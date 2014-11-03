@@ -35,6 +35,7 @@ public:
     static bool colored_output;
     static bool verbose_output;
     static bool trace_output;
+    static bool debug_output;
 };
 
 

@@ -65,6 +65,7 @@ std::ofstream yarp::os::impl::LogImpl::ferr;
 bool yarp::os::impl::LogImpl::colored_output(getenv("YARP_COLORED_OUTPUT") && (strcmp(yarp::os::getenv("YARP_COLORED_OUTPUT"), "1") == 0));
 bool yarp::os::impl::LogImpl::verbose_output(getenv("YARP_VERBOSE_OUTPUT") && (strcmp(yarp::os::getenv("YARP_VERBOSE_OUTPUT"), "1") == 0));
 bool yarp::os::impl::LogImpl::trace_output(getenv("YARP_TRACE_ENABLE") && (strcmp(yarp::os::getenv("YARP_TRACE_ENABLE"), "1") == 0));
+bool yarp::os::impl::LogImpl::debug_output(!getenv("YARP_DEBUG_ENABLE") || !(strcmp(yarp::os::getenv("YARP_DEBUG_ENABLE"), "0") == 0));
 
 yarp::os::Log::LogCallback yarp::os::Log::print_output = yarp::os::impl::LogImpl::print_callback;
 
@@ -103,17 +104,19 @@ void yarp::os::impl::LogImpl::print_callback(yarp::os::Log::LogType t,
         }
         break;
     case yarp::os::Log::DebugType:
-        if (fout.is_open()) {
-            if (verbose_output) {
-                fout << "D: " << file << ":" << line << " " << func << ":" << msg << std::endl;
+        if (debug_output) {
+            if (fout.is_open()) {
+                if (verbose_output) {
+                    fout << "D: " << file << ":" << line << " " << func << ":" << msg << std::endl;
+                } else {
+                    fout << "DEBUG: " << msg << std::endl;
+                }
             } else {
-                fout << "DEBUG: " << msg << std::endl;
-            }
-        } else {
-            if (verbose_output) {
-                std::cout << GREEN << "D" << CLEAR << ": " << file << ":" << line << " " << GREEN << func << CLEAR << ": " << msg << std::endl;
-            } else {
-                std::cout << "[" << GREEN << "DEBUG" << CLEAR << "]" << msg << std::endl;
+                if (verbose_output) {
+                    std::cout << GREEN << "D" << CLEAR << ": " << file << ":" << line << " " << GREEN << func << CLEAR << ": " << msg << std::endl;
+                } else {
+                    std::cout << "[" << GREEN << "DEBUG" << CLEAR << "]" << msg << std::endl;
+                }
             }
         }
         break;
