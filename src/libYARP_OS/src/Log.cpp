@@ -65,8 +65,8 @@ bool yarp::os::impl::LogImpl::trace_output  (getenv("YARP_TRACE_ENABLE")       &
 bool yarp::os::impl::LogImpl::debug_output  (!getenv("YARP_DEBUG_ENABLE")      || !(strcmp(yarp::os::getenv("YARP_DEBUG_ENABLE"), "0") == 0));
 bool yarp::os::impl::LogImpl::forward_output(getenv("YARP_FORWARD_LOG_ENABLE") &&  (strcmp(yarp::os::getenv("YARP_FORWARD_LOG_ENABLE"), "1") == 0));
 
-yarp::os::Log::LogCallback yarp::os::Log::print_output = yarp::os::impl::LogImpl::print_callback;
-yarp::os::Log::LogCallback yarp::os::Log::forward_output = yarp::os::impl::LogImpl::forward_callback;
+yarp::os::Log::LogCallback yarp::os::Log::print_callback = yarp::os::impl::LogImpl::print_callback;
+yarp::os::Log::LogCallback yarp::os::Log::forward_callback = yarp::os::impl::LogImpl::forward_callback;
 
 yarp::os::impl::LogImpl::LogImpl(const char *file,
                                  unsigned int line,
@@ -130,8 +130,6 @@ void yarp::os::impl::LogImpl::print_callback(yarp::os::Log::LogType t,
         } else {
             std::cerr << "["<< WHITE << RED_BG << "FATAL" << CLEAR << "]" << msg << std::endl;
         }
-        yarp_print_trace(stderr, file, line);
-        yarp::os::exit(-1);
         break;
     default:
         break;
@@ -144,6 +142,10 @@ void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
                                                const unsigned int line,
                                                const char *func)
 {
+    if (!forward_output) {
+        return;
+    }
+
     std::stringstream stringstream_buffer;
     LogForwarder* theForwarder = LogForwarder::getInstance();
 
@@ -232,8 +234,12 @@ void yarp::os::Log::trace(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
-        if (forward_output) forward_output(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -251,8 +257,12 @@ void yarp::os::Log::debug(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
-        if (forward_output) forward_output(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -270,8 +280,12 @@ void yarp::os::Log::info(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
-        if (forward_output) forward_output(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -289,8 +303,12 @@ void yarp::os::Log::warning(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
-        if (forward_output) print_output(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -308,8 +326,12 @@ void yarp::os::Log::error(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
-        if (forward_output) print_output(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -328,21 +350,28 @@ void yarp::os::Log::fatal(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
-        if (forward_output) print_output(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
-
+        if (print_callback) {
+            print_callback(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
+    yarp_print_trace(stderr, mPriv->file, mPriv->line);
+    yarp::os::exit(-1);
 }
 
 yarp::os::LogStream yarp::os::Log::fatal() const
 {
-    return yarp::os::LogStream(yarp::os::Log::FatalType, mPriv->file, mPriv->line, mPriv->func);
+    yarp::os::LogStream(yarp::os::Log::FatalType, mPriv->file, mPriv->line, mPriv->func);
+    yarp_print_trace(stderr, mPriv->file, mPriv->line);
+    yarp::os::exit(-1);
 }
 
 void yarp::os::Log::setLogCallback(yarp::os::Log::LogCallback cb)
 {
-    print_output = cb;
+    print_callback = cb;
 }
 
 void yarp_print_trace(FILE *out, const char *file, int line) {

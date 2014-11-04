@@ -51,8 +51,12 @@ public:
 
     inline ~LogStream() {
         if (!--stream->ref) {
-            Log::print_output(stream->type, stream->oss.str().c_str(), stream->file, stream->line, stream->func);
-            if (Log::forward_output) Log::forward_output(stream->type, stream->oss.str().c_str(), stream->file, stream->line, stream->func);
+            if (Log::print_callback) {
+                Log::print_callback(stream->type, stream->oss.str().c_str(), stream->file, stream->line, stream->func);
+            }
+            if (Log::forward_callback) {
+                Log::forward_callback(stream->type, stream->oss.str().c_str(), stream->file, stream->line, stream->func);
+            }
             delete stream;
         }
     }

@@ -89,8 +89,8 @@ public:
 private:
     yarp::os::impl::LogImpl * const mPriv;
 
-    static LogCallback print_output;
-    static LogCallback forward_output;
+    static LogCallback print_callback;
+    static LogCallback forward_callback;
 
     friend class LogStream;
 }; // class Log

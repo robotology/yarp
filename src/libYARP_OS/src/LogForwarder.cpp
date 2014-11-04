@@ -10,11 +10,11 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Time.h>
 
-YARP_OS_API yarp::os::LogForwarder* yarp::os::LogForwarder::instance = NULL; 
+YARP_OS_API yarp::os::LogForwarder* yarp::os::LogForwarder::instance = NULL;
 YARP_OS_API yarp::os::LogForwarderDestroyer yarp::os::LogForwarder::destroyer;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
-{ 
+{
     if (!instance)
     {
         instance = new LogForwarder;
@@ -32,7 +32,7 @@ void yarp::os::LogForwarder::forward (std::string message)
         std::string port = "["; port+=logPortName; port+="]";
         b.addString(port);
         b.addString(message);
-        outputPort->write();
+        outputPort->write(true);
     }
 }
 
@@ -48,6 +48,7 @@ yarp::os::LogForwarder::LogForwarder()
     int pid = yarp::os::getpid();
     sprintf(logPortName, "/log/%s/%s/%d",host_name,prog_name,pid);  //unsafe, better to use snprintf when available
     outputPort->open(logPortName);
+    yarp::os::Network::connect(logPortName, "/yarplogger");
 };
 
 yarp::os::LogForwarder::~LogForwarder()
