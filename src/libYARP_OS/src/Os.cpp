@@ -68,7 +68,6 @@ int yarp::os::stat(const char *path)
     return ACE_OS::stat(path, &dummy);
 }
 
-
 int yarp::os::getpid()
 {
     pid_t pid = ACE_OS::getpid();
@@ -78,9 +77,9 @@ int yarp::os::getpid()
 void yarp::os::setprogname(const char *progname)
 {
 #ifdef YARP_HAS_ACE
-    ACE_OS::setprogname(ACE::basename(p));
+    ACE_OS::setprogname(ACE::basename(progname));
 #else
-    ACE_OS::setprogname(::basename(p));
+    ACE_OS::setprogname(::basename(progname));
 #endif
 }
 
@@ -96,7 +95,6 @@ void yarp::os::getprogname(char*progname)
         strcpy(progname,tmp);
     }
 }
-
 void yarp::os::gethostname(char* hostname)
 {
     char buff[50];
@@ -109,7 +107,7 @@ void yarp::os::gethostname(char* hostname)
     {
         strcpy(hostname,"too_long_hostname");
     }
-    else 
+    else
     {
         strcpy(hostname,buff);
     }

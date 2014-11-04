@@ -28,11 +28,12 @@
 #include "messageWidget.h"
 #include "logtabSorting.h"
 
-const std::string ERROR_STRING   = "ERROR";
-const std::string WARNING_STRING = "WARNING";
-const std::string INFO_STRING    = "INFO";
-const std::string DEBUG_STRING   = "DEBUG";
 const std::string TRACE_STRING   = "TRACE";
+const std::string DEBUG_STRING   = "DEBUG";
+const std::string INFO_STRING    = "INFO";
+const std::string WARNING_STRING = "WARNING";
+const std::string ERROR_STRING   = "ERROR";
+const std::string FATAL_STRING   = "FATAL";
 
 namespace Ui {
 class LogTab;

@@ -50,7 +50,8 @@ namespace yarp
             LOGLEVEL_DEBUG     = 2,
             LOGLEVEL_INFO      = 3,
             LOGLEVEL_WARNING   = 4,
-            LOGLEVEL_ERROR     = 5
+            LOGLEVEL_ERROR     = 5,
+            LOGLEVEL_FATAL     = 6
         };
     }
 }
@@ -67,11 +68,12 @@ class yarp::yarpLogger::LogEntryInfo
 {
     private:
     LogLevelEnum  highest_error;
-    unsigned int  number_of_errors;
-    unsigned int  number_of_warnings;
+    unsigned int  number_of_traces;
     unsigned int  number_of_debugs;
     unsigned int  number_of_infos;
-    unsigned int  number_of_traces;
+    unsigned int  number_of_warnings;
+    unsigned int  number_of_errors;
+    unsigned int  number_of_fatals;
 
     public:
     std::string   port_prefix;
@@ -88,11 +90,12 @@ class yarp::yarpLogger::LogEntryInfo
     LogLevelEnum  getLastError           ();
     void          clearLastError         ();
     void          setNewError            (LogLevelEnum level);
-    unsigned int  get_number_of_errors   () { return number_of_errors;   }
-    unsigned int  get_number_of_warnings () { return number_of_warnings; }
+    unsigned int  get_number_of_traces   () { return number_of_traces;   }
     unsigned int  get_number_of_debugs   () { return number_of_debugs;   }
     unsigned int  get_number_of_infos    () { return number_of_infos;    }
-    unsigned int  get_number_of_traces   () { return number_of_traces;   }
+    unsigned int  get_number_of_warnings () { return number_of_warnings; }
+    unsigned int  get_number_of_errors   () { return number_of_errors;   }
+    unsigned int  get_number_of_fatals   () { return number_of_fatals;   }
 };
 
 class yarp::yarpLogger::LogEntry
@@ -135,28 +138,29 @@ class yarp::yarpLogger::LoggerEngine
         yarp::os::BufferedPort<yarp::os::Bottle> logger_port;
         std::string          logger_portName;
         int                  unknown_format_received;
-    
+
         public:
         std::string getPortName();
         void        run();
         void        threadRelease();
-        bool        listen_to_LOGLEVEL_INFO;
-        bool        listen_to_LOGLEVEL_DEBUG;
-        bool        listen_to_LOGLEVEL_ERROR;
-        bool        listen_to_LOGLEVEL_WARNING;
-        bool        listen_to_LOGLEVEL_TRACE;
         bool        listen_to_LOGLEVEL_UNDEFINED;
+        bool        listen_to_LOGLEVEL_TRACE;
+        bool        listen_to_LOGLEVEL_DEBUG;
+        bool        listen_to_LOGLEVEL_INFO;
+        bool        listen_to_LOGLEVEL_WARNING;
+        bool        listen_to_LOGLEVEL_ERROR;
+        bool        listen_to_LOGLEVEL_FATAL;
     };
 
     private:
     bool           logging;
     bool           discovering;
     logger_thread* log_updater;
-    
+
     public:
     void discover             (std::list<std::string>& ports);
     void connect              (const std::list<std::string>& ports);
-    
+
     public:
     LoggerEngine                 (std::string portName);
     ~LoggerEngine                ();
@@ -181,7 +185,7 @@ class yarp::yarpLogger::LoggerEngine
     void clear_messages_by_port_complete (std::string  port);
     void set_log_enable_by_port_complete (std::string  port, bool enable);
     bool get_log_enable_by_port_complete (std::string  port);
-    
+
     void set_listen_option               (LogLevelEnum logLevel, bool enable);
     bool get_listen_option               (LogLevelEnum logLevel);
 

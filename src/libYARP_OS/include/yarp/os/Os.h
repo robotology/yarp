@@ -49,7 +49,7 @@ namespace yarp {
 
         /**
         * Wrapper for ACE_OS::setprogname().
-        * @return the program name
+        * @param progname the program name
         */
         YARP_OS_API void setprogname(const char *progname);
 
