@@ -18,6 +18,7 @@
 #  include <ace/OS_NS_signal.h>
 #  include <ace/OS_NS_stdlib.h>
 #  include <ace/OS_NS_sys_stat.h>
+#  include <ace/ACE.h>
 #endif
 
 yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHandler sighandler)
@@ -76,7 +77,11 @@ int yarp::os::getpid()
 
 void yarp::os::setprogname(const char *progname)
 {
-    ACE_OS::setprogname(progname);
+#ifdef YARP_HAS_ACE
+    ACE_OS::setprogname(ACE::basename(p));
+#else
+    ACE_OS::setprogname(::basename(p));
+#endif
 }
 
 void yarp::os::getprogname(char*progname)
