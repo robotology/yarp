@@ -297,6 +297,8 @@ public:
 
     bool configure(Property& config, const char *policyName, int argc,
                    char *argv[], bool skip) {
+        yarp::os::setprogname(argv[0]);
+
         Property p;
         p.fromCommand(argc,argv,skip);
 
