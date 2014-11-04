@@ -12,6 +12,7 @@
 
 YARP_OS_API yarp::os::LogForwarder* yarp::os::LogForwarder::instance = NULL;
 YARP_OS_API yarp::os::LogForwarderDestroyer yarp::os::LogForwarder::destroyer;
+yarp::os::Semaphore yarp::os::LogForwarder::sem;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
 {
