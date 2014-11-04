@@ -191,11 +191,11 @@ private:
 // compromise - use macros so that debugging can evaporate in optimized code.
 // also, make a printf-style adaptor since c++ is a bit of a pain to
 // build strings in.
-#define YARP_ERROR(log,x) log.error(x)
-#define YARP_WARN(log,x)  log.warning(x)
-#define YARP_INFO(log,x)  log.info(x)
-#define YARP_DEBUG(log,x) log.debug(x)
-#define YARP_FAIL(log,x)  log.fail(x)
+#define YARP_ERROR(log,x) ((Logger*)&log)->error(x)
+#define YARP_WARN(log,x)  ((Logger*)&log)->warning(x)
+#define YARP_INFO(log,x)  ((Logger*)&log)->info(x)
+#define YARP_DEBUG(log,x) ((Logger*)&log)->debug(x)
+#define YARP_FAIL(log,x)  ((Logger*)&log)->fail(x)
 
 #define YARP_LONGEST_MESSAGE 1000
 #define YARP_SPRINTF0(log,mode,msg)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg); log.mode(_yarp_buf); }
