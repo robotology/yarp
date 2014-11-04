@@ -29,7 +29,7 @@ class YARP_OS_API LogForwarder
         ~LogForwarder();
         friend class LogForwarderDestroyer;
     private:
-        static yarp::os::Semaphore sem;
+        static yarp::os::Semaphore *sem;
         char logPortName[255];
         yarp::os::BufferedPort<yarp::os::Bottle>* outputPort;
     private:

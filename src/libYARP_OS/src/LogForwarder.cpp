@@ -12,23 +12,21 @@
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::instance = NULL;
 yarp::os::LogForwarderDestroyer yarp::os::LogForwarder::destroyer;
-yarp::os::Semaphore yarp::os::LogForwarder::sem;
+yarp::os::Semaphore *yarp::os::LogForwarder::sem = NULL;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
 {
-    sem.wait();
     if (!instance)
     {
         instance = new LogForwarder;
         destroyer.SetSingleton(instance);
     }
-    sem.post();
     return instance;
 };
 
 void yarp::os::LogForwarder::forward (std::string message)
 {
-    sem.wait();
+    sem->wait();
     if (outputPort)
     {
         Bottle& b = outputPort->prepare();
@@ -37,13 +35,16 @@ void yarp::os::LogForwarder::forward (std::string message)
         b.addString(port);
         b.addString(message);
         outputPort->write(true);
+        outputPort->waitForWrite();
     }
-    sem.post();
+    sem->post();
 }
 
 yarp::os::LogForwarder::LogForwarder()
 {
     yarp::os::NetworkBase::initMinimum();
+    sem = new yarp::os::Semaphore(1);
+    yAssert(sem);
     outputPort =0;
     outputPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     char host_name [255]; //unsafe
@@ -59,20 +60,24 @@ yarp::os::LogForwarder::LogForwarder()
 
 yarp::os::LogForwarder::~LogForwarder()
 {
+    sem->wait();
     if (outputPort)
     {
         Bottle& b = outputPort->prepare();
         b.clear();
         std::string port = "["; port+=logPortName; port+="]";
         b.addString(port);
-        b.addString("[INFO] Execution terminated");
-        outputPort->write();
+        b.addString("[INFO] Execution terminated\n");
+        outputPort->write(true);
         outputPort->waitForWrite();
         //outputPort->interrupt();
         outputPort->close();
         delete outputPort;
         outputPort=0;
     }
+    sem->post();
+    delete sem;
+    sem = NULL;
     yarp::os::NetworkBase::finiMinimum();
 };
 

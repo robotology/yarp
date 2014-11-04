@@ -232,7 +232,7 @@ void LoggerEngine::logger_thread::run()
     }
 
     //yarp::os::Time::delay(0.001);
-    if (logger_port.getInputCount()>0)
+    //if (logger_port.getInputCount()>0)
     {
         int bufferport_size = logger_port.getPendingReads();
 
