@@ -27,7 +27,7 @@ class YARP_OS_API LogForwarder
     protected:
         LogForwarder();
         ~LogForwarder();
-        friend class LogForwarderDestroyer; 
+        friend class LogForwarderDestroyer;
     private:
         static yarp::os::Semaphore sem;
         char logPortName[255];
