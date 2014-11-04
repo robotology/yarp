@@ -16,6 +16,7 @@
 #include <yarp/os/api.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/Os.h>
 
 namespace std {
 template <typename T>
@@ -56,6 +57,11 @@ public:
             }
             if (Log::forward_callback) {
                 Log::forward_callback(stream->type, stream->oss.str().c_str(), stream->file, stream->line, stream->func);
+            }
+            if (stream->type == yarp::os::Log::FatalType) {
+                yarp_print_trace(stderr, stream->file, stream->line);
+                delete stream;
+                yarp::os::exit(-1);
             }
             delete stream;
         }

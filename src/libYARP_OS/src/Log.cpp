@@ -364,9 +364,7 @@ void yarp::os::Log::fatal(const char *msg, ...) const
 
 yarp::os::LogStream yarp::os::Log::fatal() const
 {
-    yarp::os::LogStream(yarp::os::Log::FatalType, mPriv->file, mPriv->line, mPriv->func);
-    yarp_print_trace(stderr, mPriv->file, mPriv->line);
-    yarp::os::exit(-1);
+    return yarp::os::LogStream(yarp::os::Log::FatalType, mPriv->file, mPriv->line, mPriv->func);
 }
 
 void yarp::os::Log::setLogCallback(yarp::os::Log::LogCallback cb)
