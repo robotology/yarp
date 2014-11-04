@@ -79,12 +79,15 @@ void yarp::os::setprogname(const char *progname)
 #ifdef YARP_HAS_ACE
     ACE_OS::setprogname(ACE::basename(progname));
 #else
-    ACE_OS::setprogname(::basename(progname));
+    // not available
 #endif
 }
 
+// ??? before merge with master: consider an API that doesn't need
+// magic max sizes
 void yarp::os::getprogname(char*progname)
 {
+#ifdef YARP_HAS_ACE
     const char* tmp = ACE_OS::getprogname ();
     if (strlen(tmp)==0)
     {
@@ -94,11 +97,22 @@ void yarp::os::getprogname(char*progname)
     {
         strcpy(progname,tmp);
     }
+#else
+    // not available
+    *progname = '\0';
+#endif
 }
+
+// ??? before merge with master: consider an API that doesn't need
+// magic max sizes
 void yarp::os::gethostname(char* hostname)
 {
     char buff[50];
+#ifdef YARP_HAS_ACE
     ACE_OS::hostname(buff, sizeof(buff));
+#else
+    ::gethostname(buff, sizeof(buff));
+#endif
     if (strlen(buff)==0)
     {
         strcpy(hostname,"no_hostname");
