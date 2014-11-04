@@ -74,6 +74,11 @@ int yarp::os::getpid()
     return pid;
 }
 
+void yarp::os::setprogname(const char *progname)
+{
+    ACE_OS::setprogname(progname);
+}
+
 void yarp::os::getprogname(char*progname)
 {
     const char* tmp = ACE_OS::getprogname ();

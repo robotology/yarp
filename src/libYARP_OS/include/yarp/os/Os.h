@@ -48,6 +48,12 @@ namespace yarp {
         YARP_OS_API int getpid();
 
         /**
+        * Wrapper for ACE_OS::setprogname().
+        * @return the program name
+        */
+        YARP_OS_API void setprogname(const char *progname);
+
+        /**
         * Wrapper for ACE_OS::getprogname().
         * @return the program name
         */
