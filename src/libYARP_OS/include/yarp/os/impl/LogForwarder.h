@@ -12,6 +12,7 @@
 #include <yarp/os/api.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Semaphore.h>
 #include <string>
 
 namespace yarp {
@@ -28,6 +29,7 @@ class YARP_OS_API LogForwarder
         ~LogForwarder();
         friend class LogForwarderDestroyer; 
     private:
+        static yarp::os::Semaphore sem;
         char logPortName[255];
         yarp::os::BufferedPort<yarp::os::Bottle>* outputPort;
     private:

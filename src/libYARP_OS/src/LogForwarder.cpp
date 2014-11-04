@@ -15,16 +15,19 @@ YARP_OS_API yarp::os::LogForwarderDestroyer yarp::os::LogForwarder::destroyer;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
 {
+    sem.wait();
     if (!instance)
     {
         instance = new LogForwarder;
         destroyer.SetSingleton(instance);
     }
+    sem.post();
     return instance;
 };
 
 void yarp::os::LogForwarder::forward (std::string message)
 {
+    sem.wait();
     if (outputPort)
     {
         Bottle& b = outputPort->prepare();
@@ -34,6 +37,7 @@ void yarp::os::LogForwarder::forward (std::string message)
         b.addString(message);
         outputPort->write(true);
     }
+    sem.post();
 }
 
 yarp::os::LogForwarder::LogForwarder()
@@ -49,6 +53,7 @@ yarp::os::LogForwarder::LogForwarder()
     sprintf(logPortName, "/log/%s/%s/%d",host_name,prog_name,pid);  //unsafe, better to use snprintf when available
     outputPort->open(logPortName);
     yarp::os::Network::connect(logPortName, "/yarplogger");
+    //yarp::os::Network::connect(logPortName, "/test");
 };
 
 yarp::os::LogForwarder::~LogForwarder()
