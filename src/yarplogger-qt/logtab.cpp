@@ -112,8 +112,9 @@ void LogTab::updateLog(bool from_beginning)
         else if (it->level==yarp::yarpLogger::LOGLEVEL_WARNING)   { rowcolor = QColor("#FFFF70");  error_level=WARNING_STRING; }
         else if (it->level==yarp::yarpLogger::LOGLEVEL_INFO)      { rowcolor = QColor("#70FF70");  error_level=INFO_STRING; }
         else if (it->level==yarp::yarpLogger::LOGLEVEL_DEBUG)     { rowcolor = QColor("#7070FF");  error_level=DEBUG_STRING;}
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_TRACE)     { rowcolor = QColor("#FF70FF");  error_level=TRACE_STRING;}
         else if (it->level==yarp::yarpLogger::LOGLEVEL_UNDEFINED) { rowcolor = QColor(Qt::white);  error_level="";     }
-        else                                                    { rowcolor = QColor(Qt::white);  error_level="";     }
+        else                                                      { rowcolor = QColor(Qt::white);  error_level="";     }
 
         //using numbers seems not to work. Hence I'm using strings.
         rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());

@@ -46,11 +46,11 @@ namespace yarp
         enum   LogLevelEnum
         {
             LOGLEVEL_UNDEFINED = 0,
-            LOGLEVEL_INFO      = 1,
+            LOGLEVEL_TRACE     = 1,
             LOGLEVEL_DEBUG     = 2,
-            LOGLEVEL_WARNING   = 3,
-            LOGLEVEL_ERROR     = 4,
-            LOGLEVEL_CRITICAL  = 5
+            LOGLEVEL_INFO      = 3,
+            LOGLEVEL_WARNING   = 4,
+            LOGLEVEL_ERROR     = 5
         };
     }
 }
@@ -71,6 +71,7 @@ class yarp::yarpLogger::LogEntryInfo
     unsigned int  number_of_warnings;
     unsigned int  number_of_debugs;
     unsigned int  number_of_infos;
+    unsigned int  number_of_traces;
 
     public:
     std::string   port_prefix;
@@ -91,6 +92,7 @@ class yarp::yarpLogger::LogEntryInfo
     unsigned int  get_number_of_warnings () { return number_of_warnings; }
     unsigned int  get_number_of_debugs   () { return number_of_debugs;   }
     unsigned int  get_number_of_infos    () { return number_of_infos;    }
+    unsigned int  get_number_of_traces   () { return number_of_traces;   }
 };
 
 class yarp::yarpLogger::LogEntry
@@ -142,6 +144,7 @@ class yarp::yarpLogger::LoggerEngine
         bool        listen_to_LOGLEVEL_DEBUG;
         bool        listen_to_LOGLEVEL_ERROR;
         bool        listen_to_LOGLEVEL_WARNING;
+        bool        listen_to_LOGLEVEL_TRACE;
         bool        listen_to_LOGLEVEL_UNDEFINED;
     };
 

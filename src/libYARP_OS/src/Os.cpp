@@ -66,3 +66,41 @@ int yarp::os::stat(const char *path)
     ACE_stat dummy;
     return ACE_OS::stat(path, &dummy);
 }
+
+
+int yarp::os::getpid()
+{
+    pid_t pid = ACE_OS::getpid();
+    return pid;
+}
+
+void yarp::os::getprogname(char*progname)
+{
+    const char* tmp = ACE_OS::getprogname ();
+    if (strlen(tmp)==0)
+    {
+        strcpy(progname,"no_progname");
+    }
+    else
+    {
+        strcpy(progname,tmp);
+    }
+}
+
+void yarp::os::gethostname(char* hostname)
+{
+    char buff[50];
+    ACE_OS::hostname(buff, sizeof(buff));
+    if (strlen(buff)==0)
+    {
+        strcpy(hostname,"no_hostname");
+    }
+    else if (strlen(buff)>=50)
+    {
+        strcpy(hostname,"too_long_hostname");
+    }
+    else 
+    {
+        strcpy(hostname,buff);
+    }
+}

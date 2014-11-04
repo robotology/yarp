@@ -42,6 +42,24 @@ namespace yarp {
         YARP_OS_API const char *getenv(const char *v);
 
         /**
+        * Wrapper for ACE_OS::getppid().
+        * @return the process id (pid)
+        */
+        YARP_OS_API int getpid();
+
+        /**
+        * Wrapper for ACE_OS::getprogname().
+        * @return the program name
+        */
+        YARP_OS_API void getprogname(char* progname);
+
+        /**
+        * Wrapper for ACE_OS::hostname().
+        * @return the system hostname
+        */
+        YARP_OS_API void gethostname(char* hostname);
+
+        /**
         * Wrapper for ACE_OS::mkdir(). Create a directory.
         * @param p name of the new directory.
         */

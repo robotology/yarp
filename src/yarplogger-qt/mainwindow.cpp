@@ -452,12 +452,14 @@ QString MainWindow::recomputeFilters()
     bool e_error   = this->ui->DisplayErrorEnable->isChecked();
     bool e_info    = this->ui->DisplayInfoEnable->isChecked();
     bool e_warning = this->ui->DisplayWarningEnable->isChecked();
+    bool e_trace   = this->ui->DisplayTraceEnable->isChecked();
     bool e_all     = this->ui->DisplayUnformattedEnable->isChecked();
     int f = 0;
     if (e_debug)   {if (f>0) filter=filter +"|"; filter = filter + "^DEBUG$";   f++;}
     if (e_error)   {if (f>0) filter=filter +"|"; filter = filter + "^ERROR$";   f++;}
     if (e_info)    {if (f>0) filter=filter +"|"; filter = filter + "^INFO$";    f++;}
     if (e_warning) {if (f>0) filter=filter +"|"; filter = filter + "^WARNING$"; f++;}
+    if (e_trace)   {if (f>0) filter=filter +"|"; filter = filter + "^TRACE$";   f++;}
     if (e_all)     {if (f>0) filter=filter +"|"; filter = filter + "^$";        f++;}
     std::string debug = filter.toStdString();
     return filter;
@@ -493,6 +495,11 @@ void MainWindow::on_DisplayDebugEnable_toggled(bool checked)
 }
 
 void MainWindow::on_DisplayInfoEnable_toggled(bool checked)
+{
+    apply_button_filters();
+}
+
+void MainWindow::on_DisplayTraceEnable_toggled(bool checked)
 {
     apply_button_filters();
 }

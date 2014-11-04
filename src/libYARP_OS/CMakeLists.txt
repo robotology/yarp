@@ -147,6 +147,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/LocalCarrier.h
                       include/yarp/os/impl/Logger.h
                       include/yarp/os/impl/LogImpl.h
+                      include/yarp/os/impl/LogForwarder.h
                       include/yarp/os/impl/MachSemaphoreImpl.h
                       include/yarp/os/impl/McastCarrier.h
                       include/yarp/os/impl/MemoryOutputStream.h
@@ -231,6 +232,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/LockGuard.cpp
                  src/Log.cpp
                  src/Logger.cpp
+                 src/LogForwarder.cpp
                  src/ManagedBytes.cpp
                  src/ModifyingCarrier.cpp
                  src/Module.cpp

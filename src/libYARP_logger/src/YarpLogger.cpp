@@ -29,7 +29,7 @@
 using namespace yarp::os;
 using namespace yarp::yarpLogger;
 using namespace std;
-
+/*
 const std::string RED    ="\033[01;31m";
 const std::string GREEN  ="\033[01;32m";
 const std::string YELLOW ="\033[01;33m";
@@ -38,7 +38,7 @@ const std::string CLEAR  ="\033[00m";
 
 const std::string RED_ERROR      = RED+"ERROR"+CLEAR;
 const std::string YELLOW_WARNING = YELLOW+"WARNING"+CLEAR;
-
+*/
 void LogEntry::clear_logEntries()
 {
     entry_list.clear();
@@ -77,6 +77,7 @@ void LogEntryInfo::clear()
     number_of_errors=0;
     number_of_infos=0;
     number_of_warnings=0;
+    number_of_traces=0;
     highest_error=LOGLEVEL_UNDEFINED;
     last_update=-1;
 }
@@ -97,6 +98,7 @@ void LogEntryInfo::setNewError(LogLevelEnum level)
     else if (level==LOGLEVEL_WARNING) number_of_warnings++;
     else if (level==LOGLEVEL_DEBUG)   number_of_debugs++;
     else if (level==LOGLEVEL_INFO)    number_of_infos++;
+    else if (level==LOGLEVEL_TRACE)   number_of_traces++;
     if (level>highest_error) highest_error=level;
 }
 
@@ -194,6 +196,10 @@ void LoggerEngine::connect (const std::list<std::string>& ports)
         {
             yarp::os::Network::connect(it->c_str(),this->log_updater->getPortName().c_str());
         }
+        else
+        { 
+            //fprintf(stderr,"unable to connect to port %s\n",it->c_str());
+        }
     }
 }
 
@@ -211,6 +217,7 @@ LoggerEngine::logger_thread::logger_thread (std::string _portname, int _rate,  i
         listen_to_LOGLEVEL_ERROR     = true;
         listen_to_LOGLEVEL_WARNING   = true;
         listen_to_LOGLEVEL_UNDEFINED = true;
+        listen_to_LOGLEVEL_TRACE     = true;
         unknown_format_received      = 0;
 }
 
@@ -279,6 +286,7 @@ void LoggerEngine::logger_thread::run()
                 else if (level.find("DEBUG")!=std::string::npos)   body.level = LOGLEVEL_DEBUG;
                 else if (level.find("WARNING")!=std::string::npos) body.level = LOGLEVEL_WARNING;
                 else if (level.find("ERROR")!=std::string::npos)   body.level = LOGLEVEL_ERROR;
+                else if (level.find("TRACE")!=std::string::npos)   body.level = LOGLEVEL_TRACE;
                 body.text = s.substr(end+1);
             }
             else 
@@ -290,6 +298,7 @@ void LoggerEngine::logger_thread::run()
             if (body.level == LOGLEVEL_DEBUG     && listen_to_LOGLEVEL_DEBUG     == false) {continue;}
             if (body.level == LOGLEVEL_WARNING   && listen_to_LOGLEVEL_WARNING   == false) {continue;}
             if (body.level == LOGLEVEL_ERROR     && listen_to_LOGLEVEL_ERROR     == false) {continue;}
+            if (body.level == LOGLEVEL_TRACE     && listen_to_LOGLEVEL_TRACE     == false) {continue;}
             if (body.level == LOGLEVEL_UNDEFINED && listen_to_LOGLEVEL_UNDEFINED == false) {continue;}
 
             this->mutex.wait();
@@ -619,6 +628,7 @@ void LoggerEngine::set_listen_option               (LogLevelEnum logLevel, bool 
     else if (logLevel == LOGLEVEL_WARNING)    {log_updater->listen_to_LOGLEVEL_WARNING=enable;}
     else if (logLevel == LOGLEVEL_DEBUG)      {log_updater->listen_to_LOGLEVEL_DEBUG=enable;}
     else if (logLevel == LOGLEVEL_INFO)       {log_updater->listen_to_LOGLEVEL_INFO=enable;}
+    else if (logLevel == LOGLEVEL_TRACE)      {log_updater->listen_to_LOGLEVEL_TRACE=enable;}
     else if (logLevel == LOGLEVEL_UNDEFINED)  {log_updater->listen_to_LOGLEVEL_UNDEFINED=enable;}
     log_updater->mutex.post();
 }
@@ -630,6 +640,7 @@ bool LoggerEngine::get_listen_option               (LogLevelEnum logLevel)
     else if (logLevel == LOGLEVEL_WARNING)   {return log_updater->listen_to_LOGLEVEL_WARNING;}
     else if (logLevel == LOGLEVEL_DEBUG)     {return log_updater->listen_to_LOGLEVEL_DEBUG;}
     else if (logLevel == LOGLEVEL_INFO)      {return log_updater->listen_to_LOGLEVEL_INFO;}
+    else if (logLevel == LOGLEVEL_TRACE)     {return log_updater->listen_to_LOGLEVEL_TRACE;}
     else if (logLevel == LOGLEVEL_UNDEFINED) {return log_updater->listen_to_LOGLEVEL_UNDEFINED;}
     else return false;
 }
@@ -687,6 +698,7 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
         file1 << it->logInfo.get_number_of_warnings() << std::endl;
         file1 << it->logInfo.get_number_of_debugs() << std::endl;
         file1 << it->logInfo.get_number_of_infos() << std::endl;
+        file1 << it->logInfo.get_number_of_traces() << std::endl;
         file1 << it->logInfo.logsize << std::endl;
         file1 << it->entry_list.size() << std::endl;
         std::vector<MessageEntry>::iterator it1;
@@ -737,6 +749,7 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
             file1 >> dummy; //l_tmp.logInfo.number_of_warning;
             file1 >> dummy; //l_tmp.logInfo.number_of_debugs;
             file1 >> dummy; //l_tmp.logInfo.number_of_infos;
+            file1 >> dummy; //l_tmp.logInfo.number_of_traces;
             file1 >> l_tmp.logInfo.logsize;
             int size_entry_list;
             file1 >> size_entry_list;

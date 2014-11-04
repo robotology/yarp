@@ -32,6 +32,7 @@ const std::string ERROR_STRING   = "ERROR";
 const std::string WARNING_STRING = "WARNING";
 const std::string INFO_STRING    = "INFO";
 const std::string DEBUG_STRING   = "DEBUG";
+const std::string TRACE_STRING   = "TRACE";
 
 namespace Ui {
 class LogTab;
