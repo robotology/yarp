@@ -9,6 +9,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Log.h>
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::instance = NULL;
 yarp::os::LogForwarderDestroyer yarp::os::LogForwarder::destroyer;
