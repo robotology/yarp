@@ -7,8 +7,8 @@
  */
 
 #include <yarp/os/Log.h>
-#include <yarp/os/LogForwarder.h>
 #include <yarp/os/impl/LogImpl.h>
+#include <yarp/os/impl/LogForwarder.h>
 
 #include <iostream>
 #include <sstream>
