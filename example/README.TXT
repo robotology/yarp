@@ -57,4 +57,5 @@ libraries.
 * matrix
     Examples of how to use matrices and vectors in YARP.
 
-
+* log
+    A small test for the logging methods in YARP.
