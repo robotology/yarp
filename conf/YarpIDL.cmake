@@ -57,7 +57,6 @@ function(YARP_IDL_TO_DIR_CORE yarpidl_file output_dir)
 
     # Flag to control whether IDL generation is allowed.
     option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" ${files_missing})
-    mark_as_advanced(ALLOW_IDL_GENERATION)
 
     set(full_headers)
     set(full_sources)
