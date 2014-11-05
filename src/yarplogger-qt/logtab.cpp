@@ -63,8 +63,36 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _syst
     ui->listView->horizontalHeader()->setSectionResizeMode(3,QHeaderView::Stretch);
     ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     ui->listView->verticalHeader()->setDefaultSectionSize(20);
+    
+    clipboard=QApplication::clipboard();
+    connect(ui->listView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
 
     updateLog(true);
+}
+
+void LogTab::ctxMenu(const QPoint &pos)
+{
+    QMenu *menu = new QMenu;
+    QAction *act1 = menu->addAction(tr("Copy to clipboard"), this, SLOT(on_copy_to_clipboard_action()));
+
+    menu->exec(ui->listView->mapToGlobal(pos));
+}
+
+void LogTab::on_copy_to_clipboard_action()
+{
+    QString selected_test;
+    QString separator("\t\t");
+    foreach(const QModelIndex &index, ui->listView->selectionModel()->selectedRows())
+    {
+        QStringList list;
+        QModelIndex prox_index = proxyModelSearch->mapToSource(index);
+        if (displayYarprunTimestamp_enabled) list.append(model_logs->item(prox_index.row(),0)->text());
+        if (displayLocalTimestamp_enabled)   list.append(model_logs->item(prox_index.row(),1)->text());
+        if (displayErrorLevel_enabled)       list.append(model_logs->item(prox_index.row(),2)->text());
+        list.append(model_logs->item(prox_index.row(),3)->text());
+        selected_test += list.join(separator);
+    }
+    clipboard->setText(selected_test);
 }
 
 LogTab::~LogTab()

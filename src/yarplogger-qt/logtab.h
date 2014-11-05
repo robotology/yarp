@@ -24,6 +24,7 @@
 #include <QStandardItemModel>
 #include <QTimer>
 #include <QSortFilterProxyModel>
+#include <QClipboard>
 #include <yarp/logger/YarpLogger.h>
 #include "messageWidget.h"
 #include "logtabSorting.h"
@@ -61,12 +62,16 @@ private:
 
 private slots:
     void updateLog(bool from_beginning=false);
+    void ctxMenu(const QPoint &pos);
+    void on_copy_to_clipboard_action();
 
 public:
     QTimer                  *logTimer;
     QStandardItemModel      *model_logs;
     LogSortFilterProxyModel *proxyModelButtons;
     LogSortFilterProxyModel *proxyModelSearch;
+    QClipboard              *clipboard;
+    QMenu                   *contextMenu;
     void                    displayYarprunTimestamp  (bool enabled);
     void                    displayLocalTimestamp    (bool enabled);
     void                    displayErrorLevel (bool enabled);
