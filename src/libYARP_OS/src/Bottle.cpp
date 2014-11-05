@@ -226,7 +226,6 @@ void Bottle::copy(const Bottle& alt, int first, int len) {
     if (alt.isNull()) {
         clear();
         invalid = true;
-        ro = true;
         return;
     }
     HELPER(implementation).copyRange(HELPER(alt.implementation),
@@ -430,5 +429,8 @@ ConstString Bottle::toString(int x) {
 void Bottle::edit() {
     if (ro) {
         yFatal("Attempted to modify the null bottle");
+    }
+    if (invalid) {
+        invalid = false;
     }
 }
