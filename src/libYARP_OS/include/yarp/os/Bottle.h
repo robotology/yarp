@@ -374,7 +374,15 @@ public:
 
     static ConstString toString(int x);
 
+protected:
+
+    virtual void setReadOnly(bool readOnly) { 
+        ro = readOnly;
+    }
+
 private:
+
+    void edit();
 
     Value& findGroupBit(const ConstString& key) const;
     Value& findBit(const ConstString& key) const;
@@ -386,6 +394,7 @@ private:
     //Value& find(const char *key);
     void *implementation;
     bool invalid;
+    bool ro;
 
 
     ///////////////////////////////////////////////////////////////////

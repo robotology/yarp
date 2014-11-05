@@ -19,6 +19,10 @@ using namespace yarp::os;
 
 class NullBottle : public Bottle {
 public:
+    NullBottle() {
+        setReadOnly(true);
+    }
+
     virtual bool isNull() const    { return true; }
 
     static NullBottle *bottleNull;
@@ -33,17 +37,20 @@ NullBottle *NullBottle::bottleNull = NULL;
 Bottle::Bottle() {
     implementation = new BottleImpl;
     invalid = false;
+    ro = false;
     yAssert(implementation!=NULL);
 }
 
 Bottle::Bottle(const Bottle& bottle) : Portable(), Searchable() {
     implementation = new BottleImpl;
     invalid = false;
+    ro = false;
     yAssert(implementation!=NULL);
     copy(bottle);
 }
 
 const Bottle& Bottle::operator = (const Bottle& bottle) {
+    edit();
     copy(bottle);
     return *this;
 }
@@ -52,6 +59,7 @@ const Bottle& Bottle::operator = (const Bottle& bottle) {
 Bottle::Bottle(const ConstString& text) {
     implementation = new BottleImpl;
     invalid = false;
+    ro = false;
     yAssert(implementation!=NULL);
     fromString(text);
 }
@@ -64,39 +72,48 @@ Bottle::~Bottle() {
 }
 
 void Bottle::clear() {
+    edit();
     invalid = false;
     HELPER(implementation).clear();
 }
 
 void Bottle::addInt(int x) {
+    edit();
     HELPER(implementation).addInt(x);
 }
 
 void Bottle::addVocab(int x) {
+    edit();
     HELPER(implementation).addVocab(x);
 }
 
 void Bottle::addDouble(double x) {
+    edit();
     HELPER(implementation).addDouble(x);
 }
 
 void Bottle::addString(const char *str) {
+    edit();
     HELPER(implementation).addString(str);
 }
 
 void Bottle::addString(const ConstString& str) {
+    edit();
     HELPER(implementation).addString(str);
 }
 
 Bottle& Bottle::addList() {
+    edit();
     return HELPER(implementation).addList();
 }
 
 Property& Bottle::addDict() {
+    edit();
     return HELPER(implementation).addDict();
 }
 
 Value Bottle::pop() {
+    edit();
     Storable* stb = HELPER(implementation).pop();
     Value val(*stb);
     // here we take responsibility for deallocation of the Storable instance
@@ -142,6 +159,7 @@ bool Bottle::isList(int index) {
 }
 
 void Bottle::fromString(const ConstString& text) {
+    edit();
     invalid = false;
     HELPER(implementation).fromString(text.c_str());
 }
@@ -151,6 +169,7 @@ ConstString Bottle::toString() const {
 }
 
 void Bottle::fromBinary(const char *text, int len) {
+    edit();
     HELPER(implementation).fromBinary(text,len);
 }
 
@@ -174,6 +193,7 @@ void Bottle::onCommencement() {
 }
 
 bool Bottle::read(ConnectionReader& reader) {
+    edit();
     return HELPER(implementation).read(reader);
 }
 
@@ -202,9 +222,11 @@ void Bottle::setNested(bool nested) {
 
 
 void Bottle::copy(const Bottle& alt, int first, int len) {
+    edit();
     if (alt.isNull()) {
         clear();
         invalid = true;
+        ro = true;
         return;
     }
     HELPER(implementation).copyRange(HELPER(alt.implementation),
@@ -325,11 +347,13 @@ Bottle *Bottle::clone() {
 }
 
 void Bottle::add(Value *value) {
+    edit();
     HELPER(implementation).addBit(value);
 }
 
 
 void Bottle::add(const Value& value) {
+    edit();
     HELPER(implementation).addBit(value);
 }
 
@@ -360,6 +384,7 @@ bool Bottle::write(PortReader& reader, bool textMode) {
 }
 
 bool Bottle::read(PortWriter& writer, bool textMode) {
+    edit();
     DummyConnector con;
     con.setTextMode(textMode);
     writer.write(con.getWriter());
@@ -375,6 +400,7 @@ bool Bottle::operator!=(const Bottle& alt) {
 }
 
 void Bottle::append(const Bottle& alt) {
+    edit();
     for (int i=0; i<alt.size(); i++) {
         add(alt.get(i));
     }
@@ -400,3 +426,9 @@ ConstString Bottle::toString(int x) {
     return NetType::toString(x);
 }
 
+
+void Bottle::edit() {
+    if (ro) {
+        yFatal("Attempted to modify the null bottle");
+    }
+}
