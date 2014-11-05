@@ -14,12 +14,15 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
 {
     userTracking= withTracking;
     camerasON = withCamerasOn;
     mirrorON = withMirrorOn;
-
+    colorVideoMode=colorMode;
+    depthVideoMode=depthMode;
+    cout << "color" << colorVideoMode << endl;
+    cout << "color" << depthVideoMode << endl;
     if (minConf != MINIMUM_CONFIDENCE){
         minConfidence = minConf;
     }
@@ -40,6 +43,7 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamer
     
     loop = withLoop;
     frameSync = withFrameSync;
+    printMode = prMode;
     imageRegistration = withImageRegistration;
     init();
     initVars();
@@ -140,7 +144,7 @@ int OpenNI2SkeletonTracker::init(){
 	else{
 	    cout << "Image registration mode is not supported" << endl;
 	}
-	  
+	 
 	// if FrameSync option is enabled
 	if (frameSync){
 	    device.setDepthColorSyncEnabled(true);
@@ -163,13 +167,21 @@ int OpenNI2SkeletonTracker::init(){
                 deviceStatus = rc;
                 return rc;
             }
+
+            // if not playback, set resolution and fps for depth stream
+            depthInfo = device.getSensorInfo(openni::SENSOR_DEPTH);
+            const openni::Array<openni::VideoMode>& depthModes = depthInfo->getSupportedVideoModes();
+            if (!oniPlayback)
+            {
+                depthStream.setVideoMode(depthModes[depthVideoMode]);
+            }
         }
         if (oniRecord) {
             recorder.attach(depthStream);
         }
 
         rc = depthStream.start();
-        
+
         if (rc != openni::STATUS_OK)
         {
             printf("Couldn't start the depth stream\n%s\n", openni::OpenNI::getExtendedError());
@@ -194,6 +206,15 @@ int OpenNI2SkeletonTracker::init(){
                 deviceStatus = rc;
                 return rc;
             }
+           
+
+            // if not playback, set resolution and fps settings for RGB stream
+            colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
+            const openni::Array<openni::VideoMode>& colorModes = colorInfo->getSupportedVideoModes();
+            if (!oniPlayback)
+            {
+                imageStream.setVideoMode(colorModes[colorVideoMode]);
+            }
         }
         
         if (oniRecord) {
@@ -211,6 +232,28 @@ int OpenNI2SkeletonTracker::init(){
         else {
             cout << "RGB stream started..." << endl;
         }
+
+        // print video modes
+        if (printMode)
+        {
+            cout << "Depth video modes available:" << endl;
+            const openni::Array<openni::VideoMode>& depthModes = depthInfo->getSupportedVideoModes();
+            for (int i = 0; i<depthModes.getSize(); i++)
+            {
+                printf("%i: %ix%i, %i fps, %i format\n", i, depthModes[i].getResolutionX(), depthModes[i].getResolutionY(), depthModes[i].getFps(), depthModes[i].getPixelFormat()); 
+            }
+
+            colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
+            const openni::Array<openni::VideoMode>& colorModes= colorInfo->getSupportedVideoModes();
+            cout << "RGB video modes available:" << endl;
+            for (int i = 0; i<colorModes.getSize(); i++) {
+                if (colorModes[i].getPixelFormat() == openni::PIXEL_FORMAT_RGB888)
+                {
+                    printf("%i: %ix%i, %i fps\n", i, colorModes[i].getResolutionX(), colorModes[i].getResolutionY(), colorModes[i].getFps()); 
+                }
+            }
+        }
+
     }
 
     if (userTracking){
