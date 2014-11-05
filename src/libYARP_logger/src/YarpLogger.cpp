@@ -680,6 +680,11 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
 
 bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
 {
+    string start_string ="<#STRING_START#>";
+    int start_string_size=strlen(start_string.c_str());
+    string end_string ="<#STRING_END#>";
+    int end_string_size=strlen(end_string.c_str());
+
     if (log_updater == NULL) return false;
     if (filename.size() == 0) return false;
 
@@ -715,8 +720,9 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
             file1 << it1->yarprun_timestamp << std::endl;
             file1 << it1->local_timestamp << std::endl;
             file1 << it1->level << std::endl;
-            file1 << it1->text.size() << " " ;
+            file1 << start_string;
             for (unsigned int s=0; s< it1->text.size(); s++) file1.put(it1->text[s]);
+            file1 << end_string <<endl;
         }
     }
     file1.close();
@@ -724,8 +730,35 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
     return true;
 }
 
+int get_tag(ifstream& file, const char* tag)
+{
+    int pos=file.tellg();
+    int tag_size=strlen(tag);
+    char* buff = new char[tag_size+1];
+    for(int i=0; i<tag_size+1;i++) buff[i]=0;
+    int off=0;
+    for (; ;off++)
+    {
+        file.seekg(pos+off);
+        file.read(buff,tag_size);
+        if (file.good()==false)
+        {
+            delete [] buff;
+            return -1;
+        }
+        if (strcmp(buff,tag)==0) break;
+    }
+    delete [] buff;
+    return pos+off;
+}
+
 bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
 {
+    string start_string ="<#STRING_START#>";
+    int start_string_size=strlen(start_string.c_str());
+    string end_string ="<#STRING_END#>";
+    int end_string_size=strlen(end_string.c_str());
+
     if (log_updater == NULL) return false;
     if (filename.size() == 0) return false;
 
@@ -770,12 +803,16 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
                 int tmp_level;
                 file1 >> tmp_level;
                 m_tmp.level = static_cast<LogLevelEnum>(tmp_level);
-                int size = 0;
-                file1 >> size;
-                file1.ignore(1);
-                char buf [1000];
-                file1.get(buf, size, 0);
-                m_tmp.text=buf;
+                int start_p = get_tag(file1, start_string.c_str());
+                int end_p = get_tag(file1, end_string.c_str());
+                //validity check
+                if (start_p<0 || end_p<0 || end_p-start_p+start_string_size<=0) return false;
+                char *buff = new char[end_p-start_p+start_string_size];
+                file1.seekg(start_p+start_string_size);
+                file1.get(buff,end_p-start_p-start_string_size,0);
+                file1.seekg(end_p+end_string_size);
+                m_tmp.text=buff;
+                delete [] buff;
                 l_tmp.entry_list.push_back(m_tmp);
             }
             log_updater->log_list.push_back(l_tmp);

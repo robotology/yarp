@@ -551,6 +551,8 @@ void MainWindow::on_actionSave_Log_triggered(bool checked)
     {
         if (theLogger->save_all_logs_to_file(fileName.toStdString()))
             system_message->addMessage(QString("Log saved to file: ") + fileName);
+        else
+           system_message->addMessage(QString("Unable to save file: ") + fileName,MESSAGE_LEVEL_ERROR);
     }
 }
 
@@ -563,6 +565,8 @@ void MainWindow::on_actionLoad_Log_triggered()
         on_actionClear_triggered();
         if (theLogger->load_all_logs_from_file(fileName.toStdString()))
             system_message->addMessage(QString("Log loaded from file: ") + fileName);
+        else
+            system_message->addMessage(QString("Unable to load file: ") + fileName,MESSAGE_LEVEL_ERROR);
     }
 }
 
