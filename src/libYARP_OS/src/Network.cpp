@@ -596,9 +596,9 @@ void NetworkBase::initMinimum() {
 
 void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
+        Carriers::removeInstance();
         NameClient::removeNameClient();
         removeNameSpace();
-        Carriers::removeInstance();
         Time::useSystemClock();
         Logger::fini();
         Bottle::fini();
