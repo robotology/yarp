@@ -61,6 +61,7 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
             rtyp = "";
         } else if (typ=="yarp/bottle") {
             rtyp = proto.getContactable()->getType().getNameOnWire();
+            if (rtyp=="yarp/image") rtyp = "sensor_msgs/Image";
             wire_type = rtyp;
         } else if (typ!="") {
             rtyp = typ;
@@ -324,7 +325,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         if (translate==TCPROS_TRANSLATE_UNKNOWN) {
             dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
             FlexImage *img = NULL;
-            if (typ=="yarp/image") {
+            if (typ=="yarp/image"||typ=="yarp/bottle") {
                 img = wi.checkForImage(writer);
             }
             if (img) {

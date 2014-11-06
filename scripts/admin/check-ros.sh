@@ -217,6 +217,42 @@ if [ ! "30" = "$result" ] ; then
 fi
 
 ########################################################################
+header "Test yarp images arrive"
+
+typ="sensor_msgs/Image"
+topic="/test/image/$typ"
+${YARP_DIR}/yarpdev --device test_grabber --name $topic@/test_node --width 16 --height 8 &
+YPID=$!
+
+wait_node_topic /test_node $topic
+
+if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
+    echo "Type problem:"
+    rostopic info $topic
+    kill $YPID
+    echo "That is not right at all"
+    exit 1
+fi
+
+rostopic echo $topic -n 1 > ${BASE}image.log
+height=`cat ${BASE}image.log | grep "height:" | sed "s/.* //"`
+width=`cat ${BASE}image.log | grep "width:" | sed "s/.* //"`
+echo "width x height = $width x $height"
+
+if [ ! "$width x $height" = "16 x 8" ] ; then
+    echo "Size is not right"
+    kill $YPID
+    exit 1
+else
+    echo "Size is correct"
+fi
+
+kill $YPID
+
+echo "Topic should now be gone"
+rostopic info $topic && exit 1 || echo "(this is correct)."
+
+########################################################################
 header "Tests finished"
 
 echo " "
