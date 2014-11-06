@@ -118,6 +118,8 @@ public:
 
     yarp::os::Bytes getMonitor();
 
+    virtual bool setTypeOfService(int tos);
+
     void setMonitor(const yarp::os::Bytes& data) {
         monitor = yarp::os::ManagedBytes(data,false);
         monitor.copy();

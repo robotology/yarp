@@ -105,6 +105,15 @@ void SocketTwoWayStream::updateAddresses() {
     } else {
         YARP_ERROR(Logger::get(),"ipv6 address type not propagated without ACE");
     }
+#endif    
+}
+
+bool SocketTwoWayStream::setTypeOfService(int tos) {
+#ifdef YARP_HAS_ACE
+    return (stream.set_option(IPPROTO_IP, IP_TOS,
+                              (int *)&tos, (int)sizeof(tos) ) == 0);
+#else
+    return false;
 #endif
 }
 

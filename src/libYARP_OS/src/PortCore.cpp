@@ -2031,9 +2031,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 bOk = false;
                                 for (unsigned int i=0; i<units.size(); i++) {
                                     PortCoreUnit *unit = units[i];
-                                    if (unit && !unit->isFinished()) {
+                                    if (unit && !unit->isFinished() && unit->isOutput()) {
                                         Route route = unit->getRoute();
-                                        ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
+                                        ConstString portName = route.getToName();
                                         if (portName == cmd.get(2).asString()) {
                                             Bottle* qos_prop = value->find("qos").asList();
                                             if(qos_prop != NULL) {
@@ -2041,7 +2041,10 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                 if(qos_prop->check("dscp"))
                                                     dscp = qos_prop->find("dscp").asInt();
                                                 // set the dscp value of DiffServ
-                                                // ...
+                                                OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
+                                                if(op) {
+                                                    bOk = op->getOutputStream().setTypeOfService(dscp<<2);
+                                                }
                                             }
                                             else
                                                 bOk = false;

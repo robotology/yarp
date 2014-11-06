@@ -818,3 +818,17 @@ Bytes DgramTwoWayStream::getMonitor() {
 void DgramTwoWayStream::removeMonitor() {
     monitor.clear();
 }
+
+
+bool DgramTwoWayStream::setTypeOfService(int tos) {
+    if(!dgram)
+        return false;
+#ifdef YARP_HAS_ACE
+    return (dgram->set_option(IPPROTO_IP, IP_TOS,
+                              (int *)&tos, (int)sizeof(tos) ) == 0);
+#else
+    return (setsockopt(dgram_sockfd, IPPROTO_IP, IP_TOS,
+                       (int *)&tos, (int)sizeof(tos) ) == 0);
+#endif
+
+}

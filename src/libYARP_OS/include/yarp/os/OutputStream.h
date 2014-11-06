@@ -112,6 +112,14 @@ public:
      *
      */
     virtual bool setWriteTimeout(double timeout) { return false; }
+
+    /*
+     *
+     * Set the Type Of Service field of all outgoing packets.
+     * @return true iff the TOS is set.
+     */
+    virtual bool setTypeOfService(int tos) { return false; }
+
 };
 
 #endif
