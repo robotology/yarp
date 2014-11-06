@@ -197,8 +197,8 @@ int OpenNI2SkeletonTracker::init(){
         }
         
         else {
-	    fpsCount = depthStream.getVideoMode().getFps();
-            cout << "Resolution: " << depthStream.getVideoMode().getResolutionX() << "x" << depthStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
+	        fpsCount = depthStream.getVideoMode().getFps();
+            cout << "Depth video mode: " << depthStream.getVideoMode().getResolutionX() << "x" << depthStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
             cout << "Depth stream started..." << endl;
             frameCount = playbackControl->getNumberOfFrames(depthStream);
         }
@@ -237,6 +237,8 @@ int OpenNI2SkeletonTracker::init(){
         }
         
         else {
+            fpsCount = imageStream.getVideoMode().getFps();
+            cout << "RGB video mode: " << imageStream.getVideoMode().getResolutionX() << "x" << imageStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
             cout << "RGB stream started..." << endl;
         }
 
