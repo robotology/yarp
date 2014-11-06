@@ -11,6 +11,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
+#include <iostream>
 
 
 int main(int argc, char *argv[])
@@ -34,8 +35,8 @@ int main(int argc, char *argv[])
 
     fprintf(stdout,"This is a fprintf(stdout), only yarprun will forward it\n");
     fprintf(stderr,"This is a fprintf(stderr), only yarprun will forward it\n");
-    cout << "This is a cout, only yarprun will forward it" << endl;
-    cerr << "This is a cerr, only yarprun will forward it" << endl;
+    std::cout <<   "This is a cout, only yarprun will forward it" << std::endl;
+    std::cerr <<   "This is a cerr, only yarprun will forward it" << std::endl;
 
     yDebug("This is a debug");
     yDebug("This is %s (%d)", "a debug", i);
