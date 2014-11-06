@@ -53,6 +53,11 @@ namespace yarp
             LOGLEVEL_ERROR     = 5,
             LOGLEVEL_FATAL     = 6
         };
+        enum   LogSystemEnum
+        {
+            LOGSYSTEM_YARP    = 0,
+            LOGSYSTEM_YARPRUN = 1
+        };
     }
 }
 
@@ -76,6 +81,7 @@ class yarp::yarpLogger::LogEntryInfo
     unsigned int  number_of_fatals;
 
     public:
+    std::string   port_system;
     std::string   port_prefix;
     std::string   port_complete;
     std::string   process_name;
@@ -150,6 +156,8 @@ class yarp::yarpLogger::LoggerEngine
         bool        listen_to_LOGLEVEL_WARNING;
         bool        listen_to_LOGLEVEL_ERROR;
         bool        listen_to_LOGLEVEL_FATAL;
+        bool        listen_to_YARP_MESSAGES;
+        bool        listen_to_YARPRUN_MESSAGES;
     };
 
     private:
@@ -186,8 +194,12 @@ class yarp::yarpLogger::LoggerEngine
     void set_log_enable_by_port_complete (std::string  port, bool enable);
     bool get_log_enable_by_port_complete (std::string  port);
 
-    void set_listen_option               (LogLevelEnum logLevel, bool enable);
-    bool get_listen_option               (LogLevelEnum logLevel);
+    void set_listen_option               (LogLevelEnum  logLevel,  bool enable);
+    void set_listen_option               (std::string   option,    bool enable);
+    void set_listen_option               (LogSystemEnum logSystem, bool enable);
+    bool get_listen_option               (LogLevelEnum  logLevel);
+    bool get_listen_option               (std::string   option);
+    bool get_listen_option               (LogSystemEnum logSystem);
 
     void set_log_lines_max_size          (bool  enabled,  int new_size);
     void set_log_list_max_size           (bool  enabled,  int new_size);

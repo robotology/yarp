@@ -221,6 +221,8 @@ LoggerEngine::logger_thread::logger_thread (std::string _portname, int _rate,  i
         listen_to_LOGLEVEL_WARNING   = true;
         listen_to_LOGLEVEL_ERROR     = true;
         listen_to_LOGLEVEL_FATAL     = true;
+        listen_to_YARP_MESSAGES      = true;
+        listen_to_YARPRUN_MESSAGES   = true;
         unknown_format_received      = 0;
 }
 
@@ -314,10 +316,12 @@ void LoggerEngine::logger_thread::run()
             std::istringstream iss(header);
             std::string token;
             getline(iss, token, '/');
-            getline(iss, token, '/');
+            getline(iss, token, '/'); entry.logInfo.port_system  = token;
             getline(iss, token, '/'); entry.logInfo.port_prefix  = "/"+ token;
             getline(iss, token, '/'); entry.logInfo.process_name = token;
             getline(iss, token, '/'); entry.logInfo.process_pid  = token.erase(token.size()-1);
+            if (entry.logInfo.port_system == "log" && listen_to_YARP_MESSAGES==false)    continue;
+            if (entry.logInfo.port_system == "yarprunlog" && listen_to_YARPRUN_MESSAGES==false) continue;
 
             std::list<LogEntry>::iterator it;
             for (it = log_list.begin(); it != log_list.end(); it++)
@@ -652,6 +656,36 @@ bool LoggerEngine::get_listen_option               (LogLevelEnum logLevel)
     return false;
 }
 
+void LoggerEngine::set_listen_option               (std::string   option, bool enable)
+{
+    if (log_updater == NULL) return;
+    log_updater->mutex.wait();
+    log_updater->mutex.post();
+}
+
+bool LoggerEngine::get_listen_option               (std::string   option)
+{
+    if (log_updater == NULL) return false;
+    return false;
+}
+
+void LoggerEngine::set_listen_option               (LogSystemEnum   logSystem, bool enable)
+{
+    if (log_updater == NULL) return;
+    log_updater->mutex.wait();
+    if      (logSystem == LOGSYSTEM_YARP)         {log_updater->listen_to_YARP_MESSAGES=enable;}
+    else if (logSystem == LOGSYSTEM_YARPRUN)      {log_updater->listen_to_YARPRUN_MESSAGES=enable;}
+    log_updater->mutex.post();
+}
+
+bool LoggerEngine::get_listen_option               (LogSystemEnum   logSystem)
+{
+    if (log_updater == NULL) return false;
+    if (logSystem == LOGSYSTEM_YARP)        {return log_updater->listen_to_YARP_MESSAGES;}
+    if (logSystem == LOGSYSTEM_YARPRUN)     {return log_updater->listen_to_YARPRUN_MESSAGES;}
+    return false;
+}
+
 bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string portname)
 {
     if (log_updater == NULL) return false;
@@ -704,6 +738,7 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
         file1 << it->logInfo.ip_address << std::endl;
         file1 << it->logInfo.port_complete << std::endl;
         file1 << it->logInfo.port_prefix << std::endl;
+        file1 << it->logInfo.port_system << std::endl;
         file1 << it->logInfo.process_name << std::endl;
         file1 << it->logInfo.process_pid << std::endl;
         file1 << it->logInfo.get_number_of_traces() << std::endl;
@@ -730,13 +765,13 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
     return true;
 }
 
-int get_tag(ifstream& file, const char* tag)
+std::streamoff get_tag(ifstream& file, const char* tag)
 {
-    int pos=file.tellg();
+    std::streamoff pos=file.tellg();
     int tag_size=strlen(tag);
     char* buff = new char[tag_size+1];
     for(int i=0; i<tag_size+1;i++) buff[i]=0;
-    int off=0;
+    std::streamoff off=0;
     for (; ;off++)
     {
         file.seekg(pos+off);
@@ -784,6 +819,7 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
             file1 >> l_tmp.logInfo.ip_address;
             file1 >> l_tmp.logInfo.port_complete;
             file1 >> l_tmp.logInfo.port_prefix;
+            file1 >> l_tmp.logInfo.port_system;
             file1 >> l_tmp.logInfo.process_name;
             file1 >> l_tmp.logInfo.process_pid;
             file1 >> dummy; //l_tmp.logInfo.number_of_traces;
@@ -803,11 +839,11 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
                 int tmp_level;
                 file1 >> tmp_level;
                 m_tmp.level = static_cast<LogLevelEnum>(tmp_level);
-                int start_p = get_tag(file1, start_string.c_str());
-                int end_p = get_tag(file1, end_string.c_str());
+                std::streamoff start_p = get_tag(file1, start_string.c_str());
+                std::streamoff end_p = get_tag(file1, end_string.c_str());
                 //validity check
                 if (start_p<0 || end_p<0 || end_p-start_p+start_string_size<=0) return false;
-                char *buff = new char[end_p-start_p+start_string_size];
+                char *buff = new char[(unsigned int)(end_p-start_p+start_string_size)];
                 file1.seekg(start_p+start_string_size);
                 file1.get(buff,end_p-start_p-start_string_size,0);
                 file1.seekg(end_p+end_string_size);
