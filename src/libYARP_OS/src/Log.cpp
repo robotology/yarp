@@ -202,7 +202,6 @@ void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
             }
             theForwarder->forward(stringstream_buffer.str());
             yarp_print_trace(stderr, file, line);
-            yarp::os::exit(-1);
         break;
     default:
         break;
