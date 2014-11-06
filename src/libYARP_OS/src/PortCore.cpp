@@ -1975,6 +1975,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     bool bOk = true;
                     if (p) {
                         p->put(cmd.get(2).asString(), cmd.get(3));
+                        Bottle* value = cmd.get(3).asList();
 
                         // check if we need to set the PortCoreUnit scheduling policy
                         // e.g., "prop set /portname (sched ((priority 30) (policy 1)))"
@@ -1982,7 +1983,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         // SCHED_OTHER : policy=0, priority=[0 ..  0]
                         // SCHED_FIFO  : policy=1, priority=[1 .. 99]
                         // SCHED_RR    : policy=2, priority=[1 .. 99]
-                        Bottle* value = cmd.get(3).asList();
                         if(value && value->check("sched"))
                         {
                             if((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
@@ -2011,6 +2011,48 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 }
                             }
                         }
+
+                        // check if we need to set the packet QOS policy
+                        // e.g., "prop set /portname (qos ((dscp 46)))"
+                        //
+                        // Default              (DSCP 0)
+                        // Expedited Forwarding (DSCP 46)
+                        // Voice Admit          (DSCP 44)
+                        //
+                        //                Class 1          Class 2         Class 3         Class 4
+                        //          ------------------------------------------------------------------
+                        // Low Drop	 | AF11 (DSCP 10)	AF21 (DSCP 18)	AF31 (DSCP 26)	AF41 (DSCP 34)
+                        // Med Drop	 | AF12 (DSCP 12)	AF22 (DSCP 20)	AF32 (DSCP 28)	AF42 (DSCP 36)
+                        // High Drop | AF13 (DSCP 14)	AF23 (DSCP 22)	AF33 (DSCP 30)	AF43 (DSCP 38)
+
+                        if(value && value->check("qos"))
+                        {
+                            if((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
+                                bOk = false;
+                                for (unsigned int i=0; i<units.size(); i++) {
+                                    PortCoreUnit *unit = units[i];
+                                    if (unit && !unit->isFinished()) {
+                                        Route route = unit->getRoute();
+                                        ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
+                                        if (portName == cmd.get(2).asString()) {
+                                            Bottle* qos_prop = value->find("qos").asList();
+                                            if(qos_prop != NULL) {
+                                                int dscp = 0; // Default policy
+                                                if(qos_prop->check("dscp"))
+                                                    dscp = qos_prop->find("dscp").asInt();
+                                                // set the dscp value of DiffServ
+                                                // ...
+                                            }
+                                            else
+                                                bOk = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
                     }
                     releaseProperties(p);
                     result.addVocab((bOk) ? Vocab::encode("ok") : Vocab::encode("fail"));
