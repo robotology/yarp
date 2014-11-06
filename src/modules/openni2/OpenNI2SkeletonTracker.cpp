@@ -27,9 +27,6 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamer
     if (depthMode << 10 && colorMode >= 0){
     depthVideoMode=depthMode;
     }
-    cout << "color" << colorVideoMode << endl;
-
-    cout << "color" << depthVideoMode << endl;
     if (minConf != MINIMUM_CONFIDENCE){
         minConfidence = minConf;
     }
