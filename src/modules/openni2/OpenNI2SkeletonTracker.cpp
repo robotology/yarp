@@ -19,9 +19,16 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamer
     userTracking= withTracking;
     camerasON = withCamerasOn;
     mirrorON = withMirrorOn;
+    colorVideoMode=DEFAULT_COLOR_MODE;
+    depthVideoMode=DEFAULT_DEPTH_MODE;
+    if (colorMode < 10 && colorMode >= 0){
     colorVideoMode=colorMode;
+    }
+    if (depthMode << 10 && colorMode >= 0){
     depthVideoMode=depthMode;
+    }
     cout << "color" << colorVideoMode << endl;
+
     cout << "color" << depthVideoMode << endl;
     if (minConf != MINIMUM_CONFIDENCE){
         minConfidence = minConf;
@@ -240,16 +247,19 @@ int OpenNI2SkeletonTracker::init(){
             const openni::Array<openni::VideoMode>& depthModes = depthInfo->getSupportedVideoModes();
             for (int i = 0; i<depthModes.getSize(); i++)
             {
-                printf("%i: %ix%i, %i fps, %i format\n", i, depthModes[i].getResolutionX(), depthModes[i].getResolutionY(), depthModes[i].getFps(), depthModes[i].getPixelFormat()); 
+                if (depthModes[i].getPixelFormat() == openni::PIXEL_FORMAT_DEPTH_1_MM)
+                {
+                    printf("%i: %ix%i, %i fps\n", i, depthModes[i].getResolutionX(), depthModes[i].getResolutionY(), depthModes[i].getFps()); 
+            
+                }
             }
-
             colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
             const openni::Array<openni::VideoMode>& colorModes= colorInfo->getSupportedVideoModes();
             cout << "RGB video modes available:" << endl;
             for (int i = 0; i<colorModes.getSize(); i++) {
                 if (colorModes[i].getPixelFormat() == openni::PIXEL_FORMAT_RGB888)
                 {
-                    printf("%i: %ix%i, %i fps\n", i, colorModes[i].getResolutionX(), colorModes[i].getResolutionY(), colorModes[i].getFps()); 
+                printf("%i: %ix%i, %i fps\n", i, colorModes[i].getResolutionX(), colorModes[i].getResolutionY(), colorModes[i].getFps()); 
                 }
             }
         }

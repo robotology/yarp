@@ -30,6 +30,8 @@ using namespace yarp::sig;
 #define MAX_USERS 10
 #define TOTAL_JOINTS 15
 #define MINIMUM_CONFIDENCE 0.6
+#define DEFAULT_COLOR_MODE 0
+#define DEFAULT_DEPTH_MODE 0
 
 /**
  * Class used by the OpenNI2DeviceDriverServer to interface with the sensor.
@@ -65,7 +67,7 @@ public:
     /**
      * @param userDetection indicates if user callbacks and skeleton tracking should be on
      */
-    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, double minConf = MINIMUM_CONFIDENCE, bool oniPlayback = false, string fileDevice = "", bool oniRecord  = false, string oniOutputFile = "", bool loop = false, bool frameSync = false, bool imageRegistration = false, bool printMode = false, int depthMode = 0, int colorMode = 0);
+    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, double minConf = MINIMUM_CONFIDENCE, bool oniPlayback = false, string fileDevice = "", bool oniRecord  = false, string oniOutputFile = "", bool loop = false, bool frameSync = false, bool imageRegistration = false, bool printMode = false, int depthMode = DEFAULT_DEPTH_MODE, int colorMode = DEFAULT_COLOR_MODE);
     ~OpenNI2SkeletonTracker(void);
     void close();
     /**
