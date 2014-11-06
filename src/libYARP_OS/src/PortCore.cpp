@@ -2014,6 +2014,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
 
                         // check if we need to set the packet QOS policy
                         // e.g., "prop set /portname (qos ((dscp 46)))"
+                        // e.g., "prop set /portname (qos ((tos 12)))"
                         //
                         // Default              (DSCP 0)
                         // Expedited Forwarding (DSCP 46)
@@ -2037,14 +2038,22 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                         if (portName == cmd.get(2).asString()) {
                                             Bottle* qos_prop = value->find("qos").asList();
                                             if(qos_prop != NULL) {
-                                                int dscp = 0; // Default policy
-                                                if(qos_prop->check("dscp"))
-                                                    dscp = qos_prop->find("dscp").asInt();
-                                                // set the dscp value of DiffServ
-                                                OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
-                                                if(op) {
-                                                    bOk = op->getOutputStream().setTypeOfService(dscp<<2);
-                                                }
+                                                if(qos_prop->check("dscp")) {
+                                                    int dscp = qos_prop->find("dscp").asInt();
+                                                    // set the DSCP value of DiffServ
+                                                    OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
+                                                    if(op) {
+                                                        bOk = op->getOutputStream().setTypeOfService(dscp<<2);
+                                                    }
+                                                }                                                
+                                                else if(qos_prop->check("tos")) {
+                                                    int tos = qos_prop->find("tos").asInt();
+                                                    // set the TOS value (backward compatibility)
+                                                    OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
+                                                    if(op) {
+                                                        bOk = op->getOutputStream().setTypeOfService(tos);
+                                                    }
+                                                }                                               
                                             }
                                             else
                                                 bOk = false;
