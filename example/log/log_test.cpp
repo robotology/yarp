@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <yarp/os/Log.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
 
@@ -24,11 +25,17 @@ int main(int argc, char *argv[])
     v[2] = 3;
     v[3] = 4;
 
+    //yarp::os::Time::delay(10);
     yTrace("This is a trace");
     yTrace("This is %s (%d)", "a trace", i);
     yTrace();
     yTrace() << "This is" << "another" << "trace" << i;
     yTrace() << v;
+
+    fprintf(stdout,"This is a fprintf(stdout), only yarprun will forward it\n");
+    fprintf(stderr,"This is a fprintf(stderr), only yarprun will forward it\n");
+    cout << "This is a cout, only yarprun will forward it" << endl;
+    cerr << "This is a cerr, only yarprun will forward it" << endl;
 
     yDebug("This is a debug");
     yDebug("This is %s (%d)", "a debug", i);
@@ -54,6 +61,7 @@ int main(int argc, char *argv[])
     yError() << "This is" << "another" << "error" << i;
     yError() << v;
 
+    //yarp::os::Time::delay(10);
     yFatal() << "This is the end.";
     yFatal("This is the end."); // should never be called.
 }
