@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
     yError() << "This is" << "another" << "error" << i;
     yError() << v;
 
+    if (rf.check("no_fatal")) return 0;
+
     //yarp::os::Time::delay(10);
     yFatal() << "This is the end.";
     yFatal("This is the end."); // should never be called.
