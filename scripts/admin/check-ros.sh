@@ -29,6 +29,14 @@ function wait_node_topic {
     done
 }
 
+function wait_topic_gone {
+    topic="$1"
+    while rostopic info $topic ; do
+	echo "waiting for $topic to disappear"
+	sleep 1
+    done
+}
+
 function wait_node {
     node="$1"
     key="$2"
@@ -219,12 +227,14 @@ fi
 ########################################################################
 header "Test yarp images arrive"
 
+node="/test/image/node/pid$$"
 typ="sensor_msgs/Image"
-topic="/test/image/$typ"
-${YARP_DIR}/yarpdev --device test_grabber --name $topic@/test_node --width 16 --height 8 &
+topic="/test/image/$typ/pid$$"
+echo ${YARP_DIR}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8
+${YARP_DIR}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8 &
 YPID=$!
 
-wait_node_topic /test_node $topic
+wait_node_topic $node $topic
 
 if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     echo "Type problem:"
@@ -246,11 +256,29 @@ if [ ! "$width x $height" = "16 x 8" ] ; then
 else
     echo "Size is correct"
 fi
-
 kill $YPID
 
-echo "Topic should now be gone"
-rostopic info $topic && exit 1 || echo "(this is correct)."
+########################################################################
+header "Test ros images arrive"
+
+node="/test/rimage/node/pid$$"
+typ="sensor_msgs/Image"
+topic="/test/rimage/$typ/pid$$"
+
+rm -f ${BASE}rimage.log
+touch ${BASE}rimage.log
+stdbuf --output=L ${YARP_DIR}/yarp read $topic@$node > ${BASE}rimage.log &
+YPID=$!
+wait_node_topic $node $topic
+rostopic pub -f ${BASE}image.log $topic sensor_msgs/Image -1
+
+wait_file ${BASE}rimage.log
+
+grep "\[mat\] \[rgb\]" ${BASE}rimage.log && echo "(got an image, good)" || {
+    echo "did not get an image"
+    exit 1
+}
+kill $YPID
 
 ########################################################################
 header "Tests finished"
