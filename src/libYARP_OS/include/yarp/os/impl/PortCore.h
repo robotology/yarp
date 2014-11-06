@@ -359,27 +359,51 @@ public:
                     OutputStream *os);
 
 
+    /**
+     *
+     * @return true if there is a server socket/thread currently
+     * associated with this port.
+     *
+     */
     bool isListening() const {
         return listening;
     }
 
+    /**
+     *
+     * @return true if there the port is configured to operate without
+     * a server socket/thread.
+     *
+     */
     bool isManual() const {
         return manual;
     }
 
+    /**
+     *
+     * @return true if port operation has been interrupted.
+     *
+     */
     bool isInterrupted() const {
         return interrupted;
     }
 
 public:
 
-    // PortManager interface, exposed to inputs
-
+    // documented in PortManager
     virtual bool addOutput(const String& dest, void *id, OutputStream *os,
                            bool onlyIfNeeded);
+
+    // documented in PortManager
     virtual void removeOutput(const String& dest, void *id, OutputStream *os);
+
+    // documented in PortManager
     virtual void removeInput(const String& dest, void *id, OutputStream *os);
+
+    // documented in PortManager
     virtual void describe(void *id, OutputStream *os);
+
+    // documented in PortManager
     virtual bool readBlock(yarp::os::ConnectionReader& reader, void *id, OutputStream *os);
 
 
