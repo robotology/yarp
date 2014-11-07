@@ -5,6 +5,8 @@
 
 #include <yarp/os/api.h>
 
+#include <cstddef>
+
 /*
 * Copyright (C) 2009 RobotCub Consortium
 * Author: Lorenzo Natale
