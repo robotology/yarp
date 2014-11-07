@@ -109,7 +109,7 @@ void yarp::os::gethostname(char* hostname, size_t size)
 #ifdef YARP_HAS_ACE
     ACE_OS::hostname(hostname, size);
 #else
-    ::gethostname(hostname, size));
+    ::gethostname(hostname, size);
 #endif
     if (strlen(hostname)==0)
     {
