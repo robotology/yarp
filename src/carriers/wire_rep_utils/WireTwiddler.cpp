@@ -122,7 +122,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
     } else if (kind=="vocab") {
         tag = BOTTLE_TAG_VOCAB;
         unit_length = 4;
-    } else if (kind=="int8"||kind=="uint8") {
+    } else if (kind=="int8"||kind=="uint8"||kind=="bool") {
         tag = BOTTLE_TAG_INT;
         unit_length = 4;
         wire_unit_length = 1;
