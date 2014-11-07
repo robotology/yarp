@@ -232,7 +232,10 @@ void yarp::os::Log::trace(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w =ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        if (w>0 && buf[w-1]=='\n') {
+            buf[w-1]=0;
+        }
         if (print_callback) {
             print_callback(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
@@ -255,7 +258,10 @@ void yarp::os::Log::debug(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        if (w>0 && buf[w-1]=='\n') {
+            buf[w-1]=0;
+        }
         if (print_callback) {
             print_callback(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
@@ -278,7 +284,10 @@ void yarp::os::Log::info(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        if (w>0 && buf[w-1]=='\n') {
+            buf[w-1]=0;
+        }
         if (print_callback) {
             print_callback(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
@@ -301,7 +310,10 @@ void yarp::os::Log::warning(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        if (w>0 && buf[w-1]=='\n') {
+            buf[w-1]=0;
+        }
         if (print_callback) {
             print_callback(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
@@ -324,7 +336,10 @@ void yarp::os::Log::error(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        if (w>0 && buf[w-1]=='\n') {
+            buf[w-1]=0;
+        }
         if (print_callback) {
             print_callback(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
@@ -348,7 +363,10 @@ void yarp::os::Log::fatal(const char *msg, ...) const
     va_start(args, msg);
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
-        ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        int w = ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
+        if (w>0 && buf[w-1]=='\n') {
+            buf[w-1]=0;
+        }
         if (print_callback) {
             print_callback(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
