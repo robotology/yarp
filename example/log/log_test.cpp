@@ -7,6 +7,7 @@
 
 #include <vector>
 
+#include <yarp/os/Network.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
@@ -16,6 +17,8 @@
 
 int main(int argc, char *argv[])
 {
+    //yarp::os::Network yarp; 
+
     yarp::os::ResourceFinder rf;
     rf.configure(argc, argv);
 

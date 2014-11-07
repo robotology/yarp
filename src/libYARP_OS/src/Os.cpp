@@ -36,7 +36,8 @@ yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHan
 
 void yarp::os::exit(int v)
 {
-    ACE_OS::exit(v);
+    ACE_OS::exit(v); //may cause crash...
+    //::exit(v);     //...this seems to work(?)
 }
 
 const char *yarp::os::getenv(const char *var)
@@ -83,19 +84,18 @@ void yarp::os::setprogname(const char *progname)
 #endif
 }
 
-// ??? before merge with master: consider an API that doesn't need
-// magic max sizes
-void yarp::os::getprogname(char*progname)
+
+void yarp::os::getprogname(char*progname, size_t size)
 {
 #ifdef YARP_HAS_ACE
     const char* tmp = ACE_OS::getprogname ();
     if (strlen(tmp)==0)
     {
-        strcpy(progname,"no_progname");
+        strncpy(progname,"no_progname",size);
     }
     else
     {
-        strcpy(progname,tmp);
+        strncpy(progname,tmp,size);
     }
 #else
     // not available
@@ -103,26 +103,16 @@ void yarp::os::getprogname(char*progname)
 #endif
 }
 
-// ??? before merge with master: consider an API that doesn't need
-// magic max sizes
-void yarp::os::gethostname(char* hostname)
+
+void yarp::os::gethostname(char* hostname, size_t size)
 {
-    char buff[50];
 #ifdef YARP_HAS_ACE
-    ACE_OS::hostname(buff, sizeof(buff));
+    ACE_OS::hostname(hostname, size);
 #else
-    ::gethostname(buff, sizeof(buff));
+    ::gethostname(hostname, size));
 #endif
-    if (strlen(buff)==0)
+    if (strlen(hostname)==0)
     {
-        strcpy(hostname,"no_hostname");
-    }
-    else if (strlen(buff)>=50)
-    {
-        strcpy(hostname,"too_long_hostname");
-    }
-    else
-    {
-        strcpy(hostname,buff);
+        strncpy(hostname,"no_hostname",size);
     }
 }

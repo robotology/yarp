@@ -57,13 +57,13 @@ namespace yarp {
         * Wrapper for ACE_OS::getprogname().
         * @return the program name
         */
-        YARP_OS_API void getprogname(char* progname);
+        YARP_OS_API void getprogname(char* progname, size_t size);
 
         /**
         * Wrapper for ACE_OS::hostname().
         * @return the system hostname
         */
-        YARP_OS_API void gethostname(char* hostname);
+        YARP_OS_API void gethostname(char* hostname, size_t size);
 
         /**
         * Wrapper for ACE_OS::mkdir(). Create a directory.

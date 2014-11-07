@@ -18,6 +18,8 @@
 namespace yarp {
 namespace os {
 
+#define MAX_STRING_SIZE 255
+
 class YARP_OS_API LogForwarderDestroyer;
 class YARP_OS_API LogForwarder
 {
@@ -30,7 +32,7 @@ class YARP_OS_API LogForwarder
         friend class LogForwarderDestroyer;
     private:
         static yarp::os::Semaphore *sem;
-        char logPortName[255];
+        char logPortName[MAX_STRING_SIZE];
         yarp::os::BufferedPort<yarp::os::Bottle>* outputPort;
     private:
         LogForwarder(LogForwarder const&){};
