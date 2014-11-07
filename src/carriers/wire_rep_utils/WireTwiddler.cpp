@@ -25,6 +25,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/sig/Image.h>
 
 using namespace std;
 using namespace yarp::os;
@@ -408,17 +409,51 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         int w = prop.find("width").asInt();
         int h = prop.find("height").asInt();
         int step = prop.find("step").asInt();
+        bool bigendian = prop.find("is_bigendian").asInt()==1;
         ConstString encoding = prop.find("encoding").asString();
-        if (encoding!="bgr8" && encoding!="rgb8") {
-            fprintf(stderr,"Sorry, cannot handle [%s] images yet.\n", encoding.c_str());
+        int bpp = 1;
+        int translated_encoding = 0;
+        switch (Vocab::encode(encoding)) {
+        case VOCAB4('b','g','r','8'):
+            bpp = 3;
+            translated_encoding = VOCAB_PIXEL_BGR;
+            break;
+        case VOCAB4('r','g','b','8'):
+            bpp = 3;
+            translated_encoding = VOCAB_PIXEL_RGB;
+            break;
+        case VOCAB4('3','2','F','C'):
+            yAssert(encoding=="32FC1");
+            bpp = 4;
+            translated_encoding = VOCAB_PIXEL_MONO_FLOAT;
+            break;
+        case VOCAB4('1','6','U','C'):
+            yAssert(encoding=="16UC1");
+            bpp = 2;
+            translated_encoding = VOCAB_PIXEL_MONO16;
+            break;
+        case VOCAB4('m','o','n','o'):
+            yAssert(encoding=="mono8"||encoding=="mono16");
+            if (encoding == "mono8") {
+                bpp = 1;
+                translated_encoding = VOCAB_PIXEL_MONO;
+            } else {
+                bpp = 2;
+                translated_encoding = VOCAB_PIXEL_MONO16;
+            }
+            break;
+        default:
+            fprintf(stderr,"Sorry, cannot handle [%s] images yet.\n", 
+                    encoding.c_str());
             exit(1);
+            break;
         }
         int quantum = 1;
-        if (step!=w*3) {
+        if (step!=w*bpp) {
             bool ok = false;
             while (quantum<=256) {
                 quantum *= 2;
-                if (((w*3+quantum)/quantum)*quantum == step) {
+                if (((w*bpp+quantum)/quantum)*quantum == step) {
                     ok = true;
                     break;
                 }
@@ -431,7 +466,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         prop.put("depth",3);
         prop.put("img_size",img_size);
         prop.put("quantum",quantum);
-        prop.put("translated_encoding",Vocab::encode(encoding.substr(0,3)));
+        prop.put("translated_encoding",translated_encoding);
     }
 }
 
