@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012-2014  iCub Facility, Istituto Italiano di Tecnologia
- * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+ * Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+ *          Marco Randazzo          <marco.randazzo@iit.it>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -69,21 +70,6 @@ public:
     LogStream error() const;
     LogStream fatal() const;
 
-    /*!
-     * \brief Set the output file used by yTrace()
-     */
-    static void setTraceFile(const std::string &filename);
-
-    /*!
-     * \brief Set the output file used by yDebug() and yInfo()
-     */
-    static void setOutputFile(const std::string &filename);
-
-    /*!
-     * \brief Set the output file used by yWarning(), yError() and yFatal()
-     */
-    static void setErrorFile(const std::string &filename);
-
 #ifndef YARP_NO_DEPRECATED
     YARP_DEPRECATED virtual void debug(const ConstString& txt) const { debug(txt.c_str()); } ///< \deprecated since YARP 2.3.64
     YARP_DEPRECATED virtual void info(const ConstString& txt) const { info(txt.c_str()); } ///< \deprecated since YARP 2.3.64
@@ -103,7 +89,8 @@ public:
 private:
     yarp::os::impl::LogImpl * const mPriv;
 
-    static LogCallback print_output;
+    static LogCallback print_callback;
+    static LogCallback forward_callback;
 
     friend class LogStream;
 }; // class Log

@@ -59,6 +59,8 @@ private slots:
 
     void on_DisplayInfoEnable_toggled(bool checked);
 
+    void on_DisplayTraceEnable_toggled(bool checked);
+
     void on_DisplayUnformattedEnable_toggled(bool checked);
 
     void on_actionShow_YarprunTimestamps_toggled(bool arg1);

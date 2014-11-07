@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012-2014  iCub Facility, Istituto Italiano di Tecnologia
- * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+ * Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+ *          Marco Randazzo          <marco.randazzo@iit.it>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -24,6 +25,12 @@ public:
                                const unsigned int line,
                                const char *func);
 
+    static void forward_callback(yarp::os::Log::LogType t,
+                               const char *msg,
+                               const char *file,
+                               const unsigned int line,
+                               const char *func);
+
     const char *file;
     const unsigned int line;
     const char *func;
@@ -36,6 +43,7 @@ public:
     static bool verbose_output;
     static bool trace_output;
     static bool debug_output;
+    static bool forward_output;
 };
 
 

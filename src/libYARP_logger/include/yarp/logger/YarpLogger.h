@@ -46,11 +46,17 @@ namespace yarp
         enum   LogLevelEnum
         {
             LOGLEVEL_UNDEFINED = 0,
-            LOGLEVEL_INFO      = 1,
+            LOGLEVEL_TRACE     = 1,
             LOGLEVEL_DEBUG     = 2,
-            LOGLEVEL_WARNING   = 3,
-            LOGLEVEL_ERROR     = 4,
-            LOGLEVEL_CRITICAL  = 5
+            LOGLEVEL_INFO      = 3,
+            LOGLEVEL_WARNING   = 4,
+            LOGLEVEL_ERROR     = 5,
+            LOGLEVEL_FATAL     = 6
+        };
+        enum   LogSystemEnum
+        {
+            LOGSYSTEM_YARP    = 0,
+            LOGSYSTEM_YARPRUN = 1
         };
     }
 }
@@ -67,12 +73,15 @@ class yarp::yarpLogger::LogEntryInfo
 {
     private:
     LogLevelEnum  highest_error;
-    unsigned int  number_of_errors;
-    unsigned int  number_of_warnings;
+    unsigned int  number_of_traces;
     unsigned int  number_of_debugs;
     unsigned int  number_of_infos;
+    unsigned int  number_of_warnings;
+    unsigned int  number_of_errors;
+    unsigned int  number_of_fatals;
 
     public:
+    std::string   port_system;
     std::string   port_prefix;
     std::string   port_complete;
     std::string   process_name;
@@ -87,10 +96,12 @@ class yarp::yarpLogger::LogEntryInfo
     LogLevelEnum  getLastError           ();
     void          clearLastError         ();
     void          setNewError            (LogLevelEnum level);
-    unsigned int  get_number_of_errors   () { return number_of_errors;   }
-    unsigned int  get_number_of_warnings () { return number_of_warnings; }
+    unsigned int  get_number_of_traces   () { return number_of_traces;   }
     unsigned int  get_number_of_debugs   () { return number_of_debugs;   }
     unsigned int  get_number_of_infos    () { return number_of_infos;    }
+    unsigned int  get_number_of_warnings () { return number_of_warnings; }
+    unsigned int  get_number_of_errors   () { return number_of_errors;   }
+    unsigned int  get_number_of_fatals   () { return number_of_fatals;   }
 };
 
 class yarp::yarpLogger::LogEntry
@@ -133,27 +144,31 @@ class yarp::yarpLogger::LoggerEngine
         yarp::os::BufferedPort<yarp::os::Bottle> logger_port;
         std::string          logger_portName;
         int                  unknown_format_received;
-    
+
         public:
         std::string getPortName();
         void        run();
         void        threadRelease();
-        bool        listen_to_LOGLEVEL_INFO;
-        bool        listen_to_LOGLEVEL_DEBUG;
-        bool        listen_to_LOGLEVEL_ERROR;
-        bool        listen_to_LOGLEVEL_WARNING;
         bool        listen_to_LOGLEVEL_UNDEFINED;
+        bool        listen_to_LOGLEVEL_TRACE;
+        bool        listen_to_LOGLEVEL_DEBUG;
+        bool        listen_to_LOGLEVEL_INFO;
+        bool        listen_to_LOGLEVEL_WARNING;
+        bool        listen_to_LOGLEVEL_ERROR;
+        bool        listen_to_LOGLEVEL_FATAL;
+        bool        listen_to_YARP_MESSAGES;
+        bool        listen_to_YARPRUN_MESSAGES;
     };
 
     private:
     bool           logging;
     bool           discovering;
     logger_thread* log_updater;
-    
+
     public:
     void discover             (std::list<std::string>& ports);
     void connect              (const std::list<std::string>& ports);
-    
+
     public:
     LoggerEngine                 (std::string portName);
     ~LoggerEngine                ();
@@ -178,9 +193,13 @@ class yarp::yarpLogger::LoggerEngine
     void clear_messages_by_port_complete (std::string  port);
     void set_log_enable_by_port_complete (std::string  port, bool enable);
     bool get_log_enable_by_port_complete (std::string  port);
-    
-    void set_listen_option               (LogLevelEnum logLevel, bool enable);
-    bool get_listen_option               (LogLevelEnum logLevel);
+
+    void set_listen_option               (LogLevelEnum  logLevel,  bool enable);
+    void set_listen_option               (std::string   option,    bool enable);
+    void set_listen_option               (LogSystemEnum logSystem, bool enable);
+    bool get_listen_option               (LogLevelEnum  logLevel);
+    bool get_listen_option               (std::string   option);
+    bool get_listen_option               (LogSystemEnum logSystem);
 
     void set_log_lines_max_size          (bool  enabled,  int new_size);
     void set_log_list_max_size           (bool  enabled,  int new_size);

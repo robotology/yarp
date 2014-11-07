@@ -1,12 +1,14 @@
 /*
  * Copyright (C) 2012-2014  iCub Facility, Istituto Italiano di Tecnologia
- * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+ * Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+ *          Marco Randazzo          <marco.randazzo@iit.it>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/LogImpl.h>
+#include <yarp/os/impl/LogForwarder.h>
 
 #include <iostream>
 #include <sstream>
@@ -57,17 +59,14 @@
 
 #endif // WIN32
 
+bool yarp::os::impl::LogImpl::colored_output(getenv("YARP_COLORED_OUTPUT")     &&  (strcmp(yarp::os::getenv("YARP_COLORED_OUTPUT"), "1") == 0));
+bool yarp::os::impl::LogImpl::verbose_output(getenv("YARP_VERBOSE_OUTPUT")     &&  (strcmp(yarp::os::getenv("YARP_VERBOSE_OUTPUT"), "1") == 0));
+bool yarp::os::impl::LogImpl::trace_output  (getenv("YARP_TRACE_ENABLE")       &&  (strcmp(yarp::os::getenv("YARP_TRACE_ENABLE"), "1") == 0));
+bool yarp::os::impl::LogImpl::debug_output  (!getenv("YARP_DEBUG_ENABLE")      || !(strcmp(yarp::os::getenv("YARP_DEBUG_ENABLE"), "0") == 0));
+bool yarp::os::impl::LogImpl::forward_output(getenv("YARP_FORWARD_LOG_ENABLE") &&  (strcmp(yarp::os::getenv("YARP_FORWARD_LOG_ENABLE"), "1") == 0));
 
-std::ofstream yarp::os::impl::LogImpl::ftrc;
-std::ofstream yarp::os::impl::LogImpl::fout;
-std::ofstream yarp::os::impl::LogImpl::ferr;
-
-bool yarp::os::impl::LogImpl::colored_output(getenv("YARP_COLORED_OUTPUT") && (strcmp(yarp::os::getenv("YARP_COLORED_OUTPUT"), "1") == 0));
-bool yarp::os::impl::LogImpl::verbose_output(getenv("YARP_VERBOSE_OUTPUT") && (strcmp(yarp::os::getenv("YARP_VERBOSE_OUTPUT"), "1") == 0));
-bool yarp::os::impl::LogImpl::trace_output(getenv("YARP_TRACE_ENABLE") && (strcmp(yarp::os::getenv("YARP_TRACE_ENABLE"), "1") == 0));
-bool yarp::os::impl::LogImpl::debug_output(!getenv("YARP_DEBUG_ENABLE") || !(strcmp(yarp::os::getenv("YARP_DEBUG_ENABLE"), "0") == 0));
-
-yarp::os::Log::LogCallback yarp::os::Log::print_output = yarp::os::impl::LogImpl::print_callback;
+yarp::os::Log::LogCallback yarp::os::Log::print_callback = yarp::os::impl::LogImpl::print_callback;
+yarp::os::Log::LogCallback yarp::os::Log::forward_callback = yarp::os::impl::LogImpl::forward_callback;
 
 yarp::os::impl::LogImpl::LogImpl(const char *file,
                                  unsigned int line,
@@ -88,103 +87,126 @@ void yarp::os::impl::LogImpl::print_callback(yarp::os::Log::LogType t,
     switch (t) {
     case yarp::os::Log::TraceType:
         if (trace_output) {
-            if (ftrc.is_open()) {
-                if (verbose_output) {
-                    ftrc << "T: " << file << ":" << line << " " << func << ":" << msg << std::endl;
-                } else {
-                    ftrc << "TRACE: " << func << msg << std::endl;
-                }
+            if (verbose_output) {
+                std::cout << "[" << WHITE << "TRACE" << CLEAR << "]" << file << ":" << line << " " << WHITE << func << CLEAR << ": " << msg << std::endl;
             } else {
-                if (verbose_output) {
-                    std::cout << WHITE << "T" << CLEAR << ": " << file << ":" << line << " " << WHITE << func << CLEAR << ": " << msg << std::endl;
-                } else {
-                    std::cout << "[" << WHITE << "TRACE" << CLEAR << "]" << func << msg << std::endl;
-                }
+                std::cout << "[" << WHITE << "TRACE" << CLEAR << "]" << func << msg << std::endl;
             }
         }
         break;
     case yarp::os::Log::DebugType:
         if (debug_output) {
-            if (fout.is_open()) {
-                if (verbose_output) {
-                    fout << "D: " << file << ":" << line << " " << func << ":" << msg << std::endl;
-                } else {
-                    fout << "DEBUG: " << msg << std::endl;
-                }
+            if (verbose_output) {
+                std::cout << "[" << GREEN << "DEBUG" << CLEAR << "]" << file << ":" << line << " " << GREEN << func << CLEAR << ": " << msg << std::endl;
             } else {
-                if (verbose_output) {
-                    std::cout << GREEN << "D" << CLEAR << ": " << file << ":" << line << " " << GREEN << func << CLEAR << ": " << msg << std::endl;
-                } else {
-                    std::cout << "[" << GREEN << "DEBUG" << CLEAR << "]" << msg << std::endl;
-                }
+                std::cout << "[" << GREEN << "DEBUG" << CLEAR << "]" << msg << std::endl;
             }
         }
         break;
     case yarp::os::Log::InfoType:
-        if (fout.is_open()) {
             if (verbose_output) {
-                fout << "I: " << file << ":" << line << " " << func << ":" << msg << std::endl;
-            } else {
-                fout << "INFO: " << msg << std::endl;
-            }
-        } else {
-            if (verbose_output) {
-                std::cout << BLUE << "I" << CLEAR << ": " << file << ":" << line << " " << BLUE << func << CLEAR << ": " << msg << std::endl;
+                std::cout << "[" << BLUE     << "INFO" << CLEAR << "]" << file << ":" << line << " " << BLUE << func << CLEAR << ": " << msg << std::endl;
             } else {
                 std::cout << "[" << BLUE     << "INFO" << CLEAR << "]" << msg << std::endl;
             }
-        }
         break;
     case yarp::os::Log::WarningType:
-        if (ferr.is_open()) {
             if (verbose_output) {
-                ferr << "W: " << file << ":" << line << " " << func << ":" << msg << std::endl;
-            } else {
-                ferr << "WARNING: " << msg << std::endl;
-            }
-        }
-        if (verbose_output) {
-            std::cerr << YELLOW << "W" << CLEAR << ": " << file << ":" << line << " " << YELLOW << func << CLEAR << ": " << msg << std::endl;
+            std::cerr << "[" << YELLOW << "WARNING" << CLEAR << "]" << file << ":" << line << " " << YELLOW << func << CLEAR << ": " << msg << std::endl;
         } else {
             std::cerr << "[" << YELLOW << "WARNING" << CLEAR << "]" << msg << std::endl;
         }
         break;
     case yarp::os::Log::ErrorType:
-        if (ferr.is_open()) {
             if (verbose_output) {
-                ferr << "E: " << file << ":" << line << " " << func << ":" << msg << std::endl;
-            } else {
-                ferr << "ERROR: " << msg << std::endl;
-            }
-        }
-        if (verbose_output) {
-            std::cerr << RED << "E" << CLEAR << ": " << file << ":" << line << " " << RED << func << CLEAR << ": " << msg << std::endl;
+            std::cerr << "[" << RED << "ERROR" << CLEAR << "]" << file << ":" << line << " " << RED << func << CLEAR << ": " << msg << std::endl;
         } else {
             std::cerr << "[" << RED << "ERROR" << CLEAR << "]" << msg << std::endl;
         }
         break;
     case yarp::os::Log::FatalType:
-        if (ferr.is_open()) {
             if (verbose_output) {
-                ferr << "F: " << file << ":" << line << " " << func << ":" << msg << std::endl;
-            } else {
-                ferr << "FATAL: " << msg << std::endl;
-            }
-        }
-        if (verbose_output) {
-            std::cerr << WHITE << RED_BG << "F" << CLEAR << ": " << file << ":" << line << " " << WHITE << RED_BG << func << CLEAR << ": " << msg << std::endl;
+            std::cerr << "["<< WHITE << RED_BG << "FATAL" << CLEAR << "]" << file << ":" << line << " " << WHITE << RED_BG << func << CLEAR << ": " << msg << std::endl;
         } else {
             std::cerr << "["<< WHITE << RED_BG << "FATAL" << CLEAR << "]" << msg << std::endl;
         }
-        yarp_print_trace(stderr, file, line);
-        yarp::os::exit(-1);
         break;
     default:
         break;
     }
 }
 
+void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
+                                               const char *msg,
+                                               const char *file,
+                                               const unsigned int line,
+                                               const char *func)
+{
+    if (!forward_output) {
+        return;
+    }
 
+    std::stringstream stringstream_buffer;
+    LogForwarder* theForwarder = LogForwarder::getInstance();
+
+    switch (t) {
+    case yarp::os::Log::TraceType:
+        if (trace_output) {
+            if (verbose_output) {
+                stringstream_buffer << "[TRACE]" << file << ":" << line << " " << func << ": " << msg << std::endl;
+            } else {
+                stringstream_buffer << "[TRACE]" << func << msg << std::endl;
+            }
+            theForwarder->forward(stringstream_buffer.str());
+        }
+        break;
+    case yarp::os::Log::DebugType:
+        if (debug_output) {
+            if (verbose_output) {
+                stringstream_buffer << "[DEBUG]" << file << ":" << line << " " << func << ": " << msg << std::endl;
+            } else {
+                stringstream_buffer << "[DEBUG]" << msg << std::endl;
+            }
+            theForwarder->forward(stringstream_buffer.str());
+        }
+        break;
+    case yarp::os::Log::InfoType:
+            if (verbose_output) {
+                stringstream_buffer << "[INFO]" << file << ":" << line << " " << func << ": " << msg << std::endl;
+            } else {
+                stringstream_buffer << "[INFO]" << msg << std::endl;
+            }
+            theForwarder->forward(stringstream_buffer.str());
+        break;
+    case yarp::os::Log::WarningType:
+            if (verbose_output) {
+                stringstream_buffer << "[WARNING]" << file << ":" << line << " "  << func << ": " << msg << std::endl;
+            } else {
+                stringstream_buffer << "[WARNING]" << msg << std::endl;
+            }
+            theForwarder->forward(stringstream_buffer.str());
+        break;
+    case yarp::os::Log::ErrorType:
+            if (verbose_output) {
+                stringstream_buffer << "[ERROR]" << file << ":" << line << " " << func << ": " << msg << std::endl;
+            } else {
+                stringstream_buffer << "[ERROR]" << msg << std::endl;
+            }
+            theForwarder->forward(stringstream_buffer.str());
+        break;
+    case yarp::os::Log::FatalType:
+            if (verbose_output) {
+                stringstream_buffer << "[FATAL]" << file << ":" << line << " " << func << ": " << msg << std::endl;
+            } else {
+                stringstream_buffer << "[FATAL]" << msg << std::endl;
+            }
+            theForwarder->forward(stringstream_buffer.str());
+            yarp_print_trace(stderr, file, line);
+        break;
+    default:
+        break;
+    }
+}
 
 yarp::os::Log::Log(const char *file,
                    unsigned int line,
@@ -211,7 +233,12 @@ void yarp::os::Log::trace(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -229,7 +256,12 @@ void yarp::os::Log::debug(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -247,7 +279,12 @@ void yarp::os::Log::info(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -265,7 +302,12 @@ void yarp::os::Log::warning(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -283,7 +325,12 @@ void yarp::os::Log::error(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
 }
@@ -302,9 +349,16 @@ void yarp::os::Log::fatal(const char *msg, ...) const
     if (msg) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         ACE_OS::vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
-        print_output(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
+        if (print_callback) {
+            print_callback(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
+        if (forward_callback) {
+            forward_callback(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
+        }
     }
     va_end(args);
+    yarp_print_trace(stderr, mPriv->file, mPriv->line);
+    yarp::os::exit(-1);
 }
 
 yarp::os::LogStream yarp::os::Log::fatal() const
@@ -312,35 +366,9 @@ yarp::os::LogStream yarp::os::Log::fatal() const
     return yarp::os::LogStream(yarp::os::Log::FatalType, mPriv->file, mPriv->line, mPriv->func);
 }
 
-
-void yarp::os::Log::setTraceFile(const std::string& filename)
-{
-    if(yarp::os::impl::LogImpl::ftrc.is_open()) {
-        yarp::os::impl::LogImpl::ftrc.close();
-    }
-    yarp::os::impl::LogImpl::ftrc.open(filename.c_str());
-}
-
-
-void yarp::os::Log::setOutputFile(const std::string& filename)
-{
-    if(yarp::os::impl::LogImpl::fout.is_open()) {
-        yarp::os::impl::LogImpl::fout.close();
-    }
-    yarp::os::impl::LogImpl::fout.open(filename.c_str());
-}
-
-void yarp::os::Log::setErrorFile(const std::string& filename)
-{
-    if(yarp::os::impl::LogImpl::ferr.is_open()) {
-        yarp::os::impl::LogImpl::ferr.close();
-    }
-    yarp::os::impl::LogImpl::ferr.open(filename.c_str());
-}
-
 void yarp::os::Log::setLogCallback(yarp::os::Log::LogCallback cb)
 {
-    print_output = cb;
+    print_callback = cb;
 }
 
 void yarp_print_trace(FILE *out, const char *file, int line) {

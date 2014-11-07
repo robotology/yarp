@@ -24,14 +24,17 @@
 #include <QStandardItemModel>
 #include <QTimer>
 #include <QSortFilterProxyModel>
+#include <QClipboard>
 #include <yarp/logger/YarpLogger.h>
 #include "messageWidget.h"
 #include "logtabSorting.h"
 
-const std::string ERROR_STRING   = "ERROR";
-const std::string WARNING_STRING = "WARNING";
-const std::string INFO_STRING    = "INFO";
+const std::string TRACE_STRING   = "TRACE";
 const std::string DEBUG_STRING   = "DEBUG";
+const std::string INFO_STRING    = "INFO";
+const std::string WARNING_STRING = "WARNING";
+const std::string ERROR_STRING   = "ERROR";
+const std::string FATAL_STRING   = "FATAL";
 
 namespace Ui {
 class LogTab;
@@ -59,12 +62,16 @@ private:
 
 private slots:
     void updateLog(bool from_beginning=false);
+    void ctxMenu(const QPoint &pos);
+    void on_copy_to_clipboard_action();
 
 public:
     QTimer                  *logTimer;
     QStandardItemModel      *model_logs;
     LogSortFilterProxyModel *proxyModelButtons;
     LogSortFilterProxyModel *proxyModelSearch;
+    QClipboard              *clipboard;
+    QMenu                   *contextMenu;
     void                    displayYarprunTimestamp  (bool enabled);
     void                    displayLocalTimestamp    (bool enabled);
     void                    displayErrorLevel (bool enabled);

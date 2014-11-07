@@ -32,6 +32,7 @@ advanced_dialog::advanced_dialog(yarp::yarpLogger::LoggerEngine* logger, QWidget
     ui->cap_warning->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_WARNING));
     ui->cap_debug->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_DEBUG));
     ui->cap_info->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_INFO));
+    ui->cap_trace->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_TRACE));
     ui->cap_unformatted->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_UNDEFINED));
 
     bool enable_log_lines_limit;
@@ -64,6 +65,7 @@ void advanced_dialog::on_buttonBox_clicked(QAbstractButton *button)
     theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_WARNING,ui->cap_warning->checkState());
     theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_DEBUG,ui->cap_debug->checkState());
     theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_INFO,ui->cap_info->checkState());
+    theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_TRACE,ui->cap_trace->checkState());
     theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_UNDEFINED,ui->cap_unformatted->checkState());
 
     QString s_lines    = ui->log_max_size->text();

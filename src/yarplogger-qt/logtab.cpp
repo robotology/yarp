@@ -64,7 +64,35 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _syst
     ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     ui->listView->verticalHeader()->setDefaultSectionSize(20);
     
+    clipboard=QApplication::clipboard();
+    connect(ui->listView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
+
     updateLog(true);
+}
+
+void LogTab::ctxMenu(const QPoint &pos)
+{
+    QMenu *menu = new QMenu;
+    QAction *act1 = menu->addAction(tr("Copy to clipboard"), this, SLOT(on_copy_to_clipboard_action()));
+
+    menu->exec(ui->listView->mapToGlobal(pos));
+}
+
+void LogTab::on_copy_to_clipboard_action()
+{
+    QString selected_test;
+    QString separator("\t\t");
+    foreach(const QModelIndex &index, ui->listView->selectionModel()->selectedRows())
+    {
+        QStringList list;
+        QModelIndex prox_index = proxyModelSearch->mapToSource(index);
+        if (displayYarprunTimestamp_enabled) list.append(model_logs->item(prox_index.row(),0)->text());
+        if (displayLocalTimestamp_enabled)   list.append(model_logs->item(prox_index.row(),1)->text());
+        if (displayErrorLevel_enabled)       list.append(model_logs->item(prox_index.row(),2)->text());
+        list.append(model_logs->item(prox_index.row(),3)->text());
+        selected_test += list.join(separator);
+    }
+    clipboard->setText(selected_test);
 }
 
 LogTab::~LogTab()
@@ -106,14 +134,17 @@ void LogTab::updateLog(bool from_beginning)
     for (it=messages.begin(); it!=messages.end(); it++)
     {
         QList<QStandardItem *> rowItem;
-        QColor rowcolor = QColor(Qt::white);
+        QColor rowbgcolor = QColor(Qt::white);
+        QColor rowfgcolor = QColor(Qt::black);
         std:: string error_level;
-        if      (it->level==yarp::yarpLogger::LOGLEVEL_ERROR)     { rowcolor = QColor("#FF7070");  error_level=ERROR_STRING;}
-        else if (it->level==yarp::yarpLogger::LOGLEVEL_WARNING)   { rowcolor = QColor("#FFFF70");  error_level=WARNING_STRING; }
-        else if (it->level==yarp::yarpLogger::LOGLEVEL_INFO)      { rowcolor = QColor("#70FF70");  error_level=INFO_STRING; }
-        else if (it->level==yarp::yarpLogger::LOGLEVEL_DEBUG)     { rowcolor = QColor("#7070FF");  error_level=DEBUG_STRING;}
-        else if (it->level==yarp::yarpLogger::LOGLEVEL_UNDEFINED) { rowcolor = QColor(Qt::white);  error_level="";     }
-        else                                                    { rowcolor = QColor(Qt::white);  error_level="";     }
+        if      (it->level==yarp::yarpLogger::LOGLEVEL_UNDEFINED) { rowbgcolor = QColor(Qt::white);  error_level="";     }
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_TRACE)     { rowbgcolor = QColor("#FF70FF");  error_level=TRACE_STRING;}
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_DEBUG)     { rowbgcolor = QColor("#7070FF");  error_level=DEBUG_STRING;}
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_INFO)      { rowbgcolor = QColor("#70FF70");  error_level=INFO_STRING; }
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_WARNING)   { rowbgcolor = QColor("#FFFF70");  error_level=WARNING_STRING; }
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_ERROR)     { rowbgcolor = QColor("#FF7070");  error_level=ERROR_STRING;}
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_FATAL)     { rowbgcolor = QColor(Qt::black);  rowfgcolor = QColor(Qt::white);  error_level=FATAL_STRING;}
+        else                                                      { rowbgcolor = QColor(Qt::white);  error_level="";     }
 
         //using numbers seems not to work. Hence I'm using strings.
         rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());
@@ -122,7 +153,8 @@ void LogTab::updateLog(bool from_beginning)
         {
             for (QList<QStandardItem *>::iterator col_it = rowItem.begin(); col_it != rowItem.end(); col_it++)
             {
-                (*col_it)->setBackground(rowcolor);
+                (*col_it)->setBackground(rowbgcolor);
+                (*col_it)->setForeground(rowfgcolor);
             }
         }
         rootNode->appendRow(rowItem);

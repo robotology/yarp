@@ -18,6 +18,7 @@
 #  include <ace/OS_NS_signal.h>
 #  include <ace/OS_NS_stdlib.h>
 #  include <ace/OS_NS_sys_stat.h>
+#  include <ace/ACE.h>
 #endif
 
 yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHandler sighandler)
@@ -35,7 +36,8 @@ yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHan
 
 void yarp::os::exit(int v)
 {
-    ACE_OS::exit(v);
+    ACE_OS::exit(v); //may cause crash...
+    //::exit(v);     //...this seems to work(?)
 }
 
 const char *yarp::os::getenv(const char *var)
@@ -65,4 +67,52 @@ int yarp::os::stat(const char *path)
 {
     ACE_stat dummy;
     return ACE_OS::stat(path, &dummy);
+}
+
+int yarp::os::getpid()
+{
+    pid_t pid = ACE_OS::getpid();
+    return pid;
+}
+
+void yarp::os::setprogname(const char *progname)
+{
+#ifdef YARP_HAS_ACE
+    ACE_OS::setprogname(ACE::basename(progname));
+#else
+    // not available
+#endif
+}
+
+
+void yarp::os::getprogname(char*progname, size_t size)
+{
+#ifdef YARP_HAS_ACE
+    const char* tmp = ACE_OS::getprogname ();
+    if (strlen(tmp)==0)
+    {
+        strncpy(progname,"no_progname",size);
+    }
+    else
+    {
+        strncpy(progname,tmp,size);
+    }
+#else
+    // not available
+    *progname = '\0';
+#endif
+}
+
+
+void yarp::os::gethostname(char* hostname, size_t size)
+{
+#ifdef YARP_HAS_ACE
+    ACE_OS::hostname(hostname, size);
+#else
+    ::gethostname(hostname, size));
+#endif
+    if (strlen(hostname)==0)
+    {
+        strncpy(hostname,"no_hostname",size);
+    }
 }
