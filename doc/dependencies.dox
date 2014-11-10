@@ -1,0 +1,511 @@
+/*
+ * Copyright (C) 2014  iCub Facility, Istituto Italiano di Tecnologia
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+/**
+ * \page dependencies YARP Dependencies
+
+\tableofcontents
+
+\section dependencies_required Required Dependencies
+
+
+YARP does not have any strong build dependencies, the only requirements
+are
+<a href="http://www.stroustrup.com/compilers.html"> a C++ compiler </a>
+and CMake
+
+
+
+\subsection dependencies_cmake CMake
+
+YARP is for programmers.  We'd like every YARP user all to use the
+development environment you are used to, and not force you to switch
+to something else -- no Linux/g++/emacs vs Windows/DevStudio vs
+Mac/... fights please!
+
+To achieve this without complete chaos, we ask you to install
+<a href="http://www.cmake.org/"><b>CMake</b></a>.
+CMake lets us describe our programs and libraries in a
+cross-platform way. CMake takes care of building the makefiles or
+workspaces needed by whatever development environment you like to work
+in.
+
+\subsubsection dependencies_cmake_install Tips for CMake Installation
+
+Install CMake from
+<a href="http://www.cmake.org/download">here</a>.
+
+\li Debian/Ubuntu/... Linux:
+    \code{.sh}
+    apt-get install cmake cmake-curses-gui cmake-qt-gui
+    \endcode
+\li SUSE Linux: add the GURU YAST repository and use YAST for installing
+    CMake or download directly the rpm from GURU website access
+
+
+\subsubsection dependencies_cmake_windows CMake in Windows
+
+On Windows, the easiest way to use CMake is via its GUI. After
+installing, you should have an icon for CMake in your START
+menu. Click that, then fill in the path to your code, and the path you
+want CMake to build in (that can be the same if you want). Click
+"configure". Depending on the project, configuration may involve
+several steps -- you may have to answer new questions and click
+"configure" again. When the "OK" button becomes clickable, then CMake
+has enough information to set up your project. Click "OK" and you're
+done. Project files of the type you specified should exist in the
+build path you gave.
+
+If you want to start over from the beginning with CMake, it is
+important to press the "delete cache" button to make it forget
+everything you've told it.
+
+
+\subsubsection dependencies_cmake_unix CMake in UNIX
+
+On UNIX CMake can now be used conveniently in two ways:
+
+\li From the command line : type
+\code{.sh}
+cmake .
+\endcode
+\li Interactively: type
+\code{.sh}
+ccmake .
+\endcode
+\li With the GUI: type
+\code{.sh}
+cmake-gui
+\endcode
+Or start it from your system menu.
+
+Out-of-source build is recommended when building a project with CMake.
+If you are running CMake while in a directory different to where your
+code is, replace "." with the path to your code. For example:
+
+\code{.sh}
+cd <project_dir>
+mkdir build
+cd build
+cmake ..
+\endcode
+
+\c ccmake is very much like the Windows GUI, and you may need to iterate
+"configure" a few times before the option to "generate" appears.
+
+\c cmake doesn't ask questions, and just uses defaults. You can pass it
+values on the command line:
+
+\code{.sh}
+cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .
+\endcode
+
+The generated file \c CMakeCache.txt contains all settings stored by
+CMake. It can be useful to delete this if you want to start over
+completely.
+
+
+\subsubsection cmake_example CMake Example
+
+Create a new directory, something like \c $HOME/cmake/example or
+\c C:\cmake\example.
+
+Inside that directory, create a file called \c %CMakeLists.txt.
+In it place the following:
+
+\code{.cmake}
+cmake_minimum_required(VERSION 2.8.9)
+project(example)
+add_executable(example main.cpp)
+\endcode
+
+In the same directory, create a file called \c %main.cpp.
+In it place the following:
+
+\code{.c}
+#include <stdio.h>
+int main()
+{
+    printf("CMake the world a better place!\n");
+    return 0;
+}
+\endcode
+
+In UNIX, go to that directory, and then
+\code{.sh}
+mkdir build
+cd build
+cmake ..
+make
+./example
+\endcode
+
+On Windows, run the CMake GUI, fill in the path to the example, click
+"configure", say what compiler you use, click "configure" again if
+needed, then click "ok". Then run your compiler, and finally the
+program. Easy!
+
+Notice that the abstract description of our project above can be
+shared by developers on Windows, Linux, OSX, ...
+
+\li There's another example you can try
+    <a href="http://www.cmake.org/HTML/Examples.html">here</a>.
+\li For more examples, and details, see
+    <a href="http://www.linuxjournal.com/article/6700">here</a>
+
+
+
+\section dependencies_recommended Recommended Dependencies
+
+Even though these packages are not necessary to build YARP, they are
+recommended, since some features will not be available without them.
+
+
+\subsection dependencies_ace The ACE Library
+
+<a href="http://www.cs.wustl.edu/~schmidt/ACE.html"><b>ACE</b></a>
+is a free and open source library that provides an excellent portable
+interface to a vast array of operating systems, dealing with the details
+so you don't have to.
+
+ACE is required on all the platforms exept for Linux. Without ACE,
+YARP will be able to connect using TCP only, and will have limited
+functionality.
+
+\subsubsection dependencies_ace_install The general approach to installing ACE
+
+\li For Ubuntu and other deb-based systems, we suggest you install the
+    \c libace-dev package (on rpm-based systems, try libace-devel).
+    \code{.sh}
+    sudo apt-get install libace-dev
+    \endcode
+\li For Windows and other systems we suggest the latest stable release
+    (ACE-N.N.zip/ACE-N.N.tar.gz).  Download ACE
+    <a href="http://download.dre.vanderbilt.edu/">here</a>.
+
+Compile ACE using our summary instructions, below, or through the
+official method given
+<a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html">here (FIXME broken)</a>.
+Don't panic! The instructions cover a lot of operating systems and
+compilers. Just look carefully for your combination.
+
+\li Windows/DevStudio instructions are
+    <a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#msvc">here (FIXME broken)</a>.
+\li UNIX/gcc instructions are
+    <a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional">here (FIXME broken)</a>.
+\li OSX/gcc users, follow the UNIX instructions.
+
+ACE will take a while to compile, but if you can do it you'll be able to
+deal with anything we throw at you.
+
+\subsubsection dependencies_ace_install_unix Compiling ACE on UNIX
+
+If you are on a system with a binary ACE package (Debian, Redhat,
+... -- it is usually called \c libace-dev or \c libace-devel), then you
+can just install that and you are done. Otherwise you need to download
+\c ACE-5.5.tar.gz as described above and follow these steps:
+
+\li Let's suppose you have placed \c ACE-5.5.tar.gz in the directory
+    \c $HOME/work/. Then, in this directory, type:
+    \code{.sh}
+    tar xzvf - < ACE-5.5.tar.gz
+    \endcode
+\li You should now have a subdirectory called "ACE_wrappers". Type one
+    (or if you're not sure which, type both) of:
+    \code{.sh}
+    export ACE_ROOT=$PWD/ACE_wrappers
+    setenv ACE_ROOT $PWD/ACE_wrappers
+    \endcode
+\li One of these lines will succeed and the other will fail, depending
+    on what shell you use. That's fine. as long as when you type:
+    \<tt>echo $ACE_ROOT</tt> you get the \c ACE_wrappers directory.
+\li You now need to configure ACE to your platform, by creating one
+    build file and one include file. If you are on Linux, type:
+    \code{.sh}
+    cd $ACE_ROOT/include/makeinclude/
+    ln -s platform_linux.GNU platform_macros.GNU
+    cd $ACE_ROOT/ace
+    ln -s config-linux.h config.h
+    \endcode
+\li If you are not on Linux, or even if you are, you should take a look
+    at the \c platform_*.GNU and \c config-*.h files and pick the one
+    that matches you.
+\li Now, to compile, type:
+    \code{.sh}
+    cd $ACE_ROOT/ace; make
+    \endcode
+\li If all goes well, at the end you will have some files in
+    \c ACE_wrappers/ace, for example:
+    \code{.sh}
+    $ ls $ACE_ROOT/lib/
+    libACE.so  libACE.so.5.4.7
+    \endcode
+    (the \c .so may be \c .dylib or other variants):
+\li One thing remains to be done; programs need to be able to find the
+    ACE library at run time. You can set this up by runing one of the
+    following:
+    \code{.sh}
+    export LD_LIBRARY_PATH=$ACE_ROOT/lib:$LD_LIBRARY_PATH
+    setenv LD_LIBRARY_PATH $ACE_ROOT/lib:$LD_LIBRARY_PATH
+    \endcode
+\li (On OSX, the variable you need to set is \c DYLD_LIBRARY_PATH).
+\li An alternative is to copy the files in \c $ACE_ROOT/lib to a
+    standard library directory, for example, \c /usr/lib.
+\li We've given a simple procedure that works for most people. But if
+    you run into a lot of trouble, we suggest you delete the
+    \c ACE_wrappers directory, recreate it with tar again as above, and
+    follow carefully all the detailed instructions
+    <a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional">here (FIXME broken)</a>.
+
+
+\subsubsection ace_windows Compiling ACE on Windows
+
+For Borland C++Builder, MinGW, Cygwin instructions build instructions
+are
+<a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#win32">here (FIXME broken)</a>.
+
+For Visual Studio, here's a brief summary of the steps.
+\li Get \c ACE-5.5.zip as described above.
+\li Unpack its contents to a directory. Find the directory
+    \c ACE_wrappers in the unpacked material.
+\li In the \c ACE_wrappers\ace directory, create a file called
+    \c config.h and edit it to be just this:
+    \code{.h}
+    #include "ace/config-win32.h"
+    \endcode
+\li Open Visual Studio. Go to open a project/workspace/solution, and
+    browse to the directory \c ACE_wrappers\ace.
+\li Find the project/workspace/solution that works for you: probably
+    called \c ACE.dsw or \c ace_vc8.sln.
+\li Compile! We suggest you compile both debug and release versions of
+    the library.
+\li On Visual Studio Express, you may need to add the in project
+    properties -> linker -> input -> additional dependencies:
+    \c kernel32.lib, \c user32.lib, \c advapi32.lib.
+    See also
+    <a href="http://msdn.microsoft.com/vstudio/express/visualc/usingsdk/">here (FIXME broken)</a>
+\li In the end, you should have some files in the directory
+    \c ACE_wrappers/lib, including \c ACE.dll, \c ACE.lib, \c ACEd.dll,
+    \c ACEd.lib (if you compiled both release and debug versions).
+\li You must make sure you include the path to \c ACE_wrappers\lib in
+    your \c PATH environment variable whenever you run programs that
+    uses ACE. See generic instructions for setting environment
+    variables
+    <a href="http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/environment_variables.mspx">here</a>.
+\li It is also a good idea to set an environment variable \c ACE_ROOT to
+    hold the path to \c ACE_wrappers. This will make it easier to find
+    the libraries and header files.
+
+On Windows you can unzip the ACE distribution and simply open the
+workspace file contained within it from within Visual Studio and
+then start the compilation.  We recommend you compile twice,
+once in debug mode and release mode, so you have both versions of
+the library available later.
+
+\subsection dependencies_gsl The GNU Scientific Library (GSL)
+
+The
+<a href="https://www.gnu.org/software/gsl/"><b>GNU Scientific Library (GSL)</b></a>
+is a numerical library for C and C++ programmers.
+
+If not installed, you will not be able to enable the \c YARP_math
+library.
+
+\warning
+GSL is released under the GPL, and therefore if the \c YARP_math library
+is enabled, it requires the use of YARP under the GPL, rather than the
+LGPL.
+
+\todo TODO Installation
+
+\subsubsection dependencies_gsl_atlas Automatically Tuned Linear Algebra Software (ATLAS)
+
+<a href="http://math-atlas.sourceforge.net/"><b>Automatically Tuned Linear Algebra Software (ATLAS)</b></a>
+is an efficient alternative to the
+<a href="http://www.netlib.org/blas/">BLAS</a> and
+<a href="http://www.netlib.org/lapack/">LAPACK</a> libraries.
+
+YARP can be linked to the ATLAS library by enabling the
+\c YARP_USE_ATLAS CMake option.
+
+As an alternative, on Debian and Debian-based systems, the BLAS and
+LAPACK implementation can be changed dynamically (without need to
+recompile). To enable ATLAS:
+
+\code{.sh}
+sudo update-alternatives --set libblas.so /usr/lib/atlas-base/atlas/libblas.so
+sudo update-alternatives --set libblas.so.3 /usr/lib/atlas-base/atlas/libblas.so.3
+sudo update-alternatives --set liblapack.so /usr/lib/atlas-base/atlas/liblapack.so
+sudo update-alternatives --set liblapack.so.3 /usr/lib/atlas-base/atlas/liblapack.so.3
+\endcode
+
+To restore the default implementation:
+
+\code{.sh}
+sudo update-alternatives --auto libblas.so
+sudo update-alternatives --auto libblas.so.3
+sudo update-alternatives --auto liblapack.so
+sudo update-alternatives --auto liblapack.so.3
+\endcode
+
+\todo TODO Installation
+
+\section dependencies_gui GUI Dependencies
+
+YARP GUIs are being migrated from
+<a href="http://www.gtk.org/"><b>GTK+2</b></a> +
+<a href="http://www.gtkmm.org/"><b>GtkMM</b></a>
+to
+<a href="http://qt-project.org/"><b>Qt5</b></a>.
+For compatibility with older distributions, GTK2 GUIs can still be
+built, but no new features are added, and the new GUIs (i.e.
+\a yarplogger) are not available.
+
+This is a list of the GUIs with the toolkit required.
+
+\li \b yarpview: Qt5 or GTK2
+\li \b yarpscope: Qt5 or GTK2
+\li \b yarpmanager: Qt5 or GTK2
+\li \b yarpbuilder: GTK2 (Qt5 porting in progress)
+\li \b yarplogger: Qt5
+
+For the GUIs that can be built with both toolkits:
+
+\li If only Qt5 is available, the Qt5 version will be built.
+\li If only GTK2 is available, the GTK2 version will be built.
+\li If both Qt5 and GTK2 are available, both will be built and the
+    \c -gtk suffix will be appended to the GTK2 executable.
+\li If both Qt5 and GTK2 are available, and the \c YARP_DEFAULT_GTK
+    CMake variable is set, both will be built and the
+    \c -qt suffix will be appended to the Qt5 executable.
+
+\note
+Usage of the \c YARP_DEFAULT_GTK is discouraged, and therefore it
+cannot be set using CMake GUIs. If it is really necessary, it can be set
+by passing \c -DYARP_DEFAULT_GTK:BOOL=TRUE to CMake command line, or by
+using the "Add Entry" button in CMake GUI.
+
+\subsection dependencies_qt5 Qt5 (Recommended)
+
+Qt 5.2 or later is required. YARP GUIs use the QtQuick Controls module
+that is available only since 5.2.
+
+The recommended way to install Qt5 on your system is to use the binary
+packages supplied by your distribution (if available). If they are not
+available, you can download a binary release from the
+<a href="http://qt-project.org/downloads">Qt Project website</a>, or
+download the source code, and build it yourself.
+
+If you installed Qt5 from the Qt Project website, you will also need
+need to set up the environment variable \c Qt5_DIR pointing to the
+location where Qt5 cmake modules are, e.g. for Qt 5.3 on Linux 64 bit:
+
+\code{.sh}
+export Qt5_DIR=/path/to/Qt/5.3/gcc_64/lib/cmake/Qt5/
+\endcode
+
+Alternatively you can add the install path to the CMAKE_PREFIX_PATH
+environment variable, for example:
+
+\code{.sh}
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/path/to/Qt/5.3/gcc_64/
+\endcode
+
+\subsubsection dependencies_qt5_Linux Linux
+
+\paragraph dependencies_qt5_debian_jessie Debian (jessie)
+On Debian testing you need to install the following packages:
+
+\li qtbase5-dev
+\li qtdeclarative5-dev
+\li qtmultimedia5-dev
+\li qml-module-qtquick2
+\li qml-module-qtquick-window2
+\li qml-module-qtmultimedia
+\li qml-module-qtquick-dialogs
+\li qml-module-qtquick-controls
+
+You can install them by running:
+
+\code{.sh}
+sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
+  qml-module-qtquick2 qml-module-qtquick-window2 \
+  qml-module-qtmultimedia qml-module-qtquick-dialogs \
+  qml-module-qtquick-controls
+\endcode
+
+
+\paragraph dependencies_qt5_debian_wheezy Debian (wheezy)
+On Debian wheezy, Qt5 packages are available in the backports
+repository.
+
+You can enable the backports repository you have to add
+
+\verbatim
+deb http://backports.debian.org/debian-backports/ wheezy-backports main
+\endverbatim
+
+to your \c /etc/apt/sources.list file, and then install the same
+packages required from Debian jessie from the backports repository:
+
+
+\code{.sh}
+sudo apt-get update
+sudo apt-get install -t wheezy-backports qtbase5-dev \
+  qtdeclarative5-dev qtmultimedia5-dev qml-module-qtquick2 \
+  qml-module-qtquick-window2 qml-module-qtmultimedia \
+  qml-module-qtquick-dialogs qml-module-qtquick-controls
+\endcode
+
+
+
+\paragraph dependencies_qt5_ubuntu Ubuntu (utopic and vivid)
+Qt5 is available from the main repository. See
+\ref dependencies_qt5_debian_jessie for instructions.
+
+\paragraph dependencies_qt5_ubuntu_trusty Ubuntu (trusty)
+Qt5 packages are available from the main repository, but the package
+names are slightly different:
+
+\li qtbase5-dev
+\li qtdeclarative5-dev
+\li qtmultimedia5-dev
+\li qtdeclarative5-qtquick2-plugin
+\li qtdeclarative5-window-plugin
+\li qtdeclarative5-qtmultimedia-plugin
+\li qtdeclarative5-controls-plugin
+
+You can install them by running:
+
+\code{.sh}
+sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
+  qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin \
+  qtdeclarative5-qtmultimedia-plugin qtdeclarative5-controls-plugin
+\endcode
+
+\paragraph dependencies_qt5_linux_others Others
+If your distribution does not supply binary packages for Qt5, you can
+download a binary release from the
+<a href="http://qt-project.org/downloads">Qt Project website</a>, or
+download the source code, and build it yourself.
+
+
+\subsubsection dependencies_qt5_windows Windows
+
+Qt5 binary package for Windows is available from the
+<a href="http://qt-project.org/downloads">Qt Project website</a>
+
+\subsubsection dependencies_qt5_macosx Mac OSX
+
+Qt5 binary package for Mac is available from the
+<a href="http://qt-project.org/downloads">Qt Project website</a>
+
+
+\subsection dependencies_gtk GTK2 (Legacy)
+
+\section dependencies_optional Optional Dependencies
+\todo TODO
+
+ */
