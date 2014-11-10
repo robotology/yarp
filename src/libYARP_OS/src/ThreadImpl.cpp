@@ -209,8 +209,7 @@ void ThreadImpl::threadRelease()
 }
 
 bool ThreadImpl::start() {
-    //YARP_DEBUG(Logger::get(),"Calling ThreadImpl::start()");
-
+    join();
     closing = false;
     initWasSuccessful = false;
     beforeStart();
