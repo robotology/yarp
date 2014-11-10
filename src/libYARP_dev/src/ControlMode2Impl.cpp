@@ -31,13 +31,13 @@ bool ImplementControlMode2::initialize(int size, const int *amap)
         dummy[k]=0;
 
     helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
 
     temp_int=new int [size];
-    _YARP_ASSERT(temp_int != NULL);
+    yAssert(temp_int != NULL);
 
     temp_mode=new int [size];
-    _YARP_ASSERT(temp_mode != NULL);
+    yAssert(temp_mode != NULL);
 
     delete [] dummy;
     return true;

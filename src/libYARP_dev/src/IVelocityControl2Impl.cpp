@@ -35,13 +35,13 @@ bool ImplementVelocityControl2::initialize(int size, const int *axis_map, const 
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, axis_map, enc, zeros,0));
-    _YARP_ASSERT (helper != NULL);
+    yAssert (helper != NULL);
     temp_double = new double [size];
-    _YARP_ASSERT (temp_double != NULL);
+    yAssert (temp_double != NULL);
     temp_int = new int [size];
-    _YARP_ASSERT (temp_int != NULL);
+    yAssert (temp_int != NULL);
     tempPids = new Pid [size];
-    _YARP_ASSERT (tempPids != NULL);
+    yAssert (tempPids != NULL);
 
     return true;
 }

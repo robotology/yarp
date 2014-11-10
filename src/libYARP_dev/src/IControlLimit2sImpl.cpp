@@ -55,13 +55,13 @@ bool ImplementControlLimits2::initialize(int size, const int *amap, const double
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT(helper != NULL);
+    yAssert(helper != NULL);
     temp_max=new double [size];
-    _YARP_ASSERT(temp_max != NULL);
+    yAssert(temp_max != NULL);
     temp_min=new double [size];
-    _YARP_ASSERT(temp_min != NULL);
+    yAssert(temp_min != NULL);
     temp_int=new int [size];
-    _YARP_ASSERT(temp_int != NULL);
+    yAssert(temp_int != NULL);
     return true;
 }
 
