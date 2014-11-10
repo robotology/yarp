@@ -10,6 +10,8 @@
 #include "ControlBoardWrapper.h"
 
 #include <iostream>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -79,19 +81,19 @@ bool SubDevice::configure(int b, int t, int n, const std::string &key)
 
     if (top<base)
         {
-            cerr<<"check configuration file top<base."<<endl;
+            yError()<<"controlBoardWrapper: check configuration file top<base.";
             return false;
         }
 
     if ((top-base+1)!=axes)
         {
-            cerr<<"check configuration file, number of axes and top/base parameters do not match"<<endl;
+            yError()<<"controlBoardWrapper: check configuration file, number of axes and top/base parameters do not match";
             return false;
         }
 
     if (axes<=0)
         {
-            cerr<<"check number of axes"<<endl;
+            yError()<<"controlBoardWrapper: check number of axes";
             return false;
         }
 
@@ -132,20 +134,20 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 {
     if (id!=k)
         {
-            cerr<<"Wrong device sorry."<<endl;
+            yError()<<"controlBoardWrapper: Wrong device" << k.c_str();
             return false;
         }
 
     //configure first
     if (!configuredF)
         {
-            cerr<<"You need to call configure before you can attach any device"<<endl;
+            yError()<<"controlBoardWrapper: You need to call configure before you can attach any device";
             return false;
         }
 
     if (d==0)
         {
-            cerr<<"Invalid device (null pointer)\n"<<endl;
+            yError()<<"controlBoardWrapper: Invalid device (null pointer)";
             return false;
         }
 
@@ -175,38 +177,37 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         }
     else
         {
-            cerr<<"Invalid device " << k << " (isValid() returned false)"<<endl;
+            yError()<<"controlBoardWrapper: Invalid device " << k << " (isValid() returned false)";
             return false;
         }
 
     if ( ((iMode==0) || (iMode2==0)) && (_subDevVerbose ))
-        std::cerr << "--> Warning iMode not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iMode not valid interface";
 
     if ((iTorque==0) && (_subDevVerbose))
-        std::cerr << "--> Warning iTorque not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iTorque not valid interface";
 
     if ((iImpedance==0) && (_subDevVerbose))
-        std::cerr << "--> Warning iImpedance not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iImpedance not valid interface";
 
     if ((iOpenLoop==0) && (_subDevVerbose))
-        std::cerr << "--> Warning iOpenLoop not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iOpenLoop not valid interface";
 
     if ((iInteract==0) && (_subDevVerbose))
-        std::cerr << "--> Warning iInteractionMode not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iInteractionMode not valid interface";
 
     int deviceJoints=0;
 
     // checking minimum set of intefaces required
     if( ! (pos || pos2) ) // One of the 2 is enough, therefore if both are missing I raise an error
     {
-        printf("ControlBoarWrapper Error: neither IPositionControl nor IPositionControl2 interface was not found in subdevice. Quitting\n");
+        yError("ControlBoarWrapper: neither IPositionControl nor IPositionControl2 interface was not found in subdevice. Quitting");
         return false;
     }
 
     if( ! (vel || vel2) ) // One of the 2 is enough, therefor if both are missing I raise an error
     {
-        printf("ControlBoarWrapper Error: neither IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting\n");
-
+        yError("ControlBoarWrapper: neither IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting");
         return false;
     }
     else
@@ -218,7 +219,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if(!enc)
     {
-        printf("ControlBoarWrapper Error: IEncoderTimed interface was not found in subdevice. Quitting\n");
+        yError("ControlBoarWrapper: IEncoderTimed interface was not found in subdevice");
         return false;
     }
 
@@ -226,7 +227,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     {
         if (!pos->getAxes(&deviceJoints))
         {
-            std::cerr<< "Error: attached device has 0 axes\n";
+            yError("ControlBoarWrapper: attached device has 0 axes");
             return false;
         }
     }
@@ -234,14 +235,14 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     {
         if (!pos2->getAxes(&deviceJoints))
         {
-            std::cerr<< "Error: attached device has 0 axes\n";
+            yError("ControlBoarWrapper: attached device has 0 axes");
             return false;
         }
     }
 
     if (deviceJoints<axes)
     {
-        std::cerr<<"check device configuration, number of joints of attached device less than the one specified during configuration.\n";
+        yError()<<"ControlBoarWrapper: check device configuration, number of joints of attached device less than the one specified during configuration";
         return false;
     }
     attachedF=true;
@@ -266,10 +267,10 @@ void CommandsHelper::handleImpedanceMsg(const yarp::os::Bottle& cmd,
                                            yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (caller->verbose())
-        fprintf(stderr, "Handling IImpedance message\n");
+        yDebug("Handling IImpedance message\n");
      if (!iImpedance)
         {
-            fprintf(stderr, "Error I do not have a valid interface\n");
+            yError("controlBoardWrapper: I do not have a valid interface");
             *ok=false;
             return;
         }
@@ -281,7 +282,7 @@ void CommandsHelper::handleImpedanceMsg(const yarp::os::Bottle& cmd,
     case VOCAB_SET:
         {
             if (caller->verbose())
-                fprintf(stderr, "handleImpedanceMsg::VOCAB_SET command\n");
+                yDebug("handleImpedanceMsg::VOCAB_SET command\n");
             switch (cmd.get(2).asVocab())
             {
                 case VOCAB_IMP_PARAM:
@@ -316,7 +317,7 @@ void CommandsHelper::handleImpedanceMsg(const yarp::os::Bottle& cmd,
             double damp = 0;
             double offs = 0;
             if (caller->verbose())
-                fprintf(stderr, "handleImpedanceMsg::VOCAB_GET command\n");
+                yDebug("handleImpedanceMsg::VOCAB_GET command\n");
 
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
@@ -371,10 +372,10 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                                            yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (caller->verbose())
-        fprintf(stderr, "Handling IControlMode message\n");
+        yDebug("Handling IControlMode message\n");
      if (! (iMode || iMode2) )
         {
-            fprintf(stderr, "Error I do not have a valid iControlMode interface\n");
+            yError("ControlBoardWrapper: I do not have a valid iControlMode interface");
             *ok=false;
             return;
         }
@@ -389,7 +390,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
         case VOCAB_SET:
         {
             if (caller->verbose())
-                fprintf(stderr, "handleControlModeMsg::VOCAB_SET command\n");
+                yDebug("handleControlModeMsg::VOCAB_SET command\n");
 
             int method = cmd.get(2).asVocab();
 
@@ -398,12 +399,12 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_CM_CONTROL_MODE:
                 {
                     int axis = cmd.get(3).asInt();
-//                    std::cerr << "got VOCAB_CM_CONTROL_MODE " << std::endl;
+//                  yDebug() << "got VOCAB_CM_CONTROL_MODE " << std::endl;
                     if(iMode2)
                         *ok = iMode2->setControlMode(axis, cmd.get(4).asVocab());
                     else
                     {
-                        std::cerr << "ControlBoardWrapper: Unable to handle setControlMode request! This should not happen!" << std::endl;
+                        yError() << "ControlBoardWrapper: Unable to handle setControlMode request! This should not happen!";
                         *rec = false;
                     }
                 }
@@ -411,7 +412,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                 case VOCAB_CM_CONTROL_MODE_GROUP:
                 {
-//                    std::cerr << "got VOCAB_CM_CONTROL_MODE_GROUP " << cmd.toString() << std::endl;
+//                  yDebug() << "got VOCAB_CM_CONTROL_MODE_GROUP " << cmd.toString() << std::endl;
 
                     int n_joints = cmd.get(3).asInt();
                     Bottle& jList = *(cmd.get(4).asList());
@@ -438,14 +439,14 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                 case VOCAB_CM_CONTROL_MODES:
                 {
-//                    std::cerr << "got VOCAB_CM_CONTROL_MODES"  << std::endl;
+//                  yDebug() << "got VOCAB_CM_CONTROL_MODES"  << std::endl;
                     yarp::os::Bottle *modeList;
                     modeList  = cmd.get(3).asList();
 
                     if(modeList->size() != controlledJoints)
                     {
                         if (caller->verbose())
-                            fprintf(stderr, "received an invalid setControlMode message. Size of vector doesn´t match the number of controlled joints\n");
+                            yError("received an invalid setControlMode message. Size of vector doesn´t match the number of controlled joints\n");
                         *ok = false;
                         break;
                     }
@@ -464,10 +465,10 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     // if I´m here, someone is probably sending command using the old interface.
                     // try to be compatible as much as I can
 
-                    std::cerr << " Error, received a set control mode message using a legacy version, trying to be handle the message anyway " \
-                                 " but please update your client to be compatible with the IControlMode2 interface";
+                    yError()  << " Error, received a set control mode message using a legacy version, trying to be handle the message anyway "
+                              << " but please update your client to be compatible with the IControlMode2 interface";
 
-                    // std::cout << " cmd.get(4).asVocab() is " << Vocab::decode(cmd.get(4).asVocab()).c_str() << std::endl;
+                    // yDebug << " cmd.get(4).asVocab() is " << Vocab::decode(cmd.get(4).asVocab()).c_str() << std::endl;
                     int axis = cmd.get(3).asInt();
 
                     switch (cmd.get(4).asVocab())
@@ -500,14 +501,14 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                             break;
 
                         case VOCAB_CM_IMPEDANCE_POS:
-                            printf("The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead\n");
+                            yError() << "The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead";
 
     //                      Let´s propagate the legacy version as is until it will be removed
                                 *ok = iMode->setImpedancePositionMode(axis);
                                 break;
 
                         case VOCAB_CM_IMPEDANCE_VEL:
-                            printf("The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead\n");
+                            yError() << "The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead";
 
     //                      Let´s propagate the legacy version as is until it will be removed
                                 *ok = iMode->setImpedanceVelocityMode(axis);
@@ -532,7 +533,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                         default:
 //                        if (caller->verbose())
-                            fprintf(stderr, "SET unknown controlMode : %s \n", cmd.toString().c_str());
+                            yError( "SET unknown controlMode : %s \n", cmd.toString().c_str());
                             *ok = false;
                             *rec = false;
                             break;
@@ -546,7 +547,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
         case VOCAB_GET:
         {
             if (caller->verbose())
-                fprintf(stderr, "GET command\n");
+                yDebug("GET command\n");
 
             int method = cmd.get(2).asVocab();
 
@@ -555,7 +556,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_CM_CONTROL_MODES:
                 {
                     if (caller->verbose())
-                        fprintf(stderr, "getControlModes\n");
+                        yDebug("getControlModes\n");
                     int *p = new int[controlledJoints];
                     *ok = iMode->getControlModes(p);
 
@@ -575,7 +576,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_CM_CONTROL_MODE:
                 {
                     if (caller->verbose())
-                        fprintf(stderr, "getControlMode\n");
+                        yDebug("getControlMode\n");
 
                     int p=-1;
                     int axis = cmd.get(3).asInt();
@@ -585,7 +586,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     response.addInt(axis);
                     response.addVocab(p);
 
-                    //fprintf(stderr, "Returning %d\n", p);
+                    //yError("Returning %d\n", p);
                     *rec=true;
                 }
                 break;
@@ -593,7 +594,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_CM_CONTROL_MODE_GROUP:
                 {
                     if (caller->verbose())
-                        fprintf(stderr, "getControlMode group\n");
+                        yDebug("getControlMode group\n");
 
                     int n_joints = cmd.get(3).asInt();
                     Bottle& lIn = *(cmd.get(4).asList());
@@ -614,13 +615,13 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         b.addVocab(modes[i]);
                     }
 
-                    //fprintf(stderr, "Returning %d\n", p);
+                    //yDebugf("Returning %d\n", p);
                     *rec=true;
                 }
                 break;
 
             default:
-                printf("Error: received a GET ICONTROLMODE command not understood\n");
+                yError("received a GET ICONTROLMODE command not understood");
                 break;
             }
         }
@@ -642,11 +643,11 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
                                       yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (caller->verbose())
-        fprintf(stderr, "Handling ITorqueControl message\n");
+        yDebug("Handling ITorqueControl message\n");
 
     if (!torque)
         {
-            fprintf(stderr, "Error, I do not have a valid ITorque interface\n");
+            yError("Error, I do not have a valid ITorque interface");
             *ok=false;
             return;
         }
@@ -658,7 +659,7 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
             {
                 *rec = true;
                 if (caller->verbose())
-                    printf("set command received\n");
+                    yDebug("set command received\n");
 
                 switch(cmd.get(2).asVocab())
                 {
@@ -825,7 +826,7 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
             {
                 *rec = true;
                 if (caller->verbose())
-                    printf("get command received\n");
+                    yDebug("get command received\n");
                 int tmp = 0;
                 double dtmp  = 0.0;
                 double dtmp2 = 0.0;
@@ -1023,18 +1024,17 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
     yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (caller->verbose())
-        fprintf(stderr, "\nHandling IInteractionMode message\n");
+        yDebug("Handling IInteractionMode message\n");
     if (!iInteract)
     {
-        fprintf(stderr, "Error I do not have a valid IInteractionMode interface\n");
+        yError("Error I do not have a valid IInteractionMode interface");
         *ok=false;
         return;
     }
 
     if (caller->verbose())
     {
-        fprintf(stdout, "received command:\n");
-        std::cout << cmd.toString() << std::endl;
+        yDebug() << "received command: " << cmd.toString();
     }
 
     int action = cmd.get(0).asVocab();
@@ -1051,14 +1051,14 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
             case VOCAB_INTERACTION_MODE:
             {
-//                std::cout << "CBW.cpp set interactionMode SINGLE" << std::endl;
+//              yDebug() << "CBW.cpp set interactionMode SINGLE" << std::endl;
                 *ok = iInteract->setInteractionMode(cmd.get(3).asInt(), (yarp::dev::InteractionModeEnum) cmd.get(4).asVocab());
             }
             break;
 
             case VOCAB_INTERACTION_MODE_GROUP:
             {
-//                std::cout << "CBW.h set interactionMode GROUP" << std::endl;
+//              yDebug() << "CBW.h set interactionMode GROUP" << std::endl;
 
                 int n_joints = cmd.get(3).asInt();
                 jointList = cmd.get(4).asList();
@@ -1066,7 +1066,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                 if( (jointList->size() != n_joints) || (modeList->size() != n_joints) )
                 {
                     if (caller->verbose())
-                        fprintf(stderr, "received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
+                        yError("Received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
                     *ok = false;
                     break;
                 }
@@ -1076,7 +1076,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                 {
                     joints[i] = jointList->get(i).asInt();
                     modes[i]  = (yarp::dev::InteractionModeEnum) modeList->get(i).asVocab();
-//                    std::cout << "CBW.cpp received vocab " << yarp::os::Vocab::decode(modes[i]) << std::endl;
+//                  yDebug()  << "CBW.cpp received vocab " << yarp::os::Vocab::decode(modes[i]) << std::endl;
                 }
                 *ok = iInteract->setInteractionModes(n_joints, joints, modes);
                 delete [] joints;
@@ -1087,13 +1087,13 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
             case VOCAB_INTERACTION_MODES:
             {
-//                std::cout << "CBW.c set interactionMode ALL" << std::endl;
+//              yDebug()  << "CBW.c set interactionMode ALL" << std::endl;
 
                 modeList  = cmd.get(3).asList();
                 if(modeList->size() != controlledJoints)
                 {
                     if (caller->verbose())
-                        fprintf(stderr, "received an invalid setInteractionMode message. Size of vector doesn´t match the number of controlled joints\n");
+                        yError("Received an invalid setInteractionMode message. Size of vector doesn´t match the number of controlled joints\n");
                     *ok = false;
                     break;
                 }
@@ -1110,7 +1110,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
             default:
             {
                 if (caller->verbose())
-                    fprintf(stderr, "Error while Handling IInteractionMode message, SET command not understood %s\n", cmd.get(2).asString().c_str());
+                    yError("Error while Handling IInteractionMode message, SET command not understood %s\n", cmd.get(2).asString().c_str());
                 *ok = false;
             }
             break;
@@ -1130,7 +1130,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     yarp::dev::InteractionModeEnum mode;
                     *ok = iInteract->getInteractionMode(cmd.get(3).asInt(), &mode);
                     response.addVocab(mode);
-                    if (caller->verbose())    std::cout << " resp is " << response.toString() << std::endl;
+                    if (caller->verbose())    yDebug()  << " resp is " << response.toString();
             }
             break;
 
@@ -1142,7 +1142,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                 jointList = cmd.get(4).asList();
                 if(jointList->size() != n_joints )
                 {
-                    fprintf(stderr, "received an invalid getInteractionMode message. Size of vectors doesn´t match\n");
+                    yError("Received an invalid getInteractionMode message. Size of vectors doesn´t match");
                     *ok = false;
                     break;
                 }
@@ -1162,7 +1162,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
                 if (caller->verbose())
                 {
-                    fprintf(stdout, "\ngot response bottle\n");
+                    yDebug("got response bottle\n");
                     response.toString();
                 }
                 delete [] joints;
@@ -1175,7 +1175,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     yarp::dev::InteractionModeEnum* modes;
                     modes  = new yarp::dev::InteractionModeEnum [controlledJoints];
 
-//                    std::cout << " cbw.cpp getInteractionModes ALL joint" << std::endl;
+//                  yDebug()  << " cbw.cpp getInteractionModes ALL joint" << std::endl;
                     *ok = iInteract->getInteractionModes(modes);
 
                     Bottle& b = response.addList();
@@ -1185,7 +1185,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     }
                     if (caller->verbose())
                     {
-                        fprintf(stdout, "\ngot response bottle\n");
+                        yDebug("got response bottle\n");
                         response.toString();
                     }
                     delete [] modes;
@@ -1199,7 +1199,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
     break; // case VOCAB_GET
 
     default:
-        fprintf(stderr, "Error while Handling IInteractionMode message, command was not SET nor GET\n");
+        yError("Error while Handling IInteractionMode message, command was not SET nor GET");
         *ok = false;
     break;
 
@@ -1211,16 +1211,14 @@ void CommandsHelper::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os::Bo
 {
     if (!iOpenLoop)
     {
-        fprintf(stderr, "Error I do not have a valid OpenLoopInterface interface\n");
+        yError("Error I do not have a valid OpenLoopInterface interface");
         *ok=false;
         return;
     }
 
     if (caller->verbose())
     {
-        fprintf(stderr, "\nHandling OpenLoopInterface message\n");
-        fprintf(stdout, "received command:\n");
-        std::cout << cmd.toString() << std::endl;
+        yDebug("Handling OpenLoopInterface message: received command: %s\n",  cmd.toString().c_str());
     }
 
     int action = cmd.get(0).asVocab();
@@ -1229,8 +1227,8 @@ void CommandsHelper::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os::Bo
     {
         case VOCAB_SET:
         {
-            std::cout << "Error: ControlBoardWrapper2 received a set command in the OpenLoopInterface on rpc port.\n";
-            std::cout << "... This is wrong, no SET command should use rpc for this interface, but they should use the sreaming port!" << std::endl;
+            yError() << "ControlBoardWrapper2 received a set command in the OpenLoopInterface on rpc port "
+                     << "This is wrong, no SET command should use rpc for this interface, but they should use the sreaming port!" ;
             *rec = false;
         }
         break;
@@ -1313,18 +1311,18 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
     Vector& cmdVector = v.body;
 
     //Use the following only for debug, since it can heavily slow down the system
-    //fprintf(stderr, "Received command %s, %s\n", b.toString().c_str(), cmdVector.toString().c_str());
+    //yDebug("Received command %s, %s\n", b.toString().c_str(), cmdVector.toString().c_str());
 
     // some consistency checks
     if ((int)cmdVector.size() > controlledAxes)
     {
         yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
-        fprintf(stderr, "Received command vector with number of elements bigger than axis controlled by this wrapper (cmd: %s requested jnts: %d received jnts: %d)\n",str.c_str(),controlledAxes,(int)cmdVector.size());
+        yError("Received command vector with number of elements bigger than axis controlled by this wrapper (cmd: %s requested jnts: %d received jnts: %d)",str.c_str(),controlledAxes,(int)cmdVector.size());
         return;
     }
     if (cmdVector.data()==0)
     {
-         fprintf(stderr, "Errors: received null command vector\n");
+         yError("Received null command vector");
          return;
     }
 
@@ -1341,10 +1339,10 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
                     {
                         bool ok = iOpenLoop->setRefOutput(b.get(2).asVocab(), cmdVector[0]);
                         if (!ok)
-                            fprintf(stderr, "Errors while trying to command an open loop message\n");
+                            yError("Errors while trying to command an open loop message");
                     }
                     else
-                        fprintf(stderr, "OpenLoop interface not valid\n");
+                        yError("OpenLoop interface not valid");
                 }
                 break;
 
@@ -1354,10 +1352,10 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
                     {
                         bool ok=iOpenLoop->setRefOutputs(cmdVector.data());
                         if (!ok)
-                            fprintf(stderr, "Errors while trying to command an open loop message\n");
+                            yError("Errors while trying to command an open loop message");
                     }
                     else
-                        fprintf(stderr, "OpenLoop interface not valid\n");
+                        yError("OpenLoop interface not valid\n");
                 }
                 break;
             }
@@ -1368,7 +1366,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
         // fallback to commands without interface name
         case VOCAB_POSITION_MODE:
             {
-                fprintf(stderr, "Warning: received VOCAB_POSITION_MODE this is an send invalid message on streaming port\n");
+                yError("Received VOCAB_POSITION_MODE this is an send invalid message on streaming port");
                 break;
             }
         case VOCAB_POSITION_MOVES:
@@ -1377,7 +1375,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
                     {
                         bool ok = pos->positionMove(cmdVector.data());
                         if (!ok)
-                            fprintf(stderr, "Errors while trying to start a position move\n");
+                            yError("Errors while trying to start a position move");
                     }
 
             }
@@ -1385,7 +1383,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
 
         case VOCAB_VELOCITY_MODE:
              {
-                fprintf(stderr, "Warning: received VOCAB_VELOCITY_MODE this is an send invalid message on streaming port\n");
+                yError("Received VOCAB_VELOCITY_MODE this is an send invalid message on streaming port");
                 break;
             }
         case VOCAB_VELOCITY_MOVES:
@@ -1394,15 +1392,15 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
                     {
                         bool ok = vel->velocityMove(cmdVector.data());
                         if (!ok)
-                            fprintf(stderr, "Errors while trying to start a velocity move\n");
+                            yError("Errors while trying to start a velocity move");
                     }
             }
             break;
 
         case VOCAB_OUTPUTS:
             {
-                std::cout << "DEPRECATED openloop setOutputS!! missing interface name! Check you are using the updated RemoteControlBoard class" << std::endl;
-                std::cout << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] list_if_values" << std::endl;
+                yError() << "DEPRECATED openloop setOutputS!! missing interface name! Check you are using the updated RemoteControlBoard class "
+                         << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] list_if_values";
             }
             break;
 
@@ -1414,7 +1412,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
                 double temp_val = cmdVector.operator [](0);
                 bool ok = posDir->setPosition(b.get(1).asInt(), cmdVector.operator [](0)); // cmdVector.data());
                 if (!ok)
-                {   fprintf(stderr, "Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt() ); }
+                {   yError("Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt() ); }
             }
         }
         break;
@@ -1427,8 +1425,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
                 Bottle *jlut = b.get(2).asList();
                 if( (jlut->size() != n_joints) && (cmdVector.size() != n_joints) )
                 {
-                    fprintf(stderr, "Received VOCAB_POSITION_DIRECT_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
-
+                    yError("Received VOCAB_POSITION_DIRECT_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
                 }
 
                 int *joint_list = new int[n_joints];
@@ -1438,7 +1435,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
 
                 bool ok = posDir->setPositions(n_joints, joint_list, cmdVector.data());
                 if (!ok)
-                {   fprintf(stderr, "Error while trying to command a streaming position direct message on joint group\n" ); }
+                {   yError("Error while trying to command a streaming position direct message on joint group\n" ); }
 
                 delete[] joint_list;
             }
@@ -1451,7 +1448,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
             {
                 bool ok = posDir->setPositions(cmdVector.data());
                 if (!ok)
-                {   fprintf(stderr, "Error while trying to command a streaming position direct message on all joints\n" ); }
+                {   yError("Error while trying to command a streaming position direct message on all joints\n" ); }
             }
         }
         break;
@@ -1462,7 +1459,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
                 int n_joints = b.get(1).asInt();
                 Bottle *jlut = b.get(2).asList();
                 if( (jlut->size() != n_joints) && (cmdVector.size() != n_joints) )
-                    fprintf(stderr, "Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
+                    yError("Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
 
                 int *joint_list = new int[n_joints];
                 for (int i = 0; i < n_joints; i++)
@@ -1470,7 +1467,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
 
                 bool ok = vel2->velocityMove(n_joints, joint_list, cmdVector.data());
                 if (!ok)
-                {   fprintf(stderr, "Error while trying to command a velocity move on joint group\n" ); }
+                {   yError("Error while trying to command a velocity move on joint group\n" ); }
 
                 delete[] joint_list;
             }
@@ -1480,7 +1477,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
         default:
             {
                 yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
-                fprintf(stderr, "Unrecognized message while receiving on command port (%s)\n",str.c_str());
+                yError("Unrecognized message while receiving on command port (%s)\n",str.c_str());
             }
             break;
         }
@@ -1492,12 +1489,12 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 {
 
     //    ACE_thread_t self=ACE_Thread::self();
-    //    fprintf(stderr, "--> [%X] starting responder\n",self);
+    //    yDebug(stderr, "--> [%X] starting responder\n",self);
 
     bool ok = false;
     bool rec = false; // is the command recognized?
      if (caller->verbose())
-        printf("command received: %s\n", cmd.toString().c_str());
+        yDebug("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
 
     if(cmd.size() >= 2)
@@ -1532,7 +1529,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 {
                     rec=true;
                     if (caller->verbose())
-                        printf("Calling calibrate joint\n");
+                        yDebug("Calling calibrate joint\n");
 
                     int j=cmd.get(1).asInt();
                     int ui=cmd.get(2).asInt();
@@ -1540,7 +1537,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                     double v2=cmd.get(4).asDouble();
                     double v3=cmd.get(5).asDouble();
                     if (ical2==0)
-                        printf("Sorry I don't have a IControlCalibration2 interface\n");
+                        yError("Sorry I don't have a IControlCalibration2 interface\n");
                     else
                         ok=ical2->calibrate2(j,ui,v1,v2,v3);
                 }
@@ -1549,7 +1546,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 {
                     rec=true;
                     if (caller->verbose())
-                        printf("Calling calibrate\n");
+                        yDebug("Calling calibrate\n");
                     ok=ical2->calibrate();
                 }
                 break;
@@ -1557,7 +1554,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 {
                     rec=true;
                     if (caller->verbose())
-                        printf("Calling calibrate done\n");
+                        yDebug("Calling calibrate done\n");
                     int j=cmd.get(1).asInt();
                     ok=ical2->done(j);
                 }
@@ -1566,7 +1563,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 {
                     rec=true;
                     if (caller->verbose())
-                        printf("Calling park function\n");
+                        yDebug("Calling park function\n");
                     int flag=cmd.get(1).asInt();
                     if (flag)
                         ok=ical2->park(true);
@@ -1579,22 +1576,22 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 {
                     rec = true;
                     if (caller->verbose())
-                        printf("set command received\n");
+                        yDebug("set command received\n");
 
                     switch(cmd.get(1).asVocab())
                     {
                         case VOCAB_OUTPUT:
                         {
-                            std::cout << "DEPRECATED setOutput (should be in streaming!) Check you are using the updated RemoteControlBoard class" << std::endl;
-                            std::cout << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUT) << "] joint value" << std::endl;
+                            yWarning() << "DEPRECATED setOutput (should be in streaming!) Check you are using the updated RemoteControlBoard class";
+                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUT) << "] joint value";
                             ok = false;
                         }
                             break;
 
                         case VOCAB_OUTPUTS:
                             {
-                            std::cout << "DEPRECATED setOutpus (should be in streaming!) Check you are using the updated RemoteControlBoard class" << std::endl;
-                            std::cout << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] joint value" << std::endl;
+                            yWarning() << "DEPRECATED setOutpus (should be in streaming!) Check you are using the updated RemoteControlBoard class";
+                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] joint value";
                             ok = false;
                             }
                             break;
@@ -2194,7 +2191,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
                         default:
                             {
-                                printf("received an unknown command after a VOCAB_SET (%s)\n", cmd.toString().c_str());
+                                yError("received an unknown command after a VOCAB_SET (%s)\n", cmd.toString().c_str());
                             }
                             break;
                     } //switch(cmd.get(1).asVocab()
@@ -2205,7 +2202,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 {
                     rec = true;
                     if (caller->verbose())
-                        printf("get command received\n");
+                        yDebug("get command received\n");
                     int tmp = 0;
                     double dtmp = 0.0;
                     response.addVocab(VOCAB_IS);
@@ -2620,7 +2617,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
                         default:
                             {
-                                 printf("received an unknown request after a VOCAB_GET: %s\n", yarp::os::Vocab::decode(cmd.get(1).asVocab()).c_str());
+                                 yError("received an unknown request after a VOCAB_GET: %s\n", yarp::os::Vocab::decode(cmd.get(1).asVocab()).c_str());
                             }
                             break;
                     } //switch cmd.get(1).asVocab())
@@ -2647,7 +2644,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
     else
         response.addVocab(VOCAB_OK);
 
-    // fprintf(stderr, "--> [%X] done ret %d\n",self, ok);    
+    // yDebug(stderr, "--> [%X] done ret %d\n",self, ok);    
     }
 
     return ok;
@@ -2737,7 +2734,7 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     _verb = (prop.check("verbose","if present, give detailed output"));
     if (_verb)
-        fprintf(stdout, "running with verbose output\n");
+        yInfo("ControlBoardWrapper: running with verbose output\n");
 
     thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
@@ -2748,7 +2745,7 @@ bool ControlBoardWrapper::open(Searchable& config)
         ownDevices=true;
         if(!openAndAttachSubDevice(prop))
         {
-            printf("Error while opening subdevice\n");
+            yError("ControlBoardWrapper: error while opening subdevice\n");
             return false;
         }
     }
@@ -2767,15 +2764,15 @@ bool ControlBoardWrapper::open(Searchable& config)
     */
     if(controlledJoints > MAX_JOINTS_ON_DEVICE)
     {
-        cerr << " ERROR: number of subdevices for this wrapper (" << controlledJoints << ") is bigger than maximum currently handled ("  << MAX_JOINTS_ON_DEVICE << ").";
-        cerr << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ << endl;
+        yError() << " ERROR: number of subdevices for this wrapper (" << controlledJoints << ") is bigger than maximum currently handled ("  << MAX_JOINTS_ON_DEVICE << ").";
+        yError() << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ ;
         return false;
     }
 
     // initialize callback
     if (!callback_impl.initialize())
     {
-        cerr<<"Error could not initialize callback object"<<endl;
+        yError() <<"Error could not initialize callback object";
         return false;
     }
 
@@ -2800,7 +2797,7 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     if (!state_p.open((rootName+"/state:o").c_str()))
     {
-        std::cerr<<"Error opening port "<< rootName+"/state:o\n";
+        yError() <<"Error opening port "<< rootName+"/state:o\n";
         return false;
     }
         
@@ -2822,14 +2819,14 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 {
     if (!prop.check("networks", "list of networks merged by this wrapper"))
     {
-        cerr << "controlBoardWrapper2: List of networks to attach to was not found.\n";
+        yError() << "controlBoardWrapper2: List of networks to attach to was not found.\n";
         return false;
     }
 
     Bottle *nets=prop.find("networks").asList();
     if(nets==0)
     {
-       cerr<<"Error parsing parameters: \"networks\" should be followed by a list\n";
+       yError() <<"Error parsing parameters: \"networks\" should be followed by a list\n";
        return false;
     }
 
@@ -2848,8 +2845,8 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
     if(nsubdevices > MAX_DEVICES)
     {
-        cerr << " ERROR: number of subdevices for this wrapper (" << nsubdevices << ") is bigger than maximum currently handled ("  << MAX_DEVICES << ").";
-        cerr << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ << endl;
+        yError() << " ERROR: number of subdevices for this wrapper (" << nsubdevices << ") is bigger than maximum currently handled ("  << MAX_DEVICES << ").";
+        yError() << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ ;
         return false;
     }
 
@@ -2866,8 +2863,8 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
         parameters=prop.findGroup(nets->get(k).asString().c_str());
 
-        // cout<<"Net is "<< nets->get(k).asString().c_str()<<"\n";
-        //cout<<parameters.toString().c_str();
+        //yDebug()<<"Net is "<< nets->get(k).asString().c_str();
+        //yDebug()<<parameters.toString().c_str();
 
         if(parameters.size()==2)
         {
@@ -2881,9 +2878,9 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
                 if(tmpBot.size() != 4)
                 {
-                    cerr << "Error: check network parameters in part description" << endl;
-                    cerr << "--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis" << endl;
-                    cerr << "Got: "<< parameters.toString().c_str() << "\n";
+                    yError() << "Error: check network parameters in part description"
+                             << "--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis"
+                             << "Got: "<< parameters.toString().c_str() << "\n";
                     return false;
                 }
                 else
@@ -2900,7 +2897,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         }
         else if (parameters.size()==5)
         {
-            // cout<<"Parameter networks use deprecated syntax\n";
+            // yError<<"Parameter networks use deprecated syntax\n";
             wBase=parameters.get(1).asInt();
             wTop=parameters.get(2).asInt();
             base=parameters.get(3).asInt();
@@ -2908,9 +2905,9 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         }
         else
         {
-            cerr<<"Error: check network parameters in part description"<<endl;
-            cerr<<"--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis"<<endl;
-            cerr<<"Got: "<< parameters.toString().c_str() << "\n";                 
+            yError() <<"Error: check network parameters in part description"
+                     <<"--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis"
+                     <<"Got: "<< parameters.toString().c_str() << "\n";                 
             return false;
         }
 
@@ -2920,7 +2917,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         int axes=top-base+1;
         if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str()))
         {
-            cerr<<"configure of subdevice ret false"<<endl;
+            yError() <<"configure of subdevice ret false";
             return false;
         }
 
@@ -2935,7 +2932,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
     if (totalJ!=controlledJoints)
     {
-        cerr<<"Error total number of mapped joints ("<< totalJ <<") does not correspond to part joints (" << controlledJoints << ")" << endl;
+        yError() <<"Error total number of mapped joints ("<< totalJ <<") does not correspond to part joints (" << controlledJoints << ")";
         return false;
     }
 
@@ -2956,12 +2953,12 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
 
     // if error occour during open, quit here.
-    printf("opening controlBoardWrapper2 subdevice\n");
+    yDebug("opening controlBoardWrapper2 subdevice\n");
     subDeviceOwned->open(p);
 
     if (!subDeviceOwned->isValid())
     {
-        printf("opening controlBoardWrapper2 subdevice... FAILED\n");
+        yError("opening controlBoardWrapper2 subdevice... FAILED\n");
         return false;
     }
 
@@ -2969,18 +2966,18 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     Bottle &general = p.findGroup("GENERAL", "section for general motor control parameters");
     if(general.isNull())
     {
-        fprintf(stderr, "Cannot find GENERAL group configuration parameters\n");
+        yError("Cannot find GENERAL group configuration parameters\n");
         return false;
     }
 
     Value & myjoints = general.find("TotalJoints");
     if(myjoints.isNull())
     {
-        printf("ControlBoardWrapper: error, 'TotalJoints' parameter not valid\n");
+        yError("ControlBoardWrapper: error, 'TotalJoints' parameter not valid\n");
         return false;
     }
     controlledJoints = myjoints.asInt();
-    printf("joints parameter is %d\n", controlledJoints);
+    yDebug("joints parameter is %d\n", controlledJoints);
 
 
     device.lut.resize(controlledJoints);
@@ -2996,7 +2993,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     std::string subDevName ((partName + "_" + prop.find("subdevice").asString().c_str()));
     if (!tmpDevice->configure(base, top, controlledJoints, subDevName) )
     {
-        cerr<<"configure of subdevice ret false"<<endl;
+        yError() <<"configure of subdevice ret false";
         return false;
     }
 
@@ -3038,7 +3035,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
             {
                 if (!device.subdevices[k].attach(polylist[p]->poly, tmpKey))
                 {
-                    printf("ControlBoardWrapper: attach to subdevice %s failed\n", polylist[p]->key.c_str());
+                    yError("ControlBoardWrapper: attach to subdevice %s failed\n", polylist[p]->key.c_str());
                     return false;
                 }
             }
@@ -3057,7 +3054,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
 
     if (!ready)
     {
-        printf("ControlBoardWrapper: AttachAll failed, some subdevice was not found or its attach failed\n");
+        yError("ControlBoardWrapper: AttachAll failed, some subdevice was not found or its attach failed\n");
         return false;
     }
 

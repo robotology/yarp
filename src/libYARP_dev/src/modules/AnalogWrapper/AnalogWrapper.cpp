@@ -8,6 +8,8 @@
 #include <iostream>
 #include "AnalogWrapper.h"
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -219,7 +221,7 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
 {
     if (analog2attach.size() != 1)
     {
-        std::cerr<<"AnalogServer: cannot attach more than one device\n";
+        yError("AnalogWrapper: cannot attach more than one device");
         return false;
     }
 
@@ -232,7 +234,7 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
 
     if(NULL == analogSensor_p)
     {
-        std::cerr << "AnalogServer: subdevice passed to attach method is invalid!!!";
+        yError("AnalogWrapper: subdevice passed to attach method is invalid");
         return false;
     }
     attach(analogSensor_p);
@@ -280,7 +282,10 @@ bool AnalogWrapper::threadInit()
     {
         // open data port
         if (!analogPorts[i].port.open(analogPorts[i].port_name.c_str()))
-            return false;
+           {
+               yError("AnalogWrapper: failed to open port %s", analogPorts[i].port_name.c_str());
+               return false;
+           }
     }
     return true;
 }
@@ -314,19 +319,19 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     if(!params.check("robotName", "name of the robot.") )
     {
         correct=false;
-        cerr << "AnalogServer missing robot Name, check your configuration file!! Quitting\n";
+        yError("AnalogWrapper: missing robotName, check your configuration file");
         return false;
     }
 
     if(params.check("deviceId"))
     {
       string tmp(params.find("deviceId").asString());
-      cout << "AnalogWrapper Debug" << tmp;
+      //yDebug() << "AnalogWrapper Debug" << tmp;
       setId(tmp);
     }
     else
     {
-        printf("no device Id found\n");
+        yError("AnalogWrapper: no device Id found");
         return false;
     }
 
@@ -337,7 +342,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     else
     {
         _rate=20;
-        std::cout <<"Warning: part "<< id <<" using default period ("<<_rate<<")\n";
+         yWarning("AnalogWrapper: part %s using default period %d", id.c_str() , _rate);
     }
 
     // Create the list of ports
@@ -352,8 +357,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     {
      // if there is no "ports" section open only 1 port and use name as is.
         createPort((root_name ).c_str(), _rate );
-        cout << "opening port " << root_name.c_str();
-
+        yDebug() << "opening port " << root_name.c_str();
     }
     else
     {
@@ -362,7 +366,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
         Value &deviceChannels =  params.find("channels");
         if (deviceChannels.isNull())
         {
-            cerr << "Error: 'channels' parameters was not found in config file." << endl;
+            yError("AnalogWrapper: 'channels' parameters was not found in config file.");
             return false;
         }
 
@@ -377,8 +381,8 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
             if (parameters.size()!=5)
             {
-                cerr << "check skin port parameters in part description";
-                cerr << "--> I was expecting " << ports->get(k).asString().c_str() << " followed by four integers" << endl;
+                yError() << "AnalogWrapper: check skin port parameters in part description, I was expecting "
+                         << ports->get(k).asString().c_str() << " followed by four integers";
                 return false;
             }
 
@@ -387,19 +391,19 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
             int base=parameters.get(3).asInt();
             int top=parameters.get(4).asInt();
 
-            cout<<"--> "<<wBase<<" "<<wTop<<" "<<base<<" "<<top<<endl;
+            yDebug()<<"--> "<<wBase<<" "<<wTop<<" "<<base<<" "<<top;
 
             //check consistenty
             if(wTop-wBase != top-base){
-                cerr << "Error: Numbers of mapped taxels do not match.\n";
-                cerr << "check " << ports->get(k).asString().c_str() << " port parameters in part description" << endl;
+                yError() << "AnalogWrapper: numbers of mapped taxels do not match, check "
+                         << ports->get(k).asString().c_str() << " port parameters in part description";
                 return false;
             }
             int portChannels = top-base+1;
 
             tmpPorts[k].length = portChannels;
             tmpPorts[k].offset = wBase;
-            cout << "opening port " << ports->get(k).asString().c_str();
+            yDebug() << "opening port " << ports->get(k).asString().c_str();
             tmpPorts[k].port_name = root_name+ "/" + string(ports->get(k).asString().c_str());
 
             createPorts(tmpPorts, _rate);
@@ -408,7 +412,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
         if (sumOfChannels!=deviceChannels.asInt())
         {
-            cerr << "Error total number of mapped taxels does not correspond to total taxels";
+            yError() << "AnalogWrapper: Total number of mapped taxels does not correspond to total taxels";
             return false;
         }
     }
@@ -449,8 +453,8 @@ void AnalogWrapper::run()
 
                     // check vector limit
                     if(last>=(int)lastDataRead.size()){
-                        cerr<<"Error while sending analog sensor output on port "<< analogPorts[i].port_name<< endl;
-                        cerr<<"Vector size expected to be at least "<<last<<" whereas it is "<< lastDataRead.size()<< endl;
+                        yError()<<"AnalogWrapper: error while sending analog sensor output on port "<< analogPorts[i].port_name 
+                                <<" Vector size expected to be at least "<<last<<" whereas it is "<< lastDataRead.size();
                         continue;
                     }
                     pv = lastDataRead.subVector(first, last);
@@ -461,19 +465,19 @@ void AnalogWrapper::run()
             }
             else
             {
-                printf("%s: vector size non valid: %lu\n", id.c_str(), static_cast<unsigned long> (lastDataRead.size()));
+                yError("AnalogWrapper: %s: vector size non valid: %lu", id.c_str(), static_cast<unsigned long> (lastDataRead.size()));
             }
         }
         else
         {
-             printf("%s: Sensor returned error\n", id.c_str());
+             yError("AnalogWrapper: %s: Sensor returned error", id.c_str());
         }
     }
 }
 
 bool AnalogWrapper::close()
 {
-    fprintf(stderr, "AnalogServer::Close\n");
+    yTrace("AnalogWrapper::Close");
     if (RateThread::isRunning())
     {
         RateThread::stop();
