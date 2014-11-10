@@ -11,12 +11,9 @@
 #define __YARP_CONTROL_BOARD_HELPER__
 
 #include <string.h> // for memset
-#include <stdlib.h> // for exit
 #include <stdio.h> // for printf
 #include <math.h> //fabs
-
-
-#define _YARP_ASSERT(x) { if (!(x)) { printf("memory allocation failure\n"); exit(1); } }
+#include <yarp/os/Log.h>
 
 /*
  * simple helper template to alloc memory.
@@ -25,7 +22,7 @@ template <class T>
 inline T* allocAndCheck(int size)
 {
     T* t = new T[size];
-    _YARP_ASSERT (t != 0);
+    yAssert (t != 0);
     memset(t, 0, sizeof(T) * size);
     return t;
 }
@@ -53,8 +50,8 @@ public:
         angleToEncoders(0),
         newtonsToSensors(0)
     {
-        _YARP_ASSERT(n>=0);         // if number of joints is negative complain!
-        _YARP_ASSERT(aMap!=0);      // at least the axisMap is required
+        yAssert(n>=0);         // if number of joints is negative complain!
+        yAssert(aMap!=0);      // at least the axisMap is required
 
         nj=n;
         alloc(n);
@@ -114,7 +111,7 @@ public:
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
         newtonsToSensors=new double [nj];
-        _YARP_ASSERT(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && newtonsToSensors != 0);
+        yAssert(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && newtonsToSensors != 0);
 
         return true;
     }
