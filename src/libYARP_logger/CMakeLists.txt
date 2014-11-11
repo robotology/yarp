@@ -23,7 +23,6 @@ set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
-include_directories(${TinyXML_INCLUDE_DIRS})
 
 
 if(CREATE_LIB_MATH)
@@ -38,7 +37,6 @@ add_library(YARP_logger STATIC ${YARP_logger_SRCS}
                                 ${YARP_logger_IMPL_HDRS})
 
 target_link_libraries(YARP_logger LINK_PRIVATE YARP_sig YARP_OS)
-target_link_libraries(YARP_logger LINK_PRIVATE ${TinyXML_LIBRARIES})
 
 if(CREATE_LIB_MATH)
   target_link_libraries(YARP_logger LINK_PRIVATE YARP_math)
