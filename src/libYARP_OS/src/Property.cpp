@@ -485,7 +485,11 @@ public:
                             } else {
                                 comment = 0;
                                 if (ch=='#'&&prespace) {
-                                    buf = buf.substr(0,i-1);
+                                    if (i==0) {
+                                        buf = "";
+                                    } else {
+                                        buf = buf.substr(0,i-1);
+                                    }
                                     break;
                                 }
                             }
