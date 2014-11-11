@@ -357,6 +357,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     displayErrorLevel=true;
     displayGrid=true;
     displayColors=true;
+    show_mute_ports_enabled=true;
 
     bool autostart = rf.check("start");
     if (autostart)
