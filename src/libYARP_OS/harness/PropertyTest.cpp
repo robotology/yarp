@@ -295,6 +295,19 @@ check $x $y\n\
         checkEqual(p.findGroup("x").size(),4,"group size with quoting ok");
         p.fromConfig("x 10#15 4 5");
         checkEqual(p.findGroup("x").size(),4,"group size with x#y ok");
+        report(0,"checking comment in configuration file");
+        p.fromConfig("robotName icub \n urdf_file model.urdf \n # this is trash \n");
+        checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfig");
+        const char *fname1 = "_yarp_regression_test_ini_comments.txt";
+        FILE *fout = fopen(fname1,"w");
+        yAssert(fout!=NULL);
+        fprintf(fout,"robotName icub\n");
+        fprintf(fout,"urdf_file model.urdf\n");
+        fprintf(fout,"# this is trash\n");
+        fclose(fout);
+        fout = NULL;
+        checkEqual(p.fromConfigFile(fname1),true,"test file correctly loaded");
+        checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfigFile");
     }
 
     virtual void checkWipe() {
