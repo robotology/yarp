@@ -60,7 +60,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     */
 
     ThreadImpl *thread = (ThreadImpl *)args;
-   
+
     YARP_DEBUG(Logger::get(),"Thread starting up");
 
     bool success=thread->threadInit();
@@ -69,11 +69,11 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     thread->synchroPost();
 
     if (success)
-        {
-            thread->setPriority();
-            thread->run();
-            thread->threadRelease();
-        }
+    {
+        thread->setPriority();
+        thread->run();
+        thread->threadRelease();
+    }
 
 
     //YARP_ERROR(Logger::get(),String("uncaught exception in thread: ") +
@@ -329,7 +329,7 @@ int ThreadImpl::setPriority(int priority, int policy) {
 #else
     #if defined(YARP_HAS_ACE) // Use ACE API
         return ACE_Thread::setprio(hid, priority, policy);
-    #elif defined(UNIX) // Use the POSIX syscalls 
+    #elif defined(UNIX) // Use the POSIX syscalls
         struct sched_param thread_param;
         thread_param.sched_priority = priority;
         int ret pthread_setschedparam(hid, policy, &thread_param);
@@ -350,7 +350,7 @@ int ThreadImpl::getPriority() {
 #else
     #if defined(YARP_HAS_ACE) // Use ACE API
         ACE_Thread::getprio(hid, prio);
-    #elif defined(UNIX) // Use the POSIX syscalls 
+    #elif defined(UNIX) // Use the POSIX syscalls
         struct sched_param thread_param;
         int policy;
         if(pthread_getschedparam(hid, &policy, &thread_param) == 0)
@@ -364,15 +364,15 @@ int ThreadImpl::getPriority() {
 }
 
 int ThreadImpl::getPolicy() {
-    int policy = defaultPolicy;    
+    int policy = defaultPolicy;
     int prio;
     if (active) {
 #if defined(YARP_HAS_CXX11)
         YARP_ERROR(Logger::get(),"Cannot get scheduiling policy with C++11");
 #else
-    #if defined(YARP_HAS_ACE) // Use ACE API        
+    #if defined(YARP_HAS_ACE) // Use ACE API
         ACE_Thread::getprio(hid, prio, policy);
-    #elif defined(UNIX) // Use the POSIX syscalls 
+    #elif defined(UNIX) // Use the POSIX syscalls
         struct sched_param thread_param;
         if(pthread_getschedparam(hid, &policy, &thread_param) != 0)
             policy = defaultPolicy;

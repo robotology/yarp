@@ -31,8 +31,8 @@ namespace yarp {
 /**
  * A stream abstraction for shared memory communication.
  */
-class yarp::os::impl::ShmemHybridStream : public TwoWayStream, 
-           yarp::os::InputStream, 
+class yarp::os::impl::ShmemHybridStream : public TwoWayStream,
+           yarp::os::InputStream,
            yarp::os::OutputStream
 {
 public:

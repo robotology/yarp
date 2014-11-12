@@ -112,7 +112,7 @@ private:
 
 
 /**
- * Low level function for printing a stack trace, if implemented (gcc/Linux).
+ * Low level function for printing a stack trace, if implemented (ACE or gcc/Linux).
  */
 YARP_OS_API void yarp_print_trace(FILE *out, const char *file, int line);
 

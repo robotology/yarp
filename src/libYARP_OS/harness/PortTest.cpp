@@ -89,7 +89,7 @@ public:
         p.open("/reader");
         this->faithful = faithful;
     }
-    
+
     virtual void run() {
         for (int i=0; i<3; i++) {
             Bottle b,b2;
@@ -225,7 +225,7 @@ public:
     DataPort() {
         ct = 0;
     }
-    
+
     virtual void onRead(Bottle& b) {
         ct++;
      }
@@ -320,7 +320,7 @@ public:
             checkTrue(result!=NULL,"got something check");
             if (result!=NULL) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),String("size is in fact ") + 
+                YARP_INFO(Logger::get(),String("size is in fact ") +
                           NetType::toString(result->size()));
             }
         }
@@ -360,7 +360,7 @@ public:
             checkTrue(result!=NULL,"got something check");
             if (result!=NULL) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),String("size is in fact ") + 
+                YARP_INFO(Logger::get(),String("size is in fact ") +
                           NetType::toString(result->size()));
             }
         }
@@ -408,7 +408,7 @@ public:
             checkTrue(result!=NULL,"got something check");
             if (result!=NULL) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),String("size is in fact ") + 
+                YARP_INFO(Logger::get(),String("size is in fact ") +
                           NetType::toString(result->size()));
             }
         }
@@ -463,9 +463,9 @@ public:
         Port input, output;
         input.open("/in");
         output.open("/out");
-    
+
         input.setReader(provider);
-    
+
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
         Time::delay(0.1);
         ServiceTester tester(*this);
@@ -474,7 +474,7 @@ public:
         tester.finalCheck();
         Time::delay(0.1);
         output.close();
-        input.close();    
+        input.close();
     }
 
 
@@ -556,7 +556,7 @@ public:
         }
 
         report(0,"port stabilized");
-		output.close();
+        output.close();
         report(0,"shut down output buffering");
     }
 
@@ -581,7 +581,7 @@ public:
         report(0,"reading...");
         BinPortable<int> *bin = input.read();
         checkEqual(bin->content(),999,"good send");
-	}
+    }
 
     void testCloseOrder() {
         report(0,"check that port close order doesn't matter...");
@@ -593,23 +593,23 @@ public:
                 input.open("/in");
                 output.open("/out");
                 output.addOutput("/in");
-                
+
                 report(0,"closing in");
                 input.close();
-                
+
                 report(0,"closing out");
                 output.close();
             }
-            
+
             {
                 Port input, output;
                 input.open("/in");
                 output.open("/out");
                 output.addOutput("/in");
-                
+
                 report(0,"closing out");
                 output.close();
-                
+
                 report(0,"closing in");
                 input.close();
             }
@@ -674,19 +674,19 @@ public:
         in.setStrict();
         in.open("/in");
         out.open("/out");
-        
+
         Network::connect("/out","/in");
-        
+
         Bottle& outBot1 = out.prepare();
         outBot1.fromString("hello world");
         printf("Writing bottle 1: %s\n", outBot1.toString().c_str());
         out.write(true);
-        
+
         Bottle& outBot2 = out.prepare();
         outBot2.fromString("2 3 5 7 11");
         printf("Writing bottle 2: %s\n", outBot2.toString().c_str());
         out.write(true);
-        
+
         Bottle *inBot1 = in.read();
         checkTrue(inBot1!=NULL,"got 1 of 2 items");
         if (inBot1!=NULL) {
@@ -709,14 +709,14 @@ public:
         in.setStrict(false);
         in.open("/in");
         out.open("/out");
-        
+
         Network::connect("/out","/in");
-        
+
         Bottle& outBot1 = out.prepare();
         outBot1.fromString("hello world");
         printf("Writing bottle 1: %s\n", outBot1.toString().c_str());
         out.write(true);
-        
+
         Bottle& outBot2 = out.prepare();
         outBot2.fromString("2 3 5 7 11");
         printf("Writing bottle 2: %s\n", outBot2.toString().c_str());
@@ -965,7 +965,7 @@ public:
         Network::connect("/p2","/p1");
         Network::sync("/p1");
         Network::sync("/p2");
-        
+
         Bottle cmd("[help]"), reply;
         p2.setAdminMode();
         p2.write(cmd,reply);
@@ -989,7 +989,7 @@ public:
 
         out.prepare().fromString("1");
         out.write(true);
-        
+
         Bottle *bot = in.read();
         checkTrue(bot!=NULL,"Inserted message received");
         if (bot!=NULL) {
@@ -1008,7 +1008,7 @@ public:
 
         out.prepare().fromString("1 2 3");
         out.write(true);
-        
+
         void *key2 = in.acquire();
         Bottle *bot3 = in.read();
         checkTrue(bot3!=NULL,"Inserted message received");
@@ -1206,7 +1206,7 @@ public:
         input.close();
         output.stop();
         output.p.close();
-        report(0,"successfully closed");        
+        report(0,"successfully closed");
     }
 
     void testInterruptWithBadReader() {

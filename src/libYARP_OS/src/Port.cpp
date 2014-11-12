@@ -55,10 +55,10 @@ public:
     bool active;
 
     PortCoreAdapter(Port& owner) :
-        owner(owner), stateMutex(1), 
-        readDelegate(NULL), 
-        permanentReadDelegate(NULL), 
-        adminReadDelegate(NULL), 
+        owner(owner), stateMutex(1),
+        readDelegate(NULL),
+        permanentReadDelegate(NULL),
+        adminReadDelegate(NULL),
         writeDelegate(NULL),
         readResult(false),
         readActive(false),

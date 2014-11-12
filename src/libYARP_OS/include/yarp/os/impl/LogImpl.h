@@ -26,10 +26,10 @@ public:
                                const char *func);
 
     static void forward_callback(yarp::os::Log::LogType t,
-                               const char *msg,
-                               const char *file,
-                               const unsigned int line,
-                               const char *func);
+                                 const char *msg,
+                                 const char *file,
+                                 const unsigned int line,
+                                 const char *func);
 
     const char *file;
     const unsigned int line;

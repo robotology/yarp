@@ -55,10 +55,10 @@ public:
             fclose(fout);
             fout = NULL;
 
-            const char *argv[] = { "ignore", 
+            const char *argv[] = { "ignore",
                                    "--policy", "_yarp_regression_test",
                                    "--_yarp_regression_test", ".",
-                                   "--from", fname1, 
+                                   "--from", fname1,
                                    "--verbose", "0",
                                    NULL };
             int argc = 9;
@@ -84,7 +84,6 @@ public:
             alt=rf.findFileByName(fname1);
             checkTrue(alt!="","found file by name");
         }
-        
     }
 
     void testCommandLineArgs() {
@@ -109,10 +108,10 @@ public:
             fclose(fout);
             fout = NULL;
 
-            const char *argv[] = { "ignore", 
+            const char *argv[] = { "ignore",
                                    "--policy", "_yarp_regression_test",
                                    "--_yarp_regression_test", ".",
-                                   "--from", fname1, 
+                                   "--from", fname1,
                                    "--verbose", "0",
                                    NULL };
             int argc = 9;
@@ -121,10 +120,10 @@ public:
             rf1.configure("none",argc,(char **)argv);
             checkEqual(rf1.find("x").asInt(),14,"found x");
 
-            const char *argv2[] = { "ignore", 
+            const char *argv2[] = { "ignore",
                                     "--policy", "_yarp_regression_test",
                                     "--_yarp_regression_test", ".",
-                                    "--from", fname1, 
+                                    "--from", fname1,
                                     "--verbose", "0",
                                     "--x", "20",
                                     "--y", "30",
@@ -143,10 +142,10 @@ public:
     void testContext() {
         report(0,"test context setting");
         ResourceFinder rf;
-        const char *argv[] = { "ignore", 
+        const char *argv[] = { "ignore",
                                "--policy", "_yarp_regression_test",
                                "--_yarp_regression_test", ".",
-                               "--context", "zig", 
+                               "--context", "zig",
                                "--verbose", "0",
                                NULL };
         int argc = 9;
@@ -184,10 +183,10 @@ public:
             fout = NULL;
         }
         ResourceFinder rf;
-        const char *argv[] = { "ignore", 
+        const char *argv[] = { "ignore",
                                "--policy", "_yarp_regression_test",
                                "--_yarp_regression_test", ".",
-                               "--from", fname0, 
+                               "--from", fname0,
                                "--verbose", "0",
                                NULL };
         int argc = 9;
@@ -383,7 +382,7 @@ public:
             mkdir(dir);
         }
     }
-    
+
     void setUpTestArea(bool etc_pathd) {
         ConstString colon = Network::getPathSeparator();
         ConstString slash = Network::getDirectorySeparator();
@@ -620,7 +619,7 @@ public:
                 report(0,"test readConfig with pathd in /usr/share/yarp/...");
             }
             setUpTestArea(area==0);
-            
+
             ResourceFinder rf;
             Property p;
             bool ok = rf.readConfig(p,"data.ini",
@@ -638,7 +637,7 @@ public:
             checkTrue(p.check("data_home"),"data_home found");
             checkTrue(p.check("data_dir0"),"data_dirs found");
             checkTrue(p.check("project1"),"project1 found");
-            
+
             breakDownTestArea();
         }
     }
@@ -646,7 +645,7 @@ public:
     void testContextVer2() {
         report(0,"test context version 2");
         setUpTestArea(false);
-        
+
         {
             ResourceFinder rf;
             rf.setDefaultContext("my_app");

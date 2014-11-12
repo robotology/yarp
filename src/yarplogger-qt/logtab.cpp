@@ -22,7 +22,7 @@
 LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
     ui(new Ui::LogTab)
-{ 
+{
     system_message = _system_message;
     theLogger= _theLogger;
     portName =_portName;

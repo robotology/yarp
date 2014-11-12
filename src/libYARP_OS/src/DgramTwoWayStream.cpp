@@ -40,7 +40,7 @@ using namespace yarp::os;
 
 static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct,
                      int *store_altPct = NULL) {
-    NetInt32 alt = 
+    NetInt32 alt =
         (NetInt32)NetType::getCrc(buf+crcLength,(length>crcLength)?(length-crcLength):0);
     Bytes b(buf,4);
     Bytes b2(buf+4,4);
@@ -64,7 +64,7 @@ static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int
 
 
 static void addCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct) {
-    NetInt32 alt = 
+    NetInt32 alt =
         (NetInt32)NetType::getCrc(buf+crcLength,
                                            (length>crcLength)?(length-crcLength):0);
     Bytes b(buf,4);
@@ -107,8 +107,8 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
     YARP_DEBUG(Logger::get(),String("starting DGRAM entity on port number ") + NetType::toString(localHandle.get_port_number()));
     localAddress = Contact("127.0.0.1",
                            localHandle.get_port_number());
-    YARP_DEBUG(Logger::get(),String("Update: DGRAM from ") + 
-               localAddress.toURI() + 
+    YARP_DEBUG(Logger::get(),String("Update: DGRAM from ") +
+               localAddress.toURI() +
                " to " + remote.toURI());
 
     allocate();
@@ -198,9 +198,9 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
     // Most require interface names, yet provide no way to query
     // these names - and in the end, convert to IP addresses.
     // Here we try to do an end run around ACE.
-    
+
     // based on: ACE_SOCK_Dgram::set_nic
-    
+
     ip_mreq multicast_address;
     ACE_INET_Addr group_addr(group.getPort(),
                              group.getHost().c_str());
@@ -210,17 +210,17 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
         htonl (interface_addr.get_ip_address ());
     multicast_address.imr_multiaddr.s_addr =
         htonl (group_addr.get_ip_address ());
-    
+
     if (add) {
         YARP_DEBUG(Logger::get(),"Trying to correct mcast membership...\n");
-        result = 
+        result =
             ((ACE_SOCK*)dmcast)->set_option (IPPROTO_IP,
                                              IP_ADD_MEMBERSHIP,
                                              &multicast_address,
                                              sizeof (struct ip_mreq));
     } else {
         YARP_DEBUG(Logger::get(),"Trying to correct mcast output...");
-        result = 
+        result =
             ((ACE_SOCK*)dmcast)->set_option (IPPROTO_IP,
                                              IP_MULTICAST_IF,
                                              &multicast_address.imr_interface.s_addr,
@@ -238,12 +238,12 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
         }
         result = 0; // in fact, best to proceed for Windows.
     }
-    
+
     return result;
 }
 
 
-bool DgramTwoWayStream::openMcast(const Contact& group, 
+bool DgramTwoWayStream::openMcast(const Contact& group,
                                   const Contact& ipLocal) {
 
     multiMode = true;
@@ -256,16 +256,16 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     dgram = dmcast;
     mgram = dmcast;
     yAssert(dgram!=NULL);
-    
+
     int result = -1;
     ACE_INET_Addr addr(group.getPort(),group.getHost().c_str());
     if (ipLocal.isValid()) {
-        result = dmcast->open(addr,NULL,1); 
+        result = dmcast->open(addr,NULL,1);
         if (result==0) {
             result = restrictMcast(dmcast,group,ipLocal,false);
         }
     } else {
-        result = dmcast->open(addr,NULL,1); 
+        result = dmcast->open(addr,NULL,1);
     }
 
     if (result!=0) {
@@ -287,7 +287,7 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
 
 bool DgramTwoWayStream::join(const Contact& group, bool sender,
                              const Contact& ipLocal) {
-    YARP_DEBUG(Logger::get(),String("subscribing to mcast address ") + 
+    YARP_DEBUG(Logger::get(),String("subscribing to mcast address ") +
                group.toURI() + " for " +
                (sender?"writing":"reading"));
 
@@ -316,13 +316,13 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
     int result = -1;
     if (ipLocal.isValid()) {
         result = 0;
-        result = dmcast->join(addr,1); 
+        result = dmcast->join(addr,1);
 
         if (result==0) {
             result = restrictMcast(dmcast,group,ipLocal,true);
         }
     } else {
-        result = dmcast->join(addr,1); 
+        result = dmcast->join(addr,1);
     }
 
     configureSystemBuffers();
@@ -382,10 +382,10 @@ void DgramTwoWayStream::interrupt() {
                 for (size_t i=0; i<empty.length(); i++) {
                     empty.get()[i] = 0;
                 }
-                
+
                 // don't want this message getting into a valid packet
                 tmp.pct = -1;
-                
+
                 tmp.write(empty.bytes());
                 tmp.flush();
                 tmp.close();
@@ -394,7 +394,7 @@ void DgramTwoWayStream::interrupt() {
                 }
             }
             YARP_DEBUG(Logger::get(),"dgram interrupt done");
-        } 
+        }
         mutex.wait();
         interrupting = false;
         mutex.post();
@@ -433,21 +433,21 @@ void DgramTwoWayStream::closeMain() {
         }
         happy = false;
         mutex.post();
-    } 
+    }
     happy = false;
 }
 
 YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
     reader = true;
     bool done = false;
-    
+
     while (!done) {
 
-        if (closed) { 
+        if (closed) {
             happy = false;
-            return -1; 
+            return -1;
         }
-        
+
         // if nothing is available, try to grab stuff
         if (readAvail==0) {
             readAt = 0;
@@ -456,7 +456,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             //yAssert(dgram!=NULL);
             //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
             YARP_SSIZE_T result = -1;
-            if (mgram && restrictInterfaceIp.isValid()) { 
+            if (mgram && restrictInterfaceIp.isValid()) {
                 /*
                 printf("Consider remote mcast\n");
                 printf("What we know:\n");
@@ -472,7 +472,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                 YARP_DEBUG(Logger::get(),
                            String("MCAST Got ") + NetType::toString((int)result) +
                            " bytes");
-                
+
             } else if (dgram!=NULL) {
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
                 yAssert(dgram!=NULL);
@@ -507,7 +507,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                 return -1;
             }
             readAvail = result;
-            
+
             // deal with CRC
             int altPct = 0;
             bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE,pct,

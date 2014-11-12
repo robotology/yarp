@@ -28,14 +28,14 @@ namespace yarp {
  * Manage the name server.
  *
  */
-class yarp::name::NameServerManager : public NameService, 
-									  public yarp::os::PortReaderCreator {
+class yarp::name::NameServerManager : public NameService,
+                                      public yarp::os::PortReaderCreator {
 private:
     NameService& ns;
     yarp::os::Port *port;
     yarp::os::Semaphore mutex;
 public:
-    NameServerManager(NameService& ns, 
+    NameServerManager(NameService& ns,
                       yarp::os::Port *port = NULL) : ns(ns),
                                                      port(port), mutex(1) {
     }
@@ -63,9 +63,9 @@ public:
         mutex.post();
     }
 
-    virtual bool apply(yarp::os::Bottle& cmd, 
-                       yarp::os::Bottle& reply, 
-                       yarp::os::Bottle& event, 
+    virtual bool apply(yarp::os::Bottle& cmd,
+                       yarp::os::Bottle& reply,
+                       yarp::os::Bottle& event,
                        const yarp::os::Contact& remote) {
         bool ok = ns.apply(cmd,reply,event,remote);
         return ok;

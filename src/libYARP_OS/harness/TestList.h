@@ -62,7 +62,7 @@ class yarp::os::impl::TestList {
 public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();
-		root.add(getBottleTest());
+        root.add(getBottleTest());
         root.add(getStringTest());
         root.add(getAddressTest());
         root.add(getStringInputStreamTest());
@@ -98,7 +98,7 @@ public:
         root.add(getPublisherTest());
 
 #ifdef YARPRUN_TEST
-		root.add(getRunTest());
+        root.add(getRunTest());
 #endif
 
     }
