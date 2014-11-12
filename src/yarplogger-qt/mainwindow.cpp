@@ -664,7 +664,7 @@ void MainWindow::on_actionRefresh_triggered()
     updateMain();
     theLogger->connect(ports);
     char text [100];
-    sprintf (text,"found %d ports, logger running", ports.size());
+    sprintf (text,"found %zd ports, logger running", ports.size());
     system_message->addMessage(text);
     statusBarLabel->setText("Running");
 }
