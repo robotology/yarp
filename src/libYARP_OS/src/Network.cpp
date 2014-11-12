@@ -49,12 +49,29 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 static int __yarp_is_initialized = 0;
-static bool __yarp_auto_init_active = false;
+static bool __yarp_auto_init_active = false; // was yarp auto-initialized?
 
 static MultiNameSpace *__multi_name_space = NULL;
 
+/**
+ *
+ * A single-use class to shut down the yarp library if it was
+ * initialized automatically.
+ *
+ */
 class YarpAutoInit {
 public:
+    /**
+     *
+     * Shut down the yarp library if it was automatically initialized.
+     * The library is automatically initialized if
+     * NetworkBase::autoInitMinimum() is called before any of the
+     * manual ways of initializing the library (calling Network::init,
+     * creating a Network object, etc).  yarp::os::ResourceFinder
+     * calls autoInitMinimum() since it needs to be sure that
+     * YARP+ACE is initialized (but a user might not expect that).
+     *
+     */
     ~YarpAutoInit() {
         if (__yarp_auto_init_active) {
             NetworkBase::finiMinimum();
@@ -62,7 +79,7 @@ public:
         }
     }
 };
-static YarpAutoInit yarp_auto_init;
+static YarpAutoInit yarp_auto_init; ///< destructor is called on shutdown.
 
 static MultiNameSpace& getNameSpace() {
     if (__multi_name_space == NULL) {
