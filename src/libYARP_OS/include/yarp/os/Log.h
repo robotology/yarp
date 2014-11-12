@@ -28,6 +28,16 @@
 # define __YFUNCTION__ "(unknown function)"
 #endif // __GNUC__
 
+// check arguments of the c-style debug functions to make sure that the
+// arguments supplied have types appropriate to the format string
+// specified, and that the conversions specified in the format string
+// make sense. On gcc the warning is enabled by -Wformat.
+#if defined(__GNUC__)
+# define YARP_ATTRIBUTE_FORMAT(style, fmt, args) __attribute__((format(printf, (fmt), (args))))
+#else
+# define YARP_ATTRIBUTE_FORMAT(style, fmt, args)
+#endif
+
 
 namespace yarp { namespace os { class LogStream; }}
 namespace yarp { namespace os { namespace impl { class LogImpl; }}}
@@ -55,12 +65,12 @@ public:
         FatalType
     };
 
-    void trace(const char *msg, ...) const;
-    void debug(const char *msg, ...) const;
-    void info(const char *msg, ...) const;
-    void warning(const char *msg, ...) const;
-    void error(const char *msg, ...) const;
-    void fatal(const char *msg, ...) const;
+    void trace(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void debug(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void info(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void warning(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void error(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void fatal(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
 
     LogStream trace() const;
     LogStream debug() const;
