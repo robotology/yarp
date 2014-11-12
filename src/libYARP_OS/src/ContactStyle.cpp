@@ -12,6 +12,7 @@
 yarp::os::ContactStyle::ContactStyle() :
         admin(false),
         quiet(false),
+        verboseOnSuccess(true),
         timeout(-1),
         carrier(""),
         expectReply(true),

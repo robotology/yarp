@@ -193,9 +193,11 @@ static int enactConnection(const Contact& src,
         noteDud(dest);
     }
     if (!style.quiet) {
-        fprintf(stderr,"%s %s",
-                ok?"Success:":"Failure:",
-                msg.c_str());
+        if (style.verboseOnSuccess||!ok) {
+            fprintf(stderr,"%s %s",
+                    ok?"Success:":"Failure:",
+                    msg.c_str());
+        }
     }
     return ok?0:1;
 }
@@ -370,7 +372,9 @@ static int metaConnect(const ConstString& src,
             return 1;
         }
         if (!style.quiet) {
-            fprintf(stderr,"Success: connection to topic added.\n");
+            if (style.verboseOnSuccess) {
+                fprintf(stderr,"Success: connection to topic added.\n");
+            }
         }
         return 0;
     }
@@ -442,7 +446,9 @@ static int metaConnect(const ConstString& src,
     if (result!=-1) {
         if (!style.quiet) {
             if (result==0) {
-                printf("Success: added connection using custom carrier method\n");
+                if (style.verboseOnSuccess) {
+                    printf("Success: added connection using custom carrier method\n");
+                }
             } else {
                 printf("Failure: custom carrier method did not work\n");
             }

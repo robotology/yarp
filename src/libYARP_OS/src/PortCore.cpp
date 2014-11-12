@@ -873,13 +873,22 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
     // Check for any restrictions on the port.  Perhaps it can only
     // read, or write.
     bool allowed = true;
+    String err = "";
+    String append = "";
     int f = getFlags();
     bool allow_output = (f&PORTCORE_IS_OUTPUT);
     bool rpc = (f&PORTCORE_IS_RPC);
     Name name(r.getCarrierName() + String("://test"));
     String mode = name.getCarrierModifier("log");
     bool is_log = (mode!="");
-    String err = "";
+    if (is_log) {
+        if (mode!="in") {
+            err = "Logger configured as log." + mode + ", but only log.in is supported";
+            allowed = false;
+        } else {
+            append = "; " + r.getFromName() + " will forward messages and replies (if any) to " + r.getToName();
+        }
+    }
     if (!allow_output) {
         if (!is_log) {
             bool push = false;
@@ -961,7 +970,7 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
     }
 
     // Communicated the good news.
-    bw.appendLine(String("Added connection from ") + getName() + " to " + dest);
+    bw.appendLine(String("Added connection from ") + getName() + " to " + dest + append);
     if (os!=NULL) bw.write(*os);
     cleanUnits();
     return true;

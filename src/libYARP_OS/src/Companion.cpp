@@ -2045,8 +2045,10 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
     applyArgs(reader.core);
     reader.open(name,showEnvelope);
     if (src!=NULL) {
-        NetworkBase::connect(src,reader.getName().c_str());
-        //reader.core.addOutput(reader.getName().c_str());
+        ContactStyle style;
+        style.quiet = false;
+        style.verboseOnSuccess = false;
+        NetworkBase::connect(src,reader.getName(),style);
     }
     reader.wait();
     reader.close();
