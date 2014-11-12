@@ -305,15 +305,17 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
 void QtYARPView::printHelp()
 {
     qDebug("yarpview usage:");
-    qDebug("--name: input port name (default: /yarpview/img:i)");
-    qDebug("--x: x position of the window in the screen");
-    qDebug("--y: y position of the window in the screen");
-    qDebug("--w, --h: size of the window, weight and height");
-    qDebug("--p: refresh time [ms]");
-    qDebug("--synch: synchronous display, every image received by the input port is displayed");
-    qDebug("--out: output port name (no default is given, if this option is not specified the port is not created)");
-    qDebug("--neto: output network");
-    qDebug("--neti: input network");
+    qDebug("  --name: input port name (default: /yarpview/img:i)");
+    qDebug("  --x: x position of the window in the screen");
+    qDebug("  --y: y position of the window in the screen");
+    qDebug("  --w: width of the window");
+    qDebug("  --h: height of the window");
+    qDebug("  --p: refresh time [ms]");
+    qDebug("  --synch: synchronous display, every image received by the input port is displayed");
+    qDebug("  --out: output port name (no default is given, if this option is not specified the port is not created)");
+    qDebug("  --neto: output network");
+    qDebug("  --neti: input network");
+    qDebug("  --compact: if this flag is enabled, no window controls will be printed");
 }
 
 /*! \brief Stes the options to their defaults.*/
