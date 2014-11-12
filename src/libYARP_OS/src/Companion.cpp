@@ -296,8 +296,6 @@ Companion::Companion() {
         "remove a connection between two ports");
     add("exists",  &Companion::cmdExists,
         "check if a port or connection is alive");
-    add("forward",        &Companion::cmdForward,
-        "forward commands to a port, in standard format (experimental)");
     add("help",       &Companion::cmdHelp,
         "get this list");
     add("merge",       &Companion::cmdMerge,
@@ -1235,19 +1233,6 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
         }
     }
     return 0;
-}
-
-
-int Companion::cmdForward(int argc, char *argv[]) {
-    if (argc<2) {
-        ACE_OS::fprintf(stderr, "Please supply local and remote port name\n");
-        return 1;
-    }
-
-    const char *src = argv[0];
-    const char *dest = argv[1];
-
-    return forward(src,dest);
 }
 
 
