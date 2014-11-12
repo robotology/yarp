@@ -929,6 +929,8 @@ public:
 #define HELPER(x) (*((ResourceFinderHelper*)(x)))
 
 ResourceFinder::ResourceFinder() {
+    // We need some pieces of YARP to be initialized.
+    NetworkBase::autoInitMinimum();
     implementation = new ResourceFinderHelper();
     yAssert(implementation!=NULL);
     owned = true;

@@ -49,8 +49,20 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 static int __yarp_is_initialized = 0;
+static bool __yarp_auto_init_active = false;
 
 static MultiNameSpace *__multi_name_space = NULL;
+
+class YarpAutoInit {
+public:
+    ~YarpAutoInit() {
+        if (__yarp_auto_init_active) {
+            NetworkBase::finiMinimum();
+            __yarp_auto_init_active = false;
+        }
+    }
+};
+static YarpAutoInit yarp_auto_init;
 
 static MultiNameSpace& getNameSpace() {
     if (__multi_name_space == NULL) {
@@ -545,6 +557,12 @@ int NetworkBase::runNameServer(int argc, char *argv[]) {
 }
 
 
+void NetworkBase::autoInitMinimum() {
+    if (!(__yarp_auto_init_active||__yarp_is_initialized)) {
+        __yarp_auto_init_active = true;
+        initMinimum();
+    }
+}
 
 void NetworkBase::initMinimum() {
     if (__yarp_is_initialized==0) {
