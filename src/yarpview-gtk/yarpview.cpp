@@ -1030,15 +1030,17 @@ int main(int argc, char* argv[])
 void printHelp()
 {
     g_print("yarpview usage:\n");
-    g_print("--name: input port name (default: /yarpview/img:i)\n");
-    g_print("--x: x position of the window in the screen\n");
-    g_print("--y: y position of the window in the screen\n");
-    g_print("--w, --h: size of the window, weight and height\n");
-    g_print("--p: refresh time [ms]");
-    g_print("--synch: synchronous display, every image received by the input port is displayed\n");
-    g_print("--out: output port name (no default is given, if this option is not specified the port is not created)\n");
-    g_print("--neto: output network\n");
-    g_print("--neti: input network\n");
+    g_print("  --name: input port name (default: /yarpview/img:i)\n");
+    g_print("  --x: x position of the window in the screen\n");
+    g_print("  --y: y position of the window in the screen\n");
+    g_print("  --w: width of the window\n");
+    g_print("  --h: height of the window\n");
+    g_print("  --p: refresh time [ms]\n");
+    g_print("  --synch: synchronous display, every image received by the input port is displayed\n");
+    g_print("  --out: output port name (if this option is not specified the port is not created)\n");
+    g_print("  --neto: output network\n");
+    g_print("  --neti: input network\n");
+    g_print("  --compact: if this flag is enabled, no window controls will be printed\n");
 }
 
 #include <yarp/sig/ImageFile.h>
