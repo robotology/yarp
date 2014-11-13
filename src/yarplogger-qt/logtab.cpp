@@ -85,7 +85,18 @@ void LogTab::on_copy_to_clipboard_action()
     foreach(const QModelIndex &index, ui->listView->selectionModel()->selectedRows())
     {
         QStringList list;
-        QModelIndex prox_index = proxyModelSearch->mapToSource(index);
+        QModelIndex prox_index_pre = proxyModelSearch->mapToSource(index);
+        if (prox_index_pre.isValid() == false)
+        {
+            system_message->addMessage(QString("Invalid prox_index_pre in copy_to_clipboard"));
+            return;
+        }
+        QModelIndex prox_index     = proxyModelButtons->mapToSource(prox_index_pre);
+        if (prox_index.isValid() == false)
+        {
+            system_message->addMessage(QString("Invalid prox_index in copy_to_clipboard"));
+            return;
+        }
         if (displayYarprunTimestamp_enabled) list.append(model_logs->item(prox_index.row(),0)->text());
         if (displayLocalTimestamp_enabled)   list.append(model_logs->item(prox_index.row(),1)->text());
         if (displayErrorLevel_enabled)       list.append(model_logs->item(prox_index.row(),2)->text());
