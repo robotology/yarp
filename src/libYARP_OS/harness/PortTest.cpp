@@ -247,6 +247,9 @@ public:
         in.open("/in");
         out.open(Contact::bySocket("tcp","",safePort()));
 
+        checkTrue(in.isOpen(), "/in port is open");
+        checkTrue(out.isOpen(), "/out port is open");
+
         Contact conIn = in.where();
         Contact conOut = out.where();
 
