@@ -57,6 +57,8 @@ extern yarp::os::impl::UnitTest& getEventTest();
 extern yarp::os::impl::UnitTest& getRunTest();
 extern yarp::os::impl::UnitTest& getNodeTest();
 extern yarp::os::impl::UnitTest& getPublisherTest();
+extern yarp::os::impl::UnitTest& getLogTest();
+extern yarp::os::impl::UnitTest& getLogStreamTest();
 
 class yarp::os::impl::TestList {
 public:
@@ -96,6 +98,8 @@ public:
         root.add(getEventTest());
         root.add(getNodeTest());
         root.add(getPublisherTest());
+        root.add(getLogTest());
+        root.add(getLogStreamTest());
 
 #ifdef YARPRUN_TEST
         root.add(getRunTest());
