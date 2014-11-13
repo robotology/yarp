@@ -95,7 +95,7 @@ void MainWindow::updateMain()
                     for (int j=0; j<model_yarprunports->columnCount(); j++)
                         model_yarprunports->item(i,j)->setBackground(rowcolor);
                 }
-                
+
                 existing = true;
                 if (it->last_update==-1 && show_mute_ports_enabled==false) {model_yarprunports->removeRow(i);}
                 break;

@@ -26,9 +26,9 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
   source_group("Generated Files" FILES ${yarplogger-qt_QRC_GEN_SRCS} ${yarplogger-qt_UI_GEN_SRCS})
 
   add_executable(yarplogger-qt WIN32 ${yarplogger-qt_SRCS}
-                                    ${yarplogger-qt_HDRS}
-                                    ${yarplogger-qt_QRC_GEN_SRCS}
-                                    ${yarplogger-qt_UI_GEN_SRCS})
+                                     ${yarplogger-qt_HDRS}
+                                     ${yarplogger-qt_QRC_GEN_SRCS}
+                                     ${yarplogger-qt_UI_GEN_SRCS})
   target_link_libraries(yarplogger-qt YARP_OS
                                       YARP_init
                                       YARP_logger)

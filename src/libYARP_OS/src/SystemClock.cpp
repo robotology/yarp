@@ -18,7 +18,7 @@
 
 using namespace yarp::os;
 
-/// WARNING: actual precision under WIN32 depends on setting scheduler 
+/// WARNING: actual precision under WIN32 depends on setting scheduler
 /// by means of MM functions.
 ///
 void SystemClock::delaySystem(double seconds) {
@@ -37,17 +37,17 @@ double SystemClock::nowSystem() {
     // only uses high res on Microsoft Windows
     // This caused problems; maybe only with new ACE versions or Windows 7, can't tell.
     // Lorenzo
-	// ACE_Time_Value timev = ACE_High_Res_Timer::gettimeofday_hr();
+    // ACE_Time_Value timev = ACE_High_Res_Timer::gettimeofday_hr();
     ACE_Time_Value timev=ACE_OS::gettimeofday ();
     //ACE_Time_Value timev = ACE_OS::gettimeofday ();
-    return double(timev.sec()) + timev.usec() * 1e-6; 
+    return double(timev.sec()) + timev.usec() * 1e-6;
 #else
     // on other operating systems, high res seems dysfunctional
-    // which is weird since ACE manual claims it maps naturally 
+    // which is weird since ACE manual claims it maps naturally
     // on gettimoday...
-#  ifdef YARP_HAS_ACE 
+#  ifdef YARP_HAS_ACE
     ACE_Time_Value timev = ACE_OS::gettimeofday ();
-    return double(timev.sec()) + timev.usec() * 1e-6; 
+    return double(timev.sec()) + timev.usec() * 1e-6;
 #  else
     struct  timeval currentTime;
     gettimeofday(&currentTime, NULL);
@@ -55,4 +55,3 @@ double SystemClock::nowSystem() {
 #  endif
 #endif
 }
-

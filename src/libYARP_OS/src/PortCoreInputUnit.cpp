@@ -200,7 +200,7 @@ void PortCoreInputUnit::run() {
         }
         char key = cmd.getKey();
         //ACE_OS::printf("Port command is [%c:%d/%s]\n",
-        //	     (key>=32)?key:'?', key, cmd.getText().c_str());
+        //         (key>=32)?key:'?', key, cmd.getText().c_str());
 
         PortManager& man = getOwner();
         OutputStream *os = NULL;
@@ -376,9 +376,9 @@ void PortCoreInputUnit::run() {
             if (posted) {
                 YARP_INFO(Logger::get(),msg);
             }
-		} else {
-	        YARP_DEBUG(Logger::get(),"PortCoreInputUnit (unrooted) shutting down");
-		}
+        } else {
+            YARP_DEBUG(Logger::get(),"PortCoreInputUnit (unrooted) shutting down");
+        }
 
         getOwner().reportUnit(this,false);
 

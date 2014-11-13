@@ -30,7 +30,7 @@ int ShmemTwoWayStream::open(const Address& address, bool sender) {
     int result = -1;
     happy = false;
     ACE_INET_Addr addr(address.getPort(),address.getHost().c_str());
-    YARP_DEBUG(Logger::get(),String("trying to open shmem port ") + 
+    YARP_DEBUG(Logger::get(),String("trying to open shmem port ") +
                NetType::toString(address.getPort()));
     if (sender) {
         ACE_MEM_Connector connector;
@@ -86,7 +86,7 @@ int ShmemTwoWayStream::accept() {
     acceptor.init_buffer_size(currentLength*4);
     acceptor.preferred_strategy(ACE_MEM_IO::Reactive);
     // end configuration option
-    
+
     result = acceptor.accept(stream);
     if (result>=0) {
         YARP_DEBUG(Logger::get(),"shmem receiver accept succeeded");
@@ -166,10 +166,10 @@ void ShmemTwoWayStream::write(const Bytes& b) {
 void ShmemTwoWayStream::reset() {
 }
 
-void ShmemTwoWayStream::beginPacket() { 
+void ShmemTwoWayStream::beginPacket() {
 }
 
-void ShmemTwoWayStream::endPacket() { 
+void ShmemTwoWayStream::endPacket() {
 }
 
 #endif

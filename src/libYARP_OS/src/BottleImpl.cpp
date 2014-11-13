@@ -31,7 +31,7 @@ using namespace yarp::os::impl;
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
 #define YMSG(x)
-#define YTRACE(x) 
+#define YTRACE(x)
 
 // YARP1 compatible codes
 //const int StoreInt::code = 1;
@@ -414,10 +414,10 @@ bool BottleImpl::fromBytes(const Bytes& data) {
     dirty = true; // for clarity
 
     if (!nested) {
-        
+
         clear();
         specialize(0);
-        
+
         int code = reader.expectInt();
         if (reader.isError()) { return false; }
         YMSG(("READ got top level code %d\n", code));
@@ -478,7 +478,7 @@ bool BottleImpl::write(ConnectionWriter& writer) {
           // No byte count any more, to facilitate nesting
           //YMSG(("bottle byte count %d\n",byteCount()));
           //writer.appendInt(byteCount()+sizeof(NetInt32));
-          
+
           writer.appendInt(StoreList::code + speciality);
           }
         */
@@ -528,10 +528,10 @@ bool BottleImpl::read(ConnectionReader& reader) {
         if (!nested) {
             // no byte length any more to facilitate nesting
             //reader.expectInt(); // the bottle byte ct; ignored
-            
+
             clear();
             specialize(0);
-            
+
             int code = reader.expectInt();
             if (reader.isError()) return false;
             YMSG(("READ got top level code %d\n", code));
@@ -540,11 +540,11 @@ bool BottleImpl::read(ConnectionReader& reader) {
                 specialize(code);
             }
         }
-        
+
         result = true;
         clear();
         dirty = true; // for clarity
-        
+
         int len = 0;
         int i = 0;
         len = reader.expectInt();

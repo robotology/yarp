@@ -94,12 +94,12 @@ public:
 
     // documentation provided in Contactable
     virtual void interrupt() {
-        active().interrupt();        
+        active().interrupt();
     }
 
     // documentation provided in Contactable
     virtual void resume() {
-        active().resume();        
+        active().resume();
     }
 
     // documented in Contactable
@@ -127,7 +127,7 @@ public:
     virtual const Port& asPort() const {
         return port;
     }
-    
+
 private:
     Port port;
     BufferedPort<T> *buffered_port;

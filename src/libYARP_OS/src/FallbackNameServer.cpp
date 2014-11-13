@@ -29,7 +29,7 @@ void FallbackNameServer::run() {
     DgramTwoWayStream send;
     send.join(getAddress(),true);
     listen.join(getAddress(),false);
-    
+
     YARP_DEBUG(Logger::get(),"Fallback server running");
     while (listen.isOk()&&send.isOk()&&!closed) {
         YARP_DEBUG(Logger::get(),"Fallback server waiting");
