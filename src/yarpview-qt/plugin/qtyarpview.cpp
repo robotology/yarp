@@ -204,44 +204,37 @@ void QtYARPView::deleteObjects() {
 */
 bool QtYARPView::parseParameters(QStringList params)
 {
-
     Property options;
     int c = params.count();
     char **v;
-
-
     v = (char**)malloc(sizeof(char*) * c);
 
     for(int i=0;i<params.count();i++){
         v[i] = strdup(params.at(i).toLatin1().data());
     }
 
-    if (c==1){
-        if (params.at(0).compare("--help") == 0){
-            printHelp();
-            for(int i=0;i<params.count();i++) {
-                free(v[i]);
-            }
-            free(v);
-            return false;
-        }
-        // user did not use flags, just gave a port name
-        // might as well allow this
-        options.put("name",params.at(0).toLatin1().data());
-    }else {
-        options.fromCommand(c,v,false);
-    }
-    setOptions(options);
+    options.fromCommand(c,v,false);
+    
     for(int i=0;i<params.count();i++) {
         free(v[i]);
     }
     free(v);
 
+    // If the user asks for help, let's print it and return.
+    if (options.check("help"))
+    {
+        printHelp();
+        return false;
+    }
+    
+    // Otherwise, simply set the options asked
+    setOptions(options);
+
     if (!openPorts()){
         qDebug("Error open ports");
         return false;
     }
-    setName(QString("%1").arg(_options.portName));
+    setName(options.find("name").asString().c_str());
     ptr_inputPort->useCallback(*ptr_portCallback);
     return true;
 }
