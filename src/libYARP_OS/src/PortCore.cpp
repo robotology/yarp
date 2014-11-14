@@ -46,8 +46,6 @@ PortCore::~PortCore() {
 
 
 bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
-    bool success = false;
-
     // If we're using ACE, we really need to have it initialized before
     // this point.
     if (!NetworkBase::initialized()) {
