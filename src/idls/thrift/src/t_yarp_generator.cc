@@ -1538,6 +1538,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   // Send if possible
   indent(out) << "void communicate() {" << endl;
   indent_up();
+  indent(out) << "if (group!=0) return;" << endl;
   indent(out) << "if (yarp().canWrite()) {" << endl;
   indent_up();
   indent(out) << "yarp().write(*this);" << endl;
@@ -1821,6 +1822,10 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     }
     scope_down(out);
     indent(out) << "reader.accept();" << endl;
+    indent(out) << "yarp::os::idl::WireWriter writer(reader);" << endl;
+    indent(out) << "if (writer.isNull()) return true;" << endl;
+    indent(out) << "writer.writeListHeader(1);" << endl;
+    indent(out) << "writer.writeVocab(VOCAB2('o','k'));" << endl;
     indent(out) << "return true;" << endl;
     scope_down(out);
 

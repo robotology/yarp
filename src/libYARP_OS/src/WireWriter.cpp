@@ -74,6 +74,12 @@ bool WireWriter::writeDouble(double x) {
     return !writer.isError();
 }
 
+bool WireWriter::writeVocab(int x) {
+    writer.appendInt(BOTTLE_TAG_VOCAB);
+    writer.appendInt((int)x);
+    return !writer.isError();
+}
+
 bool WireWriter::isValid() {
     return writer.isValid();
 }
