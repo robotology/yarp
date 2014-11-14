@@ -51,8 +51,6 @@ public:
     ZombieHunterThread()
     {
         int warn_suppress=pipe(pipe_sync);
-
-        
     }
    ~ZombieHunterThread(){}
 

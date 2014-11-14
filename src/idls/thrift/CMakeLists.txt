@@ -61,7 +61,7 @@ if (NOT THRIFT_USE_EXTERNAL)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/msvc)
     add_definitions(-D__STDC_VERSION__=199901L)
   endif ()
-  add_executable(yarpidl_thrift 
+  add_executable(yarpidl_thrift
     src_gen/parser.cc
     src_gen/lexer.cc
     src_thrift/md5.c

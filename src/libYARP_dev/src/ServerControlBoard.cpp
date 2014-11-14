@@ -251,7 +251,7 @@ public:
 
     /**
     * Open the device driver.
-    * @param prop is a Searchable object which contains the parameters. 
+    * @param prop is a Searchable object which contains the parameters.
     * Allowed parameters are:
     * - verbose or v to print diagnostic information while running.
     * - subdevice to specify the name of the wrapped device.
@@ -303,7 +303,7 @@ public:
             return false;
         }
 
-        ConstString rootName = 
+        ConstString rootName =
             prop.check("name",Value("/controlboard"),
 
             "prefix for port names").asString();
@@ -343,7 +343,7 @@ public:
         // experimental: let it be ok for not all interfaces to be
         // implemented.
 
-        // we need at least the pos interface to get the number of 
+        // we need at least the pos interface to get the number of
         // axes (is this true?)
 
         /*
@@ -444,9 +444,9 @@ public:
     }
 
     /** Set the controller reference point for a given axis.
-    * Warning this method can result in very large torques 
+    * Warning this method can result in very large torques
     * and should be used carefully. If you do not understand
-    * this warning you should avoid using this method. 
+    * this warning you should avoid using this method.
     * Have a look at other interfaces (e.g. position control).
     * @param j joint number
     * @param ref new reference point
@@ -459,9 +459,9 @@ public:
     }
 
     /** Set the controller reference points, multiple axes.
-    * Warning this method can result in very large torques 
+    * Warning this method can result in very large torques
     * and should be used carefully. If you do not understand
-    * this warning you should avoid using this method. 
+    * this warning you should avoid using this method.
     * Have a look at other interfaces (e.g. position control).
     * @param refs pointer to the vector that contains the new reference points.
     * @return true/false upon success/failure
@@ -573,7 +573,7 @@ public:
     /** Get the current reference position of the controller for a specific joint.
     * @param j joint number
     * @param ref pointer to storage for return value
-    * @return reference value 
+    * @return reference value
     */
     virtual bool getReference(int j, double *ref) {
         if (pid)
@@ -615,7 +615,7 @@ public:
         return false;
     }
 
-    /** Reset the controller of a given joint, usually sets the 
+    /** Reset the controller of a given joint, usually sets the
     * current position of the joint as the reference value for the PID, and resets
     * the integrator.
     * @param j joint number
@@ -627,8 +627,8 @@ public:
         return false;
     }
 
-    /** 
-    * Disable the pid computation for a joint 
+    /**
+    * Disable the pid computation for a joint
     * @param j is the axis number
     * @return true if successful, false on failure
     **/
@@ -638,7 +638,7 @@ public:
         return false;
     }
 
-    /** 
+    /**
     * Enable the pid computation for a joint
     * @param j is the axis number
     * @return true/false on success/failure
@@ -657,15 +657,15 @@ public:
     * @return true/false.
     */
     virtual bool getAxes(int *ax) {
-        if (pos) 
+        if (pos)
             return pos->getAxes(ax);
-        if (vel) 
+        if (vel)
             return vel->getAxes(ax);
         *ax = 0;
         return false;
     }
 
-    /** 
+    /**
     * Set position mode. This command
     * is required by control boards implementing different
     * control methods (e.g. velocity/torque), in some cases
@@ -678,16 +678,16 @@ public:
         return false;
     }
 
-    /** 
+    /**
     * Set new reference point for a single axis.
     * @param j joint number
     * @param ref specifies the new ref point
     * @return true/false on success/failure
     */
-    virtual bool positionMove(int j, double ref) { 
+    virtual bool positionMove(int j, double ref) {
         if (pos)
             return pos->positionMove(j, ref);
-        return false; 
+        return false;
     }
 
     /** Set new reference point for all axes.
@@ -701,7 +701,7 @@ public:
         return false;
     }
 
-    /** Set relative position. The command is relative to the 
+    /** Set relative position. The command is relative to the
     * current position of the axis.
     * @param j joint axis number
     * @param delta relative command
@@ -723,7 +723,7 @@ public:
         return false;
     }
 
-    /** 
+    /**
     * Check if the current trajectory is terminated. Non blocking.
     * @param j the axis
     * @param flag true if the trajectory is terminated, false otherwise
@@ -736,12 +736,12 @@ public:
         return false;
     }
 
-    /** 
+    /**
     * Check if the current trajectory is terminated. Non blocking.
     * @param flag true if the trajectory is terminated, false otherwise
     * @return false on failure
     */
-    virtual bool checkMotionDone(bool *flag) { 
+    virtual bool checkMotionDone(bool *flag) {
         if (pos)
             return pos->checkMotionDone(flag);
         *flag = true;
@@ -755,7 +755,7 @@ public:
     * @return true/false upon success/failure
     */
     virtual bool setRefSpeed(int j, double sp) {
-        if (pos) 
+        if (pos)
             return pos->setRefSpeed(j, sp);
         return false;
     }
@@ -794,7 +794,7 @@ public:
         return false;
     }
 
-    /** Get reference speed for a joint. Returns the speed used to 
+    /** Get reference speed for a joint. Returns the speed used to
     * generate the trajectory profile.
     * @param j joint number
     * @param ref pointer to storage for the return value
@@ -819,7 +819,7 @@ public:
         return false;
     }
 
-    /** Get reference acceleration for a joint. Returns the acceleration used to 
+    /** Get reference acceleration for a joint. Returns the acceleration used to
     * generate the trajectory profile.
     * @param j joint number
     * @param acc pointer to storage for the return value
@@ -835,7 +835,7 @@ public:
     /** Get reference acceleration of all joints. These are the values used during the
     * interpolation of the trajectory.
     * @param accs pointer to the array that will store the acceleration values.
-    * @return true/false on success or failure 
+    * @return true/false on success or failure
     */
     virtual bool getRefAccelerations(double *accs) {
         if (pos)
@@ -854,8 +854,8 @@ public:
         return false;
     }
 
-    /** 
-    * Stop motion, multiple joints 
+    /**
+    * Stop motion, multiple joints
     * @return true/false on success/failure
     */
     virtual bool stop() {
@@ -866,7 +866,7 @@ public:
 
     /* IVelocityControl */
 
-    /** 
+    /**
     * Set new reference speed for a single axis.
     * @param j joint number
     * @param v specifies the new ref speed
@@ -902,7 +902,7 @@ public:
     /* IEncoders */
 
     /**
-    * Reset encoder, single joint. Set the encoder value to zero 
+    * Reset encoder, single joint. Set the encoder value to zero
     * @param j is the axis number
     * @return true/false on success/failure
     */
@@ -923,7 +923,7 @@ public:
     }
 
     /**
-    * Set the value of the encoder for a given joint. 
+    * Set the value of the encoder for a given joint.
     * @param j encoder number
     * @param val new value
     * @return true/false
@@ -1010,7 +1010,7 @@ public:
     /**
     * Read the istantaneous acceleration of all axes.
     * @param accs pointer to the array that will contain the output
-    * @return true if all goes well, false if anything bad happens. 
+    * @return true if all goes well, false if anything bad happens.
     */
     virtual bool getEncoderAccelerations(double *accs) {
         if (enc)
@@ -1021,9 +1021,9 @@ public:
 
     /* IAmplifierControl */
 
-    /** 
+    /**
     * Enable the amplifier on a specific joint. Be careful, check that the output
-    * of the controller is appropriate (usually zero), to avoid 
+    * of the controller is appropriate (usually zero), to avoid
     * generating abrupt movements.
     * @return true/false on success/failure
     */
@@ -1033,7 +1033,7 @@ public:
         return false;
     }
 
-    /** 
+    /**
     * Disable the amplifier on a specific joint. All computations within the board
     * will be carried out normally, but the output will be disabled.
     * @return true/false on success/failure
@@ -1073,7 +1073,7 @@ public:
 
 
     /**
-    * Set the maximum electric current going to a given motor. The behavior 
+    * Set the maximum electric current going to a given motor. The behavior
     * of the board/amplifier when this limit is reached depends on the
     * implementation.
     * @param j motor number
@@ -1088,7 +1088,7 @@ public:
 
     /**
     * Get the status of the amplifiers, coded in a 32 bits integer for
-    * each amplifier (at the moment contains only the fault, it will be 
+    * each amplifier (at the moment contains only the fault, it will be
     * expanded in the future).
     * @param st pointer to storage
     * @return true in good luck, false otherwise.
@@ -1116,7 +1116,7 @@ public:
     * @param min the value of the lower limit
     * @param max the value of the upper limit
     * @return true or false on success or failure
-    */ 
+    */
     virtual bool setLimits(int axis, double min, double max) {
         if (lim)
             return lim->setLimits(axis, min, max);
@@ -1242,7 +1242,7 @@ public:
         return false;
     }
 
-    /** Get the value of the torque for all joints (this is 
+    /** Get the value of the torque for all joints (this is
      * the feedback if you have torque sensors).
      * @param t pointer to the array that will store the output
      */
@@ -1390,7 +1390,7 @@ public:
         return false;
     }
 
-    /** Reset the controller of a given joint, usually sets the 
+    /** Reset the controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
      * the integrator.
      * @param j joint number
@@ -1536,7 +1536,7 @@ public:
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createServerControlBoard() {
-    return new DriverCreatorOf<ServerControlBoard>("controlboard", 
+    return new DriverCreatorOf<ServerControlBoard>("controlboard",
         "controlboard",
         "ServerControlBoard");
 }
@@ -1559,7 +1559,7 @@ inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
     Bottle& b = v.head;
     //printf("bottle: %s\n", b.toString().c_str());
     switch (b.get(0).asVocab()) {
-    case VOCAB_POSITION_MODE: 
+    case VOCAB_POSITION_MODE:
     case VOCAB_POSITION_MOVES: {
         //            printf("Received a position command\n");
         //            for (i = 0; i < v.body.size(); i++)
@@ -1604,9 +1604,9 @@ inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 yarp::dev::CommandsHelper::CommandsHelper() {}
 
-void yarp::dev::CommandsHelper::init(yarp::dev::ServerControlBoard *x) { 
+void yarp::dev::CommandsHelper::init(yarp::dev::ServerControlBoard *x) {
     yAssert(x != NULL);
-    caller = x; 
+    caller = x;
     trq   = dynamic_cast<yarp::dev::ITorqueControl *> (caller);
     mod   = dynamic_cast<yarp::dev::IControlMode *> (caller);
     pid   = dynamic_cast<yarp::dev::IPidControl *> (caller);
@@ -1642,11 +1642,11 @@ bool yarp::dev::CommandsHelper::initialize() {
         }
         args = args + "$f" + Bottle::toString(i);
     }
-    addUsage((ConstString("[set] [poss] (")+args+")").c_str(), 
+    addUsage((ConstString("[set] [poss] (")+args+")").c_str(),
         "command the position of all axes");
-    addUsage((ConstString("[set] [rels] (")+args+")").c_str(), 
+    addUsage((ConstString("[set] [rels] (")+args+")").c_str(),
         "command the relative position of all axes");
-    addUsage((ConstString("[set] [vmos] (")+args+")").c_str(), 
+    addUsage((ConstString("[set] [vmos] (")+args+")").c_str(),
         "command the velocity of all axes");
 
     addUsage("[set] [aen] $iAxisNumber", "enable (amplifier for) the given axis");
@@ -1657,8 +1657,8 @@ bool yarp::dev::CommandsHelper::initialize() {
     return ok;
 }
 
-bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd, 
-                                        yarp::os::Bottle& response) 
+bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
+                                        yarp::os::Bottle& response)
 {
     bool ok = false;
     bool rec = false; // is the command recognized?
@@ -1718,7 +1718,7 @@ case VOCAB_SET:
     if (caller->verbose())
         printf("set command received\n");
     {
-        switch(cmd.get(1).asVocab()) 
+        switch(cmd.get(1).asVocab())
         {
         case VOCAB_IMPEDANCE:
             //TO BE IMPLEMENTED
@@ -1758,7 +1758,7 @@ case VOCAB_SET:
                 ok = pid->setOffset(j, v);
             }
             break;
-        case VOCAB_PID: 
+        case VOCAB_PID:
             {
                 Pid p;
                 int j = cmd.get(2).asInt();
@@ -1776,7 +1776,7 @@ case VOCAB_SET:
             }
             break;
 
-        case VOCAB_PIDS: 
+        case VOCAB_PIDS:
             {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
@@ -1802,19 +1802,19 @@ case VOCAB_SET:
             }
             break;
 
-        case VOCAB_REF: 
+        case VOCAB_REF:
             {
                 ok = pid->setReference (cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
             break;
 
-        case VOCAB_REFS: 
+        case VOCAB_REFS:
             {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
                 yAssert(njs == nj);
-                double *p = new double[njs];    // LATER: optimize to avoid allocation. 
+                double *p = new double[njs];    // LATER: optimize to avoid allocation.
                 yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
@@ -1823,28 +1823,28 @@ case VOCAB_SET:
             }
             break;
 
-        case VOCAB_LIM: 
+        case VOCAB_LIM:
             {
                 ok = pid->setErrorLimit (cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
             break;
 
-        case VOCAB_LIMS: 
+        case VOCAB_LIMS:
             {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
                 yAssert(njs == nj);
-                double *p = new double[njs];    // LATER: optimize to avoid allocation. 
+                double *p = new double[njs];    // LATER: optimize to avoid allocation.
                 yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pid->setErrorLimits (p);
-                delete[] p;                
+                delete[] p;
             }
             break;
 
-        case VOCAB_RESET: 
+        case VOCAB_RESET:
             {
                 ok = pid->resetPid (cmd.get(2).asInt());
             }
@@ -1855,38 +1855,38 @@ case VOCAB_SET:
                             }
                             break;
 
-        case VOCAB_ENABLE: 
+        case VOCAB_ENABLE:
             {
                 ok = pid->enablePid (cmd.get(2).asInt());
             }
             break;
 
-        case VOCAB_VELOCITY_MODE: 
+        case VOCAB_VELOCITY_MODE:
             {
                 ok = vel->setVelocityMode();
             }
             break;
 
-        case VOCAB_VELOCITY_MOVE: 
+        case VOCAB_VELOCITY_MOVE:
             {
                 ok = vel->velocityMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
             break;
 
-        case VOCAB_POSITION_MODE: 
+        case VOCAB_POSITION_MODE:
             {
                 ok = pos->setPositionMode();
             }
             break;
 
-        case VOCAB_POSITION_MOVE: 
+        case VOCAB_POSITION_MOVE:
             {
                 ok = pos->positionMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
             break;
 
             // this operation is also available on "command" port
-        case VOCAB_POSITION_MOVES: 
+        case VOCAB_POSITION_MOVES:
             {
                 Bottle *b = cmd.get(2).asList();
                 int i;
@@ -1905,7 +1905,7 @@ case VOCAB_SET:
             break;
 
             // this operation is also available on "command" port
-        case VOCAB_VELOCITY_MOVES: 
+        case VOCAB_VELOCITY_MOVES:
             {
 
                 Bottle *b = cmd.get(2).asList();
@@ -1922,24 +1922,24 @@ case VOCAB_SET:
             }
             break;
 
-        case VOCAB_RELATIVE_MOVE: 
+        case VOCAB_RELATIVE_MOVE:
             {
                 ok = pos->relativeMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
             break;
 
-        case VOCAB_RELATIVE_MOVES: 
+        case VOCAB_RELATIVE_MOVES:
             {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
                 yAssert(njs == nj);
-                double *p = new double[njs];    // LATER: optimize to avoid allocation. 
+                double *p = new double[njs];    // LATER: optimize to avoid allocation.
                 yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pos->relativeMove(p);
-                delete[] p;                
+                delete[] p;
             }
             break;
 
@@ -1955,33 +1955,33 @@ case VOCAB_SET:
                 int i;
                 const int njs = b.size();
                 yAssert(njs == nj);
-                double *p = new double[njs];    // LATER: optimize to avoid allocation. 
+                double *p = new double[njs];    // LATER: optimize to avoid allocation.
                 yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pos->setRefSpeeds(p);
-                delete[] p;                
+                delete[] p;
             }
             break;
 
-        case VOCAB_REF_ACCELERATION: 
+        case VOCAB_REF_ACCELERATION:
             {
                 ok = pos->setRefAcceleration(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
             break;
 
-        case VOCAB_REF_ACCELERATIONS: 
+        case VOCAB_REF_ACCELERATIONS:
             {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
                 yAssert(njs == nj);
-                double *p = new double[njs];    // LATER: optimize to avoid allocation. 
+                double *p = new double[njs];    // LATER: optimize to avoid allocation.
                 yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pos->setRefAccelerations(p);
-                delete[] p;                
+                delete[] p;
             }
             break;
 
@@ -1991,42 +1991,42 @@ case VOCAB_SET:
             }
             break;
 
-        case VOCAB_STOPS: 
+        case VOCAB_STOPS:
             {
                 ok = pos->stop();
             }
             break;
 
-        case VOCAB_E_RESET: 
+        case VOCAB_E_RESET:
             {
                 ok = enc->resetEncoder(cmd.get(2).asInt());
             }
             break;
 
-        case VOCAB_E_RESETS: 
+        case VOCAB_E_RESETS:
             {
                 ok = enc->resetEncoders();
             }
             break;
 
-        case VOCAB_ENCODER: 
+        case VOCAB_ENCODER:
             {
                 ok = enc->setEncoder(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
             break;
 
-        case VOCAB_ENCODERS: 
+        case VOCAB_ENCODERS:
             {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
                 yAssert(njs == nj);
-                double *p = new double[njs];    // LATER: optimize to avoid allocation. 
+                double *p = new double[njs];    // LATER: optimize to avoid allocation.
                 yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = enc->setEncoders(p);
-                delete[] p;                
+                delete[] p;
             }
             break;
 
@@ -2042,17 +2042,17 @@ case VOCAB_SET:
             }
             break;
 
-        case VOCAB_AMP_MAXCURRENT: 
+        case VOCAB_AMP_MAXCURRENT:
             {
                 ok = amp->setMaxCurrent(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
             break;
 
-        case VOCAB_LIMITS: 
+        case VOCAB_LIMITS:
             {
                 ok = lim->setLimits(cmd.get(2).asInt(), cmd.get(3).asDouble(), cmd.get(4).asDouble());
             }
-            break; 
+            break;
 
         default:
             printf("received an unknown command after a VOCAB_SET\n");
@@ -2079,7 +2079,7 @@ case VOCAB_TORQUE:
         case VOCAB_TRQ:
             {
                 ok= trq->getTorque(cmd.get(3).asInt(),&dtmp);
-                response.addDouble(dtmp); 
+                response.addDouble(dtmp);
             }
             break;
         case VOCAB_TRQS:
@@ -2087,8 +2087,8 @@ case VOCAB_TORQUE:
                 double *p = new double[nj];
                 yAssert(p!=NULL);
                 ok= trq->getTorques(p);
-                Bottle& b = response.addList(); 
-                response.addDouble(dtmp);       
+                Bottle& b = response.addList();
+                response.addDouble(dtmp);
                 int i;
                 for (i = 0; i < nj; i++)
                     b.addDouble(p[i]);
@@ -2123,21 +2123,21 @@ case VOCAB_ICONTROLMODE:
         case VOCAB_CM_CONTROL_MODE:
             {
                 ok= mod->getControlMode(cmd.get(3).asInt(),&tmp);
-                response.addVocab(tmp); 
+                response.addVocab(tmp);
             }
             break;
         }
     }
     break;
- 
-case VOCAB_ERR: 
+
+case VOCAB_ERR:
     {
         ok = pid->getError(cmd.get(2).asInt(), &dtmp);
         response.addDouble(dtmp);
     }
     break;
 
-case VOCAB_ERRS: 
+case VOCAB_ERRS:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2150,14 +2150,14 @@ case VOCAB_ERRS:
     }
     break;
 
-case VOCAB_OUTPUT: 
+case VOCAB_OUTPUT:
     {
         ok = pid->getOutput(cmd.get(2).asInt(), &dtmp);
         response.addDouble(dtmp);
     }
     break;
 
-case VOCAB_OUTPUTS: 
+case VOCAB_OUTPUTS:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2170,7 +2170,7 @@ case VOCAB_OUTPUTS:
     }
     break;
 
-case VOCAB_PID: 
+case VOCAB_PID:
     {
         Pid p;
         ok = pid->getPid(cmd.get(2).asInt(), &p);
@@ -2187,7 +2187,7 @@ case VOCAB_PID:
     }
     break;
 
-case VOCAB_PIDS: 
+case VOCAB_PIDS:
     {
         Pid *p = new Pid[nj];
         yAssert(p != NULL);
@@ -2207,18 +2207,18 @@ case VOCAB_PIDS:
             c.addDouble(p[i].stiction_up_val);
             c.addDouble(p[i].stiction_down_val);
         }
-        delete[] p;              
+        delete[] p;
     }
     break;
 
-case VOCAB_REFERENCE: 
+case VOCAB_REFERENCE:
     {
         ok = pid->getReference(cmd.get(2).asInt(), &dtmp);
         response.addDouble(dtmp);
     }
     break;
 
-case VOCAB_REFERENCES: 
+case VOCAB_REFERENCES:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2231,14 +2231,14 @@ case VOCAB_REFERENCES:
     }
     break;
 
-case VOCAB_LIM: 
+case VOCAB_LIM:
     {
         ok = pid->getErrorLimit(cmd.get(2).asInt(), &dtmp);
         response.addDouble(dtmp);
     }
     break;
 
-case VOCAB_LIMS: 
+case VOCAB_LIMS:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2256,7 +2256,7 @@ case VOCAB_AXES:
     response.addInt(tmp);
     break;
 
-case VOCAB_MOTION_DONE: 
+case VOCAB_MOTION_DONE:
     {
         bool x = false;;
         ok = pos->checkMotionDone(cmd.get(2).asInt(), &x);
@@ -2264,7 +2264,7 @@ case VOCAB_MOTION_DONE:
     }
     break;
 
-case VOCAB_MOTION_DONES: 
+case VOCAB_MOTION_DONES:
     {
         bool x = false;
         ok = pos->checkMotionDone(&x);
@@ -2272,14 +2272,14 @@ case VOCAB_MOTION_DONES:
     }
     break;
 
-case VOCAB_REF_SPEED: 
+case VOCAB_REF_SPEED:
     {
         ok = pos->getRefSpeed(cmd.get(2).asInt(), &dtmp);
         response.addDouble(dtmp);
     }
     break;
 
-case VOCAB_REF_SPEEDS: 
+case VOCAB_REF_SPEEDS:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2299,7 +2299,7 @@ case VOCAB_REF_ACCELERATION:
     }
     break;
 
-case VOCAB_REF_ACCELERATIONS: 
+case VOCAB_REF_ACCELERATIONS:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2312,14 +2312,14 @@ case VOCAB_REF_ACCELERATIONS:
     }
     break;
 
-case VOCAB_ENCODER: 
+case VOCAB_ENCODER:
     {
         ok = enc->getEncoder(cmd.get(2).asInt(), &dtmp);
         response.addDouble(dtmp);
     }
     break;
 
-case VOCAB_ENCODERS: 
+case VOCAB_ENCODERS:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2332,7 +2332,7 @@ case VOCAB_ENCODERS:
     }
     break;
 
-case VOCAB_ENCODER_SPEED: 
+case VOCAB_ENCODER_SPEED:
     {
         ok = enc->getEncoderSpeed(cmd.get(2).asInt(), &dtmp);
         response.addDouble(dtmp);
@@ -2340,7 +2340,7 @@ case VOCAB_ENCODER_SPEED:
     }
     break;
 
-case VOCAB_ENCODER_SPEEDS: 
+case VOCAB_ENCODER_SPEEDS:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2353,14 +2353,14 @@ case VOCAB_ENCODER_SPEEDS:
     }
     break;
 
-case VOCAB_ENCODER_ACCELERATION: 
+case VOCAB_ENCODER_ACCELERATION:
     {
         ok = enc->getEncoderAcceleration(cmd.get(2).asInt(), &dtmp);
         response.addDouble(dtmp);
     }
     break;
 
-case VOCAB_ENCODER_ACCELERATIONS: 
+case VOCAB_ENCODER_ACCELERATIONS:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2373,14 +2373,14 @@ case VOCAB_ENCODER_ACCELERATIONS:
     }
     break;
 
-case VOCAB_AMP_CURRENT: 
+case VOCAB_AMP_CURRENT:
     {
         ok = amp->getCurrent(cmd.get(2).asInt(), &dtmp);
         response.addDouble(dtmp);
     }
     break;
 
-case VOCAB_AMP_CURRENTS: 
+case VOCAB_AMP_CURRENTS:
     {
         double *p = new double[nj];
         yAssert(p!=NULL);
@@ -2393,7 +2393,7 @@ case VOCAB_AMP_CURRENTS:
     }
     break;
 
-case VOCAB_AMP_STATUS: 
+case VOCAB_AMP_STATUS:
     {
         int *p = new int[nj];
         yAssert(p!=NULL);
@@ -2406,7 +2406,7 @@ case VOCAB_AMP_STATUS:
     }
     break;
 
-case VOCAB_AMP_STATUS_SINGLE: 
+case VOCAB_AMP_STATUS_SINGLE:
     {
         int itmp=0;
         ok = amp->getAmpStatus(cmd.get(2).asInt(),  &tmp);
@@ -2414,7 +2414,7 @@ case VOCAB_AMP_STATUS_SINGLE:
     }
     break;
 
-case VOCAB_LIMITS: 
+case VOCAB_LIMITS:
     {
         double min = 0.0, max = 0.0;
         ok = lim->getLimits(cmd.get(2).asInt(), &min, &max);
@@ -2423,7 +2423,7 @@ case VOCAB_LIMITS:
     }
     break;
 
-case VOCAB_INFO_NAME: 
+case VOCAB_INFO_NAME:
     {
         ConstString name = "undocumented";
         ok = info->getAxisName(cmd.get(2).asInt(),name);

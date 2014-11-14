@@ -32,12 +32,12 @@ int RunWrite::loop()
         return 1;
     }
     if (yarp::os::Network::exists(wLoggerName.c_str()))
-	{
-		if (yarp::os::Network::connect(wPortName.c_str(),wLoggerName.c_str())==false)
-		{
-		    fprintf(stderr,"RunWrite: could not mmake connection with the logger\n");      
-		}
-	}
+    {
+        if (yarp::os::Network::connect(wPortName.c_str(),wLoggerName.c_str())==false)
+        {
+            fprintf(stderr,"RunWrite: could not mmake connection with the logger\n");
+        }
+    }
 
     char txt[2048];
 
@@ -53,7 +53,7 @@ int RunWrite::loop()
         if (mVerbose) bot.addString(tag.c_str());
         bot.addString(txt);
         wPort.write(bot);
-    }        
+    }
 
     RUNLOG(">>>loop()")
 
@@ -77,7 +77,7 @@ int RunRead::loop()
     {
         yarp::os::Bottle bot;
         if (!rPort.read(bot,true))
-        {   
+        {
             RUNLOG("!rPort.read(bot,true)")
             break;
         }
@@ -111,7 +111,7 @@ int RunReadWrite::loop()
 
     if (!rPort.open(rPortName.c_str()))
     {
-        RUNLOG("RunReadWrite: could not open input port") 
+        RUNLOG("RunReadWrite: could not open input port")
         fprintf(stderr,"RunReadWrite: could not open input port\n");
         return 1;
     }
@@ -120,10 +120,10 @@ int RunReadWrite::loop()
     style.persistent=true;
 
     yarp::os::Network::connect((UUID+"/stdout").c_str(),rPortName.c_str(),style);
-    
+
     // forwarded section
     yarp::os::ConstString tag;
-    
+
     if (mForwarded)
     {
         tag=yarp::os::ConstString("[")+fPortName+yarp::os::ConstString("]");
@@ -131,7 +131,7 @@ int RunReadWrite::loop()
         {
             RUNLOG("RunReadWrite: could not open forward port")
             fprintf(stderr,"RunReadWrite: could not open forward port\n");
-        
+
             rPort.close();
 
             return 1;
@@ -151,7 +151,7 @@ int RunReadWrite::loop()
             #if !defined(WIN32)
             if (getppid()==1) break;
             #endif
-        
+
             yarp::os::Bottle bot;
 
             if (!rPort.read(bot,true))
@@ -165,7 +165,7 @@ int RunReadWrite::loop()
             #if !defined(WIN32)
             if (getppid()==1) break;
             #endif
-        
+
             if (bot.size()==1)
             {
                 printf("%s",bot.get(0).asString().c_str());
@@ -211,7 +211,7 @@ int RunReadWrite::loop()
         fflush(file_term_pipe);
         fclose(file_term_pipe);
 #endif
-    }        
+    }
 
     RUNLOG(">>>loop()")
 

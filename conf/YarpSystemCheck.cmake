@@ -380,6 +380,6 @@ set (YARP_HAS_NAME_LIB ${YARP_USE_PERSISTENT_NAMESERVER})
 #########################################################################
 # Tweak tests for MSVC, to add paths to DLLs
 if (MSVC)
-	configure_file(${YARP_MODULE_DIR}/template/TestConfig.cmake ${CMAKE_BINARY_DIR}/TestConfig.cmake @ONLY)
-	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY TEST_INCLUDE_FILE ${CMAKE_BINARY_DIR}/TestConfig.cmake)
+    configure_file(${YARP_MODULE_DIR}/template/TestConfig.cmake ${CMAKE_BINARY_DIR}/TestConfig.cmake @ONLY)
+    set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY TEST_INCLUDE_FILE ${CMAKE_BINARY_DIR}/TestConfig.cmake)
 endif()

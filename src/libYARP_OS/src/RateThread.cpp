@@ -22,7 +22,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-//const ACE_Time_Value _timeout_value(20,0);	// (20 sec) timeout value for the release (20 sec)
+//const ACE_Time_Value _timeout_value(20,0);    // (20 sec) timeout value for the release (20 sec)
 
 class RateThreadCallbackAdapter: public ThreadImpl
 {

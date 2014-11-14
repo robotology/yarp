@@ -196,7 +196,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         yarp::os::ConstString lPortName("");
 
         if (config.check("forward"))
-        { 
+        {
             fPortName=config.findGroup("forward").get(1).asString();
             lPortName=config.findGroup("forward").get(2).asString();
         }
@@ -281,7 +281,7 @@ int yarp::os::Run::main(int argc, char *argv[])
             rt.start();
             return w.loop();
         }
-        
+
         return 0;
     }
 
@@ -430,7 +430,7 @@ yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg,yarp::os::ConstString target
             yarp::os::Time::delay(DELAY);
             continue;
         }
-        
+
         if (!yarp::os::Network::connect(port.getName(),target))
         {
             port.close();
@@ -449,7 +449,7 @@ yarp::os::Bottle yarp::os::Run::sendMsg(Bottle& msg,yarp::os::ConstString target
 
         yarp::os::Network::disconnect(port.getName().c_str(),target.c_str());
         port.close();
-    
+
         fprintf(stderr,"RESPONSE:\n=========\n");
         for (int s=0; s<response.size(); ++s)
         {
@@ -607,7 +607,7 @@ int yarp::os::Run::server()
                 if (botLogger.size()>1)
                 {
                     yarp::os::ConstString loggerName=botLogger.get(1).asString();
-                    executeCmdStdout(msg,cmdResult,loggerName);    
+                    executeCmdStdout(msg,cmdResult,loggerName);
                 }
                 else
                 {
@@ -1094,7 +1094,7 @@ int yarp::os::Run::server()
                     if (botLogger.size()>1)
                     {
                         yarp::os::ConstString loggerName=botLogger.get(1).asString();
-                        executeCmdStdout(msg,cmdResult,loggerName);    
+                        executeCmdStdout(msg,cmdResult,loggerName);
                     }
                     else
                     {
@@ -1481,7 +1481,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         {
             fprintf(stderr, "RESPONSE:\n=========\n");
             fprintf(stderr, "Cannot open port, aborting...\n");
-            
+
             return YARPRUN_ERROR;
         }
 
@@ -1900,7 +1900,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result,yarp::os::ConstSt
     int space=command.find(" ");
     if (space!=ConstString::npos) command=command.substr(0,space);
     portName+=command;
-    
+
     // PIPES
     SECURITY_ATTRIBUTES pipe_sec_attr;
     pipe_sec_attr.nLength=sizeof(SECURITY_ATTRIBUTES);
@@ -2777,7 +2777,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString strCmd=msg.find("cmd").asString();
-    
+
     yarp::os::ConstString portName="/log";
     portName+=mPortName+"/";
 
@@ -2787,7 +2787,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
     portName+=command;
 
 
-    
+
     int  pipe_cmd_to_stdout[2];
     int  ret_cmd_to_stdout=pipe(pipe_cmd_to_stdout);
 
@@ -3067,7 +3067,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
                         out+=yarp::os::ConstString(buff);
                     }
-        
+
                     fclose(in_from_child);
                 }
 
@@ -3108,7 +3108,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
     yarp::os::ConstString strUUID=msg.find("stdiouuid").asString();
 
     yarp::os::ConstString strCmd;
-    
+
     if (msg.check("forward"))
     {
         strCmd=yarp::os::ConstString("/bin/bash -l -c \"yarprun --readwrite ")+strUUID
@@ -3118,7 +3118,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
     {
         strCmd=yarp::os::ConstString("/bin/bash -l -c \"yarprun --readwrite ")+strUUID+"\"";
     }
-    
+
     int pipe_child_to_parent[2];
 
     if (pipe(pipe_child_to_parent))
@@ -3231,7 +3231,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
         cmdclean(command);
 
         yarp::os::Time::delay(0.01);
-        
+
         FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
         int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
         fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK);
@@ -3247,7 +3247,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
                 out+=yarp::os::ConstString(buff);
             }
-        
+
             fclose(in_from_child);
         }
 
@@ -3458,7 +3458,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
                 out+=yarp::os::ConstString(buff);
             }
-        
+
             fclose(in_from_child);
         }
 

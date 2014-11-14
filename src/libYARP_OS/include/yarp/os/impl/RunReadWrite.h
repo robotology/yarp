@@ -58,7 +58,7 @@ public:
         DWORD nr;
         char dummy[24];
         ReadFile(hReadPipe,dummy,1,&nr,NULL);
-        RUNLOG("mStdio->exit()")      
+        RUNLOG("mStdio->exit()")
         mStdio->exit();
     }
 
@@ -108,7 +108,7 @@ public:
 #if !defined(WIN32)
         char dummy[24];
         char* warn_suppress=fgets(dummy,16,fwait);
-        RUNLOG("mStdio->exit()")      
+        RUNLOG("mStdio->exit()")
         mStdio->exit();
 #endif
     }
@@ -134,9 +134,9 @@ class RunWrite : public RunStdio
 {
 public:
     RunWrite(yarp::os::ConstString& portName,yarp::os::ConstString& loggerName)
-    { 
+    {
         mVerbose=true;
-    
+
         char buff[16];
         sprintf(buff,"/%d",getpid());
         wPortName=portName+buff;
@@ -153,11 +153,11 @@ public:
     }
 
     RunWrite(yarp::os::ConstString& portName)
-    { 
+    {
         mVerbose=false;
-    
+
         wPortName=portName+"/stdout";
-      
+
         mRunning=true;
     }
 
@@ -168,7 +168,7 @@ public:
     void exit()
     {
         RUNLOG("<<<exit()")
-        
+
         mRunning=false;
         wPort.close();
 
@@ -205,7 +205,7 @@ public:
     {
         rPortName=portName+"/stdin";
 
-        mRunning=true; 
+        mRunning=true;
     }
    ~RunRead(){}
 
@@ -216,7 +216,7 @@ public:
         RUNLOG("<<<exit()")
 
         mRunning=false;
-        
+
         rPort.interrupt();
 
         RUNLOG(">>>exit()")
@@ -266,7 +266,7 @@ public:
     void exit()
     {
         RUNLOG("<<<exit()")
-        
+
         mRunning=false;
 
         rPort.interrupt();
