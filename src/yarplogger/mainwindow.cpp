@@ -300,10 +300,12 @@ void MainWindow::ctxMenu(const QPoint &pos)
     menu->exec(ui->yarprunTreeView->mapToGlobal(pos));
 }
 
-MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    yarp::os::ResourceFinder &rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
+
     std::string loggername = rf.check("name",yarp::os::Value("/yarplogger")).asString();
     theLogger = new yarp::yarpLogger::LoggerEngine(loggername);
 
