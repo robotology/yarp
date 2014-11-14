@@ -10,6 +10,8 @@ include(CMakePackageConfigHelpers)
 get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 get_property(YARP_LINK_DIRS GLOBAL PROPERTY YARP_TREE_LINK_DIRS)
 get_property(YARP_LIBS GLOBAL PROPERTY YARP_LIBS)
+get_property(YARP_TOOLS GLOBAL PROPERTY YARP_TOOLS)
+
 # Oops, cannot use YARP_DEFINES name, conflicts with an old variable
 # that might be lurking in CMakeCache.txt as people upgrade.  Insert
 # an "_ALL_" for now.
@@ -49,7 +51,7 @@ write_basic_package_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
                                  COMPATIBILITY AnyNewerVersion)
 
 # YARPTargets.cmake (build tree)
-export(TARGETS ${YARP_LIBS}
+export(TARGETS ${YARP_LIBS} ${YARP_TOOLS}
        NAMESPACE YARP::
        FILE ${CMAKE_BINARY_DIR}/YARPTargets.cmake)
 
