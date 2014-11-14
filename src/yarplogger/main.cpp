@@ -38,12 +38,13 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    QApplication a(argc, argv);
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.setDefaultConfigFile("yarprunLogger.ini");           //overridden by --from parameter
     rf.setDefaultContext("yarprunLogger");                  //overridden by --context parameter
     rf.configure(argc,argv);
+
+    QApplication a(argc, argv); // Eats the "--name" argument, therefore initialized after the ResourceFinder
 
     bool cannot_close = rf.check("no_stop");
     if (cannot_close)
