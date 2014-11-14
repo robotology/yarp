@@ -183,25 +183,24 @@ bool ControlBoardWrapper::open(Searchable& config)
     // attach callback.
     inputStreaming_buffer.useCallback(streaming_parser);
 
-    inputRPCPort.open((rootName+"/rpc:i").c_str());
-    inputStreamingPort.open((rootName+"/command:i").c_str());
-    outputPositionStatePort.open((rootName+"/state:o").c_str());
-
-    // new extended output state port
-#ifdef YARP_MSG
-    extendedOutputState_buffer.attach(extendedOutputStatePort);
-    extendedOutputStatePort.open((rootName+"/stateExt:o").c_str());
-#endif
-
-
-
     // In case attach is not deferred and the controlboard already owns a valid device
     // we can start the thread. Otherwise this will happen when attachAll is called
     if (ownDevices)
-        {
-           RateThread::setRate(thread_period);
-           RateThread::start();
-        }
+    {
+        inputRPCPort.open((rootName+"/rpc:i").c_str());
+        inputStreamingPort.open((rootName+"/command:i").c_str());
+        outputPositionStatePort.open((rootName+"/state:o").c_str());
+
+        // new extended output state port
+    #ifdef YARP_MSG
+        extendedOutputState_buffer.attach(extendedOutputStatePort);
+        extendedOutputStatePort.open((rootName+"/stateExt:o").c_str());
+    #endif
+
+       RateThread::setRate(thread_period);
+        RateThread::start();
+    }
+
 #ifdef ROS_MSG
     rosNode = new yarp::os::Node( (rootName+"/rosPublisher").c_str());   // added a Node
 
@@ -472,6 +471,19 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
 
     // initialization.
     RPC_parser.initialize();
+
+    // When the attach is deferred, wait to open the ports untill the attach to be sure the subdevice is fully
+    // initialized do that when the port opens get functions have real values available
+
+    inputRPCPort.open((rootName+"/rpc:i").c_str());
+    inputStreamingPort.open((rootName+"/command:i").c_str());
+    outputPositionStatePort.open((rootName+"/state:o").c_str());
+
+    // new extended output state port
+#ifdef YARP_MSG
+    extendedOutputState_buffer.attach(extendedOutputStatePort);
+    extendedOutputStatePort.open((rootName+"/stateExt:o").c_str());
+#endif
 
     RateThread::setRate(thread_period);
     RateThread::start();
