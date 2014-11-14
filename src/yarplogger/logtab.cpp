@@ -57,15 +57,17 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _syst
     connect(logTimer, SIGNAL(timeout()), this, SLOT(updateLog()));
     logTimer->start(refreshRate);
 
-    model_logs->setHorizontalHeaderItem(0,new QStandardItem("yarprun timestamp"));
-    model_logs->setHorizontalHeaderItem(1,new QStandardItem("local timestamp"));
-    model_logs->setHorizontalHeaderItem(2,new QStandardItem("level"));
-    model_logs->setHorizontalHeaderItem(3,new QStandardItem("message"));
+    model_logs->setHorizontalHeaderItem(0,new QStandardItem(tr("yarprun timestamp")));
+    model_logs->setHorizontalHeaderItem(1,new QStandardItem(tr("local timestamp")));
+    model_logs->setHorizontalHeaderItem(2,new QStandardItem(tr("level")));
+    model_logs->setHorizontalHeaderItem(3,new QStandardItem(tr("component")));
+    model_logs->setHorizontalHeaderItem(4,new QStandardItem(tr("message")));
     ui->listView->setColumnWidth(0,120);
     ui->listView->setColumnWidth(1,120);
     ui->listView->setColumnWidth(2,120);
-    ui->listView->setColumnWidth(3,100);
-    ui->listView->horizontalHeader()->setSectionResizeMode(3,QHeaderView::Stretch);
+    ui->listView->setColumnWidth(3,120);
+    ui->listView->setColumnWidth(4,100);
+    ui->listView->horizontalHeader()->setSectionResizeMode(4,QHeaderView::Stretch);
     ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     ui->listView->verticalHeader()->setDefaultSectionSize(20);
 
@@ -179,7 +181,12 @@ void LogTab::updateLog(bool from_beginning)
         std::string textWithoutNewLines = it->text;
         textWithoutNewLines.erase(textWithoutNewLines.find_last_not_of(" \n\r\t")+1);
         //using numbers seems not to work. Hence I'm using strings.
-        rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(textWithoutNewLines.c_str());
+
+        rowItem << new QStandardItem(it->yarprun_timestamp.c_str())
+                << new QStandardItem(it->local_timestamp.c_str())
+                << new QStandardItem(error_level.c_str())
+                << new QStandardItem(it->component.c_str())
+                << new QStandardItem(it->text.c_str());
 
         if (displayColors_enabled)
         {
