@@ -738,6 +738,8 @@ bool ApplicationViewWidget::onRefresh()
     selectAllConnections(false);
     selectAllModule(false);
     selectAllResources(false);
+
+    return true;
 }
 
 /*! \brief Select all modules */
