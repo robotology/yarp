@@ -33,6 +33,10 @@ using namespace yarp::os;
 #define dbg_flag 0
 #define dbg_printf if (dbg_flag) printf
 
+WireTwiddlerWriter::~WireTwiddlerWriter() {
+}
+
+
 int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
                             const yarp::os::ConstString& vtag) {
     int start = offset;
@@ -683,7 +687,7 @@ bool WireTwiddlerWriter::update() {
     lastBlock = parent->length()-block-1;
     activeEmit = NULL;
     activeEmitLength = 0;
-
+    activeEmitOffset = -1;
 
     dbg_printf("Parent headers %d blocks %d\n", (int)parent->headerLength(), 
                (int)parent->length());
@@ -708,8 +712,8 @@ bool WireTwiddlerWriter::update() {
                     dbg_printf("Pass [4-byte length] [<length> bytes]\n");
                     readLengthAndPass(1);
                 } else if (gap.length==-1) {
-                    dbg_printf("Pass [4-byte length] [<length>*%d bytes]", gap.unit_length);
-                    readLengthAndPass(gap.unit_length);
+                    dbg_printf("Pass [4-byte length] [<length>*%d bytes]\n", gap.unit_length);
+                    readLengthAndPass(gap.unit_length,&gap);
                 } else {
                     dbg_printf("Pass [%d*%d bytes]\n", gap.length, gap.unit_length);
                     if (gap.unit_length!=gap.wire_unit_length) {
@@ -727,6 +731,11 @@ bool WireTwiddlerWriter::update() {
     }
     emit(NULL,0);
     dbg_printf("%d write blocks\n", (int)srcs.size());
+    if (dbg_flag) {
+        for (int i=0; i<(int)srcs.size(); i++) {
+            dbg_printf("  write block %d: len %d offset %d ptr %ld\n", i, srcs[i].len,srcs[i].offset,(long int)srcs[i].src);
+        }
+    }
     return !errorState;
 }
 
@@ -750,14 +759,21 @@ bool WireTwiddlerWriter::pad(int len) {
     return emit(zeros.get(),len);
 }
 
-bool WireTwiddlerWriter::readLengthAndPass(int unitLength) {
+bool WireTwiddlerWriter::readLengthAndPass(int unitLength, 
+                                           const WireTwiddlerGap *gap) {
     int len = readLength();
     if (len==0) return false;
     if (unitLength!=-1) {
-        advance(unitLength*len,true);
+        if (gap == NULL || gap->wire_unit_length==unitLength) {
+            advance(unitLength*len,true);
+        } else {
+            for (int i=0; i<len; i++) {
+                if (!transform(*gap)) return false;
+            }
+        }
     } else {
         for (int i=0; i<len; i++) {
-            bool ok = readLengthAndPass(1);
+            bool ok = readLengthAndPass(1,gap);
             if (!ok) return false;
         }
     }
@@ -812,12 +828,7 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
             }
         }
         if (shouldEmit) {
-            dbg_printf("  emitting block %d with offset %d, length %d\n",
-                       block, offset, rem);
             emit(blockPtr+offset, rem);
-        } else {
-            dbg_printf("  skipping block %d with offset %d, length %d\n",
-                       block, offset, rem);
         }
         if (shouldAccum) {
             if (accumOffset+rem>4) {
@@ -835,6 +846,7 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
 }
 
 bool WireTwiddlerWriter::emit(const char *src, int len) {
+    int noffset = -1;
     if (src!=NULL) {
         if (activeGap) {
             const WireTwiddlerGap& gap = *activeGap;
@@ -847,7 +859,8 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
                 }
                 NetFloat32 *y = (NetFloat32 *)(scratch.get()+scratchOffset);
                 *y = *x;
-                src = scratch.get()+scratchOffset;
+                src = NULL;
+                noffset = scratchOffset;
                 len = 4;
                 scratchOffset += 4;
             } else {
@@ -857,26 +870,34 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
             activeGap = NULL;
         }
     }
-    if (src!=NULL) {
-        dbg_printf("  cache %ld %d [%d]\n", (long int)src, len, *src);
-    }
-    if (activeEmit!=NULL) {
-        dbg_printf("  activeEmit is currently %ld, len %d\n",
-                   (long int)activeEmit, 
-                   activeEmitLength);
-        if (activeEmit+activeEmitLength!=src) {
-            dbg_printf("  emit %ld %d [%d]\n", (long int)activeEmit, 
-                       activeEmitLength, *activeEmit);
-            srcs.push_back(Bytes((char*)activeEmit,activeEmitLength));
+    dbg_printf("  cache %ld len %d offset %d /// activeEmit %ld %d %d\n", (long int)src, len, noffset, (long int) activeEmit, activeEmitLength, activeEmitOffset);
+    if (activeEmit!=NULL||activeEmitOffset>=0) {
+        bool push = false;
+        if (activeEmitOffset>=0 && noffset<0) {
+            push = true;
+        } else if (activeEmitOffset<0 && noffset>=0) {
+            push = true;
+        } else if (noffset==-1 && activeEmit+activeEmitLength!=src) {
+            push = true;
+        }
+        if (push) {
+            dbg_printf("  ** emit %ld len %d offset %d\n", (long int)activeEmit, 
+                       activeEmitLength, activeEmitOffset);
+            srcs.push_back(WireTwiddlerSrc((char*)activeEmit,activeEmitLength,activeEmitOffset));
             activeEmit = NULL;
+            activeEmitLength = 0;
+            activeEmitOffset = -1;
         } else {
             activeEmitLength += len;
+            dbg_printf("  ** extend %ld len %d offset %d\n", (long int)activeEmit, 
+                       activeEmitLength, activeEmitOffset);
             return true;
         }
     }
-    if (src!=NULL) {
+    if (src!=NULL||noffset>=0) {
         activeEmit = src;
         activeEmitLength = len;
+        activeEmitOffset = noffset;
     }
     return true;
 }
