@@ -1,3 +1,15 @@
+/*
+ * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Authors: Alberto Cardellino
+ * email:   alberto.cardellino@iit.it
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+*
+*/
+
+#ifndef STATE_EXTENDED_READER
+#define STATE_EXTENDED_READER
+
+
 #include <string.h>
 
 #include <yarp/os/PortablePair.h>
@@ -18,9 +30,8 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
 
-#ifdef YARP_MSG
 #include "jointData.h"
-#endif
+
 
 // encoders should arrive at least every 0.5s to be considered valide
 // getEncoders will return false otherwise.
@@ -59,3 +70,4 @@ public:
     void getEstFrequency(int &ite, double &av, double &min, double &max);
 };
 
+#endif //STATE_EXTENDED_READER

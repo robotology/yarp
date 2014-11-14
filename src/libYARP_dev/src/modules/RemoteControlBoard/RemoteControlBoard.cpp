@@ -1074,6 +1074,7 @@ public:
         else
             diagnosticThread=0;
 
+#if defined(YARP_MSG)
         // allocate memory for helper struct
         // single joint
         last_singleJoint.position.resize(1);
@@ -1088,6 +1089,7 @@ public:
         last_wholePart.torque.resize(nj);
         last_wholePart.controlMode.resize(nj);
         last_wholePart.interactionMode.resize(nj);
+#endif
         return true;
     }
 
@@ -2772,7 +2774,7 @@ public:
         for (int i = 0; i < n_joints; i++)
             l1.addInt(joints[i]);
 
-        bool ok = rpc_p.write(cmd, response);
+        ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response))
         {

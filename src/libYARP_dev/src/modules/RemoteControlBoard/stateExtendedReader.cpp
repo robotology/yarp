@@ -20,10 +20,6 @@
 
 #include <stateExtendedReader.hpp>
 
-#ifdef YARP_MSG
-#include "jointData.h"
-#endif
-
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -82,7 +78,9 @@ bool StateExtendedInputPort::getLast(int j, jointData &data, Stamp &stamp, doubl
     {
         data.position[0]        = last.position[j];
         data.velocity[0]        = last.velocity[j];
+        data.acceleration[0]    = last.acceleration[j];
         data.torque[0]          = last.torque[j];
+        data.pidOutput[0]       = last.pidOutput[j];
         data.controlMode[0]     = last.controlMode[j];
         data.interactionMode[0] = last.interactionMode[j];
 
@@ -134,4 +132,3 @@ void StateExtendedInputPort::getEstFrequency(int &ite, double &av, double &min, 
     av=av*1000;
     mutex.post();
 }
-
