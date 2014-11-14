@@ -374,6 +374,16 @@ public:
 
     static ConstString toString(int x);
 
+    /**
+     *
+     * Convert a numeric bottle code to a string.
+     * @param the code to convert
+     * @return a string representation of the code's meaning
+     *
+     */
+    static ConstString describeBottleCode(int code);
+
+
 protected:
 
     virtual void setReadOnly(bool readOnly) { 

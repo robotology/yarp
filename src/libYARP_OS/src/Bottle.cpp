@@ -434,3 +434,39 @@ void Bottle::edit() {
         invalid = false;
     }
 }
+
+
+ConstString Bottle::describeBottleCode(int code) {
+    int unit = code & ~(BOTTLE_TAG_LIST|BOTTLE_TAG_DICT);
+    ConstString unitName = "mixed";
+    switch (unit) {
+    case 0:
+        unitName = "mixed";
+        break;
+    case BOTTLE_TAG_INT:
+        unitName = "int";
+        break;
+    case BOTTLE_TAG_VOCAB:
+        unitName = "vocab";
+        break;
+    case BOTTLE_TAG_DOUBLE:
+        unitName = "float";
+        break;
+    case BOTTLE_TAG_STRING:
+        unitName = "string";
+        break;
+    case BOTTLE_TAG_BLOB:
+        unitName = "blob";
+        break;
+    default:
+        unitName = "unknown";
+        break;
+    }
+    ConstString result = unitName;
+    if (code & BOTTLE_TAG_LIST) {
+        result = "list of " + unitName;
+    } else if (code & BOTTLE_TAG_DICT) {
+        result = "dict of " + unitName;
+    }
+    return result;
+}

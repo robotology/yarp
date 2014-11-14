@@ -816,12 +816,17 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
             activeCheck += rem;
             if (result!=0) {
                 dbg_printf("Type check failed! >>>\n");
-                for (int i=0; i<rem; i++) {
-                    dbg_printf(" %03d <--> %03d\n", 
-                            activeCheck[i], blockPtr[i+offset]);
-                }
                 if (!errorState) {
                     yError("Structure of message is unexpected (expected %s)", twiddler->getPrompt().c_str());
+                    if (rem>=4) {
+                        NetInt32 t1 = *((NetInt32 *)(blockPtr+offset));
+                        NetInt32 t2 = *((NetInt32 *)(activeCheck-rem));
+                        if (t1!=t2) {
+                            yError("Expected '%s', got '%s'\n", 
+                                   Bottle::describeBottleCode(t2).c_str(),
+                                   Bottle::describeBottleCode(t1).c_str());
+                        }
+                    }
                 }
                 errorState = true;
                 return false;
