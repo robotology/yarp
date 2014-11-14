@@ -402,7 +402,7 @@ static int metaConnect(const ConstString& src,
         }
         if (!style.quiet) {
             if (style.verboseOnSuccess) {
-                fprintf(stderr,"Success: connection to topic added.\n");
+                fprintf(stderr,"Success: connection to topic %s.\n", mode==YARP_ENACT_CONNECT ? "added" : "removed");
             }
         }
         return 0;
