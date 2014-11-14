@@ -892,7 +892,7 @@ int main(int argc, char *argv[])
 
     if (rf.check("help"))
     {
-        cout << "Options:";
+        cout << "Options:"                                                                           << endl;
         cout << "\t--name       port: service port name (default: /dump)"                            << endl;
         cout << "\t--dir        name: provide explicit name of storage directory"                    << endl;
         cout << "\t--overwrite      : overwrite pre-existing storage directory"                      << endl;
