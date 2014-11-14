@@ -72,7 +72,7 @@
    start at the top of the list. */
     static char* command_generator (const char* text, int state)
     {
-        static int list_index, len;
+        static size_t list_index, len;
         char *name;
 
         /* if this is a new word to complete, initialize now.  this includes

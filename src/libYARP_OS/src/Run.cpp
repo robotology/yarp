@@ -1020,7 +1020,7 @@ int yarp::os::Run::server()
                         yarp::os::ConstString portName="/log";
                         portName+=mPortName+"/";
                         yarp::os::ConstString command=msg.findGroup("cmd").get(1).asString();
-                        int space=command.find(" ");
+                        size_t space=command.find(" ");
                         if (space!=ConstString::npos) command=command.substr(0,space);
                         portName+=command;
 
@@ -2782,7 +2782,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
     portName+=mPortName+"/";
 
     yarp::os::ConstString command=strCmd;
-    int space=command.find(" ");
+    size_t space=command.find(" ");
     if (space!=ConstString::npos) command=command.substr(0,space);
     portName+=command;
 
