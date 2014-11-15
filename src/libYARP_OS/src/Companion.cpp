@@ -213,8 +213,10 @@ static void companion_install_handler() {
     #endif
 }
 
+#ifdef WITH_READLINE
 static char* szLine = (char*)NULL;
 static bool readlineEOF=false;
+#endif
 static bool EOFreached()
 {
 #ifdef WITH_READLINE
