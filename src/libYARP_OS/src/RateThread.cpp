@@ -37,7 +37,6 @@ private:
     ACE_Time_Value sleep;
     ACE_Time_Value sleepPeriodTV;
     //ACE_High_Res_Timer thread_timer; // timer to estimate thread time
-    double sleep_period;   // thread sleep
 
     bool suspended;
     double totalUsed;      //total time taken iterations
