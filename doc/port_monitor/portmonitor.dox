@@ -98,7 +98,7 @@ PortMonitor.update = function(thing)
 end 
 \endverbatim
 
-- <b>PortMonitor.setparam/getparam</b> :  This will be called by the YARP port administrator when users try to reconfigure the monitor object using YARP port administrative commands (See image_modification example). The 'param' is of type yarp.Property object. 
+- <b>PortMonitor.setparam/getparam</b> :  This will be called by the YARP port administrator when users try to reconfigure the monitor object using YARP port administrative commands (See \ref image_modification "An example of image data modification and setting parameters via administrative port"). The 'param' is of type yarp.Property object. 
 
 \verbatim
 PortMonitor.setparam = function(param)
@@ -135,7 +135,7 @@ selector block. Port arbitrator extends the port's scripting API for setting con
 A port monitor can be attached to each connection (Ci) going through the port arbitrator. It monitors the data from connection and inserts the corresponding events into a shared container. A port monitor can also remove an event (if previously inserted by itself) from the container. Normally events have infinite life time. This means that they remain valid in the container until they are explicitly removed by the monitor object. An event can also have a specific life time. A time event will be automatically removed from the
 container when its life time is over. For each connection Ci , there is a selection constraint written in first order logic as a boolean combination of the symbolic events. Upon the reception of data from a connection, the selector evaluates the corresponding constraint and, if satisfied, it allows the data to be delivered to the input port; otherwise the data will be discarded. 
     
-Beside the port monitor callbacks, there is a set of auxiliary functions which is offered by the PortMonitor. These auxiliary functions are used for the port arbitration (See example/arbitration).
+Beside the port monitor callbacks, there is a set of auxiliary functions which is offered by the PortMonitor. These auxiliary functions are used for the port arbitration (See \ref arbitration "An example of using port monitors for arbitrating multiple connections").
 
 - <b>PortMonitor.setEvent(event, lifetime)</b> : set an event (with optional lifetime) into port event record
 - <b>PortMonitor.unsetEvent(event)</b>         : unset an event into port event record
@@ -148,7 +148,7 @@ Beside the port monitor callbacks, there is a set of auxiliary functions which i
 
 - \ref type_modification "Simple data type modiffication"
 
-- \ref image_modification "An example of image data modification and setting parameters via admin port" 
+- \ref image_modification "An example of image data modification and setting parameters via administrative port" 
 
 - \ref arbitration "An example of using port monitors for arbitrating multiple connections"
 
