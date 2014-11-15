@@ -113,7 +113,6 @@ Sound Sound::subSound(int first_sample, int last_sample)
     */
 
     //safe implementation
-    int c=0;
     int j=0;
     for (int i=first_sample; i<last_sample; i++)
     {
