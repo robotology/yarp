@@ -45,7 +45,7 @@ int RunWrite::loop()
 
     while (mRunning)
     {
-        if (fgets(txt,2048,stdin)<=0 || ferror(stdin) || feof(stdin)) break;
+        if (!fgets(txt,2048,stdin) || ferror(stdin) || feof(stdin)) break;
 
         if (!mRunning) break;
 
@@ -244,7 +244,7 @@ void RunReadWrite::run()
         if (getppid()==1) break;
         #endif
 
-        if (fgets(txt,2048,stdin)<=0 || ferror(stdin) || feof(stdin)) break;
+        if (!fgets(txt,2048,stdin) || ferror(stdin) || feof(stdin)) break;
 
         RUNLOG(txt)
 
