@@ -141,7 +141,6 @@ class yarp::dev::ServerControlBoard :
     // methods get implemented
 {
 private:
-    bool spoke;
     bool verb;
 
     Port rpc_p;     // RPC to configure the robot
