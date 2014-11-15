@@ -51,14 +51,14 @@ Sound& Sound::operator += (const Sound& alt) {
 
     Sound orig= *this;
     this->resize(this->samples+alt.samples,channels);
-    
+
     unsigned char* p1    = orig.getRawData();
     unsigned char* p2    = alt.getRawData();
     unsigned char* pout  = this->getRawData();
-    
+
     for (int i=0; i<offset; i++)
         pout[i]=p1[i];
-    
+
     int j=0;
     for (int i=offset; i<offset+size; i++)
         pout[i]=p2[j++];
@@ -100,7 +100,7 @@ Sound Sound::subSound(int first_sample, int last_sample)
 
     s.resize(last_sample-first_sample, this->channels);
     s.setFrequency(this->frequency);
-    
+
     /*
     //faster implementation but currently not working
     unsigned char* p1    = this->getRawData();
@@ -138,7 +138,7 @@ void Sound::init(int bytesPerSample) {
 
     samples = 0;
     channels = 0;
-    this->bytesPerSample = bytesPerSample;    
+    this->bytesPerSample = bytesPerSample;
 }
 
 Sound::~Sound() {
