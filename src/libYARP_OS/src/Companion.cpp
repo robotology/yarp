@@ -203,8 +203,8 @@ static void companion_sighup_handler()
 #endif
 
 static void companion_install_handler() {
-	::signal(SIGINT,companion_sigint_handler);
-	::signal(SIGTERM,companion_sigterm_handler);
+    ::signal(SIGINT,companion_sigint_handler);
+    ::signal(SIGTERM,companion_sigterm_handler);
 
     #if defined(WIN32)
     ::signal(SIGBREAK, (ACE_SignalHandler) companion_sigbreak_handler);
@@ -311,7 +311,7 @@ Companion::Companion() {
     add("read",       &Companion::cmdRead,
         "read from the network and print to standard output");
     // needed by yarprun --stdio
-	add("readwrite",  &Companion::cmdReadWrite,
+    add("readwrite",  &Companion::cmdReadWrite,
         "read from the network and print to standard output, write to the network from standard input");
     add("regression", &Companion::cmdRegression,
         "run regression tests, if linked");
@@ -1951,25 +1951,25 @@ public:
 
 int Companion::cmdReadWrite(int argc, char *argv[])
 {
-	if (argc<2)
-	{
+    if (argc<2)
+    {
         ACE_OS::fprintf(stderr, "Please supply the read and write port names\n");
         return 1;
     }
 
-	const char *read_port_name=argv[0];
-	const char *write_port_name=argv[1];
+    const char *read_port_name=argv[0];
+    const char *write_port_name=argv[1];
     const char *verbatim[] = { "verbatim", NULL };
 
     companion_install_handler();
     BottleReader reader;
     reader.open(read_port_name,false);
 
-	int ret = write(write_port_name,1,(char**)&verbatim);
+    int ret = write(write_port_name,1,(char**)&verbatim);
 
     reader.close();
 
-	return ret;
+    return ret;
 }
 
 
@@ -2001,8 +2001,8 @@ int Companion::cmdTopic(int argc, char *argv[]) {
             return 0;
         }
     }
-	if (argc<1)
-	{
+    if (argc<1)
+    {
         ACE_OS::fprintf(stderr, "Please supply the topic name\n");
         ACE_OS::fprintf(stderr, "(Or: '--list' to list all topics)\n");
         ACE_OS::fprintf(stderr, "(Or: '--remove <topic>' to remove a topic)\n");
@@ -2532,7 +2532,7 @@ int Companion::cmdMerge(int argc, char *argv[]) {
         if (!b) {
             delete [] inPort;
             delete [] inData;
-		    return -1;
+            return -1;
         }
     }
 
