@@ -47,18 +47,14 @@ end
 -- if false is returned, the data will be ignored 
 -- and update() will never be called
 PortMonitor.accept = function(thing)
+     bt = thing:asBottle()
+     if bt:size() < 2 or bt:get(0):asString() ~= "random" then  
+        print("type_modifier: invalid command! (e.g., random 10)")
+        return false;
+     end
     return true
 end
 
-
--- 
--- trig is called when one of the peer portmonitors
--- to the same input port receives data. This is 
--- called before the update() method of the peer 
--- portmoniotr is invoked
---
-PortMonitor.trig = function()
-end
 
 
 --
@@ -67,35 +63,12 @@ end
 -- @return Things
 PortMonitor.update = function(thing)
     bt = thing:asBottle()
-    
-    -- igonre whatever is in incomming data 
-    -- and create new data of vector type  
     th = yarp.Things()
     vec = yarp.Vector()
-    vec:push_back(1.5)
-    vec:push_back(2.0)
-    vec:push_back(3.0)
+    for i=1,bt:get(1):asInt() do
+        vec:push_back(math.random())
+    end    
     th:setPortWriter(vec)
     return th
 end
-
-
---
--- setparam is called on setCarrierParams by the port administrator  
--- @param property The Property
---
-PortMonitor.setparam = function(property) 
-
-end
-
-
---
--- getparan is called on getCarrierParams by the port administrator
--- @return property The Property
---
-PortMonitor.getparam = function() 
-
-    return property
-end
-
 

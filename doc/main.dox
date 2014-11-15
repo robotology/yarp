@@ -66,6 +66,7 @@ Interoperability:
 \li \ref yarp_without_yarp
 \li \ref yarp_with_ros
 \li \ref yarp_swig
+\li \ref portmonitor
 
 More information:
 \li \subpage what_is_yarp

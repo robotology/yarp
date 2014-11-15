@@ -80,7 +80,7 @@ Port Monitor carrier
    PortMonitor.setparam/getparam
    -----------------------------
    This will be called by the yarp port administrator when users try to reconfigure the monitor
-   object using yarp port administrative commands (See example/portmonitor/image_modification/README.txt).  
+   object using yarp port administrative commands (See example/image_modification/README.txt).  
    The 'param' is of type yarp.Property object. 
 
    PortMonitor.setparam = function(param)
@@ -102,7 +102,7 @@ Port Monitor carrier
   
   Beside the port monitor callbacks, there is a set of auxiliary functions which is offered by the 
   PortMonitor. These auxiliary functions are used with the PortMonitor to arbitrator multiple 
-  connection to the same input port of a module. (See example/portmonitor/arbitration/README.txt) 
+  connection to the same input port of a module. (See example/arbitration/README.txt) 
 
     - PortMonitor.setEvent(event, lifetime) : set an event (with optional lifetime) into port event record
     - PortMonitor.unsetEvent(event)         : unset an event into port event record
