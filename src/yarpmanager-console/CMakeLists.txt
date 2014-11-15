@@ -4,7 +4,7 @@
 #
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(CREATE_YMANAGER)
+if(CREATE_YARPMANAGER_CONSOLE)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
