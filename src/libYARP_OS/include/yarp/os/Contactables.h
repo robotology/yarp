@@ -27,8 +27,6 @@ public:
 
     virtual Contact query(const ConstString& name,
                           const ConstString& category = "") = 0;
-private:
-    void *system_resource;
 };
 
 #endif
