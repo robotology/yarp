@@ -33,6 +33,7 @@ Then, install any language-specific packages needed.
  - \ref yarp_swig_python
  - \ref yarp_swig_matlab
  - \ref yarp_swig_lua
+ - \ref yarp_swig_octave
  - \ref Other tested languages are: Perl, Chicken Scheme, C#, Allegro Common Lisp, TCL, and Ruby.  Procedure is same as for Java/Python.  You may need to install a development package for your desired language.  To find out:
    - On Linux: Check http://www.dabeaz.com/cgi-bin/wiki.pl?DeveloperInfo/GettingStarted
    - On OSX: A surprising amount of stuff comes pre-installed.
@@ -149,6 +150,18 @@ which classpath.txt
 \endverbatim
 
 
+@section yarp_swig_octave YARP for Octave
+For using Yarp from octave on Linux, be sure to install octave development packages, e.g. on Debian/Ubuntu:
+\verbatim
+sudo apt-get install liboctave-dev
+\endverbatim
+
+After \ref yarp_swig_compile, make sure that Octave-Yarp binding library (i.e., yarp.oct) is in the octave Load-path list or manually set it within your octave script. For example:  
+\verbatim
+ octave> addpath([getenv('YARP_ROOT') '/build/lib/octave']);
+\endverbatim
+
+
 @section yarp_swig_lua YARP for Lua
 For Lua on linux, be sure to install Lua development files, e.g. on Debian/Ubuntu:
 \verbatim
@@ -175,6 +188,7 @@ After \ref yarp_swig_compile, make sure that the Lua-Yarp binding shared library
 \verbatim
 export LUA_CPATH=";;;$YARP_ROOT/bindings/build-lua/?.so"
 \endverbatim
+
 
 
 @section yarp_swig_configure Configuring YARP language bindings

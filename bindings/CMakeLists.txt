@@ -1,5 +1,5 @@
 # Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau, Stephane Lallee
+# Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau, Stephane Lallee, Ali Paikan
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.8.9)
@@ -45,6 +45,7 @@ set(CREATE_ALLEGRO FALSE CACHE BOOL "Do you want to create the Allegro Common Li
 set(CREATE_TCL FALSE CACHE BOOL "Do you want to create the TCL interface")
 set(CREATE_RUBY FALSE CACHE BOOL "Do you want to create the Ruby interface")
 set(CREATE_LUA FALSE CACHE BOOL "Do you want to create the Lua interface")
+set(CREATE_OCTAVE FALSE CACHE BOOL "Do you want to create the Octave interface")
 
 
 
@@ -337,5 +338,25 @@ if(CREATE_LUA)
   endif()
   set(YARP_COLLISION_AVOIDANCE TRUE)
 endif(CREATE_LUA)
+
+#############################################################################
+## Create Octave bindings
+
+if(CREATE_OCTAVE)
+  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+  find_package(Octave REQUIRED)
+  set(target_name yarp_octave)
+  get_filename_component(OCTAVE_INCLUDE_TOP ${OCTAVE_INCLUDE_DIR} DIRECTORY)
+  include_directories(${OCTAVE_INCLUDE_DIRS} ${OCTAVE_INCLUDE_TOP})
+  swig_add_module(${target_name} octave yarp.i)
+  swig_link_libraries(${target_name} ${OCTAVE_LIBRARIES})
+  set_target_properties(${target_name} PROPERTIES PREFIX "")
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
+  set_target_properties(${target_name} PROPERTIES SUFFIX ".oct")
+  if(YARP_COLLISION_AVOIDANCE)
+    set_target_properties(${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/octave)
+  endif()
+  set(YARP_COLLISION_AVOIDANCE TRUE)
+endif(CREATE_OCTAVE)
 
 endif()
