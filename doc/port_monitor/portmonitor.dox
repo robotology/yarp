@@ -10,6 +10,16 @@
 
 \author Ali Paikan
 
+\section content Contents 
+\li \ref what_is
+\li \ref which_is
+\li \ref need
+\li \ref use
+\li \ref callbacks
+\li \ref portarbitrator
+\li \ref portmonitor_exmp
+\li \ref reading
+
 
 \section what_is What is portmonitor carrier? 
 
@@ -27,7 +37,7 @@ recompiling it. Using the run-time script (currently written in Lua) we can acce
 \image html portmonitor.png "An example of port monitor. The output port of FaceDetector modules is extended with a plug-in which provides access to the outgoing data through scripting language (e.g., Lua)"
 
 
-\section need What do I need to use portmonitor?  
+\section need What do I need to use portmonitor carrier?  
 \li You need to compile yarp-lua binding and set the 'LUA_CPATH' to find yarp-lua binding library (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages"). 
 
 \li Enable portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON) in cmake and comile the YARP.
