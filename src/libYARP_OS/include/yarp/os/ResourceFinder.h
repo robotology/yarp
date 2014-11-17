@@ -26,6 +26,9 @@ namespace yarp {
 /**
  *
  * Helper class for finding config files and other external resources.
+ * 
+ * More details on this class behaviour can be found in
+ * \ref yarp_resource_finder_tutorials.
  *
  */
 class YARP_OS_API yarp::os::ResourceFinder : public Searchable{
