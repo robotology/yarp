@@ -167,6 +167,9 @@ public:
      * a file name - this is for backwards compatibility
      * and is behavior that will probably go away - don't
      * depend on it!
+     * 
+     * The file is searched in a hierarchy of paths as defined in
+     * \ref yarp_resource_finder_tutorials.
      *
      */
     yarp::os::ConstString findFile(const ConstString& key);
@@ -175,6 +178,8 @@ public:
      *
      * Find the full path to a file. The name of the file is provided explicitly.
      *
+     * The file is searched in a hierarchy of paths as defined in
+     * \ref yarp_resource_finder_tutorials.
      */
     yarp::os::ConstString findFileByName(const ConstString& fileName);
 
@@ -190,6 +195,8 @@ public:
      * and is behavior that will probably go away - don't
      * depend on it!
      *
+     * The path is searched in a hierarchy of paths as defined in
+     * \ref yarp_resource_finder_tutorials.
      */
     yarp::os::ConstString findPath(const ConstString& key);
 
@@ -204,6 +211,8 @@ public:
      * The first path is the list comes from the highest-priority
      * location, and would be the path returned by findPath("app")
      *
+     * The path is searched in a hierarchy of paths as defined in
+     * \ref yarp_resource_finder_tutorials.
      */
     yarp::os::Bottle findPaths(const ConstString& key);
 
