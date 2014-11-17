@@ -6,7 +6,7 @@
  */
 
 /**
- * @page portmonitor Port monitoting and arbitration using  portmonitor carrier 
+ * @page portmonitor Port monitoring and arbitration using the portmonitor carrier 
 
 \author Ali Paikan
 
@@ -21,13 +21,13 @@
 \li \ref reading
 
 
-\section what_is What is portmonitor carrier? 
+\section what_is What is the portmonitor carrier? 
 
-In short, it is an extended functionality of a port implemented as a new carrier which allows to dynamically load a run–time script and plug it into the port of an existing module without changing the code or
-recompiling it. Using the run-time script (currently written in Lua) we can access and modify the data traveling through the port using a simple API. Thus, some extra functionalities of a component can be added during the application development time and without the need to modify and rebuild the component itself.
+In short, it is an extended functionality of a port implemented as a new carrier which allows to dynamically load at run–time script and plug it into the port of an existing module without changing the code or
+recompiling it. Using run-time scripts (currently written in Lua) we can access and modify the data travelling through the port using a simple API. In this way extra functionalities of a component can be added during application development time and without the need to modify and rebuild the component itself.
 
 
-\section which_is Which functionalities are we talking? 
+\section which_is Which functionalities are we talking about? 
 - Data Guarding and Filtering
 - Data Transformation
 - Logging and Performance Monitoring
@@ -40,16 +40,18 @@ recompiling it. Using the run-time script (currently written in Lua) we can acce
 \section need What do I need to use portmonitor carrier?  
 \li You need to compile yarp-lua binding and set the 'LUA_CPATH' to find yarp-lua binding library (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages"). 
 
-\li Enable portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON) in cmake and comile the YARP.
+\li Enable portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON) in CMake and compile YARP.
 
 
 \section use How can I use port monitor? 
-You should connect two ports using yarp 'portmonitor' carrier modifier:
+You should connect two ports using the YARP 'portmonitor' carrier modifier:
 
 \verbatim
   $ yarp connect /out /in tcp+recv.portmonitor+script.lua+context.myapp+file.my_lua_script
 \endverbatim
   
+This rather weird syntax can be read as follow. Connect port /out to /in using the tcp transport protocol. Chain the receiver (recv) side of the port /in to the plugin portmonitor with parameters: script=lua, contex=myapp and file=my_lua_script ('.' here can be indeed interpreted as an assignment operator).
+
 This connects '/out' to '/in' using tcp and a portmonitor carrier modifier on the receiver side. Alternatively the script can be plugged into the sender port: 
 
 \verbatim
