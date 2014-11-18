@@ -4,6 +4,17 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+if [ ! "k$YARP_DIR" = "k" ] ; then
+    cd $YARP_DIR
+fi
+
+if [ ! -e CMakeCache.txt ] ; then
+    echo "Run from build directory or with YARP_DIR set to build directory"
+    exit 1
+fi
+
+YARP_BIN="$PWD/bin"
+
 function header {
 echo " "
 echo "====================================================================="
@@ -53,19 +64,44 @@ function wait_node {
 echo "Run some basic ROS tests, assuming a ros install"
 echo "Also assumes that YARP has been configured for ROS"
 
-YARP_DIR=/root/yarp/bin
 BASE=$PWD/check_ros_
+
+########################################################################
+header "Start name servers if needed"
+
+rostopic list || {
+    echo "String roscore"
+    roscore > /dev/null &
+}
+
+while ! rostopic list; do
+    echo "Waiting for roscore"
+    sleep 1
+done
+
+${YARP_BIN}/yarp where || {
+    echo "Starting yarpserver"
+    ${YARP_BIN}/yarpserver --ros --write > /dev/null &
+}
+
+while ! ${YARP_BIN}/yarp detect --write; do
+    echo "Waiting for yarpserver"
+    sleep 1
+done
+
+echo "roscore is OK"
+echo "yarpserver is OK"
 
 ########################################################################
 header "Check name server is found"
 
-${YARP_DIR}/yarp where || exit 1
+${YARP_BIN}/yarp where || exit 1
 
 
 ########################################################################
 header "Test name gets listed"
 
-${YARP_DIR}/yarp read /test/msg@/test_node &
+${YARP_BIN}/yarp read /test/msg@/test_node &
 YPID=$!
 
 wait_node_topic /test_node /test/msg
@@ -80,7 +116,7 @@ header "Test yarp write name gets listed with right type"
 
 typ="test_write/pid$$"
 topic="/test/msg/$typ"
-yes | ${YARP_DIR}/yarp write $topic@/test_node --type $typ &
+yes | ${YARP_BIN}/yarp write $topic@/test_node --type $typ &
 YPID=$!
 
 wait_node_topic /test_node $topic
@@ -104,7 +140,7 @@ header "Test yarp read name gets listed with right type"
 
 typ="test_read/pid$$"
 topic="/test/msg/$typ"
-${YARP_DIR}/yarp read $topic@/test_node --type $typ &
+${YARP_BIN}/yarp read $topic@/test_node --type $typ &
 YPID=$!
 
 wait_node_topic /test_node $topic
@@ -128,7 +164,7 @@ header "Test yarp read name gets listed with right type using twiddle"
 
 typ="test_twiddle/pid$$"
 topic="/test/msg/$typ"
-${YARP_DIR}/yarp read $topic@/test_node~$typ &
+${YARP_BIN}/yarp read $topic@/test_node~$typ &
 YPID=$!
 
 wait_node_topic /test_node $topic
@@ -154,7 +190,7 @@ rm -f ${BASE}listener.log
 touch ${BASE}listener.log
 stdbuf --output=L rosrun rospy_tutorials listener > ${BASE}listener.log &
 
-echo "Hello" | ${YARP_DIR}/yarp write /chatter@/ros/check/write --type std_msgs/String --wait-connect
+echo "Hello" | ${YARP_BIN}/yarp write /chatter@/ros/check/write --type std_msgs/String --wait-connect
 
 wait_file ${BASE}listener.log
 result=`cat ${BASE}listener.log | sed "s/.*I heard //"`
@@ -177,7 +213,7 @@ rm -f ${BASE}talker.log
 touch ${BASE}talker.log
 
 rosrun rospy_tutorials talker &
-stdbuf --output=L ${YARP_DIR}/yarp read /chatter@/ros/check/read > ${BASE}talker.log &
+stdbuf --output=L ${YARP_BIN}/yarp read /chatter@/ros/check/read > ${BASE}talker.log &
 
 wait_file ${BASE}talker.log
 result=`cat ${BASE}talker.log | head -n1 | sed "s/world .*/world/" | sed "s/[^a-z ]//g"`
@@ -187,7 +223,7 @@ for f in `rosnode list | grep "^/talker"`; do
     rosnode kill $f
 done
 
-killall ${YARP_DIR}/yarp
+killall ${YARP_BIN}/yarp
 
 echo "Result is '$result'"
 if [ ! "hello world" = "$result" ] ; then
@@ -201,13 +237,13 @@ header "Test against rospy_tutorials/add_two_ints_server"
 rm -f ${BASE}add_two_ints_server.log
 touch ${BASE}add_two_ints_server.log
 
-${YARP_DIR}/yarpidl_rosmsg --name /typ@/yarpros &
+${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros &
 PIDL=$!
 wait_node /yarpros /typ
 
 rosrun rospy_tutorials add_two_ints_server &
 wait_node /add_two_ints_server /add_two_ints
-echo "10 20" | ${YARP_DIR}/yarp rpc /add_two_ints > ${BASE}add_two_ints_server.log
+echo "10 20" | ${YARP_BIN}/yarp rpc /add_two_ints > ${BASE}add_two_ints_server.log
 
 result=`cat ${BASE}add_two_ints_server.log | sed "s/.* //"`
 
@@ -230,8 +266,8 @@ header "Test yarp images arrive"
 node="/test/image/node/pid$$"
 typ="sensor_msgs/Image"
 topic="/test/image/$typ/pid$$"
-echo ${YARP_DIR}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8
-${YARP_DIR}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8 &
+echo ${YARP_BIN}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8
+${YARP_BIN}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8 &
 YPID=$!
 
 wait_node_topic $node $topic
@@ -267,7 +303,7 @@ topic="/test/rimage/$typ/pid$$"
 
 rm -f ${BASE}rimage.log
 touch ${BASE}rimage.log
-stdbuf --output=L ${YARP_DIR}/yarp read $topic@$node > ${BASE}rimage.log &
+stdbuf --output=L ${YARP_BIN}/yarp read $topic@$node > ${BASE}rimage.log &
 YPID=$!
 wait_node_topic $node $topic
 rostopic pub -f ${BASE}image.log $topic sensor_msgs/Image -1

@@ -3,13 +3,16 @@ compiler:
   - gcc
   - clang
 env:
-  - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=true
-  - TRAVIS_WITH_ACE=false CMAKE_FLAGS="-DSKIP_ACE=TRUE" TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=false
-  - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false
+  - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=true TRAVIS_WITH_ROS=false
+  - TRAVIS_WITH_ACE=false CMAKE_FLAGS="-DSKIP_ACE=TRUE" TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=false TRAVIS_WITH_ROS=false
+  - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false TRAVIS_WITH_ROS=false
+  - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=false TRAVIS_WITH_ROS=true
 matrix:
   exclude:
     - compiler: gcc
       env: TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false
+    - compiler: clang
+      env: TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=false TRAVIS_WITH_ROS=true
 before_install:
   - sudo add-apt-repository --yes ppa:kalakris/cmake
   - sudo apt-get update -qq
@@ -20,6 +23,19 @@ install:
   - if $TRAVIS_WITH_ACE; then sudo apt-get install libace-dev; fi
   - if $TRAVIS_WITH_SWIG; then sudo apt-get install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-gmcs; fi
 script:
-  - mkdir -p build && cd build && cmake -DTEST_yarpidl_rosmsg=TRUE -DTEST_yarpidl_thrift=TRUE $CMAKE_FLAGS .. && make && make test && ../scripts/admin/check-runtime.sh && cd ..
+  - mkdir -p build && cd build && cmake -DTEST_yarpidl_rosmsg=TRUE -DTEST_yarpidl_thrift=TRUE -DCREATE_OPTIONAL_CARRIERS=TRUE -DENABLE_yarpcar_tcpros_carrier=TRUE -DENABLE_yarpcar_rossrv_carrier=TRUE -DENABLE_yarpcar_xmlrpc_carrier=TRUE $CMAKE_FLAGS .. && make && make test && ../scripts/admin/check-runtime.sh && cd ..
   - if $TRAVIS_WITH_SWIG; then ./build/bin/yarp conf 0 0 local; fi
   - if $TRAVIS_WITH_SWIG; then YARP_DIR=$PWD/build ./scripts/admin/check-bindings.sh PYTHON JAVA LUA RUBY CSHARP PERL TCL; fi
+  - export ROS_CI_DESKTOP=`lsb_release -cs`
+  - export ROS_CI_VERSION=groovy
+  - export ROS_CI_PREFIX=ros-${ROS_CI_VERSION}-
+  - export ROS_HOSTNAME=localhost
+  - export ROS_MASTER_URI=http://localhost:11311
+  - export ROBOT=sim
+  - if $TRAVIS_WITH_ROS; then echo "deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main" | sudo tee /etc/apt/sources.list.d/ros-latest.list; fi
+  - if $TRAVIS_WITH_ROS; then wget http://packages.ros.org/ros.key -O - | sudo apt-key add -; fi
+  - if $TRAVIS_WITH_ROS; then sudo apt-get -y update; fi
+  - if $TRAVIS_WITH_ROS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi
+  - if $TRAVIS_WITH_ROS; then sudo rosdep init && rosdep update; fi
+  - if $TRAVIS_WITH_ROS; then source /opt/ros/${ROS_CI_VERSION}/setup.bash; fi
+  - if $TRAVIS_WITH_ROS; then YARP_DIR=$PWD/build YARP_DATA_DIRS=$PWD/build/share/yarp ./scripts/admin/check-ros.sh; fi
