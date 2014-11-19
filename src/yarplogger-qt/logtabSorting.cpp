@@ -24,7 +24,6 @@ LogSortFilterProxyModel::LogSortFilterProxyModel( QObject *parent ) : QSortFilte
 
 bool LogSortFilterProxyModel::lessThan( const QModelIndex &left, const QModelIndex &right ) const
 {
-  int l=0;
   if (left.column()==0)
   {
       //sorting by yarprun timestamp
