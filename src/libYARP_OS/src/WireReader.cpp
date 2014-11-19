@@ -15,7 +15,6 @@ using namespace yarp::os;
 WireReader::WireReader(ConnectionReader& reader) : reader(reader) {
     reader.convertTextMode();
     state = &baseState;
-    size_t pending = reader.getSize();
     flush_if_needed = false;
     get_mode = false;
     support_get_mode = false;
