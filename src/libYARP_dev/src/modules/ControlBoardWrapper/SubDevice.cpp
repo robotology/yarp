@@ -12,6 +12,8 @@
 #include "RPCMessagesParser.h"
 #include "SubDevice.h"
 #include <iostream>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -64,19 +66,19 @@ bool SubDevice::configure(int b, int t, int n, const std::string &key)
 
     if (top<base)
         {
-            cerr<<"check configuration file top<base."<<endl;
+            yError()<<"controlBoardWrapper: check configuration file top<base.";
             return false;
         }
 
     if ((top-base+1)!=axes)
         {
-            cerr<<"check configuration file, number of axes and top/base parameters do not match"<<endl;
+            yError()<<"controlBoardWrapper: check configuration file, number of axes and top/base parameters do not match";
             return false;
         }
 
     if (axes<=0)
         {
-            cerr<<"check number of axes"<<endl;
+            yError()<<"controlBoardWrapper: check number of axes";
             return false;
         }
 
@@ -117,20 +119,20 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 {
     if (id!=k)
         {
-            cerr<<"Wrong device sorry."<<endl;
+            yError()<<"controlBoardWrapper: Wrong device" << k.c_str();
             return false;
         }
 
     //configure first
     if (!configuredF)
         {
-            cerr<<"You need to call configure before you can attach any device"<<endl;
+            yError()<<"controlBoardWrapper: You need to call configure before you can attach any device";
             return false;
         }
 
     if (d==0)
         {
-            cerr<<"Invalid device (null pointer)\n"<<endl;
+            yError()<<"controlBoardWrapper: Invalid device (null pointer)";
             return false;
         }
 
@@ -160,38 +162,37 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         }
     else
         {
-            cerr<<"Invalid device " << k << " (isValid() returned false)"<<endl;
+            yError()<<"controlBoardWrapper: Invalid device " << k << " (isValid() returned false)";
             return false;
         }
 
     if ( ((iMode==0) || (iMode2==0)) && (_subDevVerbose ))
-        std::cerr << "--> Warning iMode not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iMode not valid interface";
 
     if ((iTorque==0) && (_subDevVerbose))
-        std::cerr << "--> Warning iTorque not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iTorque not valid interface";
 
     if ((iImpedance==0) && (_subDevVerbose))
-        std::cerr << "--> Warning iImpedance not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iImpedance not valid interface";
 
     if ((iOpenLoop==0) && (_subDevVerbose))
-        std::cerr << "--> Warning iOpenLoop not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iOpenLoop not valid interface";
 
     if ((iInteract==0) && (_subDevVerbose))
-        std::cerr << "--> Warning iInteractionMode not valid interface\n";
+        yWarning() << "controlBoardWrapper:  Warning iInteractionMode not valid interface";
 
     int deviceJoints=0;
 
     // checking minimum set of intefaces required
     if( ! (pos || pos2) ) // One of the 2 is enough, therefore if both are missing I raise an error
     {
-        printf("ControlBoarWrapper Error: neither IPositionControl nor IPositionControl2 interface was not found in subdevice. Quitting\n");
+        yError("ControlBoarWrapper: neither IPositionControl nor IPositionControl2 interface was not found in subdevice. Quitting");
         return false;
     }
 
     if( ! (vel || vel2) ) // One of the 2 is enough, therefor if both are missing I raise an error
     {
-        printf("ControlBoarWrapper Error: neither IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting\n");
-
+        yError("ControlBoarWrapper: neither IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting");
         return false;
     }
     else
@@ -203,7 +204,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if(!enc)
     {
-        printf("ControlBoarWrapper Error: IEncoderTimed interface was not found in subdevice. Quitting\n");
+        yError("ControlBoarWrapper: IEncoderTimed interface was not found in subdevice");
         return false;
     }
 
@@ -211,7 +212,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     {
         if (!pos->getAxes(&deviceJoints))
         {
-            std::cerr<< "Error: attached device has 0 axes\n";
+            yError("ControlBoarWrapper: attached device has 0 axes");
             return false;
         }
     }
@@ -219,14 +220,14 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     {
         if (!pos2->getAxes(&deviceJoints))
         {
-            std::cerr<< "Error: attached device has 0 axes\n";
+            yError("ControlBoarWrapper: attached device has 0 axes");
             return false;
         }
     }
 
     if (deviceJoints<axes)
     {
-        std::cerr<<"check device configuration, number of joints of attached device less than the one specified during configuration.\n";
+        yError()<<"ControlBoarWrapper: check device configuration, number of joints of attached device less than the one specified during configuration";
         return false;
     }
     attachedF=true;

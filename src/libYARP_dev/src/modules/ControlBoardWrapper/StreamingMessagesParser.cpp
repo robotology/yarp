@@ -10,6 +10,8 @@
 #include "ControlBoardWrapper.h"
 #include "StreamingMessagesParser.h"
 #include <iostream>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -47,18 +49,18 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
     Vector& cmdVector = v.body;
 
     //Use the following only for debug, since it can heavily slow down the system
-    //fprintf(stderr, "Received command %s, %s\n", b.toString().c_str(), cmdVector.toString().c_str());
+    //yDebug("Received command %s, %s\n", b.toString().c_str(), cmdVector.toString().c_str());
 
     // some consistency checks
     if ((int)cmdVector.size() > stream_nJoints)
     {
         yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
-        fprintf(stderr, "Received command vector with number of elements bigger than axis controlled by this wrapper (cmd: %s requested jnts: %d received jnts: %d)\n",str.c_str(),stream_nJoints,(int)cmdVector.size());
+        yError("Received command vector with number of elements bigger than axis controlled by this wrapper (cmd: %s requested jnts: %d received jnts: %d)\n",str.c_str(),stream_nJoints,(int)cmdVector.size());
         return;
     }
     if (cmdVector.data()==0)
     {
-         fprintf(stderr, "Errors: received null command vector\n");
+         yError("Received null command vector");
          return;
     }
 
@@ -75,10 +77,10 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                     {
                         bool ok = stream_IOpenLoop->setRefOutput(b.get(2).asVocab(), cmdVector[0]);
                         if (!ok)
-                            fprintf(stderr, "Errors while trying to command an open loop message\n");
+                            yError("Errors while trying to command an open loop message");
                     }
                     else
-                        fprintf(stderr, "OpenLoop interface not valid\n");
+                        yError("OpenLoop interface not valid");
                 }
                 break;
 
@@ -88,10 +90,10 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                     {
                         bool ok=stream_IOpenLoop->setRefOutputs(cmdVector.data());
                         if (!ok)
-                            fprintf(stderr, "Errors while trying to command an open loop message\n");
+                            yError("Errors while trying to command an open loop message");
                     }
                     else
-                        fprintf(stderr, "OpenLoop interface not valid\n");
+                        yError("OpenLoop interface not valid\n");
                 }
                 break;
             }
@@ -102,7 +104,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         // fallback to commands without interface name
         case VOCAB_POSITION_MODE:
             {
-                fprintf(stderr, "Warning: received VOCAB_POSITION_MODE this is an send invalid message on streaming port\n");
+                yError("Received VOCAB_POSITION_MODE this is an send invalid message on streaming port");
                 break;
             }
         case VOCAB_POSITION_MOVES:
@@ -111,7 +113,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                     {
                         bool ok = stream_IPosCtrl->positionMove(cmdVector.data());
                         if (!ok)
-                            fprintf(stderr, "Errors while trying to start a position move\n");
+                            yError("Errors while trying to start a position move");
                     }
 
             }
@@ -119,7 +121,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
         case VOCAB_VELOCITY_MODE:
              {
-                fprintf(stderr, "Warning: received VOCAB_VELOCITY_MODE this is an send invalid message on streaming port\n");
+                yError("Received VOCAB_VELOCITY_MODE this is an send invalid message on streaming port");
                 break;
             }
         case VOCAB_VELOCITY_MOVES:
@@ -128,15 +130,15 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                     {
                         bool ok = stream_IVel->velocityMove(cmdVector.data());
                         if (!ok)
-                            fprintf(stderr, "Errors while trying to start a velocity move\n");
+                            yError("Errors while trying to start a velocity move");
                     }
             }
             break;
 
         case VOCAB_OUTPUTS:
             {
-                std::cout << "DEPRECATED openloop setOutputS!! missing interface name! Check you are using the updated RemoteControlBoard class" << std::endl;
-                std::cout << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] list_if_values" << std::endl;
+                yError() << "DEPRECATED openloop setOutputS!! missing interface name! Check you are using the updated RemoteControlBoard class "
+                         << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] list_if_values";
             }
             break;
 
@@ -148,7 +150,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 double temp_val = cmdVector.operator [](0);
                 bool ok = stream_IPosDirect->setPosition(b.get(1).asInt(), cmdVector.operator [](0)); // cmdVector.data());
                 if (!ok)
-                {   fprintf(stderr, "Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt() ); }
+                {   yError("Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt() ); }
             }
         }
         break;
@@ -161,8 +163,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 Bottle *jlut = b.get(2).asList();
                 if( (jlut->size() != n_joints) && (cmdVector.size() != n_joints) )
                 {
-                    fprintf(stderr, "Received VOCAB_POSITION_DIRECT_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
-
+                    yError("Received VOCAB_POSITION_DIRECT_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
                 }
 
                 int *joint_list = new int[n_joints];
@@ -172,7 +173,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
                 bool ok = stream_IPosDirect->setPositions(n_joints, joint_list, cmdVector.data());
                 if (!ok)
-                {   fprintf(stderr, "Error while trying to command a streaming position direct message on joint group\n" ); }
+                {   yError("Error while trying to command a streaming position direct message on joint group\n" ); }
 
                 delete[] joint_list;
             }
@@ -185,7 +186,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
             {
                 bool ok = stream_IPosDirect->setPositions(cmdVector.data());
                 if (!ok)
-                {   fprintf(stderr, "Error while trying to command a streaming position direct message on all joints\n" ); }
+                {   yError("Error while trying to command a streaming position direct message on all joints\n" ); }
             }
         }
         break;
@@ -196,7 +197,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 int n_joints = b.get(1).asInt();
                 Bottle *jlut = b.get(2).asList();
                 if( (jlut->size() != n_joints) && (cmdVector.size() != n_joints) )
-                    fprintf(stderr, "Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
+                    yError("Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
 
                 int *joint_list = new int[n_joints];
                 for (int i = 0; i < n_joints; i++)
@@ -204,7 +205,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
                 bool ok = stream_IVel2->velocityMove(n_joints, joint_list, cmdVector.data());
                 if (!ok)
-                {   fprintf(stderr, "Error while trying to command a velocity move on joint group\n" ); }
+                {   yError("Error while trying to command a velocity move on joint group\n" ); }
 
                 delete[] joint_list;
             }
@@ -214,7 +215,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         default:
             {
                 yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
-                fprintf(stderr, "Unrecognized message while receiving on command port (%s)\n",str.c_str());
+                yError("Unrecognized message while receiving on command port (%s)\n",str.c_str());
             }
             break;
         }

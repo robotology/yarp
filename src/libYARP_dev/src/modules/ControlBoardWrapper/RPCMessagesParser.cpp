@@ -11,6 +11,8 @@
 #include "RPCMessagesParser.h"
 
 #include <iostream>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -36,7 +38,7 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
         fprintf(stderr, "Handling IImpedance message\n");
     if (!rpc_IImpedance)
     {
-        fprintf(stderr, "Error I do not have a valid interface\n");
+        yError("controlBoardWrapper: I do not have a valid interface");
         *ok=false;
         return;
     }
@@ -48,7 +50,7 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
         case VOCAB_SET:
         {
             if (ControlBoardWrapper_p->verbose())
-                fprintf(stderr, "handleImpedanceMsg::VOCAB_SET command\n");
+                yDebug("handleImpedanceMsg::VOCAB_SET command\n");
             switch (cmd.get(2).asVocab())
             {
                 case VOCAB_IMP_PARAM:
@@ -83,7 +85,7 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
             double damp = 0;
             double offs = 0;
             if (ControlBoardWrapper_p->verbose())
-                fprintf(stderr, "handleImpedanceMsg::VOCAB_GET command\n");
+                yDebug("handleImpedanceMsg::VOCAB_GET command\n");
 
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
@@ -138,10 +140,10 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                                              yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (ControlBoardWrapper_p->verbose())
-        fprintf(stderr, "Handling IControlMode message\n");
+        yDebug("Handling IControlMode message\n");
     if (! (rpc_iCtrlMode || rpc_iCtrlMode2) )
     {
-        fprintf(stderr, "Error I do not have a valid iControlMode interface\n");
+        yError("ControlBoardWrapper: I do not have a valid iControlMode interface");
         *ok=false;
         return;
     }
@@ -156,7 +158,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
         case VOCAB_SET:
         {
             if (ControlBoardWrapper_p->verbose())
-                fprintf(stderr, "handleControlModeMsg::VOCAB_SET command\n");
+                yDebug("handleControlModeMsg::VOCAB_SET command\n");
 
             int method = cmd.get(2).asVocab();
 
@@ -165,12 +167,12 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_CM_CONTROL_MODE:
                 {
                     int axis = cmd.get(3).asInt();
-                    std::cerr << "got VOCAB_CM_CONTROL_MODE " << std::endl;
+//                  yDebug() << "got VOCAB_CM_CONTROL_MODE " << std::endl;
                     if(rpc_iCtrlMode2)
                         *ok = rpc_iCtrlMode2->setControlMode(axis, cmd.get(4).asVocab());
                     else
                     {
-                        std::cerr << "ControlBoardWrapper: Unable to handle setControlMode request! This should not happen!" << std::endl;
+                        yError() << "ControlBoardWrapper: Unable to handle setControlMode request! This should not happen!";
                         *rec = false;
                     }
                 }
@@ -208,7 +210,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                     if(modeList->size() != controlledJoints)
                     {
-                            yError("received an invalid setControlMode message. Size of vector doesn´t match the number of controlled joints\n");
+                        yError("received an invalid setControlMode message. Size of vector doesn´t match the number of controlled joints\n");
                         *ok = false;
                         break;
                     }
@@ -227,10 +229,10 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     // if I´m here, someone is probably sending command using the old interface.
                     // try to be compatible as much as I can
 
-                    std::cerr << " Error, received a set control mode message using a legacy version, trying to be handle the message anyway " \
-                                 " but please update your client to be compatible with the IControlMode2 interface";
+                    yError()  << " Error, received a set control mode message using a legacy version, trying to be handle the message anyway "
+                              << " but please update your client to be compatible with the IControlMode2 interface";
 
-                    // std::cout << " cmd.get(4).asVocab() is " << Vocab::decode(cmd.get(4).asVocab()).c_str() << std::endl;
+                    // yDebug << " cmd.get(4).asVocab() is " << Vocab::decode(cmd.get(4).asVocab()).c_str() << std::endl;
                     int axis = cmd.get(3).asInt();
 
                     switch (cmd.get(4).asVocab())
@@ -263,14 +265,14 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         break;
 
                         case VOCAB_CM_IMPEDANCE_POS:
-                            printf("The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead\n");
+                            yError() << "The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead";
 
                             //                      Let´s propagate the legacy version as is until it will be removed
                             *ok = rpc_iCtrlMode->setImpedancePositionMode(axis);
                         break;
 
                         case VOCAB_CM_IMPEDANCE_VEL:
-                            printf("The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead\n");
+                            yError() << "The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead";
 
                             //                      Let´s propagate the legacy version as is until it will be removed
                             *ok = rpc_iCtrlMode->setImpedanceVelocityMode(axis);
@@ -295,7 +297,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                         default:
                             //                        if (ControlBoardWrapper_p->verbose())
-                            fprintf(stderr, "SET unknown controlMode : %s \n", cmd.toString().c_str());
+                            yError("SET unknown controlMode : %s \n", cmd.toString().c_str());
                             *ok = false;
                             *rec = false;
                         break;
@@ -309,7 +311,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
         case VOCAB_GET:
         {
             if (ControlBoardWrapper_p->verbose())
-                fprintf(stderr, "GET command\n");
+                yDebug("GET command\n");
 
             int method = cmd.get(2).asVocab();
 
@@ -318,7 +320,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_CM_CONTROL_MODES:
                 {
                     if (ControlBoardWrapper_p->verbose())
-                        fprintf(stderr, "getControlModes\n");
+                        yDebug("getControlModes\n");
                     int *p = new int[controlledJoints];
                     *ok = rpc_iCtrlMode->getControlModes(p);
 
@@ -338,7 +340,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_CM_CONTROL_MODE:
                 {
                     if (ControlBoardWrapper_p->verbose())
-                        fprintf(stderr, "getControlMode\n");
+                        yDebug("getControlMode\n");
 
                     int p=-1;
                     int axis = cmd.get(3).asInt();
@@ -348,7 +350,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     response.addInt(axis);
                     response.addVocab(p);
 
-                    //fprintf(stderr, "Returning %d\n", p);
+                    //yError("Returning %d\n", p);
                     *rec=true;
                 }
                 break;
@@ -356,7 +358,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_CM_CONTROL_MODE_GROUP:
                 {
                     if (ControlBoardWrapper_p->verbose())
-                        fprintf(stderr, "getControlMode group\n");
+                        yDebug("getControlMode group\n");
 
                     int n_joints = cmd.get(3).asInt();
                     Bottle& lIn = *(cmd.get(4).asList());
@@ -377,19 +379,19 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         b.addVocab(modes[i]);
                     }
 
-                    //fprintf(stderr, "Returning %d\n", p);
+                    //yDebugf("Returning %d\n", p);
                     *rec=true;
                 }
                 break;
 
                 default:
-                    printf("Error: received a GET ICONTROLMODE command not understood\n");
+                    yError("received a GET ICONTROLMODE command not understood");
                 break;
             }
         }
 
-            lastRpcStamp.update();
-            appendTimeStamp(response, lastRpcStamp);
+        lastRpcStamp.update();
+        appendTimeStamp(response, lastRpcStamp);
         break; // case VOCAB_GET
 
         default:
@@ -405,11 +407,11 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                                         yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (ControlBoardWrapper_p->verbose())
-        fprintf(stderr, "Handling ITorqueControl message\n");
+        yDebug("Handling ITorqueControl message\n");
 
     if (!rpc_ITorque)
     {
-        fprintf(stderr, "Error, I do not have a valid ITorque interface\n");
+        yError("Error, I do not have a valid ITorque interface");
         *ok=false;
         return;
     }
@@ -421,7 +423,7 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
         {
             *rec = true;
             if (ControlBoardWrapper_p->verbose())
-                printf("set command received\n");
+                yDebug("set command received\n");
 
             switch(cmd.get(2).asVocab())
             {
@@ -588,7 +590,7 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
         {
             *rec = true;
             if (ControlBoardWrapper_p->verbose())
-                printf("get command received\n");
+                yDebug("get command received\n");
             int tmp = 0;
             double dtmp  = 0.0;
             double dtmp2 = 0.0;
@@ -786,18 +788,17 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                                                  yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (ControlBoardWrapper_p->verbose())
-        fprintf(stderr, "\nHandling IInteractionMode message\n");
+        yDebug("\nHandling IInteractionMode message\n");
     if (!rpc_IInteract)
     {
-        fprintf(stderr, "Error I do not have a valid IInteractionMode interface\n");
+        yError("Error I do not have a valid IInteractionMode interface");
         *ok=false;
         return;
     }
 
     if (ControlBoardWrapper_p->verbose())
     {
-        fprintf(stdout, "received command:\n");
-        std::cout << cmd.toString() << std::endl;
+        yDebug() << "received command: " << cmd.toString();
     }
 
     int action = cmd.get(0).asVocab();
@@ -814,22 +815,21 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
                 case VOCAB_INTERACTION_MODE:
                 {
-                    //                std::cout << "CBW.cpp set interactionMode SINGLE" << std::endl;
                     *ok = rpc_IInteract->setInteractionMode(cmd.get(3).asInt(), (yarp::dev::InteractionModeEnum) cmd.get(4).asVocab());
                 }
                 break;
 
                 case VOCAB_INTERACTION_MODE_GROUP:
                 {
-                    //                std::cout << "CBW.h set interactionMode GROUP" << std::endl;
+//              yDebug() << "CBW.h set interactionMode GROUP" << std::endl;
 
                     int n_joints = cmd.get(3).asInt();
                     jointList = cmd.get(4).asList();
                     modeList  = cmd.get(5).asList();
                     if( (jointList->size() != n_joints) || (modeList->size() != n_joints) )
                     {
-                        if (ControlBoardWrapper_p->verbose())
-                            fprintf(stderr, "received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
+                    if (ControlBoardWrapper_p->verbose())
+                        yError("Received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
                         *ok = false;
                         break;
                     }
@@ -839,7 +839,7 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     {
                         joints[i] = jointList->get(i).asInt();
                         modes[i]  = (yarp::dev::InteractionModeEnum) modeList->get(i).asVocab();
-                        //                    std::cout << "CBW.cpp received vocab " << yarp::os::Vocab::decode(modes[i]) << std::endl;
+//                  yDebug()  << "CBW.cpp received vocab " << yarp::os::Vocab::decode(modes[i]) << std::endl;
                     }
                     *ok = rpc_IInteract->setInteractionModes(n_joints, joints, modes);
                     delete [] joints;
@@ -850,13 +850,13 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
                 case VOCAB_INTERACTION_MODES:
                 {
-                    //                std::cout << "CBW.c set interactionMode ALL" << std::endl;
+//              yDebug()  << "CBW.c set interactionMode ALL" << std::endl;
 
                     modeList  = cmd.get(3).asList();
                     if(modeList->size() != controlledJoints)
                     {
-                        if (ControlBoardWrapper_p->verbose())
-                            fprintf(stderr, "received an invalid setInteractionMode message. Size of vector doesn´t match the number of controlled joints\n");
+                    if (ControlBoardWrapper_p->verbose())
+                        yError("Received an invalid setInteractionMode message. Size of vector doesn´t match the number of controlled joints\n");
                         *ok = false;
                         break;
                     }
@@ -872,8 +872,8 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
                 default:
                 {
-                    if (ControlBoardWrapper_p->verbose())
-                        fprintf(stderr, "Error while Handling IInteractionMode message, SET command not understood %s\n", cmd.get(2).asString().c_str());
+                if (ControlBoardWrapper_p->verbose())
+                    yError("Error while Handling IInteractionMode message, SET command not understood %s\n", cmd.get(2).asString().c_str());
                     *ok = false;
                 }
                 break;
@@ -894,7 +894,7 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     yarp::dev::InteractionModeEnum mode;
                     *ok = rpc_IInteract->getInteractionMode(cmd.get(3).asInt(), &mode);
                     response.addVocab(mode);
-                    std::cout << " resp is " << response.toString() << std::endl;
+                    if (ControlBoardWrapper_p->verbose())    yDebug()  << " resp is " << response.toString();
                 }
                 break;
 
@@ -906,8 +906,7 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     jointList = cmd.get(4).asList();
                     if(jointList->size() != n_joints )
                     {
-                        if (ControlBoardWrapper_p->verbose())
-                            fprintf(stderr, "received an invalid getInteractionMode message. Size of vectors doesn´t match\n");
+                    yError("Received an invalid getInteractionMode message. Size of vectors doesn´t match");
                         *ok = false;
                         break;
                     }
@@ -927,7 +926,7 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
                     if (ControlBoardWrapper_p->verbose())
                     {
-                        fprintf(stdout, "\ngot response bottle\n");
+                    yDebug("got response bottle\n");
                         response.toString();
                     }
                     delete [] joints;
@@ -940,7 +939,6 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     yarp::dev::InteractionModeEnum* modes;
                     modes  = new yarp::dev::InteractionModeEnum [controlledJoints];
 
-                    //                    std::cout << " cbw.cpp getInteractionModes ALL joint" << std::endl;
                     *ok = rpc_IInteract->getInteractionModes(modes);
 
                     Bottle& b = response.addList();
@@ -950,7 +948,7 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     }
                     if (ControlBoardWrapper_p->verbose())
                     {
-                        fprintf(stdout, "\ngot response bottle\n");
+                        yDebug("got response bottle\n");
                         response.toString();
                     }
                     delete [] modes;
@@ -964,7 +962,7 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
         break; // case VOCAB_GET
 
         default:
-            fprintf(stderr, "Error while Handling IInteractionMode message, command was not SET nor GET\n");
+        yError("Error while Handling IInteractionMode message, command was not SET nor GET");
             *ok = false;
         break;
 
@@ -976,16 +974,14 @@ void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os:
 {
     if (!rpc_IOpenLoop)
     {
-        fprintf(stderr, "Error I do not have a valid OpenLoopInterface interface\n");
+        yError("Error I do not have a valid OpenLoopInterface interface");
         *ok=false;
         return;
     }
 
     if (ControlBoardWrapper_p->verbose())
     {
-        fprintf(stderr, "\nHandling OpenLoopInterface message\n");
-        fprintf(stdout, "received command:\n");
-        std::cout << cmd.toString() << std::endl;
+        yDebug("Handling OpenLoopInterface message: received command: %s\n",  cmd.toString().c_str());
     }
 
     int action = cmd.get(0).asVocab();
@@ -994,8 +990,8 @@ void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os:
     {
         case VOCAB_SET:
         {
-            std::cout << "Error: ControlBoardWrapper2 received a set command in the OpenLoopInterface on rpc port.\n";
-            std::cout << "... This is wrong, no SET command should use rpc for this interface, but they should use the sreaming port!" << std::endl;
+            yError() << "ControlBoardWrapper2 received a set command in the OpenLoopInterface on rpc port "
+                     << "This is wrong, no SET command should use rpc for this interface, but they should use the sreaming port!" ;
             *rec = false;
         }
         break;
@@ -1072,7 +1068,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
     bool rec = false;    // Tells if the command is recognized!
 
     if (ControlBoardWrapper_p->verbose())
-        printf("command received: %s\n", cmd.toString().c_str());
+        yDebug("command received: %s\n", cmd.toString().c_str());
 
     int code = cmd.get(0).asVocab();
 
@@ -1112,7 +1108,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     {
                         rec=true;
                         if (ControlBoardWrapper_p->verbose())
-                            printf("Calling calibrate joint\n");
+                            yDebug("Calling calibrate joint\n");
 
                         int j=cmd.get(1).asInt();
                         int ui=cmd.get(2).asInt();
@@ -1120,7 +1116,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         double v2=cmd.get(4).asDouble();
                         double v3=cmd.get(5).asDouble();
                         if (rpc_Icalib2==0)
-                            printf("Sorry I don't have a IControlCalibration2 interface\n");
+                            yError("Sorry I don't have a IControlCalibration2 interface\n");
                         else
                             ok=rpc_Icalib2->calibrate2(j,ui,v1,v2,v3);
                     }
@@ -1130,7 +1126,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     {
                         rec=true;
                         if (ControlBoardWrapper_p->verbose())
-                            printf("Calling calibrate\n");
+                            yDebug("Calling calibrate\n");
                         ok=rpc_Icalib2->calibrate();
                     }
                     break;
@@ -1139,7 +1135,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     {
                         rec=true;
                         if (ControlBoardWrapper_p->verbose())
-                            printf("Calling calibrate done\n");
+                            yDebug("Calling calibrate done\n");
                         int j=cmd.get(1).asInt();
                         ok=rpc_Icalib2->done(j);
                     }
@@ -1148,8 +1144,8 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     case VOCAB_PARK:
                     {
                         rec=true;
-                        if (ControlBoardWrapper_p->verbose())
-                            printf("Calling park function\n");
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling park function\n");
                         int flag=cmd.get(1).asInt();
                         if (flag)
                             ok=rpc_Icalib2->park(true);
@@ -1163,22 +1159,22 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     {
                         rec = true;
                         if (ControlBoardWrapper_p->verbose())
-                            printf("set command received\n");
+                            yDebug("set command received\n");
 
                         switch(cmd.get(1).asVocab())
                         {
                             case VOCAB_OUTPUT:
                             {
-                                std::cout << "DEPRECATED setOutput (should be in streaming!) Check you are using the updated RemoteControlBoard class" << std::endl;
-                                std::cout << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUT) << "] joint value" << std::endl;
+                            yWarning() << "DEPRECATED setOutput (should be in streaming!) Check you are using the updated RemoteControlBoard class";
+                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUT) << "] joint value";
                                 ok = false;
                             }
                             break;
 
                             case VOCAB_OUTPUTS:
                             {
-                                std::cout << "DEPRECATED setOutpus (should be in streaming!) Check you are using the updated RemoteControlBoard class" << std::endl;
-                                std::cout << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] joint value" << std::endl;
+                            yWarning() << "DEPRECATED setOutpus (should be in streaming!) Check you are using the updated RemoteControlBoard class";
+                            yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] joint value";
                                 ok = false;
                             }
                             break;
@@ -1595,7 +1591,8 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                     spds_tmp[i] = velBottle_p->get(i).asDouble();
 
                                 ok = rpc_IPosCtrl2->setRefSpeeds(len, j_tmp, spds_tmp);
-                                delete[] j_tmp, spds_tmp;
+                                delete[] j_tmp;
+                                delete[] spds_tmp;
                             }
                             break;
 
@@ -1648,7 +1645,8 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                     accs_tmp[i] = accBottle_p->get(i).asDouble();
 
                                 ok = rpc_IPosCtrl2->setRefAccelerations(len, j_tmp, accs_tmp);
-                                delete[] j_tmp, accs_tmp;
+                                delete[] j_tmp;
+                                delete[] accs_tmp;
                             }
                             break;
 
@@ -1787,7 +1785,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     {
                         rec = true;
                         if (ControlBoardWrapper_p->verbose())
-                            printf("get command received\n");
+                            yDebug("get command received\n");
                         int tmp = 0;
                         double dtmp = 0.0;
                         response.addVocab(VOCAB_IS);
@@ -1969,7 +1967,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
-                                /*                        case VOCAB_MOTION_DONE_GROUP:
+                          case VOCAB_MOTION_DONE_GROUP:
                             {
                                 bool x = false;
                                 int len = cmd.get(2).asInt();
@@ -1979,14 +1977,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 {
                                     jointList[j] = in.get(j).asInt();
                                 }
-                                if(pos2!=NULL)
-                                    ok = pos2->checkMotionDone(len, jointList, &x);
+                                if(rpc_IPosCtrl2!=NULL)
+                                    ok = rpc_IPosCtrl2->checkMotionDone(len, jointList, &x);
                                 response.addInt(x);
 
                                 delete[] jointList;
                             }
                             break;
-*/
+
                             case VOCAB_MOTION_DONES:
                             {
                                 bool x = false;
@@ -2019,7 +2017,8 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (int i = 0; i < len; i++)
                                     b.addDouble(speeds[i]);
 
-                                delete[] jointList, speeds;
+                                delete[] jointList;
+                                delete[] speeds;
                             }
                             break;
 
@@ -2059,7 +2058,8 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (int i = 0; i < len; i++)
                                     b.addDouble(accs[i]);
 
-                                delete[] jointList, accs;
+                            delete[] jointList;
+                            delete[] accs;
                             }
                             break;
 
@@ -2200,7 +2200,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                             default:
                             {
-                                printf("received an unknown request after a VOCAB_GET: %s\n", yarp::os::Vocab::decode(cmd.get(1).asVocab()).c_str());
+                                 yError("received an unknown request after a VOCAB_GET: %s\n", yarp::os::Vocab::decode(cmd.get(1).asVocab()).c_str());
                             }
                             break;
                         } //switch cmd.get(1).asVocab())
@@ -2227,9 +2227,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
         else
             response.addVocab(VOCAB_OK);
 
-        // fprintf(stderr, "--> [%X] done ret %d\n",self, ok);
-        return ok;
+    // yDebug(stderr, "--> [%X] done ret %d\n",self, ok);    
     }
+
+        return ok;
 }
 
 bool RPCMessagesParser::initialize()

@@ -11,7 +11,8 @@
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
 #include <iostream>
-#include <sstream>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -118,10 +119,9 @@ bool ControlBoardWrapper::open(Searchable& config)
     Property prop;
     prop.fromString(config.toString().c_str());
 
-    std::cout << "Wrapper params \n " << config.toString() << std::endl;
     _verb = (prop.check("verbose","if present, give detailed output"));
     if (_verb)
-        fprintf(stdout, "running with verbose output\n");
+        yInfo("ControlBoardWrapper: running with verbose output\n");
 
     thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
@@ -130,10 +130,9 @@ bool ControlBoardWrapper::open(Searchable& config)
     if(prop.check("subdevice"))
     {
         ownDevices=true;
-        std::cout << "\nFound <" << prop.find("subdevice").asString() << "> subdevice, opening it\n";
         if(! openAndAttachSubDevice(prop))
         {
-            printf("Error while opening subdevice\n");
+            yError("ControlBoardWrapper: error while opening subdevice\n");
             return false;
         }
     }
@@ -152,15 +151,15 @@ bool ControlBoardWrapper::open(Searchable& config)
     */
     if(controlledJoints > MAX_JOINTS_ON_DEVICE)
     {
-        cerr << " ERROR: number of subdevices for this wrapper (" << controlledJoints << ") is bigger than maximum currently handled ("  << MAX_JOINTS_ON_DEVICE << ").";
-        cerr << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ << endl;
+        yError() << " ERROR: number of subdevices for this wrapper (" << controlledJoints << ") is bigger than maximum currently handled ("  << MAX_JOINTS_ON_DEVICE << ").";
+        yError() << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ ;
         return false;
     }
 
     // initialize callback
     if (!streaming_parser.initialize())
     {
-        cerr<<"Error could not initialize callback object"<<endl;
+        yError() <<"Error could not initialize callback object";
         return false;
     }
 
@@ -207,7 +206,7 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     if (!rosPublisherPort.topic(rootName+"/ROS_jointState" ) )
      {
-        cerr << "Error opening " << (rootName+"/ROS_jointState").c_str() << " port, check your yarp network\n";
+        yError() << " opening " << (rootName+"/ROS_jointState").c_str() << " port, check your yarp network\n";
         return false;
      }
     else
@@ -225,14 +224,14 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 {
     if (!prop.check("networks", "list of networks merged by this wrapper"))
     {
-        cerr << "controlBoardWrapper2: List of networks to attach to was not found.\n";
+        yError() << "controlBoardWrapper2: List of networks to attach to was not found.\n";
         return false;
     }
 
     Bottle *nets=prop.find("networks").asList();
     if(nets==0)
     {
-       cerr<<"Error parsing parameters: \"networks\" should be followed by a list\n";
+       yError() <<"Error parsing parameters: \"networks\" should be followed by a list\n";
        return false;
     }
 
@@ -251,8 +250,8 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
     if(nsubdevices > MAX_DEVICES)
     {
-        cerr << " ERROR: number of subdevices for this wrapper (" << nsubdevices << ") is bigger than maximum currently handled ("  << MAX_DEVICES << ").";
-        cerr << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ << endl;
+        yError() << " ERROR: number of subdevices for this wrapper (" << nsubdevices << ") is bigger than maximum currently handled ("  << MAX_DEVICES << ").";
+        yError() << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ ;
         return false;
     }
 
@@ -269,8 +268,8 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
         parameters=prop.findGroup(nets->get(k).asString().c_str());
 
-        // cout<<"Net is "<< nets->get(k).asString().c_str()<<"\n";
-        //cout<<parameters.toString().c_str();
+        //yDebug()<<"Net is "<< nets->get(k).asString().c_str();
+        //yDebug()<<parameters.toString().c_str();
 
         if(parameters.size()==2)
         {
@@ -284,9 +283,9 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
                 if(tmpBot.size() != 4)
                 {
-                    cerr << "Error: check network parameters in part description" << endl;
-                    cerr << "--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis" << endl;
-                    cerr << "Got: "<< parameters.toString().c_str() << "\n";
+                    yError() << "Error: check network parameters in part description"
+                             << "--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis"
+                             << "Got: "<< parameters.toString().c_str() << "\n";
                     return false;
                 }
                 else
@@ -303,7 +302,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         }
         else if (parameters.size()==5)
         {
-            // cout<<"Parameter networks use deprecated syntax\n";
+            // yError<<"Parameter networks use deprecated syntax\n";
             wBase=parameters.get(1).asInt();
             wTop=parameters.get(2).asInt();
             base=parameters.get(3).asInt();
@@ -311,9 +310,9 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         }
         else
         {
-            cerr<<"Error: check network parameters in part description"<<endl;
-            cerr<<"--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis"<<endl;
-            cerr<<"Got: "<< parameters.toString().c_str() << "\n";
+            yError() <<"Error: check network parameters in part description"
+                     <<"--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis"
+                     <<"Got: "<< parameters.toString().c_str() << "\n";                 
             return false;
         }
 
@@ -323,7 +322,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         int axes=top-base+1;
         if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str()))
         {
-            cerr<<"configure of subdevice ret false"<<endl;
+            yError() <<"configure of subdevice ret false";
             return false;
         }
 
@@ -338,7 +337,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
     if (totalJ!=controlledJoints)
     {
-        cerr<<"Error total number of mapped joints ("<< totalJ <<") does not correspond to part joints (" << controlledJoints << ")" << endl;
+        yError() <<"Error total number of mapped joints ("<< totalJ <<") does not correspond to part joints (" << controlledJoints << ")";
         return false;
     }
 
@@ -359,12 +358,12 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
 
     // if error occour during open, quit here.
-    printf("opening controlBoardWrapper2 subdevice\n");
+    yDebug("opening controlBoardWrapper2 subdevice\n");
     subDeviceOwned->open(p);
 
     if (!subDeviceOwned->isValid())
     {
-        printf("opening controlBoardWrapper2 subdevice... FAILED\n");
+        yError("opening controlBoardWrapper2 subdevice... FAILED\n");
         return false;
     }
 
@@ -372,18 +371,18 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     Bottle &general = p.findGroup("GENERAL", "section for general motor control parameters");
     if(general.isNull())
     {
-        fprintf(stderr, "Cannot find GENERAL group configuration parameters\n");
+        yError("Cannot find GENERAL group configuration parameters\n");
         return false;
     }
 
     Value & myjoints = general.find("TotalJoints");
     if(myjoints.isNull())
     {
-        printf("ControlBoardWrapper: error, 'TotalJoints' parameter not valid\n");
+        yError("ControlBoardWrapper: error, 'TotalJoints' parameter not valid\n");
         return false;
     }
     controlledJoints = myjoints.asInt();
-    printf("joints parameter is %d\n", controlledJoints);
+    yDebug("joints parameter is %d\n", controlledJoints);
 
 
     device.lut.resize(controlledJoints);
@@ -399,7 +398,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     std::string subDevName ((partName + "_" + prop.find("subdevice").asString().c_str()));
     if (!tmpDevice->configure(base, top, controlledJoints, subDevName) )
     {
-        cerr<<"configure of subdevice ret false"<<endl;
+        yError() <<"configure of subdevice ret false";
         return false;
     }
 
@@ -444,7 +443,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
             {
                 if (!device.subdevices[k].attach(polylist[p]->poly, tmpKey))
                 {
-                    printf("ControlBoardWrapper: attach to subdevice %s failed\n", polylist[p]->key.c_str());
+                    yError("ControlBoardWrapper: attach to subdevice %s failed\n", polylist[p]->key.c_str());
                     return false;
                 }
             }
@@ -463,7 +462,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
 
     if (!ready)
     {
-        printf("ControlBoardWrapper: AttachAll failed, some subdevice was not found or its attach failed\n");
+        yError("ControlBoardWrapper: AttachAll failed, some subdevice was not found or its attach failed\n");
         return false;
     }
 
