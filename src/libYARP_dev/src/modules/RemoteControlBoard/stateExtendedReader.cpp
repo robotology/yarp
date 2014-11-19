@@ -42,6 +42,17 @@ StateExtendedInputPort::StateExtendedInputPort()
     resetStat();
 }
 
+void StateExtendedInputPort::init(int numberOfJoints)
+{
+    last.position.resize(numberOfJoints);
+    last.velocity.resize(numberOfJoints);
+    last.acceleration.resize(numberOfJoints);
+    last.torque.resize(numberOfJoints);
+    last.pidOutput.resize(numberOfJoints);
+    last.controlMode.resize(numberOfJoints);
+    last.interactionMode.resize(numberOfJoints);
+}
+
 void StateExtendedInputPort::onRead(jointData &v)
 {
     now=Time::now();
@@ -73,7 +84,6 @@ bool StateExtendedInputPort::getLast(int j, jointData &data, Stamp &stamp, doubl
 {
     mutex.wait();
     bool ret=valid;
-    std::cout << "get Last single joint j " << j << std::endl;
     if (ret)
     {
         data.position[0]        = last.position[j];

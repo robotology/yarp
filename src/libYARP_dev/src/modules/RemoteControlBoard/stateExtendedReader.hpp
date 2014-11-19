@@ -59,7 +59,7 @@ public:
     StateExtendedInputPort();
 
     inline void resetStat();
-
+    void init(int numberOfJoints);
     virtual void onRead(jointData &v);
 
     bool getLast(int j, jointData &data, Stamp &stamp, double &localArrivalTime);
