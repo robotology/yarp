@@ -1754,13 +1754,13 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     scope_down(out);
     indent(out) << "yarp::os::ConstString tag;" << endl;
     indent(out) << "if (!reader.readString(tag)) return false;" << endl;
-    indent(out) << "if (tag!=\"patch\") {" << endl;
+    indent(out) << "if (tag==\"help\") {" << endl;
     indent_up();
     indent(out) << "yarp::os::idl::WireWriter writer(reader);" << endl;
     indent(out) << "if (writer.isNull()) return true;" << endl;
     indent(out) << "if (!writer.writeListHeader(2)) return false;" << endl;
     indent(out) << "if (!writer.writeTag(\"many\",1, 0)) return false;" << endl;
-    indent(out) << "if (tag==\"help\" && reader.getLength()>0) {" << endl;
+    indent(out) << "if (reader.getLength()>0) {" << endl;
     indent_up();
     indent(out) << "yarp::os::ConstString field;" << endl;
     indent(out) << "if (!reader.readString(field)) return false;" << endl;
@@ -1789,12 +1789,28 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     }
     indent(out) << "return true;" << endl;
     scope_down(out);
+    indent(out) << "bool nested = true;" << endl;
+    indent(out) << "bool have_act = false;" << endl;
+    indent(out) << "if (tag!=\"patch\") {" << endl;
+    indent_up();
+    indent(out) << "if (len%3 != 0) return false;" << endl;
+    indent(out) << "len = 1 + (len/3);" << endl;
+    indent(out) << "nested = false;" << endl;
+    indent(out) << "have_act = true;" << endl;
+    scope_down(out);
     indent(out) << "for (int i=1; i<len; i++) {" << endl;
     indent_up();
-    indent(out) << "if (!reader.readListHeader(3)) return false;" << endl;
+    indent(out) << "if (nested && !reader.readListHeader(3)) return false;" << endl;
     indent(out) << "yarp::os::ConstString act;" << endl;
     indent(out) << "yarp::os::ConstString key;" << endl;
+    indent(out) << "if (have_act) {" << endl;
+    indent_up();
+    indent(out) << "act = tag;" << endl;
+    indent_down();
+    indent(out) << "} else {" << endl;
+    indent_up();
     indent(out) << "if (!reader.readString(act)) return false;" << endl;
+    scope_down(out);
     indent(out) << "if (!reader.readString(key)) return false;" << endl;
     indent(out) << "// inefficient code follows, bug paulfitz to improve it" << endl;
     for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
