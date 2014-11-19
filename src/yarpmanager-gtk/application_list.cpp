@@ -328,7 +328,6 @@ bool ApplicationList::addModule(Module* mod)
 
 bool ApplicationList::addAppTemplate(AppTemplate* temp)
 {
-    typedef Gtk::TreeModel::Children type_children;
     string fname = temp->name + string(" (") + temp->tmpFileName + string(")");
     Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(m_tempRow.children()));
     descrow[m_appColumns.m_col_type] = NODE_FILENAME;
