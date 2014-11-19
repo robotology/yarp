@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
         } else {
             printf("Type \"help\" for usage\n");
         }
-        
+
         ConstString keys = Network::readString();
         Bottle b(keys);
         ConstString cmd = b.get(0).asString();

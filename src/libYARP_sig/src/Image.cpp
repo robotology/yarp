@@ -131,7 +131,7 @@ void ImageStorage::resize(int x, int y, int pixel_type,
 
 // allocates an empty image.
 void ImageStorage::_alloc (void) {
-    YARP_ASSERT (pImage != NULL);
+    yAssert(pImage != NULL);
 
     if (pImage != NULL)
         if (pImage->imageData != NULL)
@@ -149,8 +149,8 @@ void ImageStorage::_alloc (void) {
 // installs an external buffer as the image data
 void ImageStorage::_alloc_extern (void *buf)
 {
-    YARP_ASSERT (pImage != NULL);
-    YARP_ASSERT(Data==NULL);
+    yAssert(pImage != NULL);
+    yAssert(Data==NULL);
 
     if (pImage != NULL)
         if (pImage->imageData != NULL)
@@ -167,17 +167,17 @@ void ImageStorage::_alloc_extern (void *buf)
 void ImageStorage::_alloc_data (void)
 {
     DBGPF1 printf("alloc_data1\n"), fflush(stdout);
-    YARP_ASSERT (pImage != NULL);
+    yAssert(pImage != NULL);
 
-    YARP_ASSERT(Data==NULL);
+    yAssert(Data==NULL);
 
     char **ptr = new char *[pImage->height];
 
     Data = ptr;
 
-    YARP_ASSERT (Data != NULL);
+    yAssert(Data != NULL);
 
-    YARP_ASSERT (pImage->imageData != NULL);
+    yAssert(pImage->imageData != NULL);
 
     int height = pImage->height;
 
@@ -224,7 +224,7 @@ void ImageStorage::_free (void)
 
 void ImageStorage::_free_data (void)
 {
-    YARP_ASSERT(Data==NULL); // Now always free Data at same time
+    yAssert(Data==NULL); // Now always free Data at same time
 }
 
 
@@ -440,7 +440,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             break;
 
         case VOCAB_PIXEL_RGB_SIGNED:
-            YARP_ASSERT (implemented_yet == 0);
+            yAssert(implemented_yet == 0);
             break;
 
         case VOCAB_PIXEL_MONO_FLOAT:
@@ -477,11 +477,11 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           NULL,
                                           NULL,
                                           NULL);
-            //YARP_ASSERT (implemented_yet == 0);
+            //yAssert(implemented_yet == 0);
             break;
 
         case VOCAB_PIXEL_HSV_FLOAT:
-            YARP_ASSERT (implemented_yet == 0);
+            yAssert(implemented_yet == 0);
             break;
 
         case VOCAB_PIXEL_INT:
@@ -546,7 +546,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
 
         default:
             // unknown pixel type. Should revert to a non-IPL mode... how?
-            YARP_ASSERT (implemented_yet == 0);
+            yAssert(implemented_yet == 0);
             break;
         }
 
@@ -599,7 +599,7 @@ void Image::initialize() {
     imgQuantum = 0;
     topIsLow = true;
     implementation = new ImageStorage(*this);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 
@@ -629,7 +629,7 @@ void Image::zero() {
 
 
 void Image::resize(int imgWidth, int imgHeight) {
-    YARP_ASSERT(imgWidth>=0 && imgHeight>=0);
+    yAssert(imgWidth>=0 && imgHeight>=0);
 
     int code = getPixelCode();
     int size = getPixelSize();
@@ -681,7 +681,7 @@ void Image::setQuantum(int imgQuantum) {
 
 void Image::synchronize() {
     ImageStorage *impl = (ImageStorage*)implementation;
-    YARP_ASSERT(impl!=NULL);
+    yAssert(impl!=NULL);
     if (impl->pImage!=NULL) {
         imgWidth = impl->pImage->width;
         imgHeight = impl->pImage->height;
@@ -699,7 +699,7 @@ void Image::synchronize() {
 
 unsigned char *Image::getRawImage() const {
     ImageStorage *impl = (ImageStorage*)implementation;
-    YARP_ASSERT(impl!=NULL);
+    yAssert(impl!=NULL);
     if (impl->pImage!=NULL) {
         return (unsigned char *)impl->pImage->imageData;
     }
@@ -708,7 +708,7 @@ unsigned char *Image::getRawImage() const {
 
 int Image::getRawImageSize() const {
     ImageStorage *impl = (ImageStorage*)implementation;
-    YARP_ASSERT(impl!=NULL);
+    yAssert(impl!=NULL);
     if (impl->pImage!=NULL) {
         return impl->pImage->imageSize;
     }
@@ -724,7 +724,7 @@ const void *Image::getIplImage() const {
 }
 
 void Image::wrapIplImage(void *iplImage) {
-    YARP_ASSERT(iplImage!=NULL);
+    yAssert(iplImage!=NULL);
     IplImage *p = (IplImage *)iplImage;
     ConstString str = p->colorModel;
     int code = -1;
@@ -860,7 +860,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         flex.resize(header.width,header.height);
         if (header.width!=0&&header.height!=0) {
             unsigned char *mem = flex.getRawImage();
-            YARP_ASSERT(mem!=NULL);
+            yAssert(mem!=NULL);
             if (flex.getRawImageSize()!=header.imgSize) {
                 printf("There is a problem reading an image\n");
                 printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
@@ -872,18 +872,18 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
                        flex.getQuantum(), 
                        flex.getRawImageSize());
             }
-            YARP_ASSERT(flex.getRawImageSize()==header.imgSize);
+            yAssert(flex.getRawImageSize()==header.imgSize);
             ok = connection.expectBlock((char *)flex.getRawImage(),
                                         flex.getRawImageSize());
             if (!ok) return false;
         }
         copy(flex);
     } else {
-        YARP_ASSERT(getPixelCode()==header.id);
+        yAssert(getPixelCode()==header.id);
         resize(header.width,header.height);
         unsigned char *mem = getRawImage();
         if (header.width!=0&&header.height!=0) {
-            YARP_ASSERT(mem!=NULL);
+            yAssert(mem!=NULL);
             if (getRawImageSize()!=header.imgSize) {
                 printf("There is a problem reading an image\n");
                 printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
@@ -893,7 +893,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
                 printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
                        width(), height(), getPixelCode(), getQuantum(), getRawImageSize());
             }
-            YARP_ASSERT(getRawImageSize()==header.imgSize);
+            yAssert(getRawImageSize()==header.imgSize);
             ok = connection.expectBlock((char *)getRawImage(),
                                         getRawImageSize());
             if (!ok) return false;
@@ -928,7 +928,7 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     connection.appendBlock((char*)&header,sizeof(header));
     unsigned char *mem = getRawImage();
     if (header.width!=0&&header.height!=0) {
-        YARP_ASSERT(mem!=NULL);
+        yAssert(mem!=NULL);
         
         // Note use of external block.  
         // Implies care needed about ownership.
@@ -972,12 +972,12 @@ bool Image::copy(const Image& alt) {
     bool o1 = alt.topIsLowIndex();
     bool o2 = topIsLowIndex();
 
-    YARP_ASSERT(width()==alt.width());
-    YARP_ASSERT(height()==alt.height());
+    yAssert(width()==alt.width());
+    yAssert(height()==alt.height());
     if (getPixelCode()==alt.getPixelCode()) {
         if (getQuantum()==alt.getQuantum()) {
-            YARP_ASSERT(getRawImageSize()==alt.getRawImageSize());
-            YARP_ASSERT(q1==q2);
+            yAssert(getRawImageSize()==alt.getRawImageSize());
+            yAssert(q1==q2);
         }
     }
     copyPixels(alt.getRawImage(),alt.getPixelCode(),

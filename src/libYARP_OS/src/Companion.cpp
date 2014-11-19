@@ -72,7 +72,7 @@
    start at the top of the list. */
     static char* command_generator (const char* text, int state)
     {
-        static int list_index, len;
+        static size_t list_index, len;
         char *name;
 
         /* if this is a new word to complete, initialize now.  this includes
@@ -162,7 +162,7 @@ static void companion_sigint_handler(int sig) {
         Port *port = companion_active_port;
         if (!showedMessage) {
             showedMessage = true;
-            YARP_LOG_INFO("Interrupting...");
+            yInfo("Interrupting...");
         }
         if (companion_unregister_name!="") {
             if (!unregistered) {
@@ -203,8 +203,8 @@ static void companion_sighup_handler()
 #endif
 
 static void companion_install_handler() {
-	::signal(SIGINT,companion_sigint_handler);
-	::signal(SIGTERM,companion_sigterm_handler);
+    ::signal(SIGINT,companion_sigint_handler);
+    ::signal(SIGTERM,companion_sigterm_handler);
 
     #if defined(WIN32)
     ::signal(SIGBREAK, (ACE_SignalHandler) companion_sigbreak_handler);
@@ -213,8 +213,10 @@ static void companion_install_handler() {
     #endif
 }
 
+#ifdef WITH_READLINE
 static char* szLine = (char*)NULL;
 static bool readlineEOF=false;
+#endif
 static bool EOFreached()
 {
 #ifdef WITH_READLINE
@@ -296,8 +298,6 @@ Companion::Companion() {
         "remove a connection between two ports");
     add("exists",  &Companion::cmdExists,
         "check if a port or connection is alive");
-    add("forward",        &Companion::cmdForward,
-        "forward commands to a port, in standard format (experimental)");
     add("help",       &Companion::cmdHelp,
         "get this list");
     add("merge",       &Companion::cmdMerge,
@@ -313,7 +313,7 @@ Companion::Companion() {
     add("read",       &Companion::cmdRead,
         "read from the network and print to standard output");
     // needed by yarprun --stdio
-	add("readwrite",  &Companion::cmdReadWrite,
+    add("readwrite",  &Companion::cmdReadWrite,
         "read from the network and print to standard output, write to the network from standard input");
     add("regression", &Companion::cmdRegression,
         "run regression tests, if linked");
@@ -478,7 +478,7 @@ int Companion::cmdPing(int argc, char *argv[]) {
             } else if (ConstString(argv[0])=="--rate") {
                 rate = true;
             } else {
-                YARP_LOG_ERROR("Unrecognized option");
+                yError("Unrecognized option");
                 argc = 1;
             }
             argc--;
@@ -1238,19 +1238,6 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
 }
 
 
-int Companion::cmdForward(int argc, char *argv[]) {
-    if (argc<2) {
-        ACE_OS::fprintf(stderr, "Please supply local and remote port name\n");
-        return 1;
-    }
-
-    const char *src = argv[0];
-    const char *dest = argv[1];
-
-    return forward(src,dest);
-}
-
-
 int Companion::cmdRegression(int argc, char *argv[]) {
     ACE_OS::fprintf(stderr,"no regression tests linked in this version\n");
     return 1;
@@ -1966,25 +1953,25 @@ public:
 
 int Companion::cmdReadWrite(int argc, char *argv[])
 {
-	if (argc<2)
-	{
+    if (argc<2)
+    {
         ACE_OS::fprintf(stderr, "Please supply the read and write port names\n");
         return 1;
     }
 
-	const char *read_port_name=argv[0];
-	const char *write_port_name=argv[1];
+    const char *read_port_name=argv[0];
+    const char *write_port_name=argv[1];
     const char *verbatim[] = { "verbatim", NULL };
 
     companion_install_handler();
     BottleReader reader;
     reader.open(read_port_name,false);
 
-	int ret = write(write_port_name,1,(char**)&verbatim);
+    int ret = write(write_port_name,1,(char**)&verbatim);
 
     reader.close();
 
-	return ret;
+    return ret;
 }
 
 
@@ -2016,8 +2003,8 @@ int Companion::cmdTopic(int argc, char *argv[]) {
             return 0;
         }
     }
-	if (argc<1)
-	{
+    if (argc<1)
+    {
         ACE_OS::fprintf(stderr, "Please supply the topic name\n");
         ACE_OS::fprintf(stderr, "(Or: '--list' to list all topics)\n");
         ACE_OS::fprintf(stderr, "(Or: '--remove <topic>' to remove a topic)\n");
@@ -2060,8 +2047,10 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
     applyArgs(reader.core);
     reader.open(name,showEnvelope);
     if (src!=NULL) {
-        NetworkBase::connect(src,reader.getName().c_str());
-        //reader.core.addOutput(reader.getName().c_str());
+        ContactStyle style;
+        style.quiet = false;
+        style.verboseOnSuccess = false;
+        NetworkBase::connect(src,reader.getName(),style);
     }
     reader.wait();
     reader.close();
@@ -2545,7 +2534,7 @@ int Companion::cmdMerge(int argc, char *argv[]) {
         if (!b) {
             delete [] inPort;
             delete [] inData;
-		    return -1;
+            return -1;
         }
     }
 

@@ -349,7 +349,7 @@ bool NameConfig::isLocalName(const String& name) {
      * instead of just gethostname.
      */
     char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
-    gethostname(hostname, NI_MAXHOST);
+    ::gethostname(hostname, NI_MAXHOST);
     if (strcmp(hostname, name.c_str()) == 0) result = true;
     if (!result) {
         Bottle lst = getIpsAsBottle();

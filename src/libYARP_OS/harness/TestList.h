@@ -57,12 +57,14 @@ extern yarp::os::impl::UnitTest& getEventTest();
 extern yarp::os::impl::UnitTest& getRunTest();
 extern yarp::os::impl::UnitTest& getNodeTest();
 extern yarp::os::impl::UnitTest& getPublisherTest();
+extern yarp::os::impl::UnitTest& getLogTest();
+extern yarp::os::impl::UnitTest& getLogStreamTest();
 
 class yarp::os::impl::TestList {
 public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();
-		root.add(getBottleTest());
+        root.add(getBottleTest());
         root.add(getStringTest());
         root.add(getAddressTest());
         root.add(getStringInputStreamTest());
@@ -96,9 +98,11 @@ public:
         root.add(getEventTest());
         root.add(getNodeTest());
         root.add(getPublisherTest());
+        root.add(getLogTest());
+        root.add(getLogStreamTest());
 
 #ifdef YARPRUN_TEST
-		root.add(getRunTest());
+        root.add(getRunTest());
 #endif
 
     }

@@ -31,14 +31,14 @@ public:
         ns1 = 0/*NULL*/;
         ns2 = 0/*NULL*/;
     }
-    
+
     void open(NameService& ns1,NameService& ns2) {
         this->ns1 = &ns1;
         this->ns2 = &ns2;
     }
 
-    virtual bool apply(yarp::os::Bottle& cmd, 
-                       yarp::os::Bottle& reply, 
+    virtual bool apply(yarp::os::Bottle& cmd,
+                       yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
                        const yarp::os::Contact& remote) {
         if (ns1->apply(cmd,reply,event,remote)) {

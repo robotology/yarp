@@ -25,12 +25,17 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/sig/Image.h>
 
 using namespace std;
 using namespace yarp::os;
 
 #define dbg_flag 0
 #define dbg_printf if (dbg_flag) printf
+
+WireTwiddlerWriter::~WireTwiddlerWriter() {
+}
+
 
 int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
                             const yarp::os::ConstString& vtag) {
@@ -121,7 +126,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
     } else if (kind=="vocab") {
         tag = BOTTLE_TAG_VOCAB;
         unit_length = 4;
-    } else if (kind=="int8"||kind=="uint8") {
+    } else if (kind=="int8"||kind=="uint8"||kind=="bool") {
         tag = BOTTLE_TAG_INT;
         unit_length = 4;
         wire_unit_length = 1;
@@ -408,17 +413,51 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         int w = prop.find("width").asInt();
         int h = prop.find("height").asInt();
         int step = prop.find("step").asInt();
+        bool bigendian = prop.find("is_bigendian").asInt()==1;
         ConstString encoding = prop.find("encoding").asString();
-        if (encoding!="bgr8" && encoding!="rgb8") {
-            fprintf(stderr,"Sorry, cannot handle [%s] images yet.\n", encoding.c_str());
+        int bpp = 1;
+        int translated_encoding = 0;
+        switch (Vocab::encode(encoding)) {
+        case VOCAB4('b','g','r','8'):
+            bpp = 3;
+            translated_encoding = VOCAB_PIXEL_BGR;
+            break;
+        case VOCAB4('r','g','b','8'):
+            bpp = 3;
+            translated_encoding = VOCAB_PIXEL_RGB;
+            break;
+        case VOCAB4('3','2','F','C'):
+            yAssert(encoding=="32FC1");
+            bpp = 4;
+            translated_encoding = VOCAB_PIXEL_MONO_FLOAT;
+            break;
+        case VOCAB4('1','6','U','C'):
+            yAssert(encoding=="16UC1");
+            bpp = 2;
+            translated_encoding = VOCAB_PIXEL_MONO16;
+            break;
+        case VOCAB4('m','o','n','o'):
+            yAssert(encoding=="mono8"||encoding=="mono16");
+            if (encoding == "mono8") {
+                bpp = 1;
+                translated_encoding = VOCAB_PIXEL_MONO;
+            } else {
+                bpp = 2;
+                translated_encoding = VOCAB_PIXEL_MONO16;
+            }
+            break;
+        default:
+            fprintf(stderr,"Sorry, cannot handle [%s] images yet.\n", 
+                    encoding.c_str());
             exit(1);
+            break;
         }
         int quantum = 1;
-        if (step!=w*3) {
+        if (step!=w*bpp) {
             bool ok = false;
             while (quantum<=256) {
                 quantum *= 2;
-                if (((w*3+quantum)/quantum)*quantum == step) {
+                if (((w*bpp+quantum)/quantum)*quantum == step) {
                     ok = true;
                     break;
                 }
@@ -431,7 +470,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         prop.put("depth",3);
         prop.put("img_size",img_size);
         prop.put("quantum",quantum);
-        prop.put("translated_encoding",Vocab::encode(encoding.substr(0,3)));
+        prop.put("translated_encoding",translated_encoding);
     }
 }
 
@@ -648,7 +687,7 @@ bool WireTwiddlerWriter::update() {
     lastBlock = parent->length()-block-1;
     activeEmit = NULL;
     activeEmitLength = 0;
-
+    activeEmitOffset = -1;
 
     dbg_printf("Parent headers %d blocks %d\n", (int)parent->headerLength(), 
                (int)parent->length());
@@ -673,8 +712,8 @@ bool WireTwiddlerWriter::update() {
                     dbg_printf("Pass [4-byte length] [<length> bytes]\n");
                     readLengthAndPass(1);
                 } else if (gap.length==-1) {
-                    dbg_printf("Pass [4-byte length] [<length>*%d bytes]", gap.unit_length);
-                    readLengthAndPass(gap.unit_length);
+                    dbg_printf("Pass [4-byte length] [<length>*%d bytes]\n", gap.unit_length);
+                    readLengthAndPass(gap.unit_length,&gap);
                 } else {
                     dbg_printf("Pass [%d*%d bytes]\n", gap.length, gap.unit_length);
                     if (gap.unit_length!=gap.wire_unit_length) {
@@ -692,6 +731,11 @@ bool WireTwiddlerWriter::update() {
     }
     emit(NULL,0);
     dbg_printf("%d write blocks\n", (int)srcs.size());
+    if (dbg_flag) {
+        for (int i=0; i<(int)srcs.size(); i++) {
+            dbg_printf("  write block %d: len %d offset %d ptr %ld\n", i, srcs[i].len,srcs[i].offset,(long int)srcs[i].src);
+        }
+    }
     return !errorState;
 }
 
@@ -715,14 +759,21 @@ bool WireTwiddlerWriter::pad(int len) {
     return emit(zeros.get(),len);
 }
 
-bool WireTwiddlerWriter::readLengthAndPass(int unitLength) {
+bool WireTwiddlerWriter::readLengthAndPass(int unitLength, 
+                                           const WireTwiddlerGap *gap) {
     int len = readLength();
     if (len==0) return false;
     if (unitLength!=-1) {
-        advance(unitLength*len,true);
+        if (gap == NULL || gap->wire_unit_length==unitLength) {
+            advance(unitLength*len,true);
+        } else {
+            for (int i=0; i<len; i++) {
+                if (!transform(*gap)) return false;
+            }
+        }
     } else {
         for (int i=0; i<len; i++) {
-            bool ok = readLengthAndPass(1);
+            bool ok = readLengthAndPass(1,gap);
             if (!ok) return false;
         }
     }
@@ -765,24 +816,24 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
             activeCheck += rem;
             if (result!=0) {
                 dbg_printf("Type check failed! >>>\n");
-                for (int i=0; i<rem; i++) {
-                    dbg_printf(" %03d <--> %03d\n", 
-                            activeCheck[i], blockPtr[i+offset]);
-                }
                 if (!errorState) {
-                    YARP_LOG_ERROR(ConstString("Structure of message is unexpected (expected ") + twiddler->getPrompt() + ")");
+                    yError("Structure of message is unexpected (expected %s)", twiddler->getPrompt().c_str());
+                    if (rem>=4) {
+                        NetInt32 t1 = *((NetInt32 *)(blockPtr+offset));
+                        NetInt32 t2 = *((NetInt32 *)(activeCheck-rem));
+                        if (t1!=t2) {
+                            yError("Expected '%s', got '%s'\n", 
+                                   Bottle::describeBottleCode(t2).c_str(),
+                                   Bottle::describeBottleCode(t1).c_str());
+                        }
+                    }
                 }
                 errorState = true;
                 return false;
             }
         }
         if (shouldEmit) {
-            dbg_printf("  emitting block %d with offset %d, length %d\n",
-                       block, offset, rem);
             emit(blockPtr+offset, rem);
-        } else {
-            dbg_printf("  skipping block %d with offset %d, length %d\n",
-                       block, offset, rem);
         }
         if (shouldAccum) {
             if (accumOffset+rem>4) {
@@ -800,6 +851,7 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
 }
 
 bool WireTwiddlerWriter::emit(const char *src, int len) {
+    int noffset = -1;
     if (src!=NULL) {
         if (activeGap) {
             const WireTwiddlerGap& gap = *activeGap;
@@ -812,7 +864,8 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
                 }
                 NetFloat32 *y = (NetFloat32 *)(scratch.get()+scratchOffset);
                 *y = *x;
-                src = scratch.get()+scratchOffset;
+                src = NULL;
+                noffset = scratchOffset;
                 len = 4;
                 scratchOffset += 4;
             } else {
@@ -822,26 +875,34 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
             activeGap = NULL;
         }
     }
-    if (src!=NULL) {
-        dbg_printf("  cache %ld %d [%d]\n", (long int)src, len, *src);
-    }
-    if (activeEmit!=NULL) {
-        dbg_printf("  activeEmit is currently %ld, len %d\n",
-                   (long int)activeEmit, 
-                   activeEmitLength);
-        if (activeEmit+activeEmitLength!=src) {
-            dbg_printf("  emit %ld %d [%d]\n", (long int)activeEmit, 
-                       activeEmitLength, *activeEmit);
-            srcs.push_back(Bytes((char*)activeEmit,activeEmitLength));
+    dbg_printf("  cache %ld len %d offset %d /// activeEmit %ld %d %d\n", (long int)src, len, noffset, (long int) activeEmit, activeEmitLength, activeEmitOffset);
+    if (activeEmit!=NULL||activeEmitOffset>=0) {
+        bool push = false;
+        if (activeEmitOffset>=0 && noffset<0) {
+            push = true;
+        } else if (activeEmitOffset<0 && noffset>=0) {
+            push = true;
+        } else if (noffset==-1 && activeEmit+activeEmitLength!=src) {
+            push = true;
+        }
+        if (push) {
+            dbg_printf("  ** emit %ld len %d offset %d\n", (long int)activeEmit, 
+                       activeEmitLength, activeEmitOffset);
+            srcs.push_back(WireTwiddlerSrc((char*)activeEmit,activeEmitLength,activeEmitOffset));
             activeEmit = NULL;
+            activeEmitLength = 0;
+            activeEmitOffset = -1;
         } else {
             activeEmitLength += len;
+            dbg_printf("  ** extend %ld len %d offset %d\n", (long int)activeEmit, 
+                       activeEmitLength, activeEmitOffset);
             return true;
         }
     }
-    if (src!=NULL) {
+    if (src!=NULL||noffset>=0) {
         activeEmit = src;
         activeEmitLength = len;
+        activeEmitOffset = noffset;
     }
     return true;
 }

@@ -65,9 +65,7 @@ public:
 
     virtual bool getAxes(int *ax) {
         *ax = njoints;
-        if (yarp_show_info()) {
-            printf("TestMotor reporting %d axes present\n", *ax);
-        }
+        yInfo("TestMotor reporting %d axes present", *ax);
         return true;
     }
 

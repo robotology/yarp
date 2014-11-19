@@ -37,7 +37,7 @@ public:
 
         {
             FILE *fout = fopen(fname0,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"style capability\n");
             fprintf(fout,"capability_directory \".\"\n");
             fprintf(fout,"default_capability \".\"\n");
@@ -45,7 +45,7 @@ public:
             fout = NULL;
 
             fout = fopen(fname1,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"alt %s\n", fname2);
             fclose(fout);
             fout = NULL;
@@ -55,10 +55,10 @@ public:
             fclose(fout);
             fout = NULL;
 
-            const char *argv[] = { "ignore", 
+            const char *argv[] = { "ignore",
                                    "--policy", "_yarp_regression_test",
                                    "--_yarp_regression_test", ".",
-                                   "--from", fname1, 
+                                   "--from", fname1,
                                    "--verbose", "0",
                                    NULL };
             int argc = 9;
@@ -84,7 +84,6 @@ public:
             alt=rf.findFileByName(fname1);
             checkTrue(alt!="","found file by name");
         }
-        
     }
 
     void testCommandLineArgs() {
@@ -97,7 +96,7 @@ public:
 
         {
             FILE *fout = fopen(fname0,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"style capability\n");
             fprintf(fout,"capability_directory \".\"\n");
             fprintf(fout,"default_capability \".\"\n");
@@ -109,10 +108,10 @@ public:
             fclose(fout);
             fout = NULL;
 
-            const char *argv[] = { "ignore", 
+            const char *argv[] = { "ignore",
                                    "--policy", "_yarp_regression_test",
                                    "--_yarp_regression_test", ".",
-                                   "--from", fname1, 
+                                   "--from", fname1,
                                    "--verbose", "0",
                                    NULL };
             int argc = 9;
@@ -121,10 +120,10 @@ public:
             rf1.configure("none",argc,(char **)argv);
             checkEqual(rf1.find("x").asInt(),14,"found x");
 
-            const char *argv2[] = { "ignore", 
+            const char *argv2[] = { "ignore",
                                     "--policy", "_yarp_regression_test",
                                     "--_yarp_regression_test", ".",
-                                    "--from", fname1, 
+                                    "--from", fname1,
                                     "--verbose", "0",
                                     "--x", "20",
                                     "--y", "30",
@@ -143,10 +142,10 @@ public:
     void testContext() {
         report(0,"test context setting");
         ResourceFinder rf;
-        const char *argv[] = { "ignore", 
+        const char *argv[] = { "ignore",
                                "--policy", "_yarp_regression_test",
                                "--_yarp_regression_test", ".",
-                               "--context", "zig", 
+                               "--context", "zig",
                                "--verbose", "0",
                                NULL };
         int argc = 9;
@@ -161,7 +160,7 @@ public:
         const char *fname2 = "_yarp_regression_subgroup_test_rf2.txt";
         {
             FILE *fout = fopen(fname0,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"[section1]\n");
             fprintf(fout,"fname \"_yarp_regression_subgroup_test_rf1.txt\"\n");
             fprintf(fout,"[section2]\n");
@@ -171,23 +170,23 @@ public:
         }
         {
             FILE *fout = fopen(fname1,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"x 1\n");
             fclose(fout);
             fout = NULL;
         }
         {
             FILE *fout = fopen(fname2,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"x 2\n");
             fclose(fout);
             fout = NULL;
         }
         ResourceFinder rf;
-        const char *argv[] = { "ignore", 
+        const char *argv[] = { "ignore",
                                "--policy", "_yarp_regression_test",
                                "--_yarp_regression_test", ".",
-                               "--from", fname0, 
+                               "--from", fname0,
                                "--verbose", "0",
                                NULL };
         int argc = 9;
@@ -383,7 +382,7 @@ public:
             mkdir(dir);
         }
     }
-    
+
     void setUpTestArea(bool etc_pathd) {
         ConstString colon = Network::getPathSeparator();
         ConstString slash = Network::getDirectorySeparator();
@@ -507,14 +506,14 @@ public:
         path_project2.addString(pathify(project2));
 
         fout = fopen((pathify(pathd)+slash+"project1.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"[search project1]\n");
         fprintf(fout,"%s\n", path_project1.toString().c_str());
         fclose(fout);
         fout = NULL;
 
         fout = fopen((pathify(pathd)+slash+"project2.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"[search project2]\n");
         fprintf(fout,"%s\n", path_project2.toString().c_str());
         fclose(fout);
@@ -537,7 +536,7 @@ public:
 
 
         fout = fopen((pathify(yarp_data_home)+slash+"data.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"magic_number = 42\n");
         fprintf(fout,"[data_home]\n");
         fprintf(fout,"x = 2\n");
@@ -545,7 +544,7 @@ public:
         fout = NULL;
 
         fout = fopen((pathify(yarp_data_dir0)+slash+"data.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"magic_number = 22\n");
         fprintf(fout,"[data_dir0]\n");
         fprintf(fout,"x = 3\n");
@@ -553,7 +552,7 @@ public:
         fout = NULL;
 
         fout = fopen((pathify(project1)+slash+"data.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"magic_number = 101\n");
         fprintf(fout,"[project1]\n");
         fprintf(fout,"x = 3\n");
@@ -561,31 +560,31 @@ public:
         fout = NULL;
 
         fout = fopen((pathify(yarp_context_dir)+slash+"my_app.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"magic_number = 1000\n");
         fclose(fout);
         fout = NULL;
 
         fout = fopen((pathify(yarp_context_dir2)+slash+"shadow.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"magic_number = 5000\n");
         fclose(fout);
         fout = NULL;
 
         fout = fopen((pathify(yarp_data_home_shadow)+slash+"shadow.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"magic_number = 5001\n");
         fclose(fout);
         fout = NULL;
 
         fout = fopen((pathify(yarp_context_dir2)+slash+"noshadow.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"magic_number = 5002\n");
         fclose(fout);
         fout = NULL;
 
         fout = fopen((pathify(yarp_config_home_plugins)+slash+"fakedev1.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"[plugin fakedev1]\n");
         fprintf(fout,"type device\n");
         fprintf(fout,"name fakedev1\n");
@@ -595,7 +594,7 @@ public:
         fout = NULL;
 
         fout = fopen((pathify(yarp_data_dir0_plugins)+slash+"fakedev2.ini").c_str(),"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"[plugin fakedev2]\n");
         fprintf(fout,"type device\n");
         fprintf(fout,"name fakedev2\n");
@@ -620,7 +619,7 @@ public:
                 report(0,"test readConfig with pathd in /usr/share/yarp/...");
             }
             setUpTestArea(area==0);
-            
+
             ResourceFinder rf;
             Property p;
             bool ok = rf.readConfig(p,"data.ini",
@@ -638,7 +637,7 @@ public:
             checkTrue(p.check("data_home"),"data_home found");
             checkTrue(p.check("data_dir0"),"data_dirs found");
             checkTrue(p.check("project1"),"project1 found");
-            
+
             breakDownTestArea();
         }
     }
@@ -646,7 +645,7 @@ public:
     void testContextVer2() {
         report(0,"test context version 2");
         setUpTestArea(false);
-        
+
         {
             ResourceFinder rf;
             rf.setDefaultContext("my_app");

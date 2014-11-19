@@ -19,6 +19,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Log.h>
 #include <yarp/dev/PolyDriver.h>
 
 namespace yarp {
@@ -256,12 +257,12 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
 
     if (local=="")
     {
-        fprintf(stderr,"AnalogSensorClient::open() error you have to provide valid local name\n");
+        yError("AnalogSensorClient: you have to provide valid local name");
         return false;
     }
     if (remote=="")
     {
-        fprintf(stderr,"AnalogSensorClient::open() error you have to provide valid remote name\n");
+        yError("AnalogSensorClient: you have to provide valid remote name");
         return false;
     }
 
@@ -272,28 +273,28 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
 
     if (!inputPort.open(local.c_str()))
     {
-        fprintf(stderr,"AnalogSensorClient::open() error could not open port %s, check network\n",local.c_str());
+        yError("AnalogSensorClient: could not open port %s, check network",local.c_str());
         return false;
     }
     inputPort.useCallback();
 
     if (!rpcPort.open(local_rpc.c_str()))
     {
-        fprintf(stderr,"AnalogSensorClient::open() error could not open rpc port %s, check network\n", local_rpc.c_str());
+        yError("AnalogSensorClient: could not open rpc port %s, check network", local_rpc.c_str());
         return false;
     }
 
     bool ok=Network::connect(remote.c_str(), local.c_str(), carrier.c_str());
     if (!ok)
     {
-        fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote.c_str());
+        yError("AnalogSensorClient: could not connect to %s", remote.c_str());
         return false;
     }
 
     ok=Network::connect(local_rpc.c_str(), remote_rpc.c_str());
     if (!ok)
     {
-        fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote_rpc.c_str());
+       yError("AnalogSensorClient: could not connect to %s", remote_rpc.c_str());
        return false;
     }
 

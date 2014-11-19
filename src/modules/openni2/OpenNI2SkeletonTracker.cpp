@@ -14,12 +14,19 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
 {
     userTracking= withTracking;
     camerasON = withCamerasOn;
     mirrorON = withMirrorOn;
-
+    colorVideoMode=DEFAULT_COLOR_MODE;
+    depthVideoMode=DEFAULT_DEPTH_MODE;
+    if (colorMode < 10 && colorMode >= 0){
+    colorVideoMode=colorMode;
+    }
+    if (depthMode << 10 && colorMode >= 0){
+    depthVideoMode=depthMode;
+    }
     if (minConf != MINIMUM_CONFIDENCE){
         minConfidence = minConf;
     }
@@ -40,6 +47,7 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamer
     
     loop = withLoop;
     frameSync = withFrameSync;
+    printMode = prMode;
     imageRegistration = withImageRegistration;
     init();
     initVars();
@@ -140,7 +148,7 @@ int OpenNI2SkeletonTracker::init(){
 	else{
 	    cout << "Image registration mode is not supported" << endl;
 	}
-	  
+	 
 	// if FrameSync option is enabled
 	if (frameSync){
 	    device.setDepthColorSyncEnabled(true);
@@ -163,13 +171,21 @@ int OpenNI2SkeletonTracker::init(){
                 deviceStatus = rc;
                 return rc;
             }
+
+            // if not playback, set resolution and fps for depth stream
+            depthInfo = device.getSensorInfo(openni::SENSOR_DEPTH);
+            const openni::Array<openni::VideoMode>& depthModes = depthInfo->getSupportedVideoModes();
+            if (!oniPlayback)
+            {
+                depthStream.setVideoMode(depthModes[depthVideoMode]);
+            }
         }
         if (oniRecord) {
             recorder.attach(depthStream);
         }
 
         rc = depthStream.start();
-        
+
         if (rc != openni::STATUS_OK)
         {
             printf("Couldn't start the depth stream\n%s\n", openni::OpenNI::getExtendedError());
@@ -178,8 +194,8 @@ int OpenNI2SkeletonTracker::init(){
         }
         
         else {
-	    fpsCount = depthStream.getVideoMode().getFps();
-            cout << "Resolution: " << depthStream.getVideoMode().getResolutionX() << "x" << depthStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
+	        fpsCount = depthStream.getVideoMode().getFps();
+            cout << "Depth video mode: " << depthVideoMode << " - " << depthStream.getVideoMode().getResolutionX() << "x" << depthStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
             cout << "Depth stream started..." << endl;
             frameCount = playbackControl->getNumberOfFrames(depthStream);
         }
@@ -193,6 +209,15 @@ int OpenNI2SkeletonTracker::init(){
                 printf("Couldn't create RGB stream\n%s\n", openni::OpenNI::getExtendedError());
                 deviceStatus = rc;
                 return rc;
+            }
+           
+
+            // if not playback, set resolution and fps settings for RGB stream
+            colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
+            const openni::Array<openni::VideoMode>& colorModes = colorInfo->getSupportedVideoModes();
+            if (!oniPlayback)
+            {
+                imageStream.setVideoMode(colorModes[colorVideoMode]);
             }
         }
         
@@ -209,8 +234,35 @@ int OpenNI2SkeletonTracker::init(){
         }
         
         else {
+            fpsCount = imageStream.getVideoMode().getFps();
+            cout << "RGB video mode: " << colorVideoMode << " - " << imageStream.getVideoMode().getResolutionX() << "x" << imageStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
             cout << "RGB stream started..." << endl;
         }
+
+        // print video modes
+        if (printMode)
+        {
+            cout << "Depth video modes available:" << endl;
+            const openni::Array<openni::VideoMode>& depthModes = depthInfo->getSupportedVideoModes();
+            for (int i = 0; i<depthModes.getSize(); i++)
+            {
+                if (depthModes[i].getPixelFormat() == openni::PIXEL_FORMAT_DEPTH_1_MM)
+                {
+                    printf("%i: %ix%i, %i fps\n", i, depthModes[i].getResolutionX(), depthModes[i].getResolutionY(), depthModes[i].getFps()); 
+            
+                }
+            }
+            colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
+            const openni::Array<openni::VideoMode>& colorModes= colorInfo->getSupportedVideoModes();
+            cout << "RGB video modes available:" << endl;
+            for (int i = 0; i<colorModes.getSize(); i++) {
+                if (colorModes[i].getPixelFormat() == openni::PIXEL_FORMAT_RGB888)
+                {
+                printf("%i: %ix%i, %i fps\n", i, colorModes[i].getResolutionX(), colorModes[i].getResolutionY(), colorModes[i].getFps()); 
+                }
+            }
+        }
+
     }
 
     if (userTracking){

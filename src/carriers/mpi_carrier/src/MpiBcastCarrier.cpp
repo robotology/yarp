@@ -89,7 +89,7 @@ ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >& MpiBcastCarrier::getCaster()
         caster = new ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >;
         yarp::os::NetworkBase::unlock();
         if (caster==NULL) {
-            YARP_LOG_ERROR("No memory for MpiBcastCarrier::caster");
+            yError("No memory for MpiBcastCarrier::caster");
             exit(1);
         }
     } else {

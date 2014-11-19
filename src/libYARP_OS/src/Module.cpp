@@ -239,7 +239,7 @@ bool ModuleHelper::read(ConnectionReader& connection) {
 Module::Module() {
     stopFlag = false;
     implementation = new ModuleHelper(*this);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 Module::~Module() {

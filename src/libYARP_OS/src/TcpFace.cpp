@@ -82,7 +82,7 @@ static void showError(Logger& log) {
 InputProtocol *TcpFace::read() {
 
     SocketTwoWayStream *stream  = new SocketTwoWayStream();
-    YARP_ASSERT(stream!=NULL);
+    yAssert(stream!=NULL);
 
     int result = stream->open(peerAcceptor);
     if (result<0) {

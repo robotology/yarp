@@ -45,7 +45,7 @@
     <connection>
         <from>/Selector/grabber</from>
         <to>/ViewGrabbers/yarpview/img:i</to>
-        <protocol>udp+recv.portmonitor+script.lua+file.selector_monitor</protocol>
+        <protocol>udp+recv.portmonitor+script.lua+file.sel_monitor</protocol>
     </connection>
 
 </application>

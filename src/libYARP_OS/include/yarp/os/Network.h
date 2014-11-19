@@ -45,8 +45,16 @@ class YARP_OS_API yarp::os::NetworkBase {
 public:
     /**
      * Basic system initialization, not including plugins.
+     * Must eventually make a matching call to finiMinimum().
      */
     static void initMinimum();
+
+    /**
+     * Basic system initialization, not including plugins.
+     * A matching finiMinimum() will be called automatically
+     * on program termination.
+     */
+    static void autoInitMinimum();
 
 
     /**

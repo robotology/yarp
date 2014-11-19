@@ -1,10 +1,28 @@
+/* 
+ * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo
+ * email:  marco.randazzo@iit.it
+ * website: www.robotcub.org
+ * Permission is granted to copy, distribute, and/or modify this program
+ * under the terms of the GNU General Public License, version 2 or any
+ * later version published by the Free Software Foundation.
+ *
+ * A copy of the license can be found at
+ * http://www.robotcub.org/icub/license/gpl.txt
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details
+*/
+
 #include "logtab.h"
 #include "ui_logtab.h"
 
-LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
+LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
     ui(new Ui::LogTab)
-{ 
+{
     system_message = _system_message;
     theLogger= _theLogger;
     portName =_portName;
@@ -46,7 +64,46 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, MessageWidget
     ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     ui->listView->verticalHeader()->setDefaultSectionSize(20);
     
+    clipboard=QApplication::clipboard();
+    connect(ui->listView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
+
     updateLog(true);
+}
+
+void LogTab::ctxMenu(const QPoint &pos)
+{
+    QMenu *menu = new QMenu;
+    QAction *act1 = menu->addAction(tr("Copy to clipboard"), this, SLOT(on_copy_to_clipboard_action()));
+
+    menu->exec(ui->listView->mapToGlobal(pos));
+}
+
+void LogTab::on_copy_to_clipboard_action()
+{
+    QString selected_test;
+    QString separator("\t\t");
+    foreach(const QModelIndex &index, ui->listView->selectionModel()->selectedRows())
+    {
+        QStringList list;
+        QModelIndex prox_index_pre = proxyModelSearch->mapToSource(index);
+        if (prox_index_pre.isValid() == false)
+        {
+            system_message->addMessage(QString("Invalid prox_index_pre in copy_to_clipboard"));
+            return;
+        }
+        QModelIndex prox_index     = proxyModelButtons->mapToSource(prox_index_pre);
+        if (prox_index.isValid() == false)
+        {
+            system_message->addMessage(QString("Invalid prox_index in copy_to_clipboard"));
+            return;
+        }
+        if (displayYarprunTimestamp_enabled) list.append(model_logs->item(prox_index.row(),0)->text());
+        if (displayLocalTimestamp_enabled)   list.append(model_logs->item(prox_index.row(),1)->text());
+        if (displayErrorLevel_enabled)       list.append(model_logs->item(prox_index.row(),2)->text());
+        list.append(model_logs->item(prox_index.row(),3)->text());
+        selected_test += list.join(separator);
+    }
+    clipboard->setText(selected_test);
 }
 
 LogTab::~LogTab()
@@ -80,22 +137,25 @@ void LogTab::updateLog(bool from_beginning)
     */
 
     mutex.lock();
-    std::list<yarp::os::YarprunLogger::MessageEntry> messages;
+    std::list<yarp::yarpLogger::MessageEntry> messages;
     this->theLogger->get_messages_by_port_complete(portName,messages, from_beginning);
     int size_messages= messages.size();
-    std::list<yarp::os::YarprunLogger::MessageEntry>::iterator it;
+    std::list<yarp::yarpLogger::MessageEntry>::iterator it;
     QStandardItem *rootNode = model_logs->invisibleRootItem();
     for (it=messages.begin(); it!=messages.end(); it++)
     {
         QList<QStandardItem *> rowItem;
-        QColor rowcolor = QColor(Qt::white);
+        QColor rowbgcolor = QColor(Qt::white);
+        QColor rowfgcolor = QColor(Qt::black);
         std:: string error_level;
-        if      (it->level==yarp::os::YarprunLogger::LOGLEVEL_ERROR)     { rowcolor = QColor("#FF7070");  error_level=ERROR_STRING;}
-        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_WARNING)   { rowcolor = QColor("#FFFF70");  error_level=WARNING_STRING; }
-        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_INFO)      { rowcolor = QColor("#70FF70");  error_level=INFO_STRING; }
-        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_DEBUG)     { rowcolor = QColor("#7070FF");  error_level=DEBUG_STRING;}
-        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_UNDEFINED) { rowcolor = QColor(Qt::white);  error_level="";     }
-        else                                                             { rowcolor = QColor(Qt::white);  error_level="";     }
+        if      (it->level==yarp::yarpLogger::LOGLEVEL_UNDEFINED) { rowbgcolor = QColor(Qt::white);  error_level="";     }
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_TRACE)     { rowbgcolor = QColor("#FF70FF");  error_level=TRACE_STRING;}
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_DEBUG)     { rowbgcolor = QColor("#7070FF");  error_level=DEBUG_STRING;}
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_INFO)      { rowbgcolor = QColor("#70FF70");  error_level=INFO_STRING; }
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_WARNING)   { rowbgcolor = QColor("#FFFF70");  error_level=WARNING_STRING; }
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_ERROR)     { rowbgcolor = QColor("#FF7070");  error_level=ERROR_STRING;}
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_FATAL)     { rowbgcolor = QColor(Qt::black);  rowfgcolor = QColor(Qt::white);  error_level=FATAL_STRING;}
+        else                                                      { rowbgcolor = QColor(Qt::white);  error_level="";     }
 
         //using numbers seems not to work. Hence I'm using strings.
         rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());
@@ -104,7 +164,8 @@ void LogTab::updateLog(bool from_beginning)
         {
             for (QList<QStandardItem *>::iterator col_it = rowItem.begin(); col_it != rowItem.end(); col_it++)
             {
-                (*col_it)->setBackground(rowcolor);
+                (*col_it)->setBackground(rowbgcolor);
+                (*col_it)->setForeground(rowfgcolor);
             }
         }
         rootNode->appendRow(rowItem);

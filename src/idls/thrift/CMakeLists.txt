@@ -61,7 +61,7 @@ if (NOT THRIFT_USE_EXTERNAL)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/msvc)
     add_definitions(-D__STDC_VERSION__=199901L)
   endif ()
-  add_executable(yarpidl_thrift 
+  add_executable(yarpidl_thrift
     src_gen/parser.cc
     src_gen/lexer.cc
     src_thrift/md5.c
@@ -74,8 +74,11 @@ if (NOT THRIFT_USE_EXTERNAL)
 endif ()
 
 install(TARGETS yarpidl_thrift
+        EXPORT YARP
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+set_property(GLOBAL APPEND PROPERTY YARP_TOOLS yarpidl_thrift)
 
 option(TEST_yarpidl_thrift "Test thrift-based IDL" OFF)
 if (TEST_yarpidl_thrift)

@@ -128,7 +128,7 @@ public:
         }
         PortReaderPacket *next = NULL;
         PLATFORM_LIST_GET(inactive,next);
-        YARP_ASSERT(next!=NULL);
+        yAssert(next!=NULL);
         inactive.remove(next);
         //active.insert_tail(next);
         return next;
@@ -139,7 +139,7 @@ public:
         if (getCount()>=1) {
             PLATFORM_LIST_GET(active,next);
             //active.get(next);
-            YARP_ASSERT(next!=NULL);
+            yAssert(next!=NULL);
             active.remove(next);
         }
         return next;
@@ -340,7 +340,7 @@ PortReaderBufferBase::~PortReaderBufferBase() {
 
 void PortReaderBufferBase::init() {
     implementation = new PortReaderBufferBaseHelper(*this);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 yarp::os::PortReader *PortReaderBufferBase::create() {
@@ -444,7 +444,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         reader = HELPER(implementation).get();
         if (reader->getReader()==NULL) {
             PortReader *next = create();
-            YARP_ASSERT(next!=NULL);
+            yAssert(next!=NULL);
             reader->setReader(next);
         }
         HELPER(implementation).stateSema.post();
@@ -454,7 +454,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     }
     bool ok = false;
     if (connection.isValid()) {
-        YARP_ASSERT(reader->getReader()!=NULL);
+        yAssert(reader->getReader()!=NULL);
         ok = reader->getReader()->read(connection);
         reader->setEnvelope(connection.readEnvelope());
     } else {

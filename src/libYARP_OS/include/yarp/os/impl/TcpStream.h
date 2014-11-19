@@ -121,6 +121,15 @@ public:
     // set stream descriptor
     void set_handle(int h) { sd = h; }
 
+    // Wrapper around the setsockopt system call.
+    inline int set_option(int level, int option, void *optval, int optlen) const {
+        return setsockopt(sd, level, option, (char*)optval, optlen);
+    }
+
+    // Wrapper around the getsockopt system call.
+    inline int get_option(int level, int option, void *optval, int *optlen) const {
+        return getsockopt(sd, level, option, (char*)optval, (socklen_t*)optlen);
+    }
 private:
     // stream descriptor
     int sd;

@@ -1,0 +1,178 @@
+
+/*
+ * Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page portmonitor Port monitoring and arbitration using the portmonitor carrier 
+
+\author Ali Paikan
+
+\section content Contents 
+\li \ref what_is
+\li \ref which_is
+\li \ref need
+\li \ref use
+\li \ref callbacks
+\li \ref portarbitrator
+\li \ref portmonitor_exmp
+\li \ref reading
+
+
+\section what_is What is the portmonitor carrier? 
+
+In short, it is an extended functionality of a port implemented as a new carrier which allows to dynamically load at run–time script and plug it into the port of an existing module without changing the code or
+recompiling it. Using run-time scripts (currently written in Lua) we can access and modify the data travelling through the port using a simple API. In this way extra functionalities of a component can be added during application development time and without the need to modify and rebuild the component itself.
+
+
+\section which_is Which functionalities are we talking about? 
+- Data Guarding and Filtering
+- Data Transformation
+- Logging and Performance Monitoring
+- Monitoring communication for Quality of Service
+
+
+\image html portmonitor.png "An example of port monitor. The output port of FaceDetector modules is extended with a plug-in which provides access to the outgoing data through scripting language (e.g., Lua)"
+
+
+\section need What do I need to use portmonitor carrier?  
+\li You need to compile yarp-lua binding and set the 'LUA_CPATH' to find yarp-lua binding library (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages"). 
+
+\li Enable portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON) in CMake and compile YARP.
+
+
+\section use How can I use port monitor? 
+You should connect two ports using the YARP 'portmonitor' carrier modifier:
+
+\verbatim
+  $ yarp connect /out /in tcp+recv.portmonitor+script.lua+context.myapp+file.my_lua_script
+\endverbatim
+  
+This rather weird syntax can be read as follow. Connect port /out to /in using the tcp transport protocol. Chain the receiver (recv) side of the port /in to the plugin portmonitor with parameters: script=lua, contex=myapp and file=my_lua_script ('.' here can be indeed interpreted as an assignment operator).
+
+This connects '/out' to '/in' using tcp and a portmonitor carrier modifier on the receiver side. Alternatively the script can be plugged into the sender port: 
+
+\verbatim
+  $ yarp connect /out /in tcp+send.portmonitor+script.lua+context.myapp+file.my_lua_script
+\endverbatim
+
+
+- 'recv.portmonitor' or 'send.portmonitor' indicates that a portmonitor carrier modiffier should be used respectively in receiver or sender side. 
+- 'script.lua' tells the carrier to expect Lua script.  
+- 'context.myapp' tells the resource finder to load the script from the 'myapp' context. If context is not used, the current path where module is launched will be searched for the script file.
+- 'file.my_lua_script' indicates 'my_lua_script' should be loaded by monitor object. The 'my_lua_script' is located using standard yarp Resource Finder policy. The postfix (e.g., '.lua') is not necessary.
+ 
+
+
+\section callbacks Portmonitor life cycle and API
+
+\image html portmonitor_lifecycle.png "The life cycle of port monitor."
+
+A callback function is assigned to each state (except Waiting) which can have a corresponding implementation in the user’s script. Using these callbacks, users have full control over the port’s data and can access it, modify it and decide whether to accept the data or discard it. The Port Monitor starts in the Create state in which `PortMonitor.create' callback is called. The initialization of the user’s code can be done at this point. Returning a true value means that the user’s initialization was successful and the monitor object is able to start monitoring data from the port. When data arrives to the monitor, `PortMonitor.accept' is called and an instance of Yarp `Things' object is passed to the callback function. In this callback, user can access (for reading purposes only) the data, check it and decide whether to accept or discard it. The return value of this function indicates whether the data should be delivered (accepted) or discarded. If the data is accepted, `PortMonitor.update' is called, at which point the user has access to modify the data.
+
+
+- <b>PortMonitor.create</b> : This is called when the script is loaded and the port monitor object is created (i.e. when the ports are connected). Returning 'false' will avoid calling other functions and stop the monitor object.
+
+\verbatim
+    PortMonitor.create = function() 
+        ... 
+        return true     --default 
+    end 
+\endverbatim
+
+
+- <b>PortMonitor.destroy</b>: This is called when the monitor object is destroying (e.g., on disconnect)
+
+\verbatim
+    PortMonitor.destroy = function() 
+        ... 
+    end 
+\endverbatim
+
+- <b>PortMonitor.accept</b> : This is called when a new data arrives to the port. User can access the data and check whether it should accept or discard it. Returning 'false' will discard delivering  data to the port and avoids calling PortMonitor.update(). 
+
+\verbatim
+    PortMonitor.accept = function(thing)
+        ... 
+        return true     --default
+    end
+\endverbatim
+
+
+- <b>PortMonitor.update</b> :  This will be called if the data is accepted by PortMonitor.update(). User can modify and return it using `Thing' object. 
+
+\verbatim
+PortMonitor.update = function(thing)
+    ... 
+    return thing 
+end 
+\endverbatim
+
+- <b>PortMonitor.setparam/getparam</b> :  This will be called by the YARP port administrator when users try to reconfigure the monitor object using YARP port administrative commands (See \ref image_modification "An example of image data modification and setting parameters via administrative port"). The 'param' is of type yarp.Property object. 
+
+\verbatim
+PortMonitor.setparam = function(param)
+    ... 
+end
+
+PortMonitor.getparam = function()
+    ... 
+    return param 
+end
+\endverbatim
+
+
+- <b>PortMonitor.trig</b> : This will be called when one of the peer connections to the same input port receives data. This feature is not available if the portmonitor is plugged into the sender port. 
+
+\verbatim
+PortMonitor.trig = function() 
+    ... 
+end
+\endverbatim
+
+\note Port monitor carrier looks for the global table name 'PortMonitor' in the user script and calls its corresponding functions if exist. Notice that the PortMonitor is a global variable and should not be altered or assigned to nil.
+
+
+\section portarbitrator Port Arbitration
+
+A port arbitrator is an extended functionality of an input port which can be configured to arbitrate data from multiple source based on some user–defined constraints.  
+
+\image html portarbitrator.png "An example of using port arbitrator (left) and the architecture of port arbitrator (right). Straight lines show the data flow and zigzag lines represent event flows"
+
+A port arbitrator consists of multiple port monitors, a set of selection constraints, an event container and a
+selector block. Port arbitrator extends the port's scripting API for setting constraints and altering events in the container. In fact, when a port monitor is used in an arbitrator, the user's script can access the extended API for arbitration.
+
+A port monitor can be attached to each connection (Ci) going through the port arbitrator. It monitors the data from connection and inserts the corresponding events into a shared container. A port monitor can also remove an event (if previously inserted by itself) from the container. Normally events have infinite life time. This means that they remain valid in the container until they are explicitly removed by the monitor object. An event can also have a specific life time. A time event will be automatically removed from the
+container when its life time is over. For each connection Ci , there is a selection constraint written in first order logic as a boolean combination of the symbolic events. Upon the reception of data from a connection, the selector evaluates the corresponding constraint and, if satisfied, it allows the data to be delivered to the input port; otherwise the data will be discarded. 
+    
+Beside the port monitor callbacks, there is a set of auxiliary functions which is offered by the PortMonitor. These auxiliary functions are used for the port arbitration (See \ref arbitration "An example of using port monitors for arbitrating multiple connections").
+
+- <b>PortMonitor.setEvent(event, lifetime)</b> : set an event (with optional lifetime) into port event record
+- <b>PortMonitor.unsetEvent(event)</b>         : unset an event into port event record
+- <b>PortMonitor.setConstraint(rule)</b>       : set the selection rule 
+- <b>PortMonitor.getConstraint()</b>           : get the selection rule
+
+
+\section portmonitor_exmp Examples and tutorials
+- \ref simple_modification "Simple data filtering and modiffication"
+
+- \ref type_modification "Simple data type modiffication"
+
+- \ref image_modification "An example of image data modification and setting parameters via administrative port" 
+
+- \ref arbitration "An example of using port monitors for arbitrating multiple connections"
+
+- \ref arbitration_tevent "An example of using port arbitrator with time events"
+
+
+\section reading Further reading 
+\li [1] Data Flow Port's Monitoring and Arbitration, Paikan, A., Fitzpatrick, P., Metta, G., and Natale, L., Journal of Software Engneering for Robotics, vol. 5, no. 1, pp. 80-88, 2014. [<a href="http://joser.unibg.it/index.php?journal=joser&page=article&op=view&path%5B%5D=72">pdf</a>]
+
+\li [2] Enhancing software module reusability using port plug-ins: an experiment with the iCub robot, Paikan, A., Tikhanoff, V., Metta, G., and Natale, L., International Conference on Intelligent Robots and Systems (IROS 2014). [<a href="http://arxiv.org/pdf/1411.1102v1.pdf">pdf</a>]
+
+
+
+
+*/

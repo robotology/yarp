@@ -51,14 +51,14 @@ Sound& Sound::operator += (const Sound& alt) {
 
     Sound orig= *this;
     this->resize(this->samples+alt.samples,channels);
-    
+
     unsigned char* p1    = orig.getRawData();
     unsigned char* p2    = alt.getRawData();
     unsigned char* pout  = this->getRawData();
-    
+
     for (int i=0; i<offset; i++)
         pout[i]=p1[i];
-    
+
     int j=0;
     for (int i=offset; i<offset+size; i++)
         pout[i]=p2[j++];
@@ -68,7 +68,7 @@ Sound& Sound::operator += (const Sound& alt) {
 }
 
 const Sound& Sound::operator = (const Sound& alt) {
-    YARP_ASSERT(getBytesPerSample()==alt.getBytesPerSample());
+    yAssert(getBytesPerSample()==alt.getBytesPerSample());
     FlexImage& img1 = HELPER(implementation);
     FlexImage& img2 = HELPER(alt.implementation);
     img1.copy(img2);
@@ -100,7 +100,7 @@ Sound Sound::subSound(int first_sample, int last_sample)
 
     s.resize(last_sample-first_sample, this->channels);
     s.setFrequency(this->frequency);
-    
+
     /*
     //faster implementation but currently not working
     unsigned char* p1    = this->getRawData();
@@ -113,7 +113,6 @@ Sound Sound::subSound(int first_sample, int last_sample)
     */
 
     //safe implementation
-    int c=0;
     int j=0;
     for (int i=first_sample; i<last_sample; i++)
     {
@@ -129,16 +128,16 @@ Sound Sound::subSound(int first_sample, int last_sample)
 
 void Sound::init(int bytesPerSample) {
     implementation = new FlexImage();
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 
-    YARP_ASSERT(bytesPerSample==2); // that's all thats implemented right now
+    yAssert(bytesPerSample==2); // that's all thats implemented right now
     HELPER(implementation).setPixelSize(sizeof(PixelMono16));
     HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO16);
     HELPER(implementation).setQuantum(2);
 
     samples = 0;
     channels = 0;
-    this->bytesPerSample = bytesPerSample;    
+    this->bytesPerSample = bytesPerSample;
 }
 
 Sound::~Sound() {
@@ -160,7 +159,7 @@ int Sound::get(int location, int channel) const {
     if (bytesPerSample==2) {
         return *((NetUint16 *)addr);
     }
-    YARP_LOG_INFO("sound only implemented for 16 bit samples");
+    yInfo("sound only implemented for 16 bit samples");
     return 0;
 }
 
@@ -178,7 +177,7 @@ void Sound::set(int value, int location, int channel) {
         *((NetUint16 *)addr) = value;
         return;
     }
-    YARP_LOG_INFO("sound only implemented for 16 bit samples");
+    yInfo("sound only implemented for 16 bit samples");
 }
 
 int Sound::getFrequency() const {

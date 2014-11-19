@@ -1,3 +1,4 @@
+
 /*
  * Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -9,9 +10,21 @@
 
 \author Ali Paikan
 
-The command-line utility "yarpmanager" and its graphical companion "gyarpmanager", are tools for running and managing multiple programs on a set of machines.
+The command-line utility "yarpmanager-console" and its graphical companions "yarpmanager-gtk" (i.e., a GTK implementation), "gyarpmanager" - currently also called "yarpmanger" - (i.e., a QT implementation) are tools for running and managing multiple programs on a set of machines.
 
-\image html ymgui.jpg "yarpmanager and gyarpmanager"
+\image html ymgui.png "yarpmanager-console and (g)yarpmanager"
+
+\section Contents
+\li \ref features
+\li \ref concepts
+\li \ref configuration
+\li \ref examples
+\li \ref application
+\li \ref resource
+\li \ref module
+\li \ref create 
+\li \ref export
+\li \ref faq
 
 \section features Features
 - Running, stopping, killing and monitoring multiple programs on localhost or remote machines.
@@ -30,15 +43,16 @@ The command-line utility "yarpmanager" and its graphical companion "gyarpmanager
 - Modifying program's parameters from GUI.
 - Modifying and reloading XML description files from GUI.
 
-\section concepts What is?
-- Module, is an executable binary file (program) which is developed using YARP or any other libraries.
-- Application, refers to a collection of modules, connections and other applications.
-- Resource refers to any physical or logical resources which are needed by module. (e.g Computer, Memory, GPU, Platform)
+\section concepts Some Concepts
+- <b>Module</b>, is an executable binary file (program) which is developed using YARP or any other libraries.
+- <b>Application</b>, refers to a collection of modules, connections and other applications.
+- <b>Resource</b> refers to any physical or logical resources which are needed by module. (e.g Computer, Memory, GPU, Platform)
 
 See \ref application, \ref module and \ref resource for more information on how to use XML model to describe each of these concepts.
 
 \section configuration Configuration
-Default configuration file known as "ymanager.ini" can be automatically loaded by (g)yarpmanager from the same folder running the manager; or it can be indicated by parameter "--config".
+Default configuration file known as "ymanager.ini" can be automatically loaded by (g)yarpmanager from the same folder running the manager; or it can be indicated by parameter "\-\-config". Using the configuration files, one can explicitly indicates the paths where (g)yarpmanager should search for applications, resources or modules. If the configuration file is not provided, then (g)yarpmanager will search for the corresponding XML files in the Yarp data directories (see \ref yarp_data_dirs).
+
 \verbatim
 $ yarpmanager --config <my_config_file>
 $ gyarpmanager --config <my_config_file>
@@ -95,9 +109,9 @@ $ yarpserver
 Open another terminal and try this:
 \verbatim
 $ cd ${YARP_ROOT}/src/yarpmanager/tests
-$ yarpmanager
+$ yarpmanager-console
 >> help
-     # a list of yarpmanager keywords
+     # a list of yarpmanager-console keywords
 >> list app
      # you should see EyesViewer-Localhost, FakeEyes, ...
 >> load app EyesViewer-Localhost
@@ -109,7 +123,7 @@ $ yarpmanager
 >> exit
 \endverbatim
 
-\subsection example_g Using gyarpmanager
+\subsection example_g Using (g)yarpmanager
 Open another terminal and try this:
 \verbatim
 $ cd ${YARP_ROOT}/src/yarpmanager/tests
@@ -172,6 +186,10 @@ Here is an example of application description file in XML format:
       <b><font color="#00458A">&lt;node&gt;&lt;/node&gt;</font></b>
       <b><font color="#00458A">&lt;stdio&gt;&lt;/stdio&gt;</font></b>
       <b><font color="#00458A">&lt;prefix&gt;&lt;/prefix&gt;</font></b>
+      <b><font color="#00458A">&lt;dependencies&gt;</font></b>
+          <b><font color="#00458A">&lt;port</font></b> <font color="#009900">timeout</font><font color="#990000">=</font><font color="#FF0000">"5.0"</font><b><font color="#00458A">&gt;&lt;/port&gt;</font></b>
+          ...
+      <b><font color="#00458A">&lt;/dependencies&gt;</font></b>
   <b><font color="#00458A">&lt;/module&gt;</font></b>
   ...
 
@@ -257,7 +275,7 @@ Here is an example of application description file in XML format:
  - \<prefix\> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and \<prefix\>/MyPrefix\</prefix\>, after launching the module, the real port name will be "/Myprefix/Port1".
  - Other applications can be integrated by indicating their names. Setting \<prefix\> for an included application, port prefix will be applied to all modules and connections which are not set as external.
  - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in gyarpmanager).
-
+ - The \<port\> tags inside \<dependencies\> indicate that the execution of the current module should be postponed until the ports become available. (g)yarpmanager waits for the ports and continuously checks their availability. If one of the required ports is not available within the time indicated in by the "timeout" property, the module will not be launched.   
 
 \section resource Resource description file
 The resource description file can be used to provide a general information of the machines that are part of the cluster. In very simple form, the resource description file is a list of the names of machines in the cluster.
@@ -622,5 +640,25 @@ Windows users can download Graphviz tools from http://www.graphviz.org/Download_
  C:\...\> dot -Tpdf -o MyApp.pdf MyApp.dot
 \endverbatim
 
+
+
+\section faq Frequently asked questions
+\subsection wait_launch How to postpone launching a module?
+It can very often happen that you need to launch a module after some other modules already launched and are running. This is usually the case where a module needs to access some ports which should be open by other modules. To achieve this behavior, you simply needs to indicate which ports your module needs to be available using \<dependencies\> tag of the corresponding module in the application description file (see \ref app_notes). 
+ 
+\subsection quick_launch How to quickly launch a single application in command line? 
+Imagine you need to run a single application (e.g., eyesviewer-localhost.xml) without using Guis. All you need is to use 'yarpmanager-console', give your application description file as its parameter and ask it to run the modules and connect them: 
+
+\verbatim
+     yarpmanager-console --application my-app.xml --run --connect
+\endverbatim
+  
+If you want to run the application without getting blocked in yarpmanager-console, you can ask it to quit after running the application. 
+
+\verbatim
+     yarpmanager-console --application my-app.xml --run --connect --exit --silent 
+\endverbatim
+
+The '--silent' parameter avoids showing the verbose messages. Try 'yarpmanager-console --help' for further information.  
 
 */

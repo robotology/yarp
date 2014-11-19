@@ -55,10 +55,10 @@ public:
     bool active;
 
     PortCoreAdapter(Port& owner) :
-        owner(owner), stateMutex(1), 
-        readDelegate(NULL), 
-        permanentReadDelegate(NULL), 
-        adminReadDelegate(NULL), 
+        owner(owner), stateMutex(1),
+        readDelegate(NULL),
+        permanentReadDelegate(NULL),
+        adminReadDelegate(NULL),
         writeDelegate(NULL),
         readResult(false),
         readActive(false),
@@ -364,7 +364,7 @@ void *Port::needImplementation() const {
     if (implementation) return implementation;
     Port *self = (Port *)this;
     self->implementation = new PortCoreAdapter(*self);
-    YARP_ASSERT(self->implementation!=NULL);
+    yAssert(self->implementation!=NULL);
     self->owned = true;
     return self->implementation;
 }
@@ -503,7 +503,7 @@ bool Port::open(const Contact& contact, bool registerName,
     // Allow for open() to be called safely many times on the same Port
     if (currentCore->isOpened()) {
         PortCoreAdapter *newCore = new PortCoreAdapter(*this);
-        YARP_ASSERT(newCore!=NULL);
+        yAssert(newCore!=NULL);
         // copy state that should survive in a new open()
         if (currentCore->checkPortReader()!=NULL) {
             newCore->configReader(*(currentCore->checkPortReader()));

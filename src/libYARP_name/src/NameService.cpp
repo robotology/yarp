@@ -14,8 +14,8 @@
 using namespace yarp::name;
 using namespace yarp::os;
 
-bool NameService::process(yarp::os::PortWriter& in, 
-                          yarp::os::PortReader& out, 
+bool NameService::process(yarp::os::PortWriter& in,
+                          yarp::os::PortReader& out,
                           const yarp::os::Contact& remote) {
     DummyConnector din, dout;
     din.setTextMode(true);

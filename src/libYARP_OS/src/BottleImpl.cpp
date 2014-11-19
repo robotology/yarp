@@ -342,7 +342,7 @@ Storable *Storable::createByCode(int id) {
         break;
     case StoreList::code:
         storable = new StoreList();
-        YARP_ASSERT(storable!=NULL);
+        yAssert(storable!=NULL);
         storable->asList()->setNested(true);
         break;
     default:
@@ -351,10 +351,10 @@ Storable *Storable::createByCode(int id) {
             subCode = (id&UNIT_MASK);
             if (id&BOTTLE_TAG_DICT) {
                 storable = new StoreDict();
-                YARP_ASSERT(storable!=NULL);
+                yAssert(storable!=NULL);
             } else {
                 storable = new StoreList();
-                YARP_ASSERT(storable!=NULL);
+                yAssert(storable!=NULL);
                 storable->asList()->specialize(subCode);
                 storable->asList()->setNested(true);
             }
@@ -435,7 +435,7 @@ bool BottleImpl::fromBytes(const Bytes& data) {
 
 void BottleImpl::toBytes(const Bytes& data) {
     synch();
-    YARP_ASSERT(data.length()==byteCount());
+    yAssert(data.length()==byteCount());
     ACE_OS::memcpy(data.get(),getBytes(),byteCount());
 }
 
@@ -576,7 +576,7 @@ void BottleImpl::synch() {
                 writer.appendInt(s->getCode());
             } else {
                 YMSG(("skipped subcode %d\n",s->getCode()));
-                YARP_ASSERT(speciality==s->getCode());
+                yAssert(speciality==s->getCode());
             }
             if (s->isList()) {
                 s->asList()->setNested(true);
@@ -1088,7 +1088,7 @@ Storable *BottleImpl::pop() {
         content.pop_back();
         dirty = true;
     }
-    YARP_ASSERT(stb!=NULL);
+    yAssert(stb!=NULL);
     return stb;
 }
 
@@ -1165,15 +1165,15 @@ void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
 
 
 
-Value& Storable::find(const ConstString& txt) {
+Value& Storable::find(const ConstString& txt) const {
     return BottleImpl::getNull();
 }
 
-Bottle& Storable::findGroup(const ConstString& txt) {
+Bottle& Storable::findGroup(const ConstString& txt) const {
     return Bottle::getNullBottle();
 }
 
-bool Storable::check(const ConstString& key) {
+bool Storable::check(const ConstString& key) const {
     Bottle& val = findGroup(key);
     if (!val.isNull()) return true;
     Value& val2 = find(key);

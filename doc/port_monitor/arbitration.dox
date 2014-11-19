@@ -1,0 +1,172 @@
+
+/*
+ * Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page arbitration Using port monitors for arbitrating multiple connections 
+
+
+\author Ali Paikan
+
+\section desc Description
+This example demonstrates how to use port monitor to coordinate different modules by arbitrating their connections in the input port.  Each port monitor can be set with a selection rule (constraint). The rule is simply written in first order logic (boolean expression) based on some symbolic name. We call these symbols as events. Port monitors from peer connections (the connections to the same input port) can set (add) or unset (remove) events in a shared event record. If an event is set, it has a true value in the corresponding boolean expression; otherwise it is false. When data arrives to the port from a connection, the corresponding port monitor evaluate the boolean expression and if it is true (the constraint is satisfied), the data can be delivered to the port; otherwise it is discarded.
+
+
+A port monitor can set the selection rule (for its own connection) using `PortMonitor.setConstraint()'. 
+For example: 
+
+\verbatim
+    PortMonitor.setConstraint("e_line_selected and not e_ball_selected")
+\endverbatim
+
+Or to set or unset an event: 
+
+\verbatim    
+    PortMonitor.setEvent("e_line_selected")
+    PortMonitor.unsetEvent("e_line_selected")
+\endverbatim
+
+\Note The following keywords are reserved and cannot be used for event's name: 
+\verbatim
+    { true, false, not, and, or }
+\endverbatim
+
+
+This simple example shows the arbitration of two different connections to the same port of "yarpview" using Port Monitor object. 
+
+<br>
+
+\image html arbitration.png ""
+
+The connection from the third "test_grabber" module (/Selector/grabber) is used as an auxiliary connection to choose between "/Ball/grabber" and "/Line/grabber". To achieve this, its selection rule in the 'selector_monitor.lua' is simply set to 'false'. The  module runs in low frequency (every 3 seconds) and plays as a selector between two other modules by setting/removing some events which are used as constraint in 'ball_monitor.lua' and 'line_monitor.lua'. As the result, yarpview switches between different images coming from "/Ball/grabber" and "/Line/grabber" periodically. 
+
+
+\section req Requirements
+\li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
+
+\li Compile Yarp with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+
+\li Set LUA_CPATH to include Yarp-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
+
+
+\section running Running the example
+
+\li Open a terminal and run yarpserver
+\verbatim
+   $ yarpserver
+\endverbatim
+
+\li Open another terminal (lets call this the receiver terminal) )and change to the 'image_modification' directory and run the application using yarpmanager:
+\verbatim 
+   $ cd $YARP_ROOT/example/portmonitor/arbitration
+   $ yarpmanager-console --application TestArbitratorImage.xml 
+\endverbatim
+  
+
+\li run the modules and connect the ports
+\verbatim 
+   >> run
+   >> connect
+\endverbatim
+
+\li To stop the application, in the yarpmanager's console, type:
+\verbatim
+    >> stop
+    >> exit
+\endverbatim
+
+\section scripts Scripts
+
+\subsection ball_monitor ball_monitor.lua
+\htmlonly
+<pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
+<span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
+
+<span style="color:#00b418">--</span>
+<span style="color:#00b418">-- create is called when the port monitor is created </span>
+<span style="color:#00b418">-- @return Boolean</span>
+<span style="color:#00b418">--</span>
+PortMonitor.create <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>()
+    <span style="color:#00b418">-- set the constraint here </span>
+    PortMonitor.setConstraint(<span style="color:#d80800">"e_ball_selected"</span>)
+    <span style="color:#0100b6;font-weight:700">return</span> <span style="color:#585cf6;font-style:italic">true</span>;
+<span style="color:#0100b6;font-weight:700">end</span>
+
+</pre>
+\endhtmlonly
+
+
+\subsection line_monitor line_monitor.lua
+\htmlonly
+<pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
+<span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
+
+<span style="color:#00b418">--</span>
+<span style="color:#00b418">-- create is called when the port monitor is created </span>
+<span style="color:#00b418">-- @return Boolean</span>
+<span style="color:#00b418">--</span>
+PortMonitor.create <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>()
+    <span style="color:#00b418">-- set the constraint here </span>
+    PortMonitor.setConstraint(<span style="color:#d80800">"e_line_selected"</span>)
+    <span style="color:#0100b6;font-weight:700">return</span> <span style="color:#585cf6;font-style:italic">true</span>;
+<span style="color:#0100b6;font-weight:700">end</span>
+
+</pre>
+\endhtmlonly
+
+
+\subsection sel_monitor sel_monitor.lua
+\htmlonly
+<pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
+<span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
+
+<span style="color:#00b418">--</span>
+<span style="color:#00b418">-- create is called when the port monitor is created </span>
+<span style="color:#00b418">-- @return Boolean</span>
+<span style="color:#00b418">--</span>
+PortMonitor.create <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>()
+    <span style="color:#00b418">-- set the constraint here </span>
+    <span style="color:#00b418">-- Notice that we never want to receive image data from</span>
+    <span style="color:#00b418">-- this connection (/Selector/grabber)</span>
+    PortMonitor.setConstraint(<span style="color:#d80800">"false"</span>)       
+    switchDisplay <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#585cf6;font-style:italic">false</span>;
+    <span style="color:#0100b6;font-weight:700">return</span> <span style="color:#585cf6;font-style:italic">true</span>;
+<span style="color:#0100b6;font-weight:700">end</span>
+
+<span style="color:#00b418">-- </span>
+<span style="color:#00b418">-- destroy is called when port monitor is destroyed</span>
+<span style="color:#00b418">--</span>
+PortMonitor.destroy <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>()
+    <span style="color:#00b418">-- unset the all events on destroy</span>
+    PortMonitor.unsetEvent(<span style="color:#d80800">"e_line_selected"</span>)
+    PortMonitor.unsetEvent(<span style="color:#d80800">"e_ball_selected"</span>)
+<span style="color:#0100b6;font-weight:700">end</span>
+
+<span style="color:#00b418">--</span>
+<span style="color:#00b418">-- accept is called when the port receives new data</span>
+<span style="color:#00b418">-- @param thing The Things abstract data type</span>
+<span style="color:#00b418">-- @return Boolean</span>
+<span style="color:#00b418">-- if false is returned, the data will be ignored </span>
+<span style="color:#00b418">-- and update() will never be called</span>
+PortMonitor.accept <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>(thing)
+    <span style="color:#3c4c72;font-weight:700">print</span>(<span style="color:#d80800">"selector: PortMonitor.accept()"</span>)
+    <span style="color:#0100b6;font-weight:700">if</span> switchDisplay <span style="color:#0100b6;font-weight:700">==</span> <span style="color:#585cf6;font-style:italic">true</span> <span style="color:#0100b6;font-weight:700">then</span>
+        switchDisplay <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#585cf6;font-style:italic">false</span>
+        PortMonitor.unsetEvent(<span style="color:#d80800">"e_line_selected"</span>)
+        PortMonitor.setEvent(<span style="color:#d80800">"e_ball_selected"</span>)
+    <span style="color:#0100b6;font-weight:700">else</span>
+        switchDisplay <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#585cf6;font-style:italic">true</span>
+        PortMonitor.setEvent(<span style="color:#d80800">"e_line_selected"</span>)
+        PortMonitor.unsetEvent(<span style="color:#d80800">"e_ball_selected"</span>)
+    <span style="color:#0100b6;font-weight:700">end</span>
+    <span style="color:#0100b6;font-weight:700">return</span> <span style="color:#585cf6;font-style:italic">true</span>
+<span style="color:#0100b6;font-weight:700">end</span>
+
+</pre>
+\endhtmlonly
+
+
+*/

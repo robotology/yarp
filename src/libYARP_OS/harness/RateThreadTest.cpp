@@ -202,6 +202,19 @@ private:
         }
 	};
 
+    class UgoThread : public RateThread {
+    public:
+        bool done;
+
+        UgoThread() : RateThread(100) {
+            done = false;
+        }
+        
+        void run() {
+            if (done) askToStop();
+        }
+    };
+
     class Runnable1:public Runnable
 	{
 	public:
@@ -383,12 +396,27 @@ public:
         Time::useSystemClock();    
     }
 
+    void testStartAskForStopStart() {
+        report(0,"testing start() askForStop() start() sequence...");
+        UgoThread test;
+        int ct = 0;
+        while (ct<10) {
+            if (!test.isRunning()) {
+                test.start();
+                checkTrue(test.isRunning(),"isRunning is correct");
+                test.done = true;
+                ct++;
+            }
+        }
+    }
+
     virtual void runTests() {
    		testInitSuccessFailure();
 		testInitReleaseSynchro();
 		testRunnable();
 		testRateThread();
         testSimTime();
+        testStartAskForStopStart();
     }
 };
 

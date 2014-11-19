@@ -38,7 +38,7 @@ public:
         NetInt16 pcmBlockAlign;
         NetInt16 pcmBitsPerSample;
     } pcm;
-    ManagedBytes pcmExtraData; 
+    ManagedBytes pcmExtraData;
 
     NetInt32     dummyHeader;
     NetInt32     dummyLength;
@@ -103,7 +103,7 @@ void PcmWavHeader::setup_to_write(const Sound& src, FILE *fp)
     int channels = src.getChannels();
     int bytes = channels*src.getSamples()*2;
     int align = channels*((bitsPerSample+7)/8);
-    
+
     wavHeader = VOCAB4('R','I','F','F');
     wavLength = bytes + sizeof(PcmWavHeader) - 2*sizeof(NetInt32);
     formatHeader1 = VOCAB4('W','A','V','E');
@@ -258,11 +258,11 @@ bool yarp::sig::file::soundStreamReader::close()
 
 size_t yarp::sig::file::soundStreamReader::readBlock(Sound& dest, size_t block_size)
 {
-    int expected_bytes = block_size*(soundInfo.bits/8)*soundInfo.channels; 
+    int expected_bytes = block_size*(soundInfo.bits/8)*soundInfo.channels;
 
     //this probably works only if soundInfo.bits=16
     int expected_words=expected_bytes/(soundInfo.bits/8);
-    NetInt16     *data = new NetInt16 [expected_words]; 
+    NetInt16     *data = new NetInt16 [expected_words];
 
     int bytes_read = fread(data,1,expected_bytes,fp);
     int samples_read = bytes_read/(soundInfo.bits/8)/soundInfo.channels;

@@ -48,7 +48,7 @@ namespace yarp {
 /**
  * @ingroup dev_impl_media
  *
- * An OpenNI2 sensor device implementation to get the kinect data from a sensor conected locally.
+ * An OpenNI2 sensor device implementation to get the data from a sensor conected locally.
  * This implementation opens 4 ports:
  *	- [portPrefix]:i - input port (does nothing)
  *	- [portPrefix]/userSkeleton:o - userSkeleton detection port (only opened if user detection is on)
@@ -101,7 +101,7 @@ private:
  * @ingroup dev_runtime
  * \defgroup cmd_device_openni2_device_server openni2_device_server
  
- Local OpenNI2 device interface implementation
+ OpenNI2 device interface implementation - http://wiki.icub.org/wiki/OpenNI2
  
  */
 #endif

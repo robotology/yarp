@@ -141,7 +141,7 @@ String NameClient::send(const String& cmd, bool multi) {
 
     if (NetworkBase::getQueryBypass()) {
         ContactStyle style;
-        Bottle bcmd(cmd.c_str()), reply;       
+        Bottle bcmd(cmd.c_str()), reply;
         NetworkBase::writeToNameServer(bcmd,reply,style);
         ConstString si = reply.toString(), so;
         for (int i=0; i<(int)si.length(); i++) {
@@ -386,7 +386,7 @@ NameServer& NameClient::getServer() {
     if (fakeServer==NULL) {
         fakeServer = new NameServer;
     }
-    YARP_ASSERT(fakeServer!=NULL);
+    yAssert(fakeServer!=NULL);
     return *fakeServer;
 }
 

@@ -7,14 +7,10 @@
 
 # yarpmanager
 
-if (CREATE_YMANAGER)
+# TODO Figure out what to do with the files in this folder
+
+if(CREATE_LIB_MANAGER)
     add_subdirectory(tests) #should be renamed to xml or templates
-    if (CREATE_GUIS)
-        if(CREATE_GYARPMANAGER)
-        endif()
-        if(CREATE_GYARPBUILDER)
-        endif()
-    endif (CREATE_GUIS)
-endif (CREATE_YMANAGER)
+endif()
 
 

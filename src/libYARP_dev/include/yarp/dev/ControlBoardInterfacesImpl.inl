@@ -196,9 +196,9 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     temp=new double [size];
-    _YARP_ASSERT (temp != 0);
+    yAssert (temp != 0);
 
     return true;
 }
@@ -243,9 +243,9 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     temp=new double [size];
-    _YARP_ASSERT (temp != 0);
+    yAssert (temp != 0);
 
     return true;
 }
@@ -375,11 +375,11 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     temp=new double [size];
-    _YARP_ASSERT (temp != 0);
+    yAssert (temp != 0);
     tmpPids=new Pid[size];
-    _YARP_ASSERT (tmpPids != 0);
+    yAssert (tmpPids != 0);
     
     return true;
 }
@@ -638,9 +638,9 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>:: initialize (int size, const int *am
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     temp=new double [size];
-    _YARP_ASSERT (temp != 0);
+    yAssert (temp != 0);
     return true;
 }
 
@@ -810,9 +810,9 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>:: initialize (int size, con
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     temp=new double [size];
-    _YARP_ASSERT (temp != 0);
+    yAssert (temp != 0);
     return true;
 }
 
@@ -875,9 +875,9 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>:: initialize (int size, co
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     temp=new double [size];
-    _YARP_ASSERT (temp != 0);
+    yAssert (temp != 0);
     return true;
 }
 
@@ -940,9 +940,9 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>:: initialize (int size, const in
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     temp=new double [size];
-    _YARP_ASSERT (temp != 0);
+    yAssert (temp != 0);
     return true;
 }
 
@@ -1031,11 +1031,11 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     dTemp=new double[size];
-    _YARP_ASSERT (dTemp != 0);
+    yAssert (dTemp != 0);
     iTemp=new int[size];
-    _YARP_ASSERT (iTemp != 0);
+    yAssert (iTemp != 0);
     
     return true;
 }

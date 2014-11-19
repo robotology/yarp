@@ -29,14 +29,24 @@ namespace yarp {
  */
 class yarp::os::impl::PortCoreInputUnit : public PortCoreUnit {
 public:
-    // specifically for managing input connections
-
+    /**
+     * Constructor.
+     *
+     * @param owner the port we call home
+     * @param index an id for this connection
+     * @param ip the protocol object used to read/write to connection
+     * @param autoHandshake if true, do YARP protocol negotiation -
+     * if false, don't touch the connection, leave that to user
+     * @param reversed true if this input connection was originally 
+     * an output which was then reversed
+     *
+     */
     PortCoreInputUnit(PortCore& owner, int index, InputProtocol *ip,
                       bool autoHandshake, bool reversed) :
         PortCoreUnit(owner,index), ip(ip), phase(1), access(1),
         autoHandshake(autoHandshake), reversed(reversed) {
 
-        YARP_ASSERT(ip!=NULL);
+        yAssert(ip!=NULL);
         closing = false;
         finished = false;
         running = false;
@@ -48,6 +58,9 @@ public:
         }
     }
 
+    /**
+     * Destructor.
+     */
     virtual ~PortCoreInputUnit() {
         closeMain();
         if (localReader!=NULL) {
@@ -56,16 +69,25 @@ public:
         }
     }
 
+    /**
+     *
+     * Start a thread running to serve this input.
+     *
+     */
     virtual bool start();
 
+    /**
+     *
+     * The body of the thread associated with this input. Accepts
+     * and processes administrative input, and makes sure regular
+     * data gets to the user
+     *
+     */
     virtual void run();
 
     virtual bool isInput() {
         return true;
     }
-
-    // just for testing
-    virtual void runSimulation();
 
     virtual void close() {
         closeMain();

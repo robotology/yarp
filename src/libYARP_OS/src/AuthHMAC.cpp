@@ -52,10 +52,10 @@ AuthHMAC::AuthHMAC() {
             fprintf(stderr,"Please move authentication to an auth.conf findable by 'yarp resource'\n");
             auth_warning_shown = true;
         }
-        fname = NetworkBase::getEnvironment("HOME", &found) + 
+        fname = NetworkBase::getEnvironment("HOME", &found) +
             "/.yarp/conf/user.conf";
     }
-    
+
     if (found) {
         found = false;
         Property config;

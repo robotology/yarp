@@ -53,7 +53,7 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(ConnectionState& proto) {
 
     // issue: need a fresh port number...
     DgramTwoWayStream *stream = new DgramTwoWayStream();
-    YARP_ASSERT(stream!=NULL);
+    yAssert(stream!=NULL);
 
     Contact remote = proto.getStreams().getRemoteAddress();
     bool ok = stream->open(remote);
@@ -82,7 +82,7 @@ bool yarp::os::impl::UdpCarrier::expectReplyToHeader(ConnectionState& proto) {
     }
 
     DgramTwoWayStream *stream = new DgramTwoWayStream();
-    YARP_ASSERT(stream!=NULL);
+    yAssert(stream!=NULL);
 
     proto.takeStreams(NULL); // free up port from tcp
     bool ok =

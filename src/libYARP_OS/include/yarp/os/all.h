@@ -67,6 +67,8 @@
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/NetworkClock.h>
 #include <yarp/os/Things.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #endif
 
 

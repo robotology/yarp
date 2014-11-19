@@ -26,7 +26,6 @@ Here are the ways you can call yarp:
 - \ref yarp_detect
 - \ref yarp_disconnect
 - \ref yarp_exists
-- \ref yarp_forward
 - \ref yarp_help
 - \ref yarp_merge
 - \ref yarp_name
@@ -242,43 +241,6 @@ exists:
 \verbatim
 yarp exists /SOURCE_PORT /TARGET_PORT
 \endverbatim
-
-
-
-
-
-@section yarp_forward yarp forward
-
-\verbatim
-yarp forward LOCAL_PORT REMOTE_PORT
-\endverbatim
-
-This was a tool for monitoring RPC connections.  It is now
-DEPRECATED, because there is a better way to achieve the
-same result using carrier modifiers (just do
-"yarp connect /rpc_port tcp+log.in://debug_port"
-to get a log of incoming messages and replies).
-
-Documentation for the DEPRECATED method: suppose port
-/controller sends commands to /motor, using RPC in order to get
-replies, and for debugging we would like to see those commands/replies
-without changing code.  For streaming data, we could simply add an
-extra connection to a test port.  But for an RPC connection, this
-doesn't work.  "yarp forward" lets us set up a man-in-the-middle
-which passes commands and replies to and fro, while printing
-them out for us to see.
-
-If we have an RPC connection like this:
-\verbatim
-yarp connect /controller /motor
-\endverbatim
-
-Then we can put a forwarder in the middle like this:
-\verbatim
-yarp forward /middle /motor
-yarp connect /controller /middle
-\endverbatim
-
 
 
 

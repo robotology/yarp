@@ -13,8 +13,11 @@ add_executable(yarpidl_rosmsg src/main.cpp src/RosType.cpp src/RosTypeCodeGenYar
 
 target_link_libraries(yarpidl_rosmsg YARP_init YARP_OS ${ACE_LIBRARIES})
 install(TARGETS yarpidl_rosmsg
+        EXPORT YARP
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+set_property(GLOBAL APPEND PROPERTY YARP_TOOLS yarpidl_rosmsg)
 
 option(TEST_yarpidl_rosmsg "Test ROS msg based IDL" OFF)
 if (TEST_yarpidl_rosmsg)

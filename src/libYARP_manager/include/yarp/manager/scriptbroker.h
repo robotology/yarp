@@ -27,7 +27,7 @@ class ScriptLocalBroker: public LocalBroker
 
 public:
      ScriptLocalBroker(const char* sc) : LocalBroker() {
-        YARP_ASSERT(sc);
+        yAssert(sc);
         script = sc;
      }
      virtual ~ScriptLocalBroker() {}
@@ -44,7 +44,7 @@ class ScriptYarprunBroker: public YarpBroker
 
 public:
     ScriptYarprunBroker(const char* sc) : YarpBroker() {
-        YARP_ASSERT(sc);
+        yAssert(sc);
         script = sc;
     }
      virtual ~ScriptYarprunBroker() {}

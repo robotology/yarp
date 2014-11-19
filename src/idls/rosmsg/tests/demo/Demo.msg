@@ -8,3 +8,4 @@ uint32 an_unsigned_byte4
 int64 a_signed_byte8
 uint64 an_unsigned_byte8
 string str
+bool a_bool

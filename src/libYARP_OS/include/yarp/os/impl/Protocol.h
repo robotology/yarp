@@ -260,7 +260,7 @@ private:
      *
      */
     bool expectSenderSpecifier() {
-        YARP_ASSERT(delegate!=NULL);
+        yAssert(delegate!=NULL);
         return delegate->expectSenderSpecifier(*this);
     }
 
@@ -288,7 +288,7 @@ private:
      *
      */
     bool sendHeader() {
-        YARP_ASSERT(delegate!=NULL);
+        yAssert(delegate!=NULL);
         return delegate->sendHeader(*this);
     }
 
@@ -299,7 +299,7 @@ private:
      *
      */
     bool expectReplyToHeader() {
-        YARP_ASSERT(delegate!=NULL);
+        yAssert(delegate!=NULL);
         return delegate->expectReplyToHeader(*this);
     }
 

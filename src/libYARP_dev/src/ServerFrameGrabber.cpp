@@ -117,41 +117,26 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         !config.check("shared-ports",
                       "If present, send audio and images on same port")) {
         separatePorts = true;
-        YARP_ASSERT(p2==NULL);
+        yAssert(p2==NULL);
         p2 = new Port;
-        YARP_ASSERT(p2!=NULL);
+        yAssert(p2!=NULL);
         p2->open(config.check("name2",Value("/grabber2"),
                               "Name of second port to send data on, when audio and images sent separately").asString());
     }
 
     if (fgAv!=NULL) {
         if (separatePorts) {
-            if (yarp_show_info()) {
-                printf("Grabber for images and sound (in separate ports)\n");
-            }
-            YARP_ASSERT(p2!=NULL);
+            yAssert(p2!=NULL);
             thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this,canDrop,addStamp));
         } else {
-            if (yarp_show_info()) {
-                printf("Grabber for images and sound (in shared port)\n");
-            }
             thread.attach(new DataWriter<ImageRgbSound>(p,*this,canDrop,
                                                         addStamp));
         }
     } else if (fgImage!=NULL) {
-        if (yarp_show_debug()) {
-            printf("Grabber for rgb images\n");
-        }
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop,addStamp,fgTimed));
     } else if (fgImageRaw!=NULL) {
-        if (yarp_show_debug()) {
-            printf("Grabber for raw images\n");
-        }
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelMono> >(p,*this,canDrop,addStamp,fgTimed));
     } else if (fgSound!=NULL) {
-        if (yarp_show_info()) {
-            printf("Grabber for sound\n");
-        }
         thread.attach(new DataWriter<yarp::sig::Sound>(p,*this,canDrop));
     } else {
         printf("subdevice <%s> doesn't look like a framegrabber\n",

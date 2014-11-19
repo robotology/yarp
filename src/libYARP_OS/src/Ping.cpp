@@ -31,7 +31,7 @@ void Ping::connect() {
     Contact c = NetworkBase::queryName(target);
     double afterQuery = Time::now();
     if (!c.isValid()) {
-        YARP_LOG_ERROR("Port not found during ping");
+        yError("Port not found during ping");
     }
     ContactStyle rpc;
     rpc.admin = true;
@@ -40,7 +40,7 @@ void Ping::connect() {
     cmd.addVocab(Vocab::encode("ver"));
     bool ok = NetworkBase::write(c,cmd,reply,rpc);
     if (!ok) {
-        YARP_LOG_ERROR("Port did not respond as expected");
+        yError("Port did not respond as expected");
     }
     double stop = Time::now();
     lastConnect.totalTime.add(stop-start);
@@ -72,7 +72,7 @@ ConstString Ping::renderTime(double t, int space, int decimal) {
     ConstString unit = "";
     double times = 1;
     if (space<0) {
-        YARP_LOG_ERROR("Negative space");
+        yError("Negative space");
     }
     if (t>=1) {
         unit = "sec";

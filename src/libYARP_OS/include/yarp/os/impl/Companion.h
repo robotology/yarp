@@ -165,8 +165,6 @@ public:
 
     int cmdRpcServer(int argc, char *argv[]);
 
-    int cmdForward(int argc, char *argv[]);
-
     int cmdRegression(int argc, char *argv[]);
 
     int cmdServer(int argc, char *argv[]);

@@ -48,13 +48,13 @@ bool ImplementInteractionMode::initialize(int size, const int *amap, const doubl
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT(helper != NULL);
+    yAssert(helper != NULL);
 
     temp_int=new int [size];
-    _YARP_ASSERT(temp_int != NULL);
+    yAssert(temp_int != NULL);
 
     temp_modes=new yarp::dev::InteractionModeEnum [size];
-    _YARP_ASSERT(temp_modes != NULL);
+    yAssert(temp_modes != NULL);
     return true;
 }
 

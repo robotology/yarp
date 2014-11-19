@@ -35,6 +35,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/LocalReader.h
                  include/yarp/os/LockGuard.h
                  include/yarp/os/Log.h
+                 include/yarp/os/LogStream.h
                  include/yarp/os/ManagedBytes.h
                  include/yarp/os/ModifyingCarrier.h
                  include/yarp/os/Module.h
@@ -145,6 +146,8 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/IOException.h
                       include/yarp/os/impl/LocalCarrier.h
                       include/yarp/os/impl/Logger.h
+                      include/yarp/os/impl/LogImpl.h
+                      include/yarp/os/impl/LogForwarder.h
                       include/yarp/os/impl/MachSemaphoreImpl.h
                       include/yarp/os/impl/McastCarrier.h
                       include/yarp/os/impl/MemoryOutputStream.h
@@ -167,6 +170,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/PortCoreInputUnit.h
                       include/yarp/os/impl/PortCoreOutputUnit.h
                       include/yarp/os/impl/PortCorePacket.h
+                      include/yarp/os/impl/PortCorePackets.h
                       include/yarp/os/impl/PortCoreUnit.h
                       include/yarp/os/impl/PortManager.h
                       include/yarp/os/impl/POSIXSemaphoreImpl.h
@@ -226,7 +230,9 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/InputStream.cpp
                  src/LocalCarrier.cpp
                  src/LockGuard.cpp
+                 src/Log.cpp
                  src/Logger.cpp
+                 src/LogForwarder.cpp
                  src/ManagedBytes.cpp
                  src/ModifyingCarrier.cpp
                  src/Module.cpp

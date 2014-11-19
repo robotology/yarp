@@ -17,11 +17,18 @@ endif(${IS_BIG_ENDIAN})
 # Find 16, 32, and 64 bit types, portably
 
 # CheckTypeSize changes CMAKE_MINIMUM_REQUIRED_VERSION, see
-# http://www.cmake.org/Bug/view.php?id=14864
+# http://www.cmake.org/Bug/view.php?id=14864 (fixed in CMake 3.1)
 # We save it here, and restore it after including the file.
-set(_CMAKE_MINIMUM_REQUIRED_VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION})
+if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.1)
+    set(_CMAKE_MINIMUM_REQUIRED_VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION})
+endif()
 include(CheckTypeSize)
-cmake_minimum_required(VERSION ${_CMAKE_MINIMUM_REQUIRED_VERSION})
+if(CMAKE_VERSION VERSION_LESS 3.1)
+    cmake_minimum_required(VERSION ${_CMAKE_MINIMUM_REQUIRED_VERSION})
+endif()
 
 set(YARP_INT16)
 set(YARP_INT32)
@@ -367,8 +374,8 @@ else(WIN32)
     endif(CXX_HAS_STD_CXX11)
 
 
-    include (CheckIncludeFiles)
-    check_include_files (execinfo.h YARP_HAS_EXECINFO)
+    include(CheckIncludeFiles)
+    check_include_files(execinfo.h YARP_HAS_EXECINFO)
 
 endif(WIN32)
 
@@ -380,6 +387,6 @@ set (YARP_HAS_NAME_LIB ${YARP_USE_PERSISTENT_NAMESERVER})
 #########################################################################
 # Tweak tests for MSVC, to add paths to DLLs
 if (MSVC)
-	configure_file(${YARP_MODULE_DIR}/template/TestConfig.cmake ${CMAKE_BINARY_DIR}/TestConfig.cmake @ONLY)
-	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY TEST_INCLUDE_FILE ${CMAKE_BINARY_DIR}/TestConfig.cmake)
+    configure_file(${YARP_MODULE_DIR}/template/TestConfig.cmake ${CMAKE_BINARY_DIR}/TestConfig.cmake @ONLY)
+    set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY TEST_INCLUDE_FILE ${CMAKE_BINARY_DIR}/TestConfig.cmake)
 endif()

@@ -197,7 +197,7 @@ void Protocol::interrupt() {
 }
    
 bool Protocol::respondToHeader() {
-    YARP_ASSERT(delegate!=NULL);
+    yAssert(delegate!=NULL);
     bool ok = delegate->respondToHeader(*this);
     if (!ok) return false;
     os().flush();
@@ -205,7 +205,7 @@ bool Protocol::respondToHeader() {
 }
 
 bool Protocol::expectAck() {
-    YARP_ASSERT(delegate!=NULL);
+    yAssert(delegate!=NULL);
     if (delegate->requireAck()) {
         return delegate->expectAck(*this);
     }
@@ -312,7 +312,7 @@ bool Protocol::expectHeader() {
     if (!ok) return false;
     ok = expectSenderSpecifier();
     if (!ok) return false;
-    YARP_ASSERT(delegate!=NULL);
+    yAssert(delegate!=NULL);
     ok = delegate->expectExtraHeader(*this);
     return ok;
 }
@@ -388,7 +388,7 @@ bool Protocol::write(SizedWriter& writer) {
     if (!getConnection().isActive()) return false;
     this->writer = &writer;
     bool replied = false;
-    YARP_ASSERT(delegate!=NULL);
+    yAssert(delegate!=NULL);
     getStreams().beginPacket(); // Message begins.
     bool ok = delegate->write(*this,writer);
     getStreams().endPacket();   // Message ends.

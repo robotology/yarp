@@ -119,6 +119,8 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     std::cout << "Starting OpenNI2 YARP Device please wait..." << endl;
     string portPrefix;
     double mConf;
+    int dMode, cMode;
+    bool printMode;
 
     if(config.check("noCameras", "Use only user tracking")) camerasON = false;
     else camerasON = true;
@@ -128,8 +130,25 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     
     if(config.check("noUserTracking", "Disable user tracking")) userTracking = false;
     else userTracking = true;
-    
-    if(config.check("playback", "Play from .oni file")) {
+
+    if(config.check("printVideoModes", "Print supported video modes"))
+    {
+        printMode = true;
+    }
+    else
+    {
+        printMode = false;
+    }
+
+    if(config.check("depthVideoMode", "Depth video mode (default=0)")){
+        dMode = config.find("depthVideoMode").asInt();
+    } 
+   
+   if(config.check("colorVideoMode", "Color video mode (default=0)")){
+         cMode = config.find("colorVideoMode").asInt();
+    } 
+
+   if(config.check("playback", "Play from .oni file")) {
         oniPlayback = true;
         fileDevice = config.find("playback").asString();
     }
@@ -181,7 +200,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
 	imageRegistration = false;
     }
     
-    skeleton = new OpenNI2SkeletonTracker(userTracking, camerasON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop, frameSync, imageRegistration);
+    skeleton = new OpenNI2SkeletonTracker(userTracking, camerasON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop, frameSync, imageRegistration, printMode, dMode, cMode);
     
     if (skeleton->getDeviceStatus() == 0) {
     cout << "OpenNI2 Yarp Device started." << endl;

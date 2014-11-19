@@ -83,7 +83,7 @@ YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
 
             if (!decompression.decompress(cimg.bytes(),img)) {
                 if (delegate->getInputStream().isOk()) {
-                    YARP_LOG_ERROR("Skipping a problematic JPEG frame");
+                    yError("Skipping a problematic JPEG frame");
                 }
             }
 

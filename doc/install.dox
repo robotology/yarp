@@ -11,300 +11,83 @@ YARP is available from https://github.com/robotology/yarp
 
 For Debian and Ubuntu users, here's a quick summary of how to
 get a build of the core YARP libraries and utilities from source:
-\verbatim
-  sudo apt-get install cmake libace-dev git
-  git clone git://github.com/robotology/yarp.git
-  cd yarp && mkdir build && cd build && cmake .. && make
-\endverbatim
+
+\code{.sh}
+sudo apt-get install cmake libace-dev git
+git clone git://github.com/robotology/yarp.git
+cd yarp && mkdir build && cd build && cmake .. && make
+\endcode
+
 If you wish to install YARP programs and libraries system-wide
 (this is *not* required) you would then do:
-\verbatim
-  sudo make install
-  sudo ldconfig
-\endverbatim
+\code{.sh}
+sudo make install
+sudo ldconfig
+\endcode
 
 You can also install to a custom directory by setting the CMake
-`CMAKE_INSTALL_PREFIX` variable.  In this case, consider also
-setting the `INSTALL_WITH_RPATH` variable to `ON`, since this will
+\c CMAKE_INSTALL_PREFIX variable.  In this case, consider also
+setting the \c INSTALL_WITH_RPATH variable to \c ON, since this will
 make it easier for YARP programs to find the corresponding YARP
 libraries if they are not in your system's library path.
 
 If using YARP without installing it, consider setting some or all
 of the following environment variables:
 
- + Set environment variable `YARP_DIR` to `.../yarp/build` to allow
+ + Set environment variable \c YARP_DIR to \c .../yarp/build to allow
    cmake to find YARP easily for your own projects.
- + Add `.../yarp/build/bin` to `PATH` to allow your shell to find
+ + Add \c .../yarp/build/bin to \c PATH to allow your shell to find
    YARP programs.
- + Add `.../yarp/build/lib` to `LD_LIBRARY_PATH` to allow YARP programs
-   to find YARP libraries, if they cannot be found by other means.
+ + Add \c .../yarp/build/lib to \c LD_LIBRARY_PATH to allow YARP
+   programs to find YARP libraries, if they cannot be found by other
+   means.
 
 Or, if you'd like to compile without using the ACE library:
-\verbatim
-  sudo apt-get install cmake git
-  git clone git://github.com/robotology/yarp.git
-  cd yarp && mkdir build && cd build && cmake -DSKIP_ACE=TRUE .. && make
-  ./bin/yarp check
-\endverbatim
 
-For a more comprehensive build with optional extras, use the CMake GUI, or see: http://wiki.icub.org/wiki/Linux:Installation_from_sources#Compile_YARP
+\code{.sh}
+sudo apt-get install cmake git
+git clone git://github.com/robotology/yarp.git
+cd yarp && mkdir build && cd build && cmake -DSKIP_ACE=TRUE .. && make
+./bin/yarp check
+\endcode
+
+For a more comprehensive build with optional extras, use the CMake GUI,
+or see:
+http://wiki.icub.org/wiki/Linux:Installation_from_sources#Compile_YARP
 
 There are also Debian and Ubuntu packages available from the iCub
-project, just follow the instructions at http://wiki.icub.org/wiki/Linux:Installation_from_binaries and then do:
-\verbatim
+project, just follow the instructions at
+http://wiki.icub.org/wiki/Linux:Installation_from_binaries and then do:
+
+\code{.sh}
 sudo apt-get install yarp
-\endverbatim
+\endcode
 
 For OSX users, try homebrew:
-\verbatim
-  brew install yarp
-\endverbatim
+\code{.sh}
+brew install yarp
+\endcode
+
 
 For Microsoft Windows users:
  \li Get a YARP installer from http://wiki.icub.org/wiki/Downloads
  \li Or follow the instructions for compiling YARP at http://wiki.icub.org/wiki/Windows:_installation_from_sources
 
 Here are the more general steps needed to install YARP:
-  \li \ref install_cmake "Install CMake"
-  \li \ref install_ace "Install ACE"
+  \li \ref dependencies_cmake "Install CMake"
+  \li \ref dependencies_ace "Install ACE"
   \li \ref install_yarp "Get YARP"
 
 We suggest that, if you are a first-time user of YARP, you install
 it on one or two machines first, before trying to set it up for a
 cluster.
 
- * @section install_cmake Installing CMake
 
-YARP is for programmers.  We'd like every YARP user all to use the
-development environment you are used to, and not force you to switch
-to something else -- no Linux/g++/emacs vs Windows/DevStudio vs
-Mac/... fights please!
 
-To achieve this without complete chaos, we ask you to install
-"CMake". CMake lets us describe our programs and libraries in a
-cross-platform way. CMake takes care of building the makefiles or
-workspaces needed by whatever development environment you like to work
-in.
 
-Read about and install CMake from here: http://www.cmake.org/
 
 
-@subsection cmake_install Tips for CMake Installation
-
-Install CMake from here: http://www.cmake.org/HTML/Download.html
-
-    \li Debian/Ubuntu/... Linux: apt-get install cmake
-    \li SUSE Linux: add the GURU YAST repository and use YAST for installing CMake or download directly the rpm from GURU website access
-
-@subsection cmake_windows CMake in Windows
-
-On Windows, the easiest way to use CMake is via its GUI. After
-installing, you should have an icon for CMake in your START
-menu. Click that, then fill in the path to your code, and the path you
-want CMake to build in (that can be the same if you want). Click
-"configure". Depending on the project, configuration may involve
-several steps -- you may have to answer new questions and click
-"configure" again. When the "OK" button becomes clickable, then CMake
-has enough information to set up your project. Click "OK" and you're
-done. Project files of the type you specified should exist in the
-build path you gave.
-
-If you want to start over from the beginning with CMake, it is
-important to press the "delete cache" button to make it forget
-everything you've told it.
-
-
-
-@subsection cmake_unix CMake in UNIX
-
-On UNIX CMake can be used conveniently in two ways:
-
-\li From the command line : type "cmake ."
-\li Interactively: type "ccmake ."
-
-If you are running CMake while in a directory different to where your code is, replace "." with the path to your code.
-
-"ccmake" is very much like the Windows GUI, and you may need to iterate "configure" a few times before the option to "generate" appears.
-
-"cmake" doesn't ask questions, and just uses defaults. You can pass it values on the command line:
-
-\code
-  cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .
-\endcode
-
-The generated file "CMakeCache.txt" contains all settings stored by CMake. It can be useful to delete this if you want to start over completely.
-
-
-@subsection cmake_example CMake Example
-
-Create a new directory, something like "$HOME/cmake/example" or "C:\cmake\example".
-
-Inside that directory, create a file called "CMakeLists.txt". In it place the following:
-
-\code
- PROJECT(example)
- ADD_EXECUTABLE(example main.cpp)
-\endcode
-
-In the same directory, create a file called "main.cpp". In it place the following:
-
-\code
- #include <stdio.h>
- int main() {
-   printf("CMake the world a better place!\n");
-   return 0;
- }
-\endcode
-
-In UNIX, type "cmake ." in that directory, and then "make", and then
-"./example". Easy!
-
-On Windows, run the CMake GUI, fill in the path to the example, click
-"configure", say what compiler you use, click "configure" again if
-needed, then click "ok". Then run your compiler, and finally the
-program. Easy!
-
-Notice that the abstract description of our project above can be
-shared by developers on Windows, Linux, OSX, ...
-
-\li There's another example you can try here: http://www.cmake.org/HTML/Examples.html
- \li For more examples, and details, see: http://www.linuxjournal.com/article/6700
-
-
-
-
-
-@section install_ace The ACE library
-
-
-CMake liberates your project from the particular
-development environment you are using. But the code itself may still
-have operating-system dependencies that will make life difficult. ACE
-is a free and open source library that provides an excellent portable
-interface to a vast array of operating systems, dealing with the
-details so you don't have to.
-
-\li Read about ACE here: http://www.cs.wustl.edu/~schmidt/ACE.html
-
-@subsection intro_install_ace The general approach to installing ACE
-
-\li For Ubuntu and other deb-based systems, we suggest you install the "libace-dev" package (on rpm-based systems, try libace-devel).
-\li For Windows and other systems we suggest the latest stable release (ACE-N.N.zip/ACE-N.N.tar.gz).  Download ACE here: http://download.dre.vanderbilt.edu/
-
-Compile ACE using our summary instructions, below, or through the
-official method given here:
-
-\code
-http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html
-\endcode
-
-Don't panic! The instructions cover a lot of operating systems and compilers. Just look carefully for your combination.
-          \li Windows/DevStudio instructions are here: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#msvc
-          \li UNIX/gcc instructions are here: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional
-          \li OSX/gcc users, follow the UNIX instructions.
-
-ACE will take a while to compile, but if you can do it you'll be able to deal with anything we throw at you.
-
-@subsection ace_unix Compiling ACE on UNIX
-
-If you are on a system with a binary ACE package (Debian, Redhat,
-... -- it is usually called libace-dev or libace-devel), then you can
-just install that and you are done. Otherwise you need to download
-ACE-5.5.tar.gz as described above and follow these steps:
-
-    \li Let's suppose you have placed ACE-5.5.tar.gz in the directory $HOME/work/. Then, in this directory, type:
-
-\code
- tar xzvf - < ACE-5.5.tar.gz
-\endcode
-
-    \li You should now have a subdirectory called "ACE_wrappers". Type one (or if you're not sure which, type both) of:
-
-\code
- export ACE_ROOT=$PWD/ACE_wrappers
- setenv ACE_ROOT $PWD/ACE_wrappers
-\endcode
-
-    \li One of these lines will succeed and the other will fail, depending on what shell you use. That's fine. as long as when you type: "echo $ACE_ROOT" you get the ACE_wrappers directory.
-    \li You now need to configure ACE to your platform, by creating one build file and one include file. If you are on Linux, type:
-
-\code
- cd $ACE_ROOT/include/makeinclude/
- ln -s platform_linux.GNU platform_macros.GNU
- cd $ACE_ROOT/ace
- ln -s config-linux.h config.h
-\endcode
-
-    \li If you are not on Linux, or even if you are, you should take a look at the platform_*.GNU and config-*.h files and pick the one that matches you.
-    \li Now, to compile, type:
-
-\code
- cd $ACE_ROOT/ace; make
-\endcode
-
-    \li If all goes well, at the end you will have some files in ACE_wrappers/ace, for example (the .so may be .dylib or other variants):
-
-\code
- $ ls $ACE_ROOT/lib/
- libACE.so  libACE.so.5.4.7
-\endcode
-
-    \li One thing remains to be done; programs need to be able to find the ACE library at run time. You can set this up by runing one of the following:
-
-\code
- export LD_LIBRARY_PATH=$ACE_ROOT/lib:$LD_LIBRARY_PATH
- setenv LD_LIBRARY_PATH $ACE_ROOT/lib:$LD_LIBRARY_PATH
-\endcode
-
-    \li (On OSX, the variable you need to set is DYLD_LIBRARY_PATH).
-    \li An alternative is to copy the files in $ACE_ROOT/lib to a standard library directory, for example, /usr/lib.
-    \li We've given a simple procedure that works for most people. But if you run into a lot of trouble, we suggest you delete the ACE_wrappers directory, recreate it with tar again as above, and follow carefully all the detailed instructions in: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional
-
-
-
-@subsection ace_windows Compiling ACE on Windows
-
-For Borland C++Builder, MinGW, Cygwin instructions see:
-
-\code
-http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#win32
-\endcode
-
-For Visual Studio, here's a brief summary of the steps.
-  \li Get ACE-5.5.zip as described above.
-  \li Unpack its contents to a directory. Find the directory "ACE_wrappers" in the unpacked material.
-  \li In the "ACE_wrappers\ace" directory, create a file called "config.h" and edit it to be just this:
-
-\code
- #include "ace/config-win32.h"
-\endcode
-
-    \li Open Visual Studio. Go to open a project/workspace/solution, and browse to the directory "ACE_wrappers\ace".
-    \li Find the project/workspace/solution that works for you: probably called "ACE.dsw" or "ace_vc8.sln".
-    \li Compile! We suggest you compile both debug and release versions of the library.
-          \li On Visual Studio Express, you may need to add the in project properties -> linker -> input -> additional dependencies: kernel32.lib user32.lib advapi32.lib. See http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/
-    \li In the end, you should have some files in the directory ACE_wrappers/lib, including ACE.dll, ACE.lib, ACEd.dll, ACEd.lib (if you compiled both release and debug versions).
-    \li You must make sure you include the path to "ACE_wrappers\lib" in your PATH environment variable whenever you run programs that uses ACE. See generic instructions for setting environment variables:
-
-\code
-http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/environment_variables.mspx
-\endcode
-
-    \li It is also a good idea to set an environment variable ACE_ROOT to hold the path to ACE_wrappers. This will make it easier to find the libraries and header files.
-
-
-On Windows you can unzip the ACE distribution and simply open the
-workspace file contained within it from within Visual Studio and
-then start the compilation.  We recommend you compile twice,
-once in debug mode and release mode, so you have both versions of
-the library available later.
-
-
-
-
-
-
-@section install_yarp Getting and compiling YARP
+\section install_yarp Getting and compiling YARP
 
 YARP can be downloaded from:
 
@@ -317,8 +100,10 @@ or installed from GIT by following the instructions at:
 You can compile it with CMake.
 Documentation is built periodically on the website.
 
-See README.md file for compilation tips.
+See
+<a href="https://github.com/robotology/yarp/blob/master/README.md">README.md</a>
+file for compilation tips.
 
 
- */
+*/
 

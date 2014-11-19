@@ -38,13 +38,13 @@ set_property(GLOBAL PROPERTY YARP_DEFS)
 # See conf/YarpVersion.cmake.
 include(YarpVersion)
 
-# Set up some compilation options.
-# See conf/YarpOptions.cmake.
-include(YarpOptions)
-
 # Check system configuration.
 # See conf/YarpSystemCheck.cmake.
 include(YarpSystemCheck)
+
+# Set up some compilation options.
+# See conf/YarpOptions.cmake.
+include(YarpOptions)
 
 # Include some workarounds for older cmake versions
 # See conf/YarpCMakeWorkarounds.cmake

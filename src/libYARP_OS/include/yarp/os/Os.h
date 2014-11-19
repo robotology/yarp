@@ -5,6 +5,8 @@
 
 #include <yarp/os/api.h>
 
+#include <cstddef>
+
 /*
 * Copyright (C) 2009 RobotCub Consortium
 * Author: Lorenzo Natale
@@ -40,6 +42,30 @@ namespace yarp {
         * @return the value corresponding to the envarionment variable v
         */
         YARP_OS_API const char *getenv(const char *v);
+
+        /**
+        * Wrapper for ACE_OS::getppid().
+        * @return the process id (pid)
+        */
+        YARP_OS_API int getpid();
+
+        /**
+        * Wrapper for ACE_OS::setprogname().
+        * @param progname the program name
+        */
+        YARP_OS_API void setprogname(const char *progname);
+
+        /**
+        * Wrapper for ACE_OS::getprogname().
+        * @return the program name
+        */
+        YARP_OS_API void getprogname(char* progname, size_t size);
+
+        /**
+        * Wrapper for ACE_OS::hostname().
+        * @return the system hostname
+        */
+        YARP_OS_API void gethostname(char* hostname, size_t size);
 
         /**
         * Wrapper for ACE_OS::mkdir(). Create a directory.

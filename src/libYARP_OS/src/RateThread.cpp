@@ -22,7 +22,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-//const ACE_Time_Value _timeout_value(20,0);	// (20 sec) timeout value for the release (20 sec)
+//const ACE_Time_Value _timeout_value(20,0);    // (20 sec) timeout value for the release (20 sec)
 
 class RateThreadCallbackAdapter: public ThreadImpl
 {
@@ -37,7 +37,6 @@ private:
     ACE_Time_Value sleep;
     ACE_Time_Value sleepPeriodTV;
     //ACE_High_Res_Timer thread_timer; // timer to estimate thread time
-    double sleep_period;   // thread sleep
 
     bool suspended;
     double totalUsed;      //total time taken iterations
@@ -243,7 +242,7 @@ RateThread::RateThread(int p)
 {
     // use p
     implementation = new RateThreadCallbackAdapter(*this, p);
-    YARP_ASSERT(implementation!=0);
+    yAssert(implementation!=0);
 }
 
 RateThread::~RateThread()

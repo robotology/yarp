@@ -104,7 +104,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
         if (ss.size()!=4) {
             addr = Contact();
         } else {
-            YARP_ASSERT(ss.size()==4);
+            yAssert(ss.size()==4);
             for (int i=0; i<4; i++) {
                 ip[i] = NetType::toInt(ss.get(i));
             }
@@ -165,7 +165,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
 #else
     ACE_UNUSED_ARG(sender);
     DgramTwoWayStream *stream = new DgramTwoWayStream();
-    YARP_ASSERT(stream!=NULL);
+    yAssert(stream!=NULL);
     Contact remote = proto.getStreams().getRemoteAddress();
     Contact local;
     local = proto.getStreams().getLocalAddress();

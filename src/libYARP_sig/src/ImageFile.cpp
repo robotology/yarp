@@ -104,7 +104,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const ConstString& src) {
             } else {
                 buf[idx] = ch;
                 idx++;
-                YARP_ASSERT(((unsigned int)idx)<sizeof(buf));
+                yAssert(((unsigned int)idx)<sizeof(buf));
                 blank = 0;
             }
         }

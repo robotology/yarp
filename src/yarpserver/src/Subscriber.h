@@ -66,7 +66,7 @@ public:
 
     virtual bool welcome(const yarp::os::ConstString& port, int activity) = 0;
 
-    virtual bool setTopic(const yarp::os::ConstString& port, 
+    virtual bool setTopic(const yarp::os::ConstString& port,
                           const yarp::os::ConstString& structure, bool active) = 0;
 
     virtual bool listTopics(yarp::os::Bottle& topics) = 0;
@@ -78,8 +78,8 @@ public:
     virtual yarp::os::ConstString getType(const yarp::os::ConstString& family,
                                           const yarp::os::ConstString& structure) = 0;
 
-    virtual bool apply(yarp::os::Bottle& cmd, 
-                       yarp::os::Bottle& reply, 
+    virtual bool apply(yarp::os::Bottle& cmd,
+                       yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
                        const yarp::os::Contact& remote) {
         yarp::os::ConstString tag = cmd.get(0).asString();
@@ -144,7 +144,7 @@ public:
                 reply.addVocab(replyCode(result));
                 return true;
             } else if (cmd.size()==3) {
-                yarp::os::ConstString result = 
+                yarp::os::ConstString result =
                     getType(cmd.get(1).asString().c_str(),
                             cmd.get(2).asString().c_str());
                 reply.clear();
