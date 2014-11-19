@@ -80,11 +80,11 @@ public:
     LogStream fatal() const;
 
 #ifndef YARP_NO_DEPRECATED
-    YARP_DEPRECATED virtual void debug(const ConstString& txt) const { debug(txt.c_str()); } ///< \deprecated since YARP 2.3.64
-    YARP_DEPRECATED virtual void info(const ConstString& txt) const { info(txt.c_str()); } ///< \deprecated since YARP 2.3.64
-    YARP_DEPRECATED virtual void warning(const ConstString& txt) const { warning(txt.c_str()); } ///< \deprecated since YARP 2.3.64
-    YARP_DEPRECATED virtual void error(const ConstString& txt) const { error(txt.c_str()); } ///< \deprecated since YARP 2.3.64
-    YARP_DEPRECATED virtual void fail(const ConstString& txt) const { fatal(txt.c_str()); } ///< \deprecated since YARP 2.3.64
+    YARP_DEPRECATED virtual void debug(const ConstString& txt) const { debug("%s", txt.c_str()); } ///< \deprecated since YARP 2.3.64
+    YARP_DEPRECATED virtual void info(const ConstString& txt) const { info("%s", txt.c_str()); } ///< \deprecated since YARP 2.3.64
+    YARP_DEPRECATED virtual void warning(const ConstString& txt) const { warning("%s", txt.c_str()); } ///< \deprecated since YARP 2.3.64
+    YARP_DEPRECATED virtual void error(const ConstString& txt) const { error("%s", txt.c_str()); } ///< \deprecated since YARP 2.3.64
+    YARP_DEPRECATED virtual void fail(const ConstString& txt) const { fatal("%s", txt.c_str()); } ///< \deprecated since YARP 2.3.64
 #endif // YARP_NO_DEPRECATED
 
     typedef void (*LogCallback)(yarp::os::Log::LogType,
@@ -128,10 +128,10 @@ YARP_OS_API void yarp_print_trace(FILE *out, const char *file, int line);
 
 #ifndef YARP_NO_DEPRECATED
 
-YARP_OS_API YARP_DEPRECATED inline void __yarp_debug(const yarp::os::ConstString& str) { yDebug(str.c_str()); } ///< \deprecated since YARP 2.3.64
-YARP_OS_API YARP_DEPRECATED inline void __yarp_info(const yarp::os::ConstString& str) { yInfo(str.c_str()); } ///< \deprecated since YARP 2.3.64
-YARP_OS_API YARP_DEPRECATED inline void __yarp_warn(const yarp::os::ConstString& str) { yWarning(str.c_str()); } ///< \deprecated since YARP 2.3.64
-YARP_OS_API YARP_DEPRECATED inline void __yarp_error(const yarp::os::ConstString& str) { yError(str.c_str()); } ///< \deprecated since YARP 2.3.64
+YARP_OS_API YARP_DEPRECATED inline void __yarp_debug(const yarp::os::ConstString& str) { yDebug("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
+YARP_OS_API YARP_DEPRECATED inline void __yarp_info(const yarp::os::ConstString& str) { yInfo("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
+YARP_OS_API YARP_DEPRECATED inline void __yarp_warn(const yarp::os::ConstString& str) { yWarning("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
+YARP_OS_API YARP_DEPRECATED inline void __yarp_error(const yarp::os::ConstString& str) { yError("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
 
 YARP_OS_API YARP_DEPRECATED inline bool yarp_show_error() { return true; } ///< \deprecated since YARP 2.3.64
 YARP_OS_API YARP_DEPRECATED inline bool yarp_show_warn() { return true; } ///< \deprecated since YARP 2.3.64
