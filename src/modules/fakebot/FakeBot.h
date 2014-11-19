@@ -309,6 +309,7 @@ public:
     {
         bool ret = getEncoder(j, enc);
         *time = yarp::os::Time::now();
+        return ret;
     }
 
 
