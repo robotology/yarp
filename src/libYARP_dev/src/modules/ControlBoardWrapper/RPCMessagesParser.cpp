@@ -178,10 +178,9 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                 case VOCAB_CM_CONTROL_MODE_GROUP:
                 {
-                    std::cerr << "got VOCAB_CM_CONTROL_MODE_GROUP" << std::endl;
-
                     int n_joints = cmd.get(3).asInt();
                     Bottle& jList = *(cmd.get(4).asList());
+                    Bottle& modeList= *(cmd.get(5).asList());
 
                     int *js = new int [n_joints];
                     int *modes = new int [n_joints];
@@ -191,7 +190,6 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         js[i] = jList.get(i).asInt();
                     }
 
-                    Bottle& modeList = response.addList();
                     for(int i=0; i<n_joints; i++)
                     {
                         modes[i] = modeList.get(i).asVocab();
@@ -205,14 +203,12 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                 case VOCAB_CM_CONTROL_MODES:
                 {
-                    std::cerr << "got VOCAB_CM_CONTROL_MODES"  << std::endl;
                     yarp::os::Bottle *modeList;
                     modeList  = cmd.get(3).asList();
 
                     if(modeList->size() != controlledJoints)
                     {
-                        if (ControlBoardWrapper_p->verbose())
-                            fprintf(stderr, "received an invalid setControlMode message. Size of vector doesn´t match the number of controlled joints\n");
+                            yError("received an invalid setControlMode message. Size of vector doesn´t match the number of controlled joints\n");
                         *ok = false;
                         break;
                     }
