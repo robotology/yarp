@@ -90,8 +90,8 @@ void advanced_dialog::on_buttonBox_clicked(QAbstractButton *button)
         theLogger->set_log_list_max_size(false,size_ports);
     }
 
-    QString s_refresh_rate = ui->refresh_rate->text();
-    int refresh_rate  = atoi (s_refresh_rate.toStdString().c_str());
+//     QString s_refresh_rate = ui->refresh_rate->text();
+//     int refresh_rate  = atoi (s_refresh_rate.toStdString().c_str());
 
 }
 
