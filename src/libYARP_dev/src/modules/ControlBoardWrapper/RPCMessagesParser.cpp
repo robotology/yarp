@@ -885,7 +885,6 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
         case VOCAB_GET:
         {
             yarp::os::Bottle *jointList;
-            yarp::os::Bottle *modeList;
 
             switch (cmd.get(2).asVocab())
             {
@@ -1786,7 +1785,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         rec = true;
                         if (ControlBoardWrapper_p->verbose())
                             yDebug("get command received\n");
-                        int tmp = 0;
+
                         double dtmp = 0.0;
                         response.addVocab(VOCAB_IS);
                         response.add(cmd.get(1));

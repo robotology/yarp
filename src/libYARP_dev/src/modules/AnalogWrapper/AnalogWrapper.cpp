@@ -313,12 +313,10 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString().c_str());
-    bool correct=true;
 
     // Verify minimum set of parameters required
     if(!params.check("robotName", "name of the robot.") )
     {
-        correct=false;
         yError("AnalogWrapper: missing robotName, check your configuration file");
         return false;
     }

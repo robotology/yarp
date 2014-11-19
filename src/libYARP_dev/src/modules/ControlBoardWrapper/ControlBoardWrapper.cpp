@@ -57,7 +57,6 @@ bool ControlBoardWrapper::close()
 #if defined(ROS_MSG)
     if(rosNode != NULL)
     {
-        rosNode;
         delete rosNode;
         rosNode = NULL;
     }
@@ -113,9 +112,6 @@ Bottle ControlBoardWrapper::getOptions()
 
 bool ControlBoardWrapper::open(Searchable& config)
 {
-    bool deferredAttach=false;
-
-    string str=config.toString().c_str();
     Property prop;
     prop.fromString(config.toString().c_str());
 
@@ -559,15 +555,16 @@ void ControlBoardWrapper::run()
     ros_struct.velocity.resize(controlledJoints);
     ros_struct.effort.resize(controlledJoints);
 
+    getEncoders(ros_struct.position.data());
+    getEncoderSpeeds(ros_struct.velocity.data());
+    getTorques(ros_struct.effort.data());
+
     for(int i=0; i<controlledJoints; i++)
     {
         std::stringstream ss;
         ss << " rosName " << i;
 
         ros_struct.name[i] = std::string(ss.str() );
-        ros_struct.position[i] = 10000 + loopCounting;
-        ros_struct.velocity[i] = 20000 + loopCounting/2.0f;
-        ros_struct.effort[i]   = 30000 + loopCounting^2;
     }
 
     rosPublisherPort.write(ros_struct);
@@ -1137,7 +1134,7 @@ bool ControlBoardWrapper::positionMove(const double *refs)
     int j_wrap = 0;         // index of the wrapper joint
 
     int nDev = device.subdevices.size();
-    for(unsigned int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
+    for(int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
     {
         int subIndex=device.lut[j_wrap].deviceEntry;
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1440,8 +1437,6 @@ bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints,
    for(int j=0; j<n_joints; j++)
    {
        subIndex = device.lut[joints[j]].deviceEntry;
-       int tmp1= X_idx[subIndex];
-       int tmp2 = joints[j];
        XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
        X_idx[subIndex]++;
    }
@@ -1503,7 +1498,6 @@ bool ControlBoardWrapper::setRefSpeeds(const double *spds)
     bool ret = true;
     int j_wrap = 0;         // index of the wrapper joint
 
-    int nDev = device.subdevices.size();
     for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
     {
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);
@@ -2153,7 +2147,6 @@ bool ControlBoardWrapper::velocityMove(const double *v)
     bool ret = true;
     int j_wrap = 0;         // index of the wrapper joint
 
-    int nDev = device.subdevices.size();
     for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
     {
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);

@@ -146,9 +146,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if(stream_IPosDirect)
             {
-                int temp_j = b.get(1).asInt();
-                double temp_val = cmdVector.operator [](0);
-                bool ok = stream_IPosDirect->setPosition(b.get(1).asInt(), cmdVector.operator [](0)); // cmdVector.data());
+                bool ok = stream_IPosDirect->setPosition(b.get(1).asInt(), cmdVector[0]); // cmdVector.data());
                 if (!ok)
                 {   yError("Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt() ); }
             }
