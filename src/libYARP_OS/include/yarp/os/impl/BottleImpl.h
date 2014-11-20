@@ -264,7 +264,7 @@ public:
     virtual int asInt() const { return (int)x; }
     virtual YARP_INT64 asInt64() const { return x; }
     virtual int asVocab() const { return (int)x; }
-    virtual double asDouble() const { return x; }
+    virtual double asDouble() const { return (double)x; }
     virtual bool isInt() const { return false; }
     virtual bool isInt64() const { return true; }
     static const int code;
