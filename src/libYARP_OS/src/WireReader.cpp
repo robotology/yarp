@@ -81,6 +81,20 @@ bool WireReader::readNested(yarp::os::PortReader& obj) {
     return obj.read(reader);
 }
 
+bool WireReader::readI16(YARP_INT16& x) {
+    int tag = state->code;
+    if (tag<0) {
+        if (noMore()) return false;
+        tag = reader.expectInt();
+    }
+    if (tag!=BOTTLE_TAG_INT) return false;
+    if (noMore()) return false;
+    int v = reader.expectInt();
+    x = (YARP_INT16) v;
+    state->len--;
+    return !reader.isError();
+}
+
 bool WireReader::readI32(YARP_INT32& x) {
     int tag = state->code;
     if (tag<0) {
@@ -95,6 +109,24 @@ bool WireReader::readI32(YARP_INT32& x) {
     return !reader.isError();
 }
 
+bool WireReader::readI64(YARP_INT64& x) {
+    int tag = state->code;
+    if (tag<0) {
+        if (noMore()) return false;
+        tag = reader.expectInt();
+    }
+    if (tag!=BOTTLE_TAG_INT && tag!=BOTTLE_TAG_INT64) return false;
+    if (noMore()) return false;
+    if (tag==BOTTLE_TAG_INT) {
+        int v = reader.expectInt();
+        x = (YARP_INT32) v;
+    } else {
+        x = reader.expectInt64();
+    }
+    state->len--;
+    return !reader.isError();
+}
+
 bool WireReader::readBool(bool& x) {
     if (state->code<0) {
         if (noMore()) return false;
@@ -104,6 +136,20 @@ bool WireReader::readBool(bool& x) {
     if (noMore()) return false;
     int v = reader.expectInt();
     x = (v!=0) && (v!=VOCAB4('f','a','i','l'));
+    state->len--;
+    return !reader.isError();
+}
+
+bool WireReader::readByte(YARP_INT8& x) {
+    int tag = state->code;
+    if (tag<0) {
+        if (noMore()) return false;
+        tag = reader.expectInt();
+    }
+    if (tag!=BOTTLE_TAG_INT) return false;
+    if (noMore()) return false;
+    int v = reader.expectInt();
+    x = (YARP_INT8) v;
     state->len--;
     return !reader.isError();
 }
@@ -168,6 +214,29 @@ bool WireReader::readString(ConstString& str, bool *is_vocab) {
     str.resize(len);
     reader.expectBlock((const char *)str.c_str(),len);
     str.resize(len-1);
+    return !reader.isError();
+}
+
+bool WireReader::readBinary(ConstString& str) {
+    if (state->len<=0) return false;
+    int tag = state->code;
+    if (state->code<0) {
+        if (noMore()) return false;
+        tag = reader.expectInt();
+        if (tag!=BOTTLE_TAG_BLOB) return false;
+    }
+    state->len--;
+    if (noMore()) return false;
+    int len = reader.expectInt();
+    if (reader.isError()) return false;
+    if (len == 0) {
+        str = ConstString();
+        return true;
+    }
+    if (len<0) return false;
+    if (noMore()) return false;
+    str.resize(len);
+    reader.expectBlock((const char *)str.c_str(),len);
     return !reader.isError();
 }
 

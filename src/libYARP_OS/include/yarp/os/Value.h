@@ -104,10 +104,18 @@ public:
     virtual bool isBool() const;
 
     /**
-     * Checks if value is an integer. If so, asInt() will return that integer.
+     * Checks if value is an integer (32 bit or smaller). If so, asInt() will 
+     * return that integer.
      * @return true iff value is an integer
      */
     virtual bool isInt() const;
+
+    /**
+     * Checks if value is a 64-bit integer or smaller. If so, asInt64() will 
+     * return that integer.
+     * @return true iff value is a 64-bit integer or smaller
+     */
+    virtual bool isInt64() const;
 
     /**
      * Checks if value is a string. If so, asString() will return that string.
@@ -164,6 +172,14 @@ public:
      * Otherwise returns 0.
      */
     virtual int asInt() const;
+
+    /**
+     * Get 64-bit integer value.
+     * @return 64-bit integer value if value is indeed an integer.
+     * If it is another numeric type, the appropriate cast value is returned.
+     * Otherwise returns 0.
+     */
+    virtual YARP_INT64 asInt64() const;
 
     /**
      * Get vocabulary identifier as an integer.

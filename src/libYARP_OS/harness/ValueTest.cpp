@@ -119,11 +119,32 @@ public:
         }
     }
 
+    void checkInt64() {
+        report(0,"check int64");
+        {
+            Bottle b1, b2;
+            b1.addInt64(42);
+            b1.addInt(43);
+            b2.read(b1);
+            checkTrue(b2.get(0).isInt64(),"0 type ok");
+            checkFalse(b2.get(0).isInt(),"0 type not 32 bit");
+            checkEqual(b2.get(0).asInt64(),42,"0 value ok");
+            checkTrue(b2.get(1).isInt(),"1 type is 32 bit");
+            checkTrue(b2.get(1).isInt64(),"1 type ok");
+            checkEqual(b2.get(1).asInt(),43,"1 value ok");
+            checkEqual(b2.get(1).asInt64(),43,"1 value as 64-bit ok");
+            checkEqual(b2.toString(),"42 43","string is ok");
+            b1.fromString("64 128");
+            checkEqual(b1.get(0).asInt64(),64,"32 bit reads ok as 64");
+        }
+    }
+
     virtual void runTests() {
         checkCopy();
         checkMixedCopy();
         checkReadWrite();
         checkAssignment();
+        checkInt64();
     }
 };
 

@@ -14,6 +14,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Searchable.h>
+#include <yarp/conf/numeric.h>
 
 namespace yarp {
     namespace os {
@@ -63,6 +64,12 @@ public:
      * @return the integer read from the connection
      */
     virtual int expectInt() = 0;
+
+    /**
+     * Read a 64 bit integer from the network connection.
+     * @return the integer read from the connection
+     */
+    virtual YARP_INT64 expectInt64() = 0;
 
     /**
      * Read a floating point number from the network connection.

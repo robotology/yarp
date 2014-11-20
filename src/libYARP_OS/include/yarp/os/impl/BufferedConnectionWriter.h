@@ -19,6 +19,7 @@
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NetInt64.h>
 
 #include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/PlatformStdlib.h>
@@ -128,6 +129,15 @@ public:
 
     virtual void appendInt(int data) {
         NetInt32 i = data;
+        yarp::os::Bytes b((char*)(&i),sizeof(i));
+        if (addPool(b)) return;
+        yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
+        buf->copy();
+        target->push_back(buf);
+    }
+
+    virtual void appendInt64(const YARP_INT64& data) {
+        NetInt64 i = data;
         yarp::os::Bytes b((char*)(&i),sizeof(i));
         if (addPool(b)) return;
         yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
@@ -430,6 +440,12 @@ public:
         return x;
     }
 
+    virtual YARP_INT64 expectInt64() {
+        YARP_INT64 x = reader->expectInt64();
+        readerStore.appendInt64(x);
+        return x;
+    }
+
     virtual bool pushInt(int x) {
         bool ok = reader->pushInt(x);
         skipNextInt = skipNextInt || ok;
@@ -511,6 +527,11 @@ public:
     virtual void appendInt(int data) {
         writer->appendInt(data);
         writerStore.appendInt(data);
+    }
+
+    virtual void appendInt64(const YARP_INT64& data) {
+        writer->appendInt64(data);
+        writerStore.appendInt64(data);
     }
 
     virtual void appendDouble(double data) {

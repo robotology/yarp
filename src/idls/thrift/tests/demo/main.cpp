@@ -15,6 +15,7 @@
 #include <DemoStructExt.h>
 #include <SurfaceMeshWithBoundingBox.h>
 #include <Wrapping.h>
+#include <TestSomeMoreTypes.h>
 
 using namespace yarp::os;
 
@@ -855,6 +856,38 @@ bool test_help() {
     return true;
 }
 
+bool test_primitives() {
+    printf("\n*** test_primitives()\n");
+    TestSomeMoreTypes a, b;
+    Bottle tmp;
+    a.a_bool = true;
+    a.a_byte = 8;
+    a.a_i16 = 16;
+    a.a_i32 = 32;
+    a.a_i64 = 64;
+    tmp.read(a);
+    tmp.write(b);
+    if (a.a_bool!=b.a_bool) {
+        fprintf(stderr,"copy bool failed\n");
+        return false;
+    }
+    if (a.a_i16!=b.a_i16) {
+        fprintf(stderr,"copy i16 failed\n");
+        return false;
+    }
+    if (a.a_i32!=b.a_i32) {
+        fprintf(stderr,"copy i32 failed\n");
+        return false;
+    }
+    if (a.a_i64!=b.a_i64) {
+        fprintf(stderr,"copy i64 failed\n");
+        return false;
+    }
+    printf("Copies all done\n");
+    return true;
+}
+
+
 int main(int argc, char *argv[]) {
     if (argc>1) {
         Network yarp;
@@ -885,5 +918,6 @@ int main(int argc, char *argv[]) {
     if (!test_editor()) return 1;
     if (!test_list_editor()) return 1;
     if (!test_help()) return 1;
+    if (!test_primitives()) return 1;
     return 0;
 }

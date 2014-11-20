@@ -50,8 +50,9 @@ const int StoreString::code = BOTTLE_TAG_STRING;
 const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
 const int StoreDict::code = BOTTLE_TAG_LIST|BOTTLE_TAG_DICT;
+const int StoreInt64::code = BOTTLE_TAG_INT64;
 
-#define UNIT_MASK (BOTTLE_TAG_INT|BOTTLE_TAG_VOCAB|BOTTLE_TAG_DOUBLE|BOTTLE_TAG_STRING|BOTTLE_TAG_BLOB)
+#define UNIT_MASK (BOTTLE_TAG_INT|BOTTLE_TAG_VOCAB|BOTTLE_TAG_DOUBLE|BOTTLE_TAG_STRING|BOTTLE_TAG_BLOB|BOTTLE_TAG_INT64)
 #define GROUP_MASK (BOTTLE_TAG_LIST|BOTTLE_TAG_DICT)
 
 
@@ -345,6 +346,9 @@ Storable *Storable::createByCode(int id) {
         yAssert(storable!=NULL);
         storable->asList()->setNested(true);
         break;
+    case StoreInt64::code:
+        storable = new StoreInt64();
+        break;
     default:
         if ((id&GROUP_MASK)!=0) {
             // typed list
@@ -626,6 +630,31 @@ bool StoreInt::readRaw(ConnectionReader& reader) {
 
 bool StoreInt::writeRaw(ConnectionWriter& writer) {
     writer.appendInt(x);
+    return true;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// StoreInt64
+
+String StoreInt64::toStringFlex() const {
+    char buf[256];
+    ACE_OS::sprintf(buf,"%ld",x);
+    return String(buf);
+}
+
+void StoreInt64::fromString(const String& src) {
+    x = ACE_OS::strtoll(src.c_str(), (char **)NULL, 0);
+}
+
+bool StoreInt64::readRaw(ConnectionReader& reader) {
+    x = reader.expectInt64();
+    return true;
+}
+
+bool StoreInt64::writeRaw(ConnectionWriter& writer) {
+    writer.appendInt64(x);
     return true;
 }
 

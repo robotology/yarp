@@ -82,6 +82,11 @@ void Bottle::addInt(int x) {
     HELPER(implementation).addInt(x);
 }
 
+void Bottle::addInt64(const YARP_INT64& x) {
+    edit();
+    HELPER(implementation).addInt64(x);
+}
+
 void Bottle::addVocab(int x) {
     edit();
     HELPER(implementation).addVocab(x);

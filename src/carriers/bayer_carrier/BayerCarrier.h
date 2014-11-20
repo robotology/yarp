@@ -130,6 +130,10 @@ public:
         return local->expectInt();
     }
 
+    virtual YARP_INT64 expectInt64() {
+        return local->expectInt64();
+    }
+
     virtual bool pushInt(int x) {
         return local->pushInt(x);
     }

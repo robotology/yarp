@@ -21,6 +21,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/PlatformSize.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NetInt64.h>
 
 namespace yarp {
     namespace os {
@@ -116,6 +117,20 @@ public:
         }
         if (!isGood()) { return 0; }
         NetInt32 x = 0;
+        yarp::os::Bytes b((char*)(&x),sizeof(x));
+        yAssert(in!=NULL);
+        YARP_SSIZE_T r = in->read(b);
+        if (r<0 || (size_t)r<b.length()) {
+            err = true;
+            return 0;
+        }
+        messageLen -= b.length();
+        return x;
+    }
+
+    virtual YARP_INT64 expectInt64() {
+        if (!isGood()) { return 0; }
+        NetInt64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         yAssert(in!=NULL);
         YARP_SSIZE_T r = in->read(b);
