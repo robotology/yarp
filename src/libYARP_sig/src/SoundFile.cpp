@@ -94,6 +94,7 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     dataHeader=dummyHeader;
     result = fread(&dataLength,sizeof(dataLength),1,fp);
 
+    YARP_UNUSED(result);
     return true;
 }
 
@@ -137,6 +138,8 @@ void PcmWavHeader::setup_to_write(const Sound& src, FILE *fp)
 
     result = fwrite(&dataHeader,sizeof(dataHeader),1,fp);
     result = fwrite(&dataLength,sizeof(dataLength),1,fp);
+
+    YARP_UNUSED(result);
 }
 
 bool yarp::sig::file::read(Sound& dest, const char *src)
@@ -167,6 +170,7 @@ bool yarp::sig::file::read(Sound& dest, const char *src)
 
     size_t result;
     result = fread(bytes.get(),bytes.length(),1,fp);
+    YARP_UNUSED(result);
 
     NetInt16 *data = (NetInt16*)bytes.get();
     int ct = 0;
