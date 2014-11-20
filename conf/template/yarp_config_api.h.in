@@ -88,4 +88,7 @@ recommended usage of this header within YARP is:
 #  define YARP_DEPRECATED
 #endif
 
+// YARP_UNUSED: Suppress unused variable warnings
+#define YARP_UNUSED(var) (void)var
+
 #endif /* _YARP2_API_ */
