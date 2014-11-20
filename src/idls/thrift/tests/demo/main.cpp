@@ -16,6 +16,7 @@
 #include <SurfaceMeshWithBoundingBox.h>
 #include <Wrapping.h>
 #include <TestSomeMoreTypes.h>
+#include <sub/directory/ClockServer.h>
 
 using namespace yarp::os;
 
