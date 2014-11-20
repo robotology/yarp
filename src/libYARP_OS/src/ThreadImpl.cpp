@@ -365,12 +365,12 @@ int ThreadImpl::getPriority() {
 
 int ThreadImpl::getPolicy() {
     int policy = defaultPolicy;
-    int prio;
     if (active) {
 #if defined(YARP_HAS_CXX11)
         YARP_ERROR(Logger::get(),"Cannot get scheduiling policy with C++11");
 #else
     #if defined(YARP_HAS_ACE) // Use ACE API
+        int prio;
         ACE_Thread::getprio(hid, prio, policy);
     #elif defined(UNIX) // Use the POSIX syscalls
         struct sched_param thread_param;
