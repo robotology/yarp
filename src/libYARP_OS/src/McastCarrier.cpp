@@ -163,7 +163,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
 #ifndef YARP_HAS_ACE
     return false;
 #else
-    ACE_UNUSED_ARG(sender);
+    YARP_UNUSED(sender);
     DgramTwoWayStream *stream = new DgramTwoWayStream();
     yAssert(stream!=NULL);
     Contact remote = proto.getStreams().getRemoteAddress();
