@@ -46,11 +46,7 @@
 #include <yarp/os/impl/PlatformSignal.h>
 
 #include <yarp/conf/system.h>
-#ifdef YARP_CMAKE_CONFIG
 #include <yarp/conf/version.h>
-#else
-// we do not have configuration information, disable some features.
-#endif
 
 #ifdef WITH_READLINE
     #include <readline/readline.h>
@@ -2312,11 +2308,7 @@ String Companion::readString(bool *eof) {
 }
 
 String Companion::version() {
-#ifdef YARP_VERSION
     return YARP_VERSION;
-#else
-    return "2";
-#endif
 }
 
 
