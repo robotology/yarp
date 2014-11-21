@@ -928,7 +928,7 @@ Bottle& Property::findGroup(const ConstString& key) const {
         }
         reportToMonitor(report);
         if (result!=0/*NULL*/) {
-            String context = getContext().c_str();
+            String context = getMonitorContext();
             context += ".";
             context += key;
             result->setMonitor(getMonitor(),

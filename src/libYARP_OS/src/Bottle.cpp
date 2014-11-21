@@ -328,7 +328,7 @@ Bottle& Bottle::findGroup(const ConstString& key) const {
         }
         reportToMonitor(report);
         if (bb.isList()) {
-            String context = getContext().c_str();
+            String context = getMonitorContext().c_str();
             context += ".";
             context += key;
             bb.asList()->setMonitor(getMonitor(),
