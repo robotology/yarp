@@ -322,6 +322,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Vocab.cpp
                  src/YarpNameSpace.cpp
                  src/YarpPlugin.cpp
+                 src/WirePortable.cpp
                  src/WireReader.cpp
                  src/WireState.cpp
                  src/WireWriter.cpp
