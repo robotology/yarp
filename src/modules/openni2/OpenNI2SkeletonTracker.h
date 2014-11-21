@@ -92,6 +92,7 @@ private:
     int fpsCount;
     int depthVideoMode;
     int colorVideoMode;
+    string deviceName;
 
     // OpenNI2 and NiTE objects
     openni::Device device;
