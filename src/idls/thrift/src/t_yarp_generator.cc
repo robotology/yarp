@@ -1997,7 +1997,28 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	  indent(f_curr_) << declare_field(&returnfield) << endl;
 	}
 	
-	indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) {" << endl;
+	indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection);" << endl;
+	indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection);" << endl;
+	indent_down();
+	f_curr_ << "};" << endl;
+	f_curr_ << endl;
+      }
+    }
+    {
+      ofstream& f_curr_ = f_cpp_;
+      fn_iter = functions.begin();
+      for ( ; fn_iter != functions.end(); fn_iter++) {
+	string fname = (*fn_iter)->get_name();
+	//f_curr_ << "class " << service_name_ << "_" << fname 
+	//	<< " : public yarp::os::Portable {"
+	//	<< endl;
+	//indent(f_curr_) << "public:" << endl;
+	
+	vector<t_field*> args = (*fn_iter)->get_arglist()->get_members();
+	vector<t_field*>::iterator arg_iter;
+	t_type* returntype = (*fn_iter)->get_returntype();
+	t_field returnfield(returntype, "_return");
+	indent(f_curr_) << "bool " << service_name_ << "_" << fname << "::write(yarp::os::ConnectionWriter& connection) {" << endl;
 	indent_up();
 	yfn y((*fn_iter)->get_name());
 	indent(f_curr_) << "yarp::os::idl::WireWriter writer(connection);" 
@@ -2016,8 +2037,9 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	indent(f_curr_) << "return true;" << endl;
 	indent_down();
 	indent(f_curr_) << "}" << endl;
+	f_curr_ << endl;
 	
-	indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection) {" << endl;
+	indent(f_curr_) << "bool " << service_name_ << "_" << fname << "::read(yarp::os::ConnectionReader& connection) {" << endl;
 	indent_up();
 	if (!(*fn_iter)->is_oneway()) {
 	  indent(f_curr_) << "yarp::os::idl::WireReader reader(connection);" 
@@ -2034,9 +2056,6 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	indent(f_curr_) << "return true;" << endl;
 	indent_down();
 	indent(f_curr_) << "}" << endl;
-	
-	indent_down();
-	f_curr_ << "};" << endl;
 	f_curr_ << endl;
       }
     }
