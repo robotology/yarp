@@ -2076,7 +2076,14 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     f_srv_ << "public:" << endl;
     indent_up();
 
-    indent(f_srv_) << service_name_ << "() { yarp().setOwner(*this); }" << endl;
+    indent(f_srv_) << service_name_ << "();" << endl;
+
+    indent_down();
+    indent(f_cpp_) << service_name_ << "::" << service_name_ << "() {" << endl;
+    indent_up();
+    indent(f_cpp_) << "yarp().setOwner(*this);" << endl;
+    scope_down(f_cpp_);
+    indent_up();
 
     fn_iter = functions.begin();
     for ( ; fn_iter != functions.end(); fn_iter++) {
