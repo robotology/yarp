@@ -39,7 +39,8 @@ foreach(lib ${YARP_LIBS})
      NOT "${lib}" STREQUAL "yarpcar" AND
      NOT "${lib}" STREQUAL "yarpmod" AND
      NOT "${lib}" STREQUAL "YARP_wire_rep_utils" AND
-     NOT "${lib}" STREQUAL "YARP_manager")
+     NOT "${lib}" STREQUAL "YARP_manager"
+     NOT "${lib}" STREQUAL "YARP_logger")
     list(APPEND YARP_LIBRARIES YARP::${lib})
   endif()
 endforeach()
