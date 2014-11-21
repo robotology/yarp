@@ -53,7 +53,7 @@ public:
     bool commitToRpc;
     bool active;
 
-    PortCoreAdapter() :
+    PortCoreAdapter(Port& owner) :
         stateMutex(1),
         readDelegate(NULL),
         permanentReadDelegate(NULL),
@@ -80,6 +80,7 @@ public:
         commitToRpc(false),
         active(false)
     {
+        setContactable(&owner);
     }
 
     void openable() {
@@ -361,7 +362,7 @@ public:
 void *Port::needImplementation() const {
     if (implementation) return implementation;
     Port *self = (Port *)this;
-    self->implementation = new PortCoreAdapter();
+    self->implementation = new PortCoreAdapter(*self);
     yAssert(self->implementation!=NULL);
     self->owned = true;
     return self->implementation;
@@ -500,7 +501,7 @@ bool Port::open(const Contact& contact, bool registerName,
 
     // Allow for open() to be called safely many times on the same Port
     if (currentCore->isOpened()) {
-        PortCoreAdapter *newCore = new PortCoreAdapter();
+        PortCoreAdapter *newCore = new PortCoreAdapter(*this);
         yAssert(newCore!=NULL);
         // copy state that should survive in a new open()
         if (currentCore->checkPortReader()!=NULL) {
