@@ -221,8 +221,6 @@ public:
 
     inline void refreshEncoders()
     {
-        int idx = 0;
-        double tmp = 0;
         for(int j=base, idx=0; j<(base+axes); j++, idx++)
         {
             if(enc)
@@ -1302,8 +1300,6 @@ public:
        for(int j=0; j<n_joints; j++)
        {
            subIndex = device.lut[joints[j]].deviceEntry;
-           int tmp1= X_idx[subIndex];
-           int tmp2 = joints[j];
            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
            X_idx[subIndex]++;
        }
@@ -1365,7 +1361,6 @@ public:
         bool ret = true;
         int j_wrap = 0;         // index of the wrapper joint
 
-        int nDev = device.subdevices.size();
         for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
         {
             yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);
@@ -2025,7 +2020,6 @@ public:
         bool ret = true;
         int j_wrap = 0;         // index of the wrapper joint
 
-        int nDev = device.subdevices.size();
         for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
         {
             yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);
@@ -2516,7 +2510,6 @@ public:
 
         for(int l=0;l<controlledJoints;l++)
         {
-            int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
             yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2653,6 +2646,8 @@ public:
     }
 
     /* IControlCalibration */
+
+    using yarp::dev::IControlCalibration2::calibrate;
 
     /**
     * Calibrate a single joint, the calibration method accepts a parameter

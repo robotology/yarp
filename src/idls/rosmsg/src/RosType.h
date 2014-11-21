@@ -182,17 +182,6 @@ public:
     }
 };
 
-class RosTypeCodeGenTest : public RosTypeCodeGen {
-public:
-    virtual bool beginType(const std::string& tname, 
-                           RosTypeCodeGenState& state);
-    virtual bool declareField(const RosField& field);
-    virtual bool readField(const RosField& field);
-    virtual bool writeField(const RosField& field);
-    virtual bool endType();
-};
-
-
 
 #endif
 

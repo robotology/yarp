@@ -170,7 +170,7 @@ public:
     virtual bool setRefAccelerationRaw(int j, double acc)
     {return NOT_YET_IMPLEMENTED("setRefAccelerationRaw");}
 
-    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
     {return NOT_YET_IMPLEMENTED("setRefAccelerationsRaw");}
 
     virtual bool setRefAccelerationsRaw(const double *accs)

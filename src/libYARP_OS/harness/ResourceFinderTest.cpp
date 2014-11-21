@@ -764,7 +764,6 @@ public:
 
         {
             ResourceFinder rf;
-            const char *fname1 = "_yarp_regression_test_rf1.txt";
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
             bool configures = rf.configure(NULL,0,NULL);
@@ -784,7 +783,6 @@ public:
 
         {
             ResourceFinder rf;
-            const char *fname1 = "_yarp_regression_test_rf1.txt";
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app_not_there.ini");
             bool configures = rf.configure(NULL,0,NULL);

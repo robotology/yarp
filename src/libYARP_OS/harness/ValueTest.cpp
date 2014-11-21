@@ -128,14 +128,14 @@ public:
             b2.read(b1);
             checkTrue(b2.get(0).isInt64(),"0 type ok");
             checkFalse(b2.get(0).isInt(),"0 type not 32 bit");
-            checkEqual(b2.get(0).asInt64(),42,"0 value ok");
+            checkEqual((int)b2.get(0).asInt64(),42,"0 value ok");
             checkTrue(b2.get(1).isInt(),"1 type is 32 bit");
             checkTrue(b2.get(1).isInt64(),"1 type ok");
             checkEqual(b2.get(1).asInt(),43,"1 value ok");
-            checkEqual(b2.get(1).asInt64(),43,"1 value as 64-bit ok");
+            checkEqual((int)b2.get(1).asInt64(),43,"1 value as 64-bit ok");
             checkEqual(b2.toString(),"42 43","string is ok");
             b1.fromString("64 128");
-            checkEqual(b1.get(0).asInt64(),64,"32 bit reads ok as 64");
+            checkEqual((int)b1.get(0).asInt64(),64,"32 bit reads ok as 64");
         }
     }
 

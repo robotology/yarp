@@ -827,7 +827,6 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 *rec = true;
                 if (caller->verbose())
                     yDebug("get command received\n");
-                int tmp = 0;
                 double dtmp  = 0.0;
                 double dtmp2 = 0.0;
                 response.addVocab(VOCAB_IS);
@@ -1408,8 +1407,6 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
         {
             if(posDir)
             {
-                int temp_j = b.get(1).asInt();
-                double temp_val = cmdVector.operator [](0);
                 bool ok = posDir->setPosition(b.get(1).asInt(), cmdVector.operator [](0)); // cmdVector.data());
                 if (!ok)
                 {   yError("Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt() ); }
@@ -1423,7 +1420,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
             {
                 int n_joints = b.get(1).asInt();
                 Bottle *jlut = b.get(2).asList();
-                if( (jlut->size() != n_joints) && (cmdVector.size() != n_joints) )
+                if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                 {
                     yError("Received VOCAB_POSITION_DIRECT_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
                 }
@@ -1458,7 +1455,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
             {
                 int n_joints = b.get(1).asInt();
                 Bottle *jlut = b.get(2).asList();
-                if( (jlut->size() != n_joints) && (cmdVector.size() != n_joints) )
+                if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                     yError("Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
 
                 int *joint_list = new int[n_joints];
@@ -2203,7 +2200,6 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                     rec = true;
                     if (caller->verbose())
                         yDebug("get command received\n");
-                    int tmp = 0;
                     double dtmp = 0.0;
                     response.addVocab(VOCAB_IS);
                     response.add(cmd.get(1));
@@ -2726,8 +2722,6 @@ Bottle ControlBoardWrapper::getOptions()
 
 bool ControlBoardWrapper::open(Searchable& config)
 {
-    bool deferredAttach=false;
-
     string str=config.toString().c_str();
     Property prop;
     prop.fromString(config.toString().c_str());
@@ -3099,7 +3093,6 @@ void ControlBoardWrapper::run()
     for(unsigned int k=0;k<device.subdevices.size();k++)
         {
             int axes=device.subdevices[k].axes;
-            int base=device.subdevices[k].base;
 
             device.subdevices[k].refreshEncoders();
 

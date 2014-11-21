@@ -57,14 +57,14 @@ public:
         ns2->goPublic();
     }
 
-    virtual yarp::os::Contact query(const char *name) {
+    virtual yarp::os::Contact query(const yarp::os::ConstString& name) {
         yarp::os::Contact result;
         result = ns1->query(name);
         if (!result.isValid()) result = ns2->query(name);
         return result;
     }
 
-    virtual bool announce(const char *name, int activity) {
+    virtual bool announce(const yarp::os::ConstString& name, int activity) {
         if (ns2->announce(name,activity)) return true;
         return ns1->announce(name,activity);
     }

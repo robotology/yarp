@@ -330,33 +330,6 @@ void RosType::show() {
 
 
 
-bool RosTypeCodeGenTest::beginType(const std::string& tname,
-                                   RosTypeCodeGenState& state) {
-    printf("Begin %s\n", tname.c_str());
-    return true;
-}
-
-bool RosTypeCodeGenTest::declareField(const RosField& field) {
-    printf("Field %s\n", field.rosName.c_str());
-    return true;
-}
-
-bool RosTypeCodeGenTest::readField(const RosField& field) {
-    printf("READ Field %s\n", field.rosName.c_str());
-    return true;
-}
-
-bool RosTypeCodeGenTest::writeField(const RosField& field) {
-    printf("WRITE Field %s\n", field.rosName.c_str());
-    return true;
-}
-
-bool RosTypeCodeGenTest::endType() {
-    printf("End\n");
-    return true;
-}
-
-
 bool RosType::emitType(RosTypeCodeGen& gen,
                        RosTypeCodeGenState& state) {
     if (isPrimitive) return true;
@@ -476,7 +449,6 @@ static bool checkWeb(const char *tname,
         printf("GOT %s for %s\n", txt.c_str(), url.c_str());
         vector<string> lines;
         split(txt,'\n',lines);
-        int phase = 0;
         for (size_t i=0; i<lines.size(); i++) {
             std::string line = lines[i];
             if (line == "<h2>Compact Message Definition</h2>" && i<lines.size()-2) {
