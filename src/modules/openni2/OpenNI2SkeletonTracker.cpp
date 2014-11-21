@@ -21,10 +21,10 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamer
     mirrorON = withMirrorOn;
     colorVideoMode=DEFAULT_COLOR_MODE;
     depthVideoMode=DEFAULT_DEPTH_MODE;
-    if (colorMode < 10 && colorMode >= 0){
+    if (colorMode <= 11 && colorMode >= 0){
     colorVideoMode=colorMode;
     }
-    if (depthMode << 10 && colorMode >= 0){
+    if (depthMode <= 10 && depthMode >= 0){
     depthVideoMode=depthMode;
     }
     if (minConf != MINIMUM_CONFIDENCE){
