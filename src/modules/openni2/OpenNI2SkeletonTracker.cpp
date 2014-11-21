@@ -132,26 +132,27 @@ int OpenNI2SkeletonTracker::init(){
     }
 
     if(camerasON){
-	
+
+    if(deviceName!="Kinect"){
 	// check if Image registration mode is supported and set accordingly
-	bool modeIsSupported = false;
-	modeIsSupported = device.isImageRegistrationModeSupported(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
-	if (modeIsSupported){
-	    cout << "Image registration mode is supported" << endl;
+	    bool modeIsSupported = false;
+	    modeIsSupported = device.isImageRegistrationModeSupported(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
+	    if (modeIsSupported){
+	        cout << "Image registration mode is supported" << endl;
 	    
-	    if (imageRegistration){
-		device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
-		cout << "Image registration mode is on" << endl;
-		}
-	    else{
-		device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_OFF);
-		cout << "Image registration mode is off" << endl;
+	        if (imageRegistration){
+		    device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
+		    cout << "Image registration mode is on" << endl;
+		    }
+	        else{
+		    device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_OFF);
+		    cout << "Image registration mode is off" << endl;
+	        }
 	    }
-	}
-	else{
-	    cout << "Image registration mode is not supported" << endl;
-	}
-	 
+	    else{
+	        cout << "Image registration mode is not supported" << endl;
+	    }
+    } 
 	// if FrameSync option is enabled
 	if (frameSync){
 	    device.setDepthColorSyncEnabled(true);
