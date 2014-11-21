@@ -120,6 +120,9 @@ int OpenNI2SkeletonTracker::init(){
         return rc;
     }
 
+    deviceName = device.getDeviceInfo().getName();
+    cout << "Device Name: " << deviceName << endl;
+
     cout << "OpenNI v" << openni::OpenNI::getVersion().openni::Version::major << "." << openni::OpenNI::getVersion().openni::Version::minor << "." << openni::OpenNI::getVersion().openni::Version::maintenance << "." << openni::OpenNI::getVersion().openni::Version::build <<endl;
     
      
