@@ -33,10 +33,12 @@ public:
     using yarp::os::Portable::read;
     using yarp::os::Portable::write;
     virtual bool read(yarp::os::idl::WireReader& reader) {
+        YARP_UNUSED(reader);
         return false;
     }
 
     virtual bool write(yarp::os::idl::WireWriter& writer) {
+        YARP_UNUSED(writer);
         return false;
     }
 

@@ -265,6 +265,7 @@ public:
      * requested this be done by calling useCallback()
      */
     virtual void onRead(T& datum) {
+        YARP_UNUSED(datum);
         // override this to do something
     }
 
@@ -386,10 +387,12 @@ private:
 
     // forbid this
     BufferedPort(const BufferedPort& alt) {
+        YARP_UNUSED(alt);
     }
 
     // forbid this
     const BufferedPort& operator = (const BufferedPort& alt) {
+        YARP_UNUSED(alt);
         return *this;
     }
 

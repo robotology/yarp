@@ -60,6 +60,7 @@ public:
                                  const std::vector<int32_t> & lst,
                                  const int32_t y) {
         printf("test_partial with %d and %d\n", x, y);
+        YARP_UNUSED(lst);
         return x+y;
     }
 
@@ -71,6 +72,7 @@ public:
     }
 
     virtual int32_t test_longer_tail_defaults(const int32_t ignore, const DemoEnum _enum, const int32_t _int, const std::string& _string) {
+        YARP_UNUSED(ignore);
         if (_enum==ENUM2 && _int==42 && _string=="Space Monkey from the Planet: Space") {
             return 999;
         }
@@ -237,7 +239,6 @@ bool test_live_rpc() {
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());
 
-    int x = 0;
     client.yarp().attachAsClient(client_port);
     server.yarp().attachAsServer(server_port);
 
@@ -291,7 +292,7 @@ bool test_enums() {
     lst1.push_back(ENUM1);
     lst1.push_back(ENUM2);
     std::vector<DemoEnum> lst2 = client.test_enum_vector(lst1);
-    printf("lst1 %d lst2 %d\n", lst1.size(), lst2.size());
+    printf("lst1 %d lst2 %d\n", (int)lst1.size(), (int)lst2.size());
 
     return (lst2.size()==3 && lst1[0]==lst2[0] && lst1[1]==lst2[1]);
 }
