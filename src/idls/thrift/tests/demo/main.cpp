@@ -169,10 +169,12 @@ public:
 
     virtual bool will_set_id() { 
         called_will_set_id = true;
+        return false;
     }
 
     virtual bool did_set_id() { 
         called_did_set_id = true;
+        return false;
     }
 };
 
