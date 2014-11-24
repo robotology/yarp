@@ -10,7 +10,7 @@ env:
 matrix:
   exclude:
     - compiler: gcc
-      env: TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false
+      env: TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false TRAVIS_WITH_ROS=false
     - compiler: clang
       env: TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=false TRAVIS_WITH_ROS=true
 before_install:
