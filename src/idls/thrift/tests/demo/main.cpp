@@ -10,6 +10,7 @@
 #include <stdio.h>
 
 #include <yarp/os/all.h>
+#include <yarp/os/impl/UnitTest.h>
 #include <Demo.h>
 #include <DemoStructList.h>
 #include <DemoStructExt.h>
@@ -17,8 +18,17 @@
 #include <Wrapping.h>
 #include <TestSomeMoreTypes.h>
 #include <sub/directory/ClockServer.h>
+#include <Settings.h>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
+
+class ThriftTest : public UnitTest {
+public:
+    virtual ConstString getName() {
+        return "ThriftTest";
+    }
+};
 
 class Server : public Demo {
 public:
@@ -140,6 +150,29 @@ public:
         bot.read(con);
         printf("Got %s\n", bot.toString().c_str());
         return true;
+    }
+};
+
+class SettingsReceiver : public Settings::Editor {
+public:
+    bool called_will_set_id;
+    bool called_did_set_id;
+
+    SettingsReceiver() {
+        reset();
+    }
+
+    void reset() {
+        called_will_set_id = false;
+        called_did_set_id = false;
+    }
+
+    virtual bool will_set_id() { 
+        called_will_set_id = true;
+    }
+
+    virtual bool did_set_id() { 
+        called_did_set_id = true;
     }
 };
 
@@ -889,6 +922,63 @@ bool test_primitives() {
     return true;
 }
 
+bool test_settings(UnitTest& test) {
+    test.report(0,"test settings");
+
+    Settings::Editor settings;
+    SettingsReceiver receiver;
+
+    Network yarp;
+    yarp::os::RpcClient sender_port;
+    yarp::os::RpcServer receiver_port;
+
+    settings.yarp().attachAsClient(sender_port);
+    receiver.yarp().attachAsServer(receiver_port);
+
+    if (!sender_port.open("/sender")) return 1;
+    if (!receiver_port.open("/receiver")) return 1;
+    yarp.connect("/sender","/receiver");    
+
+    settings.set_id(5);
+    test.checkEqual(receiver.state().id,5,"int assignment");
+
+    settings.set_name("hello");
+    test.checkEqual(receiver.state().name,"hello","string assignment");
+
+    settings.begin();
+    settings.set_id(6);
+    test.checkEqual(receiver.state().id,5,"not too early");
+    settings.set_name("world");
+    test.checkEqual(receiver.state().name,"hello","string not too early");
+    settings.end();
+    test.checkEqual(receiver.state().id,6,"int group");
+    test.checkEqual(receiver.state().name,"world","string group");
+
+    yarp::os::Bottle cmd, reply;
+    cmd.fromString("patch (set id 3) (set name frog)");
+    sender_port.write(cmd,reply);
+    test.checkEqual(reply.toString(),"[ok]","return on success");
+    test.checkEqual(receiver.state().id,3,"id ok");
+    test.checkEqual(receiver.state().name,"frog","name ok");
+
+    cmd.fromString("set id 9");
+    reply.clear();
+    sender_port.write(cmd,reply);
+    test.checkEqual(receiver.state().id,9,"set id ok");
+
+    cmd.fromString("set id 99 name \"Space Monkey\"");
+    reply.clear();
+    sender_port.write(cmd,reply);
+    test.checkEqual(receiver.state().id,99,"multi set ok");
+    test.checkEqual(receiver.state().name,"Space Monkey","multi set ok");
+
+    cmd.fromString("set id 99 name \"Space Monkey\" id 101");
+    reply.clear();
+    sender_port.write(cmd,reply);
+    test.checkEqual(receiver.state().id,101,"triple set ok");
+
+    return test.isOk();
+}
 
 int main(int argc, char *argv[]) {
     if (argc>1) {
@@ -921,5 +1011,7 @@ int main(int argc, char *argv[]) {
     if (!test_list_editor()) return 1;
     if (!test_help()) return 1;
     if (!test_primitives()) return 1;
+    ThriftTest test;
+    if (!test_settings(test)) return 1;
     return 0;
 }

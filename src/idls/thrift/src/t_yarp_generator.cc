@@ -1791,8 +1791,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "bool have_act = false;" << endl;
     indent(out) << "if (tag!=\"patch\") {" << endl;
     indent_up();
-    indent(out) << "if (len%3 != 0) return false;" << endl;
-    indent(out) << "len = 1 + (len/3);" << endl;
+    indent(out) << "if ((len-1)%2 != 0) return false;" << endl;
+    indent(out) << "len = 1 + ((len-1)/2);" << endl;
     indent(out) << "nested = false;" << endl;
     indent(out) << "have_act = true;" << endl;
     scope_down(out);

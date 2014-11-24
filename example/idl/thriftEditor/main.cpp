@@ -99,7 +99,7 @@ int main() {
     sender_port.write(cmd,reply);
     printf("answer: %s\n", reply.toString().c_str());
 
-    cmd.fromString("set id 99 set name \"Space Monkey\"");
+    cmd.fromString("set id 99 name \"Space Monkey\"");
     reply.clear();
     sender_port.write(cmd,reply);
     printf("answer: %s\n", reply.toString().c_str());
