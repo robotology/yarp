@@ -229,7 +229,6 @@ bool test_live() {
     printf("\n*** test_live()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     Server server;
@@ -261,7 +260,6 @@ bool test_live_rpc() {
     printf("\n*** test_live_rpc()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     Server server;
@@ -308,7 +306,6 @@ bool test_enums() {
     printf("\n*** test_enums()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     Server server;
@@ -335,7 +332,6 @@ bool test_defaults() {
 
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     Server server;
@@ -360,7 +356,6 @@ bool test_partial() {
 
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Server server;
 
@@ -426,7 +421,6 @@ bool test_defaults_with_rpc() {
 
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Server server;
 
@@ -471,7 +465,6 @@ bool test_names_with_spaces() {
     printf("\n*** test_names_with_spaces()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Server server;
 
@@ -545,7 +538,6 @@ bool test_wrapping() {
     printf("\n*** test_wrapping()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Wrapping client;
     WrappingServer server;
@@ -587,7 +579,6 @@ bool test_missing_method() {
     printf("\n*** test_missing_method()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     BrokenServer server;
@@ -992,6 +983,9 @@ int main(int argc, char *argv[]) {
         }
         return 0;
     }
+
+    Network yarp;
+    yarp.setLocalMode(true);
 
     if (!add_one()) return 1;
     if (!test_void()) return 1;
