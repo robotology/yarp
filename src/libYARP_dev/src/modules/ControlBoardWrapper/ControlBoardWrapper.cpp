@@ -470,6 +470,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     // When the attach is deferred, wait to open the ports untill the attach to be sure the subdevice is fully
     // initialized do that when the port opens get functions have real values available
 
+    std::string rootName;
     inputRPCPort.open((rootName+"/rpc:i").c_str());
     inputStreamingPort.open((rootName+"/command:i").c_str());
     outputPositionStatePort.open((rootName+"/state:o").c_str());
