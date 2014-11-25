@@ -159,11 +159,8 @@ bool ControlBoardWrapper::open(Searchable& config)
         return false;
     }
 
-    std::string rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
+    rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
     partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
-
-    // cout << " rootName " << rootName << " partName " << partName;
-
     rootName+=(partName);
 
     // attach readers.
@@ -336,7 +333,6 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         return false;
     }
 
-    prop.put("rootName", "/");
     return true;
 }
 
@@ -415,7 +411,6 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     RateThread::setRate(thread_period);
     RateThread::start();
 
-    prop.put("rootName", "");
     return true;
 }
 
@@ -470,7 +465,6 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     // When the attach is deferred, wait to open the ports untill the attach to be sure the subdevice is fully
     // initialized do that when the port opens get functions have real values available
 
-    std::string rootName;
     inputRPCPort.open((rootName+"/rpc:i").c_str());
     inputStreamingPort.open((rootName+"/command:i").c_str());
     outputPositionStatePort.open((rootName+"/state:o").c_str());
@@ -557,6 +551,7 @@ void ControlBoardWrapper::run()
     getControlModes(yarp_struct.controlMode.data());
     getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.data());
 
+    extendedOutputStatePort.setEnvelope(time);
     extendedOutputState_buffer.write();
 #endif
 

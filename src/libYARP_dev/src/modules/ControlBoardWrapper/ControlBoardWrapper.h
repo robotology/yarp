@@ -116,6 +116,8 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IInteractionMode
 {
 private:
+
+    std::string rootName;
     yarp::dev::impl::WrappedDevice device;
 
     yarp::os::Port outputPositionStatePort;     // Port /state:o streaming out the encoder positions
