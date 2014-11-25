@@ -33,13 +33,13 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     temp=new double [size];
-    _YARP_ASSERT (temp != 0);
+    yAssert (temp != 0);
     temp2=new double [size];
-    _YARP_ASSERT (temp2 != 0);
+    yAssert (temp2 != 0);
     tmpPids=new Pid[size];
-    _YARP_ASSERT (tmpPids!=0);
+    yAssert (tmpPids!=0);
 
     return true;
 }

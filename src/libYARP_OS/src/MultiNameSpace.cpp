@@ -197,7 +197,7 @@ public:
 MultiNameSpace::MultiNameSpace() {
     altStore = NULL;
     system_resource = new MultiNameSpaceHelper;
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(system_resource!=NULL);
 }
 
 MultiNameSpace::~MultiNameSpace() {

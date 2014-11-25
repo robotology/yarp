@@ -33,13 +33,13 @@ bool ImplementPositionDirect::initialize(int size, const int *amap, const double
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT(helper != NULL);
+    yAssert(helper != NULL);
 
     temp_double=new double [size];
-    _YARP_ASSERT(temp_double != NULL);
+    yAssert(temp_double != NULL);
 
     temp_int=new int [size];
-    _YARP_ASSERT(temp_int != NULL);
+    yAssert(temp_int != NULL);
     return true;
 }
 

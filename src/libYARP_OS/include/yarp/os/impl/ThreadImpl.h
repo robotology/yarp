@@ -16,7 +16,7 @@
 #include <yarp/os/impl/SemaphoreImpl.h>
 
 #include <yarp/os/impl/PlatformThread.h>
-
+#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {
@@ -31,6 +31,7 @@ namespace yarp {
  */
 class YARP_OS_impl_API yarp::os::impl::ThreadImpl : public Runnable {
 public:
+    
     ThreadImpl();
     ThreadImpl(Runnable *target);
 
@@ -76,8 +77,9 @@ public:
     void synchroWait();
     void synchroPost();
 
-    int setPriority(int priority = -1);
+    int setPriority(int priority = -1, int policy = -1);
     int getPriority();
+    int getPolicy();
 
     static void setDefaultStackSize(int stackSize);
 
@@ -88,9 +90,10 @@ public:
 
 private:
     int defaultPriority;
+    int defaultPolicy;
     int stackSize;
     Platform_hthread_t hid;
-    Platform_thread_t id;
+    Platform_thread_t  id;
     bool active;
     bool opened;
     bool closing;

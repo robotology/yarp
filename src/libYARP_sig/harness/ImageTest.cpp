@@ -190,7 +190,7 @@ public:
                         int wwp1 = (ww%pad1)?(ww+pad1-(ww%pad1)):ww;
                         FlexImage img;
                         char *data = new char[wwp1*hh*3];
-                        YARP_ASSERT(data);
+                        yAssert(data);
                         img.setQuantum(pad1);
                         img.setPixelCode(VOCAB_PIXEL_RGB);
                         img.setPixelSize(3);

@@ -40,7 +40,7 @@ ElectionOf<PriorityGroup>& PriorityCarrier::getPeers() {
     if (peers==NULL) {
         peers = new ElectionOf<PriorityGroup>;
         NetworkBase::unlock();
-        YARP_ASSERT(peers);
+        yAssert(peers);
     } else {
         NetworkBase::unlock();
     }
@@ -50,7 +50,7 @@ ElectionOf<PriorityGroup>& PriorityCarrier::getPeers() {
 // Decide whether data should be accepted.
 bool PriorityCarrier::acceptIncomingData(yarp::os::ConnectionReader& reader) {
     getPeers().lock();
-    YARP_ASSERT(group);
+    yAssert(group);
     bool result = group->acceptIncomingData(reader,this);
     getPeers().unlock();
     return result;
@@ -117,7 +117,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
         int rate = options.check("rate", Value(10)).asInt();
         safe_printf(dummy, 1024, "   db.rate: %dms\n", rate);
         msg+= dummy;
-        YARP_LOG_INFO(msg.c_str());
+        yInfo(msg.c_str());
         debugger.stop();
         debugger.setRate(rate);
         debugger.start();
@@ -282,7 +282,7 @@ bool PriorityGroup::recalculate(double t)
     double determinant = yarp::math::det(InvA);
     if(determinant == 0)
     {
-        YARP_LOG_ERROR("Inconsistent regulation! non-invertible weight matrix");
+        yError("Inconsistent regulation! non-invertible weight matrix");
         return false;
     }
 

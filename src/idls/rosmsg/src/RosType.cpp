@@ -249,8 +249,12 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         }
         string t = msg[0];
         string n = msg[1];
-        fprintf(stderr,"[type]%s   %s %s [%s]\n", indent.c_str(), t.c_str(), 
-                n.c_str(), const_txt.c_str());
+        fprintf(stderr,"[type]%s   %s %s", indent.c_str(), t.c_str(), 
+                n.c_str());
+        if (const_txt!="") {
+            fprintf(stderr," = %s", const_txt.c_str());
+        }
+        fprintf(stderr,"\n");
         RosType sub;
         if (!sub.read(t.c_str(),env,gen,nesting+1)) {
             fprintf(stderr, "[type]%s Type not complete: %s\n", 

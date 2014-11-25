@@ -19,6 +19,10 @@ using namespace yarp::os;
 
 class NullBottle : public Bottle {
 public:
+    NullBottle() {
+        setReadOnly(true);
+    }
+
     virtual bool isNull() const    { return true; }
 
     static NullBottle *bottleNull;
@@ -33,17 +37,20 @@ NullBottle *NullBottle::bottleNull = NULL;
 Bottle::Bottle() {
     implementation = new BottleImpl;
     invalid = false;
-    YARP_ASSERT(implementation!=NULL);
+    ro = false;
+    yAssert(implementation!=NULL);
 }
 
 Bottle::Bottle(const Bottle& bottle) : Portable(), Searchable() {
     implementation = new BottleImpl;
     invalid = false;
-    YARP_ASSERT(implementation!=NULL);
+    ro = false;
+    yAssert(implementation!=NULL);
     copy(bottle);
 }
 
 const Bottle& Bottle::operator = (const Bottle& bottle) {
+    edit();
     copy(bottle);
     return *this;
 }
@@ -52,7 +59,8 @@ const Bottle& Bottle::operator = (const Bottle& bottle) {
 Bottle::Bottle(const ConstString& text) {
     implementation = new BottleImpl;
     invalid = false;
-    YARP_ASSERT(implementation!=NULL);
+    ro = false;
+    yAssert(implementation!=NULL);
     fromString(text);
 }
 
@@ -64,39 +72,48 @@ Bottle::~Bottle() {
 }
 
 void Bottle::clear() {
+    edit();
     invalid = false;
     HELPER(implementation).clear();
 }
 
 void Bottle::addInt(int x) {
+    edit();
     HELPER(implementation).addInt(x);
 }
 
 void Bottle::addVocab(int x) {
+    edit();
     HELPER(implementation).addVocab(x);
 }
 
 void Bottle::addDouble(double x) {
+    edit();
     HELPER(implementation).addDouble(x);
 }
 
 void Bottle::addString(const char *str) {
+    edit();
     HELPER(implementation).addString(str);
 }
 
 void Bottle::addString(const ConstString& str) {
+    edit();
     HELPER(implementation).addString(str);
 }
 
 Bottle& Bottle::addList() {
+    edit();
     return HELPER(implementation).addList();
 }
 
 Property& Bottle::addDict() {
+    edit();
     return HELPER(implementation).addDict();
 }
 
 Value Bottle::pop() {
+    edit();
     Storable* stb = HELPER(implementation).pop();
     Value val(*stb);
     // here we take responsibility for deallocation of the Storable instance
@@ -142,6 +159,7 @@ bool Bottle::isList(int index) {
 }
 
 void Bottle::fromString(const ConstString& text) {
+    edit();
     invalid = false;
     HELPER(implementation).fromString(text.c_str());
 }
@@ -151,6 +169,7 @@ ConstString Bottle::toString() const {
 }
 
 void Bottle::fromBinary(const char *text, int len) {
+    edit();
     HELPER(implementation).fromBinary(text,len);
 }
 
@@ -174,6 +193,7 @@ void Bottle::onCommencement() {
 }
 
 bool Bottle::read(ConnectionReader& reader) {
+    edit();
     return HELPER(implementation).read(reader);
 }
 
@@ -202,6 +222,7 @@ void Bottle::setNested(bool nested) {
 
 
 void Bottle::copy(const Bottle& alt, int first, int len) {
+    edit();
     if (alt.isNull()) {
         clear();
         invalid = true;
@@ -212,7 +233,7 @@ void Bottle::copy(const Bottle& alt, int first, int len) {
                                      len);
 }
 
-Value& Bottle::findGroupBit(const ConstString& key) {
+Value& Bottle::findGroupBit(const ConstString& key) const {
     for (int i=0; i<size(); i++) {
         Value *org = &(get(i));
         Value *cursor = org;
@@ -228,7 +249,7 @@ Value& Bottle::findGroupBit(const ConstString& key) {
 }
 
 
-Value& Bottle::findBit(const ConstString& key) {
+Value& Bottle::findBit(const ConstString& key) const {
     for (int i=0; i<size(); i++) {
         Value *org = &(get(i));
         Value *cursor = org;
@@ -265,7 +286,7 @@ Value& Bottle::findBit(const ConstString& key) {
 }
 
 
-bool Bottle::check(const ConstString& key) {
+bool Bottle::check(const ConstString& key) const {
     Bottle& val = findGroup(key);
     if (!val.isNull())
         return true;
@@ -274,7 +295,7 @@ bool Bottle::check(const ConstString& key) {
 }
 
 
-Value& Bottle::find(const ConstString& key) {
+Value& Bottle::find(const ConstString& key) const {
     Value& val = findBit(key);
 
     if (getMonitor()!=NULL) {
@@ -289,7 +310,7 @@ Value& Bottle::find(const ConstString& key) {
 }
 
 
-Bottle& Bottle::findGroup(const ConstString& key) {
+Bottle& Bottle::findGroup(const ConstString& key) const {
     Value& bb = findGroupBit(key);
 
     if (getMonitor()!=NULL) {
@@ -319,17 +340,19 @@ Bottle& Bottle::findGroup(const ConstString& key) {
 
 Bottle *Bottle::clone() {
     Bottle *b = new Bottle();
-    YARP_ASSERT(b!=NULL);
+    yAssert(b!=NULL);
     b->copy(*this);
     return b;
 }
 
 void Bottle::add(Value *value) {
+    edit();
     HELPER(implementation).addBit(value);
 }
 
 
 void Bottle::add(const Value& value) {
+    edit();
     HELPER(implementation).addBit(value);
 }
 
@@ -360,6 +383,7 @@ bool Bottle::write(PortReader& reader, bool textMode) {
 }
 
 bool Bottle::read(PortWriter& writer, bool textMode) {
+    edit();
     DummyConnector con;
     con.setTextMode(textMode);
     writer.write(con.getWriter());
@@ -375,6 +399,7 @@ bool Bottle::operator!=(const Bottle& alt) {
 }
 
 void Bottle::append(const Bottle& alt) {
+    edit();
     for (int i=0; i<alt.size(); i++) {
         add(alt.get(i));
     }
@@ -400,3 +425,48 @@ ConstString Bottle::toString(int x) {
     return NetType::toString(x);
 }
 
+
+void Bottle::edit() {
+    if (ro) {
+        yFatal("Attempted to modify the null bottle");
+    }
+    if (invalid) {
+        invalid = false;
+    }
+}
+
+
+ConstString Bottle::describeBottleCode(int code) {
+    int unit = code & ~(BOTTLE_TAG_LIST|BOTTLE_TAG_DICT);
+    ConstString unitName = "mixed";
+    switch (unit) {
+    case 0:
+        unitName = "mixed";
+        break;
+    case BOTTLE_TAG_INT:
+        unitName = "int";
+        break;
+    case BOTTLE_TAG_VOCAB:
+        unitName = "vocab";
+        break;
+    case BOTTLE_TAG_DOUBLE:
+        unitName = "float";
+        break;
+    case BOTTLE_TAG_STRING:
+        unitName = "string";
+        break;
+    case BOTTLE_TAG_BLOB:
+        unitName = "blob";
+        break;
+    default:
+        unitName = "unknown";
+        break;
+    }
+    ConstString result = unitName;
+    if (code & BOTTLE_TAG_LIST) {
+        result = "list of " + unitName;
+    } else if (code & BOTTLE_TAG_DICT) {
+        result = "dict of " + unitName;
+    }
+    return result;
+}

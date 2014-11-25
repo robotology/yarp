@@ -35,7 +35,7 @@ yarp::os::Searchable::~Searchable() {
 
 bool yarp::os::Searchable::check(const ConstString& txt,
                                  yarp::os::Value *& result,
-                                 const ConstString& comment) {
+                                 const ConstString& comment) const {
     if (getMonitor()!=NULL && comment!="") {
         SearchReport report;
         report.key = txt;
@@ -53,7 +53,7 @@ bool yarp::os::Searchable::check(const ConstString& txt,
 
 yarp::os::Value yarp::os::Searchable::check(const ConstString& txt,
                                   const yarp::os::Value& fallback,
-                                  const ConstString& comment) {
+                                  const ConstString& comment) const {
     if (getMonitor()!=NULL && comment!="") {
         yarp::os::SearchReport report;
         report.key = txt;
@@ -77,7 +77,7 @@ yarp::os::Value yarp::os::Searchable::check(const ConstString& txt,
 }
 
 bool yarp::os::Searchable::check(const ConstString& key,
-                                 const ConstString& comment) {
+                                 const ConstString& comment) const {
     if (getMonitor()!=NULL && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
@@ -89,7 +89,7 @@ bool yarp::os::Searchable::check(const ConstString& key,
 }
 
 yarp::os::Bottle& yarp::os::Searchable::findGroup(const ConstString& key,
-                                                  const ConstString& comment) {
+                                                  const ConstString& comment) const {
     if (getMonitor()!=NULL && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
@@ -111,15 +111,15 @@ void yarp::os::Searchable::setMonitor(yarp::os::SearchMonitor *monitor, const ch
     this->monitorContext = context;
 }
 
-yarp::os::SearchMonitor *yarp::os::Searchable::getMonitor() {
+yarp::os::SearchMonitor *yarp::os::Searchable::getMonitor() const {
     return monitor;
 }
 
-yarp::os::ConstString yarp::os::Searchable::getContext() {
+yarp::os::ConstString yarp::os::Searchable::getContext() const {
     return monitorContext;
 }
 
-void yarp::os::Searchable::reportToMonitor(const yarp::os::SearchReport& report) {
+void yarp::os::Searchable::reportToMonitor(const yarp::os::SearchReport& report) const {
     if (monitor!=NULL) {
         monitor->report(report,monitorContext.c_str());
     }

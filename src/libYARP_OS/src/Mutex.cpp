@@ -19,7 +19,7 @@ Mutex::Mutex() {
     // should optimize implementation when better building blocks are
     // available, but for now stick with semaphores
     implementation = new SemaphoreImpl(1);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 Mutex::~Mutex() {

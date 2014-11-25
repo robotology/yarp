@@ -76,7 +76,7 @@ Terminee::Terminee(const char *name) {
     }
     
     implementation = new TermineeHelper();
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     TermineeHelper& helper = HELPER(implementation);
     ok = helper.open(s.c_str());
     if (!ok) {

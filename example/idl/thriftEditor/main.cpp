@@ -70,8 +70,26 @@ int main() {
     // network use
     settings.begin();
     settings.set_id(6);
+    if (receiver.state().id==6) {
+        printf("Oops, id was set too early!\n");
+        return 1;
+    } else {
+        printf("(set_id has been called, but has not happened yet, good.\n");
+    }
     settings.set_name("world");
     settings.end();
+    if (receiver.state().id!=6) {
+        printf("Oops, id was never set!\n");
+        return 1;
+    }
+
+    printf("####################################################\n");
+    printf("Pretend to use server from RPC\n");
+
+    yarp::os::Bottle cmd, reply;
+    cmd.fromString("patch (set id 3) (set name frog)");
+    sender_port.write(cmd,reply);
+    printf("answer: %s\n", reply.toString().c_str());
 
     printf("####################################################\n");
 

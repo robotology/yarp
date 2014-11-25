@@ -79,7 +79,7 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address) {
 //	Address servAddress,
 //	servAddress = Address(inet_ntoa(servAddr.sin_addr),servAddr.sin_port);
 
-	YARP_ASSERT (new_stream.get_handle() != -1);
+	yAssert(new_stream.get_handle() != -1);
 
     int result = ::connect(new_stream.get_handle(), (sockaddr*) &servAddr, sizeof(servAddr));
 

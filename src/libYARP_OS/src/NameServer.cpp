@@ -37,7 +37,7 @@ using namespace yarp::os;
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
 #define YMSG(x)
-#define YTRACE(x) 
+#define YTRACE(x)
 
 // produce a correctly parsed string in presence of quoting
 static ConstString STR_HELP(const char *txt) {
@@ -79,13 +79,13 @@ Contact NameServer::unregisterName(const String& name) {
             onEvent(event);
         }
     }
-  
+
     return queryName(name);
 }
 
 
 
-Contact NameServer::registerName(const String& name, 
+Contact NameServer::registerName(const String& name,
                                  const Contact& address,
                                  const String& remote) {
     bool reusablePort = false;
@@ -121,7 +121,7 @@ Contact NameServer::registerName(const String& name,
                 YARP_ERROR(Logger::get(),"remote machine name was not found!  can only guess it is local...");
                 machine = "127.0.0.1";
             } else {
-                machine = remote; 
+                machine = remote;
             }
         } else {
             machine = mcastRecord.get();
@@ -144,7 +144,7 @@ Contact NameServer::registerName(const String& name,
 
     YARP_DEBUG(Logger::get(),String("Registering ") +
                suggestion.toURI() + " for " + suggestion.getRegName());
-  
+
     NameRecord& nameRecord = getNameRecord(suggestion.getRegName());
     nameRecord.setAddress(suggestion,reusablePort,reusableIp);
 
@@ -186,7 +186,7 @@ Contact NameServer::queryName(const String& name) {
 }
 
 
-NameServer::NameRecord *NameServer::getNameRecord(const String& name, 
+NameServer::NameRecord *NameServer::getNameRecord(const String& name,
                                                   bool create) {
     PLATFORM_MAP_ITERATOR(String,NameRecord,entry);
     int result = PLATFORM_MAP_FIND(nameMap,name,entry);
@@ -197,8 +197,8 @@ NameServer::NameRecord *NameServer::getNameRecord(const String& name,
         PLATFORM_MAP_SET(nameMap,name,NameRecord());
         result = PLATFORM_MAP_FIND(nameMap,name,entry);
     }
-    YARP_ASSERT(result!=-1);
-    //YARP_ASSERT(entry!=NULL);
+    yAssert(result!=-1);
+    //yAssert(entry!=NULL);
     return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
 }
 
@@ -213,11 +213,11 @@ NameServer::HostRecord *NameServer::getHostRecord(const String& name,
         }
         PLATFORM_MAP_SET(hostMap,name,HostRecord());
         result = PLATFORM_MAP_FIND(hostMap,name,entry);
-        //YARP_ASSERT(entry!=NULL);
+        //yAssert(entry!=NULL);
         PLATFORM_MAP_ITERATOR_SECOND(entry).setBase(basePort);
     }
-    YARP_ASSERT(result!=-1);
-    //YARP_ASSERT(entry!=NULL);
+    yAssert(result!=-1);
+    //yAssert(entry!=NULL);
     return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
 }
 
@@ -296,10 +296,10 @@ String NameServer::cmdRegister(int argc, char *argv[]) {
                                    Contact::bySocket(carrier,machine,port).addName(portName),
                                    remote);
 
-    //YARP_DEBUG(Logger::get(), 
+    //YARP_DEBUG(Logger::get(),
     //String("name server register address -- ") +
     //address.toString());
-  
+
     return terminate(textify(address));
 }
 
@@ -353,8 +353,8 @@ String NameServer::cmdRoute(int argc, char *argv[]) {
     argc-=2;
     argv+=2;
 
-    const char *altArgv[] = { 
-        "local", "shmem", "mcast", "udp", "tcp", "text" 
+    const char *altArgv[] = {
+        "local", "shmem", "mcast", "udp", "tcp", "text"
     };
     int altArgc = 6;
 
@@ -501,7 +501,7 @@ String NameServer::cmdCheck(int argc, char *argv[]) {
             response += "\n";
         }
         response += "port ";
-        response += target + " property " + 
+        response += target + " property " +
             key + " value " + argv[i] + " present " + val;
     }
     response += "\n";
@@ -560,13 +560,13 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
     if (argc==1) {
         prefix = STR(argv[0]);
     }
-    
+
     response.addString("ports");
     for (PLATFORM_MAP(String,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
         String iname = rec.getAddress().getRegName();
         if (iname.find(prefix)==0) {
-            if (iname==prefix || iname[prefix.length()]=='/' || 
+            if (iname==prefix || iname[prefix.length()]=='/' ||
                 prefix[prefix.length()-1]=='/') {
                 if (rec.getAddress().isValid()) {
                     response.addList() = botify(rec.getAddress());
@@ -641,15 +641,15 @@ String NameServer::textify(const Contact& address) {
     if (address.isValid()) {
         if (address.getPort()>=0) {
             result = "registration name ";
-            result = result + address.getRegName() + 
-                " ip " + address.getHost() + " port " + 
-                NetType::toString(address.getPort()) + " type " + 
+            result = result + address.getRegName() +
+                " ip " + address.getHost() + " port " +
+                NetType::toString(address.getPort()) + " type " +
                 address.getCarrier() + "\n";
         } else {
             result = "registration name ";
-            result = result + address.getRegName() + 
-                " ip " + "none" + " port " + 
-                "none" + " type " + 
+            result = result + address.getRegName() +
+                " ip " + "none" + " port " +
+                "none" + " type " +
                 address.getCarrier() + "\n";
         }
     }
@@ -774,7 +774,7 @@ public:
             if (index==0) {
                 Contact remote = reader.getRemoteContact();
                 YARP_DEBUG(Logger::get(),
-                           String("name server receiving from ") + 
+                           String("name server receiving from ") +
                            remote.toURI());
                 YARP_DEBUG(Logger::get(),
                            String("name server request is ") + msg);
@@ -782,7 +782,7 @@ public:
                 ConnectionWriter *os = reader.getWriter();
                 if (os!=NULL) {
                     if (result=="") {
-                        result = ns_terminate(String("unknown command ") + 
+                        result = ns_terminate(String("unknown command ") +
                                               msg + "\n");
                     }
                     // This change is just to make Microsoft Telnet happy
@@ -795,7 +795,7 @@ public:
                     }
                     tmp += '\r';
                     os->appendString(tmp.c_str(),'\n');
-                    
+
                     YARP_DEBUG(Logger::get(),
                                String("name server reply is ") + result);
                     String resultSparse = result;
@@ -872,12 +872,12 @@ int NameServer::main(int argc, char *argv[]) {
             suggest = Contact("...",NetType::toInt(argv[0]));
         }
     }
-    
+
     Property config;
     config.fromCommand(argc,argv,false);
-    
+
     bool bNoAuto=config.check("noauto");
-    
+
     // see what address is lying around
     Contact prev;
     NameConfig conf;
@@ -888,13 +888,13 @@ int NameServer::main(int argc, char *argv[]) {
         prev = conf.getAddress();
     }
     else if (bNoAuto)
-		{
-			YARP_ERROR(Logger::get(), String("Could not find configuration file ") +
-                       conf.getConfigFileName());
-            
-			return 1;
-		}
-    
+    {
+        YARP_ERROR(Logger::get(), String("Could not find configuration file ") +
+        conf.getConfigFileName());
+
+        return 1;
+    }
+
     // merge
     if (prev.isValid()) {
         if (suggest.getHost()=="...") {
@@ -904,7 +904,7 @@ int NameServer::main(int argc, char *argv[]) {
             suggest = Contact(suggest.getHost(),prev.getPort());
         }
     }
-    
+
     // still something not set?
     if (suggest.getPort()==0) {
         suggest = Contact(suggest.getHost(),NetworkBase::getDefaultPortRange());
@@ -913,47 +913,47 @@ int NameServer::main(int argc, char *argv[]) {
         // should get my IP
         suggest = Contact(conf.getHostName(),suggest.getPort());
     }
-    
+
     // finally, should make sure IP is local, and if not, correct it
     if (!conf.isLocalName(suggest.getHost())) {
         YARP_INFO(Logger::get(),"Overriding non-local address for name server");
         suggest = Contact(conf.getHostName(),suggest.getPort());
     }
-    
+
     // and save
     conf.setAddress(suggest);
     if (!conf.toFile()) {
         YARP_ERROR(Logger::get(), String("Could not save configuration file ") +
                    conf.getConfigFileName());
     }
-    
+
     MainNameServer name(suggest.getPort() + 2);
     // register root for documentation purposes
     name.registerName(conf.getNamespace(),suggest);
-    
+
     Port server;
     name.setPort(server);
     server.setReaderCreator(name);
     bool ok = server.open(suggest.addName(conf.getNamespace()),
                           false);
     if (ok) {
-        YARP_DEBUG(Logger::get(), String("Name server listening at ") + 
+        YARP_DEBUG(Logger::get(), String("Name server listening at ") +
                    suggest.toURI());
-        
+
         YARP_SPRINTF2(Logger::get(),info,
                       "Name server can be browsed at http://%s:%d/",
                       suggest.getHost().c_str(), suggest.getPort());
-        
+
 #ifdef YARP_HAS_ACE
         FallbackNameServer fallback(name);
         fallback.start();
-        
+
         // register fallback root for documentation purposes
         name.registerName("fallback",FallbackNameServer::getAddress());
-        YARP_INFO(Logger::get(), String("Bootstrap server listening at ") + 
+        YARP_INFO(Logger::get(), String("Bootstrap server listening at ") +
                   FallbackNameServer::getAddress().toURI());
 #endif
-        
+
         while (true) {
             YARP_DEBUG(Logger::get(),"name server running happily");
             Time::delay(60);
@@ -967,7 +967,7 @@ int NameServer::main(int argc, char *argv[]) {
 
     if (!ok) {
         YARP_ERROR(Logger::get(), "Name server failed to start");
-        //YARP_ERROR(Logger::get(), String("   reason for failure is \"") + 
+        //YARP_ERROR(Logger::get(), String("   reason for failure is \"") +
         //e.toString() + "\"");
         YARP_ERROR(Logger::get(), "Maybe it is already be running?");
         if (suggest.getPort()>0) {

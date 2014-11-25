@@ -181,7 +181,7 @@ CanAddress2 0x0E\n\
         const char *fname1 = "_yarp_regression_test1.txt";
 
         FILE *fout = fopen(fname1,"w");
-        YARP_ASSERT(fout!=NULL);
+        yAssert(fout!=NULL);
         fprintf(fout,"CanAddress1 0x0E\n");
         fprintf(fout,"CanAddress2 0x0C\n");
         fclose(fout);
@@ -295,6 +295,19 @@ check $x $y\n\
         checkEqual(p.findGroup("x").size(),4,"group size with quoting ok");
         p.fromConfig("x 10#15 4 5");
         checkEqual(p.findGroup("x").size(),4,"group size with x#y ok");
+        report(0,"checking comment in configuration file");
+        p.fromConfig("robotName icub \n urdf_file model.urdf \n # this is trash \n");
+        checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfig");
+        const char *fname1 = "_yarp_regression_test_ini_comments.txt";
+        FILE *fout = fopen(fname1,"w");
+        yAssert(fout!=NULL);
+        fprintf(fout,"robotName icub\n");
+        fprintf(fout,"urdf_file model.urdf\n");
+        fprintf(fout,"# this is trash\n");
+        fclose(fout);
+        fout = NULL;
+        checkEqual(p.fromConfigFile(fname1),true,"test file correctly loaded");
+        checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfigFile");
     }
 
     virtual void checkWipe() {
@@ -334,13 +347,13 @@ check $x $y\n\
 
         {
             FILE *fout = fopen(fname1,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"x 1\n");
             fclose(fout);
             fout = NULL;
 
             fout = fopen(fname2,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"[include %s]\n",fname1);
             fprintf(fout,"y 2\n");
             fclose(fout);
@@ -355,13 +368,13 @@ check $x $y\n\
 
         {
             FILE *fout = fopen(fname1,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"x 1\n");
             fclose(fout);
             fout = NULL;
 
             fout = fopen(fname2,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"[include base %s]\n",fname1);
             fprintf(fout,"y 2\n");
             fclose(fout);
@@ -386,13 +399,13 @@ check $x $y\n\
 
         {
             FILE *fout = fopen(fname1,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"x 1\n");
             fclose(fout);
             fout = NULL;
 
             fout = fopen(fname2,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"[base]\n");
             fprintf(fout,"w 4\n");
             fprintf(fout,"[base]\n");
@@ -412,13 +425,13 @@ check $x $y\n\
 
         {
             FILE *fout = fopen(fname1,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"x 1\n");
             fclose(fout);
             fout = NULL;
 
             fout = fopen(fname2,"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"[b1]\n");
             fprintf(fout,"z 3\n");
             fprintf(fout,"[include base b1 %s]\n",fname1);
@@ -472,7 +485,7 @@ check $x $y\n\
         checkTrue(ACE_OS::stat(dirname.c_str(),&sb)>=0,"test directory present");
         {
             FILE *fout = fopen((dirname + "/t1.ini").c_str(),"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"x 3\n");
             fprintf(fout,"[nesttest]\n");
             fprintf(fout,"z 14\n");
@@ -481,7 +494,7 @@ check $x $y\n\
         }
         {
             FILE *fout = fopen((dirname + "/t2.ini").c_str(),"w");
-            YARP_ASSERT(fout!=NULL);
+            yAssert(fout!=NULL);
             fprintf(fout,"y 4\n");
             fclose(fout);
             fout = NULL;

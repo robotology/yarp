@@ -21,7 +21,7 @@ class DummyConnectorReader : public StreamConnectionReader {
 public:
     BufferedConnectionWriter *altWriter;
     bool tmode;
-    
+
     BufferedConnectionWriter *getWriter() {
         altWriter->reset(tmode);
         return altWriter;

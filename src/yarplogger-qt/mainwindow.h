@@ -1,3 +1,21 @@
+/* 
+ * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo
+ * email:  marco.randazzo@iit.it
+ * website: www.robotcub.org
+ * Permission is granted to copy, distribute, and/or modify this program
+ * under the terms of the GNU General Public License, version 2 or any
+ * later version published by the Free Software Foundation.
+ *
+ * A copy of the license can be found at
+ * http://www.robotcub.org/icub/license/gpl.txt
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details
+*/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -6,7 +24,7 @@
 #include <QTimer>
 #include <QLabel>
 #include <QSortFilterProxyModel>
-#include <yarp/os/YarprunLogger.h>
+#include <yarp/logger/YarpLogger.h>
 #include <yarp/os/ResourceFinder.h>
 #include "messageWidget.h"
 #include "yarprunPortSorting.h"
@@ -40,6 +58,8 @@ private slots:
     void on_DisplayDebugEnable_toggled(bool checked);
 
     void on_DisplayInfoEnable_toggled(bool checked);
+
+    void on_DisplayTraceEnable_toggled(bool checked);
 
     void on_DisplayUnformattedEnable_toggled(bool checked);
 
@@ -90,7 +110,7 @@ private slots:
     void on_actionReset_current_log_error_warning_counters_triggered();
 
 private:
-    yarp::os::YarprunLogger::LoggerEngine* theLogger;
+    yarp::yarpLogger::LoggerEngine* theLogger;
 
     Ui::MainWindow                   *ui;
     QStandardItemModel               *model_yarprunports;

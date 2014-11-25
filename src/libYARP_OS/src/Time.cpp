@@ -52,7 +52,7 @@ static Clock *getClock() {
             network_clock_pending = false;
             pclock = nc = new NetworkClock();
             clock_owned = true;
-            YARP_ASSERT(pclock);
+            yAssert(pclock);
         }
         NetworkBase::unlock();
         if (nc) {
@@ -114,7 +114,7 @@ void Time::useCustomClock(Clock *clock) {
     NetworkBase::lock();
     removeClock();
     pclock = clock;
-    YARP_ASSERT(pclock);
+    yAssert(pclock);
     NetworkBase::unlock();
 }
 

@@ -48,8 +48,7 @@ can be used.
 
 Normal streaming communication in YARP is very easy to monitor,
 just connect another port to the sender.  For RPC communication,
-we have to be a bit more careful, since senders are affected
-by receivers.
+we have to be a bit more careful.
 
 Suppose the server and client above are running (the source
 code is in example/os/rpc_server.cpp and example/os/rpc_client.cpp),
@@ -58,49 +57,34 @@ in two separate terminals, as follows:
 ./rpc_server /server
 ./rpc_client /client /server
 \endverbatim
-Here we have named the server port "/server" and the client port "/client".
+Here we have named the server port `/server` and the client port `/client`.
 Every second or so, the client sends a message to the server with
 a count in it, and the server replies with "you said" followed
 by that message.
 
-How can we monitor this traffic remotely?  Normally, if we wanted
-to monitor the output of port /foo, we would just do something like:
-\verbatim
-yarp read /read /foo
-\endverbatim
-This would create a port called "/read", and make a connection from
-"/foo" to "/read".  For streaming communication, that works fine,
-since streaming ports will send copies of messages to every connected
-port.  But for RPC, this does not work, since neither the server
-nor the client expect to broadcast messages this way.
+How can we monitor this traffic remotely?  YARP supports a special
+kind of logging connection called `log.in` which can report all
+the *inputs* a port is receiving (along with the corresponding replies).
+We make a connection from the *server* (not the *client*) to a logging
+port, set the connection to `log.in` mode, and we are done.
 
-The solution is to tell YARP the purpose of the connection we are making,
-so that it can distinguish (in this case) logging traffic from regular
-traffic.  We can do this with a carrier modifier.  To monitor
-traffic on our server, it suffices to do:
+The syntax for doing so is either:
 \verbatim
 yarp read /read tcp+log.in://server
 \endverbatim
 
-This syntax needs a little explanation.  It is equivalent to:
+Or equivalently:
 \verbatim
 yarp read /read
 yarp connect /server /read tcp+log.in
 \endverbatim
 
-The "yarp connect" utility is used
-like this:
-\verbatim
-yarp connect /source /target [protocol]
-\endverbatim
-
 The protocol in this case is specified to be tcp (which is the default),
-but with an added "+log.in" decoration.  This is a "carrier modifier"
+but with an added `+log.in` decoration.  This is a "carrier modifier"
 that tells YARP that the connection has a special purpose, in this
-case to log traffic that targets the source port.  Without that
-modifier, this connection would be forbidden if the RPC port is already
-connected to a client, and even if it were allowed it would misbehave
-(the source port would expect replies from it!)
+case to log traffic that arrives at the `/server` port.  Without that
+modifier, this connection would be forbidden if the RPC server is already
+connected to a client, and even if it were allowed it would misbehave.
 
 The output shown by the "yarp read" command will be something like this:
 \verbatim
@@ -117,6 +101,14 @@ The first element is a tag for RPC traffic.  The second element is
 a nested list describing the input received by the port.
 The third element is a nested list describing the corresponding
 output produced by the port.
+
+Note that we log from the *server* side, because we are logging inputs.
+At this time YARP does not have a `log.out` mode for logging outputs
+with their replies.
+
+The logging connection will pass along any envelope or timestamp
+associated with the input, and will lack an envelope if the input
+lacks an envelope.
 
  *
  */

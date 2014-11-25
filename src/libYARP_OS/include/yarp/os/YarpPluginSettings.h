@@ -215,7 +215,7 @@ private:
         Bottle plugins = selector->getSelectedPlugins();
         Bottle group = plugins.findGroup(name.c_str()).tail();
         if (group.isNull()) {
-            YARP_LOG_ERROR(ConstString("No .ini file found for plugin: ") + name);
+            yError("No .ini file found for plugin: %s", name.c_str());
             return false;
         }
         readFromSearchable(group,name);

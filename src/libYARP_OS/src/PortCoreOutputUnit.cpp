@@ -35,7 +35,7 @@ bool PortCoreOutputUnit::start() {
     if (!threaded) {
         running = false;
         sending = false;
-        runSimulation();
+        runSingleThreaded();
         phase.post();
         return true;
     }
@@ -59,7 +59,7 @@ void PortCoreOutputUnit::run() {
     // By default, we don't start up a thread for outputs.
 
     if (!threaded) {
-        runSimulation();
+        runSingleThreaded();
         phase.post();
     } else {
         phase.post();
@@ -96,7 +96,7 @@ void PortCoreOutputUnit::run() {
 
 
 
-void PortCoreOutputUnit::runSimulation() {
+void PortCoreOutputUnit::runSingleThreaded() {
 
     if (op!=NULL) {
         Route route = op->getRoute();
@@ -259,7 +259,7 @@ bool PortCoreOutputUnit::sendHelper() {
         } else {
 
 
-            YARP_ASSERT(cachedWriter!=NULL);
+            yAssert(cachedWriter!=NULL);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
                 done = true;
@@ -324,7 +324,7 @@ bool PortCoreOutputUnit::sendHelper() {
         closeBasic();
         finished = true;
         closing = true;
-        setDoomed(true);
+        setDoomed();
     }
     return replied;
 }

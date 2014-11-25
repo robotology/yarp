@@ -37,7 +37,7 @@ bool PortCoreInputUnit::start() {
     /*
     if (ip!=NULL) {
         Route route = ip->getRoute();
-        YARP_DEBUG(Logger::get(),String("starting output for ") + 
+        YARP_DEBUG(Logger::get(),String("starting output for ") +
                    route.toString());
     }
     */
@@ -70,11 +70,11 @@ void PortCoreInputUnit::run() {
     bool posted = false;
 
     bool done = false;
-    
-    YARP_ASSERT(ip!=NULL);
-    
+
+    yAssert(ip!=NULL);
+
     PortCommand cmd;
-    
+
     if (autoHandshake) {
         bool ok = true;
         if (!reversed) {
@@ -103,8 +103,8 @@ void PortCoreInputUnit::run() {
             setMode();
             getOwner().reportUnit(this,true);
 
-            String msg = String("Receiving input from ") + 
-                route.getFromName() + " to " + route.getToName() + 
+            String msg = String("Receiving input from ") +
+                route.getFromName() + " to " + route.getToName() +
                 " using " +
                 route.getCarrierName();
             if (Name(route.getFromName()).isRooted()) {
@@ -117,7 +117,7 @@ void PortCoreInputUnit::run() {
             } else {
                 YARP_DEBUG(Logger::get(),msg);
             }
-            
+
             // Report the new connection
             PortInfo info;
             info.message = msg.c_str();
@@ -128,13 +128,13 @@ void PortCoreInputUnit::run() {
             info.targetName = route.getToName().c_str();
             info.portName = info.targetName;
             info.carrierName = route.getCarrierName().c_str();
-            
+
             if (info.sourceName!="admin"&&info.sourceName!="null") {
                 getOwner().report(info);
                 wasNoticed = true;
             }
         }
-        
+
     } else {
         bool ok = ip->open(""); // anonymous connection
         route = ip->getRoute();
@@ -150,22 +150,22 @@ void PortCoreInputUnit::run() {
             Route r = op->getRoute();
             // reverse route
             op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
-                    
+
             getOwner().addOutput(op);
             ip = NULL;
             done = true;
         }
     }
-    
+
     if (closing) {
         done = true;
     }
-    
+
     void *id = (void *)this;
-    
+
     while (!done) {
         ConnectionReader& br = ip->beginRead();
-            
+
         if (br.getReference()!=NULL) {
             //printf("HAVE A REFERENCE\n");
             if (localReader!=NULL) {
@@ -184,7 +184,7 @@ void PortCoreInputUnit::run() {
             }
             continue;
         }
-            
+
         if (autoHandshake&&(ip->getConnection().canEscape())) {
             bool ok = cmd.read(br);
             if (!br.isActive()) { done = true; break; }
@@ -193,7 +193,7 @@ void PortCoreInputUnit::run() {
             cmd = PortCommand('d',"");
             if (!ip->isOk()) { done = true; break; }
         }
-        
+
         if (closing||isDoomed()) {
             done = true;
             break;
@@ -201,20 +201,20 @@ void PortCoreInputUnit::run() {
         char key = cmd.getKey();
         //ACE_OS::printf("Port command is [%c:%d/%s]\n",
         //	     (key>=32)?key:'?', key, cmd.getText().c_str());
-        
+
         PortManager& man = getOwner();
         OutputStream *os = NULL;
         if (br.isTextMode()) {
             os = &(ip->getOutputStream());
         }
-        
+
         switch (key) {
         case '/':
             YARP_SPRINTF3(Logger::get(),
                           debug,
                           "Port command (%s): %s should add connection: %s",
                           route.toString().c_str(),
-                          getOwner().getName().c_str(), 
+                          getOwner().getName().c_str(),
                           cmd.getText().c_str());
             man.addOutput(cmd.getText(),id,os);
             break;
@@ -223,7 +223,7 @@ void PortCoreInputUnit::run() {
                           debug,
                           "Port command (%s): %s should remove output: %s",
                           route.toString().c_str(),
-                          getOwner().getName().c_str(), 
+                          getOwner().getName().c_str(),
                           cmd.getText().c_str());
             man.removeOutput(cmd.getText().substr(1,String::npos),id,os);
             break;
@@ -232,7 +232,7 @@ void PortCoreInputUnit::run() {
                           debug,
                           "Port command (%s): %s should remove input: %s",
                           route.toString().c_str(),
-                          getOwner().getName().c_str(), 
+                          getOwner().getName().c_str(),
                           cmd.getText().c_str());
             man.removeInput(cmd.getText().substr(1,String::npos),id,os);
             break;
@@ -243,13 +243,13 @@ void PortCoreInputUnit::run() {
         case 'd':
             {
                 bool suppressed = false;
-                    
+
                 // this will be the new way to signal that
                 // replies are not expected.
                 if (key=='D') {
                     ip->suppressReply();
                 }
-                    
+
                 String env = cmd.getText();
                 if (env.length()>1) {
                     if (!suppressed) {
@@ -301,7 +301,7 @@ void PortCoreInputUnit::run() {
                 Route r = op->getRoute();
                 // reverse route
                 op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
-                    
+
                 getOwner().addOutput(op);
                 ip = NULL;
                 done = true;
@@ -358,8 +358,8 @@ void PortCoreInputUnit::run() {
         }
     }
 
-    setDoomed(true);
-  
+    setDoomed();
+
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closing ip");
     access.wait();
     if (ip!=NULL) {
@@ -369,7 +369,7 @@ void PortCoreInputUnit::run() {
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closed ip");
 
     if (autoHandshake) {
-        String msg = String("Removing input from ") + 
+        String msg = String("Removing input from ") +
             route.getFromName() + " to " + route.getToName();
 
         if (Name(route.getFromName()).isRooted()) {
@@ -417,27 +417,6 @@ void PortCoreInputUnit::run() {
 }
 
 
-
-void PortCoreInputUnit::runSimulation() {
-    /*
-    // simulation
-    running = true;
-    while (true) {
-    ACE_OS::printf("tick\n");
-    Time::delay(0.3);
-    if (closing) {
-    break;
-    }
-    }
-    */
-
-    ACE_OS::printf("stopping\n");
-
-    running = false;
-    finished = true;
-}
-
-
 bool PortCoreInputUnit::interrupt() {
     // give a kick (unfortunately unavoidable)
     access.wait();
@@ -474,8 +453,6 @@ void PortCoreInputUnit::closeMain() {
     }
     running = false;
     closing = false;
-    //finished = false;
-    //setDoomed(false);
 }
 
 

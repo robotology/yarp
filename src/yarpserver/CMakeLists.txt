@@ -14,20 +14,41 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
   include_directories(${YARP_TREE_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-  add_library(YARP_serversql STATIC src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/StyleNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/StyleNameService.cpp)
+  set(YARP_serversql_SRCS src/TripleSourceCreator.cpp
+                          src/NameServiceOnTriples.cpp
+                          src/AllocatorOnTriples.cpp
+                          src/SubscriberOnSql.cpp
+                          src/ParseName.cpp
+                          src/yarpserver3.cpp
+                          src/StyleNameService.cpp)
+  set(YARP_serversql_HDRS src/TripleSourceCreator.h
+                          src/Triple.h
+                          src/TripleSource.h
+                          src/SqliteTripleSource.h
+                          src/NameServiceOnTriples.h
+                          src/Allocator.h
+                          src/AllocatorOnTriples.h
+                          src/Subscriber.h
+                          src/SubscriberOnSql.h
+                          src/ComposedNameService.h
+                          src/ConnectThread.h
+                          src/ParseName.h
+                          src/StyleNameService.h)
+  add_library(YARP_serversql STATIC ${YARP_serversql_SRCS}
+                                    ${YARP_serversql_HDRS})
   target_link_libraries(YARP_serversql LINK_PRIVATE YARP_OS)
   target_link_libraries(YARP_serversql LINK_PRIVATE YARP_init)
   target_link_libraries(YARP_serversql LINK_PRIVATE YARP_name)
   target_link_libraries(YARP_serversql LINK_PRIVATE ${SQLite_LIBRARIES})
-  if (UNIX)
+  if(UNIX)
     target_link_libraries(YARP_serversql LINK_PRIVATE ${CMAKE_DL_LIBS})
-  endif ()
+  endif()
 
   # preserve yarpserver3 executable for a while
-  add_executable(yarpserver3 ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+  add_executable(yarpserver3 src/main.cpp)
   target_link_libraries(yarpserver3 YARP_serversql)
 
-  add_executable(yarpserver ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+  add_executable(yarpserver src/main.cpp)
   target_link_libraries(yarpserver YARP_serversql)
 
   # set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_serversql)

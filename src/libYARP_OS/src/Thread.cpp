@@ -52,7 +52,7 @@ public:
 
 Thread::Thread() {
     implementation = new ThreadCallbackAdapter(*this);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     stopping = false;
 }
 
@@ -119,8 +119,8 @@ long int Thread::getKeyOfCaller() {
 }
 
 
-int Thread::setPriority(int priority) {
-    return ((ThreadImpl*)implementation)->setPriority(priority);
+int Thread::setPriority(int priority, int policy) {
+    return ((ThreadImpl*)implementation)->setPriority(priority, policy);
 }
 
 

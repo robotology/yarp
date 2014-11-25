@@ -40,8 +40,8 @@ class YARP_name_API yarp::name::NameService : public yarp::os::NameStore {
 public:
     virtual ~NameService() {}
 
-    virtual bool apply(yarp::os::Bottle& cmd, 
-                       yarp::os::Bottle& reply, 
+    virtual bool apply(yarp::os::Bottle& cmd,
+                       yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
                        const yarp::os::Contact& remote) = 0;
 
@@ -60,8 +60,8 @@ public:
         return false;
     }
 
-    virtual bool process(yarp::os::PortWriter& in, 
-                         yarp::os::PortReader& out, 
+    virtual bool process(yarp::os::PortWriter& in,
+                         yarp::os::PortReader& out,
                          const yarp::os::Contact& remote);
 };
 

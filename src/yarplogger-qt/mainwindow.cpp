@@ -1,3 +1,21 @@
+/* 
+ * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo
+ * email:  marco.randazzo@iit.it
+ * website: www.robotcub.org
+ * Permission is granted to copy, distribute, and/or modify this program
+ * under the terms of the GNU General Public License, version 2 or any
+ * later version published by the Free Software Foundation.
+ *
+ * A copy of the license can be found at
+ * http://www.robotcub.org/icub/license/gpl.txt
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details
+*/
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "advanced_dialog.h"
@@ -7,7 +25,7 @@
 #include <QMenu>
 #include <QTextStream>
 #include <ctime>
-#include <yarp/os/YarprunLogger.h>
+#include <yarp/logger/YarpLogger.h>
 #include <QAbstractItemModel>
 #include <QStandardItemModel>
 #include <QDesktopServices>
@@ -25,21 +43,23 @@ void MainWindow::updateMain()
     model_yarprunports->setHorizontalHeaderItem(3,new QStandardItem("log size"));
     model_yarprunports->setHorizontalHeaderItem(4,new QStandardItem("errors"));
     model_yarprunports->setHorizontalHeaderItem(5,new QStandardItem("warnings"));
-    std::list<yarp::os::YarprunLogger::LogEntryInfo> infos;
+    std::list<yarp::yarpLogger::LogEntryInfo> infos;
     this->theLogger->get_infos (infos);
-    std::list<yarp::os::YarprunLogger::LogEntryInfo>::iterator it;
+    std::list<yarp::yarpLogger::LogEntryInfo>::iterator it;
 
     QStandardItem *itemsRoot = model_yarprunports->invisibleRootItem();
     for (it=infos.begin(); it!=infos.end(); it++)
     {
         const size_t string_size= 50;
         char time_text[string_size];
-        std::tm* tm = localtime(&it->last_update);
-        if (tm)
-           sprintf ( time_text,"%02d:%02d:%02d",tm->tm_hour,tm->tm_min, tm->tm_sec);
+        if (it->last_update!=-1)
+        {
+            std::tm* tm = localtime(&it->last_update);
+            sprintf ( time_text,"%02d:%02d:%02d",tm->tm_hour,tm->tm_min, tm->tm_sec);
+        }
         else
            sprintf ( time_text, "no data received yet");
-        
+
         char logsize_text[10];
         sprintf (logsize_text, "%d", it->logsize);
 
@@ -65,19 +85,19 @@ void MainWindow::updateMain()
                 model_yarprunports->item(i,5)->setText(logwarnings_text);
 
                 QColor rowcolor = QColor(Qt::white);
-                yarp::os::YarprunLogger::LogLevelEnum last_error = it->getLastError();
+                yarp::yarpLogger::LogLevelEnum last_error = it->getLastError();
 
                 bool     log_enabled =  this->theLogger->get_log_enable_by_port_complete(it->port_complete);
                 if (log_enabled)
                 {
-                    if      (last_error==yarp::os::YarprunLogger::LOGLEVEL_ERROR)   rowcolor = QColor("#FF7070");
-                    else if (last_error==yarp::os::YarprunLogger::LOGLEVEL_WARNING) rowcolor = QColor("#FFFF70");
+                    if      (last_error==yarp::yarpLogger::LOGLEVEL_ERROR)   rowcolor = QColor("#FF7070");
+                    else if (last_error==yarp::yarpLogger::LOGLEVEL_WARNING) rowcolor = QColor("#FFFF70");
                     for (int j=0; j<model_yarprunports->columnCount(); j++)
                         model_yarprunports->item(i,j)->setBackground(rowcolor);
                 }
                 
                 existing = true;
-                if (!tm && show_mute_ports_enabled==false) {model_yarprunports->removeRow(i);}
+                if (it->last_update==-1 && show_mute_ports_enabled==false) {model_yarprunports->removeRow(i);}
                 break;
             }
         }
@@ -87,7 +107,7 @@ void MainWindow::updateMain()
             rowItems << new QStandardItem(it->ip_address.c_str()) << new QStandardItem(it->port_complete.c_str()) <<
                         new QStandardItem(time_text) << new QStandardItem(logsize_text) <<
                         new QStandardItem(logerrors_text) << new QStandardItem (logwarnings_text);
-            if (show_mute_ports_enabled || (!show_mute_ports_enabled && tm)) {itemsRoot->appendRow(rowItems);}
+            if (show_mute_ports_enabled || (!show_mute_ports_enabled && it->last_update!=-1)) {itemsRoot->appendRow(rowItems);}
         }
 
 #elif TREE_MODEL
@@ -185,13 +205,14 @@ void MainWindow::on_enableLogTab(int model_row)
 
 void MainWindow::on_enableLogTab_action()
 {
-    QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
-    if (qvar.isValid()==false)
+    QModelIndex pre_index = ui->yarprunTreeView->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(pre_index);
+    int model_row=index.row();
+    if (model_row==-1)
     {
         system_message->addMessage("on_clearLogTab_action error",MESSAGE_LEVEL_ERROR);
         return;
     }
-    int model_row = qvar.toInt();
     on_enableLogTab(model_row);
 }
 
@@ -212,13 +233,14 @@ void MainWindow::on_clearLogTab(int model_row)
 
 void MainWindow::on_clearLogTab_action()
 {
-    QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
-    if (qvar.isValid()==false)
+    QModelIndex pre_index = ui->yarprunTreeView->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(pre_index);
+    int model_row=index.row();
+    if (model_row==-1)
     {
         system_message->addMessage("on_clearLogTab_action error",MESSAGE_LEVEL_ERROR);
         return;
     }
-    int model_row = qvar.toInt();
     on_clearLogTab(model_row);
 }
 
@@ -244,36 +266,42 @@ void MainWindow::on_saveLogTab(int model_row)
 
 void MainWindow::on_saveLogTab_action()
 {
-    QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
-    if (qvar.isValid()==false)
+    QModelIndex pre_index = ui->yarprunTreeView->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(pre_index);
+    int model_row=index.row();
+    if (model_row==-1)
     {
-        system_message->addMessage("on_clearLogTab_action error",MESSAGE_LEVEL_ERROR);
+        system_message->addMessage("on_saveLogTab_action error",MESSAGE_LEVEL_ERROR);
         return;
     }
-    int model_row = qvar.toInt();
     on_saveLogTab(model_row);
 }
 
 void MainWindow::on_resetCountersLogTab_action()
 {
-    QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
-    if (qvar.isValid()==false)
+    QModelIndex pre_index = ui->yarprunTreeView->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(pre_index);
+    int model_row=index.row();
+    if (model_row==-1)
     {
         system_message->addMessage("on_resetCountersLogTab_action error",MESSAGE_LEVEL_ERROR);
         return;
     }
-    int model_row = qvar.toInt();
     on_resetCountersLogTab(model_row);
 }
 
 void MainWindow::ctxMenu(const QPoint &pos)
 {
-    QModelIndex index = ui->yarprunTreeView->indexAt(pos);
+    QModelIndex pre_index = ui->yarprunTreeView->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(pre_index);
     int model_row=index.row();
-    if (model_row==-1) return;
-
-    std::string portName = model_yarprunports->item(model_row,1)->text().toStdString();
-    bool log_enabled = theLogger->get_log_enable_by_port_complete(portName);
+    if (model_row==-1)
+    {
+        system_message->addMessage("ctxMenu error",MESSAGE_LEVEL_ERROR);
+        return;
+    }
+    std::string logname = model_yarprunports->item(model_row,1)->text().toStdString();
+    bool log_enabled = theLogger->get_log_enable_by_port_complete(logname);
 
     QMenu *menu = new QMenu;
     QAction *act1 = menu->addAction(tr("Clear current log"), this, SLOT(on_clearLogTab_action()));
@@ -285,10 +313,6 @@ void MainWindow::ctxMenu(const QPoint &pos)
        {act3 = menu->addAction(tr("Enable current log"), this, SLOT(on_enableLogTab_action()));}
     QAction *act4 = menu->addAction(tr("Reset errors/warning counters"), this, SLOT(on_resetCountersLogTab_action()));
 
-    act1->setProperty("model_row", model_row);
-    act2->setProperty("model_row", model_row);
-    act3->setProperty("model_row", model_row);
-    act4->setProperty("model_row", model_row);
     menu->exec(ui->yarprunTreeView->mapToGlobal(pos));
 }
 
@@ -296,8 +320,8 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    std::string loggername = rf.check("name",yarp::os::Value("/logger")).asString();
-    theLogger = new yarp::os::YarprunLogger::LoggerEngine(loggername);
+    std::string loggername = rf.check("name",yarp::os::Value("/yarplogger")).asString();
+    theLogger = new yarp::yarpLogger::LoggerEngine(loggername);
 
     ui->setupUi(this);
 
@@ -333,6 +357,14 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     displayErrorLevel=true;
     displayGrid=true;
     displayColors=true;
+    show_mute_ports_enabled=true;
+
+    bool autostart = rf.check("start");
+    if (autostart)
+    {
+        system_message->addMessage("start option found");
+        on_actionStart_Logger_triggered();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -376,9 +408,15 @@ void MainWindow::on_logtabs_tabCloseRequested(int index)
     delete ui->logtabs->widget(index);
 }
 
-void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &index)
+void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &pre_index)
 {
+    QModelIndex index = proxyModel->mapToSource(pre_index);
     int model_row=index.row();
+    if (model_row==-1)
+    {
+        system_message->addMessage("Invalid log selected",MESSAGE_LEVEL_ERROR);
+        return;
+    }
     QString tabname = model_yarprunports->item(model_row,1)->text();
  
     int exists = -1;
@@ -411,17 +449,20 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &index)
 QString MainWindow::recomputeFilters()
 {
     QString filter;
+    bool e_trace   = this->ui->DisplayTraceEnable->isChecked();
     bool e_debug   = this->ui->DisplayDebugEnable->isChecked();
-    bool e_error   = this->ui->DisplayErrorEnable->isChecked();
     bool e_info    = this->ui->DisplayInfoEnable->isChecked();
     bool e_warning = this->ui->DisplayWarningEnable->isChecked();
+    bool e_error   = this->ui->DisplayErrorEnable->isChecked();
     bool e_all     = this->ui->DisplayUnformattedEnable->isChecked();
     int f = 0;
+    if (e_trace)   {if (f>0) filter=filter +"|"; filter = filter + "^TRACE$";   f++;}
     if (e_debug)   {if (f>0) filter=filter +"|"; filter = filter + "^DEBUG$";   f++;}
-    if (e_error)   {if (f>0) filter=filter +"|"; filter = filter + "^ERROR$";   f++;}
     if (e_info)    {if (f>0) filter=filter +"|"; filter = filter + "^INFO$";    f++;}
     if (e_warning) {if (f>0) filter=filter +"|"; filter = filter + "^WARNING$"; f++;}
+    if (e_error)   {if (f>0) filter=filter +"|"; filter = filter + "^ERROR$";   f++;}
     if (e_all)     {if (f>0) filter=filter +"|"; filter = filter + "^$";        f++;}
+    if (true)      {if (f>0) filter=filter +"|"; filter = filter + "^FATAL$";   f++;}
     std::string debug = filter.toStdString();
     return filter;
 }
@@ -434,9 +475,9 @@ void MainWindow::apply_button_filters()
     {
         LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
         if (logtab) {
-                      logtab->proxyModelButtons->setFilterRegExp(regExp);
-                      logtab->proxyModelButtons->setFilterKeyColumn(2);
-                    }
+            logtab->proxyModelButtons->setFilterRegExp(regExp);
+            logtab->proxyModelButtons->setFilterKeyColumn(2);
+        }
     }
 }
 
@@ -456,6 +497,11 @@ void MainWindow::on_DisplayDebugEnable_toggled(bool checked)
 }
 
 void MainWindow::on_DisplayInfoEnable_toggled(bool checked)
+{
+    apply_button_filters();
+}
+
+void MainWindow::on_DisplayTraceEnable_toggled(bool checked)
 {
     apply_button_filters();
 }
@@ -506,6 +552,8 @@ void MainWindow::on_actionSave_Log_triggered(bool checked)
     {
         if (theLogger->save_all_logs_to_file(fileName.toStdString()))
             system_message->addMessage(QString("Log saved to file: ") + fileName);
+        else
+           system_message->addMessage(QString("Unable to save file: ") + fileName,MESSAGE_LEVEL_ERROR);
     }
 }
 
@@ -518,6 +566,8 @@ void MainWindow::on_actionLoad_Log_triggered()
         on_actionClear_triggered();
         if (theLogger->load_all_logs_from_file(fileName.toStdString()))
             system_message->addMessage(QString("Log loaded from file: ") + fileName);
+        else
+            system_message->addMessage(QString("Unable to load file: ") + fileName,MESSAGE_LEVEL_ERROR);
     }
 }
 
@@ -614,7 +664,7 @@ void MainWindow::on_actionRefresh_triggered()
     updateMain();
     theLogger->connect(ports);
     char text [100];
-    sprintf (text,"found %d ports, logger running", ports.size());
+    sprintf (text,"found %zd ports, logger running", ports.size());
     system_message->addMessage(text);
     statusBarLabel->setText("Running");
 }
@@ -631,36 +681,52 @@ void MainWindow::on_actionClear_triggered()
 
 void MainWindow::on_actionClear_current_log_triggered()
 {
-    int row = selection_yarprunports->currentIndex().row();
-    if (row>=0)
-        on_clearLogTab(row);
-    else
-        system_message->addMessage("Invalid log selected", MESSAGE_LEVEL_ERROR);
+    QModelIndex pre_index = ui->yarprunTreeView->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(pre_index);
+    int model_row=index.row();
+    if (model_row==-1)
+    {
+        system_message->addMessage("Invalid log selected",MESSAGE_LEVEL_ERROR);
+        return;
+    }
+    on_clearLogTab(model_row);
 }
 
 void MainWindow::on_actionExport_current_log_to_text_file_triggered()
 {
-    int row = selection_yarprunports->currentIndex().row();
-    if (row>=0)
-        on_saveLogTab(row);
-    else
-        system_message->addMessage("Invalid log selected", MESSAGE_LEVEL_ERROR);
+    QModelIndex pre_index = ui->yarprunTreeView->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(pre_index);
+    int model_row=index.row();
+    if (model_row==-1)
+    {
+        system_message->addMessage("Invalid log selected",MESSAGE_LEVEL_ERROR);
+        return;
+    }
+    on_saveLogTab(model_row);
 }
 
 void MainWindow::on_actionDisable_current_log_triggered()
 {
-    int row = selection_yarprunports->currentIndex().row();
-    if (row>=0)
-        on_enableLogTab(row);
-    else
-        system_message->addMessage("Invalid log selected", MESSAGE_LEVEL_ERROR);
+    QModelIndex pre_index = ui->yarprunTreeView->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(pre_index);
+    int model_row=index.row();
+    if (model_row==-1)
+    {
+        system_message->addMessage("Invalid log selected",MESSAGE_LEVEL_ERROR);
+        return;
+    }
+    on_enableLogTab(model_row);
 }
 
 void MainWindow::on_actionReset_current_log_error_warning_counters_triggered()
 {
-    int row = selection_yarprunports->currentIndex().row();
-    if (row>=0)
-        on_resetCountersLogTab(row);
-    else
-        system_message->addMessage("Invalid log selected", MESSAGE_LEVEL_ERROR);
+    QModelIndex pre_index = ui->yarprunTreeView->selectionModel()->currentIndex();
+    QModelIndex index = proxyModel->mapToSource(pre_index);
+    int model_row=index.row();
+    if (model_row==-1)
+    {
+        system_message->addMessage("Invalid log selected",MESSAGE_LEVEL_ERROR);
+        return;
+    }
+    on_resetCountersLogTab(model_row);
 }

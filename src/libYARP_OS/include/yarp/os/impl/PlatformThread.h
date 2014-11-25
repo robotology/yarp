@@ -21,6 +21,7 @@
 #else
 #  ifdef YARP_HAS_ACE
 #    include <ace/Thread.h>
+#    include <ace/Sched_Params.h>
 #    define Platform_hthread_t ACE_hthread_t
 #    define Platform_thread_t ACE_thread_t
 #    define PLATFORM_THREAD_SELF() ACE_Thread::self()

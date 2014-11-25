@@ -45,6 +45,13 @@ public:
 
     /**
      *
+     * Allow output on success.
+     *
+     */
+    bool verboseOnSuccess;
+
+    /**
+     *
      * Set a timeout for communication (in units of seconds,
      * fractional seconds allowed).
      *

@@ -1079,14 +1079,18 @@ public:
         // single joint
         last_singleJoint.position.resize(1);
         last_singleJoint.velocity.resize(1);
+        last_singleJoint.acceleration.resize(1);
         last_singleJoint.torque.resize(1);
+        last_singleJoint.pidOutput.resize(1);
         last_singleJoint.controlMode.resize(1);
         last_singleJoint.interactionMode.resize(1);
 
         // whole part  (safe here because we already got the nj
         last_wholePart.position.resize(nj);
         last_wholePart.velocity.resize(nj);
+        last_wholePart.acceleration.resize(nj);
         last_wholePart.torque.resize(nj);
+        last_wholePart.pidOutput.resize(nj);
         last_wholePart.controlMode.resize(nj);
         last_wholePart.interactionMode.resize(nj);
 #endif
@@ -1553,7 +1557,7 @@ public:
 #else
         ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
         std::copy(last_wholePart.position.begin(), last_wholePart.position.end(), encs);
-        std::fill_n(ts, ts+sizeof(double)*nj, lastStamp.getTime());
+        std::fill_n(ts, nj, lastStamp.getTime());
 #endif
 
         ////////////////////////// HANDLE TIMEOUT
@@ -2154,6 +2158,7 @@ public:
         double localArrivalTime=0.0;
         bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
         *t = last_singleJoint.torque[0];
+        return ret;
 #else
         return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t);
 #endif
@@ -2165,6 +2170,7 @@ public:
         double localArrivalTime=0.0;
         bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
         std::copy(last_wholePart.torque.begin(), last_wholePart.torque.end(), t);
+        return ret;
 #else
         return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t);
 #endif
@@ -2797,7 +2803,7 @@ public:
             }
         }
 #endif
-        return false;
+        return ok;
     }
 
     bool getInteractionModes(yarp::dev::InteractionModeEnum* modes)

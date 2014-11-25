@@ -147,7 +147,7 @@ public:
     // the user's compiler family/version too much with that
     // used to compile YARP.
     //
-    // However, we can provide some convenience inlines that use 
+    // However, we can provide some convenience inlines that use
     // the definition of std::string in user code.  Precedent:
     //   QString::toStdString()
 
@@ -166,35 +166,35 @@ private:
 #else
 
     inline ConstString() {}
-    
+
     inline ConstString(const char *str) : s(str) {}
-    
+
     inline ConstString(const char *str, int len) : s(str,len) {}
-    
+
     inline ConstString(size_t len, char v) : s(len,v) {}
 
     inline ~ConstString() {}
-    
+
     inline ConstString(const ConstString& alt) : s(alt.s) {}
-    
+
     inline const char *c_str() const { return s.c_str(); }
-    
+
     inline const char *data() const { return s.data(); }
-    
-    inline ConstString& assign(const char *s, size_t n) { 
+
+    inline ConstString& assign(const char *s, size_t n) {
         this->s.assign(s,n);
         return *this;
     }
-    
+
     inline char& operator[](size_t idx) { return s[idx]; }
-    
+
     inline const char& operator[](size_t idx) const { return s[idx]; }
-    
+
     inline const ConstString& operator = (const ConstString& alt) {
         s = alt.s;
         return *this;
     }
-    
+
     inline bool operator < (const ConstString& alt) const { return (s<alt.s); }
     inline bool operator > (const ConstString& alt) const { return (s>alt.s); }
 
@@ -245,9 +245,9 @@ private:
     static size_t npos;
 
     typedef size_t size_type;
-    
+
     unsigned long hash() const;
-    
+
     inline void clear() { s.clear(); }
 
     inline operator std::string() const
@@ -256,7 +256,7 @@ private:
     inline ConstString(const std::string& str) {
         s = str;
     }
-    
+
 private:
     std::string s;
 
@@ -265,10 +265,10 @@ private:
 
 namespace yarp {
     namespace os {
-        YARP_OS_API yarp::os::ConstString operator + (const char *txt, 
+        YARP_OS_API yarp::os::ConstString operator + (const char *txt,
                                                       const yarp::os::ConstString& alt);
-        
-        inline std::ostream& operator<<(std::ostream& stream, 
+
+        inline std::ostream& operator<<(std::ostream& stream,
                                         const yarp::os::ConstString& alt) {
             stream << (std::string)alt;
             return stream;

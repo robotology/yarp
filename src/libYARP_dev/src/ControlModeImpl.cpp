@@ -29,7 +29,7 @@ bool ImplementControlMode::initialize(int size, const int *amap)
         dummy[k]=0;
 
     helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
 
     delete [] dummy;
     return true;

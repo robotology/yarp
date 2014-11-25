@@ -228,13 +228,13 @@ public:
     virtual bool write(ConnectionWriter& connection);
 
     // documented in Searchable
-    virtual bool check(const ConstString& key);
+    virtual bool check(const ConstString& key) const;
 
     // documented in Searchable
-    virtual Value& find(const ConstString& key);
+    virtual Value& find(const ConstString& key) const;
 
     // documented in Searchable
-    virtual Bottle& findGroup(const ConstString& key);
+    virtual Bottle& findGroup(const ConstString& key) const;
 
     /**
      * Equality test.

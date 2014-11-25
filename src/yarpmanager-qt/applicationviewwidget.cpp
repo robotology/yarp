@@ -143,6 +143,8 @@ void ApplicationViewWidget::createConnectionsViewContextMenu()
 
     connSelectAllAction->setIcon(QIcon(":/images/selectall_ico.png"));
     connRefreshAction->setIcon(QIcon(":/images/progress_ico.png"));
+    connConnectAction->setIcon(QIcon(":/images/connect_ico.png"));
+    connDisconnectAction->setIcon(QIcon(":/images/disconnect_ico.png"));
 
     connect(connConnectAction,SIGNAL(triggered()),this,SLOT(onConnect()));
     connect(connDisconnectAction,SIGNAL(triggered()),this,SLOT(onDisconnect()));
@@ -539,7 +541,7 @@ bool ApplicationViewWidget::onRun()
                                      it->text(7).toLatin1().data());
 
             it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/images/progress_ico.png"));
+            it->setIcon(0,QIcon(":/images/refresh_ico.png"));
             it->setTextColor(2,QColor("#000000"));
 
         }
@@ -573,7 +575,7 @@ bool ApplicationViewWidget::onStop()
                                      it->text(7).toLatin1().data());
 
             it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/images/progress_ico.png"));
+            it->setIcon(0,QIcon(":/images/refresh_ico.png"));
             it->setTextColor(2,QColor("#000000"));
 
         }
@@ -736,6 +738,8 @@ bool ApplicationViewWidget::onRefresh()
     selectAllConnections(false);
     selectAllModule(false);
     selectAllResources(false);
+
+    return true;
 }
 
 /*! \brief Select all modules */

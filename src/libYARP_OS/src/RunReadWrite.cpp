@@ -21,13 +21,9 @@
 
 /////////////////////////////////////
 
-int RunWrite::loop(yarp::os::ConstString &uuid)
+int RunWrite::loop()
 {
     RUNLOG("<<<loop()")
-
-    UUID=uuid;
-
-    wPortName=uuid+"/stdout";
 
     if (!wPort.open(wPortName.c_str()))
     {
@@ -35,19 +31,29 @@ int RunWrite::loop(yarp::os::ConstString &uuid)
         fprintf(stderr,"RunWrite: could not open output port\n");
         return 1;
     }
+    if (yarp::os::Network::exists(wLoggerName.c_str()))
+    {
+        if (yarp::os::Network::connect(wPortName.c_str(),wLoggerName.c_str())==false)
+        {
+            fprintf(stderr,"RunWrite: could not mmake connection with the logger\n");
+        }
+    }
 
     char txt[2048];
 
+    yarp::os::ConstString tag=yarp::os::ConstString("[")+wPortName+yarp::os::ConstString("]");
+
     while (mRunning)
     {
-        if (fgets(txt,2048,stdin)<=0 || ferror(stdin) || feof(stdin)) break;
+        if (!fgets(txt,2048,stdin) || ferror(stdin) || feof(stdin)) break;
 
         if (!mRunning) break;
 
         yarp::os::Bottle bot;
+        if (mVerbose) bot.addString(tag.c_str());
         bot.addString(txt);
         wPort.write(bot);
-    }        
+    }
 
     RUNLOG(">>>loop()")
 
@@ -56,13 +62,9 @@ int RunWrite::loop(yarp::os::ConstString &uuid)
 
 ///////////////////////////////////////////
 
-int RunRead::loop(yarp::os::ConstString& uuid)
+int RunRead::loop()
 {
     RUNLOG("<<<loop()")
-
-    UUID=uuid;
-
-    rPortName=uuid+"/stdin";
 
     if (!rPort.open(rPortName.c_str()))
     {
@@ -75,7 +77,7 @@ int RunRead::loop(yarp::os::ConstString& uuid)
     {
         yarp::os::Bottle bot;
         if (!rPort.read(bot,true))
-        {   
+        {
             RUNLOG("!rPort.read(bot,true)")
             break;
         }
@@ -103,20 +105,13 @@ int RunRead::loop(yarp::os::ConstString& uuid)
 
 ///////////////////////////////////////////
 
-int RunReadWrite::loop(yarp::os::ConstString &uuid)
+int RunReadWrite::loop()
 {
     RUNLOG("<<<loop()")
 
-    UUID=uuid;
-
-    RUNLOG(uuid.c_str())
-
-    wPortName=uuid+"/stdio:o";
-    rPortName=uuid+"/stdio:i";
-
     if (!rPort.open(rPortName.c_str()))
     {
-        RUNLOG("RunReadWrite: could not open input port") 
+        RUNLOG("RunReadWrite: could not open input port")
         fprintf(stderr,"RunReadWrite: could not open input port\n");
         return 1;
     }
@@ -124,8 +119,26 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
     yarp::os::ContactStyle style;
     style.persistent=true;
 
-    yarp::os::Network::connect((uuid+"/stdout").c_str(),rPortName.c_str(),style);
-    
+    yarp::os::Network::connect((UUID+"/stdout").c_str(),rPortName.c_str(),style);
+
+    // forwarded section
+    yarp::os::ConstString tag;
+
+    if (mForwarded)
+    {
+        tag=yarp::os::ConstString("[")+fPortName+yarp::os::ConstString("]");
+        if (!fPort.open(fPortName.c_str()))
+        {
+            RUNLOG("RunReadWrite: could not open forward port")
+            fprintf(stderr,"RunReadWrite: could not open forward port\n");
+
+            rPort.close();
+
+            return 1;
+        }
+    }
+    /////////////////////
+
     #if !defined(WIN32)
     if (getppid()!=1)
     #endif
@@ -138,7 +151,7 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
             #if !defined(WIN32)
             if (getppid()==1) break;
             #endif
-        
+
             yarp::os::Bottle bot;
 
             if (!rPort.read(bot,true))
@@ -152,35 +165,53 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
             #if !defined(WIN32)
             if (getppid()==1) break;
             #endif
-        
+
             if (bot.size()==1)
             {
                 printf("%s",bot.get(0).asString().c_str());
+                fflush(stdout);
+
+                if (mForwarded)
+                {
+                    yarp::os::Bottle fwd;
+                    fwd.addString(tag.c_str());
+                    fwd.addString(bot.get(0).asString().c_str());
+                    fPort.write(fwd);
+                }
             }
             else
             {
                 printf("%s\n",bot.toString().c_str());
-            }
+                fflush(stdout);
 
-            fflush(stdout);
+                if (mForwarded)
+                {
+                    yarp::os::Bottle fwd;
+                    fwd.addString(tag.c_str());
+                    fwd.addString(bot.toString().c_str());
+                    fPort.write(fwd);
+                }
+            }
         }
 
         rPort.close();
 
         wPort.close();
 
+        if (mForwarded) fPort.close();
+
 #if defined(WIN32)
         ::exit(0);
 #else
         int term_pipe[2];
-        int warn_suppress=pipe(term_pipe);
+        pipe(term_pipe);
         dup2(term_pipe[0],STDIN_FILENO);
         FILE* file_term_pipe=fdopen(term_pipe[1],"w");
         fprintf(file_term_pipe,"SHKIATTETE!\n");
         fflush(file_term_pipe);
         fclose(file_term_pipe);
 #endif
-    }        
+    }
 
     RUNLOG(">>>loop()")
 
@@ -213,7 +244,7 @@ void RunReadWrite::run()
         if (getppid()==1) break;
         #endif
 
-        if (fgets(txt,2048,stdin)<=0 || ferror(stdin) || feof(stdin)) break;
+        if (!fgets(txt,2048,stdin) || ferror(stdin) || feof(stdin)) break;
 
         RUNLOG(txt)
 

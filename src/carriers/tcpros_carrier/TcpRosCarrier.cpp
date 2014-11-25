@@ -61,6 +61,7 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
             rtyp = "";
         } else if (typ=="yarp/bottle") {
             rtyp = proto.getContactable()->getType().getNameOnWire();
+            if (rtyp=="yarp/image") rtyp = "sensor_msgs/Image";
             wire_type = rtyp;
         } else if (typ!="") {
             rtyp = typ;
@@ -227,8 +228,12 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     int res = proto.is().readFull(mrem);
     dbg_printf("read %d bytes\n", res);
     if (res!=(int)mrem.length()) {
-        fprintf(stderr,"TCPROS header failure, expected %d bytes, got %d bytes\n",
-                (int)mrem.length(),res);
+        if (res>=0) {
+            fprintf(stderr,"TCPROS header failure, expected %d bytes, got %d bytes\n",
+                    (int)mrem.length(),res);
+        } else {
+            fprintf(stderr,"TCPROS connection has gone terribly wrong\n");
+        }
         return false;
     }
     RosHeader header;
@@ -324,7 +329,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         if (translate==TCPROS_TRANSLATE_UNKNOWN) {
             dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
             FlexImage *img = NULL;
-            if (typ=="yarp/image") {
+            if (typ=="yarp/image"||typ=="yarp/bottle") {
                 img = wi.checkForImage(writer);
             }
             if (img) {

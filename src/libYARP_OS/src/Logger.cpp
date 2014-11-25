@@ -30,27 +30,6 @@ void Logger::fini() {
     root = NULL;
 }
 
-#ifdef YARP_HAS_EXECINFO
-#include <execinfo.h>
-void yarp_print_trace(FILE *out, const char *file, int line) {
-    const size_t max_depth = 100;
-    size_t stack_depth;
-    void *stack_addrs[max_depth];
-    char **stack_strings;
-    stack_depth = backtrace(stack_addrs, max_depth);
-    stack_strings = backtrace_symbols(stack_addrs, stack_depth);
-    fprintf(out, "Assertion thrown at %s:%d by code called from:\n", file, line);
-    for (size_t i = 1; i < stack_depth; i++) {
-        fprintf(out, " --> %s\n", stack_strings[i]);
-    }
-    free(stack_strings); // malloc()ed by backtrace_symbols
-    fflush(out);
-}
-#else
-void yarp_print_trace(FILE *out, const char *file, int line) {
-    // Not implemented on this platform
-}
-#endif
 
 void Logger::show(int level, const String& txt) {
     int inLevel = level;
@@ -96,38 +75,3 @@ void Logger::exit(int level) {
 void Logger::setPid() {
     pid = ACE_OS::getpid();
 }
-
-
-void __yarp_error(const ConstString& str) {
-    YARP_ERROR(Logger::get(),str);
-}
-
-void __yarp_warn(const ConstString& str) {
-    YARP_WARN(Logger::get(),str);
-}
-
-void __yarp_info(const ConstString& str) {
-    YARP_INFO(Logger::get(),str);
-}
-
-void __yarp_debug(const ConstString& str) {
-    YARP_DEBUG(Logger::get(),str);
-}
-
-
-bool yarp_show_error() {
-    return Logger::get().shouldShowError();
-}
-
-bool yarp_show_warn() {
-    return Logger::get().shouldShowError();
-}
-
-bool yarp_show_info() {
-    return Logger::get().shouldShowInfo();
-}
-
-bool yarp_show_debug() {
-    return Logger::get().shouldShowDebug();
-}
-

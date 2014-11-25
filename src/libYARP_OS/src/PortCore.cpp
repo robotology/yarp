@@ -46,8 +46,6 @@ PortCore::~PortCore() {
 
 
 bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
-    bool success = false;
-
     // If we're using ACE, we really need to have it initialized before
     // this point.
     if (!NetworkBase::initialized()) {
@@ -63,11 +61,11 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
     // We can assume this because it is not a user-facing class,
     // and we carefully never call this method again without
     // calling close().
-    YARP_ASSERT(listening==false);
-    YARP_ASSERT(running==false);
-    YARP_ASSERT(closing==false);
-    YARP_ASSERT(finished==false);
-    YARP_ASSERT(face==NULL);
+    yAssert(listening==false);
+    yAssert(running==false);
+    yAssert(closing==false);
+    yAssert(finished==false);
+    yAssert(face==NULL);
 
     // Try to put the port on the network, using the user-supplied
     // address (which may be incomplete).  You can think of
@@ -119,22 +117,22 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
 
 void PortCore::setReadHandler(PortReader& reader) {
     // Don't even try to do this when the port is hot, it'll burn you
-    YARP_ASSERT(running==false);
-    YARP_ASSERT(this->reader==NULL);
+    yAssert(running==false);
+    yAssert(this->reader==NULL);
     this->reader = &reader;
 }
 
 void PortCore::setAdminReadHandler(PortReader& reader) {
     // Don't even try to do this when the port is hot, it'll burn you
-    YARP_ASSERT(running==false);
-    YARP_ASSERT(this->adminReader==NULL);
+    yAssert(running==false);
+    yAssert(this->adminReader==NULL);
     this->adminReader = &reader;
 }
 
 void PortCore::setReadCreator(PortReaderCreator& creator) {
     // Don't even try to do this when the port is hot, it'll burn you
-    YARP_ASSERT(running==false);
-    YARP_ASSERT(this->readableCreator==NULL);
+    yAssert(running==false);
+    yAssert(this->readableCreator==NULL);
     this->readableCreator = &creator;
 }
 
@@ -152,11 +150,11 @@ void PortCore::run() {
 
     // We assume that listen() has succeeded and that
     // start() has been called.
-    YARP_ASSERT(listening==true);
-    YARP_ASSERT(running==false);
-    YARP_ASSERT(closing==false);
-    YARP_ASSERT(finished==false);
-    YARP_ASSERT(starting==true);
+    yAssert(listening==true);
+    yAssert(running==false);
+    yAssert(closing==false);
+    yAssert(finished==false);
+    yAssert(starting==true);
 
     // Enter running phase
     running = true;
@@ -259,11 +257,11 @@ bool PortCore::start() {
     stateMutex.wait();
 
     // We assume that listen() has been called.
-    YARP_ASSERT(listening==true);
-    YARP_ASSERT(running==false);
-    YARP_ASSERT(starting==false);
-    YARP_ASSERT(finished==false);
-    YARP_ASSERT(closing==false);
+    yAssert(listening==true);
+    yAssert(running==false);
+    yAssert(starting==false);
+    yAssert(finished==false);
+    yAssert(closing==false);
     starting = true;
 
     // Start the server thread.
@@ -274,7 +272,7 @@ bool PortCore::start() {
     } else {
         // run() will signal stateMutex once it is active
         stateMutex.wait();
-        YARP_ASSERT(running==true);
+        yAssert(running==true);
 
         // release stateMutex for its normal task of controlling access to state
         stateMutex.post();
@@ -447,7 +445,7 @@ void PortCore::closeMain() {
 
         // We should be finished now.
         stateMutex.wait();
-        YARP_ASSERT(finished==true);
+        yAssert(finished==true);
         stateMutex.post();
 
         // Clean up our connection list. We couldn't do this earlier,
@@ -465,7 +463,7 @@ void PortCore::closeMain() {
     // There should be no other threads at this point and we 
     // can stop listening on the network.
     if (listening) {
-        YARP_ASSERT(face!=NULL);
+        yAssert(face!=NULL);
         face->close();
         delete face;
         face = NULL;
@@ -496,13 +494,13 @@ void PortCore::closeMain() {
     finishing = false;
 
     // We are fresh as a daisy.
-    YARP_ASSERT(listening==false);
-    YARP_ASSERT(running==false);
-    YARP_ASSERT(starting==false);
-    YARP_ASSERT(closing==false);
-    YARP_ASSERT(finished==false);
-    YARP_ASSERT(finishing==false);
-    YARP_ASSERT(face==NULL);
+    yAssert(listening==false);
+    yAssert(running==false);
+    yAssert(starting==false);
+    yAssert(closing==false);
+    yAssert(finished==false);
+    yAssert(finishing==false);
+    yAssert(face==NULL);
 }
 
 
@@ -519,7 +517,7 @@ void PortCore::closeUnits() {
     // Empty the PortCore#units list. This is only possible when
     // the server thread is finished.
     stateMutex.wait();
-    YARP_ASSERT(finished==true);
+    yAssert(finished==true);
     stateMutex.post();
 
     // In the "finished" phase, nobody else touches the units,
@@ -656,12 +654,12 @@ void PortCore::addInput(InputProtocol *ip) {
     // PortCore#units.  The unit will have its own thread associated
     // with it.
 
-    YARP_ASSERT(ip!=NULL);
+    yAssert(ip!=NULL);
     stateMutex.wait();
     PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                getNextIndex(),
                                                ip,autoHandshake,false);
-    YARP_ASSERT(unit!=NULL);
+    yAssert(unit!=NULL);
     unit->start();
     units.push_back(unit);
     YMSG(("there are now %d units\n", (int)units.size()));
@@ -677,11 +675,11 @@ void PortCore::addOutput(OutputProtocol *op) {
     // associated with it, but that thread will be very short-lived
     // if the port is not configured to do background writes.
 
-    YARP_ASSERT(op!=NULL);
+    yAssert(op!=NULL);
     stateMutex.wait();
     if (!finished) {
         PortCoreUnit *unit = new PortCoreOutputUnit(*this,getNextIndex(),op);
-        YARP_ASSERT(unit!=NULL);
+        yAssert(unit!=NULL);
         unit->start();
         units.push_back(unit);
     }
@@ -873,13 +871,22 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
     // Check for any restrictions on the port.  Perhaps it can only
     // read, or write.
     bool allowed = true;
+    String err = "";
+    String append = "";
     int f = getFlags();
     bool allow_output = (f&PORTCORE_IS_OUTPUT);
     bool rpc = (f&PORTCORE_IS_RPC);
     Name name(r.getCarrierName() + String("://test"));
     String mode = name.getCarrierModifier("log");
     bool is_log = (mode!="");
-    String err = "";
+    if (is_log) {
+        if (mode!="in") {
+            err = "Logger configured as log." + mode + ", but only log.in is supported";
+            allowed = false;
+        } else {
+            append = "; " + r.getFromName() + " will forward messages and replies (if any) to " + r.getToName();
+        }
+    }
     if (!allow_output) {
         if (!is_log) {
             bool push = false;
@@ -953,7 +960,7 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                                                        ip,
                                                        true,
                                                        true);
-            YARP_ASSERT(unit!=NULL);
+            yAssert(unit!=NULL);
             unit->start();
             units.push_back(unit);
         }
@@ -961,7 +968,7 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
     }
 
     // Communicated the good news.
-    bw.appendLine(String("Added connection from ") + getName() + " to " + dest);
+    bw.appendLine(String("Added connection from ") + getName() + " to " + dest + append);
     if (os!=NULL) bw.write(*os);
     cleanUnits();
     return true;
@@ -1267,7 +1274,7 @@ bool PortCore::sendHelper(PortWriter& writer,
     // may travel by multiple outputs.
     packetMutex.wait();
     PortCorePacket *packet = packets.getFreePacket();
-    YARP_ASSERT(packet!=NULL);
+    yAssert(packet!=NULL);
     packet->setContent(&writer,false,callback);
     packetMutex.post();
 
@@ -1817,7 +1824,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                             ConstString me = unit->getPupString();
                             present.put(me,1);
                             if (!listed.check(me)) {
-                                unit->setDoomed(true);
+                                unit->setDoomed();
                             }
                         }
                     }
@@ -1889,8 +1896,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                                            ip,
                                                                            true,
                                                                            true);
-                                YARP_ASSERT(unit!=NULL);
-                                unit->setPupped(true,pub);
+                                yAssert(unit!=NULL);
+                                unit->setPupped(pub);
                                 unit->start();
                                 units.push_back(unit);
                             }
@@ -1958,11 +1965,48 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             case VOCAB3('s','e','t'):
                 {
                     Property *p = acquireProperties(false);
+                    bool bOk = true;
                     if (p) {
-                        p->put(cmd.get(2).asString(),cmd.get(3));
+                        p->put(cmd.get(2).asString(), cmd.get(3));                        
+                        
+                        // check if we need to set the PortCoreUnit scheduling policy
+                        // e.g., "prop set /portname (sched ((priority 30) (policy 1)))"
+                        // The priority and policy values on Linux are: 
+                        // SCHED_OTHER : policy=0, priority=[0 ..  0]
+                        // SCHED_FIFO  : policy=1, priority=[1 .. 99]
+                        // SCHED_RR    : policy=2, priority=[1 .. 99]
+                        Bottle* value = cmd.get(3).asList();
+                        if(value && value->check("sched")) 
+                        {
+                            if((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
+                                bOk = false;
+                                for (unsigned int i=0; i<units.size(); i++) {
+                                    PortCoreUnit *unit = units[i];
+                                    if (unit && !unit->isFinished()) {
+                                        Route route = unit->getRoute();
+                                        ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
+                                        if (portName == cmd.get(2).asString()) {
+                                            Bottle* sched_prop = value->find("sched").asList();
+                                            if(sched_prop != NULL) {
+                                                int prio = -1;
+                                                int policy = -1;
+                                                if(sched_prop->check("priority"))
+                                                    prio = sched_prop->find("priority").asInt();
+                                                if(sched_prop->check("policy"))
+                                                    policy = sched_prop->find("policy").asInt();
+                                                bOk = (unit->setPriority(prio, policy) != -1);
+                                            }
+                                            else
+                                                bOk = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }            
+                        }
                     }
                     releaseProperties(p);
-                    result.addVocab(Vocab::encode("ok"));
+                    result.addVocab((bOk) ? Vocab::encode("ok") : Vocab::encode("fail"));
                 }
                 break;
             default:

@@ -187,11 +187,24 @@ public:
 };
 
 
+class YARP_wire_rep_utils_API WireTwiddlerSrc {
+public:
+    char *src;
+    int len;
+    int offset;
+
+    WireTwiddlerSrc(char *src, int len, int offset) {
+        this->src = src;
+        this->len = len;
+        this->offset = offset;
+    }
+};
+
 class YARP_wire_rep_utils_API WireTwiddlerWriter : public yarp::os::SizedWriter {
 private:
     yarp::os::SizedWriter *parent;
     WireTwiddler *twiddler;
-    std::vector<yarp::os::Bytes> srcs;
+    std::vector<WireTwiddlerSrc> srcs;
     int block;
     int lastBlock;
     int offset;
@@ -205,6 +218,7 @@ private:
     const char *activeEmit;
     const WireTwiddlerGap *activeGap;
     int activeEmitLength;
+    int activeEmitOffset;
     const char *activeCheck;
     bool errorState;
     int scratchOffset;
@@ -220,6 +234,8 @@ public:
         twiddler = NULL;
     }
 
+    virtual ~WireTwiddlerWriter();
+
     void attach(yarp::os::SizedWriter& parent,
                 WireTwiddler& twiddler) {
         this->parent = &parent;
@@ -228,8 +244,6 @@ public:
     }
 
     bool update();
-
-    virtual ~WireTwiddlerWriter() {}
 
     virtual size_t length() {
         return srcs.size();
@@ -240,11 +254,12 @@ public:
     }
 
     virtual size_t length(size_t index)  {
-        return srcs[index].length();
+        return srcs[index].len;
     }
 
     virtual const char *data(size_t index) {
-        return srcs[index].get();
+        if (srcs[index].offset<0) return srcs[index].src;
+        return scratch.get()+srcs[index].offset;
     }
 
     virtual yarp::os::PortReader *getReplyHandler() {
@@ -263,7 +278,7 @@ public:
 
     bool pad(int len);
 
-    bool readLengthAndPass(int unitLength);
+    bool readLengthAndPass(int unitLength, const WireTwiddlerGap *gap = 0/*NULL*/);
 
     bool advance(int length, bool shouldEmit, bool shouldAccum=false,
                  bool shouldCheck=false);

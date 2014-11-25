@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>475</width>
-    <height>342</height>
+    <height>379</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>300</y>
+     <y>330</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -38,7 +38,7 @@
      <x>30</x>
      <y>20</y>
      <width>421</width>
-     <height>271</height>
+     <height>301</height>
     </rect>
    </property>
    <widget class="QLabel" name="label_4">
@@ -109,7 +109,7 @@
     <property name="geometry">
      <rect>
       <x>1</x>
-      <y>39</y>
+      <y>40</y>
       <width>112</width>
       <height>16</height>
      </rect>
@@ -122,7 +122,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>39</y>
+      <y>40</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -141,7 +141,7 @@
     <property name="geometry">
      <rect>
       <x>1</x>
-      <y>58</y>
+      <y>60</y>
       <width>123</width>
       <height>16</height>
      </rect>
@@ -154,7 +154,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>58</y>
+      <y>60</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -173,7 +173,7 @@
     <property name="geometry">
      <rect>
       <x>1</x>
-      <y>77</y>
+      <y>80</y>
       <width>153</width>
       <height>16</height>
      </rect>
@@ -186,7 +186,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>77</y>
+      <y>80</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -218,7 +218,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>100</y>
+      <y>130</y>
       <width>391</width>
       <height>61</height>
      </rect>
@@ -283,7 +283,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>170</y>
+      <y>200</y>
       <width>391</width>
       <height>61</height>
      </rect>
@@ -348,7 +348,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>240</y>
+      <y>270</y>
       <width>171</width>
       <height>16</height>
      </rect>
@@ -361,10 +361,42 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>240</y>
+      <y>270</y>
       <width>51</width>
       <height>20</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_20">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>100</y>
+      <width>153</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Capture Trace Messages</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cap_trace">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>100</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
    <zorder>frame_2</zorder>
@@ -382,6 +414,8 @@
    <zorder>label_2</zorder>
    <zorder>label_10</zorder>
    <zorder>refresh_rate</zorder>
+   <zorder>label_20</zorder>
+   <zorder>cap_trace</zorder>
   </widget>
  </widget>
  <resources/>

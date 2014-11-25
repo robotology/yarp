@@ -34,11 +34,11 @@ bool ImplementEncodersTimed:: initialize (int size, const int *amap, const doubl
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    yAssert (helper != 0);
     temp=new double [size];
-    _YARP_ASSERT (temp != 0);
+    yAssert (temp != 0);
     temp2=new double [size];
-    _YARP_ASSERT (temp2 != 0);
+    yAssert (temp2 != 0);
     return true;
 }
 

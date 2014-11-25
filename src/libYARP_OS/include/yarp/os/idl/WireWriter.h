@@ -57,6 +57,8 @@ public:
 
     bool writeDouble(double x);
 
+    bool writeVocab(int x);
+
     bool isValid();
 
     bool isError();
