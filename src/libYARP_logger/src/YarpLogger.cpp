@@ -128,14 +128,14 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
                 char* log_off = 0;
                 char* yarprun_log_off = 0;
                 log_off = std::strstr((char*)(n2->get(1).toString().c_str()), "/log/");
-                if (log_off > 0)
+                if (log_off)
                 {
                     std::string logport = n2->get(1).toString();
                     printf ("%s\n", logport.c_str());
                     ports.push_back(logport);
                 }
                 yarprun_log_off = std::strstr((char*)(n2->get(1).toString().c_str()), "/yarprunlog/");
-                if (yarprun_log_off > 0)
+                if (yarprun_log_off)
                 {
                     std::string logport = n2->get(1).toString();
                     printf ("%s\n", logport.c_str());
@@ -277,8 +277,8 @@ void LoggerEngine::logger_thread::run()
             body.local_timestamp   = machine_current_time_s;
             body.level = LOGLEVEL_UNDEFINED;
 
-            int str = s.find('[',0);
-            int end = s.find(']',0);
+            size_t str = s.find('[',0);
+            size_t end = s.find(']',0);
             if (str==std::string::npos || end==std::string::npos )
             {
                 body.level = LOGLEVEL_UNDEFINED;
@@ -715,9 +715,7 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
 bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
 {
     string start_string ="<#STRING_START#>";
-    int start_string_size=strlen(start_string.c_str());
     string end_string ="<#STRING_END#>";
-    int end_string_size=strlen(end_string.c_str());
 
     if (log_updater == NULL) return false;
     if (filename.size() == 0) return false;
