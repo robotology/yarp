@@ -88,7 +88,7 @@ public:
 #endif
 
     void println(const String& txt) {
-        debug(txt);
+        internal_debug(txt);
     }
 
 
@@ -145,7 +145,7 @@ public:
 
     void assertion(bool cond) {
         if (!cond) {
-            fail("assertion failure");
+            internal_fail("assertion failure");
         }
     }
 
