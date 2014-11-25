@@ -50,7 +50,8 @@ class ZombieHunterThread : public yarp::os::Thread
 public:
     ZombieHunterThread()
     {
-        pipe(pipe_sync);
+        int warn_suppress = pipe(pipe_sync);
+        YARP_UNUSED(warn_suppress);
     }
    ~ZombieHunterThread(){}
 
@@ -88,7 +89,8 @@ public:
 
     void sigchldHandler()
     {
-        write(pipe_sync[1],"zombie",1);
+        ssize_t warn_suppress = write(pipe_sync[1],"zombie",1);
+        YARP_UNUSED(warn_suppress);
     }
 
 protected:

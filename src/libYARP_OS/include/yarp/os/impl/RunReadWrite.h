@@ -85,7 +85,8 @@ public:
         mStdio=pStdio;
 #if !defined(WIN32)
         int pipe_block[2];
-        pipe(pipe_block);
+        int warn_suppress = pipe(pipe_block);
+        YARP_UNUSED(warn_suppress);
         fwait=fdopen(pipe_block[0],"r");
         fpost=fdopen(pipe_block[1],"w");
 #endif
@@ -107,7 +108,8 @@ public:
     {
 #if !defined(WIN32)
         char dummy[24];
-        fgets(dummy,16,fwait);
+        char* warn_suppress = fgets(dummy,16,fwait);
+        YARP_UNUSED(warn_suppress);
         RUNLOG("mStdio->exit()")
         mStdio->exit();
 #endif
@@ -177,7 +179,8 @@ public:
         ::exit(0);
 #else
         int term_pipe[2];
-        pipe(term_pipe);
+        int warn_suppress = pipe(term_pipe);
+        YARP_UNUSED(warn_suppress);
         dup2(term_pipe[0],STDIN_FILENO);
         FILE* file_term_pipe=fdopen(term_pipe[1],"w");
         fprintf(file_term_pipe,"SHKIATTETE!\n");

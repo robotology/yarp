@@ -770,8 +770,9 @@ void yarp::os::Run::writeToPipe(int fd,yarp::os::ConstString str)
 {
     int len=str.length()+1;
 
-    write(fd,&len,4);
-    write(fd,str.c_str(),len);
+    ssize_t warn_suppress = write(fd,&len,4);
+    warn_suppress = write(fd,str.c_str(),len);
+    YARP_UNUSED(warn_suppress);
 }
 
 int yarp::os::Run::readFromPipe(int fd,char* &data,int& buffsize)
