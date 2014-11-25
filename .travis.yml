@@ -17,7 +17,7 @@ before_install:
   - sudo add-apt-repository --yes ppa:kalakris/cmake
   - sudo apt-get update -qq
   - sudo apt-get install cmake  # travis version is currently too old
-  - if $TRAVIS_WITH_SWIG; then wget https://github.com/paulfitz/swigs/releases/download/v0.0.3/swigs.zip; fi
+  - if $TRAVIS_WITH_SWIG; then wget https://github.com/paulfitz/swigs/releases/download/v0.0.4/swigs.zip; fi
   - if $TRAVIS_WITH_SWIG; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi
 install:
   - if $TRAVIS_WITH_ACE; then sudo apt-get install libace-dev; fi
