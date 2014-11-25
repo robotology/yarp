@@ -25,7 +25,7 @@ install:
 script:
   - mkdir -p build && cd build && cmake -DTEST_yarpidl_rosmsg=TRUE -DTEST_yarpidl_thrift=TRUE -DCREATE_OPTIONAL_CARRIERS=TRUE -DENABLE_yarpcar_tcpros_carrier=TRUE -DENABLE_yarpcar_rossrv_carrier=TRUE -DENABLE_yarpcar_xmlrpc_carrier=TRUE $CMAKE_FLAGS .. && make && make test && ../scripts/admin/check-runtime.sh && cd ..
   - if $TRAVIS_WITH_SWIG; then ./build/bin/yarp conf 0 0 local; fi
-  - if $TRAVIS_WITH_SWIG; then YARP_DIR=$PWD/build ./scripts/admin/check-bindings.sh PYTHON JAVA LUA RUBY CSHARP PERL TCL; fi
+  - if $TRAVIS_WITH_SWIG; then YARP_DIR=$PWD/build SWIG_VERSIONS="1.3.40 2.0.12 3.0.2" ./scripts/admin/check-bindings.sh PYTHON JAVA LUA RUBY CSHARP PERL TCL; fi
   - export ROS_CI_DESKTOP=`lsb_release -cs`
   - export ROS_CI_VERSION=groovy
   - export ROS_CI_PREFIX=ros-${ROS_CI_VERSION}-
