@@ -27,7 +27,7 @@ endif()
 
 install(TARGETS yarp ${YARPSERVER_NAME} COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-include_directories(${CMAKE_SOURCE_DIR}/extern/diff_match_patch)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/extern/diff_match_patch)
 add_executable(yarp-config yarpconfig.cpp yarpcontext.cpp yarpcontext.h yarprobot.cpp yarprobot.h yarpcontextutils.cpp yarpcontextutils.h)
 target_link_libraries(yarp-config YARP_OS YARP_init ${ACE_LIBRARIES})
 install(TARGETS yarp-config COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
