@@ -442,6 +442,8 @@ public:
     Property *acquireProperties(bool readOnly);
     void releaseProperties(Property *prop);
 
+    int getDSCPByVocab(NetInt32 code);
+
     bool setCallbackLock(yarp::os::Mutex *mutex = NULL) {
         removeCallbackLock();
         if (mutex) {

@@ -2013,19 +2013,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         }
 
                         // check if we need to set the packet QOS policy
-                        // e.g., "prop set /portname (qos ((dscp 46)))"
+                        // e.g., "prop set /portname (qos ((priority HIGH)))"
+                        // e.g., "prop set /portname (qos ((dscp AF12)))"
                         // e.g., "prop set /portname (qos ((tos 12)))"
-                        //
-                        // Default              (DSCP 0)
-                        // Expedited Forwarding (DSCP 46)
-                        // Voice Admit          (DSCP 44)
-                        //
-                        //                Class 1          Class 2         Class 3         Class 4
-                        //          ------------------------------------------------------------------
-                        // Low Drop	 | AF11 (DSCP 10)	AF21 (DSCP 18)	AF31 (DSCP 26)	AF41 (DSCP 34)
-                        // Med Drop	 | AF12 (DSCP 12)	AF22 (DSCP 20)	AF32 (DSCP 28)	AF42 (DSCP 36)
-                        // High Drop | AF13 (DSCP 14)	AF23 (DSCP 22)	AF33 (DSCP 30)	AF43 (DSCP 38)
-
                         if(value && value->check("qos"))
                         {
                             if((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
@@ -2038,14 +2028,33 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                         if (portName == cmd.get(2).asString()) {
                                             Bottle* qos_prop = value->find("qos").asList();
                                             if(qos_prop != NULL) {
-                                                if(qos_prop->check("dscp")) {
-                                                    int dscp = qos_prop->find("dscp").asInt();
-                                                    // set the DSCP value of DiffServ
+                                                if(qos_prop->check("priority")) {
+                                                    NetInt32 priority = qos_prop->find("priority").asVocab();
+                                                    // set the packet DSCP value based on some predifined priority levels
+                                                    // the expected levels are: LOW, NORM, HIGH, CRIT
+                                                    int dscp;
+                                                    switch(priority) {
+                                                        case VOCAB3('L','O','W')    : dscp = 10; break;
+                                                        case VOCAB4('N','O','R','M'): dscp = 0;  break;
+                                                        case VOCAB4('H','I','G','H'): dscp = 36; break;
+                                                        case VOCAB4('C','R','I','T'): dscp = 44; break;
+                                                        default: dscp = -1;
+                                                    };
                                                     OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
-                                                    if(op) {
+                                                    if(op && (dscp >= 0) ) {
                                                         bOk = op->getOutputStream().setTypeOfService(dscp<<2);
                                                     }
-                                                }                                                
+                                                }
+                                                else if(qos_prop->check("dscp")) {
+                                                    int dscp = getDSCPByVocab(qos_prop->find("dscp").asVocab());
+                                                    if (dscp < 0)
+                                                        dscp = qos_prop->find("dscp").asInt();
+                                                    // set the DSCP value of DiffServ
+                                                    OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
+                                                    if(op && (dscp>=0) && (dscp<64)) {
+                                                        bOk = op->getOutputStream().setTypeOfService(dscp<<2);
+                                                    }
+                                                }
                                                 else if(qos_prop->check("tos")) {
                                                     int tos = qos_prop->find("tos").asInt();
                                                     // set the TOS value (backward compatibility)
@@ -2053,7 +2062,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                     if(op) {
                                                         bOk = op->getOutputStream().setTypeOfService(tos);
                                                     }
-                                                }                                               
+                                                }
                                             }
                                             else
                                                 bOk = false;
@@ -2063,8 +2072,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 }
                             }
                         }
-
-
                     }
                     releaseProperties(p);
                     result.addVocab((bOk) ? Vocab::encode("ok") : Vocab::encode("fail"));
@@ -2104,6 +2111,41 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     }
 
     return true;
+}
+
+//                Class 1          Class 2         Class 3         Class 4
+//          ------------------------------------------------------------------
+// Low Drop	 | AF11 (DSCP 10)	AF21 (DSCP 18)	AF31 (DSCP 26)	AF41 (DSCP 34)
+// Med Drop	 | AF12 (DSCP 12)	AF22 (DSCP 20)	AF32 (DSCP 28)	AF42 (DSCP 36)
+// High Drop | AF13 (DSCP 14)	AF23 (DSCP 22)	AF33 (DSCP 30)	AF43 (DSCP 38)
+inline int PortCore::getDSCPByVocab(NetInt32 code) {
+    int dscp;
+    switch(code) {
+        case VOCAB3('C','S','0')    : dscp = 0; break;
+        case VOCAB3('C','S','1')    : dscp = 8; break;
+        case VOCAB3('C','S','2')    : dscp = 16; break;
+        case VOCAB3('C','S','3')    : dscp = 24; break;
+        case VOCAB3('C','S','4')    : dscp = 32; break;
+        case VOCAB3('C','S','5')    : dscp = 40; break;
+        case VOCAB3('C','S','6')    : dscp = 48; break;
+        case VOCAB3('C','S','7')    : dscp = 56; break;
+        case VOCAB4('A','F','1','1'): dscp = 10; break;
+        case VOCAB4('A','F','1','2'): dscp = 12; break;
+        case VOCAB4('A','F','1','3'): dscp = 14; break;
+        case VOCAB4('A','F','2','1'): dscp = 18; break;
+        case VOCAB4('A','F','2','2'): dscp = 20; break;
+        case VOCAB4('A','F','2','3'): dscp = 22; break;
+        case VOCAB4('A','F','3','1'): dscp = 26; break;
+        case VOCAB4('A','F','3','2'): dscp = 28; break;
+        case VOCAB4('A','F','3','3'): dscp = 30; break;
+        case VOCAB4('A','F','4','1'): dscp = 34; break;
+        case VOCAB4('A','F','4','2'): dscp = 36; break;
+        case VOCAB4('A','F','4','3'): dscp = 38; break;
+        case VOCAB2('V','A')        : dscp = 44; break;
+        case VOCAB2('E','F')        : dscp = 46; break;
+        default: dscp = -1;
+    };
+    return dscp;
 }
 
 void PortCore::reportUnit(PortCoreUnit *unit, bool active) {
