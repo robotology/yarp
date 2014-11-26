@@ -31,7 +31,15 @@ public:
 };
 
 class Server : public Demo {
+private:
+    bool running;
+    bool closing;
 public:
+    Server() {
+        running = false;
+        closing = false;
+    }
+
     virtual int32_t get_answer() {
         return 42;
     }
@@ -87,6 +95,29 @@ public:
             return 999;
         }
         return _int;
+    }
+
+
+
+    virtual void do_start_a_service() {
+        running = true;
+        while (!closing) {
+            printf("Operating...\n");
+            Time::delay(0.1);
+        }
+        running = false;
+    }
+
+    virtual bool do_check_for_service() {
+        return running;
+    }
+
+    virtual void do_stop_a_service() {
+        closing = true;
+        while (running) {
+            Time::delay(0.1);
+        }
+        closing = false;
     }
 };
 
@@ -973,6 +1004,28 @@ bool test_settings(UnitTest& test) {
     return test.isOk();
 }
 
+bool test_start_stop(UnitTest& test) {
+    test.report(0,"test start/stop");
+
+    Network yarp;
+    Demo client;
+    Server server;
+    RpcClient client_port;
+    RpcServer server_port;
+    client_port.open("/client");
+    server_port.open("/server");
+    yarp.connect(client_port.getName(),server_port.getName());
+    client.yarp().attachAsClient(client_port);
+    server.yarp().attachAsServer(server_port);
+
+    printf("Starting a long operation\n");
+    client.do_start_a_service();
+    Time::delay(1);
+    printf("Stopping a long operation\n");
+    client.do_stop_a_service();
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (argc>1) {
         Network yarp;
@@ -1007,7 +1060,10 @@ int main(int argc, char *argv[]) {
     if (!test_list_editor()) return 1;
     if (!test_help()) return 1;
     if (!test_primitives()) return 1;
+    UnitTest::startTestSystem();
     ThriftTest test;
     if (!test_settings(test)) return 1;
+    if (!test_start_stop(test)) return 1;
+    UnitTest::stopTestSystem();
     return 0;
 }

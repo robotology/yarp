@@ -37,6 +37,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Log.h
                  include/yarp/os/LogStream.h
                  include/yarp/os/ManagedBytes.h
+                 include/yarp/os/MessageStack.h
                  include/yarp/os/ModifyingCarrier.h
                  include/yarp/os/Module.h
                  include/yarp/os/MultiNameSpace.h
@@ -234,6 +235,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Logger.cpp
                  src/LogForwarder.cpp
                  src/ManagedBytes.cpp
+                 src/MessageStack.cpp
                  src/ModifyingCarrier.cpp
                  src/Module.cpp
                  src/MultiNameSpace.cpp

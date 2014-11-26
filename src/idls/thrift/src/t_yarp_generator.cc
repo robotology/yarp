@@ -170,9 +170,10 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
 				t_type* ttype = NULL);
 
   std::string function_prototype(t_function *tfn, bool include_defaults,
-				 const char *prefix=NULL);
+				 const char *prefix=NULL,
+				 const char *override_name=NULL);
 
-  std::string declare_field(t_field* tfield, bool init=false, bool pointer=false, bool is_constant=false, bool reference=false);
+  std::string declare_field(t_field* tfield, bool init=false, bool pointer=false, bool is_constant=false, bool reference=false, const char *force_type=NULL);
 
   std::string type_name(t_type* ttype, bool in_typedef=false, bool arg=false, bool ret = false);
   std::string base_type_name(t_base_type::t_base tbase);
@@ -1865,11 +1866,16 @@ void t_yarp_generator::generate_xception(t_struct* txception) {
 
 std::string t_yarp_generator::function_prototype(t_function *tfn,
 						 bool include_defaults,
-						 const char *prefix) {
+						 const char *prefix,
+						 const char *override_name) {
   string result = "";
   t_function **fn_iter = &tfn;
   string fn_name = (*fn_iter)->get_name();
   string return_type = print_type((*fn_iter)->get_returntype());
+  if (override_name!=NULL) {
+    fn_name = override_name;
+    return_type = "void";
+  }
   result += return_type;
   result += string(" ");
   if (prefix) {
@@ -1997,8 +2003,10 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	  indent(f_curr_) << declare_field(&returnfield) << endl;
 	}
 	
+	indent(f_curr_) << function_prototype(*fn_iter,false,NULL,"init") << ";" << endl; 
 	indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection);" << endl;
 	indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection);" << endl;
+
 	indent_down();
 	f_curr_ << "};" << endl;
 	f_curr_ << endl;
@@ -2057,6 +2065,30 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	indent_down();
 	indent(f_curr_) << "}" << endl;
 	f_curr_ << endl;
+
+
+	{
+	  indent(f_curr_) << 
+	    function_prototype(*fn_iter,false,(service_name_ + "_" + fname).c_str(),"init") << " {" << endl;
+	  indent_up();
+	  t_type* returntype = (*fn_iter)->get_returntype();
+	  t_field returnfield(returntype, "_return");
+	  if (!returntype->is_void()) {
+	    indent(f_curr_) << declare_field(&returnfield, true,false,false,false,"") << endl;
+	  }
+	  vector<t_field*> args = (*fn_iter)->get_arglist()->get_members();
+	  vector<t_field*>::iterator arg_iter = args.begin();
+	  if (arg_iter != args.end()) {
+	    for ( ; arg_iter != args.end(); arg_iter++) {
+	      indent(f_curr_) << "this->" << (*arg_iter)->get_name() 
+			      << " = "
+			      << (*arg_iter)->get_name() << ";" << endl;
+	    }
+	  }
+	  indent_down();
+	  indent(f_curr_) << "}" << endl;
+	  f_curr_ << endl;
+	}
       }
     }
 
@@ -2106,13 +2138,16 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 		     << " helper;" << endl;
       vector<t_field*> args = (*fn_iter)->get_arglist()->get_members();
       vector<t_field*>::iterator arg_iter = args.begin();
+      indent(f_cpp_) << "helper.init" << "(";
       if (arg_iter != args.end()) {
+	bool first = true;
 	for ( ; arg_iter != args.end(); arg_iter++) {
-	  indent(f_cpp_) << "helper." << (*arg_iter)->get_name() 
-			 << " = "
-			 << (*arg_iter)->get_name() << ";" << endl;
+	  if (!first) f_cpp_ << ",";
+	  first = false;
+	  f_cpp_ << (*arg_iter)->get_name();
 	}
       }
+      f_cpp_ << ");" << endl;
       indent(f_cpp_) << "if (!yarp().canWrite()) {" << endl;
       indent_up();
       indent(f_cpp_) << "fprintf(stderr,\"Missing server method '%s'?\\n\",\"";
@@ -2128,6 +2163,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	f_cpp_ << "yarp().write(helper,helper);" << endl;
       } else {
 	f_cpp_ << "yarp().write(helper);" << endl;
+	//f_cpp_ << "yarp().callback(helper,*this,\"__direct__\");" << endl;
       }
       if (!returntype->is_void()) {
 	indent(f_cpp_);
@@ -2157,6 +2193,8 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent(f_cpp_) << "if (!reader.readListHeader()) { reader.fail(); return false; }"
 		   << endl;
     indent(f_cpp_) << "yarp::os::ConstString tag = reader.readTag();" << endl;
+    indent(f_cpp_) << "bool direct = (tag==\"__direct__\");" << endl;
+    indent(f_cpp_) << "if (direct) tag = reader.readTag();" << endl;
     indent(f_cpp_) << "while (!reader.isError()) {" << endl;
     indent_up();
     indent(f_cpp_) << "// TODO: use quick lookup, this is just a test" << endl;
@@ -2176,6 +2214,28 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	  generate_deserialize_field(f_cpp_, *arg_iter, "");
 	}
       }
+
+      if ((*fn_iter)->is_oneway()) {
+	indent(f_cpp_) << "if (!direct) {" << endl;
+	indent_up();
+	indent(f_cpp_) << service_name_ << "_" << (*fn_iter)->get_name() << " helper;" << endl;
+	indent(f_cpp_) << "helper.init(";
+	arg_iter = args.begin();
+	if (arg_iter != args.end()) {
+	  bool first = true;
+	  for ( ; arg_iter != args.end(); arg_iter++) {
+	    if (!first) f_cpp_ << ",";
+	    first = false;
+	    f_cpp_ << (*arg_iter)->get_name();
+	  }
+	}
+	f_cpp_ << ");" << endl;
+	indent(f_cpp_) << "yarp().callback(helper,*this,\"__direct__\");" << endl;
+	indent_down();
+	indent(f_cpp_) << "} else {" << endl;
+	indent_up();
+      }
+
       t_type* returntype = (*fn_iter)->get_returntype();
       t_field returnfield(returntype, "_return");
       if (!returntype->is_void()) {
@@ -2184,7 +2244,6 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       } else {
 	indent(f_cpp_);
       }
-
       f_cpp_ << (*fn_iter)->get_name() << "(";
       arg_iter = args.begin();
       if (arg_iter != args.end()) {
@@ -2196,6 +2255,11 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	}
       }
       f_cpp_ << ");" << endl;
+
+      if ((*fn_iter)->is_oneway()) {
+	indent_down();
+	indent(f_cpp_) << "}" << endl;
+      }
 
       indent(f_cpp_) << "yarp::os::idl::WireWriter writer(reader);" << endl;
       indent(f_cpp_) << "if (!writer.isNull()) {" << endl;
@@ -2761,20 +2825,27 @@ void t_yarp_generator::generate_deserialize_list_element(ofstream& out,
   }
 }
 
-string t_yarp_generator::declare_field(t_field* tfield, bool init, bool pointer, bool is_constant, bool reference) {
+string t_yarp_generator::declare_field(t_field* tfield, bool init, bool pointer, bool is_constant, bool reference, const char *force_type) {
   // TODO(mcslee): do we ever need to initialize the field?
   string result = "";
   if (is_constant) {
     result += "const ";
   }
-  result += type_name(tfield->get_type());
+  if (!force_type) {
+    result += type_name(tfield->get_type());
+  } else {
+    result += force_type;
+  }
   if (pointer) {
     result += "*";
   }
   if (reference) {
     result += "&";
   }
-  result += " " + tfield->get_name();
+  if (result.length()>0) {
+    result += " ";
+  }
+  result += tfield->get_name();
   if (init) {
     t_type* type = get_true_type(tfield->get_type());
 

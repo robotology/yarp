@@ -86,4 +86,8 @@ service Demo {
   * Test longer tail defaults
   */
   i32 test_longer_tail_defaults(1: i32 ignore, 2:DemoEnum _enum = DemoEnum.ENUM2, 3:i32 _int = 42, 4:string _string = "Space Monkey from the Planet: Space");
+
+  oneway void do_start_a_service();
+  bool do_check_for_service();
+  void do_stop_a_service();
 }
