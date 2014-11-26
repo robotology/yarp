@@ -22,10 +22,7 @@ public:
 
     bool trig(void);
 
-    bool hasAccept();
     bool accept(yarp::os::Things& thing);
-
-    bool hasUpdate();
     yarp::os::Things& update(yarp::os::Things& thing);
 };
 

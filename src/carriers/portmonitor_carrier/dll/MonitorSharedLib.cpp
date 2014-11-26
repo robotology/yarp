@@ -63,19 +63,9 @@ bool MonitorSharedLib::getParams(yarp::os::Property& params)
     return true;
 }
 
-bool MonitorSharedLib::hasAccept() 
-{
-    return monitor->hasAccept();
-}
-
 bool MonitorSharedLib::acceptData(yarp::os::Things& thing)
 {
     return monitor->accept(thing);
-}
-
-bool MonitorSharedLib::hasUpdate()
-{
-    return monitor->hasUpdate();
 }
 
 

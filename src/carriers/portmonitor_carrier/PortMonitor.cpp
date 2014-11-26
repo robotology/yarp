@@ -101,7 +101,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     PortMonitor::lock();
     yarp::os::Things thing;
     thing.setConnectionReader(*localReader);
-    yarp::os::Things& result = binder->updateData(thing);    
+    yarp::os::Things& result = binder->updateData(thing); 
     PortMonitor::unlock();
     con.reset();
     if(result.write(con.getWriter()))
@@ -114,6 +114,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
     if(!bReady) return false;
    
     bool result;
+    localReader = &reader;
     // If no accept callback avoid calling the binder
     if(binder->hasAccept()) 
     {
@@ -132,15 +133,13 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         // localReader.  
         // localReader points to a connection reader which contains 
         // either the original or modified data.
-        con.reset();
-        if(thing.write(con.getWriter()))
-            localReader = &con.getReader();
-        else
-            localReader = &reader;
+        if(thing.hasBeenRead()) {
+            con.reset();
+            if(thing.write(con.getWriter()))
+                localReader = &con.getReader();
+        }                
     }
-    else
-        localReader = &reader;
-
+        
     getPeers().lock();
     yAssert(group);
     result = group->acceptIncomingData(this);

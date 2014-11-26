@@ -10,26 +10,28 @@
 #ifndef _MONITOR_OBJECT_INC_
 #define _MONITOR_OBJECT_INC_
 
+/*
 #include <string>
 #include <yarp/os/ConstString.h>
+*/
 #include <yarp/os/Property.h>
 #include <yarp/os/Things.h>
 
 class MonitorObject
 {
 public:
+    MonitorObject() {}
+    virtual ~MonitorObject() {}
+
     virtual bool create(void) { return true; }
     virtual void destroy(void) { }
 
-    virtual bool setparam(const yarp::os::Property& params) { }
-    virtual bool getparam(yarp::os::Property& params) { }
+    virtual bool setparam(const yarp::os::Property& params) { return false; }
+    virtual bool getparam(yarp::os::Property& params) { return false; }
    
     virtual bool trig(void) { }
 
-    virtual bool hasAccept() = 0;
     virtual bool accept(yarp::os::Things& thing) { return true; }
-
-    virtual bool hasUpdate() = 0;
     virtual yarp::os::Things& update(yarp::os::Things& thing) { return thing; }
 
  };

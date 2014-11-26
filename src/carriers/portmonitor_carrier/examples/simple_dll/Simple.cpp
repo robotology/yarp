@@ -39,21 +39,11 @@ bool SimpleMonitorObject::getparam(yarp::os::Property& params)
     return true;
 }
 
-bool SimpleMonitorObject::hasAccept()
-{
-    return true;
-}
-
 bool SimpleMonitorObject::accept(yarp::os::Things& thing)
 {   
     Bottle* bt = thing.cast_as<Bottle>();
     if(bt->toString() == "ignore")
         return false;
-    return true;
-}
-
-bool SimpleMonitorObject::hasUpdate()
-{    
     return true;
 }
 

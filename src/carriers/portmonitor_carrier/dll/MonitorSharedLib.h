@@ -46,8 +46,8 @@ public:
         return constraint.c_str();
     }
 
-    bool hasAccept();
-    bool hasUpdate(); 
+    bool hasAccept() { return true; }
+    bool hasUpdate() { return true; } 
 
 private:
     std::string constraint;
