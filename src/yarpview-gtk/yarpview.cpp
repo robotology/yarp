@@ -675,6 +675,10 @@ GtkWidget* createMainWindow(void)
     {
         gtk_window_set_decorated (GTK_WINDOW (window), FALSE);
     }
+    if (_options.keepabove == 1)
+    {
+        gtk_window_set_keep_above (GTK_WINDOW (window), TRUE);
+    }
 
     gtk_window_set_title (GTK_WINDOW (window), "YARP GTK Image Viewer");
     gtk_window_set_default_size(GTK_WINDOW (window), _options.windWidth, _options.windHeight);
@@ -792,6 +796,10 @@ void setOptions(yarp::os::Searchable& options) {
     {
         _options.compact=true;
     }
+    if (options.check("keep-above"))
+    {
+        _options.keepabove=true;
+    }
 }
 
 void saveOptFile(char *fileName)
@@ -816,6 +824,7 @@ void saveOptFile(char *fileName)
     ACE_OS::fprintf(optFile,"SaveOptions %d\n", _options.saveOnExit);
     ACE_OS::fprintf(optFile,"synch %d\n", _options.synch);
     ACE_OS::fprintf(optFile,"compact %d\n", _options.compact);
+    ACE_OS::fprintf(optFile,"keep-above %d\n", _options.keepabove);
     ACE_OS::fclose(optFile);
 }
 
@@ -1041,6 +1050,7 @@ void printHelp()
     g_print("  --neto: output network\n");
     g_print("  --neti: input network\n");
     g_print("  --compact: if this flag is enabled, no window controls will be printed\n");
+    g_print("  --keep-above: keep windows above others\n");
 }
 
 #include <yarp/sig/ImageFile.h>

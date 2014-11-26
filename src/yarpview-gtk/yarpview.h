@@ -120,6 +120,7 @@ struct mOptions
     int             outputEnabled;
     bool            synch;
     bool            compact;
+    bool            keepabove;
 };
 typedef struct mOptions pgmOptions;
 
