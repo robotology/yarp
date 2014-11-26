@@ -309,6 +309,7 @@ void QtYARPView::printHelp()
     qDebug("  --neto: output network");
     qDebug("  --neti: input network");
     qDebug("  --compact: if this flag is enabled, no window controls will be printed");
+    qDebug("  --keep-above: keep windows above others");
 }
 
 /*! \brief Stes the options to their defaults.*/

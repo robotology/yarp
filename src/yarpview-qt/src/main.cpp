@@ -27,6 +27,7 @@
 int main(int argc, char *argv[])
 {
     bool compact=false;
+    bool keepabove=false;
     // Pack the argc and argv to a QStringList so we can pass them easily to
     // the plugin.
     // This list must be packed before creating the QApplication, because
@@ -38,6 +39,10 @@ int main(int argc, char *argv[])
         if (std::string(argv[i]) == "--compact")
         {
             compact=true;
+        }
+        if (std::string(argv[i]) == "--keep-above")
+        {
+            keepabove=true;
         }
     }
 
@@ -77,6 +82,10 @@ int main(int argc, char *argv[])
     if (compact)
     {
         window->setFlags(Qt::FramelessWindowHint);
+    }
+    if (keepabove)
+    {
+        window->setFlags(Qt::WindowStaysOnTopHint);
     }
 
     // Call the parseParameters of the qml object called YARPVideoSurface
