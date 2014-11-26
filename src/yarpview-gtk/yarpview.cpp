@@ -716,7 +716,7 @@ GtkWidget* createMainWindow(void)
     if (_options.compact == 0)
     {
         // StatusBar for main window
-        
+
         fpsStatusBar=gtk_statusbar_new();
         gtk_box_pack_start(GTK_BOX (box), fpsStatusBar, FALSE, TRUE, 0);
         gtk_widget_size_request(fpsStatusBar, &actualSize);

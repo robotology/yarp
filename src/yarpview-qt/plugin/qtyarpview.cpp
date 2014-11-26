@@ -214,7 +214,7 @@ bool QtYARPView::parseParameters(QStringList params)
     }
 
     options.fromCommand(c,v,false);
-    
+
     for(int i=0;i<params.count();i++) {
         free(v[i]);
     }
@@ -226,7 +226,7 @@ bool QtYARPView::parseParameters(QStringList params)
         printHelp();
         return false;
     }
-    
+
     // Otherwise, simply set the options asked
     setOptions(options);
 

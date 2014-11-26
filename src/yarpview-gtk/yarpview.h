@@ -106,20 +106,20 @@ void printHelp();
 //-------------------------------------------------
 struct mOptions
 {
-	unsigned int	refreshTime;
-	char			portName[256];
-	char			networkName[256];
-	int				windWidth;
-	int				windHeight;
-	int				posX;
-	int				posY;
-	char			fileName[256];
-	int				saveOnExit;
-	char			outPortName[256];
-	char			outNetworkName[256];
-	int				outputEnabled;
+    unsigned int    refreshTime;
+    char            portName[256];
+    char            networkName[256];
+    int             windWidth;
+    int             windHeight;
+    int             posX;
+    int             posY;
+    char            fileName[256];
+    int             saveOnExit;
+    char            outPortName[256];
+    char            outNetworkName[256];
+    int             outputEnabled;
     bool            synch;
-    bool			compact;
+    bool            compact;
 };
 typedef struct mOptions pgmOptions;
 

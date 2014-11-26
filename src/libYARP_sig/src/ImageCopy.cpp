@@ -20,7 +20,7 @@ using namespace yarp::sig;
 template <class T1, class T2>
 static inline void CopyPixel(const T1 *src, T2 *dest)
 {
-	*dest = *src;
+    *dest = *src;
 }
 
 typedef PixelMono Def_VOCAB_PIXEL_MONO;
@@ -536,8 +536,8 @@ SPECIAL_COPY_END
 
 //static inline int PAD_BYTES (int len, int pad)
 //{
-//	const int rem = len % pad;
-//	return (rem != 0) ? (pad - rem) : rem;
+//    const int rem = len % pad;
+//    return (rem != 0) ? (pad - rem) : rem;
 //}
 
 ///
@@ -549,8 +549,8 @@ static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2,
 {
     const T1 *src = osrc;
     T2 *dest = odest;
-	const int p1 = PAD_BYTES (w * sizeof(T1), q1);
-	const int p2 = PAD_BYTES (w * sizeof(T2), q2);
+    const int p1 = PAD_BYTES (w * sizeof(T1), q1);
+    const int p2 = PAD_BYTES (w * sizeof(T2), q2);
     //const int step1 = w*sizeof(T1) + p1;
     const int step2 = w*sizeof(T2) + p2;
     DBG printf("q1 %d q2 %d (%dx%d) inc %d %d\n", q1, q2, w, h, p1, p2);
@@ -561,7 +561,7 @@ static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2,
     }
 
     YARPDummyCopyPixel();
-	for (int i=0; i<h; i++)
+    for (int i=0; i<h; i++)
         {
             DBG printf("x,y = %d,%d\n", 0,i);
             for (int j = 0; j < w; j++)
