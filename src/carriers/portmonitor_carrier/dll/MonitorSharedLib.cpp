@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2014 iCub Facility
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -28,13 +28,15 @@ MonitorSharedLib::~MonitorSharedLib()
 {
     if(monitor.isValid())
         monitor->destroy();
+    monitor.close();
 }
 
-bool MonitorSharedLib::load(const char* script_file)
+bool MonitorSharedLib::load(const yarp::os::Property& options)
 {
-    monitorFactory.open(script_file, "MonitorObject_there");
+    string filename = options.find("filename").asString();
+    monitorFactory.open(filename.c_str(), "MonitorObject_there");
 	if(!monitorFactory.isValid()) {
-        string msg = string("Cannot load shared library ") + script_file  + string(" (");
+        string msg = string("Cannot load shared library ") + filename  + string(" (");
         msg += Vocab::decode(monitorFactory.getStatus()) + string(")");
         YARP_LOG_ERROR(msg.c_str());
 		return false;
@@ -48,19 +50,17 @@ bool MonitorSharedLib::load(const char* script_file)
         return false;
     }
 
-    return monitor->create();
+    return monitor->create(options);
 }
 
-bool MonitorSharedLib::setParams(const yarp::os::Property& params)
+bool MonitorSharedLib::setParams(const Property &params)
 {
-    monitor->setparam(params);
-    return true;
+    return monitor->setparam(params);
 }
 
 bool MonitorSharedLib::getParams(yarp::os::Property& params)
 {
-    monitor->getparam(params);
-    return true;
+    return monitor->getparam(params);
 }
 
 bool MonitorSharedLib::acceptData(yarp::os::Things& thing)
@@ -69,7 +69,7 @@ bool MonitorSharedLib::acceptData(yarp::os::Things& thing)
 }
 
 
-yarp::os::Things& MonitorSharedLib::updateData(yarp::os::Things& thing)
+yarp::os::Things& MonitorSharedLib::updateData(Things &thing)
 {
     return monitor->update(thing);
 }

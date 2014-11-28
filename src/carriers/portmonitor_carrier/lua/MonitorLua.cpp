@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2014 iCub Facility
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -50,10 +50,10 @@ MonitorLua::~MonitorLua()
     }        
 }
 
-bool MonitorLua::load(const char* script_file)
+bool MonitorLua::load(const Property &options)
 {
     //printf("%s (%d)\n", __FILE__, __LINE__);
-    if(luaL_loadfile(L, script_file))
+    if(luaL_loadfile(L, options.find("filename").asString().c_str()))
     {   
         yError("Cannot load script file");
         yError(lua_tostring(L, -1));
@@ -93,14 +93,24 @@ bool MonitorLua::load(const char* script_file)
     //  call PortMonitor.create if exists
     if(getLocalFunction("create"))
     {
-        if(lua_pcall(L, 0, 1, 0) != 0)
+        // mapping to swig type
+        swig_type_info *propType = SWIG_TypeQuery(L, "yarp::os::Property *");
+        if(!propType)
+        {
+            yError("Swig type of Property is not found");
+            lua_pop(L, 1);
+            return false;
+        }
+        // getting the swig-type pointer
+        SWIG_NewPointerObj(L, &options, propType, 0);
+        if(lua_pcall(L, 1, 1, 0) != 0)
         {
             yError(lua_tostring(L, -1));
             lua_pop(L, 1);
             lua_close(L);
             L = NULL;
             return false;
-        }            
+        }
         else    
             result = lua_toboolean(L, -1);
     }  
@@ -117,7 +127,7 @@ bool MonitorLua::load(const char* script_file)
     return result;
 }
 
-bool MonitorLua::acceptData(yarp::os::Things& thing)
+bool MonitorLua::acceptData(Things &thing)
 {
     if(getLocalFunction("accept"))
     {

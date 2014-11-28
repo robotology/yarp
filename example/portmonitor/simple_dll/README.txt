@@ -4,15 +4,12 @@ in an input port
 ======================================================================
 
 
--- Set LUA_CPATH to include Yarp-Lua binding library 
-    (e.g., export LUA_CPATH=";;;$YARP_ROOT/bindings/build-lua/?.so")
-
 -- Open a terminal and follow the bellow instruction to build the dll
-   $ mkdir $YARP_ROOT/src/carriers/portmonitor_carrier/examples/simple_dll/build
-   $ cd $YARP_ROOT/src/carriers/portmonitor_carrier/examples/simple_dll/build
+   $ mkdir $YARP_ROOT/examples/portmonitor/simple_dll/build
+   $ cd $YARP_ROOT/examples/portmonitor/simple_dll/build
    $ cmake ../; make; 
    
-   you should see the `libsimple.so' after the compilation (the generated dll can have 
+   you should see the `libsimple_monitor.so' after the compilation (the generated dll can have 
    different names on windows or macos). 
 
 -- Open a terminal and run yarpserver
@@ -21,12 +18,12 @@ in an input port
 -- Open another terminal (lets call this the sender terminal) and type 
    $ yarp write /write 
 
--- in the directory where you you built the dll (lets call this the receiver terminal), type
+-- In the directory where you you built the dll (lets call this the receiver terminal), type
    $ yarp read /read
 
  
 -- In another terminal connect the port as follow: 
-   $ yarp connect /write /read tcp+recv.portmonitor+type.dll+file.simple
+   $ yarp connect /write /read tcp+recv.portmonitor+type.dll+file.simple_monitor
 
 Now if you write something  in the 'sender' terminal, you will see the text 
 "Modified in DLL" will be added to the original message. For example: 

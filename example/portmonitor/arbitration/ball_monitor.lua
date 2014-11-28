@@ -11,7 +11,7 @@ require("yarp")
 -- create is called when the port monitor is created 
 -- @return Boolean
 --
-PortMonitor.create = function()
+PortMonitor.create = function(options)
     -- set the constraint here 
     PortMonitor.setConstraint("e_ball_selected")
     return true;

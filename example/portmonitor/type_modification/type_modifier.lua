@@ -12,7 +12,7 @@ require("yarp")
 -- to invoke the corresponding methods.The methods are
 -- optional but must satisfy the following format:
 --
---  PortMonitor.create = function() ... return true end, 
+--  PortMonitor.create = function(options) ... return true end, 
 --  PortMonitor.destroy = function() ... end, 
 --  PortMonitor.accept = function(thing) ... return true end,     
 --  PortMonitor.update = function(thing) ... return thing end, 
@@ -25,7 +25,7 @@ require("yarp")
 -- create is called when the port monitor is created 
 -- @return Boolean
 --
-PortMonitor.create = function()
+PortMonitor.create = function(options)
     print("in create!")
     return true;
 end
@@ -47,6 +47,11 @@ end
 -- if false is returned, the data will be ignored 
 -- and update() will never be called
 PortMonitor.accept = function(thing)
+    if thing:asBottle() == nil then
+        print("type_modifier.lua: got wrong data type (expected type Bottle)")
+        return false
+    end
+
      bt = thing:asBottle()
      if bt:size() < 2 or bt:get(0):asString() ~= "random" then  
         print("type_modifier: invalid command! (e.g., random 10)")
@@ -62,6 +67,10 @@ end
 -- @param thing The Things abstract data type
 -- @return Things
 PortMonitor.update = function(thing)
+    if thing:asBottle() == nil then
+        print("type_modifier.lua: got wrong data type (expected type Bottle)")
+        return thing
+    end
     bt = thing:asBottle()
     th = yarp.Things()
     vec = yarp.Vector()

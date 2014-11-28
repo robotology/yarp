@@ -14,7 +14,7 @@ prevTime = yarp.Time_now()
 -- create is called when the port monitor is created 
 -- @return Boolean
 --
-PortMonitor.create = function()
+PortMonitor.create = function(options)
     -- set the constraint here 
     PortMonitor.setConstraint("true")
     return true;

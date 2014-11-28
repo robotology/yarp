@@ -47,7 +47,7 @@ The port '/write' from 'yarp write' module is connected to the '/read' port of '
   
 \li In another terminal connect the port as follow
 \verbatim 
-   $ yarp connect /write /read tcp+recv.portmonitor+script.lua+file.type_modifier
+   $ yarp connect /write /read tcp+recv.portmonitor+type.lua+file.type_modifier
 \endverbatim
 
 Now if you write a valid command in the 'sender' terminal (e.g., random 3), you will see the command is completely substituted by a vector of 3 random values. For example:

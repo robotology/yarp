@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2014 iCub Facility
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -24,7 +24,7 @@ using namespace yarp::os;
 
 // Read connection settings.
 bool PortMonitor::configure(yarp::os::ConnectionState& proto) 
-{   
+{
     portName = proto.getRoute().getToName();
     sourceName = proto.getRoute().getFromName();
     group = getPeers().add(portName,this);
@@ -64,8 +64,22 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
             strFile = rf.findFile(filename+".lua");
     }
 
+    // provide some useful information for the monitor object
+    // which can be accessed in the create() callback.
+    Property info;
+    info.clear();
+    info.put("filename", strFile);
+    info.put("type", script);
+    info.put("sender_side",
+             (proto.getContactable()->getName() == sourceName));
+    info.put("receiver_side",
+             (proto.getContactable()->getName() == portName));
+    info.put("source", sourceName);
+    info.put("destination", portName);
+    info.put("carrier", proto.getRoute().getCarrierName());
+
     PortMonitor::lock();
-    bReady =  binder->load(strFile.c_str());
+    bReady =  binder->load(info);
     PortMonitor::unlock();
     return bReady;
 }

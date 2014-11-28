@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2014 iCub Facility
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -15,14 +15,6 @@
 #include <yarp/os/Time.h>
 #include <vector>
 
-/*
-namespace yarp {
-    namespace os {
-        class MonitorEvent;
-        class MonitorEventRecord;
-    }
-}
-*/
 
 class MonitorBinding;
 

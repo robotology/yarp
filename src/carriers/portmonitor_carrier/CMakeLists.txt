@@ -1,4 +1,4 @@
-# Copyright (C) 2012 IITRBCS
+# Copyright (C) 2014 iCub Facility
 # Authors: Ali Paikan and Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
