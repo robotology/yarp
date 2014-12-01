@@ -11,16 +11,22 @@
 #define _YARP2_TYPE_
 
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Searchable.h>
 
 namespace yarp {
     namespace os {
         class Type;
+        class Property;
     }
 }
 
 class YARP_OS_API yarp::os::Type {
 public:
-    Type() {}
+    Type() {
+        prop = 0/*NULL*/;
+    }
+
+    virtual ~Type();
 
     static Type byName(const char *name) {
         Type t;
@@ -69,9 +75,17 @@ public:
         if (name!="") return name;
         return "null";
     }
+
+    const Searchable& readProperties() const;
+
+    Property& writeProperties();
+
+    Type& addProperty(const char *key, const Value& val);
+
 private:
     ConstString name;
     ConstString name_on_wire;
+    Property *prop;
 };
 
 #endif

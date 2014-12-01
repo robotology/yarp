@@ -48,6 +48,7 @@ public:
     void portTopicCombo();
     void directionTest();
     void singleNameTest();
+    void typePropTest();
 
     virtual void runTests();
 
@@ -243,6 +244,14 @@ void NodeTest::singleNameTest() {
     checkEqual(reply.get(0).asInt(),1,"found /p1");
 }
 
+void NodeTest::typePropTest() {
+    report(0,"type property test");
+    Type t;
+    checkFalse(t.readProperties().check("test"),"property absent");
+    t.addProperty("test",Value("foo"));
+    checkTrue(t.readProperties().check("test"),"property present");
+}
+
 void NodeTest::runTests() {
     NetworkBase::setLocalMode(true);
     parseNameTest();
@@ -254,6 +263,7 @@ void NodeTest::runTests() {
     portTopicCombo();
     directionTest();
     singleNameTest();
+    typePropTest();
     NetworkBase::setLocalMode(false);
 }
 

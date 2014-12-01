@@ -49,6 +49,7 @@ private:
     bool persistent;
     ConstString wire_type;
     ConstString user_type;
+    ConstString md5sum;
 
     ConstString getRosType(ConnectionState& proto);
 

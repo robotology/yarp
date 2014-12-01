@@ -319,6 +319,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ThreadImpl.cpp
                  src/Time.cpp
                  src/TwoWayStream.cpp
+                 src/Type.cpp
                  src/UnitTest.cpp
                  src/Value.cpp
                  src/Vocab.cpp
