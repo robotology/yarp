@@ -14,11 +14,38 @@
 
 using namespace yarp::os;
 
+Type::Type() {
+    prop = NULL;
+}
+
+Type::Type(const Type& alt) {
+    prop = NULL;
+    name = alt.name;
+    name_on_wire = alt.name_on_wire;
+    if (alt.prop) {
+        writeProperties();
+        *prop = *(alt.prop);
+    }
+}
+
 Type::~Type() {
     if (prop) {
         delete prop;
         prop = NULL;
     }
+}
+
+const Type& Type::operator =(const Type& alt) {
+    name = alt.name;
+    name_on_wire = alt.name_on_wire;
+    if (alt.prop) {
+        writeProperties();
+        *prop = *(alt.prop);
+    } else if (prop) {
+        delete prop;
+        prop = NULL;
+    }
+    return *this;
 }
 
 const Searchable& Type::readProperties() const {

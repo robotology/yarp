@@ -22,11 +22,13 @@ namespace yarp {
 
 class YARP_OS_API yarp::os::Type {
 public:
-    Type() {
-        prop = 0/*NULL*/;
-    }
+    Type();
+
+    Type(const Type& alt);
 
     virtual ~Type();
+
+    const Type& operator =(const Type& alt);
 
     static Type byName(const char *name) {
         Type t;

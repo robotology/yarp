@@ -398,7 +398,7 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname) {
 
     fprintf(out,"  // Name the class, ROS will need this\n");
     fprintf(out,"  yarp::os::Type getType() {\n");
-    fprintf(out,"    yarp::os::Type::byName(\"%s\",\"%s\").addProperty(\"md5sum\",yarp::os::Value(\"*\"));\n", tname.c_str(), tname.c_str());
+    fprintf(out,"    return yarp::os::Type::byName(\"%s\",\"%s\").addProperty(\"md5sum\",yarp::os::Value(\"*\"));\n", tname.c_str(), tname.c_str());
     fprintf(out,"  }\n");
     fprintf(out,"};\n\n");
     fprintf(out,"#endif\n");

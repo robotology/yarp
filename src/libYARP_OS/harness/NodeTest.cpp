@@ -250,6 +250,11 @@ void NodeTest::typePropTest() {
     checkFalse(t.readProperties().check("test"),"property absent");
     t.addProperty("test",Value("foo"));
     checkTrue(t.readProperties().check("test"),"property present");
+
+    Type t1(t);
+    checkTrue(t1.readProperties().check("test"),"property present in copy");
+    t = t1;
+    checkTrue(t.readProperties().check("test"),"property present in double copy");
 }
 
 void NodeTest::runTests() {
