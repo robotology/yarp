@@ -129,9 +129,9 @@ include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
 
 add_library(YARP_dev ${YARP_dev_SRCS} ${YARP_devices_SRCS} ${YARP_dev_HDRS})
+target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
-target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})

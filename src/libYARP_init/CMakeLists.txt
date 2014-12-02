@@ -22,15 +22,15 @@ target_link_libraries(YARP_init LINK_PRIVATE YARP_OS)
 if(YARP_LINK_PLUGINS)
     if(CREATE_OPTIONAL_CARRIERS)
         set_property(SOURCE src/CustomInit.cpp
-                    APPEND PROPERTY COMPILE_DEFINITIONS
-                    PLUGIN_INIT_FUNCTION=add_yarpcar_devices)
+                     APPEND PROPERTY COMPILE_DEFINITIONS
+                     PLUGIN_INIT_FUNCTION=add_yarpcar_devices)
         target_link_libraries(YARP_init LINK_PRIVATE yarpcar)
     endif()
 
     if(CREATE_DEVICE_LIBRARY_MODULES)
         set_property(SOURCE src/CustomInit.cpp
-                    APPEND PROPERTY COMPILE_DEFINITIONS
-                    PLUGIN_INIT_FUNCTION2=add_yarpmod_devices)
+                     APPEND PROPERTY COMPILE_DEFINITIONS
+                     PLUGIN_INIT_FUNCTION2=add_yarpmod_devices)
         target_link_libraries(YARP_init LINK_PRIVATE yarpmod)
         target_link_libraries(YARP_init LINK_PRIVATE YARP_dev)
     endif()

@@ -62,11 +62,11 @@ void Drivers::init() {
     add(new DriverCreatorOf<ServerInertial>("inertial",
                                             "inertial",
                                             "ServerInertial"));
-                                            
+
     add(new DriverCreatorOf<ServerSoundGrabber>("sound_grabber",
                                                 "sound_grabber",
                                                 "ServerSoundGrabber"));
-						
+
     add(new DriverCreatorOf<DevicePipe>("pipe",
                                         "",
                                         "DevicePipe"));
