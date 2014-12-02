@@ -2121,7 +2121,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                     break;  // for example, horrible windows ^D
                 }
             }
-            BottleImpl bot;
+            Bottle bot;
             if (!raw) {
                 bot.addInt(0);
                 bot.addString(txt.c_str());
@@ -2157,7 +2157,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     companion_active_port = NULL;
 
     if (!raw) {
-        BottleImpl bot;
+        Bottle bot;
         bot.addInt(1);
         bot.addString("<EOF>");
         //core.send(bot);
