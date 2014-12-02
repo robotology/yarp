@@ -17,11 +17,15 @@ if (CREATE_OPTIONAL_CARRIERS)
     add_subdirectory(priority_carrier)
     add_subdirectory(portmonitor_carrier)
   YARP_END_PLUGIN_LIBRARY(yarpcar)
-  set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpcar ${yarpcar_LIBRARIES})
   install(TARGETS yarpcar
           EXPORT YARP
           COMPONENT runtime
           RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
           LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+  if (YARP_LINK_PLUGINS)
+    set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpcar ${yarpcar_LIBRARIES})
+  endif()
+
 endif (CREATE_OPTIONAL_CARRIERS)
