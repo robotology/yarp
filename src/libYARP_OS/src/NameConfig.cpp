@@ -404,6 +404,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
             result.addString(host);
         }
     }
+    freeifaddrs(ifaddr);
 #endif
 
     return result;
