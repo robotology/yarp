@@ -320,6 +320,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Time.cpp
                  src/TwoWayStream.cpp
                  src/Type.cpp
+                 src/UdpCarrier.cpp
                  src/UnitTest.cpp
                  src/Value.cpp
                  src/Vocab.cpp
@@ -338,8 +339,7 @@ if (NOT SKIP_ACE)
   # these carriers have not yet been implemented without ACE
   set(YARP_OS_SRCS ${YARP_OS_SRCS}
                    src/McastCarrier.cpp
-                   src/ShmemCarrier.cpp
-                   src/UdpCarrier.cpp)
+                   src/ShmemCarrier.cpp)
 endif()
 
 source_group("Source Files" FILES ${YARP_OS_SRCS})
