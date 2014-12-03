@@ -344,6 +344,7 @@ Companion::Companion() {
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
     // new logic to handle some global arguments
     char **argv_copy = new char *[argc];
+    char **argv_copy_org = argv_copy;
     int argc_copy = argc;
     if (!argv_copy) {
         YARP_SPRINTF0(Logger::get(),
@@ -381,14 +382,16 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
     String sname(name);
     Entry e;
     int result = PLATFORM_MAP_FIND_RAW(action,sname,e);
+    int v = -1;
     if (result!=-1) {
-        return (this->*(e.fn))(argc_copy,argv_copy);
+        v = (this->*(e.fn))(argc_copy,argv_copy);
     } else {
         YARP_SPRINTF1(Logger::get(),
                       error,
                       "Could not find command \"%s\"",name);
     }
-    return -1;
+    delete[] argv_copy_org;
+    return v;
 }
 
 
