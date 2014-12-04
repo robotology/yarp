@@ -86,6 +86,7 @@ public:
 public:
     bool isValid;
     bool isArray;
+    int arrayLength;
     bool isPrimitive;
     std::string rosType;
     std::string rosName;
@@ -103,6 +104,7 @@ public:
     void clear() {
         isValid = false;
         isArray = false;
+        arrayLength = -1;
         isPrimitive = false;
         txt = "";
         rosType = "";
@@ -166,6 +168,10 @@ public:
     virtual bool beginDeclare() { return true; }
     virtual bool declareField(const RosField& field) = 0;
     virtual bool endDeclare() { return true; }
+
+    virtual bool beginConstruct() { return true; }
+    virtual bool constructField(const RosField& field) { return true; }
+    virtual bool endConstruct() { return true; }
 
     virtual bool beginRead(bool bare, int len) { return true; } 
     virtual bool readField(bool bare, const RosField& field) = 0;

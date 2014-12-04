@@ -142,16 +142,20 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     rosType = base;
     if (base.length()==0) return false;
     if (base[base.length()-1]==']') {
-        char ch = '\0';
-        if (base.length()>=2) {
-            ch = base[base.length()-2];
-        }
-        if (ch!='[') {
+        size_t at = base.rfind('[');
+        if (at==string::npos) {
             fprintf(stderr,"dodgy array? %s\n", base.c_str());
             return false;
         }
+        string idx = base.substr(at+1,base.length()-at-2);
+        if (idx!="") {
+            yarp::os::Bottle b(idx.c_str());
+            arrayLength = b.get(0).asInt();
+        } else {
+            arrayLength = -1;
+        }
         isArray = true;
-        base = base.substr(0,base.length()-2);
+        base = base.substr(0,at);
         rosType = base;
     }
 
@@ -361,6 +365,12 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         if (!gen.declareField(subRosType[i])) return false;
     }
     if (!gen.endDeclare()) return false;
+
+    if (!gen.beginConstruct()) return false;
+    for (int i=0; i<(int)subRosType.size(); i++) {
+        if (!gen.constructField(subRosType[i])) return false;
+    }
+    if (!gen.endConstruct()) return false;
 
     if (!gen.beginRead(true,(int)subRosType.size())) return false;
     for (int i=0; i<(int)subRosType.size(); i++) {

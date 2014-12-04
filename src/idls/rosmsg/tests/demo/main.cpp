@@ -16,8 +16,17 @@
 #include <HeaderTest.h>
 #include <HeaderTest2.h>
 #include <yarp/os/all.h>
+#include <yarp/os/impl/UnitTest.h>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
+
+class RosMsgTest : public UnitTest {
+public:
+    virtual ConstString getName() {
+        return "RosMsg";
+    }
+};
 
 bool test_signs() {
     printf("\n*** test_signs()\n");
@@ -60,10 +69,62 @@ bool test_serialization() {
    return true;
 }
 
+template <class T>
+bool test_lists(UnitTest& test, T demo, std::string name) {
+    test.report(0,std::string("test lists ") + name);
+    Port p1;
+    p1.enableBackgroundWrite(true);
+    if (!p1.open("/p1")) return false;
+    BufferedPort<T> p2;
+    if (!p2.open("/p2")) return false;
+    if (!Network::connect(p1.getName(),p2.getName())) {
+        printf("Could not connect\n");
+        return false;
+    }
+    demo.x = 10;
+    demo.a_signed_byte = 0;
+    demo.an_unsigned_byte = 0;
+    demo.a_signed_byte2 = 0;
+    demo.an_unsigned_byte2 = 0;
+    demo.a_signed_byte4 = 0;
+    demo.an_unsigned_byte4 = 0;
+    demo.a_signed_byte8 = 0;
+    demo.an_unsigned_byte8 = 0;
+    demo.a_bool = false;
+    for (int i=0; i<3; i++) {
+        demo.fixed_string_list[i] = "";
+        demo.fixed_byte_list[i] = 1;
+    }
+    demo.fixed_string_list[2] = "ping";
+    demo.fixed_byte_list[1] = 99;
+    p1.write(demo);
+    T *in = p2.read();
+    test.checkTrue(in!=NULL,"read ok");
+    if (!in) return false;
+    test.checkEqual(demo.x,in->x,"int ok");
+    test.checkEqual(demo.fixed_string_list[2].c_str(),in->fixed_string_list[2].c_str(),"string in list ok");
+    test.checkEqual(demo.fixed_byte_list[1],in->fixed_byte_list[1],"byte in list ok");
+    p2.close();
+    p1.close();
+    return test.isOk();
+}
 
 int main(int argc, char *argv[]) {
+    Network yarp;
+    yarp.setLocalMode(true);
+    UnitTest::startTestSystem();
+    RosMsgTest test;
+
     if (!test_signs()) return 1;
     if (!test_serialization()) return 1;
+    
+    Demo demo1;
+    if (!test_lists(test,demo1,"regular")) return 1;
+    Demo::bottleStyle demo2;
+    if (!test_lists(test,demo2,"bottle")) return 1;
+    Demo::rosStyle demo3;
+    if (!test_lists(test,demo3,"ros")) return 1;
+    UnitTest::stopTestSystem();
 
     return 0;
 }
