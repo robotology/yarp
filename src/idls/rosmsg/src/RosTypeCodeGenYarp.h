@@ -67,7 +67,8 @@ public:
     virtual bool writeField(bool bare,const RosField& field);
     virtual bool endWrite(bool bare);
 
-    virtual bool endType(const std::string& tname);
+    virtual bool endType(const std::string& tname,
+                         const RosField& field);
 
     virtual bool hasNativeTimeClass() const {
         return false;

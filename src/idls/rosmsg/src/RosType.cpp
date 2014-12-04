@@ -7,16 +7,23 @@
  *
  */
 
+#include "RosType.h"
+#include "md5.h"
+
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "RosType.h"
-
-#include <vector>
-
 #include <sys/stat.h>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Bottle.h>
 
 #ifdef YARP_PRESENT
+// this code used to be compilable without yarp, I have let this rust but
+// it would be straightforward to make it do so again
 #  include <yarp/conf/system.h>
 #endif
 #ifdef YARP_HAS_ACE
@@ -29,15 +36,6 @@
 #    define ACE_OS
 #  endif
 #endif
-#include <stdlib.h>
-
-#include <yarp/os/Network.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/Bottle.h>
-
-#include <string>
-#include <sstream>
-#include <vector>
 
 using namespace std;
 
@@ -159,7 +157,10 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         rosType = base;
     }
 
+    isStruct = true;
+    rosRawType = base;
     if (base[0]>='a'&&base[0]<='z'&&base.find("/")==string::npos&&base.find(".")==string::npos) {
+        isStruct = false;
         if (base=="time"||base=="duration") {
             if (gen.hasNativeTimeClass()) {
                 isPrimitive = true;
@@ -343,9 +344,54 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 
     if (subRosType.size()>0) {
         for (int i=0; i<(int)subRosType.size(); i++) {
-            if (!subRosType[i].emitType(gen,state)) return false;
+            RosType& e = subRosType[i];
+            if (!e.emitType(gen,state)) return false;
+
+            if (e.isConst()) {
+                string add = e.rosType + " " + e.rosName + "=" + e.initializer + "\n";
+                checksum_const_text.push_back(add);
+            } else {
+                string add = "";
+                if (!e.isStruct) {
+                    add += e.rosRawType;
+                } else {
+                    add += e.checksum;
+                }
+                if (e.isArray && !e.isStruct) {
+                    add += "[";
+                    if (e.arrayLength!=-1) {
+                        add += yarp::os::Bottle::toString(e.arrayLength);
+                    }
+                    add += "]";
+                }
+                add += " ";
+                add += e.rosName;
+                add += "\n";
+                checksum_var_text.push_back(add);
+            }
         }
     }
+
+    string sum = "";
+    for (list<string>::iterator it=checksum_const_text.begin();
+         it!=checksum_const_text.end(); it++) {
+        sum += *it;
+    }
+    for (list<string>::iterator it=checksum_var_text.begin();
+         it!=checksum_var_text.end(); it++) {
+        sum += *it;
+    }
+    sum = sum.substr(0,sum.length()-1);
+    md5_state_t cstate;
+    md5_byte_t digest[16];
+    md5_init(&cstate);
+    md5_append(&cstate, (const md5_byte_t *)sum.c_str(), sum.length());
+    md5_finish(&cstate, digest);
+    char hex_output[16*2 + 1];
+    for (int di = 0; di<16; di++) {
+	    sprintf(hex_output + di * 2, "%02x", digest[di]);
+    }
+    checksum = (char *)hex_output;
 
     if (reply!=NULL) {
         if (!reply->emitType(gen,state)) return false;
@@ -396,7 +442,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     }
     if (!gen.endWrite(false)) return false;
 
-    if (!gen.endType(rosType)) return false;
+    if (!gen.endType(rosType,*this)) return false;
 
     state.generated[rosType] = true;
     state.dependencies.push_back(rosType);

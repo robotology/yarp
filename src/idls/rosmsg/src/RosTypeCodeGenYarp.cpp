@@ -431,7 +431,8 @@ bool RosTypeCodeGenYarp::endWrite(bool bare) {
 }
 
 
-bool RosTypeCodeGenYarp::endType(const std::string& tname) {
+bool RosTypeCodeGenYarp::endType(const std::string& tname,
+                                 const RosField& field) {
     string safe_tname = getSafeName(tname);
     fprintf(out,"  // This class will serialize ROS style or YARP style depending on protocol.\n");
     fprintf(out,"  // If you need to force a serialization style, use one of these classes:\n");
@@ -440,7 +441,7 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname) {
 
     fprintf(out,"  // Name the class, ROS will need this\n");
     fprintf(out,"  yarp::os::Type getType() {\n");
-    fprintf(out,"    return yarp::os::Type::byName(\"%s\",\"%s\").addProperty(\"md5sum\",yarp::os::Value(\"*\"));\n", tname.c_str(), tname.c_str());
+    fprintf(out,"    return yarp::os::Type::byName(\"%s\",\"%s\").addProperty(\"md5sum\",yarp::os::Value(\"%s\"));\n", tname.c_str(), tname.c_str(), field.checksum.c_str());
     fprintf(out,"  }\n");
     fprintf(out,"};\n\n");
     fprintf(out,"#endif\n");

@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <list>
 
 class RosTypeSearch {
 private:
@@ -88,12 +89,17 @@ public:
     bool isArray;
     int arrayLength;
     bool isPrimitive;
+    bool isStruct;
     std::string rosType;
+    std::string rosRawType;
     std::string rosName;
     std::string rosPath;
     std::string initializer;
     RosTypes subRosType;
     std::string txt;
+    std::list<std::string> checksum_var_text;
+    std::list<std::string> checksum_const_text;
+    std::string checksum;
     RosType *reply;
 
     RosType() {
@@ -104,10 +110,12 @@ public:
     void clear() {
         isValid = false;
         isArray = false;
+        isStruct = false;
         arrayLength = -1;
         isPrimitive = false;
         txt = "";
         rosType = "";
+        rosRawType = "";
         rosName = "";
         initializer = "";
         subRosType.clear();
@@ -115,6 +123,9 @@ public:
             delete reply;
             reply = 0 /*NULL*/;
         }
+        checksum_var_text.clear();
+        checksum_const_text.clear();
+        checksum = "";
     }
 
     virtual ~RosType() {
@@ -141,6 +152,7 @@ public:
     std::string directory;
     std::map<std::string, bool> generated;
     std::map<std::string, bool> usedVariables;
+    std::map<std::string, std::string> checksums;
     std::vector<std::string> dependencies;
     std::vector<std::string> dependenciesAsPaths;
     std::string txt;
@@ -181,7 +193,8 @@ public:
     virtual bool writeField(bool bare, const RosField& field) = 0;
     virtual bool endWrite(bool bare) { return true; }
 
-    virtual bool endType(const std::string& tname) = 0;
+    virtual bool endType(const std::string& tname,
+                         const RosField& field) = 0;
 
     virtual bool hasNativeTimeClass() const {
         return false;
