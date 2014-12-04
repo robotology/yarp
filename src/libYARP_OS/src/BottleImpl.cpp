@@ -229,12 +229,12 @@ void BottleImpl::fromString(const String& line) {
                     if ((!quoted)&&(ch==','||ch==' '||ch=='\t'||ch=='\n'||ch=='\r')
                         &&(nestedAlt==0)
                         &&(nested==0)) {
-                        if (arg=="") {
-                            if (ch==',') {
+                        if (arg!="") {
+                            if (arg=="null") {
                                 add(new StoreVocab(VOCAB4('n','u','l','l')));
+                            } else {
+                                smartAdd(arg);
                             }
-                        } else {
-                            smartAdd(arg);
                         }
                         arg = "";
                         begun = false;
