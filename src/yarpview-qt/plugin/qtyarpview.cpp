@@ -234,7 +234,6 @@ bool QtYARPView::parseParameters(QStringList params)
         qDebug("Error open ports");
         return false;
     }
-    setName(options.find("name").asString().c_str());
     ptr_inputPort->useCallback(*ptr_portCallback);
     return true;
 }
@@ -348,6 +347,7 @@ bool QtYARPView::openPorts()
 
     ptr_inputPort->setReadOnly();
     ret= ptr_inputPort->open(_options.portName);
+    setName(ptr_inputPort->getName().c_str());
 
     if (!ret){
         qDebug("Error: port failed to open, quitting.");
