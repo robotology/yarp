@@ -29,15 +29,6 @@
 
 #define WND_DEF_HEIGHT          400
 #define WND_DEF_WIDTH           800
-#define CMD_HELP                VOCAB4('h','e','l','p')
-#define CMD_STEP                VOCAB4('s','t','e','p')
-#define CMD_QUIT                VOCAB4('q','u','i','t')
-#define CMD_SET                 VOCAB3('s','e','t')
-#define CMD_GET                 VOCAB3('g','e','t')
-#define CMD_LOAD                VOCAB4('l','o','a','d')
-#define CMD_PLAY                VOCAB4('p','l','a','y')
-#define CMD_STOP                VOCAB4('s','t','o','p')
-#define CMD_PAUSE               VOCAB4('p','a','u','s')
 
 using namespace std;
 using namespace yarp::os;
@@ -67,7 +58,6 @@ MainWindow::MainWindow(yarp::os::ResourceFinder    &rf)
         withExtraTimeCol = false;
         column = 0;
     }
-
 
     add_prefix= rf.check("add_prefix");
     createUtilities();
