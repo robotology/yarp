@@ -46,7 +46,8 @@ using namespace std;
 /**********************************************************/
 Utilities::~Utilities()
 {
-    delete [] partDetails;
+    if (partDetails!=NULL)
+        delete [] partDetails;
 }
 /**********************************************************/
 Utilities::Utilities(string name, bool _add_prefix)
