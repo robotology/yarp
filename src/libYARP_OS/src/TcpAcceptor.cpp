@@ -107,12 +107,12 @@ int TcpAcceptor::shared_open(const Contact& address) {
     struct sockaddr_in sin;
     socklen_t addrlen = sizeof(sin);
     if (getsockname(get_handle(), (struct sockaddr *)&sin, &addrlen) == 0 &&
-	sin.sin_family == AF_INET &&
-	addrlen == sizeof(sin)) {
-      port_number = (int)ntohs(sin.sin_port);
+            sin.sin_family == AF_INET &&
+            addrlen == sizeof(sin)) {
+        port_number = (int)ntohs(sin.sin_port);
     } else {
-      perror("At getsockname(address) there was an error...");
-      return -1;
+        perror("At getsockname(address) there was an error...");
+        return -1;
     }
 
     return 1;
