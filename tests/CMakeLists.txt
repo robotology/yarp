@@ -72,6 +72,9 @@ if(YARP_COMPILE_TESTS)
             add_test(device::${XN} ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness ${EXECUTABLE_OUTPUT_PATH}/harness_dev --file "${XINI}" --doc "${XDOX}")
         endforeach(X ${inis})
     endif()
+
+    # Integration tests
+    add_subdirectory(integration)
 endif()
 
 # touch 1 2 3 4

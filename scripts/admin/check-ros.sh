@@ -321,3 +321,4 @@ header "Tests finished"
 
 echo " "
 echo "Ok!"
+exit 0
