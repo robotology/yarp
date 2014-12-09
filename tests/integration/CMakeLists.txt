@@ -17,4 +17,7 @@ if(YARP_TEST_INTEGRATION)
     endforeach()
   endforeach()
 
+  add_test("integration::runtime" ${CMAKE_SOURCE_DIR}/scripts/admin/check-runtime.sh)
+  set_property(TEST "integration::runtime" PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
+
 endif()
