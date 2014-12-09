@@ -13,7 +13,7 @@ a connection to encode and decode the data
 -- Open another terminal (lets call this the sender terminal) )and change 
    to the 'coder_decoder' directory: 
    $ cd $YARP_ROOT/example/portmonitor/coder_decoder
-   $ yarp read /write
+   $ yarp write /write
 
 -- Open another terminal (lets call this the receiver terminal) )and change 
    to the 'coder_decoder' directory: 

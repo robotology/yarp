@@ -180,6 +180,8 @@ Beside the port monitor callbacks, there is a set of auxiliary functions which i
 
 - \ref simple_dll "Simple data filtering and modification using DLL and C++"
 
+- \ref coder_decoder "Using the portmonitor object at the both sides of a connection to encode and decode data"
+
 <br>
 \section reading Further reading 
 \li [1] Data Flow Port's Monitoring and Arbitration, Paikan, A., Fitzpatrick, P., Metta, G., and Natale, L., Journal of Software Engneering for Robotics, vol. 5, no. 1, pp. 80-88, 2014. [<a href="http://joser.unibg.it/index.php?journal=joser&page=article&op=view&path%5B%5D=72">pdf</a>]

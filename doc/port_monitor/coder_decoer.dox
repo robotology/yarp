@@ -1,0 +1,137 @@
+
+/*
+ * Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page coder_decoder An example of using the portmonitor object at the both sides of a connection to encode and decode data
+
+\author Ali Paikan
+
+\section desc Description
+This example demonstrates how to use the port the portmonitor object at both side of a connection to encode and decode the data. The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using two portmonitors plugged into the sender and receiver side. Both portmonitors load the same Lua script (\c 'codec.lua') which can act as data coder or decoder depending on the which side of the connection it is attached. 
+
+<br>
+
+\image html coder_decoder.png ""
+ 
+
+\section req Requirements
+\li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
+
+\li Compile Yarp with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+
+\li Set LUA_CPATH to include Yarp-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
+
+
+\section running Running the example
+
+\li Open a terminal and run yarpserver
+\verbatim
+   $ yarpserver
+\endverbatim
+
+\li Open another terminal (lets call this the sender terminal) )and change to the 'coder_decoder' directory: 
+\verbatim
+   $ cd $YARP_ROOT/example/portmonitor/coder_decoder
+   $ yarp write /write
+\endverbatim
+
+\li Open another terminal (lets call this the receiver terminal) )and change to the 'coder_decoder' directory: 
+\verbatim
+   $ cd $YARP_ROOT/example/portmonitor/coder_decoder
+   $ yarp read /read
+\endverbatim
+  
+\li In another terminal connect the port as follow: 
+\verbatim
+   $ yarp connect /write /read tcp+send.portmonitor+type.lua+file.codec
+\endverbatim
+
+Now if you write something in the 'sender' terminal, you will see the original text is encoded with a simple base64 encoder and transmitted to the receiver. For example: 
+\verbatim
+[sender terminal]
+ Hello 
+ 
+[receiver terminal] 
+ "SGVsbG8="
+\endverbatim
+
+Now try to plug the `codec.lua' to the receiver side too. 
+\verbatim
+   $ yarp connect /write /read tcp+send.portmonitor+file.codec+recv.portmonitor+file.codec
+\endverbatim
+
+You will see the data gets decoded and the original text will be shown in the receiver terminal:
+
+\verbatim
+[sender terminal]
+ Hello 
+ 
+[receiver terminal] 
+ "Hello"
+\endverbatim
+
+Notice that codec.lua acts as coder or decoder depending to which side of the connection it is attached. This is checked in the \c 'PortMonitor.create(options)' callback. 
+
+\section scripts Scripts
+
+\subsection codec codec.lua
+\htmlonly
+
+<pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
+<span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
+
+<span style="color:#00b418">--</span>
+<span style="color:#00b418">-- create is called when the port monitor is created </span>
+<span style="color:#00b418">-- @return Boolean</span>
+<span style="color:#00b418">--</span>
+PortMonitor.create <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>(options)   
+    isCoder <span style="color:#0100b6;font-weight:700">=</span> (options:find(<span style="color:#d80800">"sender_side"</span>):asInt() <span style="color:#0100b6;font-weight:700">==</span> <span style="color:#cd0000;font-style:italic">1</span>)
+    <span style="color:#0100b6;font-weight:700">if</span> isCoder <span style="color:#0100b6;font-weight:700">==</span> <span style="color:#585cf6;font-style:italic">true</span> <span style="color:#0100b6;font-weight:700">then</span>
+        <span style="color:#3c4c72;font-weight:700">print</span>(<span style="color:#d80800">"codec.lua: I will encode whatever i get!"</span>)
+    <span style="color:#0100b6;font-weight:700">else</span>
+        <span style="color:#3c4c72;font-weight:700">print</span>(<span style="color:#d80800">"codec.lua: I will decode whatever i get!"</span>)
+    <span style="color:#0100b6;font-weight:700">end</span>        
+    <span style="color:#0100b6;font-weight:700">return</span> <span style="color:#585cf6;font-style:italic">true</span>;
+<span style="color:#0100b6;font-weight:700">end</span>
+
+
+<span style="color:#00b418">--</span>
+<span style="color:#00b418">-- accept is called when the port receives new data</span>
+<span style="color:#00b418">-- @param thing The Things abstract data type</span>
+<span style="color:#00b418">-- @return Boolean</span>
+<span style="color:#00b418">-- if false is returned, the data will be ignored </span>
+<span style="color:#00b418">-- and update() will never be called</span>
+PortMonitor.accept <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>(thing)
+    <span style="color:#0100b6;font-weight:700">if</span> thing:asBottle() <span style="color:#0100b6;font-weight:700">==</span> <span style="color:#585cf6;font-style:italic">nil</span> <span style="color:#0100b6;font-weight:700">then</span>
+        <span style="color:#3c4c72;font-weight:700">print</span>(<span style="color:#d80800">"codec.lua: got wrong data type (expected type Bottle)"</span>)
+        <span style="color:#0100b6;font-weight:700">return</span> <span style="color:#585cf6;font-style:italic">false</span>
+    <span style="color:#0100b6;font-weight:700">end</span>
+    <span style="color:#0100b6;font-weight:700">return</span> <span style="color:#585cf6;font-style:italic">true</span>
+<span style="color:#0100b6;font-weight:700">end</span>
+
+
+<span style="color:#00b418">--</span>
+<span style="color:#00b418">-- update is called when the port receives new data</span>
+<span style="color:#00b418">-- @param thing The Things abstract data type</span>
+<span style="color:#00b418">-- @return Things</span>
+PortMonitor.update <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>(thing)
+    bt <span style="color:#0100b6;font-weight:700">=</span> thing:asBottle()
+    data <span style="color:#0100b6;font-weight:700">=</span> bt:toString()
+    bt:clear()
+    <span style="color:#0100b6;font-weight:700">if</span> isCoder <span style="color:#0100b6;font-weight:700">==</span> <span style="color:#585cf6;font-style:italic">true</span> <span style="color:#0100b6;font-weight:700">then</span> 
+        bt:fromString(enc(data))
+    <span style="color:#0100b6;font-weight:700">else</span>
+        bt:fromString(dec(data))
+    <span style="color:#0100b6;font-weight:700">end</span>
+    <span style="color:#0100b6;font-weight:700">return</span> thing
+<span style="color:#0100b6;font-weight:700">end</span>
+
+</pre>
+
+\endhtmlonly
+
+*/
