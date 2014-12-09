@@ -52,7 +52,14 @@ set(CREATE_OCTAVE FALSE CACHE BOOL "Do you want to create the Octave interface")
 #############################################################################
 ## Find SWIG and YARP
 
-find_package(SWIG REQUIRED)
+if (YARP_SPECIAL_SWIG)
+  set(__CMAKE_IGNORE_PATH ${CMAKE_IGNORE_PATH})
+  set(CMAKE_IGNORE_PATH /usr/bin ${CMAKE_IGNORE_PATH})
+  find_package(SWIG REQUIRED)
+  set(CMAKE_IGNORE_PATH ${__CMAKE_IGNORE_PATH})
+else()
+  find_package(SWIG REQUIRED)
+endif()
 include(${SWIG_USE_FILE})
 message(STATUS "${SWIG_USE_FILE}")
 set(MIN_SWIG_VERSION "1.3.29")
