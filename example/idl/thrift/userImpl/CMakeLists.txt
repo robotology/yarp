@@ -4,7 +4,7 @@
 
 SET(PROJECTNAME Demo)
 PROJECT(${PROJECTNAME})
-include_directories(${generated_libs_include_dir})
+include_directories(${YARP_INCLUDE_DIRS} ${generated_libs_include_dir})
 
 ADD_EXECUTABLE (${PROJECTNAME}Server DemoServer.cpp)
 TARGET_LINK_LIBRARIES(${PROJECTNAME}Server ${YARP_LIBRARIES} generatedDemoLibrary)

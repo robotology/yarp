@@ -98,7 +98,6 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/PolyDriverDescriptor.cpp
                   src/PolyDriverList.cpp
                   src/PopulateDrivers.cpp
-                  src/RemoteControlBoard.cpp
                   src/RemoteFrameGrabber.cpp
                   src/RemoteFrameGrabberDC1394.cpp
                   src/ServerControlBoard.cpp
@@ -106,15 +105,46 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/TestFrameGrabber.cpp
                   src/TorqueControlImpl.cpp)
 
-
 set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
-                        src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
+                        )
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
-                        src/modules/ControlBoardWrapper/ControlBoardWrapper.h
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
+                        )
 
+# handle the ros / yarp thrift messages
+# the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
+add_subdirectory(src/modules/msgs)
+
+
+# defined in msgs forder, for now TBR
+if(CBW2_USE_YARP_THRIFT)
+    message(STATUS "defining YARP_MSG")
+    add_definitions(-DYARP_MSG)
+endif()
+
+if(CBW2_USE_ROS_MSG)
+    message(STATUS "defining ROS_MSG")
+    add_definitions(-DROS_MSG)
+endif()
+
+# handle the source file for the controlboardwrapper2 device
+# the variable cbw2_core_srcs, cbw2_core_hrds, cbw2_core_incl_dirs will be set inside
+add_subdirectory(src/modules/ControlBoardWrapper)
+
+# handle the source file for the RemoteControlBoard device
+# the variables rmc_core_srcs and rmc_core_hrds and rmc_core_incl_dirs will be set inside
+add_subdirectory(src/modules/RemoteControlBoard)
+
+
+set( YARP_devices_SRCS ${YARP_devices_SRCS} ${cbw2_core_srcs} ${rmc_core_srcs} ${cbw2_msgs_srcs})
+set( YARP_devices_HRDS ${YARP_devices_HRDS} ${cbw2_core_hrds} ${rmc_core_hrds} ${cbw2_msgs_hrds})
+
+#message(INFO "\n other_files is ${other_files}")
+include_directories(${cbw2_core_incl_dirs} ${rmc_core_incl_dirs} ${cbw2_msgs_incl_dirs})
+#message(STATUS "CMAKE_CURRENT_BINARY_DIR is ${CMAKE_CURRENT_BINARY_DIR} ||")
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/modules/ControlBoardWrapper/jointstate )
 
 source_group("Source Files" FILES ${YARP_dev_SRCS})
 source_group("Header Files" FILES ${YARP_dev_HDRS})
@@ -127,9 +157,11 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
+include_directories(${other_include_path})
 
 add_library(YARP_dev ${YARP_dev_SRCS} ${YARP_devices_SRCS} ${YARP_dev_HDRS})
-target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
+add_dependencies(YARP_dev yarpidl_rosmsg yarpidl_thrift )
+
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
 

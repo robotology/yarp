@@ -28,6 +28,10 @@
 #include <yarp/dev/PreciselyTimed.h>
 
 
+#ifdef YARP_MSG
+#include <stateExtendedReader.hpp>
+#endif
+
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -256,14 +260,22 @@ protected:
     Port rpc_p;
     Port command_p;
     DiagnosticThread *diagnosticThread;
-    // Port state_p;
 
     PortReaderBuffer<yarp::sig::Vector> state_buffer;
-    // BufferedPort<yarp::sig::Vector> state_p;
     StateInputPort state_p;
     PortWriterBuffer<CommandMessage> command_buffer;
     bool writeStrict_singleJoint;
     bool writeStrict_moreJoints;
+
+#if defined(YARP_MSG)
+    // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
+    // from the YARP .thrift file
+//  yarp::os::PortReaderBuffer<jointData>           extendedInputState_buffer;  // Buffer storing new data
+    StateExtendedInputPort                          extendedIntputStatePort;  // Buffered port storing new data
+    jointData last_singleJoint;     // tmp to store last received data for a particular joint
+//    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
+    jointData last_wholePart;         // tmp to store last received data for whole part
+#endif
 
     ConstString remote;
     ConstString local;
@@ -731,14 +743,14 @@ protected:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
 
-            int njs = l->size();
-            yAssert(nj == njs);
+            int njs = l.size();
+            YARP_ASSERT (nj == njs);
             for (i = 0; i < nj; i++)
-                val[i] = l->get(i).asInt();
+                val[i] = l.get(i).asInt();
 
             getTimeStamp(response, lastStamp);
 
@@ -761,14 +773,14 @@ protected:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
 
-            int njs = l->size();
-            yAssert(nj == njs);
+            int njs = l.size();
+            YARP_ASSERT (nj == njs);
             for (i = 0; i < nj; i++)
-                val[i] = l->get(i).asDouble();
+                val[i] = l.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
 
@@ -794,14 +806,14 @@ protected:
 
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
 
-            int njs = l->size();
-            yAssert(nj == njs);
+            int njs = l.size();
+            YARP_ASSERT (nj == njs);
             for (i = 0; i < nj; i++)
-                val[i] = l->get(i).asDouble();
+                val[i] = l.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
 
@@ -820,22 +832,22 @@ protected:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle *l1 = response.get(2).asList();
-            if (!l1)
+            Bottle& l1 = *(response.get(2).asList());
+            if (&l1 == 0)
                 return false;
-            Bottle *l2 = response.get(3).asList();
-            if (!l2)
+            Bottle& l2 = *(response.get(3).asList());
+            if (&l2 == 0)
                 return false;
 
-            int nj1 = l1->size();
-            int nj2 = l2->size();
+            int nj1 = l1.size();
+            int nj2 = l2.size();
            // ACE_ASSERT (nj == nj1);
            // ACE_ASSERT (nj == nj2);
 
             for (i = 0; i < nj1; i++)
-                val1[i] = l1->get(i).asDouble();
+                val1[i] = l1.get(i).asDouble();
             for (i = 0; i < nj2; i++)
-                val2[i] = l2->get(i).asDouble();
+                val2[i] = l2.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
 
@@ -876,18 +888,18 @@ protected:
 
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle *l2 = response.get(2).asList();
-            if (!l2)
+            Bottle& l2 = *(response.get(2).asList());
+            if (&l2 == 0)
                 return false;
 
-            int nj2 = l2->size();
+            int nj2 = l2.size();
             if(nj2 != len)
             {
                 printf("received an answer with an unexpected number of entries!\n");
                 return false;
             }
             for (i = 0; i < nj2; i++)
-                val2[i] = l2->get(i).asDouble();
+                val2[i] = l2.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -967,9 +979,18 @@ public:
             s1 += "/state:i";
             if (!state_p.open(s1.c_str())) { portProblem = true; }
 
+#if defined(YARP_MSG)
+            s1 = local;
+            s1 += "/stateExt:i";
+            if (!extendedIntputStatePort.open(s1.c_str())) { portProblem = true; }
+#endif
             //new code
-            if (!portProblem) {
+            if (!portProblem)
+            {
                 state_p.useCallback();
+#if defined(YARP_MSG)
+                extendedIntputStatePort.useCallback();
+#endif
             }
         }
 
@@ -1001,9 +1022,16 @@ public:
             s1 += "/state:o";
             s2 = local;
             s2 += "/state:i";
-
             ok = Network::connect(s1, state_p.getName(), carrier);
 
+#if defined(YARP_MSG)
+            s1 = remote;
+            s1 += "/stateExt:o";
+            s2 = local;
+            s2 += "/stateExt:i";
+            // not checking return value for now since it is wip (different machines can have different compilation flags
+            /*ok = */ Network::connect(s1, s2, carrier);
+#endif
             if (!ok) {
                 printf("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
                 connectionProblem = true;
@@ -1015,11 +1043,12 @@ public:
             rpc_p.close();
             command_p.close();
             state_p.close();
-
+#if defined(YARP_MSG)
+            extendedIntputStatePort.close();
+#endif
             return false;
         }
 
-        //        state_buffer.attach(state_p);
         state_buffer.setStrict(false);
         command_buffer.attach(command_p);
 
@@ -1029,6 +1058,9 @@ public:
                 rpc_p.close();
                 command_p.close();
                 state_p.close();
+#if defined(YARP_MSG)
+                extendedIntputStatePort.close();
+#endif
                 return false;
             }
         }
@@ -1042,6 +1074,26 @@ public:
         else
             diagnosticThread=0;
 
+#if defined(YARP_MSG)
+        // allocate memory for helper struct
+        // single joint
+        last_singleJoint.position.resize(1);
+        last_singleJoint.velocity.resize(1);
+        last_singleJoint.acceleration.resize(1);
+        last_singleJoint.torque.resize(1);
+        last_singleJoint.pidOutput.resize(1);
+        last_singleJoint.controlMode.resize(1);
+        last_singleJoint.interactionMode.resize(1);
+
+        // whole part  (safe here because we already got the nj
+        last_wholePart.position.resize(nj);
+        last_wholePart.velocity.resize(nj);
+        last_wholePart.acceleration.resize(nj);
+        last_wholePart.torque.resize(nj);
+        last_wholePart.pidOutput.resize(nj);
+        last_wholePart.controlMode.resize(nj);
+        last_wholePart.interactionMode.resize(nj);
+#endif
         return true;
     }
 
@@ -1060,6 +1112,9 @@ public:
         rpc_p.close();
         command_p.close();
         state_p.close();
+#if defined(YARP_MSG)
+        extendedIntputStatePort.close();
+#endif
         return true;
     }
 
@@ -1218,19 +1273,19 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
-            pid->kp = l->get(0).asDouble();
-            pid->kd = l->get(1).asDouble();
-            pid->ki = l->get(2).asDouble();
-            pid->max_int = l->get(3).asDouble();
-            pid->max_output = l->get(4).asDouble();
-            pid->offset = l->get(5).asDouble();
-            pid->scale = l->get(6).asDouble();
-            pid->stiction_up_val = l->get(7).asDouble();
-            pid->stiction_down_val = l->get(8).asDouble();
-            pid->kff = l->get(9).asDouble();
+            pid->kp = l.get(0).asDouble();
+            pid->kd = l.get(1).asDouble();
+            pid->ki = l.get(2).asDouble();
+            pid->max_int = l.get(3).asDouble();
+            pid->max_output = l.get(4).asDouble();
+            pid->offset = l.get(5).asDouble();
+            pid->scale = l.get(6).asDouble();
+            pid->stiction_up_val = l.get(7).asDouble();
+            pid->stiction_down_val = l.get(8).asDouble();
+            pid->kff = l.get(9).asDouble();
             return true;
         }
         return false;
@@ -1249,26 +1304,26 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
-            const int njs = l->size();
-            yAssert(njs == nj);
+            const int njs = l.size();
+            YARP_ASSERT (njs == nj);
             for (i = 0; i < nj; i++)
             {
-                Bottle *m = l->get(i).asList();
-                if (!m)
+                Bottle& m = *(l.get(i).asList());
+                if (&m == 0)
                     return false;
-                pids[i].kp = m->get(0).asDouble();
-                pids[i].kd = m->get(1).asDouble();
-                pids[i].ki = m->get(2).asDouble();
-                pids[i].max_int = m->get(3).asDouble();
-                pids[i].max_output = m->get(4).asDouble();
-                pids[i].offset = m->get(5).asDouble();
-                pids[i].scale = m->get(6).asDouble();
-                pids[i].stiction_up_val = m->get(7).asDouble();
-                pids[i].stiction_down_val = m->get(8).asDouble();
-                pids[i].kff = m->get(9).asDouble();
+                pids[i].kp = m.get(0).asDouble();
+                pids[i].kd = m.get(1).asDouble();
+                pids[i].ki = m.get(2).asDouble();
+                pids[i].max_int = m.get(3).asDouble();
+                pids[i].max_output = m.get(4).asDouble();
+                pids[i].offset = m.get(5).asDouble();
+                pids[i].scale = m.get(6).asDouble();
+                pids[i].stiction_up_val = m.get(7).asDouble();
+                pids[i].stiction_down_val = m.get(8).asDouble();
+                pids[i].kff = m.get(9).asDouble();
             }
             return true;
         }
@@ -1387,8 +1442,13 @@ public:
     virtual bool getEncoder(int j, double *v) {
         // return get1V1I1D(VOCAB_ENCODER, j, v);
         double localArrivalTime = 0.0;
-        bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
-
+        bool ret;
+#if not defined (YARP_MSG)
+        ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+#else
+        ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *v = last_singleJoint.position[0];
+#endif
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
             ret=false;
 
@@ -1404,8 +1464,14 @@ public:
     virtual bool getEncoderTimed(int j, double *v, double *t) {
         // return get1V1I1D(VOCAB_ENCODER, j, v);
         double localArrivalTime = 0.0;
-        bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
-
+        bool ret = false;
+#if not defined (YARP_MSG)
+        ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+#else
+        ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *v = last_singleJoint.position[0];
+        std::cout << "getEncoderTimed j " << j << " val " << *v << std::endl;
+#endif
         *t=lastStamp.getTime();
 
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
@@ -1426,11 +1492,15 @@ public:
     virtual bool getEncoders(double *encs) {
         if (!isLive()) return false;
         // particular case, does not use RPC
-        Vector tmp(nj);
+        bool ret = false;
         double localArrivalTime=0.0;
 
+
+#if not defined (YARP_MSG)
+        Vector tmp(nj);
+
         // mutex.wait();
-        bool ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+        ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
         // mutex.post();
 
         if (ret)
@@ -1438,7 +1508,7 @@ public:
             if (tmp.size() != (size_t)nj)
                 fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-            yAssert(tmp.size() == (size_t)nj);
+            YARP_ASSERT (tmp.size() == (size_t)nj);
             memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
 
             ////////////////////////// HANDLE TIMEOUT
@@ -1446,7 +1516,10 @@ public:
             if (Time::now()-localArrivalTime>TIMEOUT)
                 ret=false;
         }
-
+#else
+        ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.position.begin(), last_wholePart.position.end(), encs);
+#endif
         return ret;
     }
 
@@ -1459,11 +1532,14 @@ public:
     virtual bool getEncodersTimed(double *encs, double *ts) {
         if (!isLive()) return false;
         // particular case, does not use RPC
-        Vector tmp(nj);
         double localArrivalTime=0.0;
 
+        bool ret=false;
+#if not defined (YARP_MSG)
+
+        Vector tmp(nj);
  //       mutex.wait();
-        bool ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+        ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
  //       mutex.post();
 
         if (ret)
@@ -1471,17 +1547,22 @@ public:
             if (tmp.size() != (size_t)nj)
                 fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-            yAssert(tmp.size() == (size_t)nj);
+            YARP_ASSERT (tmp.size() == (size_t)nj);
             for(int j=0; j<nj; j++)
             {
                 encs[j]=tmp[j];
                 ts[j]=lastStamp.getTime();
             }
-            ////////////////////////// HANDLE TIMEOUT
-            // fill the vector anyway
-            if (Time::now()-localArrivalTime>TIMEOUT)
-                ret=false;
         }
+#else
+        ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.position.begin(), last_wholePart.position.end(), encs);
+        std::fill_n(ts, nj, lastStamp.getTime());
+#endif
+
+        ////////////////////////// HANDLE TIMEOUT
+        if (Time::now()-localArrivalTime>TIMEOUT)
+            ret=false;
 
         return ret;
     }
@@ -1491,8 +1572,16 @@ public:
      * @param sp pointer to storage for the output
      * @return true if successful, false ... otherwise.
      */
-    virtual bool getEncoderSpeed(int j, double *sp) {
+    virtual bool getEncoderSpeed(int j, double *sp)
+    {
+#if not defined (YARP_MSG)
         return get1V1I1D(VOCAB_ENCODER_SPEED, j, sp);
+#else
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *sp = last_singleJoint.velocity[0];
+        return ret;
+#endif
     }
 
 
@@ -1501,8 +1590,16 @@ public:
      * @param spds pointer to storage for the output values
      * @return guess what? (true/false on success or failure).
      */
-    virtual bool getEncoderSpeeds(double *spds) {
+    virtual bool getEncoderSpeeds(double *spds)
+    {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.velocity.begin(), last_wholePart.velocity.end(), spds);
+        return ret;
+#else
         return get1VDA(VOCAB_ENCODER_SPEEDS, spds);
+#endif
     }
 
     /**
@@ -1511,8 +1608,16 @@ public:
      * @param acc pointer to the array that will contain the output
      */
 
-    virtual bool getEncoderAcceleration(int j, double *acc) {
+    virtual bool getEncoderAcceleration(int j, double *acc)
+    {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *acc = last_singleJoint.acceleration[0];
+        return ret;
+#else
         return get1V1I1D(VOCAB_ENCODER_ACCELERATION, j, acc);
+#endif
     }
 
     /**
@@ -1520,8 +1625,16 @@ public:
      * @param accs pointer to the array that will contain the output
      * @return true if all goes well, false if anything bad happens.
      */
-    virtual bool getEncoderAccelerations(double *accs) {
+    virtual bool getEncoderAccelerations(double *accs)
+    {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.acceleration.begin(), last_wholePart.acceleration.end(), accs);
+        return ret;
+#else
         return get1VDA(VOCAB_ENCODER_ACCELERATIONS, accs);
+#endif
     }
 
     /* IPreciselyTimed */
@@ -2040,10 +2153,28 @@ public:
     }
 
     bool getTorque(int j, double *t)
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t); }
+    {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *t = last_singleJoint.torque[0];
+        return ret;
+#else
+        return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t);
+#endif
+    }
 
     bool getTorques(double *t)
-    { return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t); }
+    {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.torque.begin(), last_wholePart.torque.end(), t);
+        return ret;
+#else
+        return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t);
+#endif
+    }
 
     bool getTorqueRange(int j, double *min, double* max)
     { return get2V1I2D(VOCAB_TORQUE, VOCAB_RANGE, j, min, max); }
@@ -2089,19 +2220,19 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
-            pid->kp = l->get(0).asDouble();
-            pid->kd = l->get(1).asDouble();
-            pid->ki = l->get(2).asDouble();
-            pid->max_int = l->get(3).asDouble();
-            pid->max_output = l->get(4).asDouble();
-            pid->offset = l->get(5).asDouble();
-            pid->scale = l->get(6).asDouble();
-            pid->stiction_up_val = l->get(7).asDouble();
-            pid->stiction_down_val = l->get(8).asDouble();
-            pid->kff = l->get(9).asDouble();
+            pid->kp = l.get(0).asDouble();
+            pid->kd = l.get(1).asDouble();
+            pid->ki = l.get(2).asDouble();
+            pid->max_int = l.get(3).asDouble();
+            pid->max_output = l.get(4).asDouble();
+            pid->offset = l.get(5).asDouble();
+            pid->scale = l.get(6).asDouble();
+            pid->stiction_up_val = l.get(7).asDouble();
+            pid->stiction_down_val = l.get(8).asDouble();
+            pid->kff = l.get(9).asDouble();
             return true;
         }
         return false;
@@ -2116,11 +2247,11 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
-            *stiffness = l->get(0).asDouble();
-            *damping   = l->get(1).asDouble();
+            *stiffness = l.get(0).asDouble();
+            *damping   = l.get(1).asDouble();
             return true;
         }
         return false;
@@ -2135,10 +2266,10 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
-            *offset    = l->get(0).asDouble();
+            *offset    = l.get(0).asDouble();
             return true;
         }
         return false;
@@ -2184,13 +2315,13 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
-            *min_stiff    = l->get(0).asDouble();
-            *max_stiff    = l->get(1).asDouble();
-            *min_damp     = l->get(2).asDouble();
-            *max_damp     = l->get(3).asDouble();
+            *min_stiff    = l.get(0).asDouble();
+            *max_stiff    = l.get(1).asDouble();
+            *min_damp     = l.get(2).asDouble();
+            *max_damp     = l.get(3).asDouble();
             return true;
         }
         return false;
@@ -2276,25 +2407,38 @@ public:
 
     bool getControlMode(int j, int *mode)
     {
+        bool ok = false;
+#if defined(YARP_MSG)
+        double localArrivalTime=0.0;
+        ok = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *mode = last_singleJoint.controlMode[0];
+#else
         Bottle cmd, resp;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
         cmd.addVocab(VOCAB_CM_CONTROL_MODE);
         cmd.addInt(j);
 
-        bool ok = rpc_p.write(cmd, resp);
+        ok = rpc_p.write(cmd, resp);
         if (CHECK_FAIL(ok, resp)) {
             *mode=resp.get(2).asVocab();
             return true;
         }
-
+#endif
         return ok;
     }
 
     // IControlMode2
     bool getControlModes(const int n_joint, const int *joints, int *modes)
     {
-        Bottle cmd, response;
+        bool ok = false;
+#if defined(YARP_MSG)
+        double localArrivalTime=0.0;
+        ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        for (int i = 0; i < n_joint; i++)
+            modes[i] = last_wholePart.controlMode[joints[i]];
+#else
+        Bottle cmd, resp;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
         cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
@@ -2303,49 +2447,55 @@ public:
         for (int i = 0; i < n_joint; i++)
             l1.addInt(joints[i]);
 
-        bool ok = rpc_p.write(cmd, response);
+        ok = rpc_p.write(cmd, resp);
 
-        if (CHECK_FAIL(ok, response))
+        if (CHECK_FAIL(ok, resp))
         {
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(resp.get(2).asList());
+            if (&l == 0)
                 return false;
 
-            if (n_joint != l->size())
+            if (n_joint != l.size())
             {
-                printf("getControlModes group received an answer of wrong lenght. expected %d, actual size is %d", n_joint, l->size());
+                printf("getControlModes group received an answer of wrong lenght. expected %d, actual size is %d", n_joint, l.size());
                 return false;
             }
 
             for (int i = 0; i < n_joint; i++)
-                modes[i] = l->get(i).asInt();
+                modes[i] = l.get(i).asInt();
             return true;
         }
-
+#endif
         return ok;
     }
 
     // IControlMode
     bool getControlModes(int *modes)
     {
+        bool ok = false;
+ #if defined(YARP_MSG)
+        double localArrivalTime=0.0;
+        ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.controlMode.begin(), last_wholePart.controlMode.end(), modes);
+ #else
         if (!isLive()) return false;
-        Bottle cmd, response;
+        Bottle cmd, resp;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
         cmd.addVocab(VOCAB_CM_CONTROL_MODES);
 
-        bool ok = rpc_p.write(cmd, response);
-        if (CHECK_FAIL(ok, response)) {
-            Bottle *l = response.get(2).asList();
-            if (!l)
+        ok = rpc_p.write(cmd, resp);
+        if (CHECK_FAIL(ok, resp)) {
+            Bottle& l = *(resp.get(2).asList());
+            if (&l == 0)
                 return false;
-            int njs = l->size();
-            yAssert(nj == njs);
+            int njs = l.size();
+            YARP_ASSERT (nj == njs);
             for (int i = 0; i < nj; i++)
-                modes[i] = l->get(i).asInt();
+                modes[i] = l.get(i).asInt();
             return true;
         }
-
+#endif
         return ok;
     }
 
@@ -2525,19 +2675,19 @@ public:
 
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
-            pid->kp = l->get(0).asDouble();
-            pid->kd = l->get(1).asDouble();
-            pid->ki = l->get(2).asDouble();
-            pid->max_int = l->get(3).asDouble();
-            pid->max_output = l->get(4).asDouble();
-            pid->offset = l->get(5).asDouble();
-            pid->scale = l->get(6).asDouble();
-            pid->stiction_up_val = l->get(7).asDouble();
-            pid->stiction_down_val = l->get(8).asDouble();
-            pid->kff = l->get(9).asDouble();
+            pid->kp = l.get(0).asDouble();
+            pid->kd = l.get(1).asDouble();
+            pid->ki = l.get(2).asDouble();
+            pid->max_int = l.get(3).asDouble();
+            pid->max_output = l.get(4).asDouble();
+            pid->offset = l.get(5).asDouble();
+            pid->scale = l.get(6).asDouble();
+            pid->stiction_up_val = l.get(7).asDouble();
+            pid->stiction_down_val = l.get(8).asDouble();
+            pid->kff = l.get(9).asDouble();
             return true;
         }
         return false;
@@ -2553,26 +2703,26 @@ public:
         if (CHECK_FAIL(ok, response))
         {
             int i;
-            Bottle *l = response.get(2).asList();
-            if (!l)
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
                 return false;
-            const int njs = l->size();
-            yAssert(njs == nj);
+            const int njs = l.size();
+            YARP_ASSERT (njs == nj);
             for (i = 0; i < nj; i++)
             {
-                Bottle *m = l->get(i).asList();
-                if (!m)
+                Bottle& m = *(l.get(i).asList());
+                if (&m == 0)
                     return false;
-                pids[i].kp = m->get(0).asDouble();
-                pids[i].kd = m->get(1).asDouble();
-                pids[i].ki = m->get(2).asDouble();
-                pids[i].max_int = m->get(3).asDouble();
-                pids[i].max_output = m->get(4).asDouble();
-                pids[i].offset = m->get(5).asDouble();
-                pids[i].scale = m->get(6).asDouble();
-                pids[i].stiction_up_val = m->get(7).asDouble();
-                pids[i].stiction_down_val = m->get(8).asDouble();
-                pids[i].kff = m->get(9).asDouble();
+                pids[i].kp = m.get(0).asDouble();
+                pids[i].kd = m.get(1).asDouble();
+                pids[i].ki = m.get(2).asDouble();
+                pids[i].max_int = m.get(3).asDouble();
+                pids[i].max_output = m.get(4).asDouble();
+                pids[i].offset = m.get(5).asDouble();
+                pids[i].scale = m.get(6).asDouble();
+                pids[i].stiction_up_val = m.get(7).asDouble();
+                pids[i].stiction_down_val = m.get(8).asDouble();
+                pids[i].kff = m.get(9).asDouble();
             }
             return true;
         }
@@ -2582,6 +2732,12 @@ public:
     // Interaction Mode interface
     bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
     {
+        bool ok = false;
+ #if defined(YARP_MSG)
+        double localArrivalTime=0.0;
+        ok = extendedIntputStatePort.getLast(axis, last_singleJoint, lastStamp, localArrivalTime);
+        *mode = (yarp::dev::InteractionModeEnum)last_singleJoint.interactionMode[0];
+#else
         Bottle cmd, response;
 
         if (!isLive()) return false;
@@ -2591,19 +2747,26 @@ public:
         cmd.addVocab(VOCAB_INTERACTION_MODE);
         cmd.addInt(axis);
 
-        bool ok = rpc_p.write(cmd, response);
+        ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response))
         {
-            yAssert(response.size()>=1);
+            YARP_ASSERT (response.size()>=1);
             *mode = (InteractionModeEnum) response.get(0).asVocab();
-            return true;
         }
-        return false;
+#endif
+        return ok;
     }
 
     bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
     {
+        bool ok = false;
+ #if defined(YARP_MSG)
+        double localArrivalTime=0.0;
+        ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        for (int i = 0; i < n_joints; i++)
+            modes[i] = (yarp::dev::InteractionModeEnum)last_wholePart.interactionMode[joints[i]];
+#else
         Bottle cmd, response;
         if (!isLive()) return false;
 
@@ -2617,13 +2780,13 @@ public:
         for (int i = 0; i < n_joints; i++)
             l1.addInt(joints[i]);
 
-        bool ok = rpc_p.write(cmd, response);
+        ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response))
         {
             int i;
             Bottle& list = *(response.get(0).asList());
-            yAssert(list.size() >= n_joints)
+            YARP_ASSERT(list.size() >= n_joints)
 
             if (list.size() != n_joints)
             {
@@ -2639,12 +2802,18 @@ public:
                 return true;
             }
         }
-        return false;
+#endif
+        return ok;
     }
 
     bool getInteractionModes(yarp::dev::InteractionModeEnum* modes)
     {
         bool ret = false;
+ #if defined(YARP_MSG)
+        double localArrivalTime=0.0;
+        ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.interactionMode.begin(), last_wholePart.interactionMode.end(), (int*)modes);
+ #else
         Bottle cmd, response;
         if (!isLive()) return false;
 
@@ -2658,7 +2827,7 @@ public:
         {
             int i;
             Bottle& list = *(response.get(0).asList());
-            yAssert(list.size() >= nj)
+            YARP_ASSERT(list.size() >= nj)
 
             if (list.size() != nj)
             {
@@ -2679,6 +2848,7 @@ public:
         {
             ret = false;
         }
+#endif
         return ret;
     }
 
@@ -2820,6 +2990,12 @@ public:
 
     virtual bool getOutput(int j, double *out)
     {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *out = last_singleJoint.pidOutput[0];
+        return ret;
+#else
         // both iOpenLoop and iPid getOutputs will pass here and use the VOCAB_OPENLOOP_INTERFACE
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -2838,6 +3014,7 @@ public:
         }
         else
             return false;
+#endif
     }
 
     /**
@@ -2845,8 +3022,16 @@ public:
      * @param outs pointer to the vector that will store the output values
      * @return true/false on success/failure
      */
-    virtual bool getOutputs(double *outs) {
+    virtual bool getOutputs(double *outs)
+    {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.pidOutput.begin(), last_wholePart.pidOutput.end(), outs);
+        return ret;
+#else
         return get1VDA(VOCAB_OUTPUTS, outs);
+#endif
     }
 };
 

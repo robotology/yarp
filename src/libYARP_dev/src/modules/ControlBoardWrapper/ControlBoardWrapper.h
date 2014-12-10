@@ -33,6 +33,28 @@
 #include <string>
 #include <vector>
 
+//#define ROS_MSG
+////#undef  ROS_MSG
+
+//#define YARP_MSG
+//#undef  YARP_MSG
+
+#ifdef YARP_MSG
+#include "jointData.h"
+#endif
+
+#ifdef ROS_MSG
+#include "jointState.h"
+#endif
+
+#include "StreamingMessagesParser.h"
+#include "RPCMessagesParser.h"
+#include "SubDevice.h"
+
+// ROS state publisher
+#include <yarp/os/Node.h>
+#include <yarp/os/Publisher.h>
+
 
 #ifdef MSVC
     #pragma warning(disable:4355)
@@ -53,7 +75,6 @@ namespace yarp {
         class ControlBoardWrapper;
         namespace impl {
             class CommandsHelper;
-            class ImplementCallbackHelper;
             class SubDevice;
             class WrappedDevice;
         }
@@ -66,256 +87,79 @@ namespace yarp {
 
 enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEVICE=32};
 
-/* the control command message type
-* head is a Bottle which contains the specification of the message type
-* body is a Vector which move the robot accordingly
-*/
-typedef yarp::os::PortablePair<yarp::os::Bottle, yarp::sig::Vector> CommandMessage;
-
-
-/**
-* Helper object for reading config commands for the ControlBoardWrapper
-* class.
-*/
-class  yarp::dev::impl::CommandsHelper : public yarp::dev::DeviceResponder
-{
-protected:
-    yarp::dev::ControlBoardWrapper      *caller;
-    yarp::dev::IPidControl              *pid;
-    yarp::dev::IPositionControl         *pos;
-    yarp::dev::IPositionControl2        *pos2;
-    yarp::dev::IPositionDirect          *iposDir;
-    yarp::dev::IVelocityControl         *vel;
-    yarp::dev::IVelocityControl2        *vel2;
-    yarp::dev::IEncodersTimed           *enc;
-    yarp::dev::IAmplifierControl        *amp;
-    yarp::dev::IControlLimits2          *lim2;
-    yarp::dev::ITorqueControl           *torque;
-    yarp::dev::IControlMode             *iMode;
-    yarp::dev::IControlMode2            *iMode2;
-    yarp::dev::IAxisInfo                *info;
-    yarp::dev::IControlCalibration2     *ical2;
-    yarp::dev::IOpenLoopControl         *iOpenLoop;
-    yarp::dev::IImpedanceControl        *iImpedance;
-    yarp::dev::IInteractionMode         *iInteract;
-    yarp::sig::Vector                   vect;
-    yarp::os::Stamp                     lastRpcStamp;
-    yarp::os::Semaphore                 mutex;
-    int                                 controlledJoints;
-
-public:
-    /**
-    * Constructor.
-    */
-    CommandsHelper();
-
-    /**
-    * Initialization.
-    * @param x is the pointer to the instance of the object that uses the CommandsHelper.
-    * This is required to recover the pointers to the interfaces that implement the responses
-    * to the commands.
-    */
-    void init(yarp::dev::ControlBoardWrapper *x);
-
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
-
-    void handleTorqueMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
-
-    void handleControlModeMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
-
-    void handleImpedanceMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
-
-    void handleInteractionModeMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
-
-    void handleOpenLoopMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
-
-    /**
-    * Initialize the internal data.
-    * @return true/false on success/failure
-    */
-    virtual bool initialize();
-};
-
-
-/**
-* Callback implementation after buffered input.
-*/
-class  yarp::dev::impl::ImplementCallbackHelper : public yarp::os::TypedReaderCallback<CommandMessage> {
-protected:
-    yarp::dev::IPositionControl     *pos;
-    yarp::dev::IPositionControl2    *pos2;
-    yarp::dev::IPositionDirect      *posDir;
-    yarp::dev::IVelocityControl     *vel;
-    yarp::dev::IVelocityControl2    *vel2;
-    yarp::dev::IOpenLoopControl     *iOpenLoop;
-    int                             controlledAxes;
-
-public:
-    /**
-    * Constructor.
-    */
-    ImplementCallbackHelper();
-
-    /**
-    * Initialization.
-    * @param x is the instance of the container class using the callback.
-    */
-    void init(yarp::dev::ControlBoardWrapper *x);
-
-    /**
-    * Callback function.
-    * @param v is the Vector being received.
-    */
-    virtual void onRead(CommandMessage& v);
-
-    bool initialize();
-};
-
-
-class  yarp::dev::impl::SubDevice
-{
-public:
-    std::string id;
-    int base;
-    int top;
-    int axes;
-
-    bool configuredF;
-
-    yarp::dev::PolyDriver            *subdevice;
-    yarp::dev::IPidControl           *pid;
-    yarp::dev::IPositionControl      *pos;
-    yarp::dev::IPositionControl2     *pos2;
-    yarp::dev::IVelocityControl      *vel;
-    yarp::dev::IVelocityControl2     *vel2;
-    yarp::dev::IEncodersTimed        *enc;
-    yarp::dev::IAmplifierControl     *amp;
-    yarp::dev::IControlLimits2       *lim2;
-    yarp::dev::IControlCalibration   *calib;
-    yarp::dev::IControlCalibration2  *calib2;
-    yarp::dev::IPreciselyTimed       *iTimed;
-    yarp::dev::ITorqueControl        *iTorque;
-    yarp::dev::IImpedanceControl     *iImpedance;
-    yarp::dev::IOpenLoopControl      *iOpenLoop;
-    yarp::dev::IControlMode          *iMode;
-    yarp::dev::IControlMode2         *iMode2;
-    yarp::dev::IAxisInfo             *info;
-    yarp::dev::IPositionDirect       *posDir;
-    yarp::dev::IInteractionMode      *iInteract;
-
-    yarp::sig::Vector subDev_encoders;
-    yarp::sig::Vector encodersTimes;
-
-    SubDevice();
-
-    bool attach(yarp::dev::PolyDriver *d, const std::string &id);
-    void detach();
-    inline void setVerbose(bool _verbose) {_subDevVerbose = _verbose; }
-
-    bool configure(int base, int top, int axes, const std::string &id);
-
-    inline void refreshEncoders()
-    {
-        for(int j=base, idx=0; j<(base+axes); j++, idx++)
-        {
-            if(enc)
-                enc->getEncoderTimed(j, &subDev_encoders[idx], &encodersTimes[idx]);
-        }
-    }
-
-    bool isAttached()
-    { return attachedF; }
-
-private:
-    bool _subDevVerbose;
-    bool attachedF;
-};
-
-typedef std::vector<yarp::dev::impl::SubDevice> SubDeviceVector;
-
-struct DevicesLutEntry
-{
-    int offset; //an offset, the device is mapped starting from this joint
-    int deviceEntry; //index to the joint corresponding subdevice in the list
-};
-
-
-class yarp::dev::impl::WrappedDevice
-{
-public:
-    SubDeviceVector subdevices;
-    std::vector<DevicesLutEntry> lut;
-
-    inline yarp::dev::impl::SubDevice *getSubdevice(unsigned int i)
-    {
-        if (i>=subdevices.size())
-            return 0;
-
-        return &subdevices[i];
-    }
-};
-
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*
-* A modified version of the network wrapper. Similar
-* to the the network wrapper in YARP, but it
-* maps only a subpart of the underlying device.
+* A updated version of the controlBoard network wrapper.
+* It can merge toghether more than one device, or use only a
+* portion of it by remapping utility.
 * Allows also deferred attach/detach of a subdevice.
 */
-class yarp::dev::ControlBoardWrapper:
-                             public yarp::dev::DeviceDriver,
-                             public yarp::os::RateThread,
-                             public yarp::dev::IPidControl,
-                             public yarp::dev::IPositionControl2,
-                             public yarp::dev::IPositionDirect,
-                             public yarp::dev::IVelocityControl2,
-                             public yarp::dev::IEncodersTimed,
-                             public yarp::dev::IAmplifierControl,
-                             public yarp::dev::IControlLimits2,
-                             public yarp::dev::IControlCalibration,
-                             public yarp::dev::IControlCalibration2,
-                             public yarp::dev::IOpenLoopControl,
-                             public yarp::dev::ITorqueControl,
-                             public yarp::dev::IImpedanceControl,
-                             public yarp::dev::IControlMode2,
-                             public yarp::dev::IMultipleWrapper,
-                             public yarp::dev::IAxisInfo,
-                             public yarp::dev::IPreciselyTimed,
-                             public yarp::dev::IInteractionMode
+class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
+                                        public yarp::os::RateThread,
+                                        public yarp::dev::IPidControl,
+                                        public yarp::dev::IPositionControl2,
+                                        public yarp::dev::IPositionDirect,
+                                        public yarp::dev::IVelocityControl2,
+                                        public yarp::dev::IEncodersTimed,
+                                        public yarp::dev::IAmplifierControl,
+                                        public yarp::dev::IControlLimits2,
+                                        public yarp::dev::IControlCalibration,
+                                        public yarp::dev::IControlCalibration2,
+                                        public yarp::dev::IOpenLoopControl,
+                                        public yarp::dev::ITorqueControl,
+                                        public yarp::dev::IImpedanceControl,
+                                        public yarp::dev::IControlMode2,
+                                        public yarp::dev::IMultipleWrapper,
+                                        public yarp::dev::IAxisInfo,
+                                        public yarp::dev::IPreciselyTimed,
+                                        public yarp::dev::IInteractionMode
 {
 private:
+
+    std::string rootName;
     yarp::dev::impl::WrappedDevice device;
 
-    yarp::os::BufferedPort<yarp::sig::Vector> state_p;   // out port to read the state
-    yarp::os::Port control_p; // in port to command the robot
-    yarp::os::Port rpc_p;     // RPC to configure the robot
-    yarp::os::Stamp time;     // envelope to attach to the state port
+    yarp::os::Port outputPositionStatePort;     // Port /state:o streaming out the encoder positions
+    yarp::os::Port outputStructStatePort;       // Port /?????:o streaming out the state as a struct
+    yarp::os::Port inputStreamingPort;          // Input streaming port for high frequency commands
+    yarp::os::Port inputRPCPort;                // Input RPC port for set/get remote calls
+    yarp::os::Stamp time;                       // envelope to attach to the state port
     yarp::os::Semaphore timeMutex;
 
-    yarp::os::PortWriterBuffer<yarp::sig::Vector> state_buffer;
-    yarp::os::PortReaderBuffer<CommandMessage> control_buffer;
+    yarp::os::PortWriterBuffer<yarp::sig::Vector>   outputPositionState_buffer;     // Buffer associated to the outputPositionStatePort port
 
-    yarp::dev::impl::ImplementCallbackHelper callback_impl;
+#if defined(YARP_MSG)
+    // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
+    // from the YARP .thrift file
+    yarp::os::PortWriterBuffer<jointData>           extendedOutputState_buffer;
+    yarp::os::Port extendedOutputStatePort;     // Port /stateExt:o streaming out the encoder positions
+#endif
 
-    yarp::dev::impl::CommandsHelper command_reader;
 
-    // for new interface
-    yarp::os::PortReaderBuffer<yarp::os::Bottle> command_buffer;
+#if defined(ROS_MSG)
+    // ROS state publisher
+    yarp::os::Node *rosNode;   // added a Node
+    yarp::os::PortWriterBuffer<jointState>           rosOutputState_buffer;     // Buffer associated to the extendedOutputStatePort port
+    yarp::os::Publisher<jointState>  rosPublisherPort;  // changed Port to Publisher
+#endif
 
-    yarp::sig::Vector            CBW_encoders;
-    std::string       partName;
+
+    yarp::os::PortReaderBuffer<CommandMessage>      inputStreaming_buffer;          // Buffer associated to the inputStreamingPort port
+    yarp::os::PortReaderBuffer<yarp::os::Bottle>    inputRPC_buffer;                // Buffer associated to the inputRPCPort port
+    yarp::dev::impl::RPCMessagesParser              RPC_parser;                     // Message parser associated to the inputRPCPort port
+    yarp::dev::impl::StreamingMessagesParser        streaming_parser;               // Message parser associated to the inputStreamingPort port
+
+    yarp::sig::Vector   CBW_encoders;
+    std::string         partName;               // to open ports and debug messages
 
     int               controlledJoints;
-    int               base;
-    int               top;
+    int               base;         // to be removed
+    int               top;          // to be removed
     int               thread_period;
-    bool              _verb;
+    bool              _verb;        // make it work and propagate to subdevice if --subdevice option is used
+
+    bool closeMain();
 
     yarp::os::Bottle getOptions();
 
@@ -334,24 +178,9 @@ public:
     /**
     * Constructor.
     */
-    ControlBoardWrapper() :yarp::os::RateThread(20), 
-        control_buffer(4),
-        ownDevices(true)
-    {
-        callback_impl.init(this);
-        command_reader.init(this);
-        ////YARP_TRACE(Logger::get(),"ControlBoardWrapper2::ControlBoardWrapper2()", Logger::get().log_files.f3);
-        
-        thread_period = 20; // ms.
-        base = 0;
-        top = 0;
-        subDeviceOwned = NULL;
-        _verb = false;
-    }
+    ControlBoardWrapper();
 
-    virtual ~ControlBoardWrapper() 
-    {
-    }
+    virtual ~ControlBoardWrapper();
 
     /**
     * Return the value of the verbose flag.
@@ -363,43 +192,13 @@ public:
     * Default open() method.
     * @return always false since initialization requires parameters.
     */
-    virtual bool open() {
-        return false;
-    }
+    virtual bool open() { return false; }
 
     /**
     * Close the device driver by deallocating all resources and closing ports.
     * @return true if successful or false otherwise.
     */
-    virtual bool close() {
-
-        //stop thread if running
-        if (yarp::os::RateThread::isRunning()) {
-            yarp::os::RateThread::stop();
-        }
-
-        //shut down control port
-        control_p.close();
-        state_p.close();
-        rpc_p.close();
-
-        //if we own a deviced we have to close and delete it
-        if (ownDevices)
-        {
-            // we should have created a new devices which we need to delete
-            if(subDeviceOwned != NULL)
-            {
-                subDeviceOwned->close();
-                delete subDeviceOwned;
-                subDeviceOwned = NULL;
-            }
-        }
-        else
-        {
-            detachAll();
-        }
-        return true;
-    }
+    virtual bool close();
 
 
     /**
@@ -429,48 +228,13 @@ public:
     * @param p new pid value
     * @return true/false on success/failure
     */
-    virtual bool setPid(int j, const Pid &p)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
-        if (!s)
-            return false;
-
-        if (s->pid)
-        {
-            return s->pid->setPid(off+base, p);
-        }
-        return false;
-    }
+    virtual bool setPid(int j, const Pid &p);
 
     /** Set new pid value on multiple axes.
     * @param ps pointer to a vector of pids
     * @return true/false upon success/failure
     */
-    virtual bool setPids(const Pid *ps)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->pid)
-            {
-                ret=ret&&p->pid->setPid(off+base, ps[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool setPids(const Pid *ps);
 
     /** Set the controller reference point for a given axis.
     * Warning this method can result in very large torques
@@ -481,21 +245,7 @@ public:
     * @param ref new reference point
     * @return true/false upon success/failure
     */
-    virtual bool setReference(int j, double ref)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
-        {
-            return p->pid->setReference(off+base, ref);
-        }
-        return false;
-    }
+    virtual bool setReference(int j, double ref);
 
     /** Set the controller reference points, multiple axes.
     * Warning this method can result in very large torques
@@ -505,322 +255,84 @@ public:
     * @param refs pointer to the vector that contains the new reference points.
     * @return true/false upon success/failure
     */
-    virtual bool setReferences(const double *refs) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->pid)
-            {
-                ret=ret&&p->pid->setReference(off+base, refs[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool setReferences(const double *refs);
 
     /** Set the error limit for the controller on a specifi joint
     * @param j joint number
     * @param limit limit value
     * @return true/false on success/failure
     */
-    virtual bool setErrorLimit(int j, double limit) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
-        {
-            return p->pid->setErrorLimit(off+base, limit);
-        }
-        return false;
-    }
+    virtual bool setErrorLimit(int j, double limit);
 
     /** Get the error limit for the controller on all joints.
     * @param limits pointer to the vector with the new limits
     * @return true/false on success/failure
     */
-    virtual bool setErrorLimits(const double *limits) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->pid)
-            {
-                ret=ret&&p->pid->setErrorLimit(off+base, limits[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool setErrorLimits(const double *limits);
 
     /** Get the current error for a joint.
     * @param j joint number
     * @param err pointer to the storage for the return value
     * @return true/false on success failure
     */
-    virtual bool getError(int j, double *err) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
-        {
-            return p->pid->getError(off+base, err);
-        }
-        *err = 0.0;
-        return false;
-    }
+    virtual bool getError(int j, double *err);
 
     /** Get the error of all joints.
     * @param errs pointer to the vector that will store the errors.
     * @return true/false on success/failure.
     */
-    virtual bool getErrors(double *errs) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->pid)
-            {
-                ret=ret&&p->pid->getError(off+base, errs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool getErrors(double *errs);
 
     /** Get the output of the controller (e.g. pwm value)
     * @param j joint number
     * @param out pointer to storage for return value
     * @return success/failure
     */
-    virtual bool getOutput(int j, double *out) {
-
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
-        {
-            return p->pid->getOutput(off+base, out);
-        }
-        *out=0.0;
-        return false;
-    }
+    virtual bool getOutput(int j, double *out);
 
     /** Get the output of the controllers (e.g. pwm value)
     * @param outs pinter to the vector that will store the output values
     */
-    virtual bool getOutputs(double *outs) {
-        bool ret=true;
+    virtual bool getOutputs(double *outs);
 
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->pid)
-            {
-                ret=ret&&p->pid->getOutput(off+base, outs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool setOffset(int j, double v)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
-        {
-            return p->pid->setOffset(off+base, v);
-        }
-        return false;
-    }
+    virtual bool setOffset(int j, double v);
 
     /** Get current pid value for a specific joint.
     * @param j joint number
     * @param p pointer to storage for the return value.
     * @return success/failure
     */
-    virtual bool getPid(int j, Pid *p)
-    {
-//#warning "check for max number of joints!?!?!"
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
-        if (!s)
-            return false;
-
-        if (s->pid)
-        {
-            return s->pid->getPid(off+base, p);
-        }
-        return false;
-    }
+    virtual bool getPid(int j, Pid *p);
 
     /** Get current pid value for a specific joint.
     * @param pids vector that will store the values of the pids.
     * @return success/failure
     */
-    virtual bool getPids(Pid *pids)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->pid)
-            {
-                ret=ret&&p->pid->getPid(off+base, pids+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool getPids(Pid *pids);
 
     /** Get the current reference position of the controller for a specific joint.
     * @param j joint number
     * @param ref pointer to storage for return value
     * @return reference value
     */
-    virtual bool getReference(int j, double *ref) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-        if (p->pid)
-        {
-            return p->pid->getReference(off+base, ref);
-        }
-        return false;
-    }
+    virtual bool getReference(int j, double *ref);
 
     /** Get the current reference position of all controllers.
     * @param refs vector that will store the output.
     */
-    virtual bool getReferences(double *refs) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->pid)
-            {
-                ret=ret&&p->pid->getReference(off+base, refs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool getReferences(double *refs);
 
     /** Get the error limit for the controller on a specific joint
     * @param j joint number
     * @param limit pointer to storage
     * @return success/failure
     */
-    virtual bool getErrorLimit(int j, double *limit) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
-        {
-            return p->pid->getErrorLimit(off+base, limit);
-        }
-        return false;
-    }
-
+    virtual bool getErrorLimit(int j, double *limit);
     /** Get the error limit for all controllers
     * @param limits pointer to the array that will store the output
     * @return success or failure
     */
-    virtual bool getErrorLimits(double *limits) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->pid)
-            {
-                ret=ret&&p->pid->getErrorLimit(off+base, limits+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool getErrorLimits(double *limits);
 
     /** Reset the controller of a given joint, usually sets the
     * current position of the joint as the reference value for the PID, and resets
@@ -828,64 +340,20 @@ public:
     * @param j joint number
     * @return true on success, false on failure.
     */
-    virtual bool resetPid(int j) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
-        {
-            return p->pid->resetPid(off+base);
-        }
-        return false;
-    }
-
+    virtual bool resetPid(int j);
     /**
     * Disable the pid computation for a joint
     * @param j is the axis number
     * @return true if successful, false on failure
     **/
-    virtual bool disablePid(int j) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        // Use the newer interface if available, otherwise fallback on the old one.
-        if(p->iMode2)
-            return p->iMode2->setControlMode(off+base, VOCAB_CM_IDLE);
-        else
-            if (p->pid)
-            {
-                return p->pid->disablePid(off+base);
-            }
-        return false;
-    }
+    virtual bool disablePid(int j);
 
     /**
     * Enable the pid computation for a joint
     * @param j is the axis number
     * @return true/false on success/failure
     */
-    virtual bool enablePid(int j) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pid)
-        {
-            return p->pid->enablePid(off+base);
-        }
-        return false;
-    }
+    virtual bool enablePid(int j);
 
     /* IPositionControl */
 
@@ -895,10 +363,7 @@ public:
     * @param ax pointer to storage
     * @return true/false.
     */
-    virtual bool getAxes(int *ax) {
-        *ax=controlledJoints;
-        return true;
-    }
+    virtual bool getAxes(int *ax);
 
     /**
     * Set position mode. This command
@@ -907,63 +372,8 @@ public:
     * it can be left empty.
     * return true/false on success/failure
     */
-    virtual bool setPositionMode() {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            if (!p)
-                return false;
-
-            if (p->iMode2)
-            {
-                //calling new iControlMode2 interface
-                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION);
-            }
-            else if(p->iMode)
-            {
-                //calling old iControlMode interface
-                ret=ret&&p->iMode->setPositionMode(off+base);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool setOpenLoopMode() {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            if (!p)
-                return false;
-
-            if (p->iMode2)
-            {
-                //calling new iControlMode2 interface
-                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_OPENLOOP);
-            }
-            else if(p->iMode)
-            {
-                //calling iControlMode interface
-                ret=ret&&p->iMode->setOpenLoopMode(off+base);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool setPositionMode();
+    virtual bool setOpenLoopMode();
 
     /**
     * Set new reference point for a single axis.
@@ -971,139 +381,20 @@ public:
     * @param ref specifies the new ref point
     * @return true/false on success/failure
     */
-    virtual bool positionMove(int j, double ref) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->pos->positionMove(off+base, ref);
-        }
-
-        return false;
-    }
+    virtual bool positionMove(int j, double ref);
 
     /** Set new reference point for all axes.
     * @param refs array, new reference points.
     * @return true/false on success/failure
     */
-    virtual bool positionMove(const double *refs)
-    {
-        bool ret = true;
-        int j_wrap = 0;         // index of the wrapper joint
-
-        int nDev = device.subdevices.size();
-        for(int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
-        {
-            int subIndex=device.lut[j_wrap].deviceEntry;
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            int wrapped_joints=(p->top - p->base) + 1;
-            int *joints = new int[wrapped_joints];
-
-            if(!p)
-                return false;
-
-            if(p->pos2)   // Position Control 2
-            {
-                // versione comandi su subset di giunti
-                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++)
-                {
-                    joints[j_dev] = p->base + j_dev;  // for all joints is equivalent to add offset term
-                }
-
-                ret = ret && p->pos2->positionMove(wrapped_joints, joints, &refs[j_wrap]);
-                j_wrap+=wrapped_joints;
-            }
-            else   // Classic Position Control
-            {
-                if(p->pos)
-                {
-
-                    for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
-                    {
-                        int off=device.lut[j_wrap].offset;
-                        ret=ret && p->pos->positionMove(p->base+off, refs[j_wrap]);
-                    }
-                }
-                else
-                {
-                    ret=false;
-                }
-            }
-
-            if(joints!=0)
-            { delete [] joints;
-              joints = 0;}
-        }
-
-        return ret;
-    }
+    virtual bool positionMove(const double *refs);
 
     /** Set new reference point for a subset of axis.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifing the new reference points
      * @return true/false on success/failure
      */
-    virtual bool positionMove(const int n_joints, const int *joints, const double *refs)
-    {
-        bool ret = true;
-
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check if concurrency problems are real!!
-     */
-
-        int    nDev   = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice   *ps[MAX_DEVICES];
-
-       for(int i=0; i<nDev; i++)
-       {
-           X_idx[i]=0;
-           ps[i]=device.getSubdevice(i);
-       }
-
-
-       // Create a map of joints for each subDevice
-       int subIndex = 0;
-       for(int j=0; j<n_joints; j++)
-       {
-           subIndex = device.lut[joints[j]].deviceEntry;
-           XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-           XRefs[subIndex][X_idx[subIndex]] = refs[j];
-           X_idx[subIndex]++;
-       }
-
-       for(subIndex=0; subIndex<nDev; subIndex++)
-       {
-           if(ps[subIndex]->pos2)   // Position Control 2
-           {
-               ret= ret && ps[subIndex]->pos2->positionMove(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
-           }
-           else   // Classic Position Control
-           {
-               if(ps[subIndex]->pos)
-               {
-                   for(int i = 0; i < X_idx[subIndex]; i++)
-                   {
-                       ret=ret && ps[subIndex]->pos->positionMove(XJoints[subIndex][i], XRefs[subIndex][i]);
-                   }
-               }
-               else
-               {
-                   ret=false;
-               }
-           }
-       }
-        return ret;
-    }
+    virtual bool positionMove(const int n_joints, const int *joints, const double *refs);
 
     /** Set relative position. The command is relative to the
     * current position of the axis.
@@ -1111,108 +402,20 @@ public:
     * @param delta relative command
     * @return true/false on success/failure
     */
-    virtual bool relativeMove(int j, double delta) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->pos->relativeMove(off+base, delta);
-        }
-
-        return false;
-    }
+    virtual bool relativeMove(int j, double delta);
 
     /** Set relative position, all joints.
     * @param deltas pointer to the relative commands
     * @return true/false on success/failure
     */
-    virtual bool relativeMove(const double *deltas) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->pos)
-            {
-                ret=ret&&p->pos->relativeMove(off+base, deltas[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool relativeMove(const double *deltas);
 
     /** Set relative position for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param deltas pointer to the array of relative commands
      * @return true/false on success/failure
      */
-    virtual bool relativeMove(const int n_joints, const int *joints, const double *deltas)
-    {
-        bool ret = true;
-
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check this!!
-     */
-
-        int    nDev   = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice   *ps[MAX_DEVICES];
-
-        for(int i=0; i<nDev; i++)
-       {
-           X_idx[i]=0;
-           ps[i]=device.getSubdevice(i);
-       }
-
-
-       // Create a map of joints for each subDevice
-       int subIndex = 0;
-       for(int j=0; j<n_joints; j++)
-       {
-           subIndex = device.lut[joints[j]].deviceEntry;
-           XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-           XRefs[subIndex][X_idx[subIndex]] = deltas[j];
-           X_idx[subIndex]++;
-       }
-
-       for(subIndex=0; subIndex<nDev; subIndex++)
-       {
-           if(ps[subIndex]->pos2)   // Position Control 2
-           {
-               ret= ret && ps[subIndex]->pos2->relativeMove(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
-           }
-           else   // Classic Position Control
-           {
-               if(ps[subIndex]->pos)
-               {
-                   for(int i = 0; i < X_idx[subIndex]; i++)
-                   {
-                       ret=ret && ps[subIndex]->pos->relativeMove(XJoints[subIndex][i], XRefs[subIndex][i]);
-                   }
-               }
-               else
-               {
-                   ret=false;
-               }
-           }
-       }
-        return ret;
-    }
+    virtual bool relativeMove(const int n_joints, const int *joints, const double *deltas);
 
     /**
     * Check if the current trajectory is terminated. Non blocking.
@@ -1220,115 +423,20 @@ public:
     * @param flag true if the trajectory is terminated, false otherwise
     * @return false on failure
     */
-    virtual bool checkMotionDone(int j, bool *flag) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->pos->checkMotionDone(off+base, flag);
-        }
-
-        return false;
-    }
-
+    virtual bool checkMotionDone(int j, bool *flag);
     /**
     * Check if the current trajectory is terminated. Non blocking.
     * @param flag true if the trajectory is terminated, false otherwise
     * @return false on failure
     */
-    virtual bool checkMotionDone(bool *flag) {
-        bool ret=true;
-        *flag=true;
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            if (!p)
-                return false;
-
-            if (p->pos)
-            {
-                bool tmpF=false;
-                ret=ret&&p->pos->checkMotionDone(off+base, &tmpF);
-                *flag=*flag&&tmpF;
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
+    virtual bool checkMotionDone(bool *flag);
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @param joints pointer to the array of joint numbers
      * @param flags  pointer to the array that will store the actual value of the checkMotionDone
      * @return true/false if network communication went well.
      */
-    virtual bool checkMotionDone(const int n_joints, const int *joints, bool *flags)
-    {
-        bool ret = true;
-
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check this!!
-     */
-
-        int    nDev   = device.subdevices.size();
-        bool   XFlags = true;
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice   *ps[MAX_DEVICES];
-
-        for(int i=0; i<nDev; i++)
-       {
-           X_idx[i]=0;
-           ps[i]=device.getSubdevice(i);
-       }
-
-
-       // Create a map of joints for each subDevice
-       int subIndex;
-       for(int j=0; j<n_joints; j++)
-       {
-           subIndex = device.lut[joints[j]].deviceEntry;
-           XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-           X_idx[subIndex]++;
-       }
-
-       for(subIndex=0; subIndex<nDev; subIndex++)
-       {
-           if(ps[subIndex]->pos2)   // Position Control 2
-           {
-               ret= ret && ps[subIndex]->pos2->checkMotionDone(X_idx[subIndex], XJoints[subIndex], &XFlags);
-                *flags = flags && XFlags;
-           }
-           else   // Classic Position Control
-           {
-               if(ps[subIndex]->pos)
-               {
-                   for(int i = 0; i < X_idx[subIndex]; i++)
-                   {
-                       ret=ret && ps[subIndex]->pos->checkMotionDone(XJoints[subIndex][i], &XFlags);
-                        *flags = flags && XFlags;
-                   }
-               }
-               else
-               {
-                   ret=false;
-               }
-           }
-       }
-        return ret;
-    }
+    virtual bool checkMotionDone(const int n_joints, const int *joints, bool *flags);
 
     /** Set reference speed for a joint, this is the speed used during the
     * interpolation of the trajectory.
@@ -1336,76 +444,14 @@ public:
     * @param sp speed value
     * @return true/false upon success/failure
     */
-    virtual bool setRefSpeed(int j, double sp) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->pos->setRefSpeed(off+base, sp);
-        }
-        return false;
-    }
+    virtual bool setRefSpeed(int j, double sp);
 
     /** Set reference speed on all joints. These values are used during the
     * interpolation of the trajectory.
     * @param spds pointer to the array of speed values.
     * @return true/false upon success/failure
     */
-    virtual bool setRefSpeeds(const double *spds)
-    {
-        bool ret = true;
-        int j_wrap = 0;         // index of the wrapper joint
-
-        for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
-        {
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);
-
-            if(!p)
-                return false;
-
-            int wrapped_joints=(p->top - p->base) + 1;
-            int *joints = new int[wrapped_joints];
-
-            if(p->pos2)   // Position Control 2
-            {
-                // verione comandi su subset di giunti
-                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++)
-                {
-                    joints[j_dev] = p->base + j_dev;
-                }
-
-                p->pos2->setRefSpeeds(wrapped_joints, joints, &spds[j_wrap]);
-                j_wrap += wrapped_joints;
-            }
-            else   // Classic Position Control
-            {
-                if(p->pos)
-                {
-                    for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
-                    {
-                        int off=device.lut[j_wrap].offset;
-                        ret=ret && p->pos->setRefSpeed(p->base+off, spds[j_wrap]);
-                    }
-                }
-                else
-                {
-                    ret=false;
-                }
-            }
-
-            if(joints!=0)
-            { delete [] joints;
-              joints = 0;}
-        }
-
-        return ret;
-    }
-
+    virtual bool setRefSpeeds(const double *spds);
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.
@@ -1413,60 +459,7 @@ public:
      * @param spds   pointer to the array with speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeeds(const int n_joints, const int *joints, const double *spds)
-    {
-        /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-         * then it is optimizable by instantiating the table once and for all during the creation of the class.
-         * TODO check this!!
-         */
-
-        bool ret = true;
-        int    nDev   = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        double   XSpeds[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice   *ps[MAX_DEVICES];
-
-        for(int i=0; i<nDev; i++)
-       {
-           X_idx[i]=0;
-           ps[i]=device.getSubdevice(i);
-       }
-
-
-       // Create a map of joints for each subDevice
-       int subIndex = 0;
-       for(int j=0; j<n_joints; j++)
-       {
-           subIndex = device.lut[joints[j]].deviceEntry;
-           XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-           XSpeds[subIndex][X_idx[subIndex]] = spds[j];
-           X_idx[subIndex]++;
-       }
-
-       for(subIndex=0; subIndex<nDev; subIndex++)
-       {
-           if(ps[subIndex]->pos2)   // Position Control 2
-           {
-               ret= ret && ps[subIndex]->pos2->setRefSpeeds(X_idx[subIndex], XJoints[subIndex], XSpeds[subIndex]);
-           }
-           else   // Classic Position Control
-           {
-               if(ps[subIndex]->pos)
-               {
-                   for(int i = 0; i < X_idx[subIndex]; i++)
-                   {
-                       ret=ret && ps[subIndex]->pos->setRefSpeed(XJoints[subIndex][i], XSpeds[subIndex][i]);
-                   }
-               }
-               else
-               {
-                   ret=false;
-               }
-           }
-       }
-        return ret;
-    }
+    virtual bool setRefSpeeds(const int n_joints, const int *joints, const double *spds);
 
     /** Set reference acceleration for a joint. This value is used during the
     * trajectory generation.
@@ -1474,77 +467,14 @@ public:
     * @param acc acceleration value
     * @return true/false upon success/failure
     */
-    virtual bool setRefAcceleration(int j, double acc) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->pos->setRefAcceleration(off+base, acc);
-        }
-        return false;
-    }
+    virtual bool setRefAcceleration(int j, double acc);
 
     /** Set reference acceleration on all joints. This is the valure that is
     * used during the generation of the trajectory.
     * @param accs pointer to the array of acceleration values
     * @return true/false upon success/failure
     */
-    virtual bool setRefAccelerations(const double *accs)
-    {
-        bool ret = true;
-        int j_wrap = 0;    // index of the joint from the wrapper side (useful if wrapper joins 2 subdevices)
-
-        // for all subdevices
-        for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
-        {
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);
-
-            if(!p)
-                return false;
-
-            int wrapped_joints=(p->top - p->base) + 1;
-            int *joints = new int[wrapped_joints];  // to be defined once and for all?
-
-            if(p->pos2)   // Position Control 2
-            {
-                // verione comandi su subset di giunti
-                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++)
-                {
-                    joints[j_dev] = p->base + j_dev;
-                }
-
-                p->pos2->setRefAccelerations(wrapped_joints, joints, &accs[j_wrap]);
-                j_wrap += wrapped_joints;
-            }
-            else        // Classic Position Control
-            {
-                if(p->pos)
-                {
-                    for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
-                    {
-                        int off=device.lut[j_wrap].offset;
-                        ret=ret && p->pos->setRefAcceleration(p->base+off, accs[j_wrap]);
-                    }
-                }
-                else
-                {
-                    ret=false;
-                }
-            }
-
-            if(joints!=0)
-            { delete [] joints;
-            joints = 0;}
-        }
-
-        return ret;
-    }
+    virtual bool setRefAccelerations(const double *accs);
 
     /** Set reference acceleration on all joints. This is the valure that is
      * used during the generation of the trajectory.
@@ -1552,61 +482,7 @@ public:
      * @param accs   pointer to the array with acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerations(const int n_joints, const int *joints, const double *accs)
-    {
-        /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-         * then it is optimizable by instantiating the table once and for all during the creation of the class.
-         * TODO check this!!
-         */
-
-        bool ret = true;
-        int    nDev   = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        double   XAccs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-        for(int i=0; i<nDev; i++)
-       {
-           X_idx[i]=0;
-           ps[i]=device.getSubdevice(i);
-       }
-
-
-       // Create a map of joints for each subDevice
-       int subIndex = 0;
-       for(int j=0; j<n_joints; j++)
-       {
-           subIndex = device.lut[joints[j]].deviceEntry;
-           XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-           XAccs[subIndex][X_idx[subIndex]] = accs[j];
-           X_idx[subIndex]++;
-       }
-
-       for(subIndex=0; subIndex<nDev; subIndex++)
-       {
-           if(ps[subIndex]->pos2)   // Position Control 2
-           {
-               ret= ret && ps[subIndex]->pos2->setRefAccelerations(X_idx[subIndex], XJoints[subIndex], XAccs[subIndex]);
-           }
-           else   // Classic Position Control
-           {
-               if(ps[subIndex]->pos)
-               {
-                   for(int i = 0; i < X_idx[subIndex]; i++)
-                   {
-                       ret=ret && ps[subIndex]->pos->setRefAcceleration(XJoints[subIndex][i], XAccs[subIndex][i]);
-                   }
-               }
-               else
-               {
-                   ret=false;
-               }
-           }
-       }
-        return ret;
-    }
-
+    virtual bool setRefAccelerations(const int n_joints, const int *joints, const double *accs);
 
     /** Get reference speed for a joint. Returns the speed used to
      * generate the trajectory profile.
@@ -1614,51 +490,14 @@ public:
      * @param ref pointer to storage for the return value
      * @return true/false on success or failure
      */
-    virtual bool getRefSpeed(int j, double *ref) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->pos->getRefSpeed(off+base, ref);
-        }
-        *ref=0;
-        return false;
-    }
-
+    virtual bool getRefSpeed(int j, double *ref);
 
     /** Get reference speed of all joints. These are the  values used during the
     * interpolation of the trajectory.
     * @param spds pointer to the array that will store the speed values.
     * @return true/false on success/failure.
     */
-    virtual bool getRefSpeeds(double *spds) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            if (!p)
-                return false;
-
-            if (p->pos)
-            {
-                ret=ret&&p->pos->getRefSpeed(off+base, spds+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool getRefSpeeds(double *spds);
 
 
     /** Get reference speed of all joints. These are the  values used during the
@@ -1667,80 +506,7 @@ public:
      * @param spds   pointer to the array that will store the speed values.
      * @return true/false upon success/failure
      */
-    virtual bool getRefSpeeds(const int n_joints, const int *joints, double *spds)
-    {
-        /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-         * then it is optimizable by instantiating the table once and for all during the creation of the class.
-         * TODO check this!!
-         */
-
-        bool ret = true;
-        int    nDev   = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        double  XSpeds[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-        for(int i=0; i<nDev; i++)
-       {
-           X_idx[i]=0;
-           ps[i]=device.getSubdevice(i);
-       }
-
-        // Create a map of joints for each subDevice
-       int subIndex = 0;
-       for(int j=0; j<n_joints; j++)
-       {
-           subIndex = device.lut[joints[j]].deviceEntry;
-           XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-           X_idx[subIndex]++;
-       }
-
-        for(subIndex=0; subIndex<nDev; subIndex++)
-        {
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if(ps[subIndex]->pos2)   // Position Control 2
-            {
-                ret= ret && p->pos2->getRefSpeeds(X_idx[subIndex], XJoints[subIndex], &XSpeds[subIndex][0]);
-            }
-            else   // Classic Position Control
-            {
-                if(ps[subIndex]->pos)
-                {
-                    for(int i = 0; i < X_idx[subIndex]; i++)
-                    {
-                        ret=ret && ps[subIndex]->pos->getRefSpeed(XJoints[subIndex][i], &XSpeds[subIndex][i]);
-                    }
-                }
-                else
-                {
-                    ret=false;
-                }
-            }
-        }
-
-        if(ret)
-        {
-            // ReMix values by user expectations
-            for(int i=0; i<nDev; i++)
-                X_idx[i]=0;       // reset index
-
-            for(int j=0; j<n_joints; j++)
-            {
-                subIndex = device.lut[joints[j]].deviceEntry;
-                spds[j] = XSpeds[subIndex][X_idx[subIndex]];
-                X_idx[subIndex]++;
-            }
-        }
-        else
-        {
-            for(int j=0; j<n_joints; j++)
-            {
-                spds[j] = 0;
-            }
-        }
-        return ret;
-    }
+    virtual bool getRefSpeeds(const int n_joints, const int *joints, double *spds);
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
     * generate the trajectory profile.
@@ -1748,52 +514,14 @@ public:
     * @param acc pointer to storage for the return value
     * @return true/false on success/failure
     */
-    virtual bool getRefAcceleration(int j, double *acc) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->pos->getRefAcceleration(off+base, acc);
-        }
-        *acc=0;
-        return false;
-    }
-
+    virtual bool getRefAcceleration(int j, double *acc);
 
     /** Get reference acceleration of all joints. These are the values used during the
     * interpolation of the trajectory.
     * @param accs pointer to the array that will store the acceleration values.
     * @return true/false on success or failure
     */
-    virtual bool getRefAccelerations(double *accs) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            if (!p)
-                return false;
-
-            if (p->pos)
-            {
-                ret=ret&&p->pos->getRefAcceleration(off+base, accs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
+    virtual bool getRefAccelerations(double *accs);
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -1801,190 +529,26 @@ public:
      * @param accs   pointer to the array that will store the acceleration values
      * @return true/false on success/failure
      */
-    virtual bool getRefAccelerations(const int n_joints, const int *joints, double *accs)
-    {
-        /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-         * then it is optimizable by instantiating the table once and for all during the creation of the class.
-         * TODO check this!!
-         */
-
-        bool ret = true;
-        int    nDev   = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        double  XAccs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-        for(int i=0; i<nDev; i++)
-       {
-           X_idx[i]=0;
-           ps[i]=device.getSubdevice(i);
-       }
-
-        // Create a map of joints for each subDevice
-        int subIndex = 0;
-        for(int j=0; j<n_joints; j++)
-        {
-            subIndex = device.lut[joints[j]].deviceEntry;
-            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-            X_idx[subIndex]++;
-        }
-
-        for(subIndex=0; subIndex<nDev; subIndex++)
-        {
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if(p->pos2)   // Position Control 2
-            {
-                ret= ret && p->pos2->getRefAccelerations(X_idx[subIndex], XJoints[subIndex], &XAccs[subIndex][0]);
-            }
-            else   // Classic Position Control
-            {
-                if(p->pos)
-                {
-                    for(int i = 0; i < X_idx[subIndex]; i++)
-                    {
-                        int tmp_jDev = XJoints[subIndex][i];
-                        int off=device.lut[tmp_jDev].offset;
-                        ret=ret && p->pos->getRefAcceleration(p->base+off, &XAccs[subIndex][i]);
-                    }
-                }
-                else
-                {
-                    ret=false;
-                }
-            }
-        }
-
-        if(ret)
-        {
-            // ReMix values by user expectations
-            for(int i=0; i<nDev; i++)
-                X_idx[i]=0;       // reset index
-
-            subIndex=0;
-            for(int j=0; j<n_joints; j++)
-            {
-                subIndex = device.lut[joints[j]].deviceEntry;
-                accs[j] = XAccs[subIndex][X_idx[subIndex]];
-                X_idx[subIndex]++;
-            }
-        }
-        else
-        {
-            for(int j=0; j<n_joints; j++)
-            {
-                accs[j] = 0;
-            }
-        }
-
-        return ret;
-    }
+    virtual bool getRefAccelerations(const int n_joints, const int *joints, double *accs);
 
     /** Stop motion, single joint
     * @param j joint number
     * @return true/false on success/failure
     */
-    virtual bool stop(int j) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->pos->stop(off+base);
-        }
-        return false;
-    }
-
+    virtual bool stop(int j);
 
     /**
     * Stop motion, multiple joints
     * @return true/false on success/failure
     */
-    virtual bool stop() {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            if (!p)
-                return false;
-
-            if (p->pos)
-            {
-                ret=ret&&p->pos->stop(off+base);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool stop();
 
 
     /** Stop motion for subset of joints
      * @param joints pointer to the array of joint numbers
      * @return true/false on success/failure
      */
-    virtual bool stop(const int n_joints, const int *joints)
-    {
-     /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-         * then it is optimizable by instantiating the table once and for all during the creation of the class.
-         * TODO check this!!
-         */
-
-        bool ret = true;
-        int    nDev   = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-        for(int i=0; i<nDev; i++)
-       {
-           X_idx[i]=0;
-           ps[i]=device.getSubdevice(i);
-       }
-
-
-       // Create a map of joints for each subDevice
-       int subIndex = 0;
-       for(int j=0; j<n_joints; j++)
-       {
-           subIndex = device.lut[joints[j]].deviceEntry;
-           XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-           X_idx[subIndex]++;
-       }
-
-       for(subIndex=0; subIndex<nDev; subIndex++)
-       {
-           if(ps[subIndex]->pos2)   // Position Control 2
-           {
-               ret= ret && ps[subIndex]->pos2->stop(X_idx[subIndex], XJoints[subIndex]);
-           }
-           else   // Classic Position Control
-           {
-               if(ps[subIndex]->pos)
-               {
-                   for(int i = 0; i < X_idx[subIndex]; i++)
-                   {
-                       ret=ret && ps[subIndex]->pos->stop(XJoints[subIndex][i]);
-                   }
-               }
-               else
-               {
-                   ret=false;
-               }
-           }
-       }
-        return ret;
-    }
+    virtual bool stop(const int n_joints, const int *joints);
 
     /* IVelocityControl */
 
@@ -1994,110 +558,20 @@ public:
     * @param v specifies the new ref speed
     * @return true/false on success/failure
     */
-    virtual bool velocityMove(int j, double v) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-        if (!p)
-            return false;
-
-        if (p->vel)
-        {
-            return p->vel->velocityMove(off+base, v);
-        }
-        return false;
-    }
+    virtual bool velocityMove(int j, double v);
 
     /**
     * Set a new reference speed for all axes.
     * @param v is a vector of double representing the requested speed.
     * @return true/false on success/failure.
     */
-    virtual bool velocityMove(const double *v)
-    {
-        bool ret = true;
-        int j_wrap = 0;         // index of the wrapper joint
-
-        for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
-        {
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);
-
-            if(!p)
-                return false;
-
-            int wrapped_joints=(p->top - p->base) + 1;
-            int *joints = new int[wrapped_joints];
-
-            if(p->vel2)   // Velocity Control 2
-            {
-                // verione comandi su subset di giunti
-                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++)
-                {
-                    joints[j_dev] = p->base + j_dev;
-                }
-
-                ret = ret && p->vel2->velocityMove(wrapped_joints, joints, &v[j_wrap]);
-                j_wrap += wrapped_joints;
-            }
-            else   // Classic Position Control
-            {
-                if(p->vel)
-                {
-                    for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
-                    {
-                        int off=device.lut[j_wrap].offset;
-                        ret=ret && p->vel->velocityMove(p->base+off, v[j_wrap]);
-                    }
-                }
-                else
-                {
-                    ret=false;
-                }
-            }
-
-            if(joints!=0)
-            { delete [] joints;
-              joints = 0;}
-        }
-
-        return ret;
-    }
+    virtual bool velocityMove(const double *v);
 
     /**
     * Set the controller to velocity mode.
     * @return true/false on success/failure.
     */
-    virtual bool setVelocityMode()
-    {
-        bool ret=true;
-        int j_wrap = 0;         // index of the wrapper joint
-        for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
-        {
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);
-
-            if(!p)
-                return false;
-
-            int wrapped_joints=(p->top - p->base) + 1;
-
-            if(p->iMode2)   // ControlMode2
-            {
-                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
-                {   ret = ret && p->iMode2->setControlMode(p->base + j_dev, VOCAB_CM_VELOCITY);   }
-            }
-            else if(p->iMode)
-            {
-                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
-                {
-                    int off=device.lut[j_wrap].offset;
-                    ret = ret && p->iMode->setVelocityMode(p->base+off);
-                }
-            }
-        }
-        return ret;
-    }
+    virtual bool setVelocityMode();
 
     /* IEncoders */
 
@@ -2106,46 +580,13 @@ public:
     * @param j is the axis number
     * @return true/false on success/failure
     */
-    virtual bool resetEncoder(int j) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->enc)
-        {
-            return p->enc->resetEncoder(off+base);
-        }
-        return false;
-    }
+    virtual bool resetEncoder(int j);
 
     /**
     * Reset encoders. Set the encoder values to zero for all axes
     * @return true/false
     */
-    virtual bool resetEncoders() {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->enc)
-            {
-                ret=ret&&p->enc->resetEncoder(off+base);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool resetEncoders();
 
     /**
     * Set the value of the encoder for a given joint.
@@ -2153,47 +594,14 @@ public:
     * @param val new value
     * @return true/false
     */
-    virtual bool setEncoder(int j, double val) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->enc)
-        {
-            return p->enc->setEncoder(off+base,val);
-        }
-        return false;
-    }
+    virtual bool setEncoder(int j, double val);
 
     /**
     * Set the value of all encoders.
     * @param vals pointer to the new values
     * @return true/false
     */
-    virtual bool setEncoders(const double *vals) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->enc)
-            {
-                ret=ret&&p->enc->setEncoder(off+base, vals[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool setEncoders(const double *vals);
 
     /**
     * Read the value of an encoder.
@@ -2201,86 +609,18 @@ public:
     * @param v pointer to storage for the return value
     * @return true/false, upon success/failure (you knew it, uh?)
     */
-    virtual bool getEncoder(int j, double *v) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->enc->getEncoder(off+base, v);
-        }
-        *v=0.0;
-        return false;
-    }
+    virtual bool getEncoder(int j, double *v);
 
     /**
     * Read the position of all axes.
     * @param encs pointer to the array that will contain the output
     * @return true/false on success/failure
     */
-    virtual bool getEncoders(double *encs) {
-        bool ret=true;
+    virtual bool getEncoders(double *encs);
 
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
+    virtual bool getEncodersTimed(double *encs, double *t);
 
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->enc)
-            {
-                ret=ret&&p->enc->getEncoder(off+base, encs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getEncodersTimed(double *encs, double *t) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->enc)
-            {
-                ret=ret&&p->enc->getEncoderTimed(off+base, encs+l, t+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getEncoderTimed(int j, double *v, double *t) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->enc->getEncoderTimed(off+base, v, t);
-        }
-        *v=0.0;
-        return false;
-    }
+    virtual bool getEncoderTimed(int j, double *v, double *t);
 
     /**
     * Read the istantaneous speed of an axis.
@@ -2288,96 +628,27 @@ public:
     * @param sp pointer to storage for the output
     * @return true if successful, false ... otherwise.
     */
-    virtual bool getEncoderSpeed(int j, double *sp) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->enc->getEncoderSpeed(off+base, sp);
-        }
-        *sp=0.0;
-        return false;
-    }
+    virtual bool getEncoderSpeed(int j, double *sp);
 
     /**
     * Read the instantaneous speed of all axes.
     * @param spds pointer to storage for the output values
     * @return guess what? (true/false on success or failure).
     */
-    virtual bool getEncoderSpeeds(double *spds) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->enc)
-            {
-                ret=ret&&p->enc->getEncoderSpeed(off+base, spds+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool getEncoderSpeeds(double *spds);
 
     /**
     * Read the instantaneous acceleration of an axis.
     * @param j axis number
     * @param acc pointer to the array that will contain the output
     */
-    virtual bool getEncoderAcceleration(int j, double *acc) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->enc->getEncoderAcceleration(off+base,acc);
-        }
-        *acc=0.0;
-        return false;
-    }
-
+    virtual bool getEncoderAcceleration(int j, double *acc);
     /**
     * Read the istantaneous acceleration of all axes.
     * @param accs pointer to the array that will contain the output
     * @return true if all goes well, false if anything bad happens.
     */
-    virtual bool getEncoderAccelerations(double *accs) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->enc)
-            {
-                ret=ret&&p->enc->getEncoderAcceleration(off+base, accs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool getEncoderAccelerations(double *accs);
 
     /* IAmplifierControl */
 
@@ -2387,71 +658,21 @@ public:
     * generating abrupt movements.
     * @return true/false on success/failure
     */
-    virtual bool enableAmp(int j) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->amp->enableAmp(off+base);
-        }
-        return false;
-    }
+    virtual bool enableAmp(int j);
 
     /**
     * Disable the amplifier on a specific joint. All computations within the board
     * will be carried out normally, but the output will be disabled.
     * @return true/false on success/failure
     */
-    virtual bool disableAmp(int j) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        // Use the newer interface if available, otherwise fallback on the old one.
-        if(p->iMode2)
-            return p->iMode2->setControlMode(off+base, VOCAB_CM_IDLE);
-        else
-            if (p->pos)
-            {
-                return p->amp->disableAmp(off+base);
-            }
-            return false;
-    }
+    virtual bool disableAmp(int j);
 
     /**
     * Read the electric current going to all motors.
     * @param vals pointer to storage for the output values
     * @return hopefully true, false in bad luck.
     */
-    virtual bool getCurrents(double *vals) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->amp)
-            {
-                ret=ret&&p->amp->getCurrent(off+base, vals+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool getCurrents(double *vals);
 
     /**
     * Read the electric current going to a given motor.
@@ -2459,21 +680,7 @@ public:
     * @param val pointer to storage for the output value
     * @return probably true, might return false in bad times
     */
-    virtual bool getCurrent(int j, double *val) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->amp->getCurrent(off+base,val);
-        }
-        *val=0.0;
-        return false;
-    }
+    virtual bool getCurrent(int j, double *val);
 
     /**
     * Set the maximum electric current going to a given motor. The behavior
@@ -2483,20 +690,7 @@ public:
     * @param v the new value
     * @return probably true, might return false in bad times
     */
-    virtual bool setMaxCurrent(int j, double v) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->pos)
-        {
-            return p->amp->setMaxCurrent(off+base,v);
-        }
-        return false;
-    }
+    virtual bool setMaxCurrent(int j, double v);
 
     /**
     * Get the status of the amplifiers, coded in a 32 bits integer for
@@ -2505,42 +699,9 @@ public:
     * @param st pointer to storage
     * @return true in good luck, false otherwise.
     */
-    virtual bool getAmpStatus(int *st) {
-        bool ret=true;
+    virtual bool getAmpStatus(int *st);
 
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (p->amp)
-                {
-
-                    st[l]=0;
-                    //getAmpStatus for single joint does not exist!!
-                    // AMP_STATUS TODO
-                    //ret=ret&&p->amp->getAmpStatus(off+base, st+l);
-                }
-            else
-                ret=false;
-        }
-
-        return ret;
-    }
-
-    virtual bool getAmpStatus(int j, int *v)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (p->amp)
-            {
-                return p->amp->getAmpStatus(off+base,v);
-            }
-        *v=0;
-        return false;
-    }
+    virtual bool getAmpStatus(int j, int *v);
 
     /* IControlLimits */
 
@@ -2552,20 +713,7 @@ public:
     * @param max the value of the upper limit
     * @return true or false on success or failure
     */
-    virtual bool setLimits(int j, double min, double max) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->lim2)
-        {
-            return p->lim2->setLimits(off+base,min, max);
-        }
-        return false;
-    }
+    virtual bool setLimits(int j, double min, double max);
 
     /**
     * Get the software limits for a particular axis.
@@ -2574,26 +722,7 @@ public:
     * @param max pointer to store the value of the upper limit
     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
     */
-    virtual bool getLimits(int j, double *min, double *max) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-        {
-            *min=0.0;
-            *max=0.0;
-            return false;
-        }
-
-        if (p->lim2)
-        {
-            return p->lim2->getLimits(off+base,min, max);
-        }
-        *min=0.0;
-        *max=0.0;
-        return false;
-    }
+    virtual bool getLimits(int j, double *min, double *max);
 
     /**
     * Set the software velocity limits for a particular axis, the behavior of the
@@ -2603,20 +732,7 @@ public:
     * @param max the value of the upper limit
     * @return true or false on success or failure
     */
-    virtual bool setVelLimits(int j, double min, double max) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (!p->lim2)
-        {
-            return false;
-        }
-        return p->lim2->setVelLimits(off+base,min, max);
-    }
+    virtual bool setVelLimits(int j, double min, double max);
 
     /**
     * Get the software velocity limits for a particular axis.
@@ -2625,25 +741,7 @@ public:
     * @param max pointer to store the value of the upper limit
     * @return true if everything goes fine, false if something bad happens
     */
-    virtual bool getVelLimits(int j, double *min, double *max) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        *min=0.0;
-        *max=0.0;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-        {
-            return false;
-        }
-
-        if(!p->lim2)
-        {
-            return false;
-        }
-        return p->lim2->getVelLimits(off+base,min, max);
-    }
+    virtual bool getVelLimits(int j, double *min, double *max);
 
     /* IControlCalibration */
 
@@ -2657,1575 +755,167 @@ public:
     * @param p is a double value that is passed to the calibration procedure.
     * @return true/false on success/failure.
     */
-    virtual bool calibrate(int j, double p)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
+    virtual bool calibrate(int j, double p);
 
-        yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
-        if (!s)
-            return false;
-
-        if (s->calib)
-        {
-            return s->calib->calibrate(off+base, p);
-        }
-        return false;
-    }
-
-    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-        if (p && p->calib2)
-        {
-            return p->calib2->calibrate2(off+base, ui,v1,v2,v3);
-        }
-        return false;
-    }
+    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3);
 
     /**
     * Check whether the calibration has been completed.
     * @param j is the joint that has started a calibration procedure.
     * @return true/false on success/failure.
     */
-    virtual bool done(int j) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
+    virtual bool done(int j);
 
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
+    virtual bool abortPark();
 
-        if (p->calib2)
-        {
-            return p->calib2->done(off+base);
-        }
-        return false;
-    }
-
-    virtual bool abortPark()
-    {
-        fprintf(stderr, "ControlBoardWrapper2::Calling abortPark -- not implemented\n");
-        return false;
-    }
-
-    virtual bool abortCalibration()
-    {
-        fprintf(stderr, "ControlBoardWrapper2::Calling abortCalibration -- not implemented\n");
-        return false;
-    }
+    virtual bool abortCalibration();
 
     /* IAxisInfo */
-    virtual bool getAxisName(int j, yarp::os::ConstString& name) {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->info)
-        {
-            return p->info->getAxisName(off+base, name);
-        }
-        return false;
-    }
-
-    virtual bool setTorqueMode()
-    {
-        bool ret=true;
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            if (!p)
-                return false;
-
-            if(p->iMode2)   // ControlMode2
-            {
-                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
-            }
-            else if(p->iMode)
-            {
-                //calling iControlMode interface
-                ret=ret&&p->iMode->setTorqueMode(off+base);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getRefTorques(double *refs)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->getRefTorque(off+base, refs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getRefTorque(int j, double *t)
-    {
-
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->getRefTorque(off+base, t);
-        }
-        return false;
-    }
-
-    virtual bool setRefTorques(const double *t)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->setRefTorque(off+base, t[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool setRefTorque(int j, double t)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->setRefTorque(off+base, t);
-        }
-        return false;
-    }
-
-    virtual bool getBemfParam(int j, double *t)
-    {
-
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->getBemfParam(off+base, t);
-        }
-        return false;
-    }
-
-    virtual bool setBemfParam(int j, double t)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->setBemfParam(off+base, t);
-        }
-        return false;
-    }
-
-    virtual bool setTorquePid(int j, const Pid &pid)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->setTorquePid(off+base, pid);
-        }
-
-        return false;
-    }
-
-    virtual bool setImpedance(int j, double stiff, double damp)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iImpedance)
-        {
-            return p->iImpedance->setImpedance(off+base, stiff, damp);
-        }
-
-        return false;
-    }
-
-    virtual bool setImpedanceOffset(int j, double offset)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iImpedance)
-        {
-            return p->iImpedance->setImpedanceOffset(off+base, offset);
-        }
-
-        return false;
-    }
-
-    virtual bool getTorque(int j, double *t)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->getTorque(off+base, t);
-        }
-
-        return false;
-    }
-
-    virtual bool getTorques(double *t)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->getTorque(off+base, t+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-     }
-
-    virtual bool getTorqueRange(int j, double *min, double *max)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->getTorqueRange(off+base, min, max);
-        }
-
-        return false;
-    }
-
-    virtual bool getTorqueRanges(double *min, double *max)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->getTorqueRange(off+base, min+l, max+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-     }
-
-    virtual bool setTorquePids(const Pid *pids)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->setTorquePid(off+base, pids[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool setTorqueErrorLimit(int j, double limit)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->setTorqueErrorLimit(off+base, limit);
-        }
-
-        return false;
-    }
-
-    virtual bool setTorqueErrorLimits(const double *limits)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->setTorqueErrorLimit(off+base, limits[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getTorqueError(int j, double *err)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->getTorqueError(off+base, err);
-        }
-
-        return false;
-    }
-
-    virtual bool getTorqueErrors(double *errs)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->getTorqueError(off+base, errs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getTorquePidOutput(int j, double *out)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->getTorquePidOutput(off+base, out);
-        }
-
-        return false;
-    }
-
-    virtual bool getTorquePidOutputs(double *outs)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->getTorquePidOutput(off+base, outs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getTorquePid(int j, Pid *pid)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->getTorquePid(off+base, pid);
-        }
-
-        return false;
-    }
-
-    virtual bool getImpedance(int j, double* stiff, double* damp)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iImpedance)
-        {
-            return p->iImpedance->getImpedance(off+base, stiff, damp);
-        }
-
-        return false;
-    }
-
-    virtual bool getImpedanceOffset(int j, double* offset)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iImpedance)
-        {
-            return p->iImpedance->getImpedanceOffset(off+base, offset);
-        }
-
-        return false;
-    }
-
-    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iImpedance)
-        {
-            return p->iImpedance->getCurrentImpedanceLimit(off+base, min_stiff, max_stiff, min_damp, max_damp);
-        }
-
-        return false;
-    }
-
-    virtual bool getTorquePids(Pid *pids)
-    {
-         bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->getTorquePid(off+base, pids+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getTorqueErrorLimit(int j, double *limit)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->getTorqueErrorLimit(off+base, limit);
-        }
-
-        return false;
-    }
-
-    virtual bool getTorqueErrorLimits(double *limits)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iTorque)
-            {
-                ret=ret&&p->iTorque->getTorqueErrorLimit(off+base, limits+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool resetTorquePid(int j)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->resetTorquePid(off+base);
-        }
-
-        return false;
-    }
-
-    virtual bool disableTorquePid(int j)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->disableTorquePid(off+base);
-        }
-
-        return false;
-    }
-
-    virtual bool enableTorquePid(int j)
-    {
-         int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->enableTorquePid(off+base);
-        }
-
-        return false;
-    }
-
-    virtual bool setTorqueOffset(int j, double v)
-    {
-         int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iTorque)
-        {
-            return p->iTorque->setTorqueOffset(off+base,v);
-        }
-
-        return false;
-    }
-
-    virtual bool setPositionMode(int j)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMode2)
-        {
-            return p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION);
-        }
-        else
-            if (p->iMode)
-            {
-                return p->iMode->setPositionMode(off+base);
-            }
-
-        return false;
-    }
-
-    virtual bool setTorqueMode(int j)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMode2)
-        {
-            return p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
-        }
-        else
-            if (p->iMode)
-            {
-                return p->iMode->setTorqueMode(off+base);
-            }
-
-        return false;
-    }
-
-    virtual bool setImpedancePositionMode(int j)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-//        Let´s propagate the legacy version as is until it will be removed
-        if (p->iMode)
-        {
-            return p->iMode->setImpedancePositionMode(off+base);
-        }
-
-        return false;
-    }
-
-    virtual bool setImpedanceVelocityMode(int j)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-//        Let´s propagate the legacy version as is until it will be removed
-        if (p->iMode)
-        {
-            return p->iMode->setImpedanceVelocityMode(off+base);
-        }
-
-        return false;
-    }
-
-    virtual bool setVelocityMode(int j)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMode2)
-        {
-            return p->iMode2->setControlMode(off+base, VOCAB_CM_VELOCITY);
-        }
-        else
-            if (p->iMode)
-            {
-                return p->iMode->setVelocityMode(off+base);
-            }
-
-        return false;
-    }
-
-    virtual bool setOpenLoopMode(int j)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMode2)
-        {
-            return p->iMode2->setControlMode(off+base, VOCAB_CM_OPENLOOP);
-        }
-        else
-            if (p->iMode)
-            {
-                return p->iMode->setOpenLoopMode(off+base);
-            }
-
-        return false;
-    }
-
-    virtual bool getControlMode(int j, int *mode)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMode)
-        {
-            return p->iMode->getControlMode(off+base, mode);
-        }
-        return false;
-    }
-
-    virtual bool getControlModes(int *modes)
-    {
-       bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iMode)
-            {
-                ret=ret&&p->iMode->getControlMode(off+base, modes+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool getAxisName(int j, yarp::os::ConstString& name);
+
+    virtual bool setTorqueMode();
+
+    virtual bool getRefTorques(double *refs);
+
+    virtual bool getRefTorque(int j, double *t);
+
+    virtual bool setRefTorques(const double *t);
+
+    virtual bool setRefTorque(int j, double t);
+
+    virtual bool getBemfParam(int j, double *t);
+
+    virtual bool setBemfParam(int j, double t);
+
+    virtual bool setTorquePid(int j, const Pid &pid);
+
+    virtual bool setImpedance(int j, double stiff, double damp);
+
+    virtual bool setImpedanceOffset(int j, double offset);
+
+    virtual bool getTorque(int j, double *t);
+
+    virtual bool getTorques(double *t);
+
+    virtual bool getTorqueRange(int j, double *min, double *max);
+
+    virtual bool getTorqueRanges(double *min, double *max);
+
+    virtual bool setTorquePids(const Pid *pids);
+
+    virtual bool setTorqueErrorLimit(int j, double limit);
+
+    virtual bool setTorqueErrorLimits(const double *limits);
+
+    virtual bool getTorqueError(int j, double *err);
+
+    virtual bool getTorqueErrors(double *errs);
+
+    virtual bool getTorquePidOutput(int j, double *out);
+
+    virtual bool getTorquePidOutputs(double *outs);
+
+    virtual bool getTorquePid(int j, Pid *pid);
+
+    virtual bool getImpedance(int j, double* stiff, double* damp);
+
+    virtual bool getImpedanceOffset(int j, double* offset);
+
+    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
+
+    virtual bool getTorquePids(Pid *pids);
+
+    virtual bool getTorqueErrorLimit(int j, double *limit);
+
+    virtual bool getTorqueErrorLimits(double *limits);
+
+    virtual bool resetTorquePid(int j);
+
+    virtual bool disableTorquePid(int j);
+
+    virtual bool enableTorquePid(int j);
+
+    virtual bool setTorqueOffset(int j, double v);
+
+    virtual bool setPositionMode(int j);
+
+    virtual bool setTorqueMode(int j);
+
+    virtual bool setImpedancePositionMode(int j);
+
+    virtual bool setImpedanceVelocityMode(int j);
+
+    virtual bool setVelocityMode(int j);
+
+    virtual bool setOpenLoopMode(int j);
+
+    virtual bool getControlMode(int j, int *mode);
+
+    virtual bool getControlModes(int *modes);
 
     // iControlMode2
-    virtual bool getControlModes(const int n_joint, const int *joints, int *modes)
-    {
-        bool ret=true;
+    virtual bool getControlModes(const int n_joint, const int *joints, int *modes);
 
-         for(int l=0; l<n_joint; l++)
-         {
-             int off=device.lut[joints[l]].offset;
-             int subIndex=device.lut[joints[l]].deviceEntry;
+    bool legacySetControlMode(const int j, const int mode);
 
-             yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-             if (!p)
-                 return false;
+    virtual bool setControlMode(const int j, const int mode);
 
-             if (p->iMode2)
-             {
-                 ret=ret&&p->iMode2->getControlMode(off+base, &modes[l]);
-             }
-             else
-                 ret=false;
-         }
-         return ret;
-    }
+    virtual bool setControlModes(const int n_joints, const int *joints, int *modes);
 
-    bool legacySetControlMode(const int j, const int mode)
-    {
-        bool ret = true;
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
+    virtual bool setControlModes(int *modes);
 
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
+    virtual bool setRefOutput(int j, double v);
 
-        switch(mode)
-        {
-            case VOCAB_CM_IDLE:
-            {
+    virtual bool setRefOutputs(const double *outs);
 
-                if(p->amp)
-                {
-                    ret = ret && p->amp->disableAmp(off+p->base);
-                }
-                if(p->pid)
-                {
-                    ret = ret && p->pid->disablePid(off+p->base);
-                }
-            }
-            break;
+    virtual bool setPosition(int j, double ref);
 
-            case VOCAB_CM_TORQUE:
-            {
-                ret = p->iMode->setTorqueMode(off+p->base);
-            }
-            break;
+    virtual bool setPositionDirectMode();
 
-            case VOCAB_CM_POSITION:
-            {
-                ret = p->iMode->setPositionMode(off+p->base);
-            }
-            break;
+    virtual bool setPositions(const int n_joints, const int *joints, double *dpos);
 
-            case VOCAB_CM_VELOCITY:
-            {
-                ret = p->iMode->setVelocityMode(off+p->base);
-            }
-            break;
+    virtual bool setPositions(const double *refs);
 
-            case VOCAB_CM_OPENLOOP:
-            {
-                ret = p->iMode->setOpenLoopMode(off+p->base);
-            }
-            break;
-
-            case VOCAB_CM_IMPEDANCE_POS:
-            {
-                ret = p->iMode->setImpedancePositionMode(off+p->base);
-            }
-            break;
-
-            case VOCAB_CM_IMPEDANCE_VEL:
-            {
-                ret = p->iMode->setImpedanceVelocityMode(off+p->base);
-            }
-            break;
-
-            default:
-            {
-                fprintf(stderr, "ControlBoardWrapper received an invalid  setControlMode %s for joint %d\n", yarp::os::Vocab::decode(mode).c_str(), j);
-                ret = false;
-            }
-            break;
-        }
-        return ret;
-    }
-
-    virtual bool setControlMode(const int j, const int mode)
-    {
-        bool ret = true;
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iMode2)
-        {
-            ret = p->iMode2->setControlMode(off+base, mode);
-        }
-        else
-        {
-            if (p->iMode)
-            {
-                legacySetControlMode(j, mode);
-            }
-        }
-        return ret;
-    }
-
-    virtual bool setControlModes(const int n_joints, const int *joints, int *modes)
-    {
-        bool ret = true;
-
-        /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-         * then it is optimizable by instantiating the table once and for all during the creation of the class.
-         * TODO check if concurrency problems are real!!
-         */
-        int    nDev  = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      XModes[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-        for(int i=0; i<nDev; i++)
-        {
-            X_idx[i]=0;
-            ps[i]=device.getSubdevice(i);
-        }
-
-
-        // Create a map of joints for each subDevice
-        int subIndex = 0;
-        for(int j=0; j<n_joints; j++)
-        {
-            subIndex = device.lut[joints[j]].deviceEntry;
-            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-            XModes[subIndex][X_idx[subIndex]] = modes[j];
-            X_idx[subIndex]++;
-        }
-
-        for(subIndex=0; subIndex<nDev; subIndex++)
-        {
-            if(ps[subIndex]->iMode2)
-            {
-                ret= ret && ps[subIndex]->iMode2->setControlModes(X_idx[subIndex], XJoints[subIndex], XModes[subIndex]);
-            }
-            else
-            {
-                for(int j = 0; j < X_idx[subIndex]; j++)
-                {
-                    ret = ret && legacySetControlMode(XJoints[subIndex][j], XModes[subIndex][j]);
-                }
-            }
-        }
-        return ret;
-    }
-
-    virtual bool setControlModes(int *modes)
-    {
-        bool ret = true;
-        int j_wrap = 0;         // index of the wrapper joint
-
-        int nDev = device.subdevices.size();
-        for(int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
-        {
-            int subIndex=device.lut[j_wrap].deviceEntry;
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            int wrapped_joints=(p->top - p->base) + 1;
-            int *joints = new int[wrapped_joints];
-
-            if(!p)
-                return false;
-
-            if(p->iMode2)   // Control Mode interface 2
-            {
-                // versione comandi su subset di giunti
-                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++)
-                {
-                    joints[j_dev] = p->base + j_dev;  // for all joints is equivalent to add offset term
-                }
-
-                ret = ret && p->iMode2->setControlModes(wrapped_joints, joints, &modes[j_wrap]);
-                j_wrap+=wrapped_joints;
-            }
-            else
-            {
-                for(int j_wrap = 0; j_wrap < wrapped_joints; j_wrap++)
-                {
-                    ret = ret && legacySetControlMode(j_wrap, modes[j_wrap]);
-                }
-            }
-
-            if(joints!=0)
-            {
-                delete [] joints;
-                joints = 0;
-            }
-        }
-
-        return ret;
-    }
-
-    //
-    virtual bool setRefOutput(int j, double v)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iOpenLoop)
-        {
-            return p->iOpenLoop->setRefOutput(off+base, v);
-        }
-        return false;
-    }
-
-    virtual bool setRefOutputs(const double *outs) {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iOpenLoop)
-            {
-                ret=ret&&p->iOpenLoop->setRefOutput(off+base, outs[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool setPosition(int j, double ref)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->posDir)
-        {
-            return p->posDir->setPosition(off+base, ref);
-        }
-
-        return false;
-    }
-
-    virtual bool setPositionDirectMode()
-    {
-        bool ret=true;
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            if (!p)
-                return false;
-
-            if(p->iMode2)
-                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION_DIRECT);
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool setPositions(const int n_joints, const int *joints, double *dpos)
-    {
-        bool ret = true;
-
-        /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-         * then it is optimizable by instantiating the table once and for all during the creation of the class.
-         * TODO check if concurrency problems are real!!
-         */
-        int    nDev  = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-        for(int i=0; i<nDev; i++)
-        {
-            X_idx[i]=0;
-            ps[i]=device.getSubdevice(i);
-        }
-
-        // Create a map of joints for each subDevice
-        int subIndex = 0;
-        for(int j=0; j<n_joints; j++)
-        {
-            subIndex = device.lut[joints[j]].deviceEntry;
-            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-            XRefs[subIndex][X_idx[subIndex]] = dpos[j];
-            X_idx[subIndex]++;
-        }
-
-        for(subIndex=0; subIndex<nDev; subIndex++)
-        {
-            if(ps[subIndex]->posDir)
-            {
-                ret= ret && ps[subIndex]->posDir->setPositions(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
-            }
-            else
-            {
-                ret=false;
-            }
-        }
-        return ret;
-    }
-
-    virtual bool setPositions(const double *refs)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->posDir)
-            {
-                ret = p->posDir->setPosition(off+base, refs[l]) && ret;
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual yarp::os::Stamp getLastInputStamp() {
-        timeMutex.wait();
-        yarp::os::Stamp ret=time;
-        timeMutex.post();
-        return ret;
-    }
+    virtual yarp::os::Stamp getLastInputStamp();
 
     //
     // IVelocityControl2 Interface
     //
-    virtual bool velocityMove(const int n_joints, const int *joints, const double *spds)
-    {
-        bool ret = true;
+    virtual bool velocityMove(const int n_joints, const int *joints, const double *spds);
 
-        /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-         * then it is optimizable by instantiating the table once and for all during the creation of the class.
-         * TODO check if concurrency problems are real!!
-         */
+    virtual bool setVelPid(int j, const Pid &pid);
 
-        int    nDev  = device.subdevices.size();
-        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        int      X_idx[MAX_DEVICES];
-        yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
+    virtual bool setVelPids(const Pid *pids);
 
-        for(int i=0; i<nDev; i++)
-        {
-            X_idx[i]=0;
-            ps[i]=device.getSubdevice(i);
-        }
+    virtual bool getVelPid(int j, Pid *pid);
 
+    virtual bool getVelPids(Pid *pids);
 
-        // Create a map of joints for each subDevice
-        int subIndex = 0;
-        for(int j=0; j<n_joints; j++)
-        {
-            subIndex = device.lut[joints[j]].deviceEntry;
-            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-            XRefs[subIndex][X_idx[subIndex]] = spds[j];
-            X_idx[subIndex]++;
-        }
+    virtual bool getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode);
 
-        for(subIndex=0; subIndex<nDev; subIndex++)
-        {
-            if(ps[subIndex]->vel2)   // Velocity Control 2
-            {
-                ret= ret && ps[subIndex]->vel2->velocityMove(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
-            }
-            else   // Classic Velocity Control
-            {
-                if(ps[subIndex]->vel)
-                {
-                    for(int i = 0; i < X_idx[subIndex]; i++)
-                    {
-                        ret=ret && ps[subIndex]->vel->velocityMove(XJoints[subIndex][i], XRefs[subIndex][i]);
-                    }
-                }
-                else
-                {
-                    ret=false;
-                }
-            }
-        }
-        return ret;
-    }
+    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
 
-    virtual bool setVelPid(int j, const Pid &pid)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
+    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes);
 
-        yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
-        if (!s)
-            return false;
+    virtual bool setInteractionMode(int j, yarp::dev::InteractionModeEnum mode);
 
-        if (s->vel2)
-        {
-            return s->vel2->setVelPid(off+base, pid);
-        }
-        return false;
-    }
+    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes);
 
-    virtual bool setVelPids(const Pid *pids)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->vel2)
-            {
-                ret=ret&&p->vel2->setVelPid(off+base, pids[l]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getVelPid(int j, Pid *pid)
-    {
-        //#warning "check for max number of joints!?!?!"
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
-        if (!s)
-            return false;
-
-        if (s->vel2)
-        {
-            return s->vel2->getVelPid(off+base, pid);
-        }
-        return false;
-    }
-
-    virtual bool getVelPids(Pid *pids)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->vel2)
-            {
-                ret=ret&&p->vel2->getVelPid(off+base, pids+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
-        if (!s)
-            return false;
-
-        if (s->iInteract)
-        {
-            return s->iInteract->getInteractionMode(off+base, mode);
-        }
-        return false;
-    }
-
-    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
-    {
-        int                              X_idx[MAX_DEVICES];
-        int                              XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        yarp::dev::InteractionModeEnum   XModes[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        yarp::dev::impl::SubDevice       *ps[MAX_DEVICES];
-
-        int  nDev  = device.subdevices.size();
-        bool ret = true;
-
-        for(int i=0; i<nDev; i++)
-        {
-            X_idx[i]=0;
-            ps[i]=device.getSubdevice(i);
-        }
-
-        // Create a map of joints for each subDevice
-        int subIndex = 0;
-        for(int j=0; j<n_joints; j++)
-        {
-            subIndex = device.lut[joints[j]].deviceEntry;
-            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-            X_idx[subIndex]++;
-        }
-
-        for(subIndex=0; subIndex<nDev; subIndex++)
-        {
-            if (!ps[subIndex])
-                return false;
-
-            if(ps[subIndex]->iInteract)
-            {
-                ret= ret && ps[subIndex]->iInteract->getInteractionModes(X_idx[subIndex], XJoints[subIndex], XModes[subIndex]);
-            }
-            else ret = false;
-        }
-
-        // fill the output vector
-        for(int j=0; j<n_joints; j++)
-        {
-            subIndex = device.lut[joints[j]].deviceEntry;
-            modes[j] = XModes[subIndex][j];
-        }
-        return ret;
-    }
-
-    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes)
-    {
-        bool ret = true;
-
-        for(int j=0; j<controlledJoints; j++)
-        {
-            int off=device.lut[j].offset;
-            int subIndex=device.lut[j].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iInteract)
-            {
-                ret=ret && p->iInteract->getInteractionMode(off+base, &modes[j]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-    virtual bool setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
-        if (!s)
-            return false;
-
-        if (s->iInteract)
-        {
-            return s->iInteract->setInteractionMode(off+base, mode);
-        }
-        return false;
-    }
-
-    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
-    {
-        int                              X_idx[MAX_DEVICES];
-        int                              XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        yarp::dev::InteractionModeEnum   XModes[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-        yarp::dev::impl::SubDevice       *ps[MAX_DEVICES];
-
-        int  nDev  = device.subdevices.size();
-        bool ret = true;
-
-        for(int i=0; i<nDev; i++)
-        {
-            X_idx[i]=0;
-            ps[i]=device.getSubdevice(i);
-        }
-
-        // Create a map of joints for each subDevice
-        int subIndex = 0;
-        for(int j=0; j<n_joints; j++)
-        {
-            subIndex = device.lut[joints[j]].deviceEntry;
-            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-            XModes[subIndex][X_idx[subIndex]] = modes[j];
-            X_idx[subIndex]++;
-        }
-
-        for(subIndex=0; subIndex<nDev; subIndex++)
-        {
-            if (!ps[subIndex])
-                return false;
-
-            if(ps[subIndex]->iInteract)
-            {
-                ret= ret && ps[subIndex]->iInteract->setInteractionModes(X_idx[subIndex], XJoints[subIndex], XModes[subIndex]);
-            }
-            else ret = false;
-        }
-        return ret;
-    }
-
-    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes)
-    {
-        bool ret = true;
-
-        for(int j=0; j<controlledJoints; j++)
-        {
-            int off=device.lut[j].offset;
-            int subIndex=device.lut[j].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iInteract)
-            {
-                ret=ret && p->iInteract->setInteractionMode(off+base, modes[j]);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
+    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes);
 
     /**
      * Get the last reference sent using the setOutput function
      * @param outs pointer to the vector that will store the output values
      * @return true/false on success/failure
      */
-    virtual bool getRefOutput(int j, double *out)
-    {
-        int off=device.lut[j].offset;
-        int subIndex=device.lut[j].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (!p)
-            return false;
-
-        if (p->iOpenLoop)
-        {
-            return p->iOpenLoop->getRefOutput(off+base, out);
-        }
-        *out=0.0;
-        return false;
-    }
+    virtual bool getRefOutput(int j, double *out);
 
     /**
      * Get the last reference sent using the setOutputs function
      * @param outs pointer to the vector that will store the output values
      * @return true/false on success/failure
      */
-    virtual bool getRefOutputs(double *outs)
-    {
-        bool ret=true;
-
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-            if (!p)
-                return false;
-
-            if (p->iOpenLoop)
-            {
-                ret=ret && p->iOpenLoop->getRefOutput(off+base, outs+l);
-            }
-            else
-                ret=false;
-        }
-        return ret;
-    }
-
-
+    virtual bool getRefOutputs(double *outs);
 };
 
 #endif
