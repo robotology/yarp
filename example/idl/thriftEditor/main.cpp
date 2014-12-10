@@ -84,10 +84,23 @@ int main() {
     }
 
     printf("####################################################\n");
-    printf("Pretend to use server from RPC\n");
+    printf("Pretend to use server from RPC: patch command\n");
 
     yarp::os::Bottle cmd, reply;
     cmd.fromString("patch (set id 3) (set name frog)");
+    sender_port.write(cmd,reply);
+    printf("answer: %s\n", reply.toString().c_str());
+
+    printf("####################################################\n");
+    printf("Pretend to use server from RPC: set command\n");
+
+    cmd.fromString("set id 9");
+    reply.clear();
+    sender_port.write(cmd,reply);
+    printf("answer: %s\n", reply.toString().c_str());
+
+    cmd.fromString("set id 99 name \"Space Monkey\"");
+    reply.clear();
     sender_port.write(cmd,reply);
     printf("answer: %s\n", reply.toString().c_str());
 

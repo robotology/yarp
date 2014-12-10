@@ -494,12 +494,11 @@ void ApplicationViewWidget::onAttachStdout()
     for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
         if(it->isSelected()){
-            bool found = false;
             int id = it->text(1).toInt();
 
             StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
             if(stdouWin && stdouWin->getId() == id){
-                found = true;
+                // found
                 continue;
             }
 

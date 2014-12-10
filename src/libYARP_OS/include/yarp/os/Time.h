@@ -33,7 +33,7 @@ public:
     static void delay(double seconds);
 
     /**
-     * Return the current time in seconds, relative to an arbitrary 
+     * Return the current time in seconds, relative to an arbitrary
      * starting point.
      * @return the time in seconds
      */
@@ -51,7 +51,7 @@ public:
      * on the capability of the hardware.
      * Specifically, on Microsoft Windows, high resolution scheduling is
      * used.
-     */  
+     */
     static void turboBoost();
 
     /**
@@ -69,7 +69,7 @@ public:
      * time in seconds followed by residual in nanoseconds.
      * If yarp is configured according to \ref yarp_with_ros,
      * then ROS /clock topic will work.
-     * 
+     *
      * \see yarp::os::NetworkClock
      *
      */

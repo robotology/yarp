@@ -164,7 +164,6 @@ add_dependencies(YARP_dev yarpidl_rosmsg yarpidl_thrift )
 
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
-target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})

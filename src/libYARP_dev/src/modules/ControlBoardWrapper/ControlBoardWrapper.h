@@ -745,6 +745,8 @@ public:
 
     /* IControlCalibration */
 
+    using yarp::dev::IControlCalibration2::calibrate;
+
     /**
     * Calibrate a single joint, the calibration method accepts a parameter
     * that is used to accomplish various things internally and is implementation

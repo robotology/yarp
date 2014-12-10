@@ -363,7 +363,7 @@ public:
     }
 
     // test row pointer access (getRow())
-    // this function only tests if getRow(r)[c] is consistent with the operator ()    
+    // this function only tests if getRow(r)[c] is consistent with the operator ()
     void testRowPointer()
     {
         report(0,"checking row pointer...");
@@ -390,7 +390,7 @@ public:
                     }
             }
 
-        // do the same on img2, but using the 
+        // do the same on img2, but using the
         // pixel function
         for(r=0; r<img2.height(); r++)
             for(c=0;c<img2.width(); c++)
@@ -399,8 +399,8 @@ public:
                     img2(c,r).g=r;
                     img2(c,r).b=r;
                 }
-       
-    
+
+
         // now make sure the two images are the same
         int acc=0;
         for(r=0; r<img2.height(); r++)
@@ -431,7 +431,7 @@ public:
                     img1(c,r)=(unsigned char) r;
                     acc1+=r;
                 }
-  
+
         const ImageOf<PixelMono> &constImg=img1;
         for(r=0; r<constImg.height(); r++)
             {
@@ -554,7 +554,7 @@ public:
         img.setExternal(&buf2[0],EXT_WIDTH*2,EXT_HEIGHT*2);
 
         checkEqual(img.width(),EXT_WIDTH*2,"width check");
-        checkEqual(img.height(),EXT_HEIGHT*2,"height check");        
+        checkEqual(img.height(),EXT_HEIGHT*2,"height check");
     }
 
 

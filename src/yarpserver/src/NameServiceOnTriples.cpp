@@ -23,7 +23,7 @@ using namespace std;
 //#define mutex printf("mutex %s %d\n", __FILE__, __LINE__), mutex
 
 
-Contact NameServiceOnTriples::query(const yarp::os::ConstString& portName, 
+Contact NameServiceOnTriples::query(const yarp::os::ConstString& portName,
                                     NameTripleState& act,
                                     const yarp::os::ConstString& prefix,
                                     bool nested) {
@@ -212,7 +212,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
                 if (ok) {
                     printf(" ? prior registration seems to be live! Denying new registration.\n");
                     /*
-                      printf("Got a live one! %s - said %s\n", 
+                      printf("Got a live one! %s - said %s\n",
                       port.c_str(),
                       reply.toString().c_str());
                     */
@@ -231,7 +231,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
     }
 
     act.reply.addString("old");
-    
+
     int at = 2;
     int sock = -1;
     ConstString carrier = "...";
@@ -359,7 +359,7 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act) {
         t.setNameValue("port",port.c_str());
         act.mem.remove_query(t,NULL);
         // now, query to report that there is nothing there
- 
+
         if (contact.getCarrier()!="mcast") {
             Bottle& event = act.event.addList();
             event.addVocab(Vocab::encode("del"));
@@ -399,7 +399,7 @@ bool NameServiceOnTriples::cmdList(NameTripleState& act) {
         } else {
             string iname = it->value.c_str();
             if (iname.find(prefix)==0) {
-                if (iname==prefix || iname[prefix.length()]=='/' || 
+                if (iname==prefix || iname[prefix.length()]=='/' ||
                     prefix[prefix.length()-1]=='/') {
                     act.cmd.clear();
                     act.cmd.addString("query");
@@ -427,9 +427,9 @@ bool NameServiceOnTriples::cmdSet(NameTripleState& act) {
     Triple t;
     t.setNameValue("port",port.c_str());
     int result = act.mem.find(t,NULL);
-    if (result==-1) { 
+    if (result==-1) {
         unlock();
-        return false; 
+        return false;
     }
     TripleContext context;
     context.setRid(result);
@@ -462,9 +462,9 @@ bool NameServiceOnTriples::cmdGet(NameTripleState& act) {
     Triple t;
     t.setNameValue("port",port.c_str());
     int result = act.mem.find(t,NULL);
-    if (result==-1) { 
+    if (result==-1) {
         unlock();
-        return false; 
+        return false;
     }
     TripleContext context;
     context.setRid(result);
@@ -503,9 +503,9 @@ bool NameServiceOnTriples::cmdCheck(NameTripleState& act) {
     Triple t;
     t.setNameValue("port",port.c_str());
     int result = act.mem.find(t,NULL);
-    if (result==-1) { 
+    if (result==-1) {
         unlock();
-        return false; 
+        return false;
     }
     TripleContext context;
     context.setRid(result);
@@ -577,13 +577,13 @@ bool NameServiceOnTriples::cmdHelp(NameTripleState& act) {
     return true;
 }
 
-bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd, 
-                                 yarp::os::Bottle& reply, 
+bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
+                                 yarp::os::Bottle& reply,
                                  yarp::os::Bottle& event,
                                  const yarp::os::Contact& remote) {
     ConstString key = cmd.get(0).toString();
     ConstString prefix = " * ";
-    
+
     if (key=="register") {
         lastRegister = cmd.get(1).asString().c_str();
     } else if (key=="set") {
@@ -594,7 +594,7 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
         lastRegister = "";
     }
     if (!silent) {
-        printf("%s%s\n", 
+        printf("%s%s\n",
                prefix.c_str(),
                cmd.toString().c_str());
     }

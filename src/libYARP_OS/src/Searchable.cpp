@@ -115,7 +115,7 @@ yarp::os::SearchMonitor *yarp::os::Searchable::getMonitor() const {
     return monitor;
 }
 
-yarp::os::ConstString yarp::os::Searchable::getContext() const {
+yarp::os::ConstString yarp::os::Searchable::getMonitorContext() const {
     return monitorContext;
 }
 

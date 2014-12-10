@@ -14,11 +14,11 @@
  *
  * Copyright © 2010 Anne van Rossum <anne@almende.com>
  *
- * @author 	Anne C. van Rossum
- * @date	Feb 17, 2011
- * @project	Replicator FP7
- * @company	Almende B.V.
- * @case	
+ * @author  Anne C. van Rossum
+ * @date    Feb 17, 2011
+ * @project Replicator FP7
+ * @company Almende B.V.
+ * @case
  */
 
 
@@ -51,21 +51,21 @@ namespace yarp {
 
 class yarp::os::impl::TcpConnector {
 public:
-	/**
-	 * Constructor TcpConnector
-	 */
-	TcpConnector();
+    /**
+     * Constructor TcpConnector
+     */
+    TcpConnector();
 
-	/**
-	 * Destructor ~TcpConnector
-	 */
-	virtual ~TcpConnector();
+    /**
+     * Destructor ~TcpConnector
+     */
+    virtual ~TcpConnector();
 
-	int connect (TcpStream &new_stream,
-		     const yarp::os::Contact &remote_address);
+    int connect (TcpStream &new_stream,
+                 const yarp::os::Contact &remote_address);
 protected:
 
-	int open(TcpStream &stream);
+    int open(TcpStream &stream);
 private:
 
 };

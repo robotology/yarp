@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -70,7 +70,7 @@ void advanced_dialog::on_buttonBox_clicked(QAbstractButton *button)
 
     QString s_lines    = ui->log_max_size->text();
     int size_log_lines = atoi (s_lines.toStdString().c_str());
-    if (ui->radio_log_limited->isChecked()) 
+    if (ui->radio_log_limited->isChecked())
     {
         theLogger->set_log_lines_max_size(true, size_log_lines);
     }
@@ -81,7 +81,7 @@ void advanced_dialog::on_buttonBox_clicked(QAbstractButton *button)
 
     QString s_ports = ui->ports_max_size->text();
     int size_ports  = atoi (s_ports.toStdString().c_str());
-    if (ui->radio_ports_limited->isChecked()) 
+    if (ui->radio_ports_limited->isChecked())
     {
         theLogger->set_log_list_max_size(true, size_ports);
     }
@@ -90,8 +90,8 @@ void advanced_dialog::on_buttonBox_clicked(QAbstractButton *button)
         theLogger->set_log_list_max_size(false,size_ports);
     }
 
-    QString s_refresh_rate = ui->refresh_rate->text();
-    int refresh_rate  = atoi (s_refresh_rate.toStdString().c_str());
+//     QString s_refresh_rate = ui->refresh_rate->text();
+//     int refresh_rate  = atoi (s_refresh_rate.toStdString().c_str());
 
 }
 

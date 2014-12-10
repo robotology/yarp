@@ -19,6 +19,10 @@
 #  include <stddef.h>
 #endif
 
+#ifdef YARP_INT8
+#undef YARP_INT8
+#endif
+
 #ifdef YARP_INT16
 #undef YARP_INT16
 #endif
@@ -51,11 +55,15 @@
 #undef YARP_SSIZE_T
 #endif
 
+#define YARP_INT8 signed char
 #define YARP_INT16 ${YARP_INT16}
 #define YARP_INT32 ${YARP_INT32}
 #define YARP_INT64 ${YARP_INT64}
 #define YARP_FLOAT32 ${YARP_FLOAT32}
 #define YARP_FLOAT64 ${YARP_FLOAT64}
+
+#define YARP_INT32_FMT "${YARP_INT32_FMT}"
+#define YARP_INT64_FMT "${YARP_INT64_FMT}"
 
 #cmakedefine YARP_BIG_ENDIAN
 #cmakedefine YARP_LITTLE_ENDIAN

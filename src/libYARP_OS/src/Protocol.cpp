@@ -14,7 +14,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-   
+
 Protocol::Protocol(TwoWayStream* stream) :
     log(Logger::get()) {
 
@@ -42,7 +42,7 @@ Protocol::Protocol(TwoWayStream* stream) :
 bool Protocol::open(const ConstString& name) {
     if (name=="") return false;
     setRoute(getRoute().addToName(name));
-    // We are not the initiator of the connection, so we 
+    // We are not the initiator of the connection, so we
     // expect to receive a header (carrier-dependent).
     bool ok = expectHeader();
     if (!ok) return false;
@@ -66,7 +66,7 @@ void Protocol::setRoute(const Route& route) {
     Route r = route;
 
     // We reorganize the route to reduce variation in naming.
-    // If there are qualifiers in the source port name, propagate 
+    // If there are qualifiers in the source port name, propagate
     // those qualifiers to the carrier.
     String from = r.getFromName();
     String carrier = r.getCarrierName();
@@ -186,7 +186,7 @@ bool Protocol::getSendDelegate() {
 }
 
 void Protocol::interrupt() {
-	if (!active) return;
+    if (!active) return;
     if (pendingAck) {
         // Don't neglect to send one last acknowledgement if needed.
         sendAck();
@@ -195,7 +195,7 @@ void Protocol::interrupt() {
     shift.getInputStream().interrupt();
     active = false;
 }
-   
+
 bool Protocol::respondToHeader() {
     yAssert(delegate!=NULL);
     bool ok = delegate->respondToHeader(*this);
@@ -211,7 +211,7 @@ bool Protocol::expectAck() {
     }
     return true;
 }
-   
+
 void Protocol::closeHelper() {
     active = false;
     if (pendingAck) {
@@ -234,7 +234,7 @@ void Protocol::closeHelper() {
         send_delegate = NULL;
     }
 }
-   
+
 bool Protocol::sendAck() {
     bool ok = true;
     pendingAck = false;
@@ -245,14 +245,14 @@ bool Protocol::sendAck() {
     getStreams().endPacket();
     return ok;
 }
-   
+
 bool Protocol::expectIndex() {
     // We'll eventually need to send an acknowledgement
     // (if the carrier in use requires that).
     pendingAck = true;
     messageLen = 0;
     // This is where a message can be considered to begin.
-    // If things go wrong on an unreliable carrier (e.g. on 
+    // If things go wrong on an unreliable carrier (e.g. on
     // udp), we should skip to the beginning of the next
     // message, as marked by this call.
     getStreams().beginPacket();
@@ -278,7 +278,7 @@ bool Protocol::expectIndex() {
     }
     return ok;
 }
-   
+
 void Protocol::setCarrier(const String& carrierNameBase) {
     // Set up the carrier for this connection.  The carrier
     // has all the protocol-specific behavior.
@@ -299,7 +299,7 @@ void Protocol::setCarrier(const String& carrierNameBase) {
         }
     }
 }
-   
+
 bool Protocol::expectHeader() {
     // A header, for historic reasons, is seen as
     // a protocol fingerprint (at least 8 bytes)
@@ -316,9 +316,9 @@ bool Protocol::expectHeader() {
     ok = delegate->expectExtraHeader(*this);
     return ok;
 }
-   
+
 bool Protocol::expectProtocolSpecifier() {
-    // Historically YARP has used the first 8 bytes of 
+    // Historically YARP has used the first 8 bytes of
     // every connection as a way to identify it.  This
     // assumption is showing its age, and should really
     // be generalized.
@@ -357,9 +357,9 @@ bool Protocol::expectProtocolSpecifier() {
     delegate->setParameters(header);
     return true;
 }
-   
+
 ConnectionReader& Protocol::beginRead() {
-    // We take care of reading the message index 
+    // We take care of reading the message index
     // (carrier-specific preamble), then leave it
     // up to caller to read the actual message payload.
     getRecvDelegate();
@@ -379,7 +379,7 @@ ConnectionReader& Protocol::beginRead() {
     }
     return reader;
 }
-   
+
 bool Protocol::write(SizedWriter& writer) {
     // End any current write.
     writer.stopWrite();

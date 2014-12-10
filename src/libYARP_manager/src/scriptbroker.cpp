@@ -149,7 +149,7 @@ bool ScriptYarprunBroker::init(const char* szcmd, const char* szparam,
             strHost = string("/") + string(szhost);
         else
             strHost = szhost;
-        bool ok=whichFile(strHost.c_str(), szcmd, strCmd);
+        whichFile(strHost.c_str(), szcmd, strCmd);
     }
     if(szparam) strParam = szparam;
     strDevParam<<strCmd<<" "<<strParam;

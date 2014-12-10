@@ -50,10 +50,16 @@ public:
     bool writeNested(WirePortable& obj);
 
     bool writeNested(yarp::os::PortWriter& obj);
+    
+    bool writeI16(const YARP_INT16& x);
 
-    bool writeI32(YARP_INT32 x);
+    bool writeI32(const YARP_INT32& x);
+
+    bool writeI64(const YARP_INT64& x);
 
     bool writeBool(bool x);
+
+    bool writeByte(const YARP_INT8& x);
 
     bool writeDouble(double x);
 
@@ -66,6 +72,8 @@ public:
     bool writeTag(const char *tag, int split, int len);
 
     bool writeString(const yarp::os::ConstString& tag);
+
+    bool writeBinary(const yarp::os::ConstString& tag);
 
     bool writeListHeader(int len);
 

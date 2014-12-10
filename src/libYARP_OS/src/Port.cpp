@@ -28,7 +28,6 @@ using namespace yarp::os;
 
 class PortCoreAdapter : public PortCore {
 private:
-    Port& owner;
     SemaphoreImpl stateMutex;
     PortReader *readDelegate;
     PortReader *permanentReadDelegate;
@@ -55,7 +54,7 @@ public:
     bool active;
 
     PortCoreAdapter(Port& owner) :
-        owner(owner), stateMutex(1),
+        stateMutex(1),
         readDelegate(NULL),
         permanentReadDelegate(NULL),
         adminReadDelegate(NULL),

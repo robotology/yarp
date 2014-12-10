@@ -12,7 +12,7 @@ require("yarp")
 -- to invoke the corresponding methods.The methods are
 -- optional but must satisfy the following format:
 --
--- PortMonitor.create = function() ... return true end, 
+-- PortMonitor.create = function(options) ... return true end, 
 -- PortMonitor.destroy = function() ... end, 
 -- PortMonitor.accept = function(thing) ... return true end,     
 -- PortMonitor.update = function(thing) ... return thing end, 
@@ -25,7 +25,7 @@ require("yarp")
 -- create is called when the port monitor is created 
 -- @return Boolean
 --
-PortMonitor.create = function()
+PortMonitor.create = function(options)
     print("on create")
     PortMonitor.index = 0;
     PortMonitor.bdraw = true
@@ -76,6 +76,11 @@ end
 -- @return Things
 PortMonitor.update = function(thing)
     img_out = thing:asImageOfPixelRgb()
+    if img_out == nil then
+        print("img_modifier.lua: got wrong data type (expected type ImageOfPixelRgb)")
+        return thing
+    end
+
     --img_out:copy(img_in)
 
     w = img_out:width()

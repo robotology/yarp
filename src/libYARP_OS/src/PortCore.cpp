@@ -313,7 +313,7 @@ void PortCore::interrupt() {
     if (!interruptible) return;
 
     // Since interruptible is set, it is possible that the user
-    // may be blocked on a read.  We send an empty message, 
+    // may be blocked on a read.  We send an empty message,
     // which is reserved for giving blocking readers a chance to
     // update their state.
     stateMutex.wait();
@@ -345,7 +345,7 @@ void PortCore::closeMain() {
     YARP_DEBUG(log,"now preparing to shut down port");
     stateMutex.post();
 
-    // Start disconnecting inputs.  We ask the other side of the 
+    // Start disconnecting inputs.  We ask the other side of the
     // connection to do this, so it won't come as a surprise.
     // The details of how disconnection works vary by carrier.
     // While we are doing this, the server thread may be still running.
@@ -460,7 +460,7 @@ void PortCore::closeMain() {
         stateMutex.post();
     }
 
-    // There should be no other threads at this point and we 
+    // There should be no other threads at this point and we
     // can stop listening on the network.
     if (listening) {
         yAssert(face!=NULL);
@@ -540,7 +540,7 @@ void PortCore::closeUnits() {
 }
 
 void PortCore::reapUnits() {
-    // Connections that should be shut down get tagged as "doomed" 
+    // Connections that should be shut down get tagged as "doomed"
     // but aren't otherwise touched until it is safe to do so.
     stateMutex.wait();
     if (!finished) {
@@ -618,7 +618,7 @@ void PortCore::cleanUnits(bool blocking) {
         }
 
         // Now we do some awkward shuffling (list class may be from ACE
-        // or STL, if ACE it is quite limited).  We move the nulls to 
+        // or STL, if ACE it is quite limited).  We move the nulls to
         // the end of the list ...
         unsigned int rem = 0;
         for (unsigned int i2=0; i2<units.size(); i2++) {
@@ -792,7 +792,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
                 delete op;
             }
             YARP_DEBUG(log,"sent message to prod connection death");
-            
+
             if (synch) {
                 // Wait for connections to be cleaned up.
                 YARP_DEBUG(log,"synchronizing with connection death");
@@ -836,7 +836,7 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
         bw.appendLine(String("Do not know how to connect to ") + dest);
         if(os!=NULL) bw.write(*os);
         return false;
-    } 
+    }
 
     // We clean all existing connections to the desired destination,
     // optionally stopping if we find one with the right carrier.
@@ -867,7 +867,7 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                     (parts.getCarrier()!="")?parts.getCarrier():
                     address.getCarrier());
     r = r.addToContact(contact);
-    
+
     // Check for any restrictions on the port.  Perhaps it can only
     // read, or write.
     bool allowed = true;
@@ -1255,8 +1255,8 @@ bool PortCore::sendHelper(PortWriter& writer,
     // written.
     writer.onCommencement();
 
-    // All user-facing parts of this port will be blocked on this 
-    // operation, so we'll want to be snappy. How long the 
+    // All user-facing parts of this port will be blocked on this
+    // operation, so we'll want to be snappy. How long the
     // operation lasts will depend on these flags:
     //   * waitAfterSend
     //   * waitBeforeSend
@@ -1309,7 +1309,7 @@ bool PortCore::sendHelper(PortWriter& writer,
             if (out!=NULL) {
                 // We got back a report of a message already sent.
                 packetMutex.wait();
-                ((PortCorePacket *)out)->dec();  // Message on one 
+                ((PortCorePacket *)out)->dec();  // Message on one
                                                  // fewer connections.
                 packets.checkPacket((PortCorePacket *)out);
                 packetMutex.post();
@@ -1501,7 +1501,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
 
     int vocab = cmd.get(0).asVocab();
 
-    // We support ROS client API these days.  Here we recode some long ROS 
+    // We support ROS client API these days.  Here we recode some long ROS
     // command names, just for convenience.
     if (cmd.get(0).asString()=="publisherUpdate") {
         vocab = VOCAB4('r','p','u','p');
@@ -1806,7 +1806,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             // node ports.
             YARP_SPRINTF1(log,debug,
                           "publisherUpdate! --> %s", cmd.toString().c_str());
-            ConstString topic = 
+            ConstString topic =
                 RosNameSpace::fromRosName(cmd.get(2).asString());
             Bottle *pubs = cmd.get(3).asList();
             if (pubs!=NULL) {
@@ -1967,16 +1967,16 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     Property *p = acquireProperties(false);
                     bool bOk = true;
                     if (p) {
-                        p->put(cmd.get(2).asString(), cmd.get(3));                        
-                        
+                        p->put(cmd.get(2).asString(), cmd.get(3));
+
                         // check if we need to set the PortCoreUnit scheduling policy
                         // e.g., "prop set /portname (sched ((priority 30) (policy 1)))"
-                        // The priority and policy values on Linux are: 
+                        // The priority and policy values on Linux are:
                         // SCHED_OTHER : policy=0, priority=[0 ..  0]
                         // SCHED_FIFO  : policy=1, priority=[1 .. 99]
                         // SCHED_RR    : policy=2, priority=[1 .. 99]
                         Bottle* value = cmd.get(3).asList();
-                        if(value && value->check("sched")) 
+                        if(value && value->check("sched"))
                         {
                             if((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
                                 bOk = false;
@@ -2002,7 +2002,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                         }
                                     }
                                 }
-                            }            
+                            }
                         }
                     }
                     releaseProperties(p);

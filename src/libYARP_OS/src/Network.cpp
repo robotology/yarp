@@ -486,7 +486,7 @@ static int metaConnect(const ConstString& src,
     }
 
     if (mode!=YARP_ENACT_DISCONNECT) {
-        fprintf(stderr,"Failure: no method known for this connection type: [%s]->[%s]\n", staticSrc.toString().c_str(), staticDest.toString().c_str());
+        fprintf(stderr,"Failure: no way to make connection %s->%s\n", src.c_str(), dest.c_str());
     }
 
     return 1;
@@ -1200,7 +1200,11 @@ bool NetworkBase::registerCarrier(const char *name,const char *dll) {
         return false;
     }
     if (!factory->isValid()) {
-        YARP_SPRINTF2(Logger::get(),error,"Failed to find library %s with carrier %s", dll, name);
+        if (dll!=NULL) {
+            YARP_SPRINTF2(Logger::get(),error,"Failed to find library %s with carrier %s", dll, name);
+        } else {
+            YARP_SPRINTF1(Logger::get(),error,"Failed to find library support for carrier %s", name);
+        }
         delete factory;
         factory = NULL;
         return false;

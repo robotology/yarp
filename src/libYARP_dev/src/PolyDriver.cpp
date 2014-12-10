@@ -122,7 +122,7 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
     coreOpen(config);
     HELPER(system_resource).info.fromString(config.toString());
     if (removeMonitorAfterwards) {
-        config.setMonitor(NULL);        
+        config.setMonitor(NULL);
     }
     return isValid();
 }

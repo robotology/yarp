@@ -137,6 +137,7 @@ private:
     ACE_SOCK_Dgram_Mcast *mgram;
     ACE_INET_Addr localHandle, remoteHandle;
 #else
+    int dgram_sockfd;
     void *dgram;
     void *mgram;
     int localHandle, remoteHandle;

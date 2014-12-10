@@ -310,6 +310,18 @@ check $x $y\n\
         checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfigFile");
     }
 
+    void checkListWithSpaces()
+    {
+        report(0,"checking loading of list with spaces");
+        Property p_spaces, p_no_spaces;
+        p_spaces.fromConfig("torso_yaw = ((0.275,\"0B3M0\") ,(0.275,\"0B3M1\") ,(0.55,\"0B4M0\"))\n");
+        p_no_spaces.fromConfig("torso_yaw = ((0.275,\"0B3M0\"),(0.275,\"0B3M1\"),(0.55,\"0B4M0\"))\n");
+        checkEqual(p_no_spaces.find("torso_yaw").isList(),true,"list without spaces correctly loaded");
+        checkEqual(p_spaces.find("torso_yaw").isList(),true,"list with spaces correctly loaded");
+        checkEqual(p_no_spaces.find("torso_yaw").asList()->size(),3,"list without spaces loaded with correct size");
+        checkEqual(p_spaces.find("torso_yaw").asList()->size(),3,"list with spaces loaded with correct size");
+    }
+
     virtual void checkWipe() {
         report(0,"checking wipe suppression");
         Property p;
@@ -542,6 +554,7 @@ check $x $y\n\
         checkIncludes();
         checkCommand();
         checkComment();
+        checkListWithSpaces();
         checkLineBreak();
         checkMonitor();
         checkHex();

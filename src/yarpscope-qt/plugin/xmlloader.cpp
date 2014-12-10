@@ -98,6 +98,8 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                 }
 
                 plotter = plotManager->addPlot(plot_title, plot_gridx, plot_gridy, plot_hspan, plot_vspan, plot_minval, plot_maxval, plot_size, plot_bgcolor, plot_autorescale);
+                Q_UNUSED(plot_realtime);
+                Q_UNUSED(plot_triggermode);
                 continue;
             }
 

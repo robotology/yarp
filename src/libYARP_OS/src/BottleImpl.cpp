@@ -31,7 +31,7 @@ using namespace yarp::os::impl;
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
 #define YMSG(x)
-#define YTRACE(x) 
+#define YTRACE(x)
 
 // YARP1 compatible codes
 //const int StoreInt::code = 1;
@@ -50,8 +50,9 @@ const int StoreString::code = BOTTLE_TAG_STRING;
 const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
 const int StoreDict::code = BOTTLE_TAG_LIST|BOTTLE_TAG_DICT;
+const int StoreInt64::code = BOTTLE_TAG_INT64;
 
-#define UNIT_MASK (BOTTLE_TAG_INT|BOTTLE_TAG_VOCAB|BOTTLE_TAG_DOUBLE|BOTTLE_TAG_STRING|BOTTLE_TAG_BLOB)
+#define UNIT_MASK (BOTTLE_TAG_INT|BOTTLE_TAG_VOCAB|BOTTLE_TAG_DOUBLE|BOTTLE_TAG_STRING|BOTTLE_TAG_BLOB|BOTTLE_TAG_INT64)
 #define GROUP_MASK (BOTTLE_TAG_LIST|BOTTLE_TAG_DICT)
 
 
@@ -228,12 +229,12 @@ void BottleImpl::fromString(const String& line) {
                     if ((!quoted)&&(ch==','||ch==' '||ch=='\t'||ch=='\n'||ch=='\r')
                         &&(nestedAlt==0)
                         &&(nested==0)) {
-                        if (arg=="") {
-                            if (ch==',') {
+                        if (arg!="") {
+                            if (arg=="null") {
                                 add(new StoreVocab(VOCAB4('n','u','l','l')));
+                            } else {
+                                smartAdd(arg);
                             }
-                        } else {
-                            smartAdd(arg);
                         }
                         arg = "";
                         begun = false;
@@ -345,6 +346,9 @@ Storable *Storable::createByCode(int id) {
         yAssert(storable!=NULL);
         storable->asList()->setNested(true);
         break;
+    case StoreInt64::code:
+        storable = new StoreInt64();
+        break;
     default:
         if ((id&GROUP_MASK)!=0) {
             // typed list
@@ -410,10 +414,10 @@ bool BottleImpl::fromBytes(const Bytes& data) {
     dirty = true; // for clarity
 
     if (!nested) {
-        
+
         clear();
         specialize(0);
-        
+
         int code = reader.expectInt();
         if (reader.isError()) { return false; }
         YMSG(("READ got top level code %d\n", code));
@@ -474,7 +478,7 @@ bool BottleImpl::write(ConnectionWriter& writer) {
           // No byte count any more, to facilitate nesting
           //YMSG(("bottle byte count %d\n",byteCount()));
           //writer.appendInt(byteCount()+sizeof(NetInt32));
-          
+
           writer.appendInt(StoreList::code + speciality);
           }
         */
@@ -524,10 +528,10 @@ bool BottleImpl::read(ConnectionReader& reader) {
         if (!nested) {
             // no byte length any more to facilitate nesting
             //reader.expectInt(); // the bottle byte ct; ignored
-            
+
             clear();
             specialize(0);
-            
+
             int code = reader.expectInt();
             if (reader.isError()) return false;
             YMSG(("READ got top level code %d\n", code));
@@ -536,11 +540,11 @@ bool BottleImpl::read(ConnectionReader& reader) {
                 specialize(code);
             }
         }
-        
+
         result = true;
         clear();
         dirty = true; // for clarity
-        
+
         int len = 0;
         int i = 0;
         len = reader.expectInt();
@@ -626,6 +630,31 @@ bool StoreInt::readRaw(ConnectionReader& reader) {
 
 bool StoreInt::writeRaw(ConnectionWriter& writer) {
     writer.appendInt(x);
+    return true;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// StoreInt64
+
+String StoreInt64::toStringFlex() const {
+    char buf[256];
+    ACE_OS::sprintf(buf,"%"YARP_INT64_FMT,x);
+    return String(buf);
+}
+
+void StoreInt64::fromString(const String& src) {
+    x = ACE_OS::strtoll(src.c_str(), (char **)NULL, 0);
+}
+
+bool StoreInt64::readRaw(ConnectionReader& reader) {
+    x = reader.expectInt64();
+    return true;
+}
+
+bool StoreInt64::writeRaw(ConnectionWriter& writer) {
+    writer.appendInt64(x);
     return true;
 }
 

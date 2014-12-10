@@ -175,7 +175,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyOutgoingData called.
      */
-    virtual bool modifiesOutgoingData() = 0; 
+    virtual bool modifiesOutgoingData() = 0;
 
     /**
      * Modify outgoing payload data, if appropriate.
@@ -187,8 +187,8 @@ public:
      * @param writer for outgoing data.
      * @return writer for modified version of outgoing data.
      */
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) = 0; 
-    
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) = 0;
+
     /**
      * Determine whether outgoing data should be accepted.
      *
@@ -197,7 +197,7 @@ public:
      *         discarded.
      */
     virtual bool acceptOutgoingData(PortWriter& writer) = 0;
-    
+
     /**
      * Configure carrier from port administrative commands.
      *
@@ -253,13 +253,13 @@ public:
         return true;
     }
 
-    virtual bool modifiesOutgoingData() { 
-        return false; 
+    virtual bool modifiesOutgoingData() {
+        return false;
     }
 
     virtual PortWriter& modifyOutgoingData(PortWriter& writer) {
         return writer;
-    } 
+    }
 
     virtual bool acceptOutgoingData(PortWriter& writer) {
         return true;

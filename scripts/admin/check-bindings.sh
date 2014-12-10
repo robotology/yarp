@@ -6,11 +6,18 @@ set -e
 # You'll probably need to remove your global swig version to prevent
 # cmake finding it later.
 swig_base="/cache/swig"
-if [ -e "cache/swig" ]; then
+if [ ! -e $swig_base ]; then
     swig_base="$PWD/cache/swig"
+    mkdir -p $swig_base
 fi
+
 # swig_versions="1.3.39 1.3.40 2.0.1 2.0.2 2.0.3 2.0.4 2.0.5 2.0.6 2.0.7 2.0.8 2.0.9 2.0.10 2.0.11 2.0.12 3.0.0 3.0.1 3.0.2"
-swig_versions="1.3.39 1.3.40 2.0.2 2.0.3 2.0.5 2.0.6 2.0.9 2.0.10 2.0.11 2.0.12 3.0.0 3.0.1 3.0.2"
+default_swig_versions="1.3.39 1.3.40 2.0.2 2.0.5 2.0.6 2.0.10 2.0.12 3.0.0 3.0.1 3.0.2"
+if [ -z "$SWIG_VERSIONS" ]; then
+swig_versions="$default_swig_versions"
+else
+swig_versions="$SWIG_VERSIONS"
+fi
 
 skip_versions="RUBY_1.3.39 RUBY_1.3.40 LUA_2.0.11"
 
@@ -91,9 +98,28 @@ for lang in $SUPPORTED_LANGUAGES; do
 	    skips="$skips $swig_ver"
 	    continue
 	fi
+	if [ ! -e "$swig_base/$swig_ver" ]; then
+	    echo "CANNOT FIND precompiled versions of swig."
+	    echo "Going to compile it from scratch.  Warning: SLOW."
+	    echo "To cache this work, make a directory called '/cache/swig' that I can write in"
+	    base="$PWD"
+	    cd $swig_base
+	    if [ ! -e swig ]; then
+		git clone https://github.com/swig/swig
+	    fi
+	    cd swig
+	    git clean -f -d
+	    git checkout .
+	    git checkout rel-$swig_ver
+	    ./autogen.sh
+	    ./configure --prefix=$swig_base/$swig_ver
+	    make clean
+	    make
+	    make install
+	fi
 	export SWIG_LIB=$swig_base/$swig_ver/share/swig/$swig_ver
 	$swig_base/$swig_ver/bin/swig -swiglib
-	search_path="-DCMAKE_SYSTEM_PROGRAM_PATH=$swig_base/$swig_ver/bin -DCMAKE_SYSTEM_PREFIX_PATH=$swig_base/$swig_ver"
+	search_path="-DCMAKE_SYSTEM_PROGRAM_PATH=$swig_base/$swig_ver/bin -DCMAKE_SYSTEM_PREFIX_PATH=$swig_base/$swig_ver -DYARP_SPECIAL_SWIG=TRUE"
 	cd $YARP_ROOT
 	mkdir -p bindings
 	cd bindings
@@ -108,7 +134,20 @@ for lang in $SUPPORTED_LANGUAGES; do
 	lang_var=YARP_${lang}_FLAGS
 	lang_flags=${!lang_var}
 	echo "Running cmake"
+	set +e
+	rm -f CMakeCache.txt
 	cmake -DCREATE_$lang=TRUE $lang_flags $search_path $YARP_ROOT/bindings > result.txt 2>&1
+	set -e
+	if [ ! -e CMakeCache.txt ] ; then
+	    cat result.txt
+	    exit 1
+	fi
+	if grep -q SWIG_EXECUTABLE CMakeCache.txt; then
+	    echo "Configured."
+	else
+	    cat result.txt
+	    exit 1
+	fi
 	grep SWIG_EXECUTABLE CMakeCache.txt | grep "$swig_base/$swig_ver/" || {
 	    echo "CMake is picking up wrong SWIG version"
 	    echo "Remove this: `grep SWIG_EXECUTABLE CMakeCache.txt`"

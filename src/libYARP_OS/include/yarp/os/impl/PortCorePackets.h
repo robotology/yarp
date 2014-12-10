@@ -39,6 +39,11 @@ private:
     PLATFORM_LIST(PortCorePacket) active;   // a list of packets being sent
 public:
 
+    virtual ~PortCorePackets() {
+        PLATFORM_LIST_CLEAR(inactive);
+        PLATFORM_LIST_CLEAR(active);
+    }
+
     /**
      *
      * @return the number of packets currently being sent.

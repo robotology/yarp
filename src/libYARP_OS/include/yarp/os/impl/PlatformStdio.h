@@ -18,9 +18,6 @@
 #  ifndef ACE_OS
 #    define ACE_OS
 #  endif
-#  ifndef ACE_UNUSED_ARG
-#    define ACE_UNUSED_ARG(x) do {/*null*/} while (&x<0)
-#  endif
 #endif
 
 #endif

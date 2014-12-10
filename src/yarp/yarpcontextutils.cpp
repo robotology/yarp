@@ -729,6 +729,7 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
             char choice='n';
             printf("Are you sure you want to remove this folder: %s ? (y/n): ", targetPath.c_str());
             int got = scanf("%c",&choice);
+            YARP_UNUSED(got);
             if (choice=='y')
             {
                 int result= recursiveRemove(targetPath.c_str());
@@ -753,6 +754,7 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
             char choice='n';
             printf("Are you sure you want to remove files from this folder: %s ? (y/n): ", targetPath.c_str());
             int got = scanf("%c",&choice);
+            YARP_UNUSED(got);
             if (choice=='y')
             {
                 bool ok=true;

@@ -57,9 +57,15 @@ public:
 
     bool readNested(yarp::os::PortReader& obj);
 
+    bool readI16(YARP_INT16& x);
+
     bool readI32(YARP_INT32& x);
 
+    bool readI64(YARP_INT64& x);
+
     bool readBool(bool& x);
+
+    bool readByte(YARP_INT8& x);
 
     bool readVocab(YARP_INT32& x);
 
@@ -79,12 +85,21 @@ public:
 
     bool readString(yarp::os::ConstString& str, bool *is_vocab = 0 /*NULL*/);
 
+    bool readBinary(yarp::os::ConstString& str);
+
 #ifndef YARP_CONSTSTRING_IS_STD_STRING
     // we need to do the WIN32 dance to read an std::string without
     // running into DLL linkage trouble
     inline bool readString(std::string& str, bool *is_vocab = 0 /*NULL*/) {
         yarp::os::ConstString tmp;
         bool ok = readString(tmp,is_vocab);
+        str = tmp;
+        return ok;
+    }
+
+    inline bool readBinary(std::string& str) {
+        yarp::os::ConstString tmp;
+        bool ok = readBinary(tmp);
         str = tmp;
         return ok;
     }

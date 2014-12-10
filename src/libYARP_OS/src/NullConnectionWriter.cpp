@@ -16,6 +16,9 @@ void yarp::os::NullConnectionWriter::appendBlock(const char *data, size_t len) {
 void yarp::os::NullConnectionWriter::appendInt(int data) {
 }
 
+void yarp::os::NullConnectionWriter::appendInt64(const YARP_INT64& data) {
+}
+
 void yarp::os::NullConnectionWriter::appendDouble(double data) {
 }
 

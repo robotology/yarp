@@ -73,8 +73,7 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _syst
 void LogTab::ctxMenu(const QPoint &pos)
 {
     QMenu *menu = new QMenu;
-    QAction *act1 = menu->addAction(tr("Copy to clipboard"), this, SLOT(on_copy_to_clipboard_action()));
-
+    menu->addAction(tr("Copy to clipboard"), this, SLOT(on_copy_to_clipboard_action()));
     menu->exec(ui->listView->mapToGlobal(pos));
 }
 
@@ -139,7 +138,6 @@ void LogTab::updateLog(bool from_beginning)
     mutex.lock();
     std::list<yarp::yarpLogger::MessageEntry> messages;
     this->theLogger->get_messages_by_port_complete(portName,messages, from_beginning);
-    int size_messages= messages.size();
     std::list<yarp::yarpLogger::MessageEntry>::iterator it;
     QStandardItem *rootNode = model_logs->invisibleRootItem();
     for (it=messages.begin(); it!=messages.end(); it++)

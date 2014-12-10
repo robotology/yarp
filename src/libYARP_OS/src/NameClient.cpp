@@ -86,7 +86,7 @@ public:
                         at++;
                     }
                     sub_at = 0;
-                } 
+                }
             }
         }
         for (i=0; i<MAX_ARG_CT; i++) {
@@ -166,7 +166,7 @@ String NameClient::send(const String& cmd, bool multi) {
             //YARP_DEBUG(Logger::get(),"fake mode nameserver");
             return getServer().apply(cmd,Contact::bySocket("tcp","127.0.0.1",NetworkBase::getDefaultPortRange())) + "\n";
         }
-        
+
         TcpFace face;
         YARP_DEBUG(Logger::get(),String("connecting to ") + getAddress().toURI());
         OutputProtocol *ip = NULL;
@@ -431,7 +431,7 @@ void NameClient::setup() {
         if (!updateAddress()) {
             YARP_ERROR(Logger::get(),"Cannot find name server");
         }
-        
+
         YARP_DEBUG(Logger::get(),String("name server address is ") + 
                    address.toURI());
         isSetup = true;

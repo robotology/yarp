@@ -10,16 +10,36 @@
 #include <stdio.h>
 
 #include <yarp/os/all.h>
+#include <yarp/os/impl/UnitTest.h>
 #include <Demo.h>
 #include <DemoStructList.h>
 #include <DemoStructExt.h>
 #include <SurfaceMeshWithBoundingBox.h>
 #include <Wrapping.h>
+#include <TestSomeMoreTypes.h>
+#include <sub/directory/ClockServer.h>
+#include <Settings.h>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
+
+class ThriftTest : public UnitTest {
+public:
+    virtual ConstString getName() {
+        return "ThriftTest";
+    }
+};
 
 class Server : public Demo {
+private:
+    bool running;
+    bool closing;
 public:
+    Server() {
+        running = false;
+        closing = false;
+    }
+
     virtual int32_t get_answer() {
         return 42;
     }
@@ -58,6 +78,7 @@ public:
                                  const std::vector<int32_t> & lst,
                                  const int32_t y) {
         printf("test_partial with %d and %d\n", x, y);
+        YARP_UNUSED(lst);
         return x+y;
     }
 
@@ -69,10 +90,34 @@ public:
     }
 
     virtual int32_t test_longer_tail_defaults(const int32_t ignore, const DemoEnum _enum, const int32_t _int, const std::string& _string) {
+        YARP_UNUSED(ignore);
         if (_enum==ENUM2 && _int==42 && _string=="Space Monkey from the Planet: Space") {
             return 999;
         }
         return _int;
+    }
+
+
+
+    virtual void do_start_a_service() {
+        running = true;
+        while (!closing) {
+            printf("Operating...\n");
+            Time::delay(0.1);
+        }
+        running = false;
+    }
+
+    virtual bool do_check_for_service() {
+        return running;
+    }
+
+    virtual void do_stop_a_service() {
+        closing = true;
+        while (running) {
+            Time::delay(0.1);
+        }
+        closing = false;
     }
 };
 
@@ -139,6 +184,31 @@ public:
     }
 };
 
+class SettingsReceiver : public Settings::Editor {
+public:
+    bool called_will_set_id;
+    bool called_did_set_id;
+
+    SettingsReceiver() {
+        reset();
+    }
+
+    void reset() {
+        called_will_set_id = false;
+        called_did_set_id = false;
+    }
+
+    virtual bool will_set_id() { 
+        called_will_set_id = true;
+        return false;
+    }
+
+    virtual bool did_set_id() { 
+        called_did_set_id = true;
+        return false;
+    }
+};
+
 bool add_one() {
     printf("\n*** add_one()\n");
     ClientPeek client_peek;
@@ -192,7 +262,6 @@ bool test_live() {
     printf("\n*** test_live()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     Server server;
@@ -224,7 +293,6 @@ bool test_live_rpc() {
     printf("\n*** test_live_rpc()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     Server server;
@@ -235,7 +303,6 @@ bool test_live_rpc() {
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());
 
-    int x = 0;
     client.yarp().attachAsClient(client_port);
     server.yarp().attachAsServer(server_port);
 
@@ -272,7 +339,6 @@ bool test_enums() {
     printf("\n*** test_enums()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     Server server;
@@ -289,7 +355,7 @@ bool test_enums() {
     lst1.push_back(ENUM1);
     lst1.push_back(ENUM2);
     std::vector<DemoEnum> lst2 = client.test_enum_vector(lst1);
-    printf("lst1 %d lst2 %d\n", lst1.size(), lst2.size());
+    printf("lst1 %d lst2 %d\n", (int)lst1.size(), (int)lst2.size());
 
     return (lst2.size()==3 && lst1[0]==lst2[0] && lst1[1]==lst2[1]);
 }
@@ -299,7 +365,6 @@ bool test_defaults() {
 
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     Server server;
@@ -324,7 +389,6 @@ bool test_partial() {
 
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Server server;
 
@@ -390,7 +454,6 @@ bool test_defaults_with_rpc() {
 
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Server server;
 
@@ -435,7 +498,6 @@ bool test_names_with_spaces() {
     printf("\n*** test_names_with_spaces()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Server server;
 
@@ -509,7 +571,6 @@ bool test_wrapping() {
     printf("\n*** test_wrapping()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Wrapping client;
     WrappingServer server;
@@ -551,7 +612,6 @@ bool test_missing_method() {
     printf("\n*** test_missing_method()\n");
 
     Network yarp;
-    yarp.setLocalMode(true);
 
     Demo client;
     BrokenServer server;
@@ -855,6 +915,117 @@ bool test_help() {
     return true;
 }
 
+bool test_primitives() {
+    printf("\n*** test_primitives()\n");
+    TestSomeMoreTypes a, b;
+    Bottle tmp;
+    a.a_bool = true;
+    a.a_byte = 8;
+    a.a_i16 = 16;
+    a.a_i32 = 32;
+    a.a_i64 = 64;
+    tmp.read(a);
+    tmp.write(b);
+    if (a.a_bool!=b.a_bool) {
+        fprintf(stderr,"copy bool failed\n");
+        return false;
+    }
+    if (a.a_i16!=b.a_i16) {
+        fprintf(stderr,"copy i16 failed\n");
+        return false;
+    }
+    if (a.a_i32!=b.a_i32) {
+        fprintf(stderr,"copy i32 failed\n");
+        return false;
+    }
+    if (a.a_i64!=b.a_i64) {
+        fprintf(stderr,"copy i64 failed\n");
+        return false;
+    }
+    printf("Copies all done\n");
+    return true;
+}
+
+bool test_settings(UnitTest& test) {
+    test.report(0,"test settings");
+
+    Settings::Editor settings;
+    SettingsReceiver receiver;
+
+    Network yarp;
+    yarp::os::RpcClient sender_port;
+    yarp::os::RpcServer receiver_port;
+
+    settings.yarp().attachAsClient(sender_port);
+    receiver.yarp().attachAsServer(receiver_port);
+
+    if (!sender_port.open("/sender")) return 1;
+    if (!receiver_port.open("/receiver")) return 1;
+    yarp.connect("/sender","/receiver");    
+
+    settings.set_id(5);
+    test.checkEqual(receiver.state().id,5,"int assignment");
+
+    settings.set_name("hello");
+    test.checkEqual(receiver.state().name,"hello","string assignment");
+
+    settings.begin();
+    settings.set_id(6);
+    test.checkEqual(receiver.state().id,5,"not too early");
+    settings.set_name("world");
+    test.checkEqual(receiver.state().name,"hello","string not too early");
+    settings.end();
+    test.checkEqual(receiver.state().id,6,"int group");
+    test.checkEqual(receiver.state().name,"world","string group");
+
+    yarp::os::Bottle cmd, reply;
+    cmd.fromString("patch (set id 3) (set name frog)");
+    sender_port.write(cmd,reply);
+    test.checkEqual(reply.toString(),"[ok]","return on success");
+    test.checkEqual(receiver.state().id,3,"id ok");
+    test.checkEqual(receiver.state().name,"frog","name ok");
+
+    cmd.fromString("set id 9");
+    reply.clear();
+    sender_port.write(cmd,reply);
+    test.checkEqual(receiver.state().id,9,"set id ok");
+
+    cmd.fromString("set id 99 name \"Space Monkey\"");
+    reply.clear();
+    sender_port.write(cmd,reply);
+    test.checkEqual(receiver.state().id,99,"multi set ok");
+    test.checkEqual(receiver.state().name,"Space Monkey","multi set ok");
+
+    cmd.fromString("set id 99 name \"Space Monkey\" id 101");
+    reply.clear();
+    sender_port.write(cmd,reply);
+    test.checkEqual(receiver.state().id,101,"triple set ok");
+
+    return test.isOk();
+}
+
+bool test_start_stop(UnitTest& test) {
+    test.report(0,"test start/stop");
+
+    Network yarp;
+    Demo client;
+    Server server;
+    RpcClient client_port;
+    RpcServer server_port;
+    client_port.open("/client");
+    server_port.open("/server");
+    yarp.connect(client_port.getName(),server_port.getName());
+    client.yarp().attachAsClient(client_port);
+    server.yarp().attachAsServer(server_port);
+
+    printf("Starting a long operation\n");
+    client.do_start_a_service();
+    Time::delay(1);
+    printf("Stopping a long operation\n");
+    client.do_stop_a_service();
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (argc>1) {
         Network yarp;
@@ -867,6 +1038,9 @@ int main(int argc, char *argv[]) {
         }
         return 0;
     }
+
+    Network yarp;
+    yarp.setLocalMode(true);
 
     if (!add_one()) return 1;
     if (!test_void()) return 1;
@@ -885,5 +1059,11 @@ int main(int argc, char *argv[]) {
     if (!test_editor()) return 1;
     if (!test_list_editor()) return 1;
     if (!test_help()) return 1;
+    if (!test_primitives()) return 1;
+    UnitTest::startTestSystem();
+    ThriftTest test;
+    if (!test_settings(test)) return 1;
+    if (!test_start_stop(test)) return 1;
+    UnitTest::stopTestSystem();
     return 0;
 }

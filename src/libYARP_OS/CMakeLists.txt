@@ -37,6 +37,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Log.h
                  include/yarp/os/LogStream.h
                  include/yarp/os/ManagedBytes.h
+                 include/yarp/os/MessageStack.h
                  include/yarp/os/ModifyingCarrier.h
                  include/yarp/os/Module.h
                  include/yarp/os/MultiNameSpace.h
@@ -234,6 +235,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Logger.cpp
                  src/LogForwarder.cpp
                  src/ManagedBytes.cpp
+                 src/MessageStack.cpp
                  src/ModifyingCarrier.cpp
                  src/Module.cpp
                  src/MultiNameSpace.cpp
@@ -317,11 +319,14 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ThreadImpl.cpp
                  src/Time.cpp
                  src/TwoWayStream.cpp
+                 src/Type.cpp
+                 src/UdpCarrier.cpp
                  src/UnitTest.cpp
                  src/Value.cpp
                  src/Vocab.cpp
                  src/YarpNameSpace.cpp
                  src/YarpPlugin.cpp
+                 src/WirePortable.cpp
                  src/WireReader.cpp
                  src/WireState.cpp
                  src/WireWriter.cpp
@@ -334,8 +339,7 @@ if (NOT SKIP_ACE)
   # these carriers have not yet been implemented without ACE
   set(YARP_OS_SRCS ${YARP_OS_SRCS}
                    src/McastCarrier.cpp
-                   src/ShmemCarrier.cpp
-                   src/UdpCarrier.cpp)
+                   src/ShmemCarrier.cpp)
 endif()
 
 source_group("Source Files" FILES ${YARP_OS_SRCS})

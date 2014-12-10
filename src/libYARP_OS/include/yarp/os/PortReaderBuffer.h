@@ -59,6 +59,7 @@ public:
      * @param datum data read from a port
      */
     virtual void onRead(T& datum) {
+        YARP_UNUSED(datum);
         typedReaderMissingCallback();
     }
 
@@ -70,6 +71,7 @@ public:
      * @param reader the original port (or delegate object)
      */
     virtual void onRead(T& datum, const yarp::os::TypedReader<T>& reader) {
+        YARP_UNUSED(reader);
         onRead(datum);
     }
 };

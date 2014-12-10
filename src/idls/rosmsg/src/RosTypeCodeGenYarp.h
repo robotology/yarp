@@ -24,6 +24,7 @@ public:
     std::string yarpTag;
     std::string yarpReader;
     std::string yarpWireReader;
+    std::string yarpDefaultValue;
     int len;
 
     RosYarpType() {
@@ -34,6 +35,7 @@ public:
 class RosTypeCodeGenYarp : public RosTypeCodeGen {
 private:
     std::string target;
+    std::string className;
 
 public:
     std::string counter;
@@ -52,6 +54,10 @@ public:
     virtual bool beginDeclare();
     virtual bool declareField(const RosField& field);
     virtual bool endDeclare();
+
+    virtual bool beginConstruct();
+    virtual bool constructField(const RosField& field);
+    virtual bool endConstruct();
 
     virtual bool beginRead(bool bare, int len);
     virtual bool readField(bool bare, const RosField& field);

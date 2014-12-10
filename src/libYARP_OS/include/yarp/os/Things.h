@@ -71,15 +71,37 @@ public:
         conReader = NULL;
         writer = NULL;
         portable = NULL;
+        beenRead = false;
     }
 
+    template<typename T>
+    T* cast_as(void)
+    {
+        if(this->writer)
+            return dynamic_cast<T*>(this->writer);
 
-/**
- * TODO: these should be private indeed! 
- *       they are defined as public member to allow 
- *       accessing them in swig file via 'self->' 
- */
-public: 
+        if(!this->portable) 
+        {
+            if(!this->conReader)
+                return NULL;
+            this->portable = new T(); 
+            if(!this->portable->read(*this->conReader)) 
+            {
+                delete this->portable; 
+                this->portable = NULL; 
+                return NULL; 
+            }
+            beenRead = true;
+        }
+        return dynamic_cast<T*>(this->portable);
+    }
+
+    bool hasBeenRead() { 
+        return beenRead;
+    }
+
+private: 
+    bool beenRead;
     yarp::os::ConnectionReader* conReader;
     yarp::os::PortWriter* writer;
     yarp::os::Portable* portable;

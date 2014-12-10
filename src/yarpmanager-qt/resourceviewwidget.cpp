@@ -114,6 +114,7 @@ void ResourceViewWidget::init()
 
     for(int i=0; i<res->peripheralCount();i++){
         QTreeWidgetItem *it = new QTreeWidgetItem(peripheralItem,QStringList() << res->getPeripheralAt(i).getName());
+        Q_UNUSED(it);
     }
 
     yarp::manager::ProcessContainer procs = res->getProcesses();
@@ -121,5 +122,6 @@ void ResourceViewWidget::init()
     for(size_t i=0; i<procs.size();i++){
         yarp::manager::Process p  = procs.at(i);
         QTreeWidgetItem *it = new QTreeWidgetItem(processesItem,QStringList() << QString("%1").arg(p.pid));
+        Q_UNUSED(it);
     }
 }

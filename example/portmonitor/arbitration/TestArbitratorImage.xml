@@ -35,17 +35,17 @@
     <connection>
         <from>/Ball/grabber</from>
         <to>/ViewGrabbers/yarpview/img:i</to>
-        <protocol>udp+recv.portmonitor+script.lua+file.ball_monitor</protocol>
+        <protocol>udp+recv.portmonitor+type.lua+file.ball_monitor</protocol>
     </connection>
     <connection>
         <from>/Line/grabber</from>
         <to>/ViewGrabbers/yarpview/img:i</to>
-        <protocol>udp+recv.portmonitor+script.lua+file.line_monitor</protocol>
+        <protocol>udp+recv.portmonitor+type.lua+file.line_monitor</protocol>
     </connection>
     <connection>
         <from>/Selector/grabber</from>
         <to>/ViewGrabbers/yarpview/img:i</to>
-        <protocol>udp+recv.portmonitor+script.lua+file.sel_monitor</protocol>
+        <protocol>udp+recv.portmonitor+type.lua+file.selector_monitor</protocol>
     </connection>
 
 </application>

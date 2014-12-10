@@ -591,7 +591,6 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
             *rec = true;
             if (ControlBoardWrapper_p->verbose())
                 yDebug("get command received\n");
-            int tmp = 0;
             double dtmp  = 0.0;
             double dtmp2 = 0.0;
             response.addVocab(VOCAB_IS);

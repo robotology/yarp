@@ -99,11 +99,11 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
 
     // TODO enable realtime mode
     plot_realtime = options.check("realtime");
-    (void)plot_realtime; // UNUSED
+    YARP_UNUSED(plot_realtime);
 
     // TODO enable trigger mode
     plot_triggermode = options.check("triggermode");
-    (void)plot_triggermode; // UNUSED
+    YARP_UNUSED(plot_triggermode);
 
     int plotIndex = plotManager.addPlot(plot_title, 0, 0, 1, 1, plot_minval, plot_maxval, plot_size, plot_bgcolor, plot_autorescale);
 

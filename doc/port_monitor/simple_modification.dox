@@ -45,7 +45,7 @@ This example demonstrates how to simply use the port monitor carrier to modify d
   
 \li In another terminal connect the port as follow
 \verbatim 
-   $ yarp connect /write /read tcp+recv.portmonitor+script.lua+file.bot_modifier
+   $ yarp connect /write /read tcp+recv.portmonitor+type.lua+file.bot_modifier
 \endverbatim
 
 Now if you write something  in the 'sender' terminal, you will see the text "modified from Lua" will be added to the original message. For example: 

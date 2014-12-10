@@ -13,6 +13,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/DummyConnector.h>
+#include <yarp/os/MessageStack.h>
 
 namespace yarp {
     namespace os {
@@ -31,6 +32,7 @@ private:
     yarp::os::UnbufferedContactable *port;
     yarp::os::PortReader *reader;
     yarp::os::PortReader *owner;
+    yarp::os::MessageStack stack;
     bool replies;
     bool can_write;
     bool can_read;
@@ -174,11 +176,37 @@ public:
     }
 
 
+    /**
+     *
+     * Put a message in a stack to call later, asynchronously.  Used
+     * in implementation of thrift "oneway" messages.
+     * @param writer message to send
+     * @param reader where to send the message
+     * @param tag string to prefix the message with
+     * @return true on success
+     *
+     */
+    bool callback(PortWriter& writer, PortReader& reader, const ConstString& tag = "") {
+        stack.attach(reader);
+        stack.stack(writer,tag);
+        return true;
+    }
+
+    /**
+     *
+     * @return true if writing is allowed over link.
+     *
+     */
     bool canWrite() const {
         return can_write;
     }
 
 
+    /**
+     *
+     * @return true if reading from the link is allowed.
+     *
+     */
     bool canRead() const {
         return can_read;
     }

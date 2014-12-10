@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2014 iCub Facility
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -24,7 +24,7 @@ using namespace yarp::os;
 
 // Read connection settings.
 bool PortMonitor::configure(yarp::os::ConnectionState& proto) 
-{   
+{
     portName = proto.getRoute().getToName();
     sourceName = proto.getRoute().getFromName();
     group = getPeers().add(portName,this);
@@ -35,35 +35,52 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
 
     if(binder) delete binder;
     binder = NULL;        
-    // check which monitor should be used
-    ConstString script = options.check("script", Value("lua")).asString();
+
+    ConstString script = options.check("type", Value("lua")).asString();
+    ConstString filename = options.check("file", Value("modifier")).asString();
+    ConstString constraint = options.check("constraint", Value("")).asString();
+    // context is used to find the script files
+    ConstString context = options.check("context", Value("")).asString();
+
+    // check which monitor should be used    
     if((binder = MonitorBinding::create(script.c_str())) == NULL)
     {
-         yError("Currently only \'lua\' scripting is supported by portmonitor");
+         YARP_LOG_ERROR("Currently only \'lua\' script and \'dll\' object is supported by portmonitor");
          return false;
     }
    
-    // check the acceptance constraint
-    ConstString constraint = options.check("constraint", Value("")).asString();
+    // set the acceptance constraint
     binder->setAcceptConstraint(constraint.c_str());
+    
+    ConstString strFile = filename;
 
-    ConstString context = options.check("context", Value("")).asString();
-    ConstString filename = options.check("file", Value("modifier")).asString();
-    yarp::os::ResourceFinder rf;
-    //rf.setDefaultConfigFile(filename);
-    rf.setDefaultContext(context.c_str());
-    rf.configure(0, NULL);
-    ConstString strFile = rf.findFile(filename.c_str());
-    if(strFile == "")
+    if(script != "dll") 
     {
-        strFile = rf.findFile(filename+".lua");
-        PortMonitor::lock();
-        bReady =  binder->loadScript(strFile.c_str());
-        PortMonitor::unlock();
-        return bReady;
-
+        yarp::os::ResourceFinder rf;
+        rf.setDefaultContext(context.c_str());
+        rf.configure(0, NULL);
+        strFile = rf.findFile(filename.c_str());
+        if(strFile == "")
+            strFile = rf.findFile(filename+".lua");
     }
-    bReady = false;
+
+    // provide some useful information for the monitor object
+    // which can be accessed in the create() callback.
+    Property info;
+    info.clear();
+    info.put("filename", strFile);
+    info.put("type", script);
+    info.put("sender_side",
+             (proto.getContactable()->getName() == sourceName));
+    info.put("receiver_side",
+             (proto.getContactable()->getName() == portName));
+    info.put("source", sourceName);
+    info.put("destination", portName);
+    info.put("carrier", proto.getRoute().getCarrierName());
+
+    PortMonitor::lock();
+    bReady =  binder->load(info);
+    PortMonitor::unlock();
     return bReady;
 }
 
@@ -98,7 +115,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     PortMonitor::lock();
     yarp::os::Things thing;
     thing.setConnectionReader(*localReader);
-    yarp::os::Things& result = binder->updateData(thing);    
+    yarp::os::Things& result = binder->updateData(thing); 
     PortMonitor::unlock();
     con.reset();
     if(result.write(con.getWriter()))
@@ -111,6 +128,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
     if(!bReady) return false;
    
     bool result;
+    localReader = &reader;
     // If no accept callback avoid calling the binder
     if(binder->hasAccept()) 
     {
@@ -129,15 +147,13 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         // localReader.  
         // localReader points to a connection reader which contains 
         // either the original or modified data.
-        con.reset();
-        if(thing.write(con.getWriter()))
-            localReader = &con.getReader();
-        else
-            localReader = &reader;
+        if(thing.hasBeenRead()) {
+            con.reset();
+            if(thing.write(con.getWriter()))
+                localReader = &con.getReader();
+        }                
     }
-    else
-        localReader = &reader;
-
+        
     getPeers().lock();
     yAssert(group);
     result = group->acceptIncomingData(this);

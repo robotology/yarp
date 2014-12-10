@@ -30,6 +30,7 @@ namespace yarp {
             class Storable;
             class StoreNull;
             class StoreInt;
+            class StoreInt64;
             class StoreBool;
             class StoreVocab;
             class StoreDouble;
@@ -52,6 +53,7 @@ class YARP_OS_impl_API yarp::os::impl::Storable : public yarp::os::Value {
 public:
     virtual bool isBool() const    { return false; }
     virtual bool isInt() const     { return false; }
+    virtual bool isInt64() const   { return false; }
     virtual bool isString() const  { return false; }
     virtual bool isDouble() const  { return false; }
     virtual bool isList() const    { return false; }
@@ -62,6 +64,7 @@ public:
 
     virtual bool asBool() const          { return false; }
     virtual int asInt() const            { return 0; }
+    virtual YARP_INT64 asInt64() const   { return 0; }
     virtual int asVocab() const          { return 0; }
     virtual double asDouble() const      { return 0; }
     virtual yarp::os::ConstString asString() const {
@@ -232,11 +235,40 @@ public:
     virtual bool writeRaw(ConnectionWriter& connection);
     virtual Storable *createStorable() const { return new StoreInt(0); }
     virtual int asInt() const { return x; }
+    virtual YARP_INT64 asInt64() const { return x; }
     virtual int asVocab() const { return x; }
     virtual double asDouble() const { return x; }
     virtual bool isInt() const { return true; }
+    virtual bool isInt64() const { return true; }
     static const int code;
     virtual void copy(const Storable& alt) { x = alt.asInt(); }
+};
+
+/**
+ *
+ * A 64-bit integer item.
+ *
+ */
+class YARP_OS_impl_API yarp::os::impl::StoreInt64 : public Storable {
+private:
+    YARP_INT64 x;
+public:
+    StoreInt64() { x = 0; }
+    StoreInt64(const YARP_INT64& x) { this->x = x; }
+    virtual String toStringFlex() const;
+    virtual void fromString(const String& src);
+    virtual int getCode() const { return code; }
+    virtual bool readRaw(ConnectionReader& connection);
+    virtual bool writeRaw(ConnectionWriter& connection);
+    virtual Storable *createStorable() const { return new StoreInt64(0); }
+    virtual int asInt() const { return (int)x; }
+    virtual YARP_INT64 asInt64() const { return x; }
+    virtual int asVocab() const { return (int)x; }
+    virtual double asDouble() const { return (double)x; }
+    virtual bool isInt() const { return false; }
+    virtual bool isInt64() const { return true; }
+    static const int code;
+    virtual void copy(const Storable& alt) { x = alt.asInt64(); }
 };
 
 /**
@@ -260,6 +292,7 @@ public:
     virtual Storable *createStorable() const { return new StoreVocab(0); }
     virtual bool asBool() const { return x!=0; }
     virtual int asInt() const { return x; }
+    virtual YARP_INT64 asInt64() const { return x; }
     virtual int asVocab() const { return x; }
     virtual double asDouble() const { return x; }
     virtual bool isVocab() const { return true; }
@@ -357,6 +390,7 @@ public:
         return new StoreDouble(0);
     }
     virtual int asInt() const { return (int)x; }
+    virtual YARP_INT64 asInt64() const { return (YARP_INT64)x; }
     virtual double asDouble() const { return x; }
     virtual bool isDouble() const { return true; }
     static const int code;
@@ -474,6 +508,10 @@ public:
 
     void addInt(int x) {
         add(new StoreInt(x));
+    }
+
+    void addInt64(const YARP_INT64& x) {
+        add(new StoreInt64(x));
     }
 
     void addVocab(int x) {

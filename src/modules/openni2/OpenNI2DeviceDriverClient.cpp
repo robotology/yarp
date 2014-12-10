@@ -31,9 +31,8 @@ bool yarp::dev::OpenNI2DeviceDriverClient::open(yarp::os::Searchable& config){
         printf("\t- Error: remoteName element not found in PolyDriver.\n");
         return false;
     }
-    Network yarp;
     string remotePortIn = remotePortPrefix+":i";
-    if(!yarp.exists(remotePortIn.c_str())){
+    if(!NetworkBase::exists(remotePortIn.c_str())){
         printf("\t- Error: remote port not found. (%s)\n\t  Check if OpenNI2DeviceDriverServer is running.\n",remotePortIn.c_str());
         return false;
     }
@@ -79,10 +78,10 @@ bool yarp::dev::OpenNI2DeviceDriverClient::connectPorts(string remotePortPrefix,
     portsOK = portsOK && inUserSkeletonPort->open(tinUserSkeletonPort.c_str());
     
     bool anyPort = false;
-    if(Network::connect(toutLocalPort.c_str(),tinRemotePort.c_str(),NULL,false)) anyPort = true;
-    if(Network::connect(toutUserSkeletonPort.c_str(),tinUserSkeletonPort.c_str(),NULL,false)) anyPort = true;
-    if(Network::connect(toutDepthFramePort.c_str(),tinDepthFramePort.c_str(),NULL,false)) anyPort = true;
-    if(Network::connect(toutImageFramePort.c_str(),tinImageFramePort.c_str(),NULL,false)) anyPort = true;
+    if(NetworkBase::connect(toutLocalPort.c_str(),tinRemotePort.c_str(),NULL,false)) anyPort = true;
+    if(NetworkBase::connect(toutUserSkeletonPort.c_str(),tinUserSkeletonPort.c_str(),NULL,false)) anyPort = true;
+    if(NetworkBase::connect(toutDepthFramePort.c_str(),tinDepthFramePort.c_str(),NULL,false)) anyPort = true;
+    if(NetworkBase::connect(toutImageFramePort.c_str(),tinImageFramePort.c_str(),NULL,false)) anyPort = true;
     
     if(!anyPort || !portsOK) close();
     

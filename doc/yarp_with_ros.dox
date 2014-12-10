@@ -528,9 +528,55 @@ The sensor_msgs_PointCloud2 datatype can then be used to communicate with
 a ROS topic of that type (see \ref port_expert for background).
 
 
+\section yarp_with_ros_param Using YARP with the ROS parameter server
 
+YARP has no special support for the ROS parameter server, but can
+communicate with it via its [network API](http://wiki.ros.org/ROS/Parameter%20Server%20API). Here is a command-line example:
 
+\verbatim
+yarp rpc /ros
+>>setParam /demo foo 15
+Response: 1 "parameter /foo set" 0
+>>getParam /demo foo
+Target disappeared, reconnecting...
+Response: 1 "Parameter [/foo]" 15
+\endverbatim
 
+From code, you could use a Bottle:
+
+\code
+  Network yarp;
+  Contact ros = Network::queryName("/ros");
+  printf("ROS available as %s\n", ros.toURI().c_str());
+
+  // set a parameter called "foo" to 15
+  Bottle cmd, reply;
+  cmd.addString("setParam");
+  cmd.addString("/demo");
+  cmd.addString("foo");
+  cmd.addInt(15);
+  Network::write(ros,cmd,reply);
+  printf("reply to setParam is: %s\n", reply.toString().c_str());
+
+  // read "foo" back
+  cmd.clear();
+  cmd.addString("getParam");
+  cmd.addString("/demo");
+  cmd.addString("foo");
+  Network::write(ros,cmd,reply);
+  printf("reply to getParam is: %s\n", reply.toString().c_str());
+  printf("Stored value is hopefully %d\n", reply.get(2).asInt());
+  return 0;
+\endcode
+
+This should give:
+
+\verbatim
+ROS available as xmlrpc://127.0.0.1:11311
+reply to setParam is: 1 "parameter /foo set" 0
+reply to getParam is: 1 "Parameter [/foo]" 15
+Stored value is hopefully 15
+\endverbatim
 
 
 \section yarp_with_ros_roscore_only Using YARP with roscore only

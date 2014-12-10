@@ -127,4 +127,3 @@ bool Time::isValid() {
     if (clk) return clk->isValid();
     return true;
 }
-

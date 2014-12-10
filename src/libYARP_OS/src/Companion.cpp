@@ -46,11 +46,7 @@
 #include <yarp/os/impl/PlatformSignal.h>
 
 #include <yarp/conf/system.h>
-#ifdef YARP_CMAKE_CONFIG
 #include <yarp/conf/version.h>
-#else
-// we do not have configuration information, disable some features.
-#endif
 
 #ifdef WITH_READLINE
     #include <readline/readline.h>
@@ -348,6 +344,7 @@ Companion::Companion() {
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
     // new logic to handle some global arguments
     char **argv_copy = new char *[argc];
+    char **argv_copy_org = argv_copy;
     int argc_copy = argc;
     if (!argv_copy) {
         YARP_SPRINTF0(Logger::get(),
@@ -385,14 +382,16 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
     String sname(name);
     Entry e;
     int result = PLATFORM_MAP_FIND_RAW(action,sname,e);
+    int v = -1;
     if (result!=-1) {
-        return (this->*(e.fn))(argc_copy,argv_copy);
+        v = (this->*(e.fn))(argc_copy,argv_copy);
     } else {
         YARP_SPRINTF1(Logger::get(),
                       error,
                       "Could not find command \"%s\"",name);
     }
-    return -1;
+    delete[] argv_copy_org;
+    return v;
 }
 
 
@@ -2125,7 +2124,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                     break;  // for example, horrible windows ^D
                 }
             }
-            BottleImpl bot;
+            Bottle bot;
             if (!raw) {
                 bot.addInt(0);
                 bot.addString(txt.c_str());
@@ -2161,7 +2160,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     companion_active_port = NULL;
 
     if (!raw) {
-        BottleImpl bot;
+        Bottle bot;
         bot.addInt(1);
         bot.addString("<EOF>");
         //core.send(bot);
@@ -2312,11 +2311,7 @@ String Companion::readString(bool *eof) {
 }
 
 String Companion::version() {
-#ifdef YARP_VERSION
     return YARP_VERSION;
-#else
-    return "2";
-#endif
 }
 
 

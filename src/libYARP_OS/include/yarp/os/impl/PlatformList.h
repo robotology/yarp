@@ -22,7 +22,7 @@
 #  include <list>
 #  define PLATFORM_LIST(x) std::list<x *>
 #  define PLATFORM_LIST_EMPTY(x) x.empty()
-#  define PLATFORM_LIST_CLEAR(x) x.clear()
+#  define PLATFORM_LIST_CLEAR(x) while (!x.empty()) { delete x.back(); x.pop_back(); }
 #  define PLATFORM_LIST_PUSH_BACK(x,y) x.push_back(y)
 #  define PLATFORM_LIST_GET(x,y) y = x.front()
 #endif

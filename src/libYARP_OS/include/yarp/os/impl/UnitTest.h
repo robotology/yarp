@@ -84,6 +84,10 @@ public:
     void saveEnvironment(const char *key);
     void restoreEnvironment();
 
+    bool isOk() {
+        return !hasProblem;
+    }
+
 private:
     UnitTest *parent;
     PlatformVector<UnitTest *> subTests;

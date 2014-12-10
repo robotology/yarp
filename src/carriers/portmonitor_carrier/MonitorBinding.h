@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2014 iCub Facility
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -16,12 +16,12 @@
 
 #include "MonitorEvent.h"
 
-class MonitorBinding 
+class MonitorBinding
 {
 
 public:
     virtual ~MonitorBinding();   
-    virtual bool loadScript(const char* filename) = 0;
+    virtual bool load(const yarp::os::Property& options) = 0;
     virtual bool setParams(const yarp::os::Property& params) = 0;
     virtual bool getParams(yarp::os::Property& params) = 0;
     

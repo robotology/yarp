@@ -204,7 +204,8 @@ int RunReadWrite::loop()
         ::exit(0);
 #else
         int term_pipe[2];
-        pipe(term_pipe);
+        int warn_suppress = pipe(term_pipe);
+        YARP_UNUSED(warn_suppress);
         dup2(term_pipe[0],STDIN_FILENO);
         FILE* file_term_pipe=fdopen(term_pipe[1],"w");
         fprintf(file_term_pipe,"SHKIATTETE!\n");

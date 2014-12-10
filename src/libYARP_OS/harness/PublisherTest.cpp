@@ -49,7 +49,7 @@ public:
             pin.open("very_interesting_topic");
 
             waitForOutput(p,10);
-            
+
             Bottle& b = p.prepare();
             b.clear();
             b.addInt(42);
@@ -71,13 +71,13 @@ public:
         pout.setWriteOnly();
         pout.open("very_interesting_topic");
 
-        {           
+        {
             Node n2("/node2");
             Subscriber<Bottle> pin("/very_interesting_topic");
             pin.read(false); // make sure we are in buffered mode
 
             waitForOutput(pout,10);
-            
+
             Bottle& b = pout.prepare();
             b.clear();
             b.addInt(42);
@@ -98,13 +98,13 @@ public:
         Publisher<Bottle> pout;
         pout.topic("/very_interesting_topic");
 
-        {           
+        {
             Node n2("/node2");
             Subscriber<Bottle> pin("/very_interesting_topic");
             pin.read(false); // make sure we are in buffered mode
 
             waitForOutput(pout,10);
-            
+
             Bottle& b = pout.prepare();
             b.clear();
             b.addInt(42);
@@ -132,7 +132,7 @@ public:
             pin.open("very_interesting_topic");
 
             waitForOutput(p,10);
-            
+
             Bottle b;
             b.addInt(42);
             p.write(b);
@@ -152,12 +152,12 @@ public:
         pout.setWriteOnly();
         pout.open("very_interesting_topic");
 
-        {           
+        {
             Node n2("/node2");
             Subscriber<Bottle> pin("/very_interesting_topic");
 
             waitForOutput(pout,10);
-            
+
             Bottle& b = pout.prepare();
             b.clear();
             b.addInt(42);

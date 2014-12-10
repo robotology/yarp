@@ -49,7 +49,7 @@ bool NameConfig::fromString(const String& txt) {
             // use Property format
             Property config;
             config.fromConfig(txt.c_str());
-            
+
             Bottle& b = config.findGroup("name");
             if (b.isNull()) {
                 fprintf(stderr,"Cannot find yarp group in config file\n");
@@ -248,22 +248,22 @@ String NameConfig::getHostName(bool prefer_loopback, String seed) {
     ConstString ip;
     struct ifaddrs *ifaddr, *ifa;
     if (getifaddrs(&ifaddr) == -1) {
-    	perror("getifaddrs in getIps");
-    	exit(EXIT_FAILURE);
+        perror("getifaddrs in getIps");
+        exit(EXIT_FAILURE);
     }
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-    	if (ifa->ifa_addr == NULL) continue;
-    	family = ifa->ifa_addr->sa_family;
-    	if (family == AF_INET || family == AF_INET6) {
-    		s = getnameinfo(ifa->ifa_addr,
-    				(family == AF_INET) ? sizeof(struct sockaddr_in) :
-    						sizeof(struct sockaddr_in6),
-    						hostname, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-    		if (s != 0) {
-    			printf("getnameinfo() failed: %s\n", gai_strerror(s));
-    			exit(EXIT_FAILURE);
-    		}
-    		ip = ConstString(hostname);
+        if (ifa->ifa_addr == NULL) continue;
+        family = ifa->ifa_addr->sa_family;
+        if (family == AF_INET || family == AF_INET6) {
+            s = getnameinfo(ifa->ifa_addr,
+                    (family == AF_INET) ? sizeof(struct sockaddr_in) :
+                            sizeof(struct sockaddr_in6),
+                            hostname, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+            if (s != 0) {
+                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                exit(EXIT_FAILURE);
+            }
+            ip = ConstString(hostname);
 #endif
 
             YARP_DEBUG(Logger::get(), String("scanning network interface ") +
@@ -289,7 +289,7 @@ String NameConfig::getHostName(bool prefer_loopback, String seed) {
                 found = true;
                 continue;
             }
-            
+
             // We have an interface
 
             // If this isn't the right kind of interface, skip it
@@ -386,24 +386,25 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
     char host[NI_MAXHOST];
     struct ifaddrs *ifaddr, *ifa;
     if (getifaddrs(&ifaddr) == -1) {
-    	perror("getifaddrs in getIpsAsBottle");
-    	exit(EXIT_FAILURE);
+        perror("getifaddrs in getIpsAsBottle");
+        exit(EXIT_FAILURE);
     }
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-    	if (ifa->ifa_addr == NULL) continue;
-    	family = ifa->ifa_addr->sa_family;
-    	if (family == AF_INET || family == AF_INET6) {
-    		s = getnameinfo(ifa->ifa_addr,
-    				(family == AF_INET) ? sizeof(struct sockaddr_in) :
-    						sizeof(struct sockaddr_in6),
-    						host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-    		if (s != 0) {
-    			printf("getnameinfo() failed: %s\n", gai_strerror(s));
-    			exit(EXIT_FAILURE);
-    		}
-    		result.addString(host);
-    	}
+        if (ifa->ifa_addr == NULL) continue;
+        family = ifa->ifa_addr->sa_family;
+        if (family == AF_INET || family == AF_INET6) {
+            s = getnameinfo(ifa->ifa_addr,
+                    (family == AF_INET) ? sizeof(struct sockaddr_in) :
+                            sizeof(struct sockaddr_in6),
+                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+            if (s != 0) {
+                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                exit(EXIT_FAILURE);
+            }
+            result.addString(host);
+        }
     }
+    freeifaddrs(ifaddr);
 #endif
 
     return result;

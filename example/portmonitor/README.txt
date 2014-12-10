@@ -38,8 +38,13 @@ Port Monitor carrier
    ------------------
    This is called when the script is loaded and the port monitor object is created.
    Returning 'false' will avoid calling other functions and stop the monitor object.
+   The 'options' is of type yarp.Property object and it consists of a set of property/value 
+   provides some information about the current connection which the PortMonitor object is attached.
+   such as "sender_side" or "receiver_side" keys in the options list respectively indicate whether
+   the port monitor object is attached to the sender side or the receiver side of the connection. 
+   e.g., options:find("sender_side"):asBool()
    
-   PortMonitor.create = function() 
+   PortMonitor.create = function(options) 
         ... 
         return true     --default 
    end 

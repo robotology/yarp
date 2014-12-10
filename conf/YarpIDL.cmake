@@ -53,7 +53,6 @@ function(YARP_IDL_TO_DIR_CORE yarpidl_file output_dir)
     set(files_missing TRUE)
     if (EXISTS ${settings_file})
       set(files_missing FALSE)
-      message(STATUS "FOUND ${settings_file}")
     endif()
 
     # Flag to control whether IDL generation is allowed.

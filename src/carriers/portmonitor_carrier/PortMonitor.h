@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 IITRBCS
+ * Copyright (C) 2014 iCub Facility
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -46,7 +46,7 @@ public:
  * Allow to monitor and modify port data from Lua script  Under development.
  * Affected by carrier modifiers.  
  *
- * Examples: tcp+recv.portmonitor+script.lua+file.my_lua_script_file
+ * Examples: tcp+recv.portmonitor+type.lua+file.my_lua_script_file
  *
  */
 

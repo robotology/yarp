@@ -511,7 +511,6 @@ void ControlBoardWrapper::run()
     for(unsigned int k=0;k<device.subdevices.size();k++)
         {
             int axes=device.subdevices[k].axes;
-            int base=device.subdevices[k].base;
 
             device.subdevices[k].refreshEncoders();
 
@@ -2559,7 +2558,6 @@ bool ControlBoardWrapper::getAmpStatus(int *st)
 
     for(int l=0;l<controlledJoints;l++)
     {
-        int off=device.lut[l].offset;
         int subIndex=device.lut[l].deviceEntry;
 
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3002,7 +3000,6 @@ bool ControlBoardWrapper::getTorqueRanges(double *min, double *max)
     {
         int off=device.lut[l].offset;
         int subIndex=device.lut[l].deviceEntry;
-
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;

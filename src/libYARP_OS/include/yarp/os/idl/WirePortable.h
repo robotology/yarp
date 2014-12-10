@@ -18,7 +18,7 @@ namespace yarp {
             class WireReader;
             class WireWriter;
             class WirePortable;
-	}
+        }
     }
 }
 
@@ -32,13 +32,10 @@ class YARP_OS_API yarp::os::idl::WirePortable : public yarp::os::Portable {
 public:
     using yarp::os::Portable::read;
     using yarp::os::Portable::write;
-    virtual bool read(yarp::os::idl::WireReader& reader) {
-        return false;
-    }
 
-    virtual bool write(yarp::os::idl::WireWriter& writer) {
-        return false;
-    }
+    virtual bool read(yarp::os::idl::WireReader& reader);
+
+    virtual bool write(yarp::os::idl::WireWriter& writer);
 
     virtual bool readBare(yarp::os::ConnectionReader& reader) {
         return read(reader);

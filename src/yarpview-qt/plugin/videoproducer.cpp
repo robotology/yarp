@@ -108,6 +108,9 @@ void VideoProducer::onNewVideoContentReceived(QVideoFrame *frame)
 
     if (m_surface && m_format){
         bool b = m_surface->present(*frame);
+        if (!b) {
+            qWarning("Surface PRESENT ERROR");
+        }
     }
 
 }

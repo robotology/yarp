@@ -184,7 +184,7 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     virtual void setMonitor(SearchMonitor *monitor, const char *context="");
     virtual SearchMonitor *getMonitor() const;
-    virtual ConstString getContext() const;
+    virtual ConstString getMonitorContext() const;
     virtual void reportToMonitor(const SearchReport& report) const;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };

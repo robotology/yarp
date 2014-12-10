@@ -75,7 +75,7 @@ You should see two instances of yarpview showing the original image from fake te
 <span style="color:#00b418">-- create is called when the port monitor is created </span>
 <span style="color:#00b418">-- @return Boolean</span>
 <span style="color:#00b418">--</span>
-PortMonitor.create <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>()
+PortMonitor.create <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>(options)
     <span style="color:#3c4c72;font-weight:700">print</span>(<span style="color:#d80800">"on create"</span>)
     PortMonitor.index <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#cd0000;font-style:italic">0</span>;
     PortMonitor.bdraw <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#585cf6;font-style:italic">true</span>

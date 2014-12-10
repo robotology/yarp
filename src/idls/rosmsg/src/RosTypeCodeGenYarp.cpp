@@ -33,6 +33,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     len = state.getFreeVariable("len");
     len2 = state.getFreeVariable("len2");
     string safe_tname = getSafeName(tname);
+    className = safe_tname;
     string fname = safe_tname + ".h";
     if (target!="") {
         string iname = target + "/" + safe_tname + "_indexALL.txt";
@@ -88,13 +89,38 @@ bool RosTypeCodeGenYarp::declareField(const RosField& field) {
         }
     } else {
         fprintf(out,"  std::vector<%s> %s;\n", t.yarpType.c_str(), 
-               field.rosName.c_str());
+                field.rosName.c_str());
     }
     return true;
 }
 
 bool RosTypeCodeGenYarp::endDeclare() {
     fprintf(out,"\n");
+    return true;
+}
+
+bool RosTypeCodeGenYarp::beginConstruct() {
+    fprintf(out,"  %s() {\n", className.c_str());
+    return true;
+}           
+
+bool RosTypeCodeGenYarp::constructField(const RosField& field) {
+    if (field.isArray && field.arrayLength!=-1) {
+        RosYarpType t = mapPrimitive(field);
+        if (t.yarpDefaultValue!="") {
+            fprintf(out,"    %s.resize(%d,%s);\n", 
+                    field.rosName.c_str(), field.arrayLength,
+                    t.yarpDefaultValue.c_str());
+        } else {
+            fprintf(out,"    %s.resize(%d);\n", 
+                    field.rosName.c_str(), field.arrayLength);
+        }
+    }
+    return true;
+}
+
+bool RosTypeCodeGenYarp::endConstruct() {
+    fprintf(out,"  }\n\n");
     return true;
 }
 
@@ -131,9 +157,14 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
             if (!bare) {
                 fprintf(out,"    if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) return false;\n");
             }
-            fprintf(out,"    %s%s = connection.expectInt();\n",
-                   usedLen?"":"int ",
-                   len.c_str());
+            if (field.arrayLength==-1||!bare) {
+                fprintf(out,"    %s%s = connection.expectInt();\n",
+                        usedLen?"":"int ",
+                        len.c_str());
+            } else {
+                fprintf(out,"    %s%s = %d;\n",
+                        usedLen?"":"int ",len.c_str(),field.arrayLength);
+            }
             usedLen = true;
             fprintf(out,"    %s.resize(%s);\n", 
                    field.rosName.c_str(),
@@ -144,10 +175,9 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
                    len.c_str(),
                    counter.c_str());
             fprintf(out,"      %s%s = connection.expectInt();\n",
-                   usedLen2?"":"int ",
+                   "int ",
                    len2.c_str());
-            usedLen2 = true;
-            fprintf(out,"      %s.resize(%s);\n", 
+            fprintf(out,"      %s[i].resize(%s);\n", 
                    field.rosName.c_str(),
                    len2.c_str());
             fprintf(out,"      if (!connection.expectBlock((char*)%s[%s].c_str(),%s)) return false;\n",
@@ -178,9 +208,14 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
                 fprintf(out,"    if (connection.expectInt()!=(BOTTLE_TAG_LIST|%s)) return false;\n",
                         t.yarpTag.c_str());
             }
-            fprintf(out,"    %s%s = connection.expectInt();\n",
-                   usedLen?"":"int ",
-                   len.c_str());
+            if (field.arrayLength==-1||!bare) {
+                fprintf(out,"    %s%s = connection.expectInt();\n",
+                        usedLen?"":"int ",
+                        len.c_str());
+            } else {
+                fprintf(out,"    %s%s = %d;\n",
+                        usedLen?"":"int ",len.c_str(),field.arrayLength);
+            }
             usedLen = true;
             fprintf(out,"    %s.resize(%s);\n", 
                    field.rosName.c_str(),
@@ -282,8 +317,10 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
             if (!bare) {
                 fprintf(out,"    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);\n");
             }
-            fprintf(out,"    connection.appendInt(%s.size());\n",
-                    field.rosName.c_str());
+            if (field.arrayLength==-1 || !bare) {
+                fprintf(out,"    connection.appendInt(%s.size());\n",
+                        field.rosName.c_str());
+            }
             fprintf(out,"    for (size_t %s=0; %s<%s.size(); %s++) {\n", 
                     counter.c_str(),
                     counter.c_str(),
@@ -327,8 +364,10 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                         field.rosName.c_str());                
                 fprintf(out,"    }\n");
             } else {
-                fprintf(out,"    connection.appendInt(%s.size());\n",
-                        field.rosName.c_str());
+                if (field.arrayLength==-1) {
+                    fprintf(out,"    connection.appendInt(%s.size());\n",
+                            field.rosName.c_str());
+                }
                 fprintf(out,"    connection.appendExternalBlock((char*)&%s[0],sizeof(%s)*%s.size());\n",
                         field.rosName.c_str(),
                         t.yarpType.c_str(),
@@ -354,8 +393,11 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
         }
     } else {
         if (field.isArray) {
-            fprintf(out,"    connection.appendInt(%s.size());\n",
-                   field.rosName.c_str());
+            fprintf(out,"    connection.appendInt(BOTTLE_TAG_LIST);\n");
+            if (field.arrayLength==-1 || !bare) {
+                fprintf(out,"    connection.appendInt(%s.size());\n",
+                        field.rosName.c_str());
+            }
             fprintf(out,"    for (size_t %s=0; %s<%s.size(); %s++) {\n", 
                    counter.c_str(),
                    counter.c_str(),
@@ -398,7 +440,7 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname) {
 
     fprintf(out,"  // Name the class, ROS will need this\n");
     fprintf(out,"  yarp::os::Type getType() {\n");
-    fprintf(out,"    return yarp::os::Type::byName(\"%s\",\"%s\");\n", tname.c_str(), tname.c_str());
+    fprintf(out,"    return yarp::os::Type::byName(\"%s\",\"%s\").addProperty(\"md5sum\",yarp::os::Value(\"*\"));\n", tname.c_str(), tname.c_str());
     fprintf(out,"  }\n");
     fprintf(out,"};\n\n");
     fprintf(out,"#endif\n");
@@ -442,6 +484,7 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
         ry.writer = "appendBlock";
         ry.reader = "expectBlock";
         flavor = "int";
+        ry.yarpDefaultValue = "false";
         ry.len = 1;
     } else if (name=="int16") {
         ry.yarpType = "yarp::os::NetInt16";
@@ -501,12 +544,18 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
         ry.yarpWriterCast = "(int)";
         ry.yarpTag = "BOTTLE_TAG_INT";
         ry.yarpWireReader = "expectInt";
+        if (ry.yarpDefaultValue=="") {
+            ry.yarpDefaultValue = "0";
+        }
     } else if (flavor=="double") {
         ry.yarpWriter = "appendDouble";
         ry.yarpReader = "expectDouble";
         ry.yarpWriterCast = "(double)";
         ry.yarpTag = "BOTTLE_TAG_DOUBLE";
         ry.yarpWireReader = "expectDouble";
+        if (ry.yarpDefaultValue=="") {
+            ry.yarpDefaultValue = "0.0";
+        }
     }
     return ry;
 }

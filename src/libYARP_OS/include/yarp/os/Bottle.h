@@ -13,12 +13,14 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Value.h>
+#include <yarp/conf/numeric.h>
 
 #define BOTTLE_TAG_INT 1
 #define BOTTLE_TAG_VOCAB (1+8)
 #define BOTTLE_TAG_DOUBLE (2+8)
 #define BOTTLE_TAG_STRING (4)
 #define BOTTLE_TAG_BLOB (4+8)
+#define BOTTLE_TAG_INT64 (1+16)
 #define BOTTLE_TAG_LIST 256
 #define BOTTLE_TAG_DICT 512
 
@@ -91,6 +93,13 @@ public:
      * @param x the integer to add.
      */
     void addInt(int x);
+
+    /**
+     * Places a 64 integer in the bottle, at the end of the list.
+     *
+     * @param x the integer to add.
+     */
+    void addInt64(const YARP_INT64& x);
 
     /**
      * Places a vocabulary item in the bottle, at the end of the list.

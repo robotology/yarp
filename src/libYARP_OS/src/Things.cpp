@@ -16,6 +16,7 @@ Things::Things() {
     conReader = NULL;
     writer = NULL;
     portable = NULL;
+    beenRead = false;
 }
 
 Things::~Things() {

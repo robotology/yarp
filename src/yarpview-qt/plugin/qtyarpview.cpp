@@ -214,7 +214,7 @@ bool QtYARPView::parseParameters(QStringList params)
     }
 
     options.fromCommand(c,v,false);
-    
+
     for(int i=0;i<params.count();i++) {
         free(v[i]);
     }
@@ -226,7 +226,7 @@ bool QtYARPView::parseParameters(QStringList params)
         printHelp();
         return false;
     }
-    
+
     // Otherwise, simply set the options asked
     setOptions(options);
 
@@ -234,7 +234,6 @@ bool QtYARPView::parseParameters(QStringList params)
         qDebug("Error open ports");
         return false;
     }
-    setName(options.find("name").asString().c_str());
     ptr_inputPort->useCallback(*ptr_portCallback);
     return true;
 }
@@ -309,6 +308,7 @@ void QtYARPView::printHelp()
     qDebug("  --neto: output network");
     qDebug("  --neti: input network");
     qDebug("  --compact: if this flag is enabled, no window controls will be printed");
+    qDebug("  --keep-above: keep windows above others");
 }
 
 /*! \brief Stes the options to their defaults.*/
@@ -347,6 +347,7 @@ bool QtYARPView::openPorts()
 
     ptr_inputPort->setReadOnly();
     ret= ptr_inputPort->open(_options.portName);
+    setName(ptr_inputPort->getName().c_str());
 
     if (!ret){
         qDebug("Error: port failed to open, quitting.");

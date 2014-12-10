@@ -159,7 +159,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
             {
                 int n_joints = b.get(1).asInt();
                 Bottle *jlut = b.get(2).asList();
-                if( (jlut->size() != n_joints) && (cmdVector.size() != n_joints) )
+                if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                 {
                     yError("Received VOCAB_POSITION_DIRECT_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
                 }
@@ -194,7 +194,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
             {
                 int n_joints = b.get(1).asInt();
                 Bottle *jlut = b.get(2).asList();
-                if( (jlut->size() != n_joints) && (cmdVector.size() != n_joints) )
+                if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                     yError("Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
 
                 int *joint_list = new int[n_joints];

@@ -16,11 +16,11 @@
 #include <yarp/os/impl/TextCarrier.h>
 
 #ifdef YARP_HAS_ACE
-#  include <yarp/os/impl/UdpCarrier.h>
 #  include <yarp/os/impl/McastCarrier.h>
 #  include <yarp/os/impl/ShmemCarrier.h>
 #endif
 
+#include <yarp/os/impl/UdpCarrier.h>
 #include <yarp/os/impl/LocalCarrier.h>
 #include <yarp/os/impl/NameserCarrier.h>
 #include <yarp/os/impl/HttpCarrier.h>
@@ -100,8 +100,8 @@ Carriers::Carriers() {
     delegates.push_back(new TcpCarrier(false));
 #ifdef YARP_HAS_ACE
     delegates.push_back(new McastCarrier());
-    delegates.push_back(new UdpCarrier());
 #endif
+    delegates.push_back(new UdpCarrier());
     delegates.push_back(new TextCarrier());
     delegates.push_back(new TextCarrier(true));
 }

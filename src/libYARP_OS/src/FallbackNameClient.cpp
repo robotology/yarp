@@ -44,7 +44,7 @@ void FallbackNameClient::run() {
         YARP_DEBUG(Logger::get(),String("Fallback name client got ") + txt);
         if (txt.find("registration ")==0) {
             address = NameClient::extractAddress(txt);
-            YARP_INFO(Logger::get(),String("Received address ") + 
+            YARP_INFO(Logger::get(),String("Received address ") +
                       address.toURI());
             return;
         }
@@ -74,9 +74,9 @@ Contact FallbackNameClient::seek() {
         FallbackNameClient seeker;
 
         YARP_INFO(Logger::get(),
-                  String("Polling for name server (using multicast), try ") + 
-                  NetType::toString(k+1) + 
-                  String(" of max ") + 
+                  String("Polling for name server (using multicast), try ") +
+                  NetType::toString(k+1) +
+                  String(" of max ") +
                   NetType::toString(tries));
 
         seeker.start();
@@ -89,7 +89,7 @@ Contact FallbackNameClient::seek() {
             ACE_OS::fprintf(stderr,"++");
         }
         ACE_OS::fprintf(stderr,"\n");
-	    
+
         for (int i=0; i<len; i++) {
             Time::delay(0.025);
             ACE_OS::fprintf(stderr,"++");

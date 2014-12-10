@@ -115,6 +115,11 @@ bool Value::isInt() const {
     return proxy->isInt();
 }
 
+bool Value::isInt64() const {
+    ok();
+    return proxy->isInt64();
+}
+
 bool Value::isString() const {
     ok();
     return proxy->isString();
@@ -153,6 +158,11 @@ bool Value::asBool() const {
 int Value::asInt() const {
     ok();
     return proxy->asInt();
+}
+
+YARP_INT64 Value::asInt64() const {
+    ok();
+    return proxy->asInt64();
 }
 
 int Value::asVocab() const {

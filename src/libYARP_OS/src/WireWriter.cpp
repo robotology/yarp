@@ -56,15 +56,33 @@ bool WireWriter::writeNested(yarp::os::PortWriter& obj) {
     return obj.write(writer);
 }
 
-bool WireWriter::writeI32(YARP_INT32 x) {
+bool WireWriter::writeI16(const YARP_INT16& x) {
     writer.appendInt(BOTTLE_TAG_INT);
     writer.appendInt((int)x);
+    return !writer.isError();
+}
+
+bool WireWriter::writeI32(const YARP_INT32& x) {
+    writer.appendInt(BOTTLE_TAG_INT);
+    writer.appendInt((int)x);
+    return !writer.isError();
+}
+
+bool WireWriter::writeI64(const YARP_INT64& x) {
+    writer.appendInt(BOTTLE_TAG_INT64);
+    writer.appendInt64(x);
     return !writer.isError();
 }
 
 bool WireWriter::writeBool(bool x) {
     writer.appendInt(BOTTLE_TAG_VOCAB);
     writer.appendInt(x?VOCAB2('o','k'):VOCAB4('f','a','i','l'));
+    return !writer.isError();
+}
+
+bool WireWriter::writeByte(const YARP_INT8& x) {
+    writer.appendInt(BOTTLE_TAG_INT);
+    writer.appendInt((int)x);
     return !writer.isError();
 }
 
@@ -116,6 +134,13 @@ bool WireWriter::writeString(const yarp::os::ConstString& tag) {
     writer.appendInt(BOTTLE_TAG_STRING);
     writer.appendInt((int)tag.length()+1);
     writer.appendString(tag.c_str(),'\0');
+    return !writer.isError();
+}
+
+bool WireWriter::writeBinary(const yarp::os::ConstString& tag) {
+    writer.appendInt(BOTTLE_TAG_BLOB);
+    writer.appendInt((int)tag.length());
+    writer.appendBlock(tag.c_str(),tag.length());
     return !writer.isError();
 }
 

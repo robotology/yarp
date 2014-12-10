@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -24,7 +24,6 @@ LogSortFilterProxyModel::LogSortFilterProxyModel( QObject *parent ) : QSortFilte
 
 bool LogSortFilterProxyModel::lessThan( const QModelIndex &left, const QModelIndex &right ) const
 {
-  int l=0;
   if (left.column()==0)
   {
       //sorting by yarprun timestamp

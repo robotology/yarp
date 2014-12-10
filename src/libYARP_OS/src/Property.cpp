@@ -782,12 +782,13 @@ public:
 
 
 Property::Property(int hash_size) {
-    implementation = new PropertyHelper(*this,hash_size);
-    yAssert(implementation!=NULL);
+    this->hash_size = hash_size;
+    implementation = NULL;
 }
 
 
 Property::Property(const char *str) {
+    hash_size = 0;
     implementation = new PropertyHelper(*this,0);
     yAssert(implementation!=NULL);
     fromString(str);
@@ -795,9 +796,22 @@ Property::Property(const char *str) {
 
 
 Property::Property(const Property& prop) : Searchable(), Portable() {
+    hash_size = 0;
     implementation = new PropertyHelper(*this,0);
     yAssert(implementation!=NULL);
     fromString(prop.toString());
+}
+
+
+void Property::summon() {
+    if (check()) return;
+    implementation = new PropertyHelper(*this,hash_size);
+    yAssert(implementation!=NULL);
+}
+
+
+bool Property::check() const {
+    return implementation!=NULL;
 }
 
 
@@ -810,63 +824,76 @@ Property::~Property() {
 
 
 const Property& Property::operator = (const Property& prop) {
+    summon();
     fromString(prop.toString());
     return *this;
 }
 
 
 void Property::put(const ConstString& key, const ConstString& val) {
+    summon();
     HELPER(implementation).put(key,val);
 }
 
 void Property::put(const ConstString& key, const Value& value) {
+    summon();
     HELPER(implementation).put(key,value);
 }
 
 
 void Property::put(const ConstString& key, Value *value) {
+    summon();
     HELPER(implementation).put(key,value);
 }
 
 void Property::put(const ConstString& key, int v) {
+    summon();
     put(key,Value::makeInt(v));
 }
 
 void Property::put(const ConstString& key, double v) {
+    summon();
     put(key,Value::makeDouble(v));
 }
 
 bool Property::check(const ConstString& key) const {
+    if (!check()) return false;
     return HELPER(implementation).check(key);
 }
 
 
 void Property::unput(const ConstString& key) {
+    summon();
     HELPER(implementation).unput(key);
 }
 
 
 Value& Property::find(const ConstString& key) const {
+    if (!check()) return Value::getNullValue();
     return HELPER(implementation).get(key);
 }
 
 
 void Property::clear() {
+    summon();
     HELPER(implementation).clear();
 }
 
 
 void Property::fromString(const ConstString& txt,bool wipe) {
+    summon();
     HELPER(implementation).fromString(txt,wipe);
 }
 
 
 ConstString Property::toString() const {
+    if (!check()) return "";
     return HELPER(implementation).toString();
 }
 
 void Property::fromCommand(int argc, char *argv[], bool skipFirst,
                            bool wipe) {
+    summon();
     if (skipFirst) {
         argc--;
         argv++;
@@ -875,25 +902,30 @@ void Property::fromCommand(int argc, char *argv[], bool skipFirst,
 }
 
 void Property::fromCommand(int argc, const char *argv[], bool skipFirst, bool wipe) {
+    summon();
     fromCommand(argc,(char **)argv,skipFirst,wipe);
 }
 
 bool Property::fromConfigFile(const ConstString& fname, bool wipe) {
+    summon();
     Property p;
     return fromConfigFile(fname,p,wipe);
 }
 
 
 bool Property::fromConfigFile(const ConstString& fname,Searchable& env,bool wipe) {
+    summon();
     return HELPER(implementation).fromConfigFile(fname,env,wipe);
 }
 
 void Property::fromConfig(const char *txt, bool wipe) {
+    summon();
     Property p;
     fromConfig(txt,p,wipe);
 }
 
 void Property::fromConfig(const char *txt,Searchable& env,bool wipe) {
+    summon();
     HELPER(implementation).fromConfig(txt,env,wipe);
 }
 
@@ -917,6 +949,7 @@ bool Property::write(ConnectionWriter& writer) {
 
 
 Bottle& Property::findGroup(const ConstString& key) const {
+    if (!check()) return Bottle::getNullBottle();
     Bottle *result = HELPER(implementation).getBottle(key);
     if (getMonitor()!=NULL) {
         SearchReport report;
@@ -928,7 +961,7 @@ Bottle& Property::findGroup(const ConstString& key) const {
         }
         reportToMonitor(report);
         if (result!=0/*NULL*/) {
-            String context = getContext().c_str();
+            String context = getMonitorContext();
             context += ".";
             context += key;
             result->setMonitor(getMonitor(),
@@ -942,6 +975,7 @@ Bottle& Property::findGroup(const ConstString& key) const {
 
 
 void Property::fromQuery(const char *url, bool wipe) {
+    summon();
     if (wipe) {
         clear();
     }
@@ -998,5 +1032,6 @@ void Property::fromQuery(const char *url, bool wipe) {
 
 
 Property& yarp::os::Property::addGroup(const ConstString& key) {
+    summon();
     return HELPER(implementation).addGroup(key);
 }

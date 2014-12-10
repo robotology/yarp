@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -27,7 +27,6 @@ YarprunPortsSortFilterProxyModel::YarprunPortsSortFilterProxyModel( QObject *par
 
 bool YarprunPortsSortFilterProxyModel::lessThan( const QModelIndex &left, const QModelIndex &right ) const
 {
-  int l=0;
   if (left.column()==0)
   {
       //sorting by ip
@@ -39,6 +38,8 @@ bool YarprunPortsSortFilterProxyModel::lessThan( const QModelIndex &left, const 
       rightIp.replace('.', ' ');
       int lres = sscanf  (leftIp.toStdString().c_str(),"%d %d %d %d",&l1,&l2,&l3,&l4);
       int rres = sscanf (rightIp.toStdString().c_str(),"%d %d %d %d",&r1,&r2,&r3,&r4);
+      Q_UNUSED(lres);
+      Q_UNUSED(rres);
       int lval = (l1 * 16777216) + (l2 * 65536) + (l3 * 256) + (l4);
       int rval = (r1 * 16777216) + (r2 * 65536) + (r3 * 256) + (r4);
       return lval < rval;

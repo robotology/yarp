@@ -95,7 +95,7 @@ void MainWindow::updateMain()
                     for (int j=0; j<model_yarprunports->columnCount(); j++)
                         model_yarprunports->item(i,j)->setBackground(rowcolor);
                 }
-                
+
                 existing = true;
                 if (it->last_update==-1 && show_mute_ports_enabled==false) {model_yarprunports->removeRow(i);}
                 break;
@@ -304,15 +304,10 @@ void MainWindow::ctxMenu(const QPoint &pos)
     bool log_enabled = theLogger->get_log_enable_by_port_complete(logname);
 
     QMenu *menu = new QMenu;
-    QAction *act1 = menu->addAction(tr("Clear current log"), this, SLOT(on_clearLogTab_action()));
-    QAction *act2 = menu->addAction(tr("Export current log to text file"), this, SLOT(on_saveLogTab_action()));
-    QAction *act3 = 0;
-    if (log_enabled)
-       {act3 = menu->addAction(tr("Disable current log"), this, SLOT(on_enableLogTab_action()));}
-    else
-       {act3 = menu->addAction(tr("Enable current log"), this, SLOT(on_enableLogTab_action()));}
-    QAction *act4 = menu->addAction(tr("Reset errors/warning counters"), this, SLOT(on_resetCountersLogTab_action()));
-
+    menu->addAction(tr("Clear current log"), this, SLOT(on_clearLogTab_action()));
+    menu->addAction(tr("Export current log to text file"), this, SLOT(on_saveLogTab_action()));
+    menu->addAction(log_enabled ? tr("Disable current log") : tr("Enable current log"), this, SLOT(on_enableLogTab_action()));
+    menu->addAction(tr("Reset errors/warning counters"), this, SLOT(on_resetCountersLogTab_action()));
     menu->exec(ui->yarprunTreeView->mapToGlobal(pos));
 }
 
@@ -397,7 +392,6 @@ void MainWindow::on_lineEdit_2_textChanged(const QString &arg1)
     filter.append("*");
     QRegExp regExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard);
 
-    int currentTab = ui->logtabs->currentIndex();
     LogTab* logtab = ui->logtabs->currentWidget()->findChild<LogTab*>("logtab");
 
     if (logtab) logtab->proxyModelSearch->setFilterRegExp(regExp);

@@ -292,6 +292,10 @@ public:
 
 private:
     void *implementation;
+    int hash_size;
+
+    void summon();
+    bool check() const;
 };
 
 #endif

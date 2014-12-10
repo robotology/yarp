@@ -22,7 +22,7 @@ namespace yarp {
 }
 
 class yarp::dev::FakeBot : public DeviceDriver,
-            public IPositionControl, 
+            public IPositionControl,
             public IVelocityControl,
             public IAmplifierControl,
             public IEncodersTimed,
@@ -77,7 +77,7 @@ public:
 
     // IFrameGrabberImage
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
-    
+
     virtual int height() const {
         return m_h;
     }
@@ -252,7 +252,7 @@ public:
         if (j<njoints) {
             (*v) = loc[j];
         }
-        
+
         return true;
     }
 
@@ -276,7 +276,7 @@ public:
         }
         return true;
     }
-    
+
     virtual bool getEncoderAcceleration(int j, double *spds) {
         if (j<njoints) {
             (*spds) = 0;
@@ -309,6 +309,7 @@ public:
     {
         bool ret = getEncoder(j, enc);
         *time = yarp::os::Time::now();
+        return ret;
     }
 
 
@@ -384,7 +385,7 @@ public:
     virtual bool done(int j)
     {
         fprintf(stderr , "FakeBot: calibration done on joint %d.\n", j);
-        return true; 
+        return true;
     }
 
     virtual bool getLimits(int axis, double *min, double *max)
@@ -394,7 +395,7 @@ public:
         *max=0;
         return true;
     }
-    
+
     virtual bool setLimits(int axis, double min, double max)
     {
         fprintf(stderr, "FakeBot: set limits\n");
