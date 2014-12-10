@@ -1443,7 +1443,7 @@ public:
         // return get1V1I1D(VOCAB_ENCODER, j, v);
         double localArrivalTime = 0.0;
         bool ret;
-#if not defined (YARP_MSG)
+#if !defined(YARP_MSG)
         ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 #else
         ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
@@ -1465,7 +1465,7 @@ public:
         // return get1V1I1D(VOCAB_ENCODER, j, v);
         double localArrivalTime = 0.0;
         bool ret = false;
-#if not defined (YARP_MSG)
+#if !defined(YARP_MSG)
         ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 #else
         ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
@@ -1496,7 +1496,7 @@ public:
         double localArrivalTime=0.0;
 
 
-#if not defined (YARP_MSG)
+#if !defined(YARP_MSG)
         Vector tmp(nj);
 
         // mutex.wait();
@@ -1535,7 +1535,7 @@ public:
         double localArrivalTime=0.0;
 
         bool ret=false;
-#if not defined (YARP_MSG)
+#if !defined(YARP_MSG)
 
         Vector tmp(nj);
  //       mutex.wait();
@@ -1574,7 +1574,7 @@ public:
      */
     virtual bool getEncoderSpeed(int j, double *sp)
     {
-#if not defined (YARP_MSG)
+#if !defined(YARP_MSG)
         return get1V1I1D(VOCAB_ENCODER_SPEED, j, sp);
 #else
         double localArrivalTime=0.0;
