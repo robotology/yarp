@@ -1,11 +1,11 @@
 
-option(CBW2_USE_YARP_THRIFT "Use the extended status generated from .thrift file" OFf)
+option(CBW2_USE_YARP_THRIFT "Use the extended status generated from .thrift file" ON)
 option(CBW2_USE_ROS_MSG "Create ROS topic" OFF)
 
 include(YarpIDL)    ## we want to use IDL so include their macros
 
 if(CBW2_USE_YARP_THRIFT)
-    message(INFO " Using YARP message\n")
+    #message(INFO " Using YARP message\n")
     add_definitions(-DYARP_MSG)
 
     # name of the file
@@ -23,15 +23,15 @@ if(CBW2_USE_YARP_THRIFT)
 #    include_directories(${yarp_msg_include_dirs} )
 
     # create the sender
-    message(STATUS ">> YARP MSG sources is ${yarp_msg_sources}")
-    message(STATUS ">> YARP MSG headers is ${yarp_msg_headers}")
-    message(STATUS ">> YARP MSG yarp_msg_include_dirs is ${yarp_msg_include_dirs}")
+    #message(STATUS ">> YARP MSG sources is ${yarp_msg_sources}")
+    #message(STATUS ">> YARP MSG headers is ${yarp_msg_headers}")
+    #message(STATUS ">> YARP MSG yarp_msg_include_dirs is ${yarp_msg_include_dirs}")
 
 
 endif(CBW2_USE_YARP_THRIFT)
 
 if(CBW2_USE_ROS_MSG)
-    message(INFO " Using ROS message\n")
+    message(STATUS " Using ROS message\n")
     add_definitions(-DROS_MSG)
 
     # name of the file
@@ -49,10 +49,10 @@ if(CBW2_USE_ROS_MSG)
     #include_directories( ${generated_libs_dir}/include ${YARP_INCLUDE_DIRS})
 
     #debug messages
-    message(STATUS ">> ROS headers is ${ros_msg_headers}")
-    message(STATUS ">> ROS sources is ${ros_msg_sources}")
-    message(STATUS ">> ROS include_dirs is ${ros_msg_include_dirs}")
-    message(STATUS ">> generated_libs_dir is ${generated_libs_dir}")
+    #message(STATUS ">> ROS headers is ${ros_msg_headers}")
+    #message(STATUS ">> ROS sources is ${ros_msg_sources}")
+    #message(STATUS ">> ROS include_dirs is ${ros_msg_include_dirs}")
+    #message(STATUS ">> generated_libs_dir is ${generated_libs_dir}")
 
 endif(CBW2_USE_ROS_MSG)
 
