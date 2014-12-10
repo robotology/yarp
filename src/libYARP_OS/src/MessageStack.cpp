@@ -51,12 +51,9 @@ public:
 
     void clear() {
         active = false;
-        mutex.wait();
         for (size_t i=0; i<threads.size(); i++) {
             produce.post();
         }
-        mutex.post();
-        mutex.wait();
         for (std::list<MessageStackThread *>::iterator it = threads.begin();
              it != threads.end(); it++) {
             (*it)->stop();
@@ -65,7 +62,6 @@ public:
         }
         threads.clear();
         msgs.clear();
-        mutex.post();
         active = true;
     }
 
