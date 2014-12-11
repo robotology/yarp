@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
     RosTypeSearch env;
     configure_search(env,p);
 
-    Network yarp;
+    NetworkBase yarp;
     Port port;
     if (!has_cmd) {
         // Borrow an accidentally-available service type on ROS, in
