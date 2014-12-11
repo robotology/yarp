@@ -6,7 +6,7 @@
 
 set -e
 
-if [ ! "$YARP_DIR" = "" ]; then
+if [ -e "$YARP_DIR/lib/lua" ]; then
     export LUA_CPATH=";;;$YARP_DIR/lib/lua/?.so"
 else
     export LUA_CPATH=";;;$PWD/?.so"

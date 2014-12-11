@@ -13,7 +13,7 @@ if(YARP_TEST_INTEGRATION)
   foreach (lang PYTHON JAVA LUA RUBY CSHARP PERL TCL)
     foreach (swig 1.3.40 2.0.12 3.0.2)
       add_test("integration::swig::${lang}::${swig}" ${CMAKE_SOURCE_DIR}/scripts/admin/check-bindings.sh ${swig} ${lang})
-      set_property(TEST "integration::swig::${lang}::${swig}" PROPERTY ENVIRONMENT "YARP_ROOT=${CMAKE_SOURCE_DIR}")
+      set_property(TEST "integration::swig::${lang}::${swig}" PROPERTY ENVIRONMENT "YARP_ROOT=${CMAKE_SOURCE_DIR}" "YARP_DIR=${CMAKE_BINARY_DIR}")
     endforeach()
   endforeach()
 

@@ -6,7 +6,7 @@
 
 set -e
 
-if [ ! "$YARP_DIR" = "" ]; then
+if [ -e "$YARP_DIR/lib/ruby" ]; then
     export RUBYLIB="$YARP_DIR/lib/ruby/:$PWD"
 else
     export RUBYLIB="$PWD"

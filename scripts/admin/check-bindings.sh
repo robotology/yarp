@@ -166,6 +166,16 @@ for lang in $SUPPORTED_LANGUAGES; do
 	    cat result.txt
 	fi
 	lc=`echo $lang | tr '[:upper:]' '[:lower:]'`
+	NPID=""
+	if yarp where; then
+	    echo "name server present"
+	else
+	    $YARP_DIR/bin/yarp namespace /bindings
+	    $YARP_DIR/bin/yarpserver &
+	    NPID="$!"
+	    $YARP_DIR/bin/yarp wait /bindings
+	fi
+
 	run=$YARP_ROOT/bindings/tests/$lc/run.sh
 	if [ -e $run ]; then
 	    bash $run || {
@@ -179,6 +189,9 @@ for lang in $SUPPORTED_LANGUAGES; do
 	else
 	    failures="$failures $swig_ver"
 	    failed=true
+	fi
+	if [ ! "k$NPID" = "k" ]; then
+	    kill $NPID
 	fi
     done
     echo $successes >> $log

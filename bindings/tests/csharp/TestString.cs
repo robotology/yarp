@@ -14,7 +14,7 @@ namespace HelloNameSpace
 	{
 	    Network.init();
 	    BufferedPortBottle p = new BufferedPortBottle();
-	    p.open("/csharp");
+	    if (!p.open("/csharp")) System.Environment.Exit(1);
 	    p.close();
 	    Network.fini();
 	}

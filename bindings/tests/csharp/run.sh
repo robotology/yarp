@@ -7,13 +7,9 @@
 set -e
 
 export CSLIB="$PWD"
-if [ ! "$YARP_DIR" = "" ]; then
-    if [ ! -e $PWD/Network.cs ]; then
-	export CSLIB="$YARP_DIR/lib/csharp/"
-    fi
+if [ ! -e $PWD/Network.cs ]; then
+    export CSLIB="$YARP_DIR/lib/csharp/"
 fi
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 

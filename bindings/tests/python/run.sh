@@ -6,7 +6,7 @@
 
 set -e
 
-if [ ! "$YARP_DIR" = "" ]; then
+if [ -e $YARP_DIR/lib/python ]; then
     export LD_LIBRARY_PATH=$YARP_DIR/lib/python:$LD_LIBRARY_PATH
     export PYTHONPATH=$YARP_DIR:$PYTHONPATH
 else
