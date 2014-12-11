@@ -588,6 +588,8 @@ void NetworkBase::autoInitMinimum() {
 }
 
 void NetworkBase::initMinimum() {
+    bool tick = false;
+
     if (__yarp_is_initialized==0) {
         // Broken pipes need to be dealt with through other means
         ACE_OS::signal(SIGPIPE, SIG_IGN);
@@ -622,6 +624,7 @@ void NetworkBase::initMinimum() {
         ConstString clock = getEnvironment("YARP_CLOCK");
         if (clock!="") {
             Time::useNetworkClock(clock);
+            tick = true;
         } else {
             Time::useSystemClock();
         }
@@ -633,14 +636,17 @@ void NetworkBase::initMinimum() {
         Carriers::getInstance();
     }
     __yarp_is_initialized++;
+
+    // start simulated time if necessary
+    if (tick) Time::now();
 }
 
 void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
+        Time::useSystemClock();
         Carriers::removeInstance();
         NameClient::removeNameClient();
         removeNameSpace();
-        Time::useSystemClock();
         Logger::fini();
         Bottle::fini();
         BottleImpl::fini();

@@ -2624,8 +2624,22 @@ void Companion::applyArgs(yarp::os::Contactable& port) {
 
 int Companion::cmdTime(int argc, char *argv[]) {
     SystemClock clk;
+    bool ros = false;
+    if (argc>0) {
+        if (ConstString(argv[0])=="--ros") {
+            ros = true;
+        }
+    }
     while (true) {
-        printf("%f\n", Time::now());
+        double t = Time::now();
+        if (ros) {
+            int sec = (int) t;
+            int nsec = (int)((t-sec)*1e9);
+            printf("%d %d\n", sec, nsec);
+        } else {
+            printf("%f\n", t);
+        }
+        fflush(stdout);
         clk.delay(0.1);
     }
     return 0;

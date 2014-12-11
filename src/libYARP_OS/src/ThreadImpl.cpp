@@ -24,15 +24,21 @@ using namespace yarp::os::impl;
 int ThreadImpl::threadCount = 0;
 int ThreadImpl::defaultStackSize = 0;
 SemaphoreImpl *ThreadImpl::threadMutex = NULL;
+SemaphoreImpl *ThreadImpl::threadMutex2 = NULL;
 
 void ThreadImpl::init() {
     if (!threadMutex) threadMutex = new SemaphoreImpl(1);
+    if (!threadMutex2) threadMutex2 = new SemaphoreImpl(1);
 }
 
 void ThreadImpl::fini() {
     if (threadMutex) {
         delete threadMutex;
         threadMutex = NULL;
+    }
+    if (threadMutex2) {
+        delete threadMutex2;
+        threadMutex2 = NULL;
     }
 }
 

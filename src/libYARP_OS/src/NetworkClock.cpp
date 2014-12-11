@@ -22,6 +22,7 @@ typedef std::list<std::pair<double, Semaphore*> > Waiters;
 #define WAITERS(x) (*((Waiters*)(x)))
 
 NetworkClock::NetworkClock() {
+    closing = false;
     sec = 0;
     nsec = 0;
     t = 0;
@@ -30,6 +31,15 @@ NetworkClock::NetworkClock() {
 }
 
 NetworkClock::~NetworkClock() {
+    listMutex.lock();
+    closing = true;
+    port.interrupt();
+    Waiters& waiters = WAITERS(pwaiters);
+    Waiters::iterator waiter_i;
+    for(waiter_i = waiters.begin(); waiter_i != waiters.end(); waiter_i++) {
+        waiter_i->second->post();
+    }
+    listMutex.unlock();
     if (pwaiters) {
         delete &WAITERS(pwaiters);
         pwaiters = NULL;
@@ -73,6 +83,13 @@ void NetworkClock::delay(double seconds) {
     waiter.second = new Semaphore(0);
     
     listMutex.lock();
+    if (closing) {
+        // We are shutting down.  The time signal is no longer available.
+        // Make a short delay and return.
+        listMutex.unlock();
+        SystemClock::delaySystem(1);
+        return;
+    }
     waiter.first = now() + seconds;
     waiterIterator = waiters.insert(waiters.end(), waiter);
     listMutex.unlock();

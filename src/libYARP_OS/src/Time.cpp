@@ -14,6 +14,7 @@
 #include <yarp/os/NetworkClock.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/impl/ThreadImpl.h>
 
 #ifdef ACE_WIN32
 // for WIN32 MM functions
@@ -26,6 +27,14 @@ static Clock *pclock = NULL;
 static bool clock_owned = false;
 static ConstString *network_clock_name = NULL;
 static bool network_clock_pending = false;
+
+static void lock() {
+    yarp::os::impl::ThreadImpl::threadMutex2->wait();
+}
+
+static void unlock() {
+    yarp::os::impl::ThreadImpl::threadMutex2->post();
+}
 
 static void removeClock() {
     if (pclock) {
@@ -44,7 +53,7 @@ static Clock *getClock() {
     if (network_clock_pending) {
         ConstString name;
         NetworkClock *nc = NULL;
-        NetworkBase::lock();
+        lock();
         if (network_clock_pending) {
             name = "";
             if (network_clock_name) name = *network_clock_name;
@@ -54,7 +63,7 @@ static Clock *getClock() {
             clock_owned = true;
             yAssert(pclock);
         }
-        NetworkBase::unlock();
+        unlock();
         if (nc) {
             nc->open(name);
         }
@@ -97,25 +106,25 @@ void Time::yield() {
 
 
 void Time::useSystemClock() {
-    NetworkBase::lock();
+    lock();
     removeClock();
-    NetworkBase::unlock();
+    unlock();
 }
 
 void Time::useNetworkClock(const ConstString& clock) {
-    NetworkBase::lock();
+    lock();
     removeClock();
     network_clock_name = new ConstString(clock);
     network_clock_pending = true;
-    NetworkBase::unlock();
+    unlock();
 }
 
 void Time::useCustomClock(Clock *clock) {
-    NetworkBase::lock();
+    lock();
     removeClock();
     pclock = clock;
     yAssert(pclock);
-    NetworkBase::unlock();
+    unlock();
 }
 
 bool Time::isSystemClock() {

@@ -46,6 +46,7 @@ private:
     YARP_INT32 sec;
     YARP_INT32 nsec;
     double t;
+    bool closing;
 };
 
 #endif

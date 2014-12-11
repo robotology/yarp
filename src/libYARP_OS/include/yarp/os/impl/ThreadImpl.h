@@ -84,6 +84,7 @@ public:
     static void setDefaultStackSize(int stackSize);
 
     static SemaphoreImpl *threadMutex;
+    static SemaphoreImpl *threadMutex2;
 
     static void init();
     static void fini();
