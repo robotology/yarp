@@ -168,7 +168,9 @@ target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})
 
-target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
+if(YARP_HAS_ACE)
+    target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
+endif(YARP_HAS_ACE)
 
 install(TARGETS YARP_dev
         EXPORT YARP
