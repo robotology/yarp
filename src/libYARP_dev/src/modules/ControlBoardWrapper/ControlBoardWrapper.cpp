@@ -162,7 +162,10 @@ bool ControlBoardWrapper::open(Searchable& config)
     rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
     partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
     rootName+=(partName);
-    rootName.replace(rootName.find("//"), 2, "/");
+    if( rootName.find("//") != std::string::npos )
+    {
+        rootName.replace(rootName.find("//"), 2, "/");
+    }
 
     // attach readers.
     // inputRPCPort.setReader(RPC_parser);
