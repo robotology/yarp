@@ -160,7 +160,7 @@ include_directories(${ACE_INCLUDE_DIRS})
 include_directories(${other_include_path})
 
 add_library(YARP_dev ${YARP_dev_SRCS} ${YARP_devices_SRCS} ${YARP_dev_HDRS})
-add_dependencies(YARP_dev yarpidl_rosmsg yarpidl_thrift )
+#add_dependencies(YARP_dev yarpidl_rosmsg yarpidl_thrift )
 
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)

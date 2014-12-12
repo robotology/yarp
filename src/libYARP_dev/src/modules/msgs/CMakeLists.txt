@@ -2,7 +2,7 @@
 option(CBW2_USE_YARP_THRIFT "Use the extended status generated from .thrift file" ON)
 option(CBW2_USE_ROS_MSG "Create ROS topic" OFF)
 
-include(YarpIDL)    ## we want to use IDL so include their macros
+# include(YarpIDL)    ## we want to use IDL so include their macros
 
 if(CBW2_USE_YARP_THRIFT)
     #message(INFO " Using YARP message\n")
@@ -12,21 +12,30 @@ if(CBW2_USE_YARP_THRIFT)
     set(thrifFile stateExt)
 
     #idl commands
-#    set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
     set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}/yarp")
 
     # run the generator engine
-    yarp_idl_to_dir(${thrifFile}.thrift ${generated_libs_dir} yarp_msg_sources yarp_msg_headers yarp_msg_include_dirs)
+    #yarp_idl_to_dir(${thrifFile}.thrift ${generated_libs_dir} yarp_msg_sources yarp_msg_headers yarp_msg_include_dirs)
 
     #include files generated previously
     include(${generated_libs_dir}/${thrifFile}_thrift.cmake)
-#    include_directories(${yarp_msg_include_dirs} )
+
+    foreach(file ${sources})
+        set(yarp_msg_sources ${yarp_msg_sources} ${generated_libs_dir}/${file})
+    endforeach()
+
+    foreach(file ${headers})
+        set(yarp_msg_headers ${yarp_msg_headers} ${generated_libs_dir}/${file})
+    endforeach()
+
+    set(yarp_msg_include_dirs "${generated_libs_dir}/include")
+
+    include_directories(${yarp_msg_include_dirs} )
 
     # create the sender
     #message(STATUS ">> YARP MSG sources is ${yarp_msg_sources}")
     #message(STATUS ">> YARP MSG headers is ${yarp_msg_headers}")
     #message(STATUS ">> YARP MSG yarp_msg_include_dirs is ${yarp_msg_include_dirs}")
-
 
 endif(CBW2_USE_YARP_THRIFT)
 
@@ -38,15 +47,25 @@ if(CBW2_USE_ROS_MSG)
     set(rosMSG jointState)
 
     #idl commands
-#    set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
     set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}/ros")
 
     # run the generator engine
-    yarp_idl_to_dir(${rosMSG}.msg ${generated_libs_dir} ros_msg_sources ros_msg_headers ros_msg_include_dirs)
+    #yarp_idl_to_dir(${rosMSG}.msg ${generated_libs_dir} ros_msg_sources ros_msg_headers ros_msg_include_dirs)
 
     #include files generated previously
     include(${generated_libs_dir}/${rosMSG}_msg.cmake)
-    #include_directories( ${generated_libs_dir}/include ${YARP_INCLUDE_DIRS})
+
+    foreach(file ${sources})
+        set(ros_msg_sources ${ros_msg_sources} ${generated_libs_dir}/${file})
+    endforeach()
+
+    foreach(file ${headers})
+        set(ros_msg_headers ${ros_msg_headers} ${generated_libs_dir}/${file})
+    endforeach()
+
+    set(ros_msg_include_dirs "${generated_libs_dir}/include")
+
+    include_directories(${yarp_msg_include_dirs} )
 
     #debug messages
     #message(STATUS ">> ROS headers is ${ros_msg_headers}")
