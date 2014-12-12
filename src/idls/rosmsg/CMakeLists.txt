@@ -11,7 +11,7 @@ endif ()
 include_directories(src)
 add_executable(yarpidl_rosmsg src/main.cpp src/RosType.cpp src/RosTypeCodeGenYarp.cpp src/RosType.h src/RosTypeCodeGenYarp.h src/md5.c src/md5.h)
 
-target_link_libraries(yarpidl_rosmsg YARP_OS ${ACE_LIBRARIES})
+target_link_libraries(yarpidl_rosmsg YARP_init YARP_OS ${ACE_LIBRARIES})
 install(TARGETS yarpidl_rosmsg
         EXPORT YARP
         COMPONENT utilities
