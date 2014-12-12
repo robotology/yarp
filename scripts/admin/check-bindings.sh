@@ -167,7 +167,7 @@ for lang in $SUPPORTED_LANGUAGES; do
 	fi
 	lc=`echo $lang | tr '[:upper:]' '[:lower:]'`
 	NPID=""
-	if yarp where; then
+	if $YARP_DIR/bin/yarp where; then
 	    echo "name server present"
 	else
 	    $YARP_DIR/bin/yarp namespace /bindings
