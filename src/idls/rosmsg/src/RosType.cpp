@@ -494,7 +494,7 @@ static bool checkWeb(const char *tname,
         url += typ;
         url += ".html";
         fprintf(stderr, "Trying the web: %s\n", url.c_str());
-        yarp::os::NetworkBase yarp;
+        yarp::os::Network yarp;
         yarp::os::Port port;
         port.openFake("base");
         port.addOutput(url);
