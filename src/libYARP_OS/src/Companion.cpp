@@ -25,6 +25,7 @@
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
@@ -150,7 +151,7 @@ static ConstString companion_unregister_name;
 static Port *companion_active_port = NULL;
 
 static void companion_sigint_handler(int sig) {
-    double now = Time::now();
+    double now = SystemClock::nowSystem();
     static double firstCall = now;
     static bool showedMessage = false;
     static bool unregistered = false;
