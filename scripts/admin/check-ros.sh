@@ -107,6 +107,7 @@ YPID=$!
 wait_node_topic /test_node /test/msg
 
 kill $YPID
+wait $YPID
 
 echo "Topic should now be gone"
 rostopic info /test_msg && exit 1 || echo "(this is correct)."
@@ -125,14 +126,27 @@ if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     echo "Type problem:"
     rostopic info $topic
     kill $YPID
+    wait $YPID
     echo "That is not right at all"
     exit 1
 fi
 
+${YARP_BIN}/yarp terminate $topic@/test_node
+while ${YARP_BIN}/yarp exists $topic@/test_node ; do
+    echo "Waiting for port to disappear"
+    sleep 1
+done
+
 kill $YPID
+wait $YPID
 
 echo "Topic should now be gone"
-rostopic info $topic && exit 1 || echo "(this is correct)."
+{
+    rostopic info $topic && {
+	echo Topic is incorrectly lingering
+	exit 1
+    }
+} || echo "(this is correct)."
 
 
 ########################################################################
@@ -149,11 +163,13 @@ if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     echo "Type problem:"
     rostopic info $topic
     kill $YPID
+    wait $YPID
     echo "That is not right at all"
     exit 1
 fi
 
 kill $YPID
+wait $YPID
 
 echo "Topic should now be gone"
 rostopic info $topic && exit 1 || echo "(this is correct)."
@@ -173,11 +189,13 @@ if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     echo "Type problem:"
     rostopic info $topic
     kill $YPID
+    wait $YPID
     echo "That is not right at all"
     exit 1
 fi
 
 kill $YPID
+wait $YPID
 
 echo "Topic should now be gone"
 rostopic info $topic && exit 1 || echo "(this is correct)."
@@ -214,6 +232,7 @@ touch ${BASE}talker.log
 
 rosrun rospy_tutorials talker &
 stdbuf --output=L ${YARP_BIN}/yarp read /chatter@/ros/check/read > ${BASE}talker.log &
+YPID=$!
 
 wait_file ${BASE}talker.log
 result=`cat ${BASE}talker.log | head -n1 | sed "s/world .*/world/" | sed "s/[^a-z ]//g"`
@@ -223,7 +242,8 @@ for f in `rosnode list | grep "^/talker"`; do
     rosnode kill $f
 done
 
-killall ${YARP_BIN}/yarp
+kill $YPID
+wait $YPID
 
 echo "Result is '$result'"
 if [ ! "hello world" = "$result" ] ; then
@@ -240,7 +260,7 @@ touch ${BASE}add_two_ints_server.log
 rm -f rospy_tutorials_AddTwoInts
 
 ${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros --web false &
-PIDL=$!
+YPID=$!
 wait_node /yarpros /typ
 
 rosrun rospy_tutorials add_two_ints_server &
@@ -254,7 +274,8 @@ for f in `rosnode list | grep "^/add_two_ints_server"`; do
     rosnode kill $f
 done
 
-kill $PIDL
+kill $YPID
+wait $YPID
 
 echo "Result is '$result'"
 if [ ! "30" = "$result" ] ; then
@@ -290,11 +311,13 @@ echo "width x height = $width x $height"
 if [ ! "$width x $height" = "16 x 8" ] ; then
     echo "Size is not right"
     kill $YPID
+    wait $YPID
     exit 1
 else
     echo "Size is correct"
 fi
 kill $YPID
+wait $YPID
 
 ########################################################################
 header "Test ros images arrive"
@@ -314,9 +337,12 @@ wait_file ${BASE}rimage.log
 
 grep "\[mat\] \[rgb\]" ${BASE}rimage.log && echo "(got an image, good)" || {
     echo "did not get an image"
+    kill $YPID
+    wait $YPID
     exit 1
 }
 kill $YPID
+wait $YPID
 
 ########################################################################
 header "Tests finished"
