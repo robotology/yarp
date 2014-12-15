@@ -27,11 +27,12 @@ yarp::dev::DriverCreator *createControlBoardWrapper()
             ("controlboardwrapper2", "controlboardwrapper2", "ControlBoardWrapper2");
 }
 
-ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20), inputStreaming_buffer(4), inputRPC_buffer(4)
+ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),
+                                            inputStreaming_buffer(4),
+                                            ownDevices(true)
 {
     streaming_parser.init(this);
     RPC_parser.init(this);
-    ////YARP_TRACE(Logger::get(),"ControlBoardWrapper2::ControlBoardWrapper2()", Logger::get().log_files.f3);
     controlledJoints = 0;
     thread_period = 20; // ms.
     base = 0;
@@ -40,19 +41,23 @@ ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20), inputStrea
     _verb = false;
 }
 
-ControlBoardWrapper::~ControlBoardWrapper()
-{
-    closeMain();
-}
+ControlBoardWrapper::~ControlBoardWrapper() { }
 
 bool ControlBoardWrapper::close()
 {
-    if(subDeviceOwned != NULL)
+    //stop thread if running
+    if (yarp::os::RateThread::isRunning())
     {
-        subDeviceOwned->close();
-        delete subDeviceOwned;
-        subDeviceOwned = NULL;
+        yarp::os::RateThread::stop();
     }
+
+    //shut down control port
+    outputPositionStatePort.close();
+#if defined(YARP_MSG)
+    extendedOutputStatePort.close();
+#endif
+    inputStreamingPort.close();
+    inputRPCPort.close();
 
 #if defined(ROS_MSG)
     if(rosNode != NULL)
@@ -61,43 +66,23 @@ bool ControlBoardWrapper::close()
         rosNode = NULL;
     }
 #endif
-    return closeMain();
-}
 
-bool ControlBoardWrapper::closeMain()
-{
-    detachAll();
-
-    inputRPCPort.interrupt();
-    inputStreamingPort.interrupt();
-    outputPositionStatePort.interrupt();
-
-    inputStreaming_buffer.detach();
-    outputPositionState_buffer.detach();
-
-    if(subDeviceOwned != NULL)
+    //if we own a deviced we have to close and delete it
+    if (ownDevices)
     {
-        subDeviceOwned->close();
-        delete subDeviceOwned;
-        subDeviceOwned = NULL;
+        // we should have created a new devices which we need to delete
+        if(subDeviceOwned != NULL)
+        {
+            subDeviceOwned->close();
+            delete subDeviceOwned;
+            subDeviceOwned = NULL;
+        }
+    }
+    else
+    {
+        detachAll();
     }
 
-    if (yarp::os::RateThread::isRunning())
-    {
-        yarp::os::RateThread::stop();
-    }
-
-    // close the port connections here!
-    inputRPCPort.close();
-    inputStreamingPort.close();
-    outputPositionStatePort.close();
-#if defined(YARP_MSG)
-    extendedOutputStatePort.close();
-#endif
-
-#if defined(ROS_MSG)
-//    rosOutputState_buffer;
-#endif
     return true;
 }
 
@@ -159,6 +144,15 @@ bool ControlBoardWrapper::open(Searchable& config)
         return false;
     }
 
+    // attach readers.
+    // inputRPCPort.setReader(RPC_parser);
+    // changed so that streaming input accepted if offered
+    inputRPC_buffer.attach(inputRPCPort);
+    RPC_parser.attach(inputRPC_buffer);
+
+    // attach buffers.
+    inputStreaming_buffer.attach(inputStreamingPort);
+
     rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
     partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
     rootName+=(partName);
@@ -167,50 +161,43 @@ bool ControlBoardWrapper::open(Searchable& config)
         rootName.replace(rootName.find("//"), 2, "/");
     }
 
-    // attach readers.
-    // inputRPCPort.setReader(RPC_parser);
-    // changed so that streaming input accepted if offered
-    inputRPC_buffer.attach(inputRPCPort);
-    RPC_parser.attach(inputRPC_buffer);
-
-    // attach buffers.
-    outputPositionState_buffer.attach(outputPositionStatePort);
-    inputStreaming_buffer.attach(inputStreamingPort);
+    ///// We now open ports
+    inputRPCPort.open((rootName+"/rpc:i").c_str());
+    inputStreamingPort.open((rootName+"/command:i").c_str());
     // attach callback.
     inputStreaming_buffer.useCallback(streaming_parser);
 
-    inputRPCPort.open((rootName+"/rpc:i").c_str());
-    inputStreamingPort.open((rootName+"/command:i").c_str());
-    outputPositionStatePort.open((rootName+"/state:o").c_str());
+    if(!outputPositionStatePort.open((rootName+"/state:o").c_str()) )
+    {
+        yError() <<"Error opening port "<< rootName+"/state:o\n";
+        return false;
+    }
 
-    // new extended output state port
 #ifdef YARP_MSG
+    // new extended output state port
     extendedOutputState_buffer.attach(extendedOutputStatePort);
     extendedOutputStatePort.open((rootName+"/stateExt:o").c_str());
 #endif
 
-
-
-    // In case attach is not deferred and the controlboard already owns a valid device
-    // we can start the thread. Otherwise this will happen when attachAll is called
-    if (ownDevices)
-        {
-           RateThread::setRate(thread_period);
-           RateThread::start();
-        }
 #ifdef ROS_MSG
     rosNode = new yarp::os::Node( (rootName+"/rosPublisher").c_str());   // added a Node
 
     if (!rosPublisherPort.topic(rootName+"/ROS_jointState" ) )
-     {
+    {
         yError() << " opening " << (rootName+"/ROS_jointState").c_str() << " port, check your yarp network\n";
         return false;
-     }
+    }
     else
         cout << "\n\n ROS " << (rootName+"/ROS_jointState").c_str() << " opened succesfully!!\n\n" << std::endl;
 #endif
 
-
+    // In case attach is not deferred and the controlboard already owns a valid device
+    // we can start the thread. Otherwise this will happen when attachAll is called
+    if (ownDevices)
+    {
+       RateThread::setRate(thread_period);
+       RateThread::start();
+    }
     return true;
 }
 
@@ -264,9 +251,6 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         int wTop;
 
         parameters=prop.findGroup(nets->get(k).asString().c_str());
-
-        //yDebug()<<"Net is "<< nets->get(k).asString().c_str();
-        //yDebug()<<parameters.toString().c_str();
 
         if(parameters.size()==2)
         {
@@ -338,6 +322,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         return false;
     }
 
+    prop.put("rootName", "/");
     return true;
 }
 
@@ -413,9 +398,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     // initialization.
     RPC_parser.initialize();
 
-    RateThread::setRate(thread_period);
-    RateThread::start();
-
+    prop.put("rootName", "");
     return true;
 }
 
@@ -461,7 +444,6 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
         return false;
     }
 
-
     CBW_encoders.resize(device.lut.size());
 
     // initialization.
@@ -493,7 +475,7 @@ void ControlBoardWrapper::run()
 {
     std::string tmp(partName.c_str());
 
-    yarp::sig::Vector& v = outputPositionState_buffer.get();
+    yarp::sig::Vector& v = outputPositionStatePort.prepare();
     v.size(controlledJoints);
 
     //getEncoders for all subdevices
@@ -519,9 +501,7 @@ void ControlBoardWrapper::run()
     timeMutex.post();
 
     outputPositionStatePort.setEnvelope(time);
-    outputPositionState_buffer.write();
-
-    static int loopCounting = 0;
+    outputPositionStatePort.write();
 
 #if defined(YARP_MSG)
     jointData &yarp_struct = extendedOutputState_buffer.get();
@@ -561,14 +541,13 @@ void ControlBoardWrapper::run()
     for(int i=0; i<controlledJoints; i++)
     {
         std::stringstream ss;
-        ss << " rosName " << i;
+        ss << " rosNameTest " << i;
 
         ros_struct.name[i] = std::string(ss.str() );
     }
 
     rosPublisherPort.write(ros_struct);
 #endif
-    loopCounting++;
 }
 
 //

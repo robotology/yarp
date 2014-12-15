@@ -120,27 +120,24 @@ private:
     std::string rootName;
     yarp::dev::impl::WrappedDevice device;
 
-    yarp::os::Port outputPositionStatePort;     // Port /state:o streaming out the encoder positions
-    yarp::os::Port outputStructStatePort;       // Port /?????:o streaming out the state as a struct
+    yarp::os::BufferedPort<yarp::sig::Vector>  outputPositionStatePort;   // Port /state:o streaming out the encoder positions
     yarp::os::Port inputStreamingPort;          // Input streaming port for high frequency commands
     yarp::os::Port inputRPCPort;                // Input RPC port for set/get remote calls
     yarp::os::Stamp time;                       // envelope to attach to the state port
     yarp::os::Semaphore timeMutex;
 
-    yarp::os::PortWriterBuffer<yarp::sig::Vector>   outputPositionState_buffer;     // Buffer associated to the outputPositionStatePort port
-
 #if defined(YARP_MSG)
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
     yarp::os::PortWriterBuffer<jointData>           extendedOutputState_buffer;
-    yarp::os::Port extendedOutputStatePort;     // Port /stateExt:o streaming out the encoder positions
+    yarp::os::Port extendedOutputStatePort;         // Port /stateExt:o streaming out the struct with the robot data
 #endif
 
 
 #if defined(ROS_MSG)
     // ROS state publisher
     yarp::os::Node *rosNode;   // added a Node
-    yarp::os::PortWriterBuffer<jointState>           rosOutputState_buffer;     // Buffer associated to the extendedOutputStatePort port
+    yarp::os::PortWriterBuffer<jointState>           rosOutputState_buffer;     // Buffer associated to the ROS topic
     yarp::os::Publisher<jointState>  rosPublisherPort;  // changed Port to Publisher
 #endif
 
@@ -158,8 +155,6 @@ private:
     int               top;          // to be removed
     int               thread_period;
     bool              _verb;        // make it work and propagate to subdevice if --subdevice option is used
-
-    bool closeMain();
 
     yarp::os::Bottle getOptions();
 
