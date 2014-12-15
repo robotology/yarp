@@ -136,9 +136,9 @@ private:
 
 #if defined(ROS_MSG)
     // ROS state publisher
-    yarp::os::Node *rosNode;   // added a Node
-    yarp::os::PortWriterBuffer<jointState>           rosOutputState_buffer;     // Buffer associated to the ROS topic
-    yarp::os::Publisher<jointState>  rosPublisherPort;  // changed Port to Publisher
+    yarp::os::Node                                  *rosNode;                   // add a ROS node
+    yarp::os::PortWriterBuffer<jointState>          rosOutputState_buffer;      // Buffer associated to the ROS topic
+    yarp::os::Publisher<jointState>                 rosPublisherPort;           // Dedicated ROS topic publisher
 #endif
 
 
@@ -148,7 +148,7 @@ private:
     yarp::dev::impl::StreamingMessagesParser        streaming_parser;               // Message parser associated to the inputStreamingPort port
 
     yarp::sig::Vector   CBW_encoders;
-    std::string         partName;               // to open ports and debug messages
+    std::string         partName;               // to open ports and print more detailed debug messages
 
     int               controlledJoints;
     int               base;         // to be removed

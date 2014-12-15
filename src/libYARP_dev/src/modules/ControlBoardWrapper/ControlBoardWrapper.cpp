@@ -180,15 +180,13 @@ bool ControlBoardWrapper::open(Searchable& config)
 #endif
 
 #ifdef ROS_MSG
-    rosNode = new yarp::os::Node( (rootName+"/rosPublisher").c_str());   // added a Node
+    rosNode = new yarp::os::Node( (rootName+"/rosPublisher").c_str());   // add a ROS node
 
     if (!rosPublisherPort.topic(rootName+"/ROS_jointState" ) )
     {
         yError() << " opening " << (rootName+"/ROS_jointState").c_str() << " port, check your yarp network\n";
         return false;
     }
-    else
-        cout << "\n\n ROS " << (rootName+"/ROS_jointState").c_str() << " opened succesfully!!\n\n" << std::endl;
 #endif
 
     // In case attach is not deferred and the controlboard already owns a valid device
