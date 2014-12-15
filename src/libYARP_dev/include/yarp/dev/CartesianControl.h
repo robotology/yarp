@@ -195,14 +195,14 @@ public:
      * reply]
      * \param x a 3-d vector which is filled with the actual
      *          position x,y,z [m].
-     * \param od a 4-d vector which is filled with the actual
+     * \param o a 4-d vector which is filled with the actual
      *           orientation using axis-angle representation xa, ya,
      *           za, theta [m],[rad].
      * \param stamp the stamp of the encoders employed to compute the
      *              pose.
      * \return true/false on success/failure.
      */
-    virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &od,
+    virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o,
                          yarp::os::Stamp *stamp=NULL) = 0;
 
     /*!
@@ -212,7 +212,7 @@ public:
      *            not).
      * \param x a 3-d vector which is filled with the actual position
      *         x,y,z [m] of the given link reference frame.
-     * \param od a 4-d vector which is filled with the actual
+     * \param o a 4-d vector which is filled with the actual
      * orientation of the given link reference frame using axis-angle
      * representation xa, ya, za, theta [m],[rad].
      * \param stamp the stamp of the encoders employed to compute the
@@ -220,7 +220,7 @@ public:
      * \return true/false on success/failure.
      */
     virtual bool getPose(const int axis, yarp::sig::Vector &x,
-                         yarp::sig::Vector &od,
+                         yarp::sig::Vector &o,
                          yarp::os::Stamp *stamp=NULL) = 0;
 
     /*!
