@@ -543,6 +543,44 @@ static bool checkWeb(const char *tname,
     return success;
 }
 
+bool RosTypeSearch::fetchFromRos(const std::string& file_name,
+                                 const std::string& type_name,
+                                 bool find_service) {
+    string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+type_name+" > " + file_name + " || rm -f " + type_name;
+    fprintf(stderr,"[ros]  %s\n", cmd.c_str());
+    pid_t p = ACE_OS::fork();
+    if (p==0) {
+#ifdef __linux__
+        // This was ACE_OS::execlp, but that fails
+        ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#else
+        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#endif
+        exit(0);
+    } else {
+        ACE_OS::wait(NULL);
+    }
+
+    bool success = true;
+
+    FILE *fin = fopen(file_name.c_str(),"r");
+    if (!fin) {
+        fprintf(stderr, "[type] FAILED to open %s\n", file_name.c_str());
+        success = false;
+    } else {
+        char buf[10];
+        char *result = fgets(buf,sizeof(buf),fin);
+        fclose(fin);
+        if (result==NULL) {
+            fprintf(stderr, "[type] File is blank: %s\n", file_name.c_str());
+            ACE_OS::unlink(file_name.c_str());
+            success = false;
+        }
+    }
+
+    return success;
+}
+
 std::string RosTypeSearch::findFile(const char *tname) {
     struct stat dummy;
 	if (stat(tname, &dummy)==0) {
@@ -562,6 +600,8 @@ std::string RosTypeSearch::findFile(const char *tname) {
         return target;
     }
 
+    bool success = false;
+
     if (std::string(tname)=="Header") {
         // support Header natively, for the sake of tests
         FILE *fout = fopen(target_full.c_str(),"w");
@@ -572,39 +612,13 @@ std::string RosTypeSearch::findFile(const char *tname) {
             fprintf(fout,"string frame_id\n");
         }
         fclose(fout);
+        success = true;
     } else {
-        string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+tname+" > " + target_full + " || rm -f " + target_full;
-        fprintf(stderr,"[ros]  %s\n", cmd.c_str());
-        pid_t p = ACE_OS::fork();
-        if (p==0) {
-#ifdef __linux__
-            // This was ACE_OS::execlp, but that fails
-            ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#else
-            ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#endif
-            exit(0);
-        } else {
-            ACE_OS::wait(NULL);
+        success = fetchFromRos(target_full,tname,find_service);
+        if (!success) {
+            success = fetchFromRos(target_full,tname,!find_service);
         }
     } 
-
-    bool success = true;
-
-    FILE *fin = fopen(target_full.c_str(),"r");
-    if (!fin) {
-        fprintf(stderr, "[type] FAILED to open %s\n", target_full.c_str());
-        success = false;
-    } else {
-        char buf[10];
-        char *result = fgets(buf,sizeof(buf),fin);
-        fclose(fin);
-        if (result==NULL) {
-            fprintf(stderr, "[type] File is blank: %s\n", target_full.c_str());
-            ACE_OS::unlink(target_full.c_str());
-            success = false;
-        }
-    }
 
     if (allow_web && !success) {
         success = checkWeb(tname,find_service,target_full);

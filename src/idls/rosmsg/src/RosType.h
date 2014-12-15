@@ -21,6 +21,10 @@ private:
     std::string target_dir;
     bool allow_web;
     bool abort_on_error;
+
+    bool fetchFromRos(const std::string& file_name,
+                      const std::string& type_name,
+                      bool find_service);
 public:
     RosTypeSearch() {
         find_service = false;

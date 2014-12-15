@@ -237,7 +237,9 @@ header "Test against rospy_tutorials/add_two_ints_server"
 rm -f ${BASE}add_two_ints_server.log
 touch ${BASE}add_two_ints_server.log
 
-${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros &
+rm -f rospy_tutorials_AddTwoInts
+
+${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros --web false &
 PIDL=$!
 wait_node /yarpros /typ
 
