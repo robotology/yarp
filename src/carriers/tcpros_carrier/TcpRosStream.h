@@ -49,6 +49,8 @@ private:
     WireTwiddler twiddler;
     yarp::os::ConstString kind;
     WireTwiddlerReader twiddlerReader;
+    bool initiative;
+    bool setInitiative;
 public:
     TcpRosStream(TwoWayStream *delegate,
                  bool sender,
@@ -64,7 +66,9 @@ public:
             phase(0),
             expectTwiddle(service && sender),
             kind(kind),
-            twiddlerReader(delegate->getInputStream(), twiddler)
+            twiddlerReader(delegate->getInputStream(), twiddler),
+            initiative(false),
+            setInitiative(false)
     {
         updateKind(kind,sender,reply);
     }
