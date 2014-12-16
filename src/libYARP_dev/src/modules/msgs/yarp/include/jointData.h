@@ -20,15 +20,15 @@ public:
   std::vector<double>  pidOutput;
   std::vector<int32_t>  controlMode;
   std::vector<int32_t>  interactionMode;
-  
+
   // Default constructor
   jointData() {
   }
-  
+
   // Constructor with field values
   jointData(const std::vector<double> & position,const std::vector<double> & velocity,const std::vector<double> & acceleration,const std::vector<double> & torque,const std::vector<double> & pidOutput,const std::vector<int32_t> & controlMode,const std::vector<int32_t> & interactionMode) : position(position), velocity(velocity), acceleration(acceleration), torque(torque), pidOutput(pidOutput), controlMode(controlMode), interactionMode(interactionMode) {
   }
-  
+
   // Copy constructor
   jointData(const jointData& __alt) {
     this->position = __alt.position;
@@ -39,7 +39,7 @@ public:
     this->controlMode = __alt.controlMode;
     this->interactionMode = __alt.interactionMode;
   }
-  
+
   // Assignment operator
   const jointData& operator = (const jointData& __alt) {
     this->position = __alt.position;
@@ -51,13 +51,13 @@ public:
     this->interactionMode = __alt.interactionMode;
     return *this;
   }
-  
+
   // read and write structure on a connection
   bool read(yarp::os::idl::WireReader& reader);
   bool read(yarp::os::ConnectionReader& connection);
   bool write(yarp::os::idl::WireWriter& writer);
   bool write(yarp::os::ConnectionWriter& connection);
-  
+
 private:
   bool write_position(yarp::os::idl::WireWriter& writer);
   bool nested_write_position(yarp::os::idl::WireWriter& writer);
@@ -89,15 +89,15 @@ private:
   bool nested_read_interactionMode(yarp::os::idl::WireReader& reader);
 
 public:
-  
+
   yarp::os::ConstString toString();
-  
+
   // if you want to serialize this class without nesting, use this helper
   typedef yarp::os::idl::Unwrapped<jointData > unwrapped;
-  
+
   class Editor : public yarp::os::Wire, public yarp::os::PortWriter {
   public:
-    
+
     Editor() {
       group = 0;
       obj_owned = true;
@@ -105,14 +105,14 @@ public:
       dirty_flags(false);
       yarp().setOwner(*this);
     }
-    
+
     Editor(jointData& obj) {
       group = 0;
       obj_owned = false;
       edit(obj,false);
       yarp().setOwner(*this);
     }
-    
+
     bool edit(jointData& obj, bool dirty = true) {
       if (obj_owned) delete this->obj;
       this->obj = &obj;
@@ -120,19 +120,19 @@ public:
       dirty_flags(dirty);
       return true;
     }
-    
+
     virtual ~Editor() {
     if (obj_owned) delete obj;
     }
-    
+
     bool isValid() const {
       return obj!=0/*NULL*/;
     }
-    
+
     jointData& state() { return *obj; }
-    
+
     void begin() { group++; }
-    
+
     void end() {
       group--;
       if (group==0&&is_dirty) communicate();
@@ -276,12 +276,12 @@ public:
     bool read(yarp::os::ConnectionReader& connection);
     bool write(yarp::os::ConnectionWriter& connection);
   private:
-    
+
     jointData *obj;
-    
+
     bool obj_owned;
     int group;
-    
+
     void communicate() {
       if (yarp().canWrite()) {
         yarp().write(*this);
