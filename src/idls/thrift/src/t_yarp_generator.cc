@@ -1256,7 +1256,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   }
 
   // Default constructor
-  indent(out) << endl;
+  out << endl;
   indent(out) << "// Default constructor" << endl;
   indent(out) <<
     tstruct->get_name() << "()";
@@ -1300,7 +1300,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   scope_down(out);
 
   // Fill-out constructor
-  indent(out) << endl;
+  out << endl;
   indent(out) << "// Constructor with field values" << endl;
   indent(out) << tstruct->get_name() << "(";
   init_ctor = false;
@@ -1328,10 +1328,10 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   scope_down(out);
 
   // Copy constructor
-  indent(out) << endl;
+  out << endl;
   indent(out) << "// Copy constructor" << endl;
   indent(out) << tstruct->get_name() << "(const " << tstruct->get_name() 
-	      << "& __alt) {" << endl;
+	      << "& __alt) : WirePortable(__alt) " << " {" << endl;
   indent_up();
   for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
     indent(out) << "this->" << (*m_iter)->get_name() << " = "
@@ -1340,7 +1340,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   scope_down(out);
 
   // Assignment operator
-  indent(out) << endl;
+  out << endl;
   indent(out) << "// Assignment operator" << endl;
   indent(out) << "const " << tstruct->get_name() << "& operator = (const " 
 	      << tstruct->get_name() 
@@ -1353,7 +1353,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(out) << "return *this;" << endl;
   scope_down(out);
 
-  indent(out) << endl;
+  out << endl;
   indent(out) << "// read and write structure on a connection" << endl;
   indent(out) << "bool read(yarp::os::idl::WireReader& reader);" 
 	      << endl;
@@ -1367,7 +1367,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(out) << "bool write(yarp::os::ConnectionWriter& connection);" 
 	      << endl;
 
-  indent(out) << endl;
+  out << endl;
 
   indent_down();
   indent(out) << "private:" << endl;
@@ -1385,18 +1385,18 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   }
 
   indent_down();
-  indent(out) << endl;
+  out << endl;
   indent(out) << "public:" << endl;
   indent_up();
 
-  indent(f_stt_) << endl;
+  f_stt_ << endl;
   indent(f_stt_) << "yarp::os::ConstString toString();" 
 		 << endl;
 
-  indent(f_stt_) << endl;
+  f_stt_ << endl;
   indent(f_stt_) << "// if you want to serialize this class without nesting, use this helper" << endl;
   indent(f_stt_) << "typedef yarp::os::idl::Unwrapped<" << namespace_decorate(ns,name) << " > unwrapped;" << endl;
-  indent(f_stt_) << endl;
+  f_stt_ << endl;
 
   // Editor: setters, getters, individual serializers, and dirty flags?
   indent(out) << "class Editor : public yarp::os::Wire, public yarp::os::PortWriter {" << endl;
@@ -1404,7 +1404,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent_up();
 
   // Editor constructor
-  indent(out) << endl;
+  out << endl;
   indent(out) << "Editor() {" << endl;
   indent_up();
   indent(out) << "group = 0;" << endl;
@@ -1413,7 +1413,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(out) << "dirty_flags(false);" << endl;
   indent(out) << "yarp().setOwner(*this);" << endl;
   scope_down(out);
-  indent(out) << endl;
+  out << endl;
   indent(out) << "Editor(" << tstruct->get_name() 
 	      << "& obj) {" << endl;
   indent_up();
@@ -1423,7 +1423,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(out) << "yarp().setOwner(*this);" << endl;
   scope_down(out);
 
-  indent(out) << endl;
+  out << endl;
   indent(out) << "bool edit(" << tstruct->get_name() 
 	      << "& obj, bool dirty = true) {" << endl;
   indent_up();
@@ -1435,27 +1435,27 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   scope_down(out);
 
   // Editor destructor
-  indent(out) << endl;
+  out << endl;
   indent(out) << "virtual ~Editor() {" << endl;
   indent(out) << "if (obj_owned) delete obj;" << endl;
   indent_up();
   scope_down(out);
 
   // Validity check
-  indent(out) << endl;
+  out << endl;
   indent(out) << "bool isValid() const {" << endl;
   indent_up();
   indent(out) << "return obj!=0/*NULL*/;" << endl;
   scope_down(out);
 
   // State
-  indent(out) << endl;
+  out << endl;
   indent(out) << tstruct->get_name() << "& state() { return *obj; }" << endl;
-  indent(out) << endl;
+  out << endl;
 
   // Grouping
   indent(out) << "void begin() { group++; }" << endl;
-  indent(out) << endl;
+  out << endl;
   indent(out) << "void end() {" << endl;
   indent_up();
   indent(out) << "group--;" << endl;
@@ -1527,12 +1527,12 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent_up();
 
   // State
-  indent(out) << endl;
+  out << endl;
   indent(out) << tstruct->get_name() << " *obj;" << endl;
-  indent(out) << endl;
+  out << endl;
   indent(out) << "bool obj_owned;" << endl;
   indent(out) << "int group;" << endl;
-  indent(out) << endl;
+  out << endl;
 
   // Send if possible
   indent(out) << "void communicate() {" << endl;
@@ -1609,7 +1609,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   {
     f_cpp_ <<  "#include <" << get_include_prefix(*program_) + name + ".h>" << endl;
   }
-  indent(f_cpp_) << endl;
+  f_cpp_ << endl;
 
   namespace_open(f_cpp_,ns);
 
@@ -1645,7 +1645,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "return !reader.isError();" 
 		<< endl;
     scope_down(out);
-    indent(out) << endl;
+    out << endl;
 
     indent(out) << "bool " << name
 		<< "::read(yarp::os::ConnectionReader& connection) {" 
@@ -1659,7 +1659,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 		<< endl;
     indent(out) << "return read(reader);"  << endl;
     scope_down(out);
-    indent(out) << endl;
+    out << endl;
 
 
     for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
@@ -1691,7 +1691,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "return !writer.isError();" 
 		<< endl;
     scope_down(out);
-    indent(out) << endl;
+    out << endl;
 
     indent(out) << "bool " << name
 		<< "::write(yarp::os::ConnectionWriter& connection) {" 
@@ -1844,7 +1844,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "return true;" << endl;
     scope_down(out);
 
-    indent(out) << endl;
+    out << endl;
   }
 
   indent(f_cpp_) << "yarp::os::ConstString " << name
