@@ -73,6 +73,15 @@ namespace yarp {
         */
         YARP_OS_API int mkdir(const char *p);
 
+        /**
+        * Create a directory and all parent directories needed
+        * @param p desired path
+        * @param ignoreLevels components of name to ignore. Set to 1 if 
+        * last element of path is a filename, for example.
+        * @return 0 on success
+        */
+        YARP_OS_API int mkdir_p(const char *p, int ignoreLevels = 0);
+
        /**
         * Wrapper for ACE_OS::rmdir(). Remove an empty directory.
         * @param p name of the directory.

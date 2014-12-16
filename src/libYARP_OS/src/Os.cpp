@@ -12,6 +12,7 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/NameConfig.h>
 #ifdef YARP_HAS_ACE
 #  include <ace/OS_NS_stdio.h>
 #  include <ace/OS_NS_unistd.h>
@@ -53,6 +54,12 @@ int yarp::os::mkdir(const char *p)
     return ::mkdir(p,0777);
 #endif
 }
+
+int yarp::os::mkdir_p(const char *p, int ignoreLevels) {
+    bool ok = yarp::os::impl::NameConfig::createPath(p,ignoreLevels);
+    return ok?0:1;
+}
+
 
 int yarp::os::rmdir(const char *p)
 {
