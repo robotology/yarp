@@ -256,21 +256,6 @@ using namespace yarp::sig;
 
 
 /**************************************************************************/
-void createFullPath(const string &path)
-{
-    if (yarp::os::stat(path.c_str()))
-    {
-        size_t found=path.find_last_of("/");    
-        while (path[found]=='/')
-            found--;
-
-        createFullPath(path.substr(0,found+1).c_str());
-        yarp::os::mkdir(path.c_str());
-    }
-}
-
-
-/**************************************************************************/
 typedef enum { bottle, image } DumpType;
 
 
@@ -810,8 +795,7 @@ public:
             }
             while (!yarp::os::stat(dirName.c_str()));
         }
-
-        createFullPath(dirName);
+        yarp::os::mkdir_p(dirName.c_str());
 
         q=new DumpQueue();
         t=new DumpThread(type,*q,dirName.c_str(),100,saveData,videoOn,videoType);
