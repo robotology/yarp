@@ -797,7 +797,8 @@ bool NetworkBase::write(const Contact& contact,
     out->open(r);
 
     PortCommand pc(0,style.admin?"a":"d");
-    BufferedConnectionWriter bw(out->getConnection().isTextMode());
+    BufferedConnectionWriter bw(out->getConnection().isTextMode(),
+                                out->getConnection().isBareMode());
     bool ok = true;
     if (out->getConnection().canEscape()) {
         ok = pc.write(bw);
@@ -1034,6 +1035,11 @@ public:
 
     virtual bool isTextMode() {
         return getContent().isTextMode();
+    }
+
+
+    virtual bool isBareMode() {
+        return getContent().isBareMode();
     }
 
 

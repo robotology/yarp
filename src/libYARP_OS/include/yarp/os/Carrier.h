@@ -57,13 +57,6 @@ public:
     virtual Carrier *create() = 0;
 
     /**
-     * Get the name of this carrier ("tcp", "mcast", "shmem", ...)
-     *
-     * @return the name of this carrier
-     */
-    virtual ConstString getName() = 0;
-
-    /**
      * Given the first 8 bytes received on a connection, decide if
      * this is the right carrier type to use for the rest of the
      * connection.

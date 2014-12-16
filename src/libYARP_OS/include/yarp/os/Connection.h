@@ -227,6 +227,13 @@ public:
      * necessary.
      */
     virtual void prepareDisconnect() = 0;
+
+    /**
+     * Get the name of this connection type ("tcp", "mcast", "shmem", ...)
+     *
+     * @return the name of this connection type
+     */
+    virtual yarp::os::ConstString getName() = 0;
 };
 
 
@@ -278,6 +285,10 @@ public:
     }
 
     virtual void prepareDisconnect() {}
+
+    virtual yarp::os::ConstString getName() {
+        return "null";
+    }
 };
 
 #endif
