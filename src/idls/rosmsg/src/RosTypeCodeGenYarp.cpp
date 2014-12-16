@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <yarp/os/Os.h>
+
 using namespace std;
 
 static std::string getSafeName(const std::string& tname) {
@@ -27,6 +29,31 @@ static std::string getSafeName(const std::string& tname) {
     return safe_tname;
 }
 
+static std::string getPartName(const std::string& tname) {
+    string part_tname = tname;
+    size_t at = tname.rfind("/");
+    if (at!=string::npos) {
+        part_tname = tname.substr(at+1,tname.length());
+    }
+    return part_tname;
+}
+
+static std::string getPackageName(const std::string& tname) {
+    string part_tname = tname;
+    size_t at = tname.rfind("/");
+    if (at!=string::npos) {
+        return tname.substr(0,at);
+    }
+    return "";
+}
+
+static std::string getSillyName(const std::string& tname) {
+    string pack = getPackageName(tname);
+    string safe = getSafeName(tname);
+    if (pack!="") return pack + "/" + safe;
+    return safe;
+}
+
 bool RosTypeCodeGenYarp::beginType(const std::string& tname,
                                    RosTypeCodeGenState& state) {
     counter = state.getFreeVariable("i");
@@ -35,25 +62,58 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     string safe_tname = getSafeName(tname);
     className = safe_tname;
     string fname = safe_tname + ".h";
+    string pack = getPackageName(tname);
+    string part = getPartName(tname);
+    string root = "";
     if (target!="") {
-        string iname = target + "/" + safe_tname + "_indexALL.txt";
+        root = target + "/";
+    }
+    if (target!="") {
+        string iname = target + "/" + getPartName(tname) + "_indexALL.txt";
+        yarp::os::mkdir_p(iname.c_str(),1);
         FILE *index = fopen(iname.c_str(),"w");
         if (index!=NULL) {
             fprintf(index,"%s\n",fname.c_str());
+            if (pack!="") {
+                fprintf(index,"%s.h\n",part.c_str());
+            }
             for (int i=0; i<(int)state.dependencies.size(); i++) {
-                fprintf(index,"%s.h\n",state.dependenciesAsPaths[i].c_str());
+                fprintf(index,"%s.h\n",getSafeName(state.dependenciesAsPaths[i]).c_str());
             }
             fclose(index);
             index = NULL;
         }
-        fname = target + "/" + fname;
+        fname = root + fname;
     }
+
+    yarp::os::mkdir_p(fname.c_str(),1);
+
+    if (pack!=""&&target!="") {
+        // Make header file names more sensible
+        string alt_fname = root + part + ".h";
+        out = fopen(alt_fname.c_str(),"w");
+        if (!out) {
+            fprintf(stderr,"Failed to open %s for writing\n", 
+                    alt_fname.c_str());
+            exit(1);
+        }
+        printf("Generating %s\n", alt_fname.c_str());
+        fprintf(out,"// This is an automatically generated file.\n");
+        fprintf(out,"#ifndef YARPMSG_TYPE_wrap_%s\n", safe_tname.c_str());
+        fprintf(out,"#define YARPMSG_TYPE_wrap_%s\n\n", safe_tname.c_str());
+        fprintf(out,"#include <%s.h>\n\n",getSillyName(tname).c_str());
+        fprintf(out,"namespace %s {\n", pack.c_str());
+        fprintf(out,"  typedef %s %s;\n", safe_tname.c_str(), part.c_str());
+        fprintf(out,"}\n\n");
+        fprintf(out,"#endif\n\n");
+        fclose(out);
+    }
+
     out = fopen(fname.c_str(),"w");
     if (!out) {
         fprintf(stderr,"Failed to open %s for writing\n", fname.c_str());
         exit(1);
     }
-    printf("Generating %s\n", fname.c_str());
     fprintf(out,"// This is an automatically generated file.\n");
     fprintf(out,"// Generated from this %s.msg definition:\n", safe_tname.c_str());
     fprintf(out,"%s", state.txt.c_str());
@@ -67,7 +127,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out,"#include <yarp/os/Wire.h>\n");
     fprintf(out,"#include <yarp/os/idl/WireTypes.h>\n");
     for (int i=0; i<(int)state.dependencies.size(); i++) {
-        fprintf(out,"#include <%s.h>\n",state.dependenciesAsPaths[i].c_str());
+        fprintf(out,"#include <%s.h>\n",getSillyName(state.dependenciesAsPaths[i]).c_str());
     }
     fprintf(out,"\n");
     fprintf(out,"class %s : public yarp::os::idl::WirePortable {\n", safe_tname.c_str());
@@ -441,7 +501,9 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
 
     fprintf(out,"  // Name the class, ROS will need this\n");
     fprintf(out,"  yarp::os::Type getType() {\n");
-    fprintf(out,"    return yarp::os::Type::byName(\"%s\",\"%s\").addProperty(\"md5sum\",yarp::os::Value(\"%s\"));\n", tname.c_str(), tname.c_str(), field.checksum.c_str());
+    fprintf(out,"    yarp::os::Type typ = yarp::os::Type::byName(\"%s\",\"%s\");\n", tname.c_str(), tname.c_str());
+    fprintf(out,"    // addProperty(\"md5sum\",yarp::os::Value(\"%s\"));\n", field.checksum.c_str());
+    fprintf(out,"    return typ;\n");
     fprintf(out,"  }\n");
     fprintf(out,"};\n\n");
     fprintf(out,"#endif\n");

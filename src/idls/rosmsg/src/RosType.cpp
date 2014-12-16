@@ -20,6 +20,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Os.h>
 
 #ifdef YARP_PRESENT
 // this code used to be compilable without yarp, I have let this rust but
@@ -286,6 +287,7 @@ bool RosType::cache(const char *tname, RosTypeSearch& env,
     }
     rosType = rosType.substr(0,rosType.rfind("."));
     FILE *fin = fopen((env.getTargetDirectory() + "/" + tname).c_str(),"r");
+    yarp::os::mkdir_p((env.getTargetDirectory() + "/" + tname).c_str(),1);
     FILE *fout = fopen((env.getTargetDirectory() + "/" + rosType).c_str(),"w");
     if (!fin) {
         fin = fopen(tname,"r");
@@ -531,6 +533,7 @@ static bool checkWeb(const char *tname,
                         def2 += ch;
                     }
                 }
+                yarp::os::mkdir_p(target_full.c_str(),1);
                 FILE *fout = fopen(target_full.c_str(),"w");
                 if (fout) {
                     fprintf(fout,"%s",def2.c_str());
@@ -604,6 +607,7 @@ std::string RosTypeSearch::findFile(const char *tname) {
 
     if (std::string(tname)=="Header") {
         // support Header natively, for the sake of tests
+        yarp::os::mkdir_p(target_full.c_str(),1);
         FILE *fout = fopen(target_full.c_str(),"w");
         if (fout) {
             fprintf(fout,"[roslib/Header]\n");
