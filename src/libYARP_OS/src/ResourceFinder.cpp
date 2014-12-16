@@ -938,7 +938,9 @@ ResourceFinder::ResourceFinder() {
     isConfiguredFlag = false;
 }
 
-ResourceFinder::ResourceFinder(const ResourceFinder& alt) {
+ResourceFinder::ResourceFinder(const ResourceFinder& alt) :
+        Searchable(alt)
+{
     implementation = new ResourceFinderHelper();
     yAssert(implementation!=NULL);
     owned = true;

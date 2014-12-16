@@ -30,7 +30,9 @@ public:
   }
 
   // Copy constructor
-  jointData(const jointData& __alt) {
+  jointData(const jointData& __alt) :
+      WirePortable(__alt)
+  {
     this->position = __alt.position;
     this->velocity = __alt.velocity;
     this->acceleration = __alt.acceleration;
