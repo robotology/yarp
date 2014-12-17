@@ -38,7 +38,7 @@ bool MonitorSharedLib::load(const yarp::os::Property& options)
     if(!monitorFactory.isValid()) {
         string msg = string("Cannot load shared library ") + filename  + string(" (");
         msg += Vocab::decode(monitorFactory.getStatus()) + string(")");
-        YARP_LOG_ERROR(msg.c_str());
+        yError(msg.c_str());
         return false;
     }
 
@@ -46,7 +46,7 @@ bool MonitorSharedLib::load(const yarp::os::Property& options)
 
     monitor.open(monitorFactory);
     if(!monitor.isValid()) {
-        YARP_LOG_ERROR("Cannot create an instance of MonitorObject");
+        yError("Cannot create an instance of MonitorObject");
         return false;
     }
 

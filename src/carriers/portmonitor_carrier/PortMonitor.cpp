@@ -45,7 +45,7 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     // check which monitor should be used
     if((binder = MonitorBinding::create(script.c_str())) == NULL)
     {
-         YARP_LOG_ERROR("Currently only \'lua\' script and \'dll\' object is supported by portmonitor");
+         yError("Currently only \'lua\' script and \'dll\' object is supported by portmonitor");
          return false;
     }
 
