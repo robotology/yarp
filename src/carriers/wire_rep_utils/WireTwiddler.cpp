@@ -750,10 +750,10 @@ bool WireTwiddlerWriter::pass(int len) {
     return advance(len,true);
 }
 
-bool WireTwiddlerWriter::pad(int len) {
+bool WireTwiddlerWriter::pad(size_t len) {
     if (zeros.length()<len) {
         zeros.allocate(len);
-        for (int i=0; i<len; i++) {
+        for (size_t i=0; i<len; i++) {
             zeros.get()[i] = '\0';
         }
     }
