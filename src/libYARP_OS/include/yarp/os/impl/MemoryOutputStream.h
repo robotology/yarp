@@ -25,16 +25,16 @@ namespace yarp {
  */
 class yarp::os::impl::MemoryOutputStream : public yarp::os::OutputStream {
 public:
-	MemoryOutputStream(char* location): _location(location) {
-	}
-    void write(const yarp::os::Bytes& b) { 
-		memcpy(_location, b.get(), b.length());
-		_location += b.length();
-	}
+    MemoryOutputStream(char* location): _location(location) {
+    }
+    void write(const yarp::os::Bytes& b) {
+        memcpy(_location, b.get(), b.length());
+        _location += b.length();
+    }
     void close() {}
     bool isOk() { return true; }
 private:
-	char *_location;
+    char *_location;
 };
 
 #endif

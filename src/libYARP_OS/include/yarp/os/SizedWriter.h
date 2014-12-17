@@ -42,7 +42,7 @@ public:
     virtual const char *data(size_t index) = 0;
 
     virtual PortReader *getReplyHandler() = 0;
-    
+
     virtual Portable *getReference() = 0;
 
     virtual void write(OutputStream& os) {

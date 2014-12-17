@@ -41,7 +41,7 @@ class YARP_OS_impl_API yarp::os::impl::Protocol : public yarp::os::OutputProtoco
 public:
 
     /**
-     * Constructor. The Protocol object becomes the owner of 
+     * Constructor. The Protocol object becomes the owner of
      * the provided stream, and will destroy it at some point.
      */
     Protocol(TwoWayStream *stream);
@@ -228,7 +228,7 @@ public:
     }
 
 private:
-    
+
     /**
      *
      * Scan for a receiver modifier in the carrier options, and
@@ -314,8 +314,8 @@ private:
     /**
      *
      * Individual messages may have an index at the beginning.
-     * They did a decade ago with YARP1, these days it is 
-     * entirely unnecessary.  It was just a workaround for 
+     * They did a decade ago with YARP1, these days it is
+     * entirely unnecessary.  It was just a workaround for
      * some limits in the size of QNX buffers.  New carriers
      * can leave the index classbacks as no-ops.
      *
