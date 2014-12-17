@@ -25,6 +25,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/os/Os.h>
 #include <yarp/sig/Image.h>
 
 using namespace std;
@@ -153,7 +154,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
         //pass
     } else {
         fprintf(stderr,"%s does not know about %s\n", __FILE__, kind.c_str());
-        exit(1);
+        yarp::os::exit(1);
     }
 
     dbg_printf("Type %s (%s) len %d unit %d %s\n", 
@@ -449,7 +450,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         default:
             fprintf(stderr,"Sorry, cannot handle [%s] images yet.\n", 
                     encoding.c_str());
-            exit(1);
+            yarp::os::exit(1);
             break;
         }
         int quantum = 1;
