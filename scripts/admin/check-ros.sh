@@ -97,7 +97,6 @@ header "Check name server is found"
 
 ${YARP_BIN}/yarp where || exit 1
 
-
 ########################################################################
 header "Test name gets listed"
 
@@ -121,6 +120,7 @@ yes | ${YARP_BIN}/yarp write $topic@/test_node --type $typ &
 YPID=$!
 
 wait_node_topic /test_node $topic
+${YARP_BIN}/yarp wait $topic@/test_node
 
 if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     echo "Type problem:"
@@ -131,6 +131,7 @@ if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     exit 1
 fi
 
+echo ${YARP_BIN}/yarp terminate $topic@/test_node
 ${YARP_BIN}/yarp terminate $topic@/test_node
 while ${YARP_BIN}/yarp exists $topic@/test_node ; do
     echo "Waiting for port to disappear"
@@ -248,6 +249,8 @@ wait $YPID
 echo "Result is '$result'"
 if [ ! "hello world" = "$result" ] ; then
     echo "That is not right."
+    echo "Full text:"
+    cat ${BASE}talker.log
     exit 1
 fi
 
@@ -303,9 +306,9 @@ if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     exit 1
 fi
 
-rostopic echo $topic -n 1 > ${BASE}image.log
-height=`cat ${BASE}image.log | grep "height:" | sed "s/.* //"`
-width=`cat ${BASE}image.log | grep "width:" | sed "s/.* //"`
+rostopic echo $topic -n 10 > ${BASE}image.log
+height=`cat ${BASE}image.log | grep "height:" | head -n1 | sed "s/.* //"`
+width=`cat ${BASE}image.log | grep "width:" | head -n1 | sed "s/.* //"`
 echo "width x height = $width x $height"
 
 if [ ! "$width x $height" = "16 x 8" ] ; then
@@ -331,7 +334,7 @@ touch ${BASE}rimage.log
 stdbuf --output=L ${YARP_BIN}/yarp read $topic@$node > ${BASE}rimage.log &
 YPID=$!
 wait_node_topic $node $topic
-rostopic pub -f ${BASE}image.log $topic sensor_msgs/Image -1
+rostopic pub -f ${BASE}image.log $topic sensor_msgs/Image || echo ok
 
 wait_file ${BASE}rimage.log
 
