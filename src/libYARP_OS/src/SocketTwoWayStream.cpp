@@ -79,7 +79,7 @@ void SocketTwoWayStream::updateAddresses() {
     struct linger lval;
     lval.l_onoff = 1;
     lval.l_linger = 0;
-    stream.set_option (ACE_IPPROTO_TCP, SO_LINGER, &lval,
+    stream.set_option (ACE_SOL_SOCKET, SO_LINGER, &lval,
                        sizeof(linger));
     ACE_INET_Addr local, remote;
     stream.get_local_addr(local);
