@@ -7,7 +7,6 @@
 project(YARP_priv_tinyxml)
 
 set(tinyxml_SRCS
-    tinyxml/tinystr.cpp
     tinyxml/tinyxml.cpp
     tinyxml/tinyxmlerror.cpp
     tinyxml/tinyxmlparser.cpp
