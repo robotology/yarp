@@ -38,7 +38,7 @@ set(gtkdatabox_SRCS
     gtkdatabox/gtk/gtkdatabox_grid.c
     gtkdatabox/gtk/gtkdatabox_lines.c
     gtkdatabox/gtk/gtkdatabox_markers.c
-    gtkdatabox/gtk/gtkdatabox_marshal.c
+#     gtkdatabox/gtk/gtkdatabox_marshal.c
     gtkdatabox/gtk/gtkdatabox_points.c
     gtkdatabox/gtk/gtkdatabox_ruler.c
     gtkdatabox/gtk/gtkdatabox_scale.c
