@@ -20,7 +20,7 @@ using namespace std;
 /**
  * Class MonitorSharedLib
  */
-MonitorSharedLib::MonitorSharedLib(void) 
+MonitorSharedLib::MonitorSharedLib(void)
 {
 }
 
@@ -35,16 +35,16 @@ bool MonitorSharedLib::load(const yarp::os::Property& options)
 {
     string filename = options.find("filename").asString();
     monitorFactory.open(filename.c_str(), "MonitorObject_there");
-	if(!monitorFactory.isValid()) {
+    if(!monitorFactory.isValid()) {
         string msg = string("Cannot load shared library ") + filename  + string(" (");
         msg += Vocab::decode(monitorFactory.getStatus()) + string(")");
         YARP_LOG_ERROR(msg.c_str());
-		return false;
-	}
+        return false;
+    }
 
     monitorFactory.addRef();
 
-    monitor.open(monitorFactory);    
+    monitor.open(monitorFactory);
     if(!monitor.isValid()) {
         YARP_LOG_ERROR("Cannot create an instance of MonitorObject");
         return false;
@@ -87,5 +87,3 @@ bool MonitorSharedLib::canAccept(void)
      //TODO: constraint checking should be implemented here!
      return true;
 }
-
-
