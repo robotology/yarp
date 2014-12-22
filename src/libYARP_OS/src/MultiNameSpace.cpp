@@ -11,6 +11,7 @@
 #include <yarp/os/MultiNameSpace.h>
 #include <yarp/os/YarpNameSpace.h>
 #include <yarp/os/RosNameSpace.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/Logger.h>
@@ -104,10 +105,12 @@ public:
         // read namespace list from config file
         NameConfig conf;
         if (!conf.fromFile()) {
-            static bool shown = false;
-            if (!shown) {
-                shown = true;
-                fprintf(stderr,"warning: YARP name server(s) not configured\n");
+            double now = Time::now();
+            static double last_shown = now-10;
+            if (now-last_shown>3) {
+                last_shown = now;
+                fprintf(stderr,"warning: YARP name server(s) not configured, ports will be anonymous\n");
+                fprintf(stderr,"warning: check your namespace and settings with 'yarp detect'\n");
             }
             return false;
         }
