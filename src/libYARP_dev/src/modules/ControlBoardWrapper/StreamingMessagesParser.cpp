@@ -30,6 +30,7 @@ void StreamingMessagesParser::init(ControlBoardWrapper *x) {
     stream_IVel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
     stream_IVel2 = dynamic_cast<yarp::dev::IVelocityControl2 *> (x);
     stream_IOpenLoop=dynamic_cast<yarp::dev::IOpenLoopControl *> (x);
+    stream_ITorque=dynamic_cast<yarp::dev::ITorqueControl *> (x);
 }
 
 
@@ -149,6 +150,28 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 bool ok = stream_IPosDirect->setPosition(b.get(1).asInt(), cmdVector[0]); // cmdVector.data());
                 if (!ok)
                 {   yError("Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt() ); }
+            }
+        }
+        break;
+        
+        case VOCAB_TORQUES_DIRECT:
+        {
+            if (stream_ITorque)
+            {
+                bool ok = stream_ITorque->setRefTorque(b.get(1).asInt(), cmdVector[0]);
+                if (!ok)
+                {   yError("Errors while trying to command a streaming torque direct message on all joints\n"); }
+            }
+        }
+        break;
+        
+        case VOCAB_TORQUES_DIRECTS:
+        {
+            if (stream_ITorque)
+            {
+                bool ok = stream_ITorque->setRefTorques(cmdVector.data());
+                if (!ok)
+                {   yError("Errors while trying to command a streaming torque direct message on all joints\n"); }
             }
         }
         break;

@@ -807,5 +807,8 @@ public:
 #define VOCAB_IMP_PARAM   VOCAB3('i','p','r')
 #define VOCAB_IMP_OFFSET  VOCAB3('i','o','f')
 
+#define VOCAB_TORQUES_DIRECTS VOCAB4('d','t','q','s') //This implements the setRefTorques for the whole part
+#define VOCAB_TORQUES_DIRECT VOCAB3('d','t','q') //This implements the setRefTorque for a single joint
+#define VOCAB_TORQUES_DIRECT_GROUP VOCAB4('d','t','q','g') //This implements the setRefTorques with joint list
 #endif
 
