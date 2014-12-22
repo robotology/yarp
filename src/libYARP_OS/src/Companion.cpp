@@ -1391,6 +1391,15 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.add("source_group(\"Source Files\" FILES ${folder_source})");
     f.add("source_group(\"Header Files\" FILES ${folder_header})");
     f.add("");
+    f.add("# Search for IDL files.");
+    f.add("file(GLOB idl_files *.thrift *.msg *.srv)");
+    f.add("foreach(idl ${idl_files})");
+    f.add("  yarp_idl_to_dir(${idl} ${CMAKE_BINARY_DIR}/idl IDL_SRC IDL_HDR IDL_INCLUDE)");
+    f.add("  set(folder_source ${folder_source} ${IDL_SRC})");
+    f.add("  set(folder_header ${folder_header} ${IDL_HDR})");
+    f.add("  include_directories(${IDL_INCLUDE})");
+    f.add("endforeach()");
+    f.add("");
     f.add("# Automatically add include directories if needed.");
     f.add("foreach(header_file ${folder_header})");
     f.add("  get_filename_component(p ${header_file} PATH)");
