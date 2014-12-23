@@ -42,6 +42,7 @@ using namespace yarp;
 
 PortCore::~PortCore() {
     close();
+    removeCallbackLock();
 }
 
 
@@ -320,7 +321,9 @@ void PortCore::interrupt() {
     if (reader!=NULL) {
         YARP_DEBUG(log,"sending update-state message to listener");
         StreamConnectionReader sbr;
+        lockCallback();
         reader->read(sbr);
+        unlockCallback();
     }
     stateMutex.post();
 }
@@ -1202,13 +1205,17 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 
             ConnectionRecorder recorder;
             recorder.init(&reader);
+            lockCallback();
             result = this->reader->read(recorder);
+            unlockCallback();
             recorder.fini();
             // send off a log of this transaction to whoever wants it
             sendHelper(recorder,PORTCORE_SEND_LOG);
         } else {
             // YARP is not needed as a middleman
+            lockCallback();
             result = this->reader->read(reader);
+            unlockCallback();
         }
 
         interruptible = true;
@@ -2022,7 +2029,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             if (adminReader) {
                 DummyConnector con;
                 cmd.write(con.getWriter());
+                lockCallback();
                 ok = adminReader->read(con.getReader());
+                unlockCallback();
                 if (ok) {
                     result.read(con.getReader());
                 }

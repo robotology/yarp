@@ -281,6 +281,16 @@ public:
      */
     bool isOpen() const;
 
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex = NULL);
+
+    virtual bool removeCallbackLock();
+
+    virtual bool lockCallback();
+
+    virtual bool tryLockCallback();
+
+    virtual void unlockCallback();
+
 private:
     void *implementation;
     bool owned;

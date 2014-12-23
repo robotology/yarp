@@ -177,6 +177,26 @@ public:
     virtual void includeNodeInName(bool flag) {
         return asPort().includeNodeInName(flag);
     }
+
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex = NULL) {
+        return asPort().setCallbackLock(mutex);
+    }
+
+    virtual bool removeCallbackLock() {
+        return asPort().removeCallbackLock();
+    }
+
+    virtual bool lockCallback() {
+        return asPort().lockCallback();
+    }
+
+    virtual bool tryLockCallback() {
+        return asPort().tryLockCallback();
+    }
+
+    virtual void unlockCallback() {
+        return asPort().unlockCallback();
+    }
 };
 
 #endif

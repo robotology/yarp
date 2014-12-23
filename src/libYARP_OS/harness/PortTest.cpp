@@ -1312,6 +1312,31 @@ public:
         checkTrue(reply.size()>=4,"yarp commands still work");
     }
 
+    void testCallbackLock() {
+        report(0,"checking callback locking");
+        Port pin, pout;
+        Bottle data;
+        pin.setCallbackLock();
+        pin.setReader(data);
+        pout.enableBackgroundWrite(true);
+        pin.open("/in");
+        pout.open("/out");
+        Network::connect("/out","/in");
+        Bottle cmd("hello");
+        pin.lockCallback();
+        pout.write(cmd);
+        Time::delay(0.25);
+        checkEqual(data.size(),0,"data does not arrive too early");
+        pin.unlockCallback();
+        while (pout.isWriting()) {
+            report(0,"waiting for port to stabilize");
+            Time::delay(0.2);
+        }
+        checkEqual(data.size(),1,"data does eventually arrive");
+        pin.close();
+        pout.close();
+    }
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
@@ -1364,6 +1389,8 @@ public:
         testBufferedPortCallback();
 
         testAdminReader();
+
+        testCallbackLock();
 
         NetworkBase::setLocalMode(false);
     }
