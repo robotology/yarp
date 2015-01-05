@@ -15,6 +15,15 @@ fi
 
 YARP_BIN="$PWD/bin"
 
+echo "Run some basic ROS tests, assuming a ros install"
+echo "Also assumes that YARP has been configured for ROS"
+
+BASE=$PWD/check_ros_
+
+########################################################################
+# Some utilities and cleanup code
+
+# Print a header for the test
 function header {
 echo " "
 echo "====================================================================="
@@ -61,10 +70,37 @@ function wait_node {
     done
 }
 
-echo "Run some basic ROS tests, assuming a ros install"
-echo "Also assumes that YARP has been configured for ROS"
+# Track PIDs of some processes we'll be running, for cleanup purposes
+SERVER_ID=""
+HELPER_ID=""
+ROS_ID=""
 
-BASE=$PWD/check_ros_
+cleanup_helper() {
+    if [ ! "k$HELPER_ID" = "k" ]; then
+	echo "Removing helper"
+	kill $HELPER_ID || true
+	wait $HELPER_ID || true
+	HELPER_ID=""
+    fi
+}
+
+cleanup_all() {
+    cleanup_helper
+    if [ ! "k$SERVER_ID" = "k" ]; then
+	echo "Removing yarp server"
+	kill $SERVER_ID || true
+	wait $SERVER_ID || true
+	SERVER_ID=""
+    fi
+    if [ ! "k$ROS_ID" = "k" ]; then
+	echo "Removing ros server"
+	kill $ROS_ID || true
+	wait $ROS_ID || true
+	ROS_ID=""
+    fi
+}
+trap cleanup_all EXIT
+
 
 ########################################################################
 header "Start name servers if needed"
@@ -72,6 +108,7 @@ header "Start name servers if needed"
 rostopic list || {
     echo "String roscore"
     roscore > /dev/null &
+    ROS_ID=$!
 }
 
 while ! rostopic list; do
@@ -82,6 +119,7 @@ done
 ${YARP_BIN}/yarp where || {
     echo "Starting yarpserver"
     ${YARP_BIN}/yarpserver --ros --write > /dev/null &
+    SERVER_ID=$!
 }
 
 while ! ${YARP_BIN}/yarp detect --write; do
@@ -101,12 +139,11 @@ ${YARP_BIN}/yarp where || exit 1
 header "Test name gets listed"
 
 ${YARP_BIN}/yarp read /test/msg@/test_node &
-YPID=$!
+HELPER_ID=$!
 
 wait_node_topic /test_node /test/msg
 
-kill $YPID
-wait $YPID
+cleanup_helper
 
 echo "Topic should now be gone"
 rostopic info /test_msg && exit 1 || echo "(this is correct)."
@@ -116,8 +153,9 @@ header "Test yarp write name gets listed with right type"
 
 typ="test_write/pid$$"
 topic="/test/msg/$typ"
-yes | ${YARP_BIN}/yarp write $topic@/test_node --type $typ &
-YPID=$!
+
+# yes | ${YARP_BIN}/yarp write $topic@/test_node --type $typ &
+HELPER_ID=$( { { yes 0<&4 & echo $! >&3 ; } 4<&0 | ${YARP_BIN}/yarp write $topic@/test_node --type $typ >/dev/null & } 3>&1 | head -1 )
 
 wait_node_topic /test_node $topic
 ${YARP_BIN}/yarp wait $topic@/test_node
@@ -131,15 +169,12 @@ if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     exit 1
 fi
 
-echo ${YARP_BIN}/yarp terminate $topic@/test_node
-${YARP_BIN}/yarp terminate $topic@/test_node
+cleanup_helper
+
 while ${YARP_BIN}/yarp exists $topic@/test_node ; do
     echo "Waiting for port to disappear"
     sleep 1
 done
-
-kill $YPID
-wait $YPID
 
 echo "Topic should now be gone"
 {
@@ -156,7 +191,7 @@ header "Test yarp read name gets listed with right type"
 typ="test_read/pid$$"
 topic="/test/msg/$typ"
 ${YARP_BIN}/yarp read $topic@/test_node --type $typ &
-YPID=$!
+HELPER_ID=$!
 
 wait_node_topic /test_node $topic
 
@@ -169,8 +204,7 @@ if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     exit 1
 fi
 
-kill $YPID
-wait $YPID
+cleanup_helper
 
 echo "Topic should now be gone"
 rostopic info $topic && exit 1 || echo "(this is correct)."
@@ -182,7 +216,7 @@ header "Test yarp read name gets listed with right type using twiddle"
 typ="test_twiddle/pid$$"
 topic="/test/msg/$typ"
 ${YARP_BIN}/yarp read $topic@/test_node~$typ &
-YPID=$!
+HELPER_ID=$!
 
 wait_node_topic /test_node $topic
 
@@ -195,8 +229,7 @@ if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
     exit 1
 fi
 
-kill $YPID
-wait $YPID
+cleanup_helper
 
 echo "Topic should now be gone"
 rostopic info $topic && exit 1 || echo "(this is correct)."
@@ -208,6 +241,7 @@ header "Test against rospy_tutorials/listener"
 rm -f ${BASE}listener.log
 touch ${BASE}listener.log
 stdbuf --output=L rosrun rospy_tutorials listener > ${BASE}listener.log &
+HELPER_ID=$!
 
 echo "Hello" | ${YARP_BIN}/yarp write /chatter@/ros/check/write --type std_msgs/String --wait-connect
 
@@ -225,6 +259,8 @@ if [ ! "Hello" = "$result" ] ; then
     exit 1
 fi
 
+cleanup_helper
+
 ########################################################################
 header "Test against rospy_tutorials/talker"
 
@@ -233,7 +269,7 @@ touch ${BASE}talker.log
 
 rosrun rospy_tutorials talker &
 stdbuf --output=L ${YARP_BIN}/yarp read /chatter@/ros/check/read > ${BASE}talker.log &
-YPID=$!
+HELPER_ID=$!
 
 wait_file ${BASE}talker.log
 result=`cat ${BASE}talker.log | head -n1 | sed "s/world .*/world/" | sed "s/[^a-z ]//g"`
@@ -243,8 +279,7 @@ for f in `rosnode list | grep "^/talker"`; do
     rosnode kill $f
 done
 
-kill $YPID
-wait $YPID
+cleanup_helper
 
 echo "Result is '$result'"
 if [ ! "hello world" = "$result" ] ; then
@@ -263,7 +298,7 @@ touch ${BASE}add_two_ints_server.log
 rm -f rospy_tutorials_AddTwoInts
 
 ${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros --web false &
-YPID=$!
+HELPER_ID=$!
 wait_node /yarpros /typ
 
 rosrun rospy_tutorials add_two_ints_server &
@@ -277,8 +312,7 @@ for f in `rosnode list | grep "^/add_two_ints_server"`; do
     rosnode kill $f
 done
 
-kill $YPID
-wait $YPID
+cleanup_helper
 
 echo "Result is '$result'"
 if [ ! "30" = "$result" ] ; then
@@ -294,7 +328,7 @@ typ="sensor_msgs/Image"
 topic="/test/image/$typ/pid$$"
 echo ${YARP_BIN}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8
 ${YARP_BIN}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8 &
-YPID=$!
+HELPER_ID=$!
 
 wait_node_topic $node $topic
 
@@ -319,8 +353,7 @@ if [ ! "$width x $height" = "16 x 8" ] ; then
 else
     echo "Size is correct"
 fi
-kill $YPID
-wait $YPID
+cleanup_helper
 
 ########################################################################
 header "Test ros images arrive"
@@ -332,7 +365,7 @@ topic="/test/rimage/$typ/pid$$"
 rm -f ${BASE}rimage.log
 touch ${BASE}rimage.log
 stdbuf --output=L ${YARP_BIN}/yarp read $topic@$node > ${BASE}rimage.log &
-YPID=$!
+HELPER_ID=$!
 wait_node_topic $node $topic
 rostopic pub -f ${BASE}image.log $topic sensor_msgs/Image || echo ok
 
@@ -344,8 +377,7 @@ grep "\[mat\] \[rgb\]" ${BASE}rimage.log && echo "(got an image, good)" || {
     wait $YPID
     exit 1
 }
-kill $YPID
-wait $YPID
+cleanup_helper
 
 ########################################################################
 header "Tests finished"
