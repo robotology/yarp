@@ -415,6 +415,10 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         int h = prop.find("height").asInt();
         int step = prop.find("step").asInt();
         bool bigendian = prop.find("is_bigendian").asInt()==1;
+        if (bigendian) {
+            fprintf(stderr,"Sorry, cannot handle bigendian images yet.\n");
+            yarp::os::exit(1);
+        }
         ConstString encoding = prop.find("encoding").asString();
         int bpp = 1;
         int translated_encoding = 0;
@@ -954,13 +958,13 @@ YARP_SSIZE_T WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
     for (int i=0; i<(int)b.length(); i++) {
         b.get()[i] = 0;
     }
-    int len = gap.wire_unit_length;
+    size_t len = gap.wire_unit_length;
     if (len>b.length()) {
         len = b.length();
     }
     Bytes b2(b.get(),len);
     YARP_SSIZE_T r = is.readFull(b2);
-    if (r==len) {
+    if (r==(YARP_SSIZE_T)len) {
         if (gap.flavor==BOTTLE_TAG_DOUBLE) {
             if (gap.wire_unit_length==4 && 
                 gap.unit_length==8) {
