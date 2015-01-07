@@ -379,6 +379,53 @@ grep "\[mat\] \[rgb\]" ${BASE}rimage.log && echo "(got an image, good)" || {
 }
 cleanup_helper
 
+
+########################################################################
+header "Check MD5 checksums"
+
+rm -f ${BASE}_md5
+mkdir -p ${BASE}_md5
+pushd ${BASE}_md5
+
+good=0
+bad=0
+rm -f good.txt
+rm -f bad.txt
+touch good.txt
+touch bad.txt
+
+for msg in `rosmsg list`; do
+	$YARP_BIN/yarpidl_rosmsg $msg 2> /dev/null
+	v1=`rosmsg md5 $msg`
+	v2=$(grep md5 `echo $msg | sed "s|/|_|g"`.h | sed 's|.*Value."||' | sed 's|".*||')
+	ok=0
+	if [ "k$v1" = "k$v2" ]; then
+		let good=$good+1
+		echo $msg >> ${BASE}_md5_good.txt
+		ok=1
+	else
+		let bad=$bad+1
+		echo $msg >> ${BASE}_md5_bad.txt
+	fi
+	echo "$v1 $v2 $ok $msg"
+done
+echo "score good $good bad $bad"
+
+if [ ! "$bad" = "0" ]; then
+    echo "FAILURE of md5 for these types:"
+    cat bad.txt
+    exit 1
+fi
+
+if [ "$good" = "0" ]; then
+    echo "Messages not found"
+    exit 1
+fi
+
+echo "All $good md5 checksums are ok"
+
+popd
+
 ########################################################################
 header "Tests finished"
 

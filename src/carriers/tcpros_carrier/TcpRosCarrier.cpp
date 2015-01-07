@@ -57,6 +57,7 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
         Type t = proto.getContactable()->getType(); 
         typ = t.getName();
         md5sum = t.readProperties().find("md5sum").asString();
+        message_definition = t.readProperties().find("message_definition").asString();
         user_type = typ;
         if (typ=="yarp/image") {
             wire_type = "sensor_msgs/Image";
@@ -128,6 +129,9 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     }
     header.data[mode.c_str()] = modeValue.c_str();
     header.data["md5sum"] = (md5sum!="")?md5sum:"*";
+    if (message_definition!="") {
+        header.data["message_definition"] = message_definition;
+    }
     header.data["callerid"] = proto.getRoute().getFromName().c_str();
     header.data["persistent"] = "1";
     string header_serial = header.writeHeader();
@@ -251,6 +255,9 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
         rosname = rtyp;
         header.data["type"] = rosname;
         header.data["md5sum"] = (md5sum!="")?md5sum:"*";
+        if (message_definition!="") {
+            header.data["message_definition"] = message_definition;
+        }
     }
     dbg_printf("<outgoing> Type of data is %s\n", rosname.c_str());
 

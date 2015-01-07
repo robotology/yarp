@@ -491,6 +491,47 @@ bool RosTypeCodeGenYarp::endWrite(bool bare) {
 }
 
 
+static void output_type(FILE *out,
+                        const RosField& field,
+                        std::map<std::string,int>& processed) {
+    const std::string& name = field.rosType;
+    processed[name] = 1;
+    const std::string& source = field.source;
+    bool need_newline = false;
+    for (size_t i=0; i<source.length(); i++) {
+        char ch = source[i];
+        if (ch=='\r') continue;
+        if (need_newline) {
+            fprintf(out,"\\n");
+            fprintf(out,"\\\n");
+            need_newline = false;
+        }
+        if (ch=='\n') {
+            need_newline = true;
+            continue;
+        }
+        if (ch=='\\') {
+            fprintf(out,"\\\\");
+            continue;
+        }
+        if (ch=='\"') {
+            fprintf(out,"\\\"");
+            continue;
+        }
+        fprintf(out,"%c",ch);
+    }
+    size_t len = field.subRosType.size();
+    for (size_t i=0; i<len; i++) {
+        const RosField& sub_field = field.subRosType[i];
+        if (!sub_field.isStruct) continue;
+        const std::string& sub_name = sub_field.rosType;
+        if (processed.find(sub_name)!=processed.end()) continue;
+        fprintf(out,"\\n================================================================================\\n\\\n");
+        fprintf(out,"MSG: %s\\n\\\n", (sub_name=="Header"?"std_msgs/Header":sub_name.c_str()));
+        output_type(out,sub_field,processed);
+    }
+}
+
 bool RosTypeCodeGenYarp::endType(const std::string& tname,
                                  const RosField& field) {
     string safe_tname = getSafeName(tname);
@@ -499,10 +540,20 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
     fprintf(out,"  typedef yarp::os::idl::BareStyle<%s> rosStyle;\n", safe_tname.c_str());
     fprintf(out,"  typedef yarp::os::idl::BottleStyle<%s> bottleStyle;\n\n", safe_tname.c_str());
 
+    fprintf(out,"  // Give source text for class, ROS will need this\n");
+    fprintf(out,"  yarp::os::ConstString getTypeText() {\n");
+    fprintf(out,"    return \"");
+    std::map<std::string,int> processed;
+    output_type(out,field,processed);
+    fprintf(out,"\";\n");
+    fprintf(out,"  }\n");
+    fprintf(out,"\n");
+
     fprintf(out,"  // Name the class, ROS will need this\n");
     fprintf(out,"  yarp::os::Type getType() {\n");
     fprintf(out,"    yarp::os::Type typ = yarp::os::Type::byName(\"%s\",\"%s\");\n", tname.c_str(), tname.c_str());
-    fprintf(out,"    // addProperty(\"md5sum\",yarp::os::Value(\"%s\"));\n", field.checksum.c_str());
+    fprintf(out,"    typ.addProperty(\"md5sum\",yarp::os::Value(\"%s\"));\n", field.checksum.c_str());
+    fprintf(out,"    typ.addProperty(\"message_definition\",yarp::os::Value(getTypeText()));\n");
     fprintf(out,"    return typ;\n");
     fprintf(out,"  }\n");
     fprintf(out,"};\n\n");
@@ -530,13 +581,13 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
     }
     string name = field.rosType;
     string flavor = "";
-    if (name=="int8"||(name=="bool"&&field.isArray)) {
+    if (name=="int8"||(name=="bool"&&field.isArray)||name=="char") {
         ry.yarpType = "char";
         ry.writer = "appendBlock";
         ry.reader = "expectBlock";
         flavor = "int";
         ry.len = 1;
-    } else if (name=="uint8") {
+    } else if (name=="uint8"||name=="byte") {
         ry.yarpType = "unsigned char";
         ry.writer = "appendBlock";
         ry.reader = "expectBlock";
