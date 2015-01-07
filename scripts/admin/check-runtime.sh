@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [ "k$TRAVIS_WITH_RUNTIME" = "kfalse" ] ; then
-    echo Nothing to check
-    exit 0
-fi
-
 function header() {
     echo "###############################################################"
     echo "## $1"
