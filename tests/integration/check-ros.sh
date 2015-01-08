@@ -15,6 +15,10 @@ fi
 
 YARP_BIN="$PWD/bin"
 
+YARP_SRC=`grep YARP_SOURCE_DIR CMakeCache.txt | sed "s/.*=//"`
+YARP_DIR="$PWD"
+export YARP_DATA_DIRS=$YARP_DIR
+
 echo "Run some basic ROS tests, assuming a ros install"
 echo "Also assumes that YARP has been configured for ROS"
 
@@ -147,6 +151,57 @@ cleanup_helper
 
 echo "Topic should now be gone"
 rostopic info /test_msg && exit 1 || echo "(this is correct)."
+
+########################################################################
+header "Test bag file record and playback"
+
+root="/test/bag/pid$$"
+rm -rf ${BASE}check_bag
+mkdir -p ${BASE}check_bag
+pushd ${BASE}check_bag
+# rosbag record --output-name=log.bag $root/str &
+cmake $YARP_SRC/tests/integration/ros/ -DYARP_DIR=$YARP_DIR
+make
+
+# rosbag record appears to need a topic type to already be set up,
+# so we need to use the topic at least once *before* calling it
+./test_topic $root
+rosrun rosbag record -a -O log.bag &
+HELPER_ID=$!
+sleep 5
+
+./test_topic $root
+
+echo "Stopping rosbag process"
+kill -s SIGINT $HELPER_ID
+wait $HELPER_ID || echo ok
+HELPER_ID=""
+test log.bag
+
+echo "Topic should now be gone"
+rostopic info $root/str && exit 1 || echo "(this is correct)."
+
+$YARP_BIN/yarp read $root/str@$root/reader > replay.txt &
+HELPER_ID=$!
+rosbag play log.bag --topics $root/str
+cleanup_helper
+
+grep "hello world" replay.txt || {
+    echo "Failed to playback text"
+    exit 1
+}
+
+rostopic echo $root/img -n 1 > replay_image.txt &
+HELPER_ID=$!
+rosbag play log.bag --topics $root/img
+cleanup_helper
+
+grep "is_bigendian" replay_image.txt || {
+    echo "Failed to playback image"
+    exit 1
+}
+
+popd
 
 ########################################################################
 header "Test yarp write name gets listed with right type"
@@ -383,7 +438,7 @@ cleanup_helper
 ########################################################################
 header "Check MD5 checksums"
 
-rm -f ${BASE}_md5
+rm -rf ${BASE}_md5
 mkdir -p ${BASE}_md5
 pushd ${BASE}_md5
 
