@@ -10,8 +10,10 @@
 #include <yarp/conf/system.h>
 
 #ifdef YARP_HAS_ACE
-#include <ace/ACE.h>
-#include <ace/DLL.h>
+#  include <ace/ACE.h>
+#  include <ace/DLL.h>
+#else
+#  include <dlfcn.h>
 #endif
 
 #include <yarp/os/SharedLibrary.h>
@@ -35,8 +37,8 @@ SharedLibrary::~SharedLibrary() {
 }
 
 bool SharedLibrary::open(const char *filename) {
-#ifdef YARP_HAS_ACE
     close();
+#ifdef YARP_HAS_ACE
     implementation = new ACE_DLL();
     yAssert(implementation);
     int result = HELPER(implementation).open(filename);
@@ -46,26 +48,29 @@ bool SharedLibrary::open(const char *filename) {
     }
     return true;
 #else
-    return false;
+    implementation = dlopen(filename, RTLD_LAZY);
+    return implementation!=NULL;
 #endif
 }
 
 bool SharedLibrary::close() {
-#ifdef YARP_HAS_ACE
     if (implementation!=NULL) {
+#ifdef YARP_HAS_ACE
         HELPER(implementation).close();
+#else
+        dlclose(implementation);
+#endif
         implementation = NULL;
     }
-#endif
     return true;
 }
 
 void *SharedLibrary::getSymbol(const char *symbolName) {
-#ifdef YARP_HAS_ACE
     if (implementation==NULL) return NULL;
+#ifdef YARP_HAS_ACE
     return HELPER(implementation).symbol(symbolName);
 #else
-    return NULL;
+    return dlsym(implementation,symbolName);
 #endif
 }
 

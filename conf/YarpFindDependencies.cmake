@@ -218,7 +218,7 @@ message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
 if(SKIP_ACE)
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(ACE_LIBRARIES pthread rt)
+        set(ACE_LIBRARIES pthread rt dl)
     endif()
 else()
     find_package(ACE)
