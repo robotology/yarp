@@ -44,9 +44,11 @@
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/PortInfo.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Publisher.h>
 #include <yarp/os/Random.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Subscriber.h>
 #include <yarp/os/Mutex.h>
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/Event.h>
