@@ -163,14 +163,10 @@ pushd ${BASE}check_bag
 cmake $YARP_SRC/tests/integration/ros/ -DYARP_DIR=$YARP_DIR
 make
 
-# rosbag record appears to need a topic type to already be set up,
-# so we need to use the topic at least once *before* calling it
-./test_topic $root
 rosrun rosbag record -a -O log.bag &
 HELPER_ID=$!
-sleep 5
 
-./test_topic $root
+./test_topic $root wait
 
 echo "Stopping rosbag process"
 kill -s SIGINT $HELPER_ID
