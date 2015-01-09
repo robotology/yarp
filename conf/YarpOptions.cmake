@@ -25,12 +25,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
     set(CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
     set(CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
+    set(CMAKE_STATIC_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
 
     mark_as_advanced(CMAKE_C_FLAGS_DEBUGFULL
                      CMAKE_CXX_FLAGS_DEBUGFULL
                      CMAKE_EXE_LINKER_FLAGS_DEBUGFULL
                      CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL
-                     CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL)
+                     CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL
+                     CMAKE_STATIC_LINKER_FLAGS_DEBUGFULL)
 
     list(APPEND YARP_DEBUG_CONFIGURATIONS "DebugFull")
 endif(CMAKE_COMPILER_IS_GNUCXX)
@@ -44,12 +46,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_EXE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
     set(CMAKE_MODULE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
     set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
+    set(CMAKE_STATIC_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
 
     mark_as_advanced(CMAKE_C_FLAGS_PROFILE
                      CMAKE_CXX_FLAGS_PROFILE
                      CMAKE_EXE_LINKER_FLAGS_PROFILE
                      CMAKE_MODULE_LINKER_FLAGS_PROFILE
-                     CMAKE_SHARED_LINKER_FLAGS_PROFILE)
+                     CMAKE_SHARED_LINKER_FLAGS_PROFILE
+                     CMAKE_STATIC_LINKER_FLAGS_PROFILE)
 
     list(APPEND YARP_DEBUG_CONFIGURATIONS "Profile")
 endif(CMAKE_COMPILER_IS_GNUCXX)
