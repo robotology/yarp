@@ -45,7 +45,6 @@ public:
 
 /// network stuff
 #include <yarp/os/NetInt32.h>
-#include <yarp/os/begin_pack_for_net.h>
 
 bool yarp::sig::removeCols(const Matrix &in, Matrix &out, int first_col, int how_many)
 {
