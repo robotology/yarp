@@ -30,7 +30,8 @@ SubDevice::SubDevice()
     posDir = 0;
     vel = 0;
     vel2 = 0;
-    enc = 0;
+    iJntEnc = 0;
+    iMotEnc = 0;
     amp = 0;
     lim2 = 0;
     calib = 0;
@@ -82,8 +83,10 @@ bool SubDevice::configure(int b, int t, int n, const std::string &key)
             return false;
         }
 
-    subDev_encoders.resize(axes);
-    encodersTimes.resize(axes);
+    subDev_joint_encoders.resize(axes);
+    jointEncodersTimes.resize(axes);
+    subDev_motor_encoders.resize(axes);
+    motorEncodersTimes.resize(axes);
 
     configuredF=true;
     return true;
@@ -99,7 +102,8 @@ void SubDevice::detach()
     posDir=0;
     vel=0;
     vel2=0;
-    enc=0;
+    iJntEnc=0;
+    iMotEnc=0;
     lim2=0;
     calib=0;
     calib2=0;
@@ -157,7 +161,8 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(iMode);
             subdevice->view(iMode2);
             subdevice->view(iOpenLoop);
-            subdevice->view(enc);
+            subdevice->view(iJntEnc);
+            subdevice->view(iMotEnc);
             subdevice->view(iInteract);
         }
     else
@@ -202,9 +207,15 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             vel = vel2;
     }
 
-    if(!enc)
+    if(!iJntEnc)
     {
         yError("ControlBoarWrapper: IEncoderTimed interface was not found in subdevice");
+        return false;
+    }
+
+    if(!iMotEnc)
+    {
+        yError("ControlBoarWrapper: IMotorEncoder interface was not found in subdevice");
         return false;
     }
 

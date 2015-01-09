@@ -222,7 +222,7 @@ public:
      * @param spds pointer to storage for the output values
      * @return guess what? (true/false on success or failure).
      */
-    virtual bool geMotortEncoderSpeeds(double *spds)=0;
+    virtual bool getMotorEncoderSpeeds(double *spds)=0;
     
     /**
      * Read the instantaneous acceleration of an axis.
@@ -240,16 +240,16 @@ public:
 };
 
 // interface IMotorEncoders sets
-#define VOCAB_MOTOR_E_RESET VOCAB3('e','r','e')
-#define VOCAB_MOTOR_E_RESETS VOCAB4('e','r','e','s')
-#define VOCAB_MOTOR_ENCODER VOCAB3('e','n','c')
-#define VOCAB_MOTOR_ENCODERS VOCAB4('e','n','c','s')
+#define VOCAB_MOTOR_E_RESET VOCAB3('m','r','e')
+#define VOCAB_MOTOR_E_RESETS VOCAB4('m','r','e','s')
+#define VOCAB_MOTOR_ENCODER VOCAB3('m','n','c')
+#define VOCAB_MOTOR_ENCODERS VOCAB4('m','n','c','s')
 
 // interface IMotorEncoders gets
-#define VOCAB_MOTOR_ENCODER_SPEED VOCAB3('e','s','p')
-#define VOCAB_MOTOR_ENCODER_SPEEDS VOCAB4('e','s','p','s')
-#define VOCAB_MOTOR_ENCODER_ACCELERATION VOCAB3('e','a','c')
-#define VOCAB_MOTOR_ENCODER_ACCELERATIONS VOCAB4('e','a','c','s')
+#define VOCAB_MOTOR_ENCODER_SPEED VOCAB3('m','s','p')
+#define VOCAB_MOTOR_ENCODER_SPEEDS VOCAB4('m','s','p','s')
+#define VOCAB_MOTOR_ENCODER_ACCELERATION VOCAB3('m','a','c')
+#define VOCAB_MOTOR_ENCODER_ACCELERATIONS VOCAB4('m','a','c','s')
 
 #endif
 

@@ -13,9 +13,12 @@ class jointData;
 class jointData : public yarp::os::idl::WirePortable {
 public:
   // Fields
-  std::vector<double>  position;
-  std::vector<double>  velocity;
-  std::vector<double>  acceleration;
+  std::vector<double>  jointPosition;
+  std::vector<double>  jointVelocity;
+  std::vector<double>  jointAcceleration;
+  std::vector<double>  motorPosition;
+  std::vector<double>  motorVelocity;
+  std::vector<double>  motorAcceleration;
   std::vector<double>  torque;
   std::vector<double>  pidOutput;
   std::vector<int32_t>  controlMode;
@@ -26,16 +29,16 @@ public:
   }
 
   // Constructor with field values
-  jointData(const std::vector<double> & position,const std::vector<double> & velocity,const std::vector<double> & acceleration,const std::vector<double> & torque,const std::vector<double> & pidOutput,const std::vector<int32_t> & controlMode,const std::vector<int32_t> & interactionMode) : position(position), velocity(velocity), acceleration(acceleration), torque(torque), pidOutput(pidOutput), controlMode(controlMode), interactionMode(interactionMode) {
+  jointData(const std::vector<double> & jointPosition,const std::vector<double> & jointVelocity,const std::vector<double> & jointAcceleration,const std::vector<double> & torque,const std::vector<double> & pidOutput,const std::vector<int32_t> & controlMode,const std::vector<int32_t> & interactionMode) : jointPosition(jointPosition), jointVelocity(jointVelocity), jointAcceleration(jointAcceleration), torque(torque), pidOutput(pidOutput), controlMode(controlMode), interactionMode(interactionMode) {
   }
 
   // Copy constructor
   jointData(const jointData& __alt) :
       WirePortable(__alt)
   {
-    this->position = __alt.position;
-    this->velocity = __alt.velocity;
-    this->acceleration = __alt.acceleration;
+    this->jointPosition = __alt.jointPosition;
+    this->jointVelocity = __alt.jointVelocity;
+    this->jointAcceleration = __alt.jointAcceleration;
     this->torque = __alt.torque;
     this->pidOutput = __alt.pidOutput;
     this->controlMode = __alt.controlMode;
@@ -44,9 +47,9 @@ public:
 
   // Assignment operator
   const jointData& operator = (const jointData& __alt) {
-    this->position = __alt.position;
-    this->velocity = __alt.velocity;
-    this->acceleration = __alt.acceleration;
+    this->jointPosition = __alt.jointPosition;
+    this->jointVelocity = __alt.jointVelocity;
+    this->jointAcceleration = __alt.jointAcceleration;
     this->torque = __alt.torque;
     this->pidOutput = __alt.pidOutput;
     this->controlMode = __alt.controlMode;
@@ -139,44 +142,44 @@ public:
       group--;
       if (group==0&&is_dirty) communicate();
     }
-    void set_position(const std::vector<double> & position) {
+    void set_position(const std::vector<double> & jointPosition) {
       will_set_position();
-      obj->position = position;
+      obj->jointPosition = jointPosition;
       mark_dirty_position();
       communicate();
       did_set_position();
     }
     void set_position(int index, const double elem) {
       will_set_position();
-      obj->position[index] = elem;
+      obj->jointPosition[index] = elem;
       mark_dirty_position();
       communicate();
       did_set_position();
     }
-    void set_velocity(const std::vector<double> & velocity) {
+    void set_velocity(const std::vector<double> & jointVelocity) {
       will_set_velocity();
-      obj->velocity = velocity;
+      obj->jointVelocity = jointVelocity;
       mark_dirty_velocity();
       communicate();
       did_set_velocity();
     }
     void set_velocity(int index, const double elem) {
       will_set_velocity();
-      obj->velocity[index] = elem;
+      obj->jointVelocity[index] = elem;
       mark_dirty_velocity();
       communicate();
       did_set_velocity();
     }
-    void set_acceleration(const std::vector<double> & acceleration) {
+    void set_acceleration(const std::vector<double> & jointAcceleration) {
       will_set_acceleration();
-      obj->acceleration = acceleration;
+      obj->jointAcceleration = jointAcceleration;
       mark_dirty_acceleration();
       communicate();
       did_set_acceleration();
     }
     void set_acceleration(int index, const double elem) {
       will_set_acceleration();
-      obj->acceleration[index] = elem;
+      obj->jointAcceleration[index] = elem;
       mark_dirty_acceleration();
       communicate();
       did_set_acceleration();
@@ -238,13 +241,13 @@ public:
       did_set_interactionMode();
     }
     const std::vector<double> & get_position() {
-      return obj->position;
+      return obj->jointPosition;
     }
     const std::vector<double> & get_velocity() {
-      return obj->velocity;
+      return obj->jointVelocity;
     }
     const std::vector<double> & get_acceleration() {
-      return obj->acceleration;
+      return obj->jointAcceleration;
     }
     const std::vector<double> & get_torque() {
       return obj->torque;

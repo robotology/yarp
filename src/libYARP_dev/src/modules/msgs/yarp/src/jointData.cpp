@@ -5,15 +5,15 @@
 
 bool jointData::read_position(yarp::os::idl::WireReader& reader) {
   {
-    position.clear();
+    jointPosition.clear();
     uint32_t _size0;
     yarp::os::idl::WireState _etype3;
     reader.readListBegin(_etype3, _size0);
-    position.resize(_size0);
+    jointPosition.resize(_size0);
     uint32_t _i4;
     for (_i4 = 0; _i4 < _size0; ++_i4)
     {
-      if (!reader.readDouble(position[_i4])) {
+      if (!reader.readDouble(jointPosition[_i4])) {
         reader.fail();
         return false;
       }
@@ -24,15 +24,15 @@ bool jointData::read_position(yarp::os::idl::WireReader& reader) {
 }
 bool jointData::nested_read_position(yarp::os::idl::WireReader& reader) {
   {
-    position.clear();
+    jointPosition.clear();
     uint32_t _size5;
     yarp::os::idl::WireState _etype8;
     reader.readListBegin(_etype8, _size5);
-    position.resize(_size5);
+    jointPosition.resize(_size5);
     uint32_t _i9;
     for (_i9 = 0; _i9 < _size5; ++_i9)
     {
-      if (!reader.readDouble(position[_i9])) {
+      if (!reader.readDouble(jointPosition[_i9])) {
         reader.fail();
         return false;
       }
@@ -43,15 +43,15 @@ bool jointData::nested_read_position(yarp::os::idl::WireReader& reader) {
 }
 bool jointData::read_velocity(yarp::os::idl::WireReader& reader) {
   {
-    velocity.clear();
+    jointVelocity.clear();
     uint32_t _size10;
     yarp::os::idl::WireState _etype13;
     reader.readListBegin(_etype13, _size10);
-    velocity.resize(_size10);
+    jointVelocity.resize(_size10);
     uint32_t _i14;
     for (_i14 = 0; _i14 < _size10; ++_i14)
     {
-      if (!reader.readDouble(velocity[_i14])) {
+      if (!reader.readDouble(jointVelocity[_i14])) {
         reader.fail();
         return false;
       }
@@ -62,15 +62,15 @@ bool jointData::read_velocity(yarp::os::idl::WireReader& reader) {
 }
 bool jointData::nested_read_velocity(yarp::os::idl::WireReader& reader) {
   {
-    velocity.clear();
+    jointVelocity.clear();
     uint32_t _size15;
     yarp::os::idl::WireState _etype18;
     reader.readListBegin(_etype18, _size15);
-    velocity.resize(_size15);
+    jointVelocity.resize(_size15);
     uint32_t _i19;
     for (_i19 = 0; _i19 < _size15; ++_i19)
     {
-      if (!reader.readDouble(velocity[_i19])) {
+      if (!reader.readDouble(jointVelocity[_i19])) {
         reader.fail();
         return false;
       }
@@ -81,15 +81,15 @@ bool jointData::nested_read_velocity(yarp::os::idl::WireReader& reader) {
 }
 bool jointData::read_acceleration(yarp::os::idl::WireReader& reader) {
   {
-    acceleration.clear();
+    jointAcceleration.clear();
     uint32_t _size20;
     yarp::os::idl::WireState _etype23;
     reader.readListBegin(_etype23, _size20);
-    acceleration.resize(_size20);
+    jointAcceleration.resize(_size20);
     uint32_t _i24;
     for (_i24 = 0; _i24 < _size20; ++_i24)
     {
-      if (!reader.readDouble(acceleration[_i24])) {
+      if (!reader.readDouble(jointAcceleration[_i24])) {
         reader.fail();
         return false;
       }
@@ -100,15 +100,15 @@ bool jointData::read_acceleration(yarp::os::idl::WireReader& reader) {
 }
 bool jointData::nested_read_acceleration(yarp::os::idl::WireReader& reader) {
   {
-    acceleration.clear();
+    jointAcceleration.clear();
     uint32_t _size25;
     yarp::os::idl::WireState _etype28;
     reader.readListBegin(_etype28, _size25);
-    acceleration.resize(_size25);
+    jointAcceleration.resize(_size25);
     uint32_t _i29;
     for (_i29 = 0; _i29 < _size25; ++_i29)
     {
-      if (!reader.readDouble(acceleration[_i29])) {
+      if (!reader.readDouble(jointAcceleration[_i29])) {
         reader.fail();
         return false;
       }
@@ -288,9 +288,9 @@ bool jointData::read(yarp::os::ConnectionReader& connection) {
 
 bool jointData::write_position(yarp::os::idl::WireWriter& writer) {
   {
-    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(position.size()))) return false;
+    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(jointPosition.size()))) return false;
     std::vector<double> ::iterator _iter70;
-    for (_iter70 = position.begin(); _iter70 != position.end(); ++_iter70)
+    for (_iter70 = jointPosition.begin(); _iter70 != jointPosition.end(); ++_iter70)
     {
       if (!writer.writeDouble((*_iter70))) return false;
     }
@@ -300,9 +300,9 @@ bool jointData::write_position(yarp::os::idl::WireWriter& writer) {
 }
 bool jointData::nested_write_position(yarp::os::idl::WireWriter& writer) {
   {
-    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(position.size()))) return false;
+    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(jointPosition.size()))) return false;
     std::vector<double> ::iterator _iter71;
-    for (_iter71 = position.begin(); _iter71 != position.end(); ++_iter71)
+    for (_iter71 = jointPosition.begin(); _iter71 != jointPosition.end(); ++_iter71)
     {
       if (!writer.writeDouble((*_iter71))) return false;
     }
@@ -312,9 +312,9 @@ bool jointData::nested_write_position(yarp::os::idl::WireWriter& writer) {
 }
 bool jointData::write_velocity(yarp::os::idl::WireWriter& writer) {
   {
-    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(velocity.size()))) return false;
+    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(jointVelocity.size()))) return false;
     std::vector<double> ::iterator _iter72;
-    for (_iter72 = velocity.begin(); _iter72 != velocity.end(); ++_iter72)
+    for (_iter72 = jointVelocity.begin(); _iter72 != jointVelocity.end(); ++_iter72)
     {
       if (!writer.writeDouble((*_iter72))) return false;
     }
@@ -324,9 +324,9 @@ bool jointData::write_velocity(yarp::os::idl::WireWriter& writer) {
 }
 bool jointData::nested_write_velocity(yarp::os::idl::WireWriter& writer) {
   {
-    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(velocity.size()))) return false;
+    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(jointVelocity.size()))) return false;
     std::vector<double> ::iterator _iter73;
-    for (_iter73 = velocity.begin(); _iter73 != velocity.end(); ++_iter73)
+    for (_iter73 = jointVelocity.begin(); _iter73 != jointVelocity.end(); ++_iter73)
     {
       if (!writer.writeDouble((*_iter73))) return false;
     }
@@ -336,9 +336,9 @@ bool jointData::nested_write_velocity(yarp::os::idl::WireWriter& writer) {
 }
 bool jointData::write_acceleration(yarp::os::idl::WireWriter& writer) {
   {
-    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(acceleration.size()))) return false;
+    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(jointAcceleration.size()))) return false;
     std::vector<double> ::iterator _iter74;
-    for (_iter74 = acceleration.begin(); _iter74 != acceleration.end(); ++_iter74)
+    for (_iter74 = jointAcceleration.begin(); _iter74 != jointAcceleration.end(); ++_iter74)
     {
       if (!writer.writeDouble((*_iter74))) return false;
     }
@@ -348,9 +348,9 @@ bool jointData::write_acceleration(yarp::os::idl::WireWriter& writer) {
 }
 bool jointData::nested_write_acceleration(yarp::os::idl::WireWriter& writer) {
   {
-    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(acceleration.size()))) return false;
+    if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(jointAcceleration.size()))) return false;
     std::vector<double> ::iterator _iter75;
-    for (_iter75 = acceleration.begin(); _iter75 != acceleration.end(); ++_iter75)
+    for (_iter75 = jointAcceleration.begin(); _iter75 != jointAcceleration.end(); ++_iter75)
     {
       if (!writer.writeDouble((*_iter75))) return false;
     }
@@ -478,19 +478,19 @@ bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
   if (is_dirty_position) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
-    if (!writer.writeString("position")) return false;
+    if (!writer.writeString("jointPosition")) return false;
     if (!obj->nested_write_position(writer)) return false;
   }
   if (is_dirty_velocity) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
-    if (!writer.writeString("velocity")) return false;
+    if (!writer.writeString("jointVelocity")) return false;
     if (!obj->nested_write_velocity(writer)) return false;
   }
   if (is_dirty_acceleration) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
-    if (!writer.writeString("acceleration")) return false;
+    if (!writer.writeString("jointAcceleration")) return false;
     if (!obj->nested_write_acceleration(writer)) return false;
   }
   if (is_dirty_torque) {
@@ -542,17 +542,17 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
     if (tag=="help" && reader.getLength()>0) {
       yarp::os::ConstString field;
       if (!reader.readString(field)) return false;
-      if (field=="position") {
+      if (field=="jointPosition") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("std::vector<double>  position")) return false;
+        if (!writer.writeString("std::vector<double>  jointPosition")) return false;
       }
-      if (field=="velocity") {
+      if (field=="jointVelocity") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("std::vector<double>  velocity")) return false;
+        if (!writer.writeString("std::vector<double>  jointVelocity")) return false;
       }
-      if (field=="acceleration") {
+      if (field=="jointAcceleration") {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeString("std::vector<double>  acceleration")) return false;
+        if (!writer.writeString("std::vector<double>  jointAcceleration")) return false;
       }
       if (field=="torque") {
         if (!writer.writeListHeader(1)) return false;
@@ -573,9 +573,9 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
     }
     if (!writer.writeListHeader(8)) return false;
     writer.writeString("*** Available fields:");
-    writer.writeString("position");
-    writer.writeString("velocity");
-    writer.writeString("acceleration");
+    writer.writeString("jointPosition");
+    writer.writeString("jointVelocity");
+    writer.writeString("jointAcceleration");
     writer.writeString("torque");
     writer.writeString("pidOutput");
     writer.writeString("controlMode");
@@ -589,15 +589,15 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
     if (!reader.readString(act)) return false;
     if (!reader.readString(key)) return false;
     // inefficient code follows, bug paulfitz to improve it
-    if (key == "position") {
+    if (key == "jointPosition") {
       will_set_position();
       if (!obj->nested_read_position(reader)) return false;
       did_set_position();
-    } else if (key == "velocity") {
+    } else if (key == "jointVelocity") {
       will_set_velocity();
       if (!obj->nested_read_velocity(reader)) return false;
       did_set_velocity();
-    } else if (key == "acceleration") {
+    } else if (key == "jointAcceleration") {
       will_set_acceleration();
       if (!obj->nested_read_acceleration(reader)) return false;
       did_set_acceleration();

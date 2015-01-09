@@ -44,9 +44,12 @@ StateExtendedInputPort::StateExtendedInputPort()
 
 void StateExtendedInputPort::init(int numberOfJoints)
 {
-    last.position.resize(numberOfJoints);
-    last.velocity.resize(numberOfJoints);
-    last.acceleration.resize(numberOfJoints);
+    last.jointPosition.resize(numberOfJoints);
+    last.jointVelocity.resize(numberOfJoints);
+    last.jointAcceleration.resize(numberOfJoints);
+    last.motorPosition.resize(numberOfJoints);
+    last.motorVelocity.resize(numberOfJoints);
+    last.motorAcceleration.resize(numberOfJoints);
     last.torque.resize(numberOfJoints);
     last.pidOutput.resize(numberOfJoints);
     last.controlMode.resize(numberOfJoints);
@@ -86,9 +89,12 @@ bool StateExtendedInputPort::getLast(int j, jointData &data, Stamp &stamp, doubl
     bool ret=valid;
     if (ret)
     {
-        data.position[0]        = last.position[j];
-        data.velocity[0]        = last.velocity[j];
-        data.acceleration[0]    = last.acceleration[j];
+        data.jointPosition[0]        = last.jointPosition[j];
+        data.jointVelocity[0]        = last.jointVelocity[j];
+        data.jointAcceleration[0]    = last.jointAcceleration[j];
+        data.motorPosition[0]        = last.motorPosition[j];
+        data.motorVelocity[0]        = last.motorVelocity[j];
+        data.motorAcceleration[0]    = last.motorAcceleration[j];
         data.torque[0]          = last.torque[j];
         data.pidOutput[0]       = last.pidOutput[j];
         data.controlMode[0]     = last.controlMode[j];

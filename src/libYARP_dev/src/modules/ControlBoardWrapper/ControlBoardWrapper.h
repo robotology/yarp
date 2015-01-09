@@ -102,6 +102,7 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IPositionDirect,
                                         public yarp::dev::IVelocityControl2,
                                         public yarp::dev::IEncodersTimed,
+                                        public yarp::dev::IMotorEncoders,
                                         public yarp::dev::IAmplifierControl,
                                         public yarp::dev::IControlLimits2,
                                         public yarp::dev::IControlCalibration,
@@ -644,6 +645,83 @@ public:
     * @return true if all goes well, false if anything bad happens.
     */
     virtual bool getEncoderAccelerations(double *accs);
+
+    /* IMotorEncoders */
+
+    /**
+    * Reset encoder, single joint. Set the encoder value to zero
+    * @param j is the axis number
+    * @return true/false on success/failure
+    */
+    virtual bool resetMotorEncoder(int j);
+
+    /**
+    * Reset encoders. Set the encoder values to zero for all axes
+    * @return true/false
+    */
+    virtual bool resetMotorEncoders();
+
+    /**
+    * Set the value of the encoder for a given joint.
+    * @param j encoder number
+    * @param val new value
+    * @return true/false
+    */
+    virtual bool setMotorEncoder(int j, double val);
+
+    /**
+    * Set the value of all encoders.
+    * @param vals pointer to the new values
+    * @return true/false
+    */
+    virtual bool setMotorEncoders(const double *vals);
+
+    /**
+    * Read the value of an encoder.
+    * @param j encoder number
+    * @param v pointer to storage for the return value
+    * @return true/false, upon success/failure (you knew it, uh?)
+    */
+    virtual bool getMotorEncoder(int j, double *v);
+
+    /**
+    * Read the position of all axes.
+    * @param encs pointer to the array that will contain the output
+    * @return true/false on success/failure
+    */
+    virtual bool getMotorEncoders(double *encs);
+
+    virtual bool getMotorEncodersTimed(double *encs, double *t);
+
+    virtual bool getMotorEncoderTimed(int j, double *v, double *t);
+
+    /**
+    * Read the istantaneous speed of an axis.
+    * @param j axis number
+    * @param sp pointer to storage for the output
+    * @return true if successful, false ... otherwise.
+    */
+    virtual bool getMotorEncoderSpeed(int j, double *sp);
+
+    /**
+    * Read the instantaneous speed of all axes.
+    * @param spds pointer to storage for the output values
+    * @return guess what? (true/false on success or failure).
+    */
+    virtual bool getMotorEncoderSpeeds(double *spds);
+
+    /**
+    * Read the instantaneous acceleration of an axis.
+    * @param j axis number
+    * @param acc pointer to the array that will contain the output
+    */
+    virtual bool getMotorEncoderAcceleration(int j, double *acc);
+    /**
+    * Read the istantaneous acceleration of all axes.
+    * @param accs pointer to the array that will contain the output
+    * @return true if all goes well, false if anything bad happens.
+    */
+    virtual bool getMotorEncoderAccelerations(double *accs);
 
     /* IAmplifierControl */
 
