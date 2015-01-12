@@ -37,6 +37,7 @@ Using the Thrift IDL to define data types and interfaces:
 \li \ref thrift_tutorial_portable
 \li \ref thrift_tutorial_simple
 \li \ref thrift_tutorial
+\li \ref thrift_editor
 
 How to search and install configuration files:
 \li \subpage yarp_resource_finder_tutorials

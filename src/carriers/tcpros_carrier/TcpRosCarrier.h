@@ -50,6 +50,7 @@ private:
     ConstString wire_type;
     ConstString user_type;
     ConstString md5sum;
+    ConstString message_definition;
 
     ConstString getRosType(ConnectionState& proto);
 

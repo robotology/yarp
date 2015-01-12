@@ -108,7 +108,7 @@ public:
  * A "null" stream, always invalid.
  */
 class YARP_OS_API yarp::os::NullStream : public TwoWayStream,
-                                         public InputStream, 
+                                         public InputStream,
                                          public OutputStream {
 private:
     Contact address;
@@ -117,7 +117,7 @@ public:
 
     virtual InputStream& getInputStream();
     virtual OutputStream& getOutputStream();
-    
+
     virtual const Contact& getLocalAddress();
     virtual const Contact& getRemoteAddress();
 

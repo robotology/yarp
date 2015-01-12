@@ -31,7 +31,7 @@ namespace yarp {
  * \ref yarp_resource_finder_tutorials.
  *
  */
-class YARP_OS_API yarp::os::ResourceFinder : public Searchable{
+class YARP_OS_API yarp::os::ResourceFinder : public Searchable {
 public:
     ResourceFinder();
 

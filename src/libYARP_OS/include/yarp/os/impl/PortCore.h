@@ -23,6 +23,7 @@
 
 #include <yarp/os/PortReport.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Mutex.h>
 
 #include <yarp/os/impl/PlatformVector.h>
 
@@ -143,6 +144,8 @@ public:
         counter = 1;
         prop = NULL;
         contactable = NULL;
+        mutex = NULL;
+        mutexOwned = false;
     }
 
     /**
@@ -439,6 +442,48 @@ public:
     Property *acquireProperties(bool readOnly);
     void releaseProperties(Property *prop);
 
+    int getDSCPByVocab(NetInt32 code);
+
+    bool setCallbackLock(yarp::os::Mutex *mutex = NULL) {
+        removeCallbackLock();
+        if (mutex) {
+            this->mutex = mutex;
+            mutexOwned = false;
+        } else {
+            this->mutex = new yarp::os::Mutex();
+            mutexOwned = true;
+        }
+        return true;
+    }
+
+    bool removeCallbackLock() {
+        if (mutexOwned&&mutex) {
+            delete mutex;
+        }
+        mutex = NULL;
+        mutexOwned = false;
+        return true;
+    }
+
+    bool lockCallback() {
+        if (!mutex) return false;
+        mutex->lock();
+        return true;
+    }
+
+    bool tryLockCallback() {
+        if (!mutex) return true;
+        return mutex->tryLock();
+    }
+
+    void unlockCallback() {
+        if (!mutex) return;
+        mutex->unlock();
+    }
+
+    void take(PortCore *alt) {
+    }
+
 private:
 
     // main internal PortCore state and operations
@@ -481,6 +526,8 @@ private:
     int counter;    ///< port-unique ids for connections
     yarp::os::Property *prop;  ///< optional unstructured properties associated with port
     yarp::os::Contactable *contactable;  ///< user-facing object that contains this PortCore
+    yarp::os::Mutex *mutex; ///< callback optional access control lock
+    bool mutexOwned;        ///< do we own the optional callback lock
 
     void closeMain();
 

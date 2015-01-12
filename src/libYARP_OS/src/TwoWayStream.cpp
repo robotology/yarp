@@ -49,8 +49,10 @@ void NullStream::endPacket()   {
 }
 
 YARP_SSIZE_T NullStream::read(const Bytes& b) {
+    YARP_UNUSED(b);
     return -1;
 }
 
 void NullStream::write(const Bytes& b) {
+    YARP_UNUSED(b);
 }

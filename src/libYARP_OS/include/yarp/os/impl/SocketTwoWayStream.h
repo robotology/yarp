@@ -44,10 +44,11 @@ namespace yarp {
 class yarp::os::impl::SocketTwoWayStream : public TwoWayStream,
             InputStream, OutputStream {
 public:
-    SocketTwoWayStream() {
-        happy = false;
-        haveReadTimeout = false;
-        haveWriteTimeout = false;
+    SocketTwoWayStream() :
+            haveWriteTimeout(false),
+            haveReadTimeout(false),
+            happy(false)
+    {
     }
 
     int open(const Contact& address);
@@ -176,6 +177,8 @@ public:
         }
         return true;
     }
+
+    virtual bool setTypeOfService(int tos);
 
 private:
     ACE_SOCK_Stream stream;

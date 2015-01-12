@@ -102,6 +102,7 @@ void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const {
         break;
     case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
         fprintf(stderr,"YARP hook in shared library misbehaved (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
+        fprintf(stderr,"(the library may be too old/new and need to be recompiled to match YARP version)\n");
         break;
     default:
         fprintf(stderr,"Unknown error (%s:%s)\n", dll_name.c_str(), fn_name.c_str());

@@ -25,6 +25,11 @@ using namespace std;
 #define dbg_printf if (0) printf
 
 YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
+    if (!setInitiative) {
+        initiative = false;
+        setInitiative = true;
+    }
+
     if (kind!="") {
       return twiddlerReader.read(b);
     }
@@ -46,7 +51,7 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
         }
     }
     if (phase==0) {
-        if (expectTwiddle) {
+        if (expectTwiddle&&initiative) {
             // There's a success/failure byte to check.
             // Here we just consume it, but if it shows failure
             // we should in fact expect a string afterwards.
@@ -135,6 +140,10 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
 
 
 void TcpRosStream::write(const Bytes& b) {
+    if (!setInitiative) {
+        initiative = true;
+        setInitiative = true;
+    }
     dbg_printf("                   [[[[[ write %d bytes ]]]]]\n", (int)b.length());
     delegate->getOutputStream().write(b);
 }

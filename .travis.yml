@@ -38,4 +38,4 @@ script:
   - if $TRAVIS_WITH_ROS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi
   - if $TRAVIS_WITH_ROS; then sudo rosdep init && rosdep update; fi
   - if $TRAVIS_WITH_ROS; then source /opt/ros/${ROS_CI_VERSION}/setup.bash; fi
-  - if $TRAVIS_WITH_ROS; then YARP_DIR=$PWD/build YARP_DATA_DIRS=$PWD/build/share/yarp ./scripts/admin/check-ros.sh; fi
+  - if $TRAVIS_WITH_ROS; then YARP_DIR=$PWD/build YARP_DATA_DIRS=$PWD/build/share/yarp ./tests/integration/check-ros.sh; fi

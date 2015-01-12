@@ -20,6 +20,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Os.h>
 
 #ifdef YARP_PRESENT
 // this code used to be compilable without yarp, I have let this rust but
@@ -117,11 +118,15 @@ void RosType::RosTypes::push_back(const RosType& t) {
     HELPER(system_resource).push_back(t);
 }
 
-size_t RosType::RosTypes::size() {
+size_t RosType::RosTypes::size() const {
     return HELPER(system_resource).size();
 }
 
 RosType& RosType::RosTypes::operator[](int i) {
+    return HELPER(system_resource)[i];
+}
+
+const RosType& RosType::RosTypes::operator[](int i) const {
     return HELPER(system_resource)[i];
 }
 
@@ -190,6 +195,15 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         rosType = rosType.substr(0,rosType.rfind("."));
     }
 
+    if (isStruct && rosType!="Header") {
+        if (rosType.find("/")!=string::npos) {
+            package = rosType.substr(0,rosType.find("/"));
+        } else if (package!="") {
+            rosType = package + "/" + rosType;
+            base = package + "/" + base;
+        }
+    }
+
     bool ok = true;
     string path = env.findFile(base.c_str());
     rosPath = path;
@@ -206,6 +220,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
     char *result = NULL;
     txt = "";
+    source = "";
 
     RosType *cursor = this;
     do {
@@ -214,6 +229,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         if (result==NULL) break;
         txt += "//   ";
         txt += result;
+        source += result;
         int len = (int)strlen(result);
         for (int i=0; i<len; i++) {
             if (result[i]=='\n') {
@@ -261,6 +277,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         }
         fprintf(stderr,"\n");
         RosType sub;
+        sub.package = package;
         if (!sub.read(t.c_str(),env,gen,nesting+1)) {
             fprintf(stderr, "[type]%s Type not complete: %s\n", 
                     indent.c_str(), 
@@ -268,11 +285,22 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             ok = false;
         }
         sub.rosName = n;
+        const_txt.erase(0,const_txt.find_first_not_of(" \t"));
+        if (const_txt.find_first_of(" \t#")!=string::npos) {
+            const_txt = const_txt.substr(0,const_txt.find_first_of(" \t#"));
+        }
         sub.initializer = const_txt;
         cursor->subRosType.push_back(sub);
     } while (result!=NULL);
     fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
     fclose(fin);
+
+    if (rosType == "Header") {
+        string preamble = "[std_msgs/Header]:";
+        if (source.find(preamble)==0) {
+            source = source.substr(preamble.length()+1,source.length());
+        }
+    }
 
     cursor->isValid = ok;
     return isValid;
@@ -286,6 +314,7 @@ bool RosType::cache(const char *tname, RosTypeSearch& env,
     }
     rosType = rosType.substr(0,rosType.rfind("."));
     FILE *fin = fopen((env.getTargetDirectory() + "/" + tname).c_str(),"r");
+    yarp::os::mkdir_p((env.getTargetDirectory() + "/" + tname).c_str(),1);
     FILE *fout = fopen((env.getTargetDirectory() + "/" + rosType).c_str(),"w");
     if (!fin) {
         fin = fopen(tname,"r");
@@ -339,6 +368,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
                        RosTypeCodeGenState& state) {
     if (isPrimitive) return true;
     if (state.generated.find(rosType)!=state.generated.end()) {
+        checksum = state.generated[rosType]->checksum;
         return true;
     }
 
@@ -381,6 +411,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
          it!=checksum_var_text.end(); it++) {
         sum += *it;
     }
+    //printf("SUM [%s]\n", sum.c_str());
     sum = sum.substr(0,sum.length()-1);
     md5_state_t cstate;
     md5_byte_t digest[16];
@@ -444,7 +475,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 
     if (!gen.endType(rosType,*this)) return false;
 
-    state.generated[rosType] = true;
+    state.generated[rosType] = this;
     state.dependencies.push_back(rosType);
     state.dependenciesAsPaths.push_back((rosPath=="")?rosType:rosPath);
 
@@ -531,6 +562,7 @@ static bool checkWeb(const char *tname,
                         def2 += ch;
                     }
                 }
+                yarp::os::mkdir_p(target_full.c_str(),1);
                 FILE *fout = fopen(target_full.c_str(),"w");
                 if (fout) {
                     fprintf(fout,"%s",def2.c_str());
@@ -540,6 +572,44 @@ static bool checkWeb(const char *tname,
             }
         }
     }
+    return success;
+}
+
+bool RosTypeSearch::fetchFromRos(const std::string& file_name,
+                                 const std::string& type_name,
+                                 bool find_service) {
+    string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+type_name+" > " + file_name + " || rm -f " + type_name;
+    fprintf(stderr,"[ros]  %s\n", cmd.c_str());
+    pid_t p = ACE_OS::fork();
+    if (p==0) {
+#ifdef __linux__
+        // This was ACE_OS::execlp, but that fails
+        ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#else
+        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#endif
+        exit(0);
+    } else {
+        ACE_OS::wait(NULL);
+    }
+
+    bool success = true;
+
+    FILE *fin = fopen(file_name.c_str(),"r");
+    if (!fin) {
+        fprintf(stderr, "[type] FAILED to open %s\n", file_name.c_str());
+        success = false;
+    } else {
+        char buf[10];
+        char *result = fgets(buf,sizeof(buf),fin);
+        fclose(fin);
+        if (result==NULL) {
+            fprintf(stderr, "[type] File is blank: %s\n", file_name.c_str());
+            ACE_OS::unlink(file_name.c_str());
+            success = false;
+        }
+    }
+
     return success;
 }
 
@@ -562,49 +632,28 @@ std::string RosTypeSearch::findFile(const char *tname) {
         return target;
     }
 
+    bool success = false;
+
     if (std::string(tname)=="Header") {
-        // support Header natively, for the sake of tests
-        FILE *fout = fopen(target_full.c_str(),"w");
-        if (fout) {
-            fprintf(fout,"[roslib/Header]\n");
-            fprintf(fout,"uint32 seq\n");
-            fprintf(fout,"time stamp\n");
-            fprintf(fout,"string frame_id\n");
+        success = fetchFromRos(target_full,tname,false);
+        if (!success) {
+            // support Header natively, for the sake of tests
+            yarp::os::mkdir_p(target_full.c_str(),1);
+            FILE *fout = fopen(target_full.c_str(),"w");
+            if (fout) {
+                fprintf(fout,"uint32 seq\n");
+                fprintf(fout,"time stamp\n");
+                fprintf(fout,"string frame_id\n");
+            }
+            fclose(fout);
+            success = true;
         }
-        fclose(fout);
     } else {
-        string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+tname+" > " + target_full + " || rm -f " + target_full;
-        fprintf(stderr,"[ros]  %s\n", cmd.c_str());
-        pid_t p = ACE_OS::fork();
-        if (p==0) {
-#ifdef __linux__
-            // This was ACE_OS::execlp, but that fails
-            ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#else
-            ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#endif
-            exit(0);
-        } else {
-            ACE_OS::wait(NULL);
+        success = fetchFromRos(target_full,tname,find_service);
+        if (!success) {
+            success = fetchFromRos(target_full,tname,!find_service);
         }
     } 
-
-    bool success = true;
-
-    FILE *fin = fopen(target_full.c_str(),"r");
-    if (!fin) {
-        fprintf(stderr, "[type] FAILED to open %s\n", target_full.c_str());
-        success = false;
-    } else {
-        char buf[10];
-        char *result = fgets(buf,sizeof(buf),fin);
-        fclose(fin);
-        if (result==NULL) {
-            fprintf(stderr, "[type] File is blank: %s\n", target_full.c_str());
-            ACE_OS::unlink(target_full.c_str());
-            success = false;
-        }
-    }
 
     if (allow_web && !success) {
         success = checkWeb(tname,find_service,target_full);

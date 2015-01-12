@@ -25,19 +25,18 @@ using namespace yarp::os;
 
 /// network stuff
 #include <yarp/os/NetInt32.h>
-#include <yarp/os/begin_pack_for_net.h>
 
 #include <yarp/gsl_compatibility.h>
 
 ///////////////////
 
+#include <yarp/os/begin_pack_for_net.h>
 class VectorPortContentHeader
 {
 public:
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
 } PACKED_FOR_NET;
-
 #include <yarp/os/end_pack_for_net.h>
 
 bool VectorBase::read(yarp::os::ConnectionReader& connection) {

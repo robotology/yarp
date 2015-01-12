@@ -378,6 +378,26 @@ public:
         return port.includeNodeInName(flag);
     }
 
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex) {
+        return port.setCallbackLock(mutex);
+    }
+
+    virtual bool removeCallbackLock() {
+        return port.removeCallbackLock();
+    }
+
+    virtual bool lockCallback() {
+        return port.lockCallback();
+    }
+
+    virtual bool tryLockCallback() {
+        return port.tryLockCallback();
+    }
+
+    virtual void unlockCallback() {
+        return port.unlockCallback();
+    }
+
 private:
     PortWriterBuffer<T> writer;
     Port port;

@@ -23,18 +23,18 @@ using namespace yarp::os;
  */
 
 // Read connection settings.
-bool PortMonitor::configure(yarp::os::ConnectionState& proto) 
+bool PortMonitor::configure(yarp::os::ConnectionState& proto)
 {
     portName = proto.getRoute().getToName();
     sourceName = proto.getRoute().getFromName();
     group = getPeers().add(portName,this);
     if (!group) return false;
-   
+
     Property options;
     options.fromString(proto.getSenderSpecifier().c_str());
 
     if(binder) delete binder;
-    binder = NULL;        
+    binder = NULL;
 
     ConstString script = options.check("type", Value("lua")).asString();
     ConstString filename = options.check("file", Value("modifier")).asString();
@@ -42,19 +42,19 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     // context is used to find the script files
     ConstString context = options.check("context", Value("")).asString();
 
-    // check which monitor should be used    
+    // check which monitor should be used
     if((binder = MonitorBinding::create(script.c_str())) == NULL)
     {
-         YARP_LOG_ERROR("Currently only \'lua\' script and \'dll\' object is supported by portmonitor");
+         yError("Currently only \'lua\' script and \'dll\' object is supported by portmonitor");
          return false;
     }
-   
+
     // set the acceptance constraint
     binder->setAcceptConstraint(constraint.c_str());
-    
+
     ConstString strFile = filename;
 
-    if(script != "dll") 
+    if(script != "dll")
     {
         yarp::os::ResourceFinder rf;
         rf.setDefaultContext(context.c_str());
@@ -84,7 +84,7 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     return bReady;
 }
 
-void PortMonitor::setCarrierParams(const yarp::os::Property& params) 
+void PortMonitor::setCarrierParams(const yarp::os::Property& params)
 {
     if(!bReady) return;
     PortMonitor::lock();
@@ -92,7 +92,7 @@ void PortMonitor::setCarrierParams(const yarp::os::Property& params)
     PortMonitor::unlock();
 }
 
-void PortMonitor::getCarrierParams(yarp::os::Property& params) 
+void PortMonitor::getCarrierParams(yarp::os::Property& params)
 {
     if(!bReady) return;
     PortMonitor::lock();
@@ -101,21 +101,21 @@ void PortMonitor::getCarrierParams(yarp::os::Property& params)
 }
 
 
-yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::ConnectionReader& reader) 
+yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::ConnectionReader& reader)
 {
     if(!bReady) return reader;
-       
+
     // When we are here,
-    // the incoming data should be accessed using localReader. 
-    // The reader passed to this function is infact empty.  
+    // the incoming data should be accessed using localReader.
+    // The reader passed to this function is infact empty.
     // first check if we need to call the update callback
     if(!binder->hasUpdate())
-        return *localReader;   
+        return *localReader;
 
     PortMonitor::lock();
     yarp::os::Things thing;
     thing.setConnectionReader(*localReader);
-    yarp::os::Things& result = binder->updateData(thing); 
+    yarp::os::Things& result = binder->updateData(thing);
     PortMonitor::unlock();
     con.reset();
     if(result.write(con.getWriter()))
@@ -123,14 +123,14 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     return *localReader;
 }
 
-bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader) 
-{       
+bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
+{
     if(!bReady) return false;
-   
+
     bool result;
     localReader = &reader;
     // If no accept callback avoid calling the binder
-    if(binder->hasAccept()) 
+    if(binder->hasAccept())
     {
         PortMonitor::lock();
         Things thing;
@@ -141,19 +141,19 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         if(!result)
             return false;
 
-        // When data is read here using the reader passed to this functions, 
+        // When data is read here using the reader passed to this functions,
         // then it wont be available for modifyIncomingData(). Thus, we write
-        // it to a dumy connection and pass it to the modifyOutgoingData() using 
-        // localReader.  
-        // localReader points to a connection reader which contains 
+        // it to a dumy connection and pass it to the modifyOutgoingData() using
+        // localReader.
+        // localReader points to a connection reader which contains
         // either the original or modified data.
         if(thing.hasBeenRead()) {
             con.reset();
             if(thing.write(con.getWriter()))
                 localReader = &con.getReader();
-        }                
+        }
     }
-        
+
     getPeers().lock();
     yAssert(group);
     result = group->acceptIncomingData(this);
@@ -173,7 +173,7 @@ yarp::os::PortWriter& PortMonitor::modifyOutgoingData(yarp::os::PortWriter& writ
     PortMonitor::lock();
     thing.reset();
     thing.setPortWriter(&writer);
-    yarp::os::Things& result = binder->updateData(thing);    
+    yarp::os::Things& result = binder->updateData(thing);
     PortMonitor::unlock();
     return *result.getPortWriter();
 }
@@ -215,8 +215,8 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers() {
 }
 
 // Decide whether data should be accepted, for real.
-bool PortMonitorGroup::acceptIncomingData(PortMonitor *source) 
-{    
+bool PortMonitorGroup::acceptIncomingData(PortMonitor *source)
+{
     //bool accept = true;
     for (PeerRecord<PortMonitor>::iterator it = peerSet.begin(); it!=peerSet.end(); it++)
     {
@@ -224,14 +224,12 @@ bool PortMonitorGroup::acceptIncomingData(PortMonitor *source)
         if(peer != source)
         {
             peer->lock();
-            // TODO: check whether we should return false if 
+            // TODO: check whether we should return false if
             //       the peer monitor object is not ready!
             if(peer->getBinder())
                 peer->getBinder()->peerTrigged();
             peer->unlock();
-        }            
+        }
     }
     return source->getBinder()->canAccept();
 }
-
-

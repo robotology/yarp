@@ -13,6 +13,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/PortReport.h>
+#include <yarp/os/Mutex.h>
 
 /**
  * The main, catch-all namespace for YARP.
@@ -350,6 +351,55 @@ public:
         setOutputMode(true);
         setRpcMode(true);
     }
+
+    /**
+     *
+     * Add a lock to use when invoking callbacks.  mutex.lock() will
+     * be called before and mutex.unlock() will be called after the
+     * callback.  This applies at least to callbacks set by setReader and
+     * setAdminReader, and in future may apply to other callbacks.
+     *
+     * @param mutex the lock to use. If NULL, a mutex will be allocated
+     * internally by the port, and destroyed with the port.
+     *
+     */
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex = NULL) = 0;
+
+    /**
+     *
+     * Remove a lock on callbacks added with setCallbackLock()
+     *
+     */
+    virtual bool removeCallbackLock() = 0;
+
+    /**
+     *
+     * Lock callbacks until unlockCallback() is called.  Has no effect
+     * if no lock has been set via a call to setCallbackLock().  Will
+     * block if callbacks are already locked.
+     * @return true if callbacks were locked
+     *
+     */
+    virtual bool lockCallback() = 0;
+
+    /**
+     *
+     * Try to lock callbacks until unlockCallback() is called.  Has no effect
+     * if no lock has been set via a call to setCallbackLock().  Returns
+     * immediately.
+     *
+     * @return true if callbacks were locked by this call, false if they
+     * were already locked.
+     *
+     */
+    virtual bool tryLockCallback() = 0;
+
+    /**
+     *
+     * Unlock callbacks.
+     *
+     */
+    virtual void unlockCallback() = 0;
 };
 
 #endif

@@ -126,6 +126,8 @@ public:
             op->getConnection().getCarrierParams(params);
     }
 
+    // return the protocol object
+    OutputProtocol* getOutPutProtocol() { return op; }
 
 private:
     OutputProtocol *op; ///< protocol object for writing/reading

@@ -216,9 +216,9 @@ public:
     }
 
 
-	virtual size_t dataSize() {
+    virtual size_t dataSize() {
         size_t i;
-		size_t len=0;
+        size_t len=0;
         for (i=0; i<header.size(); i++) {
             yarp::os::ManagedBytes& b = *(header[i]);
             len += b.usedBytes().length();
@@ -227,8 +227,8 @@ public:
             yarp::os::ManagedBytes& b = *(lst[i]);
             len += b.usedBytes().length();
         }
- 		return len;
-	}
+        return len;
+    }
 
     virtual size_t length() {
         return header.size()+lst.size();
@@ -588,7 +588,7 @@ public:
     BufferedConnectionWriter& getReply() { return writerStore; }
     bool hasReply() { return wrote; }
     virtual SizedWriter *getBuffer() { return 0 /*NULL*/; }
-    
+
     virtual bool setSize(size_t len) {
         return reader->setSize(len);
     }

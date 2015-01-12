@@ -7,7 +7,7 @@ mark_as_advanced(YARP_TEST_INTEGRATION)
 
 if(YARP_TEST_INTEGRATION)
 
-  add_test("integration::ros" ${CMAKE_SOURCE_DIR}/scripts/admin/check-ros.sh)
+  add_test("integration::ros" ${CMAKE_CURRENT_SOURCE_DIR}/check-ros.sh)
   set_property(TEST "integration::ros" PROPERTY ENVIRONMENT "YARP_DIR=${CMAKE_BINARY_DIR}")
 
   foreach (lang PYTHON JAVA LUA RUBY CSHARP PERL TCL)

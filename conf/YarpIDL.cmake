@@ -8,7 +8,7 @@
 #   yarp_idl_to_dir(foo.thrift foo)
 #   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS)
 #   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS INCLUDE_PATHS)
-function(YARP_IDL_TO_DIR_CORE yarpidl_file output_dir)
+function(YARP_IDL_TO_DIR_CORE yarpidl_file_base output_dir)
     # Store optional output variable(s).
     set(out_vars ${ARGN})
 
@@ -16,6 +16,11 @@ function(YARP_IDL_TO_DIR_CORE yarpidl_file output_dir)
     set(output_dir ${output_dir})
 
     # Extract a name and extension.
+    if (IS_ABSOLUTE ${yarpidl_file_base})
+      file(RELATIVE_PATH yarpidl_file ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file_base})
+    else()
+      set(yarpidl_file ${yarpidl_file_base})
+    endif()
     get_filename_component(include_prefix ${yarpidl_file} PATH)
     get_filename_component(yarpidlName ${yarpidl_file} NAME_WE)
     get_filename_component(yarpidlExt ${yarpidl_file} EXT)

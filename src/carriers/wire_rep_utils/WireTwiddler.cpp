@@ -25,6 +25,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/os/Os.h>
 #include <yarp/sig/Image.h>
 
 using namespace std;
@@ -153,7 +154,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
         //pass
     } else {
         fprintf(stderr,"%s does not know about %s\n", __FILE__, kind.c_str());
-        exit(1);
+        yarp::os::exit(1);
     }
 
     dbg_printf("Type %s (%s) len %d unit %d %s\n", 
@@ -414,6 +415,10 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         int h = prop.find("height").asInt();
         int step = prop.find("step").asInt();
         bool bigendian = prop.find("is_bigendian").asInt()==1;
+        if (bigendian) {
+            fprintf(stderr,"Sorry, cannot handle bigendian images yet.\n");
+            yarp::os::exit(1);
+        }
         ConstString encoding = prop.find("encoding").asString();
         int bpp = 1;
         int translated_encoding = 0;
@@ -449,7 +454,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         default:
             fprintf(stderr,"Sorry, cannot handle [%s] images yet.\n", 
                     encoding.c_str());
-            exit(1);
+            yarp::os::exit(1);
             break;
         }
         int quantum = 1;
@@ -749,10 +754,10 @@ bool WireTwiddlerWriter::pass(int len) {
     return advance(len,true);
 }
 
-bool WireTwiddlerWriter::pad(int len) {
+bool WireTwiddlerWriter::pad(size_t len) {
     if (zeros.length()<len) {
         zeros.allocate(len);
-        for (int i=0; i<len; i++) {
+        for (size_t i=0; i<len; i++) {
             zeros.get()[i] = '\0';
         }
     }
@@ -953,13 +958,13 @@ YARP_SSIZE_T WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
     for (int i=0; i<(int)b.length(); i++) {
         b.get()[i] = 0;
     }
-    int len = gap.wire_unit_length;
+    size_t len = gap.wire_unit_length;
     if (len>b.length()) {
         len = b.length();
     }
     Bytes b2(b.get(),len);
     YARP_SSIZE_T r = is.readFull(b2);
-    if (r==len) {
+    if (r==(YARP_SSIZE_T)len) {
         if (gap.flavor==BOTTLE_TAG_DOUBLE) {
             if (gap.wire_unit_length==4 && 
                 gap.unit_length==8) {

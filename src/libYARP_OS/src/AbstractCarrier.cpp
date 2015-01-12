@@ -67,7 +67,7 @@ bool AbstractCarrier::expectReplyToHeader(ConnectionState& proto) {
 }
 
 bool AbstractCarrier::sendIndex(ConnectionState& proto,
-                                                SizedWriter& writer) {
+                                SizedWriter& writer) {
     return defaultSendIndex(proto,writer);
 }
 
@@ -176,7 +176,7 @@ bool AbstractCarrier::sendSenderSpecifier(ConnectionState& proto) {
 }
 
 bool AbstractCarrier::defaultSendIndex(ConnectionState& proto,
-                                                       SizedWriter& writer) {
+                                       SizedWriter& writer) {
     writeYarpInt(10,proto);
     int len = (int)writer.length();
     char lens[] = { (char)len, 1,

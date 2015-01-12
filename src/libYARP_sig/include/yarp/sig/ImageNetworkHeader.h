@@ -12,7 +12,6 @@
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/begin_pack_for_net.h>
 
 #include <yarp/sig/Image.h>
 

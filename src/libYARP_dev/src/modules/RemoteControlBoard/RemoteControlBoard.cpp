@@ -1470,7 +1470,6 @@ public:
 #else
         ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
         *v = last_singleJoint.position[0];
-        std::cout << "getEncoderTimed j " << j << " val " << *v << std::endl;
 #endif
         *t=lastStamp.getTime();
 

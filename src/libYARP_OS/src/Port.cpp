@@ -52,6 +52,8 @@ public:
     bool commitToWrite;
     bool commitToRpc;
     bool active;
+    Mutex *recCallbackLock;
+    bool haveCallbackLock;
 
     PortCoreAdapter(Port& owner) :
         stateMutex(1),
@@ -78,7 +80,9 @@ public:
         commitToRead(false),
         commitToWrite(false),
         commitToRpc(false),
-        active(false)
+        active(false),
+        recCallbackLock(NULL),
+        haveCallbackLock(false)
     {
         setContactable(&owner);
     }
@@ -315,6 +319,18 @@ public:
         setWaitAfterSend(waitAfterSend);
     }
 
+    bool configCallbackLock(Mutex *lock) {
+        recCallbackLock = lock;
+        haveCallbackLock = true;
+        return setCallbackLock(lock);
+    }
+
+    bool unconfigCallbackLock() {
+        recCallbackLock = NULL;
+        haveCallbackLock = false;
+        return removeCallbackLock();
+    }
+
     PortReader *checkPortReader() {
         return readDelegate;
     }
@@ -515,6 +531,9 @@ bool Port::open(const Contact& contact, bool registerName,
         }
         if (currentCore->checkWaitAfterSend()>=0) {
             newCore->configWaitAfterSend(currentCore->checkWaitAfterSend());
+        }
+        if (currentCore->haveCallbackLock) {
+            newCore->configCallbackLock(currentCore->recCallbackLock);
         }
         close();
         if (owned) delete ((PortCoreAdapter*)implementation);
@@ -957,4 +976,27 @@ bool Port::sharedOpen(Port& port) {
 bool Port::isOpen() const {
     if (!implementation) return false;
     return IMPL().active;
+}
+
+bool Port::setCallbackLock(yarp::os::Mutex *mutex) {
+    return IMPL().configCallbackLock(mutex);
+}
+
+bool Port::removeCallbackLock() {
+    return IMPL().unconfigCallbackLock();
+}
+
+bool Port::lockCallback() {
+    if (!IMPL().lockCallback()) {
+        fprintf(stderr,"Cannot do lockCallback() without setCallbackLock() before opening port\n");
+    }
+    return true;
+}
+
+bool Port::tryLockCallback() {
+    return IMPL().tryLockCallback();
+}
+
+void Port::unlockCallback() {
+    return IMPL().unlockCallback();
 }

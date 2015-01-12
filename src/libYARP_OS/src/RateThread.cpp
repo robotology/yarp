@@ -353,6 +353,16 @@ void RateThread::beforeStart()
 void RateThread::afterStart(bool s)
 {}
 
+int RateThread::setPriority(int priority, int policy)
+{
+    return ((ThreadImpl*)implementation)->setPriority(priority, policy);
+}
+
+int RateThread::getPriority()
+{
+    return ((ThreadImpl*)implementation)->getPriority();
+}
+
 RateThreadWrapper::RateThreadWrapper(): RateThread(0) {
     helper = NULL;
     owned = false;

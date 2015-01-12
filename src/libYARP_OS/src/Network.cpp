@@ -588,8 +588,6 @@ void NetworkBase::autoInitMinimum() {
 }
 
 void NetworkBase::initMinimum() {
-    bool tick = false;
-
     if (__yarp_is_initialized==0) {
         // Broken pipes need to be dealt with through other means
         ACE_OS::signal(SIGPIPE, SIG_IGN);
@@ -624,7 +622,6 @@ void NetworkBase::initMinimum() {
         ConstString clock = getEnvironment("YARP_CLOCK");
         if (clock!="") {
             Time::useNetworkClock(clock);
-            tick = true;
         } else {
             Time::useSystemClock();
         }
@@ -636,9 +633,6 @@ void NetworkBase::initMinimum() {
         Carriers::getInstance();
     }
     __yarp_is_initialized++;
-
-    // start simulated time if necessary
-    if (tick) Time::now();
 }
 
 void NetworkBase::finiMinimum() {
@@ -803,7 +797,8 @@ bool NetworkBase::write(const Contact& contact,
     out->open(r);
 
     PortCommand pc(0,style.admin?"a":"d");
-    BufferedConnectionWriter bw(out->getConnection().isTextMode());
+    BufferedConnectionWriter bw(out->getConnection().isTextMode(),
+                                out->getConnection().isBareMode());
     bool ok = true;
     if (out->getConnection().canEscape()) {
         ok = pc.write(bw);
@@ -1040,6 +1035,11 @@ public:
 
     virtual bool isTextMode() {
         return getContent().isTextMode();
+    }
+
+
+    virtual bool isBareMode() {
+        return getContent().isBareMode();
     }
 
 

@@ -221,7 +221,7 @@ private:
     int activeEmitOffset;
     const char *activeCheck;
     bool errorState;
-    int scratchOffset;
+    size_t scratchOffset;
 public:
     WireTwiddlerWriter(yarp::os::SizedWriter& parent,
                        WireTwiddler& twiddler) : parent(&parent),
@@ -276,7 +276,7 @@ public:
 
     bool pass(int len);
 
-    bool pad(int len);
+    bool pad(size_t len);
 
     bool readLengthAndPass(int unitLength, const WireTwiddlerGap *gap = 0/*NULL*/);
 

@@ -203,7 +203,7 @@ yarp_idl_to_dir(firstInterface/PointD.thrift <desired_output_dir> <source_variab
 You can also get a list of paths to include:
 
 \code
-yarp_idl_to_dir(firstInterface/PointD.thrift <desired_output_dir> <source_variable_name> <include_dirs_variable_name>)
+yarp_idl_to_dir(firstInterface/PointD.thrift <desired_output_dir> <source_variable_name> <header_variable_name> <include_dirs_variable_name>)
 \endcode
 
 Typical usage of these variables would be something like this:

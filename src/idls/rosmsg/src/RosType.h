@@ -21,6 +21,10 @@ private:
     std::string target_dir;
     bool allow_web;
     bool abort_on_error;
+
+    bool fetchFromRos(const std::string& file_name,
+                      const std::string& type_name,
+                      bool find_service);
 public:
     RosTypeSearch() {
         find_service = false;
@@ -79,9 +83,10 @@ public:
 
         void push_back(const RosType& t);
 
-        size_t size();
+        size_t size() const;
 
         RosType& operator[](int i);
+        const RosType& operator[](int i) const;
     };
 
 public:
@@ -100,7 +105,9 @@ public:
     std::list<std::string> checksum_var_text;
     std::list<std::string> checksum_const_text;
     std::string checksum;
+    std::string source;
     RosType *reply;
+    std::string package;
 
     RosType() {
         reply = 0 /*NULL*/;
@@ -126,6 +133,8 @@ public:
         checksum_var_text.clear();
         checksum_const_text.clear();
         checksum = "";
+        source = "";
+        //package = "";
     }
 
     virtual ~RosType() {
@@ -150,7 +159,7 @@ typedef RosType RosField;
 class RosTypeCodeGenState {
 public:
     std::string directory;
-    std::map<std::string, bool> generated;
+    std::map<std::string, RosType *> generated;
     std::map<std::string, bool> usedVariables;
     std::map<std::string, std::string> checksums;
     std::vector<std::string> dependencies;

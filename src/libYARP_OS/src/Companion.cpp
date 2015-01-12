@@ -25,6 +25,7 @@
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
@@ -150,7 +151,7 @@ static ConstString companion_unregister_name;
 static Port *companion_active_port = NULL;
 
 static void companion_sigint_handler(int sig) {
-    double now = Time::now();
+    double now = SystemClock::nowSystem();
     static double firstCall = now;
     static bool showedMessage = false;
     static bool unregistered = false;
@@ -1389,6 +1390,15 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.add("file(GLOB folder_header *.h)");
     f.add("source_group(\"Source Files\" FILES ${folder_source})");
     f.add("source_group(\"Header Files\" FILES ${folder_header})");
+    f.add("");
+    f.add("# Search for IDL files.");
+    f.add("file(GLOB idl_files *.thrift *.msg *.srv)");
+    f.add("foreach(idl ${idl_files})");
+    f.add("  yarp_idl_to_dir(${idl} ${CMAKE_BINARY_DIR}/idl IDL_SRC IDL_HDR IDL_INCLUDE)");
+    f.add("  set(folder_source ${folder_source} ${IDL_SRC})");
+    f.add("  set(folder_header ${folder_header} ${IDL_HDR})");
+    f.add("  include_directories(${IDL_INCLUDE})");
+    f.add("endforeach()");
     f.add("");
     f.add("# Automatically add include directories if needed.");
     f.add("foreach(header_file ${folder_header})");

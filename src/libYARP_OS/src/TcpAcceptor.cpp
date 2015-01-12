@@ -38,7 +38,7 @@ using namespace yarp::os;
  * An error handler that reaps the zombies.
  */
 void sigchld_handler(int s) {
-    while(waitpid(-1, NULL, WNOHANG) > 0);
+    while(waitpid(-1, NULL, WNOHANG) > 0) {}
 }
 
 
