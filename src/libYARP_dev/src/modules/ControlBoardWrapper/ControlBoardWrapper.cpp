@@ -356,7 +356,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
         return false;
     }
 
-    bool getAx = iencs->getAxes(controlledJoints);
+    bool getAx = iencs->getAxes(&controlledJoints);
     
     if (!getAx)
     {
