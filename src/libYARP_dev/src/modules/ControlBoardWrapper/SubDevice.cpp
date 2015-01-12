@@ -186,6 +186,9 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     if ((iInteract==0) && (_subDevVerbose))
         yWarning() << "controlBoardWrapper:  Warning iInteractionMode not valid interface";
 
+    if ((iMotEnc==0) && (_subDevVerbose))
+        yWarning() << "controlBoardWrapper:  Warning iMotorEncoder not valid interface";
+
     int deviceJoints=0;
 
     // checking minimum set of intefaces required
@@ -210,12 +213,6 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     if(!iJntEnc)
     {
         yError("ControlBoarWrapper: IEncoderTimed interface was not found in subdevice");
-        return false;
-    }
-
-    if(!iMotEnc)
-    {
-        yError("ControlBoarWrapper: IMotorEncoder interface was not found in subdevice");
         return false;
     }
 
