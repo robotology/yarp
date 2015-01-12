@@ -346,21 +346,23 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
         return false;
     }
 
-    // getting parameters in simStyle... this is different from usual checks of controlBoardWrapper2
-    Bottle &general = p.findGroup("GENERAL", "section for general motor control parameters");
-    if(general.isNull())
+    yarp::dev::IEncoders iencs = 0;
+   
+    subDeviceOwned->view(iencs);
+   
+    if (iencs == 0)
     {
-        yError("Cannot find GENERAL group configuration parameters\n");
+        yError("Opening IEncoders interface of controlBoardWrapper2 subdevice... FAILED\n");
         return false;
     }
 
-    Value & myjoints = general.find("TotalJoints");
-    if(myjoints.isNull())
+    bool getAx = iencs->getAxes(controlledJoints);
+    
+    if (!getAx)
     {
-        yError("ControlBoardWrapper: error, 'TotalJoints' parameter not valid\n");
+        yError("Calling getAxes of controlBoardWrapper2 subdevice... FAILED\n");
         return false;
     }
-    controlledJoints = myjoints.asInt();
     yDebug("joints parameter is %d\n", controlledJoints);
 
 
