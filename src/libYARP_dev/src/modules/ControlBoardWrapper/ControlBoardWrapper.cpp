@@ -346,7 +346,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
         return false;
     }
 
-    yarp::dev::IEncoders iencs = 0;
+    yarp::dev::IEncoders * iencs = 0;
    
     subDeviceOwned->view(iencs);
    
