@@ -165,7 +165,7 @@ make
 
 rosrun rosbag record -a -O log.bag &
 HELPER_ID=$!
-
+sleep 5
 ./test_topic $root wait
 
 echo "Stopping rosbag process"
@@ -196,6 +196,27 @@ grep "is_bigendian" replay_image.txt || {
     echo "Failed to playback image"
     exit 1
 }
+
+rostopic echo $root/disp -n 1 > replay_disp.txt &
+HELPER_ID=$!
+rosbag play log.bag --topics $root/disp
+cleanup_helper
+
+grep "min_disparity" replay_disp.txt || {
+    echo "Failed to playback disparity"
+    exit 1
+}
+
+rostopic echo $root/cloud -n 1 > replay_cloud.txt &
+HELPER_ID=$!
+rosbag play log.bag --topics $root/cloud
+cleanup_helper
+
+grep "is_dense" replay_cloud.txt || {
+    echo "Failed to playback pointcloud"
+    exit 1
+}
+
 
 popd
 

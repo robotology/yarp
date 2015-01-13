@@ -1,2 +1,4 @@
 std_msgs/String m_string
 sensor_msgs/Image m_image
+sensor_msgs/PointCloud2 m_cloud
+stereo_msgs/DisparityImage m_disparity
