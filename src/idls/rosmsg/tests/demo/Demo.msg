@@ -14,3 +14,4 @@ string[] string_list
 int8[3] fixed_byte_list
 string[3] fixed_string_list
 int32 fixed = 3
+SharedData[] data

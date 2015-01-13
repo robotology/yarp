@@ -453,7 +453,9 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
         }
     } else {
         if (field.isArray) {
-            fprintf(out,"    connection.appendInt(BOTTLE_TAG_LIST);\n");
+            if (!bare) {
+                fprintf(out,"    connection.appendInt(BOTTLE_TAG_LIST);\n");
+            }
             if (field.arrayLength==-1 || !bare) {
                 fprintf(out,"    connection.appendInt(%s.size());\n",
                         field.rosName.c_str());
