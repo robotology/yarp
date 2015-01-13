@@ -1081,6 +1081,9 @@ public:
         last_singleJoint.jointPosition.resize(1);
         last_singleJoint.jointVelocity.resize(1);
         last_singleJoint.jointAcceleration.resize(1);
+        last_singleJoint.motorPosition.resize(1);
+        last_singleJoint.motorVelocity.resize(1);
+        last_singleJoint.motorAcceleration.resize(1);
         last_singleJoint.torque.resize(1);
         last_singleJoint.pidOutput.resize(1);
         last_singleJoint.controlMode.resize(1);
@@ -1090,6 +1093,9 @@ public:
         last_wholePart.jointPosition.resize(nj);
         last_wholePart.jointVelocity.resize(nj);
         last_wholePart.jointAcceleration.resize(nj);
+        last_wholePart.motorPosition.resize(nj);
+        last_wholePart.motorVelocity.resize(nj);
+        last_wholePart.motorAcceleration.resize(nj);
         last_wholePart.torque.resize(nj);
         last_wholePart.pidOutput.resize(nj);
         last_wholePart.controlMode.resize(nj);
