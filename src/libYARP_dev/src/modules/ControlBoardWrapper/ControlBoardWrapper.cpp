@@ -291,7 +291,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         {
             yError() <<"Error: check network parameters in part description"
                      <<"--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis"
-                     <<"Got: "<< parameters.toString().c_str() << "\n";                 
+                     <<"Got: "<< parameters.toString().c_str() << "\n";
             return false;
         }
 
@@ -564,7 +564,7 @@ bool ControlBoardWrapper::setPid(int j, const Pid &p)
 
     if (s->pid)
     {
-        return s->pid->setPid(off+base, p);
+        return s->pid->setPid(off+s->base, p);
     }
     return false;
 }
@@ -584,7 +584,7 @@ bool ControlBoardWrapper::setPids(const Pid *ps)
 
         if (p->pid)
         {
-            ret=ret&&p->pid->setPid(off+base, ps[l]);
+            ret=ret&&p->pid->setPid(off+p->base, ps[l]);
         }
         else
             ret=false;
@@ -603,7 +603,7 @@ bool ControlBoardWrapper::setReference(int j, double ref)
 
     if (p->pid)
     {
-        return p->pid->setReference(off+base, ref);
+        return p->pid->setReference(off+p->base, ref);
     }
     return false;
 }
@@ -623,7 +623,7 @@ bool ControlBoardWrapper::setReferences(const double *refs)
 
         if (p->pid)
         {
-            ret=ret&&p->pid->setReference(off+base, refs[l]);
+            ret=ret&&p->pid->setReference(off+p->base, refs[l]);
         }
         else
             ret=false;
@@ -642,7 +642,7 @@ bool ControlBoardWrapper::setErrorLimit(int j, double limit)
 
     if (p->pid)
     {
-        return p->pid->setErrorLimit(off+base, limit);
+        return p->pid->setErrorLimit(off+p->base, limit);
     }
     return false;
 }
@@ -666,7 +666,7 @@ bool ControlBoardWrapper::setErrorLimits(const double *limits)
 
         if (p->pid)
         {
-            ret=ret&&p->pid->setErrorLimit(off+base, limits[l]);
+            ret=ret&&p->pid->setErrorLimit(off+p->base, limits[l]);
         }
         else
             ret=false;
@@ -690,7 +690,7 @@ bool ControlBoardWrapper::getError(int j, double *err)
 
     if (p->pid)
     {
-        return p->pid->getError(off+base, err);
+        return p->pid->getError(off+p->base, err);
     }
     *err = 0.0;
     return false;
@@ -715,7 +715,7 @@ bool ControlBoardWrapper::getErrors(double *errs)
 
         if (p->pid)
         {
-            ret=ret&&p->pid->getError(off+base, errs+l);
+            ret=ret&&p->pid->getError(off+p->base, errs+l);
         }
         else
             ret=false;
@@ -739,7 +739,7 @@ bool ControlBoardWrapper::getOutput(int j, double *out)
 
     if (p->pid)
     {
-        return p->pid->getOutput(off+base, out);
+        return p->pid->getOutput(off+p->base, out);
     }
     *out=0.0;
     return false;
@@ -763,7 +763,7 @@ bool ControlBoardWrapper::getOutputs(double *outs)
 
         if (p->pid)
         {
-            ret=ret&&p->pid->getOutput(off+base, outs+l);
+            ret=ret&&p->pid->getOutput(off+p->base, outs+l);
         }
         else
             ret=false;
@@ -782,7 +782,7 @@ bool ControlBoardWrapper::setOffset(int j, double v)
 
     if (p->pid)
     {
-        return p->pid->setOffset(off+base, v);
+        return p->pid->setOffset(off+p->base, v);
     }
     return false;
 }
@@ -804,7 +804,7 @@ bool ControlBoardWrapper::getPid(int j, Pid *p)
 
     if (s->pid)
     {
-        return s->pid->getPid(off+base, p);
+        return s->pid->getPid(off+s->base, p);
     }
     return false;
 }
@@ -828,7 +828,7 @@ bool ControlBoardWrapper::getPids(Pid *pids)
 
         if (p->pid)
         {
-            ret=ret&&p->pid->getPid(off+base, pids+l);
+            ret=ret&&p->pid->getPid(off+p->base, pids+l);
         }
         else
             ret=false;
@@ -850,7 +850,7 @@ bool ControlBoardWrapper::getReference(int j, double *ref) {
         return false;
     if (p->pid)
     {
-        return p->pid->getReference(off+base, ref);
+        return p->pid->getReference(off+p->base, ref);
     }
     return false;
 }
@@ -872,7 +872,7 @@ bool ControlBoardWrapper::getReferences(double *refs) {
 
         if (p->pid)
         {
-            ret=ret&&p->pid->getReference(off+base, refs+l);
+            ret=ret&&p->pid->getReference(off+p->base, refs+l);
         }
         else
             ret=false;
@@ -895,7 +895,7 @@ bool ControlBoardWrapper::getErrorLimit(int j, double *limit) {
 
     if (p->pid)
     {
-        return p->pid->getErrorLimit(off+base, limit);
+        return p->pid->getErrorLimit(off+p->base, limit);
     }
     return false;
 }
@@ -918,7 +918,7 @@ bool ControlBoardWrapper::getErrorLimits(double *limits) {
 
         if (p->pid)
         {
-            ret=ret&&p->pid->getErrorLimit(off+base, limits+l);
+            ret=ret&&p->pid->getErrorLimit(off+p->base, limits+l);
         }
         else
             ret=false;
@@ -942,7 +942,7 @@ bool ControlBoardWrapper::resetPid(int j) {
 
     if (p->pid)
     {
-        return p->pid->resetPid(off+base);
+        return p->pid->resetPid(off+p->base);
     }
     return false;
 }
@@ -962,11 +962,11 @@ bool ControlBoardWrapper::disablePid(int j) {
 
     // Use the newer interface if available, otherwise fallback on the old one.
     if(p->iMode2)
-        return p->iMode2->setControlMode(off+base, VOCAB_CM_IDLE);
+        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_IDLE);
     else
         if (p->pid)
         {
-            return p->pid->disablePid(off+base);
+            return p->pid->disablePid(off+p->base);
         }
     return false;
 }
@@ -986,7 +986,7 @@ bool ControlBoardWrapper::enablePid(int j) {
 
     if (p->pid)
     {
-        return p->pid->enablePid(off+base);
+        return p->pid->enablePid(off+p->base);
     }
     return false;
 }
@@ -1032,14 +1032,14 @@ bool ControlBoardWrapper::setPositionMode() {
             std::cout<< "setPositionMode() for ALL joint using NEW interface" << std::endl;
 
             //calling new iControlMode2 interface
-            ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION);
+            ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_POSITION);
         }
         else if(p->iMode)
         {
             std::cout<< "setPositionMode() for ALL joint using OLD interface" << std::endl;
 
             //calling old iControlMode interface
-            ret=ret&&p->iMode->setPositionMode(off+base);
+            ret=ret&&p->iMode->setPositionMode(off+p->base);
         }
         else
             ret=false;
@@ -1065,14 +1065,14 @@ bool ControlBoardWrapper::setOpenLoopMode() {
             std::cout<< "setOpenLoopMode() for ALL joint using NEW interface" << std::endl;
 
             //calling new iControlMode2 interface
-            ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_OPENLOOP);
+            ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_OPENLOOP);
         }
         else if(p->iMode)
         {
             std::cout<< "setOpenLoopMode() for ALL joint using OLD interface" << std::endl;
 
             //calling iControlMode interface
-            ret=ret&&p->iMode->setOpenLoopMode(off+base);
+            ret=ret&&p->iMode->setOpenLoopMode(off+p->base);
         }
         else
             ret=false;
@@ -1096,7 +1096,7 @@ bool ControlBoardWrapper::positionMove(int j, double ref) {
 
     if (p->pos)
     {
-        return p->pos->positionMove(off+base, ref);
+        return p->pos->positionMove(off+p->base, ref);
     }
 
     return false;
@@ -1236,7 +1236,7 @@ bool ControlBoardWrapper::relativeMove(int j, double delta) {
 
     if (p->pos)
     {
-        return p->pos->relativeMove(off+base, delta);
+        return p->pos->relativeMove(off+p->base, delta);
     }
 
     return false;
@@ -1260,7 +1260,7 @@ bool ControlBoardWrapper::relativeMove(const double *deltas) {
 
         if (p->pos)
         {
-            ret=ret&&p->pos->relativeMove(off+base, deltas[l]);
+            ret=ret&&p->pos->relativeMove(off+p->base, deltas[l]);
         }
         else
             ret=false;
@@ -1346,7 +1346,7 @@ bool ControlBoardWrapper::checkMotionDone(int j, bool *flag) {
 
     if (p->pos)
     {
-        return p->pos->checkMotionDone(off+base, flag);
+        return p->pos->checkMotionDone(off+p->base, flag);
     }
 
     return false;
@@ -1373,7 +1373,7 @@ bool ControlBoardWrapper::checkMotionDone(bool *flag) {
         if (p->pos)
         {
             bool tmpF=false;
-            ret=ret&&p->pos->checkMotionDone(off+base, &tmpF);
+            ret=ret&&p->pos->checkMotionDone(off+p->base, &tmpF);
             *flag=*flag&&tmpF;
         }
         else
@@ -1461,7 +1461,7 @@ bool ControlBoardWrapper::setRefSpeed(int j, double sp) {
 
     if (p->pos)
     {
-        return p->pos->setRefSpeed(off+base, sp);
+        return p->pos->setRefSpeed(off+p->base, sp);
     }
     return false;
 }
@@ -1600,7 +1600,7 @@ bool ControlBoardWrapper::setRefAcceleration(int j, double acc) {
 
     if (p->pos)
     {
-        return p->pos->setRefAcceleration(off+base, acc);
+        return p->pos->setRefAcceleration(off+p->base, acc);
     }
     return false;
 }
@@ -1740,7 +1740,7 @@ bool ControlBoardWrapper::getRefSpeed(int j, double *ref) {
 
     if (p->pos)
     {
-        return p->pos->getRefSpeed(off+base, ref);
+        return p->pos->getRefSpeed(off+p->base, ref);
     }
     *ref=0;
     return false;
@@ -1767,7 +1767,7 @@ bool ControlBoardWrapper::getRefSpeeds(double *spds) {
 
         if (p->pos)
         {
-            ret=ret&&p->pos->getRefSpeed(off+base, spds+l);
+            ret=ret&&p->pos->getRefSpeed(off+p->base, spds+l);
         }
         else
             ret=false;
@@ -1874,7 +1874,7 @@ bool ControlBoardWrapper::getRefAcceleration(int j, double *acc) {
 
     if (p->pos)
     {
-        return p->pos->getRefAcceleration(off+base, acc);
+        return p->pos->getRefAcceleration(off+p->base, acc);
     }
     *acc=0;
     return false;
@@ -1901,7 +1901,7 @@ bool ControlBoardWrapper::getRefAccelerations(double *accs) {
 
         if (p->pos)
         {
-            ret=ret&&p->pos->getRefAcceleration(off+base, accs+l);
+            ret=ret&&p->pos->getRefAcceleration(off+p->base, accs+l);
         }
         else
             ret=false;
@@ -2010,7 +2010,7 @@ bool ControlBoardWrapper::stop(int j) {
 
     if (p->pos)
     {
-        return p->pos->stop(off+base);
+        return p->pos->stop(off+p->base);
     }
     return false;
 }
@@ -2035,7 +2035,7 @@ bool ControlBoardWrapper::stop() {
 
         if (p->pos)
         {
-            ret=ret&&p->pos->stop(off+base);
+            ret=ret&&p->pos->stop(off+p->base);
         }
         else
             ret=false;
@@ -2115,7 +2115,7 @@ bool ControlBoardWrapper::velocityMove(int j, double v) {
 
     if (p->vel)
     {
-        return p->vel->velocityMove(off+base, v);
+        return p->vel->velocityMove(off+p->base, v);
     }
     return false;
 }
@@ -2212,7 +2212,7 @@ bool ControlBoardWrapper::resetEncoder(int j) {
 
     if (p->enc)
     {
-        return p->enc->resetEncoder(off+base);
+        return p->enc->resetEncoder(off+p->base);
     }
     return false;
 }
@@ -2231,7 +2231,7 @@ bool ControlBoardWrapper::resetEncoders() {
 
         if (p->enc)
         {
-            ret=ret&&p->enc->resetEncoder(off+base);
+            ret=ret&&p->enc->resetEncoder(off+p->base);
         }
         else
             ret=false;
@@ -2249,7 +2249,7 @@ bool ControlBoardWrapper::setEncoder(int j, double val) {
 
     if (p->enc)
     {
-        return p->enc->setEncoder(off+base,val);
+        return p->enc->setEncoder(off+p->base,val);
     }
     return false;
 }
@@ -2268,7 +2268,7 @@ bool ControlBoardWrapper::setEncoders(const double *vals) {
 
         if (p->enc)
         {
-            ret=ret&&p->enc->setEncoder(off+base, vals[l]);
+            ret=ret&&p->enc->setEncoder(off+p->base, vals[l]);
         }
         else
             ret=false;
@@ -2286,7 +2286,8 @@ bool ControlBoardWrapper::getEncoder(int j, double *v) {
 
     if (p->pos)
     {
-        return p->enc->getEncoder(off+base, v);
+       // printf("\tget encode off %d, base %d\n", off, base); fflush(stdout);
+        return p->enc->getEncoder(off+p->base, v);
     }
     *v=0.0;
     return false;
@@ -2306,7 +2307,8 @@ bool ControlBoardWrapper::getEncoders(double *encs) {
 
         if (p->enc)
         {
-            ret=ret&&p->enc->getEncoder(off+base, encs+l);
+           // printf("get encodes off %d, base %d\n", off, base); fflush(stdout);
+            ret=ret&&p->enc->getEncoder(off+p->base, encs+l);
         }
         else
             ret=false;
@@ -2328,7 +2330,7 @@ bool ControlBoardWrapper::getEncodersTimed(double *encs, double *t) {
 
         if (p->enc)
         {
-            ret=ret&&p->enc->getEncoderTimed(off+base, encs+l, t+l);
+            ret=ret&&p->enc->getEncoderTimed(off+p->base, encs+l, t+l);
         }
         else
             ret=false;
@@ -2346,7 +2348,7 @@ bool ControlBoardWrapper::getEncoderTimed(int j, double *v, double *t) {
 
     if (p->pos)
     {
-        return p->enc->getEncoderTimed(off+base, v, t);
+        return p->enc->getEncoderTimed(off+p->base, v, t);
     }
     *v=0.0;
     return false;
@@ -2362,7 +2364,7 @@ bool ControlBoardWrapper::getEncoderSpeed(int j, double *sp) {
 
     if (p->pos)
     {
-        return p->enc->getEncoderSpeed(off+base, sp);
+        return p->enc->getEncoderSpeed(off+p->base, sp);
     }
     *sp=0.0;
     return false;
@@ -2382,7 +2384,7 @@ bool ControlBoardWrapper::getEncoderSpeeds(double *spds) {
 
         if (p->enc)
         {
-            ret=ret&&p->enc->getEncoderSpeed(off+base, spds+l);
+            ret=ret&&p->enc->getEncoderSpeed(off+p->base, spds+l);
         }
         else
             ret=false;
@@ -2400,7 +2402,7 @@ bool ControlBoardWrapper::getEncoderAcceleration(int j, double *acc) {
 
     if (p->pos)
     {
-        return p->enc->getEncoderAcceleration(off+base,acc);
+        return p->enc->getEncoderAcceleration(off+p->base,acc);
     }
     *acc=0.0;
     return false;
@@ -2421,7 +2423,7 @@ bool ControlBoardWrapper::getEncoderAccelerations(double *accs)
 
         if (p->enc)
         {
-            ret=ret&&p->enc->getEncoderAcceleration(off+base, accs+l);
+            ret=ret&&p->enc->getEncoderAcceleration(off+p->base, accs+l);
         }
         else
             ret=false;
@@ -2442,7 +2444,7 @@ bool ControlBoardWrapper::enableAmp(int j)
 
     if (p->pos)
     {
-        return p->amp->enableAmp(off+base);
+        return p->amp->enableAmp(off+p->base);
     }
     return false;
 }
@@ -2458,11 +2460,11 @@ bool ControlBoardWrapper::disableAmp(int j)
 
     // Use the newer interface if available, otherwise fallback on the old one.
     if(p->iMode2)
-        return p->iMode2->setControlMode(off+base, VOCAB_CM_IDLE);
+        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_IDLE);
     else
         if (p->pos)
         {
-            return p->amp->disableAmp(off+base);
+            return p->amp->disableAmp(off+p->base);
         }
         return false;
 }
@@ -2482,7 +2484,7 @@ bool ControlBoardWrapper::getCurrents(double *vals)
 
         if (p->amp)
         {
-            ret=ret&&p->amp->getCurrent(off+base, vals+l);
+            ret=ret&&p->amp->getCurrent(off+p->base, vals+l);
         }
         else
             ret=false;
@@ -2501,7 +2503,7 @@ bool ControlBoardWrapper::getCurrent(int j, double *val)
 
     if (p->pos)
     {
-        return p->amp->getCurrent(off+base,val);
+        return p->amp->getCurrent(off+p->base,val);
     }
     *val=0.0;
     return false;
@@ -2518,7 +2520,7 @@ bool ControlBoardWrapper::setMaxCurrent(int j, double v)
 
     if (p->pos)
     {
-        return p->amp->setMaxCurrent(off+base,v);
+        return p->amp->setMaxCurrent(off+p->base,v);
     }
     return false;
 }
@@ -2538,7 +2540,7 @@ bool ControlBoardWrapper::getAmpStatus(int *st)
                 st[l]=0;
                 //getAmpStatus for single joint does not exist!!
                 // AMP_STATUS TODO
-                //ret=ret&&p->amp->getAmpStatus(off+base, st+l);
+                //ret=ret&&p->amp->getAmpStatus(off+p->base, st+l);
             }
         else
             ret=false;
@@ -2555,7 +2557,7 @@ bool ControlBoardWrapper::getAmpStatus(int j, int *v)
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
     if (p->amp)
         {
-            return p->amp->getAmpStatus(off+base,v);
+            return p->amp->getAmpStatus(off+p->base,v);
         }
     *v=0;
     return false;
@@ -2574,7 +2576,7 @@ bool ControlBoardWrapper::setLimits(int j, double min, double max)
 
     if (p->lim2)
     {
-        return p->lim2->setLimits(off+base,min, max);
+        return p->lim2->setLimits(off+p->base,min, max);
     }
     return false;
 }
@@ -2594,7 +2596,7 @@ bool ControlBoardWrapper::getLimits(int j, double *min, double *max)
 
     if (p->lim2)
     {
-        return p->lim2->getLimits(off+base,min, max);
+        return p->lim2->getLimits(off+p->base,min, max);
     }
     *min=0.0;
     *max=0.0;
@@ -2614,7 +2616,7 @@ bool ControlBoardWrapper::setVelLimits(int j, double min, double max)
     {
         return false;
     }
-    return p->lim2->setVelLimits(off+base,min, max);
+    return p->lim2->setVelLimits(off+p->base,min, max);
 }
 
 bool ControlBoardWrapper::getVelLimits(int j, double *min, double *max)
@@ -2635,7 +2637,7 @@ bool ControlBoardWrapper::getVelLimits(int j, double *min, double *max)
     {
         return false;
     }
-    return p->lim2->getVelLimits(off+base,min, max);
+    return p->lim2->getVelLimits(off+p->base,min, max);
 }
 
 /* IControlCalibration */
@@ -2651,7 +2653,7 @@ bool ControlBoardWrapper::calibrate(int j, double p)
 
     if (s->calib)
     {
-        return s->calib->calibrate(off+base, p);
+        return s->calib->calibrate(off+s->base, p);
     }
     return false;
 }
@@ -2664,7 +2666,7 @@ bool ControlBoardWrapper::calibrate2(int j, unsigned int ui, double v1, double v
     yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
     if (p && p->calib2)
     {
-        return p->calib2->calibrate2(off+base, ui,v1,v2,v3);
+        return p->calib2->calibrate2(off+p->base, ui,v1,v2,v3);
     }
     return false;
 }
@@ -2680,7 +2682,7 @@ bool ControlBoardWrapper::done(int j)
 
     if (p->calib2)
     {
-        return p->calib2->done(off+base);
+        return p->calib2->done(off+p->base);
     }
     return false;
 }
@@ -2710,7 +2712,7 @@ bool ControlBoardWrapper::getAxisName(int j, yarp::os::ConstString& name)
 
     if (p->info)
     {
-        return p->info->getAxisName(off+base, name);
+        return p->info->getAxisName(off+p->base, name);
     }
     return false;
 }
@@ -2730,12 +2732,12 @@ bool ControlBoardWrapper::setTorqueMode()
 
         if(p->iMode2)   // ControlMode2
         {
-            ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
+            ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_TORQUE);
         }
         else if(p->iMode)
         {
             //calling iControlMode interface
-            ret=ret&&p->iMode->setTorqueMode(off+base);
+            ret=ret&&p->iMode->setTorqueMode(off+p->base);
         }
         else
             ret=false;
@@ -2758,7 +2760,7 @@ bool ControlBoardWrapper::getRefTorques(double *refs)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->getRefTorque(off+base, refs+l);
+            ret=ret&&p->iTorque->getRefTorque(off+p->base, refs+l);
         }
         else
             ret=false;
@@ -2778,7 +2780,7 @@ bool ControlBoardWrapper::getRefTorque(int j, double *t)
 
     if (p->iTorque)
     {
-        return p->iTorque->getRefTorque(off+base, t);
+        return p->iTorque->getRefTorque(off+p->base, t);
     }
     return false;
 }
@@ -2798,7 +2800,7 @@ bool ControlBoardWrapper::setRefTorques(const double *t)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->setRefTorque(off+base, t[l]);
+            ret=ret&&p->iTorque->setRefTorque(off+p->base, t[l]);
         }
         else
             ret=false;
@@ -2817,7 +2819,7 @@ bool ControlBoardWrapper::setRefTorque(int j, double t)
 
     if (p->iTorque)
     {
-        return p->iTorque->setRefTorque(off+base, t);
+        return p->iTorque->setRefTorque(off+p->base, t);
     }
     return false;
 }
@@ -2834,7 +2836,7 @@ bool ControlBoardWrapper::getBemfParam(int j, double *t)
 
     if (p->iTorque)
     {
-        return p->iTorque->getBemfParam(off+base, t);
+        return p->iTorque->getBemfParam(off+p->base, t);
     }
     return false;
 }
@@ -2850,7 +2852,7 @@ bool ControlBoardWrapper::setBemfParam(int j, double t)
 
     if (p->iTorque)
     {
-        return p->iTorque->setBemfParam(off+base, t);
+        return p->iTorque->setBemfParam(off+p->base, t);
     }
     return false;
 }
@@ -2866,7 +2868,7 @@ bool ControlBoardWrapper::setTorquePid(int j, const Pid &pid)
 
     if (p->iTorque)
     {
-        return p->iTorque->setTorquePid(off+base, pid);
+        return p->iTorque->setTorquePid(off+p->base, pid);
     }
 
     return false;
@@ -2883,7 +2885,7 @@ bool ControlBoardWrapper::setImpedance(int j, double stiff, double damp)
 
     if (p->iImpedance)
     {
-        return p->iImpedance->setImpedance(off+base, stiff, damp);
+        return p->iImpedance->setImpedance(off+p->base, stiff, damp);
     }
 
     return false;
@@ -2900,7 +2902,7 @@ bool ControlBoardWrapper::setImpedanceOffset(int j, double offset)
 
     if (p->iImpedance)
     {
-        return p->iImpedance->setImpedanceOffset(off+base, offset);
+        return p->iImpedance->setImpedanceOffset(off+p->base, offset);
     }
 
     return false;
@@ -2917,7 +2919,7 @@ bool ControlBoardWrapper::getTorque(int j, double *t)
 
     if (p->iTorque)
     {
-        return p->iTorque->getTorque(off+base, t);
+        return p->iTorque->getTorque(off+p->base, t);
     }
 
     return false;
@@ -2938,7 +2940,7 @@ bool ControlBoardWrapper::getTorques(double *t)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->getTorque(off+base, t+l);
+            ret=ret&&p->iTorque->getTorque(off+p->base, t+l);
         }
         else
             ret=false;
@@ -2957,7 +2959,7 @@ bool ControlBoardWrapper::getTorqueRange(int j, double *min, double *max)
 
     if (p->iTorque)
     {
-        return p->iTorque->getTorqueRange(off+base, min, max);
+        return p->iTorque->getTorqueRange(off+p->base, min, max);
     }
 
     return false;
@@ -2977,7 +2979,7 @@ bool ControlBoardWrapper::getTorqueRanges(double *min, double *max)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->getTorqueRange(off+base, min+l, max+l);
+            ret=ret&&p->iTorque->getTorqueRange(off+p->base, min+l, max+l);
         }
         else
             ret=false;
@@ -3000,7 +3002,7 @@ bool ControlBoardWrapper::setTorquePids(const Pid *pids)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->setTorquePid(off+base, pids[l]);
+            ret=ret&&p->iTorque->setTorquePid(off+p->base, pids[l]);
         }
         else
             ret=false;
@@ -3019,7 +3021,7 @@ bool ControlBoardWrapper::setTorqueErrorLimit(int j, double limit)
 
     if (p->iTorque)
     {
-        return p->iTorque->setTorqueErrorLimit(off+base, limit);
+        return p->iTorque->setTorqueErrorLimit(off+p->base, limit);
     }
 
     return false;
@@ -3040,7 +3042,7 @@ bool ControlBoardWrapper::setTorqueErrorLimits(const double *limits)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->setTorqueErrorLimit(off+base, limits[l]);
+            ret=ret&&p->iTorque->setTorqueErrorLimit(off+p->base, limits[l]);
         }
         else
             ret=false;
@@ -3059,7 +3061,7 @@ bool ControlBoardWrapper::getTorqueError(int j, double *err)
 
     if (p->iTorque)
     {
-        return p->iTorque->getTorqueError(off+base, err);
+        return p->iTorque->getTorqueError(off+p->base, err);
     }
 
     return false;
@@ -3080,7 +3082,7 @@ bool ControlBoardWrapper::getTorqueErrors(double *errs)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->getTorqueError(off+base, errs+l);
+            ret=ret&&p->iTorque->getTorqueError(off+p->base, errs+l);
         }
         else
             ret=false;
@@ -3099,7 +3101,7 @@ bool ControlBoardWrapper::getTorquePidOutput(int j, double *out)
 
     if (p->iTorque)
     {
-        return p->iTorque->getTorquePidOutput(off+base, out);
+        return p->iTorque->getTorquePidOutput(off+p->base, out);
     }
 
     return false;
@@ -3120,7 +3122,7 @@ bool ControlBoardWrapper::getTorquePidOutputs(double *outs)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->getTorquePidOutput(off+base, outs+l);
+            ret=ret&&p->iTorque->getTorquePidOutput(off+p->base, outs+l);
         }
         else
             ret=false;
@@ -3139,7 +3141,7 @@ bool ControlBoardWrapper::getTorquePid(int j, Pid *pid)
 
     if (p->iTorque)
     {
-        return p->iTorque->getTorquePid(off+base, pid);
+        return p->iTorque->getTorquePid(off+p->base, pid);
     }
 
     return false;
@@ -3156,7 +3158,7 @@ bool ControlBoardWrapper::getImpedance(int j, double* stiff, double* damp)
 
     if (p->iImpedance)
     {
-        return p->iImpedance->getImpedance(off+base, stiff, damp);
+        return p->iImpedance->getImpedance(off+p->base, stiff, damp);
     }
 
     return false;
@@ -3173,7 +3175,7 @@ bool ControlBoardWrapper::getImpedanceOffset(int j, double* offset)
 
     if (p->iImpedance)
     {
-        return p->iImpedance->getImpedanceOffset(off+base, offset);
+        return p->iImpedance->getImpedanceOffset(off+p->base, offset);
     }
 
     return false;
@@ -3190,7 +3192,7 @@ bool ControlBoardWrapper::getCurrentImpedanceLimit(int j, double *min_stiff, dou
 
     if (p->iImpedance)
     {
-        return p->iImpedance->getCurrentImpedanceLimit(off+base, min_stiff, max_stiff, min_damp, max_damp);
+        return p->iImpedance->getCurrentImpedanceLimit(off+p->base, min_stiff, max_stiff, min_damp, max_damp);
     }
 
     return false;
@@ -3211,7 +3213,7 @@ bool ControlBoardWrapper::getTorquePids(Pid *pids)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->getTorquePid(off+base, pids+l);
+            ret=ret&&p->iTorque->getTorquePid(off+p->base, pids+l);
         }
         else
             ret=false;
@@ -3230,7 +3232,7 @@ bool ControlBoardWrapper::getTorqueErrorLimit(int j, double *limit)
 
     if (p->iTorque)
     {
-        return p->iTorque->getTorqueErrorLimit(off+base, limit);
+        return p->iTorque->getTorqueErrorLimit(off+p->base, limit);
     }
 
     return false;
@@ -3251,7 +3253,7 @@ bool ControlBoardWrapper::getTorqueErrorLimits(double *limits)
 
         if (p->iTorque)
         {
-            ret=ret&&p->iTorque->getTorqueErrorLimit(off+base, limits+l);
+            ret=ret&&p->iTorque->getTorqueErrorLimit(off+p->base, limits+l);
         }
         else
             ret=false;
@@ -3270,7 +3272,7 @@ bool ControlBoardWrapper::resetTorquePid(int j)
 
     if (p->iTorque)
     {
-        return p->iTorque->resetTorquePid(off+base);
+        return p->iTorque->resetTorquePid(off+p->base);
     }
 
     return false;
@@ -3287,7 +3289,7 @@ bool ControlBoardWrapper::disableTorquePid(int j)
 
     if (p->iTorque)
     {
-        return p->iTorque->disableTorquePid(off+base);
+        return p->iTorque->disableTorquePid(off+p->base);
     }
 
     return false;
@@ -3304,7 +3306,7 @@ bool ControlBoardWrapper::enableTorquePid(int j)
 
     if (p->iTorque)
     {
-        return p->iTorque->enableTorquePid(off+base);
+        return p->iTorque->enableTorquePid(off+p->base);
     }
 
     return false;
@@ -3321,7 +3323,7 @@ bool ControlBoardWrapper::setTorqueOffset(int j, double v)
 
     if (p->iTorque)
     {
-        return p->iTorque->setTorqueOffset(off+base,v);
+        return p->iTorque->setTorqueOffset(off+p->base,v);
     }
 
     return false;
@@ -3338,12 +3340,12 @@ bool ControlBoardWrapper::setPositionMode(int j)
 
     if (p->iMode2)
     {
-        return p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION);
+        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_POSITION);
     }
     else
         if (p->iMode)
         {
-            return p->iMode->setPositionMode(off+base);
+            return p->iMode->setPositionMode(off+p->base);
         }
 
     return false;
@@ -3360,12 +3362,12 @@ bool ControlBoardWrapper::setTorqueMode(int j)
 
     if (p->iMode2)
     {
-        return p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
+        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_TORQUE);
     }
     else
         if (p->iMode)
         {
-            return p->iMode->setTorqueMode(off+base);
+            return p->iMode->setTorqueMode(off+p->base);
         }
 
     return false;
@@ -3383,7 +3385,7 @@ bool ControlBoardWrapper::setImpedancePositionMode(int j)
 //        Let´s propagate the legacy version as is until it will be removed
     if (p->iMode)
     {
-        return p->iMode->setImpedancePositionMode(off+base);
+        return p->iMode->setImpedancePositionMode(off+p->base);
     }
 
     return false;
@@ -3400,7 +3402,7 @@ bool ControlBoardWrapper::setImpedanceVelocityMode(int j)
 //        Let´s propagate the legacy version as is until it will be removed
     if (p->iMode)
     {
-        return p->iMode->setImpedanceVelocityMode(off+base);
+        return p->iMode->setImpedanceVelocityMode(off+p->base);
     }
 
     return false;
@@ -3417,12 +3419,12 @@ bool ControlBoardWrapper::setVelocityMode(int j)
 
     if (p->iMode2)
     {
-        return p->iMode2->setControlMode(off+base, VOCAB_CM_VELOCITY);
+        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_VELOCITY);
     }
     else
         if (p->iMode)
         {
-            return p->iMode->setVelocityMode(off+base);
+            return p->iMode->setVelocityMode(off+p->base);
         }
 
     return false;
@@ -3439,12 +3441,12 @@ bool ControlBoardWrapper::setOpenLoopMode(int j)
 
     if (p->iMode2)
     {
-        return p->iMode2->setControlMode(off+base, VOCAB_CM_OPENLOOP);
+        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_OPENLOOP);
     }
     else
         if (p->iMode)
         {
-            return p->iMode->setOpenLoopMode(off+base);
+            return p->iMode->setOpenLoopMode(off+p->base);
         }
 
     return false;
@@ -3461,7 +3463,7 @@ bool ControlBoardWrapper::getControlMode(int j, int *mode)
 
     if (p->iMode)
     {
-        return p->iMode->getControlMode(off+base, mode);
+        return p->iMode->getControlMode(off+p->base, mode);
     }
     return false;
 }
@@ -3481,7 +3483,7 @@ bool ControlBoardWrapper::getControlModes(int *modes)
 
         if (p->iMode)
         {
-            ret=ret&&p->iMode->getControlMode(off+base, modes+l);
+            ret=ret&&p->iMode->getControlMode(off+p->base, modes+l);
         }
         else
             ret=false;
@@ -3505,7 +3507,7 @@ bool ControlBoardWrapper::getControlModes(const int n_joint, const int *joints, 
 
          if (p->iMode2)
          {
-             ret=ret&&p->iMode2->getControlMode(off+base, &modes[l]);
+             ret=ret&&p->iMode2->getControlMode(off+p->base, &modes[l]);
          }
          else
              ret=false;
@@ -3597,7 +3599,7 @@ bool ControlBoardWrapper::setControlMode(const int j, const int mode)
 
     if (p->iMode2)
     {
-        ret = p->iMode2->setControlMode(off+base, mode);
+        ret = p->iMode2->setControlMode(off+p->base, mode);
     }
     else
     {
@@ -3714,7 +3716,7 @@ bool ControlBoardWrapper::setRefOutput(int j, double v)
 
     if (p->iOpenLoop)
     {
-        return p->iOpenLoop->setRefOutput(off+base, v);
+        return p->iOpenLoop->setRefOutput(off+p->base, v);
     }
     return false;
 }
@@ -3733,7 +3735,7 @@ bool ControlBoardWrapper::setRefOutputs(const double *outs) {
 
         if (p->iOpenLoop)
         {
-            ret=ret&&p->iOpenLoop->setRefOutput(off+base, outs[l]);
+            ret=ret&&p->iOpenLoop->setRefOutput(off+p->base, outs[l]);
         }
         else
             ret=false;
@@ -3752,7 +3754,7 @@ bool ControlBoardWrapper::setPosition(int j, double ref)
 
     if (p->posDir)
     {
-        return p->posDir->setPosition(off+base, ref);
+        return p->posDir->setPosition(off+p->base, ref);
     }
 
     return false;
@@ -3772,7 +3774,7 @@ bool ControlBoardWrapper::setPositionDirectMode()
             return false;
 
         if(p->iMode2)
-            ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION_DIRECT);
+            ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_POSITION_DIRECT);
         else
             ret=false;
     }
@@ -3838,7 +3840,7 @@ bool ControlBoardWrapper::setPositions(const double *refs)
 
         if (p->posDir)
         {
-            ret = p->posDir->setPosition(off+base, refs[l]) && ret;
+            ret = p->posDir->setPosition(off+p->base, refs[l]) && ret;
         }
         else
             ret=false;
@@ -3923,7 +3925,7 @@ bool ControlBoardWrapper::setVelPid(int j, const Pid &pid)
 
     if (s->vel2)
     {
-        return s->vel2->setVelPid(off+base, pid);
+        return s->vel2->setVelPid(off+s->base, pid);
     }
     return false;
 }
@@ -3943,7 +3945,7 @@ bool ControlBoardWrapper::setVelPids(const Pid *pids)
 
         if (p->vel2)
         {
-            ret=ret&&p->vel2->setVelPid(off+base, pids[l]);
+            ret=ret&&p->vel2->setVelPid(off+p->base, pids[l]);
         }
         else
             ret=false;
@@ -3963,7 +3965,7 @@ bool ControlBoardWrapper::getVelPid(int j, Pid *pid)
 
     if (s->vel2)
     {
-        return s->vel2->getVelPid(off+base, pid);
+        return s->vel2->getVelPid(off+s->base, pid);
     }
     return false;
 }
@@ -3983,7 +3985,7 @@ bool ControlBoardWrapper::getVelPids(Pid *pids)
 
         if (p->vel2)
         {
-            ret=ret&&p->vel2->getVelPid(off+base, pids+l);
+            ret=ret&&p->vel2->getVelPid(off+p->base, pids+l);
         }
         else
             ret=false;
@@ -4002,7 +4004,7 @@ bool ControlBoardWrapper::getInteractionMode(int j, yarp::dev::InteractionModeEn
 
     if (s->iInteract)
     {
-        return s->iInteract->getInteractionMode(off+base, mode);
+        return s->iInteract->getInteractionMode(off+s->base, mode);
     }
     return false;
 }
@@ -4068,7 +4070,7 @@ bool ControlBoardWrapper::getInteractionModes(yarp::dev::InteractionModeEnum* mo
 
         if (p->iInteract)
         {
-            ret=ret && p->iInteract->getInteractionMode(off+base, &modes[j]);
+            ret=ret && p->iInteract->getInteractionMode(off+p->base, &modes[j]);
         }
         else
             ret=false;
@@ -4087,7 +4089,7 @@ bool ControlBoardWrapper::setInteractionMode(int j, yarp::dev::InteractionModeEn
 
     if (s->iInteract)
     {
-        return s->iInteract->setInteractionMode(off+base, mode);
+        return s->iInteract->setInteractionMode(off+s->base, mode);
     }
     return false;
 }
@@ -4147,7 +4149,7 @@ bool ControlBoardWrapper::setInteractionModes(yarp::dev::InteractionModeEnum* mo
 
         if (p->iInteract)
         {
-            ret=ret && p->iInteract->setInteractionMode(off+base, modes[j]);
+            ret=ret && p->iInteract->setInteractionMode(off+p->base, modes[j]);
         }
         else
             ret=false;
@@ -4166,7 +4168,7 @@ bool ControlBoardWrapper::getRefOutput(int j, double *out)
 
     if (p->iOpenLoop)
     {
-        return p->iOpenLoop->getRefOutput(off+base, out);
+        return p->iOpenLoop->getRefOutput(off+p->base, out);
     }
     *out=0.0;
     return false;
@@ -4187,7 +4189,7 @@ bool ControlBoardWrapper::getRefOutputs(double *outs)
 
         if (p->iOpenLoop)
         {
-            ret=ret && p->iOpenLoop->getRefOutput(off+base, outs+l);
+            ret=ret && p->iOpenLoop->getRefOutput(off+p->base, outs+l);
         }
         else
             ret=false;
