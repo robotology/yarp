@@ -27,6 +27,7 @@
 #include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IInteractionMode.h>
+#include <yarp/dev/IMotorEncoders.h>
 
 namespace yarp {
     namespace dev {
@@ -34,6 +35,8 @@ namespace yarp {
         class IPidControl;
         class IEncodersRaw;
         class IEncoders;
+        class IMotorEncodersRaw;
+        class IMotorEncoders;
         class IAmplifierControlRaw;
         class IAmplifierControl;
         class IControlDebug;
