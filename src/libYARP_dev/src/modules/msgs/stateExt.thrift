@@ -1,9 +1,9 @@
 
 struct jointData
 {
-  1: list<double> position;
-  2: list<double> velocity;
-  3: list<double> acceleration;
+  1: list<double> jointPosition;
+  2: list<double> jointVelocity;
+  3: list<double> jointAcceleration;
   4: list<double> motorPosition;
   5: list<double> motorVelocity;
   6: list<double> motorAcceleration;
