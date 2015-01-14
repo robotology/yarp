@@ -2438,9 +2438,9 @@ bool ControlBoardWrapper::getEncoderAccelerations(double *accs)
 
 /* IMotorEncoders */
 
-bool ControlBoardWrapper::resetMotorEncoder(int j) {
-    int off=device.lut[j].offset;
-    int subIndex=device.lut[j].deviceEntry;
+bool ControlBoardWrapper::resetMotorEncoder(int m) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
     if (!p)
@@ -2475,9 +2475,9 @@ bool ControlBoardWrapper::resetMotorEncoders() {
     return ret;
 }
 
-bool ControlBoardWrapper::setMotorEncoder(int j, double val) {
-    int off=device.lut[j].offset;
-    int subIndex=device.lut[j].deviceEntry;
+bool ControlBoardWrapper::setMotorEncoder(int m, double val) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
     if (!p)
@@ -2512,15 +2512,46 @@ bool ControlBoardWrapper::setMotorEncoders(const double *vals) {
     return ret;
 }
 
-bool ControlBoardWrapper::getMotorEncoder(int j, double *v) {
-    int off=device.lut[j].offset;
-    int subIndex=device.lut[j].deviceEntry;
+bool ControlBoardWrapper::setMotorEncoderCountsPerRevolution(int m, double cpr) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
     if (!p)
         return false;
 
-    if (p->pos)
+    if (p->iMotEnc)
+    {
+        return p->iMotEnc->setMotorEncoderCountsPerRevolution(off+p->base,cpr);
+    }
+    return false;
+}
+
+bool ControlBoardWrapper::getMotorEncoderCountsPerRevolution(int m, double *cpr) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iMotEnc)
+    {
+        return p->iMotEnc->getMotorEncoderCountsPerRevolution(off+p->base, cpr);
+    }
+    *cpr=0.0;
+    return false;
+}
+
+bool ControlBoardWrapper::getMotorEncoder(int m, double *v) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iMotEnc)
     {
         return p->iMotEnc->getMotorEncoder(off+p->base, v);
     }
@@ -2572,9 +2603,9 @@ bool ControlBoardWrapper::getMotorEncodersTimed(double *encs, double *t) {
     return ret;
 }
 
-bool ControlBoardWrapper::getMotorEncoderTimed(int j, double *v, double *t) {
-    int off=device.lut[j].offset;
-    int subIndex=device.lut[j].deviceEntry;
+bool ControlBoardWrapper::getMotorEncoderTimed(int m, double *v, double *t) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
     if (!p)
@@ -2588,9 +2619,9 @@ bool ControlBoardWrapper::getMotorEncoderTimed(int j, double *v, double *t) {
     return false;
 }
 
-bool ControlBoardWrapper::getMotorEncoderSpeed(int j, double *sp) {
-    int off=device.lut[j].offset;
-    int subIndex=device.lut[j].deviceEntry;
+bool ControlBoardWrapper::getMotorEncoderSpeed(int m, double *sp) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
     if (!p)
@@ -2626,9 +2657,9 @@ bool ControlBoardWrapper::getMotorEncoderSpeeds(double *spds) {
     return ret;
 }
 
-bool ControlBoardWrapper::getMotorEncoderAcceleration(int j, double *acc) {
-    int off=device.lut[j].offset;
-    int subIndex=device.lut[j].deviceEntry;
+bool ControlBoardWrapper::getMotorEncoderAcceleration(int m, double *acc) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
     if (!p)

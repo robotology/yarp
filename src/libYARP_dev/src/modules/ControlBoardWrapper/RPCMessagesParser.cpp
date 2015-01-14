@@ -1739,6 +1739,12 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_MOTOR_CPR:
+                            {
+                                ok = rpc_IMotEnc->setMotorEncoderCountsPerRevolution(cmd.get(2).asInt(), cmd.get(3).asDouble());
+                            }
+                            break;
+
                             case VOCAB_MOTOR_E_RESET:
                             {
                                 ok = rpc_IMotEnc->resetMotorEncoder(cmd.get(2).asInt());
@@ -2164,6 +2170,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (i = 0; i < controlledJoints; i++)
                                     b.addDouble(p[i]);
                                 delete[] p;
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_CPR:
+                            {
+                                ok = rpc_IMotEnc->getMotorEncoderCountsPerRevolution(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
                             }
                             break;
 

@@ -653,7 +653,7 @@ public:
     * @param j is the axis number
     * @return true/false on success/failure
     */
-    virtual bool resetMotorEncoder(int j);
+    virtual bool resetMotorEncoder(int m);
 
     /**
     * Reset encoders. Set the encoder values to zero for all axes
@@ -662,12 +662,28 @@ public:
     virtual bool resetMotorEncoders();
 
     /**
+     * Sets number of counts per revolution for motor encoder m.
+     * @param m motor encoder number
+     * @param cpr new parameter
+     * @return true/false
+     */
+    virtual bool setMotorEncoderCountsPerRevolution(int m, double cpr);
+
+    /**
+     * gets number of counts per revolution for motor encoder m.
+     * @param m motor encoder number
+     * @param cpr pointer to storage for the return value
+     * @return true/false
+     */
+    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr);
+
+    /**
     * Set the value of the encoder for a given joint.
     * @param j encoder number
     * @param val new value
     * @return true/false
     */
-    virtual bool setMotorEncoder(int j, double val);
+    virtual bool setMotorEncoder(int m, double val);
 
     /**
     * Set the value of all encoders.
@@ -682,7 +698,7 @@ public:
     * @param v pointer to storage for the return value
     * @return true/false, upon success/failure (you knew it, uh?)
     */
-    virtual bool getMotorEncoder(int j, double *v);
+    virtual bool getMotorEncoder(int m, double *v);
 
     /**
     * Read the position of all axes.
@@ -693,7 +709,7 @@ public:
 
     virtual bool getMotorEncodersTimed(double *encs, double *t);
 
-    virtual bool getMotorEncoderTimed(int j, double *v, double *t);
+    virtual bool getMotorEncoderTimed(int m, double *v, double *t);
 
     /**
     * Read the istantaneous speed of an axis.
@@ -701,7 +717,7 @@ public:
     * @param sp pointer to storage for the output
     * @return true if successful, false ... otherwise.
     */
-    virtual bool getMotorEncoderSpeed(int j, double *sp);
+    virtual bool getMotorEncoderSpeed(int m, double *sp);
 
     /**
     * Read the instantaneous speed of all axes.
@@ -715,7 +731,7 @@ public:
     * @param j axis number
     * @param acc pointer to the array that will contain the output
     */
-    virtual bool getMotorEncoderAcceleration(int j, double *acc);
+    virtual bool getMotorEncoderAcceleration(int m, double *acc);
     /**
     * Read the istantaneous acceleration of all axes.
     * @param accs pointer to the array that will contain the output

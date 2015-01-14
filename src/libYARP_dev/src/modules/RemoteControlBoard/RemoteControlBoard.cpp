@@ -1673,6 +1673,26 @@ public:
     }
 
     /**
+     * Sets number of counts per revolution for motor encoder m.
+     * @param m motor encoder number
+     * @param cpr new parameter
+     * @return true/false
+     */
+    virtual bool setMotorEncoderCountsPerRevolution(int m, double cpr) {
+        return set1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
+    }
+
+    /**
+     * gets number of counts per revolution for motor encoder m.
+     * @param m motor encoder number
+     * @param cpr pointer to storage for the return value
+     * @return true/false
+     */ 
+    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr) {
+         return get1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
+    }
+
+    /**
      * Set the value of all encoders.
      * @param vals pointer to the new values
      * @return true/false

@@ -18,7 +18,7 @@ namespace yarp {
     }
 }
 
-class YARP_dev_API yarp::dev::ImplementMotorEncoders
+class YARP_dev_API yarp::dev::ImplementMotorEncoders: public IMotorEncoders
 {
 protected:
     IMotorEncodersRaw *iMotorEncoders;
@@ -55,17 +55,19 @@ public:
     
     virtual bool getAxes(int *ax);
 
-    virtual bool resetMotorEncoder(int j);
+    virtual bool resetMotorEncoder(int m);
     virtual bool resetMotorEncoders();
-    virtual bool setMotorEncoder(int j, double val);
+    virtual bool setMotorEncoder(int m, double val);
     virtual bool setMotorEncoders(const double *vals);
-    virtual bool getMotorEncoder(int j, double *v);
+    virtual bool setMotorEncoderCountsPerRevolution(int m, double cpr);
+    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr);
+    virtual bool getMotorEncoder(int m, double *v);
     virtual bool getMotorEncodersTimed(double *encs, double *time);
-    virtual bool getMotorEncoderTimed(int j, double *v, double *t);
+    virtual bool getMotorEncoderTimed(int m, double *v, double *t);
     virtual bool getMotorEncoders(double *encs);
-    virtual bool getMotorEncoderSpeed(int j, double *spds);
+    virtual bool getMotorEncoderSpeed(int m, double *spds);
     virtual bool getMotorEncoderSpeeds(double *spds);
-    virtual bool getMotorEncoderAcceleration(int j, double *spds);
+    virtual bool getMotorEncoderAcceleration(int m, double *spds);
     virtual bool getMotorEncoderAccelerations(double *accs);
 };
 

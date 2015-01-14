@@ -66,10 +66,10 @@ bool ImplementMotorEncoders::getAxes(int *ax)
     return true;
 }
 
-bool ImplementMotorEncoders::resetMotorEncoder(int j)
+bool ImplementMotorEncoders::resetMotorEncoder(int m)
 {
     int k;
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(helper)->toHw(m);
 
     return iMotorEncoders->resetMotorEncoderRaw(k);
 }
@@ -79,14 +79,33 @@ bool ImplementMotorEncoders::resetMotorEncoders()
     return iMotorEncoders->resetMotorEncodersRaw();
 }
 
-bool ImplementMotorEncoders::setMotorEncoder(int j, double val)
+bool ImplementMotorEncoders::setMotorEncoder(int m, double val)
 {
     int k;
     double enc;
 
-    castToMapper(helper)->posA2E(val, j, enc, k);
+    castToMapper(helper)->posA2E(val, m, enc, k);
 
     return iMotorEncoders->setMotorEncoderRaw(k, enc);
+}
+
+bool ImplementMotorEncoders::getMotorEncoderCountsPerRevolution(int m, double* cpr)
+{
+    bool ret;
+    int k=castToMapper(helper)->toHw(m);
+
+    ret=iMotorEncoders->getMotorEncoderRaw(m, cpr);
+
+    return ret;
+}
+
+bool ImplementMotorEncoders::setMotorEncoderCountsPerRevolution(int m, double cpr)
+{
+    int k;
+
+    k=castToMapper(helper)->toHw(m);
+
+    return iMotorEncoders->setMotorEncoderCountsPerRevolutionRaw(k, cpr);
 }
 
 bool ImplementMotorEncoders::setMotorEncoders(const double *val)
@@ -96,13 +115,13 @@ bool ImplementMotorEncoders::setMotorEncoders(const double *val)
     return iMotorEncoders->setMotorEncodersRaw(temp);
 }
 
-bool ImplementMotorEncoders::getMotorEncoder(int j, double *v)
+bool ImplementMotorEncoders::getMotorEncoder(int m, double *v)
 {
     int k;
     double enc;
     bool ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(helper)->toHw(m);
 
     ret=iMotorEncoders->getMotorEncoderRaw(k, &enc);
 
@@ -123,13 +142,13 @@ bool ImplementMotorEncoders::getMotorEncoders(double *v)
     return ret;
 }
 
-bool ImplementMotorEncoders::getMotorEncoderSpeed(int j, double *v)
+bool ImplementMotorEncoders::getMotorEncoderSpeed(int m, double *v)
 {
     int k;
     double enc;
     bool ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(helper)->toHw(m);
 
     ret=iMotorEncoders->getMotorEncoderSpeedRaw(k, &enc);
 
@@ -148,13 +167,13 @@ bool ImplementMotorEncoders::getMotorEncoderSpeeds(double *v)
     return ret;
 }
 
-bool ImplementMotorEncoders::getMotorEncoderAcceleration(int j, double *v)
+bool ImplementMotorEncoders::getMotorEncoderAcceleration(int m, double *v)
 {
     int k;
     double enc;
     bool ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(helper)->toHw(m);
 
     ret=iMotorEncoders->getMotorEncoderAccelerationRaw(k, &enc);
 
@@ -173,13 +192,13 @@ bool ImplementMotorEncoders::getMotorEncoderAccelerations(double *v)
     return ret;
 }
 
-bool ImplementMotorEncoders::getMotorEncoderTimed(int j, double *v, double *t)
+bool ImplementMotorEncoders::getMotorEncoderTimed(int m, double *v, double *t)
 {
     int k;
     double enc;
     bool ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(helper)->toHw(m);
 
     ret=iMotorEncoders->getMotorEncoderTimedRaw(k, &enc, t);
 

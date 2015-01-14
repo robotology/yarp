@@ -40,91 +40,108 @@ public:
     virtual bool getAxes(int *ax) = 0;
 
     /**
-     * Reset encoder, single joint. Set the encoder value to zero 
-     * @param j encoder number
+     * Reset motor encoder, single motor. Set the encoder value to zero.
+     * @param m motor number
      * @return true/false
      */
-    virtual bool resetMotorEncoderRaw(int j)=0;
+    virtual bool resetMotorEncoderRaw(int m)=0;
 
     /**
-     * Reset encoders. Set the encoders value to zero 
+     * Reset motor encoders. Set the motor encoders value to zero.
      * @return true/false
      */
     virtual bool resetMotorEncodersRaw()=0;
 
     /**
-     * Set the value of the encoder for a given joint. 
-     * @param j encoder number
+     * Sets number of counts per revolution for motor encoder m.
+     * @param m motor number
+     * @param cpr new value
+     * @return true/false
+     */
+    virtual bool setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)=0;
+
+    /**
+     * Gets number of counts per revolution for motor encoder m.
+     * @param m motor number
+     * @param cpr vals pointer to the new value
+     * @return true/false
+     */
+    virtual bool getMotorEncoderCountsPerRevolutionRaw(int m, double *cpr)=0;
+
+    /**
+     * Set the value of the motor encoder for a given motor. 
+     * @param m motor number
      * @param val new value
      * @return true/false
      */
-    virtual bool setMotorEncoderRaw(int j, double val)=0;
+    virtual bool setMotorEncoderRaw(int m, double val)=0;
 
     /**
-     * Set the value of all encoders.
+     * Set the value of all motor encoders.
      * @param vals pointer to the new values
      * @return true/false
      */
     virtual bool setMotorEncodersRaw(const double *vals)=0;
 
     /**
-     * Read the value of an encoder.
-     * @param j encoder number
+     * Read the value of a motor encoder.
+     * @param m motor encoder number
      * @param v pointer to storage for the return value
-     * @return true/false, upon success/failure (you knew it, uh?)
+     * @return true/false
      */
-    virtual bool getMotorEncoderRaw(int j, double *v)=0;
+    virtual bool getMotorEncoderRaw(int m, double *v)=0;
 
     /**
-     * Read the position of all axes.
+     * Read the position of all motor encoders.
      * @param encs pointer to the array that will contain the output
-     * @return true/false on success/failure
+     * @return true/false
      */
     virtual bool getMotorEncodersRaw(double *encs)=0;
 
     /**
-     * Read the instantaneous acceleration of all axes.
-     * \param encs pointer to the array that will contain the output
-     * \param stamps pointer to the array that will contain individual timestamps
-     * \return return true if all goes well, false if anything bad happens.
+     * Read the instantaneous position of all motor encoders.
+     * @param encs pointer to the array that will contain the output
+     * @param time pointer to the array that will contain individual timestamps
+     * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncodersTimedRaw(double *encs, double *stamps)=0;
 
-    /**
-     * Read the instantaneous acceleration of all axes.
-     * \param j axis index
-     * \param encs encoder value
-     * \param stamp corresponding timestamp
-     * \return true if all goes well, false if anything bad happens.
-     */
-    virtual bool getMotorEncoderTimedRaw(int j, double *encs, double *stamp)=0;
+   /**
+    * Read the instantaneous position of a motor encoder.
+    * @param m motor index
+    * @param encs encoder value (pointer to)
+    * @param time corresponding timestamp (pointer to)
+    * @return true if successful, false otherwise.
+    */
+    virtual bool getMotorEncoderTimedRaw(int m, double *encs, double *stamp)=0;
 
     /**
-     * Read the instantaneous speed of an axis.
-     * @param j axis number
+     * Read the istantaneous speed of a motor encoder.
+     * @param m motor number
      * @param sp pointer to storage for the output
-     * @return true if successful, false ... otherwise.
+     * @return true if successful, false otherwise.
      */
-    virtual bool getMotorEncoderSpeedRaw(int j, double *sp)=0;
+    virtual bool getMotorEncoderSpeedRaw(int m, double *sp)=0;
 
     /**
-     * Read the instantaneous acceleration of an axis.
+     * Read the instantaneous speed of all motor encoders.
      * @param spds pointer to storage for the output values
-     * @return guess what? (true/false on success or failure).
+     * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncoderSpeedsRaw(double *spds)=0;
     
     /**
-     * Read the instantaneous acceleration of an axis.
-     * @param j axis number
-     * @param spds pointer to the array that will contain the output
+     * Read the instantaneous acceleration of a motor encoder
+     * @param m motor number
+     * @param acc pointer to the array that will contain the output
+     * @return true if successful, false otherwise.
      */
-    virtual bool getMotorEncoderAccelerationRaw(int j, double *spds)=0;
+    virtual bool getMotorEncoderAccelerationRaw(int m, double *spds)=0;
 
     /**
-     * Read the instantaneous acceleration of all axes.
-     * @param accs pointer to the array that will contain the output
-     * @return true if all goes well, false if anything bad happens. 
+     * Read the instantaneous acceleration of all motor encoders.
+     * @param accs pointer to the array that will contain the output 
+     * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncoderAccelerationsRaw(double *accs)=0;
 };
@@ -150,91 +167,108 @@ public:
     virtual bool getAxes(int *ax) = 0;
 
     /**
-     * Reset encoder, single joint. Set the encoder value to zero 
-     * @param j encoder number
+     * Reset motor encoder, single motor. Set the encoder value to zero.
+     * @param m motor number
      * @return true/false
      */
-    virtual bool resetMotorEncoder(int j)=0;
+    virtual bool resetMotorEncoder(int m)=0;
 
     /**
-     * Reset encoders. Set the encoders value to zero 
+     * Reset motor encoders. Set the motor encoders value to zero.
      * @return true/false
      */
     virtual bool resetMotorEncoders()=0;
 
     /**
-     * Set the value of the encoder for a given joint. 
-     * @param j encoder number
+     * Sets number of counts per revolution for motor encoder m.
+     * @param m motor number
+     * @param cpr new value
+     * @return true/false
+     */
+    virtual bool setMotorEncoderCountsPerRevolution(int m, double cpr)=0;
+
+    /**
+     * Gets number of counts per revolution for motor encoder m.
+     * @param m motor number
+     * @param cpr vals pointer to the new value
+     * @return true/false
+     */
+    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr)=0;
+
+    /**
+     * Set the value of the motor encoder for a given motor. 
+     * @param m motor number
      * @param val new value
      * @return true/false
      */
-    virtual bool setMotorEncoder(int j, double val)=0;
+    virtual bool setMotorEncoder(int m, double val)=0;
 
     /**
-     * Set the value of all encoders.
+     * Set the value of all motor encoders.
      * @param vals pointer to the new values
      * @return true/false
      */
     virtual bool setMotorEncoders(const double *vals)=0;
 
     /**
-     * Read the value of an encoder.
-     * @param j encoder number
+     * Read the value of a motor encoder.
+     * @param m motor encoder number
      * @param v pointer to storage for the return value
-     * @return true/false, upon success/failure (you knew it, uh?)
+     * @return true/false
      */
-    virtual bool getMotorEncoder(int j, double *v)=0;
+    virtual bool getMotorEncoder(int m, double *v)=0;
 
     /**
-     * Read the position of all axes.
+     * Read the position of all motor encoders.
      * @param encs pointer to the array that will contain the output
-     * @return true/false on success/failure
+     * @return true/false
      */
     virtual bool getMotorEncoders(double *encs)=0;
 
     /**
-     * Read the instantaneous acceleration of all axes.
-     * \param encs pointer to the array that will contain the output
-     * \param time pointer to the array that will contain individual timestamps
-     * \return true if all goes well, false if anything bad happens.
+     * Read the instantaneous position of all motor encoders.
+     * @param encs pointer to the array that will contain the output
+     * @param time pointer to the array that will contain individual timestamps
+     * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncodersTimed(double *encs, double *time)=0;
 
    /**
-    * Read the instantaneous acceleration of all axes.
-    * \param j axis index
-    * \param encs encoder value (pointer to)
-    * \param time corresponding timestamp (pointer to)
-    * \return true if all goes well, false if anything bad happens.
+    * Read the instantaneous position of a motor encoder.
+    * @param m motor index
+    * @param encs encoder value (pointer to)
+    * @param time corresponding timestamp (pointer to)
+    * @return true if successful, false otherwise.
     */
-    virtual bool getMotorEncoderTimed(int j, double *encs, double *time)=0;
+    virtual bool getMotorEncoderTimed(int m, double *encs, double *time)=0;
 
     /**
-     * Read the istantaneous speed of an axis.
-     * @param j axis number
+     * Read the istantaneous speed of a motor encoder.
+     * @param m motor number
      * @param sp pointer to storage for the output
-     * @return true if successful, false ... otherwise.
+     * @return true if successful, false otherwise.
      */
-    virtual bool getMotorEncoderSpeed(int j, double *sp)=0;
+    virtual bool getMotorEncoderSpeed(int m, double *sp)=0;
 
     /**
-     * Read the instantaneous speed of all axes.
+     * Read the instantaneous speed of all motor encoders.
      * @param spds pointer to storage for the output values
-     * @return guess what? (true/false on success or failure).
+     * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncoderSpeeds(double *spds)=0;
     
     /**
-     * Read the instantaneous acceleration of an axis.
-     * @param j axis number
-     * @param spds pointer to the array that will contain the output
+     * Read the instantaneous acceleration of a motor encoder
+     * @param m motor number
+     * @param acc pointer to the array that will contain the output
+     * @return true if successful, false otherwise.
      */
-    virtual bool getMotorEncoderAcceleration(int j, double *spds)=0;
+    virtual bool getMotorEncoderAcceleration(int m, double *acc)=0;
 
     /**
-     * Read the instantaneous acceleration of all axes.
-     * @param accs pointer to the array that will contain the output
-     * @return true if all goes well, false if anything bad happens. 
+     * Read the instantaneous acceleration of all motor encoders.
+     * @param accs pointer to the array that will contain the output 
+     * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncoderAccelerations(double *accs)=0;
 };
@@ -244,6 +278,7 @@ public:
 #define VOCAB_MOTOR_E_RESETS VOCAB4('m','r','e','s')
 #define VOCAB_MOTOR_ENCODER VOCAB3('m','n','c')
 #define VOCAB_MOTOR_ENCODERS VOCAB4('m','n','c','s')
+#define VOCAB_MOTOR_CPR VOCAB4('m','c','p','r')
 
 // interface IMotorEncoders gets
 #define VOCAB_MOTOR_ENCODER_SPEED VOCAB3('m','s','p')
