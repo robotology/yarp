@@ -27,10 +27,7 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
 
-
-#ifdef YARP_MSG
 #include <stateExtendedReader.hpp>
-#endif
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -268,7 +265,6 @@ protected:
     bool writeStrict_singleJoint;
     bool writeStrict_moreJoints;
 
-#if defined(YARP_MSG)
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
 //  yarp::os::PortReaderBuffer<jointData>           extendedInputState_buffer;  // Buffer storing new data
@@ -276,8 +272,8 @@ protected:
     jointData last_singleJoint;     // tmp to store last received data for a particular joint
 //    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
     jointData last_wholePart;         // tmp to store last received data for whole part
-#endif
 
+    bool controlBoardWrapper1_compatibility;
     ConstString remote;
     ConstString local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
@@ -917,6 +913,7 @@ public:
         njIsKnown = false;
         writeStrict_singleJoint = true;
         writeStrict_moreJoints  = false;
+        controlBoardWrapper1_compatibility = false;
     }
 
     /**
@@ -980,23 +977,20 @@ public:
             s1 += "/state:i";
             if (!state_p.open(s1.c_str())) { portProblem = true; }
 
-#if defined(YARP_MSG)
             s1 = local;
             s1 += "/stateExt:i";
             if (!extendedIntputStatePort.open(s1.c_str())) { portProblem = true; }
-#endif
             //new code
             if (!portProblem)
             {
                 state_p.useCallback();
-#if defined(YARP_MSG)
                 extendedIntputStatePort.useCallback();
-#endif
             }
         }
 
         bool connectionProblem = false;
-        if (remote != "" && !portProblem) {
+        if (remote != "" && !portProblem)
+        {
             ConstString s1 = remote;
             s1 += "/rpc:i";
             ConstString s2 = local;
@@ -1025,17 +1019,27 @@ public:
             s2 += "/state:i";
             ok = Network::connect(s1, state_p.getName(), carrier);
 
-#if defined(YARP_MSG)
+            if (!ok) {
+                printf("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
+                connectionProblem = true;
+            }
+
             s1 = remote;
             s1 += "/stateExt:o";
             s2 = local;
             s2 += "/stateExt:i";
             // not checking return value for now since it is wip (different machines can have different compilation flags
-            /*ok = */ Network::connect(s1, s2, carrier);
-#endif
-            if (!ok) {
-                printf("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
-                connectionProblem = true;
+            ok = Network::connect(s1, s2, carrier);
+            if (ok)
+            {
+                controlBoardWrapper1_compatibility = false;
+            }
+            else
+            {
+                printf("*** Extended port %s was not found on the controlBoardWrapper I'm connecting to. Falling back to compatibility beaviour\n", s1.c_str());
+                printf("Updating to newer yarp and the usage of controlBoardWrapper2 is suggested***\n");
+                //connectionProblem = true;     // for compatibility
+                controlBoardWrapper1_compatibility = true;
             }
         }
 
@@ -1044,9 +1048,7 @@ public:
             rpc_p.close();
             command_p.close();
             state_p.close();
-#if defined(YARP_MSG)
             extendedIntputStatePort.close();
-#endif
             return false;
         }
 
@@ -1059,9 +1061,7 @@ public:
                 rpc_p.close();
                 command_p.close();
                 state_p.close();
-#if defined(YARP_MSG)
                 extendedIntputStatePort.close();
-#endif
                 return false;
             }
         }
@@ -1075,7 +1075,6 @@ public:
         else
             diagnosticThread=0;
 
-#if defined(YARP_MSG)
         // allocate memory for helper struct
         // single joint
         last_singleJoint.jointPosition.resize(1);
@@ -1100,7 +1099,6 @@ public:
         last_wholePart.pidOutput.resize(nj);
         last_wholePart.controlMode.resize(nj);
         last_wholePart.interactionMode.resize(nj);
-#endif
         return true;
     }
 
@@ -1119,9 +1117,7 @@ public:
         rpc_p.close();
         command_p.close();
         state_p.close();
-#if defined(YARP_MSG)
         extendedIntputStatePort.close();
-#endif
         return true;
     }
 
@@ -1450,12 +1446,16 @@ public:
         // return get1V1I1D(VOCAB_ENCODER, j, v);
         double localArrivalTime = 0.0;
         bool ret;
-#if !defined(YARP_MSG)
-        ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
-#else
-        ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *v = last_singleJoint.jointPosition[0];
-#endif
+
+        if(controlBoardWrapper1_compatibility)
+        {
+            ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+        }
+        else
+        {
+            ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+            *v = last_singleJoint.jointPosition[0];
+        }
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
             ret=false;
 
@@ -1472,12 +1472,15 @@ public:
         // return get1V1I1D(VOCAB_ENCODER, j, v);
         double localArrivalTime = 0.0;
         bool ret = false;
-#if !defined(YARP_MSG)
-        ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
-#else
-        ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *v = last_singleJoint.jointPosition[0];
-#endif
+        if(controlBoardWrapper1_compatibility)
+        {
+            ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+        }
+        else
+        {
+            ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+            *v = last_singleJoint.jointPosition[0];
+        }
         *t=lastStamp.getTime();
 
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
@@ -1501,31 +1504,33 @@ public:
         bool ret = false;
         double localArrivalTime=0.0;
 
-
-#if !defined(YARP_MSG)
-        Vector tmp(nj);
-
-        // mutex.wait();
-        ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
-        // mutex.post();
-
-        if (ret)
+        if(controlBoardWrapper1_compatibility)
         {
-            if (tmp.size() != (size_t)nj)
-                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+            Vector tmp(nj);
 
-            YARP_ASSERT (tmp.size() == (size_t)nj);
-            memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
+            // mutex.wait();
+            ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+            // mutex.post();
 
-            ////////////////////////// HANDLE TIMEOUT
-            // fill the vector anyway
-            if (Time::now()-localArrivalTime>TIMEOUT)
-                ret=false;
+            if (ret)
+            {
+                if (tmp.size() != (size_t)nj)
+                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+
+                YARP_ASSERT (tmp.size() == (size_t)nj);
+                memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
+
+                ////////////////////////// HANDLE TIMEOUT
+                // fill the vector anyway
+                if (Time::now()-localArrivalTime>TIMEOUT)
+                    ret=false;
+            }
         }
-#else
-        ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
-#endif
+        else
+        {
+            ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
+        }
         return ret;
     }
 
@@ -1541,30 +1546,32 @@ public:
         double localArrivalTime=0.0;
 
         bool ret=false;
-#if !defined(YARP_MSG)
-
-        Vector tmp(nj);
- //       mutex.wait();
-        ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
- //       mutex.post();
-
-        if (ret)
+        if(controlBoardWrapper1_compatibility)
         {
-            if (tmp.size() != (size_t)nj)
-                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+            Vector tmp(nj);
+     //       mutex.wait();
+            ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+     //       mutex.post();
 
-            YARP_ASSERT (tmp.size() == (size_t)nj);
-            for(int j=0; j<nj; j++)
+            if (ret)
             {
-                encs[j]=tmp[j];
-                ts[j]=lastStamp.getTime();
+                if (tmp.size() != (size_t)nj)
+                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+
+                YARP_ASSERT (tmp.size() == (size_t)nj);
+                for(int j=0; j<nj; j++)
+                {
+                    encs[j]=tmp[j];
+                    ts[j]=lastStamp.getTime();
+                }
             }
         }
-#else
-        ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
-        std::fill_n(ts, nj, lastStamp.getTime());
-#endif
+        else
+        {
+            ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
+            std::fill_n(ts, nj, lastStamp.getTime());
+        }
 
         ////////////////////////// HANDLE TIMEOUT
         if (Time::now()-localArrivalTime>TIMEOUT)
@@ -1580,14 +1587,17 @@ public:
      */
     virtual bool getEncoderSpeed(int j, double *sp)
     {
-#if !defined(YARP_MSG)
-        return get1V1I1D(VOCAB_ENCODER_SPEED, j, sp);
-#else
-        double localArrivalTime=0.0;
-        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *sp = last_singleJoint.jointVelocity[0];
-        return ret;
-#endif
+        if(controlBoardWrapper1_compatibility)
+        {
+            return get1V1I1D(VOCAB_ENCODER_SPEED, j, sp);
+        }
+        else
+        {
+            double localArrivalTime=0.0;
+            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+            *sp = last_singleJoint.jointVelocity[0];
+            return ret;
+        }
     }
 
 
@@ -1598,14 +1608,17 @@ public:
      */
     virtual bool getEncoderSpeeds(double *spds)
     {
-#if defined (YARP_MSG)
-        double localArrivalTime=0.0;
-        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.jointVelocity.begin(), last_wholePart.jointVelocity.end(), spds);
-        return ret;
-#else
-        return get1VDA(VOCAB_ENCODER_SPEEDS, spds);
-#endif
+        if(controlBoardWrapper1_compatibility)
+        {
+            double localArrivalTime=0.0;
+            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            std::copy(last_wholePart.jointVelocity.begin(), last_wholePart.jointVelocity.end(), spds);
+            return ret;
+        }
+        else
+        {
+            return get1VDA(VOCAB_ENCODER_SPEEDS, spds);
+        }
     }
 
     /**
@@ -1616,14 +1629,17 @@ public:
 
     virtual bool getEncoderAcceleration(int j, double *acc)
     {
-#if defined (YARP_MSG)
-        double localArrivalTime=0.0;
-        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *acc = last_singleJoint.jointAcceleration[0];
-        return ret;
-#else
-        return get1V1I1D(VOCAB_ENCODER_ACCELERATION, j, acc);
-#endif
+        if(controlBoardWrapper1_compatibility)
+        {
+            double localArrivalTime=0.0;
+            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+            *acc = last_singleJoint.jointAcceleration[0];
+            return ret;
+        }
+        else
+        {
+            return get1V1I1D(VOCAB_ENCODER_ACCELERATION, j, acc);
+        }
     }
 
     /**
@@ -1633,14 +1649,17 @@ public:
      */
     virtual bool getEncoderAccelerations(double *accs)
     {
-#if defined (YARP_MSG)
-        double localArrivalTime=0.0;
-        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.jointAcceleration.begin(), last_wholePart.jointAcceleration.end(), accs);
-        return ret;
-#else
-        return get1VDA(VOCAB_ENCODER_ACCELERATIONS, accs);
-#endif
+        if(controlBoardWrapper1_compatibility)
+        {
+            double localArrivalTime=0.0;
+            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            std::copy(last_wholePart.jointAcceleration.begin(), last_wholePart.jointAcceleration.end(), accs);
+            return ret;
+        }
+        else
+        {
+            return get1VDA(VOCAB_ENCODER_ACCELERATIONS, accs);
+        }
     }
 
     /* IMotorEncoder */
@@ -2429,26 +2448,32 @@ public:
 
     bool getTorque(int j, double *t)
     {
-#if defined (YARP_MSG)
-        double localArrivalTime=0.0;
-        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *t = last_singleJoint.torque[0];
-        return ret;
-#else
-        return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t);
-#endif
+        if(controlBoardWrapper1_compatibility)
+        {
+            return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t);
+        }
+        else
+        {
+            double localArrivalTime=0.0;
+            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+            *t = last_singleJoint.torque[0];
+            return ret;
+        }
     }
 
     bool getTorques(double *t)
     {
-#if defined (YARP_MSG)
-        double localArrivalTime=0.0;
-        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.torque.begin(), last_wholePart.torque.end(), t);
-        return ret;
-#else
-        return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t);
-#endif
+        if(controlBoardWrapper1_compatibility)
+        {
+            return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t);
+        }
+        else
+        {
+            double localArrivalTime=0.0;
+            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            std::copy(last_wholePart.torque.begin(), last_wholePart.torque.end(), t);
+            return ret;
+        }
     }
 
     bool getTorqueRange(int j, double *min, double* max)
@@ -2683,64 +2708,70 @@ public:
     bool getControlMode(int j, int *mode)
     {
         bool ok = false;
-#if defined(YARP_MSG)
-        double localArrivalTime=0.0;
-        ok = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *mode = last_singleJoint.controlMode[0];
-#else
-        Bottle cmd, resp;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_ICONTROLMODE);
-        cmd.addVocab(VOCAB_CM_CONTROL_MODE);
-        cmd.addInt(j);
+        if(controlBoardWrapper1_compatibility)
+        {
+            Bottle cmd, resp;
+            cmd.addVocab(VOCAB_GET);
+            cmd.addVocab(VOCAB_ICONTROLMODE);
+            cmd.addVocab(VOCAB_CM_CONTROL_MODE);
+            cmd.addInt(j);
 
-        ok = rpc_p.write(cmd, resp);
-        if (CHECK_FAIL(ok, resp)) {
-            *mode=resp.get(2).asVocab();
-            return true;
+            ok = rpc_p.write(cmd, resp);
+            if (CHECK_FAIL(ok, resp))
+            {
+                *mode=resp.get(2).asVocab();
+            }
         }
-#endif
+        else
+        {
+            double localArrivalTime=0.0;
+            ok = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+            *mode = last_singleJoint.controlMode[0];
+        }
         return ok;
+
     }
 
     // IControlMode2
     bool getControlModes(const int n_joint, const int *joints, int *modes)
     {
-        bool ok = false;
-#if defined(YARP_MSG)
-        double localArrivalTime=0.0;
-        ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        for (int i = 0; i < n_joint; i++)
-            modes[i] = last_wholePart.controlMode[joints[i]];
-#else
-        Bottle cmd, resp;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_ICONTROLMODE);
-        cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
-        cmd.addInt(n_joint);
-        Bottle& l1 = cmd.addList();
-        for (int i = 0; i < n_joint; i++)
-            l1.addInt(joints[i]);
-
-        ok = rpc_p.write(cmd, resp);
-
-        if (CHECK_FAIL(ok, resp))
+        bool ok = false;      
+        if(controlBoardWrapper1_compatibility)
         {
-            Bottle& l = *(resp.get(2).asList());
-            if (&l == 0)
-                return false;
-
-            if (n_joint != l.size())
-            {
-                printf("getControlModes group received an answer of wrong lenght. expected %d, actual size is %d", n_joint, l.size());
-                return false;
-            }
-
+            Bottle cmd, resp;
+            cmd.addVocab(VOCAB_GET);
+            cmd.addVocab(VOCAB_ICONTROLMODE);
+            cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
+            cmd.addInt(n_joint);
+            Bottle& l1 = cmd.addList();
             for (int i = 0; i < n_joint; i++)
-                modes[i] = l.get(i).asInt();
-            return true;
+                l1.addInt(joints[i]);
+
+            ok = rpc_p.write(cmd, resp);
+
+            if (CHECK_FAIL(ok, resp))
+            {
+                Bottle& l = *(resp.get(2).asList());
+                if (&l == 0)
+                    return false;
+
+                if (n_joint != l.size())
+                {
+                    printf("getControlModes group received an answer of wrong lenght. expected %d, actual size is %d", n_joint, l.size());
+                    return false;
+                }
+
+                for (int i = 0; i < n_joint; i++)
+                    modes[i] = l.get(i).asInt();
+            }
         }
-#endif
+        else
+        {
+            double localArrivalTime=0.0;
+            ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            for (int i = 0; i < n_joint; i++)
+                modes[i] = last_wholePart.controlMode[joints[i]];
+        }
         return ok;
     }
 
@@ -2748,29 +2779,32 @@ public:
     bool getControlModes(int *modes)
     {
         bool ok = false;
- #if defined(YARP_MSG)
-        double localArrivalTime=0.0;
-        ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.controlMode.begin(), last_wholePart.controlMode.end(), modes);
- #else
-        if (!isLive()) return false;
-        Bottle cmd, resp;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_ICONTROLMODE);
-        cmd.addVocab(VOCAB_CM_CONTROL_MODES);
+        if(controlBoardWrapper1_compatibility)
+        {
+            if (!isLive()) return false;
+            Bottle cmd, resp;
+            cmd.addVocab(VOCAB_GET);
+            cmd.addVocab(VOCAB_ICONTROLMODE);
+            cmd.addVocab(VOCAB_CM_CONTROL_MODES);
 
-        ok = rpc_p.write(cmd, resp);
-        if (CHECK_FAIL(ok, resp)) {
-            Bottle& l = *(resp.get(2).asList());
-            if (&l == 0)
-                return false;
-            int njs = l.size();
-            YARP_ASSERT (nj == njs);
-            for (int i = 0; i < nj; i++)
-                modes[i] = l.get(i).asInt();
-            return true;
+            ok = rpc_p.write(cmd, resp);
+            if (CHECK_FAIL(ok, resp)) {
+                Bottle& l = *(resp.get(2).asList());
+                if (&l == 0)
+                    return false;
+                int njs = l.size();
+                YARP_ASSERT (nj == njs);
+                for (int i = 0; i < nj; i++)
+                    modes[i] = l.get(i).asInt();
+                return true;
+            }
         }
-#endif
+        else
+        {
+            double localArrivalTime=0.0;
+            ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            std::copy(last_wholePart.controlMode.begin(), last_wholePart.controlMode.end(), modes);
+        }
         return ok;
     }
 
@@ -3008,122 +3042,131 @@ public:
     bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
     {
         bool ok = false;
- #if defined(YARP_MSG)
-        double localArrivalTime=0.0;
-        ok = extendedIntputStatePort.getLast(axis, last_singleJoint, lastStamp, localArrivalTime);
-        *mode = (yarp::dev::InteractionModeEnum)last_singleJoint.interactionMode[0];
-#else
-        Bottle cmd, response;
-
-        if (!isLive()) return false;
-
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
-        cmd.addVocab(VOCAB_INTERACTION_MODE);
-        cmd.addInt(axis);
-
-        ok = rpc_p.write(cmd, response);
-
-        if (CHECK_FAIL(ok, response))
+        if(controlBoardWrapper1_compatibility)
         {
-            YARP_ASSERT (response.size()>=1);
-            *mode = (InteractionModeEnum) response.get(0).asVocab();
+            Bottle cmd, response;
+
+            if (!isLive()) return false;
+
+            cmd.addVocab(VOCAB_GET);
+            cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+            cmd.addVocab(VOCAB_INTERACTION_MODE);
+            cmd.addInt(axis);
+
+            ok = rpc_p.write(cmd, response);
+
+            if (CHECK_FAIL(ok, response))
+            {
+                YARP_ASSERT (response.size()>=1);
+                *mode = (InteractionModeEnum) response.get(0).asVocab();
+            }
         }
-#endif
+        else
+        {
+            double localArrivalTime=0.0;
+            ok = extendedIntputStatePort.getLast(axis, last_singleJoint, lastStamp, localArrivalTime);
+            *mode = (yarp::dev::InteractionModeEnum)last_singleJoint.interactionMode[0];
+        }
         return ok;
     }
 
     bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
     {
         bool ok = false;
- #if defined(YARP_MSG)
-        double localArrivalTime=0.0;
-        ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        for (int i = 0; i < n_joints; i++)
-            modes[i] = (yarp::dev::InteractionModeEnum)last_wholePart.interactionMode[joints[i]];
-#else
-        Bottle cmd, response;
-        if (!isLive()) return false;
-
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
-        cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
-
-        cmd.addInt(n_joints);
-
-        Bottle& l1 = cmd.addList();
-        for (int i = 0; i < n_joints; i++)
-            l1.addInt(joints[i]);
-
-        ok = rpc_p.write(cmd, response);
-
-        if (CHECK_FAIL(ok, response))
+        if(controlBoardWrapper1_compatibility)
         {
-            int i;
-            Bottle& list = *(response.get(0).asList());
-            YARP_ASSERT(list.size() >= n_joints)
+            Bottle cmd, response;
+            if (!isLive()) return false;
 
-            if (list.size() != n_joints)
+            cmd.addVocab(VOCAB_GET);
+            cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+            cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
+
+            cmd.addInt(n_joints);
+
+            Bottle& l1 = cmd.addList();
+            for (int i = 0; i < n_joints; i++)
+                l1.addInt(joints[i]);
+
+            ok = rpc_p.write(cmd, response);
+
+            if (CHECK_FAIL(ok, response))
             {
-                fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
-                return false;
-            }
-            else
-            {
-                for (i = 0; i < n_joints; i++)
+                int i;
+                Bottle& list = *(response.get(0).asList());
+                YARP_ASSERT(list.size() >= n_joints)
+
+                if (list.size() != n_joints)
                 {
-                    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
+                    fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
+                    return false;
                 }
-                return true;
+                else
+                {
+                    for (i = 0; i < n_joints; i++)
+                    {
+                        modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
+                    }
+                    return true;
+                }
             }
         }
-#endif
+        else
+        {
+            double localArrivalTime=0.0;
+            ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            for (int i = 0; i < n_joints; i++)
+                modes[i] = (yarp::dev::InteractionModeEnum)last_wholePart.interactionMode[joints[i]];
+        }
         return ok;
     }
 
     bool getInteractionModes(yarp::dev::InteractionModeEnum* modes)
     {
         bool ret = false;
- #if defined(YARP_MSG)
-        double localArrivalTime=0.0;
-        ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.interactionMode.begin(), last_wholePart.interactionMode.end(), (int*)modes);
- #else
-        Bottle cmd, response;
-        if (!isLive()) return false;
-
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
-        cmd.addVocab(VOCAB_INTERACTION_MODES);
-
-        bool ok = rpc_p.write(cmd, response);
-
-        if (CHECK_FAIL(ok, response))
+        if(!controlBoardWrapper1_compatibility)
         {
-            int i;
-            Bottle& list = *(response.get(0).asList());
-            YARP_ASSERT(list.size() >= nj)
-
-            if (list.size() != nj)
-            {
-                fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
-                return false;
-
-            }
-            else
-            {
-                for (i = 0; i < nj; i++)
-                {
-                    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
-                }
-                ret = true;
-            }
+            double localArrivalTime=0.0;
+            ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            std::copy(last_wholePart.interactionMode.begin(), last_wholePart.interactionMode.end(), (int*)modes);
         }
         else
         {
-            ret = false;
+            Bottle cmd, response;
+            if (!isLive()) return false;
+
+            cmd.addVocab(VOCAB_GET);
+            cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+            cmd.addVocab(VOCAB_INTERACTION_MODES);
+
+            bool ok = rpc_p.write(cmd, response);
+
+            if (CHECK_FAIL(ok, response))
+            {
+                int i;
+                Bottle& list = *(response.get(0).asList());
+                YARP_ASSERT(list.size() >= nj)
+
+                if (list.size() != nj)
+                {
+                    fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
+                    return false;
+
+                }
+                else
+                {
+                    for (i = 0; i < nj; i++)
+                    {
+                        modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
+                    }
+                    ret = true;
+                }
+            }
+            else
+            {
+                ret = false;
+            }
         }
-#endif
         return ret;
     }
 
@@ -3265,31 +3308,34 @@ public:
 
     virtual bool getOutput(int j, double *out)
     {
-#if defined (YARP_MSG)
-        double localArrivalTime=0.0;
-        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *out = last_singleJoint.pidOutput[0];
-        return ret;
-#else
-        // both iOpenLoop and iPid getOutputs will pass here and use the VOCAB_OPENLOOP_INTERFACE
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_GET);
-//        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
-        cmd.addVocab(VOCAB_OUTPUT);
-        cmd.addInt(j);
-        bool ok = rpc_p.write(cmd, response);
-
-        if (CHECK_FAIL(ok, response))
+        if(!controlBoardWrapper1_compatibility)
         {
-            // ok
-            *out = response.get(2).asDouble();
-
-            getTimeStamp(response, lastStamp);
-            return true;
+            double localArrivalTime=0.0;
+            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+            *out = last_singleJoint.pidOutput[0];
+            return ret;
         }
         else
-            return false;
-#endif
+        {
+            // both iOpenLoop and iPid getOutputs will pass here and use the VOCAB_OPENLOOP_INTERFACE
+            Bottle cmd, response;
+            cmd.addVocab(VOCAB_GET);
+    //        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
+            cmd.addVocab(VOCAB_OUTPUT);
+            cmd.addInt(j);
+            bool ok = rpc_p.write(cmd, response);
+    
+            if (CHECK_FAIL(ok, response))
+            {
+                // ok
+                *out = response.get(2).asDouble();
+    
+                getTimeStamp(response, lastStamp);
+                return true;
+            }
+            else
+                return false;
+        }
     }
 
     /**
@@ -3299,14 +3345,15 @@ public:
      */
     virtual bool getOutputs(double *outs)
     {
-#if defined (YARP_MSG)
-        double localArrivalTime=0.0;
-        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.pidOutput.begin(), last_wholePart.pidOutput.end(), outs);
-        return ret;
-#else
-        return get1VDA(VOCAB_OUTPUTS, outs);
-#endif
+        if(!controlBoardWrapper1_compatibility)
+        {
+            double localArrivalTime=0.0;
+            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+            std::copy(last_wholePart.pidOutput.begin(), last_wholePart.pidOutput.end(), outs);
+            return ret;
+        }
+        else
+            return get1VDA(VOCAB_OUTPUTS, outs);
     }
 };
 
