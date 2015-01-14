@@ -2237,6 +2237,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_MOTOR_ENCODER_NUMBER:
+                            {
+                                int num=0;
+                                ok = rpc_IMotEnc->getNumberOfMotorEncoders(&num);
+                                response.addInt(num);
+                            }
+                            break;
+
                             case VOCAB_AMP_CURRENT:
                             {
                                 ok = rcp_IAmp->getCurrent(cmd.get(2).asInt(), &dtmp);

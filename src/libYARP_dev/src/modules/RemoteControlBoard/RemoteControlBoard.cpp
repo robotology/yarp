@@ -1678,7 +1678,7 @@ public:
      * @param cpr new parameter
      * @return true/false
      */
-    virtual bool setMotorEncoderCountsPerRevolution(int m, double cpr) {
+    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr) {
         return set1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
     }
 
@@ -1917,6 +1917,14 @@ public:
         return ret;
     }
 
+    /**
+     * Get the number of available motor encoders.
+     * @param m pointer to a value representing the number of available motor encoders.
+     * @return true/false
+     */
+    virtual bool getNumberOfMotorEncoders(int *num) {
+        return get1V1I(VOCAB_MOTOR_ENCODER_NUMBER, *num);
+    }
 
     /* IPositionControl */
 

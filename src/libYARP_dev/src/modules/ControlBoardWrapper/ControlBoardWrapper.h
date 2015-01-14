@@ -649,6 +649,13 @@ public:
     /* IMotorEncoders */
 
     /**
+     * Get the number of available motor encoders.
+     * @param m pointer to a value representing the number of available motor encoders.
+     * @return true/false
+     */
+    virtual bool getNumberOfMotorEncoders(int *num);
+
+    /**
     * Reset encoder, single joint. Set the encoder value to zero
     * @param j is the axis number
     * @return true/false on success/failure
@@ -667,7 +674,7 @@ public:
      * @param cpr new parameter
      * @return true/false
      */
-    virtual bool setMotorEncoderCountsPerRevolution(int m, double cpr);
+    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr);
 
     /**
      * gets number of counts per revolution for motor encoder m.

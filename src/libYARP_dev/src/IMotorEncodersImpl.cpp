@@ -1,8 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
- * Authors: Lorenzo Natale
+ * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -60,9 +60,9 @@ bool ImplementMotorEncoders::uninitialize ()
     return true;
 }
 
-bool ImplementMotorEncoders::getAxes(int *ax)
+bool ImplementMotorEncoders::getNumberOfMotorEncoders(int *num)
 {
-    (*ax)=castToMapper(helper)->axes();
+    (*num)=castToMapper(helper)->axes();
     return true;
 }
 

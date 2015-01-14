@@ -2696,6 +2696,12 @@ bool ControlBoardWrapper::getMotorEncoderAccelerations(double *accs)
     return ret;
 }
 
+
+bool ControlBoardWrapper::getNumberOfMotorEncoders(int *num) {
+    *num=controlledJoints;
+    return true;
+}
+
 /* IAmplifierControl */
 
 bool ControlBoardWrapper::enableAmp(int j)

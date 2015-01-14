@@ -1,8 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
- * Authors: Lorenzo Natale
+ * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -53,13 +53,13 @@ public:
 
     virtual ~ImplementMotorEncoders();
     
-    virtual bool getAxes(int *ax);
+    virtual bool getNumberOfMotorEncoders(int *num);
 
     virtual bool resetMotorEncoder(int m);
     virtual bool resetMotorEncoders();
     virtual bool setMotorEncoder(int m, double val);
     virtual bool setMotorEncoders(const double *vals);
-    virtual bool setMotorEncoderCountsPerRevolution(int m, double cpr);
+    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr);
     virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr);
     virtual bool getMotorEncoder(int m, double *v);
     virtual bool getMotorEncodersTimed(double *encs, double *time);

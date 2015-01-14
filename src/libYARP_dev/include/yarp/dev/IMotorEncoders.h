@@ -1,8 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
- * Authors: Lorenzo Natale
+ * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -33,11 +33,11 @@ public:
     virtual ~IMotorEncodersRaw() {}
 
     /**
-     * Get the number of controlled axes. This command asks the number of controlled
-     * axes for the current physical interface.
-     * @return the number of controlled axes.
+     * Get the number of available motor encoders.
+     * @param m pointer to a value representing the number of available motor encoders.
+     * @return true/false
      */
-    virtual bool getAxes(int *ax) = 0;
+    virtual bool getNumberOfMotorEncodersRaw(int *num) = 0;
 
     /**
      * Reset motor encoder, single motor. Set the encoder value to zero.
@@ -58,7 +58,7 @@ public:
      * @param cpr new value
      * @return true/false
      */
-    virtual bool setMotorEncoderCountsPerRevolutionRaw(int m, double cpr)=0;
+    virtual bool setMotorEncoderCountsPerRevolutionRaw(int m, const double cpr)=0;
 
     /**
      * Gets number of counts per revolution for motor encoder m.
@@ -160,11 +160,11 @@ public:
     virtual ~IMotorEncoders() {}
 
     /**
-     * Get the number of controlled axes. This command asks the number of controlled
-     * axes for the current physical interface.
-     * @return the number of controlled axes.
+     * Get the number of available motor encoders.
+     * @param m pointer to a value representing the number of available motor encoders.
+     * @return true/false
      */
-    virtual bool getAxes(int *ax) = 0;
+    virtual bool getNumberOfMotorEncoders(int *num) = 0;
 
     /**
      * Reset motor encoder, single motor. Set the encoder value to zero.
@@ -185,7 +185,7 @@ public:
      * @param cpr new value
      * @return true/false
      */
-    virtual bool setMotorEncoderCountsPerRevolution(int m, double cpr)=0;
+    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr)=0;
 
     /**
      * Gets number of counts per revolution for motor encoder m.
@@ -281,6 +281,7 @@ public:
 #define VOCAB_MOTOR_CPR VOCAB4('m','c','p','r')
 
 // interface IMotorEncoders gets
+#define VOCAB_MOTOR_ENCODER_NUMBER VOCAB4('m','n','u','m')
 #define VOCAB_MOTOR_ENCODER_SPEED VOCAB3('m','s','p')
 #define VOCAB_MOTOR_ENCODER_SPEEDS VOCAB4('m','s','p','s')
 #define VOCAB_MOTOR_ENCODER_ACCELERATION VOCAB3('m','a','c')
