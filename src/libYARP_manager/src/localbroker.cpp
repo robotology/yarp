@@ -29,10 +29,12 @@
     #include <fcntl.h>
     #include <cerrno>
     #include <unistd.h>
+    #include <string.h>
 
-    #define PIPE_TIMEOUT    0
-    #define PIPE_EVENT      1
-    #define PIPE_SIGNALED   2
+    #define PIPE_TIMEOUT        0
+    #define PIPE_EVENT          1
+    #define PIPE_SIGNALED       2
+    #define C_MAXARGS           128         // max number of the command parametes
 #endif
 
 using namespace yarp::os;
@@ -507,50 +509,6 @@ void LocalBroker::threadRelease()
 }
 
 
-void LocalBroker::ParseCmd(char* cmd_str,char** szarg)
-{
-    int nargs=0;
-    for (bool bSpace=true; *cmd_str; ++cmd_str)
-    {
-        if (*cmd_str!=' ')
-        {
-            if (bSpace) szarg[nargs++]=cmd_str;
-            bSpace=false;
-        }
-        else
-        {
-            *cmd_str=0;
-            bSpace=true;
-        }
-    }
-}
-
-
-int LocalBroker::CountArgs(char *str)
-{
-    int nargs=0;
-    for (bool bSpace=true; *str; ++str)
-    {
-        if (bSpace)
-        {
-            if (*str!=' ')
-            {
-                ++nargs;
-                bSpace=false;
-            }
-        }
-        else
-        {
-            if (*str==' ')
-            {
-                bSpace=true;
-            }
-        }
-    }
-    return nargs;
-}
-
-
 #if defined(WIN32)
 
 string LocalBroker::lastError2String()
@@ -851,11 +809,10 @@ int LocalBroker::ExecuteCmd(void)
         strCmd = strCmd + string(" ") + strParam;
         char *szcmd = new char[strCmd.size()+1];
         strcpy(szcmd,strCmd.c_str());
-        int nargs = CountArgs(szcmd);
-        char **szarg = new char*[nargs+1];
-        ParseCmd(szcmd, szarg);
+        int nargs = 0;
+        char **szarg = new char*[C_MAXARGS + 1];
+        parseArguments(szcmd, &nargs, szarg);
         szarg[nargs]=0;
-
         if(strEnv.size())
         {
             char* szenv = new char[strEnv.size()+1];
@@ -948,4 +905,73 @@ int LocalBroker::ExecuteCmd(void)
     return 0;
 }
 
+/**
+ * Split a line into separate words.
+ */
+void LocalBroker::splitLine(char *pLine, char **pArgs)
+{
+     char *pTmp = strchr(pLine, ' ');
+
+    if (pTmp) {
+        *pTmp = '\0';
+        pTmp++;
+        while ((*pTmp) && (*pTmp == ' ')) {
+            pTmp++;
+        }
+        if (*pTmp == '\0') {
+            pTmp = NULL;
+        }
+    }
+    *pArgs = pTmp;
+}
+
+
+
+/**
+ * Breaks up a line into multiple arguments.
+ */
+void LocalBroker::parseArguments(char *io_pLine, int *o_pArgc, char **o_pArgv)
+{
+    char *pNext = io_pLine;
+    size_t i;
+    int j;
+    int quoted = 0;
+    size_t len = strlen(io_pLine);
+
+    // Protect spaces inside quotes, but lose the quotes
+    for(i = 0; i < len; i++) {
+        if ((!quoted) && ('"' == io_pLine[i])) {
+            quoted = 1;
+            io_pLine[i] = ' ';
+        } else if ((quoted) && ('"' == io_pLine[i])) {
+            quoted = 0;
+            io_pLine[i] = ' ';
+        } else if ((quoted) && (' ' == io_pLine[i])) {
+            io_pLine[i] = '\1';
+        }
+    }
+
+    // init
+    memset(o_pArgv, 0x00, sizeof(char*) * C_MAXARGS);
+    *o_pArgc = 1;
+    o_pArgv[0] = io_pLine;
+
+    while ((NULL != pNext) && (*o_pArgc < C_MAXARGS)) {
+        splitLine(pNext, &(o_pArgv[*o_pArgc]));
+        pNext = o_pArgv[*o_pArgc];
+
+        if (NULL != o_pArgv[*o_pArgc]) {
+            *o_pArgc += 1;
+        }
+    }
+
+    for(j = 0; j < *o_pArgc; j++) {
+        len = strlen(o_pArgv[j]);
+        for(i = 0; i < len; i++) {
+            if('\1' == o_pArgv[j][i]) {
+                o_pArgv[j][i] = ' ';
+            }
+        }
+    }
+}
 #endif

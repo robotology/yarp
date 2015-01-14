@@ -87,8 +87,6 @@ private:
     FILE* fd_stdout;
     bool bShowConsole;
     bool timeout(double base, double timeout);
-    void ParseCmd(char* cmd_str,char** arg_str);
-    int CountArgs(char *str);
     int ExecuteCmd(void);
     bool psCmd(int pid);
     bool killCmd(int pid);
@@ -100,6 +98,8 @@ private:
 #else
     int waitPipe(int pipe_fd);
     int waitPipeSignal(int pipe_fd);
+    void splitLine(char *pLine, char **pArgs);
+    void parseArguments(char *io_pLine, int *o_pArgc, char **o_pArgv);
 #endif
     bool startStdout(void);
     void stopStdout(void);
