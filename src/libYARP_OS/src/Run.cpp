@@ -26,6 +26,8 @@
 #include <windows.h>
 #else
 #include <unistd.h>
+#include <string.h>
+#define C_MAXARGS       128     // the max number of command paramters. rational?
 #endif
 
 #if !defined(WIN32)
@@ -2307,7 +2309,7 @@ int yarp::os::Run::userStdio(Bottle& msg,Bottle& result)
 ////////////////
 #else // LINUX
 ////////////////
-
+/*
 int CountArgs(char *str)
 {
     int nargs=0;
@@ -2349,6 +2351,76 @@ void ParseCmd(char* cmd_str,char** arg_str)
         {
             *cmd_str=0;
             bSpace=true;
+        }
+    }
+}
+*/
+/**
+ * Split a line into separate words.
+ */
+void splitLine(char *pLine, char **pArgs)
+{
+     char *pTmp = strchr(pLine, ' ');
+
+    if (pTmp) {
+        *pTmp = '\0';
+        pTmp++;
+        while ((*pTmp) && (*pTmp == ' ')) {
+            pTmp++;
+        }
+        if (*pTmp == '\0') {
+            pTmp = NULL;
+        }
+    }
+    *pArgs = pTmp;
+}
+
+
+
+/**
+ * Breaks up a line into multiple arguments.
+ */
+void parseArguments(char *io_pLine, int *o_pArgc, char **o_pArgv)
+{
+    char *pNext = io_pLine;
+    size_t i;
+    int j;
+    int quoted = 0;
+    size_t len = strlen(io_pLine);
+
+    // Protect spaces inside quotes, but lose the quotes
+    for(i = 0; i < len; i++) {
+        if ((!quoted) && ('"' == io_pLine[i])) {
+            quoted = 1;
+            io_pLine[i] = ' ';
+        } else if ((quoted) && ('"' == io_pLine[i])) {
+            quoted = 0;
+            io_pLine[i] = ' ';
+        } else if ((quoted) && (' ' == io_pLine[i])) {
+            io_pLine[i] = '\1';
+        }
+    }
+
+    // init
+    memset(o_pArgv, 0x00, sizeof(char*) * C_MAXARGS);
+    *o_pArgc = 1;
+    o_pArgv[0] = io_pLine;
+
+    while ((NULL != pNext) && (*o_pArgc < C_MAXARGS)) {
+        splitLine(pNext, &(o_pArgv[*o_pArgc]));
+        pNext = o_pArgv[*o_pArgc];
+
+        if (NULL != o_pArgv[*o_pArgc]) {
+            *o_pArgc += 1;
+        }
+    }
+
+    for(j = 0; j < *o_pArgc; j++) {
+        len = strlen(o_pArgv[j]);
+        for(i = 0; i < len; i++) {
+            if('\1' == o_pArgv[j][i]) {
+                o_pArgv[j][i] = ' ';
+            }
         }
     }
 }
@@ -2583,9 +2655,15 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
                 char *cmd_str=new char[strCmd.length()+1];
                 strcpy(cmd_str,strCmd.c_str());
+                /*
                 int nargs=CountArgs(cmd_str);
                 char **arg_str=new char*[nargs+1];
-                ParseCmd(cmd_str,arg_str);
+                ParseCmd(cmd_str,arg_str);                
+                arg_str[nargs]=0;
+                */
+                int nargs = 0;
+                char **arg_str = new char*[C_MAXARGS + 1];
+                parseArguments(cmd_str, &nargs, arg_str);
                 arg_str[nargs]=0;
 
                 setvbuf(stdout,NULL,_IONBF,0);
@@ -2921,9 +2999,15 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
                 char *cmd_str=new char[strCmd.length()+1];
                 strcpy(cmd_str,strCmd.c_str());
+                /*
                 int nargs=CountArgs(cmd_str);
                 char **arg_str=new char*[nargs+1];
                 ParseCmd(cmd_str,arg_str);
+                arg_str[nargs]=0;
+                */
+                int nargs = 0;
+                char **arg_str = new char*[C_MAXARGS + 1];
+                parseArguments(cmd_str, &nargs, arg_str);
                 arg_str[nargs]=0;
 
                 setvbuf(stdout,NULL,_IONBF,0);
@@ -3338,9 +3422,15 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
         char *cmd_str=new char[strCmd.length()+1];
         strcpy(cmd_str,strCmd.c_str());
+        /*
         int nargs=CountArgs(cmd_str);
         char **arg_str=new char*[nargs+1];
         ParseCmd(cmd_str,arg_str);
+        arg_str[nargs]=0;
+        */
+        int nargs = 0;
+        char **arg_str = new char*[C_MAXARGS + 1];
+        parseArguments(cmd_str, &nargs, arg_str);
         arg_str[nargs]=0;
 
         if (msg.check("env"))
