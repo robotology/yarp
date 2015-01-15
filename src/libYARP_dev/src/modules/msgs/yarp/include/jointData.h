@@ -13,9 +13,12 @@ class jointData;
 class jointData : public yarp::os::idl::WirePortable {
 public:
   // Fields
-  std::vector<double>  position;
-  std::vector<double>  velocity;
-  std::vector<double>  acceleration;
+  std::vector<double>  jointPosition;
+  std::vector<double>  jointVelocity;
+  std::vector<double>  jointAcceleration;
+  std::vector<double>  motorPosition;
+  std::vector<double>  motorVelocity;
+  std::vector<double>  motorAcceleration;
   std::vector<double>  torque;
   std::vector<double>  pidOutput;
   std::vector<int32_t>  controlMode;
@@ -26,16 +29,17 @@ public:
   }
 
   // Constructor with field values
-  jointData(const std::vector<double> & position,const std::vector<double> & velocity,const std::vector<double> & acceleration,const std::vector<double> & torque,const std::vector<double> & pidOutput,const std::vector<int32_t> & controlMode,const std::vector<int32_t> & interactionMode) : position(position), velocity(velocity), acceleration(acceleration), torque(torque), pidOutput(pidOutput), controlMode(controlMode), interactionMode(interactionMode) {
+  jointData(const std::vector<double> & jointPosition,const std::vector<double> & jointVelocity,const std::vector<double> & jointAcceleration,const std::vector<double> & motorPosition,const std::vector<double> & motorVelocity,const std::vector<double> & motorAcceleration,const std::vector<double> & torque,const std::vector<double> & pidOutput,const std::vector<int32_t> & controlMode,const std::vector<int32_t> & interactionMode) : jointPosition(jointPosition), jointVelocity(jointVelocity), jointAcceleration(jointAcceleration), motorPosition(motorPosition), motorVelocity(motorVelocity), motorAcceleration(motorAcceleration), torque(torque), pidOutput(pidOutput), controlMode(controlMode), interactionMode(interactionMode) {
   }
 
   // Copy constructor
-  jointData(const jointData& __alt) :
-      WirePortable(__alt)
-  {
-    this->position = __alt.position;
-    this->velocity = __alt.velocity;
-    this->acceleration = __alt.acceleration;
+  jointData(const jointData& __alt) : WirePortable(__alt)  {
+    this->jointPosition = __alt.jointPosition;
+    this->jointVelocity = __alt.jointVelocity;
+    this->jointAcceleration = __alt.jointAcceleration;
+    this->motorPosition = __alt.motorPosition;
+    this->motorVelocity = __alt.motorVelocity;
+    this->motorAcceleration = __alt.motorAcceleration;
     this->torque = __alt.torque;
     this->pidOutput = __alt.pidOutput;
     this->controlMode = __alt.controlMode;
@@ -44,9 +48,12 @@ public:
 
   // Assignment operator
   const jointData& operator = (const jointData& __alt) {
-    this->position = __alt.position;
-    this->velocity = __alt.velocity;
-    this->acceleration = __alt.acceleration;
+    this->jointPosition = __alt.jointPosition;
+    this->jointVelocity = __alt.jointVelocity;
+    this->jointAcceleration = __alt.jointAcceleration;
+    this->motorPosition = __alt.motorPosition;
+    this->motorVelocity = __alt.motorVelocity;
+    this->motorAcceleration = __alt.motorAcceleration;
     this->torque = __alt.torque;
     this->pidOutput = __alt.pidOutput;
     this->controlMode = __alt.controlMode;
@@ -61,12 +68,18 @@ public:
   bool write(yarp::os::ConnectionWriter& connection);
 
 private:
-  bool write_position(yarp::os::idl::WireWriter& writer);
-  bool nested_write_position(yarp::os::idl::WireWriter& writer);
-  bool write_velocity(yarp::os::idl::WireWriter& writer);
-  bool nested_write_velocity(yarp::os::idl::WireWriter& writer);
-  bool write_acceleration(yarp::os::idl::WireWriter& writer);
-  bool nested_write_acceleration(yarp::os::idl::WireWriter& writer);
+  bool write_jointPosition(yarp::os::idl::WireWriter& writer);
+  bool nested_write_jointPosition(yarp::os::idl::WireWriter& writer);
+  bool write_jointVelocity(yarp::os::idl::WireWriter& writer);
+  bool nested_write_jointVelocity(yarp::os::idl::WireWriter& writer);
+  bool write_jointAcceleration(yarp::os::idl::WireWriter& writer);
+  bool nested_write_jointAcceleration(yarp::os::idl::WireWriter& writer);
+  bool write_motorPosition(yarp::os::idl::WireWriter& writer);
+  bool nested_write_motorPosition(yarp::os::idl::WireWriter& writer);
+  bool write_motorVelocity(yarp::os::idl::WireWriter& writer);
+  bool nested_write_motorVelocity(yarp::os::idl::WireWriter& writer);
+  bool write_motorAcceleration(yarp::os::idl::WireWriter& writer);
+  bool nested_write_motorAcceleration(yarp::os::idl::WireWriter& writer);
   bool write_torque(yarp::os::idl::WireWriter& writer);
   bool nested_write_torque(yarp::os::idl::WireWriter& writer);
   bool write_pidOutput(yarp::os::idl::WireWriter& writer);
@@ -75,12 +88,18 @@ private:
   bool nested_write_controlMode(yarp::os::idl::WireWriter& writer);
   bool write_interactionMode(yarp::os::idl::WireWriter& writer);
   bool nested_write_interactionMode(yarp::os::idl::WireWriter& writer);
-  bool read_position(yarp::os::idl::WireReader& reader);
-  bool nested_read_position(yarp::os::idl::WireReader& reader);
-  bool read_velocity(yarp::os::idl::WireReader& reader);
-  bool nested_read_velocity(yarp::os::idl::WireReader& reader);
-  bool read_acceleration(yarp::os::idl::WireReader& reader);
-  bool nested_read_acceleration(yarp::os::idl::WireReader& reader);
+  bool read_jointPosition(yarp::os::idl::WireReader& reader);
+  bool nested_read_jointPosition(yarp::os::idl::WireReader& reader);
+  bool read_jointVelocity(yarp::os::idl::WireReader& reader);
+  bool nested_read_jointVelocity(yarp::os::idl::WireReader& reader);
+  bool read_jointAcceleration(yarp::os::idl::WireReader& reader);
+  bool nested_read_jointAcceleration(yarp::os::idl::WireReader& reader);
+  bool read_motorPosition(yarp::os::idl::WireReader& reader);
+  bool nested_read_motorPosition(yarp::os::idl::WireReader& reader);
+  bool read_motorVelocity(yarp::os::idl::WireReader& reader);
+  bool nested_read_motorVelocity(yarp::os::idl::WireReader& reader);
+  bool read_motorAcceleration(yarp::os::idl::WireReader& reader);
+  bool nested_read_motorAcceleration(yarp::os::idl::WireReader& reader);
   bool read_torque(yarp::os::idl::WireReader& reader);
   bool nested_read_torque(yarp::os::idl::WireReader& reader);
   bool read_pidOutput(yarp::os::idl::WireReader& reader);
@@ -139,47 +158,89 @@ public:
       group--;
       if (group==0&&is_dirty) communicate();
     }
-    void set_position(const std::vector<double> & position) {
-      will_set_position();
-      obj->position = position;
-      mark_dirty_position();
+    void set_jointPosition(const std::vector<double> & jointPosition) {
+      will_set_jointPosition();
+      obj->jointPosition = jointPosition;
+      mark_dirty_jointPosition();
       communicate();
-      did_set_position();
+      did_set_jointPosition();
     }
-    void set_position(int index, const double elem) {
-      will_set_position();
-      obj->position[index] = elem;
-      mark_dirty_position();
+    void set_jointPosition(int index, const double elem) {
+      will_set_jointPosition();
+      obj->jointPosition[index] = elem;
+      mark_dirty_jointPosition();
       communicate();
-      did_set_position();
+      did_set_jointPosition();
     }
-    void set_velocity(const std::vector<double> & velocity) {
-      will_set_velocity();
-      obj->velocity = velocity;
-      mark_dirty_velocity();
+    void set_jointVelocity(const std::vector<double> & jointVelocity) {
+      will_set_jointVelocity();
+      obj->jointVelocity = jointVelocity;
+      mark_dirty_jointVelocity();
       communicate();
-      did_set_velocity();
+      did_set_jointVelocity();
     }
-    void set_velocity(int index, const double elem) {
-      will_set_velocity();
-      obj->velocity[index] = elem;
-      mark_dirty_velocity();
+    void set_jointVelocity(int index, const double elem) {
+      will_set_jointVelocity();
+      obj->jointVelocity[index] = elem;
+      mark_dirty_jointVelocity();
       communicate();
-      did_set_velocity();
+      did_set_jointVelocity();
     }
-    void set_acceleration(const std::vector<double> & acceleration) {
-      will_set_acceleration();
-      obj->acceleration = acceleration;
-      mark_dirty_acceleration();
+    void set_jointAcceleration(const std::vector<double> & jointAcceleration) {
+      will_set_jointAcceleration();
+      obj->jointAcceleration = jointAcceleration;
+      mark_dirty_jointAcceleration();
       communicate();
-      did_set_acceleration();
+      did_set_jointAcceleration();
     }
-    void set_acceleration(int index, const double elem) {
-      will_set_acceleration();
-      obj->acceleration[index] = elem;
-      mark_dirty_acceleration();
+    void set_jointAcceleration(int index, const double elem) {
+      will_set_jointAcceleration();
+      obj->jointAcceleration[index] = elem;
+      mark_dirty_jointAcceleration();
       communicate();
-      did_set_acceleration();
+      did_set_jointAcceleration();
+    }
+    void set_motorPosition(const std::vector<double> & motorPosition) {
+      will_set_motorPosition();
+      obj->motorPosition = motorPosition;
+      mark_dirty_motorPosition();
+      communicate();
+      did_set_motorPosition();
+    }
+    void set_motorPosition(int index, const double elem) {
+      will_set_motorPosition();
+      obj->motorPosition[index] = elem;
+      mark_dirty_motorPosition();
+      communicate();
+      did_set_motorPosition();
+    }
+    void set_motorVelocity(const std::vector<double> & motorVelocity) {
+      will_set_motorVelocity();
+      obj->motorVelocity = motorVelocity;
+      mark_dirty_motorVelocity();
+      communicate();
+      did_set_motorVelocity();
+    }
+    void set_motorVelocity(int index, const double elem) {
+      will_set_motorVelocity();
+      obj->motorVelocity[index] = elem;
+      mark_dirty_motorVelocity();
+      communicate();
+      did_set_motorVelocity();
+    }
+    void set_motorAcceleration(const std::vector<double> & motorAcceleration) {
+      will_set_motorAcceleration();
+      obj->motorAcceleration = motorAcceleration;
+      mark_dirty_motorAcceleration();
+      communicate();
+      did_set_motorAcceleration();
+    }
+    void set_motorAcceleration(int index, const double elem) {
+      will_set_motorAcceleration();
+      obj->motorAcceleration[index] = elem;
+      mark_dirty_motorAcceleration();
+      communicate();
+      did_set_motorAcceleration();
     }
     void set_torque(const std::vector<double> & torque) {
       will_set_torque();
@@ -237,14 +298,23 @@ public:
       communicate();
       did_set_interactionMode();
     }
-    const std::vector<double> & get_position() {
-      return obj->position;
+    const std::vector<double> & get_jointPosition() {
+      return obj->jointPosition;
     }
-    const std::vector<double> & get_velocity() {
-      return obj->velocity;
+    const std::vector<double> & get_jointVelocity() {
+      return obj->jointVelocity;
     }
-    const std::vector<double> & get_acceleration() {
-      return obj->acceleration;
+    const std::vector<double> & get_jointAcceleration() {
+      return obj->jointAcceleration;
+    }
+    const std::vector<double> & get_motorPosition() {
+      return obj->motorPosition;
+    }
+    const std::vector<double> & get_motorVelocity() {
+      return obj->motorVelocity;
+    }
+    const std::vector<double> & get_motorAcceleration() {
+      return obj->motorAcceleration;
     }
     const std::vector<double> & get_torque() {
       return obj->torque;
@@ -258,16 +328,22 @@ public:
     const std::vector<int32_t> & get_interactionMode() {
       return obj->interactionMode;
     }
-    virtual bool will_set_position() { return true; }
-    virtual bool will_set_velocity() { return true; }
-    virtual bool will_set_acceleration() { return true; }
+    virtual bool will_set_jointPosition() { return true; }
+    virtual bool will_set_jointVelocity() { return true; }
+    virtual bool will_set_jointAcceleration() { return true; }
+    virtual bool will_set_motorPosition() { return true; }
+    virtual bool will_set_motorVelocity() { return true; }
+    virtual bool will_set_motorAcceleration() { return true; }
     virtual bool will_set_torque() { return true; }
     virtual bool will_set_pidOutput() { return true; }
     virtual bool will_set_controlMode() { return true; }
     virtual bool will_set_interactionMode() { return true; }
-    virtual bool did_set_position() { return true; }
-    virtual bool did_set_velocity() { return true; }
-    virtual bool did_set_acceleration() { return true; }
+    virtual bool did_set_jointPosition() { return true; }
+    virtual bool did_set_jointVelocity() { return true; }
+    virtual bool did_set_jointAcceleration() { return true; }
+    virtual bool did_set_motorPosition() { return true; }
+    virtual bool did_set_motorVelocity() { return true; }
+    virtual bool did_set_motorAcceleration() { return true; }
     virtual bool did_set_torque() { return true; }
     virtual bool did_set_pidOutput() { return true; }
     virtual bool did_set_controlMode() { return true; }
@@ -285,6 +361,7 @@ public:
     int group;
 
     void communicate() {
+      if (group!=0) return;
       if (yarp().canWrite()) {
         yarp().write(*this);
         clean();
@@ -293,22 +370,40 @@ public:
     void mark_dirty() {
       is_dirty = true;
     }
-    void mark_dirty_position() {
-      if (is_dirty_position) return;
+    void mark_dirty_jointPosition() {
+      if (is_dirty_jointPosition) return;
       dirty_count++;
-      is_dirty_position = true;
+      is_dirty_jointPosition = true;
       mark_dirty();
     }
-    void mark_dirty_velocity() {
-      if (is_dirty_velocity) return;
+    void mark_dirty_jointVelocity() {
+      if (is_dirty_jointVelocity) return;
       dirty_count++;
-      is_dirty_velocity = true;
+      is_dirty_jointVelocity = true;
       mark_dirty();
     }
-    void mark_dirty_acceleration() {
-      if (is_dirty_acceleration) return;
+    void mark_dirty_jointAcceleration() {
+      if (is_dirty_jointAcceleration) return;
       dirty_count++;
-      is_dirty_acceleration = true;
+      is_dirty_jointAcceleration = true;
+      mark_dirty();
+    }
+    void mark_dirty_motorPosition() {
+      if (is_dirty_motorPosition) return;
+      dirty_count++;
+      is_dirty_motorPosition = true;
+      mark_dirty();
+    }
+    void mark_dirty_motorVelocity() {
+      if (is_dirty_motorVelocity) return;
+      dirty_count++;
+      is_dirty_motorVelocity = true;
+      mark_dirty();
+    }
+    void mark_dirty_motorAcceleration() {
+      if (is_dirty_motorAcceleration) return;
+      dirty_count++;
+      is_dirty_motorAcceleration = true;
       mark_dirty();
     }
     void mark_dirty_torque() {
@@ -337,20 +432,26 @@ public:
     }
     void dirty_flags(bool flag) {
       is_dirty = flag;
-      is_dirty_position = flag;
-      is_dirty_velocity = flag;
-      is_dirty_acceleration = flag;
+      is_dirty_jointPosition = flag;
+      is_dirty_jointVelocity = flag;
+      is_dirty_jointAcceleration = flag;
+      is_dirty_motorPosition = flag;
+      is_dirty_motorVelocity = flag;
+      is_dirty_motorAcceleration = flag;
       is_dirty_torque = flag;
       is_dirty_pidOutput = flag;
       is_dirty_controlMode = flag;
       is_dirty_interactionMode = flag;
-      dirty_count = flag ? 7 : 0;
+      dirty_count = flag ? 10 : 0;
     }
     bool is_dirty;
     int dirty_count;
-    bool is_dirty_position;
-    bool is_dirty_velocity;
-    bool is_dirty_acceleration;
+    bool is_dirty_jointPosition;
+    bool is_dirty_jointVelocity;
+    bool is_dirty_jointAcceleration;
+    bool is_dirty_motorPosition;
+    bool is_dirty_motorVelocity;
+    bool is_dirty_motorAcceleration;
     bool is_dirty_torque;
     bool is_dirty_pidOutput;
     bool is_dirty_controlMode;

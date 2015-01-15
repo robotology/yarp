@@ -85,7 +85,8 @@ public:
     yarp::dev::IPositionControl2     *pos2;
     yarp::dev::IVelocityControl      *vel;
     yarp::dev::IVelocityControl2     *vel2;
-    yarp::dev::IEncodersTimed        *enc;
+    yarp::dev::IEncodersTimed        *iJntEnc;
+    yarp::dev::IMotorEncoders        *iMotEnc;
     yarp::dev::IAmplifierControl     *amp;
     yarp::dev::IControlLimits2       *lim2;
     yarp::dev::IControlCalibration   *calib;
@@ -100,8 +101,10 @@ public:
     yarp::dev::IPositionDirect       *posDir;
     yarp::dev::IInteractionMode      *iInteract;
 
-    yarp::sig::Vector subDev_encoders;
-    yarp::sig::Vector encodersTimes;
+    yarp::sig::Vector subDev_joint_encoders;
+    yarp::sig::Vector jointEncodersTimes;
+    yarp::sig::Vector subDev_motor_encoders;
+    yarp::sig::Vector motorEncodersTimes;
 
     SubDevice();
 
@@ -111,14 +114,25 @@ public:
 
     bool configure(int base, int top, int axes, const std::string &id);
 
-    inline void refreshEncoders()
+    inline void refreshJointEncoders()
     {
         for(int j=base, idx=0; j<(base+axes); j++, idx++)
         {
-            if(enc)
-                enc->getEncoderTimed(j, &subDev_encoders[idx], &encodersTimes[idx]);
+            if(iJntEnc)
+                iJntEnc->getEncoderTimed(j, &subDev_joint_encoders[idx], &jointEncodersTimes[idx]);
         }
     }
+
+    inline void refreshMotorEncoders()
+    {
+        for(int j=base, idx=0; j<(base+axes); j++, idx++)
+        {
+            if(iMotEnc)
+                iMotEnc->getMotorEncoderTimed(j, &subDev_motor_encoders[idx], &motorEncodersTimes[idx]);
+        }
+    }
+
+
 
     bool isAttached()
     { return attachedF; }

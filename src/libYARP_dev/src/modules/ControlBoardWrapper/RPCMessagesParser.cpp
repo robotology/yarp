@@ -1739,6 +1739,49 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_MOTOR_CPR:
+                            {
+                                ok = rpc_IMotEnc->setMotorEncoderCountsPerRevolution(cmd.get(2).asInt(), cmd.get(3).asDouble());
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_E_RESET:
+                            {
+                                ok = rpc_IMotEnc->resetMotorEncoder(cmd.get(2).asInt());
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_E_RESETS:
+                            {
+                                ok = rpc_IMotEnc->resetMotorEncoders();
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_ENCODER:
+                            {
+                                ok = rpc_IMotEnc->setMotorEncoder(cmd.get(2).asInt(), cmd.get(3).asDouble());
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_ENCODERS:
+                            {
+                                Bottle *b = cmd.get(2).asList();
+
+                                if (b==NULL)
+                                    break;
+
+                                int i;
+                                const int njs = b->size();
+                                if (njs!=controlledJoints)
+                                    break;
+                                double *p = new double[njs];    // LATER: optimize to avoid allocation.
+                                for (i = 0; i < njs; i++)
+                                    p[i] = b->get(i).asDouble();
+                                ok = rpc_IMotEnc->setMotorEncoders(p);
+                                delete[] p;
+                            }
+                            break;
+
                             case VOCAB_AMP_ENABLE:
                             {
                                 ok = rcp_IAmp->enableAmp(cmd.get(2).asInt());
@@ -2127,6 +2170,78 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (i = 0; i < controlledJoints; i++)
                                     b.addDouble(p[i]);
                                 delete[] p;
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_CPR:
+                            {
+                                ok = rpc_IMotEnc->getMotorEncoderCountsPerRevolution(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_ENCODER:
+                            {
+                                ok = rpc_IMotEnc->getMotorEncoder(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_ENCODERS:
+                            {
+                                double *p = new double[controlledJoints];
+                                ok = rpc_IMotEnc->getMotorEncoders(p);
+                                Bottle& b = response.addList();
+                                int i;
+                                for (i = 0; i < controlledJoints; i++)
+                                    b.addDouble(p[i]);
+                                delete[] p;
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_ENCODER_SPEED:
+                            {
+                                ok = rpc_IMotEnc->getMotorEncoderSpeed(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_ENCODER_SPEEDS:
+                            {
+                                double *p = new double[controlledJoints];
+                                ok = rpc_IMotEnc->getMotorEncoderSpeeds(p);
+                                Bottle& b = response.addList();
+                                int i;
+                                for (i = 0; i < controlledJoints; i++)
+                                    b.addDouble(p[i]);
+                                delete[] p;
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_ENCODER_ACCELERATION:
+                            {
+                                ok = rpc_IMotEnc->getMotorEncoderAcceleration(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_ENCODER_ACCELERATIONS:
+                            {
+                                double *p = new double[controlledJoints];
+                                ok = rpc_IMotEnc->getMotorEncoderAccelerations(p);
+                                Bottle& b = response.addList();
+                                int i;
+                                for (i = 0; i < controlledJoints; i++)
+                                    b.addDouble(p[i]);
+                                delete[] p;
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_ENCODER_NUMBER:
+                            {
+                                int num=0;
+                                ok = rpc_IMotEnc->getNumberOfMotorEncoders(&num);
+                                response.addInt(num);
                             }
                             break;
 

@@ -33,12 +33,14 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IControlMode2.h
                   include/yarp/dev/IEncoders.h
                   include/yarp/dev/IEncodersTimed.h
+                  include/yarp/dev/IMotorEncoders.h
                   include/yarp/dev/IImpedanceControl.h
                   include/yarp/dev/IKinectDeviceDriver.h
                   include/yarp/dev/ImplementControlBoardInterfaces.h
                   include/yarp/dev/ImplementControlMode.h
                   include/yarp/dev/ImplementControlMode2.h
                   include/yarp/dev/ImplementEncodersTimed.h
+                  include/yarp/dev/ImplementMotorEncoders.h
                   include/yarp/dev/ImplementImpedanceControl.h
                   include/yarp/dev/ImplementOpenLoopControl.h
                   include/yarp/dev/ImplementTorqueControl.h
@@ -88,6 +90,7 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/Dummy.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
+                  src/IMotorEncodersImpl.cpp
                   src/ImpedanceControlImpl.cpp
                   src/IInteractionModeImpl.cpp
                   src/IPositionControl2Impl.cpp

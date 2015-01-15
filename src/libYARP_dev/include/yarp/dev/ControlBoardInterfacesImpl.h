@@ -13,6 +13,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include <yarp/dev/ImplementEncodersTimed.h>
+#include <yarp/dev/ImplementMotorEncoders.h>
 #include <yarp/dev/ImplementControlMode.h>
 #include <yarp/dev/ImplementControlMode2.h>
 #include <yarp/dev/ImplementOpenLoopControl.h>

@@ -242,6 +242,7 @@ class yarp::dev::RemoteControlBoard :
     public IPositionControl2,
     public IVelocityControl2,
     public IEncodersTimed,
+    public IMotorEncoders,
     public IAmplifierControl,
     public IControlLimits2,
     public IAxisInfo,
@@ -1077,18 +1078,24 @@ public:
 #if defined(YARP_MSG)
         // allocate memory for helper struct
         // single joint
-        last_singleJoint.position.resize(1);
-        last_singleJoint.velocity.resize(1);
-        last_singleJoint.acceleration.resize(1);
+        last_singleJoint.jointPosition.resize(1);
+        last_singleJoint.jointVelocity.resize(1);
+        last_singleJoint.jointAcceleration.resize(1);
+        last_singleJoint.motorPosition.resize(1);
+        last_singleJoint.motorVelocity.resize(1);
+        last_singleJoint.motorAcceleration.resize(1);
         last_singleJoint.torque.resize(1);
         last_singleJoint.pidOutput.resize(1);
         last_singleJoint.controlMode.resize(1);
         last_singleJoint.interactionMode.resize(1);
 
         // whole part  (safe here because we already got the nj
-        last_wholePart.position.resize(nj);
-        last_wholePart.velocity.resize(nj);
-        last_wholePart.acceleration.resize(nj);
+        last_wholePart.jointPosition.resize(nj);
+        last_wholePart.jointVelocity.resize(nj);
+        last_wholePart.jointAcceleration.resize(nj);
+        last_wholePart.motorPosition.resize(nj);
+        last_wholePart.motorVelocity.resize(nj);
+        last_wholePart.motorAcceleration.resize(nj);
         last_wholePart.torque.resize(nj);
         last_wholePart.pidOutput.resize(nj);
         last_wholePart.controlMode.resize(nj);
@@ -1447,7 +1454,7 @@ public:
         ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 #else
         ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *v = last_singleJoint.position[0];
+        *v = last_singleJoint.jointPosition[0];
 #endif
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
             ret=false;
@@ -1469,7 +1476,7 @@ public:
         ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 #else
         ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *v = last_singleJoint.position[0];
+        *v = last_singleJoint.jointPosition[0];
 #endif
         *t=lastStamp.getTime();
 
@@ -1517,7 +1524,7 @@ public:
         }
 #else
         ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.position.begin(), last_wholePart.position.end(), encs);
+        std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
 #endif
         return ret;
     }
@@ -1555,7 +1562,7 @@ public:
         }
 #else
         ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.position.begin(), last_wholePart.position.end(), encs);
+        std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
         std::fill_n(ts, nj, lastStamp.getTime());
 #endif
 
@@ -1578,7 +1585,7 @@ public:
 #else
         double localArrivalTime=0.0;
         bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *sp = last_singleJoint.velocity[0];
+        *sp = last_singleJoint.jointVelocity[0];
         return ret;
 #endif
     }
@@ -1594,7 +1601,7 @@ public:
 #if defined (YARP_MSG)
         double localArrivalTime=0.0;
         bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.velocity.begin(), last_wholePart.velocity.end(), spds);
+        std::copy(last_wholePart.jointVelocity.begin(), last_wholePart.jointVelocity.end(), spds);
         return ret;
 #else
         return get1VDA(VOCAB_ENCODER_SPEEDS, spds);
@@ -1612,7 +1619,7 @@ public:
 #if defined (YARP_MSG)
         double localArrivalTime=0.0;
         bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-        *acc = last_singleJoint.acceleration[0];
+        *acc = last_singleJoint.jointAcceleration[0];
         return ret;
 #else
         return get1V1I1D(VOCAB_ENCODER_ACCELERATION, j, acc);
@@ -1629,10 +1636,271 @@ public:
 #if defined (YARP_MSG)
         double localArrivalTime=0.0;
         bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-        std::copy(last_wholePart.acceleration.begin(), last_wholePart.acceleration.end(), accs);
+        std::copy(last_wholePart.jointAcceleration.begin(), last_wholePart.jointAcceleration.end(), accs);
         return ret;
 #else
         return get1VDA(VOCAB_ENCODER_ACCELERATIONS, accs);
+#endif
+    }
+
+    /* IMotorEncoder */
+
+    /**
+     * Reset encoder, single joint. Set the encoder value to zero
+     * @param j is the axis number
+     * @return true/false on success/failure
+     */
+    virtual bool resetMotorEncoder(int j) {
+        return set1V1I(VOCAB_MOTOR_E_RESET, j);
+    }
+
+    /**
+     * Reset encoders. Set the encoders value to zero
+     * @return true/false
+     */
+    virtual bool resetMotorEncoders() {
+        return set1V(VOCAB_MOTOR_E_RESETS);
+    }
+
+    /**
+     * Set the value of the encoder for a given joint.
+     * @param j encoder number
+     * @param val new value
+     * @return true/false on success/failure
+     */
+    virtual bool setMotorEncoder(int j, double val) {
+        return set1V1I1D(VOCAB_MOTOR_ENCODER, j, val);
+    }
+
+    /**
+     * Sets number of counts per revolution for motor encoder m.
+     * @param m motor encoder number
+     * @param cpr new parameter
+     * @return true/false
+     */
+    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr) {
+        return set1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
+    }
+
+    /**
+     * gets number of counts per revolution for motor encoder m.
+     * @param m motor encoder number
+     * @param cpr pointer to storage for the return value
+     * @return true/false
+     */ 
+    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr) {
+         return get1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
+    }
+
+    /**
+     * Set the value of all encoders.
+     * @param vals pointer to the new values
+     * @return true/false
+     */
+    virtual bool setMotorEncoders(const double *vals) {
+        return set1VDA(VOCAB_MOTOR_ENCODERS, vals);
+    }
+
+    /**
+     * Read the value of an encoder.
+     * @param j encoder number
+     * @param v pointer to storage for the return value
+     * @return true/false, upon success/failure (you knew it, uh?)
+     */
+    virtual bool getMotorEncoder(int j, double *v) {
+        double localArrivalTime = 0.0;
+        bool ret;
+#if !defined(YARP_MSG)
+        // return get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
+        ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+#else
+        ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *v = last_singleJoint.motorPosition[0];
+#endif
+        if (ret && Time::now()-localArrivalTime>TIMEOUT)
+            ret=false;
+
+        return ret;
+    }
+
+    /**
+     * Read the value of an encoder.
+     * @param j encoder number
+     * @param v pointer to storage for the return value
+     * @return true/false, upon success/failure (you knew it, uh?)
+     */
+    virtual bool getMotorEncoderTimed(int j, double *v, double *t) {
+        double localArrivalTime = 0.0;
+        bool ret = false;
+#if !defined(YARP_MSG)
+        // return get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
+        ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+#else
+        ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *v = last_singleJoint.motorPosition[0];
+#endif
+        *t=lastStamp.getTime();
+
+        if (ret && Time::now()-localArrivalTime>TIMEOUT)
+            ret=false;
+
+        return ret;
+    }
+
+    /**
+     * Read the position of all axes. This object receives encoders periodically
+     * from a YARP port. You should check the return value of the function to
+     * make sure that encoders have been received at least once and with the expected
+     * rate.
+     * @param encs pointer to the array that will contain the output
+     * @return true/false on success/failure. Failure means encoders have not been received
+     * from the server or that they are not being streamed with the expected rate.
+     */
+    virtual bool getMotorEncoders(double *encs) {
+        if (!isLive()) return false;
+        // particular case, does not use RPC
+        bool ret = false;
+        double localArrivalTime=0.0;
+
+
+#if !defined(YARP_MSG)
+        Vector tmp(nj);
+
+        // mutex.wait();
+        ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+        // mutex.post();
+
+        if (ret)
+        {
+            if (tmp.size() != (size_t)nj)
+                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+
+            YARP_ASSERT (tmp.size() == (size_t)nj);
+            memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
+
+            ////////////////////////// HANDLE TIMEOUT
+            // fill the vector anyway
+            if (Time::now()-localArrivalTime>TIMEOUT)
+                ret=false;
+        }
+#else
+        ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.motorPosition.begin(), last_wholePart.motorPosition.end(), encs);
+#endif
+        return ret;
+    }
+
+    /**
+     * Read the position of all axes.
+     * @param encs pointer to the array that will contain the output
+     * @param ts pointer to the array that will contain timestamps
+     * @return true/false on success/failure
+     */
+    virtual bool getMotorEncodersTimed(double *encs, double *ts) {
+        if (!isLive()) return false;
+        // particular case, does not use RPC
+        double localArrivalTime=0.0;
+
+        bool ret=false;
+#if !defined(YARP_MSG)
+
+        Vector tmp(nj);
+ //       mutex.wait();
+        ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+ //       mutex.post();
+
+        if (ret)
+        {
+            if (tmp.size() != (size_t)nj)
+                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+
+            YARP_ASSERT (tmp.size() == (size_t)nj);
+            for(int j=0; j<nj; j++)
+            {
+                encs[j]=tmp[j];
+                ts[j]=lastStamp.getTime();
+            }
+        }
+#else
+        ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.motorPosition.begin(), last_wholePart.motorPosition.end(), encs);
+        std::fill_n(ts, nj, lastStamp.getTime());
+#endif
+
+        ////////////////////////// HANDLE TIMEOUT
+        if (Time::now()-localArrivalTime>TIMEOUT)
+            ret=false;
+
+        return ret;
+    }
+    /**
+     * Read the istantaneous speed of an axis.
+     * @param j axis number
+     * @param sp pointer to storage for the output
+     * @return true if successful, false ... otherwise.
+     */
+    virtual bool getMotorEncoderSpeed(int j, double *sp)
+    {
+#if !defined(YARP_MSG)
+        return get1V1I1D(VOCAB_MOTOR_ENCODER_SPEED, j, sp);
+#else
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *sp = last_singleJoint.motorVelocity[0];
+        return ret;
+#endif
+    }
+
+
+    /**
+     * Read the instantaneous speed of all axes.
+     * @param spds pointer to storage for the output values
+     * @return guess what? (true/false on success or failure).
+     */
+    virtual bool getMotorEncoderSpeeds(double *spds)
+    {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.motorVelocity.begin(), last_wholePart.motorVelocity.end(), spds);
+        return ret;
+#else
+        return get1VDA(VOCAB_MOTOR_ENCODER_SPEEDS, spds);
+#endif
+    }
+
+    /**
+     * Read the instantaneous acceleration of an axis.
+     * @param j axis number
+     * @param acc pointer to the array that will contain the output
+     */
+
+    virtual bool getMotorEncoderAcceleration(int j, double *acc)
+    {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
+        *acc = last_singleJoint.motorAcceleration[0];
+        return ret;
+#else
+        return get1V1I1D(VOCAB_MOTOR_ENCODER_ACCELERATION, j, acc);
+#endif
+    }
+
+    /**
+     * Read the istantaneous acceleration of all axes.
+     * @param accs pointer to the array that will contain the output
+     * @return true if all goes well, false if anything bad happens.
+     */
+    virtual bool getMotorEncoderAccelerations(double *accs)
+    {
+#if defined (YARP_MSG)
+        double localArrivalTime=0.0;
+        bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
+        std::copy(last_wholePart.motorAcceleration.begin(), last_wholePart.motorAcceleration.end(), accs);
+        return ret;
+#else
+        return get1VDA(VOCAB_MOTOR_ENCODER_ACCELERATIONS, accs);
 #endif
     }
 
@@ -1649,6 +1917,14 @@ public:
         return ret;
     }
 
+    /**
+     * Get the number of available motor encoders.
+     * @param m pointer to a value representing the number of available motor encoders.
+     * @return true/false
+     */
+    virtual bool getNumberOfMotorEncoders(int *num) {
+        return get1V1I(VOCAB_MOTOR_ENCODER_NUMBER, *num);
+    }
 
     /* IPositionControl */
 
