@@ -807,5 +807,8 @@ public:
 #define VOCAB_IMP_PARAM   VOCAB3('i','p','r')
 #define VOCAB_IMP_OFFSET  VOCAB3('i','o','f')
 
+// protocol version
+#define VOCAB_PROTOCOL_VERSION VOCAB('p', 'r', 'o', 't')
+
 #endif
 

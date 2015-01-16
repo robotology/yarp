@@ -32,6 +32,10 @@
 #include <stateExtendedReader.hpp>
 #endif
 
+#define PROTOCOL_VERSION_MAJOR 1
+#define PROTOCOL_VERSION_MINOR 0
+#define PROTOCOL_VERSION_TWEAK 0
+
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -39,6 +43,7 @@ using namespace yarp::sig;
 namespace yarp{
     namespace dev {
         class RemoteControlBoard;
+        struct ProtocolVersion;
     }
 }
 
@@ -54,6 +59,13 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
     }
     return false;
 }
+
+struct yarp::dev::ProtocolVersion
+{
+    int major;
+    int minor;
+    int tweak;
+};
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -284,6 +296,8 @@ protected:
     // Semaphore mutex;
     int nj;
     bool njIsKnown;
+
+    ProtocolVersion protocolVersion;
 
     // Check for number of joints, if needed.
     // This is to allow for delayed connection to the remote control board.
@@ -1052,6 +1066,12 @@ public:
 
         state_buffer.setStrict(false);
         command_buffer.attach(command_p);
+
+        bool ignoreCheck=false;
+        ignoreCheck = true; //config.check("ignoreProtocolCheck");
+
+        if (!checkProtocolVersion(ignoreCheck))
+            return false;
 
         if (!isLive()) {
             if (remote!="") {
@@ -3307,6 +3327,56 @@ public:
 #else
         return get1VDA(VOCAB_OUTPUTS, outs);
 #endif
+    }
+
+    bool checkProtocolVersion(bool ignore)
+    {
+        bool error=false;
+        // verify protocol
+        Bottle cmd, reply;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_PROTOCOL_VERSION);
+        rpc_p.write(cmd, reply);
+    
+        // check size and format of messages, expected [prot] int int int [ok]
+        if (reply.size()!=5)
+           error=true;
+
+        if (reply.get(0).asVocab()!=VOCAB_PROTOCOL_VERSION)
+           error=true;
+
+        if (!error)
+        {
+            protocolVersion.major=reply.get(1).asInt();
+            protocolVersion.minor=reply.get(2).asInt();
+            protocolVersion.tweak=reply.get(3).asInt();
+
+            //verify protocol
+            if (protocolVersion.major!=PROTOCOL_VERSION_MAJOR)
+                error=true;
+        }
+
+        if (!error)
+            return true;
+
+        // protocol did not match
+        fprintf(stderr, "ERROR, expecting protocol %d %d %d, but remotecontrolboard returned protocol version %d %d %d\n", 
+                        PROTOCOL_VERSION_MAJOR, PROTOCOL_VERSION_MINOR, PROTOCOL_VERSION_TWEAK,
+                        protocolVersion.major, protocolVersion.minor, protocolVersion.tweak); 
+
+
+        if (ignore)
+        {
+            fprintf(stderr, "WARNING: ignoring error but please update YARP or the remotecontrolboard implementation\n");
+            return true;
+        }
+        else 
+        {
+            fprintf(stderr, "ERROR: please update YARP or the remotecontrolboard implementation\n");
+            return true;
+        }
+
+        return false;
     }
 };
 
