@@ -2412,10 +2412,39 @@ public:
     { return get2V1DA(VOCAB_TORQUE, VOCAB_REFS, t); }
 
     bool setRefTorques(const double *t)
-    { return set2V1DA(VOCAB_TORQUE, VOCAB_REFS, t); }
+    {
+        //Now we use streaming instead of rpc
+        //return set2V1DA(VOCAB_TORQUE, VOCAB_REFS, t);
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_TORQUES_DIRECTS);
+
+        c.body.resize(nj);
+
+        memcpy(c.body.data(), t, sizeof(double) * nj);
+
+        command_buffer.write(writeStrict_moreJoints);
+        return true;
+    }
 
     bool setRefTorque(int j, double v)
-    { return set2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, v); }
+    {
+        //return set2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, v);
+        // use the streaming port!
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        // in streaming port only SET command can be sent, so it is implicit
+        c.head.addVocab(VOCAB_TORQUES_DIRECT);
+        c.head.addInt(j);
+
+        c.body.clear();
+        c.body.resize(1);
+        c.body[0] = v;
+        command_buffer.write(writeStrict_singleJoint);
+        return true;
+    }
 
     bool getBemfParam(int j, double *t)
     { return get2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, t); }

@@ -79,6 +79,7 @@ protected:
     yarp::dev::IVelocityControl     *stream_IVel;
     yarp::dev::IVelocityControl2    *stream_IVel2;
     yarp::dev::IOpenLoopControl     *stream_IOpenLoop;
+    yarp::dev::ITorqueControl       *stream_ITorque;
     int                              stream_nJoints;
 
 public:
