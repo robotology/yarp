@@ -2397,6 +2397,7 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_IVelCtrl    = dynamic_cast<yarp::dev::IVelocityControl *> (ControlBoardWrapper_p);
     rpc_IVelCtrl2   = dynamic_cast<yarp::dev::IVelocityControl2 *> (ControlBoardWrapper_p);
     rpc_IEncTimed   = dynamic_cast<yarp::dev::IEncodersTimed *> (ControlBoardWrapper_p);
+    rpc_IMotEnc     = dynamic_cast<yarp::dev::IMotorEncoders *> (ControlBoardWrapper_p);
     rcp_IAmp        = dynamic_cast<yarp::dev::IAmplifierControl *> (ControlBoardWrapper_p);
     rcp_Ilim2       = dynamic_cast<yarp::dev::IControlLimits2 *> (ControlBoardWrapper_p);
     rpc_AxisInfo    = dynamic_cast<yarp::dev::IAxisInfo *> (ControlBoardWrapper_p);
