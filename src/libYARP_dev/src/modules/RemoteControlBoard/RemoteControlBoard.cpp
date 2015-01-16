@@ -269,6 +269,7 @@ protected:
     // from the YARP .thrift file
 //  yarp::os::PortReaderBuffer<jointData>           extendedInputState_buffer;  // Buffer storing new data
     StateExtendedInputPort                          extendedIntputStatePort;  // Buffered port storing new data
+    Semaphore extendedPortMutex;
     jointData last_singleJoint;     // tmp to store last received data for a particular joint
 //    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
     jointData last_wholePart;         // tmp to store last received data for whole part
@@ -1453,8 +1454,10 @@ public:
         }
         else
         {
+            extendedPortMutex.wait();
             ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
             *v = last_singleJoint.jointPosition[0];
+            extendedPortMutex.post();
         }
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
             ret=false;
@@ -1478,8 +1481,10 @@ public:
         }
         else
         {
+            extendedPortMutex.wait();
             ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
             *v = last_singleJoint.jointPosition[0];
+            extendedPortMutex.post();
         }
         *t=lastStamp.getTime();
 
@@ -1528,8 +1533,10 @@ public:
         }
         else
         {
+            extendedPortMutex.wait();
             ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
+            extendedPortMutex.post();
         }
         return ret;
     }
@@ -1568,9 +1575,11 @@ public:
         }
         else
         {
+            extendedPortMutex.wait();
             ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
             std::fill_n(ts, nj, lastStamp.getTime());
+            extendedPortMutex.post();
         }
 
         ////////////////////////// HANDLE TIMEOUT
@@ -1594,8 +1603,10 @@ public:
         else
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
             *sp = last_singleJoint.jointVelocity[0];
+            extendedPortMutex.post();
             return ret;
         }
     }
@@ -1611,8 +1622,10 @@ public:
         if(controlBoardWrapper1_compatibility)
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             std::copy(last_wholePart.jointVelocity.begin(), last_wholePart.jointVelocity.end(), spds);
+            extendedPortMutex.post();
             return ret;
         }
         else
@@ -1632,8 +1645,10 @@ public:
         if(controlBoardWrapper1_compatibility)
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
             *acc = last_singleJoint.jointAcceleration[0];
+            extendedPortMutex.post();
             return ret;
         }
         else
@@ -1652,8 +1667,10 @@ public:
         if(controlBoardWrapper1_compatibility)
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             std::copy(last_wholePart.jointAcceleration.begin(), last_wholePart.jointAcceleration.end(), accs);
+            extendedPortMutex.post();
             return ret;
         }
         else
@@ -1733,8 +1750,10 @@ public:
         // return get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
         ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 #else
+        extendedPortMutex.wait();
         ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
         *v = last_singleJoint.motorPosition[0];
+        extendedPortMutex.post();
 #endif
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
             ret=false;
@@ -1755,8 +1774,10 @@ public:
         // return get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
         ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 #else
+        extendedPortMutex.wait();
         ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
         *v = last_singleJoint.motorPosition[0];
+        extendedPortMutex.post();
 #endif
         *t=lastStamp.getTime();
 
@@ -1803,8 +1824,10 @@ public:
                 ret=false;
         }
 #else
+        extendedPortMutex.wait();
         ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
         std::copy(last_wholePart.motorPosition.begin(), last_wholePart.motorPosition.end(), encs);
+        extendedPortMutex.post();
 #endif
         return ret;
     }
@@ -1841,9 +1864,11 @@ public:
             }
         }
 #else
+        extendedPortMutex.wait();
         ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
         std::copy(last_wholePart.motorPosition.begin(), last_wholePart.motorPosition.end(), encs);
         std::fill_n(ts, nj, lastStamp.getTime());
+        extendedPortMutex.post();
 #endif
 
         ////////////////////////// HANDLE TIMEOUT
@@ -1864,8 +1889,10 @@ public:
         return get1V1I1D(VOCAB_MOTOR_ENCODER_SPEED, j, sp);
 #else
         double localArrivalTime=0.0;
+        extendedPortMutex.wait();
         bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
         *sp = last_singleJoint.motorVelocity[0];
+        extendedPortMutex.post();
         return ret;
 #endif
     }
@@ -1880,8 +1907,10 @@ public:
     {
 #if defined (YARP_MSG)
         double localArrivalTime=0.0;
+        extendedPortMutex.wait();
         bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
         std::copy(last_wholePart.motorVelocity.begin(), last_wholePart.motorVelocity.end(), spds);
+        extendedPortMutex.post();
         return ret;
 #else
         return get1VDA(VOCAB_MOTOR_ENCODER_SPEEDS, spds);
@@ -1898,8 +1927,10 @@ public:
     {
 #if defined (YARP_MSG)
         double localArrivalTime=0.0;
+        extendedPortMutex.wait();
         bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
         *acc = last_singleJoint.motorAcceleration[0];
+        extendedPortMutex.post();
         return ret;
 #else
         return get1V1I1D(VOCAB_MOTOR_ENCODER_ACCELERATION, j, acc);
@@ -1915,8 +1946,10 @@ public:
     {
 #if defined (YARP_MSG)
         double localArrivalTime=0.0;
+        extendedPortMutex.wait();
         bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
         std::copy(last_wholePart.motorAcceleration.begin(), last_wholePart.motorAcceleration.end(), accs);
+        extendedPortMutex.post();
         return ret;
 #else
         return get1VDA(VOCAB_MOTOR_ENCODER_ACCELERATIONS, accs);
@@ -2484,8 +2517,10 @@ public:
         else
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
             *t = last_singleJoint.torque[0];
+            extendedPortMutex.post();
             return ret;
         }
     }
@@ -2499,8 +2534,10 @@ public:
         else
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             std::copy(last_wholePart.torque.begin(), last_wholePart.torque.end(), t);
+            extendedPortMutex.post();
             return ret;
         }
     }
@@ -2754,8 +2791,10 @@ public:
         else
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             ok = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
             *mode = last_singleJoint.controlMode[0];
+            extendedPortMutex.post();
         }
         return ok;
 
@@ -2797,9 +2836,11 @@ public:
         else
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             for (int i = 0; i < n_joint; i++)
                 modes[i] = last_wholePart.controlMode[joints[i]];
+            extendedPortMutex.post();
         }
         return ok;
     }
@@ -2831,8 +2872,10 @@ public:
         else
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             std::copy(last_wholePart.controlMode.begin(), last_wholePart.controlMode.end(), modes);
+            extendedPortMutex.post();
         }
         return ok;
     }
@@ -3093,8 +3136,10 @@ public:
         else
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             ok = extendedIntputStatePort.getLast(axis, last_singleJoint, lastStamp, localArrivalTime);
             *mode = (yarp::dev::InteractionModeEnum)last_singleJoint.interactionMode[0];
+            extendedPortMutex.post();
         }
         return ok;
     }
@@ -3143,9 +3188,11 @@ public:
         else
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             for (int i = 0; i < n_joints; i++)
                 modes[i] = (yarp::dev::InteractionModeEnum)last_wholePart.interactionMode[joints[i]];
+            extendedPortMutex.post();
         }
         return ok;
     }
@@ -3156,8 +3203,10 @@ public:
         if(!controlBoardWrapper1_compatibility)
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             std::copy(last_wholePart.interactionMode.begin(), last_wholePart.interactionMode.end(), (int*)modes);
+            extendedPortMutex.post();
         }
         else
         {
@@ -3340,8 +3389,10 @@ public:
         if(!controlBoardWrapper1_compatibility)
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
             *out = last_singleJoint.pidOutput[0];
+            extendedPortMutex.post();
             return ret;
         }
         else
@@ -3377,8 +3428,10 @@ public:
         if(!controlBoardWrapper1_compatibility)
         {
             double localArrivalTime=0.0;
+            extendedPortMutex.wait();
             bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
             std::copy(last_wholePart.pidOutput.begin(), last_wholePart.pidOutput.end(), outs);
+            extendedPortMutex.post();
             return ret;
         }
         else
