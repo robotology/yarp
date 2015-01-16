@@ -94,7 +94,7 @@ bool ImplementMotorEncoders::getMotorEncoderCountsPerRevolution(int m, double* c
     bool ret;
     int k=castToMapper(helper)->toHw(m);
 
-    ret=iMotorEncoders->getMotorEncoderRaw(m, cpr);
+    ret=iMotorEncoders->getMotorEncoderCountsPerRevolutionRaw(k, cpr);
 
     return ret;
 }
