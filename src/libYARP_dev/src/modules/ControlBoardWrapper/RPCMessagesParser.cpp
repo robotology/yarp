@@ -30,6 +30,24 @@ inline void appendTimeStamp(Bottle &bot, Stamp &st)
     bot.addDouble(time);
 }
 
+void RPCMessagesParser::handleProtocolVersionRequest(const yarp::os::Bottle& cmd,
+                                           yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if (cmd.get(0).asVocab()!=VOCAB_GET)
+    {
+        *rec=false;
+        *ok=false;
+        return;
+    }
+
+    response.addVocab(VOCAB_PROTOCOL_VERSION);
+    response.addInt(PROTOCOL_VERSION_MAJOR);
+    response.addInt(PROTOCOL_VERSION_MINOR);
+    response.addInt(PROTOCOL_VERSION_TWEAK);
+
+    *rec=true;
+    *ok=true;
+}
 
 void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
                                            yarp::os::Bottle& response, bool *rec, bool *ok)
@@ -1096,6 +1114,9 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
             case VOCAB_OPENLOOP_INTERFACE:
                 handleOpenLoopMsg(cmd, response, &rec, &ok);
+            break;
+            case VOCAB_PROTOCOL_VERSION:
+                handleProtocolVersionRequest(cmd, response, &rec, &ok);
             break;
 
             default:
