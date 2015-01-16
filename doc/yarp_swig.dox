@@ -258,8 +258,15 @@ If you followed the command-line suggestions in \ref yarp_swig_configure,
 and are on Linux/OSX, all that remains is to do:
 \verbatim
 make
-sudo make install   # Optional, not sane for all languages.  Good for python.
+sudo make install   # Optional, not sane for all languages.
 \endverbatim
+
+For Python, you can append the path of the bindings build directory to the PYTHONPATH environment variable, like this:
+\verbatim
+export PYTHONPATH=$PYTHONPATH:$YARP_ROOT/bindings/build
+\endverbatim
+then compile with make and you're done (no need to make install).
+
 In any case, everything you need should be sitting in the build directory.
 With Visual Studio: open the solution file in build directory, and compile
 as usual.  Be sure to use the Release build.
