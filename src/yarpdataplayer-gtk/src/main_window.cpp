@@ -117,8 +117,11 @@ bool MainWindow::load(const string &path)
     for (int x=0; x < subDirCnt; x++)
         utilities->closePorts(utilities->partDetails[x]);
 
-    clearUtilities();
-    createUtilities();
+    if (subDirCnt > 0)
+    {
+        clearUtilities();
+        createUtilities();
+    }
     subDirCnt = 0;
     size_t slashErr = cmdPath.find('/');
 
@@ -602,10 +605,13 @@ void MainWindow::onMenuFileOpen()
         //for (int x=0; x < subDirCnt; x++)
             //utilities->interruptPorts(utilities->partDetails[x]);       
         for (int x=0; x < subDirCnt; x++)
-            utilities->closePorts(utilities->partDetails[x]);  
-
-        clearUtilities();
-        createUtilities();
+            utilities->closePorts(utilities->partDetails[x]);
+        
+        if (subDirCnt > 0)
+        {
+            clearUtilities();
+            createUtilities();
+        }
 
         doGuiSetup(fpath);
     }
