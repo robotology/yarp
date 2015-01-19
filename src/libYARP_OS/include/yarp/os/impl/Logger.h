@@ -194,7 +194,11 @@ private:
 #define YARP_ERROR(log,x) ((Logger*)&log)->internal_error(x)
 #define YARP_WARN(log,x)  ((Logger*)&log)->internal_warning(x)
 #define YARP_INFO(log,x)  ((Logger*)&log)->internal_info(x)
-#define YARP_DEBUG(log,x) ((Logger*)&log)->internal_debug(x)
+#ifndef NDEBUG
+#  define YARP_DEBUG(log,x) ((Logger*)&log)->internal_debug(x)
+#else
+#  define YARP_DEBUG(log,x)
+#endif
 #define YARP_FAIL(log,x)  ((Logger*)&log)->internal_fail(x)
 
 #define YARP_LONGEST_MESSAGE 1000
