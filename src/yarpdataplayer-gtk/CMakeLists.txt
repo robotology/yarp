@@ -32,6 +32,3 @@ include_directories(${PROJECT_SOURCE_DIR}/include
 add_executable(${PROJECTNAME} ${folder_header} ${folder_source})
 target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES} ${OpenCV_LIBRARIES} ${GTK2_LIBRARIES})
 install(TARGETS ${PROJECTNAME} DESTINATION bin)
-
-
-

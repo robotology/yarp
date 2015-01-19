@@ -23,7 +23,7 @@
 #include <map>
 #include <fstream>
 #include <gtkmm.h>
-#include "iCub/utils.h"
+#include "utils.h"
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
@@ -318,4 +318,3 @@ private:
 };
 
 #endif //_MAIN_WINDOW_
-

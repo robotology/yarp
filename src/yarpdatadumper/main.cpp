@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Ugo Pattacini
  * email:  ugo.pattacini@iit.it
@@ -20,86 +20,86 @@
 @ingroup icub_tools
 
 \defgroup dataDumper dataDumper
- 
-Acquires and stores Bottles or Images and Videos from a YARP 
-port. 
+
+Acquires and stores Bottles or Images and Videos from a YARP
+port.
 
 Copyright (C) 2010 RobotCub Consortium
- 
-Author: Ugo Pattacini 
- 
-Date: first release 16/05/2008 
+
+Author: Ugo Pattacini
+
+Date: first release 16/05/2008
 
 CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 \section intro_sec Description
 
-When launched, the service monitors the presence of incoming 
-data (bottles or images) and stores it within a folder called 
-with the same name as the service port (or with a proper suffix 
-appended if other data is present in the current path). In this 
-folder the file 'data.log' contains the information (taken from 
-the envelope field of the port) line by line as follows: 
- 
-\code 
-[pck id] [time stamp] [bottle content (or image_file_name)] 
+When launched, the service monitors the presence of incoming
+data (bottles or images) and stores it within a folder called
+with the same name as the service port (or with a proper suffix
+appended if other data is present in the current path). In this
+folder the file 'data.log' contains the information (taken from
+the envelope field of the port) line by line as follows:
+
+\code
+[pck id] [time stamp] [bottle content (or image_file_name)]
    0       1.234         0 1 2 3 ...
    1       1.235         4 5 6 7 ...
    ...     ...           ...
-\endcode 
- 
-Note that if the envelope is not valid, then the Time Stamp is 
-the reference time of the machine where the service is running. 
-Anyway, a selection between these two Time Stamps is available 
-for the user through --rxTime option. 
- 
-Moreover, a file called 'info.log' is produced containing 
-information about the data type stored within the 'data.log' 
-file as well as the name of the yarp ports connected or 
-disconnected to the dumper, as in the following: 
+\endcode
 
-\code 
+Note that if the envelope is not valid, then the Time Stamp is
+the reference time of the machine where the service is running.
+Anyway, a selection between these two Time Stamps is available
+for the user through --rxTime option.
+
+Moreover, a file called 'info.log' is produced containing
+information about the data type stored within the 'data.log'
+file as well as the name of the yarp ports connected or
+disconnected to the dumper, as in the following:
+
+\code
 Type: [Bottle | Image:ppm | Image:ppm; Video:ext(huffyuv)]
-[local-timestamp] /yarp-port-name [connected] 
+[local-timestamp] /yarp-port-name [connected]
 [local-timestamp] /yarp-port-name [disconnected]
-\endcode 
- 
+\endcode
+
 Finally, a further file called 'timecodes.log' is also generated
-together with the video, which contains the timecode associated 
-to each frame given in millisecond precision. The file content 
-looks like the following: 
- 
-\code 
+together with the video, which contains the timecode associated
+to each frame given in millisecond precision. The file content
+looks like the following:
+
+\code
 # timecode format v2
 0
 40
-80 
-\endcode 
- 
-This is useful to recover the exact timing while post-processing 
-the video relying for example on the \e mkvmerge tool: 
-\code 
-mkvmerge -o out.mkv --timecodes 0:timecodes.log video.mkv 
+80
+\endcode
+
+This is useful to recover the exact timing while post-processing
+the video relying for example on the \e mkvmerge tool:
+\code
+mkvmerge -o out.mkv --timecodes 0:timecodes.log video.mkv
 \endcode
 To get \e mkvmerge do: sudo apt-get install mkvtoolnix
- 
-The module \ref dataSetPlayer can be used to re-play a dump generated 
+
+The module \ref dataSetPlayer can be used to re-play a dump generated
 by the \ref dataDumper.
- 
-\section lib_sec Libraries 
-- YARP libraries 
-- To record videos: OpenCV 2.4 and the <a 
+
+\section lib_sec Libraries
+- YARP libraries
+- To record videos: OpenCV 2.4 and the <a
   href="http://wiki.team-mediaportal.com/9_Glossary/Huffyuv">huffyuv</a>
   codec for lossless data compression.
- 
-\section codec_installation Codec Installation 
-- Windows: fetch the dll library from the codec website and 
+
+\section codec_installation Codec Installation
+- Windows: fetch the dll library from the codec website and
   simply install it.
- 
-- Linux: ffmpeg must be properly installed and recognized by 
+
+- Linux: ffmpeg must be properly installed and recognized by
   OpenCV. The command "sudo apt-get ffmpeg" seemed not to work.
   This is a possible alterative procedure:
- 
+
   -# sudo apt-get install libjpeg62-dev libtiff4-dev
      libjasper-dev libopenexr-dev libeigen2-dev yasm libfaac-dev
      libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev
@@ -114,42 +114,42 @@ by the \ref dataDumper.
   -# recompile OpenCV through cmake
 
 \section parameters_sec Parameters
---name \e portname 
+--name \e portname
 - The parameter \e portname identifies the name of the listening
   port open by the service; if not specified \e /dump is
   assumed. The leading forward slash will be added if not
   provided.
- 
---dir \e dirname 
-- The parameter \e dirname serves to specify the storage 
+
+--dir \e dirname
+- The parameter \e dirname serves to specify the storage
   directory explicitely (relative to the location where the
   module has been launched from).
- 
---overwrite 
-- If this option is specified, then a pre-existing storage 
+
+--overwrite
+- If this option is specified, then a pre-existing storage
   directory will be overwritten.
- 
---type \e datatype 
-- The parameter \e datatype selects the type of items to be 
+
+--type \e datatype
+- The parameter \e datatype selects the type of items to be
   stored. It can be \e bottle, \e image or \e video; if not
   specified \e bottle is assumed. Note that images are stored as
   ppm files. The data type \e video is available if OpenCV is
   found and the codec \e huffyuv is installed.
- 
+
 --addVideo
-- In case images are acquired with this option enabled, a video 
+- In case images are acquired with this option enabled, a video
   called 'video.ext' is also produced at the same time. The
   extension \e ext is determined by the option \e videoType.
   This option is available if OpenCV is found and the codec
   \e huffyuv is installed in the system.
- 
---videoType \e ext 
-- If it is required to generate a video, the parameter \e ext 
+
+--videoType \e ext
+- If it is required to generate a video, the parameter \e ext
   specifies the type of the video container employed. Available
   types are: \e mkv (default), \e avi.
- 
---downsample \e n 
-- With this option it is possible to reduce the storing rate by 
+
+--downsample \e n
+- With this option it is possible to reduce the storing rate by
   a factor \e n, i.e. the parameter \e n specifies how many
   items (bottles or images) shall be skipped after one
   acquisition.
@@ -162,7 +162,7 @@ by the \ref dataDumper.
   reference. However, even if --rxTime is not selected, the
   receiver time will be taken as reference in case of invalid
   message envelope.
- 
+
 --txTime
 - Regardless of its availability, the sender time stamp will be
   inserted in the log straightaway. Moreover, if \e txTime is
@@ -170,18 +170,18 @@ by the \ref dataDumper.
   \e rxTime is not selected but the sender stamp is invalid),
     then the following format will be adopted for the logged
     data:
- 
-\code 
+
+\code
 [pck id] [tx stamp] [rx stamp] [message content]
-\endcode 
- 
+\endcode
+
 \section portsa_sec Ports Accessed
 The port the service is listening to.
 
 \section portsc_sec Ports Created
- 
-- \e <portname> (e.g. /dump) 
- 
+
+- \e <portname> (e.g. /dump)
+
 - \e <portname>/rpc which is a remote procedure call port useful
   to shut down the service remotely by sending to this port the
   'quit' command.
@@ -190,50 +190,50 @@ The port the service is listening to.
 None.
 
 \section out_data_sec Output Data Files
-Within the directory \e ./<portname> the file \e data.log is 
+Within the directory \e ./<portname> the file \e data.log is
 created containing the acquisitions. Besides, if \e image type
-has been selected, all the acquired images are also stored. A 
-further file called \e info.log is also produced containing 
-meta-data relevant for the logging. 
- 
-Note that in case an acquisition with the same \e <portname> was
-previously carried out, an increasing suffix will be appended 
-to the name of the directory.
- 
-\section conf_file_sec Configuration Files
-None. 
- 
-\section tested_os_sec Tested OS
-Linux and Windows. 
- 
-\section example_sec Example
-By launching the following command: 
- 
-\code 
-dataDumper --name /log --type image --downsample 2 
-\endcode 
- 
-the service will create the listening port /log capable of 
-storing images in ppm format within the subdirectory ./log at a 
-halved rate with respect to the rate of the sender. 
- 
-Then, by connecting the port to the sender with the usual yarp 
-command
- 
-\code 
-yarp connect /grabber /log 
-\endcode 
- 
-the acquisition will start. 
- 
-By pressing CTRL+C the acquisition is terminated.
- 
-So, now, have a look inside the directory ./log 
+has been selected, all the acquired images are also stored. A
+further file called \e info.log is also produced containing
+meta-data relevant for the logging.
 
-\author Ugo Pattacini 
+Note that in case an acquisition with the same \e <portname> was
+previously carried out, an increasing suffix will be appended
+to the name of the directory.
+
+\section conf_file_sec Configuration Files
+None.
+
+\section tested_os_sec Tested OS
+Linux and Windows.
+
+\section example_sec Example
+By launching the following command:
+
+\code
+dataDumper --name /log --type image --downsample 2
+\endcode
+
+the service will create the listening port /log capable of
+storing images in ppm format within the subdirectory ./log at a
+halved rate with respect to the rate of the sender.
+
+Then, by connecting the port to the sender with the usual yarp
+command
+
+\code
+yarp connect /grabber /log
+\endcode
+
+the acquisition will start.
+
+By pressing CTRL+C the acquisition is terminated.
+
+So, now, have a look inside the directory ./log
+
+\author Ugo Pattacini
 
 \sa dataSetPlayer
-*/ 
+*/
 
 #include <iostream>
 #include <iomanip>
@@ -378,7 +378,7 @@ public:
         {
             if (!ret.str().empty())
                 ret<<' ';
-            ret<<rxStamp; 
+            ret<<rxStamp;
         }
         return ret.str();
     }
@@ -475,7 +475,7 @@ private:
     DumpQueue      &buf;
     DumpType        type;
     ofstream        finfo;
-    ofstream        fdata;    
+    ofstream        fdata;
     string          dirName;
     string          infoFile;
     string          dataFile;
@@ -483,7 +483,7 @@ private:
     unsigned int    cumulSize;
     unsigned int    counter;
     double          oldTime;
-                   
+
     bool            saveData;
     bool            videoOn;
     string          videoType;
@@ -575,7 +575,7 @@ public:
     #ifdef ADD_VIDEO
         if (videoOn)
         {
-            ftimecodes.open(timecodesFile.c_str()); 
+            ftimecodes.open(timecodesFile.c_str());
             if (!ftimecodes.is_open())
             {
                 yError() << "unable to open file: " << timecodesFile;
@@ -744,7 +744,7 @@ public:
             if (optTypeName=="bottle")
                 type=bottle;
             else if (optTypeName=="image")
-            {    
+            {
                 type=image;
             #ifdef ADD_VIDEO
                 if (rf.check("addVideo"))
@@ -753,7 +753,7 @@ public:
             }
         #ifdef ADD_VIDEO
             else if (optTypeName=="video")
-            {    
+            {
                 type=image;
                 videoOn=true;
                 saveData=false;
@@ -767,7 +767,7 @@ public:
         }
         else
             type=bottle;
-        
+
         dwnsample=rf.check("downsample",Value(1)).asInt();
         rxTime=rf.check("rxTime");
         txTime=rf.check("txTime");
@@ -781,7 +781,7 @@ public:
         else
         {
             // look for a proper directory
-            int i=0;            
+            int i=0;
             do
             {
                 ostringstream checkDirName;
@@ -789,7 +789,7 @@ public:
                     checkDirName << "." << templateDirName << "_" << setw(5) << setfill('0') << i;
                 else
                     checkDirName << "." << templateDirName;
-            
+
                 dirName=checkDirName.str();
                 i++;
             }
@@ -904,5 +904,3 @@ int main(int argc, char *argv[])
     DumpModule mod;
     return mod.runModule(rf);
 }
-
-

@@ -29,7 +29,7 @@ When playing it uses the timestamps provided from the time of aquisition to sync
 
 \image html datasetplayer.jpg
 \image latex datasetplayer.eps "The dataSetPlayer GUI running on Windows" width=6cm
- 
+
 \section lib_sec Libraries
 - YARP libraries.
 - ICUB libraries
@@ -39,10 +39,10 @@ When playing it uses the timestamps provided from the time of aquisition to sync
 \section running_sec Running
 dataSetPlayer can run with or without the GUI (for server use and commands are sent via the rpc port)
 For gui run normally \e dataSetPlayer .
-Without GUI run with the extra parameter \e hidden: 
+Without GUI run with the extra parameter \e hidden:
 
 \verbatim
-  dataSetPlayer --hidden 
+  dataSetPlayer --hidden
 \endverbatim
 
 \section file-sec dataDumper file example
@@ -56,23 +56,23 @@ dataDumper data.log file example:
 dataDumper info.log file example:
 
 \verbatim
-  Type: Bottle;  
-  [1324373535.040288] /icub/head/state:o [connected]  
+  Type: Bottle;
+  [1324373535.040288] /icub/head/state:o [connected]
   etc...
 \endverbatim
-    
-\e Type: is used to identify what kind of data the player is    
-   required to send. 
- 
-\e The names of the ports open up by the player are initially    
-   set up based on the content of info.log file. This can be 
-   then changed using the GUI. 
+
+\e Type: is used to identify what kind of data the player is
+   required to send.
+
+\e The names of the ports open up by the player are initially
+   set up based on the content of info.log file. This can be
+   then changed using the GUI.
 
 \section parameters_sec Parameters
 
 --hidden
 - run with or without gui
- 
+
 --withExtraTimeCol index
 - loads the log files created by the datadumper with both rx and tx time.
   The user must select which timestamp to use (txTime index = 1 or rxTime index = 2)
@@ -91,11 +91,11 @@ dataDumper info.log file example:
 \section in_files_sec Input Data Files
 The player will look, in a recursive way, into directories in order to create the parts needed and retreive the data.
 
-The data name is the default \ref dataDumper names: data.log and    
-info.log.    
+The data name is the default \ref dataDumper names: data.log and
+info.log.
 
-An example directory tree containing data (data.log+info.log)    
-can be:    
+An example directory tree containing data (data.log+info.log)
+can be:
 \code
 /experiment1/
              /head/data.log;info.log
@@ -137,7 +137,7 @@ CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 #include <iostream>
 #include <gtkmm.h>
-#include "iCub/main_window.h"
+#include "main_window.h"
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Network.h>
 
@@ -189,6 +189,3 @@ int main(int argc, char *argv[])
     GDK_THREADS_LEAVE();
     return 0;
 }
-
-
-

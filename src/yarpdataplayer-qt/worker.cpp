@@ -22,8 +22,8 @@
 #endif
 
 #include "yarp/os/Stamp.h"
-#include "iCub/worker.h"
-//#include "iCub/main_window.h"
+#include "worker.h"
+//#include "main_window.h"
 #include "mainwindow.h"
 #include "log.h"
 

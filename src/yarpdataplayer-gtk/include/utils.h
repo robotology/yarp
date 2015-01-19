@@ -29,7 +29,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
-#include "iCub/worker.h"
+#include "worker.h"
 
 struct partsData
     {

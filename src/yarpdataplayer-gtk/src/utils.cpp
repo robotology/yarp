@@ -22,7 +22,7 @@
 #endif
 
 #if defined(WIN32)
-    #include "iCub/dirent.h"
+    #include "msvc/dirent.h"
     #undef max                  /*conflict with pango lib coverage.h*/
     #include <direct.h>
     #define GetCurrentDir _getcwd
@@ -35,8 +35,8 @@
 
 #include <yarp/os/Time.h>
 #include <stdio.h>              /* defines FILENAME_MAX */
-#include "iCub/utils.h"
-#include "iCub/main_window.h"
+#include "utils.h"
+#include "main_window.h"
 #include <iostream>
 
 using namespace yarp::os;
@@ -132,7 +132,7 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
                 if ( checkLog && checkData && (stat(dataFileName.c_str(), &st) == 0))
                 {
                     fprintf(stdout," %s IS present adding it to the gui\n",filename);
-                    
+
                     if (recursiveName.empty())
                         names.push_back( string( direntp->d_name) );//pass also previous subDir name
                     else
@@ -171,7 +171,7 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
                 }
                 else
                     recursiveName = string( direntp->d_name );
-                
+
                 getRecSubDirList(recDir, names, info, logs, paths, 1);
             }
             if (recursiveIterations < 2 || recursiveIterations > 2)
@@ -195,11 +195,11 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
 bool Utilities::checkLogValidity(const char *filename)
 {
     bool check = false;
-    fstream str; 
+    fstream str;
     str.open (filename);//, ios::binary);
-    
+
     if (str.is_open())
-    {   
+    {
         string line;
         int itr = 0;
         while( getline( str, line ) && itr < 3)
@@ -208,15 +208,15 @@ bool Utilities::checkLogValidity(const char *filename)
             if (itr >= 1)
             {
                 if ( b.size() < 1)
-                    check = false;                
+                    check = false;
                 else
                     check = true;
-            } 
+            }
             itr++;
-        }    
+        }
         str.close();
         fprintf (stdout, "The size of the file is %d \n",itr );
-    }   
+    }
     return check;
 }
 /**********************************************************/
@@ -256,7 +256,7 @@ bool Utilities::setupDataFromParts(partsData &part)
     fprintf(stdout,"opening file %s\n", part.logFile.c_str() );
     str.open (part.logFile.c_str());//, ios::binary);
 
-    //read throughout  
+    //read throughout
     if (str.is_open())
     {
         string line;
@@ -272,7 +272,7 @@ bool Utilities::setupDataFromParts(partsData &part)
             part.timestamp.push_back( b.get(timeStampCol).asDouble() );
             itr++;
         }
-        allTimeStamps.push_back( part.timestamp[0] );   //save all first timeStamps dumped for later ease of use 
+        allTimeStamps.push_back( part.timestamp[0] );   //save all first timeStamps dumped for later ease of use
         part.maxFrame= itr-1;                           //set max frame to the total iteration minus first line type;
         part.currFrame = 0;                             //initialize current frame to 0
         str.close();                                    //close the file
@@ -294,7 +294,7 @@ void Utilities::getMaxTimeStamp()
             maxTimeStamp = allTimeStamps[i];
             index = i;
         }
-        
+
     }
     fprintf(stdout,"the biggest timestamp is: index %d with value %lf\n",index, allTimeStamps[index] );
 }
@@ -409,6 +409,3 @@ void Utilities::pauseThread()
     fprintf(stdout, "ok................ \n");
     masterThread->stepfromCmd = false;
 }
-
-
-

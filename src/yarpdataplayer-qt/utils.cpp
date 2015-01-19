@@ -22,7 +22,7 @@
 #endif
 
 #if defined(WIN32)
-    #include "iCub/dirent.h"
+    #include "msvc/dirent.h"
     #undef max                  /*conflict with pango lib coverage.h*/
     #include <direct.h>
     #define GetCurrentDir _getcwd
@@ -35,7 +35,7 @@
 
 #include <yarp/os/Time.h>
 #include <stdio.h>              /* defines FILENAME_MAX */
-#include "iCub/utils.h"
+#include "utils.h"
 
 #include <iostream>
 #include "mainwindow.h"

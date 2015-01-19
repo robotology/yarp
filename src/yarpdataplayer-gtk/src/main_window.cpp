@@ -25,7 +25,7 @@
 #include <gtkmm.h>
 #include <iostream>
 #include <string>
-#include "iCub/main_window.h"
+#include "main_window.h"
 
 #define WND_DEF_HEIGHT          400
 #define WND_DEF_WIDTH           800
@@ -205,7 +205,7 @@ int MainWindow::doGuiSetup(string newPath)
     partsFullPath.clear();
     partsInfoPath.clear();
     partsLogPath.clear();
-    
+
     utilities->resetMaxTimeStamp();
 
     subDirCnt = utilities->getRecSubDirList(newPath.c_str(), partsName, partsInfoPath, partsLogPath, partsFullPath, 1);
@@ -603,10 +603,10 @@ void MainWindow::onMenuFileOpen()
         m_refTreeModel->clear();
 
         //for (int x=0; x < subDirCnt; x++)
-            //utilities->interruptPorts(utilities->partDetails[x]);       
+            //utilities->interruptPorts(utilities->partDetails[x]);
         for (int x=0; x < subDirCnt; x++)
             utilities->closePorts(utilities->partDetails[x]);
-        
+
         if (subDirCnt > 0)
         {
             clearUtilities();
@@ -642,7 +642,7 @@ void MainWindow::onErrorMessage(const char *filename)
             break;
         }
     }
-        
+
 }
 
 
@@ -845,7 +845,7 @@ void MainWindow::onPlayPositionChanged()
     //double value = m_hPlayScale.get_value();
     //figure out which frame it is:
     //int selectedFrame = (int)( (utilities->partDetails[0].maxFrame * value) /100 );
-    
+
     /*
      * this is currently commented as, a click on the bar creates events that are taken as a change in other functions
      * Still to find a way to fix it...
@@ -967,6 +967,3 @@ bool MainWindow::getPartPort(const char* szName, char* dest)
     return false;
 }
 /**********************************************************/
-
-
-

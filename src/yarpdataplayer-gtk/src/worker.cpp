@@ -22,8 +22,8 @@
 #endif
 
 #include "yarp/os/Stamp.h"
-#include "iCub/worker.h"
-#include "iCub/main_window.h"
+#include "worker.h"
+#include "main_window.h"
 
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -91,7 +91,7 @@ void WorkerClass::run()
 
         if (strcmp (utilities->partDetails[part].type.c_str(),"Bottle") == 0)
         {
-            
+
             Bottle& outBot = utilities->partDetails[part].bottlePort.prepare();
             outBot = tmp;
 
@@ -212,7 +212,7 @@ void MasterThread::stepFromCmd()
 
     for (int i=0; i < numPart; i++)
         utilities->partDetails[i].sent = 0;
-    
+
     utilities->totalSent = 0;
     utilities->pauseThread();
 }
@@ -387,6 +387,3 @@ void UpdateGui::updateGuiRateThread()
 {
     this->run();
 }
-
-
-

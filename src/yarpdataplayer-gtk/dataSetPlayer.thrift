@@ -7,18 +7,18 @@
 /**
 * dataSetPlayer_IDL
 *
-* Interface. 
+* Interface.
 */
 
 service dataSetPlayer_IDL
 {
   /**
-  * Steps the player once. The player will be stepped 
+  * Steps the player once. The player will be stepped
   * until all parts have sent data
   * @return true/false on success/failure
   */
   bool step();
-  
+
   /**
   * Sets the frame number to the user desired frame.
   * @param name specifies the name of the loaded data
@@ -27,7 +27,7 @@ service dataSetPlayer_IDL
   * @return true/false on success/failure
   */
   bool setFrame(1:string name, 2:i32 frameNum);
-  
+
   /**
   * Gets the frame number the user is requesting
   * @param name specifies the name of the data to modify
@@ -35,13 +35,13 @@ service dataSetPlayer_IDL
   * @return i32 returns the current frame index
   */
   i32 getFrame(1:string name);
-  
+
   /**
   * Loads a dataset from a path
   * @return true/false on success/failure
   */
   bool load(1:string path);
-  
+
   /**
   * Plays the dataSets
   * @return true/false on success/failure
@@ -64,5 +64,5 @@ service dataSetPlayer_IDL
   * Quit the module.
   * @return true/false on success/failure
   */
-  bool quit();  
+  bool quit();
 }

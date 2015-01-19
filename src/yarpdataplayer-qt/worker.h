@@ -14,24 +14,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details
 */
+#include <QObject>
 
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/RateThread.h>
-#include "iCub/utils.h"
+#include "utils.h"
 #include <cv.h>
 #include <highgui.h>
 #include <yarp/os/Event.h>
 #include <yarp/os/Time.h>
+#include <QMainWindow>
 
 #ifndef __WORKER_H__
 #define __WORKER_H__
 
 class Utilities;
-class MainWindow;
+//class MainWindow;
 
 /**********************************************************/
-class WorkerClass
+class WorkerClass : public QObject
 {
 protected:
     Utilities *utilities;
@@ -78,40 +80,48 @@ public:
     * Function that resets the time
     */
     void resetTime();
+
+
+
 };
 /**********************************************************/
-class UpdateGui
-{
-protected:
-    Utilities *utilities;
-    MainWindow* wnd;
-    int numPart;
-    int percentage;
-public:
-    UpdateGui(Utilities *utilities, int numPart, MainWindow *gui);
-    void run();
-    void updateGuiRateThread();
-    bool threadInit();
-    void threadRelease();
-};
+//class UpdateGui : public QObject
+//{
+//protected:
+//    Utilities *utilities;
+//    QMainWindow* wnd;
+//    int numPart;
+//    int percentage;
+//public:
+//    UpdateGui(Utilities *utilities, int numPart, QMainWindow *gui );
+//    void run();
+//    //void updateGuiRateThread();
+//    bool threadInit();
+//    void threadRelease();
+
+
+//};
 /**********************************************************/
-class MasterThread : public yarp::os::RateThread
+class MasterThread : public QObject,  public yarp::os::RateThread
 {
+
+    friend class Utilities;
+
 protected:
     Utilities *utilities;
-    UpdateGui *guiUpdate;
+    //UpdateGui *guiUpdate;
     int numPart;
 
 public:
     int                     numThreads;
     double                  timePassed, initTime, virtualTime;
     bool                    stepfromCmd;
-    MainWindow* wnd;
+    QMainWindow* wnd;
 
     /**
      * Master thread class
      */
-    MasterThread(Utilities *utilities, int numPart, MainWindow* gui);
+    MasterThread(Utilities *utilities, int numPart, QMainWindow *gui, QObject *parent = NULL);
     /**
      * Thread init
      */
@@ -148,6 +158,10 @@ public:
      * Function that steps normally (without using terminal or rpc)
      */
     void runNormally();
+
+    void goToPercentage(int value);
+
+
 };
 
 
