@@ -502,7 +502,7 @@ private:
 public:
     DumpThread(DumpType _type, DumpQueue &Q, const string &_dirName, int szToWrite,
                bool _saveData, bool _videoOn, const string &_videoType) :
-               RateThread(50), type(_type), buf(Q), dirName(_dirName),
+               RateThread(50), buf(Q), type(_type), dirName(_dirName),
                blockSize(szToWrite), saveData(_saveData),
                videoOn(_videoOn), videoType(_videoType)
     {
