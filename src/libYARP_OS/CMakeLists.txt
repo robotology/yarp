@@ -385,6 +385,12 @@ if (YARP_USE_READLINE)
     target_link_libraries(YARP_OS LINK_PRIVATE ${Readline_LIBRARY})
 endif ()
 
+option(YARP_TEST_HEAP "Replace new/delete operators with test harness (may be incompatible with ACE)" FALSE)
+mark_as_advanced(YARP_TEST_HEAP)
+if (YARP_TEST_HEAP)
+    add_definitions(-DYARP_TEST_HEAP)
+endif()
+
 install(TARGETS YARP_OS
         EXPORT YARP
         COMPONENT runtime

@@ -15,10 +15,49 @@
 #include <yarp/os/Network.h>
 #include <math.h>
 
+#ifdef YARP_TEST_HEAP
+#include <yarp/os/Mutex.h>
+#endif
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
 UnitTest *UnitTest::theRoot = NULL;
+
+#ifdef YARP_TEST_HEAP
+
+static bool heap_count_active = false;
+static int heap_count_ops = 0;
+static bool heap_expect_ops = false;
+static yarp::os::Mutex *heap_count_mutex = NULL;
+
+void addHeapOperation(const char *act) {
+    if (heap_count_active) {
+        heap_count_mutex->lock();
+        if (!heap_expect_ops) {
+            heap_count_mutex->unlock();
+            fprintf(stderr,"Unexpected '%s' heap operation detected.\n", act);
+            yarp_print_trace(stderr,__FILE__,__LINE__);
+            heap_count_mutex->lock();
+        }
+        heap_count_ops++;
+        heap_count_mutex->unlock();
+    }
+}
+
+void *operator new(std::size_t size) {
+    addHeapOperation("new");
+    return malloc(size);
+}
+
+void operator delete(void *ptr) {
+    addHeapOperation("delete");
+    free(ptr);
+}
+
+#endif
+
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -249,3 +288,54 @@ void UnitTest::restoreEnvironment() {
 }
 
  
+bool UnitTest::heapMonitorSupported() {
+#ifdef YARP_TEST_HEAP
+    return true;
+#else
+    return false;
+#endif
+}
+
+void UnitTest::heapMonitorBegin(bool expectAllocations) {
+#ifdef YARP_TEST_HEAP
+    heapMonitorEnd();
+    heap_count_ops = 0;
+    heap_count_mutex = new Mutex();
+    heap_expect_ops = expectAllocations;
+    heap_count_active = true;
+#endif
+}
+
+int UnitTest::heapMonitorOps() {
+#ifdef YARP_TEST_HEAP
+    heap_count_mutex->lock();
+    int diff = heap_count_ops;
+    heap_count_ops = 0;
+    heap_count_mutex->unlock();
+    if (!heap_expect_ops) {
+        checkEqual(0,diff,"heap operator count");
+    }
+    return diff;
+#else
+    return -1;
+#endif
+}
+
+int UnitTest::heapMonitorEnd() {
+#ifdef YARP_TEST_HEAP
+    if (!heap_count_mutex) return 0;
+    heap_count_mutex->lock();
+    heap_count_active = false;
+    int diff = heap_count_ops;
+    heap_count_ops = 0;
+    heap_count_mutex->unlock();
+    if (!heap_expect_ops) {
+        checkEqual(0,diff,"heap operator final count");
+    }
+    delete heap_count_mutex;
+    heap_count_mutex = NULL;
+    return diff;
+#else
+    return -1;
+#endif
+}

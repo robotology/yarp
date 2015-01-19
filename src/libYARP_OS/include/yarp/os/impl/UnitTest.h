@@ -39,7 +39,7 @@ public:
 
     void report(int severity, const String& problem);
 
-    virtual String getName() = 0;
+    virtual String getName() { return "isolated test"; }
 
     static void startTestSystem();
     static UnitTest& getRoot();
@@ -87,6 +87,51 @@ public:
     bool isOk() {
         return !hasProblem;
     }
+
+    /**
+     *
+     * Check if YARP has been compiled with YARP_TEST_HEAP set, and so
+     * can monitor heap activity.
+     *
+     * @return true if YARP is compiled with hooks for monitoring heap
+     * activity
+     *
+     */
+    static bool heapMonitorSupported();
+
+    /**
+     *
+     * Begin monitoring heap activity, specifically calls to
+     * new/new[]/delete/delete[]. It is important to eventually call
+     * heapMonitorEnd() to stop monitoring heap activity.  You must
+     * guarantee that no heap activity is occurring in any other
+     * threads when you call this method.
+     *
+     * @param expectAllocations set to true if heap activity is expected,
+     * set to false if heap activity is unexpected (stack traces will be
+     * shown for every new/delete in this case)
+     *
+     */
+    void heapMonitorBegin(bool expectAllocations = true);
+
+    /**
+     *
+     * @return a cumulative count of new/delete calls since the last call
+     * to this method or to heapMonitorBegin()
+     *
+     */
+    int heapMonitorOps();
+
+    /**
+     *
+     * Stop monitoring heap activity.  You must guarantee that no
+     * heap activity is occurring in any other threads when you call
+     * this method.
+     *
+     * @return the output of heapMonitorOps()
+     *
+     */
+    int heapMonitorEnd();
 
 private:
     UnitTest *parent;

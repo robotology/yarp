@@ -60,6 +60,7 @@ extern yarp::os::impl::UnitTest& getPublisherTest();
 extern yarp::os::impl::UnitTest& getLogTest();
 extern yarp::os::impl::UnitTest& getLogStreamTest();
 extern yarp::os::impl::UnitTest& getMessageStackTest();
+extern yarp::os::impl::UnitTest& getUnitTestTest();
 
 class yarp::os::impl::TestList {
 public:
@@ -102,6 +103,7 @@ public:
         root.add(getLogTest());
         root.add(getLogStreamTest());
         root.add(getMessageStackTest());
+        root.add(getUnitTestTest());
 
 #ifdef YARPRUN_TEST
         root.add(getRunTest());
