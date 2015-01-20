@@ -130,6 +130,15 @@ public:
 
     bool write(ConnectionWriter& writer);
 
+    /**
+     *
+     * @return true iff the managed data block is owned by this object
+     *
+     */
+    bool isOwner() const {
+        return owned;
+    }
+
 private:
     Bytes b;
     bool owned;
