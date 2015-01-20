@@ -1,43 +1,39 @@
 
-option(CBW2_USE_YARP_THRIFT "Use the extended status generated from .thrift file" ON)
 option(CBW2_USE_ROS_MSG "Create ROS topic" OFF)
 
 # include(YarpIDL)    ## we want to use IDL so include their macros
 
-if(CBW2_USE_YARP_THRIFT)
-    #message(INFO " Using YARP message\n")
-    add_definitions(-DYARP_MSG)
+## Extended yarp port always on by default, backward compatibility is provided by a run-time check
 
-    # name of the file
-    set(thrifFile stateExt)
+# name of the file
+set(thrifFile stateExt)
 
-    #idl commands
-    set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}/yarp")
+#idl commands
+set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}/yarp")
 
-    # run the generator engine
-    #yarp_idl_to_dir(${thrifFile}.thrift ${generated_libs_dir} yarp_msg_sources yarp_msg_headers yarp_msg_include_dirs)
+# run the generator engine
+#yarp_idl_to_dir(${thrifFile}.thrift ${generated_libs_dir} yarp_msg_sources yarp_msg_headers yarp_msg_include_dirs)
 
-    #include files generated previously
-    include(${generated_libs_dir}/${thrifFile}_thrift.cmake)
+#include files generated previously
+include(${generated_libs_dir}/${thrifFile}_thrift.cmake)
 
-    foreach(file ${sources})
-        set(yarp_msg_sources ${yarp_msg_sources} ${generated_libs_dir}/${file})
-    endforeach()
+foreach(file ${sources})
+    set(yarp_msg_sources ${yarp_msg_sources} ${generated_libs_dir}/${file})
+endforeach()
 
-    foreach(file ${headers})
-        set(yarp_msg_headers ${yarp_msg_headers} ${generated_libs_dir}/${file})
-    endforeach()
+foreach(file ${headers})
+    set(yarp_msg_headers ${yarp_msg_headers} ${generated_libs_dir}/${file})
+endforeach()
 
-    set(yarp_msg_include_dirs "${generated_libs_dir}/include")
+set(yarp_msg_include_dirs "${generated_libs_dir}/include")
 
-    include_directories(${yarp_msg_include_dirs} )
+include_directories(${yarp_msg_include_dirs} )
 
-    # create the sender
-    #message(STATUS ">> YARP MSG sources is ${yarp_msg_sources}")
-    #message(STATUS ">> YARP MSG headers is ${yarp_msg_headers}")
-    #message(STATUS ">> YARP MSG yarp_msg_include_dirs is ${yarp_msg_include_dirs}")
+# create the sender
+#message(STATUS ">> YARP MSG sources is ${yarp_msg_sources}")
+#message(STATUS ">> YARP MSG headers is ${yarp_msg_headers}")
+#message(STATUS ">> YARP MSG yarp_msg_include_dirs is ${yarp_msg_include_dirs}")
 
-endif(CBW2_USE_YARP_THRIFT)
 
 if(CBW2_USE_ROS_MSG)
     message(STATUS " Using ROS message\n")
