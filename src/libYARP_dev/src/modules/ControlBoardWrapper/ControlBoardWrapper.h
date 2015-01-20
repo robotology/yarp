@@ -36,12 +36,7 @@
 //#define ROS_MSG
 ////#undef  ROS_MSG
 
-//#define YARP_MSG
-//#undef  YARP_MSG
-
-#ifdef YARP_MSG
 #include "jointData.h"
-#endif
 
 #ifdef ROS_MSG
 #include "jointState.h"
@@ -127,12 +122,10 @@ private:
     yarp::os::Stamp time;                       // envelope to attach to the state port
     yarp::os::Semaphore timeMutex;
 
-#if defined(YARP_MSG)
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
     yarp::os::PortWriterBuffer<jointData>           extendedOutputState_buffer;
     yarp::os::Port extendedOutputStatePort;         // Port /stateExt:o streaming out the struct with the robot data
-#endif
 
 
 #if defined(ROS_MSG)

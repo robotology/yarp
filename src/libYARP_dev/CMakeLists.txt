@@ -120,13 +120,6 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
 add_subdirectory(src/modules/msgs)
 
-
-# defined in msgs forder, for now TBR
-if(CBW2_USE_YARP_THRIFT)
-    message(STATUS "defining YARP_MSG")
-    add_definitions(-DYARP_MSG)
-endif()
-
 if(CBW2_USE_ROS_MSG)
     message(STATUS "defining ROS_MSG")
     add_definitions(-DROS_MSG)

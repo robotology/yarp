@@ -53,9 +53,7 @@ bool ControlBoardWrapper::close()
 
     //shut down control port
     outputPositionStatePort.close();
-#if defined(YARP_MSG)
     extendedOutputStatePort.close();
-#endif
     inputStreamingPort.close();
     inputRPCPort.close();
 
@@ -173,11 +171,9 @@ bool ControlBoardWrapper::open(Searchable& config)
         return false;
     }
 
-#ifdef YARP_MSG
     // new extended output state port
     extendedOutputState_buffer.attach(extendedOutputStatePort);
     extendedOutputStatePort.open((rootName+"/stateExt:o").c_str());
-#endif
 
 #ifdef ROS_MSG
     rosNode = new yarp::os::Node( (rootName+"/rosPublisher").c_str());   // add a ROS node
@@ -504,7 +500,6 @@ void ControlBoardWrapper::run()
     outputPositionStatePort.setEnvelope(time);
     outputPositionStatePort.write();
 
-#if defined(YARP_MSG)
     jointData &yarp_struct = extendedOutputState_buffer.get();
 
     yarp_struct.jointPosition.resize(controlledJoints);
@@ -531,7 +526,6 @@ void ControlBoardWrapper::run()
 
     extendedOutputStatePort.setEnvelope(time);
     extendedOutputState_buffer.write();
-#endif
 
 #if defined(ROS_MSG)
     jointState ros_struct;
