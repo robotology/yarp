@@ -810,5 +810,9 @@ public:
 #define VOCAB_TORQUES_DIRECTS VOCAB4('d','t','q','s') //This implements the setRefTorques for the whole part
 #define VOCAB_TORQUES_DIRECT VOCAB3('d','t','q') //This implements the setRefTorque for a single joint
 #define VOCAB_TORQUES_DIRECT_GROUP VOCAB4('d','t','q','g') //This implements the setRefTorques with joint list
+
+// protocol version
+#define VOCAB_PROTOCOL_VERSION VOCAB('p', 'r', 'o', 't')
+
 #endif
 

@@ -128,6 +128,10 @@ public:
     void handleOpenLoopMsg(const yarp::os::Bottle& cmd,
         yarp::os::Bottle& response, bool *rec, bool *ok);
 
+
+    void handleProtocolVersionRequest(const yarp::os::Bottle& cmd,
+         yarp::os::Bottle& response, bool *rec, bool *ok);
+
     /**
     * Initialize the internal data.
     * @return true/false on success/failure
