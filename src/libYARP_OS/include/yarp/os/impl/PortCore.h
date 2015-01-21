@@ -26,6 +26,7 @@
 #include <yarp/os/Mutex.h>
 
 #include <yarp/os/impl/PlatformVector.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 
 namespace yarp {
     namespace os {
@@ -114,7 +115,7 @@ public:
      * Constructor.
      */
     PortCore() : stateMutex(1), packetMutex(1), connectionChange(1),
-                 log("port",Logger::get()) {
+        log("port",Logger::get()), envelopeWriter(true) {
         // dormant phase
         listening = false;
         running = false;
@@ -528,6 +529,7 @@ private:
     yarp::os::Contactable *contactable;  ///< user-facing object that contains this PortCore
     yarp::os::Mutex *mutex; ///< callback optional access control lock
     bool mutexOwned;        ///< do we own the optional callback lock
+    BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
 
     void closeMain();
 
