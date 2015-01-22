@@ -40,18 +40,24 @@ add_subdirectory(yarp)
 add_subdirectory(yarprun)
 add_subdirectory(yarphear)
 add_subdirectory(yarpdev)
-add_subdirectory(yarpmanager)
 add_subdirectory(yarpmanager-console)
 add_subdirectory(yarplogger-console)
+add_subdirectory(yarpdatadumper)
 
 # Qt5 GUIs
 add_subdirectory(yarpview-qt)
 add_subdirectory(yarpscope-qt)
 add_subdirectory(yarpmanager-qt)
 add_subdirectory(yarplogger-qt)
+add_subdirectory(yarpdataplayer-qt)
 
 # GTK2 GUIs
 add_subdirectory(yarpview-gtk)
 add_subdirectory(yarpscope-gtk)
 add_subdirectory(yarpmanager-gtk)
 add_subdirectory(yarpbuilder-gtk)
+add_subdirectory(yarpdataplayer-gtk)
+
+# data
+add_subdirectory(yarpmanager)
+add_subdirectory(yarpdataplayer)
