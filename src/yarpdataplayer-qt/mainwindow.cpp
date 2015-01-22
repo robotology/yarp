@@ -36,7 +36,13 @@
 #define PORT        5
 #define PERCENT     6
 
+#ifndef APP_NAME
+ #define APP_NAME "yarpdataplayer"
+#endif
 
+#ifndef APP_VERSION
+ #define APP_VERSION "1.0"
+#endif
 
 MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     QMainWindow(parent),
