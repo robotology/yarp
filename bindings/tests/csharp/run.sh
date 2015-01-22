@@ -16,6 +16,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "HELLO $CSLIB // $DIR"
 
 echo "We compile using gmcs, the Mono C# Compiler"
-rm -rf test_string.exe
-gmcs -out:test_string.exe $DIR/TestString.cs $CSLIB/*.cs
-./test_string.exe
+for f in TestString TestStamp; do
+    rm -rf $f.exe
+    gmcs -out:$f.exe $DIR/$f.cs $CSLIB/*.cs
+    ./$f.exe
+done
