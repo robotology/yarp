@@ -30,6 +30,7 @@
     #include <unistd.h>
     #include <dirent.h>
     #include <cerrno>
+    #include <sys/stat.h>
     #define GetCurrentDir getcwd
 #endif
 
