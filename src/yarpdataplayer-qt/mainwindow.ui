@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>5</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>5</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QTreeWidget" name="mainWidget">
+      <attribute name="headerDefaultSectionSize">
+       <number>80</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Active</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Part</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Type</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Frames</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Sample Rate</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Port Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Status</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSlider" name="playSlider">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QSlider::groove:horizontal:enabled {
+     border: 1px solid #999999;
+     height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
+     margin: 2px 0;
+ }
+
+QSlider::groove:horizontal:disabled {
+     border: 1px solid #c8c8c8;
+     height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f0f0f0, stop:1 #dcdcdc);
+     margin: 2px 0;
+ }
+
+ QSlider::handle:horizontal:enabled {
+     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+     border: 1px solid #5c5c5c;
+     width: 30px;
+     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+     border-radius: 3px;
+ }
+
+
+ QSlider::handle:horizontal:disabled {
+     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #e6e6e6, stop:1 #c8c8c8);
+     border: 1px solid #c8c8c8;
+     width: 30px;
+     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+     border-radius: 3px;
+ }</string>
+      </property>
+      <property name="maximum">
+       <number>100</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QToolButton" name="rewButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/images/rewind.png</normaloff>:/images/rewind.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="playButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/images/play.png</normaloff>:/images/play.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="stopButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/images/stop.png</normaloff>:/images/stop.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="ffwButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="speedLbl">
+           <property name="text">
+            <string>Speed:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="horizontalSlider">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QSlider::groove:horizontal:enabled {
+     border: 1px solid #999999;
+     height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
+     margin: 2px 0;
+ }
+
+QSlider::groove:horizontal:disabled {
+     border: 1px solid #c8c8c8;
+     height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f0f0f0, stop:1 #dcdcdc);
+     margin: 2px 0;
+ }
+
+ QSlider::handle:horizontal:enabled {
+     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+     border: 1px solid #5c5c5c;
+     width: 30px;
+     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+     border-radius: 3px;
+ }
+
+
+ QSlider::handle:horizontal:disabled {
+     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #e6e6e6, stop:1 #c8c8c8);
+     border: 1px solid #c8c8c8;
+     width: 30px;
+     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+     border-radius: 3px;
+ }</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>20</number>
+           </property>
+           <property name="value">
+            <number>10</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+           <property name="tickInterval">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="speedValueLbl">
+           <property name="text">
+            <string>1X</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen_Directory"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuAction">
+    <property name="title">
+     <string>Action</string>
+    </property>
+    <addaction name="actionPlay"/>
+    <addaction name="actionPause"/>
+    <addaction name="actionStop"/>
+    <addaction name="actionForward"/>
+    <addaction name="actionRewind"/>
+   </widget>
+   <widget class="QMenu" name="menuOption">
+    <property name="title">
+     <string>Option</string>
+    </property>
+    <addaction name="actionIncrease"/>
+    <addaction name="actionDecrease"/>
+    <addaction name="actionNormal_1x"/>
+    <addaction name="separator"/>
+    <addaction name="actionRepeat"/>
+    <addaction name="actionStrict"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuAction"/>
+   <addaction name="menuOption"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpen_Directory">
+   <property name="text">
+    <string>Open Directory</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionPlay">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/play.png</normaloff>:/images/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Play</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/pause.png</normaloff>:/images/pause.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/stop.png</normaloff>:/images/stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionForward">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+   </property>
+   <property name="text">
+    <string>Forward</string>
+   </property>
+  </action>
+  <action name="actionRewind">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/rewind.png</normaloff>:/images/rewind.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rewind</string>
+   </property>
+  </action>
+  <action name="actionIncrease">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Increase ++</string>
+   </property>
+  </action>
+  <action name="actionDecrease">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Decrease --</string>
+   </property>
+  </action>
+  <action name="actionNormal_1x">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Normal 1x</string>
+   </property>
+  </action>
+  <action name="actionRepeat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Repeat</string>
+   </property>
+  </action>
+  <action name="actionStrict">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Strict</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
