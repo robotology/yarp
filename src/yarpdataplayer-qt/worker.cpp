@@ -160,7 +160,7 @@ void WorkerClass::setManager(Utilities *utilities)
 }
 
 /**********************************************************/
-MasterThread::MasterThread(Utilities *utilities, int numPart, QMainWindow *gui, QObject *parent) : RateThread (2),QObject(parent)
+MasterThread::MasterThread(Utilities *utilities, int numPart, QMainWindow *gui, QObject *parent) : QObject(parent), RateThread (2)
 {
     //stepfromCmd = false;
     this->wnd = gui;

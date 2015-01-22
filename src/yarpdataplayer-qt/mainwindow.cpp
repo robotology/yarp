@@ -39,8 +39,9 @@
 
 
 MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
-    QMainWindow(parent),loadingWidget(this),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    loadingWidget(this)
 {
     ui->setupUi(this);
     setWindowTitle(APP_NAME);
