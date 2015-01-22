@@ -63,7 +63,7 @@ before_script:
   - mkdir -p build
   - cd build
   - export YARP_CMAKE_OPTIONS="-DTEST_yarpidl_rosmsg=TRUE -DTEST_yarpidl_thrift=TRUE -DCREATE_OPTIONAL_CARRIERS=TRUE -DENABLE_yarpcar_tcpros_carrier=TRUE -DENABLE_yarpcar_rossrv_carrier=TRUE -DENABLE_yarpcar_xmlrpc_carrier=TRUE"
-  - if [ "k$TRAVIS_WITH_ACE" = "kfalse" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=TRUE"; fi
+  - if [ "k$TRAVIS_WITH_ACE" = "kfalse" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=TRUE -DYARP_TEST_HEAP=TRUE"; fi
   - cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ..
   - if [ "$CXX" = "g++" ]; then lcov --directory . --zerocounters; fi
   - cd ..

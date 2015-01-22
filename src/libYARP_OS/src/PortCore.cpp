@@ -1414,10 +1414,10 @@ void PortCore::notifyCompletion(void *tracker) {
 
 
 bool PortCore::setEnvelope(PortWriter& envelope) {
-    BufferedConnectionWriter buf(true);
-    bool ok = envelope.write(buf);
+    envelopeWriter.restart();
+    bool ok = envelope.write(envelopeWriter);
     if (ok) {
-        setEnvelope(buf.toString());
+        setEnvelope(envelopeWriter.toString());
     }
     return ok;
 }
