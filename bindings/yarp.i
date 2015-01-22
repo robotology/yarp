@@ -641,6 +641,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 	}
 }
 
+%extend yarp::os::Contactable {
+  bool setEnvelope(Portable& data) {
+    return self->setEnvelope(*((PortWriter*)(&data)));
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Deal with PolyDriver idiom that doesn't translate too well
 
