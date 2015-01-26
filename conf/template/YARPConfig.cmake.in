@@ -81,9 +81,6 @@ if(NOT YARP_FOUND)
         set(YARP_NAME_LIBRARY YARP::YARP_name)
     endif()
     set(YARP_INIT_LIBRARY YARP::YARP_init)
-    if(TARGET YARP::YARP_manager)
-        set(YARP_manager_LIBRARY YARP::YARP_manager)
-    endif()
 
     # load IDL support on demand
     macro(YARP_IDL_TO_DIR)
