@@ -82,11 +82,7 @@ if(NOT YARP_FOUND)
     endif()
     set(YARP_INIT_LIBRARY YARP::YARP_init)
 
-    # load IDL support on demand
-    macro(YARP_IDL_TO_DIR)
-      if (NOT COMMAND YARP_IDL_TO_DIR_CORE)
-	include(${YARP_MODULE_DIR}/YarpIDL.cmake)
-      endif()
-      YARP_IDL_TO_DIR_CORE(${ARGN})
-    endmacro()
+    # load IDL functions
+    include(${YARP_MODULE_DIR}/YarpIDL.cmake)
+
 endif(NOT YARP_FOUND)
