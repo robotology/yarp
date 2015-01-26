@@ -82,7 +82,7 @@ if(NOT YARP_FOUND)
     endif()
     set(YARP_INIT_LIBRARY YARP::YARP_init)
     if(TARGET YARP::YARP_manager)
-        set(YARP_MATH_LIBRARY YARP::YARP_manager)
+        set(YARP_manager_LIBRARY YARP::YARP_manager)
     endif()
 
     # load IDL support on demand
