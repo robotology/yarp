@@ -10,6 +10,7 @@ find_package(YARP REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 include(YarpIDL)
 
+# Test using yarp_idl_to_dir
 set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}")
 yarp_idl_to_dir(demo.thrift ${generated_libs_dir} S1 H1 I1)
 yarp_idl_to_dir(namespaced.thrift ${generated_libs_dir} S2 H2 I2)
@@ -26,3 +27,16 @@ target_link_libraries(demo_test ${YARP_LIBRARIES})
 add_test(demo_basic demo_test)
 
 
+# Test using yarp_add_idl
+set(IDL_FILES demo.thrift
+              namespaced.thrift
+              objects3D.thrift
+              wrapping.thrift
+              sub/directory/clock_rpc.thrift
+              settings.thrift)
+yarp_add_idl(IDL_GEN_FILES ${IDL_FILES})
+include_directories(${YARP_INCLUDE_DIRS})
+add_executable(demo_test2 main.cpp ${IDL_GEN_FILES})
+target_link_libraries(demo_test2 ${YARP_LIBRARIES})
+
+add_test(demo_basic2 demo_test2)
