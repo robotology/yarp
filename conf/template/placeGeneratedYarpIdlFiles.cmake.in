@@ -2,8 +2,8 @@
 # Authors: Elena Ceseracciu
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-FILE(GLOB globbedHeaders RELATIVE @dir@/ "@dir@/*.h")
-FILE(GLOB globbedSources RELATIVE @dir@/ "@dir@/*.cpp")
+file(GLOB globbedHeaders RELATIVE @dir@/ "@dir@/*.h")
+file(GLOB globbedSources RELATIVE @dir@/ "@dir@/*.cpp")
 
 set(headers)
 set(sources)
@@ -15,40 +15,44 @@ if (include_prefix)
 endif()
 
 # check that globbed files are really the ones we need from generated listfile
-FILE(STRINGS @dir@/@yarpidlName@_indexALL.txt index)
+file(STRINGS @dir@/@yarpidlName@_indexALL.txt index)
 #prepare include and src directories in the source tree
 make_directory("@output_dir@/include/${prefix}")
 make_directory("@output_dir@/src/${prefix}")
 
-
 foreach(genFile ${index})
   get_filename_component(type ${genFile} EXT)
   get_filename_component(main ${genFile} NAME_WE)
-  if (${type} STREQUAL ".h")
+  if(${type} STREQUAL ".h")
     list(FIND globbedHeaders ${genFile} inclFound)
-    if (${inclFound} EQUAL -1)
+    if(${inclFound} EQUAL -1)
       message(WARNING "${genFile} not found in @yarpidlName@ dir!")
-    else(${inclFound} EQUAL -1) 
-      FILE(COPY @dir@/${genFile} DESTINATION @output_dir@/include/${prefix})
+    else()
+      file(COPY @dir@/${genFile} DESTINATION @output_dir@/include/${prefix})
       list(APPEND headers "include/${prefix}${genFile}")
-    endif(${inclFound} EQUAL -1)
+    endif()
     list(FIND globbedHeaders ${main}Reply${type} inclFound)
     if (NOT ${inclFound} EQUAL -1)
-      FILE(COPY @dir@/${main}Reply${type} DESTINATION @output_dir@/include/${prefix})
+      file(COPY @dir@/${main}Reply${type} DESTINATION @output_dir@/include/${prefix})
       list(APPEND headers "include/${prefix}${main}Reply${type}")
-    endif(NOT ${inclFound} EQUAL -1)
+    endif()
   elseif(${type} STREQUAL ".cpp")
     list(FIND globbedSources ${genFile} srcFound)
     if (${srcFound} EQUAL -1)
       message(WARNING "${genFile} not found in @yarpidlName@ dir!")
-    else(${srcFound} EQUAL -1) 
-      FILE(COPY @dir@/${genFile} DESTINATION @output_dir@/src/${prefix})
+    else()
+      file(COPY @dir@/${genFile} DESTINATION @output_dir@/src/${prefix})
       list(APPEND sources "src/${prefix}${genFile}")
-    endif(${srcFound} EQUAL -1)
+    endif()
 
-  else(${type} STREQUAL ".h")
-message(WARNING "Filename extension of ${genFile} is neither .h nor .cpp")
-  endif(${type} STREQUAL ".h")
+  else()
+    message(WARNING "Filename extension of ${genFile} is neither .h nor .cpp")
+  endif()
 endforeach(genFile)
 
-file(WRITE @output_dir@/@yarpidl_target_name@.cmake "## This is an automatically-generated file.\n## It could get re-generated if the ALLOW_IDL_GENERATION flag is on\n\nset(headers ${headers})\nset(sources ${sources})\n")
+file(WRITE @output_dir@/@yarpidl_target_name@.cmake
+"## This is an automatically-generated file.
+## It could get re-generated if the ALLOW_IDL_GENERATION flag is on
+
+set(headers ${headers})
+set(sources ${sources})")

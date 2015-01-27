@@ -1,0 +1,77 @@
+<application>
+<name>dataSetPlayer</name>
+<dependencies>
+        <port>computer1</port>
+</dependencies>
+    <module>
+        <name>iCubGui</name>
+        <node>computer1</node>
+        <parameters>--xpos    1000    --ypos    100    --width    370</parameters>
+        <stdio></stdio>
+        <tag>iCubGui</tag>
+    </module>
+    <module>
+        <name>dataSetPlayer</name>
+        <node>computer1</node>
+        <stdio></stdio>
+        <tag>dataSetPlayer</tag>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <node>computer1</node>
+        <parameters>--name    /leftCam    --x    0    --y    0    --RefreshTime    33</parameters>
+        <tag>viewer</tag>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <node>computer1</node>
+        <parameters>--name    /rightCam    --x    350    --y    0    --RefreshTime    33</parameters>
+        <tag>viewer</tag>
+    </module>
+    <connection>
+        <from>/icub/camcalib/left/out</from>
+        <to>/leftCam</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icub/camcalib/right/out</from>
+        <to>/rightCam</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icub/head/state:o</from>
+        <to>/iCubGui/head:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icub/inertial</from>
+        <to>/iCubGui/inertial:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icub/left_arm/state:o</from>
+        <to>/iCubGui/left_arm:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icub/right_arm/state:o</from>
+        <to>/iCubGui/right_arm:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icub/left_leg/state:o</from>
+        <to>/iCubGui/left_leg:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icub/right_leg/state:o</from>
+        <to>/iCubGui/right_leg:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icub/torso/state:o</from>
+        <to>/iCubGui/torso:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    
+</application>

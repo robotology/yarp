@@ -60,6 +60,8 @@ Some helpful programs:
 \li \subpage yarprun
 \li \subpage yarpmanager
 \li \subpage yarpscope
+\li \subpage yarpdatadumper
+\li \subpage yarpdataplayer
 \li \subpage yarp_yarp-config
 
 Interoperability:
