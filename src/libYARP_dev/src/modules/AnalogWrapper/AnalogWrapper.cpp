@@ -196,7 +196,7 @@ void AnalogWrapper::setHandlers()
     for(unsigned int i=0;i<analogPorts.size(); i++)
     {
         std::string rpcPortName = analogPorts[i].port_name;
-        rpcPortName += "/rpc";
+        rpcPortName += "/rpc:i";
         AnalogServerHandler* ash = new AnalogServerHandler(rpcPortName.c_str());
         handlers.push_back(ash);
     }
@@ -383,7 +383,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
      // if there is no "ports" section open only 1 port and use name as is.
         createPort((streamingPortName ).c_str(), _rate );
         // since createPort always return true, check the port is really been opened is done here
-        if(! Network::exists(streamingPortName + "/rpc"))
+        if(! Network::exists(streamingPortName + "/rpc:i"))
             return false;
     }
     else
