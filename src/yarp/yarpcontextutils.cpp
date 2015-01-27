@@ -769,7 +769,8 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
                     if(fileName != "")
                     {
                         ok = (recursiveRemove(targetPath+ PATH_SEPARATOR + fileName) >=0 ) && ok;
-                        recursiveRemove(hiddenPath + PATH_SEPARATOR + fileName, false);
+                        if(removeHidden)
+                            recursiveRemove(hiddenPath + PATH_SEPARATOR + fileName, false);
                     }
                 }
                 if (ok)
