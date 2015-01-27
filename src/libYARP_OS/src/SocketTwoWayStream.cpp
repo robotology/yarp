@@ -75,15 +75,9 @@ void SocketTwoWayStream::updateAddresses() {
     //int zero = 0;
     int one = 1;
 
-    struct linger lval;
-    lval.l_onoff = 1;
-    lval.l_linger = 0;
-
 #ifdef YARP_HAS_ACE
     stream.set_option (ACE_IPPROTO_TCP, TCP_NODELAY, &one,
                        sizeof(int));
-    stream.set_option (ACE_IPPROTO_TCP, SO_LINGER, &lval,
-                       sizeof(linger));
     ACE_INET_Addr local, remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
@@ -92,8 +86,6 @@ void SocketTwoWayStream::updateAddresses() {
 #else
     stream.set_option (IPPROTO_TCP, TCP_NODELAY, &one,
                        sizeof(int));
-    stream.set_option (SOL_SOCKET, SO_LINGER, &lval,
-                       sizeof(linger));
     struct sockaddr local, remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);

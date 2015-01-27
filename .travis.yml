@@ -73,6 +73,7 @@ script:
   - cmake --build . --config ${TRAVIS_BUILD_TYPE}
   - ctest --build . --config ${TRAVIS_BUILD_TYPE}
   - if [ "k$TRAVIS_WITH_RUNTIME" = "ktrue" ]; then ../scripts/admin/check-runtime.sh; fi
+  - if [ "k$TRAVIS_WITH_RUNTIME" = "ktrue" ]; then ../tests/integration/check-http.sh; fi
   - cd ..
   - if [ "k$TRAVIS_WITH_SWIG" = "ktrue" ]; then build/bin/yarp conf 0 0 local; fi
   - if [ "k$TRAVIS_WITH_SWIG" = "ktrue" ]; then YARP_DIR=$PWD/build SWIG_VERSIONS="1.3.40 2.0.12 3.0.2" ./scripts/admin/check-bindings.sh PYTHON JAVA LUA RUBY CSHARP PERL TCL; fi

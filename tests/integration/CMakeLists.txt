@@ -20,4 +20,7 @@ if(YARP_TEST_INTEGRATION)
   add_test("integration::runtime" ${CMAKE_SOURCE_DIR}/scripts/admin/check-runtime.sh)
   set_property(TEST "integration::runtime" PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
 
+  add_test("integration::http" ${CMAKE_CURRENT_SOURCE_DIR}/check-http.sh)
+  set_property(TEST "integration::http" PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
+
 endif()
