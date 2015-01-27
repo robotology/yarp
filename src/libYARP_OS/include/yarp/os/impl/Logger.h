@@ -197,7 +197,7 @@ private:
 #ifndef NDEBUG
 #  define YARP_DEBUG(log,x) ((Logger*)&log)->internal_debug(x)
 #else
-#  define YARP_DEBUG(log,x)
+#  define YARP_DEBUG(log,x) YARP_UNUSED(log)
 #endif
 #define YARP_FAIL(log,x)  ((Logger*)&log)->internal_fail(x)
 
