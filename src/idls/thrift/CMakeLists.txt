@@ -33,6 +33,11 @@ if (THRIFT_USE_EXTERNAL)
   flex_target(tcc_scanner ${THRIFT_COMPILER_SOURCE}/src/thriftl.ll  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc)
   add_flex_bison_dependency(tcc_scanner tcc_parser)
 
+  if (MSVC)
+    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/parser.cc PROPERTIES COMPILE_FLAGS "/wd4065 /wd4244")
+    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/lexer.cc PROPERTIES COMPILE_FLAGS "/wd4068 /wd4003 /wd4102")
+  endif ()
+
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -60,6 +65,8 @@ if (NOT THRIFT_USE_EXTERNAL)
     add_definitions(-DPATH_MAX=1000 -DS_ISDIR=1+0*)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/msvc)
     add_definitions(-D__STDC_VERSION__=199901L)
+    set_source_files_properties(src_gen/parser.cc PROPERTIES COMPILE_FLAGS "/wd4065 /wd4244")
+    set_source_files_properties(src_gen/lexer.cc PROPERTIES COMPILE_FLAGS "/wd4068 /wd4003 /wd4102")
   endif ()
   add_executable(yarpidl_thrift
     src_gen/parser.cc
