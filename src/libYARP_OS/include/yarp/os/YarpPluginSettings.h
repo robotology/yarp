@@ -50,9 +50,9 @@ public:
      * @param dll_name the name of the shared library to load
      * @param fn_name the name of the method within that library to use
      * as a factory
-     * 
+     *
      */
-    void setLibraryMethodName(const ConstString& dll_name, 
+    void setLibraryMethodName(const ConstString& dll_name,
                               const ConstString& fn_name) {
         this->dll_name = dll_name;
         this->fn_name = fn_name;
@@ -132,7 +132,7 @@ public:
      * @return the name of the plugin, if set
      *
      */
-    ConstString getPluginName() const { 
+    ConstString getPluginName() const {
         return name;
     }
 
@@ -141,7 +141,7 @@ public:
      * @return the name of the shared library, if set
      *
      */
-    ConstString getLibraryName() const { 
+    ConstString getLibraryName() const {
         return dll_name;
     }
 
@@ -150,7 +150,7 @@ public:
      * @return the name of the factory method, if set
      *
      */
-    ConstString getMethodName() const { 
+    ConstString getMethodName() const {
         return fn_name;
     }
 

@@ -228,7 +228,7 @@ bool AbstractCarrier::defaultExpectIndex(ConnectionState& proto) {
     YARP_DEBUG(Logger::get(),"expecting an index");
     YARP_SPRINTF1(Logger::get(),
                   debug,
-                  "ConnectionState::expectIndex for %s", 
+                  "ConnectionState::expectIndex for %s",
                   proto.getRoute().toString().c_str());
     // expect index header
     char buf[8];

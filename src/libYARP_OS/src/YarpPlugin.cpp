@@ -22,7 +22,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-bool YarpPluginSettings::open(SharedLibraryFactory& factory, 
+bool YarpPluginSettings::open(SharedLibraryFactory& factory,
                               const ConstString& dll_name,
                               const ConstString& fn_name) {
     bool ok = subopen(factory,dll_name,fn_name);
@@ -42,7 +42,7 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory,
     return ok;
 }
 
-bool YarpPluginSettings::subopen(SharedLibraryFactory& factory, 
+bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
                                  const ConstString& dll_name,
                                  const ConstString& fn_name) {
     YARP_SPRINTF2(impl::Logger::get(),debug,"Trying plugin [dll: %s] [fn: %s]",

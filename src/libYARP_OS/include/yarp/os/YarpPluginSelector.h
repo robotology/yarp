@@ -43,13 +43,13 @@ public:
     /**
      *
      * Determine whether a plugin is of interest.
-     * 
+     *
      * @return true if plugin is of interest.  By default, always returns true.
      *
      */
     virtual bool select(Searchable& options) { return true; }
 
-    
+
     /**
      *
      * Find plugin configuration files, and run [plugin] sections

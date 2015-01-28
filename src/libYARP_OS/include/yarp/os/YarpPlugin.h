@@ -54,7 +54,7 @@ public:
      *
      * Load a library and prepare an object factory, based on the
      * hints supplied.
-     * 
+     *
      * @param settings the hints to use in finding the library
      *
      * @return true on success
@@ -128,7 +128,7 @@ public:
      * @return the factory object associated with the plugin
      *
      */
-    SharedLibraryClassFactory<T> *getFactory() const { 
+    SharedLibraryClassFactory<T> *getFactory() const {
         return factory;
     }
 };
