@@ -1,5 +1,5 @@
 <application>
-<name>dataSetPlayer</name>
+<name>yarpdataplayer</name>
 <dependencies>
         <port>computer1</port>
 </dependencies>
@@ -11,10 +11,10 @@
         <tag>iCubGui</tag>
     </module>
     <module>
-        <name>dataSetPlayer</name>
+        <name>yarpdataplayer</name>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataSetPlayer</tag>
+        <tag>yarpdataplayer</tag>
     </module>
     <module>
         <name>yarpview</name>

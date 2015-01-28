@@ -1,70 +1,70 @@
 <application>
-<name>dataSetPlayer recording example</name>
+<name>yarpdatadumper recording example</name>
 <dependencies>
       <port>/computer1</port>
 </dependencies>
     <module>
-        <name>dataDumper</name>
+        <name>yarpdatadumper</name>
         <parameters>--name /data/head</parameters>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataDumper</tag>
+        <tag>yarpdatadumper</tag>
     </module>
     <module>
-        <name>dataDumper</name>
+        <name>yarpdatadumper</name>
         <parameters>--name /data/inertial</parameters>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataDumper</tag>
+        <tag>yarpdatadumper</tag>
     </module>
     <module>
-        <name>dataDumper</name>
+        <name>yarpdatadumper</name>
         <parameters>--name /data/torso</parameters>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataDumper</tag>
+        <tag>yarpdatadumper</tag>
     </module>
     <module>
-        <name>dataDumper</name>
+        <name>yarpdatadumper</name>
         <parameters>--name /data/leftArm</parameters>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataDumper</tag>
+        <tag>yarpdatadumper</tag>
     </module>
     <module>
-        <name>dataDumper</name>
+        <name>yarpdatadumper</name>
         <parameters>--name /data/rightArm</parameters>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataDumper</tag>
+        <tag>yarpdatadumper</tag>
     </module>
     <module>
-        <name>dataDumper</name>
+        <name>yarpdatadumper</name>
         <parameters>--name /data/leftLeg</parameters>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataDumper</tag>
+        <tag>yarpdatadumper</tag>
     </module>
     <module>
-        <name>dataDumper</name>
+        <name>yarpdatadumper</name>
         <parameters>--name /data/rightLeg</parameters>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataDumper</tag>
+        <tag>yarpdatadumper</tag>
     </module>
     <module>
-        <name>dataDumper</name>
+        <name>yarpdatadumper</name>
         <parameters>--name /data/images/left --type image</parameters>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataDumper</tag>
+        <tag>yarpdatadumper</tag>
     </module>
     <module>
-        <name>dataDumper</name>
+        <name>yarpdatadumper</name>
         <parameters>--name /data/images/right --type image</parameters>
         <node>computer1</node>
         <stdio></stdio>
-        <tag>dataDumper</tag>
+        <tag>yarpdatadumper</tag>
     </module>
     <connection>
         <from>/icub/inertial</from>
