@@ -481,6 +481,13 @@ typedef yarp::os::BufferedPort<ImageMono> BufferedPortImageMono;
 %}
 
 %{
+typedef yarp::sig::ImageOf<yarp::sig::PixelMono16> ImageMono16;
+typedef yarp::os::TypedReader<ImageMono16> TypedReaderImageMono16;
+typedef yarp::os::TypedReaderCallback<ImageMono16> TypedReaderCallbackImageMono16;
+typedef yarp::os::BufferedPort<ImageMono16> BufferedPortImageMono16;
+%}
+
+%{
 typedef yarp::sig::ImageOf<yarp::sig::PixelInt> ImageInt;
 typedef yarp::os::TypedReader<ImageInt> TypedReaderImageInt;
 typedef yarp::os::TypedReaderCallback<ImageInt> TypedReaderCallbackImageInt;
@@ -505,6 +512,10 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %feature("notabstract") yarp::os::BufferedPort<ImageMono>;
 %feature("notabstract") BufferedPortImageMono;
 
+%feature("notabstract") ImageMono16;
+%feature("notabstract") yarp::os::BufferedPort<ImageMono16>;
+%feature("notabstract") BufferedPortImageMono16;
+
 %feature("notabstract") ImageInt;
 %feature("notabstract") yarp::os::BufferedPort<ImageInt>;
 %feature("notabstract") BufferedPortImageInt;
@@ -527,6 +538,11 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %template(TypedReaderImageMono) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
 %template(TypedReaderCallbackImageMono) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
 %template(BufferedPortImageMono) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
+
+%template(ImageMono16) yarp::sig::ImageOf<yarp::sig::PixelMono16>;
+%template(TypedReaderImageMono16) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelMono16> >;
+%template(TypedReaderCallbackImageMono16) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelMono16> >;
+%template(BufferedPortImageMono16) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono16> >;
 
 %template(ImageInt) yarp::sig::ImageOf<yarp::sig::PixelInt>;
 %template(TypedReaderImageInt) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
