@@ -16,6 +16,8 @@ set(sqlite_HDRS
     sqlite/sqlite3.h
 )
 
+add_definitions(-DSQLITE_OMIT_LOAD_EXTENSION)
+
 add_library(YARP_priv_sqlite STATIC ${sqlite_SRCS})
 
 if(UNIX)
