@@ -868,7 +868,7 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
                     scratch.allocateOnNeed(scratchOffset+4,scratchOffset+4);
                 }
                 NetFloat32 *y = (NetFloat32 *)(scratch.get()+scratchOffset);
-                *y = *x;
+                *y = (NetFloat32) *x;
                 src = NULL;
                 noffset = scratchOffset;
                 len = 4;
