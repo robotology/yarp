@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" FALSE)
-if (CREATE_OPTIONAL_CARRIERS)
+if(CREATE_OPTIONAL_CARRIERS)
   add_subdirectory(wire_rep_utils)
   include(YarpPlugin)
   include_directories(${ACE_INCLUDE_DIRS})
@@ -24,8 +24,8 @@ if (CREATE_OPTIONAL_CARRIERS)
           LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
-  if (YARP_LINK_PLUGINS)
+  if(YARP_LINK_PLUGINS)
     set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpcar ${yarpcar_LIBRARIES})
   endif()
 
-endif (CREATE_OPTIONAL_CARRIERS)
+endif()
