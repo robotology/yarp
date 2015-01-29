@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1072</width>
-    <height>531</height>
+    <width>1200</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,6 +33,12 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
@@ -43,38 +49,47 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <property name="handleWidth">
-       <number>7</number>
+       <number>10</number>
       </property>
       <widget class="QFrame" name="left_frame">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="minimumSize">
         <size>
-         <width>500</width>
+         <width>0</width>
          <height>0</height>
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Panel</enum>
+        <enum>QFrame::NoFrame</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QTreeView" name="yarprunTreeView">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-            <horstretch>0</horstretch>
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>5</horstretch>
             <verstretch>5</verstretch>
            </sizepolicy>
           </property>
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
@@ -101,7 +116,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>150</height>
+            <height>200</height>
            </size>
           </property>
           <property name="baseSize">
@@ -111,17 +126,32 @@
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
             <widget class="QTabWidget" name="tabWidget">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>200</height>
+              </size>
+             </property>
              <property name="currentIndex">
               <number>0</number>
              </property>
@@ -133,7 +163,7 @@
                <item>
                 <widget class="MessageWidget" name="system_message">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Plain</enum>
@@ -149,6 +179,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_6">
                <item>
                 <widget class="QPlainTextEdit" name="plainTextEdit_2">
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
                  <property name="frameShadow">
                   <enum>QFrame::Plain</enum>
                  </property>
@@ -163,6 +196,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
                 <widget class="QPlainTextEdit" name="plainTextEdit">
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
                  <property name="frameShadow">
                   <enum>QFrame::Plain</enum>
                  </property>
@@ -186,15 +222,18 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>550</width>
+         <width>0</width>
          <height>0</height>
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Panel</enum>
+        <enum>QFrame::StyledPanel</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
@@ -206,7 +245,7 @@
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
@@ -472,6 +511,12 @@
         </item>
         <item>
          <widget class="QTabWidget" name="logtabs">
+          <property name="baseSize">
+           <size>
+            <width>580</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="currentIndex">
            <number>-1</number>
           </property>
@@ -491,8 +536,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1072</width>
-     <height>19</height>
+     <width>1200</width>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -563,14 +608,11 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="separator"/>
    <addaction name="actionStart_Logger"/>
    <addaction name="actionStop_Logger"/>
    <addaction name="actionRefresh"/>
-   <addaction name="separator"/>
    <addaction name="actionSave_Log"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout_QtYarpLogger">
    <property name="text">
     <string>Help</string>

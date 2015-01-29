@@ -145,7 +145,6 @@ private:
     QStandardItemModel               *model_yarprunports;
     QItemSelectionModel              *selection_yarprunports;
     QTimer                           *mainTimer;
-    QLabel                           *statusBarLabel;
     MessageWidget                    *system_message;
     YarprunPortsSortFilterProxyModel *proxyModel;
     void loadTextFile();

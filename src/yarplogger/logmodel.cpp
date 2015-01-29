@@ -178,13 +178,13 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
         case yarp::yarpLogger::LOGLEVEL_TRACE:
             return QBrush(QColor("#E9E9E9"));
         case yarp::yarpLogger::LOGLEVEL_DEBUG:
-            return QBrush(QColor("#7070FF")); // FIXME Debug should be green
+            return QBrush(QColor("#78E678"));
         case yarp::yarpLogger::LOGLEVEL_INFO:
-            return QBrush(QColor("#70FF70")); // FIXME Info should be blue
+            return QBrush(QColor("#8DCFE8"));
         case yarp::yarpLogger::LOGLEVEL_WARNING:
             return QBrush(QColor("#FFFF70"));
         case yarp::yarpLogger::LOGLEVEL_ERROR:
-            return QBrush(QColor("#FF7070"));
+            return QBrush(QColor("#DE4E4E"));
         case yarp::yarpLogger::LOGLEVEL_FATAL:
             return QBrush(Qt::black);
         default:
