@@ -16,17 +16,6 @@
 
 #define WND_DEF_HEIGHT          400
 #define WND_DEF_WIDTH           800
-#define CMD_HELP                VOCAB4('h','e','l','p')
-#define CMD_STEP                VOCAB4('s','t','e','p')
-#define CMD_QUIT                VOCAB4('q','u','i','t')
-#define CMD_SET                 VOCAB3('s','e','t')
-#define CMD_GET                 VOCAB3('g','e','t')
-#define CMD_LOAD                VOCAB4('l','o','a','d')
-#define CMD_PLAY                VOCAB4('p','l','a','y')
-#define CMD_STOP                VOCAB4('s','t','o','p')
-#define CMD_PAUSE               VOCAB4('p','a','u','s')
-
-
 
 #define ACTIVE      0
 #define PART        1
@@ -95,6 +84,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
 
 }
 
+/**********************************************************/
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -104,13 +94,13 @@ MainWindow::~MainWindow()
     clearUtilities();
 }
 
-/************************************************************************/
+/**********************************************************/
 bool MainWindow::attach(RpcServer &source)
 {
     return this->yarp().attachAsServer(source);
 }
 
-/************************************************************************/
+/**********************************************************/
 bool MainWindow::step()
 {
     Bottle reply;
@@ -124,24 +114,26 @@ bool MainWindow::step()
     return false;
 }
 
+/**********************************************************/
 void MainWindow::onInternalStep(Bottle *reply)
 {
     stepFromCommand(*reply);
 }
 
-/************************************************************************/
+/**********************************************************/
 bool MainWindow::setFrame(const string &name, const int frameNum)
 {
     internalSetFrame(name,frameNum);
     return true;
 }
 
+/**********************************************************/
 void MainWindow::onInternalSetFrame(const string &name, const int frameNum)
 {
     updateFrameNumber(name.c_str(), frameNum);
 }
 
-/************************************************************************/
+/**********************************************************/
 int MainWindow::getFrame(const string &name)
 {
     int frame = 0;
@@ -153,12 +145,13 @@ int MainWindow::getFrame(const string &name)
     }
 }
 
+/**********************************************************/
 void MainWindow::onInternalGetFrame(const string &name, int *frame)
 {
     getFrameCmd(name.c_str(),frame);
 }
 
-/************************************************************************/
+/**********************************************************/
 bool MainWindow::load(const string &path)
 {
     string cmdPath = path.c_str();
@@ -183,16 +176,17 @@ bool MainWindow::load(const string &path)
 
     return true;
 }
+
 /**********************************************************/
 void  MainWindow::onInternalLoad(QString sPath)
 {
+    
+    ui->mainWidget->clear();
     for (int x=0; x < subDirCnt; x++){
         utilities->closePorts(utilities->partDetails[x]);
     }
 
     doGuiSetup(sPath);
-
-
 }
 
 /**********************************************************/
@@ -202,6 +196,7 @@ bool MainWindow::play()
     return true;
 }
 
+/**********************************************************/
 void MainWindow::onInternalPlay()
 {
     onMenuPlayBackPlay();
@@ -214,6 +209,7 @@ bool MainWindow::pause()
     return true;
 }
 
+/**********************************************************/
 void MainWindow::onInternalPause()
 {
     onMenuPlayBackPause();
@@ -226,11 +222,11 @@ bool MainWindow::stop()
     return true;
 }
 
+/**********************************************************/
 void MainWindow::onInternalStop()
 {
     onMenuPlayBackStop();
 }
-
 
 /**********************************************************/
 bool MainWindow::quit()
@@ -271,6 +267,7 @@ void MainWindow::getFrameCmd( const char* part , int *frame)
         }
     }
 }
+
 /**********************************************************/
 void MainWindow::stepFromCommand(Bottle &reply)
 {
@@ -281,6 +278,7 @@ void MainWindow::stepFromCommand(Bottle &reply)
         reply.addString("error");
     }
 }
+
 /**********************************************************/
 bool MainWindow::cmdSafeExit(void)
 {
@@ -301,6 +299,7 @@ bool MainWindow::cmdSafeExit(void)
     LOG( "Done!...\n");
     return true;
 }
+
 /**********************************************************/
 bool MainWindow::safeExit(void)
 {
@@ -324,8 +323,8 @@ bool MainWindow::safeExit(void)
     }
     return false;
 }
-/**********************************************************/
 
+/**********************************************************/
 void MainWindow::createUtilities()
 {
     if(!utilities){
@@ -334,6 +333,7 @@ void MainWindow::createUtilities()
         utilities->column = column;
     }
 }
+
 /**********************************************************/
 void MainWindow::clearUtilities()
 {
@@ -343,8 +343,8 @@ void MainWindow::clearUtilities()
     }
 
 }
-/**********************************************************/
 
+/**********************************************************/
 bool MainWindow::getPartActivation(const char* szName)
 {
     QTreeWidgetItem *row = NULL;
@@ -359,12 +359,14 @@ bool MainWindow::getPartActivation(const char* szName)
     }
     return false;
 }
+
 /**********************************************************/
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     cmdSafeExit();
     event->accept();
 }
+
 /**********************************************************/
 void MainWindow::setupSignals()
 {
@@ -378,6 +380,7 @@ void MainWindow::setupSignals()
     connect(ui->rewButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackBackward()));
 
 }
+
 /**********************************************************/
 void MainWindow::setupActions()
 {
@@ -396,6 +399,7 @@ void MainWindow::setupActions()
     connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(onClose()));
 
 }
+
 /**********************************************************/
 bool  MainWindow::doGuiSetup(QString newPath)
 {
@@ -437,6 +441,7 @@ bool  MainWindow::doGuiSetup(QString newPath)
     return true;
 }
 
+/**********************************************************/
 void MainWindow::onInitDone(int subDirCount)
 {
     subDirCnt = subDirCount;
@@ -481,10 +486,6 @@ void MainWindow::onInitDone(int subDirCount)
         }
     }
 
-
-
-
-
     errorMessage = "";
     waitCond.wakeAll();
 
@@ -521,6 +522,7 @@ void MainWindow::addPart(const char* szName, const char* type, int frames, const
 
     itr++;
 }
+
 /**********************************************************/
 bool MainWindow::setInitialPartProgress(const char* szName, int percentage)
 {
@@ -538,6 +540,7 @@ bool MainWindow::setInitialPartProgress(const char* szName, int percentage)
 
     return false;
 }
+
 /**********************************************************/
 bool MainWindow::setPartProgress(const char* szName, int percentage)
 {
@@ -552,6 +555,7 @@ bool MainWindow::setPartProgress(const char* szName, int percentage)
     }
     return false;
 }
+
 /**********************************************************/
 QTreeWidgetItem * MainWindow::getRowByPart(QString szName )
 {
@@ -562,22 +566,7 @@ QTreeWidgetItem * MainWindow::getRowByPart(QString szName )
         }
     }
     return NULL;
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**********************************************************/
 void MainWindow::onMenuFileOpen()
@@ -587,16 +576,16 @@ void MainWindow::onMenuFileOpen()
                                                     QFileDialog::ShowDirsOnly
                                                     | QFileDialog::DontResolveSymlinks);
 
-    if(!dir.isEmpty()){
+    if(!dir.isEmpty())
+    {
         ui->mainWidget->clear();
-        for (int x=0; x < subDirCnt; x++){
+        for (int x=0; x < subDirCnt; x++)
             utilities->closePorts(utilities->partDetails[x]);
-        }
-
-
+        
         doGuiSetup(dir);
     }
 }
+
 /**********************************************************/
 void MainWindow::onErrorMessage(QString msg)
 {
@@ -630,7 +619,6 @@ void MainWindow::onErrorMessage(QString msg)
     }
 }
 
-
 /**********************************************************/
 void MainWindow::onMenuHelpAbout()
 {
@@ -640,7 +628,6 @@ void MainWindow::onMenuHelpAbout()
     AboutDlg dlg(name,version,copyright,"http://www.icub.org/");
     dlg.exec();
 }
-
 
 /**********************************************************/
 void MainWindow::onMenuPlayBackPlay()
@@ -692,6 +679,7 @@ void MainWindow::onMenuPlayBackPlay()
         ui->playSlider->setEnabled(true);
     }
 }
+
 /**********************************************************/
 void MainWindow::onMenuPlayBackPause()
 {
@@ -707,6 +695,7 @@ void MainWindow::onMenuPlayBackPause()
         utilities->masterThread->pause();
     }
 }
+
 /**********************************************************/
 void MainWindow::resetButtonOnStop()
 {
@@ -749,20 +738,21 @@ void MainWindow::onMenuPlayBackStop()
         setPlayProgress(0);
     }
 }
+
 /**********************************************************/
 void MainWindow::onMenuPlayBackForward()
 {
-    if (subDirCnt > 0){
+    if (subDirCnt > 0)
         utilities->masterThread->forward(5);
-    }
 }
+
 /**********************************************************/
 void MainWindow::onMenuPlayBackBackward()
 {
-    if (subDirCnt > 0){
+    if (subDirCnt > 0)
         utilities->masterThread->backward(5);
-    }
 }
+
 /**********************************************************/
 void MainWindow::onMenuPlayBackStrict()
 {
@@ -774,6 +764,7 @@ void MainWindow::onMenuPlayBackStrict()
         utilities->sendStrict = false;
     }
 }
+
 /**********************************************************/
 void MainWindow::onMenuPlayBackRepeat()
 {
@@ -785,22 +776,26 @@ void MainWindow::onMenuPlayBackRepeat()
         utilities->repeat = false;
     }
 }
+
 /**********************************************************/
 void MainWindow::onMenuSpeedUp()
 {
     ui->horizontalSlider->setValue(ui->horizontalSlider->value() + 1);
     //m_hScale.set_value(m_hScale.get_value() + 1.0);
 }
+
 /**********************************************************/
 void MainWindow::onMenuSpeedDown()
 {
     ui->horizontalSlider->setValue(ui->horizontalSlider->value() - 1);
 }
+
 /**********************************************************/
 void MainWindow::onMenuSpeedNormal()
 {
     ui->horizontalSlider->setValue(10);
 }
+
 /**********************************************************/
 //void MainWindow::onPlayButtonTogle()
 //{
@@ -809,6 +804,7 @@ void MainWindow::onMenuSpeedNormal()
 //    else
 //        onMenuPlayBackPause();
 //}
+
 /**********************************************************/
 void MainWindow::onSpeedValueChanged(int val)
 {
@@ -823,16 +819,19 @@ void MainWindow::onSpeedValueChanged(int val)
         utilities->speed = value;
     }
 }
+
 /**********************************************************/
 //void MainWindow::onPlayPositionSlided(Gtk::ScrollType scroll)
 //{
 //    LOG( "slided ...\n");
 //}
+
 /**********************************************************/
 void MainWindow::onSliderPressed()
 {
     pressed = true;
 }
+
 /**********************************************************/
 void MainWindow::onSliderReleased()
 {
@@ -840,6 +839,7 @@ void MainWindow::onSliderReleased()
     goToPercentage(currValue);
     pressed = false;
 }
+
 /**********************************************************/
 bool MainWindow::getPartPort(const char* szName, QString *dest)
 {
@@ -853,6 +853,7 @@ bool MainWindow::getPartPort(const char* szName, QString *dest)
 
     return false;
 }
+
 /**********************************************************/
 bool MainWindow::setFrameRate(const char* szName, int frameRate)
 {
@@ -865,8 +866,8 @@ bool MainWindow::setFrameRate(const char* szName, int frameRate)
 
     return false;
 }
-/**********************************************************/
 
+/**********************************************************/
 void MainWindow::setPlayProgress(int percentage)
 {
     if(pressed){
@@ -876,8 +877,6 @@ void MainWindow::setPlayProgress(int percentage)
 }
 
 /**********************************************************/
-
-
 void MainWindow::onUpdateGuiRateThread()
 {
     for (int i=0; i < subDirCnt; i++){
@@ -905,14 +904,13 @@ void MainWindow::onUpdateGuiRateThread()
     }
 }
 
+/**********************************************************/
 void MainWindow::goToPercentage(int value)
 {
     utilities->masterThread->goToPercentage(value);
-
-
 }
 
-
+/**********************************************************/
 void MainWindow::onClose()
 {
     if(safeExit()){
@@ -921,11 +919,7 @@ void MainWindow::onClose()
 
 }
 
-
-
-
-/*************************************************/
-
+/**********************************************************/
 InitThread::InitThread(Utilities *utilities,
                        QString newPath,
                        std::vector<std::string>    *partsName,
@@ -943,6 +937,7 @@ InitThread::InitThread(Utilities *utilities,
     this->mainWindow = (QMainWindow*)parent;
 }
 
+/**********************************************************/
 void InitThread::run()
 {
     utilities->resetMaxTimeStamp();

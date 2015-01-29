@@ -41,6 +41,7 @@ WorkerClass::WorkerClass(int part, int numThreads)
     frameRate = 0.0;
     isActive = true;
 }
+
 /**********************************************************/
 bool WorkerClass::init()
 {
@@ -50,17 +51,20 @@ bool WorkerClass::init()
     utilities->partDetails[part].hasNotified = false;
     return true;
 }
+
 /**********************************************************/
 void WorkerClass::release()
 {
 
 }
+
 /**********************************************************/
 void WorkerClass::resetTime()
 {
     initTime = 0.0;
     virtualTime = 0.0;
 }
+
 /**********************************************************/
 void WorkerClass::sendData(int frame, bool isActive, double virtualTime)
 {
@@ -69,6 +73,7 @@ void WorkerClass::sendData(int frame, bool isActive, double virtualTime)
     currFrame = frame;
     this->run();
 }
+
 /**********************************************************/
 void WorkerClass::run()
 {
@@ -110,12 +115,14 @@ void WorkerClass::run()
     }
     utilities->partDetails[part].sent++;
 }
+
 /**********************************************************/
 double WorkerClass::getFrameRate()
 {
     frameRate = frameRate*1000;
     return frameRate;
 }
+
 /**********************************************************/
 int WorkerClass::sendImages(int part, int frame)
 {
@@ -185,6 +192,7 @@ bool MasterThread::threadInit()
 
     return true;
 }
+
 /**********************************************************/
 void MasterThread::stepFromCmd()
 {
@@ -215,6 +223,7 @@ void MasterThread::stepFromCmd()
     utilities->totalSent = 0;
     utilities->pauseThread();
 }
+
 /**********************************************************/
 void MasterThread::runNormally()
 {
@@ -261,8 +270,8 @@ void MasterThread::runNormally()
     //LOG("virtualTime: %lf \n", virtualTime);
     initTime++;
 }
-/**********************************************************/
 
+/**********************************************************/
 void MasterThread::goToPercentage(int value)
 {
     for (int i=0; i < numPart; i++){
@@ -272,6 +281,7 @@ void MasterThread::goToPercentage(int value)
     }
     virtualTime = utilities->partDetails[0].timestamp[ utilities->partDetails[0].currFrame ];
 }
+
 /**********************************************************/
 void MasterThread::run()
 {
@@ -281,6 +291,7 @@ void MasterThread::run()
         runNormally();
     }
 }
+
 /**********************************************************/
 void MasterThread::forward(int steps)
 {
@@ -297,6 +308,7 @@ void MasterThread::forward(int steps)
         }
     }
 }
+
 /**********************************************************/
 void MasterThread::backward(int steps)
 {
@@ -313,16 +325,19 @@ void MasterThread::backward(int steps)
         }
     }
 }
+
 /**********************************************************/
 void MasterThread::pause()
 {
     this->suspend();
 }
+
 /**********************************************************/
 void MasterThread::resume()
 {
     RateThread::resume();
 }
+
 /**********************************************************/
 void MasterThread::threadRelease()
 {

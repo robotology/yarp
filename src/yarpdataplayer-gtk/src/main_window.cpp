@@ -119,10 +119,12 @@ bool MainWindow::load(const string &path)
 
     if (subDirCnt > 0)
     {
+        m_refTreeModel->clear();
         clearUtilities();
         createUtilities();
     }
     subDirCnt = 0;
+    
     size_t slashErr = cmdPath.find('/');
 
     if (slashErr!=string::npos)
