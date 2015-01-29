@@ -6,7 +6,7 @@
 
 if(ENABLE_yarpcar_mjpeg_carrier OR ENABLE_yarpcar_tcpros_carrier)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-    include_directories(${ACE_INCLUDE_DIRS})
+    include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
     get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
     include_directories(${YARP_INCLUDE_DIRS})
     add_library(YARP_wire_rep_utils STATIC WireImage.cpp

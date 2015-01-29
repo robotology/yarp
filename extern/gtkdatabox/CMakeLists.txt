@@ -26,8 +26,8 @@ set(GtkDatabox_GTK2_LIBRARIES ${GTK2_CAIRO_LIBRARY}
                               ${GTK2_GTK_LIBRARY}
                               ${GTK2_PANGO_LIBRARY})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk
-                    ${GtkDatabox_GTK2_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk)
+include_directories(SYSTEM ${GtkDatabox_GTK2_INCLUDE_DIRS})
 
 
 set(gtkdatabox_SRCS

@@ -47,7 +47,7 @@ if (YARP_HAS_MATH_LIB)
         set(MATH_LIB_EXTRAS ${GSL_LIBRARIES})
     endif()
 
-    include_directories(${GSL_INCLUDE_DIRS})
+    include_directories(SYSTEM ${GSL_INCLUDE_DIRS})
 
     add_library(YARP_math ${YARP_math_SRCS}
                           ${YARP_math_HDRS}

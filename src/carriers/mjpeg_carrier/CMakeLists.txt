@@ -17,7 +17,7 @@ if(NOT SKIP_mjpeg_carrier)
     # on windows, a handy place to get libjpeg in compiled form is:
     #   svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/windows/jpeg (for 32-bit)
     #   svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64/jpeg (for 64-bit)
-    include_directories(${JPEG_INCLUDE_DIR})
+    include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
     include_directories(${YARP_INCLUDE_DIRS})
     include_directories(${CMAKE_CURRENT_SOURCE_DIR})
     get_property(WIRE_INCLUDE_DIRS TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS)

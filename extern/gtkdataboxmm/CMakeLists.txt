@@ -29,9 +29,9 @@ set(GtkDataboxMM_GTK2_LIBRARIES ${GTK2_ATKMM_LIBRARY}
                                 ${GTK2_GTKMM_LIBRARY}
                                 ${GTK2_SIGC++_LIBRARY})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox/
-                    ${GtkDatabox_INCLUDE_DIRS}
-                    ${GtkDataboxMM_GTK2_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox/)
+include_directories(SYSTEM ${GtkDatabox_INCLUDE_DIRS}
+                           ${GtkDataboxMM_GTK2_INCLUDE_DIRS})
 
 
 set(gtkdataboxmm_SRCS

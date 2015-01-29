@@ -31,9 +31,9 @@ set(GooCanvasMM_GTK2_LIBRARIES ${GTK2_ATKMM_LIBRARY}
                                ${GTK2_PANGOMM_LIBRARY}
                                ${GTK2_SIGC++_LIBRARY})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/goocanvasmm/goocanvas/
-                    ${GooCanvas_INCLUDE_DIRS}
-                    ${GooCanvasMM_GTK2_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/goocanvasmm/goocanvas/)
+include_directories(SYSTEM ${GooCanvas_INCLUDE_DIRS}
+                           ${GooCanvasMM_GTK2_INCLUDE_DIRS})
 
 
 set(goocanvasmm_SRCS

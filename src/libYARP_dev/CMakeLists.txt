@@ -152,8 +152,7 @@ set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
-include_directories(${ACE_INCLUDE_DIRS})
-include_directories(${other_include_path})
+include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
 add_library(YARP_dev ${YARP_dev_SRCS} ${YARP_devices_SRCS} ${YARP_dev_HDRS})
 #add_dependencies(YARP_dev yarpidl_rosmsg yarpidl_thrift )

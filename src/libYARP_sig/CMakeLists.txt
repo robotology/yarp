@@ -36,7 +36,7 @@ set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
-include_directories(${ACE_INCLUDE_DIRS})
+include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
 add_library(YARP_sig ${YARP_sig_SRCS} ${YARP_sig_HDRS})
 target_link_libraries(YARP_sig LINK_PRIVATE YARP_OS ${ACE_LIBRARIES})

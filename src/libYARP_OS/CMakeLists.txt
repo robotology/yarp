@@ -363,7 +363,7 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 if (NOT SKIP_ACE)
-  include_directories(${ACE_INCLUDE_DIRS})
+  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 endif ()
 
 add_library(YARP_OS ${YARP_OS_SRCS}

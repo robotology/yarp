@@ -32,8 +32,8 @@ set(GooCanvas_GTK2_LIBRARIES ${GTK2_ATK_LIBRARY}
 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/goocanvas
-                    ${CMAKE_CURRENT_SOURCE_DIR}/goocanvas/src
-                    ${GooCanvas_GTK2_INCLUDE_DIRS})
+                    ${CMAKE_CURRENT_SOURCE_DIR}/goocanvas/src)
+include_directories(SYSTEM ${GooCanvas_GTK2_INCLUDE_DIRS})
 
 
 set(goocanvas_SRCS

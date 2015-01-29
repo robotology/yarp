@@ -9,7 +9,10 @@ endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_portmonitor_carrier)
 
-  include_directories(${YARP_INCLUDE_DIRS} ${LUA_INCLUDE_DIR} ./lua ./dll)
+  include_directories(${YARP_INCLUDE_DIRS}
+                      ${CMAKE_CURRENT_SOURCE_DIR}/lua
+                      ${CMAKE_CURRENT_SOURCE_DIR}/dll)
+  include_directories(SYSTEM ${LUA_INCLUDE_DIR})
 
   yarp_add_plugin(yarp_portmonitor
                   PortMonitor.h

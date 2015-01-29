@@ -26,7 +26,7 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
     get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
     include_directories(${YARP_TREE_INCLUDE_DIRS})
-    include_directories(${ACE_INCLUDE_DIRS})
+    include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
     add_library(YARP_name ${YARP_name_SRCS}
                           ${YARP_name_HDRS}

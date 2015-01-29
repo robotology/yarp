@@ -19,8 +19,8 @@ if(NOT SKIP_all_serial)
 
   if(ACE_FOUND)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                        ${YARP_INCLUDE_DIRS}
-                        ${ACE_INCLUDE_DIRS})
+                        ${YARP_INCLUDE_DIRS})
+    include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
     add_definitions(${YARP_DEFINITIONS})
 
     yarp_add_plugin(yarp_serial SerialDeviceDriver.cpp SerialDeviceDriver.h)

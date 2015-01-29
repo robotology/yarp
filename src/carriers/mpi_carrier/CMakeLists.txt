@@ -11,7 +11,7 @@ endif(COMPILE_PLUGIN_LIBRARY)
 if(NOT SKIP_mpi_carrier)
 
   find_package(MPI REQUIRED)
-  include_directories(${MPI_INCLUDE_PATH})
+  include_directories(SYSTEM ${MPI_INCLUDE_PATH})
   add_definitions(-DCREATE_MPI_CARRIER)
 
   # include print statements for debugging purpose
@@ -42,7 +42,7 @@ endif(NOT SKIP_mpi_carrier)
 if(NOT SKIP_mpibcast_carrier)
 
   find_package(MPI REQUIRED)
-  include_directories(${MPI_INCLUDE_PATH})
+  include_directories(SYSTEM ${MPI_INCLUDE_PATH})
   add_definitions(-DCREATE_MPI_CARRIER)
 
   # include print statements for debugging purpose

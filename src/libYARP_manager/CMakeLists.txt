@@ -80,7 +80,7 @@ if(CREATE_LIB_MANAGER)
   get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
   include_directories(${YARP_TREE_INCLUDE_DIRS})
-  include_directories(${TinyXML_INCLUDE_DIRS})
+  include_directories(SYSTEM ${TinyXML_INCLUDE_DIRS})
 
 
   if(CREATE_LIB_MATH)
