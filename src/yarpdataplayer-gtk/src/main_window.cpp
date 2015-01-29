@@ -559,7 +559,10 @@ bool MainWindow::cmdSafeExit(void)
     fprintf(stdout, "Attempt to close ports\n");
     for (int x=0; x < subDirCnt; x++)
         utilities->closePorts(utilities->partDetails[x]);
-    clearUtilities();
+    
+    if (subDirCnt > 0)
+        clearUtilities();
+    
     fprintf(stdout, "Done!...\n");
     return true;
 }
@@ -580,7 +583,10 @@ bool MainWindow::safeExit(void)
         fprintf(stdout, "Attempt to close ports\n");
         for (int x=0; x < subDirCnt; x++)
             utilities->closePorts(utilities->partDetails[x]);
-        clearUtilities();
+        
+        if (subDirCnt > 0)
+            clearUtilities();
+        
         fprintf(stdout, "Done!...\n");
         return true;
     }
