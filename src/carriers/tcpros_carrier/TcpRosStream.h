@@ -36,10 +36,7 @@ class YARP_tcpros_carrier_API yarp::os::TcpRosStream : public TwoWayStream,
 {
 private:
     TwoWayStream *delegate;
-    bool sender;
-    bool reply;
     int raw;
-    bool firstRound;
     BlobNetworkHeader header;
     ManagedBytes scan;
     char *cursor;
@@ -59,10 +56,7 @@ public:
                  int raw,
                  const char *kind) :
             delegate(delegate),
-            sender(sender),
-            reply(reply),
             raw(raw),
-            firstRound(true),
             phase(0),
             expectTwiddle(service && sender),
             kind(kind),
