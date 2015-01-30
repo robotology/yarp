@@ -71,7 +71,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
 
     if (options->check("bgcolor")) {
         plot_bgcolor = QString("%1").arg(options->find("bgcolor").asString().c_str());
-    }else{
+    } else {
         plot_bgcolor = default_bg_color;
     }
 

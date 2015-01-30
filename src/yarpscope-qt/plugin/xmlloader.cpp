@@ -35,25 +35,25 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
         }
         if(token == QXmlStreamReader::StartElement) {
             if(xml.name() == "portscope") {
-                 QXmlStreamAttributes attributes = xml.attributes();
+                QXmlStreamAttributes attributes = xml.attributes();
 
-                 if(attributes.hasAttribute("rows")) {
-                     portscope_rows = attributes.value("rows").toInt();
-                 }
-                 if(attributes.hasAttribute("columns")) {
-                     portscope_columns = attributes.value("columns").toInt();
-                 }
-                 if(attributes.hasAttribute("carrier")) {
-                     portscope_carrier = attributes.value("carrier").toString();
-                 }
-                 if(attributes.hasAttribute("persistent")) {
+                if(attributes.hasAttribute("rows")) {
+                    portscope_rows = attributes.value("rows").toInt();
+                }
+                if(attributes.hasAttribute("columns")) {
+                    portscope_columns = attributes.value("columns").toInt();
+                }
+                if(attributes.hasAttribute("carrier")) {
+                    portscope_carrier = attributes.value("carrier").toString();
+                }
+                if(attributes.hasAttribute("persistent")) {
                      portscope_persistent = QVariant(attributes.value("persistent").toString()).toBool();
-                 }
+                }
 
-                 continue;
+                continue;
             }
 
-            if (xml.name() == "plot"){
+            if (xml.name() == "plot") {
 
                 QXmlStreamAttributes plotAttributes = xml.attributes();
                 int plot_gridx, plot_gridy, plot_hspan, plot_vspan, plot_size;
@@ -103,21 +103,21 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                 continue;
             }
 
-            if (xml.name() == "graph"){
+            if (xml.name() == "graph") {
                 QXmlStreamAttributes graphAttributes = xml.attributes();
                 if(graphAttributes.hasAttribute("remote")) {
                     graph_remote = graphAttributes.value("remote").toString();
-                }else{
+                } else {
                     qCritical("Syntax error while loading %s. \"remote\" attribute not found in element \"graph\"",fileName.toLatin1().data());
                     break;
                 }
                 if(graphAttributes.hasAttribute("index")) {
                     graph_index = graphAttributes.value("index").toInt();
-                    if(graph_index < 0){
+                    if(graph_index < 0) {
                         qCritical("Syntax error while loading %s. \"index\" attribute not found in element \"graph\"",fileName.toLatin1().data());
                         break;
                     }
-                }else{
+                } else {
                     qCritical("Syntax error while loading %s. \"index\" attribute in element \"graph\" should be >= 0",fileName.toLatin1().data());
                     break;
                 }
@@ -136,7 +136,7 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                         graph_size = default_graph_size;
                     }
                 }
-                plotter->init(graph_remote,"", portscope_carrier, portscope_persistent);
+                plotter->init(graph_remote, "", portscope_carrier, portscope_persistent);
                 plotter->addGraph(graph_index,graph_title, graph_color, graph_type, graph_size);
                 continue;
             }

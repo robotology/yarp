@@ -29,15 +29,15 @@ public:
     static PlotManager *instance();
     ~PlotManager();
     Plotter * addPlot(const QString &title,
-                    int gridx,
-                    int gridy,
-                    int hspan,
-                    int vspan,
-                    float minval,
-                    float maxval,
-                    int size,
-                    const QString &bgcolor,
-                    bool autorescale);
+                      int gridx,
+                      int gridy,
+                      int hspan,
+                      int vspan,
+                      float minval,
+                      float maxval,
+                      int size,
+                      const QString &bgcolor,
+                      bool autorescale);
 
 
 
