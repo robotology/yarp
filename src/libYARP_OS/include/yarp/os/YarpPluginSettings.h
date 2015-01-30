@@ -216,6 +216,7 @@ private:
         Bottle group = plugins.findGroup(name.c_str()).tail();
         if (group.isNull()) {
             yError("Cannot find \"%s\" plugin (not built in, and no .ini file found for it)", name.c_str());
+            yError("Check that YARP_DATA_DIRS leads to at least one directory with plugins/%s.ini or share/yarp/plugins/%s.ini in it", name.c_str(), name.c_str());
             return false;
         }
         readFromSearchable(group,name);
