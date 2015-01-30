@@ -2,7 +2,7 @@
 # Authors: Vadim Tikhanoff
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2)
+if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2 AND YARP_HAS_OPENCV)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
@@ -10,7 +10,8 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
                       ${YARP_OS_INCLUDE_DIRS}
                       ${YARP_sig_INCLUDE_DIRS}
-                      ${GTK2_INCLUDE_DIRS})
+                      ${GTK2_INCLUDE_DIRS}
+                      ${OpenCV_INCLUDE_DIRS})
 
   set(yarpdataplayer_gtk_SRCS src/main.cpp
                               src/main_window.cpp
