@@ -72,17 +72,23 @@ endif(MSVC)
 if(UNIX)
     include(CheckCCompilerFlag)
     check_c_compiler_flag("-Wno-unused-but-set-variable" C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+    check_c_compiler_flag("-Wnoliteral-conversion" C_SUPPORTS_WNO_LITERAL_CONVERSION)
     if(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
         set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
                                     gtkdatabox/gtk/gtkdatabox_lines.c
                                     gtkdatabox/gtk/gtkdatabox_ruler.c
                                     PROPERTIES COMPILE_FLAGS "-Wno-unused-but-set-variable")
-    else(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+    else()
         set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
                                     gtkdatabox/gtk/gtkdatabox_lines.c
                                     gtkdatabox/gtk/gtkdatabox_ruler.c
                                     PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
-    endif(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+    endif()
+    if(C_SUPPORTS_WNO_LITERAL_CONVERSION)
+        set_property(SOURCE gtkdatabox/gtk/gtkdatabox_ruler.c
+                     APPEND_STRING
+                     PROPERTY COMPILE_FLAGS " -Wnoliteral-conversion")
+    endif()
 endif(UNIX)
 
 set(GtkDatabox_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk
