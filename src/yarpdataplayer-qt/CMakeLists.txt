@@ -2,7 +2,7 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
+if(CREATE_YARPMANAGER AND YARP_HAS_QT5 AND YARP_HAS_OPENCV)
 
   include(YarpUseQt5)
 
@@ -10,7 +10,8 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
 
   include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
+                      ${YARP_sig_INCLUDE_DIRS}
+                      ${OpenCV_INCLUDE_DIRS})
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
