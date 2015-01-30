@@ -56,9 +56,18 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
             if (xml.name() == "plot") {
 
                 QXmlStreamAttributes plotAttributes = xml.attributes();
-                int plot_gridx, plot_gridy, plot_hspan, plot_vspan, plot_size;
-                float plot_minval, plot_maxval;
-                bool plot_autorescale, plot_realtime, plot_triggermode;
+                int plot_gridx(default_plot_gridx);
+                int plot_gridy(default_plot_gridy);
+                int plot_hspan(default_plot_hspan);
+                int plot_vspan(default_plot_vspan);
+                int plot_size(default_plot_size);
+                float plot_minval(default_plot_minval);
+                float plot_maxval(default_plot_maxval);
+                bool plot_autorescale(default_plot_autorescale);
+                bool plot_realtime(default_plot_realtime);
+                bool plot_triggermode(default_plot_triggermode);
+                QString plot_bgcolor(default_plot_bgcolor);
+                QString plot_title(default_plot_title);
 
                 if(plotAttributes.hasAttribute("title")) {
                     plot_title = plotAttributes.value("title").toString();
@@ -104,7 +113,15 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
             }
 
             if (xml.name() == "graph") {
+
                 QXmlStreamAttributes graphAttributes = xml.attributes();
+                QString graph_remote;
+                QString graph_title(default_graph_title);
+                QString graph_color(default_graph_color);
+                QString graph_type(default_graph_type);
+                int graph_index;
+                int graph_size(default_graph_size);
+
                 if(graphAttributes.hasAttribute("remote")) {
                     graph_remote = graphAttributes.value("remote").toString();
                 } else {

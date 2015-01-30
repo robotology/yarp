@@ -10,34 +10,58 @@
 
 #include "simpleloader.h"
 #include <yarp/os/Value.h>
+/*
+    QString plot_bgcolor;
+    int plot_size;
+    float plot_minval;
+    float plot_maxval;
+    bool plot_autorescale;
+    bool plot_realtime;
+    bool plot_triggermode;
+    QString plot_title;
+
+    QString graph_localport;
+    QString graph_remote;
+    QString graph_title;
+    QString graph_color;
+    QString graph_type;
+    int graph_index;
+    int graph_size;*/
 
 SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, PlotManager *plotManager, bool *ok, QObject *parent) :
-    GenericLoader(parent)
+    GenericLoader(parent),
+    plotManager(plotManager),
+    plot_bgcolor(default_plot_bgcolor),
+    plot_size(default_plot_size),
+    plot_minval(default_plot_minval),
+    plot_maxval(default_plot_maxval),
+    plot_autorescale(options->check("autorescale")),
+    plot_realtime(options->check("realtime")),
+    plot_triggermode(options->check("triggermode")),
+    plot_title(default_plot_title),
+    graph_remote(),
+    graph_index(-1),
+    graph_localport(default_portscope_localport),
+    graph_title(default_graph_title),
+    graph_color(default_graph_color),
+    graph_type(default_graph_type),
+    graph_size(default_graph_size)
 {
-    this->plotManager = plotManager;
-
     if (!options->check("remote")) {
            qDebug("Missing \"remote\" argument. Will wait for external connection");
     } else {
        graph_remote = QString("%1").arg(options->find("remote").toString().c_str());
+       plot_title = graph_remote;
     }
-
-    local_port = default_local_port;
 
     if (options->check("carrier")) {
         portscope_carrier = QString("%1").arg(options->find("carrier").asString().c_str());
-    } else {
-        portscope_carrier = default_portscope_carrier;
     }
-
     if (options->check("no-persistent")) {
         portscope_persistent = false;
     } else if (options->check("persistent")) {
         portscope_persistent = true;
-    } else {
-        portscope_persistent = default_portscope_persistent;
     }
-
 
     if (!options->check("index")) {
         qWarning() << "Missing \"index\" argument. Will use index = 0";
@@ -47,48 +71,32 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
 
     if (options->check("plot_title")) {
         plot_title = QString("%1").arg(options->find("plot_title").toString().c_str());
-    } else {
-        plot_title = graph_remote;
     }
 
     if (options->check("min")) {
         plot_minval = (float)options->find("min").asDouble();
-    } else {
-        plot_minval = default_plot_minval;
     }
 
     if (options->check("max")) {
         plot_maxval = (float)options->find("max").asDouble();
-    } else {
-        plot_maxval = default_plot_maxval;
     }
 
     if (options->check("size")) {
         plot_size = options->find("size").asInt();
-    } else {
-        plot_size = default_plot_size;
     }
 
     if (options->check("bgcolor")) {
         plot_bgcolor = QString("%1").arg(options->find("bgcolor").asString().c_str());
-    } else {
-        plot_bgcolor = default_bg_color;
     }
 
-    plot_autorescale = options->check("autorescale");
-
     // TODO enable realtime mode
-    plot_realtime = options->check("realtime");
     Q_UNUSED(plot_realtime); // UNUSED
 
     // TODO enable trigger mode
-    plot_triggermode = options->check("triggermode");
     Q_UNUSED(plot_triggermode); // UNUSED
 
     Plotter *plotter = plotManager->addPlot(plot_title, 0, 0, 1, 1, plot_minval, plot_maxval, plot_size, plot_bgcolor, plot_autorescale);
 
-
-    graph_color = default_graph_color;
 
     if (!indexValue.isList()) {
         // SINGLE PLOT
@@ -112,7 +120,6 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
             graph_color = QString("%1").arg(options->find("color").toString().c_str());
         }
 
-
         if (options->check("type")) {
             if (options->find("type").isList()) {
                 qCritical("\"type\" and \"index\" arguments should have the same number of elements");
@@ -120,8 +127,6 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
                 return;
             }
             graph_type =  QString("%1").arg(options->find("type").toString().c_str());
-        } else {
-            graph_type = default_graph_type;
         }
 
         if (options->check("graph_size")) {
@@ -134,7 +139,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
         } else {
             graph_size = default_graph_size;
         }
-        plotter->init(graph_remote, local_port, portscope_carrier, portscope_persistent);
+        plotter->init(graph_remote, graph_localport, portscope_carrier, portscope_persistent);
         plotter->addGraph(graph_index,graph_title, graph_color, graph_type, graph_size);
 
     } else {
@@ -209,7 +214,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
             sizes = yarp::os::Bottle::getNullBottle();
         }
 
-        plotter->init(graph_remote,  local_port, portscope_carrier, portscope_persistent);
+        plotter->init(graph_remote, graph_localport, portscope_carrier, portscope_persistent);
 
         for (int i = 0; i < indexes.size(); i++) {
             graph_index = indexes.get(i).asInt();
@@ -224,8 +229,6 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
 
             if (!types.isNull()) {
                 graph_type = QString("%1").arg(types.get(i).asString().data());
-            } else {
-                graph_type = default_graph_type;
             }
 
             if (!sizes.isNull()) {

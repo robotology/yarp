@@ -28,12 +28,22 @@ public:
 private:
     PlotManager *plotManager;
 
+    QString plot_bgcolor;
+    int plot_size;
+    float plot_minval;
+    float plot_maxval;
+    bool plot_autorescale;
+    bool plot_realtime;
+    bool plot_triggermode;
+    QString plot_title;
 
-
-signals:
-
-public slots:
-
+    QString graph_remote;
+    int graph_index;
+    QString graph_localport;
+    QString graph_title;
+    QString graph_color;
+    QString graph_type;
+    int graph_size;
 };
 
 #endif // SIMPLELOADER_H
