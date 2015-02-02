@@ -60,7 +60,7 @@ namespace yarp{
 * Parameters accepted in the config argument of the open method:
 * | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
 * |:--------------:|:------:|:-----:|:-------------:|:--------: |:-------------:|:-----:|
-* | name           | string | -     | -             | Yes       | full name of the port opened by the devie, like /robotName/deviceId/sensorType:o | must start with a '/' character |
+* | name           | string | -     | -             | Yes       | full name of the port opened by the device, like /robotName/deviceId/sensorType:o | must start with a '/' character |
 * | period         | int    | ms    | 20            | No        | refresh period of the broadcasted values in ms (optional, default 20ms) | - |
 **/
 
