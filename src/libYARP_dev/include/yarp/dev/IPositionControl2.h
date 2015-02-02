@@ -70,7 +70,8 @@ public:
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @param joints pointer to the array of joint numbers
-     * @param flags  pointer to the array with actual answer of the checkMotionDone
+     * @param flag true if the trajectory is terminated, false otherwise
+     *        (a single value which is the 'and' of all joints')
      * @return true/false if network communication went well.
      */
     virtual bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)=0;

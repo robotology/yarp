@@ -421,13 +421,15 @@ public:
     /**
     * Check if the current trajectory is terminated. Non blocking.
     * @param flag true if the trajectory is terminated, false otherwise
+    *        (a single value which is the 'and' of all joints')
     * @return false on failure
     */
     virtual bool checkMotionDone(bool *flag);
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @param joints pointer to the array of joint numbers
-     * @param flags  pointer to the array that will store the actual value of the checkMotionDone
+     * @param flag true if the trajectory is terminated, false otherwise
+     *        (a single value which is the 'and' of all joints')
      * @return true/false if network communication went well.
      */
     virtual bool checkMotionDone(const int n_joints, const int *joints, bool *flags);
