@@ -38,17 +38,38 @@ static std::string getPartName(const std::string& tname) {
     return part_tname;
 }
 
-static std::string getPackageName(const std::string& tname) {
-    string part_tname = tname;
+static std::string getDirName(const std::string& tname) {
     size_t at = tname.rfind("/");
-    if (at!=string::npos) {
-        return tname.substr(0,at);
+    if (at==string::npos) return "";
+    return tname.substr(0,at);
+ }
+
+static std::string getPackageName(const std::string& name) {
+    string tname = name;
+    string pname = "";
+    size_t at = tname.rfind("/");
+    if (at==string::npos) return "";
+    tname = pname = tname.substr(0,at);
+    do {
+        at = pname.rfind("/");
+        if (at == string::npos) break;
+        tname = pname.substr(at+1,pname.length());
+        pname = pname.substr(0,at);
+    } while (tname=="srv"||tname=="msg");
+    return tname;
+}
+
+static std::string getDoubleName(const std::string& tname) {
+    string package_name = getPackageName(tname);
+    string part_name = getPartName(tname);
+    if (package_name!="") {
+        return package_name + "/" + part_name;
     }
-    return "";
+    return part_name;
 }
 
 static std::string getSillyName(const std::string& tname) {
-    string pack = getPackageName(tname);
+    string pack = getDirName(tname);
     string safe = getSafeName(tname);
     if (pack!="") return pack + "/" + safe;
     return safe;
@@ -537,6 +558,7 @@ static void output_type(FILE *out,
 bool RosTypeCodeGenYarp::endType(const std::string& tname,
                                  const RosField& field) {
     string safe_tname = getSafeName(tname);
+    string dbl_name = getDoubleName(tname);
     fprintf(out,"  // This class will serialize ROS style or YARP style depending on protocol.\n");
     fprintf(out,"  // If you need to force a serialization style, use one of these classes:\n");
     fprintf(out,"  typedef yarp::os::idl::BareStyle<%s> rosStyle;\n", safe_tname.c_str());
@@ -553,7 +575,7 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
 
     fprintf(out,"  // Name the class, ROS will need this\n");
     fprintf(out,"  yarp::os::Type getType() {\n");
-    fprintf(out,"    yarp::os::Type typ = yarp::os::Type::byName(\"%s\",\"%s\");\n", tname.c_str(), tname.c_str());
+    fprintf(out,"    yarp::os::Type typ = yarp::os::Type::byName(\"%s\",\"%s\");\n", dbl_name.c_str(), dbl_name.c_str());
     fprintf(out,"    typ.addProperty(\"md5sum\",yarp::os::Value(\"%s\"));\n", field.checksum.c_str());
     fprintf(out,"    typ.addProperty(\"message_definition\",yarp::os::Value(getTypeText()));\n");
     fprintf(out,"    return typ;\n");

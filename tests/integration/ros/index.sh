@@ -11,6 +11,8 @@
 active_test="$1"
 available_tests=""
 
+set -e
+
 function is_test {
     if [[ ! "$available_tests" =~ " $1 " ]]; then
 	available_tests="$available_tests $1 "
@@ -70,6 +72,16 @@ function wait_node_topic {
     done
 }
 
+function wait_node_service {
+    node="$1"
+    topic="$2"
+    rosservice info $topic | grep $node
+    while [ "`rosservice info $topic | grep $node | wc -c`" = "0" ] ; do
+	echo "waiting for $node on $topic"
+	sleep 1
+    done
+}
+
 function wait_topic_gone {
     topic="$1"
     while rostopic info $topic ; do
@@ -94,6 +106,7 @@ function wait_node {
 # Track PIDs of some processes we'll be running, for cleanup purposes
 SERVER_ID=""
 HELPER_ID=""
+HELPER2_ID=""
 ROS_ID=""
 
 cleanup_helper() {
@@ -102,6 +115,12 @@ cleanup_helper() {
 	kill $HELPER_ID || true
 	wait $HELPER_ID || true
 	HELPER_ID=""
+    fi
+    if [ ! "k$HELPER2_ID" = "k" ]; then
+	echo "Removing helper"
+	kill $HELPER2_ID || true
+	wait $HELPER2_ID || true
+	HELPER2_ID=""
     fi
 }
 
@@ -536,6 +555,126 @@ if is_test md5_all; then
     popd
 fi
 
+
+########################################################################
+function begin_examples {
+    dir=${BASE}check_example
+    rm -rf $dir
+    mkdir -p $dir
+    pushd $dir
+    cmake $YARP_SRC/example/ros/ -DYARP_DIR=$YARP_DIR
+    make "$@"
+    cp -R $YARP_SRC/example/ros/package package
+    pushd package
+    catkin_make
+    popd
+}
+
+function end_examples {
+    popd
+}
+
+function wait_for_log {
+    want_lines="$1"
+    max_wait="$2"
+    at=0
+    while true; do
+	ct=`cat log.txt | wc -l`
+	echo "waiting for at least $want_lines messages, have $ct"
+	if [ $ct -gt $want_lines ]; then
+	    break
+	fi
+	if [ $at -gt $max_wait ]; then
+	    # approximate time, not exact
+	    echo "did not get messages"
+	    exit 1
+	fi
+	sleep 1
+	let at=at+1
+    done
+}
+
+########################################################################
+if is_test cpp_talker_listener_v1; then
+    header "test cpp example listener_v1 to talker"
+    
+    root="/test/example1/pid$$"
+    begin_examples listener_v1 talker
+ 
+    export YARP_RENAME_chatter__yarp_talker="$root@$root/talker"
+    $PWD/talker &
+    HELPER_ID=$!
+
+    export YARP_RENAME_chatter__yarp_listener="$root@$root/listener"
+    stdbuf --output=L $PWD/listener_v1 > log.txt &
+    HELPER2_ID=$!
+
+    wait_for_log 3 30
+ 
+    cleanup_helper
+    end_examples
+fi
+
+
+########################################################################
+if is_test cpp_talker_listener_v2; then
+    header "test cpp example listener_v2 to talker"
+    
+    root="/test/example2/pid$$"
+    begin_examples listener_v2 talker
+ 
+    export YARP_RENAME_chatter__yarp_talker="$root@$root/talker"
+    $PWD/talker &
+    HELPER_ID=$!
+
+    export YARP_RENAME_chatter__yarp_listener="$root@$root/listener"
+    export YARP_RENAMEchatter="$root@$root/listener"
+    stdbuf --output=L $PWD/listener_v2 > log.txt &
+    HELPER2_ID=$!
+
+    wait_for_log 3 30
+ 
+    cleanup_helper
+    end_examples
+fi
+
+for client in v1 v1b v2; do
+    for server in v1 v1b; do
+	if is_test cpp_add_int_client_${client}_server_${server}; then
+	    header "test cpp example add_int_client_${client}/add_int_server_${server}"
+    	    root="/test/example_add_int_${client}_${server}/pid$$"
+	    begin_examples add_int_server_${server} add_int_client_${client}
+	    source package/devel/setup.bash
+	    rossrv show yarp_test/AddTwoInts
+
+	    ${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros --web false --verbose 1 &
+	    HELPER_ID=$!
+	    wait_node /yarpros /typ
+
+	    export YARP_RENAME_add_two_ints__yarp_add_int_server=/add_two_ints@$root/server
+	    export YARP_RENAME_add_two_ints__yarp_add_int_client=/add_two_ints@$root/client
+	    export YARP_RENAMEadd_two_ints="/add_two_ints@$root/server"
+	    $PWD/add_int_server_${server} &
+	    HELPER2_ID=$!
+	    wait_node_service $root/server /add_two_ints
+	    
+	    export YARP_RENAMEadd_two_ints="/add_two_ints@$root/client"
+	    result=`$PWD/add_int_client_${client} 40 2 | sed "s/.* //"`
+	    echo "Result is $result"
+	    if [[ ! "$result" = "42" ]]; then
+		echo "That is not right"
+		exit 1
+	    fi
+	    
+	    cleanup_helper
+	    end_examples
+	fi
+    done
+done
+
+########################################################################
+## We're done!
+########################################################################
 
 if [[ ! "$active_test" = "" ]]; then
     header "Test(s) finished"

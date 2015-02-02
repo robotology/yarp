@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <yarp/os/all.h>
-#include "yarp_test/AddTwoInts.h"
-#include "yarp_test/AddTwoIntsReply.h"
+#include "package/src/yarp_test/srv/AddTwoInts.h"
+#include "package/src/yarp_test/srv/AddTwoIntsReply.h"
 
 using namespace yarp::os;
 
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr,"Failed to call service\n");
         return 1;
     }
-    printf("Got %d\n", reply.sum);
+    printf("Got %d\n", (int)reply.sum);
 
     return 0;
 }

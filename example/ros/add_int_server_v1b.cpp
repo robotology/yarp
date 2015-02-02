@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <yarp/os/all.h>
-#include "yarp_test/AddTwoInts.h"
-#include "yarp_test/AddTwoIntsReply.h"
+#include "package/src/yarp_test/srv/AddTwoInts.h"
+#include "package/src/yarp_test/srv/AddTwoIntsReply.h"
 
 using namespace yarp::os;
 
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
         yarp_test::AddTwoIntsReply reply;
         if (!server.read(msg,true)) continue;
         reply.sum = msg.a + msg.b;
-        printf("Got %d + %d, answering %d\n", msg.a, msg.b, reply.sum);
+        printf("Got %d + %d, answering %d\n", (int)msg.a, (int)msg.b, (int)reply.sum);
         server.reply(reply);
     }
 

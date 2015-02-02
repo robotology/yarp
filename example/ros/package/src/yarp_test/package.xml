@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package>
+  <name>yarp_test</name>
+  <version>0.0.0</version>
+  <description>A test yarp package - this .xml file is here for ROS only, YARP does not use it</description>
+  <maintainer email="paul@robotrebuilt.com">Paul Fitzpatrick</maintainer>
+  <license>BSD</license>
+  <build_depend>message_generation</build_depend>
+  <run_depend>message_runtime</run_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+</package>
+
