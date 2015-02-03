@@ -101,6 +101,10 @@ by the \ref yarpdatadumper.
   assumed. The leading forward slash will be added if not
   provided.
 
+--connect \e portname
+- The parameter \e portname specifies the name of the port to 
+  connect the dumper to at launch time.
+
 --dir \e dirname
 - The parameter \e dirname serves to specify the storage
   directory explicitely (relative to the location where the

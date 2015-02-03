@@ -594,6 +594,15 @@ public:
             p_image->setReporter(reporter);
         }
 
+        if (rf.check("connect"))
+        {
+            string srcPort=rf.find("connect").asString().c_str();
+            bool ok=Network::connect(srcPort.c_str(),
+                                     (type==bottle)?p_bottle->getName().c_str():
+                                     p_image->getName().c_str());
+            yInfo() << "Connection to " << srcPort << " port ... " << (ok?"successful":"failed");
+        }
+
         rpcPort.open((portName+"/rpc").c_str());
         attach(rpcPort);
 
