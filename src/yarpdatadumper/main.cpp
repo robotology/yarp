@@ -600,7 +600,14 @@ public:
             bool ok=Network::connect(srcPort.c_str(),
                                      (type==bottle)?p_bottle->getName().c_str():
                                      p_image->getName().c_str());
-            yInfo() << "Connection to " << srcPort << " port ... " << (ok?"successful":"failed");
+
+            ostringstream msg;
+            msg << "Connection to " << srcPort << " " << (ok?"successful":"failed");
+
+            if (ok)
+                yInfo() << msg.str();
+            else
+                yWarning() << msg.str();
         }
 
         rpcPort.open((portName+"/rpc").c_str());
