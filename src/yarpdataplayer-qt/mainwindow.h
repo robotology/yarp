@@ -147,10 +147,6 @@ protected:
      * function that deletes utilities
      */
     void clearUtilities();
-//    /**
-//     * function that lists the list of commands
-//     */
-//    void listOfCommands(yarp::os::Bottle &reply);
     /**
      * function that gets the frame command
      */
@@ -162,8 +158,6 @@ protected:
 
     void closeEvent(QCloseEvent *event);
 
-
-/***********************************************************/
 private:
     Ui::MainWindow              *ui;
     QString                     moduleName;
@@ -195,8 +189,9 @@ protected:
     int                         itr;
     int                         column;
     bool                        withExtraTimeCol;
+    bool                        quitFromCmd;
 
-/***********************************************************/
+
 public slots:
     /**
      * function that gets which parts are activated
@@ -204,6 +199,7 @@ public slots:
     bool getPartActivation(const char* szName);
 
 signals:
+    void internalQuit();
     void internalLoad(QString);
     void internalPlay();
     void internalPause();
@@ -214,6 +210,8 @@ signals:
 
 
 private slots:
+    void onInternalQuit();
+    void onItemDoubleClicked(QTreeWidgetItem *item,int column);
     void onErrorMessage(QString msg);
     void onInitDone(int subDirCount);
     void onMenuFileOpen();
@@ -245,7 +243,7 @@ private slots:
 
 };
 
-
+/***********************************************************/
 class InitThread : public QThread
 {
     Q_OBJECT

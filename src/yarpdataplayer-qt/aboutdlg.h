@@ -20,7 +20,7 @@ private:
 
 private slots:
     void onCredits();
-    void onLicence();
+    void onLicense();
 };
 
 #endif // ABOUTDLG_H

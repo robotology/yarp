@@ -6,13 +6,13 @@
 #include <aboutdlg.h>
 #include <QMessageBox>
 #include "log.h"
+#include <signal.h>
 
 #if defined(WIN32)
     #pragma warning (disable : 4099)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
 #endif
-
 
 #define WND_DEF_HEIGHT          400
 #define WND_DEF_WIDTH           800
@@ -33,6 +33,13 @@
  #define APP_VERSION "1.0"
 #endif
 
+using namespace std;
+void sighandler(int sig)
+{
+    LOG("\n\nCaught ctrl-c, please quit within gui for clean exit\n\n");
+}
+
+/**********************************************************/
 MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -44,7 +51,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     pressed = false;
     initThread = NULL;
 
-    moduleName =  QString("%1").arg(rf.check("name", Value("dataSetPlayer"), "module name (string)").asString().c_str());
+    moduleName =  QString("%1").arg(rf.check("name", Value("yarpdataplayer"), "module name (string)").asString().c_str());
 
     if (rf.check("withExtraTimeCol")){
         withExtraTimeCol = true;
@@ -72,8 +79,15 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
 
     QString port = QString("/%1/rpc:i").arg(moduleName);
     rpcPort.open( port.toLatin1().data() );
+    
+    ::signal(SIGINT, sighandler);
+    ::signal(SIGTERM, sighandler);
+    
     attach(rpcPort);
+    
+    quitFromCmd = false;
 
+    connect(ui->mainWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(onItemDoubleClicked(QTreeWidgetItem*,int)));
     connect(this,SIGNAL(internalLoad(QString)),this,SLOT(onInternalLoad(QString)),Qt::QueuedConnection);
     connect(this,SIGNAL(internalPlay()),this,SLOT(onInternalPlay()),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalPause()),this,SLOT(onInternalPause()),Qt::BlockingQueuedConnection);
@@ -81,7 +95,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     connect(this,SIGNAL(internalStep(Bottle*)),this,SLOT(onInternalStep(Bottle*)),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalSetFrame(std::string,int)),this,SLOT(onInternalSetFrame(std::string,int)),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalGetFrame(std::string, int*)),this,SLOT(onInternalGetFrame(std::string,int*)),Qt::BlockingQueuedConnection);
-
+    connect(this,SIGNAL(internalQuit()),this,SLOT(onInternalQuit()),Qt::QueuedConnection);
 }
 
 /**********************************************************/
@@ -92,6 +106,18 @@ MainWindow::~MainWindow()
     rpcPort.close();
     LOG("done cleaning rpc port...\n");
     clearUtilities();
+}
+
+/**********************************************************/
+void MainWindow::onItemDoubleClicked(QTreeWidgetItem *item,int column)
+{
+    if(column == 5){
+        //ui->treeWidget->openPersistentEditor(item,column);
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        return;
+    }else{
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+    }
 }
 
 /**********************************************************/
@@ -180,7 +206,6 @@ bool MainWindow::load(const string &path)
 /**********************************************************/
 void  MainWindow::onInternalLoad(QString sPath)
 {
-    
     ui->mainWidget->clear();
     for (int x=0; x < subDirCnt; x++){
         utilities->closePorts(utilities->partDetails[x]);
@@ -231,10 +256,17 @@ void MainWindow::onInternalStop()
 /**********************************************************/
 bool MainWindow::quit()
 {
+    quitFromCmd = true;
+    internalQuit();
+    return true;
+}
+
+/**********************************************************/
+void MainWindow::onInternalQuit()
+{
     if(cmdSafeExit()){
         QMainWindow::close();
     }
-    return true;
 }
 
 /**********************************************************/
@@ -282,29 +314,18 @@ void MainWindow::stepFromCommand(Bottle &reply)
 /**********************************************************/
 bool MainWindow::cmdSafeExit(void)
 {
-    onMenuPlayBackStop();
-    LOG( "Module closing...\nCleaning up...\n");
-    for (int x=0; x < subDirCnt; x++){
-        utilities->partDetails[x].worker->release();
-    }
-    LOG( "Attempt to interrupt ports\n");
-    for (int x=0; x < subDirCnt; x++){
-        utilities->interruptPorts(utilities->partDetails[x]);
-    }
-    LOG( "Attempt to close ports\n");
-    for (int x=0; x < subDirCnt; x++){
-        utilities->closePorts(utilities->partDetails[x]);
-    }
-    clearUtilities();
-    LOG( "Done!...\n");
-    return true;
-}
-
-/**********************************************************/
-bool MainWindow::safeExit(void)
-{
-    if(QMessageBox::question(this,"Quit","Do you want to quit?") == QMessageBox::Yes){
-        onMenuPlayBackStop();
+    quitFromCmd = true;
+    if(utilities){
+        LOG( "asking the threads to stop...\n");
+        if (utilities->masterThread->isSuspended()){
+            utilities->masterThread->resume();
+        }
+        
+        utilities->masterThread->stop();
+        LOG( "done stopping!\n");
+        for (int i=0; i < subDirCnt; i++)
+            utilities->partDetails[i].currFrame = 1;
+        
         LOG( "Module closing...\nCleaning up...\n");
         for (int x=0; x < subDirCnt; x++){
             utilities->partDetails[x].worker->release();
@@ -319,9 +340,40 @@ bool MainWindow::safeExit(void)
         }
         clearUtilities();
         LOG( "Done!...\n");
-        return true;
     }
-    return false;
+    return true;
+}
+
+/**********************************************************/
+bool MainWindow::safeExit(void)
+{
+    if(utilities){
+        LOG( "asking the threads to stop...\n");
+        if (utilities->masterThread->isSuspended()){
+            utilities->masterThread->resume();
+        }
+        
+        utilities->masterThread->stop();
+        LOG( "done stopping!\n");
+        for (int i=0; i < subDirCnt; i++)
+            utilities->partDetails[i].currFrame = 1;
+        
+        LOG( "Module closing...\nCleaning up...\n");
+        for (int x=0; x < subDirCnt; x++){
+            utilities->partDetails[x].worker->release();
+        }
+        LOG( "Attempt to interrupt ports\n");
+        for (int x=0; x < subDirCnt; x++){
+            utilities->interruptPorts(utilities->partDetails[x]);
+        }
+        LOG( "Attempt to close ports\n");
+        for (int x=0; x < subDirCnt; x++){
+            utilities->closePorts(utilities->partDetails[x]);
+        }
+        clearUtilities();
+        LOG( "Done!...\n");
+    }
+    return true;
 }
 
 /**********************************************************/
@@ -341,7 +393,6 @@ void MainWindow::clearUtilities()
         delete utilities;
         utilities = NULL;
     }
-
 }
 
 /**********************************************************/
@@ -363,8 +414,19 @@ bool MainWindow::getPartActivation(const char* szName)
 /**********************************************************/
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    cmdSafeExit();
-    event->accept();
+    if (!quitFromCmd){
+        QMessageBox::StandardButton resBtn = QMessageBox::question( this, APP_NAME,
+                                                               "Quitting, Are you sure?\n",
+                                                               QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
+        
+        if (resBtn != QMessageBox::Yes) {
+            event->ignore();
+
+        } else {
+            safeExit();
+            event->accept();
+        }
+    }
 }
 
 /**********************************************************/
@@ -378,7 +440,6 @@ void MainWindow::setupSignals()
     connect(ui->stopButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackStop()));
     connect(ui->ffwButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackForward()));
     connect(ui->rewButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackBackward()));
-
 }
 
 /**********************************************************/
@@ -502,18 +563,20 @@ void MainWindow::addPart(const char* szName, const char* type, int frames, const
     ui->mainWidget->setItemWidget(item,ACTIVE,checkBox);
     if(szName){
         item->setText(PART,QString("%1").arg(szName));
+        ui->mainWidget->resizeColumnToContents(PART);
     }
     if(type){
         item->setText(TYPE,QString("%1").arg(type));
+        ui->mainWidget->resizeColumnToContents(TYPE);
     }
     item->setText(FRAMES,QString("%1").arg(frames));
+    ui->mainWidget->resizeColumnToContents(FRAMES);
 
-//    if(szFileName){
-//        item->setText(6,QString("%1").arg(szFileName));
-//    }
     if(portName){
         item->setText(PORT,QString("%1").arg(portName));
+        ui->mainWidget->resizeColumnToContents(PORT);
     }
+    
     QProgressBar *progress = new QProgressBar();
     progress->setMaximum(100);
     progress->setValue(0);
@@ -622,7 +685,7 @@ void MainWindow::onErrorMessage(QString msg)
 /**********************************************************/
 void MainWindow::onMenuHelpAbout()
 {
-    QString copyright = "2014 (C) Robotics, Brain and Cognitive Sciences\nIstituto Italiano di Tecnologia";
+    QString copyright = "2014 (C) iCub Facility \nIstituto Italiano di Tecnologia";
     QString name = APP_NAME;
     QString version = APP_VERSION;
     AboutDlg dlg(name,version,copyright,"http://www.icub.org/");
@@ -640,8 +703,6 @@ void MainWindow::onMenuPlayBackPlay()
 
         ui->actionPause->setEnabled(true);
         ui->actionPlay->setEnabled(false);
-
-
 
         LOG("checking if port was changed by the user...\n");
 
@@ -913,10 +974,8 @@ void MainWindow::goToPercentage(int value)
 /**********************************************************/
 void MainWindow::onClose()
 {
-    if(safeExit()){
-        QMainWindow::close();
-    }
-
+    //just send the closing event
+    QMainWindow::close();
 }
 
 /**********************************************************/
