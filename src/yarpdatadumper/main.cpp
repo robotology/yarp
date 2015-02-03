@@ -602,7 +602,7 @@ public:
                                      p_image->getName().c_str());
 
             ostringstream msg;
-            msg << "Connection to " << srcPort << (ok?"successful":"failed");
+            msg << "Connection to " << srcPort << " " << (ok?"successful":"failed");
 
             if (ok)
                 yInfo() << msg.str();
