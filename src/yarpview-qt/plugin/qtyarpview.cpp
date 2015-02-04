@@ -307,7 +307,8 @@ void QtYARPView::printHelp()
     qDebug("  --out: output port name (no default is given, if this option is not specified the port is not created)");
     qDebug("  --neto: output network");
     qDebug("  --neti: input network");
-    qDebug("  --compact: if this flag is enabled, no window controls will be printed");
+    qDebug("  --compact: if this flag is enabled, no status bar will be showed");
+    qDebug("  --minimal: if this flag is enabled, neither the status bars nor the title bar/menu bar will be showed. It overwrites --compact.");
     qDebug("  --keep-above: keep windows above others");
 }
 

@@ -26,6 +26,7 @@
  */
 int main(int argc, char *argv[])
 {
+    bool minimal=false;
     bool compact=false;
     bool keepabove=false;
     // Pack the argc and argv to a QStringList so we can pass them easily to
@@ -39,6 +40,10 @@ int main(int argc, char *argv[])
         if (std::string(argv[i]) == "--compact")
         {
             compact=true;
+        }
+        if (std::string(argv[i]) == "--minimal")
+        {
+            minimal=true;
         }
         if (std::string(argv[i]) == "--keep-above")
         {
@@ -63,7 +68,7 @@ int main(int argc, char *argv[])
                                          PLUGINS_RELATIVE_PATH + QDir::separator() +
                                          CMAKE_INTDIR));
 #endif
-    if (compact)
+    if (compact || minimal)
     {
         engine.load(QUrl("qrc:/qml/QtYARPView/mainCompact.qml"));
     }
@@ -79,7 +84,7 @@ int main(int argc, char *argv[])
     }
 
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
-    if (compact)
+    if (minimal)
     {
         window->setFlags(Qt::FramelessWindowHint);
     }

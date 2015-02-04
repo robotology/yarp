@@ -1,15 +1,15 @@
 /*
  * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
  * Author: Alessandro Roncone
- * Date: Sep 2014
- * email:   alessandro.roncone@iit.it
+ * Date:   Sep 2014
+ * email:  alessandro.roncone@iit.it
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 import QtQuick 2.0
 import QtQuick.Controls 1.1
-import QtQuick.Window 2.0
+import QtQuick.Window 2.1
 
 // Import the YARPView module
 import robotology.yarp.view 1.0

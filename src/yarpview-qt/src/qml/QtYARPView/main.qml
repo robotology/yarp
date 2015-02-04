@@ -10,7 +10,7 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 1.1
-import QtQuick.Window 2.0
+import QtQuick.Window 2.1
 
 // Import the YARPView module
 import robotology.yarp.view 1.0
