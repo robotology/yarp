@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012, 2015  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -24,11 +24,13 @@ public:
 
     Module * const parent;
     RobotInterface::Robot robot;
+    int interruptReceived;
 };
 
 
 RobotInterface::Module::Private::Private(Module *parent) :
-    parent(parent)
+    parent(parent),
+    interruptReceived(0)
 {
 }
 
@@ -87,17 +89,22 @@ bool RobotInterface::Module::updateModule()
 
 bool RobotInterface::Module::interruptModule()
 {
-    static int ct = 0;
-    ct++;
+    mPriv->interruptReceived++;
 
-    yWarning() << "Interrupt #" << ct << "# received.";
+    yWarning() << "Interrupt #" << mPriv->interruptReceived << "# received.";
 
-    switch (ct) {
+    mPriv->robot.interrupt();
+
+    // In the first interrupt, after sending the interrupt() command
+    // to the robot we exit the callback. In the close() method then
+    // we proceed with the interupt1 phase, where we wait for all the
+    // threads already started are joined, and finally we start the
+    // interrupt1 actions.
+    // In the second and third interrupts, we enter the interrupt2
+    // phase in the callback. This means that in Robot, we cannot
+    // wait for the other threads using join().
+    switch (mPriv->interruptReceived) {
     case 1:
-        if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt1)) {
-            yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseInterrupt1) << "phase... see previous messages for more info";
-            return false;
-        }
         break;
     case 2:
         if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt2)) {
@@ -120,5 +127,27 @@ bool RobotInterface::Module::interruptModule()
 
 bool RobotInterface::Module::close()
 {
-    return mPriv->robot.enterPhase(RobotInterface::ActionPhaseShutdown);
+    // If called from the first interrupt, enter the corresponding
+    // interrupt phase.
+    switch (mPriv->interruptReceived) {
+    case 1:
+        if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt1)) {
+            yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseInterrupt1) << "phase... see previous messages for more info";
+            return false;
+        }
+        break;
+    case 2:
+    case 3:
+        break;
+    default:
+        return false;
+    }
+
+    // Finally call the shutdown phase.
+    if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseShutdown)) {
+        yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseShutdown) << "phase... see previous messages for more info";
+        return false;
+    }
+
+    return true;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012, 2015  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -41,7 +41,7 @@ std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Ro
 class RobotInterface::Robot::Private
 {
 public:
-    Private(Robot * /*parent*/) {}
+    Private(Robot * /*parent*/) : currentPhase(ActionPhaseUnknown) {}
 
     // return true if a device with the given name exists
     bool hasDevice(const std::string &name) const;
@@ -88,6 +88,7 @@ public:
     std::string portprefix;
     ParamList params;
     DeviceList devices;
+    RobotInterface::ActionPhase currentPhase;
 }; // class RobotInterface::Robot::Private
 
 bool RobotInterface::Robot::Private::hasDevice(const std::string &name) const
@@ -453,9 +454,23 @@ const RobotInterface::Device& RobotInterface::Robot::device(const std::string& n
     return *mPriv->findDevice(name);
 }
 
+void RobotInterface::Robot::interrupt()
+{
+    yInfo() << "Interrupt received. Stopping all running threads.";
+
+    // If we received an interrupt we send a stop signal to all threads
+    // from previous phases
+    for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
+        Device &device = *dit;
+        device.stopThreads();
+    }
+}
+
 bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
 {
     yInfo() << ActionPhaseToString(phase) << "phase starting...";
+
+    mPriv->currentPhase = phase;
 
     // Open all devices
     if (phase == ActionPhaseStartup) {
@@ -465,19 +480,48 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
         }
     }
 
+    // Before starting any action we ensure that there are no other
+    // threads running from prevoius phases.
+    // In interrupt 2 and 3 and this is called by the interrupt callback,
+    // and therefore main thread will be blocked and join will never
+    // return. Therefore, since we want to start the abort actions we
+    // skip this check.
+    if (phase != ActionPhaseInterrupt2 && phase != ActionPhaseInterrupt3) {
+        for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
+            Device &device = *dit;
+            device.joinThreads();
+        }
+    }
+
     std::vector<unsigned int> levels = mPriv->getLevels(phase);
 
     bool ret = true;
     for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); ++lit) {
         // for each level
         const unsigned int level = *lit;
+
         yInfo() << "Entering action level" << level << "of phase" << ActionPhaseToString(phase);
+
+        // If current phase was changed by some other thread, we should
+        // exit the loop and avoid starting further actions.
+        if(mPriv->currentPhase != phase) {
+            ret = false;
+            break;
+        }
+
         std::vector<std::pair<Device, Action> > actions = mPriv->getActions(phase, level);
 
         for (std::vector<std::pair<Device, Action> >::iterator ait = actions.begin(); ait != actions.end(); ++ait) {
             // for each action in that level
             Device &device = ait->first;
             Action &action = ait->second;
+
+            // If current phase was changed by some other thread, we should
+            // exit the loop and avoid starting further actions.
+            if(mPriv->currentPhase != phase) {
+                ret = false;
+                break;
+            }
 
             switch (action.type()) {
             case ActionTypeConfigure:

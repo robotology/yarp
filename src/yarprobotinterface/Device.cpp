@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
+ * Copyright (C) 2012, 2015  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -37,6 +37,7 @@ public:
         }
         yarp::dev::PolyDriver *driver;
         ThreadList runningThreads;
+        yarp::os::Semaphore registerThreadSemaphore;
         yarp::os::Semaphore threadListSemaphore;
         int ref;
     };
@@ -62,7 +63,7 @@ public:
     ~Private()
     {
         if (!--driver->ref) {
-            joinThreads();
+            stopThreads();
 
             if (driver->driver->isValid()) {
                 if (!driver->driver->close()) {
@@ -77,7 +78,8 @@ public:
 
     inline yarp::dev::PolyDriver* drv() const { return driver->driver; }
     inline RobotInterface::ThreadList* thr() const { return &driver->runningThreads; }
-    inline yarp::os::Semaphore* sem() const { return &driver->threadListSemaphore; }
+    inline yarp::os::Semaphore* reg_sem() const { return &driver->registerThreadSemaphore; }
+    inline yarp::os::Semaphore* lst_sem() const { return &driver->threadListSemaphore; }
 
     inline bool isValid() const { return drv()->isValid(); }
     inline bool open() { return drv()->open(paramsAsProperty().toString()); }
@@ -85,21 +87,45 @@ public:
 
     inline void registerThread(yarp::os::Thread *thread) const
     {
+        reg_sem()->wait();
+        lst_sem()->wait();
         thr()->push_back(thread);
-    }
-
-    inline void unregisterThread(yarp::os::Thread *thread) const
-    {
-        thr()->remove(thread);
-        delete thread;
+        reg_sem()->post();
+        lst_sem()->post();
     }
 
     inline void joinThreads() const
     {
-        while (!thr()->empty()) {
-            driver->runningThreads.front()->join();
-            unregisterThread(driver->runningThreads.front());
+        // The semafore will not allow other thread to be registered while
+        // joining threads.
+        // Other calls to joinThread() will stop at the semaphore and will
+        // be restarted as soon as all the threads are joined and the list
+        // is empty. This will avoid calling delete twice.
+        // stopThreads() must pass this semaphore, but in order to avoid to
+        // stop an already deleted thread we need a second semaphore.
+        bool cippa = false;
+        if(!thr()->empty()) cippa = true;
+        reg_sem()->wait();
+        RobotInterface::ThreadList::iterator tit = thr()->begin();
+        while (tit != thr()->end()) {
+            yarp::os::Thread *thread = *tit;
+            thread->join();
+            lst_sem()->wait();
+            thr()->erase(tit++);
+            delete thread;
+            lst_sem()->post();
         }
+        reg_sem()->post();
+    }
+
+    inline void stopThreads() const
+    {
+        lst_sem()->wait();
+        for (RobotInterface::ThreadList::iterator tit = thr()->begin(); tit != thr()->end(); tit++) {
+            yarp::os::Thread *thread = *tit;
+            thread->stop();
+        }
+        lst_sem()->post();
     }
 
     yarp::os::Property paramsAsProperty() const
@@ -119,7 +145,6 @@ public:
     ParamList params;
     ActionList actions;
     Driver *driver;
-
 };
 
 std::ostream& std::operator<<(std::ostream &oss, const RobotInterface::Device &t)
@@ -285,23 +310,17 @@ yarp::dev::PolyDriver* RobotInterface::Device::driver() const
 
 void RobotInterface::Device::registerThread(yarp::os::Thread *thread) const
 {
-    mPriv->sem()->wait();
     mPriv->registerThread(thread);
-    mPriv->sem()->post();
-}
-
-void RobotInterface::Device::unregisterThread(yarp::os::Thread *thread) const
-{
-    mPriv->sem()->wait();
-    mPriv->unregisterThread(thread);
-    mPriv->sem()->post();
 }
 
 void RobotInterface::Device::joinThreads() const
 {
-    mPriv->sem()->wait();
     mPriv->joinThreads();
-    mPriv->sem()->post();
+}
+
+void RobotInterface::Device::stopThreads() const
+{
+    mPriv->stopThreads();
 }
 
 bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) const
@@ -396,5 +415,4 @@ bool RobotInterface::Device::park(const Device &target) const
     }
 
     return true;
-
 }

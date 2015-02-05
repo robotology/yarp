@@ -49,8 +49,8 @@ public:
 
     // thread handling methods
     void registerThread(yarp::os::Thread *thread) const;
-    void unregisterThread(yarp::os::Thread *thread) const;
     void joinThreads() const;
+    void stopThreads() const;
 
     // configure action
     bool configure(const Device &target, const ParamList& params) const;

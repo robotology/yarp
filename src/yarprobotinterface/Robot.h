@@ -40,6 +40,7 @@ public:
     bool hasParam(const std::string &name) const;
     std::string findParam(const std::string &name) const;
 
+    void interrupt();
     bool enterPhase(RobotInterface::ActionPhase phase);
 
 private:
