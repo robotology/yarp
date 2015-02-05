@@ -1234,6 +1234,15 @@ Contact NetworkBase::detectNameServer(bool useDetectedServer,
                                            serverUsed);
 }
 
+bool NetworkBase::setNameServerContact(Contact &nameServerContact)
+{
+    NameConfig nameConfig;
+    nameConfig.setAddress(nameServerContact);
+    String configFileName = nameConfig.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
+    nameConfig.writeConfig(configFileName, getNameServerName() + "\n");
+    return true;
+}
+
 
 bool NetworkBase::writeToNameServer(PortWriter& cmd,
                                     PortReader& reply,
