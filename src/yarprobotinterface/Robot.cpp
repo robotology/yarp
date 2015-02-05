@@ -455,8 +455,9 @@ const RobotInterface::Device& RobotInterface::Robot::device(const std::string& n
 
 bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
 {
-    // yDebug() << "Entering" << ActionPhaseToString(phase) << "phase";
+    yInfo() << ActionPhaseToString(phase) << "phase starting...";
 
+    // Open all devices
     if (phase == ActionPhaseStartup) {
         if (!mPriv->openDevices()) {
             yError() << "One or more devices failed opening... see previous log messages for more info";
@@ -470,7 +471,7 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); ++lit) {
         // for each level
         const unsigned int level = *lit;
-        // yDebug() << "Entering action level" << level;
+        yInfo() << "Entering action level" << level << "of phase" << ActionPhaseToString(phase);
         std::vector<std::pair<Device, Action> > actions = mPriv->getActions(phase, level);
 
         for (std::vector<std::pair<Device, Action> >::iterator ait = actions.begin(); ait != actions.end(); ++ait) {
@@ -528,7 +529,7 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
             }
         }
 
-        // yDebug() << "All actions for action level" << level << "started. Waiting for unfinished actions.";
+        yInfo() << "All actions for action level" << level << "of" << ActionPhaseToString(phase) << "phase started. Waiting for unfinished actions.";
 
         // Join parallel threads
         for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
@@ -537,11 +538,11 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
             // yDebug() << "All actions for device" << device.name() << "at level()" << level << "finished";
         }
 
-        // yDebug() << "All actions for action level" << level << "finished.";
+        yInfo() << "All actions for action level" << level << "of" << ActionPhaseToString(phase) << "phase finished.";
     }
 
     if (!ret) {
-        yWarning() << "There was some problem running actions for phase" << ActionPhaseToString(phase) << ". Please check the log and your configuration";
+        yWarning() << "There was some problem running actions for" << ActionPhaseToString(phase) << "phase . Please check the log and your configuration";
     }
 
     if (phase == ActionPhaseShutdown) {
@@ -550,6 +551,8 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
             return false;
         }
     }
+
+    yInfo() << ActionPhaseToString(phase) << "phase finished.";
 
     return ret;
 }

@@ -67,7 +67,7 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
 
     // Enter startup phase
     if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup)) {
-        yError() << "Error in startup phase... see previous messages for more info";
+        yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseStartup) << "phase... see previous messages for more info";
         return false;
     }
 
@@ -94,14 +94,28 @@ bool RobotInterface::Module::interruptModule()
 
     switch (ct) {
     case 1:
-        return mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt1);
+        if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt1)) {
+            yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseInterrupt1) << "phase... see previous messages for more info";
+            return false;
+        }
+        break;
     case 2:
-        return mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt2);
+        if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt2)) {
+            yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseInterrupt2) << "phase... see previous messages for more info";
+            return false;
+        }
+        break;
     case 3:
-        return mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt3);
+        if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt3)) {
+            yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseInterrupt3) << "phase... see previous messages for more info";
+            return false;
+        }
+        break;
     default:
         return false;
     }
+
+    return true;
 }
 
 bool RobotInterface::Module::close()
