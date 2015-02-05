@@ -255,8 +255,9 @@ bool RobotInterface::Device::open()
 bool RobotInterface::Device::close()
 {
     if (!mPriv->isValid()) {
-        yError() << "Trying to close an already closed device.";
-        return false;
+        // Trying to close an already closed device. Perhaps open()
+        // Failed... Nothing to do and not worth sending an error.
+        return true;
     }
 
     if (!mPriv->close()) {
