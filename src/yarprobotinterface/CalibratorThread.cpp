@@ -52,10 +52,6 @@ public:
         }
     }
 
-    void release()
-    {
-    }
-
     RobotInterface::CalibratorThread * const parent;
 
     yarp::dev::ICalibrator *calibrator;
@@ -98,9 +94,4 @@ void RobotInterface::CalibratorThread::run()
 void RobotInterface::CalibratorThread::onStop()
 {
     mPriv->stop();
-}
-
-void RobotInterface::CalibratorThread::threadRelease()
-{
-    mPriv->release();
 }

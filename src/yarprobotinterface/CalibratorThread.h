@@ -33,7 +33,6 @@ public:
 
     virtual void run();
     virtual void onStop();
-    virtual void threadRelease();
 
 private:
     class Private;
