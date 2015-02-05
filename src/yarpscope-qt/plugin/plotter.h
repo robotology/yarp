@@ -22,6 +22,8 @@
 #define GRAPH_TYPE_BARS     1
 #define GRAPH_TYPE_POINTS   2
 
+class Connection;
+
 /*! \class Graph
     \brief Class representing a Graph
 */
@@ -33,6 +35,11 @@ class Graph : public QObject
 public:
     Graph(int index, QString title,QString color,QString type,int size,int buffer_size,QObject *parent = 0);
     ~Graph();
+    void init(QString remotePortName,
+                       QString localPortName,
+                       QString carrier,
+                       bool persistent);
+
     void appendPreviousValues();
     void appendValues(float y, float t);
 
@@ -54,6 +61,8 @@ public:
     QCPGraph *customGraph;
 
     int index;
+
+    Connection *curr_connection;
 
 
 private:
@@ -119,8 +128,7 @@ public:
                      bool autorescale,
                      QObject *parent = 0);
     ~Plotter();
-    void init(QString remotePortName, QString localPortName, QString carrier, bool persistent);
-    int addGraph(int index, QString title, QString color, QString type, int size);
+    Graph *addGraph(int index, QString title, QString color, QString type, int size);
     void clear();
     void rescale();
     void setPaintGeometry(QRectF);
@@ -132,7 +140,7 @@ public:
     //QCPAxisRect *axisRect;
     QRectF paintRectGeometry;
 
-    Connection *curr_connection;
+    //Connection *curr_connection;
     QString title;
     int gridx;
     int gridy;

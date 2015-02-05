@@ -72,40 +72,10 @@ void Plotter::onInteract()
     interact = true;
 }
 
-/*! \brief Inits the plotter.
- *
- *  \param remotePortName name of the remote port
- *  \param localPortName name of the local port
- *  \param carrier name of the carrier
- *  \param persistent sets the persistent modality
- */
-void Plotter::init(QString remotePortName,
-                   QString localPortName,
-                   QString carrier,
-                   bool persistent)
-{
 
-    yarp::os::ContactStyle  style;
-    curr_connection = NULL;
-
-    if (persistent) {
-        style.persistent = persistent;
-        style.persistenceType = yarp::os::ContactStyle::END_WITH_TO_PORT;
-    }
-    style.carrier = carrier.toLatin1().data();
-
-    curr_connection = new Connection(remotePortName, localPortName);
-    curr_connection->connect(style);
-}
 
 Plotter::~Plotter()
 {
-
-    if(curr_connection){
-        delete curr_connection;
-    }
-
-
     for (int i=0;i<graphList.count(); i++) {
         Graph *idx = (Graph*)graphList.at(i);
         if (idx) {
@@ -130,6 +100,7 @@ void Plotter::setPaintGeometry(QRectF r)
     paintRectGeometry = r;
 }
 
+
 /*! \brief Add a Graph to the current Plotter
     \param index the index of the graph
     \param title the title of the graph
@@ -137,101 +108,83 @@ void Plotter::setPaintGeometry(QRectF r)
     \param type the type of the graph (bar, lines, points)
     \param the tickness of the graph
 */
-int Plotter::addGraph(int index, QString title,QString color,QString type,int size)
+Graph * Plotter::addGraph(int index, QString title, QString color, QString type, int size)
 {
-    // Adding a graph
-    if(!curr_connection){
-        return -1;
-    }
-
-    bool found = false;
-    for(int i=0;i<graphList.count();i++){
-        Graph *idx = (Graph*)graphList.at(i);
-        if (idx->index == index) {
-            found = true;
-            break;
-        }
-    }
-
     Graph *graph = NULL;
-    if (!found) {
-        graph = new Graph(index,title,color,type,size,this->size);
-        graphList.append(graph);
+    graph = new Graph(index,title,color,type,size,this->size);
+    graphList.append(graph);
 
 
-        QCPGraph *customGraph = customPlot.addGraph(); // line
-        customGraph->setPen(QPen(QColor(color),size));
-        customGraph->setAntialiased(false);
-        customGraph->setLineStyle(QCPGraph::lsLine);
+    QCPGraph *customGraph = customPlot.addGraph(); // line
+    customGraph->setPen(QPen(QColor(color),size));
+    customGraph->setAntialiased(false);
+    customGraph->setLineStyle(QCPGraph::lsLine);
 
-        if(type == "points"){
-            customGraph->setLineStyle(QCPGraph::lsNone);
-            customGraph->setScatterStyle(QCPScatterStyle::ssDot);
-        }
-
-        if(type == "bars"){
-            customGraph->setLineStyle(QCPGraph::lsImpulse);
-            customGraph->setScatterStyle(QCPScatterStyle::ssNone);
-        }
-
-
-        QCPGraph *customGraphPoint = customPlot.addGraph(); // dot
-        customGraphPoint->setPen(QPen(QColor(color)));
-        customGraphPoint->setLineStyle(QCPGraph::lsNone);
-        customGraphPoint->setScatterStyle(QCPScatterStyle::ssDisc);
-
-        graph->setCustomGraph(customGraph);
-        graph->setCustomGraphPoint(customGraphPoint);
-        customPlot.replot();
-
+    if(type == "points"){
+        customGraph->setLineStyle(QCPGraph::lsNone);
+        customGraph->setScatterStyle(QCPScatterStyle::ssDot);
     }
-    return 0;
+
+    if(type == "bars"){
+        customGraph->setLineStyle(QCPGraph::lsImpulse);
+        customGraph->setScatterStyle(QCPScatterStyle::ssNone);
+    }
+
+
+    QCPGraph *customGraphPoint = customPlot.addGraph(); // dot
+    customGraphPoint->setPen(QPen(QColor(color)));
+    customGraphPoint->setLineStyle(QCPGraph::lsNone);
+    customGraphPoint->setScatterStyle(QCPScatterStyle::ssDisc);
+
+    graph->setCustomGraph(customGraph);
+    graph->setCustomGraphPoint(customGraphPoint);
+    customPlot.replot();
+
+
+    return graph;
 }
 
 
 /*! \brief Timeout on which the data is acquired */
 void Plotter::onTimeout()
 {
-    if(!curr_connection){
-        return;
-    }
-
     if (graphList.empty()) {
         // Do not read data from this port if we don't need it
         return;
     }
 
-    yarp::os::Bottle *b = curr_connection->localPort->read(false);
-    if (!b) {
-        qDebug("No data received. Using previous values.");
-        for (int j=0;j < graphList.count(); j++) {
-            Graph *graph = (Graph*)graphList.at(j);
+    int c = graphList.count();
+    for (int j=0;j < c; j++) {
+        Graph *graph = (Graph*)graphList.at(j);
+        yarp::os::Bottle *b = graph->curr_connection->localPort->read(false);
+        if (!b) {
+            qDebug("No data received. Using previous values.");
             graph->appendPreviousValues();
-        }
 
-    } else {
-        yarp::os::Stamp stmp;
-        curr_connection->localPort->getEnvelope(stmp);
-
-        int c = graphList.count();
-        for (int j=0;j < c; j++) {
-            Graph *graph = (Graph*)graphList.at(j);
+        } else {
+            yarp::os::Stamp stmp;
+            graph->curr_connection->localPort->getEnvelope(stmp);
 
             if (b->size() - 1 < graph->index) {
                 qWarning() << "bottle size =" << b->size() << " requested index =" << graph->index;
                 continue;
             }
 
+
             double y = (float)(b->get(graph->index).asDouble());
+
             float t;
-            if (curr_connection->realTime && stmp.isValid()) {
-                t = (float)(stmp.getTime() - curr_connection->initialTime);
+            if (graph->curr_connection->realTime && stmp.isValid()) {
+                t = (float)(stmp.getTime() - graph->curr_connection->initialTime);
             } else {
                 t = -1.0;
             }
 
             graph->appendValues(y,t);
+
         }
+
+
     }
 
     // if the user did not interact with the plotter, it remains aligned to the right
@@ -262,6 +215,7 @@ void Plotter::clear()
 /***********************************************************/
 Graph::Graph(int index, QString title, QString color, QString type, int size, int buffer_size,QObject *parent) : QObject(parent)
 {
+    curr_connection = NULL;
     this->index = index;
     this->type = type;
     this->color = color;
@@ -277,8 +231,31 @@ Graph::Graph(int index, QString title, QString color, QString type, int size, in
 
 }
 
+
+void Graph::init(QString remotePortName,
+                   QString localPortName,
+                   QString carrier,
+                   bool persistent)
+{
+
+    yarp::os::ContactStyle  style;
+    curr_connection = NULL;
+
+    if (persistent) {
+        style.persistent = persistent;
+        style.persistenceType = yarp::os::ContactStyle::END_WITH_TO_PORT;
+    }
+    style.carrier = carrier.toLatin1().data();
+
+    curr_connection = new Connection(remotePortName, localPortName);
+    curr_connection->connect(style);
+}
+
 Graph::~Graph()
 {
+    if(curr_connection){
+        delete curr_connection;
+    }
     clearData();
 }
 

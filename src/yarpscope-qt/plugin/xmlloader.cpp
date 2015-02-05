@@ -153,8 +153,10 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                         graph_size = default_graph_size;
                     }
                 }
-                plotter->init(graph_remote, "", portscope_carrier, portscope_persistent);
-                plotter->addGraph(graph_index,graph_title, graph_color, graph_type, graph_size);
+                Graph *graph = plotter->addGraph(graph_index,graph_title, graph_color, graph_type, graph_size);
+                if(graph){
+                    graph->init(graph_remote,"", portscope_carrier, portscope_persistent);
+                }
                 continue;
             }
 

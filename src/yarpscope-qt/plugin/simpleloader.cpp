@@ -139,8 +139,11 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
         } else {
             graph_size = default_graph_size;
         }
-        plotter->init(graph_remote, graph_localport, portscope_carrier, portscope_persistent);
-        plotter->addGraph(graph_index,graph_title, graph_color, graph_type, graph_size);
+
+        Graph *graph = plotter->addGraph(graph_index, graph_title, graph_color, graph_type, graph_size);
+        if(graph){
+            graph->init(graph_remote, graph_localport, portscope_carrier, portscope_persistent);
+        }
 
     } else {
         const yarp::os::Bottle &indexes = *indexValue.asList();
@@ -214,8 +217,6 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
             sizes = yarp::os::Bottle::getNullBottle();
         }
 
-        plotter->init(graph_remote, graph_localport, portscope_carrier, portscope_persistent);
-
         for (int i = 0; i < indexes.size(); i++) {
             graph_index = indexes.get(i).asInt();
 
@@ -236,7 +237,10 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
             } else {
                 graph_size = default_graph_size;
             }
-            plotter->addGraph( graph_index, graph_title, graph_color, graph_type, graph_size);
+            Graph *graph = plotter->addGraph( graph_index, graph_title, graph_color, graph_type, graph_size);
+            if(graph){
+                graph->init(graph_remote,  graph_localport, portscope_carrier, portscope_persistent);
+            }
         }
     }
     *ok = true;
