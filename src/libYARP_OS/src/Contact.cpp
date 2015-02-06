@@ -100,8 +100,13 @@ Contact Contact::addHost(const ConstString& host) const {
     return result;
 }
 
+Contact Contact::addPort(int portnumber) const {
+    Contact result(*this);
+    result.port = portnumber;
+    return result;
+}
 
-Contact Contact::bySocket(const ConstString& carrier, 
+Contact Contact::bySocket(const ConstString& carrier,
                           const ConstString& machineName,
                           int portNumber) {
     Contact result;
@@ -328,6 +333,15 @@ void Contact::setTimeout(float timeout) {
 void Contact::setNested(const yarp::os::NestedContact& flavor) {
     this->flavor = flavor;
 }
+
+void Contact::setHost(const ConstString& host) {
+    this->hostName = host;
+}
+
+void Contact::setPort(int port) {
+    this->port = port;
+}
+
 
 float Contact::getTimeout() const {
     return timeout;
