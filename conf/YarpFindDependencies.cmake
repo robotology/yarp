@@ -10,7 +10,7 @@
 # YARP_USE_${PACKAGE}: Can be disabled by the user if he doesn't want to use that
 #                      dependency.
 # YARP_HAS_${PACKAGE}: Internal flag. It should be used to check if a part of
-#                      Yarp should be built. It is on if YARP_USE_${package} is
+#                      Yarp should be built. It is on if YARP_USE_${PACKAGE} is
 #                      on and either the package was found or will be built.
 # YARP_USE_SYSTEM_${PACKAGE}: This flag is shown only for packages in the
 #                             extern folder that were also found on the system
@@ -38,7 +38,7 @@ macro(checkandset_dependency package)
     # YARP_USE_${PKG}
     cmake_dependent_option(YARP_USE_${PKG} "Use package ${package}" TRUE
                            YARP_HAS_SYSTEM_${PKG} FALSE)
-    mark_as_advanced(YARP_USE_${package})
+    mark_as_advanced(YARP_USE_${PKG})
 
     # YARP_USE_SYSTEM_${PKG}
     set(YARP_USE_SYSTEM_${PKG} ${YARP_USE_${PKG}} CACHE INTERNAL "Use system-installed ${package}, rather than a private copy (recommended)" FORCE)
