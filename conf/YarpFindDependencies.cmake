@@ -326,11 +326,9 @@ if(YARP_COMPILE_BINDINGS)
     checkandset_dependency(SWIG)
 endif()
 
-if(ENABLE_yarpmod_opencv_grabber)
+if(CREATE_YARPDATADUMPER OR CREATE_YARPDATAPLAYER OR ENABLE_yarpmod_opencv_grabber)
     find_package(OpenCV)
     checkandset_dependency(OpenCV)
-elseif(CREATE_YARPDATADUMPER)
-    find_package(OpenCV)
 endif()
 
 if(ENABLE_yarpcar_portmonitor_carrier)
