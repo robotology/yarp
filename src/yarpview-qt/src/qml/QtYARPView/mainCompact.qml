@@ -59,5 +59,8 @@ ApplicationWindow {
                 menu.enableSynch(check)
             }
         }
+        onSetName:{
+            title = name
+        }
     }
 }
