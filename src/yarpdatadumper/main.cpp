@@ -610,6 +610,7 @@ public:
                 yWarning() << msg.str();
         }
 
+        // this port serves to handle the "quit" rpc command
         rpcPort.open((portName+"/rpc").c_str());
         attach(rpcPort);
 
