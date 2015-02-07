@@ -1237,10 +1237,9 @@ Contact NetworkBase::detectNameServer(bool useDetectedServer,
 bool NetworkBase::setNameServerContact(Contact &nameServerContact)
 {
     NameConfig nameConfig;
+    nameConfig.fromFile();
     nameConfig.setAddress(nameServerContact);
-    String configFileName = nameConfig.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
-    nameConfig.writeConfig(configFileName, getNameServerName() + "\n");
-    return true;
+    return nameConfig.toFile();
 }
 
 
