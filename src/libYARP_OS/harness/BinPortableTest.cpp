@@ -7,6 +7,8 @@
  *
  */
 
+#include <yarp/conf/system.h>
+
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
@@ -24,7 +26,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
-#include <yarp/os/begin_pack_for_net.h>
+YARP_BEGIN_PACK
 class BinPortableTarget {
 public:
     BinPortableTarget() {
@@ -37,7 +39,7 @@ public:
     NetInt32 x;
     NetInt32 y;
 } PACKED_FOR_NET;
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 
 
 class BinPortableTest : public UnitTest {

@@ -301,13 +301,14 @@ may add different amounts of "padding" into your structure
 
 If you define your data-structure as follows:
 \code
-#include <yarp/os/begin_pack_for_net.h>
+#include <yarp/conf/system.h>
+YARP_BEGIN_PACK
 class Target {
 public:
   NetInt32 x;
   NetInt32 y;
 } PACKED_FOR_NET;
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 \endcode
 Then you'll be in better shape.  The integers now have a well defined
 representation, and the compiler is requested not to introduce padding.
@@ -316,8 +317,9 @@ So this is a portable representation.
 Even better, for YARP, is to add in a small "header" that describes
 your data-type.  If you defined Target as follows:
 \code
+#include <yarp/conf/system.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/begin_pack_for_net.h>
+YARP_BEGIN_PACK
 class Target {
 public:
     NetInt32 tag;
@@ -329,7 +331,7 @@ public:
         len = 2;
     }
 } PACKED_FOR_NET;
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 \endcode
 
 Then suddenly ports carrying this data become a lot easy to

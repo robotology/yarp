@@ -8,7 +8,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/AbstractContactable.h
                  include/yarp/os/all.h
                  include/yarp/os/api.h
-                 include/yarp/os/begin_pack_for_net.h
                  include/yarp/os/BinPortable.h
                  include/yarp/os/Bottle.h
                  include/yarp/os/BufferedPort.h
@@ -26,7 +25,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/ContactStyle.h
                  include/yarp/os/DummyConnector.h
                  include/yarp/os/Election.h
-                 include/yarp/os/end_pack_for_net.h
                  include/yarp/os/Event.h
                  include/yarp/os/Face.h
                  include/yarp/os/IConfig.h
@@ -117,6 +115,11 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/YarpPlugin.h
                  include/yarp/os/YarpPluginSelector.h
                  include/yarp/os/YarpPluginSettings.h)
+
+if(NOT YARP_NO_DEPRECATED)
+  list(APPEND YARP_OS_HDRS include/yarp/os/begin_pack_for_net.h
+                           include/yarp/os/end_pack_for_net.h)
+endif()
 
 set(YARP_OS_IDL_HDRS include/yarp/os/idl/BareStyle.h
                      include/yarp/os/idl/BottleStyle.h

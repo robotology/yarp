@@ -10,6 +10,7 @@
 #ifndef _YARP2_IMAGE_
 #define _YARP2_IMAGE_
 
+#include <yarp/conf/system.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NetUint16.h>
@@ -382,7 +383,7 @@ enum YarpVocabPixelTypesEnum
     };
 
 
-#include <yarp/os/begin_pack_for_net.h>
+
 
 #include <yarp/os/NetInt32.h>
 
@@ -407,6 +408,7 @@ namespace yarp {
         /**
          * Packed RGB pixel type.
          */
+        YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgb
         {
             unsigned char r,g,b;
@@ -415,10 +417,12 @@ namespace yarp {
             PixelRgb(unsigned char n_r, unsigned char n_g, unsigned char n_b)
             { r = n_r;  g = n_g;  b = n_b; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        YARP_END_PACK
 
         /**
          * Packed RGBA pixel type.
          */
+        YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgba
         {
             unsigned char r,g,b,a;
@@ -428,10 +432,12 @@ namespace yarp {
                       unsigned char n_b, unsigned char n_a)
             { r = n_r;  g = n_g;  b = n_b; a = n_a; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        YARP_END_PACK
 
         /**
          * Packed BGRA pixel type.
          */
+        YARP_BEGIN_PACK
         struct YARP_sig_API PixelBgra
         {
             unsigned char b,g,r,a;
@@ -441,10 +447,12 @@ namespace yarp {
                       unsigned char n_b, unsigned char n_a)
             { r = n_r;  g = n_g;  b = n_b; a = n_a; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        YARP_END_PACK
 
         /**
          * Packed RGB pixel type, with pixels stored in reverse order.
          */
+        YARP_BEGIN_PACK
         struct YARP_sig_API PixelBgr
         {
             unsigned char b,g,r;
@@ -452,13 +460,16 @@ namespace yarp {
             PixelBgr(unsigned char n_r, unsigned char n_g, unsigned char n_b)
             { r = n_r;  g = n_g;  b = n_b; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        YARP_END_PACK
 
         /**
          * Packed HSV (hue/saturation/value pixel type.
          */
+        YARP_BEGIN_PACK
         struct YARP_sig_API PixelHsv {
             unsigned char h,s,v;
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        YARP_END_PACK
 
         /**
          * Signed byte pixel type.
@@ -468,9 +479,11 @@ namespace yarp {
         /**
          * Signed, packed RGB pixel type.
          */
+        YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgbSigned {
             char r,g,b;
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        YARP_END_PACK
 
         /**
          * Floating point pixel type.
@@ -480,16 +493,19 @@ namespace yarp {
         /**
          * Floating point RGB pixel type.
          */
+        YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgbFloat {
             float r,g,b;
             PixelRgbFloat() { r = g = b = 0; }
             PixelRgbFloat(float n_r, float n_g, float n_b)
             { r = n_r;  g = n_g;  b = n_b; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        YARP_END_PACK
 
         /**
          * Integer RGB pixel type.
          */
+        YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgbInt {
             yarp::os::NetInt32 r,g,b;
             PixelRgbInt() { r = g = b = 0; }
@@ -497,15 +513,16 @@ namespace yarp {
                 r = n_r; g = n_g; b = n_b;
             }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        YARP_END_PACK
 
         /**
          * Floating point HSV pixel type.
          */
+        YARP_BEGIN_PACK
         struct PixelHsvFloat {
             float h,s,v;
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
-
-#include <yarp/os/end_pack_for_net.h>
+        YARP_END_PACK
 
     }
 }

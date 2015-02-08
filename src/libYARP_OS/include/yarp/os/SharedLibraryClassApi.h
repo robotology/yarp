@@ -25,7 +25,6 @@ namespace yarp {
 // to compile those DLLs and your own code.
 
 #define YARP_SHAREDLIBRARYCLASSAPI_PADDING (30-2*(YARP_POINTER_SIZE/4))
-#include <yarp/os/begin_pack_for_net.h>
 extern "C" {
 
     /**
@@ -35,6 +34,7 @@ extern "C" {
      * using create() or destroy().
      *
      */
+    YARP_BEGIN_PACK
     struct yarp::os::SharedLibraryClassApi {
     public:
         NetInt32 startCheck;    // Constant: this should be 'Y' 'A' 'R' 'P'.
@@ -53,8 +53,8 @@ extern "C" {
         NetInt32 roomToGrow[YARP_SHAREDLIBRARYCLASSAPI_PADDING]; // Padding.
         NetInt32 endCheck;      // Constant: should be 'P' 'L' 'U' 'G'.
     };
+    YARP_END_PACK
 }
-#include <yarp/os/end_pack_for_net.h>
 
 #define YARP_SHARED_CLASS_FN extern "C" YARP_EXPORT
 

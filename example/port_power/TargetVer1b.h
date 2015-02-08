@@ -9,9 +9,10 @@
 #ifndef TARGETVER1B_INC
 #define TARGETVER1B_INC
 
+#include <yarp/conf/system.h>
 #include <yarp/os/Bottle.h>
 
-#include <yarp/os/begin_pack_for_net.h>
+YARP_BEGIN_PACK
 class Target {
 public:
     Target() {
@@ -24,6 +25,6 @@ public:
     NetInt32 x;
     NetInt32 y;
 } PACKED_FOR_NET;
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 
 #endif

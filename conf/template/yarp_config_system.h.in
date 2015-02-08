@@ -1,8 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright: (C) 2009 RobotCub Consortium
- * Author: Paul Fitzpatrick
+ * Copyright: (C) 2006-2009 RobotCub Consortium
+ *            (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+ *          Giorgio Metta <giorgio.metta@iit.it>
+ *          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -33,5 +36,191 @@
 #cmakedefine YARP_HAS_EXECINFO
 
 #define YARP_POINTER_SIZE ${YARP_POINTER_SIZE}
+
+
+///@{
+
+/**
+ * \def YARP_COMPILER_MESSAGE
+ *
+ * Print a message at build time on supported compilers.
+ *
+ * For example:
+ * \code{.c}
+ * YARP_COMPILER_MESSAGE(This is a custom compiler message)
+ * \endcode
+ * will print "This is a custom compiler message".
+ *
+ * \param x Message.
+ *
+ * \see YARP_COMPILER_WARNING, YARP_COMPILER_ERROR, YARP_COMPILER_DEPRECATED_WARNING
+ */
+
+/**
+ * \def YARP_COMPILER_WARNING
+ *
+ * Generate a warning at build time on supported compilers.
+ *
+ * For example:
+ * \code{.c}
+ * YARP_COMPILER_WARNING(This is a custom compiler warning)
+ * \endcode
+ * will generate a warning "This is a custom compiler warning"
+ *
+ * \param x Warning message.
+ *
+ * \see YARP_COMPILER_MESSAGE, YARP_COMPILER_ERROR, YARP_COMPILER_DEPRECATED_WARNING
+ *
+ */
+
+/**
+ * \def YARP_COMPILER_ERROR
+ *
+ * Generate an error at build time on supported compilers.
+ *
+ * For example:
+ * \code{.c}
+ * YARP_COMPILER_ERROR(This is a custom compiler error)
+ * \endcode
+ * will generate an error "This is a custom compiler error".
+ *
+ * \param x Error message.
+ *
+ * \see YARP_COMPILER_MESSAGE, YARP_COMPILER_WARNING, YARP_COMPILER_DEPRECATED_WARNING
+ */
+
+/**
+ * \def YARP_COMPILER_DEPRECATED_WARNING
+ *
+ * Generate a warning at build time on supported compilers if deprecated
+ * warnings are enabled.
+ *
+ * This can be useful for example to deprecate a header file.
+ *
+ * \param x Deprecation message.
+ *
+ * \see YARP_COMPILER_MESSAGE, YARP_COMPILER_WARNING, YARP_COMPILER_ERROR
+ */
+
+///@}
+
+
+#if defined(_MSC_VER)
+  // see https://support.microsoft.com/kb/155196/en-us
+  #define __YARP_STR2(x) #x
+  #define __YARP_STR1(x) __YARP_STR2(x)
+  #define __YARP_LOC __FILE__ "("__STR1__(__LINE__)")"
+  #define YARP_COMPILER_MESSAGE(x) __pragma(message(__LOC__ " : msg" #x)
+  #define YARP_COMPILER_WARNING(x) __pragma(message(__LOC__ " : warning msg" #x)
+  #define YARP_COMPILER_ERROR(x)  __pragma(message(__LOC__ " : error msg" #x)
+#elif defined(__GNUC__)
+  // see https://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html
+  #define __YARP_DO_PRAGMA(x) _Pragma (#x)
+  #define YARP_COMPILER_MESSAGE(x) __YARP_DO_PRAGMA(message #x)
+  #define YARP_COMPILER_WARNING(x) __YARP_DO_PRAGMA(GCC warning #x)
+  #define YARP_COMPILER_ERROR(x)  __YARP_DO_PRAGMA(GCC error #x)
+#else
+  #define YARP_COMPILER_MESSAGE(x)
+  #define YARP_COMPILER_WARNING(x)
+  #define YARP_COMPILER_ERROR(x)
+#endif
+
+#ifndef YARP_NO_DEPRECATED_WARNINGS
+  #define YARP_COMPILER_DEPRECATED_WARNING(x) YARP_COMPILER_WARNING(x)
+#else
+  #define YARP_COMPILER_DEPRECATED_WARNING(x)
+#endif
+
+
+///@{
+
+/**
+ * \def YARP_BEGIN_PACK
+ *
+ * Starts 1 byte packing for structs/classes.
+ *
+ * Instructs the compiler that the following structure/class has to be
+ * packed with 1 byte boundary.  This is conditionally generated depending
+ * on the compiler and architecture. It assures interoperability of network
+ * communication between compilers.
+ *
+ * \see \ref port_expert_data, YARP_END_PACK
+ */
+
+/**
+ * \def YARP_END_PACK
+ *
+ * Ends 1 byte packing for structs/classes.
+ *
+ * Instructs the compiler that the default packing can be reinstated.
+ *
+ * \see \ref port_expert_data YARP_BEGIN_PACK
+ */
+
+/**
+ * \def PACKED_FOR_NET
+ *
+ * FIXME Add documentation.
+ *
+ * \see \ref port_expert_data
+ */
+
+///@}
+
+
+#if defined(CYGWIN)
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#elif defined(_MSC_VER)
+// use packing and make no apologies about it
+#  define YARP_BEGIN_PACK \
+     __pragma(warning(push)) \
+     __pragma(warning(disable:4103)) \
+     __pragma(pack(push, 1))
+#  define YARP_END_PACK \
+     __pragma(pack(pop)) \
+     __pragma(warning(pop))
+#elif defined(__linux__)
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK _Pragma("pack()")
+#elif defined(__DARWIN__)
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#elif defined(__APPLE__)
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#elif defined(__QNX4__)
+#  define YARP_BEGIN_PACK \
+     _Pragma(" pack (push) ;") \
+     _Pragma(" pack (1) ;")
+#  define YARP_END_PACK \
+     _Pragma(" pack (pop) ;")
+#elif defined(__QNX6__)
+//_Pragma("align 1")
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+//_Pragma("align 0")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#else
+//#warning "Platform not known, guessing, please update "
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#endif
+
+#ifndef PACKED_FOR_NET
+#  define PACKED_FOR_NET
+#endif
+
+
 
 #endif
