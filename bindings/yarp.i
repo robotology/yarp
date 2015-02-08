@@ -327,6 +327,10 @@ namespace yarp {
 	%enddef
 	#endif
 
+%define YARP_BEGIN_PACK
+%enddef
+%define YARP_END_PACK
+%enddef
 %define PACKED_FOR_NET 
 %enddef
 
