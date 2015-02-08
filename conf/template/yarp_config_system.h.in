@@ -1,9 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright: (C) 2009 RobotCub Consortium
+ * Copyright: (C) 2006-2009 RobotCub Consortium
  *            (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+ *          Giorgio Metta <giorgio.metta@iit.it>
  *          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -129,6 +130,97 @@
 #else
   #define YARP_COMPILER_DEPRECATED_WARNING(x)
 #endif
+
+
+///@{
+
+/**
+ * \def YARP_BEGIN_PACK
+ *
+ * Starts 1 byte packing for structs/classes.
+ *
+ * Instructs the compiler that the following structure/class has to be
+ * packed with 1 byte boundary.  This is conditionally generated depending
+ * on the compiler and architecture. It assures interoperability of network
+ * communication between compilers.
+ *
+ * \see \ref port_expert_data, YARP_END_PACK
+ */
+
+/**
+ * \def YARP_END_PACK
+ *
+ * Ends 1 byte packing for structs/classes.
+ *
+ * Instructs the compiler that the default packing can be reinstated.
+ *
+ * \see \ref port_expert_data YARP_BEGIN_PACK
+ */
+
+/**
+ * \def PACKED_FOR_NET
+ *
+ * FIXME Add documentation.
+ *
+ * \see \ref port_expert_data
+ */
+
+///@}
+
+
+#if defined(CYGWIN)
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#elif defined(_MSC_VER)
+// use packing and make no apologies about it
+#  define YARP_BEGIN_PACK \
+     __pragma(warning(push)) \
+     __pragma(warning(disable:4103)) \
+     __pragma(pack(push, 1))
+#  define YARP_END_PACK \
+     __pragma(pack(pop)) \
+     __pragma(warning(pop))
+#elif defined(__linux__)
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK _Pragma("pack()")
+#elif defined(__DARWIN__)
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#elif defined(__APPLE__)
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#elif defined(__QNX4__)
+#  define YARP_BEGIN_PACK \
+     _Pragma(" pack (push) ;") \
+     _Pragma(" pack (1) ;")
+#  define YARP_END_PACK \
+     _Pragma(" pack (pop) ;")
+#elif defined(__QNX6__)
+//_Pragma("align 1")
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+//_Pragma("align 0")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#else
+//#warning "Platform not known, guessing, please update "
+#  define YARP_BEGIN_PACK \
+     _Pragma("pack(1)")
+#  define YARP_END_PACK \
+     _Pragma("pack()")
+#endif
+
+#ifndef PACKED_FOR_NET
+#  define PACKED_FOR_NET
+#endif
+
 
 
 #endif
