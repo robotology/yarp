@@ -9,12 +9,14 @@
 #ifndef TARGETVER1_INC
 #define TARGETVER1_INC
 
-#include <yarp/os/begin_pack_for_net.h>
+#include <yarp/conf/system.h>
+
+YARP_BEGIN_PACK
 class Target {
 public:
     NetInt32 x;
     NetInt32 y;
 } PACKED_FOR_NET;
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 
 #endif
