@@ -6,9 +6,11 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-// $Id: Matrix.cpp,v 1.20 2009-05-12 16:02:29 eshuy Exp $ 
-#include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
+
+#include <yarp/conf/system.h>
+
+#include <yarp/sig/Vector.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
@@ -26,8 +28,7 @@ using namespace yarp::os;
 #define RES(v) ((PlatformVector<T> *)v)
 #define RES_ITERATOR(v) ((PLATFORM_VECTOR_ITERATOR(double) *)v)
 
-#include <yarp/os/begin_pack_for_net.h>
-
+YARP_BEGIN_PACK
 class MatrixPortContentHeader
 {
 public:
@@ -40,8 +41,7 @@ public:
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
 } PACKED_FOR_NET;
-
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 
 /// network stuff
 #include <yarp/os/NetInt32.h>

@@ -10,6 +10,7 @@
 #ifndef YARP2_WIREIMAGE
 #define YARP2_WIREIMAGE
 
+#include <yarp/conf/system.h>
 #include <yarp/os/SizedWriter.h>
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/ConnectionWriter.h>
@@ -34,14 +35,14 @@
     // uint8[] data      --> real payload
     */
 
-#include <yarp/os/begin_pack_for_net.h>
+YARP_BEGIN_PACK
 class RosImageStamp {
 public:
     yarp::os::NetInt32 seq;
     yarp::os::NetInt32 sec;
     yarp::os::NetInt32 nsec;
 } PACKED_FOR_NET;
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 
 /**
  *

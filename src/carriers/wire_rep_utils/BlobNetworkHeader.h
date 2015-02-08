@@ -10,11 +10,12 @@
 #ifndef BLOBHEADER_INC
 #define BLOBHEADER_INC
 
+#include <yarp/conf/system.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetInt32.h>
 
 // translate to blobs for now; better translation requires type system
-#include <yarp/os/begin_pack_for_net.h>
+YARP_BEGIN_PACK
 class BlobNetworkHeader {
 public:
     yarp::os::NetInt32 listTag;
@@ -29,6 +30,6 @@ public:
     }
 
 } PACKED_FOR_NET;
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 
 #endif

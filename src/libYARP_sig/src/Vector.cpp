@@ -6,8 +6,10 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-// $Id: Vector.cpp,v 1.28 2009-06-15 17:47:37 eshuy Exp $
 #include <yarp/sig/Vector.h>
+
+#include <yarp/conf/system.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
@@ -16,6 +18,8 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/Logger.h>
+
+#include <yarp/sig/Matrix.h>
 
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -30,14 +34,14 @@ using namespace yarp::os;
 
 ///////////////////
 
-#include <yarp/os/begin_pack_for_net.h>
+YARP_BEGIN_PACK
 class VectorPortContentHeader
 {
 public:
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
 } PACKED_FOR_NET;
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 
 bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     // auto-convert text mode interaction

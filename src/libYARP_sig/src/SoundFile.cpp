@@ -7,12 +7,16 @@
  *
  */
 
-#include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
+
+#include <yarp/conf/system.h>
+
 #include <yarp/os/NetInt16.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Vocab.h>
+
+#include <yarp/sig/Sound.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -21,7 +25,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 
-#include <yarp/os/begin_pack_for_net.h>
+YARP_BEGIN_PACK
 class PcmWavHeader {
 public:
     NetInt32 wavHeader;
@@ -50,7 +54,7 @@ public:
     void setup_to_write(const Sound& sound, FILE *fp);
     bool parse_from_file(FILE *fp);
 } PACKED_FOR_NET;
-#include <yarp/os/end_pack_for_net.h>
+YARP_END_PACK
 
 bool PcmWavHeader::parse_from_file(FILE *fp)
 {
