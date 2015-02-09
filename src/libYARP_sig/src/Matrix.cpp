@@ -40,7 +40,7 @@ public:
     yarp::os::NetInt32 cols;
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
-} PACKED_FOR_NET;
+};
 YARP_END_PACK
 
 /// network stuff

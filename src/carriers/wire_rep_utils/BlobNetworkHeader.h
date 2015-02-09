@@ -29,7 +29,7 @@ public:
         blobLen = len;
     }
 
-} PACKED_FOR_NET;
+};
 YARP_END_PACK
 
 #endif

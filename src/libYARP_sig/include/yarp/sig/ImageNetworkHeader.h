@@ -67,7 +67,7 @@ public:
         paramBlobLen = image.getRawImageSize();
     }
 
-} PACKED_FOR_NET;
+};
 YARP_END_PACK
 
 #endif

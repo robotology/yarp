@@ -157,14 +157,6 @@
  * \see \ref port_expert_data YARP_BEGIN_PACK
  */
 
-/**
- * \def PACKED_FOR_NET
- *
- * FIXME Add documentation.
- *
- * \see \ref port_expert_data
- */
-
 ///@}
 
 
@@ -216,11 +208,5 @@
 #  define YARP_END_PACK \
      _Pragma("pack()")
 #endif
-
-#ifndef PACKED_FOR_NET
-#  define PACKED_FOR_NET
-#endif
-
-
 
 #endif

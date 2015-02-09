@@ -41,7 +41,7 @@ public:
     yarp::os::NetInt32 seq;
     yarp::os::NetInt32 sec;
     yarp::os::NetInt32 nsec;
-} PACKED_FOR_NET;
+};
 YARP_END_PACK
 
 /**

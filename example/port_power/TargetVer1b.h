@@ -24,7 +24,7 @@ public:
     NetInt32 len;
     NetInt32 x;
     NetInt32 y;
-} PACKED_FOR_NET;
+};
 YARP_END_PACK
 
 #endif
