@@ -68,6 +68,11 @@ if(YARP_TREE_BUILD)
     install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/plugins)
 endif(YARP_TREE_BUILD)
 
+
+option(YARP_FORCE_SHARED_PLUGINS "Force yarp to create dynamically loaded plugins even if building static libraries." OFF)
+mark_as_advanced(YARP_FORCE_SHARED_PLUGINS)
+
+
 #########################################################################
 # YARP_BEGIN_PLUGIN_LIBRARY: this macro makes sure that all the hooks
 # needed for creating a plugin library are in place.  Between
@@ -315,13 +320,20 @@ macro(YARP_ADD_PLUGIN LIBNAME)
             message(FATAL_ERROR "YARP_ADD_PLUGIN does not support the IMPORTED argument.")
         endif("${arg}" STREQUAL "IMPORTED")
     endforeach(arg)
+
+    if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
+      set(X_LIBTYPE "SHARED")
+    else()
+      set(X_LIBTYPE "STATIC")
+    endif()
+
     # The user is adding a bone-fide plugin library.  We add it,
     # while inserting any generated source code needed for initialization.
     get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
     foreach(s ${srcs})
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
     endforeach(s)
-    add_library(${LIBNAME} ${srcs} ${ARGN})
+    add_library(${LIBNAME} ${X_LIBTYPE} ${srcs} ${ARGN})
     # Add the library to the list of plugin libraries.
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
     # Reset the list of generated source code to empty.
