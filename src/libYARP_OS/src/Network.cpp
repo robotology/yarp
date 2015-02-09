@@ -1234,6 +1234,14 @@ Contact NetworkBase::detectNameServer(bool useDetectedServer,
                                            serverUsed);
 }
 
+bool NetworkBase::setNameServerContact(Contact &nameServerContact)
+{
+    NameConfig nameConfig;
+    nameConfig.fromFile();
+    nameConfig.setAddress(nameServerContact);
+    return nameConfig.toFile();
+}
+
 
 bool NetworkBase::writeToNameServer(PortWriter& cmd,
                                     PortReader& reply,

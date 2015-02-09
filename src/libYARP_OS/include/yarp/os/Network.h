@@ -530,6 +530,14 @@ public:
                                     bool& scanNeeded,
                                     bool& serverUsed);
 
+    /** 
+     * Set explicitly the nameserver information 
+     *
+     * @param nameServerContact the NameServer contact information (e.g. IP, port)
+     * @return true if succeed. False otherwise
+     */
+    static bool setNameServerContact(Contact &nameServerContact);
+
     /**
      *
      * Search for a configuration file in YARP's standard config

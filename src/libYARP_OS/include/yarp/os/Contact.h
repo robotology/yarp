@@ -81,6 +81,14 @@ public:
     Contact addHost(const ConstString& host) const;
 
     /**
+     * Returns a new Contact with the previous information plus the updated
+     * port number
+     * @param portnumber port number
+     * @return a new contact the the port number updated
+     */
+    Contact addPort(int portnumber) const;
+
+    /**
      * Constructor for a socket contact.
      * Creates an unnamed contact, with information about
      * how to reach it using socket communication.
@@ -231,6 +239,19 @@ public:
     float getTimeout() const;
 
     ConstString getRegName() const;
+
+    /**
+     * Set the host to be the input parameter
+     * @param the new host
+     */
+    void setHost(const ConstString& host);
+
+    /**
+     * Set the port to be the input parameter
+     * @param the new port
+     */
+    void setPort(int port);
+
 
 private:
     ConstString regName;
