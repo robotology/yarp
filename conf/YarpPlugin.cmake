@@ -38,10 +38,13 @@
 ##
 #########################################################################
 
-include(GNUInstallDirs)
 
 ## Skip this whole file if it has already been included
-if(NOT COMMAND YARP_END_PLUGIN_LIBRARY)
+if(COMMAND YARP_END_PLUGIN_LIBRARY)
+    return()
+endif()
+
+include(GNUInstallDirs)
 
 get_property(YARP_TREE_BUILD GLOBAL PROPERTY YARP_TREE_BUILD)
 if(YARP_TREE_BUILD)
@@ -510,7 +513,3 @@ macro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
 endmacro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
 endif(NOT YARP_NO_DEPRECATED)
-
-
-## We skipped this whole file if it was already included
-endif(NOT COMMAND YARP_END_PLUGIN_LIBRARY)
