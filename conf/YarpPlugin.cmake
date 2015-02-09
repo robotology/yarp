@@ -300,37 +300,39 @@ endmacro(YARP_PREPARE_CARRIER)
 # be later able to link against them all as a group.
 #
 macro(YARP_ADD_PLUGIN LIBNAME)
-    # we check to see if the ADD_LIBRARY call is an import, and ignore
-    # if so - we don't need to do anything about imports.
-    set(X_IS_IMPORTED FALSE)
+    # YARP_ADD_PLUGIN used to be a re-definition of the ADD_LIBRARY
+    # CMake command therefore IMPORTED libraries had to be skipped.
+    # It should be safe to remove this check now, but for now issue a
+    # fatal error to ensure that YARP_ADD_PLUGIN is not used instead
+    # of ADD_LIBRARY
+    # FIXME Remove this check as soon as we are sure that it is not used
+    # anywhere
     foreach(arg ${ARGN})
         if("${arg}" STREQUAL "IMPORTED")
-            set(X_IS_IMPORTED TRUE)
+            message(FATAL_ERROR "YARP_ADD_PLUGIN does not support the IMPORTED argument.")
         endif("${arg}" STREQUAL "IMPORTED")
     endforeach(arg)
-    if(NOT X_IS_IMPORTED)
-        # The user is adding a bone-fide plugin library.  We add it,
-        # while inserting any generated source code needed for initialization.
-        get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
-        foreach(s ${srcs})
-            set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
-        endforeach(s)
-        add_library(${LIBNAME} ${srcs} ${ARGN})
-        # Add the library to the list of plugin libraries.
-        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
-        # Reset the list of generated source code to empty.
-        set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
-        if(YARP_TREE_INCLUDE_DIRS)
-            # If compiling YARP, we go ahead and set up installing this
-            # target.  It isn't safe to do this outside of YARP though.
-            install(TARGETS ${LIBNAME}
-                    EXPORT YARP
-                    COMPONENT runtime
-                    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-                    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        endif(YARP_TREE_INCLUDE_DIRS)
-    endif(NOT X_IS_IMPORTED)
+    # The user is adding a bone-fide plugin library.  We add it,
+    # while inserting any generated source code needed for initialization.
+    get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
+    foreach(s ${srcs})
+        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
+    endforeach(s)
+    add_library(${LIBNAME} ${srcs} ${ARGN})
+    # Add the library to the list of plugin libraries.
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
+    # Reset the list of generated source code to empty.
+    set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
+    if(YARP_TREE_INCLUDE_DIRS)
+        # If compiling YARP, we go ahead and set up installing this
+        # target.  It isn't safe to do this outside of YARP though.
+        install(TARGETS ${LIBNAME}
+                EXPORT YARP
+                COMPONENT runtime
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    endif(YARP_TREE_INCLUDE_DIRS)
 endmacro(YARP_ADD_PLUGIN)
 
 
