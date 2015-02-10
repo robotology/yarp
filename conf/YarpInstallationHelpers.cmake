@@ -2,6 +2,12 @@
 # Authors: Elena Ceseracciu, Daniele Domenichelli
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+
+## Skip this whole file if it has already been included
+if(COMMAND YARP_CONFIGURE_EXTERNAL_INSTALLATION)
+  return()
+endif()
+
 include(CMakeParseArguments)
 include(GNUInstallDirs)
 
