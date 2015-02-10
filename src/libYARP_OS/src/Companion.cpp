@@ -1132,15 +1132,32 @@ int Companion::cmdWrite(int argc, char *argv[]) {
 
 
 int Companion::cmdRpcServer(int argc, char *argv[]) {
-    if (argc<1) {
-        ACE_OS::fprintf(stderr, "Please supply port name\n");
-        return 1;
-    }
     bool drop = false;
-    if (String(argv[0])=="--single") {
-        drop = true;
+    bool stop = false;
+    bool echo = false;
+    while (argc>=1 && String(argv[0]).find("--")==0) {
+        String cmd = argv[0];
+        if (cmd=="--single") {
+            drop = true;
+        } else if (cmd=="--stop") {
+            stop = true;
+        } else if (cmd=="--echo") {
+            echo = true;
+        } else {
+            ACE_OS::fprintf(stderr, "Option not recognized: %s\n", cmd.c_str());
+            return 1;
+        }
         argv++;
         argc--;
+    }
+    if (argc<1) {
+        ACE_OS::fprintf(stderr, "Please call as:\n");
+        ACE_OS::fprintf(stderr, "  yarp rpcserver [--single] [--stop] [--echo] /port/name\n");
+        ACE_OS::fprintf(stderr, "By default, this shows commands and waits for user to enter replies. Flags:\n");
+        ACE_OS::fprintf(stderr, "  --single: respond to only a single command per connection, ROS-style\n");
+        ACE_OS::fprintf(stderr, "  --stop: stop the server entirely after a single command\n");
+        ACE_OS::fprintf(stderr, "  --echo: reply with the message received\n");
+        return 1;
     }
 
     const char *name = argv[0];
@@ -1161,13 +1178,18 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
         port.read(cmd,true);
         printf("Message: %s\n", cmd.toString().c_str());
         printf("Reply: ");
-        String txt = getStdin();
-        response.fromString(txt.c_str());
+        if (echo) {
+            response = cmd;
+        } else {
+            String txt = getStdin();
+            response.fromString(txt.c_str());
+        }
         if (drop) {
             port.replyAndDrop(response);
         } else {
             port.reply(response);
         }
+        if (stop) return 0;
     }
 }
 
