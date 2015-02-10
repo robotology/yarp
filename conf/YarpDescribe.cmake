@@ -8,7 +8,6 @@ include(CMakePackageConfigHelpers)
 # Let's see what we built, and record it to facilitate in-tree
 # ("uninstalled") use of YARP.
 get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-get_property(YARP_LINK_DIRS GLOBAL PROPERTY YARP_TREE_LINK_DIRS)
 get_property(YARP_LIBS GLOBAL PROPERTY YARP_LIBS)
 get_property(YARP_TOOLS GLOBAL PROPERTY YARP_TOOLS)
 

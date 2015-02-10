@@ -7,7 +7,6 @@ if(NOT YARP_FOUND)
     # Give the details of YARP libraries, include path etc.
     set(YARP_LIBRARIES "@YARP_LIBRARIES@")
     set(YARP_INCLUDE_DIRS "@YARP_INCLUDE_DIRS@")
-    set(YARP_LINK_DIRS "@YARP_LINK_DIRS@") # only needed with certain plugins
     set(YARP_DEFINES "@YARP_ALL_DEFINES@") # only needed if you use ACE directly
     set(YARP_BINDINGS "@YARP_BINDINGS@")
 
