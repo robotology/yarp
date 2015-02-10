@@ -23,13 +23,12 @@
 
 #include "yarp/os/Stamp.h"
 #include "worker.h"
-//#include "main_window.h"
 #include "mainwindow.h"
 #include "log.h"
 
 using namespace yarp::sig;
+using namespace yarp::sig::file;
 using namespace yarp::os;
-using namespace cv;
 
 /**********************************************************/
 WorkerClass::WorkerClass(int part, int numThreads)
@@ -126,7 +125,7 @@ double WorkerClass::getFrameRate()
 /**********************************************************/
 int WorkerClass::sendImages(int part, int frame)
 {
-    IplImage* img = NULL;
+    ImageOf<PixelRgb> img;
     string tmpPath = utilities->partDetails[part].path;
     string tmpName;
     if (utilities->withExtraColumn){
@@ -136,16 +135,13 @@ int WorkerClass::sendImages(int part, int frame)
     }
 
     tmpPath = tmpPath + tmpName;
-    img = cvLoadImage( tmpPath.c_str(), CV_LOAD_IMAGE_UNCHANGED );
 
-    if( img == 0 ){
+    if( !read(img,tmpPath.c_str()) ){
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
     } else {
-        cvCvtColor( img, img, CV_BGR2RGB );
         ImageOf<PixelRgb> &temp = utilities->partDetails[part].imagePort.prepare();
-        temp.resize(img->width,img->height);
-        cvCopyImage( img, (IplImage *) temp.getIplImage());
+        temp = img;
 
         //propagate timestamp
         Stamp ts(frame,utilities->partDetails[part].timestamp[frame]);
@@ -156,7 +152,6 @@ int WorkerClass::sendImages(int part, int frame)
         } else {
             utilities->partDetails[part].imagePort.write();
         }
-        cvReleaseImage(&img);
     }
     return 0;
 }

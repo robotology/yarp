@@ -19,9 +19,8 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/RateThread.h>
+#include <yarp/sig/ImageFile.h>
 #include "utils.h"
-#include <cv.h>
-#include <highgui.h>
 #include <yarp/os/Event.h>
 #include <yarp/os/Time.h>
 #include <QMainWindow>
