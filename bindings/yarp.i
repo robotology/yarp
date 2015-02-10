@@ -331,8 +331,6 @@ namespace yarp {
 %enddef
 %define YARP_END_PACK
 %enddef
-%define PACKED_FOR_NET 
-%enddef
 
 #if defined( SWIGALLEGROCL )
   %include "compat.h"

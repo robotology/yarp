@@ -307,7 +307,7 @@ class Target {
 public:
   NetInt32 x;
   NetInt32 y;
-} PACKED_FOR_NET;
+};
 YARP_END_PACK
 \endcode
 Then you'll be in better shape.  The integers now have a well defined
@@ -330,7 +330,7 @@ public:
         tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
         len = 2;
     }
-} PACKED_FOR_NET;
+};
 YARP_END_PACK
 \endcode
 

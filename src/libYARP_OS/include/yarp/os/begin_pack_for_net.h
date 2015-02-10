@@ -9,4 +9,10 @@
 #include <yarp/conf/system.h>
 
 YARP_COMPILER_DEPRECATED_WARNING(begin_pack_for_net.h is deprecated. Use YARP_BEGIN_PACK/YARP_END_PACK instead)
+
+// Left here for compatibility with old code
+#ifndef PACKED_FOR_NET
+#  define PACKED_FOR_NET
+#endif
+
 YARP_BEGIN_PACK

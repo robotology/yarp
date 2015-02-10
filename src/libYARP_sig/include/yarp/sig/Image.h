@@ -416,7 +416,7 @@ namespace yarp {
             PixelRgb() { r = g = b = 0; }
             PixelRgb(unsigned char n_r, unsigned char n_g, unsigned char n_b)
             { r = n_r;  g = n_g;  b = n_b; }
-        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        };
         YARP_END_PACK
 
         /**
@@ -431,7 +431,7 @@ namespace yarp {
             PixelRgba(unsigned char n_r, unsigned char n_g,
                       unsigned char n_b, unsigned char n_a)
             { r = n_r;  g = n_g;  b = n_b; a = n_a; }
-        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        };
         YARP_END_PACK
 
         /**
@@ -446,7 +446,7 @@ namespace yarp {
             PixelBgra(unsigned char n_r, unsigned char n_g,
                       unsigned char n_b, unsigned char n_a)
             { r = n_r;  g = n_g;  b = n_b; a = n_a; }
-        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        };
         YARP_END_PACK
 
         /**
@@ -459,7 +459,7 @@ namespace yarp {
             PixelBgr() { b = g = r = 0; }
             PixelBgr(unsigned char n_r, unsigned char n_g, unsigned char n_b)
             { r = n_r;  g = n_g;  b = n_b; }
-        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        };
         YARP_END_PACK
 
         /**
@@ -468,7 +468,7 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelHsv {
             unsigned char h,s,v;
-        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        };
         YARP_END_PACK
 
         /**
@@ -482,7 +482,7 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgbSigned {
             char r,g,b;
-        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        };
         YARP_END_PACK
 
         /**
@@ -499,7 +499,7 @@ namespace yarp {
             PixelRgbFloat() { r = g = b = 0; }
             PixelRgbFloat(float n_r, float n_g, float n_b)
             { r = n_r;  g = n_g;  b = n_b; }
-        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        };
         YARP_END_PACK
 
         /**
@@ -512,7 +512,7 @@ namespace yarp {
             PixelRgbInt(int n_r, int n_g, int n_b) {
                 r = n_r; g = n_g; b = n_b;
             }
-        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        };
         YARP_END_PACK
 
         /**
@@ -521,7 +521,7 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct PixelHsvFloat {
             float h,s,v;
-        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+        };
         YARP_END_PACK
 
     }

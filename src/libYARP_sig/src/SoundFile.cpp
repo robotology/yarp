@@ -53,7 +53,7 @@ public:
 
     void setup_to_write(const Sound& sound, FILE *fp);
     bool parse_from_file(FILE *fp);
-} PACKED_FOR_NET;
+};
 YARP_END_PACK
 
 bool PcmWavHeader::parse_from_file(FILE *fp)
