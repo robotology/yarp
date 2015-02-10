@@ -1237,6 +1237,8 @@ Contact NetworkBase::detectNameServer(bool useDetectedServer,
 bool NetworkBase::setNameServerContact(Contact &nameServerContact)
 {
     NameConfig nameConfig;
+    if (nameServerContact.getName() != "")
+        setNameServerName(nameServerContact.getName());
     nameConfig.fromFile();
     nameConfig.setAddress(nameServerContact);
     return nameConfig.toFile();
