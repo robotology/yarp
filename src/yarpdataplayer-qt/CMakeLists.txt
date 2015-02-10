@@ -2,7 +2,7 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5 AND YARP_HAS_OPENCV)
+if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
 
   include(YarpUseQt5)
 
@@ -11,6 +11,15 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5 AND YARP_HAS_OPENCV)
 
   include_directories(${YARP_OS_INCLUDE_DIRS}
                       ${YARP_sig_INCLUDE_DIRS})
+
+  if(YARP_HAS_OPENCV)
+    add_definitions(-DHAS_OPENCV)
+    include_directories(${OpenCV_INCLUDE_DIRS})
+  else()
+    message(STATUS "yarpdataplayer: OpenCV not selected, keep on building...")
+  endif()
+
+
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -79,6 +88,10 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5 AND YARP_HAS_OPENCV)
   qtyarp_deprecate_with_cmake_version(2.8.11)
   if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
     target_link_libraries(yarpdataplayer-qt Qt5::WinMain)
+  endif()
+
+  if(YARP_HAS_OPENCV)
+    target_link_libraries(yarpdataplayer-qt ${OpenCV_LIBRARIES})
   endif()
 
   install(TARGETS yarpdataplayer-qt COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

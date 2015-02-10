@@ -24,7 +24,12 @@
 #include <yarp/os/Event.h>
 #include <yarp/os/Time.h>
 #include <QMainWindow>
-
+ 
+#ifdef HAS_OPENCV
+  #include <cv.h>
+  #include <highgui.h>
+#endif
+ 
 #ifndef __WORKER_H__
 #define __WORKER_H__
 
