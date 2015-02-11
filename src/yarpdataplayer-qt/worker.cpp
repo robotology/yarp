@@ -177,7 +177,13 @@ int WorkerClass::sendImages(int part, int frame)
         } else {
             utilities->partDetails[part].imagePort.write();
         }
+        
+#ifdef HAS_OPENCV
+        cvReleaseImage(&img);
+#endif
     }
+
+
 
     return 0;
 }
