@@ -328,21 +328,6 @@ endmacro(YARP_ADD_PLUGIN)
 
 
 #########################################################################
-# Lightly redefine LINK_DIRECTORIES to track link path changes.  Rarely
-# needed.
-#
-macro(LINK_DIRECTORIES)
-    _LINK_DIRECTORIES(${ARGN})
-    if(X_YARP_PLUGIN_MODE)
-        # Add to the list of linked directories.
-        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LINKS ${ARGN})
-        set_property(GLOBAL APPEND PROPERTY YARP_TREE_LINK_DIRS ${ARGN})
-    endif(X_YARP_PLUGIN_MODE)
-endmacro(LINK_DIRECTORIES)
-
-
-
-#########################################################################
 # Lightly redefine FIND_PACKAGE to skip calls to FIND_PACKAGE(YARP).
 # YARP dependencies are guaranteed to have already been satisfied.
 # And if we are compiling YARP, the use of FIND_PACKAGE(YARP) will lead
