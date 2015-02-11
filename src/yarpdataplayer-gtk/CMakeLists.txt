@@ -56,7 +56,7 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2)
                                            ${GTK2_LIBRARIES})
 
   if(YARP_HAS_OPENCV)
-    target_link_libraries(yarpdataplayer-qt ${OpenCV_LIBRARIES})
+    target_link_libraries(yarpdataplayer-gtk ${OpenCV_LIBRARIES})
   endif()
 
   install(TARGETS yarpdataplayer-gtk
