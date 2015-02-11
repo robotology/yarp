@@ -31,6 +31,10 @@
 #include <yarp/os/RpcClient.h>
 #include "worker.h"
 
+class WorkerClass;
+class MasterThread;
+class MainWindow;
+
 struct partsData
     {
         WorkerClass             *worker;                                                        //personal rate thread

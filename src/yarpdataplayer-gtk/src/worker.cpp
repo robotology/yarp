@@ -26,8 +26,14 @@
 #include "main_window.h"
 
 using namespace yarp::sig;
+using namespace yarp::sig::file;
 using namespace yarp::os;
-using namespace cv;
+
+#ifdef HAS_OPENCV
+  using namespace cv;
+#else
+  using namespace std;
+#endif
 
 /**********************************************************/
 WorkerClass::WorkerClass(int part, int numThreads)
@@ -118,7 +124,11 @@ double WorkerClass::getFrameRate()
 /**********************************************************/
 int WorkerClass::sendImages(int part, int frame)
 {
+#ifdef HAS_OPENCV
     IplImage* img = NULL;
+#else
+    ImageOf<PixelRgb> img;
+#endif
     string tmpPath = utilities->partDetails[part].path;
     string tmpName;
     if (utilities->withExtraColumn)
@@ -127,18 +137,29 @@ int WorkerClass::sendImages(int part, int frame)
         tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(0).asString().c_str();
 
     tmpPath = tmpPath + tmpName;
-    img = cvLoadImage( tmpPath.c_str(), CV_LOAD_IMAGE_UNCHANGED );
 
-    if( img == 0 )
-    {
+#ifdef HAS_OPENCV
+    img = cvLoadImage( tmpPath.c_str(), CV_LOAD_IMAGE_UNCHANGED );
+#endif
+
+#ifdef HAS_OPENCV
+    if ( !img ) {
         fprintf( stderr, "Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
-    }else
-    {
+    } else {
         cvCvtColor( img, img, CV_BGR2RGB );
         ImageOf<PixelRgb> &temp = utilities->partDetails[part].imagePort.prepare();
         temp.resize(img->width,img->height);
         cvCopyImage( img, (IplImage *) temp.getIplImage());
+#else
+    if ( !read(img,tmpPath.c_str()) ) {
+        fprintf( stderr, "Cannot load file %s !\n", tmpPath.c_str() );
+        return 1;
+    } else {
+
+        ImageOf<PixelRgb> &temp = utilities->partDetails[part].imagePort.prepare();
+        temp = img;
+#endif
 
         //propagate timestamp
         Stamp ts(frame,utilities->partDetails[part].timestamp[frame]);
@@ -148,7 +169,9 @@ int WorkerClass::sendImages(int part, int frame)
             utilities->partDetails[part].imagePort.writeStrict();
         else
             utilities->partDetails[part].imagePort.write();
+#ifdef HAS_OPENCV
         cvReleaseImage(&img);
+#endif
     }
     return 0;
 }

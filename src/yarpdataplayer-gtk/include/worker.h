@@ -15,17 +15,22 @@
  * Public License for more details
 */
 
+#ifndef __WORKER_H__
+#define __WORKER_H__
+
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/sig/ImageFile.h>
 #include <yarp/os/RateThread.h>
 #include "utils.h"
-#include <cv.h>
-#include <highgui.h>
 #include <yarp/os/Event.h>
 #include <yarp/os/Time.h>
 
-#ifndef __WORKER_H__
-#define __WORKER_H__
+#ifdef HAS_OPENCV
+  #include <cv.h>
+  #include <highgui.h>
+#endif
+
 
 class Utilities;
 class MainWindow;

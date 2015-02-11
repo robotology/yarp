@@ -2,7 +2,7 @@
 # Authors: Vadim Tikhanoff
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2 AND YARP_HAS_OPENCV)
+if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
@@ -10,8 +10,14 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2 AND YARP_HAS_OPENCV)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
                       ${YARP_OS_INCLUDE_DIRS}
                       ${YARP_sig_INCLUDE_DIRS}
-                      ${GTK2_INCLUDE_DIRS}
-                      ${OpenCV_INCLUDE_DIRS})
+                      ${GTK2_INCLUDE_DIRS})
+
+  if(YARP_HAS_OPENCV)
+    add_definitions(-DHAS_OPENCV)
+    include_directories(${OpenCV_INCLUDE_DIRS})
+  else()
+    message(STATUS "yarpdataplayer-gtk: OpenCV not selected, keep on building...")
+  endif()
 
   set(yarpdataplayer_gtk_SRCS src/main.cpp
                               src/main_window.cpp
@@ -47,8 +53,11 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2 AND YARP_HAS_OPENCV)
   target_link_libraries(yarpdataplayer-gtk YARP_OS
                                            YARP_init
                                            YARP_sig
-                                           ${OpenCV_LIBRARIES}
                                            ${GTK2_LIBRARIES})
+
+  if(YARP_HAS_OPENCV)
+    target_link_libraries(yarpdataplayer-qt ${OpenCV_LIBRARIES})
+  endif()
 
   install(TARGETS yarpdataplayer-gtk
           COMPONENT utilities
