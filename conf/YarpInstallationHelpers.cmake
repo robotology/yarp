@@ -88,6 +88,24 @@ macro(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
     set(${_NAME}_MODULES_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/modules" CACHE INTERNAL "module templates' installation directory for ${_name} (relative to build/installation dir")
     set(${_NAME}_ROBOTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/robots" CACHE INTERNAL "robot-specific configurations installation directory for ${_name} (relative to build/installation dir")
     set(${_NAME}_QML2_IMPORT_DIR ${CMAKE_INSTALL_QMLDIR} CACHE INTERNAL "QML2 import directory for ${_name} (relative to build/installation dir")
+
+    foreach(_dir DATA
+                 CONFIG
+                 PLUGIN_MANIFESTS
+                 MODULES
+                 APPLICATIONS
+                 TEMPLATES
+                 CONTEXTS
+                 APPLICATIONS_TEMPLATES
+                 MODULES_TEMPLATES
+                 ROBOTS)
+      set(${_NAME}_${_dir}_INSTALL_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_${_dir}_INSTALL_DIR}")
+  endforeach()
+
+  # QML2 Import directory
+  set(${_NAME}_QML2_IMPORT_DIR ${CMAKE_INSTALL_QMLDIR} CACHE INTERNAL "QML2 import directory for ${_name} (relative to build/installation dir")
+  set(${_NAME}_QML2_IMPORT_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_QML2_IMPORT_DIR}")
+
 endmacro()
 
 # This macro has the same signature as CMake "install" command (i.e., with DESTINATION and FILES/DIRECTORY arguments); in addition to calling the "install" command,
