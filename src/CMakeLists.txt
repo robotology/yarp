@@ -4,7 +4,8 @@
 
 option(YARP_USE_PERSISTENT_NAMESERVER "Do you want a nameserver that stores its database in sqlite?" TRUE)
 include(YarpInstallationHelpers)
-yarp_configure_external_installation(yarp)
+yarp_configure_external_installation(yarp WITH_PLUGINS)
+
 # libraries
 add_subdirectory(libYARP_OS)
 add_subdirectory(libYARP_sig)

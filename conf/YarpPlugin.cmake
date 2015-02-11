@@ -45,46 +45,7 @@ if(COMMAND YARP_END_PLUGIN_LIBRARY)
 endif()
 
 include(GNUInstallDirs)
-
-get_property(YARP_TREE_BUILD GLOBAL PROPERTY YARP_TREE_BUILD)
-if(YARP_TREE_BUILD)
-    # When compiling YARP,
-    # Prepare path information for the benefit of clients
-
-    # Prepare the following variables used to generate path.ini:
-    # - YARP_LIBRARY_PATH
-    # - YARP_LIBRARY_EXTENSION
-    # - YARP_LIBRARY_PREFIX
-    # - YARP_LIBRARY_TYPE
-
-    if(YARP_FORCE_SHARED_PLUGINS OR BUILD_SHARED_LIBS)
-        set(YARP_LIBRARY_EXTENSION "${CMAKE_SHARED_LIBRARY_SUFFIX}")
-        set(YARP_LIBRARY_PREFIX "${CMAKE_SHARED_LIBRARY_PREFIX}")
-        set(YARP_LIBRARY_TYPE "shared")
-    else()
-        set(YARP_LIBRARY_EXTENSION "${CMAKE_STATIC_LIBRARY_SUFFIX}")
-        set(YARP_LIBRARY_PREFIX "${CMAKE_STATIC_LIBRARY_PREFIX}")
-        set(YARP_LIBRARY_TYPE "static")
-    endif()
-
-    # Generate path.ini for build tree
-    set(YARP_LIBRARY_PATH "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
-    configure_file(${YARP_MODULE_DIR}/template/path.ini.in
-        ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/yarp/plugins/path.ini @ONLY)
-
-    # Generate and install path.ini for install tree
-    set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_FULL_LIBDIR}) # (install)
-    configure_file(${YARP_MODULE_DIR}/template/path.ini.in
-        ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY)
-    install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini
-            RENAME path.ini
-            COMPONENT configuration
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/plugins)
-endif(YARP_TREE_BUILD)
-
-
-option(YARP_FORCE_SHARED_PLUGINS "Force yarp to create dynamically loaded plugins even if building static libraries." OFF)
-mark_as_advanced(YARP_FORCE_SHARED_PLUGINS)
+include(YarpInstallationHelpers)
 
 
 #########################################################################

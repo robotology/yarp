@@ -45,10 +45,16 @@ We recommend you now have a look at the tutorials in \ref yarp_resource_finder_t
 
 If you want to install data files inside directories specific to your project, you should add:
 \verbatim
- yarp_configure_external_installation(PACKAGE)
+ yarp_configure_external_installation(<PACKAGE>
+                                      [COMPONENT <component>]
+#                                     [NO_PATH_D]
+#                                     [WITH_PLUGINS])
+# )
 \endverbatim
 
-Where \e PACKAGE is the name of your build/project. This line modifies YARP installation so that it can locate the data files you will install with your project; furthermore, it will create for you the following CMake variables:
+Where \e PACKAGE is the name of your build/project. This command creates
+the following CMake variables containing paths relative to the install
+prefix:
 
 \li <B><PACKAGE>_CONTEXTS_INSTALL_DIR</B> for "context" folders, containing configuration files and data that modules look for at runtime
 \li <B><PACKAGE>_PLUGIN_MANIFESTS_INSTALL_DIR</B> for plugin manifest files
@@ -60,6 +66,19 @@ Where \e PACKAGE is the name of your build/project. This line modifies YARP inst
 \li <B><PACKAGE>_MODULES_TEMPLATES_INSTALL_DIR</B> for module templates (should not be needed)
 \li <B><PACKAGE>_DATA_INSTALL_DIR</B> generic directory for data; it is however advised to use more specific directories
 \li <B><PACKAGE>_CONFIG_INSTALL_DIR</B> generic directory for configuration files
+
+and the analogue variables containing absolute paths:
+
+\li <B><PACKAGE>_CONTEXTS_INSTALL_DIR_FULL</B>
+\li <B><PACKAGE>_PLUGIN_MANIFESTS_INSTALL_DIR_FULL</B>
+\li <B><PACKAGE>_APPLICATIONS_INSTALL_DIR_FULL</B>
+\li <B><PACKAGE>_MODULES_INSTALL_DIR_FULL</B>
+\li <B><PACKAGE>_ROBOTS_INSTALL_DIR_FULL</B>
+\li <B><PACKAGE>_TEMPLATES_INSTALL_DIR_FULL</B>
+\li <B><PACKAGE>_APPLICATIONS_TEMPLATES_INSTALL_DIR_FULL</B>
+\li <B><PACKAGE>_MODULES_TEMPLATES_INSTALL_DIR_FULL</B>
+\li <B><PACKAGE>_DATA_INSTALL_DIR_FULL</B>
+\li <B><PACKAGE>_CONFIG_INSTALL_DIR_FULL</B>
 
 Now you can install additional data files by using the macro \e yarp_install, e.g.:
 \verbatim
@@ -73,6 +92,18 @@ Now you can install additional data files by using the macro \e yarp_install, e.
  yarp_install(FILES ${scripts} DESTINATION ${<PACKAGE>_APPLICATIONS_INSTALL_DIR})
 \endverbatim
 
+Unless the \e NO_PATH_D option is passed, this macro checks if the
+installation directory of the package is the same as YARP's, in which
+case it sets up automatic recognition of data directories;
+otherwise, it warns the user to set up appropriately the
+YARP_DATA_DIRS environment variable.
+
+If the \e WITH_PLUGINS argument is passed, a plugin manifest file
+containing the search path for the plugins is generated and installed
+
+An extra \e COMPONENT argument can be passed to this function to set the
+component for the installed files. If not set, "configuration" will
+be used.
 
 
  *
