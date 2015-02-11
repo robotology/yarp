@@ -143,27 +143,27 @@ int WorkerClass::sendImages(int part, int frame)
     }
 
     tmpPath = tmpPath + tmpName;
-    
-#ifdef HAS_OPENCV    
+
+#ifdef HAS_OPENCV
     img = cvLoadImage( tmpPath.c_str(), CV_LOAD_IMAGE_UNCHANGED );
 #endif
-        
+
 #ifdef HAS_OPENCV
-    if( !img )
+    if ( !img )
     {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
-    }else {
+    } else {
         cvCvtColor( img, img, CV_BGR2RGB );
         ImageOf<PixelRgb> &temp = utilities->partDetails[part].imagePort.prepare();
         temp.resize(img->width,img->height);
         cvCopyImage( img, (IplImage *) temp.getIplImage());
 #else
-    if( !read(img,tmpPath.c_str()) ){
+    if ( !read(img,tmpPath.c_str()) ) {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
     } else {
-        
+
         ImageOf<PixelRgb> &temp = utilities->partDetails[part].imagePort.prepare();
         temp = img;
 
@@ -171,19 +171,17 @@ int WorkerClass::sendImages(int part, int frame)
         //propagate timestamp
         Stamp ts(frame,utilities->partDetails[part].timestamp[frame]);
         utilities->partDetails[part].imagePort.setEnvelope(ts);
-        
+
         if (utilities->sendStrict){
             utilities->partDetails[part].imagePort.writeStrict();
         } else {
             utilities->partDetails[part].imagePort.write();
         }
-        
+
 #ifdef HAS_OPENCV
         cvReleaseImage(&img);
 #endif
     }
-
-
 
     return 0;
 }

@@ -14,6 +14,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details
 */
+
+#ifndef __WORKER_H__
+#define __WORKER_H__
+
 #include <QObject>
 
 #include <yarp/sig/Image.h>
@@ -24,14 +28,12 @@
 #include <yarp/os/Event.h>
 #include <yarp/os/Time.h>
 #include <QMainWindow>
- 
+
 #ifdef HAS_OPENCV
   #include <cv.h>
   #include <highgui.h>
 #endif
- 
-#ifndef __WORKER_H__
-#define __WORKER_H__
+
 
 class Utilities;
 //class MainWindow;

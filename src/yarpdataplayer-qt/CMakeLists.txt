@@ -9,6 +9,7 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
 
+  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
   include_directories(${YARP_OS_INCLUDE_DIRS}
                       ${YARP_sig_INCLUDE_DIRS})
 
@@ -16,12 +17,8 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
     add_definitions(-DHAS_OPENCV)
     include_directories(${OpenCV_INCLUDE_DIRS})
   else()
-    message(STATUS "yarpdataplayer: OpenCV not selected, keep on building...")
+    message(STATUS "yarpdataplayer-qt: OpenCV not selected, keep on building...")
   endif()
-
-
-
-  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
   set(yarpdataplayer_qt_SRCS aboutdlg.cpp
                              genericinfodlg.cpp
