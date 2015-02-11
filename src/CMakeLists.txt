@@ -13,7 +13,7 @@ add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_dev)
 
 set (YARP_LINK_PLUGINS TRUE)
-if (BUILD_SHARED_LIBS)
+if (YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
   set (YARP_LINK_PLUGINS FALSE)
 endif()
 
