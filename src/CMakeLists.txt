@@ -18,11 +18,6 @@ if (YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
 endif()
 
 add_subdirectory(modules)
-
-# We may have picked up some link directories - apply them here.
-get_property(YARP_TREE_LINK_DIRS GLOBAL PROPERTY YARP_TREE_LINK_DIRS)
-link_directories(${YARP_TREE_LINK_DIRS})
-
 add_subdirectory(carriers)
 
 add_subdirectory(idls)
