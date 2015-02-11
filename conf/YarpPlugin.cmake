@@ -100,7 +100,6 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
         set_property(GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE) # initializers
         set_property(GLOBAL PROPERTY YARP_BUNDLE_OWNERS)   # owner library
         set_property(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
-        set_property(GLOBAL PROPERTY YARP_BUNDLE_LINKS)   # list of link directories
         set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
 
         # One glitch is that if plugins are used within YARP, rather
@@ -379,10 +378,6 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         get_property(code_stub GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE)
         include_directories(${YARP_INCLUDE_DIRS})
         get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
-        get_property(links GLOBAL PROPERTY YARP_BUNDLE_LINKS)
-        if(links)
-            _link_directories(${links})
-        endif(links)
         # add the library initializer code
         add_library(${X_YARP_PLUGIN_MASTER} ${code} ${code_stub} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
 
