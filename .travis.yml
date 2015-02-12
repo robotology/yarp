@@ -71,7 +71,7 @@ before_script:
 script:
   - cd build
   - cmake --build . --config ${TRAVIS_BUILD_TYPE}
-  - ctest --build . --config ${TRAVIS_BUILD_TYPE}
+  - ctest -VV --build . --config ${TRAVIS_BUILD_TYPE}
   - if [ "k$TRAVIS_WITH_RUNTIME" = "ktrue" ]; then ../scripts/admin/check-runtime.sh; fi
   - if [ "k$TRAVIS_WITH_RUNTIME" = "ktrue" ]; then ../tests/integration/check-http.sh; fi
   - cd ..

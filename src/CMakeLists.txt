@@ -4,7 +4,8 @@
 
 option(YARP_USE_PERSISTENT_NAMESERVER "Do you want a nameserver that stores its database in sqlite?" TRUE)
 include(YarpInstallationHelpers)
-yarp_configure_external_installation(yarp)
+yarp_configure_external_installation(yarp WITH_PLUGINS)
+
 # libraries
 add_subdirectory(libYARP_OS)
 add_subdirectory(libYARP_sig)
@@ -12,16 +13,11 @@ add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_dev)
 
 set (YARP_LINK_PLUGINS TRUE)
-if (BUILD_SHARED_LIBS)
+if (YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
   set (YARP_LINK_PLUGINS FALSE)
 endif()
 
 add_subdirectory(modules)
-
-# We may have picked up some link directories - apply them here.
-get_property(YARP_TREE_LINK_DIRS GLOBAL PROPERTY YARP_TREE_LINK_DIRS)
-link_directories(${YARP_TREE_LINK_DIRS})
-
 add_subdirectory(carriers)
 
 add_subdirectory(idls)

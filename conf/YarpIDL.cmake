@@ -2,13 +2,25 @@
 # Authors: Elena Ceseracciu, Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+# yarp_idl_to_dir
+# ---------------
+#
 # Take an IDL file and generate code for it in the specified directory,
 # optionally storing the list of source/header files in the supplied
 # variables. Call as:
+#
 #   yarp_idl_to_dir(foo.thrift foo)
 #   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS)
 #   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS INCLUDE_PATHS)
-function(YARP_IDL_TO_DIR_CORE yarpidl_file_base output_dir)
+
+
+# Avoid multiple inclusions of this file
+if(COMMAND yarp_idl_to_dir)
+  return()
+endif()
+
+
+function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     # Store optional output variable(s).
     set(out_vars ${ARGN})
 
@@ -129,9 +141,3 @@ function(YARP_IDL_TO_DIR_CORE yarpidl_file_base output_dir)
         set(${target_paths} ${output_dir} ${output_dir}/include PARENT_SCOPE)
     endif()
 endfunction()
-
-if (NOT COMMAND YARP_IDL_TO_DIR)
-    macro(YARP_IDL_TO_DIR)
-        YARP_IDL_TO_DIR_CORE(${ARGN})
-    endmacro()
-endif()

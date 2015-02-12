@@ -8,7 +8,6 @@ include(CMakePackageConfigHelpers)
 # Let's see what we built, and record it to facilitate in-tree
 # ("uninstalled") use of YARP.
 get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-get_property(YARP_LINK_DIRS GLOBAL PROPERTY YARP_TREE_LINK_DIRS)
 get_property(YARP_LIBS GLOBAL PROPERTY YARP_LIBS)
 get_property(YARP_TOOLS GLOBAL PROPERTY YARP_TOOLS)
 
@@ -45,8 +44,31 @@ foreach(lib ${YARP_LIBS})
   endif()
 endforeach()
 
-configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
-               ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY)
+configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in"
+                              "${CMAKE_BINARY_DIR}/YARPConfig.cmake"
+                              INSTALL_DESTINATION "${CMAKE_BINARY_DIR}"
+                              INSTALL_PREFIX "${CMAKE_BINARY_DIR}"
+                              PATH_VARS YARP_INCLUDE_DIRS
+                                        YARP_BINDINGS
+                                        YARP_MODULE_DIR
+                                        YARP_IDL_BINARY_HINT
+                                        # YARP_INSTALL_PREFIX is empty for build tree
+                                        # The following variables are used both for the relative
+                                        # and absolute directory in YARPConfig.cmake.in using
+                                        # @VAR@ for relative path or @PACKAGE_VAR for absolute.
+                                        YARP_DATA_INSTALL_DIR
+                                        YARP_CONFIG_INSTALL_DIR
+                                        YARP_PLUGIN_MANIFESTS_INSTALL_DIR
+                                        YARP_MODULES_INSTALL_DIR
+                                        YARP_APPLICATIONS_INSTALL_DIR
+                                        YARP_TEMPLATES_INSTALL_DIR
+                                        YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR
+                                        YARP_MODULES_TEMPLATES_INSTALL_DIR
+                                        YARP_CONTEXTS_INSTALL_DIR
+                                        YARP_ROBOTS_INSTALL_DIR
+                                        YARP_QML2_IMPORT_DIR
+                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+
 write_basic_package_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
                                  VERSION ${YARP_VERSION}
                                  COMPATIBILITY AnyNewerVersion)
@@ -59,15 +81,36 @@ export(TARGETS ${YARP_LIBS} ${YARP_TOOLS}
 set(YARP_CMAKE_DESTINATION ${CMAKE_INSTALL_LIBDIR}/YARP)
 
 # Set up a configuration file for installed use of YARP
-set(YARP_INCLUDE_DIRS ${CMAKE_INSTALL_FULL_INCLUDEDIR})
-set(YARP_MODULE_DIR ${CMAKE_INSTALL_FULL_DATADIR}/yarp/cmake)
-set(YARP_IDL_BINARY_HINT ${CMAKE_INSTALL_FULL_BINDIR})
-set(YARP_BINDINGS ${CMAKE_INSTALL_FULL_PREFIX_DATADIR}/yarp/bindings)
+set(YARP_INCLUDE_DIRS "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+set(YARP_MODULE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/yarp/cmake")
+set(YARP_IDL_BINARY_HINT "${CMAKE_INSTALL_FULL_BINDIR}")
+set(YARP_BINDINGS "${CMAKE_INSTALL_FULL_DATADIR}/yarp/bindings")
 
-set(YARP_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+set(YARP_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
-configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
-               ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY)
+configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in"
+                              "${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake"
+                              INSTALL_DESTINATION ${YARP_CMAKE_DESTINATION}
+                              PATH_VARS YARP_INCLUDE_DIRS
+                                        YARP_BINDINGS
+                                        YARP_MODULE_DIR
+                                        YARP_IDL_BINARY_HINT
+                                        YARP_INSTALL_PREFIX
+                                        # The following variables are used both for the relative
+                                        # and absolute directory in YARPConfig.cmake.in using
+                                        # @VAR@ for relative path or @PACKAGE_VAR for absolute.
+                                        YARP_DATA_INSTALL_DIR
+                                        YARP_CONFIG_INSTALL_DIR
+                                        YARP_PLUGIN_MANIFESTS_INSTALL_DIR
+                                        YARP_MODULES_INSTALL_DIR
+                                        YARP_APPLICATIONS_INSTALL_DIR
+                                        YARP_TEMPLATES_INSTALL_DIR
+                                        YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR
+                                        YARP_MODULES_TEMPLATES_INSTALL_DIR
+                                        YARP_CONTEXTS_INSTALL_DIR
+                                        YARP_ROBOTS_INSTALL_DIR
+                                        YARP_QML2_IMPORT_DIR
+                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION ${YARP_CMAKE_DESTINATION})
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuration DESTINATION ${YARP_CMAKE_DESTINATION})
 
