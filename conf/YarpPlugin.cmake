@@ -345,9 +345,13 @@ endmacro(FIND_PACKAGE LIBNAME)
 # it.
 #
 macro(YARP_END_PLUGIN_LIBRARY bundle_name)
-    message(STATUS "ending plugin library: ${bundle_name}")
     # make sure we are the outermost plugin library, if nesting is present.
-    if("${bundle_name}" STREQUAL "${X_YARP_PLUGIN_MASTER}")
+    if(NOT "${bundle_name}" STREQUAL "${X_YARP_PLUGIN_MASTER}")
+        # If we are nested inside a larger plugin block, we don't
+        # have to do anything.
+        message(STATUS "ending nested plugin library ${bundle_name}")
+    else()
+        message(STATUS "ending plugin library: ${bundle_name}")
         # generate code to call all plugin initializers
         set(YARP_LIB_NAME ${X_YARP_PLUGIN_MASTER})
         get_property(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
@@ -383,7 +387,7 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         # give user access to a list of all the plugin libraries
         set(${X_YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
         set(X_YARP_PLUGIN_MODE FALSE) # neutralize redefined methods
-    endif("${bundle_name}" STREQUAL "${X_YARP_PLUGIN_MASTER}")
+    endif()
 endmacro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
 
