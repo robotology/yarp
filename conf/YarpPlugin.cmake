@@ -96,8 +96,6 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
 
         # Set some properties to an empty state
         set_property(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS) # list of plugins
-        set_property(GLOBAL PROPERTY YARP_BUNDLE_STUBS)   # list of stubs
-        set_property(GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE) # initializers
         set_property(GLOBAL PROPERTY YARP_BUNDLE_OWNERS)   # owner library
         set_property(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
         set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
@@ -179,7 +177,6 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
     if(ENABLE_${X_MYNAME})
         # Go ahead and prepare some code to wrap this plugin.
         set(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
-        set(fname_stub ${fdir}/yarpdev_stub_${plugin_name}.cpp)
         configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_${category}.cpp.in
                        ${fname} @ONLY)
 
@@ -375,11 +372,10 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib.h.in
                        ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.h @ONLY)
         get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
-        get_property(code_stub GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE)
         include_directories(${YARP_INCLUDE_DIRS})
         get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
         # add the library initializer code
-        add_library(${X_YARP_PLUGIN_MASTER} ${code} ${code_stub} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
+        add_library(${X_YARP_PLUGIN_MASTER} ${code} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
 
         if(TARGET YARP_OS)
             # Building YARP
