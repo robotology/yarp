@@ -169,6 +169,13 @@ public:
      *
      */
     virtual void attachPort(Contactable *port) = 0;
+
+    /**
+     *
+     * @return true if a reply will be made to a message.
+     *
+     */
+    virtual bool isReplying() = 0;
 };
 
 #endif

@@ -122,6 +122,7 @@ public:
     void reply(SizedWriter& writer) {
         writer.stopWrite();
         delegate->reply(*this,writer);
+        pendingReply = false;
     }
 
     // Documented in yarp::os::InputProtocol.
@@ -225,6 +226,21 @@ public:
     // Documented in yarp::os::ConnectionState.
     virtual Contactable *getContactable() {
         return port;
+    }
+
+    /**
+     *
+     * Promise that we'll be making a reply.
+     *
+     */
+    void willReply() {
+        pendingReply = true;
+    }
+
+
+    // Documented in yarp::os::InputProtocol.
+    virtual bool isReplying() {
+        return pendingReply;
     }
 
 private:
@@ -374,6 +390,7 @@ private:
     String envelope;         ///< envelope for current message
     NullConnection nullConnection; ///< dummy connection
     yarp::os::Contactable *port;   ///< port associated with this connection
+    bool pendingReply;  ///< will we be making a reply
 };
 
 #endif

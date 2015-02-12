@@ -475,3 +475,14 @@ bool PortCoreInputUnit::skipIncomingData(yarp::os::ConnectionReader& reader) {
     return false;
 }
 
+
+bool PortCoreInputUnit::isBusy() {
+    bool busy = false;
+    access.wait();
+    if (ip!=NULL) {
+        busy = ip->isReplying();
+    }
+    access.post();
+    return busy;
+}
+

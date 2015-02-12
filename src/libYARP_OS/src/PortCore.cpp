@@ -1368,7 +1368,7 @@ bool PortCore::isWriting() {
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
             if (unit!=NULL) {
-                if (unit->isOutput() && !unit->isFinished()) {
+                if (!unit->isFinished()) {
                     if (unit->isBusy()) {
                         writing = true;
                     }

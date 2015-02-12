@@ -115,6 +115,7 @@ public:
             ip->getReceiver().getCarrierParams(params);
     }
 
+    virtual bool isBusy();
 
 private:
     InputProtocol *ip;

@@ -29,6 +29,9 @@ yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {
     }
     writer->clear();
     writePending = true;
+    if (protocol!=NULL) {
+        protocol->willReply();
+    }
     return writer;
 }
 

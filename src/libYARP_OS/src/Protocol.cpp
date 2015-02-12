@@ -37,6 +37,7 @@ Protocol::Protocol(TwoWayStream* stream) :
     reader.setProtocol(this);
     envelope = "";
     port = NULL;
+    pendingReply = false;
 }
 
 bool Protocol::open(const ConstString& name) {
