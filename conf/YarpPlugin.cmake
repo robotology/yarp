@@ -401,6 +401,12 @@ macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
                    ${X_YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY)
     add_executable(${exename} ${X_YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp)
     target_link_libraries(${exename} ${bundle_name})
+    if(TARGET YARP_OS)
+        # Building YARP
+        target_link_libraries(${exename} YARP_OS YARP_init YARP_dev)
+    else()
+        target_link_libraries(${exename} YARP::YARP_OS YARP::YARP_init YARP::YARP_dev)
+    endif()
 endmacro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
 
