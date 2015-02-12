@@ -74,7 +74,11 @@ if(YARP_COMPILE_TESTS)
     endif()
 
     # Integration tests
-    add_subdirectory(integration)
+    option(YARP_TEST_INTEGRATION "Run integration tests (UNIX only)" FALSE)
+    mark_as_advanced(YARP_TEST_INTEGRATION)
+    if(YARP_TEST_INTEGRATION)
+      add_subdirectory(integration)
+    endif()
 endif()
 
 # touch 1 2 3 4
