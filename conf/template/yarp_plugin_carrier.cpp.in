@@ -11,13 +11,12 @@
 #include <yarp/os/SharedLibraryClass.h>
 #include <@YARPPLUG_INCLUDE@>
 
-#cmakedefine BUILD_SHARED_LIBS
-#ifdef BUILD_SHARED_LIBS
-#  define YARP_PLUGIN_IMPORT YARP_HELPER_DLL_IMPORT
-#  define YARP_PLUGIN_EXPORT YARP_HELPER_DLL_EXPORT
-#else
+#ifdef YARP_STATIC_PLUGIN
 #  define YARP_PLUGIN_IMPORT
 #  define YARP_PLUGIN_EXPORT
+#else
+#  define YARP_PLUGIN_IMPORT YARP_HELPER_DLL_IMPORT
+#  define YARP_PLUGIN_EXPORT YARP_HELPER_DLL_EXPORT
 #endif
 
 using namespace yarp::os;
