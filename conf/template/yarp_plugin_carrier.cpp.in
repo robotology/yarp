@@ -8,8 +8,8 @@
 
 #include <yarp/os/api.h>
 #include <yarp/os/impl/Carriers.h>
-using namespace yarp::os;
-using namespace yarp::os::impl;
+#include <yarp/os/SharedLibraryClass.h>
+#include <@YARPPLUG_INCLUDE@>
 
 #cmakedefine BUILD_SHARED_LIBS
 #ifdef BUILD_SHARED_LIBS
@@ -20,17 +20,15 @@ using namespace yarp::os::impl;
 #  define YARP_PLUGIN_EXPORT
 #endif
 
-#include <@YARPDEV_INCLUDE@>
+using namespace yarp::os;
+using namespace yarp::os::impl;
 
-#include <yarp/os/SharedLibraryClass.h>
-
-YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
-    Carriers::addCarrierPrototype(new @YARPDEV_TYPE@);
+YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
+    yarp::os::impl::Carriers::addCarrierPrototype(new @YARPPLUG_TYPE@);
 }
 
-
-YARP_PLUGIN_EXPORT void add_@YARPDEV_NAME@() {
-    add_owned_@YARPDEV_NAME@(NULL);
+YARP_PLUGIN_EXPORT void add_@YARPPLUG_NAME@() {
+    add_owned_@YARPPLUG_NAME@(NULL);
 }
 
-YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,Carrier)
+YARP_DEFINE_SHARED_SUBCLASS(@YARPPLUG_NAME@, @YARPPLUG_TYPE@, yarp::os::Carrier)

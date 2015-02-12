@@ -16,7 +16,6 @@
 #include <yarp/dev/Drivers.h>
 
 int main(int argc, char *argv[]) {
-	yarp::os::Network yarp;
+    yarp::os::Network yarp;
     return yarp::dev::Drivers::yarpdev(argc,argv);
 }
-

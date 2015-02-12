@@ -17,6 +17,7 @@
 #  define YARP_PLUGIN_EXPORT
 #endif
 
+
 @YARP_CODE_PRE@
 
 // give the function for adding devices a consistent name
@@ -27,7 +28,7 @@ static bool @YARP_LIB_NAME@_added = false;
 void add_@YARP_LIB_NAME@_devices() {
     if (!@YARP_LIB_NAME@_added) {
         @YARP_LIB_NAME@_added = true;
-        @YARP_CODE_POST@
+@YARP_CODE_POST@
     }
 }
 

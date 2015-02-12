@@ -1,45 +1,33 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Giacomo Spigler, Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- 
-IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(cuda TYPE CUDAGPU INCLUDE "CUDADeviceDriver.h")
-  YARP_ADD_DEVICE_FINGERPRINT(cuda.ini cuda)
-ENDIF (COMPILE_DEVICE_LIBRARY)
 
-IF (NOT SKIP_cuda)
-#  SET( CUDA_NUMTHREADS "64" CACHE STRING "lemieux" FORCE )
-  SET( CUDA_NUMTHREADS 64 CACHE STRING "" )
-  SET( CUDA_NUMTHREADBLOCKS 256 CACHE STRING "" )
+if(COMPILE_DEVICE_LIBRARY)
+  yarp_prepare_device(cuda TYPE CUDAGPU INCLUDE "CUDADeviceDriver.h")
+  yarp_add_device_fingerprint(cuda.ini cuda)
+endif(COMPILE_DEVICE_LIBRARY)
 
+if(NOT SKIP_cuda)
+#  set(CUDA_NUMTHREADS "64" CACHE STRING "lemieux" FORCE)
+  set(CUDA_NUMTHREADS 64 CACHE STRING "")
+  set(CUDA_NUMTHREADBLOCKS 256 CACHE STRING "")
 
+  find_package(YARP REQUIRED)
 
-  FIND_PACKAGE(YARP REQUIRED)
+  find_library(lib_cudart cudart)
+  find_library(lib_cuda cuda)
+  find_library(lib_cutil cutil)
+  find_library(lib_GL GL)
 
-  FIND_LIBRARY(lib_cudart cudart)
-  FIND_LIBRARY(lib_cuda cuda)
-  FIND_LIBRARY(lib_cutil cutil)
-  FIND_LIBRARY(lib_GL GL)
+  if(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
 
+    add_definitions(-DCUDA_NUMTHREADS=${CUDA_NUMTHREADS} -DCUDA_NUMTHREADBLOCKS=${CUDA_NUMTHREADBLOCKS})
+    yarp_add_plugin(ycuda CUDADeviceDriver.cpp CUDADeviceDriver.h FunctionClass.h)
+    target_link_libraries(ycuda ${lib_cudart} ${lib_cuda} ${lib_GL} ${lib_cutil})
 
-  SET (OK FALSE)
-  IF(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
-    SET (OK TRUE)
-  ENDIF(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
+  else()
+    message(FATAL_ERROR "could not find all libraries needed by cuda driver")
+  endif()
 
-  IF (OK)
-
-    LINK_LIBRARIES(${lib_cudart} ${lib_cuda} ${lib_GL} ${lib_cutil})
-
-    ADD_DEFINITIONS(-DCUDA_NUMTHREADS=${CUDA_NUMTHREADS} -DCUDA_NUMTHREADBLOCKS=${CUDA_NUMTHREADBLOCKS})
-
-    YARP_ADD_PLUGIN(ycuda CUDADeviceDriver.cpp CUDADeviceDriver.h FunctionClass.h)
-
-  ELSE (OK)
-
-    MESSAGE(FATAL_ERROR "could not find all libraries needed by cuda driver")
-
-  ENDIF (OK)
-
-ENDIF (NOT SKIP_cuda)
+endif()
 

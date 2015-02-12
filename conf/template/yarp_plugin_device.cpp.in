@@ -6,8 +6,10 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/Network.h>
+#include <yarp/os/api.h>
+#include <yarp/os/SharedLibraryClass.h>
 #include <yarp/dev/Drivers.h>
+#include <@YARPPLUG_INCLUDE@>
 
 #cmakedefine BUILD_SHARED_LIBS
 #ifdef BUILD_SHARED_LIBS
@@ -18,23 +20,19 @@
 #  define YARP_PLUGIN_EXPORT
 #endif
 
-#include <@YARPDEV_INCLUDE@>
-
 using namespace yarp::os;
 using namespace yarp::dev;
 
-#include <yarp/os/SharedLibraryClass.h>
-
-YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
-    DriverCreator *factory = 
-        new DriverCreatorOf<@YARPDEV_TYPE@>("@YARPDEV_NAME@",
-                                           "@YARPDEV_WRAPPER@",
-                                           "@YARPDEV_TYPE@");
-    Drivers::factory().add(factory); // hand factory over to YARP
+YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
+    yarp::dev::DriverCreator *factory =
+        new yarp::dev::DriverCreatorOf<@YARPPLUG_TYPE@>("@YARPPLUG_NAME@",
+                "@YARPPLUG_WRAPPER@",
+                "@YARPPLUG_TYPE@");
+    yarp::dev::Drivers::factory().add(factory); // hand factory over to YARP
 }
 
-YARP_PLUGIN_EXPORT void add_@YARPDEV_NAME@() {
-    add_owned_@YARPDEV_NAME@(NULL);
+YARP_PLUGIN_EXPORT void add_@YARPPLUG_NAME@() {
+    add_owned_@YARPPLUG_NAME@(NULL);
 }
 
-YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,DeviceDriver)
+YARP_DEFINE_SHARED_SUBCLASS(@YARPPLUG_NAME@, @YARPPLUG_TYPE@, yarp::dev::DeviceDriver)

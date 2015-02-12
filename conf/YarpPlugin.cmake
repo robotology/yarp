@@ -96,7 +96,7 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
 
         # Set some properties to an empty state
         set_property(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS) # list of plugins
-        set_property(GLOBAL PROPERTY YARP_BUNDLE_OWNERS)   # owner library
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_OWNERS)  # owner library
         set_property(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
         set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
 
@@ -144,16 +144,6 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
         set(fdir ${CMAKE_CURRENT_BINARY_DIR})
     endif(NOT fdir)
 
-    # We'll be expanding the code in template/yarp_plugin_*.cpp.in using
-    # the following variables:
-
-    set(YARPDEV_NAME "${plugin_name}")
-    set(YARPDEV_TYPE "${type}")
-    set(YARPDEV_INCLUDE "${include}")
-    set(YARPDEV_WRAPPER "${wrapper}")
-    set(YARPDEV_CATEGORY "${category}")
-    #set(ENABLE_YARPDEV_NAME "1")
-
     # Set up a flag to enable/disable compilation of this plugin.
     set(X_MYNAME "${X_YARP_PLUGIN_PREFIX}${plugin_name}")
     if(NOT COMPILE_BY_DEFAULT)
@@ -176,12 +166,18 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
     # the library source list.
     if(ENABLE_${X_MYNAME})
         # Go ahead and prepare some code to wrap this plugin.
-        set(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
+        set(_fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
+        # Variables used by the templates:
+        set(YARPPLUG_NAME "${plugin_name}")
+        set(YARPPLUG_TYPE "${type}")
+        set(YARPPLUG_INCLUDE "${include}")
+        set(YARPPLUG_WRAPPER "${wrapper}")
+        set(YARPPLUG_CATEGORY "${category}")
         configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_${category}.cpp.in
-                       ${fname} @ONLY)
+                       ${_fname} @ONLY)
 
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
-        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
+        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
         set(YARP_PLUGIN_ACTIVE TRUE)
         message(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
     else(ENABLE_${X_MYNAME})
