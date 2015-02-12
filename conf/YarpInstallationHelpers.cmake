@@ -189,7 +189,6 @@ path \"@_path@\"
       endif()
 
       if(NOT "$ENV{YARP_DATA_DIRS}" STREQUAL "")
-      message("${CMAKE_CURRENT_LIST_LINE}")
         set(_data_dirs "$ENV{YARP_DATA_DIRS}")
       else()
         set(_data_dirs "${YARP_DATA_INSTALL_DIR_FULL}")
@@ -197,12 +196,10 @@ path \"@_path@\"
       endif()
 
       if(YARP_INSTALL_PREFIX)
-      message("${CMAKE_CURRENT_LIST_LINE}")
         # Suggest to use the install tree
         set(_msg "Installation prefix is different from YARP")
         set(_path "${CMAKE_INSTALL_PREFIX}/${${_NAME}_DATA_INSTALL_DIR}")
       else()
-      message("${CMAKE_CURRENT_LIST_LINE}")
         # If yarp is used not installed, then it is very likely that the
         # will use the build tree for this package as well.
         # Suggest to use the build tree
