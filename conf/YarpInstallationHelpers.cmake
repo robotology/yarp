@@ -10,6 +10,7 @@ endif()
 
 include(CMakeParseArguments)
 include(GNUInstallDirs)
+include(CMakeDependentOption)
 
 
 # Define CMAKE_INSTALL_QMLDIR for installing QML plugins
@@ -215,8 +216,9 @@ path \"@_path@\"
   # Create and install the manifest file containing plugin search path
   # when requested
   if(YCEI_WITH_PLUGINS)
-    option(YARP_FORCE_SHARED_PLUGINS "Force YARP to create dynamically loaded plugins even if building static libraries." OFF)
-    mark_as_advanced(YARP_FORCE_SHARED_PLUGINS)
+    cmake_dependent_option(YARP_FORCE_DYNAMIC_PLUGINS "Force YARP to create dynamically loaded plugins even if building static libraries." OFF
+                           "NOT BUILD_SHARED_LIBS" OFF)
+    mark_as_advanced(YARP_FORCE_DYNAMIC_PLUGINS)
 
     set(_in_file "${CMAKE_BINARY_DIR}/CMakeFiles/${_name}.ini.in")
     set(_build_file "${CMAKE_BINARY_DIR}/${${_NAME}_PLUGIN_MANIFESTS_INSTALL_DIR}/${_name}.ini")
@@ -236,7 +238,7 @@ prefix \"@_prefix@\"
 type \"@_type@\"
 ")
 
-    if(YARP_FORCE_SHARED_PLUGINS OR BUILD_SHARED_LIBS)
+    if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
       set(_extension "${CMAKE_SHARED_LIBRARY_SUFFIX}")
       set(_prefix "${CMAKE_SHARED_LIBRARY_PREFIX}")
       set(_type "shared")
