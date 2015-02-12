@@ -492,9 +492,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
 static void fill_rgb_image(AVFrame *pict, int frame_index, int width, 
                            int height, ImageOf<PixelRgb>& img)
 {
-    int x, y, i;
-
-    i = frame_index;
+    int x, y;
 
     for(y=0;y<height;y++) {
         for(x=0;x<width;x++) {
@@ -758,7 +756,7 @@ bool FfmpegWriter::close() {
     av_write_trailer(oc);
 
     /* free the streams */
-    for(int i = 0; i < oc->nb_streams; i++) {
+    for(unsigned int i = 0; i < oc->nb_streams; i++) {
         av_freep(&oc->streams[i]->codec);
         av_freep(&oc->streams[i]);
     }
