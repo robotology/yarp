@@ -239,8 +239,8 @@ type \"@_type@\"
 ")
 
     if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
-      set(_extension "${CMAKE_SHARED_LIBRARY_SUFFIX}")
-      set(_prefix "${CMAKE_SHARED_LIBRARY_PREFIX}")
+      set(_extension "${CMAKE_SHARED_MODULE_SUFFIX}")
+      set(_prefix "${CMAKE_SHARED_MODULE_PREFIX}")
       set(_type "shared")
     else()
       set(_extension "${CMAKE_STATIC_LIBRARY_SUFFIX}")

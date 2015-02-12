@@ -4,10 +4,10 @@
 #include <yarp/dev/Drivers.h>
 
 
-YARP_DECLARE_DEVICES(@YARP_LIB_NAME@)
+@YARP_CODE_PRE@
 
 int main(int argc, char *argv[]) {
     yarp::os::Network yarp;
-    YARP_REGISTER_DEVICES(@YARP_LIB_NAME@)
+@YARP_CODE_POST@
     return yarp::dev::Drivers::yarpdev(argc,argv);
 }
