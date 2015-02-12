@@ -4,21 +4,17 @@
 
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(KinectDeviceLocal TYPE KinectDeviceDriverServer INCLUDE KinectYarpDeviceServerLib/KinectDeviceDriverServer.h)
-  yarp_prepare_device(KinectDeviceClient TYPE KinectDeviceDriverClient INCLUDE KinectYarpDeviceClientLib/KinectDeviceDriverClient.h)
   yarp_add_device_fingerprint(kinect.ini KinectDeviceLocal KinectDeviceClient)
 endif(COMPILE_DEVICE_LIBRARY)
 
-if(ENABLE_KinectDeviceLocal OR ENABLE_KinectDeviceClient)
-  find_package(YARP REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS})
-  link_libraries(${YARP_LIBRARIES})
+if(ENABLE_KinectDeviceLocal)
+  add_subdirectory(KinectYarpDeviceServerLib)
 endif()
 
-if(ENABLE_KinectDeviceLocal)
-  add_subdirectory (KinectYarpDeviceServerLib)
-  set(CORELIBS ${YARP_LIBRARIES} YarpInterfaceLib)
-endif()
+if(COMPILE_DEVICE_LIBRARY)
+  yarp_prepare_device(KinectDeviceClient TYPE KinectDeviceDriverClient INCLUDE KinectYarpDeviceClientLib/KinectDeviceDriverClient.h)
+endif(COMPILE_DEVICE_LIBRARY)
 
 if(ENABLE_KinectDeviceClient)
-  add_subdirectory (KinectYarpDeviceClientLib)
+  add_subdirectory(KinectYarpDeviceClientLib)
 endif()

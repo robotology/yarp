@@ -2,6 +2,9 @@
 # Author: Duarte Aragao
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+find_package(YARP REQUIRED)
+include_directories(${YARP_INCLUDE_DIRS})
+
 # Search for source code.
 file(GLOB folder_source *.cpp *.cc *.c)
 file(GLOB folder_header *.h)

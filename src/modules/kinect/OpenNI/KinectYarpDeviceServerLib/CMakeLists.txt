@@ -2,6 +2,9 @@
 # Author: Duarte Aragao
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+find_package(YARP REQUIRED)
+include_directories(${YARP_INCLUDE_DIRS})
+
 #OPENNI Lib
 # message("$ENV{OPEN_NI_INCLUDE}")
 #ONLY TESTED WITH THE ROS OPENNI
