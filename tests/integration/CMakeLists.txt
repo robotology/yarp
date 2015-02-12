@@ -25,7 +25,12 @@ endforeach()
 add_test("integration::runtime" ${CMAKE_SOURCE_DIR}/scripts/admin/check-runtime.sh)
 set_property(TEST "integration::runtime" PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
 
-# Sanity check for YARP http support against curl
-add_test("integration::http" ${CMAKE_CURRENT_SOURCE_DIR}/check-http.sh)
-set_property(TEST "integration::http" PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
+set(SIMPLE_TESTS 
+  http # Sanity check for YARP http support against curl
+  rpc  # Make sure replies get through when port closed immediately
+)
 
+foreach(test ${SIMPLE_TESTS})
+  add_test("integration::${test}" ${CMAKE_CURRENT_SOURCE_DIR}/check-${test}.sh)
+  set_property(TEST "integration::${test}" PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
+endforeach()
