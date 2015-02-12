@@ -4,7 +4,6 @@
 
 if(COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(mpi_carrier TYPE MpiP2PCarrier INCLUDE include/yarp/os/MpiP2PCarrier.h)
-  yarp_prepare_carrier(mpibcast_carrier TYPE MpiBcastCarrier INCLUDE include/yarp/os/MpiBcastCarrier.h)
   yarp_add_carrier_fingerprint(mpi.ini mpi_carrier mpibcast_carrier)
 endif(COMPILE_PLUGIN_LIBRARY)
 
@@ -38,6 +37,11 @@ if(NOT SKIP_mpi_carrier)
   target_link_libraries(yarp_mpi ${MPI_LIBRARIES})
 
 endif(NOT SKIP_mpi_carrier)
+
+
+if(COMPILE_PLUGIN_LIBRARY)
+  yarp_prepare_carrier(mpibcast_carrier TYPE MpiBcastCarrier INCLUDE include/yarp/os/MpiBcastCarrier.h)
+endif(COMPILE_PLUGIN_LIBRARY)
 
 if(NOT SKIP_mpibcast_carrier)
 

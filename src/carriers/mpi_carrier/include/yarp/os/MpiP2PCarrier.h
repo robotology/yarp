@@ -33,29 +33,33 @@ public:
     MpiP2PCarrier() : MpiCarrier() {
         target = "MPI_____";
     }
+
     virtual ~MpiP2PCarrier() {
     }
-    void close() {
+
+    virtual void close() {
         #ifdef MPI_DEBUG
         printf("[MpiP2PCarrier @ %s] Closing carrier \n", name.c_str() );
         #endif
         delete comm;
     }
-    Carrier *create() {
+
+    virtual Carrier *create() {
         return new MpiP2PCarrier();
     }
-    void createStream(bool sender) {
+
+    virtual void createStream(bool sender) {
         comm = new MpiComm(route);
         stream = new MpiP2PStream(route, comm);
     }
-    String getName() {
-        return "mpi";}
-    bool supportReply() {
-        return true;}
 
+    virtual ConstString getName() {
+        return "mpi";
+    }
 
+    virtual bool supportReply() {
+        return true;
+    }
 };
 
 #endif //_YARP_MPIP2PCARRIER_
-
-

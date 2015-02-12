@@ -43,32 +43,40 @@ public:
     MpiBcastCarrier() : MpiCarrier(), electionMember(false) {
         target = "MPIBCAST";
     }
-    ~MpiBcastCarrier();
-    void close();
-    Carrier *create() {
+
+    virtual ~MpiBcastCarrier();
+
+    virtual void close();
+
+    virtual Carrier *create() {
         return new MpiBcastCarrier();
     }
-    void createStream(bool sender);
-    ConstString getName() {
-        return "bcast";}
-    bool supportReply() {
-        return false;}
-    bool isBroadcast() {
+
+    virtual void createStream(bool sender);
+
+    virtual ConstString getName() {
+        return "bcast";
+    }
+
+    virtual bool supportReply() {
+        return false;
+    }
+
+    virtual bool isBroadcast() {
         return true;
     }
-    void prepareDisconnect();
 
-    bool expectReplyToHeader(ConnectionState&  proto) {
+    virtual void prepareDisconnect();
+
+    virtual bool expectReplyToHeader(ConnectionState&  proto) {
         bool ok = MpiCarrier::expectReplyToHeader(proto);
         dynamic_cast<MpiBcastStream*> (stream)->post();
         return ok;
     }
 
-    bool isActive();
-    bool isElect();
+    virtual bool isActive();
 
+    virtual bool isElect();
 };
 
 #endif //_YARP_MPIBCASTCARRIER_
-
-

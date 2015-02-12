@@ -47,10 +47,13 @@ public:
     virtual void createStream(bool sender) = 0;
 
     virtual bool isConnectionless() {
-        return false;}
+        return false;
+    }
 
     virtual bool canEscape() {
-        return true;}
+        return true;
+    }
+
     virtual bool supportReply() = 0;
 
 
@@ -74,19 +77,24 @@ public:
     }
 
     virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
-        return true; }
+        return true;
+    }
+
     virtual bool expectIndex(ConnectionState& proto) {
-        return true; }
+        return true;
+    }
 
     /////////////////////////////////////////////////
     // Acknowledgements, we don't do them
 
     virtual bool sendAck(ConnectionState& proto) {
-        return true; }
+        return true;
+    }
+
     virtual bool expectAck(ConnectionState& proto) {
-        return true; }
+        return true;
+    }
 
 };
 
 #endif //_YARP_MPICARRIER_
-
