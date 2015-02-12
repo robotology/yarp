@@ -2,7 +2,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(dynamixelAX12Ftdi TYPE DynamixelAX12FtdiDriver INCLUDE "DynamixelAX12FtdiDriver.h" WRAPPER controlboard)
+  yarp_prepare_device(dynamixelAX12Ftdi TYPE yarp::dev::DynamixelAX12FtdiDriver INCLUDE "DynamixelAX12FtdiDriver.h" WRAPPER controlboard)
   YARP_ADD_DEVICE_FINGERPRINT(dynamixelAX12Ftdi.ini dynamixelAX12Ftdi)
 endif(COMPILE_DEVICE_LIBRARY)
 

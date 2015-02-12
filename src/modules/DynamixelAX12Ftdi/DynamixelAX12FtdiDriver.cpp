@@ -213,7 +213,7 @@ int DynamixelAX12FtdiDriver::sendCommand(unsigned char id, unsigned char inst[],
     int i;
     int retCode = 0;
     bool badAnswer = false;
-    unsigned char command[5 + size];
+    unsigned char command[16];
     unsigned char chksum = 0x00;
     unsigned char header[4];
     unsigned char body[256];
@@ -232,16 +232,16 @@ int DynamixelAX12FtdiDriver::sendCommand(unsigned char id, unsigned char inst[],
     }
 
     // Calculate checksum
-    command[sizeof (command) - 1] = ~(chksum + command[2] + command[3]);
+    command[size + 5 - 1] = ~(chksum + command[2] + command[3]);
 #ifdef __DEBUG__
     printf("Packet sent: ");
-    for (i = 0; i < sizeof (command); i++) {
+    for (i = 0; i < size + 5; i++) {
         printf("%X ", command[i]);
     }
     printf("\n");
 #endif
     // Write data to device
-    retCode = ftdi_write_data(&ftdic, command, sizeof (command));
+    retCode = ftdi_write_data(&ftdic, command, size + 5);
 
     // Now receive return packet
     if (id != AX12_BROADCAST_ID) {
@@ -478,7 +478,7 @@ bool DynamixelAX12FtdiDriver::setRefSpeeds(const double *spds) {
         if (!setRefSpeed(k, spds[k]))
             t = false;
     }
-    return true;
+    return t;
 }
 
 /**
@@ -597,10 +597,10 @@ bool DynamixelAX12FtdiDriver::setTorques(const double *t) {
  */
 bool DynamixelAX12FtdiDriver::setTorque(int j, double t) {
     if (t < 0) {
-        ACE_OS::fprintf(stderr, "torque (%d) should in range [0 1023] or [0 0x3FF]. t is set to 0 here\n", t);
+        ACE_OS::fprintf(stderr, "torque (%d) should in range [0 1023] or [0 0x3FF]. t is set to 0 here\n", (int)t);
         t = 0;
     } else if (t > 1023) {
-        ACE_OS::fprintf(stderr, "torque (%d) should in range [0 1023] or [0 0x3FF]. t is set to 1023 here\n", t);
+        ACE_OS::fprintf(stderr, "torque (%d) should in range [0 1023] or [0 0x3FF]. t is set to 1023 here\n", (int)t);
         t = 1023;
     }
 
