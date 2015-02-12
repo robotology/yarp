@@ -4,13 +4,12 @@
 
 cmake_minimum_required(VERSION 2.8.9)
 
-IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(foodevice TYPE foodevice INCLUDE "foodevice.h")
-ENDIF (COMPILE_DEVICE_LIBRARY)
- 
-IF (NOT SKIP_foodevice)
-  FIND_PACKAGE(YARP REQUIRED)
-  INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-  LINK_LIBRARIES(${YARP_LIBRARIES})
-  ADD_LIBRARY(foodevice foodevice.cpp foodevice.h)
-ENDIF (NOT SKIP_foodevice)
+if(COMPILE_DEVICE_LIBRARY)
+  yarp_prepare_device(foodevice TYPE foodevice INCLUDE "foodevice.h")
+endif(COMPILE_DEVICE_LIBRARY)
+
+if(NOT SKIP_foodevice)
+  find_package(YARP REQUIRED)
+  include_directories(${YARP_INCLUDE_DIRS})
+  yarp_add_plugin(foodevice foodevice.cpp foodevice.h)
+endif(NOT SKIP_foodevice)

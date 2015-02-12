@@ -4,13 +4,12 @@
 
 cmake_minimum_required(VERSION 2.8.9)
 
-IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(foobot TYPE foobot INCLUDE "foobot.h")
-ENDIF (COMPILE_DEVICE_LIBRARY)
- 
-IF (NOT SKIP_foobot)
-  FIND_PACKAGE(YARP REQUIRED)
-  INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-  LINK_LIBRARIES(${YARP_LIBRARIES})
-  ADD_LIBRARY(foobot foobot.cpp foobot.h)
-ENDIF (NOT SKIP_foobot)
+if(COMPILE_DEVICE_LIBRARY)
+  yarp_prepare_device(foobot TYPE foobot INCLUDE "foobot.h")
+endif(COMPILE_DEVICE_LIBRARY)
+
+if(NOT SKIP_foobot)
+  find_package(YARP REQUIRED)
+  include_directories(${YARP_INCLUDE_DIRS})
+  yarp_add_plugin(foobot foobot.cpp foobot.h)
+endif(NOT SKIP_foobot)

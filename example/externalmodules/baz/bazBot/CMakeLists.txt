@@ -4,13 +4,12 @@
 
 cmake_minimum_required(VERSION 2.8.9)
 
-IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(bazbot TYPE bazbot INCLUDE "bazbot.h")
-ENDIF (COMPILE_DEVICE_LIBRARY)
- 
-IF (NOT SKIP_bazbot)
-  FIND_PACKAGE(YARP REQUIRED)
-  INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-  LINK_LIBRARIES(${YARP_LIBRARIES})
-  ADD_LIBRARY(bazbot bazbot.cpp bazbot.h)
-ENDIF (NOT SKIP_bazbot)
+if(COMPILE_DEVICE_LIBRARY)
+  yarp_prepare_device(bazbot TYPE bazbot INCLUDE "bazbot.h")
+endif(COMPILE_DEVICE_LIBRARY)
+
+if(NOT SKIP_bazbot)
+  find_package(YARP REQUIRED)
+  include_directories(${YARP_INCLUDE_DIRS})
+  yarp_add_plugin(bazbot bazbot.cpp bazbot.h)
+endif(NOT SKIP_bazbot)
