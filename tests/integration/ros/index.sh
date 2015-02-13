@@ -8,6 +8,9 @@
 # Call with the name of a test to run that test
 # Call with the special name "all" to run all tests
 
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $SCRIPT_DIR/../test-helper.sh
+
 active_test="$1"
 available_tests=""
 
@@ -44,132 +47,9 @@ if [[ ! "$active_test" = "" ]]; then
 fi
 
 ########################################################################
-# Some utilities and cleanup code
-
-# Print a header for the test
-function header {
-    echo " "
-    echo "====================================================================="
-    echo "== $1"
-    echo " "
-}
-    
-function wait_file {
-    fname="$1"
-    while [ "`cat $fname | wc -c`" = "0" ] ; do
-	echo "waiting for $fname"
-	sleep 1
-    done
-}
-
-function wait_node_topic {
-    node="$1"
-    topic="$2"
-    rostopic info $topic | grep $node
-    while [ "`rostopic info $topic | grep $node | wc -c`" = "0" ] ; do
-	echo "waiting for $node on $topic"
-	sleep 1
-    done
-}
-
-function wait_node_service {
-    node="$1"
-    topic="$2"
-    rosservice info $topic | grep $node
-    while [ "`rosservice info $topic | grep $node | wc -c`" = "0" ] ; do
-	echo "waiting for $node on $topic"
-	sleep 1
-    done
-}
-
-function wait_topic_gone {
-    topic="$1"
-    while rostopic info $topic ; do
-	echo "waiting for $topic to disappear"
-	sleep 1
-    done
-}
-
-function wait_node {
-    node="$1"
-    key="$2"
-    while [ "`rosnode list | grep $node | wc -c`" = "0" ] ; do
-	echo "waiting for $node"
-	sleep 1
-    done
-    while [ "`rosnode info $node | grep $key | wc -c`" = "0" ] ; do
-	echo "waiting for $node with key $key"
-	sleep 1
-    done
-}
-
-# Track PIDs of some processes we'll be running, for cleanup purposes
-SERVER_ID=""
-HELPER_ID=""
-HELPER2_ID=""
-ROS_ID=""
-
-cleanup_helper() {
-    if [ ! "k$HELPER_ID" = "k" ]; then
-	echo "Removing helper"
-	kill $HELPER_ID || true
-	wait $HELPER_ID || true
-	HELPER_ID=""
-    fi
-    if [ ! "k$HELPER2_ID" = "k" ]; then
-	echo "Removing helper"
-	kill $HELPER2_ID || true
-	wait $HELPER2_ID || true
-	HELPER2_ID=""
-    fi
-}
-
-cleanup_all() {
-    cleanup_helper
-    if [ ! "k$SERVER_ID" = "k" ]; then
-	echo "Removing yarp server"
-	kill $SERVER_ID || true
-	wait $SERVER_ID || true
-	SERVER_ID=""
-    fi
-    if [ ! "k$ROS_ID" = "k" ]; then
-	echo "Removing ros server"
-	kill $ROS_ID || true
-	wait $ROS_ID || true
-	ROS_ID=""
-    fi
-}
-trap cleanup_all EXIT
-
-
-########################################################################
 if [[ ! "$active_test" = "" ]]; then
-    header "Start name servers if needed"
-
-    rostopic list || {
-	echo "String roscore"
-	roscore > /dev/null &
-	ROS_ID=$!
-    }
-    
-    while ! rostopic list; do
-	echo "Waiting for roscore"
-	sleep 1
-    done
-    
-    ${YARP_BIN}/yarp where || {
-	echo "Starting yarpserver"
-	${YARP_BIN}/yarpserver --ros --write > /dev/null &
-	SERVER_ID=$!
-    }
-    
-    while ! ${YARP_BIN}/yarp detect --write; do
-	echo "Waiting for yarpserver"
-	sleep 1
-    done
-    
-    echo "roscore is OK"
-    echo "yarpserver is OK"
+    require_ros_name_server
+    require_name_server
 fi
 
 ########################################################################
@@ -177,7 +57,7 @@ if is_test name_registration; then
     header "Test name gets listed"
     
     ${YARP_BIN}/yarp read /test/msg@/test_node &
-    HELPER_ID=$!
+    add_helper $!
     
     wait_node_topic /test_node /test/msg
     
@@ -200,21 +80,19 @@ if is_test bag_record; then
     make
 
     rosrun rosbag record -a -O log.bag &
-    HELPER_ID=$!
+    add_helper $!
     sleep 5
     ./test_topic $root wait
     
     echo "Stopping rosbag process"
-    kill -s SIGINT $HELPER_ID
-    wait $HELPER_ID || echo ok
-    HELPER_ID=""
+    cleanup_helper SIGINT
     test log.bag
     
     echo "Topic should now be gone"
     rostopic info $root/str && exit 1 || echo "(this is correct)."
     
     $YARP_BIN/yarp read $root/str@$root/reader > replay.txt &
-    HELPER_ID=$!
+    add_helper $!
     rosbag play log.bag --topics $root/str
     cleanup_helper
     
@@ -224,7 +102,7 @@ if is_test bag_record; then
     }
     
     rostopic echo $root/img -n 1 > replay_image.txt &
-    HELPER_ID=$!
+    add_helper $!
     rosbag play log.bag --topics $root/img
     cleanup_helper
     
@@ -234,7 +112,7 @@ if is_test bag_record; then
     }
     
     rostopic echo $root/disp -n 1 > replay_disp.txt &
-    HELPER_ID=$!
+    add_helper $!
     rosbag play log.bag --topics $root/disp
     cleanup_helper
 
@@ -244,7 +122,7 @@ if is_test bag_record; then
     }
     
     rostopic echo $root/cloud -n 1 > replay_cloud.txt &
-    HELPER_ID=$!
+    add_helper $!
     rosbag play log.bag --topics $root/cloud
     cleanup_helper
     
@@ -264,7 +142,7 @@ if is_test type_registration_write; then
     typ="test_write/pid$$"
     topic="/test/msg/$typ"
     
-    HELPER_ID=$( { { yes 0<&4 & echo $! >&3 ; } 4<&0 | ${YARP_BIN}/yarp write $topic@/test_node --type $typ >/dev/null & } 3>&1 | head -1 )
+    add_helper $( { { yes 0<&4 & echo $! >&3 ; } 4<&0 | ${YARP_BIN}/yarp write $topic@/test_node --type $typ >/dev/null & } 3>&1 | head -1 )
 
     wait_node_topic /test_node $topic
     ${YARP_BIN}/yarp wait $topic@/test_node
@@ -302,7 +180,7 @@ if is_test type_registration_read; then
     typ="test_read/pid$$"
     topic="/test/msg/$typ"
     ${YARP_BIN}/yarp read $topic@/test_node --type $typ &
-    HELPER_ID=$!
+    add_helper $!
 
     wait_node_topic /test_node $topic
 
@@ -329,7 +207,7 @@ if is_test type_registration_twiddle; then
     typ="test_twiddle/pid$$"
     topic="/test/msg/$typ"
     ${YARP_BIN}/yarp read $topic@/test_node~$typ &
-    HELPER_ID=$!
+    add_helper $!
     
     wait_node_topic /test_node $topic
     
@@ -356,7 +234,7 @@ if is_test against_tutorial_listener; then
     rm -f ${BASE}listener.log
     touch ${BASE}listener.log
     stdbuf --output=L rosrun rospy_tutorials listener > ${BASE}listener.log &
-    HELPER_ID=$!
+    add_helper $!
     
     echo "Hello" | ${YARP_BIN}/yarp write /chatter@/ros/check/write --type std_msgs/String --wait-connect
     
@@ -387,7 +265,7 @@ if is_test against_tutorial_talker; then
 
     rosrun rospy_tutorials talker &
     stdbuf --output=L ${YARP_BIN}/yarp read /chatter@/ros/check/read > ${BASE}talker.log &
-    HELPER_ID=$!
+    add_helper $!
 
     wait_file ${BASE}talker.log
     result=`cat ${BASE}talker.log | head -n1 | sed "s/world .*/world/" | sed "s/[^a-z ]//g"`
@@ -419,7 +297,7 @@ if is_test against_tutorial_add_two_ints_server; then
     rm -f rospy_tutorials_AddTwoInts
     
     ${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros --web false &
-    HELPER_ID=$!
+    add_helper $!
     wait_node /yarpros /typ
 
     rosrun rospy_tutorials add_two_ints_server &
@@ -452,7 +330,7 @@ if is_test images_yarp_to_ros; then
     topic="/test/image/$typ/pid$$"
     echo ${YARP_BIN}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8
     ${YARP_BIN}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8 &
-    HELPER_ID=$!
+    add_helper $!
 
     wait_node_topic $node $topic
 
@@ -491,7 +369,7 @@ if is_test images_ros_to_yarp; then
     rm -f ${BASE}rimage.log
     touch ${BASE}rimage.log
     stdbuf --output=L ${YARP_BIN}/yarp read $topic@$node > ${BASE}rimage.log &
-    HELPER_ID=$!
+    add_helper $!
     wait_node_topic $node $topic
     rostopic pub -f ${BASE}image.log $topic sensor_msgs/Image || echo ok
 
@@ -603,11 +481,11 @@ if is_test cpp_talker_listener_v1; then
  
     export YARP_RENAME_chatter__yarp_talker="$root@$root/talker"
     $PWD/talker &
-    HELPER_ID=$!
+    add_helper $!
 
     export YARP_RENAME_chatter__yarp_listener="$root@$root/listener"
     stdbuf --output=L $PWD/listener_v1 > log.txt &
-    HELPER2_ID=$!
+    add_helper $!
 
     wait_for_log 3 30
  
@@ -625,12 +503,12 @@ if is_test cpp_talker_listener_v2; then
  
     export YARP_RENAME_chatter__yarp_talker="$root@$root/talker"
     $PWD/talker &
-    HELPER_ID=$!
+    add_helper $!
 
     export YARP_RENAME_chatter__yarp_listener="$root@$root/listener"
     export YARP_RENAMEchatter="$root@$root/listener"
     stdbuf --output=L $PWD/listener_v2 > log.txt &
-    HELPER2_ID=$!
+    add_helper $!
 
     wait_for_log 3 30
  
@@ -648,14 +526,14 @@ for client in v1 v1b v2; do
 	    rossrv show yarp_test/AddTwoInts
 
 	    ${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros --web false --verbose 1 &
-	    HELPER_ID=$!
+	    add_helper $!
 	    wait_node /yarpros /typ
 
 	    export YARP_RENAME_add_two_ints__yarp_add_int_server=/add_two_ints@$root/server
 	    export YARP_RENAME_add_two_ints__yarp_add_int_client=/add_two_ints@$root/client
 	    export YARP_RENAMEadd_two_ints="/add_two_ints@$root/server"
 	    $PWD/add_int_server_${server} &
-	    HELPER2_ID=$!
+	    add_helper $!
 	    wait_node_service $root/server /add_two_ints
 	    
 	    export YARP_RENAMEadd_two_ints="/add_two_ints@$root/client"
