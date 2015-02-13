@@ -51,11 +51,11 @@ The command-line utility "yarpmanager-console" and its graphical companions "yar
 See \ref application, \ref module and \ref resource for more information on how to use XML model to describe each of these concepts.
 
 \section configuration Configuration
-Default configuration file known as "ymanager.ini" can be automatically loaded by (g)yarpmanager from the same folder running the manager; or it can be indicated by parameter "\-\-config". Using the configuration files, one can explicitly indicates the paths where (g)yarpmanager should search for applications, resources or modules. If the configuration file is not provided, then (g)yarpmanager will search for the corresponding XML files in the Yarp data directories (see \ref yarp_data_dirs).
+Default configuration file known as "ymanager.ini" can be automatically loaded by (g)yarpmanager from the same folder running the manager; or it can be indicated by parameter "--from" and "--context", following Yarp Resource Finder policies (see \ref yarp_resource_finder_basic). Using the configuration files, one can explicitly indicates the paths where (g)yarpmanager should search for applications, resources or modules. If the configuration file is not provided, then (g)yarpmanager will search for the corresponding XML files in the Yarp data directories (see \ref yarp_data_dirs).
 
 \verbatim
-$ yarpmanager --config <my_config_file>
-$ gyarpmanager --config <my_config_file>
+$ yarpmanager --from <path to my_config_file>
+$ gyarpmanager --from <path to my_config_file>
 \endverbatim
 
 The below example shows the syntax of configuration file:
