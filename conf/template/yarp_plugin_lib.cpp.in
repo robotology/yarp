@@ -30,6 +30,3 @@ void add_@YARP_LIB_NAME@_devices() {
 @YARP_CODE_POST@
     }
 }
-
-
-

@@ -167,7 +167,7 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
     # the library source list.
     if(ENABLE_${X_MYNAME})
         # Go ahead and prepare some code to wrap this plugin.
-        set(_fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
+        set(_fname ${fdir}/${X_YARP_PLUGIN_MASTER}_add_${plugin_name}.cpp)
         # Variables used by the templates:
         set(YARPPLUG_NAME "${plugin_name}")
         set(YARPPLUG_TYPE "${type}")
@@ -344,9 +344,9 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
                 set(YARP_CODE_POST "${YARP_CODE_POST}\n        add_owned_${dev}(\"${owner}\");")
             endif()
         endforeach()
-        configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib.cpp.in
+        configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_lib.cpp.in
                        ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp @ONLY)
-        configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib.h.in
+        configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_lib.h.in
                        ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.h @ONLY)
         get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
         include_directories(${YARP_INCLUDE_DIRS})
@@ -387,9 +387,9 @@ macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
       set(YARP_CODE_PRE "YARP_DECLARE_DEVICES(${bundle_name})")
       set(YARP_CODE_POST "    YARP_REGISTER_DEVICES(${bundle_name})")
     endif()
-    configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib_main.cpp.in
-                   ${X_YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY)
-    add_executable(${exename} ${X_YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp)
+    configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_yarpdev_main.cpp.in
+                   ${X_YARP_PLUGIN_GEN}/${bundle_name}_yarpdev.cpp @ONLY)
+    add_executable(${exename} ${X_YARP_PLUGIN_GEN}/${bundle_name}_yarpdev.cpp)
     target_link_libraries(${exename} ${bundle_name})
     if(TARGET YARP_OS)
         # Building YARP
