@@ -165,6 +165,7 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
 {
   char buffer[40];
   double bemfGain = 0;
+  double ktau = 0;
 
   //fprintf(stderr, "%s \n", gtk_entry_get_text((GtkEntry*) kpDes));
   pid->kp = atoi(gtk_entry_get_text((GtkEntry*) trq_kpDes));
@@ -173,6 +174,7 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kiDes));
   pid->kff = atoi(gtk_entry_get_text((GtkEntry*) trq_kffDes));
   bemfGain = atoi(gtk_entry_get_text((GtkEntry*) trq_kbemfDes));
+  ktau = atoi(gtk_entry_get_text((GtkEntry*) trq_ktauDes));
   pid->scale = atoi(gtk_entry_get_text((GtkEntry*) trq_scaleDes));
   pid->offset = atoi(gtk_entry_get_text((GtkEntry*) trq_offsetDes));
   pid->stiction_up_val = atoi(gtk_entry_get_text((GtkEntry*) trq_upStictionDes));
@@ -181,10 +183,19 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) trq_INT_limitDes));
 
   iTrq->setTorquePid(*joint, *pid);
-  iTrq->setBemfParam(*joint, bemfGain);
+
+  {MotorTorqueParameters m;
+  m.bemf=bemfGain;
+  m.ktau=ktau;
+  iTrq->setMotorTorqueParams(*joint,m);}
+
   yarp::os::Time::delay(0.005);
   iTrq->getTorquePid(*joint, pid);
-  iTrq->getBemfParam(*joint, (double*)&bemfGain);
+
+  {MotorTorqueParameters m;
+  iTrq->getMotorTorqueParams(*joint,&m);
+  ktau=m.ktau;
+  bemfGain=m.bemf;}
 
   sprintf(buffer, "%d", (int) pid->kp);
   gtk_entry_set_text((GtkEntry*) trq_kpEntry,  buffer);
@@ -200,7 +211,10 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   
   sprintf(buffer, "%d", (int) bemfGain);
   gtk_entry_set_text((GtkEntry*) trq_kbemfEntry,  buffer);
-  
+
+  sprintf(buffer, "%d", (int) ktau);
+  gtk_entry_set_text((GtkEntry*) trq_ktauEntry,  buffer);
+
   sprintf(buffer, "%d", (int) pid->kff);
   gtk_entry_set_text((GtkEntry*) trq_kffEntry,  buffer);
   
@@ -495,6 +509,7 @@ void guiPid2::guiPid2(void *button, void* data)
   Pid myPosPid(0,0,0,0,0,0);
   Pid myTrqPid(0,0,0,0,0,0);
   double bemfGain=0;
+  double ktau=0;
   double stiff_val=0;
   double damp_val=0;
   double stiff_max=0;
@@ -515,7 +530,12 @@ void guiPid2::guiPid2(void *button, void* data)
   iPid->getPid(*joint, &myPosPid);
   yarp::os::Time::delay(0.005);
   iTrq->getTorquePid(*joint, &myTrqPid);
-  iTrq->getBemfParam(*joint, &bemfGain);
+  
+  MotorTorqueParameters params;
+  iTrq->getMotorTorqueParams(*joint, &params);
+  bemfGain=params.bemf;
+  ktau=params.ktau;
+
   yarp::os::Time::delay(0.005);
   iImp->getImpedance(*joint, &stiff_val, &damp_val);
   iImp->getImpedanceOffset(*joint, &impedance_offset_val);
@@ -726,6 +746,12 @@ void guiPid2::guiPid2(void *button, void* data)
   //kbemf desired
   trq_kbemfDes   =  gtk_entry_new();
   changePidValue((int) bemfGain, note_pag2, trq_kbemfDes, 400, 70, "Desired Trq Kbemf");
+  //ktau
+  trq_ktauEntry   =  gtk_entry_new();
+  displayPidValue((int) ktau, note_pag2, trq_ktauEntry, 280, 140, "Current Trq Ktau");
+  //ktau desired
+  trq_ktauDes   =  gtk_entry_new();
+  changePidValue((int) ktau, note_pag2, trq_ktauDes, 400, 140, "Desired Trq Ktau");
 
   //scale
   trq_scaleEntry   =  gtk_entry_new();
