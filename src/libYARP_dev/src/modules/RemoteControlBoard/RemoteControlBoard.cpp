@@ -2533,6 +2533,7 @@ public:
     {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_TORQUE);
         cmd.addVocab(VOCAB_MOTOR_PARAMS);
         cmd.addInt(j);
         Bottle& b = cmd.addList();
