@@ -74,28 +74,28 @@ extern "C" {
  * working with.
  *
  */
-#define YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,basename)       \
+#define YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,basename) \
     YARP_SHARED_CLASS_FN void *factoryname ## _create () { return (basename *)new classname; } \
     YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { delete (classname *)obj; } \
-    YARP_SHARED_CLASS_FN int factoryname ## _getVersion (char *ver, int len) { return 0; }   \
-    YARP_SHARED_CLASS_FN int factoryname ## _getAbi (char *abi, int len) { return 0; }       \
+    YARP_SHARED_CLASS_FN int factoryname ## _getVersion (char *ver, int len) { return 0; } \
+    YARP_SHARED_CLASS_FN int factoryname ## _getAbi (char *abi, int len) { return 0; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getClassName (char *name, int len) { char cname[] = # classname; strncpy(name,cname,len); return strlen(cname)+1; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getBaseClassName (char *name, int len) { char cname[] = # basename; strncpy(name,cname,len); return strlen(cname)+1; } \
     YARP_SHARED_CLASS_FN int factoryname(void *api,int len) { \
-    struct yarp::os::SharedLibraryClassApi *sapi = (struct yarp::os::SharedLibraryClassApi *) api; \
-    if (len<(int)sizeof(yarp::os::SharedLibraryClassApi)) return -1;    \
-    sapi->startCheck = VOCAB4('Y','A','R','P'); \
-    sapi->structureSize = sizeof(yarp::os::SharedLibraryClassApi);  \
-    sapi->systemVersion = 3; \
-    sapi->create = factoryname ## _create; \
-    sapi->destroy = factoryname ## _destroy; \
-    sapi->getVersion = factoryname ## _getVersion; \
-    sapi->getAbi = factoryname ## _getAbi; \
-    sapi->getClassName = factoryname ## _getClassName; \
-    sapi->getBaseClassName = factoryname ## _getBaseClassName; \
-    for (int i=0; i<YARP_SHAREDLIBRARYCLASSAPI_PADDING; i++) { sapi->roomToGrow[i] = 0; } \
-    sapi->endCheck = VOCAB4('P','L','U','G');        \
-    return sapi->startCheck;                    \
+        struct yarp::os::SharedLibraryClassApi *sapi = (struct yarp::os::SharedLibraryClassApi *) api; \
+        if (len<(int)sizeof(yarp::os::SharedLibraryClassApi)) return -1; \
+        sapi->startCheck = VOCAB4('Y','A','R','P'); \
+        sapi->structureSize = sizeof(yarp::os::SharedLibraryClassApi); \
+        sapi->systemVersion = 3; \
+        sapi->create = factoryname ## _create; \
+        sapi->destroy = factoryname ## _destroy; \
+        sapi->getVersion = factoryname ## _getVersion; \
+        sapi->getAbi = factoryname ## _getAbi; \
+        sapi->getClassName = factoryname ## _getClassName; \
+        sapi->getBaseClassName = factoryname ## _getBaseClassName; \
+        for (int i=0; i<YARP_SHAREDLIBRARYCLASSAPI_PADDING; i++) { sapi->roomToGrow[i] = 0; } \
+        sapi->endCheck = VOCAB4('P','L','U','G'); \
+        return sapi->startCheck; \
     }
 
 #define YARP_DEFAULT_FACTORY_NAME "yarp_default_factory"

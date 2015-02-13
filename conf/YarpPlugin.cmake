@@ -65,7 +65,7 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
         # have to do anything.
         message(STATUS "nested library ${bundle_name}")
 
-    else(X_YARP_PLUGIN_MODE)
+    else()
 
         # If we are the outermost plugin block, then we need to set up
         # everything for tracking the plugins within that block.
@@ -80,7 +80,7 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
         set(X_YARP_PLUGIN_GEN ${CMAKE_BINARY_DIR}/generated_code)
         if(NOT EXISTS ${X_YARP_PLUGIN_GEN})
             file(MAKE_DIRECTORY ${X_YARP_PLUGIN_GEN})
-        endif(NOT EXISTS ${X_YARP_PLUGIN_GEN})
+        endif()
 
         # Choose a prefix for CMake options related to this library
         set(X_YARP_PLUGIN_PREFIX "${bundle_name}_")
@@ -113,13 +113,13 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
             get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
             get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
             get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
-        else(YARP_TREE_INCLUDE_DIRS)
+        else()
             find_package(YARP REQUIRED)
-        endif(YARP_TREE_INCLUDE_DIRS)
+        endif()
 
-    endif(X_YARP_PLUGIN_MODE)
+    endif()
 
-endmacro(YARP_BEGIN_PLUGIN_LIBRARY)
+endmacro()
 
 
 #########################################################################
@@ -143,13 +143,13 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
     set(fdir ${X_YARP_PLUGIN_GEN})
     if(NOT fdir)
         set(fdir ${CMAKE_CURRENT_BINARY_DIR})
-    endif(NOT fdir)
+    endif()
 
     # Set up a flag to enable/disable compilation of this plugin.
     set(X_MYNAME "${X_YARP_PLUGIN_PREFIX}${plugin_name}")
     if(NOT COMPILE_BY_DEFAULT)
         set(COMPILE_BY_DEFAULT FALSE)
-    endif(NOT COMPILE_BY_DEFAULT)
+    endif()
     set(ENABLE_${X_MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${X_MYNAME}")
 
     # Set some convenience variables based on whether the plugin
@@ -158,10 +158,10 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
     if(ENABLE_${plugin_name})
         set(SKIP_${plugin_name} FALSE)
         set(SKIP_${X_MYNAME} FALSE)
-    else(ENABLE_${plugin_name})
+    else()
         set(SKIP_${plugin_name} TRUE)
         set(SKIP_${X_MYNAME} TRUE)
-    endif(ENABLE_${plugin_name})
+    endif()
 
     # If the plugin is enabled, add the appropriate source code into
     # the library source list.
@@ -180,13 +180,13 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
         message(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
-    else(ENABLE_${X_MYNAME})
+    else()
         message(STATUS " +++ plugin ${plugin_name}, SKIP_${plugin_name} is set")
-    endif(ENABLE_${X_MYNAME})
+    endif()
 
     # We are done!
 
-endmacro(YARP_ADD_PLUGIN_NORMALIZED)
+endmacro()
 
 
 
@@ -214,7 +214,7 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
     message(STATUS "  wrapper: ${_YPP_WRAPPER}")
     message(STATUS "  category: ${_YPP_CATEGORY}")
   endif()
-endmacro(YARP_PREPARE_PLUGIN plugin_name)
+endmacro()
 
 
 
@@ -225,7 +225,7 @@ endmacro(YARP_PREPARE_PLUGIN plugin_name)
 #
 macro(YARP_PREPARE_DEVICE)
     yarp_prepare_plugin(${ARGN} CATEGORY device)
-endmacro(YARP_PREPARE_DEVICE)
+endmacro()
 
 
 
@@ -236,7 +236,7 @@ endmacro(YARP_PREPARE_DEVICE)
 #
 macro(YARP_PREPARE_CARRIER)
     yarp_prepare_plugin(${ARGN} CATEGORY carrier)
-endmacro(YARP_PREPARE_CARRIER)
+endmacro()
 
 
 
@@ -255,8 +255,8 @@ macro(YARP_ADD_PLUGIN LIBNAME)
     foreach(arg ${ARGN})
         if("${arg}" STREQUAL "IMPORTED")
             message(FATAL_ERROR "YARP_ADD_PLUGIN does not support the IMPORTED argument.")
-        endif("${arg}" STREQUAL "IMPORTED")
-    endforeach(arg)
+        endif()
+    endforeach()
 
     if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
       set(X_LIBTYPE "MODULE")
@@ -269,7 +269,7 @@ macro(YARP_ADD_PLUGIN LIBNAME)
     get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
     foreach(s ${srcs})
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
-    endforeach(s)
+    endforeach()
     add_library(${LIBNAME} ${X_LIBTYPE} ${srcs} ${ARGN})
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
@@ -289,8 +289,8 @@ macro(YARP_ADD_PLUGIN LIBNAME)
                 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
                 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    endif(YARP_TREE_INCLUDE_DIRS)
-endmacro(YARP_ADD_PLUGIN)
+    endif()
+endmacro()
 
 
 
@@ -304,12 +304,12 @@ macro(FIND_PACKAGE LIBNAME)
     if(NOT X_YARP_PLUGIN_MODE)
         # pass on call without looking at it
         _FIND_PACKAGE(${LIBNAME} ${ARGN})
-    endif(NOT X_YARP_PLUGIN_MODE)
+    endif()
     if(NOT "${LIBNAME}" STREQUAL "YARP")
         # Skipping requests for YARP, we already have it
         _FIND_PACKAGE(${LIBNAME} ${ARGN})
-    endif(NOT "${LIBNAME}" STREQUAL "YARP")
-endmacro(FIND_PACKAGE LIBNAME)
+    endif()
+endmacro()
 
 
 
@@ -336,14 +336,14 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         foreach(dev ${devs})
             if(NOT owners)
                 message(SEND_ERROR "No owner for device ${dev}, this is likely due to a previous error, check the output of CMake above.")
-            endif(NOT owners)
+            endif()
             list(GET owners 0 owner)
             list(REMOVE_AT owners 0)
             if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
                 set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern YARP_PLUGIN_IMPORT void add_owned_${dev}(const char *str);")
                 set(YARP_CODE_POST "${YARP_CODE_POST}\n        add_owned_${dev}(\"${owner}\");")
             endif()
-        endforeach(dev)
+        endforeach()
         configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib.cpp.in
                        ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp @ONLY)
         configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib.h.in
@@ -371,7 +371,7 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         set(${X_YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
         set(X_YARP_PLUGIN_MODE FALSE) # neutralize redefined methods
     endif()
-endmacro(YARP_END_PLUGIN_LIBRARY bundle_name)
+endmacro()
 
 
 
@@ -397,7 +397,7 @@ macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
     else()
         target_link_libraries(${exename} YARP::YARP_OS YARP::YARP_init YARP::YARP_dev)
     endif()
-endmacro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
+endmacro()
 
 
 
@@ -414,8 +414,9 @@ macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
         install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/yarp/plugins/${out_name}
                 COMPONENT runtime
                 DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/plugins)
-    endif(YARP_TREE_INCLUDE_DIRS)
-endmacro(YARP_ADD_CARRIER_FINGERPRINT)
+    endif()
+endmacro()
+
 
 
 #########################################################################
@@ -425,8 +426,8 @@ endmacro(YARP_ADD_CARRIER_FINGERPRINT)
 #
 macro(YARP_ADD_DEVICE_FINGERPRINT)
     # no difference between fingerprint macros
-    YARP_ADD_CARRIER_FINGERPRINT(${ARGN})
-endmacro(YARP_ADD_DEVICE_FINGERPRINT)
+    yarp_add_carrier_fingerprint(${ARGN})
+endmacro()
 
 
 
@@ -439,36 +440,37 @@ include(${CMAKE_CURRENT_LIST_DIR}/YarpDeprecatedWarning.cmake)
 macro(BEGIN_PLUGIN_LIBRARY)
     yarp_deprecated_warning("BEGIN_PLUGIN_LIBRARY is deprecated. Use YARP_BEGIN_PLUGIN_LIBRARY instead.")
     yarp_begin_plugin_library(${ARGN})
-endmacro(BEGIN_PLUGIN_LIBRARY)
+endmacro()
 
 macro(ADD_PLUGIN_NORMALIZED)
     yarp_deprecated_warning("ADD_PLUGIN_NORMALIZED is deprecated. Use YARP_ADD_PLUGIN_NORMALIZED instead.")
     yarp_add_plugin_normalized(${ARGN})
-endmacro(ADD_PLUGIN_NORMALIZED)
+endmacro()
 
 macro(PREPARE_PLUGIN)
     yarp_deprecated_warning("PREPARE_PLUGIN is deprecated. Use YARP_PREPARE_PLUGIN instead.")
     yarp_prepare_plugin(${ARGN})
-endmacro(PREPARE_PLUGIN)
+endmacro()
 
 macro(PREPARE_DEVICE)
     yarp_deprecated_warning("PREPARE_DEVICE is deprecated. Use YARP_PREPARE_DEVICE instead.")
     yarp_prepare_device(${ARGN})
-endmacro(PREPARE_DEVICE)
+endmacro()
 
 macro(PREPARE_CARRIER)
     yarp_deprecated_warning("PREPARE_CARRIER is deprecated. Use YARP_PREPARE_CARRIER instead.")
     yarp_prepare_carrier(${ARGN})
-endmacro(PREPARE_CARRIER)
+endmacro()
 
 macro(END_PLUGIN_LIBRARY)
     yarp_deprecated_warning("END_PLUGIN_LIBRARY is deprecated. Use YARP_END_PLUGIN_LIBRARY instead.")
     yarp_end_plugin_library(${ARGN})
-endmacro(END_PLUGIN_LIBRARY)
+endmacro()
 
 macro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
     yarp_deprecated_warning("ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated. Use YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE instead.")
     yarp_add_plugin_library_executable(${ARGN})
-endmacro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
+endmacro()
 
-endif(NOT YARP_NO_DEPRECATED)
+
+endif()
