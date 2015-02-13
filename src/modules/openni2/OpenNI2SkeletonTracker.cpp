@@ -75,12 +75,13 @@ void OpenNI2SkeletonTracker::close(){
         cout << "Done" << endl;
     }
     
-    if (camerasON) {
         depthStream.stop();
         imageStream.stop();
         cout << "Destroying depth stream...";
         depthStream.destroy();
         cout << "Done" << endl;
+    
+    if (camerasON){
         cout << "Destroying RGB stream...";
         imageStream.destroy();
         cout << "Done" << endl;
@@ -130,8 +131,6 @@ int OpenNI2SkeletonTracker::init(){
     if (oniRecord) {
         recorder.create(oniOutputFile.c_str());
     }
-
-    if(camerasON){
 
     if(deviceName!="Kinect"){
 	// check if Image registration mode is supported and set accordingly
@@ -203,7 +202,8 @@ int OpenNI2SkeletonTracker::init(){
             cout << "Depth stream started..." << endl;
             frameCount = playbackControl->getNumberOfFrames(depthStream);
         }
-            
+    
+    if (camerasON){        
         // setup and start colour stream
         if (device.getSensorInfo(openni::SENSOR_COLOR) != NULL)
         {
@@ -243,6 +243,7 @@ int OpenNI2SkeletonTracker::init(){
             cout << "RGB stream started..." << endl;
         }
 
+    }
         // print video modes
         if (printMode)
         {
@@ -256,18 +257,21 @@ int OpenNI2SkeletonTracker::init(){
             
                 }
             }
-            colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
-            const openni::Array<openni::VideoMode>& colorModes= colorInfo->getSupportedVideoModes();
-            cout << "RGB video modes available:" << endl;
-            for (int i = 0; i<colorModes.getSize(); i++) {
-                if (colorModes[i].getPixelFormat() == openni::PIXEL_FORMAT_RGB888)
-                {
-                printf("%i: %ix%i, %i fps\n", i, colorModes[i].getResolutionX(), colorModes[i].getResolutionY(), colorModes[i].getFps()); 
+
+            if (camerasON)
+            {
+                colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
+                const openni::Array<openni::VideoMode>& colorModes= colorInfo->getSupportedVideoModes();
+                cout << "RGB video modes available:" << endl;
+                for (int i = 0; i<colorModes.getSize(); i++) {
+                    if (colorModes[i].getPixelFormat() == openni::PIXEL_FORMAT_RGB888)
+                    {
+                        printf("%i: %ix%i, %i fps\n", i, colorModes[i].getResolutionX(), colorModes[i].getResolutionY(), colorModes[i].getFps()); 
+                    }
                 }
             }
-        }
 
-    }
+        }
 
     if (userTracking){
         
@@ -307,9 +311,10 @@ int OpenNI2SkeletonTracker::init(){
 void OpenNI2SkeletonTracker::initVars(){
     sensorStatus = new SensorStatus;
    
-    if (camerasON) {
     // read frames from streams
-    imageStream.readFrame(&imageFrameRef);
+    if (camerasON){
+        imageStream.readFrame(&imageFrameRef);
+    }
     depthStream.readFrame(&depthFrameRef);
     
     // get depth mode properties and prepare depthFrame
@@ -317,6 +322,7 @@ void OpenNI2SkeletonTracker::initVars(){
     sensorStatus->depthFrame.resize(depthMode.getResolutionX(), depthMode.getResolutionY());
     sensorStatus->depthFrame.zero();
     
+    if (camerasON){
     // get RGB mode properties and prepare imageFrame
     imageMode = imageStream.getVideoMode();
     sensorStatus->imageFrame.resize(imageMode.getResolutionX(), imageMode.getResolutionY());
@@ -345,9 +351,10 @@ OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::getSensor(){
 
 void OpenNI2SkeletonTracker::updateSensor(){
     // get camera image
-    if(camerasON && imageStream.isValid()){
+    if(camerasON){ 
+            if (imageStream.isValid()){
         imageStream.readFrame(&imageFrameRef);
-        
+            }
         if (imageFrameRef.isValid()){
             getSensor()->imageFrame.setQuantum(1);
             
@@ -358,7 +365,7 @@ void OpenNI2SkeletonTracker::updateSensor(){
     }
     
     // Get depth image (in millimetres)
-    if(camerasON && depthStream.isValid()){
+    if(depthStream.isValid()){
         depthStream.readFrame(&depthFrameRef);
        
         if (depthFrameRef.getFrameIndex() == frameCount) {

@@ -30,10 +30,10 @@ void yarp::dev::OpenNI2DeviceDriverServer::openPorts(string portPrefix, bool use
         skeletonPort->open(skeletonPortName.c_str());
     }
     
-    if(camerasON){
         depthFramePort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono16> >();
         string strTemp = portPrefix+PORTNAME_DEPTHFRAME+":o";
         depthFramePort->open(strTemp.c_str());
+        if(camerasON){
         imageFramePort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >();
         strTemp = portPrefix+PORTNAME_IMAGEFRAME+":o";
         imageFramePort->open(strTemp.c_str());
@@ -53,11 +53,12 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
         imageFramePort->prepare() = OpenNI2SkeletonTracker::getSensor()->imageFrame;
         imageFramePort->setEnvelope(timestamp);
         imageFramePort->write();
+        }
+
         // depth frame data
         depthFramePort->prepare() = OpenNI2SkeletonTracker::getSensor()->depthFrame;
         depthFramePort->setEnvelope(timestamp);
         depthFramePort->write();
-    }
     
     // sending skeleton data
     
@@ -122,9 +123,13 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     int dMode, cMode;
     bool printMode;
 
-    if(config.check("noCameras", "Use only user tracking")) camerasON = false;
-    else camerasON = true;
-    
+    if(config.check("noRGB", "Use only depth sensor")) {
+        camerasON = false;
+    }
+    else {
+        camerasON = true;
+    }
+
     if(config.check("noMirror", "Disable mirroring")) mirrorON = false;
     else mirrorON = true;
     
@@ -143,10 +148,15 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     if(config.check("depthVideoMode", "Depth video mode (default=0)")){
         dMode = config.find("depthVideoMode").asInt();
     } 
+    else {
+        dMode = 0;
+    }
    
    if(config.check("colorVideoMode", "Color video mode (default=0)")){
          cMode = config.find("colorVideoMode").asInt();
-    } 
+    }
+   else{
+      cMode = 0; 
 
    if(config.check("playback", "Play from .oni file")) {
         oniPlayback = true;
@@ -224,9 +234,9 @@ bool yarp::dev::OpenNI2DeviceDriverServer::close(){
         if(userTracking) {
             skeletonPort->close();
         }
-        
+       
+        depthFramePort->close(); 
         if(camerasON){
-            depthFramePort->close();
             imageFramePort->close();
         }
         receivingPort->close();
