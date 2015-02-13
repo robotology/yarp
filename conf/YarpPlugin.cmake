@@ -178,7 +178,6 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
 
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
-        set(YARP_PLUGIN_ACTIVE TRUE)
         message(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
     else(ENABLE_${X_MYNAME})
         message(STATUS " +++ plugin ${plugin_name}, SKIP_${plugin_name} is set")
