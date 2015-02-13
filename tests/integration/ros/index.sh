@@ -48,8 +48,10 @@ fi
 
 ########################################################################
 if [[ ! "$active_test" = "" ]]; then
-    require_ros_name_server
-    require_name_server
+    if [[ ! "$active_test" = "all" ]]; then
+	require_ros_name_server
+	require_name_server
+    fi
 fi
 
 ########################################################################

@@ -100,6 +100,7 @@ for lang in $SUPPORTED_LANGUAGES; do
 	fi
 	if [ ! -e "$swig_base/$swig_ver" ]; then
 	    echo "CANNOT FIND precompiled versions of swig."
+	    echo "In $PWD, looking in $swig_base/$sig_ver"
 	    echo "Going to compile it from scratch.  Warning: SLOW."
 	    echo "To cache this work, make a directory called '/cache/swig' that I can write in"
 	    base="$PWD"
