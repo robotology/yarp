@@ -134,7 +134,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     // Setup resource finder
     yarp::os::ResourceFinder rf;
     rf.setVerbose(false);
-   // rf.setDefaultContext("");
+    rf.setDefaultContext("yarpmanager");
     rf.setDefaultConfigFile(DEF_CONFIG_FILE);
     rf.configure(argc, argv);
 
