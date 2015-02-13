@@ -66,6 +66,8 @@ public:
     virtual bool getTorque(int j, double *t);
     virtual bool getBemfParam(int j, double *bemf);
     virtual bool setBemfParam(int j, double bemf);
+    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params);
+    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params);
     virtual bool getTorqueRange(int j, double *min, double *max);
     virtual bool getTorqueRanges(double *min, double *max);
     virtual bool setTorquePid(int j, const Pid &pid);

@@ -457,6 +457,30 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 }
                 break;
 
+                case VOCAB_MOTOR_PARAMS:
+                {
+                    yarp::dev::MotorTorqueParameters params;
+                    int joint = cmd.get(3).asInt();
+                    Bottle *b = cmd.get(4).asList();
+
+                    if (b==NULL)
+                        break;
+
+                    if (b->size() != 4)
+                    {
+                        yError("received a SET VOCAB_MOTOR_PARAMS command not understood, size!=4");
+                        break;
+                    }
+
+                    params.bemf         = b->get(0).asDouble();
+                    params.bemf_scale   = b->get(1).asDouble();
+                    params.ktau         = b->get(2).asDouble();
+                    params.ktau_scale   = b->get(3).asDouble();
+
+                    *ok = rpc_ITorque->setMotorTorqueParams(joint, params);
+                }
+                break;
+
                 case VOCAB_REFS:
                 {
                     Bottle *b = cmd.get(3).asList();
@@ -638,6 +662,23 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 }
                 break;
 
+                case VOCAB_MOTOR_PARAMS:
+                {
+                    yarp::dev::MotorTorqueParameters params;
+                    int joint = cmd.get(3).asInt();
+
+                    // get the data
+                    *ok = rpc_ITorque->getMotorTorqueParams(joint, &params);
+
+                    // convert it back to yarp message
+                    Bottle& b = response.addList();
+                    
+                    b.addDouble(params.bemf);
+                    b.addDouble(params.bemf_scale);
+                    b.addDouble(params.ktau);
+                    b.addDouble(params.ktau_scale);
+                }
+                break;
                 case VOCAB_RANGE:
                 {
                     *ok = rpc_ITorque->getTorqueRange(cmd.get(3).asInt(), &dtmp, &dtmp2);

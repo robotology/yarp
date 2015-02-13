@@ -97,6 +97,19 @@ bool ImplementTorqueControl::setBemfParam(int j, double bemf)
     return ret;
 }
 
+bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params) 
+{
+    int k;
+    k=castToMapper(helper)->toHw(j);
+    return iTorqueRaw->setMotorTorqueParamsRaw(k, params);
+}
+
+bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params) 
+{
+  int k=castToMapper(helper)->toHw(j);
+  return iTorqueRaw->getMotorTorqueParamsRaw(k, params);
+}
+
 bool ImplementTorqueControl::getRefTorques(double *t)
 {
     bool ret;

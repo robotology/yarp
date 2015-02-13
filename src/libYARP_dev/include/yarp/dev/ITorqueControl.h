@@ -17,8 +17,19 @@ namespace yarp {
     namespace dev {
         class ITorqueControlRaw;
         class ITorqueControl;
+        class MotorTorqueParameters;
       }
 }
+
+class YARP_dev_API yarp::dev::MotorTorqueParameters
+{
+    public:
+    double bemf;
+    double bemf_scale;
+    double ktau;
+    double ktau_scale;
+    MotorTorqueParameters() : bemf(0), bemf_scale(0), ktau(0), ktau_scale(0) {};
+};
 
 /**
  * @ingroup dev_iface_motor
@@ -77,19 +88,33 @@ public:
      */
     virtual bool setRefTorque(int j, double t)=0;
 
-    /** Set the back-efm compensation gain for a given joint.
+    /** Get the back-emf compensation gain for a given joint.
      * @param j joint number
      * @param bemf the returned bemf gain of joint j
      * @return true/false on success/failure
      */
     virtual bool getBemfParam(int j, double *bemf)=0;
 
-    /** Set the back-efm compensation gain for a given joint.
+    /** Set the back-emf compensation gain for a given joint.
      * @param j joint number
      * @param bemf new value
      * @return true/false on success/failure
      */
     virtual bool setBemfParam(int j, double bemf)=0;
+
+    /** Get a subset of motor parameters (bemf, ktau etc) useful for torque control.
+     * @param j joint number
+     * @param params a struct containing the motor parameters to be retrieved
+     * @return true/false on success/failure
+     */
+    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params) {return false;}
+
+    /** Set a subset of motor parameters (bemf, ktau etc) useful for torque control.
+     * @param j joint number
+     * @param params a struct containing the motor parameters to be set
+     * @return true/false on success/failure
+     */
+    virtual bool setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params) {return false;}
 
      /** Set new pid value for a joint axis.
      * @param j joint number
@@ -328,6 +353,20 @@ public:
      * @return true/false on success/failure
      */
     virtual bool setBemfParamRaw(int j, double bemf)=0;
+
+    /** Get the motor parameters.
+     * @param j joint number
+     * @param params a struct containing the motor parameters to be retrieved
+     * @return true/false on success/failure
+     */
+    virtual bool getMotorTorqueParamsRaw(int j,  yarp::dev::MotorTorqueParameters *params) {return false;}
+
+    /** Set the motor parameters.
+     * @param j joint number
+     * @param params a struct containing the motor parameters to be set
+     * @return true/false on success/failure
+     */
+    virtual bool setMotorTorqueParamsRaw(int j,  const yarp::dev::MotorTorqueParameters params) {return false;}
 
      /** Set new pid value for a joint axis.
      * @param j joint number

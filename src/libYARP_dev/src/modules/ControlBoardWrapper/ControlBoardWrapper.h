@@ -883,6 +883,10 @@ public:
 
     virtual bool setBemfParam(int j, double t);
 
+    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params);
+
+    virtual bool setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params);
+
     virtual bool setTorquePid(int j, const Pid &pid);
 
     virtual bool setImpedance(int j, double stiff, double damp);

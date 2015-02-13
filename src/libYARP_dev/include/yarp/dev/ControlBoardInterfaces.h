@@ -745,7 +745,6 @@ public:
 #define VOCAB_RESET VOCAB3('r','e','s')
 #define VOCAB_DISABLE VOCAB3('d','i','s')
 #define VOCAB_ENABLE VOCAB3('e','n','a')
-#define VOCAB_BEMF VOCAB3('b','m','f')
 
 // interface IPidControl gets.
 #define VOCAB_ERR VOCAB3('e','r','r')
@@ -802,6 +801,8 @@ public:
 #define VOCAB_TORQUE_MODE VOCAB4('t','r','q','d')
 #define VOCAB_TRQS VOCAB4('t','r','q','s')
 #define VOCAB_TRQ  VOCAB3('t','r','q')
+#define VOCAB_BEMF VOCAB3('b','m','f')
+#define VOCAB_MOTOR_PARAMS  VOCAB4('m','t','p','s')
 #define VOCAB_RANGES VOCAB4('r','n','g','s')
 #define VOCAB_RANGE  VOCAB3('r','n','g')
 #define VOCAB_IMP_PARAM   VOCAB3('i','p','r')

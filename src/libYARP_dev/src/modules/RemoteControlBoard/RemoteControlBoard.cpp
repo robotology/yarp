@@ -18,6 +18,7 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/sig/Vector.h>
 
@@ -2527,6 +2528,47 @@ public:
 
     bool setBemfParam(int j, double v)
     { return set2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, v); }
+
+    bool setMotorTorqueParams(int j, const MotorTorqueParameters params)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_MOTOR_PARAMS);
+        cmd.addInt(j);
+        Bottle& b = cmd.addList();
+        b.addDouble(params.bemf);
+        b.addDouble(params.bemf_scale);
+        b.addDouble(params.ktau);
+        b.addDouble(params.ktau_scale);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool getMotorTorqueParams(int j, MotorTorqueParameters *params)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_TORQUE);
+        cmd.addVocab(VOCAB_MOTOR_PARAMS);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            if (l.size() != 4)
+            {
+                yError("getMotorTorqueParams return value not understood, size!=4");
+                return false;
+            }
+            params->bemf        = l.get(0).asDouble();
+            params->bemf_scale  = l.get(1).asDouble();
+            params->ktau        = l.get(2).asDouble();
+            params->ktau_scale  = l.get(3).asDouble();
+            return true;
+        }
+        return false;
+    }
 
     bool setTorquePid(int j, const Pid &pid)
     {

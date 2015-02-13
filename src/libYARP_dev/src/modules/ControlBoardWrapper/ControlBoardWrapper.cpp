@@ -3122,6 +3122,38 @@ bool ControlBoardWrapper::setBemfParam(int j, double t)
     return false;
 }
 
+bool ControlBoardWrapper::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
+{
+    int off=device.lut[j].offset;
+    int subIndex=device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iTorque)
+    {
+        return p->iTorque->getMotorTorqueParams(off+p->base, params);
+    }
+    return false;
+}
+
+bool ControlBoardWrapper::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params)
+{
+    int off=device.lut[j].offset;
+    int subIndex=device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iTorque)
+    {
+        return p->iTorque->setMotorTorqueParams(off+p->base, params);
+    }
+    return false;
+}
+
 bool ControlBoardWrapper::setTorquePid(int j, const Pid &pid)
 {
     int off=device.lut[j].offset;
