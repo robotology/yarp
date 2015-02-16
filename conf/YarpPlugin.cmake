@@ -376,10 +376,10 @@ endmacro()
 
 
 #########################################################################
-# YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE macro expands a simple test program
-# for a named device library.
+# YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE macro expands yarpdev executable
+# for a named plugin library.
 #
-macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
+macro(YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE exename bundle_name)
     if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
       set(YARP_CODE_PRE)
       set(YARP_CODE_POST)
@@ -468,9 +468,13 @@ macro(END_PLUGIN_LIBRARY)
 endmacro()
 
 macro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
-    yarp_deprecated_warning("ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated. Use YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE instead.")
-    yarp_add_plugin_library_executable(${ARGN})
+    yarp_deprecated_warning("ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated. Use YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.")
+    yarp_add_plugin_yarpdev_executable(${ARGN})
 endmacro()
 
+macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
+    yarp_deprecated_warning("YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated. Use YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.")
+    yarp_add_plugin_yarpdev_executable(${ARGN})
+endmacro()
 
 endif()
