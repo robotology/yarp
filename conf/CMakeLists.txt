@@ -16,7 +16,6 @@ endforeach(conf)
 # users of YARP.
 set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpIDL.cmake
-                     YarpDevice.cmake
                      MacroExtractVersion.cmake
                      MacroStandardFindModule.cmake
                      YarpDeprecatedWarning.cmake
