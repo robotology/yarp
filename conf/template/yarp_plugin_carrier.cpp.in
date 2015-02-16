@@ -26,8 +26,4 @@ YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
     yarp::os::impl::Carriers::addCarrierPrototype(new @YARPPLUG_TYPE@);
 }
 
-YARP_PLUGIN_EXPORT void add_@YARPPLUG_NAME@() {
-    add_owned_@YARPPLUG_NAME@(NULL);
-}
-
 YARP_DEFINE_SHARED_SUBCLASS(@YARPPLUG_NAME@, @YARPPLUG_TYPE@, yarp::os::Carrier)

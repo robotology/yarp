@@ -30,8 +30,4 @@ YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
     yarp::dev::Drivers::factory().add(factory); // hand factory over to YARP
 }
 
-YARP_PLUGIN_EXPORT void add_@YARPPLUG_NAME@() {
-    add_owned_@YARPPLUG_NAME@(NULL);
-}
-
 YARP_DEFINE_SHARED_SUBCLASS(@YARPPLUG_NAME@, @YARPPLUG_TYPE@, yarp::dev::DeviceDriver)
