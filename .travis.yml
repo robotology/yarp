@@ -46,7 +46,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install cmake
+  - sudo apt-get install cmake libgsl0-dev
   - if $TRAVIS_WITH_ACE; then sudo apt-get install libace-dev; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-gmcs; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi
@@ -63,7 +63,8 @@ before_script:
   - mkdir -p build
   - cd build
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then ln -s ../cache cache; fi
-  - export YARP_CMAKE_OPTIONS="-DTEST_yarpidl_rosmsg=TRUE -DTEST_yarpidl_thrift=TRUE -DCREATE_OPTIONAL_CARRIERS=TRUE -DENABLE_yarpcar_tcpros_carrier=TRUE -DENABLE_yarpcar_rossrv_carrier=TRUE -DENABLE_yarpcar_xmlrpc_carrier=TRUE"
+  - . ../scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
+  - export YARP_CMAKE_OPTIONS=" $CMAKE_OPTIONS"
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=TRUE -DYARP_TEST_HEAP=TRUE"; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=TRUE"; fi
   - cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ..
