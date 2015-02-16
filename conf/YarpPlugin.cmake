@@ -100,6 +100,7 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
         set_property(GLOBAL PROPERTY YARP_BUNDLE_OWNERS)  # owner library
         set_property(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
         set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES) # list of additional libraries that will be linked by the master
 
         # One glitch is that if plugins are used within YARP, rather
         # than in an external library, then "find_package(YARP)" will
@@ -194,6 +195,14 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
 
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
+    get_property(_link_libs GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
+    if("${_YPP_CATEGORY}" STREQUAL "carrier")
+      list(APPEND _link_libs YARP::YARP_OS)
+    elseif("${_YPP_CATEGORY}" STREQUAL "device")
+      list(APPEND _link_libs YARP::YARP_OS YARP::YARP_dev)
+    endif()
+    list(REMOVE_DUPLICATES _link_libs)
+    set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES ${_link_libs})
     message(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
   else()
     message(STATUS " +++ plugin ${plugin_name}, SKIP_${plugin_name} is set")
@@ -254,7 +263,13 @@ macro(YARP_ADD_PLUGIN LIBNAME)
     foreach(s ${srcs})
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
     endforeach()
+    get_property(_link_libs GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
+    if(TARGET YARP_OS)
+        # Building YARP: Targets don't have NAMESPACE
+        string(REPLACE "YARP::" "" _link_libs "${_link_libs}")
+    endif()
     add_library(${LIBNAME} ${X_LIBTYPE} ${srcs} ${ARGN})
+    target_link_libraries(${LIBNAME} ${_link_libs})
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
         set_property(TARGET ${LIBNAME} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
@@ -262,8 +277,9 @@ macro(YARP_ADD_PLUGIN LIBNAME)
 
     # Add the library to the list of plugin libraries.
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
-    # Reset the list of generated source code to empty.
+    # Reset the list of generated source code and link libraries to empty.
     set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
+    set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
     if(YARP_TREE_INCLUDE_DIRS)
         # If compiling YARP, we go ahead and set up installing this
         # target.  It isn't safe to do this outside of YARP though.
@@ -317,17 +333,17 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         get_property(owners GLOBAL PROPERTY YARP_BUNDLE_OWNERS)
         set(YARP_CODE_PRE)
         set(YARP_CODE_POST)
-        foreach(dev ${devs})
-            if(NOT owners)
-                message(SEND_ERROR "No owner for device ${dev}, this is likely due to a previous error, check the output of CMake above.")
-            endif()
-            list(GET owners 0 owner)
-            list(REMOVE_AT owners 0)
-            if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
+        if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
+            foreach(dev ${devs})
+                if(NOT owners)
+                    message(SEND_ERROR "No owner for device ${dev}, this is likely due to a previous error, check the output of CMake above.")
+                endif()
+                list(GET owners 0 owner)
+                list(REMOVE_AT owners 0)
                 set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern YARP_PLUGIN_IMPORT void add_owned_${dev}(const char *str);")
                 set(YARP_CODE_POST "${YARP_CODE_POST}\n        add_owned_${dev}(\"${owner}\");")
-            endif()
-        endforeach()
+            endforeach()
+        endif()
         configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_lib.cpp.in
                        ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp @ONLY)
         configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_lib.h.in
@@ -339,16 +355,7 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         add_library(${X_YARP_PLUGIN_MASTER} ${code} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
 
         if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
-            set_property(TARGET ${X_YARP_PLUGIN_MASTER} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
-        endif()
-
-        if(TARGET YARP_OS)
-            # Building YARP
-            target_link_libraries(${X_YARP_PLUGIN_MASTER} LINK_PRIVATE YARP_OS)
-        else()
-            target_link_libraries(${X_YARP_PLUGIN_MASTER} LINK_PRIVATE YARP::YARP_OS)
-        endif()
-        if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
+            set_property(TARGET ${LIBNAME} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
             target_link_libraries(${X_YARP_PLUGIN_MASTER} LINK_PRIVATE ${libs})
         endif()
         # give user access to a list of all the plugin libraries
