@@ -244,6 +244,7 @@ int OpenNI2SkeletonTracker::init(){
         }
         else {
             camerasON = false;
+            cout << "No RGB camera found, RGB stream disabled" << endl;
         }
 
     }
