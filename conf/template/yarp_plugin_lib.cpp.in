@@ -19,12 +19,12 @@
 
 @YARP_CODE_PRE@
 
-// give the function for adding devices a consistent name
-extern "C" YARP_PLUGIN_EXPORT void add_@YARP_LIB_NAME@_devices();
+// give the function for adding plugins a consistent name
+extern "C" YARP_PLUGIN_EXPORT void add_@YARP_LIB_NAME@_plugins();
 
 static bool @YARP_LIB_NAME@_added = false;
 
-void add_@YARP_LIB_NAME@_devices() {
+void add_@YARP_LIB_NAME@_plugins() {
     if (!@YARP_LIB_NAME@_added) {
         @YARP_LIB_NAME@_added = true;
 @YARP_CODE_POST@

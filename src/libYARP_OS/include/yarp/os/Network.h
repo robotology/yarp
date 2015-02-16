@@ -31,8 +31,8 @@ namespace yarp {
 }
 
 // Make plugins in a library available for use
-#define YARP_DECLARE_PLUGINS(name) extern "C" void add_ ## name ## _devices();
-#define YARP_REGISTER_PLUGINS(name) add_ ## name ## _devices();
+#define YARP_DECLARE_PLUGINS(name) extern "C" void add_ ## name ## _plugins();
+#define YARP_REGISTER_PLUGINS(name) add_ ## name ## _plugins();
 
 
 /**

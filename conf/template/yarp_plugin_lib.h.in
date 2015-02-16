@@ -15,7 +15,7 @@ extern "C" {
     // Call this method in order to add devices from @YARP_LIB_NAME@ library.
     // After this call, yarp::dev::PolyDriver can be used to create instances
     // of such devices.
-    void add_@YARP_LIB_NAME@_devices();
+    void add_@YARP_LIB_NAME@_plugins();
 
 };
 
