@@ -122,73 +122,6 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
 endmacro()
 
 
-#########################################################################
-# YARP_ADD_PLUGIN_NORMALIZED macro is an internal command to convert a
-# plugin declaration to code, and to set up CMake flags for controlling
-# compilation of that device.  This macro is called by YARP_PREPARE_PLUGIN
-# which is the user-facing macro.  YARP_PREPARE_PLUGIN parses
-# a flexible set of arguments, then passes them to YARP_ADD_PLUGIN_NORMALIZED
-# in a clean canonical order.
-#
-macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
-
-    # Append the current source directory to the set of include paths.
-    # Developers seem to expect #include "foo.h" to work if foo.h is
-    # in their module directory.
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-    # Figure out a decent filename for the code we are about to
-    # generate.  If all else fails, the code will get dumped in
-    # the current binary directory.
-    set(fdir ${X_YARP_PLUGIN_GEN})
-    if(NOT fdir)
-        set(fdir ${CMAKE_CURRENT_BINARY_DIR})
-    endif()
-
-    # Set up a flag to enable/disable compilation of this plugin.
-    set(X_MYNAME "${X_YARP_PLUGIN_PREFIX}${plugin_name}")
-    if(NOT COMPILE_BY_DEFAULT)
-        set(COMPILE_BY_DEFAULT FALSE)
-    endif()
-    set(ENABLE_${X_MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${X_MYNAME}")
-
-    # Set some convenience variables based on whether the plugin
-    # is enabled or disabled.
-    set(ENABLE_${plugin_name} ${ENABLE_${X_MYNAME}})
-    if(ENABLE_${plugin_name})
-        set(SKIP_${plugin_name} FALSE)
-        set(SKIP_${X_MYNAME} FALSE)
-    else()
-        set(SKIP_${plugin_name} TRUE)
-        set(SKIP_${X_MYNAME} TRUE)
-    endif()
-
-    # If the plugin is enabled, add the appropriate source code into
-    # the library source list.
-    if(ENABLE_${X_MYNAME})
-        # Go ahead and prepare some code to wrap this plugin.
-        set(_fname ${fdir}/${X_YARP_PLUGIN_MASTER}_add_${plugin_name}.cpp)
-        # Variables used by the templates:
-        set(YARPPLUG_NAME "${plugin_name}")
-        set(YARPPLUG_TYPE "${type}")
-        set(YARPPLUG_INCLUDE "${include}")
-        set(YARPPLUG_WRAPPER "${wrapper}")
-        set(YARPPLUG_CATEGORY "${category}")
-        configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_${category}.cpp.in
-                       ${_fname} @ONLY)
-
-        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
-        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
-        message(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
-    else()
-        message(STATUS " +++ plugin ${plugin_name}, SKIP_${plugin_name} is set")
-    endif()
-
-    # We are done!
-
-endmacro()
-
-
 
 #########################################################################
 # YARP_PREPARE_PLUGIN macro lets a developer declare a plugin using a
@@ -196,8 +129,8 @@ endmacro()
 #    YARP_PREPARE_PLUGIN(foo CATEGORY device TYPE FooDriver INCLUDE FooDriver.h)
 # or
 #    YARP_PREPARE_PLUGIN(moto CATEGORY device TYPE Moto INCLUDE moto.h WRAPPER controlboard)
-# This macro is just a simple parser and calls YARP_ADD_PLUGIN_NORMALIZED to
-# do the actual work.
+# This macro converts a plugin declaration to code, and to set up CMake
+# flags for controlling compilation of that device.
 #
 macro(YARP_PREPARE_PLUGIN plugin_name)
   set(_options )
@@ -205,14 +138,65 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
   set(_multiValueArgs)
   cmake_parse_arguments(_YPP "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
-  if(_YPP_TYPE AND _YPP_INCLUDE)
-    yarp_add_plugin_normalized(${plugin_name} ${_YPP_TYPE} ${_YPP_INCLUDE} "${_YPP_WRAPPER}" "${_YPP_CATEGORY}")
-  else()
+  if(NOT _YPP_TYPE OR NOT _YPP_INCLUDE)
     message(STATUS "Not enough information to create ${plugin_name}")
-    message(STATUS "  type:    ${_YPP_TYPE}")
-    message(STATUS "  include: ${_YPP_INCLUDE}")
-    message(STATUS "  wrapper: ${_YPP_WRAPPER}")
+    message(STATUS "  type:     ${_YPP_TYPE}")
+    message(STATUS "  include:  ${_YPP_INCLUDE}")
+    message(STATUS "  wrapper:  ${_YPP_WRAPPER}")
     message(STATUS "  category: ${_YPP_CATEGORY}")
+    return()
+  endif()
+
+  # Append the current source directory to the set of include paths.
+  # Developers seem to expect #include "foo.h" to work if foo.h is
+  # in their module directory.
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+  # Figure out a decent filename for the code we are about to
+  # generate.  If all else fails, the code will get dumped in
+  # the current binary directory.
+  set(fdir ${X_YARP_PLUGIN_GEN})
+  if(NOT fdir)
+    set(fdir ${CMAKE_CURRENT_BINARY_DIR})
+  endif()
+
+  # Set up a flag to enable/disable compilation of this plugin.
+  set(X_MYNAME "${X_YARP_PLUGIN_PREFIX}${plugin_name}")
+  if(NOT COMPILE_BY_DEFAULT)
+    set(COMPILE_BY_DEFAULT FALSE)
+  endif()
+  set(ENABLE_${X_MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${X_MYNAME}")
+
+  # Set some convenience variables based on whether the plugin
+  # is enabled or disabled.
+  set(ENABLE_${plugin_name} ${ENABLE_${X_MYNAME}})
+  if(ENABLE_${plugin_name})
+    set(SKIP_${plugin_name} FALSE)
+    set(SKIP_${X_MYNAME} FALSE)
+  else()
+    set(SKIP_${plugin_name} TRUE)
+    set(SKIP_${X_MYNAME} TRUE)
+  endif()
+
+  # If the plugin is enabled, add the appropriate source code into
+  # the library source list.
+  if(ENABLE_${X_MYNAME})
+    # Go ahead and prepare some code to wrap this plugin.
+    set(_fname ${fdir}/${X_YARP_PLUGIN_MASTER}_add_${plugin_name}.cpp)
+    # Variables used by the templates:
+    set(YARPPLUG_NAME "${plugin_name}")
+    set(YARPPLUG_TYPE "${_YPP_TYPE}")
+    set(YARPPLUG_INCLUDE "${_YPP_INCLUDE}")
+    set(YARPPLUG_WRAPPER "${_YPP_WRAPPER}")
+    set(YARPPLUG_CATEGORY "${_YPP_CATEGORY}")
+    configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_${_YPP_CATEGORY}.cpp.in
+                   ${_fname} @ONLY)
+
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
+    message(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
+  else()
+    message(STATUS " +++ plugin ${plugin_name}, SKIP_${plugin_name} is set")
   endif()
 endmacro()
 
