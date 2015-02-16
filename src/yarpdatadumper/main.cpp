@@ -664,6 +664,7 @@ int main(int argc, char *argv[])
     {
         cout << "Options:"                                                                           << endl;
         cout << "\t--name       port: service port name (default: /dump)"                            << endl;
+        cout << "\t--connect    port: name of the port to connect the dumper to at launch time"      << endl;
         cout << "\t--dir        name: provide explicit name of storage directory"                    << endl;
         cout << "\t--overwrite      : overwrite pre-existing storage directory"                      << endl;
     #ifdef ADD_VIDEO
