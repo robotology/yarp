@@ -2388,6 +2388,11 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
     } else {
         settings.setPluginName(argv[0]);
     }
+    YarpPluginSelector selector;
+    selector.scan();
+    if (!settings.setSelector(selector)) {
+        fprintf(stderr,"cannot find a plugin with the specified name\n");
+    }
     settings.open(lib);
     if (!lib.isValid()) {
         int problem = lib.getStatus();
