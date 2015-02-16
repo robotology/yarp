@@ -32,7 +32,7 @@ PLUGIN_FLAGS="-DCREATE_DEVICE_LIBRARY_MODULES=TRUE -DENABLE_yarpmod_fakebot=TRUE
 # Create fakebot device
 cd $base/fakebot
 echo "Working in $PWD"
-cmake -DCMAKE_INSTALL_PREFIX=$base/root $PLUGIN_FLAGS $src
+cmake -DCMAKE_INSTALL_PREFIX=$base/root $PLUGIN_FLAGS -DCREATE_SHARED_LIBRARY=TRUE $src
 make
 make install
 
@@ -45,7 +45,7 @@ make install
 cd $base
 export YARP_CONF=$PWD
 echo "0 0 local" > yarp.conf
-export YARP_DATA_DIRS=$PWD/fakebot/share/yarp 
+export YARP_DATA_DIRS=$PWD/fakebot/share/yarp
 
 ######################################################################
 ## Shared version of plugins
@@ -106,7 +106,7 @@ $yarp terminate /localhost:10112 || echo ok
 ## Installed shared version of plugins
 
 cd $base
-export YARP_DATA_DIRS=$PWD/root/share/yarp 
+export YARP_DATA_DIRS=$PWD/root/share/yarp
 export LD_LIBRARY_PATH=$PWD/root/lib
 
 header "Check installed shared fakebot is startable"
