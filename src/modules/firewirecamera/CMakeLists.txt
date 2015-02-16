@@ -5,7 +5,7 @@
 if(UNIX)
 
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(firewirecamera TYPE FirewireCamera INCLUDE FirewireCamera.h WRAPPER grabber)
+    yarp_prepare_device(firewirecamera TYPE yarp::dev::FirewireCamera INCLUDE FirewireCamera.h WRAPPER grabber)
     yarp_add_device_fingerprint(firewirecamera.ini firewirecamera)
   endif(COMPILE_DEVICE_LIBRARY)
 

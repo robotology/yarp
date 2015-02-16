@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(mpi_carrier TYPE MpiP2PCarrier INCLUDE include/yarp/os/MpiP2PCarrier.h)
+  yarp_prepare_carrier(mpi_carrier TYPE yarp::os::MpiP2PCarrier INCLUDE include/yarp/os/MpiP2PCarrier.h)
   yarp_add_carrier_fingerprint(mpi.ini mpi_carrier mpibcast_carrier)
 endif(COMPILE_PLUGIN_LIBRARY)
 
@@ -40,7 +40,7 @@ endif(NOT SKIP_mpi_carrier)
 
 
 if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(mpibcast_carrier TYPE MpiBcastCarrier INCLUDE include/yarp/os/MpiBcastCarrier.h)
+  yarp_prepare_carrier(mpibcast_carrier TYPE yarp::os::MpiBcastCarrier INCLUDE include/yarp/os/MpiBcastCarrier.h)
 endif(COMPILE_PLUGIN_LIBRARY)
 
 if(NOT SKIP_mpibcast_carrier)

@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(dimax_u2c TYPE DimaxU2C INCLUDE DimaxU2C.h WRAPPER controlboard)
+    yarp_prepare_device(dimax_u2c TYPE yarp::dev::DimaxU2C INCLUDE DimaxU2C.h WRAPPER controlboard)
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_dimax_u2c)

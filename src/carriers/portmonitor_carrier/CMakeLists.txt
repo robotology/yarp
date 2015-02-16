@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if (COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(portmonitor_carrier TYPE PortMonitor INCLUDE PortMonitor.h)
+  yarp_prepare_carrier(portmonitor_carrier TYPE yarp::os::PortMonitor INCLUDE PortMonitor.h)
   yarp_add_carrier_fingerprint(portmonitor.ini portmonitor_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 

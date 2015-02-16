@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if (COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(xmlrpc_carrier TYPE XmlRpcCarrier INCLUDE XmlRpcCarrier.h)
+  yarp_prepare_carrier(xmlrpc_carrier TYPE yarp::os::XmlRpcCarrier INCLUDE XmlRpcCarrier.h)
   yarp_add_carrier_fingerprint(xmlrpc.ini xmlrpc_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 

@@ -3,8 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(serial TYPE ServerSerial INCLUDE yarp/dev/ServerSerial.h WRAPPER serial)
-  yarp_prepare_device(serialport TYPE SerialDeviceDriver INCLUDE SerialDeviceDriver.h WRAPPER serial)
+  yarp_prepare_device(serial TYPE yarp::dev::ServerSerial INCLUDE yarp/dev/ServerSerial.h WRAPPER serial)
+  yarp_prepare_device(serialport TYPE yarp::dev::SerialDeviceDriver INCLUDE SerialDeviceDriver.h WRAPPER serial)
   yarp_add_device_fingerprint(serial.ini serial serialport)
 endif()
 
