@@ -48,13 +48,13 @@ public:
      * Create a device.
      */
     virtual DeviceDriver *create() = 0;
-    
+
     /**
      * Get the common name of the device.
      * @return the common name of the device this creates.
      */
     virtual yarp::os::ConstString getName() = 0;
-    
+
     /**
      * Get the common name of a device that can wrap this one.
      *
@@ -91,7 +91,7 @@ private:
 public:
     /**
      * Constructor.  Sets up the name by which the device will be known.
-     * @param name The "common name" of the device.  This is the name 
+     * @param name The "common name" of the device.  This is the name
      * that will be used when naming the device externally, for example
      * from the command line.
      * @param wrap The "common name" of another device which can wrap
@@ -102,7 +102,7 @@ public:
      * code documentation.
      *
      */
-    DriverCreatorOf(const char *name, const char *wrap, const char *code) : 
+    DriverCreatorOf(const char *name, const char *wrap, const char *code) :
         desc(name), wrap(wrap), code(code)
     {
     }
@@ -138,7 +138,7 @@ private:
     yarp::os::ConstString desc, wrap, code, libname, fnname;
 public:
     StubDriverCreator(const char *name, const char *wrap, const char *code,
-                      const char *libname, const char *fnname) : 
+                      const char *libname, const char *fnname) :
         desc(name), wrap(wrap), code(code), libname(libname), fnname(fnname)
     {
     }
@@ -172,7 +172,7 @@ public:
  * by Drivers::factory() by calling the add() method on it, then
  * those devices will be creatable by name through the open() methods.
  *
- * There is only one instance of the Drivers class.  Call 
+ * There is only one instance of the Drivers class.  Call
  * Drivers::factory() to get that instance.
  */
 class YARP_dev_API yarp::dev::Drivers {
@@ -266,7 +266,7 @@ private:
     void *implementation;
 
     Drivers();
-    
+
     static Drivers instance;
 };
 
