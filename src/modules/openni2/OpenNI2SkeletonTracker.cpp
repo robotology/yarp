@@ -223,24 +223,27 @@ int OpenNI2SkeletonTracker::init(){
             {
                 imageStream.setVideoMode(colorModes[colorVideoMode]);
             }
-        }
         
-        if (oniRecord) {
+            if (oniRecord) {
             recorder.attach(imageStream);
-        }
+            }
 
-        rc = imageStream.start();
-        if (rc != openni::STATUS_OK)
-        {
-            printf("Couldn't start the RGB stream\n%s\n", openni::OpenNI::getExtendedError());
-            deviceStatus = rc;
-            return rc;
-        }
+            rc = imageStream.start();
+            if (rc != openni::STATUS_OK)
+            {
+                printf("Couldn't start the RGB stream\n%s\n", openni::OpenNI::getExtendedError());
+                deviceStatus = rc;
+                return rc;
+            }
         
+            else {
+                fpsCount = imageStream.getVideoMode().getFps();
+                cout << "RGB video mode: " << colorVideoMode << " - " << imageStream.getVideoMode().getResolutionX() << "x" << imageStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
+                cout << "RGB stream started..." << endl;
+            }
+        }
         else {
-            fpsCount = imageStream.getVideoMode().getFps();
-            cout << "RGB video mode: " << colorVideoMode << " - " << imageStream.getVideoMode().getResolutionX() << "x" << imageStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
-            cout << "RGB stream started..." << endl;
+            camerasON = false;
         }
 
     }

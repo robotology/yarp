@@ -157,6 +157,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     }
    else{
       cMode = 0; 
+   }
 
    if(config.check("playback", "Play from .oni file")) {
         oniPlayback = true;
