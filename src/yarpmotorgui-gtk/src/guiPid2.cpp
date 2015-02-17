@@ -166,6 +166,8 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   char buffer[40];
   double bemfGain = 0;
   double ktau = 0;
+  double bemfshift = 0;
+  double ktaushift = 0;
 
   //fprintf(stderr, "%s \n", gtk_entry_get_text((GtkEntry*) kpDes));
   pid->kp = atoi(gtk_entry_get_text((GtkEntry*) trq_kpDes));
@@ -175,6 +177,8 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   pid->kff = atoi(gtk_entry_get_text((GtkEntry*) trq_kffDes));
   bemfGain = atoi(gtk_entry_get_text((GtkEntry*) trq_kbemfDes));
   ktau = atoi(gtk_entry_get_text((GtkEntry*) trq_ktauDes));
+  bemfshift = atoi(gtk_entry_get_text((GtkEntry*) trq_kbemfshiftDes));
+  ktaushift = atoi(gtk_entry_get_text((GtkEntry*) trq_ktaushiftDes));
   pid->scale = atoi(gtk_entry_get_text((GtkEntry*) trq_scaleDes));
   pid->offset = atoi(gtk_entry_get_text((GtkEntry*) trq_offsetDes));
   pid->stiction_up_val = atoi(gtk_entry_get_text((GtkEntry*) trq_upStictionDes));
@@ -187,6 +191,8 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   {MotorTorqueParameters m;
   m.bemf=bemfGain;
   m.ktau=ktau;
+  m.bemf_scale=bemfshift;
+  m.ktau_scale=ktaushift;
   iTrq->setMotorTorqueParams(*joint,m);}
 
   yarp::os::Time::delay(0.005);
@@ -195,7 +201,10 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   {MotorTorqueParameters m;
   iTrq->getMotorTorqueParams(*joint,&m);
   ktau=m.ktau;
-  bemfGain=m.bemf;}
+  bemfGain=m.bemf;
+  ktaushift=m.ktau_scale;
+  bemfshift=m.bemf_scale;
+  }
 
   sprintf(buffer, "%d", (int) pid->kp);
   gtk_entry_set_text((GtkEntry*) trq_kpEntry,  buffer);
@@ -214,6 +223,12 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
 
   sprintf(buffer, "%d", (int) ktau);
   gtk_entry_set_text((GtkEntry*) trq_ktauEntry,  buffer);
+
+  sprintf(buffer, "%d", (int) bemfshift);
+  gtk_entry_set_text((GtkEntry*) trq_kbemfshiftEntry,  buffer);
+
+  sprintf(buffer, "%d", (int) ktaushift);
+  gtk_entry_set_text((GtkEntry*) trq_ktaushiftEntry,  buffer);
 
   sprintf(buffer, "%d", (int) pid->kff);
   gtk_entry_set_text((GtkEntry*) trq_kffEntry,  buffer);
@@ -510,6 +525,8 @@ void guiPid2::guiPid2(void *button, void* data)
   Pid myTrqPid(0,0,0,0,0,0);
   double bemfGain=0;
   double ktau=0;
+  double bemfshift=0;
+  double ktaushift=0;
   double stiff_val=0;
   double damp_val=0;
   double stiff_max=0;
@@ -535,6 +552,8 @@ void guiPid2::guiPid2(void *button, void* data)
   iTrq->getMotorTorqueParams(*joint, &params);
   bemfGain=params.bemf;
   ktau=params.ktau;
+  ktaushift=params.ktau_scale;
+  bemfshift=params.bemf_scale;
 
   yarp::os::Time::delay(0.005);
   iImp->getImpedance(*joint, &stiff_val, &damp_val);
@@ -752,6 +771,28 @@ void guiPid2::guiPid2(void *button, void* data)
   //ktau desired
   trq_ktauDes   =  gtk_entry_new();
   changePidValue((int) ktau, note_pag2, trq_ktauDes, 400, 140, "Desired Trq Ktau");
+
+  char buff2 [40];
+  //ktaushift
+  trq_ktaushiftEntry   =  gtk_entry_new();
+  gtk_widget_set_size_request     (trq_ktaushiftEntry, 30, 20);
+  sprintf(buff2, "%d", (int) ktaushift);gtk_entry_set_text((GtkEntry*) trq_ktaushiftEntry, buff2);
+  gtk_fixed_put    (GTK_FIXED(note_pag2), trq_ktaushiftEntry, 280+60+40, 140+30);
+  //ktaushift
+  trq_ktaushiftDes   =  gtk_entry_new();
+  gtk_widget_set_size_request     (trq_ktaushiftDes, 30, 20);
+  sprintf(buff2, "%d", (int) ktaushift);gtk_entry_set_text((GtkEntry*) trq_ktaushiftDes, buff2);
+  gtk_fixed_put    (GTK_FIXED(note_pag2), trq_ktaushiftDes, 420+60+40, 140+30);
+  //bemfshift
+  trq_kbemfshiftEntry   =  gtk_entry_new();
+  gtk_widget_set_size_request     (trq_kbemfshiftEntry, 30, 20);
+  sprintf(buff2, "%d", (int) bemfshift);gtk_entry_set_text((GtkEntry*) trq_kbemfshiftEntry, buff2);
+  gtk_fixed_put    (GTK_FIXED(note_pag2), trq_kbemfshiftEntry, 280+60+40, 70+30);
+  //bemfshift
+  trq_kbemfshiftDes   =  gtk_entry_new();
+  gtk_widget_set_size_request     (trq_kbemfshiftDes, 30, 20);
+  sprintf(buff2, "%d", (int) bemfshift);gtk_entry_set_text((GtkEntry*) trq_kbemfshiftDes, buff2);
+  gtk_fixed_put    (GTK_FIXED(note_pag2), trq_kbemfshiftDes, 420+60+40, 70+30);
 
   //scale
   trq_scaleEntry   =  gtk_entry_new();
