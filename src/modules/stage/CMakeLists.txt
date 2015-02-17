@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(stage TYPE StageControl INCLUDE StageControl.h)
+  yarp_prepare_device(stage TYPE yarp::dev::StageControl INCLUDE StageControl.h)
   yarp_add_device_fingerprint(stage.ini stage)
 endif()
 

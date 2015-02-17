@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(opencv_grabber TYPE OpenCVGrabber INCLUDE OpenCVGrabber.h WRAPPER grabber)
+    yarp_prepare_device(opencv_grabber TYPE yarp::dev::OpenCVGrabber INCLUDE OpenCVGrabber.h WRAPPER grabber)
     yarp_add_device_fingerprint(opencv.ini opencv_grabber)
 endif(COMPILE_DEVICE_LIBRARY)
 

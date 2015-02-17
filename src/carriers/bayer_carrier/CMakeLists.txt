@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if (COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(bayer_carrier TYPE BayerCarrier INCLUDE BayerCarrier.h)
+  yarp_prepare_carrier(bayer_carrier TYPE yarp::os::BayerCarrier INCLUDE BayerCarrier.h)
   yarp_add_carrier_fingerprint(bayer.ini bayer_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 

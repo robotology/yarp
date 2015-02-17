@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(microphone TYPE MicrophoneDeviceDriver INCLUDE MicrophoneDeviceDriver.h WRAPPER grabber)
+  yarp_prepare_device(microphone TYPE yarp::dev::MicrophoneDeviceDriver INCLUDE MicrophoneDeviceDriver.h WRAPPER grabber)
   YARP_ADD_DEVICE_FINGERPRINT(microphone.ini microphone)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 

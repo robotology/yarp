@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if (COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(priority_carrier TYPE PriorityCarrier INCLUDE PriorityCarrier.h)
+  yarp_prepare_carrier(priority_carrier TYPE yarp::os::PriorityCarrier INCLUDE PriorityCarrier.h)
   yarp_add_carrier_fingerprint(priority.ini priority_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 

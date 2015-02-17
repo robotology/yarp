@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(wxsdl TYPE WxsdlWriter INCLUDE WxsdlWriter.h)
+  yarp_prepare_device(wxsdl TYPE yarp::dev::WxsdlWriter INCLUDE WxsdlWriter.h)
   YARP_ADD_DEVICE_FINGERPRINT(wxsdl.ini wxsdl)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 

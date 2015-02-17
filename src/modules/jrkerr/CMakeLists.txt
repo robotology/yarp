@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(jrkerr TYPE JrkerrMotionControl INCLUDE JrkerrMotionControl.h WRAPPER controlboard)
+  yarp_prepare_device(jrkerr TYPE yarp::dev::JrkerrMotionControl INCLUDE JrkerrMotionControl.h WRAPPER controlboard)
   YARP_ADD_DEVICE_FINGERPRINT(jrkerr.ini jrkerr)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 

@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(portaudio TYPE PortAudioDeviceDriver INCLUDE PortAudioDeviceDriver.h WRAPPER grabber)
+  yarp_prepare_device(portaudio TYPE yarp::dev::PortAudioDeviceDriver INCLUDE PortAudioDeviceDriver.h WRAPPER grabber)
   yarp_add_device_fingerprint(portaudio.ini portaudio)
 endif(COMPILE_DEVICE_LIBRARY)
 

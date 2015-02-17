@@ -3,8 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if (COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(OpenNI2DeviceServer TYPE OpenNI2DeviceDriverServer INCLUDE OpenNI2DeviceDriverServer.h)
-    yarp_prepare_device(OpenNI2DeviceClient TYPE OpenNI2DeviceDriverClient INCLUDE OpenNI2DeviceDriverClient.h)
+    yarp_prepare_device(OpenNI2DeviceServer TYPE yarp::dev::OpenNI2DeviceDriverServer INCLUDE OpenNI2DeviceDriverServer.h)
+    yarp_prepare_device(OpenNI2DeviceClient TYPE yarp::dev::OpenNI2DeviceDriverClient INCLUDE OpenNI2DeviceDriverClient.h)
     yarp_add_device_fingerprint(openni2.ini OpenNI2DeviceServer OpenNI2DeviceClient)
 endif()
 

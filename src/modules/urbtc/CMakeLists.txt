@@ -3,8 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(urbtc TYPE UrbtcControl INCLUDE UrbtcControl.h
-		 WRAPPER controlboard)
+  yarp_prepare_device(urbtc TYPE yarp::dev::UrbtcControl INCLUDE UrbtcControl.h WRAPPER controlboard)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_urbtc)

@@ -7,7 +7,7 @@
 # making an instance of VfwGrabber (declared in VfwGrabber.h).
 # Our devices can optionally be declared to have a network wrapper.
 IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(vfw_grabber TYPE VfwGrabber INCLUDE VfwGrabber.h WRAPPER grabber)
+  yarp_prepare_device(vfw_grabber TYPE yarp::dev::VfwGrabber INCLUDE VfwGrabber.h WRAPPER grabber)
   YARP_ADD_DEVICE_FINGERPRINT(vfw.ini vfw_grabber)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
