@@ -73,7 +73,7 @@ bool yarp::os::SharedLibraryFactory::isValid() const {
     if (api.structureSize != sizeof(SharedLibraryClassApi)) {
         return false;
     }
-    if (api.systemVersion != 3) {
+    if (api.systemVersion != 4) {
         return false;
     }
     if (api.endCheck != VOCAB4('P','L','U','G')) {

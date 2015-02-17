@@ -86,7 +86,7 @@ extern "C" {
         if (len<(int)sizeof(yarp::os::SharedLibraryClassApi)) return -1; \
         sapi->startCheck = VOCAB4('Y','A','R','P'); \
         sapi->structureSize = sizeof(yarp::os::SharedLibraryClassApi); \
-        sapi->systemVersion = 3; \
+        sapi->systemVersion = 4; \
         sapi->create = factoryname ## _create; \
         sapi->destroy = factoryname ## _destroy; \
         sapi->getVersion = factoryname ## _getVersion; \
