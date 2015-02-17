@@ -114,7 +114,7 @@ and all the goodies.  In fact, they should.  That's a separate issue from
 what a library that aims at being portable (especially in binary form)
 should do.  YARP *executables* are also free to use the STL etc.
 \li Documentation is produced using doxygen.  Extended tutorials like this
-one are to be found in src/doc/[filename].dox, where the filename should
+one are to be found in src/[filename].dox, where the filename should
 closely match the name before .html you see in your browsers.
 
 

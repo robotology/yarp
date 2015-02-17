@@ -67,7 +67,7 @@ if(YARP_COMPILE_TESTS)
             get_filename_component(XN ${X} NAME_WE)
             get_filename_component(XINI ${X} ABSOLUTE)
             # need to cache examples for reference
-            set(DOC_DIR "${CMAKE_SOURCE_DIR}/src/doc/device_invocation")
+            set(DOC_DIR "${CMAKE_SOURCE_DIR}/doc/device_invocation")
             set(XDOX ${DOC_DIR}/${XN}.dox)
             add_test(device::${XN} ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/harness_dev --file "${XINI}" --doc "${XDOX}")
         endforeach(X ${inis})

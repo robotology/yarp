@@ -19,7 +19,7 @@ YARP users: For compiling:
  * Make sure the $YARP_ROOT/example directory is in your ROS_PACKAGE_PATH.
  * Do "rosmake" in the current directory.
 
-Follow the steps in $YARP_ROOT/src/doc/yarp_with_ros.dox.
+Follow the steps in $YARP_ROOT/doc/yarp_with_ros.dox.
 Then run waggler.  Then do:
 \verbatim
   yarp read /read-#/pos

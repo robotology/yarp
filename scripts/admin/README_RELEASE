@@ -28,7 +28,7 @@
 
 * Update the file ChangeLog with " * tagging version x.y.x"
 
-* Update src/doc/download.dox
+* Update doc/download.dox
 
 * Commit :
   git commit -a -m "YARP 2.3.21"
