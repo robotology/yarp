@@ -93,6 +93,11 @@ class yarp::dev::CartesianEvent
 {
 public:
     /*!
+     * Destructor.
+     */
+    virtual ~CartesianEvent() {}
+
+    /*!
      * The user fills this structure to establish the event
      * parameters.
      */

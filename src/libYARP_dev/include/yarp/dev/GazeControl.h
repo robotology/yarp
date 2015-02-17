@@ -98,6 +98,11 @@ class yarp::dev::GazeEvent
 {
 public:
     /*!
+     * Destructor.
+     */
+    virtual ~GazeEvent() {}
+
+    /*!
      * The user fills this structure to establish the event
      * parameters.
      */

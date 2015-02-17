@@ -76,6 +76,11 @@ namespace yarp {
 */
 class yarp::dev::IKinectDeviceDriver {
 public:
+    /*!
+     * Destructor.
+     */
+    virtual ~IKinectDeviceDriver() {}
+
     /**
     * Gets kinect skeleton joints orientation 3x3 matrix
     *
