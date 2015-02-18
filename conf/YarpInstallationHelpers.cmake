@@ -273,14 +273,26 @@ endfunction()
 # installation.
 macro(YARP_INSTALL)
   install(${ARGN})
-  #change destination argument 'dest' to "${CMAKE_BINARY_DIR}/${dest}"
-  cmake_parse_arguments(currentTarget "" "DESTINATION" "FILES;DIRECTORY;PROGRAMS;PERMISSIONS" "${ARGN}")
 
-  string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" currentTarget_DESTINATION_RELATIVE ${currentTarget_DESTINATION})
-  string(REGEX REPLACE ";DESTINATION;${currentTarget_DESTINATION}(;|$)" ";DESTINATION;${CMAKE_BINARY_DIR}/${currentTarget_DESTINATION_RELATIVE}\\1" copyARGN "${ARGN}")
+  set(_options )
+  set(_oneValueArgs DESTINATION
+                    COMPONENT)
+  set(_multiValueArgs FILES
+                      DIRECTORY
+                      PROGRAMS
+                      PERMISSIONS)
+  cmake_parse_arguments(_YI "" "DESTINATION;COMPONENT" "FILES;DIRECTORY;PROGRAMS;PERMISSIONS" "${ARGN}")
+
+  # Change DESTINATION argument 'dest' to "${CMAKE_BINARY_DIR}/${dest}"
+  string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" _YI_DESTINATION_RELATIVE ${_YI_DESTINATION})
+  string(REGEX REPLACE ";DESTINATION;${_YI_DESTINATION}(;|$)" ";DESTINATION;${CMAKE_BINARY_DIR}/${_YI_DESTINATION_RELATIVE}\\1" copyARGN "${ARGN}")
+
+  # Remove COMPONENT argument
+  string(REGEX REPLACE ";COMPONENT;${_YI_COMPONENT}" "" copyARGN "${copyARGN}")
+
   list(REMOVE_AT copyARGN 0)
   list(INSERT copyARGN 0 COPY)
-  if (currentTarget_PROGRAMS AND NOT currentTarget_PERMISSIONS)
+  if (_YI_PROGRAMS AND NOT _YI_PERMISSIONS)
     list(APPEND copyARGN "FILE_PERMISSIONS;OWNER_READ;OWNER_WRITE;OWNER_EXECUTE;GROUP_READ;GROUP_EXECUTE;WORLD_READ;WORLD_EXECUTE")
   endif()
   file(${copyARGN})
