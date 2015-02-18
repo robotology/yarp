@@ -476,6 +476,9 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     if (phase == ActionPhaseStartup) {
         if (!mPriv->openDevices()) {
             yError() << "One or more devices failed opening... see previous log messages for more info";
+            if (!mPriv->closeDevices()) {
+                yError() << "One or more devices failed closing";
+            }
             return false;
         }
     }
