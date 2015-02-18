@@ -104,7 +104,6 @@ bool yarp::os::SharedLibraryFactory::useFactoryFunction(void *factory) {
     if (factory == NULL) {
         return false;
     }
-    isValid();
     returnValue =
         ((int (*)(void *ptr,int len)) factory)(&api,sizeof(SharedLibraryClassApi));
     return isValid();
