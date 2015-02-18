@@ -1,4 +1,4 @@
-#include "genericinfodlg.h"
+#include "include/genericinfodlg.h"
 #include "ui_genericinfodlg.h"
 
 GenericInfoDlg::GenericInfoDlg(QString title, QString description, QString text,QWidget *parent) :

@@ -22,9 +22,9 @@
 #endif
 
 #include "yarp/os/Stamp.h"
-#include "worker.h"
-#include "mainwindow.h"
-#include "log.h"
+#include "include/worker.h"
+#include "include/mainwindow.h"
+#include "include/log.h"
 
 using namespace yarp::sig;
 using namespace yarp::sig::file;

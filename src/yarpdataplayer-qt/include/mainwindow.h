@@ -13,15 +13,15 @@
 #include <string>
 #include <map>
 #include <fstream>
-#include "utils.h"
+#include "include/utils.h"
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/Module.h>
 #include <yarp/os/RpcServer.h>
-#include "dataSetPlayer_IDL.h"
-#include "loadingwidget.h"
+#include "yarpdataplayer_IDL.h"
+#include "include/loadingwidget.h"
 
 using namespace std;
 using namespace yarp::os;

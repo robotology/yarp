@@ -20,31 +20,34 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
     message(STATUS "yarpdataplayer-qt: OpenCV not selected, keep on building...")
   endif()
 
-  set(yarpdataplayer_qt_SRCS aboutdlg.cpp
-                             genericinfodlg.cpp
-                             loadingwidget.cpp
-                             main.cpp
-                             mainwindow.cpp
-                             utils.cpp
-                             worker.cpp)
-  set(yarpdataplayer_qt_HDRS aboutdlg.h
-                             genericinfodlg.h
-                             loadingwidget.h
-                             log.h
-                             mainwindow.h
-                             utils.h
-                             worker.h)
+  set(yarpdataplayer_qt_SRCS src/aboutdlg.cpp
+                             src/genericinfodlg.cpp
+                             src/loadingwidget.cpp
+                             src/main.cpp
+                             src/mainwindow.cpp
+                             src/utils.cpp
+                             src/worker.cpp)
+
+
+  set(yarpdataplayer_qt_HDRS include/aboutdlg.h
+                             include/genericinfodlg.h
+                             include/loadingwidget.h
+                             include/log.h
+                             include/mainwindow.h
+                             include/utils.h
+                             include/worker.h)
   if(MSVC)
     list(APPEND yarpdataplayer_HDRS include/msvc/dirent.h)
   endif()
-  set(yarpdataplayer_qt_QRC_FILES res.qrc)
-  set(yarpdataplayer_qt_UI_FILES aboutdlg.ui
-                                 genericinfodlg.ui
-                                 loadingwidget.ui
-                                 mainwindow.ui)
-  set(yarpdataplayer_qt_THRIFT_FILES dataSetPlayer.thrift)
+  set(yarpdataplayer_qt_QRC_FILES src/RC/res.qrc)
+  set(yarpdataplayer_qt_UI_FILES include/UI/aboutdlg.ui
+                                 include/UI/genericinfodlg.ui
+                                 include/UI/loadingwidget.ui
+                                 include/UI/mainwindow.ui)
+                                 
+  set(yarpdataplayer_qt_THRIFT_FILES yarpdataplayer.thrift)
   if(MSVC)
-    set(yarpdataplayer_qt_RC_FILES QtDataSetPlayer_resource.rc)
+    set(yarpdataplayer_qt_RC_FILES src/RC/QtDataSetPlayer_resource.rc)
   endif()
 
   qt5_add_resources(yarpdataplayer_qt_QRC_GEN_SRCS ${yarpdataplayer_qt_QRC_FILES})
@@ -56,6 +59,7 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
                   yarpdataplayer_qt_THRIFT_GEN_SRCS
                   yarpdataplayer_qt_THRIFT_GEN_HDRS
                   yarpdataplayer_qt_THRIFT_INCLUDE_DIRS)
+
   include_directories(${yarpdataplayer_qt_THRIFT_INCLUDE_DIRS})
 
 
@@ -76,7 +80,8 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
                                          ${yarpdataplayer_qt_UI_GEN_SRCS}
                                          ${yarpdataplayer_qt_THRIFT_GEN_SRCS}
                                          ${yarpdataplayer_qt_THRIFT_GEN_HDRS}
-                                         ${yarpdataplayer_qt_RC_FILES})
+                                         ${yarpdataplayer_qt_RC_FILES}
+                                         ${yarpdataplayer_qt_THRIFT_FILES})
 
   target_link_libraries(yarpdataplayer-qt YARP_OS
                                           YARP_init

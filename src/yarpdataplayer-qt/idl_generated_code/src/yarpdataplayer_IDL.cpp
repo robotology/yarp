@@ -1,7 +1,7 @@
 // This is an automatically-generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <dataSetPlayer_IDL.h>
+#include <yarpdataplayer_IDL.h>
 #include <yarp/os/idl/WireTypes.h>
 
 

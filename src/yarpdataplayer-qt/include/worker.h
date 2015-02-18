@@ -24,7 +24,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/sig/ImageFile.h>
-#include "utils.h"
+#include "include/utils.h"
 #include <yarp/os/Event.h>
 #include <yarp/os/Time.h>
 #include <QMainWindow>

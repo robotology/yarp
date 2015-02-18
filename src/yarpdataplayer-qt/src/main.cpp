@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "include/mainwindow.h"
 #include <QApplication>
 
 #if defined(WIN32)
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     yarp::os::ResourceFinder rf;
     rf.setVerbose( true );
     rf.setDefaultConfigFile( "config.ini" );        //overridden by --from parameter
-    rf.setDefaultContext( "dataSetPlayer" );        //overridden by --context parameter
+    rf.setDefaultContext( "yarpdataplayer" );        //overridden by --context parameter
     rf.configure( argc, argv );
 
 

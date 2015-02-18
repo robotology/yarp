@@ -22,7 +22,7 @@
 #endif
 
 #if defined(WIN32)
-    #include "msvc/dirent.h"
+    #include "include/msvc/dirent.h"
     #undef max                  /*conflict with pango lib coverage.h*/
     #include <direct.h>
     #define GetCurrentDir _getcwd
@@ -36,11 +36,11 @@
 
 #include <yarp/os/Time.h>
 #include <stdio.h>              /* defines FILENAME_MAX */
-#include "utils.h"
+#include "include/utils.h"
 
 #include <iostream>
-#include "mainwindow.h"
-#include "log.h"
+#include "include/mainwindow.h"
+#include "include/log.h"
 
 using namespace yarp::os;
 using namespace yarp::sig;

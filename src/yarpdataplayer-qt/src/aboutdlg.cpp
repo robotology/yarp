@@ -1,6 +1,6 @@
-#include "aboutdlg.h"
+#include "include/aboutdlg.h"
 #include "ui_aboutdlg.h"
-#include "genericinfodlg.h"
+#include "include/genericinfodlg.h"
 
 AboutDlg::AboutDlg(QString appName,QString version,QString copyright,QString webSite,QWidget *parent) :
     QDialog(parent),

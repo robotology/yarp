@@ -1,11 +1,11 @@
-#include "mainwindow.h"
+#include "include/mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QCheckBox>
 #include <QProgressBar>
-#include <aboutdlg.h>
+#include <include/aboutdlg.h>
 #include <QMessageBox>
-#include "log.h"
+#include "include/log.h"
 #include <signal.h>
 
 #if defined(WIN32)

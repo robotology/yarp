@@ -42,7 +42,7 @@
          </font>
         </property>
         <property name="text">
-         <string>QtDataSetPlayer</string>
+         <string>yarpdataplayer</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

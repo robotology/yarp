@@ -1,4 +1,4 @@
-#include "loadingwidget.h"
+#include "include/loadingwidget.h"
 #include "ui_loadingwidget.h"
 
 LoadingWidget::LoadingWidget(QWidget *parent) :

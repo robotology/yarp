@@ -25,8 +25,8 @@ VS_VERSION_INFO VERSIONINFO
 				VALUE "FileDescription", "\0"
 				VALUE "FileVersion", "1.0.0.0\0"
 				VALUE "LegalCopyright", "\0"
-				VALUE "OriginalFilename", "QtDataSetPlayer.exe\0"
-				VALUE "ProductName", "QtDataSetPlayer\0"
+				VALUE "OriginalFilename", "yarpdataplayer.exe\0"
+				VALUE "ProductName", "yarpdataplayer\0"
 				VALUE "ProductVersion", "1.0.0.0\0"
 			END
 		END

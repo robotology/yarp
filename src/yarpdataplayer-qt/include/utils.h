@@ -29,7 +29,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
-#include "worker.h"
+#include "include/worker.h"
 
 class WorkerClass;
 class MasterThread;
