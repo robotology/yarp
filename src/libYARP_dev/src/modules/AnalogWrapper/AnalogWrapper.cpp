@@ -261,7 +261,7 @@ void AnalogWrapper::attach(yarp::dev::IAnalogSensor *s)
     {
         handlers[i]->setInterface(analogSensor_p);
     }
-    //Resize vector of read data to avoid further allocation of memory 
+    //Resize vector of read data to avoid further allocation of memory
     //as long as the number of channels does not change
     lastDataRead.resize((size_t)analogSensor_p->getChannels(),0.0);
 }
@@ -451,7 +451,7 @@ void AnalogWrapper::run()
 
                     // check vector limit
                     if(last>=(int)lastDataRead.size()){
-                        yError()<<"AnalogWrapper: error while sending analog sensor output on port "<< analogPorts[i].port_name 
+                        yError()<<"AnalogWrapper: error while sending analog sensor output on port "<< analogPorts[i].port_name
                                 <<" Vector size expected to be at least "<<last<<" whereas it is "<< lastDataRead.size();
                         continue;
                     }
@@ -468,7 +468,19 @@ void AnalogWrapper::run()
         }
         else
         {
-             yError("AnalogWrapper: %s: Sensor returned error", id.c_str());
+            switch(ret)
+            {
+                case IAnalogSensor::AS_OVF:
+                    yError("AnalogWrapper: %s: Sensor returned overflow error (code %d).", id.c_str(), ret);
+                    break;
+                case IAnalogSensor::AS_TIMEOUT:
+                    yError("AnalogWrapper: %s: Sensor returned timeout error (code %d).", id.c_str(), ret);
+                    break;
+                case IAnalogSensor::AS_ERROR:
+                default:
+                    yError("AnalogWrapper: %s: Sensor returned error with code %d.", id.c_str(), ret);
+                    break;
+            }
         }
     }
 }
