@@ -21,7 +21,7 @@ using namespace yarp::dev::impl;
 yarp::dev::DriverCreator *createAnalogWrapper() {
     return new DriverCreatorOf<yarp::dev::AnalogWrapper>("analogServer",
         "analogServer",
-        "AnalogWrapper");
+        "yarp::dev::AnalogWrapper");
 }
 
 

@@ -3580,6 +3580,6 @@ public:
 yarp::dev::DriverCreator *createRemoteControlBoard() {
     return new DriverCreatorOf<RemoteControlBoard>("remote_controlboard",
         "controlboard",
-        "RemoteControlBoard");
+        "yarp::dev::RemoteControlBoard");
 }
 

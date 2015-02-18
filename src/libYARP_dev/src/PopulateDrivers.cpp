@@ -42,38 +42,38 @@ extern DriverCreator *createVirtualAnalogWrapper();
 
 void Drivers::init() {
 
-    add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",
-                                              "grabber",
-                                              "TestFrameGrabber"));
+    add(new DriverCreatorOf<yarp::dev::TestFrameGrabber>("test_grabber",
+                                                         "grabber",
+                                                         "yarp::dev::TestFrameGrabber"));
 
-    add(new DriverCreatorOf<TestMotor>("test_motor",
-                                       "controlboard",
-                                       "TestMotor"));
+    add(new DriverCreatorOf<yarp::dev::TestMotor>("test_motor",
+                                                  "controlboard",
+                                                  "yarp::dev::TestMotor"));
 
-    add(new DriverCreatorOf<RemoteFrameGrabber>("remote_grabber",
-                                                "grabber",
-                                                "RemoteFrameGrabber"));
+    add(new DriverCreatorOf<yarp::dev::RemoteFrameGrabber>("remote_grabber",
+                                                           "grabber",
+                                                           "yarp::dev::RemoteFrameGrabber"));
 
-    add(new DriverCreatorOf<ServerFrameGrabber>("grabber",
-                                                "grabber",
-                                                "ServerFrameGrabber"));
+    add(new DriverCreatorOf<yarp::dev::ServerFrameGrabber>("grabber",
+                                                           "grabber",
+                                                           "yarp::dev::ServerFrameGrabber"));
 
 
-    add(new DriverCreatorOf<ServerInertial>("inertial",
-                                            "inertial",
-                                            "ServerInertial"));
+    add(new DriverCreatorOf<yarp::dev::ServerInertial>("inertial",
+                                                       "inertial",
+                                                       "yarp::dev::ServerInertial"));
 
-    add(new DriverCreatorOf<ServerSoundGrabber>("sound_grabber",
-                                                "sound_grabber",
-                                                "ServerSoundGrabber"));
+    add(new DriverCreatorOf<yarp::dev::ServerSoundGrabber>("sound_grabber",
+                                                           "sound_grabber",
+                                                           "yarp::dev::ServerSoundGrabber"));
 
-    add(new DriverCreatorOf<DevicePipe>("pipe",
-                                        "",
-                                        "DevicePipe"));
+    add(new DriverCreatorOf<yarp::dev::DevicePipe>("pipe",
+                                                   "",
+                                                   "yarp::dev::DevicePipe"));
 
-    add(new DriverCreatorOf<DeviceGroup>("group",
-                                        "",
-                                        "DeviceGroup"));
+    add(new DriverCreatorOf<yarp::dev::DeviceGroup>("group",
+                                                    "",
+                                                    "yarp::dev::DeviceGroup"));
 
     add(createRemoteControlBoard());
     add(createServerControlBoard());

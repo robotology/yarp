@@ -24,7 +24,7 @@ using namespace std;
 yarp::dev::DriverCreator *createControlBoardWrapper()
 {
     return new yarp::dev::DriverCreatorOf<yarp::dev::ControlBoardWrapper>
-            ("controlboardwrapper2", "controlboardwrapper2", "ControlBoardWrapper2");
+            ("controlboardwrapper2", "controlboardwrapper2", "yarp::dev::ControlBoardWrapper2");
 }
 
 ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),

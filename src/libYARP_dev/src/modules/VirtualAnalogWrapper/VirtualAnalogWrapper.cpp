@@ -20,9 +20,9 @@ using namespace yarp::dev::impl;
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createVirtualAnalogWrapper() {
-    return new DriverCreatorOf<VirtualAnalogWrapper>("virtualAnalogServer",
+    return new DriverCreatorOf<yarp::dev::VirtualAnalogWrapper>("virtualAnalogServer",
         "virtualAnalogServer",
-        "VirtualAnalogWrapper");
+        "yarp::dev::VirtualAnalogWrapper");
 }
 
 

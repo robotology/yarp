@@ -1535,9 +1535,9 @@ public:
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createServerControlBoard() {
-    return new DriverCreatorOf<ServerControlBoard>("controlboard",
+    return new DriverCreatorOf<yarp::dev::ServerControlBoard>("controlboard",
         "controlboard",
-        "ServerControlBoard");
+        "yarp::dev::ServerControlBoard");
 }
 
 inline yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper() {
