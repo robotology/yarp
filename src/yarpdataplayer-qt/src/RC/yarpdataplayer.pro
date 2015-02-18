@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = QtDataSetPlayer
+TARGET = yarpdataplayer
 TEMPLATE = app
 
 VERSION = 1.0
@@ -17,30 +17,28 @@ DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 DEFINES += APP_NAME=\\\"$$TARGET\\\"
 
 
+SOURCES += src/main.cpp\
+        src/mainwindow.cpp \
+        src/utils.cpp \
+        src/worker.cpp \
+        src/aboutdlg.cpp \
+        src/genericinfodlg.cpp \
+        src/loadingwidget.cpp \
+        src/idl_generated_code/src/yarpdataplayer_IDL.cpp
 
+HEADERS  += include/mainwindow.h \
+         include/msvc/dirent.h \
+         include/utils.h \
+         include/worker.h \
+         include/aboutdlg.h \
+         include/genericinfodlg.h \
+         include/log.h \
+         include/loadingwidget.h
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    utils.cpp \
-    worker.cpp \
-    aboutdlg.cpp \
-    genericinfodlg.cpp \
-    loadingwidget.cpp \
-    $$(ICUB_ROOT)/src/idl_generated_code/src/dataSetPlayer_IDL.cpp
-
-HEADERS  += mainwindow.h \
-    iCub/dirent.h \
-    iCub/utils.h \
-    iCub/worker.h \
-    aboutdlg.h \
-    genericinfodlg.h \
-    log.h \
-    loadingwidget.h
-
-FORMS    += mainwindow.ui \
-    aboutdlg.ui \
-    genericinfodlg.ui \
-    loadingwidget.ui
+FORMS    += include/UI/mainwindow.ui \
+         include/UI/aboutdlg.ui \
+         include/UI/genericinfodlg.ui \
+         include/UI/loadingwidget.ui
 
 
 win32-msvc2010{
@@ -142,4 +140,4 @@ win32-msvc2010{
 }
 
 RESOURCES += \
-    res.qrc
+    src/RC/res.qrc
