@@ -38,12 +38,15 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>test_grabber.height</td><td>desired height of test image</td><td>128</td></tr>
 <tr><td>test_grabber.freq</td><td>rate of test images in Hz</td><td></td></tr>
 <tr><td>test_grabber.period</td><td>period of test images in seconds</td><td></td></tr>
-<tr><td>test_grabber.mode</td><td>bouncy [ball], scrolly [line], grid [grid], random [rand]</td><td>line</td></tr>
+<tr><td>test_grabber.mode</td><td>bouncy [ball], scrolly [line], grid [grid], random [rand], none [none]</td><td>line</td></tr>
+<tr><td>test_grabber.src</td><td></td><td></td></tr>
+<tr><td>test_grabber.bayer</td><td>should emit bayer test image?</td><td></td></tr>
+<tr><td>test_grabber.mono</td><td>should emit a monochrome image?</td><td></td></tr>
 <tr><td>no_drop</td><td>if present, use strict policy for sending data</td><td></td></tr>
 <tr><td>stamp</td><td>if present, add timestamps to data</td><td></td></tr>
 <tr><td>name</td><td>name of port to send data on</td><td>/grabber</td></tr>
-<tr><td>framerate</td><td>maximum rate in Hz to read from subdevice</td><td>0</td></tr>
 <tr><td>single_threaded</td><td>if present, operate in single threaded mode</td><td></td></tr>
+<tr><td>framerate</td><td>maximum rate in Hz to read from subdevice</td><td>0</td></tr>
 </table>
 
 \sa yarp::dev::ServerFrameGrabber

@@ -33,7 +33,10 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>height</td><td>desired height of test image</td><td>128</td></tr>
 <tr><td>freq</td><td>rate of test images in Hz</td><td></td></tr>
 <tr><td>period</td><td>period of test images in seconds</td><td></td></tr>
-<tr><td>mode</td><td>bouncy [ball], scrolly [line], grid [grid], random [rand]</td><td>line</td></tr>
+<tr><td>mode</td><td>bouncy [ball], scrolly [line], grid [grid], random [rand], none [none]</td><td>line</td></tr>
+<tr><td>src</td><td></td><td></td></tr>
+<tr><td>bayer</td><td>should emit bayer test image?</td><td></td></tr>
+<tr><td>mono</td><td>should emit a monochrome image?</td><td></td></tr>
 </table>
 
 \sa yarp::dev::TestFrameGrabber

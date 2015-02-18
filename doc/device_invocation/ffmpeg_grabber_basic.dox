@@ -34,6 +34,7 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>nodelay</td><td>media will play in simulated realtime unless this is present</td><td></td></tr>
 <tr><td>pace</td><td>simulated realtime multiplier factor (must be <1 right now)</td><td>1.0</td></tr>
 <tr><td>v4l</td><td>if present, read from video4linux</td><td></td></tr>
+<tr><td>v4l1</td><td>if present, read from video4linux</td><td></td></tr>
 <tr><td>v4l2</td><td>if present, read from video4linux2</td><td></td></tr>
 <tr><td>ieee1394</td><td>if present, read from firewire</td><td></td></tr>
 </table>

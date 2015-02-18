@@ -27,7 +27,7 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
 <tr><td>movie</td><td>if present, read from specified file rather than camera</td><td></td></tr>
-<tr><td>camera</td><td>if present, read from camera identified by this index</td><td>0</td></tr>
+<tr><td>camera</td><td>if present, read from camera identified by this index</td><td>-1</td></tr>
 <tr><td>width</td><td>if present, specifies desired image width</td><td></td></tr>
 <tr><td>height</td><td>if present, specifies desired image height</td><td></td></tr>
 </table>
