@@ -47,7 +47,7 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
                                  
   set(yarpdataplayer_qt_THRIFT_FILES yarpdataplayer.thrift)
   if(MSVC)
-    set(yarpdataplayer_qt_RC_FILES src/RC/QtDataSetPlayer_resource.rc)
+    set(yarpdataplayer_qt_RC_FILES src/RC/yarpdataplayer_resource.rc)
   endif()
 
   qt5_add_resources(yarpdataplayer_qt_QRC_GEN_SRCS ${yarpdataplayer_qt_QRC_FILES})
