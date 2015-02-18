@@ -367,36 +367,6 @@ endmacro()
 
 
 #########################################################################
-# YARP_ADD_CARRIER_FINGERPRINT macro gives YARP a config file that will help
-# detect that a message is in a particular protocol, even if support for
-# that protocol has not yet loaded:
-#    YARP_ADD_CARRIER_FINGERPRINT(carrier.ini carrier1 carrier2)
-#
-macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
-  get_filename_component(out_name ${file_name} NAME)
-  configure_file(${file_name} ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/yarp/plugins/${out_name} COPYONLY)
-  if(YARP_TREE_INCLUDE_DIRS)
-    install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/yarp/plugins/${out_name}
-            COMPONENT runtime
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/plugins)
-  endif()
-endmacro()
-
-
-
-#########################################################################
-# YARP_ADD_DEVICE_FINGERPRINT macro gives YARP a config file that will help
-# give information about a device that has not yet loaded
-#    YARP_ADD_DEVICE_FINGERPRINT(device.ini device1 device2)
-#
-macro(YARP_ADD_DEVICE_FINGERPRINT)
-  # no difference between fingerprint macros
-  yarp_add_carrier_fingerprint(${ARGN})
-endmacro()
-
-
-
-#########################################################################
 # Deprecated macros
 #
 if(NOT YARP_NO_DEPRECATED)
@@ -440,6 +410,20 @@ if(NOT YARP_NO_DEPRECATED)
   macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
     yarp_deprecated_warning("YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated. Use YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.")
     yarp_add_plugin_yarpdev_executable(${ARGN})
+  endmacro()
+
+  macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
+    yarp_deprecated_warning("YARP_ADD_CARRIER_FINGERPRINT is deprecated. Use YARP_INSTALL instead.")
+    yarp_install(FILES ${file_name}
+                 COMPONENT runtime
+                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+  endmacro()
+
+  macro(YARP_ADD_DEVICE_FINGERPRINT file_name)
+    yarp_deprecated_warning("YARP_ADD_DEVICE_FINGERPRINT is deprecated. Use YARP_INSTALL instead.")
+    yarp_install(FILES ${file_name}
+                 COMPONENT runtime
+                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   endmacro()
 endif()
 

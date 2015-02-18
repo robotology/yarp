@@ -4,7 +4,9 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(priority_carrier TYPE yarp::os::PriorityCarrier INCLUDE PriorityCarrier.h)
-  yarp_add_carrier_fingerprint(priority.ini priority_carrier)
+  yarp_install(FILES priority.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_priority_carrier)

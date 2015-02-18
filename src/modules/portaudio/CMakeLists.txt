@@ -4,7 +4,9 @@
 
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(portaudio TYPE yarp::dev::PortAudioDeviceDriver INCLUDE PortAudioDeviceDriver.h WRAPPER grabber)
-  yarp_add_device_fingerprint(portaudio.ini portaudio)
+  yarp_install(FILES portaudio.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_portaudio)

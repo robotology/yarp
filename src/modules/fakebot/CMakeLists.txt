@@ -4,7 +4,9 @@
 
 IF (COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(fakebot TYPE yarp::dev::FakeBot INCLUDE FakeBot.h)
-  YARP_ADD_DEVICE_FINGERPRINT(fakebot.ini fakebot)
+  yarp_install(FILES fakebot.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_fakebot)

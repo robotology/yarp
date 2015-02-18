@@ -5,7 +5,9 @@
 if (COMPILE_DEVICE_LIBRARY)
     yarp_prepare_device(OpenNI2DeviceServer TYPE yarp::dev::OpenNI2DeviceDriverServer INCLUDE OpenNI2DeviceDriverServer.h)
     yarp_prepare_device(OpenNI2DeviceClient TYPE yarp::dev::OpenNI2DeviceDriverClient INCLUDE OpenNI2DeviceDriverClient.h)
-    yarp_add_device_fingerprint(openni2.ini OpenNI2DeviceServer OpenNI2DeviceClient)
+  yarp_install(FILES openni2.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 if (SKIP_OpenNI2DeviceServer AND SKIP_OpenNI2DeviceClient)

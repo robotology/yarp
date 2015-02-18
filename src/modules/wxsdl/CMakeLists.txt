@@ -4,7 +4,9 @@
  
 IF (COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(wxsdl TYPE yarp::dev::WxsdlWriter INCLUDE WxsdlWriter.h)
-  YARP_ADD_DEVICE_FINGERPRINT(wxsdl.ini wxsdl)
+  yarp_install(FILES wxsdl.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_wxsdl)

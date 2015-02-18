@@ -4,7 +4,9 @@
 
 if(COMPILE_DEVICE_LIBRARY)
     yarp_prepare_device(opencv_grabber TYPE yarp::dev::OpenCVGrabber INCLUDE OpenCVGrabber.h WRAPPER grabber)
-    yarp_add_device_fingerprint(opencv.ini opencv_grabber)
+  yarp_install(FILES opencv.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_opencv_grabber)

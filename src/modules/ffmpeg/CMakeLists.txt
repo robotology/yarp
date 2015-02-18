@@ -5,7 +5,9 @@
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(ffmpeg_grabber TYPE yarp::dev::FfmpegGrabber INCLUDE FfmpegGrabber.h WRAPPER grabber)
   yarp_prepare_device(ffmpeg_writer TYPE yarp::dev::FfmpegWriter INCLUDE FfmpegWriter.h)
-  yarp_add_device_fingerprint(ffmpeg.ini ffmpeg_grabber ffmpeg_writer)
+  yarp_install(FILES ffmpeg.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 if(SKIP_ffmpeg_grabber AND SKIP_ffmpeg_writer)

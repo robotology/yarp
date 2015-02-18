@@ -4,7 +4,9 @@
 
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(cuda TYPE CUDAGPU INCLUDE "CUDADeviceDriver.h")
-  yarp_add_device_fingerprint(cuda.ini cuda)
+  yarp_install(FILES cuda.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_cuda)

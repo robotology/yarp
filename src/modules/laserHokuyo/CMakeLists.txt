@@ -2,8 +2,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 IF (COMPILE_DEVICE_LIBRARY)
-	YARP_PREPARE_DEVICE(laserHokuyo TYPE laserHokuyo INCLUDE laserHokuyo.h)
-	YARP_ADD_DEVICE_FINGERPRINT(laserHokuyo.ini laserHokuyo)
+  yarp_prepare_device(laserHokuyo TYPE laserHokuyo INCLUDE laserHokuyo.h)
+  yarp_install(FILES laserHokuyo.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 if (NOT SKIP_laserHokuyo)

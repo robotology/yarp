@@ -3,7 +3,9 @@
 
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(dynamixelAX12Ftdi TYPE yarp::dev::DynamixelAX12FtdiDriver INCLUDE "DynamixelAX12FtdiDriver.h" WRAPPER controlboard)
-  YARP_ADD_DEVICE_FINGERPRINT(dynamixelAX12Ftdi.ini dynamixelAX12Ftdi)
+  yarp_install(FILES dynamixelAX12Ftdi.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_dynamixelAX12Ftdi)

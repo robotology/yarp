@@ -4,7 +4,9 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(bayer_carrier TYPE yarp::os::BayerCarrier INCLUDE BayerCarrier.h)
-  yarp_add_carrier_fingerprint(bayer.ini bayer_carrier)
+  yarp_install(FILES bayer.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_bayer_carrier)

@@ -4,7 +4,9 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(portmonitor_carrier TYPE yarp::os::PortMonitor INCLUDE PortMonitor.h)
-  yarp_add_carrier_fingerprint(portmonitor.ini portmonitor_carrier)
+  yarp_install(FILES portmonitor.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_portmonitor_carrier)

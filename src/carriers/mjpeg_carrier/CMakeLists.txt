@@ -4,7 +4,9 @@
 
 if(COMPILE_PLUGIN_LIBRARY)
     yarp_prepare_carrier(mjpeg_carrier TYPE yarp::os::MjpegCarrier INCLUDE MjpegCarrier.h)
-    yarp_add_carrier_fingerprint(mjpeg.ini mjpeg_carrier)
+  yarp_install(FILES mjpeg.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_PLUGIN_LIBRARY)
 
 if(NOT SKIP_mjpeg_carrier)

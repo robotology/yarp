@@ -6,7 +6,9 @@ if(UNIX)
 
   if(COMPILE_DEVICE_LIBRARY)
     yarp_prepare_device(firewirecamera TYPE yarp::dev::FirewireCamera INCLUDE FirewireCamera.h WRAPPER grabber)
-    yarp_add_device_fingerprint(firewirecamera.ini firewirecamera)
+    yarp_install(FILES firewirecamera.ini
+                 COMPONENT runtime
+                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   endif(COMPILE_DEVICE_LIBRARY)
 
   find_package(YARP REQUIRED)

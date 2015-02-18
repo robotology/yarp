@@ -8,7 +8,9 @@
 # Our devices can optionally be declared to have a network wrapper.
 IF (COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(vfw_grabber TYPE yarp::dev::VfwGrabber INCLUDE VfwGrabber.h WRAPPER grabber)
-  YARP_ADD_DEVICE_FINGERPRINT(vfw.ini vfw_grabber)
+  yarp_install(FILES vfw.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_vfw_grabber)

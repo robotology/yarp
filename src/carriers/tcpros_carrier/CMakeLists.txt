@@ -5,7 +5,9 @@
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(tcpros_carrier TYPE yarp::os::TcpRosCarrier INCLUDE TcpRosCarrier.h)
   yarp_prepare_carrier(rossrv_carrier TYPE yarp::os::RosSrvCarrier INCLUDE TcpRosCarrier.h)
-  yarp_add_carrier_fingerprint(ros.ini rossrv_carrier tcpros_carrier)
+  yarp_install(FILES ros.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_tcpros_carrier)

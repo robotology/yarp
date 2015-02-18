@@ -4,7 +4,9 @@
 
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(stage TYPE yarp::dev::StageControl INCLUDE StageControl.h)
-  yarp_add_device_fingerprint(stage.ini stage)
+  yarp_install(FILES stage.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 if(NOT SKIP_stage)

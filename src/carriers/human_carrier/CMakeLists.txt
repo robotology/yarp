@@ -3,8 +3,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_PLUGIN_LIBRARY)
-  YARP_PREPARE_CARRIER(human_carrier TYPE HumanCarrier INCLUDE HumanCarrier.h)
-  YARP_ADD_CARRIER_FINGERPRINT(human.ini human_carrier)
+  yarp_prepare_carrier(human_carrier TYPE HumanCarrier INCLUDE HumanCarrier.h)
+  yarp_install(FILES human.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 if(NOT SKIP_human_carrier)

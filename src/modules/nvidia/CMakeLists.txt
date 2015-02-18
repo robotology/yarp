@@ -3,8 +3,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(nvidia TYPE NVIDIAGPU INCLUDE "NVIDIADeviceDriver.h")
-  YARP_ADD_DEVICE_FINGERPRINT(nvidia.ini nvidia)
+  yarp_prepare_device(nvidia TYPE NVIDIAGPU INCLUDE "NVIDIADeviceDriver.h")
+  yarp_install(FILES nvidia.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_nvidia)
