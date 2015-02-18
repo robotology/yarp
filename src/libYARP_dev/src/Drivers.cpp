@@ -187,6 +187,8 @@ public:
             dev.open(*plugin.getFactory());
             settings.setLibraryMethodName(plugin.getFactory()->getName(),
                                           settings.getMethodName());
+            settings.setClassInfo(plugin.getFactory()->getClassName(),
+                                  plugin.getFactory()->getBaseClassName());
         }
     }
 
@@ -222,6 +224,14 @@ public:
 
     ConstString getPluginName() {
         return settings.getPluginName();
+    }
+
+    ConstString getClassName() {
+        return settings.getClassName();
+    }
+
+    ConstString getBaseClassName() {
+        return settings.getBaseClassName();
     }
 };
 #endif
@@ -275,7 +285,11 @@ DriverCreator *DriversHelper::load(const char *name) {
         result = NULL;
         return NULL;
     }
-    DriverCreator *creator = new StubDriverCreator(result->getPluginName().c_str(), result->getwrapName().c_str(), "", result->getDllName().c_str(), result->getFnName().c_str());
+    DriverCreator *creator = new StubDriverCreator(result->getPluginName().c_str(),
+                                                   result->getwrapName().c_str(),
+                                                   result->getClassName().c_str(),
+                                                   result->getDllName().c_str(),
+                                                   result->getFnName().c_str());
     add(creator);
     delete result;
     return creator;
