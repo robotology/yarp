@@ -17,7 +17,7 @@ OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
 {
     userTracking= withTracking;
-    camerasON = withCamerasOn;
+    colorON = withCamerasOn;
     mirrorON = withMirrorOn;
     colorVideoMode=DEFAULT_COLOR_MODE;
     depthVideoMode=DEFAULT_DEPTH_MODE;
@@ -81,7 +81,7 @@ void OpenNI2SkeletonTracker::close(){
         depthStream.destroy();
         cout << "Done" << endl;
     
-    if (camerasON){
+    if (colorON){
         cout << "Destroying RGB stream...";
         imageStream.destroy();
         cout << "Done" << endl;
@@ -203,7 +203,7 @@ int OpenNI2SkeletonTracker::init(){
             frameCount = playbackControl->getNumberOfFrames(depthStream);
         }
     
-    if (camerasON){        
+    if (colorON){        
         // setup and start colour stream
         if (device.getSensorInfo(openni::SENSOR_COLOR) != NULL)
         {
@@ -243,7 +243,7 @@ int OpenNI2SkeletonTracker::init(){
             }
         }
         else {
-            camerasON = false;
+            colorON = false;
             cout << "No RGB camera found, RGB stream disabled" << endl;
         }
 
@@ -262,7 +262,7 @@ int OpenNI2SkeletonTracker::init(){
                 }
             }
 
-            if (camerasON)
+            if (colorON)
             {
                 colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
                 const openni::Array<openni::VideoMode>& colorModes= colorInfo->getSupportedVideoModes();
@@ -316,7 +316,7 @@ void OpenNI2SkeletonTracker::initVars(){
     sensorStatus = new SensorStatus;
    
     // read frames from streams
-    if (camerasON){
+    if (colorON){
         imageStream.readFrame(&imageFrameRef);
     }
     depthStream.readFrame(&depthFrameRef);
@@ -326,7 +326,7 @@ void OpenNI2SkeletonTracker::initVars(){
     sensorStatus->depthFrame.resize(depthMode.getResolutionX(), depthMode.getResolutionY());
     sensorStatus->depthFrame.zero();
     
-    if (camerasON){
+    if (colorON){
     // get RGB mode properties and prepare imageFrame
     imageMode = imageStream.getVideoMode();
     sensorStatus->imageFrame.resize(imageMode.getResolutionX(), imageMode.getResolutionY());
@@ -355,7 +355,7 @@ OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::getSensor(){
 
 void OpenNI2SkeletonTracker::updateSensor(){
     // get camera image
-    if(camerasON){ 
+    if(colorON){ 
             if (imageStream.isValid()){
         imageStream.readFrame(&imageFrameRef);
             }
