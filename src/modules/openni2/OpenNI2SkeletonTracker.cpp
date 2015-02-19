@@ -14,27 +14,23 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColorOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
 {
     userTracking= withTracking;
-    colorON = withCamerasOn;
+    colorON = withColorOn;
     mirrorON = withMirrorOn;
     colorVideoMode=DEFAULT_COLOR_MODE;
     depthVideoMode=DEFAULT_DEPTH_MODE;
+    
     if (colorMode <= 11 && colorMode >= 0){
     colorVideoMode=colorMode;
     }
+    
     if (depthMode <= 10 && depthMode >= 0){
     depthVideoMode=depthMode;
     }
-    if (minConf != MINIMUM_CONFIDENCE){
-        minConfidence = minConf;
-    }
-
-    else{
-        minConfidence = MINIMUM_CONFIDENCE;
-    }
-
+    
+    minConfidence = minConf;
     oniPlayback = withOniPlayback;
     oniRecord = withOniRecord;
     if (oniPlayback) {
@@ -53,12 +49,10 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamer
     initVars();
 }
 
-OpenNI2SkeletonTracker::~OpenNI2SkeletonTracker(void)
-{
+OpenNI2SkeletonTracker::~OpenNI2SkeletonTracker(void){
 }
 
 void OpenNI2SkeletonTracker::close(){
-   
     if (oniRecord) {
         recorder.stop();
         cout << "Stopping recorder device...";
@@ -278,9 +272,7 @@ int OpenNI2SkeletonTracker::init(){
         }
 
     if (userTracking){
-        
         // setup and start user tracking
-
         nite::Status niteRc = nite::NiTE::initialize();
         niteRc = userTracker.create(&device);
 
@@ -289,7 +281,6 @@ int OpenNI2SkeletonTracker::init(){
             printf("Couldn't create user tracker\n");
             return niteRc;
         }
-        
         else {
             cout << "User tracker started..." << endl;
         }
@@ -303,7 +294,6 @@ int OpenNI2SkeletonTracker::init(){
         if (rc != openni::STATUS_OK) {
             printf("Couldn't start recorder\n");
         }
-
         else {
             cout << "Recorder started..." << endl;
         }
@@ -436,7 +426,6 @@ void OpenNI2SkeletonTracker::updateSensor(){
 }
 
 void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, nite::JointType joint, int jIndex){
-    
     int i = user.getId();
     UserSkeleton *userSkeleton = &getSensor()->userSkeleton[i-1];
     
@@ -444,7 +433,6 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
     userSkeleton->stillTracking = true;
     
     if (user.getSkeleton().getJoint(joint).getPositionConfidence() > minConfidence) {
-        
         // position
         double x = user.getSkeleton().getJoint(joint).getPosition().x;
         userSkeleton->skeletonPointsPos[jIndex][0]= x;
@@ -455,7 +443,6 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
     }
     
     if (user.getSkeleton().getJoint(joint).getOrientationConfidence() > minConfidence){
-        
         // orientation
         userSkeleton->skeletonPointsOri[jIndex][0] = user.getSkeleton().getJoint(joint).getOrientation().w;
         userSkeleton->skeletonPointsOri[jIndex][1] = user.getSkeleton().getJoint(joint).getOrientation().x;
@@ -470,8 +457,7 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
 }
 
 
-void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigned long long ts)
-{
+void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigned long long ts){
     int tmpID = user.getId();
     // if user is new
     if (user.isNew())
@@ -536,3 +522,4 @@ void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigne
 int OpenNI2SkeletonTracker::getDeviceStatus(){
     return deviceStatus;
 }
+

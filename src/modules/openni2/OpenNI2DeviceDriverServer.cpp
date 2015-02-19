@@ -130,12 +130,20 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
         colorON = true;
     }
 
-    if(config.check("noMirror", "Disable mirroring")) mirrorON = false;
-    else mirrorON = true;
+    if(config.check("noMirror", "Disable mirroring")) {
+        mirrorON = false;
+    }
+    else {
+        mirrorON = true;
+    }
     
-    if(config.check("noUserTracking", "Disable user tracking")) userTracking = false;
-    else userTracking = true;
-
+    if(config.check("noUserTracking", "Disable user tracking")) {
+        userTracking = false;
+    }
+    else {
+        userTracking = true;
+    }
+    
     if(config.check("printVideoModes", "Print supported video modes"))
     {
         printMode = true;
@@ -188,6 +196,9 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
 
     if (config.check("minConfidence", "Set minimum confidence (default=0.6)")){
         mConf = config.find("minConfidence").asDouble();
+    }
+    else {
+        mConf = MINIMUM_CONFIDENCE;
     }
     
     if (config.check("loop", "Set playback to loop")){
