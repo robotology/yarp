@@ -104,9 +104,13 @@ trap cleanup_all EXIT
 function require_name_server() {
     header "Start yarp name server if needed"
 
+    args=""
+    if [[ ! "$ROS_ID" = "" ]]; then
+	args="--ros"
+    fi
     ${YARP_BIN}/yarp where || {
 	echo "Starting yarpserver"
-	${YARP_BIN}/yarpserver --write --ros > /dev/null &
+	${YARP_BIN}/yarpserver --write $args > /dev/null &
 	SERVER_ID=$!
     }
 

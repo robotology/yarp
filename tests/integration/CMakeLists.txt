@@ -17,8 +17,10 @@ endforeach()
 # Generate a matrix of SWIG tests
 foreach (lang PYTHON JAVA LUA RUBY CSHARP PERL TCL)
   foreach (swig 1.3.40 2.0.12 3.0.2)
-    add_test("integration::swig::${lang}::${swig}" ${CMAKE_SOURCE_DIR}/scripts/admin/check-bindings.sh ${swig} ${lang})
-    set_property(TEST "integration::swig::${lang}::${swig}" PROPERTY ENVIRONMENT "YARP_ROOT=${CMAKE_SOURCE_DIR}" "YARP_DIR=${CMAKE_BINARY_DIR}")
+    set(test_name "integration::swig::${lang}::${swig}")
+    add_test(${test_name} ${CMAKE_SOURCE_DIR}/scripts/admin/check-bindings.sh ${swig} ${lang})
+    set_property(TEST ${test_name} PROPERTY ENVIRONMENT "YARP_ROOT=${CMAKE_SOURCE_DIR}" "YARP_DIR=${CMAKE_BINARY_DIR}")
+    set_property(TEST ${test_name} PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
   endforeach()
 endforeach()
 
