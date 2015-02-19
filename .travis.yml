@@ -17,7 +17,7 @@ matrix:
   exclude:
     - compiler: gcc
       env: TRAVIS_BUILD_TYPE=Profile TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_WITH_ACE=false TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_BLESSED=false
-    - compiler: gcc
+    - compiler: clang
       env: TRAVIS_BUILD_TYPE=Profile TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_BLESSED=true
     - compiler: clang
       env: TRAVIS_BUILD_TYPE=Profile TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_WITH_ACE=false TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_BLESSED=false

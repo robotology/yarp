@@ -12,7 +12,7 @@ if [ ! -e $swig_base ]; then
 fi
 
 # swig_versions="1.3.39 1.3.40 2.0.1 2.0.2 2.0.3 2.0.4 2.0.5 2.0.6 2.0.7 2.0.8 2.0.9 2.0.10 2.0.11 2.0.12 3.0.0 3.0.1 3.0.2"
-default_swig_versions="1.3.39 1.3.40 2.0.2 2.0.5 2.0.6 2.0.10 2.0.12 3.0.0 3.0.1 3.0.2"
+default_swig_versions="1.3.40 2.0.12 3.0.2"
 if [ -z "$SWIG_VERSIONS" ]; then
 swig_versions="$default_swig_versions"
 else
@@ -137,7 +137,12 @@ for lang in $SUPPORTED_LANGUAGES; do
 	echo "Running cmake"
 	set +e
 	rm -f CMakeCache.txt
-	cmake -DCREATE_$lang=TRUE $lang_flags $search_path $YARP_ROOT/bindings > result.txt 2>&1
+	opt_flags=""
+	if [[ "$TRAVIS_WITH_INTEGRATION_TESTS" ]]; then
+	    # turn off optimizations and force use of clang to fit into travis memory limits
+	    opt_flags="-DCMAKE_CXX_FLAGS='-O0' -DCMAKE_C_FLAGS='-O0' -DCMAKE_C_COMPILER='clang' -DCMAKE_CXX_COMPILER='clang++'"
+	fi
+	cmake -DCREATE_$lang=TRUE $opt_flags $lang_flags $search_path $YARP_ROOT/bindings > result.txt 2>&1
 	set -e
 	if [ ! -e CMakeCache.txt ] ; then
 	    cat result.txt
