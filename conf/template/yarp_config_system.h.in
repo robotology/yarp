@@ -110,9 +110,9 @@
   #define __YARP_STR2(x) #x
   #define __YARP_STR1(x) __YARP_STR2(x)
   #define __YARP_LOC __FILE__ "("__STR1__(__LINE__)")"
-  #define YARP_COMPILER_MESSAGE(x) __pragma(message(__LOC__ " : msg" #x)
-  #define YARP_COMPILER_WARNING(x) __pragma(message(__LOC__ " : warning msg" #x)
-  #define YARP_COMPILER_ERROR(x)  __pragma(message(__LOC__ " : error msg" #x)
+  #define YARP_COMPILER_MESSAGE(x) __pragma(message(__LOC__ " : msg" #x))
+  #define YARP_COMPILER_WARNING(x) __pragma(message(__LOC__ " : warning msg" #x))
+  #define YARP_COMPILER_ERROR(x)  __pragma(message(__LOC__ " : error msg" #x))
 #elif defined(__GNUC__)
   // see https://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html
   #define __YARP_DO_PRAGMA(x) _Pragma (#x)
