@@ -31,6 +31,8 @@ yarp::os::SharedLibraryFactory::~SharedLibraryFactory() {
 bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_name) {
     returnValue = 0;
     name = "";
+    className = "";
+    baseClassName = "";
     status = STATUS_NONE;
     api.startCheck = 0;
     if (!lib.open(dll_name)) {
@@ -51,6 +53,13 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
     }
     status = STATUS_OK;
     name = dll_name;
+
+    char buf[256];
+    api.getClassName(buf, 256);
+    className = buf;
+    api.getBaseClassName(buf, 256);
+    baseClassName = buf;
+
     return true;
 }
 
@@ -97,6 +106,14 @@ int yarp::os::SharedLibraryFactory::removeRef() {
 
 yarp::os::ConstString yarp::os::SharedLibraryFactory::getName() const {
     return name;
+}
+
+yarp::os::ConstString yarp::os::SharedLibraryFactory::getClassName() const {
+    return className;
+}
+
+yarp::os::ConstString yarp::os::SharedLibraryFactory::getBaseClassName() const {
+    return baseClassName;
 }
 
 bool yarp::os::SharedLibraryFactory::useFactoryFunction(void *factory) {

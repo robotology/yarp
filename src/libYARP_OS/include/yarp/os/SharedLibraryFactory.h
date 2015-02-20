@@ -125,6 +125,20 @@ public:
     ConstString getName() const;
 
     /**
+     * Get the type associated with this factory.
+     *
+     * @return the type associated with this factory.
+     */
+    ConstString getClassName() const;
+
+    /**
+     * Get the base type associated with this factory.
+     *
+     * @return the base type associated with this factory.
+     */
+    ConstString getBaseClassName() const;
+
+    /**
      *
      * Specify function to use as factory.
      *
@@ -141,6 +155,8 @@ private:
     int returnValue;
     int rct;
     ConstString name;
+    ConstString className;
+    ConstString baseClassName;
 };
 
 

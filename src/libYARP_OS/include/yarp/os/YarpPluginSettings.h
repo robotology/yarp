@@ -73,6 +73,21 @@ public:
 
     /**
      *
+     * Set the information about the class and the base class
+     * constructed by this plugin.
+     *
+     * @param class_name the name of the class
+     * @param baseclass_name the name of the base class
+     */
+    void setClassInfo(const ConstString& class_name,
+                      const ConstString& baseclass_name) {
+        this->class_name = class_name;
+        this->baseclass_name = baseclass_name;
+    }
+
+
+    /**
+     *
      * Use a selector to find a plugin or plugins.  If the name
      * of the plugin has already been set, the selector will be used to
      * increase what is known about the plugin.
@@ -163,8 +178,31 @@ public:
         return selector;
     }
 
+    /**
+     *
+     * @return the name of the wrapper, if set
+     *
+     */
     ConstString getWrapperName() const {
         return wrapper_name;
+    }
+
+    /**
+     *
+     * @return the name of the class, if set
+     *
+     */
+    ConstString getClassName() const {
+        return class_name;
+    }
+
+    /**
+     *
+     * @return the name of the base class, if set
+     *
+     */
+    ConstString getBaseClassName() const {
+        return class_name;
     }
 
     /**
@@ -201,6 +239,8 @@ private:
     ConstString fn_name;
     ConstString fn_ext;
     ConstString wrapper_name;
+    ConstString class_name;
+    ConstString baseclass_name;
     YarpPluginSelector *selector;
     bool verbose;
 

@@ -125,6 +125,36 @@ public:
 
     /**
      *
+     * @return the name of the objects constructed by this plugin
+     *
+     */
+    ConstString getName() {
+        if (!factory) return ConstString();
+        return factory->getName();
+    }
+
+    /**
+     *
+     * @return the type of the objects constructed by this plugin
+     *
+     */
+    ConstString getClassName() {
+        if (!factory) return ConstString();
+        return factory->getClassName();
+    }
+
+    /**
+     *
+     * @return the base class the objects constructed by this plugin
+     *
+     */
+    ConstString getBaseClassName() {
+        if (!factory) return ConstString();
+        return factory->getBaseClassName();
+    }
+
+    /**
+     *
      * @return the factory object associated with the plugin
      *
      */
