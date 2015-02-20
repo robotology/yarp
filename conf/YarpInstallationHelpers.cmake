@@ -88,7 +88,7 @@ endif()
 # component for the installed files. If not set, "configuration" will
 # be used.
 
-function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name) #_component
+function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
 
   string(TOUPPER ${_name} _NAME)
 
@@ -168,8 +168,6 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name) #_component
 path \"@_path@\"
 ")
       set(_path "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/${_name}")
-      file(TO_NATIVE_PATH "${_path}" _path)
-
       configure_file("${_in_file}" "${_install_file}" @ONLY)
 
       # Install the file into yarp config dir
@@ -193,7 +191,6 @@ path \"@_path@\"
         set(_data_dirs "$ENV{YARP_DATA_DIRS}")
       else()
         set(_data_dirs "${YARP_DATA_INSTALL_DIR_FULL}")
-        file(TO_NATIVE_PATH "${_data_dirs}" _data_dirs)
       endif()
 
       if(YARP_INSTALL_PREFIX)
@@ -207,8 +204,6 @@ path \"@_path@\"
         set(_msg "Using YARP from build tree")
         set(_path "${CMAKE_BINARY_DIR}/${${_NAME}_DATA_INSTALL_DIR}")
       endif()
-      file(TO_NATIVE_PATH "${_path}" _path)
-
       message(STATUS "${_msg}: no file will we be installed into path.d folder, you need to set YARP_DATA_DIRS environment variable to ${_data_dirs}${_path_separator}${_path}")
     endif()
   endif()
@@ -245,11 +240,9 @@ type \"@_type@\"
     endif()
 
     set(_path "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}") # (build tree)
-    file(TO_NATIVE_PATH "${_path}" _path)
     configure_file("${_in_file}" "${_build_file}" @ONLY)
 
     set(_path "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}") # (install tree)
-    file(TO_NATIVE_PATH "${_path}" _path)
     configure_file("${_in_file}" "${_install_file}" @ONLY)
     install(FILES "${_install_file}"
             RENAME ${_name}.ini
