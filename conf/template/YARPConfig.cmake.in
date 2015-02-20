@@ -27,9 +27,17 @@ if(YARP_NO_DEPRECATED)
     add_definitions("-DYARP_NO_DEPRECATED")
 endif(YARP_NO_DEPRECATED)
 
-# Disable deprecated warnings
-# FIXME 2.4 re-enable these warnings before releasing YARP 2.4
+# Disable deprecated warnings, but add an option to enable it
+# FIXME 2.4 enable by default
 set(YARP_NO_DEPRECATED_WARNINGS TRUE)
+include(CMakeDependentOption)
+cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
+                       "Do not warn when using YARP deprecated declarations" TRUE
+                       "NOT YARP_NO_DEPRECATED" FALSE)
+mark_as_advanced(YARP_NO_DEPRECATED_WARNINGS)
+if(YARP_NO_DEPRECATED_WARNINGS)
+    add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
+endif()
 
 # CMake modules directories
 set_and_check(YARP_MODULE_DIR "@PACKAGE_YARP_MODULE_DIR@")
