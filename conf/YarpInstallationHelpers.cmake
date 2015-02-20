@@ -281,7 +281,7 @@ macro(YARP_INSTALL)
                       DIRECTORY
                       PROGRAMS
                       PERMISSIONS)
-  cmake_parse_arguments(_YI "" "DESTINATION;COMPONENT" "FILES;DIRECTORY;PROGRAMS;PERMISSIONS" "${ARGN}")
+  cmake_parse_arguments(_YI "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" "${ARGN}")
 
   # Change DESTINATION argument 'dest' to "${CMAKE_BINARY_DIR}/${dest}"
   string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" _YI_DESTINATION_RELATIVE ${_YI_DESTINATION})
