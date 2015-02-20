@@ -18,6 +18,11 @@ if(NOT SKIP_opencv_grabber)
     yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp OpenCVGrabber.h)
     target_link_libraries(yarp_opencv ${YARP_LIBRARIES})
     target_link_libraries(yarp_opencv ${OpenCV_LIBRARIES})
+    yarp_install(TARGETS yarp_opencv
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
     yarp_install(FILES opencv_grabber.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
 

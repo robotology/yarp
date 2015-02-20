@@ -19,6 +19,11 @@ if(UNIX)
     message(STATUS "Warning, just taking it on faith that that raw1394 and dc1394_control exist")
     link_libraries(dc1394_control ${YARP_LIBRARIES})
     yarp_add_plugin(yarp_firewirecamera FirewireCamera.cpp FirewireCameraSet.cpp FirewireCameraSet.h dc1394settings.h FirewireCamera.h)
+    yarp_install(TARGETS dc1394_control
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   endif(NOT SKIP_firewirecamera)
 
 endif(UNIX)

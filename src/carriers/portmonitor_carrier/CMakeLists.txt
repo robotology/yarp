@@ -29,6 +29,11 @@ if (NOT SKIP_portmonitor_carrier)
 
   target_link_libraries(yarp_portmonitor YARP_OS ${LUA_LIBRARY})
   target_link_libraries(yarp_portmonitor ${ACE_LIBRARIES})
+  yarp_install(TARGETS yarp_portmonitor
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 endif ()
 

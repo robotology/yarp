@@ -26,6 +26,11 @@ if(NOT SKIP_cuda)
     add_definitions(-DCUDA_NUMTHREADS=${CUDA_NUMTHREADS} -DCUDA_NUMTHREADBLOCKS=${CUDA_NUMTHREADBLOCKS})
     yarp_add_plugin(ycuda CUDADeviceDriver.cpp CUDADeviceDriver.h FunctionClass.h)
     target_link_libraries(ycuda ${lib_cudart} ${lib_cuda} ${lib_GL} ${lib_cutil})
+    yarp_install(TARGETS ycuda
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
   else()
     message(FATAL_ERROR "could not find all libraries needed by cuda driver")

@@ -25,6 +25,11 @@ if (NOT SKIP_tcpros_carrier)
   target_link_libraries(yarp_tcpros YARP_wire_rep_utils)
   target_link_libraries(yarp_tcpros YARP_OS YARP_sig)
   target_link_libraries(yarp_tcpros ${ACE_LIBRARIES})
+  yarp_install(TARGETS yarp_tcpros
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
   add_executable(yarpros yarpros.cpp
                          TcpRosStream.cpp

@@ -37,6 +37,11 @@ if(NOT SKIP_mpi_carrier)
   target_link_libraries(yarp_mpi YARP_OS YARP_sig)
   target_link_libraries(yarp_mpi ${ACE_LIBRARIES})
   target_link_libraries(yarp_mpi ${MPI_LIBRARIES})
+  yarp_install(TARGETS yarp_mpi
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 endif(NOT SKIP_mpi_carrier)
 
@@ -74,5 +79,10 @@ if(NOT SKIP_mpibcast_carrier)
   target_link_libraries(yarp_mpibcast YARP_OS YARP_sig)
   target_link_libraries(yarp_mpibcast ${ACE_LIBRARIES})
   target_link_libraries(yarp_mpibcast ${MPI_LIBRARIES})
+  yarp_install(TARGETS yarp_mpibcast
+               COMPONENT runtime
+               EXPORT YARP
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 endif(NOT SKIP_mpibcast_carrier)

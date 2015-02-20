@@ -17,6 +17,11 @@ if(WIN32)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/blob)
     link_libraries(U2CCommon I2cBrdg)
     yarp_add_plugin(yarp_dimax_u2c DimaxU2C.cpp I2c.cpp Servo.cpp DimaxU2C.h Servo.h i2cbridge.h I2c.h u2c_common_func.h)
+    yarp_install(TARGETS yarp_dimax_u2c
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 
 else(WIN32)

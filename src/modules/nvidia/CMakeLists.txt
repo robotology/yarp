@@ -42,6 +42,11 @@ IF (NOT SKIP_nvidia)
   ENDIF (NOT WINDOWS)	
 
   YARP_ADD_PLUGIN(yarp_nvidia NVIDIADeviceDriver.cpp NVIDIADeviceDriver.h FBO_Filter.h)
+  yarp_install(TARGETS yarp_nvidia
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
  ELSE (OK)
 

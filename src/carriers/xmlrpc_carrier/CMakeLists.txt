@@ -26,4 +26,9 @@ if (NOT SKIP_xmlrpc_carrier)
                   xmlrpc/XmlRpcValue.cpp)
   target_link_libraries(yarp_xmlrpc YARP_OS YARP_sig)
   target_link_libraries(yarp_xmlrpc ${ACE_LIBRARIES})
+  yarp_install(TARGETS yarp_xmlrpc
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 endif (NOT SKIP_xmlrpc_carrier)

@@ -26,7 +26,11 @@ if(NOT SKIP_ffmpeg)
     if(MINGW)
       target_link_libraries(yarp_ffmpeg ws2_32)
     endif()
-
+    yarp_install(TARGETS yarp_ffmpeg
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   else()
     message(SEND_ERROR "ffmpeg not found")
   endif()

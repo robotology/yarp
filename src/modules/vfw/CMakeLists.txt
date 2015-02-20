@@ -33,6 +33,11 @@ IF (NOT SKIP_vfw_grabber)
 
     # Create a library of our device code.
     YARP_ADD_PLUGIN(vfw_grabber VfwGrabber.cpp VfwGrabber.h)
+    yarp_install(TARGETS vfw_grabber
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
     # If not being compiled as part of a library, try making a test program.
     IF (NOT COMPILE_DEVICE_LIBRARY)

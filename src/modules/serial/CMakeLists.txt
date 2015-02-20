@@ -28,6 +28,11 @@ if(NOT SKIP_all_serial)
     yarp_add_plugin(yarp_serial SerialDeviceDriver.cpp SerialDeviceDriver.h)
     target_link_libraries(yarp_serial YARP_OS YARP_dev)
     target_link_libraries(yarp_serial ${ACE_LIBRARIES})
+    yarp_install(TARGETS yarp_serial
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
   else()
     message(SEND_ERROR "ACE not found; needed by serial driver")

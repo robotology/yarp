@@ -17,6 +17,12 @@ if(NOT SKIP_stage)
     include_directories(${STAGE_INCLUDE_DIR})
     yarp_add_plugin(yarp_stage StageControl.cpp StageControl.h)
     target_link_libraries(yarp_stage ${STAGE_LIBRARY})
+    yarp_install(TARGETS yarp_stage
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+
   else()
     message(STATUS "Could not find everything needed for stage device")
   endif()

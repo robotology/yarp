@@ -20,6 +20,11 @@ if(NOT SKIP_portaudio)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${PortAudio_INCLUDE_DIR})
     link_libraries(${PortAudio_LIBRARIES})
     yarp_add_plugin(yarp_portaudio PortAudioBuffer.cpp PortAudioBuffer.h PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
+    yarp_install(TARGETS yarp_portaudio
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   else(PortAudio_FOUND)
     message(SEND_ERROR "portaudio not found")
   endif(PortAudio_FOUND)

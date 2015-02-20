@@ -19,6 +19,11 @@ IF (WIN32)
 
   YARP_ADD_PLUGIN(yarp_jrkerr JrkerrMotionControl.cpp nmccom.cpp picservo.cpp sio_util.cpp JrkerrMotionControl.h nmccom.h picservo.h sio_util.h)
   TARGET_LINK_LIBRARIES(yarp_jrkerr ${YARP_LIBRARIES})
+  yarp_install(TARGETS yarp_jrkerr
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 ELSE (WIN32)
 

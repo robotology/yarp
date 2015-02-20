@@ -14,6 +14,11 @@ IF (UNIX)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(urbtc UrbtcControl.cpp UrbtcControl.h)
+  yarp_install(TARGETS urbtc
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 ELSE (UNIX)
 

@@ -10,10 +10,15 @@ ENDIF (COMPILE_DEVICE_LIBRARY)
 
 if (NOT SKIP_laserHokuyo)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                       ${YARP_INCLUDE_DIRS})
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}
+                      ${YARP_INCLUDE_DIRS})
 
-yarp_add_plugin(laserHokuyo laserHokuyo.h laserHokuyo.cpp)
-target_link_libraries(laserHokuyo ${YARP_LIBRARIES})
+  yarp_add_plugin(laserHokuyo laserHokuyo.h laserHokuyo.cpp)
+  target_link_libraries(laserHokuyo ${YARP_LIBRARIES})
+  yarp_install(TARGETS laserHokuyo
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 endif (NOT SKIP_laserHokuyo)

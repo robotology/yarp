@@ -33,6 +33,11 @@ if(NOT SKIP_mjpeg_carrier)
     target_link_libraries(mjpeg_carrier ${ACE_LIBRARIES})
     target_link_libraries(mjpeg_carrier ${JPEG_LIBRARY})
 
+    yarp_install(TARGETS mjpeg_carrier
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 if(YARP_COMPILE_TESTS)
     add_executable(test_mjpeg test_mjpeg.cpp

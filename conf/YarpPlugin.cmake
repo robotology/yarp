@@ -269,10 +269,9 @@ macro(YARP_ADD_PLUGIN LIBNAME)
     # Do not add the "lib" prefix to dynamic plugin libraries.
     # This simplifies search on different platforms and makes it easier
     # to distinguish them from linkable libraries.
-    set_target_properties(${LIBNAME} PROPERTIES PREFIX "")
-  endif()
-
-  if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
+    set_property(TARGET ${LIBNAME} PROPERTY PREFIX "")
+  else()
+    # Compile static plugins with -DYARP_STATIC_PLUGIN
     set_property(TARGET ${LIBNAME} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
   endif()
 
@@ -281,16 +280,6 @@ macro(YARP_ADD_PLUGIN LIBNAME)
   # Reset the list of generated source code and link libraries to empty.
   set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
   set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
-  if(YARP_TREE_INCLUDE_DIRS)
-    # If compiling YARP, we go ahead and set up installing this
-    # target.  It isn't safe to do this outside of YARP though.
-    install(TARGETS ${LIBNAME}
-            EXPORT YARP
-            COMPONENT runtime
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-  endif()
 endmacro()
 
 

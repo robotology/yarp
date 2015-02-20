@@ -16,4 +16,9 @@ if(NOT SKIP_human_carrier)
   yarp_add_plugin(yarp_human HumanCarrier.h HumanStream.h HumanCarrier.cpp HumanStream.cpp)
   target_link_libraries(yarp_human YARP_OS YARP_sig)
   target_link_libraries(yarp_human ${ACE_LIBRARIES})
+  yarp_install(TARGETS yarp_human
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 endif()

@@ -26,6 +26,11 @@ IF (UNIX OR WIN32)
   LINK_LIBRARIES(${YARP_LIBRARIES})
 
   YARP_ADD_PLUGIN(yarp_microphone ${SYS}MicrophoneDeviceDriver.cpp MicrophoneDeviceDriver.h)
+  yarp_install(TARGETS yarp_microphone
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 ELSE (UNIX OR WIN32)
 

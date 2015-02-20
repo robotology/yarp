@@ -35,6 +35,12 @@ if (NOT SKIP_OpenNI2Device)
 
     yarp_add_plugin(yarp_OpenNI2Device ${folder_source} ${folder_header})
     target_link_libraries(yarp_OpenNI2Device ${YARP_LIBRARIES} ${LINK_LIBRARIES})
+    yarp_install(TARGETS yarp_OpenNI2Device
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+
 endif()
 
 
