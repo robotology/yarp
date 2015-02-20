@@ -148,7 +148,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out,"#include <yarp/os/Wire.h>\n");
     fprintf(out,"#include <yarp/os/idl/WireTypes.h>\n");
     for (int i=0; i<(int)state.dependencies.size(); i++) {
-        fprintf(out,"#include <%s.h>\n",getSillyName(state.dependenciesAsPaths[i]).c_str());
+        fprintf(out,"#include \"%s.h\"\n",getSillyName(state.dependenciesAsPaths[i]).c_str());
     }
     fprintf(out,"\n");
     fprintf(out,"class %s : public yarp::os::idl::WirePortable {\n", safe_tname.c_str());
