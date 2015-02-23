@@ -15,6 +15,7 @@ CMAKE_OPTIONS="\
 -DUSE_PORT_AUTHENTICATION:BOOL=FALSE \
 -DCREATE_OPTIONAL_CARRIERS=TRUE \
 -DENABLE_yarpcar_tcpros_carrier=TRUE \
+-DENABLE_yarpcar_rossrv_carrier=TRUE \
 -DENABLE_yarpcar_xmlrpc_carrier=TRUE \
 -DENABLE_yarpcar_bayer_carrier=TRUE \
 -DENABLE_yarpcar_priority_carrier=TRUE \
