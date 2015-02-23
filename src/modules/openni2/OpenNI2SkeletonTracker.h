@@ -67,7 +67,7 @@ public:
     /**
      * @param userDetection indicates if user callbacks and skeleton tracking should be on
      */
-    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, double minConf = MINIMUM_CONFIDENCE, bool oniPlayback = false, string fileDevice = "", bool oniRecord  = false, string oniOutputFile = "", bool loop = false, bool frameSync = false, bool imageRegistration = false, bool printMode = false, int depthMode = DEFAULT_DEPTH_MODE, int colorMode = DEFAULT_COLOR_MODE);
+    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, bool withRgbOn=true, double minConf = MINIMUM_CONFIDENCE, bool oniPlayback = false, string fileDevice = "", bool oniRecord  = false, string oniOutputFile = "", bool loop = false, bool frameSync = false, bool imageRegistration = false, bool printMode = false, int depthMode = DEFAULT_DEPTH_MODE, int colorMode = DEFAULT_COLOR_MODE);
     ~OpenNI2SkeletonTracker(void);
     void close();
     /**
@@ -83,7 +83,7 @@ public:
     static SensorStatus *getSensor();
 private:
     static SensorStatus *sensorStatus;
-    bool userTracking, camerasON, mirrorON, oniPlayback, oniRecord, loop, frameSync, imageRegistration, printMode;
+    bool userTracking, camerasON, mirrorON, rgbON, oniPlayback, oniRecord, loop, frameSync, imageRegistration, printMode;
     int deviceStatus;
     double minConfidence;
     string fileDevice;
