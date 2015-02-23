@@ -81,14 +81,14 @@ private:
     BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono16> > *depthFramePort;
     BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *imageFramePort;
     OpenNI2SkeletonTracker *skeleton;
-    bool withOpenPorts, userTracking, camerasON, mirrorON, oniPlayback, oniRecord, loop, frameSync, imageRegistration;
+    bool withOpenPorts, userTracking, colorON, mirrorON, oniPlayback, oniRecord, loop, frameSync, imageRegistration;
     string fileDevice;
     string oniOutputFile;
 
     /**
      * Opens the depth sensor and rgb camera image ports
      */
-    void openPorts(string portPrefix, bool withUserTracking, bool withCamerasON);
+    void openPorts(string portPrefix, bool withUserTracking, bool withColorOn);
     /**
      * Sends the sensor data to the rgb and depth frame ports. Also sends the userSkeleton data to the mainBottle port.
      *

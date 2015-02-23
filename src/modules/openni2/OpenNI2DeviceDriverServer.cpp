@@ -18,7 +18,7 @@ yarp::dev::OpenNI2DeviceDriverServer::~OpenNI2DeviceDriverServer(void)
 {
 }
 
-void yarp::dev::OpenNI2DeviceDriverServer::openPorts(string portPrefix, bool userTracking, bool camerasON){
+void yarp::dev::OpenNI2DeviceDriverServer::openPorts(string portPrefix, bool userTracking, bool colorON){
     
     string receivingPortName = portPrefix+":i";
     receivingPort = new BufferedPort<Bottle>();
@@ -30,10 +30,10 @@ void yarp::dev::OpenNI2DeviceDriverServer::openPorts(string portPrefix, bool use
         skeletonPort->open(skeletonPortName.c_str());
     }
     
-    if(camerasON){
         depthFramePort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono16> >();
         string strTemp = portPrefix+PORTNAME_DEPTHFRAME+":o";
         depthFramePort->open(strTemp.c_str());
+        if(colorON){
         imageFramePort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >();
         strTemp = portPrefix+PORTNAME_IMAGEFRAME+":o";
         imageFramePort->open(strTemp.c_str());
@@ -48,16 +48,17 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
     // creating a timestamp with the current system time in seconds.milliseconds
     Stamp timestamp(index,Time::now());
     // cameras data
-    if(camerasON){
+    if(colorON){
         // image frame data
         imageFramePort->prepare() = OpenNI2SkeletonTracker::getSensor()->imageFrame;
         imageFramePort->setEnvelope(timestamp);
         imageFramePort->write();
+        }
+
         // depth frame data
         depthFramePort->prepare() = OpenNI2SkeletonTracker::getSensor()->depthFrame;
         depthFramePort->setEnvelope(timestamp);
         depthFramePort->write();
-    }
     
     // sending skeleton data
     
@@ -122,15 +123,27 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     int dMode, cMode;
     bool printMode;
 
-    if(config.check("noCameras", "Use only user tracking")) camerasON = false;
-    else camerasON = true;
-    
-    if(config.check("noMirror", "Disable mirroring")) mirrorON = false;
-    else mirrorON = true;
-    
-    if(config.check("noUserTracking", "Disable user tracking")) userTracking = false;
-    else userTracking = true;
+    if(config.check("noRGB", "Use only depth sensor")) {
+        colorON = false;
+    }
+    else {
+        colorON = true;
+    }
 
+    if(config.check("noMirror", "Disable mirroring")) {
+        mirrorON = false;
+    }
+    else {
+        mirrorON = true;
+    }
+    
+    if(config.check("noUserTracking", "Disable user tracking")) {
+        userTracking = false;
+    }
+    else {
+        userTracking = true;
+    }
+    
     if(config.check("printVideoModes", "Print supported video modes"))
     {
         printMode = true;
@@ -143,10 +156,16 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     if(config.check("depthVideoMode", "Depth video mode (default=0)")){
         dMode = config.find("depthVideoMode").asInt();
     } 
+    else {
+        dMode = 0;
+    }
    
    if(config.check("colorVideoMode", "Color video mode (default=0)")){
          cMode = config.find("colorVideoMode").asInt();
-    } 
+    }
+   else{
+      cMode = 0; 
+   }
 
    if(config.check("playback", "Play from .oni file")) {
         oniPlayback = true;
@@ -167,16 +186,19 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     if(config.check("name", "Name for the port prefix (default=/OpenNI2)")){
         portPrefix = config.find("name").asString();
         withOpenPorts = true;
-        openPorts(portPrefix, userTracking, camerasON);
+        openPorts(portPrefix, userTracking, colorON);
     }
     else {
         portPrefix = "/OpenNI2";
         withOpenPorts  = true;
-        openPorts(portPrefix, userTracking, camerasON);
+        openPorts(portPrefix, userTracking, colorON);
     }
 
     if (config.check("minConfidence", "Set minimum confidence (default=0.6)")){
         mConf = config.find("minConfidence").asDouble();
+    }
+    else {
+        mConf = MINIMUM_CONFIDENCE;
     }
     
     if (config.check("loop", "Set playback to loop")){
@@ -200,7 +222,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
 	imageRegistration = false;
     }
     
-    skeleton = new OpenNI2SkeletonTracker(userTracking, camerasON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop, frameSync, imageRegistration, printMode, dMode, cMode);
+    skeleton = new OpenNI2SkeletonTracker(userTracking, colorON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop, frameSync, imageRegistration, printMode, dMode, cMode);
     
     if (skeleton->getDeviceStatus() == 0) {
     cout << "OpenNI2 Yarp Device started." << endl;
@@ -224,9 +246,9 @@ bool yarp::dev::OpenNI2DeviceDriverServer::close(){
         if(userTracking) {
             skeletonPort->close();
         }
-        
-        if(camerasON){
-            depthFramePort->close();
+       
+        depthFramePort->close(); 
+        if(colorON){
             imageFramePort->close();
         }
         receivingPort->close();

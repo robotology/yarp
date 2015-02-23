@@ -14,27 +14,23 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColorOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
 {
     userTracking= withTracking;
-    camerasON = withCamerasOn;
+    colorON = withColorOn;
     mirrorON = withMirrorOn;
     colorVideoMode=DEFAULT_COLOR_MODE;
     depthVideoMode=DEFAULT_DEPTH_MODE;
+    
     if (colorMode <= 11 && colorMode >= 0){
     colorVideoMode=colorMode;
     }
+    
     if (depthMode <= 10 && depthMode >= 0){
     depthVideoMode=depthMode;
     }
-    if (minConf != MINIMUM_CONFIDENCE){
-        minConfidence = minConf;
-    }
-
-    else{
-        minConfidence = MINIMUM_CONFIDENCE;
-    }
-
+    
+    minConfidence = minConf;
     oniPlayback = withOniPlayback;
     oniRecord = withOniRecord;
     if (oniPlayback) {
@@ -53,12 +49,10 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamer
     initVars();
 }
 
-OpenNI2SkeletonTracker::~OpenNI2SkeletonTracker(void)
-{
+OpenNI2SkeletonTracker::~OpenNI2SkeletonTracker(void){
 }
 
 void OpenNI2SkeletonTracker::close(){
-   
     if (oniRecord) {
         recorder.stop();
         cout << "Stopping recorder device...";
@@ -75,12 +69,13 @@ void OpenNI2SkeletonTracker::close(){
         cout << "Done" << endl;
     }
     
-    if (camerasON) {
         depthStream.stop();
         imageStream.stop();
         cout << "Destroying depth stream...";
         depthStream.destroy();
         cout << "Done" << endl;
+    
+    if (colorON){
         cout << "Destroying RGB stream...";
         imageStream.destroy();
         cout << "Done" << endl;
@@ -130,8 +125,6 @@ int OpenNI2SkeletonTracker::init(){
     if (oniRecord) {
         recorder.create(oniOutputFile.c_str());
     }
-
-    if(camerasON){
 
     if(deviceName!="Kinect"){
 	// check if Image registration mode is supported and set accordingly
@@ -203,7 +196,8 @@ int OpenNI2SkeletonTracker::init(){
             cout << "Depth stream started..." << endl;
             frameCount = playbackControl->getNumberOfFrames(depthStream);
         }
-            
+    
+    if (colorON){        
         // setup and start colour stream
         if (device.getSensorInfo(openni::SENSOR_COLOR) != NULL)
         {
@@ -223,26 +217,31 @@ int OpenNI2SkeletonTracker::init(){
             {
                 imageStream.setVideoMode(colorModes[colorVideoMode]);
             }
-        }
         
-        if (oniRecord) {
+            if (oniRecord) {
             recorder.attach(imageStream);
-        }
+            }
 
-        rc = imageStream.start();
-        if (rc != openni::STATUS_OK)
-        {
-            printf("Couldn't start the RGB stream\n%s\n", openni::OpenNI::getExtendedError());
-            deviceStatus = rc;
-            return rc;
-        }
+            rc = imageStream.start();
+            if (rc != openni::STATUS_OK)
+            {
+                printf("Couldn't start the RGB stream\n%s\n", openni::OpenNI::getExtendedError());
+                deviceStatus = rc;
+                return rc;
+            }
         
+            else {
+                fpsCount = imageStream.getVideoMode().getFps();
+                cout << "RGB video mode: " << colorVideoMode << " - " << imageStream.getVideoMode().getResolutionX() << "x" << imageStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
+                cout << "RGB stream started..." << endl;
+            }
+        }
         else {
-            fpsCount = imageStream.getVideoMode().getFps();
-            cout << "RGB video mode: " << colorVideoMode << " - " << imageStream.getVideoMode().getResolutionX() << "x" << imageStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
-            cout << "RGB stream started..." << endl;
+            colorON = false;
+            cout << "No RGB camera found, RGB stream disabled" << endl;
         }
 
+    }
         // print video modes
         if (printMode)
         {
@@ -256,23 +255,24 @@ int OpenNI2SkeletonTracker::init(){
             
                 }
             }
-            colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
-            const openni::Array<openni::VideoMode>& colorModes= colorInfo->getSupportedVideoModes();
-            cout << "RGB video modes available:" << endl;
-            for (int i = 0; i<colorModes.getSize(); i++) {
-                if (colorModes[i].getPixelFormat() == openni::PIXEL_FORMAT_RGB888)
-                {
-                printf("%i: %ix%i, %i fps\n", i, colorModes[i].getResolutionX(), colorModes[i].getResolutionY(), colorModes[i].getFps()); 
+
+            if (colorON)
+            {
+                colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
+                const openni::Array<openni::VideoMode>& colorModes= colorInfo->getSupportedVideoModes();
+                cout << "RGB video modes available:" << endl;
+                for (int i = 0; i<colorModes.getSize(); i++) {
+                    if (colorModes[i].getPixelFormat() == openni::PIXEL_FORMAT_RGB888)
+                    {
+                        printf("%i: %ix%i, %i fps\n", i, colorModes[i].getResolutionX(), colorModes[i].getResolutionY(), colorModes[i].getFps()); 
+                    }
                 }
             }
+
         }
 
-    }
-
     if (userTracking){
-        
         // setup and start user tracking
-
         nite::Status niteRc = nite::NiTE::initialize();
         niteRc = userTracker.create(&device);
 
@@ -281,7 +281,6 @@ int OpenNI2SkeletonTracker::init(){
             printf("Couldn't create user tracker\n");
             return niteRc;
         }
-        
         else {
             cout << "User tracker started..." << endl;
         }
@@ -295,7 +294,6 @@ int OpenNI2SkeletonTracker::init(){
         if (rc != openni::STATUS_OK) {
             printf("Couldn't start recorder\n");
         }
-
         else {
             cout << "Recorder started..." << endl;
         }
@@ -307,9 +305,10 @@ int OpenNI2SkeletonTracker::init(){
 void OpenNI2SkeletonTracker::initVars(){
     sensorStatus = new SensorStatus;
    
-    if (camerasON) {
     // read frames from streams
-    imageStream.readFrame(&imageFrameRef);
+    if (colorON){
+        imageStream.readFrame(&imageFrameRef);
+    }
     depthStream.readFrame(&depthFrameRef);
     
     // get depth mode properties and prepare depthFrame
@@ -317,6 +316,7 @@ void OpenNI2SkeletonTracker::initVars(){
     sensorStatus->depthFrame.resize(depthMode.getResolutionX(), depthMode.getResolutionY());
     sensorStatus->depthFrame.zero();
     
+    if (colorON){
     // get RGB mode properties and prepare imageFrame
     imageMode = imageStream.getVideoMode();
     sensorStatus->imageFrame.resize(imageMode.getResolutionX(), imageMode.getResolutionY());
@@ -345,9 +345,10 @@ OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::getSensor(){
 
 void OpenNI2SkeletonTracker::updateSensor(){
     // get camera image
-    if(camerasON && imageStream.isValid()){
+    if(colorON){ 
+            if (imageStream.isValid()){
         imageStream.readFrame(&imageFrameRef);
-        
+            }
         if (imageFrameRef.isValid()){
             getSensor()->imageFrame.setQuantum(1);
             
@@ -358,7 +359,7 @@ void OpenNI2SkeletonTracker::updateSensor(){
     }
     
     // Get depth image (in millimetres)
-    if(camerasON && depthStream.isValid()){
+    if(depthStream.isValid()){
         depthStream.readFrame(&depthFrameRef);
        
         if (depthFrameRef.getFrameIndex() == frameCount) {
@@ -425,7 +426,6 @@ void OpenNI2SkeletonTracker::updateSensor(){
 }
 
 void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, nite::JointType joint, int jIndex){
-    
     int i = user.getId();
     UserSkeleton *userSkeleton = &getSensor()->userSkeleton[i-1];
     
@@ -433,7 +433,6 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
     userSkeleton->stillTracking = true;
     
     if (user.getSkeleton().getJoint(joint).getPositionConfidence() > minConfidence) {
-        
         // position
         double x = user.getSkeleton().getJoint(joint).getPosition().x;
         userSkeleton->skeletonPointsPos[jIndex][0]= x;
@@ -444,7 +443,6 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
     }
     
     if (user.getSkeleton().getJoint(joint).getOrientationConfidence() > minConfidence){
-        
         // orientation
         userSkeleton->skeletonPointsOri[jIndex][0] = user.getSkeleton().getJoint(joint).getOrientation().w;
         userSkeleton->skeletonPointsOri[jIndex][1] = user.getSkeleton().getJoint(joint).getOrientation().x;
@@ -459,8 +457,7 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
 }
 
 
-void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigned long long ts)
-{
+void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigned long long ts){
     int tmpID = user.getId();
     // if user is new
     if (user.isNew())
@@ -525,3 +522,4 @@ void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigne
 int OpenNI2SkeletonTracker::getDeviceStatus(){
     return deviceStatus;
 }
+
