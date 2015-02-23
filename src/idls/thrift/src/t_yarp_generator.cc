@@ -2074,7 +2074,9 @@ void t_yarp_generator::generate_service(t_service* tservice) {
           t_type* returntype = (*fn_iter)->get_returntype();
           t_field returnfield(returntype, "_return");
           if (!returntype->is_void()) {
-            indent(f_curr_) << declare_field(&returnfield, true,false,false,false,"") << endl;
+	    if (returntype->is_base_type()||returntype->is_enum()) {
+	      indent(f_curr_) << declare_field(&returnfield, true,false,false,false,"") << endl;
+	    }
           }
           vector<t_field*> args = (*fn_iter)->get_arglist()->get_members();
           vector<t_field*>::iterator arg_iter = args.begin();

@@ -90,4 +90,6 @@ service Demo {
   oneway void do_start_a_service();
   bool do_check_for_service();
   void do_stop_a_service();
+
+  DemoStruct get_demo_struct();
 }
