@@ -15,7 +15,9 @@ foreach(test ${test_list})
 endforeach()
 
 # Generate a matrix of SWIG tests
-foreach (lang PYTHON JAVA LUA RUBY CSHARP PERL TCL)
+# Dropping PERL for now since it is is crashing the clang compiler on travis
+# and it has no known users (does seem to work fine though)
+foreach (lang PYTHON JAVA LUA RUBY CSHARP TCL)
   foreach (swig 1.3.40 2.0.12 3.0.2)
     set(test_name "integration::swig::${lang}::${swig}")
     add_test(${test_name} ${CMAKE_SOURCE_DIR}/scripts/admin/check-bindings.sh ${swig} ${lang})
