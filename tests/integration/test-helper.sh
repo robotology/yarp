@@ -171,6 +171,14 @@ function wait_topic_gone {
     done
 }
 
+function wait_port_gone {
+    port="$1"
+    while ${YARP_BIN}/yarp exists $port ; do
+	echo "waiting for $port to disappear"
+	sleep 1
+    done
+}
+
 function wait_node {
     node="$1"
     key="$2"
