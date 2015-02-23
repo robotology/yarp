@@ -21,6 +21,8 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformStdio.h>
 
+#include <clocale>
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -715,7 +717,6 @@ String StoreDouble::toStringFlex() const {
 
     // YARP Bug 2526259: Locale settings influence YARP behavior
     // Need to deal with alternate versions of the decimal point.
-#ifdef LC_NUMERIC
  	struct lconv * lc=localeconv();
  	size_t offset = str.find(lc->decimal_point);
  	if (offset!=String::npos){
@@ -723,12 +724,6 @@ String StoreDouble::toStringFlex() const {
  	} else {
         str += ".0";
     }
-#else
-    // maintain old YARP behavior if locale info not available
-    if (YARP_STRSTR(str,".")==String::npos) {
-        str += ".0";
-    }
-#endif
 
     int ct = 0;
     for (size_t i=str.length(); i>=1; i--) {
@@ -750,7 +745,6 @@ String StoreDouble::toStringFlex() const {
 void StoreDouble::fromString(const String& src) {
     // YARP Bug 2526259: Locale settings influence YARP behavior
     // Need to deal with alternate versions of the decimal point.
-#ifdef LC_NUMERIC
     String tmp = src;
     size_t offset = tmp.find(".");
     if (offset!=String::npos) {
@@ -758,9 +752,6 @@ void StoreDouble::fromString(const String& src) {
  		tmp[offset] = lc->decimal_point[0];
     }
     x = ACE_OS::strtod(tmp.c_str(),NULL);
-#else
-    x = ACE_OS::strtod(src.c_str(),NULL);
-#endif
 }
 
 bool StoreDouble::readRaw(ConnectionReader& reader) {
