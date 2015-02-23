@@ -270,7 +270,7 @@ if is_test against_tutorial_talker; then
     add_helper $!
 
     wait_file ${BASE}talker.log
-    result=`cat ${BASE}talker.log | head -n1 | sed "s/world .*/world/" | sed "s/[^a-z ]//g"`
+    result=`cat ${BASE}talker.log | grep -v "yarp:" | head -n1 | sed "s/world .*/world/" | sed "s/[^a-z ]//g"`
 
     for f in `rosnode list | grep "^/talker"`; do
 	echo $f
