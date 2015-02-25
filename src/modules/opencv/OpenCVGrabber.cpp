@@ -111,6 +111,13 @@ bool OpenCVGrabber::open(Searchable & config) {
             return false;
         }
 
+        if ( config.check("framerate","if present, specifies desired camera device framerate") ) {
+            double m_fps = config.check("framerate", Value(-1)).asDouble();
+            cvSetCaptureProperty((CvCapture*)m_capture,
+                                 CV_CAP_PROP_FPS,m_fps);
+        }
+
+
     }
 
 
