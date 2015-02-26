@@ -370,6 +370,16 @@ public:
      */
     virtual bool getCurrent(int j, double *val)=0;
 
+    /**
+    * Returns the maximum electric current allowed for a given motor. The behavior
+    * of the board/amplifier when this limit is reached depends on the
+    * implementation.
+    * @param j motor number
+    * @param v the return value
+    * @return probably true, might return false in bad times
+    */
+    virtual bool getMaxCurrent(int j, double *v)=0;
+
     /* Set the maximum electric current going to a given motor. The behavior 
      * of the board/amplifier when this limit is reached depends on the
      * implementation.
@@ -442,6 +452,16 @@ public:
      * @return probably true, might return false in bad times
      */
     virtual bool setMaxCurrentRaw(int j, double v)=0;
+
+    /**
+    * Returns the maximum electric current allowed for a given motor. The behavior
+    * of the board/amplifier when this limit is reached depends on the
+    * implementation.
+    * @param j motor number
+    * @param v the return value
+    * @return probably true, might return false in bad times
+    */
+    virtual bool getMaxCurrentRaw(int j, double *v)=0;
 
     /* Get the status of the amplifiers, coded in a 32 bits integer for
      * each amplifier (at the moment contains only the fault, it will be 

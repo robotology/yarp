@@ -1709,6 +1709,32 @@ public:
         }
     }
 
+    /* IMotor */
+    virtual bool getTemperature      (int m, double* val) {
+        return get1V1I1D(VOCAB_TEMPERATURE, m, val);
+    }
+
+    virtual bool getTemperatures     (double *vals) {
+        return get1VDA(VOCAB_TEMPERATURES, vals);
+    }
+
+    virtual bool getTemperatureLimit (int m, double* val) {
+        return get1V1I1D(VOCAB_TEMPERATURE_LIMIT, m, val);
+    }
+
+    virtual bool setTemperatureLimit (int m, const double val) {
+        return set1V1I1D(VOCAB_TEMPERATURE_LIMIT, m, val);
+    }
+
+    virtual bool getMotorOutputLimit (int m, double* val) {
+        return get1V1I1D(VOCAB_MOTOR_OUTPUT_LIMIT, m, val);
+    }
+
+    virtual bool setMotorOutputLimit (int m, const double val) {
+        return set1V1I1D(VOCAB_MOTOR_OUTPUT_LIMIT, m, val);
+    }
+
+
     /* IMotorEncoder */
 
     /**
@@ -2398,6 +2424,18 @@ public:
      */
     virtual bool setMaxCurrent(int j, double v) {
         return set1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
+    }
+
+    /**
+    * Returns the maximum electric current allowed for a given motor. The behavior
+    * of the board/amplifier when this limit is reached depends on the
+    * implementation.
+    * @param j motor number
+    * @param v the return value
+    * @return probably true, might return false in bad times
+    */
+    virtual bool getMaxCurrent(int j, double *v) {
+        return get1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
     }
 
     /**

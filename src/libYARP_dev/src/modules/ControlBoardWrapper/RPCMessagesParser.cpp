@@ -1862,6 +1862,18 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            
+                            case VOCAB_TEMPERATURE_LIMIT:
+                            {
+                                ok = rpc_IMotor->setTemperatureLimit(cmd.get(2).asInt(), cmd.get(3).asDouble());
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_OUTPUT_LIMIT:
+                            {
+                                ok = rpc_IMotor->setMotorOutputLimit(cmd.get(2).asInt(), cmd.get(3).asDouble());
+                            }
+                            break;
 
                             case VOCAB_VEL_LIMITS:
                             {
@@ -1906,6 +1918,46 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 for (i = 0; i < controlledJoints; i++)
                                     b.addDouble(p[i]);
                                 delete[] p;
+                            }
+                            break;
+
+                            case VOCAB_TEMPERATURE_LIMIT:
+                            {
+                                ok = rpc_IMotor->getTemperatureLimit(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_MOTOR_OUTPUT_LIMIT:
+                            {
+                                ok = rpc_IMotor->getMotorOutputLimit(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_TEMPERATURE:
+                            {
+                                ok = rpc_IMotor->getTemperature(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_TEMPERATURES:
+                            {
+                                double *p = new double[controlledJoints];
+                                ok = rpc_IMotor->getTemperatures(p);
+                                Bottle& b = response.addList();
+                                int i;
+                                for (i = 0; i < controlledJoints; i++)
+                                    b.addDouble(p[i]);
+                                delete[] p;
+                            }
+                            break;
+
+                            case VOCAB_AMP_MAXCURRENT:
+                            {
+                                ok = rcp_IAmp->getMaxCurrent(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
                             }
                             break;
 
