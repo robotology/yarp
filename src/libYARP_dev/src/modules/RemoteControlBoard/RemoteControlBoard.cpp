@@ -1012,8 +1012,10 @@ public:
             ConstString s2 = local;
             s2 += "/rpc:o";
             bool ok = false;
-            // ok=Network::connect(s2.c_str(), s1.c_str()); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
-            ok=rpc_p.addOutput(s1.c_str());
+            // RPC port needs to be tcp, therefore no carrier option is added here
+            // ok=Network::connect(s2.c_str(), s1.c_str());         //This doesn't take into consideration possible YARP_PORT_PREFIX on local ports
+            // ok=Network::connect(rpc_p.getName(), s1.c_str());    //This should work also with YARP_PORT_PREFIX because getting back the name of the port will return the modified name
+            ok=rpc_p.addOutput(s1.c_str());                         //This works because we are manipulating only remote side and let yarp handle the local side
             if (!ok) {
                 printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
@@ -1023,7 +1025,8 @@ public:
             s2 = local;
             s2 += "/command:o";
             //ok = Network::connect(s2.c_str(), s1.c_str(), carrier);
-            ok = command_p.addOutput(s1.c_str());
+            // ok=Network::connect(command_p.getName(), s1.c_str(), carrier); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
+            ok = command_p.addOutput(s1.c_str(), carrier);
             if (!ok) {
                 printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
@@ -1045,7 +1048,7 @@ public:
             s2 = local;
             s2 += "/stateExt:i";
             // not checking return value for now since it is wip (different machines can have different compilation flags
-            ok = Network::connect(s1, s2, carrier);
+            ok = Network::connect(s1, extendedIntputStatePort.getName(), carrier);
             if (ok)
             {
                 controlBoardWrapper1_compatibility = false;
