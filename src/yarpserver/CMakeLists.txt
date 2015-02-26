@@ -59,10 +59,11 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
   ###############################################################
   ## Some extra test programs
 
-  if(TEST_BUILD)
+  if(YARP_COMPILE_TESTS)
     add_executable(server_peek src/server_peek.cpp)
     target_link_libraries(server_peek YARP_serversql)
     add_executable(server_test src/server_test.cpp)
+    target_link_libraries(server_test YARP_OS YARP_init)
   endif()
 
 endif()
