@@ -23,7 +23,7 @@ class YARP_dev_API yarp::dev::ImplementMotor: public IMotor
 protected:
     IMotorRaw *imotor;
     void *helper;
-    double *temp;
+    double *temp1;
     double *temp2;
 
 
@@ -57,8 +57,8 @@ public:
     virtual bool getTemperatures     (double *vals);
     virtual bool getTemperatureLimit (int m, double* val);
     virtual bool setTemperatureLimit (int m, const double val);
-    virtual bool getOutputLimit      (int m, double* val);
-    virtual bool setOutputLimit      (int m, const double val);
+    virtual bool getMotorOutputLimit (int m, double* val);
+    virtual bool setMotorOutputLimit (int m, const double val);
 };
 
 #endif

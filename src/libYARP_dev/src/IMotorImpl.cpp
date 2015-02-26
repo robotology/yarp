@@ -19,7 +19,7 @@ ImplementMotor::ImplementMotor(IMotorRaw *y)
 {
     imotor=y;
     helper = 0;
-    temp=0;
+    temp1=0;
     temp2=0;
 }
 
@@ -35,8 +35,8 @@ bool ImplementMotor:: initialize (int size, const int *amap)
     
     helper=(void *)(new ControlBoardHelper(size, amap, 0, 0, 0));
     yAssert (helper != 0);
-    temp=new double [size];
-    yAssert (temp != 0);
+    temp1=new double [size];
+    yAssert (temp1 != 0);
     temp2=new double [size];
     yAssert (temp2 != 0);
     return true;
@@ -54,7 +54,7 @@ bool ImplementMotor::uninitialize ()
         helper=0;
     }
     
-    checkAndDestroy(temp);
+    checkAndDestroy(temp1);
     checkAndDestroy(temp2);
 
     return true;
@@ -66,12 +66,62 @@ bool ImplementMotor::getNumberOfMotors(int *num)
     return true;
 }
 
-bool ImplementMotor::getTemperature(int m, double* temp)
+bool ImplementMotor::getTemperature(int m, double* value)
 {
     bool ret;
     int k=castToMapper(helper)->toHw(m);
 
-    ret=imotor->getTemperatureRaw(k, temp);
+    ret=imotor->getTemperatureRaw(k, value);
+
+    return ret;
+}
+
+bool ImplementMotor::getTemperatureLimit(int m, double* value)
+{
+    bool ret;
+    int k=castToMapper(helper)->toHw(m);
+
+    ret=imotor->getTemperatureLimitRaw(k, value);
+
+    return ret;
+}
+
+bool ImplementMotor::getMotorOutputLimit(int m, double* value)
+{
+    bool ret;
+    int k=castToMapper(helper)->toHw(m);
+
+    ret=imotor->getMotorOutputLimitRaw(k, value);
+
+    return ret;
+}
+
+bool ImplementMotor::setTemperatureLimit(int m, const double value)
+{
+    bool ret;
+    int k=castToMapper(helper)->toHw(m);
+
+    ret=imotor->setTemperatureLimitRaw(k, value);
+
+    return ret;
+}
+
+bool ImplementMotor::setMotorOutputLimit(int m, const double value)
+{
+    bool ret;
+    int k=castToMapper(helper)->toHw(m);
+
+    ret=imotor->setMotorOutputLimitRaw(k, value);
+
+    return ret;
+}
+
+bool ImplementMotor::getTemperatures(double *v)
+{
+    bool ret;
+    castToMapper(helper)->axes();
+    
+    ret=imotor->getTemperaturesRaw(v);
 
     return ret;
 }
