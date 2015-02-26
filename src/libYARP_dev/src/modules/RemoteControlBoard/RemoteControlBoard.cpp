@@ -31,7 +31,7 @@
 #include <stateExtendedReader.hpp>
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 0
+#define PROTOCOL_VERSION_MINOR 1
 #define PROTOCOL_VERSION_TWEAK 0
 
 using namespace yarp::os;
@@ -1075,7 +1075,8 @@ public:
         command_buffer.attach(command_p);
 
         bool ignoreCheck=false;
-        ignoreCheck = true; //config.check("ignoreProtocolCheck");
+        //ignoreCheck = true;
+        config.check("ignoreProtocolCheck");
 
         if (!checkProtocolVersion(ignoreCheck))
             return false;
@@ -2304,7 +2305,15 @@ public:
      * @return true/false on success/failure
      */
     virtual bool velocityMove(int j, double v) {
-        return set1V1I1D(VOCAB_VELOCITY_MOVE, j, v);
+     //   return set1V1I1D(VOCAB_VELOCITY_MOVE, j, v);
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_VELOCITY_MOVE);
+        c.body.size(1);
+        memcpy(&(c.body[0]), &v, sizeof(double));
+        command_buffer.write(writeStrict_singleJoint);
+        return true;
     }
 
     /**
@@ -3552,29 +3561,33 @@ public:
             //verify protocol
             if (protocolVersion.major!=PROTOCOL_VERSION_MAJOR)
                 error=true;
+
+            if (protocolVersion.minor!=PROTOCOL_VERSION_MINOR)
+                error=true;
         }
 
         if (!error)
             return true;
 
         // protocol did not match
-        fprintf(stderr, "ERROR, expecting protocol %d %d %d, but remotecontrolboard returned protocol version %d %d %d\n", 
+        yError("expecting protocol %d %d %d, but remotecontrolboard returned protocol version %d %d %d\n",
                         PROTOCOL_VERSION_MAJOR, PROTOCOL_VERSION_MINOR, PROTOCOL_VERSION_TWEAK,
                         protocolVersion.major, protocolVersion.minor, protocolVersion.tweak); 
 
 
+        bool ret;
         if (ignore)
         {
-            fprintf(stderr, "WARNING: ignoring error but please update YARP or the remotecontrolboard implementation\n");
-            return true;
+            yWarning(" ignoring error but please update YARP or the remotecontrolboard implementation\n");
+            ret = true;
         }
         else 
         {
-            fprintf(stderr, "ERROR: please update YARP or the remotecontrolboard implementation\n");
-            return true;
+            yError(" please update YARP or the remotecontrolboard implementation\n");
+            ret = false;
         }
 
-        return false;
+        return ret;
     }
 };
 

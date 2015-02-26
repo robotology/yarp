@@ -1468,12 +1468,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
-                            case VOCAB_VELOCITY_MOVE:
-                            {
-                                ok = rpc_IVelCtrl->velocityMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
-                            }
-                            break;
-
                             case VOCAB_POSITION_MODE:
                             {
                                 ok = rpc_IPosCtrl->setPositionMode();

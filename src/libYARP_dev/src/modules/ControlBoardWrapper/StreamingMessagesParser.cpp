@@ -125,6 +125,13 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 yError("Received VOCAB_VELOCITY_MODE this is an send invalid message on streaming port");
                 break;
             }
+
+        case VOCAB_VELOCITY_MOVE:
+            {
+                stream_IVel->velocityMove(b.get(1).asInt(), cmdVector[0]);
+            }
+        break;
+
         case VOCAB_VELOCITY_MOVES:
             {
                 if (stream_IVel)
