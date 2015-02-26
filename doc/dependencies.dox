@@ -476,13 +476,15 @@ names are slightly different:
 \li qtdeclarative5-window-plugin
 \li qtdeclarative5-qtmultimedia-plugin
 \li qtdeclarative5-controls-plugin
+\li qtdeclarative5-dialogs-plugin
 
 You can install them by running:
 
 \code{.sh}
 sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin \
-  qtdeclarative5-qtmultimedia-plugin qtdeclarative5-controls-plugin
+  qtdeclarative5-qtmultimedia-plugin qtdeclarative5-controls-plugin \
+  qtdeclarative5-dialogs-plugin
 \endcode
 
 \paragraph dependencies_qt5_linux_others Others
