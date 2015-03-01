@@ -28,6 +28,7 @@
 #include <yarp/dev/IPositionDirect.h>
 #include <yarp/dev/IInteractionMode.h>
 #include <yarp/dev/IMotorEncoders.h>
+#include <yarp/dev/IMotor.h>
 
 namespace yarp {
     namespace dev {
@@ -35,6 +36,8 @@ namespace yarp {
         class IPidControl;
         class IEncodersRaw;
         class IEncoders;
+        class IMotor;
+        class IMotorRaw;
         class IMotorEncodersRaw;
         class IMotorEncoders;
         class IAmplifierControlRaw;
