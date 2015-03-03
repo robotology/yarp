@@ -145,8 +145,11 @@ name /mymotor\n\
         p2.put("remote","/motor");
         p2.put("local","/motor/client");
         p2.put("carrier","tcp");
+        p2.put("ignoreProtocolCheck","true");
         result = dd2.open(p2);
         checkTrue(result,"client open reported successful");
+
+        if(!result)   return;  // cannot go on if the device was not opened
 
         IPositionControl *pos = NULL;
         result = dd2.view(pos);
