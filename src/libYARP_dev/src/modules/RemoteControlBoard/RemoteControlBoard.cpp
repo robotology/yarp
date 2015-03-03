@@ -1074,16 +1074,21 @@ public:
         state_buffer.setStrict(false);
         command_buffer.attach(command_p);
 
-        bool ignoreCheck=false;
-        //ignoreCheck = true;
-        config.check("ignoreProtocolCheck");
-
-        if (!checkProtocolVersion(ignoreCheck))
+        if (!checkProtocolVersion(config.check("ignoreProtocolCheck")))
+        {
+            std::cout << "checkProtocolVersion failed" << std::endl;
+            command_buffer.detach();
+            rpc_p.close();
+            command_p.close();
+            state_p.close();
+            extendedIntputStatePort.close();
             return false;
+        }
 
         if (!isLive()) {
             if (remote!="") {
                 printf("Problems with obtaining the number of controlled axes\n");
+                command_buffer.detach();
                 rpc_p.close();
                 command_p.close();
                 state_p.close();
