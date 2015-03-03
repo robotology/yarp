@@ -1,22 +1,22 @@
 // This is an automatically-generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_dataSetPlayer_IDL
-#define YARP_THRIFT_GENERATOR_dataSetPlayer_IDL
+#ifndef YARP_THRIFT_GENERATOR_yarpdataplayer_IDL
+#define YARP_THRIFT_GENERATOR_yarpdataplayer_IDL
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-class dataSetPlayer_IDL;
+class yarpdataplayer_IDL;
 
 
 /**
- * dataSetPlayer_IDL
+ * yarpdataplayer_IDL
  * Interface.
  */
-class dataSetPlayer_IDL : public yarp::os::Wire {
+class yarpdataplayer_IDL : public yarp::os::Wire {
 public:
-  dataSetPlayer_IDL();
+  yarpdataplayer_IDL();
   /**
    * Steps the player once. The player will be stepped
    * until all parts have sent data

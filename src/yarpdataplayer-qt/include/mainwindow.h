@@ -32,7 +32,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow,public yarp::os::ResourceFinder, public yarp::os::Module, public dataSetPlayer_IDL
+class MainWindow : public QMainWindow,public yarp::os::ResourceFinder, public yarp::os::Module, public yarpdataplayer_IDL
 {
     Q_OBJECT
     friend class Utilities;

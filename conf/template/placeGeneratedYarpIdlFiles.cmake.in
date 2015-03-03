@@ -55,4 +55,5 @@ file(WRITE @output_dir@/@yarpidl_target_name@.cmake
 ## It could get re-generated if the ALLOW_IDL_GENERATION flag is on
 
 set(headers ${headers})
-set(sources ${sources})")
+set(sources ${sources})
+")
