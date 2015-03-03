@@ -28,6 +28,11 @@ if(NOT SKIP_all_primesensecamera)
 
   #add_definitions(-DDEBUG -g)
   yarp_add_plugin(kinect KinectDeviceDriver.cpp KinectDeviceDriver.h)
+  yarp_install(TARGETS kinect
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
   if(NOT COMPILE_DEVICE_LIBRARY)
     link_libraries(kinect)

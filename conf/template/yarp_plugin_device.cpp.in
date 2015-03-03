@@ -22,6 +22,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+#ifdef YARP_STATIC_PLUGIN
 YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
     yarp::dev::DriverCreator *factory =
         new yarp::dev::DriverCreatorOf<@YARPPLUG_TYPE@>("@YARPPLUG_NAME@",
@@ -29,9 +30,6 @@ YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
                 "@YARPPLUG_TYPE@");
     yarp::dev::Drivers::factory().add(factory); // hand factory over to YARP
 }
-
-YARP_PLUGIN_EXPORT void add_@YARPPLUG_NAME@() {
-    add_owned_@YARPPLUG_NAME@(NULL);
-}
+#endif
 
 YARP_DEFINE_SHARED_SUBCLASS(@YARPPLUG_NAME@, @YARPPLUG_TYPE@, yarp::dev::DeviceDriver)

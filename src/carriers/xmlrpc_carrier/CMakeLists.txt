@@ -4,7 +4,9 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(xmlrpc_carrier TYPE yarp::os::XmlRpcCarrier INCLUDE XmlRpcCarrier.h)
-  yarp_add_carrier_fingerprint(xmlrpc.ini xmlrpc_carrier)
+  yarp_install(FILES xmlrpc.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_xmlrpc_carrier)
@@ -24,4 +26,9 @@ if (NOT SKIP_xmlrpc_carrier)
                   xmlrpc/XmlRpcValue.cpp)
   target_link_libraries(yarp_xmlrpc YARP_OS YARP_sig)
   target_link_libraries(yarp_xmlrpc ${ACE_LIBRARIES})
+  yarp_install(TARGETS yarp_xmlrpc
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 endif (NOT SKIP_xmlrpc_carrier)

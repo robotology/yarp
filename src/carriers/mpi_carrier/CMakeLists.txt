@@ -4,7 +4,9 @@
 
 if(COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(mpi_carrier TYPE yarp::os::MpiP2PCarrier INCLUDE include/yarp/os/MpiP2PCarrier.h)
-  yarp_add_carrier_fingerprint(mpi.ini mpi_carrier mpibcast_carrier)
+  yarp_install(FILES mpi.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_PLUGIN_LIBRARY)
 
 if(NOT SKIP_mpi_carrier)
@@ -35,6 +37,11 @@ if(NOT SKIP_mpi_carrier)
   target_link_libraries(yarp_mpi YARP_OS YARP_sig)
   target_link_libraries(yarp_mpi ${ACE_LIBRARIES})
   target_link_libraries(yarp_mpi ${MPI_LIBRARIES})
+  yarp_install(TARGETS yarp_mpi
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 endif(NOT SKIP_mpi_carrier)
 
@@ -72,5 +79,10 @@ if(NOT SKIP_mpibcast_carrier)
   target_link_libraries(yarp_mpibcast YARP_OS YARP_sig)
   target_link_libraries(yarp_mpibcast ${ACE_LIBRARIES})
   target_link_libraries(yarp_mpibcast ${MPI_LIBRARIES})
+  yarp_install(TARGETS yarp_mpibcast
+               COMPONENT runtime
+               EXPORT YARP
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 endif(NOT SKIP_mpibcast_carrier)

@@ -4,7 +4,9 @@
 
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(cuda TYPE CUDAGPU INCLUDE "CUDADeviceDriver.h")
-  yarp_add_device_fingerprint(cuda.ini cuda)
+  yarp_install(FILES cuda.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_cuda)
@@ -24,6 +26,11 @@ if(NOT SKIP_cuda)
     add_definitions(-DCUDA_NUMTHREADS=${CUDA_NUMTHREADS} -DCUDA_NUMTHREADBLOCKS=${CUDA_NUMTHREADBLOCKS})
     yarp_add_plugin(ycuda CUDADeviceDriver.cpp CUDADeviceDriver.h FunctionClass.h)
     target_link_libraries(ycuda ${lib_cudart} ${lib_cuda} ${lib_GL} ${lib_cutil})
+    yarp_install(TARGETS ycuda
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
   else()
     message(FATAL_ERROR "could not find all libraries needed by cuda driver")

@@ -18,3 +18,8 @@ endforeach(header_file ${folder_header})
 
 yarp_add_plugin(KinectYarpDeviceClientLib ${folder_source} ${folder_header})
 target_link_libraries(KinectYarpDeviceClientLib ${YARP_LIBRARIES})
+install(TARGETS KinectYarpDeviceClientLib
+        COMPONENT runtime
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

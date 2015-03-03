@@ -4,7 +4,9 @@
  
 IF (COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(jrkerr TYPE yarp::dev::JrkerrMotionControl INCLUDE JrkerrMotionControl.h WRAPPER controlboard)
-  YARP_ADD_DEVICE_FINGERPRINT(jrkerr.ini jrkerr)
+  yarp_install(FILES jrkerr.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_jrkerr)
@@ -17,6 +19,11 @@ IF (WIN32)
 
   YARP_ADD_PLUGIN(yarp_jrkerr JrkerrMotionControl.cpp nmccom.cpp picservo.cpp sio_util.cpp JrkerrMotionControl.h nmccom.h picservo.h sio_util.h)
   TARGET_LINK_LIBRARIES(yarp_jrkerr ${YARP_LIBRARIES})
+  yarp_install(TARGETS yarp_jrkerr
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 ELSE (WIN32)
 

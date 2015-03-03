@@ -13,6 +13,11 @@ IF (NOT SKIP_pumacalibrator)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
   yarp_add_plugin(pumacalibrator PumaCalibrator.cpp  PumaCalibrator.h )
+  yarp_install(TARGETS pumacalibrator
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 ENDIF (NOT SKIP_pumacalibrator)
 

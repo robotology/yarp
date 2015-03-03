@@ -4,7 +4,9 @@
  
 IF (COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(wxsdl TYPE yarp::dev::WxsdlWriter INCLUDE WxsdlWriter.h)
-  YARP_ADD_DEVICE_FINGERPRINT(wxsdl.ini wxsdl)
+  yarp_install(FILES wxsdl.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_wxsdl)
@@ -29,6 +31,11 @@ IF (NOT SKIP_wxsdl)
 
   YARP_ADD_PLUGIN(yarp_wxsdl WxsdlWriter.cpp  WxsdlWriter.h)
   SET_TARGET_PROPERTIES(yarp_wxsdl PROPERTIES COMPILE_DEFINITIONS "${wxWidgets_DEFINITIONS}")
+  yarp_install(TARGETS yarp_wxsdl
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
   IF (NOT COMPILE_DEVICE_LIBRARY)
     ADD_DEFINITIONS(-DWXSDL_MAIN)

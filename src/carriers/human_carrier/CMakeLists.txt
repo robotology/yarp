@@ -3,8 +3,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_PLUGIN_LIBRARY)
-  YARP_PREPARE_CARRIER(human_carrier TYPE HumanCarrier INCLUDE HumanCarrier.h)
-  YARP_ADD_CARRIER_FINGERPRINT(human.ini human_carrier)
+  yarp_prepare_carrier(human_carrier TYPE HumanCarrier INCLUDE HumanCarrier.h)
+  yarp_install(FILES human.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 if(NOT SKIP_human_carrier)
@@ -14,4 +16,9 @@ if(NOT SKIP_human_carrier)
   yarp_add_plugin(yarp_human HumanCarrier.h HumanStream.h HumanCarrier.cpp HumanStream.cpp)
   target_link_libraries(yarp_human YARP_OS YARP_sig)
   target_link_libraries(yarp_human ${ACE_LIBRARIES})
+  yarp_install(TARGETS yarp_human
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 endif()

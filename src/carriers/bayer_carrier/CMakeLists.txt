@@ -4,7 +4,9 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(bayer_carrier TYPE yarp::os::BayerCarrier INCLUDE BayerCarrier.h)
-  yarp_add_carrier_fingerprint(bayer.ini bayer_carrier)
+  yarp_install(FILES bayer.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_bayer_carrier)
@@ -44,4 +46,10 @@ if (NOT SKIP_bayer_carrier)
   if (USE_LIBDC1394)
     target_link_libraries(yarp_bayer ${DC1394_LIBRARIES})
   endif()
+
+  yarp_install(TARGETS yarp_bayer
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 endif ()

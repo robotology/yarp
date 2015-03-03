@@ -4,7 +4,9 @@
 
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(KinectDeviceLocal TYPE yarp::dev::KinectDeviceDriverServer INCLUDE KinectYarpDeviceServerLib/KinectDeviceDriverServer.h)
-  yarp_add_device_fingerprint(kinect.ini KinectDeviceLocal KinectDeviceClient)
+  yarp_install(FILES kinect.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(ENABLE_KinectDeviceLocal)

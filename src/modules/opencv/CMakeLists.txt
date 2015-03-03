@@ -4,7 +4,9 @@
 
 if(COMPILE_DEVICE_LIBRARY)
     yarp_prepare_device(opencv_grabber TYPE yarp::dev::OpenCVGrabber INCLUDE OpenCVGrabber.h WRAPPER grabber)
-    yarp_add_device_fingerprint(opencv.ini opencv_grabber)
+  yarp_install(FILES opencv.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_opencv_grabber)
@@ -14,8 +16,13 @@ if(NOT SKIP_opencv_grabber)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common)
     include_directories(${OpenCV_INCLUDE_DIRS})
     yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp OpenCVGrabber.h)
-    target_link_libraries(yarp_opencv LINK_PRIVATE ${YARP_LIBRARIES})
-    target_link_libraries(yarp_opencv LINK_PRIVATE ${OpenCV_LIBRARIES})
+    target_link_libraries(yarp_opencv ${YARP_LIBRARIES})
+    target_link_libraries(yarp_opencv ${OpenCV_LIBRARIES})
+    yarp_install(TARGETS yarp_opencv
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
     yarp_install(FILES opencv_grabber.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
 

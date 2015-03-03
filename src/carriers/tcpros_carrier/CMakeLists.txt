@@ -5,7 +5,9 @@
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(tcpros_carrier TYPE yarp::os::TcpRosCarrier INCLUDE TcpRosCarrier.h)
   yarp_prepare_carrier(rossrv_carrier TYPE yarp::os::RosSrvCarrier INCLUDE TcpRosCarrier.h)
-  yarp_add_carrier_fingerprint(ros.ini rossrv_carrier tcpros_carrier)
+  yarp_install(FILES ros.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_tcpros_carrier)
@@ -23,6 +25,11 @@ if (NOT SKIP_tcpros_carrier)
   target_link_libraries(yarp_tcpros YARP_wire_rep_utils)
   target_link_libraries(yarp_tcpros YARP_OS YARP_sig)
   target_link_libraries(yarp_tcpros ${ACE_LIBRARIES})
+  yarp_install(TARGETS yarp_tcpros
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
   add_executable(yarpros yarpros.cpp
                          TcpRosStream.cpp

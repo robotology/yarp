@@ -4,7 +4,9 @@
 
 if(COMPILE_PLUGIN_LIBRARY)
     yarp_prepare_carrier(mjpeg_carrier TYPE yarp::os::MjpegCarrier INCLUDE MjpegCarrier.h)
-    yarp_add_carrier_fingerprint(mjpeg.ini mjpeg_carrier)
+  yarp_install(FILES mjpeg.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_PLUGIN_LIBRARY)
 
 if(NOT SKIP_mjpeg_carrier)
@@ -31,6 +33,11 @@ if(NOT SKIP_mjpeg_carrier)
     target_link_libraries(mjpeg_carrier ${ACE_LIBRARIES})
     target_link_libraries(mjpeg_carrier ${JPEG_LIBRARY})
 
+    yarp_install(TARGETS mjpeg_carrier
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 if(YARP_COMPILE_TESTS)
     add_executable(test_mjpeg test_mjpeg.cpp

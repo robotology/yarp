@@ -4,7 +4,9 @@
  
 IF (COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(microphone TYPE yarp::dev::MicrophoneDeviceDriver INCLUDE MicrophoneDeviceDriver.h WRAPPER grabber)
-  YARP_ADD_DEVICE_FINGERPRINT(microphone.ini microphone)
+  yarp_install(FILES microphone.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_microphone)
@@ -24,6 +26,11 @@ IF (UNIX OR WIN32)
   LINK_LIBRARIES(${YARP_LIBRARIES})
 
   YARP_ADD_PLUGIN(yarp_microphone ${SYS}MicrophoneDeviceDriver.cpp MicrophoneDeviceDriver.h)
+  yarp_install(TARGETS yarp_microphone
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 ELSE (UNIX OR WIN32)
 

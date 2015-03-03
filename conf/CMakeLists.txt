@@ -16,7 +16,6 @@ endforeach(conf)
 # users of YARP.
 set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpIDL.cmake
-                     YarpDevice.cmake
                      MacroExtractVersion.cmake
                      MacroStandardFindModule.cmake
                      YarpDeprecatedWarning.cmake
@@ -50,9 +49,8 @@ install(FILES ${YARP_CMAKE_FILES}
 # Templates used by modules
 set(YARP_TEMPLATE_FILES template/yarp_plugin_carrier.cpp.in
                         template/yarp_plugin_device.cpp.in
-                        template/yarpdev_lib.cpp.in
-                        template/yarpdev_lib.h.in
-                        template/yarpdev_lib_main.cpp.in
+                        template/yarp_plugin_lib.cpp.in
+                        template/yarp_plugin_yarpdev_main.cpp.in
                         template/YarpTweakIDL.cmake.in
                         template/placeGeneratedYarpIdlFiles.cmake.in)
 

@@ -3,7 +3,9 @@
 
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(dynamixelAX12Ftdi TYPE yarp::dev::DynamixelAX12FtdiDriver INCLUDE "DynamixelAX12FtdiDriver.h" WRAPPER controlboard)
-  YARP_ADD_DEVICE_FINGERPRINT(dynamixelAX12Ftdi.ini dynamixelAX12Ftdi)
+  yarp_install(FILES dynamixelAX12Ftdi.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_dynamixelAX12Ftdi)
@@ -14,6 +16,11 @@ if(NOT SKIP_dynamixelAX12Ftdi)
   include_directories(${YARP_INCLUDE_DIRS})
   yarp_add_plugin(dynamixelAX12FtdiDriver DynamixelAX12FtdiDriver.cpp DynamixelAX12FtdiDriver.h)
   target_link_libraries(dynamixelAX12FtdiDriver ${YARP_LIBRARIES} ${FTDI_LIBRARY})
+  yarp_install(TARGETS dynamixelAX12FtdiDriver
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 endif(NOT SKIP_dynamixelAX12Ftdi)
 
 

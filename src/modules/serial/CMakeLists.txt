@@ -5,7 +5,9 @@
 if(COMPILE_DEVICE_LIBRARY)
   yarp_prepare_device(serial TYPE yarp::dev::ServerSerial INCLUDE yarp/dev/ServerSerial.h WRAPPER serial)
   yarp_prepare_device(serialport TYPE yarp::dev::SerialDeviceDriver INCLUDE SerialDeviceDriver.h WRAPPER serial)
-  yarp_add_device_fingerprint(serial.ini serial serialport)
+  yarp_install(FILES serial.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 if(SKIP_serial AND SKIP_serialport)
@@ -26,6 +28,11 @@ if(NOT SKIP_all_serial)
     yarp_add_plugin(yarp_serial SerialDeviceDriver.cpp SerialDeviceDriver.h)
     target_link_libraries(yarp_serial YARP_OS YARP_dev)
     target_link_libraries(yarp_serial ${ACE_LIBRARIES})
+    yarp_install(TARGETS yarp_serial
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
   else()
     message(SEND_ERROR "ACE not found; needed by serial driver")

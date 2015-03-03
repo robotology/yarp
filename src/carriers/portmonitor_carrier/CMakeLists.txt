@@ -4,7 +4,9 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(portmonitor_carrier TYPE yarp::os::PortMonitor INCLUDE PortMonitor.h)
-  yarp_add_carrier_fingerprint(portmonitor.ini portmonitor_carrier)
+  yarp_install(FILES portmonitor.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_portmonitor_carrier)
@@ -27,6 +29,11 @@ if (NOT SKIP_portmonitor_carrier)
 
   target_link_libraries(yarp_portmonitor YARP_OS ${LUA_LIBRARY})
   target_link_libraries(yarp_portmonitor ${ACE_LIBRARIES})
+  yarp_install(TARGETS yarp_portmonitor
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 endif ()
 

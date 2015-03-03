@@ -14,6 +14,11 @@ IF (NOT SKIP_SerialServoBoard)
   INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
   yarp_add_plugin(ySerialServoBoard SerialServoBoard.cpp SerialServoBoard.h)
   TARGET_LINK_LIBRARIES(ySerialServoBoard ${YARP_LIBRARIES})
+  yarp_install(TARGETS ySerialServoBoard
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
 
 ENDIF (NOT SKIP_SerialServoBoard)

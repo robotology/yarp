@@ -72,17 +72,33 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
             Searchable& options = paths.get(i);
             ConstString path = options.find("path").asString();
             ConstString ext = options.find("extension").asString();
-            ConstString prefix = options.find("prefix").asString();
-            ConstString full = path + "/" + prefix + dll_name + ext;
-            if (dll_name.find(".")!=ConstString::npos) {
-                full = path + "/" + prefix + name + ext;
-            }
-            bool ok = subopen(factory,full,(fn_name=="")?name:fn_name);
-            if (ok) return true;
+            ConstString basename = (dll_name.find(".")!=basename.npos) ? name : dll_name;
+            ConstString fn = (fn_name=="")?name:fn_name;
+
+            // Basic name
+            if (subopen(factory, path + "/" + basename + ext, fn))
+                return true;
+
+            // Debug name
+            if (subopen(factory, path + "/" + basename + "d" + ext, fn))
+                return true;
+
+#ifdef CMAKE_INTDIR
+            // On multi-config system, try to find the plugin in the
+            // current config subdirectory
+
+            // Basic name
+            if (subopen(factory, path + "/" +  CMAKE_INTDIR + "/" + dll_name + ext, fn))
+                return true;
+
+            // Debug name
+            if (subopen(factory, path + "/" +  CMAKE_INTDIR + "/" + dll_name + "d" + ext, fn))
+                return true;
+#endif
         }
     }
     if (dll_name!=""||fn_name!="") {
-        return open(factory,dll_name, fn_name);
+        return open(factory, dll_name, fn_name);
     }
     return factory.open((ConstString("yarp_") + name).c_str(),
                         (fn_name=="")?name.c_str():fn_name.c_str());
