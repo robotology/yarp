@@ -435,6 +435,7 @@ public:
     virtual bool disableAmpRaw(int j);
     virtual bool getCurrentsRaw(double *vals);
     virtual bool getCurrentRaw(int j, double *val);
+    virtual bool getMaxCurrentRaw(int j, double *val);
     virtual bool setMaxCurrentRaw(int j, double val);
     virtual bool getAmpStatusRaw(int *st);
     virtual bool getAmpStatusRaw(int k, int *st);

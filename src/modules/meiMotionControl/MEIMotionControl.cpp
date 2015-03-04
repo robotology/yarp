@@ -1678,9 +1678,13 @@ bool MEIMotionControl::getCurrentRaw(int axis, double *c)
 
 bool MEIMotionControl::setMaxCurrentRaw(int axis, double v)
 {
-	    return NOT_IMPLEMENTED_YET("getEncoderSpeed");
+	    return NOT_IMPLEMENTED_YET("setMaxCurrentRaw");
 }
 
+bool MEIMotionControl::getMaxCurrentRaw(int axis, double v)
+{
+	    return NOT_IMPLEMENTED_YET("getMaxCurrentRaw");
+}
 
 //before starting the calibration you have to move each axis of the arm 
 //they have to stay as much as possible far away from their limit..

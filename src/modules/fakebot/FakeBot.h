@@ -361,6 +361,11 @@ public:
         return true;
     }
 
+    virtual bool getMaxCurrent(int j, double* v) {
+        *v = 0;
+        return true;
+    }
+    
     virtual bool setMaxCurrent(int j, double v) {
         return true;
     }
