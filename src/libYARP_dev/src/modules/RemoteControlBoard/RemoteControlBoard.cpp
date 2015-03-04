@@ -253,6 +253,7 @@ class yarp::dev::RemoteControlBoard :
     public IVelocityControl2,
     public IEncodersTimed,
     public IMotorEncoders,
+    public IMotor,
     public IAmplifierControl,
     public IControlLimits2,
     public IAxisInfo,
@@ -1710,6 +1711,10 @@ public:
     }
 
     /* IMotor */
+    virtual bool getNumberOfMotors(int *num) {
+        return get1V1I(VOCAB_MOTORS_NUMBER, *num);
+    }
+
     virtual bool getTemperature      (int m, double* val) {
         return get1V1I1D(VOCAB_TEMPERATURE, m, val);
     }
