@@ -1587,6 +1587,15 @@ inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
                                }
                                break;
 
+    case VOCAB_VELOCITY_MOVE:
+    {
+        if(!vel->velocityMove(b.get(2).asInt(), v.body[0]) )
+        {
+            printf("Issues while trying to start a velocity move\n");
+        }
+    }
+    break;
+
     default: {
         printf("Unrecognized message while receiving on command port\n");
              }
