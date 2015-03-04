@@ -37,7 +37,7 @@ public:
      * @param num retrieved number of available motors
      * @return true/false
      */
-    virtual bool getNumberOfMotors(int *num) = 0;
+    virtual bool getNumberOfMotorsRaw(int *num) = 0;
 
     /**
      * Get temperature of a motor. 

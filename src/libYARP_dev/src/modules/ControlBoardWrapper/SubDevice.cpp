@@ -164,6 +164,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(iJntEnc);
             subdevice->view(iMotEnc);
             subdevice->view(iInteract);
+            subdevice->view(imotor);
         }
     else
         {
@@ -188,6 +189,9 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if ((iMotEnc==0) && (_subDevVerbose))
         yWarning() << "controlBoardWrapper:  Warning iMotorEncoder not valid interface";
+
+    if ((imotor==0) && (_subDevVerbose))
+        yWarning() << "controlBoardWrapper:  Warning iMotor not valid interface";
 
     int deviceJoints=0;
 
