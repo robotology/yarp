@@ -503,14 +503,14 @@ void AnalogWrapper::run()
             switch(ret)
             {
                 case IAnalogSensor::AS_OVF:
-                    yError("AnalogWrapper: %s: Sensor returned overflow error (code %d).", id.c_str(), ret);
+                    yError("AnalogWrapper: %s: Sensor returned overflow error (code %d).", sensorId.c_str(), ret);
                     break;
                 case IAnalogSensor::AS_TIMEOUT:
-                    yError("AnalogWrapper: %s: Sensor returned timeout error (code %d).", id.c_str(), ret);
+                    yError("AnalogWrapper: %s: Sensor returned timeout error (code %d).", sensorId.c_str(), ret);
                     break;
                 case IAnalogSensor::AS_ERROR:
                 default:
-                    yError("AnalogWrapper: %s: Sensor returned error with code %d.", id.c_str(), ret);
+                    yError("AnalogWrapper: %s: Sensor returned error with code %d.", sensorId.c_str(), ret);
                     break;
             }
         }
