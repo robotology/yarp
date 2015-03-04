@@ -103,6 +103,7 @@ public:
     void init(yarp::dev::ServerControlBoard *x);
 
     virtual bool respond(const Bottle& cmd, Bottle& response);
+    bool setControlMode(int axis, int mode);
 
     /**
     * Initialize the internal data.
@@ -1665,6 +1666,41 @@ bool yarp::dev::CommandsHelper::initialize() {
     return ok;
 }
 
+
+bool yarp::dev::CommandsHelper::setControlMode(int axis, int mode)
+{
+    bool ok;
+    switch(mode)
+    {
+        case VOCAB_CM_POSITION:
+            ok = mod->setPositionMode(axis);
+            break;
+        case VOCAB_CM_VELOCITY:
+            ok = mod->setVelocityMode(axis);
+            break;
+        case VOCAB_CM_TORQUE:
+            ok = mod->setTorqueMode(axis);
+            break;
+        case VOCAB_CM_IMPEDANCE_POS:
+            ok = mod->setImpedancePositionMode(axis);
+            break;
+        case VOCAB_CM_IMPEDANCE_VEL:
+            ok = mod->setImpedanceVelocityMode(axis);
+            break;
+        case VOCAB_CM_OPENLOOP:
+            ok = mod->setOpenLoopMode(axis);
+            break;
+        case VOCAB_CM_IDLE:
+            ok = amp->disableAmp(axis);
+            ok = ok && pid->disablePid(axis);
+        default:
+            ok = false;
+            printf("ControlBoard Error: set control mode not known %s\n", yarp::os::Vocab::decode(mode).c_str());
+            break;
+    }
+    return ok;
+}
+
 bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                                         yarp::os::Bottle& response)
 {
@@ -1733,30 +1769,77 @@ case VOCAB_SET:
             break;
 
         case VOCAB_ICONTROLMODE:
+        {
+            switch(cmd.get(2).asVocab())
             {
-                int axis = cmd.get(3).asInt();
-                switch(cmd.get(2).asVocab()) {
-                    case VOCAB_CM_POSITION:
-                        ok = mod->setPositionMode(axis);
+
+                case VOCAB_CM_CONTROL_MODE:         // new syntax - single joint
+                {
+                    int axis = cmd.get(3).asInt();
+                    ok = setControlMode(axis, cmd.get(4).asVocab());
+                } break;
+
+                case VOCAB_CM_CONTROL_MODE_GROUP:    // new syntax - multiple joints
+                {
+                    int n_joints = cmd.get(3).asInt();
+                    Bottle& jList = *(cmd.get(4).asList());
+                    Bottle& modeList= *(cmd.get(5).asList());
+
+                    for(int i=0; i<n_joints; i++)
+                    {
+                        ok = ok && setControlMode(jList.get(i).asInt(), modeList.get(i).asVocab());
+                    }
+                } break;
+
+                case VOCAB_CM_CONTROL_MODES:        // new syntax - all joints
+                {
+                    Bottle& modeList= *(cmd.get(5).asList());
+                    int joints;
+                    caller->getAxes(&joints);
+
+                    if(modeList.size() != joints)
+                    {
+                        yError("received an invalid setControlMode message. Size of vector doesn´t match the number of controlled joints\n");
+                        ok = false;
                         break;
-                    case VOCAB_CM_VELOCITY:
-                        ok = mod->setVelocityMode(axis);
-                        break;
-                    case VOCAB_CM_TORQUE:
-                        ok = mod->setTorqueMode(axis);
-                        break;
-                    case VOCAB_CM_IMPEDANCE_POS:
-                        ok = mod->setImpedancePositionMode(axis);
-                        break;
-                    case VOCAB_CM_IMPEDANCE_VEL:
-                        ok = mod->setImpedanceVelocityMode(axis);
-                        break;
-                    case VOCAB_CM_OPENLOOP:
-                        ok = mod->setOpenLoopMode(axis);
-                        break;
-                }
-            }
-            break;
+                    }
+                    int *modes  = new int [joints];
+                    for( int i=0; i<joints; i++)
+                    {
+                        ok = ok && setControlMode(i, modeList.get(i).asVocab());
+                    }
+                    delete [] modes;
+                } break;  // end if using new syntax
+
+                default:                                // fallback old style
+                {
+                    int axis = cmd.get(3).asInt();
+                    switch(cmd.get(2).asVocab())
+                    {
+                        case VOCAB_CM_POSITION:
+                            ok = mod->setPositionMode(axis);
+                            break;
+                        case VOCAB_CM_VELOCITY:
+                            ok = mod->setVelocityMode(axis);
+                            break;
+                        case VOCAB_CM_TORQUE:
+                            ok = mod->setTorqueMode(axis);
+                            break;
+                        case VOCAB_CM_IMPEDANCE_POS:
+                            ok = mod->setImpedancePositionMode(axis);
+                            break;
+                        case VOCAB_CM_IMPEDANCE_VEL:
+                            ok = mod->setImpedanceVelocityMode(axis);
+                            break;
+                        case VOCAB_CM_OPENLOOP:
+                            ok = mod->setOpenLoopMode(axis);
+                            break;
+                    }
+                } break;            // end fallback in old style syntax
+            } break;            // end check new or old syntax
+        }break;             // end case VOCAB_ICONTROLMODE
+
+
         case VOCAB_OFFSET:
             {
                 double v;
@@ -2459,5 +2542,6 @@ default:
         response.addVocab(VOCAB_OK);
     return ok;
 }
+
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
