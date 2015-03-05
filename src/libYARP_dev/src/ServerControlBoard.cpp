@@ -1087,6 +1087,21 @@ public:
     }
 
     /**
+    * Returns the maximum electric current allowed for a given motor. The behavior
+    * of the board/amplifier when this limit is reached depends on the
+    * implementation.
+    * @param j motor number
+    * @param v the new value
+    * @return probably true, might return false in bad times
+    */
+    virtual bool getMaxCurrent(int j, double* v) {
+        if (amp)
+            return amp->getMaxCurrent(j, v);
+        *v = 0;
+        return false;
+    }
+
+    /**
     * Get the status of the amplifiers, coded in a 32 bits integer for
     * each amplifier (at the moment contains only the fault, it will be
     * expanded in the future).
@@ -2420,6 +2435,13 @@ case VOCAB_ENCODERS:
         for (i = 0; i < nj; i++)
             b.addDouble(p[i]);
         delete[] p;
+    }
+    break;
+
+case VOCAB_AMP_MAXCURRENT:
+    {
+        ok = amp->getMaxCurrent(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
     }
     break;
 

@@ -1104,6 +1104,14 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setMaxCurrent(int j, double 
 }
 
 template <class DERIVED, class IMPLEMENT> 
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getMaxCurrent(int j, double* v)
+{
+    int k=castToMapper(helper)->toHw(j);
+
+    return iAmplifier->getMaxCurrentRaw(k, v);
+}
+
+template <class DERIVED, class IMPLEMENT> 
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getAmpStatus(int *st)
 {
     bool ret=iAmplifier->getAmpStatusRaw(iTemp);

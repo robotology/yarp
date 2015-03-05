@@ -1235,6 +1235,11 @@ bool JrkerrMotionControl::getCurrentRaw(int axis, double *c)
 	return NOT_YET_IMPLEMENTED("getCurrentRaw");
 }
 
+bool JrkerrMotionControl::getMaxCurrentRaw(int axis, double* v)
+{
+	return NOT_YET_IMPLEMENTED("getMaxCurrentRaw");
+}
+
 bool JrkerrMotionControl::setMaxCurrentRaw(int axis, double v)
 {
 	_mutex.wait();

@@ -2430,6 +2430,112 @@ bool ControlBoardWrapper::getEncoderAccelerations(double *accs)
     return ret;
 }
 
+/* IMotor */
+bool ControlBoardWrapper::getNumberOfMotors   (int *num) {
+    *num=controlledJoints;
+    return true;
+}
+
+bool ControlBoardWrapper::getTemperature      (int m, double* val) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->imotor)
+    {
+        return p->imotor->getTemperature(off+p->base, val);
+    }
+    *val=0.0;
+    return false;
+}
+
+bool ControlBoardWrapper::getTemperatures     (double *vals) {
+    bool ret=true;
+
+    for(int l=0;l<controlledJoints;l++)
+    {
+        int off=device.lut[l].offset;
+        int subIndex=device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->imotor)
+        {
+            ret=ret&&p->imotor->getTemperature(off+p->base, vals+l);
+        }
+        else
+            ret=false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::getTemperatureLimit (int m, double* val) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->imotor)
+    {
+        return p->imotor->getTemperatureLimit(off+p->base, val);
+    }
+    *val=0.0;
+    return false;
+}
+
+bool ControlBoardWrapper::setTemperatureLimit (int m, const double val) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->imotor)
+    {
+        return p->imotor->setTemperatureLimit(off+p->base,val);
+    }
+    return false;
+}
+
+bool ControlBoardWrapper::getMotorOutputLimit (int m, double* val) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->imotor)
+    {
+        return p->imotor->getMotorOutputLimit(off+p->base, val);
+    }
+    *val=0.0;
+    return false;
+}
+
+bool ControlBoardWrapper::setMotorOutputLimit (int m, const double val) {
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->imotor)
+    {
+        return p->imotor->setMotorOutputLimit(off+p->base,val);
+    }
+    return false;
+}
+
 /* IMotorEncoders */
 
 bool ControlBoardWrapper::resetMotorEncoder(int m) {
@@ -2787,6 +2893,26 @@ bool ControlBoardWrapper::setMaxCurrent(int j, double v)
     {
         return p->amp->setMaxCurrent(off+p->base,v);
     }
+    return false;
+}
+
+bool ControlBoardWrapper::getMaxCurrent(int j, double* v)
+{
+    int off=device.lut[j].offset;
+    int subIndex=device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+    {
+        *v=0.0;
+        return false;
+    }
+
+    if (p->amp)
+    {
+        return p->amp->getMaxCurrent(off+p->base,v);
+    }
+    *v=0.0;
     return false;
 }
 

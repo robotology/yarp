@@ -92,6 +92,7 @@ protected:
     yarp::dev::IOpenLoopControl         *rpc_IOpenLoop;
     yarp::dev::IImpedanceControl        *rpc_IImpedance;
     yarp::dev::IInteractionMode         *rpc_IInteract;
+    yarp::dev::IMotor                   *rpc_IMotor;
     yarp::sig::Vector                   tmpVect;
     yarp::os::Stamp                     lastRpcStamp;
     yarp::os::Semaphore                 mutex;

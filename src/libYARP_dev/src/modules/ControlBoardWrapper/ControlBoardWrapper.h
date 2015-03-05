@@ -57,7 +57,7 @@
 
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 1
+#define PROTOCOL_VERSION_MINOR 2
 #define PROTOCOL_VERSION_TWEAK 0
 
 /*
@@ -102,6 +102,7 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IPositionDirect,
                                         public yarp::dev::IVelocityControl2,
                                         public yarp::dev::IEncodersTimed,
+                                        public yarp::dev::IMotor,
                                         public yarp::dev::IMotorEncoders,
                                         public yarp::dev::IAmplifierControl,
                                         public yarp::dev::IControlLimits2,
@@ -789,6 +790,16 @@ public:
     virtual bool setMaxCurrent(int j, double v);
 
     /**
+    * Returns the maximum electric current allowed for a given motor. The behavior
+    * of the board/amplifier when this limit is reached depends on the
+    * implementation.
+    * @param j motor number
+    * @param v the return value
+    * @return probably true, might return false in bad times
+    */
+    virtual bool getMaxCurrent(int j, double *v);
+
+    /**
     * Get the status of the amplifiers, coded in a 32 bits integer for
     * each amplifier (at the moment contains only the fault, it will be
     * expanded in the future).
@@ -865,6 +876,21 @@ public:
     virtual bool abortPark();
 
     virtual bool abortCalibration();
+
+    /* IMotor */
+    virtual bool getNumberOfMotors   (int *num);
+
+    virtual bool getTemperature      (int m, double* val);
+    
+    virtual bool getTemperatures     (double *vals);
+    
+    virtual bool getTemperatureLimit (int m, double* val);
+    
+    virtual bool setTemperatureLimit (int m, const double val);
+
+    virtual bool getMotorOutputLimit (int m, double* val);
+    
+    virtual bool setMotorOutputLimit (int m, const double val);
 
     /* IAxisInfo */
     virtual bool getAxisName(int j, yarp::os::ConstString& name);
