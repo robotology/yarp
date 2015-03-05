@@ -2167,6 +2167,18 @@ public:
     }
 
     /**
+    * Returns the maximum electric current allowed for a given motor. The behavior
+    * of the board/amplifier when this limit is reached depends on the
+    * implementation.
+    * @param j motor number
+    * @param v the return value
+    * @return probably true, might return false in bad times
+    */
+    virtual bool getMaxCurrent(int j, double *v) {
+        return get1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
+    }
+
+    /**
      * Get the status of the amplifiers, coded in a 32 bits integer for
      * each amplifier (at the moment contains only the fault, it will be
      * expanded in the future).
