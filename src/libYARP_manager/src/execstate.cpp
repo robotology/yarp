@@ -14,7 +14,6 @@
 
 #include <iostream>
 
-
 using namespace std;
 using namespace FSM;
 using namespace yarp::manager;
@@ -125,6 +124,27 @@ bool Ready::checkResources(void)
     {
         if(!executable->getBroker()->exists((*itr).getPort()))
             return false;
+        // check the rpc request/reply if required
+        if(strlen((*itr).getRequest()) != 0) {
+            const char* reply = executable->getBroker()->requestRpc((*itr).getPort(),
+                                                                    (*itr).getRequest(),
+                                                                    (*itr).getTimeout());
+            if(reply == NULL) {
+                OSTRINGSTREAM msg;
+                msg<<"cannot request resource "<<(*itr).getPort()<<" for "<<(*itr).getRequest();
+                ErrorLogger::Instance()->addError(msg);
+                return false;
+            }
+
+            if(!compareString(reply, (*itr).getReply())) {
+                OSTRINGSTREAM msg;
+                msg<<"received wrong reply from resource "<<(*itr).getPort();
+                msg<<" for request "<<(*itr).getRequest();
+                msg<<". (expected="<<(*itr).getReply()<<", received="<<reply<<")";
+                ErrorLogger::Instance()->addError(msg);
+                return false;
+            }
+        }
     }
     return true;
 }

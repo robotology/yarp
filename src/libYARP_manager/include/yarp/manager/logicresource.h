@@ -56,6 +56,10 @@ public:
     virtual ~ResYarpPort();
     void setPort(const char* szPort) { if(szPort) strPort = szPort; }
     const char* getPort(void) { return strPort.c_str(); }
+    void setRequest(const char* szReq) { if(szReq) strRequest = szReq; }
+    void setReply(const char* szRep) { if(szRep) strReply = szRep; }
+    const char* getRequest(void) { return strRequest.c_str(); }
+    const char* getReply(void) { return strReply.c_str(); }
     void setTimeout(double t) { timeout = t; }
     double getTimeout(void) { return timeout; }
     virtual Node* clone(void);
@@ -65,6 +69,8 @@ protected:
 
 private:
     string strPort;
+    string strRequest;
+    string strReply;
     double timeout;
 };
 

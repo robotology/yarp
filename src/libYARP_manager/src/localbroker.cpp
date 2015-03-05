@@ -15,6 +15,7 @@
 #define RUN_TIMEOUT             10.0        //seconds
 #define STOP_TIMEOUT            30.0
 #define KILL_TIMEOUT            10.0
+#define CONNECTION_TIMEOUT      5.0
 
 #define WRITE_TO_PIPE           1
 #define READ_FROM_PIPE          0
@@ -418,6 +419,49 @@ bool LocalBroker::disconnect(const char* from, const char* to)
 bool LocalBroker::exists(const char* port)
 {
     return NetworkBase::exists(port);
+}
+
+
+const char* LocalBroker::requestRpc(const char* szport, const char* request, double timeout)
+{
+    if((szport==NULL) || (request==NULL))
+        return NULL;
+
+    if(!exists(szport))
+        return NULL;
+
+    // opening the port
+    yarp::os::Port port;
+    port.setTimeout((timeout>0.0) ? timeout : CONNECTION_TIMEOUT);
+    if(!port.open("..."))
+        return NULL;
+
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = (timeout>0.0) ? timeout : CONNECTION_TIMEOUT;
+    bool ret;
+    for(int i=0; i<10; i++) {
+        ret = NetworkBase::connect(port.getName().c_str(), szport, style);
+        if(ret) break;
+        Time::delay(1.0);
+    }
+
+    if(!ret) {
+        port.close();
+        return NULL;
+    }
+
+    Bottle msg, response;
+    msg.fromString(request);
+    ret = port.write(msg, response);
+    NetworkBase::disconnect(port.getName().c_str(), szport);
+    if(!response.size() || !ret) {
+        port.close();
+        return NULL;
+    }
+
+    port.close();
+    return response.toString().c_str();
 }
 
 bool LocalBroker::connected(const char* from, const char* to)

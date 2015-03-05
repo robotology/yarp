@@ -8,7 +8,7 @@
     <module>
         <name>yarpview</name>
         <parameters>--x 100 </parameters>
-        <node>localhost</node>
+        <node>/node1</node>
         <prefix>/LeftView</prefix>
         <geometry>(Pos (x 412) (y 103.9))</geometry>
     </module>
@@ -16,7 +16,7 @@
         <name>yarpview</name>
         <parameters>--x 500</parameters>
         <node>localhost</node>
-        <prefix>/RightView</prefix>
+        <prefix>/RightView</prefix>        
         <geometry>(Pos (x 414) (y 222.9))</geometry>
     </module>
     <application>

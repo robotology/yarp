@@ -502,6 +502,48 @@ bool YarpBroker::exists(const char* szport)
     return NetworkBase::exists(szport, style);
 }
 
+const char* YarpBroker::requestRpc(const char* szport, const char* request, double timeout)
+{
+    if((szport==NULL) || (request==NULL))
+        return NULL;
+
+    if(!exists(szport))
+        return NULL;
+
+    // opening the port
+    yarp::os::Port port;
+    port.setTimeout((timeout>0.0) ? timeout : CONNECTION_TIMEOUT);
+    if(!port.open("..."))
+        return NULL;
+
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = (timeout>0.0) ? timeout : CONNECTION_TIMEOUT;
+    bool ret;
+    for(int i=0; i<10; i++) {
+        ret = NetworkBase::connect(port.getName().c_str(), szport, style);
+        if(ret) break;
+        Time::delay(1.0);
+    }
+
+    if(!ret) {
+        port.close();
+        return NULL;
+    }
+
+    Bottle msg, response;
+    msg.fromString(request);
+    ret = port.write(msg, response);
+    NetworkBase::disconnect(port.getName().c_str(), szport);
+    if(!response.size() || !ret) {
+        port.close();
+        return NULL;
+    }
+
+    port.close();
+    return response.toString().c_str();
+}
+
 bool YarpBroker::connected(const char* from, const char* to)
 {
     if(!exists(from) || !exists(to))

@@ -349,6 +349,10 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                                 resource.setPort(res->GetText());
                                 if(res->Attribute("timeout"))
                                     resource.setTimeout(atof(res->Attribute("timeout")));
+                                if(res->Attribute("request"))
+                                    resource.setRequest(res->Attribute("request"));
+                                if(res->Attribute("reply"))
+                                    resource.setReply(res->Attribute("reply"));
                                 module.addResource(resource);
                             }
                         }

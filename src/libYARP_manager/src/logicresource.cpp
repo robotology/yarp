@@ -30,7 +30,7 @@ Platform::Platform(const char* szName) : GenericResource("Platform")
 Platform::Platform(const Platform &resource) : GenericResource(resource)
 {
     strDistrib = resource.strDistrib;
-    strRelease = resource.strRelease;
+    strRelease = resource.strRelease;    
 }
 
 Node* Platform::clone(void)
@@ -69,6 +69,7 @@ Platform::~Platform() { }
 ResYarpPort::ResYarpPort(void) : GenericResource("ResYarpPort")
 {
     timeout = 0;
+    strRequest = strReply = "";
 }
 
 ResYarpPort::ResYarpPort(const char* szName) : GenericResource("ResYarpPort")
@@ -81,6 +82,8 @@ ResYarpPort::ResYarpPort(const ResYarpPort &resource) : GenericResource(resource
 {
     timeout = resource.timeout;
     strPort = resource.strPort;
+    strRequest = resource.strRequest;
+    strReply = resource.strReply;
 }
 
 Node* ResYarpPort::clone(void)
