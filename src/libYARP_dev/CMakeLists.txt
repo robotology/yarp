@@ -82,6 +82,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
 set(YARP_dev_IMPL_HDRS )
 
 set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
+		  src/ClientControlBoard.cpp
                   src/ControlBoardPid.cpp
                   src/ControlCalibrationImpl.cpp
                   src/RemoteCalibratorImpl.cpp
