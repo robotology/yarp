@@ -977,6 +977,11 @@ public:
             return false;
         }
 
+        if (remote=="") {
+            fprintf(stderr,"Problem connecting to remote controlboard, 'remote' port name not given\n");
+            return false;
+        }
+
         ConstString carrier =
             config.check("carrier",
             Value("udp"),
