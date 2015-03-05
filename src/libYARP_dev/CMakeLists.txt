@@ -108,6 +108,7 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/RemoteFrameGrabberDC1394.cpp
                   src/ServerControlBoard.cpp
                   src/ServerFrameGrabber.cpp
+                  src/ServerSerial.cpp
                   src/TestFrameGrabber.cpp
                   src/TorqueControlImpl.cpp)
 
