@@ -134,6 +134,7 @@ PortAudioDeviceDriver::PortAudioDeviceDriver()
     dataBuffers.playData = 0;
     dataBuffers.recData = 0;
     renderMode = RENDER_APPEND;
+    stream = 0;
 }
 
 PortAudioDeviceDriver::~PortAudioDeviceDriver()
@@ -272,7 +273,17 @@ void PortAudioDeviceDriver::handleError()
 bool PortAudioDeviceDriver::close(void)
 {
     pThread.stop();
-    err = Pa_CloseStream( stream );
+    if (stream != 0)
+    {
+        err = Pa_CloseStream( stream );
+        if( err != paNoError )
+        {
+            fprintf( stderr, "An error occured while closing the portaudio stream\n" );
+            fprintf( stderr, "Error number: %d\n", err );
+            fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
+        }
+    }
+
     if (this->dataBuffers.playData != 0)
     {
         delete this->dataBuffers.playData;
@@ -284,12 +295,6 @@ bool PortAudioDeviceDriver::close(void)
         this->dataBuffers.recData = 0;
     }
 
-    if( err != paNoError )
-    {
-        fprintf( stderr, "An error occured while closing the portaudio stream\n" );
-        fprintf( stderr, "Error number: %d\n", err );
-        fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
-    }
     return (err==paNoError);
 }
 
@@ -316,10 +321,15 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound)
         this->startRecording();
     }
     
-    while (dataBuffers.recData->size()<this->numSamples*this->numChannels)
+    int buff_size = 0;
+    static int buff_size_wdt = 0;
+    while (buff_size<this->numSamples*this->numChannels)
     {
+         buff_size = dataBuffers.recData->size();
+         if (buff_size == 0 && buff_size_wdt++ == 100) break;
          yarp::os::Time::delay(SLEEP_TIME);
     }
+    buff_size_wdt = 0;
 
     if (sound.getChannels()!=this->numChannels && sound.getSamples() != this->numSamples)
     {
