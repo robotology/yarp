@@ -72,7 +72,7 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
             Searchable& options = paths.get(i);
             ConstString path = options.find("path").asString();
             ConstString ext = options.find("extension").asString();
-            ConstString basename = (dll_name.find(".")!=basename.npos) ? name : dll_name;
+            ConstString basename = (dll_name.find(".")!=ConstString::npos) ? name : dll_name;
             ConstString fn = (fn_name=="")?name:fn_name;
 
             // Basic name
