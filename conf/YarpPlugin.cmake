@@ -324,7 +324,7 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
     add_library(${X_YARP_PLUGIN_MASTER} ${code} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
-      set_property(TARGET ${LIBNAME} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
+      set_property(TARGET ${X_YARP_PLUGIN_MASTER} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
       target_link_libraries(${X_YARP_PLUGIN_MASTER} LINK_PRIVATE ${libs})
     endif()
     # give user access to a list of all the plugin libraries
