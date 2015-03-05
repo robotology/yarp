@@ -15,7 +15,10 @@
 
 using namespace yarp::os;
 
-
+#ifdef MPI_DEBUG
+#include <yarp/os/impl/Logger.h>
+using yarp::os::impl::Logger;
+#endif
 
 MpiCarrier::MpiCarrier() : stream(NULL), comm(NULL) {
     #ifdef MPI_DEBUG
