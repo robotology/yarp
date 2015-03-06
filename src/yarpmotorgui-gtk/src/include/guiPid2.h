@@ -25,7 +25,7 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkmain.h>
 //#include <CanBusInterface.h>
-#include <iCub/DebugInterfaces.h>
+//#include <iCub/DebugInterfaces.h>
 #include "partMover.h"
 
 namespace guiPid2
@@ -135,7 +135,9 @@ namespace guiPid2
     static IOpenLoopControl  *iOpl = NULL;
     static ITorqueControl    *iTrq = NULL;
     static IImpedanceControl *iImp = NULL;
+#ifdef DEBUG_INTERFACE
     static IDebugInterface   *iDbg = NULL;
+#endif
     static IVelocityControl  *iVel = NULL;
     //static ICanBus           *iCan = NULL;
 

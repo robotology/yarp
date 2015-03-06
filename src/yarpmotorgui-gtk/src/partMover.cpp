@@ -54,15 +54,17 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
   pos		= NULL;
   iVel      = NULL;
   iDir      = NULL;
-  iencs		= NULL;
-  amp		= NULL;
-  pid		= NULL;
-  opl		= NULL;
-  trq		= NULL;
-  imp		= NULL;
-  idbg		= NULL;
-  lim		= NULL;
-  cal		= NULL;
+  iencs     = NULL;
+  amp       = NULL;
+  pid       = NULL;
+  opl       = NULL;
+  trq       = NULL;
+  imp       = NULL;
+#ifdef DEBUG_INTERFACE
+  idbg      = NULL;
+#endif
+  lim       = NULL;
+  cal       = NULL;
   ctrlmode2 = NULL;
   iinteract = NULL;
 
@@ -104,18 +106,20 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
     fprintf(stderr, "...imp was not ok.\n");
   ok &= partDd->view(ctrlmode2);
   if (!ok)
-	fprintf(stderr, "...ctrlmode2 was not ok.\n");
+    fprintf(stderr, "...ctrlmode2 was not ok.\n");
   ok &= partDd->view(iinteract);
   if (!ok)
-	fprintf(stderr, "...iinteract was not ok.\n");
+    fprintf(stderr, "...iinteract was not ok.\n");
   
   //this interface is not mandatory
+#ifdef DEBUG_INTERFACE
   if (debugDd)
   {
-	  ok2 &= debugDd->view(idbg);
-	  if (!ok2)
-		fprintf(stderr, "...dbg was not ok.\n");
+      ok2 &= debugDd->view(idbg);
+      if (!ok2)
+        fprintf(stderr, "...dbg was not ok.\n");
   }
+#endif
 
   if (!partDd->isValid()) {
     fprintf(stderr, "Device driver was not valid! \n");

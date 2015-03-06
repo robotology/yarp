@@ -28,7 +28,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <iCub/DebugInterfaces.h>
+//#include <iCub/DebugInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
@@ -62,7 +62,9 @@ class partMover{
   IOpenLoopControl *opl;
   ITorqueControl *trq;
   IImpedanceControl *imp;
+#ifdef DEBUG_INTERFACE
   IDebugInterface *idbg;
+#endif
   IControlLimits *lim;
   IControlCalibration2 *cal;
   IControlMode2 *ctrlmode2;
@@ -202,7 +204,9 @@ class partMover{
   inline IOpenLoopControl* get_IOpenLoopControl () {return opl;}
   inline ITorqueControl* get_ITorqueControl () {return trq;}
   inline IImpedanceControl* get_IImpedanceControl () {return imp;}
+#ifdef DEBUG_INTERFACE
   inline IDebugInterface* get_IDebugControl () {return idbg;}
+#endif
   inline IVelocityControl* get_IVelocityControl () {return iVel;}
   inline IControlMode2* get_IControlMode2 () {return ctrlmode2;}
   inline IInteractionMode* get_IInteractionMode () {return iinteract;}

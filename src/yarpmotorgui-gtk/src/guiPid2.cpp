@@ -298,6 +298,7 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
 //*********************************************************************************
 void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
 {
+#ifdef DEBUG_INTERFACE
   if (iDbg==0) 
   {
       fprintf(stderr, "WARN: Debug interface not enabled.\n");
@@ -354,6 +355,7 @@ void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
   gtk_entry_set_text((GtkEntry*) dbg_debug6Entry,  buffer);
   sprintf(buffer, "%d", (int) debug_param[7]);
   gtk_entry_set_text((GtkEntry*) dbg_debug7Entry,  buffer);
+#endif
 }
 
 //*********************************************************************************
@@ -444,7 +446,9 @@ void guiPid2::changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX
 //*********************************************************************************
 void guiPid2::receive_dbg_pid()
 {
+#ifdef DEBUG_INTERFACE
   double debug_param [8];
+
   if (iDbg != 0)
   {
     iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
@@ -456,6 +460,7 @@ void guiPid2::receive_dbg_pid()
     iDbg->getDebugParameter(*joint, debug_base+6, &debug_param[6]);
     iDbg->getDebugParameter(*joint, debug_base+7, &debug_param[7]);
   }
+
   char buffer [255];
   sprintf(buffer, "%d", (int) debug_param[0]);
   gtk_entry_set_text((GtkEntry*) dbg_debug0Entry,  buffer);
@@ -473,6 +478,7 @@ void guiPid2::receive_dbg_pid()
   gtk_entry_set_text((GtkEntry*) dbg_debug6Entry,  buffer);
   sprintf(buffer, "%d", (int) debug_param[7]);
   gtk_entry_set_text((GtkEntry*) dbg_debug7Entry,  buffer);
+#endif
 }
 
 //*********************************************************************************
@@ -505,7 +511,9 @@ void guiPid2::guiPid2(void *button, void* data)
   iPid  = currentPart->get_IPidControl();
   iTrq  = currentPart->get_ITorqueControl();
   iImp  = currentPart->get_IImpedanceControl();
+#ifdef DEBUG_INTERFACE
   iDbg  = currentPart->get_IDebugControl();
+#endif
   iVel  = currentPart->get_IVelocityControl();
   iOpl  = currentPart->get_IOpenLoopControl();
 
@@ -562,6 +570,7 @@ void guiPid2::guiPid2(void *button, void* data)
   iOpl->getRefOutput(*joint,&openloop_reference);
   iOpl->getOutput(*joint, &openloop_current_pwm);
 
+#ifdef DEBUG_INTERFACE
   if (iDbg != 0)
   {
     iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
@@ -577,6 +586,7 @@ void guiPid2::guiPid2(void *button, void* data)
   {
     fprintf(stderr, "WARN: Debug interface not enabled.\n");
   }
+#endif
 
 #if 0
   //ImpedanceOffset test
@@ -612,11 +622,13 @@ void guiPid2::guiPid2(void *button, void* data)
   gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag3, note_lbl3);
   gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag6, note_lbl6);
 
+#ifdef DEBUG_INTERFACE
   if (iDbg != 0)
   {
       gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag4, note_lbl4);
       gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag5, note_lbl5);
   }
+#endif
 
   //adding a set of display
   //inv = gtk_fixed_new ();
