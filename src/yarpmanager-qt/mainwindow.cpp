@@ -74,9 +74,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->entitiesTree,SIGNAL(removeApplication(QString)),this,SLOT(onRemoveApplication(QString)));
     connect(ui->entitiesTree,SIGNAL(removeModule(QString)),this,SLOT(onRemoveModule(QString)));
     connect(ui->entitiesTree,SIGNAL(removeResource(QString)),this,SLOT(onRemoveResource(QString)));
-    connect(ui->entitiesTree,SIGNAL(reopenApplication(QString,QString)),this,SLOT(onReopenApplication(QString,QString)));
-    connect(ui->entitiesTree,SIGNAL(reopenModule(QString,QString)),this,SLOT(onReopenModule(QString,QString)));
-    connect(ui->entitiesTree,SIGNAL(reopenResource(QString,QString)),this,SLOT(onReopenResource(QString,QString)));
+    connect(ui->entitiesTree,SIGNAL(reopenApplication(QString,QString)),this,SLOT(onReopenApplication(QString,QString)),Qt::DirectConnection);
+    connect(ui->entitiesTree,SIGNAL(reopenModule(QString,QString)),this,SLOT(onReopenModule(QString,QString)),Qt::DirectConnection);
+    connect(ui->entitiesTree,SIGNAL(reopenResource(QString,QString)),this,SLOT(onReopenResource(QString,QString)),Qt::DirectConnection);
 
     connect(ui->actionRun,SIGNAL(triggered()),this,SLOT(onRun()));
     connect(ui->actionStop,SIGNAL(triggered()),this,SLOT(onStop()));

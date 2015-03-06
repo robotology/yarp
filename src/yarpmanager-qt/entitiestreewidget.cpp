@@ -49,7 +49,7 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
     loadFiles = new QAction("Load",this);
     QAction *separator = new QAction(this);
     separator->setSeparator(true);
-    reopen = new QAction("Reopen",this);
+    reopen = new QAction("Refresh",this);
     remove = new QAction("Remove",this);
 
     secondLevelMenu.addAction(loadFiles);
@@ -366,6 +366,8 @@ void EntitiesTreeWidget::onEdit()
 void EntitiesTreeWidget::onReopen()
 {
     QTreeWidgetItem *it = currentItem();
+    QTreeWidgetItem *parent = it -> parent();
+    int index = it -> parent() -> indexOfChild(it);
 
     if(!it){
         return;
@@ -405,6 +407,9 @@ void EntitiesTreeWidget::onReopen()
             }
         }
     }
+
+    parent -> child(index) -> setSelected(true);
+    scrollToItem(parent -> child(index));
 }
 
 /*! \brief Remove the selected entity node
