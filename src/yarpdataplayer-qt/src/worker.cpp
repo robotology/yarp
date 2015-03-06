@@ -290,9 +290,12 @@ void MasterThread::runNormally()
             }
         }
     }
-    this->setRate( (int) (2 / utilities->speed) );
+    this->setRate( (2 / utilities->speed) );
+
+    //fprintf(stdout, "rate is %lf \n", (2 / utilities->speed));
+    
     virtualTime += 0.002; // increase by two millisecond
-    //LOG("virtualTime: %lf \n", virtualTime);
+
     initTime++;
 }
 
