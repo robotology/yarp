@@ -15,6 +15,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Log.h>
 
 #include <vector>
 

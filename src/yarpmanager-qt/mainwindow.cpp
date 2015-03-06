@@ -571,7 +571,13 @@ void MainWindow::onTabClose(int index)
     }
     if(w->getType() == yarp::manager::APPLICATION){
         ApplicationViewWidget *aw = ((ApplicationViewWidget*)w);
-        if(aw->isRunning()){
+
+        if (!aw)
+        {
+            yWarning("ApplicationViewWidget is NULL!");
+        }
+
+        if(aw && aw->isRunning()){
             if( QMessageBox::warning(this,QString("Closing %1").arg(ui->mainTabs->tabText(index)),"You have some running module. After closing the application window you might not be able to recover them. Are you sure?",QMessageBox::Yes,QMessageBox::No) == QMessageBox::No){
                 return;
             }

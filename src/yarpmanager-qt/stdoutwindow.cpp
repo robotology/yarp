@@ -23,6 +23,7 @@ StdoutWindow::StdoutWindow(int id, QString title,QWidget *parent) :
         setWindowTitle("STDOUT");
     }
 
+    connect(this,SIGNAL(internalAddMessage(QString)),this,SLOT(onInternalAddMessage(QString)),Qt::QueuedConnection);
 }
 
 StdoutWindow::~StdoutWindow()
@@ -32,7 +33,8 @@ StdoutWindow::~StdoutWindow()
 
 void StdoutWindow::addMessage(QString text)
 {
-    ui->plainTextEdit->appendPlainText(text);
+    // ui->plainTextEdit->appendPlainText(text);
+    internalAddMessage(text);
 }
 
 int StdoutWindow::getId()
@@ -44,4 +46,9 @@ void StdoutWindow::closeEvent(QCloseEvent * event)
 {
     Q_UNUSED(event);
     closeStdOut(id);
+}
+
+void StdoutWindow::onInternalAddMessage(QString msg)
+{
+    ui->plainTextEdit->appendPlainText(msg);
 }

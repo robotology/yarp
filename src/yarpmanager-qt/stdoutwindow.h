@@ -39,6 +39,10 @@ private:
 
 signals:
     void closeStdOut(int);
+    void internalAddMessage(QString msg);
+
+public slots:
+    void onInternalAddMessage(QString msg);
 };
 
 #endif // STDOUTWINDOW_H

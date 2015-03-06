@@ -220,7 +220,14 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
         modRunAction->setEnabled(true);
         modStopAction->setEnabled(true);
         modkillAction->setEnabled(true);
-        modAttachAction->setEnabled(true);
+        if (ui->moduleList->currentItem()->text(3) == "localhost")
+        {
+            modAttachAction->setEnabled(true);
+        }
+        else
+        {
+            modAttachAction->setEnabled(false);
+        }
         modAssignAction->setEnabled(true);
         modRefreshAction->setEnabled(true);
     }
@@ -543,9 +550,10 @@ bool ApplicationViewWidget::onRun()
             it->setIcon(0,QIcon(":/images/refresh_ico.png"));
             it->setTextColor(2,QColor("#000000"));
 
+            yDebug("Trying to run module ID %i param %s host %s stdio %s wdir %s env %s",it->text(1).toInt(),it->text(4).toLatin1().data(),
+                    it->text(3).toLatin1().data(),it->text(5).toLatin1().data(),it->text(6).toLatin1().data(),it->text(7).toLatin1().data());
         }
     }
-
 
     manager.safeRun(MIDs);
     yarp::os::Time::delay(0.1);
