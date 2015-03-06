@@ -102,38 +102,38 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
   char buffer[40];
 
   //fprintf(stderr, "%s \n", gtk_entry_get_text((GtkEntry*) kpDes));
-  pid->kp = atoi(gtk_entry_get_text((GtkEntry*) pos_kpDes));
+  pid->kp = atof(gtk_entry_get_text((GtkEntry*) pos_kpDes));
   //fprintf(stderr, "kp changed to: %d \n", (int) pid->kp);
-  pid->kd = atoi(gtk_entry_get_text((GtkEntry*) pos_kdDes));
-  pid->ki = atoi(gtk_entry_get_text((GtkEntry*) pos_kiDes));
-  pid->scale = atoi(gtk_entry_get_text((GtkEntry*) pos_scaleDes));
-  pid->offset = atoi(gtk_entry_get_text((GtkEntry*) pos_offsetDes));
-  pid->stiction_up_val = atoi(gtk_entry_get_text((GtkEntry*) pos_posStictionDes));
-  pid->stiction_down_val = atoi(gtk_entry_get_text((GtkEntry*) pos_negStictionDes));
-  pid->max_output = atoi(gtk_entry_get_text((GtkEntry*) pos_PWM_limitDes));
-  pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) pos_INT_limitDes));
+  pid->kd = atof(gtk_entry_get_text((GtkEntry*) pos_kdDes));
+  pid->ki = atof(gtk_entry_get_text((GtkEntry*) pos_kiDes));
+  pid->scale = atof(gtk_entry_get_text((GtkEntry*) pos_scaleDes));
+  pid->offset = atof(gtk_entry_get_text((GtkEntry*) pos_offsetDes));
+  pid->stiction_up_val = atof(gtk_entry_get_text((GtkEntry*) pos_posStictionDes));
+  pid->stiction_down_val = atof(gtk_entry_get_text((GtkEntry*) pos_negStictionDes));
+  pid->max_output = atof(gtk_entry_get_text((GtkEntry*) pos_PWM_limitDes));
+  pid->max_int = atof(gtk_entry_get_text((GtkEntry*) pos_INT_limitDes));
 
   iPid->setPid(*joint, *pid);
   yarp::os::Time::delay(0.005);
   iPid->getPid(*joint, pid);
 
-  sprintf(buffer, "%d", (int) pid->kp);
+  sprintf(buffer, "%.3f", (double) pid->kp);
   gtk_entry_set_text((GtkEntry*) pos_kpEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->kd);
+  sprintf(buffer, "%.3f", (double) pid->kd);
   gtk_entry_set_text((GtkEntry*) pos_kdEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->ki);
+  sprintf(buffer, "%.3f", (double) pid->ki);
   gtk_entry_set_text((GtkEntry*) pos_kiEntry,  buffer);
   sprintf(buffer, "%d", (int) pid->scale);
   gtk_entry_set_text((GtkEntry*) pos_scaleEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->offset);
+  sprintf(buffer, "%.3f", (double) pid->offset);
   gtk_entry_set_text((GtkEntry*) pos_offsetEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->max_output);
+  sprintf(buffer, "%.3f", (double) pid->max_output);
   gtk_entry_set_text((GtkEntry*) pos_PWM_limitEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->max_int);
+  sprintf(buffer, "%.3f", (double) pid->max_int);
   gtk_entry_set_text((GtkEntry*) pos_INT_limitEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->stiction_up_val);
+  sprintf(buffer, "%.3f", (double) pid->stiction_up_val);
   gtk_entry_set_text((GtkEntry*) pos_posStictionEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->stiction_down_val);
+  sprintf(buffer, "%.3f", (double) pid->stiction_down_val);
   gtk_entry_set_text((GtkEntry*) pos_negStictionEntry,  buffer);
 }
 
@@ -153,10 +153,10 @@ void guiPid2::send_opl_pid (GtkButton *button, Pid *pid)
   yarp::os::Time::delay(0.010);
   iOpl->getOutput   (*joint, &get_cur_offset);  //This is the reak PWM output
 
-  sprintf(buffer, "%d", (int) get_ref_offset);
+  sprintf(buffer, "%.3f", (double) get_ref_offset);
   gtk_entry_set_text((GtkEntry*) opl_koEntry,  buffer);
 
-  sprintf(buffer, "%d", (int) get_cur_offset);
+  sprintf(buffer, "%.3f", (double) get_cur_offset);
   gtk_entry_set_text((GtkEntry*) opl_koDisplay,  buffer);
 }
 
@@ -170,21 +170,21 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   double ktaushift = 0;
 
   //fprintf(stderr, "%s \n", gtk_entry_get_text((GtkEntry*) kpDes));
-  pid->kp = atoi(gtk_entry_get_text((GtkEntry*) trq_kpDes));
+  pid->kp = atof(gtk_entry_get_text((GtkEntry*) trq_kpDes));
   //fprintf(stderr, "kp changed to: %d \n", (int) pid->kp);
-  pid->kd = atoi(gtk_entry_get_text((GtkEntry*) trq_kdDes));
-  pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kiDes));
-  pid->kff = atoi(gtk_entry_get_text((GtkEntry*) trq_kffDes));
-  bemfGain = atoi(gtk_entry_get_text((GtkEntry*) trq_kbemfDes));
-  ktau = atoi(gtk_entry_get_text((GtkEntry*) trq_ktauDes));
-  bemfshift = atoi(gtk_entry_get_text((GtkEntry*) trq_kbemfshiftDes));
-  ktaushift = atoi(gtk_entry_get_text((GtkEntry*) trq_ktaushiftDes));
-  pid->scale = atoi(gtk_entry_get_text((GtkEntry*) trq_scaleDes));
-  pid->offset = atoi(gtk_entry_get_text((GtkEntry*) trq_offsetDes));
-  pid->stiction_up_val = atoi(gtk_entry_get_text((GtkEntry*) trq_upStictionDes));
-  pid->stiction_down_val = atoi(gtk_entry_get_text((GtkEntry*) trq_downStictionDes));
-  pid->max_output = atoi(gtk_entry_get_text((GtkEntry*) trq_PWM_limitDes));
-  pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) trq_INT_limitDes));
+  pid->kd = atof(gtk_entry_get_text((GtkEntry*) trq_kdDes));
+  pid->ki = atof(gtk_entry_get_text((GtkEntry*) trq_kiDes));
+  pid->kff = atof(gtk_entry_get_text((GtkEntry*) trq_kffDes));
+  bemfGain = atof(gtk_entry_get_text((GtkEntry*) trq_kbemfDes));
+  ktau = atof(gtk_entry_get_text((GtkEntry*) trq_ktauDes));
+  bemfshift = atof(gtk_entry_get_text((GtkEntry*) trq_kbemfshiftDes));
+  ktaushift = atof(gtk_entry_get_text((GtkEntry*) trq_ktaushiftDes));
+  pid->scale = atof(gtk_entry_get_text((GtkEntry*) trq_scaleDes));
+  pid->offset = atof(gtk_entry_get_text((GtkEntry*) trq_offsetDes));
+  pid->stiction_up_val = atof(gtk_entry_get_text((GtkEntry*) trq_upStictionDes));
+  pid->stiction_down_val = atof(gtk_entry_get_text((GtkEntry*) trq_downStictionDes));
+  pid->max_output = atof(gtk_entry_get_text((GtkEntry*) trq_PWM_limitDes));
+  pid->max_int = atof(gtk_entry_get_text((GtkEntry*) trq_INT_limitDes));
 
   iTrq->setTorquePid(*joint, *pid);
 
@@ -206,22 +206,22 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   bemfshift=m.bemf_scale;
   }
 
-  sprintf(buffer, "%d", (int) pid->kp);
+  sprintf(buffer, "%.3f", (double) pid->kp);
   gtk_entry_set_text((GtkEntry*) trq_kpEntry,  buffer);
 
-  sprintf(buffer, "%d", (int) pid->kd);
+  sprintf(buffer, "%.3f", (double) pid->kd);
   gtk_entry_set_text((GtkEntry*) trq_kdEntry,  buffer);
   
-  sprintf(buffer, "%d", (int) pid->ki);
+  sprintf(buffer, "%.3f", (double) pid->ki);
   gtk_entry_set_text((GtkEntry*) trq_kiEntry,  buffer);
   
   sprintf(buffer, "%d", (int) pid->scale);
   gtk_entry_set_text((GtkEntry*) trq_scaleEntry,  buffer);
   
-  sprintf(buffer, "%d", (int) bemfGain);
+  sprintf(buffer, "%.3f", (double) bemfGain);
   gtk_entry_set_text((GtkEntry*) trq_kbemfEntry,  buffer);
 
-  sprintf(buffer, "%d", (int) ktau);
+  sprintf(buffer, "%.3f", (double) ktau);
   gtk_entry_set_text((GtkEntry*) trq_ktauEntry,  buffer);
 
   sprintf(buffer, "%d", (int) bemfshift);
@@ -230,22 +230,22 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   sprintf(buffer, "%d", (int) ktaushift);
   gtk_entry_set_text((GtkEntry*) trq_ktaushiftEntry,  buffer);
 
-  sprintf(buffer, "%d", (int) pid->kff);
+  sprintf(buffer, "%.3f", (double) pid->kff);
   gtk_entry_set_text((GtkEntry*) trq_kffEntry,  buffer);
   
-  sprintf(buffer, "%d", (int) pid->offset);
+  sprintf(buffer, "%.3f", (double) pid->offset);
   gtk_entry_set_text((GtkEntry*) trq_offsetEntry,  buffer);
   
-  sprintf(buffer, "%d", (int) pid->max_output);
+  sprintf(buffer, "%.3f", (double) pid->max_output);
   gtk_entry_set_text((GtkEntry*) trq_PWM_limitEntry,  buffer);
   
-  sprintf(buffer, "%d", (int) pid->max_int);
+  sprintf(buffer, "%.3f", (double) pid->max_int);
   gtk_entry_set_text((GtkEntry*) trq_INT_limitEntry,  buffer);
   
-  sprintf(buffer, "%d", (int) pid->stiction_up_val);
+  sprintf(buffer, "%.3f", (double) pid->stiction_up_val);
   gtk_entry_set_text((GtkEntry*) trq_upStictionEntry,  buffer);
   
-  sprintf(buffer, "%d", (int) pid->stiction_down_val);
+  sprintf(buffer, "%.3f", (double) pid->stiction_down_val);
   gtk_entry_set_text((GtkEntry*) trq_downStictionEntry,  buffer);
 }
 
@@ -369,18 +369,18 @@ void guiPid2::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, 
     gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
     gtk_fixed_put    (GTK_FIXED(inv), entry, posX+30, posY+30);
     gtk_widget_set_size_request     (frame, 140, 60);
-    gtk_widget_set_size_request     (entry, 60, 20);
+    gtk_widget_set_size_request     (entry, 80, 20);
   }
   else
   {
     gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
     gtk_fixed_put    (GTK_FIXED(inv), entry, posX+10, posY+30);
     gtk_widget_set_size_request     (frame, 60, 60);
-    gtk_widget_set_size_request     (entry, 40, 20);
+    gtk_widget_set_size_request     (entry, 50, 20);
   }
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
-  sprintf(buffer, "%d", k);
+  sprintf(buffer, "%d", k); //use this if k is integer
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
   return;
 }
@@ -395,19 +395,19 @@ void guiPid2::displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int pos
   {
     gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
     gtk_fixed_put    (GTK_FIXED(inv), entry, posX+30, posY+30);
-    gtk_widget_set_size_request     (frame, 130, 60);
-    gtk_widget_set_size_request     (entry, 60, 20);
+    gtk_widget_set_size_request     (frame, 140, 60);
+    gtk_widget_set_size_request     (entry, 80, 20);
   }
   else
   {
     gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
     gtk_fixed_put    (GTK_FIXED(inv), entry, posX+10, posY+30);
     gtk_widget_set_size_request     (frame, 60, 60);
-    gtk_widget_set_size_request     (entry, 40, 20);
+    gtk_widget_set_size_request     (entry, 50, 20);
   }
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
-  sprintf(buffer, "%3.3f", k);
+  sprintf(buffer, "%3.3f", k); //use this if k is float
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
   return;
 }
@@ -420,10 +420,10 @@ void guiPid2::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, i
 
   gtk_fixed_put    (GTK_FIXED(inv), frame, posX+20, posY);
   gtk_fixed_put    (GTK_FIXED(inv), entry, posX+50, posY+30);
-  gtk_widget_set_size_request     (frame, 130, 60);
-  gtk_widget_set_size_request     (entry, 60, 20);
+  gtk_widget_set_size_request     (frame, 140, 60);
+  gtk_widget_set_size_request     (entry, 80, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
-  sprintf(buffer, "%d", k);
+  sprintf(buffer, "%d", k);  //use this if k is integer
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
   return;
 }
@@ -436,10 +436,10 @@ void guiPid2::changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX
 
   gtk_fixed_put    (GTK_FIXED(inv), frame, posX+20, posY);
   gtk_fixed_put    (GTK_FIXED(inv), entry, posX+50, posY+30);
-  gtk_widget_set_size_request     (frame, 130, 60);
-  gtk_widget_set_size_request     (entry, 60, 20);
+  gtk_widget_set_size_request     (frame, 140, 60);
+  gtk_widget_set_size_request     (entry, 80, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
-  sprintf(buffer, "%3.3f", k);
+  sprintf(buffer, "%3.3f", k);  //use this if k is float
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
   return;
 }
@@ -691,22 +691,22 @@ void guiPid2::guiPid2(void *button, void* data)
   // ------ POSITION CONTROL ------
   //kp
   pos_kpEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.kp, note_pag1, pos_kpEntry, 0, 0, "Current Pos Kp");
+  displayPidValue((double) myPosPid.kp, note_pag1, pos_kpEntry, 0, 0, "Current Pos Kp");
   //kp desired
   pos_kpDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.kp, note_pag1, pos_kpDes, 120, 0, "Desired Pos Kp");
+  changePidValue((double) myPosPid.kp, note_pag1, pos_kpDes, 120, 0, "Desired Pos Kp");
   //kd
   pos_kdEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.kd, note_pag1, pos_kdEntry, 0, 70, "Current Pos Kd");
+  displayPidValue((double) myPosPid.kd, note_pag1, pos_kdEntry, 0, 70, "Current Pos Kd");
   //kd desired
   pos_kdDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.kd, note_pag1, pos_kdDes, 120, 70, "Desired Pos Kd");
+  changePidValue((double) myPosPid.kd, note_pag1, pos_kdDes, 120, 70, "Desired Pos Kd");
   //ki
   pos_kiEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.ki, note_pag1, pos_kiEntry, 0, 140, "Current Pos Ki");
+  displayPidValue((double) myPosPid.ki, note_pag1, pos_kiEntry, 0, 140, "Current Pos Ki");
   //ki desired
   pos_kiDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.ki, note_pag1, pos_kiDes, 120, 140, "Desired Pos Ki");
+  changePidValue((double) myPosPid.ki, note_pag1, pos_kiDes, 120, 140, "Desired Pos Ki");
   //scale
   pos_scaleEntry   =  gtk_entry_new();
   displayPidValue((int) myPosPid.scale, note_pag1, pos_scaleEntry, 0, 210, "Current Pos shift");
@@ -715,74 +715,74 @@ void guiPid2::guiPid2(void *button, void* data)
   changePidValue((int) myPosPid.scale, note_pag1, pos_scaleDes, 120, 210, "Desired Pos shift");
   //offset
   pos_offsetEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.offset, note_pag1, pos_offsetEntry, 0, 280, "Current Pos offset");
+  displayPidValue((double) myPosPid.offset, note_pag1, pos_offsetEntry, 0, 280, "Current Pos offset");
   //offset desired
   pos_offsetDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.offset, note_pag1, pos_offsetDes, 120, 280, "Desired Pos offset");
+  changePidValue((double) myPosPid.offset, note_pag1, pos_offsetDes, 120, 280, "Desired Pos offset");
   //positive stiction
   pos_posStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionEntry, 280, 280, "Current Pos Stiction offset");
+  displayPidValue((double) myPosPid.stiction_up_val, note_pag1, pos_posStictionEntry, 280, 280, "Current Pos Stiction offset");
   //positive stiction desired
   pos_posStictionDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionDes, 400, 280, "Desired Pos Stiction offset");
+  changePidValue((double) myPosPid.stiction_up_val, note_pag1, pos_posStictionDes, 400, 280, "Desired Pos Stiction offset");
   //negative stiction
   pos_negStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionEntry, 280, 350, "Current Neg Stiction offset");
+  displayPidValue((double) myPosPid.stiction_down_val, note_pag1, pos_negStictionEntry, 280, 350, "Current Neg Stiction offset");
   //negative stiction desired
   pos_negStictionDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionDes, 400, 350, "Desired Neg Stiction offset");
+  changePidValue((double) myPosPid.stiction_down_val, note_pag1, pos_negStictionDes, 400, 350, "Desired Neg Stiction offset");
 
   //PWM limit
   pos_PWM_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitEntry, 0, 350, "Current PWM limit");
+  displayPidValue((double) myPosPid.max_output, note_pag1, pos_PWM_limitEntry, 0, 350, "Current PWM limit");
   //PWM limit desired
   pos_PWM_limitDes=  gtk_entry_new();
-  changePidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitDes, 120, 350, "Desired PWM limit");
+  changePidValue((double) myPosPid.max_output, note_pag1, pos_PWM_limitDes, 120, 350, "Desired PWM limit");
   //INTEGRAL limit
   pos_INT_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitEntry, 0, 420, "Current Integral limit");
+  displayPidValue((double) myPosPid.max_int, note_pag1, pos_INT_limitEntry, 0, 420, "Current Integral limit");
   //INTEGRAL limit desired
   pos_INT_limitDes=  gtk_entry_new();
-  changePidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitDes, 120, 420, "Desired Integral limit");
+  changePidValue((double) myPosPid.max_int, note_pag1, pos_INT_limitDes, 120, 420, "Desired Integral limit");
 
     // ------ TORQUE CONTROL ------
   //kp
   trq_kpEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.kp, note_pag2, trq_kpEntry, 0, 0, "Current Trq Kp");
+  displayPidValue((double) myTrqPid.kp, note_pag2, trq_kpEntry, 0, 0, "Current Trq Kp");
   //kp desired
   trq_kpDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.kp, note_pag2, trq_kpDes, 120, 0, "Desired Trq Kp");
+  changePidValue((double) myTrqPid.kp, note_pag2, trq_kpDes, 120, 0, "Desired Trq Kp");
   //kd
   trq_kdEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.kd, note_pag2, trq_kdEntry, 0, 70, "Current Trq Kd");
+  displayPidValue((double) myTrqPid.kd, note_pag2, trq_kdEntry, 0, 70, "Current Trq Kd");
   //kd desired
   trq_kdDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.kd, note_pag2, trq_kdDes, 120, 70, "Desired Trq Kd");
+  changePidValue((double) myTrqPid.kd, note_pag2, trq_kdDes, 120, 70, "Desired Trq Kd");
   //ki
   trq_kiEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.ki, note_pag2, trq_kiEntry, 0, 140, "Current Trq Ki");
+  displayPidValue((double) myTrqPid.ki, note_pag2, trq_kiEntry, 0, 140, "Current Trq Ki");
   //ki desired
   trq_kiDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.ki, note_pag2, trq_kiDes, 120, 140, "Desired Trq Ki");
+  changePidValue((double) myTrqPid.ki, note_pag2, trq_kiDes, 120, 140, "Desired Trq Ki");
   
   //kff
   trq_kffEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.kff, note_pag2, trq_kffEntry, 280, 0, "Current Trq Kff");
+  displayPidValue((double) myTrqPid.kff, note_pag2, trq_kffEntry, 280, 0, "Current Trq Kff");
   //kff desired
   trq_kffDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.kff, note_pag2, trq_kffDes, 400, 0, "Desired Trq Kff");
+  changePidValue((double) myTrqPid.kff, note_pag2, trq_kffDes, 400, 0, "Desired Trq Kff");
   //kbemf
   trq_kbemfEntry   =  gtk_entry_new();
-  displayPidValue((int) bemfGain, note_pag2, trq_kbemfEntry, 280, 70, "Current Trq Kbemf");
+  displayPidValue((double) bemfGain, note_pag2, trq_kbemfEntry, 280, 70, "Current Trq Kbemf");
   //kbemf desired
   trq_kbemfDes   =  gtk_entry_new();
-  changePidValue((int) bemfGain, note_pag2, trq_kbemfDes, 400, 70, "Desired Trq Kbemf");
+  changePidValue((double) bemfGain, note_pag2, trq_kbemfDes, 400, 70, "Desired Trq Kbemf");
   //ktau
   trq_ktauEntry   =  gtk_entry_new();
-  displayPidValue((int) ktau, note_pag2, trq_ktauEntry, 280, 140, "Current Trq Ktau");
+  displayPidValue((double) ktau, note_pag2, trq_ktauEntry, 280, 140, "Current Trq Ktau");
   //ktau desired
   trq_ktauDes   =  gtk_entry_new();
-  changePidValue((int) ktau, note_pag2, trq_ktauDes, 400, 140, "Desired Trq Ktau");
+  changePidValue((double) ktau, note_pag2, trq_ktauDes, 400, 140, "Desired Trq Ktau");
 
   char buff2 [40];
   //ktaushift
@@ -814,35 +814,35 @@ void guiPid2::guiPid2(void *button, void* data)
   changePidValue((int) myTrqPid.scale, note_pag2, trq_scaleDes, 120, 210, "Desired Trq shift");
   //offset
   trq_offsetEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.offset, note_pag2, trq_offsetEntry, 0, 280, "Current Trq offset");
+  displayPidValue((double) myTrqPid.offset, note_pag2, trq_offsetEntry, 0, 280, "Current Trq offset");
   //offset desired
   trq_offsetDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.offset, note_pag2, trq_offsetDes, 120, 280, "Desired Trq offset");
+  changePidValue((double) myTrqPid.offset, note_pag2, trq_offsetDes, 120, 280, "Desired Trq offset");
  //positive stiction
   trq_upStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionEntry, 280, 280, "Current Pos Stiction offset");
+  displayPidValue((double) myTrqPid.stiction_up_val, note_pag2, trq_upStictionEntry, 280, 280, "Current Pos Stiction offset");
   //positive stiction desired
   trq_upStictionDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionDes, 400, 280, "Desired Pos Stiction offset");
+  changePidValue((double) myTrqPid.stiction_up_val, note_pag2, trq_upStictionDes, 400, 280, "Desired Pos Stiction offset");
   //negative stiction
   trq_downStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionEntry, 280, 350, "Current Neg Stiction offset");
+  displayPidValue((double) myTrqPid.stiction_down_val, note_pag2, trq_downStictionEntry, 280, 350, "Current Neg Stiction offset");
   //negative stiction desired
   trq_downStictionDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionDes, 400, 350, "Desired Neg Stiction offset");
+  changePidValue((double) myTrqPid.stiction_down_val, note_pag2, trq_downStictionDes, 400, 350, "Desired Neg Stiction offset");
 
   //PWM limit
   trq_PWM_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitEntry, 0, 350, "Current PWM limit");
+  displayPidValue((double) myTrqPid.max_output, note_pag2, trq_PWM_limitEntry, 0, 350, "Current PWM limit");
   //PWM limit desired
   trq_PWM_limitDes=  gtk_entry_new();
-  changePidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitDes, 120, 350, "Desired PWM limit");
+  changePidValue((double) myTrqPid.max_output, note_pag2, trq_PWM_limitDes, 120, 350, "Desired PWM limit");
   //INTEGRAL limit
   trq_INT_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitEntry, 0, 420, "Current Integral limit");
+  displayPidValue((double) myTrqPid.max_int, note_pag2, trq_INT_limitEntry, 0, 420, "Current Integral limit");
   //INTEGRAL limit desired
   trq_INT_limitDes=  gtk_entry_new();
-  changePidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitDes, 120, 420, "Desired Integral limit");
+  changePidValue((double) myTrqPid.max_int, note_pag2, trq_INT_limitDes, 120, 420, "Desired Integral limit");
 
   // ------ IMPEDANCE CONTROL ------
   //stiffness
@@ -883,13 +883,13 @@ void guiPid2::guiPid2(void *button, void* data)
 
   //offset
   opl_koEntry = gtk_entry_new();
-  displayPidValue((int)openloop_reference, note_pag6, opl_koEntry, 0, 0, "Current openloop value");
+  displayPidValue((double)openloop_reference, note_pag6, opl_koEntry, 0, 0, "Current openloop value");
   //offset desired
   opl_koDes   =  gtk_entry_new();
-  changePidValue((int)openloop_reference, note_pag6, opl_koDes, 120, 0, "Desired openloop value");
+  changePidValue((double)openloop_reference, note_pag6, opl_koDes, 120, 0, "Desired openloop value");
   //offset current reading
   opl_koDisplay   =  gtk_entry_new();
-  displayPidValue((int)openloop_current_pwm, note_pag6, opl_koDisplay, 50, 90, "Current measured PWM");
+  displayPidValue((double)openloop_current_pwm, note_pag6, opl_koDisplay, 50, 90, "Current measured PWM");
 
   //Send buttons
   button_Pos_Send = gtk_button_new_with_mnemonic ("Send");
