@@ -67,6 +67,16 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
     connect(remove,SIGNAL(triggered()),this,SLOT(onRemove()));
     connect(reopen,SIGNAL(triggered()),this,SLOT(onReopen()));
 
+    #if defined(WIN32)
+        ext_editor = "notepad.exe";
+    #else
+        ext_editor = "xdg-open";
+    #endif
+}
+
+void EntitiesTreeWidget::setExtEditor(string editor)
+{
+    ext_editor = editor.c_str();
 }
 
 /*! \brief Add an application to the tree
@@ -194,7 +204,7 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 
         QProcess *notepad;
         notepad = new QProcess(this);
-        notepad->start(TEXTEDITOR,QStringList()<<tmpFileName);
+        notepad->start(ext_editor,QStringList()<<tmpFileName);
 
     }
 
@@ -204,7 +214,7 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 
         QProcess *notepad;
         notepad = new QProcess(this);
-        notepad->start(TEXTEDITOR,QStringList()<<fileName);
+        notepad->start(ext_editor,QStringList()<<fileName);
     }
 }
 
@@ -337,7 +347,7 @@ void EntitiesTreeWidget::onEdit()
 
         QProcess *notepad;
         notepad = new QProcess(this);
-        notepad->start(TEXTEDITOR,QStringList()<<fileName);
+        notepad->start(ext_editor,QStringList()<<fileName);
     }else if(item->data(0,Qt::UserRole)  == yarp::manager::NODE_APPTEMPLATE){
             QString name = item->data(0,Qt::UserRole + 1).toString();
             QString tmpFileName = item->data(0,Qt::UserRole + 2).toString();
@@ -345,7 +355,7 @@ void EntitiesTreeWidget::onEdit()
 
             QProcess *notepad;
             notepad = new QProcess(this);
-            notepad->start(TEXTEDITOR,QStringList()<<tmpFileName);
+            notepad->start(ext_editor,QStringList()<<tmpFileName);
 
     }
 

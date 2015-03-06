@@ -215,6 +215,17 @@ void MainWindow::init(yarp::os::Property config)
         }
     }
 
+    if(config.check("external_editor")){
+        ext_editor = config.find("external_editor").asString();
+        ((EntitiesTreeWidget*)ui->entitiesTree)->setExtEditor(ext_editor);
+    }else{
+#if defined(WIN32)
+        ext_editor = "notepad.exe";
+#else
+        ext_editor = "xdg-open";
+#endif
+    }
+
     reportErrors();
 
     syncApplicationList();
@@ -638,16 +649,6 @@ void MainWindow::onTabChangeItem(int index)
 void MainWindow::onNewApplication()
 {
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
-    std::string ext_editor;
-    if(config.check("external_editor")){
-        ext_editor = config.find("external_editor").asString();
-    }else{
-#if defined(WIN32)
-        ext_editor = "notepad.exe";
-#else
-        ext_editor = "xdg-open";
-#endif
-    }
 
     QString fileName = QFileDialog::getSaveFileName(this,"Create new Application description file",QApplication::applicationDirPath(),
                                  "Application description files (*.xml)");
@@ -679,16 +680,6 @@ void MainWindow::onNewApplication()
 void MainWindow::onNewResource()
 {
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
-    std::string ext_editor;
-    if(config.check("external_editor")){
-        ext_editor = config.find("external_editor").asString();
-    }else{
-#if defined(WIN32)
-        ext_editor = "notepad.exe";
-#else
-        ext_editor = "xdg-open";
-#endif
-    }
 
     QString fileName = QFileDialog::getSaveFileName(this,"Create new Resource description file",QApplication::applicationDirPath(),
                                  "Resource description files (*.xml)");
@@ -721,16 +712,6 @@ void MainWindow::onNewResource()
 void MainWindow::onNewModule()
 {
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
-    std::string ext_editor;
-    if(config.check("external_editor")){
-        ext_editor = config.find("external_editor").asString();
-    }else{
-#if defined(WIN32)
-        ext_editor = "notepad.exe";
-#else
-        ext_editor = "xdg-open";
-#endif
-    }
 
     QString fileName = QFileDialog::getSaveFileName(this,"Create new Module description file",QApplication::applicationDirPath(),
                                  "Module description files (*.xml)");

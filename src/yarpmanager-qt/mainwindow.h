@@ -51,6 +51,8 @@ private:
 
     EntitiesTreeWidget *entitiesTree;
 
+    string ext_editor;
+
 private slots:
     void onOpen();
     void onClose();

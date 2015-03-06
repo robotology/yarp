@@ -16,13 +16,6 @@
 #include <QMenu>
 #include <yarp/manager/manager.h>
 
-#if defined(WIN32)
-#define TEXTEDITOR "notepad.exe"
-#else
-#define TEXTEDITOR "xdg-open"
-#endif
-
-
 /*! \class EntitiesTreeWidget
     \brief The Entities QtreeWidget
 */
@@ -42,6 +35,8 @@ public:
     void clearResources();
     void clearTemplates();
 
+    void setExtEditor(string editor);
+
 private:
     QTreeWidgetItem *applicationNode;
     QTreeWidgetItem *modulesNode;
@@ -58,6 +53,8 @@ private:
     QAction *reopen;
     QAction *remove;
     QAction *edit;
+
+    QString ext_editor;
 
 
 signals:
