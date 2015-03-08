@@ -107,11 +107,12 @@ void Plotter::setPaintGeometry(QRectF r)
     \param color the color of the graph
     \param type the type of the graph (bar, lines, points)
     \param the tickness of the graph
+    \param graph_y_scale to multiply the all data points for a scale factor
 */
-Graph * Plotter::addGraph(int index, QString title, QString color, QString type, int size)
+Graph * Plotter::addGraph(int index, QString title, QString color, QString type, int size, double graph_y_scale)
 {
     Graph *graph = NULL;
-    graph = new Graph(index,title,color,type,size,this->size);
+    graph = new Graph(index,title,color,type,size,graph_y_scale,this->size);
     graphList.append(graph);
 
 
@@ -213,7 +214,7 @@ void Plotter::clear()
 
 
 /***********************************************************/
-Graph::Graph(int index, QString title, QString color, QString type, int size, int buffer_size,QObject *parent) : QObject(parent)
+Graph::Graph(int index, QString title, QString color, QString type, int size, double graph_y_scale, int buffer_size, QObject *parent) : QObject(parent)
 {
     curr_connection = NULL;
     this->index = index;
@@ -221,6 +222,7 @@ Graph::Graph(int index, QString title, QString color, QString type, int size, in
     this->color = color;
     this->buffer_size = buffer_size;
     this->title = title;
+    this->graph_y_scale =graph_y_scale;
 
     lastX = 0;
     lastY = 0;
@@ -300,6 +302,9 @@ void Graph::appendValues(float y, float t)
     if(t == -1){
         _t = (float)numberAcquiredData;
     }
+
+    //apply the y scale factor
+    y=y*graph_y_scale;
 
     lastX = numberAcquiredData;
     lastY = y;

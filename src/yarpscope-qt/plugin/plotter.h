@@ -33,7 +33,7 @@ class Graph : public QObject
 
 
 public:
-    Graph(int index, QString title,QString color,QString type,int size,int buffer_size,QObject *parent = 0);
+    Graph(int index, QString title,QString color,QString type,int size,double graph_y_scale, int buffer_size,QObject *parent = 0);
     ~Graph();
     void init(QString remotePortName,
                        QString localPortName,
@@ -61,6 +61,7 @@ public:
     QCPGraph *customGraph;
 
     int index;
+    double graph_y_scale;
 
     Connection *curr_connection;
 
@@ -128,7 +129,7 @@ public:
                      bool autorescale,
                      QObject *parent = 0);
     ~Plotter();
-    Graph *addGraph(int index, QString title, QString color, QString type, int size);
+    Graph *addGraph(int index, QString title, QString color, QString type, int size, double graph_y_scale=1.0);
     void clear();
     void rescale();
     void setPaintGeometry(QRectF);

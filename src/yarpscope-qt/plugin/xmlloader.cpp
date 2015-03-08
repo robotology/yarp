@@ -120,6 +120,7 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                 QString graph_color(default_graph_color);
                 QString graph_type(default_graph_type);
                 int graph_index;
+                double graph_y_scale;
                 int graph_size(default_graph_size);
 
                 if(graphAttributes.hasAttribute("remote")) {
@@ -141,6 +142,13 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                 if(graphAttributes.hasAttribute("title")) {
                     graph_title = graphAttributes.value("title").toString();
                 }
+                if(graphAttributes.hasAttribute("rescale_y_factor")) {
+                    graph_y_scale = graphAttributes.value("rescale_y_factor").toDouble();
+                }
+                else
+                {
+                    graph_y_scale = 1.0;
+                }
                 if(graphAttributes.hasAttribute("color")) {
                     graph_color = graphAttributes.value("color").toString();
                 }
@@ -153,7 +161,7 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                         graph_size = default_graph_size;
                     }
                 }
-                Graph *graph = plotter->addGraph(graph_index,graph_title, graph_color, graph_type, graph_size);
+                Graph *graph = plotter->addGraph(graph_index,graph_title, graph_color, graph_type, graph_size, graph_y_scale);
                 if(graph){
                     graph->init(graph_remote,"", portscope_carrier, portscope_persistent);
                 }
