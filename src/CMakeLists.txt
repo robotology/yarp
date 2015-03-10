@@ -46,6 +46,7 @@ add_subdirectory(yarpscope-qt)
 add_subdirectory(yarpmanager-qt)
 add_subdirectory(yarplogger-qt)
 add_subdirectory(yarpdataplayer-qt)
+add_subdirectory(yarpmotorgui-qt)
 
 # GTK2 GUIs
 add_subdirectory(yarpview-gtk)
