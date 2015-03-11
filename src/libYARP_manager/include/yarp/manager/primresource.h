@@ -200,7 +200,7 @@ private:
     ResourcePContainer peripheralResources;
 
     // Processes are not actually part of a resource and only
-    // will be used by gyarpmanager for listing processes running
+    // will be used by yarpmanager for listing processes running
     // on Computer
     ProcessContainer processes;
 

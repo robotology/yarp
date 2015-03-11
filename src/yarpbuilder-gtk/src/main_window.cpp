@@ -67,7 +67,7 @@ inline bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder
 MainWindow::MainWindow( yarp::os::Property &config)
 {
     m_config = config;
-    dragTargets.push_back( Gtk::TargetEntry("gyarpbuilder", Gtk::TARGET_SAME_APP) );
+    dragTargets.push_back( Gtk::TargetEntry("yarpbuilder", Gtk::TARGET_SAME_APP) );
 
     //fullscreen();
     set_title("Yarp Application Builder");
@@ -918,12 +918,12 @@ void MainWindow::onMenuFileOpenGymanager()
         OSTRINGSTREAM strParam;
         strParam<<"--application \""<<appWnd->getApplication()->getXmlFile() << "\"";
         LocalBroker launcher;
-        if(launcher.init("gyarpmanager",
+        if(launcher.init("yarpmanager",
                          strParam.str().c_str(), NULL, NULL, NULL, NULL))
             if(!launcher.start() && strlen(launcher.error()))
             {
                 OSTRINGSTREAM msg;
-                msg<<"Error while launching gyarpmanager. "<<launcher.error();
+                msg<<"Error while launching yarpmanager. "<<launcher.error();
                 logger->addError(msg);
                 reportErrors();
             }

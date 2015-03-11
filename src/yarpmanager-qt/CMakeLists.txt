@@ -75,23 +75,4 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
     set_target_properties(yarpmanager-qt PROPERTIES OUTPUT_NAME yarpmanager)
   endif()
 
-  # Keep compatibility with the old name
-  if(NOT YARP_NO_DEPRECATED AND NOT YARP_DEFAULT_GTK)
-    add_executable(gyarpmanager WIN32 ${yarpmanager_qt_SRCS}
-                                      ${yarpmanager_qt_HDRS}
-                                      ${yarpmanager_qt_QRC_GEN_SRCS}
-                                      ${yarpmanager_qt_UI_GEN_SRCS})
-    target_link_libraries(gyarpmanager YARP_OS
-                                       YARP_init
-                                       YARP_manager)
-    qt5_use_modules(gyarpmanager Widgets
-                                 Gui)
-    qtyarp_deprecate_with_cmake_version(2.8.11)
-    if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-      target_link_libraries(gyarpmanager Qt5::WinMain)
-    endif()
-
-    install(TARGETS gyarpmanager COMPONENT deprecated DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endif()
-
 endif()

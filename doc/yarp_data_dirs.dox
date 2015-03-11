@@ -111,7 +111,7 @@ Plugin manifest files are INI files that describe which class implements the plu
 \subsection datafiles_applications Application Deployment files
 
 
-\e Applications, \e modules and \e resources folders contain XML files that describe programs (modules), the resources available to run the programs (resources), and collections of interconnected modules (applications). The \ref yarpmanager "yarpmanager and gyarpmanager"  executables allow to run and monitor applications, while the gyarpbuilder executables allows to design new ones.
+\e Applications, \e modules and \e resources folders contain XML files that describe programs (modules), the resources available to run the programs (resources), and collections of interconnected modules (applications). The \ref yarpmanager "yarpmanager" executable allow to run and monitor applications, while the yarpbuilder executables allows to design new ones.
 
 Templates are XML files with a .template extension. Typical templates are applications that need to be configured (i.e., assigning the node where each module should be run) before they can be executed.
 

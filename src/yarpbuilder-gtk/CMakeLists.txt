@@ -19,7 +19,7 @@ if(CREATE_YARPBUILDER AND YARP_HAS_GTK2)
                     src/arrow_model.cpp
                     src/con_property_window.cpp
                     src/ext_port_model.cpp
-                    src/gybuilder.cpp
+                    src/yarpbuilder.cpp
                     src/int_port_model.cpp
                     src/label_model.cpp
                     src/main_window.cpp
@@ -119,25 +119,4 @@ if(CREATE_YARPBUILDER AND YARP_HAS_GTK2)
     set_target_properties(yarpbuilder-gtk PROPERTIES OUTPUT_NAME yarpbuilder)
   endif()
 
-  if(NOT YARP_NO_DEPRECATED)
-    add_executable(gyarpbuilder ${folder_source} ${folder_header})
-    target_link_libraries(gyarpbuilder YARP_init
-                                       YARP_OS
-                                       YARP_manager
-                                       ${ACE_LIBRARIES}
-                                       ${GTK2_GTK_LIBRARY}
-                                       ${GTK2_GDK_LIBRARY}
-                                       ${GTK2_GLIB_LIBRARY}
-                                       ${GTK2_PANGOCAIRO_LIBRARY}
-                                       ${GTK2_GTKMM_LIBRARY}
-                                       ${GTK2_GLIBMM_LIBRARY}
-                                       ${GTK2_GDKMM_LIBRARY}
-                                       ${GTK2_ATKMM_LIBRARY}
-                                       ${GTK2_SIGC++_LIBRARY}
-                                       ${GTK2_GTHREAD_LIBRARY}
-                                       ${GooCanvasMM_LIBRARIES})
-    install(TARGETS gyarpbuilder
-            COMPONENT deprecated
-            DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endif()
 endif()

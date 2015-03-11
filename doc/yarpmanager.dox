@@ -6,11 +6,13 @@
  */
 
 /**
- * @page yarpmanager (g)yarpmanager: a way of running and managing multiple programs on a set of machines
+\page yarpmanager yarpmanager: a way of running and managing multiple programs on a set of machines
 
 \author Ali Paikan
 
-The command-line utility "yarpmanager-console" and its graphical companions "yarpmanager-gtk" (i.e., a GTK implementation), "gyarpmanager" - currently also called "yarpmanger" - (i.e., a QT implementation) are tools for running and managing multiple programs on a set of machines.
+The command-line utility "yarpmanager-console" and its graphical
+companions "yarpmanager"  are tools for running and managing multiple
+programs on a set of machines.
 
 \image html ymgui.png "yarpmanager-console and (g)yarpmanager"
 
@@ -55,7 +57,6 @@ Default configuration file known as "ymanager.ini" can be automatically loaded b
 
 \verbatim
 $ yarpmanager --from <path to my_config_file>
-$ gyarpmanager --from <path to my_config_file>
 \endverbatim
 
 The below example shows the syntax of configuration file:
@@ -96,7 +97,7 @@ external_editor = gvim
 \endverbatim
 
 Items 'apppath', 'modpath' and 'respath' respectively point to the folder where the XML description files of Applications, Modules and Resources can be found. All description file names must have ".xml" extension. If 'load_subfolders=yes', applications description files will be  recursively loaded from sub folders of 'apppath'.
-Set 'external_editor' to your preferable text editor. It will be used by gyarpmanager for editing XML file.
+Set 'external_editor' to your preferable text editor. It will be used by yarpmanager for editing XML file.
 
 
 \section examples Running examples
@@ -127,7 +128,7 @@ $ yarpmanager-console
 Open another terminal and try this:
 \verbatim
 $ cd ${YARP_ROOT}/src/yarpmanager/tests
-$ gyarpmanager
+$ yarpmanager
 \endverbatim
 
 - From "Entities" frame, click the triangle beside Applications, then  double-click "EyesViewer-Localhost".
@@ -149,7 +150,7 @@ $ yarprun --server /node2
 Then try this:
 \verbatim
 $ cd ${YARP_ROOT}/src/yarpmanager/tests
-$ gyarpmanager
+$ yarpmanager
 \endverbatim
 
 - From "Entities" frame, click the triangle beside Applications, then  double-click "EyesViewer-Cluster".
@@ -275,7 +276,7 @@ Here is an example of application description file in XML format:
  - Leaving \<node\>\</node\> empty, later you can use the load balancer to automatically assign module to a node for better performance.
  - \<prefix\> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and \<prefix\>/MyPrefix\</prefix\>, after launching the module, the real port name will be "/Myprefix/Port1".
  - Other applications can be integrated by indicating their names. Setting \<prefix\> for an included application, port prefix will be applied to all modules and connections which are not set as external.
- - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in gyarpmanager).
+ - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in yarpmanager).
  - The \<port\> tags inside \<dependencies\> indicate that the execution of the current module should be postponed until the ports become available. (g)yarpmanager waits for the ports and continuously checks their availability. If one of the required ports is not available within the time indicated by the "timeout" property, the module will not be launched.   
  - It is also possible to send a specific RPC request to a port to get status about the internal state of a module. This is useful when launching a module should be postponed until other modules get launched and ready. This can be done by specifying the request using "request" property and the expected reply using "reply" property in a \<port\> tag. The manager sends the request to the relevant port and check if the received reply matches the one indicated in the "reply" property before launching the module. If the reply does not match the expected one, the corresponding module will not launched. 
  
@@ -605,11 +606,11 @@ Here is an example of module description file in XML format:
 \endlatexonly
 
 \section create Create new XML description file
-gyarpmanager allows for creating new application, module and resource description file using predifined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then
+yarpmanager allows for creating new application, module and resource description file using predifined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then
 - From "File>New" menu chose "New Application". ("New Module" for module and "New Resource" for resource)
 - Chose your application folder and enter proper name (e.g "my-test-app.xml") to save it. The template file will be open using 'external_editor'.
 - Modify and save it.
-- Open it using gyarpmanager.
+- Open it using yarpmanager.
 
 \subsection create_notes Notes
 - (g)yarpmanager allows for identical application names (they will be listed as MyApp(1), MyApp(2), ...). But it is strongly recommended to have unique proper name for each application. Notice that, duplicate names for modules and resources are not allowed and will be ignored by (g)yarpmanager.
@@ -621,7 +622,7 @@ The arrangement of modules and resources within an application can be visualized
 
 As shown in the graph, application "EyesViewer-Localhost" consists of two instances of "FakeEyes" with their relevant modules. Each module is associated with a node marked as "MultipleResource". It is linked to machines which satisfy its requirements. Notice that here, "localhost" is specifically assigned by user to each modules; Thus there is no link to machines "node1" and "node2".
  The graph is generated in DOT format which can be visualized using Graphviz tools. To generate the graph:
- - Open an application using gyarpmanager (See above example \ref example_g)
+ - Open an application using yarpmanager (See above example \ref example_g)
  - From "Edit" menu chose "Export graph"
  - Give a name (e.g "MyApp.dot") and save it.
 

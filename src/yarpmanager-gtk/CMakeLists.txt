@@ -19,7 +19,7 @@ if(CREATE_YARPMANAGER AND YARP_HAS_GTK2)
 
   set(yarpmanager_gtk_SRCS application_list.cpp
                            application_window.cpp
-                           gymanager.cpp
+                           yarpmanager.cpp
                            main_window.cpp
                            message_list.cpp
                            module_window.cpp
@@ -79,27 +79,6 @@ if(CREATE_YARPMANAGER AND YARP_HAS_GTK2)
 
   if(NOT TARGET yarpmanager-qt OR YARP_DEFAULT_GTK)
     set_target_properties(yarpmanager-gtk PROPERTIES OUTPUT_NAME yarpmanager)
-  endif()
-
-  if(NOT YARP_NO_DEPRECATED AND NOT TARGET gyarpmanager)
-    add_executable(gyarpmanager ${yarpmanager_gtk_SRCS} ${yarpmanager_gtk_HDRS})
-    target_link_libraries(gyarpmanager YARP_init
-                                       YARP_OS
-                                       YARP_manager
-                                       ${ACE_LIBRARIES}
-                                       ${GTK2_GTK_LIBRARY}
-                                       ${GTK2_GDK_LIBRARY}
-                                       ${GTK2_GLIB_LIBRARY}
-                                       ${GTK2_GTKMM_LIBRARY}
-                                       ${GTK2_GLIBMM_LIBRARY}
-                                       ${GTK2_GDKMM_LIBRARY}
-                                       ${GTK2_ATKMM_LIBRARY}
-                                       ${GTK2_SIGC++_LIBRARY}
-                                       ${GTK2_GTHREAD_LIBRARY})
-
-    install(TARGETS gyarpmanager
-            COMPONENT deprecated
-            DESTINATION ${CMAKE_INSTALL_BINDIR})
   endif()
 
 endif()

@@ -28,7 +28,7 @@ if 'load_subfolders' is enabled, applications description files will be
 recursively loaded from subfolders of 'apppath'.
 
 Set 'external_editor' to your preferable text editor. It will be used by
-gyarpmanager for editing any XML file.
+yarpmanager for editing any XML file.
 
 
 Running examples
@@ -55,10 +55,10 @@ $ yarpmanager
 >> exit
 
 
-using gyarpmanager (1.1)
+using yarpmanager (1.1)
 ==================
 $ cd ${YARP_ROOT}/src/yarpmanager/tests
-$ gyarpmanager
+$ yarpmanager
 + From "Entities" frame, click the triangle beside Applications, then
   double-click "EyesViewer-Localhost".
 + From menu "Manage" press "Run" to run all modules
@@ -73,7 +73,7 @@ Open another one and type:
 $ yarprun --server /node2
 
 Then try this:
-$ gyarpmanager
+$ yarpmanager
 + From "Entities" frame, click the triangle beside Applications, then
   double-click "EyesViewer-Cluster".
 + From the right side, right-click on the frame where you can see all
@@ -98,7 +98,7 @@ While making an application using XML description file, if you set <node></node>
 to "localhost", the manager will use an internal module launcher to run the module
 on localhost.
 
-Leaving <node></node> empty, later you can use the load balancer of gyarpmanager
+Leaving <node></node> empty, later you can use the load balancer of yarpmanager
 to automatically assign module a a node which has less processor load. Notice that,
 available nodes should be  listed using Resource XML file.
 See ./xml/resources/cluster_nodes.xml for an example.

@@ -28,7 +28,7 @@ using namespace std;
 
 #define HELP_MESSAGE        "\
 Usage:\n\
-      gyarpmanager [option...]\n\n\
+      yarpmanager [option...]\n\n\
 Options:\n\
   --help                  Show help\n\
   --from                  Configuration file name\n\
