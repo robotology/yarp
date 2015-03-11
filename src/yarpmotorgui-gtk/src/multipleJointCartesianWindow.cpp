@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -19,7 +19,7 @@
 */
 
 
-#include "include/robotMotorGui.h"
+#include "include/yarpmotorgui.h"
 #include "include/cartesianMover.h"
 
 #include <string.h>
@@ -32,7 +32,7 @@ extern int get_cartesian_index_selection(cartesianMover *cm);
  */
 void cartesianMover::save_to_file(char* filenameIn, cartesianMover* cm)
 {
-  char filename[800]; 
+  char filename[800];
   char filenamePart[800];
   FILE* outputFile;
 
@@ -41,8 +41,8 @@ void cartesianMover::save_to_file(char* filenameIn, cartesianMover* cm)
   int invSequence[NUMBER_OF_STORED];
 
   //be sure that "." will be used in place of "," for decimals
-  char* loc = setlocale(LC_NUMERIC, NULL); 
-  setlocale(LC_NUMERIC, "C"); 
+  char* loc = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
 
   fprintf(stderr, "Start saving file\n");
   strcpy(filename, filenameIn);
@@ -50,7 +50,7 @@ void cartesianMover::save_to_file(char* filenameIn, cartesianMover* cm)
   strcpy(filenamePart, strcat(filename, cm->partLabel));
   //fprintf(stderr, "%s", filenamePart);
   outputFile = fopen(filenamePart,"w");
-	
+
   for (j = 0; j < NUMBER_OF_STORED; j++)
     invSequence[j] = -1;
 
@@ -82,7 +82,7 @@ void cartesianMover::save_to_file(char* filenameIn, cartesianMover* cm)
   fprintf(stderr, "File saved and closed\n");
 
   //restore local "."/"," policy
-  setlocale(LC_NUMERIC, loc); 
+  setlocale(LC_NUMERIC, loc);
 }
 
 /*
@@ -102,12 +102,12 @@ void cartesianMover::load_from_file(char* filenameIn, cartesianMover* cm)
   extensionLength = strlen(filenameExtension);
   filenameLength = strlen(filenameIn);
   if ((filenameLength - extensionLength) > 0)
-    fileExists &= (strcmp(filenameIn + 
-			  (sizeof(char))*(filenameLength - extensionLength), 
+    fileExists &= (strcmp(filenameIn +
+			  (sizeof(char))*(filenameLength - extensionLength),
 			  filenameExtension) == 0 );
   else
     fileExists=false;
-	
+
   if (fileExists)
     {
       for (j = 0; j < NUMBER_OF_STORED; j++)
@@ -118,7 +118,7 @@ void cartesianMover::load_from_file(char* filenameIn, cartesianMover* cm)
 	    {
 	      for (k = 0; k < NUMBER_OF_CARTESIAN_COORDINATES; k++)
 		cm->STORED_POS[j][k] = xtmp.get(k+1).asDouble();
-				
+
 	      xtmp = p.findGroup(buffer).findGroup("timing");
 	      cm->TIMING[j] = xtmp.get(1).asDouble();
 	      cm->SEQUENCE[j] = j;
@@ -131,19 +131,19 @@ void cartesianMover::load_from_file(char* filenameIn, cartesianMover* cm)
 	      if(j==0)
 		{
 		  dialog_message(GTK_MESSAGE_ERROR,
-				 (char *) "Couldn't load a valid position file.", 
+				 (char *) "Couldn't load a valid position file.",
 				 (char *) "Check the format of the supplied file.", true);
 		  return;
 		}
 	      if(j == NUMBER_OF_STORED - 1 && xtmp.size() == NUMBER_OF_CARTESIAN_COORDINATES+1)
 		{
 		  dialog_message(GTK_MESSAGE_ERROR,
-			      (char *) "Truncating the current sequence which is too long. You need to recompile with a greater value of NUMBER_OF_STORED", 
+			      (char *) "Truncating the current sequence which is too long. You need to recompile with a greater value of NUMBER_OF_STORED",
 			      (char *) "Unfortunately maximum sequence length is not set at runtime", true);
 		}
 	    }
 	}
-  
+
       if(GTK_IS_TREE_VIEW (cm->treeview))
 	{
 	  gtk_tree_view_set_model (GTK_TREE_VIEW (cm->treeview), refresh_cartesian_list_model(cm));
@@ -152,20 +152,20 @@ void cartesianMover::load_from_file(char* filenameIn, cartesianMover* cm)
     }
   else
     dialog_message(GTK_MESSAGE_ERROR,
-				(char *) "Wrong format (check estensions) of the file associated with:", 
+				(char *) "Wrong format (check estensions) of the file associated with:",
 				cm->partLabel, true);
   return;
 }
 
 /*
- * If go is clicked retrieve the current 
+ * If go is clicked retrieve the current
  * selection and move to the given position.
  * Finally update sliders
  */
 
 void cartesianMover::go_click(GtkButton *button, cartesianMover *cm)
 {
-  ICartesianControl *icrt = cm->crt;	
+  ICartesianControl *icrt = cm->crt;
   //get the current row index
   int i = get_cartesian_index_selection(cm);
   if (i != -1)
@@ -195,13 +195,13 @@ void cartesianMover::go_click(GtkButton *button, cartesianMover *cm)
 
 	}
     }
-		
+
   return;
 }
 
 
 /*
- * If sequence button is pressed the 
+ * If sequence button is pressed the
  * sequence of movements is executed
  */
 /*
@@ -215,8 +215,8 @@ void cartesianMover::sequence_time(GtkButton *button, cartesianMover* currentPar
   int invSequence[NUMBER_OF_STORED];
   int NUMBER_OF_JOINTS;
   int j;
-	
-  ipos->getAxes(&NUMBER_OF_JOINTS);	
+
+  ipos->getAxes(&NUMBER_OF_JOINTS);
 
 
   for (j = 0; j < NUMBER_OF_STORED; j++)
@@ -231,7 +231,7 @@ void cartesianMover::sequence_time(GtkButton *button, cartesianMover* currentPar
     if (invSequence[j]!=-1)
       {
 	if (TIMING_TMP[invSequence[j]] > 0)
-	  { 	    
+	  {
 	    fixed_time_move(STORED_POS_TMP[invSequence[j]],
 			    TIMING_TMP[invSequence[j]],
 			    currentPart);
@@ -244,7 +244,7 @@ void cartesianMover::sequence_time(GtkButton *button, cartesianMover* currentPar
 }
 */
 /*
- * Saves the current sequence in the 
+ * Saves the current sequence in the
  * correct order.
  */
 
@@ -258,17 +258,17 @@ void cartesianMover::sequence_save(GtkButton *button,  cartesianMover* cm)
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
 					NULL);
-	
+
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-      char *filenameIn; 
-	  	  
+      char *filenameIn;
+
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
       cm->save_to_file (filenameIn,cm);
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-	
+
   return;
 }
 
@@ -286,7 +286,7 @@ void cartesianMover::sequence_load(GtkFileChooser *button, cartesianMover *cm )
 }
 
 /*
- * If sequence cycle (time) is pressed a new thread 
+ * If sequence cycle (time) is pressed a new thread
  * is started. The thread will use the function
  * sequence_iterator to decide the next movement.
  * The thread rate (timeout_seqeunce_rate) corresponds
@@ -299,14 +299,14 @@ void cartesianMover::sequence_load(GtkFileChooser *button, cartesianMover *cm )
 void cartesianMover::sequence_cycle_time(GtkButton *button,cartesianMover* cm)
 {
 
-  ICartesianControl *icrt = cm->crt;	
+  ICartesianControl *icrt = cm->crt;
   fprintf(stderr, "Retrieving sequence variables\n");
   GtkWidget *tree_view = cm->treeview;
-	
+
   fprintf(stderr, "Preparing timing\n");
   int j, k;
   *(cm->timeout_seqeunce_rate) = (unsigned int) (cm->TIMING[0]*1000);
-	
+
   fprintf(stderr, "Preparing inverse sequence\n");
   for (j = 0; j < NUMBER_OF_STORED; j++)
     cm->INV_SEQUENCE[j] = -1;
@@ -325,7 +325,7 @@ void cartesianMover::sequence_cycle_time(GtkButton *button,cartesianMover* cm)
   if (cm->INV_SEQUENCE[0]!=-1 && cm->TIMING[0] >0 )
     {
       *(cm->timeout_seqeunce_id) = gtk_timeout_add(*(cm->timeout_seqeunce_rate), (GtkFunction) (cm->sequence_iterator_time), cm);
-      
+
       double time = cm->TIMING[cm->INV_SEQUENCE[0]];
 
       Vector xd(3);  Vector eu(3);
@@ -344,7 +344,7 @@ void cartesianMover::sequence_cycle_time(GtkButton *button,cartesianMover* cm)
 	fprintf(stderr, "Troubles in executing the cartesian pose for %s\n", cm->partLabel);
       //else
       //fprintf(stderr, "Sent %s, %s new orientation for %s\n", xd.toString().c_str(), od.toString().c_str(), cm->partLabel);
-      
+
       //point the SEQUENCE ITERATOR to the next movement
       *(cm->SEQUENCE_ITERATOR) = 1;
 
@@ -374,13 +374,13 @@ void cartesianMover::sequence_cycle_time(GtkButton *button,cartesianMover* cm)
 /* Decide the next movement
  * and waits enough time so that
  * the total amount of delay corresponds
- * to the desired 
+ * to the desired
  */
 
 bool cartesianMover::sequence_iterator_time(cartesianMover* cm)
 {
 
-  ICartesianControl *icrt = cm->crt;	
+  ICartesianControl *icrt = cm->crt;
   int *SEQUENCE_TMP = cm->SEQUENCE;
   double *TIMING_TMP = cm->TIMING;
   double **STORED_POS_TMP = cm->STORED_POS;
@@ -455,7 +455,7 @@ bool cartesianMover::sequence_iterator_time(cartesianMover* cm)
 
 
 /*
- * If sequence button is pressed the 
+ * If sequence button is pressed the
  * sequence of movements is executed
  */
 
@@ -480,7 +480,7 @@ void cartesianMover::sequence_stop(GtkButton *button,cartesianMover* cm)
     gtk_widget_set_sensitive(cm->buttonCycTim, true);
   if (cm->buttonStp != NULL)
     gtk_widget_set_sensitive(cm->buttonStp, true);
-    //fprintf(stderr, "disabled...");     
+    //fprintf(stderr, "disabled...");
 
   gtk_timeout_remove(*(cm->timeout_seqeunce_id));
   return;

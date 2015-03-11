@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -31,8 +31,6 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/ResourceFinder.h>
-///////////ICUB///////////
-#include <iCub/ctrl/math.h>
 ///////////GTK///////////
 #include <gtk/gtk.h>
 #include <gtk/gtkmain.h>
@@ -44,7 +42,6 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::math;
-using namespace iCub::ctrl;
 
 #define NUMBER_OF_CARTESIAN_COORDINATES 6
 #define UPDATE_TIME 500

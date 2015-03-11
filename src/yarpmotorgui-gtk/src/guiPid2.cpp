@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -211,13 +211,13 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
 
   sprintf(buffer, "%.3f", (double) pid->kd);
   gtk_entry_set_text((GtkEntry*) trq_kdEntry,  buffer);
-  
+
   sprintf(buffer, "%.3f", (double) pid->ki);
   gtk_entry_set_text((GtkEntry*) trq_kiEntry,  buffer);
-  
+
   sprintf(buffer, "%d", (int) pid->scale);
   gtk_entry_set_text((GtkEntry*) trq_scaleEntry,  buffer);
-  
+
   sprintf(buffer, "%.3f", (double) bemfGain);
   gtk_entry_set_text((GtkEntry*) trq_kbemfEntry,  buffer);
 
@@ -232,19 +232,19 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
 
   sprintf(buffer, "%.3f", (double) pid->kff);
   gtk_entry_set_text((GtkEntry*) trq_kffEntry,  buffer);
-  
+
   sprintf(buffer, "%.3f", (double) pid->offset);
   gtk_entry_set_text((GtkEntry*) trq_offsetEntry,  buffer);
-  
+
   sprintf(buffer, "%.3f", (double) pid->max_output);
   gtk_entry_set_text((GtkEntry*) trq_PWM_limitEntry,  buffer);
-  
+
   sprintf(buffer, "%.3f", (double) pid->max_int);
   gtk_entry_set_text((GtkEntry*) trq_INT_limitEntry,  buffer);
-  
+
   sprintf(buffer, "%.3f", (double) pid->stiction_up_val);
   gtk_entry_set_text((GtkEntry*) trq_upStictionEntry,  buffer);
-  
+
   sprintf(buffer, "%.3f", (double) pid->stiction_down_val);
   gtk_entry_set_text((GtkEntry*) trq_downStictionEntry,  buffer);
 }
@@ -299,7 +299,7 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
 void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
 {
 #ifdef DEBUG_INTERFACE
-  if (iDbg==0) 
+  if (iDbg==0)
   {
       fprintf(stderr, "WARN: Debug interface not enabled.\n");
       return;
@@ -499,7 +499,7 @@ void guiPid2::guiPid2(void *button, void* data)
       if (trq_winPid != NULL) destroy_win(NULL, NULL);
   }
 
-  if (trq_winPid != NULL) 
+  if (trq_winPid != NULL)
   {
       gtk_window_set_keep_above    (GTK_WINDOW(trq_winPid),true);
       return;
@@ -555,7 +555,7 @@ void guiPid2::guiPid2(void *button, void* data)
   iPid->getPid(*joint, &myPosPid);
   yarp::os::Time::delay(0.005);
   iTrq->getTorquePid(*joint, &myTrqPid);
-  
+
   MotorTorqueParameters params;
   iTrq->getMotorTorqueParams(*joint, &params);
   bemfGain=params.bemf;
@@ -590,7 +590,7 @@ void guiPid2::guiPid2(void *button, void* data)
 
 #if 0
   //ImpedanceOffset test
-  iImp->setImpedanceOffset(*joint, 0.2); 
+  iImp->setImpedanceOffset(*joint, 0.2);
   iImp->getImpedanceOffset(*joint, &offset_val);
 #endif
 
@@ -764,7 +764,7 @@ void guiPid2::guiPid2(void *button, void* data)
   //ki desired
   trq_kiDes   =  gtk_entry_new();
   changePidValue((double) myTrqPid.ki, note_pag2, trq_kiDes, 120, 140, "Desired Trq Ki");
-  
+
   //kff
   trq_kffEntry   =  gtk_entry_new();
   displayPidValue((double) myTrqPid.kff, note_pag2, trq_kffEntry, 280, 0, "Current Trq Kff");

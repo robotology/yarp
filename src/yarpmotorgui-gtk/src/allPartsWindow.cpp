@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -28,7 +28,7 @@
 // This callback starts all sequences (time based)
 void run_all_parts (GtkButton *button, partMover** currentPartMover)
 {
-  int i; 
+  int i;
   for (i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
     currentPartMover[i]->run_all(NULL, currentPartMover[i]);
   return;
@@ -79,7 +79,7 @@ void sequence_all_click (GtkButton *button, partMover** currentPartMover)
 // This callback saves all sequences
 void sequence_all_save (GtkButton *button, partMover** currentPartMover)
 {
-        
+
   FILE* fileAll;
   char buffer[800];
 
@@ -90,12 +90,12 @@ void sequence_all_save (GtkButton *button, partMover** currentPartMover)
                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                     GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                     NULL);
-    
+
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-      char *filenameIn; 
+      char *filenameIn;
       int i;
-          
+
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
       for (i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
     currentPartMover[i]->save_to_file(filenameIn,currentPartMover[i]);
@@ -114,7 +114,7 @@ void sequence_all_save (GtkButton *button, partMover** currentPartMover)
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-    
+
   return;
 
 }
@@ -124,7 +124,7 @@ void sequence_all_save (GtkButton *button, partMover** currentPartMover)
 // This callback saves all sequences
 void sequence_crt_all_save (GtkButton *button, cartesianMover** cm)
 {
-        
+
   FILE* fileAll;
   char buffer[800];
 
@@ -135,12 +135,12 @@ void sequence_crt_all_save (GtkButton *button, cartesianMover** cm)
                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                     GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                     NULL);
-    
+
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-      char *filenameIn; 
+      char *filenameIn;
       int i;
-          
+
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
       for (i = 0; i < NUMBER_OF_ACTIVATED_CARTESIAN; i++)
     cm[i]->save_to_file(filenameIn,cm[i]);
@@ -159,7 +159,7 @@ void sequence_crt_all_save (GtkButton *button, cartesianMover** cm)
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-    
+
   return;
 
 }
@@ -176,14 +176,14 @@ void sequence_all_load (GtkButton *button, partMover** currentPartMover)
                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                     NULL);
-    
+
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-      char *filenameIn; 
+      char *filenameIn;
       int i, lengthStr;
-          
+
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-      
+
       //store the file describing the poses
       for (i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
     {
@@ -196,26 +196,26 @@ void sequence_all_load (GtkButton *button, partMover** currentPartMover)
       if (fileExists)
         {
           Bottle& xtmp = p.findGroup(currentPartMover[i]->partLabel);
-          
+
           sprintf(buffer, "%s",(const char*)xtmp.get(1).toString().c_str());
           lengthStr = strlen(buffer);
           *(buffer + (lengthStr-1)*sizeof(char)) = (char) NULL;
-          currentPartMover[i]->load_from_file(buffer+(sizeof(char)),currentPartMover[i]); 
+          currentPartMover[i]->load_from_file(buffer+(sizeof(char)),currentPartMover[i]);
         }
       else
         {
           dialog_message(GTK_MESSAGE_ERROR,
-                 (char *)"Couldn't find the file describing the positions ", 
+                 (char *)"Couldn't find the file describing the positions ",
                  (char *)"associated to the currently activated parts", true);
         }
     }
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-    
+
   return;
 
-  
+
   //int i;
   //for (i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
   //    currentPartMover[i]->sequence_load(NULL, currentPartMover[i]);
@@ -234,14 +234,14 @@ void sequence_crt_all_load (GtkButton *button, cartesianMover** cm)
                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                     NULL);
-    
+
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-      char *filenameIn; 
+      char *filenameIn;
       int i, lengthStr;
-          
+
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-      
+
       //store the file describing the poses
       for (i = 0; i < NUMBER_OF_ACTIVATED_CARTESIAN; i++)
     {
@@ -262,14 +262,14 @@ void sequence_crt_all_load (GtkButton *button, cartesianMover** cm)
       else
         {
           dialog_message(GTK_MESSAGE_ERROR,
-                 (char *)"Couldn't find the file describing the positions ", 
+                 (char *)"Couldn't find the file describing the positions ",
                  (char *)"associated to the currently activated parts", true);
         }
     }
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-    
+
   return;
 }
 #endif
@@ -377,4 +377,3 @@ void sequence_crt_all_stop (GtkButton *button, cartesianMover** cm)
   return;
 }
 #endif
-

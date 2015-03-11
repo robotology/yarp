@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <math.h>
 #include "log.h"
-#include "robotMotorGui.h"
+#include "yarpmotorgui.h"
 
 JointItem::JointItem(int index,QWidget *parent) :
     QWidget(parent),
@@ -467,7 +467,7 @@ void JointItem::onSliderOpenloopPressed()
 
     int index = ui->stackedWidget->currentIndex();
     if (index == OPENLOOP) {
-        connect(ui->sliderOpenloopOutput,SIGNAL(sliderMoved(int)),this,SLOT(onSliderOpenloopMoved(int))); 
+        connect(ui->sliderOpenloopOutput,SIGNAL(sliderMoved(int)),this,SLOT(onSliderOpenloopMoved(int)));
     }
 }
 

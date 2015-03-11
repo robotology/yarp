@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -65,7 +65,7 @@ namespace guiControl
     static void radio_click_trq (GtkWidget* radio , gtkClassData* currentClassData);
     static void radio_click_imp_pos (GtkWidget* radio , gtkClassData* currentClassData);
     static void radio_click_imp_vel (GtkWidget* radio , gtkClassData* currentClassData);
-    static void radio_click_open(GtkWidget* radio , gtkClassData* currentClassData);    
+    static void radio_click_open(GtkWidget* radio , gtkClassData* currentClassData);
     static void radio_click_stiff (GtkWidget* radio , gtkClassData* currentClassData);
     static void radio_click_compl (GtkWidget* radio , gtkClassData* currentClassData);
     static void on_key_press(GtkWidget* radio , gtkClassData* currentClassData);

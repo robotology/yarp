@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -19,7 +19,7 @@
 */
 
 
-#include "include/robotMotorGui.h"
+#include "include/yarpmotorgui.h"
 #include "include/cartesianMover.h"
 
 #include <stdlib.h>
@@ -42,40 +42,40 @@ static void destroy_win (GtkButton *button, GtkWindow *window)
   gtk_main_quit ();
 }
 
-/* 
- * Display the list containing 
+/*
+ * Display the list containing
  * the positions sotred so far
  */
 
 GtkTreeModel* refresh_cartesian_list_model(cartesianMover *cm)
 {
   const int ADDITIONAL_COLUMNS = 2;
-	
+
   GType types[NUMBER_OF_CARTESIAN_COORDINATES + ADDITIONAL_COLUMNS];
   GtkListStore *store;
   GtkTreeIter iter;
-	
+
   GValue valore={0};
   g_value_init(&valore, G_TYPE_STRING);
-	
+
   int cols[NUMBER_OF_CARTESIAN_COORDINATES + ADDITIONAL_COLUMNS];
   int k,j;
-	
+
   for (k = 0; k < NUMBER_OF_CARTESIAN_COORDINATES + ADDITIONAL_COLUMNS; k++)
     {
       types[k] = G_TYPE_STRING;
       cols[k]  = k;
     }
-	
+
   store = gtk_list_store_newv ( NUMBER_OF_CARTESIAN_COORDINATES + ADDITIONAL_COLUMNS, types);
   //gtk_list_store_set   (store, &iter, 0, 0.0, 1, 0.1, 2, 0.2, 3, 0.3, 4, 0.4, 5, 0.5, 6, 0.6, 7, 0.7, 8, 0.8 , 9, 0.9, 10, 1.0, 11, 1.1, 12, 1.2, 13, 1.3, 14, 1.4, 15, 1.5, -1);
   char buffer[800];
-	
-  
+
+
   for (j = 0; j < NUMBER_OF_STORED; j++)
     {
       gtk_list_store_append (store, &iter);
-		
+
       for (k = 0; k < ADDITIONAL_COLUMNS; k++)
 	{
 	  if (k == POS_SEQUENCE)
@@ -85,7 +85,7 @@ GtkTreeModel* refresh_cartesian_list_model(cartesianMover *cm)
 	  g_value_set_string(&valore, buffer);
 	  gtk_list_store_set_value(store, &iter, cols[k], &valore);
 	}
-		
+
       for (k = 0; k < NUMBER_OF_CARTESIAN_COORDINATES; k++)
 	{
 	  sprintf(buffer, "%.1f", cm->STORED_POS[j][k]);
@@ -93,7 +93,7 @@ GtkTreeModel* refresh_cartesian_list_model(cartesianMover *cm)
 	  gtk_list_store_set_value(store, &iter, cols[k+ADDITIONAL_COLUMNS], &valore);
 	}
     }
-  
+
   return GTK_TREE_MODEL (store);
 }
 
@@ -109,12 +109,12 @@ int get_cartesian_index_selection(cartesianMover *cm)
   GtkWidget *tree_view = cm->treeview;
   treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
   GtkTreeModel* myModel = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
-	
+
   bool selected = (gtk_tree_selection_get_selected (treeSelection, NULL, &iter)?true:false);
   //gchar *buffer[10000];
   //gtk_tree_model_get(myModel, &iter, 0, buffer, -1);
-	
-	
+
+
   if(selected==false)
     {
       dialog_message(GTK_MESSAGE_ERROR,(char *) "Select a entry in the table", (char *) "before performing a movement", true);
@@ -147,7 +147,7 @@ void cartesianMover::cartesian_line_click(GtkTreeView *tree_view, GtkTreePath *p
   Vector axis;
   if(!icrt->getPose(x,axis))
     fprintf(stderr, "Troubles in getting the cartesian pose for %s", cm->partLabel);
-  
+
 
   Matrix R = axis2dcm(axis);
   Vector eu = dcm2euler(R);
@@ -161,15 +161,15 @@ void cartesianMover::cartesian_line_click(GtkTreeView *tree_view, GtkTreePath *p
       else
 	cm->STORED_POS[*i][k] = eu(k-3)*180/M_PI;
     }
-	
+
   gtk_tree_view_set_model (GTK_TREE_VIEW (tree_view), refresh_cartesian_list_model(cm));
   gtk_widget_draw(GTK_WIDGET(tree_view), NULL);
-	
+
   return;
 }
 
 
-/* 
+/*
  * Initilize the variables used by the table
  */
 
@@ -212,17 +212,17 @@ void cartesianMover::edited_cartesian_sequence (GtkCellRendererText *cell, GtkTr
   if	 (new_val == NUMBER_OF_STORED -1)
     {
 	 dialog_message(GTK_MESSAGE_ERROR,
-			      (char *) "Please do not use the entire table (leave at least one row). Otherwise increase NUMBER_OF_STORED", 
+			      (char *) "Please do not use the entire table (leave at least one row). Otherwise increase NUMBER_OF_STORED",
 			      (char *) "Unfortunately maximum sequence length is not set at runtime (recompile)", true);
 	 return;
     }
   //---
-	
+
   //get the current row index
   int i = get_cartesian_index_selection(cm);
   if (i != -1)
     cm->SEQUENCE[i] = atoi(new_text);
-	
+
   gtk_tree_view_set_model (GTK_TREE_VIEW (tree_view), refresh_cartesian_list_model(cm));
   gtk_widget_draw(tree_view, NULL);
 }
@@ -242,7 +242,7 @@ void cartesianMover::edited_cartesian_timing (GtkCellRendererText *cell, GtkTree
 
   //retrieve new val from edited
   gdouble  new_val = atof (new_text);
-	
+
   //get the current row index
   int i = get_cartesian_index_selection(cm);
   //fprintf(stderr, "Getting index %d", i);
@@ -253,7 +253,7 @@ void cartesianMover::edited_cartesian_timing (GtkCellRendererText *cell, GtkTree
       else
 	dialog_message(GTK_MESSAGE_ERROR, (char *) "Timing must be positive", (char *) "Change your selection", true);
     }
-	
+
   //redisplay list
   gtk_tree_view_set_model (GTK_TREE_VIEW (tree_view), refresh_cartesian_list_model(cm));
   gtk_widget_draw(tree_view, NULL);
@@ -277,18 +277,18 @@ void add_cartesian_columns (GtkTreeView *tree_view, cartesianMover* cm)
   renderer->mode=GTK_CELL_RENDERER_MODE_EDITABLE;
 
   g_signal_connect (renderer, "edited", G_CALLBACK (cm->edited_cartesian_sequence), cm);
-	
+
   column = gtk_tree_view_column_new_with_attributes ("Sequence",
 						     renderer,
 						     "text",
 						     0,
 						     NULL);
-	
+
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),GTK_TREE_VIEW_COLUMN_FIXED);
   gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 80);
   gtk_tree_view_append_column (tree_view, column);
-	
-	
+
+
   //Sequence timing
   renderer = gtk_cell_renderer_text_new ();
   GTK_CELL_RENDERER_TEXT(renderer)->editable=true;
@@ -296,7 +296,7 @@ void add_cartesian_columns (GtkTreeView *tree_view, cartesianMover* cm)
   renderer->mode=GTK_CELL_RENDERER_MODE_EDITABLE;
 
   g_signal_connect (renderer, "edited", G_CALLBACK (cm->edited_cartesian_timing), cm);
-	
+
   column = gtk_tree_view_column_new_with_attributes ("Timing",
 						     renderer,
 						     "text",
@@ -305,15 +305,15 @@ void add_cartesian_columns (GtkTreeView *tree_view, cartesianMover* cm)
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),GTK_TREE_VIEW_COLUMN_FIXED);
   gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 80);
   gtk_tree_view_append_column (tree_view, column);
-	
+
   //Sequence description
   renderer = gtk_cell_renderer_text_new ();
   GTK_CELL_RENDERER_TEXT(renderer)->editable=false;
   GTK_CELL_RENDERER_TEXT(renderer)->editable_set=false;
   renderer->mode=GTK_CELL_RENDERER_MODE_EDITABLE;
-	
+
   //fprintf(stderr, "Current add_columns received %d\n", NUMBER_OF_JOINTS);
-	
+
   for (k =0; k < NUMBER_OF_CARTESIAN_COORDINATES; k++)
     {
       if(k<3)
@@ -349,7 +349,7 @@ void add_cartesian_columns (GtkTreeView *tree_view, cartesianMover* cm)
 
 void cartesianMover::cartesian_table_open(GtkButton *button, cartesianMover *cm)
 {
-  
+
   //int *joint = currentClassData->indexPointer;
   /*ipos = currentPart->pos;
   iiencs = currentPart->iencs;
@@ -357,17 +357,17 @@ void cartesianMover::cartesian_table_open(GtkButton *button, cartesianMover *cm)
   ipid   = currentPart->pid;
   */
   GtkWidget *winTable = NULL;
-  
+
   //adding a popup window
   winTable = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (winTable), cm->partLabel);
   gtk_window_set_default_size((GtkWindow*) winTable, 300, 300);
-  
+
   //creating a new box
   GtkWidget *bottom_hbox = gtk_hbox_new (FALSE, 8);
   gtk_container_set_border_width (GTK_CONTAINER (bottom_hbox), 10);
   gtk_container_add (GTK_CONTAINER (winTable), bottom_hbox);
-		
+
   //In the bottom frame there is:
   //1) the list of the cards
   GtkWidget *sw = gtk_scrolled_window_new (NULL, NULL);
@@ -388,10 +388,10 @@ void cartesianMover::cartesian_table_open(GtkButton *button, cartesianMover *cm)
   treeSelection2 = gtk_tree_view_get_selection(GTK_TREE_VIEW(myTreeview));
   gtk_tree_selection_set_mode(treeSelection2, GTK_SELECTION_SINGLE);
   g_signal_connect (myTreeview, "row-activated", G_CALLBACK (cm->cartesian_line_click), cm);
-				
+
   //g_object_unref (myModel);
   gtk_container_add (GTK_CONTAINER (sw), myTreeview);
-		
+
   // add columns to the tree view
   add_cartesian_columns (GTK_TREE_VIEW (myTreeview), cm);
 
@@ -451,7 +451,7 @@ void cartesianMover::cartesian_table_open(GtkButton *button, cartesianMover *cm)
       gtk_widget_destroy (winTable);
       winTable = NULL;
     }
-	
+
   gtk_main ();
 
   return;

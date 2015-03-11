@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -103,7 +103,7 @@ class partMover{
   guint32 *timeout_seqeunce_rate;
 
   GtkWidget *frame1;
-  
+
   guint *entry_id;
 
   //GtkWidget *button0;
@@ -226,15 +226,15 @@ struct gtkClassDataTree
 };
 
 //Control Modes
-#define MODE_IDLE					0x00
-#define MODE_POSITION 				0x01
-#define MODE_VELOCITY				0x02
-#define MODE_TORQUE					0x03
-#define MODE_IMPEDANCE_POS			0x04
-#define MODE_IMPEDANCE_VEL			0x05
-#define MODE_CALIB_ABS_POS_SENS		0x10
-#define MODE_CALIB_HARD_STOPS		0x20
-#define MODE_HANDLE_HARD_STOPS		0x30
-#define MODE_MARGIN_REACHED    		0x40
+#define MODE_IDLE                   0x00
+#define MODE_POSITION               0x01
+#define MODE_VELOCITY               0x02
+#define MODE_TORQUE                 0x03
+#define MODE_IMPEDANCE_POS          0x04
+#define MODE_IMPEDANCE_VEL          0x05
+#define MODE_CALIB_ABS_POS_SENS     0x10
+#define MODE_CALIB_HARD_STOPS       0x20
+#define MODE_HANDLE_HARD_STOPS      0x30
+#define MODE_MARGIN_REACHED         0x40
 
 #endif

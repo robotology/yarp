@@ -1,17 +1,17 @@
-#include <QMessageBox>
-
 #include "partitem.h"
 #include "log.h"
+
 #include <yarp/os/all.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
-#include <qDebug>
+
+#include <QDebug>
 #include <QEvent>
 #include <QResizeEvent>
 #include <QFileDialog>
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttribute>
-
+#include <QMessageBox>
 
 double filt (double& v)
 {
@@ -64,7 +64,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 
     //checking existence of the port
     int ind = 0;
-    QString portLocalName = QString("/%1/robotMotorGui%2/%3").arg(robotName).arg(ind).arg(partName);
+    QString portLocalName = QString("/%1/yarpmotorgui%2/%3").arg(robotName).arg(ind).arg(partName);
 
 
     QString nameToCheck = portLocalName;
@@ -82,7 +82,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     while(adr.isValid()){
         ind++;
 
-        portLocalName = QString("/%1/robotMotorGui%2/%3").arg(robotName).arg(ind).arg(partName);;
+        portLocalName = QString("/%1/yarpmotorgui%2/%3").arg(robotName).arg(ind).arg(partName);;
 
         nameToCheck = portLocalName;
         nameToCheck += "/rpc:o";
@@ -101,7 +101,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         Property debugOptions;
         QString portLocalName2=portLocalName;
         // the following complex line of code performs a substring substitution (see example below)
-        // "/icub/robotMotorGui2/right_arm" -> "/icub/robotMotorGui2/debug/right_arm"
+        // "/icub/yarpmotorgui2/right_arm" -> "/icub/yarpmotorgui2/debug/right_arm"
 
         portLocalName2.replace(partName,QString("debug/%1").arg(partName));
         debugOptions.put("local", portLocalName2.toLatin1().data());
@@ -117,13 +117,13 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     }
 
     /*********************************************************************/
-    /**************** PartMover Content/**********************************/
+    /**************** PartMover Content **********************************/
 
     if (!finder->isNull()){
         LOG_ERROR("Setting a valid finder \n");
     }
 
-    QString sequence_portname = QString("/robotMotorGui/%1/sequence:o").arg(partName);
+    QString sequence_portname = QString("/yarpmotorgui/%1/sequence:o").arg(partName);
     sequence_port.open(sequence_portname.toLatin1().data());
 
     interfaceError = false;
@@ -265,7 +265,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         }
         while (!ret);
 
-        LOG_ERROR("%s iencs->getEncoders() ok!\n", partName);
+        LOG_ERROR("%s iencs->getEncoders() ok!\n", partName.toLatin1().data());
         double min = 0;
         double max = 100;
         //char buffer[40] = {'i', 'n', 'i', 't'};
@@ -855,13 +855,13 @@ void PartItem::homeAll()
     QString zero = QString("%1_zero").arg(partName);
 
     if (!finder->isNull() && !finder->findGroup(zero.toLatin1().data()).isNull()){
-        bool ok,ok1 = true;
+        bool ok = true;
         Bottle xtmp, ytmp;
         xtmp = finder->findGroup(zero.toLatin1().data()).findGroup("PositionZero");
         ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
         ytmp = finder->findGroup(zero.toLatin1().data()).findGroup("VelocityZero");
         ok = ok && (ytmp.size() == NUMBER_OF_JOINTS+1);
-        if(ok && ok1){
+        if(ok){
             for (int jointIndex = 0; jointIndex < NUMBER_OF_JOINTS; jointIndex++){
                 double positionZero = xtmp.get(jointIndex+1).asDouble();
 
@@ -1776,7 +1776,7 @@ void PartItem::updatePart()
             joint->setJointInteraction(JointItem::Compliant);
             break;
         default:
-        case VOCAB_CM_UNKNOWN:
+        case VOCAB_IM_UNKNOWN:
             //joint->setJointInteraction(JointItem::Stiff); TODO
             break;
         }

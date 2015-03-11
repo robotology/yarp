@@ -7,7 +7,7 @@
 #include "jointitem.h"
 #include "piddlg.h"
 #include <QTimer>
-#include "robotMotorGui.h"
+#include "yarpmotorgui.h"
 
 ///////////YARP//////////
 #include <yarp/os/BufferedPort.h>

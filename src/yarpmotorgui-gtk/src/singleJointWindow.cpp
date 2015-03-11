@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -19,7 +19,7 @@
 */
 
 
-#include "include/robotMotorGui.h"
+#include "include/yarpmotorgui.h"
 #include "include/partMover.h"
 #include "include/windowTools.h"
 #include <string.h>
@@ -48,7 +48,7 @@ void partMover::dis_click(GtkButton *button, gtkClassData* currentClassData)
   #else
   ictrl->setControlMode(*joint,VOCAB_CM_FORCE_IDLE);
   #endif
-  
+
   return;
 }
 
@@ -59,7 +59,7 @@ void partMover::dis_click(GtkButton *button, gtkClassData* currentClassData)
 void partMover::calib_click(GtkButton *button, gtkClassData* currentClassData)
 {
   //ask for confirmation
-  if (!dialog_question("Do you really want to recalibrate the joint?")) 
+  if (!dialog_question("Do you really want to recalibrate the joint?"))
   {
      return;
   }
@@ -175,8 +175,8 @@ void partMover::home_click(GtkButton *button, gtkClassData* currentClassData)
     }
   else
     {
-      //        currentPart->dialog_message(GTK_MESSAGE_ERROR,"No calib file found", strcat("Define a suitable ", strcat(currentPart->partLabel, "Calib")), true);        
-      dialog_message(GTK_MESSAGE_ERROR,(char *) "No zero group found in the supplied file. Define a suitable",  buffer2, true);   
+      //        currentPart->dialog_message(GTK_MESSAGE_ERROR,"No calib file found", strcat("Define a suitable ", strcat(currentPart->partLabel, "Calib")), true);
+      dialog_message(GTK_MESSAGE_ERROR,(char *) "No zero group found in the supplied file. Define a suitable",  buffer2, true);
     }
   return;
 }
@@ -196,12 +196,12 @@ void partMover::run_click(GtkButton *button, gtkClassData* currentClassData)
   IPidControl *ipid = currentPart->pid;
   IControlMode2 *ictrl = currentPart->ctrlmode2;
   GtkWidget **sliderAry = currentPart->sliderArray;
-     
+
   double posJoint;
-    
+
   while (!iiencs->getEncoder(*joint, &posJoint))
     Time::delay(0.001);
-  
+
   ictrl->setControlMode(*joint,VOCAB_CM_POSITION);
 
   gtk_range_set_value ((GtkRange *) (sliderAry[*joint]), posJoint);
@@ -228,7 +228,7 @@ bool partMover::entry_update(partMover *currentPart)
   GdkColor color_indaco;
   GdkColor color_white;
   GdkColor color_blue;
-  
+
   color_pink.red=219*255;
   color_pink.green=166*255;
   color_pink.blue=171*255;
@@ -276,7 +276,7 @@ bool partMover::entry_update(partMover *currentPart)
   color_yellow.red=249*255;
   color_yellow.green=236*255;
   color_yellow.blue=141*255;
-  
+
   GdkColor* pColor= &color_grey;
 
   static int slowSwitcher = 0;
@@ -320,12 +320,12 @@ bool partMover::entry_update(partMover *currentPart)
 
   if (NUMBER_OF_JOINTS == 0)
   {
-      fprintf(stderr,"Lost connection with iCubInterface. You should save and restart.\n" );
+      fprintf(stderr,"Lost connection with robotInterface. You should save and restart.\n" );
       Time::delay(0.1);
       pColor=&color_grey;
       strcpy(frame_title,"DISCONNECTED");
       for (k = 0; k < MAX_NUMBER_OF_JOINTS; k++)
-      {   
+      {
           if (currentPart->framesArray[k]!=0)
           {
               gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
@@ -335,30 +335,30 @@ bool partMover::entry_update(partMover *currentPart)
       return true;
   }
 
-  for (k = 0; k < NUMBER_OF_JOINTS; k++) 
+  for (k = 0; k < NUMBER_OF_JOINTS; k++)
   {
       max_torques[k]=0;
       min_torques[k]=0;
       torques[k]=0;
   }
 
-  if (!iiencs->getEncoders(positions)) 
+  if (!iiencs->getEncoders(positions))
       return true;
   itrq->getTorques(torques);
   iiencs->getEncoderSpeeds(speeds);
-  
+
   //update all joints positions
   for (k = 0; k < NUMBER_OF_JOINTS; k++)
     {
-      sprintf(buffer, "%.1f", positions[k]);  
+      sprintf(buffer, "%.1f", positions[k]);
       gtk_entry_set_text((GtkEntry*) pos_entry[k],  buffer);
-      sprintf(buffer, "%.3f", torques[k]);  
+      sprintf(buffer, "%.3f", torques[k]);
       gtk_entry_set_text((GtkEntry*) trq_entry[k],  buffer);
-      sprintf(buffer, "%.1f", speeds[k]);  
+      sprintf(buffer, "%.1f", speeds[k]);
       gtk_entry_set_text((GtkEntry*) speed_entry[k],  buffer);
     }
   //update all joint sliders
-  for (k = 0; k < NUMBER_OF_JOINTS; k++) 
+  for (k = 0; k < NUMBER_OF_JOINTS; k++)
     if(POS_UPDATE[k])
       gtk_range_set_value((GtkRange*)sliderAry[k],  positions[k]);
 
@@ -371,7 +371,7 @@ bool partMover::entry_update(partMover *currentPart)
 #else
   ipos->checkMotionDone(k, &done);
   if (!done)
-      gtk_entry_set_text((GtkEntry*) inEntry[k],  " "); 
+      gtk_entry_set_text((GtkEntry*) inEntry[k],  " ");
   else
       gtk_entry_set_text((GtkEntry*) inEntry[k],  "@");
 #endif
@@ -508,7 +508,7 @@ bool partMover::entry_update(partMover *currentPart)
                gtk_widget_modify_base ((GtkWidget*)inEntry[k], GTK_STATE_NORMAL, &color_fault_red);
            break;
            default:
-           case VOCAB_CM_UNKNOWN:
+           case VOCAB_IM_UNKNOWN:
                gtk_widget_modify_base ((GtkWidget*)inEntry[k], GTK_STATE_NORMAL, &color_white);
            break;
       }
@@ -516,7 +516,7 @@ bool partMover::entry_update(partMover *currentPart)
 
   currentPart->first_time =false;
   return true;
-    
+
 }
 
 void partMover::enable_entry_update(partMover* currentPartMover)
@@ -543,7 +543,7 @@ void partMover::disable_entry_update(partMover* currentPartMover)
  */
 
 void partMover::sliderVel_release(GtkRange *range, gtkClassData* currentClassData)
-{    
+{
   partMover *currentPart = currentClassData->partPointer;
   int * joint = currentClassData->indexPointer;
   IPositionControl *ipos = currentPart->pos;
@@ -567,7 +567,7 @@ void partMover::sliderVel_release(GtkRange *range, gtkClassData* currentClassDat
  */
 
 void partMover::slider_release(GtkRange *range, gtkClassData* currentClassData)
-{    
+{
   partMover *currentPart = currentClassData->partPointer;
   int * joint = currentClassData->indexPointer;
   bool *POS_UPDATE = currentPart->CURRENT_POS_UPDATE;
@@ -623,7 +623,7 @@ void partMover::slider_release(GtkRange *range, gtkClassData* currentClassData)
  */
 
 void partMover::slider_pick(GtkRange *range, GdkEvent *e, gtkClassData* currentClassData)
-{    
+{
   partMover *currentPart = currentClassData->partPointer;
   int * joint = currentClassData->indexPointer;
   IPositionControl *ipos = currentPart->pos;
@@ -634,7 +634,7 @@ void partMover::slider_pick(GtkRange *range, GdkEvent *e, gtkClassData* currentC
   POS_UPDATE[*joint] = false;
   //partMover *currentPart = currentClassData->partPointer;
 
-  
+
   return;
 }
 
@@ -644,7 +644,7 @@ void partMover::slider_pick(GtkRange *range, GdkEvent *e, gtkClassData* currentC
  */
 
 void partMover::slider_unpick(GtkRange *range, GdkEvent *e, gtkClassData* currentClassData)
-{    
+{
   partMover *currentPart = currentClassData->partPointer;
   int * joint = currentClassData->indexPointer;
   bool *POS_UPDATE = currentPart->CURRENT_POS_UPDATE;
@@ -655,6 +655,6 @@ void partMover::slider_unpick(GtkRange *range, GdkEvent *e, gtkClassData* curren
   POS_UPDATE[*joint] = true;
   //partMover *currentPart = currentClassData->partPointer;
 
-  
+
   return;
 }

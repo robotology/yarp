@@ -17,153 +17,13 @@
 */
 
 
-/**
- *
- * @ingroup icub_tools
- * @ingroup icub_guis
- * \defgroup icub_robotMotorGui robotMotorGui
- *
- * A simple graphical interface for moving all
- * the joints of the iCub robot with sliders.
- * Uses remote control boards.
- *
- * \image html robotMotorGui.jpg
- * \image latex robotMotorGui.eps "A window of robotMotorGui running on Linux" width=15cm
- *
- * \section intro_sec Description
- *
- * This GUI can be used for the following pouposes:
- *
- * - continuosly reading the position of the ALL the robot joints
- * - running/idling single joints
- * - running ALL the robot joints
- * - position command of single joints
- * - changing the velocity of the position commands
- * - performing sequences of position commands with the ALL robot joints
- * - calibrating single joints
- * - checking if the robot is in position ("@")
- *
- * \section parameters_sec Parameters
- *
- * \code
- * --name: name of the robot (used to form port names)
- * --parts: a list of parts to be added.
- * --debug: opens the debugInterfaceClient (for firmware debugging).
- * --speed: enables the speed visualisation.
- * \endcode
- * Example:
- * \code
- * robotMotorGui --name icub --parts (head torso left_arm right_arm left_leg right_leg)
- * \endcode
- *
- * These parameters can be specified in a single file, passed with the
- * --from option.
- * Example:
- * \code
- * robotMotorGui --from robotMotorGui.ini
- * \endcode
- *
- * By default robotMotorGui starts using the file robotMotorGui.ini
- * in $ICUB_ROOT/app/default.
- *
- * An home position can be optionally defined in the supplied file.
- * This home position is specified using a group [part_zero] (e.g. [head_zero])
- * containing the home position and velocity  that will be commanded when the home
- * button is pressed:
- * \code
- * [head_zero]
- * PositionZero      0.0        0.0      0.0       0.0        0.0        0.0
- * VelocityZero     10.0       10.0     10.0      10.0       10.0       10.0
- * \endcode
- *
- * A set of calibration parameters can be optionally defined in the
- * supplied file. These calibration parameters follow the same standard
- * followed by the \ref icub_iCubInterface and can be specified within
- * the group [part_calib] (e.g. [head_calib]):
- * \code
- * [head_calib]
- * CalibrationType     0          0        0         0          0          0
- * Calibration1    500.0      1000.0    900.0     300.0     1333.0     1333.0
- * Calibration2     20.0        20.0     20.0     -20.0        5.0        5.0
- * Calibration3      0.0         0.0      0.0       0.0        0.0        0.0
- * \endcode
- *
- * A set of parameters can be optionally specified in order to
- * open a set of tabs which allow cartesian movements trough the cartesian
- * interfaces (see the tutorial \ref icub_cartesian_interface). These cartesian
- * interfaces can be enabled by inserting a group [cartesian] in the
- * robotMotorGui intialization file. This group should contain the name
- * of the robot parts which should be controlled in the cartesian space:
- * \code
- * [cartesian]
- * left_arm
- * ...
- * right_leg
- * \endcode
- * Each part initialized with the cartesian interface should be properly
- * configured by specifying the limits for the cartesian workspace.
- * \code
- * [left_arm_workspace]
- * xmin xm
- * xmax xM
- *
- * ymin ym
- * ymax yM
- *
- * zmin zm
- * zmax zM
- * \endcode
- * In order to make the cartesian tabs working you need to be sure that
- * that the \ref iKinCartesianSolver "Cartesian Solvers" are running and working.
- *
- * \section portsa_sec Ports Accessed
- * For each part initalized (e.g. right_leg):
- * - /icub/right_leg/rpc:i
- * - /icub/right_leg/command:i
- * - /icub/gui/right_leg/state:i
- *
- * \section portsc_sec Ports Created
- * For each part initalized (e.g. right_leg):
- * - /icub/gui/right_leg/rpc:o
- * - /icub/gui/right_leg/command:o
- * - /icub/right_leg/state:o
- *
- * \section conf_file_sec Configuration Files
- *
- * Passed with the paremter --from, configure the layout of the gui.
- * \code
- * name icub
- * parts (head torso right_arm left_arm)
- * \endcode
- *
- * Creates a gui. Connects automatically to:
- *
- * \code
- * /icub/head/*
- * /icub/torso/*
- * /icub/right_arm/*
- * ...
- * \endcode
- *
- * \section tested_os_sec Tested OS
- * Linux and Windows.
- *
- * \author Francesco Nori
- *
- *Copyright (C) 2008 RobotCub Consortium
- *
- *CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- *This file can be edited at src/gui/robotMotorGui/src/main.cpp.
- **/
-
 #include "mainwindow.h"
 #include <QApplication>
 #include "log.h"
-#include "robotMotorGui.h"
+#include "yarpmotorgui.h"
 #include "startdlg.h"
 #include "sequencewindow.h"
-#include <qDebug>
+#include <QDebug>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
 
@@ -201,13 +61,13 @@ int main(int argc, char *argv[])
 
     //retrieve information for the list of parts
     finder->setVerbose();
-    finder->setDefaultConfigFile("robotMotorGui.ini");
+    finder->setDefaultConfigFile("yarpmotorgui.ini");
     finder->setDefault("name", "icub");
     finder->configure(argc,argv);
 
     qRegisterMetaType<Pid>("Pid");
     qRegisterMetaType<SequenceItem>("SequenceItem");
-    qRegisterMetaType<QList<SequenceItem>>("QList<SequenceItem>");
+    qRegisterMetaType<QList<SequenceItem> >("QList<SequenceItem>");
 
 
     if (finder->check("calib")){

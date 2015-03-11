@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C)2012  Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -21,4 +21,3 @@
 #include "gtkMessages.h"
 
 bool dialog_question (const char* text);
-

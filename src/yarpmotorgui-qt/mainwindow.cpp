@@ -2,17 +2,16 @@
 #include "ui_mainwindow.h"
 #include "flowlayout.h"
 #include "jointitem.h"
+#include "partitem.h"
 
 #include <QToolBar>
 #include <QDebug>
-#include "partitem.h"
 #include <QHBoxLayout>
 #include <QScrollArea>
 #include <QFont>
 #include <QFontMetrics>
 #include <QMessageBox>
 #include <QSettings>
-#include "jointitem.h"
 
 #define TREEMODE_OK     1
 #define TREEMODE_WARN   2
@@ -713,52 +712,52 @@ QColor MainWindow::getColorMode(int m)
 {
     QColor mode;
     switch (m) {
-    case JointItem::JointState::Idle:{
+    case JointItem::Idle:{
         mode = idleColor;
         break;
     }
-    case JointItem::JointState::Position:{
+    case JointItem::Position:{
         mode = positionColor;
         break;
     }
-    case JointItem::JointState::PositionDirect:{
+    case JointItem::PositionDirect:{
         mode = positionDirectColor;
         break;
     }
-    case JointItem::JointState::Mixed:{
+    case JointItem::Mixed:{
         mode = mixedColor;
         break;
     }
-    case JointItem::JointState::Velocity:{
+    case JointItem::Velocity:{
         mode = velocityColor;
         break;
     }
-    case JointItem::JointState::Torque:{
+    case JointItem::Torque:{
         mode = torqueColor;
         break;
     }
-    case JointItem::JointState::OpenLoop:{
+    case JointItem::OpenLoop:{
         mode = openLoopColor;
         break;
     }
 
-    case JointItem::JointState::Disconnected:{
+    case JointItem::Disconnected:{
         mode = disconnectColor;
         break;
     }
-    case JointItem::JointState::HwFault:{
+    case JointItem::HwFault:{
         mode = hwFaultColor;
         break;
     }
-    case JointItem::JointState::Calibrating:{
+    case JointItem::Calibrating:{
         mode = calibratingColor;
         break;
     }
-    case JointItem::JointState::NotConfigured:{
+    case JointItem::NotConfigured:{
         mode = calibratingColor;
         break;
     }
-    case JointItem::JointState::Configured:{
+    case JointItem::Configured:{
         mode = calibratingColor;
         break;
     }
@@ -775,52 +774,52 @@ QString MainWindow::getStringMode(int m)
 {
     QString mode;
     switch (m) {
-    case JointItem::JointState::Idle:{
+    case JointItem::Idle:{
         mode = "Idle";
         break;
     }
-    case JointItem::JointState::Position:{
+    case JointItem::Position:{
         mode = "Position";
         break;
     }
-    case JointItem::JointState::PositionDirect:{
+    case JointItem::PositionDirect:{
         mode = "Position Direct";
         break;
     }
-    case JointItem::JointState::Mixed:{
+    case JointItem::Mixed:{
         mode = "Mixed";
         break;
     }
-    case JointItem::JointState::Velocity:{
+    case JointItem::Velocity:{
         mode = "Velocity";
         break;
     }
-    case JointItem::JointState::Torque:{
+    case JointItem::Torque:{
         mode = "Torque";
         break;
     }
-    case JointItem::JointState::OpenLoop:{
+    case JointItem::OpenLoop:{
         mode = "Open Loop";
         break;
     }
 
-    case JointItem::JointState::Disconnected:{
+    case JointItem::Disconnected:{
         mode = "Disconnected";
         break;
     }
-    case JointItem::JointState::HwFault:{
+    case JointItem::HwFault:{
         mode = "Hardware Fault";
         break;
     }
-    case JointItem::JointState::Calibrating:{
+    case JointItem::Calibrating:{
         mode = "Calibrating";
         break;
     }
-    case JointItem::JointState::NotConfigured:{
+    case JointItem::NotConfigured:{
         mode = "Not Configured";
         break;
     }
-    case JointItem::JointState::Configured:{
+    case JointItem::Configured:{
         mode = "Configured";
         break;
     }

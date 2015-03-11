@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -253,7 +253,7 @@ void guiControl::update_menu(int control_mode, int interaction_mode)
       case VOCAB_CM_HW_FAULT:
         printf("WARNING: you cannot change control mode of a joint in HARDWARE FAULT\n");
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_idl),true);
-      break; 
+      break;
       default:
       case VOCAB_CM_UNKNOWN:
         //NOTE: Unknown!!!
@@ -283,7 +283,7 @@ void guiControl::update_menu(int control_mode, int interaction_mode)
 //*********************************************************************************
 void guiControl::guiControl(void *button, void* data)
 {
-  if (pos_winPid != NULL) 
+  if (pos_winPid != NULL)
   {
       gtk_window_set_keep_above    (GTK_WINDOW(pos_winPid),true);
       return;
@@ -302,7 +302,7 @@ void guiControl::guiControl(void *button, void* data)
   yarp::dev::InteractionModeEnum interaction_mode=VOCAB_IM_UNKNOWN;
   ret &= icntrl2->getControlMode(*joint, &control_mode);
   ret &= iinteract->getInteractionMode(*joint, &interaction_mode);
-  if (control_mode==VOCAB_CM_HW_FAULT) 
+  if (control_mode==VOCAB_CM_HW_FAULT)
   {
       printf("WARNING: you cannot change control mode of a joint in HARDWARE FAULT\n");
       return;
@@ -316,11 +316,11 @@ void guiControl::guiControl(void *button, void* data)
   char title[255];
   sprintf(title,"Control mode JNT:%d",*joint);
   gtk_window_set_title (GTK_WINDOW (pos_winPid), title);
-  
+
   //adding a set of display
   inv = gtk_fixed_new ();
   gtk_container_add (GTK_CONTAINER (pos_winPid), inv);
-  
+
   label_title = gtk_label_new (title);
   sprintf(title,"Interaction mode JNT:%d",*joint);
   label_title2 = gtk_label_new (title);
@@ -394,7 +394,7 @@ void guiControl::guiControl(void *button, void* data)
       gtk_widget_destroy (pos_winPid);
       pos_winPid = NULL;
     }
-    
+
   gtk_window_set_keep_above    (GTK_WINDOW(pos_winPid),true);
   gtk_main ();
 

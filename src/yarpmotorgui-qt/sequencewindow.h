@@ -158,7 +158,7 @@ public:
         return speedsList;
     }
 
-    SequenceItem &SequenceItem::operator =(const SequenceItem &other){
+    SequenceItem &operator =(const SequenceItem &other){
         sequenceNumber = other.sequenceNumber;
         timing = other.timing;
         positionsList = other.positionsList;

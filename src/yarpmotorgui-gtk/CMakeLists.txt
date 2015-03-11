@@ -1,59 +1,57 @@
-# 
-# Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
-# Author: Francesco Nori
-# email:  francesco.nori@iit.it
-# website: www.robotcub.org
-# Permission is granted to copy, distribute, and/or modify this program
-# under the terms of the GNU General Public License, version 2 or any
-# later version published by the Free Software Foundation.
-#
-# A copy of the license can be found at
-# http://www.robotcub.org/icub/license/gpl.txt
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-# Public License for more details
-#
+# Copyright (C) 2015  iCub Facility, Istituto Italiano di Tecnologia
+# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-SET(PROJECTNAME robotMotorGui)
-PROJECT(${PROJECTNAME})
 
-FILE(GLOB_RECURSE folder_header src/include/allPartsWindow.h 
-                                src/include/gtkMessages.h
-                                src/include/guiControl.h
-                                src/include/guiPid2.h
-                                src/include/partMover.h
-                                src/include/robotMotorGui.h
-                                src/include/windowsTools.h
-)
-FILE(GLOB_RECURSE folder_source src/gtkMessages.cpp
-                                src/allPartsWindow.cpp
-                                src/guicontrol.cpp
-                                src/guiPid2.cpp
-                                src/main.cpp
-                                src/multipleJointWindow.cpp
-                                src/partMover.cpp
-                                src/singleJointWindow.cpp
-                                src/tableWindow.cpp
-                                src/windowTools.cpp
+if(CREATE_YARPMOTORGUI AND YARP_HAS_GTK2)
 
-)
-SOURCE_GROUP("Header Files" FILES ${folder_header})
-SOURCE_GROUP("Source Files" FILES ${folder_source})
+  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
 
-ADD_DEFINITIONS(${GTK2_DEFINITIONS})
+  include_directories(${YARP_OS_INCLUDE_DIRS}
+                      ${YARP_sig_INCLUDE_DIRS}
+                      ${YARP_dev_INCLUDE_DIRS})
+  include_directories(${GTK2_INCLUDE_DIRS})
+  add_definitions(${GTK2_DEFINITIONS})
 
-INCLUDE_DIRECTORIES(
-                    ${GTK2_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
+  set(yarpmotorgui_gtk_SRCS src/allPartsWindow.cpp
+                            src/gtkMessages.cpp
+                            src/guicontrol.cpp
+                            src/guiPid2.cpp
+                            src/main.cpp
+                            src/multipleJointWindow.cpp
+                            src/partMover.cpp
+                            src/singleJointWindow.cpp
+                            src/tableWindow.cpp
+                            src/windowTools.cpp)
 
-ADD_EXECUTABLE(${PROJECTNAME} ${folder_header} ${folder_source})
+  set(yarpmotorgui_gtk_HDRS src/include/allPartsWindow.h
+                            src/include/gtkMessages.h
+                            src/include/guiControl.h
+                            src/include/guiPid2.h
+                            src/include/partMover.h
+                            src/include/yarpmotorgui.h
+                            src/include/windowTools.h)
 
-TARGET_LINK_LIBRARIES(${PROJECTNAME} 
-                      icubmod
-                      ${GTK2_LIBRARIES}
-                      ${YARP_LIBRARIES})
+  source_group("Source Files" FILES ${yarpmotorgui_gtk_SRCS})
+  source_group("Header Files" FILES ${yarpmotorgui_gtk_HDRS})
 
-INSTALL(TARGETS ${PROJECTNAME} DESTINATION bin)
 
+  add_executable(yarpmotorgui-gtk ${yarpmotorgui_gtk_SRCS} ${yarpmotorgui_gtk_HDRS})
+
+  target_link_libraries(yarpmotorgui-gtk YARP_OS
+                                         YARP_init
+                                         YARP_sig
+                                         YARP_dev
+                                         ${GTK2_LIBRARIES})
+
+  install(TARGETS yarpmotorgui-gtk
+          COMPONENT utilities
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+  if(NOT TARGET yarpmotorgui-qt OR YARP_DEFAULT_GTK)
+    set_target_properties(yarpmotorgui-gtk PROPERTIES OUTPUT_NAME yarpmotorgui)
+  endif()
+
+endif()

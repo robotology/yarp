@@ -1,5 +1,5 @@
-#ifndef ROBOTMOTORGUI_H
-#define ROBOTMOTORGUI_H
+#ifndef YARPMOTORGUI_H
+#define YARPMOTORGUI_H
 #include <QColor>
 
 /*
@@ -56,4 +56,4 @@ enum {
 };
 
 
-#endif // ROBOTMOTORGUI_H
+#endif // YARPMOTORGUI_H

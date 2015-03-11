@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C)2012  Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -19,11 +19,11 @@
 #include "include/windowTools.h"
 
 GtkWidget *message            = NULL;
-GtkWidget *message_icon       = NULL; 
-GtkWidget *message_hbox       = NULL; 
-GtkWidget *message_right_vbox = NULL; 
-GtkWidget *message_label1     = NULL; 
-GtkWidget *message_label2     = NULL; 
+GtkWidget *message_icon       = NULL;
+GtkWidget *message_hbox       = NULL;
+GtkWidget *message_right_vbox = NULL;
+GtkWidget *message_label1     = NULL;
+GtkWidget *message_label2     = NULL;
 
 //Shows a message dialog for displaying infos/errors
 GtkWidget * dialog_message_generator(GtkMessageType gtk_message_type, const char *text1, const char *text2)
@@ -67,7 +67,7 @@ GtkWidget * dialog_message_generator(GtkMessageType gtk_message_type, const char
     gtk_container_set_border_width (GTK_CONTAINER (message_hbox), 8);
     gtk_box_pack_start (GTK_BOX (GTK_DIALOG (message)->vbox), message_hbox, FALSE, FALSE, 0);
 
-    if		(gtk_message_type==GTK_MESSAGE_QUESTION)
+    if      (gtk_message_type==GTK_MESSAGE_QUESTION)
     {
         gtk_window_set_title    (GTK_WINDOW(message),"Question");
         message_icon = gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
@@ -132,4 +132,3 @@ bool dialog_question (const char* text)
     gtk_widget_destroy (message);
     return ret;
 }
-

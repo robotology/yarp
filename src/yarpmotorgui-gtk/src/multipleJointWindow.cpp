@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -19,7 +19,7 @@
 */
 
 
-#include "include/robotMotorGui.h"
+#include "include/yarpmotorgui.h"
 #include "include/partMover.h"
 #include <string.h>
 #include <locale.h>
@@ -55,13 +55,13 @@ void partMover::fixed_time_move(const double *cmdPositions, double cmdTime, part
     //fprintf(stderr, "Getting the following values for the encoders");
   //for(int k=0; k<NUM_JOINTS; k++)
   //  fprintf(stderr, "%.1f ", startPositions[k]);
-  //fprintf(stderr, "\n");  
+  //fprintf(stderr, "\n");
 
   int k;
   for(k=0; k<NUM_JOINTS; k++)
     {
       cmdVelocities[k] = 0;
-		
+
       if (fabs(startPositions[k] - cmdPositions[k]) > 0.01)
 	cmdVelocities[k] = fabs(startPositions[k] - cmdPositions[k])/cmdTime;
       else
@@ -82,7 +82,7 @@ void partMover::fixed_time_move(const double *cmdPositions, double cmdTime, part
   //fprintf(stderr, "\n");
 
   ipos->setRefSpeeds(cmdVelocities);
-  ipos->positionMove(cmdPositions);	
+  ipos->positionMove(cmdPositions);
 
   currentPart->sequence_port_stamp.update();
   currentPart->sequence_port.setEnvelope(currentPart->sequence_port_stamp);
@@ -98,7 +98,7 @@ void partMover::fixed_time_move(const double *cmdPositions, double cmdTime, part
  */
 void partMover::save_to_file(char* filenameIn, partMover* currentPart)
 {
-  char filename[800]; 
+  char filename[800];
   char filenamePart[800];
   FILE* outputFile;
 
@@ -110,28 +110,28 @@ void partMover::save_to_file(char* filenameIn, partMover* currentPart)
   int j, k;
   char buffer[800];
   int invSequence[NUMBER_OF_STORED];
-	
+
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
 
   //be sure that "." will be used in place of "," for decimals
-  char* loc = setlocale(LC_NUMERIC, NULL); 
-  setlocale(LC_NUMERIC, "C"); 
+  char* loc = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
 
   int len = strlen (filenameIn);
   int len2=0;
-  for (len2=0; len2<len; len2++) 
+  for (len2=0; len2<len; len2++)
       if (filenameIn[len2]=='.') break;
   strncpy(filename, filenameIn, len2);
   filename[len2]=0;
   strcat(filename, ".pos");
   strcat(filename, currentPart->partLabel);
   strcpy(filenamePart, filename);
-  
+
   fprintf(stderr, "Saving file %s \n", filenamePart);
-  
+
   outputFile = fopen(filenamePart,"w");
-	
+
   for (j = 0; j < NUMBER_OF_STORED; j++)
     invSequence[j] = -1;
 
@@ -167,7 +167,7 @@ void partMover::save_to_file(char* filenameIn, partMover* currentPart)
   fclose(outputFile);
   fprintf(stderr, "File saved and closed\n");
   //restore local "."/"," policy
-  setlocale(LC_NUMERIC, loc); 
+  setlocale(LC_NUMERIC, loc);
 }
 
 /*
@@ -193,18 +193,18 @@ void partMover::load_from_file(char* filenameIn, partMover* currentPart)
   char filenameExtension[800];
 
   Property p;
-  bool fileExists = p.fromConfigFile(filenameIn);	
+  bool fileExists = p.fromConfigFile(filenameIn);
   strcpy(filenameExtension, ".pos");
   strcat(filenameExtension, currentPart->partLabel);
   extensionLength = strlen(filenameExtension);
   filenameLength = strlen(filenameIn);
   if ((filenameLength - extensionLength) > 0)
-    fileExists &= (strcmp(filenameIn + 
-			  (sizeof(char))*(filenameLength - extensionLength), 
+    fileExists &= (strcmp(filenameIn +
+			  (sizeof(char))*(filenameLength - extensionLength),
 			  filenameExtension) == 0 );
   else
     fileExists=false;
-	
+
   if (fileExists)
     {
       int NUMBER_OF_JOINTS;
@@ -218,12 +218,12 @@ void partMover::load_from_file(char* filenameIn, partMover* currentPart)
 	    {
 	      for (k = 0; k < NUMBER_OF_JOINTS; k++)
 		STORED_POS_TMP[j][k] = xtmp.get(k+1).asDouble();
-				
+
 	      xtmp = p.findGroup(buffer).findGroup("jointVelocities");
 	      for (k = 0; k < NUMBER_OF_JOINTS; k++)
 		STORED_VEL_TMP[j][k] = xtmp.get(k+1).asDouble();
-				
-				
+
+
 	      xtmp = p.findGroup(buffer).findGroup("timing");
 	      TIMING_TMP[j] = xtmp.get(1).asDouble();
 	      SEQUENCE_TMP[j] = j;
@@ -236,20 +236,20 @@ void partMover::load_from_file(char* filenameIn, partMover* currentPart)
 	      if(j==0)
 		{
 		  dialog_message(GTK_MESSAGE_ERROR,
-				 (char *) "Couldn't load a valid position file.", 
+				 (char *) "Couldn't load a valid position file.",
 				 (char *) "Check the format of the supplied file.", true);
 		  return;
 		}
 	      if(j == NUMBER_OF_STORED - 1 && xtmp.size() == NUMBER_OF_JOINTS+1)
 		{
 		  dialog_message(GTK_MESSAGE_ERROR,
-			      (char *) "Truncating the current sequence which is too long. You need to recompile with a greater value of NUMBER_OF_STORED", 
+			      (char *) "Truncating the current sequence which is too long. You need to recompile with a greater value of NUMBER_OF_STORED",
 			      (char *) "Unfortunately maximum sequence length is not set at runtime", true);
 		}
 	    }
 	}
       fprintf(stderr, "Sequence was loaded. \n");
-      if(GTK_IS_TREE_VIEW (tree_view))	
+      if(GTK_IS_TREE_VIEW (tree_view))
 	{
 	  //gtk_tree_view_set_model (GTK_TREE_VIEW (tree_view), refresh_position_list_model(currentPart));
 	  //gtk_widget_draw(GTK_WIDGET(tree_view), NULL);
@@ -257,7 +257,7 @@ void partMover::load_from_file(char* filenameIn, partMover* currentPart)
     }
   else
     dialog_message(GTK_MESSAGE_ERROR,
-				(char *) "Wrong format (check estensions) of the file associated with:", 
+				(char *) "Wrong format (check estensions) of the file associated with:",
 				currentPart->partLabel, true);
   fprintf(stderr, "load_from_file is exiting. \n");
   return;
@@ -275,12 +275,12 @@ void partMover::run_all(GtkButton *button, partMover* currentPart)
   IPidControl *ipid = currentPart->pid;
   IControlMode2 *ictrl = currentPart->ctrlmode2;
   GtkWidget **sliderAry = currentPart->sliderArray;
-	 
+
   double posJoint;
   int joint;
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
-  
+
   for (joint=0; joint < NUMBER_OF_JOINTS; joint++)
   {
     iiencs->getEncoder(joint, &posJoint);
@@ -298,12 +298,12 @@ void partMover::idle_all(GtkButton *button, partMover* currentPart)
   IAmplifierControl *iamp = currentPart->amp;
   IPidControl *ipid = currentPart->pid;
   GtkWidget **sliderAry = currentPart->sliderArray;
-	 
+
   double posJoint;
   int joint;
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
-  
+
   for (joint=0; joint < NUMBER_OF_JOINTS; joint++)
   {
     iiencs->getEncoder(joint, &posJoint);
@@ -361,8 +361,8 @@ void partMover::home_all(GtkButton *button, partMover* currentPart)
     }
   else
     {
-      //		currentPart->dialog_message(GTK_MESSAGE_ERROR,"No calib file found", strcat("Define a suitable ", strcat(currentPart->partLabel, "Calib")), true);        
-      dialog_message(GTK_MESSAGE_ERROR,(char *) "No zero group found in the supplied file. Define a suitable",  buffer2, true);   
+      //		currentPart->dialog_message(GTK_MESSAGE_ERROR,"No calib file found", strcat("Define a suitable ", strcat(currentPart->partLabel, "Calib")), true);
+      dialog_message(GTK_MESSAGE_ERROR,(char *) "No zero group found in the supplied file. Define a suitable",  buffer2, true);
     }
   return;
 }
@@ -373,14 +373,14 @@ void partMover::home_all(GtkButton *button, partMover* currentPart)
 void partMover::calib_all(GtkButton *button, partMover* currentPart)
 {
   //ask for confirmation
-  if (!dialog_question("Do you really want to recalibrate the whole part?")) 
+  if (!dialog_question("Do you really want to recalibrate the whole part?"))
   {
      return;
   }
 
   IPositionControl *ipos = currentPart->pos;
   IControlCalibration2 *ical = currentPart->cal;
-	 
+
   int joint;
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
@@ -431,7 +431,7 @@ void partMover::calib_all(GtkButton *button, partMover* currentPart)
     }
   else
     {
-      dialog_message(GTK_MESSAGE_ERROR,(char *) "No calib file found. Define a suitable file called:",  buffer1, true);   
+      dialog_message(GTK_MESSAGE_ERROR,(char *) "No calib file found. Define a suitable file called:",  buffer1, true);
     }
   return;
 
@@ -439,7 +439,7 @@ void partMover::calib_all(GtkButton *button, partMover* currentPart)
 
 
 /*
- * If sequence button is pressed the 
+ * If sequence button is pressed the
  * sequence of movements is executed
  */
 
@@ -458,10 +458,10 @@ void partMover::sequence_click(GtkButton *button, partMover* currentPart)
   GtkWidget **sliderVelAry = currentPart->sliderVelArray;
 
   int j;
-	
+
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
-	
+
   int invSequence[NUMBER_OF_STORED];
 
   for (j = 0; j < NUMBER_OF_STORED; j++)
@@ -494,7 +494,7 @@ void partMover::sequence_click(GtkButton *button, partMover* currentPart)
 
 
 /*
- * If go is clicked retrieve the current 
+ * If go is clicked retrieve the current
  * selection and move to the given position.
  * Finally update sliders
  */
@@ -514,7 +514,7 @@ void partMover::go_click(GtkButton *button, partMover *currentPart)
 
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
-		
+
   //get the current row index
   int i = get_index_selection(currentPart);
   if (i != -1)
@@ -530,14 +530,14 @@ void partMover::go_click(GtkButton *button, partMover *currentPart)
 	    }
 	}
     }
-		
+
   return;
 }
 
 
 
 /*
- * If sequence button is pressed the 
+ * If sequence button is pressed the
  * sequence of movements is executed
  */
 
@@ -552,8 +552,8 @@ void partMover::sequence_time(GtkButton *button, partMover* currentPart)
   int invSequence[NUMBER_OF_STORED];
   int NUMBER_OF_JOINTS;
   int j;
-	
-  ipos->getAxes(&NUMBER_OF_JOINTS);	
+
+  ipos->getAxes(&NUMBER_OF_JOINTS);
 
 
   for (j = 0; j < NUMBER_OF_STORED; j++)
@@ -568,7 +568,7 @@ void partMover::sequence_time(GtkButton *button, partMover* currentPart)
     if (invSequence[j]!=-1)
       {
 	if (TIMING_TMP[invSequence[j]] > 0)
-	  { 	    
+	  {
 	    fixed_time_move(STORED_POS_TMP[invSequence[j]],
 			    TIMING_TMP[invSequence[j]],
 			    currentPart);
@@ -581,7 +581,7 @@ void partMover::sequence_time(GtkButton *button, partMover* currentPart)
 }
 
 /*
- * Saves the current sequence in the 
+ * Saves the current sequence in the
  * correct order.
  */
 
@@ -595,17 +595,17 @@ void partMover::sequence_save(GtkButton *button,  partMover* currentPart)
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
 					NULL);
-	
+
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-      char *filenameIn; 
-	  	  
+      char *filenameIn;
+
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
       save_to_file (filenameIn,currentPart);
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-	
+
   return;
 }
 
@@ -625,7 +625,7 @@ void partMover::sequence_load(GtkFileChooser *button, partMover *currentPart )
 }
 
 /*
- * If sequence cycle is pressed a new thread 
+ * If sequence cycle is pressed a new thread
  * is started. The thread will use the function
  * sequence_iterator to decide the next movement.
  * The thread rate (timeout_seqeunce_rate) corresponds
@@ -651,10 +651,10 @@ void partMover::sequence_cycle(GtkButton *button,partMover* currentPart)
   guint32* timeout_seqeunce_rate_tmp = currentPart->timeout_seqeunce_rate;
   guint* timeout_seqeunce_id_tmp = currentPart->timeout_seqeunce_id;
   int *SEQUENCE_ITERATOR_TMP = currentPart->SEQUENCE_ITERATOR;
-	
+
   int j, k;
   *timeout_seqeunce_rate_tmp = (unsigned int) (TIMING_TMP[0]*1000);
-	
+
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
 
@@ -712,7 +712,7 @@ void partMover::sequence_cycle(GtkButton *button,partMover* currentPart)
 }
 
 /*
- * If sequence cycle (time) is pressed a new thread 
+ * If sequence cycle (time) is pressed a new thread
  * is started. The thread will use the function
  * sequence_iterator to decide the next movement.
  * The thread rate (timeout_seqeunce_rate) corresponds
@@ -739,10 +739,10 @@ void partMover::sequence_cycle_time(GtkButton *button,partMover* currentPart)
   guint32* timeout_seqeunce_rate_tmp = currentPart->timeout_seqeunce_rate;
   guint* timeout_seqeunce_id_tmp = currentPart->timeout_seqeunce_id;
   int *SEQUENCE_ITERATOR_TMP = currentPart->SEQUENCE_ITERATOR;
-	
+
   int j, k;
   *timeout_seqeunce_rate_tmp = (unsigned int) (TIMING_TMP[0]*1000);
-	
+
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
 
@@ -767,7 +767,7 @@ void partMover::sequence_cycle_time(GtkButton *button,partMover* currentPart)
       fixed_time_move(STORED_POS_TMP[INV_SEQUENCE_TMP[0]],
 			    TIMING_TMP[0],
 			    currentPart);
-      
+
       //point the SEQUENCE ITERATOR to the next movement
       *SEQUENCE_ITERATOR_TMP = 1;
 
@@ -803,7 +803,7 @@ void partMover::sequence_cycle_time(GtkButton *button,partMover* currentPart)
 /* Decide the next movement
  * and waits enough time so that
  * the total amount of delay corresponds
- * to the desired 
+ * to the desired
  */
 
 bool partMover::sequence_iterator(partMover* currP)
@@ -868,7 +868,7 @@ bool partMover::sequence_iterator(partMover* currP)
 /* Decide the next movement
  * and waits enough time so that
  * the total amount of delay corresponds
- * to the desired 
+ * to the desired
  */
 
 bool partMover::sequence_iterator_time(partMover* currP)
@@ -913,7 +913,7 @@ bool partMover::sequence_iterator_time(partMover* currP)
       fixed_time_move(STORED_POS_TMP[INV_SEQUENCE_TMP[j]],
 			    TIMING_TMP[j],
 			    currP);
-      
+
 
       (*SEQUENCE_ITERATOR_TMP)++;
       *timeout_seqeunce_rate_tmp = (unsigned int) (TIMING_TMP[j]*1000);
@@ -926,7 +926,7 @@ bool partMover::sequence_iterator_time(partMover* currP)
 
 
 /*
- * If sequence button is pressed the 
+ * If sequence button is pressed the
  * sequence of movements is executed
  */
 
@@ -953,7 +953,7 @@ void partMover::sequence_stop(GtkButton *button,partMover* currP)
   if (currP->button1 != NULL)
     //fprintf(stderr, "botton is sensitive...");
     gtk_widget_set_sensitive(currP->button1, true);
-    //fprintf(stderr, "disabled...");     
+    //fprintf(stderr, "disabled...");
   if (currP->button2 != NULL)
     gtk_widget_set_sensitive(currP->button2, true);
   if (currP->button3 != NULL)
@@ -975,7 +975,7 @@ void partMover::sequence_stop(GtkButton *button,partMover* currP)
 }
 
 /*
- * If sequence button is pressed the 
+ * If sequence button is pressed the
  * sequence of movements is executed
  */
 

@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author: Francesco Nori
  * email:  francesco.nori@iit.it
@@ -19,7 +19,7 @@
 */
 
 #include "partMover.h"
-#include "robotMotorGui.h"
+#include "yarpmotorgui.h"
 
 #ifdef CARTESIAN_MOVER
 #include "cartesianMover.h"
