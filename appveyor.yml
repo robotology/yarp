@@ -3,12 +3,12 @@ version: 1.0.{build}
 clone_folder: c:\projects\yarp
 
 install:
-  - cmd: cinst wget -x86
+  - ps:  $dwntool=New-Object System.Net.WebClient
   - cmd: cinst 7zip.commandline -x86
   - cmd: dir c:\projects
-  #- cmd: wget -q http://download.dre.vanderbilt.edu/previous_versions/ACE-6.2.0.zip -O c:\ace.zip
+  #- ps:  $dwntool.DownloadFile('http://download.dre.vanderbilt.edu/previous_versions/ACE-6.2.0.zip','c:\ace.zip')
   #- cmd: 7z x c:\ace.zip -oc:\ -y > nul
-  - cmd: wget -q http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip -O c:\ace.zip
+  - ps:  $dwntool.DownloadFile('http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip','c:\ace.zip')
   - cmd: 7z x c:\ace.zip -oc:\ -y > nul
 
 build:
