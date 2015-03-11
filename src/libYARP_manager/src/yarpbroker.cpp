@@ -512,7 +512,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
 
     // opening the port
     yarp::os::Port port;
-    port.setTimeout((timeout>0.0) ? timeout : CONNECTION_TIMEOUT);
+    port.setTimeout((timeout>0.0) ? (float)timeout : CONNECTION_TIMEOUT);
     if(!port.open("..."))
         return NULL;
 
