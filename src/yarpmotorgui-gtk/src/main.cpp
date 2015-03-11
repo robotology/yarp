@@ -238,6 +238,7 @@ void notebook_change (GtkNotebook *nb, GtkNotebookPage *nbp,    gint current_ena
 }
 
 //*********************************************************************************
+#ifdef CARTESIAN_MOVER
 void add_enabled_joints(cartesianMover* cm, GtkWidget *vbox)
 {
     GtkWidget *check= gtk_check_button_new_with_mnemonic ("test");
@@ -246,6 +247,7 @@ void add_enabled_joints(cartesianMover* cm, GtkWidget *vbox)
     gtk_toggle_button_set_active((GtkToggleButton*) check, true);
     //g_signal_connect (check, "clicked", G_CALLBACK (check_pressed),ENA[n]);
 }
+#endif
 
 //*********************************************************************************
 // This function is main window after selection of the part to be controlled
@@ -285,11 +287,14 @@ static void myMain2(GtkButton *button,  int *position)
 
     PolyDriver *partsdd[MAX_NUMBER_ACTIVATED];
     PolyDriver *debugdd[MAX_NUMBER_ACTIVATED];
-    PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
     partMover *partMoverList[MAX_NUMBER_ACTIVATED];
-    cartesianMover *cartesianMoverList[MAX_NUMBER_ACTIVATED];
     partMover *currentPartMover;
+
+    #ifdef CARTESIAN_MOVER
+    PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
+    cartesianMover *cartesianMoverList[MAX_NUMBER_ACTIVATED];
     cartesianMover *currentCartesianMover;
+    #endif
 
     for (n = 0; n < NUMBER_OF_AVAILABLE_PARTS; n++)
         {
@@ -393,11 +398,11 @@ static void myMain2(GtkButton *button,  int *position)
     if (NUMBER_OF_ACTIVATED_PARTS > 0)
         {
 
+            #ifdef CARTESIAN_MOVER
             for (n = 0; n < NUMBER_OF_AVAILABLE_PARTS; n++)
                 {
                     if(*ENA[n] == 1)
                         {
-
                             if (finder->check("cartesian"))
                                 {
                                     Bottle bCartesianParts = finder->findGroup("cartesian");
@@ -465,6 +470,7 @@ static void myMain2(GtkButton *button,  int *position)
                                 fprintf(stderr, "GUI was not configured for cartesian \n");
                         }
                 }
+            #endif
             
             if (NUMBER_OF_ACTIVATED_PARTS>0)
                 {
@@ -562,6 +568,7 @@ static void myMain2(GtkButton *button,  int *position)
                             //    add_enabled_joints(cartesianMoverList[i], main_vbox5);
 
                             //Button 3 in the panel
+                            #ifdef CARTESIAN_MOVER
                             buttonCrtSeqAllSave = gtk_button_new_with_mnemonic ("Save ALL Cartesian Seq");
                             gtk_fixed_put   (GTK_FIXED(main_vbox5), buttonCrtSeqAllSave, 320, 200);
                             g_signal_connect (buttonCrtSeqAllSave, "clicked", G_CALLBACK(sequence_crt_all_save), cartesianMoverList);
@@ -584,7 +591,7 @@ static void myMain2(GtkButton *button,  int *position)
                             gtk_fixed_put   (GTK_FIXED(main_vbox5), buttonCrtSeqAllStop, 320, 400);
                             g_signal_connect (buttonCrtSeqAllStop, "clicked", G_CALLBACK (sequence_crt_all_stop),  cartesianMoverList);
                             gtk_widget_set_size_request     (buttonCrtSeqAllStop, 190, 30);
-
+                            #endif
                         }
                     // finish & show
                     //  connected_status();
@@ -614,6 +621,7 @@ static void myMain2(GtkButton *button,  int *position)
             Time::delay(0.1);
         }
 
+    #if CARTESIAN_MOVER
     fprintf(stderr, "Closing the cartesianMovers. Number of activated parts was %d. \n", NUMBER_OF_ACTIVATED_CARTESIAN);
     for (int i = 0; i < NUMBER_OF_ACTIVATED_CARTESIAN; i++)
         {
@@ -623,6 +631,8 @@ static void myMain2(GtkButton *button,  int *position)
             delete cartesianMoverList[i];
             Time::delay(0.1);
         }
+    #endif
+
     fprintf(stderr, "Closing the main GUI \n");
     Network::fini();
     return;

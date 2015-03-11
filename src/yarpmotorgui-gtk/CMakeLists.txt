@@ -19,24 +19,41 @@
 SET(PROJECTNAME robotMotorGui)
 PROJECT(${PROJECTNAME})
 
-FILE(GLOB_RECURSE folder_header src/include/*.h)
-FILE(GLOB_RECURSE folder_source src/*.cpp)
+FILE(GLOB_RECURSE folder_header src/include/allPartsWindow.h 
+                                src/include/gtkMessages.h
+                                src/include/guiControl.h
+                                src/include/guiPid2.h
+                                src/include/partMover.h
+                                src/include/robotMotorGui.h
+                                src/include/windowsTools.h
+)
+FILE(GLOB_RECURSE folder_source src/gtkMessages.cpp
+                                src/allPartsWindow.cpp
+                                src/guicontrol.cpp
+                                src/guiPid2.cpp
+                                src/main.cpp
+                                src/multipleJointWindow.cpp
+                                src/partMover.cpp
+                                src/singleJointWindow.cpp
+                                src/tableWindow.cpp
+                                src/windowTools.cpp
+
+)
 SOURCE_GROUP("Header Files" FILES ${folder_header})
 SOURCE_GROUP("Source Files" FILES ${folder_source})
 
 ADD_DEFINITIONS(${GTK2_DEFINITIONS})
 
-INCLUDE_DIRECTORIES(${iCubDev_INCLUDE_DIRS}
-                    ${ctrlLib_INCLUDE_DIRS}
+INCLUDE_DIRECTORIES(
                     ${GTK2_INCLUDE_DIRS}
                     ${YARP_INCLUDE_DIRS})
 
 ADD_EXECUTABLE(${PROJECTNAME} ${folder_header} ${folder_source})
 
-TARGET_LINK_LIBRARIES(${PROJECTNAME} ctrlLib
-										icubmod
-										${GTK2_LIBRARIES}
-										${YARP_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECTNAME} 
+                      icubmod
+                      ${GTK2_LIBRARIES}
+                      ${YARP_LIBRARIES})
 
 INSTALL(TARGETS ${PROJECTNAME} DESTINATION bin)
 

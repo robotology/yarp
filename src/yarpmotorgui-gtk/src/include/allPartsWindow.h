@@ -19,8 +19,11 @@
 */
 
 #include "partMover.h"
-#include "cartesianMover.h"
 #include "robotMotorGui.h"
+
+#ifdef CARTESIAN_MOVER
+#include "cartesianMover.h"
+#endif
 
 extern GtkWidget *buttonGoAll;
 extern GtkWidget *buttonSeqAll;
@@ -50,7 +53,9 @@ void sequence_all_cycle (GtkButton *button, partMover** currentPartMover);
 void sequence_all_cycle_time (GtkButton *button, partMover** currentPartMover);
 void sequence_all_stop (GtkButton *button, partMover** currentPartMover);
 
+#ifdef CARTESIAN_MOVER
 void sequence_crt_all_save (GtkButton *button, cartesianMover** currentPartMover);
 void sequence_crt_all_load (GtkButton *button, cartesianMover** currentPartMover);
 void sequence_crt_all_cycle_time (GtkButton *button, cartesianMover** currentPartMover);
 void sequence_crt_all_stop (GtkButton *button, cartesianMover** currentPartMover);
+#endif

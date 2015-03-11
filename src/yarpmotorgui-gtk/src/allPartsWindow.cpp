@@ -119,6 +119,7 @@ void sequence_all_save (GtkButton *button, partMover** currentPartMover)
 
 }
 
+#ifdef CARTESIAN_MOVER
 //*********************************************************************************
 // This callback saves all sequences
 void sequence_crt_all_save (GtkButton *button, cartesianMover** cm)
@@ -162,6 +163,7 @@ void sequence_crt_all_save (GtkButton *button, cartesianMover** cm)
   return;
 
 }
+#endif
 
 //*********************************************************************************
 // This callback loads all sequences
@@ -222,6 +224,7 @@ void sequence_all_load (GtkButton *button, partMover** currentPartMover)
 
 //*********************************************************************************
 // This callback loads all cartesian sequences
+#ifdef CARTESIAN_MOVER
 void sequence_crt_all_load (GtkButton *button, cartesianMover** cm)
 {
   GtkWidget *dialog;
@@ -269,6 +272,7 @@ void sequence_crt_all_load (GtkButton *button, cartesianMover** cm)
     
   return;
 }
+#endif
 
 //*********************************************************************************
 // This callback cycles all sequences
@@ -324,6 +328,7 @@ void sequence_all_cycle_time (GtkButton *button, partMover** currentPartMover)
 
 //*********************************************************************************
 // This callback cycles all sequences in time based
+#ifdef CARTESIAN_MOVER
 void sequence_crt_all_cycle_time (GtkButton *button, cartesianMover** cm)
 {
   int i;
@@ -337,6 +342,7 @@ void sequence_crt_all_cycle_time (GtkButton *button, cartesianMover** cm)
 
   return;
 }
+#endif
 
 //*********************************************************************************
 // This callback stops all cycling sequences
@@ -361,6 +367,7 @@ void sequence_all_stop (GtkButton *button, partMover** currentPartMover)
 
 //*********************************************************************************
 // This callback stops all cycling sequences
+#ifdef CARTESIAN_MOVER
 void sequence_crt_all_stop (GtkButton *button, cartesianMover** cm)
 {
   int i;
@@ -369,4 +376,5 @@ void sequence_crt_all_stop (GtkButton *button, cartesianMover** cm)
 
   return;
 }
+#endif
 
