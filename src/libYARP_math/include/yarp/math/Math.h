@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 2007 RobotCub Consortium
- * Authors: Lorenzo Natale
+ * Authors: Lorenzo Natale, Ugo Pattacini
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -482,7 +482,120 @@ namespace yarp
         * @return the inverse of the matrix
         */
         //YARP_math_API yarp::sig::Matrix chinv(const yarp::sig::Matrix& in);
+
+        /**
+        * Returns the sign of a real number: 1 if positive, 
+        * -1 if negative, 0 if equal to zero
+        * @param v is a real number. 
+        * @return sign(v). 
+        */
+        YARP_math_API double sign(const double &v);
+
+        /**
+        * Returns the sign vector of a real vector, that is a vector 
+        * with 1 if the value is positive, 
+        * -1 if negative, 0 if equal to zero. 
+        * @param v is the input vector. 
+        * @return sign(v). 
+        */
+        YARP_math_API yarp::sig::Vector sign(const yarp::sig::Vector &v);
+
+        /**
+        * Converts a dcm (direction cosine matrix) rotation matrix R to 
+        * axis/angle representation. 
+        * @param R is the input matrix.
+        * @return 4 by 1 vector for the axis/angle representation.
+        */
+        YARP_math_API yarp::sig::Vector dcm2axis(const yarp::sig::Matrix &R);
+
+        /**
+        * Returns a dcm (direction cosine matrix) rotation matrix R from
+        * axis/angle representation.
+        * @param v is the axis/angle vector.
+        * @return 4 by 4 rotation matrix of the form [R,1].
+        */
+        YARP_math_API yarp::sig::Matrix axis2dcm(const yarp::sig::Vector &v);
+
+        /**
+        * Converts a dcm (direction cosine matrix) rotation matrix to 
+        * euler angles (ZYZ). Three angles are returned in a vector with
+        * the following format: 
+        * \f[  \mathbf{v} = [\alpha, \beta, \gamma ]\f]
+        * such that the returned matrix satisfies the following:
+        * \f[  R = R_z(\alpha) R_y(\beta) R_z(\gamma) \f]
+        * @param R is the input ZYZ rotation matrix.
+        * @return 3 by 1 vector for the Euler angles representation.
+        */
+        YARP_math_API yarp::sig::Vector dcm2euler(const yarp::sig::Matrix &R);
+
+        /**
+        * Converts euler angles (ZYZ) vector in the corresponding dcm 
+        * (direction cosine matrix) rotation matrix. The three euler 
+        * angles are specified in a vector with the following structure:
+        * \f[  \mathbf{v} = [\alpha, \beta, \gamma ]\f]
+        * and the returned matrix is:
+        * \f[  R = R_z(\alpha) R_y(\beta) R_z(\gamma) \f]
+        * @param euler is the input vector (alpha=z-rotation, 
+        *              beta=y-rotation, gamma=z-rotation).
+        * @return 3 by 3 matrix representing the ZYZ rotation.
+        */
+        YARP_math_API yarp::sig::Matrix euler2dcm(const yarp::sig::Vector &euler);
+
+        /**
+        * Converts a dcm (direction cosine matrix) rotation matrix to 
+        * roll-pitch-yaw angles. Three angles are returned in a vector 
+        * with the following format: 
+        * \f[  \mathbf{v} = [\psi, \theta, \phi ]\f]
+        * such that the returned matrix satisfies the following:
+        * \f[  R = R_z(\phi) R_y(\theta) R_x(\psi) \f]
+        * @param R is the input ZYX rotation matrix.
+        * @return 3 by 1 vector for the roll pitch-yaw-angles representation.
+        */
+        YARP_math_API yarp::sig::Vector dcm2rpy(const yarp::sig::Matrix &R);
+
+        /**
+        * Converts roll-pitch-yaw angles in the corresponding dcm 
+        * (direction cosine matrix) rotation matrix. The three angles 
+        * are specified in a vector with the following structure: 
+        * \f[  \mathbf{v} = [\psi, \theta, \phi ]\f]
+        * and the returned matrix is:
+        * \f[  R = R_z(\phi) R_y(\theta) R_x(\psi) \f]
+        * @param rpy is the input vector (\psi=roll 
+        *            x-rotation,\theta=pitch y-rotation, \phi=yaw
+        *            z-rotation).
+        * @return 3 by 3 matrix representing the ZYX rotation.
+        */
+        YARP_math_API yarp::sig::Matrix rpy2dcm(const yarp::sig::Vector &rpy);
+
+        /**
+        * Returns the inverse of a 4 by 4 rototranslational matrix 
+        * @param H is the 4 by 4 rototranslational matrix.
+        * @return inverse of 4 by 4 rototranslational matrix. 
+        *  
+        * @note about 5 times faster than pinv() 
+        */
+        YARP_math_API yarp::sig::Matrix SE3inv(const yarp::sig::Matrix &H);
+
+        /**
+        * Returns the adjoint matrix of a given roto-translational 
+        * matrix. The adjoint is a (6x6) matrix: [R , S(r)*R; 0, R] 
+        * where R is the rotational part of H, and r the translational part.
+        * @param H is the 4 by 4 rototranslational matrix.
+        * @return the adjoint matrix 
+        */
+        YARP_math_API yarp::sig::Matrix adjoint(const yarp::sig::Matrix &H);
+
+        /**
+        * Returns the inverse of the adjoint matrix of a given 
+        * roto-translational matrix. The inverse of an adjoint is a 
+        * (6x6) matrix: [R^T , -S(R^T*r)*R^T; 0 , R^T] where R is the 
+        * rotational part of H, and r the translational part. 
+        * @param H is the 4 by 4 rototranslational matrix.
+        * @return the inverse of the adjoint matrix  
+        */
+        YARP_math_API yarp::sig::Matrix adjointInv(const yarp::sig::Matrix &H);
     }
 }
 
 #endif
+

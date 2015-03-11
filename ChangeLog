@@ -1,6 +1,10 @@
-2014-07-14 Matteo Brunettini  <matteo.brunettini@iit.it>
-    * tagging version 2.3.63       
+2015-03-10 Ugo Pattacini <ugo.pattacini@iit.it>
+    * iCub::ctrl::{axis2dcm, dcm2euler ...} imported in yarp::math
 
+2014-07-14 Matteo Brunettini  <matteo.brunettini@iit.it>
+    * tagging version 2.3.63
+
+2014-05-24 Ugo Pattacini <ugo.pattacini@iit.it>
 2014-05-24 Ugo Pattacini <ugo.pattacini@iit.it>
     * yarp/src/libYARP_dev/src/include/yarp/dev/CartesianControl.h
     added methods to set/get pose priority
@@ -15,15 +19,15 @@
     * src/libYARP_dev/src/RemoteControlBoard.cpp
    * src/libYARP_dev/src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
    fixed missing bemf parameter in torque control
-   
+
 2014-03-21 Marco Randazzo <marco.randazzo@iit.it>
     * src/libYARP_dev/src/RemoteControlBoard.cpp
    * src/libYARP_dev/src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
    fixed missing kff parameter in pid structure
-   
+
 2014-01-31 Matteo Brunettini  <matteo.brunettini@iit.it>
-    * tagging version 2.3.61       
-   
+    * tagging version 2.3.61
+
 2014-01-29 Matteo Brunettini  <matteo.brunettini@iit.it>
     * tagging version 2.3.60
 
@@ -35,17 +39,17 @@
     * yarp2\src\libYARP_sig\src\SoundFile.cpp
     * yarp2\src\libYARP_sig\include\yarp\sig\SoundFile.cpp
     fixed a critical bug in the size of the storage of the sound type. This was causing a 'click' at the end of the sound reproduction.
-    fixed a race condition in the variable pThread.something_to_play, occuring during continous stream of sound packets (e.g. real time playback from a microphone) 
+    fixed a race condition in the variable pThread.something_to_play, occuring during continous stream of sound packets (e.g. real time playback from a microphone)
 
 2014-01-02 Marco Randazzo <marco.randazzo@iit.it>
     * yarp2\src\libYARP_sig\src\SoundFile.cpp
     * yarp2\src\libYARP_sig\include\yarp\sig\SoundFile.cpp
     added soundStreamReader class to incrementally read chunks of sound file (instead of the whole file)
     * /example/portaudio/sound_sender_file_chunks.cpp
-    added example to demonstrate use of soundStreamReader class 
+    added example to demonstrate use of soundStreamReader class
     * /example/portaudio/sound_sender_file_sum.cpp
     added example to demonstrate the use of += operator for yarp::sig::Sound
-    
+
 2013-12-23 Marco Randazzo <marco.randazzo@iit.it>
     * yarp2\src\libYARP_sig\src\sound
     added yarp::sig::Sound::subSound() method to split a sound into two subsounds
@@ -57,19 +61,19 @@
 2013-12-21 Marco Randazzo <marco.randazzo@iit.it>
     * /src/libYARP_sig/include/sound.h
     * /src/libYARP_sig/src/sound.cpp
-    added += operator to yarp::sig::Sound 
-    
+    added += operator to yarp::sig::Sound
+
     * /example/portaudio/sound_sender_file
     improved example
-    
+
 2013-12-18 Marco Randazzo <marco.randazzo@iit.it>
     * src\libYARP_sig\src\soundfile.cpp
     fixed a bug preventing .wav files containing non-data chucks to be loaded correctly
-    
+
 2013-12-12 Marco Randazzo <marco.randazzo@iit.it>
-    * example/portaudio 
-    added example: read audio from a file and send data to a port 
-    
+    * example/portaudio
+    added example: read audio from a file and send data to a port
+
 2013-11-13 Alessandro Scalzo <alessandro.scalzo@iit.it>
     * src/libYARP_OS/include/yarp/os/impl/RunProcManager.h
     * src/libYARP_OS/include/yarp/os/impl/RunCheckpoints.h
@@ -93,15 +97,15 @@
     * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
     * src/libYARP_dev/include/yarp/dev/ITorqueControl.h
     * src/libYARP_dev/include/yarp/dev/ImplementTorqueControl.h
-    
-    added getBemfParam() setBemfParam() methods to iTorqueControl Interface 
-    
+
+    added getBemfParam() setBemfParam() methods to iTorqueControl Interface
+
 2013-07-01 Marco Randazzo <marco.randazzo@iit.it>
     * src/libYARP_dev/include/yarp/dev/ControlBoardPid.h
     * src/libYARP_dev/src/ControlBoardPid.cpp
-    
-    added Kff feedforward gain to Pid 
-    
+
+    added Kff feedforward gain to Pid
+
 2013-06-18 Alessandro Scalzo <alessandro.scalzo@iit.it>
     * src/libYARP_OS/include/yarp/os/impl/RunProcManager.h
     * src/libYARP_OS/src/RunProcManager.cpp
@@ -118,7 +122,7 @@
     * src/libYARP_sig/harness/MatrixTest.cpp
     * src/libYARP_sig/include/yarp/sig/Matrix.h
     * src/libYARP_sig/src/Matrix.cpp
-    
+
     fixed bug on Matrix::resize(), added regression tests.
     Clean up: tabs->spaces [thanks Juan G Victores].
 
@@ -259,7 +263,7 @@
 2012-12-13  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
    * src/doc/persistent_connections.dox: show how to
-   connect two ports persistently from code without an 
+   connect two ports persistently from code without an
    intermediate topic.
 
    * src/doc/yarp_plugins.dox: document how runtime plugins
@@ -287,7 +291,7 @@
    * src\libYARP_dev\include\yarp\dev\ServerInertial.h
    fixed issue on timestamps for devices which do not implement IPreciselyTimed
    [thanks Barry Ridge]
-   
+
 2012-11-27  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
    * bindings/yarp.i: add C# tweak for setTargetPeriod
@@ -321,14 +325,14 @@
    simulink, contributed by Juan [thanks Juan G Victores]
 
 2012-10-23  Marco Randazzo <marco.randazzo@iit.it>
-   * src/libYARP_dev/ControlBoardPid.cpp 
+   * src/libYARP_dev/ControlBoardPid.cpp
    * src/libYARP_dev/include/yarp/dev/ControlBoardPid.h
    stiction_pos_val and stiction_neg_val parameters have been added to the yarp::dev::Pid class.
-   
+
    * src/libYARP_dev/RemoteControlBoard.cpp
    * src/libYARP_dev/ServerControlBoard.cpp
-   all the related methods (get/set pid) have been modified accordingly.   
-   
+   all the related methods (get/set pid) have been modified accordingly.
+
    * conf/YarpVersion.cmake
     YARP_VERSION_TWEAK "9424"
 
@@ -420,7 +424,7 @@
 2012-09-05  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
    * bindings/yarp.i: applied patch from Marek - makes Vector a
-   genuine list in python, adds various controlboard interface 
+   genuine list in python, adds various controlboard interface
    convenience functions [thanks Marek Rucinski]
 
    * example/swig: move this to $YARP_ROOT/bindings, people are tired
@@ -432,11 +436,11 @@
     * conf/YarpVersion.cmake
 
    Renamed YARP_SVN_REVISION to YARP_VERSION_TWEAK, now manually updated.
-    
+
 2012-08-23  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
    * src/idls/thrift/src/t_yarp_generator.cc: make oneway functions
-   served using thrift compatible with "yarp rpc" 
+   served using thrift compatible with "yarp rpc"
    [thanks Elena Ceseracciu]
 
 2012-08-23  Alessandro Scalzo <alessandro.scalzo@iit.it>
@@ -515,7 +519,7 @@
 
    * conf/YarpDoc.cmake: revive "make man" target for making man pages
 
-   * src/libYARP_OS/src/ResourceFinder.cpp: undo breakage in 
+   * src/libYARP_OS/src/ResourceFinder.cpp: undo breakage in
    behavior when no policy is found [thanks Daniele Domenichelli]
 
    * src/yarpserver/CMakeLists.txt: add soversion to yarpserversql
@@ -578,7 +582,7 @@
 
 2012-07-24  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
-   * src/modules/kinect/OpenNI/KinectYarpDeviceServerLib: apply 
+   * src/modules/kinect/OpenNI/KinectYarpDeviceServerLib: apply
    patch for "no mirror" option [thanks Juan G Victores]
 
 2012-07-23  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
@@ -589,7 +593,7 @@
 2012-07-20  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
    * src/libYARP_OS/src/ResourceFinder.cpp: add /usr/local/etc
-   to default search path, for convenience of OSX users 
+   to default search path, for convenience of OSX users
    [thanks Francesco Nori] [thanks Lorenzo Natale]
 
    * src/tests/CMakeLists.txt, src/yarpview/CMakeLists.txt,
@@ -602,7 +606,7 @@
 2012-07-19  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
    * src/libYARP_OS/src/Value.cpp: fix Value::read, it wasn't
-   correctly reading the value type when packed with a list 
+   correctly reading the value type when packed with a list
    header [thanks Miguel Sarabia del Castillo]
 
    * src/libYARP_OS/harness/ValueTest.cpp: add check for
@@ -613,7 +617,7 @@
 
 2012-07-16  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
-   * src/libYARP_sig/src/Image.cpp: from Juxi Leitner, a fix for 
+   * src/libYARP_sig/src/Image.cpp: from Juxi Leitner, a fix for
    GRAY images [thanks Juxi Leitner]
 
    * src/libYARP_OS/include/yarp/os/Run.h,
@@ -621,7 +625,7 @@
    src/yarpserver/src/yarpserver3.cpp,
    src/libYARP_OS/include/yarp/os/impl/PlatformMap.h,
    src/libYARP_OS/include/yarp/os/impl/RunProcManager.h,
-   src/libYARP_sig/src/Vector.cpp: from Anne van Rossum, some fixes 
+   src/libYARP_sig/src/Vector.cpp: from Anne van Rossum, some fixes
    for YARP without ACE configuration [thanks Anne van Rossum]
 
 2012-07-13  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
@@ -646,12 +650,12 @@
    (modifyIncomingData): fix reporting of errors on unreliable
    connections [thanks Vadim Tikhanoff] [thanks Lorenzo Natale]
 
-   * src/idls/thrift/src/t_yarp_generator.cc (generate_service): 
+   * src/idls/thrift/src/t_yarp_generator.cc (generate_service):
    account for length of return types [thanks Elena Ceseracciu]
 
 2012-07-03 Lorenzo Natale <lorenzo.natale@iit.it>
     * setting version 2.3.19 to follow interface changes
-   
+
 2012-07-03 Ugo Pattacini <ugo.pattacini@iit.it>
     * gaze I/F's: added get/setSaccadesActivationAngle() methods.
 
@@ -667,7 +671,7 @@
 
     *  src/libYARP_dev/include/yarp/dev/serverInertial.h
     fixed issue related to the assignment of timestamps by the inertial driver
-    
+
 2012-06-19  Ugo Pattacini  <ugo.pattacini@iit.it>
 
    * src/libYARP_dev/include/yarp/dev/CartesianControl.h,GazeControl.h:
@@ -675,7 +679,7 @@
 
 2012-06-18  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
-   * src/modules/kinect/OpenNI/KinectYarpDeviceServerLib/KinectDeviceDriverServer.cpp: apply patch to include timestamps in output 
+   * src/modules/kinect/OpenNI/KinectYarpDeviceServerLib/KinectDeviceDriverServer.cpp: apply patch to include timestamps in output
    [thanks Christian Dondrup]
 
 2012-06-17  Ugo Pattacini  <ugo.pattacini@iit.it>
@@ -685,7 +689,7 @@
 
 2012-06-13  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
-   * conf/template/YarpTweakIDL.cmake.in: reorder header files as 
+   * conf/template/YarpTweakIDL.cmake.in: reorder header files as
    needed [thanks Elena Ceseracciu]
 
 2012-06-12  Alessandro Scalzo <alessandro.scalzo@iit.it>
@@ -728,13 +732,13 @@
 
 2012-05-15  Andrea Del Prete  <andrea.delprete@iit.it>
     * src\libYARP_math\include\yarp\math\SVD.h
-    * src\libYARP_math\src\SVD.cpp 
+    * src\libYARP_math\src\SVD.cpp
     * src\libYARP_math\harness\svdTest.cpp
-    Add methods for damped pseudo-inverse, range projection matrix, 
+    Add methods for damped pseudo-inverse, range projection matrix,
     nullspace projection matrix and related tests.
 
 2012-05-14 Lorenzo Natale <lorenzo.natale@iit.it>
-        * src/libYARP_dev/src/IEncodersTimedImpl.cpp: small bug 
+        * src/libYARP_dev/src/IEncodersTimedImpl.cpp: small bug
           mapping between encoders to angles
 
 2012-05-11  Paul Fitzpatrick  <paul@robotrebuilt.com>
@@ -745,13 +749,13 @@
 
 2012-05-05  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
-   * src/carriers/priority_carrier/PriorityCarrier.cpp: create a 
+   * src/carriers/priority_carrier/PriorityCarrier.cpp: create a
    stub for a modifying carrier that will choose messages based on
    priority levels. [thanks Ali Paikan] [thanks Lorenzo Natale]
 
 2012-05-04  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
-   * src/carriers/bayer_carrier/CMakeLists.txt: make visual studio 
+   * src/carriers/bayer_carrier/CMakeLists.txt: make visual studio
    accept libdc1394 code, however begrudgingly [thanks Giorgio Metta]
 
    * src/idls/thrift/CMakeLists.txt: make visual studio accept
@@ -763,12 +767,12 @@
 
 2012-05-03 Lorenzo Natale <lorenzo.natale@iit.it>
     * Following Gaze Interface change tagging version number: 2.3.17
-   
+
 2012-05-02  Andrea Del Prete  <andrea.delprete@iit.it>
     * src/libYARP_sig/src/Matrix.cpp
     * src/libYARP_sig/harness/MatrixTest.cpp
     Fix bug in method Matrix::read and modify related test.
-    
+
 2012-05-02  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
    * src/idls/thrift: merge from https://github.com/paulfitz/yarp_thrift
@@ -783,7 +787,7 @@
     * src/libYARP_sig/src/Matrix.cpp
     Add methods for pseudo-inverse that return singular value vector.
     Some bug fixes and performance improvements in Matrix.
-    
+
 2012-04-23  Ugo Pattacini  <ugo.pattacini@iit.it>
     * src/libYAR_dev/include/yarp/dev/GazeControl.h
     Added a couple of new methods to check saccades termination
@@ -816,21 +820,21 @@
     * Reorganization of control board interfaces in separate files
    * Added IEncodersTimed
    * Increase minor version number: 2.3.16
-   
+
 2012-03-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_sig/src/ImageFile.cpp: support pgm.
 
 2012-03-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_sig/src/Image.cpp: correctly reallocate 
+   * src/libYARP_sig/src/Image.cpp: correctly reallocate
    memory when image type changes without change in dimension.
 
 2012-03-27  Marco Randazzo <marco.randazzo@iit.it>
     * src/libYARP_dev/src/RemoteControlBoard.cpp
-    
+
     fixed bug in method getPids(): the method was retrieving just the first pid of the list.
-  
+
 2012-03-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/include/yarp/os/ResourceFinder.h: add
@@ -857,7 +861,7 @@
     * src/libYARP_math/include/yarp/math/SVD.h
     * src/libYARP_math/harness/SVDTest.cpp
     Add SVD and pseudo-inverse for fat matrices (and related tests).
-    
+
 2012-03-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/Network.cpp: respect timeout in
@@ -916,9 +920,9 @@
      src/libYARP_sig/include/yarp/sig/Vector.h
      src/libYARP_sig/src/Matrix.cpp
      src/libYARP_sig/src/Vector.cpp
- 
-    Modified Vector::resize() and Matrix::resize() to keep 
-   old content when it exists 
+
+    Modified Vector::resize() and Matrix::resize() to keep
+   old content when it exists
 
 2012-02-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
@@ -938,13 +942,13 @@
 
 2012-01-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/src/Companion.cpp (cmdName): bugfix - port 
+   * src/libYARP_OS/src/Companion.cpp (cmdName): bugfix - port
    numbers in a "yarp name register ..." command were not being
    read correctly.
 
    * example/external/nameserver_proxy/main.cpp: demo of proxying
    queries to a foreign name server.  Useful for "yarp-without-yarp"
-   applications on a system using the ROS name server 
+   applications on a system using the ROS name server
    [thanks Zhenli Lu]
 
    * src/libYARP_name/include/yarp/name/all.h: commit missing catch-all
@@ -974,8 +978,8 @@
 2012-01-23  Andrea Del Prete  <andrea.delprete@iit.it>
 
     * src\libYARP_sig\include\yarp\sig\Vector.h: add constructor with default value
-    * src\libYARP_math\include\yarp\math\Math.h: 
-    * src\libYARP_math\src\math.cpp: 
+    * src\libYARP_math\include\yarp\math\Math.h:
+    * src\libYARP_math\src\math.cpp:
         - add operator '+' to sum scalar to vector and viceversa
         - add operator '-' to subtract scalar to vector and viceversa
         - add operators +=, -=, *=, /= for all operations between vectors, matrices, scalars
@@ -986,13 +990,13 @@
     * src\libYARP_math\src\SVD.cpp: method pinv optimized
     * src\libYARP_math\harness\MathTest.cpp: add tests on new operators
     * src\libYARP_math\harness\svdTest.cpp: add test on pinv
-    
+
 2012-01-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * example/web/web_test.cpp: update example to show streaming
    web content
 
-   * src/libYARP_OS/src/HttpCarrier.cpp: add streaming web 
+   * src/libYARP_OS/src/HttpCarrier.cpp: add streaming web
    content [thanks Juan G Victores]
 
 2012-01-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -1010,17 +1014,17 @@
    * src/doc/yarp_http.dox: Give some basic documentation for the
    http protocol.
 
-   * src/libYARP_OS/src/PortCore.cpp: chrome browser plays 
-   interesting games with http connections; don't display connections 
+   * src/libYARP_OS/src/PortCore.cpp: chrome browser plays
+   interesting games with http connections; don't display connections
    until they commit to a carrier.
 
 2012-01-10  Marco Randazzo <marco.randazzo@iit.it>
     * src/libYARP_dev/src/RemoteControlBoard.cpp
-    
+
     fixed bug in method setTorquePids(): the method was setting the position pid, not the torque pid
-    
+
 2011-12-13 Lorenzo Natale <lorenzo.natale@iit.it>
-        * Tagging 2.3.14 
+        * Tagging 2.3.14
 
 2011-12-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
@@ -1037,10 +1041,10 @@
    * src/libYARP_OS/src/Run.cpp
    * src/libYARP_OS/src/RunProcManager.cpp
    * src/libYARP_OS/src/RunReadWrite.cpp
-   
-   Redirection to stdio uses plain strings to improve formatting. 
-    Remove redundant check if WIN32 || WIN64 since WIN64 => WIN32  
-   
+
+   Redirection to stdio uses plain strings to improve formatting.
+    Remove redundant check if WIN32 || WIN64 since WIN64 => WIN32
+
 2011-12-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/PortCoreOutputUnit.cpp: when closing
@@ -1060,7 +1064,7 @@
    * src/modules/laserHokuyo.h
    Added the new option 'fake' to test the module without any attached laser sensor.
    Added the new option 'Measurement_Units'. it can be set M/MM/INCH/FEET. (default: M)
-    
+
 2011-11-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/include/yarp/os/impl/SemaphoreImpl.h,
@@ -1076,7 +1080,7 @@
 2011-11-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_sig/include/yarp/sig/Vector.h: eliminate out-of-date
-   size_t-to-int casts, causing trouble on debian squeeze/etch 
+   size_t-to-int casts, causing trouble on debian squeeze/etch
    [thanks Lorenzo Natale]
 
 2011-11-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -1086,7 +1090,7 @@
 
 2011-11-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_sig/include/yarp/sig/Image.h: correctly declare 
+   * src/libYARP_sig/include/yarp/sig/Image.h: correctly declare
    const argument for resize method
 
 2011-11-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -1114,12 +1118,12 @@
 
 2011-11-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/src/Contact.cpp: fix rusty support for YARP 
+   * src/libYARP_OS/src/Contact.cpp: fix rusty support for YARP
    without nameserver [thanks Traveler Hauptman]
 
 2011-11-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * example/swig/yarp.i: add IGazeControl view 
+   * example/swig/yarp.i: add IGazeControl view
    [thanks Sebastian Gieselmann]
 
 2011-11-03 Lorenzo Natale <lorenzo.natale@iit.it>
@@ -1129,8 +1133,8 @@
    added support for gtkmm x64 (default windows installer set GTKMM64_BASEPATH)
 
    * conf/FindGTKMMWin32.cmake
-   specifically handles Visual Studio 10, previous version was using VS9 dlls with 
-   VS10 and caused mysterious crash of gyarpmanager. May need VS 10 users to install 
+   specifically handles Visual Studio 10, previous version was using VS9 dlls with
+   VS10 and caused mysterious crash of gyarpmanager. May need VS 10 users to install
    newer versions of gtkmm that contains VS 10 dlls (i.e. 2.22).
 
 
@@ -1173,7 +1177,7 @@
    forwarding in getReport/setReporter/isWriting methods.
 
    * src/libYARP_OS/harness/PortTest.cpp: add test
-   for RpcServer/RpcClient problem with setReporter 
+   for RpcServer/RpcClient problem with setReporter
    [thanks Ugo Pattacini] [thanks Vadim Tikhanoff]
 
 2011-10-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -1186,7 +1190,7 @@
    * src/libYARP_OS/src/NameClient.cpp: support a YARP_IP environment
    variable, that forces the IP address used for registering YARP
    ports to be in a particular family.  Prefixes allowed.  For
-   example, on a machine with a 10.11.4.4 address and a 
+   example, on a machine with a 10.11.4.4 address and a
    192.168.1.10 address, seeting YARP_IP to 192 or 192.168 or
    192.168.1.10 all result in the 192.... IP address being used.
    [thanks Zenon Mathews]
@@ -1221,7 +1225,7 @@
 2011-09-12 Lorenzo Natale <lorenzo.natale@iit.it>
         * conf/YarpVersion.cmake
         tagging 2.3.12
-     
+
 2011-09-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * example/swig/yarp.i: apply patch to add interfaces for impedance
@@ -1229,12 +1233,12 @@
 
 2011-09-09  Andrea Del Prete    <andrea.delprete@iit.it>
    * src/libYARP_math/src/math.cpp
-   * src/libYARP_math/include/yarp/math/Math.h     
+   * src/libYARP_math/include/yarp/math/Math.h
    These methods have been moved from iCub::ctrlLib to yarp::math:
    norm(Vector), norm2(Vector), findMax(Vector), findMin(Vector), cross(Vector, Vector)
-   The reason is that these are really basic operations, so 
+   The reason is that these are really basic operations, so
    yarp::math is the best place for them.
-   Since the namespace has changed, every call to these methods 
+   Since the namespace has changed, every call to these methods
    using explicit namespace has been modified accordingly. For instance:
    iCub::ctrl::norm(x)  =>  yarp::math::norm(x)
    As far as the icub main build is concerned, we have checked that everything compiles.
@@ -1243,7 +1247,7 @@
    - pile: vertical matrix-vector concatenation
    - cat: horizontal matrix-vector concatenation
    New checks of matrix and vector sizes in operators +, -, *, /.
-   
+
    * src/libYARP_sig/include/yarp/sig/Matrix.h
    * src/libYARP_sig/include/yarp/sig/Vector.h
    * src/libYARP_sig/src/Matrix.cpp
@@ -1253,7 +1257,7 @@
 
 2011-09-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/yarpserver/CMakeLists.txt: make yarpserver3 the 
+   * src/yarpserver/CMakeLists.txt: make yarpserver3 the
    default name server.  It will now run when "yarpserver"
    or "yarp server" is called [thanks Lorenzo Natale].
    The CMake CREATE_YARPSERVER3 option with default FALSE is
@@ -1280,12 +1284,12 @@
 2011-08-31  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/ace_test.cpp: fix test for ACE change in inline
-   behavior; it was failing due to ace/OS.h removal in 
+   behavior; it was failing due to ace/OS.h removal in
    recent ACE versions [thanks Giorgio Metta]
 
 2011-08-29  Paul Fitzpatrick <paul@robotrebuilt.com>
 
-   * src/carriers/tcpros_carrier/RosType.cpp: fix use of 
+   * src/carriers/tcpros_carrier/RosType.cpp: fix use of
    non-portable header files [thanks Giorgio Metta]
 
 2011-08-26  Lorenzo Natale <lorenzo.natale@iit.it>
@@ -1293,9 +1297,9 @@
    * src/libYARP_OS/src/DgramTwoWayStream.cpp:
    now check YARP_DGRAM_BUFFER_SIZE to set socket buffer size,
    added debugging messages
-   
+
 2011-08-25  Marco Randazzo    <marco.randazzo@iit.it>
-   
+
    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
    * src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
@@ -1308,7 +1312,7 @@
 
    * src/libYARP_OS/src/Port.cpp: add support for YARP_PORT_PREFIX.
    If this environment variable is defined, it is added as a prefix
-   to port names by Port::open. [thanks Lorenzo Natale] 
+   to port names by Port::open. [thanks Lorenzo Natale]
    [thanks Ali Paikan]
 
 2011-08-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -1321,7 +1325,7 @@
     * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
     * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
    Windows: fixed Dll export issues to cope with recent changes to the iCub simulator.
-   
+
 2011-08-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/YarpVersion.cmake: version bump to 2.3.9
@@ -1330,7 +1334,7 @@
 
    * src/libYARP_dev/src/ServerControlBoard.cpp
    fixed issue with the iCub simulator (VOCAB_CM_CONTROL_MODE).
-   
+
 2011-07-28  Daniel Krieg  <krieg@fias.uni-frankfurt.de>
 
     * src/carriers/mpi_carrier: fixed remaining problems
@@ -1350,7 +1354,7 @@
 
 2011-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_dev/include/yarp/dev/ServerInertial.h: add 
+   * src/libYARP_dev/include/yarp/dev/ServerInertial.h: add
    --period option rather than hardcoded 5ms [thanks Gabriel Baud-Bovy]
 
    * src/libYARP_OS/src/NameServer.cpp: always allocate separate
@@ -1389,9 +1393,9 @@
    * src/libYARP_OS/include/yarp/os/RateThread.h
    * src/libYARP_OS/src/RateThread.cpp
    * src/libYARP_OS/src/ThreadImpl.cpp
-   
+
    added non waiting stop request function to RateThread class (askToStop).
-   
+
 2011-07-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/Port.cpp: report error for port
@@ -1400,7 +1404,7 @@
    * src/libYARP_OS/harness/PortTest.cpp: check that port
    names without a leading "/" are rejected with an error
 
-   * src/libYARP_dev/src/RemoteControlBoard.cpp: make sure 
+   * src/libYARP_dev/src/RemoteControlBoard.cpp: make sure
    remote_controlboard fails with error if it cannot open
    local ports [thanks Nikolas Hemion]
 
@@ -1452,7 +1456,7 @@
 
 2011-07-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/doc/yarp_with_ros.dox: first pass at documenting use of 
+   * src/doc/yarp_with_ros.dox: first pass at documenting use of
    YARP with ROS.
 
    * src/libYARP_OS/src/Companion.cpp: support "yarp detect --ros"
@@ -1461,7 +1465,7 @@
    * src/libYARP_OS/src/Network.cpp et al: activate multiple name
    server support.
 
-   * src/libYARP_OS/src/Port.cpp: support local allocation of 
+   * src/libYARP_OS/src/Port.cpp: support local allocation of
    socket port numbers, for use with name servers that don't
    allocate them.
 
@@ -1503,7 +1507,7 @@
    * src/libYARP_OS/include/yarp/os/Bottle.cpp: copy "null bottles"
    without fuss, to meet user expectations [thanks Gianluca Massera]
 
-   * conf/template/YARPConfig.cmake.in: remove auto-linking 
+   * conf/template/YARPConfig.cmake.in: remove auto-linking
    option, which was there to ease a transition to more
    normal behavior of FIND_PACKAGE(YARP) last year.
 
@@ -1554,7 +1558,7 @@
     * conf/template/YARPConfigUninstall.cmake.in
     * conf/YARPUninstall.cmake
     Added Uninstall target
-    
+
 
 2011-06-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
@@ -1569,7 +1573,7 @@
    * conf/YarpVersion.cmake: bump to version 2.3.4
 
 2011-05-26  Marco Randazzo    <marco.randazzo@iit.it>
-   
+
    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
    * src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
@@ -1580,7 +1584,7 @@
    Instead, use the new methods:
    bool getImpedance(int j, double *stiffness, double *damping)
    bool setImpedance(int j, double stiffness,  double damping)
-   
+
 2011-05-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/PortCore.cpp: fix race condition
@@ -1656,10 +1660,10 @@
 
     * src/libYARP_sig/include/yarp/sig/Vector.h
     * src/libYARP_math/include/yarp/math/Math.h
-    * src/libYARP_math/src/math.cpp 
+    * src/libYARP_math/src/math.cpp
     * src/libYARP_math/harness/MathTest.cpp:
-    
-    A bunch of changes to improve error checking on Arjan Gijsberts 
+
+    A bunch of changes to improve error checking on Arjan Gijsberts
     test case involving Vector/Matrix division by scalar [thanks Arjan Gijsberts]
 
     made Vector(size_t c) explicit
@@ -1667,7 +1671,7 @@
     added missing operator * by scalar for Matrix
     regression tests
 
-    
+
 2011-04-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/FindFFMPEG.cmake: apply patch from Gianluca to build
@@ -1683,13 +1687,13 @@
    * conf/YarpSystemCheck.cmake: add experimental SKIP_ACE option
    to compile YARP without using ACE.  Support for some features
    is dropped, and only Linux is targeted.  This draws on
-   Anne van Rossum's yarp-lightweight fork at 
+   Anne van Rossum's yarp-lightweight fork at
    https://dev.almende.com/svn/yarp-lightweight
    [thanks Anne van Rossum].
 
 2011-03-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/carriers/mjpeg_carrier/CMakeLists.txt: add option to 
+   * src/carriers/mjpeg_carrier/CMakeLists.txt: add option to
    pass mjpeg images through uncompressed [thanks Philipp Robbel]
 
    * src/libYARP_dev/src/PolyDriver.cpp: disconnect from Property
@@ -1717,10 +1721,10 @@
    * src/modules/laserHokuyo.h
    Added a new option to convert invalid measurements to out-of-range measurements.
    Previously invalid measurements were interpreted as near obstacles.
-   
+
 2011-02-16  Paul Fitzpatrick  <paulfitz@farmMac1.local>
 
-   * src/libYARP_OS/src/Network.cpp: shuffle header file to 
+   * src/libYARP_OS/src/Network.cpp: shuffle header file to
    avoid Mac OSX problem [thanks Lorenzo Natale]
 
 2011-02-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -1738,7 +1742,7 @@
 
    * src/libYARP_OS/src/PortCoreOutputUnit.cpp: use out-of-band
    kill messages on carriers tagged as using a broadcast mechanism.
-   Previously, out-of-band kills were used only for carriers 
+   Previously, out-of-band kills were used only for carriers
    tagged as connectionless. [thanks Daniel Krieg]
 
 2011-02-08  Marco Randazzo <marco.randazzo@iit.it>
@@ -1748,7 +1752,7 @@
    * src\libYARP_dev\include\yarp\dev\SerialInterfaces.h
    * src\libYARP_dev\include\yarp\dev\ServerSerial.h
    Added new method flush() to the serial device driver
-   
+
 2011-02-08 Daniel Krieg <krieg@fias.uni-frankfurt.de>
 
     * src/carriers/mpi_carrier/: added a carrier for broadcasting
@@ -1757,7 +1761,7 @@
 
 2011-02-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * conf/YarpPlugin.cmake: propagate LINK_DIRECTORIES information, 
+   * conf/YarpPlugin.cmake: propagate LINK_DIRECTORIES information,
    needed by current OpenCVConfig.cmake [thanks Lorenzo Natale]
 
 2011-02-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -1776,7 +1780,7 @@
 
 2011-02-01  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
-   * conf/YarpDoc.cmake: YARP documentation should now always 
+   * conf/YarpDoc.cmake: YARP documentation should now always
    be verbose, rather than sometimes filtered as it has
    been for legacy reasons [thanks Lorenzo Natale]
 
@@ -1800,19 +1804,19 @@
 
 2011-01-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * conf/template/YARPConfigVersion.cmake.in: add version 
+   * conf/template/YARPConfigVersion.cmake.in: add version
    information for side-by-side YARP installs.
 
    * conf/YarpDescribe.cmake: add version information to
    YARPConfig.cmake [thanks Lorenzo Natale]
 
-   * example/swig/yarp.i: add a wrapper for 
+   * example/swig/yarp.i: add a wrapper for
    IPositionControl::checkMotionDone, and define a "BVector"
    class to wrap the C "bool *" types.  [thanks Varun Kompella]
 
 2011-01-22  Paul Fitzpatrick  <paulfitz@sigmund>
 
-   * conf/YarpWdk.cmake: experiment - set up build files for 
+   * conf/YarpWdk.cmake: experiment - set up build files for
    using Windows Driver Kit to compile YARP library and
    executable.
 
@@ -1844,7 +1848,7 @@
 2010-12-07  Marco Randazzo <marco.randazzo@iit.it>
 
     * src/modules/laserHokuyo.cpp: fixed configuration parameters
-   
+
 2010-12-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/modules/kinect/CMakeLists.txt: add Philipp Robbel's
@@ -1871,7 +1875,7 @@
 2010-11-25  Arjan Gijsberts  <arjan@liralab.it>
 
    * conf/FindAtlas.cmake: additional possibly include directory
-   and library locations for Atlas, warranted by changes in the 
+   and library locations for Atlas, warranted by changes in the
    Ubuntu packages.
 
 2010-11-24  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
@@ -1883,7 +1887,7 @@
 2010-11-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/YarpOptions.cmake: support reasonable RPATH behavior
-   upon installation in non-system directories 
+   upon installation in non-system directories
    [thanks Lorenzo Natale] [thanks Lars Schillingmann]
 
    * example/swig/yarp.i: add mono image support to the wrappers
@@ -1929,7 +1933,7 @@
 
 2010-11-08  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
-   * src/doc/persistent_connections.dox: add notes about using 
+   * src/doc/persistent_connections.dox: add notes about using
    persistent connections from code [thanks Charles Lesire-Cabaniols]
 
 2010-10-30  Ugo Pattacini  <ugo.pattacini@iit.it>
@@ -1958,20 +1962,20 @@
 
 2010-10-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_dev/src/ServerControlBoard.cpp: add missing 
+   * src/libYARP_dev/src/ServerControlBoard.cpp: add missing
    "get encs" description to help on rpc port.
 
 2010-10-18  Marco Randazzo <marco.randazzo@iit.it>
 
    * src\modules\serial\SerialDeviceDriver.cpp
-   fixed a critical bug on serial port parity property 
+   fixed a critical bug on serial port parity property
    (memory around variable config2.SerialParams.paritymode was corrupted)
 
    * src\modules\serial\SerialDeviceDriver.h
    * src\libYARP_dev\include\yarp\dev\ServerSerial.h
    added an optional verbose property to SerialDeviceDriver.h
    and fixed the already present verbose property in ServerSerial.h
-   
+
 2010-10-18  Daniel Krieg  <krieg@fias.uni-frankfurt.de>
 
     * src/libYARP_OS/include/hmac/sha2.h
@@ -1981,9 +1985,9 @@
     * src/libYARP_OS/include/yarp/os/impl/AuthHMAC.h
     * src/libYARP_OS/src/AuthHMAC.cpp
 
-    added a 3-way port authentication mechansim using 
+    added a 3-way port authentication mechansim using
     HMAC with SHA
-    
+
     * src/libYARP_OS/include/yarp/os/impl/Face.h
     * src/libYARP_OS/src/TcpFace.cpp
     * src/libYARP_OS/CMakeLists.txt
@@ -1993,13 +1997,13 @@
 
 2010-10-07  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
-   * src/libYARP_OS/harness/ResourceFinderTest.cpp: test 
+   * src/libYARP_OS/harness/ResourceFinderTest.cpp: test
    for getContext method.
 
    * src/libYARP_OS/include/yarp/os/ResourceFinder.h: add
    getContext/getContexts methods to recover application
    context [thanks Ugo Pattacini]
-   
+
 2010-10-04  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
    * src/libYARP_OS/include/yarp/os/Bottle.h: the
@@ -2019,7 +2023,7 @@
    IAnalogSensor: added the two more methods to the IAnalogSensor interface:
    calibrateSensor(const double *value) and calibrateChannel(int ch).
    The calibration methods are now implemented in the AnalogSensorClient.cpp
-   
+
 2010-09-21  Marco Randazzo <marco.randazzo@iit.it>
 
    * src/libYARP_dev/src/AnalogSensorClient.cpp
@@ -2048,30 +2052,30 @@
 
 2010-09-14  Lorenzo Natale  <lorenzo.natale@iit.it>
    * src/libYARP_math/
-   
+
    RandScalar and RandnScalar moved to yarp::math from yarp::math::impl.
-   
+
 2010-09-14  Marco Randazzo <marco.randazzo@iit.it>
    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
    * src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
    * src/libYARP_dev/src/RemoteControlBoard.cpp
-   
+
    Added two new methods to torqueControl interface: getTorqueRange(), getTorqueRanges()
 
 2010-09-10  Lorenzo Natale  <lorenzo.natale@iit.it>
    * src/libYARP_math/
-   
+
    Split classes into files for better code organization. Use gsl for
    normal distribution, added support for normal distributions and matrix
    generation.
-   
+
 2010-09-08  Lorenzo Natale  <lorenzo.natale@iit.it>
    * src/libYARP_math/src/Rand.cpp
    * src/libYARP_math/include/yarp/math/Rand.h
    * src/libYARP_math/harness/MathTest.cpp:
-   
-   Modified random generation routines to use gsl, updated doxygen and 
+
+   Modified random generation routines to use gsl, updated doxygen and
    regression tests.
 
 2010-09-08  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
@@ -2089,7 +2093,7 @@
    ServerControlBoard.cpp
 
    * src/libYARP_dev/src/ServerControlBoard.cpp: adapt to
-   recent elimination of indirect ACE dependencies 
+   recent elimination of indirect ACE dependencies
    [thanks Ugo Pattacini]
 
 2010-09-01  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
@@ -2108,7 +2112,7 @@
 
 2010-08-30  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
-   * conf/YarpDescribe.cmake, conf/YarpVersion.cmake: bring back 
+   * conf/YarpDescribe.cmake, conf/YarpVersion.cmake: bring back
    sonames [thanks Anne van Rossum]
 
 2010-08-27  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
@@ -2128,7 +2132,7 @@
    The Blender game engine initializes/finalizes python modules in an
    odd way.
 
-   * src/libYARP_OS/CMakeLists.txt: (and many other files) 
+   * src/libYARP_OS/CMakeLists.txt: (and many other files)
    added code to respect LIB_SUFFIX setting, so on 64-bit
    systems libraries can be installed directly to lib64
    [thanks Anne van Rossum]
@@ -2136,7 +2140,7 @@
 2010-08-25  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
    * src/libYARP_OS/src/Network.cpp: clean up global name client
-   object, and temporary carrier objects in metaConnect 
+   object, and temporary carrier objects in metaConnect
    [thanks Vadim Tikhanoff]
 
 2010-08-24  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
@@ -2154,7 +2158,7 @@
 2010-08-24  Marco Randazzo  <marco.randazzo@iit.it>
    * src/libYARP_dev/src/RemoteControlBoard.cpp
    fixed a bug related to methods getImpedanceOffset() setImpedanceOffset()
-   
+
 2010-08-23  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
    * scripts/debian: moved from original location, since they are just
@@ -2167,10 +2171,10 @@
    * src/libYARP_OS/src/Bottle.cpp
    * src/libYARP_OS/src/BottleImpl.cpp
 
-   Bottle::pop() incorrectly returned references, triggering an 
-   assertion problem in the copy constructor of Value 
+   Bottle::pop() incorrectly returned references, triggering an
+   assertion problem in the copy constructor of Value
    ([thanks Anne van Rossum] for reporting the bug!)
-   
+
 2010-08-21  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
    * src/libYARP_OS/include/yarp/os/Value.h: fix problem copying
@@ -2201,7 +2205,7 @@
         - CTRL_BREAK_EVENT to console applications
 
 2010-08-12 Daniel Krieg <krieg@fias.uni-frankfurt.de>
-    
+
     * added scripts/yarp_completion for tab-completion in bash
 
 2010-07-28  Marco Randazzo  <marco.randazzo@iit.it>
@@ -2211,16 +2215,16 @@
    * src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
    * src/libYARP_dev/src/RemoteControlBoard.cpp
    added method getControlModes() (multiple joint)
-   
+
 2010-07-26  Ugo Pattacini  <ugo.pattacini@iit.it>
 
    * src/libYARP_dev/include/yarp/dev/CartesianControl.h: added two more methods
-   
+
 
 2010-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/yarpview/ImagePort.cpp: bring back broken save-image-set function
-   
+
 
 2010-07-23  Marco Randazzo  <marco.randazzo@iit.it>
 
@@ -2249,7 +2253,7 @@
 2010-07-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/YarpOptions.cmake: ENABLE_FORCE_RPATH option for setting
-   rpath - applied patch from Alexis.  Purpose: ROS-friendliness.  
+   rpath - applied patch from Alexis.  Purpose: ROS-friendliness.
    [thanks Alexis Maldonado]
 
    * src/modules/opencv/CMakeLists.txt: add missing link command
@@ -2275,7 +2279,7 @@
     * src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
     * src/libYARP_dev/src/RemoteControlBoard.cpp
    Fixed the signature of various functions related to IOpenLoopControl.
-   
+
 2010-07-08  Marco Randazzo  <marco.randazzo@iit.it>
 
     * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
@@ -2284,11 +2288,11 @@
     * src/libYARP_dev/src/RemoteControlBoard.cpp
    Added IImpedanceControl interface, IImpedanceControlRaw interface.
    The new methods allow to set the impedance (stiffness/damping) at
-    the joint level. 
-   
+    the joint level.
+
 2010-07-08  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
-   * src/libYARP_dev/src/Drivers.cpp: change default name of 
+   * src/libYARP_dev/src/Drivers.cpp: change default name of
    "quit" ports for yarpdev when no name argument is supplied.
    The device name will now be used.
 
@@ -2325,7 +2329,7 @@
     * src/libYARP_dev/src/RemoteControlBoard.cpp
     * src/libYARP_dev/src/ServerControlBoard.cpp
     * src/modules/fakebot/FakeBot.h
-    
+
     Added getAmpStatus(int, int*)/getAmpStatusRaw() for single joint to interface.
     Fixed modules using it.
 
@@ -2336,12 +2340,12 @@
    information properly associated with queued messages
    [thanks Daniel Krieg]
 
-   * src/libYARP_dev/src/DeviceGroup.cpp: remove unnecessary 
+   * src/libYARP_dev/src/DeviceGroup.cpp: remove unnecessary
    polling if all devices within a group are backgrounded
    [thanks Philipp Robbel].
 
    * src/libYARP_OS/src/Terminator.cpp: make "Terminee" ports be
-   just regular ports.  Network-compatible with previous terminator 
+   just regular ports.  Network-compatible with previous terminator
    protocol.  Give error for conflicting terminees [thanks
    Philipp Robbel].
 
@@ -2359,7 +2363,7 @@
    * scripts/fetch-ace.sh: Change ACE configuration when bundled
    with YARP to facilitate compiling YARP with gcc (as opposed
    to g++).  The core yarp libraries and executables make
-   no use of C++ libraries, and so can be compiled without 
+   no use of C++ libraries, and so can be compiled without
    linking to libstdc++.  This can be handy for avoiding conflicts
    with different versions of this library.  Steps:
      cd $YARP_ROOT
@@ -2402,7 +2406,7 @@
       [terminal 1, type] {8 0 0 0 0 0 0 0   4 0 0 0 0 0 0 0}
       [terminal 1, see]  {12 0 0 0 0 0 0 0}
    here you are reading/writing 64-bit integers by hand :-)
-   
+
    * src/carriers/tcpros_carrier/TcpRosCarrier.cpp: implemented
    rudimentary writing to ROS subscribers, and writing to ROS
    services.  Be sure to read src/carriers/tcpros_carrier/README.TXT
@@ -2412,7 +2416,7 @@
 
    * src/carriers/tcpros_carrier/CMakeLists.txt: implemented
    rudimentary (untyped) reading from ROS publishers.  Be sure
-   to read src/carriers/tcpros_carrier/README.TXT if you are 
+   to read src/carriers/tcpros_carrier/README.TXT if you are
    tempted to play, this is not user-friendly stuff yet.
 
    * src/tests/CMakeLists.txt: freshen generation of device
@@ -2449,12 +2453,12 @@
 2010-05-31  Ugo Pattacini  <ugo.pattacini@iit.it>
 
    * src/libYARP_OS/include/yarp/os/Network.h: Companion::exists()
-    exported up to NetworkBase class level. 
+    exported up to NetworkBase class level.
 
 2010-05-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_dev/src/ServerControlBoard.cpp: add 
-   stream_state option to turn on/off streaming of encoder 
+   * src/libYARP_dev/src/ServerControlBoard.cpp: add
+   stream_state option to turn on/off streaming of encoder
    state for default controlboard network wrapper.  E.g.:
      yarpdev --device test_motor --stream_state 0
    (Do yarpdev --device test_motor --verbose for details.)
@@ -2467,7 +2471,7 @@
    with the XmlRpc++ library's "Hello" server and client.  Not
    intended for high bandwidth uses.  Carrier name is "xmlrpc".
    XML structures are converted to Bottle-compatible form.
-   Here's a quick test against ROS, which uses XML/RPC for some 
+   Here's a quick test against ROS, which uses XML/RPC for some
    APIs. Assumes roscore and "talker.cpp" tutorial example running:
      yarp name register /roscore tcp localhost 11311
      echo "lookupNode dummy_id /talker" | yarp rpc xmlrpc://roscore
@@ -2476,9 +2480,9 @@
      echo "requestTopic dummy_id /chatter ((TCPROS))" | yarp rpc xmlrpc://talker
        >> prints: 1 "" (TCPROS contact 38265)
      yarp name register /talker/chatter tcp localhost 38265
-   At that point we stop since port number 38265 talks the TCPROS 
+   At that point we stop since port number 38265 talks the TCPROS
    protocol, rather than XMLRPC.
-   
+
    * src/libYARP_OS/include/yarp/os/Event.h: add wrapper
    for ACE_Event class.
 
@@ -2513,7 +2517,7 @@
    to include [include category_name section_name "filename.ini"]
    syntax.
 
-   * src/libYARP_OS/src/Property.cpp: allow usage of 
+   * src/libYARP_OS/src/Property.cpp: allow usage of
    [include category_name section_name "filename.ini"] in
    configuration files.  This acts as if the material in
    "filename.ini" was included in a section called
@@ -2521,7 +2525,7 @@
 
 2010-05-13  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
-   * conf/FindACE.cmake: renamed from FindAce.cmake for 
+   * conf/FindACE.cmake: renamed from FindAce.cmake for
    consistency.  Provides ACE_FOUND, ACE_LIBRARIES, ACE_INCLUDE_DIRS.
 
    * conf/FindOpenCV.cmake: freshen OpenCV search script.
@@ -2537,7 +2541,7 @@
    * src/CMakeLists.txt and lots of others: big cmake clean-up.
    Report breakage please!  In case you need a working YARP in
    a hurry, use revision r7841 (svn update -r 7841)
-   
+
 2010-05-04  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
    * conf/YarpVersion.cmake: bump version up to 2.2.7, probably
@@ -2570,7 +2574,7 @@
    * src/libYARP_OS/include/yarp/os/all.h: add RpcClient and
    RpcServer to the standard set of includes.
 
-   * src/libYARP_OS/src/Companion.cpp: allow carriers to be 
+   * src/libYARP_OS/src/Companion.cpp: allow carriers to be
    specified either on source or destination port in "yarp
    connect"
 
@@ -2578,7 +2582,7 @@
    * src/libYARP_sig/src/Matrix.cpp
     * src/libYARP_sig/include/yarp/sig/Matrix.h
         Matrix::transposed() is now a const method
-        
+
 2010-03-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/Companion.cpp: tab at the start of a line was
@@ -2589,7 +2593,7 @@
 
    * src/yarpserver/src/SqliteTripleSource.h: eliminate use of
    unprotected sprintf.
-   
+
    * src/CMakeLists.txt, src/modules/CMakeLists.txt: improve
    dependencies produced by export_library_dependencies on
    Windows when using Visual Studio.
@@ -2606,14 +2610,14 @@
    * src/libYARP_math/include/yarp/math/Math.h
    * src/libYARP_math/src/math.cpp
    * src/libYARP_math/harness/MathTest.cpp
-   Added yarp::math::det to calculate the determinant of a 
+   Added yarp::math::det to calculate the determinant of a
    matrix and the related regression test.
 
 2010-02-10 Lorenzo Natale <lorenzo.natale@iit.it>
    * conf/YarpLibraryNames.cmake:
    fixed YARP_INCLUDES, removed $YARP_DIR/include
    added $YARP_DIR/generated_include
-   
+
 2010-02-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/PortCoreOutputUnit.cpp: fix regression
@@ -2658,11 +2662,11 @@
 
    * src/libYARP_sig/include/yarp/sig/Matrix.h src/libYARP_sig/src/Matrix.cpp:
     added setRow/setCol methods
-    
+
 2010-01-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/FindAce.cmake: explicitly link pthread along with ACE,
-   to keep GoLD happy for users of that linker 
+   to keep GoLD happy for users of that linker
    [thanks Radu Bogdan Rusu]
 
 2010-01-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -2671,7 +2675,7 @@
 
 2010-01-10 Lorenzo Natale <nat@liralab.it>
    * libYARP_dev: added new IOpenLoopControlRaw/IOpenLoopControl interfaces and implementation class.
-    
+
 2010-01-10 Lorenzo Natale <nat@liralab.it>
    * libYARP_dev: added new IAnalogSensor/AnalogSensorClient.
 
@@ -2695,8 +2699,8 @@
 
 2009-12-08  Arjan Gijsberts  <arjan@liralab.it>
 
-   * example/swig/CMakeLists.txt: use parentheses for print 
-   statement in embedded Python script to be compatible with 
+   * example/swig/CMakeLists.txt: use parentheses for print
+   statement in embedded Python script to be compatible with
    Python 3.0. ([thanks Severin Lemaignan] for report)
 
 2009-12-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -2711,7 +2715,7 @@
 2009-12-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/Port.cpp: deal correctly with reads that
-   arrive while a reply is being made to another message, using 
+   arrive while a reply is being made to another message, using
    the read(*,true) ... reply(*) mechanism [thanks Ugo Pattacini]
    and [thanks Lorenzo Natale]!
 
@@ -2765,7 +2769,7 @@
 
    * src/libYARP_math/CMakeLists.txt: applied patch by
    Arjan to allow Atlas BLAS to be used for GSL.
-   Just turn on the "USE_ATLAS" flag when  configuring.  
+   Just turn on the "USE_ATLAS" flag when  configuring.
    [Thanks Arjan Gijsberts]!
 
 2009-11-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -2776,9 +2780,9 @@
 2009-11-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/CMakeLists.txt: start recording flags and options in
-   header files, rather than just in YARPConfig.cmake.  This 
+   header files, rather than just in YARPConfig.cmake.  This
    makes those options easier to access without using cmake.
-   Header files are created as yarp/conf/(version|options|system).h 
+   Header files are created as yarp/conf/(version|options|system).h
    initially in the include subdirectory of the binary directory.
 
 2009-11-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -2798,22 +2802,22 @@
    * example/swig/yarp.i: apply C# support patch from Stephane -
    [thanks Stephane Lallee]!  Also added better translation of
    the reply method.
-   
+
 
 2009-11-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/PortCore.cpp: start enforcing some RPC
-   contraints.  These only apply to users of the 
+   contraints.  These only apply to users of the
    RpcServer/RpcClient classes.
 
-   * src/libYARP_OS/include/yarp/os/RpcServer.h: add a stub for 
-   an RPC client specialization of Ports.  This adds no new 
+   * src/libYARP_OS/include/yarp/os/RpcServer.h: add a stub for
+   an RPC client specialization of Ports.  This adds no new
    behavior, except to let the user declare that a port should
    only be used as an RPC client.  This will let YARP give better
    warnings/errors.
 
-   * src/libYARP_OS/include/yarp/os/RpcClient.h: add a stub for 
-   an RPC client specialization of Ports.  This adds no new 
+   * src/libYARP_OS/include/yarp/os/RpcClient.h: add a stub for
+   an RPC client specialization of Ports.  This adds no new
    behavior, except to let the user declare that a port should
    only be used as an RPC client.  This will let YARP give better
    warnings/errors.
@@ -2842,7 +2846,7 @@
    * src/libYARP_OS/src/BottleImpl.cpp
    * src/libYARP_sig/src/Vector.cpp
    * src/libYARP_sig/src/Matrix.cpp
-   Increased buffers to 512 bytes to prevent buffer overflows when 
+   Increased buffers to 512 bytes to prevent buffer overflows when
    printing (large) floating point numbers.
 
 2009-10-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -2856,7 +2860,7 @@
    * src/libYARP_OS/src/Companion.cpp: add "admin" option for
    using the port administrative interface.  So:
      yarp admin rpc /port/name
-   will now send administrative rather than data messages to 
+   will now send administrative rather than data messages to
    that port.  To get a list of administrative commands, type:
      help
    while running "yarp admin rpc /port/name".  The admin
@@ -2891,20 +2895,20 @@
 
    * src/libYARP_OS/src/NameClient.cpp: remove dependency on
    "localhost" being correctly set - this leads to hard to debug
-   problems if it is not set.  You still need the loopback device 
-   though ([thanks Andrew Stout] and [thanks Baris Akgun] for 
+   problems if it is not set.  You still need the loopback device
+   though ([thanks Andrew Stout] and [thanks Baris Akgun] for
    64-bit Ubuntu 9.04 reports).
 
 2009-10-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * conf/YarpModuleHooks.cmake: fix bug introduced while 
-   "cleaning" up this code; a wrapper was added for 
-   the TARGET_LINK_LIBRARIES method, but an internal use of 
+   * conf/YarpModuleHooks.cmake: fix bug introduced while
+   "cleaning" up this code; a wrapper was added for
+   the TARGET_LINK_LIBRARIES method, but an internal use of
    this method got caught where it should not have.
 
 2009-10-10  Arjan Gijsberts  <arjan@liralab.it>
-   * examples/swig/CMakeLists.txt: enabled threads directive and 
-   added installation support for Python wrapper 
+   * examples/swig/CMakeLists.txt: enabled threads directive and
+   added installation support for Python wrapper
 
 2009-10-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
@@ -2923,7 +2927,7 @@
 
    * src/yarpserver/src/SubscriberOnSql.cpp: define F_OK if needed
    (thanks Philipp Robbel)
-   
+
    * src/yarpserver/src/TripleSourceCreator.cpp: define F_OK if needed
    (thanks Philipp Robbel)
 
@@ -2946,7 +2950,7 @@
 
 2009-09-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * example/swig/yarp.i: enable callbacks for "BottleCallback" 
+   * example/swig/yarp.i: enable callbacks for "BottleCallback"
    (yarp::os::TypedReaderCallback<yarp::os::Bottle>) class in python.
 
 2009-09-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -2955,7 +2959,7 @@
    for database flushes an option.
 
    * src/yarpserver/CMakeLists.txt: add install target for
-   library associated with new name server 
+   library associated with new name server
    [thanks Alexis Maldonado]
 
    * src/libYARP_OS/src/Module.cpp: change getName() to avoid an
@@ -2974,14 +2978,14 @@
    * src/CMakeLists.txt: add option to compile new yarp server
    version to the global build.  To use the new yarp server,
    turn on the "CREATE_YARPSERVER3" flag during configuration,
-   and run it as "yarpserver3".  The current yarp server is 
+   and run it as "yarpserver3".  The current yarp server is
    still compiled and is still available as "yarp server" or
    "yarpserver"
 
    * src/libYARP_OS/include/yarp/os/impl/StringOutputStream.h: fix
    inefficient append operation.
 
-   * src/libYARP_OS/include/yarp/os/impl/BufferedConnectionWriter.h: 
+   * src/libYARP_OS/include/yarp/os/impl/BufferedConnectionWriter.h:
    add an optimization for messages with lots of small parts.
 
    * example/swig/CMakeLists.txt: fix directory creation for Java
@@ -2990,7 +2994,7 @@
    * src/libYARP_OS/src/Bottle.cpp: make Bottle copies much, much
    faster.
 
-   * example/profiling/bottle_test.cpp: do some profiling on 
+   * example/profiling/bottle_test.cpp: do some profiling on
    Bottles.
 
 2009-08-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3006,7 +3010,7 @@
    java libraries need to have suffix .jnilib on OSX -
    [thanks Dimitri Ognibene]
 
-   * example/swig/README: add doc patch from Dimitri Ognibene for 
+   * example/swig/README: add doc patch from Dimitri Ognibene for
    Java+Matlab
 
    * README: add doc patch from Dimitri Ognibene for OSX
@@ -3034,12 +3038,12 @@
    * src/libYARP_OS/harness/ResourceFinderTest.cpp: regression test
    to make sure command line can override config files for config
    settings.
-   
+
 2009-08-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_sig/include/yarp/sig/Image.h: include a warning
-   to the Image::wrapIplImage method about the required object 
-   lifetime, and how this interacts with ports 
+   to the Image::wrapIplImage method about the required object
+   lifetime, and how this interacts with ports
    [thanks Bruno Nery]
 
 2009-07-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3048,7 +3052,7 @@
    "any" camera is 0 rather than -1 now [thanks Sebastien Gay]
 
    * src/libYARP_OS/src/HttpCarrier.cpp: silly bug in http
-   interface to ports, "send data" form used wrong IP 
+   interface to ports, "send data" form used wrong IP
    [thanks Stephane Lallee]
 
    * example/swig/CMakeLists.txt: update module name in csharp,
@@ -3070,10 +3074,10 @@
    * src/libYARP_math/src/math.cpp
    * src/libYARP_math/include/yarp/math/Math.h
    * src/libYARP_math/harness/MathTest.cpp
-   Added 'luinv' function for square matrix inversion using LU 
+   Added 'luinv' function for square matrix inversion using LU
    decomposition.
-   Added 'chinv' function for positive definite matrix inversion using 
-   Cholesky decomposition. This function depends on GSL 1.12 and is 
+   Added 'chinv' function for positive definite matrix inversion using
+   Cholesky decomposition. This function depends on GSL 1.12 and is
    commented out until this version is installed on most target machines.
 
 2009-07-07 Lorenzo Natale <nat@robotcub.org>
@@ -3101,20 +3105,20 @@
 
 2009-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_sig/src/ImageCopy.cpp: small patch to deal 
+   * src/libYARP_sig/src/ImageCopy.cpp: small patch to deal
    correctly with PixelMono16 type on big-endian systems.
    [Thanks Giovanni Saponaro] for testing on Mac OSX (PPC).
 
 2009-06-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/doc/cmd_yarp.dox: update documentation for yarp 
+   * src/doc/cmd_yarp.dox: update documentation for yarp
    companion program for commands "yarp where/detect/conf".
 
    * src/libYARP_OS/src/Companion.cpp: add "yarp detect" command
    to scan for nameserver in a controlled way, and give
    debugging tips for when problems arise.
 
-   * src/libYARP_OS/src/NameClient.cpp: stop ports from 
+   * src/libYARP_OS/src/NameClient.cpp: stop ports from
    automatically scanning for nameserver if they cannot find it.
 
 2009-06-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3134,20 +3138,20 @@
 
 2009-06-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/src/BottleImpl.cpp: fix bug in smartAdd() method 
+   * src/libYARP_OS/src/BottleImpl.cpp: fix bug in smartAdd() method
    that failed to correctly interpret sequences with multiple periods
    as strings (e.g. IP addresses).
 
    * src/libYARP_OS/harness/BottleTest.cpp: add test for correct
    interpretation of IPv4 addresses as strings.
-           
+
 
 2009-06-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/harness/PortReaderBufferTest.cpp: mistake
    in test: messages in checkCallback need to be send with "strict"
    flag set, to be sure they don't get dropped.
-   [Thanks Alejandro R. Mosteo] for drawing attention to 
+   [Thanks Alejandro R. Mosteo] for drawing attention to
    PortReaderBufferTest problem.
 
    * src/libYARP_OS/include/yarp/os/impl/McastCarrier.h: allocate
@@ -3156,7 +3160,7 @@
 
 2009-06-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_sig/src/Vector.cpp: improve read() method to 
+   * src/libYARP_sig/src/Vector.cpp: improve read() method to
    do a sanity check, for better error recovery [thanks Arjan Gijsberts]
 
 2009-06-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3167,19 +3171,19 @@
 2009-06-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * example/swig/: lots of updates to make Java examples work again
-   after yarp classes were moved into a package 
+   after yarp classes were moved into a package
    [thanks Sebastian Wrede]
 
 2009-06-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/include/yarp/os/impl/ThreadImpl.h: avoid using
    ACE_Auto_Event class, in favor of Semaphores - just because they
-   have been more tested against different ACE builds.  
+   have been more tested against different ACE builds.
    [Thanks Alejandro R. Mosteo] for drawing attention to ThreadTest
    problems in bug report #2801261
 
    * src/libYARP_OS/harness/ThreadTest.cpp: regression test for
-   isRunning() was not quite right, it could fail even for 
+   isRunning() was not quite right, it could fail even for
    correct behavior.  Thanks to Alejandro R. Mosteo for drawing
    attention to ThreadTest problems in bug report #2801261
 
@@ -3199,7 +3203,7 @@
    in src/doc/carrier_expert.dox
 
    * src/libYARP_OS/src/Port.cpp: if a port is sending data,
-   give it a chance to finish before closing 
+   give it a chance to finish before closing
    ([thanks Pablo Urcola] for pointing out this issue).
 
    * src/libYARP_OS/include/yarp/os/BufferedPort.h: implement
@@ -3243,21 +3247,21 @@
 
    * src/libYARP_OS/src/PortCore.cpp: bugfix: when closing
    a port, and shutting down connections, deal correctly with
-   disconnections that fail because the port on the other 
-   side no longer exists.  
+   disconnections that fail because the port on the other
+   side no longer exists.
 
    * src/libYARP_OS/src/PortCoreInputUnit.cpp: bugfix: when
-   "success" flag of a read was clobbered (see below), the port 
+   "success" flag of a read was clobbered (see below), the port
    would fail to correctly move on to the next payload.
 
-   * src/libYARP_OS/src/Port.cpp: bugfix: "success" flag of a 
+   * src/libYARP_OS/src/Port.cpp: bugfix: "success" flag of a
    read could get clobbered by competing RPC calls.
 
 2009-04-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * example/swig/yarp.i: [thanks Philipp Robbel] for patch to 
+   * example/swig/yarp.i: [thanks Philipp Robbel] for patch to
    fix swig wrapping for Port::write with two arguments.
-   
+
 2009-04-14 Alessandro Scalzo <alessandro@liralab.it>
    * src/libYARP_OS/include/yarp/os/Run.h
    * src/libYARP_OS/include/yarp/os/impl/Companion.h
@@ -3341,14 +3345,14 @@
    * src/libYARP_OS/src/Property.cpp: fix bugs in variable expansion,
    continuation across line breaks.
 
-   * src/libYARP_OS/harness/PropertyTest.cpp: add better regression 
+   * src/libYARP_OS/harness/PropertyTest.cpp: add better regression
    tests for variable expansion, continuation across line breaks.
 
 2009-01-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * example/port_power/ex0402_port_callback_reply.cpp: add return
    value to read method [thanks Arnaud Degroote]
-   
+
 2009-01-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/PortCoreOutputUnit.cpp: when a message fails
@@ -3366,15 +3370,15 @@
    * conf/YarpReqLib.cmake
    * src/CMakeLists.txt
    * src/yarpview/CmakeLists
-   added gthread libs, used by new version of yarpview, searched 
+   added gthread libs, used by new version of yarpview, searched
    only when requested
-   
+
 2008-12-30 Lorenzo Natale <nat@liralab.it>
    * src/yarpview:
    started reorganization and update of yarpview, at the moment
-   the new version is compiled only if an appropriate flag is 
+   the new version is compiled only if an appropriate flag is
    selected in cmake.
-   
+
 2008-12-11 Lorenzo Natale <nat@liralab.it>
    * src/libYARP_OS/src/Terminator.cpp
    * src/libYARP_OS/include/yarp/os/Terminator.h
@@ -3383,7 +3387,7 @@
 
 2008-12-10 Lorenzo Natale <nat@liralab.it>
    * conf/YarpDevice.cmake, conf/YarpModuleHooks.cmake:
-   fixed Debug/Release problems when building external modules library, 
+   fixed Debug/Release problems when building external modules library,
    changes commented in code.
 
 2008-12-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3393,7 +3397,7 @@
 
 2008-11-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/include/yarp/os/PortReaderBuffer.h: add 
+   * src/libYARP_OS/include/yarp/os/PortReaderBuffer.h: add
    disableCallback method ([thanks Andreu Corominas Murtra] for
    the suggestion)
 
@@ -3442,7 +3446,7 @@
    functions (they just map onto ACE's implementation).
 
    * src/libYARP_OS/src/Thread.cpp: fix for bug
-   2168847 ("Thread::onStop() problem").  
+   2168847 ("Thread::onStop() problem").
    [Thanks Alexandre Bernardino] for reporting this.
 
 2008-10-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3510,7 +3514,7 @@
 
 2008-09-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/src/ResourceFinder.cpp: if "--context" is 
+   * src/libYARP_OS/src/ResourceFinder.cpp: if "--context" is
    specified on command line, it should take priority over other
    search paths.
 
@@ -3521,7 +3525,7 @@
 
 2008-09-02 Lorenzo Natale <nat@liralab.it>
    * src/libYARP_os/src/Run.cpp:
-   added --verbose method, removed debug messages and a 
+   added --verbose method, removed debug messages and a
    bunch of carriage returns. Old, unused, run code moved
    to Run.bak
 
@@ -3538,7 +3542,7 @@
    * src/libYARP_dev/src/TestFrameGrabber.cpp: add [rand] mode
    ([thanks Alessandro Scalzo] for patch)
 
-   * src/libYARP_OS/harness/DgramTwoWayStreamTest.cpp: testing 
+   * src/libYARP_OS/harness/DgramTwoWayStreamTest.cpp: testing
    the detection of corrupted datagrams.
 
 2008-08-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3568,7 +3572,7 @@
    * src/libYARP_OS/include/yarp/Companion.h: add hook for
    "yarp resource" command
 
-   * src/libYARP_OS/src/ResourceFinder.cpp: improve search for 
+   * src/libYARP_OS/src/ResourceFinder.cpp: improve search for
    policy file
 
    * src/libYARP_OS/include/yarp/os/ResourceFinder.h: some changes
@@ -3582,7 +3586,7 @@
    * src/libYARP_OS/include/yarp/os/all.h: added RateThread.h
 
 2008-07-28  Lorenzo Natale <nat@liralab.it>
-   * src/yarp/libYARP_dev/include/yarp/dev/DataSource.h: 
+   * src/yarp/libYARP_dev/include/yarp/dev/DataSource.h:
    removed IPreciselyTimed interface
    * src/yarp/libYARP_dev/include/yarp/dev/PreciselyTimed.h:
    added IPreciselyTimedInterface
@@ -3593,7 +3597,7 @@
 2008-07-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/Companion.cpp: "yarp exists" now works
-   also with two arguments.  With two arguments, it tests if 
+   also with two arguments.  With two arguments, it tests if
    a connection exists between the two ports.  With one argument,
    it does as always (checks if port exists)
 
@@ -3602,12 +3606,12 @@
 
 2008-07-28  Giacomo Spigler  <spiglerg@gmail.com>
 
-   * src/modules/cuda/*: Now CUDA driver requires two variables to 
+   * src/modules/cuda/*: Now CUDA driver requires two variables to
    be set with ccmake:
    -CUDA_NUMTHREADS: the number of threads per block to be run on the GPU
    -CUDA_NUMTHREADBLOCKS: the number of thread blocks to be run on the GPU
-   With this new format the driver can be tuned for better performance on 
-   every CUDA compatible GPU 
+   With this new format the driver can be tuned for better performance on
+   every CUDA compatible GPU
    [http://www.nvidia.com/object/cuda_learn_products.html].
 
 2008-07-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3618,7 +3622,7 @@
    control write access to this cache.
 
    * src/libYARP_OS/include/yarp/os/PortWriter.h: added onCommencement
-   method that is called just before an object is sent from a 
+   method that is called just before an object is sent from a
    Port to its zero, one, or several recipients.  This is a useful
    hook for finalizing the representation of the object, since its
    user has passed control of it to YARP and we know they will
@@ -3660,13 +3664,13 @@
 2008-07-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/Property.cpp: when reading config
-   files, accept a final line without a linefeed/newline at 
+   files, accept a final line without a linefeed/newline at
    the end of it (previously such lines were ignored)
 
 2008-07-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * example/swig/yarp.i, example/swig/CMakeLists.txt, 
-   example/swig/compat.h, example/swig/example.lisp: patch 
+   * example/swig/yarp.i, example/swig/CMakeLists.txt,
+   example/swig/compat.h, example/swig/example.lisp: patch
    [thanks Lorenz Mosenlechner] for Allegro Lisp bindings.
 
 2008-07-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3694,7 +3698,7 @@
 
 2008-07-02  Giacomo Spigler  <spiglerg@gmail.com>
 
-   * src/modules/cuda/CUDADeviceDriver.cpp: Little modification to 
+   * src/modules/cuda/CUDADeviceDriver.cpp: Little modification to
    add CUDA 2.0 (beta) compatibility.
 
 2008-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3709,10 +3713,10 @@
    * src/libYARP_OS/src/ResourceFinder.cpp: basic implementation
    of policy for finding configuration files.
 
-   * src/libYARP_OS/include/yarp/os/ResourceFinder.h: stub for 
+   * src/libYARP_OS/include/yarp/os/ResourceFinder.h: stub for
    tool for helping find configuration files.
 
-   * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h: 
+   * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h:
    adding missing copyright/license statement.
 
 2008-06-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3724,7 +3728,7 @@
    PixelMono16 to all other pixel types, for efficient image
    copies.
 
-   * src/libYARP_sig/src/Image.cpp: apply patch 
+   * src/libYARP_sig/src/Image.cpp: apply patch
    [thanks Stefan Freyr Stefansson] for PixelMono16 type
 
    * src/libYARP_sig/include/yarp/sig/Image.h: apply patch from
@@ -3737,15 +3741,15 @@
    NetUint32 respectively.  On little-endian systems these map
    to native types instead.
 
-   * conf/YarpReqLib.cmake: get CMake to check for size of 16-bit 
+   * conf/YarpReqLib.cmake: get CMake to check for size of 16-bit
    integers (needed for portable PixelMono16 type for images).
 
 2008-06-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * conf/DEVICEConfig.cmake.in: deal better with debug-mode library 
+   * conf/DEVICEConfig.cmake.in: deal better with debug-mode library
    dependencies for module libraries.
 
-   * src/libYARP_sig/src/Image.cpp: make default IPL type for unknown 
+   * src/libYARP_sig/src/Image.cpp: make default IPL type for unknown
    16-bit types be unsigned - more likely.
 
 2008-06-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3810,7 +3814,7 @@
 
    RemoteControlBoard::getEncoders is now non blocking. This prevents
    clients from getting stuck when server dies.
-   
+
 2008-05-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_dev/src/TestFrameGrabber.cpp: added new [grid]
@@ -3820,8 +3824,8 @@
    version of Lorenzo's port latency test.
 
 2008-05-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
-   
-   * conf/Doxyfile.part: update list of directories searched 
+
+   * conf/Doxyfile.part: update list of directories searched
    (math library wasn't included).
 
 2008-05-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3835,7 +3839,7 @@
 
    * src/libYARP_dev/include/yarp/dev/PolyDriver.h: added private
    copy constructor / assignment operators to catch accidental
-   copies.  PolyDriver objects cannot be copied. 
+   copies.  PolyDriver objects cannot be copied.
    Closes bug 1968253.
 
 2008-05-19  Lorenzo Natale <nat@liralab.it>
@@ -3843,7 +3847,7 @@
    time.
 
 2008-05-16  Lorenzo Natale <nat@liralab.it>
-   * src/libYARP_dev/src/RemoteControlBoard.cpp: added timestamps to 
+   * src/libYARP_dev/src/RemoteControlBoard.cpp: added timestamps to
    state:o port
 
 2008-05-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -3854,7 +3858,7 @@
    * src/libYARP_OS/include/yarp/os/BufferedPort.h: expose
    new acquire/release methods in normal user interface.
 
-   * src/libYARP_OS/include/yarp/os/PortReaderBuffer.h: add 
+   * src/libYARP_OS/include/yarp/os/PortReaderBuffer.h: add
    acquire/release methods to allow user to hold onto objects
    read for as long as they want.
 
@@ -3862,7 +3866,7 @@
    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h:
    * src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
    ImplementPidControlRaw,
-   ImplementEncodersRaw, 
+   ImplementEncodersRaw,
    ImplementPositionControlRaw,
    renamed to:
    StubImplPidControlRaw,
@@ -3877,8 +3881,8 @@
 
 2008-04-18  Lorenzo Natale  <nat@liralab.it>
    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h:
-   ImplementPidControlRaw, 
-   ImplementEncodersRaw, 
+   ImplementPidControlRaw,
+   ImplementEncodersRaw,
    ImplementPositionControlRaw,
    cointaining default implementation for respective interfaces.
 
@@ -3900,7 +3904,7 @@
    * src/modules/ffmpeg/FfmpegGrabber.cpp: update code to work with
    factored libavdevice library in current ffmpeg.
 
-   * src/modules/CMakeLists.txt: better diagnostics when there are 
+   * src/modules/CMakeLists.txt: better diagnostics when there are
    problems in ExternalModules.cmake
 
 2008-04-11 Lorenzo Natale <nat@liralab.it>
@@ -3914,10 +3918,10 @@
 
    * conf/YarpVersion.cmake: froze version 2.2.0
 
-   * scripts/make-source-package: update filters after 
+   * scripts/make-source-package: update filters after
    change in device directories
 
-   * conf/FindAce.cmake: prioritize paths relative to ACE_ROOT 
+   * conf/FindAce.cmake: prioritize paths relative to ACE_ROOT
    environmental variable, if present -- [thanks Andrew Dankers]
    for the report.
 
@@ -3982,7 +3986,7 @@
    * src/libYARP_OS/include/yarp/os/Bottle.h: added method
    * src/libYARP_OS/include/yarp/BottleImpl.h: added method
    * src/libYARP_OS/harness/BottleTest.cpp: added test
-   Added pop method to Bottle and BottleImpl for stack 
+   Added pop method to Bottle and BottleImpl for stack
    functionality.
 
 2008-03-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4023,7 +4027,7 @@
    * src/yarp/libYARP_OS/src/ShmemInputStream.cpp : added
    * src/yarp/libYARP_OS/src/ShmemOutputStream.cpp : added
    * src/yarp/libYARP_OS/src/ShmemHybridStream.cpp : modified
-   New version, based on ACE Process Semaphores. Faster. 
+   New version, based on ACE Process Semaphores. Faster.
 
 2008-03-13  Lorenzo Natale <nat@liralab.it>
 
@@ -4094,7 +4098,7 @@
 2008-02-26  Lorenzo Natale <nat@liralab.it>
    * conf/FindGtkPlus.cmake: fixed an apparent bug which caused cmake
    to pass $GTKPLUS_LIBRARY_DIR as a paramter to the linker.
-   
+
 2008-02-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/DEVICEConfig.cmake.in: remove unnecessary line that was
@@ -4123,13 +4127,13 @@
    * conf/FindAce.cmake: fix broken case where ace library not found
    on windows.
 
-   * src/libYARP_dev/src/opencv_grabber/default/yarp/OpenCVGrabber.cpp: 
+   * src/libYARP_dev/src/opencv_grabber/default/yarp/OpenCVGrabber.cpp:
    applied patch [thanks Stefan Freyr Stefansson] to use camera index
    if one is specified.
 
 2008-02-03  Giacomo Spigler  <spiglerg@gmail.com>
 
-   * src/modules/CUDA-nvidia: added support to the newly added BGRA 
+   * src/modules/CUDA-nvidia: added support to the newly added BGRA
    pixel type.
 
 2008-02-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4161,7 +4165,7 @@
 2008-01-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/YarpCompileModules.cmake: change defaults in new method
-   of device compilation to be as much like the old ones as 
+   of device compilation to be as much like the old ones as
    possible.
 
 2008-01-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4188,12 +4192,12 @@
 
 2007-12-19  Lorenzo Natale <nat@liralab.it>
    * src/libYARP_dev/src/RemoteControlBoard.cpp:
-   * src/libYARP_dev/include/ControlBoardInterfaces.h: added 
+   * src/libYARP_dev/include/ControlBoardInterfaces.h: added
    remotization of calibration methods.
 
-   * src/modules/FakeBot.h: added fake calibration methods for 
+   * src/modules/FakeBot.h: added fake calibration methods for
    testing
-   * example/motorcontrol: test program for remote motorcontrol 
+   * example/motorcontrol: test program for remote motorcontrol
    devices (e.g. fakebot), useful for debugging/testing.
 
 2007-12-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4220,7 +4224,7 @@
 
    * src/libYARP_dev/src/ControlBoardInterfacesImpl.inl: moved
    this file to ../include/yarp/dev, since it is needed by users
-   of ControlBoardInterfacesImpl.h.  A redirecting file was left 
+   of ControlBoardInterfacesImpl.h.  A redirecting file was left
    at this location.
 
 2007-12-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4237,7 +4241,7 @@
 
 2007-12-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_sig/src/Image.cpp (_alloc_data): implement 
+   * src/libYARP_sig/src/Image.cpp (_alloc_data): implement
    inversion of row access for bottom-left origin
 
 2007-12-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4252,7 +4256,7 @@
    can do, via the wxsdl module.
 
    * src/modules/wxsdl/WxsdlWriter.cpp: replicate all the documented
-   flags of the GTK+ viewer: name, width, height, x, y, and out (port 
+   flags of the GTK+ viewer: name, width, height, x, y, and out (port
    for clicks)
 
 2007-12-02  Giacomo Spigler  <spiglerg@gmail.com>
@@ -4284,7 +4288,7 @@
 
 2007-11-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/modules/wxsdl/WxsdlWriter.h: stub for alternate wxwidgets+sdl 
+   * src/modules/wxsdl/WxsdlWriter.h: stub for alternate wxwidgets+sdl
    image viewer.
 
    * src/yarpdev/yarpview.cpp: stub for a device-based version of the
@@ -4300,11 +4304,11 @@
 2007-11-24  Giacomo Spigler <spiglerg@gmail.com>
 
    * src/modules/cuda/*:
-   * src/libYARP_dev/include/yarp/dev/GPUInterface.h:      
+   * src/libYARP_dev/include/yarp/dev/GPUInterface.h:
    * example/cuda: Added a new GPU device driver, using CUDA, the
    latest NVIDIA library for gpgpu. NOTE: it currently has a few
    limitations, and it can only run on the very latest NVIDIA
-   GPUs. It can transform (NVIDIA GeForce 8800GTS) to bw a 320x240 
+   GPUs. It can transform (NVIDIA GeForce 8800GTS) to bw a 320x240
    image taking just 0.36ms!
 
 2007-11-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4316,8 +4320,8 @@
 
 2007-11-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/include/yarp/os/NetInt32.h, conf/YarpReqLib.cmake: 
-   finally made CMake responsible for figuring out appropriate integer 
+   * src/libYARP_OS/include/yarp/os/NetInt32.h, conf/YarpReqLib.cmake:
+   finally made CMake responsible for figuring out appropriate integer
    type. Older guesses now only used when not compiling with CMake.
 
 2007-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4343,13 +4347,13 @@
    status changes.
 
    * src/libYARP_OS/include/yarp/os/Network.h: Added simpler
-   code interface for setting/getting port properties.  
-   The name server was updated for this, as part of the 
+   code interface for setting/getting port properties.
+   The name server was updated for this, as part of the
    conversion to the fully bottle-compatible interface.
 
 2007-11-05  Arjan Gijsberts  <arjan@liralab.it>
 
-   * src/libYARP_dev/src/ffmpeg/default/yarp/FfmpegGrabber.cpp: 
+   * src/libYARP_dev/src/ffmpeg/default/yarp/FfmpegGrabber.cpp:
    added support for Video4Linux2, using a --v4l2 flag.
 
 2007-10-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4370,7 +4374,7 @@
    * src/libYARP_OS/include/yarp/TcpCarrier.h: dust off TCP carrier
    variant without flow control, call it "fast_tcp".
 
-   * src/libYARP_OS/src/Carriers.cpp: add "fast_tcp" as a known 
+   * src/libYARP_OS/src/Carriers.cpp: add "fast_tcp" as a known
    carrier.
 
 2007-10-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4385,7 +4389,7 @@
    useful for monitoring RPC command/reply sequences.  Streaming
    messages can of course already be monitored with "yarp read".
    This is experimental rather than polished work.
-   
+
 2007-10-15 Alessandro Scalzo <alessandro@liralab.it>
 
    * src/libYARP_OS/src/NameServer.cpp: Added --noauto option: if
@@ -4411,10 +4415,10 @@
 
    Removed as previously planned. They will be placed in separate
    repositories. Could not redistribute them for violation of copyright.
-   
+
 2007-10-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/yarpfs/yarpfs.cpp: directory structure basically in 
+   * src/yarpfs/yarpfs.cpp: directory structure basically in
    place, and read/write operations work.
 
 2007-10-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4447,7 +4451,7 @@
    * conf/YarpVersion.cmake: froze YARP version 2.1.7
 
    * conf/YarpLibrary.cmake: insert SONAME versioning for shared
-   libraries; this is provisional.  ABI stability will need some 
+   libraries; this is provisional.  ABI stability will need some
    planning.
 
    * src/libYARP_OS/include/yarp/os/BinPortable.h: automatic text
@@ -4494,7 +4498,7 @@
 
 2007-08-14  Giacomo Spigler  <spiglerg@gmail.com>
 
-   * src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: Added the capability of 
+   * src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: Added the capability of
    setting non-vector arguments in an easier way
    * src/libYARP_dev/include/yarp/dev/GPUInterface.h: same as above
    * example/nvidia/progs/: added a new example program, FP-resize.
@@ -4508,9 +4512,9 @@
 
 2007-08-12  Giacomo Spigler  <spiglerg@gmail.com>
 
-   * src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: these 2 files 
-   needed a little fix to allow the usage of textures containing 
-   float, int, .. values. Before this fix only 0-255 values where 
+   * src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: these 2 files
+   needed a little fix to allow the usage of textures containing
+   float, int, .. values. Before this fix only 0-255 values where
    accepted.
    * src/libYARP_dev/include/yarp/dev/GPUInterface.h: this file was
    modified to introduce the new feature.
@@ -4534,33 +4538,33 @@
    to better control multicast routing when multiple interfaces
    are present; standard network selection commands like:
      yarp connect /port/1 mcast://net=10.0.0/port/2
-   now do exactly what you would expect (route multicast 
-   packets on the path from source port /port/1 to destination 
-   port /port/2 through interfaces associated with IP addresses 
+   now do exactly what you would expect (route multicast
+   packets on the path from source port /port/1 to destination
+   port /port/2 through interfaces associated with IP addresses
    beginning with 10.0.0.
-   
 
-2007-08-02  Alex Bernardino, Carlos Beltran  <alex@isr.ist.utl.pt>, <cbeltran@dist.unige.it> 
+
+2007-08-02  Alex Bernardino, Carlos Beltran  <alex@isr.ist.utl.pt>, <cbeltran@dist.unige.it>
 
    * src/libYARP_dev/src/serial
-   Driver for Serial communications 
-   This driver creates an OS independent serial communications 
-   driver for YARP. We exploit the capacity of ACE (Adaptive 
-   Communications Environment) to provide serial communications. 
-   
+   Driver for Serial communications
+   This driver creates an OS independent serial communications
+   driver for YARP. We exploit the capacity of ACE (Adaptive
+   Communications Environment) to provide serial communications.
+
    * src\libYARP_dev\include\yarp\dev\ServerSerial.h.
-   The companion network wrapper that provides a "yarpdev" server 
+   The companion network wrapper that provides a "yarpdev" server
    for the driver.
    Invocation example:
    >> yarpdev --device serialport --comport COM4 --file serial.ini
-   The server opens two ports (defaults /serial/in and /serial/out) 
-   that receive and send Bottles to the clients, containing the 
-   characters to send/receive to/from the serial link. To test the 
-   driver, you may use a rs232 9-pin plug with pins 2 and 3 
-   shortcutted (rx/tx) then send strings to the input port 
-   using yarp write and attach a yarp read to the output port. 
-   The sent strings should appear unchanged at the yarp read terminal 
-   (except for being broken or having extra control characters from 
+   The server opens two ports (defaults /serial/in and /serial/out)
+   that receive and send Bottles to the clients, containing the
+   characters to send/receive to/from the serial link. To test the
+   driver, you may use a rs232 9-pin plug with pins 2 and 3
+   shortcutted (rx/tx) then send strings to the input port
+   using yarp write and attach a yarp read to the output port.
+   The sent strings should appear unchanged at the yarp read terminal
+   (except for being broken or having extra control characters from
    the bottle format).
 
 2007-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4569,17 +4573,17 @@
 
    * src/libYARP_OS/src/NameConfig.cpp: removed "/conf" added
    automatically to directory supplied by YARP_CONF.  Users
-   of the optional environment variable YARP_CONF seem to prefer 
+   of the optional environment variable YARP_CONF seem to prefer
    this.
 
-        If YARP_CONF is set, YARP tries to read the following 
+        If YARP_CONF is set, YARP tries to read the following
    configuration file:
           ${YARP_CONF}/yarp.conf
         rather than (as was the case previously)
           ${YARP_CONF}/conf/yarp.conf
-   
+
    * src/libYARP_OS/src/Network.cpp: make Network::sync
-   behave exactly like "yarp wait /portname" from the 
+   behave exactly like "yarp wait /portname" from the
    command line
 
    * src/libYARP_OS/src/Companion.cpp: propagated a more
@@ -4607,14 +4611,14 @@
       [terminal 2] yarp namespace /space2
       [terminal 2] yarp server 20000
    The 20000 in the second server is the start of the range of
-   socket port numbers that server manages.  If you plan to 
-   simultaneously use multiple nameservers they need to own 
+   socket port numbers that server manages.  If you plan to
+   simultaneously use multiple nameservers they need to own
    different socket port ranges.
    After the above, names are registered and queried from /space2
    until you type
       [terminal 3] yarp namespace /space1
    at which point they switch to the first namespace.
-   
+
 2007-07-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/DgramTwoWayStream.cpp: added environment
@@ -4623,7 +4627,7 @@
    to the maximum number of bytes you want per packet.  This
    does not affect the size of messages that yarp can send,
    just the maximum size of individual packets within that message.
-   
+
    If you wish to control UDP and MCAST packet sizes independently,
    set either/both of:
      YARP_UDP_SIZE
@@ -4640,7 +4644,7 @@
 
 2007-07-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/include/yarp/McastCarrier.h: disable recent 
+   * src/libYARP_OS/include/yarp/McastCarrier.h: disable recent
    changes to mcast, problems reported in the field.
 
    * src/libYARP_OS/src/Companion.cpp: more information when
@@ -4653,14 +4657,14 @@
    * src/yarp/libYARP_OS/include/yarp.McastCarrier.h,
      src/yarp/libYARP_OS/include/yarp.DgramTwoWayStream.h,
      src/yarp/libYARP_OS/include/yarp.DgramTwoWayStream.cpp:
-   By default restrict multicast operation to specific network 
+   By default restrict multicast operation to specific network
    interfaces.  A connection like:
      yarp connect /port/1 /net=10.0.0/port/2 mcast
    will establish a multicast connection between ports
    /port/1 and /port/2, with network interfaces chosen
-   to prefer IP address prefixes of 10.0.0.  
-   
-   * src/yarp/libYARP_OS/src/Module.cpp, 
+   to prefer IP address prefixes of 10.0.0.
+
+   * src/yarp/libYARP_OS/src/Module.cpp,
      src/yarp/libYARP_dev/src/Drivers.cpp:
    Added SIGTERM handler, equal to SIGINT, for modules and drivers.
 
@@ -4677,8 +4681,8 @@
    * src/yarp/libYARP_OS/include/yarp/os/Run.h
    * src/yarp/libYARP_OS/src/Run.cpp
    New version, supports run & kill commands,
-   .sh and .bat scripts, redirect stdin and 
-   stdout to yarp ports. 
+   .sh and .bat scripts, redirect stdin and
+   stdout to yarp ports.
 
 2007-07-06  Alessandro Scalzo <alessandro@liralab.it>
    * src/yarp/libYARP_OS/include/yarp/os/Run.h
@@ -4686,17 +4690,17 @@
    New version, supports run & kill processes
    on both unix and win32. Does not support
    IO (by now).
-   
+
 2007-06-27  Jonas Ruesch  <ruesch@ifi.uzh.ch>
 
    * example/swig/yarp.i:
     support for ImageOf<PixelFloat> added.
     * example/swig/src/YarpImageHelper.java
-    method get2DMatrix(ImageFloat img) added. 
+    method get2DMatrix(ImageFloat img) added.
 
 2007-06-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/CmakeLists.txt, conf/YarpReqLib.cmake, src/yarp-framegrabbergui: 
+   * src/CmakeLists.txt, conf/YarpReqLib.cmake, src/yarp-framegrabbergui:
    removed GtkMM dependency
 
 2007-07-04  Lorenzo Natale <nat@liralab.it>
@@ -4734,7 +4738,7 @@
    connect using the new shmem implementation from today.
 
 2007-05-29  Alessandro Scalzo <ale@liralab.it>
-   * src/libYARP_OS/include/yarp/ShmemHybridStream.h, 
+   * src/libYARP_OS/include/yarp/ShmemHybridStream.h,
    src/libYARP_OS/src/ShmemHybridStream.cpp: added a new
    two way communication stream based on shared memory.
    Synchronization obtained by socket. It has the same
@@ -4763,19 +4767,19 @@
 
 2007-05-21  Lorenzo Natale  <nat@liralab.it>
 
-   * conf/YarpAddExternalModules: multiple devices 
-   can now be listed in each device directory, 
+   * conf/YarpAddExternalModules: multiple devices
+   can now be listed in each device directory,
    module name gets propagated to cmake flag variable
    to avoid clashes.
 
 2007-05-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/include/yarp/ShmemCarrier.h, 
+   * src/libYARP_OS/include/yarp/ShmemCarrier.h,
    src/libYARP_OS/include/src/Carriers.cpp: told YARP about
    ale's new carrier, called it "shmem2" for testing purposes.
 
 2007-05-21  Alessandro Scalzo <ale@liralab.it>
-   * src/libYARP_OS/include/yarp/ShmemHybridStream.h, 
+   * src/libYARP_OS/include/yarp/ShmemHybridStream.h,
    src/libYARP_OS/src/ShmemHybridStream.cpp: added a new
    two way communication stream based on shared memory.
    Synchronization obtained by socket. It has the same
@@ -4802,9 +4806,9 @@
 
 2007-05-14  Lorenzo Natale  <nat@liralab.it>
 
-   * src/libYARP_dev/src/esdMotionControl: 
+   * src/libYARP_dev/src/esdMotionControl:
    * src/libYARP_dev/src/James:
-   * src/libYARP_dev/src/XSensMTx: 
+   * src/libYARP_dev/src/XSensMTx:
    * src/libYARP_dev/src/inertiacube2:
    code removed. It is now placed in platform specific modules.
 
@@ -4812,14 +4816,14 @@
 
    * src/libYARP_dev/CMakeLists.txt: use TARGET_LINK_LIBRARIES
    instead of LINK_LIBRARIES so that external dependencies
-   propagate correctly to any other subprojects using the device 
+   propagate correctly to any other subprojects using the device
    library (src/yarp-framegrabbergui seems to currently need this).
 
    * src/libYARP_OS/src/ThreadImpl.cpp: bugfix - join was no
-   longer being called in some situations due to changes made 
+   longer being called in some situations due to changes made
    for bug #1695724. This gave a memory leak, first noticed
    in the yarp name server.
-   
+
 2007-04-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/harness/ModuleTest.cpp: fix for the usual mac +
@@ -4856,13 +4860,13 @@
    ./scripts/update-license
 
    * src/libYARP_OS/src/ShmemTwoWayStream.cpp: added message
-   about occasional bad shared memory / hostname configuration 
+   about occasional bad shared memory / hostname configuration
    interaction problem.  If a shared memory connection fails, the
    following message is shown:
           *** Shared memory connection failed
-          Shared memory connections can fail due to a network configuration 
-     problem.  There is a check to make sure shared memory connections 
-     are local, and this check relies on your hostname being configured 
+          Shared memory connections can fail due to a network configuration
+     problem.  There is a check to make sure shared memory connections
+     are local, and this check relies on your hostname being configured
      well. Possible fixes:
      - On linux, edit /etc/hosts to link 127.0.0.1 with your hostname
           - (you can find out your hostname with the "hostname" command)
@@ -4879,11 +4883,11 @@
    that don't get translated well due to use of pointers.
    Motor control from Matlab is now working on fakebot at least :-).
 
-   * src/libYARP_OS/include/yarp/BottleImpl.h: applied patch 
-   [thanks Tomassino Ferrauto] to make copies a little bit less 
+   * src/libYARP_OS/include/yarp/BottleImpl.h: applied patch
+   [thanks Tomassino Ferrauto] to make copies a little bit less
    inefficient.
 
-   * src/libYARP_dev/src/ControlBoardInterfacesImpl.inl: propagated 
+   * src/libYARP_dev/src/ControlBoardInterfacesImpl.inl: propagated
    return values for a bunch of methods.
 
 2007-03-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4919,25 +4923,25 @@
 
 2007-03-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * conf/FindGSL.cmake: added minimal linux functionality, 
+   * conf/FindGSL.cmake: added minimal linux functionality,
    corrected some (probably copy/paste?) references to OpenCV.
 
 2007-03-23  Lorenzo Natale  <nat@liralab.it>
 
-   * src/libYARP_sig: moved Rand.h, Rand.cpp to libYARP_math. 
-   Moved all Vector/Matrix related functions that were previously 
+   * src/libYARP_sig: moved Rand.h, Rand.cpp to libYARP_math.
+   Moved all Vector/Matrix related functions that were previously
    in libYARP_sig to libYARP_math.
 
 2007-03-22  Lorenzo Natale  <nat@liralab.it>
 
    * src/libYARP_math: added directory structure and some initial
    files for for libYARP_math. Changed cmake files accordingly..
-   For now the default is that CMake does not include the library 
+   For now the default is that CMake does not include the library
    in the main project.
 
 2007-03-21  Lorenzo Natale  <nat@liralab.it>
 
-   * src/libYARP_sig/src/Rand.cpp: random generation (scalar and 
+   * src/libYARP_sig/src/Rand.cpp: random generation (scalar and
    vectors)
 
 2007-03-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -4961,16 +4965,16 @@
    * src/libYARP_OS/src/DgramTwoWayStream.cpp: crc mistreated
    in 64-bit linux.  Follow-up on sourceforge bug 1682155.
 
-   * src/libYARP_sig/src/IplImage.cpp: applied 
+   * src/libYARP_sig/src/IplImage.cpp: applied
    fix for compile error in 64-bit linux [sourceforge bug 1682155].
    For bug report and fix, [thanks Marco Barbosa]
 
 2007-03-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/Network.cpp: added constructors and destructors.
-   On Windows, there was a potental problem when Ports are created 
+   On Windows, there was a potental problem when Ports are created
    in the main() method, and destroyed after the call to Network::fini()
-   without first closing the ports.  The symptom is Yarp scanning for 
+   without first closing the ports.  The symptom is Yarp scanning for
    a connection to the name server on shutdown.
    This problem can be avoided by creating ports in a sub-method
    or sub-scope.
@@ -4980,7 +4984,7 @@
         Make sure this object is declared before any ports.  That way
    it should go out of scope after them.  It calls Network::init
    in its constructor and Network::fini in its destructor.
-   This scoping behavior may or may not be guaranteed, I haven't 
+   This scoping behavior may or may not be guaranteed, I haven't
    checked that yet.
 
    * src/libYARP_OS: added IConfig and Module classes; these are
@@ -4991,7 +4995,7 @@
 
    * example/gsl_example: contains examples of how to use GSL with
    yarp Matrix and Vector classes.
-        
+
    * example/matrix: contains examples of how to use Matrix and
    Vector classes.
 
@@ -5003,7 +5007,7 @@
 2007-03-07 Lorenzo Natale <nat@liralab.it>
 
    * src/libYARPsig: added Matrix and Vector classes
-   
+
 2007-03-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/FindGtkPlus.cmake: Make sure pkg-config is loaded on
@@ -5011,18 +5015,18 @@
 
 2007-02-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/src/NameServer.cpp: Name server port now 
+   * src/libYARP_OS/src/NameServer.cpp: Name server port now
    produces output when ports are registered/unregistered, you
    can do "yarp read ... /root" to eavesdrop.
 
 2007-02-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * example/tutorial: This example is a simple simulation of a 
+   * example/tutorial: This example is a simple simulation of a
    pan/tilt robot head, with simulated vision, and motor control.
 
 2007-02-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/yarp-imageviewer/gCamView.cpp: Reduce verbosity of 
+   * src/yarp-imageviewer/gCamView.cpp: Reduce verbosity of
    yarpview program; now it prints messages to the console
    only when things go wrong, now when they are going right.
 
@@ -5062,7 +5066,7 @@
 
    * example/swig/CMakeLists.txt: Conditional for MINGW added
    for Java, based on feedback from Nelson Goncalves.  Not sure
-   if it works, but should do no harm and it alerts the user to 
+   if it works, but should do no harm and it alerts the user to
    the issue: passing "--add-stdcall-alias" to the linker.
    [Thanks Nelson Goncalves]
 
@@ -5092,12 +5096,12 @@
    reference-counting to PolyDrivers.
 
    * src/libYARP_dev/CMakeLists.txt: add unit testing
-   to libYARP_dev - now that fake devices are available, 
+   to libYARP_dev - now that fake devices are available,
    at least partial automated testing should be easier.
 
 2007-02-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/doc/port_expert.dox: started documenting some of the 
+   * src/doc/port_expert.dox: started documenting some of the
    deeper port stuff.
 
    * CMakeLists.txt: added simple (unix-only) "dox" target for
@@ -5106,7 +5110,7 @@
 2007-02-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/PortCoreInputUnit.cpp,PortCoreOutputUnit.cpp:
-   Francesco Nori reported a problem that was caused by the 
+   Francesco Nori reported a problem that was caused by the
    change on 2007-01-26 that adds information about whether replies
    are expected to a message.  In some configurations this change
    was not compatible with communicating with older YARP processes.
@@ -5122,10 +5126,10 @@
    * src/libYARP_dev/src/dragonfly/winnt/yarp/DragonflyDeviceDriver.cpp:
    corrected erratic behavior on setGain/setShutter/setBrightness and
    corresponding getters.
-   
-   * src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h: 
+
+   * src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h:
    added getWhiteBalanceMethod to IFrameGrabberControl and changes
-   propagated to the following files -     
+   propagated to the following files -
    - src/libYARP_dev/include/yarp/dev/ServerFrameGrabber.h
    - src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h
    - src/libYARP_dev/src/dragonfly/winnt/yarp/DragonflyDeviceDriver.cpp
@@ -5135,7 +5139,7 @@
 
    * src/libYARP_OS/include/yarp/Makefile.am: ran
    ./scripts/update-automake to freshen files needed for
-   the "autoconf/automake" method of compiling YARP.  
+   the "autoconf/automake" method of compiling YARP.
    This still just builds the libYARP_OS and libYARP_sig
    libraries.
 
@@ -5219,7 +5223,7 @@
 2007-01-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * src/libYARP_OS/src/PortCoreInputUnit.cpp: Made connections
-   reversible, so that an input connection can switch to 
+   reversible, so that an input connection can switch to
    become an output connection.  This is helpful for communication
    with non-YARP processes, where a connection to read data is
    initiated externally.
@@ -5228,7 +5232,7 @@
 
 2007-01-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/include/yarp/HttpCarrier.h: Made basic port 
+   * src/libYARP_OS/include/yarp/HttpCarrier.h: Made basic port
    properties visible to http connections (e.g. from web browser)
 
    * src/libYARP_OS/include/yarp/NameserCarrier.h: Made name server
@@ -5241,17 +5245,17 @@
 
 2007-01-11  Alexandre Bernardino  <alex@isr.ist.utl.pt>
 
-   * src/libYARP_dev/src/dragonfly/common/yarp/DragonflyDeviceDriver.h: 
+   * src/libYARP_dev/src/dragonfly/common/yarp/DragonflyDeviceDriver.h:
    Added a new option (--flea) to provide support for pointgray FLEA
    cameras.
-   
-   * src/libYARP_dev/src/dragonfly/winnt/yarp/DragonflyDeviceDriver.cpp: 
-   1. Removed the hardcoded parameter initialization. 
-   2. Added FLEA camera's support through a more general color 
+
+   * src/libYARP_dev/src/dragonfly/winnt/yarp/DragonflyDeviceDriver.cpp:
+   1. Removed the hardcoded parameter initialization.
+   2. Added FLEA camera's support through a more general color
    reconstruction method.
-   
-   * src/libYARP_dev/src/dragonfly/winnt/yarp/COPYRIGHT: 
-   Original copyright for the Bayer2RGB color reconstruction method 
+
+   * src/libYARP_dev/src/dragonfly/winnt/yarp/COPYRIGHT:
+   Original copyright for the Bayer2RGB color reconstruction method
    from OpenCV.
 
 
@@ -5272,7 +5276,7 @@
    * src/libYARP_OS/src/PortCoreInputUnit.cpp: Allowed ports to
    pass on interrupt signal.
 
-   * src/libYARP_dev/src/opencv_grabber: Made driver pay attention 
+   * src/libYARP_dev/src/opencv_grabber: Made driver pay attention
    to width, height.
 
    * src/libYARP_OS/src/ffmpeg: Added FfmpegWriter as basic
@@ -5284,7 +5288,7 @@
    and output connection counts for Ports and BufferedPorts.
 
    * example/external/nameclient.cpp: Added an example of accessing
-   the yarp name client using UNIX-style native tcp socket 
+   the yarp name client using UNIX-style native tcp socket
    interface, rather than ACE+YARP.  This was in response to
    questions from someone evaluating YARP.
 
@@ -5301,14 +5305,14 @@
 
 2006-12-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_OS/src/BottleImpl.cpp: fixed some gaps in 
+   * src/libYARP_OS/src/BottleImpl.cpp: fixed some gaps in
    text-mode quoting for bottles
 
    * src/libYARP_OS/src/Vector.cpp: fixed constructor bug #1601862
 
 2006-12-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * example/swig: Lots of small improvements - hopefully I 
+   * example/swig: Lots of small improvements - hopefully I
    didn't break anything
 
 2006-12-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -5326,12 +5330,12 @@
    * example/swig/FindJNI.cmake: updated by Assif to work on
    Ubuntu.
 
-   * conf/FindPortAudio.cmake: contribution from Hatice to get 
+   * conf/FindPortAudio.cmake: contribution from Hatice to get
    portaudio driver working under Windows
 
 2006-11-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * src/libYARP_dev/src/dimax_u2c: driver contributed by 
+   * src/libYARP_dev/src/dimax_u2c: driver contributed by
    Assif, [thanks Assif Mirza]
 
    * example/dev/fake_motor.cpp,simple_motor_client.cpp: examples
@@ -5343,20 +5347,20 @@
 
    * Several OSX fixes added -- the usual small problems related to
    ace header file order
-   
+
    * src/libYARP_OS/include/yarp/os/NetInt32.h: added operator++ and
    operator-- to big-endian implementation of NetInt32 (for OSX PPC).
-   
-   * automake Makefile.am files updated using scripts/update-automake.  
+
+   * automake Makefile.am files updated using scripts/update-automake.
    This fixed bug #1601656.
-   
+
    * src/libYARP_OS/src/Terminator.cpp: added unregister for
    fake "quit" port, fixing bug #1595763.
-   
-   * conf/YarpDevice.cmake, conf/yarpdev.cpp.in, 
+
+   * conf/YarpDevice.cmake, conf/yarpdev.cpp.in,
    conf/yarpdev_helper.cpp.in: began to develop better support for
    device compilation outside of libYARP_dev.
-   
+
 2006-11-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * conf/YarpVersion.cmake: bumped version up to 2.1.2
@@ -5379,7 +5383,7 @@
    GLOB, thanks [Assif Mirza]
    * src/libYARP_dev/include/yarp/dev/UserDoc.dox: inserted
    some important missing info into the howto.
-   
+
 2006-11-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
    * Device documentation procedure cleaned up a lot
@@ -5415,12 +5419,12 @@
 
 2006-10-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * YARPConfig.cmake fixed so that windows paths with 
+   * YARPConfig.cmake fixed so that windows paths with
    spaces are OK.  Fixes bug 1582945.
 
 2006-10-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * Bugfix - PortReaderBuffer was not always returning 
+   * Bugfix - PortReaderBuffer was not always returning
    messages in the right order, oops!
 
 2006-09-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -5433,7 +5437,7 @@
 
 2006-09-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-   * Fixed bug where non-buffered Port closed with data pending 
+   * Fixed bug where non-buffered Port closed with data pending
    would wait for that to get read
 
    * Fixed ports so you can open and close them repeatedly
