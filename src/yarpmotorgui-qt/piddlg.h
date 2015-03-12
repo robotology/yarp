@@ -1,0 +1,80 @@
+#ifndef PIDDLG_H
+#define PIDDLG_H
+
+#include <QDialog>
+#include <QTableWidgetItem>
+#include <QItemDelegate>
+#include <QModelIndex>
+#include <QLineEdit>
+
+#include <yarp/dev/ControlBoardInterfaces.h>
+
+class TableDelegate;
+class TableDoubleDelegate;
+
+namespace Ui {
+class PidDlg;
+}
+using namespace yarp::dev;
+
+class PidDlg : public QDialog
+{
+    Q_OBJECT
+
+public:
+    explicit PidDlg(QString partname, int jointIndex,QWidget *parent = 0);
+    ~PidDlg();
+
+    void initPosition(Pid myPid);
+    void initTorque(Pid myPid, double bemfGain);
+    void initStiffness(double curStiffVal, double minStiff, double maxStiff,
+                       double curDampVal, double minDamp, double maxDamp,
+                       double curForceVal, double minForce, double maxForce);
+    void initOpenLoop(double openLoopVal, double pwm);
+
+
+signals:
+    void sendStiffness(int,double,double,double);
+    void sendPid(int jointIndex, Pid pid);
+    void sendTorque(int jointIndex,Pid,double bemfGain);
+    void sendOpenLoop(int jointIndex,int openLoopVal);
+
+private:
+    Ui::PidDlg *ui;
+    int jointIndex;
+
+private slots:
+    void onSend();
+    void onCancel();
+
+};
+
+class TableIntDelegate : public QItemDelegate
+{
+public:
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
+                      const QModelIndex & index) const
+    {
+        QLineEdit *lineEdit = new QLineEdit(parent);
+        // Set validator
+        QIntValidator *validator = new QIntValidator(-100000, 100000, lineEdit);
+        lineEdit->setValidator(validator);
+        return lineEdit;
+    }
+};
+
+class TableDoubleDelegate : public QItemDelegate
+{
+public:
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
+                      const QModelIndex & index) const
+    {
+        QLineEdit *lineEdit = new QLineEdit(parent);
+        // Set validator
+        QDoubleValidator *validator = new QDoubleValidator(-100000, 100000, 3,lineEdit);
+        lineEdit->setValidator(validator);
+        return lineEdit;
+    }
+};
+
+#endif // PIDDLG_H

@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/downArrow.png</file>
+        <file>images/goAll.png</file>
+        <file>images/calibrate.png</file>
+        <file>images/cycleAllSequence.png</file>
+        <file>images/cycleAllSequenceTime.png</file>
+        <file>images/home.png</file>
+        <file>images/idle.png</file>
+        <file>images/load.png</file>
+        <file>images/loadAllSequence.png</file>
+        <file>images/openSequence.png</file>
+        <file>images/runSequence.png</file>
+        <file>images/runSequenceTime.png</file>
+        <file>images/saveAllSequence.png</file>
+        <file>images/stop.png</file>
+        <file>images/playParts.png</file>
+        <file>images/save.png</file>
+        <file>images/jointOk.svg</file>
+        <file>images/warning.png</file>
+    </qresource>
+</RCC>
