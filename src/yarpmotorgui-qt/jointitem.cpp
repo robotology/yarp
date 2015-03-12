@@ -1,9 +1,20 @@
+/*
+ * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Francesco Nori <francesco.nori@iit.it>
+ *         Davide Perrone <dperrone@aitek.it>
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ */
+
 #include "jointitem.h"
 #include "ui_jointitem.h"
-#include <QDebug>
-#include <math.h>
+
 #include "log.h"
 #include "yarpmotorgui.h"
+
+#include <cmath>
+
+#include <QDebug>
 
 JointItem::JointItem(int index,QWidget *parent) :
     QWidget(parent),
@@ -1022,5 +1033,3 @@ bool WheelEventFilter::eventFilter(QObject *obj, QEvent *event)
         return QObject::eventFilter(obj, event);
     }
 }
-
-

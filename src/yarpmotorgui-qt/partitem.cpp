@@ -1,3 +1,11 @@
+/*
+ * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Authors: Francesco Nori <francesco.nori@iit.it>
+ *          Davide Perrone <dperrone@aitek.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include "partitem.h"
 #include "log.h"
 
@@ -12,6 +20,8 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttribute>
 #include <QMessageBox>
+
+#include <cmath>
 
 double filt (double& v)
 {
@@ -96,6 +106,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     options.put("carrier", "udp");
     partsdd = new PolyDriver(options);
 
+#ifdef DEBUG_INTERFACE
     if (debug_param_enabled)
     {
         Property debugOptions;
@@ -115,6 +126,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     } else {
         debugdd = NULL;
     }
+#endif
 
     /*********************************************************************/
     /**************** PartMover Content **********************************/
@@ -130,18 +142,20 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 
 
     //default value for unopened interfaces
-    pos		= NULL;
+    pos       = NULL;
     iVel      = NULL;
     iDir      = NULL;
-    iencs		= NULL;
-    amp		= NULL;
-    pid		= NULL;
-    opl		= NULL;
-    trq		= NULL;
-    imp		= NULL;
-    idbg		= NULL;
-    lim		= NULL;
-    cal		= NULL;
+    iencs     = NULL;
+    amp       = NULL;
+    pid       = NULL;
+    opl       = NULL;
+    trq       = NULL;
+    imp       = NULL;
+#ifdef DEBUG_INTERFACE
+    idbg      = NULL;
+#endif
+    lim       = NULL;
+    cal       = NULL;
     ctrlmode2 = NULL;
     iinteract = NULL;
 
@@ -201,12 +215,14 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         LOG_ERROR("...iinteract was not ok.\n");
     }
 
+#ifdef DEBUG_INTERFACE
     //this interface is not mandatory
     if (debugdd){
       ok2 &= debugdd->view(idbg);
       if (!ok2)
         LOG_ERROR("...dbg was not ok.\n");
     }
+#endif
 
     if (!partsdd->isValid()) {
         LOG_ERROR("Device driver was not valid! \n");
@@ -565,6 +581,7 @@ void PartItem::onPidClicked(JointItem *joint)
     opl->getOutput(jointIndex, &openloop_current_pwm);
 
 
+#ifdef DEBUG_INTERFACE
     // Debug
     int debug_base = 0;
     if (idbg != 0){
@@ -579,7 +596,7 @@ void PartItem::onPidClicked(JointItem *joint)
     } else {
         LOG_ERROR("WARN: Debug interface not enabled.\n");
     }
-
+#endif
 
     currentPidDlg->initPosition(myPosPid);
     currentPidDlg->initTorque(myTrqPid,bemfGain);

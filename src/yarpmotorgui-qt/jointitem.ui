@@ -253,7 +253,7 @@ QSlider::groove:horizontal:disabled {
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
-              <widget class="QWidget" name="widget" native="true">
+              <widget class="QWidget" name="widget_1" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <property name="spacing">
                  <number>2</number>
@@ -301,7 +301,7 @@ QSlider::groove:horizontal:disabled {
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget" native="true">
+           <widget class="QWidget" name="widget_2" native="true">
             <layout class="QGridLayout" name="gridLayout">
              <item row="0" column="0">
               <widget class="QLabel" name="label_5">
@@ -413,7 +413,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_12" native="true">
+              <widget class="QWidget" name="widget_3" native="true">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -470,7 +470,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item>
-              <widget class="QWidget" name="widget_13" native="true">
+              <widget class="QWidget" name="widget_4" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_9">
                 <property name="spacing">
                  <number>2</number>
@@ -540,7 +540,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_11" native="true">
+              <widget class="QWidget" name="widget_5" native="true">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -606,7 +606,7 @@ QSlider::groove:horizontal:disabled {
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_10" native="true">
+           <widget class="QWidget" name="widget_6" native="true">
             <layout class="QGridLayout" name="gridLayout_3">
              <property name="leftMargin">
               <number>1</number>
@@ -687,7 +687,7 @@ QSlider::groove:horizontal:disabled {
            </widget>
           </item>
          </layout>
-         <zorder>widget_10</zorder>
+         <zorder>widget_6</zorder>
          <zorder>groupBox_12</zorder>
          <zorder>groupBox_13</zorder>
         </widget>
@@ -730,7 +730,7 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_3" native="true">
+              <widget class="QWidget" name="widget_7" native="true">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -781,7 +781,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item>
-              <widget class="QWidget" name="widget" native="true">
+              <widget class="QWidget" name="widget_8" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_8">
                 <property name="spacing">
                  <number>2</number>
@@ -829,7 +829,7 @@ QSlider::groove:horizontal:disabled {
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget" native="true">
+           <widget class="QWidget" name="widget_9" native="true">
             <layout class="QGridLayout" name="gridLayout_4">
              <item row="0" column="0">
               <widget class="QLabel" name="label_9">
@@ -895,7 +895,7 @@ QSlider::groove:horizontal:disabled {
            </widget>
           </item>
          </layout>
-         <zorder>widget</zorder>
+         <zorder>widget_9</zorder>
          <zorder>groupBox_5</zorder>
         </widget>
         <widget class="QWidget" name="pageMixed">
@@ -943,7 +943,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_5" native="true">
+              <widget class="QWidget" name="widget_10" native="true">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -1000,7 +1000,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item>
-              <widget class="QWidget" name="widget_8" native="true">
+              <widget class="QWidget" name="widget_11" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_2">
                 <property name="spacing">
                  <number>2</number>
@@ -1070,7 +1070,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_4" native="true">
+              <widget class="QWidget" name="widget_12" native="true">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -1136,7 +1136,7 @@ QSlider::groove:horizontal:disabled {
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_9" native="true">
+           <widget class="QWidget" name="widget_13" native="true">
             <layout class="QGridLayout" name="gridLayout_2">
              <property name="leftMargin">
               <number>1</number>
@@ -1326,7 +1326,7 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_2" native="true">
+              <widget class="QWidget" name="widget_15" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_14">
                 <property name="spacing">
                  <number>2</number>
@@ -1374,7 +1374,7 @@ QSlider::groove:horizontal:disabled {
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_15" native="true">
+           <widget class="QWidget" name="widget_16" native="true">
             <layout class="QGridLayout" name="gridLayout_7">
              <item row="0" column="0">
               <widget class="QLabel" name="label_31">
@@ -1480,7 +1480,7 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_6" native="true">
+              <widget class="QWidget" name="widget_17" native="true">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -1552,7 +1552,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget" native="true">
+              <widget class="QWidget" name="widget_18" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_11">
                 <property name="spacing">
                  <number>2</number>
@@ -1600,7 +1600,7 @@ QSlider::groove:horizontal:disabled {
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget" native="true">
+           <widget class="QWidget" name="widget_19" native="true">
             <layout class="QGridLayout" name="gridLayout_5">
              <item row="0" column="0">
               <widget class="QLabel" name="label_19">
@@ -1706,7 +1706,7 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_7" native="true">
+              <widget class="QWidget" name="widget_20" native="true">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -1772,7 +1772,7 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget" native="true">
+              <widget class="QWidget" name="widget_21" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_13">
                 <property name="spacing">
                  <number>2</number>
@@ -1820,7 +1820,7 @@ QSlider::groove:horizontal:disabled {
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget" native="true">
+           <widget class="QWidget" name="widget_22" native="true">
             <layout class="QGridLayout" name="gridLayout_6">
              <item row="0" column="0">
               <widget class="QLabel" name="label_23">

@@ -1,25 +1,38 @@
+/*
+ * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Francesco Nori <francesco.nori@iit.it>
+ *         Davide Perrone <dperrone@aitek.it>
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ */
+
+
 #ifndef PARTITEM_H
 #define PARTITEM_H
 
-#include <QWidget>
 #include "flowlayout.h"
 #include "sequencewindow.h"
 #include "jointitem.h"
 #include "piddlg.h"
-#include <QTimer>
 #include "yarpmotorgui.h"
 
-///////////YARP//////////
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <iCub/DebugInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Stamp.h>
+
+#include <QWidget>
+#include <QTimer>
+
+
+#ifdef DEBUG_INTERFACE
+#include <iCub/DebugInterfaces.h>
+#endif
 
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -97,7 +110,9 @@ private:
     ResourceFinder *finder;
     Property options;
     PolyDriver *partsdd;
+#ifdef DEBUG_INTERFACE
     PolyDriver *debugdd;
+#endif
 
     Port      sequence_port;
     bool interfaceError;
@@ -112,7 +127,9 @@ private:
     IOpenLoopControl *opl;
     ITorqueControl *trq;
     IImpedanceControl *imp;
+#ifdef DEBUG_INTERFACE
     IDebugInterface *idbg;
+#endif
     IControlLimits *lim;
     IControlCalibration2 *cal;
     IControlMode2 *ctrlmode2;

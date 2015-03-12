@@ -1,5 +1,15 @@
+/*
+ * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Francesco Nori <francesco.nori@iit.it>
+ *         Davide Perrone <dperrone@aitek.it>
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ */
+
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include "flowlayout.h"
 #include "jointitem.h"
 #include "partitem.h"
@@ -141,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewSpeedValues->setCheckable(true);
 
 
-    QSettings settings("iCub","QtRobotMotrGui");
+    QSettings settings("YARP","yarpmotorgui");
     bool bViewGlobalToolbar = settings.value("GlobalToolVisible",true).toBool();
     bool bViewPartToolbar = settings.value("PartToolVisible",true).toBool();
     bool bSpeedValues = settings.value("SpeedValuesVisible",false).toBool();
@@ -224,7 +234,7 @@ void MainWindow::onSequenceStopped()
 
 void MainWindow::onViewGlobalToolbar(bool val)
 {
-    QSettings settings("iCub","QtRobotMotrGui");
+    QSettings settings("YARP","yarpmotorgui");
     settings.setValue("GlobalToolVisible",val);
     if(!val){
         globalToolBar->hide();
@@ -236,7 +246,7 @@ void MainWindow::onViewGlobalToolbar(bool val)
 
 void MainWindow::onViewPartToolbar(bool val)
 {
-    QSettings settings("iCub","QtRobotMotrGui");
+    QSettings settings("YARP","yarpmotorgui");
     settings.setValue("PartToolVisible",val);
     if(!val){
         partToolBar->hide();
@@ -247,7 +257,7 @@ void MainWindow::onViewPartToolbar(bool val)
 
 void MainWindow::onViewSpeeds(bool val)
 {
-    QSettings settings("iCub","QtRobotMotrGui");
+    QSettings settings("YARP","yarpmotorgui");
     settings.setValue("SpeedValuesVisible",val);
 
     viewSpeedValues(val);
@@ -343,7 +353,7 @@ void MainWindow::init(QString robotName, QStringList enabledParts,
     ui->mainContainer->layout()->addWidget(tabPanel);
     connect(tabPanel,SIGNAL(currentChanged(int)),this,SLOT(onCurrentPartChanged(int)));
 
-    QSettings settings("iCub","QtRobotMotrGui");
+    QSettings settings("YARP","yarpmotorgui");
     bool speedVisible = settings.value("SpeedValuesVisible",false).toBool();
 
     onViewSpeeds(speedVisible);
