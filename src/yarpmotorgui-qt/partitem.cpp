@@ -1662,17 +1662,13 @@ void PartItem::updateControlMode()
 void PartItem::updatePart()
 {
     char buffer[40] = {'i', 'n', 'i', 't'};
-    char frame_title [255];
-
+    
     double torques[MAX_NUMBER_OF_JOINTS];
     double positions[MAX_NUMBER_OF_JOINTS];
     double speeds[MAX_NUMBER_OF_JOINTS];
 
     //int controlModes[MAX_NUMBER_OF_JOINTS];
-    int controlModesOld[MAX_NUMBER_OF_JOINTS];
     yarp::dev::InteractionModeEnum interactionModes[MAX_NUMBER_OF_JOINTS];
-    yarp::dev::InteractionModeEnum interactionModesOld[MAX_NUMBER_OF_JOINTS];
-
 
     bool done = false;
     bool ret = false;
