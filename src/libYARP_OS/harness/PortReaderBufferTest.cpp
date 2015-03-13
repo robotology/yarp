@@ -158,7 +158,6 @@ public:
             in.useCallback();
             in.disableCallback();
         }
-#if 0
         {
             report(0, "test 3");
             PortReaderBufferTestHelper in;
@@ -170,7 +169,6 @@ public:
             in.useCallback();
             in.close();
         }
-#endif
     }
 
     virtual void runTests() {

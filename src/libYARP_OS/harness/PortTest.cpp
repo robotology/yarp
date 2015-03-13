@@ -692,7 +692,6 @@ public:
             reader.useCallback(callback);
             reader.disableCallback();
         }
-#if 0
         {
             report(0, "test 3");
             Port in;
@@ -712,7 +711,6 @@ public:
             reader.attach(in);
             reader.useCallback(callback);
         }
-#endif
     }
 
     virtual void testStrictWriter() {
@@ -1354,7 +1352,6 @@ public:
             pin.disableCallback();
             pin.close();
         }
-#if 0
         {
             report(0, "test 3");
             DataPort pin;
@@ -1366,7 +1363,6 @@ public:
             pin.useCallback();
             pin.close();
         }
-#endif
     }
 
     void testAdminReader() {
