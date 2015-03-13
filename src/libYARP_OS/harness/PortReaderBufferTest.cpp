@@ -36,7 +36,7 @@ public:
 class PortReaderBufferTest : public UnitTest {
 public:
     virtual String getName() { return "PortReaderBufferTest"; }
-  
+
 
     void checkAccept() {
         report(0, "checking direct object accept...");
@@ -47,7 +47,7 @@ public:
         Bottle data2("there");
 
         buffer.acceptObject(&data, &dummy);
-        
+
         Bottle *bot = buffer.read();
         checkTrue(bot!=NULL,"Inserted message received");
         if (bot!=NULL) {
@@ -61,7 +61,7 @@ public:
         if (bot!=NULL) {
             checkEqual(bot->toString().c_str(),"there","value ok");
         }
-        
+
         buffer.read(false);
     }
 
@@ -143,6 +143,24 @@ public:
         }
         checkEqual(in.count,5,"got message #3");
     }
+
+    void checkCallbackNoOpen() {
+        report(0, "checking callback part without open...");
+#if 0
+        {
+            report(1, "test 1");
+            PortReaderBufferTestHelper in;
+            in.useCallback();
+        }
+        {
+            report(1, "test 2");
+            PortReaderBufferTestHelper in;
+            in.useCallback();
+            in.close();
+        }
+#endif
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
 
@@ -151,6 +169,7 @@ public:
 
         checkAccept();
         checkCallback();
+        checkCallbackNoOpen();
         Network::setLocalMode(false);
     }
 };

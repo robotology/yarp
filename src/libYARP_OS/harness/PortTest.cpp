@@ -669,6 +669,51 @@ public:
         in.disableCallback();
     }
 
+    virtual void testReaderHandlerNoOpen() {
+        report(0,"check reader handler without open...");
+#if 0
+        {
+            report(1, "test 1");
+            Port in;
+            DelegatedCallback callback;
+            PortReaderBuffer<Bottle> reader;
+            reader.setStrict();
+            reader.attach(in);
+            reader.useCallback(callback);
+            reader.disableCallback();
+            in.close();
+        }
+        {
+            report(1, "test 2");
+            Port in;
+            DelegatedCallback callback;
+            PortReaderBuffer<Bottle> reader;
+            reader.setStrict();
+            reader.attach(in);
+            reader.useCallback(callback);
+            reader.disableCallback();
+        }
+        {
+            report(1, "test 3");
+            Port in;
+            DelegatedCallback callback;
+            PortReaderBuffer<Bottle> reader;
+            reader.setStrict();
+            reader.attach(in);
+            reader.useCallback(callback);
+            in.close();
+        }
+        {
+            report(1, "test 4");
+            Port in;
+            DelegatedCallback callback;
+            PortReaderBuffer<Bottle> reader;
+            reader.setStrict();
+            reader.attach(in);
+            reader.useCallback(callback);
+        }
+#endif
+    }
 
     virtual void testStrictWriter() {
         report(0,"check strict writer...");
@@ -1294,6 +1339,36 @@ public:
         checkEqual(pin.ct,1,"callback happened");
     }
 
+    virtual void testBufferedPortCallbackNoOpen() {
+        report(0,"checking BufferedPort callback without open...");
+#if 0
+        {
+            report(1, "test 1");
+            DataPort pin;
+            pin.useCallback();
+            pin.disableCallback();
+        }
+        {
+            report(1, "test 2");
+            DataPort pin;
+            pin.useCallback();
+            pin.disableCallback();
+            pin.close();
+        }
+        {
+            report(1, "test 3");
+            DataPort pin;
+            pin.useCallback();
+        }
+        {
+            report(1, "test 4");
+            DataPort pin;
+            pin.useCallback();
+            pin.close();
+        }
+#endif
+    }
+
     void testAdminReader() {
         report(0,"checking user-level admin message reads");
         Port pin;
@@ -1354,6 +1429,7 @@ public:
         testDelegatedReadReply();
         testReaderHandler();
         testReaderHandler2();
+        testReaderHandlerNoOpen();
         testStrictWriter();
         testRecentReader();
 
@@ -1387,6 +1463,7 @@ public:
         testInterruptWithBadReader();
 
         testBufferedPortCallback();
+        testBufferedPortCallbackNoOpen();
 
         testAdminReader();
 
