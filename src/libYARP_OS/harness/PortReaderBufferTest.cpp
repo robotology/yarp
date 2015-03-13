@@ -146,14 +146,26 @@ public:
 
     void checkCallbackNoOpen() {
         report(0, "checking callback part without open...");
+        {
+            report(0, "test 1");
+            PortReaderBufferTestHelper in;
+            in.useCallback();
+            in.disableCallback();
+        }
+        {
+            report(0, "test 2");
+            PortReaderBufferTestHelper in;
+            in.useCallback();
+            in.disableCallback();
+        }
 #if 0
         {
-            report(1, "test 1");
+            report(0, "test 3");
             PortReaderBufferTestHelper in;
             in.useCallback();
         }
         {
-            report(1, "test 2");
+            report(0, "test 4");
             PortReaderBufferTestHelper in;
             in.useCallback();
             in.close();

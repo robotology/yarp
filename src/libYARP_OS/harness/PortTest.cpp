@@ -671,30 +671,30 @@ public:
 
     virtual void testReaderHandlerNoOpen() {
         report(0,"check reader handler without open...");
+        {
+            report(0, "test 1");
+            Port in;
+            DelegatedCallback callback;
+            PortReaderBuffer<Bottle> reader;
+            reader.setStrict();
+            reader.attach(in);
+            reader.useCallback(callback);
+            reader.disableCallback();
+            in.close();
+        }
+        {
+            report(0, "test 2");
+            Port in;
+            DelegatedCallback callback;
+            PortReaderBuffer<Bottle> reader;
+            reader.setStrict();
+            reader.attach(in);
+            reader.useCallback(callback);
+            reader.disableCallback();
+        }
 #if 0
         {
-            report(1, "test 1");
-            Port in;
-            DelegatedCallback callback;
-            PortReaderBuffer<Bottle> reader;
-            reader.setStrict();
-            reader.attach(in);
-            reader.useCallback(callback);
-            reader.disableCallback();
-            in.close();
-        }
-        {
-            report(1, "test 2");
-            Port in;
-            DelegatedCallback callback;
-            PortReaderBuffer<Bottle> reader;
-            reader.setStrict();
-            reader.attach(in);
-            reader.useCallback(callback);
-            reader.disableCallback();
-        }
-        {
-            report(1, "test 3");
+            report(0, "test 3");
             Port in;
             DelegatedCallback callback;
             PortReaderBuffer<Bottle> reader;
@@ -704,7 +704,7 @@ public:
             in.close();
         }
         {
-            report(1, "test 4");
+            report(0, "test 4");
             Port in;
             DelegatedCallback callback;
             PortReaderBuffer<Bottle> reader;
@@ -1341,27 +1341,27 @@ public:
 
     virtual void testBufferedPortCallbackNoOpen() {
         report(0,"checking BufferedPort callback without open...");
-#if 0
         {
-            report(1, "test 1");
+            report(0, "test 1");
             DataPort pin;
             pin.useCallback();
             pin.disableCallback();
         }
         {
-            report(1, "test 2");
+            report(0, "test 2");
             DataPort pin;
             pin.useCallback();
             pin.disableCallback();
             pin.close();
         }
+#if 0
         {
-            report(1, "test 3");
+            report(0, "test 3");
             DataPort pin;
             pin.useCallback();
         }
         {
-            report(1, "test 4");
+            report(0, "test 4");
             DataPort pin;
             pin.useCallback();
             pin.close();
