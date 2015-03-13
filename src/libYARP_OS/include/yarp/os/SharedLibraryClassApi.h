@@ -63,7 +63,7 @@ extern "C" {
  * Macro to create a bunch of functions with undecorated names that can
  * be found within a plugin library to handle creation/deletion of that
  * plugin.  Use with care.
- * 
+ *
  * @param factoryname the name of the "hook" function to make.  A collection
  * of other helper functions with names composed of the factoryname with
  * _create/_destroy/... appended.
@@ -75,8 +75,13 @@ extern "C" {
  *
  */
 #define YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,basename) \
-    YARP_SHARED_CLASS_FN void *factoryname ## _create () { return (basename *)new classname; } \
-    YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { delete (classname *)obj; } \
+    YARP_SHARED_CLASS_FN void *factoryname ## _create () { \
+        classname *cn = new classname; \
+        basename *bn = dynamic_cast<basename *>(cn); \
+        if (!bn) delete cn; \
+        return static_cast<void *>(bn); \
+    } \
+    YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { delete dynamic_cast<classname *>(static_cast<basename *>(obj)); } \
     YARP_SHARED_CLASS_FN int factoryname ## _getVersion (char *ver, int len) { return 0; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getAbi (char *abi, int len) { return 0; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getClassName (char *name, int len) { char cname[] = # classname; strncpy(name,cname,len); return strlen(cname)+1; } \
@@ -86,7 +91,7 @@ extern "C" {
         if (len<(int)sizeof(yarp::os::SharedLibraryClassApi)) return -1; \
         sapi->startCheck = VOCAB4('Y','A','R','P'); \
         sapi->structureSize = sizeof(yarp::os::SharedLibraryClassApi); \
-        sapi->systemVersion = 4; \
+        sapi->systemVersion = 5; \
         sapi->create = factoryname ## _create; \
         sapi->destroy = factoryname ## _destroy; \
         sapi->getVersion = factoryname ## _getVersion; \
@@ -97,6 +102,16 @@ extern "C" {
         sapi->endCheck = VOCAB4('P','L','U','G'); \
         return sapi->startCheck; \
     }
+// The double cast in the _create() and _destroy() functions are
+// required to ensure that everything works when `basename` is not the
+// first inherited class:
+// _create() will return a valid `basename` or a null pointer if
+// `classname` does not inherit from `basename`.
+// _destroy() will ensure that we are calling `classname` destructor
+// even if `basename` is not the first inherited class. If the
+// dynamic_cast fails, it will not delete the object (that is probably
+// leaked), but it is less dangerous than executing some other random
+// function.
 
 #define YARP_DEFAULT_FACTORY_NAME "yarp_default_factory"
 #define YARP_DEFINE_DEFAULT_SHARED_CLASS(classname) YARP_DEFINE_SHARED_SUBCLASS(yarp_default_factory,classname,classname)
