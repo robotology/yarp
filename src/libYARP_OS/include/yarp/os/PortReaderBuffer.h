@@ -367,6 +367,7 @@ public:
         // it would also help to close the port, so
         // that incoming inputs are interrupted
         if (reader!=0/*NULL*/) {
+            reader->stop();
             delete reader;
             reader = 0/*NULL*/;
         }
@@ -455,6 +456,7 @@ public:
 
     void useCallback(TypedReaderCallback<T>& callback) {
         if (reader!=0/*NULL*/) {
+            reader->stop();
             delete reader;
             reader = 0/*NULL*/;
         }
