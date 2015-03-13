@@ -2351,6 +2351,7 @@ public:
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_VELOCITY_MOVE);
+        c.head.addInt(j);
         c.body.size(1);
         memcpy(&(c.body[0]), &v, sizeof(double));
         command_buffer.write(writeStrict_singleJoint);
