@@ -220,6 +220,12 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         if(!ok){
             LOG_ERROR("...iinteract was not ok.\n");
         }
+
+        if (!ok) {
+            LOG_ERROR("Error while acquiring interfaces \n");
+            QMessageBox::critical(0,"Problems acquiring interfaces.","Check if interface is running");
+            interfaceError = true;
+        }
     }
 
 #ifdef DEBUG_INTERFACE
@@ -230,12 +236,6 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         LOG_ERROR("...dbg was not ok.\n");
     }
 #endif
-
-    if (partsdd->isValid() && !ok) {
-        LOG_ERROR("Error while acquiring interfaces \n");
-        QMessageBox::critical(0,"Problems acquiring interfaces.","Check if interface is running");
-        interfaceError = true;
-    }
 
 //    COPY_STORED_POS=0;
 //    COPY_STORED_VEL=0;
