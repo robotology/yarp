@@ -1,5 +1,4 @@
 
-option(CBW2_USE_ROS_MSG "Create ROS topic" OFF)
 
 # include(YarpIDL)    ## we want to use IDL so include their macros
 
@@ -35,10 +34,6 @@ include_directories(${yarp_msg_include_dirs} )
 #message(STATUS ">> YARP MSG yarp_msg_include_dirs is ${yarp_msg_include_dirs}")
 
 
-if(CBW2_USE_ROS_MSG)
-    message(STATUS " Using ROS message\n")
-    add_definitions(-DROS_MSG)
-
     # name of the file
     set(rosMSG jointState)
 
@@ -68,10 +63,6 @@ if(CBW2_USE_ROS_MSG)
     #message(STATUS ">> ROS sources is ${ros_msg_sources}")
     #message(STATUS ">> ROS include_dirs is ${ros_msg_include_dirs}")
     #message(STATUS ">> generated_libs_dir is ${generated_libs_dir}")
-
-endif(CBW2_USE_ROS_MSG)
-
-
 
 
 # add automatically generated files to source list

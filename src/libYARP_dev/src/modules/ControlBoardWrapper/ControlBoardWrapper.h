@@ -33,28 +33,21 @@
 #include <string>
 #include <vector>
 
-//#define ROS_MSG
-////#undef  ROS_MSG
-
-#include "jointData.h"
-
-#ifdef ROS_MSG
-#include <sensor_msgs_JointState.h>  // this already includes TickTime and Header
-#endif
+#include <jointData.h>           // struct for YARP extended port
 
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
 #include "SubDevice.h"
 
 // ROS state publisher
+#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-
+#include <sensor_msgs_JointState.h>  // Defines ROS jointState msg; it already includes TickTime and Header
 
 #ifdef MSVC
     #pragma warning(disable:4355)
 #endif
-
 
 #define PROTOCOL_VERSION_MAJOR 1
 #define PROTOCOL_VERSION_MINOR 2
@@ -204,12 +197,15 @@ private:
     yarp::os::PortWriterBuffer<jointData>           extendedOutputState_buffer;
     yarp::os::Port extendedOutputStatePort;         // Port /stateExt:o streaming out the struct with the robot data
 
-#if defined(ROS_MSG)
     // ROS state publisher
-    yarp::os::Node                                  *rosNode;                   // add a ROS node
+    ROSTopicUsageType                                   useROS;                     // decide if open ROS topic or not
+    std::vector<std::string>                            jointNames;                 // name of the joints
+    std::string                                         rosNodeName;                // name of the rosNode
+    std::string                                         rosTopicName;               // name of the rosTopic
+    yarp::os::Node                                      *rosNode;                   // add a ROS node
+    yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
     yarp::os::PortWriterBuffer<sensor_msgs_JointState>  rosOutputState_buffer;      // Buffer associated to the ROS topic
     yarp::os::Publisher<sensor_msgs_JointState>         rosPublisherPort;           // Dedicated ROS topic publisher
-#endif
 
     yarp::os::PortReaderBuffer<CommandMessage>      inputStreaming_buffer;          // Buffer associated to the inputStreamingPort port
     yarp::os::PortReaderBuffer<yarp::os::Bottle>    inputRPC_buffer;                // Buffer associated to the inputRPCPort port
@@ -226,6 +222,10 @@ private:
     bool              _verb;        // make it work and propagate to subdevice if --subdevice option is used
 
     yarp::os::Bottle getOptions();
+    bool checkROSParams(yarp::os::Searchable &config);
+    bool initialize_ROS();
+    bool initialize_YARP(yarp::os::Searchable &prop);
+    void cleanup_yarpPorts();
 
     // Default usage
     // Open the wrapper only, the attach method needs to be called before using it
