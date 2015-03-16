@@ -100,6 +100,8 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         adr=Network::queryName(nameToCheck.toLatin1().data());
     }
 
+    interfaceError = false;
+
     options.put("local", portLocalName.toLatin1().data());
     options.put("device", "remote_controlboard");
     options.put("remote", robotPartPort.toLatin1().data());
@@ -107,6 +109,8 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     partsdd = new PolyDriver(options);
     if (!partsdd->isValid()) {
         LOG_ERROR("Opening PolyDriver for part %s failed...", robotPartPort.toLatin1().data());
+        QMessageBox::critical(0,"Error opening a device", QString("Error while opening device for part ").append(robotPartPort.toLatin1().data()));
+        interfaceError=true;
     }
 
 #ifdef DEBUG_INTERFACE
@@ -140,9 +144,6 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 
     QString sequence_portname = QString("/yarpmotorgui/%1/sequence:o").arg(partName);
     sequence_port.open(sequence_portname.toLatin1().data());
-
-    interfaceError = false;
-
 
     //default value for unopened interfaces
     pos       = NULL;
@@ -230,11 +231,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     }
 #endif
 
-    if (!partsdd->isValid()) {
-        LOG_ERROR("Device driver was not valid! \n");
-        QMessageBox::critical(0,"Device not available.","Check available devices");
-        interfaceError = true;
-    } else if(!ok){
+    if (partsdd->isValid() && !ok) {
         LOG_ERROR("Error while acquiring interfaces \n");
         QMessageBox::critical(0,"Problems acquiring interfaces.","Check if interface is running");
         interfaceError = true;

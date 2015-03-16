@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     QLocale::setDefault(QLocale::C);
-    yarp::os::Network::init();
     tabPanel = NULL;
     sequenceActiveCount = 0;
 
