@@ -105,6 +105,9 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     options.put("remote", robotPartPort.toLatin1().data());
     options.put("carrier", "udp");
     partsdd = new PolyDriver(options);
+    if (!partsdd->isValid()) {
+        LOG_ERROR("Opening PolyDriver for part %s failed...", robotPartPort.toLatin1().data());
+    }
 
 #ifdef DEBUG_INTERFACE
     if (debug_param_enabled)
@@ -160,59 +163,62 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     iinteract = NULL;
 
     LOG_ERROR("Opening interfaces...");
-    bool ok = true;
+    bool ok = false;
     bool ok2 = true;
-    ok  = partsdd->view(pid);
-    if(!ok){
-        LOG_ERROR("...pid was not ok...");
-    }
-    ok &= partsdd->view(amp);
-    if(!ok){
-        LOG_ERROR("...amp was not ok...");
-    }
-    ok &= partsdd->view(pos);
-    if(!ok){
-        LOG_ERROR("...pos was not ok...");
-    }
-    ok &= partsdd->view(iDir);
-    if(!ok){
-        LOG_ERROR("...posDirect was not ok...");
-    }
-    ok &= partsdd->view(iVel);
-    if(!ok){
-        LOG_ERROR("...vel was not ok...");
-    }
-    ok &= partsdd->view(lim);
-    if(!ok){
-        LOG_ERROR("...lim was not ok...");
-    }
-    ok &= partsdd->view(iencs);
-    if(!ok){
-        LOG_ERROR("...enc was not ok...");
-    }
-    ok &= partsdd->view(cal);
-    if(!ok){
-        LOG_ERROR("...cal was not ok.\n");
-    }
-    ok &= partsdd->view(trq);
-    if(!ok){
-        LOG_ERROR("...trq was not ok.\n");
-    }
-    ok  = partsdd->view(opl);
-    if(!ok){
-        LOG_ERROR("...opl was not ok...");
-    }
-    ok &= partsdd->view(imp);
-    if(!ok){
-        LOG_ERROR("...imp was not ok.\n");
-    }
-    ok &= partsdd->view(ctrlmode2);
-    if(!ok){
-        LOG_ERROR("...ctrlmode2 was not ok.\n");
-    }
-    ok &= partsdd->view(iinteract);
-    if(!ok){
-        LOG_ERROR("...iinteract was not ok.\n");
+
+    if (partsdd->isValid()) {
+        ok  = partsdd->view(pid);
+        if(!ok){
+            LOG_ERROR("...pid was not ok...");
+        }
+        ok &= partsdd->view(amp);
+        if(!ok){
+            LOG_ERROR("...amp was not ok...");
+        }
+        ok &= partsdd->view(pos);
+        if(!ok){
+            LOG_ERROR("...pos was not ok...");
+        }
+        ok &= partsdd->view(iDir);
+        if(!ok){
+            LOG_ERROR("...posDirect was not ok...");
+        }
+        ok &= partsdd->view(iVel);
+        if(!ok){
+            LOG_ERROR("...vel was not ok...");
+        }
+        ok &= partsdd->view(lim);
+        if(!ok){
+            LOG_ERROR("...lim was not ok...");
+        }
+        ok &= partsdd->view(iencs);
+        if(!ok){
+            LOG_ERROR("...enc was not ok...");
+        }
+        ok &= partsdd->view(cal);
+        if(!ok){
+            LOG_ERROR("...cal was not ok.\n");
+        }
+        ok &= partsdd->view(trq);
+        if(!ok){
+            LOG_ERROR("...trq was not ok.\n");
+        }
+        ok  = partsdd->view(opl);
+        if(!ok){
+            LOG_ERROR("...opl was not ok...");
+        }
+        ok &= partsdd->view(imp);
+        if(!ok){
+            LOG_ERROR("...imp was not ok.\n");
+        }
+        ok &= partsdd->view(ctrlmode2);
+        if(!ok){
+            LOG_ERROR("...ctrlmode2 was not ok.\n");
+        }
+        ok &= partsdd->view(iinteract);
+        if(!ok){
+            LOG_ERROR("...iinteract was not ok.\n");
+        }
     }
 
 #ifdef DEBUG_INTERFACE
