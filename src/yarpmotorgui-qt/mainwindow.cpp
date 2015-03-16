@@ -194,7 +194,6 @@ MainWindow::~MainWindow()
 
     delete ui;
 
-    Network::fini();
     mutex.unlock();
 }
 
