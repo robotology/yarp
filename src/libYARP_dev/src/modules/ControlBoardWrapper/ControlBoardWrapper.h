@@ -39,7 +39,7 @@
 #include "jointData.h"
 
 #ifdef ROS_MSG
-#include "jointState.h"
+#include <sensor_msgs_JointState.h>  // this already includes TickTime and Header
 #endif
 
 #include "StreamingMessagesParser.h"
@@ -204,14 +204,12 @@ private:
     yarp::os::PortWriterBuffer<jointData>           extendedOutputState_buffer;
     yarp::os::Port extendedOutputStatePort;         // Port /stateExt:o streaming out the struct with the robot data
 
-
 #if defined(ROS_MSG)
     // ROS state publisher
     yarp::os::Node                                  *rosNode;                   // add a ROS node
-    yarp::os::PortWriterBuffer<jointState>          rosOutputState_buffer;      // Buffer associated to the ROS topic
-    yarp::os::Publisher<jointState>                 rosPublisherPort;           // Dedicated ROS topic publisher
+    yarp::os::PortWriterBuffer<sensor_msgs_JointState>  rosOutputState_buffer;      // Buffer associated to the ROS topic
+    yarp::os::Publisher<sensor_msgs_JointState>         rosPublisherPort;           // Dedicated ROS topic publisher
 #endif
-
 
     yarp::os::PortReaderBuffer<CommandMessage>      inputStreaming_buffer;          // Buffer associated to the inputStreamingPort port
     yarp::os::PortReaderBuffer<yarp::os::Bottle>    inputRPC_buffer;                // Buffer associated to the inputRPCPort port

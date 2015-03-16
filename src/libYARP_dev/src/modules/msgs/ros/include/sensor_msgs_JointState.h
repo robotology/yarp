@@ -1,30 +1,55 @@
 // This is an automatically generated file.
-// Generated from this jointState.msg definition:
+// Generated from this sensor_msgs_JointState.msg definition:
+//   # This is a message that holds data to describe the state of a set of torque controlled joints.
+//   #
+//   # The state of each joint (revolute or prismatic) is defined by:
+//   #  * the position of the joint (rad or m),
+//   #  * the velocity of the joint (rad/s or m/s) and
+//   #  * the effort that is applied in the joint (Nm or N).
+//   #
+//   # Each joint is uniquely identified by its name
+//   # The header specifies the time at which the joint states were recorded. All the joint states
+//   # in one message have to be recorded at the same time.
+//   #
+//   # This message consists of a multiple arrays, one for each part of the joint state.
+//   # The goal is to make each of the fields optional. When e.g. your joints have no
+//   # effort associated with them, you can leave the effort array empty.
+//   #
+//   # All arrays in this message should have the same size, or be empty.
+//   # This is the only way to uniquely associate the joint name with the correct
+//   # states.
+//
+//
 //   Header header
-//   string[]  name
+//
+//   string[] name
 //   float64[] position
 //   float64[] velocity
 //   float64[] effort
+//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
-#ifndef YARPMSG_TYPE_jointState
-#define YARPMSG_TYPE_jointState
+#ifndef YARPMSG_TYPE_sensor_msgs_JointState
+#define YARPMSG_TYPE_sensor_msgs_JointState
 
 #include <string>
 #include <vector>
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <TickTime.h>
-#include <Header.h>
+#include "TickTime.h"
+#include "Header.h"
 
-class jointState : public yarp::os::idl::WirePortable {
+class sensor_msgs_JointState : public yarp::os::idl::WirePortable {
 public:
   Header header;
   std::vector<std::string> name;
   std::vector<yarp::os::NetFloat64> position;
   std::vector<yarp::os::NetFloat64> velocity;
   std::vector<yarp::os::NetFloat64> effort;
+
+  sensor_msgs_JointState() {
+  }
 
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** header ***
@@ -35,7 +60,7 @@ public:
     name.resize(len);
     for (int i=0; i<len; i++) {
       int len2 = connection.expectInt();
-      name.resize(len2);
+      name[i].resize(len2);
       if (!connection.expectBlock((char*)name[i].c_str(),len2)) return false;
     }
 
@@ -70,7 +95,7 @@ public:
     name.resize(len);
     for (int i=0; i<len; i++) {
       int len2 = connection.expectInt();
-      name.resize(len2);
+      name[i].resize(len2);
       if (!connection.expectBlock((char*)name[i].c_str(),len2)) return false;
     }
 
@@ -78,7 +103,7 @@ public:
     if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
     len = connection.expectInt();
     position.resize(len);
-    for (size_t i=0; i<len; i++) {
+    for (int i=0; i<len; i++) {
       position[i] = (yarp::os::NetFloat64)connection.expectDouble();
     }
 
@@ -86,7 +111,7 @@ public:
     if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
     len = connection.expectInt();
     velocity.resize(len);
-    for (size_t i=0; i<len; i++) {
+    for (int i=0; i<len; i++) {
       velocity[i] = (yarp::os::NetFloat64)connection.expectDouble();
     }
 
@@ -94,7 +119,7 @@ public:
     if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
     len = connection.expectInt();
     effort.resize(len);
-    for (size_t i=0; i<len; i++) {
+    for (int i=0; i<len; i++) {
       effort[i] = (yarp::os::NetFloat64)connection.expectDouble();
     }
     return !connection.isError();
@@ -176,12 +201,63 @@ public:
 
   // This class will serialize ROS style or YARP style depending on protocol.
   // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<jointState> rosStyle;
-  typedef yarp::os::idl::BottleStyle<jointState> bottleStyle;
+  typedef yarp::os::idl::BareStyle<sensor_msgs_JointState> rosStyle;
+  typedef yarp::os::idl::BottleStyle<sensor_msgs_JointState> bottleStyle;
+
+  // Give source text for class, ROS will need this
+  yarp::os::ConstString getTypeText() {
+    return "# This is a message that holds data to describe the state of a set of torque controlled joints. \n\
+#\n\
+# The state of each joint (revolute or prismatic) is defined by:\n\
+#  * the position of the joint (rad or m),\n\
+#  * the velocity of the joint (rad/s or m/s) and \n\
+#  * the effort that is applied in the joint (Nm or N).\n\
+#\n\
+# Each joint is uniquely identified by its name\n\
+# The header specifies the time at which the joint states were recorded. All the joint states\n\
+# in one message have to be recorded at the same time.\n\
+#\n\
+# This message consists of a multiple arrays, one for each part of the joint state. \n\
+# The goal is to make each of the fields optional. When e.g. your joints have no\n\
+# effort associated with them, you can leave the effort array empty. \n\
+#\n\
+# All arrays in this message should have the same size, or be empty.\n\
+# This is the only way to uniquely associate the joint name with the correct\n\
+# states.\n\
+\n\
+\n\
+Header header\n\
+\n\
+string[] name\n\
+float64[] position\n\
+float64[] velocity\n\
+float64[] effort\n\
+\n================================================================================\n\
+MSG: std_msgs/Header\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+";
+  }
 
   // Name the class, ROS will need this
   yarp::os::Type getType() {
-    return yarp::os::Type::byName("jointState");
+    yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JointState","sensor_msgs/JointState");
+    typ.addProperty("md5sum",yarp::os::Value("3066dcd76a6cfaef579bd0f34173e9fd"));
+    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
+    return typ;
   }
 };
 

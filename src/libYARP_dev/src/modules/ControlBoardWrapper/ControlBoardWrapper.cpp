@@ -607,7 +607,7 @@ void ControlBoardWrapper::run()
     extendedOutputState_buffer.write();
 
 #if defined(ROS_MSG)
-    jointState ros_struct;
+        sensor_msgs_JointState ros_struct;
 
     ros_struct.name.resize(controlledJoints);
     ros_struct.position.resize(controlledJoints);

@@ -16,6 +16,9 @@ public:
   yarp::os::NetUint32 sec;
   yarp::os::NetUint32 nsec;
 
+  TickTime() {
+  }
+
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** sec ***
     sec = connection.expectInt();
@@ -77,9 +80,17 @@ public:
   typedef yarp::os::idl::BareStyle<TickTime> rosStyle;
   typedef yarp::os::idl::BottleStyle<TickTime> bottleStyle;
 
+  // Give source text for class, ROS will need this
+  yarp::os::ConstString getTypeText() {
+    return "";
+  }
+
   // Name the class, ROS will need this
   yarp::os::Type getType() {
-    return yarp::os::Type::byName("TickTime");
+    yarp::os::Type typ = yarp::os::Type::byName("TickTime","TickTime");
+    typ.addProperty("md5sum",yarp::os::Value("4f8dc7710c22b42c7b09295dcda33fa0"));
+    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
+    return typ;
   }
 };
 
