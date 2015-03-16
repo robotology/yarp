@@ -194,6 +194,8 @@ MainWindow::~MainWindow()
     }
 
     delete ui;
+
+    Network::fini();
     mutex.unlock();
 }
 
@@ -291,8 +293,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 
 
-
-void MainWindow::init(QString robotName, QStringList enabledParts,
+bool MainWindow::init(QString robotName, QStringList enabledParts,
                       ResourceFinder *finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
@@ -323,6 +324,10 @@ void MainWindow::init(QString robotName, QStringList enabledParts,
                                       position_direct_enabled,
                                       openloop_enabled,
                                       scroll);
+
+        if(part->getInterfaceError()){
+            return false;
+        }
 
         connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
         connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
@@ -357,6 +362,7 @@ void MainWindow::init(QString robotName, QStringList enabledParts,
     bool speedVisible = settings.value("SpeedValuesVisible",false).toBool();
 
     onViewSpeeds(speedVisible);
+    return true;
 }
 
 

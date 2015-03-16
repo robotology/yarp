@@ -56,8 +56,9 @@ public:
                       bool openloop_enabled,
                       QWidget *parent = 0);
 
-    ~PartItem();
 
+    ~PartItem();
+    bool getInterfaceError();
     void openSequenceWindow();
     bool cycleAllSeq();
     bool checkAndRunAllSeq();

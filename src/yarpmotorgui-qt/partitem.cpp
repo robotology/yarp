@@ -387,6 +387,17 @@ PartItem::~PartItem()
         disconnect(joint,SIGNAL(calibClicked(JointItem*)),this,SLOT(onCalibClicked(JointItem*)));
         delete joint;
     }
+
+    if(partsdd){
+        partsdd->close();
+    }
+
+
+}
+
+bool PartItem::getInterfaceError()
+{
+    return interfaceError;
 }
 
 QString PartItem::getPartName()

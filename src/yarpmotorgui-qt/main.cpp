@@ -163,10 +163,15 @@ int main(int argc, char *argv[])
     }
 
     MainWindow w;
-    w.init(newRobotName,enabledParts,finder,debug_param_enabled,speedview_param_enabled,enable_calib_all,position_direct_enabled,openloop_enabled);
-    w.show();
-    return a.exec();
+    int appRet = 0;
+    bool ret = w.init(newRobotName,enabledParts,finder,debug_param_enabled,speedview_param_enabled,enable_calib_all,position_direct_enabled,openloop_enabled);
+    if(ret){
+        w.show();
+        appRet = a.exec();
+    }
 
     delete finder;
     delete pParts;
+
+    return appRet;
 }
