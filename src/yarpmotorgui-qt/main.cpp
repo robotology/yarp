@@ -44,6 +44,13 @@ int main(int argc, char *argv[])
 
     //YARP_REGISTER_DEVICES(icubmod)
 
+    Network yarp;
+
+    if (!yarp.checkNetwork())
+    {
+        LOG_ERROR("Error initializing yarp network (is the yarpnameserver running?)\n");
+        return 0;
+    }
 
     ResourceFinder *finder;
 
