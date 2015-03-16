@@ -23,6 +23,7 @@ typedef enum
 }
 ROSTopicUsageType;
 
+double const pi = 3.1415926535897932384626433;
 
 /**
  * This function has been took from ROS source file
@@ -50,7 +51,16 @@ inline TickTime normalizeSecNSec(double yarpTimeStamp)
     return ret;
 }
 
+/** convert degrees to radiants for ROS messages */
+inline double convertDegreesToRadians(double &degrees)
+{
+    return degrees / 180.0 * pi;
+}
 
-
+inline void convertDegreesToRadians(std::vector<yarp::os::NetFloat64>  &degrees)
+{
+    for(size_t i=0; i<degrees.size(); i++)
+        degrees[i] = convertDegreesToRadians(degrees[i]);
+}
 
 #endif  // __YARP__ROS__HELPER__

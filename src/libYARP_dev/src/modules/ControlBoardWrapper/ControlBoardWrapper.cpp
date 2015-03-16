@@ -13,6 +13,7 @@
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/math/api.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -847,6 +848,8 @@ void ControlBoardWrapper::run()
         getEncoderSpeeds(ros_struct.velocity.data());
         getTorques(ros_struct.effort.data());
 
+        convertDegreesToRadians(ros_struct.position);
+        convertDegreesToRadians(ros_struct.velocity);
         ros_struct.name=jointNames;
 
         ros_struct.header.seq = rosMsgCounter++;
