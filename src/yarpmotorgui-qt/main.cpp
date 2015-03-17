@@ -18,9 +18,11 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QMessageBox>
 
 using namespace yarp::dev;
 using namespace yarp::os;
+
 
 QStringList partsName;
 QList <int> ENA;
@@ -49,6 +51,7 @@ int main(int argc, char *argv[])
     if (!yarp.checkNetwork())
     {
         LOG_ERROR("Error initializing yarp network (is the yarpnameserver running?)\n");
+        QMessageBox::critical(0,"Error","Error initializing yarp network (is the yarpnameserver running?)");
         return 0;
     }
 
