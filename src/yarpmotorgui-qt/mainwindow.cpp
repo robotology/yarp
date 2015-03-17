@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     globalToolBar->addSeparator();
-    goAll = globalToolBar->addAction(QIcon(":/images/goAll.png"),"GO All");
+    goAll = globalToolBar->addAction(QIcon(":/play-all.svg"),"Go All");
     globalToolBar->addSeparator();
     runAllSeq      = globalToolBar->addAction(QIcon(":/images/runSequence.png"),"Run All Seqences");
     runAllSeqTime  = globalToolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run All Seqences (time)");
@@ -61,10 +61,10 @@ MainWindow::MainWindow(QWidget *parent) :
     loadAllSeq     = globalToolBar->addAction(QIcon(":/images/loadAllSequence.png"),"Load All Seqences");
     cycleAllSeq    = globalToolBar->addAction(QIcon(":/images/cycleAllSequence.png"),"Cycle All Seqences");
     cycleAllSeqTime= globalToolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"),"Cycle All Seqences (time)");
-    stopAllSeq     = globalToolBar->addAction(QIcon(":/images/stop.png"),"Stop All Seqences");
+    stopAllSeq     = globalToolBar->addAction(QIcon(":/stop.svg"),"Stop All Seqences");
     globalToolBar->addSeparator();
-    runAllParts    = globalToolBar->addAction(QIcon(":/images/playParts.png"),"Run All Parts");
-    homeAllParts   = globalToolBar->addAction(QIcon(":/images/home.png"),"Home All Parts");
+    runAllParts    = globalToolBar->addAction(QIcon(":/play.svg"),"Run All Parts");
+    homeAllParts   = globalToolBar->addAction(QIcon(":/home.svg"),"Home All Parts");
     addToolBar(globalToolBar);
 
     QMenu *globalMenuCommands = ui->menuBar->addMenu("Global Joints Commands ");
@@ -113,13 +113,13 @@ MainWindow::MainWindow(QWidget *parent) :
     partToolBar->addWidget(partName)->setCheckable(false);
 
     partToolBar->addSeparator();
-    QAction *openSequenceAction     = partToolBar->addAction(QIcon(":/images/load.png"),"Open Sequence Tab");
+    QAction *openSequenceAction     = partToolBar->addAction(QIcon(":/file-new.svg"),"Open Sequence Tab");
     partToolBar->addSeparator();
-    QAction *runAll                 = partToolBar->addAction(QIcon(":/images/goAll.png"),"Run All");
+    QAction *runAll                 = partToolBar->addAction(QIcon(":/play.svg"),"Run All");
     QAction *calibAll               = partToolBar->addAction(QIcon(":/images/calibrate.png"),"Calibrate All");
-    QAction *homeAll                = partToolBar->addAction(QIcon(":/images/home.png"),"Home All");
+    QAction *homeAll                = partToolBar->addAction(QIcon(":/home.svg"),"Home All");
     partToolBar->addSeparator();
-    QAction *idleAll                = partToolBar->addAction(QIcon(":/images/idle.png"),"Idle All");
+    QAction *idleAll                = partToolBar->addAction(QIcon(":/idle.svg"),"Idle All");
     addToolBar(partToolBar);
 
     currentPartMenu = ui->menuBar->addMenu("Current Part: ");
@@ -885,12 +885,12 @@ void MainWindow::updateModesTree(PartItem *part)
             if(c == hwFaultColor){
                 parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
                 jointNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-                parentNode->setIcon(0,QIcon(":/images/warning.png"));
-                jointNode->setIcon(0,QIcon(":/images/warning.png"));
+                parentNode->setIcon(0,QIcon(":/warning.svg"));
+                jointNode->setIcon(0,QIcon(":/warning.svg"));
             }else{
                 parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
                 jointNode->setData(0,Qt::UserRole,TREEMODE_OK);
-                parentNode->setIcon(0,QIcon(":/images/jointOk.svg"));
+                parentNode->setIcon(0,QIcon(":/apply.svg"));
             }
         }
     }else{
@@ -910,13 +910,13 @@ void MainWindow::updateModesTree(PartItem *part)
                 if(item->data(0,Qt::UserRole).toInt() == TREEMODE_WARN){
                     if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
                         parentNode->setBackgroundColor(0,hwFaultColor);
-                        parentNode->setIcon(0,QIcon(":/images/warning.png"));
+                        parentNode->setIcon(0,QIcon(":/warning.svg"));
                         parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
                     }
                 }else{
                     if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
                         parentNode->setBackgroundColor(0,QColor("white"));
-                        parentNode->setIcon(0,QIcon(":/images/jointOk.svg"));
+                        parentNode->setIcon(0,QIcon(":/apply.svg"));
                         parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
                     }
                 }
@@ -936,16 +936,16 @@ void MainWindow::updateModesTree(PartItem *part)
 
                 if(c == hwFaultColor){
                     if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                        parentNode->setIcon(0,QIcon(":/images/warning.png"));
+                        parentNode->setIcon(0,QIcon(":/warning.svg"));
                         parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
                     }
                     if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                        item->setIcon(0,QIcon(":/images/warning.png"));
+                        item->setIcon(0,QIcon(":/warning.svg"));
                         item->setData(0,Qt::UserRole,TREEMODE_WARN);
                     }
                 }else{
                     if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
-                        parentNode->setIcon(0,QIcon(":/images/jointOk.svg"));
+                        parentNode->setIcon(0,QIcon(":/apply.svg"));
                         parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
                     }
                 }
