@@ -268,6 +268,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     mutex.lock();
 
+    this->setVisible(false);
+
     disconnect(&timer,SIGNAL(timeout()),this,SLOT(onUpdate()));
     timer.stop();
 
@@ -306,14 +308,17 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
 
 
 
+    int errorCount = 0;
+    QScrollArea *scroll = NULL;
+    PartItem *part = NULL;
     for(int i=0;i<count;i++){
         //JointItem *item = new JointItem();
         //layout->addWidget(item);
-        QScrollArea *scroll = new QScrollArea(tabPanel);
+        scroll = new QScrollArea(tabPanel);
         scroll->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scroll->setWidgetResizable(true);
-        PartItem *part = new PartItem(robotName,
+        part = new PartItem(robotName,
                                       enabledParts.at(i),
                                       finder,
                                       debug_param_enabled,
@@ -323,32 +328,42 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
                                       openloop_enabled,
                                       scroll);
 
-        if(part->getInterfaceError()){
-            return false;
+        if(!part->getInterfaceError()){
+            connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
+            connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
+            connect(this,SIGNAL(viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
+
+            scroll->setWidget(part);
+            tabPanel->addTab(scroll,enabledParts.at(i));
+            if(i==0){
+
+                QString auxName = enabledParts.at(i);
+                auxName.replace(0,1,enabledParts.at(i).at(0).toUpper());
+                currentPartMenu->setTitle(QString("%1 Commands ").arg(auxName));
+
+                this->partName->setText(QString("%1 Commands ").arg(auxName));
+            }
+
+            QTreeWidgetItem *mode = new QTreeWidgetItem();
+            mode->setText(0,enabledParts.at(i));
+            ui->treeWidgetMode->addTopLevelItem(mode);
+            mode->setExpanded(false);
+            part->setTreeWidgetModeNode(mode);
+
+        }else{
+            if(part){
+                delete part;
+            }
+            if(scroll){
+                delete scroll;
+            }
+            errorCount++;
         }
-
-        connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
-        connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
-        connect(this,SIGNAL(viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
-
-        scroll->setWidget(part);
-        tabPanel->addTab(scroll,enabledParts.at(i));
-        if(i==0){
-
-            QString auxName = enabledParts.at(i);
-            auxName.replace(0,1,enabledParts.at(i).at(0).toUpper());
-            currentPartMenu->setTitle(QString("%1 Commands ").arg(auxName));
-
-            this->partName->setText(QString("%1 Commands ").arg(auxName));
-        }
-
-        QTreeWidgetItem *mode = new QTreeWidgetItem();
-        mode->setText(0,enabledParts.at(i));
-        ui->treeWidgetMode->addTopLevelItem(mode);
-        mode->setExpanded(false);
-        part->setTreeWidgetModeNode(mode);
     }
 
+    if(errorCount == count){
+        return false;
+    }
     QHBoxLayout *lay = new QHBoxLayout();
     lay->setMargin(0);
     lay->setSpacing(0);
@@ -691,6 +706,7 @@ void MainWindow::onOpenSequenceTab()
     }
     part->openSequenceWindow();
 }
+
 
 
 void MainWindow::onUpdate()
