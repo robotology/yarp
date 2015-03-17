@@ -46,6 +46,11 @@ namespace yarp
  *
  * @author Alexis Maldonado, Radu Bogdan Rusu
  */
+
+/**
+ *  ROS message type used is sensor_msgs/Imu.msg
+ */
+
 class yarp::dev::ServerInertial : public DeviceDriver,
             private yarp::os::Thread,
             public yarp::os::PortReader,

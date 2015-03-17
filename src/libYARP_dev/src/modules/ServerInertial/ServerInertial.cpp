@@ -68,28 +68,28 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
     //Look for the device name (serial Port). Usually /dev/ttyUSB0
     yarp::os::Value *name;
     if (config.check("subdevice",name))
+    {
+        printf("Subdevice %s\n", name->toString().c_str());
+        if (name->isString())
         {
-            printf("Subdevice %s\n", name->toString().c_str());
-            if (name->isString())
-                {
-                    // maybe user isn't doing nested configuration
-                    yarp::os::Property p;
-                    p.setMonitor(config.getMonitor(),
-                                 "subdevice"); // pass on any monitoring
-                    p.fromString(config.toString());
-                    p.put("device",name->toString());
-                    poly.open(p);
-                }
-            else
-                poly.open(*name);
-            if (!poly.isValid())
-                printf("cannot make <%s>\n", name->toString().c_str());
+            // maybe user isn't doing nested configuration
+            yarp::os::Property p;
+            p.setMonitor(config.getMonitor(),
+                         "subdevice"); // pass on any monitoring
+            p.fromString(config.toString());
+            p.put("device",name->toString());
+            poly.open(p);
         }
+        else
+            poly.open(*name);
+        if (!poly.isValid())
+            printf("cannot make <%s>\n", name->toString().c_str());
+    }
     else
-        {
-            printf("\"--subdevice <name>\" not set for server_inertial\n");
-            return false;
-        }
+    {
+        printf("\"--subdevice <name>\" not set for server_inertial\n");
+        return false;
+    }
     if (poly.isValid())
         poly.view(IMU);
 
@@ -109,10 +109,10 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
     //p.open(config.check("name", Value("/inertial")).asString());
 
     if (IMU!=NULL)
-        {
-            start();
-            return true;
-        }
+    {
+        start();
+        return true;
+    }
     else
         return false;
 }
@@ -133,33 +133,33 @@ bool yarp::dev::ServerInertial::close()
 bool yarp::dev::ServerInertial::getInertial(yarp::os::Bottle &bot)
 {
     if (IMU==NULL)
-        {
-            return false;
-        }
+    {
+        return false;
+    }
     else
+    {
+        int nchannels;
+        IMU->getChannels (&nchannels);
+
+        yarp::sig::Vector indata(nchannels);
+        bool worked(false);
+
+        worked=IMU->read(indata);
+        if (worked)
         {
-            int nchannels;
-            IMU->getChannels (&nchannels);
+            bot.clear();
 
-            yarp::sig::Vector indata(nchannels);
-            bool worked(false);
-
-            worked=IMU->read(indata);
-            if (worked)
-                {
-                    bot.clear();
-
-                    // Euler+accel+gyro+magn orientation values
-                    for (int i = 0; i < nchannels; i++)
-                        bot.addDouble (indata[i]);
-                }
-            else
-                {
-                    bot.clear(); //dummy info.
-                }
-
-            return(worked);
+            // Euler+accel+gyro+magn orientation values
+            for (int i = 0; i < nchannels; i++)
+                bot.addDouble (indata[i]);
         }
+        else
+        {
+            bot.clear(); //dummy info.
+        }
+
+        return(worked);
+    }
 }
 
 void yarp::dev::ServerInertial::run()
@@ -167,49 +167,49 @@ void yarp::dev::ServerInertial::run()
     double before, now;
     printf("Server Inertial starting\n");
     while (!isStopping())
+    {
+        before = yarp::os::Time::now();
+        if (IMU!=NULL)
         {
-            before = yarp::os::Time::now();
-            if (IMU!=NULL)
+            yarp::os::Bottle& bot = writer.get();
+            bool res = getInertial(bot);
+            if (res)
+            {
+                static yarp::os::Stamp ts;
+                if (iTimed)
+                    ts=iTimed->getLastInputStamp();
+                else
+                    ts.update();
+
+
+                curr_timestamp_counter = ts.getCount();
+
+                if (curr_timestamp_counter!=prev_timestamp_counter)
                 {
-                    yarp::os::Bottle& bot = writer.get();
-                    bool res = getInertial(bot);
-                    if (res)
+                    if (!spoke)
                     {
-                        static yarp::os::Stamp ts;
-                        if (iTimed)
-                            ts=iTimed->getLastInputStamp();
-                        else
-                            ts.update();
-
-
-                        curr_timestamp_counter = ts.getCount();
-
-                        if (curr_timestamp_counter!=prev_timestamp_counter)
-                        {
-                            if (!spoke)
-                                {
-                                    printf("Writing an Inertial measurement.\n");
-                                    spoke = true;
-                                }
-                            p.setEnvelope(ts);
-                            writer.write();
-                        }
-                        else
-                        {
-                            trap++;
-                        }
-
-                        prev_timestamp_counter = curr_timestamp_counter;
+                        printf("Writing an Inertial measurement.\n");
+                        spoke = true;
                     }
+                    p.setEnvelope(ts);
+                    writer.write();
+                }
+                else
+                {
+                    trap++;
                 }
 
-            /// wait 5 ms.
-            now = yarp::os::Time::now();
-            if ((now - before) < period) {
-                double k = period-(now-before);
-                yarp::os::Time::delay(k);
+                prev_timestamp_counter = curr_timestamp_counter;
             }
         }
+
+        /// wait 5 ms.
+        now = yarp::os::Time::now();
+        if ((now - before) < period) {
+            double k = period-(now-before);
+            yarp::os::Time::delay(k);
+        }
+    }
     printf("Server Intertial closed\n");
 }
 
