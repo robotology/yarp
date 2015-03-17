@@ -433,7 +433,7 @@ void MainWindow::viewApplication(yarp::manager::Application *app)
     connect(w,SIGNAL(logError(QString)),this,SLOT(onLogError(QString)));
     connect(w,SIGNAL(logWarning(QString)),this,SLOT(onLogWarning(QString)));
     int index = ui->mainTabs->addTab(w,app->getName());
-    ui->mainTabs->setTabIcon(index,QIcon(":/images/application_ico.png"));
+    ui->mainTabs->setTabIcon(index,QIcon(":/run22.svg"));
     ui->mainTabs->setCurrentIndex(index);
 }
 

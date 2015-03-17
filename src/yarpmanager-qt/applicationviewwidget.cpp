@@ -95,11 +95,11 @@ void ApplicationViewWidget::createModulesViewContextMenu()
     modAttachAction = new QAction("Attach to stdout",this);
     modAssignAction = new QAction("Assign Hosts",this);
 
-    modRunAction->setIcon(QIcon(":/images/run_ico.png"));
-    modStopAction->setIcon(QIcon(":/images/stop_ico.png"));
-    modkillAction->setIcon(QIcon(":/images/kill_ico.png"));
-    modRefreshAction->setIcon(QIcon(":/images/progress_ico.png"));
-    modSelectAllAction->setIcon(QIcon(":/images/selectall_ico.png"));
+    modRunAction->setIcon(QIcon(":/play22.svg"));
+    modStopAction->setIcon(QIcon(":/stop22.svg"));
+    modkillAction->setIcon(QIcon(":/kill22.svg"));
+    modRefreshAction->setIcon(QIcon(":/refresh22.svg"));
+    modSelectAllAction->setIcon(QIcon(":/select-all22.svg"));
     modAssignAction->setIcon(QIcon(":/images/yesres_ico.png"));
 
 
@@ -141,10 +141,10 @@ void ApplicationViewWidget::createConnectionsViewContextMenu()
     connYARPHearAction = new QAction("yarphear",connSubMenu);
     connYARPScopeAction = new QAction("yarpscope",connSubMenu);
 
-    connSelectAllAction->setIcon(QIcon(":/images/selectall_ico.png"));
-    connRefreshAction->setIcon(QIcon(":/images/progress_ico.png"));
-    connConnectAction->setIcon(QIcon(":/images/connect_ico.png"));
-    connDisconnectAction->setIcon(QIcon(":/images/disconnect_ico.png"));
+    connSelectAllAction->setIcon(QIcon(":/select-all22.svg"));
+    connRefreshAction->setIcon(QIcon(":/refresh22.svg"));
+    connConnectAction->setIcon(QIcon(":/connect22.svg"));
+    connDisconnectAction->setIcon(QIcon(":/disconnect22.svg"));
 
     connect(connConnectAction,SIGNAL(triggered()),this,SLOT(onConnect()));
     connect(connDisconnectAction,SIGNAL(triggered()),this,SLOT(onDisconnect()));
@@ -180,8 +180,8 @@ void ApplicationViewWidget::createResourcesViewContextMenu()
     resRefreshAction = new QAction("Refresh Status", this);
     resSelectAllAction = new QAction("Select All Resources", this);
 
-    resRefreshAction->setIcon(QIcon(":/images/progress_ico.png"));
-    resSelectAllAction->setIcon(QIcon(":/images/selectall_ico.png"));
+    resRefreshAction->setIcon(QIcon(":/refresh22.svg"));
+    resSelectAllAction->setIcon(QIcon(":/select-all22.svg"));
 
     ui->resourcesList->addAction(resRefreshAction);
     ui->resourcesList->addAction(resSelectAllAction);
@@ -291,7 +291,7 @@ void ApplicationViewWidget::updateApplicationWindow()
 
         //it->setFlags(it->flags() | Qt::ItemIsEditable);
         it->setData(0,Qt::UserRole,yarp::manager::MODULE);
-        it->setIcon(0,QIcon(":/images/suspended_ico.png"));
+        it->setIcon(0,QIcon(":/close.svg"));
         it->setTextColor(2,QColor("#BF0303"));
         ui->moduleList->addTopLevelItem(it);
     }
@@ -321,7 +321,7 @@ void ApplicationViewWidget::updateApplicationWindow()
         CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->connectionList,l);
         ui->moduleList->addTopLevelItem(it);
         it->setData(0,Qt::UserRole,yarp::manager::INOUTD);
-        it->setIcon(0,QIcon(":/images/disconnected_ico.png"));
+        it->setIcon(0,QIcon(":/disconnect22.svg"));
         it->setTextColor(2,QColor("#BF0303"));
         id++;
     }
@@ -547,7 +547,7 @@ bool ApplicationViewWidget::onRun()
                                      it->text(7).toLatin1().data());
 
             it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/images/refresh_ico.png"));
+            it->setIcon(0,QIcon(":/refresh.svg"));
             it->setTextColor(2,QColor("#000000"));
 
             yDebug("Trying to run module ID %i param %s host %s stdio %s wdir %s env %s",it->text(1).toInt(),it->text(4).toLatin1().data(),
@@ -582,7 +582,7 @@ bool ApplicationViewWidget::onStop()
                                      it->text(7).toLatin1().data());
 
             it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/images/refresh_ico.png"));
+            it->setIcon(0,QIcon(":/refresh.svg"));
             it->setTextColor(2,QColor("#000000"));
 
         }
@@ -620,7 +620,7 @@ bool ApplicationViewWidget::onKill()
                                      it->text(7).toLatin1().data());
 
             it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/images/progress_ico.png"));
+            it->setIcon(0,QIcon(":/refresh22.svg"));
             it->setTextColor(2,QColor("#000000"));
 
         }
@@ -652,7 +652,7 @@ bool ApplicationViewWidget::onConnect()
                                      it->text(5).toLatin1().data());
 
             it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/images/progress_ico.png"));
+            it->setIcon(0,QIcon(":/refresh22.svg"));
             it->setTextColor(2,QColor("#000000"));
         }
     }
@@ -683,7 +683,7 @@ bool ApplicationViewWidget::onDisconnect()
                                      it->text(5).toLatin1().data());
 
             it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/images/progress_ico.png"));
+            it->setIcon(0,QIcon(":/refresh22.svg"));
             it->setTextColor(2,QColor("#000000"));
 
         }
@@ -712,7 +712,7 @@ bool ApplicationViewWidget::onRefresh()
         if(it->isSelected()){
             modulesIDs.push_back(it->text(1).toInt());
             it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/images/progress_ico.png"));
+            it->setIcon(0,QIcon(":/refresh22.svg"));
             it->setTextColor(2,QColor("#000000"));
         }
     }
@@ -723,7 +723,7 @@ bool ApplicationViewWidget::onRefresh()
         if(it->isSelected()){
             connectionsIDs.push_back(it->text(1).toInt());
             it->setText(2,"waiting");
-            it->setIcon(0,QIcon(":/images/progress_ico.png"));
+            it->setIcon(0,QIcon(":/refresh22.svg"));
             it->setTextColor(2,QColor("#000000"));
         }
     }
@@ -733,7 +733,7 @@ bool ApplicationViewWidget::onRefresh()
         if(it->isSelected()){
             resourcesIDs.push_back(it->text(1).toInt());
             it->setText(3,"waiting");
-            it->setIcon(0,QIcon(":/images/progress_ico.png"));
+            it->setIcon(0,QIcon(":/refresh22.svg"));
             it->setTextColor(3,QColor("#000000"));
         }
     }
@@ -1163,7 +1163,7 @@ void ApplicationViewWidget::onSelfConnect(int which)
     QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
     if(it){
         it->setText(2,"connected");
-        it->setIcon(0,QIcon(":/images/connected_ico.png"));
+        it->setIcon(0,QIcon(":/connect22.svg"));
         it->setTextColor(2,QColor("#008C00"));
     }
 
@@ -1180,7 +1180,7 @@ void ApplicationViewWidget::onSelfDisconnect(int which)
     QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
     if(it){
         it->setText(2,"disconnected");
-        it->setIcon(0,QIcon(":/images/disconnected_ico.png"));
+        it->setIcon(0,QIcon(":/disconnect22.svg"));
         it->setTextColor(2,QColor("#BF0303"));
     }
     reportErrors();
@@ -1232,7 +1232,7 @@ void ApplicationViewWidget::onSelfStart(int which)
 
     if(it){
         it->setText(2,"running");
-        it->setIcon(0,QIcon(":/images/runnin_ico.png"));
+        it->setIcon(0,QIcon(":/apply.svg"));
         it->setTextColor(2,QColor("#008C00"));
         //row[m_modColumns.m_col_editable] = false;
         //row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
@@ -1248,7 +1248,7 @@ void ApplicationViewWidget::onSelfStop(int which)
     QTreeWidgetItem *it = ui->moduleList->topLevelItem(row);
     if(it){
         it->setText(2,"stopped");
-        it->setIcon(0,QIcon(":/images/suspended_ico.png"));
+        it->setIcon(0,QIcon(":/close.svg"));
         it->setTextColor(2,QColor("#BF0303"));
     }
     reportErrors();

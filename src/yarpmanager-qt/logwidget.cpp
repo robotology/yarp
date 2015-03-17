@@ -10,8 +10,8 @@ LogWidget::LogWidget(QWidget *parent) :
     clearLogAction = new QAction("Clear Log",this);
     saveLogAction = new QAction("Save Log",this);
 
-    clearLogAction->setIcon(QIcon(":/images/clear.png"));
-    saveLogAction->setIcon(QIcon(":/images/Save-icon.png"));
+    clearLogAction->setIcon(QIcon(":/clear.svg"));
+    saveLogAction->setIcon(QIcon(":/file-save.svg"));
 
     this->addAction(clearLogAction);
     this->addAction(saveLogAction);
