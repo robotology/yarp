@@ -23,6 +23,7 @@
         <file alias="hardware.svg">../yarpgui-icons/512x512/audio-card.svg</file>
         <file alias="cpuload.svg">../yarpgui-icons/512x512/system-monitor.svg</file>
         <file alias="drive-harddisk.svg">../yarpgui-icons/512x512/drive-harddisk.svg</file>
+        <file alias="uml-app.svg">../yarpgui-icons/512x512/calligraflow.svg</file>
         <file alias="help.svg">../yarpgui-icons/512x512/help.svg</file>
         <file alias="info.svg">../yarpgui-icons/512x512/help-info.svg</file>
         <file alias="close22.svg">../yarpgui-icons/22x22/window-close-symbolic_B.svg</file>
@@ -35,12 +36,12 @@
         <file alias="kill22.svg">../yarpgui-icons/22x22/actions-kill.svg</file>
         <file alias="run22.svg">../yarpgui-icons/22x22/run_B.svg</file>
         <file alias="file-xml22.svg">../yarpgui-icons/22x22/file-xml.svg</file>
-        <file>images/computer_ico.png</file>
-        <file>images/module_ico.png</file>
-        <file>images/port_avail_ico.png</file>
-        <file>images/port_unavail_ico.png</file>
-        <file>images/yesres_ico.png</file>
-        <file>images/nores_ico.png</file>
-        <file>images/ymanager_ico.png</file>
+        <file alias="computer22.svg">../yarpgui-icons/22x22/computer.svg</file>
+        <file alias="computer-available22.svg">../yarpgui-icons/22x22/computer_available.svg</file>
+        <file alias="computer-unavailable22.svg">../yarpgui-icons/22x22/computer_unavailable.svg</file>
+        <file alias="module22.svg">../yarpgui-icons/22x22/module.svg</file>
+        <file alias="port22.svg">../yarpgui-icons/22x22/port.svg</file>
+        <file alias="port-unavailable22.svg">../yarpgui-icons/22x22/port_available.svg</file>
+        <file alias="port-available22.svg">../yarpgui-icons/22x22/port_unavailable.svg</file>
     </qresource>
 </RCC>

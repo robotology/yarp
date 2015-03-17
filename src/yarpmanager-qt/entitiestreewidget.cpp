@@ -115,7 +115,7 @@ void EntitiesTreeWidget::addComputer(yarp::manager::Computer* comp)
     QTreeWidgetItem *item = new QTreeWidgetItem(resourcesNode,QStringList() << comp->getName());
     item->setData(0,Qt::UserRole + 1,qlonglong(comp));
     item->setData(0,Qt::UserRole, yarp::manager::RESOURCE);
-    item->setIcon(0,QIcon(":/images/computer_ico.png"));
+    item->setIcon(0,QIcon(":/computer22.svg"));
 
     string fname;
     string fpath = comp->getXmlFile();
@@ -140,7 +140,7 @@ void EntitiesTreeWidget::addModule(yarp::manager::Module* mod)
     QTreeWidgetItem *item = new QTreeWidgetItem(modulesNode,QStringList() << mod->getName());
     item->setData(0,Qt::UserRole + 1,qlonglong(mod));
     item->setData(0,Qt::UserRole, yarp::manager::MODULE);
-    item->setIcon(0,QIcon(":/images/module_ico.png"));
+    item->setIcon(0,QIcon(":/module22.svg"));
 
     string fname;
     string fpath = mod->getXmlFile();

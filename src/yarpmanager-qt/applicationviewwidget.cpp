@@ -100,7 +100,7 @@ void ApplicationViewWidget::createModulesViewContextMenu()
     modkillAction->setIcon(QIcon(":/kill22.svg"));
     modRefreshAction->setIcon(QIcon(":/refresh22.svg"));
     modSelectAllAction->setIcon(QIcon(":/select-all22.svg"));
-    modAssignAction->setIcon(QIcon(":/images/yesres_ico.png"));
+    modAssignAction->setIcon(QIcon(":/computer-available22.svg"));
 
 
     ui->moduleList->addAction(modRunAction);
@@ -351,10 +351,10 @@ void ApplicationViewWidget::updateApplicationWindow()
         ui->moduleList->addTopLevelItem(it);
         it->setData(0,Qt::UserRole,yarp::manager::RESOURCE);
         if(type == "computer"){
-            it->setIcon(0,QIcon(":/images/nores_ico.png"));
+            it->setIcon(0,QIcon(":/computer-unavailable22.svg"));
             it->setTextColor(3,QColor("#BF0303"));
         }else{
-            it->setIcon(0,QIcon(":/images/port_unavail_ico.png"));
+            it->setIcon(0,QIcon(":/port-unavailable22.svg"));
             it->setTextColor(3,QColor("#BF0303"));
         }
         id++;
@@ -1192,10 +1192,10 @@ void ApplicationViewWidget::onSelfResAvailable(int which)
     if(it){
         it->setText(3,"available");
         if(it->text(2) == "computer"){
-            it->setIcon(0,QIcon(":/images/computer_ico.png"));
+            it->setIcon(0,QIcon(":/computer-available22.svg"));
             it->setTextColor(3,QColor("#008C00"));
         }else{
-            it->setIcon(0,QIcon(":/images/port_avail_ico.png"));
+            it->setIcon(0,QIcon(":/port-available22.svg"));
             it->setTextColor(3,QColor("#008C00"));
         }
         /*if(row[m_resColumns.m_col_type] == Glib::ustring("computer"))
@@ -1214,10 +1214,10 @@ void ApplicationViewWidget::onSelfResUnavailable(int which)
     if(it){
         it->setText(3,"unavailable");
         if(it->text(2) == "computer"){
-            it->setIcon(0,QIcon(":/images/nores_ico.png"));
+            it->setIcon(0,QIcon(":/computer-unavailable22.svg"));
             it->setTextColor(3,QColor("#BF0303"));
         }else{
-            it->setIcon(0,QIcon(":/images/port_unavail_ico.png"));
+            it->setIcon(0,QIcon(":/port-unavailable22.svg"));
             it->setTextColor(3,QColor("#BF0303"));
         }
     }

@@ -373,6 +373,10 @@
    </property>
   </action>
   <action name="actionExport_Graph">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/uml-app.svg</normaloff>:/uml-app.svg</iconset>
+   </property>
    <property name="text">
     <string>Export Graph...</string>
    </property>
