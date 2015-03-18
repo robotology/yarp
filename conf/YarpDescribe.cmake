@@ -66,6 +66,8 @@ configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cma
                                         YARP_MODULES_TEMPLATES_INSTALL_DIR
                                         YARP_CONTEXTS_INSTALL_DIR
                                         YARP_ROBOTS_INSTALL_DIR
+                                        YARP_STATIC_PLUGINS_INSTALL_DIR
+                                        YARP_DYNAMIC_PLUGINS_INSTALL_DIR
                                         YARP_QML2_IMPORT_DIR
                               NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
