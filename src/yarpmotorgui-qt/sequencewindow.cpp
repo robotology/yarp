@@ -19,9 +19,8 @@ SequenceWindow::SequenceWindow(QString partName, int count,QWidget *parent) :
 {
     ui->setupUi(this);
 
-
     setWindowTitle(QString("Sequence Window for part: %1").arg(partName));
-    goAction        = ui->toolBar->addAction(QIcon(":/play.svg"),"Run");
+    goAction         = ui->toolBar->addAction(QIcon(":/play.svg"),"Run");
     runTimeAction    = ui->toolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run (time)");
     saveAction       = ui->toolBar->addAction(QIcon(":/file-save.svg"),"Save");
     openAction       = ui->toolBar->addAction(QIcon(":/file-open.svg"),"Open");
@@ -513,13 +512,13 @@ void SequenceWindow::onSetCurrentSequenceIndex(int index)
         ui->treePositions->topLevelItem(index)->setBackgroundColor(i,QColor(0,255,0,120));
 
     }
-    ui->treePositions->topLevelItem(index)->setIcon(0,QIcon(":/images/goAll.png"));
+    ui->treePositions->topLevelItem(index)->setIcon(0,QIcon(":/play.svg"));
 
     for(int i=0;i<ui->treeSpeed->columnCount();i++){
         ui->treeSpeed->topLevelItem(index)->setBackgroundColor(i,QColor(0,255,0,120));
 
     }
-    ui->treeSpeed->topLevelItem(index)->setIcon(0,QIcon(":/images/goAll.png"));
+    ui->treeSpeed->topLevelItem(index)->setIcon(0,QIcon(":/play.svg"));
     prevCurrentIndex = index;
 }
 
