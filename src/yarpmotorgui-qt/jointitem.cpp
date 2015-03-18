@@ -75,6 +75,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     connect(ui->buttonCalib,SIGNAL(clicked()),this,SLOT(onCalibClicked()));
 
     ui->groupBox->setTitle(QString("JOINT %1").arg(index));
+    // ui->groupBox->setAlignment(Qt::AlignHCenter);
 
 
     movingSliderStyle = "QSlider::groove:horizontal:enabled {"
@@ -170,7 +171,6 @@ JointItem::JointItem(int index,QWidget *parent) :
     velocityTimer.setInterval(50);
     velocityTimer.setSingleShot(false);
     connect(&velocityTimer,SIGNAL(timeout()),this,SLOT(onVelocityTimer()));
-
 }
 
 void JointItem::setSpeedVisible(bool visible)
@@ -775,6 +775,7 @@ void JointItem::setJointInternalState(int mode)
 
 
         ui->stackedWidget->widget(mode)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+        setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
 
         QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
         ui->comboMode->setStyleSheet(styleSheet);
