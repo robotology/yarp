@@ -166,7 +166,7 @@ void YarpPluginSelector::scan() {
                 YARP_SPRINTF1(Logger::get(),
                               debug,
                               "Loading configuration files related to plugins from %s.", target.c_str());
-                config.fromConfigFile(target,false);
+                config.fromConfigDir(target, "inifile", false);
             }
         } else {
             YARP_SPRINTF0(Logger::get(),
@@ -177,18 +177,25 @@ void YarpPluginSelector::scan() {
         state = config;
         NetworkBase::unlock();
     }
-    Bottle lst = config.findGroup("plugin").tail();
-    for (int i=0; i<lst.size(); i++) {
-        ConstString plugin_name = lst.get(i).asString();
-        Bottle group = config.findGroup(plugin_name);
-        if (select(group)) {
-            plugins.addList() = group;
+
+    Bottle inilst = config.findGroup("inifile").tail();
+    for (int i=0; i<inilst.size(); i++) {
+        ConstString inifile = inilst.get(i).asString();
+        Bottle inigroup = config.findGroup(inifile);
+        Bottle lst = inigroup.findGroup("plugin").tail();
+        for (int i=0; i<lst.size(); i++) {
+            ConstString plugin_name = lst.get(i).asString();
+            Bottle group = inigroup.findGroup(plugin_name);
+            group.add(Value::makeValue(ConstString("(inifile ") + inifile + ")"));
+            if (select(group)) {
+                plugins.addList() = group;
+            }
         }
-    }
-    lst = config.findGroup("search").tail();
-    for (int i=0; i<lst.size(); i++) {
-        ConstString search_name = lst.get(i).asString();
-        Bottle group = config.findGroup(search_name);
-        search_path.addList() = group;
+        lst = inigroup.findGroup("search").tail();
+        for (int i=0; i<lst.size(); i++) {
+            ConstString search_name = lst.get(i).asString();
+            Bottle group = inigroup.findGroup(search_name);
+            search_path.addList() = group;
+        }
     }
 }
