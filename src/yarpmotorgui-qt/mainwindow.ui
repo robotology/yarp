@@ -54,6 +54,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
        <property name="animated">
         <bool>true</bool>
        </property>
