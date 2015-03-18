@@ -186,7 +186,7 @@ void ConstString::clear() {
 }
 
 bool ConstString::empty() const {
-    HELPER(implementation).empty();
+    return HELPER(implementation).empty();
 }
 
 char& ConstString::operator[](size_t idx) {
