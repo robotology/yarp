@@ -21,13 +21,13 @@ SequenceWindow::SequenceWindow(QString partName, int count,QWidget *parent) :
 
 
     setWindowTitle(QString("Sequence Window for part: %1").arg(partName));
-    goAction        = ui->toolBar->addAction(QIcon(":/images/goAll.png"),"Go!");
+    goAction        = ui->toolBar->addAction(QIcon(":/play.svg"),"Run");
     runTimeAction    = ui->toolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run (time)");
-    saveAction       = ui->toolBar->addAction(QIcon(":/images/save.png"),"Save");
-    openAction       = ui->toolBar->addAction(QIcon(":/images/load.png"),"Open");
+    saveAction       = ui->toolBar->addAction(QIcon(":/file-save.svg"),"Save");
+    openAction       = ui->toolBar->addAction(QIcon(":/file-open.svg"),"Open");
     cycleAllAction   = ui->toolBar->addAction(QIcon(":/images/cycleAllSequence.png"),"Cycle");
     cycleTimeAction  = ui->toolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"),"Cycle (time)");
-    stopAction       = ui->toolBar->addAction(QIcon(":/images/stop.png"),"Stop");
+    stopAction       = ui->toolBar->addAction(QIcon(":/stop.svg"),"Stop");
 
     QMenu *menu = ui->menuBar->addMenu("Commands");
     menu->addAction(goAction);

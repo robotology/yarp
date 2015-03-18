@@ -9,8 +9,10 @@
         <file alias="time.svg">../yarpgui-icons/512x512/clock.svg</file>
         <file alias="file-save.svg">../yarpgui-icons/512x512/file-save.svg</file>
         <file alias="file-new.svg">../yarpgui-icons/512x512/file-new.svg</file>
+        <file alias="file-open.svg">../yarpgui-icons/512x512/file-open.svg</file>
         <file alias="apply.svg">../yarpgui-icons/512x512/actions-apply.svg</file>
         <file alias="warning.svg">../yarpgui-icons/512x512/actions-warning.svg</file>
+        <file alias="folder-new.svg">../yarpgui-icons/512x512/folder-new.svg</file>
         <file>images/downArrow.png</file>
         <file>images/goAll.png</file>
         <file>images/calibrate.png</file>
