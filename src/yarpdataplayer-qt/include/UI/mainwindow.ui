@@ -29,6 +29,9 @@
     </property>
     <item>
      <widget class="QTreeWidget" name="mainWidget">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
       <attribute name="headerDefaultSectionSize">
        <number>80</number>
       </attribute>
@@ -151,6 +154,11 @@ QSlider::groove:horizontal:disabled {
              <height>30</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {border: none; background-color:none;}
+QToolButton:hover {border: 3px solid transparent;}
+QToolButton:pressed {border: 4px solid transparent;}</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -158,13 +166,11 @@ QSlider::groove:horizontal:disabled {
             <iconset>
              <normaloff>:/backward.svg</normaloff>:/backward.svg</iconset>
            </property>
-           <property name="styleSheet">
-            <string notr="true"> QToolButton { /* all types of tool button */
-              border: none;
-              border-radius: 6px;
-              background-color: none;
-              }
-            </string>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>26</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -186,12 +192,9 @@ QSlider::groove:horizontal:disabled {
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true"> QToolButton { /* all types of tool button */
-              border: none;
-              border-radius: 6px;
-              background-color: none;
-              }
-            </string>
+            <string notr="true">QToolButton {border: none; background-color:none;}
+QToolButton:hover {border: 3px solid transparent;}
+QToolButton:pressed {border: 4px solid transparent;}</string>
            </property>
            <property name="text">
             <string/>
@@ -199,6 +202,12 @@ QSlider::groove:horizontal:disabled {
            <property name="icon">
             <iconset>
              <normaloff>:/play.svg</normaloff>:/play.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>26</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -219,6 +228,11 @@ QSlider::groove:horizontal:disabled {
              <height>30</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {border: none; background-color:none;}
+QToolButton:hover {border: 3px solid transparent;}
+QToolButton:pressed {border: 4px solid transparent;}</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -226,13 +240,11 @@ QSlider::groove:horizontal:disabled {
             <iconset>
              <normaloff>:/stop.svg</normaloff>:/stop.svg</iconset>
            </property>
-           <property name="styleSheet">
-            <string notr="true"> QToolButton { /* all types of tool button */
-              border: none;
-              border-radius: 6px;
-              background-color: none;
-              }
-            </string>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>26</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -253,6 +265,11 @@ QSlider::groove:horizontal:disabled {
              <height>30</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {border: none; background-color:none;}
+QToolButton:hover {border: 3px solid transparent;}
+QToolButton:pressed {border: 4px solid transparent;}</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -260,13 +277,11 @@ QSlider::groove:horizontal:disabled {
             <iconset>
              <normaloff>:/forward.svg</normaloff>:/forward.svg</iconset>
            </property>
-           <property name="styleSheet">
-            <string notr="true"> QToolButton { /* all types of tool button */
-              border: none;
-              border-radius: 6px;
-              background-color: none;
-              }
-            </string>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>26</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -414,7 +429,11 @@ QSlider::groove:horizontal:disabled {
    <addaction name="menuOption"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="styleSheet">
+    <string notr="true">border: none;</string>
+   </property>
+  </widget>
   <action name="actionOpen_Directory">
    <property name="icon">
     <iconset>
