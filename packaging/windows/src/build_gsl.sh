@@ -109,7 +109,7 @@ if [ ! -e Headers.cmake ] ; then
   (
 	echo "set(GSL_HEADERS"
 	echo -n "  "
-	find .. -iname "gsl*.h" -maxdepth 2 | sed "s|\.\./||g"
+	find .. -maxdepth 2 -iname "gsl*.h" | sed "s|\.\./||g"
 	echo ")"
 	) | tee Headers.cmake
 fi

@@ -56,6 +56,8 @@ if [ ! -d $fname ]; then
 		rm -rf $fname
 		exit 1
 	}
+	find . -name *.exe -exec chmod +x '{}' \;
+	find . -name *.dll -exec chmod +x '{}' \;
 fi
 
 

@@ -35,8 +35,8 @@ source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 # options
 # Visual Studio 11 not directly supported so we use ACE_vc10. We set
 ###
-if [ "$OPT_COMPILER" == "v11" ] ; then
-    echo "WARNING: ACE does not yet provide visual studio 11 project files so you have to manually open and convert ACE_vc10.vcxproj"
+if [ "$OPT_COMPILER" == "v11" ] || [ "$OPT_COMPILER" == "v12" ] ; then
+    echo "WARNING: this version of ACE does not yet provide visual studio $OPT_COMPILER project files so you have to manually open and convert ACE_vc10.vcxproj"
 	convert=1
 	pname=ACE_vc10.sln #ACE_vc10.vcxprojfi
 	if [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
