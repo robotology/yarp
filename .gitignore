@@ -16,3 +16,5 @@ tags
 .DS_Store
 *.swp
 /source-package/
+*.dox.fail
+*.kate-swp
