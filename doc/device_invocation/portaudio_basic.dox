@@ -34,7 +34,8 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>write</td><td>if present, just deal with writing audio (speaker)</td><td></td></tr>
 <tr><td>id</td><td>which portaudio index to use (-1=automatic)</td><td>-1</td></tr>
 <tr><td>loopback</td><td>if present, send audio read from microphone immediately back to speaker</td><td></td></tr>
-<tr><td>delay</td><td>if present, do not configure audio device until it needs to be used</td><td></td></tr>
+<tr><td>render_mode_append</td><td></td><td></td></tr>
+<tr><td>render_mode_immediate</td><td></td><td></td></tr>
 </table>
 
 \sa yarp::dev::PortAudioDeviceDriver

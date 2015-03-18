@@ -39,12 +39,13 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>portaudio.write</td><td>if present, just deal with writing audio (speaker)</td><td></td></tr>
 <tr><td>portaudio.id</td><td>which portaudio index to use (-1=automatic)</td><td>-1</td></tr>
 <tr><td>portaudio.loopback</td><td>if present, send audio read from microphone immediately back to speaker</td><td></td></tr>
-<tr><td>portaudio.delay</td><td>if present, do not configure audio device until it needs to be used</td><td></td></tr>
+<tr><td>portaudio.render_mode_append</td><td></td><td></td></tr>
+<tr><td>portaudio.render_mode_immediate</td><td></td><td></td></tr>
 <tr><td>no_drop</td><td>if present, use strict policy for sending data</td><td></td></tr>
 <tr><td>stamp</td><td>if present, add timestamps to data</td><td></td></tr>
 <tr><td>name</td><td>name of port to send data on</td><td>/grabber</td></tr>
-<tr><td>framerate</td><td>maximum rate in Hz to read from subdevice</td><td>0</td></tr>
 <tr><td>single_threaded</td><td>if present, operate in single threaded mode</td><td></td></tr>
+<tr><td>framerate</td><td>maximum rate in Hz to read from subdevice</td><td>0</td></tr>
 </table>
 
 \sa yarp::dev::ServerFrameGrabber
