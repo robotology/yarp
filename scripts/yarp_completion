@@ -23,7 +23,12 @@ _get_yarp_carriers(){
 echo $(yarp connect --list-carriers 2>/dev/null)
 }
 
-_yarp() 
+_get_yarp_plugins(){
+echo $(yarp plugin --list 2>/dev/null)
+}
+
+
+_yarp()
 {
     COMPREPLY=()
 
@@ -44,6 +49,7 @@ _yarp()
     local command="${COMP_WORDS[1]}"
     local cmds=$(_get_yarp_help)
     local connectopts=(--persist --persist-to --persist-from --list-carriers --help)
+    local pluginopts=(--help --list --all --search-path)
 
     completion=""
     if [ $COMP_CWORD -eq 1 ]; then
@@ -110,7 +116,12 @@ _yarp()
                 if [ $COMP_CWORD -eq 2 ]; then completion="list"; fi ;;
             conf)
                 if [ $COMP_CWORD -eq 2 ]; then completion="--clean"; fi ;;
-             *)
+            plugin)
+                if [ $COMP_CWORD -eq 2 ]; then
+                    completion="${pluginopts[@]} $(_get_yarp_plugins)"
+                fi
+                ;;
+            *)
                 ;;
         esac
 
@@ -121,7 +132,7 @@ _yarp()
     fi;
 
     return 0
-        
+
 }
 
 _yarprun() {
@@ -174,7 +185,7 @@ _yarprun() {
             esac
         fi
     fi
-    
+
     COMPREPLY=( $(compgen -W "${completion}" -- ${cur}) )
 
     return 0
