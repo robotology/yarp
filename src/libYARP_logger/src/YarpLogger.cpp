@@ -767,8 +767,8 @@ std::streamoff get_tag(ifstream& file, const char* tag)
 {
     std::streamoff pos=file.tellg();
     int tag_size=strlen(tag);
-    char* buff = new char[tag_size+1];
-    for(int i=0; i<tag_size+1;i++) buff[i]=0;
+    char* buff = new char[tag_size+2];
+    for(int i=0; i<tag_size+2;i++) buff[i]=0;
     std::streamoff off=0;
     for (; ;off++)
     {
@@ -798,7 +798,8 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
     const int      LOGFILE_VERSION = 1;
 
     ifstream file1;
-    file1.open(filename.c_str());
+    file1.open(filename.c_str(),std::ifstream::binary);
+    std::streamoff debug_pos=file1.tellg();
     if (file1.is_open() == false) return false;
 
     int log_file_version;
@@ -842,8 +843,16 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
                 //validity check
                 if (start_p<0 || end_p<0 || end_p-start_p+start_string_size<=0) return false;
                 char *buff = new char[(unsigned int)(end_p-start_p+start_string_size)];
+                //memset(buff,0,end_p-start_p+start_string_size);
                 file1.seekg(start_p+start_string_size);
-                file1.get(buff,end_p-start_p-start_string_size,0);
+                if (end_p-start_p-start_string_size!=1)
+                {
+                    file1.get(buff,end_p-start_p-start_string_size);
+                }
+                else
+                {
+                    //skip empty strings
+                }
                 file1.seekg(end_p+end_string_size);
                 m_tmp.text=buff;
                 delete [] buff;
