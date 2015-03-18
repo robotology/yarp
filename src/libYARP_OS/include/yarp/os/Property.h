@@ -249,13 +249,26 @@ public:
                         bool wipe=true);
 
     /**
+     * Interprets all files in a directory as lists of properties as
+     * described in fromConfigFile().
+     *
+     * @param dirname the name of the file to read from
+     * @param section if specified names the subsection for each file,
+     * otherwise use the same section for all files
+     * @param wipe should Property be emptied first
+     * @return true if file exists and can be read
+     */
+    bool fromConfigDir(const ConstString& firname,
+                       const ConstString& section = ConstString(),
+                       bool wipe = true);
+
+    /**
      * Parses text in the configuration format described in
      * fromConfigFile().
      * @param txt the configuration text
      * @param wipe should Property be emptied first
      */
     void fromConfig(const char *txt, bool wipe=true);
-
 
     /**
      * Variant of fromConfig(txt,wipe) that includes extra
