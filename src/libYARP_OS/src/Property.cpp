@@ -321,6 +321,8 @@ public:
 
     bool readDir(const ConstString& dirname, ACE_DIR *&dir, String& result) {
         bool ok = true;
+        YARP_DEBUG(Logger::get(),
+                   String("reading directory ") + dirname);
 
         struct YARP_DIRENT **namelist;
         YARP_closedir(dir);
@@ -364,6 +366,8 @@ public:
             ACE_DIR *dir = ACE_OS::opendir(fname.c_str());
             if (dir) return readDir(fname,dir,result);
         }
+        YARP_DEBUG(Logger::get(),
+                   String("reading file ") + fname);
         FILE *fin = fopen(fname.c_str(),"r");
         if (fin==NULL) return false;
         char buf[25600];
@@ -375,7 +379,7 @@ public:
         return true;
     }
 
-    bool fromConfigFile(const ConstString& fname,Searchable& env, bool wipe=true) {
+    bool fromConfigFile(const ConstString& fname, Searchable& env, bool wipe=true) {
         String searchPath =
             env.check("CONFIG_PATH",
                       Value(""),
