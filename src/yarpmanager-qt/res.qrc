@@ -36,7 +36,7 @@
         <file alias="kill22.svg">../yarpgui-icons/22x22/actions-kill.svg</file>
         <file alias="run22.svg">../yarpgui-icons/22x22/run_B.svg</file>
         <file alias="file-xml22.svg">../yarpgui-icons/22x22/file-xml.svg</file>
-        <file alias="computer22.svg">../yarpgui-icons/22x22/computer.svg</file>
+        <file alias="computer22.svg">../yarpgui-icons/22x22/computer_B.svg</file>
         <file alias="computer-available22.svg">../yarpgui-icons/22x22/computer_available.svg</file>
         <file alias="computer-unavailable22.svg">../yarpgui-icons/22x22/computer_unavailable.svg</file>
         <file alias="module22.svg">../yarpgui-icons/22x22/module.svg</file>

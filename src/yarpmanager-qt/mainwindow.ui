@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
+    <width>1200</width>
     <height>600</height>
    </rect>
   </property>
@@ -68,6 +68,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
            <column>
             <property name="text">
              <string>Entities</string>
@@ -80,6 +83,13 @@
              <horstretch>15</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">
+              QTabBar::close-button {image: url(:/close22.svg);}
+              QTabBar::close-button:hover { border: 2px solid transparent; }
+              QTabWidget::pane { border: none; }
+            </string>
            </property>
            <property name="currentIndex">
             <number>-1</number>
@@ -157,6 +167,12 @@
               <property name="contextMenuPolicy">
                <enum>Qt::ActionsContextMenu</enum>
               </property>
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="lineWidth">
+               <number>0</number>
+              </property>
              </widget>
             </item>
            </layout>
@@ -180,6 +196,9 @@
             </property>
             <item>
              <widget class="QPlainTextEdit" name="notesWidget">
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
               <property name="plainText">
                <string>&lt;&lt; Yellow Notes &gt;&gt;
 </string>
@@ -201,8 +220,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>21</height>
+     <width>1200</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -289,16 +308,28 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew_Application">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/run22.svg</normaloff>:/run22.svg</iconset>
+   </property>
    <property name="text">
     <string>New Application</string>
    </property>
   </action>
   <action name="actionNew_Module">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/module22.svg</normaloff>:/module22.svg</iconset>
+   </property>
    <property name="text">
     <string>New Module</string>
    </property>
   </action>
   <action name="actionNew_Resource">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/computer22.svg</normaloff>:/computer22.svg</iconset>
+   </property>
    <property name="text">
     <string>New Resource</string>
    </property>
@@ -322,24 +353,24 @@
    </property>
   </action>
   <action name="actionSave">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
-   </property>
-   <property name="enabled">
-    <bool>false</bool>
    </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="actionSave_As">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
-   </property>
-   <property name="enabled">
-    <bool>false</bool>
    </property>
    <property name="text">
     <string>Save As</string>

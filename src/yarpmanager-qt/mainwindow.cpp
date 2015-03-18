@@ -395,7 +395,7 @@ void MainWindow::viewResource(yarp::manager::Computer *res)
 
     ResourceViewWidget *w = new ResourceViewWidget(res,ui->mainTabs);
     int index = ui->mainTabs->addTab(w,res->getName());
-    ui->mainTabs->setTabIcon(index,QIcon(":/computer.svg"));
+    ui->mainTabs->setTabIcon(index,QIcon(":/computer22.svg"));
     ui->mainTabs->setCurrentIndex(index);
 }
 /*! \brief Load the Module on the MainWindow
