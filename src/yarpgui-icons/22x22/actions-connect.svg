@@ -39,14 +39,14 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1855"
-     inkscape:window-height="1056"
+     inkscape:window-width="1375"
+     inkscape:window-height="876"
      id="namedview9"
      showgrid="false"
      inkscape:zoom="29.625"
-     inkscape:cx="11.084388"
+     inkscape:cx="5.734177"
      inkscape:cy="11"
-     inkscape:window-x="65"
+     inkscape:window-x="1985"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg7384"
@@ -66,7 +66,7 @@
   <title
      id="title9167">Gnome Symbolic Icon Theme</title>
   <path
-     style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#8cca37;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+     style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:0.9;fill:#81bb31;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
      id="path3804-7"
      inkscape:connector-curvature="0"
      d="m 18.40359,2.0000002 c -0.13715,0 -0.26831,0.0513 -0.36457,0.14955 l -3.65506,3.65464 -1.66393,0 c -0.13701,-10e-4 -0.27697,0.0528 -0.37392,0.14954 l -2.4211304,2.42085 c -0.19663,0.19249 -0.19663,0.55526 0,0.74774 L 12.88829,12.08529 c 0.0989,0.0988 0.23412,0.1529 0.37392,0.14955 0.1342,-10e-4 0.2696,-0.0547 0.36457,-0.14955 l 2.43047,-2.4301898 c 0.0968,-0.097 0.15066,-0.22754 0.14957,-0.36453 l 0,-1.67309 3.6457,-3.64529 c 0.19664,-0.19249 0.19664,-0.55525 0,-0.74774 l -1.07501,-1.0749 c -0.0963,-0.0983 -0.23678,-0.14955 -0.37392,-0.14955 z m -9.6658004,7.76726 c -0.1342,10e-4 -0.2696,0.0641 -0.36457,0.1589 L 5.9427486,12.347 c -0.09681,0.097 -0.150662,0.23689 -0.149567,0.37387 l 0,1.66375 -3.645707,3.65464 c -0.196633,0.19248 -0.196633,0.5459 0,0.73839 l 1.075016,1.0749 c 0.192517,0.1966 0.545972,0.1966 0.738489,0 l 3.65506,-3.64529 1.66393,0 c 0.13701,10e-4 0.27697,-0.0528 0.37392,-0.14954 L 12.07502,13.62753 c 0.19663,-0.1925 0.19663,-0.54592 0,-0.7384 L 9.1117096,9.9261602 c -0.0989,-0.0988 -0.23412,-0.16225 -0.37392,-0.1589 z" />
