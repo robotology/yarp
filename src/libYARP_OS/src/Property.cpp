@@ -319,7 +319,7 @@ public:
         }
     }
 
-    bool readDir(const ConstString& dirname, ACE_DIR *&dir, String& result) {
+    bool readDir(const ConstString& dirname, ACE_DIR *&dir, String& result, const ConstString& section=ConstString()) {
         bool ok = true;
         YARP_DEBUG(Logger::get(),
                    String("reading directory ") + dirname);
@@ -338,8 +338,12 @@ public:
             if (len<4) continue;
             if (name.substr(len-4)!=".ini") continue;
             ConstString fname = ConstString(dirname) + "/" + name;
-            ok = ok && readFile(fname,result,false);
-            result += "\n[]\n";  // reset any nested sections
+            if (section.empty()) {
+                ok = ok && readFile(fname,result,false);
+                result += "\n[]\n";  // reset any nested sections
+            } else {
+                result += "[include " + section + " \"" + fname + "\" \"" + fname + "\"]\n";
+            }
         }
         free(namelist);
         return ok;
