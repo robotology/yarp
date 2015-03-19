@@ -23,6 +23,11 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/PreciselyTimed.h>
 
+// ROS state publisher
+#include <yarpRosHelper.h>
+#include <yarp/os/Node.h>
+#include <yarp/os/Publisher.h>
+#include <sensor_msgs_Imu.h>
 
 namespace yarp
 {
@@ -58,6 +63,7 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 {
 private:
     bool spoke;
+    yarp::os::ConstString partName;
     yarp::dev::PolyDriver poly;
     IGenericSensor *IMU; //The inertial device
     IPreciselyTimed *iTimed;
@@ -67,6 +73,21 @@ private:
     int prev_timestamp_counter;
     int curr_timestamp_counter;
     int trap;
+
+    // ROS data
+    ROSTopicUsageType                                   useROS;                     // decide if open ROS topic or not
+    std::string                                         frame_id;                   // name of the frame mesuares are referred to
+    std::string                                         rosNodeName;                // name of the rosNode
+    std::string                                         rosTopicName;               // name of the rosTopic
+    yarp::os::Node                                      *rosNode;                   // add a ROS node
+    yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
+    yarp::os::Publisher<sensor_msgs_Imu>                rosPublisherPort;           // Dedicated ROS topic publisher
+//    sensor_msgs_Imu                                     rosData;                    // store imu data in ROS format to be published
+    std::vector<yarp::os::NetFloat64>                   covariance;                 // empty matrix to store covariance data needed by ROS msg
+
+    bool checkROSParams(yarp::os::Searchable &config);
+    bool initialize_ROS();
+    bool initialize_YARP(yarp::os::Searchable &prop);
 
 public:
     /**
