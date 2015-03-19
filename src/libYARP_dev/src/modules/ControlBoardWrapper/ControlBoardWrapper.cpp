@@ -13,7 +13,6 @@
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/math/api.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -38,6 +37,7 @@ ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),
     period = 20; // ms.
     base = 0;
     top = 0;
+    rosMsgCounter = 0;
     subDeviceOwned = NULL;
     _verb = false;
 }
