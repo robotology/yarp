@@ -11,8 +11,13 @@
 // This file contains helper functions for the ControlBoardWrapper
 
 
+#include <iostream>
 #include <limits.h>
+#include <cmath>
+#include <yarp/os/LogStream.h>
+
 #include "sensor_msgs_JointState.h"
+
 
 typedef enum
 {
@@ -23,7 +28,7 @@ typedef enum
 }
 ROSTopicUsageType;
 
-double const pi = 3.1415926535897932384626433;
+double const PI = 3.1415926535897932384626433;
 
 /**
  * This function has been took from ROS source file
@@ -42,7 +47,7 @@ inline TickTime normalizeSecNSec(double yarpTimeStamp)
 
     if (sec_part > UINT_MAX)
     {
-        std::cout << "Timestamp exceeded the 64 bit representation, resetting it to 0" << std::endl;
+        yWarning() << "Timestamp exceeded the 64 bit representation, resetting it to 0";
         sec_part = 0;
     }
 
@@ -52,9 +57,9 @@ inline TickTime normalizeSecNSec(double yarpTimeStamp)
 }
 
 /** convert degrees to radiants for ROS messages */
-inline double convertDegreesToRadians(double &degrees)
+inline double convertDegreesToRadians(double degrees)
 {
-    return degrees / 180.0 * pi;
+    return degrees / 180.0 * PI;
 }
 
 inline void convertDegreesToRadians(std::vector<yarp::os::NetFloat64>  &degrees)
