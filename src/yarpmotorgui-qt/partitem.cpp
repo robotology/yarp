@@ -165,7 +165,6 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 
     LOG_ERROR("Opening interfaces...");
     bool ok = false;
-    bool ok2 = true;
 
     if (partsdd->isValid()) {
         ok  = partsdd->view(pid);
@@ -537,7 +536,7 @@ void PartItem::onSendPid(int jointIndex,Pid newPid)
 }
 void PartItem::onCalibClicked(JointItem *joint)
 {
-    const int jointIndex = joint->getJointIndex();
+    joint->getJointIndex();
 
     if(QMessageBox::question(this,"Question","Do you want really to recalibrate the joint?") != QMessageBox::Yes){
         return;
@@ -568,10 +567,6 @@ void PartItem::onPidClicked(JointItem *joint)
     double impedance_offset_val=0;
     double openloop_reference=0;
     double openloop_current_pwm=0;
-    double debug_param [8];
-    for (int i=0; i<8; i++){
-      debug_param[i] =0;
-    }
 
     imp->getCurrentImpedanceLimit(jointIndex, &stiff_min, &stiff_max, &damp_min, &damp_max);
     trq->getTorqueRange(jointIndex, &off_min, &off_max);
@@ -597,6 +592,12 @@ void PartItem::onPidClicked(JointItem *joint)
 
 #ifdef DEBUG_INTERFACE
     // Debug
+
+    double debug_param [8];
+    for (int i=0; i<8; i++){
+      debug_param[i] =0;
+    }
+
     int debug_base = 0;
     if (idbg != 0){
         idbg->getDebugParameter(jointIndex, debug_base+0, &debug_param[0]);
@@ -1076,7 +1077,7 @@ void PartItem::onOpenSequence()
     QXmlStreamReader reader(&file);
     reader.readNext();
 
-    int totPositions = 0;
+    // int totPositions = 0;
     QString referencePart;
 
     QList<SequenceItem> sequenceItems;
@@ -1087,7 +1088,7 @@ void PartItem::onOpenSequence()
         if(reader.isStartElement()){
             if(reader.name().contains("Sequence_")){ //Sequence_
                 QXmlStreamAttributes attributes = reader.attributes();
-                totPositions = attributes.value("TotPositions").toInt();
+                // totPositions = attributes.value("TotPositions").toInt();
                 referencePart = attributes.value("ReferencePart").toString();
             }
 
@@ -1172,7 +1173,7 @@ void PartItem::onSaveSequence(QList<SequenceItem> values)
     QString completeFileName = QString("%1/%2.pos%3").arg(fInfo.absolutePath()).arg(fInfo.baseName()).arg(partName);
 
     //QFile file(completeFileName);
-    LOG_ERROR(QString("Saving File %1\n").arg(completeFileName).toLatin1().data());
+    LOG_ERROR("%s", QString("Saving File %1\n").arg(completeFileName).toLatin1().data());
 
     QFile file(completeFileName);
     if(!file.open(QIODevice::WriteOnly)){
@@ -1675,8 +1676,6 @@ void PartItem::updateControlMode()
 
 void PartItem::updatePart()
 {
-    char buffer[40] = {'i', 'n', 'i', 't'};
-    
     double torques[MAX_NUMBER_OF_JOINTS];
     double positions[MAX_NUMBER_OF_JOINTS];
     double speeds[MAX_NUMBER_OF_JOINTS];
