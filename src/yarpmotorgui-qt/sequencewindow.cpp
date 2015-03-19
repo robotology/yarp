@@ -20,12 +20,13 @@ SequenceWindow::SequenceWindow(QString partName, int count,QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle(QString("Sequence Window for part: %1").arg(partName));
-    goAction         = ui->toolBar->addAction(QIcon(":/play.svg"),"Run");
-    runTimeAction    = ui->toolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run (time)");
+    goAction        = ui->toolBar->addAction(QIcon(":/play.svg"),"Run (use joint speeds from Speed tab)");
+    runTimeAction    = ui->toolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run (ignore Speed tab, produce coordinated movement using Timing)");
+
     saveAction       = ui->toolBar->addAction(QIcon(":/file-save.svg"),"Save");
     openAction       = ui->toolBar->addAction(QIcon(":/file-open.svg"),"Open");
-    cycleAllAction   = ui->toolBar->addAction(QIcon(":/images/cycleAllSequence.png"),"Cycle");
-    cycleTimeAction  = ui->toolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"),"Cycle (time)");
+    cycleAllAction   = ui->toolBar->addAction(QIcon(":/images/cycleAllSequence.png"),"Cycle (use joint speeds from Speed tab)");
+    cycleTimeAction  = ui->toolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"),"Cycle (ignore Speed tab, produce coordinated movement using Timing)");
     stopAction       = ui->toolBar->addAction(QIcon(":/stop.svg"),"Stop");
 
     QMenu *menu = ui->menuBar->addMenu("Commands");

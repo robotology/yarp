@@ -55,12 +55,12 @@ MainWindow::MainWindow(QWidget *parent) :
     globalToolBar->addSeparator();
     goAll = globalToolBar->addAction(QIcon(":/play-all.svg"),"Go All");
     globalToolBar->addSeparator();
-    runAllSeq      = globalToolBar->addAction(QIcon(":/images/runSequence.png"),"Run All Sequences");
-    runAllSeqTime  = globalToolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run All Sequences (time)");
+    runAllSeq      = globalToolBar->addAction(QIcon(":/images/runSequence.png"),"Run All Sequences (use joint speeds from Speed tab)");
+    runAllSeqTime  = globalToolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run All Sequences (ignore Speed tab, produce coordinated movement using Timing)");
     saveAllSeq     = globalToolBar->addAction(QIcon(":/file-save.svg"),"Save All Sequences");
     loadAllSeq     = globalToolBar->addAction(QIcon(":/file-open.svg"),"Load All Sequences");
-    cycleAllSeq    = globalToolBar->addAction(QIcon(":/images/cycleAllSequence.png"),"Cycle All Sequences");
-    cycleAllSeqTime= globalToolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"),"Cycle All Sequences (time)");
+    cycleAllSeq    = globalToolBar->addAction(QIcon(":/images/cycleAllSequence.png"),"Cycle All Sequences (use joint speeds from Speed tab)");
+    cycleAllSeqTime= globalToolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"),"Cycle All Sequences (ignore Speed tab, produce coordinated movement using Timing)");
     stopAllSeq     = globalToolBar->addAction(QIcon(":/stop.svg"),"Stop All Sequences");
     globalToolBar->addSeparator();
     runAllParts    = globalToolBar->addAction(QIcon(":/play.svg"),"Run All Parts");
