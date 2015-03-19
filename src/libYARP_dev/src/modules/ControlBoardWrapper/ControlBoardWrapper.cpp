@@ -37,9 +37,15 @@ ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),
     period = 20; // ms.
     base = 0;
     top = 0;
-    rosMsgCounter = 0;
     subDeviceOwned = NULL;
     _verb = false;
+
+    // init ROS data
+    rosNodeName = "";
+    rosTopicName = "";
+    rosNode = NULL;
+    rosMsgCounter = 0;
+    useROS = ROS_disabled;
 }
 
 void ControlBoardWrapper::cleanup_yarpPorts()
