@@ -101,7 +101,7 @@ public:
     if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
     int len = connection.expectInt();
     orientation_covariance.resize(len);
-    for (size_t i=0; i<len; i++) {
+    for (int i=0; i<len; i++) {
       orientation_covariance[i] = (yarp::os::NetFloat64)connection.expectDouble();
     }
 
@@ -112,7 +112,7 @@ public:
     if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
     len = connection.expectInt();
     angular_velocity_covariance.resize(len);
-    for (size_t i=0; i<len; i++) {
+    for (int i=0; i<len; i++) {
       angular_velocity_covariance[i] = (yarp::os::NetFloat64)connection.expectDouble();
     }
 
@@ -123,7 +123,7 @@ public:
     if (connection.expectInt()!=(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) return false;
     len = connection.expectInt();
     linear_acceleration_covariance.resize(len);
-    for (size_t i=0; i<len; i++) {
+    for (int i=0; i<len; i++) {
       linear_acceleration_covariance[i] = (yarp::os::NetFloat64)connection.expectDouble();
     }
     return !connection.isError();
