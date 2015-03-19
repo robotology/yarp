@@ -44,7 +44,7 @@ namespace yarp
  * Export an inertial sensor.
  * The network interface is a single Port.
  * We will stream bottles with 12 floats:
- * 0  1   2  = Euler orientation data (Kalman filter processed)
+ * 0  1   2  = Euler orientation data  XYZ global frame representation.
  * 3  4   5  = Calibrated 3-axis (X, Y, Z) acceleration data
  * 6  7   8  = Calibrated 3-axis (X, Y, Z) gyroscope data
  * 9 10 11   = Calibrated 3-axis (X, Y, Z) magnetometer data
