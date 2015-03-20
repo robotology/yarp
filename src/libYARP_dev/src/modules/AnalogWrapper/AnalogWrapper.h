@@ -33,6 +33,14 @@
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/api.h>
 
+
+// ROS state publisher
+#include <yarpRosHelper.h>
+#include <yarp/os/Node.h>
+#include <yarp/os/Publisher.h>
+#include <geometry_msgs_WrenchStamped.h>  // Defines ROS jointState msg; it already includes TickTime and Header
+
+
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
  * name conflicts
  */
@@ -83,6 +91,7 @@ public:
 
     bool open(yarp::os::Searchable &params);
     bool close();
+    yarp::os::Bottle getOptions();
 
     void setId(const std::string &id);
     std::string getId();
@@ -115,6 +124,21 @@ private:
     std::string sensorId;
     std::string sensorType;
     // END deprecated params
+
+    // ROS state publisher
+    ROSTopicUsageType                                        useROS;                     // decide if open ROS topic or not
+    std::string                                              frame_id;                   // name of the reference frame the measures are referred to
+    std::string                                              rosNodeName;                // name of the rosNode
+    std::string                                              rosTopicName;               // name of the rosTopic
+    yarp::os::Node                                           *rosNode;                   // add a ROS node
+    yarp::os::NetUint32                                      rosMsgCounter;              // incremental counter in the ROS message
+    // TODO: in the future, in order to support multiple ROS msgs this should be a pointer allocated dynamically depending on the msg maybe (??)
+    yarp::os::PortWriterBuffer<geometry_msgs_WrenchStamped>  rosOutputState_buffer;      // Buffer associated to the ROS topic
+    yarp::os::Publisher<geometry_msgs_WrenchStamped>         rosPublisherPort;           // Dedicated ROS topic publisher
+
+    bool checkROSParams(yarp::os::Searchable &config);
+    bool initialize_ROS();
+    bool initialize_YARP(yarp::os::Searchable &config);
 
     void setHandlers();
     void removeHandlers();
