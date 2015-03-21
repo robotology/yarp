@@ -77,6 +77,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Publisher.h
                  include/yarp/os/Random.h
                  include/yarp/os/RateThread.h
+                 include/yarp/os/RecursiveMutex.h
                  include/yarp/os/ResourceFinder.h
                  include/yarp/os/ResourceFinderOptions.h
                  include/yarp/os/RFModule.h
@@ -131,12 +132,14 @@ set(YARP_OS_IDL_HDRS include/yarp/os/idl/BareStyle.h
                      include/yarp/os/idl/WireVocab.h
                      include/yarp/os/idl/WireWriter.h)
 
-set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
+set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
+                      include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/BottleImpl.h
                       include/yarp/os/impl/BufferedConnectionWriter.h
                       include/yarp/os/impl/Carriers.h
                       include/yarp/os/impl/Companion.h
+                      include/yarp/os/impl/CXX11LockImpl.h
                       include/yarp/os/impl/CXX11SemaphoreImpl.h
                       include/yarp/os/impl/DgramTwoWayStream.h
                       include/yarp/os/impl/Dispatcher.h
@@ -149,6 +152,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/HttpCarrier.h
                       include/yarp/os/impl/IOException.h
                       include/yarp/os/impl/LocalCarrier.h
+                      include/yarp/os/impl/LockImpl.h
                       include/yarp/os/impl/Logger.h
                       include/yarp/os/impl/LogImpl.h
                       include/yarp/os/impl/LogForwarder.h
@@ -177,6 +181,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/PortCorePackets.h
                       include/yarp/os/impl/PortCoreUnit.h
                       include/yarp/os/impl/PortManager.h
+                      include/yarp/os/impl/POSIXLockImpl.h
                       include/yarp/os/impl/POSIXSemaphoreImpl.h
                       include/yarp/os/impl/Protocol.h
                       include/yarp/os/impl/RunCheckpoints.h
@@ -233,7 +238,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/IConfig.cpp
                  src/InputStream.cpp
                  src/LocalCarrier.cpp
-                 src/LockGuard.cpp
                  src/Log.cpp
                  src/Logger.cpp
                  src/LogForwarder.cpp
@@ -286,6 +290,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Protocol.cpp
                  src/Random.cpp
                  src/RateThread.cpp
+                 src/RecursiveMutex.cpp
                  src/ResourceFinder.cpp
                  src/ResourceFinderOptions.cpp
                  src/RFModule.cpp

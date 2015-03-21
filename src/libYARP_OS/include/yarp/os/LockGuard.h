@@ -14,8 +14,14 @@
 
 namespace yarp {
     namespace os {
+        template <typename Lockable>
+        class AbstractLockGuard;
+
         class Mutex;
-        class LockGuard;
+        class RecursiveMutex;
+
+        typedef AbstractLockGuard<Mutex> LockGuard;
+        typedef AbstractLockGuard<RecursiveMutex> RecursiveLockGuard;
     }
 }
 
@@ -27,29 +33,52 @@ namespace yarp {
  * the LockGuard is destructed and the mutex is released.
  * The lock_guard class is non-copyable. 
  */
-class YARP_OS_API yarp::os::LockGuard {
+template <typename Lockable>
+class yarp::os::AbstractLockGuard {
 public:
     /**
      * Acquires ownership of the given mutex _mutex.
      * The behavior is undefined if _mutex is destroyed before the LockGuard object is.
      * @param _mutex the mutex which will be locked
      */
-    explicit LockGuard(yarp::os::Mutex& _mutex);
+    explicit AbstractLockGuard(Lockable& _lock);
     
     /**
      * destructs the LockGuard object, unlocks the underlying mutex
      */
-    ~LockGuard();
+    ~AbstractLockGuard();
     
 private:
     
     /** Copy constructor is disabled */
-    LockGuard(const LockGuard&);
+    AbstractLockGuard(const AbstractLockGuard&);
     
     /** Assignment operator is disabled */
-    LockGuard& operator=(const LockGuard&);
+    AbstractLockGuard& operator=(const AbstractLockGuard&);
     
-    yarp::os::Mutex& mutex; /*!< underlining mutex */
+    Lockable& lock; /*!< underlining mutex */
 };
+
+
+//Implementation
+template <typename Lockable>
+yarp::os::AbstractLockGuard<Lockable>::AbstractLockGuard(Lockable& _lock)
+    : lock(_lock)
+{
+    lock.lock();
+}
+
+template <typename Lockable>
+yarp::os::AbstractLockGuard<Lockable>::~AbstractLockGuard()
+{
+    lock.unlock();
+}
+
+template <typename Lockable>
+yarp::os::AbstractLockGuard<Lockable>::AbstractLockGuard(const AbstractLockGuard& lg)
+: lock(lg.lock) { }
+
+template <typename Lockable>
+yarp::os::AbstractLockGuard<Lockable>& yarp::os::AbstractLockGuard<Lockable>::operator=(const AbstractLockGuard&) { return *this; }
 
 #endif
