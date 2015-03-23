@@ -257,7 +257,7 @@ Rectangle {
         Button {
             id: recordSetBtn
             text: qsTr("Record")
-            iconSource: "qrc:/YARPView/images/Record-Pressed-icon.png"
+            iconSource: "qrc:/YARPView/record.svg"
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             anchors.top: parent.top
@@ -272,7 +272,7 @@ Rectangle {
         Button {
             id: stopSetBtn
             text: qsTr("Stop")
-            iconSource: "qrc:/YARPView/images/Stop-Normal-Red-icon.png"
+            iconSource: "qrc:/YARPView/stop.svg"
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             anchors.top: parent.top
@@ -339,7 +339,7 @@ Rectangle {
         Button {
             id: button1
             text: qsTr("Save")
-            iconSource: "qrc:/YARPView/images/Record-Pressed-icon.png"
+            iconSource: "qrc:/YARPView/stop.svg"
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             anchors.top: parent.top

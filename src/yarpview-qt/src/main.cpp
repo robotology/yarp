@@ -105,6 +105,8 @@ int main(int argc, char *argv[])
 
 
     window->show();
+    window->setIcon(QIcon(":/logo.png"));
+    // window->setIcon(QIcon(":/logo.svg"));
 
     return app.exec();
 
