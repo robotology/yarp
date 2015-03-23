@@ -156,6 +156,14 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( TORQUE,         torqueColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( OPENLOOP,       openLoopColor, Qt::BackgroundRole );
 
+    ui->comboMode->setItemData( IDLE,           JointState::Idle, Qt::UserRole);
+    ui->comboMode->setItemData( POSITION,       JointState::Position, Qt::UserRole );
+    ui->comboMode->setItemData( POSITION_DIR,   JointState::PositionDirect, Qt::UserRole );
+    ui->comboMode->setItemData( MIXED,          JointState::Mixed, Qt::UserRole );
+    ui->comboMode->setItemData( VELOCITY,       JointState::Velocity, Qt::UserRole );
+    ui->comboMode->setItemData( TORQUE,         JointState::Torque, Qt::UserRole );
+    ui->comboMode->setItemData( OPENLOOP,       JointState::OpenLoop, Qt::UserRole );
+
     QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(149,221,186);} %2").arg(comboStyle1).arg(comboStyle2);
     ui->comboMode->setStyleSheet(styleSheet);
 
@@ -348,7 +356,8 @@ void JointItem::onStackedWidgetChanged(int index)
 
 void JointItem::onModeChanged(int index)
 {
-    changeMode(index,this);
+    int mode = ui->comboMode->currentData(Qt::UserRole).toInt();
+    changeMode(mode,this);
 }
 
 
