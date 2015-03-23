@@ -378,17 +378,19 @@ PartItem::~PartItem()
 
     for(int i=0;i<layout->count();i++){
         JointItem *joint = (JointItem *)layout->itemAt(i)->widget();
-        disconnect(joint, SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
-        disconnect(joint, SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
-        disconnect(joint,SIGNAL(sliderPositionMoved(double,double,int)),this,SLOT(onSliderPositionMoved(double,double,int)));
-        disconnect(joint,SIGNAL(sliderTorqueMoved(double,int)),this,SLOT(onSliderTorqueMoved(double,int)));
-        disconnect(joint,SIGNAL(sliderOpenloopMoved(double,int)),this,SLOT(onSliderOpenloopMoved(double,int)));
-        disconnect(joint,SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
-        disconnect(joint,SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
-        disconnect(joint,SIGNAL(runClicked(JointItem*)),this,SLOT(onRunClicked(JointItem*)));
-        disconnect(joint,SIGNAL(pidClicked(JointItem*)),this,SLOT(onPidClicked(JointItem*)));
-        disconnect(joint,SIGNAL(calibClicked(JointItem*)),this,SLOT(onCalibClicked(JointItem*)));
-        delete joint;
+        if(joint){
+            disconnect(joint, SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
+            disconnect(joint, SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
+            disconnect(joint,SIGNAL(sliderPositionMoved(double,double,int)),this,SLOT(onSliderPositionMoved(double,double,int)));
+            disconnect(joint,SIGNAL(sliderTorqueMoved(double,int)),this,SLOT(onSliderTorqueMoved(double,int)));
+            disconnect(joint,SIGNAL(sliderOpenloopMoved(double,int)),this,SLOT(onSliderOpenloopMoved(double,int)));
+            disconnect(joint,SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
+            disconnect(joint,SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
+            disconnect(joint,SIGNAL(runClicked(JointItem*)),this,SLOT(onRunClicked(JointItem*)));
+            disconnect(joint,SIGNAL(pidClicked(JointItem*)),this,SLOT(onPidClicked(JointItem*)));
+            disconnect(joint,SIGNAL(calibClicked(JointItem*)),this,SLOT(onCalibClicked(JointItem*)));
+            delete joint;
+        }
     }
 
     if(partsdd){

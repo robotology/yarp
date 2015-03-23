@@ -64,6 +64,8 @@ public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
                       const QModelIndex & index) const
     {
+        Q_UNUSED(option);
+        Q_UNUSED(index);
         QLineEdit *lineEdit = new QLineEdit(parent);
         // Set validator
         QIntValidator *validator = new QIntValidator(-100000, 100000, lineEdit);
@@ -78,6 +80,8 @@ public:
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
                       const QModelIndex & index) const
     {
+        Q_UNUSED(option);
+        Q_UNUSED(index);
         QLineEdit *lineEdit = new QLineEdit(parent);
         // Set validator
         QDoubleValidator *validator = new QDoubleValidator(-100000, 100000, 3,lineEdit);

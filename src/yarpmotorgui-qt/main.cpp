@@ -15,6 +15,7 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
+#include <yarp/os/os.h>
 
 #include <QApplication>
 #include <QDebug>
@@ -38,6 +39,15 @@ bool enable_calib_all =false;
 bool position_direct_enabled = false;
 bool openloop_enabled = false;
 bool old_impedance_enabled = false;
+
+MainWindow *mainW = NULL;
+
+static void sighandler(int sig) {
+    qDebug() << "\nCAUGHT Ctrl-c" << endl;
+    if(mainW){
+        mainW->term();
+    }
+}
 
 
 int main(int argc, char *argv[])
@@ -172,7 +182,10 @@ int main(int argc, char *argv[])
         }
     }
 
+    yarp::os::signal(yarp::os::YARP_SIGINT, sighandler);
+    yarp::os::signal(yarp::os::YARP_SIGTERM, sighandler);
     MainWindow w;
+    mainW = &w;
     int appRet = 0;
     bool ret = w.init(newRobotName,enabledParts,finder,debug_param_enabled,speedview_param_enabled,enable_calib_all,position_direct_enabled,openloop_enabled);
     if(ret){

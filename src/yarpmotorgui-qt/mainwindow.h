@@ -40,6 +40,8 @@ public:
               bool enable_calib_all, bool position_direct_enabled, bool openloop_enabled);
     ~MainWindow();
 
+    void term();
+
 protected:
     void closeEvent(QCloseEvent *event);
 private:
@@ -94,6 +96,7 @@ private slots:
 
 signals:
     void viewSpeedValues(bool);
+    void internalClose();
 };
 
 class ModesTreeWidget : public QTreeWidget

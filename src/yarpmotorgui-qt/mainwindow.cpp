@@ -166,6 +166,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewPartToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewPartToolbar(bool)));
     connect(viewSpeedValues,SIGNAL(triggered(bool)),this,SLOT(onViewSpeeds(bool)));
 
+    connect(this,SIGNAL(internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
 
     timer.setInterval(200);
@@ -186,7 +187,9 @@ MainWindow::~MainWindow()
     if(tabPanel){
         disconnect(tabPanel,SIGNAL(currentChanged(int)),this,SLOT(onCurrentPartChanged(int)));
         for(int i=0;i<tabPanel->count();i++){
-            delete tabPanel->widget(i);
+            if(tabPanel->widget(i)){
+                delete tabPanel->widget(i);
+            }
         }
         delete tabPanel;
         tabPanel = NULL;
@@ -195,6 +198,11 @@ MainWindow::~MainWindow()
     delete ui;
 
     mutex.unlock();
+}
+
+void MainWindow::term()
+{
+    internalClose();
 }
 
 void MainWindow::onSequenceActivated()
@@ -278,7 +286,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if(tabPanel){
         disconnect(tabPanel,SIGNAL(currentChanged(int)),this,SLOT(onCurrentPartChanged(int)));
         for(int i=0;i<tabPanel->count();i++){
-            delete tabPanel->widget(i);
+            if(tabPanel->widget(i)){
+                delete tabPanel->widget(i);
+            }
         }
         delete tabPanel;
         tabPanel = NULL;
