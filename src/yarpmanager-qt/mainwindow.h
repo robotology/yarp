@@ -73,6 +73,7 @@ private slots:
     void onLogWarning(QString);
     void onLogMessage(QString);
     void onHelp();
+    void onAbout();
 
 public slots:
     void onTabChangeItem(int);

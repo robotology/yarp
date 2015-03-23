@@ -16,7 +16,7 @@
 #include <QTreeWidgetItem>
 #include "safe_manager.h"
 #include "genericviewwidget.h"
-#include <stdoutwindow.h>
+#include "stdoutwindow.h"
 #include <QList>
 
 namespace Ui {

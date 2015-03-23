@@ -21,6 +21,7 @@
 #include "resourceviewwidget.h"
 #include "genericviewwidget.h"
 #include "template_res.h"
+#include "aboutdlg.h"
 
 #include <QGridLayout>
 #include <QMessageBox>
@@ -37,6 +38,14 @@
     #include <errno.h>
     #include <sys/types.h>
     #include <signal.h>
+#endif
+
+#ifndef APP_NAME
+ #define APP_NAME "yarpmanager"
+#endif
+
+#ifndef APP_VERSION
+ #define APP_VERSION "1.0"
 #endif
 
 using namespace std;
@@ -96,6 +105,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(close()));
     connect(ui->actionOpen_File,SIGNAL(triggered()),this,SLOT(onOpen()));
     connect(ui->actionHelp,SIGNAL(triggered()),this,SLOT(onHelp()));
+    connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(onAbout()));
 
 
 
@@ -807,6 +817,15 @@ void MainWindow::onOpen()
     }
     reportErrors();
 
+}
+/*! \brief Opens the About Dialog */
+void MainWindow::onAbout()
+{
+    QString copyright = "2014 (C) Robotics, Brain and Cognitive Sciences\nIstituto Italiano di Tecnologia";
+    QString name = APP_NAME;
+    QString version = APP_VERSION;
+    AboutDlg dlg(name,version,copyright,"http://www.icub.org/");
+    dlg.exec();
 }
 
 /*! \brief Opens the Help in the default browser */
