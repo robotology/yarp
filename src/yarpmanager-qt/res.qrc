@@ -1,47 +1,47 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>images/application_ico.png</file>
-    <file>images/apptemplate_ico.png</file>
-    <file>images/close_ico.png</file>
-    <file>images/computer_disable_ico.png</file>
-    <file>images/computer_ico.png</file>
-    <file>images/connected_ico.png</file>
-    <file>images/connect_ico.png</file>
-    <file>images/cpuload_ico.png</file>
-    <file>images/device_ico.png</file>
-    <file>images/disconnected_ico.png</file>
-    <file>images/disconnect_ico.png</file>
-    <file>images/gridsnap_ico.png</file>
-    <file>images/gridview_ico.png</file>
-    <file>images/quit_ico.png</file>
-    <file>images/import_ico.png</file>
-    <file>images/import_folder_ico.png</file>
-    <file>images/kill_ico.png</file>
-    <file>images/memory_ico.png</file>
-    <file>images/module_ico.png</file>
-    <file>images/network_ico.png</file>
-    <file>images/nores_ico.png</file>
-    <file>images/port_avail_ico.png</file>
-    <file>images/port_disabled_ico.png</file>
-    <file>images/port_ico.png</file>
-    <file>images/port_unavail_ico.png</file>
-    <file>images/port_unknown_ico.png</file>
-    <file>images/process_ico.png</file>
-    <file>images/processor_ico.png</file>
-    <file>images/progress_ico.png</file>
-    <file>images/refresh_ico.png</file>
-    <file>images/res_comp_disabled_ico.png</file>
-    <file>images/res_comp_unknown_ico.png</file>
-    <file>images/run_ico.png</file>
-    <file>images/runnin_ico.png</file>
-    <file>images/selectall_ico.png</file>
-    <file>images/stop_ico.png</file>
-    <file>images/storage_ico.png</file>
-    <file>images/suspended_ico.png</file>
-    <file>images/unknown_ico.png</file>
-    <file>images/yesres_ico.png</file>
-    <file>images/ymanager_ico.png</file>
-    <file>images/clear.png</file>
-    <file>images/save_ico.png</file>
-</qresource>
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file alias="logo.svg">../yarpgui-icons/512x512/yarpmanager.svg</file>
+        <file alias="stop.svg">../yarpgui-icons/512x512/actions-media-stop_B.svg</file>
+        <file alias="play.svg">../yarpgui-icons/512x512/actions-media-play_B.svg</file>
+        <file alias="folder-new.svg">../yarpgui-icons/512x512/folder-new.svg</file>
+        <file alias="folder.svg">../yarpgui-icons/512x512/folder-sand.svg</file>
+        <file alias="folder-app.svg">../yarpgui-icons/512x512/folder-sand.svg</file>
+        <file alias="folder-mod.svg">../yarpgui-icons/512x512/folder-sand.svg</file>
+        <file alias="folder-res.svg">../yarpgui-icons/512x512/folder-sand.svg</file>
+        <file alias="file-new.svg">../yarpgui-icons/512x512/file-new.svg</file>
+        <file alias="file-save.svg">../yarpgui-icons/512x512/file-save.svg</file>
+        <file alias="file-xml.svg">../yarpgui-icons/512x512/file-xml.svg</file>
+        <file alias="close.svg">../yarpgui-icons/512x512/actions-close.svg</file>
+        <file alias="apply.svg">../yarpgui-icons/512x512/actions-apply.svg</file>
+        <file alias="clear.svg">../yarpgui-icons/512x512/actions-edit-clear.svg</file>
+        <file alias="kill.svg">../yarpgui-icons/512x512/actions-kill.svg</file>
+        <file alias="connect.svg">../yarpgui-icons/512x512/actions-connect.svg</file>
+        <file alias="refresh.svg">../yarpgui-icons/512x512/actions-refresh.svg</file>
+        <file alias="disconnect.svg">../yarpgui-icons/512x512/actions-disconnect.svg</file>
+        <file alias="select-all.svg">../yarpgui-icons/512x512/actions-select-all.svg</file>
+        <file alias="hardware.svg">../yarpgui-icons/512x512/audio-card.svg</file>
+        <file alias="cpuload.svg">../yarpgui-icons/512x512/system-monitor.svg</file>
+        <file alias="drive-harddisk.svg">../yarpgui-icons/512x512/drive-harddisk.svg</file>
+        <file alias="uml-app.svg">../yarpgui-icons/512x512/calligraflow.svg</file>
+        <file alias="help.svg">../yarpgui-icons/512x512/help.svg</file>
+        <file alias="info.svg">../yarpgui-icons/512x512/help-info.svg</file>
+        <file alias="close22.svg">../yarpgui-icons/22x22/window-close-symbolic_B.svg</file>
+        <file alias="stop22.svg">../yarpgui-icons/22x22/actions-media-stop_B.svg</file>
+        <file alias="play22.svg">../yarpgui-icons/22x22/actions-media-play_B.svg</file>
+        <file alias="disconnect22.svg">../yarpgui-icons/22x22/network-disconnected.svg</file>
+        <file alias="connect22.svg">../yarpgui-icons/22x22/actions-connect.svg</file>
+        <file alias="refresh22.svg">../yarpgui-icons/22x22/actions-refresh.svg</file>
+        <file alias="select-all22.svg">../yarpgui-icons/22x22/actions-select-all.svg</file>
+        <file alias="kill22.svg">../yarpgui-icons/22x22/actions-kill.svg</file>
+        <file alias="run22.svg">../yarpgui-icons/22x22/run_B.svg</file>
+        <file alias="file-xml22.svg">../yarpgui-icons/22x22/file-xml.svg</file>
+        <file alias="computer22.svg">../yarpgui-icons/22x22/computer_B.svg</file>
+        <file alias="computer-available22.svg">../yarpgui-icons/22x22/computer_available.svg</file>
+        <file alias="computer-unavailable22.svg">../yarpgui-icons/22x22/computer_unavailable.svg</file>
+        <file alias="module22.svg">../yarpgui-icons/22x22/module.svg</file>
+        <file alias="port22.svg">../yarpgui-icons/22x22/port.svg</file>
+        <file alias="port-unavailable22.svg">../yarpgui-icons/22x22/port_available.svg</file>
+        <file alias="port-available22.svg">../yarpgui-icons/22x22/port_unavailable.svg</file>
+    </qresource>
 </RCC>

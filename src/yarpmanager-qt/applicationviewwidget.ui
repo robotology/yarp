@@ -115,6 +115,9 @@ background-color: rgb(255, 255, 255);*/
 background-color: rgb(255, 255, 255);*/
 </string>
           </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
           <property name="rootIsDecorated">
            <bool>false</bool>
           </property>
@@ -163,6 +166,9 @@ background-color: rgb(255, 255, 255);*/
            <string notr="true">/*alternate-background-color: rgb(200, 200, 200);
 background-color: rgb(255, 255, 255);*/
 </string>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="rootIsDecorated">
            <bool>false</bool>

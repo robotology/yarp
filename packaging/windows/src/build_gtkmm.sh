@@ -21,141 +21,37 @@ source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	exit 1
 }
 
-if [ "k$BUNDLE_GTKMM_VERSION" = "k" ]; then
-	#BUNDLE_GTKMM_VERSION=2.22.0-2
-	echo "Set GTKMM version"
-	exit 1
+GTKMM_VERSION_TAG="BUNDLE_GTKMM_VERSION_${OPT_COMPILER}_${OPT_VARIANT}"
+if [ "${!GTKMM_VERSION_TAG}" == "" ]; then
+	echo "Warning no GTKMM version defined for ${GTKMM_VERSION_TAG}"
+	exit 0
 fi
 
-GTKMM_PLATFORM=""
-ext=exe
-if [ "$OPT_VARIANT" == "x86" ] ; then
-	GTKMM_PLATFORM="win32"
-	if [ "$BUNDLE_GTKMM_32_ZIP" != "" ] ; then
-		ext=zip
-	fi
-elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
-	GTKMM_PLATFORM="win64"
-	if [ "$BUNDLE_GTKMM_64_ZIP" != "" ] ; then
-		ext=zip
-	fi
-else
-	echo "Unsupported GTKMM platform $OPT_VARIANT"
-	exit 1
-fi
-fname=gtkmm-${GTKMM_PLATFORM}-devel-$BUNDLE_GTKMM_VERSION
+GTKMM_PATH="gtkmm-${!GTKMM_VERSION_TAG}_${OPT_VARIANT}"
+GTKMM_FILE="${GTKMM_PATH}.zip" 
+GTKMM_URL="${BUNDLE_EXT_REPO_URL}/${GTKMM_FILE}" 
 
-if [ "$ext" = "exe" ]; then
-
-  if [ ! -e $fname.exe ]; then
-	GTKMM_DIR=`echo $BUNDLE_GTKMM_VERSION | sed "s/\.[-0-9]*$//"`
-	wget -O $fname.exe http://ftp.gnome.org/pub/GNOME/binaries/${GTKMM_PLATFORM}/gtkmm/$GTKMM_DIR/${fname}.exe || (
-		echo "Cannot fetch GTKMM"
-		rm -f $fname.exe
-		exit 1
-	)
-  fi
-
-  if [ ! -d $fname ]; then
-	mkdir -p $fname
-	cd $fname
-	7z x ../$fname.exe || {
-		echo "Cannot unpack GTKMM"
-		cd $BUILD_DIR
-		rm -rf $fname
+if [ ! -e "$GTKMM_FILE" ]; then
+	wget $GTKMM_URL || {
+		echo "Cannot fetch GTKMM file $GTKMM_URL"
 		exit 1
 	}
-  fi
-
-  if [ ! -e $BUILD_DIR/$fname/include ]; then
-	# rejigger files for Lorenzo
-	cd $BUILD_DIR/$fname
-	mkdir -p include || exit 1
-	cd include || exit 1
-	ALT=../*_OUTDIR
-	for d in gtk-2.0 cairo glib-2.0 pango-1.0 atk-1.0 glib-2.0 gtk-2.0 gdk-pixbuf-2.0; do
-		echo "Copying $d to include"
-		if [ ! -e $d ]; then
-			cp -R $ALT/$d $d || exit 1
-		fi
-	done
-	mkdir -p ../lib/glib-2.0/include
-	cp $ALT/include/glibconfig.h ../lib/glib-2.0/include || exit 1
-	mkdir -p ../lib/gtk-2.0/include
-	cp $ALT/include/gdkconfig.h ../lib/gtk-2.0/include || exit 1
-  fi
 fi
 
-GTKMM_PATH=""
-
-if [ "$ext" = "zip" ]; then
-
-  if [ ! -e $fname.zip ]; then
-    if [ "$OPT_VARIANT" == "x86" ] ; then
-		wget -O $fname.zip $BUNDLE_GTKMM_32_ZIP || {
-			echo "Cannot fetch GTKMM"
-			rm -f $fname.zip
-			exit 1
-		}
-	elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
-		wget -O $fname.zip $BUNDLE_GTKMM_64_ZIP || {
-			echo "Cannot fetch GTKMM"
-			rm -f $fname.zip
-			exit 1
-		}
-	else
-		echo "Unsupported GTKMM platform $OPT_VARIANT"
+if [ ! -d "$GTKMM_PATH" ] ; then
+    unzip $GTKMM_FILE || {
+	  	echo "Cannot unpack GTKMM file $GTKMM_FILEMM"
 		exit 1
-	fi
-  fi
-  if [ "$OPT_VARIANT" == "x86" ] ; then	
-	GTKMM_PATH="gtkmm"
-  elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
-	GTKMM_PATH="gtkmm64"
-  else
-	echo "Unsupported GTKMM platform $OPT_VARIANT"
-	exit 1
-  fi
-
-  if [ ! -d $fname ] ; then
-    if [ ! -d "$GTKMM_PATH" ] ; then
-      unzip $fname.zip || {
-	  	echo "Cannot unpack GTKMM"
-		cd $BUILD_DIR
-		rm -rf $GTKMM_PATH
-		exit 1
-	  }
-	  
-	  ## we follow instructions in gtkmm/redist/README
-	  cd $GTKMM_PATH
-	  mv bin bin-backup
-	  mkdir bin
-	  cp redist/*.dll bin/
-	  
-	  cd bin
-	  rm libsigc-*.dll libglibmm-*.dll libgiomm-*.dll libcairomm-*.dll libpangomm-*.dll libatkmm-*.dll libgdkmm-*.dll libgtkmm-*.dll libxml++-*.dll libglademm-*.dll;
-
-	  cd ..
-	  cp bin-backup/*vc[0-9]0*.dll bin
-	  rm bin-backup -rf
-	  
-	  cd ..
-	fi
-	#mv $fname.zip store-$fname.zip
-	#mv $fname.exe store-$fname.exe
-	sleep 3
-	echo "GTKMM_PATH=$GTKMM_PATH"
-	echo "fname=$fname"
-	mv $GTKMM_PATH $fname || exit 1
-	#mv store-$fname.zip $fname.zip
-	#mv store-$fname.exe $fname.exe
-  fi
+	}
 fi
 
+find $GTKMM_PATH -name "*.exe" -exec chmod u+x '{}' \;
+find $GTKMM_PATH -name "*.dll" -exec chmod u+x '{}' \;
 
 (
-	GTKMM_DIR=`cygpath --mixed "$BUILD_DIR/$fname"`
+	GTKMM_DIR=$(cygpath --mixed "${BUILD_DIR}/${GTKMM_PATH}")
 	echo "export GTKMM_DIR='$GTKMM_DIR'"
+	echo "export GTKMM_PATH='$GTKMM_PATH'"
 	echo "export GTK_BASEPATH='$GTKMM_DIR'"
 	echo "export GTKMM_BASEPATH='$GTKMM_DIR'"
 ) > $BUILD_DIR/gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh

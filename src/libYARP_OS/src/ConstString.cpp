@@ -185,6 +185,10 @@ void ConstString::clear() {
     HELPER(implementation).clear();
 }
 
+bool ConstString::empty() const {
+    return HELPER(implementation).empty();
+}
+
 char& ConstString::operator[](size_t idx) {
     return HELPER(implementation)[idx];
 }
@@ -219,7 +223,7 @@ unsigned long ConstString::hash() const {
     return h;
 }
 
-ConstString yarp::os::operator + (const char *txt, 
+ConstString yarp::os::operator + (const char *txt,
                                   const yarp::os::ConstString& alt) {
     return ConstString(txt) + alt;
 }

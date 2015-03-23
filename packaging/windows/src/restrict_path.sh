@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! "k$RESTRICTED_PATH" = "k" ]; then
+if [ "$RESTRICTED_PATH" != "" ]; then
 	PATH="$RESTRICTED_PATH"
 	echo "PATH set to $PATH"
 fi

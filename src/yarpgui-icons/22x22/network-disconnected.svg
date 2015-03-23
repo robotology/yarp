@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg7384"
+   height="22"
+   width="22"
+   version="1.1"
+   inkscape:version="0.91pre2 r"
+   sodipodi:docname="network-disconnected.svg">
+  <defs
+     id="defs11">
+    <linearGradient
+       x1="11"
+       y1="11.015625"
+       x2="19"
+       y2="11.015625"
+       id="linearGradient2927-4"
+       xlink:href="#linearGradient3183-0"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0,-3.0000004,2.9652505,0,33.335916,111.00001)" />
+    <linearGradient
+       id="linearGradient3183-0">
+      <stop
+         id="stop3185-9"
+         style="stop-color:#c80000;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3187-6"
+         style="stop-color:#f3604d;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     id="namedview9"
+     showgrid="true"
+     inkscape:zoom="14.20905"
+     inkscape:cx="11"
+     inkscape:cy="9"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg7384">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4711" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata90">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Gnome Symbolic Icon Theme</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <title
+     id="title9167">Gnome Symbolic Icon Theme</title>
+  <g
+     id="g3000"
+     transform="matrix(0.80000001,0,0,0.80000001,1.4000005,1.3999966)" />
+  <path
+     style="color:#000000;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.9;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ef2929;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.17795563;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+     d="M 17.404297 3 C 17.267157 3 17.135323 3.0520506 17.039062 3.1503906 L 14.884766 5.3046875 L 13.220703 5.3046875 C 13.083693 5.3036875 12.942663 5.3583281 12.845703 5.4550781 L 10.425781 7.875 C 10.402117 7.8981661 10.389062 7.9295262 10.371094 7.9570312 L 14.050781 11.636719 C 14.076189 11.619489 14.105267 11.607597 14.126953 11.585938 L 16.556641 9.15625 C 16.653441 9.05935 16.708131 8.9280056 16.707031 8.7910156 L 16.707031 7.1171875 L 18.851562 4.9726562 C 19.048192 4.7801563 19.048192 4.4170994 18.851562 4.2246094 L 17.777344 3.1503906 C 17.681044 3.0520906 17.541447 2.9999999 17.404297 3 z "
+     id="path2994" />
+  <path
+     style="color:#000000;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.9;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ef2929;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.17795563;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+     d="M 4.3085938 4.8945312 L 2.8945312 6.3085938 L 7.4414062 10.855469 L 5.4433594 12.847656 C 5.3465594 12.944556 5.2918687 13.083713 5.2929688 13.220703 L 5.2929688 14.884766 L 3.1484375 17.039062 C 2.9518075 17.231562 2.9518075 17.584844 3.1484375 17.777344 L 4.2226562 18.853516 C 4.4151663 19.050126 4.7684175 19.050126 4.9609375 18.853516 L 7.1152344 16.707031 L 8.7792969 16.707031 C 8.9163069 16.708031 9.0573369 16.653391 9.1542969 16.556641 L 11.144531 14.558594 L 15.691406 19.105469 L 17.105469 17.691406 L 4.3085938 4.8945312 z "
+     id="path3804-7" />
+</svg>

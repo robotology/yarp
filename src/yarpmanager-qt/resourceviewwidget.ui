@@ -63,7 +63,7 @@
       </property>
       <property name="icon">
        <iconset resource="res.qrc">
-        <normaloff>:/images/computer_ico.png</normaloff>:/images/computer_ico.png</iconset>
+        <normaloff>:/computer22.svg</normaloff>:/computer22.svg</iconset>
       </property>
      </item>
      <item>
@@ -72,7 +72,7 @@
       </property>
       <property name="icon">
        <iconset resource="res.qrc">
-        <normaloff>:/images/yesres_ico.png</normaloff>:/images/yesres_ico.png</iconset>
+        <normaloff>:/computer-available22.svg</normaloff>:/computer-available22.svg</iconset>
       </property>
       <property name="text">
        <string>Yes</string>
@@ -84,7 +84,7 @@
       </property>
       <property name="icon">
        <iconset resource="res.qrc">
-        <normaloff>:/images/module_ico.png</normaloff>:/images/module_ico.png</iconset>
+        <normaloff>:/module22.svg</normaloff>:/module22.svg</iconset>
       </property>
       <item>
        <property name="text">
@@ -108,7 +108,7 @@
       </property>
       <property name="icon">
        <iconset resource="res.qrc">
-        <normaloff>:/images/processor_ico.png</normaloff>:/images/processor_ico.png</iconset>
+        <normaloff>:/hardware.svg</normaloff>:/hardware.svg</iconset>
       </property>
       <item>
        <property name="text">
@@ -151,7 +151,7 @@
       </property>
       <property name="icon">
        <iconset resource="res.qrc">
-        <normaloff>:/images/cpuload_ico.png</normaloff>:/images/cpuload_ico.png</iconset>
+        <normaloff>:/hardware.svg</normaloff>:/hardware.svg</iconset>
       </property>
       <item>
        <property name="text">
@@ -192,7 +192,7 @@
       </property>
       <property name="icon">
        <iconset resource="res.qrc">
-        <normaloff>:/images/memory_ico.png</normaloff>:/images/memory_ico.png</iconset>
+        <normaloff>:/hardware.svg</normaloff>:/hardware.svg</iconset>
       </property>
       <item>
        <property name="text">
@@ -217,7 +217,7 @@
       </property>
       <property name="icon">
        <iconset resource="res.qrc">
-        <normaloff>:/images/storage_ico.png</normaloff>:/images/storage_ico.png</iconset>
+        <normaloff>:/drive-harddisk.svg</normaloff>:/drive-harddisk.svg</iconset>
       </property>
       <item>
        <property name="text">
@@ -242,7 +242,7 @@
       </property>
       <property name="icon">
        <iconset resource="res.qrc">
-        <normaloff>:/images/device_ico.png</normaloff>:/images/device_ico.png</iconset>
+        <normaloff>:/hardware.svg</normaloff>:/hardware.svg</iconset>
       </property>
      </item>
      <item>
@@ -251,7 +251,7 @@
       </property>
       <property name="icon">
        <iconset resource="res.qrc">
-        <normaloff>:/images/process_ico.png</normaloff>:/images/process_ico.png</iconset>
+        <normaloff>:/run22.svg</normaloff>:/run22.svg</iconset>
       </property>
      </item>
     </widget>

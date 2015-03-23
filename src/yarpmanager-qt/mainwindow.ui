@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1200</width>
     <height>600</height>
    </rect>
   </property>
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="res.qrc">
-    <normaloff>:/images/ymanager_ico.png</normaloff>:/images/ymanager_ico.png</iconset>
+    <normaloff>:/logo.svg</normaloff>:/logo.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_4">
@@ -68,6 +68,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
            <column>
             <property name="text">
              <string>Entities</string>
@@ -80,6 +83,13 @@
              <horstretch>15</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">
+              QTabBar::close-button {image: url(:/close22.svg);}
+              QTabBar::close-button:hover { border: 2px solid transparent; }
+              QTabWidget::pane { border: none; }
+            </string>
            </property>
            <property name="currentIndex">
             <number>-1</number>
@@ -157,6 +167,12 @@
               <property name="contextMenuPolicy">
                <enum>Qt::ActionsContextMenu</enum>
               </property>
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="lineWidth">
+               <number>0</number>
+              </property>
              </widget>
             </item>
            </layout>
@@ -180,6 +196,9 @@
             </property>
             <item>
              <widget class="QPlainTextEdit" name="notesWidget">
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
               <property name="plainText">
                <string>&lt;&lt; Yellow Notes &gt;&gt;
 </string>
@@ -201,8 +220,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>21</height>
+     <width>1200</width>
+     <height>25</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -289,16 +308,28 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew_Application">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/run22.svg</normaloff>:/run22.svg</iconset>
+   </property>
    <property name="text">
     <string>New Application</string>
    </property>
   </action>
   <action name="actionNew_Module">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/module22.svg</normaloff>:/module22.svg</iconset>
+   </property>
    <property name="text">
     <string>New Module</string>
    </property>
   </action>
   <action name="actionNew_Resource">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/computer22.svg</normaloff>:/computer22.svg</iconset>
+   </property>
    <property name="text">
     <string>New Resource</string>
    </property>
@@ -306,7 +337,7 @@
   <action name="actionOpen_File">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/import_ico.png</normaloff>:/images/import_ico.png</iconset>
+     <normaloff>:/file-new.svg</normaloff>:/file-new.svg</iconset>
    </property>
    <property name="text">
     <string>Open File</string>
@@ -315,19 +346,19 @@
   <action name="actionClose">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/close_ico.png</normaloff>:/images/close_ico.png</iconset>
+     <normaloff>:/close.svg</normaloff>:/close.svg</iconset>
    </property>
    <property name="text">
     <string>Close</string>
    </property>
   </action>
   <action name="actionSave">
-   <property name="icon">
-    <iconset resource="res.qrc">
-     <normaloff>:/images/save_ico.png</normaloff>:/images/save_ico.png</iconset>
-   </property>
    <property name="enabled">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -337,6 +368,10 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
+   </property>
    <property name="text">
     <string>Save As</string>
    </property>
@@ -344,7 +379,7 @@
   <action name="actionImport_Files">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/import_folder_ico.png</normaloff>:/images/import_folder_ico.png</iconset>
+     <normaloff>:/folder-new.svg</normaloff>:/folder-new.svg</iconset>
    </property>
    <property name="text">
     <string>Import Folder</string>
@@ -353,7 +388,7 @@
   <action name="actionQuit">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/quit_ico.png</normaloff>:/images/quit_ico.png</iconset>
+     <normaloff>:/close.svg</normaloff>:/close.svg</iconset>
    </property>
    <property name="text">
     <string>Quit</string>
@@ -362,13 +397,17 @@
   <action name="actionSelect_All">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/selectall_ico.png</normaloff>:/images/selectall_ico.png</iconset>
+     <normaloff>:/select-all.svg</normaloff>:/select-all.svg</iconset>
    </property>
    <property name="text">
     <string>Select All</string>
    </property>
   </action>
   <action name="actionExport_Graph">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/uml-app.svg</normaloff>:/uml-app.svg</iconset>
+   </property>
    <property name="text">
     <string>Export Graph...</string>
    </property>
@@ -376,7 +415,7 @@
   <action name="actionRun">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/run_ico.png</normaloff>:/images/run_ico.png</iconset>
+     <normaloff>:/play.svg</normaloff>:/play.svg</iconset>
    </property>
    <property name="text">
     <string>Run</string>
@@ -385,7 +424,7 @@
   <action name="actionStop">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/stop_ico.png</normaloff>:/images/stop_ico.png</iconset>
+     <normaloff>:/stop.svg</normaloff>:/stop.svg</iconset>
    </property>
    <property name="text">
     <string>Stop</string>
@@ -394,7 +433,7 @@
   <action name="actionKill">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/kill_ico.png</normaloff>:/images/kill_ico.png</iconset>
+     <normaloff>:/kill.svg</normaloff>:/kill.svg</iconset>
    </property>
    <property name="text">
     <string>Kill</string>
@@ -403,7 +442,7 @@
   <action name="actionConnect">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/connect_ico.png</normaloff>:/images/connect_ico.png</iconset>
+     <normaloff>:/connect.svg</normaloff>:/connect.svg</iconset>
    </property>
    <property name="text">
     <string>Connect</string>
@@ -412,7 +451,7 @@
   <action name="actionDisconnect">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/disconnect_ico.png</normaloff>:/images/disconnect_ico.png</iconset>
+     <normaloff>:/disconnect.svg</normaloff>:/disconnect.svg</iconset>
    </property>
    <property name="text">
     <string>Disconnect</string>
@@ -421,18 +460,26 @@
   <action name="actionRefresh_Status">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/progress_ico.png</normaloff>:/images/progress_ico.png</iconset>
+     <normaloff>:/refresh.svg</normaloff>:/refresh.svg</iconset>
    </property>
    <property name="text">
     <string>Refresh Status</string>
    </property>
   </action>
   <action name="actionHelp">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/help.svg</normaloff>:/help.svg</iconset>
+   </property>
    <property name="text">
     <string>Help</string>
    </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/info.svg</normaloff>:/info.svg</iconset>
+   </property>
    <property name="text">
     <string>About</string>
    </property>

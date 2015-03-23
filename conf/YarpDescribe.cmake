@@ -66,6 +66,8 @@ configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cma
                                         YARP_MODULES_TEMPLATES_INSTALL_DIR
                                         YARP_CONTEXTS_INSTALL_DIR
                                         YARP_ROBOTS_INSTALL_DIR
+                                        YARP_STATIC_PLUGINS_INSTALL_DIR
+                                        YARP_DYNAMIC_PLUGINS_INSTALL_DIR
                                         YARP_QML2_IMPORT_DIR
                               NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
@@ -78,7 +80,22 @@ export(TARGETS ${YARP_LIBS} ${YARP_TOOLS}
        NAMESPACE YARP::
        FILE ${CMAKE_BINARY_DIR}/YARPTargets.cmake)
 
-set(YARP_CMAKE_DESTINATION ${CMAKE_INSTALL_LIBDIR}/YARP)
+if(WIN32)
+    set(YARP_CMAKE_DESTINATION "cmake")
+    # Temporary fix to remove the outdated destination path that will
+    # cause issues when looking for YARP package.
+    # FIXME Remove this when this hack has been around for enough time.
+    if(EXISTS "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP")
+        message(STATUS "The directory \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\" will cause issues when looking for YARP package. It will be automatically deleted when installing")
+        install(CODE
+ "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\")
+    message(STATUS \"Deleted: \\\"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\\\"\")
+    file(REMOVE_RECURSE \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\")
+  endif()")
+    endif()
+else()
+  set(YARP_CMAKE_DESTINATION ${CMAKE_INSTALL_LIBDIR}/YARP)
+endif()
 
 # Set up a configuration file for installed use of YARP
 set(YARP_INCLUDE_DIRS "${CMAKE_INSTALL_FULL_INCLUDEDIR}")

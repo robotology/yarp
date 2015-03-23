@@ -142,6 +142,8 @@ public:
 
     void clear();
 
+    bool empty() const;
+
     // ConstString is implemented internally as a std::string
     // We cannot expose that implementation without coupling
     // the user's compiler family/version too much with that
@@ -249,6 +251,8 @@ private:
     unsigned long hash() const;
 
     inline void clear() { s.clear(); }
+
+    inline bool empty() const { return s.empty(); }
 
     inline operator std::string() const
     { return s; }

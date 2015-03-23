@@ -395,7 +395,7 @@ void MainWindow::viewResource(yarp::manager::Computer *res)
 
     ResourceViewWidget *w = new ResourceViewWidget(res,ui->mainTabs);
     int index = ui->mainTabs->addTab(w,res->getName());
-    ui->mainTabs->setTabIcon(index,QIcon(":/images/computer_ico.png"));
+    ui->mainTabs->setTabIcon(index,QIcon(":/computer22.svg"));
     ui->mainTabs->setCurrentIndex(index);
 }
 /*! \brief Load the Module on the MainWindow
@@ -413,7 +413,7 @@ void MainWindow::viewModule(yarp::manager::Module *module)
 
     ModuleViewWidget *w = new ModuleViewWidget(module,ui->mainTabs);
     int index = ui->mainTabs->addTab(w,module->getName());
-    ui->mainTabs->setTabIcon(index,QIcon(":/images/module_ico.png"));
+    ui->mainTabs->setTabIcon(index,QIcon(":/module22.svg"));
     ui->mainTabs->setCurrentIndex(index);
 }
 
@@ -433,7 +433,7 @@ void MainWindow::viewApplication(yarp::manager::Application *app)
     connect(w,SIGNAL(logError(QString)),this,SLOT(onLogError(QString)));
     connect(w,SIGNAL(logWarning(QString)),this,SLOT(onLogWarning(QString)));
     int index = ui->mainTabs->addTab(w,app->getName());
-    ui->mainTabs->setTabIcon(index,QIcon(":/images/application_ico.png"));
+    ui->mainTabs->setTabIcon(index,QIcon(":/run22.svg"));
     ui->mainTabs->setCurrentIndex(index);
 }
 

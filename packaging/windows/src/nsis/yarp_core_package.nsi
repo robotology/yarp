@@ -97,7 +97,7 @@ Section -openlogfile
     !insertmacro AddKey "Software\${VENDOR}\installer\YARPInventory" "" "$INSTDIR\${UninstLog}"
 
 SectionEnd
-  
+
 SectionGroup "YARP core" SecYarp
 
   Section "Command-line utilities" SecPrograms
@@ -131,7 +131,6 @@ SectionGroup "YARP core" SecYarp
     !insertmacro AddKey "Software\${VENDOR}\YARP\Common" "LastInstallVersion" ${YARP_SUB}
 
     !insertmacro AddEnv "PATH" "$INSTDIR\${YARP_SUB}\bin"
-	!insertmacro AddEnv "PATH" "$INSTDIR\${YARP_SUB}\lib"
     !insertmacro AddEnv "LIB" "$INSTDIR\${YARP_SUB}\lib"
     !insertmacro AddEnv "INCLUDE" "$INSTDIR\${YARP_SUB}\include"
 	!insertmacro AddEnv "YARP_DATA_DIRS" "$INSTDIR\${YARP_SUB}\share\yarp"
@@ -149,7 +148,7 @@ SectionGroup "YARP core" SecYarp
 
 SectionGroupEnd
 
-SectionGroup "ACE (Adaptive Communication Environment)" SecAce
+SectionGroup "ACE (Adaptive Communication Environment)" SecAce  
   Section "ACE headers" SecAceHeaders
     SetOutPath "$INSTDIR"
     !include ${NSIS_OUTPUT_PATH}\ace_headers_add.nsi
@@ -217,42 +216,83 @@ SectionGroup "GSL (GNU Scientific Library) (GPL license)" SecGsl
 
 SectionGroupEnd
 
+!ifdef GTKMM_SUB
 SectionGroup "GTKMM" SecGtkmm
-
   Section "GTKMM headers" SecGtkmmHeaders
     SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\gtkmm_headers_add.nsi
+	!include ${NSIS_OUTPUT_PATH}\gtkmm_headers_add.nsi
   SectionEnd
 
   Section "GTKMM library" SecGtkmmLibraries
+    !echo "Skipping GTK libraries"
     SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\gtkmm_libraries_add.nsi
+	!include ${NSIS_OUTPUT_PATH}\gtkmm_libraries_add.nsi
   SectionEnd
 
   Section "GTKMM runtime DLL" SecGtkmmDLLs
-    SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\gtkmm_dlls_add.nsi
+	  SetOutPath "$INSTDIR"
+	  !include ${NSIS_OUTPUT_PATH}\gtkmm_dlls_add.nsi
   SectionEnd
 
   Section "Set environment variables and registry keys" SecGtkmmEnv
-    !insertmacro AddKey "Software\${VENDOR}\GTKMM\${GTKMM_SUB}" "" "$INSTDIR\${GTKMM_SUB}"
-    !insertmacro AddKey "Software\${VENDOR}\GTKMM\Common" "LastInstallLocation" $INSTDIR
-    !insertmacro AddKey "Software\${VENDOR}\GTKMM\Common" "LastInstallVersion" ${GTKMM_SUB}
-    !insertmacro AddEnv "PATH" "$INSTDIR\${GTKMM_SUB}\bin"
-    !insertmacro AddEnv "LIB" "$INSTDIR\${GTKMM_SUB}\lib"
-    !insertmacro AddEnv "INCLUDE" "$INSTDIR\${GTKMM_SUB}\include"
-    !insertmacro AddEnv1 GTKMM_BASEPATH "$INSTDIR\${GTKMM_SUB}"
-    !insertmacro AddEnv1 GTK_BASEPATH "$INSTDIR\${GTKMM_SUB}"
-    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+	  !insertmacro AddKey "Software\${VENDOR}\GTKMM\${GTKMM_SUB}" "" "$INSTDIR\${GTKMM_SUB}"
+	  !insertmacro AddKey "Software\${VENDOR}\GTKMM\Common" "LastInstallLocation" $INSTDIR
+	  !insertmacro AddKey "Software\${VENDOR}\GTKMM\Common" "LastInstallVersion" ${GTKMM_SUB}
+	  !insertmacro AddEnv "PATH" "$INSTDIR\${GTKMM_SUB}\bin"
+	  !insertmacro AddEnv "LIB" "$INSTDIR\${GTKMM_SUB}\lib"
+	  !insertmacro AddEnv "INCLUDE" "$INSTDIR\${GTKMM_SUB}\include"
+	  !insertmacro AddEnv1 GTKMM_BASEPATH "$INSTDIR\${GTKMM_SUB}"
+	  !insertmacro AddEnv1 GTK_BASEPATH "$INSTDIR\${GTKMM_SUB}"
+	  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   SectionEnd
 
-  Section "yarpview utility" SecGuis
-    SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\yarp_guis_add.nsi
-    #CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
+  Section "GTKMM GUIs" SecGtkGuis
+		SetOutPath "$INSTDIR"
+		!include ${NSIS_OUTPUT_PATH}\gtk_guis_add.nsi
+		#CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
   SectionEnd
-
 SectionGroupEnd
+!else
+    !echo "Skipping GTK material"
+!endif
+
+!ifdef QT_SUB
+SectionGroup "Qt" SecQt
+   Section "QT files" SecQtFile
+      SetOutPath "$INSTDIR"
+      !include ${NSIS_OUTPUT_PATH}\qt_files_add.nsi
+      ExecWait '"$INSTDIR\${QT_SUB}\bin\qtpathcorrector.exe" patch -n "$INSTDIR\${QT_SUB}" -f "$INSTDIR\${QT_SUB}\bin\Qt5Core.dll"' $0
+      ExecWait '"$INSTDIR\${QT_SUB}\bin\qtpathcorrector.exe" patch -n "$INSTDIR\${QT_SUB}" -f "$INSTDIR\${QT_SUB}\bin\Qt5Cored.dll"' $0
+      ExecWait '"$INSTDIR\${QT_SUB}\bin\qtpathcorrector.exe" patch -n "$INSTDIR\${QT_SUB}" -f "$INSTDIR\${QT_SUB}\bin\qmake.exe"' $0
+      Delete "$INSTDIR\${QT_SUB}\bin\qtpathcorrector.exe"
+      FileOpen $1 '$INSTDIR\${QT_SUB}\bin\qtenv2.bat' w
+      FileWrite $1 'echo off'
+      FileWrite $1 '$\r$\n'
+      FileWrite $1 'echo Setting up environment for Qt usage...'
+      FileWrite $1 '$\r$\n'
+      FileWrite $1 'set PATH="$INSTDIR\${QT_SUB}\bin;%PATH%"'
+      FileWrite $1 '$\r$\n'
+      FileWrite $1 'cd /D "$INSTDIR\${QT_SUB}"'
+      FileWrite $1 '$\r$\n'
+      FileWrite $1 'echo Remember to call vcvarsall.bat to complete environment setup!'
+      FileClose $1
+  SectionEnd
+  Section "Set environment variables" SecQtEnv
+    !insertmacro AddEnv "PATH" "$INSTDIR\${QT_SUB}\bin"
+    !insertmacro AddEnv "LIB" "$INSTDIR\${QT_SUB}\lib"
+    !insertmacro AddEnv "INCLUDE" "$INSTDIR\${QT_SUB}\include"
+    !insertmacro AddEnv1 Qt5_DIR "$INSTDIR\${QT_SUB}\lib\cmake\Qt5"
+    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+   SectionEnd
+  Section "QT GUIs" SecQtGuis
+      !echo "Skipping Qt guis" 
+ 	  SetOutPath "$INSTDIR"
+	  !include ${NSIS_OUTPUT_PATH}\qt_guis_add.nsi
+  SectionEnd
+SectionGroupEnd
+!else
+  !echo "Skipping Qt material" 
+!endif
 
 Section "Visual Studio Runtime (nonfree)" SecVcDlls
   SetOutPath "$INSTDIR"
@@ -281,18 +321,33 @@ SectionEnd
   Pop $R0
 !macroend
 
+!macro GroupRO GroupId
+  Push $0
+  IntOp $0 ${SF_SECGRP} | ${SF_RO}
+  SectionSetFlags ${GroupId} $0
+  Pop $0
+!macroend
+ 
+
 Function .onSelChange
   Push $R0
   Push $R1
+  Push $R2
   SectionGetFlags ${SecYarp} $R0
   IntOp $R0 $R0 & ${SF_SELECTED}
   StrCmp $R0 ${SF_SELECTED} Skip 0
   !insertmacro Unselect "SecYarpMathLibraries"
   !insertmacro Unselect "SecYarpMathDLLs"
   !insertmacro Unselect "SecYarpMathHeaders"
-  !insertmacro Unselect "SecGuis"
+  !ifdef QT_SUB
+    !insertmacro Unselect "SecQtGuis"
+  !endif
+  !ifdef GTKMM_SUB
+    !insertmacro Unselect "SecGtkGuis"
+  !endif
   !insertmacro Unselect "SecVcDlls"
   Skip:
+  Pop $R2
   Pop $R1
   Pop $R0
 FunctionEnd
@@ -305,45 +360,43 @@ LangString DESC_SecYarp ${LANG_ENGLISH} "YARP libraries and tools. Unselect this
 LangString DESC_SecAce ${LANG_ENGLISH} "The Adaptive Communications Environment, used by this version of YARP."
 LangString DESC_SecGsl ${LANG_ENGLISH} "The YARP math library.  Based on the GNU Scientific Library.  This is therefore GPL software, not the LGPL like YARP."
 LangString DESC_SecGtkmm ${LANG_ENGLISH} "User interface library.  Not needed to use the YARP library.  Used by the yarpview program."
-
 LangString DESC_SecPrograms ${LANG_ENGLISH} "YARP programs, including the standard YARP companion, and the standard YARP name server."
 LangString DESC_SecLibraries ${LANG_ENGLISH} "Libraries for linking against YARP."
 LangString DESC_SecHeaders ${LANG_ENGLISH} "YARP header files."
 LangString DESC_SecExamples ${LANG_ENGLISH} "A basic example of using YARP.  See online documentation, and many more examples in source code package."
 LangString DESC_SecDLLs ${LANG_ENGLISH} "Libraries needed for YARP programs to run."
-
 LangString DESC_SecAceLibraries ${LANG_ENGLISH} "ACE library files."
 LangString DESC_SecAceDLLs ${LANG_ENGLISH} "ACE library run-time."
-
 LangString DESC_SecGslLibraries ${LANG_ENGLISH} "Math library files."
 LangString DESC_SecYarpMathDLLs ${LANG_ENGLISH} "Math library run-time."
 LangString DESC_SecGslHeaders ${LANG_ENGLISH} "Math library header files."
-LangString DESC_SecGuis ${LANG_ENGLISH} "Utility for viewing image streams.  Uses GTK+."
+LangString DESC_SecGtkGuis ${LANG_ENGLISH} "GUIs usign GTK+."
+LangString DESC_SecQtGuis ${LANG_ENGLISH} "GUIs usign Qt."
 LangString DESC_SecYarpEnv ${LANG_ENGLISH} "Add YARP to PATH, LIB, and INCLUDE variables, and set YARP_DIR variable."
-
 LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable files.  Not free software.  If you already have Visual Studio installed, you may want to skip this."
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecYarp} $(DESC_SecYarp)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkmm} $(DESC_SecGtkmm)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecPrograms} $(DESC_SecPrograms)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecLibraries} $(DESC_SecLibraries)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecHeaders} $(DESC_SecHeaders)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} $(DESC_SecExamples)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecDLLs} $(DESC_SecDLLs)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecVcDlls} $(DESC_SecVcDlls)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecAce} $(DESC_SecAce)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecAceLibraries} $(DESC_SecAceLibraries)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecAceDLLs} $(DESC_SecAceDLLs)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGsl} $(DESC_SecGsl)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGslLibraries} $(DESC_SecGslLibraries)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecYarpMathDLLs} $(DESC_SecYarpMathDLLs)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGslHeaders} $(DESC_SecGslHeaders)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGuis} $(DESC_SecGuis)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecYarpEnv} $(DESC_SecYarpEnv)
-  #!insertmacro MUI_DESCRIPTION_TEXT ${Sec} $(DESC_Sec)
-  !insertmacro MUI_FUNCTION_DESCRIPTION_END
+!insertmacro MUI_DESCRIPTION_TEXT ${SecYarp} $(DESC_SecYarp)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecGtkmm} $(DESC_SecGtkmm)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecPrograms} $(DESC_SecPrograms)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecLibraries} $(DESC_SecLibraries)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecHeaders} $(DESC_SecHeaders)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} $(DESC_SecExamples)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecDLLs} $(DESC_SecDLLs)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecVcDlls} $(DESC_SecVcDlls)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecAce} $(DESC_SecAce)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecAceLibraries} $(DESC_SecAceLibraries)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecAceDLLs} $(DESC_SecAceDLLs)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecGsl} $(DESC_SecGsl)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecGslLibraries} $(DESC_SecGslLibraries)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecYarpMathDLLs} $(DESC_SecYarpMathDLLs)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecGslHeaders} $(DESC_SecGslHeaders)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecGtkGuis} $(DESC_SecGtkGuis)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecQtGuis} $(DESC_SecQtGuis)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecYarpEnv} $(DESC_SecYarpEnv)
+#!insertmacro MUI_DESCRIPTION_TEXT ${Sec} $(DESC_Sec)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 ;Uninstaller Section
@@ -370,7 +423,12 @@ Section "Uninstall"
   RMDir /r "$INSTDIR\${YARP_SUB}"
   RMDir /r "$INSTDIR\${GSL_SUB}"
   RMDir /r "$INSTDIR\${ACE_SUB}"
-  RMDir /r "$INSTDIR\${GTKMM_SUB}"
+  !ifdef GTKMM_SUB
+    RMDir /r "$INSTDIR\${GTKMM_SUB}"
+  !endif
+  !ifdef QT_SUB
+    RMDir /r "$INSTDIR\${QT_SUB}"
+  !endif
 
   # cleanup YARP registry entries
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\Common"

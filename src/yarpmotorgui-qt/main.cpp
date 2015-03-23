@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
 
     if (!yarp.checkNetwork())
     {
-        LOG_ERROR("Error initializing yarp network (is the yarpnameserver running?)\n");
-        QMessageBox::critical(0,"Error","Error initializing yarp network (is the yarpnameserver running?)");
+        LOG_ERROR("Error initializing yarp network (is yarpserver running?)\n");
+        QMessageBox::critical(0,"Error","Error initializing yarp network (is yarpserver running?)");
         return 0;
     }
 

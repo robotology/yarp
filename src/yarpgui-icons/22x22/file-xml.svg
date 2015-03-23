@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg7384"
+   height="22"
+   width="22"
+   version="1.1"
+   inkscape:version="0.91+devel r"
+   sodipodi:docname="file-xml.svg"
+   viewBox="0 0 22 22">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="983"
+     inkscape:window-height="718"
+     id="namedview8"
+     showgrid="false"
+     inkscape:zoom="11.313709"
+     inkscape:cx="2.2136737"
+     inkscape:cy="-3.2107678"
+     inkscape:window-x="75"
+     inkscape:window-y="34"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg7384"
+     inkscape:document-units="px" />
+  <metadata
+     id="metadata90">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Gnome Symbolic Icon Theme</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <title
+     id="title9167">Gnome Symbolic Icon Theme</title>
+  <path
+     style="display:inline;fill:#ff5fd6;fill-opacity:1;stroke:none;stroke-width:1.00000012"
+     id="path3722"
+     inkscape:connector-curvature="0"
+     d="M 6.8461533,5 1.9999983,10.999994 6.8461533,17 l 0,-2.571437 -2.769231,-3.428569 2.769231,-3.42857 0,-2.571424 z M 11.865384,5 8.4038454,17 10.134614,17 13.596153,5 11.865384,5 Z m 3.288461,0 0,2.571424 2.769237,3.42857 -2.769237,3.428569 0,2.571437 4.846157,-6.000006 L 15.153845,5 Z" />
+</svg>

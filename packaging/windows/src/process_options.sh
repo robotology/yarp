@@ -93,7 +93,12 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
 
 	OPT_PLATFORM=""
 	OPT_VCNNN=""
-	if [ "k$OPT_COMPILER" = "kv11" ] ; then
+	if [ "$OPT_COMPILER" == "v12" ] ; then
+		OPT_PLATFORM=v120
+		OPT_VCNNN="VC120"
+		OPT_HUMAN_PLATFORM_NAME="msvc12"
+	fi
+	if [ "$OPT_COMPILER" = "v11" ] ; then
 		OPT_PLATFORM=v110
 		OPT_VCNNN="VC110"
 		OPT_HUMAN_PLATFORM_NAME="msvc11"
@@ -130,6 +135,13 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
 	OPT_CONFIGURATION_COMMAND="/p:Configuration=$OPT_BUILD"
 
 	OPT_GENERATOR=""
+	if [ "$OPT_COMPILER" == "v12" ] ; then
+		if [ "$OPT_VARIANT" == "x86" ] ; then
+			OPT_GENERATOR="Visual Studio 12"
+		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+			OPT_GENERATOR="Visual Studio 12 Win64"
+		fi		
+	fi
 	if [ "$OPT_COMPILER" == "v11" ] ; then
 		if [ "$OPT_VARIANT" == "x86" ] ; then
 			OPT_GENERATOR="Visual Studio 11"

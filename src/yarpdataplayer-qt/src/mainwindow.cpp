@@ -697,7 +697,7 @@ void MainWindow::onMenuPlayBackPlay()
 {
 
     if (subDirCnt > 0){
-        ui->playButton->setIcon(QIcon(":/images/pause.png"));
+        ui->playButton->setIcon(QIcon(":/pause.svg"));
         disconnect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPlay()));
         connect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPause()));
 
@@ -745,7 +745,7 @@ void MainWindow::onMenuPlayBackPlay()
 void MainWindow::onMenuPlayBackPause()
 {
     if (subDirCnt > 0){
-        ui->playButton->setIcon(QIcon(":/images/play.png"));
+        ui->playButton->setIcon(QIcon(":/play.svg"));
         disconnect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPause()));
         connect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPlay()));
 
@@ -760,7 +760,7 @@ void MainWindow::onMenuPlayBackPause()
 /**********************************************************/
 void MainWindow::resetButtonOnStop()
 {
-    ui->playButton->setIcon(QIcon(":/images/play.png"));
+    ui->playButton->setIcon(QIcon(":/play.svg"));
     disconnect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPause()));
     connect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPlay()));
 
@@ -773,7 +773,7 @@ void MainWindow::resetButtonOnStop()
 void MainWindow::onMenuPlayBackStop()
 {
     if (subDirCnt > 0){
-        ui->playButton->setIcon(QIcon(":/images/play.png"));
+        ui->playButton->setIcon(QIcon(":/play.svg"));
         disconnect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPause()));
         disconnect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPlay()));
         connect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPlay()));

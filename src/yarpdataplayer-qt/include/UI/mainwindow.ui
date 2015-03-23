@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>400</height>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,6 +29,9 @@
     </property>
     <item>
      <widget class="QTreeWidget" name="mainWidget">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
       <attribute name="headerDefaultSectionSize">
        <number>80</number>
       </attribute>
@@ -151,12 +154,23 @@ QSlider::groove:horizontal:disabled {
              <height>30</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {border: none; background-color:none;}
+QToolButton:hover {border: 3px solid transparent;}
+QToolButton:pressed {border: 4px solid transparent;}</string>
+           </property>
            <property name="text">
             <string/>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>:/images/rewind.png</normaloff>:/images/rewind.png</iconset>
+             <normaloff>:/backward.svg</normaloff>:/backward.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>26</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -177,12 +191,23 @@ QSlider::groove:horizontal:disabled {
              <height>30</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {border: none; background-color:none;}
+QToolButton:hover {border: 3px solid transparent;}
+QToolButton:pressed {border: 4px solid transparent;}</string>
+           </property>
            <property name="text">
             <string/>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>:/images/play.png</normaloff>:/images/play.png</iconset>
+             <normaloff>:/play.svg</normaloff>:/play.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>26</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -203,12 +228,23 @@ QSlider::groove:horizontal:disabled {
              <height>30</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {border: none; background-color:none;}
+QToolButton:hover {border: 3px solid transparent;}
+QToolButton:pressed {border: 4px solid transparent;}</string>
+           </property>
            <property name="text">
             <string/>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>:/images/stop.png</normaloff>:/images/stop.png</iconset>
+             <normaloff>:/stop.svg</normaloff>:/stop.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>26</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -229,12 +265,23 @@ QSlider::groove:horizontal:disabled {
              <height>30</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {border: none; background-color:none;}
+QToolButton:hover {border: 3px solid transparent;}
+QToolButton:pressed {border: 4px solid transparent;}</string>
+           </property>
            <property name="text">
             <string/>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+             <normaloff>:/forward.svg</normaloff>:/forward.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>26</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -339,7 +386,7 @@ QSlider::groove:horizontal:disabled {
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -382,15 +429,33 @@ QSlider::groove:horizontal:disabled {
    <addaction name="menuOption"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="styleSheet">
+    <string notr="true">border: none;</string>
+   </property>
+  </widget>
   <action name="actionOpen_Directory">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/folder-new.svg</normaloff>:/folder-new.svg</iconset>
+   </property>
    <property name="text">
     <string>Open Directory</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/close.svg</normaloff>:/close.svg</iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionPlay">
@@ -399,7 +464,7 @@ QSlider::groove:horizontal:disabled {
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>:/images/play.png</normaloff>:/images/play.png</iconset>
+     <normaloff>:/play.svg</normaloff>:/play.svg</iconset>
    </property>
    <property name="text">
     <string>Play</string>
@@ -411,7 +476,7 @@ QSlider::groove:horizontal:disabled {
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>:/images/pause.png</normaloff>:/images/pause.png</iconset>
+     <normaloff>:/pause.svg</normaloff>:/pause.svg</iconset>
    </property>
    <property name="text">
     <string>Pause</string>
@@ -423,7 +488,7 @@ QSlider::groove:horizontal:disabled {
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>:/images/stop.png</normaloff>:/images/stop.png</iconset>
+     <normaloff>:/stop.svg</normaloff>:/stop.svg</iconset>
    </property>
    <property name="text">
     <string>Stop</string>
@@ -435,7 +500,7 @@ QSlider::groove:horizontal:disabled {
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+     <normaloff>:/forward.svg</normaloff>:/forward.svg</iconset>
    </property>
    <property name="text">
     <string>Forward</string>
@@ -447,7 +512,7 @@ QSlider::groove:horizontal:disabled {
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>:/images/rewind.png</normaloff>:/images/rewind.png</iconset>
+     <normaloff>:/backward.svg</normaloff>:/backward.svg</iconset>
    </property>
    <property name="text">
     <string>Rewind</string>

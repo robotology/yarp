@@ -29,6 +29,8 @@
 #      nsis paths
 #   gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
 #      gtkmm paths - an OPT_BUILD value of "any" is replaced with "Release"
+#   qt_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      Qt paths - an OPT_BUILD value of "any" is replaced with "Release"
 #
 # Related code:
 #   src/nsis/yarp_core_package.nsi
@@ -58,6 +60,8 @@
 BUILD_DIR=$PWD
 
 BUNDLE_VENDOR=robotology
+
+GUIS="yarpview yarpscope yarpmanager yarpdataplayer yarplogger yarpmotorgui"
 
 # Get SETTINGS_* variables (paths) from cache
 source ./settings.sh || {
@@ -134,10 +138,22 @@ source gsl_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
 }
 
 # Pick up GTKMM paths
-source gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
-	echo "Cannot find corresponding GTKMM build"
-	exit 1
-}
+GTKMM_VERSION_TAG="BUNDLE_GTKMM_VERSION_${OPT_COMPILER}_${OPT_VARIANT}"
+if [ "${!GTKMM_VERSION_TAG}" != "" ]; then
+	source gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
+		echo "Cannot find corresponding GTKMM build"
+		exit 1
+	}
+fi
+
+# Pick up Qt paths
+QT_VERSION_TAG="BUNDLE_QT_VERSION_${OPT_COMPILER}_${OPT_VARIANT}"
+if [ "${!QT_VERSION_TAG}" != "" ]; then
+	source qt_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
+		echo "Cannot find corresponding Qt build"
+		exit 1
+	}
+fi
 
 # Pick up NSIS paths
 source nsis_any_any_any.sh || {
@@ -187,7 +203,7 @@ function nsis_add_base {
 	echo "Add " "$@"
 	osrc="$src"
 	odest="$dest"
-	if [ "k$dir" = "k" ] ; then
+	if [ "$dir" == "" ]; then
 		src="$PWD/$src"
 		osrc="$src"
 		src=${src//\//\\}
@@ -266,7 +282,8 @@ nsis_setup yarp_programs
 nsis_setup yarp_math_libraries
 nsis_setup yarp_math_dlls
 nsis_setup yarp_math_headers
-nsis_setup yarp_guis
+nsis_setup yarp_gtk_guis
+nsis_setup yarp_qt_guis
 
 nsis_setup yarp_vc_dlls
 nsis_setup yarp_examples
@@ -274,7 +291,8 @@ nsis_setup yarp_examples
 YARP_SUB="yarp-$BUNDLE_YARP_VERSION"
 ACE_SUB="ace-$BUNDLE_ACE_VERSION"
 GSL_SUB="gsl-$BUNDLE_GSL_VERSION"
-GTKMM_SUB="gtkmm-$BUNDLE_GTKMM_VERSION"
+GTKMM_SUB="$GTKMM_PATH"
+QT_SUB="$QT_PATH"
 
 # Add YARP material to NSIS
 cd $YARP_DIR_UNIX || exit 1
@@ -320,24 +338,33 @@ done
 for f in `ls -1 *.$LIBEXT | grep YARP_math`; do
 	nsis_add yarp_math_libraries $f ${YARP_SUB}/lib/$f
 done
+cd $YARP_DIR_UNIX/install/bin
 for f in `ls -1 *.dll | grep -v YARP_math`; do
-	nsis_add yarp_dlls $f ${YARP_SUB}/lib/$f
+	nsis_add yarp_dlls $f ${YARP_SUB}/bin/$f
 done
 for f in `ls -1 *.dll | grep YARP_math`; do
-	nsis_add yarp_math_dlls $f ${YARP_SUB}/lib/$f
+	nsis_add yarp_math_dlls $f ${YARP_SUB}/bin/$f
 done
-cd $YARP_DIR_UNIX/install/bin
-for f in `ls -1 *.exe | grep -v yarpview`; do
-	nsis_add yarp_programs $f ${YARP_SUB}/bin/$f
+
+BINARY_FILES=$(ls -1 *.exe)
+for f in $BINARY_FILES; do
+	if [ "${f/gtk}" == "$f" ]; then
+		FOUND="false"
+		for gui in $GUIS; do
+			if [ "$f" == "${gui}.exe" ]; then
+				FOUND="true"
+			fi
+		done
+		if [ "$FOUND" != "true" ]; then
+			nsis_add yarp_programs $f ${YARP_SUB}/bin/$f
+		fi
+	 fi
 done
 cd $YARP_ROOT/example/hello
 for f in `ls *.cpp CMakeLists.txt`; do
 	nsis_add yarp_examples $f ${YARP_SUB}/example/$f
 done
-cd $YARP_DIR_UNIX/install/bin
-for f in `ls -1 *.exe | grep yarpview`; do
-	nsis_add yarp_guis $f ${YARP_SUB}/bin/$f
-done
+
 cd $YARP_DIR_UNIX/install/include/yarp
 for f in conf os sig dev ; do
 	nsis_add_recurse yarp_headers $f ${YARP_SUB}/include/yarp/$f
@@ -351,27 +378,53 @@ nsis_add_recurse gsl_libraries lib ${GSL_SUB}/lib
 
 # Add GTKMM material to NSIS
 
-
 ## 11/11/11: Lorenzo Natale. Added missing Visual Studio dlls from ${GTKMM_SUB}/bin
 # Add GTKMM material to NSIS
-if [ "k$SKIP_GTK" = "k" ]; then
+if [ "$GTKMM_DIR" != "" ]; then
 	##cd $GTKMM_DIR/redist || exit 1
     cd $GTKMM_DIR/bin || exit 1
-	for f in `ls *.dll`; do
+	for f in `ls -1 *.dll`; do
 		chmod u+x $f
 		nsis_add gtkmm_dlls $f ${GTKMM_SUB}/bin/$f
 	done
-	
-##
-#	cd $GTKMM_DIR/bin || exit 1
-#	for f in zlib1.dll freetype6.dll intl.dll; do
-#		chmod u+x $f
-#		nsis_add gtkmm_dlls $f ${GTKMM_SUB}/bin/$f
-#	done
-##
 	cd $GTKMM_DIR || exit 1
     nsis_add_recurse gtkmm_headers include ${GTKMM_SUB}/include
     nsis_add_recurse gtkmm_libraries lib ${GTKMM_SUB}/lib
+	
+	cd ${YARP_DIR_UNIX}/install/bin || exit 1
+	if [ "$QT_DIR" == "" ]; then
+		for f in $GUIS; do
+			if [ -f "${f}.exe" ]; then
+				nsis_add gtk_guis ${f}.exe ${YARP_SUB}/bin/${f}.exe
+			fi 
+		done
+	else
+		for f in $GUIS; do
+			if [ -f "${f}-gtk.exe" ]; then
+				nsis_add gtk_guis ${f}-gtk.exe ${YARP_SUB}/bin/${f}-gtk.exe
+			fi 
+		done
+	fi
+fi
+if [ "$QT_DIR" != "" ]; then
+	cd $QT_DIR || exit 1
+	nsis_add_recurse qt_files bin ${QT_SUB}/bin
+	nsis_add_recurse qt_files imports ${QT_SUB}/imports
+	nsis_add_recurse qt_files include ${QT_SUB}/include
+	nsis_add_recurse qt_files lib ${QT_SUB}/lib
+	nsis_add_recurse qt_files mkspecs ${QT_SUB}/mkspecs
+	nsis_add_recurse qt_files phrasebooks ${QT_SUB}/phrasebooks
+	nsis_add_recurse qt_files plugins ${QT_SUB}/plugins
+	nsis_add_recurse qt_files qml ${QT_SUB}/qml
+	nsis_add_recurse qt_files translations ${QT_SUB}/translations
+	
+	cd ${YARP_DIR_UNIX}/install/bin || exit 1
+	for f in $GUIS; do
+		nsis_add qt_guis ${f}.exe ${YARP_SUB}/bin/${f}.exe
+	done
+	
+	cd ${YARP_DIR_UNIX}/install/lib || exit 1
+	nsis_add_recurse qt_guis qt5 ${YARP_SUB}/lib/qt5
 fi
 
 # Add ACE material to NSIS
@@ -391,24 +444,27 @@ nsis_add_recurse ace_headers tmp/ace ${ACE_SUB}/ace
 # Add Visual Studio redistributable material to NSIS
 if [ -e "$OPT_VC_REDIST_CRT" ] ; then
 	cd "$OPT_VC_REDIST_CRT" || exit 1
-	for f in `ls *.dll *.manifest`; do
+	pwd
+	for f in `ls *.dll`; do
 		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "$OPT_VC_REDIST_CRT"
 	done
 fi
 # 03 jan 2013 by Matteo Brunettini :
 # Add Visual Studio redistributable material to NSIS - Fix missign GTKMM MVSC100 DLLs
 # NOTE: the path VS10/VC/redist/$OPT_VARIANT/Microsoft.VC100.CRT must be copied to VS10/VC/redist/$OPT_VARIANT/ 
-if [ "$OPT_VCNNN" == "VC110" ]
+if [ "$OPT_VCNNN" == "VC110" ] || [ "$OPT_VCNNN" == "VC120" ]
 then
 	echo "**** Fixing missing msvc100 DLLs in gtkmm from $REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT"
 	VC_PLAT="$OPT_VARIANT"
 	if [ "$VC_PLAT" == "amd64" ] || [ "$VC_PLAT" == "x86_amd64" ]
 	then
-		VC_PLAT="x64"
+		_PLAT_="x64"
+	else
+		_PLAT_="x86"
 	fi
-	cd "${REDIST_PATH}/${VC_PLAT}/Microsoft.VC100.CRT" || exit 1
-	for f in `ls *.dll *.manifest`; do
-		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "${REDIST_PATH/}${VC_PLAT}/Microsoft.VC100.CRT"
+	cd "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT" || exit 1
+	for f in `ls *.dll`; do
+		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT"
 	done
 fi
 
@@ -419,7 +475,7 @@ if $add_debug; then
 	for f in `ls -1 *.lib`; do
 		nsis_add yarp_libraries $f ${YARP_SUB}/lib/$f
 	done
-	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
+	cd $YARP_DIR_DBG_UNIX/install/bin || exit 1
 	for f in `ls -1 *.dll`; do
 		nsis_add yarp_dlls $f ${YARP_SUB}/lib/$f
 	done
@@ -440,13 +496,26 @@ if $add_debug; then
 	DBG_HIDE=""
 fi
 
-
 # Run NSIS
 cd $OUT_DIR
 cp $SETTINGS_SOURCE_DIR/src/nsis/*.nsh .
 
-$NSIS_BIN -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DGTKMM_SUB=$GTKMM_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
-
+if [ "$GTKMM_SUB" == "" ]; then
+	if [ "$QT_SUB" == "" ]; then
+		# no GTKMM and no Qt
+		$NSIS_BIN -DYARP_PLATFORM="$OPT_VARIANT" -DVENDOR="$BUNDLE_VENDOR" -DYARP_VERSION="$BUNDLE_YARP_VERSION" -DYARP_SUB="$YARP_SUB" -DGSL_VERSION="$BUNDLE_GSL_VERSION" -DACE_SUB="$ACE_SUB" -DGSL_SUB="$GSL_SUB" -DBUILD_VERSION="${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK}" -DYARP_LICENSE="$YARP_LICENSE" -DYARP_ORG_DIR="$YARP_DIR" -DACE_ORG_DIR="$ACE_DIR" -DDBG_HIDE="$DBG_HIDE" -DYARP_ORG_DIR_DBG="$YARP_DIR_DBG" -DACE_ORG_DIR_DBG="$ACE_DIR_DBG" -DYARP_LIB_DIR_DBG="$YARP_LIB_DIR_DBG" -DYARP_LIB_FILE_DBG="$YARP_LIB_FILE_DBG" -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
+	else
+		#no GTKMM
+		$NSIS_BIN -DYARP_PLATFORM="$OPT_VARIANT" -DVENDOR="$BUNDLE_VENDOR" -DYARP_VERSION="$BUNDLE_YARP_VERSION" -DYARP_SUB="$YARP_SUB" -DGSL_VERSION="$BUNDLE_GSL_VERSION" -DACE_SUB="$ACE_SUB" -DGSL_SUB="$GSL_SUB" -DQT_SUB="$QT_SUB" -DBUILD_VERSION="${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK}" -DYARP_LICENSE="$YARP_LICENSE" -DYARP_ORG_DIR="$YARP_DIR" -DACE_ORG_DIR="$ACE_DIR" -DDBG_HIDE="$DBG_HIDE" -DYARP_ORG_DIR_DBG="$YARP_DIR_DBG" -DACE_ORG_DIR_DBG="$ACE_DIR_DBG" -DYARP_LIB_DIR_DBG="$YARP_LIB_DIR_DBG" -DYARP_LIB_FILE_DBG="$YARP_LIB_FILE_DBG" -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
+	fi
+else
+	if [ "$QT_SUB" == "" ]; then
+	# no Qt
+		$NSIS_BIN -DYARP_PLATFORM="$OPT_VARIANT" -DVENDOR="$BUNDLE_VENDOR" -DYARP_VERSION="$BUNDLE_YARP_VERSION" -DYARP_SUB="$YARP_SUB" -DGSL_VERSION="$BUNDLE_GSL_VERSION" -DACE_SUB="$ACE_SUB" -DGSL_SUB="$GSL_SUB" -DGTKMM_SUB="$GTKMM_SUB" -DBUILD_VERSION="${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK}" -DYARP_LICENSE="$YARP_LICENSE" -DYARP_ORG_DIR="$YARP_DIR" -DACE_ORG_DIR="$ACE_DIR" -DDBG_HIDE="$DBG_HIDE" -DYARP_ORG_DIR_DBG="$YARP_DIR_DBG" -DACE_ORG_DIR_DBG="$ACE_DIR_DBG" -DYARP_LIB_DIR_DBG="$YARP_LIB_DIR_DBG" -DYARP_LIB_FILE_DBG="$YARP_LIB_FILE_DBG" -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
+	else
+		$NSIS_BIN -DYARP_PLATFORM="$OPT_VARIANT" -DVENDOR="$BUNDLE_VENDOR" -DYARP_VERSION="$BUNDLE_YARP_VERSION" -DYARP_SUB="$YARP_SUB" -DGSL_VERSION="$BUNDLE_GSL_VERSION" -DACE_SUB="$ACE_SUB" -DGSL_SUB="$GSL_SUB" -DGTKMM_SUB="$GTKMM_SUB" -DQT_SUB="$QT_SUB" -DBUILD_VERSION="${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK}" -DYARP_LICENSE="$YARP_LICENSE" -DYARP_ORG_DIR="$YARP_DIR" -DACE_ORG_DIR="$ACE_DIR" -DDBG_HIDE="$DBG_HIDE" -DYARP_ORG_DIR_DBG="$YARP_DIR_DBG" -DACE_ORG_DIR_DBG="$ACE_DIR_DBG" -DYARP_LIB_DIR_DBG="$YARP_LIB_DIR_DBG" -DYARP_LIB_FILE_DBG="$YARP_LIB_FILE_DBG" -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
+	fi
+fi	
 # Generate zip files
 if [ "k$SKIP_ZIP" = "k" ] ; then
 	# flush zips

@@ -19,15 +19,15 @@ SequenceWindow::SequenceWindow(QString partName, int count,QWidget *parent) :
 {
     ui->setupUi(this);
 
-
     setWindowTitle(QString("Sequence Window for part: %1").arg(partName));
-    goAction        = ui->toolBar->addAction(QIcon(":/images/goAll.png"),"Go!");
-    runTimeAction    = ui->toolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run (time)");
-    saveAction       = ui->toolBar->addAction(QIcon(":/images/save.png"),"Save");
-    openAction       = ui->toolBar->addAction(QIcon(":/images/load.png"),"Open");
-    cycleAllAction   = ui->toolBar->addAction(QIcon(":/images/cycleAllSequence.png"),"Cycle");
-    cycleTimeAction  = ui->toolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"),"Cycle (time)");
-    stopAction       = ui->toolBar->addAction(QIcon(":/images/stop.png"),"Stop");
+    goAction        = ui->toolBar->addAction(QIcon(":/play.svg"),"Run (use joint speeds from Speed tab)");
+    runTimeAction    = ui->toolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run (ignore Speed tab, produce coordinated movement using Timing)");
+
+    saveAction       = ui->toolBar->addAction(QIcon(":/file-save.svg"),"Save");
+    openAction       = ui->toolBar->addAction(QIcon(":/file-open.svg"),"Open");
+    cycleAllAction   = ui->toolBar->addAction(QIcon(":/images/cycleAllSequence.png"),"Cycle (use joint speeds from Speed tab)");
+    cycleTimeAction  = ui->toolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"),"Cycle (ignore Speed tab, produce coordinated movement using Timing)");
+    stopAction       = ui->toolBar->addAction(QIcon(":/stop.svg"),"Stop");
 
     QMenu *menu = ui->menuBar->addMenu("Commands");
     menu->addAction(goAction);
@@ -513,13 +513,13 @@ void SequenceWindow::onSetCurrentSequenceIndex(int index)
         ui->treePositions->topLevelItem(index)->setBackgroundColor(i,QColor(0,255,0,120));
 
     }
-    ui->treePositions->topLevelItem(index)->setIcon(0,QIcon(":/images/goAll.png"));
+    ui->treePositions->topLevelItem(index)->setIcon(0,QIcon(":/play.svg"));
 
     for(int i=0;i<ui->treeSpeed->columnCount();i++){
         ui->treeSpeed->topLevelItem(index)->setBackgroundColor(i,QColor(0,255,0,120));
 
     }
-    ui->treeSpeed->topLevelItem(index)->setIcon(0,QIcon(":/images/goAll.png"));
+    ui->treeSpeed->topLevelItem(index)->setIcon(0,QIcon(":/play.svg"));
     prevCurrentIndex = index;
 }
 

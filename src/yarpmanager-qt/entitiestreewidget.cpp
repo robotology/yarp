@@ -23,10 +23,10 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
     resourcesNode = new QTreeWidgetItem(this,QStringList() << "Resources");
     templatesNode = new QTreeWidgetItem(this,QStringList() << "Templates");
 
-    applicationNode->setIcon(0,QIcon(":/images/folderapp_ico.png"));
-    modulesNode->setIcon(0,QIcon(":/images/foldermod_ico.png"));
-    resourcesNode->setIcon(0,QIcon(":/images/folderres_ico.png"));
-    templatesNode->setIcon(0,QIcon(":/images/folder_ico.png"));
+    applicationNode->setIcon(0,QIcon(":/folder-app.svg"));
+    modulesNode->setIcon(0,QIcon(":/folder-mod.svg"));
+    resourcesNode->setIcon(0,QIcon(":/folder-res.svg"));
+    templatesNode->setIcon(0,QIcon(":/folder.svg"));
 
     addTopLevelItem(applicationNode);
     addTopLevelItem(modulesNode);
@@ -87,7 +87,7 @@ void EntitiesTreeWidget::addApplication(yarp::manager::Application *app)
     QTreeWidgetItem *item = new QTreeWidgetItem(applicationNode,QStringList() << app->getName());
     item->setData(0,Qt::UserRole + 1,qlonglong(app));
     item->setData(0,Qt::UserRole, yarp::manager::APPLICATION);
-    item->setIcon(0,QIcon(":/images/application_ico.png"));
+    item->setIcon(0,QIcon(":/run22.svg"));
 
 
 
@@ -104,6 +104,7 @@ void EntitiesTreeWidget::addApplication(yarp::manager::Application *app)
     QTreeWidgetItem *xml = new QTreeWidgetItem(item,QStringList() << fname.data());
     xml->setData(0,Qt::UserRole + 1,QString(fpath.data()));
     xml->setData(0,Qt::UserRole, yarp::manager::NODE_FILENAME);
+    xml->setIcon(0,QIcon(":/file-xml22.svg"));
 }
 
 /*! \brief Add a resource to the tree
@@ -114,7 +115,7 @@ void EntitiesTreeWidget::addComputer(yarp::manager::Computer* comp)
     QTreeWidgetItem *item = new QTreeWidgetItem(resourcesNode,QStringList() << comp->getName());
     item->setData(0,Qt::UserRole + 1,qlonglong(comp));
     item->setData(0,Qt::UserRole, yarp::manager::RESOURCE);
-    item->setIcon(0,QIcon(":/images/computer_ico.png"));
+    item->setIcon(0,QIcon(":/computer22.svg"));
 
     string fname;
     string fpath = comp->getXmlFile();
@@ -139,7 +140,7 @@ void EntitiesTreeWidget::addModule(yarp::manager::Module* mod)
     QTreeWidgetItem *item = new QTreeWidgetItem(modulesNode,QStringList() << mod->getName());
     item->setData(0,Qt::UserRole + 1,qlonglong(mod));
     item->setData(0,Qt::UserRole, yarp::manager::MODULE);
-    item->setIcon(0,QIcon(":/images/module_ico.png"));
+    item->setIcon(0,QIcon(":/module22.svg"));
 
     string fname;
     string fpath = mod->getXmlFile();
@@ -167,7 +168,7 @@ void EntitiesTreeWidget::addAppTemplate(yarp::manager::AppTemplate* tmp)
     item->setData(0,Qt::UserRole, yarp::manager::NODE_APPTEMPLATE);
     item->setData(0,Qt::UserRole + 1 ,tmp->name.data());
     item->setData(0,Qt::UserRole + 2 ,tmp->tmpFileName.data());
-    item->setIcon(0,QIcon(":/images/apptemplate_ico.png"));
+    item->setIcon(0,QIcon(":/file-xml22.svg"));
 }
 
 /*! \brief Called when an item has been double clicked

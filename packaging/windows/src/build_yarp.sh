@@ -80,10 +80,18 @@ source gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 }
 
 # Pick up GTKMM paths
-source gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
-	echo "Cannot find corresponding GTKMM build"
-	exit 1
-}
+if [ -f "gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh" ]; then
+  source gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh 
+else
+	echo "No GTKMM build"
+fi
+
+# Pick up QT paths
+if [ -f "qt_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh" ]; then
+  source qt_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+else
+	echo "NO QT build"
+fi
 
 # Go ahead and download YARP
 echo "BUNDLE_YARP_VERSION: $BUNDLE_YARP_VERSION"
@@ -136,7 +144,6 @@ cat << XXX
 	
 	# Post-GSL reorganization, Post-GTKMM reorganization
 	"$CMAKE_BIN" $OPT_CMAKE_OPTION -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DCREATE_YARPMANAGER_CONSOLE=TRUE -DCREATE_YARPMANAGER=TRUE -DCREATE_LIB_MATH=TRUE -DGSL_DIR="$GSL_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" -DCREATE_GUIS=TRUE -DCREATE_SHARED_LIBRARY=TRUE -DYARP_COMPILE_TESTS=TRUE -DYARP_FILTER_API=TRUE -DCREATE_IDLS=TRUE -DENABLE_yarpidl_thrift=TRUE -DCREATE_OPTIONAL_CARRIERS=TRUE -DENABLE_yarpcar_tcpros_carrier=TRUE -DENABLE_yarpcar_xmlrpc_carrier=TRUE -DENABLE_yarpcar_bayer_carrier=TRUE -DUSE_LIBDC1394=FALSE -DENABLE_yarpcar_priority_carrier=TRUE -G "$OPT_GENERATOR" ../$fname || exit 1
-	
 	target_name "YARP"
 	$OPT_BUILDER  \$user_target \$TARGET $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
 	# if [ ! -e install ]; then

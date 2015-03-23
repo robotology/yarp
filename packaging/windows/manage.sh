@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#set -x
 ##############################################################################
 #
 # Copyright: (C) 2011 RobotCub Consortium
@@ -138,7 +138,7 @@ done
 # make targets for the various software packages
 
 # Here's the list of all available targets we care about
-full_target_list="cmake ace gsl gtkmm yarp nsis yarp_core_package transfer"
+full_target_list="cmake ace gsl gtkmm qt yarp nsis yarp_core_package transfer"
 
 # For package $PACKAGE, depend_$PACKAGE contains a list of packages
 # it depends on
@@ -146,7 +146,8 @@ depend_cmake=
 depend_ace=
 depend_gsl="cmake"
 depend_gtkmm=
-depend_yarp="cmake ace gsl gtkmm"
+depend_qt=
+depend_yarp="cmake ace gsl gtkmm qt"
 depend_icub="cmake yarp ace gsl gtkmm"
 depend_nsis=
 depend_yarp_core_package="yarp nsis"
