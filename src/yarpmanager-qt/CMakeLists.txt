@@ -24,7 +24,9 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
                           resourceviewwidget.cpp
                           applicationviewwidget.cpp
                           logwidget.cpp
-                          mainwindow.cpp)
+                          mainwindow.cpp
+						  aboutdlg.cpp
+						  genericinfodlg.cpp)
   set(yarpmanager_qt_HDRS safe_manager.h
                           mainwindow.h
                           entitiestreewidget.h
@@ -36,14 +38,18 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
                           moduleviewwidget.h
                           genericviewwidget.h
                           yscopewindow.h
-                          stdoutwindow.h)
+                          stdoutwindow.h
+						  aboutdlg.h
+						  genericinfodlg.h)
   set(yarpmanager_qt_QRC_FILES res.qrc)
   set(yarpmanager_qt_UI_FILES moduleviewwidget.ui
                               stdoutwindow.ui
                               yscopewindow.ui
                               mainwindow.ui
                               resourceviewwidget.ui
-                              applicationviewwidget.ui)
+                              applicationviewwidget.ui
+							  aboutdlg.ui
+							  genericinfodlg.ui)
 
   qt5_add_resources(yarpmanager_qt_QRC_GEN_SRCS ${yarpmanager_qt_QRC_FILES})
   qt5_wrap_ui(yarpmanager_qt_UI_GEN_SRCS ${yarpmanager_qt_UI_FILES})
