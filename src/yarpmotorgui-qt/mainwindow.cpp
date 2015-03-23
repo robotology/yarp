@@ -103,7 +103,8 @@ MainWindow::MainWindow(QWidget *parent) :
     partToolBar->setAllowedAreas(Qt::AllToolBarAreas);
 
     QFontMetrics metrics(f);
-    int w = metrics.width(globalLabel);
+    // int w = metrics.width(globalLabel);
+    metrics.width(globalLabel);
 
     partName = new QLabel("NONE");
     f = partName->font();
