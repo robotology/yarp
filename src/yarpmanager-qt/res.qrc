@@ -41,7 +41,7 @@
         <file alias="computer-unavailable22.svg">../yarpgui-icons/22x22/computer_unavailable.svg</file>
         <file alias="module22.svg">../yarpgui-icons/22x22/module.svg</file>
         <file alias="port22.svg">../yarpgui-icons/22x22/port.svg</file>
-        <file alias="port-unavailable22.svg">../yarpgui-icons/22x22/port_available.svg</file>
-        <file alias="port-available22.svg">../yarpgui-icons/22x22/port_unavailable.svg</file>
+        <file alias="port-available22.svg">../yarpgui-icons/22x22/port_available.svg</file>
+        <file alias="port-unavailable22.svg">../yarpgui-icons/22x22/port_unavailable.svg</file>
     </qresource>
 </RCC>
