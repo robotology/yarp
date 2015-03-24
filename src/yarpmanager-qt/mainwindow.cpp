@@ -821,7 +821,7 @@ void MainWindow::onOpen()
 /*! \brief Opens the About Dialog */
 void MainWindow::onAbout()
 {
-    QString copyright = "2014 (C) Robotics, Brain and Cognitive Sciences\nIstituto Italiano di Tecnologia";
+    QString copyright = "2014 (C) iCub Facility\nIstituto Italiano di Tecnologia";
     QString name = APP_NAME;
     QString version = APP_VERSION;
     AboutDlg dlg(name,version,copyright,"http://www.icub.org/");

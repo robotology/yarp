@@ -72,7 +72,7 @@
    <item>
     <widget class="QLabel" name="copyright">
      <property name="text">
-      <string>2014 (C) Robotics, Brain and Cognitive Sciences
+      <string>2014 (C) iCub Facility
 Istituto Italiano di Tecnologia</string>
      </property>
      <property name="alignment">
