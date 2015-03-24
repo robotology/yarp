@@ -47,11 +47,24 @@ namespace yarp{
     }
 }
 
+#define DEFAULT_THREAD_PERIOD 20 //ms
 
 /**
-  * It reads the data from an analog sensor and sends them on one or more ports.
-  * It creates one rpc port and its related handler for every output port.
-  */
+*  @ingroup yarp_dev_modules
+*  \defgroup analogServer analogServer
+*
+*
+*  It reads the data from an analog sensor and sends them on one or more ports.
+*  It creates one rpc port and its related handler for every output port..
+*
+* Parameters accepted in the config argument of the open method:
+* | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
+* |:--------------:|:------:|:-----:|:-------------:|:--------: |:-------------:|:-----:|
+* | name           | string | -     | -             | Yes       | full name of the port opened by the device, like /robotName/deviceId/sensorType:o | must start with a '/' character |
+* | period         | int    | ms    | 20            | No        | refresh period of the broadcasted values in ms (optional, default 20ms) | - |
+**/
+
+
 class yarp::dev::AnalogWrapper: public yarp::os::RateThread,
                                 public yarp::dev::DeviceDriver,
                                 public yarp::dev::IMultipleWrapper
@@ -70,9 +83,8 @@ public:
 
     bool open(yarp::os::Searchable &params);
     bool close();
-    yarp::os::Bottle getOptions();
 
-    void setId(const std::string &i);
+    void setId(const std::string &id);
     std::string getId();
 
     /**
@@ -89,14 +101,21 @@ public:
     void run();
 
 private:
-    std::string rpcPortName;
-    std::string id;
+    yarp::os::ConstString streamingPortName;
+    yarp::os::ConstString rpcPortName;
     yarp::dev::IAnalogSensor *analogSensor_p;   // the analog sensor to read from
     std::vector<yarp::dev::impl::AnalogPortEntry> analogPorts;   // the list of output ports
     std::vector<yarp::dev::impl::AnalogServerHandler*> handlers; // the list of rpc port handlers
     yarp::os::Stamp lastStateStamp;             // the last reading time stamp
     yarp::sig::Vector lastDataRead;             // the last vector of data read from the attached IAnalogSensor
     int _rate;
+
+    // deprecated params
+    std::string robotName;
+    std::string sensorId;
+    std::string sensorType;
+    // END deprecated params
+
     void setHandlers();
     void removeHandlers();
 
@@ -104,6 +123,7 @@ private:
     bool createPort(const char* name, int rate=20);
     // Function used when one or more output ports are specified
     bool createPorts(const std::vector<yarp::dev::impl::AnalogPortEntry>& _analogPorts, int rate=20);
+    bool checkForDeprecatedParams(yarp::os::Searchable &params);
 };
 
 /**
