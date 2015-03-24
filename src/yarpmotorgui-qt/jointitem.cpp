@@ -264,6 +264,9 @@ void JointItem::setEnabledOptions(bool debug_param_enabled,
                                   bool position_direct_enabled,
                                   bool openloop_enabled)
 {
+    Q_UNUSED(debug_param_enabled);
+    Q_UNUSED(speedview_param_enabled);
+
     enableCalib = enable_calib_all;
     if(!enable_calib_all){
         ui->buttonCalib->setEnabled(false);
@@ -356,6 +359,7 @@ void JointItem::onStackedWidgetChanged(int index)
 
 void JointItem::onModeChanged(int index)
 {
+    Q_UNUSED(index);
     int mode = ui->comboMode->currentData(Qt::UserRole).toInt();
     changeMode(mode,this);
 }

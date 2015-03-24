@@ -43,6 +43,7 @@ bool old_impedance_enabled = false;
 MainWindow *mainW = NULL;
 
 static void sighandler(int sig) {
+    Q_UNUSED(sig);
     qDebug() << "\nCAUGHT Ctrl-c" << endl;
     if(mainW){
         mainW->term();

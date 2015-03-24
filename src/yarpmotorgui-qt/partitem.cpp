@@ -165,7 +165,6 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 
     LOG_ERROR("Opening interfaces...");
     bool ok = false;
-    bool ok2 = true;
 
     if (partsdd->isValid()) {
         ok  = partsdd->view(pid);
@@ -482,6 +481,7 @@ void PartItem::onSendOpenLoop(int jointIndex, int openLoopVal)
 
 void PartItem::onSendStiffness(int jointIdex,double stiff,double damp,double force)
 {
+    Q_UNUSED(force);
     double stiff_val=0;
     double damp_val=0;
     double offset_val=0;
@@ -539,7 +539,8 @@ void PartItem::onSendPid(int jointIndex,Pid newPid)
 }
 void PartItem::onCalibClicked(JointItem *joint)
 {
-    const int jointIndex = joint->getJointIndex();
+    Q_UNUSED(joint);
+    //const int jointIndex = joint->getJointIndex();
 
     if(QMessageBox::question(this,"Question","Do you want really to recalibrate the joint?") != QMessageBox::Yes){
         return;
@@ -1677,8 +1678,7 @@ void PartItem::updateControlMode()
 
 void PartItem::updatePart()
 {
-    char buffer[40] = {'i', 'n', 'i', 't'};
-    
+
     double torques[MAX_NUMBER_OF_JOINTS];
     double positions[MAX_NUMBER_OF_JOINTS];
     double speeds[MAX_NUMBER_OF_JOINTS];

@@ -102,14 +102,11 @@ MainWindow::MainWindow(QWidget *parent) :
     partToolBar->setFloatable(true);
     partToolBar->setAllowedAreas(Qt::AllToolBarAreas);
 
-    QFontMetrics metrics(f);
-    int w = metrics.width(globalLabel);
-
     partName = new QLabel("NONE");
     f = partName->font();
     f.setBold(true);
     partName->setFont(f);
-    //partName->setMinimumWidth(w);
+
     partToolBar->addWidget(partName)->setCheckable(false);
 
     partToolBar->addSeparator();
