@@ -691,7 +691,7 @@ public:
     * @param val new value
     * @return true/false
     */
-    virtual bool setMotorEncoder(int m, double val);
+    virtual bool setMotorEncoder(int m, const double val);
 
     /**
     * Set the value of all encoders.

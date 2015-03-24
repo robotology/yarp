@@ -74,7 +74,7 @@ public:
      * @param val new value
      * @return true/false
      */
-    virtual bool setMotorEncoderRaw(int m, double val)=0;
+    virtual bool setMotorEncoderRaw(int m, const double val)=0;
 
     /**
      * Set the value of all motor encoders.
@@ -201,7 +201,7 @@ public:
      * @param val new value
      * @return true/false
      */
-    virtual bool setMotorEncoder(int m, double val)=0;
+    virtual bool setMotorEncoder(int m, const double val)=0;
 
     /**
      * Set the value of all motor encoders.

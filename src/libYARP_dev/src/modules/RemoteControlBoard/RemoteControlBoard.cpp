@@ -1770,7 +1770,7 @@ public:
      * @param val new value
      * @return true/false on success/failure
      */
-    virtual bool setMotorEncoder(int j, double val) {
+    virtual bool setMotorEncoder(int j, const double val) {
         return set1V1I1D(VOCAB_MOTOR_ENCODER, j, val);
     }
 

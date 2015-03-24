@@ -57,7 +57,7 @@ public:
 
     virtual bool resetMotorEncoder(int m);
     virtual bool resetMotorEncoders();
-    virtual bool setMotorEncoder(int m, double val);
+    virtual bool setMotorEncoder(int m, const double val);
     virtual bool setMotorEncoders(const double *vals);
     virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr);
     virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr);
