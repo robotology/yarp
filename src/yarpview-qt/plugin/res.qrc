@@ -1,8 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/YARPView">
+    <file alias="stop.svg">../../yarpgui-icons/512x512/actions-media-stop_B.svg</file>
+    <file alias="record.svg">../../yarpgui-icons/512x512/volume-recorder_B.svg</file>
     <file>YARPViewMenu.qml</file>
-    <file>images/Record-Pressed-icon.png</file>
-    <file>images/Stop-Normal-Red-icon.png</file>
     <file>YARPViewStatusBar.qml</file>
     <file>VideoSurface.qml</file>
 </qresource>
