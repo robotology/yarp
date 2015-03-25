@@ -433,7 +433,7 @@ You can install them by running:
 sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qml-module-qtquick2 qml-module-qtquick-window2 \
   qml-module-qtmultimedia qml-module-qtquick-dialogs \
-  qml-module-qtquick-controls
+  qml-module-qtquick-controls libqt5svg5
 \endcode
 
 
@@ -456,7 +456,7 @@ sudo apt-get update
 sudo apt-get install -t wheezy-backports qtbase5-dev \
   qtdeclarative5-dev qtmultimedia5-dev qml-module-qtquick2 \
   qml-module-qtquick-window2 qml-module-qtmultimedia \
-  qml-module-qtquick-dialogs qml-module-qtquick-controls
+  qml-module-qtquick-dialogs qml-module-qtquick-controls libqt5svg5
 \endcode
 
 
@@ -484,7 +484,7 @@ You can install them by running:
 sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin \
   qtdeclarative5-qtmultimedia-plugin qtdeclarative5-controls-plugin \
-  qtdeclarative5-dialogs-plugin
+  qtdeclarative5-dialogs-plugin libqt5svg5
 \endcode
 
 \paragraph dependencies_qt5_linux_others Others
