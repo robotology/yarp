@@ -46,6 +46,35 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_GTK2)
                                          YARP_dev
                                          ${GTK2_LIBRARIES})
 
+  if(UNIX)
+    include(CheckCCompilerFlag)
+    check_cxx_compiler_flag("-Wno-unused-variable" CXX_SUPPORTS_WNO_UNUSED_VARIABLE)
+    if(CXX_SUPPORTS_WNO_UNUSED_VARIABLE)
+      set_property(SOURCE ${yarpmotorgui_gtk_SRCS}
+                   APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-variable")
+    endif()
+    check_cxx_compiler_flag("-Wno-unused-but-set-variable" CXX_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+    if(CXX_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+      set_property(SOURCE ${yarpmotorgui_gtk_SRCS}
+                   APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-but-set-variable")
+    endif()
+    check_cxx_compiler_flag("-Wno-unused-function" CXX_SUPPORTS_WNO_UNUSED_FUNCTION)
+    if(CXX_SUPPORTS_WNO_UNUSED_FUNCTION)
+      set_property(SOURCE ${yarpmotorgui_gtk_SRCS}
+                   APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-function")
+    endif()
+    check_cxx_compiler_flag("-Wno-sign-compare" CXX_SUPPORTS_WNO_SIGN_COMPARE)
+    if(CXX_SUPPORTS_WNO_SIGN_COMPARE)
+      set_property(SOURCE src/singleJointWindow.cpp
+                   APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-sign-compare")
+    endif()
+    check_cxx_compiler_flag("-Wno-missing-field-initializers" CXX_SUPPORTS_WNO_MISSING_FIELD_INITIALIZERS)
+    if(CXX_SUPPORTS_WNO_MISSING_FIELD_INITIALIZERS)
+      set_property(SOURCE src/tableWindow.cpp
+                   APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-missing-field-initializers")
+    endif()
+  endif()
+
   install(TARGETS yarpmotorgui-gtk
           COMPONENT utilities
           DESTINATION ${CMAKE_INSTALL_BINDIR})
