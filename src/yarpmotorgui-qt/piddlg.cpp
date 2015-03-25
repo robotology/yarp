@@ -95,22 +95,22 @@ void PidDlg::initPosition(Pid myPid)
     ui->tablePosition->item(POSITION_MAXINT,1)->setText(QString("%1").arg((int)myPid.max_int));
 }
 
-void PidDlg::initTorque(Pid myPid, double bemfGain)
+void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
 {
-    ui->tableTorque->item(TORQUE_KP,0)->setText(QString("%1").arg((int)myPid.kp));
-    ui->tableTorque->item(TORQUE_KP,1)->setText(QString("%1").arg((int)myPid.kp));
+    ui->tableTorque->item(TORQUE_KP,0)->setText(QString("%1").arg((double)myPid.kp));
+    ui->tableTorque->item(TORQUE_KP,1)->setText(QString("%1").arg((double)myPid.kp));
 
-    ui->tableTorque->item(TORQUE_KFF,0)->setText(QString("%1").arg((int)myPid.kff));
-    ui->tableTorque->item(TORQUE_KFF,1)->setText(QString("%1").arg((int)myPid.kff));
+    ui->tableTorque->item(TORQUE_KFF,0)->setText(QString("%1").arg((double)myPid.kff));
+    ui->tableTorque->item(TORQUE_KFF,1)->setText(QString("%1").arg((double)myPid.kff));
 
-    ui->tableTorque->item(TORQUE_KD,0)->setText(QString("%1").arg((int)myPid.kd));
-    ui->tableTorque->item(TORQUE_KD,1)->setText(QString("%1").arg((int)myPid.kd));
+    ui->tableTorque->item(TORQUE_KD,0)->setText(QString("%1").arg((double)myPid.kd));
+    ui->tableTorque->item(TORQUE_KD,1)->setText(QString("%1").arg((double)myPid.kd));
 
-    ui->tableTorque->item(TORQUE_BEMFGAIN,0)->setText(QString("%1").arg((int)bemfGain));
-    ui->tableTorque->item(TORQUE_BEMFGAIN,1)->setText(QString("%1").arg((int)bemfGain));
+    ui->tableTorque->item(TORQUE_BEMFGAIN,0)->setText(QString("%1").arg((double)TrqParam.bemf));
+    ui->tableTorque->item(TORQUE_BEMFGAIN,1)->setText(QString("%1").arg((double)TrqParam.bemf));
 
-    ui->tableTorque->item(TORQUE_KI,0)->setText(QString("%1").arg((int)myPid.ki));
-    ui->tableTorque->item(TORQUE_KI,1)->setText(QString("%1").arg((int)myPid.ki));
+    ui->tableTorque->item(TORQUE_KI,0)->setText(QString("%1").arg((double)myPid.ki));
+    ui->tableTorque->item(TORQUE_KI,1)->setText(QString("%1").arg((double)myPid.ki));
 
     ui->tableTorque->item(TORQUE_SCALE,0)->setText(QString("%1").arg((int)myPid.scale));
     ui->tableTorque->item(TORQUE_SCALE,1)->setText(QString("%1").arg((int)myPid.scale));
@@ -163,7 +163,7 @@ void PidDlg::initOpenLoop(double openLoopVal, double pwm)
 void PidDlg::onSend()
 {
     Pid newPid;
-    double bemfGain;
+    MotorTorqueParameters newMotorTorqueParams;
 
     switch (ui->tabWidget->currentIndex()) {
     case TAB_POSITION:
@@ -182,7 +182,10 @@ void PidDlg::onSend()
         newPid.kp = ui->tableTorque->item(TORQUE_KP,1)->text().toDouble();
         newPid.kff = ui->tableTorque->item(TORQUE_KFF,1)->text().toDouble();
         newPid.kd = ui->tableTorque->item(TORQUE_KD,1)->text().toDouble();
-        bemfGain = ui->tableTorque->item(TORQUE_BEMFGAIN,1)->text().toDouble();
+        newMotorTorqueParams.bemf = ui->tableTorque->item(TORQUE_BEMFGAIN,1)->text().toDouble();
+        newMotorTorqueParams.bemf_scale = 0;
+        newMotorTorqueParams.ktau = 0;
+        newMotorTorqueParams.ktau_scale = 0;
         newPid.ki = ui->tableTorque->item(TORQUE_KI,1)->text().toDouble();
         newPid.scale = ui->tableTorque->item(TORQUE_SCALE,1)->text().toDouble();
         newPid.offset = ui->tableTorque->item(TORQUE_OFFSET,1)->text().toDouble();
@@ -190,7 +193,7 @@ void PidDlg::onSend()
         newPid.max_output = ui->tableTorque->item(TORQUE_MAXOUTPUT,1)->text().toDouble();
         newPid.stiction_down_val = ui->tableTorque->item(TORQUE_STICTIONDW,1)->text().toDouble();
         newPid.max_int = ui->tableTorque->item(TORQUE_MAXINT,1)->text().toDouble();
-        sendTorque(jointIndex,newPid,bemfGain);
+        sendTorque(jointIndex,newPid,newMotorTorqueParams);
         break;
     case TAB_STIFF:{
         double desiredStiff = ui->tableStiffness->item(0,3)->text().toDouble();

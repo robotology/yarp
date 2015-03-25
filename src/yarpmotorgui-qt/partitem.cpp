@@ -511,18 +511,19 @@ void PartItem::onSendStiffness(int jointIdex,double stiff,double damp,double for
 
 }
 
-void PartItem::onSendTorque(int jointIndex,Pid newPid,double newBemfGain)
+void PartItem::onSendTorque(int jointIndex,Pid newPid,MotorTorqueParameters newTrqParam)
 {
     Pid myTrqPid(0,0,0,0,0,0);
-    double bemfGain=0;
+    yarp::dev::MotorTorqueParameters TrqParam;
     trq->setTorquePid(jointIndex, newPid);
-    trq->setBemfParam(jointIndex, newBemfGain);
+
+    trq->setMotorTorqueParams(jointIndex, newTrqParam);
     yarp::os::Time::delay(0.005);
     trq->getTorquePid(jointIndex, &myTrqPid);
-    trq->getBemfParam(jointIndex, (double*)&bemfGain);
+    trq->getMotorTorqueParams(jointIndex, &TrqParam);
 
     if(currentPidDlg){
-        currentPidDlg->initTorque(myTrqPid,bemfGain);
+        currentPidDlg->initTorque(myTrqPid,TrqParam);
     }
 }
 
@@ -553,13 +554,14 @@ void PartItem::onPidClicked(JointItem *joint)
 
     currentPidDlg = new PidDlg(partName,jointIndex);
     connect(currentPidDlg,SIGNAL(sendPid(int,Pid)),this,SLOT(onSendPid(int,Pid)));
-    connect(currentPidDlg,SIGNAL(sendTorque(int,Pid,double)),this,SLOT(onSendTorque(int,Pid,double)));
+    connect(currentPidDlg,SIGNAL(sendTorque(int,Pid,MotorTorqueParameters)),this,SLOT(onSendTorque(int,Pid,MotorTorqueParameters)));
     connect(currentPidDlg,SIGNAL(sendStiffness(int,double,double,double)),this,SLOT(onSendStiffness(int,double,double,double)));
     connect(currentPidDlg,SIGNAL(sendOpenLoop(int,int)),this,SLOT(onSendOpenLoop(int,int)));
 
     Pid myPosPid(0,0,0,0,0,0);
     Pid myTrqPid(0,0,0,0,0,0);
     double bemfGain=0;
+    MotorTorqueParameters motorTorqueParams;
     double stiff_val=0;
     double damp_val=0;
     double stiff_max=0;
@@ -585,7 +587,7 @@ void PartItem::onPidClicked(JointItem *joint)
 
     // Torque
     trq->getTorquePid(jointIndex, &myTrqPid);
-    trq->getBemfParam(jointIndex, &bemfGain);
+    trq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
     yarp::os::Time::delay(0.005);
 
     //Stiff
@@ -616,7 +618,7 @@ void PartItem::onPidClicked(JointItem *joint)
 #endif
 
     currentPidDlg->initPosition(myPosPid);
-    currentPidDlg->initTorque(myTrqPid,bemfGain);
+    currentPidDlg->initTorque(myTrqPid,motorTorqueParams);
     currentPidDlg->initStiffness(stiff_val,stiff_min,stiff_max,
                       damp_val,damp_min,damp_max,
                       impedance_offset_val,off_min,off_max);

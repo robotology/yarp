@@ -202,7 +202,7 @@ private slots:
     void onRunClicked(JointItem *joint);
     void onPidClicked(JointItem *joint);
     void onSendPid(int jointIndex, Pid newPid);
-    void onSendTorque(int jointIndex, Pid newPid, double newBemfGain);
+    void onSendTorque(int jointIndex, Pid newPid, MotorTorqueParameters newTorqueParam);
     void onSendStiffness(int jointIdex, double stiff, double damp, double force);
     void onSendOpenLoop(int jointIndex, int openLoopVal);
 
