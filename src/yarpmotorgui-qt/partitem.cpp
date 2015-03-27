@@ -560,7 +560,6 @@ void PartItem::onPidClicked(JointItem *joint)
 
     Pid myPosPid(0,0,0,0,0,0);
     Pid myTrqPid(0,0,0,0,0,0);
-    double bemfGain=0;
     MotorTorqueParameters motorTorqueParams;
     double stiff_val=0;
     double damp_val=0;

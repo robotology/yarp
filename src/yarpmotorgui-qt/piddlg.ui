@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>524</width>
-    <height>558</height>
+    <width>735</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabPosition">
       <attribute name="title">
@@ -82,7 +82,7 @@
          </row>
          <row>
           <property name="text">
-           <string>Position Shift</string>
+           <string>Position Shift Factor</string>
           </property>
          </row>
          <row>
@@ -397,7 +397,7 @@
          </row>
          <row>
           <property name="text">
-           <string>Torque Shift</string>
+           <string>Torque Shift Factor</string>
           </property>
          </row>
          <row>
@@ -433,6 +433,21 @@
          <row>
           <property name="text">
            <string>Torque Kbemf</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Torque Kbemf Scale</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Torque Ktau</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Torque Ktau Scale</string>
           </property>
          </row>
          <column>
@@ -720,6 +735,81 @@
            <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
           </property>
          </item>
+         <item row="11" column="0">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="background">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>207</red>
+             <green>207</green>
+             <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="flags">
+           <set>ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="11" column="1">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="12" column="0">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="background">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>207</red>
+             <green>207</green>
+             <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="flags">
+           <set>ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="12" column="1">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="13" column="0">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="background">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>207</red>
+             <green>207</green>
+             <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="flags">
+           <set>ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="13" column="1">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
@@ -762,12 +852,12 @@
          </row>
          <row>
           <property name="text">
-           <string>Joint damping</string>
+           <string>Joint Damping</string>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>Joint Force off</string>
+           <string>Joint Torque Feedforward</string>
           </property>
          </row>
          <column>
@@ -943,6 +1033,9 @@
           </property>
          </item>
          <item row="2" column="2">
+          <property name="text">
+           <string/>
+          </property>
           <property name="background">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
