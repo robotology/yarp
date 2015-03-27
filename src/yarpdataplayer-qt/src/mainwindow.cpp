@@ -634,6 +634,11 @@ QTreeWidgetItem * MainWindow::getRowByPart(QString szName )
 /**********************************************************/
 void MainWindow::onMenuFileOpen()
 {
+    if(ui->actionRepeat->isChecked()){
+        LOG("repeat mode is activated, setting it to false\n");
+        utilities->repeat = false;
+        ui->actionRepeat->setChecked(false);
+    }
     QString dir = QFileDialog::getExistingDirectory(this, tr("Please choose a folder"),
                                                     QDir::homePath(),
                                                     QFileDialog::ShowDirsOnly
