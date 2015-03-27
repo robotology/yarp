@@ -553,6 +553,31 @@ for client in v1 v1b v2; do
 done
 
 ########################################################################
+if is_test empty_list; then
+    header "Test sending an empty list"
+
+    root="/test/empty_list/pid$$"
+    rm -f ${BASE}check_empty_list.txt
+
+    cp $YARP_SRC/src/libYARP_dev/src/modules/msgs/jointState.msg sensor_msgs_JointState
+
+    ${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros --web false &
+    add_helper $!
+    wait_node /yarpros /typ
+
+    rostopic echo $root -n 1 > ${BASE}check_empty_list.txt &
+    add_helper $!
+
+    echo '(6 (0 0) "0") (test) (1.0) (1.0) ()' | $YARP_BIN/yarp write $root@$root/node --type sensor_msgs/JointState --wait-connect
+
+    wait_file ${BASE}check_empty_list.txt
+    # getting past this line means receipt of a message
+
+    cleanup_helper
+fi
+
+
+########################################################################
 ## We're done!
 ########################################################################
 

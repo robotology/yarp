@@ -222,6 +222,12 @@ private:
     const char *activeCheck;
     bool errorState;
     size_t scratchOffset;
+    yarp::os::NetInt32 codeExpected;
+    yarp::os::NetInt32 codeReceived;
+
+    void showBrokenExpectation(const yarp::os::NetInt32& expected,
+                               const yarp::os::NetInt32& received,
+                               int evidence);
 public:
     WireTwiddlerWriter(yarp::os::SizedWriter& parent,
                        WireTwiddler& twiddler) : parent(&parent),

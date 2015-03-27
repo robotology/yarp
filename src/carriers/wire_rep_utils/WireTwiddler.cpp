@@ -682,6 +682,8 @@ bool WireTwiddlerWriter::update() {
     scratchOffset = 0;
     errorState = false;
     activeGap = NULL;
+    codeExpected = 0;
+    codeReceived = 0;
     srcs.clear();
 
     lengthBytes = Bytes((char*)(&lengthBuffer),sizeof(yarp::os::NetInt32));
@@ -785,9 +787,34 @@ bool WireTwiddlerWriter::readLengthAndPass(int unitLength,
     return true;
 }
 
+void WireTwiddlerWriter::showBrokenExpectation(const yarp::os::NetInt32& expected,
+                                              const yarp::os::NetInt32& received,
+                                              int evidence) {
+    if (!errorState) {
+        yError("Structure of message is unexpected (expected %s)", twiddler->getPrompt().c_str());
+        if (evidence>=4) {
+            if (expected!=received) {
+                yError("Expected '%s', got '%s'\n", 
+                       Bottle::describeBottleCode(expected).c_str(),
+                       Bottle::describeBottleCode(received).c_str());
+            }
+        }
+    }
+    errorState = true;
+}
+
+
 int WireTwiddlerWriter::readLength() {
     advance(4,true,true);
-    if (accumOffset==4) return lengthBuffer;
+    if (accumOffset==4) {
+        if (codeExpected!=codeReceived) {
+            if (lengthBuffer!=0) {
+                showBrokenExpectation(codeExpected,codeReceived,4);
+            }
+            codeExpected = codeReceived = 0;
+        }
+        return lengthBuffer;
+    }
     return 0;
 }
 
@@ -820,21 +847,24 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
             int result = memcmp(activeCheck,blockPtr+offset,rem);
             activeCheck += rem;
             if (result!=0) {
-                dbg_printf("Type check failed! >>>\n");
-                if (!errorState) {
-                    yError("Structure of message is unexpected (expected %s)", twiddler->getPrompt().c_str());
-                    if (rem>=4) {
-                        NetInt32 t1 = *((NetInt32 *)(blockPtr+offset));
-                        NetInt32 t2 = *((NetInt32 *)(activeCheck-rem));
-                        if (t1!=t2) {
-                            yError("Expected '%s', got '%s'\n", 
-                                   Bottle::describeBottleCode(t2).c_str(),
-                                   Bottle::describeBottleCode(t1).c_str());
-                        }
+                NetInt32 t1 = 0;
+                NetInt32 t2 = 0;
+                if (rem>=4) {
+                    t1 = *((NetInt32 *)(blockPtr+offset));
+                    t2 = *((NetInt32 *)(activeCheck-rem));
+                    if (t1!=t2 && (t1&BOTTLE_TAG_LIST) && (t2&BOTTLE_TAG_LIST)) {
+                        // delay checking of codes until list length is read
+                        // since list may be empty
+                        codeExpected = t2;
+                        codeReceived = t1;
+                        result = 0;
                     }
                 }
-                errorState = true;
-                return false;
+                if (result!=0) {
+                    dbg_printf("Type check failed! >>>\n");
+                    showBrokenExpectation(t2,t1,rem);
+                    return false;
+                }
             }
         }
         if (shouldEmit) {
