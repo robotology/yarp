@@ -359,6 +359,10 @@ void JointItem::onStackedWidgetChanged(int index)
 
 void JointItem::onModeChanged(int index)
 {
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
     Q_UNUSED(index);
     int mode = ui->comboMode->currentData(Qt::UserRole).toInt();
     changeMode(mode,this);

@@ -416,7 +416,6 @@ void PartItem::onSliderOpenloopMoved(double torqueVal,int index)
 
 void PartItem::onSliderVelocityMoved(double speedVal,int index)
 {
-    qDebug() << speedVal << " -- " << index;
     iVel->velocityMove(index,speedVal);
 }
 
