@@ -995,21 +995,37 @@ void JointItem::setPositionRange(double min, double max)
 
 void JointItem::onCalibClicked()
 {
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
     calibClicked(this);
 }
 
 void JointItem::onHomeClicked()
 {
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
     homeClicked(this);
 }
 
 void JointItem::onIdleClicked()
 {
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
     idleClicked(this);
 }
 
 void JointItem::onRunClicked()
 {
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
     runClicked(this);
 }
 
