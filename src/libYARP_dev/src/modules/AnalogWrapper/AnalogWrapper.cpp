@@ -278,7 +278,6 @@ void AnalogWrapper::detach()
 
 bool AnalogWrapper::threadInit()
 {
-    yInfo() << "thread Init";  //TBR
     for(unsigned int i=0; i<analogPorts.size(); i++)
     {
         // open data port
@@ -370,7 +369,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     else
     {
         _rate = DEFAULT_THREAD_PERIOD;
-         yWarning("AnalogWrapper: part %s using default period %d", sensorId.c_str() , _rate);
+         yInfo("AnalogWrapper: part %s using default period %d", sensorId.c_str() , _rate);
     }
 
     if(!correct)
