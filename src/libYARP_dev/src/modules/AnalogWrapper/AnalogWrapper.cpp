@@ -340,7 +340,6 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     Property params;
     params.fromString(config.toString().c_str());
 
-    std::cout << "\nAS\n\n" << params.toString() << "\n\n" << std::endl;
     bool correct=true;
 
     // Verify minimum set of parameters required
@@ -443,8 +442,6 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
             return false;
         }
     }
-
-    threadInit();  // debug only TBR
     return true;
 }
 
