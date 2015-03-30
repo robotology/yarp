@@ -554,87 +554,15 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
 
         default:
         {
-            // Verify minimum set of parameters required
-            if(!params.check("robotName", "name of the robot.") )
-            {
-                yError("AnalogWrapper: missing 'robotName' parameter, check your configuration file");
-                return false;
-            }
-
-            if(params.check("deviceId"))
-            {
-              string tmp(params.find("deviceId").asString());
-              setId(tmp);
-            }
-            else
-            {
-                yError() << " AnalogServer missing DEPRECATED parameter 'deviceId', check your configuration file!! Quitting\n";
-                return false;
-            }
-
-    yWarning() <<   " AnalogServer device:\n"
-                    "************************************************************************************************\n"
-                    "  AnalogServer is using deprecated parameters for port name! It should be:\n"
-                    "       name:         full name of the port, like /robotName/deviceId/sensorType:o\n"
-                    "       period:       refresh period of the broadcasted values in ms (optional, default 20ms)\n"
-                    "************************************************************************************************";
-
-    // Create the list of ports
-    std::string robotName = params.find("robotName").asString().c_str();
-    streamingPortName ="/";
-    streamingPortName += robotName;
-    streamingPortName += "/" + this->sensorId + "/analog:o";
-    return true;
-}
-
-bool AnalogWrapper::open(yarp::os::Searchable &config)
-{
-    Property params;
-    params.fromString(config.toString().c_str());
-
-    bool correct=true;
-
-    // Verify minimum set of parameters required
-    streamingPortName.clear();
-    rpcPortName.clear();
-
-    if (!config.check("name"))
-    {
-        correct = checkForDeprecatedParams(config);
-        if(!correct)
-        {
-            yError() << "AnalogServer: missing 'name' parameter. Check you configuration file; it must be like:\n"
-                        "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
-        }
-    }
-    else
-    {
-        streamingPortName  = config.find("name").asString().c_str();
-        setId("AnalogServer");
-    }
-
-            if (params.check("period"))
-            {
-                _rate=params.find("period").asInt();
-            }
-            else
-            {
-               _rate = DEFAULT_THREAD_PERIOD;
-               yInfo("AnalogWrapper: part %s using default period %d", sensorId.c_str() , _rate);
-            }
-
-    if(!correct)
-        return false;
-
-
+            // Create the list of ports
             // port names are optional, do not check for correctness.
             if(!params.check("ports"))
             {
              // if there is no "ports" section open only 1 port and use name as is.
-        createPort((streamingPortName ).c_str(), _rate );
-        // since createPort always return true, check the port is really been opened is done here
-        if(! Network::exists(streamingPortName + "/rpc:i"))
-            return false;
+                createPort((streamingPortName ).c_str(), _rate );
+                // since createPort always return true, check the port is really been opened is done here
+                if(! Network::exists(streamingPortName + "/rpc:i"))
+                    return false;
             }
             else
             {
@@ -660,7 +588,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
                     {
                         yError() << "AnalogWrapper: check skin port parameters in part description, I was expecting "
                                  << ports->get(k).asString().c_str() << " followed by four integers";
-                   yError() << " your param is " << parameters.toString();
+                           yError() << " your param is " << parameters.toString();
                         return false;
                     }
 
@@ -682,7 +610,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
                     tmpPorts[k].length = portChannels;
                     tmpPorts[k].offset = wBase;
                     yDebug() << "opening port " << ports->get(k).asString().c_str();
-            tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString().c_str());
+                    tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString().c_str());
 
                     createPorts(tmpPorts, _rate);
                     sumOfChannels+=portChannels;
@@ -694,6 +622,8 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
                     return false;
                 }
             }
+        } break;
+    }
     return true;
 }
 
