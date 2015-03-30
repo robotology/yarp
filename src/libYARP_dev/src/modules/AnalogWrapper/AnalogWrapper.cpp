@@ -157,7 +157,7 @@ AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
     rosNode         = NULL;
     rosMsgCounter   = 0;
 
-    id = "AnalogServer";
+    sensorId = "AnalogServer";
     createPort(name, rate);
 }
 
@@ -184,7 +184,7 @@ AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, i
     rosNode         = NULL;
     rosMsgCounter   = 0;
 
-    id = "AnalogServer";
+    sensorId = "AnalogServer";
     createPorts(_analogPorts, rate);
 }
 bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts, int rate)
@@ -318,14 +318,39 @@ std::string AnalogWrapper::getId()
     return sensorId;
 }
 
-Bottle AnalogWrapper::getOptions()
+bool AnalogWrapper::checkForDeprecatedParams(yarp::os::Searchable &params)
 {
 //    check for deprecated params
-    Bottle options;
-    options.addString("robotName, mandatory");
-    options.addString("deviceId, mandatory");
-    options.addString("period");
-    return options;
+    if(!params.check("robotName", "name of the robot.") )
+    {
+        yError("AnalogWrapper: missing 'robotName' parameter, check your configuration file");
+        return false;
+    }
+
+    if(params.check("deviceId"))
+    {
+        string tmp(params.find("deviceId").asString());
+        setId(tmp);
+    }
+    else
+    {
+        yError() << " AnalogServer missing DEPRECATED parameter 'deviceId', check your configuration file!! Quitting\n";
+        return false;
+    }
+
+    yWarning() <<   " AnalogServer device:\n"
+                    "************************************************************************************************\n"
+                    "  AnalogServer is using deprecated parameters for port name! It should be:\n"
+                    "       name:         full name of the port, like /robotName/deviceId/sensorType:o\n"
+                    "       period:       refresh period of the broadcasted values in ms (optional, default 20ms)\n"
+                    "************************************************************************************************";
+
+    // Create the list of ports
+    std::string robotName = params.find("robotName").asString().c_str();
+    streamingPortName ="/";
+    streamingPortName += robotName;
+    streamingPortName += "/" + this->sensorId + "/analog:o";
+    return true;
 }
 
 
@@ -344,7 +369,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     Bottle &rosGroup = config.findGroup("ROS");
     if(rosGroup.isNull())
     {
-        yError() << id << "ROS group params is not a valid group or empty";
+        yError() << sensorId << "ROS group params is not a valid group or empty";
         useROS = ROS_config_error;
         return false;
     }
@@ -352,7 +377,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     // check for useROS parameter
     if(!rosGroup.check("useROS"))
     {
-        yError() << id << " cannot find useROS parameter, mandatory when using ROS message. \n \
+        yError() << sensorId << " cannot find useROS parameter, mandatory when using ROS message. \n \
                     Allowed values are true, false, ROS_only";
         useROS = ROS_config_error;
         return false;
@@ -360,23 +385,23 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
     if(ros_use_type == "false")
     {
-        yInfo() << id << "useROS topic if set to 'false'";
+        yInfo() << sensorId << "useROS topic if set to 'false'";
         useROS = ROS_disabled;
         return true;
     }
     else if(ros_use_type == "true")
     {
-        yInfo() << id << "useROS topic if set to 'true'";
+        yInfo() << sensorId << "useROS topic if set to 'true'";
         useROS = ROS_enabled;
     }
     else if(ros_use_type == "only")
     {
-        yInfo() << id << "useROS topic if set to 'only";
+        yInfo() << sensorId << "useROS topic if set to 'only";
         useROS = ROS_only;
     }
     else
     {
-        yInfo() << id << "useROS parameter is set to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+        yInfo() << sensorId << "useROS parameter is set to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
         useROS = ROS_config_error;
         return false;
     }
@@ -384,48 +409,48 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     // check for ROS_nodeName parameter
     if(!rosGroup.check("ROS_nodeName"))
     {
-        yError() << id << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+        yError() << sensorId << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
-    yInfo() << id << "rosNodeName is " << rosNodeName;
+    yInfo() << sensorId << "rosNodeName is " << rosNodeName;
 
     // check for ROS_topicName parameter
     if(!rosGroup.check("ROS_topicName"))
     {
-        yError() << id << " cannot find ROS_topicName parameter, mandatory when using ROS message";
+        yError() << sensorId << " cannot find ROS_topicName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     rosTopicName = rosGroup.find("ROS_topicName").asString();
-    yInfo() << id << "ROS_topicName is " << rosTopicName;
+    yInfo() << sensorId << "ROS_topicName is " << rosTopicName;
 
     // check for frame_id parameter
     if(!rosGroup.check("frame_id"))
     {
-        yError() << id << " cannot find frame_id parameter, mandatory when using ROS message";
+        yError() << sensorId << " cannot find frame_id parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     frame_id = rosGroup.find("frame_id").asString();
-    yInfo() << id << "frame_id is " << frame_id;
+    yInfo() << sensorId << "frame_id is " << frame_id;
 
     // check for ROS_msgType parameter
     if(!rosGroup.check("ROS_msgType"))
     {
-        yError() << id << " cannot find ROS_msgType parameter, mandatory when using ROS message";
+        yError() << sensorId << " cannot find ROS_msgType parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     std::string rosMsgType = rosGroup.find("ROS_msgType").asString();
     if(rosMsgType == "geometry_msgs/WrenchedStamped")
     {
-        yInfo() << id << "ROS_msgType is " << rosTopicName;
+        yInfo() << sensorId << "ROS_msgType is " << rosTopicName;
     }
     else
     {
-        yError() << id << "ROS_msgType '" << rosMsgType << "' not supported ";
+        yError() << sensorId << "ROS_msgType '" << rosMsgType << "' not supported ";
         return false;
     }
     return true;
@@ -459,40 +484,59 @@ bool AnalogWrapper::initialize_ROS()
 
         case ROS_disabled:
         {
-            yInfo() << id << ": no ROS initialization required";
+            yInfo() << sensorId << ": no ROS initialization required";
             success = true;
         } break;
 
         case ROS_config_error:
         {
-            yError() << id << " ROS parameter are not correct, check your configuration file";
+            yError() << sensorId << " ROS parameter are not correct, check your configuration file";
             success = false;
         } break;
 
         default:
         {
-            yError() << id << " something went wrong with ROS configuration, we should never be here!!!";
+            yError() << sensorId << " something went wrong with ROS configuration, we should never be here!!!";
             success = false;
         } break;
     }
     return success;
 }
 
+bool AnalogWrapper::open(yarp::os::Searchable &config)
+{
+    Property params;
+    params.fromString(config.toString().c_str());
+
+    if (!config.check("name"))
+    {
+        if(!checkForDeprecatedParams(config))
+        {
+            yError() << "AnalogServer: missing 'name' parameter. Check you configuration file; it must be like:\n"
+                        "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
+        }
+    }
+    else
+    {
+        streamingPortName  = config.find("name").asString().c_str();
+        setId("AnalogServer");
+    }
+
     if(!checkROSParams(config) )
     {
-        yError() << id << "ROS parameter are not correct, check your configuration file";
+        yError() << sensorId << "ROS parameter are not correct, check your configuration file";
         return false;
     }
 
     if(!initialize_ROS() )
     {
-        yError() << id << "Error initializing ROS topics";
+        yError() << sensorId << "Error initializing ROS topics";
         return false;
     }
 
     if(!initialize_YARP(config) )
     {
-        yError() << id << "Error initializing YARP ports";
+        yError() << sensorId << "Error initializing YARP ports";
         return false;
     }
     return true;
@@ -504,7 +548,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
     {
         case ROS_only:
         {
-            yInfo() << id << " No YARP initialization required";
+            yInfo() << sensorId << " No YARP initialization required";
             return true;
         } break;
 

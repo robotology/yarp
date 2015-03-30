@@ -58,19 +58,54 @@ namespace yarp{
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
 /**
-*  @ingroup yarp_dev_modules
-*  \defgroup analogServer analogServer
-*
-*
-*  It reads the data from an analog sensor and sends them on one or more ports.
-*  It creates one rpc port and its related handler for every output port..
-*
-* Parameters accepted in the config argument of the open method:
-* | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
-* |:--------------:|:------:|:-----:|:-------------:|:--------: |:-------------:|:-----:|
-* | name           | string | -     | -             | Yes       | full name of the port opened by the device, like /robotName/deviceId/sensorType:o | must start with a '/' character |
-* | period         | int    | ms    | 20            | No        | refresh period of the broadcasted values in ms (optional, default 20ms) | - |
-**/
+ *  @ingroup yarp_dev_modules
+ *  \defgroup analogServer analogServer
+ *
+ *
+ *  It reads the data from an analog sensor and sends them on one or more ports.
+ *  It creates one rpc port and its related handler for every output port..
+ *
+ * Parameters accepted in the config argument of the open method:
+ * | Parameter name | Type    | Units          | Default Value | Required  | Description   | Notes |
+ * |:--------------:|:------: |:--------------:|:-------------:|:--------: |:-------------:|:-----:|
+ * | name           | string  | -              | -             | Yes       | full name of the port opened by the device, like /robotName/deviceId/sensorType:o | must start with a '/' character |
+ * | period         | int     | ms             | 20            | No        | refresh period of the broadcasted values in ms (optional, default 20ms) | - |
+ * | ROS            | group   |  -             |   -           | No                          | Group containing parameter for ROS topic initialization           | if missing, it is assumed to not use ROS topics |
+ * |  useROS        | string  | true/false/only|   -           |  if ROS group is present    | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
+ * |  ROS_TopicName | string  |  -             |   -           |  if ROS group is present    | set the name for ROS topic                                        | must start with a leading '/' |
+ * |  ROS_nodeName  | string  |  -             |   -           |  if ROS group is present    | set the name for ROS node                                         | must start with a leading '/' |
+ * |  ROS_msgType   | string  |  enum          |   -           |  if ROS group is present    | choose the message to be sent through ROS topic                   | supported value now is ONLY geometry_msgs/WrenchedStamped |
+ * |  frame_id      | string  |  -             |   -           |  if ROS group is present    | name of reference frame the measures are referred to              | - |
+ *
+ * ROS message type used for force/torque is geometry_msgs/WrenchedStamped.msg (http://docs.ros.org/indigo/api/geometry_msgs/html/msg/WrenchStamped.html)
+ *
+ * Some example of configuration files:
+ *
+ * Configuration file using .ini format
+ *
+ * \code{.unparsed}
+ * [ROS]
+ * useROS        true
+ * ROS_topicName /left_arm/forceTorque
+ * ROS_nodeName  /torquePublisher
+ * ROS_msgType   geometry_msgs/WrenchedStamped
+ * frame_id      r_shoulder
+ * \endcode
+ *
+ * Configuration file using .xml format.
+ *
+ * \code{.unparsed}
+ *
+ *  * <group name="ROS">
+ *     <param name="useROS">         true                           </param>    // use 'only' if you want only ROS topic and NOT yarp ports
+ *     <param name="ROS_topicName">  /left_arm/forceTorque          </param>
+ *     <param name="ROS_nodeName">   /torquePublisher               </param>
+ *     <param name="ROS_msgType">    geometry_msgs/WrenchedStamped  </param>
+ *     <param name="frame_id">       r_shoulder                     </param>
+ * </group>
+ * \endcode
+ */
+
 
 
 class yarp::dev::AnalogWrapper: public yarp::os::RateThread,

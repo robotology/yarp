@@ -493,6 +493,9 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     // call ROS node/topic initilization, if needed
     if(!initialize_ROS() )
+    {
+        return false;
+    }
 
     // call YARP port initilization, if needed
     if(!initialize_YARP(prop) )

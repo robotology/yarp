@@ -39,20 +39,67 @@ namespace yarp
 
 
 /**
- * @ingroup dev_impl_wrapper
+ *  @ingroup yarp_dev_modules
+ *  \defgroup serverInertial serverInertial
  *
  * Export an inertial sensor.
  * The network interface is a single Port.
  * We will stream bottles with 12 floats:
- * 0  1   2  = Euler orientation data  XYZ global frame representation.
+ * \code{.unparsed}
+ * 0  1   2  = Euler orientation data (X, Y, Z)  global frame representation.
  * 3  4   5  = Calibrated 3-axis (X, Y, Z) acceleration data
  * 6  7   8  = Calibrated 3-axis (X, Y, Z) gyroscope data
- * 9 10 11   = Calibrated 3-axis (X, Y, Z) magnetometer data
+ * 9 10  11  = Calibrated 3-axis (X, Y, Z) magnetometer data
+ * \endcode
  *
  * @author Alexis Maldonado, Radu Bogdan Rusu
- */
-
-/**
+ *
+ *
+ *  It reads the data from an Inertial measurement unit sensor and sends them through yarp port.
+ *
+ * Parameters accepted in the config argument of the open method:
+ * | Parameter name | Type    | Units          | Default Value | Required  | Description   | Notes |
+ * |:--------------:|:------: |:--------------:|:-------------:|:--------: |:-------------:|:-----:|
+ * | name           | string  |  -             |   -           | Yes       | full name of the port opened by the device, like /robotName/deviceId/sensorType:o | must start with a '/' character |
+ * | period         | int     | ms             |   5           | No        | refresh period of the broadcasted values in ms (optional, default 20ms) | - |
+ * | subdevice      | string  |  -             |   -           | Yes       | name of the IM device to be instantiated | - |
+ * | ROS            | group   |  -             |   -           | No                          | Group containing parameter for ROS topic initialization           | if missing, it is assumed to not use ROS topics |
+ * |  useROS        | string  | true/false/only|   -           |  if ROS group is present    | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
+ * |  ROS_TopicName | string  |  -             |   -           |  if ROS group is present    | set the name for ROS topic                                        | must start with a leading '/' |
+ * |  ROS_nodeName  | string  |  -             |   -           |  if ROS group is present    | set the name for ROS node                                         | must start with a leading '/' |
+ * |  ROS_msgType   | string  |  enum          |   -           |  if ROS group is present    | choose the message to be sent through ROS topic                   | supported value now is ONLY geometry_msgs/WrenchedStamped |
+ * |  frame_id      | string  |  -             |   -           |  if ROS group is present    | name of reference frame the measures are referred to              | - |
+ *
+ *  ROS message type used is sensor_msgs/Imu.msg (http://docs.ros.org/api/sensor_msgs/html/msg/Imu.html)
+ *
+ * Some example of configuration files:
+ *
+ * Configuration file using .ini format
+ *
+ * \code{.unparsed}
+ * name         /inertial
+ * period       20
+ * [ROS]
+ * useROS        true
+ * ROS_topicName /ROSinertial
+ * ROS_nodeName  /IMUPublisher
+ * frame_id      r_shoulder
+ * \endcode
+ *
+ * Configuration file using .xml format.
+ *
+ * \code{.unparsed}
+ *
+ * <param name="name">              /inertial                   </param>
+ * <param name="period">            20                          </param>
+ * <group name="ROS">
+ *     <param name="useROS">         true                       </param>    // use 'only' if you want only ROS topic and NOT yarp ports
+ *     <param name="ROS_topicName">  /ROSinertial               </param>
+ *     <param name="ROS_nodeName">   /IMUPublisher              </param>
+ *     <param name="frame_id">       r_shoulder                 </param>
+ * </group>
+ * \endcode
+ *
  *  ROS message type used is sensor_msgs/Imu.msg
  */
 
