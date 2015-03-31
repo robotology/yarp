@@ -156,7 +156,7 @@ For using Yarp from octave on Linux, be sure to install octave development packa
 sudo apt-get install liboctave-dev
 \endverbatim
 
-After \ref yarp_swig_compile, make sure that Octave-Yarp binding library (i.e., yarp.oct) is in the octave Load-path list or manually set it within your octave script. For example:  
+After \ref yarp_swig_compile, make sure that Octave-Yarp binding library (i.e., yarp.oct) is in the octave Load-path list or manually set it within your octave script. For example:
 \verbatim
  octave> addpath([getenv('YARP_ROOT') '/build/lib/octave']);
 \endverbatim
@@ -186,12 +186,27 @@ OSX users can also uses Lua binaries from http://lua-users.org/wiki/LuaBinaries
 After \ref yarp_swig_compile, make sure that the Lua-Yarp binding shared library
 (.so/.dll/.dylib/...) is included in your LUA_CPATH environment variable; e.g., on linux:
 \verbatim
-export LUA_CPATH=";;;$YARP_ROOT/bindings/build-lua/?.so"
+export LUA_CPATH=";;;/path/to/bindings/build/?.so"
 \endverbatim
 
 
 
 @section yarp_swig_configure Configuring YARP language bindings
+
+You can build the YARP bindings while you are building YARP or
+using a separated build directory just for the bindings.
+
+@subsection yarp_swig_configure_main_build Configure bindings while compiling YARP
+
+The process on building bindings with YARP follows the usual YARP compilation steps.
+In addition to that, while you configure YARP using <tt>ccmake</tt> or the CMake GUI
+you should enable the YARP_COMPILE_BINDINGS option.
+
+After a configuration step you should see the options to enable various languages (CREATE_JAVA, CREATE_PYTHON, and so on).
+Turn on the languages for which you want to compile the bindings, and then continue with the usual YARP compilation steps.
+
+
+@subsection yarp_swig_configure_separate_build Configure bindings to build separately from YARP
 
 Run the CMake GUI (or <tt>ccmake</tt> from the
 command line), and set the source directory to $YARP_ROOT/bindings,
@@ -238,6 +253,8 @@ CREATE_<LANGUAGE>=ON
 \li Finish configuring/generating in CMake, then exit it.
 \li Now you should have everything you need to compile and build.
 
+@subsection yarp_swig_configure_troubleshooting Configuration troubleshooting
+
 If you run into any trouble, choose the "SHOW ADVANCED VALUES" option in
 CMake and make sure that all options related to your language are correct
 (e.g. PYTHON_* variables, JAVA_* variables, etc).
@@ -263,7 +280,7 @@ sudo make install   # Optional, not sane for all languages.
 
 For Python, you can append the path of the bindings build directory to the PYTHONPATH environment variable, like this:
 \verbatim
-export PYTHONPATH=$PYTHONPATH:$YARP_ROOT/bindings/build
+export PYTHONPATH=$PYTHONPATH:/path/to/bindings/build
 \endverbatim
 then compile with make and you're done (no need to make install).
 
