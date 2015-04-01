@@ -989,9 +989,6 @@ public:
         factory = NULL;
     }
 
-    bool isValid() {
-        return car.isValid();
-    }
 
     virtual Carrier& getContent() {
         return car.getContent();
@@ -1001,47 +998,20 @@ public:
         return owner->create();
     }
 
-    virtual String getName() {
-        return getContent().getName();
+
+    // Forward yarp::os::Connection methods
+
+    bool isValid() {
+        return car.isValid();
     }
-
-    virtual bool checkHeader(const yarp::os::Bytes& header) {
-        return getContent().checkHeader(header);
-    }
-
-    virtual void setParameters(const yarp::os::Bytes& header) {
-        getContent().setParameters(header);
-    }
-
-    virtual void getHeader(const yarp::os::Bytes& header) {
-        getContent().getHeader(header);
-    }
-
-
-    virtual bool isConnectionless() {
-        return getContent().isConnectionless();
-    }
-
-
-    virtual bool canAccept() {
-        return getContent().canAccept();
-    }
-
-
-    virtual bool canOffer() {
-        return getContent().canOffer();
-    }
-
 
     virtual bool isTextMode() {
         return getContent().isTextMode();
     }
 
-
     virtual bool isBareMode() {
         return getContent().isBareMode();
     }
-
 
     virtual bool canEscape() {
         return getContent().canEscape();
@@ -1051,19 +1021,91 @@ public:
         return getContent().requireAck();
     }
 
-
     virtual bool supportReply() {
         return getContent().supportReply();
     }
-
 
     virtual bool isLocal() {
         return getContent().isLocal();
     }
 
-
     virtual bool isPush() {
         return getContent().isPush();
+    }
+
+    virtual bool isConnectionless() {
+        return getContent().isConnectionless();
+    }
+
+    virtual bool isBroadcast() {
+        return getContent().isBroadcast();
+    }
+
+    virtual bool isActive() {
+        return getContent().isActive();
+    }
+
+    virtual bool modifiesIncomingData() {
+        return getContent().modifiesIncomingData();
+    }
+
+    virtual ConnectionReader& modifyIncomingData(ConnectionReader& reader) {
+        return getContent().modifyIncomingData(reader);
+    }
+
+    virtual bool acceptIncomingData(ConnectionReader& reader) {
+        return getContent().acceptIncomingData(reader);
+    }
+
+    virtual bool modifiesOutgoingData() {
+        return getContent().modifiesOutgoingData();
+    }
+
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) {
+        return getContent().modifyOutgoingData(writer);
+    }
+
+    virtual bool acceptOutgoingData(PortWriter& writer) {
+        return getContent().acceptOutgoingData(writer);
+    }
+
+    virtual void setCarrierParams(const Property& params) {
+        return getContent().setCarrierParams(params);
+    }
+
+    virtual void getCarrierParams(Property& params) {
+        return getContent().getCarrierParams(params);
+    }
+
+    virtual void getHeader(const yarp::os::Bytes& header) {
+        getContent().getHeader(header);
+    }
+
+    virtual void prepareDisconnect() {
+        getContent().prepareDisconnect();
+    }
+
+    virtual String getName() {
+        return getContent().getName();
+    }
+
+
+    // Forward yarp::os::Carrier methods
+
+    virtual bool checkHeader(const yarp::os::Bytes& header) {
+        return getContent().checkHeader(header);
+    }
+
+    virtual void setParameters(const yarp::os::Bytes& header) {
+        getContent().setParameters(header);
+    }
+
+    virtual bool canAccept() {
+        return getContent().canAccept();
+    }
+
+    virtual bool canOffer() {
+        return getContent().canOffer();
     }
 
     virtual bool prepareSend(ConnectionState& proto) {
@@ -1077,10 +1119,6 @@ public:
     virtual bool expectReplyToHeader(ConnectionState& proto) {
         return getContent().expectReplyToHeader(proto);
     }
-
-    //virtual bool sendIndex(ConnectionState& proto,SizedWriter& writer) {
-    //return getContent().sendIndex(proto,writer);
-    //}
 
     virtual bool write(ConnectionState& proto, SizedWriter& writer) {
         return getContent().write(proto,writer);
@@ -1114,10 +1152,6 @@ public:
         return getContent().expectAck(proto);
     }
 
-    virtual bool isActive() {
-        return getContent().isActive();
-    }
-
     virtual String toString() {
         return getContent().toString();
     }
@@ -1136,6 +1170,10 @@ public:
                         int mode,
                         bool reversed) {
         return getContent().connect(src,dest,style,mode,reversed);
+    }
+
+    virtual bool configure(ConnectionState& proto) {
+        return getContent().configure(proto);
     }
 };
 
