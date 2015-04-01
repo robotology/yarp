@@ -258,7 +258,7 @@ bool dataSetPlayer_IDL::step() {
   dataSetPlayer_IDL_step helper;
   helper.init();
   if (!yarp().canWrite()) {
-    fprintf(stderr,"Missing server method '%s'?\n","bool dataSetPlayer_IDL::step()");
+    yError("Missing server method '%s'?","bool dataSetPlayer_IDL::step()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -268,7 +268,7 @@ bool dataSetPlayer_IDL::setFrame(const std::string& name, const int32_t frameNum
   dataSetPlayer_IDL_setFrame helper;
   helper.init(name,frameNum);
   if (!yarp().canWrite()) {
-    fprintf(stderr,"Missing server method '%s'?\n","bool dataSetPlayer_IDL::setFrame(const std::string& name, const int32_t frameNum)");
+    yError("Missing server method '%s'?","bool dataSetPlayer_IDL::setFrame(const std::string& name, const int32_t frameNum)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -278,7 +278,7 @@ int32_t dataSetPlayer_IDL::getFrame(const std::string& name) {
   dataSetPlayer_IDL_getFrame helper;
   helper.init(name);
   if (!yarp().canWrite()) {
-    fprintf(stderr,"Missing server method '%s'?\n","int32_t dataSetPlayer_IDL::getFrame(const std::string& name)");
+    yError("Missing server method '%s'?","int32_t dataSetPlayer_IDL::getFrame(const std::string& name)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -288,7 +288,7 @@ bool dataSetPlayer_IDL::load(const std::string& path) {
   dataSetPlayer_IDL_load helper;
   helper.init(path);
   if (!yarp().canWrite()) {
-    fprintf(stderr,"Missing server method '%s'?\n","bool dataSetPlayer_IDL::load(const std::string& path)");
+    yError("Missing server method '%s'?","bool dataSetPlayer_IDL::load(const std::string& path)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -298,7 +298,7 @@ bool dataSetPlayer_IDL::play() {
   dataSetPlayer_IDL_play helper;
   helper.init();
   if (!yarp().canWrite()) {
-    fprintf(stderr,"Missing server method '%s'?\n","bool dataSetPlayer_IDL::play()");
+    yError("Missing server method '%s'?","bool dataSetPlayer_IDL::play()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -308,7 +308,7 @@ bool dataSetPlayer_IDL::pause() {
   dataSetPlayer_IDL_pause helper;
   helper.init();
   if (!yarp().canWrite()) {
-    fprintf(stderr,"Missing server method '%s'?\n","bool dataSetPlayer_IDL::pause()");
+    yError("Missing server method '%s'?","bool dataSetPlayer_IDL::pause()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -318,7 +318,7 @@ bool dataSetPlayer_IDL::stop() {
   dataSetPlayer_IDL_stop helper;
   helper.init();
   if (!yarp().canWrite()) {
-    fprintf(stderr,"Missing server method '%s'?\n","bool dataSetPlayer_IDL::stop()");
+    yError("Missing server method '%s'?","bool dataSetPlayer_IDL::stop()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -328,7 +328,7 @@ bool dataSetPlayer_IDL::quit() {
   dataSetPlayer_IDL_quit helper;
   helper.init();
   if (!yarp().canWrite()) {
-    fprintf(stderr,"Missing server method '%s'?\n","bool dataSetPlayer_IDL::quit()");
+    yError("Missing server method '%s'?","bool dataSetPlayer_IDL::quit()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
