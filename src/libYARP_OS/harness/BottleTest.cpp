@@ -555,26 +555,27 @@ public:
         char buf1[] = "hello world";
         char buf2[] = "hello world";
         buf2[5] = '\0';
-        ConstString str1(buf1,12);
-        ConstString str2(buf2,12);
-        checkEqual(str1.length(),12,"unmodified string length ok");
-        checkEqual(str2.length(),12,"modified string length ok");
+        size_t len = 11;
+        ConstString str1(buf1,len);
+        ConstString str2(buf2,len);
+        checkEqual(str1.length(),len,"unmodified string length ok");
+        checkEqual(str2.length(),len,"modified string length ok");
         ConstString str3(str2);
-        checkEqual(str3.length(),12,"copied string length ok");
+        checkEqual(str3.length(),len,"copied string length ok");
         Bottle bot;
         bot.addString(str2);
-        checkEqual(bot.get(0).asString().length(),12,"bottled string asString() length ok");
-        checkEqual(bot.get(0).toString().length(),12,"bottled string toString() length ok");
+        checkEqual(bot.get(0).asString().length(),len,"bottled string asString() length ok");
+        checkEqual(bot.get(0).toString().length(),len,"bottled string toString() length ok");
         Bottle bot2 = bot;
-        checkEqual(bot2.get(0).asString().length(),12,"bottled, copied string length ok");
+        checkEqual(bot2.get(0).asString().length(),len,"bottled, copied string length ok");
 
         Bottle bot3;
         bot.write(bot3);
-        checkEqual(bot3.get(0).asString().length(),12,"bottled, serialized string length ok");
+        checkEqual(bot3.get(0).asString().length(),len,"bottled, serialized string length ok");
 
         Bottle bot4;
         bot4.fromString(bot.toString());
-        checkEqual(bot4.get(0).asString().length(),12,"bottled, text-serialized string length ok");
+        checkEqual(bot4.get(0).asString().length(),len,"bottled, text-serialized string length ok");
     }
 
     void testBool() {

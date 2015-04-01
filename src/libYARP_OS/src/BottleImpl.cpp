@@ -885,6 +885,7 @@ bool StoreString::readRaw(ConnectionReader& reader) {
     int len = reader.expectInt();
     String buf(YARP_STRINIT(len));
     reader.expectBlock((const char *)buf.c_str(),len);
+    // This is needed for compatiblity with versions of yarp before March 2015
     if (len>0) {
         if (buf[len-1] == '\0') {
             len--;
@@ -895,8 +896,8 @@ bool StoreString::readRaw(ConnectionReader& reader) {
 }
 
 bool StoreString::writeRaw(ConnectionWriter& writer) {
-    writer.appendInt((int)x.length()+1);
-    writer.appendBlock(x.c_str(),x.length()+1); // need \0
+    writer.appendInt((int)x.length());
+    writer.appendBlock(x.c_str(),x.length());
     return true;
 }
 

@@ -132,8 +132,8 @@ bool WireWriter::writeTag(const char *tag, int split, int len) {
 
 bool WireWriter::writeString(const yarp::os::ConstString& tag) {
     writer.appendInt(BOTTLE_TAG_STRING);
-    writer.appendInt((int)tag.length()+1);
-    writer.appendString(tag.c_str(),'\0');
+    writer.appendInt((int)tag.length());
+    writer.appendBlock(tag.c_str(),tag.length());
     return !writer.isError();
 }
 

@@ -393,7 +393,6 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
     fprintf(out,"    // *** %s ***\n", field.rosName.c_str());
     if (field.rosType=="string") {
         // strings are special; variable length primitive
-        string tweak = bare?"":"+1";
         if (field.isArray) {
             if (!bare) {
                 fprintf(out,"    connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);\n");
@@ -407,28 +406,24 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                     counter.c_str(),
                     field.rosName.c_str(),
                     counter.c_str());
-            fprintf(out,"      connection.appendInt(%s[%s].length()%s);\n",
+            fprintf(out,"      connection.appendInt(%s[%s].length());\n",
+                    field.rosName.c_str(),
+                    counter.c_str());
+            fprintf(out,"      connection.appendExternalBlock((char*)%s[%s].c_str(),%s[%s].length());\n",
                     field.rosName.c_str(),
                     counter.c_str(),
-                    tweak.c_str());
-            fprintf(out,"      connection.appendExternalBlock((char*)%s[%s].c_str(),%s[%s].length()%s);\n",
                     field.rosName.c_str(),
-                    counter.c_str(),
-                    field.rosName.c_str(),
-                    counter.c_str(),
-                    tweak.c_str());
+                    counter.c_str());
             fprintf(out,"    }\n");                  
         } else {
             if (!bare) {
                 fprintf(out,"    connection.appendInt(BOTTLE_TAG_STRING);\n");
             }
-            fprintf(out,"    connection.appendInt(%s.length()%s);\n",
+            fprintf(out,"    connection.appendInt(%s.length());\n",
+                    field.rosName.c_str());
+            fprintf(out,"    connection.appendExternalBlock((char*)%s.c_str(),%s.length());\n",
                     field.rosName.c_str(),
-                    tweak.c_str());
-            fprintf(out,"    connection.appendExternalBlock((char*)%s.c_str(),%s.length()%s);\n",
-                    field.rosName.c_str(),
-                    field.rosName.c_str(),
-                    tweak.c_str());
+                    field.rosName.c_str());
         }
     } else if (field.isPrimitive) {
         if (field.isArray) {

@@ -209,11 +209,15 @@ bool WireReader::readString(ConstString& str, bool *is_vocab) {
     if (noMore()) return false;
     int len = reader.expectInt();
     if (reader.isError()) return false;
-    if (len<1) return false;
     if (noMore()) return false;
     str.resize(len);
     reader.expectBlock((const char *)str.c_str(),len);
-    str.resize(len-1);
+    // This is needed for compatiblity with versions of yarp before March 2015
+    if (len>0) {
+        if (str[len-1] == '\0') {
+            str.resize(len-1);
+        }
+    }
     return !reader.isError();
 }
 
