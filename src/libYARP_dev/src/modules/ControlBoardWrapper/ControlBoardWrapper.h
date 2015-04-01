@@ -89,12 +89,80 @@ enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEV
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-/*
-* A updated version of the controlBoard network wrapper.
-* It can merge toghether more than one device, or use only a
-* portion of it by remapping utility.
-* Allows also deferred attach/detach of a subdevice.
-*/
+/**
+ *  @ingroup yarp_dev_modules
+ *  \defgroup controlBoardWrapper2 controlBoardWrapper2
+ *
+ * A updated version of the controlBoard network wrapper.
+ * It can merge toghether more than one control board device, or use only a
+ * portion of it by remapping functionality.
+ * Allows also deferred attach/detach of a subdevice.
+ *
+ *
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+ * | name           |      -         | string  | -              |   -           | Yes                         | full name of the port opened by the device, like /robotName/part/ | MUST start with a '/' character |
+ * | period         |      -         | int     | ms             |   20          | No                          | refresh period of the broadcasted values in ms                    | optional, default 20ms |
+ * | subdevice      |      -         | string  | -              |   -           | alternative to netwok group | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
+ * | networks       |      -         | group   | -              |   -           | alternative to subdevice    | this is expected to be a group parameter in xml format, a list in .ini file format. SubParameter are mandatory if this is used| - |
+ * | -              | networkName_1  | 4 * int | joint number   |   -           |   if networks is used       | describe how to match subdevice_1 joints with the wrapper joints. First 2 numbers indicate first/last wrapper joint, last 2 numbers are subdevice first/last joint | The joints are intended to be consequent |
+ * | -              |      ...       | 4 * int | joint number   |   -           |   if networks is used       | describe how to match subdevice_1 joints with the wrapper joints. First 2 numbers indicate first/last wrapper joint, last 2 numbers are subdevice first/last joint | The joints are intended to be consequent |
+ * | -              | networkName_n  | 4 * int | joint number   |   -           |   if networks is used       | describe how to match subdevice_1 joints with the wrapper joints. First 2 numbers indicate first/last wrapper joint, last 2 numbers are subdevice first/last joint | The joints are intended to be consequent |
+ * | -              | joints         |  int    |  -             |   -           |   if networks is used       | total number of joints handled by the wrapper                     | MUST match the sum of joints from all the networks |
+ *
+ * Some example of configuration files:
+ *
+ * Configuration file using .ini format, using subdevice keyword.
+ *
+ * \code{.unparsed}
+ *  device controlboardwrapper2
+ *  subdevice fakebot
+ *  name /icub/head
+ *
+ * ** parameter for 'fakebot' subdevice follows here **
+ * ...
+ * \endcode
+ *
+ * XML format, using 'networks' keywork. This file is meant to be used in junction with robotInterface executable,
+ * therefore has an addictional section at the end.
+ *
+ * \code{.xml}
+ * <paramlist name="networks">
+ *   <!-- elem name hereafter are custom names that live only in this file, they are used in the attach phase -->
+ *   <elem name="FirstSetOfJoints">  0  3  0  3 </elem>
+ *   <elem name="SecondSetOfJoints"> 4 15  0 11 </elem>
+ * </paramlist>
+ *
+ * <param name="period"> 20                 </param>
+ * <param name="name">   /icub/left_arm     </param>
+ * <param name="joints"> 16                 </param>
+ *
+ *
+ *  <!-- Following parameters are meaningful ONLY for robotInterface -->
+ *  <action phase="startup" level="5" type="attach">
+ *      <paramlist name="networks">
+ *          <!-- The param value must match the device name in the corresponding emsX file -->
+ *          <elem name="FirstSetOfJoints">  left_upper_arm_mc </elem>
+ *          <elem name="SecondSetOfJoints"> left_lower_arm_mc </elem>
+ *       </paramlist>
+ *  </action>
+ *  <action phase="shutdown" level="5" type="detach" />
+ * \endcode
+ *
+ * Configuration file using .ini format, using network keyword
+ *
+ * \code{.unparsed}
+ *  device controlboardwrapper2
+ *  name  /robotName/partName
+ *  period 10
+ *  networks (net_larm net_lhand)
+ *  joints 16
+ *  net_larm    0 7  0 7
+ *  net_lhand   8 15 0 7
+ * \endcode
+ */
+
 class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::os::RateThread,
                                         public yarp::dev::IPidControl,
@@ -121,6 +189,9 @@ private:
 
     std::string rootName;
     yarp::dev::impl::WrappedDevice device;
+
+    bool checkPortName(yarp::os::Searchable &params);
+
 
     yarp::os::BufferedPort<yarp::sig::Vector>  outputPositionStatePort;   // Port /state:o streaming out the encoder positions
     yarp::os::Port inputStreamingPort;          // Input streaming port for high frequency commands
@@ -153,7 +224,7 @@ private:
     int               controlledJoints;
     int               base;         // to be removed
     int               top;          // to be removed
-    int               thread_period;
+    int               period;       // thread rate for publishing data
     bool              _verb;        // make it work and propagate to subdevice if --subdevice option is used
 
     yarp::os::Bottle getOptions();
@@ -881,15 +952,15 @@ public:
     virtual bool getNumberOfMotors   (int *num);
 
     virtual bool getTemperature      (int m, double* val);
-    
+
     virtual bool getTemperatures     (double *vals);
-    
+
     virtual bool getTemperatureLimit (int m, double* val);
-    
+
     virtual bool setTemperatureLimit (int m, const double val);
 
     virtual bool getMotorOutputLimit (int m, double* val);
-    
+
     virtual bool setMotorOutputLimit (int m, const double val);
 
     /* IAxisInfo */

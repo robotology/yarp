@@ -34,7 +34,7 @@ ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),
     streaming_parser.init(this);
     RPC_parser.init(this);
     controlledJoints = 0;
-    thread_period = 20; // ms.
+    period = 20; // ms.
     base = 0;
     top = 0;
     subDeviceOwned = NULL;
@@ -46,6 +46,8 @@ ControlBoardWrapper::~ControlBoardWrapper() { }
 bool ControlBoardWrapper::close()
 {
     //stop thread if running
+    detachAll();
+
     if (yarp::os::RateThread::isRunning())
     {
         yarp::os::RateThread::stop();
@@ -84,13 +86,51 @@ bool ControlBoardWrapper::close()
     return true;
 }
 
-Bottle ControlBoardWrapper::getOptions()
+bool ControlBoardWrapper::checkPortName(Searchable &params)
 {
-    Bottle options;
-    options.addString("robotName, mandatory");
-    options.addString("deviceId, mandatory");
-    options.addString("period");
-    return options;
+    /* see if rootName is present in the config file, this param is not used from long time, so it'll be
+     * marked as deprecated.
+     */
+    if(params.check("rootName"))
+    {
+        yWarning() <<   " ControlBoardWrapper2 device:\n"
+                        "************************************************************************************\n"
+                        "* ControlBoardWrapper2 is using the deprecated parameter 'rootName' for port name, *\n"
+                        "* It has to be removed and substituted with:                                       *\n"
+                        "*     name:    full port prefix name with leading '/',  e.g.  /robotName/part/     *\n"
+                        "************************************************************************************";
+        rootName = params.find("rootName").asString();
+    }
+
+    // find name as port name (similar both in new and old policy
+    if(!params.check("name"))
+    {
+        yError() <<     " ControlBoardWrapper2 device:\n"
+                        "************************************************************************************\n"
+                        "* ControlBoardWrapper2 missing mandatory parameter 'name' for port name, usage is: *\n"
+                        "*     name:    full port prefix name with leading '/',  e.g.  /robotName/part/     *\n"
+                        "************************************************************************************";
+        return false;
+    }
+
+    partName = params.find("name").asString();
+    if(partName[0] != '/')
+    {
+        yWarning() <<   " ControlBoardWrapper2 device:\n"
+                        "************************************************************************************\n"
+                        "* ControlBoardWrapper2 'name' parameter for port name does not follow convention,  *\n"
+                        "* it MUST start with a leading '/' since it is used as the full prefix port name   *\n"
+                        "*     name:    full port prefix name with leading '/',  e.g.  /robotName/part/     *\n"
+                        "* A temporary automatic fix will be done for you, but please fix your config file  *\n"
+                        "************************************************************************************";
+        rootName = "/" + partName;
+    }
+    else
+    {
+        rootName = partName;
+    }
+
+    return true;
 }
 
 bool ControlBoardWrapper::open(Searchable& config)
@@ -102,7 +142,58 @@ bool ControlBoardWrapper::open(Searchable& config)
     if (_verb)
         yInfo("ControlBoardWrapper: running with verbose output\n");
 
-    thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
+    if(!checkPortName(config) )
+    {
+        yError() << "the portName was not correctly set, check you r configuration file";
+        return false;
+    }
+
+    bool found_period = false;
+
+    // check FIRST for deprecated parameter
+    if(prop.check("threadrate"))
+    {
+        yWarning() << " *** ControlBoardWrapper2 is using DEPRECATED parameter 'threadrate', use 'period' instead ***";
+        if(!prop.find("threadrate").isInt())
+        {
+            yError() << " *** DEPRECATED 'threadrate' parameter is not an integer value, read value is " << period << " ***";
+            return false;
+        }
+        period = prop.find("threadrate").asInt();
+        if(period <= 0)
+        {
+            yError() << " *** DEPRECATED 'threadrate' parameter must be a positive value > 0 *** ";
+            return false;
+        }
+        found_period = true;
+    }
+
+    // NOW, check for correct parameter, so if both are present we use the correct one
+    if(prop.check("period"))
+    {
+        if(!prop.find("period").isInt())
+        {
+            yError() << " *** 'period' parameter is not an integer value *** ";
+            return false;
+        }
+        if(found_period)
+        {
+            yWarning() << "*** ControlBoardWrapper2: found both 'period' and DEPRECATED 'threadrate' parameters. Using 'period', please remove the deprecated 'threadrate' param ***";
+        }
+        period = prop.find("period").asInt();
+        if(period <= 0)
+        {
+            yError() << " *** 'period' parameter is not an integer value, read value is " << period << " ***";
+            return false;
+        }
+        found_period = true;
+    }
+
+    // if none are present, fallback in the default value of 20ms set in the constructor
+    if(!found_period)
+    {
+        yInfo() << "Using default 'period' of " << period << "ms";
+    }
 
     // check if we need to create subdevice or if they are
     // passed later on thorugh attachAll()
@@ -151,13 +242,7 @@ bool ControlBoardWrapper::open(Searchable& config)
     // attach buffers.
     inputStreaming_buffer.attach(inputStreamingPort);
 
-    rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
-    partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
-    rootName+=(partName);
-    if( rootName.find("//") != std::string::npos )
-    {
-        rootName.replace(rootName.find("//"), 2, "/");
-    }
+
 
     ///// We now open ports
     inputRPCPort.open((rootName+"/rpc:i").c_str());
@@ -189,7 +274,7 @@ bool ControlBoardWrapper::open(Searchable& config)
     // we can start the thread. Otherwise this will happen when attachAll is called
     if (ownDevices)
     {
-       RateThread::setRate(thread_period);
+       RateThread::setRate(period);
        RateThread::start();
     }
     return true;
@@ -315,8 +400,6 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         yError() <<"Error total number of mapped joints ("<< totalJ <<") does not correspond to part joints (" << controlledJoints << ")";
         return false;
     }
-
-    prop.put("rootName", "/");
     return true;
 }
 
@@ -343,9 +426,9 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     }
 
     yarp::dev::IEncoders * iencs = 0;
-   
+
     subDeviceOwned->view(iencs);
-   
+
     if (iencs == 0)
     {
         yError("Opening IEncoders interface of controlBoardWrapper2 subdevice... FAILED\n");
@@ -353,7 +436,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     }
 
     bool getAx = iencs->getAxes(&controlledJoints);
-    
+
     if (!getAx)
     {
         yError("Calling getAxes of controlBoardWrapper2 subdevice... FAILED\n");
@@ -393,8 +476,6 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
 
     // initialization.
     RPC_parser.initialize();
-
-    prop.put("rootName", "");
     return true;
 }
 
@@ -445,7 +526,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     // initialization.
     RPC_parser.initialize();
 
-    RateThread::setRate(thread_period);
+    RateThread::setRate(period);
     RateThread::start();
 
     return true;
@@ -469,8 +550,6 @@ bool ControlBoardWrapper::detachAll()
 
 void ControlBoardWrapper::run()
 {
-    std::string tmp(partName.c_str());
-
     yarp::sig::Vector& v = outputPositionStatePort.prepare();
     v.size(controlledJoints);
 
