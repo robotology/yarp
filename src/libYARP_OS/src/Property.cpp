@@ -319,7 +319,7 @@ public:
         }
     }
 
-    bool readDir(const ConstString& dirname, ACE_DIR *&dir, String& result) {
+    bool readDir(const ConstString& dirname, ACE_DIR *&dir, String& result, const ConstString& section=ConstString()) {
         bool ok = true;
         YARP_DEBUG(Logger::get(),
                    String("reading directory ") + dirname);
@@ -338,8 +338,12 @@ public:
             if (len<4) continue;
             if (name.substr(len-4)!=".ini") continue;
             ConstString fname = ConstString(dirname) + "/" + name;
-            ok = ok && readFile(fname,result,false);
-            result += "\n[]\n";  // reset any nested sections
+            if (section.empty()) {
+                ok = ok && readFile(fname,result,false);
+                result += "\n[]\n";  // reset any nested sections
+            } else {
+                result += "[include " + section + " \"" + fname + "\" \"" + fname + "\"]\n";
+            }
         }
         free(namelist);
         return ok;
@@ -430,6 +434,29 @@ public:
         return true;
     }
 
+    bool fromConfigDir(const ConstString& dirname, const ConstString& section, bool wipe=true) {
+        Property p;
+        if (section.empty()) {
+            return fromConfigFile(dirname, p, wipe);
+        }
+
+        YARP_DEBUG(Logger::get(), String("looking for ") + dirname.c_str());
+
+        ACE_DIR *dir = ACE_OS::opendir(dirname.c_str());
+        if (!dir) {
+            YARP_ERROR(Logger::get(), String("cannot read from ") + dirname);
+            return false;
+        }
+
+        String txt;
+        if (!readDir(dirname, dir, txt, section)) {
+            YARP_ERROR(Logger::get(), String("cannot read from ") + dirname);
+            return false;
+        }
+
+        fromConfig(txt.c_str(), p, wipe);
+        return true;
+    }
 
     void fromConfig(const char *txt,Searchable& env, bool wipe=true) {
         StringInputStream sis;
@@ -892,6 +919,11 @@ void Property::fromCommand(int argc, char *argv[], bool skipFirst,
 void Property::fromCommand(int argc, const char *argv[], bool skipFirst, bool wipe) {
     summon();
     fromCommand(argc,(char **)argv,skipFirst,wipe);
+}
+
+bool Property::fromConfigDir(const ConstString& dirname, const ConstString& section, bool wipe) {
+    summon();
+    return HELPER(implementation).fromConfigDir(dirname, section, wipe);
 }
 
 bool Property::fromConfigFile(const ConstString& fname, bool wipe) {

@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <algorithm>
+#include <csignal>
 
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/NameClient.h>
@@ -2347,81 +2348,178 @@ String Companion::version() {
 }
 
 
-int Companion::cmdPlugin(int argc, char *argv[]) {
 #ifdef YARP_HAS_ACE
-    if (argc<1) {
-        printf("To test a specific plugin, do:\n");
-        printf("  yarp plugin <pluginname> /path/to/plugin/lib<libraryname>.so\n");
-        printf("List of runtime plugins:\n");
-        YarpPluginSelector selector;
-        selector.scan();
-        Bottle lst = selector.getSelectedPlugins();
-        if (lst.size()==0) {
-            printf("None found.\n");
-        }
-        for (int i=0; i<lst.size(); i++) {
-            Value& options = lst.get(i);
-            ConstString name = options.check("name",Value("untitled")).asString();
-            ConstString kind = options.check("type",Value("unknown type")).asString();
-            SharedLibraryFactory lib;
-            YarpPluginSettings settings;
-            settings.setSelector(selector);
-            settings.readFromSearchable(options,name);
-            settings.open(lib);
-            ConstString location = lib.getName().c_str();
-            if (lib.isValid()) {
-                printf("\n");
-                printf("%s %s\n", kind.c_str(), name.c_str());
-                printf("  %s\n", options.toString().c_str());
-                printf("  found by linking to %s\n", lib.getName().c_str());
-            }
-        }
+static void plugin_signal_handler(int) {
+   // prevent infinite recursion if say_hi() causes another segfault
+    std::signal(SIGSEGV, SIG_DFL);
+    std::signal(SIGABRT, SIG_DFL);
+    throw std::exception();
+}
 
-        return 1;
-    }
+static bool plugin_test(YarpPluginSettings& settings) {
     SharedLibraryFactory lib;
-    Property p;
-    YarpPluginSettings settings;
-    settings.setVerboseMode(true);
-    if (argc>=2) {
-        settings.setLibraryMethodName(argv[0],argv[1]);
-    } else {
-        settings.setPluginName(argv[0]);
-    }
-    YarpPluginSelector selector;
-    selector.scan();
-    if (!settings.setSelector(selector)) {
-        fprintf(stderr,"cannot find a plugin with the specified name\n");
-    }
     settings.open(lib);
     if (!lib.isValid()) {
         int problem = lib.getStatus();
         switch (problem) {
         case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
-            fprintf(stderr,"cannot load shared library\n");
-            break;
+            fprintf(stderr,"  Cannot find or load shared library\n");
+            return false;
         case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
-            fprintf(stderr,"cannot find YARP hook in shared library\n");
-            break;
+            fprintf(stderr,"  Cannot find YARP hook in shared library\n");
+            return false;
         case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
-            fprintf(stderr,"YARP hook in shared library misbehaved\n");
-            break;
+            fprintf(stderr,"  YARP hook in shared library misbehaved\n");
+            return false;
         default:
-            fprintf(stderr,"Unknown error\n");
-            break;
+            fprintf(stderr,"  Unknown error\n");
+            return false;
         }
+    } else {
+        ConstString location = lib.getName().c_str();
+        const SharedLibraryClassApi& api = lib.getApi();
+        char className[256] = "unknown";
+        api.getClassName(className,sizeof(className));
+        char baseClassName[256] = "unknown";
+        api.getBaseClassName(baseClassName,sizeof(baseClassName));
+        printf("  * library:        %s\n", lib.getName().c_str());
+        printf("  * system version: %d\n", (int)api.systemVersion);
+        printf("  * class name:     %s\n", className);
+        printf("  * base class:     %s\n", baseClassName);
+
+        bool ok = true;
+        std::signal(SIGSEGV, plugin_signal_handler);
+        std::signal(SIGABRT, plugin_signal_handler);
+        try {
+            void* tmp = api.create();
+            api.destroy(tmp);
+        } catch (...) {
+            printf("\n");
+            printf("  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
+            printf("  X                                                     X\n");
+            printf("  X                       WARNING                       X\n");
+            printf("  X                                                     X\n");
+            printf("  X            === This plugin is BROKEN ===            X\n");
+            printf("  X                                                     X\n");
+            printf("  X                                                     X\n");
+            printf("  X  Author information: The most plausible reason is   X\n");
+            printf("  X  that the destructor is deleting some pointer that  X\n");
+            printf("  X  is not allocated in the constructor, and that is   X\n");
+            printf("  X  not initialized to a null pointer.                 X\n");
+            printf("  X                                                     X\n");
+            printf("  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
+            ok = false;
+        }
+        std::signal(SIGSEGV, SIG_DFL);
+        std::signal(SIGABRT, SIG_DFL);
+        return ok;
+    }
+}
+
+static void plugin_usage()
+{
+    printf("Print information about installed plugins\n");
+    printf("\n");
+    printf("Usage:\n");
+    printf(" * Test a specific plugin:\n");
+    printf("     yarp plugin <pluginname>\n");
+    printf("     yarp plugin /path/to/plugin/<libraryname>.(so|dll|dylib) <pluginpart>\n");
+    printf(" * Test all the plugins:\n");
+    printf("     yarp plugin --all\n");
+    printf(" * Print a list of plugins:\n");
+    printf("     yarp plugin --list\n");
+    printf(" * Print plugin search path:\n");
+    printf("     yarp plugin --search-path\n");
+    printf(" * Print this help and exit:\n");
+    printf("     yarp plugin --help\n");
+    printf("\n");
+}
+#endif
+
+int Companion::cmdPlugin(int argc, char *argv[]) {
+#ifdef YARP_HAS_ACE
+    if (argc<1) {
+        plugin_usage();
         return 1;
     }
-    printf("Yes, this is a YARP plugin\n");
-    const SharedLibraryClassApi& api = lib.getApi();
-    char className[256] = "unknown";
-    api.getClassName(className,sizeof(className));
-    char baseClassName[256] = "unknown";
-    api.getBaseClassName(baseClassName,sizeof(baseClassName));
-    printf("  * system version %d\n",(int)api.systemVersion);
-    printf("  * class name '%s'\n",className);
-    printf("  * base class '%s'\n",baseClassName);
-    return 0;
+
+    ConstString arg = argv[0];
+    if (arg=="--help") {
+        plugin_usage();
+        return 0;
+    }
+
+    YarpPluginSelector selector;
+    selector.scan();
+
+    if (arg=="--search-path") {
+        Bottle lst = selector.getSearchPath();
+        if (lst.size()==0) {
+            printf("No search path.\n");
+            return 1;
+        }
+        printf("Search path:\n");
+        for (int i=0; i<lst.size(); i++) {
+            Value& options = lst.get(i);
+            ConstString name = options.asList()->get(0).toString();
+            ConstString path = options.check("path",Value("unknown path")).asString();
+            ConstString type = options.check("type",Value("unknown type")).asString();
+            if (type == "shared") {
+                printf("  * %s:\t%s\n", name.c_str(), path.c_str());
+            }
+        }
+        return 0;
+    }
+
+    if (arg=="--list") {
+        Bottle lst = selector.getSelectedPlugins();
+        for (int i=0; i<lst.size(); i++) {
+            Value& options = lst.get(i);
+            ConstString name = options.check("name",Value("untitled")).asString();
+            printf("%s\n", name.c_str());
+        }
+        return 0;
+    }
+    if (arg=="--all") {
+        Bottle lst = selector.getSelectedPlugins();
+        if (lst.size()==0) {
+            printf("No plugins found.\n");
+            return 1;
+        }
+        printf("Runtime plugins found:\n");
+        bool ok = true;
+        for (int i=0; i<lst.size(); i++) {
+            Value& options = lst.get(i);
+            ConstString name = options.check("name",Value("untitled")).asString();
+            ConstString type = options.check("type",Value("unknown type")).asString();
+            printf("\n");
+            printf("%s %s\n", type.c_str(), name.c_str());
+            printf("  * ini file:       %s\n", options.find("inifile").toString().c_str());
+            options.asList()->pop();
+            printf("  * config:         %s\n", options.toString().c_str());
+            YarpPluginSettings settings;
+            settings.setVerboseMode(true);
+            settings.setSelector(selector);
+            settings.readFromSearchable(options, name);
+            ok &= plugin_test(settings);
+        }
+        return ok ? 0 : 1;
+    } else {
+        Property p;
+        YarpPluginSettings settings;
+        settings.setVerboseMode(true);
+        if (argc>=2) {
+            settings.setLibraryMethodName(argv[0],argv[1]);
+        } else {
+            settings.setPluginName(argv[0]);
+        }
+        if (!settings.setSelector(selector)) {
+            fprintf(stderr,"cannot find a plugin with the specified name\n");
+        } else {
+            printf("Yes, this is a YARP plugin\n");
+        }
+        return plugin_test(settings) ? 0 : 1;
+    }
 #endif
     fprintf(stderr,"Command not available without ACE\n");
     return 1;
