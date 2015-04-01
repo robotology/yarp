@@ -2152,7 +2152,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       f_cpp_ << ");" << endl;
       indent(f_cpp_) << "if (!yarp().canWrite()) {" << endl;
       indent_up();
-      indent(f_cpp_) << "fprintf(stderr,\"Missing server method '%s'?\\n\",\"";
+      indent(f_cpp_) << "yError(\"Missing server method '%s'?\",\"";
       f_cpp_ << function_prototype(*fn_iter,false,service_name_.c_str());
       f_cpp_ << "\");" << endl;
       indent_down();

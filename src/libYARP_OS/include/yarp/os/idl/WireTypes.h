@@ -44,5 +44,6 @@
 #include <yarp/os/NetUint64.h>
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/os/Log.h>
 
 #endif
