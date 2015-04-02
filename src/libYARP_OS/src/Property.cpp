@@ -338,6 +338,7 @@ public:
             if (len<4) continue;
             if (name.substr(len-4)!=".ini") continue;
             ConstString fname = ConstString(dirname) + "/" + name;
+            std::replace(fname.begin(), fname.end(), '\\', '/');
             if (section.empty()) {
                 ok = ok && readFile(fname,result,false);
                 result += "\n[]\n";  // reset any nested sections
