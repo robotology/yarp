@@ -15,12 +15,16 @@
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Stamp.h>
 
+#include <yarp/os/Time.h>
+#include <yarp/os/Log.h>
+
 #include <yarp/dev/PreciselyTimed.h>
 
 // These classes are part of the YARP library implementation,
 // rather than its user interface
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+const int REPORT_TIME=5; //seconds
 
 namespace yarp {
     namespace dev {
@@ -48,6 +52,12 @@ private:
 	IPreciselyTimed *pPrecTime;
     bool canDrop;
     bool addStamp;
+    int counter;
+    double timePrevious;
+    double cumulativeT;
+    double minT;
+    double maxT;
+    double lastSpoke;
 public:
     DataWriter(yarp::os::Port& port, DataSource<T>& dater, 
                bool canDrop=true,
@@ -56,10 +66,56 @@ public:
         port(port), dater(dater), pPrecTime(pt), canDrop(canDrop), addStamp(addStamp)
     {
         writer.attach(port);
+        cumulativeT=0.0;
+        maxT=0.0;
+        minT=1e10;
+        lastSpoke=yarp::os::Time::now();
+        counter=0;
     }
 
     virtual void run() {
+
+        ///////////// execution statistics for logging
+        double now=yarp::os::Time::now();
+        double deltaT=0.0;
+
+        if (counter==0)
+        {
+            lastSpoke=now;
+            timePrevious=now;
+            cumulativeT=0.0;
+        }
+        else
+        {
+            deltaT=now-timePrevious;        
+            cumulativeT+=deltaT; 
+            if (deltaT>maxT)
+               maxT=deltaT;
+            if (deltaT<minT)
+               minT=deltaT;
+            timePrevious=now;
+        }
+
+        counter++;
+
+        // print report
+        if (now-lastSpoke>REPORT_TIME)
+            {
+                yInfo("Read [%d] frames in %d[s], average period %.2lf[ms], min %.2lf[ms], max %.2lf[ms]\n", 
+                                counter, 
+                                REPORT_TIME,
+                                (cumulativeT/counter)*1000, 
+                                minT*1000, maxT*1000);
+                cumulativeT=0;
+                counter=0;
+                minT=1e10;
+                maxT=0.0;
+                lastSpoke=now;
+            }
+        //////////////
+
         T& datum = writer.get();
+
         dater.getDatum(datum);
         if (addStamp) {
 			if (pPrecTime)
