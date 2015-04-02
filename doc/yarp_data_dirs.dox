@@ -135,17 +135,39 @@ If you are not interested in the details you can skip the following sections and
 
 \subsection datafiles_installedpkgs Installed packages
 
-Yarp exports the following CMake variables:
-\li YARP_INSTALL_PREFIX
-\li YARP_CONFIG_INSTALL_DIR
-\li YARP_PLUGIN_MANIFESTS_INSTALL_DIR
-\li YARP_MODULES_INSTALL_DIR
-\li YARP_APPLICATIONS_INSTALL_DIR
-\li YARP_TEMPLATES_INSTALL_DIR
-\li YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR
-\li YARP_MODULES_TEMPLATES_INSTALL_DIR
-\li YARP_CONTEXTS_INSTALL_DIR
-\li YARP_ROBOTS_INSTALL_DIR
+If yarp is installed the \li YARP_INSTALL_PREFIX will contain the prefix
+where YARP was installed. If yarp is used from the binary tree, this
+variable is empty.
+
+YARP exports the following CMake variables that contain relative
+installation paths:
+\li \c YARP_DATA_INSTALL_DIR
+\li \c YARP_CONFIG_INSTALL_DIR
+\li \c YARP_PLUGIN_MANIFESTS_INSTALL_DIR
+\li \c YARP_MODULES_INSTALL_DIR
+\li \c YARP_APPLICATIONS_INSTALL_DIR
+\li \c YARP_TEMPLATES_INSTALL_DIR
+\li \c YARP_CONTEXTS_INSTALL_DIR
+\li \c YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR
+\li \c YARP_MODULES_TEMPLATES_INSTALL_DIR
+\li \c YARP_ROBOTS_INSTALL_DIR
+\li \c YARP_STATIC_PLUGINS_INSTALL_DIR
+\li \c YARP_DYNAMIC_PLUGINS_INSTALL_DIR
+
+and their corresponding that contain absolute paths:
+\li \c YARP_DATA_INSTALL_DIR_FULL
+\li \c YARP_CONFIG_INSTALL_DIR_FULL
+\li \c YARP_PLUGIN_MANIFESTS_INSTALL_DIR_FULL
+\li \c YARP_MODULES_INSTALL_DIR_FULL
+\li \c YARP_APPLICATIONS_INSTALL_DIR_FULL
+\li \c YARP_TEMPLATES_INSTALL_DIR_FULL
+\li \c YARP_CONTEXTS_INSTALL_DIR_FULL
+\li \c YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR_FULL
+\li \c YARP_MODULES_TEMPLATES_INSTALL_DIR_FULL
+\li \c YARP_ROBOTS_INSTALL_DIR_FULL
+\li \c YARP_STATIC_PLUGINS_INSTALL_DIR_FULL
+\li \c YARP_DYNAMIC_PLUGINS_INSTALL_DIR_FULL
+
 
 Using the correct CMake variables when installing files will ensure that those files will be in the correct place on every platform, provided CMake is instructed to use the same CMAKE_INSTALL_PREFIX (in Linux this is the case by default).
 
