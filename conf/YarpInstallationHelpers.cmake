@@ -125,7 +125,9 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
                CONTEXTS
                APPLICATIONS_TEMPLATES
                MODULES_TEMPLATES
-               ROBOTS)
+               ROBOTS
+               STATIC_PLUGINS
+               DYNAMIC_PLUGINS)
     set(${_NAME}_${_dir}_INSTALL_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_${_dir}_INSTALL_DIR}")
   endforeach()
 
