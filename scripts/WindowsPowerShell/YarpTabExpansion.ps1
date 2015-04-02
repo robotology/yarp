@@ -22,12 +22,21 @@ function script:getYarpCarriers($filter)
     $carrierList | sort
 }
 
+function script:getYarpPlugins($filter)
+{
+    $carrierList = @()
+    $carrierList+= yarp plugin --list 2> $null | %{$_.split()} |
+            where  { $_ -like "$filter*" }
+    $carrierList | sort
+}
+
 $global:ops = @{
     yarprun = '--on', '--server'
     yarprun1 = '--cmd', '--as', '--geometry', '--hold', '--stdio', '--workdir'
     yarprun2 = '--kill', '--sigterm', '--sigtermall', '--ps', '--isrunning', '--exit'
     yarpconfig = 'context', 'robot', '--help', '--namespace', '--nameserver', '--version'
     yarpcontext = '--where', '--import', '--remove', '--diff', '--diff-list', '--merge', '--list', '--help', '--import-all'
+    yarpplugin = '--help', '--list', '--all', '--search-path'
 }
 
 function script:getYarpRunTags($server, $filter)
@@ -113,6 +122,19 @@ function script:yarpRunExpansion($wholeBlock, $lastWord)
 
     }
       $cmdList | sort
+}
+
+function script:yarpPlugin($wholeBlock, $filter) {
+    $cmdList = @()
+    $tmp=$wholeBlock.split()
+    $ind=$tmp.length-1
+    if ($ind -le 3 )
+    {
+        getYarpPlugins($filter)
+    }
+    $cmdList | sort
+    $cmdList+=$ops.yarpplugin |
+    where { $_ -like "$filter*" }
 }
 
 ## helpers for yarp-config helpers:
@@ -348,6 +370,11 @@ function YarpTabExpansion($lastBlock, $lastWord) {
         {
             write '--clean' |
             where { $_ -like "$lastWord*" }
+            break
+        }
+        'yarp(.exe)? plugin (\S*)$'
+        {
+            yarpPlugin $lastBlock $lastWord
             break
         }
         # Handles yarp <cmd>
