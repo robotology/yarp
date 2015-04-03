@@ -101,7 +101,14 @@ ConstString::allocator_type ConstString::get_allocator() const {
 }
 
 size_t ConstString::copy(char* str, size_t len, size_t pos) const {
+#ifdef _MSC_VER
+ #pragma warning(push)
+ #pragma warning(disable : 4996)
+#endif
     return HELPER(implementation).copy(str, len, pos);
+#ifdef _MSC_VER
+ #pragma warning(pop)
+#endif
 }
 
 size_t ConstString::length() const {
