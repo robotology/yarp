@@ -526,7 +526,9 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             service = NULL;
         }
     }
+
     while (dd.isValid() && !(terminated||(terminee&&terminee->mustQuit()))) {
+        printf("%i %i %i\n", dd.isValid(),terminated,terminee&&terminee->mustQuit());
         if (service!=NULL) {
             double now = Time::now();
             if (now-startTime>dnow) {
@@ -552,6 +554,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         delete terminee;
         terminee = NULL;
     }
+    printf("mainterminator stuff\n");
     dd.close();
 
     yInfo("yarpdev is finished.");

@@ -8,6 +8,8 @@
 
 #include <SerialDeviceDriver.h>
 
+#include <yarp/os/LockGuard.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -19,7 +21,7 @@ using namespace yarp::dev;
 
 //inline SerialHandler& RES(void *res) { return *(SerialHandler *)res; }
 
-SerialDeviceDriver::SerialDeviceDriver() {
+SerialDeviceDriver::SerialDeviceDriver() : receiveTimeout(0, 100000), deviceOpened(false), shouldStop(false), stopAck(false) {
     //system_resources = (SerialHandler*) new SerialHandler();
     verbose=false;
     line_terminator_char1 = '\r';
@@ -90,7 +92,18 @@ bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
 }
 
 bool SerialDeviceDriver::close(void) {
+    if (!deviceOpened) return true;
+    printf("SerialDeviceDriver Close\n");
+    stopAck = false;
+    shouldStop = true;
+    
+    while(!stopAck) {
+        haltCondition.wait();
+    }
+    
     _serial_dev.close();
+    printf("SerialDeviceDriver Closed\n");
+    deviceOpened = false;
     return true;
 }
 
@@ -213,9 +226,19 @@ bool SerialDeviceDriver::receive(Bottle& msg)
     char message[1001];
 
     //this function call blocks
-    ssize_t bytes_read = _serial_dev.recv ((void *) message, msgSize - 1);
+    ssize_t bytes_read = 0;
+    while(!shouldStop) {
+        bytes_read = _serial_dev.recv_n ((void *) message, msgSize - 1, &receiveTimeout);
+        if (bytes_read != -1 || errno != ETIME) break;
+    }
 
-    if (bytes_read == -1) {
+    if (shouldStop) {
+        stopAck = true;
+        haltCondition.post();
+        return true;  
+    }
+
+    if (bytes_read == -1 && errno != ETIME) {
         ACE_ERROR((LM_ERROR, ACE_TEXT ("Error in SerialDeviceDriver::receive(). \n")));
         return false;
     }

@@ -129,6 +129,7 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
 
 
 bool PolyDriver::closeMain() {
+    printf("%s [OPEN]: %d, %p\n",__FUNCTION__,__LINE__, this);
     bool result = false;
     if (system_resource!=NULL) {
         int ct = HELPER(system_resource).removeRef();
@@ -137,7 +138,9 @@ bool PolyDriver::closeMain() {
             delete &HELPER(system_resource);
             system_resource = NULL;
             if (dd!=NULL) {
+                printf("%s: %d, %p closing driver %p\n",__FUNCTION__,__LINE__, this, dd);
                 result = dd->close();
+                printf("%s: %d, %p after closing driver %p\n",__FUNCTION__,__LINE__, this, dd);
                 delete dd;
                 dd = NULL;
             }
@@ -146,6 +149,7 @@ bool PolyDriver::closeMain() {
         dd = NULL;
         system_resource = NULL;
     }
+    printf("%s [CLOSE]: %d, %p\n",__FUNCTION__,__LINE__, this);
     return result;
 }
 
@@ -164,6 +168,7 @@ bool PolyDriver::link(PolyDriver& alt) {
 
 
 PolyDriver::~PolyDriver() {
+    printf("polydriver distructor\n");
     closeMain();
     yAssert(dd==NULL);
     yAssert(system_resource==NULL);

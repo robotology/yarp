@@ -44,6 +44,7 @@ bool Terminator::terminateByName(const char *name) {
 
     Bottle cmd("quit"), reply;
     Contact c = NetworkBase::queryName(s.c_str());
+    printf("Cotact %s\n", c.toString().c_str());
     if (!c.isValid()) {
         fprintf(stderr,"Terminator port not found\n");
         return false;
@@ -53,6 +54,7 @@ bool Terminator::terminateByName(const char *name) {
     style.carrier = "text_ack";
     style.expectReply = true;
     NetworkBase::write(c,cmd,reply,style);
+    printf("style\n" );
 
     return true;
 }

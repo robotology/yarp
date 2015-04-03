@@ -110,6 +110,7 @@ public:
     virtual ~PolyDriver();
 
     virtual bool close() {
+        printf("Closing PolyDriver\n");
         return closeMain();
     }
 
