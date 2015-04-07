@@ -13,8 +13,8 @@
 #include "XMLReader.h"
 
 #include <yarp/os/LogStream.h>
-
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/RpcServer.h>
 
 class RobotInterface::Module::Private
 {
@@ -25,6 +25,7 @@ public:
     Module * const parent;
     RobotInterface::Robot robot;
     int interruptReceived;
+    yarp::os::RpcServer rpcPort;
 };
 
 
@@ -32,6 +33,8 @@ RobotInterface::Module::Private::Private(Module *parent) :
     parent(parent),
     interruptReceived(0)
 {
+    rpcPort.open("/robotInterface");
+    parent->attach(rpcPort);
 }
 
 RobotInterface::Module::Private::~Private()
@@ -131,27 +134,30 @@ bool RobotInterface::Module::interruptModule()
 
 bool RobotInterface::Module::close()
 {
+    bool ret = true;
     // If called from the first interrupt, enter the corresponding
     // interrupt phase.
     switch (mPriv->interruptReceived) {
     case 1:
         if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt1)) {
             yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseInterrupt1) << "phase... see previous messages for more info";
-            return false;
+            ret = false;
         }
         break;
     case 2:
     case 3:
         break;
     default:
-        return false;
+        ret = false;
     }
 
     // Finally call the shutdown phase.
     if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseShutdown)) {
         yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseShutdown) << "phase... see previous messages for more info";
-        return false;
+        ret = false;
     }
 
-    return true;
+    mPriv->rpcPort.interrupt();
+    mPriv->rpcPort.close();
+    return ret;
 }
