@@ -432,7 +432,7 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
 
     // opening the port
     yarp::os::Port port;
-    port.setTimeout((timeout>0.0) ? timeout : CONNECTION_TIMEOUT);
+    port.setTimeout((float)((timeout>0.0) ? timeout : CONNECTION_TIMEOUT));
     if(!port.open("..."))
         return NULL;
 
