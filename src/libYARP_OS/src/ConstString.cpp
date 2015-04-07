@@ -24,7 +24,7 @@ using namespace yarp::os;
 
 
 
-size_t ConstString::npos = std::string::npos;
+const size_t ConstString::npos = std::string::npos;
 
 #ifndef YARP_WRAP_STL_STRING_INLINE
 
@@ -36,23 +36,32 @@ ConstString::ConstString() {
     yAssert(implementation!=NULL);
 }
 
+ConstString::ConstString(const ConstString& str) {
+    implementation = new std::string(HELPER(str.implementation));
+    yAssert(implementation!=NULL);
+}
+
+ConstString::ConstString(const ConstString& str, size_t pos, size_t len) {
+    implementation = new std::string(HELPER(str.implementation), pos, len);
+}
+
 ConstString::ConstString(const char *str) {
     implementation = new std::string(str);
     yAssert(implementation!=NULL);
 }
 
-ConstString::ConstString(const char *str, int len) {
-    implementation = new std::string(str,len);
+ConstString::ConstString(const char *str, size_t len) {
+    implementation = new std::string(str, len);
     yAssert(implementation!=NULL);
 }
 
 void ConstString::init(const char *str, size_t len) {
-    implementation = new std::string(str,len);
+    implementation = new std::string(str, len);
     yAssert(implementation!=NULL);
 }
 
-ConstString::ConstString(size_t len, char v) {
-    implementation = new std::string(len,v);
+ConstString::ConstString(size_t len, char c) {
+    implementation = new std::string(len, c);
     yAssert(implementation!=NULL);
 }
 
@@ -63,13 +72,19 @@ ConstString::~ConstString() {
     }
 }
 
-ConstString::ConstString(const ConstString& alt) {
-    implementation = new std::string(HELPER(alt.implementation));
-    yAssert(implementation!=NULL);
+
+ConstString& ConstString::operator=(const ConstString& str) {
+    HELPER(implementation) = HELPER(str.implementation);
+    return (*this);
 }
 
-const ConstString& ConstString::operator = (const ConstString& alt) {
-    HELPER(implementation) = HELPER(alt.implementation);
+ConstString& ConstString::operator=(const char* str) {
+    HELPER(implementation) = str;
+    return (*this);
+}
+
+ConstString& ConstString::operator=(char c) {
+    HELPER(implementation) = c;
     return (*this);
 }
 
@@ -81,99 +96,115 @@ const char *ConstString::data() const {
     return HELPER(implementation).data();
 }
 
-
-bool ConstString::operator <(const ConstString& alt) const {
-    return HELPER(implementation) < HELPER(alt.implementation);
+ConstString::allocator_type ConstString::get_allocator() const {
+    return HELPER(implementation).get_allocator();
 }
 
-bool ConstString::operator >(const ConstString& alt) const {
-    return HELPER(implementation) > HELPER(alt.implementation);
-}
-
-bool ConstString::operator ==(const ConstString& alt) const {
-    return HELPER(implementation) == HELPER(alt.implementation);
-}
-
-bool ConstString::operator !=(const ConstString& alt) const {
-    return HELPER(implementation) != HELPER(alt.implementation);
-}
-
-bool ConstString::operator ==(const char *str) const {
-    return HELPER(implementation) == str;
-}
-
-bool ConstString::operator !=(const char *str) const {
-    return HELPER(implementation) != str;
+size_t ConstString::copy(char* str, size_t len, size_t pos) const {
+#ifdef _MSC_VER
+ #pragma warning(push)
+ #pragma warning(disable : 4996)
+#endif
+    return HELPER(implementation).copy(str, len, pos);
+#ifdef _MSC_VER
+ #pragma warning(pop)
+#endif
 }
 
 size_t ConstString::length() const {
     return HELPER(implementation).length();
 }
 
+size_t ConstString::size() const {
+    return HELPER(implementation).size();
+}
+
+size_t ConstString::max_size() const {
+    return HELPER(implementation).max_size();
+}
+
 void ConstString::resize(size_t n) {
     HELPER(implementation).resize(n);
 }
 
-
-bool ConstString::operator <=(const ConstString& alt) const {
-    return HELPER(implementation) <= HELPER(alt.implementation);
+void ConstString::resize(size_t n, char c) {
+    HELPER(implementation).resize(n, c);
 }
 
-bool ConstString::operator >=(const ConstString& alt) const {
-    return HELPER(implementation) >= HELPER(alt.implementation);
+size_t ConstString::capacity() const {
+    return HELPER(implementation).capacity();
 }
 
-ConstString ConstString::operator + (char ch) const {
-    std::string helper(HELPER(implementation));
-    helper += ch;
-    return ConstString(helper.c_str());
+void ConstString::reserve(size_t n) {
+    HELPER(implementation).reserve(n);
 }
 
-ConstString ConstString::operator + (const char *str) const {
-    std::string helper(HELPER(implementation));
-    helper += str;
-    return ConstString(helper.c_str());
-}
-
-ConstString ConstString::operator + (const ConstString& alt) const {
-    std::string helper(HELPER(implementation));
-    helper += HELPER(alt.implementation);
-    return ConstString(helper.c_str());
-}
-
-const ConstString& ConstString::operator += (char ch) {
+ConstString& ConstString::operator+=(char ch) {
     HELPER(implementation) += ch;
     return *this;
 }
 
-const ConstString& ConstString::operator += (const char *str) {
+ConstString& ConstString::operator+=(const char *str) {
     HELPER(implementation) += str;
     return *this;
 }
 
-const ConstString& ConstString::operator += (const ConstString& alt) {
-    HELPER(implementation) += HELPER(alt.implementation);
+ConstString& ConstString::operator+=(const ConstString& str) {
+    HELPER(implementation) += HELPER(str.implementation);
     return *this;
 }
 
-size_t ConstString::find(const ConstString& needle) const{
-    return HELPER(implementation).find(HELPER(needle.implementation));
+void ConstString::push_back (char c) {
+    HELPER(implementation).push_back(c);
 }
 
-size_t ConstString::find(const char *needle) const {
-    return HELPER(implementation).find(needle);
+ConstString& ConstString::erase(size_t pos, size_t len) {
+    HELPER(implementation).erase(pos, len);
+    return *this;
+}
+
+ConstString::iterator ConstString::erase(iterator p) {
+    return HELPER(implementation).erase(p);
+}
+
+ConstString::iterator ConstString::erase(iterator first, iterator last) {
+    return HELPER(implementation).erase(first, last);
+}
+
+void ConstString::swap(ConstString& str) {
+    HELPER(implementation).swap(HELPER(str.implementation));
+}
+
+size_t ConstString::find(const ConstString& needle, size_t start) const {
+    return HELPER(implementation).find(HELPER(needle.implementation), start);
 }
 
 size_t ConstString::find(const char *needle, size_t start) const {
+    return HELPER(implementation).find(needle, start);
+}
+
+size_t ConstString::find(const char *needle, size_t start, size_t len) const {
+    return HELPER(implementation).find(needle, start, len);
+}
+
+size_t ConstString::find(char needle, size_t start) const {
     return HELPER(implementation).find(needle,start);
 }
 
-size_t ConstString::find(const char needle, size_t start) const {
-    return HELPER(implementation).find(needle,start);
+size_t ConstString::rfind(const ConstString& needle, size_t start) const {
+    return HELPER(implementation).rfind(HELPER(needle.implementation), start);
 }
 
-size_t ConstString::rfind(const char needle) const {
-    return HELPER(implementation).rfind(needle);
+size_t ConstString::rfind(const char *needle, size_t start) const {
+    return HELPER(implementation).rfind(needle, start);
+}
+
+size_t ConstString::rfind(const char *needle, size_t start, size_t len) const {
+    return HELPER(implementation).rfind(needle, start, len);
+}
+
+size_t ConstString::rfind(char needle, size_t start) const {
+    return HELPER(implementation).rfind(needle,start);
 }
 
 ConstString ConstString::substr(size_t start, size_t n) const {
@@ -189,12 +220,52 @@ bool ConstString::empty() const {
     return HELPER(implementation).empty();
 }
 
+ConstString::iterator ConstString::begin() {
+    return HELPER(implementation).begin();
+}
+
+ConstString::const_iterator ConstString::begin() const {
+    return HELPER(implementation).begin();
+}
+
+ConstString::iterator ConstString::end() {
+    return HELPER(implementation).end();
+}
+
+ConstString::const_iterator ConstString::end() const {
+    return HELPER(implementation).end();
+}
+
+ConstString::reverse_iterator ConstString::rbegin() {
+    return HELPER(implementation).rbegin();
+}
+
+ConstString::const_reverse_iterator ConstString::rbegin() const {
+    return HELPER(implementation).rbegin();
+}
+
+ConstString::reverse_iterator ConstString::rend() {
+    return HELPER(implementation).rend();
+}
+
+ConstString::const_reverse_iterator ConstString::rend() const {
+    return HELPER(implementation).rend();
+}
+
 char& ConstString::operator[](size_t idx) {
     return HELPER(implementation)[idx];
 }
 
 const char& ConstString::operator[](size_t idx) const {
     return HELPER(implementation)[idx];
+}
+
+char& ConstString::at(size_t pos) {
+    return HELPER(implementation).at(pos);
+}
+
+const char& ConstString::at(size_t pos) const {
+    return HELPER(implementation).at(pos);
 }
 
 ConstString& ConstString::assign(const char *s, size_t n) {
@@ -221,11 +292,6 @@ unsigned long ConstString::hash() const {
         }
     }
     return h;
-}
-
-ConstString yarp::os::operator + (const char *txt,
-                                  const yarp::os::ConstString& alt) {
-    return ConstString(txt) + alt;
 }
 
 #endif
