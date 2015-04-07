@@ -42,6 +42,8 @@ public:
 
     void interrupt();
     bool enterPhase(RobotInterface::ActionPhase phase);
+    RobotInterface::ActionPhase currentPhase() const;
+    int currentLevel() const;
 
 private:
     class Private;
