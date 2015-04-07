@@ -9,22 +9,35 @@
 #define ROBOTINTERFACE_MODULE_H
 
 #include <yarp/os/RFModule.h>
+#include <robotInterfaceRpc.h>
 
 namespace RobotInterface
 {
 
-class Module : public yarp::os::RFModule
+class Module : public yarp::os::RFModule,
+               public robotInterfaceRpc
 {
 public:
     explicit Module();
     virtual ~Module();
 
+    // yarp::os::RFModule
     virtual double getPeriod();
-
     virtual bool updateModule();
     virtual bool close();
     virtual bool interruptModule();
     virtual bool configure(yarp::os::ResourceFinder &rf);
+    virtual bool attach(yarp::os::RpcServer &source);
+
+    // robotInterfaceRpc
+    virtual std::string get_phase();
+    virtual int32_t get_level();
+    virtual bool is_ready();
+    virtual std::string get_robot();
+
+    virtual std::string quit();
+    inline virtual std::string bye() { return quit(); }
+    inline virtual std::string exit() { return quit(); }
 
 private:
     class Private;

@@ -39,11 +39,21 @@ set(robotInterface_HDRS
     XMLReader.h
 )
 
-#add_definitions("-Wall -Wextra --ansi --pedantic")
-#add_definitions("-Wno-long-long -Wno-variadic-macros -Wshadow")
-add_definitions("-DDEBUG")
+set(robotInterface_IDLS
+    robotInterface.thrift)
 
-add_executable(robotInterface ${robotInterface_SRCS})
+include(YarpIDL)
+yarp_idl_to_dir(${robotInterface_IDLS}
+                "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+                robotInterface_IDLS_SRCS
+                robotInterface_IDLS_HDRS
+                robotInterface_IDLS_INCLUDE_DIRS)
+include_directories("${robotInterface_IDLS_INCLUDE_DIRS}")
+
+add_executable(robotInterface ${robotInterface_SRCS}
+                              ${robotInterface_HDRS}
+                              ${robotInterface_IDLS_SRCS}
+                              ${robotInterface_IDLS_HDRS})
 
 target_link_libraries(robotInterface
                       YARP::YARP_OS

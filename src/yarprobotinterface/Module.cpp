@@ -161,3 +161,35 @@ bool RobotInterface::Module::close()
     mPriv->rpcPort.close();
     return ret;
 }
+
+bool RobotInterface::Module::attach(yarp::os::RpcServer &source)
+{
+    return this->yarp().attachAsServer(source);
+}
+
+
+std::string RobotInterface::Module::get_phase()
+{
+    return ActionPhaseToString(mPriv->robot.currentPhase());
+}
+
+int32_t RobotInterface::Module::get_level()
+{
+    return mPriv->robot.currentLevel();
+}
+
+bool RobotInterface::Module::is_ready()
+{
+    return (mPriv->robot.currentPhase() == RobotInterface::ActionPhaseRun ? true : false);
+}
+
+std::string RobotInterface::Module::get_robot()
+{
+    return mPriv->robot.name();
+}
+
+std::string RobotInterface::Module::quit()
+{
+    stopModule();
+    return "bye";
+}
