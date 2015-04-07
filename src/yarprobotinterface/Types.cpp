@@ -88,6 +88,8 @@ RobotInterface::ActionPhase RobotInterface::StringToActionPhase(const std::strin
 {
     if (!phase.compare("startup")) {
         return RobotInterface::ActionPhaseStartup;
+    } else if (!phase.compare("run")) {
+        return RobotInterface::ActionPhaseRun;
     } else if (!phase.compare("interrupt1")) {
         return RobotInterface::ActionPhaseInterrupt1;
     } else if (!phase.compare("interrupt2")) {
@@ -105,6 +107,8 @@ std::string RobotInterface::ActionPhaseToString(RobotInterface::ActionPhase acti
     switch (actionphase) {
     case RobotInterface::ActionPhaseStartup:
         return std::string("startup");
+    case RobotInterface::ActionPhaseRun:
+        return std::string("run");
     case RobotInterface::ActionPhaseInterrupt1:
         return std::string("interrupt1");
     case RobotInterface::ActionPhaseInterrupt2:

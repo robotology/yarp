@@ -487,6 +487,11 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
         }
     }
 
+    // run phase does not accept actions
+    if (phase == ActionPhaseRun) {
+        return true;
+    }
+
     // Before starting any action we ensure that there are no other
     // threads running from prevoius phases.
     // In interrupt 2 and 3 and this is called by the interrupt callback,

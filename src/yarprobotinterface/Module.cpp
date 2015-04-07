@@ -68,8 +68,9 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     setName(mPriv->robot.portprefix().c_str());
 
     // Enter startup phase
-    if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup)) {
-        yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseStartup) << "phase... see previous messages for more info";
+    if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup) ||
+        !mPriv->robot.enterPhase(RobotInterface::ActionPhaseRun)) {
+        yError() << "Error in" << ActionPhaseToString(mPriv->robot.currentPhase()) << "phase... see previous messages for more info";
         // stopModule() calls interruptModule() and then close()
         // internally. This ensure that interrupt1 phase actions
         // (i.e. detach) are performed before destroying the devices.
