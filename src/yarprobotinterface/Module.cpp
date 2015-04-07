@@ -70,20 +70,12 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     // Enter startup phase
     if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup)) {
         yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseStartup) << "phase... see previous messages for more info";
-        /* If one of the startup action fails, it is safer to call the interrupt/shutdown action because they will correctly undo the initialization
-         * done by the succesfully performed stastup actions.
-         *
-         * For example one startup attach action is succesful, but another one is not, when closing down the process, we must perform the detach action
-         * before closing the involved devices.
-         *
-         * Calling interruptModule() has the same effect as handling a SIGINT, so all close action will be performed in the right order. Furthermore it
-         * signal handler is not yet active here, so we do not have problems from multiple concurrent CTRL+C.
-         */
-        interruptModule();
-        close();
+        // stopModule() calls interruptModule() and then close()
+        // internally. This ensure that interrupt1 phase actions
+        // (i.e. detach) are performed before destroying the devices.
+        stopModule();
         return false;
     }
-
     return true;
 }
 
