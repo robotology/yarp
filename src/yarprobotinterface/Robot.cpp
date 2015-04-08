@@ -489,6 +489,9 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
 
     // run phase does not accept actions
     if (phase == ActionPhaseRun) {
+        if(mPriv->getLevels(phase).size() != 0) {
+            yWarning() << "Phase" << ActionPhaseToString(phase) << "does not accept actions. Skipping all actions for this phase";
+        }
         return true;
     }
 
