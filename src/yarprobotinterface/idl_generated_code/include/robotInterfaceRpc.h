@@ -22,14 +22,14 @@ public:
    */
   virtual int32_t get_level();
   /**
+   * Returns robot name.
+   */
+  virtual std::string get_robot();
+  /**
    * Returns true if robotInterface is ready (all startup actions
    * performed and no interrupt called).
    */
   virtual bool is_ready();
-  /**
-   * Returns robot name.
-   */
-  virtual std::string get_robot();
   /**
    * Closes robotInterface.
    */

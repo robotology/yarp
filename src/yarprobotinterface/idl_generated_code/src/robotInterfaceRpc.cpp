@@ -22,17 +22,17 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
-class robotInterfaceRpc_is_ready : public yarp::os::Portable {
+class robotInterfaceRpc_get_robot : public yarp::os::Portable {
 public:
-  bool _return;
+  std::string _return;
   void init();
   virtual bool write(yarp::os::ConnectionWriter& connection);
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 
-class robotInterfaceRpc_get_robot : public yarp::os::Portable {
+class robotInterfaceRpc_is_ready : public yarp::os::Portable {
 public:
-  std::string _return;
+  bool _return;
   void init();
   virtual bool write(yarp::os::ConnectionWriter& connection);
   virtual bool read(yarp::os::ConnectionReader& connection);
@@ -104,27 +104,6 @@ void robotInterfaceRpc_get_level::init() {
   _return = 0;
 }
 
-bool robotInterfaceRpc_is_ready::write(yarp::os::ConnectionWriter& connection) {
-  yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(2)) return false;
-  if (!writer.writeTag("is_ready",1,2)) return false;
-  return true;
-}
-
-bool robotInterfaceRpc_is_ready::read(yarp::os::ConnectionReader& connection) {
-  yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListReturn()) return false;
-  if (!reader.readBool(_return)) {
-    reader.fail();
-    return false;
-  }
-  return true;
-}
-
-void robotInterfaceRpc_is_ready::init() {
-  _return = false;
-}
-
 bool robotInterfaceRpc_get_robot::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
@@ -144,6 +123,27 @@ bool robotInterfaceRpc_get_robot::read(yarp::os::ConnectionReader& connection) {
 
 void robotInterfaceRpc_get_robot::init() {
   _return = "";
+}
+
+bool robotInterfaceRpc_is_ready::write(yarp::os::ConnectionWriter& connection) {
+  yarp::os::idl::WireWriter writer(connection);
+  if (!writer.writeListHeader(2)) return false;
+  if (!writer.writeTag("is_ready",1,2)) return false;
+  return true;
+}
+
+bool robotInterfaceRpc_is_ready::read(yarp::os::ConnectionReader& connection) {
+  yarp::os::idl::WireReader reader(connection);
+  if (!reader.readListReturn()) return false;
+  if (!reader.readBool(_return)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+
+void robotInterfaceRpc_is_ready::init() {
+  _return = false;
 }
 
 bool robotInterfaceRpc_quit::write(yarp::os::ConnectionWriter& connection) {
@@ -232,22 +232,22 @@ int32_t robotInterfaceRpc::get_level() {
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-bool robotInterfaceRpc::is_ready() {
-  bool _return = false;
-  robotInterfaceRpc_is_ready helper;
-  helper.init();
-  if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool robotInterfaceRpc::is_ready()");
-  }
-  bool ok = yarp().write(helper,helper);
-  return ok?helper._return:_return;
-}
 std::string robotInterfaceRpc::get_robot() {
   std::string _return = "";
   robotInterfaceRpc_get_robot helper;
   helper.init();
   if (!yarp().canWrite()) {
     yError("Missing server method '%s'?","std::string robotInterfaceRpc::get_robot()");
+  }
+  bool ok = yarp().write(helper,helper);
+  return ok?helper._return:_return;
+}
+bool robotInterfaceRpc::is_ready() {
+  bool _return = false;
+  robotInterfaceRpc_is_ready helper;
+  helper.init();
+  if (!yarp().canWrite()) {
+    yError("Missing server method '%s'?","bool robotInterfaceRpc::is_ready()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -314,17 +314,6 @@ bool robotInterfaceRpc::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
-    if (tag == "is_ready") {
-      bool _return;
-      _return = is_ready();
-      yarp::os::idl::WireWriter writer(reader);
-      if (!writer.isNull()) {
-        if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeBool(_return)) return false;
-      }
-      reader.accept();
-      return true;
-    }
     if (tag == "get_robot") {
       std::string _return;
       _return = get_robot();
@@ -332,6 +321,17 @@ bool robotInterfaceRpc::read(yarp::os::ConnectionReader& connection) {
       if (!writer.isNull()) {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString(_return)) return false;
+      }
+      reader.accept();
+      return true;
+    }
+    if (tag == "is_ready") {
+      bool _return;
+      _return = is_ready();
+      yarp::os::idl::WireWriter writer(reader);
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeBool(_return)) return false;
       }
       reader.accept();
       return true;
@@ -405,8 +405,8 @@ std::vector<std::string> robotInterfaceRpc::help(const std::string& functionName
     helpString.push_back("*** Available commands:");
     helpString.push_back("get_phase");
     helpString.push_back("get_level");
-    helpString.push_back("is_ready");
     helpString.push_back("get_robot");
+    helpString.push_back("is_ready");
     helpString.push_back("quit");
     helpString.push_back("bye");
     helpString.push_back("exit");
@@ -421,14 +421,14 @@ std::vector<std::string> robotInterfaceRpc::help(const std::string& functionName
       helpString.push_back("int32_t get_level() ");
       helpString.push_back("Returns current level. ");
     }
+    if (functionName=="get_robot") {
+      helpString.push_back("std::string get_robot() ");
+      helpString.push_back("Returns robot name. ");
+    }
     if (functionName=="is_ready") {
       helpString.push_back("bool is_ready() ");
       helpString.push_back("Returns true if robotInterface is ready (all startup actions ");
       helpString.push_back("performed and no interrupt called). ");
-    }
-    if (functionName=="get_robot") {
-      helpString.push_back("std::string get_robot() ");
-      helpString.push_back("Returns robot name. ");
     }
     if (functionName=="quit") {
       helpString.push_back("std::string quit() ");

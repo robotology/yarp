@@ -18,15 +18,15 @@ service robotInterfaceRpc {
     i32 get_level();
 
     /**
+     * Returns robot name.
+     */
+    string get_robot();
+
+    /**
      * Returns true if robotInterface is ready (all startup actions
      * performed and no interrupt called).
      */
     bool is_ready();
-
-    /**
-     * Returns robot name.
-     */
-    string get_robot();
 
     /**
      * Closes robotInterface.
