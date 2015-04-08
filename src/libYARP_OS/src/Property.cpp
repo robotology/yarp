@@ -26,6 +26,7 @@
 #endif
 
 #include <stdio.h>
+#include <algorithm>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
