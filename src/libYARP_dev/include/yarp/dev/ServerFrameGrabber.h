@@ -46,7 +46,7 @@ namespace yarp {
 //#define VOCAB_WHITE_SHADING VOCAB4('s','h','a','d')
 //#define VOCAB_OPTICAL_FILTER VOCAB4('f','i','l','t')
 //#define VOCAB_CAPTURE_QUALITY VOCAB4('q','u','a','l')
- 
+
 #define VOCAB_SET VOCAB3('s','e','t')
 #define VOCAB_GET VOCAB3('g','e','t')
 #define VOCAB_IS VOCAB2('i','s')
@@ -110,7 +110,7 @@ namespace yarp {
 /**
  * @ingroup dev_impl_wrapper
  *
- * Export a frame grabber to the network.  Provides the 
+ * Export a frame grabber to the network.  Provides the
  * IFrameGrabberImage, IFrameGrabberControls, and IAudioGrabberSound
  * interfaces.  The corresponding client is a RemoteFrameGrabber.
  *
@@ -130,12 +130,12 @@ namespace yarp {
  * Parameters are:
  * --width, --height set the size of the frame in pixels
  * --name portname set the name of the output port
- * --framerate set the frequency (Hz) at which images will be read and boradcast to 
+ * --framerate set the frequency (Hz) at which images will be read and boradcast to
  * the network; if the parameter is not set images are provided at the maximum speed
  * supported by the device. Notice that the maximum frame rate is determined by
  * the device.
- * 
- * After the "yarp connect" line, image descriptions will show up in 
+ *
+ * After the "yarp connect" line, image descriptions will show up in
  * terminal B (you could view them with the yarpview application).
  * The "yarp rpc" command should query the gain (0.0 for the test grabber).
  *
@@ -150,7 +150,7 @@ namespace yarp {
  * </TABLE>
  *
  */
-class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver, 
+class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public DeviceResponder,
             public IFrameGrabberImage,
             public IAudioGrabberSound,
@@ -173,7 +173,7 @@ private:
     IAudioGrabberSound *fgSound;
     IAudioVisualGrabber *fgAv;
     IFrameGrabberControls *fgCtrl;
-	IPreciselyTimed *fgTimed;
+    IPreciselyTimed *fgTimed;
     bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
     bool canDrop;
     bool addStamp;
@@ -185,7 +185,7 @@ public:
      * Constructor.
      */
     ServerFrameGrabber();
-    
+
     virtual bool close() {
         if (!active) {
             return false;
@@ -198,7 +198,7 @@ public:
         }
         return true;
     }
-    
+
     /**
      * Configure with a set of options. These are:
      * <TABLE>
@@ -213,13 +213,13 @@ public:
 
     //virtual bool read(ConnectionReader& connection);
 
-    virtual bool respond(const yarp::os::Bottle& command, 
+    virtual bool respond(const yarp::os::Bottle& command,
                          yarp::os::Bottle& reply);
 
     bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
         return getImage(image);
     }
-    
+
     bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
         return getImage(image);
     }
@@ -231,7 +231,7 @@ public:
     virtual bool getDatum(ImageRgbSound& imageSound) {
         return getDatum(imageSound.head,imageSound.body);
     }
-    
+
     virtual bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                           yarp::sig::Sound& sound) {
         return getAudioVisual(image,sound);
@@ -246,7 +246,7 @@ public:
         if (fgImageRaw==NULL) { return false; }
         return fgImageRaw->getImage(image);
     }
-    
+
     virtual bool getSound(yarp::sig::Sound& sound) {
         if (fgSound==NULL) { return false; }
         return fgSound->getSound(sound);
@@ -281,7 +281,7 @@ public:
     }
 
 // set
-	virtual bool setBrightness(double v) {
+    virtual bool setBrightness(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setBrightness(v);
     }
@@ -289,24 +289,24 @@ public:
     {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setExposure(v);
-    }	
-	virtual bool setSharpness(double v) {
+    }
+    virtual bool setSharpness(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setSharpness(v);
     }
-	virtual bool setWhiteBalance(double blue, double red) {
+    virtual bool setWhiteBalance(double blue, double red) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setWhiteBalance(blue,red);
     }
-	virtual bool setHue(double v) {
+    virtual bool setHue(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setHue(v);
-    }	
-	virtual bool setSaturation(double v) {
+    }
+    virtual bool setSaturation(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setSaturation(v);
     }
-	virtual bool setGamma(double v) {
+    virtual bool setGamma(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setGamma(v);
     }
@@ -322,7 +322,7 @@ public:
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setIris(v);
     }
-    
+
     /*
     virtual bool setTemperature(double v) {
         if (fgCtrl==NULL) { return false; }
@@ -344,15 +344,15 @@ public:
 
 // get
 
-	virtual double getBrightness() {
+    virtual double getBrightness() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getBrightness();
     }
-	virtual double getExposure() {
+    virtual double getExposure() {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->getExposure();
     }
-	virtual double getSharpness() {
+    virtual double getSharpness() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getSharpness();
     }
@@ -360,15 +360,15 @@ public:
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->getWhiteBalance(blue,red);
     }
-	virtual double getHue() {
+    virtual double getHue() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getHue();
-    }	
-	virtual double getSaturation() {
+    }
+    virtual double getSaturation() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getSaturation();
     }
-	virtual double getGamma() {
+    virtual double getGamma() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getGamma();
     }
@@ -384,7 +384,7 @@ public:
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getIris();
     }
-    
+
     /*
     virtual double getTemperature() const {
         if (fgCtrl==NULL) { return 0.0; }
@@ -402,7 +402,7 @@ public:
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->getCaptureQuality();
     }
-    */    
+    */
 
     virtual bool startService();
 

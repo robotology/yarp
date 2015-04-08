@@ -107,11 +107,10 @@ public:
         } else if (config.check("period",val,
                                 "period of test images in seconds")) {
             period = val->asDouble();
-            if(period<=0)
-			{
-				period =0;
-				freq = -1;
-			}
+            if(period<=0) {
+                period =0;
+                freq = -1;
+            }
         }
         mode = config.check("mode",
                             yarp::os::Value(VOCAB_LINE, true),
@@ -142,7 +141,7 @@ public:
                    yarp::os::Vocab::decode(mode).c_str());
         }
 
-		bx = w/2;
+        bx = w/2;
         by = h/2;
         return true;
     }
@@ -202,7 +201,7 @@ public:
         return false;
     }
     virtual bool setWhiteBalance(double blue, double red){
-	return false;
+        return false;
     }
     virtual bool setHue(double v) {
         return false;
@@ -234,9 +233,9 @@ public:
     }
     virtual bool getWhiteBalance(double &blue, double &red)
     {
-	red=0.0;
-	blue=0.0;
-	return true;
+        red=0.0;
+        blue=0.0;
+        return true;
     }
     virtual double getHue(){
         return 0.0;

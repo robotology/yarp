@@ -91,10 +91,10 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             // from Alessandro Scalzo
 
             static unsigned char r=128,g=128,b=128;
-            
+
             int ww = image.width();
             int hh = image.height();
-            
+
             if (ww>1&&hh>1) {
                 for (int x=0; x<ww; x++) {
                     for (int y=0; y<hh; y++) {
@@ -134,7 +134,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
 // -- in staticgrabber: first row GBGBGB, second row RGRGRG.
 // -- changed here to:  first row GRGRGR, second row BGBGBG.
 bool TestFrameGrabber::makeSimpleBayer(
-        ImageOf<PixelRgb>& img, 
+        ImageOf<PixelRgb>& img,
         ImageOf<PixelMono>& bayer) {
 
     bayer.resize(img.width(), img.height());
@@ -162,7 +162,7 @@ bool TestFrameGrabber::makeSimpleBayer(
                         *rd++ = row->r;
                         row++;
                         break;
-                }                
+                }
             }
 
             if ((i%2) == 1) {
@@ -178,7 +178,7 @@ bool TestFrameGrabber::makeSimpleBayer(
                         *rd++ = row->b;
                         row++;
                         break;
-                }                
+                }
             }
         }
     }
