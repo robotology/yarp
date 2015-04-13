@@ -149,6 +149,15 @@ AnalogPortEntry &AnalogPortEntry::operator =(const AnalogPortEntry &alt)
 // Constructor used when there is only one output port
 AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
 {
+    // init ROS struct
+    useROS          = ROS_disabled;
+    frame_id        = "";
+    rosNodeName     = "";
+    rosTopicName    = "";
+    rosNode         = NULL;
+    rosMsgCounter   = 0;
+
+    sensorId = "AnalogServer";
     createPort(name, rate);
 }
 
@@ -167,7 +176,16 @@ bool AnalogWrapper::createPort(const char* name, int rate)
 // Contructor used when one or more output ports are specified
 AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, int rate): RateThread(rate)
 {
-  createPorts(_analogPorts, rate);
+    // init ROS struct
+    useROS          = ROS_disabled;
+    frame_id        = "";
+    rosNodeName     = "";
+    rosTopicName    = "";
+    rosNode         = NULL;
+    rosMsgCounter   = 0;
+
+    sensorId = "AnalogServer";
+    createPorts(_analogPorts, rate);
 }
 bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts, int rate)
 {
@@ -335,21 +353,164 @@ bool AnalogWrapper::checkForDeprecatedParams(yarp::os::Searchable &params)
     return true;
 }
 
+
+bool AnalogWrapper::checkROSParams(Searchable &config)
+{
+    // check for ROS parameter group
+    if(!config.check("ROS") )
+    {
+        useROS = ROS_disabled;
+        yInfo()  << "No ROS group found in config file ... skipping ROS initialization.";
+        return true;
+    }
+
+    yInfo()  << "ROS group was FOUND in config file.";
+
+    Bottle &rosGroup = config.findGroup("ROS");
+    if(rosGroup.isNull())
+    {
+        yError() << sensorId << "ROS group params is not a valid group or empty";
+        useROS = ROS_config_error;
+        return false;
+    }
+
+    // check for useROS parameter
+    if(!rosGroup.check("useROS"))
+    {
+        yError() << sensorId << " cannot find useROS parameter, mandatory when using ROS message. \n \
+                    Allowed values are true, false, ROS_only";
+        useROS = ROS_config_error;
+        return false;
+    }
+    yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+    if(ros_use_type == "false")
+    {
+        yInfo() << sensorId << "useROS topic if set to 'false'";
+        useROS = ROS_disabled;
+        return true;
+    }
+    else if(ros_use_type == "true")
+    {
+        yInfo() << sensorId << "useROS topic if set to 'true'";
+        useROS = ROS_enabled;
+    }
+    else if(ros_use_type == "only")
+    {
+        yInfo() << sensorId << "useROS topic if set to 'only";
+        useROS = ROS_only;
+    }
+    else
+    {
+        yInfo() << sensorId << "useROS parameter is set to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+        useROS = ROS_config_error;
+        return false;
+    }
+
+    // check for ROS_nodeName parameter
+    if(!rosGroup.check("ROS_nodeName"))
+    {
+        yError() << sensorId << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+        useROS = ROS_config_error;
+        return false;
+    }
+    rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
+    yInfo() << sensorId << "rosNodeName is " << rosNodeName;
+
+    // check for ROS_topicName parameter
+    if(!rosGroup.check("ROS_topicName"))
+    {
+        yError() << sensorId << " cannot find ROS_topicName parameter, mandatory when using ROS message";
+        useROS = ROS_config_error;
+        return false;
+    }
+    rosTopicName = rosGroup.find("ROS_topicName").asString();
+    yInfo() << sensorId << "ROS_topicName is " << rosTopicName;
+
+    // check for frame_id parameter
+    if(!rosGroup.check("frame_id"))
+    {
+        yError() << sensorId << " cannot find frame_id parameter, mandatory when using ROS message";
+        useROS = ROS_config_error;
+        return false;
+    }
+    frame_id = rosGroup.find("frame_id").asString();
+    yInfo() << sensorId << "frame_id is " << frame_id;
+
+    // check for ROS_msgType parameter
+    if(!rosGroup.check("ROS_msgType"))
+    {
+        yError() << sensorId << " cannot find ROS_msgType parameter, mandatory when using ROS message";
+        useROS = ROS_config_error;
+        return false;
+    }
+    std::string rosMsgType = rosGroup.find("ROS_msgType").asString();
+    if(rosMsgType == "geometry_msgs/WrenchedStamped")
+    {
+        yInfo() << sensorId << "ROS_msgType is " << rosTopicName;
+    }
+    else
+    {
+        yError() << sensorId << "ROS_msgType '" << rosMsgType << "' not supported ";
+        return false;
+    }
+    return true;
+}
+
+bool AnalogWrapper::initialize_ROS()
+{
+    bool success = false;
+    switch(useROS)
+    {
+        case ROS_enabled:
+        case ROS_only:
+        {
+            rosNode = new yarp::os::Node(rosNodeName);   // add a ROS node
+
+            if(rosNode == NULL)
+            {
+                yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
+                success = false;
+                break;
+            }
+
+            if (!rosPublisherPort.topic(rosTopicName) )
+            {
+                yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
+                success = false;
+                break;
+            }
+            success = true;
+        } break;
+
+        case ROS_disabled:
+        {
+            yInfo() << sensorId << ": no ROS initialization required";
+            success = true;
+        } break;
+
+        case ROS_config_error:
+        {
+            yError() << sensorId << " ROS parameter are not correct, check your configuration file";
+            success = false;
+        } break;
+
+        default:
+        {
+            yError() << sensorId << " something went wrong with ROS configuration, we should never be here!!!";
+            success = false;
+        } break;
+    }
+    return success;
+}
+
 bool AnalogWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString().c_str());
 
-    bool correct=true;
-
-    // Verify minimum set of parameters required
-    streamingPortName.clear();
-    rpcPortName.clear();
-
     if (!config.check("name"))
     {
-        correct = checkForDeprecatedParams(config);
-        if(!correct)
+        if(!checkForDeprecatedParams(config))
         {
             yError() << "AnalogServer: missing 'name' parameter. Check you configuration file; it must be like:\n"
                         "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
@@ -361,86 +522,107 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
         setId("AnalogServer");
     }
 
-    if (params.check("period"))
+    if(!checkROSParams(config) )
     {
-        _rate = params.find("period").asInt();
-    }
-    else
-    {
-        _rate = DEFAULT_THREAD_PERIOD;
-         yInfo("AnalogWrapper: part %s using default period %d", sensorId.c_str() , _rate);
-    }
-
-    if(!correct)
+        yError() << sensorId << "ROS parameter are not correct, check your configuration file";
         return false;
-
-
-    // port names are optional, do not check for correctness.
-    if(!params.check("ports"))
-    {
-     // if there is no "ports" section open only 1 port and use name as is.
-        createPort((streamingPortName ).c_str(), _rate );
-        // since createPort always return true, check the port is really been opened is done here
-        if(! Network::exists(streamingPortName + "/rpc:i"))
-            return false;
     }
-    else
+
+    if(!initialize_ROS() )
     {
-        Bottle *ports=params.find("ports").asList();
+        yError() << sensorId << "Error initializing ROS topics";
+        return false;
+    }
 
-        Value &deviceChannels =  params.find("channels");
-        if (deviceChannels.isNull())
+    if(!initialize_YARP(config) )
+    {
+        yError() << sensorId << "Error initializing YARP ports";
+        return false;
+    }
+    return true;
+}
+
+bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
+{
+    switch(useROS)
+    {
+        case ROS_only:
         {
-            yError("AnalogWrapper: 'channels' parameters was not found in config file.");
-            return false;
-        }
+            yInfo() << sensorId << " No YARP initialization required";
+            return true;
+        } break;
 
-        int nports=ports->size();
-        int sumOfChannels = 0;
-        std::vector<AnalogPortEntry> tmpPorts;
-        tmpPorts.resize(nports);
-
-        for(int k=0; k<ports->size(); k++)
+        default:
         {
-            Bottle parameters=params.findGroup(ports->get(k).asString().c_str());
-
-            if (parameters.size()!=5)
+            // Create the list of ports
+            // port names are optional, do not check for correctness.
+            if(!params.check("ports"))
             {
-                yError() << "AnalogWrapper: check skin port parameters in part description, I was expecting "
-                         << ports->get(k).asString().c_str() << " followed by four integers";
-                   yError() << " your param is " << parameters.toString();
-                return false;
+             // if there is no "ports" section open only 1 port and use name as is.
+                createPort((streamingPortName ).c_str(), _rate );
+                // since createPort always return true, check the port is really been opened is done here
+                if(! Network::exists(streamingPortName + "/rpc:i"))
+                    return false;
             }
+            else
+            {
+                Bottle *ports=params.find("ports").asList();
 
-            int wBase=parameters.get(1).asInt();
-            int wTop=parameters.get(2).asInt();
-            int base=parameters.get(3).asInt();
-            int top=parameters.get(4).asInt();
+                Value &deviceChannels =  params.find("channels");
+                if (deviceChannels.isNull())
+                {
+                    yError("AnalogWrapper: 'channels' parameters was not found in config file.");
+                    return false;
+                }
 
-            yDebug()<<"--> "<<wBase<<" "<<wTop<<" "<<base<<" "<<top;
+                int nports=ports->size();
+                int sumOfChannels = 0;
+                std::vector<AnalogPortEntry> tmpPorts;
+                tmpPorts.resize(nports);
 
-            //check consistenty
-            if(wTop-wBase != top-base){
-                yError() << "AnalogWrapper: numbers of mapped taxels do not match, check "
-                         << ports->get(k).asString().c_str() << " port parameters in part description";
-                return false;
+                for(int k=0; k<ports->size(); k++)
+                {
+                    Bottle parameters=params.findGroup(ports->get(k).asString().c_str());
+
+                    if (parameters.size()!=5)
+                    {
+                        yError() << "AnalogWrapper: check skin port parameters in part description, I was expecting "
+                                 << ports->get(k).asString().c_str() << " followed by four integers";
+                           yError() << " your param is " << parameters.toString();
+                        return false;
+                    }
+
+                    int wBase=parameters.get(1).asInt();
+                    int wTop=parameters.get(2).asInt();
+                    int base=parameters.get(3).asInt();
+                    int top=parameters.get(4).asInt();
+
+                    yDebug()<<"--> "<<wBase<<" "<<wTop<<" "<<base<<" "<<top;
+
+                    //check consistenty
+                    if(wTop-wBase != top-base){
+                        yError() << "AnalogWrapper: numbers of mapped taxels do not match, check "
+                                 << ports->get(k).asString().c_str() << " port parameters in part description";
+                        return false;
+                    }
+                    int portChannels = top-base+1;
+
+                    tmpPorts[k].length = portChannels;
+                    tmpPorts[k].offset = wBase;
+                    yDebug() << "opening port " << ports->get(k).asString().c_str();
+                    tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString().c_str());
+
+                    createPorts(tmpPorts, _rate);
+                    sumOfChannels+=portChannels;
+                }
+
+                if (sumOfChannels!=deviceChannels.asInt())
+                {
+                    yError() << "AnalogWrapper: Total number of mapped taxels does not correspond to total taxels";
+                    return false;
+                }
             }
-            int portChannels = top-base+1;
-
-            tmpPorts[k].length = portChannels;
-            tmpPorts[k].offset = wBase;
-            yDebug() << "opening port " << ports->get(k).asString().c_str();
-            tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString().c_str());
-
-            createPorts(tmpPorts, _rate);
-            sumOfChannels+=portChannels;
-        }
-
-        if (sumOfChannels!=deviceChannels.asInt())
-        {
-            yError() << "AnalogWrapper: Total number of mapped taxels does not correspond to total taxels";
-            return false;
-        }
+        } break;
     }
     return true;
 }
@@ -466,27 +648,48 @@ void AnalogWrapper::run()
         {
             if (lastDataRead.size()>0)
             {
-                lastStateStamp.update();
-                // send the data on the port(s), splitting them as specified in the config file
-                for(unsigned int i=0; i<analogPorts.size(); i++)
+                if(useROS != ROS_only)
                 {
-                    yarp::sig::Vector &pv = analogPorts[i].port.prepare();
-                    first = analogPorts[i].offset;
-                    if(analogPorts[i].length==-1)   // read the max length available
-                        last = lastDataRead.size()-1;
-                    else
-                        last = analogPorts[i].offset + analogPorts[i].length - 1;
+                    lastStateStamp.update();
+                    // send the data on the port(s), splitting them as specified in the config file
+                    for(unsigned int i=0; i<analogPorts.size(); i++)
+                    {
+                        yarp::sig::Vector &pv = analogPorts[i].port.prepare();
+                        first = analogPorts[i].offset;
+                        if(analogPorts[i].length==-1)   // read the max length available
+                            last = lastDataRead.size()-1;
+                        else
+                            last = analogPorts[i].offset + analogPorts[i].length - 1;
 
-                    // check vector limit
-                    if(last>=(int)lastDataRead.size()){
-                        yError()<<"AnalogWrapper: error while sending analog sensor output on port "<< analogPorts[i].port_name
-                                <<" Vector size expected to be at least "<<last<<" whereas it is "<< lastDataRead.size();
-                        continue;
+                        // check vector limit
+                        if(last>=(int)lastDataRead.size()){
+                            yError()<<"AnalogWrapper: error while sending analog sensor output on port "<< analogPorts[i].port_name
+                                    <<" Vector size expected to be at least "<<last<<" whereas it is "<< lastDataRead.size();
+                            continue;
+                        }
+                        pv = lastDataRead.subVector(first, last);
+
+                        analogPorts[i].port.setEnvelope(lastStateStamp);
+                        analogPorts[i].port.write();
                     }
-                    pv = lastDataRead.subVector(first, last);
+                }
 
-                    analogPorts[i].port.setEnvelope(lastStateStamp);
-                    analogPorts[i].port.write();
+                if(useROS != ROS_disabled)
+                {
+                    geometry_msgs_WrenchStamped rosData;
+                    rosData.header.seq = rosMsgCounter++;
+                    rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                    rosData.header.frame_id = frame_id;
+
+                    rosData.wrench.force.x = lastDataRead[0];
+                    rosData.wrench.force.y = lastDataRead[1];
+                    rosData.wrench.force.z = lastDataRead[2];
+
+                    rosData.wrench.torque.x = lastDataRead[3];
+                    rosData.wrench.torque.y = lastDataRead[4];
+                    rosData.wrench.torque.z = lastDataRead[5];
+
+                    rosPublisherPort.write(rosData);
                 }
             }
             else

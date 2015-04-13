@@ -1,9 +1,22 @@
 // This is an automatically generated file.
 // Generated from this Header.msg definition:
-//   [roslib/Header]
+//   [std_msgs/Header]:
+//   # Standard metadata for higher-level stamped data types.
+//   # This is generally used to communicate timestamped data
+//   # in a particular coordinate frame.
+//   #
+//   # sequence ID: consecutively increasing ID
 //   uint32 seq
+//   #Two-integer timestamp that is expressed as:
+//   # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')
+//   # * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')
+//   # time-handling sugar is provided by the client library
 //   time stamp
+//   #Frame this data is associated with
+//   # 0: no frame
+//   # 1: global frame
 //   string frame_id
+//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -14,13 +27,16 @@
 #include <vector>
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <TickTime.h>
+#include "TickTime.h"
 
 class Header : public yarp::os::idl::WirePortable {
 public:
   yarp::os::NetUint32 seq;
   TickTime stamp;
   std::string frame_id;
+
+  Header() {
+  }
 
   bool readBare(yarp::os::ConnectionReader& connection) {
     // *** seq ***
@@ -99,9 +115,32 @@ public:
   typedef yarp::os::idl::BareStyle<Header> rosStyle;
   typedef yarp::os::idl::BottleStyle<Header> bottleStyle;
 
+  // Give source text for class, ROS will need this
+  yarp::os::ConstString getTypeText() {
+    return "# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+";
+  }
+
   // Name the class, ROS will need this
   yarp::os::Type getType() {
-    return yarp::os::Type::byName("Header");
+    yarp::os::Type typ = yarp::os::Type::byName("Header","Header");
+    typ.addProperty("md5sum",yarp::os::Value("2176decaecbce78abc3b96ef049fabed"));
+    typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
+    return typ;
   }
 };
 

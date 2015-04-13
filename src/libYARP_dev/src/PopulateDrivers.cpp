@@ -24,7 +24,6 @@
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/DevicePipe.h>
 #include <yarp/dev/DeviceGroup.h>
-#include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerSoundGrabber.h>
 #include <yarp/dev/TestMotor.h>
@@ -39,6 +38,7 @@ extern DriverCreator *createAnalogSensorClient();
 extern DriverCreator *createAnalogWrapper();
 extern DriverCreator *createControlBoardWrapper();
 extern DriverCreator *createVirtualAnalogWrapper();
+extern DriverCreator *createServerInertial();
 
 void Drivers::init() {
 
@@ -59,9 +59,7 @@ void Drivers::init() {
                                                            "yarp::dev::ServerFrameGrabber"));
 
 
-    add(new DriverCreatorOf<yarp::dev::ServerInertial>("inertial",
-                                                       "inertial",
-                                                       "yarp::dev::ServerInertial"));
+
 
     add(new DriverCreatorOf<yarp::dev::ServerSoundGrabber>("sound_grabber",
                                                            "sound_grabber",
@@ -75,6 +73,7 @@ void Drivers::init() {
                                                     "",
                                                     "yarp::dev::DeviceGroup"));
 
+    add(createServerInertial());
     add(createRemoteControlBoard());
     add(createServerControlBoard());
     add(createAnalogSensorClient());

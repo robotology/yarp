@@ -68,7 +68,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/RemoteFrameGrabber.h
                   include/yarp/dev/SerialInterfaces.h
                   include/yarp/dev/ServerFrameGrabber.h
-                  include/yarp/dev/ServerInertial.h
                   include/yarp/dev/ServerSerial.h
                   include/yarp/dev/ServerSoundGrabber.h
                   include/yarp/dev/ServiceInterfaces.h
@@ -125,10 +124,6 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
 add_subdirectory(src/modules/msgs)
 
-if(CBW2_USE_ROS_MSG)
-    message(STATUS "defining ROS_MSG")
-    add_definitions(-DROS_MSG)
-endif()
 
 # handle the source file for the controlboardwrapper2 device
 # the variable cbw2_core_srcs, cbw2_core_hrds, cbw2_core_incl_dirs will be set inside
@@ -138,12 +133,17 @@ add_subdirectory(src/modules/ControlBoardWrapper)
 # the variables rmc_core_srcs and rmc_core_hrds and rmc_core_incl_dirs will be set inside
 add_subdirectory(src/modules/RemoteControlBoard)
 
-
+# add controlboardwrapper2 and RemoteControlBoard devices
 set( YARP_devices_SRCS ${YARP_devices_SRCS} ${cbw2_core_srcs} ${rmc_core_srcs} ${cbw2_msgs_srcs})
-set( YARP_devices_HRDS ${YARP_devices_HRDS} ${cbw2_core_hrds} ${rmc_core_hrds} ${cbw2_msgs_hrds})
+set( YARP_devices_HDRS ${YARP_devices_HDRS} ${cbw2_core_hrds} ${rmc_core_hrds} ${cbw2_msgs_hrds})
+
+# add ServerInertial device
+add_subdirectory(src/modules/ServerInertial)
+set( YARP_devices_SRCS ${YARP_devices_SRCS} ${serverInertial_srcs} ${inertial_msgs_srcs})
+set( YARP_devices_HDRS ${YARP_devices_HDRS} ${serverInertial_hdrs} ${inertial_msgs_hdrs})
 
 #message(INFO "\n other_files is ${other_files}")
-include_directories(${cbw2_core_incl_dirs} ${rmc_core_incl_dirs} ${cbw2_msgs_incl_dirs})
+include_directories(${cbw2_core_incl_dirs} ${rmc_core_incl_dirs} ${cbw2_msgs_incl_dirs} ${serverInertial_incl_dirs})
 #message(STATUS "CMAKE_CURRENT_BINARY_DIR is ${CMAKE_CURRENT_BINARY_DIR} ||")
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/modules/ControlBoardWrapper/jointstate )
 

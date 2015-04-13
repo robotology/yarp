@@ -39,6 +39,31 @@ ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),
     top = 0;
     subDeviceOwned = NULL;
     _verb = false;
+
+    // init ROS data
+    rosNodeName = "";
+    rosTopicName = "";
+    rosNode = NULL;
+    rosMsgCounter = 0;
+    useROS = ROS_disabled;
+}
+
+void ControlBoardWrapper::cleanup_yarpPorts()
+{
+    //shut down control port
+    inputRPCPort.interrupt();
+    inputRPCPort.removeCallbackLock();
+    inputRPCPort.close();
+
+    inputStreamingPort.interrupt();
+    inputStreaming_buffer.detach();
+    inputStreamingPort.close();
+
+    outputPositionStatePort.interrupt();
+    outputPositionStatePort.close();
+
+    extendedOutputStatePort.interrupt();
+    extendedOutputStatePort.close();
 }
 
 ControlBoardWrapper::~ControlBoardWrapper() { }
@@ -53,19 +78,16 @@ bool ControlBoardWrapper::close()
         yarp::os::RateThread::stop();
     }
 
-    //shut down control port
-    outputPositionStatePort.close();
-    extendedOutputStatePort.close();
-    inputStreamingPort.close();
-    inputRPCPort.close();
+    if(useROS != ROS_only)
+    {
+        cleanup_yarpPorts();
+    }
 
-#if defined(ROS_MSG)
     if(rosNode != NULL)
     {
         delete rosNode;
         rosNode = NULL;
     }
-#endif
 
     //if we own a deviced we have to close and delete it
     if (ownDevices)
@@ -82,7 +104,6 @@ bool ControlBoardWrapper::close()
     {
         detachAll();
     }
-
     return true;
 }
 
@@ -132,6 +153,242 @@ bool ControlBoardWrapper::checkPortName(Searchable &params)
 
     return true;
 }
+
+bool ControlBoardWrapper::checkROSParams(Searchable &config)
+{
+    // check for ROS parameter group
+    if(!config.check("ROS") )
+    {
+        useROS = ROS_disabled;
+        yInfo()  << "No ROS group found in config file ... skipping ROS initialization.";
+        return true;
+    }
+    else
+    {
+        yInfo()  << "ROS group was FOUND in config file.";
+
+        Bottle &rosGroup = config.findGroup("ROS");
+        if(rosGroup.isNull())
+        {
+            yError() << partName << "ROS group params is not a valid group or empty";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        // check for useROS parameter
+        if(!rosGroup.check("useROS"))
+        {
+            yError() << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
+                        Allowed values are true, false, ROS_only";
+            useROS = ROS_config_error;
+            return false;
+        }
+        yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+        if(ros_use_type == "false")
+        {
+            yInfo() << partName << "useROS topic if set to 'false'";
+            useROS = ROS_disabled;
+            return true;
+        }
+        else if(ros_use_type == "true")
+        {
+            yInfo() << partName << "useROS topic if set to 'true'";
+            useROS = ROS_enabled;
+        }
+        else if(ros_use_type == "only")
+        {
+            yInfo() << partName << "useROS topic if set to 'only";
+            useROS = ROS_only;
+        }
+        else
+        {
+            yInfo() << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        // check for ROS_nodeName parameter
+        if(!rosGroup.check("ROS_nodeName"))
+        {
+            yError() << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+            useROS = ROS_config_error;
+            return false;
+        }
+        rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
+        yInfo() << partName << "rosNodeName is " << rosNodeName;
+
+        // check for ROS_topicName parameter
+        if(!rosGroup.check("ROS_topicName"))
+        {
+            yError() << partName << " cannot find rosTopicName parameter, mandatory when using ROS message";
+            useROS = ROS_config_error;
+            return false;
+        }
+        rosTopicName = rosGroup.find("ROS_topicName").asString();
+        yInfo() << partName << "rosTopicName is " << rosTopicName;
+
+        // check for rosNodeName parameter
+        if(!rosGroup.check("jointNames"))
+        {
+            yError() << partName << " cannot find jointNames parameter, mandatory when using ROS message";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        Bottle nameList = rosGroup.findGroup("jointNames").tail();
+
+        if (nameList.isNull())
+        {
+            yError() << partName << " jointNames not found\n";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        if(nameList.size() != controlledJoints)
+        {
+            yError() << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected lenght is " << controlledJoints;
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        jointNames.clear();
+        for(int i=0; i<controlledJoints; i++)
+        {
+            jointNames.push_back(nameList.get(i).toString());
+        }
+        return true;
+    }
+    yError() << partName << "should never get here!" << __LINE__;
+    return false;  // should never get here
+}
+
+bool ControlBoardWrapper::initialize_ROS()
+{
+    bool success = false;
+    switch(useROS)
+    {
+        case ROS_enabled:
+        case ROS_only:
+        {
+            rosNode = new yarp::os::Node(rosNodeName);   // add a ROS node
+
+            if(rosNode == NULL)
+            {
+                yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
+                success = false;
+                break;
+            }
+
+            if (!rosPublisherPort.topic(rosTopicName) )
+            {
+                yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
+                success = false;
+                break;
+            }
+            success = true;
+        } break;
+
+        case ROS_disabled:
+        {
+            yInfo() << partName << ": no ROS initialization required";
+            success = true;
+        } break;
+
+        case ROS_config_error:
+        {
+            yError() << partName << " ROS parameter are not correct, check your configuration file";
+            success = false;
+        } break;
+
+        default:
+        {
+            yError() << partName << " something went wrong with ROS configuration, we should never be here!!!";
+            success = false;
+        } break;
+    }
+    return success;
+}
+
+bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable &prop)
+{
+    bool success = false;
+
+    switch(useROS)
+    {
+        case ROS_only:
+        {
+            yInfo() << partName << " No YARP initialization required";
+            success = true;
+        } break;
+
+        default:
+        {
+            yInfo() << partName << " initting YARP initialization";
+            // initialize callback
+            if (!streaming_parser.initialize())
+            {
+                yError() <<"Error could not initialize callback object";
+                success = false;
+                break;
+            }
+
+            rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
+            partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
+            rootName+=(partName);
+            if( rootName.find("//") != std::string::npos )
+            {
+                rootName.replace(rootName.find("//"), 2, "/");
+            }
+
+            ///// We now open ports, then attach the readers or callbacks
+            if(! inputRPCPort.open((rootName+"/rpc:i")) )
+            {
+                yError() <<"Error opening port "<< rootName+"/rpc:i\n";
+                success = false;
+                break;
+            }
+            inputRPCPort.setReader(RPC_parser);
+            inputRPC_buffer.attach(inputRPCPort);
+            RPC_parser.attach(inputRPC_buffer);
+
+            if(!inputStreamingPort.open(rootName+"/command:i") )
+            {
+                yError() <<"Error opening port "<< rootName+"/rpc:i\n";
+                success = false;
+                break;
+            }
+
+            // attach callback.
+            inputStreaming_buffer.attach(inputStreamingPort);
+            inputStreaming_buffer.useCallback(streaming_parser);
+
+            if(!outputPositionStatePort.open((rootName+"/state:o").c_str()) )
+            {
+                yError() <<"Error opening port "<< rootName+"/state:o\n";
+                success = false;
+                break;
+            }
+
+            // new extended output state port
+            if(!extendedOutputStatePort.open(rootName+"/stateExt:o") )
+            {
+                yError() <<"Error opening port "<< rootName+"/state:o\n";
+                success = false;
+                break;
+            }
+            extendedOutputState_buffer.attach(extendedOutputStatePort);
+            success = true;
+        } break;
+    }  // end switch
+
+    // cleanup if something went wrong
+    if(!success)
+    {
+        cleanup_yarpPorts();
+    }
+    return success;
+}
+
 
 bool ControlBoardWrapper::open(Searchable& config)
 {
@@ -226,49 +483,26 @@ bool ControlBoardWrapper::open(Searchable& config)
         return false;
     }
 
-    // initialize callback
-    if (!streaming_parser.initialize())
+    /* This must be after the openAndAttachSubDevic e/ openDeferredAttach pair in order to have the correct number of controlledJoints,
+        but before the initialize_ROS and initialize_YARP */
+    if(!checkROSParams(config) )
     {
-        yError() <<"Error could not initialize callback object";
+        yError() << partName << " ROS parameter are not correct, check your configuration file";
         return false;
     }
 
-    // attach readers.
-    // inputRPCPort.setReader(RPC_parser);
-    // changed so that streaming input accepted if offered
-    inputRPC_buffer.attach(inputRPCPort);
-    RPC_parser.attach(inputRPC_buffer);
-
-    // attach buffers.
-    inputStreaming_buffer.attach(inputStreamingPort);
-
-
-
-    ///// We now open ports
-    inputRPCPort.open((rootName+"/rpc:i").c_str());
-    inputStreamingPort.open((rootName+"/command:i").c_str());
-    // attach callback.
-    inputStreaming_buffer.useCallback(streaming_parser);
-
-    if(!outputPositionStatePort.open((rootName+"/state:o").c_str()) )
+    // call ROS node/topic initilization, if needed
+    if(!initialize_ROS() )
     {
-        yError() <<"Error opening port "<< rootName+"/state:o\n";
         return false;
     }
 
-    // new extended output state port
-    extendedOutputState_buffer.attach(extendedOutputStatePort);
-    extendedOutputStatePort.open((rootName+"/stateExt:o").c_str());
-
-#ifdef ROS_MSG
-    rosNode = new yarp::os::Node( (rootName+"/rosPublisher").c_str());   // add a ROS node
-
-    if (!rosPublisherPort.topic(rootName+"/ROS_jointState" ) )
+    // call YARP port initilization, if needed
+    if(!initialize_YARP(prop) )
     {
-        yError() << " opening " << (rootName+"/ROS_jointState").c_str() << " port, check your yarp network\n";
+        yError() << partName << "Something wrong when initting yarp ports";
         return false;
     }
-#endif
 
     // In case attach is not deferred and the controlboard already owns a valid device
     // we can start the thread. Otherwise this will happen when attachAll is called
@@ -550,14 +784,16 @@ bool ControlBoardWrapper::detachAll()
 
 void ControlBoardWrapper::run()
 {
-    yarp::sig::Vector& v = outputPositionStatePort.prepare();
-    v.size(controlledJoints);
+    if(useROS != ROS_only)
+    {
+        yarp::sig::Vector& v = outputPositionStatePort.prepare();
+        v.size(controlledJoints);
 
-    //getEncoders for all subdevices
-    double *joint_encoders=v.data();
-    double joint_timeStamp=0.0;
+        //getEncoders for all subdevices
+        double *joint_encoders=v.data();
+        double joint_timeStamp=0.0;
 
-    for(unsigned int k=0;k<device.subdevices.size();k++)
+        for(unsigned int k=0;k<device.subdevices.size();k++)
         {
             int axes=device.subdevices[k].axes;
 
@@ -572,62 +808,64 @@ void ControlBoardWrapper::run()
             joint_encoders+=device.subdevices[k].axes; //jump to next group
         }
 
-    timeMutex.wait();
-    time.update(joint_timeStamp/controlledJoints);
-    timeMutex.post();
+        joint_timeStamp =  yarp::os::Time::now();
+        timeMutex.wait();
+        time.update(joint_timeStamp/controlledJoints);
+        timeMutex.post();
 
-    outputPositionStatePort.setEnvelope(time);
-    outputPositionStatePort.write();
+        outputPositionStatePort.setEnvelope(time);
+        outputPositionStatePort.write();
 
-    jointData &yarp_struct = extendedOutputState_buffer.get();
+        jointData &yarp_struct = extendedOutputState_buffer.get();
 
-    yarp_struct.jointPosition.resize(controlledJoints);
-    yarp_struct.jointVelocity.resize(controlledJoints);
-    yarp_struct.jointAcceleration.resize(controlledJoints);
-      yarp_struct.motorPosition.resize(controlledJoints);
-      yarp_struct.motorVelocity.resize(controlledJoints);
-      yarp_struct.motorAcceleration.resize(controlledJoints);
-    yarp_struct.torque.resize(controlledJoints);
-    yarp_struct.pidOutput.resize(controlledJoints);
-    yarp_struct.controlMode.resize(controlledJoints);
-    yarp_struct.interactionMode.resize(controlledJoints);
+        yarp_struct.jointPosition.resize(controlledJoints);
+        yarp_struct.jointVelocity.resize(controlledJoints);
+        yarp_struct.jointAcceleration.resize(controlledJoints);
+        yarp_struct.motorPosition.resize(controlledJoints);
+        yarp_struct.motorVelocity.resize(controlledJoints);
+        yarp_struct.motorAcceleration.resize(controlledJoints);
+        yarp_struct.torque.resize(controlledJoints);
+        yarp_struct.pidOutput.resize(controlledJoints);
+        yarp_struct.controlMode.resize(controlledJoints);
+        yarp_struct.interactionMode.resize(controlledJoints);
 
-    getEncoders(yarp_struct.jointPosition.data());
-    getEncoderSpeeds(yarp_struct.jointVelocity.data());
-    getEncoderAccelerations(yarp_struct.jointAcceleration.data());
-    getMotorEncoders(yarp_struct.motorPosition.data());
-    getMotorEncoderSpeeds(yarp_struct.motorVelocity.data());
-    getMotorEncoderAccelerations(yarp_struct.motorAcceleration.data());
-    getTorques(yarp_struct.torque.data());
-    getOutputs(yarp_struct.pidOutput.data());
-    getControlModes(yarp_struct.controlMode.data());
-    getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.data());
+        getEncoders(yarp_struct.jointPosition.data());
+        getEncoderSpeeds(yarp_struct.jointVelocity.data());
+        getEncoderAccelerations(yarp_struct.jointAcceleration.data());
+        getMotorEncoders(yarp_struct.motorPosition.data());
+        getMotorEncoderSpeeds(yarp_struct.motorVelocity.data());
+        getMotorEncoderAccelerations(yarp_struct.motorAcceleration.data());
+        getTorques(yarp_struct.torque.data());
+        getOutputs(yarp_struct.pidOutput.data());
+        getControlModes(yarp_struct.controlMode.data());
+        getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.data());
 
-    extendedOutputStatePort.setEnvelope(time);
-    extendedOutputState_buffer.write();
-
-#if defined(ROS_MSG)
-    jointState ros_struct;
-
-    ros_struct.name.resize(controlledJoints);
-    ros_struct.position.resize(controlledJoints);
-    ros_struct.velocity.resize(controlledJoints);
-    ros_struct.effort.resize(controlledJoints);
-
-    getEncoders(ros_struct.position.data());
-    getEncoderSpeeds(ros_struct.velocity.data());
-    getTorques(ros_struct.effort.data());
-
-    for(int i=0; i<controlledJoints; i++)
-    {
-        std::stringstream ss;
-        ss << " rosNameTest " << i;
-
-        ros_struct.name[i] = std::string(ss.str() );
+        extendedOutputStatePort.setEnvelope(time);
+        extendedOutputState_buffer.write();
     }
 
-    rosPublisherPort.write(ros_struct);
-#endif
+    if(useROS != ROS_disabled)
+    {
+        sensor_msgs_JointState ros_struct;
+
+        ros_struct.name.resize(controlledJoints);
+        ros_struct.position.resize(controlledJoints);
+        ros_struct.velocity.resize(controlledJoints);
+        ros_struct.effort.resize(controlledJoints);
+
+        getEncoders(ros_struct.position.data());
+        getEncoderSpeeds(ros_struct.velocity.data());
+        getTorques(ros_struct.effort.data());
+
+        convertDegreesToRadians(ros_struct.position);
+        convertDegreesToRadians(ros_struct.velocity);
+        ros_struct.name=jointNames;
+
+        ros_struct.header.seq = rosMsgCounter++;
+        ros_struct.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+
+        rosPublisherPort.write(ros_struct);
+    }
 }
 
 //

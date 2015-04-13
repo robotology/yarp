@@ -33,28 +33,21 @@
 #include <string>
 #include <vector>
 
-//#define ROS_MSG
-////#undef  ROS_MSG
-
-#include "jointData.h"
-
-#ifdef ROS_MSG
-#include "jointState.h"
-#endif
+#include <jointData.h>           // struct for YARP extended port
 
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
 #include "SubDevice.h"
 
 // ROS state publisher
+#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-
+#include <sensor_msgs_JointState.h>  // Defines ROS jointState msg; it already includes TickTime and Header
 
 #ifdef MSVC
     #pragma warning(disable:4355)
 #endif
-
 
 #define PROTOCOL_VERSION_MAJOR 1
 #define PROTOCOL_VERSION_MINOR 2
@@ -107,10 +100,16 @@ enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEV
  * | subdevice      |      -         | string  | -              |   -           | alternative to netwok group | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
  * | networks       |      -         | group   | -              |   -           | alternative to subdevice    | this is expected to be a group parameter in xml format, a list in .ini file format. SubParameter are mandatory if this is used| - |
  * | -              | networkName_1  | 4 * int | joint number   |   -           |   if networks is used       | describe how to match subdevice_1 joints with the wrapper joints. First 2 numbers indicate first/last wrapper joint, last 2 numbers are subdevice first/last joint | The joints are intended to be consequent |
- * | -              |      ...       | 4 * int | joint number   |   -           |   if networks is used       | describe how to match subdevice_1 joints with the wrapper joints. First 2 numbers indicate first/last wrapper joint, last 2 numbers are subdevice first/last joint | The joints are intended to be consequent |
- * | -              | networkName_n  | 4 * int | joint number   |   -           |   if networks is used       | describe how to match subdevice_1 joints with the wrapper joints. First 2 numbers indicate first/last wrapper joint, last 2 numbers are subdevice first/last joint | The joints are intended to be consequent |
+ * | -              |      ...       | 4 * int | joint number   |   -           |   if networks is used       | same as above                                                     | The joints are intended to be consequent |
+ * | -              | networkName_n  | 4 * int | joint number   |   -           |   if networks is used       | same as above                                                     | The joints are intended to be consequent |
  * | -              | joints         |  int    |  -             |   -           |   if networks is used       | total number of joints handled by the wrapper                     | MUST match the sum of joints from all the networks |
+ * | ROS            |      -         | group   |  -             |   -           | No                          | Group containing parameter for ROS topic initialization           | if missing, it is assumed to not use ROS topics |
+ * |   -            |  useROS        | string  | true/false/only|   -           |  if ROS group is present    | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
+ * |   -            |  ROS_TopicName | string  |  -             |   -           |  if ROS group is present    | set the name for ROS topic                                        | must start with a leading '/' |
+ * |   -            |  ROS_nodeName  | string  |  -             |   -           |  if ROS group is present    | set the name for ROS node                                         | must start with a leading '/' |
+ * |   -            |  jointNames    | string  |  -             |   -           |  if ROS group is present    | name of the joints to be used in ROS message                      | names order must match with the joint order, from 0 to N |
  *
+ * ROS message type used is sensor_msgs/JointState.msg (http://docs.ros.org/api/sensor_msgs/html/msg/JointState.html)
  * Some example of configuration files:
  *
  * Configuration file using .ini format, using subdevice keyword.
@@ -130,13 +129,13 @@ enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEV
  * \code{.xml}
  * <paramlist name="networks">
  *   <!-- elem name hereafter are custom names that live only in this file, they are used in the attach phase -->
- *   <elem name="FirstSetOfJoints">  0  3  0  3 </elem>
- *   <elem name="SecondSetOfJoints"> 4 15  0 11 </elem>
+ *   <elem name="FirstSetOfJoints">  0  3  0  3  </elem>
+ *   <elem name="SecondSetOfJoints"> 4  6  0  2  </elem>
  * </paramlist>
  *
  * <param name="period"> 20                 </param>
  * <param name="name">   /icub/left_arm     </param>
- * <param name="joints"> 16                 </param>
+ * <param name="joints"> 7                  </param>
  *
  *
  *  <!-- Following parameters are meaningful ONLY for robotInterface -->
@@ -158,8 +157,27 @@ enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEV
  *  period 10
  *  networks (net_larm net_lhand)
  *  joints 16
- *  net_larm    0 7  0 7
- *  net_lhand   8 15 0 7
+ *  net_larm    0 3  0 3
+ *  net_lhand   4 6  0 2
+ * \endcode
+ *
+ * Configuration for ROS topic using .ini format
+ * \code{.unparsed}
+ * [ROS]
+ * useROS         true
+ * ROS_topicName  /JointState
+ * ROS_nodeName   /robotPublisher
+ * jointNames     r_shoulder_pitch r_shoulder_roll r_shoulder_yaw r_elbow r_wrist_prosup r_wrist_pitch r_wrist_yaw
+ * \endcode
+ *
+ * Configuration for ROS topic using .xml format
+ * \code{.unparsed}
+ * <group name="ROS">
+ *     <param name="useROS">         true             </param>    // use 'only' if you want only ROS topic and NOT yarp port
+ *     <param name="ROS_topicName">  /JointState      </param>
+ *     <param name="ROS_nodeName">   /robotPublisher  </param>
+ *     <param name="jointNames">     r_shoulder_pitch r_shoulder_roll r_shoulder_yaw r_elbow r_wrist_prosup r_wrist_pitch r_wrist_yaw </param>
+ * </group>
  * \endcode
  */
 
@@ -204,14 +222,15 @@ private:
     yarp::os::PortWriterBuffer<jointData>           extendedOutputState_buffer;
     yarp::os::Port extendedOutputStatePort;         // Port /stateExt:o streaming out the struct with the robot data
 
-
-#if defined(ROS_MSG)
     // ROS state publisher
-    yarp::os::Node                                  *rosNode;                   // add a ROS node
-    yarp::os::PortWriterBuffer<jointState>          rosOutputState_buffer;      // Buffer associated to the ROS topic
-    yarp::os::Publisher<jointState>                 rosPublisherPort;           // Dedicated ROS topic publisher
-#endif
-
+    ROSTopicUsageType                                   useROS;                     // decide if open ROS topic or not
+    std::vector<std::string>                            jointNames;                 // name of the joints
+    std::string                                         rosNodeName;                // name of the rosNode
+    std::string                                         rosTopicName;               // name of the rosTopic
+    yarp::os::Node                                      *rosNode;                   // add a ROS node
+    yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
+    yarp::os::PortWriterBuffer<sensor_msgs_JointState>  rosOutputState_buffer;      // Buffer associated to the ROS topic
+    yarp::os::Publisher<sensor_msgs_JointState>         rosPublisherPort;           // Dedicated ROS topic publisher
 
     yarp::os::PortReaderBuffer<CommandMessage>      inputStreaming_buffer;          // Buffer associated to the inputStreamingPort port
     yarp::os::PortReaderBuffer<yarp::os::Bottle>    inputRPC_buffer;                // Buffer associated to the inputRPCPort port
@@ -228,6 +247,10 @@ private:
     bool              _verb;        // make it work and propagate to subdevice if --subdevice option is used
 
     yarp::os::Bottle getOptions();
+    bool checkROSParams(yarp::os::Searchable &config);
+    bool initialize_ROS();
+    bool initialize_YARP(yarp::os::Searchable &prop);
+    void cleanup_yarpPorts();
 
     // Default usage
     // Open the wrapper only, the attach method needs to be called before using it
