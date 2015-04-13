@@ -29,8 +29,6 @@
 #include<yarp/dev/PolyDriver.h>
 #include<yarp/dev/RemoteFrameGrabber.h>
 #include<yarp/dev/ServerFrameGrabber.h>
-#include<yarp/dev/ServerInertial.h>
-//#include<yarp/dev/ServerSerial.h>
 #include<yarp/dev/ServerSoundGrabber.h>
 #include<yarp/dev/ServiceInterfaces.h>
 #include<yarp/dev/TestFrameGrabber.h>
