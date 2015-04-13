@@ -89,16 +89,26 @@ bool StateExtendedInputPort::getLast(int j, jointData &data, Stamp &stamp, doubl
     bool ret=valid;
     if (ret)
     {
-        data.jointPosition[0]        = last.jointPosition[j];
-        data.jointVelocity[0]        = last.jointVelocity[j];
-        data.jointAcceleration[0]    = last.jointAcceleration[j];
-        data.motorPosition[0]        = last.motorPosition[j];
-        data.motorVelocity[0]        = last.motorVelocity[j];
-        data.motorAcceleration[0]    = last.motorAcceleration[j];
-        data.torque[0]          = last.torque[j];
-        data.pidOutput[0]       = last.pidOutput[j];
-        data.controlMode[0]     = last.controlMode[j];
-        data.interactionMode[0] = last.interactionMode[j];
+        data.jointPosition[0]           = last.jointPosition[j];
+        data.jointPosition_isValid      = last.jointPosition_isValid;
+        data.jointVelocity[0]           = last.jointVelocity[j];
+        data.jointVelocity_isValid      = last.jointVelocity_isValid;
+        data.jointAcceleration[0]       = last.jointAcceleration[j];
+        data.jointAcceleration_isValid  = last.jointAcceleration_isValid;
+        data.motorPosition[0]           = last.motorPosition[j];
+        data.motorPosition_isValid      = last.motorPosition_isValid;
+        data.motorVelocity[0]           = last.motorVelocity[j];
+        data.motorVelocity_isValid      = last.motorVelocity_isValid;
+        data.motorAcceleration[0]       = last.motorAcceleration[j];
+        data.motorAcceleration_isValid  = last.motorAcceleration_isValid;
+        data.torque[0]                  = last.torque[j];
+        data.torque_isValid             = last.torque_isValid;
+        data.pidOutput[0]               = last.pidOutput[j];
+        data.pidOutput_isValid          = last.pidOutput_isValid;
+        data.controlMode[0]             = last.controlMode[j];
+        data.controlMode_isValid        = last.controlMode_isValid;
+        data.interactionMode[0]         = last.interactionMode[j];
+        data.interactionMode_isValid    = last.interactionMode_isValid;
 
         stamp=lastStamp;
         localArrivalTime=now;
