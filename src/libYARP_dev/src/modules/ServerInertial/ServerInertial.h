@@ -40,8 +40,8 @@ namespace yarp
 
 /**
  *  @ingroup yarp_dev_modules
- *  \defgroup serverInertial serverInertial
- *
+ * @defgroup serverInertial serverInertial
+ * @{
  * Export an inertial sensor.
  * The network interface is a single Port.
  * We will stream bottles with 12 floats:
@@ -144,12 +144,7 @@ public:
     virtual ~ServerInertial();
 
     /**
-     * Configure with a set of options. These are:
-     * <TABLE>
-     * <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "test_grabber"). </TD></TR>
-     * <TR><TD> name </TD><TD> Port name to assign to this server (default /grabber). </TD></TR>
-     * </TABLE>
-     *
+     * Open the device driver.
      * @param config The options to use
      * @return true iff the object could be configured.
      */
@@ -169,6 +164,8 @@ public:
 
     virtual bool calibrate(int ch, double v);
 };
+
+/// @}
 
 #endif
 

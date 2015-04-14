@@ -60,7 +60,7 @@ namespace yarp{
 /**
  *  @ingroup yarp_dev_modules
  *  \defgroup analogServer analogServer
- *
+ *  @{
  *
  *  It reads the data from an analog sensor and sends them on one or more ports.
  *  It creates one rpc port and its related handler for every output port..
@@ -185,6 +185,10 @@ private:
     bool checkForDeprecatedParams(yarp::os::Searchable &params);
 };
 
+/**@} */
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /**
   * Handler of the rpc port related to an analog sensor.
   * Manage the calibration command received on the rpc port.
@@ -222,7 +226,7 @@ public:
     AnalogPortEntry(const AnalogPortEntry &alt);
     AnalogPortEntry &operator =(const AnalogPortEntry &alt);
 };
-
+#endif
 
 
 #endif
