@@ -138,10 +138,10 @@ bool Ready::checkResources(void)
 
             if(!compareString(reply, (*itr).getReply())) {
                 OSTRINGSTREAM msg;
-                msg<<"received wrong reply from resource "<<(*itr).getPort();
+                msg<<"waiting for the expected reply from resource "<<(*itr).getPort();
                 msg<<" for request "<<(*itr).getRequest();
                 msg<<". (expected="<<(*itr).getReply()<<", received="<<reply<<")";
-                ErrorLogger::Instance()->addError(msg);
+                ErrorLogger::Instance()->addWarning(msg);
                 return false;
             }
         }
