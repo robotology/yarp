@@ -129,7 +129,6 @@ private:
     yarp::os::Node                                      *rosNode;                   // add a ROS node
     yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
     yarp::os::Publisher<sensor_msgs_Imu>                rosPublisherPort;           // Dedicated ROS topic publisher
-//    sensor_msgs_Imu                                     rosData;                    // store imu data in ROS format to be published
     std::vector<yarp::os::NetFloat64>                   covariance;                 // empty matrix to store covariance data needed by ROS msg
 
     bool checkROSParams(yarp::os::Searchable &config);
