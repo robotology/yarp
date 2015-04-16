@@ -273,13 +273,14 @@ void JointItem::setEnabledOptions(bool debug_param_enabled,
     }
 
     if(!position_direct_enabled){
-        ui->stackedWidget->removeWidget(ui->stackedWidget->widget(POSITION_DIR));
-        ui->comboMode->removeItem(POSITION_DIR);
-        POSITION_DIR = -1;
-        MIXED--;
-        VELOCITY--;
-        TORQUE--;
-        OPENLOOP--;
+        ui->stackedWidget->widget(POSITION_DIR)->setEnabled(false);
+//        ui->stackedWidget->removeWidget(ui->stackedWidget->widget(POSITION_DIR));
+//        ui->comboMode->removeItem(POSITION_DIR);
+//        POSITION_DIR = -1;
+//        MIXED--;
+//        VELOCITY--;
+//        TORQUE--;
+//        OPENLOOP--;
     }
 
     if(!openloop_enabled){

@@ -110,13 +110,13 @@ MainWindow::MainWindow(QWidget *parent) :
     partToolBar->addWidget(partName)->setCheckable(false);
 
     partToolBar->addSeparator();
-    QAction *openSequenceAction     = partToolBar->addAction(QIcon(":/file-new.svg"),"Open Sequence Tab");
+    openSequenceAction     = partToolBar->addAction(QIcon(":/file-new.svg"),"Open Sequence Tab");
     partToolBar->addSeparator();
-    QAction *runAll                 = partToolBar->addAction(QIcon(":/play.svg"),"Run All");
-    QAction *calibAll               = partToolBar->addAction(QIcon(":/images/calibrate.png"),"Calibrate All");
-    QAction *homeAll                = partToolBar->addAction(QIcon(":/home.svg"),"Home All");
+    runAll                 = partToolBar->addAction(QIcon(":/play.svg"),"Run All");
+    calibAll               = partToolBar->addAction(QIcon(":/images/calibrate.png"),"Calibrate All");
+    homeAll                = partToolBar->addAction(QIcon(":/home.svg"),"Home All");
     partToolBar->addSeparator();
-    QAction *idleAll                = partToolBar->addAction(QIcon(":/idle.svg"),"Idle All");
+    idleAll                = partToolBar->addAction(QIcon(":/idle.svg"),"Idle All");
     addToolBar(partToolBar);
 
     currentPartMenu = ui->menuBar->addMenu("Current Part: ");
@@ -313,6 +313,9 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
 
     tabPanel = new QTabWidget(ui->mainContainer);
 
+    if(!enable_calib_all){
+        calibAll->setEnabled(false);
+    }
 
 
     int errorCount = 0;

@@ -65,6 +65,11 @@ private:
     QAction *stopAllSeq;
     QAction *runAllParts;
     QAction *homeAllParts;
+    QAction *openSequenceAction;
+    QAction *runAll;
+    QAction *calibAll;
+    QAction *homeAll;
+    QAction *idleAll;
 
 private:
     void updateModesTree(PartItem *part);

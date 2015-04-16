@@ -706,7 +706,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
         break;
     }
     case JointItem::PositionDirect:{
-        if(positionDirectEnabled){
+        //if(positionDirectEnabled){
             LOG_ERROR("joint: %d in POSITION DIRECT mode!\n", jointIndex);
             if(ctrlmode2){
                 ctrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION_DIRECT);
@@ -714,7 +714,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
                 LOG_ERROR("ERROR: cannot do!");
             }
             break;
-        }/*else{
+        /*}else{
             LOG_ERROR("joint: %d in MIXED mode!\n", jointIndex);
             if(ctrlmode2){
                 ctrlmode2->setControlMode(jointIndex, VOCAB_CM_MIXED);
