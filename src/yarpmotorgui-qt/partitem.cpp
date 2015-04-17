@@ -872,7 +872,7 @@ bool PartItem::checkAndHomeAll()
 {
     QString zero = QString("%1_zero").arg(partName);
 
-    if (finder->isNull() && !finder->findGroup(zero.toLatin1().data()).isNull()){
+    if (!finder->isNull() && !finder->findGroup(zero.toLatin1().data()).isNull()){
         homeAll();
         return true;
     }
