@@ -15,6 +15,7 @@
 #include <cmath>
 
 #include <QDebug>
+#include <QKeyEvent>
 
 JointItem::JointItem(int index,QWidget *parent) :
     QWidget(parent),
@@ -46,25 +47,34 @@ JointItem::JointItem(int index,QWidget *parent) :
     connect(ui->comboMode,SIGNAL(currentIndexChanged(int)),this,SLOT(onModeChanged(int)));
     connect(ui->comboInteraction,SIGNAL(currentIndexChanged(int)),this,SLOT(onInteractionChanged(int)));
 
+    ui->sliderPositionPosition->installEventFilter(this);
     connect(ui->sliderPositionPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
     connect(ui->sliderPositionPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
 
+    ui->sliderTorqueTorque->installEventFilter(this);
     connect(ui->sliderTorqueTorque,SIGNAL(sliderPressed()),this,SLOT(onSliderTorquePressed()));
     connect(ui->sliderTorqueTorque,SIGNAL(sliderReleased()),this,SLOT(onSliderTorqueReleased()));
 
+    ui->sliderOpenloopOutput->installEventFilter(this);
     connect(ui->sliderOpenloopOutput,SIGNAL(sliderPressed()),this,SLOT(onSliderOpenloopPressed()));
     connect(ui->sliderOpenloopOutput,SIGNAL(sliderReleased()),this,SLOT(onSliderOpenloopReleased()));
 
+    ui->sliderPositionDirect->installEventFilter(this);
     connect(ui->sliderPositionDirect,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
     connect(ui->sliderPositionDirect,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
 
+    ui->sliderMixedPosition->installEventFilter(this);
     connect(ui->sliderMixedPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
     connect(ui->sliderMixedPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
 
+    ui->sliderVelocityVelocity->installEventFilter(this);
     connect(ui->sliderVelocityVelocity,SIGNAL(sliderPressed()),this,SLOT(onSliderVelocityPressed()));
     connect(ui->sliderVelocityVelocity,SIGNAL(sliderReleased()),this,SLOT(onSliderVelocityReleased()));
 
+    ui->sliderPositionVelocity->installEventFilter(this);
     connect(ui->sliderPositionVelocity,SIGNAL(sliderMoved(int)),this,SLOT(onSliderVelocityMoved(int)));
+
+    ui->sliderMixedVelocity->installEventFilter(this);
     connect(ui->sliderMixedVelocity,SIGNAL(sliderMoved(int)),this,SLOT(onSliderVelocityMoved(int)));
 
 
@@ -179,6 +189,119 @@ JointItem::JointItem(int index,QWidget *parent) :
     velocityTimer.setInterval(50);
     velocityTimer.setSingleShot(false);
     connect(&velocityTimer,SIGNAL(timeout()),this,SLOT(onVelocityTimer()));
+}
+
+bool JointItem::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        int key = keyEvent->key();
+        if(key == Qt::Key_Left || key == Qt::Key_Right  || key == Qt::Key_Up ||
+           key == Qt::Key_Down || key == Qt::Key_PageUp || key == Qt::Key_PageDown){
+
+            QSlider *slider;
+            QLabel *label;
+
+            if(obj == ui->sliderPositionPosition){
+                slider = ui->sliderPositionPosition;
+                label = ui->labelPositionPosition;
+                if(keyEvent->type() == QEvent::KeyPress){
+                    onSliderPositionPressed();
+                }
+                if(keyEvent->type() == QEvent::KeyRelease){
+                    onSliderPositionReleased();
+                }
+            }
+            if(obj == ui->sliderPositionVelocity){
+                slider = ui->sliderPositionVelocity;
+                label = ui->labelPositionVelocity;
+            }
+            if(obj == ui->sliderPositionDirect){
+                slider = ui->sliderPositionDirect;
+                label = ui->labelPositionDirectPosition;
+                if(keyEvent->type() == QEvent::KeyPress){
+                    onSliderPositionPressed();
+                }
+                if(keyEvent->type() == QEvent::KeyRelease){
+                    onSliderPositionReleased();
+                }
+            }
+            if(obj == ui->sliderMixedPosition){
+                slider = ui->sliderMixedPosition;
+                label = ui->labelMixedPosition;
+                if(keyEvent->type() == QEvent::KeyPress){
+                    onSliderPositionPressed();
+                }
+                if(keyEvent->type() == QEvent::KeyRelease){
+                    onSliderPositionReleased();
+                }
+            }
+            if(obj == ui->sliderMixedVelocity){
+                slider = ui->sliderMixedVelocity;
+                label = ui->labelMixedVelocity;
+            }
+            if(obj == ui->sliderTorqueTorque){
+                slider = ui->sliderTorqueTorque;
+                label = ui->labelTorqueTorque;
+                if(keyEvent->type() == QEvent::KeyPress){
+                    onSliderTorquePressed();
+                }
+                if(keyEvent->type() == QEvent::KeyRelease){
+                    onSliderTorqueReleased();
+                }
+            }
+            if(obj == ui->sliderOpenloopOutput){
+                slider = ui->sliderOpenloopOutput;
+                label = ui->labelOpenLoopOutput;
+                if(keyEvent->type() == QEvent::KeyPress){
+                    onSliderOpenloopPressed();
+                }
+                if(keyEvent->type() == QEvent::KeyRelease){
+                    onSliderOpenloopReleased();
+                }
+            }
+            if(obj == ui->sliderVelocityVelocity){
+                slider = ui->sliderVelocityVelocity;
+                label = ui->labelVelocityVelocity;
+                if(keyEvent->type() == QEvent::KeyPress){
+                    onSliderVelocityPressed();
+                }
+                if(keyEvent->type() == QEvent::KeyRelease){
+                    onSliderVelocityReleased();
+                }
+            }
+
+
+
+            if(keyEvent->type() == QEvent::KeyPress){
+                if(key == Qt::Key_Left || key == Qt::Key_Down){
+                    slider->setValue(slider->value() - 1);
+                }
+                if(key == Qt::Key_Right || key == Qt::Key_Up){
+                    slider->setValue(slider->value() + 1);
+                }
+                if(key == Qt::Key_PageUp){
+                    slider->setValue(slider->value() + 10);
+                }
+                if(key == Qt::Key_PageDown){
+                    slider->setValue(slider->value() - 10);
+                }
+                if(obj == ui->sliderTorqueTorque){
+                    updateSliderTorqueLabel(slider,label,slider->value());
+                }else{
+                    updateSliderLabel(slider,label,slider->value());
+                }
+            }
+
+
+            return true;
+        }
+        return QObject::eventFilter(obj, event);
+
+    } else {
+        // standard event processing
+        return QObject::eventFilter(obj, event);
+    }
 }
 
 void JointItem::setSpeedVisible(bool visible)

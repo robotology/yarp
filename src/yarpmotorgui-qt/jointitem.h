@@ -60,6 +60,8 @@ class JointItem : public QWidget
 
     void sequenceActivated();
     void sequenceStopped();
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
 
 private:
     void enableAll();
