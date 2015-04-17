@@ -389,6 +389,12 @@ bool RobotInterface::Device::detach() const
 bool RobotInterface::Device::park(const Device &target) const
 {
     yarp::dev::ICalibrator *calibrator;
+    if(!driver()->isValid())
+    {
+        yError() << "park device do not exists";
+        return false;
+    }
+
     if (!driver()->view(calibrator)) {
         yError() << name() << "is not a yarp::dev::ICalibrator, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
         return NULL;
