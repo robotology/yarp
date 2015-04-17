@@ -195,7 +195,9 @@ int main(int argc, char *argv[])
     }
 
     delete finder;
-    delete pParts;
+    if(deleteParts){
+        delete pParts;
+    }
 
     return appRet;
 }
