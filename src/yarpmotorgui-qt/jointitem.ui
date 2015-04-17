@@ -25,6 +25,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout_4">
    <property name="leftMargin">
     <number>2</number>
@@ -252,6 +255,12 @@ QSlider::groove:horizontal:disabled {
              <string>Position</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
              <item>
               <widget class="QWidget" name="widget_1" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -303,6 +312,12 @@ QSlider::groove:horizontal:disabled {
           <item>
            <widget class="QWidget" name="widget_2" native="true">
             <layout class="QGridLayout" name="gridLayout">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_5">
                <property name="text">
@@ -831,6 +846,12 @@ QSlider::groove:horizontal:disabled {
           <item>
            <widget class="QWidget" name="widget_9" native="true">
             <layout class="QGridLayout" name="gridLayout_4">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_9">
                <property name="text">
@@ -1086,7 +1107,7 @@ QSlider::groove:horizontal:disabled {
                <widget class="QLabel" name="labelMixedVelocity">
                 <property name="geometry">
                  <rect>
-                  <x>16</x>
+                  <x>13</x>
                   <y>0</y>
                   <width>30</width>
                   <height>20</height>
@@ -1273,7 +1294,7 @@ QSlider::groove:horizontal:disabled {
                <widget class="QLabel" name="labelVelocityVelocity">
                 <property name="geometry">
                  <rect>
-                  <x>77</x>
+                  <x>64</x>
                   <y>0</y>
                   <width>30</width>
                   <height>20</height>
@@ -1319,8 +1340,14 @@ QSlider::groove:horizontal:disabled {
              <string>Position</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_17">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
              <property name="topMargin">
               <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
              </property>
              <property name="bottomMargin">
               <number>0</number>
@@ -1376,6 +1403,12 @@ QSlider::groove:horizontal:disabled {
           <item>
            <widget class="QWidget" name="widget_16" native="true">
             <layout class="QGridLayout" name="gridLayout_7">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_31">
                <property name="text">
@@ -1496,7 +1529,7 @@ QSlider::groove:horizontal:disabled {
                <widget class="QLabel" name="labelTorqueTorque">
                 <property name="geometry">
                  <rect>
-                  <x>77</x>
+                  <x>65</x>
                   <y>0</y>
                   <width>30</width>
                   <height>20</height>
@@ -1545,8 +1578,14 @@ QSlider::groove:horizontal:disabled {
              <string>Position</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_12">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
              <property name="topMargin">
               <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
              </property>
              <property name="bottomMargin">
               <number>2</number>
@@ -1602,6 +1641,12 @@ QSlider::groove:horizontal:disabled {
           <item>
            <widget class="QWidget" name="widget_19" native="true">
             <layout class="QGridLayout" name="gridLayout_5">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_19">
                <property name="text">
@@ -1722,7 +1767,7 @@ QSlider::groove:horizontal:disabled {
                <widget class="QLabel" name="labelOpenLoopOutput">
                 <property name="geometry">
                  <rect>
-                  <x>77</x>
+                  <x>64</x>
                   <y>0</y>
                   <width>30</width>
                   <height>20</height>
@@ -1765,8 +1810,14 @@ QSlider::groove:horizontal:disabled {
              <string>Position</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_15">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
              <property name="topMargin">
               <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
              </property>
              <property name="bottomMargin">
               <number>0</number>
@@ -1822,6 +1873,12 @@ QSlider::groove:horizontal:disabled {
           <item>
            <widget class="QWidget" name="widget_22" native="true">
             <layout class="QGridLayout" name="gridLayout_6">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_23">
                <property name="text">
