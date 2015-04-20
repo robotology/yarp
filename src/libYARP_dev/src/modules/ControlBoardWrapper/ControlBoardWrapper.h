@@ -83,8 +83,7 @@ enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEV
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /**
- *  @ingroup yarp_dev_modules
- *  \defgroup controlBoardWrapper2 controlBoardWrapper2
+ *  @ingroup dev_impl_wrapper
  *
  * A updated version of the controlBoard network wrapper.
  * It can merge toghether more than one control board device, or use only a

@@ -58,9 +58,7 @@ namespace yarp{
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
 /**
- *  @ingroup yarp_dev_modules
- *  \defgroup analogServer analogServer
- *  @{
+ *  @ingroup dev_impl_wrapper
  *
  *  It reads the data from an analog sensor and sends them on one or more ports.
  *  It creates one rpc port and its related handler for every output port..
@@ -185,7 +183,6 @@ private:
     bool checkForDeprecatedParams(yarp::os::Searchable &params);
 };
 
-/**@} */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

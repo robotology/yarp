@@ -39,9 +39,7 @@ namespace yarp
 
 
 /**
- *  @ingroup yarp_dev_modules
- * @defgroup serverInertial serverInertial
- * @{
+ *  @ingroup dev_impl_wrapper
  * Export an inertial sensor.
  * The network interface is a single Port.
  * We will stream bottles with 12 floats:
@@ -165,7 +163,6 @@ public:
     virtual bool calibrate(int ch, double v);
 };
 
-/// @}
 
 #endif
 
