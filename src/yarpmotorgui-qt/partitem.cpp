@@ -571,10 +571,7 @@ void PartItem::onPidClicked(JointItem *joint)
     double impedance_offset_val=0;
     double openloop_reference=0;
     double openloop_current_pwm=0;
-    double debug_param [8];
-    for (int i=0; i<8; i++){
-      debug_param[i] =0;
-    }
+
 
     imp->getCurrentImpedanceLimit(jointIndex, &stiff_min, &stiff_max, &damp_min, &damp_max);
     trq->getTorqueRange(jointIndex, &off_min, &off_max);
@@ -601,6 +598,10 @@ void PartItem::onPidClicked(JointItem *joint)
 #ifdef DEBUG_INTERFACE
     // Debug
     int debug_base = 0;
+    double debug_param [8];
+    for (int i=0; i<8; i++) {
+      debug_param[i] = 0;
+    }
     if (idbg != 0){
         idbg->getDebugParameter(jointIndex, debug_base+0, &debug_param[0]);
         idbg->getDebugParameter(jointIndex, debug_base+1, &debug_param[1]);
