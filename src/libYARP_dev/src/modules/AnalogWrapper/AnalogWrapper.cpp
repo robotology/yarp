@@ -196,16 +196,16 @@ bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts
     return true;
 }
 
-AnalogWrapper::AnalogWrapper(): RateThread(0)
+AnalogWrapper::AnalogWrapper(): RateThread(DEFAULT_THREAD_PERIOD)
 {
-    _rate = 0;
+    _rate = DEFAULT_THREAD_PERIOD;
     analogSensor_p = NULL;
 }
 
 AnalogWrapper::~AnalogWrapper()
 {
     threadRelease();
-    _rate = 0;
+    _rate = DEFAULT_THREAD_PERIOD;
     analogSensor_p = NULL;
 }
 
@@ -507,6 +507,14 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString().c_str());
+
+    if (!config.check("period"))
+    {
+        yError() << "AnalogServer: missing 'period' parameter. Check you configuration file\n";
+        return false;
+    }
+    else
+        _rate = config.find("period").asInt();
 
     if (!config.check("name"))
     {
