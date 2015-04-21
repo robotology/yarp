@@ -246,7 +246,7 @@ bool ControlBoardWrapper::checkROSParams(Searchable &config)
 
         if(nameList.size() != controlledJoints)
         {
-            yError() << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected lenght is " << controlledJoints;
+            yError() << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected length is " << controlledJoints;
             useROS = ROS_config_error;
             return false;
         }

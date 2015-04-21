@@ -417,7 +417,7 @@ public:
      *           configuration.
      * \return true/false on success/failure.
      *
-     * \note The vector lenght is equal to the number of limb's
+     * \note The vector length is equal to the number of limb's
      *       joints; each vector's position is filled with 1 if the
      *       associated joint is controlled (i.e. it is an actuated
      *       DOF), 0 otherwise.

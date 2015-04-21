@@ -157,9 +157,9 @@ void  yarp::dev::AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::strin
             continue;
         }
 
-        std::cout << "found is " << found <<  "; lenght is : " << name.length() << std::endl;
+        std::cout << "found is " << found <<  "; length is : " << name.length() << std::endl;
         // remove leading or trailing '/'
-        if( (found == 0) || (found == name.length()-1 ) /*found starts from 0, lenght doesn't*/ )
+        if( (found == 0) || (found == name.length()-1 ) /*found starts from 0, length doesn't*/ )
         {
             done = false;       // we could have both leading and trailing, so let's check again
             name.erase(found,1);
