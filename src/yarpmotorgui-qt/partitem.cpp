@@ -1175,7 +1175,7 @@ void PartItem::onSaveSequence(QList<SequenceItem> values)
     QString completeFileName = QString("%1/%2.pos%3").arg(fInfo.absolutePath()).arg(fInfo.baseName()).arg(partName);
 
     //QFile file(completeFileName);
-    LOG_ERROR(QString("Saving File %1\n").arg(completeFileName).toLatin1().data());
+    LOG_ERROR("Saving file %s\n", completeFileName.toLatin1().data());
 
     QFile file(completeFileName);
     if(!file.open(QIODevice::WriteOnly)){
