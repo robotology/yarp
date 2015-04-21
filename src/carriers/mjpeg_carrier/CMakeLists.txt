@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_PLUGIN_LIBRARY)
-    yarp_prepare_carrier(mjpeg_carrier TYPE yarp::os::MjpegCarrier INCLUDE MjpegCarrier.h)
+  yarp_prepare_carrier(mjpeg_carrier TYPE yarp::os::MjpegCarrier INCLUDE MjpegCarrier.h)
   yarp_install(FILES mjpeg.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
@@ -24,16 +24,16 @@ if(NOT SKIP_mjpeg_carrier)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR})
     get_property(WIRE_INCLUDE_DIRS TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS)
     include_directories(${WIRE_INCLUDE_DIRS})
-    yarp_add_plugin(mjpeg_carrier MjpegCarrier.h MjpegCarrier.cpp
+    yarp_add_plugin(yarp_mjpeg MjpegCarrier.h MjpegCarrier.cpp
                     MjpegStream.h MjpegStream.cpp
                     MjpegDecompression.h MjpegDecompression.cpp
                     ${JPEG_SOURCES})
-    target_link_libraries(mjpeg_carrier YARP_wire_rep_utils)
-    target_link_libraries(mjpeg_carrier YARP_OS YARP_sig)
-    target_link_libraries(mjpeg_carrier ${ACE_LIBRARIES})
-    target_link_libraries(mjpeg_carrier ${JPEG_LIBRARY})
+    target_link_libraries(yarp_mjpeg YARP_wire_rep_utils)
+    target_link_libraries(yarp_mjpeg YARP_OS YARP_sig)
+    target_link_libraries(yarp_mjpeg ${ACE_LIBRARIES})
+    target_link_libraries(yarp_mjpeg ${JPEG_LIBRARY})
 
-    yarp_install(TARGETS mjpeg_carrier
+    yarp_install(TARGETS yarp_mjpeg
                  EXPORT YARP
                  COMPONENT runtime
                  LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
