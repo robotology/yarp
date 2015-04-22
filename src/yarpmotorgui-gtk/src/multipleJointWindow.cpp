@@ -320,6 +320,8 @@ void partMover::home_all(GtkButton *button, partMover* currentPart)
   IAmplifierControl *iamp = currentPart->amp;
   IPidControl *ipid = currentPart->pid;
   IControlCalibration2 *ical = currentPart->cal;
+  IRemoteCalibrator *iremCalib = currentPart->remCalib;
+
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
 
@@ -361,8 +363,14 @@ void partMover::home_all(GtkButton *button, partMover* currentPart)
     }
   else
     {
-      //		currentPart->dialog_message(GTK_MESSAGE_ERROR,"No calib file found", strcat("Define a suitable ", strcat(currentPart->partLabel, "Calib")), true);
-      dialog_message(GTK_MESSAGE_ERROR,(char *) "No zero group found in the supplied file. Define a suitable",  buffer2, true);
+      strcpy(buffer2, "Asking the robotInterface to homing part ");
+      strcat(buffer2, buffer1);
+
+      dialog_message(GTK_MESSAGE_INFO, buffer2, (char *) " through the remoteCalibrator interface, since no custom zero group found in the supplied file", true);
+      if(!iremCalib->homingWholePart() )
+      {
+          dialog_message(GTK_MESSAGE_ERROR,(char *) "Homing failed", (char *) "No calibrator device was configured to perform this action or something went wrong during the homing procedure", true);
+      }
     }
   return;
 }
@@ -380,61 +388,13 @@ void partMover::calib_all(GtkButton *button, partMover* currentPart)
 
   IPositionControl *ipos = currentPart->pos;
   IControlCalibration2 *ical = currentPart->cal;
+  IRemoteCalibrator *iRemoteCalib = currentPart->remCalib;
 
-  int joint;
-  int NUMBER_OF_JOINTS;
-  ipos->getAxes(&NUMBER_OF_JOINTS);
-
-  ResourceFinder *fnd = currentPart->finder;
-  //fprintf(stderr, "opening file \n");
-  char buffer1[800];
-  char buffer2[800];
-
-  strcpy(buffer1, currentPart->partLabel);
-  strcpy(buffer2, strcat(buffer1, "_calib"));
-
-  if (!fnd->findGroup(buffer2).isNull())
-    {
-      bool ok = true;
-      Bottle p1 = fnd->findGroup(buffer2).findGroup("Calibration1");
-      ok = ok && (p1.size() == NUMBER_OF_JOINTS+1);
-      Bottle p2 = fnd->findGroup(buffer2).findGroup("Calibration2");
-      ok = ok && (p2.size() == NUMBER_OF_JOINTS+1);
-      Bottle p3 = fnd->findGroup(buffer2).findGroup("Calibration3");
-      ok = ok && (p3.size() == NUMBER_OF_JOINTS+1);
-      Bottle ty = fnd->findGroup(buffer2).findGroup("CalibrationType");
-      ok = ok && (ty.size() == NUMBER_OF_JOINTS+1);
-      if (ok)
-	{
-	  for (joint=0; joint < NUMBER_OF_JOINTS; joint++)
-	    {
-
-	      double param1 = p1.get(joint+1).asDouble();
-	      //fprintf(stderr, "%f ", param1);
-
-
-	      double param2 = p2.get(joint+1).asDouble();
-	      //fprintf(stderr, "%f ", param2);
-
-
-	      double param3 = p3.get(joint+1).asDouble();
-	      //fprintf(stderr, "%f ", param3);
-
-	      unsigned char type = (unsigned char) ty.get(joint+1).asDouble();
-	      //fprintf(stderr, "%d ", type);
-
-	      ical->calibrate2(joint, type, param1, param2, param3);
-	    }
-	}
-      else
-	dialog_message(GTK_MESSAGE_ERROR,(char *) "Check number of entries in the file",  buffer1, true);
-    }
-  else
-    {
-      dialog_message(GTK_MESSAGE_ERROR,(char *) "No calib file found. Define a suitable file called:",  buffer1, true);
-    }
+  if( !iRemoteCalib->calibrateWholePart() )
+  {
+      dialog_message(GTK_MESSAGE_ERROR,(char *) "Calibration failed", (char *)"No calibrator device was configured to perform this action or something went wrong during the calibration procedure", true);
+  }
   return;
-
 }
 
 

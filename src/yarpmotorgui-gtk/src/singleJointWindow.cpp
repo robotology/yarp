@@ -71,55 +71,17 @@ void partMover::calib_click(GtkButton *button, gtkClassData* currentClassData)
   IAmplifierControl *iamp = currentPart->amp;
   IPidControl *ipid = currentPart->pid;
   IControlCalibration2 *ical = currentPart->cal;
+  IRemoteCalibrator *iRemoteCal = currentPart->remCalib;
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
 
-  ResourceFinder *fnd = currentPart->finder;
-  //fprintf(stderr, "opening file \n");
-  char buffer1[800];
-  char buffer2[800];
+  if (!iRemoteCal->calibrateSingleJoint(*joint) )
+  {
+      char buffer[100];
+      sprintf(buffer, "Calibration failed for joint %d", *joint);
+      dialog_message(GTK_MESSAGE_ERROR,(char *) buffer, (char *) "No calibrator device was configured to perform this action or something went wrong during the calibration procedure", true);
 
-  strcpy(buffer1, currentPart->partLabel);
-  strcpy(buffer2, strcat(buffer1, "_calib"));
-
-  if (!fnd->findGroup(buffer2).isNull())
-    {
-      bool ok = true;
-      Bottle xtmp;
-
-      xtmp.clear();
-      xtmp = fnd->findGroup(buffer2).findGroup("CalibrationType");
-      ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
-      unsigned char type = (unsigned char) xtmp.get(*joint+1).asDouble();
-      fprintf(stderr, "%d ", type);
-
-      xtmp.clear();
-      xtmp = fnd->findGroup(buffer2).findGroup("Calibration1");
-      ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
-      double param1 = xtmp.get(*joint+1).asDouble();
-      fprintf(stderr, "%f ", param1);
-
-      xtmp.clear();
-      xtmp = fnd->findGroup(buffer2).findGroup("Calibration2");
-      ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
-      double param2 = xtmp.get(*joint+1).asDouble();
-      fprintf(stderr, "%f ", param2);
-
-      xtmp.clear();
-      xtmp = fnd->findGroup(buffer2).findGroup("Calibration3");
-      ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
-      double param3 = xtmp.get(*joint+1).asDouble();
-      fprintf(stderr, "%f \n", param3);
-
-
-      if(!ok)
-    dialog_message(GTK_MESSAGE_ERROR,(char *)"Check number of calib entries in the group",  buffer2, true);
-      else
-    ical->calibrate2(*joint, type, param1, param2, param3);
-    }
-  else
-    dialog_message(GTK_MESSAGE_ERROR,(char *)"The supplied file does not conatain a group named:",  buffer2, true);
-
+  }
   return;
 }
 
@@ -136,6 +98,8 @@ void partMover::home_click(GtkButton *button, gtkClassData* currentClassData)
   IAmplifierControl *iamp = currentPart->amp;
   IPidControl *ipid = currentPart->pid;
   IControlCalibration2 *ical = currentPart->cal;
+  IRemoteCalibrator *iremCalib = currentPart->remCalib;
+
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
 
@@ -150,7 +114,7 @@ void partMover::home_click(GtkButton *button, gtkClassData* currentClassData)
   //fprintf(stderr, "Finder retrieved %s\n", buffer2);
 
   if (!fnd->findGroup(buffer2).isNull() && !fnd->isNull())
-    {
+  {
       //fprintf(stderr, "Home group was not empty \n");
       bool ok = true;
       Bottle xtmp;
@@ -166,18 +130,24 @@ void partMover::home_click(GtkButton *button, gtkClassData* currentClassData)
       //fprintf(stderr, "%f\n", velocityZero);
 
       if(!ok)
-    dialog_message(GTK_MESSAGE_ERROR,(char *) "Check the number of entries in the group",  buffer2, true);
+      dialog_message(GTK_MESSAGE_ERROR,(char *) "Check the number of entries in the group",  buffer2, true);
       else
-    {
+      {
       ipos->setRefSpeed(*joint, velocityZero);
       ipos->positionMove(*joint, positionZero);
-    }
-    }
+      }
+  }
   else
-    {
-      //        currentPart->dialog_message(GTK_MESSAGE_ERROR,"No calib file found", strcat("Define a suitable ", strcat(currentPart->partLabel, "Calib")), true);
-      dialog_message(GTK_MESSAGE_ERROR,(char *) "No zero group found in the supplied file. Define a suitable",  buffer2, true);
-    }
+  {
+      strcpy(buffer2, "Asking the robotInterface to homing part ");
+      strcat(buffer2, buffer1);
+
+      dialog_message(GTK_MESSAGE_INFO, buffer2, (char *) " through the remoteCalibrator interface, since no custom zero group found in the supplied file", true);
+      if(!iremCalib->homingSingleJoint(*joint) )
+      {
+          dialog_message(GTK_MESSAGE_ERROR,(char *) "Homing failed", (char *) "No calibrator device was configured to perform this action or something went wrong during the homing procedure", true);
+      }
+  }
   return;
 }
 
