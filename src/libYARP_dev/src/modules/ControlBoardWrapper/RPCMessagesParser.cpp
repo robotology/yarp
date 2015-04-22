@@ -1115,12 +1115,93 @@ void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os:
     }
 }
 
+void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if(ControlBoardWrapper_p->verbose())
+        fprintf(stderr, "Handling IRemoteCalibrator message\n");
+
+    if (!rpc_IRemoteCalibrator)
+    {
+        yError("controlBoardWrapper: I do not have a valid IRemoteCalibrator interface");
+        *ok=false;
+        return;
+    }
+
+    int code = cmd.get(2).asVocab();
+    *ok=false;
+    *rec=true;
+    switch(code)
+    {
+        case VOCAB_CALIBRATE_SINGLE_JOINT:
+        {
+            std::cout << "cmd is " << cmd.toString() << " joint is " << cmd.get(3).asInt() << std::endl;
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("Calling calibrate joint with no parameter\n");
+            *ok = rpc_IRemoteCalibrator->calibrateSingleJoint(cmd.get(3).asInt());
+        } break;
+
+        case VOCAB_CALIBRATE_WHOLE_PART:
+        {
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("Calling calibrate whole part\n");
+            *ok = rpc_IRemoteCalibrator->calibrateWholePart();
+        } break;
+
+        case VOCAB_HOMING_SINGLE_JOINT:
+        {
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("Calling calibrate joint with no parameter\n");
+            *ok = rpc_IRemoteCalibrator->homingSingleJoint(cmd.get(3).asInt());
+        } break;
+
+        case VOCAB_HOMING_WHOLE_PART:
+        {
+            std::cout << "Received homing whole part" << std::endl;
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("Calling calibrate whole part\n");
+            *ok = rpc_IRemoteCalibrator->homingWholePart();
+        } break;
+
+        case VOCAB_PARK_SINGLE_JOINT:
+        {
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("Calling calibrate joint with no parameter\n");
+            *ok = rpc_IRemoteCalibrator->parkSingleJoint(cmd.get(3).asInt());
+        } break;
+
+        case VOCAB_PARK_WHOLE_PART:
+        {
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("Calling calibrate whole part\n");
+            *ok = rpc_IRemoteCalibrator->parkWholePart();
+        } break;
+
+        case VOCAB_QUIT_CALIBRATE:
+        {
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("Calling quit calibrate\n");
+            *ok = rpc_IRemoteCalibrator->quitCalibrate();
+        } break;
+
+        case VOCAB_QUIT_PARK:
+        {
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("Calling quit park\n");
+            *ok = rpc_IRemoteCalibrator->quitPark();
+        } break;
+
+        default:
+        {
+            *rec = false;
+            *ok = false;
+        } break;
+    }
+}
+
+
 // rpc callback
 bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response)
 {
-    //    ACE_thread_t self=ACE_Thread::self();
-    //    fprintf(stderr, "--> [%X] starting responder\n",self);
-
     bool ok  = false;
     bool rec = false;    // Tells if the command is recognized!
 
@@ -1156,8 +1237,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             case VOCAB_OPENLOOP_INTERFACE:
                 handleOpenLoopMsg(cmd, response, &rec, &ok);
             break;
+
             case VOCAB_PROTOCOL_VERSION:
                 handleProtocolVersionRequest(cmd, response, &rec, &ok);
+            break;
+
+            case VOCAB_REMOTE_CALIBRATOR_INTERFACE:
+                handleRemoteCalibratorMsg(cmd, response, &rec, &ok);
             break;
 
             default:
@@ -2518,6 +2604,7 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_iCtrlMode2  = dynamic_cast<yarp::dev::IControlMode2 *> (ControlBoardWrapper_p);
     rpc_IInteract   = dynamic_cast<yarp::dev::IInteractionMode *> (ControlBoardWrapper_p);
     controlledJoints = 0;
+    rpc_IRemoteCalibrator = dynamic_cast<yarp::dev::IRemoteCalibrator *>    (ControlBoardWrapper_p);
 }
 
 

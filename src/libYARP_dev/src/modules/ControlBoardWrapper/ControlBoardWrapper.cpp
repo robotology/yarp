@@ -722,12 +722,22 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
 
     for(int p=0;p<polylist.size();p++)
     {
-        // find appropriate entry in list of subdevices
-        // and attach
+        // look if we have to attach to a calibrator
+        std::string tmpKey=polylist[p]->key.c_str();
+        if(tmpKey == "Calibrator" || tmpKey == "calibrator")
+        {
+            // Set the IRemoteCalibrator interface, the wrapper must point to the calibrato rdevice
+            yarp::dev::IRemoteCalibrator *calibrator;
+            polylist[p]->poly->view(calibrator);
+
+            IRemoteCalibrator::setCalibratorDevice(calibrator);
+            continue;
+        }
+
+        // find appropriate entry in list of subdevices and attach
         unsigned int k=0;
         for(k=0; k<device.subdevices.size(); k++)
         {
-            std::string tmpKey=polylist[p]->key.c_str();
             if (device.subdevices[k].id==tmpKey)
             {
                 if (!device.subdevices[k].attach(polylist[p]->poly, tmpKey))
@@ -3347,6 +3357,85 @@ bool ControlBoardWrapper::getVelLimits(int j, double *min, double *max)
     }
     return p->lim2->getVelLimits(off+p->base,min, max);
 }
+
+/* IRemoteCalibrator */
+IRemoteCalibrator *ControlBoardWrapper::getCalibratorDevice()
+{
+    yTrace();
+    return yarp::dev::IRemoteCalibrator::getCalibratorDevice();
+}
+
+bool ControlBoardWrapper::calibrateSingleJoint(int j)
+{
+    yTrace();
+    if(!getCalibratorDevice())
+        return false;
+    return IRemoteCalibrator::getCalibratorDevice()->calibrateSingleJoint(j);
+}
+
+bool ControlBoardWrapper::calibrateWholePart()
+{
+    yTrace();
+    if(!getCalibratorDevice())
+        return false;
+
+    return getCalibratorDevice()->calibrateWholePart();
+}
+
+bool ControlBoardWrapper::homingSingleJoint(int j)
+{
+    yTrace();
+    if(!getCalibratorDevice())
+        return false;
+
+    return getCalibratorDevice()->homingSingleJoint(j);
+}
+
+bool ControlBoardWrapper::homingWholePart()
+{
+    yTrace();
+    if(!getCalibratorDevice())
+        return false;
+
+    return getCalibratorDevice()->homingWholePart();
+}
+
+bool ControlBoardWrapper::parkSingleJoint(int j, bool _wait)
+{
+    yTrace();
+    if(!getCalibratorDevice())
+        return false;
+
+    return getCalibratorDevice()->parkSingleJoint(j, _wait);
+}
+
+bool ControlBoardWrapper::parkWholePart()
+{
+    yTrace();
+    if(!getCalibratorDevice())
+        return false;
+
+    return getCalibratorDevice()->parkWholePart();
+}
+
+bool ControlBoardWrapper::quitCalibrate()
+{
+    yTrace();
+    if(!getCalibratorDevice())
+        return false;
+
+    return getCalibratorDevice()->quitCalibrate();
+}
+
+bool ControlBoardWrapper::quitPark()
+{
+    yTrace();
+    if(!getCalibratorDevice())
+        return false;
+
+    return getCalibratorDevice()->quitPark();
+}
+
 
 /* IControlCalibration */
 

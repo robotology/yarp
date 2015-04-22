@@ -31,7 +31,7 @@
 #include <stateExtendedReader.hpp>
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 2
+#define PROTOCOL_VERSION_MINOR 3
 #define PROTOCOL_VERSION_TWEAK 0
 
 using namespace yarp::os;
@@ -268,7 +268,8 @@ class yarp::dev::RemoteControlBoard :
     public IOpenLoopControl,
     public DeviceDriver,
     public IPositionDirect,
-    public IInteractionMode
+    public IInteractionMode,
+    public IRemoteCalibrator
 {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -3649,6 +3650,108 @@ public:
         }
 
         return ret;
+    }
+
+    /* IRemoteCalibrator interface */
+
+    /**
+     * @brief calibrateSingleJoint: call the calibration procedure for the single joint
+     * @param j: joint to be calibrated
+     * @return true if calibration was successful
+     */
+    bool calibrateSingleJoint(int j)
+    {
+        return set2V1I(VOCAB_REMOTE_CALIBRATOR_INTERFACE, VOCAB_CALIBRATE_SINGLE_JOINT, j);
+    }
+
+    /**
+     * @brief calibrateWholePart: call the procedure for calibrating the whole device
+     * @return true if calibration was successful
+     */
+    bool calibrateWholePart()
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
+        cmd.addVocab(VOCAB_CALIBRATE_WHOLE_PART);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    /**
+     * @brief homingSingleJoint: call the homing procedure for a single joint
+     * @param j: joint to be calibrated
+     * @return true if homing was succesful, false otherwise
+     */
+    bool homingSingleJoint(int j)
+    {
+        return set2V1I(VOCAB_REMOTE_CALIBRATOR_INTERFACE, VOCAB_HOMING_SINGLE_JOINT, j);
+    }
+
+    /**
+     * @brief homingWholePart: call the homing procedure for a the whole part/device
+     * @return true if homing was succesful, false otherwise
+     */
+    bool homingWholePart()
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
+        cmd.addVocab(VOCAB_HOMING_WHOLE_PART);
+        bool ok = rpc_p.write(cmd, response);
+        std::cout << "Sent homing whole part message" << std::endl;
+        return CHECK_FAIL(ok, response);
+    }
+
+    /**
+     * @brief parkSingleJoint(): start the parking procedure for the single joint
+     * @return true if succesful
+     */
+    bool parkSingleJoint(int j, bool _wait=true)
+    {
+        return set2V1I(VOCAB_REMOTE_CALIBRATOR_INTERFACE, VOCAB_PARK_SINGLE_JOINT, j);
+    }
+
+    /**
+     * @brief parkWholePart: start the parking procedure for the whole part
+     * @return true if succesful
+     */
+    bool parkWholePart()
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
+        cmd.addVocab(VOCAB_PARK_WHOLE_PART);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    /**
+     * @brief quitCalibrate: interrupt the calibration procedure
+     * @return true if succesful
+     */
+    bool quitCalibrate()
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
+        cmd.addVocab(VOCAB_QUIT_CALIBRATE);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    /**
+     * @brief quitPark: interrupt the park procedure
+     * @return true if succesful
+     */
+    bool quitPark()
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
+        cmd.addVocab(VOCAB_QUIT_PARK);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 };
 
