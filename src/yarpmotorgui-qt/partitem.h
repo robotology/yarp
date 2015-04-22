@@ -67,7 +67,7 @@ public:
     bool checkAndCycleTimeAllSeq();
     void runAll();
     void idleAll();
-    void homeAll();
+    bool homeAll();
     bool checkAndHomeAll();
     void calibrateAll();
     bool checkAndGo();
@@ -135,6 +135,7 @@ private:
     IControlCalibration2 *cal;
     IControlMode2 *ctrlmode2;
     IInteractionMode *iinteract;
+    IRemoteCalibrator *remCalib;
 
 
     bool *CURRENT_POS_UPDATE;
