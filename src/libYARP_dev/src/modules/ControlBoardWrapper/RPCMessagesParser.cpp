@@ -2584,27 +2584,27 @@ RPCMessagesParser::RPCMessagesParser() {}
 void RPCMessagesParser::init(ControlBoardWrapper *x)
 {
     ControlBoardWrapper_p = x;
-    rpc_IPid        = dynamic_cast<yarp::dev::IPidControl *> (ControlBoardWrapper_p);
-    rpc_IPosCtrl    = dynamic_cast<yarp::dev::IPositionControl *> (ControlBoardWrapper_p);
-    rpc_IPosCtrl2   = dynamic_cast<yarp::dev::IPositionControl2 *> (ControlBoardWrapper_p);
-    rpc_IPosDirect  = dynamic_cast<yarp::dev::IPositionDirect *> (ControlBoardWrapper_p);
-    rpc_IVelCtrl    = dynamic_cast<yarp::dev::IVelocityControl *> (ControlBoardWrapper_p);
-    rpc_IVelCtrl2   = dynamic_cast<yarp::dev::IVelocityControl2 *> (ControlBoardWrapper_p);
-    rpc_IEncTimed   = dynamic_cast<yarp::dev::IEncodersTimed *> (ControlBoardWrapper_p);
-    rpc_IMotEnc     = dynamic_cast<yarp::dev::IMotorEncoders *> (ControlBoardWrapper_p);
-    rpc_IMotor      = dynamic_cast<yarp::dev::IMotor *> (ControlBoardWrapper_p);
-    rcp_IAmp        = dynamic_cast<yarp::dev::IAmplifierControl *> (ControlBoardWrapper_p);
-    rcp_Ilim2       = dynamic_cast<yarp::dev::IControlLimits2 *> (ControlBoardWrapper_p);
-    rpc_AxisInfo    = dynamic_cast<yarp::dev::IAxisInfo *> (ControlBoardWrapper_p);
-    rpc_Icalib2     = dynamic_cast<yarp::dev::IControlCalibration2 *> (ControlBoardWrapper_p);
-    rpc_IOpenLoop   = dynamic_cast<yarp::dev::IOpenLoopControl *> (ControlBoardWrapper_p);
-    rpc_IImpedance  = dynamic_cast<yarp::dev::IImpedanceControl *> (ControlBoardWrapper_p);
-    rpc_ITorque     = dynamic_cast<yarp::dev::ITorqueControl *> (ControlBoardWrapper_p);
-    rpc_iCtrlMode   = dynamic_cast<yarp::dev::IControlMode *> (ControlBoardWrapper_p);
-    rpc_iCtrlMode2  = dynamic_cast<yarp::dev::IControlMode2 *> (ControlBoardWrapper_p);
-    rpc_IInteract   = dynamic_cast<yarp::dev::IInteractionMode *> (ControlBoardWrapper_p);
-    controlledJoints = 0;
+    rpc_IPid              = dynamic_cast<yarp::dev::IPidControl *>          (ControlBoardWrapper_p);
+    rpc_IPosCtrl          = dynamic_cast<yarp::dev::IPositionControl *>     (ControlBoardWrapper_p);
+    rpc_IPosCtrl2         = dynamic_cast<yarp::dev::IPositionControl2 *>    (ControlBoardWrapper_p);
+    rpc_IPosDirect        = dynamic_cast<yarp::dev::IPositionDirect *>      (ControlBoardWrapper_p);
+    rpc_IVelCtrl          = dynamic_cast<yarp::dev::IVelocityControl *>     (ControlBoardWrapper_p);
+    rpc_IVelCtrl2         = dynamic_cast<yarp::dev::IVelocityControl2 *>    (ControlBoardWrapper_p);
+    rpc_IEncTimed         = dynamic_cast<yarp::dev::IEncodersTimed *>       (ControlBoardWrapper_p);
+    rpc_IMotEnc           = dynamic_cast<yarp::dev::IMotorEncoders *>       (ControlBoardWrapper_p);
+    rpc_IMotor            = dynamic_cast<yarp::dev::IMotor *>               (ControlBoardWrapper_p);
+    rcp_IAmp              = dynamic_cast<yarp::dev::IAmplifierControl *>    (ControlBoardWrapper_p);
+    rcp_Ilim2             = dynamic_cast<yarp::dev::IControlLimits2 *>      (ControlBoardWrapper_p);
+    rpc_AxisInfo          = dynamic_cast<yarp::dev::IAxisInfo *>            (ControlBoardWrapper_p);
     rpc_IRemoteCalibrator = dynamic_cast<yarp::dev::IRemoteCalibrator *>    (ControlBoardWrapper_p);
+    rpc_Icalib2           = dynamic_cast<yarp::dev::IControlCalibration2 *> (ControlBoardWrapper_p);
+    rpc_IOpenLoop         = dynamic_cast<yarp::dev::IOpenLoopControl *>     (ControlBoardWrapper_p);
+    rpc_IImpedance        = dynamic_cast<yarp::dev::IImpedanceControl *>    (ControlBoardWrapper_p);
+    rpc_ITorque           = dynamic_cast<yarp::dev::ITorqueControl *>       (ControlBoardWrapper_p);
+    rpc_iCtrlMode         = dynamic_cast<yarp::dev::IControlMode *>         (ControlBoardWrapper_p);
+    rpc_iCtrlMode2        = dynamic_cast<yarp::dev::IControlMode2 *>        (ControlBoardWrapper_p);
+    rpc_IInteract         = dynamic_cast<yarp::dev::IInteractionMode *>     (ControlBoardWrapper_p);
+    controlledJoints      = 0;
 }
 
 
