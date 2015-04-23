@@ -547,7 +547,15 @@ void PartItem::onCalibClicked(JointItem *joint)
         return;
     }
     if(!remCalib->calibrateSingleJoint(joint->getJointIndex()) )
-        QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action or something went wrong during the calibration procedure"));
+    {
+        // provide better feedback to user by verifying if the calibrator device was set or not
+        bool isCalib = false;
+        remCalib->isCalibratorDevicePresent(&isCalib);
+        if(!isCalib)
+            QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file has the 'Calibrator' keyword in the attach phase"));
+        else
+            QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+    }
 
 }
 
@@ -684,7 +692,16 @@ void PartItem::onHomeClicked(JointItem *joint)
         }
     } else {
         QMessageBox::information(this,"Info", QString("Asking the robotInterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file").arg(partName));
-        remCalib->homingSingleJoint(jointIndex);
+        if(!remCalib->homingSingleJoint(jointIndex) )
+        {
+            // provide better feedback to user by verifying if the calibrator device was set or not
+            bool isCalib = false;
+            remCalib->isCalibratorDevicePresent(&isCalib);
+            if(!isCalib)
+                QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(partName));
+            else
+                QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+        }
     }
 }
 
@@ -871,7 +888,15 @@ void PartItem::changeEvent( QEvent *event )
 void PartItem::calibrateAll()
 {
     if(!remCalib->calibrateWholePart() )
-        QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action or something went wrong during the homing procedure"));
+    {
+        // provide better feedback to user by verifying if the calibrator device was set or not
+        bool isCalib = false;
+        remCalib->isCalibratorDevicePresent(&isCalib);
+        if(!isCalib)
+            QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(partName));
+        else
+            QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+    }
 }
 
 bool PartItem::checkAndHomeAll()
@@ -911,8 +936,15 @@ bool PartItem::homeAll()
         QMessageBox::information(this,"Info", QString("Asking the robotInterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file.").arg(partName));
         ok = remCalib->homingWholePart();
         if(!ok)
-            QMessageBox::critical(this,"Homing failed", QString("No calibrator device was configured to perform this action or something went wrong during the homing procedure"));
-
+        {
+            // provide better feedback to user by verifying if the calibrator device was set or not
+            bool isCalib = false;
+            remCalib->isCalibratorDevicePresent(&isCalib);
+            if(!isCalib)
+                QMessageBox::critical(this,"Homing failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(partName));
+            else
+                QMessageBox::critical(this,"Homing failed", QString("The remote calibrator reported that something went wrong during the homing procedure"));
+        }
     }
     return ok;
 }
