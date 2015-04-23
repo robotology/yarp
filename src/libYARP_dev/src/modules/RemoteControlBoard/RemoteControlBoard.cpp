@@ -3655,6 +3655,28 @@ public:
     /* IRemoteCalibrator interface */
 
     /**
+     * @brief isCalibratorDevicePresent: check if a calibrator device has been set
+     * @return true if a valid calibrator device has been found
+     */
+    bool isCalibratorDevicePresent(bool *isCalib)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
+        cmd.addVocab(VOCAB_IS_CALIBRATOR_PRESENT);
+        bool ok = rpc_p.write(cmd, response);
+        if(ok)
+        {
+            *isCalib = (bool) response.get(2).asInt();
+        }
+        else
+        {
+            *isCalib = false;
+        }
+        return CHECK_FAIL(ok, response);
+    }
+
+    /**
      * @brief calibrateSingleJoint: call the calibration procedure for the single joint
      * @param j: joint to be calibrated
      * @return true if calibration was successful

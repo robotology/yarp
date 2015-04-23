@@ -73,10 +73,17 @@ public:
     virtual yarp::dev::IRemoteCalibrator *getCalibratorDevice();
 
     /**
+     * @brief isCalibratorDevicePresent: check if a calibrator device has been set
+     * @return true if a valid calibrator device has been found
+     */
+    virtual bool isCalibratorDevicePresent(bool *isCalib);
+
     /**
      * @brief releaseCalibratorDevice: reset the internal pointer to NULL when stop using the calibrator
      */
     virtual void releaseCalibratorDevice(void);
+
+    /**
      * @brief calibrateSingleJoint: call the calibration procedure for the single joint
      * @param j: joint to be calibrated
      * @return true if calibration was successful
@@ -129,6 +136,7 @@ public:
 
 #define VOCAB_REMOTE_CALIBRATOR_INTERFACE           VOCAB4('r','e','c','a')
 
+#define VOCAB_IS_CALIBRATOR_PRESENT                 VOCAB4('i','s','c','a')
 #define VOCAB_CALIBRATE_SINGLE_JOINT                VOCAB3('c','a','l')
 #define VOCAB_CALIBRATE_WHOLE_PART                  VOCAB4('c','a','l','s')
 #define VOCAB_HOMING_SINGLE_JOINT                   VOCAB3('h','o','m')

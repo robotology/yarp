@@ -1127,75 +1127,102 @@ void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, y
         return;
     }
 
-    int code = cmd.get(2).asVocab();
+    int code   = cmd.get(0).asVocab();
+    int action = cmd.get(2).asVocab();
+
     *ok=false;
     *rec=true;
     switch(code)
     {
-        case VOCAB_CALIBRATE_SINGLE_JOINT:
+        case VOCAB_SET:
         {
-            std::cout << "cmd is " << cmd.toString() << " joint is " << cmd.get(3).asInt() << std::endl;
-            if (ControlBoardWrapper_p->verbose())
-                yDebug("Calling calibrate joint with no parameter\n");
-            *ok = rpc_IRemoteCalibrator->calibrateSingleJoint(cmd.get(3).asInt());
-        } break;
+            switch(action)
+            {
+                case VOCAB_CALIBRATE_SINGLE_JOINT:
+                {
+                    std::cout << "cmd is " << cmd.toString() << " joint is " << cmd.get(3).asInt() << std::endl;
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate joint with no parameter\n");
+                    *ok = rpc_IRemoteCalibrator->calibrateSingleJoint(cmd.get(3).asInt());
+                } break;
 
-        case VOCAB_CALIBRATE_WHOLE_PART:
-        {
-            if (ControlBoardWrapper_p->verbose())
-                yDebug("Calling calibrate whole part\n");
-            *ok = rpc_IRemoteCalibrator->calibrateWholePart();
-        } break;
+                case VOCAB_CALIBRATE_WHOLE_PART:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate whole part\n");
+                    *ok = rpc_IRemoteCalibrator->calibrateWholePart();
+                } break;
 
-        case VOCAB_HOMING_SINGLE_JOINT:
-        {
-            if (ControlBoardWrapper_p->verbose())
-                yDebug("Calling calibrate joint with no parameter\n");
-            *ok = rpc_IRemoteCalibrator->homingSingleJoint(cmd.get(3).asInt());
-        } break;
+                case VOCAB_HOMING_SINGLE_JOINT:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate joint with no parameter\n");
+                    *ok = rpc_IRemoteCalibrator->homingSingleJoint(cmd.get(3).asInt());
+                } break;
 
-        case VOCAB_HOMING_WHOLE_PART:
-        {
-            std::cout << "Received homing whole part" << std::endl;
-            if (ControlBoardWrapper_p->verbose())
-                yDebug("Calling calibrate whole part\n");
-            *ok = rpc_IRemoteCalibrator->homingWholePart();
-        } break;
+                case VOCAB_HOMING_WHOLE_PART:
+                {
+                    std::cout << "Received homing whole part" << std::endl;
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate whole part\n");
+                    *ok = rpc_IRemoteCalibrator->homingWholePart();
+                } break;
 
-        case VOCAB_PARK_SINGLE_JOINT:
-        {
-            if (ControlBoardWrapper_p->verbose())
-                yDebug("Calling calibrate joint with no parameter\n");
-            *ok = rpc_IRemoteCalibrator->parkSingleJoint(cmd.get(3).asInt());
-        } break;
+                case VOCAB_PARK_SINGLE_JOINT:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate joint with no parameter\n");
+                    *ok = rpc_IRemoteCalibrator->parkSingleJoint(cmd.get(3).asInt());
+                } break;
 
-        case VOCAB_PARK_WHOLE_PART:
-        {
-            if (ControlBoardWrapper_p->verbose())
-                yDebug("Calling calibrate whole part\n");
-            *ok = rpc_IRemoteCalibrator->parkWholePart();
-        } break;
+                case VOCAB_PARK_WHOLE_PART:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate whole part\n");
+                    *ok = rpc_IRemoteCalibrator->parkWholePart();
+                } break;
 
-        case VOCAB_QUIT_CALIBRATE:
-        {
-            if (ControlBoardWrapper_p->verbose())
-                yDebug("Calling quit calibrate\n");
-            *ok = rpc_IRemoteCalibrator->quitCalibrate();
-        } break;
+                case VOCAB_QUIT_CALIBRATE:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling quit calibrate\n");
+                    *ok = rpc_IRemoteCalibrator->quitCalibrate();
+                } break;
 
-        case VOCAB_QUIT_PARK:
-        {
-            if (ControlBoardWrapper_p->verbose())
-                yDebug("Calling quit park\n");
-            *ok = rpc_IRemoteCalibrator->quitPark();
-        } break;
+                case VOCAB_QUIT_PARK:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling quit park\n");
+                    *ok = rpc_IRemoteCalibrator->quitPark();
+                } break;
 
-        default:
+                default:
+                {
+                    *rec = false;
+                    *ok = false;
+                } break;
+            }
+        }break;
+
+        case VOCAB_GET:
         {
-            *rec = false;
-            *ok = false;
-        } break;
-    }
+            response.clear();
+            response.addVocab(VOCAB_IS);
+            response.add(cmd.get(1));
+
+            switch(action)
+            {
+                case VOCAB_IS_CALIBRATOR_PRESENT:
+                {
+                    bool tmp;
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling VOCAB_IS_CALIBRATOR_PRESENT\n");
+                    *ok = rpc_IRemoteCalibrator->isCalibratorDevicePresent(&tmp);
+                    response.addInt(tmp);
+                } break;
+            }
+        }
+    }   //end get/set switch
 }
 
 

@@ -3366,6 +3366,12 @@ IRemoteCalibrator *ControlBoardWrapper::getCalibratorDevice()
     return yarp::dev::IRemoteCalibrator::getCalibratorDevice();
 }
 
+bool ControlBoardWrapper::isCalibratorDevicePresent(bool *isCalib)
+{
+    yTrace();
+    return yarp::dev::IRemoteCalibrator::isCalibratorDevicePresent(isCalib);
+}
+
 bool ControlBoardWrapper::calibrateSingleJoint(int j)
 {
     yTrace();

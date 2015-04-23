@@ -948,14 +948,8 @@ public:
     virtual bool getVelLimits(int j, double *min, double *max);
 
     /* IRemoteCalibrator */
-    /**
-     * @brief setCalibratorDevice: store the pointer to the IRemotizableCalibrator
-     *        interface
-     * @param dev: device implementing the IRemotizableCalibrator interface
-     * @return
-     */
 
-//     virtual bool setCalibratorDevice(yarp::dev::IRemotizableCalibrator *dev);
+    bool isCalibratorDevicePresent(bool *isCalib);
 
     /**
      * @brief getCalibratorDevice: return the pointer stored with the setCalibratorDevice
