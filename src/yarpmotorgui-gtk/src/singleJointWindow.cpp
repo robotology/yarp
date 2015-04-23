@@ -77,10 +77,13 @@ void partMover::calib_click(GtkButton *button, gtkClassData* currentClassData)
 
   if (!iRemoteCal->calibrateSingleJoint(*joint) )
   {
-      char buffer[100];
-      sprintf(buffer, "Calibration failed for joint %d", *joint);
-      dialog_message(GTK_MESSAGE_ERROR,(char *) buffer, (char *) "No calibrator device was configured to perform this action or something went wrong during the calibration procedure", true);
-
+      // provide better feedback to user by verifying if the calibrator device was set or not
+      bool isCalib = false;
+      iRemoteCal->isCalibratorDevicePresent(&isCalib);
+      if(!isCalib)
+          dialog_message(GTK_MESSAGE_ERROR,(char *) "Calibration failed", (char *) "No calibrator device was configured to perform this action, please verify that the wrapper config file for part has the 'Calibrator' keyword in the attach phase", true);
+      else
+          dialog_message(GTK_MESSAGE_ERROR,(char *) "Calibration failed", (char *) "The remote calibrator reported that something went wrong during the calibration procedure", true);
   }
   return;
 }
@@ -145,7 +148,13 @@ void partMover::home_click(GtkButton *button, gtkClassData* currentClassData)
       dialog_message(GTK_MESSAGE_INFO, buffer2, (char *) " through the remoteCalibrator interface, since no custom zero group found in the supplied file", true);
       if(!iremCalib->homingSingleJoint(*joint) )
       {
-          dialog_message(GTK_MESSAGE_ERROR,(char *) "Homing failed", (char *) "No calibrator device was configured to perform this action or something went wrong during the homing procedure", true);
+          // provide better feedback to user by verifying if the calibrator device was set or not
+          bool isCalib = false;
+          iremCalib->isCalibratorDevicePresent(&isCalib);
+          if(!isCalib)
+              dialog_message(GTK_MESSAGE_ERROR,(char *) "Homing failed", (char *) "No calibrator device was configured to perform this action, please verify that the wrapper config file for part has the 'Calibrator' keyword in the attach phase", true);
+          else
+              dialog_message(GTK_MESSAGE_ERROR,(char *) "Homing failed", (char *) "The remote calibrator reported that something went wrong during the homing procedure", true);
       }
   }
   return;
