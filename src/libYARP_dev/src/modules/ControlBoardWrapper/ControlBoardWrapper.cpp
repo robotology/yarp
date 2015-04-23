@@ -789,6 +789,7 @@ bool ControlBoardWrapper::detachAll()
         for(int k=0;k<devices;k++)
             device.getSubdevice(k)->detach();
 
+        IRemoteCalibrator::releaseCalibratorDevice();
         return true;
 }
 

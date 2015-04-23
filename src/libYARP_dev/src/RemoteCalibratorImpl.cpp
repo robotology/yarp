@@ -45,3 +45,7 @@ IRemoteCalibrator *IRemoteCalibrator::getCalibratorDevice()
     return _remoteCalibrator;
 }
 
+void IRemoteCalibrator::releaseCalibratorDevice(void)
+{
+    _remoteCalibrator = NULL;
+}

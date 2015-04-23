@@ -73,6 +73,10 @@ public:
     virtual yarp::dev::IRemoteCalibrator *getCalibratorDevice();
 
     /**
+    /**
+     * @brief releaseCalibratorDevice: reset the internal pointer to NULL when stop using the calibrator
+     */
+    virtual void releaseCalibratorDevice(void);
      * @brief calibrateSingleJoint: call the calibration procedure for the single joint
      * @param j: joint to be calibrated
      * @return true if calibration was successful
