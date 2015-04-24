@@ -74,10 +74,14 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup) ||
         !mPriv->robot.enterPhase(RobotInterface::ActionPhaseRun)) {
         yError() << "Error in" << ActionPhaseToString(mPriv->robot.currentPhase()) << "phase... see previous messages for more info";
-        // stopModule() calls interruptModule() and then close()
-        // internally. This ensure that interrupt1 phase actions
-        // (i.e. detach) are performed before destroying the devices.
+        // stopModule() calls interruptModule() internally.
+        // This ensure that interrupt1 phase actions (i.e. detach) are
+        // performed before destroying the devices when we call close();
         stopModule();
+        // According to robotology/yarp#482, close() is not called by
+        // runModule(rf), and the user is supposed to leave everything
+        // clean.
+        close();
         return false;
     }
     return true;
