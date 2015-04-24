@@ -3,26 +3,26 @@
 -- Authors: Ali Paikan
 -- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 --
- 
+
 -- loading lua-yarp binding library
 require("yarp")
 
 --
--- PortMonitor table is used by portmonitor_carrier 
+-- PortMonitor table is used by portmonitor_carrier
 -- to invoke the corresponding methods.The methods are
 -- optional but must satisfy the following format:
 --
--- PortMonitor.create = function(options) ... return true end, 
--- PortMonitor.destroy = function() ... end, 
--- PortMonitor.accept = function(thing) ... return true end,     
--- PortMonitor.update = function(thing) ... return thing end, 
--- PortMonitor.setparam = function(param) ... end, 
+-- PortMonitor.create = function(options) ... return true end,
+-- PortMonitor.destroy = function() ... end,
+-- PortMonitor.accept = function(thing) ... return true end,
+-- PortMonitor.update = function(thing) ... return thing end,
+-- PortMonitor.setparam = function(param) ... end,
 -- PortMonitor.getparam = function() ... return param end
 -- PortMonitor.trig = function() ... return end
 --
 
 --
--- create is called when the port monitor is created 
+-- create is called when the port monitor is created
 -- @return Boolean
 --
 PortMonitor.create = function(options)
@@ -31,13 +31,13 @@ PortMonitor.create = function(options)
     PortMonitor.bdraw = true
     PortMonitor.bg = {r=255, g=255, b=255}
     PortMonitor.fg = {r=255, g=0, b=0}
-    PortMonitor.time = yarp.Time_now()    
+    PortMonitor.time = yarp.Time_now()
     return true;
 end
 
 
 
--- 
+--
 -- destroy is called when port monitor is destroyed
 --
 PortMonitor.destroy = function()
@@ -50,7 +50,7 @@ end
 -- accept is called when the port receives new data
 -- @param thing The Things abstract data type
 -- @return Boolean
--- if false is returned, the data will be ignored 
+-- if false is returned, the data will be ignored
 -- and update() will never be called
 PortMonitor.accept = function(thing)
     return true
@@ -58,10 +58,10 @@ end
 
 
 
--- 
+--
 -- trig is called when one of the peer portmonitors
--- to the same input port receives data. this is 
--- called before the update() method of the peer 
+-- to the same input port receives data. this is
+-- called before the update() method of the peer
 -- portmoniotr is invoked
 --
 PortMonitor.trig = function()
@@ -98,35 +98,35 @@ PortMonitor.update = function(thing)
             img_out:pixel(x, y).r = PortMonitor.fg.r
             img_out:pixel(x, y).g = PortMonitor.fg.g
             img_out:pixel(x, y).b = PortMonitor.fg.b
-        end            
+        end
     end
- 
+
     for i=0,PortMonitor.index,math.pi/32 do
         x = math.floor(w/2 + r * math.cos(i))
         y = math.floor(h/2 + r * math.sin(i))
         if PortMonitor.bdraw == true then
-            img_out:pixel(x, y).r = PortMonitor.fg.r            
-            img_out:pixel(x, y).g = PortMonitor.fg.g            
+            img_out:pixel(x, y).r = PortMonitor.fg.r
+            img_out:pixel(x, y).g = PortMonitor.fg.g
             img_out:pixel(x, y).b = PortMonitor.fg.b
         else
             img_out:pixel(x, y).r = PortMonitor.bg.r
             img_out:pixel(x, y).g = PortMonitor.bg.g
             img_out:pixel(x, y).b = PortMonitor.bg.b
-        end            
+        end
     end
-    
+
     t = yarp.Time_now()
     if (t-PortMonitor.time) >= 0.1 then
-        if PortMonitor.index >= 2*math.pi then            
+        if PortMonitor.index >= 2*math.pi then
             PortMonitor.index = 0
             if PortMonitor.bdraw == true then
-                PortMonitor.bdraw = false                
+                PortMonitor.bdraw = false
             else
                 PortMonitor.bdraw = true
             end
         else
             PortMonitor.index = PortMonitor.index + math.pi/32
-        end            
+        end
         PortMonitor.time = t
     end
 
@@ -135,10 +135,10 @@ end
 
 
 --
--- setparam is called on setCarrierParams by the port administrator  
+-- setparam is called on setCarrierParams by the port administrator
 -- @param property The Property
 --
-PortMonitor.setparam = function(property) 
+PortMonitor.setparam = function(property)
     bt = property:findGroup("bg", "background color")
     if bt:isNull() ~= true then
         if bt:size() >=4  then
@@ -162,16 +162,16 @@ end
 -- getparan is called on getCarrierParams by the port administrator
 -- @return property The Property
 --
-PortMonitor.getparam = function() 
+PortMonitor.getparam = function()
 
     property = yarp.Property()
     bt = yarp.Bottle()
-    bg = bt:addList()    
+    bg = bt:addList()
     bg:addString("bg")
     bg:addInt(PortMonitor.bg.r)
     bg:addInt(PortMonitor.bg.g)
     bg:addInt(PortMonitor.bg.b)
-    fg = bt:addList()    
+    fg = bt:addList()
     fg:addString("fg")
     fg:addInt(PortMonitor.fg.r)
     fg:addInt(PortMonitor.fg.g)

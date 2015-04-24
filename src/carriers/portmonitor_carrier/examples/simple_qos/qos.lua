@@ -3,12 +3,12 @@
 -- Authors: Ali Paikan
 -- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 --
- 
+
 -- loading lua-yarp binding library
 require("yarp")
 
 --
--- create is called when the port monitor is created 
+-- create is called when the port monitor is created
 -- @return Boolean
 --
 PortMonitor.create = function()
@@ -31,10 +31,10 @@ end
 
 
 
--- 
+--
 -- destroy is called when port monitor is destroyed
 --
-PortMonitor.destroy = function()    
+PortMonitor.destroy = function()
     yarp.NetworkBase_disconnect(admin_port:getName(), "/grabber")
     admin_port:close()
     print("QOS monitor finished!")
@@ -45,7 +45,7 @@ end
 -- accept is called when the port receives new data
 -- @param thing The Things abstract data type
 -- @return Boolean
--- if false is returned, the data will be ignored 
+-- if false is returned, the data will be ignored
 -- and update() will never be called
 PortMonitor.accept = function(thing)
     if prev_rcv_time == nil then
@@ -57,7 +57,7 @@ PortMonitor.accept = function(thing)
     frame_jitter =  frame_jitter + (yarp.Time_now() - prev_rcv_time)
     frame_count = frame_count + 1;
     prev_rcv_time = yarp.Time_now()
-    
+
     if (yarp.Time_now() - prev_monitor_time) > 5.0 then
         prev_monitor_time = yarp.Time_now()
         local frame_rate =  1.0 / (frame_jitter/frame_count)
@@ -75,7 +75,7 @@ PortMonitor.accept = function(thing)
             print(cmd:toString())
             admin_port:write(cmd)
         end
-    end        
+    end
     return true
 end
 

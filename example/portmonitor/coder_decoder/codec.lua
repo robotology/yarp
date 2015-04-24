@@ -4,35 +4,35 @@
 -- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 -- Using Lua 5.1+ base64 v3.0 (c) 2009 by Alex Kloss <alexthkloss@web.de>
 --
- 
+
 -- loading lua-yarp binding library
 require("yarp")
 
 --
--- PortMonitor table is used by portmonitor_carrier 
+-- PortMonitor table is used by portmonitor_carrier
 -- to invoke the corresponding methods.The methods are
 -- optional but must satisfy the following format:
 --
---  PortMonitor.create = function(options) ... return true end, 
---  PortMonitor.destroy = function() ... end, 
---  PortMonitor.accept = function(thing) ... return true end,     
---  PortMonitor.update = function(thing) ... return thing end, 
---  PortMonitor.setparam = function(param) ... end, 
+--  PortMonitor.create = function(options) ... return true end,
+--  PortMonitor.destroy = function() ... end,
+--  PortMonitor.accept = function(thing) ... return true end,
+--  PortMonitor.update = function(thing) ... return thing end,
+--  PortMonitor.setparam = function(param) ... end,
 --  PortMonitor.getparam = function() ... return param end
 --  PortMonitor.trig = function() ... return end
 --
 
 --
--- create is called when the port monitor is created 
+-- create is called when the port monitor is created
 -- @return Boolean
 --
-PortMonitor.create = function(options)   
+PortMonitor.create = function(options)
     isCoder = (options:find("sender_side"):asInt() == 1)
     if isCoder == true then
         print("codec.lua: I will encode whatever i get!")
     else
         print("codec.lua: I will decode whatever i get!")
-    end        
+    end
     return true;
 end
 
@@ -41,7 +41,7 @@ end
 -- accept is called when the port receives new data
 -- @param thing The Things abstract data type
 -- @return Boolean
--- if false is returned, the data will be ignored 
+-- if false is returned, the data will be ignored
 -- and update() will never be called
 PortMonitor.accept = function(thing)
     if thing:asBottle() == nil then
@@ -61,7 +61,7 @@ PortMonitor.update = function(thing)
     bt = thing:asBottle()
     data = bt:toString()
     bt:clear()
-    if isCoder == true then 
+    if isCoder == true then
         bt:fromString(enc(data))
     else
         bt:fromString(dec(data))
@@ -75,7 +75,7 @@ local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
 -- encoding
 function enc(data)
-    return ((data:gsub('.', function(x) 
+    return ((data:gsub('.', function(x)
         local r,b='',x:byte()
         for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
         return r;

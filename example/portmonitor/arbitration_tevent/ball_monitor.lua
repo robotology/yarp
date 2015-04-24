@@ -3,7 +3,7 @@
 -- Authors: Ali Paikan
 -- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 --
- 
+
 -- loading lua-yarp binding library
 require("yarp")
 
@@ -11,11 +11,11 @@ shouldAccept = true
 prevTime = yarp.Time_now()
 
 --
--- create is called when the port monitor is created 
+-- create is called when the port monitor is created
 -- @return Boolean
 --
 PortMonitor.create = function(options)
-    -- set the constraint here 
+    -- set the constraint here
     PortMonitor.setConstraint("true")
     return true;
 end
@@ -24,18 +24,18 @@ end
 -- accept is called when the port receives new data
 -- @param thing The Things abstract data type
 -- @return Boolean
--- if false is returned, the data will be ignored 
+-- if false is returned, the data will be ignored
 -- and update() will never be called
 PortMonitor.accept = function(thing)
 
-    if (yarp.Time_now() - prevTime) > 5.0 then        
-        if shouldAccept == true then 
+    if (yarp.Time_now() - prevTime) > 5.0 then
+        if shouldAccept == true then
             print('Ball monitor: switching off!')
-            shouldAccept = false 
+            shouldAccept = false
         else
             print('Ball monitor: switching on!')
             shouldAccept = true;
-        end    
+        end
         prevTime = yarp.Time_now()
     end
 

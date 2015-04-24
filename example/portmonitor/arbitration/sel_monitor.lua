@@ -3,26 +3,26 @@
 -- Authors: Ali Paikan
 -- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 --
- 
+
 -- loading lua-yarp binding library
 require("yarp")
 
 
 
 --
--- create is called when the port monitor is created 
+-- create is called when the port monitor is created
 -- @return Boolean
 --
 PortMonitor.create = function(options)
-    -- set the constraint here 
-    PortMonitor.setConstraint("false")       
+    -- set the constraint here
+    PortMonitor.setConstraint("false")
     switchDisplay = false;
     return true;
 end
 
 
 
--- 
+--
 -- destroy is called when port monitor is destroyed
 --
 PortMonitor.destroy = function()
@@ -37,7 +37,7 @@ end
 -- accept is called when the port receives new data
 -- @param thing The Things abstract data type
 -- @return Boolean
--- if false is returned, the data will be ignored 
+-- if false is returned, the data will be ignored
 -- and update() will never be called
 PortMonitor.accept = function(thing)
     print("selector: PortMonitor.accept()")

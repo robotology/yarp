@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 # If we are using ACE on MSVC, the RUN_TESTS target will fail
-# unless we add the ACE dlls to our path (or the user does 
+# unless we add the ACE dlls to our path (or the user does
 # that globally themselves).
 set(ACE_ACE_LIBRARY_DEBUG @ACE_ACE_LIBRARY_DEBUG@)
 set(ACE_ACE_LIBRARY_RELEASE @ACE_ACE_LIBRARY_RELEASE@)
