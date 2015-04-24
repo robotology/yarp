@@ -30,11 +30,11 @@ int main(int argc, char *argv[])
     }
 
 #ifdef ICUB_USE_REALTIME_LINUX
-	struct sched_param sch_param;
-	sch_param.__sched_priority = sched_get_priority_max(SCHED_FIFO)/3; //33
-	if( sched_setscheduler(0, SCHED_FIFO, &sch_param) != 0 )
-		 yWarning() << "Cannot set the scheduler to FIFO. (check superuser permission)";
-
+    struct sched_param sch_param;
+    sch_param.__sched_priority = sched_get_priority_max(SCHED_FIFO)/3; //33
+    if( sched_setscheduler(0, SCHED_FIFO, &sch_param) != 0 ) {
+        yWarning() << "Cannot set the scheduler to FIFO. (check superuser permission)";
+    }
     //if( mlockall(MCL_CURRENT | MCL_FUTURE) != 0 )
     //    yWarning() << "Cannot lock memory swapping (check superuser permission)";
 #endif //ICUB_USE_REALTIME_LINUX
