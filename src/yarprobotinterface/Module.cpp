@@ -26,12 +26,16 @@ public:
     RobotInterface::Robot robot;
     int interruptReceived;
     yarp::os::RpcServer rpcPort;
+    bool closed;
+    bool closeOk;
 };
 
 
 RobotInterface::Module::Private::Private(Module *parent) :
     parent(parent),
-    interruptReceived(0)
+    interruptReceived(0),
+    closed(false),
+    closeOk(true)
 {
     rpcPort.open("/robotInterface");
     parent->attach(rpcPort);
@@ -138,32 +142,36 @@ bool RobotInterface::Module::interruptModule()
 
 bool RobotInterface::Module::close()
 {
-    bool ret = true;
+    if (mPriv->closed) {
+        return mPriv->closeOk;
+    }
+    mPriv->closed = true;
+
     // If called from the first interrupt, enter the corresponding
     // interrupt phase.
     switch (mPriv->interruptReceived) {
     case 1:
         if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt1)) {
             yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseInterrupt1) << "phase... see previous messages for more info";
-            ret = false;
+            mPriv->closeOk = false;
         }
         break;
     case 2:
     case 3:
         break;
     default:
-        ret = false;
+        mPriv->closeOk = false;
     }
 
     // Finally call the shutdown phase.
     if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseShutdown)) {
         yError() << "Error in" << ActionPhaseToString(RobotInterface::ActionPhaseShutdown) << "phase... see previous messages for more info";
-        ret = false;
+        mPriv->closeOk = false;
     }
 
     mPriv->rpcPort.interrupt();
     mPriv->rpcPort.close();
-    return ret;
+    return mPriv->closeOk;
 }
 
 bool RobotInterface::Module::attach(yarp::os::RpcServer &source)
