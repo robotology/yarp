@@ -106,6 +106,7 @@ class yarp::dev::ServerInertial : public DeviceDriver,
             public yarp::os::PortReader,
             public yarp::dev::IGenericSensor
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     bool spoke;
     yarp::os::ConstString partName;
@@ -132,6 +133,7 @@ private:
     bool checkROSParams(yarp::os::Searchable &config);
     bool initialize_ROS();
     bool initialize_YARP(yarp::os::Searchable &prop);
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
     /**

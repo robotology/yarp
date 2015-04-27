@@ -164,6 +164,7 @@ STRIP_FROM_PATH        = @CMAKE_SOURCE_DIR@
 STRIP_FROM_INC_PATH    = @CMAKE_SOURCE_DIR@/src/libYARP_OS/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/modules/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/include/ \
                          @CMAKE_SOURCE_DIR@/src/libyarpc \
@@ -767,6 +768,7 @@ WARN_LOGFILE           =
 INPUT                  = @CMAKE_SOURCE_DIR@/src/libYARP_OS/include/yarp/os \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/include/yarp/sig \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/yarp/dev \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/modules \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/include/yarp/math \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/include/yarp/name \
                          @CMAKE_SOURCE_DIR@/src/libyarpc \

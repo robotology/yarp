@@ -45,6 +45,8 @@ namespace yarp{
     }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 inline bool getTimeStamp(Bottle &bot, Stamp &st)
 {
     if (bot.get(3).asVocab()==VOCAB_TIMESTAMP)
@@ -65,8 +67,6 @@ struct yarp::dev::ProtocolVersion
     int tweak;
 };
 
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 // encoders should arrive at least every 0.5s to be considered valide
 // getEncoders will return false otherwise.
@@ -193,7 +193,6 @@ public:
 
 };
 
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
 #include <yarp/os/RateThread.h>
@@ -242,6 +241,9 @@ public:
 
 };
 
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+
+
 /**
 * @ingroup dev_impl_wrapper
 *
@@ -268,6 +270,9 @@ class yarp::dev::RemoteControlBoard :
     public IPositionDirect,
     public IInteractionMode
 {
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 protected:
     Port rpc_p;
     Port command_p;
@@ -920,6 +925,8 @@ protected:
         }
         return false;
     }
+
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
     /**

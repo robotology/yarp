@@ -143,6 +143,7 @@ public:
     void run();
 
 private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     yarp::os::ConstString streamingPortName;
     yarp::os::ConstString rpcPortName;
     yarp::dev::IAnalogSensor *analogSensor_p;   // the analog sensor to read from
@@ -181,6 +182,7 @@ private:
     // Function used when one or more output ports are specified
     bool createPorts(const std::vector<yarp::dev::impl::AnalogPortEntry>& _analogPorts, int rate=20);
     bool checkForDeprecatedParams(yarp::os::Searchable &params);
+#endif //DOXYGEN_SHOULD_SKIP_THIS
 };
 
 

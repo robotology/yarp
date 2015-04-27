@@ -41,7 +41,6 @@
                         TODO make more general
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
  * name conflicts
@@ -58,6 +57,18 @@ namespace yarp{
 
 ///////////////////////////////////////////////////
 // TODO add IVirtualAnalogSensor interface to have Channels number and status??
+
+/**
+ *  @ingroup dev_impl_wrapper
+ *
+ * An analog wrapper for virtual device
+ * A virtual device is a software emulated device, for example force-torque computed from a real sensor
+ * and then relocated to another part of the robot or some kind of estimated meassurement needed by the
+ * robot.
+ *
+ * This virtual wrapper will open a port and accept the incoming estimated measurement and send them to
+ * the real robot using the attached device.
+ */
 class yarp::dev::VirtualAnalogWrapper : public yarp::dev::DeviceDriver, public yarp::os::Thread, public yarp::dev::IMultipleWrapper
 {
 public:
@@ -91,6 +102,7 @@ public:
     // Utility
     bool perform_first_check(int elems);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
     yarp::os::Semaphore mMutex;
 
@@ -105,8 +117,10 @@ protected:
 
     std::vector<yarp::dev::impl::AnalogSubDevice> mSubdevices;
     yarp::os::BufferedPort<yarp::os::Bottle> mPortInputTorques;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 class yarp::dev::impl::AnalogSubDevice
 {

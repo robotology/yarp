@@ -59,6 +59,8 @@ namespace yarp {
 #define DEFAULT_THREAD_PERIOD 20 //ms
 const int ANALOG_TIMEOUT=100; //ms
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Vector>
 {
     yarp::sig::Vector lastVector;
@@ -92,6 +94,7 @@ public:
 
     int getChannels();
 };
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
 * @ingroup dev_impl_wrapper
@@ -103,6 +106,7 @@ class yarp::dev::AnalogSensorClient: public DeviceDriver,
                           public IPreciselyTimed,
                           public IAnalogSensor
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
     InputPortProcessor inputPort;
     yarp::os::Port rpcPort;
@@ -116,6 +120,7 @@ protected:
     int _rate;
 
     void  removeLeadingTrailingSlashesOnly(std::string &name);
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
 

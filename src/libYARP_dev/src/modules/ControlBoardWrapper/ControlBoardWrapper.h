@@ -204,6 +204,7 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
 {
 private:
 
+#ifndef    DOXYGEN_SHOULD_SKIP_THIS
     std::string rootName;
     yarp::dev::impl::WrappedDevice device;
 
@@ -261,6 +262,7 @@ private:
     bool openAndAttachSubDevice(yarp::os::Property& prop);
 
     bool ownDevices;
+#endif  //DOXYGEN_SHOULD_SKIP_THIS
 
 public:
     /**
