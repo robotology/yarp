@@ -919,7 +919,7 @@ void JointItem::setJointInternalState(int mode)
 
 
         //ui->stackedWidget->widget(mode)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-        setStyleSheet(QString("font: 8pt \"Tahoma\"; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+        setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
 
         QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
         ui->comboMode->setStyleSheet(styleSheet);
