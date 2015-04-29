@@ -1,69 +1,80 @@
-% Copyright: (C) 2010 RobotCub Consortium
-% Authors: Vadim Tikhanoff
-% CopyPolicy: Released under the terms of the LGPLv2.1 or later, see
-% LGPL.TXT
 
-% Example code to show how to read an image from a YARP source, convert it
-% to matlab matix image using a fast method convertion (Leo Pape) and back
-% to a yarp image in order to send it to some ports
-%
-% run the example
-% connect images to input - e.g. yarp connect /icub/camcalib/left/out /matlab/img:i
-% connect images to output to yarpview - e.g. yarp connect /matlab/img:o /viewOut
-% connect write port to start and quit - e.g. yarp write ... /matlab/read
-%
-% use any type of message to start eg. "go"
-% when convertion is finished type "quit" to close ports nicely
+function FastImageConversion()
+
+    % Copyright: (C) 2010 RobotCub Consortium
+    % Authors: Vadim Tikhanoff
+    % CopyPolicy: Released under the terms of the LGPLv2.1 or later, see
+    % LGPL.TXT
+
+    % Example code to show how to read an image from a YARP source, convert it
+    % to matlab matix image using a fast method convertion (Leo Pape) and back
+    % to a yarp image in order to send it to some ports
+    %
+    % run the example
+    % connect images to input - e.g. yarp connect /icub/camcalib/left/out /matlab/img:i
+    % connect images to output to yarpview - e.g. yarp connect /matlab/img:o /viewOut
+    % connect write port to start and quit - e.g. yarp write ... /matlab/read
+    %
+    % use any type of message to start eg. "go"
+    % when convertion is finished type "quit" to close ports nicely
 
 
-% initialize YARP
-LoadYarp;
-import yarp.BufferedPortImageRgb
-import yarp.BufferedPortBottle
-import yarp.Port
-import yarp.Bottle
-import yarp.Time
-import yarp.ImageRgb
-import yarp.Image
-import yarp.PixelRgb
-done=0;
-b=Bottle;
 
-%creating ports
-port=BufferedPortBottle;        %port for reading "quit" signal
-portImage=BufferedPortImageRgb; %Buffered Port for reading image
-portFilters=Port;               %port for sending image
-%first close the port just in case
-%(this is to try to prevent matlab from beuing unresponsive)
-port.close;
-portImage.close;
-portFilters.close;
-%open the ports 
-disp('opening ports...');
-port.open('/matlab/read');
-disp('opened port /matlab/read');
-pause(0.5);
-portImage.open('/matlab/img:i');
-disp('opened port /matlab/img:i');
-pause(0.5);
-portFilters.open('/matlab/img:o');
-disp('opened port /matlab/img:o');
-pause(0.5);
-disp('done.');
+    % initialize YARP
+    LoadYarp;
+    import yarp.BufferedPortImageRgb
+    import yarp.BufferedPortBottle
+    import yarp.Port
+    import yarp.Bottle
+    import yarp.Time
+    import yarp.ImageRgb
+    import yarp.Image
+    import yarp.PixelRgb
+    done=0;
+    b=Bottle;
 
-while(~done)%run until you get the quit signal
-    
-     b = port.read( false );%use false to have a non blocking port
-     if (sum(size(b)) ~= 0) %check size of bottle 
-         disp('received command: ');
-         disp(b);
-         %checking for quit signal
-         if (strcmp(b.toString, 'quit'))
-             done=1;
-         else
-             disp('getting a yarp image..');
-             yarpImage=portImage.read(true);%get the yarp image from port
-             disp('got it..');
+    %creating ports
+    port=BufferedPortBottle;        %port for reading "quit" signal
+    portImage=BufferedPortImageRgb; %Buffered Port for reading image
+    portFilters=Port;               %port for sending image
+    %first close the port just in case
+    %(this is to try to prevent matlab from beuing unresponsive)
+    port.close;
+    portImage.close;
+    portFilters.close;
+    %open the ports 
+    disp('opening ports...');
+    port.open('/matlab/read');
+    disp('opened port /matlab/read');
+    pause(0.5);
+    portImage.open('/matlab/img:i');
+    disp('opened port /matlab/img:i');
+    pause(0.5);
+    portFilters.open('/matlab/img:o');
+    disp('opened port /matlab/img:o');
+    pause(0.5);
+    disp('done.');
+
+
+    finishup = onCleanup(@() closePorts(portImage,port,portFilters));
+
+
+    while(~done)%run until you get the quit signal
+
+         b = port.read( false );%use false to have a non blocking port
+         if (sum(size(b)) ~= 0) %check size of bottle 
+             disp('received command: ');
+             disp(b);
+             %checking for quit signal
+             if (strcmp(b.toString, 'quit'))
+                 break;
+             end
+         end
+
+         %disp('getting a yarp image..');
+         yarpImage=portImage.read(false);%get the yarp image from port
+         if (sum(size(yarpImage)) ~= 0) %check size of bottle 
+             %disp('got it..');
              h=yarpImage.height;
              w=yarpImage.width;
              pixSize=yarpImage.getPixelSize();
@@ -78,6 +89,8 @@ while(~done)%run until you get the quit signal
              COLOR(:,:,1)= r; % copy the image to the previoulsy create matrix
              COLOR(:,:,2)= g;
              COLOR(:,:,3)= b;
+
+
              time = toc;
              fprintf('receiving a yarp image took %f seconds \n', time);
              %
@@ -95,11 +108,17 @@ while(~done)%run until you get the quit signal
              time = toc;
              fprintf('converting back to yarp took %f seconds \n', time);
          end
-     end
-    pause(0.01);
-end
-disp('Going to close the port');
-portImage.close;
-port.close;
-portFilters.close;
 
+        pause(0.01);
+    end
+
+end
+
+function closePorts(portImage,port,portFilters)
+
+    disp('Going to close the port');
+    portImage.close;
+    port.close;
+    portFilters.close;
+    
+end
