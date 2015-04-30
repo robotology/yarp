@@ -11,6 +11,7 @@
 #define _YARPTESTCASE_H_
 
 #include <string>
+#include <cstring>
 #include <TestCase.h>
 #include <TestAssert.h>
 #include <Arguments.h>
@@ -33,8 +34,8 @@ public:
     YarpTestCase(std::string name)
         : RTF::TestCase(name) { }
 
-    bool setup(int argc, char** argv) {        
-        // check yarp network        
+    bool setup(int argc, char** argv) {
+        // check yarp network
         yarp.setVerbosity(-1);
         RTF_ASSERT_ERROR_IF(yarp.checkNetwork(),
                             "YARP network does not seem to be available, is the yarp server accessible?");
