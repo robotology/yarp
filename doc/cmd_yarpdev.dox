@@ -71,6 +71,10 @@ Device "remote_controlboard", C++ class RemoteControlBoard, wrapped by "controlb
 Device "controlboard", C++ class ServerControlBoard, is a network wrapper.
 \endverbatim
 
+where the first keyword like "test_grabber" is the device name used to instantiate it, class is
+the name of the class that implements it and the latter explains if the device is a network wrapper
+or it has a default network wrapper to be used or it does not have a default wrapper.
+
 @section yarpdev_normal yarpdev --device DEVICENAME --OPTION1 VALUE1 ...
 
 This is the normal way to start up a device.  For example:
@@ -198,6 +202,17 @@ Suggestions:
 \endverbatim
 So now we see another level of configuration which we can
 do to make the device match our system.
+
+\section devices_parameters Detailed parameters description
+
+Each device class has a description page where input parameters are desribed in
+more detail. You can find a list of devices in \ref dev_impl "Device implementation page" subdivided by type.
+
+For example the description for the
+
+yarp::dev::controlBoardWrapper2 device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref ControlBoardWrapper2_parameter "ControlBoardWrapper2 page" \n
+yarp::dev::analogWrapper        device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref analogWrapper_parameter "analogWrapper page" \n
+yarp::dev::ServeriInertial      device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref ServeriInertial_parameter "ServeriInertial page" \n
 
 
 

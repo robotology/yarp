@@ -25,6 +25,7 @@ namespace yarp{
 /**
  * @ingroup dev_impl_wrapper
  *
+ * \section remoteFrameGrabber
  * Connect to a ServerFrameGrabber.  See ServerFrameGrabber for
  * the network protocol used.
  *

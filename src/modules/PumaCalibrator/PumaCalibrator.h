@@ -40,7 +40,7 @@ namespace yarp {
  */
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_motor
  * 
  * A calibrator interface implementation for the Puma Robot Arm
  */

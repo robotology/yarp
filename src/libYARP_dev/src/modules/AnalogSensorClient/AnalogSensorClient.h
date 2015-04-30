@@ -41,6 +41,7 @@ namespace yarp {
 *  @ingroup yarp_dev_modules
 *  \defgroup analogsensorclient analogsensorclient
 *
+* \section analogsensorclient_parameter Description of input parameters
 *
 *  This device will connect to the proper analogServer and read the data broadcasted making them available to use for the user application. It also made available some function to check and control the state of the remote sensor.
 *

@@ -323,6 +323,10 @@ This will create and configure a FakeFrameGrabber, then
 wrap it up in a ServerFrameGrabber so that it can be accessed on
 the network.
 
+\subsection note_devices_list Find out available devices and their parameters
+
+To have a full lost of devices and check their parameters follow the instruction at the page \ref yarpdev
+
 More advanced topics: true nesting of device properties; calibration objects.
 
 */

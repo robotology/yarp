@@ -40,6 +40,9 @@ namespace yarp
 
 /**
  *  @ingroup dev_impl_wrapper
+ *
+ * \section ServeriInertial_parameter Description of input parameters
+ *
  * Export an inertial sensor.
  * The network interface is a single Port.
  * We will stream bottles with 12 floats:
