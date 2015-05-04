@@ -89,12 +89,7 @@ void VideoProducer::onNewVideoContentReceived(QVideoFrame *frame)
             QSize s = frame->size();
             QVideoFrame::PixelFormat f = frame->pixelFormat();
             m_format = new QVideoSurfaceFormat(s,f);
-            qreal ratio = (qreal)s.width() / (qreal)s.height();
-            if(ratio > 2){
-
-                m_format->setFrameSize(s.width(),
-                                       s.height() * 2);
-            }
+            
 
             bool b = m_surface->start(*m_format);
             if(b){
