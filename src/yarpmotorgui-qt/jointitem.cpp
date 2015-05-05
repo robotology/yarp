@@ -191,7 +191,7 @@ JointItem::JointItem(int index,QWidget *parent) :
 
 
     ui->stackedWidget->widget(VELOCITY)->setEnabled(false);
-    velocityTimer.setInterval(1000);
+    velocityTimer.setInterval(50);
     velocityTimer.setSingleShot(false);
     connect(&velocityTimer,SIGNAL(timeout()),this,SLOT(onVelocityTimer()));
 }
