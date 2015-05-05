@@ -253,7 +253,7 @@ QSlider::groove:horizontal:disabled {
  }</string>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="pageIdle">
          <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -305,7 +305,7 @@ QSlider::groove:horizontal:disabled {
                 <item>
                  <widget class="QLabel" name="label_7">
                   <property name="text">
-                   <string>Current:</string>
+                   <string>Encoder:</string>
                   </property>
                  </widget>
                 </item>
@@ -528,7 +528,7 @@ QSlider::groove:horizontal:disabled {
                 <item>
                  <widget class="QLabel" name="label_29">
                   <property name="text">
-                   <string>Current:</string>
+                   <string>Encoder:</string>
                   </property>
                  </widget>
                 </item>
@@ -839,7 +839,7 @@ QSlider::groove:horizontal:disabled {
                 <item>
                  <widget class="QLabel" name="label_11">
                   <property name="text">
-                   <string>Current:</string>
+                   <string>Encoder:</string>
                   </property>
                  </widget>
                 </item>
@@ -1064,7 +1064,7 @@ QSlider::groove:horizontal:disabled {
                 <item>
                  <widget class="QLabel" name="label_13">
                   <property name="text">
-                   <string>Current:</string>
+                   <string>Encoder:</string>
                   </property>
                  </widget>
                 </item>
@@ -1396,7 +1396,7 @@ QSlider::groove:horizontal:disabled {
                 <item>
                  <widget class="QLabel" name="label_27">
                   <property name="text">
-                   <string>Current:</string>
+                   <string>Encoder:</string>
                   </property>
                  </widget>
                 </item>
@@ -1634,7 +1634,7 @@ QSlider::groove:horizontal:disabled {
                 <item>
                  <widget class="QLabel" name="label_17">
                   <property name="text">
-                   <string>Current:</string>
+                   <string>Encoder:</string>
                   </property>
                  </widget>
                 </item>
@@ -1866,7 +1866,7 @@ QSlider::groove:horizontal:disabled {
                 <item>
                  <widget class="QLabel" name="label_21">
                   <property name="text">
-                   <string>Current:</string>
+                   <string>Encoder:</string>
                   </property>
                  </widget>
                 </item>
