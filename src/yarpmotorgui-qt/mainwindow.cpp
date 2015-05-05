@@ -904,6 +904,7 @@ void MainWindow::updateModesTree(PartItem *part)
             }
         }
     }else{
+        bool foundFaultPart = false;
         for(int i=0;i<parentNode->childCount();i++){
             QTreeWidgetItem *item = parentNode->child(i);
             QString mode;
@@ -911,26 +912,17 @@ void MainWindow::updateModesTree(PartItem *part)
             mode = getStringMode(modes.at(i));
 
             if(c == hwFaultColor){
-                item->setData(0,Qt::UserRole,TREEMODE_WARN);
+                foundFaultPart = true;
+                if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
+                    item->setIcon(0,QIcon(":/warning.svg"));
+                    item->setData(0,Qt::UserRole,TREEMODE_WARN);
+                }
             }else{
+                item->setIcon(0,QIcon());
                 item->setData(0,Qt::UserRole,TREEMODE_OK);
             }
 
-            if(!parentNode->isExpanded()){
-                if(item->data(0,Qt::UserRole).toInt() == TREEMODE_WARN){
-                    if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                        parentNode->setBackgroundColor(0,hwFaultColor);
-                        parentNode->setIcon(0,QIcon(":/warning.svg"));
-                        parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-                    }
-                }else{
-                    if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
-                        parentNode->setBackgroundColor(0,QColor("white"));
-                        parentNode->setIcon(0,QIcon(":/apply.svg"));
-                        parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-                    }
-                }
-            }else{
+            if(parentNode->isExpanded()){
                 if(item->text(1) != mode){
                     item->setText(1,mode);
                 }
@@ -938,29 +930,20 @@ void MainWindow::updateModesTree(PartItem *part)
                     item->setBackgroundColor(0,c);
                     item->setBackgroundColor(1,c);
                 }
+            }
+        }
 
-                if(parentNode->backgroundColor(0) != QColor("white")){
-                    parentNode->setBackgroundColor(0,QColor("white"));
-                }
-
-
-                if(c == hwFaultColor){
-                    if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                        parentNode->setIcon(0,QIcon(":/warning.svg"));
-                        parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-                    }
-                    if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                        item->setIcon(0,QIcon(":/warning.svg"));
-                        item->setData(0,Qt::UserRole,TREEMODE_WARN);
-                    }
-                }else{
-                    if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
-                        parentNode->setIcon(0,QIcon(":/apply.svg"));
-                        parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-                    }
-                }
-
-
+        if(!foundFaultPart){
+            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
+                parentNode->setBackgroundColor(0,QColor("white"));
+                parentNode->setIcon(0,QIcon(":/apply.svg"));
+                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
+            }
+        }else{
+            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
+                parentNode->setBackgroundColor(0,hwFaultColor);
+                parentNode->setIcon(0,QIcon(":/warning.svg"));
+                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
             }
 
         }

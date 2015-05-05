@@ -50,6 +50,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->sliderPositionPosition->installEventFilter(this);
     connect(ui->sliderPositionPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
     connect(ui->sliderPositionPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
+    connect(ui->sliderPositionPosition,SIGNAL(actionTriggered(int)),this,SLOT(onSliderPositionActionTriggered(int)));
 
     ui->sliderTorqueTorque->installEventFilter(this);
     connect(ui->sliderTorqueTorque,SIGNAL(sliderPressed()),this,SLOT(onSliderTorquePressed()));
@@ -186,7 +187,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboInteraction->setStyleSheet(styleSheet);
 
 
-    velocityTimer.setInterval(50);
+    velocityTimer.setInterval(1000);
     velocityTimer.setSingleShot(false);
     connect(&velocityTimer,SIGNAL(timeout()),this,SLOT(onVelocityTimer()));
 }
@@ -203,6 +204,7 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
             QLabel *label;
 
             if(obj == ui->sliderPositionPosition){
+                motionDone = false;
                 slider = ui->sliderPositionPosition;
                 label = ui->labelPositionPosition;
                 if(keyEvent->type() == QEvent::KeyPress){
@@ -213,10 +215,12 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
                 }
             }
             if(obj == ui->sliderPositionVelocity){
+                motionDone = false;
                 slider = ui->sliderPositionVelocity;
                 label = ui->labelPositionVelocity;
             }
             if(obj == ui->sliderPositionDirect){
+                motionDone = false;
                 slider = ui->sliderPositionDirect;
                 label = ui->labelPositionDirectPosition;
                 if(keyEvent->type() == QEvent::KeyPress){
@@ -227,6 +231,7 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
                 }
             }
             if(obj == ui->sliderMixedPosition){
+                motionDone = false;
                 slider = ui->sliderMixedPosition;
                 label = ui->labelMixedPosition;
                 if(keyEvent->type() == QEvent::KeyPress){
@@ -407,9 +412,10 @@ void JointItem::setEnabledOptions(bool debug_param_enabled,
     }
 
     if(!openloop_enabled){
-        ui->stackedWidget->removeWidget(ui->stackedWidget->widget(OPENLOOP));
-        ui->comboMode->removeItem(OPENLOOP);
-        OPENLOOP = -1;
+        //ui->stackedWidget->removeWidget(ui->stackedWidget->widget(OPENLOOP));
+        //ui->comboMode->removeItem(OPENLOOP);
+        ui->stackedWidget->widget(OPENLOOP)->setEnabled(false);
+        //OPENLOOP = -1;
     }
 
 
@@ -483,13 +489,13 @@ void JointItem::onStackedWidgetChanged(int index)
 
 void JointItem::onModeChanged(int index)
 {
-    if (this->internalState == Velocity)
-    {
+    if (this->internalState == Velocity){
        velocityTimer.stop();
     }
     Q_UNUSED(index);
     int mode = ui->comboMode->currentData(Qt::UserRole).toInt();
     changeMode(mode,this);
+    motionDone = true;
 }
 
 
@@ -529,6 +535,7 @@ void JointItem::onSliderVelocityMoved(int val)
 
 void JointItem::onSliderMoved(int val)
 {
+    motionDone = false;
     int index = ui->stackedWidget->currentIndex();
     if (index == POSITION) {
         updateSliderLabel(ui->sliderPositionPosition,ui->labelPositionPosition,val);
@@ -604,16 +611,55 @@ void JointItem::onSliderPositionReleased()
     int index = ui->stackedWidget->currentIndex();
     if (index == POSITION) {
         disconnect(ui->sliderPositionPosition,SIGNAL(sliderMoved(int)),this,SLOT(onSliderMoved(int)));
+//        updateSliderLabel(ui->sliderPositionDirect,ui->labelPositionDirectPosition,ui->sliderPositionPosition->value());
+//        updateSliderLabel(ui->sliderMixedPosition,ui->labelMixedPosition,ui->sliderPositionPosition->value());
         sliderPositionMoved(ui->sliderPositionPosition->value(),ui->sliderPositionVelocity->value(),jointIndex);
     } else if (index == POSITION_DIR) {
         disconnect(ui->sliderPositionDirect,SIGNAL(sliderMoved(int)),this,SLOT(onSliderMoved(int)));
+//        updateSliderLabel(ui->sliderPositionPosition,ui->labelPositionPosition,ui->sliderPositionDirect->value());
+//        updateSliderLabel(ui->sliderMixedPosition,ui->labelMixedPosition,ui->sliderPositionDirect->value());
         sliderPositionMoved(ui->sliderPositionDirect->value(),-1,jointIndex);
     } else if (index == MIXED) {
         disconnect(ui->sliderMixedPosition,SIGNAL(sliderMoved(int)),this,SLOT(onSliderMoved(int)));
+//        updateSliderLabel(ui->sliderPositionPosition,ui->labelPositionPosition,ui->sliderMixedPosition->value());
+//        updateSliderLabel(ui->sliderPositionDirect,ui->labelPositionDirectPosition,ui->sliderMixedPosition->value());
         sliderPositionMoved(ui->sliderMixedPosition->value(),ui->sliderMixedVelocity->value(),jointIndex);
     }
 
     sliderPositionPressed = false;
+}
+
+void JointItem::onSliderPositionActionTriggered(int val)
+{
+    qDebug() << "val " << val;
+    if( !sliderPositionPressed){
+        motionDone = false;
+        int index = ui->stackedWidget->currentIndex();
+        if (index == POSITION) {
+            connect(ui->sliderPositionPosition,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)),Qt::UniqueConnection);
+        } else if (index == POSITION_DIR) {
+            connect(ui->sliderPositionDirect,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)),Qt::UniqueConnection);
+        } else if (index == MIXED) {
+            connect(ui->sliderMixedPosition,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)),Qt::UniqueConnection);
+        }
+
+
+        //onSliderPositionReleased();
+    }
+}
+void JointItem::onSliderPositionValueChanged(int val)
+{
+
+    int index = ui->stackedWidget->currentIndex();
+    if (index == POSITION) {
+        disconnect(ui->sliderPositionPosition,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)));
+    } else if (index == POSITION_DIR) {
+        disconnect(ui->sliderPositionDirect,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)));
+    } else if (index == MIXED) {
+        disconnect(ui->sliderMixedPosition,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)));
+    }
+    onSliderMoved(val);
+    onSliderPositionReleased();
 }
 
 void JointItem::onSliderOpenloopPressed()
@@ -675,6 +721,7 @@ double JointItem::getPositionSliderSpeed()
 
 void JointItem::setMotionDone(bool done)
 {
+    motionDone = done;
     int index = ui->stackedWidget->currentIndex();
     if (index == POSITION) {
         if(!done){
@@ -717,7 +764,7 @@ void JointItem::updateSliderTorqueLabel(QSlider *slider,QLabel *label,double val
 
 void JointItem::updateSlider(QSlider *slider, QLabel *label, double val)
 {
-    if(sliderPositionPressed){
+    if(sliderPositionPressed || !motionDone){
         return;
     }
     slider->setValue(val);
@@ -957,98 +1004,113 @@ void JointItem::setJointState(JointState newState)
 
     switch (internalState) {
     case Unknown:{
-        ui->groupBox->setTitle("UNKNOWN");
+        ui->groupBox->setTitle(QString("JOINT %1  -  UNKNOWN").arg(jointIndex));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
+        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
     case Configured:{
-        ui->groupBox->setTitle("CONFIGURED");
+        ui->groupBox->setTitle(QString("JOINT %1  -  CONFIGURED").arg(jointIndex));
         ui->stackedWidget->setEnabled(true);
         ui->buttonsContainer->setEnabled(true);
+        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
 
     case NotConfigured:{
-        ui->groupBox->setTitle("NOT CONFIGURED");
+        ui->groupBox->setTitle(QString("JOINT %1  -  NOT CONFIGURED").arg(jointIndex));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
+        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
 
     case CalibDone:{
-        ui->groupBox->setTitle("CALIBRATING DONE");
+        ui->groupBox->setTitle(QString("JOINT %1  -  CALIBRATING DONE").arg(jointIndex));
         ui->stackedWidget->setEnabled(true);
         ui->buttonsContainer->setEnabled(true);
+        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
     case Calibrating:{
-        ui->groupBox->setTitle("CALIBRATING");
+        ui->groupBox->setTitle(QString("JOINT %1  -  CALIBRATING").arg(jointIndex));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
+        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
     case HwFault:{
-        ui->groupBox->setTitle("HARDWARE FAULT");
-        ui->stackedWidget->setEnabled(false);
+        ui->groupBox->setTitle(QString("JOINT %1  -  HARDWARE FAULT").arg(jointIndex));
+        //ui->stackedWidget->setEnabled(false);
         //ui->buttonsContainer->setEnabled(false);
         ui->buttonHome->setEnabled(false);
         ui->buttonCalib->setEnabled(false);
         ui->buttonRun->setEnabled(false);
         ui->comboMode->setEnabled(false);
         ui->comboInteraction->setEnabled(false);
+        velocityTimer.stop();
 
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = hwFaultColor;
-            ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
     case Disconnected:{
-        ui->groupBox->setTitle("DISCONNECTED");
+        ui->groupBox->setTitle(QString("JOINT %1  -  DISCONNECTED").arg(jointIndex));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
+        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = disconnectColor;
-            ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
     case Idle:{
+        velocityTimer.stop();
         setJointInternalState(IDLE);
         break;
     }
@@ -1057,22 +1119,27 @@ void JointItem::setJointState(JointState newState)
         break;
     }
     case PositionDirect:{
+        velocityTimer.stop();
         setJointInternalState(POSITION_DIR);
         break;
     }
     case Mixed:{
+        velocityTimer.stop();
         setJointInternalState(MIXED);
         break;
     }
     case Velocity:{
+        velocityTimer.start();
         setJointInternalState(VELOCITY);
         break;
     }
     case Torque:{
+        velocityTimer.stop();
         setJointInternalState(TORQUE);
         break;
     }
     case OpenLoop:{
+        velocityTimer.stop();
         setJointInternalState(OPENLOOP);
         break;
     }

@@ -87,6 +87,7 @@ private:
     bool speedVisible;
     QTimer velocityTimer;
     double lastVelocity;
+    bool motionDone;
 
     int     IDLE;
     int     POSITION;
@@ -126,6 +127,8 @@ private slots:
     void onInteractionChanged(int index);
     void onSliderPositionPressed();
     void onSliderPositionReleased();
+    void onSliderPositionValueChanged(int);
+    void onSliderPositionActionTriggered(int);
     void onSliderTorquePressed();
     void onSliderTorqueReleased();
     void onSliderOpenloopPressed();
