@@ -48,6 +48,8 @@ public:
 
     void clearData();
 
+    Connection *getConnetion();
+
     double lastX;
     double lastY;
     double lastT;
@@ -56,6 +58,7 @@ public:
     int getType();
     QString getColor();
     int getLineSize();
+    bool deleteConnection;
 
     QCPGraph *customGraphPoint;
     QCPGraph *customGraph;
@@ -129,7 +132,7 @@ public:
                      bool autorescale,
                      QObject *parent = 0);
     ~Plotter();
-    Graph *addGraph(int index, QString title, QString color, QString type, int size, double graph_y_scale=1.0);
+    Graph *addGraph(QString remotePort, QString localPort, int index, QString title, QString color, QString type, int size, double graph_y_scale=1.0);
     void clear();
     void rescale();
     void setPaintGeometry(QRectF);

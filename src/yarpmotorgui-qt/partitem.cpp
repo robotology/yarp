@@ -1596,6 +1596,14 @@ void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
     sendPartJointsValues(sequenceNum,values,speeds);
 }
 
+void PartItem::onControlVelocity(bool control)
+{
+    for(int i=0;i<layout->count();i++){
+        JointItem *joint  = (JointItem*)layout->itemAt(i)->widget();
+        joint->controlVelocity(control);
+    }
+}
+
 void PartItem::onViewSpeedValues(bool view)
 {
     for(int i=0;i<layout->count();i++){
@@ -1680,6 +1688,7 @@ void PartItem::updateControlMode()
 void PartItem::updatePart()
 {
 
+    double refTorques[MAX_NUMBER_OF_JOINTS];
     double torques[MAX_NUMBER_OF_JOINTS];
     double positions[MAX_NUMBER_OF_JOINTS];
     double speeds[MAX_NUMBER_OF_JOINTS];
@@ -1711,6 +1720,7 @@ void PartItem::updatePart()
     if (!iencs->getEncoders(positions)){
           return;
     }
+    trq->getRefTorques(refTorques);
     trq->getTorques(torques);
     iencs->getEncoderSpeeds(speeds);
 
@@ -1719,6 +1729,7 @@ void PartItem::updatePart()
         JointItem *joint  = (JointItem*)layout->itemAt(k)->widget();
         joint->setPosition(positions[k]);
         joint->setTorque(torques[k]);
+        joint->setRefTorque(refTorques[k]);
         joint->setSpeed(speeds[k]);
     }
 

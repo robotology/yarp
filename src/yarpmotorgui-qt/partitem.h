@@ -173,6 +173,7 @@ public slots:
     void updateControlMode();
     void updatePart();
     void onViewSpeedValues(bool);
+    void onControlVelocity(bool control);
 
 private slots:
     void onSequenceActivated();

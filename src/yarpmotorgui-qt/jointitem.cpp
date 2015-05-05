@@ -33,6 +33,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     enableCalib = true;
     speedVisible = false;
     lastVelocity = 0;
+    velocityModeEnabled = false;
 
     IDLE            = 0;
     POSITION        = 1;
@@ -87,6 +88,8 @@ JointItem::JointItem(int index,QWidget *parent) :
 
     ui->groupBox->setTitle(QString("JOINT %1").arg(index));
     // ui->groupBox->setAlignment(Qt::AlignHCenter);
+
+
 
 
     movingSliderStyle = "QSlider::groove:horizontal:enabled {"
@@ -187,6 +190,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboInteraction->setStyleSheet(styleSheet);
 
 
+    ui->stackedWidget->widget(VELOCITY)->setEnabled(false);
     velocityTimer.setInterval(1000);
     velocityTimer.setSingleShot(false);
     connect(&velocityTimer,SIGNAL(timeout()),this,SLOT(onVelocityTimer()));
@@ -306,6 +310,15 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
     } else {
         // standard event processing
         return QObject::eventFilter(obj, event);
+    }
+}
+
+void JointItem::controlVelocity(bool control)
+{
+    velocityModeEnabled = control;
+    ui->stackedWidget->widget(VELOCITY)->setEnabled(velocityModeEnabled);
+    if(ui->stackedWidget->currentIndex() == VELOCITY && velocityModeEnabled){
+        velocityTimer.start();
     }
 }
 
@@ -479,11 +492,15 @@ void JointItem::installFilter()
 void JointItem::onStackedWidgetChanged(int index)
 {
     if(index == VELOCITY){
-        velocityTimer.start();
+        if(velocityModeEnabled){
+            velocityTimer.start();
+        }
     }else{
-        velocityTimer.stop();
-        lastVelocity = 0;
-        updateSlider(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,0);
+        if(velocityModeEnabled){
+            velocityTimer.stop();
+            lastVelocity = 0;
+            updateSlider(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,0);
+        }
     }
 }
 
@@ -587,9 +604,11 @@ void JointItem::onSliderVelocityReleased()
 
 void JointItem::onVelocityTimer()
 {
-    sliderVelocityMoved(lastVelocity,jointIndex);
-    if(!sliderVelocityPressed){
-        updateSliderLabel(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,lastVelocity);
+    if(velocityModeEnabled){
+        sliderVelocityMoved(lastVelocity,jointIndex);
+        if(!sliderVelocityPressed){
+            updateSliderLabel(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,lastVelocity);
+        }
     }
 }
 
@@ -631,7 +650,6 @@ void JointItem::onSliderPositionReleased()
 
 void JointItem::onSliderPositionActionTriggered(int val)
 {
-    qDebug() << "val " << val;
     if( !sliderPositionPressed){
         motionDone = false;
         int index = ui->stackedWidget->currentIndex();
@@ -831,6 +849,13 @@ void JointItem::setPosition(double val)
 
 }
 
+void JointItem::setRefTorque(double val)
+{
+    if(ui->stackedWidget->currentIndex() == TORQUE){
+        updateSliderTorque(val);
+    }
+}
+
 void JointItem::setTorque(double val)
 {
     torque = val;
@@ -857,7 +882,6 @@ void JointItem::setTorque(double val)
     }
     if(ui->stackedWidget->currentIndex() == TORQUE){
         ui->editTorqueTorque->setText(sVal);
-        updateSliderTorque(val);
     }
     if(ui->stackedWidget->currentIndex() == OPENLOOP){
         ui->editOpenLoopTorque->setText(sVal);
@@ -898,7 +922,7 @@ void JointItem::setSpeed(double val)
     }
     if(ui->stackedWidget->currentIndex() == TORQUE){
         ui->editTorqueSpeed->setText(sVal);
-        updateSliderTorque(val);
+        //updateSliderTorque(val);
     }
     if(ui->stackedWidget->currentIndex() == OPENLOOP){
         ui->editOpenLoopSpeed->setText(sVal);
@@ -1007,7 +1031,6 @@ void JointItem::setJointState(JointState newState)
         ui->groupBox->setTitle(QString("JOINT %1  -  UNKNOWN").arg(jointIndex));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
-        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
@@ -1021,7 +1044,6 @@ void JointItem::setJointState(JointState newState)
         ui->groupBox->setTitle(QString("JOINT %1  -  CONFIGURED").arg(jointIndex));
         ui->stackedWidget->setEnabled(true);
         ui->buttonsContainer->setEnabled(true);
-        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
@@ -1036,7 +1058,6 @@ void JointItem::setJointState(JointState newState)
         ui->groupBox->setTitle(QString("JOINT %1  -  NOT CONFIGURED").arg(jointIndex));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
-        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
@@ -1051,7 +1072,6 @@ void JointItem::setJointState(JointState newState)
         ui->groupBox->setTitle(QString("JOINT %1  -  CALIBRATING DONE").arg(jointIndex));
         ui->stackedWidget->setEnabled(true);
         ui->buttonsContainer->setEnabled(true);
-        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
@@ -1065,7 +1085,6 @@ void JointItem::setJointState(JointState newState)
         ui->groupBox->setTitle(QString("JOINT %1  -  CALIBRATING").arg(jointIndex));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
-        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
@@ -1077,14 +1096,13 @@ void JointItem::setJointState(JointState newState)
     }
     case HwFault:{
         ui->groupBox->setTitle(QString("JOINT %1  -  HARDWARE FAULT").arg(jointIndex));
-        //ui->stackedWidget->setEnabled(false);
+        ui->stackedWidget->setEnabled(false);
         //ui->buttonsContainer->setEnabled(false);
         ui->buttonHome->setEnabled(false);
         ui->buttonCalib->setEnabled(false);
         ui->buttonRun->setEnabled(false);
         ui->comboMode->setEnabled(false);
         ui->comboInteraction->setEnabled(false);
-        velocityTimer.stop();
 
 
         int index = ui->stackedWidget->currentIndex();
@@ -1099,7 +1117,6 @@ void JointItem::setJointState(JointState newState)
         ui->groupBox->setTitle(QString("JOINT %1  -  DISCONNECTED").arg(jointIndex));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
-        velocityTimer.stop();
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
@@ -1110,7 +1127,6 @@ void JointItem::setJointState(JointState newState)
         break;
     }
     case Idle:{
-        velocityTimer.stop();
         setJointInternalState(IDLE);
         break;
     }
@@ -1119,27 +1135,22 @@ void JointItem::setJointState(JointState newState)
         break;
     }
     case PositionDirect:{
-        velocityTimer.stop();
         setJointInternalState(POSITION_DIR);
         break;
     }
     case Mixed:{
-        velocityTimer.stop();
         setJointInternalState(MIXED);
         break;
     }
     case Velocity:{
-        velocityTimer.start();
         setJointInternalState(VELOCITY);
         break;
     }
     case Torque:{
-        velocityTimer.stop();
         setJointInternalState(TORQUE);
         break;
     }
     case OpenLoop:{
-        velocityTimer.stop();
         setJointInternalState(OPENLOOP);
         break;
     }

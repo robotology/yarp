@@ -72,6 +72,11 @@ ApplicationWindow {
         onAbout:{
             aboutDlg.visibility = Window.Windowed
         }
+        onQuit:{
+            Qt.quit();
+        }
+
+
     }
 
 

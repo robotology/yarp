@@ -14,7 +14,7 @@ GenericLoader::GenericLoader(QObject *parent) :
     QObject(parent),
     default_portscope_rows(1),
     default_portscope_columns(1),
-    default_portscope_carrier("mcast"),
+    default_portscope_carrier("udp"),
     default_portscope_persistent(true),
     default_portscope_localport("/yarpscope"),
     default_plot_gridx(-1),

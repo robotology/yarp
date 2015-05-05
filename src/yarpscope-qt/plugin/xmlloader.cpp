@@ -161,7 +161,7 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                         graph_size = default_graph_size;
                     }
                 }
-                Graph *graph = plotter->addGraph(graph_index,graph_title, graph_color, graph_type, graph_size, graph_y_scale);
+                Graph *graph = plotter->addGraph(graph_remote,"",graph_index,graph_title, graph_color, graph_type, graph_size, graph_y_scale);
                 if(graph){
                     graph->init(graph_remote,"", portscope_carrier, portscope_persistent);
                 }

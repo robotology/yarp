@@ -12,6 +12,7 @@
 #include "yarp/os/ContactStyle.h"
 #include "yarp/os/Time.h"
 #include "yarp/os/Stamp.h"
+#include <QDebug>
 
 /*! \brief Constructor of the class.
  *
@@ -109,10 +110,24 @@ void Plotter::setPaintGeometry(QRectF r)
     \param the tickness of the graph
     \param graph_y_scale to multiply the all data points for a scale factor
 */
-Graph * Plotter::addGraph(int index, QString title, QString color, QString type, int size, double graph_y_scale)
+Graph * Plotter::addGraph(QString remotePort,QString localPort,int index, QString title, QString color, QString type, int size, double graph_y_scale)
 {
     Graph *graph = NULL;
     graph = new Graph(index,title,color,type,size,graph_y_scale,this->size);
+
+
+    for(int i=0;i<graphList.count();i++) {
+        Graph *g = (Graph *)graphList.at(i);
+        Connection *con = g->getConnetion();
+        if(!con){
+            continue;
+        }
+        if(con->remotePortName == remotePort && con->localPortName == localPort){
+            graph->curr_connection = g->curr_connection;
+            graph->deleteConnection = false;
+            break;
+        }
+    }
     graphList.append(graph);
 
 
@@ -157,7 +172,12 @@ void Plotter::onTimeout()
     int c = graphList.count();
     for (int j=0;j < c; j++) {
         Graph *graph = (Graph*)graphList.at(j);
-        yarp::os::Bottle *b = graph->curr_connection->localPort->read(false);
+        yarp::os::Bottle *b;
+        if(graph->deleteConnection){
+            b = graph->curr_connection->localPort->read(false);
+        }else{
+            b = graph->curr_connection->localPort->lastRead();
+        }
         if (!b) {
             qDebug("No data received. Using previous values.");
             graph->appendPreviousValues();
@@ -231,6 +251,9 @@ Graph::Graph(int index, QString title, QString color, QString type, int size, do
     lineSize = size;
     numberAcquiredData = 0;
 
+    curr_connection = NULL;
+    deleteConnection = true;
+
 }
 
 
@@ -241,24 +264,30 @@ void Graph::init(QString remotePortName,
 {
 
     yarp::os::ContactStyle  style;
-    curr_connection = NULL;
 
-    if (persistent) {
-        style.persistent = persistent;
-        style.persistenceType = yarp::os::ContactStyle::END_WITH_TO_PORT;
+    if(!curr_connection){
+        if (persistent) {
+            style.persistent = persistent;
+            style.persistenceType = yarp::os::ContactStyle::END_WITH_TO_PORT;
+        }
+        style.carrier = carrier.toLatin1().data();
+
+        curr_connection = new Connection(remotePortName, localPortName);
+        curr_connection->connect(style);
     }
-    style.carrier = carrier.toLatin1().data();
-
-    curr_connection = new Connection(remotePortName, localPortName);
-    curr_connection->connect(style);
 }
 
 Graph::~Graph()
 {
-    if(curr_connection){
+    if(curr_connection && deleteConnection){
         delete curr_connection;
+        curr_connection = NULL;
     }
     clearData();
+}
+Connection *Graph::getConnetion()
+{
+    return curr_connection;
 }
 
 /*! \brief Return the graph type */

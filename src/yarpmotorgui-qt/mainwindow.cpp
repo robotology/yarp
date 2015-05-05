@@ -141,10 +141,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *viewGlobalToolbar = windows->addAction("Global Commands Toolbar");
     QAction *viewPartToolbar = windows->addAction("Part Commands Toolbar");
     QAction *viewSpeedValues = windows->addAction("View Speed Values");
+    QAction *controlVelocityMode = windows->addAction("Control Velocity Mode");
 
     viewGlobalToolbar->setCheckable(true);
     viewPartToolbar->setCheckable(true);
     viewSpeedValues->setCheckable(true);
+    controlVelocityMode->setCheckable(true);
 
 
     QSettings settings("YARP","yarpmotorgui");
@@ -155,6 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewGlobalToolbar->setChecked(bViewGlobalToolbar);
     viewPartToolbar->setChecked(bViewPartToolbar);
     viewSpeedValues->setChecked(bSpeedValues);
+    controlVelocityMode->setChecked(false);
 
     globalToolBar->setVisible(bViewGlobalToolbar);
     partToolBar->setVisible(bViewPartToolbar);
@@ -162,6 +165,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewGlobalToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewGlobalToolbar(bool)));
     connect(viewPartToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewPartToolbar(bool)));
     connect(viewSpeedValues,SIGNAL(triggered(bool)),this,SLOT(onViewSpeeds(bool)));
+    connect(controlVelocityMode,SIGNAL(triggered(bool)),this,SLOT(onControlVelocity(bool)));
 
     connect(this,SIGNAL(internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
@@ -260,6 +264,11 @@ void MainWindow::onViewPartToolbar(bool val)
     }
 }
 
+void MainWindow::onControlVelocity(bool val)
+{
+    controlVelocity(val);
+}
+
 void MainWindow::onViewSpeeds(bool val)
 {
     QSettings settings("YARP","yarpmotorgui");
@@ -342,6 +351,7 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
             connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
             connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
             connect(this,SIGNAL(viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
+            connect(this,SIGNAL(controlVelocity(bool)),part,SLOT(onControlVelocity(bool)));
 
             scroll->setWidget(part);
             tabPanel->addTab(scroll,enabledParts.at(i));

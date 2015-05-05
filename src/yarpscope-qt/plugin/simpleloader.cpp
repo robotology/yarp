@@ -140,7 +140,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
             graph_size = default_graph_size;
         }
 
-        Graph *graph = plotter->addGraph(graph_index, graph_title, graph_color, graph_type, graph_size);
+        Graph *graph = plotter->addGraph(graph_remote, graph_localport,graph_index, graph_title, graph_color, graph_type, graph_size);
         if(graph){
             graph->init(graph_remote, graph_localport, portscope_carrier, portscope_persistent);
         }
@@ -237,7 +237,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
             } else {
                 graph_size = default_graph_size;
             }
-            Graph *graph = plotter->addGraph( graph_index, graph_title, graph_color, graph_type, graph_size);
+            Graph *graph = plotter->addGraph( graph_remote,  graph_localport,graph_index, graph_title, graph_color, graph_type, graph_size);
             if(graph){
                 graph->init(graph_remote,  graph_localport, portscope_carrier, portscope_persistent);
             }

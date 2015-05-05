@@ -98,8 +98,10 @@ private slots:
     void onViewGlobalToolbar(bool);
     void onViewPartToolbar(bool);
     void onViewSpeeds(bool);
+    void onControlVelocity(bool val);
 
 signals:
+    void controlVelocity(bool);
     void viewSpeedValues(bool);
     void internalClose();
 };

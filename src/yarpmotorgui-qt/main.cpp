@@ -20,6 +20,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QMessageBox>
+#include <yarp/os/Log.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -44,7 +45,7 @@ MainWindow *mainW = NULL;
 
 static void sighandler(int sig) {
     Q_UNUSED(sig);
-    qDebug() << "\nCAUGHT Ctrl-c" << endl;
+    yDebug("\nCAUGHT Ctrl-c\n");// << "\nCAUGHT Ctrl-c" << endl;
     if(mainW){
         mainW->term();
     }

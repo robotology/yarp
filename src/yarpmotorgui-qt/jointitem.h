@@ -41,6 +41,7 @@ class JointItem : public QWidget
     void setTorque(double max,double min,double val);
     void setPosition(double val);
     void setTorque(double val);
+    void setRefTorque(double val);
     void setSpeed(double val);
     void setOpenLoop(double val);
     void setMotionDone(bool done);
@@ -57,7 +58,7 @@ class JointItem : public QWidget
                            bool openloop_enabled);
 
     void setSpeedVisible(bool);
-
+    void controlVelocity(bool control);
     void sequenceActivated();
     void sequenceStopped();
 protected:
@@ -88,6 +89,7 @@ private:
     QTimer velocityTimer;
     double lastVelocity;
     bool motionDone;
+    bool velocityModeEnabled;
 
     int     IDLE;
     int     POSITION;
