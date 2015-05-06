@@ -62,7 +62,7 @@ namespace yarp
  * | Parameter name | Type    | Units          | Default Value | Required  | Description   | Notes |
  * |:--------------:|:------: |:--------------:|:-------------:|:--------: |:-------------:|:-----:|
  * | name           | string  |  -             |   -           | Yes       | full name of the port opened by the device, like /robotName/deviceId/sensorType:o | must start with a '/' character |
- * | period         | int     | ms             |   5           | No        | refresh period of the broadcasted values in ms (optional, default 20ms) | - |
+ * | period         | int     |  s             |   0.005       | No        | refresh period of the broadcasted values in ms (optional, default 5ms) | - |
  * | subdevice      | string  |  -             |   -           | Yes       | name of the IM device to be instantiated | - |
  * | ROS            | group   |  -             |   -           | No                          | Group containing parameter for ROS topic initialization           | if missing, it is assumed to not use ROS topics |
  * |  useROS        | string  | true/false/only|   -           |  if ROS group is present    | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
