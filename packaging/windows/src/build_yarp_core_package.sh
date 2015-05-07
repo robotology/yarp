@@ -304,15 +304,15 @@ cd $YARP_DIR_UNIX/install/lib || exit 1
 
 mkdir -p temp
 cd temp
-cp $YARP_DIR_UNIX/install/lib/YARP/YARPConfig.cmake . || exit 1
-cp $YARP_DIR_UNIX/install/lib/YARP/YARPConfigVersion.cmake . || exit 1
-cp $YARP_DIR_UNIX/install/lib/YARP/YARPTargets.cmake . || exit 1
-cp $YARP_DIR_UNIX/install/lib/YARP/YARPTargets-release.cmake . || exit 1
+cp $YARP_DIR_UNIX/install/cmake/YARPConfig.cmake . || exit 1
+cp $YARP_DIR_UNIX/install/cmake/YARPConfigVersion.cmake . || exit 1
+cp $YARP_DIR_UNIX/install/cmake/YARPTargets.cmake . || exit 1
+cp $YARP_DIR_UNIX/install/cmake/YARPTargets-release.cmake . || exit 1
 if $add_debug; then
-	cp $YARP_DIR_DBG_UNIX/install/lib/YARP/YARPTargets-debug.cmake . || exit 1
+	cp $YARP_DIR_DBG_UNIX/install/cmake/YARPTargets-debug.cmake . || exit 1
 fi
-sed -i 's|[^"]*/YARPTargets.cmake|include(${CMAKE_CURRENT_LIST_DIR}/../lib/YARP/YARPTargets.cmake|' YARPConfig.cmake
-sed -i 's|[^"]*/install|${CMAKE_CURRENT_LIST_DIR}/..|g' YARPConfig.cmake
+#sed -i 's|[^"]*/YARPTargets.cmake|include(${CMAKE_CURRENT_LIST_DIR}/../lib/YARP/YARPTargets.cmake|' YARPConfig.cmake
+#sed -i 's|[^"]*/install|${CMAKE_CURRENT_LIST_DIR}/..|g' YARPConfig.cmake
 for k in release debug; do
 	if [ -e YARPTargets-$k.cmake ] ; then
 		for f in gsl.lib libgsl.a gslcblas.lib libgslcblas.a; do
@@ -325,10 +325,10 @@ for k in release debug; do
 done
 nsis_add yarp_base YARPConfig.cmake ${YARP_SUB}/cmake/YARPConfig.cmake
 nsis_add yarp_base YARPConfigVersion.cmake ${YARP_SUB}/cmake/YARPConfigVersion.cmake
-nsis_add yarp_base YARPTargets.cmake ${YARP_SUB}/lib/YARP/YARPTargets.cmake
-nsis_add yarp_base YARPTargets-release.cmake ${YARP_SUB}/lib/YARP/YARPTargets-release.cmake
+nsis_add yarp_base YARPTargets.cmake ${YARP_SUB}/cmake/YARPTargets.cmake
+nsis_add yarp_base YARPTargets-release.cmake ${YARP_SUB}/cmake/YARPTargets-release.cmake
 if $add_debug; then
-	nsis_add yarp_base YARPTargets-debug.cmake ${YARP_SUB}/lib/YARP/YARPTargets-debug.cmake
+	nsis_add yarp_base YARPTargets-debug.cmake ${YARP_SUB}/cmake/YARPTargets-debug.cmake
 fi
 
 cd $YARP_DIR_UNIX/install/lib || exit 1
@@ -405,6 +405,24 @@ if [ "$GTKMM_DIR" != "" ]; then
 			fi 
 		done
 	fi
+# 03 jan 2013 by Matteo Brunettini : 
+# Add Visual Studio re-distributable material to NSIS - Fix missign GTKMM MVSC100 DLLs
+# NOTE: the path VS10/VC/redist/$OPT_VARIANT/Microsoft.VC100.CRT must be copied to VS10/VC/redist/$OPT_VARIANT/ 
+	if [ "$OPT_VCNNN" == "VC110" ] || [ "$OPT_VCNNN" == "VC120" ]
+	then
+	echo "**** Fixing missing msvc100 DLLs in gtkmm from $REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT"
+	VC_PLAT="$OPT_VARIANT"
+	if [ "$VC_PLAT" == "amd64" ] || [ "$VC_PLAT" == "x86_amd64" ]
+	then
+		_PLAT_="x64"
+	else
+		_PLAT_="x86"
+	fi
+	cd "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT" || exit 1
+	for f in `ls *.dll`; do
+		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT"
+	done
+	fi
 fi
 if [ "$QT_DIR" != "" ]; then
 	cd $QT_DIR || exit 1
@@ -441,30 +459,12 @@ mkdir -p tmp/ace || exit 1
 cp -r -v *.h *.inl *.cpp os_include tmp/ace || exit 1
 nsis_add_recurse ace_headers tmp/ace ${ACE_SUB}/ace
 
-# Add Visual Studio redistributable material to NSIS
+# Add Visual Studio re-distributable material to NSIS
 if [ -e "$OPT_VC_REDIST_CRT" ] ; then
 	cd "$OPT_VC_REDIST_CRT" || exit 1
 	pwd
 	for f in `ls *.dll`; do
 		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "$OPT_VC_REDIST_CRT"
-	done
-fi
-# 03 jan 2013 by Matteo Brunettini :
-# Add Visual Studio redistributable material to NSIS - Fix missign GTKMM MVSC100 DLLs
-# NOTE: the path VS10/VC/redist/$OPT_VARIANT/Microsoft.VC100.CRT must be copied to VS10/VC/redist/$OPT_VARIANT/ 
-if [ "$OPT_VCNNN" == "VC110" ] || [ "$OPT_VCNNN" == "VC120" ]
-then
-	echo "**** Fixing missing msvc100 DLLs in gtkmm from $REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT"
-	VC_PLAT="$OPT_VARIANT"
-	if [ "$VC_PLAT" == "amd64" ] || [ "$VC_PLAT" == "x86_amd64" ]
-	then
-		_PLAT_="x64"
-	else
-		_PLAT_="x86"
-	fi
-	cd "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT" || exit 1
-	for f in `ls *.dll`; do
-		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT"
 	done
 fi
 
@@ -477,7 +477,7 @@ if $add_debug; then
 	done
 	cd $YARP_DIR_DBG_UNIX/install/bin || exit 1
 	for f in `ls -1 *.dll`; do
-		nsis_add yarp_dlls $f ${YARP_SUB}/lib/$f
+		nsis_add yarp_dlls $f ${YARP_SUB}/bin/$f
 	done
 	cd $ACE_DIR_DBG || exit 1
 	cd lib || exit 1
