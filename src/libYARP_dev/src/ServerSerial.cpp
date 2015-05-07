@@ -28,11 +28,11 @@ bool ServerSerial::closeMain()
     if (isRunning()) {
         askToStop();
     }
-
     //close the port connection here
     toDevice.close();
     fromDevice.close();
     poly.close();
+
     return true;
 }
 
@@ -177,7 +177,7 @@ void ServerSerial::run()
     b.clear();
     receive( b );
     /*if(b.size() > 0)*/ /* this line was creating a memory leak !! */
-    reply_buffer.write();    
+    reply_buffer.write();
 }
 
 void ServerSerial::threadRelease()

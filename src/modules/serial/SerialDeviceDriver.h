@@ -82,18 +82,19 @@ private:
     void operator=(const SerialDeviceDriver&);
 
     ACE_TTY_IO _serial_dev;
+    ACE_TTY_IO _send_serial_dev;
     ACE_DEV_Connector _serialConnector;
-    ACE_Time_Value receiveTimeout;
+
     bool verbose;     // If enabled (1), the data sent/received by the serial device is print on screen
     char line_terminator_char1;
     char line_terminator_char2;
 
     bool deviceOpened;
     
-    ACE_Thread_Mutex conditionMutex;
-    ACE_Condition_Thread_Mutex stopCondition;
-    bool shouldStop;
-    bool stopAck;
+    // ACE_Thread_Mutex conditionMutex;
+    // ACE_Condition_Thread_Mutex stopCondition;
+    // bool shouldStop;
+    // bool stopAck;
 
 
 public:
