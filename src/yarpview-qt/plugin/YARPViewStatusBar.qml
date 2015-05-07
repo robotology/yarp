@@ -28,44 +28,48 @@ StatusBar {
         bar.name = name
     }
 
-    Label{
-        id: fps
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.right: parent.right
-        //anchors.bottom: displayFps.top
+    Column{
+        anchors.fill: parent
+        spacing: 2
 
-        text: "Port: " + bar.avgFps +
-              " (min:" + bar.minFps +
-              " max:" + bar.maxFps +") fps"
+        Label{
+            id: fps
+
+            //anchors.bottom: displayFps.top
+
+            text: "Port: " + bar.avgFps +
+                  " (min:" + bar.minFps +
+                  " max:" + bar.maxFps +") fps"
+            fontSizeMode: Text.VerticalFit
+            height: parent.height/3 - 2
+        }
+
+        Label{
+            id: displayFps
+
+            //anchors.bottom: name.top
+
+
+            text: "Display: " + bar.displayAvgFps +
+                  " (min:" + bar.displayMinFps +
+                  " max:" + bar.displayMaxFps +") fps"
+            fontSizeMode: Text.VerticalFit
+            height: parent.height/3 - 2
+
+
+        }
+
+        Label{
+            id: name
+
+
+            text: bar.name
+            fontSizeMode: Text.VerticalFit
+            height: parent.height/3 - 2
+
+
+        }
     }
 
-    Label{
-        id: displayFps
-        anchors.left: parent.left
-        anchors.top: fps.bottom
-        anchors.right: parent.right
-        //anchors.bottom: name.top
 
-
-        text: "Display: " + bar.displayAvgFps +
-              " (min:" + bar.displayMinFps +
-              " max:" + bar.displayMaxFps +") fps"
-
-
-
-    }
-
-    Label{
-        id: name
-        anchors.left: parent.left
-        anchors.top: displayFps.bottom
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-
-        text: bar.name
-
-
-
-    }
 }
