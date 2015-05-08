@@ -365,6 +365,7 @@ int RFModule::runModule() {
 int RFModule::runModule(yarp::os::ResourceFinder &rf) {
     if (!configure(rf)) {
         ACE_OS::printf("Module failed to open\n");
+        close();
         return false;
     }
     return runModule();
