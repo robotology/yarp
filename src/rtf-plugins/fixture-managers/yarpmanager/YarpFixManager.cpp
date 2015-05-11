@@ -7,7 +7,7 @@
  *
  */
 
-#include <Plugin.h>
+#include <rtf/dll/Plugin.h>
 #include <yarp/manager/utility.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -93,7 +93,7 @@ void YarpFixManager::tearDown() {
     const char* szerror = getLogger()->getLastError();
     RTF_ASSERT_ERROR_IF(ret,
                         "yarpmanager cannot teardown the fixture because " +
-                        std::string((szerror) ? szerror : ""));    
+                        std::string((szerror) ? szerror : ""));
 }
 
 

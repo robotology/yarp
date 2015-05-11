@@ -12,9 +12,9 @@
 
 #include <string>
 #include <cstring>
-#include <TestCase.h>
-#include <TestAssert.h>
-#include <Arguments.h>
+#include <rtf/TestCase.h>
+#include <rtf/TestAssert.h>
+#include <rtf/Arguments.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
