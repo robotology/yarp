@@ -12,9 +12,9 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/manager/manager.h>
-#include <FixtureManager.h>
-#include <TestSuit.h>
-#include <TestAssert.h>
+#include <rtf/FixtureManager.h>
+#include <rtf/TestSuit.h>
+#include <rtf/TestAssert.h>
 
 // define a helper macro for fixture message reporting
 #define RTF_FIXTURE_REPORT(message)\
