@@ -1,36 +1,46 @@
 #!/usr/bin/python
 
 # Copyright: (C) 2010 RobotCub Consortium
-# Author: Paul Fitzpatrick
+# Authors: Ali Paikan, Massimo Regoli
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+import sys
 import yarp
 
 yarp.Network.init()
 
-prop = yarp.Property()
+options = yarp.Property()
 driver = yarp.PolyDriver()
-ienc = yarp.IEncoders()
+
+# set the poly driver options 
+options.put("robot", "icub")
+options.put("device", "remote_controlboard")
+options.put("local", "/example_enc/client")
+options.put("remote", "/icub/left_arm")
 
 # opening the drivers
+print 'Opening the motor driver...'
+driver.open(options)
+if not driver.isValid():
+    print 'Cannot open the driver!'
+    sys.exit()
 
-''''
-p = yarp.BufferedPortBottle()
-p.open("/python");
+# opening the drivers
+print 'Viewing motor position/encoders...'
+ipos = driver.viewIPositionControl()
+ienc = driver.viewIEncoders()
+if ienc is None or ipos is None:
+    print 'Cannot view motor positions/encoders!'
+    sys.exit()
 
-top = 100;
-for i in range(1,top):
-    bottle = p.prepare()
-    bottle.clear()
-    bottle.addString("count")
-    bottle.addInt(i)
-    bottle.addString("of")
-    bottle.addInt(top)
-    print ("Sending", bottle.toString())
-    p.write()
-    yarp.Time.delay(0.5)
+# read encoders
+encs = yarp.Vector(ipos.getAxes())
+ienc.getEncoders(encs.data())
 
-p.close();
-'''
+print "Current encoders value: "
+print encs.toString(-1, -1)
 
-yarp.Network.fini();
+driver.close()
+
+yarp.Network.fini()
+
