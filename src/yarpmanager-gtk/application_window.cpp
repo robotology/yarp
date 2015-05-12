@@ -839,7 +839,7 @@ void ApplicationWindow::setCellsEditable(void)
     // for the gtkmm > 2.6 we do not use SetCellEditable and
     // the corresponding functinality will be taken care by
     // signal_editing_started()
-    //  
+    //  
 #else
     bool bFlag = areAllShutdown();
 
@@ -1695,6 +1695,8 @@ void ApplicationWindow::onLoadBalance(void)
 
 void ApplicationWindow::releaseApplication(void)
 {
+    manager.close();
+
     std::map<int, StdoutWindow*>::iterator itr;
     for(itr=m_MapstdWnds.begin(); itr!=m_MapstdWnds.end(); itr++)
     {

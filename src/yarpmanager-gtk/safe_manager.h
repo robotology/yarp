@@ -61,6 +61,7 @@ public:
     SafeManager();
     virtual ~SafeManager();
     bool prepare(yarp::manager::Manager* lazy, yarp::os::Property* config, ApplicationEvent* event=NULL);
+    void close();
 
     bool threadInit();
     void run();
@@ -95,9 +96,9 @@ protected:
     void onError(void* which);
 
 private:
-    yarp::os::Property* m_pConfig;
-    ApplicationEvent* eventReceiver;
+    yarp::os::Property* m_pConfig;    
     ThreadAction action;
+    ApplicationEvent* eventReceiver;
     bool busyAction;
     yarp::os::Semaphore semManage;
     std::vector<int> modIds;
