@@ -2,7 +2,7 @@
  *  YARP Modules Manager
  *  Copyright: (C) 2014 iCub Facility - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -11,16 +11,25 @@
 
 using namespace yarp::manager;
 
-SafeManager::SafeManager():action(MNOTHING), busyAction(false)
-{
+#define WAIT_SEMAPHOR() waitSemaphore();
+
+#define POST_SEMAPHOR() postSemaphore();
+
+
+SafeManager::SafeManager()
+    :action(MNOTHING), eventReceiver(NULL), busyAction(false)
+{ }
+
+SafeManager::~SafeManager() { }
+
+void SafeManager::close() {
+    yarp::os::Thread::stop();
+    WAIT_SEMAPHOR();
+    eventReceiver = NULL;
+    POST_SEMAPHOR();
 }
 
-SafeManager::~SafeManager()
-{
-
-}
-
-bool SafeManager::prepare(Manager* lazy, 
+bool SafeManager::prepare(Manager* lazy,
                          yarp::os::Property* pConfig, ApplicationEvent* event)
 {
 
@@ -62,8 +71,7 @@ bool SafeManager::prepare(Manager* lazy,
 
 
 
-bool SafeManager::threadInit()
-{
+bool SafeManager::threadInit() {
     return true;
 }
 
@@ -73,14 +81,14 @@ void SafeManager::threadRelease()
 
 void SafeManager::run()
 {
-    waitSemaphore();
+    WAIT_SEMAPHOR();
     ThreadAction local_action = action;
     std::vector<int> local_modIds = modIds;
     std::vector<int> local_conIds = conIds;
     std::vector<int> local_resIds = resIds;
-    postSemaphore();
+    POST_SEMAPHOR();
 
-    switch(local_action){ 
+    switch(local_action){
     case MRUN:{
             for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::run(local_modIds[i], true);
@@ -182,7 +190,7 @@ void SafeManager::run()
                 refreshPortStatus(local_conIds[i]);
             }
         }
- 
+
     case MATTACHSTDOUT:{
             for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::attachStdout(local_modIds[i]);
@@ -213,118 +221,130 @@ void SafeManager::run()
 
 void SafeManager::safeRun(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
-    waitSemaphore();
+    if(busyAction) return;
+    WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MRUN;
-    postSemaphore();
-    yarp::os::Thread::start();
+    POST_SEMAPHOR();
+    if(!yarp::os::Thread::isRunning())
+        yarp::os::Thread::start();
 }
 
 void SafeManager::safeStop(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
-    waitSemaphore();
+    if(busyAction) return;
+    WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MSTOP;
-    postSemaphore();
-    yarp::os::Thread::start();
+    POST_SEMAPHOR();
+    if(!yarp::os::Thread::isRunning())
+        yarp::os::Thread::start();
 }
 
 void SafeManager::safeKill(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
-    waitSemaphore();
+    if(busyAction) return;
+    WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MKILL;
-    postSemaphore();
-    yarp::os::Thread::start();
+    POST_SEMAPHOR();
+    if(!yarp::os::Thread::isRunning())
+        yarp::os::Thread::start();
 
 }
 
 
 void SafeManager::safeConnect(std::vector<int>& CIDs)
 {
-    if(busyAction) return; 
-    waitSemaphore();
+    if(busyAction) return;
+    WAIT_SEMAPHOR();
     conIds = CIDs;
     action = MCONNECT;
-    postSemaphore();
-    yarp::os::Thread::start();
+    POST_SEMAPHOR();
+    if(!yarp::os::Thread::isRunning())
+        yarp::os::Thread::start();
 }
 
 
 void SafeManager::safeDisconnect(std::vector<int>& CIDs)
 {
-    if(busyAction) return; 
-    waitSemaphore();
+    if(busyAction) return;
+    WAIT_SEMAPHOR();
     conIds = CIDs;
     action = MDISCONNECT;
-    postSemaphore();
-    yarp::os::Thread::start();
+    POST_SEMAPHOR();
+    if(!yarp::os::Thread::isRunning())
+        yarp::os::Thread::start();
 }
 
 
-void SafeManager::safeRefresh(std::vector<int>& MIDs, 
-                     std::vector<int>& CIDs, 
+void SafeManager::safeRefresh(std::vector<int>& MIDs,
+                     std::vector<int>& CIDs,
                      std::vector<int>& RIDs)
 {
-    if(busyAction) return; 
-    waitSemaphore();
+    if(busyAction) return;
+    WAIT_SEMAPHOR();
     modIds = MIDs;
     conIds = CIDs;
     resIds = RIDs;
     action = MREFRESH;
     busyAction = true;
-    postSemaphore();
-    yarp::os::Thread::start();
+    POST_SEMAPHOR();
+    if(!yarp::os::Thread::isRunning())
+        yarp::os::Thread::start();
 }
 
 
 void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
-    waitSemaphore();
+    if(busyAction) return;
+    WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MATTACHSTDOUT;
-    postSemaphore();
-    yarp::os::Thread::start();
+    POST_SEMAPHOR();
+    if(!yarp::os::Thread::isRunning())
+        yarp::os::Thread::start();
 }
 
 void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
-    waitSemaphore();
+    if(busyAction) return;
+    WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MDETACHSTDOUT;
-    postSemaphore();
-    yarp::os::Thread::start();
+    POST_SEMAPHOR();
+    if(!yarp::os::Thread::isRunning())
+        yarp::os::Thread::start();
 }
 
 void SafeManager::safeLoadBalance(void)
 {
-   if(busyAction) return; 
-   waitSemaphore();
+   if(busyAction) return;
+   WAIT_SEMAPHOR();
    action = MLOADBALANCE;
    busyAction = true;
-   postSemaphore();
-   yarp::os::Thread::start();
+   POST_SEMAPHOR();
+   if(!yarp::os::Thread::isRunning())
+       yarp::os::Thread::start();
 }
 
 void SafeManager::onExecutableStart(void* which)
 {
+    WAIT_SEMAPHOR();
     Executable* exe = static_cast<Executable*>(which);
     if(eventReceiver && exe)
         eventReceiver->onModStart(exe->getID());
+    POST_SEMAPHOR();
 }
 
 void SafeManager::onExecutableStop(void* which)
 {
+    WAIT_SEMAPHOR();
     Executable* exe = static_cast<Executable*>(which);
     if(eventReceiver && exe)
         eventReceiver->onModStop(exe->getID());
-
-    // Experimental:  
+    POST_SEMAPHOR();
+    // Experimental:
     //  do auto refresh on connections whenever a module stops
     /*
     if(checkSemaphore())
@@ -337,22 +357,25 @@ void SafeManager::onExecutableStop(void* which)
             action = MREFRESH_CNN;
             yarp::os::Thread::start();
         }
-        postSemaphore();
+        POST_SEMAPHOR();
     }
     */
 }
 
 void SafeManager::onExecutableDied(void* which)
 {
+    WAIT_SEMAPHOR();
     Executable* exe = static_cast<Executable*>(which);
     if(eventReceiver && exe)
         eventReceiver->onModStop(exe->getID());
+    POST_SEMAPHOR();
 }
 
 
 void SafeManager::onExecutableFailed(void* which)
-{   
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+{
+    WAIT_SEMAPHOR();
+    ErrorLogger* logger  = ErrorLogger::Instance();
     Executable* exe = static_cast<Executable*>(which);
     if(exe)
     {
@@ -384,18 +407,17 @@ void SafeManager::onExecutableFailed(void* which)
 
     if(eventReceiver)
             eventReceiver->onError();
+    POST_SEMAPHOR();
 }
 
 
-void SafeManager::onCnnStablished(void* which)
-{
-
-}
+void SafeManager::onCnnStablished(void* which) { }
 
 
 void SafeManager::onCnnFailed(void* which)
 {
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    WAIT_SEMAPHOR();
+    ErrorLogger* logger  = ErrorLogger::Instance();
     Connection* cnn = static_cast<Connection*>(which);
     if(cnn)
     {
@@ -417,25 +439,30 @@ void SafeManager::onCnnFailed(void* which)
 
     if(eventReceiver)
         eventReceiver->onError();
+    POST_SEMAPHOR();
 }
 
 
 void SafeManager::onExecutableStdout(void* which, const char* msg)
 {
+    WAIT_SEMAPHOR();
     Executable* exe = static_cast<Executable*>(which);
     if(eventReceiver)
         eventReceiver->onModStdout(exe->getID(), msg);
+    POST_SEMAPHOR();
 }
 
 void SafeManager::onError(void* which)
 {
+    WAIT_SEMAPHOR();
     if(eventReceiver)
         eventReceiver->onError();
+    POST_SEMAPHOR();
 }
 
 void SafeManager::refreshPortStatus(int id)
 {
-    // refreshing ports status 
+    // refreshing ports status
     if(Manager::existPortFrom(id))
     {
         if(eventReceiver) eventReceiver->onConAvailable(id, -1);

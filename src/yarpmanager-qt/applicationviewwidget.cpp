@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QFileDialog>
+#include <yarp/os/Log.h>
 #include <yarp/manager/localbroker.h>
 #include "yscopewindow.h"
 #include <QTreeWidgetItem>
@@ -1412,4 +1413,8 @@ bool ApplicationViewWidget::getModRowByID(int id, int *row)
         }
     }
     return false;
+}
+
+void ApplicationViewWidget::closeManager() {
+    manager.close();
 }

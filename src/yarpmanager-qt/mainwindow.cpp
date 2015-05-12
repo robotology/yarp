@@ -11,6 +11,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <yarp/os/Log.h>
 #include <yarp/manager/ymm-dir.h>
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/xmltemploader.h>
@@ -592,6 +593,7 @@ void MainWindow::onTabClose(int index)
                 return;
             }
         }
+        aw->closeManager();
     }
     ui->mainTabs->removeTab(index);
     delete w;

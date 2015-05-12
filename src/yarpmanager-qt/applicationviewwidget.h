@@ -56,7 +56,7 @@ public:
     void onConUnAvailable(int from, int to);
     void onError(void);
     void onLoadBalance(void);
-
+    void closeManager();
 
 
 private:
@@ -73,7 +73,7 @@ private:
     void createConnectionsViewContextMenu();
     void createResourcesViewContextMenu();
     bool timeout(double base, double timeout);
-    bool areAllShutdown();
+    bool areAllShutdown();    
 
 private:
     Ui::ApplicationViewWidget *ui;

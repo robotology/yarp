@@ -2,7 +2,7 @@
  *  YARP Modules Manager
  *  Copyright: (C) 2014 iCub Facility - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -15,7 +15,6 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
-#include <yarp/os/Log.h>
 
 #include <vector>
 
@@ -38,7 +37,7 @@ typedef enum __ThreadAction {
 
 
 class ApplicationEvent{
-public: 
+public:
     ApplicationEvent() {}
     virtual ~ApplicationEvent() {}
     virtual void onModStart(int which) {}
@@ -62,18 +61,19 @@ public:
     SafeManager();
     virtual ~SafeManager();
     bool prepare(yarp::manager::Manager* lazy, yarp::os::Property* config, ApplicationEvent* event=NULL);
-    
+    void close();
+
     bool threadInit();
     void run();
     void threadRelease();
-    
+
     void safeRun(std::vector<int>& MIDs);
     void safeStop(std::vector<int>& MIDs);
     void safeKill(std::vector<int>& MIDs);
     void safeConnect(std::vector<int>& CIDs);
     void safeDisconnect(std::vector<int>& CDs);
-    void safeRefresh(std::vector<int>& MIDs, 
-                     std::vector<int>& CIDs, 
+    void safeRefresh(std::vector<int>& MIDs,
+                     std::vector<int>& CIDs,
                      std::vector<int>& RIDs);
     void safeAttachStdout(std::vector<int>& MIDs);
     void safeDetachStdout(std::vector<int>& MIDs);
@@ -83,7 +83,7 @@ public:
     bool checkSemaphore(void){ return semManage.check(); }
     void postSemaphore(void) { semManage.post(); }
     void waitSemaphore(void) { semManage.wait(); }
-    bool busy(void) {return busyAction; } 
+    bool busy(void) {return busyAction; }
 
 protected:
     void onExecutableStart(void* which);
@@ -96,9 +96,9 @@ protected:
     void onError(void* which);
 
 private:
-    yarp::os::Property* m_pConfig;
-    ApplicationEvent* eventReceiver;
+    yarp::os::Property* m_pConfig;    
     ThreadAction action;
+    ApplicationEvent* eventReceiver;
     bool busyAction;
     yarp::os::Semaphore semManage;
     std::vector<int> modIds;
