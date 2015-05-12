@@ -135,6 +135,8 @@ bool Vector::setSubvector(int position, const Vector &v)
 
 const Vector &Vector::operator=(const Vector &r)
 {
+    if (this == &r) return *this;
+
     if(storage.size() == r.storage.size())
     {
         ACE_OS::memcpy(storage.getFirst(), r.storage.getFirst(), sizeof(double)*storage.size());

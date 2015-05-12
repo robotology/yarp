@@ -216,6 +216,8 @@ void Matrix::updatePointers()
 
 const Matrix &Matrix::operator=(const Matrix &r)
 {
+    if (this == &r) return *this;
+    
     if(nrows!=r.nrows || ncols!=r.ncols)
     {
         if (storage)
