@@ -170,7 +170,7 @@ if(CREATE_PYTHON)
   find_package(PythonLibs ${YARP_USE_PYTHON_VERSION} EXACT)
   include_directories(${PYTHON_INCLUDE_PATH})
   link_libraries(${PYTHON_LIBRARY})
-  
+
   ## in Windows it seems necessary to declare explictly the link_directory
   if(WIN32)
     get_filename_component(PYTHON_DIR ${PYTHON_LIBRARY} PATH)
@@ -180,6 +180,8 @@ if(CREATE_PYTHON)
   set(target_name yarp)
   if(YARP_COLLISION_AVOIDANCE)
     set(target_name yarp_python)
+    set(CMAKE_SWIG_OUTDIR_SAVE ${CMAKE_SWIG_OUTDIR})
+    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/lib/python")
   endif()
   swig_add_module(${target_name} python yarp.i)
   # uncomment if we want a debug version of the library
@@ -187,7 +189,7 @@ if(CREATE_PYTHON)
 
   set_target_properties(_${target_name} PROPERTIES OUTPUT_NAME "_yarp")
   if(YARP_COLLISION_AVOIDANCE)
-    set_target_properties(_${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/python)
+    set_target_properties(_${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/python")
   endif()
 
   # installation path is determined reliably on most platforms using distutils
@@ -202,7 +204,12 @@ if(CREATE_PYTHON)
   if(WIN32)
     set_target_properties(_${target_name} PROPERTIES SUFFIX ".pyd")
   endif(WIN32)
-  set(YARP_COLLISION_AVOIDANCE TRUE)
+
+  if(YARP_COLLISION_AVOIDANCE)
+    set(CMAKE_SWIG_OUTDIR ${CMAKE_SWIG_OUTDIR_SAVE})
+  else()
+    set(YARP_COLLISION_AVOIDANCE TRUE)
+  endif()
 endif(CREATE_PYTHON)
 
 
