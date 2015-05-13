@@ -70,14 +70,14 @@ PidDlg::~PidDlg()
 
 void PidDlg::initPosition(Pid myPid)
 {
-    ui->tablePosition->item(POSITION_KP,0)->setText(QString("%1").arg((int)myPid.kp));
-    ui->tablePosition->item(POSITION_KP,1)->setText(QString("%1").arg((int)myPid.kp));
+    ui->tablePosition->item(POSITION_KP,0)->setText(QString("%1").arg((double)myPid.kp));
+    ui->tablePosition->item(POSITION_KP,1)->setText(QString("%1").arg((double)myPid.kp));
 
-    ui->tablePosition->item(POSITION_KD,0)->setText(QString("%1").arg((int)myPid.kd));
-    ui->tablePosition->item(POSITION_KD,1)->setText(QString("%1").arg((int)myPid.kd));
+    ui->tablePosition->item(POSITION_KD,0)->setText(QString("%1").arg((double)myPid.kd));
+    ui->tablePosition->item(POSITION_KD,1)->setText(QString("%1").arg((double)myPid.kd));
 
-    ui->tablePosition->item(POSITION_KI,0)->setText(QString("%1").arg((int)myPid.ki));
-    ui->tablePosition->item(POSITION_KI,1)->setText(QString("%1").arg((int)myPid.ki));
+    ui->tablePosition->item(POSITION_KI,0)->setText(QString("%1").arg((double)myPid.ki));
+    ui->tablePosition->item(POSITION_KI,1)->setText(QString("%1").arg((double)myPid.ki));
 
     ui->tablePosition->item(POSITION_SCALE,0)->setText(QString("%1").arg((int)myPid.scale));
     ui->tablePosition->item(POSITION_SCALE,1)->setText(QString("%1").arg((int)myPid.scale));
