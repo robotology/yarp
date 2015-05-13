@@ -81,13 +81,13 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     nameToCheck += "/rpc:o";
 
     //   NameClient &nic=NameClient::getNameClient();
-    LOG_ERROR("Checking the existence of: %s \n", nameToCheck.toLatin1().data());
+    yDebug("Checking the existence of: %s \n", nameToCheck.toLatin1().data());
     //                    Address adr=nic.queryName(nameToCheck.c_str());
 
     Contact adr=Network::queryName(nameToCheck.toLatin1().data());
 
     //Contact c = yarp::os::Network::queryName(portLocalName.c_str());
-    LOG_ERROR("ADDRESS is: %s \n", adr.toString().c_str());
+    yDebug("ADDRESS is: %s \n", adr.toString().c_str());
 
     while(adr.isValid()){
         ind++;
@@ -139,7 +139,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     /**************** PartMover Content **********************************/
 
     if (!finder->isNull()){
-        LOG_ERROR("Setting a valid finder \n");
+        yDebug("Setting a valid finder \n");
     }
 
     QString sequence_portname = QString("/yarpmotorgui/%1/sequence:o").arg(partName);
@@ -163,7 +163,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     ctrlmode2 = NULL;
     iinteract = NULL;
 
-    LOG_ERROR("Opening interfaces...");
+    yDebug("Opening interfaces...");
     bool ok = false;
 
     if (partsdd->isValid()) {
@@ -242,7 +242,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 //    COPY_TIMING=0;
 
     if (interfaceError == false){
-        LOG_ERROR("Allocating memory \n");
+        yDebug("Allocating memory \n");
 //        STORED_POS   = new double* [NUMBER_OF_STORED];
 //        STORED_VEL   = new double* [NUMBER_OF_STORED];
 //        CURRENT_POS_UPDATE = new bool [NUMBER_OF_STORED];
@@ -283,7 +283,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         }
         while (!ret);
 
-        LOG_ERROR("%s iencs->getEncoders() ok!\n", partName.toLatin1().data());
+        yInfo("%s iencs->getEncoders() ok!\n", partName.toLatin1().data());
         double min = 0;
         double max = 100;
         //char buffer[40] = {'i', 'n', 'i', 't'};

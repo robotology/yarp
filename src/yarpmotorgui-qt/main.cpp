@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 
     bool deleteParts=false;
     std::string robotName=finder->find("name").asString().c_str();
-    LOG("%s\n",robotName.data());
+    yDebug("Robot name: %s\n",robotName.data());
 
     Bottle *pParts=finder->find("parts").asList();
     if (pParts==NULL){
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
     //Check 1 in the panel
     for(int n=0;n<NUMBER_OF_AVAILABLE_PARTS;n++){
         QString part = QString("%1").arg(pParts->get(n).asString().c_str());
-        qDebug() << "APPENDING " << part;
+        yDebug("Appending %s",part.toUtf8().constData());
         partsName.append(part);
 
         if(n < ENA.count()){
@@ -151,31 +151,23 @@ int main(int argc, char *argv[])
         }else{
             ENA.append(1);
         }
-
-        //partsName[n] = new char[80];
-        //*ENA[n] = 1;
-        //LOG("Getting part %d \n", n);
-        //strcpy(partsName[n], pParts->get(n).asString().c_str());
-        //LOG_ERROR("%s \n", partsName[n]);
-        /*
-        GtkWidget *check= gtk_check_button_new_with_mnemonic (partsName[n]);
-        gtk_fixed_put   (GTK_FIXED(inv1), check, 100*n, 0);
-        gtk_widget_set_size_request     (check, 80, 50);
-        gtk_toggle_button_set_active((GtkToggleButton*) check, true);
-        g_signal_connect (check, "clicked", G_CALLBACK (check_pressed),ENA[n]);*/
     }
 
-    QString newRobotName;
-    StartDlg dlg;
-    dlg.init(QString(robotName.data()),partsName,ENA);
-    if(dlg.exec() == QDialog::Accepted){
-        ENA.clear();
-        ENA = dlg.getEnabledParts();
-        newRobotName = dlg.getRobotName();
-    }else{
-        return 0;
-    }
+    QString newRobotName = robotName.data();
 
+    if (!finder->check("fast"))
+    {
+        StartDlg dlg;
+        dlg.init(QString(robotName.data()),partsName,ENA);
+        if(dlg.exec() == QDialog::Accepted){
+            ENA.clear();
+            ENA = dlg.getEnabledParts();
+            newRobotName = dlg.getRobotName();
+        }else{
+            yInfo("Cancel Button pressed. Closing..");
+            return 0;
+        }
+    }
 
     QStringList enabledParts;
     for(int i=0; i<partsName.count();i++){
