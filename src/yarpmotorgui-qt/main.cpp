@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 
     QString newRobotName = robotName.data();
 
-    if (!finder->check("fast"))
+    if (!finder->check("skip"))
     {
         StartDlg dlg;
         dlg.init(QString(robotName.data()),partsName,ENA);
