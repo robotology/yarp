@@ -26,10 +26,15 @@ This GUI can be used for the following pouposes:
 \section parameters_sec Parameters
 
 \code
---name: name of the robot (used to form port names)
---parts: a list of parts to be added.
---debug: opens the debugInterfaceClient (for firmware debugging).
---speed: enables the speed visualisation.
+--name:     name of the robot (used to form port names)
+--parts:    a list of parts to be added.
+--fast:     skips the initial dialog and keeps the default parts.
+--speed:    enables the speed visualisation.
+--calib:    enables the calib buttons.
+--debug:    opens the debugInterfaceClient (for firmware debugging).
+--direct:   enables the position direct mode.
+--openloop: enables the openloop mode.
+--admin:    enables all the previous parameters (debug, direct, openloob, calib).
 \endcode
 Example:
 \code
