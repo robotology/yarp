@@ -117,23 +117,23 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
   yarp::os::Time::delay(0.005);
   iPid->getPid(*joint, pid);
 
-  sprintf(buffer, "%.3f", (double) pid->kp);
+  sprintf(buffer, "%.4f", (double) pid->kp);
   gtk_entry_set_text((GtkEntry*) pos_kpEntry,  buffer);
-  sprintf(buffer, "%.3f", (double) pid->kd);
+  sprintf(buffer, "%.4f", (double) pid->kd);
   gtk_entry_set_text((GtkEntry*) pos_kdEntry,  buffer);
-  sprintf(buffer, "%.3f", (double) pid->ki);
+  sprintf(buffer, "%.4f", (double) pid->ki);
   gtk_entry_set_text((GtkEntry*) pos_kiEntry,  buffer);
   sprintf(buffer, "%d", (int) pid->scale);
   gtk_entry_set_text((GtkEntry*) pos_scaleEntry,  buffer);
-  sprintf(buffer, "%.3f", (double) pid->offset);
+  sprintf(buffer, "%.4f", (double) pid->offset);
   gtk_entry_set_text((GtkEntry*) pos_offsetEntry,  buffer);
-  sprintf(buffer, "%.3f", (double) pid->max_output);
+  sprintf(buffer, "%.4f", (double) pid->max_output);
   gtk_entry_set_text((GtkEntry*) pos_PWM_limitEntry,  buffer);
-  sprintf(buffer, "%.3f", (double) pid->max_int);
+  sprintf(buffer, "%.4f", (double) pid->max_int);
   gtk_entry_set_text((GtkEntry*) pos_INT_limitEntry,  buffer);
-  sprintf(buffer, "%.3f", (double) pid->stiction_up_val);
+  sprintf(buffer, "%.4f", (double) pid->stiction_up_val);
   gtk_entry_set_text((GtkEntry*) pos_posStictionEntry,  buffer);
-  sprintf(buffer, "%.3f", (double) pid->stiction_down_val);
+  sprintf(buffer, "%.4f", (double) pid->stiction_down_val);
   gtk_entry_set_text((GtkEntry*) pos_negStictionEntry,  buffer);
 }
 
@@ -153,10 +153,10 @@ void guiPid2::send_opl_pid (GtkButton *button, Pid *pid)
   yarp::os::Time::delay(0.010);
   iOpl->getOutput   (*joint, &get_cur_offset);  //This is the reak PWM output
 
-  sprintf(buffer, "%.3f", (double) get_ref_offset);
+  sprintf(buffer, "%.4f", (double) get_ref_offset);
   gtk_entry_set_text((GtkEntry*) opl_koEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) get_cur_offset);
+  sprintf(buffer, "%.4f", (double) get_cur_offset);
   gtk_entry_set_text((GtkEntry*) opl_koDisplay,  buffer);
 }
 
@@ -206,22 +206,22 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   bemfshift=m.bemf_scale;
   }
 
-  sprintf(buffer, "%.3f", (double) pid->kp);
+  sprintf(buffer, "%.4f", (double) pid->kp);
   gtk_entry_set_text((GtkEntry*) trq_kpEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) pid->kd);
+  sprintf(buffer, "%.4f", (double) pid->kd);
   gtk_entry_set_text((GtkEntry*) trq_kdEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) pid->ki);
+  sprintf(buffer, "%.4f", (double) pid->ki);
   gtk_entry_set_text((GtkEntry*) trq_kiEntry,  buffer);
 
   sprintf(buffer, "%d", (int) pid->scale);
   gtk_entry_set_text((GtkEntry*) trq_scaleEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) bemfGain);
+  sprintf(buffer, "%.4f", (double) bemfGain);
   gtk_entry_set_text((GtkEntry*) trq_kbemfEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) ktau);
+  sprintf(buffer, "%.4f", (double) ktau);
   gtk_entry_set_text((GtkEntry*) trq_ktauEntry,  buffer);
 
   sprintf(buffer, "%d", (int) bemfshift);
@@ -230,22 +230,22 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   sprintf(buffer, "%d", (int) ktaushift);
   gtk_entry_set_text((GtkEntry*) trq_ktaushiftEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) pid->kff);
+  sprintf(buffer, "%.4f", (double) pid->kff);
   gtk_entry_set_text((GtkEntry*) trq_kffEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) pid->offset);
+  sprintf(buffer, "%.4f", (double) pid->offset);
   gtk_entry_set_text((GtkEntry*) trq_offsetEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) pid->max_output);
+  sprintf(buffer, "%.4f", (double) pid->max_output);
   gtk_entry_set_text((GtkEntry*) trq_PWM_limitEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) pid->max_int);
+  sprintf(buffer, "%.4f", (double) pid->max_int);
   gtk_entry_set_text((GtkEntry*) trq_INT_limitEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) pid->stiction_up_val);
+  sprintf(buffer, "%.4f", (double) pid->stiction_up_val);
   gtk_entry_set_text((GtkEntry*) trq_upStictionEntry,  buffer);
 
-  sprintf(buffer, "%.3f", (double) pid->stiction_down_val);
+  sprintf(buffer, "%.4f", (double) pid->stiction_down_val);
   gtk_entry_set_text((GtkEntry*) trq_downStictionEntry,  buffer);
 }
 
@@ -264,11 +264,11 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
   iImp->getImpedanceOffset(*joint, &offset_val);
 
   //update the impedance params
-  sprintf(buffer, "%3.3f", stiff_val);
+  sprintf(buffer, "%3.4f", stiff_val);
   gtk_entry_set_text((GtkEntry*) imp_stiffEntry,  buffer);
-  sprintf(buffer, "%3.3f", damp_val);
+  sprintf(buffer, "%3.4f", damp_val);
   gtk_entry_set_text((GtkEntry*) imp_dampEntry,  buffer);
-  sprintf(buffer, "%3.3f", offset_val);
+  sprintf(buffer, "%3.4f", offset_val);
   gtk_entry_set_text((GtkEntry*) imp_offEntry,  buffer);
 
   //update the impedance limits
@@ -280,18 +280,18 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
   double off_min=0.0;
   iImp->getCurrentImpedanceLimit(*joint, &stiff_min, &stiff_max, &damp_min, &damp_max);
   iTrq->getTorqueRange(*joint, &off_min, &off_max);
-  sprintf(buffer, "%3.3f", stiff_min);
+  sprintf(buffer, "%3.4f", stiff_min);
   gtk_entry_set_text((GtkEntry*) imp_stiffMin,  buffer);
-  sprintf(buffer, "%3.3f", stiff_max);
+  sprintf(buffer, "%3.4f", stiff_max);
   gtk_entry_set_text((GtkEntry*) imp_stiffMax,  buffer);
-  sprintf(buffer, "%3.3f", damp_min);
+  sprintf(buffer, "%3.4f", damp_min);
   gtk_entry_set_text((GtkEntry*) imp_dampMin,  buffer);
-  sprintf(buffer, "%3.3f", damp_max);
+  sprintf(buffer, "%3.4f", damp_max);
   gtk_entry_set_text((GtkEntry*) imp_dampMax,  buffer);
 
-  sprintf(buffer, "%3.3f", off_min);
+  sprintf(buffer, "%3.4f", off_min);
   gtk_entry_set_text((GtkEntry*) imp_offMin,  buffer);
-  sprintf(buffer, "%3.3f", off_max);
+  sprintf(buffer, "%3.4f", off_max);
   gtk_entry_set_text((GtkEntry*) imp_offMax,  buffer);
 }
 
@@ -407,7 +407,7 @@ void guiPid2::displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int pos
   }
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
-  sprintf(buffer, "%3.3f", k); //use this if k is float
+  sprintf(buffer, "%3.4f", k); //use this if k is float
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
   return;
 }
@@ -439,7 +439,7 @@ void guiPid2::changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX
   gtk_widget_set_size_request     (frame, 140, 60);
   gtk_widget_set_size_request     (entry, 80, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
-  sprintf(buffer, "%3.3f", k);  //use this if k is float
+  sprintf(buffer, "%3.4f", k);  //use this if k is float
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
   return;
 }
