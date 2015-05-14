@@ -20,9 +20,7 @@ include_directories(${CMAKE_SOURCE_DIR}
                     ${RTF_TREE_INCLUDE_DIRS}
                     ${YARP_INCLUDE_DIRS})
 
-message(STATUS "YARP_LIBRARIES: " ${YARP_LIBRARIES})
-
-message(STATUS "RTF_LIBRARIES: " ${RTF_LIBS})
+set(CMAKE_SHARED_MODULE_PREFIX "")
 
 link_libraries(${RTF_LIBS}
                ${YARP_LIBRARIES}
