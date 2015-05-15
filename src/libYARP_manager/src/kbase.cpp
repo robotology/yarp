@@ -96,9 +96,10 @@ bool KnowledgeBase::addApplication(Application* app, char* szAppName_)
         app->setLabel(newlable.str().c_str());
     }
 
-    if(szAppName_)
-        strcpy(szAppName_, app->getName());
-
+    if(szAppName_) {
+        app->setName(szAppName_);
+        app->setLabel(szAppName_);
+    }
     if(!kbGraph.addNode(app))
     {
         OSTRINGSTREAM msg;
