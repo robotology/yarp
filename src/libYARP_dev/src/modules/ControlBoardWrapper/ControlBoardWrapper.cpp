@@ -808,7 +808,7 @@ void ControlBoardWrapper::run()
             joint_encoders+=device.subdevices[k].axes; //jump to next group
         }
 
-        joint_timeStamp =  yarp::os::Time::now();
+        //joint_timeStamp =  yarp::os::Time::now();
         timeMutex.wait();
         time.update(joint_timeStamp/controlledJoints);
         timeMutex.post();
