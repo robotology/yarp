@@ -235,7 +235,7 @@ static void handler (int sig) {
     static int ct = 0;
     ct++;
     if (ct>3) {
-        ACE_OS::printf("Aborting (calling exit())...\n");
+        ACE_OS::printf("Aborting (calling abort())...\n");
         yarp::os::abort();
     }
     ACE_OS::printf("[try %d of 3] Trying to shut down\n",
