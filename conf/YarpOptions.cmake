@@ -64,10 +64,15 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 if(NOT CMAKE_CONFIGURATION_TYPES)
     # Possible values for the CMAKE_BUILD_TYPE variable
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YARP_OPTIMIZED_CONFIGURATIONS} ${YARP_DEBUG_CONFIGURATIONS})
+    unset(_configurations)
+    foreach(_conf ${YARP_OPTIMIZED_CONFIGURATIONS} ${YARP_DEBUG_CONFIGURATIONS})
+        set(_configurations "${_configurations} ${_conf}")
+    endforeach()
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY HELPSTRING "Choose the type of build, options are:${_configurations}.")
     if(NOT CMAKE_BUILD_TYPE)
         # Encourage user to specify build type.
         message(STATUS "Setting build type to 'Release' as none was specified.")
-        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+        set_property(CACHE CMAKE_BUILD_TYPE PROPERTY VALUE "Release")
     endif()
 endif()
 
