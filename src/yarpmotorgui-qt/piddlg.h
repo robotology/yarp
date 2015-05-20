@@ -84,7 +84,7 @@ public:
         Q_UNUSED(index);
         QLineEdit *lineEdit = new QLineEdit(parent);
         // Set validator
-        QDoubleValidator *validator = new QDoubleValidator(-100000, 100000, 3,lineEdit);
+        QDoubleValidator *validator = new QDoubleValidator(-100000, 100000, 4,lineEdit);
         lineEdit->setValidator(validator);
         return lineEdit;
     }

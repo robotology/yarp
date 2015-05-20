@@ -85,14 +85,14 @@ void PidDlg::initPosition(Pid myPid)
     ui->tablePosition->item(POSITION_OFFSET,0)->setText(QString("%1").arg((int)myPid.offset));
     ui->tablePosition->item(POSITION_OFFSET,1)->setText(QString("%1").arg((int)myPid.offset));
 
-    ui->tablePosition->item(POSITION_STICTIONUP,0)->setText(QString("%1").arg((int)myPid.stiction_up_val));
-    ui->tablePosition->item(POSITION_STICTIONUP,1)->setText(QString("%1").arg((int)myPid.stiction_up_val));
+    ui->tablePosition->item(POSITION_STICTIONUP,0)->setText(QString("%1").arg((double)myPid.stiction_up_val));
+    ui->tablePosition->item(POSITION_STICTIONUP,1)->setText(QString("%1").arg((double)myPid.stiction_up_val));
 
     ui->tablePosition->item(POSITION_MAXOUTPUT,0)->setText(QString("%1").arg((int)myPid.max_output));
     ui->tablePosition->item(POSITION_MAXOUTPUT,1)->setText(QString("%1").arg((int)myPid.max_output));
 
-    ui->tablePosition->item(POSITION_STICTIONDW,0)->setText(QString("%1").arg((int)myPid.stiction_down_val));
-    ui->tablePosition->item(POSITION_STICTIONDW,1)->setText(QString("%1").arg((int)myPid.stiction_down_val));
+    ui->tablePosition->item(POSITION_STICTIONDW,0)->setText(QString("%1").arg((double)myPid.stiction_down_val));
+    ui->tablePosition->item(POSITION_STICTIONDW,1)->setText(QString("%1").arg((double)myPid.stiction_down_val));
 
     ui->tablePosition->item(POSITION_MAXINT,0)->setText(QString("%1").arg((int)myPid.max_int));
     ui->tablePosition->item(POSITION_MAXINT,1)->setText(QString("%1").arg((int)myPid.max_int));
@@ -130,14 +130,14 @@ void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
     ui->tableTorque->item(TORQUE_OFFSET,0)->setText(QString("%1").arg((int)myPid.offset));
     ui->tableTorque->item(TORQUE_OFFSET,1)->setText(QString("%1").arg((int)myPid.offset));
 
-    ui->tableTorque->item(TORQUE_STITCTIONUP,0)->setText(QString("%1").arg((int)myPid.stiction_up_val));
-    ui->tableTorque->item(TORQUE_STITCTIONUP,1)->setText(QString("%1").arg((int)myPid.stiction_up_val));
+    ui->tableTorque->item(TORQUE_STITCTIONUP,0)->setText(QString("%1").arg((double)myPid.stiction_up_val));
+    ui->tableTorque->item(TORQUE_STITCTIONUP,1)->setText(QString("%1").arg((double)myPid.stiction_up_val));
 
     ui->tableTorque->item(TORQUE_MAXOUTPUT,0)->setText(QString("%1").arg((int)myPid.max_output));
     ui->tableTorque->item(TORQUE_MAXOUTPUT,1)->setText(QString("%1").arg((int)myPid.max_output));
 
-    ui->tableTorque->item(TORQUE_STICTIONDW,0)->setText(QString("%1").arg((int)myPid.stiction_down_val));
-    ui->tableTorque->item(TORQUE_STICTIONDW,1)->setText(QString("%1").arg((int)myPid.stiction_down_val));
+    ui->tableTorque->item(TORQUE_STICTIONDW,0)->setText(QString("%1").arg((double)myPid.stiction_down_val));
+    ui->tableTorque->item(TORQUE_STICTIONDW,1)->setText(QString("%1").arg((double)myPid.stiction_down_val));
 
     ui->tableTorque->item(TORQUE_MAXINT,0)->setText(QString("%1").arg((int)myPid.max_int));
     ui->tableTorque->item(TORQUE_MAXINT,1)->setText(QString("%1").arg((int)myPid.max_int));
