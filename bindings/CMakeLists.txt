@@ -36,17 +36,25 @@ endif()
 ## about this list, any SWIG-supported language should work - take a
 ## look at e.g. ruby code below for how to do it.
 
-set(CREATE_JAVA FALSE CACHE BOOL "Do you want to create a Java interface")
-set(CREATE_PYTHON FALSE CACHE BOOL "Do you want to create the Python interface")
-set(CREATE_PERL FALSE CACHE BOOL "Do you want to create the Perl interface")
-set(CREATE_CHICKEN FALSE CACHE BOOL "Do you want to create the Chicken Scheme interface")
-set(CREATE_CSHARP FALSE CACHE BOOL "Do you want to create the CSharp interface")
-set(CREATE_ALLEGRO FALSE CACHE BOOL "Do you want to create the Allegro Common Lisp interface")
-set(CREATE_TCL FALSE CACHE BOOL "Do you want to create the TCL interface")
-set(CREATE_RUBY FALSE CACHE BOOL "Do you want to create the Ruby interface")
-set(CREATE_LUA FALSE CACHE BOOL "Do you want to create the Lua interface")
-set(CREATE_OCTAVE FALSE CACHE BOOL "Do you want to create the Octave interface")
-
+foreach(lang "Java"
+             "Python"
+             "Perl"
+             "Chicken Scheme"
+             "CSharp"
+             "Allegro Common Lisp"
+             "TCL"
+             "Ruby"
+             "Lua"
+             "Octave")
+    string(TOUPPER "${lang}" LANG)
+    string(REGEX REPLACE " .+" "" LANG "${LANG}")
+    set(CREATE_${LANG} OFF CACHE BOOL "Do you want to create the ${lang} interface")
+    if(CREATE_${LANG})
+      message(STATUS " +++ bindings ${lang} is enabled")
+    else()
+      message(STATUS " +++ bindings ${lang} is not enabled")
+    endif()
+endforeach()
 
 
 #############################################################################
