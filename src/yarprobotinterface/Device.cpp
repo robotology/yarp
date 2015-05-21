@@ -357,6 +357,30 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
 
     controlCalibrator->setCalibrator(calibrator);
 
+    // Saving pointer to Calibrator device into Wrapper to later use (NOTE this make sense if the target device is a ControlBoardWrapper2, as it should be)
+    yarp::dev::IRemoteCalibrator *rem_calibrator_wrap;
+    yarp::dev::IRemoteCalibrator *rem_calibrator_calib;
+    bool rem_calibrator_available = true;
+
+    if(!target.driver()->view(rem_calibrator_wrap))
+    {
+        yWarning() << "Device " << target.name() << "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot attach to a Calibrator device. \n \
+                                                     Please verify that the target of calibrate action is a controlBoardWrapper2 device.  \
+                                                     This doesn't prevent the robotInterface to correctly operate, but no remote calibration and homing will be available";
+        rem_calibrator_available = false;
+    }
+
+    if( (rem_calibrator_available) && (!driver()->view(rem_calibrator_calib)) )
+    {
+        yWarning() << "Device " << name() <<  "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot be used as a remote calibration device. \n \
+                                               This doesn't prevent the robotInterface to correctly operate, but no remote calibration and homing will be available";
+        rem_calibrator_available = false;
+    }
+
+    if(rem_calibrator_available)
+        rem_calibrator_wrap->setCalibratorDevice(rem_calibrator_calib);
+
+    // Start the calibrator thread
     yarp::os::Thread *calibratorThread = new RobotInterface::CalibratorThread(calibrator,
                                                                               name(),
                                                                               target.driver(),
