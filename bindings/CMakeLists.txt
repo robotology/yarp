@@ -360,6 +360,10 @@ if(CREATE_LUA)
     set_target_properties(${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/lua)
   endif()
   set(YARP_COLLISION_AVOIDANCE TRUE)
+
+  install(TARGETS ${target_name}
+    DESTINATION bin)
+
 endif(CREATE_LUA)
 
 #############################################################################
