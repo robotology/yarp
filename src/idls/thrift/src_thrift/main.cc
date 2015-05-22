@@ -641,7 +641,7 @@ void usage() {
   fprintf(stderr, "  -version    Print the compiler version\n");
   fprintf(stderr, "  -o dir      Set the output directory for gen-* packages\n");
   fprintf(stderr, "               (default: current directory)\n");
-  fprintf(stderr, "  -out dir    Set the ouput location for generated files.\n");
+  fprintf(stderr, "  -out dir    Set the output location for generated files.\n");
   fprintf(stderr,"               (no gen-* folder will be created)\n");
   fprintf(stderr, "  -I dir      Add a directory to the list of directories\n");
   fprintf(stderr, "                searched for include directives\n");

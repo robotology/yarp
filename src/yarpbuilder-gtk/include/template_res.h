@@ -98,7 +98,7 @@ static const std::string str_mod_template =
 
 static const std::string str_res_template =
 "<resources>\n"
-"    <!-- Mutiple computer descriptions can be introduced -->\n"
+"    <!-- Multiple computer descriptions can be introduced -->\n"
 "    <computer>\n"
 "        <name>hostname1</name>\n"
 "        <description>Template resource</description>\n"

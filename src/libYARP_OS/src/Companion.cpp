@@ -2565,7 +2565,7 @@ Merge the data (bottles) of multiple ports into one single port.
 The user has to specifies a list of streaming ports (i0, i1, ..., iN) that he wants to merge in a single output port (o0).
 The module creates a corresponding number of input ports and automatically makes the connections.
 The values read from the input ports are merged and synchronized into the output port according to the following rules:
-- the data are appended in the ouput vector using the same order in which the input ports are specified by the user, i.e. o0 = [i0 | i1 | ... | iN].
+- the data are appended in the output vector using the same order in which the input ports are specified by the user, i.e. o0 = [i0 | i1 | ... | iN].
 - the timestamp of the output port o0 is assigned by the module.
 - if in a time instant no data is received from ALL the input ports (i0, i1, ..., iN), no data is sent on the output port (o0).
 - if in a time instant no data is received from SOME ports (e.g. iJ), the output vector will be o0 = [i0 | i1 | ... |iJ-1| ... |in], i.e. the previous sample will be used.

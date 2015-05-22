@@ -138,7 +138,7 @@ void ResourceWindow::updateWidget()
 
 
     row = *(m_refTreeModel->append());
-    row[m_Columns.m_col_name] = "Availablity";
+    row[m_Columns.m_col_name] = "Availability";
     if(m_pComputer->getAvailability())
     {
         row[m_Columns.m_col_value] = "Yes";
