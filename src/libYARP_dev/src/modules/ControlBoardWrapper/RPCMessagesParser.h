@@ -88,6 +88,7 @@ protected:
     yarp::dev::IControlMode             *rpc_iCtrlMode;
     yarp::dev::IControlMode2            *rpc_iCtrlMode2;
     yarp::dev::IAxisInfo                *rpc_AxisInfo;
+    yarp::dev::IRemoteCalibrator        *rpc_IRemoteCalibrator;
     yarp::dev::IControlCalibration2     *rpc_Icalib2;
     yarp::dev::IOpenLoopControl         *rpc_IOpenLoop;
     yarp::dev::IImpedanceControl        *rpc_IImpedance;
@@ -132,6 +133,8 @@ public:
 
     void handleProtocolVersionRequest(const yarp::os::Bottle& cmd,
          yarp::os::Bottle& response, bool *rec, bool *ok);
+
+    void handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
 
     /**
     * Initialize the internal data.

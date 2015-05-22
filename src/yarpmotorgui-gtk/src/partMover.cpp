@@ -110,6 +110,9 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
   ok &= partDd->view(iinteract);
   if (!ok)
     fprintf(stderr, "...iinteract was not ok.\n");
+  ok &= partDd->view(remCalib);
+  if (!ok)
+    fprintf(stderr, "...remoteCalibrator interface was not ok.\n");
 
   //this interface is not mandatory
 #ifdef DEBUG_INTERFACE

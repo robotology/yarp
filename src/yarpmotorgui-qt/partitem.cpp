@@ -219,6 +219,10 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         if(!ok){
             LOG_ERROR("...iinteract was not ok.\n");
         }
+        ok &= partsdd->view(remCalib);
+        if(!ok){
+            LOG_ERROR("...remoteCalibration was not ok.\n");
+        }
 
         if (!ok) {
             LOG_ERROR("Error while acquiring interfaces \n");
@@ -539,12 +543,20 @@ void PartItem::onSendPid(int jointIndex,Pid newPid)
 }
 void PartItem::onCalibClicked(JointItem *joint)
 {
-    Q_UNUSED(joint);
-    //const int jointIndex = joint->getJointIndex();
-
     if(QMessageBox::question(this,"Question","Do you want really to recalibrate the joint?") != QMessageBox::Yes){
         return;
     }
+    if(!remCalib->calibrateSingleJoint(joint->getJointIndex()) )
+    {
+        // provide better feedback to user by verifying if the calibrator device was set or not
+        bool isCalib = false;
+        remCalib->isCalibratorDevicePresent(&isCalib);
+        if(!isCalib)
+            QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file has the 'Calibrator' keyword in the attach phase"));
+        else
+            QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+    }
+
 }
 
 void PartItem::onPidClicked(JointItem *joint)
@@ -653,12 +665,12 @@ void PartItem::onIdleClicked(JointItem *joint)
 void PartItem::onHomeClicked(JointItem *joint)
 {
     int NUMBER_OF_JOINTS;
+    const int jointIndex = joint->getJointIndex();
     pos->getAxes(&NUMBER_OF_JOINTS);
 
     QString zero = QString("%1_zero").arg(partName);
 
     if (!finder->isNull() && !finder->findGroup(zero.toLatin1().data()).isNull()){
-        const int jointIndex = joint->getJointIndex();
         bool ok = true;
         Bottle xtmp;
         xtmp = finder->findGroup(zero.toLatin1().data()).findGroup("PositionZero");
@@ -679,9 +691,18 @@ void PartItem::onHomeClicked(JointItem *joint)
             pos->positionMove(jointIndex, positionZero);
         }
     } else {
-        QMessageBox::critical(this,"Error", QString("No zero group found in the supplied file. Define a suitable %1").arg(zero));
+        QMessageBox::information(this,"Info", QString("Asking the robotInterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file").arg(partName));
+        if(!remCalib->homingSingleJoint(jointIndex) )
+        {
+            // provide better feedback to user by verifying if the calibrator device was set or not
+            bool isCalib = false;
+            remCalib->isCalibratorDevicePresent(&isCalib);
+            if(!isCalib)
+                QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(partName));
+            else
+                QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+        }
     }
-
 }
 
 void PartItem::onJointChangeMode(int mode,JointItem *joint)
@@ -866,31 +887,32 @@ void PartItem::changeEvent( QEvent *event )
 
 void PartItem::calibrateAll()
 {
-
+    if(!remCalib->calibrateWholePart() )
+    {
+        // provide better feedback to user by verifying if the calibrator device was set or not
+        bool isCalib = false;
+        remCalib->isCalibratorDevicePresent(&isCalib);
+        if(!isCalib)
+            QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(partName));
+        else
+            QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+    }
 }
 
 bool PartItem::checkAndHomeAll()
 {
-    QString zero = QString("%1_zero").arg(partName);
-
-    if (!finder->isNull() && !finder->findGroup(zero.toLatin1().data()).isNull()){
-        homeAll();
-        return true;
-    }
-    return false;
+    return homeAll();
 }
 
-void PartItem::homeAll()
+bool PartItem::homeAll()
 {
-
-
+    bool ok = true;
     int NUMBER_OF_JOINTS;
     pos->getAxes(&NUMBER_OF_JOINTS);
 
     QString zero = QString("%1_zero").arg(partName);
 
     if (!finder->isNull() && !finder->findGroup(zero.toLatin1().data()).isNull()){
-        bool ok = true;
         Bottle xtmp, ytmp;
         xtmp = finder->findGroup(zero.toLatin1().data()).findGroup("PositionZero");
         ok = ok && (xtmp.size() == NUMBER_OF_JOINTS+1);
@@ -908,11 +930,23 @@ void PartItem::homeAll()
 
         }else{
             QMessageBox::critical(this,"Error", QString("Check the number of entries in the group %1").arg(zero));
+            ok = false;
         }
     }else{
-        QMessageBox::critical(this,"Error", QString("No zero group found in the supplied file. Define a suitable %1").arg(zero));
+        QMessageBox::information(this,"Info", QString("Asking the robotInterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file.").arg(partName));
+        ok = remCalib->homingWholePart();
+        if(!ok)
+        {
+            // provide better feedback to user by verifying if the calibrator device was set or not
+            bool isCalib = false;
+            remCalib->isCalibratorDevicePresent(&isCalib);
+            if(!isCalib)
+                QMessageBox::critical(this,"Homing failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(partName));
+            else
+                QMessageBox::critical(this,"Homing failed", QString("The remote calibrator reported that something went wrong during the homing procedure"));
+        }
     }
-
+    return ok;
 }
 
 void PartItem::idleAll()

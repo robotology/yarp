@@ -432,8 +432,10 @@ void MainWindow::onCalibAll()
     if(!part){
         return;
     }
-
-    part->calibrateAll();
+    if(QMessageBox::question(this,"Question", QString("Do you want really to recalibrate the whole part?")) == QMessageBox::Yes)
+    {
+        part->calibrateAll(); // Error message is thrown inside
+    }
 }
 
 void MainWindow::onHomeAllParts()

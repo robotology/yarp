@@ -81,6 +81,7 @@ set(YARP_dev_IMPL_HDRS )
 set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardPid.cpp
                   src/ControlCalibrationImpl.cpp
+                  src/RemoteCalibratorImpl.cpp
                   src/ControlModeImpl.cpp
                   src/ControlMode2Impl.cpp
                   src/DeviceDriver.cpp

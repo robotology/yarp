@@ -50,7 +50,7 @@
 #endif
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 2
+#define PROTOCOL_VERSION_MINOR 3
 #define PROTOCOL_VERSION_TWEAK 0
 
 /*
@@ -192,6 +192,7 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IMotorEncoders,
                                         public yarp::dev::IAmplifierControl,
                                         public yarp::dev::IControlLimits2,
+                                        public yarp::dev::IRemoteCalibrator,
                                         public yarp::dev::IControlCalibration,
                                         public yarp::dev::IControlCalibration2,
                                         public yarp::dev::IOpenLoopControl,
@@ -945,6 +946,66 @@ public:
     * @return true if everything goes fine, false if something bad happens
     */
     virtual bool getVelLimits(int j, double *min, double *max);
+
+    /* IRemoteCalibrator */
+
+    bool isCalibratorDevicePresent(bool *isCalib);
+
+    /**
+     * @brief getCalibratorDevice: return the pointer stored with the setCalibratorDevice
+     * @return yarp::dev::IRemotizableCalibrator pointer or NULL if not valid
+     */
+    virtual yarp::dev::IRemoteCalibrator *getCalibratorDevice();
+
+    /**
+     * @brief calibrateSingleJoint: call the calibration procedure for the single joint
+     * @param j: joint to be calibrated
+     * @return true if calibration was successful
+     */
+    virtual bool calibrateSingleJoint(int j);
+
+    /**
+     * @brief calibrateWholePart: call the procedure for calibrating the whole device
+     * @return true if calibration was successful
+     */
+    virtual bool calibrateWholePart();
+
+    /**
+     * @brief homingSingleJoint: call the homing procedure for a single joint
+     * @param j: joint to be calibrated
+     * @return true if homing was succesful, false otherwise
+     */
+    virtual bool homingSingleJoint(int j);
+
+    /**
+     * @brief homingWholePart: call the homing procedure for a the whole part/device
+     * @return true if homing was succesful, false otherwise
+     */
+    virtual bool homingWholePart();
+
+    /**
+     * @brief parkSingleJoint(): start the parking procedure for the single joint
+     * @return true if succesful
+     */
+    virtual bool parkSingleJoint(int j, bool _wait=true);
+
+    /**
+     * @brief parkWholePart: start the parking procedure for the whole part
+     * @return true if succesful
+     */
+    virtual bool parkWholePart();
+
+    /**
+     * @brief quitCalibrate: interrupt the calibration procedure
+     * @return true if succesful
+     */
+    virtual bool quitCalibrate();
+
+    /**
+     * @brief quitPark: interrupt the park procedure
+     * @return true if succesful
+     */
+    virtual bool quitPark();
 
     /* IControlCalibration */
 

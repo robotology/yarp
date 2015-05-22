@@ -1115,12 +1115,120 @@ void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os:
     }
 }
 
+void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if(ControlBoardWrapper_p->verbose())
+        fprintf(stderr, "Handling IRemoteCalibrator message\n");
+
+    if (!rpc_IRemoteCalibrator)
+    {
+        yError("controlBoardWrapper: I do not have a valid IRemoteCalibrator interface");
+        *ok=false;
+        return;
+    }
+
+    int code   = cmd.get(0).asVocab();
+    int action = cmd.get(2).asVocab();
+
+    *ok=false;
+    *rec=true;
+    switch(code)
+    {
+        case VOCAB_SET:
+        {
+            switch(action)
+            {
+                case VOCAB_CALIBRATE_SINGLE_JOINT:
+                {
+                    std::cout << "cmd is " << cmd.toString() << " joint is " << cmd.get(3).asInt() << std::endl;
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate joint with no parameter\n");
+                    *ok = rpc_IRemoteCalibrator->calibrateSingleJoint(cmd.get(3).asInt());
+                } break;
+
+                case VOCAB_CALIBRATE_WHOLE_PART:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate whole part\n");
+                    *ok = rpc_IRemoteCalibrator->calibrateWholePart();
+                } break;
+
+                case VOCAB_HOMING_SINGLE_JOINT:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate joint with no parameter\n");
+                    *ok = rpc_IRemoteCalibrator->homingSingleJoint(cmd.get(3).asInt());
+                } break;
+
+                case VOCAB_HOMING_WHOLE_PART:
+                {
+                    std::cout << "Received homing whole part" << std::endl;
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate whole part\n");
+                    *ok = rpc_IRemoteCalibrator->homingWholePart();
+                } break;
+
+                case VOCAB_PARK_SINGLE_JOINT:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate joint with no parameter\n");
+                    *ok = rpc_IRemoteCalibrator->parkSingleJoint(cmd.get(3).asInt());
+                } break;
+
+                case VOCAB_PARK_WHOLE_PART:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling calibrate whole part\n");
+                    *ok = rpc_IRemoteCalibrator->parkWholePart();
+                } break;
+
+                case VOCAB_QUIT_CALIBRATE:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling quit calibrate\n");
+                    *ok = rpc_IRemoteCalibrator->quitCalibrate();
+                } break;
+
+                case VOCAB_QUIT_PARK:
+                {
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling quit park\n");
+                    *ok = rpc_IRemoteCalibrator->quitPark();
+                } break;
+
+                default:
+                {
+                    *rec = false;
+                    *ok = false;
+                } break;
+            }
+        }break;
+
+        case VOCAB_GET:
+        {
+            response.clear();
+            response.addVocab(VOCAB_IS);
+            response.add(cmd.get(1));
+
+            switch(action)
+            {
+                case VOCAB_IS_CALIBRATOR_PRESENT:
+                {
+                    bool tmp;
+                    if (ControlBoardWrapper_p->verbose())
+                        yDebug("Calling VOCAB_IS_CALIBRATOR_PRESENT\n");
+                    *ok = rpc_IRemoteCalibrator->isCalibratorDevicePresent(&tmp);
+                    response.addInt(tmp);
+                } break;
+            }
+        }
+    }   //end get/set switch
+}
+
+
 // rpc callback
 bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response)
 {
-    //    ACE_thread_t self=ACE_Thread::self();
-    //    fprintf(stderr, "--> [%X] starting responder\n",self);
-
     bool ok  = false;
     bool rec = false;    // Tells if the command is recognized!
 
@@ -1156,8 +1264,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             case VOCAB_OPENLOOP_INTERFACE:
                 handleOpenLoopMsg(cmd, response, &rec, &ok);
             break;
+
             case VOCAB_PROTOCOL_VERSION:
                 handleProtocolVersionRequest(cmd, response, &rec, &ok);
+            break;
+
+            case VOCAB_REMOTE_CALIBRATOR_INTERFACE:
+                handleRemoteCalibratorMsg(cmd, response, &rec, &ok);
             break;
 
             default:
@@ -2498,26 +2611,27 @@ RPCMessagesParser::RPCMessagesParser() {}
 void RPCMessagesParser::init(ControlBoardWrapper *x)
 {
     ControlBoardWrapper_p = x;
-    rpc_IPid        = dynamic_cast<yarp::dev::IPidControl *> (ControlBoardWrapper_p);
-    rpc_IPosCtrl    = dynamic_cast<yarp::dev::IPositionControl *> (ControlBoardWrapper_p);
-    rpc_IPosCtrl2   = dynamic_cast<yarp::dev::IPositionControl2 *> (ControlBoardWrapper_p);
-    rpc_IPosDirect  = dynamic_cast<yarp::dev::IPositionDirect *> (ControlBoardWrapper_p);
-    rpc_IVelCtrl    = dynamic_cast<yarp::dev::IVelocityControl *> (ControlBoardWrapper_p);
-    rpc_IVelCtrl2   = dynamic_cast<yarp::dev::IVelocityControl2 *> (ControlBoardWrapper_p);
-    rpc_IEncTimed   = dynamic_cast<yarp::dev::IEncodersTimed *> (ControlBoardWrapper_p);
-    rpc_IMotEnc     = dynamic_cast<yarp::dev::IMotorEncoders *> (ControlBoardWrapper_p);
-    rpc_IMotor      = dynamic_cast<yarp::dev::IMotor *> (ControlBoardWrapper_p);
-    rcp_IAmp        = dynamic_cast<yarp::dev::IAmplifierControl *> (ControlBoardWrapper_p);
-    rcp_Ilim2       = dynamic_cast<yarp::dev::IControlLimits2 *> (ControlBoardWrapper_p);
-    rpc_AxisInfo    = dynamic_cast<yarp::dev::IAxisInfo *> (ControlBoardWrapper_p);
-    rpc_Icalib2     = dynamic_cast<yarp::dev::IControlCalibration2 *> (ControlBoardWrapper_p);
-    rpc_IOpenLoop   = dynamic_cast<yarp::dev::IOpenLoopControl *> (ControlBoardWrapper_p);
-    rpc_IImpedance  = dynamic_cast<yarp::dev::IImpedanceControl *> (ControlBoardWrapper_p);
-    rpc_ITorque     = dynamic_cast<yarp::dev::ITorqueControl *> (ControlBoardWrapper_p);
-    rpc_iCtrlMode   = dynamic_cast<yarp::dev::IControlMode *> (ControlBoardWrapper_p);
-    rpc_iCtrlMode2  = dynamic_cast<yarp::dev::IControlMode2 *> (ControlBoardWrapper_p);
-    rpc_IInteract   = dynamic_cast<yarp::dev::IInteractionMode *> (ControlBoardWrapper_p);
-    controlledJoints = 0;
+    rpc_IPid              = dynamic_cast<yarp::dev::IPidControl *>          (ControlBoardWrapper_p);
+    rpc_IPosCtrl          = dynamic_cast<yarp::dev::IPositionControl *>     (ControlBoardWrapper_p);
+    rpc_IPosCtrl2         = dynamic_cast<yarp::dev::IPositionControl2 *>    (ControlBoardWrapper_p);
+    rpc_IPosDirect        = dynamic_cast<yarp::dev::IPositionDirect *>      (ControlBoardWrapper_p);
+    rpc_IVelCtrl          = dynamic_cast<yarp::dev::IVelocityControl *>     (ControlBoardWrapper_p);
+    rpc_IVelCtrl2         = dynamic_cast<yarp::dev::IVelocityControl2 *>    (ControlBoardWrapper_p);
+    rpc_IEncTimed         = dynamic_cast<yarp::dev::IEncodersTimed *>       (ControlBoardWrapper_p);
+    rpc_IMotEnc           = dynamic_cast<yarp::dev::IMotorEncoders *>       (ControlBoardWrapper_p);
+    rpc_IMotor            = dynamic_cast<yarp::dev::IMotor *>               (ControlBoardWrapper_p);
+    rcp_IAmp              = dynamic_cast<yarp::dev::IAmplifierControl *>    (ControlBoardWrapper_p);
+    rcp_Ilim2             = dynamic_cast<yarp::dev::IControlLimits2 *>      (ControlBoardWrapper_p);
+    rpc_AxisInfo          = dynamic_cast<yarp::dev::IAxisInfo *>            (ControlBoardWrapper_p);
+    rpc_IRemoteCalibrator = dynamic_cast<yarp::dev::IRemoteCalibrator *>    (ControlBoardWrapper_p);
+    rpc_Icalib2           = dynamic_cast<yarp::dev::IControlCalibration2 *> (ControlBoardWrapper_p);
+    rpc_IOpenLoop         = dynamic_cast<yarp::dev::IOpenLoopControl *>     (ControlBoardWrapper_p);
+    rpc_IImpedance        = dynamic_cast<yarp::dev::IImpedanceControl *>    (ControlBoardWrapper_p);
+    rpc_ITorque           = dynamic_cast<yarp::dev::ITorqueControl *>       (ControlBoardWrapper_p);
+    rpc_iCtrlMode         = dynamic_cast<yarp::dev::IControlMode *>         (ControlBoardWrapper_p);
+    rpc_iCtrlMode2        = dynamic_cast<yarp::dev::IControlMode2 *>        (ControlBoardWrapper_p);
+    rpc_IInteract         = dynamic_cast<yarp::dev::IInteractionMode *>     (ControlBoardWrapper_p);
+    controlledJoints      = 0;
 }
 
 

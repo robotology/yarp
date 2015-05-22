@@ -69,6 +69,7 @@ class partMover{
   IControlCalibration2 *cal;
   IControlMode2 *ctrlmode2;
   IInteractionMode *iinteract;
+  IRemoteCalibrator *remCalib;
 
   bool *CURRENT_POS_UPDATE;
   int *SEQUENCE_ITERATOR;

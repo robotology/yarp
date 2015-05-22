@@ -23,7 +23,7 @@ public:
     PolyDriverList();
     ~PolyDriverList();
 
-    PolyDriverDescriptor *operator[](int k);
+    yarp::dev::PolyDriverDescriptor *operator[](int k);
 
     const PolyDriverDescriptor *operator[] (int k) const;
 
