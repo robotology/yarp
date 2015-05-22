@@ -37,8 +37,21 @@ yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHan
 
 void yarp::os::exit(int v)
 {
-    ACE_OS::exit(v); //may cause crash...
+    ACE_OS::exit(v); //may cause crash... exit is not recommended in processes with multi thread, see http://www.cplusplus.com/reference/cstdlib/exit/
     //::exit(v);     //...this seems to work(?)
+}
+
+void yarp::os::abort(bool verbose)
+{
+#if defined(WIN32)
+	if (verbose==false)
+	{
+		//to suppress windows dialog message
+		_set_abort_behavior(0, _WRITE_ABORT_MSG);
+		_set_abort_behavior(0, _CALL_REPORTFAULT);
+	}
+#endif
+    ACE_OS::abort();   // exit is not recommended in processes with multi thread, see http://www.cplusplus.com/reference/cstdlib/exit/ and http://www.cplusplus.com/reference/cstdlib/abort/
 }
 
 const char *yarp::os::getenv(const char *var)

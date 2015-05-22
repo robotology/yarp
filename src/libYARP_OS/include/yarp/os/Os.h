@@ -37,6 +37,11 @@ namespace yarp {
         YARP_OS_API void exit(int v);
 
         /**
+        * Wrapper for ACE_OS::abort().
+        */
+        YARP_OS_API void abort(bool verbose=false);
+
+        /**
         * Wrapper for ACE_OS::getenv().
         * @param v string that containt the environment variable name
         * @return the value corresponding to the envarionment variable v
