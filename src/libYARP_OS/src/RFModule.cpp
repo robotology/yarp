@@ -253,6 +253,16 @@ static void handler (int sig) {
         //printf("sent %s, got %s\n", cmd.toString().c_str(),
         //     reply.toString().c_str());
    // }
+
+#if defined(WIN32)
+	//on windows we need to reset the handler after beeing called, otherwise it will not be called anymore.
+	//see http://www.geeksforgeeks.org/write-a-c-program-that-doesnt-terminate-when-ctrlc-is-pressed/
+
+	//Additionally, from http://www.linuxprogrammingblog.com/all-about-linux-signals?page=show 
+	//The signal(2) function is the oldest and simplest way to install a signal handler but it's deprecated. 
+	// There are few reasons and most important is that the original Unix implementation would reset the signal handler to it's default value after signal is received.
+	ACE_OS::signal(SIGINT, (ACE_SignalHandler)handler);
+#endif
 }
 
 // Special case for windows. Do not return, wait for the the main thread to return.
