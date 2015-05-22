@@ -361,8 +361,18 @@ if(CREATE_LUA)
   endif()
   set(YARP_COLLISION_AVOIDANCE TRUE)
 
+  # set(LUA_INSTALL_DIR "lib/lua/${LUA_VERSION_STRING}")
+  # Unfortunatly LUA_VERSION_MAJOR and LUA_VERSION_MINOR are empty cmake (2.8.12.2)
+  # So we extract them from LUA_VERSION_STRING
+
+  string(REGEX MATCH "[0-9]*\\.[0-9]*" TMP_LUA_VERSION ${LUA_VERSION_STRING})
+  set(LUA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/lua/${TMP_LUA_VERSION})
+
+  # message(STATUS "--> ${LUA_INSTALL_DIR}")
+  # message(STATUS ${LUA_INSTALL_DIR})
   install(TARGETS ${target_name}
-    DESTINATION bin)
+    DESTINATION ${LUA_INSTALL_DIR})
+
 
 endif(CREATE_LUA)
 
