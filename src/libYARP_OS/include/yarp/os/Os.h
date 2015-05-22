@@ -39,7 +39,7 @@ namespace yarp {
         /**
         * Wrapper for ACE_OS::abort().
         */
-        YARP_OS_API void abort(void);
+        YARP_OS_API void abort(bool verbose=false);
 
         /**
         * Wrapper for ACE_OS::getenv().

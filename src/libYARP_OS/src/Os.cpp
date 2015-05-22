@@ -41,8 +41,16 @@ void yarp::os::exit(int v)
     //::exit(v);     //...this seems to work(?)
 }
 
-void yarp::os::abort()
+void yarp::os::abort(bool verbose)
 {
+#if defined(WIN32)
+	if (verbose==false)
+	{
+		//to suppress windows dialog message
+		_set_abort_behavior(0, _WRITE_ABORT_MSG);
+		_set_abort_behavior(0, _CALL_REPORTFAULT);
+	}
+#endif
     ACE_OS::abort();   // exit is not recommended in processes with multi thread, see http://www.cplusplus.com/reference/cstdlib/exit/ and http://www.cplusplus.com/reference/cstdlib/abort/
 }
 
