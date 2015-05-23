@@ -103,6 +103,9 @@ public:
     const char* getEnv(void) { return strEnv.c_str(); }
     int getID(void) { return theID; }
 
+    void setPostExecWait(double t) { wait = t; }
+    double getPostExecWait() { return wait; }
+
     void enableAutoConnect(void) { bAutoConnect = true; }
     void disableAutoConnect(void) { bAutoConnect = false; }
     bool autoConnect(void) { return bAutoConnect; }
@@ -119,6 +122,7 @@ private:
     string strWorkdir;
     string strEnv;
     int theID;
+    double wait;
 
     bool bWatchDog;
     Broker* broker;

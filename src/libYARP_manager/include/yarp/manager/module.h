@@ -169,6 +169,9 @@ public:
     bool addResource(GenericResource& res);
     bool removeResource(GenericResource& res);
 
+    void setPostExecWait(double t) { wait = t; }
+    double getPostExecWait() { return wait; }
+
     void clearInputs(void) { inputs.clear(); }
     void clearOutputs(void) { outputs.clear(); }
     void clearResources(void) { resources.clear(); }
@@ -210,7 +213,7 @@ private:
     bool bNeedDeployer;
     string strPrefix;
     string strBasePrefix;
-
+    double wait;
     GraphicModel modelBase;
 
     ArgumentIterator findArgument(Argument& argument);

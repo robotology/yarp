@@ -156,6 +156,7 @@ public:
     ModuleInterface( const char* szName) {
         if(szName) strName = szName;
         iRank = -1;
+        wait = 0.0;
     }
 
     ModuleInterface(Module* module);
@@ -188,6 +189,9 @@ public:
     void addResource(ResYarpPort &res) { resources.push_back(res); }
     ResourceContainer& getResources(void) { return resources; }
 
+    void setPostExecWait(double t) { wait = t; }
+    double getPostExecWait() { return wait; }
+
     int portmapCount(void) { return portmaps.size(); }
     Portmap& getPortmapAt(int index){ return portmaps[index]; }
     bool addPortmap(Portmap &portmap);
@@ -198,6 +202,7 @@ public:
 
     GraphicModel& getModelBase(void) { return modelBase;}
     void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
+
 
 
 protected:
@@ -212,6 +217,7 @@ private:
     string strPrefix;
     int iRank;
     ResourceContainer resources;
+    double wait;
     PortmapContainer portmaps;
     PortmapIterator findPortmap(Portmap& portmap);
     string strTag;

@@ -365,6 +365,28 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         }
                     }
                 }
+
+                /* retrieving resources information*/
+                TiXmlElement* ensure;
+                if((ensure = (TiXmlElement*) mod->FirstChild("ensure")))
+                {
+                    for(TiXmlElement* res = ensure->FirstChildElement(); res;
+                            res = res->NextSiblingElement())
+                    {
+                        if(compareString(res->Value(), "wait"))
+                        {
+                            if(res->GetText())
+                                module.setPostExecWait(atof(res->GetText()));
+                        }
+                        else
+                        {
+                            OSTRINGSTREAM war;
+                            war<<"Unrecognized tag from "<<szFile<<" at line "\
+                               <<res->Row()<<".";
+                            logger->addWarning(war);
+                        }
+                    }
+                }
                 /* retrieving portmaps */
                 for(TiXmlElement* map = mod->FirstChildElement(); map;
                             map = map->NextSiblingElement())

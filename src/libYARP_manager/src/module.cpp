@@ -63,6 +63,7 @@ void Module::swap(const Module &mod)
     strPrefix = mod.strPrefix;
     strBasePrefix = mod.strBasePrefix;
     modOwner = mod.modOwner;
+    wait = mod.wait;
     // deep copy
     for(int i=0; i<mod.resourceCount(); i++)
         addResource(mod.getResourceAt(i));
@@ -234,6 +235,7 @@ void Module::clear(void)
         *itr = NULL;
     }
     resources.clear();
+    wait = 0.0;
 }
 
 bool Module::setParam(const char* szParam)

@@ -142,7 +142,7 @@ private:
     bool oneRunning(void);
     bool allStopped(void);
     bool prepare(bool silent=true);
-    bool timeout(double base, double timeout);
+    bool timeout(double base, double t);
     bool updateResource(GenericResource* resource);
     Broker* createBroker(Module* module);
 };

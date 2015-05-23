@@ -215,6 +215,7 @@ void Ready::startModule(void)
     }
     else
     {
+        yarp::os::Time::delay(executable->getPostExecWait());
         castEvent(EventFactory::startModuleEventOk);
         executable->getEvent()->onExecutableStart(executable);
     }

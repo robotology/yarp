@@ -285,7 +285,8 @@ bool Manager::prepare(bool silent)
         exe->setParam((*itr)->getParam());
         exe->setHost((*itr)->getHost());
         exe->setStdio((*itr)->getStdio());
-        exe->setWorkDir((*itr)->getWorkDir());
+        exe->setWorkDir((*itr)->getWorkDir());        
+        exe->setPostExecWait((*itr)->getPostExecWait());
         string env = string("YARP_PORT_PREFIX=") +
                         string((*itr)->getPrefix());
         exe->setEnv(env.c_str());
@@ -612,14 +613,15 @@ bool Manager::run(unsigned int id, bool async)
 
     // waiting for running
     double base = yarp::os::Time::now();
-    while(!timeout(base, RUN_TIMEOUT))
+    double wait = runnables[id]->getPostExecWait() + RUN_TIMEOUT;
+    while(!timeout(base, wait))
         if(running(id)) return true;
 
     OSTRINGSTREAM msg;
     msg<<"Failed to run "<<runnables[id]->getCommand();
     msg<<" on "<<runnables[id]->getHost();
     msg<<". (State: "<<runnables[id]->state();
-    msg<<", paramete: "<<runnables[id]->getParam()<<")";
+    msg<<", parameter: "<<runnables[id]->getParam()<<")";
     logger->addError(msg);
     return false;
 }
@@ -644,21 +646,22 @@ bool Manager::run(void)
     }
 
     ExecutablePIterator itr;
+    double wait = 0.0;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
     {
         if(bAutoConnect)
             (*itr)->enableAutoConnect();
         else
             (*itr)->disableAutoConnect();
-        (*itr)->start();
+        (*itr)->start();       
         yarp::os::Time::delay(0.2);
+        wait = (wait > (*itr)->getPostExecWait()) ? wait : (*itr)->getPostExecWait();
     }
 
     // waiting for running
     double base = yarp::os::Time::now();
-    while(!timeout(base, RUN_TIMEOUT))
+    while(!timeout(base, wait + RUN_TIMEOUT))
         if(allRunning()) break;
-
     if(!allRunning())
     {
         ExecutablePIterator itr;
@@ -669,7 +672,7 @@ bool Manager::run(void)
                 msg<<"Failed to run "<<(*itr)->getCommand();
                 msg<<" on "<<(*itr)->getHost();
                 msg<<". (State: "<<(*itr)->state();
-                msg<<", paramete: "<<(*itr)->getParam()<<")";
+                msg<<", parameter: "<<(*itr)->getParam()<<")";
                 logger->addError(msg);
             }
 
@@ -1117,10 +1120,10 @@ bool Manager::detachStdout(unsigned int id)
     return true;
 }
 
-bool Manager::timeout(double base, double timeout)
+bool Manager::timeout(double base, double t)
 {
     yarp::os::Time::delay(1.0);
-    if((yarp::os::Time::now()-base) > timeout)
+    if((yarp::os::Time::now()-base) > t)
         return true;
     return false;
 }
