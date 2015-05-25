@@ -3186,7 +3186,7 @@ public:
 
 yarp::dev::DriverCreator *createClientControlBoard() {
     return new DriverCreatorOf<ClientControlBoard>("clientcontrolboard",
-        "clientcontrolboard",
+        "controlboard",
         "yarp::dev::ClientControlBoard");
 }
 
