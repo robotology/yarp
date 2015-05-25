@@ -141,13 +141,47 @@ name /mymotor\n\
 
         PolyDriver dd2;
         Property p2;
-        p2.put("device","remote_controlboard");
+        p2.put("device","clientcontrolboard");
         p2.put("remote","/motor");
         p2.put("local","/motor/client");
         p2.put("carrier","tcp");
         p2.put("ignoreProtocolCheck","true");
         result = dd2.open(p2);
         checkTrue(result,"client open reported successful");
+
+        if(!result)   return;  // cannot go on if the device was not opened
+
+        IPositionControl *pos = NULL;
+        result = dd2.view(pos);
+        checkTrue(result,"interface reported");
+        int axes = 0;
+        pos->getAxes(&axes);
+        checkEqual(axes,16,"interface seems functional");
+        result = dd.close() && dd2.close();
+        checkTrue(result,"close reported successful");
+    }
+
+    void testControlBoard2() {
+        report(0,"\ntest the controlboard wrapper 2");
+        PolyDriver dd;
+        Property p;
+        p.put("device","controlboardwrapper2");
+        p.put("subdevice","test_motor");
+        p.put("name","/motor");
+        p.put("axes",16);
+        bool result;
+        result = dd.open(p);
+        checkTrue(result,"controlboardwrapper open reported successful");
+
+        PolyDriver dd2;
+        Property p2;
+        p2.put("device","remote_controlboard");
+        p2.put("remote","/motor");
+        p2.put("local","/motor/client");
+        p2.put("carrier","tcp");
+        p2.put("ignoreProtocolCheck","true");
+        result = dd2.open(p2);
+        checkTrue(result,"remote_controlboard open reported successful");
 
         if(!result)   return;  // cannot go on if the device was not opened
 
@@ -169,6 +203,7 @@ name /mymotor\n\
         testGroup();
         testGrabber();
         testControlBoard();
+        testControlBoard2();
         Network::setLocalMode(false);
     }
 };
