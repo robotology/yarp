@@ -359,12 +359,19 @@ void partMover::home_all(GtkButton *button, partMover* currentPart)
 	    }
 	}
       else
-	dialog_message(GTK_MESSAGE_ERROR,(char *) "Check the number of entries in the group",  buffer2, true);
+        dialog_message(GTK_MESSAGE_ERROR,(char *) "Check the number of entries in the group",  buffer2, true);
     }
-  else
+    else
     {
+        if(!iremCalib)
+        {
+            dialog_message(GTK_MESSAGE_ERROR,  (char *) "Operation not supported",  (char *) "The IRemoteCalibrator interface was not found on this application ", true);
+            return;
+        }
+
       strcpy(buffer2, "Asking the robotInterface to homing part ");
       strcat(buffer2, buffer1);
+
 
       dialog_message(GTK_MESSAGE_INFO, buffer2, (char *) " through the remoteCalibrator interface, since no custom zero group found in the supplied file", true);
       if(!iremCalib->homingWholePart() )
@@ -386,15 +393,22 @@ void partMover::home_all(GtkButton *button, partMover* currentPart)
  */
 void partMover::calib_all(GtkButton *button, partMover* currentPart)
 {
-  //ask for confirmation
-  if (!dialog_question("Do you really want to recalibrate the whole part?"))
-  {
-     return;
-  }
-
   IPositionControl *ipos = currentPart->pos;
   IControlCalibration2 *ical = currentPart->cal;
   IRemoteCalibrator *iRemoteCalib = currentPart->remCalib;
+
+  // check if we have the interface available before asking for user confirmation
+  if(!iRemoteCalib)
+  {
+      dialog_message(GTK_MESSAGE_ERROR,  (char *) "Operation not supported",  (char *) "The IRemoteCalibrator interface was not found on this application ", true);
+      return;
+  }
+
+  //ask for confirmation (if the action is possible)
+  if (!dialog_question("Do you really want to recalibrate the whole part?"))
+  {
+      return;
+  }
 
   if( !iRemoteCalib->calibrateWholePart() )
   {

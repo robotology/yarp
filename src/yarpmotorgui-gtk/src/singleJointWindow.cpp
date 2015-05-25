@@ -58,12 +58,6 @@ void partMover::dis_click(GtkButton *button, gtkClassData* currentClassData)
 
 void partMover::calib_click(GtkButton *button, gtkClassData* currentClassData)
 {
-  //ask for confirmation
-  if (!dialog_question("Do you really want to recalibrate the joint?"))
-  {
-     return;
-  }
-
   partMover *currentPart = currentClassData->partPointer;
   int * joint = currentClassData->indexPointer;
   IPositionControl *ipos = currentPart->pos;
@@ -72,8 +66,22 @@ void partMover::calib_click(GtkButton *button, gtkClassData* currentClassData)
   IPidControl *ipid = currentPart->pid;
   IControlCalibration2 *ical = currentPart->cal;
   IRemoteCalibrator *iRemoteCal = currentPart->remCalib;
+
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
+
+  // check if interface is available
+  if(!iRemoteCal)
+  {
+      dialog_message(GTK_MESSAGE_ERROR,  (char *) "Operation not supported",  (char *) "The IRemoteCalibrator interface was not found on this application ", true);
+      return;
+  }
+
+  //ask for confirmation
+  if (!dialog_question("Do you really want to recalibrate the joint?"))
+  {
+     return;
+  }
 
   if (!iRemoteCal->calibrateSingleJoint(*joint) )
   {
@@ -142,6 +150,12 @@ void partMover::home_click(GtkButton *button, gtkClassData* currentClassData)
   }
   else
   {
+      if(!iremCalib)
+      {
+          dialog_message(GTK_MESSAGE_ERROR,  (char *) "Operation not supported",  (char *) "The IRemoteCalibrator interface was not found on this application ", true);
+          return;
+      }
+
       strcpy(buffer2, "Asking the robotInterface to homing part ");
       strcat(buffer2, buffer1);
 
