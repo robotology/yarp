@@ -64,7 +64,6 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     positionDirectEnabled = position_direct_enabled;
     openloopEnabled = openloop_enabled;
 
-
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
     QString robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
@@ -162,6 +161,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     cal       = NULL;
     ctrlmode2 = NULL;
     iinteract = NULL;
+    remCalib  = NULL;
 
     yDebug("Opening interfaces...");
     bool ok = false;
@@ -219,10 +219,8 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         if(!ok){
             LOG_ERROR("...iinteract was not ok.\n");
         }
-        ok &= partsdd->view(remCalib);
-        if(!ok){
-            LOG_ERROR("...remoteCalibration was not ok.\n");
-        }
+
+        partsdd->view(remCalib);  // remCalib is optional
 
         if (!ok) {
             LOG_ERROR("Error while acquiring interfaces \n");
@@ -543,6 +541,12 @@ void PartItem::onSendPid(int jointIndex,Pid newPid)
 }
 void PartItem::onCalibClicked(JointItem *joint)
 {
+    if(!remCalib)
+    {
+        QMessageBox::critical(this,"Operation not supported", QString("The IRemoteCalibrator interface was not found on this application"));
+        return;
+    }
+
     if(QMessageBox::question(this,"Question","Do you want really to recalibrate the joint?") != QMessageBox::Yes){
         return;
     }
@@ -690,7 +694,15 @@ void PartItem::onHomeClicked(JointItem *joint)
             pos->setRefSpeed(jointIndex, velocityZero);
             pos->positionMove(jointIndex, positionZero);
         }
-    } else {
+    }
+    else
+    {
+        if(!remCalib)
+        {
+            QMessageBox::critical(this,"Operation not supported", QString("The IRemoteCalibrator interface was not found on this application"));
+            return;
+        }
+
         QMessageBox::information(this,"Info", QString("Asking the robotInterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file").arg(partName));
         if(!remCalib->homingSingleJoint(jointIndex) )
         {
@@ -887,15 +899,24 @@ void PartItem::changeEvent( QEvent *event )
 
 void PartItem::calibrateAll()
 {
-    if(!remCalib->calibrateWholePart() )
+    if(!remCalib)
     {
-        // provide better feedback to user by verifying if the calibrator device was set or not
-        bool isCalib = false;
-        remCalib->isCalibratorDevicePresent(&isCalib);
-        if(!isCalib)
-            QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(partName));
-        else
-            QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+        QMessageBox::critical(this,"Operation not supported", QString("The IRemoteCalibrator interface was not found on this application"));
+        return;
+    }
+
+    if(QMessageBox::question(this,"Question", QString("Do you want really to recalibrate the whole part?")) == QMessageBox::Yes)
+    {
+        if(!remCalib->calibrateWholePart() )
+        {
+            // provide better feedback to user by verifying if the calibrator device was set or not
+            bool isCalib = false;
+            remCalib->isCalibratorDevicePresent(&isCalib);
+            if(!isCalib)
+                QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(partName));
+            else
+                QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+        }
     }
 }
 
@@ -932,7 +953,15 @@ bool PartItem::homeAll()
             QMessageBox::critical(this,"Error", QString("Check the number of entries in the group %1").arg(zero));
             ok = false;
         }
-    }else{
+    }
+    else
+    {
+        if(!remCalib)
+        {
+            QMessageBox::critical(this,"Operation not supported", QString("The IRemoteCalibrator interface was not found on this application"));
+            return false;
+        }
+
         QMessageBox::information(this,"Info", QString("Asking the robotInterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file.").arg(partName));
         ok = remCalib->homingWholePart();
         if(!ok)
