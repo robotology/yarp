@@ -264,12 +264,6 @@ const RobotInterface::ActionList& RobotInterface::Device::actions() const
 
 bool RobotInterface::Device::open()
 {
-    if(!mPriv)
-    {
-       yDebug() << "RobotInterface::Device::open() -> NULL pointer, Cannot call open function!";
-       return false;
-    }
-
     if (mPriv->isValid()) {
         yError() << "Trying to open an already opened device.";
         return false;
@@ -285,12 +279,6 @@ bool RobotInterface::Device::open()
 
 bool RobotInterface::Device::close()
 {
-    if(!mPriv)
-    {
-       yDebug() << "RobotInterface::Device::close() -> NULL pointer, Cannot call close function!";
-       return false;
-    }
-
     if (!mPriv->isValid()) {
         // Trying to close an already closed device. Perhaps open()
         // Failed... Nothing to do and not worth sending an error.
