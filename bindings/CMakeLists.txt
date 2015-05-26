@@ -169,7 +169,6 @@ if(CREATE_PYTHON)
   endif()
   find_package(PythonLibs ${YARP_USE_PYTHON_VERSION} EXACT)
   include_directories(${PYTHON_INCLUDE_PATH})
-  link_libraries(${PYTHON_LIBRARY})
 
   ## in Windows it seems necessary to declare explictly the link_directory
   if(WIN32)
@@ -193,13 +192,18 @@ if(CREATE_PYTHON)
   endif()
 
   # installation path is determined reliably on most platforms using distutils
-  execute_process(COMMAND ${PYTHON_EXECUTABLE}
-    -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix=''))"
-    OUTPUT_VARIABLE PYTHON_INSTDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/yarp.py
-    DESTINATION ${PYTHON_INSTDIR} )
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix=''))"
+                  OUTPUT_VARIABLE PYTHON_INSTDIR
+                  OUTPUT_STRIP_TRAILING_WHITESPACE )
+  if(YARP_COLLISION_AVOIDANCE)
+    install(FILES ${CMAKE_BINARY_DIR}/lib/python/yarp.py
+            DESTINATION ${PYTHON_INSTDIR})
+  else()
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/yarp.py
+            DESTINATION ${PYTHON_INSTDIR})
+  endif()
   install(TARGETS _${target_name}
-    DESTINATION ${PYTHON_INSTDIR} )
+          DESTINATION ${PYTHON_INSTDIR})
 
   if(WIN32)
     set_target_properties(_${target_name} PROPERTIES SUFFIX ".pyd")
