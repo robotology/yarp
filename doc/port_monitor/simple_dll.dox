@@ -11,7 +11,7 @@
 \author Ali Paikan
 
 \section desc Description
-This example demonstrates how to simply use the port monitor carrier to modify data going through a connection. The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using a portmonitor plugged into the receiver side. The portmoniotr loads a dll (\c 'libsimple_monitor.so') in which we access and modify the data going through the port. 
+This example demonstrates how to simply use the port monitor carrier to modify data going through a connection. The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using a portmonitor plugged into the receiver side. The portmoniotr loads a dll (\c 'libsimple_monitor.so') in which we access and modify the data going through the port.
 
 <br>
 
@@ -27,53 +27,53 @@ This example demonstrates how to simply use the port monitor carrier to modify d
 \verbatim
    $ mkdir $YARP_ROOT/example/portmonitor/simple_dll/build
    $ cd $YARP_ROOT/example/portmonitor/simple_dll/build
-   $ cmake ../; make; 
+   $ cmake ../; make;
 \endverbatim
-   
-   you should see the \c 'libsimple_monitor.so' after the compilation (the generated dll can have 
-   different names on windows or mac os). 
+
+   you should see the \c 'libsimple_monitor.so' after the compilation (the generated dll can have
+   different names on windows or mac os).
 
 \li Open a terminal and run yarpserver
 \verbatim
    $ yarpserver
 \endverbatim
 
-\li Open another terminal (lets call this the sender terminal) and type 
+\li Open another terminal (lets call this the sender terminal) and type
 \verbatim
-   $ yarp write /write 
+   $ yarp write /write
 \endverbatim
 
 \li In the directory where you you built the dll (lets call this the receiver terminal), type
 \verbatim
    $ yarp read /read
 \endverbatim
- 
-\li In another terminal connect the port as follow: 
+
+\li In another terminal connect the port as follow:
 \verbatim
    $ yarp connect /write /read tcp+recv.portmonitor+type.dll+file.simple_monitor
 \endverbatim
 
 
-Now if you write something  in the 'sender' terminal, you will see the text "Modified in DLL" will be added to the original message. For example: 
+Now if you write something  in the 'sender' terminal, you will see the text "Modified in DLL" will be added to the original message. For example:
 \verbatim
 [sender terminal]
- Hello 
+ Hello
 \endverbatim
 
-\verbatim 
-[receiver terminal] 
+\verbatim
+[receiver terminal]
  Hello "Modified in DLL"
 \endverbatim
 
-As it is constrained in `SimpleMonitorObject::accept()' method from `Simple.cpp', if you type "ignore", 
-the message will be ignored by the portmonitor and it never be delivered to the input port.  
+As it is constrained in `SimpleMonitorObject::accept()' method from `Simple.cpp', if you type "ignore",
+the message will be ignored by the portmonitor and it never be delivered to the input port.
 
 \section sample Code Samples
 
 \code{.cpp}
 #include <yarp/os/MonitorObject.h>
 
-class SimpleMonitorObject : public yarp::os::MonitorObject 
+class SimpleMonitorObject : public yarp::os::MonitorObject
 {
 public:
     bool create(const yarp::os::Property& options);
@@ -106,7 +106,7 @@ YARP_DEFINE_SHARED_SUBCLASS(MonitorObject_there, SimpleMonitorObject, MonitorObj
 
 bool SimpleMonitorObject::create(const yarp::os::Property& options)
 {
-   printf("created!\n"); 
+   printf("created!\n");
    printf("I am attached to the %s\n",
           (options.find("sender_side").asBool()) ? "sender side" : "receiver side");
    return true;
@@ -117,7 +117,7 @@ void SimpleMonitorObject::destroy(void)
     printf("destroyed!\n");
 }
 
-bool SimpleMonitorObject::setparam(const yarp::os::Property& params) 
+bool SimpleMonitorObject::setparam(const yarp::os::Property& params)
 {
     return false;
 }
@@ -128,7 +128,7 @@ bool SimpleMonitorObject::getparam(yarp::os::Property& params)
 }
 
 bool SimpleMonitorObject::accept(yarp::os::Things& thing)
-{   
+{
     Bottle* bt = thing.cast_as<Bottle>();
     if(bt == NULL) {
         printf("SimpleMonitorObject: expected type Bottle but got wrong data type!\n");

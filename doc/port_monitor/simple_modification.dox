@@ -11,7 +11,7 @@
 \author Ali Paikan
 
 \section desc Description
-This example demonstrates how to simply use the port monitor carrier to modify data going through a connection. The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using a portmonitor plugged into the receiver side. The portmoniotr loads a Lua script (\c 'bot_modifier.lua') in which we access and modify the data going through through the port. 
+This example demonstrates how to simply use the port monitor carrier to modify data going through a connection. The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using a portmonitor plugged into the receiver side. The portmoniotr loads a Lua script (\c 'bot_modifier.lua') in which we access and modify the data going through through the port.
 
 <br>
 
@@ -32,39 +32,40 @@ This example demonstrates how to simply use the port monitor carrier to modify d
    $ yarpserver
 \endverbatim
 
-\li Open another terminal (lets call this the sender terminal) and type 
+\li Open another terminal (lets call this the sender terminal) and type
 \verbatim
-   $ yarp write /write 
+   $ yarp write /write
 \endverbatim
 
 \li Open another terminal (lets call this the receiver terminal) )and change to the 'simple_modification' directory:
-\verbatim 
+\verbatim
    $ cd $YARP_ROOT/example/portmonitor/simple_modification
    $ yarp read /read
 \endverbatim
-  
+
 \li In another terminal connect the port as follow
-\verbatim 
+\verbatim
    $ yarp connect /write /read tcp+recv.portmonitor+type.lua+file.bot_modifier
 \endverbatim
 
-Now if you write something  in the 'sender' terminal, you will see the text "modified from Lua" will be added to the original message. For example: 
+Now if you write something  in the 'sender' terminal, you will see the text "modified from Lua" will be added to the original message. For example:
 \verbatim
 [sender terminal]
- Hello 
+ Hello
 \endverbatim
 
-\verbatim 
-[receiver terminal] 
+\verbatim
+[receiver terminal]
  Hello "modified from Lua"
 \endverbatim
 
-As it is constrained in this PortMonitor.accept() method, If you type "ignore", the word will never be delivered to the input port. 
+As it is constrained in this PortMonitor.accept() method, If you type "ignore", the word will never be delivered to the input port.
+
+\htmlonly
 
 \section scripts Scripts
 
 \subsection bot_modifier bot_modifier.lua
-\htmlonly
 <pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
 <span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
 

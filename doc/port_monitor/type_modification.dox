@@ -11,13 +11,13 @@
 \author Ali Paikan
 
 \section desc Description
-This example demonstrates how to use the port monitor carrier to substitute a data type with another one. 
+This example demonstrates how to use the port monitor carrier to substitute a data type with another one.
 The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using a portmonitor plugged into the receiver side. The portmoniotr loads a Lua script (\c 'type_modifier.lua') which expects to see a command such as 'random N' (where N is an integer number). The command is, then, completely substituted with a vector of N random values which will be delivered to the 'yarp read'. The port monitor also checks for the validity of the command
 
 <br>
 
 \image html type_modification.png ""
- 
+
 
 \section req Requirements
 \li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
@@ -35,18 +35,18 @@ The port '/write' from 'yarp write' module is connected to the '/read' port of '
 \endverbatim
 
 \li Open another terminal (lets call this the receiver terminal) and change to the 'type_modification' directory:
-\verbatim 
+\verbatim
    $ cd $YARP_ROOT/example/portmonitor/type_modification
    $ yarp read /read
 \endverbatim
 
-\li Open another terminal (lets call this the sender terminal) and type 
+\li Open another terminal (lets call this the sender terminal) and type
 \verbatim
    $ yarp write /write
 \endverbatim
-  
+
 \li In another terminal connect the port as follow
-\verbatim 
+\verbatim
    $ yarp connect /write /read tcp+recv.portmonitor+type.lua+file.type_modifier
 \endverbatim
 
@@ -54,19 +54,21 @@ Now if you write a valid command in the 'sender' terminal (e.g., random 3), you 
 
 \verbatim
 [sender terminal]
-   random 3 
+   random 3
 \endverbatim
 
-\verbatim 
-[receiver terminal] 
+\verbatim
+[receiver terminal]
    0.513401 0.95223 0.916195
 \endverbatim
 
 
+\htmlonly
+
 \section scripts Scripts
 
 \subsection type_modifier type_modifier.lua
-\htmlonly
+
 <pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
 <span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
 
@@ -78,7 +80,7 @@ Now if you write a valid command in the 'sender' terminal (e.g., random 3), you 
 <span style="color:#00b418">-- and update() will never be called</span>
 PortMonitor.accept <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>(thing)
      bt <span style="color:#0100b6;font-weight:700">=</span> thing:asBottle()
-     <span style="color:#0100b6;font-weight:700">if</span> bt:size() <span style="color:#0100b6;font-weight:700">&lt;</span> <span style="color:#cd0000;font-style:italic">2</span> <span style="color:#0100b6;font-weight:700">or</span> bt:get(<span style="color:#cd0000;font-style:italic">0</span>):asString() <span style="color:#0100b6;font-weight:700">~=</span> <span style="color:#d80800">"random"</span> <span style="color:#0100b6;font-weight:700">then</span>  
+     <span style="color:#0100b6;font-weight:700">if</span> bt:size() <span style="color:#0100b6;font-weight:700">&lt;</span> <span style="color:#cd0000;font-style:italic">2</span> <span style="color:#0100b6;font-weight:700">or</span> bt:get(<span style="color:#cd0000;font-style:italic">0</span>):asString() <span style="color:#0100b6;font-weight:700">~=</span> <span style="color:#d80800">"random"</span> <span style="color:#0100b6;font-weight:700">then</span>
         <span style="color:#3c4c72;font-weight:700">print</span>(<span style="color:#d80800">"type_modifier: invalid command! (e.g., random 10)"</span>)
         <span style="color:#0100b6;font-weight:700">return</span> <span style="color:#585cf6;font-style:italic">false</span>;
      <span style="color:#0100b6;font-weight:700">end</span>
@@ -95,7 +97,7 @@ PortMonitor.update <span style="color:#0100b6;font-weight:700">=</span> <span st
     vec <span style="color:#0100b6;font-weight:700">=</span> yarp.Vector()
     <span style="color:#0100b6;font-weight:700">for</span> i<span style="color:#0100b6;font-weight:700">=</span><span style="color:#cd0000;font-style:italic">1</span>,bt:get(<span style="color:#cd0000;font-style:italic">1</span>):asInt() <span style="color:#0100b6;font-weight:700">do</span>
         vec:push_back(<span style="color:#3c4c72;font-weight:700">math.random</span>())
-    <span style="color:#0100b6;font-weight:700">end</span>    
+    <span style="color:#0100b6;font-weight:700">end</span>
     th:setPortWriter(vec)
     <span style="color:#0100b6;font-weight:700">return</span> th
 <span style="color:#0100b6;font-weight:700">end</span>
