@@ -349,7 +349,7 @@ endif(CREATE_RUBY)
 
 if(CREATE_LUA)
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
-  find_package(Lua51 REQUIRED)
+  find_package(Lua REQUIRED)
   set(target_name yarp_lua)
   include_directories(${LUA_INCLUDE_DIR})
   swig_add_module(${target_name} lua yarp.i)

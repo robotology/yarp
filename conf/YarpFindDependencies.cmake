@@ -334,8 +334,8 @@ if(CREATE_YARPDATADUMPER OR CREATE_YARPDATAPLAYER OR ENABLE_yarpmod_opencv_grabb
 endif()
 
 if(ENABLE_yarpcar_portmonitor_carrier)
-    find_package(Lua51)
-    checkandset_dependency(Lua51)
+    find_package(Lua)
+    checkandset_dependency(Lua)
 endif()
 
 
@@ -356,7 +356,7 @@ print_dependency(GooCanvasMM)
 print_dependency(Readline)
 print_dependency(SWIG)
 print_dependency(OpenCV)
-print_dependency(Lua51)
+print_dependency(Lua)
 
 
 # CHECK DEPENDENCIES:
@@ -374,7 +374,7 @@ check_optional_dependency(CREATE_YARPBUILDER GooCanvas)
 check_optional_dependency(CREATE_YARPBUILDER GooCanvasMM)
 check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
 check_optional_dependency(ENABLE_yarpmod_opencv_grabber OpenCV)
-check_optional_dependency(ENABLE_yarpcar_portmonitor_carrier Lua51)
+check_optional_dependency(ENABLE_yarpcar_portmonitor_carrier Lua)
 
 
 
