@@ -75,26 +75,53 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
             ConstString basename = (dll_name.find(".")!=ConstString::npos) ? name : dll_name;
             ConstString fn = (fn_name=="")?name:fn_name;
 
+            ConstString fullpath;
+
+#if defined(_MSC_VER) && !defined(NDEBUG)
+            // MSVC DEBUG build: try debug name before basic name
+            fullpath = path + "/" + basename + "d" + ext;
+            if (subopen(factory, fullpath, fn))
+                return true;
+#endif // defined(_MSC_VER) && !defined(NDEBUG)
+
             // Basic name
-            if (subopen(factory, path + "/" + basename + ext, fn))
+            fullpath = path + "/" + basename + ext;
+            if (subopen(factory, fullpath, fn))
                 return true;
 
-            // Debug name
-            if (subopen(factory, path + "/" + basename + "d" + ext, fn))
+#if defined(_MSC_VER) && defined(NDEBUG)
+            // MSVC RELEASE build: try debug name after basic name
+            fullpath = path + "/" + basename + "d" + ext;
+            if (subopen(factory, fullpath, fn))
                 return true;
+#endif // defined(_MSC_VER) && defined(NDEBUG)
+
 
 #ifdef CMAKE_INTDIR
             // On multi-config system, try to find the plugin in the
             // current config subdirectory
 
+#if defined(_MSC_VER) && !defined(NDEBUG)
+            // MSVC DEBUG build: try debug name before basic name
+            fullpath = path + "/" +  CMAKE_INTDIR + "/" + dll_name + "d" + ext;
+            if (subopen(factory, fullpath, fn))
+                return true;
+#endif // defined(_MSC_VER) && !defined(NDEBUG)
+
             // Basic name
-            if (subopen(factory, path + "/" +  CMAKE_INTDIR + "/" + dll_name + ext, fn))
+            fullpath = path + "/" +  CMAKE_INTDIR + "/" + dll_name + ext;
+            if (subopen(factory, fullpath, fn))
                 return true;
 
-            // Debug name
-            if (subopen(factory, path + "/" +  CMAKE_INTDIR + "/" + dll_name + "d" + ext, fn))
+#if defined(_MSC_VER) && defined(NDEBUG)
+            // MSVC RELEASE build: try debug name after basic name
+            fullpath = path + "/" +  CMAKE_INTDIR + "/" + dll_name + "d" + ext;
+            if (subopen(factory, fullpath, fn))
                 return true;
-#endif
+#endif // defined(_MSC_VER) && defined(NDEBUG)
+
+#endif // CMAKE_INTDIR
+
         }
     }
     if (dll_name!=""||fn_name!="") {
