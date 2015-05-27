@@ -30,7 +30,7 @@ namespace yarp {
     namespace sig {
 		class VectorBase;
         class Vector;
-        template<class T> class VectorOf;
+        template<class T, int BOTTLE_TAG> class VectorOf;
     }
 }
 
@@ -46,6 +46,9 @@ class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
 {
 public:
     virtual int getElementSize() const = 0;
+    virtual int getBottleTag() const {
+        return BOTTLE_TAG_DOUBLE;
+    }
     virtual size_t getListSize() const = 0;
     virtual const char *getMemoryBlock() const = 0;
     virtual void resize(size_t size) = 0;
@@ -64,6 +67,31 @@ public:
 };
 
 
+
+
+
+template<class T>
+struct DefaultBottleTag
+{
+  static const int bottleTag = BOTTLE_TAG_DOUBLE;
+};
+
+template<>
+struct DefaultBottleTag<int>
+{
+  static const int bottleTag = BOTTLE_TAG_INT;
+};
+
+template<>
+struct DefaultBottleTag<double>
+{
+  static const int bottleTag = BOTTLE_TAG_DOUBLE;
+};
+
+
+
+
+
 /**
 * \ingroup sig_class
 *
@@ -80,7 +108,7 @@ public:
 * be checked to avoid unresolved externals. Network communication assumes
 * same data representation (endianess) between machines.
 */
-template<class T>
+template<class T, int BOTTLE_TAG = DefaultBottleTag<T>::bottleTag>
 class yarp::sig::VectorOf : public VectorBase
 {
 private:
@@ -123,6 +151,10 @@ public:
 
     virtual int getElementSize() const {
         return sizeof(T);
+    }
+
+    virtual int getBottleTag() const {
+        return BOTTLE_TAG;
     }
 
     virtual size_t getListSize() const
