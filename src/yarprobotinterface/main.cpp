@@ -19,8 +19,6 @@
 #include <sys/mman.h>
 #endif //ICUB_USE_REALTIME_LINUX
 
-YARP_DECLARE_DEVICES(icubmod)
-
 int main(int argc, char *argv[])
 {
     yarp::os::Network yarp; //initialize network, this goes before everything
@@ -40,8 +38,6 @@ int main(int argc, char *argv[])
 #endif //ICUB_USE_REALTIME_LINUX
 
     yarp::os::Time::turboBoost();
-
-    YARP_REGISTER_DEVICES(icubmod)
 
     yarp::os::ResourceFinder &rf(yarp::os::ResourceFinder::getResourceFinderSingleton());
     rf.setVerbose();

@@ -59,7 +59,6 @@ target_link_libraries(robotInterface
                       YARP::YARP_OS
                       YARP::YARP_dev
                       YARP::YARP_init
-                      icubmod
                       ${TinyXML_LIBRARIES})
 
 install(TARGETS robotInterface
