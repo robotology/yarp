@@ -237,7 +237,6 @@ private:
     ConstString name;
     ConstString dll_name;
     ConstString fn_name;
-    ConstString fn_ext;
     ConstString wrapper_name;
     ConstString class_name;
     ConstString baseclass_name;

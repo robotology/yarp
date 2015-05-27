@@ -29,13 +29,13 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory,
     if (!ok) {
         if (factory.getStatus() ==
             SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND) {
-            if (fn_ext!="") {
-                ok = subopen(factory,dll_name,fn_name + fn_ext);
-            } else {
-                ok = subopen(factory,dll_name,fn_name + "_carrier");
-                if (!ok) {
-                    ok = subopen(factory,dll_name,fn_name + "_device");
-                }
+            ok = subopen(factory,dll_name,fn_name + "_carrier");
+            if (!ok) {
+                ok = subopen(factory,dll_name,fn_name + "_device");
+            }
+            if (ok) {
+                // This is deprecated. Print a warning
+                yWarning("This plugin is using a broken .ini file");
             }
         }
     }

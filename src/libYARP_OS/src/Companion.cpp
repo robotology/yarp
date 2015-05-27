@@ -2376,7 +2376,6 @@ static bool plugin_test(YarpPluginSettings& settings) {
             return false;
         }
     } else {
-        ConstString location = lib.getName().c_str();
         const SharedLibraryClassApi& api = lib.getApi();
         char className[256] = "unknown";
         api.getClassName(className,sizeof(className));
