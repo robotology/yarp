@@ -68,7 +68,8 @@ if(${CMAKE_VERSION} VERSION_LESS 3.1)
                              cmake-3.1/Modules/SelectLibraryConfigurations.cmake
                              cmake-3.1/Modules/FindFreetype.cmake
                              cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
-                             cmake-3.1/Modules/FeatureSummary.cmake)
+                             cmake-3.1/Modules/FeatureSummary.cmake
+                             cmake-3.1/Modules/FindLua.cmake)
     install(FILES ${YARP_CMAKE_3_1_FILES}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/cmake-3.1/Modules)
