@@ -31,7 +31,7 @@ Pick installation directory, all dependencies will be installed in separate fold
 
 \image html installation/install-binaries-no-yarp2.png
 
-Alternatively you can compile all dependencies yourself following the procedure here: TODO (notice however that this can be tedious, time consuming and error prone).
+Alternatively you can compile all dependencies yourself following the procedure here: \ref dependencies (notice however that this can be tedious, time consuming and error prone).
 
 \subsubsection windows_development_environment Setting up development environment
 

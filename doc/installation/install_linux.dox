@@ -22,7 +22,6 @@ E.g. for Ubuntu 14.04 Trusty (Note: you need to adapt these instructions accordi
 \endcode
 
 (replace trusty with the name of the distribution).
-
  
  For Debian 7.0 Wheezy(Note: you need to adapt these instructions according to your distribution).
 
@@ -102,6 +101,8 @@ If your distribution does not supply binary packages for Qt5, you can
 download a binary release from the
 <a href="http://qt-project.org/downloads">Qt Project website</a>, or
 download the source code, and build it yourself.
+
+Alternatively you can compile all dependencies yourself following the procedure here: \ref dependencies (notice however that this can be tedious, time consuming and error prone).
 
 \subsubsection compiling_yarp Compiling YARP
 
