@@ -32,13 +32,13 @@ E.g. for Ubuntu 14.04 Trusty (Note: you need to adapt these instructions accordi
 
 (replace wheezy with the name of the distribution).
 
-Update the list of packages and install yarp.
+Update the list of packages and install YARP.
 \code
   sudo apt-get update
   sudo apt-get install yarp
 \endcode
 
-You are now ready to check you installation, see \ref check_your_installation
+You are now ready to check you installation, see \ref check_your_installation.
 
 \subsection install_linux_from_sources Install from sources
 
@@ -118,7 +118,7 @@ For example:
   git clone https://github.com/robotology/yarp.git
 \endcode
 
-Compile:
+Generate makefiles using CMake:
 
 \code
   cd yarp
@@ -136,16 +136,21 @@ Set the following variables to true:
 
 (leave default values as they are unless you know better)
 
+\remark CREATE_GUIS and CREATE_LIB_MATH require you have installed the libraries qt and gsl (you have, if you have followed the instructions above).
+
 Makefiles generation is an iterative process, hit "c" until the option "Generate" becomes available. Then hit "g" and quit.
 
+Compile:
+
 \code 
+ make 
  sudo make install
  sudo ldconfig
 \endcode
 
-You are now ready to check you installation, see \ref check_your_installation
+You are now ready to check you installation, see \ref check_your_installation.
 
-\remark You can optionally change CMAKE_INSTALL_PREFIX, this is the directory where you would like to install YARP (default is /usr/local). If you do so, you will then need to enable INSTALL_WITH_RPATH variable to ON to allow YARP programs to find the corresponding YARP libraries if they are not in your system's library path (alternatively you can tweak LD_LIBRARY_PATH). In addition you will have to set the YARP_DIR and YARP_DATA_DIRS environment variables to point to the installation directory, see set_up_your_environment_linux.
+\remark If you do not have \c sudo access or you want to install YARP in another location you can optionally change \c CMAKE_INSTALL_PREFIX: this is the directory where you would like to install YARP (default is \c /usr/local). If you do so, you will then need to enable \c INSTALL_WITH_RPATH variable to \c ON to allow YARP programs to find the corresponding YARP libraries if they are not in your system's library path (alternatively you can tweak \c LD_LIBRARY_PATH). In addition you will have to set the \c YARP_DIR and \c YARP_DATA_DIRS environment variables to point to the installation directory, see set_up_your_environment_linux.
 
 \remark Do not select other options unless you know what you are doing.
 
@@ -154,8 +159,7 @@ You are now ready to check you installation, see \ref check_your_installation
 If you have installed YARP in default location you can skip to \ref check_your_installation.
 If you are using YARP without installing it or you have installed it in a custom location, you have to tweak your environment (eidt your bashrc or similar) to:
 
- + Set environment variables \c YARP_DIR \c and \c YARP_DATA_DIRS to the location where you installed YARP (or CMake's build directory if you did not perform the installation step) to allow
-   cmake to find YARP easily for your own projects.
+ + Set environment variables \c YARP_DIR and \c YARP_DATA_DIRS to the location where you installed YARP (or CMake's build directory if you did not perform the installation step) to allow cmake to find YARP easily for your own projects.
  + Add \c YARP_DIR/bin to \c PATH to allow your shell to find
    YARP programs.
  + Add \c YARP_DIR/lib to \c LD_LIBRARY_PATH to allow YARP

@@ -7,16 +7,16 @@
 /**
  * @page check_your_installation Check your installation
 
-\section Check basic YARP functionalities
+\section check_basic_functionalities Check basic YARP functionalities
  
-First step is to have a yarpserver running.
+The first step is to have the \c yarpserver running.
 
 At a terminal type:
 \code
  yarpserver
 \endcode
 
-Depending on the system the console will look something like this:
+Depending on your system the console will look something like this:
 
 \image html check-your-installation-yarpserver.png
 
@@ -47,7 +47,7 @@ you'll see the effect on the name server:
   yarp: registration name /portread ip 127.0.0.1 port 10002 type tcp
 \endcode
 
-Now, anything typed on the yarp write will be sent and printed on the read side.
+Now, anything typed on the YARP write will be sent and printed on the read side.
 
 \section sec-play-recorded-sequence Play a recorded sequence
 
