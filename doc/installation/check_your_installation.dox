@@ -18,7 +18,7 @@ At a terminal type:
 
 Depending on your system the console will look something like this:
 
-\image html check-your-installation-yarpserver.png
+\image html installation/check-your-installation-yarpserver.png
 
 If you type on a web browser http://127.0.0.1:10000 you get information about the name server (registered ports, info, etc.).
 
@@ -55,7 +55,7 @@ You can also use the dataSetPlayer to replay a recorded sequence. This will repr
 
 http://wiki.icub.org/yarpdoc/group__yarpdataplayerExample.html
 
-\image html check-your-installation-datasetplayer-example.jpg
+\image html installation/check-your-installation-datasetplayer-example.jpg
 
 You are now ready to learn more, proceed to the \ref tutorials.
 
