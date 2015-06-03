@@ -535,7 +535,12 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             }
             // we requested single threading, so need to
             // give the device its chance
-            service->updateService();
+            if(!service->updateService()) {
+                if(!service->stopService()) {
+                    yWarning("Error while stopping device");
+                }
+                terminated = true;
+            }
         } else {
             // we don't need to do anything
             yInfo("device active in background...");
