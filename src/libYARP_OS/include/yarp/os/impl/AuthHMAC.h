@@ -55,7 +55,7 @@ private:
     bool check_hmac(unsigned char * mac, unsigned char * mac_check);
     void fill_nonce(unsigned char* nonce);
 
-#ifdef DEBUG_HMAC
+#ifdef PORT_AUTH
     HMAC_CONTEXT context;
 #endif
 };
