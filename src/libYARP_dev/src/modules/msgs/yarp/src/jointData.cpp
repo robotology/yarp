@@ -41,6 +41,20 @@ bool jointData::nested_read_jointPosition(yarp::os::idl::WireReader& reader) {
   }
   return true;
 }
+bool jointData::read_jointPosition_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(jointPosition_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_jointPosition_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(jointPosition_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
 bool jointData::read_jointVelocity(yarp::os::idl::WireReader& reader) {
   {
     jointVelocity.clear();
@@ -76,6 +90,20 @@ bool jointData::nested_read_jointVelocity(yarp::os::idl::WireReader& reader) {
       }
     }
     reader.readListEnd();
+  }
+  return true;
+}
+bool jointData::read_jointVelocity_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(jointVelocity_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_jointVelocity_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(jointVelocity_isValid)) {
+    reader.fail();
+    return false;
   }
   return true;
 }
@@ -117,6 +145,20 @@ bool jointData::nested_read_jointAcceleration(yarp::os::idl::WireReader& reader)
   }
   return true;
 }
+bool jointData::read_jointAcceleration_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(jointAcceleration_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_jointAcceleration_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(jointAcceleration_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
 bool jointData::read_motorPosition(yarp::os::idl::WireReader& reader) {
   {
     motorPosition.clear();
@@ -152,6 +194,20 @@ bool jointData::nested_read_motorPosition(yarp::os::idl::WireReader& reader) {
       }
     }
     reader.readListEnd();
+  }
+  return true;
+}
+bool jointData::read_motorPosition_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(motorPosition_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_motorPosition_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(motorPosition_isValid)) {
+    reader.fail();
+    return false;
   }
   return true;
 }
@@ -193,6 +249,20 @@ bool jointData::nested_read_motorVelocity(yarp::os::idl::WireReader& reader) {
   }
   return true;
 }
+bool jointData::read_motorVelocity_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(motorVelocity_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_motorVelocity_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(motorVelocity_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
 bool jointData::read_motorAcceleration(yarp::os::idl::WireReader& reader) {
   {
     motorAcceleration.clear();
@@ -228,6 +298,20 @@ bool jointData::nested_read_motorAcceleration(yarp::os::idl::WireReader& reader)
       }
     }
     reader.readListEnd();
+  }
+  return true;
+}
+bool jointData::read_motorAcceleration_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(motorAcceleration_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_motorAcceleration_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(motorAcceleration_isValid)) {
+    reader.fail();
+    return false;
   }
   return true;
 }
@@ -269,6 +353,20 @@ bool jointData::nested_read_torque(yarp::os::idl::WireReader& reader) {
   }
   return true;
 }
+bool jointData::read_torque_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(torque_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_torque_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(torque_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
 bool jointData::read_pidOutput(yarp::os::idl::WireReader& reader) {
   {
     pidOutput.clear();
@@ -304,6 +402,20 @@ bool jointData::nested_read_pidOutput(yarp::os::idl::WireReader& reader) {
       }
     }
     reader.readListEnd();
+  }
+  return true;
+}
+bool jointData::read_pidOutput_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(pidOutput_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_pidOutput_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(pidOutput_isValid)) {
+    reader.fail();
+    return false;
   }
   return true;
 }
@@ -345,6 +457,20 @@ bool jointData::nested_read_controlMode(yarp::os::idl::WireReader& reader) {
   }
   return true;
 }
+bool jointData::read_controlMode_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(controlMode_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_controlMode_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(controlMode_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
 bool jointData::read_interactionMode(yarp::os::idl::WireReader& reader) {
   {
     interactionMode.clear();
@@ -383,23 +509,47 @@ bool jointData::nested_read_interactionMode(yarp::os::idl::WireReader& reader) {
   }
   return true;
 }
+bool jointData::read_interactionMode_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(interactionMode_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
+bool jointData::nested_read_interactionMode_isValid(yarp::os::idl::WireReader& reader) {
+  if (!reader.readBool(interactionMode_isValid)) {
+    reader.fail();
+    return false;
+  }
+  return true;
+}
 bool jointData::read(yarp::os::idl::WireReader& reader) {
   if (!read_jointPosition(reader)) return false;
+  if (!read_jointPosition_isValid(reader)) return false;
   if (!read_jointVelocity(reader)) return false;
+  if (!read_jointVelocity_isValid(reader)) return false;
   if (!read_jointAcceleration(reader)) return false;
+  if (!read_jointAcceleration_isValid(reader)) return false;
   if (!read_motorPosition(reader)) return false;
+  if (!read_motorPosition_isValid(reader)) return false;
   if (!read_motorVelocity(reader)) return false;
+  if (!read_motorVelocity_isValid(reader)) return false;
   if (!read_motorAcceleration(reader)) return false;
+  if (!read_motorAcceleration_isValid(reader)) return false;
   if (!read_torque(reader)) return false;
+  if (!read_torque_isValid(reader)) return false;
   if (!read_pidOutput(reader)) return false;
+  if (!read_pidOutput_isValid(reader)) return false;
   if (!read_controlMode(reader)) return false;
+  if (!read_controlMode_isValid(reader)) return false;
   if (!read_interactionMode(reader)) return false;
+  if (!read_interactionMode_isValid(reader)) return false;
   return !reader.isError();
 }
 
 bool jointData::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListHeader(10)) return false;
+  if (!reader.readListHeader(20)) return false;
   return read(reader);
 }
 
@@ -427,6 +577,14 @@ bool jointData::nested_write_jointPosition(yarp::os::idl::WireWriter& writer) {
   }
   return true;
 }
+bool jointData::write_jointPosition_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(jointPosition_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_jointPosition_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(jointPosition_isValid)) return false;
+  return true;
+}
 bool jointData::write_jointVelocity(yarp::os::idl::WireWriter& writer) {
   {
     if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(jointVelocity.size()))) return false;
@@ -449,6 +607,14 @@ bool jointData::nested_write_jointVelocity(yarp::os::idl::WireWriter& writer) {
     }
     if (!writer.writeListEnd()) return false;
   }
+  return true;
+}
+bool jointData::write_jointVelocity_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(jointVelocity_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_jointVelocity_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(jointVelocity_isValid)) return false;
   return true;
 }
 bool jointData::write_jointAcceleration(yarp::os::idl::WireWriter& writer) {
@@ -475,6 +641,14 @@ bool jointData::nested_write_jointAcceleration(yarp::os::idl::WireWriter& writer
   }
   return true;
 }
+bool jointData::write_jointAcceleration_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(jointAcceleration_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_jointAcceleration_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(jointAcceleration_isValid)) return false;
+  return true;
+}
 bool jointData::write_motorPosition(yarp::os::idl::WireWriter& writer) {
   {
     if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(motorPosition.size()))) return false;
@@ -497,6 +671,14 @@ bool jointData::nested_write_motorPosition(yarp::os::idl::WireWriter& writer) {
     }
     if (!writer.writeListEnd()) return false;
   }
+  return true;
+}
+bool jointData::write_motorPosition_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(motorPosition_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_motorPosition_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(motorPosition_isValid)) return false;
   return true;
 }
 bool jointData::write_motorVelocity(yarp::os::idl::WireWriter& writer) {
@@ -523,6 +705,14 @@ bool jointData::nested_write_motorVelocity(yarp::os::idl::WireWriter& writer) {
   }
   return true;
 }
+bool jointData::write_motorVelocity_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(motorVelocity_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_motorVelocity_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(motorVelocity_isValid)) return false;
+  return true;
+}
 bool jointData::write_motorAcceleration(yarp::os::idl::WireWriter& writer) {
   {
     if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(motorAcceleration.size()))) return false;
@@ -545,6 +735,14 @@ bool jointData::nested_write_motorAcceleration(yarp::os::idl::WireWriter& writer
     }
     if (!writer.writeListEnd()) return false;
   }
+  return true;
+}
+bool jointData::write_motorAcceleration_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(motorAcceleration_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_motorAcceleration_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(motorAcceleration_isValid)) return false;
   return true;
 }
 bool jointData::write_torque(yarp::os::idl::WireWriter& writer) {
@@ -571,6 +769,14 @@ bool jointData::nested_write_torque(yarp::os::idl::WireWriter& writer) {
   }
   return true;
 }
+bool jointData::write_torque_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(torque_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_torque_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(torque_isValid)) return false;
+  return true;
+}
 bool jointData::write_pidOutput(yarp::os::idl::WireWriter& writer) {
   {
     if (!writer.writeListBegin(BOTTLE_TAG_DOUBLE, static_cast<uint32_t>(pidOutput.size()))) return false;
@@ -593,6 +799,14 @@ bool jointData::nested_write_pidOutput(yarp::os::idl::WireWriter& writer) {
     }
     if (!writer.writeListEnd()) return false;
   }
+  return true;
+}
+bool jointData::write_pidOutput_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(pidOutput_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_pidOutput_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(pidOutput_isValid)) return false;
   return true;
 }
 bool jointData::write_controlMode(yarp::os::idl::WireWriter& writer) {
@@ -619,6 +833,14 @@ bool jointData::nested_write_controlMode(yarp::os::idl::WireWriter& writer) {
   }
   return true;
 }
+bool jointData::write_controlMode_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(controlMode_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_controlMode_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(controlMode_isValid)) return false;
+  return true;
+}
 bool jointData::write_interactionMode(yarp::os::idl::WireWriter& writer) {
   {
     if (!writer.writeListBegin(BOTTLE_TAG_INT, static_cast<uint32_t>(interactionMode.size()))) return false;
@@ -643,23 +865,41 @@ bool jointData::nested_write_interactionMode(yarp::os::idl::WireWriter& writer) 
   }
   return true;
 }
+bool jointData::write_interactionMode_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(interactionMode_isValid)) return false;
+  return true;
+}
+bool jointData::nested_write_interactionMode_isValid(yarp::os::idl::WireWriter& writer) {
+  if (!writer.writeBool(interactionMode_isValid)) return false;
+  return true;
+}
 bool jointData::write(yarp::os::idl::WireWriter& writer) {
   if (!write_jointPosition(writer)) return false;
+  if (!write_jointPosition_isValid(writer)) return false;
   if (!write_jointVelocity(writer)) return false;
+  if (!write_jointVelocity_isValid(writer)) return false;
   if (!write_jointAcceleration(writer)) return false;
+  if (!write_jointAcceleration_isValid(writer)) return false;
   if (!write_motorPosition(writer)) return false;
+  if (!write_motorPosition_isValid(writer)) return false;
   if (!write_motorVelocity(writer)) return false;
+  if (!write_motorVelocity_isValid(writer)) return false;
   if (!write_motorAcceleration(writer)) return false;
+  if (!write_motorAcceleration_isValid(writer)) return false;
   if (!write_torque(writer)) return false;
+  if (!write_torque_isValid(writer)) return false;
   if (!write_pidOutput(writer)) return false;
+  if (!write_pidOutput_isValid(writer)) return false;
   if (!write_controlMode(writer)) return false;
+  if (!write_controlMode_isValid(writer)) return false;
   if (!write_interactionMode(writer)) return false;
+  if (!write_interactionMode_isValid(writer)) return false;
   return !writer.isError();
 }
 
 bool jointData::write(yarp::os::ConnectionWriter& connection) {
   yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(10)) return false;
+  if (!writer.writeListHeader(20)) return false;
   return write(writer);
 }
 bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
@@ -673,11 +913,23 @@ bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
     if (!writer.writeString("jointPosition")) return false;
     if (!obj->nested_write_jointPosition(writer)) return false;
   }
+  if (is_dirty_jointPosition_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("jointPosition_isValid")) return false;
+    if (!obj->nested_write_jointPosition_isValid(writer)) return false;
+  }
   if (is_dirty_jointVelocity) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
     if (!writer.writeString("jointVelocity")) return false;
     if (!obj->nested_write_jointVelocity(writer)) return false;
+  }
+  if (is_dirty_jointVelocity_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("jointVelocity_isValid")) return false;
+    if (!obj->nested_write_jointVelocity_isValid(writer)) return false;
   }
   if (is_dirty_jointAcceleration) {
     if (!writer.writeListHeader(3)) return false;
@@ -685,11 +937,23 @@ bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
     if (!writer.writeString("jointAcceleration")) return false;
     if (!obj->nested_write_jointAcceleration(writer)) return false;
   }
+  if (is_dirty_jointAcceleration_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("jointAcceleration_isValid")) return false;
+    if (!obj->nested_write_jointAcceleration_isValid(writer)) return false;
+  }
   if (is_dirty_motorPosition) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
     if (!writer.writeString("motorPosition")) return false;
     if (!obj->nested_write_motorPosition(writer)) return false;
+  }
+  if (is_dirty_motorPosition_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("motorPosition_isValid")) return false;
+    if (!obj->nested_write_motorPosition_isValid(writer)) return false;
   }
   if (is_dirty_motorVelocity) {
     if (!writer.writeListHeader(3)) return false;
@@ -697,11 +961,23 @@ bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
     if (!writer.writeString("motorVelocity")) return false;
     if (!obj->nested_write_motorVelocity(writer)) return false;
   }
+  if (is_dirty_motorVelocity_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("motorVelocity_isValid")) return false;
+    if (!obj->nested_write_motorVelocity_isValid(writer)) return false;
+  }
   if (is_dirty_motorAcceleration) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
     if (!writer.writeString("motorAcceleration")) return false;
     if (!obj->nested_write_motorAcceleration(writer)) return false;
+  }
+  if (is_dirty_motorAcceleration_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("motorAcceleration_isValid")) return false;
+    if (!obj->nested_write_motorAcceleration_isValid(writer)) return false;
   }
   if (is_dirty_torque) {
     if (!writer.writeListHeader(3)) return false;
@@ -709,11 +985,23 @@ bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
     if (!writer.writeString("torque")) return false;
     if (!obj->nested_write_torque(writer)) return false;
   }
+  if (is_dirty_torque_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("torque_isValid")) return false;
+    if (!obj->nested_write_torque_isValid(writer)) return false;
+  }
   if (is_dirty_pidOutput) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
     if (!writer.writeString("pidOutput")) return false;
     if (!obj->nested_write_pidOutput(writer)) return false;
+  }
+  if (is_dirty_pidOutput_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("pidOutput_isValid")) return false;
+    if (!obj->nested_write_pidOutput_isValid(writer)) return false;
   }
   if (is_dirty_controlMode) {
     if (!writer.writeListHeader(3)) return false;
@@ -721,11 +1009,23 @@ bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
     if (!writer.writeString("controlMode")) return false;
     if (!obj->nested_write_controlMode(writer)) return false;
   }
+  if (is_dirty_controlMode_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("controlMode_isValid")) return false;
+    if (!obj->nested_write_controlMode_isValid(writer)) return false;
+  }
   if (is_dirty_interactionMode) {
     if (!writer.writeListHeader(3)) return false;
     if (!writer.writeString("set")) return false;
     if (!writer.writeString("interactionMode")) return false;
     if (!obj->nested_write_interactionMode(writer)) return false;
+  }
+  if (is_dirty_interactionMode_isValid) {
+    if (!writer.writeListHeader(3)) return false;
+    if (!writer.writeString("set")) return false;
+    if (!writer.writeString("interactionMode_isValid")) return false;
+    if (!obj->nested_write_interactionMode_isValid(writer)) return false;
   }
   return !writer.isError();
 }
@@ -756,55 +1056,105 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<double>  jointPosition")) return false;
       }
+      if (field=="jointPosition_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool jointPosition_isValid")) return false;
+      }
       if (field=="jointVelocity") {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<double>  jointVelocity")) return false;
+      }
+      if (field=="jointVelocity_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool jointVelocity_isValid")) return false;
       }
       if (field=="jointAcceleration") {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<double>  jointAcceleration")) return false;
       }
+      if (field=="jointAcceleration_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool jointAcceleration_isValid")) return false;
+      }
       if (field=="motorPosition") {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<double>  motorPosition")) return false;
+      }
+      if (field=="motorPosition_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool motorPosition_isValid")) return false;
       }
       if (field=="motorVelocity") {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<double>  motorVelocity")) return false;
       }
+      if (field=="motorVelocity_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool motorVelocity_isValid")) return false;
+      }
       if (field=="motorAcceleration") {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<double>  motorAcceleration")) return false;
+      }
+      if (field=="motorAcceleration_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool motorAcceleration_isValid")) return false;
       }
       if (field=="torque") {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<double>  torque")) return false;
       }
+      if (field=="torque_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool torque_isValid")) return false;
+      }
       if (field=="pidOutput") {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<double>  pidOutput")) return false;
+      }
+      if (field=="pidOutput_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool pidOutput_isValid")) return false;
       }
       if (field=="controlMode") {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<int32_t>  controlMode")) return false;
       }
+      if (field=="controlMode_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool controlMode_isValid")) return false;
+      }
       if (field=="interactionMode") {
         if (!writer.writeListHeader(1)) return false;
         if (!writer.writeString("std::vector<int32_t>  interactionMode")) return false;
       }
+      if (field=="interactionMode_isValid") {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeString("bool interactionMode_isValid")) return false;
+      }
     }
-    if (!writer.writeListHeader(11)) return false;
+    if (!writer.writeListHeader(21)) return false;
     writer.writeString("*** Available fields:");
     writer.writeString("jointPosition");
+    writer.writeString("jointPosition_isValid");
     writer.writeString("jointVelocity");
+    writer.writeString("jointVelocity_isValid");
     writer.writeString("jointAcceleration");
+    writer.writeString("jointAcceleration_isValid");
     writer.writeString("motorPosition");
+    writer.writeString("motorPosition_isValid");
     writer.writeString("motorVelocity");
+    writer.writeString("motorVelocity_isValid");
     writer.writeString("motorAcceleration");
+    writer.writeString("motorAcceleration_isValid");
     writer.writeString("torque");
+    writer.writeString("torque_isValid");
     writer.writeString("pidOutput");
+    writer.writeString("pidOutput_isValid");
     writer.writeString("controlMode");
+    writer.writeString("controlMode_isValid");
     writer.writeString("interactionMode");
+    writer.writeString("interactionMode_isValid");
     return true;
   }
   bool nested = true;
@@ -830,42 +1180,82 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
       will_set_jointPosition();
       if (!obj->nested_read_jointPosition(reader)) return false;
       did_set_jointPosition();
+    } else if (key == "jointPosition_isValid") {
+      will_set_jointPosition_isValid();
+      if (!obj->nested_read_jointPosition_isValid(reader)) return false;
+      did_set_jointPosition_isValid();
     } else if (key == "jointVelocity") {
       will_set_jointVelocity();
       if (!obj->nested_read_jointVelocity(reader)) return false;
       did_set_jointVelocity();
+    } else if (key == "jointVelocity_isValid") {
+      will_set_jointVelocity_isValid();
+      if (!obj->nested_read_jointVelocity_isValid(reader)) return false;
+      did_set_jointVelocity_isValid();
     } else if (key == "jointAcceleration") {
       will_set_jointAcceleration();
       if (!obj->nested_read_jointAcceleration(reader)) return false;
       did_set_jointAcceleration();
+    } else if (key == "jointAcceleration_isValid") {
+      will_set_jointAcceleration_isValid();
+      if (!obj->nested_read_jointAcceleration_isValid(reader)) return false;
+      did_set_jointAcceleration_isValid();
     } else if (key == "motorPosition") {
       will_set_motorPosition();
       if (!obj->nested_read_motorPosition(reader)) return false;
       did_set_motorPosition();
+    } else if (key == "motorPosition_isValid") {
+      will_set_motorPosition_isValid();
+      if (!obj->nested_read_motorPosition_isValid(reader)) return false;
+      did_set_motorPosition_isValid();
     } else if (key == "motorVelocity") {
       will_set_motorVelocity();
       if (!obj->nested_read_motorVelocity(reader)) return false;
       did_set_motorVelocity();
+    } else if (key == "motorVelocity_isValid") {
+      will_set_motorVelocity_isValid();
+      if (!obj->nested_read_motorVelocity_isValid(reader)) return false;
+      did_set_motorVelocity_isValid();
     } else if (key == "motorAcceleration") {
       will_set_motorAcceleration();
       if (!obj->nested_read_motorAcceleration(reader)) return false;
       did_set_motorAcceleration();
+    } else if (key == "motorAcceleration_isValid") {
+      will_set_motorAcceleration_isValid();
+      if (!obj->nested_read_motorAcceleration_isValid(reader)) return false;
+      did_set_motorAcceleration_isValid();
     } else if (key == "torque") {
       will_set_torque();
       if (!obj->nested_read_torque(reader)) return false;
       did_set_torque();
+    } else if (key == "torque_isValid") {
+      will_set_torque_isValid();
+      if (!obj->nested_read_torque_isValid(reader)) return false;
+      did_set_torque_isValid();
     } else if (key == "pidOutput") {
       will_set_pidOutput();
       if (!obj->nested_read_pidOutput(reader)) return false;
       did_set_pidOutput();
+    } else if (key == "pidOutput_isValid") {
+      will_set_pidOutput_isValid();
+      if (!obj->nested_read_pidOutput_isValid(reader)) return false;
+      did_set_pidOutput_isValid();
     } else if (key == "controlMode") {
       will_set_controlMode();
       if (!obj->nested_read_controlMode(reader)) return false;
       did_set_controlMode();
+    } else if (key == "controlMode_isValid") {
+      will_set_controlMode_isValid();
+      if (!obj->nested_read_controlMode_isValid(reader)) return false;
+      did_set_controlMode_isValid();
     } else if (key == "interactionMode") {
       will_set_interactionMode();
       if (!obj->nested_read_interactionMode(reader)) return false;
       did_set_interactionMode();
+    } else if (key == "interactionMode_isValid") {
+      will_set_interactionMode_isValid();
+      if (!obj->nested_read_interactionMode_isValid(reader)) return false;
+      did_set_interactionMode_isValid();
     } else {
       // would be useful to have a fallback here
     }
