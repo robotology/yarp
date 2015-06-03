@@ -10,158 +10,13 @@
 
 \section dependencies_required Required Dependencies
 
-
 YARP does not have any strong build dependencies, the only requirements
 are
 <a href="http://www.stroustrup.com/compilers.html"> a C++ compiler </a>
-and CMake
+and CMake. We assume you have already installed them in your system.
 
-
-
-\subsection dependencies_cmake CMake
-
-YARP is for programmers.  We'd like every YARP user all to use the
-development environment you are used to, and not force you to switch
-to something else -- no Linux/g++/emacs vs Windows/DevStudio vs
-Mac/... fights please!
-
-To achieve this without complete chaos, we ask you to install
-<a href="http://www.cmake.org/"><b>CMake</b></a>.
-CMake lets us describe our programs and libraries in a
-cross-platform way. CMake takes care of building the makefiles or
-workspaces needed by whatever development environment you like to work
-in.
-
-\subsubsection dependencies_cmake_install Tips for CMake Installation
-
-Install CMake from
-<a href="http://www.cmake.org/download">here</a>.
-
-\li Debian/Ubuntu/... Linux:
-    \code{.sh}
-    apt-get install cmake cmake-curses-gui cmake-qt-gui
-    \endcode
-\li SUSE Linux: add the GURU YAST repository and use YAST for installing
-    CMake or download directly the rpm from GURU website access
-
-
-\subsubsection dependencies_cmake_windows CMake in Windows
-
-On Windows, the easiest way to use CMake is via its GUI. After
-installing, you should have an icon for CMake in your START
-menu. Click that, then fill in the path to your code, and the path you
-want CMake to build in (that can be the same if you want). Click
-"configure". Depending on the project, configuration may involve
-several steps -- you may have to answer new questions and click
-"configure" again. When the "OK" button becomes clickable, then CMake
-has enough information to set up your project. Click "OK" and you're
-done. Project files of the type you specified should exist in the
-build path you gave.
-
-If you want to start over from the beginning with CMake, it is
-important to press the "delete cache" button to make it forget
-everything you've told it.
-
-
-\subsubsection dependencies_cmake_unix CMake in UNIX
-
-On UNIX CMake can now be used conveniently in two ways:
-
-\li From the command line : type
-\code{.sh}
-cmake .
-\endcode
-\li Interactively: type
-\code{.sh}
-ccmake .
-\endcode
-\li With the GUI: type
-\code{.sh}
-cmake-gui
-\endcode
-Or start it from your system menu.
-
-Out-of-source build is recommended when building a project with CMake.
-If you are running CMake while in a directory different to where your
-code is, replace "." with the path to your code. For example:
-
-\code{.sh}
-cd <project_dir>
-mkdir build
-cd build
-cmake ..
-\endcode
-
-\c ccmake is very much like the Windows GUI, and you may need to iterate
-"configure" a few times before the option to "generate" appears.
-
-\c cmake doesn't ask questions, and just uses defaults. You can pass it
-values on the command line:
-
-\code{.sh}
-cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .
-\endcode
-
-The generated file \c CMakeCache.txt contains all settings stored by
-CMake. It can be useful to delete this if you want to start over
-completely.
-
-
-\subsubsection cmake_example CMake Example
-
-Create a new directory, something like \c $HOME/cmake/example or
-\c C:\cmake\example.
-
-Inside that directory, create a file called \c %CMakeLists.txt.
-In it place the following:
-
-\code{.cmake}
-cmake_minimum_required(VERSION 2.8.9)
-project(example)
-add_executable(example main.cpp)
-\endcode
-
-In the same directory, create a file called \c %main.cpp.
-In it place the following:
-
-\code{.c}
-#include <stdio.h>
-int main()
-{
-    printf("CMake the world a better place!\n");
-    return 0;
-}
-\endcode
-
-In UNIX, go to that directory, and then
-\code{.sh}
-mkdir build
-cd build
-cmake ..
-make
-./example
-\endcode
-
-On Windows, run the CMake GUI, fill in the path to the example, click
-"configure", say what compiler you use, click "configure" again if
-needed, then click "ok". Then run your compiler, and finally the
-program. Easy!
-
-Notice that the abstract description of our project above can be
-shared by developers on Windows, Linux, OSX, ...
-
-\li There's another example you can try
-    <a href="http://www.cmake.org/HTML/Examples.html">here</a>.
-\li For more examples, and details, see
-    <a href="http://www.linuxjournal.com/article/6700">here</a>
-
-
-
-\section dependencies_recommended Recommended Dependencies
-
-Even though these packages are not necessary to build YARP, they are
-recommended, since some features will not be available without them.
-
+Compilation instructions for YARP are reported here: \ref install. 
+This page reports instructions for compiling the dependencies in case you do not want to use precompiled libraries.
 
 \subsection dependencies_ace The ACE Library
 
@@ -170,7 +25,7 @@ is a free and open source library that provides an excellent portable
 interface to a vast array of operating systems, dealing with the details
 so you don't have to.
 
-ACE is required on all the platforms exept for Linux. Without ACE,
+ACE is required on all the platforms except for Linux. Without ACE,
 YARP will be able to connect using TCP only, and will have limited
 functionality.
 
