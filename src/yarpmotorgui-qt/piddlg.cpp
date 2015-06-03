@@ -13,9 +13,10 @@
 #include <QPushButton>
 
 #define     TAB_POSITION    0
-#define     TAB_TORQUE      1
-#define     TAB_STIFF       2
-#define     TAB_OPENLOOP    3
+#define     TAB_VELOCITY    1
+#define     TAB_TORQUE      2
+#define     TAB_STIFF       3
+#define     TAB_OPENLOOP    4
 
 #define     POSITION_KP         0
 #define     POSITION_KD         1
@@ -26,6 +27,16 @@
 #define     POSITION_OFFSET     6
 #define     POSITION_STICTIONUP 7
 #define     POSITION_STICTIONDW 8
+
+#define     VELOCITY_KP         0
+#define     VELOCITY_KD         1
+#define     VELOCITY_KI         2
+#define     VELOCITY_SCALE      3
+#define     VELOCITY_MAXOUTPUT  4
+#define     VELOCITY_MAXINT     5
+#define     VELOCITY_OFFSET     6
+#define     VELOCITY_STICTIONUP 7
+#define     VELOCITY_STICTIONDW 8
 
 #define     TORQUE_KP           0
 #define     TORQUE_KD           1
@@ -57,6 +68,7 @@ PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
     connect(ui->btnCancel,SIGNAL(clicked()),this,SLOT(onCancel()));
 
     ui->tablePosition->setItemDelegate(new TableDoubleDelegate);
+    ui->tableVelocity->setItemDelegate(new TableDoubleDelegate);
     ui->tableTorque->setItemDelegate(new TableDoubleDelegate);
     ui->tableStiffness->setItemDelegate(new TableDoubleDelegate);
     ui->tableOpenloop->setItemDelegate(new TableDoubleDelegate);
@@ -96,6 +108,36 @@ void PidDlg::initPosition(Pid myPid)
 
     ui->tablePosition->item(POSITION_MAXINT,0)->setText(QString("%1").arg((int)myPid.max_int));
     ui->tablePosition->item(POSITION_MAXINT,1)->setText(QString("%1").arg((int)myPid.max_int));
+}
+
+void PidDlg::initVelocity(Pid myPid)
+{
+    ui->tableVelocity->item(VELOCITY_KP, 0)->setText(QString("%1").arg((double)myPid.kp));
+    ui->tableVelocity->item(VELOCITY_KP, 1)->setText(QString("%1").arg((double)myPid.kp));
+
+    ui->tableVelocity->item(VELOCITY_KD, 0)->setText(QString("%1").arg((double)myPid.kd));
+    ui->tableVelocity->item(VELOCITY_KD, 1)->setText(QString("%1").arg((double)myPid.kd));
+
+    ui->tableVelocity->item(VELOCITY_KI, 0)->setText(QString("%1").arg((double)myPid.ki));
+    ui->tableVelocity->item(VELOCITY_KI, 1)->setText(QString("%1").arg((double)myPid.ki));
+
+    ui->tableVelocity->item(VELOCITY_SCALE, 0)->setText(QString("%1").arg((int)myPid.scale));
+    ui->tableVelocity->item(VELOCITY_SCALE, 1)->setText(QString("%1").arg((int)myPid.scale));
+
+    ui->tableVelocity->item(VELOCITY_OFFSET, 0)->setText(QString("%1").arg((int)myPid.offset));
+    ui->tableVelocity->item(VELOCITY_OFFSET, 1)->setText(QString("%1").arg((int)myPid.offset));
+
+    ui->tableVelocity->item(VELOCITY_STICTIONUP, 0)->setText(QString("%1").arg((double)myPid.stiction_up_val));
+    ui->tableVelocity->item(VELOCITY_STICTIONUP, 1)->setText(QString("%1").arg((double)myPid.stiction_up_val));
+
+    ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 0)->setText(QString("%1").arg((int)myPid.max_output));
+    ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 1)->setText(QString("%1").arg((int)myPid.max_output));
+
+    ui->tableVelocity->item(VELOCITY_STICTIONDW, 0)->setText(QString("%1").arg((double)myPid.stiction_down_val));
+    ui->tableVelocity->item(VELOCITY_STICTIONDW, 1)->setText(QString("%1").arg((double)myPid.stiction_down_val));
+
+    ui->tableVelocity->item(VELOCITY_MAXINT, 0)->setText(QString("%1").arg((int)myPid.max_int));
+    ui->tableVelocity->item(VELOCITY_MAXINT, 1)->setText(QString("%1").arg((int)myPid.max_int));
 }
 
 void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
@@ -189,6 +231,18 @@ void PidDlg::onSend()
         newPid.stiction_down_val = ui->tablePosition->item(POSITION_STICTIONDW,1)->text().toDouble();
         newPid.max_int = ui->tablePosition->item(POSITION_MAXINT,1)->text().toDouble();
         sendPid(jointIndex,newPid);
+        break;
+    case TAB_VELOCITY:
+        newPid.kp = ui->tableVelocity->item(VELOCITY_KP, 1)->text().toDouble();
+        newPid.kd = ui->tableVelocity->item(VELOCITY_KD, 1)->text().toDouble();
+        newPid.ki = ui->tableVelocity->item(VELOCITY_KI, 1)->text().toDouble();
+        newPid.scale = ui->tableVelocity->item(VELOCITY_SCALE, 1)->text().toDouble();
+        newPid.offset = ui->tableVelocity->item(VELOCITY_OFFSET, 1)->text().toDouble();
+        newPid.stiction_up_val = ui->tableVelocity->item(VELOCITY_STICTIONUP, 1)->text().toDouble();
+        newPid.max_output = ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 1)->text().toDouble();
+        newPid.stiction_down_val = ui->tableVelocity->item(VELOCITY_STICTIONDW, 1)->text().toDouble();
+        newPid.max_int = ui->tableVelocity->item(VELOCITY_MAXINT, 1)->text().toDouble();
+        sendVelocity(jointIndex, newPid);
         break;
     case TAB_TORQUE:
         newPid.kp = ui->tableTorque->item(TORQUE_KP,1)->text().toDouble();

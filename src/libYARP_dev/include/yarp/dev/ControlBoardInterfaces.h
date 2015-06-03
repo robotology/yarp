@@ -22,6 +22,7 @@
 #include <yarp/dev/IControlMode2.h>
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/IVelocityControl.h>
+#include <yarp/dev/IVelocityControl2.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionControl2.h>
 #include <yarp/dev/IOpenLoopControl.h>

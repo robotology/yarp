@@ -539,6 +539,19 @@ void PartItem::onSendPid(int jointIndex,Pid newPid)
         currentPidDlg->initPosition(myPosPid);
     }
 }
+
+void PartItem::onSendVelocityPid(int jointIndex, Pid newPid)
+{
+    Pid myVelPid(0, 0, 0, 0, 0, 0);
+    iVel->setVelPid(jointIndex, newPid);
+    yarp::os::Time::delay(0.005);
+    iVel->getVelPid(jointIndex, &myVelPid);
+
+    if (currentPidDlg){
+        currentPidDlg->initPosition(myVelPid);
+    }
+}
+
 void PartItem::onCalibClicked(JointItem *joint)
 {
     if(!remCalib)
@@ -569,12 +582,14 @@ void PartItem::onPidClicked(JointItem *joint)
 
     currentPidDlg = new PidDlg(partName,jointIndex);
     connect(currentPidDlg,SIGNAL(sendPid(int,Pid)),this,SLOT(onSendPid(int,Pid)));
+    connect(currentPidDlg,SIGNAL(sendVelocity(int, Pid)), this, SLOT(onSendVelocityPid(int, Pid)));
     connect(currentPidDlg,SIGNAL(sendTorque(int,Pid,MotorTorqueParameters)),this,SLOT(onSendTorque(int,Pid,MotorTorqueParameters)));
     connect(currentPidDlg,SIGNAL(sendStiffness(int,double,double,double)),this,SLOT(onSendStiffness(int,double,double,double)));
     connect(currentPidDlg,SIGNAL(sendOpenLoop(int,int)),this,SLOT(onSendOpenLoop(int,int)));
 
     Pid myPosPid(0,0,0,0,0,0);
     Pid myTrqPid(0,0,0,0,0,0);
+    Pid myVelPid(0,0,0,0,0,0);
     MotorTorqueParameters motorTorqueParams;
     double stiff_val=0;
     double damp_val=0;
@@ -594,6 +609,10 @@ void PartItem::onPidClicked(JointItem *joint)
 
     // Position
     pid->getPid(jointIndex, &myPosPid);
+    yarp::os::Time::delay(0.005);
+
+    // Velocity
+    iVel->getVelPid(jointIndex, &myVelPid);
     yarp::os::Time::delay(0.005);
 
     // Torque
@@ -634,6 +653,7 @@ void PartItem::onPidClicked(JointItem *joint)
 
     currentPidDlg->initPosition(myPosPid);
     currentPidDlg->initTorque(myTrqPid,motorTorqueParams);
+    currentPidDlg->initVelocity(myVelPid);
     currentPidDlg->initStiffness(stiff_val,stiff_min,stiff_max,
                       damp_val,damp_min,damp_max,
                       impedance_offset_val,off_min,off_max);

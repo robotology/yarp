@@ -121,7 +121,7 @@ private:
 
     IPositionControl *pos;
     IPositionDirect  *iDir;
-    IVelocityControl *iVel;
+    IVelocityControl2 *iVel;
     IEncoders *iencs;
     IAmplifierControl *amp;
     IPidControl *pid;
@@ -204,6 +204,7 @@ private slots:
     void onRunClicked(JointItem *joint);
     void onPidClicked(JointItem *joint);
     void onSendPid(int jointIndex, Pid newPid);
+    void onSendVelocityPid(int jointIndex, Pid newPid);
     void onSendTorque(int jointIndex, Pid newPid, MotorTorqueParameters newTorqueParam);
     void onSendStiffness(int jointIdex, double stiff, double damp, double force);
     void onSendOpenLoop(int jointIndex, int openLoopVal);
