@@ -113,7 +113,7 @@ endmacro(check_optional_dependency)
 
 
 # Check if at least one of the dependency required to enable an option is installed.
-macro(check_alternative_dependency optionname)
+function(check_alternative_dependency optionname)
     if(${optionname})
         foreach(package "${ARGN}")
             string(TOUPPER ${package} PKG)
@@ -123,7 +123,7 @@ macro(check_alternative_dependency optionname)
         endforeach()
         message(FATAL_ERROR "None of the alternative packages \"${ARGN}\" was found. Please install at least one of them or disable the option \"${optionname}\" to build yarp.")
     endif()
-endmacro()
+endfunction()
 
 
 # Check if a dependency required to disable an option is installed.
