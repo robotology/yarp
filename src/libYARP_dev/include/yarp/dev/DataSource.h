@@ -49,7 +49,7 @@ private:
     yarp::os::PortWriterBuffer<T> writer;
     DataSource<T>& dater;
     yarp::os::Stamp stamp;
-	IPreciselyTimed *pPrecTime;
+    IPreciselyTimed *pPrecTime;
     bool canDrop;
     bool addStamp;
     int counter;
@@ -59,10 +59,10 @@ private:
     double maxT;
     double lastSpoke;
 public:
-    DataWriter(yarp::os::Port& port, DataSource<T>& dater, 
+    DataWriter(yarp::os::Port& port, DataSource<T>& dater,
                bool canDrop=true,
                bool addStamp=false,
-			   IPreciselyTimed *pt=NULL) : 
+               IPreciselyTimed *pt=NULL) :
         port(port), dater(dater), pPrecTime(pt), canDrop(canDrop), addStamp(addStamp)
     {
         writer.attach(port);
@@ -87,7 +87,7 @@ public:
         }
         else
         {
-            deltaT=now-timePrevious;        
+            deltaT=now-timePrevious;
             cumulativeT+=deltaT; 
             if (deltaT>maxT)
                maxT=deltaT;
@@ -101,8 +101,8 @@ public:
         // print report
         if (now-lastSpoke>REPORT_TIME)
             {
-                yInfo("Read [%d] frames in %d[s], average period %.2lf[ms], min %.2lf[ms], max %.2lf[ms]\n", 
-                                counter, 
+                yInfo("Read [%d] frames in %d[s], average period %.2lf[ms], min %.2lf[ms], max %.2lf[ms]\n",
+                                counter,
                                 REPORT_TIME,
                                 (cumulativeT/counter)*1000, 
                                 minT*1000, maxT*1000);
@@ -118,15 +118,15 @@ public:
 
         dater.getDatum(datum);
         if (addStamp) {
-			if (pPrecTime)
-			{
-				stamp=pPrecTime->getLastInputStamp();
-			}
-			else
-			{
-				stamp.update();
-			}
-			port.setEnvelope(stamp);
+            if (pPrecTime)
+            {
+                stamp=pPrecTime->getLastInputStamp();
+            }
+            else
+            {
+                stamp.update();
+            }
+            port.setEnvelope(stamp);
         }
         writer.write(!canDrop);
     }
@@ -185,4 +185,3 @@ public:
 
 
 #endif
-

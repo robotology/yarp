@@ -113,8 +113,8 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
   set(${_NAME}_APPLICATIONS_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/applications" CACHE INTERNAL "application templates' installation directory for ${_name} (relative to build/installation dir")
   set(${_NAME}_MODULES_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/modules" CACHE INTERNAL "module templates' installation directory for ${_name} (relative to build/installation dir")
   set(${_NAME}_ROBOTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/robots" CACHE INTERNAL "robot-specific configurations installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_STATIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}"  CACHE INTERNAL "static plugins installation directory for ${_name} (relative to build/installation dir")
-  set(${_NAME}_DYNAMIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/${_name}"  CACHE INTERNAL "dynamic plugins installation directory for ${_name} (relative to build/installation dir")
+  set(${_NAME}_STATIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE INTERNAL "static plugins installation directory for ${_name} (relative to build/installation dir")
+  set(${_NAME}_DYNAMIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/${_name}" CACHE INTERNAL "dynamic plugins installation directory for ${_name} (relative to build/installation dir")
 
   foreach(_dir DATA
                CONFIG
@@ -262,13 +262,13 @@ type \"@_type@\"
     #       to assert that there are no longer path.ini around.
     string(TOLOWER ${_name} _lcname)
     foreach(_f path.ini
-                path_${_name}.ini
-                path_${_name}mod.ini
-                path_${_lcname}.ini
-                path_${_lcname}mod.ini
-                path_${_NAME}.ini
-                path_${_NAME}mod.ini
-                path_for_install.ini)
+               path_${_name}.ini
+               path_${_name}mod.ini
+               path_${_lcname}.ini
+               path_${_lcname}mod.ini
+               path_${_NAME}.ini
+               path_${_NAME}mod.ini
+               path_for_install.ini)
       if(EXISTS "${CMAKE_BINARY_DIR}/${_f}")
         message(STATUS "Deleted: \"${CMAKE_BINARY_DIR}/${_f}\"")
         file(REMOVE "${CMAKE_BINARY_DIR}/${_f}")
