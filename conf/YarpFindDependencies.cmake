@@ -338,6 +338,14 @@ if(ENABLE_yarpcar_portmonitor_carrier)
     checkandset_dependency(Lua)
 endif()
 
+if(ENABLE_yarpmod_ovrheadset)
+    find_package(LibOVR)
+    find_package(GLFW3)
+    find_package(GLEW)
+    checkandset_dependency(LibOVR)
+    checkandset_dependency(GLFW3)
+    checkandset_dependency(GLEW)
+endif()
 
 # PRINT DEPENDENCIES STATUS:
 
@@ -357,6 +365,9 @@ print_dependency(Readline)
 print_dependency(SWIG)
 print_dependency(OpenCV)
 print_dependency(Lua)
+print_dependency(LibOVR)
+print_dependency(GLFW3)
+print_dependency(GLEW)
 
 
 # CHECK DEPENDENCIES:
@@ -375,6 +386,9 @@ check_optional_dependency(CREATE_YARPBUILDER GooCanvasMM)
 check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
 check_optional_dependency(ENABLE_yarpmod_opencv_grabber OpenCV)
 check_optional_dependency(ENABLE_yarpcar_portmonitor_carrier Lua)
+check_optional_dependency(ENABLE_yarpmod_ovrheadset LibOVR)
+check_optional_dependency(ENABLE_yarpmod_ovrheadset GLFW3)
+check_optional_dependency(ENABLE_yarpmod_ovrheadset GLEW)
 
 
 
