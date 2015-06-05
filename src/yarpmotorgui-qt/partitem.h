@@ -203,9 +203,10 @@ private slots:
     void onIdleClicked(JointItem *joint);
     void onRunClicked(JointItem *joint);
     void onPidClicked(JointItem *joint);
-    void onSendPid(int jointIndex, Pid newPid);
+    void onSendPositionPid(int jointIndex, Pid newPid);
     void onSendVelocityPid(int jointIndex, Pid newPid);
-    void onSendTorque(int jointIndex, Pid newPid, MotorTorqueParameters newTorqueParam);
+    void onSendCurrentPid(int jointIndex, Pid newPid);
+    void onSendTorquePid(int jointIndex, Pid newPid, MotorTorqueParameters newTorqueParam);
     void onSendStiffness(int jointIdex, double stiff, double damp, double force);
     void onSendOpenLoop(int jointIndex, int openLoopVal);
 

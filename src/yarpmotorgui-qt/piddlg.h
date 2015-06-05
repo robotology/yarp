@@ -37,6 +37,7 @@ public:
     void initPosition(Pid myPid);
     void initVelocity(Pid myPid);
     void initTorque(Pid myPid, MotorTorqueParameters TorqueParam);
+    void initCurrent(Pid myPid);
     void initStiffness(double curStiffVal, double minStiff, double maxStiff,
                        double curDampVal, double minDamp, double maxDamp,
                        double curForceVal, double minForce, double maxForce);
@@ -45,10 +46,11 @@ public:
 
 signals:
     void sendStiffness(int,double,double,double);
-    void sendPid(int jointIndex, Pid pid);
-    void sendVelocity(int jointIndex, Pid pid);
-    void sendTorque(int jointIndex,Pid,MotorTorqueParameters newTorqueParam);
+    void sendPositionPid(int jointIndex, Pid pid);
+    void sendVelocityPid(int jointIndex, Pid pid);
+    void sendTorquePid(int jointIndex,Pid,MotorTorqueParameters newTorqueParam);
     void sendOpenLoop(int jointIndex,int openLoopVal);
+    void sendCurrentPid(int jointIndex, Pid pid);
 
 private:
     Ui::PidDlg *ui;

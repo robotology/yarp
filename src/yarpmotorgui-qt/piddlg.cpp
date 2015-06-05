@@ -17,6 +17,7 @@
 #define     TAB_TORQUE      2
 #define     TAB_STIFF       3
 #define     TAB_OPENLOOP    4
+#define     TAB_CURRENT     5
 
 #define     POSITION_KP         0
 #define     POSITION_KD         1
@@ -53,6 +54,14 @@
 #define     TORQUE_KTAUGAIN     12
 #define     TORQUE_KTAUSCALE    13
 
+#define     CURRENT_KP         0
+#define     CURRENT_KD         1
+#define     CURRENT_KI         2
+#define     CURRENT_SCALE      3
+#define     CURRENT_MAXOUTPUT  4
+#define     CURRENT_MAXINT     5
+#define     CURRENT_OFFSET     6
+
 PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PidDlg)
@@ -72,6 +81,7 @@ PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
     ui->tableTorque->setItemDelegate(new TableDoubleDelegate);
     ui->tableStiffness->setItemDelegate(new TableDoubleDelegate);
     ui->tableOpenloop->setItemDelegate(new TableDoubleDelegate);
+    ui->tableCurrent->setItemDelegate(new TableDoubleDelegate);
 
 }
 
@@ -214,6 +224,30 @@ void PidDlg::initOpenLoop(double openLoopVal, double pwm)
     ui->tableOpenloop->item(1,0)->setText(QString("%1").arg(pwm));
 }
 
+void PidDlg::initCurrent(Pid myPid)
+{
+    ui->tableCurrent->item(CURRENT_KP, 0)->setText(QString("%1").arg((double)myPid.kp));
+    ui->tableCurrent->item(CURRENT_KP, 1)->setText(QString("%1").arg((double)myPid.kp));
+
+    ui->tableCurrent->item(CURRENT_KD, 0)->setText(QString("%1").arg((double)myPid.kd));
+    ui->tableCurrent->item(CURRENT_KD, 1)->setText(QString("%1").arg((double)myPid.kd));
+
+    ui->tableCurrent->item(CURRENT_KI, 0)->setText(QString("%1").arg((double)myPid.ki));
+    ui->tableCurrent->item(CURRENT_KI, 1)->setText(QString("%1").arg((double)myPid.ki));
+
+    ui->tableCurrent->item(CURRENT_SCALE, 0)->setText(QString("%1").arg((int)myPid.scale));
+    ui->tableCurrent->item(CURRENT_SCALE, 1)->setText(QString("%1").arg((int)myPid.scale));
+
+    ui->tableCurrent->item(CURRENT_OFFSET, 0)->setText(QString("%1").arg((int)myPid.offset));
+    ui->tableCurrent->item(CURRENT_OFFSET, 1)->setText(QString("%1").arg((int)myPid.offset));
+
+    ui->tableCurrent->item(CURRENT_MAXOUTPUT, 0)->setText(QString("%1").arg((int)myPid.max_output));
+    ui->tableCurrent->item(CURRENT_MAXOUTPUT, 1)->setText(QString("%1").arg((int)myPid.max_output));
+
+    ui->tableCurrent->item(CURRENT_MAXINT, 0)->setText(QString("%1").arg((int)myPid.max_int));
+    ui->tableCurrent->item(CURRENT_MAXINT, 1)->setText(QString("%1").arg((int)myPid.max_int));
+}
+
 void PidDlg::onSend()
 {
     Pid newPid;
@@ -230,7 +264,7 @@ void PidDlg::onSend()
         newPid.max_output = ui->tablePosition->item(POSITION_MAXOUTPUT,1)->text().toDouble();
         newPid.stiction_down_val = ui->tablePosition->item(POSITION_STICTIONDW,1)->text().toDouble();
         newPid.max_int = ui->tablePosition->item(POSITION_MAXINT,1)->text().toDouble();
-        sendPid(jointIndex,newPid);
+        sendPositionPid(jointIndex,newPid);
         break;
     case TAB_VELOCITY:
         newPid.kp = ui->tableVelocity->item(VELOCITY_KP, 1)->text().toDouble();
@@ -242,7 +276,7 @@ void PidDlg::onSend()
         newPid.max_output = ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 1)->text().toDouble();
         newPid.stiction_down_val = ui->tableVelocity->item(VELOCITY_STICTIONDW, 1)->text().toDouble();
         newPid.max_int = ui->tableVelocity->item(VELOCITY_MAXINT, 1)->text().toDouble();
-        sendVelocity(jointIndex, newPid);
+        sendVelocityPid(jointIndex, newPid);
         break;
     case TAB_TORQUE:
         newPid.kp = ui->tableTorque->item(TORQUE_KP,1)->text().toDouble();
@@ -259,7 +293,7 @@ void PidDlg::onSend()
         newPid.max_output = ui->tableTorque->item(TORQUE_MAXOUTPUT,1)->text().toDouble();
         newPid.stiction_down_val = ui->tableTorque->item(TORQUE_STICTIONDW,1)->text().toDouble();
         newPid.max_int = ui->tableTorque->item(TORQUE_MAXINT,1)->text().toDouble();
-        sendTorque(jointIndex,newPid,newMotorTorqueParams);
+        sendTorquePid(jointIndex,newPid,newMotorTorqueParams);
         break;
     case TAB_STIFF:{
         double desiredStiff = ui->tableStiffness->item(0,3)->text().toDouble();
@@ -271,7 +305,18 @@ void PidDlg::onSend()
     case TAB_OPENLOOP:{
         int desiredOpenLoop = ui->tableOpenloop->item(0,1)->text().toDouble();
         sendOpenLoop(jointIndex,desiredOpenLoop);
-
+        break;
+    }
+    case TAB_CURRENT:{
+        newPid.kp = ui->tableCurrent->item(CURRENT_KP, 1)->text().toDouble();
+        newPid.kd = ui->tableCurrent->item(CURRENT_KD, 1)->text().toDouble();
+        newPid.ki = ui->tableCurrent->item(CURRENT_KI, 1)->text().toDouble();
+        newPid.scale = ui->tableCurrent->item(CURRENT_SCALE, 1)->text().toDouble();
+        newPid.offset = ui->tableCurrent->item(CURRENT_OFFSET, 1)->text().toDouble();
+        newPid.max_output = ui->tableCurrent->item(CURRENT_MAXOUTPUT, 1)->text().toDouble();
+        newPid.max_int = ui->tableCurrent->item(CURRENT_MAXINT, 1)->text().toDouble();
+        sendCurrentPid(jointIndex, newPid);
+        break;
     }
     default:
         break;
