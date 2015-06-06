@@ -30,7 +30,7 @@ if(NOT SKIP_yarpmod_ovrheadset)
                                         YARP_init
                                         YARP_sig
                                         YARP_dev
-                                        ${GLEW_LIBRARIES}
+                                        GLEW::GLEW
                                         GLFW::glfw3)
 
   yarp_install(TARGETS yarp_ovrheadset
