@@ -12,7 +12,6 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
-#if !XXX_DUAL
 InputCallback::InputCallback(int eye) :
         yarp::os::TypedReaderCallback<ImageType>(),
         eye(eye),
@@ -24,41 +23,21 @@ InputCallback::InputCallback(int eye) :
     yTrace();
     eyeRenderTexture = NULL;
 }
-#else
-InputCallback::InputCallback() :
-        yarp::os::TypedReaderCallback<ImageType>(),
-        expected(0)
-{
-    yTrace();
-    eyeRenderTextures[0] = NULL;
-    eyeRenderTextures[1] = NULL;
-}
-#endif
-
 
 
 InputCallback::~InputCallback()
 {
     yTrace();
 
-#if !XXX_DUAL
     if (eyeRenderTexture) {
         delete eyeRenderTexture;
     }
     eyeRenderTexture = NULL;
-#else
-    for (int i = 0; i < 2; ++i) {
-        if (eyeRenderTextures[i]) {
-            delete eyeRenderTextures[i];
-        }
-        eyeRenderTextures[i] = NULL;
-    }
-#endif
 }
+
 
 void InputCallback::onRead(ImageType &img)
 {
-#if !XXX_DUAL
     int delaycnt = 0;
     while (eyeRenderTexture->dataReady && delaycnt <= 3) {
         yarp::os::Time::delay(0.001);
@@ -97,7 +76,7 @@ void InputCallback::onRead(ImageType &img)
         yWarning() << "InputCallback" << (eye==0?"left ":"right") << "    expected" << expected << "found" << found << "next" <<  (found + 1) % 10;
     }
     expected = (found + 1) % 10;
-#endif
+#endif // DEBUG_SQUARES
 
     eyeRenderTexture->mutex.lock();
 
@@ -151,38 +130,4 @@ void InputCallback::onRead(ImageType &img)
         eyeRenderTexture->dataReady = true;
     }
     eyeRenderTexture->mutex.unlock();
-#else
-    for(int i = 0; i < 2; ++i) {
-        eyeRenderTextures[i]->mutex.lock();
-    }
-
-    int w = img.width();
-    int h = img.height() / 2;
-    unsigned char *data = img.getRawImage();
-
-    if(eyeRenderTextures[0]->ptr && eyeRenderTextures[1]->ptr) {
-        for(int i = 0; i < 2; ++i) {
-            // update data directly on the mapped buffer
-            // copy and orient the image properly
-            int x = (eyeRenderTextures[i]->width - w)/2;
-            int y = (eyeRenderTextures[i]->height - h)/2;
-            for (int j = 0; j < h; ++j) {
-                // FIXME handle padding in incoming data
-                // FIXME handle incoming data larger than buffer size
-//                memcpy(eyeRenderTextures[i]->ptr + (y+j)*(eyeRenderTextures[i]->width*3+eyeRenderTextures[i]->padding) + x*3, data + ((h-j)*w*3), w*3);
-                // Flipped using LibOVR ovrDistortionCap_FlipInput flag
-                memcpy(eyeRenderTextures[i]->ptr + (y+j)*(eyeRenderTextures[i]->width*3+eyeRenderTextures[i]->padding) + x*3, data + (j*w*3), w*3);
-            }
-//            memset(eyeRenderTextures[i]->ptr, 127, eyeRenderTextures[i]->bufferSize);
-
-            // FIXME padding
-            data += (w*h*3);
-
-            eyeRenderTextures[i]->dataReady = true;
-        }
-    }
-    for(int i = 0; i < 2; ++i) {
-        eyeRenderTextures[i]->mutex.unlock();
-    }
-#endif
 }

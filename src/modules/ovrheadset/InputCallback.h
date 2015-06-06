@@ -19,21 +19,13 @@ class TextureBuffer;
 class InputCallback: public yarp::os::TypedReaderCallback<ImageType>
 {
 public:
-#if !XXX_DUAL
     InputCallback(int eye);
-#else
-    InputCallback();
-#endif
     ~InputCallback();
 
     virtual void onRead(ImageType &img);
 
-#if !XXX_DUAL
     TextureBuffer *eyeRenderTexture;
     int eye;
-#else
-    TextureBuffer *eyeRenderTextures[2];
-#endif
     int expected;
     unsigned int droppedFrames;
     unsigned int lastImageWidth;

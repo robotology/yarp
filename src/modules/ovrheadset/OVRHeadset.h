@@ -69,13 +69,8 @@ private:
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
-#if !XXX_DUAL
     yarp::os::BufferedPort<ImageType>* displayPorts[2];
     InputCallback* displayPortCallbacks[2];
-#else
-    yarp::os::BufferedPort<ImageType>* displayPort;
-    InputCallback* displayPortCallback;
-#endif
     ovrEyeRenderDesc EyeRenderDesc[2];
 
     ovrHmd hmd;

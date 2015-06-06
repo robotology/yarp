@@ -95,15 +95,10 @@ yarp::dev::OVRHeadset::OVRHeadset() :
 {
     yTrace();
 
-#if !XXX_DUAL
     displayPorts[0] = NULL;
     displayPorts[1] = NULL;
     displayPortCallbacks[0] = NULL;
     displayPortCallbacks[1] = NULL;
-#else
-    displayPort = NULL;
-    displayPortCallback = NULL;
-#endif
 
     yarp::os::Time::turboBoost();
 }
@@ -133,7 +128,6 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     }
     positionPort->setWriteOnly();
 
-#if !XXX_DUAL
     for (int i = 0; i < 2; ++i) {
         displayPorts[i] = new yarp::os::BufferedPort<ImageType>;
         if (!displayPorts[i]->open(i == 0 ? "/oculus/display/left:i" : "/oculus/display/right:i")) {
@@ -142,22 +136,8 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
             return false;
         }
         displayPorts[i]->setReadOnly();
-//        displayPorts[i]->setStrict();
-
         displayPortCallbacks[i] = new InputCallback(i);
     }
-#else
-    displayPort = new yarp::os::BufferedPort<ImageType>;
-    if (!displayPort->open("/oculus/display/dual:i")) {
-        yError() << "Cannot open dual display port";
-        this->close();
-        return false;
-    }
-    displayPort->setReadOnly();
-
-    displayPortCallback = new InputCallback;
-#endif
-
 
 
     texWidth  = cfg.check("w",    yarp::os::Value(640), "Texture width (usually same as camera width)").asInt();
@@ -205,15 +185,10 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
     // Enable display port callbacks
     for (int i=0; i<2; i++) {
-#if !XXX_DUAL
         displayPorts[i]->useCallback(*(displayPortCallbacks[i]));
-#else
-        displayPort->useCallback(*(displayPortCallback));
-#endif
     }
 
 
-#if !XXX_DUAL
 //    yarp::os::Network::connect("/icubSim/cam/left", "/oculus/display/left:i", "mjpeg");
 //    yarp::os::Network::connect("/icubSim/cam/right", "/oculus/display/right:i", "mjpeg");
 //    yarp::os::Network::connect("/oculus/headpose/orientation:o", "/directPositionControl/icubSim/head/command:i", "udp");
@@ -230,9 +205,6 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
 //    yarp::os::Network::connect("/grabber", "/oculus/display/left:i", "udp");
 //    yarp::os::Network::connect("/grabber", "/oculus/display/right:i", "udp");
-#else
-    yarp::os::Network::connect("/camCalib/out", "/oculus/display/dual:i", "mjpeg");
-#endif
 
     return true;
 }
@@ -348,15 +320,7 @@ bool yarp::dev::OVRHeadset::threadInit()
 
     for (int i=0; i<2; i++)
     {
-//        OVR::Sizei idealTextureSize = ovrHmd_GetFovTextureSize(hmd, (ovrEyeType)i, hmd->DefaultEyeFov[i], 1);
-#if !XXX_DUAL
         displayPortCallbacks[i]->eyeRenderTexture = new TextureBuffer(texWidth, texHeight, i);
-//        displayPortCallbacks[i]->eyeRenderTexture = new TextureBuffer(idealTextureSize.w, idealTextureSize.h, i);
-#else
-        displayPortCallback->eyeRenderTextures[i] = new TextureBuffer(texWidth, texHeight, i);
-//        displayPortCallback->eyeRenderTextures[i] = new TextureBuffer(idealTextureSize.w, idealTextureSize.h, i);
-        }
-#endif
     }
 
     // Start the sensor which provides the Rift's pose and motion.
@@ -405,7 +369,6 @@ void yarp::dev::OVRHeadset::threadRelease()
         positionPort = NULL;
     }
 
-#if !XXX_DUAL
     for (int i = 0; i < 2; ++i) {
         if (displayPorts[i]) {
             displayPorts[i]->disableCallback();
@@ -419,19 +382,6 @@ void yarp::dev::OVRHeadset::threadRelease()
             displayPortCallbacks[i] = NULL;
         }
     }
-#else
-    if (displayPort) {
-        displayPort->disableCallback();
-        displayPort->interrupt();
-        displayPort->close();
-        delete displayPort;
-        displayPort = NULL;
-    }
-    if (displayPortCallback) {
-        delete displayPortCallback;
-        displayPortCallback = NULL;
-    }
-#endif
 }
 
 
@@ -461,7 +411,7 @@ bool yarp::dev::OVRHeadset::updateService()
            getEstPeriod(),
            getEstUsed());
     resetStat();
-#if !XXX_DUAL
+
     for (int i = 0; i < 2; ++i) {
         yDebug("%s eye: %d frames missing, %d frames dropped\n",
                (i == 0 ? "Left " : "Right"),
@@ -469,17 +419,6 @@ bool yarp::dev::OVRHeadset::updateService()
                displayPortCallbacks[i]->droppedFrames);
         displayPortCallbacks[i]->eyeRenderTexture->missingFrames = 0;
         displayPortCallbacks[i]->droppedFrames = 0;
-
-#else
-    yDebug("Missing frames: %d (left), %d (right)\n",
-           displayPortCallback->eyeRenderTextures[0]->missingFrames,
-           displayPortCallback->eyeRenderTextures[1]->missingFrames,
-    yDebug("Dropped frames: %d\n",
-           displayPortCallback->droppedFrames);
-    displayPortCallback->eyeRenderTextures[0]->missingFrames = 0;
-    displayPortCallback->eyeRenderTextures[0]->missingFrames = 0;
-    displayPortCallback->droppedFrames = 0;
-#endif
     }
 
     yarp::os::Time::delay(delay);
@@ -604,25 +543,14 @@ void yarp::dev::OVRHeadset::run()
         }
     }
 
-#if !XXX_DUAL
     if(displayPortCallbacks[0]->eyeRenderTexture && displayPortCallbacks[1]->eyeRenderTexture) {
-#else
-    if(displayPortCallback->eyeRenderTextures[0] && displayPortCallback->eyeRenderTextures[1]) {
-#endif
-
         // Do distortion rendering, Present and flush/sync
         ovrGLTexture eyeTex[2];
         for (int i = 0; i<2; ++i) {
             eyeTex[i].OGL.Header.API = ovrRenderAPI_OpenGL;
-#if !XXX_DUAL
             eyeTex[i].OGL.Header.TextureSize = OVR::Sizei(displayPortCallbacks[i]->eyeRenderTexture->width, displayPortCallbacks[i]->eyeRenderTexture->height);
             eyeTex[i].OGL.Header.RenderViewport = OVR::Recti(0, 0, displayPortCallbacks[i]->eyeRenderTexture->width, displayPortCallbacks[i]->eyeRenderTexture->height);
             eyeTex[i].OGL.TexId = displayPortCallbacks[i]->eyeRenderTexture->texId;
-#else
-            eyeTex[i].OGL.Header.TextureSize = OVR::Sizei(displayPortCallback->eyeRenderTextures[i]->width, displayPortCallback->eyeRenderTextures[i]->height);
-            eyeTex[i].OGL.Header.RenderViewport = OVR::Recti(0, 0, displayPortCallback->eyeRenderTextures[i]->width, displayPortCallback->eyeRenderTextures[i]->height);
-            eyeTex[i].OGL.TexId = displayPortCallback->eyeRenderTextures[i]->texId;
-#endif
         }
 
         // Wait till time-warp point to reduce latency.
@@ -630,11 +558,7 @@ void yarp::dev::OVRHeadset::run()
 
         // Update the textures
         for (int i = 0; i<2; i++) {
-#if !XXX_DUAL
             displayPortCallbacks[i]->eyeRenderTexture->update();
-#else
-            displayPortCallback->eyeRenderTextures[i]->update();
-#endif
         }
 
 
