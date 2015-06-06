@@ -223,7 +223,7 @@ bool yarp::dev::OVRHeadset::threadInit()
 
     //Initialise rift
     if (!ovr_Initialize(&params)) {
-        yError() << "Unable to initialize LibOVR.";
+        yError() << "Unable to initialize LibOVR. LibOVRRT not found?";
         this->close();
         return false;
     }

@@ -27,7 +27,7 @@ if(NOT SKIP_yarpmod_ovrheadset)
                            InputCallback.h)
 
   yarp_add_plugin(yarp_ovrheadset ${yarp_ovrheadset_SRCS}
-                           ${yarp_ovrheadset_HDRS})
+                                  ${yarp_ovrheadset_HDRS})
 
   target_link_libraries(yarp_ovrheadset LibOVR::OVR
                                         YARP_OS
