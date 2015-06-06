@@ -251,7 +251,9 @@ bool yarp::dev::OVRHeadset::threadInit()
 
     //Initialise rift
     if (!ovr_Initialize(&params)) {
-        yFatal() << "Unable to initialize libOVR.";
+        yError() << "Unable to initialize LibOVR.";
+        this->close();
+        return false;
     }
 
     // Detect and initialize Oculus Rift
