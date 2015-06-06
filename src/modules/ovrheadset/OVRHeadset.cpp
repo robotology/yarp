@@ -701,10 +701,10 @@ void yarp::dev::OVRHeadset::reconfigureFOV()
         double texHFOV_rad = 2 * (atan(texCamRatio * tan(camHFOV_rad/2)));
 
         double aspectRatio = static_cast<double>(texWidth)/texHeight;
-        fov[i].UpTan    = static_cast<float>(abs(tan(texHFOV_rad/2)/aspectRatio));
-        fov[i].DownTan  = static_cast<float>(abs(tan(texHFOV_rad/2)/aspectRatio));
-        fov[i].LeftTan  = static_cast<float>(abs(tan(texHFOV_rad/2)));
-        fov[i].RightTan = static_cast<float>(abs(tan(texHFOV_rad/2)));
+        fov[i].UpTan    = static_cast<float>(fabs(tan(texHFOV_rad/2)/aspectRatio));
+        fov[i].DownTan  = static_cast<float>(fabs(tan(texHFOV_rad/2)/aspectRatio));
+        fov[i].LeftTan  = static_cast<float>(fabs(tan(texHFOV_rad/2)));
+        fov[i].RightTan = static_cast<float>(fabs(tan(texHFOV_rad/2)));
     }
     debugFov(fov);
 }
