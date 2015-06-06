@@ -1,23 +1,44 @@
-# Locate the glfw3 library
-# This module defines the following variables:
-# GLFW3_LIBRARY, the name of the library;
-# GLFW3_INCLUDE_DIR, where to find glfw include files.
-# GLFW3_FOUND, true if both the GLFW3_LIBRARY and GLFW3_INCLUDE_DIR have been found.
+#.rst:
+# FindGLFW3
+# ---------
 #
-# To help locate the library and include file, you could define an environment variable called
-# GLFW3_ROOT which points to the root of the glfw3 library installation. This is pretty useful
-# on a Windows platform.
+# Find the GLFW3 framework.
 #
+# IMPORTED Targets
+# ^^^^^^^^^^^^^^^^
 #
-# Usage example to compile an "executable" target to the glfw3 library:
+# This module defines the :prop_tgt:`IMPORTED` target ``GLFW3::GLFW3``,
+# if GLFW3 has been found.
 #
-# find_package(GLFW3 REQUIRED)
-# add_executable(executable ${EXECUTABLE_SRCS})
-# target_link_libraries (executable GLFW3::glfw3)
+# Result Variables
+# ^^^^^^^^^^^^^^^^
 #
-# TODO:
-# Allow the user to select to link to a shared library or to a static library.
+# This module defines the following variables::
+#
+#   GLFW3_INCLUDE_DIRS - include directories for GLFW3
+#   GLFW3_LIBRARIES - libraries to link against GLFW3
+#   GLFW3_FOUND - true if GLFW3 has been found and can be used
+#
+# Environment Variables
+# ^^^^^^^^^^^^^^^^^^^^^
+#
+# If the library is not found on system paths, the ``GLFW3_ROOT``
+# environment variable can be used to locate the lbrary.
 
+
+#=============================================================================
+# Copyright 2015  iCub Facility, Istituto Italiano di Tecnologia
+#   Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
+# (To distribute this file outside of YCM, substitute the full
+#  License text for the above reference.)
 
 include(MacroStandardFindModule)
 macro_standard_find_module(GLFW3 glfw3)
@@ -43,9 +64,11 @@ if(NOT GLFW3_FOUND)
                      ${GLFW3_ROOT_DIR}
                      ENV GLFW3_ROOT)
 
-  find_library(OPENGL_LIBRARY
-               NAMES OpenGL32
-               PATHS "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\Lib")
+  if(WIN32)
+    find_library(OPENGL_LIBRARY
+                 NAMES OpenGL32
+                 PATHS "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\Lib")
+  endif()
 
   set(GLFW3_GLFW_glfw3_h "${GLFW3_INCLUDE_DIR}/GLFW/glfw3.h")
   if(GLFW3_INCLUDE_DIR AND EXISTS "${GLFW3_GLFW_glfw3_h}")
@@ -69,13 +92,17 @@ endif()
 
 
 # Create imported target GLFW::glfw3
-add_library(GLFW::glfw3 STATIC IMPORTED)
-set_target_properties(GLFW::glfw3 PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${GLFW3_INCLUDE_DIR}"
-  INTERFACE_LINK_LIBRARIES "${OPENGL_LIBRARY}")
+add_library(GLFW3::GLFW3 STATIC IMPORTED)
+set_target_properties(GLFW3::GLFW3 PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "${GLFW3_INCLUDE_DIR}")
 
-# Import target "GLFW::glfw3" for configuration "Release"
-set_property(TARGET GLFW::glfw3 APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(GLFW::glfw3 PROPERTIES
+if(WIN32)
+  set_target_properties(GLFW3::GLFW3 PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${OPENGL_LIBRARY}")
+endif()
+
+# Import target "GLFW3::GLFW3" for configuration "Release"
+set_property(TARGET GLFW3::GLFW3 APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(GLFW3::GLFW3 PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
   IMPORTED_LOCATION_RELEASE "${GLFW3_GLFW_LIBRARY}")

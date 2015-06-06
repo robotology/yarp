@@ -31,7 +31,7 @@ if(NOT SKIP_yarpmod_ovrheadset)
                                         YARP_sig
                                         YARP_dev
                                         GLEW::GLEW
-                                        GLFW::glfw3)
+                                        GLFW3::GLFW3)
 
   yarp_install(TARGETS yarp_ovrheadset
                COMPONENT runtime
