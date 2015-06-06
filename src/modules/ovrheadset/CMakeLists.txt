@@ -8,8 +8,12 @@ endif()
 
 if(NOT SKIP_yarpmod_ovrheadset)
 
-  include_directories(SYSTEM ${GLEW_INCLUDE_DIRS})
-  include_directories(SYSTEM ${YARP_INCLUDE_DIRS})
+  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
+  include_directories(${YARP_OS_INCLUDE_DIRS}
+                      ${YARP_sig_INCLUDE_DIRS}
+                      ${YARP_dev_INCLUDE_DIRS})
 
   # LibOVR Requires C++11
   add_definitions(${CXX11_FLAGS})
