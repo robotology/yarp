@@ -11,6 +11,7 @@
 #include "ui_piddlg.h"
 #include <QDebug>
 #include <QPushButton>
+#include <yarp/os/Bottle.h>
 
 #define     TAB_POSITION    0
 #define     TAB_VELOCITY    1
@@ -18,6 +19,7 @@
 #define     TAB_STIFF       3
 #define     TAB_OPENLOOP    4
 #define     TAB_CURRENT     5
+#define     TAB_VARIABLES   6
 
 #define     POSITION_KP         0
 #define     POSITION_KD         1
@@ -82,7 +84,7 @@ PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
     ui->tableStiffness->setItemDelegate(new TableDoubleDelegate);
     ui->tableOpenloop->setItemDelegate(new TableDoubleDelegate);
     ui->tableCurrent->setItemDelegate(new TableDoubleDelegate);
-
+    ui->tableCurrent->setItemDelegate(new TableGenericDelegate);
 }
 
 PidDlg::~PidDlg()
@@ -195,6 +197,56 @@ void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
     ui->tableTorque->item(TORQUE_MAXINT,1)->setText(QString("%1").arg((int)myPid.max_int));
 }
 
+void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
+{
+    // Remote Variables
+    if (iVar)
+    {
+        ui->tableVariables->clear();
+        ui->tableVariables->clearContents();
+        ui->tableVariables->setRowCount(0);
+        int rows = ui->tableVariables->rowCount();
+        ui->tableVariables->insertColumn(0);
+        ui->tableVariables->insertColumn(0);
+        ui->tableVariables->setHorizontalHeaderItem(0, new QTableWidgetItem(QString("Key")));
+        ui->tableVariables->setHorizontalHeaderItem(1, new QTableWidgetItem(QString("Values")));
+
+        yarp::os::Bottle keys;
+        if (iVar->getRemoteVariablesList(&keys))
+        {
+            std::string s = keys.toString();
+            for (unsigned int i = 0; i < keys.size(); i++)
+            {
+                std::string v;
+                if (keys.get(i).isString())
+                {
+                    yarp::os::Bottle val;
+                    v = keys.get(i).asString();
+                    iVar->getRemoteVariable(v, &val);
+                    ui->tableVariables->insertRow(i);
+                    ui->tableVariables->setItem(i, 0, new QTableWidgetItem(QString(v.c_str())));
+                    ui->tableVariables->item(i, 0)->setFlags(Qt::NoItemFlags);
+                    ui->tableVariables->setItem(i, 1, new QTableWidgetItem(QString(val.toString().c_str())));
+                    ui->tableVariables->item(i, 1)->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled );
+                    ui->tableVariables->setColumnWidth(1, 500);
+
+                    /*yarp::os::Bottle val;
+                    v = keys.get(i).asString();
+                    iVar->getRemoteVariable(v, &val);
+                    int valsize = val.get(0).size();
+                    ui->tableVariables->insertRow(i);
+                    ui->tableVariables->setItem(i, 0, new QTableWidgetItem(QString(v.c_str())));
+                    ui->tableVariables->item(i, 0)->setFlags(Qt::NoItemFlags);
+                    for (int j = 0; j < valsize; j++)
+                    {
+                        ui->tableVariables->setItem(i, j+1, new QTableWidgetItem(QString(val.get(j).toString().c_str())));
+                    }*/
+                }
+            }
+        }
+    }
+}
+
 void PidDlg::initStiffness(double curStiffVal, double minStiff, double maxStiff,
                            double curDampVal, double minDamp, double maxDamp,
                            double curForceVal, double minForce, double maxForce)
@@ -253,7 +305,7 @@ void PidDlg::onSend()
     Pid newPid;
     MotorTorqueParameters newMotorTorqueParams;
 
-    switch (ui->tabWidget->currentIndex()) {
+    switch (ui->tabMain->currentIndex()) {
     case TAB_POSITION:
         newPid.kp = ui->tablePosition->item(POSITION_KP,1)->text().toDouble();
         newPid.kd = ui->tablePosition->item(POSITION_KD,1)->text().toDouble();
@@ -316,6 +368,19 @@ void PidDlg::onSend()
         newPid.max_output = ui->tableCurrent->item(CURRENT_MAXOUTPUT, 1)->text().toDouble();
         newPid.max_int = ui->tableCurrent->item(CURRENT_MAXINT, 1)->text().toDouble();
         sendCurrentPid(jointIndex, newPid);
+        break;
+    }
+    case TAB_VARIABLES:{
+        // Remote Variables
+        int rows = ui->tableVariables->rowCount();
+        for (int i = 0; i < rows; i++)
+        {
+            std::string key = ui->tableVariables->item(i, 0)->text().toStdString();
+            std::string val = ui->tableVariables->item(i, 1)->text().toStdString();
+            yarp::os::Bottle valb(val);
+            sendSingleRemoteVariable(key, valb);
+        }
+        updateAllRemoteVariables();
         break;
     }
     default:

@@ -202,7 +202,8 @@ class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::dev::IMultipleWrapper,
                                         public yarp::dev::IAxisInfo,
                                         public yarp::dev::IPreciselyTimed,
-                                        public yarp::dev::IInteractionMode
+                                        public yarp::dev::IInteractionMode,
+                                        public yarp::dev::IRemoteVariables
 {
 private:
 
@@ -946,6 +947,14 @@ public:
     * @return true if everything goes fine, false if something bad happens
     */
     virtual bool getVelLimits(int j, double *min, double *max);
+
+    /* IRemoteVariables */
+
+    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle *val);
+
+    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle val);
+
+    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
 
     /* IRemoteCalibrator */
 

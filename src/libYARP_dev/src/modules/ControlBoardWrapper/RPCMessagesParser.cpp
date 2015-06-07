@@ -1352,6 +1352,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_VARIABLE:
+                            {
+                                 Bottle btail = cmd.tail().tail().tail(); // remove the first three elements
+                                 ok = rpc_IVar->setRemoteVariable(cmd.get(2).asString(), btail);
+                            }
+                            break;
+
                             case VOCAB_OFFSET:
                             {
                                 double v;
@@ -2010,6 +2017,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             yDebug("get command received\n");
 
                         double dtmp = 0.0;
+                        Bottle btmp;
                         response.addVocab(VOCAB_IS);
                         response.add(cmd.get(1));
 
@@ -2078,6 +2086,22 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 ok = rpc_IPid->getOutput(cmd.get(2).asInt(), &dtmp);
                                 response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_VARIABLE:
+                            {
+                                ok = rpc_IVar->getRemoteVariable(cmd.get(2).asString(), &btmp);
+                                Bottle& b= response.addList();
+                                b = btmp;
+                            }
+                            break;
+
+                            case VOCAB_LIST_VARIABLES:
+                            {
+                                ok = rpc_IVar->getRemoteVariablesList(&btmp);
+                                Bottle& b = response.addList();
+                                b = btmp;
                             }
                             break;
 
@@ -2620,6 +2644,7 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_IEncTimed         = dynamic_cast<yarp::dev::IEncodersTimed *>       (ControlBoardWrapper_p);
     rpc_IMotEnc           = dynamic_cast<yarp::dev::IMotorEncoders *>       (ControlBoardWrapper_p);
     rpc_IMotor            = dynamic_cast<yarp::dev::IMotor *>               (ControlBoardWrapper_p);
+    rpc_IVar              = dynamic_cast<yarp::dev::IRemoteVariables *>     (ControlBoardWrapper_p);
     rcp_IAmp              = dynamic_cast<yarp::dev::IAmplifierControl *>    (ControlBoardWrapper_p);
     rcp_Ilim2             = dynamic_cast<yarp::dev::IControlLimits2 *>      (ControlBoardWrapper_p);
     rpc_AxisInfo          = dynamic_cast<yarp::dev::IAxisInfo *>            (ControlBoardWrapper_p);

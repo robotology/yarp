@@ -147,6 +147,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     //default value for unopened interfaces
     pos       = NULL;
     iVel      = NULL;
+    iVar      = NULL;
     iDir      = NULL;
     iencs     = NULL;
     amp       = NULL;
@@ -219,8 +220,16 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         if(!ok){
             LOG_ERROR("...iinteract was not ok.\n");
         }
+        //optional interfaces
+        if (!partsdd->view(iVar))
+        {
+            LOG_ERROR("...iVar was not ok.\n");
+        }
 
-        partsdd->view(remCalib);  // remCalib is optional
+        if (!partsdd->view(remCalib))
+        {
+            LOG_ERROR("...remCalib was not ok.\n");
+        }
 
         if (!ok) {
             LOG_ERROR("Error while acquiring interfaces \n");
@@ -564,6 +573,19 @@ void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
     }
 }
 
+void PartItem::onSendSingleRemoteVariable(std::string key, yarp::os::Bottle val)
+{
+    iVar->setRemoteVariable(key,val);
+    yarp::os::Time::delay(0.005);
+}
+
+void PartItem::onUpdateAllRemoteVariables()
+{
+    if (currentPidDlg){
+        currentPidDlg->initRemoteVariables(iVar);
+    }
+}
+
 void PartItem::onCalibClicked(JointItem *joint)
 {
     if(!remCalib)
@@ -596,6 +618,8 @@ void PartItem::onPidClicked(JointItem *joint)
     connect(currentPidDlg,SIGNAL(sendPositionPid(int,Pid)),this,SLOT(onSendPositionPid(int,Pid)));
     connect(currentPidDlg,SIGNAL(sendVelocityPid(int, Pid)), this, SLOT(onSendVelocityPid(int, Pid)));
     connect(currentPidDlg,SIGNAL(sendCurrentPid(int, Pid)), this, SLOT(onSendCurrentPid(int, Pid)));
+    connect(currentPidDlg, SIGNAL(sendSingleRemoteVariable(std::string, yarp::os::Bottle)), this, SLOT(onSendSingleRemoteVariable(std::string, yarp::os::Bottle)));
+    connect(currentPidDlg, SIGNAL(updateAllRemoteVariables()), this, SLOT(onUpdateAllRemoteVariables()));
     connect(currentPidDlg,SIGNAL(sendTorquePid(int,Pid,MotorTorqueParameters)),this,SLOT(onSendTorquePid(int,Pid,MotorTorqueParameters)));
     connect(currentPidDlg,SIGNAL(sendStiffness(int,double,double,double)),this,SLOT(onSendStiffness(int,double,double,double)));
     connect(currentPidDlg,SIGNAL(sendOpenLoop(int,int)),this,SLOT(onSendOpenLoop(int,int)));
@@ -678,6 +702,7 @@ void PartItem::onPidClicked(JointItem *joint)
                       impedance_offset_val,off_min,off_max);
 
     currentPidDlg->initOpenLoop(openloop_reference,openloop_current_pwm);
+    currentPidDlg->initRemoteVariables(iVar);
 
 
     currentPidDlg->exec();

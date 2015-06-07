@@ -94,6 +94,7 @@ protected:
     yarp::dev::IImpedanceControl        *rpc_IImpedance;
     yarp::dev::IInteractionMode         *rpc_IInteract;
     yarp::dev::IMotor                   *rpc_IMotor;
+    yarp::dev::IRemoteVariables         *rpc_IVar;
     yarp::sig::Vector                   tmpVect;
     yarp::os::Stamp                     lastRpcStamp;
     yarp::os::Semaphore                 mutex;

@@ -115,6 +115,7 @@ void SubDevice::detach()
     iTimed=0;
     iOpenLoop=0;
     iInteract=0;
+    iVar = 0;
     configuredF=false;
     attachedF=false;
 }
@@ -165,6 +166,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(iMotEnc);
             subdevice->view(iInteract);
             subdevice->view(imotor);
+            subdevice->view(iVar);
         }
     else
         {
@@ -192,6 +194,9 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if ((imotor==0) && (_subDevVerbose))
         yWarning() << "controlBoardWrapper:  Warning iMotor not valid interface";
+  
+    if ((iVar == 0) && (_subDevVerbose))
+        yWarning() << "controlBoardWrapper:  Warning iVar not valid interface";
 
     int deviceJoints=0;
 

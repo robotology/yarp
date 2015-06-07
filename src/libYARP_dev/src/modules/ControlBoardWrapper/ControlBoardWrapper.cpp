@@ -2864,6 +2864,55 @@ bool ControlBoardWrapper::setMotorOutputLimit (int m, const double val) {
     return false;
 }
 
+/* IRemoteVariables */
+bool ControlBoardWrapper::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle *val) {
+    int off = device.lut[0].offset;
+    int subIndex = device.lut[0].deviceEntry;
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+
+    if (!p)
+        return false;
+
+    if (p->iVar)
+    {
+        return p->iVar->getRemoteVariable(key, val);
+    }
+
+    return false;
+}
+
+bool ControlBoardWrapper::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle val) {
+    int off = device.lut[0].offset;
+    int subIndex = device.lut[0].deviceEntry;
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+
+    if (!p)
+    return false;
+
+    if (p->iVar)
+    {
+    return p->iVar->setRemoteVariable(key, val);
+    }
+
+    return false;
+}
+
+bool ControlBoardWrapper::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
+{
+    int off = device.lut[0].offset;
+    int subIndex = device.lut[0].deviceEntry;
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+
+    if (!p)
+        return false;
+
+    if (p->iVar)
+    {
+        return p->iVar->getRemoteVariablesList(listOfKeys);
+    }
+    return false;
+}
+
 /* IMotorEncoders */
 
 bool ControlBoardWrapper::resetMotorEncoder(int m) {

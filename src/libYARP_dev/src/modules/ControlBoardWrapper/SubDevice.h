@@ -101,6 +101,7 @@ public:
     yarp::dev::IPositionDirect       *posDir;
     yarp::dev::IInteractionMode      *iInteract;
     yarp::dev::IMotor                *imotor;
+    yarp::dev::IRemoteVariables      *iVar;
 
     yarp::sig::Vector subDev_joint_encoders;
     yarp::sig::Vector jointEncodersTimes;

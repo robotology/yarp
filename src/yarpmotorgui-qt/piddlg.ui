@@ -27,7 +27,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="tabMain">
      <property name="styleSheet">
       <string notr="true"/>
      </property>
@@ -1721,6 +1721,24 @@
          <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
         </property>
        </item>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tabVariables">
+      <attribute name="title">
+       <string>Internal Variables</string>
+      </attribute>
+      <widget class="QTableWidget" name="tableVariables">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>681</width>
+         <height>551</height>
+        </rect>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
       </widget>
      </widget>
     </widget>
