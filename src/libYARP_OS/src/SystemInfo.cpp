@@ -147,10 +147,10 @@ public:
         
     }
 
-    LoadInfo getCpuLoad(void) 
+    SystemInfo::LoadInfo getCpuLoad(void) 
     {
         sem.wait();
-        LoadInfo ld = load;
+		SystemInfo::LoadInfo ld = load;
         sem.post();
         return ld; 
     }
@@ -196,7 +196,7 @@ private:
     HCOUNTER              phdCounter;
 #endif
     bool firstRun;
-    LoadInfo load;
+    SystemInfo::LoadInfo load;
     std::vector<int> samples; 
     yarp::os::Semaphore sem;
 };
