@@ -29,12 +29,12 @@ AboutDlg::~AboutDlg()
 
 void AboutDlg::onCredits()
 {
-    QString text = "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\"> \
+    QString text = "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\
             p, li { white-space: pre-wrap; } \
             </style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;\"> \
-            <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Elena Ceseracciu &lt;</span><a href=\"mailto:vadim.tikhanoff@iit.it\"><span style=\" text-decoration: underline; color:#0000ff;\">vadim.tikhanoff@iit.it</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> \
             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Ali Paikan &lt;</span><a href=\"mailto:elena.ceseracciu@iit.it\"><span style=\" text-decoration: underline; color:#0000ff;\">ali.paikan@iit.it</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> \
-            <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Alessandro Roncone &lt;</span><a href=\"mailto:Alessandro.Roncone@iit.it\"><span style=\" text-decoration: underline; color:#0000ff;\">ali.paikan@iit.it</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> \
+            <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Elena Ceseracciu &lt;</span><a href=\"mailto:elena.ceseracciu@gmail.com\"><span style=\" text-decoration: underline; color:#0000ff;\">elena.ceseracciu@gmail.com</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> \
+            <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Alessandro Roncone &lt;</span><a href=\"mailto:Alessandro.Roncone@iit.it\"><span style=\" text-decoration: underline; color:#0000ff;\">Alessandro.Roncone@iit.it</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> \
             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Davide Perrone &lt;</span><a href=\"mailto:aitek4iit@aitek.it\"><span style=\" text-decoration: underline; color:#0000ff;\">aitek4iit@aitek.it</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> \</body></html>";
     GenericInfoDlg dlg("Credits","Written by:",text);
     dlg.exec();
