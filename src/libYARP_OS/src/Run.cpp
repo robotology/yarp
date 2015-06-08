@@ -11,8 +11,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/RunProcManager.h>
-#include <yarp/os/impl/SystemInfo.h>
-#include <yarp/os/impl/SystemInfoSerializer.h>
+#include <yarp/os/SystemInfo.h>
+#include <yarp/os/SystemInfoSerializer.h>
 
 #include <yarp/os/RpcClient.h>
 
@@ -898,7 +898,7 @@ int yarp::os::Run::server()
 
             if (msg.check("sysinfo"))
             {
-                yarp::os::impl::SystemInfoSerializer sysinfo;
+                yarp::os::SystemInfoSerializer sysinfo;
                 port.reply(sysinfo);
                 continue;
             }
@@ -1499,7 +1499,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
             return YARPRUN_ERROR;
         }
 
-        yarp::os::impl::SystemInfoSerializer info;
+        yarp::os::SystemInfoSerializer info;
 
         RUNLOG("<<<port.write(msg, info)")
         int ret = port.write(msg, info);

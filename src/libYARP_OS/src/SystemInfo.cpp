@@ -13,10 +13,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <yarp/os/impl/SystemInfo.h>
-#include <yarp/os/impl/SystemInfoSerializer.h>
+#include <yarp/os/SystemInfo.h>
+#include <yarp/os/SystemInfoSerializer.h>
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 #if defined(__linux__)
 #include <unistd.h>
@@ -51,13 +50,17 @@ extern char **environ;
 #include <yarp/os/Semaphore.h>
 //#include <yarp/os/impl/PlatformVector.h>
 #include <vector>
+
+static void enableCpuLoadCollector(void);
+static void disableCpuLoadCollector(void);
+
 #endif
 
 #if defined(__linux__)
-capacity_t getMemEntry(const char *tag, const char *bufptr)
+SystemInfo::capacity_t getMemEntry(const char *tag, const char *bufptr)
 {
     char *tail;
-    capacity_t retval;
+    SystemInfo::capacity_t retval;
     size_t len = strlen(tag);
     while (bufptr) 
     {
@@ -200,7 +203,7 @@ private:
 
 static CpuLoadCollector* globalLoadCollector = NULL;
 
-void SystemInfo::enableCpuLoadCollector(void)
+void enableCpuLoadCollector(void)
 {
     if(globalLoadCollector == NULL)
     {
@@ -209,7 +212,7 @@ void SystemInfo::enableCpuLoadCollector(void)
     }
 }
 
-void SystemInfo::disableCpuLoadCollector(void)
+void disableCpuLoadCollector(void)
 {
     if(globalLoadCollector)
     {        
@@ -223,7 +226,7 @@ void SystemInfo::disableCpuLoadCollector(void)
 
 
 
-MemoryInfo SystemInfo::getMemoryInfo(void)
+SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
 {
     MemoryInfo memory;
     memory.totalSpace = 0;
@@ -260,7 +263,7 @@ MemoryInfo SystemInfo::getMemoryInfo(void)
 }
 
 
-StorageInfo SystemInfo::getStorageInfo(void)
+SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 {
     StorageInfo storage;
     storage.totalSpace = 0;
@@ -297,13 +300,13 @@ StorageInfo SystemInfo::getStorageInfo(void)
     return storage;
 }
 
-
-NetworkInfo SystemInfo::getNetworkInfo(void)
+/*
+SystemInfo::NetworkInfo SystemInfo::getNetworkInfo()
 {
     NetworkInfo network;
 
 #if defined(__linux__)
-    /*
+
     struct ifaddrs * ifAddrStruct=NULL;
     struct ifaddrs * ifa=NULL;
     void * tmpAddrPtr=NULL;
@@ -375,13 +378,14 @@ NetworkInfo SystemInfo::getNetworkInfo(void)
             addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
         network.mac = mac; 
     }
-    */
+
 #endif
     return network;
 }
+*/
 
 
-ProcessorInfo SystemInfo::getProcessorInfo(void)
+SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
 {
     ProcessorInfo processor;
     processor.cores = 0;
@@ -463,7 +467,7 @@ ProcessorInfo SystemInfo::getProcessorInfo(void)
 }
 
 
-PlatformInfo SystemInfo::getPlatformInfo(void)
+SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 {
     PlatformInfo platform;
 
@@ -570,7 +574,7 @@ PlatformInfo SystemInfo::getPlatformInfo(void)
 }
 
 
-UserInfo SystemInfo::getUserInfo(void)
+SystemInfo::UserInfo SystemInfo::getUserInfo()
 {
     UserInfo user;
     user.userID = 0;
@@ -603,7 +607,7 @@ UserInfo SystemInfo::getUserInfo(void)
 }
 
 
-LoadInfo SystemInfo::getLoadInfo(void)
+SystemInfo::LoadInfo SystemInfo::getLoadInfo()
 {
     LoadInfo load;
     load.cpuLoad1 = 0.0;
@@ -644,115 +648,4 @@ LoadInfo SystemInfo::getLoadInfo(void)
 #endif
     return load;
 }
-
-
-
-/**
- * Class SystemInfoSerializer
- */
-bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
-{
-    // reading memory
-    memory.totalSpace = connection.expectInt();
-    memory.freeSpace = connection.expectInt();
-
-    // reading storage
-    storage.totalSpace = connection.expectInt();
-    storage.freeSpace = connection.expectInt();
-
-    // reading network
-    network.mac = connection.expectText();
-    network.ip4 = connection.expectText();
-    network.ip6 = connection.expectText();
-    
-    // reading processor
-    processor.architecture = connection.expectText();
-    processor.model = connection.expectText();
-    processor.vendor = connection.expectText();
-    processor.family = connection.expectInt();
-    processor.modelNumber = connection.expectInt();
-    processor.cores = connection.expectInt();
-    processor.siblings = connection.expectInt();
-    processor.frequency = connection.expectDouble();
-
-    // reading load
-    load.cpuLoad1 = connection.expectDouble();
-    load.cpuLoad5 = connection.expectDouble();
-    load.cpuLoad15 = connection.expectDouble();
-    load.cpuLoadInstant = connection.expectInt();
-
-    // reading platform
-    platform.name = connection.expectText();
-    platform.distribution = connection.expectText();
-    platform.release = connection.expectText();
-    platform.codename = connection.expectText();
-    platform.kernel = connection.expectText();
-    platform.environmentVars.fromString(connection.expectText());
-
-    // reading user
-    user.userName = connection.expectText();
-    user.realName = connection.expectText();
-    user.homeDir = connection.expectText();
-    user.userID = connection.expectInt();
-    return true;
-}
-
-
-bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
-{
-    // updating system info
-    memory = SystemInfo::getMemoryInfo();
-    storage = SystemInfo::getStorageInfo();
-    network = SystemInfo::getNetworkInfo();
-    processor = SystemInfo::getProcessorInfo();
-    platform = SystemInfo::getPlatformInfo(); 
-    load = SystemInfo::getLoadInfo();
-    user = SystemInfo::getUserInfo();    
-
-    // serializing memory
-    connection.appendInt(memory.totalSpace);
-    connection.appendInt(memory.freeSpace);
-
-    // serializing storage
-    connection.appendInt(storage.totalSpace);
-    connection.appendInt(storage.freeSpace);
-
-    // serializing network
-    connection.appendString(network.mac.c_str());
-    connection.appendString(network.ip4.c_str());
-    connection.appendString(network.ip6.c_str());
-    
-    // serializing processor
-    connection.appendString(processor.architecture.c_str());
-    connection.appendString(processor.model.c_str());
-    connection.appendString(processor.vendor.c_str());
-    connection.appendInt(processor.family);
-    connection.appendInt(processor.modelNumber);
-    connection.appendInt(processor.cores);
-    connection.appendInt(processor.siblings);
-    connection.appendDouble(processor.frequency);
-
-    // serializing load
-    connection.appendDouble(load.cpuLoad1);
-    connection.appendDouble(load.cpuLoad5);
-    connection.appendDouble(load.cpuLoad15);
-    connection.appendInt(load.cpuLoadInstant);
-
-    // serializing platform
-    connection.appendString(platform.name.c_str());
-    connection.appendString(platform.distribution.c_str());
-    connection.appendString(platform.release.c_str());
-    connection.appendString(platform.codename.c_str());
-    connection.appendString(platform.kernel.c_str());
-    connection.appendString(platform.environmentVars.toString().c_str());
-
-    // serializing user
-    connection.appendString(user.userName.c_str());
-    connection.appendString(user.realName.c_str());
-    connection.appendString(user.homeDir.c_str());
-    connection.appendInt(user.userID);
-
-    return !connection.isError();
-}
-
 

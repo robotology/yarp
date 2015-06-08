@@ -115,7 +115,9 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/YarpNameSpace.h
                  include/yarp/os/YarpPlugin.h
                  include/yarp/os/YarpPluginSelector.h
-                 include/yarp/os/YarpPluginSettings.h)
+                 include/yarp/os/YarpPluginSettings.h
+                 include/yarp/os/SystemInfo.h
+                 include/yarp/os/SystemInfoSerializer.h)
 
 if(NOT YARP_NO_DEPRECATED)
   list(APPEND YARP_OS_HDRS include/yarp/os/begin_pack_for_net.h
@@ -199,8 +201,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/StreamConnectionReader.h
                       include/yarp/os/impl/String.h
-                      include/yarp/os/impl/SystemInfo.h
-                      include/yarp/os/impl/SystemInfoSerializer.h
                       include/yarp/os/impl/TcpAcceptor.h
                       include/yarp/os/impl/TcpCarrier.h
                       include/yarp/os/impl/TcpConnector.h
@@ -315,6 +315,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/StreamConnectionReader.cpp
                  src/SystemClock.cpp
                  src/SystemInfo.cpp
+                 src/SystemInfoSerializer.cpp
                  src/TcpAcceptor.cpp
                  src/TcpCarrier.cpp
                  src/TcpConnector.cpp

@@ -24,8 +24,8 @@
 #include <yarp/os/RateThread.h>
 
 // FIXME Do not use yarp/os/impl in .h files
-#include <yarp/os/impl/SystemInfo.h>
-#include <yarp/os/impl/SystemInfoSerializer.h>
+#include <yarp/os/SystemInfo.h>
+#include <yarp/os/SystemInfoSerializer.h>
 
 #include <yarp/manager/broker.h>
 #include <yarp/manager/primresource.h>
@@ -67,7 +67,7 @@ public:
      void detachStdout(void);
 
      bool getSystemInfo(const char* server,
-                        yarp::os::impl::SystemInfoSerializer& info);
+                        yarp::os::SystemInfoSerializer& info);
      bool getAllProcesses(const char* server,
                         ProcessContainer &processes);
      bool getAllPorts(vector<std::string> &stingList);

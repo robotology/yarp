@@ -494,7 +494,7 @@ bool Manager::updateResource(GenericResource* resource)
     if(compareString(comp->getName(), "localhost"))
         return false;
 
-    yarp::os::impl::SystemInfoSerializer info;
+    yarp::os::SystemInfoSerializer info;
     string strServer = comp->getName();
     if(strServer[0] != '/')
         strServer = string("/") + strServer;
@@ -513,9 +513,9 @@ bool Manager::updateResource(GenericResource* resource)
         comp->getStorage().setTotalSpace(info.storage.totalSpace*1024);
         comp->getStorage().setFreeSpace(info.storage.freeSpace*1024);
 
-        comp->getNetwork().setIP4(info.network.ip4.c_str());
-        comp->getNetwork().setIP6(info.network.ip6.c_str());
-        comp->getNetwork().setMAC(info.network.mac.c_str());
+        //comp->getNetwork().setIP4(info.network.ip4.c_str());
+        //comp->getNetwork().setIP6(info.network.ip6.c_str());
+        //comp->getNetwork().setMAC(info.network.mac.c_str());
 
 
         comp->getProcessor().setArchitecture(info.processor.architecture.c_str());
