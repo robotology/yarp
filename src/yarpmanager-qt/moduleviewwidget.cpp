@@ -51,7 +51,7 @@ ModuleViewWidget::ModuleViewWidget(yarp::manager::Module *mod, QWidget *parent) 
         QTreeWidgetItem *type = new QTreeWidgetItem(inputsItem,QStringList() << "Type" << a.getName());
         QTreeWidgetItem *port = new QTreeWidgetItem(type,QStringList() << "Port" << a.getPort());
         QTreeWidgetItem *desc = new QTreeWidgetItem(type,QStringList() << "Description" << a.getDescription());
-        QTreeWidgetItem *req = new QTreeWidgetItem(type,QStringList() << "Description" << (a.isRequired() ? "yes" : "no"));
+        QTreeWidgetItem *req = new QTreeWidgetItem(type,QStringList() << "Required" << (a.isRequired() ? "yes" : "no"));
         Q_UNUSED(port);
         Q_UNUSED(desc);
         Q_UNUSED(req);
