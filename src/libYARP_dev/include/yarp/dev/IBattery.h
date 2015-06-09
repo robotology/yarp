@@ -13,7 +13,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
-#define VOCAB_IBATTERY VOCAB4('i','b','a','t')
+#define VOCAB_IBATTERY     VOCAB4('i','b','a','t')
+#define VOCAB_BATTERY_INFO VOCAB4('b','t','n','f')
 
 /*! \file Ibattery.h battery interface */
 namespace yarp {
@@ -35,7 +36,7 @@ public:
         BATTERY_OK_STANBY        = 0,
         BATTERY_OK_IN_CHARGE     = 1,
         BATTERY_OK_IN_USE        = 2,
-        BATTERY_ERROR            = 3,
+        BATTERY_GENERAL_ERROR    = 3,
         BATTERY_TIMEOUT          = 4,
         BATTERY_LOW_WARNING      = 5,
         BATTERY_CRITICAL_WARNING = 6
@@ -70,6 +71,13 @@ public:
     * @return true/false.
     */
     virtual bool getBatteryStatus(int &status) = 0;
+
+    /**
+    * get the battery temperature
+    * @param temprature the battery temperature
+    * @return true/false.
+    */
+    virtual bool getBatteryTemperature(double &temperature) = 0;
 
     /**
     * get the battery hardware charactestics (e.g. max voltage etc)

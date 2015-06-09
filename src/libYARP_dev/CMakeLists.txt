@@ -27,6 +27,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/GenericSensorInterfaces.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAnalogSensor.h
+                  include/yarp/dev/IBattery.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode.h
@@ -116,11 +117,15 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
 
 set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/AnalogSensorClient/AnalogSensorClient.cpp
+                        src/modules/BatteryWrapper/BatteryWrapper.cpp
+			src/modules/BatteryClient/BatteryClient.cpp
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/AnalogSensorClient/AnalogSensorClient.h
+                        src/modules/BatteryWrapper/BatteryWrapper.h
+                        src/modules/BatteryClient/BatteryClient.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
                         
@@ -161,6 +166,8 @@ set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/AnalogSensorClient)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/BatteryClient)
+
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
