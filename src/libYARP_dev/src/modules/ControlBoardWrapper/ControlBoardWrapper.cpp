@@ -2865,7 +2865,7 @@ bool ControlBoardWrapper::setMotorOutputLimit (int m, const double val) {
 }
 
 /* IRemoteVariables */
-bool ControlBoardWrapper::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle *val) {
+bool ControlBoardWrapper::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) {
     int off = device.lut[0].offset;
     int subIndex = device.lut[0].deviceEntry;
     yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
@@ -2881,7 +2881,7 @@ bool ControlBoardWrapper::getRemoteVariable(yarp::os::ConstString key, yarp::os:
     return false;
 }
 
-bool ControlBoardWrapper::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle val) {
+bool ControlBoardWrapper::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) {
     int off = device.lut[0].offset;
     int subIndex = device.lut[0].deviceEntry;
     yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);

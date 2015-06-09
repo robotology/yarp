@@ -75,6 +75,7 @@ PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
     QString title = QString("Pid Control %1 JNT:%2").arg(partname).arg(jointIndex);
     setWindowTitle(title);
 
+    connect(ui->btnRefresh, SIGNAL(clicked()), this, SLOT(onRefresh()));
     connect(ui->btnSend,SIGNAL(clicked()),this,SLOT(onSend()));
     connect(ui->btnCancel,SIGNAL(clicked()),this,SLOT(onCancel()));
 
@@ -205,7 +206,7 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
         ui->tableVariables->clear();
         ui->tableVariables->clearContents();
         ui->tableVariables->setRowCount(0);
-        int rows = ui->tableVariables->rowCount();
+        ui->tableVariables->setColumnCount(0);
         ui->tableVariables->insertColumn(0);
         ui->tableVariables->insertColumn(0);
         ui->tableVariables->setHorizontalHeaderItem(0, new QTableWidgetItem(QString("Key")));
@@ -222,7 +223,7 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
                 {
                     yarp::os::Bottle val;
                     v = keys.get(i).asString();
-                    iVar->getRemoteVariable(v, &val);
+                    iVar->getRemoteVariable(v, val);
                     ui->tableVariables->insertRow(i);
                     ui->tableVariables->setItem(i, 0, new QTableWidgetItem(QString(v.c_str())));
                     ui->tableVariables->item(i, 0)->setFlags(Qt::NoItemFlags);
@@ -232,7 +233,7 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
 
                     /*yarp::os::Bottle val;
                     v = keys.get(i).asString();
-                    iVar->getRemoteVariable(v, &val);
+                    iVar->getRemoteVariable(v, val);
                     int valsize = val.get(0).size();
                     ui->tableVariables->insertRow(i);
                     ui->tableVariables->setItem(i, 0, new QTableWidgetItem(QString(v.c_str())));
@@ -298,6 +299,11 @@ void PidDlg::initCurrent(Pid myPid)
 
     ui->tableCurrent->item(CURRENT_MAXINT, 0)->setText(QString("%1").arg((int)myPid.max_int));
     ui->tableCurrent->item(CURRENT_MAXINT, 1)->setText(QString("%1").arg((int)myPid.max_int));
+}
+
+void PidDlg::onRefresh()
+{
+    refreshPids(jointIndex);
 }
 
 void PidDlg::onSend()

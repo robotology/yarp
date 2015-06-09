@@ -32,9 +32,9 @@ public:
      */
     virtual ~IRemoteVariablesRaw() {}
 
-    virtual bool getRemoteVariableRaw(yarp::os::ConstString key, yarp::os::Bottle *val) = 0;
+    virtual bool getRemoteVariableRaw(yarp::os::ConstString key, yarp::os::Bottle& val) = 0;
 
-    virtual bool setRemoteVariableRaw(yarp::os::ConstString key, const yarp::os::Bottle val) = 0;
+    virtual bool setRemoteVariableRaw(yarp::os::ConstString key, const yarp::os::Bottle& val) = 0;
 
     virtual bool getRemoteVariablesListRaw(yarp::os::Bottle* listOfKeys) = 0;
 };
@@ -52,15 +52,16 @@ public:
      */
     virtual ~IRemoteVariables() {}
 
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle *val) = 0;
+    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) = 0;
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle val) = 0;
+    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) = 0;
 
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) = 0;
 };
 
-#define VOCAB_VARIABLE       VOCAB4('m','v','a','r')
-#define VOCAB_LIST_VARIABLES VOCAB4('l','g','v','r')
+#define VOCAB_REMOTE_VARIABILE_INTERFACE   VOCAB4('i','v','a','r')
+#define VOCAB_VARIABLE                     VOCAB4('m','v','a','r')
+#define VOCAB_LIST_VARIABLES               VOCAB4('l','v','a','r')
 
 
 #endif

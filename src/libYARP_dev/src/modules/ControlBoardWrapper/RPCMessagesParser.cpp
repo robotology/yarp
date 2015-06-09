@@ -1115,6 +1115,79 @@ void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os:
     }
 }
 
+void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if (ControlBoardWrapper_p->verbose())
+        fprintf(stderr, "Handling IRemoteCalibrator message\n");
+
+    if (!rpc_IRemoteCalibrator)
+    {
+        yError("controlBoardWrapper: I do not have a valid IRemoteCalibrator interface");
+        *ok = false;
+        return;
+    }
+
+    int code = cmd.get(0).asVocab();
+    int action = cmd.get(2).asVocab();
+
+    *ok = false;
+    *rec = true;
+    switch (code)
+    {
+        case VOCAB_SET:
+        {
+            switch (action)
+            {
+                case VOCAB_VARIABLE:
+                {
+                    Bottle btail = cmd.tail().tail().tail().tail(); // remove the first four elements
+                    string s = btail.toString();
+                    *ok = rpc_IVar->setRemoteVariable(cmd.get(3).asString(), btail);
+                }
+                break;
+
+                default:
+                {
+                    *rec = false;
+                    *ok = false;
+                } break;
+             }
+        }
+        break;
+
+        case VOCAB_GET:
+        {
+            response.clear();
+            response.addVocab(VOCAB_IS);
+            response.add(cmd.get(1));
+            double dtmp = 0.0;
+            Bottle btmp;
+
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("get command received\n");
+
+            switch (action)
+            {
+                case VOCAB_VARIABLE:
+                {
+                    *ok = rpc_IVar->getRemoteVariable(cmd.get(3).asString(), btmp);
+                    Bottle& b = response.addList();
+                    b = btmp;
+                }
+                break;
+
+                case VOCAB_LIST_VARIABLES:
+                {
+                    *ok = rpc_IVar->getRemoteVariablesList(&btmp);
+                    Bottle& b = response.addList();
+                    b = btmp;
+                }
+                break;
+            }
+        }
+    }   //end get/set switch
+}
+
 void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if(ControlBoardWrapper_p->verbose())
@@ -1273,6 +1346,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 handleRemoteCalibratorMsg(cmd, response, &rec, &ok);
             break;
 
+            case VOCAB_REMOTE_VARIABILE_INTERFACE:
+                handleRemoteVariablesMsg(cmd, response, &rec, &ok);
+            break;
+
             default:
                 // fallback for old interfaces with no specific name
                 switch (code)
@@ -1349,13 +1426,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             yWarning() << "DEPRECATED setOutpus (should be in streaming!) Check you are using the updated RemoteControlBoard class";
                             yWarning() << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] joint value";
                                 ok = false;
-                            }
-                            break;
-
-                            case VOCAB_VARIABLE:
-                            {
-                                 Bottle btail = cmd.tail().tail().tail(); // remove the first three elements
-                                 ok = rpc_IVar->setRemoteVariable(cmd.get(2).asString(), btail);
                             }
                             break;
 
@@ -2086,22 +2156,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             {
                                 ok = rpc_IPid->getOutput(cmd.get(2).asInt(), &dtmp);
                                 response.addDouble(dtmp);
-                            }
-                            break;
-
-                            case VOCAB_VARIABLE:
-                            {
-                                ok = rpc_IVar->getRemoteVariable(cmd.get(2).asString(), &btmp);
-                                Bottle& b= response.addList();
-                                b = btmp;
-                            }
-                            break;
-
-                            case VOCAB_LIST_VARIABLES:
-                            {
-                                ok = rpc_IVar->getRemoteVariablesList(&btmp);
-                                Bottle& b = response.addList();
-                                b = btmp;
                             }
                             break;
 

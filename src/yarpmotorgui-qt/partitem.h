@@ -212,6 +212,7 @@ private slots:
     void onSendTorquePid(int jointIndex, Pid newPid, MotorTorqueParameters newTorqueParam);
     void onSendStiffness(int jointIdex, double stiff, double damp, double force);
     void onSendOpenLoop(int jointIndex, int openLoopVal);
+    void onRefreshPids(int jointIndex);
 
 
 };

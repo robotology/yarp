@@ -561,6 +561,66 @@ void PartItem::onSendVelocityPid(int jointIndex, Pid newPid)
     }
 }
 
+void PartItem::onRefreshPids(int jointIndex)
+{
+    Pid myPosPid(0, 0, 0, 0, 0, 0);
+    Pid myTrqPid(0, 0, 0, 0, 0, 0);
+    Pid myVelPid(0, 0, 0, 0, 0, 0);
+    Pid myCurPid(0, 0, 0, 0, 0, 0);
+    MotorTorqueParameters motorTorqueParams;
+    double stiff_val = 0;
+    double damp_val = 0;
+    double stiff_max = 0;
+    double damp_max = 0;
+    double off_max = 0;
+    double stiff_min = 0;
+    double damp_min = 0;
+    double off_min = 0;
+    double impedance_offset_val = 0;
+    double openloop_reference = 0;
+    double openloop_current_pwm = 0;
+
+    imp->getCurrentImpedanceLimit(jointIndex, &stiff_min, &stiff_max, &damp_min, &damp_max);
+    trq->getTorqueRange(jointIndex, &off_min, &off_max);
+
+    // Position
+    pid->getPid(jointIndex, &myPosPid);
+    yarp::os::Time::delay(0.005);
+
+    // Velocity
+    iVel->getVelPid(jointIndex, &myVelPid);
+    yarp::os::Time::delay(0.005);
+
+    // Current
+    //???????iCur->getCurPid(jointIndex, &myCurPid);
+    yarp::os::Time::delay(0.005);
+
+    // Torque
+    trq->getTorquePid(jointIndex, &myTrqPid);
+    trq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
+    yarp::os::Time::delay(0.005);
+
+    //Stiff
+    imp->getImpedance(jointIndex, &stiff_val, &damp_val);
+    imp->getImpedanceOffset(jointIndex, &impedance_offset_val);
+    yarp::os::Time::delay(0.005);
+
+    // Openloop
+    opl->getRefOutput(jointIndex, &openloop_reference);
+    opl->getOutput(jointIndex, &openloop_current_pwm);
+
+    if (currentPidDlg)
+    {
+        currentPidDlg->initPosition(myPosPid);
+        currentPidDlg->initTorque(myTrqPid, motorTorqueParams);
+        currentPidDlg->initVelocity(myVelPid);
+        currentPidDlg->initCurrent(myCurPid);
+        currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max, impedance_offset_val, off_min, off_max);
+        currentPidDlg->initOpenLoop(openloop_reference, openloop_current_pwm);
+        currentPidDlg->initRemoteVariables(iVar);
+    }
+}
+
 void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
 {
     Pid myCurPid(0, 0, 0, 0, 0, 0);
@@ -623,54 +683,9 @@ void PartItem::onPidClicked(JointItem *joint)
     connect(currentPidDlg,SIGNAL(sendTorquePid(int,Pid,MotorTorqueParameters)),this,SLOT(onSendTorquePid(int,Pid,MotorTorqueParameters)));
     connect(currentPidDlg,SIGNAL(sendStiffness(int,double,double,double)),this,SLOT(onSendStiffness(int,double,double,double)));
     connect(currentPidDlg,SIGNAL(sendOpenLoop(int,int)),this,SLOT(onSendOpenLoop(int,int)));
+    connect(currentPidDlg, SIGNAL(refreshPids(int)), this, SLOT(onRefreshPids(int)));
 
-    Pid myPosPid(0,0,0,0,0,0);
-    Pid myTrqPid(0,0,0,0,0,0);
-    Pid myVelPid(0,0,0,0,0,0);
-    Pid myCurPid(0,0,0,0,0,0);
-    MotorTorqueParameters motorTorqueParams;
-    double stiff_val=0;
-    double damp_val=0;
-    double stiff_max=0;
-    double damp_max=0;
-    double off_max=0;
-    double stiff_min=0;
-    double damp_min=0;
-    double off_min=0;
-    double impedance_offset_val=0;
-    double openloop_reference=0;
-    double openloop_current_pwm=0;
-
-
-    imp->getCurrentImpedanceLimit(jointIndex, &stiff_min, &stiff_max, &damp_min, &damp_max);
-    trq->getTorqueRange(jointIndex, &off_min, &off_max);
-
-    // Position
-    pid->getPid(jointIndex, &myPosPid);
-    yarp::os::Time::delay(0.005);
-
-    // Velocity
-    iVel->getVelPid(jointIndex, &myVelPid);
-    yarp::os::Time::delay(0.005);
-
-    // Current
-    //???????iCur->getCurPid(jointIndex, &myCurPid);
-    yarp::os::Time::delay(0.005);
-
-    // Torque
-    trq->getTorquePid(jointIndex, &myTrqPid);
-    trq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
-    yarp::os::Time::delay(0.005);
-
-    //Stiff
-    imp->getImpedance(jointIndex, &stiff_val, &damp_val);
-    imp->getImpedanceOffset(jointIndex, &impedance_offset_val);
-    yarp::os::Time::delay(0.005);
-
-    // Openloop
-    opl->getRefOutput(jointIndex,&openloop_reference);
-    opl->getOutput(jointIndex, &openloop_current_pwm);
-
+    this->onRefreshPids(jointIndex);
 
 #ifdef DEBUG_INTERFACE
     // Debug
@@ -692,18 +707,6 @@ void PartItem::onPidClicked(JointItem *joint)
         LOG_ERROR("WARN: Debug interface not enabled.\n");
     }
 #endif
-
-    currentPidDlg->initPosition(myPosPid);
-    currentPidDlg->initTorque(myTrqPid,motorTorqueParams);
-    currentPidDlg->initVelocity(myVelPid);
-    currentPidDlg->initCurrent(myCurPid);
-    currentPidDlg->initStiffness(stiff_val,stiff_min,stiff_max,
-                      damp_val,damp_min,damp_max,
-                      impedance_offset_val,off_min,off_max);
-
-    currentPidDlg->initOpenLoop(openloop_reference,openloop_current_pwm);
-    currentPidDlg->initRemoteVariables(iVar);
-
 
     currentPidDlg->exec();
 

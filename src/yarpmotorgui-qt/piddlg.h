@@ -53,6 +53,7 @@ signals:
     void sendOpenLoop(int jointIndex,int openLoopVal);
     void sendCurrentPid(int jointIndex, Pid pid);
     void sendSingleRemoteVariable(std::string key, yarp::os::Bottle val);
+    void refreshPids(int jointIndex);
     void updateAllRemoteVariables();
 
 private:
@@ -60,6 +61,7 @@ private:
     int jointIndex;
 
 private slots:
+    void onRefresh();
     void onSend();
     void onCancel();
 

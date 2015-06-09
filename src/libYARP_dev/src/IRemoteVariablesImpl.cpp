@@ -60,14 +60,14 @@ bool ImplementRemoteVariables::uninitialize()
     return true;
 }
 
-bool ImplementRemoteVariables::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle *val)
+bool ImplementRemoteVariables::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val)
 {
     bool ret;
     ret = ivar->getRemoteVariableRaw(key, val);
     return ret;
 }
 
-bool ImplementRemoteVariables::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle val)
+bool ImplementRemoteVariables::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val)
 {
     bool ret;
     ret = ivar->setRemoteVariableRaw(key, val);

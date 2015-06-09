@@ -1770,23 +1770,25 @@ public:
     }
 
     /* IRemoteVariable */
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle *val) {
+    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
         cmd.addVocab(VOCAB_VARIABLE);
         cmd.addString(key);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response))
         {
-            *val = *(response.get(2).asList());
+            val = *(response.get(2).asList());
             return true;
         }
         return false;
     }
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle val) {
+    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
         cmd.addVocab(VOCAB_VARIABLE);
         cmd.addString(key);
         cmd.append(val);
@@ -1800,6 +1802,7 @@ public:
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
         cmd.addVocab(VOCAB_LIST_VARIABLES);
         bool ok = rpc_p.write(cmd, response);
         //std::string s = response.toString();

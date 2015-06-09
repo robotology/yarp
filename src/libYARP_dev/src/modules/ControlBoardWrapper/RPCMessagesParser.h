@@ -137,6 +137,8 @@ public:
 
     void handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
 
+    void handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
+
     /**
     * Initialize the internal data.
     * @return true/false on success/failure
