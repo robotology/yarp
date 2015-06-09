@@ -42,6 +42,7 @@ public:
                        double curDampVal, double minDamp, double maxDamp,
                        double curForceVal, double minForce, double maxForce);
     void initOpenLoop(double openLoopVal, double pwm);
+    void initRemoteVariables(IRemoteVariables* iVar);
 
 
 signals:
@@ -51,12 +52,16 @@ signals:
     void sendTorquePid(int jointIndex,Pid,MotorTorqueParameters newTorqueParam);
     void sendOpenLoop(int jointIndex,int openLoopVal);
     void sendCurrentPid(int jointIndex, Pid pid);
+    void sendSingleRemoteVariable(std::string key, yarp::os::Bottle val);
+    void refreshPids(int jointIndex);
+    void updateAllRemoteVariables();
 
 private:
     Ui::PidDlg *ui;
     int jointIndex;
 
 private slots:
+    void onRefresh();
     void onSend();
     void onCancel();
 
@@ -90,6 +95,19 @@ public:
         // Set validator
         QDoubleValidator *validator = new QDoubleValidator(-100000, 100000, 4,lineEdit);
         lineEdit->setValidator(validator);
+        return lineEdit;
+    }
+};
+
+class TableGenericDelegate : public QItemDelegate
+{
+public:
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem & option,
+        const QModelIndex & index) const
+    {
+        Q_UNUSED(option);
+        Q_UNUSED(index);
+        QLineEdit *lineEdit = new QLineEdit(parent);
         return lineEdit;
     }
 };

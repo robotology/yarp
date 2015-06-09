@@ -122,6 +122,7 @@ private:
     IPositionControl *pos;
     IPositionDirect  *iDir;
     IVelocityControl2 *iVel;
+    IRemoteVariables *iVar;
     IEncoders *iencs;
     IAmplifierControl *amp;
     IPidControl *pid;
@@ -206,9 +207,12 @@ private slots:
     void onSendPositionPid(int jointIndex, Pid newPid);
     void onSendVelocityPid(int jointIndex, Pid newPid);
     void onSendCurrentPid(int jointIndex, Pid newPid);
+    void onSendSingleRemoteVariable(std::string key, yarp::os::Bottle val);
+    void onUpdateAllRemoteVariables();
     void onSendTorquePid(int jointIndex, Pid newPid, MotorTorqueParameters newTorqueParam);
     void onSendStiffness(int jointIdex, double stiff, double damp, double force);
     void onSendOpenLoop(int jointIndex, int openLoopVal);
+    void onRefreshPids(int jointIndex);
 
 
 };

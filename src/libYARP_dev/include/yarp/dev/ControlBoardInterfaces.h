@@ -30,6 +30,7 @@
 #include <yarp/dev/IInteractionMode.h>
 #include <yarp/dev/IMotorEncoders.h>
 #include <yarp/dev/IMotor.h>
+#include <yarp/dev/IRemoteVariables.h>
 
 namespace yarp {
     namespace dev {

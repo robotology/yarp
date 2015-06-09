@@ -269,7 +269,8 @@ class yarp::dev::RemoteControlBoard :
     public DeviceDriver,
     public IPositionDirect,
     public IInteractionMode,
-    public IRemoteCalibrator
+    public IRemoteCalibrator,
+    public IRemoteVariables
 {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -1766,6 +1767,52 @@ public:
 
             return ret;
         }
+    }
+
+    /* IRemoteVariable */
+    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
+        cmd.addVocab(VOCAB_VARIABLE);
+        cmd.addString(key);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response))
+        {
+            val = *(response.get(2).asList());
+            return true;
+        }
+        return false;
+    }
+
+    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
+        cmd.addVocab(VOCAB_VARIABLE);
+        cmd.addString(key);
+        cmd.append(val);
+        //std::string s = cmd.toString();
+        bool ok = rpc_p.write(cmd, response);
+
+        return CHECK_FAIL(ok, response);
+    }
+
+
+    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
+        cmd.addVocab(VOCAB_LIST_VARIABLES);
+        bool ok = rpc_p.write(cmd, response);
+        //std::string s = response.toString();
+        if (CHECK_FAIL(ok, response))
+        {
+            *listOfKeys = *(response.get(2).asList());
+            //std::string s = listOfKeys->toString();
+            return true;
+        }
+        return false;
     }
 
     /* IMotor */

@@ -1115,6 +1115,79 @@ void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os:
     }
 }
 
+void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if (ControlBoardWrapper_p->verbose())
+        fprintf(stderr, "Handling IRemoteCalibrator message\n");
+
+    if (!rpc_IRemoteCalibrator)
+    {
+        yError("controlBoardWrapper: I do not have a valid IRemoteCalibrator interface");
+        *ok = false;
+        return;
+    }
+
+    int code = cmd.get(0).asVocab();
+    int action = cmd.get(2).asVocab();
+
+    *ok = false;
+    *rec = true;
+    switch (code)
+    {
+        case VOCAB_SET:
+        {
+            switch (action)
+            {
+                case VOCAB_VARIABLE:
+                {
+                    Bottle btail = cmd.tail().tail().tail().tail(); // remove the first four elements
+                    string s = btail.toString();
+                    *ok = rpc_IVar->setRemoteVariable(cmd.get(3).asString(), btail);
+                }
+                break;
+
+                default:
+                {
+                    *rec = false;
+                    *ok = false;
+                } break;
+             }
+        }
+        break;
+
+        case VOCAB_GET:
+        {
+            response.clear();
+            response.addVocab(VOCAB_IS);
+            response.add(cmd.get(1));
+            double dtmp = 0.0;
+            Bottle btmp;
+
+            if (ControlBoardWrapper_p->verbose())
+                yDebug("get command received\n");
+
+            switch (action)
+            {
+                case VOCAB_VARIABLE:
+                {
+                    *ok = rpc_IVar->getRemoteVariable(cmd.get(3).asString(), btmp);
+                    Bottle& b = response.addList();
+                    b = btmp;
+                }
+                break;
+
+                case VOCAB_LIST_VARIABLES:
+                {
+                    *ok = rpc_IVar->getRemoteVariablesList(&btmp);
+                    Bottle& b = response.addList();
+                    b = btmp;
+                }
+                break;
+            }
+        }
+    }   //end get/set switch
+}
+
 void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if(ControlBoardWrapper_p->verbose())
@@ -1271,6 +1344,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
             case VOCAB_REMOTE_CALIBRATOR_INTERFACE:
                 handleRemoteCalibratorMsg(cmd, response, &rec, &ok);
+            break;
+
+            case VOCAB_REMOTE_VARIABILE_INTERFACE:
+                handleRemoteVariablesMsg(cmd, response, &rec, &ok);
             break;
 
             default:
@@ -2010,6 +2087,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             yDebug("get command received\n");
 
                         double dtmp = 0.0;
+                        Bottle btmp;
                         response.addVocab(VOCAB_IS);
                         response.add(cmd.get(1));
 
@@ -2620,6 +2698,7 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_IEncTimed         = dynamic_cast<yarp::dev::IEncodersTimed *>       (ControlBoardWrapper_p);
     rpc_IMotEnc           = dynamic_cast<yarp::dev::IMotorEncoders *>       (ControlBoardWrapper_p);
     rpc_IMotor            = dynamic_cast<yarp::dev::IMotor *>               (ControlBoardWrapper_p);
+    rpc_IVar              = dynamic_cast<yarp::dev::IRemoteVariables *>     (ControlBoardWrapper_p);
     rcp_IAmp              = dynamic_cast<yarp::dev::IAmplifierControl *>    (ControlBoardWrapper_p);
     rcp_Ilim2             = dynamic_cast<yarp::dev::IControlLimits2 *>      (ControlBoardWrapper_p);
     rpc_AxisInfo          = dynamic_cast<yarp::dev::IAxisInfo *>            (ControlBoardWrapper_p);
