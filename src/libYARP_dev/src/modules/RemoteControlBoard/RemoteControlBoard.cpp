@@ -3868,7 +3868,7 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if(ok)
         {
-            *isCalib = (bool) response.get(2).asInt();
+            *isCalib = response.get(2).asInt()!=0;
         }
         else
         {
