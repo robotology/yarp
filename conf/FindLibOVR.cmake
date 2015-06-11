@@ -100,32 +100,32 @@ find_path(LibOVR_LibOVR_Extras_INCLUDE_DIR "OVR_Math.h")
 mark_as_advanced(LibOVR_LibOVR_Extras_INCLUDE_DIR)
 
 find_library(LibOVR_LibOVRKernel_LIBRARY_RELEASE
-             NAMES OVRKernel
+             NAMES OVRKernel LibOVRKernel
              PATHS ENV OculusSDK_ROOT
              NO_DEFAULT_PATH
              PATH_SUFFIXES "LibOVRKernel/Lib/${_os}/Release/${_arch}")
 find_library(LibOVR_LibOVRKernel_LIBRARY_RELEASE
-             NAMES OVRKernel)
+             NAMES OVRKernel LibOVRKernel)
 mark_as_advanced(LibOVR_LibOVRKernel_LIBRARY_RELEASE)
 
 find_library(LibOVR_LibOVRKernel_LIBRARY_DEBUG
-             NAMES OVRKernel
+             NAMES OVRKernel LibOVRKernel
              PATHS ENV OculusSDK_ROOT
              NO_DEFAULT_PATH
              PATH_SUFFIXES "LibOVRKernel/Lib/${_os}/Debug/${_arch}")
 mark_as_advanced(LibOVR_LibOVRKernel_LIBRARY_DEBUG)
 
 find_library(LibOVR_LibOVR_LIBRARY_RELEASE
-             NAMES OVR
+             NAMES OVR LibOVR
              PATHS ENV OculusSDK_ROOT
              NO_DEFAULT_PATH
              PATH_SUFFIXES "LibOVR/Lib/${_os}/Release/${_arch}")
 find_library(LibOVR_LibOVR_LIBRARY_RELEASE
-             NAMES OVR)
+             NAMES OVR LibOVR)
 mark_as_advanced(LibOVR_LibOVR_LIBRARY_RELEASE)
 
 find_library(LibOVR_LibOVR_LIBRARY_DEBUG
-             NAMES OVR
+             NAMES OVR LibOVR
              PATHS ENV OculusSDK_ROOT
              NO_DEFAULT_PATH
              PATH_SUFFIXES "LibOVR/Lib/${_os}/Debug/${_arch}")
