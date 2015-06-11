@@ -147,13 +147,6 @@ select_library_configurations(LibOVR_LibOVRKernel)
 select_library_configurations(LibOVR_LibOVR)
 
 
-set(LibOVR_INCLUDE_DIRS "${LibOVR_LibOVR_INCLUDE_DIR}"
-                        "${LibOVR_LibOVR_Extras_INCLUDE_DIR}"
-                        "${LibOVR_LibOVRKernel_INCLUDE_DIR}"
-                        "${LibOVR_LibOVRKernel_INCLUDE_DIR}}/Kernel")
-set(LibOVR_LIBRARIES "${LibOVR_LibOVR_LIBRARY}"
-                     "${LibOVR_LibOVRKernel_LIBRARY}")
-
 
 if(EXISTS "${LibOVR_LibOVR_INCLUDE_DIR}/OVR_Version.h")
   file(STRINGS "${LibOVR_LibOVR_INCLUDE_DIR}/OVR_Version.h" _contents
@@ -171,19 +164,38 @@ if(EXISTS "${LibOVR_LibOVR_INCLUDE_DIR}/OVR_Version.h")
   set(LibOVR_VERSION_DETAILED_STRING "${LibOVR_VERSION}.${LibOVR_VERSION_BUILD}")
 endif()
 
+
+
+set(LibOVR_INCLUDE_DIRS "${LibOVR_LibOVR_INCLUDE_DIR}"
+                        "${LibOVR_LibOVR_Extras_INCLUDE_DIR}"
+                        "${LibOVR_LibOVRKernel_INCLUDE_DIR}"
+                        "${LibOVR_LibOVRKernel_INCLUDE_DIR}}/Kernel")
+set(LibOVR_LIBRARIES "${LibOVR_LibOVR_LIBRARY}"
+                     "${LibOVR_LibOVRKernel_LIBRARY}")
+
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(LibOVR
+                                  FOUND_VAR LibOVR_FOUND
+                                  REQUIRED_VARS LibOVR_LIBRARIES
+                                                LibOVR_INCLUDE_DIRS
+                                  VERSION_VAR LibOVR_VERSION_STRING)
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(LibOVR PROPERTIES DESCRIPTION "Oculus Virtual Reality Library"
+                                             URL "https://developer.oculus.com/")
+endif()
+
+if(NOT LibOVR_FOUND)
+  return()
+endif()
+
 # Create imported target LibOVR::OVRKernel
 add_library(LibOVR::OVRKernel STATIC IMPORTED)
 set_target_properties(LibOVR::OVRKernel PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${LibOVR_LibOVRKernel_INCLUDE_DIR};${LibOVR_LibOVRKernel_INCLUDE_DIR}/Kernel"
 )
-
-# Create imported target LibOVR::OVR
-add_library(LibOVR::OVR STATIC IMPORTED)
-set_target_properties(LibOVR::OVR PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${LibOVR_LibOVR_INCLUDE_DIR};${LibOVR_LibOVR_Extras_INCLUDE_DIR}"
-  INTERFACE_LINK_LIBRARIES "LibOVR::OVRKernel"
-)
-
 # Import target "LibOVR::OVRKernel" for configuration "Debug"
 if(EXISTS "${LibOVR_LibOVRKernel_LIBRARY_DEBUG}")
   set_property(TARGET LibOVR::OVRKernel APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
@@ -202,6 +214,13 @@ if(EXISTS "${LibOVR_LibOVRKernel_LIBRARY_RELEASE}")
     )
 endif()
 
+# Create imported target LibOVR::OVR
+add_library(LibOVR::OVR STATIC IMPORTED)
+set_target_properties(LibOVR::OVR PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "${LibOVR_LibOVR_INCLUDE_DIR};${LibOVR_LibOVR_Extras_INCLUDE_DIR}"
+  INTERFACE_LINK_LIBRARIES "LibOVR::OVRKernel"
+  )
+
 # Import target "LibOVR::OVR" for configuration "Debug"
 if(EXISTS "${LibOVR_LibOVR_LIBRARY_DEBUG}")
   set_property(TARGET LibOVR::OVR APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
@@ -219,13 +238,6 @@ if(EXISTS "${LibOVR_LibOVR_LIBRARY_RELEASE}")
     IMPORTED_LOCATION_RELEASE "${LibOVR_LibOVR_LIBRARY_RELEASE}"
     )
 endif()
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(LibOVR
-                                  FOUND_VAR LibOVR_FOUND
-                                  REQUIRED_VARS LibOVR_LIBRARIES
-                                                LibOVR_INCLUDE_DIRS
-                                  VERSION_VAR LibOVR_VERSION_STRING)
 
 if(FindLibOVR_DEBUG)
   include(CMakePrintHelpers)
