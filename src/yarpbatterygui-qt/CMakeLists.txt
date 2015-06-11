@@ -20,11 +20,11 @@ if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
                            display.cpp)
   set(yarpbatterygui_qt_HDRS display.h)
 
-  #set(yarpbatterygui_qt_QRC_FILES res.qrc)
+  set(yarpbatterygui_qt_QRC_FILES res.qrc)
 
   set(yarpbatterygui_qt_UI_FILES display.ui)
 
-  #qt5_add_resources(yarpbatterygui_qt_QRC_GEN_SRCS ${yarpbatterygui_qt_QRC_FILES})
+  qt5_add_resources(yarpbatterygui_qt_QRC_GEN_SRCS ${yarpbatterygui_qt_QRC_FILES})
   
   qt5_wrap_ui(yarpbatterygui_qt_UI_GEN_SRCS ${yarpbatterygui_qt_UI_FILES})
 

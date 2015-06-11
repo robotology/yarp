@@ -40,11 +40,11 @@ int main(int argc, char *argv[])
 
     Network yarp;
 
-    if (!yarp.checkNetwork())
+    /*if (!yarp.checkNetwork())
     {
         yError("Error initializing yarp network (is yarpserver running?)");
         return 0;
-    }
+    }*/
 
     ResourceFinder rf;
     rf.setVerbose(true);

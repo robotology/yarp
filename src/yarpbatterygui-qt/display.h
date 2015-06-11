@@ -37,10 +37,18 @@ public:
     yarp::os::Network                yarp;
     yarp::dev::IBattery*             ibat;
     yarp::dev::PolyDriver*           drv;
+    QGraphicsScene*                  scene;
 
 private:
-    Ui_BatteryDlg                    *ui;
+    Ui_MainWindow                    *ui;
     QTimer*                          mainTimer;
+
+    QPixmap                          img_background1;
+    QPixmap                          img_background2;
+    QPixmap                          img_blocks;
+    QPixmap                          img_charge;
+    QPixmap                          img_numbers;
+    bool                             connected;
 };
 
 /*
