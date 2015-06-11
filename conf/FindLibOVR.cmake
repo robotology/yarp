@@ -82,21 +82,27 @@ find_path(LibOVR_LibOVRKernel_INCLUDE_DIR "Kernel/OVR_Types.h"
           NO_DEFAULT_PATH
           PATHS ENV OculusSDK_ROOT
           PATH_SUFFIXES "LibOVRKernel/Src")
-find_path(LibOVR_LibOVRKernel_INCLUDE_DIR "Kernel/OVR_Types.h")
+find_path(LibOVR_LibOVRKernel_INCLUDE_DIR "Kernel/OVR_Types.h"
+          PATHS ENV OculusSDK_ROOT
+          PATH_SUFFIXES "include")
 mark_as_advanced(LibOVR_LibOVRKernel_INCLUDE_DIR)
 
 find_path(LibOVR_LibOVR_INCLUDE_DIR "OVR_Version.h"
           NO_DEFAULT_PATH
           PATHS ENV OculusSDK_ROOT
           PATH_SUFFIXES "LibOVR/Include")
-find_path(LibOVR_LibOVR_INCLUDE_DIR "OVR_Version.h")
+find_path(LibOVR_LibOVR_INCLUDE_DIR "OVR_Version.h"
+          PATHS ENV OculusSDK_ROOT
+          PATH_SUFFIXES "include")
 mark_as_advanced(LibOVR_LibOVR_INCLUDE_DIR)
 
 find_path(LibOVR_LibOVR_Extras_INCLUDE_DIR "OVR_Math.h"
           NO_DEFAULT_PATH
           PATHS ENV OculusSDK_ROOT
           PATH_SUFFIXES "LibOVR/Include/Extras")
-find_path(LibOVR_LibOVR_Extras_INCLUDE_DIR "OVR_Math.h")
+find_path(LibOVR_LibOVR_Extras_INCLUDE_DIR "OVR_Math.h"
+          PATHS ENV OculusSDK_ROOT
+          PATH_SUFFIXES "include/Extras")
 mark_as_advanced(LibOVR_LibOVR_Extras_INCLUDE_DIR)
 
 find_library(LibOVR_LibOVRKernel_LIBRARY_RELEASE
@@ -105,7 +111,9 @@ find_library(LibOVR_LibOVRKernel_LIBRARY_RELEASE
              NO_DEFAULT_PATH
              PATH_SUFFIXES "LibOVRKernel/Lib/${_os}/Release/${_arch}")
 find_library(LibOVR_LibOVRKernel_LIBRARY_RELEASE
-             NAMES OVRKernel LibOVRKernel)
+             NAMES OVRKernel LibOVRKernel
+             PATHS ENV OculusSDK_ROOT
+             PATH_SUFFIXES "lib")
 mark_as_advanced(LibOVR_LibOVRKernel_LIBRARY_RELEASE)
 
 find_library(LibOVR_LibOVRKernel_LIBRARY_DEBUG
@@ -121,7 +129,9 @@ find_library(LibOVR_LibOVR_LIBRARY_RELEASE
              NO_DEFAULT_PATH
              PATH_SUFFIXES "LibOVR/Lib/${_os}/Release/${_arch}")
 find_library(LibOVR_LibOVR_LIBRARY_RELEASE
-             NAMES OVR LibOVR)
+             NAMES OVR LibOVR
+             PATHS ENV OculusSDK_ROOT
+             PATH_SUFFIXES "lib")
 mark_as_advanced(LibOVR_LibOVR_LIBRARY_RELEASE)
 
 find_library(LibOVR_LibOVR_LIBRARY_DEBUG
