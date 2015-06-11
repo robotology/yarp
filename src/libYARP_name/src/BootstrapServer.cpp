@@ -197,13 +197,13 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
     if (changed && !mayEditConfigFile) {
         fprintf(stderr,"PROBLEM: need to change settings in %s\n",
                 conf.getConfigFileName().c_str());
-        fprintf(stderr,"  Previous settings: host %s port %d family %s\n",
+        fprintf(stderr,"  Current settings: host %s port %d family %s\n",
                 prev.getHost().c_str(), prev.getPort(), 
                 (conf.getMode()=="")?"yarp":conf.getMode().c_str());
         fprintf(stderr,"  Desired settings:  host %s port %d family %s\n",
                 suggest.getHost().c_str(), suggest.getPort(), "yarp");
-        fprintf(stderr,"Please specify '--write' if it is ok to overwrite old settings, or\n");
-        fprintf(stderr,"Please specify '--read' to use the existing settings, or\n");
+        fprintf(stderr,"Please specify '--write' if it is ok to overwrite current settings, or\n");
+        fprintf(stderr,"Please specify '--read' to use the current settings, or\n");
         fprintf(stderr,"delete %s\n", conf.getConfigFileName().c_str());
         return false;
     }
