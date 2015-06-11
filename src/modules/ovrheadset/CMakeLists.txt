@@ -31,7 +31,6 @@ if(NOT SKIP_yarpmod_ovrheadset)
 
   target_link_libraries(yarp_ovrheadset LibOVR::OVR
                                         YARP_OS
-                                        YARP_init
                                         YARP_sig
                                         YARP_dev
                                         GLEW::GLEW
