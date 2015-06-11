@@ -40,6 +40,11 @@
 #include <OVR_CAPI_GL.h>
 
 
+#ifdef check
+// Undefine the check macro in AssertMacros.h on OSX or the "cfg.check"
+// call will fail compiling.
+#undef check
+#endif
 
 
 #define checkGlErrorMacro yarp::dev::OVRHeadset::checkGlError(__FILE__, __LINE__)
