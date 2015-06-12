@@ -30,7 +30,8 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
-
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/sig/Image.h>
 
 #include <stdio.h>
@@ -77,6 +78,9 @@ bool OpenCVGrabber::open(Searchable & config) {
 
     m_saidSize = false;
     m_saidResize = false;
+    m_transpose = false;
+    m_flip_x = false;
+    m_flip_y = false;
 
     // Are we capturing from a file or a camera ?
     ConstString file = config.check("movie", Value(""),
@@ -87,8 +91,7 @@ bool OpenCVGrabber::open(Searchable & config) {
         // Try to open a capture object for the file
         m_capture = (void*)cvCaptureFromAVI(file.c_str());
         if (0 == m_capture) {
-            printf("Unable to open file '%s' for capture!\n",
-                   file.c_str());
+            yError("Unable to open file '%s' for capture!", file.c_str());
             return false;
         }
 
@@ -107,7 +110,7 @@ bool OpenCVGrabber::open(Searchable & config) {
         // Try to open a capture object for the first camera
         m_capture = (void*)cvCaptureFromCAM(camera_idx);
         if (0 == m_capture) {
-            printf("Unable to open camera for capture!\n");
+            yError("Unable to open camera for capture!");
             return false;
         }
 
@@ -117,7 +120,9 @@ bool OpenCVGrabber::open(Searchable & config) {
                                  CV_CAP_PROP_FPS,m_fps);
         }
 
-
+        if (config.check("flip_x", "if present, flip the image along the x-axis"))         m_flip_x = true;
+        if (config.check("flip_y", "if present, flip the image along the y-axis"))         m_flip_y = true;
+        if (config.check("transpose", "if present, rotate the image along of 90 degrees")) m_transpose = true;
     }
 
 
@@ -147,10 +152,9 @@ bool OpenCVGrabber::open(Searchable & config) {
 
 
     // Ignore capture properties - they are unreliable
-    //    printf("Capture properties: %ld x %ld pixels @ %lf frames/sec.\n",
-    //        m_w, m_h, cvGetCaptureProperty(m_capture, CV_CAP_PROP_FPS));
+    // yDebug("Capture properties: %ld x %ld pixels @ %lf frames/sec.", m_w, m_h, cvGetCaptureProperty(m_capture, CV_CAP_PROP_FPS));
 
-    fprintf(stderr, "-->OpenCVGrabber opened\n");
+    yInfo("OpenCVGrabber opened");
     // Success!
 
     // save our configuration for future reference
@@ -190,39 +194,14 @@ bool OpenCVGrabber::close() {
  * returned, the image will be resized to the dimensions used by
  * the grabber, but all pixels will be zeroed.
  */
-bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
-
-    //fprintf(stderr, "-->getImage123\n");
-
-    // Must have a capture object
-    if (0 == m_capture) {
-        image.zero(); return false;
-    }
-
-    //fprintf(stderr, "-->HERE1\n");
-    // Grab and retrieve a frame, OpenCV owns the returned image
-    IplImage * iplFrame = cvQueryFrame((CvCapture*)m_capture);
-    //fprintf(stderr, "-->HERE2\n");
-
-    if (0 == iplFrame && m_loop) {
-        bool ok = open(m_config);
-        if (!ok) return false;
-        iplFrame = cvQueryFrame((CvCapture*)m_capture);
-    }
-
-    if (0 == iplFrame) {
-        image.zero(); return false;
-    }
-
-    //fprintf(stderr, "-->HERE3\n");
-
+bool OpenCVGrabber::sendImage(IplImage* iplFrame, ImageOf<PixelRgb> & image)
+{
     // Resize the output image, this should not result in new
     // memory allocation if the image is already the correct size
     image.resize(iplFrame->width, iplFrame->height);
 
     if (!m_saidSize) {
-        printf("Received image of size %dx%d\n", 
-               image.width(), image.height());
+        yDebug("Received image of size %dx%d\n", image.width(), image.height());
         m_saidSize = true;
     }
 
@@ -236,35 +215,94 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
     else
         cvFlip(iplFrame, iplImage, 0);
 
-    if (iplFrame->channelSeq[0]=='B') {
+    if (iplFrame->channelSeq[0] == 'B') {
         cvCvtColor(iplImage, iplImage, CV_BGR2RGB);
     }
 
-    if (m_w<=0) {
+    if (m_w <= 0) {
         m_w = image.width();
     }
-    if (m_h<=0) {
+    if (m_h <= 0) {
         m_h = image.height();
     }
     if (fromFile) {
-        if (m_w>0&&m_h>0) {
-            if (image.width()!=m_w || image.height()!=m_h) {
+        if (m_w>0 && m_h>0) {
+            if (image.width() != m_w || image.height() != m_h) {
                 if (!m_saidResize) {
-                    printf("Software scaling from %dx%d to %dx%d\n", 
-                           image.width(), image.height(),
-                           m_w, m_h);
+                    yDebug("Software scaling from %dx%d to %dx%d",  image.width(), image.height(), m_w, m_h);
                     m_saidResize = true;
                 }
-                image.copy(image,m_w,m_h);
+                image.copy(image, m_w, m_h);
             }
         }
     }
 
-    DBG printf("%d by %d %s image\n", image.width(), image.height(),
-               iplFrame->channelSeq);
-    // That's it
+    DBG yDebug("%d by %d %s image\n", image.width(), image.height(), iplFrame->channelSeq);
+
     return true;
 
+}
+
+bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
+
+    //yTrace("-->getImage123");
+
+    // Must have a capture object
+    if (0 == m_capture) {
+        image.zero(); return false;
+    }
+
+    //yTrace("-->HERE1");
+    // Grab and retrieve a frame, OpenCV owns the returned image
+    IplImage * iplFrame = cvQueryFrame((CvCapture*)m_capture);
+    //yTrace("-->HERE2");
+
+    if (0 == iplFrame && m_loop) {
+        bool ok = open(m_config);
+        if (!ok) return false;
+        iplFrame = cvQueryFrame((CvCapture*)m_capture);
+    }
+
+    if (0 == iplFrame) {
+        image.zero(); return false;
+    }
+    
+    if (m_transpose == false && m_flip_x == false && m_flip_y == false)
+    {
+        return sendImage(iplFrame, image);
+    }
+
+    IplImage * iplFrame_out;
+    if (m_transpose)
+    {
+        iplFrame_out = cvCreateImage(cvSize(iplFrame->height, iplFrame->width), iplFrame->depth, iplFrame->nChannels);
+        cvTranspose(iplFrame, iplFrame_out);
+    }
+    else
+    {
+        iplFrame_out = cvCreateImage(cvSize(iplFrame->width, iplFrame->height), iplFrame->depth, iplFrame->nChannels);
+        cvCopy(iplFrame, iplFrame_out);
+    }
+
+    if (m_flip_x && m_flip_y)
+    {
+        cvFlip(iplFrame_out, 0, -1);
+    }
+    else
+    {
+        if (m_flip_x)
+        {
+            cvFlip(iplFrame_out, 0, 0);
+        }
+        else if (m_flip_y)
+        {
+            cvFlip(iplFrame_out, 0, 1);
+        }
+    }
+    bool ret = sendImage(iplFrame_out, image);
+    cvReleaseImage(&iplFrame_out);
+
+    return ret;
 }
 
 

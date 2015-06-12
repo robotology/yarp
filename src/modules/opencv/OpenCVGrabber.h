@@ -31,6 +31,17 @@ namespace yarp {
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
 
+#ifdef YARP2_WINDOWS
+#include <cv.h>
+#include <highgui.h>
+#else
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
+#endif
+
+
+#include <OpenCVGrabber.h>
+
 /**
  * @ingroup dev_impl_media
  *
@@ -63,6 +74,7 @@ public:
     virtual bool close();
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
+    virtual bool sendImage(IplImage* iplFrame, yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
 
 
     /** Get the height of images a grabber produces.
@@ -92,6 +104,11 @@ protected:
 
     /** Opaque OpenCV structure for image capture. */
     void * m_capture;
+
+    /* optional image modifiers */
+    bool m_transpose;
+    bool m_flip_x;
+    bool m_flip_y;
 
     /** Saved copy of the device configuration */
     yarp::os::Property m_config;
