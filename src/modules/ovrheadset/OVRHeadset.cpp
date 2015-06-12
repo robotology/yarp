@@ -653,7 +653,9 @@ bool yarp::dev::OVRHeadset::createWindow(int w, int h, int x, int y)
 
     glfwWindowHint(GLFW_DEPTH_BITS, 16);
 
-#if !defined(__linux__)
+#if defined(_WIN32)
+    window = glfwCreateWindow(w, h, "YARP Oculus", NULL, NULL);
+#elif !defined(__linux__)
     window = glfwCreateWindow(w, h, "YARP Oculus", monitor, NULL);
 #else
     // On linux, the display is rotated
@@ -663,7 +665,6 @@ bool yarp::dev::OVRHeadset::createWindow(int w, int h, int x, int y)
         // Using debug hmd
         window = glfwCreateWindow(w/2, h/2, "YARP Oculus", monitor, NULL);
     }
-
 #endif
 
     if (!window) {
