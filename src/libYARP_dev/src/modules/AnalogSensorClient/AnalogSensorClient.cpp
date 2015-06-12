@@ -9,6 +9,7 @@
 
 #include <AnalogSensorClient.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 /*! \file AnalogSensorClient.cpp implementation of an analog sensor client class*/
 
@@ -158,7 +159,7 @@ void  yarp::dev::AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::strin
             continue;
         }
 
-        std::cout << "found is " << found <<  "; length is : " << name.length() << std::endl;
+        yDebug() << "found is " << found <<  "; length is : " << name.length();
         // remove leading or trailing '/'
         if( (found == 0) || (found == name.length()-1 ) /*found starts from 0, length doesn't*/ )
         {
@@ -169,7 +170,7 @@ void  yarp::dev::AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::strin
             done = true;        // there is some '/', but their are in the middle and they are allowed
     }
 
-    std::cout << name << std::endl;
+    yDebug() << name;
 }
 
 bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
@@ -200,7 +201,7 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
     else
     {
         _rate = DEFAULT_THREAD_PERIOD;
-        std::cout <<"Warning: part "<< deviceId <<" using default period ("<<_rate<<")\n";
+        yWarning() <<"part "<< deviceId <<" using default period ("<<_rate<<")";
     }
 
     ConstString local_rpc = local;

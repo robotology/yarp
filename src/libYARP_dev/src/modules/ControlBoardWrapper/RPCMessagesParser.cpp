@@ -1213,7 +1213,7 @@ void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, y
             {
                 case VOCAB_CALIBRATE_SINGLE_JOINT:
                 {
-                    std::cout << "cmd is " << cmd.toString() << " joint is " << cmd.get(3).asInt() << std::endl;
+                    yDebug() << "cmd is " << cmd.toString() << " joint is " << cmd.get(3).asInt();
                     if (ControlBoardWrapper_p->verbose())
                         yDebug("Calling calibrate joint with no parameter\n");
                     *ok = rpc_IRemoteCalibrator->calibrateSingleJoint(cmd.get(3).asInt());
@@ -1235,7 +1235,7 @@ void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, y
 
                 case VOCAB_HOMING_WHOLE_PART:
                 {
-                    std::cout << "Received homing whole part" << std::endl;
+                    yDebug() << "Received homing whole part";
                     if (ControlBoardWrapper_p->verbose())
                         yDebug("Calling calibrate whole part\n");
                     *ok = rpc_IRemoteCalibrator->homingWholePart();

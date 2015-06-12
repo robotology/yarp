@@ -75,7 +75,7 @@ yarp::dev::ServerInertial::ServerInertial()
 //    rosData.orientation.w = 0;
 //    rosData.orientation_covariance = covariance;
 
-    std::cout << "covariance size is " << covariance.size() << std::endl;
+    yDebug() << "covariance size is " << covariance.size();
 }
 
 yarp::dev::ServerInertial::~ServerInertial()

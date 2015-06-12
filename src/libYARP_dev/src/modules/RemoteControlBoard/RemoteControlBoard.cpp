@@ -1091,7 +1091,7 @@ public:
 
         if (!checkProtocolVersion(config.check("ignoreProtocolCheck")))
         {
-            std::cout << "checkProtocolVersion failed" << std::endl;
+            yError() << "checkProtocolVersion failed";
             command_buffer.detach();
             rpc_p.close();
             command_p.close();
@@ -3922,7 +3922,7 @@ public:
         cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
         cmd.addVocab(VOCAB_HOMING_WHOLE_PART);
         bool ok = rpc_p.write(cmd, response);
-        std::cout << "Sent homing whole part message" << std::endl;
+        yDebug() << "Sent homing whole part message";
         return CHECK_FAIL(ok, response);
     }
 
