@@ -196,24 +196,6 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         displayPorts[i]->useCallback(*(displayPortCallbacks[i]));
     }
 
-
-//    yarp::os::Network::connect("/icubSim/cam/left", "/oculus/display/left:i", "mjpeg");
-//    yarp::os::Network::connect("/icubSim/cam/right", "/oculus/display/right:i", "mjpeg");
-//    yarp::os::Network::connect("/oculus/headpose/orientation:o", "/directPositionControl/icubSim/head/command:i", "udp");
-
-//    yarp::os::Network::connect("/icub/camcalib/left/out", "/oculus/display/left:i", "mjpeg");
-//    yarp::os::Network::connect("/icub/camcalib/right/out", "/oculus/display/right:i", "mjpeg");
-
-//    yarp::os::Network::connect("/icub/cam/left", "/oculus/display/left:i", "mjpeg");
-//    yarp::os::Network::connect("/icub/cam/right", "/oculus/display/right:i", "mjpeg");
-
-    yarp::os::Network::connect("/gazeboCamera/left", "/oculus/display/left:i", "udp");
-    yarp::os::Network::connect("/gazeboCamera/right", "/oculus/display/right:i", "udp");
-    yarp::os::Network::connect("/oculus/headpose/orientation:o", "/directPositionControl/icubGazeboSim/head/command:i", "tcp");
-
-//    yarp::os::Network::connect("/grabber", "/oculus/display/left:i", "udp");
-//    yarp::os::Network::connect("/grabber", "/oculus/display/right:i", "udp");
-
     return true;
 }
 
