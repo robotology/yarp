@@ -173,10 +173,13 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         timeWarpEnabled = false;
     }
 
-    if (cfg.check("no-imagepose", "[I] Disable image pose")) {
-        imagePoseEnabled = false;
+//    if (cfg.check("no-imagepose", "[I] Disable image pose")) {
+//        imagePoseEnabled = false;
+//    }
+    imagePoseEnabled = false;
+    if (cfg.check("imagepose", "[I] Disable image pose")) {
+        imagePoseEnabled = true;
     }
-
 
 //    userHeight = cfg.check("userHeight", yarp::os::Value(0.),  "User height").asDouble();
 
