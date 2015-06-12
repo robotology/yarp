@@ -24,6 +24,7 @@
 namespace yarp { namespace os { template <typename T> class BufferedPort; }}
 namespace yarp { namespace os { class Bottle; }}
 struct GLFWwindow;
+struct GLFWmonitor;
 class InputCallback;
 
 
@@ -56,6 +57,7 @@ public:
 
 
 private:
+    GLFWmonitor* detectMonitor();
     bool createWindow(int w, int h, int x = 0, int y = 0);
     void onKey(int key, int scancode, int action, int mods);
     void reconfigureRendering();

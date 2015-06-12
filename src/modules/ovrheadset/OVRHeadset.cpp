@@ -254,7 +254,9 @@ bool yarp::dev::OVRHeadset::threadInit()
 //    bool windowed = (hmd->HmdCaps & ovrHmdCap_ExtendDesktop) ? false : true;
     OVR::Sizei windowSize = hmd->Resolution;
 
-    if (!createWindow(windowSize.w/2, windowSize.h/2, hmd->WindowsPos.x+30, hmd->WindowsPos.y+30)) {
+
+    //if (!createWindow(windowSize.w/2, windowSize.h/2, hmd->WindowsPos.x+30, hmd->WindowsPos.y+30)) {
+    if (!createWindow(windowSize.w, windowSize.h, hmd->WindowsPos.x, hmd->WindowsPos.y)) {
         yError() << "Failed to create window";
         this->close();
         return false;
@@ -600,14 +602,70 @@ void yarp::dev::OVRHeadset::run()
     }
 }
 
+GLFWmonitor* yarp::dev::OVRHeadset::detectMonitor()
+{
+    int count;
+    GLFWmonitor** monitors = glfwGetMonitors(&count);
+    for (int i = 0;  i < count;  i++) {
+#if defined(_WIN32)
+        if (strcmp(glfwGetWin32Monitor(monitors[i]), hmd->DisplayDeviceName) == 0) {
+            return monitors[i];
+        }
+#elif defined(__APPLE__)
+        if (glfwGetCocoaMonitor(monitors[i]) == hmd->DisplayId) {
+            return monitors[i];
+        }
+#elif defined(__linux__)
+        int xpos, ypos;
+        const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
+        glfwGetMonitorPos(monitors[i], &xpos, &ypos);
+        // NOTE on linux the screen is rotated, so we must match hmd width with
+        //      screen height and vice versa
+        if (hmd->WindowsPos.x == xpos &&
+            hmd->WindowsPos.y == ypos &&
+            hmd->Resolution.w == mode->height &&
+            hmd->Resolution.h == mode->width) {
+            return monitors[i];
+        }
+#endif
+    }
+    return NULL;
+}
+
 
 bool yarp::dev::OVRHeadset::createWindow(int w, int h, int x, int y)
 {
     yTrace();
 
+#if !defined(_WIN32)
+    GLFWmonitor* monitor = detectMonitor();
+    if (monitor) {
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+        glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+    } else {
+       yWarning() << "Could not detect monitor";
+    }
+#endif
+
     glfwWindowHint(GLFW_DEPTH_BITS, 16);
-//    glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-    window = glfwCreateWindow(w, h, "YARP Oculus", NULL, NULL);
+
+#if !defined(__linux__)
+    window = glfwCreateWindow(w, h, "YARP Oculus", monitor, NULL);
+#else
+    // On linux, the display is rotated
+    if (monitor) {
+        window = glfwCreateWindow(h, w, "YARP Oculus", monitor, NULL);
+    } else {
+        // Using debug hmd
+        window = glfwCreateWindow(w/2, h/2, "YARP Oculus", monitor, NULL);
+    }
+
+#endif
+
     if (!window) {
         yError() << "Could not create window";
         return false;
