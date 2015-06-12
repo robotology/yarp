@@ -13,6 +13,7 @@
 
 #include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/api.h>
+#include <yarp/os/Log.h>
 
 namespace yarp {
     namespace dev {
@@ -97,11 +98,9 @@ private:
     bool NOT_YET_IMPLEMENTED(const char *func=0)
     {
         if (func)
-            fprintf(stderr, "%s:", func);
+            yError("%s: not yet implemented\n", func);
         else
-            fprintf(stderr, "Function ");
-
-        fprintf(stderr, "not yet implemented\n");
+            yError("Function not yet implemented\n");
 
         return false;
     }

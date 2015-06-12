@@ -53,7 +53,7 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
                                            yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (ControlBoardWrapper_p->verbose())
-        fprintf(stderr, "Handling IImpedance message\n");
+        yDebug("Handling IImpedance message\n");
     if (!rpc_IImpedance)
     {
         yError("controlBoardWrapper: I do not have a valid interface");
@@ -1118,7 +1118,7 @@ void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os:
 void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (ControlBoardWrapper_p->verbose())
-        fprintf(stderr, "Handling IRemoteCalibrator message\n");
+        yDebug("Handling IRemoteCalibrator message\n");
 
     if (!rpc_IRemoteCalibrator)
     {
@@ -1191,7 +1191,7 @@ void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, ya
 void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if(ControlBoardWrapper_p->verbose())
-        fprintf(stderr, "Handling IRemoteCalibrator message\n");
+        yDebug("Handling IRemoteCalibrator message\n");
 
     if (!rpc_IRemoteCalibrator)
     {
@@ -2639,7 +2639,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
         else
             response.addVocab(VOCAB_OK);
 
-    // yDebug(stderr, "--> [%X] done ret %d\n",self, ok);    
+    // yDebug("--> [%X] done ret %d\n",self, ok);    
     }
 
         return ok;

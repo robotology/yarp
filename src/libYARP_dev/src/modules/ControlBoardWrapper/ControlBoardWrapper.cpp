@@ -3542,13 +3542,13 @@ bool ControlBoardWrapper::done(int j)
 
 bool ControlBoardWrapper::abortPark()
 {
-    fprintf(stderr, "ControlBoardWrapper2::Calling abortPark -- not implemented\n");
+    yError("ControlBoardWrapper2::Calling abortPark -- not implemented\n");
     return false;
 }
 
 bool ControlBoardWrapper::abortCalibration()
 {
-    fprintf(stderr, "ControlBoardWrapper2::Calling abortCalibration -- not implemented\n");
+    yError("ControlBoardWrapper2::Calling abortCalibration -- not implemented\n");
     return false;
 }
 
@@ -4464,7 +4464,7 @@ bool ControlBoardWrapper::legacySetControlMode(const int j, const int mode)
 
         default:
         {
-            fprintf(stderr, "ControlBoardWrapper received an invalid  setControlMode %s for joint %d\n", yarp::os::Vocab::decode(mode).c_str(), j);
+            yError("ControlBoardWrapper received an invalid  setControlMode %s for joint %d\n", yarp::os::Vocab::decode(mode).c_str(), j);
             ret = false;
         }
         break;

@@ -10,6 +10,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/os/Log.h>
 
 #include <stdio.h>
 
@@ -36,11 +37,11 @@ bool IControlCalibration::calibrate()
     bool ret = false;
     if (calibrator!=0)
     {
-        fprintf(stderr, "Going to call calibrator\n");
+        yDebug("Going to call calibrator\n");
         ret=calibrator->calibrate(dynamic_cast<DeviceDriver *>(this));
     }
     else
-        fprintf(stderr, "Warning called calibrate but no calibrator was set\n");
+        yWarning("Warning called calibrate but no calibrator was set\n");
 
     return ret;
 }
@@ -50,11 +51,11 @@ bool IControlCalibration::park(bool wait)
     bool ret=false;
     if (calibrator!=0)
     {
-        fprintf(stderr, "Going to call calibrator\n");
+        yDebug("Going to call calibrator\n");
         ret=calibrator->park(dynamic_cast<DeviceDriver *>(this), wait);
     }
     else
-        fprintf(stderr, "Warning called park but no calibrator was set\n");
+        yWarning("Warning called park but no calibrator was set\n");
 
     return ret;
 }
@@ -82,11 +83,11 @@ bool IControlCalibration2::calibrate()
     bool ret = false;
     if (calibrator!=0)
     {
-        fprintf(stderr, "Going to call calibrator\n");
+        yDebug("Going to call calibrator\n");
         ret=calibrator->calibrate(dynamic_cast<DeviceDriver *>(this));
     }
     else
-        fprintf(stderr, "Warning called calibrate but no calibrator was set\n");
+        yWarning("Warning called calibrate but no calibrator was set\n");
 
     return ret;
 }
@@ -112,11 +113,11 @@ bool IControlCalibration2::park(bool wait)
     bool ret=false;
     if (calibrator!=0)
     {
-        fprintf(stderr, "Going to call calibrator\n");
+        yDebug("Going to call calibrator\n");
         ret=calibrator->park(dynamic_cast<DeviceDriver *>(this), wait);
     }
     else
-        fprintf(stderr, "Warning called park but no calibrator was set\n");
+        yWarning("Warning called park but no calibrator was set\n");
 
     return ret;
 }

@@ -9,6 +9,7 @@
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include "yarp/dev/ControlBoardInterfacesImpl.inl" //ControlBoardHelper
+#include <yarp/os/Log.h>
 
 #include <stdio.h>
 using namespace yarp::dev;
@@ -16,11 +17,9 @@ using namespace yarp::dev;
 bool StubImplPositionControlRaw::NOT_YET_IMPLEMENTED(const char *func)
 {
     if (func)
-        fprintf(stderr, "%s:", func);
+        yError("%s: not yet implemented\n", func);
     else
-        fprintf(stderr, "Function ");
-
-    fprintf(stderr, "not yet implemented\n");
+        yError("Function not yet implemented\n");
 
     return false;
 }
@@ -28,11 +27,9 @@ bool StubImplPositionControlRaw::NOT_YET_IMPLEMENTED(const char *func)
 bool StubImplEncodersRaw::NOT_YET_IMPLEMENTED(const char *func)
 {
     if (func)
-        fprintf(stderr, "%s:", func);
+        yError("%s: not yet implemented\n", func);
     else
-        fprintf(stderr, "Function ");
-
-    fprintf(stderr, "not yet implemented\n");
+        yError("Function not yet implemented\n");
 
     return false;
 }
@@ -40,11 +37,9 @@ bool StubImplEncodersRaw::NOT_YET_IMPLEMENTED(const char *func)
 bool StubImplPidControlRaw::NOT_YET_IMPLEMENTED(const char *func)
 {
     if (func)
-        fprintf(stderr, "%s:", func);
+        yError("%s: not yet implemented\n", func);
     else
-        fprintf(stderr, "Function ");
-
-    fprintf(stderr, "not yet implemented\n");
+        yError("Function not yet implemented\n");
 
     return false;
 }

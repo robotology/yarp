@@ -969,25 +969,25 @@ public:
             {
                 writeStrict_singleJoint = true;
                 writeStrict_moreJoints  = true;
-                printf("RemoteControlBoard is ENABLING the writeStrict option for all commands\n");
+                yInfo("RemoteControlBoard is ENABLING the writeStrict option for all commands\n");
             }
             else if(gotStrictVal.asString() == "off")
             {
                 writeStrict_singleJoint = false;
                 writeStrict_moreJoints  = false;
-                printf("RemoteControlBoard is DISABLING the writeStrict opition for all commands\n");
+                yInfo("RemoteControlBoard is DISABLING the writeStrict opition for all commands\n");
             }
             else
-                printf("ERROR, found writeStrict opition with wrong value. Accepted options are 'on' or 'off'\n");
+                yError("Found writeStrict opition with wrong value. Accepted options are 'on' or 'off'\n");
         }
 
         if (local=="") {
-            fprintf(stderr,"Problem connecting to remote controlboard, 'local' port prefix not given\n");
+            yError("Problem connecting to remote controlboard, 'local' port prefix not given\n");
             return false;
         }
 
         if (remote=="") {
-            fprintf(stderr,"Problem connecting to remote controlboard, 'remote' port name not given\n");
+            yError("Problem connecting to remote controlboard, 'remote' port name not given\n");
             return false;
         }
 
@@ -1573,7 +1573,7 @@ public:
             if (ret)
             {
                 if (tmp.size() != (size_t)nj)
-                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
                 YARP_ASSERT (tmp.size() == (size_t)nj);
                 memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
@@ -1620,7 +1620,7 @@ public:
             if (ret)
             {
                 if (tmp.size() != (size_t)nj)
-                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
                 YARP_ASSERT (tmp.size() == (size_t)nj);
                 for(int j=0; j<nj; j++)
@@ -1997,7 +1997,7 @@ public:
             if (ret)
             {
                 if (tmp.size() != (size_t)nj)
-                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
                 YARP_ASSERT (tmp.size() == (size_t)nj);
                 memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
@@ -2047,7 +2047,7 @@ public:
             if (ret)
             {
                 if (tmp.size() != (size_t)nj)
-                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
                 YARP_ASSERT (tmp.size() == (size_t)nj);
                 for(int j=0; j<nj; j++)
@@ -3509,7 +3509,7 @@ public:
 
                 if (list.size() != n_joints)
                 {
-                    fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
+                    yError("getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
                     return false;
                 }
                 else
@@ -3576,7 +3576,7 @@ public:
 
                 if (list.size() != nj)
                 {
-                    fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
+                    yError("getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
                     return false;
 
                 }
