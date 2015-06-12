@@ -255,7 +255,6 @@ bool yarp::dev::OVRHeadset::threadInit()
     OVR::Sizei windowSize = hmd->Resolution;
 
 
-    //if (!createWindow(windowSize.w/2, windowSize.h/2, hmd->WindowsPos.x+30, hmd->WindowsPos.y+30)) {
     if (!createWindow(windowSize.w, windowSize.h, hmd->WindowsPos.x, hmd->WindowsPos.y)) {
         yError() << "Failed to create window";
         this->close();
@@ -654,7 +653,7 @@ bool yarp::dev::OVRHeadset::createWindow(int w, int h, int x, int y)
     glfwWindowHint(GLFW_DEPTH_BITS, 16);
 
 #if defined(_WIN32)
-    window = glfwCreateWindow(w, h, "YARP Oculus", NULL, NULL);
+    window = glfwCreateWindow(w/2, h/2, "YARP Oculus", NULL, NULL);
 #elif !defined(__linux__)
     window = glfwCreateWindow(w, h, "YARP Oculus", monitor, NULL);
 #else
@@ -673,7 +672,9 @@ bool yarp::dev::OVRHeadset::createWindow(int w, int h, int x, int y)
     }
 
     glfwSetWindowUserPointer(window, this);
+#if !defined(_WIN32)
     glfwSetWindowPos(window, x, y);
+#endif
     glfwSetKeyCallback(window, glfwKeyCallback);
     glfwMakeContextCurrent(window);
 
