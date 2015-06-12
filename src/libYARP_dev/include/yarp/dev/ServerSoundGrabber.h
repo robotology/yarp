@@ -20,6 +20,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Log.h>
 
 //#define NUM_SAMPLES 8192
 
@@ -80,14 +81,14 @@ public:
      */
     virtual bool open(yarp::os::Searchable& config)
     {
-        printf("(NOTE: Alternative to ServerSoundGrabber: just use normal ServerFrameGrabber)\n");
+        yInfo("(NOTE: Alternative to ServerSoundGrabber: just use normal ServerFrameGrabber)\n");
         p.setReader(*this);
         //Look for the device name
         yarp::os::Value *name;
         if (config.check("subdevice",name))
-			{
-				printf("Subdevice %s\n", name->toString().c_str());
-				if (name->isString())
+            {
+                yDebug("Subdevice %s\n", name->toString().c_str());
+                if (name->isString())
                     {
                         // maybe user isn't doing nested configuration
                         yarp::os::Property p;
@@ -95,16 +96,16 @@ public:
                         p.put("device",name->toString());
                         poly.open(p);
                     }
-				else
-					poly.open(*name);
-				if (!poly.isValid())
-					printf("cannot make <%s>\n", name->toString().c_str());
-			}
+                else
+                    poly.open(*name);
+                if (!poly.isValid())
+                    yError("cannot make <%s>\n", name->toString().c_str());
+            }
         else
-			{
-				printf("\"--subdevice <name>\" not set for server_soundgrabber\n");
-				return false;
-			}
+            {
+                yError("\"--subdevice <name>\" not set for server_soundgrabber\n");
+                return false;
+            }
         if (poly.isValid())
             poly.view(mic);
 
@@ -121,11 +122,11 @@ public:
         //			p.open(config.check("name", Value("/microphone")).asString());
 
         if (mic!=NULL)
-			{
-				printf("\n\n----------------wrapper--------------\n\n\n\n");
-				start();
-				return true;
-			}
+        {
+            yDebug("\n\n----------------wrapper--------------\n\n\n\n");
+            start();
+            return true;
+        }
         else
             return false;
     }
@@ -150,17 +151,17 @@ public:
                         getSound(snd);
                         writerSound.write();
                     }
-			}
-        printf("Sound grabber stopping\n");
+            }
+        yInfo("Sound grabber stopping\n");
     }
 
     virtual bool read(ConnectionReader& connection)
     {
         yarp::os::Bottle cmd, response;
         cmd.read(connection);
-        printf("command received: %s\n", cmd.toString().c_str());
+        yDebug("command received: %s\n", cmd.toString().c_str());
         // We receive a command but don't do anything with it.
-        printf("Returning from command reading\n");
+        yDebug("Returning from command reading\n");
         return true;
     }
 

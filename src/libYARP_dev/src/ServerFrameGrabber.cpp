@@ -37,7 +37,7 @@ ServerFrameGrabber::ServerFrameGrabber() {
 
 bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     if (active) {
-        printf("Did you just try to open the same ServerFrameGrabber twice?\n");
+        yError("Did you just try to open the same ServerFrameGrabber twice?\n");
         return false;
     }
 
@@ -63,11 +63,11 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
             poly.open(subdevice);
         }
         if (!poly.isValid()) {
-            //printf("cannot make <%s>\n", name->toString().c_str());
+            //yError("cannot make <%s>\n", name->toString().c_str());
             return false;
         }
     } else {
-        printf("\"--subdevice <name>\" not set for server_framegrabber\n");
+        yError("\"--subdevice <name>\" not set for server_framegrabber\n");
         return false;
     }
     if (poly.isValid()) {
@@ -139,7 +139,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     } else if (fgSound!=NULL) {
         thread.attach(new DataWriter<yarp::sig::Sound>(p,*this,canDrop));
     } else {
-        printf("subdevice <%s> doesn't look like a framegrabber\n",
+        yError("subdevice <%s> doesn't look like a framegrabber\n",
                name->toString().c_str());
         return false;
     }
@@ -200,12 +200,12 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 
     IFrameGrabberControlsDC1394* fgCtrlDC1394=dynamic_cast<IFrameGrabberControlsDC1394*>(fgCtrl);
 
-    //printf("%s\n",cmd.toString().c_str());
+    //yDebug("%s\n",cmd.toString().c_str());
 
     switch (code)
     {
     case VOCAB_SET:
-        printf("set command received\n");
+        yDebug("set command received\n");
 
         switch(cmd.get(1).asVocab())
         {
@@ -258,7 +258,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
         return DeviceResponder::respond(cmd,response);
 
     case VOCAB_GET:
-        printf("get command received\n");
+        yDebug("get command received\n");
 
         response.addVocab(VOCAB_IS);
         response.add(cmd.get(1));
@@ -492,11 +492,11 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 bool ServerFrameGrabber::read(ConnectionReader& connection) {
     yarp::os::Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
-    printf("command received: %s\n", cmd.toString().c_str());
+    yDebug("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
     switch (code) {
     case VOCAB_SET:
-        printf("set command received\n");
+        yDebug("set command received\n");
         {
             bool ok = false;
             switch(cmd.get(1).asVocab()) {
@@ -517,7 +517,7 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
         }
         break;
     case VOCAB_GET:
-        printf("get command received\n");
+        yDebug("get command received\n");
         {
             bool ok = false;
             response.addVocab(VOCAB_IS);
@@ -568,7 +568,7 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=NULL) {
             response.write(*writer);
-            printf("response sent: %s\n", response.toString().c_str());
+            yDebug("response sent: %s\n", response.toString().c_str());
         }
     }
     return true;

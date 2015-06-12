@@ -2073,7 +2073,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                             default:
                             {
-                                printf("received an unknown command after a VOCAB_SET (%s)\n", cmd.toString().c_str());
+                                yError("received an unknown command after a VOCAB_SET (%s)\n", cmd.toString().c_str());
                             }
                             break;
                         } //switch(cmd.get(1).asVocab()

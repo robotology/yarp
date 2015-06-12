@@ -239,7 +239,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
     yarp::os::Value *name;
     if (config.check("subdevice",name))
     {
-        printf("Subdevice %s\n", name->toString().c_str());
+        yDebug("Subdevice %s\n", name->toString().c_str());
         if (name->isString())
         {
             // maybe user isn't doing nested configuration
@@ -253,13 +253,13 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
             poly.open(*name);
         if (!poly.isValid())
         {
-            printf("cannot make <%s>\n", name->toString().c_str());
+            yError("cannot make <%s>\n", name->toString().c_str());
             return false;
         }
     }
     else
     {
-        printf("\"--subdevice <name>\" not set for server_inertial\n");
+        yError("\"--subdevice <name>\" not set for server_inertial\n");
         return false;
     }
 
@@ -267,7 +267,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
     poly.view(IMU);
     if(IMU == NULL)
     {
-        printf("Error, subdevice <%s> has no valid IMU interface\n", name->toString().c_str());
+        yError("Error, subdevice <%s> has no valid IMU interface\n", name->toString().c_str());
         return false;
     }
     checkROSParams(config);
@@ -313,7 +313,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
 
 bool yarp::dev::ServerInertial::close()
 {
-    printf("Closing Server Inertial...\n");
+    yInfo("Closing Server Inertial...\n");
     if (IMU != NULL)
     {
         stop();
@@ -359,7 +359,7 @@ bool yarp::dev::ServerInertial::getInertial(yarp::os::Bottle &bot)
 void yarp::dev::ServerInertial::run()
 {
     double before, now;
-    printf("Server Inertial starting\n");
+    yInfo("Server Inertial starting\n");
     while (!isStopping())
     {
         before = yarp::os::Time::now();
@@ -388,7 +388,7 @@ void yarp::dev::ServerInertial::run()
                     {
                         if (!spoke)
                         {
-                            printf("Writing an Inertial measurement.\n");
+                            yDebug("Writing an Inertial measurement.\n");
                             spoke = true;
                         }
                         p.setEnvelope(ts);
@@ -447,7 +447,7 @@ void yarp::dev::ServerInertial::run()
             yarp::os::Time::delay(k);
         }
     }
-    printf("Server Intertial closed\n");
+    yDebug("Server Intertial closed\n");
 }
 
 bool yarp::dev::ServerInertial::read(ConnectionReader& connection)

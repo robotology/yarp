@@ -228,7 +228,7 @@ public:
                 double min;
                 owner->getEstFrequency(it, av, min, max);
                 owner->resetStat();
-                printf("%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]\n",
+                yDebug("%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]\n",
                     ownerName.c_str(),
                     it,
                     av,
@@ -916,7 +916,7 @@ protected:
             int nj2 = l2.size();
             if(nj2 != len)
             {
-                printf("received an answer with an unexpected number of entries!\n");
+                yError("received an answer with an unexpected number of entries!\n");
                 return false;
             }
             for (i = 0; i < nj2; i++)
@@ -1032,7 +1032,7 @@ public:
             // ok=Network::connect(rpc_p.getName(), s1.c_str());    //This should work also with YARP_PORT_PREFIX because getting back the name of the port will return the modified name
             ok=rpc_p.addOutput(s1.c_str());                         //This works because we are manipulating only remote side and let yarp handle the local side
             if (!ok) {
-                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
             }
             s1 = remote;
@@ -1043,7 +1043,7 @@ public:
             // ok=Network::connect(command_p.getName(), s1.c_str(), carrier); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
             ok = command_p.addOutput(s1.c_str(), carrier);
             if (!ok) {
-                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
             }
 
@@ -1054,7 +1054,7 @@ public:
             ok = Network::connect(s1, state_p.getName(), carrier);
 
             if (!ok) {
-                printf("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
+                yError("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
                 connectionProblem = true;
             }
 
@@ -1070,8 +1070,8 @@ public:
             }
             else
             {
-                printf("*** Extended port %s was not found on the controlBoardWrapper I'm connecting to. Falling back to compatibility behaviour\n", s1.c_str());
-                printf("Updating to newer yarp and the usage of controlBoardWrapper2 is suggested***\n");
+                yError("*** Extended port %s was not found on the controlBoardWrapper I'm connecting to. Falling back to compatibility behaviour\n", s1.c_str());
+                yWarning("Updating to newer yarp and the usage of controlBoardWrapper2 is suggested***\n");
                 //connectionProblem = true;     // for compatibility
                 controlBoardWrapper1_compatibility = true;
             }
@@ -1102,7 +1102,7 @@ public:
 
         if (!isLive()) {
             if (remote!="") {
-                printf("Problems with obtaining the number of controlled axes\n");
+                yError("Problems with obtaining the number of controlled axes\n");
                 command_buffer.detach();
                 rpc_p.close();
                 command_p.close();
@@ -3144,7 +3144,7 @@ public:
 
                 if (n_joint != l.size())
                 {
-                    printf("getControlModes group received an answer of wrong length. expected %d, actual size is %d", n_joint, l.size());
+                    yError("getControlModes group received an answer of wrong length. expected %d, actual size is %d", n_joint, l.size());
                     return false;
                 }
 
