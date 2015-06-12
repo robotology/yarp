@@ -769,61 +769,61 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         break;
     case GLFW_KEY_UP:
         if (!rightShiftPressed) {
-            displayPortCallbacks[0]->pitchOffset += 0.005;
+            displayPortCallbacks[0]->pitchOffset += 0.005f;
             yDebug() << "Left eye pitch offset =" << displayPortCallbacks[0]->pitchOffset;
         }
         if (!leftShiftPressed) {
-            displayPortCallbacks[1]->pitchOffset += 0.005;
+            displayPortCallbacks[1]->pitchOffset += 0.005f;
             yDebug() << "Right eye pitch offset =" << displayPortCallbacks[1]->pitchOffset;
         }
         break;
     case GLFW_KEY_DOWN:
         if (!rightShiftPressed) {
-            displayPortCallbacks[0]->pitchOffset -= 0.005;
+            displayPortCallbacks[0]->pitchOffset -= 0.005f;
             yDebug() << "Left eye pitch offset =" << displayPortCallbacks[0]->pitchOffset;
         }
         if (!leftShiftPressed) {
-            displayPortCallbacks[1]->pitchOffset -= 0.005;
+            displayPortCallbacks[1]->pitchOffset -= 0.005f;
             yDebug() << "Right eye pitch offset =" << displayPortCallbacks[1]->pitchOffset;
         }
         break;
     case GLFW_KEY_LEFT:
         if (!rightShiftPressed) {
-            displayPortCallbacks[0]->yawOffset += 0.005;
+            displayPortCallbacks[0]->yawOffset += 0.005f;
             yDebug() << "Left eye yaw offset =" << displayPortCallbacks[0]->yawOffset;
         }
         if (!leftShiftPressed) {
-            displayPortCallbacks[1]->yawOffset += 0.005;
+            displayPortCallbacks[1]->yawOffset += 0.005f;
             yDebug() << "Right eye yaw offset =" << displayPortCallbacks[1]->yawOffset;
         }
         break;
     case GLFW_KEY_RIGHT:
         if (!rightShiftPressed) {
-            displayPortCallbacks[0]->yawOffset -= 0.005;
+            displayPortCallbacks[0]->yawOffset -= 0.005f;
             yDebug() << "Left eye yaw offset =" << displayPortCallbacks[0]->yawOffset;
         }
         if (!leftShiftPressed) {
-            displayPortCallbacks[1]->yawOffset -= 0.005;
+            displayPortCallbacks[1]->yawOffset -= 0.005f;
             yDebug() << "Right eye yaw offset =" << displayPortCallbacks[1]->yawOffset;
         }
         break;
     case GLFW_KEY_PAGE_UP:
         if (!rightShiftPressed) {
-            displayPortCallbacks[0]->rollOffset += 0.005;
+            displayPortCallbacks[0]->rollOffset += 0.005f;
             yDebug() << "Left eye roll offset =" << displayPortCallbacks[0]->rollOffset;
         }
         if (!leftShiftPressed) {
-            displayPortCallbacks[1]->rollOffset += 0.005;
+            displayPortCallbacks[1]->rollOffset += 0.005f;
             yDebug() << "Right eye roll offset =" << displayPortCallbacks[1]->rollOffset;
         }
         break;
     case GLFW_KEY_PAGE_DOWN:
         if (!rightShiftPressed) {
-            displayPortCallbacks[0]->rollOffset -= 0.005;
+            displayPortCallbacks[0]->rollOffset -= 0.005f;
             yDebug() << "Left eye roll offset =" << displayPortCallbacks[0]->rollOffset;
         }
         if (!leftShiftPressed) {
-            displayPortCallbacks[1]->rollOffset -= 0.005;
+            displayPortCallbacks[1]->rollOffset -= 0.005f;
             yDebug() << "Right eye roll offset =" << displayPortCallbacks[1]->rollOffset;
         }
         break;
