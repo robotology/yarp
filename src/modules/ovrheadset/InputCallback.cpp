@@ -114,15 +114,26 @@ void InputCallback::onRead(ImageType &img)
 //         float roll = OVR::DegreeToRad(static_cast<float>(-img.roll));
 //         float pitch = OVR::DegreeToRad(static_cast<float>(-img.pitch));
 //         float yaw = OVR::DegreeToRad(static_cast<float>(img.yaw));
-//
-//         eyeRenderTexture->eyePose.Orientation.w = (float)(- cos(roll/2) * cos(pitch/2) * cos(yaw/2) - sin(roll/2) * sin(pitch/2) * sin(yaw/2));
-//         eyeRenderTexture->eyePose.Orientation.x = (float)(- cos(roll/2) * sin(pitch/2) * cos(yaw/2) - sin(roll/2) * cos(pitch/2) * sin(yaw/2));
-//         eyeRenderTexture->eyePose.Orientation.y = (float)(- cos(roll/2) * cos(pitch/2) * sin(yaw/2) + sin(roll/2) * sin(pitch/2) * cos(yaw/2));
-//         eyeRenderTexture->eyePose.Orientation.z = (float)(- sin(roll/2) * cos(pitch/2) * cos(yaw/2) + cos(roll/2) * sin(pitch/2) * sin(yaw/2));
-//
-//         eyeRenderTexture->eyePose.Position.x = (float)(img.x);
-//         eyeRenderTexture->eyePose.Position.y = (float)(img.y);
-//         eyeRenderTexture->eyePose.Position.z = (float)(img.z);
+//         float x = static_cast<float>(img.x);
+//         float y = static_cast<float>(img.y);
+//         float z = static_cast<float>(img.z);
+
+        float roll = 0.0f;
+        float pitch = 0.0f;
+        float yaw = 0.0f;
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
+
+        eyeRenderTexture->eyePose.Orientation.w = (float)(- cos(roll/2) * cos(pitch/2) * cos(yaw/2) - sin(roll/2) * sin(pitch/2) * sin(yaw/2));
+        eyeRenderTexture->eyePose.Orientation.x = (float)(- cos(roll/2) * sin(pitch/2) * cos(yaw/2) - sin(roll/2) * cos(pitch/2) * sin(yaw/2));
+        eyeRenderTexture->eyePose.Orientation.y = (float)(- cos(roll/2) * cos(pitch/2) * sin(yaw/2) + sin(roll/2) * sin(pitch/2) * cos(yaw/2));
+        eyeRenderTexture->eyePose.Orientation.z = (float)(- sin(roll/2) * cos(pitch/2) * cos(yaw/2) + cos(roll/2) * sin(pitch/2) * sin(yaw/2));
+
+        eyeRenderTexture->eyePose.Position.x = x;
+        eyeRenderTexture->eyePose.Position.y = y;
+        eyeRenderTexture->eyePose.Position.z = z;
+
 
         eyeRenderTexture->imageWidth = img.width();
         eyeRenderTexture->imageHeight = img.height();
