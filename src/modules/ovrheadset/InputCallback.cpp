@@ -14,14 +14,17 @@
 
 InputCallback::InputCallback(int eye) :
         yarp::os::TypedReaderCallback<ImageType>(),
+        eyeRenderTexture(NULL),
         eye(eye),
         expected(0),
         droppedFrames(0),
         lastImageWidth(0),
-        lastImageHeight(0)
+        lastImageHeight(0),
+        rollOffset(0.0f),
+        pitchOffset(0.0f),
+        yawOffset(0.0f)
 {
     yTrace();
-    eyeRenderTexture = NULL;
 }
 
 
@@ -118,9 +121,9 @@ void InputCallback::onRead(ImageType &img)
 //         float y = static_cast<float>(img.y);
 //         float z = static_cast<float>(img.z);
 
-        float roll = 0.0f;
-        float pitch = 0.0f;
-        float yaw = 0.0f;
+        float roll = 0.0f + rollOffset;
+        float pitch = 0.0f + pitchOffset;
+        float yaw = 0.0f + yawOffset;
         float x = 0.0f;
         float y = 0.0f;
         float z = 0.0f;

@@ -30,6 +30,10 @@ public:
     unsigned int droppedFrames;
     unsigned int lastImageWidth;
     unsigned int lastImageHeight;
+
+    float rollOffset;
+    float pitchOffset;
+    float yawOffset;
 };
 
 #endif // YARP_OVRHEADSET_INPUTCALLBACK_H
