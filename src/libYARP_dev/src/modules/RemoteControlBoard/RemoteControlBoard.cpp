@@ -1070,7 +1070,7 @@ public:
             }
             else
             {
-                printf("*** Extended port %s was not found on the controlBoardWrapper I'm connecting to. Falling back to compatibility beaviour\n", s1.c_str());
+                printf("*** Extended port %s was not found on the controlBoardWrapper I'm connecting to. Falling back to compatibility behaviour\n", s1.c_str());
                 printf("Updating to newer yarp and the usage of controlBoardWrapper2 is suggested***\n");
                 //connectionProblem = true;     // for compatibility
                 controlBoardWrapper1_compatibility = true;
