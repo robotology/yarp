@@ -177,7 +177,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 //        imagePoseEnabled = false;
 //    }
     imagePoseEnabled = false;
-    if (cfg.check("imagepose", "[I] Disable image pose")) {
+    if (cfg.check("imagepose", "[I] Enable image pose")) {
         imagePoseEnabled = true;
     }
 
