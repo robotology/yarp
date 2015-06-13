@@ -438,7 +438,7 @@ public:
             }
 
             cumulSize+=sz;
-            cout << sz << " items stored [cumul #: " << cumulSize << "]" << endl;
+            yInfo() << sz << " items stored [cumul #: " << cumulSize << "]";
         }
     }
 
@@ -662,22 +662,22 @@ int main(int argc, char *argv[])
 
     if (rf.check("help"))
     {
-        cout << "Options:"                                                                           << endl;
-        cout << "\t--name       port: service port name (default: /dump)"                            << endl;
-        cout << "\t--connect    port: name of the port to connect the dumper to at launch time"      << endl;
-        cout << "\t--dir        name: provide explicit name of storage directory"                    << endl;
-        cout << "\t--overwrite      : overwrite pre-existing storage directory"                      << endl;
+        yInfo() << "Options:";
+        yInfo() << "\t--name       port: service port name (default: /dump)";
+        yInfo() << "\t--connect    port: name of the port to connect the dumper to at launch time";
+        yInfo() << "\t--dir        name: provide explicit name of storage directory";
+        yInfo() << "\t--overwrite      : overwrite pre-existing storage directory";
     #ifdef ADD_VIDEO
-        cout << "\t--type       type: type of the data to be dumped [bottle(default), image, video]" << endl;
-        cout << "\t--addVideo       : produce video as well (if image is selected)"                  << endl;
-        cout << "\t--videoType   ext: produce video of specified container type [mkv(default), avi]" << endl;
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, video]";
+        yInfo() << "\t--addVideo       : produce video as well (if image is selected)";
+        yInfo() << "\t--videoType   ext: produce video of specified container type [mkv(default), avi]";
     #else
-        cout << "\t--type       type: type of the data to be dumped [bottle(default), image]"        << endl;
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image]";
     #endif
-        cout << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)"           << endl;
-        cout << "\t--rxTime         : dump the receiver time instead of the sender time"             << endl;
-        cout << "\t--txTime         : dump the sender time straightaway"                             << endl;
-        cout << endl;
+        yInfo() << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)";
+        yInfo() << "\t--rxTime         : dump the receiver time instead of the sender time";
+        yInfo() << "\t--txTime         : dump the sender time straightaway";
+        yInfo();
 
         return 0;
     }

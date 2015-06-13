@@ -268,7 +268,7 @@ public:
 
         verb = (prop.check("verbose","if present, give detailed output"));
         if (verb)
-            printf("running with verbose output\n");
+            yInfo("running with verbose output\n");
 
         thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
@@ -291,11 +291,11 @@ public:
             }
 
             if (!poly.isValid()) {
-                printf("cannot make <%s>\n", name->toString().c_str());
+                yError("cannot make <%s>\n", name->toString().c_str());
             }
 
         } else {
-            printf("\"--subdevice <name>\" not set for server_controlboard\n");
+            yError("\"--subdevice <name>\" not set for server_controlboard\n");
             return false;
         }
 
@@ -358,14 +358,14 @@ public:
         if (pos!=NULL||vel!=NULL) {
             if (pos!=NULL) {
                 if (!pos->getAxes(&nj)) {
-                    printf ("problems: controlling 0 axes\n");
+                    yError("problems: controlling 0 axes\n");
                     return false;
                 }
             }
 
             if (vel!=NULL) {
                 if (!vel->getAxes(&nj)) {
-                    printf ("problems: controlling 0 axes\n");
+                    yError("problems: controlling 0 axes\n");
                     return false;
                 }
             }
@@ -378,8 +378,7 @@ public:
             return true;
         }
 
-        printf("subdevice <%s> doesn't look like a control board (no appropriate interfaces were acquired)\n",
-            name->toString().c_str());
+        yError("subdevice <%s> doesn't look like a control board (no appropriate interfaces were acquired)\n", name->toString().c_str());
 
         return false;
 
@@ -1568,37 +1567,37 @@ void yarp::dev::ImplementCallbackHelper::init(yarp::dev::ServerControlBoard *x) 
 
 
 inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
-    //printf("Data received on the control channel of size: %d\n", v.body.size());
+    //yDebug("Data received on the control channel of size: %d\n", v.body.size());
     //int i;
 
     Bottle& b = v.head;
-    //printf("bottle: %s\n", b.toString().c_str());
+    //yDebug("bottle: %s\n", b.toString().c_str());
     switch (b.get(0).asVocab()) {
     case VOCAB_POSITION_MODE:
     case VOCAB_POSITION_MOVES: {
-        //            printf("Received a position command\n");
+        //            yDebug("Received a position command\n");
         //            for (i = 0; i < v.body.size(); i++)
-        //                printf("%.2f ", v.body[i]);
-        //            printf("\n");
+        //                yDebug("%.2f ", v.body[i]);
+        //            yDebug("\n");
 
         if (pos) {
             bool ok = pos->positionMove(&(v.body[0]));
             if (!ok)
-                printf("Issues while trying to start a position move\n");
+                yError("Issues while trying to start a position move\n");
         }
                                }
                                break;
 
     case VOCAB_VELOCITY_MODE:
     case VOCAB_VELOCITY_MOVES: {
-        //          printf("Received a velocity command\n");
+        //          yDebug("Received a velocity command\n");
         //          for (i = 0; i < v.body.size(); i++)
-        //              printf("%.2f ", v.body[i]);
-        //          printf("\n");
+        //              yDebug("%.2f ", v.body[i]);
+        //          yDebug("\n");
         if (vel) {
             bool ok = vel->velocityMove(&(v.body[0]));
             if (!ok)
-                printf("Issues while trying to start a velocity move\n");
+                yError("Issues while trying to start a velocity move\n");
         }
                                }
                                break;
@@ -1607,22 +1606,23 @@ inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
     {
         if(!vel->velocityMove(b.get(2).asInt(), v.body[0]) )
         {
-            printf("Issues while trying to start a velocity move\n");
+            yError("Issues while trying to start a velocity move\n");
         }
     }
     break;
 
-    default: {
-        printf("Unrecognized message while receiving on command port\n");
-             }
-             break;
+    default:
+    {
+        yError("Unrecognized message while receiving on command port\n");
+    }
+    break;
     }
 
-    //    printf("v: ");
+    //    yDebug("v: ");
     //    int i;
     //    for (i = 0; i < (int)v.size(); i++)
-    //        printf("%.3f ", v[i]);
-    //    printf("\n");
+    //        yDebug("%.3f ", v[i]);
+    //    yDebug("\n");
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -1710,7 +1710,7 @@ bool yarp::dev::CommandsHelper::setControlMode(int axis, int mode)
             ok = ok && pid->disablePid(axis);
         default:
             ok = false;
-            printf("ControlBoard Error: set control mode not known %s\n", yarp::os::Vocab::decode(mode).c_str());
+            yError("ControlBoard Error: set control mode not known %s\n", yarp::os::Vocab::decode(mode).c_str());
             break;
     }
     return ok;
@@ -1722,14 +1722,14 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
     bool ok = false;
     bool rec = false; // is the command recognized?
     if (caller->verbose())
-        printf("command received: %s\n", cmd.toString().c_str());
+        yDebug("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
     switch (code) {
 case VOCAB_CALIBRATE_JOINT:
     {
         rec=true;
         if (caller->verbose())
-            printf("Calling calibrate joint\n");
+            yDebug("Calling calibrate joint\n");
 
         int j=cmd.get(1).asInt();
         int ui=cmd.get(2).asInt();
@@ -1737,7 +1737,7 @@ case VOCAB_CALIBRATE_JOINT:
         double v2=cmd.get(4).asDouble();
         double v3=cmd.get(5).asDouble();
         if (ical2==0)
-            printf("Sorry I don't have a IControlCalibration2 interface\n");
+            yError("Sorry I don't have a IControlCalibration2 interface\n");
         else
             ok=ical2->calibrate2(j,ui,v1,v2,v3);
     }
@@ -1746,7 +1746,7 @@ case VOCAB_CALIBRATE:
     {
         rec=true;
         if (caller->verbose())
-            printf("Calling calibrate\n");
+            yDebug("Calling calibrate\n");
         ok=ical2->calibrate();
     }
     break;
@@ -1754,7 +1754,7 @@ case VOCAB_CALIBRATE_DONE:
     {
         rec=true;
         if (caller->verbose())
-            printf("Calling calibrate done\n");
+            yDebug("Calling calibrate done\n");
         int j=cmd.get(1).asInt();
         ok=ical2->done(j);
     }
@@ -1763,7 +1763,7 @@ case VOCAB_PARK:
     {
         rec=true;
         if (caller->verbose())
-            printf("Calling park function\n");
+            yDebug("Calling park function\n");
         int flag=cmd.get(1).asInt();
         if (flag)
             ok=ical2->park(true);
@@ -1775,7 +1775,7 @@ case VOCAB_PARK:
 case VOCAB_SET:
     rec = true;
     if (caller->verbose())
-        printf("set command received\n");
+        yDebug("set command received\n");
     {
         switch(cmd.get(1).asVocab())
         {
@@ -2161,7 +2161,7 @@ case VOCAB_SET:
             break;
 
         default:
-            printf("received an unknown command after a VOCAB_SET\n");
+            yError("received an unknown command after a VOCAB_SET\n");
             break;
         }
     }
@@ -2170,7 +2170,7 @@ case VOCAB_SET:
 case VOCAB_GET:
     rec = true;
     if (caller->verbose())
-        printf("get command received\n");
+        yDebug("get command received\n");
 
     {
         int tmp = 0;
@@ -2544,7 +2544,7 @@ case VOCAB_INFO_NAME:
     }
     break;
 default:
-    printf("received an unknown request after a VOCAB_GET: %s\n", yarp::os::Vocab::decode(cmd.get(1).asVocab()).c_str());
+    yError("received an unknown request after a VOCAB_GET: %s\n", yarp::os::Vocab::decode(cmd.get(1).asVocab()).c_str());
     break;
         }
     }

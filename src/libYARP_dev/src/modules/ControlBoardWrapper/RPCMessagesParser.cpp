@@ -53,7 +53,7 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
                                            yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (ControlBoardWrapper_p->verbose())
-        fprintf(stderr, "Handling IImpedance message\n");
+        yDebug("Handling IImpedance message\n");
     if (!rpc_IImpedance)
     {
         yError("controlBoardWrapper: I do not have a valid interface");
@@ -1118,7 +1118,7 @@ void RPCMessagesParser::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os:
 void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if (ControlBoardWrapper_p->verbose())
-        fprintf(stderr, "Handling IRemoteCalibrator message\n");
+        yDebug("Handling IRemoteCalibrator message\n");
 
     if (!rpc_IRemoteCalibrator)
     {
@@ -1191,7 +1191,7 @@ void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, ya
 void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
 {
     if(ControlBoardWrapper_p->verbose())
-        fprintf(stderr, "Handling IRemoteCalibrator message\n");
+        yDebug("Handling IRemoteCalibrator message\n");
 
     if (!rpc_IRemoteCalibrator)
     {
@@ -1213,7 +1213,7 @@ void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, y
             {
                 case VOCAB_CALIBRATE_SINGLE_JOINT:
                 {
-                    std::cout << "cmd is " << cmd.toString() << " joint is " << cmd.get(3).asInt() << std::endl;
+                    yDebug() << "cmd is " << cmd.toString() << " joint is " << cmd.get(3).asInt();
                     if (ControlBoardWrapper_p->verbose())
                         yDebug("Calling calibrate joint with no parameter\n");
                     *ok = rpc_IRemoteCalibrator->calibrateSingleJoint(cmd.get(3).asInt());
@@ -1235,7 +1235,7 @@ void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, y
 
                 case VOCAB_HOMING_WHOLE_PART:
                 {
-                    std::cout << "Received homing whole part" << std::endl;
+                    yDebug() << "Received homing whole part";
                     if (ControlBoardWrapper_p->verbose())
                         yDebug("Calling calibrate whole part\n");
                     *ok = rpc_IRemoteCalibrator->homingWholePart();
@@ -2073,7 +2073,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                             default:
                             {
-                                printf("received an unknown command after a VOCAB_SET (%s)\n", cmd.toString().c_str());
+                                yError("received an unknown command after a VOCAB_SET (%s)\n", cmd.toString().c_str());
                             }
                             break;
                         } //switch(cmd.get(1).asVocab()
@@ -2639,7 +2639,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
         else
             response.addVocab(VOCAB_OK);
 
-    // yDebug(stderr, "--> [%X] done ret %d\n",self, ok);    
+    // yDebug("--> [%X] done ret %d\n",self, ok);    
     }
 
         return ok;

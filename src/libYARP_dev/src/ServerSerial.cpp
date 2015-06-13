@@ -7,7 +7,7 @@
  */
 
 #include <yarp/dev/ServerSerial.h>
-
+#include <yarp/os/Log.h>
 
 ServerSerial::ServerSerial() :
         verb(false),
@@ -25,7 +25,7 @@ ServerSerial::~ServerSerial()
 bool ServerSerial::send(const Bottle& msg)
 {
     if(verb)
-        printf("ConstString to send : %s\n", msg.toString().c_str());
+        yDebug("ConstString to send : %s\n", msg.toString().c_str());
     if(serial != NULL) {
         serial->send(msg);
         return true;
@@ -37,7 +37,7 @@ bool ServerSerial::send(const Bottle& msg)
 bool ServerSerial::send(char *msg, size_t size)
 {
     if(verb)
-        printf("ConstString to send : %s\n", msg);
+        yDebug("ConstString to send : %s\n", msg);
     if(serial != NULL) {
         serial->send(msg, size);
         return true;
@@ -95,11 +95,11 @@ bool ServerSerial::open(Searchable& prop)
 {
     verb = (prop.check("verbose",Value(0),"Specifies if the device is in verbose mode (0/1).").asInt())>0;
     if (verb)
-        printf("running with verbose output\n");
+        yInfo("running with verbose output\n");
 
     Value *name;
     if (prop.check("subdevice",name,"name of specific control device to wrap")) {
-        printf("Subdevice %s\n", name->toString().c_str());
+        yDebug("Subdevice %s\n", name->toString().c_str());
         if (name->isString()) {
             // maybe user isn't doing nested configuration
             Property p;
@@ -113,10 +113,10 @@ bool ServerSerial::open(Searchable& prop)
             poly.open(subdevice);
         }
         if (!poly.isValid()) {
-            printf("cannot make <%s>\n", name->toString().c_str());
+            yError("cannot make <%s>\n", name->toString().c_str());
         }
     } else {
-        printf("\"--subdevice <name>\" not set for server_serial\n");
+        yError("\"--subdevice <name>\" not set for server_serial\n");
         return false;
     }
 
@@ -146,14 +146,14 @@ bool ServerSerial::open(Searchable& prop)
         return true;
     }
 
-    printf("subdevice <%s> doesn't look like a serial port (no appropriate interfaces were acquired)\n",
+    yError("subdevice <%s> doesn't look like a serial port (no appropriate interfaces were acquired)\n",
                     name->toString().c_str());
 
     return false;
 }
 
 void ServerSerial::run() {
-    printf("Server Serial starting\n");
+    yInfo("Server Serial starting\n");
     //double before, now;
     while (!isStopping()) {
         //before = Time::now();
@@ -166,7 +166,7 @@ void ServerSerial::run() {
         // give other threads the chance to run
         yarp::os::Time::delay(0.010);
     }
-    printf("Server Serial stopping\n");
+    yInfo("Server Serial stopping\n");
 }
 
 
@@ -177,7 +177,7 @@ yarp::dev::ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ServerS
     ser = dynamic_cast<yarp::dev::ISerialDevice *> (x);
     //ACE_ASSERT (ser != 0);
     if (ser==0) {
-        printf("Could not get serial device\n");
+        yError("Could not get serial device\n");
         exit(1);
     }
 
@@ -190,6 +190,6 @@ void yarp::dev::ImplementCallbackHelper2::onRead(Bottle &b) {
    if (ser) {
         bool ok = ser->send(b);
         if (!ok)
-            printf("Problems while trying to send data\n");
+            yError("Problems while trying to send data\n");
     }
 }

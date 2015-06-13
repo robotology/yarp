@@ -1358,14 +1358,14 @@ bool ControlBoardWrapper::setPositionMode() {
 
         if (p->iMode2)
         {
-            std::cout<< "setPositionMode() for ALL joint using NEW interface" << std::endl;
+            yDebug() << "setPositionMode() for ALL joint using NEW interface";
 
             //calling new iControlMode2 interface
             ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_POSITION);
         }
         else if(p->iMode)
         {
-            std::cout<< "setPositionMode() for ALL joint using OLD interface" << std::endl;
+            yDebug() << "setPositionMode() for ALL joint using OLD interface";
 
             //calling old iControlMode interface
             ret=ret&&p->iMode->setPositionMode(off+p->base);
@@ -1391,14 +1391,14 @@ bool ControlBoardWrapper::setOpenLoopMode() {
 
         if (p->iMode2)
         {
-            std::cout<< "setOpenLoopMode() for ALL joint using NEW interface" << std::endl;
+            yDebug() << "setOpenLoopMode() for ALL joint using NEW interface";
 
             //calling new iControlMode2 interface
             ret = ret && p->iMode2->setControlMode(off+p->base, VOCAB_CM_OPENLOOP);
         }
         else if(p->iMode)
         {
-            std::cout<< "setOpenLoopMode() for ALL joint using OLD interface" << std::endl;
+            yDebug() << "setOpenLoopMode() for ALL joint using OLD interface";
 
             //calling iControlMode interface
             ret=ret&&p->iMode->setOpenLoopMode(off+p->base);
@@ -3542,13 +3542,13 @@ bool ControlBoardWrapper::done(int j)
 
 bool ControlBoardWrapper::abortPark()
 {
-    fprintf(stderr, "ControlBoardWrapper2::Calling abortPark -- not implemented\n");
+    yError("ControlBoardWrapper2::Calling abortPark -- not implemented\n");
     return false;
 }
 
 bool ControlBoardWrapper::abortCalibration()
 {
-    fprintf(stderr, "ControlBoardWrapper2::Calling abortCalibration -- not implemented\n");
+    yError("ControlBoardWrapper2::Calling abortCalibration -- not implemented\n");
     return false;
 }
 
@@ -4464,7 +4464,7 @@ bool ControlBoardWrapper::legacySetControlMode(const int j, const int mode)
 
         default:
         {
-            fprintf(stderr, "ControlBoardWrapper received an invalid  setControlMode %s for joint %d\n", yarp::os::Vocab::decode(mode).c_str(), j);
+            yError("ControlBoardWrapper received an invalid  setControlMode %s for joint %d\n", yarp::os::Vocab::decode(mode).c_str(), j);
             ret = false;
         }
         break;

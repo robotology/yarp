@@ -12,6 +12,7 @@
 
 #include <yarp/dev/api.h>
 #include <yarp/dev/IInteractionMode.h>
+#include <yarp/os/Log.h>
 
 namespace yarp {
     namespace dev {
@@ -106,14 +107,12 @@ protected:
      * Helper for printing error message, see below.
      * Implemented in ControlBoardInterfacesImpl.cpp.
      */
-    bool NOT_YET_IMPLEMENTED(const char *func=0)
+    bool NOT_YET_IMPLEMENTED(const char *func = 0)
     {
         if (func)
-            fprintf(stderr, "%s:", func);
+            yError("%s: not yet implemented\n", func);
         else
-            fprintf(stderr, "Function ");
-
-        fprintf(stderr, "not yet implemented\n");
+            yError("Function not yet implemented\n");
 
         return false;
     }

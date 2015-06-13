@@ -11,6 +11,7 @@
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/os/Log.h>
 
 using namespace yarp::dev;
 
@@ -98,11 +99,9 @@ bool ImplementPositionDirect::setPositions(const double *refs)
 bool StubImplPositionDirectRaw::NOT_YET_IMPLEMENTED(const char *func)
 {
     if (func)
-        fprintf(stderr, "%s:", func);
+        yError("%s: not yet implemented\n", func);
     else
-        fprintf(stderr, "Function ");
-
-    fprintf(stderr, "not yet implemented\n");
+        yError("Function not yet implemented\n");
 
     return false;
 }

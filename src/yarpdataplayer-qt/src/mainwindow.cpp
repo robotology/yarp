@@ -537,11 +537,11 @@ void MainWindow::onInitDone(int subDirCount)
     if(!errorMessage.isEmpty()){
         switch(QMessageBox::critical(this,"Setup Error",errorMessage,QMessageBox::Ok)){
             case(QMessageBox::Ok):{
-                std::cout << "OK clicked." << std::endl;
+                yInfo("OK clicked.");
                 break;
             }
             default:{
-                std::cout << "Unexpected button clicked." << std::endl;
+                yError("Unexpected button clicked.");
                 break;
             }
         }
@@ -676,11 +676,11 @@ void MainWindow::onErrorMessage(QString msg)
         QString fullMessage = QString( "There was a problem opening \n\n%1\n\nplease check its validity").arg(file);
         switch(QMessageBox::critical(this,"Setup Error",fullMessage,QMessageBox::Ok)){
             case(QMessageBox::Ok):{
-                std::cout << "OK clicked." << std::endl;
+                yInfo("OK clicked.");
                 break;
             }
             default:{
-                std::cout << "Unexpected button clicked." << std::endl;
+                yError("Unexpected button clicked.");
                 break;
             }
         }

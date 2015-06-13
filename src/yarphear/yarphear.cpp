@@ -14,6 +14,7 @@
 #include <math.h>
 
 #include <yarp/os/all.h>
+#include <yarp/os/Log.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
@@ -59,7 +60,7 @@ public:
         if (dev) {
             poly.open(p);
             if (!poly.isValid()) {
-                printf("cannot open driver\n");
+                yError("cannot open driver\n");
                 return false;
             }
             
@@ -67,7 +68,7 @@ public:
                 // Make sure we can write sound
                 poly.view(put);
                 if (put==NULL) {
-                    printf("cannot open interface\n");
+                    yError("cannot open interface\n");
                     return false;
                 }
             }
@@ -75,7 +76,7 @@ public:
             
         port.setStrict(true);
         if (!port.open(p.check("name",Value("/yarphear")).asString())) {
-            printf("Communication problem\n");
+            yError("Communication problem\n");
             return false;
         }
         
@@ -94,15 +95,15 @@ public:
         static double t1= yarp::os::Time::now();
         static double t2= yarp::os::Time::now();
         t1= yarp::os::Time::now();
-        printf("onread %f\n", t2-t1);
+        yDebug("onread %f\n", t2-t1);
         t2 = yarp::os::Time::now();
         #endif
 
         int ct = port.getPendingReads();
-        //printf("pending reads %d\n", ct);
+        //yDebug("pending reads %d\n", ct);
         while (ct>padding) {
             ct = port.getPendingReads();
-            printf("Dropping sound packet -- %d packet(s) behind\n", ct);
+            yWarning("Dropping sound packet -- %d packet(s) behind\n", ct);
             port.read();
         }
         mutex.wait();
@@ -144,7 +145,7 @@ public:
         sounds.push_back(sound);
         samples += sound.getSamples();
         channels = sound.getChannels();
-        printf("  %ld sound frames buffered in memory (%ld samples)\n", 
+        yDebug("  %ld sound frames buffered in memory (%ld samples)\n", 
                (long int) sounds.size(),
                (long int) samples);
     }
@@ -170,7 +171,7 @@ public:
         mutex.post();
         bool ok = write(total,name);
         if (ok) {
-            printf("Wrote audio to %s\n", name);
+            yDebug("Wrote audio to %s\n", name);
         }
         samples = 0;
         channels = 0;
@@ -213,16 +214,16 @@ int main(int argc, char *argv[]) {
     bool done = false;
     while (!done) {
         if (help) {
-            printf("  Press return to mute/unmute\n");
-            printf("  Type \"s\" to set start/stop saving audio in memory\n");
-            printf("  Type \"write filename.wav\" to write saved audio to a file\n");
-            printf("  Type \"buf NUMBER\" to set buffering delay (default is 0)\n");
-            printf("  Type \"write\" or \"w\" to write saved audio with same/default name\n");
-            printf("  Type \"q\" to quit\n");
-            printf("  Type \"help\" to see this list again\n");
+            yInfo("  Press return to mute/unmute\n");
+            yInfo("  Type \"s\" to set start/stop saving audio in memory\n");
+            yInfo("  Type \"write filename.wav\" to write saved audio to a file\n");
+            yInfo("  Type \"buf NUMBER\" to set buffering delay (default is 0)\n");
+            yInfo("  Type \"write\" or \"w\" to write saved audio with same/default name\n");
+            yInfo("  Type \"q\" to quit\n");
+            yInfo("  Type \"help\" to see this list again\n");
             help = false;
         } else {
-            printf("Type \"help\" for usage\n");
+            yInfo("Type \"help\" for usage\n");
         }
 
         ConstString keys = Network::readString();
@@ -231,29 +232,29 @@ int main(int argc, char *argv[]) {
         if (b.size()==0) {
             muted = !muted;
             echo.mute(muted);
-            printf("%s\n", muted?"Muted":"Audible again");
+            yInfo("%s\n", muted ? "Muted" : "Audible again");
         } else if (cmd=="help") {
             help = true;
         } else if (cmd=="s") {
             saving = !saving;
             echo.save(saving);
-            printf("%s\n", saving?"Saving":"Stopped saving");
+            yInfo("%s\n", saving ? "Saving" : "Stopped saving");
             if (saving) {
-                printf("  Type \"s\" again to stop saving\n");
+                yInfo("  Type \"s\" again to stop saving\n");
             }
         } else if (cmd=="write"||cmd=="w") {
             if (b.size()==2) {
                 fname = b.get(1).asString();
             }
             char buf[2560];
-            sprintf(buf,fname.c_str(),ct);
+            yInfo(buf, fname.c_str(), ct);
             echo.saveFile(buf);
             ct++;
         } else if (cmd=="q"||cmd=="quit") {
             done = true;
         } else if (cmd=="buf"||cmd=="b") {
             padding = b.get(1).asInt();
-            printf("Buffering at %d\n", padding);
+            yInfo("Buffering at %d\n", padding);
         }
     }
 

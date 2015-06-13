@@ -228,7 +228,7 @@ public:
                 double min;
                 owner->getEstFrequency(it, av, min, max);
                 owner->resetStat();
-                printf("%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]\n",
+                yDebug("%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]\n",
                     ownerName.c_str(),
                     it,
                     av,
@@ -916,7 +916,7 @@ protected:
             int nj2 = l2.size();
             if(nj2 != len)
             {
-                printf("received an answer with an unexpected number of entries!\n");
+                yError("received an answer with an unexpected number of entries!\n");
                 return false;
             }
             for (i = 0; i < nj2; i++)
@@ -969,25 +969,25 @@ public:
             {
                 writeStrict_singleJoint = true;
                 writeStrict_moreJoints  = true;
-                printf("RemoteControlBoard is ENABLING the writeStrict option for all commands\n");
+                yInfo("RemoteControlBoard is ENABLING the writeStrict option for all commands\n");
             }
             else if(gotStrictVal.asString() == "off")
             {
                 writeStrict_singleJoint = false;
                 writeStrict_moreJoints  = false;
-                printf("RemoteControlBoard is DISABLING the writeStrict opition for all commands\n");
+                yInfo("RemoteControlBoard is DISABLING the writeStrict opition for all commands\n");
             }
             else
-                printf("ERROR, found writeStrict opition with wrong value. Accepted options are 'on' or 'off'\n");
+                yError("Found writeStrict opition with wrong value. Accepted options are 'on' or 'off'\n");
         }
 
         if (local=="") {
-            fprintf(stderr,"Problem connecting to remote controlboard, 'local' port prefix not given\n");
+            yError("Problem connecting to remote controlboard, 'local' port prefix not given\n");
             return false;
         }
 
         if (remote=="") {
-            fprintf(stderr,"Problem connecting to remote controlboard, 'remote' port name not given\n");
+            yError("Problem connecting to remote controlboard, 'remote' port name not given\n");
             return false;
         }
 
@@ -1032,7 +1032,7 @@ public:
             // ok=Network::connect(rpc_p.getName(), s1.c_str());    //This should work also with YARP_PORT_PREFIX because getting back the name of the port will return the modified name
             ok=rpc_p.addOutput(s1.c_str());                         //This works because we are manipulating only remote side and let yarp handle the local side
             if (!ok) {
-                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
             }
             s1 = remote;
@@ -1043,7 +1043,7 @@ public:
             // ok=Network::connect(command_p.getName(), s1.c_str(), carrier); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
             ok = command_p.addOutput(s1.c_str(), carrier);
             if (!ok) {
-                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
             }
 
@@ -1054,7 +1054,7 @@ public:
             ok = Network::connect(s1, state_p.getName(), carrier);
 
             if (!ok) {
-                printf("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
+                yError("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
                 connectionProblem = true;
             }
 
@@ -1070,8 +1070,8 @@ public:
             }
             else
             {
-                printf("*** Extended port %s was not found on the controlBoardWrapper I'm connecting to. Falling back to compatibility behaviour\n", s1.c_str());
-                printf("Updating to newer yarp and the usage of controlBoardWrapper2 is suggested***\n");
+                yError("*** Extended port %s was not found on the controlBoardWrapper I'm connecting to. Falling back to compatibility behaviour\n", s1.c_str());
+                yWarning("Updating to newer yarp and the usage of controlBoardWrapper2 is suggested***\n");
                 //connectionProblem = true;     // for compatibility
                 controlBoardWrapper1_compatibility = true;
             }
@@ -1091,7 +1091,7 @@ public:
 
         if (!checkProtocolVersion(config.check("ignoreProtocolCheck")))
         {
-            std::cout << "checkProtocolVersion failed" << std::endl;
+            yError() << "checkProtocolVersion failed";
             command_buffer.detach();
             rpc_p.close();
             command_p.close();
@@ -1102,7 +1102,7 @@ public:
 
         if (!isLive()) {
             if (remote!="") {
-                printf("Problems with obtaining the number of controlled axes\n");
+                yError("Problems with obtaining the number of controlled axes\n");
                 command_buffer.detach();
                 rpc_p.close();
                 command_p.close();
@@ -1573,7 +1573,7 @@ public:
             if (ret)
             {
                 if (tmp.size() != (size_t)nj)
-                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
                 YARP_ASSERT (tmp.size() == (size_t)nj);
                 memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
@@ -1620,7 +1620,7 @@ public:
             if (ret)
             {
                 if (tmp.size() != (size_t)nj)
-                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
                 YARP_ASSERT (tmp.size() == (size_t)nj);
                 for(int j=0; j<nj; j++)
@@ -1997,7 +1997,7 @@ public:
             if (ret)
             {
                 if (tmp.size() != (size_t)nj)
-                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
                 YARP_ASSERT (tmp.size() == (size_t)nj);
                 memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
@@ -2047,7 +2047,7 @@ public:
             if (ret)
             {
                 if (tmp.size() != (size_t)nj)
-                    fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
                 YARP_ASSERT (tmp.size() == (size_t)nj);
                 for(int j=0; j<nj; j++)
@@ -3144,7 +3144,7 @@ public:
 
                 if (n_joint != l.size())
                 {
-                    printf("getControlModes group received an answer of wrong length. expected %d, actual size is %d", n_joint, l.size());
+                    yError("getControlModes group received an answer of wrong length. expected %d, actual size is %d", n_joint, l.size());
                     return false;
                 }
 
@@ -3509,7 +3509,7 @@ public:
 
                 if (list.size() != n_joints)
                 {
-                    fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
+                    yError("getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
                     return false;
                 }
                 else
@@ -3576,7 +3576,7 @@ public:
 
                 if (list.size() != nj)
                 {
-                    fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
+                    yError("getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
                     return false;
 
                 }
@@ -3922,7 +3922,7 @@ public:
         cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
         cmd.addVocab(VOCAB_HOMING_WHOLE_PART);
         bool ok = rpc_p.write(cmd, response);
-        std::cout << "Sent homing whole part message" << std::endl;
+        yDebug() << "Sent homing whole part message";
         return CHECK_FAIL(ok, response);
     }
 

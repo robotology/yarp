@@ -11,6 +11,7 @@
 #define __YARPCANBUSINTERFACE__
 
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/os/Log.h>
 
 /*! \file CanBusInterface.h define interface for can bus devices*/
 
@@ -136,7 +137,7 @@ public:
     
         if (m==0)
             {
-                fprintf(stderr, "Warning trying to detroy non valid buffer\n");
+                yError("Warning trying to detroy non valid buffer\n");
                 return;
             }
 
@@ -145,7 +146,7 @@ public:
 
         if ((msgs==0)||(storage==0))
             {
-                fprintf(stderr, "Warning, troubles destroying memory\n");
+                yError("Warning, troubles destroying memory\n");
                 return;
             }
 

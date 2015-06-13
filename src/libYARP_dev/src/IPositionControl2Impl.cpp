@@ -11,6 +11,7 @@
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/os/Log.h>
 
 using namespace yarp::dev;
 
@@ -307,11 +308,9 @@ bool ImplementPositionControl2::getAxes(int *axis)
 bool StubImplPositionControl2Raw::NOT_YET_IMPLEMENTED(const char *func)
 {
     if (func)
-        fprintf(stderr, "%s:", func);
+        yError("%s: not yet implemented\n", func);
     else
-        fprintf(stderr, "Function ");
-
-    fprintf(stderr, "not yet implemented\n");
+        yError("Function not yet implemented\n");
 
     return false;
 }
