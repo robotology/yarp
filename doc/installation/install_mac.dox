@@ -7,11 +7,217 @@
 /**
  * @page install_yarp_mac Installing YARP on MacOS
 
- This is work in progress in the meanwhile please refer to:
- 
- http://wiki.icub.org/wiki/MacOSX:_installation
+\tableofcontents
 
- 
+\section install_mac_from_homebrew Install using Homebrew
+This installation has been confirmed to work on OSX Mavericks and Yosemite with Homebrew.
+
+\subsection install_mac_Xcode Installing Xcode
+
+To compile anything on OS X (including YARP), you'll need to have <a href="http://developer.apple.com/xcode/"><b>Xcode</b></a> installed. This can be done through the <b>App Store</b>. 
+
+Once installed, you need to install the <b>Command Line Tools</b>.
+To do this, open XCode, go to XCode->Preferences->Downloads and install Command Line Tools.
+
+If you do not see the option install Command Line Tools, run the following on a terminal
+
+\code
+xcode-select --install
+\endcode
+
+Once this is done, you can now continue with the installation steps:
+
+\subsection install_mac_X11 Installing X11
+
+In OS X 10.8 Mountain Lion and later, <b>X11</b> is not provided anymore. You need to install <a href="http://xquartz.macosforge.org/landing/"><b>XQuartz</b></a>. 
+In earlier version of OS X, this is not stricly necessary, but recommended as XQuartz is more robust and updated that the system-provided X11.
+
+\subsection install_mac_homebrew Installing Homebrew
+
+Please install homebrew using the following commands or visit and follow the official <a href="http://brew.sh"><b>installation steps</b></a>
+
+\code 
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+\endcode
+
+After the installation, you can run the following command to check if your setup has been successful:
+
+\code
+brew doctor
+\endcode
+
+If you had Homebrew already installed on your system, update and upgrade:
+
+\code
+brew update
+brew upgrade
+\endcode
+
+
+\subsection install_mac_YARP_Dependencies Installing YARP Dependencies
+Here we provide information for installing the <b>YARP dependencies</b> via <b>Homebrew</b> then getting and compiling the <b>YARP sources</b> directly from the repository. 
+In order to install the YARP dependencies enter the follwing command in a terminal:
+
+\code
+brew install `brew deps --1 yarp | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/ /g'`
+\endcode
+
+and the following for yarpbuilder:
+
+\code
+brew install goocanvas
+\endcode
+
+\subsubsection install_mac_YARP_QT5 Installing YARP Dependencies: QT5
+
+Please can now follow this link and download Qt 5.3.2 Open Source. <a href="http://download.qt-project.org/official_releases/online_installers/qt-opensource-mac-x64-1.6.0-5-online.dmg"><b>Qt 5.3.2 Open Source</b></a> or just follow this <a href="http://qt-project.org/downloads"><b>link</b></a> and download it yourself.
+Install the dmg package by default in your home and add its <b>environmental variable</b>: (In order to follow the KISS principle we are using the native mac editor Textedit. Please feel free to use whichever tool/editor you prefer)
+
+\code
+cd ~
+open -a TextEdit .bash_profile
+\endcode
+
+If the following command result in an error: The file .... does not exist, do the following first:
+
+\code
+cd ~
+touch .bash_profile
+\endcode
+
+now and copy the following lines (obviously changing the path with your version):
+
+\code
+export Qt5_DIR=/Users/your_user_name/Qt/5.3/clang_64
+\endcode
+
+Now you would need to configure pkg-config Add this to the .bash_profile in order to correctly do this:
+
+\code
+cd ~
+open -a TextEdit .bash_profile
+\endcode
+
+and copy the following line:
+
+\code
+export PKG_CONFIG_PATH=/usr/X11/lib/pkgconfig/:$PKG_CONFIG_PATH
+\endcode
+
+\subsubsection install_mac_YARP_optional_GDK Optional: Installing YARP Dependencies: GDK PIXBUF 
+
+Programs that require this <b>GDK PIXBUF</b> need to set the environment variable correctly. Just to be on the safe side add this to the .bash_profile
+
+\code
+export GDK_PIXBUF_MODULEDIR="/usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders"
+\endcode
+
+To refresh and load these environment settings type:
+
+\code
+source ~/.bash_profile 
+\endcode
+
+
+\subsection install_mac_YARP Installing YARP
+
+In the directory where you would like to store your code, e.g. /Users/your_user_name/Dev/ run the following git command to clone YARP on your system
+
+\code
+git clone https://github.com/robotology/yarp.git
+\endcode
+
+\subsubsection install_mac_YARP_terminal Compile YARP using terminal:
+
+\code
+cd yarp
+mkdir build
+cd build
+ccmake ..
+\endcode
+
+configure it correctly by enabling the following flags (simple solution):
+
+\code
+CREATE_GUIS
+CREATE_LIB_MATH  
+\endcode
+
+configure & generate, then:
+
+\code
+make
+\endcode
+
+\subsubsection install_mac_YARP_Xcode Compile YARP using Xcode:
+
+In order to generate and Xcode project do the following:
+
+\code
+cd yarp
+mkdir build
+cd build
+ccmake .. -G Xcode
+\endcode
+
+This will generate a <b>YARP.xcodeproj</b> file which can be opened with Xcode.
+Build it by clicking <b>Product -> Build</b> or <b>cmd+B</b> shortcut.
+One can also compile the Release binaries by clicking <b>Product -> Archive</b>.
+
+As a next step, you need to set the environmental variables:
+
+\code
+cd ~
+open -a TextEdit .bash_profile
+\endcode
+
+and copy the following lines:
+
+\code
+export code=/Users/your_user_name/Dev
+export YARP_ROOT=/Users/your_user_name/Dev/yarp
+export YARP_DIR=/Users/your_user_name/Dev/yarp/build
+export PATH=$YARP_DIR/bin/Release:$PATH 
+\endcode
+
+Notice that if you used the terminal version without Xcode the last line becomes:
+
+\code
+export PATH=$YARP_DIR/bin:$PATH
+\endcode
+
+Now setup YARP_DATA_DIRS by adding this to the .bash_profile:
+
+\code
+export YARP_DATA_DIRS=/Users/your_user_name/Dev/yarp/build/share/yarp
+\endcode
+
+To refresh and load these environment settings type:
+
+\code
+source ~/.bash_profile 
+\endcode
+
+Now to quickly test the system run this in a terminal:
+
+\code
+yarp
+\endcode
+
+and you should get something like:
+
+\code
+This is the YARP network companion.
+Call with the argument "help" to see a list of ways to use this program.
+\endcode 
+
+
+\subsubsection Prepare YARP for compiling the required bindings (LUA, JAVA, PYTHON etc):
+
+To correctly install the YARP bindings you will need <b>swig</b>
+
+\code
+brew install swig
+\endcode
+
 */
- 
- 
