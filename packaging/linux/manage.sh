@@ -153,7 +153,7 @@ for platform in $PLATFORMS; do
 	creation_list="$creation_list, config_$variant.sh"
     
         # Update Makefile with useful targets
-	all_targets="$all_targets yarp_$variant.txt"
+	all_targets="$all_targets yarp_$variant.txt test_$variant.txt"
 	(
 	    echo "chroot_$variant.txt:"
 	    echo -e "\t$SOURCE_DIR/src/build_chroot.sh $variant chroot_$variant && touch chroot_$variant.txt\n"

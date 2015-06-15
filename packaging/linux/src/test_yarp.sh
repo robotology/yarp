@@ -31,12 +31,23 @@ source ./settings.sh || {
 	exit 1
 }
 
+source $BUNDLE_FILENAME || {
+	echo "No bundle settings found: Tried '$BUNDLE_FILENAME'"
+	exit 1
+}
+
 platform=$1
 
 if [ "k$platform" = "k" ]; then
     echo "Call as: test_yarp.sh <platform>"
     exit 1
 fi
+
+# Load the configuration of the desired platform
+source ./config_$platform.sh || {
+	echo "No platform configuration file found"
+	exit 1
+}
 
 # Load the configuration of a clean chroot
 source chroot_${platform}.sh || {
@@ -68,7 +79,15 @@ fi
 # Reset the chroot (this is for quick tests only; more reliable method
 # is to delete and start over)
 sudo cp yarp-*.deb test_chroot/tmp || exit 1
-run_in_chroot test_chroot "yes | apt-get remove yarp"
+run_in_chroot test_chroot "yes | apt-get remove yarp" 
+
+DEPENDENCIES_DISTRIB="DEPENDENCIES_${PLATFORM_KEY}"
+BACKPORTS_URL_DISTRIB="BACKPORTS_URL_${PLATFORM_KEY}"
+if [ "${!BACKPORTS_URL_DISTRIB}" != "" ]; then
+  echo "Using backports from ${!BACKPORTS_URL_DISTRIB}"
+  run_in_chroot test_chroot "echo 'deb ${!BACKPORTS_URL_DISTRIB} ${PLATFORM_KEY}-backports main' > /etc/apt/sources.list.d/backports.list" || exit 1
+  run_in_chroot test_chroot "apt-get update" || exit 1
+fi
 
 # Install tool to load .deb and its dependencies.  Not available on etch
 run_in_chroot test_chroot "yes | apt-get install gdebi-core" || {
@@ -84,8 +103,8 @@ run_in_chroot test_chroot "yes | apt-get install gdebi-core" || {
 
 # _AC_
 
-run_in_chroot test_chroot "apt-get install gdebi-core"
-run_in_chroot test_chroot "gdebi -n /tmp/$YARP_PACKAGE"
+run_in_chroot test_chroot "apt-get install gdebi-core" || exit 1
+run_in_chroot test_chroot "gdebi -n /tmp/$YARP_PACKAGE" || exit 1
 
 echo "To enter test chroot, run: ($YARP_PACKAGE)"
 echo "  sudo chroot $YARP_PACKAGE_DIR/test_chroot"

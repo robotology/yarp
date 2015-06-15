@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#set -x
 ##############################################################################
 #
 # Copyright: (C) 2011 RobotCub Consortium
@@ -73,36 +73,51 @@ function run_in_chroot {
     sudo chroot $1 bash -c "$2"
 }
 
-# Install basic dependencies
-run_in_chroot build_chroot "yes | apt-get install libgsl0-dev libgtkmm-2.4-dev libace-dev subversion cmake dpkg wget" || exit 1
-case "$platform" in
-squeeze_i386|squeeze_amd64)
-  run_in_chroot build_chroot "apt-get install -y libgoocanvasmm-dev"
-  run_in_chroot build_chroot "echo 'deb http://backports.debian.org/debian-backports/ squeeze-backports main' >> /etc/apt/sources.list"
-  run_in_chroot build_chroot "apt-get update && apt-get install -y -t squeeze-backports cmake"
-  ;;
-esac
+DEPENDENCIES_DISTRIB="DEPENDENCIES_${PLATFORM_KEY}"
+BACKPORTS_URL_DISTRIB="BACKPORTS_URL_${PLATFORM_KEY}"
+if [ "${!BACKPORTS_URL_DISTRIB}" != "" ]; then
+  echo "Using backports from ${!BACKPORTS_URL_DISTRIB}"
+  run_in_chroot build_chroot "echo 'deb ${!BACKPORTS_URL_DISTRIB} ${PLATFORM_KEY}-backports main' > /etc/apt/sources.list.d/backports.list"
+  run_in_chroot build_chroot "apt-get update"
+fi
 
-if [ "k$TESTING" = "kTRUE" ]; then
-	YARP_VERSION=$YARP_REVISION
-	echo "yarp test revision $YARP_VERSION"
-	run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co -r $YARP_REVISION https://github.com/robotology/yarp/trunk yarp-$YARP_VERSION" || exit 1
-	else
-	echo "yarp tag $YARP_VERSION"
+# Install basic dependencies
+if [ "$DEPENDENCIES_COMMON" != "" ]; then
+  run_in_chroot build_chroot "yes | apt-get install $DEPENDENCIES_COMMON" || exit 1
+fi
+
+if [ "${!DEPENDENCIES_DISTRIB}" != "" ]; then
+  run_in_chroot build_chroot "yes | apt-get install ${!DEPENDENCIES_DISTRIB}" || exit 1
+fi
+
+if [ "$YARP_REVISION" != "" ]; then
+  YARP_VERSION=$YARP_REVISION
+  echo "yarp test revision $YARP_VERSION"
+  run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co -r $YARP_REVISION https://github.com/robotology/yarp/trunk yarp-$YARP_VERSION" || exit 1
+else
+  echo "yarp tag $YARP_VERSION"
 fi
 
 # Fetch yarp from SVN
 if [ ! -e build_chroot/tmp/yarp-$YARP_VERSION.done ]; then 
-	echo "fetching yarp from SVN"
-	# run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co https://github.com/robotology/yarp/trunk/yarp2 yarp2" || exit 1
-	run_in_chroot build_chroot "cd /tmp; test -e yarp-$YARP_VERSION  || svn co https://github.com/robotology/yarp/tags/v${YARP_VERSION} yarp-$YARP_VERSION" || exit 1
-	run_in_chroot build_chroot "touch /tmp/yarp-$YARP_VERSION.done"
+  echo "fetching yarp version $YARP_VERSION from SVN"
+  if [ "$YARP_VERSION" == "trunk" ]; then
+    run_in_chroot build_chroot "cd /tmp; test -e yarp-${YARP_VERSION} || svn co https://github.com/robotology/yarp/trunk yarp-${YARP_VERSION}" || exit 1
+  else
+    run_in_chroot build_chroot "cd /tmp; test -e yarp-${YARP_VERSION} || svn co https://github.com/robotology/yarp/tags/v${YARP_VERSION} yarp-${YARP_VERSION}" || exit 1
+  fi
+  run_in_chroot build_chroot "touch /tmp/yarp-$YARP_VERSION.done"
 else
 	echo "yarp already got!!"
 fi
 
 CHROOT_SRC=/tmp/yarp-$YARP_VERSION 
-#run_in_chroot build_chroot "cd $CHROOT_SRC && svn up" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_SRC && svn up" || exit 1
+if [ "$YARP_REVISION" == "" ]; then
+  run_in_chroot build_chroot "cd $CHROOT_SRC && svn up"
+  run_in_chroot build_chroot "svn info ${CHROOT_SRC} > /tmp/yarp_svn.revision"
+  YARP_REVISION=$( grep '^Revision:' build_chroot/tmp/yarp_svn.revision | sed -e 's/^Revision: //' )
+fi
 
 # Prepare to build YARP.
 CHROOT_BUILD=/tmp/yarp-$YARP_VERSION/build
@@ -132,13 +147,15 @@ run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE
 run_in_chroot build_chroot "cd $CHROOT_BUILD && make" || exit 1
 
 # Go ahead and generate .deb
-PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
-case "$platform" in
-squeeze_i386|squeeze_amd64)
-  PACKAGE_DEPENDENCIES="$PACKAGE_DEPENDENCIES, libgoocanvasmm-dev"
-  ;;
-esac
-run_in_chroot build_chroot "cd $CHROOT_BUILD && $CMAKE -DCPACK_GENERATOR='DEB' -DCPACK_DEBIAN_PACKAGE_VERSION=${YARP_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY} -DCPACK_PACKAGE_CONTACT='paul@robotrebuilt.com' -DCPACK_DEBIAN_PACKAGE_MAINTAINER='matteo.brunettini@iit.it' -DCPACK_DEBIAN_PACKAGE_DEPENDS:STRING='$PACKAGE_DEPENDENCIES' ." || exit 1
+#PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
+PACKAGE_DEPENDENCIES=$( echo "$DEPENDENCIES_COMMON ${!DEPENDENCIES_DISTRIB}" | sed -e "s/ /,/g" | sed -e "s/,$//g") 
+if [ "$YARP_VERSION" == "trunk" ]; then
+  DEBIAN_PACKAGE_VERSION="${YARP_REVISION}-trunk-${YARP_DEB_REVISION}~${PLATFORM_KEY}"
+else
+  DEBIAN_PACKAGE_VERSION="${YARP_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}"  
+fi
+
+run_in_chroot build_chroot "cd $CHROOT_BUILD && $CMAKE -DCPACK_GENERATOR='DEB' -DCPACK_DEBIAN_PACKAGE_VERSION=${DEBIAN_PACKAGE_VERSION} -DCPACK_PACKAGE_CONTACT='paul@robotrebuilt.com' -DCPACK_DEBIAN_PACKAGE_MAINTAINER='matteo.brunettini@iit.it' -DCPACK_DEBIAN_PACKAGE_DEPENDS:STRING='$PACKAGE_DEPENDENCIES' ." || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -f *.deb && make package" || exit 1
 
 # Rebuild .deb, because cmake 2.8.2 is broken, sigh
