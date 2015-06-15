@@ -2,7 +2,7 @@
 
 /*
 * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Marco Randazzo
+* Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 *
 */
@@ -51,7 +51,7 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
             deltaTMin=tmpDT;
 
         //compare network time
-        if (tmpDT*1000<ANALOG_TIMEOUT)
+        if (tmpDT*1000<BATTERY_TIMEOUT)
         {
             state = b.get(5).asInt();
         }
@@ -75,7 +75,7 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
     }
 
     //now compare timestamps
-    if ((1000*(newStamp.getTime()-lastStamp.getTime()))<ANALOG_TIMEOUT)
+    if ((1000*(newStamp.getTime()-lastStamp.getTime()))<BATTERY_TIMEOUT)
     {
         state = b.get(5).asInt();
     }
@@ -167,33 +167,6 @@ void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &mi
     }
     av=av*1000;
     mutex.post();
-}
-
-void  yarp::dev::BatteryClient::removeLeadingTrailingSlashesOnly(std::string &name)
-{
-    bool done = false;
-    while(!done)
-    {
-        std::size_t found = name.find('/');
-        // if no '/' found, I'm done
-        if (found == std::string::npos)
-        {
-            done = true;
-            continue;
-        }
-
-        std::cout << "found is " << found <<  "; length is : " << name.length() << std::endl;
-        // remove leading or trailing '/'
-        if( (found == 0) || (found == name.length()-1 ) /*found starts from 0, length doesn't*/ )
-        {
-            done = false;       // we could have both leading and trailing, so let's check again
-            name.erase(found,1);
-        }
-        else
-            done = true;        // there is some '/', but their are in the middle and they are allowed
-    }
-
-    std::cout << name << std::endl;
 }
 
 bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
