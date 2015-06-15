@@ -164,7 +164,9 @@ This will generate a <b>YARP.xcodeproj</b> file which can be opened with Xcode.
 Build it by clicking <b>Product -> Build</b> or <b>cmd+B</b> shortcut.
 One can also compile the Release binaries by clicking <b>Product -> Archive</b>.
 
-As a next step, you need to set the environmental variables:
+\subsubsection install_mac_YARP_Environment Setting YARP environmental Variables:
+
+Once YARP has been compiled, you need to set its environmental variables:
 
 \code
 cd ~
