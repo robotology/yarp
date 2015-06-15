@@ -26,8 +26,8 @@ yarp::dev::DriverCreator *createBatteryWrapper() {
 
 
 /**
-  * It reads the data from an analog sensor and sends them on one or more ports.
-  * It creates one rpc port and its related handler for every output port.
+  * It reads the data from an battery sensor and sends them on one port.
+  * It creates one rpc port.
   */
 
 // Constructor used when there is only one output port
@@ -58,18 +58,18 @@ BatteryWrapper::~BatteryWrapper()
 }
 
 /**
-  * Specify which analog sensor this thread has to read from.
+  * Specify which battery sensor this thread has to read from.
   */
 
-bool BatteryWrapper::attachAll(const PolyDriverList &analog2attach)
+bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
 {
-    if (analog2attach.size() != 1)
+    if (battery2attach.size() != 1)
     {
         yError("BatteryWrapper: cannot attach more than one device");
         return false;
     }
 
-    yarp::dev::PolyDriver * Idevice2attach=analog2attach[0]->poly;
+    yarp::dev::PolyDriver * Idevice2attach = battery2attach[0]->poly;
 
     if (Idevice2attach->isValid())
     {
@@ -110,7 +110,7 @@ bool BatteryWrapper::threadInit()
     // open data port
     if (!streamingPort.open(streamingPortName.c_str()))
         {
-            yError("AnalogWrapper: failed to open port %s", streamingPortName.c_str());
+            yError("BatteryWrapper: failed to open port %s", streamingPortName.c_str());
             return false;
         }
     return true;
@@ -124,23 +124,6 @@ void BatteryWrapper::setId(const std::string &id)
 std::string BatteryWrapper::getId()
 {
     return sensorId;
-}
-
-bool BatteryWrapper::checkForDeprecatedParams(yarp::os::Searchable &params)
-{
-//    check for deprecated params
-    if(!params.check("robotName", "name of the robot.") )
-    {
-        yError("BatteryWrapper: missing 'robotName' parameter, check your configuration file");
-        return false;
-    }
-
-    // Create the list of ports
-    std::string robotName = params.find("robotName").asString().c_str();
-    streamingPortName ="/";
-    streamingPortName += robotName;
-    streamingPortName += "/" + this->sensorId + "/analog:o";
-    return true;
 }
 
 #if ROS_PART_STILL_TO_BE_DONE
@@ -303,7 +286,7 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("period"))
     {
-        yError() << "AnalogServer: missing 'period' parameter. Check you configuration file\n";
+        yError() << "BatteryWrapper: missing 'period' parameter. Check you configuration file\n";
         return false;
     }
     else
@@ -311,15 +294,14 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("name"))
     {
-        if(!checkForDeprecatedParams(config))
-        {
-            yError() << "AnalogServer: missing 'name' parameter. Check you configuration file; it must be like:\n"
-                        "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
-        }
+        yError() << "BatteryWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
+        yError() << "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
+        return false;
     }
     else
     {
         streamingPortName  = config.find("name").asString().c_str();
+        rpcPortName = streamingPortName + "/rpc:i";
         setId("batteryWrapper");
     }
 
@@ -380,7 +362,6 @@ void BatteryWrapper::threadRelease()
 
 void BatteryWrapper::run()
 {
-    int first, last;
     bool ret = true;
 
     if (battery_p!=0)
@@ -388,9 +369,11 @@ void BatteryWrapper::run()
         double charge  = 0;
         double voltage = 0;
         double current = 0;
-        ret &= battery_p->getBatteryCharge(charge);
-        ret &= battery_p->getBatteryCharge(voltage);
-        ret &= battery_p->getBatteryCharge(current);
+        double temperature = 0;
+        bool ret_g = battery_p->getBatteryCharge(charge);
+        bool ret_v = battery_p->getBatteryVoltage(voltage);
+        bool ret_c = battery_p->getBatteryCurrent(current);
+        bool ret_t = battery_p->getBatteryTemperature(temperature);
 
         if (ret)
         {
@@ -399,9 +382,10 @@ void BatteryWrapper::run()
                 lastStateStamp.update();
                 yarp::os::Bottle& b = streamingPort.prepare();
                 b.clear();
-                b.addDouble(current);
                 b.addDouble(voltage);
+                b.addDouble(current);
                 b.addDouble(charge);
+                b.addDouble(temperature);
                 streamingPort.setEnvelope(lastStateStamp);
                 streamingPort.write();
             }
@@ -435,7 +419,7 @@ void BatteryWrapper::run()
 
 bool BatteryWrapper::close()
 {
-    yTrace("AnalogWrapper::Close");
+    yTrace("BatteryWrapper::Close");
     if (RateThread::isRunning())
     {
         RateThread::stop();

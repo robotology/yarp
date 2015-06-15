@@ -40,11 +40,11 @@ int main(int argc, char *argv[])
 
     Network yarp;
 
-    /*if (!yarp.checkNetwork())
+    if (!yarp.checkNetwork())
     {
         yError("Error initializing yarp network (is yarpserver running?)");
         return 0;
-    }*/
+    }
 
     ResourceFinder rf;
     rf.setVerbose(true);
@@ -77,11 +77,11 @@ int main(int argc, char *argv[])
     } while (b == true);
 
     std::string localPort = pname;
-    std::string remotePort = "/" + robot_name + "/battery";
+    std::string remotePort = "/" + robot_name + "/battery:o";
 
     yarp::os::Property options;
     options.put("robot", robot_name.c_str());
-    options.put("device", "batteryWrapper");
+    options.put("device", "batteryClient");
     options.put("local", localPort.c_str());
     options.put("remote", remotePort.c_str());
 

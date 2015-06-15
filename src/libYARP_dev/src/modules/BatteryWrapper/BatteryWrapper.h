@@ -170,7 +170,6 @@ private:
     bool initialize_YARP(yarp::os::Searchable &config);
     
     // Function used when one or more output ports are specified
-    bool checkForDeprecatedParams(yarp::os::Searchable &params);
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };
 

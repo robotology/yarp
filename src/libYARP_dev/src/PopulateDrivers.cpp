@@ -39,6 +39,8 @@ extern DriverCreator *createAnalogWrapper();
 extern DriverCreator *createControlBoardWrapper();
 extern DriverCreator *createVirtualAnalogWrapper();
 extern DriverCreator *createServerInertial();
+extern DriverCreator *createBatteryWrapper();
+extern DriverCreator *createBatteryClient();
 
 void Drivers::init() {
 
@@ -75,9 +77,11 @@ void Drivers::init() {
 
     add(createServerInertial());
     add(createRemoteControlBoard());
+    add(createBatteryClient());
     add(createServerControlBoard());
     add(createAnalogSensorClient());
     add(createAnalogWrapper());
     add(createControlBoardWrapper());
     add(createVirtualAnalogWrapper());
+    add(createBatteryWrapper());
 }
