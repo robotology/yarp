@@ -17,8 +17,8 @@ Here is the most recent source code package (stable version) for YARP:
 
 Here is the most recent source code package (developement version) for YARP:
 <ul>
-<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.63.tar.gz">yarp-2.3.63.tar.gz</a> development release for Linux, Mac OSX, etc.</li>
-<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.63.zip">yarp-2.3.63.zip</a> development release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.64.tar.gz">yarp-2.3.64.tar.gz</a> development release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.64.zip">yarp-2.3.64.zip</a> development release for Windows.</li>
 </ul>
 
 <a href=http://www.cmake.org>CMake</a> version 2.8.9 or newer

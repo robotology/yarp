@@ -1,3 +1,6 @@
+2015-06-13 Matteo Brunettini  <matteo.brunettini@iit.it>
+    * tagging version 2.3.64
+
 2015-03-10 Ugo Pattacini <ugo.pattacini@iit.it>
     * iCub::ctrl::{axis2dcm, dcm2euler ...} imported in yarp::math
 
