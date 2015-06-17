@@ -15,7 +15,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Log.h>
-#include <yarp/os/Logstream.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/sig/Vector.h>
 
