@@ -12,8 +12,7 @@
 #include <deque>
 
 #ifdef ADD_VIDEO
-    #include <cv.h>
-    #include <highgui.h>
+    #include <opencv2/opencv.hpp>
 #endif
 
 #include <yarp/os/all.h>
@@ -425,7 +424,7 @@ public:
             #ifdef ADD_VIDEO
                 if (doSaveFrame)
                 {
-                    cv::Mat img((IplImage*)item.obj->getPtr());
+                    cv::Mat img=cv::cvarrToMat((IplImage*)item.obj->getPtr());
                     videoWriter<<img;
 
                     // write the timecode of the frame
