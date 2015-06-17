@@ -21,7 +21,9 @@ using namespace yarp::dev;
 
 SerialDeviceDriver::SerialDeviceDriver() {
     //system_resources = (SerialHandler*) new SerialHandler();
-	verbose=false;
+    verbose=false;
+    line_terminator_char1 = '\r';
+    line_terminator_char2 = '\n';
 }
 
 SerialDeviceDriver::~SerialDeviceDriver() {
@@ -77,6 +79,13 @@ bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
     config2.SerialParams.dtrdisable = config.check("dtrdisable",Value(0),"Controls whether DTR is disabled or enabled.").asInt();
     config2.SerialParams.databits = config.check("databits",Value(7),"Data bits. Valid values 5, 6, 7 and 8 data bits. Additionally Win32 supports 4 data bits.").asInt();
     config2.SerialParams.stopbits = config.check("stopbits",Value(1),"Stop bits. Valid values are 1 and 2.").asInt();
+
+    if (config.check("line_terminator_char1", "line terminator character for receiveLine(), default '\r'"))
+        line_terminator_char1 = config.find("line_terminator_char1").asInt();
+
+    if (config.check("line_terminator_char2", "line terminator character for receiveLine(), default '\n'"))
+        line_terminator_char2 = config.find("line_terminator_char2").asInt();
+
     return open(config2);
 }
 
@@ -186,7 +195,7 @@ int SerialDeviceDriver::receiveLine(char* buffer, const int MaxLineLength)
 		{
 			return 0;
 		}
-		if ((recv_ch == '\r') || (recv_ch == '\n'))
+		if ((recv_ch == line_terminator_char1) || (recv_ch == line_terminator_char2))
 		{
 			buffer[i] = recv_ch;
 			i++;
