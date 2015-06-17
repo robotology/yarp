@@ -41,10 +41,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateMain()
 {
-    static double voltage = 0;
-    static double current = 0;
-    static double charge = 0;
-
     if (ibat)
     {
         //yDebug("received battery info");
@@ -52,6 +48,13 @@ void MainWindow::updateMain()
         ret &= ibat->getBatteryVoltage(voltage);
         ret &= ibat->getBatteryCurrent(current);
         ret &= ibat->getBatteryCharge(charge);
+        if (enable_ask_info)
+        {
+            bool ret = ibat->getBatteryInfo(info);
+            char buff[5000];
+            sprintf(buff, "%s", info.c_str());
+            yDebug("info: %s",buff);
+        }
         connected = ret;
     }
     else
@@ -186,6 +189,10 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, yarp::dev::IBattery* p_ibat,
 {
     ibat = p_ibat;
     connected = false;
+    enable_ask_info = false;
+    voltage = 0;
+    charge = 0;
+    current = 0;
 
     ui->setupUi(this);
 

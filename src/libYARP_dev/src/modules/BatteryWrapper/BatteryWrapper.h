@@ -48,7 +48,8 @@ namespace yarp{
 
 class yarp::dev::BatteryWrapper: public yarp::os::RateThread,
                                 public yarp::dev::DeviceDriver,
-                                public yarp::dev::IMultipleWrapper
+                                public yarp::dev::IMultipleWrapper,
+                                public yarp::os::PortReader
 {
 public:
     BatteryWrapper();
@@ -86,6 +87,7 @@ private:
     std::string sensorId;
 
     bool initialize_YARP(yarp::os::Searchable &config);
+    virtual bool read(yarp::os::ConnectionReader& connection);
     
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };

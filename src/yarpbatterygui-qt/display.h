@@ -49,6 +49,13 @@ private:
     QPixmap                          img_charge;
     QPixmap                          img_numbers;
     bool                             connected;
+    bool                             enable_ask_info;
+
+    //data read from the battery
+    double                           voltage;
+    double                           current;
+    double                           charge;
+    yarp::os::ConstString            info;
 };
 
 /*

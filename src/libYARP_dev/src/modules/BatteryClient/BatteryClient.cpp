@@ -171,8 +171,6 @@ void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &mi
 
 bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
 {   
-    ConstString carrier = config.check("carrier", Value("udp"), "default carrier for streaming robot state").asString().c_str();
-
     local.clear();
     remote.clear();
 
@@ -196,8 +194,8 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
     }
     else
     {
-        _rate = DEFAULT_THREAD_PERIOD;
-        yWarning() << "part "<< deviceId <<" using default period ("<<_rate;
+        yError("BatteryClient::open() missing period parameter");
+        return false;
     }
 
     ConstString local_rpc = local;
@@ -218,7 +216,7 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool ok=Network::connect(remote.c_str(), local.c_str(), carrier.c_str());
+    bool ok=Network::connect(remote.c_str(), local.c_str(), "udp");
     if (!ok)
     {
         yError("BatteryClient::open() error could not connect to %s\n", remote.c_str());
@@ -278,7 +276,7 @@ bool yarp::dev::BatteryClient::getBatteryInfo(yarp::os::ConstString &battery_inf
     cmd.addVocab(VOCAB_IBATTERY);
     cmd.addVocab(VOCAB_BATTERY_INFO);
     bool ok = rpcPort.write(cmd, response);
-    if (CHECK_FAIL(ok, response)==false)
+    if (CHECK_FAIL(ok, response)!=false)
     {
         battery_info = response.get(2).asString();
         return true;

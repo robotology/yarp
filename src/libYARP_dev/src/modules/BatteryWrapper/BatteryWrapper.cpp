@@ -88,6 +88,54 @@ void BatteryWrapper::detach()
     battery_p = NULL;
 }
 
+bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::Bottle in;
+    yarp::os::Bottle out;
+    bool ok = in.read(connection);
+    if (!ok) return false;
+
+    // parse in, prepare out
+    int code = in.get(0).asVocab();
+    bool ret = false;
+    if (code == VOCAB_IBATTERY)
+    {
+        int cmd = in.get(1).asVocab();
+        if (cmd == VOCAB_BATTERY_INFO)
+        {
+            if (battery_p)
+            {
+                yarp::os::ConstString info;
+                battery_p->getBatteryInfo(info);
+                out.addVocab(VOCAB_IS);
+                out.addVocab(cmd);
+                out.addString(info);
+                ret = true;
+            }
+        }
+        else
+        {
+            yError("Invalid vocab received in BatteryWrapper");
+        }
+    }
+    else
+    {
+        yError("Invalid vocab received in BatteryWrapper");
+    }
+
+    if (!ret)
+    {
+        out.clear();
+        out.addVocab(VOCAB_FAILED);
+    }
+
+    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
+    if (returnToSender != NULL) {
+        out.write(*returnToSender);
+    }
+    return true;
+}
+
 bool BatteryWrapper::threadInit()
 {
     // open data port
@@ -148,7 +196,7 @@ bool BatteryWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
     streamingPort.open(streamingPortName.c_str());
     rpcPort.open(rpcPortName.c_str() );
-
+    rpcPort.setReader(*this);
     return true;
 }
 

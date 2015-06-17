@@ -84,19 +84,20 @@ int main(int argc, char *argv[])
     options.put("device", "batteryClient");
     options.put("local", localPort.c_str());
     options.put("remote", remotePort.c_str());
+    options.put("period", 10);
 
     drv = new yarp::dev::PolyDriver(options);
     if (!drv || !(drv->isValid()))
     {
         yError("Problems instantiating the device driver");
-        //return false;
+        return false;
     }
 
     drv->view(ibat);
     if (ibat == 0)
     {
         yError("Problems viewing the battery interface");
-        //return false;
+        return false;
     }
 
     MainWindow w(rf, ibat, NULL);
