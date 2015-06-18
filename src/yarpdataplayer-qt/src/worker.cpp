@@ -157,7 +157,7 @@ int WorkerClass::sendImages(int part, int frame)
         cvCvtColor( img, img, CV_BGR2RGB );
         ImageOf<PixelRgb> &temp = utilities->partDetails[part].imagePort.prepare();
         temp.resize(img->width,img->height);
-        cvCopyImage( img, (IplImage *) temp.getIplImage());
+        cvCopy( img, (IplImage *) temp.getIplImage());
 #else
     if ( !read(img,tmpPath.c_str()) ) {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
