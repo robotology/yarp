@@ -657,30 +657,36 @@ void yarp::dev::OVRHeadset::run()
     // Read orientation and write it on the port
     if (ts.StatusFlags & ovrStatus_OrientationTracked) {
 
-        OVR::Quatf orientation = headpose.ThePose.Orientation;
-        float yaw, pitch, roll;
-        orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
-        yarp::os::Bottle& output_orientation = orientationPort->prepare();
-        output_orientation.clear();
-        output_orientation.addDouble(OVR::RadToDegree(pitch));
-        output_orientation.addDouble(OVR::RadToDegree(-roll));
-        output_orientation.addDouble(OVR::RadToDegree(yaw));
-        orientationPort->setEnvelope(stamp);
-        orientationPort->write();
+        if (orientationPort->getOutputCount() > 0) {
+            OVR::Quatf orientation = headpose.ThePose.Orientation;
+            float yaw, pitch, roll;
+            orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
+            yarp::os::Bottle& output_orientation = orientationPort->prepare();
+            output_orientation.clear();
+            output_orientation.addDouble(OVR::RadToDegree(pitch));
+            output_orientation.addDouble(OVR::RadToDegree(-roll));
+            output_orientation.addDouble(OVR::RadToDegree(yaw));
+            orientationPort->setEnvelope(stamp);
+            orientationPort->write();
+        }
 
-        yarp::os::Bottle& output_angularVelocity = angularVelocityPort->prepare();
-        output_angularVelocity.addDouble(OVR::RadToDegree(headpose.AngularVelocity.x));
-        output_angularVelocity.addDouble(OVR::RadToDegree(headpose.AngularVelocity.y));
-        output_angularVelocity.addDouble(OVR::RadToDegree(headpose.AngularVelocity.z));
-        angularVelocityPort->setEnvelope(stamp);
-        angularVelocityPort->write();
+        if (angularVelocityPort->getOutputCount() > 0) {
+            yarp::os::Bottle& output_angularVelocity = angularVelocityPort->prepare();
+            output_angularVelocity.addDouble(OVR::RadToDegree(headpose.AngularVelocity.x));
+            output_angularVelocity.addDouble(OVR::RadToDegree(headpose.AngularVelocity.y));
+            output_angularVelocity.addDouble(OVR::RadToDegree(headpose.AngularVelocity.z));
+            angularVelocityPort->setEnvelope(stamp);
+            angularVelocityPort->write();
+        }
 
-        yarp::os::Bottle& output_angularAcceleration = angularAccelerationPort->prepare();
-        output_angularAcceleration.addDouble(OVR::RadToDegree(headpose.AngularAcceleration.x));
-        output_angularAcceleration.addDouble(OVR::RadToDegree(headpose.AngularAcceleration.y));
-        output_angularAcceleration.addDouble(OVR::RadToDegree(headpose.AngularAcceleration.z));
-        angularAccelerationPort->setEnvelope(stamp);
-        angularAccelerationPort->write();
+        if (angularAccelerationPort->getOutputCount() > 0) {
+            yarp::os::Bottle& output_angularAcceleration = angularAccelerationPort->prepare();
+            output_angularAcceleration.addDouble(OVR::RadToDegree(headpose.AngularAcceleration.x));
+            output_angularAcceleration.addDouble(OVR::RadToDegree(headpose.AngularAcceleration.y));
+            output_angularAcceleration.addDouble(OVR::RadToDegree(headpose.AngularAcceleration.z));
+            angularAccelerationPort->setEnvelope(stamp);
+            angularAccelerationPort->write();
+        }
 
     } else {
         // Do not warn more than once every 5 seconds
@@ -695,28 +701,34 @@ void yarp::dev::OVRHeadset::run()
     // Read position and write it on the port
     if (ts.StatusFlags & ovrStatus_PositionTracked) {
 
-        OVR::Vector3f position = headpose.ThePose.Position;
-        yarp::os::Bottle& output_position = positionPort->prepare();
-        output_position.clear();
-        output_position.addDouble(position[0]);
-        output_position.addDouble(position[1]);
-        output_position.addDouble(position[2]);
-        positionPort->setEnvelope(stamp);
-        positionPort->write();
+        if (positionPort->getOutputCount() > 0) {
+            OVR::Vector3f position = headpose.ThePose.Position;
+            yarp::os::Bottle& output_position = positionPort->prepare();
+            output_position.clear();
+            output_position.addDouble(position[0]);
+            output_position.addDouble(position[1]);
+            output_position.addDouble(position[2]);
+            positionPort->setEnvelope(stamp);
+            positionPort->write();
+        }
 
-        yarp::os::Bottle& output_linearVelocity = linearVelocityPort->prepare();
-        output_linearVelocity.addDouble(headpose.LinearVelocity.x);
-        output_linearVelocity.addDouble(headpose.LinearVelocity.y);
-        output_linearVelocity.addDouble(headpose.LinearVelocity.z);
-        linearVelocityPort->setEnvelope(stamp);
-        linearVelocityPort->write();
+        if (linearVelocityPort->getOutputCount() > 0) {
+            yarp::os::Bottle& output_linearVelocity = linearVelocityPort->prepare();
+            output_linearVelocity.addDouble(headpose.LinearVelocity.x);
+            output_linearVelocity.addDouble(headpose.LinearVelocity.y);
+            output_linearVelocity.addDouble(headpose.LinearVelocity.z);
+            linearVelocityPort->setEnvelope(stamp);
+            linearVelocityPort->write();
+        }
 
-        yarp::os::Bottle& output_linearAcceleration = linearAccelerationPort->prepare();
-        output_linearAcceleration.addDouble(headpose.LinearAcceleration.x);
-        output_linearAcceleration.addDouble(headpose.LinearAcceleration.y);
-        output_linearAcceleration.addDouble(headpose.LinearAcceleration.z);
-        linearAccelerationPort->setEnvelope(stamp);
-        linearAccelerationPort->write();
+        if (linearAccelerationPort->getOutputCount() > 0) {
+            yarp::os::Bottle& output_linearAcceleration = linearAccelerationPort->prepare();
+            output_linearAcceleration.addDouble(headpose.LinearAcceleration.x);
+            output_linearAcceleration.addDouble(headpose.LinearAcceleration.y);
+            output_linearAcceleration.addDouble(headpose.LinearAcceleration.z);
+            linearAccelerationPort->setEnvelope(stamp);
+            linearAccelerationPort->write();
+        }
 
     } else {
         // Do not warn more than once every 5 seconds
@@ -731,30 +743,36 @@ void yarp::dev::OVRHeadset::run()
     // Read predicted orientation and write it on the port
     if (predicted_ts.StatusFlags & ovrStatus_OrientationTracked) {
 
-        OVR::Quatf orientation = predicted_headpose.ThePose.Orientation;
-        float yaw, pitch, roll;
-        orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
-        yarp::os::Bottle& output_orientation = predictedOrientationPort->prepare();
-        output_orientation.clear();
-        output_orientation.addDouble(OVR::RadToDegree(pitch));
-        output_orientation.addDouble(OVR::RadToDegree(-roll));
-        output_orientation.addDouble(OVR::RadToDegree(yaw));
-        predictedOrientationPort->setEnvelope(predicted_stamp);
-        predictedOrientationPort->write();
+        if (predictedOrientationPort->getOutputCount() > 0) {
+            OVR::Quatf orientation = predicted_headpose.ThePose.Orientation;
+            float yaw, pitch, roll;
+            orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
+            yarp::os::Bottle& output_orientation = predictedOrientationPort->prepare();
+            output_orientation.clear();
+            output_orientation.addDouble(OVR::RadToDegree(pitch));
+            output_orientation.addDouble(OVR::RadToDegree(-roll));
+            output_orientation.addDouble(OVR::RadToDegree(yaw));
+            predictedOrientationPort->setEnvelope(predicted_stamp);
+            predictedOrientationPort->write();
+        }
 
-        yarp::os::Bottle& output_angularVelocity = predictedAngularVelocityPort->prepare();
-        output_angularVelocity.addDouble(OVR::RadToDegree(predicted_headpose.AngularVelocity.x));
-        output_angularVelocity.addDouble(OVR::RadToDegree(predicted_headpose.AngularVelocity.y));
-        output_angularVelocity.addDouble(OVR::RadToDegree(predicted_headpose.AngularVelocity.z));
-        predictedAngularVelocityPort->setEnvelope(predicted_stamp);
-        predictedAngularVelocityPort->write();
+        if (predictedAngularVelocityPort->getOutputCount() > 0) {
+            yarp::os::Bottle& output_angularVelocity = predictedAngularVelocityPort->prepare();
+            output_angularVelocity.addDouble(OVR::RadToDegree(predicted_headpose.AngularVelocity.x));
+            output_angularVelocity.addDouble(OVR::RadToDegree(predicted_headpose.AngularVelocity.y));
+            output_angularVelocity.addDouble(OVR::RadToDegree(predicted_headpose.AngularVelocity.z));
+            predictedAngularVelocityPort->setEnvelope(predicted_stamp);
+            predictedAngularVelocityPort->write();
+        }
 
-        yarp::os::Bottle& output_angularAcceleration = predictedAngularAccelerationPort->prepare();
-        output_angularAcceleration.addDouble(OVR::RadToDegree(predicted_headpose.AngularAcceleration.x));
-        output_angularAcceleration.addDouble(OVR::RadToDegree(predicted_headpose.AngularAcceleration.y));
-        output_angularAcceleration.addDouble(OVR::RadToDegree(predicted_headpose.AngularAcceleration.z));
-        predictedAngularAccelerationPort->setEnvelope(predicted_stamp);
-        predictedAngularAccelerationPort->write();
+        if (predictedAngularAccelerationPort->getOutputCount() > 0) {
+            yarp::os::Bottle& output_angularAcceleration = predictedAngularAccelerationPort->prepare();
+            output_angularAcceleration.addDouble(OVR::RadToDegree(predicted_headpose.AngularAcceleration.x));
+            output_angularAcceleration.addDouble(OVR::RadToDegree(predicted_headpose.AngularAcceleration.y));
+            output_angularAcceleration.addDouble(OVR::RadToDegree(predicted_headpose.AngularAcceleration.z));
+            predictedAngularAccelerationPort->setEnvelope(predicted_stamp);
+            predictedAngularAccelerationPort->write();
+        }
 
     } else {
         // Do not warn more than once every 5 seconds
@@ -769,28 +787,34 @@ void yarp::dev::OVRHeadset::run()
     // Read predicted position and write it on the port
     if (predicted_ts.StatusFlags & ovrStatus_PositionTracked) {
 
-        OVR::Vector3f position = predicted_headpose.ThePose.Position;
-        yarp::os::Bottle& output_position = predictedPositionPort->prepare();
-        output_position.clear();
-        output_position.addDouble(position[0]);
-        output_position.addDouble(position[1]);
-        output_position.addDouble(position[2]);
-        predictedPositionPort->setEnvelope(predicted_stamp);
-        predictedPositionPort->write();
+        if (predictedPositionPort->getOutputCount() > 0) {
+            OVR::Vector3f position = predicted_headpose.ThePose.Position;
+            yarp::os::Bottle& output_position = predictedPositionPort->prepare();
+            output_position.clear();
+            output_position.addDouble(position[0]);
+            output_position.addDouble(position[1]);
+            output_position.addDouble(position[2]);
+            predictedPositionPort->setEnvelope(predicted_stamp);
+            predictedPositionPort->write();
+        }
 
-        yarp::os::Bottle& output_linearVelocity = predictedLinearVelocityPort->prepare();
-        output_linearVelocity.addDouble(predicted_headpose.LinearVelocity.x);
-        output_linearVelocity.addDouble(predicted_headpose.LinearVelocity.y);
-        output_linearVelocity.addDouble(predicted_headpose.LinearVelocity.z);
-        predictedLinearVelocityPort->setEnvelope(predicted_stamp);
-        predictedLinearVelocityPort->write();
+        if (predictedLinearVelocityPort->getOutputCount() > 0) {
+            yarp::os::Bottle& output_linearVelocity = predictedLinearVelocityPort->prepare();
+            output_linearVelocity.addDouble(predicted_headpose.LinearVelocity.x);
+            output_linearVelocity.addDouble(predicted_headpose.LinearVelocity.y);
+            output_linearVelocity.addDouble(predicted_headpose.LinearVelocity.z);
+            predictedLinearVelocityPort->setEnvelope(predicted_stamp);
+            predictedLinearVelocityPort->write();
+        }
 
-        yarp::os::Bottle& output_linearAcceleration = predictedLinearAccelerationPort->prepare();
-        output_linearAcceleration.addDouble(predicted_headpose.LinearAcceleration.x);
-        output_linearAcceleration.addDouble(predicted_headpose.LinearAcceleration.y);
-        output_linearAcceleration.addDouble(predicted_headpose.LinearAcceleration.z);
-        predictedLinearAccelerationPort->setEnvelope(predicted_stamp);
-        predictedLinearAccelerationPort->write();
+        if (predictedLinearAccelerationPort->getOutputCount() > 0) {
+            yarp::os::Bottle& output_linearAcceleration = predictedLinearAccelerationPort->prepare();
+            output_linearAcceleration.addDouble(predicted_headpose.LinearAcceleration.x);
+            output_linearAcceleration.addDouble(predicted_headpose.LinearAcceleration.y);
+            output_linearAcceleration.addDouble(predicted_headpose.LinearAcceleration.z);
+            predictedLinearAccelerationPort->setEnvelope(predicted_stamp);
+            predictedLinearAccelerationPort->write();
+        }
 
     } else {
         // Do not warn more than once every 5 seconds
