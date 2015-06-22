@@ -75,6 +75,12 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle>* linearVelocityPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* angularAccelerationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* linearAccelerationPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* predictedOrientationPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* predictedPositionPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* predictedAngularVelocityPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearVelocityPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* predictedAngularAccelerationPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearAccelerationPort;
     yarp::os::BufferedPort<ImageType>* displayPorts[2];
     InputCallback* displayPortCallbacks[2];
     ovrEyeRenderDesc EyeRenderDesc[2];
@@ -101,6 +107,8 @@ private:
     bool flipInputEnabled;
     bool timeWarpEnabled;
     bool imagePoseEnabled;
+
+    double prediction;
 
 }; // class OVRHeadset
 

@@ -92,6 +92,12 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         linearVelocityPort(NULL),
         angularAccelerationPort(NULL),
         linearAccelerationPort(NULL),
+        predictedOrientationPort(NULL),
+        predictedPositionPort(NULL),
+        predictedAngularVelocityPort(NULL),
+        predictedLinearVelocityPort(NULL),
+        predictedAngularAccelerationPort(NULL),
+        predictedLinearAccelerationPort(NULL),
         window(NULL),
         closed(false),
         distortionFrameIndex(0),
@@ -169,6 +175,56 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     }
     linearAccelerationPort->setWriteOnly();
 
+
+    predictedOrientationPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!predictedOrientationPort->open("/oculus/predicted/headpose/orientation:o")) {
+        yError() << "Cannot open predicted orientation port";
+        this->close();
+        return false;
+    }
+    predictedOrientationPort->setWriteOnly();
+
+    predictedPositionPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!predictedPositionPort->open("/oculus/predicted/headpose/position:o")) {
+        yError() << "Cannot open predicted position port";
+        this->close();
+        return false;
+    }
+    predictedPositionPort->setWriteOnly();
+
+    predictedAngularVelocityPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!predictedAngularVelocityPort->open("/oculus/predicted/headpose/angularVelocity:o")) {
+        yError() << "Cannot open predicted angular velocity port";
+        this->close();
+        return false;
+    }
+    predictedAngularVelocityPort->setWriteOnly();
+
+    predictedLinearVelocityPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!predictedLinearVelocityPort->open("/oculus/predicted/headpose/linearVelocity:o")) {
+        yError() << "Cannot open predicted linear velocity port";
+        this->close();
+        return false;
+    }
+    predictedLinearVelocityPort->setWriteOnly();
+
+    predictedAngularAccelerationPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!predictedAngularAccelerationPort->open("/oculus/predicted/headpose/angularAcceleration:o")) {
+        yError() << "Cannot open predicted angular acceleration port";
+        this->close();
+        return false;
+    }
+    predictedAngularAccelerationPort->setWriteOnly();
+
+    predictedLinearAccelerationPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!predictedLinearAccelerationPort->open("/oculus/predicted/headpose/linearAcceleration:o")) {
+        yError() << "Cannot open predicted linear acceleration port";
+        this->close();
+        return false;
+    }
+    predictedLinearAccelerationPort->setWriteOnly();
+
+
     for (int i = 0; i < 2; ++i) {
         displayPorts[i] = new yarp::os::BufferedPort<ImageType>;
         if (!displayPorts[i]->open(i == 0 ? "/oculus/display/left:i" : "/oculus/display/right:i")) {
@@ -219,6 +275,8 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
 //    userHeight = cfg.check("userHeight", yarp::os::Value(0.),  "User height").asDouble();
 
+
+    prediction = cfg.check("prediction", yarp::os::Value(0.01), "Prediction [sec]").asDouble();
 
     // Start the thread
     if (!this->start()) {
@@ -420,6 +478,45 @@ void yarp::dev::OVRHeadset::threadRelease()
         linearAccelerationPort = NULL;
     }
 
+
+    if (predictedOrientationPort) {
+        predictedOrientationPort->interrupt();
+        predictedOrientationPort->close();
+        delete predictedOrientationPort;
+        predictedOrientationPort = NULL;
+    }
+    if (predictedPositionPort) {
+        predictedPositionPort->interrupt();
+        predictedPositionPort->close();
+        delete predictedPositionPort;
+        predictedPositionPort = NULL;
+    }
+    if (predictedAngularVelocityPort) {
+        predictedAngularVelocityPort->interrupt();
+        predictedAngularVelocityPort->close();
+        delete predictedAngularVelocityPort;
+        predictedAngularVelocityPort = NULL;
+    }
+    if (predictedLinearVelocityPort) {
+        predictedLinearVelocityPort->interrupt();
+        predictedLinearVelocityPort->close();
+        delete predictedLinearVelocityPort;
+        predictedLinearVelocityPort = NULL;
+    }
+    if (predictedAngularAccelerationPort) {
+        predictedAngularAccelerationPort->interrupt();
+        predictedAngularAccelerationPort->close();
+        delete predictedAngularAccelerationPort;
+        predictedAngularAccelerationPort = NULL;
+    }
+    if (predictedLinearAccelerationPort) {
+        predictedLinearAccelerationPort->interrupt();
+        predictedLinearAccelerationPort->close();
+        delete predictedLinearAccelerationPort;
+        predictedLinearAccelerationPort = NULL;
+    }
+
+
     for (int i = 0; i < 2; ++i) {
         if (displayPorts[i]) {
             displayPorts[i]->disableCallback();
@@ -550,8 +647,12 @@ void yarp::dev::OVRHeadset::run()
     ovrTrackingState ts_eyes;
     ovrHmd_GetEyePoses(hmd, distortionFrameIndex, ViewOffset, EyeRenderPose, &ts_eyes);
 
-//    debugPose(ts.HeadPose.ThePose, EyeRenderPose);
-//    debugPose(ts_eyes.HeadPose.ThePose, EyeRenderPose);
+
+    // Query the HMD for the predicted state
+    ovrTrackingState predicted_ts = ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds() + prediction);
+    ovrPoseStatef predicted_headpose = predicted_ts.HeadPose;
+    yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
+
 
     // Read orientation and write it on the port
     if (ts.StatusFlags & ovrStatus_OrientationTracked) {
@@ -626,6 +727,81 @@ void yarp::dev::OVRHeadset::run()
             lastPosWarnTime = now;
         }
     }
+
+    // Read predicted orientation and write it on the port
+    if (predicted_ts.StatusFlags & ovrStatus_OrientationTracked) {
+
+        OVR::Quatf orientation = predicted_headpose.ThePose.Orientation;
+        float yaw, pitch, roll;
+        orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
+        yarp::os::Bottle& output_orientation = predictedOrientationPort->prepare();
+        output_orientation.clear();
+        output_orientation.addDouble(OVR::RadToDegree(pitch));
+        output_orientation.addDouble(OVR::RadToDegree(-roll));
+        output_orientation.addDouble(OVR::RadToDegree(yaw));
+        predictedOrientationPort->setEnvelope(predicted_stamp);
+        predictedOrientationPort->write();
+
+        yarp::os::Bottle& output_angularVelocity = predictedAngularVelocityPort->prepare();
+        output_angularVelocity.addDouble(OVR::RadToDegree(predicted_headpose.AngularVelocity.x));
+        output_angularVelocity.addDouble(OVR::RadToDegree(predicted_headpose.AngularVelocity.y));
+        output_angularVelocity.addDouble(OVR::RadToDegree(predicted_headpose.AngularVelocity.z));
+        predictedAngularVelocityPort->setEnvelope(predicted_stamp);
+        predictedAngularVelocityPort->write();
+
+        yarp::os::Bottle& output_angularAcceleration = predictedAngularAccelerationPort->prepare();
+        output_angularAcceleration.addDouble(OVR::RadToDegree(predicted_headpose.AngularAcceleration.x));
+        output_angularAcceleration.addDouble(OVR::RadToDegree(predicted_headpose.AngularAcceleration.y));
+        output_angularAcceleration.addDouble(OVR::RadToDegree(predicted_headpose.AngularAcceleration.z));
+        predictedAngularAccelerationPort->setEnvelope(predicted_stamp);
+        predictedAngularAccelerationPort->write();
+
+    } else {
+        // Do not warn more than once every 5 seconds
+        static double lastPredOrientWarnTime = 0;
+        double now = yarp::os::Time::now();
+        if(now >= lastPredOrientWarnTime + 5) {
+            yDebug() << "Predicted orientation not tracked";
+            lastPredOrientWarnTime = now;
+        }
+    }
+
+    // Read predicted position and write it on the port
+    if (predicted_ts.StatusFlags & ovrStatus_PositionTracked) {
+
+        OVR::Vector3f position = predicted_headpose.ThePose.Position;
+        yarp::os::Bottle& output_position = predictedPositionPort->prepare();
+        output_position.clear();
+        output_position.addDouble(position[0]);
+        output_position.addDouble(position[1]);
+        output_position.addDouble(position[2]);
+        predictedPositionPort->setEnvelope(predicted_stamp);
+        predictedPositionPort->write();
+
+        yarp::os::Bottle& output_linearVelocity = predictedLinearVelocityPort->prepare();
+        output_linearVelocity.addDouble(predicted_headpose.LinearVelocity.x);
+        output_linearVelocity.addDouble(predicted_headpose.LinearVelocity.y);
+        output_linearVelocity.addDouble(predicted_headpose.LinearVelocity.z);
+        predictedLinearVelocityPort->setEnvelope(predicted_stamp);
+        predictedLinearVelocityPort->write();
+
+        yarp::os::Bottle& output_linearAcceleration = predictedLinearAccelerationPort->prepare();
+        output_linearAcceleration.addDouble(predicted_headpose.LinearAcceleration.x);
+        output_linearAcceleration.addDouble(predicted_headpose.LinearAcceleration.y);
+        output_linearAcceleration.addDouble(predicted_headpose.LinearAcceleration.z);
+        predictedLinearAccelerationPort->setEnvelope(predicted_stamp);
+        predictedLinearAccelerationPort->write();
+
+    } else {
+        // Do not warn more than once every 5 seconds
+        static double lastPredPosWarnTime = 0;
+        double now = yarp::os::Time::now();
+        if(now >= lastPredPosWarnTime + 5) {
+            yDebug() << "Position not tracked";
+            lastPredPosWarnTime = now;
+        }
+    }
+
 
     if(displayPortCallbacks[0]->eyeRenderTexture && displayPortCallbacks[1]->eyeRenderTexture) {
         // Do distortion rendering, Present and flush/sync
