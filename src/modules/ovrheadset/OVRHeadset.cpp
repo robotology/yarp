@@ -13,9 +13,9 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/os/Time.h>
 #include <yarp/sig/Image.h>
-#include <yarp/os/LogStream.h>
 
 #include <math.h>
 
@@ -88,6 +88,10 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         yarp::os::RateThread(13), // ~75 fps
         orientationPort(NULL),
         positionPort(NULL),
+        angularVelocityPort(NULL),
+        linearVelocityPort(NULL),
+        angularAccelerationPort(NULL),
+        linearAccelerationPort(NULL),
         window(NULL),
         closed(false),
         distortionFrameIndex(0),
@@ -132,6 +136,38 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         return false;
     }
     positionPort->setWriteOnly();
+
+    angularVelocityPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!angularVelocityPort->open("/oculus/headpose/angularVelocity:o")) {
+        yError() << "Cannot open angular velocity port";
+        this->close();
+        return false;
+    }
+    angularVelocityPort->setWriteOnly();
+
+    linearVelocityPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!linearVelocityPort->open("/oculus/headpose/linearVelocity:o")) {
+        yError() << "Cannot open linear velocity port";
+        this->close();
+        return false;
+    }
+    linearVelocityPort->setWriteOnly();
+
+    angularAccelerationPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!angularAccelerationPort->open("/oculus/headpose/angularAcceleration:o")) {
+        yError() << "Cannot open angular acceleration port";
+        this->close();
+        return false;
+    }
+    angularAccelerationPort->setWriteOnly();
+
+    linearAccelerationPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+    if (!linearAccelerationPort->open("/oculus/headpose/linearAcceleration:o")) {
+        yError() << "Cannot open linear acceleration port";
+        this->close();
+        return false;
+    }
+    linearAccelerationPort->setWriteOnly();
 
     for (int i = 0; i < 2; ++i) {
         displayPorts[i] = new yarp::os::BufferedPort<ImageType>;
@@ -359,6 +395,30 @@ void yarp::dev::OVRHeadset::threadRelease()
         delete positionPort;
         positionPort = NULL;
     }
+    if (angularVelocityPort) {
+        angularVelocityPort->interrupt();
+        angularVelocityPort->close();
+        delete angularVelocityPort;
+        angularVelocityPort = NULL;
+    }
+    if (linearVelocityPort) {
+        linearVelocityPort->interrupt();
+        linearVelocityPort->close();
+        delete linearVelocityPort;
+        linearVelocityPort = NULL;
+    }
+    if (angularAccelerationPort) {
+        angularAccelerationPort->interrupt();
+        angularAccelerationPort->close();
+        delete angularAccelerationPort;
+        angularAccelerationPort = NULL;
+    }
+    if (linearAccelerationPort) {
+        linearAccelerationPort->interrupt();
+        linearAccelerationPort->close();
+        delete linearAccelerationPort;
+        linearAccelerationPort = NULL;
+    }
 
     for (int i = 0; i < 2; ++i) {
         if (displayPorts[i]) {
@@ -481,6 +541,8 @@ void yarp::dev::OVRHeadset::run()
 
     // Query the HMD for the current tracking state.
     ovrTrackingState ts = ovrHmd_GetTrackingState(hmd, ovr_GetTimeInSeconds());
+    ovrPoseStatef headpose = ts.HeadPose;
+    yarp::os::Stamp stamp(distortionFrameIndex, ts.HeadPose.TimeInSeconds);
 
     //Get eye poses, feeding in correct IPD offset
     ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeViewOffset,EyeRenderDesc[1].HmdToEyeViewOffset};
@@ -488,15 +550,13 @@ void yarp::dev::OVRHeadset::run()
     ovrTrackingState ts_eyes;
     ovrHmd_GetEyePoses(hmd, distortionFrameIndex, ViewOffset, EyeRenderPose, &ts_eyes);
 
-//    debugPose(ts.HeadPose.ThePose,  EyeRenderPose);
-//    debugPose(ts_eyes.HeadPose.ThePose,  EyeRenderPose);
-
-    // FIXME ts or ts_eyes?
-    ovrPosef headpose = ts.HeadPose.ThePose;
+//    debugPose(ts.HeadPose.ThePose, EyeRenderPose);
+//    debugPose(ts_eyes.HeadPose.ThePose, EyeRenderPose);
 
     // Read orientation and write it on the port
     if (ts.StatusFlags & ovrStatus_OrientationTracked) {
-        OVR::Quatf orientation = headpose.Orientation;
+
+        OVR::Quatf orientation = headpose.ThePose.Orientation;
         float yaw, pitch, roll;
         orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
         yarp::os::Bottle& output_orientation = orientationPort->prepare();
@@ -504,7 +564,23 @@ void yarp::dev::OVRHeadset::run()
         output_orientation.addDouble(OVR::RadToDegree(pitch));
         output_orientation.addDouble(OVR::RadToDegree(-roll));
         output_orientation.addDouble(OVR::RadToDegree(yaw));
+        orientationPort->setEnvelope(stamp);
         orientationPort->write();
+
+        yarp::os::Bottle& output_angularVelocity = angularVelocityPort->prepare();
+        output_angularVelocity.addDouble(OVR::RadToDegree(headpose.AngularVelocity.x));
+        output_angularVelocity.addDouble(OVR::RadToDegree(headpose.AngularVelocity.y));
+        output_angularVelocity.addDouble(OVR::RadToDegree(headpose.AngularVelocity.z));
+        angularVelocityPort->setEnvelope(stamp);
+        angularVelocityPort->write();
+
+        yarp::os::Bottle& output_angularAcceleration = angularAccelerationPort->prepare();
+        output_angularAcceleration.addDouble(OVR::RadToDegree(headpose.AngularAcceleration.x));
+        output_angularAcceleration.addDouble(OVR::RadToDegree(headpose.AngularAcceleration.y));
+        output_angularAcceleration.addDouble(OVR::RadToDegree(headpose.AngularAcceleration.z));
+        angularAccelerationPort->setEnvelope(stamp);
+        angularAccelerationPort->write();
+
     } else {
         // Do not warn more than once every 5 seconds
         static double lastOrientWarnTime = 0;
@@ -517,13 +593,30 @@ void yarp::dev::OVRHeadset::run()
 
     // Read position and write it on the port
     if (ts.StatusFlags & ovrStatus_PositionTracked) {
-        OVR::Vector3f position = headpose.Position;
+
+        OVR::Vector3f position = headpose.ThePose.Position;
         yarp::os::Bottle& output_position = positionPort->prepare();
         output_position.clear();
         output_position.addDouble(position[0]);
         output_position.addDouble(position[1]);
         output_position.addDouble(position[2]);
+        positionPort->setEnvelope(stamp);
         positionPort->write();
+
+        yarp::os::Bottle& output_linearVelocity = linearVelocityPort->prepare();
+        output_linearVelocity.addDouble(headpose.LinearVelocity.x);
+        output_linearVelocity.addDouble(headpose.LinearVelocity.y);
+        output_linearVelocity.addDouble(headpose.LinearVelocity.z);
+        linearVelocityPort->setEnvelope(stamp);
+        linearVelocityPort->write();
+
+        yarp::os::Bottle& output_linearAcceleration = linearAccelerationPort->prepare();
+        output_linearAcceleration.addDouble(headpose.LinearAcceleration.x);
+        output_linearAcceleration.addDouble(headpose.LinearAcceleration.y);
+        output_linearAcceleration.addDouble(headpose.LinearAcceleration.z);
+        linearAccelerationPort->setEnvelope(stamp);
+        linearAccelerationPort->write();
+
     } else {
         // Do not warn more than once every 5 seconds
         static double lastPosWarnTime = 0;

@@ -71,6 +71,10 @@ private:
 
     yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* angularVelocityPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* linearVelocityPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* angularAccelerationPort;
+    yarp::os::BufferedPort<yarp::os::Bottle>* linearAccelerationPort;
     yarp::os::BufferedPort<ImageType>* displayPorts[2];
     InputCallback* displayPortCallbacks[2];
     ovrEyeRenderDesc EyeRenderDesc[2];
