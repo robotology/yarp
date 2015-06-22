@@ -1279,7 +1279,9 @@ bool NetworkBase::setNameServerContact(Contact &nameServerContact)
         setNameServerName(nameServerContact.getName());
     nameConfig.fromFile();
     nameConfig.setAddress(nameServerContact);
-    return nameConfig.toFile();
+    bool result = nameConfig.toFile();
+    getNameSpace().activate(true);
+    return result;
 }
 
 
