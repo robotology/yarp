@@ -222,6 +222,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
         printf("Call with --help for information on available options\n");
     }
 
+    /* 
     ConstString configFilename = options.check("config",
                                                Value("yarpserver.conf")).asString();
     if (!options.check("config")) {
@@ -232,7 +233,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
         options.fromConfigFile(configFilename.c_str(),false);
     } else {
         printf("Options can be set on command line or in %s\n", configFilename.c_str());
-    }
+    } */
 
     Network yarp;
 
