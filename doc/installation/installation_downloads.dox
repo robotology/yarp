@@ -8,11 +8,10 @@
 * @page installation_downloads Downloads
 
 Latest releases:
-
- + 18/07/2014, latest release: __YARP-2.3.63__
-
+ + 18/07/2014, latest release: __YARP-2.3.64__
+ 
 Previous releases:
-
+ + 18/07/2014: YARP-2.3.63
  + 06/08/2013 : YARP-2.3.22
  + 10/07/2013 : YARP-2.3.21
  + 04/03/2013 : YARP 2.3.20 binaries for windows 64bits
@@ -21,18 +20,19 @@ Previous releases:
  
 \section download_windows Windows
 
- \remark Important: to develop code using precompiled binaries packages have to match the compiler you use, make sure you download and install the correct version (i.e. MSVC10 for Visual Studio 10, MSVC9 for Visual Studio 9 etc.).
+ \remark Important: to develop code using precompiled binaries packages have to match the compiler you use, make sure you download and install the correct version (i.e. MSVC12 for Visual Studio 12, etc..).
  If in doubt about the version number of your copy of Visual Studio, find the internal version number shown for it in this [version history table](http://en.wikipedia.org/wiki/Microsoft_Visual_Studio#Version_history).
 
-__Installers__:
  
- \li [MSVC9 x86] (http://sourceforge.net/projects/yarp0/files/yarp2/yarp-2.3.63/windows/yarp_2.3.63_v9_x86_0.exe/download), [MSVC9 amd64] (http://sourceforge.net/projects/yarp0/files/yarp2/yarp-2.3.63/windows/yarp_2.3.63_v9_x86_amd64_0.exe/download)
- \li [MSVC10 x86] (http://sourceforge.net/projects/yarp0/files/yarp2/yarp-2.3.63/windows/yarp_2.3.63_v10_x86_0.exe/download), [MSVC10 amd64] (http://sourceforge.net/projects/yarp0/files/yarp2/yarp-2.3.63/windows/yarp_2.3.63_v10_x86_amd64_0.exe/download) 
- \li [MSVC11 x86] (http://sourceforge.net/projects/yarp0/files/yarp2/yarp-2.3.63/windows/yarp_2.3.63_v11_x86_0.exe/download), [MSVC11 amd64] (http://sourceforge.net/projects/yarp0/files/yarp2/yarp-2.3.63/windows/yarp_2.3.63_v11_x86_amd64_0.exe/download)
+__Installers__:
 
-__Sources for all versions__: http://downloads.sourceforge.net/yarp0/yarp-2.3.63.zip
+  \li [MSVC10 x86] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v10_x86_0.exe),  [MSVC10 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v10_x86_amd64_0.exe) 
+ \li [MSVC11 x86] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v11_x86_0.exe), [MSVC11 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v11_x86_amd64_0.exe)
+ \li [MSVC12 x86] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v12_x86_0.exe), [MSVC12 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v12_x86_amd64_0.exe)
 
-__Previous versions__: https://sourceforge.net/projects/yarp0/files/yarp2/
+__Sources for all versions__: https://github.com/robotology/yarp/archive/v2.3.64.zip
+
+__Previous versions__: previous versions are hosted on sourceforge https://sourceforge.net/projects/yarp0/files/yarp2/
 
 \section download_linux Linux
 
@@ -40,8 +40,8 @@ The easiest way to install YARP from binaries is through aptitude as explained i
 
 In this page we provide individual packages for download, source packages and .deb files. You can download individual .deb packages from sourceforge:
 
-YARP: https://sourceforge.net/projects/yarp0/files/yarp2/
+YARP: https://github.com/robotology/yarp/releases
 
-or get source packages: [yarp-2.3.63.tar.gz](http://downloads.sourceforge.net/yarp0/yarp-2.3.63.tar.gz)
+or get source packages: [yarp-2.3.64.tar.gz](https://github.com/robotology/yarp/archive/v2.3.64.tar.gz)
 
 */ 
