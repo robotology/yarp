@@ -28,7 +28,6 @@ yarp::dev::DriverCreator *createControlBoardWrapper()
 }
 
 ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),
-                                            inputStreaming_buffer(4),
                                             ownDevices(true)
 {
     streaming_parser.init(this);
@@ -56,7 +55,6 @@ void ControlBoardWrapper::cleanup_yarpPorts()
     inputRPCPort.close();
 
     inputStreamingPort.interrupt();
-    inputStreaming_buffer.detach();
     inputStreamingPort.close();
 
     outputPositionStatePort.interrupt();
@@ -359,8 +357,8 @@ bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable &prop)
             }
 
             // attach callback.
-            inputStreaming_buffer.attach(inputStreamingPort);
-            inputStreaming_buffer.useCallback(streaming_parser);
+            inputStreamingPort.setStrict();
+            inputStreamingPort.useCallback(streaming_parser);
 
             if(!outputPositionStatePort.open((rootName+"/state:o").c_str()) )
             {
@@ -795,6 +793,12 @@ bool ControlBoardWrapper::detachAll()
 
 void ControlBoardWrapper::run()
 {
+    // check we are not overflowing with input messages
+    if(inputStreamingPort.getPendingReads() >= 20)
+    {
+        yWarning() << "number of streaming intput messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
+    }
+
     if(useROS != ROS_only)
     {
         yarp::sig::Vector& v = outputPositionStatePort.prepare();
