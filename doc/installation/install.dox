@@ -13,6 +13,8 @@ Source for YARP are available from https://github.com/robotology/yarp. Installin
 \li \subpage install_yarp_windows
 \li \subpage install_yarp_mac
 
+Installing the software is easy but if you are really in a rush you can download a virtual machine that contains all the software pre-installed: https://github.com/robotology/vagrant-icub
+
 After your are done installing YARP you can proceed with the following link: \subpage check_your_installation.
 
 */
