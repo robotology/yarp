@@ -1160,7 +1160,6 @@ void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, ya
             response.clear();
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
-            double dtmp = 0.0;
             Bottle btmp;
 
             if (ControlBoardWrapper_p->verbose())

@@ -210,18 +210,18 @@ void BatteryWrapper::threadRelease()
 
 void BatteryWrapper::run()
 {
-    bool ret = true;
-
     if (battery_p!=0)
     {
         double charge  = 0;
         double voltage = 0;
         double current = 0;
         double temperature = 0;
-        bool ret_g = battery_p->getBatteryCharge(charge);
-        bool ret_v = battery_p->getBatteryVoltage(voltage);
-        bool ret_c = battery_p->getBatteryCurrent(current);
-        bool ret_t = battery_p->getBatteryTemperature(temperature);
+
+        bool ret = true;
+        ret &= battery_p->getBatteryCharge(charge);
+        ret &= battery_p->getBatteryVoltage(voltage);
+        ret &= battery_p->getBatteryCurrent(current);
+        ret &= battery_p->getBatteryTemperature(temperature);
 
         if (ret)
         {
@@ -237,7 +237,7 @@ void BatteryWrapper::run()
         }
         else
         {
-            yError("BatteryWrapper: %s: Sensor returned error", sensorId.c_str(), ret);
+            yError("BatteryWrapper: %s: Sensor returned error", sensorId.c_str());
         }
     }
 }
