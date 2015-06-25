@@ -342,6 +342,16 @@ sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qtdeclarative5-dialogs-plugin libqt5svg5
 \endcode
 
+The appmenu-qt5 package on this release is bugged, see
+<a href="https://github.com/robotology/yarp/issues/521">#521</a>.
+In order to get the menus on qt5 tools, a workaround is to uninstall the
+appmenu-qt5 package:
+
+\code{.sh}
+sudo apt-get remove --purge appmenu-qt5
+\endcode
+
+
 \paragraph dependencies_qt5_linux_others Others
 If your distribution does not supply binary packages for Qt5, you can
 download a binary release from the
