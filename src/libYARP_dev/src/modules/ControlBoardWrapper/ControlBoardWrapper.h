@@ -1070,6 +1070,8 @@ public:
 
     virtual bool setRefTorque(int j, double t);
 
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
+
     virtual bool getBemfParam(int j, double *t);
 
     virtual bool setBemfParam(int j, double t);

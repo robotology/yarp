@@ -3681,6 +3681,51 @@ bool ControlBoardWrapper::setRefTorque(int j, double t)
     return false;
 }
 
+bool ControlBoardWrapper::setRefTorques(const int n_joint, const int *joints, const double *t)
+{
+    bool ret = true;
+
+    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
+     * then it is optimizable by instantiating the table once and for all during the creation of the class.
+     * TODO check if concurrency problems are real!!
+     */
+    int    nDev  = device.subdevices.size();
+    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
+    double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
+    int      X_idx[MAX_DEVICES];
+    yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
+
+    for(int i=0; i<nDev; i++)
+    {
+        X_idx[i]=0;
+        ps[i]=device.getSubdevice(i);
+    }
+
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for(int j=0; j<n_joint; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
+        XRefs[subIndex][X_idx[subIndex]] = t[j];
+        X_idx[subIndex]++;
+    }
+
+    for(subIndex=0; subIndex<nDev; subIndex++)
+    {
+        if(ps[subIndex]->posDir)
+        {
+            ret= ret && ps[subIndex]->iTorque->setRefTorques(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
+        }
+        else
+        {
+            ret=false;
+        }
+    }
+    return ret;
+}
+
+
 bool ControlBoardWrapper::getBemfParam(int j, double *t)
 {
 

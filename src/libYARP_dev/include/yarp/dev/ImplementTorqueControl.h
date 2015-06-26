@@ -26,6 +26,7 @@ protected:
     void *helper;
     double *temp;
 	double *temp2;
+    int    *temp_int;
     Pid *tmpPids;
 
     /**
@@ -62,6 +63,7 @@ public:
     virtual bool getRefTorques(double *t);
     virtual bool setRefTorques(const double *t);
     virtual bool setRefTorque(int j, double t);
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
     virtual bool getTorques(double *t);
     virtual bool getTorque(int j, double *t);
     virtual bool getBemfParam(int j, double *bemf);

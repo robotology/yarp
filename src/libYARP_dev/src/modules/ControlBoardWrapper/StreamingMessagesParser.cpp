@@ -183,6 +183,31 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         }
         break;
 
+        case VOCAB_TORQUES_DIRECT_GROUP:
+        {
+            if (stream_ITorque)
+            {
+                int n_joints = b.get(1).asInt();
+                Bottle *jlut = b.get(2).asList();
+                if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
+                {
+                    yError("Received VOCAB_TORQUES_DIRECT_GROUP size of joints vector or torques vector does not match the selected joint number\n" );
+                }
+
+                int *joint_list = new int[n_joints];
+                for (int i = 0; i < n_joints; i++)
+                    joint_list[i] = jlut->get(i).asInt();
+
+
+                bool ok = stream_ITorque->setRefTorques(n_joints, joint_list, cmdVector.data());
+                if (!ok)
+                {   yError("Error while trying to command a streaming toruqe direct message on joint group\n" ); }
+
+                delete[] joint_list;
+            }
+        }
+        break;
+
         case VOCAB_POSITION_DIRECT_GROUP:
         {
             if(stream_IPosDirect)
