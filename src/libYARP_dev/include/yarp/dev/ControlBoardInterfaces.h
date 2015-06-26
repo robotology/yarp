@@ -765,6 +765,7 @@ public:
 #define VOCAB_PIDS VOCAB4('p','i','d','s')
 #define VOCAB_REF VOCAB3('r','e','f')
 #define VOCAB_REFS VOCAB4('r','e','f','s')
+#define VOCAB_REFG VOCAB4('r','e','f','g')
 #define VOCAB_LIM VOCAB3('l','i','m')
 #define VOCAB_LIMS VOCAB4('l','i','m','s')
 #define VOCAB_RESET VOCAB3('r','e','s')
