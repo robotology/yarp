@@ -207,6 +207,8 @@ bool OpenCVGrabber::sendImage(IplImage* iplFrame, ImageOf<PixelRgb> & image)
 
     // Get an IplImage, the Yarp Image owns the memory pointed to
     IplImage * iplImage = (IplImage*)image.getIplImage();
+    // create the timestamp
+    m_laststamp.update();
 
     // Copy the captured image to the output image, flipping it if
     // the coordinate origin is not the top left

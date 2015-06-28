@@ -30,6 +30,8 @@ namespace yarp {
 #include <yarp/os/Property.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/os/Stamp.h>
+#include <yarp/dev/PreciselyTimed.h>
 
 #ifdef YARP2_WINDOWS
 #include <cv.h>
@@ -49,7 +51,7 @@ namespace yarp {
  * cameras and AVI files.
  * @author Eric Mislivec
  */
-class yarp::dev::OpenCVGrabber : public IFrameGrabberImage, public DeviceDriver
+class yarp::dev::OpenCVGrabber : public IFrameGrabberImage, public DeviceDriver, public IPreciselyTimed
 {
 public:
 
@@ -85,6 +87,11 @@ public:
      * @return The image width. */
     inline virtual int width() const { return m_w; }
 
+    /**
+    * Implements the IPreciselyTimed interface.
+    * @return the yarp::os::Stamp of the last image acquired
+    */
+    inline virtual yarp::os::Stamp getLastInputStamp() {return m_laststamp; }
 
 protected:
 
@@ -112,6 +119,8 @@ protected:
 
     /** Saved copy of the device configuration */
     yarp::os::Property m_config;
+
+    yarp::os::Stamp m_laststamp;
 };
 
 
