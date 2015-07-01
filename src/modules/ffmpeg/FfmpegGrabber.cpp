@@ -569,7 +569,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 
 
     // Retrieve stream information
-    if(YARP_av_find_stream_info(pFormatCtx)<0) {
+    if(YARP_av_find_stream_info(pFormatCtx, NULL)<0) {
         printf("Could not find stream information in %s\n", fname.c_str());
         return false; // Couldn't find stream information
     }
@@ -579,7 +579,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 
     if (pFormatCtx2!=NULL) {
         
-        if(YARP_av_find_stream_info(pFormatCtx2)<0) {
+        if(YARP_av_find_stream_info(pFormatCtx2, NULL)<0) {
             printf("Could not find stream information in %s\n", fname.c_str());
             return false; // Couldn't find stream information
         }

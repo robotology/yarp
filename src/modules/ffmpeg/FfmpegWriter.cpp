@@ -91,7 +91,7 @@ static AVStream *add_audio_stream(AVFormatContext *oc, CodecID codec_id)
     AVCodecContext *c;
     AVStream *st;
 
-    st = av_new_stream(oc, 1);
+    st = avformat_new_stream(oc, NULL);
     if (!st) {
         fprintf(stderr, "Could not alloc stream\n");
         ::exit(1);
@@ -370,7 +370,7 @@ static AVStream *add_video_stream(AVFormatContext *oc, CodecID codec_id,
     AVCodecContext *c;
     AVStream *st;
 
-    st = av_new_stream(oc, 0);
+    st = avformat_new_stream(oc, NULL);
     if (!st) {
         fprintf(stderr, "Could not alloc stream\n");
         ::exit(1);
@@ -712,7 +712,7 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     /* set the output parameters (must be done even if no
        parameters). */
 #ifndef AV_NO_SET_PARAMETERS
-    if (av_set_parameters(oc, NULL) < 0) {
+    if (avformat_write_header(oc, NULL) < 0) {
         fprintf(stderr, "Invalid output format parameters\n");
         ::exit(1);
     }
@@ -731,14 +731,14 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
 
     /* open the output file, if needed */
     if (!(fmt->flags & AVFMT_NOFILE)) {
-        if (url_fopen(&oc->pb, filename.c_str(), URL_WRONLY) < 0) {
+        if (avio_open(&oc->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0) {
             fprintf(stderr, "Could not open '%s'\n", filename.c_str());
             ::exit(1);
         }
     }
 
     /* write the stream header, if any */
-    av_write_header(oc);
+    avformat_write_header(oc, NULL);
 
     return true;
 }
@@ -764,7 +764,7 @@ bool FfmpegWriter::close() {
     if (!(fmt->flags & AVFMT_NOFILE)) {
         /* close the output file */
 #if LIBAVCODEC_BUILD >= 3354624
-        url_fclose(oc->pb);
+        avio_close(oc->pb);
 #else
         url_fclose(&oc->pb);
 #endif
