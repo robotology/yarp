@@ -122,6 +122,7 @@ private:
     int prev_timestamp_counter;
     int curr_timestamp_counter;
     int trap;
+    bool strict;
 
     // ROS data
     ROSTopicUsageType                                   useROS;                     // decide if open ROS topic or not
