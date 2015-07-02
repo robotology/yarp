@@ -45,6 +45,7 @@ yarp::dev::ServerInertial::ServerInertial()
     prev_timestamp_counter=0;
     curr_timestamp_counter=0;
     trap = 0;
+    strict = false;
     partName = "Server Inertial";
 
     // init ROS data
@@ -235,6 +236,8 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
     p.setReader(*this);
 
     period = config.check("period",yarp::os::Value(0.005),"maximum period").asDouble();
+    strict = config.check("strict",yarp::os::Value(false),"strict write").asBool();
+
     //Look for the device name (serial Port). Usually /dev/ttyUSB0
     yarp::os::Value *name;
     if (config.check("subdevice",name))
@@ -392,7 +395,7 @@ void yarp::dev::ServerInertial::run()
                             spoke = true;
                         }
                         p.setEnvelope(ts);
-                        writer.write();
+                        writer.write(strict);
                     }
                     else
                     {
