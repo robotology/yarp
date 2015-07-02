@@ -29,19 +29,16 @@ CMAKE_OPTIONS="\
 case $3 in
    "Experimental" )
       CMAKE_OPTIONS=" \
-        # add your options here
         $CMAKE_OPTIONS \
       " 
       ;;
    "Continuous" )
      CMAKE_OPTIONS=" \
-        # add your options here
         $CMAKE_OPTIONS \
       " 
       ;;
    "Nightly" )
       CMAKE_OPTIONS=" \
-        # add your options here
         $CMAKE_OPTIONS \
       " 
      ;;
