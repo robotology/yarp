@@ -22,15 +22,27 @@ CMAKE_OPTIONS="\
 -DENABLE_yarpcar_human_carrier:BOOL=TRUE \
 -DCREATE_DEVICE_LIBRARY_MODULES:BOOL=TRUE \
 -DENABLE_yarpmod_fakebot:BOOL=TRUE \
--DTEST_yarpidl_rosmsg:BOOL=TRUE
--DTEST_yarpidl_thrift:BOOL=TRUE
+-DTEST_yarpidl_rosmsg:BOOL=TRUE \
+-DTEST_yarpidl_thrift:BOOL=TRUE \
 "
 
 case $3 in
    "Experimental" )
+      CMAKE_OPTIONS=" \
+        # add your options here
+        $$CMAKE_OPTIONS \
+      " 
       ;;
    "Continuous" )
+     CMAKE_OPTIONS=" \
+        # add your options here
+        $$CMAKE_OPTIONS \
+      " 
       ;;
    "Nightly" )
-      ;;
+      CMAKE_OPTIONS=" \
+        # add your options here
+        $$CMAKE_OPTIONS \
+      " 
+     ;;
 esac
