@@ -36,10 +36,13 @@ extern "C" {
 #define GENERALIZED_PARAMETERS
 #endif 
 
+#if LIBAVCODEC_VERSION_INT >= (54<<16)
+#define USE_AVFORMAT_OPEN_INPUT
+#endif
+
 #if LIBAVCODEC_VERSION_INT >= (55<<16)
 #define USE_AV_FRAME_ALLOC
 #define USE_AUDIO4
-#define USE_AVFORMAT_OPEN_INPUT
 #endif
 
 
