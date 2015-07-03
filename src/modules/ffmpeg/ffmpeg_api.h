@@ -116,8 +116,8 @@ typedef AVFormatParameters YARP_AVDICT;
 #define YARP_avcodec_alloc_frame avcodec_alloc_frame
 #endif
 
-#define YARP_av_find_stream_info av_find_stream_info
-#define YARP_dump_format dump_format
+#define YARP_av_find_stream_info avformat_find_stream_info
+#define YARP_dump_format av_dump_format
 #define YARP_av_close_input_file av_close_input_file
 
 #ifdef USE_AVFORMAT_OPEN_INPUT
