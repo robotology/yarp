@@ -44,6 +44,8 @@ struct yarp::dev::GazeEventParameters
      *  - "motion-ongoing": a motion check-point is attained.
      *  - "saccade-onset": beginning of saccade.
      *  - "saccade-done": end of saccade.
+     *  - "stabilization-on": stabilization is turned on.
+     *  - "stabilization-off": stabilization is turned off.
      *  - "closing": the server is being shut down.
      *  - "suspended": the server has been suspeded.
      *  - "resumed": the server has been resumed.
@@ -158,6 +160,24 @@ public:
      * \return true/false on success/failure.
      */
     virtual bool getTrackingMode(bool *f) = 0;
+
+    /*!
+     * Turn on/off the head stabilization. [wait for reply]
+     * \param f true to turn on the stabilization, false otherwise.
+     * \return true/false on success/failure.
+     *
+     * \note When this mode is turned on, the controller continuously
+     *       stabilizes the head relying on the inertial data.
+     */
+    virtual bool setStabilizationMode(const bool f) = 0;
+
+    /*!
+     * Get the current stabilization mode. [wait for reply]
+     * \param f here is returned true if controller is stabilizing the head, 
+     *         false otherwise.
+     * \return true/false on success/failure.
+     */
+    virtual bool getStabilizationMode(bool *f) = 0;
 
     /*!
      * Get the current fixation point. [do not wait for reply]
