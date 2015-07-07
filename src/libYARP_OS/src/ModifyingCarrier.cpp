@@ -36,6 +36,11 @@ bool yarp::os::ModifyingCarrier::modifiesOutgoingData() {
     return true;
 }
 
+bool yarp::os::ModifyingCarrier::modifiesReply() {
+    return true;
+}
+
+
 void yarp::os::ModifyingCarrier::setCarrierParams(const yarp::os::Property &params) {
 }
 

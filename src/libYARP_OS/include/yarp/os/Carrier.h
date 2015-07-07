@@ -409,6 +409,26 @@ public:
     }
 
     /**
+     * Check if this carrier modifies outgoing data through the
+     * Carrier::modifyReply method.
+     *
+     * @return true if carrier wants Carrier::modifyReply called.
+     */
+    virtual bool modifiesReply() {
+        return false;
+    }
+
+    /**
+     * Modify reply payload data, if appropriate.
+     *
+     * @param reader for the replied message.
+     * @return reader for modified version of the replied message.
+     */
+    virtual PortReader& modifyReply(PortReader& reader) {
+        return reader;
+    }
+
+    /**
      * Determine whether outgoing data should be accepted.
      *
      * @param writer for outgoing data.

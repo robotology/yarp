@@ -80,6 +80,17 @@ public:
      * @ return An instance of modified data in form of Thing
      */
     virtual yarp::os::Things& update(yarp::os::Things& thing) { return thing; }
+
+
+    /**
+     * The updateReply makes it possible to modify a reply from a port
+     * when the portmonitor object is attached to a two-ways connection (e.g., RPC).
+     *
+     * @param thing An instance of yarp::os::Thing object which can be used
+     *        to typecast the data to the correct type.
+     * @ return An instance of modified data in form of Thing
+     */
+    virtual yarp::os::Things& updateReply(yarp::os::Things& thing) { return thing; }
 };
 
 #endif //_YARP2_MONITOROBJECT_

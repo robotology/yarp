@@ -199,6 +199,22 @@ public:
     virtual bool acceptOutgoingData(PortWriter& writer) = 0;
 
     /**
+     * Check if this carrier modifies outgoing data through the
+     * Carrier::modifyReply method.
+     *
+     * @return true if carrier wants Carrier::modifyReply called.
+     */
+    virtual bool modifiesReply() = 0;
+
+    /**
+     * Modify reply payload data, if appropriate.
+     *
+     * @param reader for the replied message.
+     * @return reader for modified version of the replied message.
+     */
+    virtual PortReader& modifyReply(PortReader& reader) = 0;
+
+    /**
      * Configure carrier from port administrative commands.
      *
      * @param params carrier properties
@@ -270,6 +286,14 @@ public:
 
     virtual bool acceptOutgoingData(PortWriter& writer) {
         return true;
+    }
+
+    virtual bool modifiesReply() {
+        return false;
+    }
+
+    virtual PortReader& modifyReply(PortReader& reader) {
+        return reader;
     }
 
     virtual void setCarrierParams(const yarp::os::Property& params) {

@@ -1069,6 +1069,14 @@ public:
         return getContent().acceptOutgoingData(writer);
     }
 
+    virtual bool modifiesReply() {
+        return getContent().modifiesReply();
+    }
+
+    virtual PortReader& modifyReply(PortReader& reader) {
+        return getContent().modifyReply(reader);
+    }
+
     virtual void setCarrierParams(const Property& params) {
         return getContent().setCarrierParams(params);
     }

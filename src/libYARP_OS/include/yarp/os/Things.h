@@ -44,6 +44,18 @@ public:
     }
 
     /**
+     * Set the reference to a PortReader object
+     *
+     */
+    void setPortReader(yarp::os::PortReader* reader) {
+        yarp::os::Things::reader = reader;
+    }
+
+    yarp::os::PortReader* getPortReader(void) {
+        return reader;
+    }
+
+    /**
      *  set a reference to a ConnectionReader
      */
     bool setConnectionReader(yarp::os::ConnectionReader& reader) {
@@ -70,6 +82,7 @@ public:
             delete portable;        
         conReader = NULL;
         writer = NULL;
+        reader = NULL;
         portable = NULL;
         beenRead = false;
     }
@@ -79,6 +92,9 @@ public:
     {
         if(this->writer)
             return dynamic_cast<T*>(this->writer);
+
+        if(this->reader)
+            return dynamic_cast<T*>(this->reader);
 
         if(!this->portable) 
         {
@@ -104,6 +120,7 @@ private:
     bool beenRead;
     yarp::os::ConnectionReader* conReader;
     yarp::os::PortWriter* writer;
+    yarp::os::PortReader* reader;
     yarp::os::Portable* portable;
 
 };

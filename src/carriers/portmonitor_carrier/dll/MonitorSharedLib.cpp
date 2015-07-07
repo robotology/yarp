@@ -74,6 +74,12 @@ yarp::os::Things& MonitorSharedLib::updateData(Things &thing)
     return monitor->update(thing);
 }
 
+yarp::os::Things& MonitorSharedLib::updateReply(Things &thing)
+{
+    return monitor->updateReply(thing);
+}
+
+
 bool MonitorSharedLib::peerTrigged(void)
 {
     monitor->trig();

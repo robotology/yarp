@@ -35,6 +35,7 @@ public:
     virtual bool respondToHeader(yarp::os::ConnectionState& proto);
     virtual bool modifiesIncomingData();
     virtual bool modifiesOutgoingData();
+    virtual bool modifiesReply();
     virtual void setCarrierParams(const yarp::os::Property& params);
     virtual void getCarrierParams(yarp::os::Property& params);
 

@@ -28,6 +28,7 @@ public:
 
     bool acceptData(yarp::os::Things& thing);
     yarp::os::Things& updateData(yarp::os::Things& thing);
+    yarp::os::Things& updateReply(yarp::os::Things& thing);
 
     bool peerTrigged(void);
     bool canAccept(void);
@@ -52,11 +53,16 @@ public:
         return bHasUpdateCallback;
     }
 
+    bool hasUpdateReply() {
+        return bHasUpdateReplyCallback;
+    }
+
 private:
     lua_State *L;   
     std::string constraint;
     bool bHasAcceptCallback;
     bool bHasUpdateCallback;
+    bool bHasUpdateReplyCallback;
 
 private:
     bool getLocalFunction(const char *name);

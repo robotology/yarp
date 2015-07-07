@@ -98,6 +98,8 @@ public:
 
     virtual bool acceptOutgoingData(yarp::os::PortWriter& wrtier);
 
+    virtual yarp::os::PortReader& modifyReply(yarp::os::PortReader& reader);
+
     virtual void setCarrierParams(const yarp::os::Property& params);
 
     virtual void getCarrierParams(yarp::os::Property& params);

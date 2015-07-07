@@ -15,6 +15,7 @@ using namespace yarp::os;
 Things::Things() { 
     conReader = NULL;
     writer = NULL;
+    reader = NULL;
     portable = NULL;
     beenRead = false;
 }

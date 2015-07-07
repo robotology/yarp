@@ -20,7 +20,8 @@ using namespace std;
  * Class MonitorLua
  */
 MonitorLua::MonitorLua(void) : bHasAcceptCallback(false), 
-                               bHasUpdateCallback(false)
+                               bHasUpdateCallback(false),
+                               bHasUpdateReplyCallback(false)
 {
     L = luaL_newstate();
     luaL_openlibs(L);
@@ -124,6 +125,10 @@ bool MonitorLua::load(const Property &options)
     bHasUpdateCallback = getLocalFunction("update");
     lua_pop(L,1);
 
+    // Check if there is update callback
+    bHasUpdateReplyCallback = getLocalFunction("update_reply");
+    lua_pop(L,1);
+
     return result;
 }
 
@@ -191,6 +196,47 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
             return thing;
         }   
         else        
+        {
+            lua_pop(L, 1);
+            return *result;
+        }
+    }
+
+    lua_pop(L,1);
+    return thing;
+}
+
+yarp::os::Things& MonitorLua::updateReply(yarp::os::Things& thing)
+{
+    if(getLocalFunction("update_reply"))
+    {
+        // mapping to swig type
+        swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");
+        if(!thingsType)
+        {
+            yError("Swig type of Things is not found");
+            lua_pop(L, 1);
+            return thing;
+        }
+
+        // getting the swig-type pointer
+        SWIG_NewPointerObj(L, &thing, thingsType, 0);
+        if(lua_pcall(L, 1, 1, 0) != 0)
+        {
+            yError(lua_tostring(L, -1));
+            lua_pop(L, 1);
+            return thing;
+        }
+
+        // converting the results
+        yarp::os::Things* result;
+        if(SWIG_Lua_ConvertPtr(L, -1, (void**)(&result), thingsType, 0) != SWIG_OK )
+        {
+            yError("Cannot get a valid return value from PortMonitor.update_reply");
+            lua_pop(L, 1);
+            return thing;
+        }
+        else
         {
             lua_pop(L, 1);
             return *result;

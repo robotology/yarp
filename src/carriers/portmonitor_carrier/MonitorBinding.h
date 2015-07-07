@@ -31,6 +31,9 @@ public:
     virtual bool hasUpdate() = 0;
     virtual yarp::os::Things& updateData(yarp::os::Things& thing) = 0;
 
+    virtual bool hasUpdateReply() = 0;
+    virtual yarp::os::Things& updateReply(yarp::os::Things& thing) = 0;
+
     virtual bool peerTrigged(void) = 0;
     virtual bool setAcceptConstraint(const char* constraint) = 0;
     virtual const char* getAcceptConstraint(void) = 0;

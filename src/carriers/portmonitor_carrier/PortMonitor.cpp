@@ -113,7 +113,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
         return *localReader;
 
     PortMonitor::lock();
-    yarp::os::Things thing;
+    yarp::os::Things thing;    
     thing.setConnectionReader(*localReader);
     yarp::os::Things& result = binder->updateData(thing);
     PortMonitor::unlock();
@@ -194,6 +194,21 @@ bool PortMonitor::acceptOutgoingData(yarp::os::PortWriter& writer)
     return result;
 }
 
+yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader) {
+
+    if(!bReady) return reader;
+
+    // If no updateReply callback avoid calling it
+    if(!binder->hasUpdateReply())
+        return reader;
+
+    PortMonitor::lock();
+    thing.reset();
+    thing.setPortReader(&reader);
+    yarp::os::Things& result = binder->updateReply(thing);
+    PortMonitor::unlock();
+    return *result.getPortReader();
+}
 
 /**
  * Class PortMonitorGroup

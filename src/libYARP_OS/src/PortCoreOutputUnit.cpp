@@ -8,7 +8,6 @@
  */
 
 
-
 #include <yarp/os/Time.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortReport.h>
@@ -326,6 +325,11 @@ bool PortCoreOutputUnit::sendHelper() {
         closing = true;
         setDoomed();
     }
+
+    if(replied && op->getSender().modifiesReply()) {
+            cachedReader = &op->getSender().modifyReply(*cachedReader);
+    }
+
     return replied;
 }
 

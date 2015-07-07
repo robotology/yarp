@@ -31,6 +31,7 @@ public:
 
     bool acceptData(yarp::os::Things &thing);
     yarp::os::Things& updateData(yarp::os::Things &thing);
+    yarp::os::Things& updateReply(yarp::os::Things &thing);
 
     bool peerTrigged(void);
     bool canAccept(void);
@@ -48,6 +49,7 @@ public:
 
     bool hasAccept() { return true; }
     bool hasUpdate() { return true; } 
+    bool hasUpdateReply() { return true; }
 
 private:
     std::string constraint;
