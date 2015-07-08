@@ -31,7 +31,7 @@
 #include <stateExtendedReader.hpp>
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 3
+#define PROTOCOL_VERSION_MINOR 4
 #define PROTOCOL_VERSION_TWEAK 0
 
 using namespace yarp::os;
@@ -2734,6 +2734,25 @@ public:
         c.body.resize(1);
         c.body[0] = v;
         command_buffer.write(writeStrict_singleJoint);
+        return true;
+    }
+
+    bool setRefTorques(const int n_joint, const int *joints, const double *t)
+    {
+        //return set2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, v);
+        // use the streaming port!
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        // in streaming port only SET command can be sent, so it is implicit
+        c.head.addVocab(VOCAB_TORQUES_DIRECT_GROUP);
+        c.head.addInt(n_joint);
+        Bottle &jointList = c.head.addList();
+        for (int i = 0; i < n_joint; i++)
+            jointList.addInt(joints[i]);
+        c.body.size(n_joint);
+        memcpy(&(c.body[0]), t, sizeof(double)*n_joint);
+        command_buffer.write(writeStrict_moreJoints);
         return true;
     }
 

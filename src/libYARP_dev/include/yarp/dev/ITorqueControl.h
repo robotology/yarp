@@ -88,6 +88,13 @@ public:
      */
     virtual bool setRefTorque(int j, double t)=0;
 
+    /** Set new torque reference for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param refs   pointer to the array specifing the new torque reference
+     * @return true/false on success/failure
+     */
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices
+
     /** Get the back-emf compensation gain for a given joint.
      * @param j joint number
      * @param bemf the returned bemf gain of joint j
@@ -324,6 +331,13 @@ public:
      * @return true/false on success/failure
      */
     virtual bool setRefTorqueRaw(int j, double t)=0;
+
+    /** Set new torque reference for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param refs   pointer to the array specifing the new torque reference
+     * @return true/false on success/failure
+     */
+    virtual bool setRefTorquesRaw(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices
 
     /** Get the reference value of the torque for all joints.
      * This is NOT the feedback (see getTorques instead).

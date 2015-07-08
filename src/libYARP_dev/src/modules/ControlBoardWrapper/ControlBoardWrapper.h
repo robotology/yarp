@@ -50,7 +50,7 @@
 #endif
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 3
+#define PROTOCOL_VERSION_MINOR 4
 #define PROTOCOL_VERSION_TWEAK 0
 
 /*
@@ -1069,6 +1069,8 @@ public:
     virtual bool setRefTorques(const double *t);
 
     virtual bool setRefTorque(int j, double t);
+
+    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t);
 
     virtual bool getBemfParam(int j, double *t);
 

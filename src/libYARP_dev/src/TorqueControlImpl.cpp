@@ -19,6 +19,7 @@ ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
     helper=0;
     temp=0;
     temp2=0;
+    temp_int=0;
     tmpPids=0;
 }
 
@@ -38,6 +39,8 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
     yAssert (temp != 0);
     temp2=new double [size];
     yAssert (temp2 != 0);
+    temp_int=new int [size];
+    yAssert (temp_int != 0);
     tmpPids=new Pid[size];
     yAssert (tmpPids!=0);
 
@@ -137,6 +140,15 @@ bool ImplementTorqueControl::getTorques(double *t)
     bool ret = iTorqueRaw->getTorquesRaw(temp);
     castToMapper(helper)->toUser(temp, t);
     return ret;
+}
+
+bool ImplementTorqueControl::setRefTorques(const int n_joint, const int *joints, const double *t)
+{
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        castToMapper(helper)->trqN2S(t[idx], joints[idx], temp[idx], temp_int[idx]);
+    }
+    return iTorqueRaw->setRefTorquesRaw(n_joint, temp_int, temp);
 }
 
 bool ImplementTorqueControl::getTorque(int j, double *t)
