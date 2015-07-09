@@ -21,7 +21,8 @@ using namespace std;
  */
 MonitorLua::MonitorLua(void) : bHasAcceptCallback(false), 
                                bHasUpdateCallback(false),
-                               bHasUpdateReplyCallback(false)
+                               bHasUpdateReplyCallback(false),
+                               trigger(NULL)
 {
     L = luaL_newstate();
     luaL_openlibs(L);
@@ -32,14 +33,20 @@ MonitorLua::MonitorLua(void) : bHasAcceptCallback(false),
      *  - PortMonitor.unsetEvent()
      *  - PortMonitor.setConstraint()
      *  - PortMonitor.getConstraint()
+     *  - portMonitor.setTrigInterval()
      */ 
     registerExtraFunctions();
 }
 
 MonitorLua::~MonitorLua()
 {
-    if(L)
-    {
+    if(L){
+        // stop trigger thread if it is running
+        if(trigger) {
+            trigger->stop();
+            delete trigger;
+            trigger = NULL;
+        }
         //  call PortMonitor.destroy if exists
         if(getLocalFunction("destroy"))
         {
@@ -48,7 +55,7 @@ MonitorLua::~MonitorLua()
         }
         // closing lua state handler
         lua_close(L);
-    }        
+    }
 }
 
 bool MonitorLua::load(const Property &options)
@@ -92,6 +99,7 @@ bool MonitorLua::load(const Property &options)
 
     bool result = true;
     //  call PortMonitor.create if exists
+    luaMutex.lock();
     if(getLocalFunction("create"))
     {
         // mapping to swig type
@@ -100,6 +108,7 @@ bool MonitorLua::load(const Property &options)
         {
             yError("Swig type of Property is not found");
             lua_pop(L, 1);
+            luaMutex.unlock();
             return false;
         }
         // getting the swig-type pointer
@@ -110,6 +119,7 @@ bool MonitorLua::load(const Property &options)
             lua_pop(L, 1);
             lua_close(L);
             L = NULL;
+            luaMutex.unlock();
             return false;
         }
         else    
@@ -128,12 +138,13 @@ bool MonitorLua::load(const Property &options)
     // Check if there is update callback
     bHasUpdateReplyCallback = getLocalFunction("update_reply");
     lua_pop(L,1);
-
+    luaMutex.unlock();
     return result;
 }
 
 bool MonitorLua::acceptData(Things &thing)
 {
+    luaMutex.lock();
     if(getLocalFunction("accept"))
     {
         // mapping to swig type
@@ -142,6 +153,7 @@ bool MonitorLua::acceptData(Things &thing)
         {            
             yError("Swig type of Things is not found");
             lua_pop(L, 1);
+            luaMutex.unlock();
             return false;
         }
         
@@ -151,22 +163,26 @@ bool MonitorLua::acceptData(Things &thing)
         {
             yError(lua_tostring(L, -1));
             lua_pop(L, 1);
+            luaMutex.unlock();
             return false;
         }
             
         // converting the results        
         bool result = lua_toboolean(L, -1);
         lua_pop(L, 1);
+        luaMutex.unlock();
         return result;        
     }
 
     lua_pop(L, 1);
+    luaMutex.unlock();
     return true;
 }
 
 
 yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
 {
+    luaMutex.lock();
     if(getLocalFunction("update"))
     {
         // mapping to swig type
@@ -175,6 +191,7 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         {            
             yError("Swig type of Things is not found");
             lua_pop(L, 1);
+            luaMutex.unlock();
             return thing;
         }
         
@@ -184,6 +201,7 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         {
             yError(lua_tostring(L, -1));
             lua_pop(L, 1);
+            luaMutex.unlock();
             return thing;
         }
 
@@ -193,21 +211,25 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         {
             yError("Cannot get a valid return value from PortMonitor.update");
             lua_pop(L, 1);
+            luaMutex.unlock();
             return thing;
         }   
         else        
         {
             lua_pop(L, 1);
+            luaMutex.unlock();
             return *result;
         }
     }
 
     lua_pop(L,1);
+    luaMutex.unlock();
     return thing;
 }
 
 yarp::os::Things& MonitorLua::updateReply(yarp::os::Things& thing)
 {
+    luaMutex.lock();
     if(getLocalFunction("update_reply"))
     {
         // mapping to swig type
@@ -216,6 +238,7 @@ yarp::os::Things& MonitorLua::updateReply(yarp::os::Things& thing)
         {
             yError("Swig type of Things is not found");
             lua_pop(L, 1);
+            luaMutex.unlock();
             return thing;
         }
 
@@ -225,6 +248,7 @@ yarp::os::Things& MonitorLua::updateReply(yarp::os::Things& thing)
         {
             yError(lua_tostring(L, -1));
             lua_pop(L, 1);
+            luaMutex.unlock();
             return thing;
         }
 
@@ -234,21 +258,25 @@ yarp::os::Things& MonitorLua::updateReply(yarp::os::Things& thing)
         {
             yError("Cannot get a valid return value from PortMonitor.update_reply");
             lua_pop(L, 1);
+            luaMutex.unlock();
             return thing;
         }
         else
         {
             lua_pop(L, 1);
+            luaMutex.unlock();
             return *result;
         }
     }
 
     lua_pop(L,1);
+    luaMutex.unlock();
     return thing;
 }
 
 bool MonitorLua::setParams(const yarp::os::Property& params)
 {
+    luaMutex.lock();
     if(getLocalFunction("setparam"))
     {
         // mapping to swig type
@@ -257,6 +285,7 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
         {            
             yError("Swig type of Property is not found");
             lua_pop(L, 1);
+            luaMutex.unlock();
             return false;
         }
         
@@ -266,17 +295,21 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
         {
             yError(lua_tostring(L, -1));
             lua_pop(L, 1);
+            luaMutex.unlock();
             return false;
         }
+        luaMutex.unlock();
         return true;
     }
 
     lua_pop(L,1);
+    luaMutex.unlock();
     return true;
 }
 
 bool MonitorLua::getParams(yarp::os::Property& params)
 {
+    luaMutex.lock();
     if(getLocalFunction("getparam"))
     {
         // mapping to swig type
@@ -285,6 +318,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         {            
             yError("Swig type of Property is not found");
             lua_pop(L, 1);
+            luaMutex.unlock();
             return false;
         }
         
@@ -293,6 +327,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         {
             yError(lua_tostring(L, -1));
             lua_pop(L, 1);
+            luaMutex.unlock();
             return false;
         }
 
@@ -302,34 +337,41 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         {
             yError("Cannot get a valid return value from PortMonitor.getparam");
             lua_pop(L, 1);
+            luaMutex.unlock();
             return false;
         }   
         else        
         {
             params = *result;
             lua_pop(L, 1);
+            luaMutex.unlock();
             return true;
         }
     }
 
     lua_pop(L,1);
+    luaMutex.unlock();
     return true;
 }
 
 bool MonitorLua::peerTrigged(void)
 {
+    luaMutex.lock();
     if(getLocalFunction("trig"))
     {
         if(lua_pcall(L, 0, 0, 0) != 0)
         {
             yError(lua_tostring(L, -1));
             lua_pop(L, 1);
+            luaMutex.unlock();
             return false;
         }
+        luaMutex.unlock();
         return true;
     }
 
     lua_pop(L, 1);
+    luaMutex.unlock();
     return true;
 }
 
@@ -470,7 +512,7 @@ int MonitorLua::setConstraint(lua_State* L)
         MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
         yAssert(owner);
         owner->setAcceptConstraint(cst);
-    }        
+    }
     return 0;
 }
 
@@ -546,9 +588,45 @@ int MonitorLua::unsetEvent(lua_State* L)
         record.lock();
         record.unsetEvent(event_name, owner);
         record.unlock();
-    }        
+    }
     return 0;
 }
+
+int MonitorLua::setTrigInterval(lua_State* L)
+{
+    double period = 0.0;
+    int n_args =  lua_gettop(L);
+    if(n_args > 0) {
+        if(lua_isnumber(L, 1))
+            period = (double) luaL_checknumber(L,1);
+        else {
+            yError("The arguemnt of setTrigInterval() must be number");
+            return 0;
+        }
+    } else {
+        yError("The setTrigInterval() require the interval number as the paramter");
+        return 0;
+    }
+
+
+    lua_getglobal(L, "PortMonitor_Owner");
+    if(!lua_islightuserdata(L, -1))
+    {
+        yError("Cannot get PortMonitor_Owner");
+        return 0;
+    }
+
+    MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
+    yAssert(owner);
+
+    // start the trigger thread (MonitorTrigger) if it is not running
+    if(owner->trigger == NULL) {
+        owner->trigger = new MonitorTrigger(owner, (int)(period*1000));
+        owner->trigger->start();
+    }
+    return 0;
+}
+
 
 #if LUA_VERSION_NUM > 501
 const struct luaL_Reg MonitorLua::portMonitorLib [] = {
@@ -559,6 +637,7 @@ const struct luaL_reg MonitorLua::portMonitorLib [] = {
     {"getConstraint", MonitorLua::getConstraint},
     {"setEvent", MonitorLua::setEvent},
     {"unsetEvent", MonitorLua::unsetEvent},
+    {"setTrigInterval", MonitorLua::setTrigInterval},
     {NULL, NULL}
 };
 

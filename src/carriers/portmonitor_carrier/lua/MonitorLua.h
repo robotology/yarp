@@ -12,8 +12,12 @@
 
 #include <string>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/RateThread.h>
+#include <yarp/os/RecursiveMutex.h>
 #include "MonitorBinding.h"
 #include "lua_swig.h"
+
+class MonitorTrigger;
 
 class MonitorLua : public MonitorBinding
 {
@@ -21,7 +25,7 @@ class MonitorLua : public MonitorBinding
 public:
     MonitorLua(void);
     virtual ~MonitorLua();
-    
+
     bool load(const yarp::os::Property& options);
     bool setParams(const yarp::os::Property& params);
     bool getParams(yarp::os::Property& params);
@@ -63,6 +67,10 @@ private:
     bool bHasAcceptCallback;
     bool bHasUpdateCallback;
     bool bHasUpdateReplyCallback;
+    yarp::os::RecursiveMutex luaMutex;
+
+public:
+    MonitorTrigger* trigger;
 
 private:
     bool getLocalFunction(const char *name);
@@ -77,6 +85,7 @@ private:
     static int getConstraint(lua_State* L);
     static int setEvent(lua_State* L); 
     static int unsetEvent(lua_State* L); 
+    static int setTrigInterval(lua_State* L);
 #if LUA_VERSION_NUM > 501
     static const struct luaL_Reg portMonitorLib[];
 #else
@@ -84,6 +93,24 @@ private:
 #endif
 
 };
+
+class MonitorTrigger : public yarp::os::RateThread {
+public:
+    MonitorTrigger(MonitorLua* monitor, int period)
+        : yarp::os::RateThread(period) {
+        MonitorTrigger::monitor = monitor;
+    }
+    virtual ~MonitorTrigger() { }
+
+    // inherited from the yarp::os::RateThread
+    virtual void run () {
+        monitor->peerTrigged();
+    }
+
+private:
+    MonitorLua* monitor;
+};
+
 
 #endif //_MONITORLUA_INC_
 
