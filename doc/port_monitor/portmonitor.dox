@@ -120,6 +120,16 @@ PortMonitor.update = function(thing)
 end
 \endverbatim
 
+- <b>PortMonitor.update_reply</b> :  When a portmonitor object attached to an RPC port (two-way connection), this will be called upon receiving the reply. User can modify and return the replied message using `Thing' object. PortMonitor.update() and PortMonitor.update_reply() together allows the user to access the outgoing message and incoming reply within a RPC port. Notice that in the current implementation, this feature is only available if the portmonitor is attached to a sender port (RPC Client).  
+
+\verbatim
+PortMonitor.update_reply = function(thing)
+    ...
+    return thing
+end
+\endverbatim
+
+
 - <b>PortMonitor.setparam/getparam</b> :  This will be called by the YARP port administrator when users try to reconfigure the monitor object using YARP port administrative commands (See \ref image_modification "An example of image data modification and setting parameters via administrative port"). The 'param' is of type yarp.Property object.
 
 \verbatim
@@ -134,7 +144,7 @@ end
 \endverbatim
 
 
-- <b>PortMonitor.trig</b> : This will be called when one of the peer connections to the same input port receives data. This feature is not available if the portmonitor is plugged into the sender port.
+- <b>PortMonitor.trig</b> : By default, this will be called when one of the peer connections to the same input port receives data. The peer-trigging is not available if the portmonitor is plugged into the sender port. A port monitor will usually act as a passive object in which PortMonitor.accept() and PortMonitor.update() callbacks are executed in sequence as data arrives. However, one may need to periodically monitor a connection (within a specific time interval) and, for example, generates proper events in case of delay in the communication. For this purpose, a portmonitor object can be configured to call PortMonitor.trig() within desired time intervals using PortMonitor.setTrigInterval(). 
 
 \verbatim
 PortMonitor.trig = function()
