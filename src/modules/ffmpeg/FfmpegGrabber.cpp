@@ -494,10 +494,10 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
     iformat = av_find_input_format("dv1394");
     printf("Checking for digital video in %s\n", devname.c_str());
     return YARP_AV_OPEN_INPUT_FILE(ppFormatCtx,
-#ifndef FACTORED_DEVCE
+#ifndef FACTORED_DEVICE
                               "",
 #else
-                              strdup(devname.asString().c_str()), 
+                              strdup(devname.c_str()),
 #endif
                               iformat, 0, &formatParams)==0;
 #endif
