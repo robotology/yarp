@@ -162,18 +162,18 @@ public:
     virtual bool getTrackingMode(bool *f) = 0;
 
     /*!
-     * Turn on/off the head stabilization. [wait for reply]
+     * Turn on/off the gaze stabilization. [wait for reply]
      * \param f true to turn on the stabilization, false otherwise.
      * \return true/false on success/failure.
      *
      * \note When this mode is turned on, the controller continuously
-     *       stabilizes the head relying on the inertial data.
+     *       stabilizes the gaze relying on the inertial data.
      */
     virtual bool setStabilizationMode(const bool f) = 0;
 
     /*!
      * Get the current stabilization mode. [wait for reply]
-     * \param f here is returned true if controller is stabilizing the head, 
+     * \param f here is returned true if controller is stabilizing the gaze, 
      *         false otherwise.
      * \return true/false on success/failure.
      */
