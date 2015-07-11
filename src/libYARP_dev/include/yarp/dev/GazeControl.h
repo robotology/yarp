@@ -331,10 +331,10 @@ public:
     /*!
      * Query whether the very fast eyes movements (saccades) will be
      * employed or not. [wait for reply]
-     * \param f the current saccades status.
+     * \param f the current saccades mode.
      * \return true/false on success/failure.
      */
-    virtual bool getSaccadesStatus(bool *f) = 0;
+    virtual bool getSaccadesMode(bool *f) = 0;
 
     /*!
      * Get the current inhibition period for saccadic movements.
@@ -582,7 +582,7 @@ public:
      * \note Vision processing algorithms might be heavily affected
      *       by saccades.
      */
-    virtual bool setSaccadesStatus(const bool f) = 0;
+    virtual bool setSaccadesMode(const bool f) = 0;
 
     /*!
      * Set the inhibition period for saccadic movements. [wait for
