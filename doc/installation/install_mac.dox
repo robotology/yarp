@@ -5,11 +5,11 @@
  */
 
 /**
- * @page install_yarp_mac Installing YARP on MacOS
+ * @page install_yarp_mac Installing YARP on MacOS X
 
 \tableofcontents
 
-\section install_mac_from_homebrew Install using Homebrew
+\section install_mac_installation_prerequisites Installation prerequisites
 This installation has been confirmed to work on OSX Mavericks and Yosemite with Homebrew.
 
 \subsection install_mac_Xcode Installing Xcode
@@ -26,11 +26,6 @@ xcode-select --install
 \endcode
 
 Once this is done, you can now continue with the installation steps:
-
-\subsection install_mac_X11 Installing X11
-
-In OS X 10.8 Mountain Lion and later, <b>X11</b> is not provided anymore. You need to install <a href="http://xquartz.macosforge.org/landing/"><b>XQuartz</b></a>. 
-In earlier version of OS X, this is not stricly necessary, but recommended as XQuartz is more robust and updated that the system-provided X11.
 
 \subsection install_mac_homebrew Installing Homebrew
 
@@ -53,60 +48,117 @@ brew update
 brew upgrade
 \endcode
 
-
-\subsection install_mac_YARP_Dependencies Installing YARP Dependencies
-Here we provide information for installing the <b>YARP dependencies</b> via <b>Homebrew</b> then getting and compiling the <b>YARP sources</b> directly from the repository. 
-In order to install the YARP dependencies enter the follwing command in a terminal:
+Also, you will need to add the homebrew-x11 and homebrew-science taps:
 
 \code
-brew install `brew deps --1 yarp | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/ /g'`
+brew tap homebrew\x11
+brew tap homebrew\science
 \endcode
 
-and the following for yarpbuilder:
+\section install_mac_Homebrew_YARP Installing YARP from Homebrew
+The easiest way to install YARP is through Homebrew. 
+ 
+\code
+ brew install yarp
+\endcode
+
+The following options are also available:
 
 \code
-brew install goocanvas
+--with-lua
+ 	Build with Lua bindings
+--with-opencv
+ 	Build the opencv_grabber device
+--with-qt5
+ 	Build the Qt5 GUI applications
+--with-serial
+ 	Build the serial/serialport devices
+--with-yarprun-log
+ 	Build with yarprun_log support
+--HEAD
+ 	Install HEAD version
 \endcode
-
-\subsubsection install_mac_YARP_QT5 Installing YARP Dependencies: QT5
-
-Please can now follow this link and download Qt 5.3.2 Open Source. <a href="http://download.qt-project.org/official_releases/online_installers/qt-opensource-mac-x64-1.6.0-5-online.dmg"><b>Qt 5.3.2 Open Source</b></a> or just follow this <a href="http://qt-project.org/downloads"><b>link</b></a> and download it yourself.
-Install the dmg package by default in your home and add its <b>environmental variable</b>: (In order to follow the KISS principle we are using the native mac editor Textedit. Please feel free to use whichever tool/editor you prefer)
-
+ 
+After the installation, you will need to add the $YARP_DATA_DIRS environmental variable (in order to follow the KISS principle we are using the native mac editor Textedit. Please feel free to use whichever tool/editor you prefer):
+ 
 \code
 cd ~
 open -a TextEdit .bash_profile
 \endcode
-
+ 
 If the following command result in an error: The file .... does not exist, do the following first:
 
 \code
 cd ~
 touch .bash_profile
 \endcode
-
-now and copy the following lines (obviously changing the path with your version):
+ 
+and add the line:
 
 \code
-export Qt5_DIR=/Users/your_user_name/Qt/5.3/clang_64
+export YARP_DATA_DIRS=/usr/local/share/yarp
+\endcode
+ 
+To refresh and load these environment settings type:
+
+\code
+source ~/.bash_profile 
+\endcode
+ 
+Now you can proceed with the following link: \subpage check_your_installation.
+ 
+\section install_mac_from_source Install YARP from source
+If the options above are not enough and you want to install YARP with additional options or in a difference location, you can compile it from source, directly from the repository.
+ 
+\subsection install_mac_YARP_Dependencies Installing YARP Dependencies
+Here we provide information for installing the <b>YARP dependencies</b> via <b>Homebrew</b>
+In order to install the YARP dependencies enter the following command in a terminal:
+
+\code
+brew install `brew deps --skip-optional --1 yarp | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/ /g'`
+\endcode
+ 
+
+For compiling the required bindings (LUA, JAVA, PYTHON etc) you need <b>swig</b>
+
+\code
+brew install swig
+\endcode
+ 
+and the following for yarpbuilder:
+
+\code
+brew install goocanvas gtkmm libglademm gtk+
 \endcode
 
-Now you would need to configure pkg-config Add this to the .bash_profile in order to correctly do this:
+For compiling the Qt5 GUIS:
+\code
+brew install qt5
+\endcode
+
+Now, add the <b>environmental variable</b> for Qt5
 
 \code
 cd ~
 open -a TextEdit .bash_profile
 \endcode
 
-and copy the following line:
+and copy the following lines (obviously changing the path with your version):
 
 \code
-export PKG_CONFIG_PATH=/usr/X11/lib/pkgconfig/:$PKG_CONFIG_PATH
+export Qt5_DIR=/usr/local/Cellar/qt5/5.4.2/lib/cmake
 \endcode
+Substitute version
+
 
 \subsubsection install_mac_YARP_optional_GDK Optional: Installing YARP Dependencies: GDK PIXBUF 
 
 Programs that require this <b>GDK PIXBUF</b> need to set the environment variable correctly. Just to be on the safe side add this to the .bash_profile
+
+\code
+cd ~
+open -a TextEdit .bash_profile
+\endcode
 
 \code
 export GDK_PIXBUF_MODULEDIR="/usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders"
@@ -214,12 +266,7 @@ Call with the argument "help" to see a list of ways to use this program.
 \endcode 
 
 
-\subsubsection Prepare YARP for compiling the required bindings (LUA, JAVA, PYTHON etc):
-
-To correctly install the YARP bindings you will need <b>swig</b>
-
-\code
-brew install swig
-\endcode
 
 */
+
+
