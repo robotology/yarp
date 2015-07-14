@@ -213,7 +213,7 @@ void YarpPluginSelector::scan() {
         for (int i=0; i<lst.size(); i++) {
             ConstString plugin_name = lst.get(i).asString();
             Bottle group = inigroup.findGroup(plugin_name);
-            group.add(Value::makeValue(ConstString("(inifile ") + inifile + ")"));
+            group.add(Value::makeValue(ConstString("(inifile \"") + inifile + "\")"));
             if (select(group)) {
                 plugins.addList() = group;
             }
