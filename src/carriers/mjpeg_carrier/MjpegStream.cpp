@@ -41,7 +41,7 @@ YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
         do {
             s = delegate->getInputStream().readLine();
             if (debug) {
-                printf("Read %s\n", s.c_str());
+                printf("Read \"%s\"\n", s.c_str());
             }
         } while ((s.length()==0||s[0]!='-') && delegate->getInputStream().isOk());
         s = delegate->getInputStream().readLine();
@@ -49,32 +49,32 @@ YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
             if (!delegate->getInputStream().isOk()) {
                 break;
             }
-            printf("Unknown content type - %s\n", s.c_str());
+            printf("Unknown content type - \"%s\"\n", s.c_str());
             continue;
         }
         if (debug) {
-            printf("Read content type - %s\n", s.c_str());
+            printf("Read content type - \"%s\"\n", s.c_str());
         }
         s = delegate->getInputStream().readLine();
         if (debug) {
-            printf("Read content length - %s\n", s.c_str());
+            printf("Read content length - \"%s\"\n", s.c_str());
         }
         Bottle b(s.c_str());
         if (b.get(0).asString()!="Content-Length:") {
             if (!delegate->getInputStream().isOk()) {
                 break;
             }
-            printf("Expected Content-Length: got - %s\n", b.get(0).asString().c_str());
+            printf("Expected Content-Length: got - \"%s\"\n", b.get(0).asString().c_str());
             continue;
         }
         int len = b.get(1).asInt();
         if (debug) {
-            printf("Length is %d\n", len);
+            printf("Length is \"%d\"\n", len);
         }
         do {
             s = delegate->getInputStream().readLine();
             if (debug) {
-                printf("Read %s\n", s.c_str());
+                printf("Read \"%s\"\n", s.c_str());
             }
         } while (s.length()>0);
         if (autocompress) {
@@ -112,14 +112,14 @@ YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
             memcpy(b.get(),cursor,allow);
             cursor+=allow;
             remaining-=allow;
-            //printf("returning %d bytes\n", allow);
+            if (debug) printf("returning %d bytes\n", allow);
             return allow;
         } else {
             int result = delegate->getInputStream().read(b);
-            //dbg_printf("Read %d bytes\n", result);
+            if (debug) printf("Read %d bytes\n", result);
             if (result>0) {
                 remaining-=result;
-                //dbg_printf("%d bytes of meat\n", result);
+                if (debug) printf("%d bytes of meat\n", result);
                 return result;
             }
         }
