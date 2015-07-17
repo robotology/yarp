@@ -106,7 +106,10 @@ source ~/.bash_profile
 \endcode
  
 Now you can proceed with the following link: \subpage check_your_installation.
- 
+
+\subsection install_mac_bash_completion_brew Bash completion
+Installing YARP using Homebrew, the bash completion is automatically installed and enabled.
+
 \section install_mac_from_source Install YARP from source
 If the options above are not enough and you want to install YARP with additional options or in a difference location, you can compile it from source, directly from the repository.
  
@@ -263,8 +266,23 @@ and you should get something like:
 \code
 This is the YARP network companion.
 Call with the argument "help" to see a list of ways to use this program.
-\endcode 
+\endcode
 
+\subsection install_mac_bash_completion_source Bash completion
+To enable bash completion when building YARP from source, do the following:
+
+\code
+brew install bash-completion
+\endcode
+
+Then add the following lines to your .bash_profile:
+
+\code
+if [ -f `brew --prefix`/etc/bash_completion ]; then
+      . `brew --prefix`/etc/bash_completion
+fi
+source $YARP_ROOT/scripts/yarp_completion
+\endcode
 
 
 */
