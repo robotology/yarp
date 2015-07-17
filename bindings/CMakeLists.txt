@@ -153,7 +153,7 @@ endif(CREATE_JAVA)
 #############################################################################
 ## Create Python bindings
 
-if(CREATE_PYTHON)	 
+if(CREATE_PYTHON)
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads")
   if(CREATE_PYTHON_VERSION) 
     message(WARNING "CREATE_PYTHON_VERSION was renamed YARP_USE_PYTHON_VERSION")
@@ -183,6 +183,7 @@ if(CREATE_PYTHON)
     set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/lib/python")
   endif()
   swig_add_module(${target_name} python yarp.i)
+  target_link_libraries(${target_name} ${PYTHON_LIBRARY})
   # uncomment if we want a debug version of the library
   #add_definitions(-DPy_DEBUG)
 
