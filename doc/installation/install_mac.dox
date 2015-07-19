@@ -67,6 +67,8 @@ The following options are also available:
 \code
 --with-lua
  	Build with Lua bindings
+--with-python
+  Build with Python bindings
 --with-opencv
  	Build the opencv_grabber device
 --with-qt5
