@@ -331,3 +331,4 @@ endif()
 
 # Add the option to build only libraries and skip the binaries
 option(YARP_BUILD_LIBRARIES_ONLY "Build only libraries. Skip binaries." FALSE)
+mark_as_advanced(YARP_BUILD_LIBRARIES_ONLY)
