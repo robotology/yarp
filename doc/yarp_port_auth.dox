@@ -28,19 +28,13 @@ with SHA256.
 
 \section yarp_port_auth_usage How to use the port authentication mechanism
 
-First, enable the cmake option
-\code
-USE_PORT_AUTHENTICATION    => ON
-\endcode
-and recompile.
-
-Second, create a file 'auth.conf' in a directory that "yarp resource --find auth.conf" would find, with the following content:
+Create a file 'auth.conf' in a directory that "yarp resource --find auth.conf" would find, with the following content:
 \code
 [AUTH]
 key  "my_secret_key"
 \endcode
 
-Finally, you can 'test' it by opening a telnet connection to your nameserver.
+You can 'test' it by opening a telnet connection to your nameserver.
 Instead of a welcome message you should see only garbage.
 
 Now, only yarp applications with the same key can connect to each other. This
@@ -65,4 +59,3 @@ still feel responsible for the security of their system.
 
  *
  */
-

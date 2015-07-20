@@ -356,12 +356,6 @@ source_group("Header Files" FILES ${YARP_OS_HDRS})
 source_group("IDL Header Files" FILES ${YARP_OS_IDL_HDRS})
 source_group("Implementation Header Files" FILES ${YARP_OS_IMPL_HDRS})
 
-option(USE_PORT_AUTHENTICATION "Use a 3-way passphrase authentication for connections to ports" FALSE)
-mark_as_advanced(USE_PORT_AUTHENTICATION)
-if (USE_PORT_AUTHENTICATION)
-    add_definitions(-DPORT_AUTH)
-endif (USE_PORT_AUTHENTICATION)
-
 option(ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
 if (ENABLE_YARPRUN_LOG)
     add_definitions(-DYARPRUN_LOG)
