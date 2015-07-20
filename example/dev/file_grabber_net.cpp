@@ -33,7 +33,7 @@ int main() {
     PolyDriver dd(config);
     if (!dd.isValid()) {
         printf("Failed to create and configure a device\n");
-        exit(1);
+        return 1;
     }
 
     // snooze while the network device operates

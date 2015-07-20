@@ -67,7 +67,7 @@ public:
             config.check("pattern",yarp::os::Value("%d.ppm")).asString();
         int first = config.check("first",yarp::os::Value(0)).asInt();
         int last = config.check("last",yarp::os::Value(-1)).asInt();
-        return open(pattern,first,last);
+        return open(pattern.c_str(),first,last);
     }
 
     virtual bool close() { 

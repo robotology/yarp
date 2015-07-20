@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
         printf("          COM is COMx or /dev/ttyS0\n");
         printf("          BAUDRATE is the baud rate, eg: 38400");
 
-      exit(1);
+      return 1;
     }
 
     Property config;

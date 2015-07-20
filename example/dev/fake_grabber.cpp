@@ -40,12 +40,12 @@ int main(int argc, char *argv[]) {
     PolyDriver dd(config);
     if (!dd.isValid()) {
         printf("Failed to create and configure a device\n");
-        exit(1);
+        return 1;
     }
     IFrameGrabberImage *grabberInterface;
     if (!dd.view(grabberInterface)) {
         printf("Failed to view device through IFrameGrabberImage interface\n");
-        exit(1);
+        return 1;
     }
 
     ImageOf<PixelRgb> img;

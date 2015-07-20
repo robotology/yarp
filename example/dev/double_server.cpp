@@ -26,7 +26,7 @@ int main() {
     PolyDriver dd(config);
     if (!dd.isValid()) {
         printf("Failed to create and configure device 1\n");
-        exit(1);
+        return 1;
     }
 
     Property config2;
@@ -35,7 +35,7 @@ int main() {
     PolyDriver dd2(config2);
     if (!dd2.isValid()) {
         printf("Failed to create and configure device 2\n");
-        exit(1);
+        return 1;
     }
 
     while (true) {
