@@ -41,7 +41,7 @@ namespace yarp {
  * An image frame grabber device using ffmpeg to capture images from
  * AVI files.
  */
-class yarp::dev::FfmpegGrabber : public IFrameGrabberImage, 
+class yarp::dev::FfmpegGrabber : public IFrameGrabberImage,
             public IAudioGrabberSound,
             public IAudioVisualGrabber,
             public IAudioVisualStream,
@@ -67,22 +67,22 @@ public:
         YARP_AVDICT_INIT(formatParamsVideo);
         YARP_AVDICT_INIT(formatParamsAudio);
     }
-  
+
     virtual bool open(yarp::os::Searchable & config);
-  
+
     virtual bool close();
-  
+
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
 
     virtual bool getSound(yarp::sig::Sound& sound);
 
     virtual int height() const { return m_h; }
-  
+
     virtual int width() const { return m_w; }
-  
+
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                 yarp::sig::Sound& sound);
-  
+
 
     virtual bool hasAudio() {
         return _hasAudio;
@@ -114,7 +114,7 @@ protected:
     bool shouldLoop;
     double pace;
     bool imageSync;
-  
+
     /** Width of the images a grabber produces. */
     int m_w;
     /** Height of the images a grabber produces. */
@@ -122,14 +122,14 @@ protected:
 
     int m_channels;
     int m_rate;
-  
+
     /** Opaque ffmpeg structure for image capture. */
     void * m_capture;
 
-    bool openFirewire(yarp::os::Searchable & config, 
+    bool openFirewire(yarp::os::Searchable & config,
                       AVFormatContext **ppFormatCtx);
 
-    bool openV4L(yarp::os::Searchable & config, 
+    bool openV4L(yarp::os::Searchable & config,
                  AVFormatContext **ppFormatCtx,
                  AVFormatContext **ppFormatCtx2);
 
@@ -148,4 +148,3 @@ protected:
 
 
 #endif
-

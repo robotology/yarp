@@ -34,7 +34,7 @@ extern "C" {
 // stick with AVFormatParameters
 #else
 #define GENERALIZED_PARAMETERS
-#endif 
+#endif
 
 #if LIBAVCODEC_VERSION_INT >= (54<<16)
 #define USE_AVFORMAT_OPEN_INPUT
@@ -64,9 +64,9 @@ extern "C" {
 #endif
 
 
-int stable_img_convert (AVPicture *dst, int dst_pix_fmt, 
-			const AVPicture *src, int src_pix_fmt, 
-			int src_width, int src_height);
+int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
+                        const AVPicture *src, int src_pix_fmt,
+                        int src_width, int src_height);
 
 #ifndef CODEC_TYPE_AUDIO
 #  define CodecType AVMediaType
@@ -103,7 +103,7 @@ typedef AVFormatParameters YARP_AVDICT;
 #define YARP_AVDICT_SET_STR(x,k,v) x.k = strdup(v)
 #define YARP_AVDICT_SET_INT(x,k,v) x.k = v
 #define YARP_AVDICT_SET_FRAC(x,k1,k2,v1,v2) { x.k1.num = v1; x.k1.den = v2; }
-#define YARP_AVDICT_DESTROY(x) 
+#define YARP_AVDICT_DESTROY(x)
 #define YARP_AVDICT_CLEAN(x) memset(&x, 0, sizeof(x))
 #define YARP_AV_OPEN_INPUT_FILE(a,b,c,d) av_open_input_file(a,strdup(b),c,0,d)
 #define YARP_avcodec_open(x,y) avcodec_open(x,y)
