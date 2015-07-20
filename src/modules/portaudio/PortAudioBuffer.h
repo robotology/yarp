@@ -47,7 +47,7 @@ class circularBuffer
         return (end + 1) % maxsize == start;
     }
  
-    inline const SAMPLE* const getRawData()
+    inline const SAMPLE* getRawData()
     {
         return elems;
     }

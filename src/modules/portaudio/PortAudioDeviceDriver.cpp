@@ -410,7 +410,7 @@ bool PortAudioDeviceDriver::immediateSound(yarp::sig::Sound& sound)
 {
     dataBuffers.playData->clear();
     
-    unsigned char* dataP= sound.getRawData();
+    //unsigned char* dataP= sound.getRawData();
     int num_bytes = sound.getBytesPerSample();
     int num_channels = sound.getChannels();
     int num_samples = sound.getRawDataSize()/num_channels/num_bytes;
@@ -460,7 +460,7 @@ bool PortAudioDeviceDriver::renderSound(yarp::sig::Sound& sound)
 
 bool PortAudioDeviceDriver::appendSound(yarp::sig::Sound& sound)
 {
-    unsigned char* dataP= sound.getRawData();
+    //unsigned char* dataP= sound.getRawData();
     int num_bytes = sound.getBytesPerSample();
     int num_channels = sound.getChannels();
     int num_samples = sound.getRawDataSize()/num_channels/num_bytes;
