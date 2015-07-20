@@ -21,7 +21,7 @@ as much fun.  So we give a basic tutorial on it here.
 We gave instructions on installing CMake and getting started
 with a basic project here:
 
-  \li \ref install_cmake
+  \li <a href="http://wiki.icub.org/wiki/CMake#Install_CMake">install_cmake</a>
 
 Now we're going to go into CMake usage in a little more
 depth.  But let's start simple, with a basic "hello world"
@@ -75,7 +75,7 @@ In what follows, we describe running CMake on the command line,
 since it is easier to present.  For instructions on using the
 CMake GUI on Windows, see:
 
-  \li \ref install_cmake
+  \li <a href="http://wiki.icub.org/wiki/CMake#Install_CMake">install_cmake</a>
 
 From the command-line, you can see all the options cmake takes
 by running it without any arguments.
@@ -352,4 +352,3 @@ fill in the directories there.
 
  *
  */
-
