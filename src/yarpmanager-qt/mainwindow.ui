@@ -87,7 +87,7 @@
            <property name="styleSheet">
             <string notr="true">
               QTabBar::close-button {image: url(:/close22.svg);}
-              QTabBar::close-button:hover { border: 2px solid transparent; }
+              QTabBar::close-button:hover { border: 2px solid transparent; image: url(:/close22-red.svg); }
               QTabWidget::pane { border: none; }
             </string>
            </property>
