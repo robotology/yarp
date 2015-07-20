@@ -357,9 +357,8 @@ int RFModule::runModule() {
         ACE_OS::fprintf(stderr, "(i.e. do not call attachTerminal()).\n");
         ACE_OS::fprintf(stderr, "This will also make this annoying message go away.\n");
 
-
-         //one day this will hopefully go away, now only way to stop
-        // remove both:
+        //one day this will hopefully go away, now only way to stop
+        //remove both:
         close();
         ACE_OS::exit(1);
         /////////////////////////////////////////////////////////////
@@ -375,7 +374,7 @@ int RFModule::runModule() {
 int RFModule::runModule(yarp::os::ResourceFinder &rf) {
     if (!configure(rf)) {
         ACE_OS::printf("Module failed to open\n");
-        return false;
+        return 1;
     }
     return runModule();
 }

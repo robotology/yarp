@@ -68,15 +68,15 @@ public:
      * Make sure you first configure your module by calling the configure()
      * function. updateModule() is then called every getPeriod()
      * seconds.  During execution of updateModule() the following methods may be executed 
-	 * asynchronously:
+     * asynchronously:
      *  - respond(): this is called if there is input from the standard input or a message
      *               from an input port connected to the module via attach().
      *  - interruptModule(): this method is called by the handlers of  the following signals: 
      *               SIGINT, SIGTERM and SIGBREAK (WIN32). Interrupt is a good place to execute
-	 *               code that unblocks pending reads (i.e. blocking reads on port).
-	 * 
-	 * After the last iteration of updateModule() the function close() is executed. 
-	 * 
+     *               code that unblocks pending reads (i.e. blocking reads on port).
+     * 
+     * After the last iteration of updateModule() the function close() is executed. 
+     * 
      * @return 0 on success
      *
      * \note attachTerminal() is no longer called automatically.
@@ -85,7 +85,7 @@ public:
 
     /**
      * Simple helper method to call configure() and then runModule(). 
-	 * See documentation of configure() and runModule() for more details.
+     * See documentation of configure() and runModule() for more details.
      *
      * @param rf a previously initialized ResourceFinder
      * @return 0 upon success, non-zero upon failure
@@ -94,11 +94,11 @@ public:
 
     /**
      * Configure the module, pass a ResourceFinder object to the module.
-	 * This function can perform initialization including object creation and 
-	 * memory allocation; returns false to notify that initialization was not
+     * This function can perform initialization including object creation and 
+     * memory allocation; returns false to notify that initialization was not
      * successful and that the module should not start. Cleanup should be performed
-	 * by the function close(). In case of failure during the initialization and before
-	 * returning false, the function configure() should cleanup memory and resources allocated.
+     * by the function close(). In case of failure during the initialization and before
+     * returning false, the function configure() should cleanup memory and resources allocated.
      *
      * @param rf a previously initialized ResourceFinder
      * @return true/false upon success/failure
@@ -171,7 +171,7 @@ public:
      *
      * This is called automatically when the module closes, after the last call
      * to updateModule. Override this to cleanup memory allocated in the configure() 
-	 * function or perform other activities that ensure graceful shutdown.
+     * function or perform other activities that ensure graceful shutdown.
      *
      * @return true/false on success failure.
      */
@@ -179,8 +179,8 @@ public:
 
     /**
      * Ask the module to stop. Called automatically by signal handlers or when a quit message
-	 * is received by the respond() (by the console or by a port if attached). It raises an internal flag 
-	 * that notifies the module to stop executing updateModule() and then calls interruptModule().
+     * is received by the respond() (by the console or by a port if attached). It raises an internal flag 
+     * that notifies the module to stop executing updateModule() and then calls interruptModule().
      *
      * @param wait specifies if stop should block and wait termination. This is
      * not implemented yet.

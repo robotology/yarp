@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     Network yarp;
     if (!yarp.checkNetwork()){
         fprintf(stderr, "Sorry YARP network does not seem to be available, is the yarp server available?\n");
-        return -1;
+        return 1;
     }
 
     yarp::os::ResourceFinder rf;
@@ -38,11 +38,7 @@ int main(int argc, char *argv[])
     rf.setDefaultContext( "yarpdataplayer" );        //overridden by --context parameter
     rf.configure( argc, argv );
 
-
-
     MainWindow w(rf);
-
-
 
     if (rf.check("hidden")){
         w.hide();
@@ -50,5 +46,5 @@ int main(int argc, char *argv[])
         w.show();
     }
 
-    return a.exec();
+    return (a.exec()!=0?1:0);
 }

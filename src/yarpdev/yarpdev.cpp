@@ -17,5 +17,6 @@
 
 int main(int argc, char *argv[]) {
     yarp::os::Network yarp;
-    return yarp::dev::Drivers::yarpdev(argc,argv);
+    int ret=yarp::dev::Drivers::yarpdev(argc,argv);
+    return (ret!=0?1:0);
 }

@@ -19,5 +19,6 @@
 int main(int argc, char *argv[]) 
 {
     yarp::os::Network yarp;
-    return yarp::os::Run::main(argc,argv);
+    int ret=yarp::os::Run::main(argc,argv);
+    return (ret!=0?1:0);
 }

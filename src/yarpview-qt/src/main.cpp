@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
     /*QByteArray data = "1";
     qputenv("QML_IMPORT_TRACE", data);*/
 
-
     QQmlApplicationEngine engine;
     engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() +
                                          PLUGINS_RELATIVE_PATH));
@@ -80,7 +79,7 @@ int main(int argc, char *argv[])
     QObject *topLevel = engine.rootObjects().value(0);
 
     if(!topLevel){
-        return 0;
+        return 1;
     }
 
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
@@ -100,15 +99,13 @@ int main(int argc, char *argv[])
                               Q_RETURN_ARG(QVariant, retVal),
                               Q_ARG(QVariant,params));
     if(!retVal.toBool()){
-        return 0;
+        return 1;
     }
-
 
     window->show();
     window->setIcon(QIcon(":/logo.png"));
     // window->setIcon(QIcon(":/logo.svg"));
 
-    return app.exec();
-
+    return (app.exec()!=0?1:0);
 }
 

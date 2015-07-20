@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     {
         LOG_ERROR("Error initializing yarp network (is yarpserver running?)\n");
         QMessageBox::critical(0,"Error","Error initializing yarp network (is yarpserver running?)");
-        return 0;
+        return 1;
     }
 
     ResourceFinder *finder;
@@ -126,11 +126,11 @@ int main(int argc, char *argv[])
     NUMBER_OF_AVAILABLE_PARTS=pParts->size();
     if (NUMBER_OF_AVAILABLE_PARTS > MAX_NUMBER_ACTIVATED){
         LOG_ERROR("The number of parts exceeds the maximum! \n");
-        return 0;
+        return 1;
     }
     if (NUMBER_OF_AVAILABLE_PARTS<=0){
         LOG_ERROR("Invalid number of parts, check config file \n");
-        return 0;
+        return 1;
     }
 
     for(int n=0; n < MAX_NUMBER_ACTIVATED; n++){
@@ -192,5 +192,5 @@ int main(int argc, char *argv[])
         delete pParts;
     }
 
-    return appRet;
+    return (appRet!=0?1:0);
 }
