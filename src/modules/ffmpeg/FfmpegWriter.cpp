@@ -124,7 +124,7 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     }
 
     /* open it */
-    if (YARP_avcodec_open(c, codec) < 0) {
+    if (avcodec_open2(c, codec, NULL) < 0) {
         fprintf(stderr, "could not open codec\n");
         ::exit(1);
     }
@@ -161,7 +161,7 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     samples = (int16_t*)av_malloc(samples_size*2*samples_channels);
 
 
-    printf("FRAME SIZE is %d / samples size is %d\n", 
+    printf("FRAME SIZE is %d / samples size is %d\n",
            c->frame_size,
            samples_size);
     ::exit(1);
@@ -195,7 +195,7 @@ static void make_audio_frame(AVCodecContext *c, AVFrame * &frame,
     frame->nb_samples     = c->frame_size;
     frame->format         = c->sample_fmt;
     frame->channel_layout = c->channel_layout;
-    int buffer_size = av_samples_get_buffer_size(NULL, c->channels, 
+    int buffer_size = av_samples_get_buffer_size(NULL, c->channels,
                                                  c->frame_size,
                                                  c->sample_fmt, 0);
     if (buffer_size < 0) {
@@ -275,7 +275,7 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
 
     int at = 0;
     while (at<snd.getSamples()) {
-        
+
         int avail = samples_size - samples_at;
         int remain = snd.getSamples() - at;
         int chan = snd.getChannels();
@@ -289,7 +289,7 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
             at++;
         }
         avail = samples_size - samples_at;
-    
+
         if (avail==0) {
             AVPacket pkt;
             av_init_packet(&pkt);
@@ -315,13 +315,13 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
             av_freep(&samples);
             av_frame_free(&frame);
 #else
-            pkt.size= avcodec_encode_audio(c, 
-                                           audio_outbuf, 
-                                           audio_outbuf_size, 
+            pkt.size= avcodec_encode_audio(c,
+                                           audio_outbuf,
+                                           audio_outbuf_size,
                                            samples);
 #endif
-        
-            pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, 
+
+            pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base,
                                   st->time_base);
             pkt.dts = pkt.pts;
             //printf("(%d)", pkt.size);
@@ -332,8 +332,8 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
             pkt.stream_index= st->index;
             pkt.data = audio_outbuf;
             pkt.duration = 0;
-            
-            
+
+
             /* write the compressed frame in the media file */
             printf("+");
             fflush(stdout);
@@ -447,7 +447,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     }
 
     /* open the codec */
-    if (YARP_avcodec_open(c, codec) < 0) {
+    if (avcodec_open2(c, codec, NULL) < 0) {
         fprintf(stderr, "could not open codec\n");
         ::exit(1);
     }
@@ -489,7 +489,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     DBG printf("Video stream opened\n");
 }
 
-static void fill_rgb_image(AVFrame *pict, int frame_index, int width, 
+static void fill_rgb_image(AVFrame *pict, int frame_index, int width,
                            int height, ImageOf<PixelRgb>& img)
 {
     int x, y;
@@ -526,7 +526,7 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
     } else {
         fill_rgb_image(picture, frame_count, c->width, c->height, img);
     }
-        
+
 
     if (oc->oformat->flags & AVFMT_RAWPICTURE) {
         /* raw video case. The API will change slightly in the near
@@ -573,7 +573,7 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
 
             /*
             static int x = 0;
-            printf("%ld / %ld  :  %ld / %ld  --> %d\n", 
+            printf("%ld / %ld  :  %ld / %ld  --> %d\n",
                    (long int) c->time_base.num,
                    (long int) c->time_base.den,
                    (long int) st->time_base.num,
@@ -615,9 +615,9 @@ void FfmpegWriter::close_video(AVFormatContext *oc, AVStream *st)
 /* YARP adaptation */
 
 bool FfmpegWriter::open(yarp::os::Searchable & config) {
-
-    //printf("ffmeg version number %d\n", LIBAVCODEC_BUILD);
-
+//     printf("ffmpeg libavcodec version number %d.%d.%d\n", LIBAVCODEC_VERSION_MAJOR,
+//                                                           LIBAVCODEC_VERSION_MINOR,
+//                                                           LIBAVCODEC_VERSION_MICRO);
 
     ready = false;
     savedConfig.fromString(config.toString());
@@ -636,7 +636,7 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
                          "height of image (must be even)").asInt();
     int framerate = config.check("framerate",Value(30),
                                  "baseline images per second").asInt();
-    
+
     int sample_rate = 0;
     int channels = 0;
     bool audio = config.check("audio","should audio be included");
@@ -654,12 +654,12 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     if (w<=0||h<=0) {
         delayed = true;
         return true;
-    } 
+    }
     ready = true;
 
     /* initialize libavcodec, and register all codecs and formats */
     av_register_all();
-    
+
     /* auto detect the output format from the name. default is
        mpeg. */
     fmt = guess_format(NULL, filename.c_str(), NULL);
@@ -742,7 +742,7 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
 
     return true;
 }
-  
+
 bool FfmpegWriter::close() {
     if (!isOk()) { return false; }
 
@@ -763,11 +763,7 @@ bool FfmpegWriter::close() {
 
     if (!(fmt->flags & AVFMT_NOFILE)) {
         /* close the output file */
-#if LIBAVCODEC_BUILD >= 3354624
         url_fclose(oc->pb);
-#else
-        url_fclose(&oc->pb);
-#endif
     }
 
     /* free the stream */
@@ -777,7 +773,7 @@ bool FfmpegWriter::close() {
 
     return true;
 }
-  
+
 bool FfmpegWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
     if (delayed) {
         savedConfig.put("width",Value(image.width()));
@@ -790,15 +786,15 @@ bool FfmpegWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
         audio_pts = (double)audio_st->pts.val * audio_st->time_base.num / audio_st->time_base.den;
     else
         audio_pts = 0.0;
-    
+
     if (video_st)
         video_pts = (double)video_st->pts.val * video_st->time_base.num / video_st->time_base.den;
     else
         video_pts = 0.0;
-    
+
     if (!(audio_st||video_st))
         return false;
-    
+
     /* write interleaved audio and video frames */
     if (!video_st || (video_st && audio_st && audio_pts < video_pts)) {
         write_audio_frame(oc, audio_st);
@@ -827,6 +823,3 @@ bool FfmpegWriter::putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
     write_audio_frame(oc, audio_st, sound);
     return true;
 }
-
-
-

@@ -38,7 +38,7 @@ namespace yarp {
  * Uses ffmpeg to write images/sounds to movie files (AVI, MOV, ...).
  *
  */
-class yarp::dev::FfmpegWriter : public IFrameWriterImage, 
+class yarp::dev::FfmpegWriter : public IFrameWriterImage,
             public IFrameWriterAudioVisual,
             public DeviceDriver,
             public IAudioVisualStream
@@ -49,11 +49,11 @@ public:
         system_resource = NULL;
         ready = false;
     }
-  
+
     virtual bool open(yarp::os::Searchable & config);
-  
+
     virtual bool close();
-  
+
     virtual bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
 
     virtual bool putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
@@ -109,4 +109,3 @@ private:
 
 
 #endif
-
