@@ -13,9 +13,6 @@
 int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
                         const AVPicture *src, int src_pix_fmt,
                         int src_width, int src_height) {
-#ifdef OLD_FFMPEG
-  return img_convert(dst,dst_pix_fmt,src,src_pix_fmt,src_width,src_height);
-#else
   static struct SwsContext *img_convert_ctx = NULL;
   if (img_convert_ctx==NULL) {
       //printf("Looking for a context\n");
@@ -52,5 +49,4 @@ int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
     return -1;
   }
   return 0;
-#endif
 }

@@ -64,8 +64,8 @@ public:
         shouldLoop = true;
         pace = 1;
         imageSync = false;
-        YARP_AVDICT_INIT(formatParamsVideo);
-        YARP_AVDICT_INIT(formatParamsAudio);
+        formatParamsVideo = NULL;
+        formatParamsAudio = NULL;
     }
 
     virtual bool open(yarp::os::Searchable & config);
@@ -103,9 +103,11 @@ public:
 protected:
     void *system_resource;
 
-    YARP_AVDICT formatParamsVideo;
-    YARP_AVDICT formatParamsAudio;
-    AVFormatContext *pFormatCtx, *pFormatCtx2, *pAudioFormatCtx;
+    AVDictionary* formatParamsVideo;
+    AVDictionary* formatParamsAudio;
+    AVFormatContext *pFormatCtx;
+    AVFormatContext *pFormatCtx2;
+    AVFormatContext *pAudioFormatCtx;
     AVPacket packet;
     bool active;
     double startTime;
@@ -114,6 +116,9 @@ protected:
     bool shouldLoop;
     double pace;
     bool imageSync;
+
+    /** Uri of the images a grabber produces. */
+    yarp::os::ConstString m_uri;
 
     /** Width of the images a grabber produces. */
     int m_w;

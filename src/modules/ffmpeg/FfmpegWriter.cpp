@@ -124,7 +124,7 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     }
 
     /* open it */
-    if (YARP_avcodec_open(c, codec) < 0) {
+    if (avcodec_open2(c, codec, NULL) < 0) {
         fprintf(stderr, "could not open codec\n");
         ::exit(1);
     }
@@ -447,7 +447,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     }
 
     /* open the codec */
-    if (YARP_avcodec_open(c, codec) < 0) {
+    if (avcodec_open2(c, codec, NULL) < 0) {
         fprintf(stderr, "could not open codec\n");
         ::exit(1);
     }
@@ -615,9 +615,9 @@ void FfmpegWriter::close_video(AVFormatContext *oc, AVStream *st)
 /* YARP adaptation */
 
 bool FfmpegWriter::open(yarp::os::Searchable & config) {
-
-    //printf("ffmeg version number %d\n", LIBAVCODEC_BUILD);
-
+//     printf("ffmpeg libavcodec version number %d.%d.%d\n", LIBAVCODEC_VERSION_MAJOR,
+//                                                           LIBAVCODEC_VERSION_MINOR,
+//                                                           LIBAVCODEC_VERSION_MICRO);
 
     ready = false;
     savedConfig.fromString(config.toString());
@@ -763,11 +763,7 @@ bool FfmpegWriter::close() {
 
     if (!(fmt->flags & AVFMT_NOFILE)) {
         /* close the output file */
-#if LIBAVCODEC_BUILD >= 3354624
         url_fclose(oc->pb);
-#else
-        url_fclose(&oc->pb);
-#endif
     }
 
     /* free the stream */
