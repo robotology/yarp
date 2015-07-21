@@ -123,6 +123,7 @@ function require_name_server() {
 }
 
 function require_ros_name_server() {
+    command -v roscore >/dev/null 2>&1 || { echo "roscore not installed." >&2; return 1; }
     header "Start ros name server if needed"
     rostopic list || {
         echo "String roscore"

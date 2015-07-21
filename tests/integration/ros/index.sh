@@ -49,7 +49,7 @@ fi
 ########################################################################
 if [[ ! "$active_test" = "" ]]; then
     if [[ ! "$active_test" = "all" ]]; then
-        require_ros_name_server
+        require_ros_name_server || exit 1
         require_name_server
     fi
 fi
