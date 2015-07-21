@@ -8,6 +8,7 @@
 
 #include <yarp/dev/ServerSerial.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/Os.h>
 
 ServerSerial::ServerSerial() :
         verb(false),
@@ -178,7 +179,7 @@ yarp::dev::ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ServerS
     //ACE_ASSERT (ser != 0);
     if (ser==0) {
         yError("Could not get serial device\n");
-        exit(1);
+        yarp::os::exit(1);
     }
 
 

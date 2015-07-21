@@ -15,6 +15,7 @@
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
 
@@ -214,7 +215,7 @@ int main(int argc, char *argv[]) {
         FILE *fout = fopen(dest2.c_str(),"w");
         if (fout==NULL) {
             printf("Problem writing to %s\n", dest2.c_str());
-            exit(1);
+            yarp::os::exit(1);
         }
         fprintf(fout,"/**\n");
         fprintf(fout," * \\ingroup dev_examples\n");
