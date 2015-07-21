@@ -79,6 +79,14 @@ void SafeManager::threadRelease()
 {
 }
 
+bool SafeManager::busy(void) {
+    bool ret;
+    WAIT_SEMAPHOR();
+    ret =  busyAction;
+    POST_SEMAPHOR();
+    return ret;
+}
+
 void SafeManager::run()
 {
     WAIT_SEMAPHOR();
@@ -136,6 +144,8 @@ void SafeManager::run()
         }
 
     case MREFRESH:{
+            busyAction = true;
+
             for(unsigned int i=0; i<local_modIds.size(); i++)
             {
                 if(Manager::running(local_modIds[i]))
@@ -204,6 +214,7 @@ void SafeManager::run()
         }
 
     case MLOADBALANCE:{
+                busyAction = true;
                 Manager::loadBalance();
                 if(eventReceiver) eventReceiver->onLoadBalance();
                 busyAction = false;
@@ -221,7 +232,8 @@ void SafeManager::run()
 
 void SafeManager::safeRun(std::vector<int>& MIDs)
 {
-    if(busyAction) return;
+    if(busy()) return;
+
     WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MRUN;
@@ -232,7 +244,8 @@ void SafeManager::safeRun(std::vector<int>& MIDs)
 
 void SafeManager::safeStop(std::vector<int>& MIDs)
 {
-    if(busyAction) return;
+    if(busy()) return;
+
     WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MSTOP;
@@ -243,7 +256,8 @@ void SafeManager::safeStop(std::vector<int>& MIDs)
 
 void SafeManager::safeKill(std::vector<int>& MIDs)
 {
-    if(busyAction) return;
+    if(busy()) return;
+
     WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MKILL;
@@ -256,7 +270,8 @@ void SafeManager::safeKill(std::vector<int>& MIDs)
 
 void SafeManager::safeConnect(std::vector<int>& CIDs)
 {
-    if(busyAction) return;
+    if(busy()) return;
+
     WAIT_SEMAPHOR();
     conIds = CIDs;
     action = MCONNECT;
@@ -268,7 +283,8 @@ void SafeManager::safeConnect(std::vector<int>& CIDs)
 
 void SafeManager::safeDisconnect(std::vector<int>& CIDs)
 {
-    if(busyAction) return;
+    if(busy()) return;
+
     WAIT_SEMAPHOR();
     conIds = CIDs;
     action = MDISCONNECT;
@@ -282,13 +298,13 @@ void SafeManager::safeRefresh(std::vector<int>& MIDs,
                      std::vector<int>& CIDs,
                      std::vector<int>& RIDs)
 {
-    if(busyAction) return;
+    if(busy()) return;
+
     WAIT_SEMAPHOR();
     modIds = MIDs;
     conIds = CIDs;
     resIds = RIDs;
     action = MREFRESH;
-    busyAction = true;
     POST_SEMAPHOR();
     if(!yarp::os::Thread::isRunning())
         yarp::os::Thread::start();
@@ -297,7 +313,7 @@ void SafeManager::safeRefresh(std::vector<int>& MIDs,
 
 void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
 {
-    if(busyAction) return;
+    if(busy()) return;
     WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MATTACHSTDOUT;
@@ -308,7 +324,8 @@ void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
 
 void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
 {
-    if(busyAction) return;
+    if(busy()) return;
+
     WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MDETACHSTDOUT;
@@ -319,10 +336,10 @@ void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
 
 void SafeManager::safeLoadBalance(void)
 {
-   if(busyAction) return;
+   if(busy()) return;
+
    WAIT_SEMAPHOR();
-   action = MLOADBALANCE;
-   busyAction = true;
+   action = MLOADBALANCE;  
    POST_SEMAPHOR();
    if(!yarp::os::Thread::isRunning())
        yarp::os::Thread::start();

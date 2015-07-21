@@ -13,9 +13,9 @@
 #include <cstring>
 
 #define RUN_TIMEOUT             10.0        //seconds
-#define STOP_TIMEOUT            30.0
+#define STOP_TIMEOUT            15.0
 #define KILL_TIMEOUT            10.0
-#define CONNECTION_TIMEOUT      5.0
+#define CONNECTION_TIMEOUT      2.0
 
 #define WRITE_TO_PIPE           1
 #define READ_FROM_PIPE          0

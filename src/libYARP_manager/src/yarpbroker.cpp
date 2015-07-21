@@ -20,9 +20,9 @@
 #define YARPRUN_SEMAPHORE_PARAM     4
 #define YARPRUN_UNDEF               5
 
-#define CONNECTION_TIMEOUT      5.0         //seconds
+#define CONNECTION_TIMEOUT      2.0         //seconds
 #define RUN_TIMEOUT             10.0        //seconds
-#define STOP_TIMEOUT            30.0
+#define STOP_TIMEOUT            15.0
 #define KILL_TIMEOUT            10.0
 #define EVENT_THREAD_PERIOD     500
 

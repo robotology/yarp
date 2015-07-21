@@ -50,7 +50,7 @@ public:
     virtual void onConAvailable(int from, int to) {}
     virtual void onConUnAvailable(int from, int to) {}
     virtual void onError(void) {}
-    virtual void onLoadBalance(void) {}
+    virtual void onLoadBalance(void) {}    
 };
 
 
@@ -78,12 +78,12 @@ public:
     void safeAttachStdout(std::vector<int>& MIDs);
     void safeDetachStdout(std::vector<int>& MIDs);
     void safeLoadBalance(void);
-
+    bool busy(void);
 
     bool checkSemaphore(void){ return semManage.check(); }
     void postSemaphore(void) { semManage.post(); }
     void waitSemaphore(void) { semManage.wait(); }
-    bool busy(void) {return busyAction; }
+
 
 protected:
     void onExecutableStart(void* which);

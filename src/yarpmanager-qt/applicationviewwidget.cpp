@@ -551,8 +551,8 @@ bool ApplicationViewWidget::onRun()
             it->setIcon(0,QIcon(":/refresh.svg"));
             it->setTextColor(2,QColor("#000000"));
 
-            yDebug("Trying to run module ID %i param %s host %s stdio %s wdir %s env %s",it->text(1).toInt(),it->text(4).toLatin1().data(),
-                    it->text(3).toLatin1().data(),it->text(5).toLatin1().data(),it->text(6).toLatin1().data(),it->text(7).toLatin1().data());
+            //yDebug("Trying to run module ID %i param %s host %s stdio %s wdir %s env %s",it->text(1).toInt(),it->text(4).toLatin1().data(),
+            //        it->text(3).toLatin1().data(),it->text(5).toLatin1().data(),it->text(6).toLatin1().data(),it->text(7).toLatin1().data());
         }
     }
 
@@ -697,6 +697,7 @@ bool ApplicationViewWidget::onDisconnect()
     return true;
 }
 
+
 /*! \brief Called when the Refresh button has been pressed */
 bool ApplicationViewWidget::onRefresh()
 {
@@ -717,7 +718,6 @@ bool ApplicationViewWidget::onRefresh()
             it->setTextColor(2,QColor("#000000"));
         }
     }
-
 
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
