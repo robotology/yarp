@@ -53,7 +53,7 @@ export YARP_DATA_DIRS=$PWD/fakebot/share/yarp
 yarp="./fakebot/bin/yarp"
 
 header "Check shared fakebot is findable"
-$yarp plugin | grep fakebot || fail "Could not find fakebot"
+$yarp plugin --list | grep fakebot || fail "Could not find fakebot"
 
 header "Check shared fakebot is startable"
 ${yarp}dev --device fakebot --lifetime 1 || fail "Could not start fakebot"
@@ -73,7 +73,7 @@ $yarp terminate /localhost:10112 || echo ok
 
 header "Check shared fakebot is unfindable without YARP_DATA_DIRS"
 export YARP_DATA_DIRS=$PWD/share/notyarpatall
-$yarp plugin | grep fakebot && fail "Should not have found fakebot" || echo "not found, good"
+$yarp plugin --list | grep fakebot && fail "Should not have found fakebot" || echo "not found, good"
 
 header "Check shared fakebot is startable in build without YARP_DATA_DIRS"
 cd fakebot
