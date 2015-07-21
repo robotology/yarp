@@ -108,9 +108,21 @@ public:
     struct jpeg_decompress_struct cinfo;
     struct net_error_mgr jerr;
     JOCTET error_buffer[4];
+    yarp::os::InputStream::readEnvelopeCallbackType readEnvelopeCallback;
+    void* readEnvelopeCallbackData;
 
-    MjpegDecompressionHelper() {
-        active = false;
+    MjpegDecompressionHelper() :
+            active(false),
+            readEnvelopeCallback(NULL),
+            readEnvelopeCallbackData(NULL) {
+    }
+
+    bool setReadEnvelopeCallback(yarp::os::InputStream::readEnvelopeCallbackType callback,
+                                 void* data)
+    {
+        readEnvelopeCallback = callback;
+        readEnvelopeCallbackData = data;
+        return true;
     }
 
     void init() {
@@ -134,6 +146,7 @@ public:
         }
 
         jpeg_net_src(&cinfo,cimg.get(),cimg.length());
+        jpeg_save_markers(&cinfo, JPEG_COM, 0xFFFF);
         jpeg_read_header(&cinfo, TRUE);
         jpeg_calc_output_dimensions(&cinfo);
         if (debug) printf("Got image %dx%d\n", cinfo.output_width, cinfo.output_height);
@@ -147,6 +160,10 @@ public:
             lines[0] = (JSAMPLE*)(&img.pixel(0,at));
             jpeg_read_scanlines(&cinfo, lines, 1);
             at++;
+        }
+        if(readEnvelopeCallback) {
+            Bytes envelope(reinterpret_cast<char*>(cinfo.marker_list->data), cinfo.marker_list->data_length);
+            readEnvelopeCallback(readEnvelopeCallbackData, envelope);
         }
         if (debug) printf("Read image!\n");
         jpeg_finish_decompress(&cinfo);
@@ -183,8 +200,16 @@ MjpegDecompression::~MjpegDecompression() {
 bool MjpegDecompression::decompress(const yarp::os::Bytes& data, 
                                     yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     MjpegDecompressionHelper& helper = HELPER(system_resource);
-    return helper.decompress(data,image);
+    return helper.decompress(data, image);
 }
+
+bool MjpegDecompression::setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType callback,
+                                                 void* data)
+{
+    MjpegDecompressionHelper& helper = HELPER(system_resource);
+    return helper.setReadEnvelopeCallback(callback, data);
+}
+
 
 bool MjpegDecompression::isAutomatic() const {
 #ifdef MJPEG_AUTOCOMPRESS

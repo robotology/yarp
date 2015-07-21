@@ -11,6 +11,7 @@
 #define YARP2_MJPEGDECOMPRESSION_INC
 
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/sig/Image.h>
 
 namespace yarp {
@@ -27,10 +28,13 @@ public:
 
     virtual ~MjpegDecompression();
 
-    bool decompress(const yarp::os::Bytes& data, 
+    bool decompress(const yarp::os::Bytes& data,
                     yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
     bool isAutomatic() const;
+
+    bool setReadEnvelopeCallback(yarp::os::InputStream::readEnvelopeCallbackType callback,
+                                 void* data);
 };
 
 #endif

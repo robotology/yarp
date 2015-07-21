@@ -80,13 +80,11 @@ YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
         if (autocompress) {
             cimg.allocate(len);
             delegate->getInputStream().readFull(cimg.bytes());
-
-            if (!decompression.decompress(cimg.bytes(),img)) {
+            if (!decompression.decompress(cimg.bytes(), img)) {
                 if (delegate->getInputStream().isOk()) {
                     yError("Skipping a problematic JPEG frame");
                 }
             }
-
             imgHeader.setFromImage(img);
             phase = 1;
             cursor = (char*)(&imgHeader);

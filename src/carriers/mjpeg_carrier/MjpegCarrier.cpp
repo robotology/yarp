@@ -160,6 +160,10 @@ bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     //jpeg_set_quality(&cinfo, 85, TRUE);
     dbg_printf("Starting to compress...\n");
     jpeg_start_compress(&cinfo, TRUE);
+    if(!envelope.empty()) {
+        jpeg_write_marker(&cinfo, JPEG_COM, reinterpret_cast<const JOCTET*>(envelope.c_str()), envelope.length() + 1);
+        envelope.clear();
+    }
     dbg_printf("Done compressing (height %d)\n", cinfo.image_height);
     while (cinfo.next_scanline < cinfo.image_height) {
         dbg_printf("Writing row %d...\n", cinfo.next_scanline);
