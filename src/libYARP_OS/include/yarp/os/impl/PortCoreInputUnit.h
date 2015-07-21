@@ -130,6 +130,8 @@ private:
     void closeMain();
 
     bool skipIncomingData(yarp::os::ConnectionReader& reader);
+
+    static void envelopeReadCallback(void* data, const Bytes& envelope);
 };
 
 #endif

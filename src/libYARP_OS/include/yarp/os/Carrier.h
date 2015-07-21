@@ -149,6 +149,20 @@ public:
     virtual bool canEscape() = 0;
 
     /**
+     * Carriers that do not distinguish data from administrative headers
+     * (i.e. canEscape returns false), can overload this method to
+     * handle the envelope inside the stream.
+     * On the receiving side, the InputStream will have to overload the
+     * yarp::os::InputStream::setReadEnvelopeCallback method, and
+     * execute the callback as soon as the envelope is ready.
+     *
+     * @param envelope the envelope to transmit bundled with data.
+     */
+    virtual void handleEnvelope(const yarp::os::ConstString& envelope) {
+        YARP_UNUSED(envelope);
+    }
+
+    /**
      * Check if carrier has flow control, requiring sent messages
      * to be acknowledged by recipient.
      *

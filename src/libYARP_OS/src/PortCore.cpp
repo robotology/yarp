@@ -1425,7 +1425,7 @@ bool PortCore::setEnvelope(PortWriter& envelope) {
 
 void PortCore::setEnvelope(const String& envelope) {
     this->envelope = envelope;
-    for (unsigned int i=0; i<envelope.length(); i++) {
+    for (unsigned int i=0; i<this->envelope.length(); i++) {
         // It looks like envelopes are constrained to be printable ASCII?
         // I'm not sure why this would be.  TODO check.
         if (this->envelope[i]<32) {

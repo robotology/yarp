@@ -220,6 +220,15 @@ administrative headers on your carrier (e.g. disconnection requests, for
 example).  Normally this should be true.
 </dd>
 
+<dt>yarp::os::Carrier::handleEnvelope</dt>
+
+<dd>Carriers that do not distinguish data from administrative headers
+(i.e. canEscape returns false), can overload this method to handle the
+envelope inside the stream. On the receiving side, the InputStream will
+have to overload the setReadEnvelopeCallback method, and execute the
+callback as soon as the envelope is ready.
+</dd>
+
 <dt>yarp::os::Carrier::requireAck</dt>
 
 <dd>Does you want YARP to use flow control?  If this is set, YARP
