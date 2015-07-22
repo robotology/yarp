@@ -581,26 +581,11 @@ int LocalBroker::ExecuteCmd(void)
 {
     string strCmdLine = strCmd + string(" ") + strParam;
 
-    // Setting up child process and pipe for stdout
-    SECURITY_ATTRIBUTES pipe_sec_attr;
-    pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES);
-    pipe_sec_attr.bInheritHandle = TRUE;
-    pipe_sec_attr.lpSecurityDescriptor = NULL;
-    CreatePipeAsync(&read_from_pipe_cmd_to_stdout,
-               &write_to_pipe_cmd_to_stdout,
-               &pipe_sec_attr, 0);
-
     PROCESS_INFORMATION cmd_process_info;
     STARTUPINFO cmd_startup_info;
     ZeroMemory(&cmd_process_info,sizeof(PROCESS_INFORMATION));
     ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
     cmd_startup_info.cb = sizeof(STARTUPINFO);
-    if(!bShowConsole)
-    {
-        cmd_startup_info.hStdError = write_to_pipe_cmd_to_stdout;
-        cmd_startup_info.hStdOutput = write_to_pipe_cmd_to_stdout;
-        cmd_startup_info.dwFlags |= STARTF_USESTDHANDLES;
-    }
 
     /*
      * setting environment variable for child process
