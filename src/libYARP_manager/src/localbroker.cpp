@@ -145,7 +145,8 @@ LocalBroker::LocalBroker()
     bOnlyConnector = bInitialized = false;
     ID = 0;
     fd_stdout = NULL;
-    bShowConsole = false;
+    bStartMinimized=true;
+    bHideWindow=true;
 }
 
 
@@ -576,6 +577,16 @@ void LocalBroker::stopStdout(void)
     Thread::stop();
 }
 
+void LocalBroker::setStartMinimized()
+{
+    bStartMinimized=true;
+}
+
+void LocalBroker::setHideWindow()
+{
+    bHideWindow=true;
+}
+
 
 int LocalBroker::ExecuteCmd(void)
 {
@@ -586,6 +597,17 @@ int LocalBroker::ExecuteCmd(void)
     ZeroMemory(&cmd_process_info,sizeof(PROCESS_INFORMATION));
     ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
     cmd_startup_info.cb = sizeof(STARTUPINFO);
+
+    if (bStartMinimized&&!bHideWindow)
+    {        
+        cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
+        cmd_startup_info.wShowWindow = SW_MINIMIZE;
+    }
+    if (bHideWindow)
+    {
+        cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
+        cmd_startup_info.wShowWindow = SW_HIDE;
+    }
 
     /*
      * setting environment variable for child process
@@ -624,7 +646,7 @@ int LocalBroker::ExecuteCmd(void)
                                 NULL,          // process security attributes
                                 NULL,          // primary thread security attributes
                                 TRUE,          // handles are inherited
-                                (bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags
+                                CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,
                                 (LPVOID) chNewEnv, // use new environment
                                 bWorkdir?strWorkdirOk.c_str():NULL, // working directory
                                 &cmd_startup_info,   // STARTUPINFO pointer
@@ -637,7 +659,7 @@ int LocalBroker::ExecuteCmd(void)
                                     NULL,          // process security attributes
                                     NULL,          // primary thread security attributes
                                     TRUE,          // handles are inherited
-                                    (bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags
+                                    CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,
                                     (LPVOID) chNewEnv, // use new environment
                                     strWorkdirOk.c_str(), // working directory
                                     &cmd_startup_info,   // STARTUPINFO pointer
