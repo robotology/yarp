@@ -512,18 +512,6 @@ Vector yarp::math::cross(const Vector &a, const Vector &b)
     return v;
 }
 
-bool yarp::math::cross(const Vector &a, const Vector &b, Vector &out)
-{
-    if(a.size()!=3 || b.size()!=3)
-        return false;
-    if(out.size()!=3)
-        out.resize(3);
-    out[0]=a[1]*b[2]-a[2]*b[1];
-    out[1]=a[2]*b[0]-a[0]*b[2];
-    out[2]=a[0]*b[1]-a[1]*b[0];
-    return true;
-}
-
 Matrix yarp::math::crossProductMatrix(const Vector &v)
 {
     yAssert(v.size()==3);

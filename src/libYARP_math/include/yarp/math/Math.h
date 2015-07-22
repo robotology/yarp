@@ -366,15 +366,6 @@ namespace yarp
         YARP_math_API yarp::sig::Vector cross(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
 
         /**
-        * Compute the cross product between two vectors. 
-        * @param a is the first input vector. 
-        * @param b is the second input vector. 
-        * @param out the result
-        * @return true if operation succeeded, false otherwise.
-        */
-        YARP_math_API bool cross(const yarp::sig::Vector &a, const yarp::sig::Vector &b, yarp::sig::Vector &out);
-
-        /**
         * Compute the cross product matrix, that is a 3-by-3 skew-symmetric matrix.
         * @param v the vector
         * @return the cross product matrix
