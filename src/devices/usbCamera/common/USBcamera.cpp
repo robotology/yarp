@@ -16,6 +16,19 @@
 #include <USBcamera.hpp>
 #include <yarp/os/LogStream.h>
 
+#if defined(_MSC_VER)
+    #include <WIN_camera.hpp>
+#elif defined __unix
+    #include <V4L_camera.hpp>
+#endif
+
+namespace yarp {
+    namespace dev {
+        class V4L_camera;
+        class WIN_camera;
+    }
+}
+
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -39,12 +52,36 @@ bool USBCameraDriver::open(yarp::os::Searchable& config)
     // open OS dependant device
     yTrace() << "input params are " << config.toString();
 
+#if defined(_MSC_VER)
+    os_device = (DeviceDriver*) new WIN_camera;
+#elif defined __unix
+    os_device = (DeviceDriver*) new V4L_camera;
+#endif
+
+    if(!os_device->open(config) )
+        return false;
+
+    os_device->view(deviceRgb);
+    os_device->view(deviceRaw);
+
+    if(deviceRaw)
+    {
+        _width = deviceRaw->width();
+        _height = deviceRaw->height();
+    }
+
+    if(deviceRgb)
+    {
+        _width = deviceRgb->width();
+        _height = deviceRgb->height();
+    }
     return true;
 }
 
 bool USBCameraDriver::close(void)
 {
     // close OS dependant device
+    os_device->close();
 	return false;
 }
 
@@ -181,7 +218,27 @@ USBCameraDriverRgb::~USBCameraDriverRgb()
 
 bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
-    return false;
+//     yTrace() << "_width is " << _width << " height is " << _height;
+    image.resize(_width, _height);
+    unsigned char *buffer = NULL;
+    unsigned char *out = NULL;
+
+    deviceRgb->getRgbBuffer(image.getRawImage());
+//     out = image.getRawImage();
+//     if(buffer == NULL)
+//     {
+//         yError() << "getRgbBuffer not ready";
+//         return false;
+//     }
+//
+//     if(out == NULL)
+//     {
+//         yError() << "out buffer not ready";
+//         return false;
+//     }
+//
+//     memcpy(image.getRawImage(), buffer, _width * _height * 3);
+    return true;
 }
 
 int USBCameraDriverRgb::width () const
@@ -208,7 +265,12 @@ USBCameraDriverRaw::~USBCameraDriverRaw()
 
 bool USBCameraDriverRaw::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
-    return false;
+//     yTrace() << "_width is " << _width << " height is " << _height;
+    image.resize(_width, _height);
+    unsigned char *buffer;
+    deviceRaw->getRawBuffer(buffer);
+    memcpy(image.getRawImage(), buffer, deviceRaw->getRawBufferSize());
+    return true;
 }
 
 int USBCameraDriverRaw::width () const

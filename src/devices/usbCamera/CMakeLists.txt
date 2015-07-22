@@ -22,13 +22,13 @@ IF(ENABLE_icubmod_USBcamera)
 
   else()  # Linux  & MAC
 
-    include(Findlibv4l2.cmake)
-    find_package(LibV4L2 REQUIRED)
+#     include(FindV4L2.cmake)
+    find_package(V4L2 REQUIRED)
 
-    if( NOT LIBV4L2_FOUND )
+    if( NOT V4L2_FOUND )
         MESSAGE(SEND_ERROR "USBcamera: LibV4L2 api not found, turn off device")
         return()
-    endif(NOT LIBV4L2_FOUND )
+    endif(NOT V4L2_FOUND )
 
   endif(WIN32)
 
@@ -42,7 +42,7 @@ IF(ENABLE_icubmod_USBcamera)
     else()
 #         INCLUDE_DIRECTORIES(${SOME_INCLUDE_DIRS})
         INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/linux)
-#         set(OS_SOURCES linux/V4L_camera.hpp linux/V4L_camera.cpp)# linux/list.hpp linux/list.cpp)
+        set(OS_SOURCES linux/V4L_camera.hpp linux/V4L_camera.cpp linux/list.hpp linux/list.cpp)
     endif(WIN32)
 
     add_definitions("-Wall -Wextra")
