@@ -145,7 +145,7 @@ LocalBroker::LocalBroker()
     bOnlyConnector = bInitialized = false;
     ID = 0;
     fd_stdout = NULL;
-    bShowConsole = false;
+    setWindowMode(WINDOW_VISIBLE);
 }
 
 
@@ -576,29 +576,56 @@ void LocalBroker::stopStdout(void)
     Thread::stop();
 }
 
+void LocalBroker::setWindowMode(WindowMode m)
+{
+    windowMode=m;
+}
 
 int LocalBroker::ExecuteCmd(void)
 {
     string strCmdLine = strCmd + string(" ") + strParam;
-
-    // Setting up child process and pipe for stdout
-    SECURITY_ATTRIBUTES pipe_sec_attr;
-    pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES);
-    pipe_sec_attr.bInheritHandle = TRUE;
-    pipe_sec_attr.lpSecurityDescriptor = NULL;
-    CreatePipeAsync(&read_from_pipe_cmd_to_stdout,
-               &write_to_pipe_cmd_to_stdout,
-               &pipe_sec_attr, 0);
 
     PROCESS_INFORMATION cmd_process_info;
     STARTUPINFO cmd_startup_info;
     ZeroMemory(&cmd_process_info,sizeof(PROCESS_INFORMATION));
     ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
     cmd_startup_info.cb = sizeof(STARTUPINFO);
-    if(!bShowConsole)
+
+
+    string strDisplay=getDisplay();
+
+    //this is common to all processes
+    cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
+    cmd_startup_info.wShowWindow = SW_SHOWNA;
+    windowMode=WINDOW_VISIBLE;
+
+    if (strDisplay=="--visible_na")
     {
+        windowMode=WINDOW_VISIBLE;
+        cmd_startup_info.wShowWindow = SW_SHOWNA;
+    }
+    if (strDisplay=="--minimized")
+    {
+        windowMode=WINDOW_MINIMIZED;
+        cmd_startup_info.wShowWindow = SW_MINIMIZE;
+    }
+    if (strDisplay=="--hidden")
+    {
+        windowMode=WINDOW_HIDDEN;
+        cmd_startup_info.wShowWindow = SW_HIDE;
+
+        // Setting up child process and pipe for stdout (useful for attaching stdout)
+        SECURITY_ATTRIBUTES pipe_sec_attr;
+        pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES);
+        pipe_sec_attr.bInheritHandle = TRUE;
+        pipe_sec_attr.lpSecurityDescriptor = NULL;
+        CreatePipeAsync(&read_from_pipe_cmd_to_stdout,
+                   &write_to_pipe_cmd_to_stdout,
+                   &pipe_sec_attr, 0);
+
         cmd_startup_info.hStdError = write_to_pipe_cmd_to_stdout;
         cmd_startup_info.hStdOutput = write_to_pipe_cmd_to_stdout;
+
         cmd_startup_info.dwFlags |= STARTF_USESTDHANDLES;
     }
 
@@ -639,7 +666,7 @@ int LocalBroker::ExecuteCmd(void)
                                 NULL,          // process security attributes
                                 NULL,          // primary thread security attributes
                                 TRUE,          // handles are inherited
-                                (bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags
+                                CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,
                                 (LPVOID) chNewEnv, // use new environment
                                 bWorkdir?strWorkdirOk.c_str():NULL, // working directory
                                 &cmd_startup_info,   // STARTUPINFO pointer
@@ -652,7 +679,7 @@ int LocalBroker::ExecuteCmd(void)
                                     NULL,          // process security attributes
                                     NULL,          // primary thread security attributes
                                     TRUE,          // handles are inherited
-                                    (bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags
+                                    CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,
                                     (LPVOID) chNewEnv, // use new environment
                                     strWorkdirOk.c_str(), // working directory
                                     &cmd_startup_info,   // STARTUPINFO pointer

@@ -68,12 +68,13 @@ public:
     bool hasWatchDog(void) { return bWithWatchDog; }    
     void setDisplay(const char* szDisplay) {if(szDisplay) strDisplay = szDisplay;}
 
+    const char* getDisplay() const {return strDisplay.c_str(); }
 protected:
     unsigned int UNIQUEID;
     BrokerEventSink* eventSink;
     bool bWithWatchDog;
     string strDisplay;
-
+    
 private:
 
 };

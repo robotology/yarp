@@ -1131,7 +1131,7 @@ void ApplicationWindow::onPMenuInspectYarpHear(void)
             param<<"-hold " << "-title " << from << " -e yarphear --nodevice --name " << to;
 #endif
             LocalBroker launcher;
-            launcher.showConsole(true);
+            launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
             if(launcher.init(cmd.c_str(), param.str().c_str(), NULL, NULL, NULL, NULL))
             {
                 if(!launcher.start() && strlen(launcher.error()))
@@ -1204,7 +1204,7 @@ void ApplicationWindow::onPMenuInspectYarpRead(void)
             param<<"-hold " << "-title " << from << " -e yarp read " << to;
 #endif
             LocalBroker launcher;
-            launcher.showConsole(true);
+            launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
             if(launcher.init(cmd.c_str(), param.str().c_str(), NULL, NULL, NULL, NULL))
             {
                 if(!launcher.start() && strlen(launcher.error()))
