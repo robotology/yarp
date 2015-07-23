@@ -553,6 +553,12 @@ void LocalBroker::threadRelease()
 }
 
 
+void LocalBroker::setWindowMode(WindowMode m)
+{
+    windowMode=m;
+}
+
+
 #if defined(WIN32)
 
 string LocalBroker::lastError2String()
@@ -574,11 +580,6 @@ bool LocalBroker::startStdout(void)
 void LocalBroker::stopStdout(void)
 {
     Thread::stop();
-}
-
-void LocalBroker::setWindowMode(WindowMode m)
-{
-    windowMode=m;
 }
 
 int LocalBroker::ExecuteCmd(void)
