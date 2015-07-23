@@ -145,8 +145,7 @@ LocalBroker::LocalBroker()
     bOnlyConnector = bInitialized = false;
     ID = 0;
     fd_stdout = NULL;
-    bStartMinimized=true;
-    bHideWindow=true;
+    setWindowMode(WINDOW_VISIBLE);
 }
 
 
@@ -577,16 +576,10 @@ void LocalBroker::stopStdout(void)
     Thread::stop();
 }
 
-void LocalBroker::setStartMinimized()
+void LocalBroker::setWindowMode(WindowMode m)
 {
-    bStartMinimized=true;
+    windowMode=m;
 }
-
-void LocalBroker::setHideWindow()
-{
-    bHideWindow=true;
-}
-
 
 int LocalBroker::ExecuteCmd(void)
 {
@@ -598,15 +591,34 @@ int LocalBroker::ExecuteCmd(void)
     ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
     cmd_startup_info.cb = sizeof(STARTUPINFO);
 
-    if (bStartMinimized&&!bHideWindow)
-    {        
-        cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
+    //this is common to all processes
+    cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
+
+    if (windowMode==WINDOW_VISIBLE)
+    {
+        cmd_startup_info.wShowWindow = SW_SHOWNA;
+    }
+    if (windowMode==WINDOW_MINIMIZED)
+    {
         cmd_startup_info.wShowWindow = SW_MINIMIZE;
     }
-    if (bHideWindow)
+    if (windowMode==WINDOW_HIDDEN)
     {
-        cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
         cmd_startup_info.wShowWindow = SW_HIDE;
+
+        // Setting up child process and pipe for stdout (useful for attaching stdout)
+        SECURITY_ATTRIBUTES pipe_sec_attr;
+        pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES);
+        pipe_sec_attr.bInheritHandle = TRUE;
+        pipe_sec_attr.lpSecurityDescriptor = NULL;
+        CreatePipeAsync(&read_from_pipe_cmd_to_stdout,
+                   &write_to_pipe_cmd_to_stdout,
+                   &pipe_sec_attr, 0);
+
+        cmd_startup_info.hStdError = write_to_pipe_cmd_to_stdout;
+        cmd_startup_info.hStdOutput = write_to_pipe_cmd_to_stdout;
+
+        cmd_startup_info.dwFlags |= STARTF_USESTDHANDLES;
     }
 
     /*

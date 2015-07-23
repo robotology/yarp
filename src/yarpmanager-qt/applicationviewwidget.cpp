@@ -971,7 +971,7 @@ void ApplicationViewWidget::onYARPHear()
 #endif
 
             yarp::manager::LocalBroker launcher;
-            launcher.showConsole(true);
+            launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
             if(launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
             {
                 if(!launcher.start() && strlen(launcher.error()))
@@ -1040,7 +1040,7 @@ void ApplicationViewWidget::onYARPRead()
 #endif
 
             yarp::manager::LocalBroker launcher;
-            launcher.showConsole(true);
+            launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
             if(launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
             {
                 if(!launcher.start() && strlen(launcher.error()))

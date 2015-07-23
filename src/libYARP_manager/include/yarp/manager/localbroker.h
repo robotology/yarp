@@ -39,8 +39,15 @@ namespace manager {
  * Class LocalBroker
  */
 class LocalBroker: public Broker, public yarp::os::Thread {
-
+    
 public:
+
+     typedef enum  {  WINDOW_HIDDEN=0,                  //window is hidden, catch stdout
+                      WINDOW_VISIBLE=1,                 //window is visible 
+                      WINDOW_MINIMIZED=2                //window is started minimized
+    } WindowMode;  
+
+
     LocalBroker();
     virtual ~LocalBroker();
     bool init();
@@ -63,7 +70,8 @@ public:
     bool attachStdout(void);
     void detachStdout(void);
 
-    inline void showConsole(bool show) { bShowConsole = show; }
+    /** Define if the application will be visible or not */
+    void setWindowMode(WindowMode m);
 
 public: // for rate thread
     void run();
@@ -87,6 +95,8 @@ private:
     int  pipe_to_stdout[2];
     FILE* fd_stdout;
     bool bShowConsole;
+    WindowMode windowMode;
+
     bool timeout(double base, double timeout);
     int ExecuteCmd(void);
     bool psCmd(int pid);
