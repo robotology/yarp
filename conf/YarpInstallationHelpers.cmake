@@ -161,7 +161,7 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
 
       set(_in_file "${CMAKE_BINARY_DIR}/CMakeFiles/path.d_${_name}.ini.in")
       set(_install_file "${CMAKE_BINARY_DIR}/CMakeFiles/path.d_${_name}_for_install.ini")
-      set(_destination "${YARP_INSTALL_PREFIX}/${YARP_DATA_INSTALL_DIR}/yarp/config/path.d")
+      set(_destination "${YARP_INSTALL_PREFIX}/${YARP_DATA_INSTALL_DIR}/config/path.d")
       message(STATUS "Setting up installation of ${_name}.ini to ${_destination} folder.")
 
       unset(_path)
