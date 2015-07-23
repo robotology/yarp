@@ -28,6 +28,7 @@ ModuleInterface::ModuleInterface(Module* module)
     strPrefix = module->strPrefix;
     iRank = module->iRank;
     strTag = module->getLabel();
+    strDisplay = module->getDisplay();
     wait = module->getPostExecWait();
     if(module->getModel())
         modelBase = *module->getModel();

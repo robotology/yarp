@@ -1109,6 +1109,8 @@ bool KnowledgeBase::updateModule(Module* module, ModuleInterface* imod )
         module->setStdio(imod->getStdio());
     if(strlen(imod->getWorkDir()))
         module->setWorkDir(imod->getWorkDir());
+    if(strlen(imod->getDisplay()))
+        module->setDisplay(imod->getDisplay());
     module->setPostExecWait(imod->getPostExecWait());
     module->setModelBase(imod->getModelBase());
 

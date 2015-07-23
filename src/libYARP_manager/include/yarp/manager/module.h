@@ -129,6 +129,7 @@ public:
     void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
     void setBasePrefix(const char* szPrefix) { if(szPrefix) strBasePrefix = szPrefix; }
     void setNeedDeployer(bool need) { bNeedDeployer = need; }
+    void setDisplay(const char* szDisplay) {if(szDisplay) strDisplay = szDisplay;}
 
     int getRank(void) { return iRank; }
     const char* getName(void) { return strName.c_str(); }
@@ -145,6 +146,8 @@ public:
     const char* getBroker(void) { return strBroker.c_str(); }
     const char* getPrefix(void) { return strPrefix.c_str(); }
     const char* getBasePrefix(void) { return strBasePrefix.c_str(); }
+    const char* getDisplay() { return strDisplay.c_str(); }
+
 
     int argumentCount(void) { return arguments.size(); }
     Argument& getArgumentAt(int index){ return arguments[index]; }
@@ -214,6 +217,7 @@ private:
     string strPrefix;
     string strBasePrefix;
     double wait;
+    string strDisplay;
     GraphicModel modelBase;
 
     ArgumentIterator findArgument(Argument& argument);

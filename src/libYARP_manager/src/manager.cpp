@@ -279,6 +279,7 @@ bool Manager::prepare(bool silent)
     for(itr=modules.begin(); itr!=modules.end(); itr++)
     {
         Broker* broker = createBroker(*itr);
+        broker->setDisplay((*itr)->getDisplay());
         Executable* exe = new Executable(broker, (MEvent*)this, bWithWatchDog);
         exe->setID(id++);
         exe->setCommand((*itr)->getName());

@@ -65,12 +65,14 @@ public:
 
     void enableWatchDog(void) { bWithWatchDog = true; }
     void disableWatchDog(void) { bWithWatchDog = false; }
-    bool hasWatchDog(void) { return bWithWatchDog; }
+    bool hasWatchDog(void) { return bWithWatchDog; }    
+    void setDisplay(const char* szDisplay) {if(szDisplay) strDisplay = szDisplay;}
 
 protected:
     unsigned int UNIQUEID;
     BrokerEventSink* eventSink;
     bool bWithWatchDog;
+    string strDisplay;
 
 private:
 

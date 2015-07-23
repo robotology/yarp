@@ -171,6 +171,7 @@ public:
     void setBroker(const char* szBroker) { if(szBroker) strBroker = szBroker; }
     void setPrefix(const char* szPrefix) {if(szPrefix) strPrefix = szPrefix; }
     void setTag(const char* szTag) {if(szTag) strTag = szTag; }
+    void setDisplay(const char* szDisplay) {if(szDisplay) strDisplay = szDisplay;}
 
     const char* getName(void) { return strName.c_str(); }
     const char* getHost(void) { return strHost.c_str(); }
@@ -181,6 +182,7 @@ public:
     const char* getBroker(void) { return strBroker.c_str(); }
     const char* getPrefix(void) { return strPrefix.c_str(); }
     const char* getTag(void) { return strTag.c_str(); }
+    const char* getDisplay() { return strDisplay.c_str(); }
 
     bool operator==(const ModuleInterface& modint) {
         return (strName == modint.strName);
@@ -215,6 +217,7 @@ private:
     string strStdio;
     string strBroker;
     string strPrefix;
+    string strDisplay;
     int iRank;
     ResourceContainer resources;
     double wait;
