@@ -72,6 +72,12 @@ typedef enum {
     IO_METHOD_USERPTR,
 } io_method;
 
+typedef enum {
+    RAW_DATA = 0,
+    LEOPARD_MT9M021C,
+    SEE3CAMCU50
+} supported_cams;
+
 struct buffer {
     void *          start;
     size_t          length;
@@ -91,6 +97,7 @@ typedef struct
     void            *raw_image;
     unsigned int    n_buffers;
     struct buffer   *buffers;
+    supported_cams  camModel;    // better is it is pixel format (YUV ...);  it happened that the only 2 cameras I have to test has custom tpyes, not standard ones.
 } Video_params;
 
 

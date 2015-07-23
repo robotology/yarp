@@ -23,6 +23,7 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE)
     param.dst_image = NULL;
     param.n_buffers = VIDIOC_REQBUFS_COUNT;
     param.buffers = NULL;
+    param.camModel = SEE3CAMCU50;
 }
 
 
@@ -105,7 +106,15 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
         param.deviceName = config.find("deviceName").asString();
 
 
-    yDebug() << "using following device " << param.deviceName << "with the configuration: " << param.width << "x" << param.height;
+    if(!config.check("camModel") )
+    {
+        yError() << "No 'camModel' was specified!";
+        return false;
+    }
+
+    param.camModel = (supported_cams) config.find("camModel").asInt();
+
+    yDebug() << "using following device " << param.deviceName << "with the configuration: " << param.width << "x" << param.height << "; camModel is " << param.camModel;
 
     return true;
 }
@@ -290,6 +299,8 @@ bool V4L_camera::deviceInit()
     if (fmt.fmt.pix.sizeimage < min)
         fmt.fmt.pix.sizeimage = min;
 
+    param.image_size = fmt.fmt.pix.sizeimage;
+
     switch (param.io)
     {
         case IO_METHOD_READ:
@@ -304,7 +315,6 @@ bool V4L_camera::deviceInit()
             userptrInit(fmt.fmt.pix.sizeimage);
             break;
     }
-    param.image_size = fmt.fmt.pix.sizeimage;
     param.dst_image = (unsigned char*) malloc(fmt.fmt.pix.width * fmt.fmt.pix.height * 3);  // 3 for rgb without gamma
     return true;
 }
