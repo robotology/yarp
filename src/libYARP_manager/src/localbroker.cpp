@@ -591,19 +591,27 @@ int LocalBroker::ExecuteCmd(void)
     ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
     cmd_startup_info.cb = sizeof(STARTUPINFO);
 
+
+    string strDisplay=getDisplay();
+
     //this is common to all processes
     cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
+    cmd_startup_info.wShowWindow = SW_SHOWNA;
+    windowMode=WINDOW_VISIBLE;
 
-    if (windowMode==WINDOW_VISIBLE)
+    if (strDisplay=="--visible_na")
     {
+        windowMode=WINDOW_VISIBLE;
         cmd_startup_info.wShowWindow = SW_SHOWNA;
     }
-    if (windowMode==WINDOW_MINIMIZED)
+    if (strDisplay=="--minimized")
     {
+        windowMode=WINDOW_MINIMIZED;
         cmd_startup_info.wShowWindow = SW_MINIMIZE;
     }
-    if (windowMode==WINDOW_HIDDEN)
+    if (strDisplay=="--hidden")
     {
+        windowMode=WINDOW_HIDDEN;
         cmd_startup_info.wShowWindow = SW_HIDE;
 
         // Setting up child process and pipe for stdout (useful for attaching stdout)
