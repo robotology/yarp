@@ -185,6 +185,7 @@ Here is an example of application description file in XML format:
       <b><font color="#00458A">&lt;name&gt;</font></b>Module_Name<b><font color="#00458A">&lt;/name&gt;</font></b>
       <b><font color="#00458A">&lt;parameters&gt;&lt;/parameters&gt;</font></b>
       <b><font color="#00458A">&lt;node&gt;&lt;/node&gt;</font></b>
+      <b><font color="#00458A">&lt;display&gt;&lt;/display&gt;</font></b>
       <b><font color="#00458A">&lt;stdio&gt;&lt;/stdio&gt;</font></b>
       <b><font color="#00458A">&lt;prefix&gt;&lt;/prefix&gt;</font></b>
       <b><font color="#00458A">&lt;dependencies&gt;</font></b>
@@ -279,6 +280,10 @@ Here is an example of application description file in XML format:
  - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in yarpmanager).
  - The \<port\> tags inside \<dependencies\> indicate that the execution of the current module should be postponed until the ports become available. (g)yarpmanager waits for the ports and continuously checks their availability. If one of the required ports is not available within the time indicated by the "timeout" property, the module will not be launched.   
  - It is also possible to send a specific RPC request to a port to get status about the internal state of a module. This is useful when launching a module should be postponed until other modules get launched and ready. This can be done by specifying the request using "request" property and the expected reply using "reply" property in a \<port\> tag. The manager sends the request to the relevant port and check if the received reply matches the one indicated in the "reply" property before launching the module. If the reply does not match the expected one, the corresponding module will not launched. 
+ - The \<display\> tag specifies the visibility of the process window:
+  - \--visible_na (default):the window is visible and inactive (it does not get the focus)
+  - \--minimized: the window is minimized 
+  - \--hidden: the process is invisible. This option is useful for console/terminal applications. Notice that on the graphical yarpmanager you can see the standard output using the ''attach to stdout'' functionality (right click on the application and select it from the menu).
  
 \section resource Resource description file
 The resource description file can be used to provide a general information of the machines that are part of the cluster. In very simple form, the resource description file is a list of the names of machines in the cluster.
