@@ -131,7 +131,7 @@ mark_as_advanced(YARP_COMPILE_UNMAINTAINED)
 #########################################################################
 # Turn on testing.
 
-option(YARP_COMPILE_TESTS "Enable YARP tests" ON)
+option(YARP_COMPILE_TESTS "Enable YARP tests" OFF)
 mark_as_advanced(YARP_COMPILE_TESTS)
 if(YARP_COMPILE_TESTS)
     enable_testing()
