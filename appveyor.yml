@@ -21,7 +21,7 @@ build_script:
   - cd c:\projects\yarp
   - md build
   - cd build
-  - cmake -G"Visual Studio 11" ..
+  - cmake -G"Visual Studio 11" .. -DYARP_COMPILE_TESTS:BOOL=ON
   - msbuild /m /p:Configuration=Release /p:Platform="Win32" yarp.sln
   - set PATH=%PATH%;c:\ACE_wrappers\bin;c:\projects\yarp\build\bin\Release;c:\projects\yarp\build\lib\Release
   - dir c:\ACE_wrappers\bin
