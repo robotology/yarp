@@ -29,8 +29,6 @@ add_subdirectory(libYARP_init)
 add_subdirectory(libYARP_manager)
 add_subdirectory(libYARP_logger)
 
-add_subdirectory(libyarpc)
-add_subdirectory(libyarpcxx)
 
 if (NOT YARP_BUILD_LIBRARIES_ONLY)
     # executables
@@ -62,3 +60,7 @@ if (NOT YARP_BUILD_LIBRARIES_ONLY)
 endif()
 
 
+# deprecated stuff?
+add_subdirectory(libyarpc)
+add_subdirectory(libyarpcxx)
+add_subdirectory(yarpfs)

@@ -1,30 +1,33 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- 
-SET(KEYWORD "yarpfs")
 
-# Start a project.
-PROJECT(${KEYWORD})
+cmake_minimum_required(VERSION 2.8.9)
+project(yarpfs)
 
-# Find YARP.  Point the YARP_BUILD environment variable at your build.
-SET(YARP_DIR "$ENV{YARP_BUILD}" CACHE LOCATION "where is yarp?")
-FIND_PACKAGE(YARP)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-ADD_DEFINITIONS(-D_FILE_OFFSET_BITS=64)
-LINK_LIBRARIES(fuse)
+# Find YARP
+find_package(YARP REQUIRED)
+include_directories(${YARP_INCLUDE_DIRS})
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
-# Search for source code.
-FILE(GLOB folder_source *.cpp *.cc *.c)
-FILE(GLOB folder_header *.h)
-SOURCE_GROUP("Source Files" FILES ${folder_source})
-SOURCE_GROUP("Header Files" FILES ${folder_header})
+find_package(ACE REQUIRED)
+add_definitions(${ACE_DEFINITIONS})
+include_directories(${ACE_INCLUDE_DIRS})
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
+# Find Fuse
+find_package(Fuse REQUIRED)
+add_definitions(${Fuse_DEFINITIONS})
+include_directories(${Fuse_INCLUDE_DIRS})
 
-# Set up our main executable.
-IF (folder_source)
-  ADD_EXECUTABLE(${KEYWORD} ${folder_source} ${folder_header})
-ELSE (folder_source)
-  MESSAGE(FATAL_ERROR "No source code files found. Please add something")
-ENDIF (folder_source)
+set(yarpfs_SRCS yarpfs.cpp
+                link.cpp)
+set(yarpfs_HDRS yarpfns.h
+                yarputils.h)
+
+add_executable(yarpfs ${yarpfs_SRCS} ${yarpfs_HDRS})
+target_link_libraries(yarpfs YARP::YARP_OS
+                             YARP::YARP_init
+                             ${ACE_LIBRARIES}
+                             ${Fuse_LIBRARIES})
