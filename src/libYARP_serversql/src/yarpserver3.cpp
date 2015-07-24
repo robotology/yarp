@@ -18,7 +18,7 @@
 #include <yarp/name/NameServerManager.h>
 #include <yarp/name/BootstrapServer.h>
 
-#include <yarp/yarpserversql/yarpserversql.h>
+#include <yarp/serversql/yarpserversql.h>
 
 #include "TripleSourceCreator.h"
 #include "NameServiceOnTriples.h"

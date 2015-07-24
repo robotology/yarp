@@ -12,7 +12,7 @@
 using namespace yarp::os;
 
 #if YARP_USE_PERSISTENT_NAMESERVER
-#  include <yarp/yarpserversql/yarpserversql.h>
+#  include <yarp/serversql/yarpserversql.h>
 #endif
 
 int main(int argc, char *argv[]) {
