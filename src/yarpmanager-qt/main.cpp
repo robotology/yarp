@@ -44,6 +44,16 @@ void onSignal(int signum);
 
 int main(int argc, char *argv[])
 {
+
+#if defined(WIN32)
+    // We create a console. This is inherited by console processes created by the localhost broker
+    // This console is not actually needed so we hide it. In principle we could redirect the output
+    // of all processes to this console, in practice this would be end up soon in a big mess.
+   AllocConsole();
+   HWND hwnd = GetConsoleWindow();
+   HWND hide = FindWindowA("ConsoleWindowClass",NULL);
+   ShowWindow(hide, 0);
+#endif
     QApplication a(argc, argv);
 
     // Setup resource finder

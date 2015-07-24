@@ -145,7 +145,7 @@ LocalBroker::LocalBroker()
     bOnlyConnector = bInitialized = false;
     ID = 0;
     fd_stdout = NULL;
-    setWindowMode(WINDOW_VISIBLE);
+    setWindowMode(WINDOW_HIDDEN);
 }
 
 
@@ -299,7 +299,7 @@ bool LocalBroker::kill()
     strError.clear();
 
 #if defined(WIN32)
-    stopCmd(ID);
+    killCmd(ID);
     stopStdout();
 #else
     stopStdout();
@@ -595,26 +595,28 @@ int LocalBroker::ExecuteCmd(void)
 
     string strDisplay=getDisplay();
 
-    //this is common to all processes
-    cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
-    cmd_startup_info.wShowWindow = SW_SHOWNA;
-    windowMode=WINDOW_VISIBLE;
+    DWORD dwCreationFlags;
 
+    //these come from xml
+    /* 
+    // These are not supported until we find a way to send break signals to 
+    // consoles that are not inherited
     if (strDisplay=="--visible_na")
-    {
         windowMode=WINDOW_VISIBLE;
-        cmd_startup_info.wShowWindow = SW_SHOWNA;
-    }
-    if (strDisplay=="--minimized")
-    {
-        windowMode=WINDOW_MINIMIZED;
-        cmd_startup_info.wShowWindow = SW_MINIMIZE;
-    }
     if (strDisplay=="--hidden")
-    {
         windowMode=WINDOW_HIDDEN;
-        cmd_startup_info.wShowWindow = SW_HIDE;
+    */
 
+    // this is for "attach to stoud only"
+    if (windowMode==WINDOW_VISIBLE)
+    { 
+        //this is common to all processes
+        cmd_startup_info.dwFlags |= STARTF_USESHOWWINDOW;
+        cmd_startup_info.wShowWindow = SW_SHOWNA;
+        dwCreationFlags=CREATE_NEW_CONSOLE;
+    }
+    if (windowMode==WINDOW_HIDDEN)
+    {
         // Setting up child process and pipe for stdout (useful for attaching stdout)
         SECURITY_ATTRIBUTES pipe_sec_attr;
         pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -628,7 +630,11 @@ int LocalBroker::ExecuteCmd(void)
         cmd_startup_info.hStdOutput = write_to_pipe_cmd_to_stdout;
 
         cmd_startup_info.dwFlags |= STARTF_USESTDHANDLES;
+
+        dwCreationFlags=CREATE_NEW_PROCESS_GROUP; //CREATE_NEW_CONSOLE|CREATE_NEW_PROCESS_GROUP,
     }
+  
+
 
     /*
      * setting environment variable for child process
@@ -667,12 +673,12 @@ int LocalBroker::ExecuteCmd(void)
                                 NULL,          // process security attributes
                                 NULL,          // primary thread security attributes
                                 TRUE,          // handles are inherited
-                                CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,
+                                dwCreationFlags,
                                 (LPVOID) chNewEnv, // use new environment
                                 bWorkdir?strWorkdirOk.c_str():NULL, // working directory
                                 &cmd_startup_info,   // STARTUPINFO pointer
                                 &cmd_process_info);  // receives PROCESS_INFORMATION
-
+       
     if (!bSuccess && bWorkdir)
     {
             bSuccess=CreateProcess(NULL,    // command name
@@ -680,7 +686,7 @@ int LocalBroker::ExecuteCmd(void)
                                     NULL,          // process security attributes
                                     NULL,          // primary thread security attributes
                                     TRUE,          // handles are inherited
-                                    CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,
+                                    dwCreationFlags,
                                     (LPVOID) chNewEnv, // use new environment
                                     strWorkdirOk.c_str(), // working directory
                                     &cmd_startup_info,   // STARTUPINFO pointer
@@ -733,11 +739,13 @@ bool LocalBroker::stopCmd(int pid)
 
     LocalTerminateParams params(pid);
     EnumWindows((WNDENUMPROC)LocalTerminateAppEnum,(LPARAM)&params);
-    //if (!params.nWin)
-   // {
-    GenerateConsoleCtrlEvent(CTRL_C_EVENT, pid);
-    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid);
-   // }
+    
+    // I believe we do not need this. It is ignored by console applications created with CREATE_NEW_PROCESS_GROUP 
+    GenerateConsoleCtrlEvent(CTRL_C_EVENT, pid); 
+
+    //send BREAK_EVENT becaue we created the process with CREATE_NEW_PROCESS_GROUP
+    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid); 
+    
     CloseHandle(hProc);
     return true;
 }
