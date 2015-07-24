@@ -46,6 +46,7 @@
 
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/os/RateThread.h>
+#include <yarp/os/Semaphore.h>
 
 // #include "list.h"
 // #include "yuv.h"
@@ -74,8 +75,8 @@ typedef enum {
 
 typedef enum {
     RAW_DATA = 0,
-    LEOPARD_MT9M021C,
-    SEE3CAMCU50
+    SEE3CAMCU50,
+    LEOPARD_MT9M021C
 } supported_cams;
 
 struct buffer {
@@ -163,6 +164,7 @@ public:
 
 private:
 
+    yarp::os::Semaphore mutex;
     Video_params param;
     double timeStart, timePrec, timeNow, timeElapsed;
     int frameCounter;

@@ -6,6 +6,7 @@
 #include <list.hpp>
 #include <yarp/os/Time.h>
 
+#include <yuv.h>
 #define errno_exit printf
 
 using namespace yarp::os;
@@ -373,15 +374,17 @@ bool V4L_camera::close()
 // IFrameGrabberRgb Interface
 bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 {
-    imageProcess(param.raw_image);
+    mutex.wait();
+//     imageProcess(param.raw_image);
     memcpy(buffer, param.dst_image, param.width * param.height * 3);
+    mutex.post();
     return true;
 }
 
 // IFrameGrabber Interface
 bool V4L_camera::getRawBuffer(unsigned char *buffer)
 {
-    buffer = (unsigned char *) param.raw_image;
+//     buffer = (unsigned char *) param.raw_image;
     return true;
 }
 
@@ -604,8 +607,8 @@ void* V4L_camera::frameRead()
                 }
             }
 
-            param.raw_image = param.buffers[0].start;
-//             imageProcess(param.buffers[0].start);
+//             memcpy(param.raw_image, param.buffers[0].start, param.image_size);
+            imageProcess(param.buffers[0].start);
             break;
 
 
@@ -633,9 +636,13 @@ void* V4L_camera::frameRead()
                     yError() << "at line " << __LINE__;
                 }
 
-//                 memcpy(param.buffers[buf.index].start, param.raw_image, param.image_size);
-//                 imageProcess(param.buffers[buf.index].start);
-                param.raw_image = param.buffers[buf.index].start;
+
+                mutex.wait();
+                yError() << " param.image_size is " <<  param.image_size << "at line " << __LINE__;
+                memcpy(param.raw_image, param.buffers[buf.index].start, param.image_size);
+//                 param.raw_image = param.buffers[buf.index].start;
+                imageProcess(param.raw_image);
+                mutex.post();
 
                 if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
                 {
@@ -679,9 +686,11 @@ void* V4L_camera::frameRead()
                         yError() << "at line " << __LINE__;
                     }
 
+                mutex.wait();
+                memcpy(param.raw_image, param.buffers[buf.index].start, param.image_size);
+//                 param.raw_image = (void*) buf.m.userptr;
+                mutex.post();
 
-//                 imageProcess((void *)buf.m.userptr);
-                param.raw_image = (void*) buf.m.userptr;
 
                 if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
                     errno_exit("VIDIOC_QBUF");
@@ -690,53 +699,10 @@ void* V4L_camera::frameRead()
         default:
         {
             printf("frameRead, default case\n");
-            param.raw_image = NULL;
+//             param.raw_image = NULL;
         }
     }
     return (void*) param.raw_image; //param.dst_image;
-}
-
-unsigned char clamp(float val)
-{
-    if (val > 255)
-        return 255;
-    if(val <0)
-        return 0;
-
-    return (unsigned char) val;
-}
-
-void myYUYV422toRGB(unsigned char* src, unsigned char* rgb, int width, int height)
-{
-    //yuv to rgb
-    float Y1, Y2, U, V;
-    float R1,G1,B1;
-    float R2,G2,B2;
-
-    int pixel = 0;
-    for(pixel=0; pixel < width * height; pixel+=2)
-    {
-        Y1 = src[pixel*2 + 0];
-        U  = src[pixel*2 + 1];
-        Y2 = src[pixel*2 + 2];
-        V  = src[pixel*2 + 3];
-
-        //          Conversion 4
-        R1 = Y1 + 1.402 *(V-128);
-        G1 = Y1 - 0.34414 *(U-128) - 0.71414 *(V-128);
-        B1 = Y1 + 1.772 *(U-128);
-
-        R2 = Y2 + 1.402 *(V-128);
-        G2 = Y2 - 0.34414 *(U-128) - 0.71414 *(V-128);
-        B2 = Y2 + 1.772 *(U-128);
-
-        rgb[pixel*3 + 0] = clamp(R1);
-        rgb[pixel*3 + 1] = clamp(G1);
-        rgb[pixel*3 + 2] = clamp(B1);
-        rgb[pixel*3 + 3] = clamp(R2);
-        rgb[pixel*3 + 4] = clamp(G2);
-        rgb[pixel*3 + 5] = clamp(B2);
-    }
 }
 
 /**
@@ -744,7 +710,41 @@ void myYUYV422toRGB(unsigned char* src, unsigned char* rgb, int width, int heigh
  */
 void V4L_camera::imageProcess(void* p)
 {
-    myYUYV422toRGB((unsigned char *) p, (unsigned char *) param.dst_image, param.width, param.height);
+    static double _start;
+    static double _end;
+
+    _start = yarp::os::Time::now();
+
+    switch(param.camModel)
+    {
+        case RAW_DATA:
+        {
+            break;
+        }
+
+        case SEE3CAMCU50:
+        {
+            YUYV422toRGB((unsigned char *) p, (unsigned char *) param.dst_image, param.width, param.height);
+            break;
+        }
+
+        case LEOPARD_MT9M021C:
+        {
+//             raw_to_bmp( (uint8_t*) p, (uint8_t*) param.dst_image, param.width, param.height, 12, 0,
+//                         true, 1.6,
+//                         600, -92, -70, -97, 389, -36, -130, -304, 690, 0, 0, 0);
+            break;
+        }
+
+        default:
+        {
+            yError() << "Unsupported camera, don't know how to do color reconstruction to RGB";
+            break;
+        }
+    }
+
+    _end = yarp::os::Time::now();
+    yDebug("Conversion time is %.6f ms", (_end - _start)*1000);
 }
 
 /**
@@ -805,6 +805,7 @@ void V4L_camera::captureStart()
             if (-1 == xioctl(param.fd, VIDIOC_STREAMON, &type))
                 errno_exit("VIDIOC_STREAMON");
 
+//             param.raw_image = param.buffers[0].start;
             break;
 
         case IO_METHOD_USERPTR:
@@ -888,7 +889,6 @@ bool V4L_camera::mmapInit()
     if (req.count == 1)
     {
         fprintf(stderr, "Only 1 buffer was available, you may encounter performance issue acquiring images from device %s\n", param.deviceName.c_str());
-        return false;
     }
 
     param.buffers = (struct buffer *) calloc(req.count, sizeof(*(param.buffers)));
@@ -899,9 +899,12 @@ bool V4L_camera::mmapInit()
         return false;
     }
 
+    struct v4l2_buffer buf;
+
+    printf("n buff is %d\n", req.count);
+
     for (param.n_buffers = 0; param.n_buffers < req.count; param.n_buffers++)
     {
-        struct v4l2_buffer buf;
 
         CLEAR(buf);
 
@@ -918,6 +921,7 @@ bool V4L_camera::mmapInit()
         if (MAP_FAILED == param.buffers[param.n_buffers].start)
             errno_exit("mmap");
     }
+    param.raw_image = malloc(param.image_size);
     return true;
 }
 
