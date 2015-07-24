@@ -7,6 +7,8 @@
 #include <yarp/os/Time.h>
 
 #include <yuv.h>
+#include <Leopard_MT9M021C.h>
+
 #define errno_exit printf
 
 using namespace yarp::os;
