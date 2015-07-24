@@ -8,13 +8,13 @@
 set(thrifFile stateExt)
 
 #idl commands
-set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}/yarp")
+set(generated_libs_dir "src/modules/msgs/yarp")
 
 # run the generator engine
 #yarp_idl_to_dir(${thrifFile}.thrift ${generated_libs_dir} yarp_msg_sources yarp_msg_headers yarp_msg_include_dirs)
 
 #include files generated previously
-include(${generated_libs_dir}/${thrifFile}_thrift.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/yarp/${thrifFile}_thrift.cmake)
 
 foreach(file ${sources})
     set(yarp_msg_sources ${yarp_msg_sources} ${generated_libs_dir}/${file})
@@ -24,9 +24,7 @@ foreach(file ${headers})
     set(yarp_msg_headers ${yarp_msg_headers} ${generated_libs_dir}/${file})
 endforeach()
 
-set(yarp_msg_include_dirs "${generated_libs_dir}/include")
-
-include_directories(${yarp_msg_include_dirs} )
+set(yarp_msg_include_dirs "${CMAKE_CURRENT_SOURCE_DIR}/yarp/include")
 
 # create the sender
 #message(STATUS ">> YARP MSG sources is ${yarp_msg_sources}")
@@ -35,16 +33,18 @@ include_directories(${yarp_msg_include_dirs} )
 
 
     # name of the file
-    set(rosMSG sensorMsgs_JointState; sensorMsgs_Imu; geometryMsgs_WrenchedStamped)
+    set(rosMSG sensorMsgs_JointState
+               sensorMsgs_Imu
+               geometryMsgs_WrenchedStamped)
 
     #idl commands
-    set(ROS_msgs_dir "${CMAKE_CURRENT_SOURCE_DIR}/ros")
+    set(ROS_msgs_dir "src/modules/msgs/ros")
 
     # messages are generated via the command yarpidl_rosmsg <message_name> like 'yarpidl_rosmsg sensor_msg/JointState'
 
     # Collect all header file from all messages into a single variable
     foreach(cmake_file ${rosMSG})
-        include("${ROS_msgs_dir}/${cmake_file}.cmake")
+        include("${CMAKE_CURRENT_LIST_DIR}/ros/${cmake_file}.cmake")
 
         foreach(file ${sources})
             set(ros_msg_sources ${ros_msg_sources} ${ROS_msgs_dir}/${file})
@@ -66,9 +66,7 @@ include_directories(${yarp_msg_include_dirs} )
         endif()
 
     endforeach()
-    set(ros_msg_include_dirs "${ROS_msgs_dir}/include")
-
-    include_directories(${ROS_msgs_include_dirs} )
+    set(ros_msg_include_dirs "${CMAKE_CURRENT_SOURCE_DIR}/ros/include")
 
     #debug messages
     #message(STATUS ">> ROS_msgs_dir is ${ROS_msgs_dir}")

@@ -118,7 +118,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
 set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/AnalogSensorClient/AnalogSensorClient.cpp
                         src/modules/BatteryWrapper/BatteryWrapper.cpp
-			src/modules/BatteryClient/BatteryClient.cpp
+                        src/modules/BatteryClient/BatteryClient.cpp
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
 
@@ -128,32 +128,40 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/BatteryClient/BatteryClient.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
-                        
+
+
 # handle the ros / yarp thrift messages
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
 add_subdirectory(src/modules/msgs)
+list(APPEND YARP_devices_SRCS ${cbw2_msgs_srcs})
+list(APPEND YARP_devices_HDRS ${cbw2_msgs_hrds})
+include_directories(${cbw2_msgs_incl_dirs})
 
 
 # handle the source file for the controlboardwrapper2 device
 # the variable cbw2_core_srcs, cbw2_core_hrds, cbw2_core_incl_dirs will be set inside
 add_subdirectory(src/modules/ControlBoardWrapper)
+list(APPEND YARP_devices_SRCS ${cbw2_core_srcs})
+list(APPEND YARP_devices_HDRS ${cbw2_core_hrds})
+include_directories(${cbw2_core_incl_dirs})
+
 
 # handle the source file for the RemoteControlBoard device
 # the variables rmc_core_srcs and rmc_core_hrds and rmc_core_incl_dirs will be set inside
 add_subdirectory(src/modules/RemoteControlBoard)
-
-# add controlboardwrapper2 and RemoteControlBoard devices
-set( YARP_devices_SRCS ${YARP_devices_SRCS} ${cbw2_core_srcs} ${rmc_core_srcs} ${cbw2_msgs_srcs})
-set( YARP_devices_HDRS ${YARP_devices_HDRS} ${cbw2_core_hrds} ${rmc_core_hrds} ${cbw2_msgs_hrds})
+list(APPEND YARP_devices_SRCS ${rmc_core_srcs})
+list(APPEND YARP_devices_HDRS ${rmc_core_hrds})
+include_directories(${rmc_core_incl_dirs})
 
 # add ServerInertial device
 add_subdirectory(src/modules/ServerInertial)
-set( YARP_devices_SRCS ${YARP_devices_SRCS} ${serverInertial_srcs} ${inertial_msgs_srcs})
-set( YARP_devices_HDRS ${YARP_devices_HDRS} ${serverInertial_hdrs} ${inertial_msgs_hdrs})
+list(APPEND YARP_devices_SRCS ${serverInertial_srcs}
+                              ${inertial_msgs_srcs})
+list(APPEND YARP_devices_HDRS ${serverInertial_hdrs}
+                              ${inertial_msgs_hdrs})
+include_directories(${serverInertial_incl_dirs})
 
-#message(INFO "\n other_files is ${other_files}")
-include_directories(${cbw2_core_incl_dirs} ${rmc_core_incl_dirs} ${cbw2_msgs_incl_dirs} ${serverInertial_incl_dirs})
-#message(STATUS "CMAKE_CURRENT_BINARY_DIR is ${CMAKE_CURRENT_BINARY_DIR} ||")
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/modules/ControlBoardWrapper/jointstate )
 
 source_group("Source Files" FILES ${YARP_dev_SRCS})
