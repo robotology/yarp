@@ -38,6 +38,13 @@ using namespace yarp::os;
 AuthHMAC::AuthHMAC() :
         authentication_enabled(false)
 {
+    static int auth_warning_shown = false;
+    if(auth_warning_shown) {
+        // If the warning was already shown, we have nothing to do.
+        // return as soon as possible
+        return;
+    }
+
     ConstString key;
     ResourceFinder& rf = NameClient::getNameClient().getResourceFinder();
     ConstString fname;
@@ -47,13 +54,10 @@ AuthHMAC::AuthHMAC() :
     fname = rf.findFile("auth.conf",opt);
     Network::unlock();
 
-    static int auth_warning_shown = false;
 
     if (fname.empty()) {
-        if (!auth_warning_shown) {
-            yInfo("Cannot find auth.conf file. Authentication disabled.\n");
-            auth_warning_shown = true;
-        }
+        yInfo("Cannot find auth.conf file. Authentication disabled.\n");
+        auth_warning_shown = true;
         return;
     }
 
@@ -62,19 +66,15 @@ AuthHMAC::AuthHMAC() :
     Bottle group = config.findGroup("AUTH");
 
     if (group.isNull()) {
-        if (!auth_warning_shown) {
-            yWarning("No \"AUTH\" group found in auth.conf file. Authentication disabled.\n");
-            auth_warning_shown = true;
-        }
+        yWarning("No \"AUTH\" group found in auth.conf file. Authentication disabled.\n");
+        auth_warning_shown = true;
         return;
     }
 
     key = group.find("key").asString();
     if (!(key.length() > 0)) {
-        if (!auth_warning_shown) {
-            yWarning("No \"key\" found in \"AUTH\" group in auth.conf file. Authentication disabled.\n");
-            auth_warning_shown = true;
-        }
+        yWarning("No \"key\" found in \"AUTH\" group in auth.conf file. Authentication disabled.\n");
+        auth_warning_shown = true;
         return;
     }
 
