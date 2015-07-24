@@ -80,5 +80,3 @@ if(YARP_COMPILE_TESTS AND NOT YARP_BUILD_LIBRARIES_ONLY)
       add_subdirectory(integration)
     endif()
 endif()
-
-# touch 1 2 3 4

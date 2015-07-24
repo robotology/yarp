@@ -135,20 +135,6 @@ The main CMakeLists.txt file for YARP is simple. It does the following:
 
 And we're done!
 
-There are a few lines at the bottom of the CMakeLists.txt file that look
-like this:
-\verbatim
-# Modify this file when you add/remove files in directories that
-# are scanned for sources.  This will make sure that cmake gets rerun
-# for everybody.
-# Touch: 1 2 3
-\endverbatim
-When new source files are added to YARP, and no CMakeLists.txt file is
-modified in so doing, it is wise to add another arbitrary number to
-the "Touch" line.  We've been lazy in YARP and let CMake scan for
-source files rather than listing them all explicitly.  Without the
-"touch" line, users could end up with broken builds if they do an "svn update",
-receive a new source file added by someone else, and don't run cmake.
 
 @section yarp_build_structure_options conf/YarpOptions.cmake
 
