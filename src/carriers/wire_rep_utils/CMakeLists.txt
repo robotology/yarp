@@ -20,7 +20,12 @@ if(ENABLE_yarpcar_mjpeg_carrier OR ENABLE_yarpcar_tcpros_carrier)
 
     set_property(TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
     set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_wire_rep_utils)
-    install(TARGETS YARP_wire_rep_utils EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS YARP_wire_rep_utils
+            EXPORT YARP
+            COMPONENT runtime
+            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
     if(YARP_COMPILE_TESTS)
         add_executable(wire_rep_test test.cpp)
