@@ -218,26 +218,8 @@ USBCameraDriverRgb::~USBCameraDriverRgb()
 
 bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
-//     yTrace() << "_width is " << _width << " height is " << _height;
     image.resize(_width, _height);
-    unsigned char *buffer = NULL;
-    unsigned char *out = NULL;
-
     deviceRgb->getRgbBuffer(image.getRawImage());
-//     out = image.getRawImage();
-//     if(buffer == NULL)
-//     {
-//         yError() << "getRgbBuffer not ready";
-//         return false;
-//     }
-//
-//     if(out == NULL)
-//     {
-//         yError() << "out buffer not ready";
-//         return false;
-//     }
-//
-//     memcpy(image.getRawImage(), buffer, _width * _height * 3);
     return true;
 }
 
