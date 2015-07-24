@@ -14,9 +14,6 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
   add_executable(yarpserver src/main.cpp)
   target_link_libraries(yarpserver YARP_serversql)
 
-  # set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_serversql)
-
-#  install(TARGETS YARP_serversql COMPONENT utilities DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(TARGETS yarpserver yarpserver3 COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 

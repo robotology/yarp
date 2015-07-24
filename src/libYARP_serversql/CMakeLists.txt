@@ -50,14 +50,14 @@
   set_property(TARGET YARP_serversql PROPERTY PUBLIC_HEADER ${YARP_serversql_HDRS})
   set_property(TARGET YARP_serversql PROPERTY PRIVATE_HEADER ${YARP_serversql_IMPL_HDRS})
 
-  install(TARGETS YARP_serversql
-          EXPORT YARP
-          COMPONENT runtime
-          RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-          LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql"
-          PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql/impl")
+#   install(TARGETS YARP_serversql
+#           EXPORT YARP
+#           COMPONENT runtime
+#           RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+#           LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+#           ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+#           PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql"
+#           PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql/impl")
 
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_serversql)
   set_property(TARGET YARP_serversql PROPERTY INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include
@@ -69,6 +69,7 @@
   if(YARP_ENABLE_TESTS)
     add_executable(server_peek src/server_peek.cpp)
     target_link_libraries(server_peek YARP_serversql)
+
     add_executable(server_test src/server_test.cpp)
     target_link_libraries(server_test YARP_OS YARP_init)
   endif()
