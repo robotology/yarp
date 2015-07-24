@@ -9,7 +9,7 @@ if(YARP_COMPILE_TESTS AND NOT YARP_BUILD_LIBRARIES_ONLY)
         include_directories(${CMAKE_SOURCE_DIR}/src/yarpserver/include)
     endif()
 
-    add_executable(testModule ${CMAKE_SOURCE_DIR}/src/libYARP_OS/harness/testModule/module.cpp)
+    add_executable(testModule ${CMAKE_SOURCE_DIR}/tests/libYARP_OS/testModule/module.cpp)
     target_link_libraries(testModule YARP_init YARP_OS)
 
     #### temporary variable for debug
@@ -26,7 +26,7 @@ if(YARP_COMPILE_TESTS AND NOT YARP_BUILD_LIBRARIES_ONLY)
     endif()
 
     foreach(test_family ${targets})
-        file(GLOB harness_code ${CMAKE_SOURCE_DIR}/src/libYARP_${test_family}/harness/*.cpp ${CMAKE_SOURCE_DIR}/src/libYARP_${test_family}/harness/*.h)
+        file(GLOB harness_code ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.cpp ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.h)
         get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family}
                      PROPERTY INCLUDE_DIRS)
         get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)

@@ -1,0 +1,7 @@
+/opt/iit/src/yarp/src/idls/thrift/tests/demo/build/CMakeFiles/demo_test.dir
+/opt/iit/src/yarp/src/idls/thrift/tests/demo/build/CMakeFiles/demo_thrift.dir
+/opt/iit/src/yarp/src/idls/thrift/tests/demo/build/CMakeFiles/namespaced_thrift.dir
+/opt/iit/src/yarp/src/idls/thrift/tests/demo/build/CMakeFiles/objects3D_thrift.dir
+/opt/iit/src/yarp/src/idls/thrift/tests/demo/build/CMakeFiles/settings_thrift.dir
+/opt/iit/src/yarp/src/idls/thrift/tests/demo/build/CMakeFiles/sub_directory_clock_rpc_thrift.dir
+/opt/iit/src/yarp/src/idls/thrift/tests/demo/build/CMakeFiles/wrapping_thrift.dir

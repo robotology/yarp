@@ -1,0 +1,12 @@
+#comment
+int8 PIPPO=1
+int8 PLUTO=2
+#comment
+int8 pluppo
+string msg
+---
+#comment
+uint32 CODE=54321
+#comment
+string val
+uint32 an_int

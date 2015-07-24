@@ -1,0 +1,457 @@
+Start testing: Jan 26 12:42 CET
+----------------------------------------------------------
+1/2 Testing: demo_basic
+1/2 Test: demo_basic
+Command: "/opt/iit/src/yarp/src/idls/thrift/tests/demo/build/demo_test"
+Directory: /opt/iit/src/yarp/src/idls/thrift/tests/demo/build
+"demo_basic" start time: Jan 26 12:42 CET
+Output:
+----------------------------------------------------------
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Sending output from /client to /server using tcp
+yarp: Receiving input from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Sending output from /client to /server using tcp
+yarp: Receiving input from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Sending output from /client to /server using tcp
+yarp: Receiving input from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+Missing server method 'int32_t Demo::add_one(const int32_t x)'?
+yarp: RpcServer /server cannot write, please use a regular Port or RpcClient for that
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: 0 | ThriftTest: test settings
+yarp: Port /sender active at tcp://127.0.0.1:10002
+yarp: Port /receiver active at tcp://127.0.0.1:10012
+yarp: Sending output from /sender to /receiver using tcp
+yarp: Receiving input from /sender to /receiver using tcp
+yarp: 0 | ThriftTest:   [int assignment] passed ok
+yarp: 0 | ThriftTest:   [string assignment] passed ok
+yarp: 0 | ThriftTest:   [not too early] passed ok
+yarp: 0 | ThriftTest:   [string not too early] passed ok
+yarp: 0 | ThriftTest:   [int group] passed ok
+yarp: 0 | ThriftTest:   [string group] passed ok
+yarp: 0 | ThriftTest:   [return on success] passed ok
+yarp: 0 | ThriftTest:   [id ok] passed ok
+yarp: 0 | ThriftTest:   [name ok] passed ok
+yarp: 0 | ThriftTest:   [set id ok] passed ok
+yarp: 0 | ThriftTest:   [multi set ok] passed ok
+yarp: 0 | ThriftTest:   [multi set ok] passed ok
+yarp: 0 | ThriftTest:   [triple set ok] passed ok
+yarp: Removing input from /sender to /receiver
+yarp: Removing output from /sender to /receiver
+yarp: 0 | ThriftTest: test start/stop
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+
+*** add_one()
+Got [add] [one] 14
+adding 1 to 14
+Result is 15
+adding 1 to 15
+Result is 16
+
+*** test_void()
+Got [test] [void] 14
+Got [test] [1way] 14
+test void with 14
+Result is  (should be blank)
+
+*** test_live()
+adding 1 to 99
+Result 100
+test void with 200
+test void with 201
+adding 1 to 100
+Result 101
+test oneway with 200
+test oneway with 201
+adding 1 to 101
+Result 102
+
+*** test_live_rpc()
+adding 1 to 5
+Cmd [add] [one] 5 reply 6
+test void with 5
+Cmd [test] [void] 5 reply 
+adding 1 to 6
+Cmd [add] [one] 6 reply 7
+test oneway with 5
+Cmd [test] [1way] 5 reply [done]
+adding 1 to 7
+Cmd [add] [one] 7 reply 8
+
+*** test_enums()
+test_enum_vector
+lst1 2 lst2 3
+
+*** test_defaults()
+test defaults with 42
+test defaults with 14
+42 1 14 0
+
+*** test_partial()
+adding 4 and 3
+add pair 4 3 -> 7
+(incomplete) add pair 4 -> [fail]
+(incomplete) add pair -> [fail]
+(incomplete) add -> [fail]
+(incomplete)  -> [fail]
+adding 10 and 20
+add pair 10 20 -> 30
+test_partial with 10 and 5
+test partial 10 (40 50 60) 5 -> 15
+test partial 10 (40 50) -> [fail]
+
+*** test_defaults_with_rpc()
+test_tail_defaults -> 42
+test_tail_defaults 55 -> 999
+test longer tail defaults -> [fail]
+test longer tail defaults 888 -> 999
+test longer tail defaults 888 ENUM2 47 -> 47
+
+*** test_names_with_spaces()
+adding 1 to 42
+add_one 42 -> 43
+adding 1 to 52
+add one 52 -> 53
+get_answer -> 42
+get answer -> 42
+
+*** test_surface_mesh()
+mesh copy: testing () () () ((1.0 2.0 3.0)) (0 0 ()) -> testing () () () ((1.0 2.0 3.0)) (0 0 ())
+
+*** test_wrapping()
+Result 100
+Result 42
+Result 9
+Bottle is this is a test (bottle)
+Bottle is this is a test (bottle)
+
+*** test_missing_method()
+Answer 42
+AddOne gives 0
+
+*** test_unwrap()
+Wrapped: ((5 10) (9 900))
+Wrapped: (5 10) (9 900)
+
+*** test_tostring()
+String: ((5 10) (9 900))
+String: 10 20
+
+*** test_editor()
+>>> set_x -> patch (set x 15)
+>>> set_y -> patch (set y 30)
+>>> set_x set_y -> patch (set x 1) (set y 2)
+will_set_y called, y is 99
+did_set_y called, y is 30
+will_set_y called, y is 0
+did_set_y called, y is 30
+
+*** test_list_editor()
+>>> set_int_list -> patch (set int_list (0 0 0 0 15))
+
+*** test_help()
+Service general help is [many] ("*** Available commands:" get_answer set_answer add_one start stop is_running test_void test_1way test_enums test_enum_vector test_defaults add_pair test_partial test_tail_defaults test_longer_tail_defaults do_start_a_service do_check_for_service do_stop_a_service help)
+Service specific help is [many] ("int32_t get_answer() " "This function gets the answer ")
+Structure general help is [many] ("*** Available fields:" x y)
+Structure specific help is [many] ("int32_t x" "this is the x part")
+
+*** test_primitives()
+Copies all done
+Starting a long operation
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Stopping a long operation
+<end of output>
+Test time =   1.13 sec
+----------------------------------------------------------
+Test Passed.
+"demo_basic" end time: Jan 26 12:42 CET
+"demo_basic" time elapsed: 00:00:01
+----------------------------------------------------------
+
+2/2 Testing: demo_basic2
+2/2 Test: demo_basic2
+Command: "/opt/iit/src/yarp/src/idls/thrift/tests/demo/build/demo_test2"
+Directory: /opt/iit/src/yarp/src/idls/thrift/tests/demo/build
+"demo_basic2" start time: Jan 26 12:42 CET
+Output:
+----------------------------------------------------------
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Sending output from /client to /server using tcp
+yarp: Receiving input from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Sending output from /client to /server using tcp
+yarp: Receiving input from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Sending output from /client to /server using tcp
+yarp: Receiving input from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Sending output from /client to /server using tcp
+yarp: Receiving input from /client to /server using tcp
+Missing server method 'int32_t Demo::add_one(const int32_t x)'?
+yarp: RpcServer /server cannot write, please use a regular Port or RpcClient for that
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+yarp: 0 | ThriftTest: test settings
+yarp: Port /sender active at tcp://127.0.0.1:10002
+yarp: Port /receiver active at tcp://127.0.0.1:10012
+yarp: Receiving input from /sender to /receiver using tcp
+yarp: Sending output from /sender to /receiver using tcp
+yarp: 0 | ThriftTest:   [int assignment] passed ok
+yarp: 0 | ThriftTest:   [string assignment] passed ok
+yarp: 0 | ThriftTest:   [not too early] passed ok
+yarp: 0 | ThriftTest:   [string not too early] passed ok
+yarp: 0 | ThriftTest:   [int group] passed ok
+yarp: 0 | ThriftTest:   [string group] passed ok
+yarp: 0 | ThriftTest:   [return on success] passed ok
+yarp: 0 | ThriftTest:   [id ok] passed ok
+yarp: 0 | ThriftTest:   [name ok] passed ok
+yarp: 0 | ThriftTest:   [set id ok] passed ok
+yarp: 0 | ThriftTest:   [multi set ok] passed ok
+yarp: 0 | ThriftTest:   [multi set ok] passed ok
+yarp: 0 | ThriftTest:   [triple set ok] passed ok
+yarp: Removing input from /sender to /receiver
+yarp: Removing output from /sender to /receiver
+yarp: 0 | ThriftTest: test start/stop
+yarp: Port /client active at tcp://127.0.0.1:10002
+yarp: Port /server active at tcp://127.0.0.1:10012
+yarp: Receiving input from /client to /server using tcp
+yarp: Sending output from /client to /server using tcp
+yarp: Removing input from /client to /server
+yarp: Removing output from /client to /server
+
+*** add_one()
+Got [add] [one] 14
+adding 1 to 14
+Result is 15
+adding 1 to 15
+Result is 16
+
+*** test_void()
+Got [test] [void] 14
+Got [test] [1way] 14
+test void with 14
+Result is  (should be blank)
+
+*** test_live()
+adding 1 to 99
+Result 100
+test void with 200
+test void with 201
+adding 1 to 100
+Result 101
+test oneway with 200
+test oneway with 201
+adding 1 to 101
+Result 102
+
+*** test_live_rpc()
+adding 1 to 5
+Cmd [add] [one] 5 reply 6
+test void with 5
+Cmd [test] [void] 5 reply 
+adding 1 to 6
+Cmd [add] [one] 6 reply 7
+test oneway with 5
+Cmd [test] [1way] 5 reply [done]
+adding 1 to 7
+Cmd [add] [one] 7 reply 8
+
+*** test_enums()
+test_enum_vector
+lst1 2 lst2 3
+
+*** test_defaults()
+test defaults with 42
+test defaults with 14
+42 1 14 0
+
+*** test_partial()
+adding 4 and 3
+add pair 4 3 -> 7
+(incomplete) add pair 4 -> [fail]
+(incomplete) add pair -> [fail]
+(incomplete) add -> [fail]
+(incomplete)  -> [fail]
+adding 10 and 20
+add pair 10 20 -> 30
+test_partial with 10 and 5
+test partial 10 (40 50 60) 5 -> 15
+test partial 10 (40 50) -> [fail]
+
+*** test_defaults_with_rpc()
+test_tail_defaults -> 42
+test_tail_defaults 55 -> 999
+test longer tail defaults -> [fail]
+test longer tail defaults 888 -> 999
+test longer tail defaults 888 ENUM2 47 -> 47
+
+*** test_names_with_spaces()
+adding 1 to 42
+add_one 42 -> 43
+adding 1 to 52
+add one 52 -> 53
+get_answer -> 42
+get answer -> 42
+
+*** test_surface_mesh()
+mesh copy: testing () () () ((1.0 2.0 3.0)) (0 0 ()) -> testing () () () ((1.0 2.0 3.0)) (0 0 ())
+
+*** test_wrapping()
+Result 100
+Result 42
+Result 9
+Bottle is this is a test (bottle)
+Bottle is this is a test (bottle)
+
+*** test_missing_method()
+Answer 42
+AddOne gives 0
+
+*** test_unwrap()
+Wrapped: ((5 10) (9 900))
+Wrapped: (5 10) (9 900)
+
+*** test_tostring()
+String: ((5 10) (9 900))
+String: 10 20
+
+*** test_editor()
+>>> set_x -> patch (set x 15)
+>>> set_y -> patch (set y 30)
+>>> set_x set_y -> patch (set x 1) (set y 2)
+will_set_y called, y is 99
+did_set_y called, y is 30
+will_set_y called, y is 0
+did_set_y called, y is 30
+
+*** test_list_editor()
+>>> set_int_list -> patch (set int_list (0 0 0 0 15))
+
+*** test_help()
+Service general help is [many] ("*** Available commands:" get_answer set_answer add_one start stop is_running test_void test_1way test_enums test_enum_vector test_defaults add_pair test_partial test_tail_defaults test_longer_tail_defaults do_start_a_service do_check_for_service do_stop_a_service help)
+Service specific help is [many] ("int32_t get_answer() " "This function gets the answer ")
+Structure general help is [many] ("*** Available fields:" x y)
+Structure specific help is [many] ("int32_t x" "this is the x part")
+
+*** test_primitives()
+Copies all done
+Starting a long operation
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Operating...
+Stopping a long operation
+<end of output>
+Test time =   1.14 sec
+----------------------------------------------------------
+Test Passed.
+"demo_basic2" end time: Jan 26 12:42 CET
+"demo_basic2" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Jan 26 12:42 CET

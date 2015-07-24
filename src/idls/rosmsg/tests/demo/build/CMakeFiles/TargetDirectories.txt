@@ -1,0 +1,8 @@
+/opt/iit/src/yarp/src/idls/rosmsg/tests/demo/build/CMakeFiles/Demo_msg.dir
+/opt/iit/src/yarp/src/idls/rosmsg/tests/demo/build/CMakeFiles/HeaderTest2_srv.dir
+/opt/iit/src/yarp/src/idls/rosmsg/tests/demo/build/CMakeFiles/HeaderTest_msg.dir
+/opt/iit/src/yarp/src/idls/rosmsg/tests/demo/build/CMakeFiles/Rpc_srv.dir
+/opt/iit/src/yarp/src/idls/rosmsg/tests/demo/build/CMakeFiles/SharedData_msg.dir
+/opt/iit/src/yarp/src/idls/rosmsg/tests/demo/build/CMakeFiles/Tennis_srv.dir
+/opt/iit/src/yarp/src/idls/rosmsg/tests/demo/build/CMakeFiles/demo_test.dir
+/opt/iit/src/yarp/src/idls/rosmsg/tests/demo/build/CMakeFiles/demo_test2.dir
