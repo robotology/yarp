@@ -7,7 +7,7 @@
  *
  */
 
-#include <yarp/yarpserversql/yarpserversql.h>
+#include <yarp/serversql/yarpserversql.h>
 
 int main(int argc, char *argv[]) {
     int ret=yarpserver3_main(argc, argv);

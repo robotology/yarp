@@ -3,11 +3,16 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_TREE_INCLUDE_DIRS})
-include_directories(${ACE_INCLUDE_DIRS})
-get_filename_component(YARP_CPP yarp.cpp ABSOLUTE) # make absolute for later reference
-add_executable(yarp ${YARP_CPP})
+get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_serversql_INCLUDE_DIRS TARGET YARP_serversql PROPERTY INCLUDE_DIRS)
+
+include_directories(${YARP_OS_INCLUDE_DIRS}
+                    ${YARP_serversql_INCLUDE_DIRS}
+                    ${ACE_INCLUDE_DIRS})
+
+set(yarp_SRCS yarp.cpp)
+
+add_executable(yarp ${yarp_SRCS})
 target_link_libraries(yarp YARP_OS YARP_init)
 
 set(YARPSERVER_NAME yarpserver2)
@@ -21,7 +26,7 @@ add_executable(${YARPSERVER_NAME} yarpserver.cpp)
 target_link_libraries(${YARPSERVER_NAME} YARP_OS YARP_init)
 
 if(YARP_USE_PERSISTENT_NAMESERVER)
-  set_property(SOURCE ${YARP_CPP} APPEND PROPERTY COMPILE_DEFINITIONS YARP_USE_PERSISTENT_NAMESERVER=1)
+  set_property(SOURCE ${yarp_SRCS} APPEND PROPERTY COMPILE_DEFINITIONS YARP_USE_PERSISTENT_NAMESERVER=1)
   target_link_libraries(yarp YARP_serversql)
 endif()
 
