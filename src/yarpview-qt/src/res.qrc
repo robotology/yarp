@@ -1,7 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-    <file alias="logo.svg">../../yarpgui-icons/512x512/actions-preview_B.svg</file>
-    <file alias="logo.png">../../yarpgui-icons/512x512/actions-preview_B.png</file>
+    <file alias="logo.svg">../../../data/icons/512x512/actions-preview_B.svg</file>
+    <file alias="logo.png">../../../data/icons/512x512/actions-preview_B.png</file>
     <file>qml/QtYARPView/main.qml</file>
     <file>qml/QtYARPView/mainCompact.qml</file>
 </qresource>

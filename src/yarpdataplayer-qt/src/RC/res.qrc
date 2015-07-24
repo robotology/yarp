@@ -1,13 +1,13 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource>
-        <file alias="forward.svg">../../../yarpgui-icons/512x512/actions-media-seek-forward.svg</file>
-        <file alias="pause.svg">../../../yarpgui-icons/512x512/actions-media-pause.svg</file>
-        <file alias="play.svg">../../../yarpgui-icons/512x512/actions-media-play.svg</file>
-        <file alias="backward.svg">../../../yarpgui-icons/512x512/actions-media-seek-backward.svg</file>
-        <file alias="stop.svg">../../../yarpgui-icons/512x512/actions-media-stop.svg</file>
-        <file alias="folder-new.svg">../../../yarpgui-icons/512x512/folder-new.svg</file>
-        <file alias="close.svg">../../../yarpgui-icons/512x512/actions-close.svg</file>
+        <file alias="forward.svg">../../../../data/icons/512x512/actions-media-seek-forward.svg</file>
+        <file alias="pause.svg">../../../../data/icons/512x512/actions-media-pause.svg</file>
+        <file alias="play.svg">../../../../data/icons/512x512/actions-media-play.svg</file>
+        <file alias="backward.svg">../../../../data/icons/512x512/actions-media-seek-backward.svg</file>
+        <file alias="stop.svg">../../../../data/icons/512x512/actions-media-stop.svg</file>
+        <file alias="folder-new.svg">../../../../data/icons/512x512/folder-new.svg</file>
+        <file alias="close.svg">../../../../data/icons/512x512/actions-close.svg</file>
         <file>images/splash/bg1.png</file>
         <file>images/splash/bg2.png</file>
         <file>images/splash/bg3.png</file>

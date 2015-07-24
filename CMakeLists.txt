@@ -68,6 +68,9 @@ add_subdirectory(bindings)
 # Tests
 add_subdirectory(tests)
 
+# Platform independent data
+add_subdirectory(data)
+
 # add rule for uninstalling YARP
 # see conf/YARPUninstall.cmake
 include(YARPUninstall)

@@ -59,9 +59,6 @@ if (NOT YARP_BUILD_LIBRARIES_ONLY)
     add_subdirectory(yarpbuilder-gtk)
     add_subdirectory(yarpdataplayer-gtk)
     add_subdirectory(yarpmotorgui-gtk)
-
-    # data
-    add_subdirectory(yarpmanager)
-    add_subdirectory(yarpdataplayer)
-
 endif()
+
+
