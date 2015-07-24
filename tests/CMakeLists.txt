@@ -2,7 +2,7 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(YARP_COMPILE_TESTS AND NOT YARP_BUILD_LIBRARIES_ONLY)
+if(YARP_COMPILE_TESTS)
 
     if(YARP_USE_PERSISTENT_NAMESERVER)
         add_definitions(-DYARP_USE_PERSISTENT_NAMESERVER=1)

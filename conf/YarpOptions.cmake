@@ -3,6 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 include(GNUInstallDirs)
+include(CMakeDependentOption)
+
 
 #########################################################################
 # Control where libraries and executables are placed during the build
@@ -111,12 +113,30 @@ if (CREATE_SHARED_LIBRARY)
   set(YARP_DLL ON)
 endif()
 
+
+#########################################################################
+# Add the option to build only libraries and skip the binaries
+
+option(YARP_COMPILE_EXECUTABLES "Enable YARP executables." ON)
+mark_as_advanced(YARP_COMPILE_EXECUTABLES)
+
+
+#########################################################################
+# Disable unmaintained stuff unless explicitly enabled by the user.
+
+option(YARP_COMPILE_UNMAINTAINED "Enable unmaintained components" OFF)
+mark_as_advanced(YARP_COMPILE_UNMAINTAINED)
+
+
 #########################################################################
 # Turn on testing.
-option(YARP_COMPILE_TESTS "Compile YARP tests" TRUE)
+
+option(YARP_COMPILE_TESTS "Enable YARP tests" ON)
+mark_as_advanced(YARP_COMPILE_TESTS)
 if(YARP_COMPILE_TESTS)
     enable_testing()
 endif()
+
 
 #########################################################################
 # Enable these messages for debugging flags
@@ -177,7 +197,6 @@ if(YARP_NO_DEPRECATED)
     add_definitions("-DYARP_NO_DEPRECATED")
 endif()
 
-include(CMakeDependentOption)
 cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
                        "Do not warn when using YARP deprecated declarations" FALSE
                        "NOT YARP_NO_DEPRECATED" FALSE)
@@ -328,7 +347,3 @@ if(TEST_MACHINE_HOSTNAME)
   message(STATUS "TEST_MACHINE_OS_TYPE: ${TEST_MACHINE_OS_TYPE}")
   message(STATUS "TEST_MACHINE_TEST_TYPE: ${TEST_MACHINE_TEST_TYPE}")
 endif()
-
-# Add the option to build only libraries and skip the binaries
-option(YARP_BUILD_LIBRARIES_ONLY "Build only libraries. Skip binaries." FALSE)
-mark_as_advanced(YARP_BUILD_LIBRARIES_ONLY)

@@ -6,31 +6,30 @@ option(YARP_USE_PERSISTENT_NAMESERVER "Do you want a nameserver that stores its 
 include(YarpInstallationHelpers)
 yarp_configure_external_installation(yarp WITH_PLUGINS)
 
-# libraries
+# public libraries
 add_subdirectory(libYARP_OS)
 add_subdirectory(libYARP_sig)
 add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_dev)
 
+# plugins
 set (YARP_LINK_PLUGINS TRUE)
-if (YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
+if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
   set (YARP_LINK_PLUGINS FALSE)
 endif()
-
 add_subdirectory(modules)
 add_subdirectory(carriers)
-
-if (NOT YARP_BUILD_LIBRARIES_ONLY)
-    add_subdirectory(idls)
-endif()
-
-add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_init)
+
+# private libraries
+add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_manager)
 add_subdirectory(libYARP_logger)
 
+if(YARP_COMPILE_EXECUTABLES)
+    # idl compilers (thrift and ros)
+    add_subdirectory(idls)
 
-if (NOT YARP_BUILD_LIBRARIES_ONLY)
     # executables
     add_subdirectory(yarpserver)
     add_subdirectory(yarp)
@@ -60,7 +59,11 @@ if (NOT YARP_BUILD_LIBRARIES_ONLY)
 endif()
 
 
-# deprecated stuff?
-add_subdirectory(libyarpc)
-add_subdirectory(libyarpcxx)
-add_subdirectory(yarpfs)
+# unmaintained stuff
+if(YARP_COMPILE_UNMAINTAINED)
+    add_subdirectory(libyarpc)
+    add_subdirectory(libyarpcxx)
+    if(YARP_COMPILE_EXECUTABLES)
+        add_subdirectory(yarpfs)
+    endif()
+endif()
