@@ -328,3 +328,7 @@ if(TEST_MACHINE_HOSTNAME)
   message(STATUS "TEST_MACHINE_OS_TYPE: ${TEST_MACHINE_OS_TYPE}")
   message(STATUS "TEST_MACHINE_TEST_TYPE: ${TEST_MACHINE_TEST_TYPE}")
 endif()
+
+# Add the option to build only libraries and skip the binaries
+option(YARP_BUILD_LIBRARIES_ONLY "Build only libraries. Skip binaries." FALSE)
+mark_as_advanced(YARP_BUILD_LIBRARIES_ONLY)
