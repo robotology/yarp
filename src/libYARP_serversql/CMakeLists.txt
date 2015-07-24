@@ -12,7 +12,7 @@
   include_directories(${YARP_OS_INCLUDE_DIRS}
                       ${YARP_name_INCLUDE_DIRS}
                       "${CMAKE_CURRENT_SOURCE_DIR}/include")
-
+  include_directories(SYSTEM ${SQLite_INCLUDE_DIRS})
 
   set(YARP_serversql_SRCS src/TripleSourceCreator.cpp
                           src/NameServiceOnTriples.cpp
