@@ -15,28 +15,37 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/impl/NameClient.h>
 
 #ifdef DEBUG_HMAC
-  void show_hmac_debug(unsigned char* hex, unsigned int length, std::string context) {
-        char *buf;
-        int off = context.length();
-        buf = new char[length*3+off+2];
-        strcpy(buf, context.c_str());
-        for (unsigned int i=0; i < length; i++)
-            sprintf(&(buf[off+i*3]), "%X ", hex[i]);
-        printf("%s\n", buf);
-        delete [] buf;
-    }
+void show_hmac_debug(unsigned char* hex, unsigned int length, std::string context)
+{
+    char *buf;
+    int off = context.length();
+    buf = new char[length*3+off+2];
+    strcpy(buf, context.c_str());
+    for (unsigned int i=0; i < length; i++)
+        sprintf(&(buf[off+i*3]), "%X ", hex[i]);
+    yDebug("%s\n", buf);
+    delete [] buf;
+}
 #endif
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-AuthHMAC::AuthHMAC() {
-#ifdef PORT_AUTH
+AuthHMAC::AuthHMAC() :
+        authentication_enabled(false)
+{
+    static int auth_warning_shown = false;
+    if(auth_warning_shown) {
+        // If the warning was already shown, we have nothing to do.
+        // return as soon as possible
+        return;
+    }
+
     ConstString key;
-    bool found = false;
     ResourceFinder& rf = NameClient::getNameClient().getResourceFinder();
     ConstString fname;
     Network::lock();
@@ -44,49 +53,47 @@ AuthHMAC::AuthHMAC() {
     opt.messageFilter = ResourceFinderOptions::ShowNone;
     fname = rf.findFile("auth.conf",opt);
     Network::unlock();
-    found = fname!="";
-    if (!found) {
-        static int auth_warning_shown = false;
-        if (!auth_warning_shown) {
-            fprintf(stderr,"Cannot find auth.conf using ResourceFinder, fallback to .yarp/conf/user.conf\n");
-            fprintf(stderr,"Please move authentication to an auth.conf findable by 'yarp resource'\n");
-            auth_warning_shown = true;
-        }
-        fname = NetworkBase::getEnvironment("HOME", &found) +
-            "/.yarp/conf/user.conf";
+
+
+    if (fname.empty()) {
+        yInfo("Cannot find auth.conf file. Authentication disabled.\n");
+        auth_warning_shown = true;
+        return;
     }
 
-    if (found) {
-        found = false;
-        Property config;
-        config.fromConfigFile(fname.c_str());
-        Bottle group = config.findGroup("AUTH");
-        if (! group.isNull()) {
-            key = group.find("key").asString();
-            if (key.length() > 0) {
-                found = true;
-            }
-        }
+    Property config;
+    config.fromConfigFile(fname.c_str());
+    Bottle group = config.findGroup("AUTH");
+
+    if (group.isNull()) {
+        yWarning("No \"AUTH\" group found in auth.conf file. Authentication disabled.\n");
+        auth_warning_shown = true;
+        return;
     }
-    if (! found) {
-        static int auth_key_warning_shown = false;
-        if (!auth_key_warning_shown) {
-            fprintf(stderr,"No key for authentication found. Using default.\n");
-            auth_key_warning_shown = true;
-        }
-        key = "DEFAULT_KEY";
+
+    key = group.find("key").asString();
+    if (!(key.length() > 0)) {
+        yWarning("No \"key\" found in \"AUTH\" group in auth.conf file. Authentication disabled.\n");
+        auth_warning_shown = true;
+        return;
     }
+
     int key_len = key.length();
     unsigned char * tmp = new unsigned char[key_len];
     strcpy((char*) tmp, key.c_str());
     HMAC_INIT(&context, tmp, key_len);
     srand((unsigned)time(NULL));
-#endif   //PORT_AUTH
+    authentication_enabled = true;
 }
 
 
-bool AuthHMAC::authSource(InputStream *streamIn, OutputStream *streamOut) {
-#ifdef PORT_AUTH
+bool AuthHMAC::authSource(InputStream *streamIn, OutputStream *streamOut)
+{
+
+    if (!authentication_enabled) {
+        return true;
+    }
+
     /* ---------------
       * 3-way auth
       * Port A
@@ -107,20 +114,24 @@ bool AuthHMAC::authSource(InputStream *streamIn, OutputStream *streamOut) {
     HMAC_REINIT(&context);
     HMAC_UPDATE(&context, nonce1, NONCE_LEN);
     HMAC_FINAL(&context, mac, DIGEST_SIZE);
-    if (! send_hmac(streamOut, nonce1, mac))
+    if (! send_hmac(streamOut, nonce1, mac)) {
         return false;
+    }
 
     /* ---------------
       * Receive and check second msg: B->A
       */
-    if (! receive_hmac(streamIn, nonce2, mac))
+    if (! receive_hmac(streamIn, nonce2, mac)) {
         return false;
+    }
+
     HMAC_REINIT(&context);
     HMAC_UPDATE(&context, nonce1, NONCE_LEN);
     HMAC_UPDATE(&context, nonce2, NONCE_LEN);
     HMAC_FINAL(&context, mac_check, DIGEST_SIZE);
-    if (! check_hmac(mac, mac_check))
+    if (! check_hmac(mac, mac_check)) {
         return false;
+    }
     /* Authentication of B successful */
 
 
@@ -133,15 +144,20 @@ bool AuthHMAC::authSource(InputStream *streamIn, OutputStream *streamOut) {
     HMAC_UPDATE(&context, nonce2, NONCE_LEN);
     HMAC_UPDATE(&context, nonce3, NONCE_LEN);
     HMAC_FINAL(&context, mac, DIGEST_SIZE);
-    if (! send_hmac(streamOut, nonce3, mac))
+    if (! send_hmac(streamOut, nonce3, mac)) {
         return false;
+    }
 
-#endif   //PORT_AUTH
     return true;
 
 }
-bool AuthHMAC::authDest(InputStream *streamIn, OutputStream *streamOut) {
-#ifdef PORT_AUTH
+bool AuthHMAC::authDest(InputStream *streamIn, OutputStream *streamOut)
+{
+
+    if (!authentication_enabled) {
+        return true;
+    }
+
     /* ---------------
      * 3-way auth
      * Port B
@@ -158,13 +174,15 @@ bool AuthHMAC::authDest(InputStream *streamIn, OutputStream *streamOut) {
     /* ---------------
      * Receive and check first msg: A->B
      */
-    if (! receive_hmac(streamIn, nonce1, mac))
+    if (! receive_hmac(streamIn, nonce1, mac)) {
         return false;
+    }
     HMAC_REINIT(&context);
     HMAC_UPDATE(&context, nonce1, NONCE_LEN);
     HMAC_FINAL(&context, mac_check, DIGEST_SIZE);
-    if (! check_hmac(mac, mac_check))
+    if (! check_hmac(mac, mac_check)) {
         return false;
+    }
 
     /* ---------------
      * Send second msg: B->A
@@ -174,30 +192,33 @@ bool AuthHMAC::authDest(InputStream *streamIn, OutputStream *streamOut) {
     HMAC_UPDATE(&context, nonce1, NONCE_LEN);
     HMAC_UPDATE(&context, nonce2, NONCE_LEN);
     HMAC_FINAL(&context, mac, DIGEST_SIZE);
-    if (! send_hmac(streamOut, nonce2, mac))
+    if (! send_hmac(streamOut, nonce2, mac)) {
         return false;
+    }
 
 
     /* ---------------
      * Receive and check third msg: A->B
      */
-    if (! receive_hmac(streamIn, nonce3, mac))
+    if (! receive_hmac(streamIn, nonce3, mac)) {
         return false;
+    }
     HMAC_REINIT(&context);
     HMAC_UPDATE(&context, nonce1, NONCE_LEN);
     HMAC_UPDATE(&context, nonce2, NONCE_LEN);
     HMAC_UPDATE(&context, nonce3, NONCE_LEN);
     HMAC_FINAL(&context, mac_check, DIGEST_SIZE);
-    if (! check_hmac(mac, mac_check))
+    if (! check_hmac(mac, mac_check)) {
         return false;
+    }
     /* Authentication of A successful */
 
-#endif   //PORT_AUTH
     return true;
 }
 
 
-bool AuthHMAC::send_hmac(OutputStream * stream, unsigned char* nonce, unsigned char* mac) {
+bool AuthHMAC::send_hmac(OutputStream * stream, unsigned char* nonce, unsigned char* mac)
+{
     Bytes nonce_bytes((char*) nonce, NONCE_LEN);
     Bytes mac_bytes((char*) mac, DIGEST_SIZE);
     stream->write(nonce_bytes);
@@ -211,7 +232,8 @@ bool AuthHMAC::send_hmac(OutputStream * stream, unsigned char* nonce, unsigned c
     return stream->isOk();
 }
 
-bool AuthHMAC::receive_hmac(InputStream * stream, unsigned char * nonce, unsigned char * mac) {
+bool AuthHMAC::receive_hmac(InputStream * stream, unsigned char * nonce, unsigned char * mac)
+{
     Bytes nonce_bytes((char*) nonce, NONCE_LEN);
     Bytes mac_bytes((char*) mac, DIGEST_SIZE);
     stream->read(nonce_bytes);
@@ -225,15 +247,15 @@ bool AuthHMAC::receive_hmac(InputStream * stream, unsigned char * nonce, unsigne
     return stream->isOk();
 }
 
-bool AuthHMAC::check_hmac(unsigned char * mac, unsigned char * mac_check) {
-
+bool AuthHMAC::check_hmac(unsigned char * mac, unsigned char * mac_check)
+{
     int cmp = memcmp(mac, mac_check, DIGEST_SIZE);
 
 #ifdef DEBUG_HMAC
     std::string check = "digest check ";
-    if (cmp == 0)
+    if (cmp == 0) {
         check += "successful";
-    else {
+    } else {
         check += "FAILED";
     }
     show_hmac_debug(mac_check, DIGEST_SIZE, check.c_str());
@@ -247,4 +269,3 @@ void AuthHMAC::fill_nonce(unsigned char* nonce) {
     for (unsigned int i=0; i < NONCE_LEN; i++)
         nonce[i] = int(rand())%256;
 }
-
