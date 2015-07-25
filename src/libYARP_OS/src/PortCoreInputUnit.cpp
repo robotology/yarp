@@ -163,6 +163,11 @@ void PortCoreInputUnit::run() {
 
     void *id = (void *)this;
 
+    if (ip!=NULL && !ip->getConnection().canEscape()) {
+        InputStream *is = &ip->getInputStream();
+        is->setReadEnvelopeCallback(envelopeReadCallback, this);
+    }
+
     while (!done) {
         ConnectionReader& br = ip->beginRead();
 
@@ -486,3 +491,13 @@ bool PortCoreInputUnit::isBusy() {
     return busy;
 }
 
+
+void PortCoreInputUnit::envelopeReadCallback(void* data, const Bytes& envelope)
+{
+    PortCoreInputUnit *p = reinterpret_cast<PortCoreInputUnit*>(data);
+    if (!p) {
+        return;
+    }
+    p->getOwner().setEnvelope(envelope.get());
+    p->ip->setEnvelope(envelope.get());
+}

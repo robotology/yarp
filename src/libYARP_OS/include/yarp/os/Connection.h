@@ -59,6 +59,19 @@ public:
     virtual bool isBareMode() { return false; }
 
     /**
+     * Carriers that do not distinguish data from administrative headers
+     * (i.e. canEscape returns false), can overload this method to
+     * handle the envelope inside the stream.
+     * On the receiving side, the InputStream will have to overload the
+     * yarp::os::InputStream::setReadEnvelopeCallback method, and
+     * execute the callback as soon as the envelope is ready.
+     *
+     * @param envelope the envelope to transmit bundled with data.
+     */
+    virtual void handleEnvelope(const yarp::os::ConstString& envelope) = 0;
+
+
+    /**
      * Check if carrier can encode administrative messages, as opposed
      * to just user data.  The word escape is used in the sense of
      * escape character or escape sequence here.
@@ -258,6 +271,7 @@ public:
     virtual bool isValid() { return false; }
     virtual bool isTextMode() { return true; }
     virtual bool canEscape() { return true; }
+    virtual void handleEnvelope(const yarp::os::ConstString& envelope) { }
     virtual bool requireAck() { return false; }
     virtual bool supportReply() { return false; }
     virtual bool isLocal() { return false; }

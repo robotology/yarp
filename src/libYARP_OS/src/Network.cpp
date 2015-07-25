@@ -1017,6 +1017,10 @@ public:
         return getContent().canEscape();
     }
 
+    virtual void handleEnvelope(const yarp::os::ConstString& envelope) {
+        getContent().handleEnvelope(envelope);
+    }
+
     virtual bool requireAck() {
         return getContent().requireAck();
     }

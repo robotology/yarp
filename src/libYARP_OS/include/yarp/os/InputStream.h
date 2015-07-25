@@ -158,6 +158,27 @@ public:
      *
      */
     YARP_SSIZE_T readDiscard(size_t len);
+
+    /**
+     *
+     * Callback type for setting the envelope from a message in carriers that
+     * cannot be escaped.
+     *
+     */
+    typedef void (*readEnvelopeCallbackType)(void*, const yarp::os::Bytes& envelope);
+
+    /**
+     *
+     * Install a callback that the InputStream will have to call when the
+     * envelope is read from a message in carriers that cannot be escaped.
+     *
+     * @param callback the callback to execute
+     * @param data a pointer that should be passed as first parameter to the
+     *        \c callback function
+     * @return true iff the \c callback was installed.
+     *
+     */
+    virtual bool setReadEnvelopeCallback(readEnvelopeCallbackType callback, void* data) { return false; }
 };
 
 #endif

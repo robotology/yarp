@@ -45,6 +45,7 @@ class yarp::os::MjpegCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
+    yarp::os::ConstString envelope;
 public:
     MjpegCarrier() {
         firstRound = true;
@@ -77,6 +78,10 @@ public:
 
     virtual bool canEscape() {
         return false;
+    }
+
+    virtual void handleEnvelope(const yarp::os::ConstString& envelope) {
+        this->envelope = envelope;
     }
 
     virtual bool requireAck() {

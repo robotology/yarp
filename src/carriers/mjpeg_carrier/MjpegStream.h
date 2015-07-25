@@ -48,15 +48,20 @@ private:
     bool sender;
     bool firstRound;
     bool autocompress;
+    yarp::os::Bytes envelope;
+    readEnvelopeCallbackType readEnvelopeCallback;
+    void* readEnvelopeCallbackData;
 public:
-    MjpegStream(TwoWayStream *delegate, bool sender,
-                bool autocompress) : sender(sender),
-                                     autocompress(autocompress) {
-        this->delegate = delegate;
-        firstRound = true;
-        phase = 0;
-        cursor = NULL;
-        remaining = 0;
+    MjpegStream(TwoWayStream *delegate, bool sender, bool autocompress) :
+            delegate(delegate),
+            phase(0),
+            cursor(NULL),
+            remaining(0),
+            sender(sender),
+            firstRound(true),
+            autocompress(autocompress),
+            readEnvelopeCallback(NULL),
+            readEnvelopeCallbackData(NULL) {
     }
 
     virtual ~MjpegStream() {
@@ -106,6 +111,12 @@ public:
         delegate->getInputStream().interrupt();
     }
 
+    virtual bool setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType callback, void* data) {
+        if (!autocompress) {
+            return false;
+        }
+        return decompression.setReadEnvelopeCallback(callback, data);
+    }
 };
 
 #endif
