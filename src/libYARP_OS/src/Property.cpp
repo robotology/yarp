@@ -792,7 +792,7 @@ public:
         return output.c_str();
     }
 
-    void fromCommand(const char *command, bool wipe=true) {
+    void fromArguments(const char *command, bool wipe=true) {
         char** szarg = new char*[128 + 1];  // maximum 128 arguments
         char* szcmd = new char[strlen(command)+1];
         strcpy(szcmd, command);
@@ -1004,9 +1004,9 @@ void Property::fromCommand(int argc, const char *argv[], bool skipFirst, bool wi
     fromCommand(argc,(char **)argv,skipFirst,wipe);
 }
 
-void Property::fromCommand(const char *command, bool wipe) {
+void Property::fromArguments(const char *arguments, bool wipe) {
     summon();
-    HELPER(implementation).fromCommand(command, wipe);
+    HELPER(implementation).fromArguments(arguments, wipe);
 }
 
 bool Property::fromConfigDir(const ConstString& dirname, const ConstString& section, bool wipe) {

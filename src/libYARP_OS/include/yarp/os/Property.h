@@ -188,16 +188,16 @@ public:
     /**
      * Interprets a list of command arguments as a list of properties.
      * Keys are named by beginning with "--".  For example, with
-     * command = "program_name --width 10 --height 15", the Property object
+     * arguments = "--width 10 --height 15", the Property object
      * will be the mapping {width => 10, height => 15}.  So:
      * \code
      *   prop.find("width").asInt() // gives 10
      *   prop.find("height").asInt() // gives 15
      * \endcode
-     * @param command the argument
+     * @param arguments the command arguments
      * @param wipe should Property be emptied first
      */
-    void fromCommand(const char *command, bool wipe=true);
+    void fromArguments(const char *arguments, bool wipe=true);
 
     /**
      * Interprets a file as a list of properties.
