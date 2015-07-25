@@ -46,9 +46,11 @@ int main(int argc, char *argv[])
 {
 
 #if defined(WIN32)
-    // We create a console. This is inherited by console processes created by the localhost broker
-    // This console is not actually needed so we hide it. In principle we could redirect the output
-    // of all processes to this console, in practice this would be end up soon in a big mess.
+    // We create a console. This is inherited by console processes created by the localhost broker. 
+    // It is useful because new processes can receive ctrl+brk signals and shutdown cleanly.
+    // This console is not actually needed for printing so we hide it.  In principle we could 
+    // redirect the output of all processes to this console, in practice this would be end up 
+    // soon in a big mess.
    AllocConsole();
    HWND hwnd = GetConsoleWindow();
    HWND hide = FindWindowA("ConsoleWindowClass",NULL);

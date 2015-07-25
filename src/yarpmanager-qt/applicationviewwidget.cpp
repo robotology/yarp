@@ -948,24 +948,11 @@ void ApplicationViewWidget::onYARPView()
 /*! \brief Launch YARPHear Inspection modality*/
 void ApplicationViewWidget::onYARPHear()
 {
-
-
     if(manager.busy()){
         return;
     }
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
-
-    #if defined(WIN32)
-        {
-            QString  msg;
-            msg = QString("Error inspecting hear temporarely not supported in windows");
-            logger->addError(msg.toLatin1().data());
-            reportErrors();
-        }
-     return;
-    #endif
-
-
+    
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
         if(it->isSelected()){
@@ -1034,16 +1021,6 @@ void ApplicationViewWidget::onYARPRead()
         return;
     }
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
-
-    #if defined(WIN32)
-        {
-            QString  msg;
-            msg = QString("Error inspecting hear temporarely not supported in windows");
-            logger->addError(msg.toLatin1().data());
-            reportErrors();
-        }
-     return;
-    #endif
 
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
