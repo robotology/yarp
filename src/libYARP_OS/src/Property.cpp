@@ -1005,6 +1005,7 @@ void Property::fromCommand(int argc, const char *argv[], bool skipFirst, bool wi
 }
 
 void Property::fromCommand(const char *command, bool wipe) {
+    summon();
     HELPER(implementation).fromCommand(command, wipe);
 }
 
