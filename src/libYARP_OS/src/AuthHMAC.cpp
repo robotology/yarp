@@ -83,7 +83,11 @@ AuthHMAC::AuthHMAC() :
     strcpy((char*) tmp, key.c_str());
     HMAC_INIT(&context, tmp, key_len);
     srand((unsigned)time(NULL));
-    authentication_enabled = true;
+
+    if(!authentication_enabled) {
+        yInfo("Authentication enabled.\n");
+        authentication_enabled = true;
+    }
 }
 
 
