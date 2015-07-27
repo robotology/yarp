@@ -7,6 +7,8 @@
  *
  */
 
+#include <cstdio>
+
 #include <yarp/os/Os.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
@@ -44,12 +46,12 @@ void yarp::os::exit(int v)
 void yarp::os::abort(bool verbose)
 {
 #if defined(WIN32)
-	if (verbose==false)
-	{
-		//to suppress windows dialog message
-		_set_abort_behavior(0, _WRITE_ABORT_MSG);
-		_set_abort_behavior(0, _CALL_REPORTFAULT);
-	}
+    if (verbose==false)
+    {
+        //to suppress windows dialog message
+        _set_abort_behavior(0, _WRITE_ABORT_MSG);
+        _set_abort_behavior(0, _CALL_REPORTFAULT);
+    }
 #endif
     ACE_OS::abort();   // exit is not recommended in processes with multi thread, see http://www.cplusplus.com/reference/cstdlib/exit/ and http://www.cplusplus.com/reference/cstdlib/abort/
 }
@@ -73,13 +75,21 @@ int yarp::os::mkdir_p(const char *p, int ignoreLevels) {
     return ok?0:1;
 }
 
-
 int yarp::os::rmdir(const char *p)
 {
 #ifdef YARP_HAS_ACE
     return ACE_OS::rmdir(p);
 #else
     return ::rmdir(p);
+#endif
+}
+
+int yarp::os::rename(const char *oldname, const char *newname)
+{
+#ifdef YARP_HAS_ACE
+    return ACE_OS::rename(oldname,newname);
+#else
+    return std::rename(oldname,newname);
 #endif
 }
 

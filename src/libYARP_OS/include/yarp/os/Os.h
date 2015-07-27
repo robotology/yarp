@@ -87,11 +87,19 @@ namespace yarp {
         */
         YARP_OS_API int mkdir_p(const char *p, int ignoreLevels = 0);
 
-       /**
+        /**
         * Wrapper for ACE_OS::rmdir(). Remove an empty directory.
         * @param p name of the directory.
         */
         YARP_OS_API int rmdir(const char *p);
+
+        /**
+        * Wrapper for ACE_OS::rename(). Changes the name of the file or 
+        * directory specified by oldname to newname. 
+        * @param oldname old name of the file/directory. 
+        * @param newname new name of the file/directory. 
+        */
+        YARP_OS_API int rename(const char *oldname, const char *newname);
 
         /**
         * Wrapper for ACE_OS::stat() function.
