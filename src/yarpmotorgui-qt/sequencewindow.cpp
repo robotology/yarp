@@ -429,7 +429,7 @@ QList <SequenceItem> SequenceWindow::getValuesFromList()
         sequenceitem.setTiming(timing);
 
         for(int j=2;j<item->columnCount();j++){
-            sequenceitem.addValue(item->text(j).toDouble(),item1->text(j).toDouble());
+            sequenceitem.addValue(item->text(j).toDouble(),item1->text(j-1).toDouble());
         }
         valuesList.append(sequenceitem);
     }
