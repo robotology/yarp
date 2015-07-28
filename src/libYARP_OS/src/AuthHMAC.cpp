@@ -56,7 +56,7 @@ AuthHMAC::AuthHMAC() :
 
 
     if (fname.empty()) {
-        yInfo("Cannot find auth.conf file. Authentication disabled.\n");
+        //yInfo("Cannot find auth.conf file. Authentication disabled.\n");
         auth_warning_shown = true;
         return;
     }
