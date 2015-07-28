@@ -48,12 +48,7 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
 
-// #include "list.h"
-// #include "yuv.h"
-
-
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
-
 
 // minimum number of buffers to request in VIDIOC_REQBUFS call
 #define DEFAULT_WIDTH           640

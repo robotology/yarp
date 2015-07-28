@@ -6,7 +6,6 @@
 #include <list.hpp>
 #include <yarp/os/Time.h>
 
-#include <yuv.h>
 #include <Leopard_MT9M021C.h>
 
 #define errno_exit printf
@@ -802,11 +801,7 @@ void* V4L_camera::frameRead()
  */
 void V4L_camera::imageProcess(void* p)
 {
-//     static double _start;
-//     static double _end;
-
     static bool initted = false;
-
 
     timeStart = yarp::os::Time::now();
 
