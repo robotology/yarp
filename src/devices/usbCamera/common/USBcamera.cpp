@@ -218,7 +218,9 @@ USBCameraDriverRgb::~USBCameraDriverRgb()
 
 bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
-    image.resize(_width, _height);
+    if( (image.width() != _width) || (image.height() != _height) )
+        image.resize(_width, _height);
+
     deviceRgb->getRgbBuffer(image.getRawImage());
     return true;
 }
@@ -247,11 +249,10 @@ USBCameraDriverRaw::~USBCameraDriverRaw()
 
 bool USBCameraDriverRaw::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
-//     yTrace() << "_width is " << _width << " height is " << _height;
-    image.resize(_width, _height);
-    unsigned char *buffer;
-    deviceRaw->getRawBuffer(buffer);
-    memcpy(image.getRawImage(), buffer, deviceRaw->getRawBufferSize());
+    if( (image.width() != _width) || (image.height() != _height) )
+        image.resize(_width, _height);
+
+    deviceRaw->getRawBuffer(image.getRawImage());
     return true;
 }
 
