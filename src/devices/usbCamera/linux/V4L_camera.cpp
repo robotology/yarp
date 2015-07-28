@@ -431,8 +431,8 @@ bool V4L_camera::close()
 bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 {
     mutex.wait();
-//     imageProcess(param.raw_image);
-    memcpy(buffer, param.dst_image, param.width * param.height * 3);
+    imageProcess(param.raw_image);
+    memcpy(buffer, param.dst_image, param.dst_image_size);
     mutex.post();
     return true;
 }
@@ -440,8 +440,10 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 // IFrameGrabber Interface
 bool V4L_camera::getRawBuffer(unsigned char *buffer)
 {
-//     buffer = (unsigned char *) param.raw_image;
+    mutex.wait();
+    imageProcess(param.raw_image);
     memcpy(buffer, param.dst_image, param.dst_image_size);
+    mutex.post();
     return true;
 }
 
@@ -665,7 +667,7 @@ void* V4L_camera::frameRead()
             }
 
 //             memcpy(param.raw_image, param.buffers[0].start, param.image_size);
-            imageProcess(param.buffers[0].start);
+//             imageProcess(param.buffers[0].start);
             break;
 
 
@@ -698,7 +700,7 @@ void* V4L_camera::frameRead()
                 yError() << " param.image_size is " <<  param.image_size << "at line " << __LINE__;
                 memcpy(param.raw_image, param.buffers[buf.index].start, param.image_size);
 //                 param.raw_image = param.buffers[buf.index].start;
-                imageProcess(param.raw_image);
+//                 imageProcess(param.raw_image);
                 mutex.post();
 
                 if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
