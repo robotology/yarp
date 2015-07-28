@@ -71,12 +71,30 @@ bool V4L_camera::open(yarp::os::Searchable& config)
         return false;
     }
 
+
+    // if previous instance crashed, maybe will help (?)
+    captureStop();
+    deviceUninit();
+    v4l2_close(param.fd);
+
+    yarp::os::Time::delay(0.5);
+    // re-open device
+    param.fd = v4l2_open(param.deviceName.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
+
+    // check if opening was successfull
+    if (-1 == param.fd) {
+        fprintf(stderr, "Cannot open '%s': %d, %s\n", param.deviceName.c_str(), errno, strerror(errno));
+        return false;
+    }
+
+
     // Initting video device
     deviceInit();
     yInfo() << "START enumerating controls";
     enumerate_controls();
     yInfo() << "DONE enumerating controls\n\n";
     captureStart();
+    yarp::os::Time::delay(0.5);
     start();
 
     return true;
@@ -300,7 +318,10 @@ bool V4L_camera::deviceInit()
     param.dst_fmt.fmt.pix.pixelformat = param.pixelType;
 
     if (v4lconvert_try_format(_v4lconvert_data, &(param.dst_fmt), &(param.src_fmt)) != 0)
+    {
         printf("ERROR: v4lconvert_try_format\n\n");
+        return false;
+    }
     else
         printf("DONE: v4lconvert_try_format\n\n");
 
@@ -377,7 +398,8 @@ bool V4L_camera::deviceUninit()
     unsigned int i;
     bool ret = true;
 
-    switch (param.io) {
+    switch (param.io)
+    {
         case IO_METHOD_READ:
         {
             free(param.buffers[0].start);
@@ -390,6 +412,18 @@ bool V4L_camera::deviceUninit()
                 if (-1 == v4l2_munmap(param.buffers[i].start, param.buffers[i].length))
                     ret = false;
             }
+
+            CLEAR(param.req);
+//             memset(param.req, 0, sizeof(struct v4l2_requestbuffers));
+            param.req.count = 0;
+            param.req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            param.req.memory = V4L2_MEMORY_MMAP;
+            if(xioctl(param.fd, VIDIOC_REQBUFS, &param.req) < 0)
+            {
+                printf("VIDIOC_REQBUFS - Failed to delete buffers: %s (errno %d)\n", strerror(errno), errno);
+                return false;
+            }
+
         } break;
 
         case IO_METHOD_USERPTR:
@@ -411,7 +445,7 @@ bool V4L_camera::close()
 {
     yTrace();
 
-    stop();
+    stop();   // stop yarp thread acquiring images
 
     if(param.fd != -1)
     {
@@ -579,15 +613,16 @@ void* V4L_camera::full_FrameRead(void)
     unsigned int count;
     unsigned int numberOfTimeouts;
 
+    fd_set fds;
+    struct timeval tv;
+    int r;
+
     numberOfTimeouts = 0;
     count = 10;  //trials
 
+
     for (int i=0; i<count; i++)
     {
-        fd_set fds;
-        struct timeval tv;
-        int r;
-
         FD_ZERO(&fds);
         FD_SET(param.fd, &fds);
 
@@ -597,38 +632,37 @@ void* V4L_camera::full_FrameRead(void)
 
         r = select(param.fd + 1, &fds, NULL, NULL, &tv);
 
-        if (-1 == r)
+        if (r < 0)
         {
             if (EINTR == errno)
                 continue;
 
-            errno_exit("select");
+            return image_ret;
         }
-
-        if (0 == r)
+        else if (0 == r)
         {
-            if (numberOfTimeouts <= 0)
+            numberOfTimeouts++;
             {
-                count++;
-            }
-            else
-            {
-                printf("select timeout\n");
-                //exit(EXIT_FAILURE);
+                printf("select timeout number %d\n", numberOfTimeouts);
                 got_it = false;
             }
         }
-
-        if( (image_ret=frameRead()) != NULL)
+        else if ((r > 0) && (FD_ISSET(param.fd, &fds)))
         {
-//             printf("got an image\n");
-            got_it = true;
-            break;
+            if( (image_ret=frameRead()) != NULL)
+            {
+        //             printf("got an image\n");
+                got_it = true;
+                break;
+            }
+            else
+            {
+                printf("trial %d failed\n", i);
+            }
         }
         else
-        {
-            printf("trial %d failed\n", count);
-        }
+            printf("select woke up for something else\n");
+
         /* EAGAIN - continue select loop. */
     }
     if(!got_it)
@@ -697,7 +731,6 @@ void* V4L_camera::frameRead()
 
 
                 mutex.wait();
-                yError() << " param.image_size is " <<  param.image_size << "at line " << __LINE__;
                 memcpy(param.raw_image, param.buffers[buf.index].start, param.image_size);
 //                 param.raw_image = param.buffers[buf.index].start;
 //                 imageProcess(param.raw_image);
@@ -769,10 +802,13 @@ void* V4L_camera::frameRead()
  */
 void V4L_camera::imageProcess(void* p)
 {
-    static double _start;
-    static double _end;
+//     static double _start;
+//     static double _end;
 
-    _start = yarp::os::Time::now();
+    static bool initted = false;
+
+
+    timeStart = yarp::os::Time::now();
 
     switch(param.camModel)
     {
@@ -803,8 +839,23 @@ void V4L_camera::imageProcess(void* p)
         }
     }
 
-    _end = yarp::os::Time::now();
-    yDebug("Conversion time is %.6f ms", (_end - _start)*1000);
+    timeElapsed = yarp::os::Time::now() - timeStart;
+    myCounter++;
+    timeTot += timeElapsed;
+//     yDebug("Conversion time is %.6f ms", timeElapsed*1000);
+
+    if((myCounter % 60) == 0)
+    {
+        if(!initted)
+        {
+            timeTot = 0;
+            myCounter = 0;
+            initted  = true;
+        }
+        else
+            yDebug("time mean is %.06f ms\n", timeTot/myCounter*1000);
+    }
+
 }
 
 /**
@@ -812,21 +863,22 @@ void V4L_camera::imageProcess(void* p)
  */
 void V4L_camera::captureStop()
 {
-    enum v4l2_buf_type type;
-
-    switch (param.io) {
+    int ret=0;
+    int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    switch(param.io)
+    {
         case IO_METHOD_READ:
-            /* Nothing to do. */
+            //do nothing
             break;
 
         case IO_METHOD_MMAP:
-
-        case IO_METHOD_USERPTR:
-            type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
-            if (-1 == xioctl(param.fd, VIDIOC_STREAMOFF, &type))
-                errno_exit("VIDIOC_STREAMOFF");
-
+        default:
+            ret = xioctl(param.fd, VIDIOC_STREAMOFF, &type);
+            if (ret < 0)
+            {
+                if(errno != 9)      /* errno = 9 means the capture was allready stoped*/
+                    perror("VIDIOC_STREAMOFF - Unable to stop capture");
+            }
             break;
     }
 }
@@ -974,13 +1026,17 @@ bool V4L_camera::mmapInit()
         if (-1 == xioctl(param.fd, VIDIOC_QUERYBUF, &buf))
             errno_exit("VIDIOC_QUERYBUF");
 
+        printf("image size is %d - buf.len is %d, offset is %d - new offset is %d\n", param.image_size, buf.length, buf.m.offset, param.image_size*param.n_buffers);
         param.buffers[param.n_buffers].length = buf.length;
         param.buffers[param.n_buffers].start = v4l2_mmap(NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, param.fd, buf.m.offset);
 
         if (MAP_FAILED == param.buffers[param.n_buffers].start)
             errno_exit("mmap");
     }
+
     param.raw_image = malloc(param.image_size);
+    yInfo() << "size is " << buf.length << " or " << param.image_size << param.raw_image;
+
     return true;
 }
 
