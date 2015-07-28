@@ -94,10 +94,15 @@ typedef struct
     io_method       io;
     int             fps;
     unsigned int    image_size;
+    unsigned int    dst_image_size;
     unsigned char   *dst_image;
     void            *raw_image;
     unsigned int    n_buffers;
     struct buffer   *buffers;
+    struct v4l2_format src_fmt;
+    struct v4l2_format dst_fmt;
+    struct v4l2_requestbuffers req;
+    int pixelType;
     supported_cams  camModel;    // better is it is pixel format (YUV ...);  it happened that the only 2 cameras I have to test has custom tpyes, not standard ones.
 } Video_params;
 
@@ -164,9 +169,11 @@ public:
 
 private:
 
+
     yarp::os::Semaphore mutex;
     Video_params param;
-    double timeStart, timePrec, timeNow, timeElapsed;
+    double timeStart, timeTot, timeNow, timeElapsed;
+    int myCounter;
     int frameCounter;
 
     bool fromConfig(yarp::os::Searchable& config);

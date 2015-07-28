@@ -58,7 +58,21 @@ bool USBCameraDriver::open(yarp::os::Searchable& config)
     os_device = (DeviceDriver*) new V4L_camera;
 #endif
 
-    if(!os_device->open(config) )
+    yarp::os::Property prop;
+    prop.fromString(config.toString().c_str());
+
+    switch(pixelType)
+    {
+        case VOCAB_PIXEL_MONO:
+            prop.put("pixelType", VOCAB_PIXEL_MONO);
+            break;
+
+        case VOCAB_PIXEL_RGB:
+        default:
+            prop.put("pixelType", VOCAB_PIXEL_RGB);
+            break;
+    }
+    if(!os_device->open(prop) )
         return false;
 
     os_device->view(deviceRgb);
@@ -209,6 +223,7 @@ double USBCameraDriver::getIris()
 USBCameraDriverRgb::USBCameraDriverRgb()  : USBCameraDriver()
 {
     yTrace();
+    pixelType = VOCAB_PIXEL_RGB;
 }
 
 USBCameraDriverRgb::~USBCameraDriverRgb()
@@ -240,6 +255,7 @@ int USBCameraDriverRgb::height () const
 USBCameraDriverRaw::USBCameraDriverRaw()  : USBCameraDriver()
 {
     yTrace();
+    pixelType = VOCAB_PIXEL_MONO;
 }
 
 USBCameraDriverRaw::~USBCameraDriverRaw()

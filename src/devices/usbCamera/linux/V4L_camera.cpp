@@ -11,6 +11,11 @@
 
 #define errno_exit printf
 
+#include "libv4lconvert.h"
+
+struct v4lconvert_data *_v4lconvert_data;
+
+
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -24,9 +29,11 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE)
     param.fd  = -1;
     param.image_size = 0;
     param.dst_image = NULL;
-    param.n_buffers = VIDIOC_REQBUFS_COUNT;
+    param.n_buffers = 0;
     param.buffers = NULL;
     param.camModel = SEE3CAMCU50;
+    myCounter = 0;
+    timeTot = 0;
 }
 
 
@@ -36,6 +43,7 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE)
 bool V4L_camera::open(yarp::os::Searchable& config)
 {
     struct stat st;
+    yTrace() << "input params are " << config.toString();
 
     if(!fromConfig(config))
         return false;
@@ -114,11 +122,38 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
         yError() << "No 'camModel' was specified!";
         return false;
     }
+    else
+        param.camModel = (supported_cams) config.find("camModel").asInt();
 
-    param.camModel = (supported_cams) config.find("camModel").asInt();
+
+    int type = 0;
+    if(!config.check("pixelType") )
+    {
+        yError() << "No 'pixelType' was specified!";
+        return false;
+    }
+    else
+        type = (supported_cams) config.find("pixelType").asInt();
+
+    switch(type)
+    {
+        case VOCAB_PIXEL_MONO:
+            param.pixelType = V4L2_PIX_FMT_GREY;
+            param.dst_image_size = param.width * param.height;
+            break;
+
+        case VOCAB_PIXEL_RGB:
+            param.pixelType = V4L2_PIX_FMT_RGB24;
+            param.dst_image_size = param.width * param.height * 3;
+            break;
+
+        default:
+            printf("Error, no valid pixel format found!! This should not happen!!\n");
+            return false;
+            break;
+    }
 
     yDebug() << "using following device " << param.deviceName << "with the configuration: " << param.width << "x" << param.height << "; camModel is " << param.camModel;
-
     return true;
 }
 
@@ -130,7 +165,9 @@ int V4L_camera::getfd()
 bool V4L_camera::threadInit()
 {
     yTrace();
-    timeStart = timePrec = timeNow = timeElapsed = yarp::os::Time::now();
+
+    timeStart = timeNow = timeElapsed = yarp::os::Time::now();
+
     frameCounter = 0;
     return true;
 }
@@ -166,7 +203,6 @@ bool V4L_camera::deviceInit()
     struct v4l2_capability cap;
     struct v4l2_cropcap cropcap;
     struct v4l2_crop crop;
-    struct v4l2_format fmt;
     struct v4l2_streamparm frameint;
     unsigned int min;
 
@@ -243,41 +279,46 @@ bool V4L_camera::deviceInit()
         /* Errors ignored. */
     }
 
-    CLEAR(fmt);
+    CLEAR(param.src_fmt);
+    CLEAR(param.dst_fmt);
 
-    // v4l2_format
+    _v4lconvert_data = v4lconvert_create(param.fd);
+    if (_v4lconvert_data == NULL)
+        printf("\nERROR: v4lconvert_create\n");
+    else
+        printf("\nDONE: v4lconvert_create\n");
 
-//     param.width  = width;   // values come from fromConfig()
-//     param.height = height;
-    printf("param.width is %d, height is %d\n\n", param.width, param.height);
+    /* Here we set the pixel format we want to have to display, for getImage
+    // set the desired format after conversion and ask v4l which input format I should
+    // ask to the camera
+    */
 
-    fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    fmt.fmt.pix.width       = param.width;
-    fmt.fmt.pix.height      = param.height;
-    fmt.fmt.pix.field       = V4L2_FIELD_ANY;
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    param.dst_fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    param.dst_fmt.fmt.pix.width       = param.width;
+    param.dst_fmt.fmt.pix.height      = param.height;
+    param.dst_fmt.fmt.pix.field       = V4L2_FIELD_NONE;
+    param.dst_fmt.fmt.pix.pixelformat = param.pixelType;
 
-    if (-1 == xioctl(param.fd, VIDIOC_S_FMT, &fmt))
+    if (v4lconvert_try_format(_v4lconvert_data, &(param.dst_fmt), &(param.src_fmt)) != 0)
+        printf("ERROR: v4lconvert_try_format\n\n");
+    else
+        printf("DONE: v4lconvert_try_format\n\n");
+
+
+    if (-1 == xioctl(param.fd, VIDIOC_S_FMT, &param.src_fmt))
         std::cout << "xioctl error VIDIOC_S_FMT" << std::endl;
 
-    if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_YUYV)
-    {
-        std::cout << "Libv4l didn't accept YUV422 format. Can't proceed." << std::endl;
-        return false;
-    }
-    else
-        std::cout << "format accepted\n" << std::endl;
 
     /* Note VIDIOC_S_FMT may change width and height. */
-    if (param.width != fmt.fmt.pix.width)
+    if (param.width != param.src_fmt.fmt.pix.width)
     {
-        param.width = fmt.fmt.pix.width;
+        param.width = param.src_fmt.fmt.pix.width;
         std::cout << "Image width set to " << param.width << " by device " << param.deviceName << std::endl;
     }
 
-    if (param.height != fmt.fmt.pix.height)
+    if (param.height != param.src_fmt.fmt.pix.height)
     {
-        param.height = fmt.fmt.pix.height;
+        param.height = param.src_fmt.fmt.pix.height;
         std::cout << "Image height set to " << param.height << " by device " << param.deviceName << std::endl;
     }
 
@@ -295,19 +336,25 @@ bool V4L_camera::deviceInit()
     }
 
     /* Buggy driver paranoia. */
-    min = fmt.fmt.pix.width * 2;
-    if (fmt.fmt.pix.bytesperline < min)
-        fmt.fmt.pix.bytesperline = min;
-    min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
-    if (fmt.fmt.pix.sizeimage < min)
-        fmt.fmt.pix.sizeimage = min;
+    min = param.src_fmt.fmt.pix.width * 2;
+    if (param.src_fmt.fmt.pix.bytesperline < min)
+    {
+        printf("bytesperline bugged!!\n");
+        param.src_fmt.fmt.pix.bytesperline = min;
+    }
+    min = param.src_fmt.fmt.pix.bytesperline * param.src_fmt.fmt.pix.height;
+    if (param.src_fmt.fmt.pix.sizeimage < min)
+    {
+        printf("sizeimage bugged!!\n");
+        param.src_fmt.fmt.pix.sizeimage = min;
+    }
 
-    param.image_size = fmt.fmt.pix.sizeimage;
+    param.image_size = param.src_fmt.fmt.pix.sizeimage;
 
     switch (param.io)
     {
         case IO_METHOD_READ:
-            readInit(fmt.fmt.pix.sizeimage);
+            readInit(param.src_fmt.fmt.pix.sizeimage);
             break;
 
         case IO_METHOD_MMAP:
@@ -315,10 +362,13 @@ bool V4L_camera::deviceInit()
             break;
 
         case IO_METHOD_USERPTR:
-            userptrInit(fmt.fmt.pix.sizeimage);
+            userptrInit(param.src_fmt.fmt.pix.sizeimage);
             break;
     }
-    param.dst_image = (unsigned char*) malloc(fmt.fmt.pix.width * fmt.fmt.pix.height * 3);  // 3 for rgb without gamma
+    param.dst_image = (unsigned char*) malloc(param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3);  // 3 for rgb without gamma
+
+    query_current_image_fmt_v4l2(param.fd);
+
     return true;
 }
 
@@ -349,7 +399,8 @@ bool V4L_camera::deviceUninit()
         } break;
     }
 
-    free(param.buffers);
+    if(param.buffers != 0)
+        free(param.buffers);
     return ret;
 }
 
@@ -362,8 +413,11 @@ bool V4L_camera::close()
 
     stop();
 
-    if(param.fd != 0)
+    if(param.fd != -1)
     {
+        captureStop();
+        deviceUninit();
+
         if (-1 == v4l2_close(param.fd))
             yError() << "Error closing V4l2 device";
         return false;
@@ -387,6 +441,7 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 bool V4L_camera::getRawBuffer(unsigned char *buffer)
 {
 //     buffer = (unsigned char *) param.raw_image;
+    memcpy(buffer, param.dst_image, param.dst_image_size);
     return true;
 }
 
@@ -726,7 +781,8 @@ void V4L_camera::imageProcess(void* p)
 
         case SEE3CAMCU50:
         {
-            YUYV422toRGB((unsigned char *) p, (unsigned char *) param.dst_image, param.width, param.height);
+            if( v4lconvert_convert((v4lconvert_data*) _v4lconvert_data, &param.src_fmt, &param.dst_fmt,  (unsigned char *)p, param.image_size,  (unsigned char *)param.dst_image, param.dst_image_size)  <0 )
+                printf("error converting \n");
             break;
         }
 
@@ -860,15 +916,14 @@ bool V4L_camera::readInit(unsigned int buffer_size)
 
 bool V4L_camera::mmapInit()
 {
-    struct v4l2_requestbuffers req;
+    CLEAR(param.req);
 
-    CLEAR(req);
+    param.n_buffers = VIDIOC_REQBUFS_COUNT;
+    param.req.count = param.n_buffers;
+    param.req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    param.req.memory = V4L2_MEMORY_MMAP;
 
-    req.count = param.n_buffers;
-    req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    req.memory = V4L2_MEMORY_MMAP;
-
-    if (-1 == xioctl(param.fd, VIDIOC_REQBUFS, &req))
+    if (-1 == xioctl(param.fd, VIDIOC_REQBUFS, &param.req))
     {
         if (EINVAL == errno)
         {
@@ -882,18 +937,18 @@ bool V4L_camera::mmapInit()
         }
     }
 
-    if (req.count < 1)
+    if (param.req.count < 1)
     {
         fprintf(stderr, "Insufficient buffer memory on %s\n", param.deviceName.c_str());
         return false;
     }
 
-    if (req.count == 1)
+    if (param.req.count == 1)
     {
         fprintf(stderr, "Only 1 buffer was available, you may encounter performance issue acquiring images from device %s\n", param.deviceName.c_str());
     }
 
-    param.buffers = (struct buffer *) calloc(req.count, sizeof(*(param.buffers)));
+    param.buffers = (struct buffer *) calloc(param.req.count, sizeof(*(param.buffers)));
 
     if (!param.buffers)
     {
@@ -903,9 +958,9 @@ bool V4L_camera::mmapInit()
 
     struct v4l2_buffer buf;
 
-    printf("n buff is %d\n", req.count);
+    printf("n buff is %d\n", param.req.count);
 
-    for (param.n_buffers = 0; param.n_buffers < req.count; param.n_buffers++)
+    for (param.n_buffers = 0; param.n_buffers < param.req.count; param.n_buffers++)
     {
 
         CLEAR(buf);
@@ -929,19 +984,19 @@ bool V4L_camera::mmapInit()
 
 bool V4L_camera::userptrInit(unsigned int buffer_size)
 {
-    struct v4l2_requestbuffers req;
+//     struct v4l2_requestbuffers req;
     unsigned int page_size;
 
     page_size = getpagesize();
     buffer_size = (buffer_size + page_size - 1) & ~(page_size - 1);
 
-    CLEAR(req);
+    CLEAR(param.req);
 
-    req.count = VIDIOC_REQBUFS_COUNT;
-    req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    req.memory = V4L2_MEMORY_USERPTR;
+    param.req.count = VIDIOC_REQBUFS_COUNT;
+    param.req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    param.req.memory = V4L2_MEMORY_USERPTR;
 
-    if (-1 == xioctl(param.fd, VIDIOC_REQBUFS, &req))
+    if (-1 == xioctl(param.fd, VIDIOC_REQBUFS, &param.req))
     {
         if (EINVAL == errno)
         {

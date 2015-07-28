@@ -42,7 +42,7 @@ IF(ENABLE_icubmod_USBcamera)
     else()
 #         INCLUDE_DIRECTORIES(${SOME_INCLUDE_DIRS})
         INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/linux)
-        set(OS_SOURCES linux/V4L_camera.hpp linux/V4L_camera.cpp linux/list.hpp linux/list.cpp  linux/yuv.cpp) #linux/Leopard_MT9M021C.cpp linux/raw2bmp.cpp)
+        set(OS_SOURCES linux/V4L_camera.hpp linux/V4L_camera.cpp linux/list.hpp linux/list.cpp)#  linux/yuv.cpp) #linux/Leopard_MT9M021C.cpp linux/raw2bmp.cpp)
     endif(WIN32)
 
     add_definitions("-Wall -Wextra")

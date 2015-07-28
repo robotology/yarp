@@ -61,6 +61,7 @@ protected:
 
     int _width;
     int _height;
+    int pixelType;
 
 public:
     /**
