@@ -1085,63 +1085,14 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
     return true;
 }
 
-double V4L_camera::getBrightness()
+bool V4L_camera::set_V4L2_control(uint32_t id, double value)
 {
-    return 0;
-}
-
-double V4L_camera::getExposure()
-{
-    return 0;
-}
-
-double V4L_camera::getGain()
-{
-    return 0;
-}
-
-double V4L_camera::getGamma()
-{
-    return 0;
-}
-
-double V4L_camera::getHue()
-{
-    return 0;
-}
-
-double V4L_camera::getIris()
-{
-    return 0;
-}
-
-double V4L_camera::getSaturation()
-{
-    return 0;
-}
-
-double V4L_camera::getSharpness()
-{
-    return 0;
-}
-
-double V4L_camera::getShutter()
-{
-    return 0;
-}
-
-bool V4L_camera::getWhiteBalance(double& blue, double& red)
-{
-    return 0;
-}
-
-bool V4L_camera::setBrightness(double v)
-{
+    yTrace();
     struct v4l2_queryctrl queryctrl;
     struct v4l2_control control;
 
     memset (&queryctrl, 0, sizeof (queryctrl));
-    queryctrl.id = V4L2_CID_BRIGHTNESS;
+    queryctrl.id = id;
 
     if (-1 == ioctl (param.fd, VIDIOC_QUERYCTRL, &queryctrl))
     {
@@ -1152,70 +1103,204 @@ bool V4L_camera::setBrightness(double v)
         }
         else
         {
-            printf ("V4L2_CID_BRIGHTNESS is not supported\n");
+            printf ("Control %s is not supported\n", queryctrl.name);
         }
     }
     else if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
     {
-        printf ("V4L2_CID_BRIGHTNESS is not supported\n");
+        printf ("Control %s is disabled\n", queryctrl.name);
+        return false;
     }
     else
     {
         memset (&control, 0, sizeof (control));
-        control.id = V4L2_CID_BRIGHTNESS;
-        control.value = queryctrl.default_value;
+        control.id = id;
+        control.value = (int32_t) (value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
 
         if (-1 == ioctl(param.fd, VIDIOC_S_CTRL, &control))
         {
             perror ("VIDIOC_S_CTRL");
             return false;
         }
+        if(errno == ERANGE)
+        {
+            printf("Normalized input value %f ( equivalent to raw value of %d) was out of range for control %s: Min and Max are: %d - %d \n", value, control.value, queryctrl.name, queryctrl.minimum, queryctrl.maximum);
+        }
+        printf("set control %s to %d done!\n", queryctrl.name, control.value);
     }
     return true;
 }
 
+double V4L_camera::get_V4L2_control(uint32_t id)
+{
+    yTrace();
+    struct v4l2_queryctrl queryctrl;
+    struct v4l2_control control;
+
+    memset (&control, 0, sizeof (control));
+    memset (&queryctrl, 0, sizeof (queryctrl));
+
+    control.id = id;
+    queryctrl.id = id;
+
+    if (-1 == ioctl (param.fd, VIDIOC_QUERYCTRL, &queryctrl))
+    {
+        if (errno != EINVAL)
+        {
+            perror ("VIDIOC_QUERYCTRL");
+            return false;
+        }
+        else
+        {
+            printf ("Control %s is not supported\n", queryctrl.name);
+        }
+    }
+    else if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+    {
+        printf ("Control %s is disabled\n", queryctrl.name);
+    }
+    else
+    {
+        if (-1 == ioctl(param.fd, VIDIOC_G_CTRL, &control))
+        {
+            perror ("VIDIOC_G_CTRL");
+            return false;
+        }
+//         printf("Control %s got value %d!\n", queryctrl.name, control.value);
+    }
+    return (double) (control.value - queryctrl.minimum) /  (queryctrl.maximum - queryctrl.minimum);
+}
+
+
+    // GET CONTROLS!!
+double V4L_camera::getBrightness()
+{
+    yTrace();
+    return get_V4L2_control(V4L2_CID_BRIGHTNESS);
+}
+
+double V4L_camera::getExposure()
+{
+    yTrace();
+    return get_V4L2_control(V4L2_CID_EXPOSURE);
+}
+
+double V4L_camera::getGain()
+{
+    yTrace();
+    return get_V4L2_control(V4L2_CID_GAIN);
+}
+
+double V4L_camera::getGamma()
+{
+    yTrace();
+    return get_V4L2_control(V4L2_CID_GAMMA);
+}
+
+double V4L_camera::getHue()
+{
+    yTrace();
+    return get_V4L2_control(V4L2_CID_HUE);
+}
+
+double V4L_camera::getIris()
+{
+    yTrace();
+    return get_V4L2_control(V4L2_CID_IRIS_ABSOLUTE);
+}
+
+double V4L_camera::getSaturation()
+{
+    yTrace();
+    return get_V4L2_control(V4L2_CID_SATURATION);
+}
+
+double V4L_camera::getSharpness()
+{
+    yTrace();
+    return get_V4L2_control(V4L2_CID_SHARPNESS);
+}
+
+double V4L_camera::getShutter()
+{
+    yTrace();
+    printf("Don't know how to map it :-&\n");
+    return false;
+}
+
+bool V4L_camera::getWhiteBalance(double& blue, double& red)
+{
+    yTrace();
+    bool ret = true;
+    blue = set_V4L2_control(V4L2_CID_RED_BALANCE, blue);
+    red  = set_V4L2_control(V4L2_CID_BLUE_BALANCE, red);
+    return ret;
+}
+
+
+    // SET CONTROLS!!
+bool V4L_camera::setBrightness(double v)
+{
+    yTrace();
+    return set_V4L2_control(V4L2_CID_BRIGHTNESS, v);
+}
+
 bool V4L_camera::setExposure(double v)
 {
-    return false;
+    yTrace();
+    return set_V4L2_control(V4L2_CID_EXPOSURE, v);
 }
 
 bool V4L_camera::setGain(double v)
 {
-    return false;
+    yTrace();
+    return set_V4L2_control(V4L2_CID_GAIN, v);
 }
 
 bool V4L_camera::setGamma(double v)
 {
-    return false;
+    yTrace();
+    return set_V4L2_control(V4L2_CID_GAMMA, v);
 }
 
 bool V4L_camera::setHue(double v)
 {
-    return false;
+    yTrace();
+    return set_V4L2_control(V4L2_CID_HUE, v);
 }
 
 bool V4L_camera::setIris(double v)
 {
-    return false;
+    yTrace();
+    return set_V4L2_control(V4L2_CID_IRIS_ABSOLUTE, v);
 }
 
 bool V4L_camera::setSaturation(double v)
 {
-    return false;
+    yTrace();
+    return set_V4L2_control(V4L2_CID_SATURATION, v);
 }
 
 bool V4L_camera::setSharpness(double v)
 {
-    return false;
+    yTrace();
+    return set_V4L2_control(V4L2_CID_SHARPNESS, v);
 }
 
 bool V4L_camera::setShutter(double v)
 {
+    yTrace();
+//     return set_V4L2_control(V4L2_CID_BRIGHTNESS, v);
+    printf("Don't know how to map it :-&\n");
     return false;
 }
 
 bool V4L_camera::setWhiteBalance(double blue, double red)
 {
-    return false;
+    yTrace();
+    bool ret = true;
+    ret &= set_V4L2_control(V4L2_CID_RED_BALANCE, blue);
+    ret &= set_V4L2_control(V4L2_CID_BLUE_BALANCE, red);
+    return ret;
 }
 

@@ -33,7 +33,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 
-////////////////////////////////////////////////////
+///////////////// generic device //////////////////////////
 
 USBCameraDriver::USBCameraDriver()
 {
@@ -77,6 +77,7 @@ bool USBCameraDriver::open(yarp::os::Searchable& config)
 
     os_device->view(deviceRgb);
     os_device->view(deviceRaw);
+    os_device->view(deviceControls);
 
     if(deviceRaw)
     {
@@ -101,12 +102,20 @@ bool USBCameraDriver::close(void)
 
 int USBCameraDriver::width () const
 {
-    return 0;
+    if(deviceRaw)
+        deviceRaw->width();
+    else if (deviceRgb)
+        deviceRgb->width();
+    else return 0;
 }
 
 int USBCameraDriver::height () const
 {
-    return 0;
+    if(deviceRaw)
+        deviceRaw->height();
+    else if (deviceRgb)
+        deviceRgb->height();
+    else return 0;
 }
 
 bool USBCameraDriver::getRawBuffer(unsigned char *buff)
@@ -131,93 +140,151 @@ yarp::os::Stamp USBCameraDriver::getLastInputStamp()
 }
 
 
-
-/*
-// SET
-
-bool USBCameraDriver::setBrightness(double value)
-{
-	return RES(system_resources)->setBrightness(value);
-}
-bool USBCameraDriver::setExposure(double value)
-{
-    return RES(system_resources)->setExposure(value);
-}
-bool USBCameraDriver::setSharpness(double value)
-{
-	return RES(system_resources)->setSharpness(value);
-}
-bool USBCameraDriver::setWhiteBalance(double blue, double red)
-{
-	return RES(system_resources)->setWhiteBalance(blue,red);
-}
-bool USBCameraDriver::setHue(double value)
-{
-	return RES(system_resources)->setHue(value);
-}
-bool USBCameraDriver::setSaturation(double value)
-{
-	return RES(system_resources)->setSaturation(value);
-}
-bool USBCameraDriver::setGamma(double value)
-{
-	return RES(system_resources)->setGamma(value);
-}
-bool USBCameraDriver::setShutter(double value)
-{
-	return RES(system_resources)->setShutter(value);
-}
-bool USBCameraDriver::setGain(double value)
-{
-	return RES(system_resources)->setGain(value);
-}
-bool USBCameraDriver::setIris(double value)
-{
-	return RES(system_resources)->setIris(value);
-}
-
-// GET
-
+    // GET CONTROLS
 double USBCameraDriver::getBrightness()
 {
-	return RES(system_resources)->getBrightness();
+    yTrace();
+    if(deviceControls)
+        return deviceControls->getBrightness();
+    return 0;
 }
+
 double USBCameraDriver::getExposure()
 {
-	return RES(system_resources)->getExposure();
+    if(deviceControls)
+        return deviceControls->getExposure();
+    return 0;
 }
-double USBCameraDriver::getSharpness()
-{
-	return RES(system_resources)->getSharpness();
-}
-bool USBCameraDriver::getWhiteBalance(double &blue, double &red)
-{
-	return RES(system_resources)->getWhiteBalance(blue,red);
-}
-double USBCameraDriver::getHue()
-{
-	return RES(system_resources)->getHue();
-}
-double USBCameraDriver::getSaturation()
-{
-	return RES(system_resources)->getSaturation();
-}
-double USBCameraDriver::getGamma()
-{
-	return RES(system_resources)->getGamma();
-}
-double USBCameraDriver::getShutter()
-{
-	return RES(system_resources)->getShutter();
-}
+
 double USBCameraDriver::getGain()
 {
-	return RES(system_resources)->getGain();
+    if(deviceControls)
+        return deviceControls->getGain();
+    return 0;
 }
+
+double USBCameraDriver::getGamma()
+{
+    if(deviceControls)
+        return deviceControls->getGamma();
+    return 0;
+}
+
+double USBCameraDriver::getHue()
+{
+    if(deviceControls)
+        return deviceControls->getHue();
+    return 0;
+}
+
 double USBCameraDriver::getIris()
 {
-	return RES(system_resources)->getIris();
-}*/
+    if(deviceControls)
+        return deviceControls->getIris();
+    return 0;
+}
+
+double USBCameraDriver::getSaturation()
+{
+    if(deviceControls)
+        return deviceControls->getSaturation();
+    return 0;
+}
+
+double USBCameraDriver::getSharpness()
+{
+    if(deviceControls)
+        return deviceControls->getSharpness();
+    return 0;
+}
+
+double USBCameraDriver::getShutter()
+{
+    if(deviceControls)
+        return deviceControls->getShutter();
+    return 0;
+}
+
+bool USBCameraDriver::getWhiteBalance(double& blue, double& red)
+{
+    if(deviceControls)
+        return deviceControls->getWhiteBalance(blue, red);
+    return 0;
+}
+
+    // SET CONTROLS
+bool USBCameraDriver::setBrightness(double v)
+{
+    yTrace();
+    if(deviceControls)
+        return deviceControls->setBrightness(v);
+    return 0;
+}
+
+bool USBCameraDriver::setExposure(double v)
+{
+    if(deviceControls)
+        return deviceControls->setExposure(v);
+    return 0;
+}
+
+bool USBCameraDriver::setGain(double v)
+{
+    if(deviceControls)
+        return deviceControls->setGain(v);
+    return 0;
+}
+
+bool USBCameraDriver::setGamma(double v)
+{
+    if(deviceControls)
+        return deviceControls->setGamma(v);
+    return 0;
+}
+
+bool USBCameraDriver::setHue(double v)
+{
+    if(deviceControls)
+        return deviceControls->setHue(v);
+    return 0;
+}
+
+bool USBCameraDriver::setIris(double v)
+{
+    if(deviceControls)
+        return deviceControls->setIris(v);
+    return 0;
+}
+
+bool USBCameraDriver::setSaturation(double v)
+{
+    if(deviceControls)
+        return deviceControls->setSaturation(v);
+    return 0;
+}
+
+bool USBCameraDriver::setSharpness(double v)
+{
+    if(deviceControls)
+        return deviceControls->setSharpness(v);
+    return 0;
+}
+
+bool USBCameraDriver::setShutter(double v)
+{
+    if(deviceControls)
+        return deviceControls->setShutter(v);
+    return 0;
+}
+
+bool USBCameraDriver::setWhiteBalance(double blue, double red)
+{
+    if(deviceControls)
+        return deviceControls->setWhiteBalance(blue, red);
+    return 0;
+}
+
+
 
 //// RGB ///
 USBCameraDriverRgb::USBCameraDriverRgb()  : USBCameraDriver()

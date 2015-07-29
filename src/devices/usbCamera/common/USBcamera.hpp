@@ -49,15 +49,17 @@ class yarp::dev::USBCameraDriver :
     public DeviceDriver,
     public IPreciselyTimed,
     public IFrameGrabber,
-    public IFrameGrabberRgb
+    public IFrameGrabberRgb,
+    public IFrameGrabberControls
 //     public IFrameGrabberControlsDC1394
 {
 protected:
     USBCameraDriver(const USBCameraDriver&);
     void operator=(const USBCameraDriver&);
-    IFrameGrabberRgb *deviceRgb;
-    IFrameGrabber    *deviceRaw;
-    DeviceDriver     *os_device;
+    IFrameGrabberRgb        *deviceRgb;
+    IFrameGrabber           *deviceRaw;
+    DeviceDriver            *os_device;
+    IFrameGrabberControls   *deviceControls;
 
     int _width;
     int _height;
@@ -126,124 +128,124 @@ public:
     */
     virtual yarp::os::Stamp getLastInputStamp();
 
-//     /**
-//     * Set Brightness.
-//     * @param v normalized image brightness [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setBrightness(double v);
-//     /**
-//     * Set Exposure.
-//     * @param v normalized image exposure [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setExposure(double v);
-//     /**
-//     * Set Sharpness.
-//     * @param v normalized image sharpness [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setSharpness(double v);
-//     /**
-//     * Set White Balance.
-//     * @param blue normalized image blue balance [0.0 : 1.0].
-//     * @param red normalized image red balance [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setWhiteBalance(double blue, double red);
-//     /**
-//     * Set Hue.
-//     * @param v normalized image hue [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setHue(double v);
-//     /**
-//     * Set Saturation.
-//     * @param v normalized image saturation [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setSaturation(double v);
-//     /**
-//     * Set Gamma.
-//     * @param v normalized image gamma [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setGamma(double v);
-//     /**
-//     * Set Shutter.
-//     * @param v normalized camera shutter time [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setShutter(double v);
-//     /**
-//     * Set Gain.
-//     * @param v normalized camera gain [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setGain(double v);
-//     /**
-//     * Set Iris.
-//     * @param v normalized camera iris [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool setIris(double v);
-//     //virtual bool setTemperature(double v);
-//     //virtual bool setWhiteShading(double r,double g,double b);
-//     //virtual bool setOpticalFilter(double v);
-//     //virtual bool setCaptureQuality(double v);
-//
-//     /**
-//     * Get Brightness.
-//     * @return normalized image brightness [0.0 : 1.0].
-//     */
-//     virtual double getBrightness();
-//     /**
-//     * Get Exposure.
-//     * @return normalized image exposure [0.0 : 1.0].
-//     */
-//     virtual double getExposure();
-//     /**
-//     * Get Sharpness.
-//     * @return normalized image sharpness [0.0 : 1.0].
-//     */
-//     virtual double getSharpness();
-//     /**
-//     * Get White Balance.
-//     * @param blue normalized blue balance [0.0 : 1.0].
-//     * @param red normalized red balance [0.0 : 1.0].
-//     * @return true/false upon success/failure
-//     */
-//     virtual bool getWhiteBalance(double &blue, double &red);
-//     /**
-//     * Get Hue.
-//     * @return normalized hue [0.0 : 1.0].
-//     */
-//     virtual double getHue();
-//     /**
-//     * Get Saturation.
-//     * @return normalized saturation [0.0 : 1.0].
-//     */
-//     virtual double getSaturation();
-//     /**
-//     * Get Gamma.
-//     * @return normalized gamma [0.0 : 1.0].
-//     */
-//     virtual double getGamma();
-//     /**
-//     * Get Shutter.
-//     * @return normalized shutter time [0.0 : 1.0].
-//     */
-//     virtual double getShutter();
-//     /**
-//     * Get Gain.
-//     * @return normalized gain [0.0 : 1.0].
-//     */
-//     virtual double getGain();
-//     /**
-//     * Get Iris.
-//     * @return normalized iris [0.0 : 1.0].
-//     */
-//     virtual double getIris();
+    /**
+    * Set Brightness.
+    * @param v normalized image brightness [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setBrightness(double v);
+    /**
+    * Set Exposure.
+    * @param v normalized image exposure [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setExposure(double v);
+    /**
+    * Set Sharpness.
+    * @param v normalized image sharpness [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setSharpness(double v);
+    /**
+    * Set White Balance.
+    * @param blue normalized image blue balance [0.0 : 1.0].
+    * @param red normalized image red balance [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setWhiteBalance(double blue, double red);
+    /**
+    * Set Hue.
+    * @param v normalized image hue [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setHue(double v);
+    /**
+    * Set Saturation.
+    * @param v normalized image saturation [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setSaturation(double v);
+    /**
+    * Set Gamma.
+    * @param v normalized image gamma [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setGamma(double v);
+    /**
+    * Set Shutter.
+    * @param v normalized camera shutter time [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setShutter(double v);
+    /**
+    * Set Gain.
+    * @param v normalized camera gain [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setGain(double v);
+    /**
+    * Set Iris.
+    * @param v normalized camera iris [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool setIris(double v);
+    //virtual bool setTemperature(double v);
+    //virtual bool setWhiteShading(double r,double g,double b);
+    //virtual bool setOpticalFilter(double v);
+    //virtual bool setCaptureQuality(double v);
+
+    /**
+    * Get Brightness.
+    * @return normalized image brightness [0.0 : 1.0].
+    */
+    virtual double getBrightness();
+    /**
+    * Get Exposure.
+    * @return normalized image exposure [0.0 : 1.0].
+    */
+    virtual double getExposure();
+    /**
+    * Get Sharpness.
+    * @return normalized image sharpness [0.0 : 1.0].
+    */
+    virtual double getSharpness();
+    /**
+    * Get White Balance.
+    * @param blue normalized blue balance [0.0 : 1.0].
+    * @param red normalized red balance [0.0 : 1.0].
+    * @return true/false upon success/failure
+    */
+    virtual bool getWhiteBalance(double &blue, double &red);
+    /**
+    * Get Hue.
+    * @return normalized hue [0.0 : 1.0].
+    */
+    virtual double getHue();
+    /**
+    * Get Saturation.
+    * @return normalized saturation [0.0 : 1.0].
+    */
+    virtual double getSaturation();
+    /**
+    * Get Gamma.
+    * @return normalized gamma [0.0 : 1.0].
+    */
+    virtual double getGamma();
+    /**
+    * Get Shutter.
+    * @return normalized shutter time [0.0 : 1.0].
+    */
+    virtual double getShutter();
+    /**
+    * Get Gain.
+    * @return normalized gain [0.0 : 1.0].
+    */
+    virtual double getGain();
+    /**
+    * Get Iris.
+    * @return normalized iris [0.0 : 1.0].
+    */
+    virtual double getIris();
 
 
     //virtual double getTemperature() const;

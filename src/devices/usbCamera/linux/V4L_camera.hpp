@@ -228,6 +228,8 @@ private:
 
     void enumerate_menu();
     bool enumerate_controls();
+    bool set_V4L2_control(u_int32_t id, double value);
+    double get_V4L2_control(uint32_t id);
 };
 
 #endif // _CAMERA_V4L_HPP_
