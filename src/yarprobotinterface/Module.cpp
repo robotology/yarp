@@ -37,8 +37,6 @@ RobotInterface::Module::Private::Private(Module *parent) :
     closed(false),
     closeOk(true)
 {
-    rpcPort.open("/robotInterface");
-    parent->attach(rpcPort);
 }
 
 RobotInterface::Module::Private::~Private()
@@ -73,6 +71,10 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     // the default name, so we don't care of handling the --name
     // argument
     setName(mPriv->robot.portprefix().c_str());
+
+    yarp::os::ConstString rpcPortName("/" + getName() + "/robotInterface");
+    mPriv->rpcPort.open(rpcPortName);
+    attach(mPriv->rpcPort);
 
     // Enter startup phase
     if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup) ||
