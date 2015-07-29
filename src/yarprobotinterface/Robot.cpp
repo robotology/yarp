@@ -358,6 +358,10 @@ RobotInterface::Robot::Robot(const RobotInterface::Robot& other) :
     mPriv(new Private(this))
 {
     mPriv->name = other.mPriv->name;
+    mPriv->build = other.mPriv->build;
+    mPriv->portprefix = other.mPriv->portprefix;
+    mPriv->currentPhase = other.mPriv->currentPhase;
+    mPriv->currentLevel = other.mPriv->currentLevel;
     mPriv->devices = other.mPriv->devices;
     mPriv->params = other.mPriv->params;
 }
@@ -366,6 +370,10 @@ RobotInterface::Robot& RobotInterface::Robot::operator=(const RobotInterface::Ro
 {
     if (&other != this) {
         mPriv->name = other.mPriv->name;
+        mPriv->build = other.mPriv->build;
+        mPriv->portprefix = other.mPriv->portprefix;
+        mPriv->currentPhase = other.mPriv->currentPhase;
+        mPriv->currentLevel = other.mPriv->currentLevel;
 
         mPriv->devices.clear();
         mPriv->devices = other.mPriv->devices;
