@@ -353,14 +353,6 @@ public:
     virtual bool getSaccadesActivationAngle(double *angle) = 0;
 
     /*!
-     * Get the current activation angle for neck movements. [wait
-     * for reply]
-     * \param angle the current activation angle [deg].
-     * \return true/false on success/failure.
-     */
-    virtual bool getNeckActivationAngle(double *angle) = 0;
-
-    /*!
      * Get the current pose of the left eye frame. [wait for reply]
      * \param x a 3-d vector which is filled with the actual
      *         position x,y,z [m].
@@ -607,14 +599,6 @@ public:
      * \return true/false on success/failure.
      */
     virtual bool setSaccadesActivationAngle(const double angle) = 0;
-
-    /*!
-     * Set the activation angle for neck movements. [wait for
-     * reply]
-     * \param angle the new activation angle [deg].
-     * \return true/false on success/failure.
-     */
-    virtual bool setNeckActivationAngle(const double angle) = 0;
 
     /*!
      * Update the options used by the stereo approach. [wait for
