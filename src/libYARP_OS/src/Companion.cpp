@@ -1516,9 +1516,12 @@ int Companion::cmdClean(int argc, char *argv[]) {
     double timeout = -1;
     if (options.check("timeout")) {
         timeout = options.find("timeout").asDouble();
-        printf("Using a timeout of %g seconds\n", timeout);
-    } else {
+    }
+    if (timeout <= 0) {
+        timeout = -1;
         printf("No timeout; to specify one, do \"yarp clean --timeout NN.N\"\n");
+    } else {
+        printf("Using a timeout of %g seconds\n", timeout);
     }
     for (int i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
