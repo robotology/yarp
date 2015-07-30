@@ -259,7 +259,7 @@ int main(int argc, char *argv[]) {
     if (server.isValid()) {
         printf("Server instantiation worked\n");
 
-        PolyDriver client("(device remote_controlboard) (local /client) (remote /server)");
+        PolyDriver client("(device clientcontrolboard) (local /client) (remote /server)");
         if (client.isValid()) {
             printf("Client instantiation worked\n");
             testMotor(client);
