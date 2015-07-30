@@ -382,12 +382,12 @@ private:
     inline size_t find(const ConstString& needle, size_t start = 0) const { return s.find(needle.s, start); }
     inline size_t find(const char *needle, size_t start = 0) const { return s.find(needle, start); }
     inline size_t find(const char *needle, size_t start, size_t len) const { return s.find(needle, start, len); }
-    inline size_t find(char needle, size_t start = 0) const { return s.find(needle, start); };
+    inline size_t find(char needle, size_t start = 0) const { return s.find(needle, start); }
 
     inline size_t rfind(const ConstString& needle, size_t start = npos) const { return s.rfind(needle.s, start); }
     inline size_t rfind(const char *needle, size_t start = npos) const { return s.rfind(needle, start); }
     inline size_t rfind(const char *needle, size_t start, size_t len) const { return s.rfind(needle, start, len); }
-    inline size_t rfind(char needle, size_t start = npos) const { return s.rfind(needle, start); };
+    inline size_t rfind(char needle, size_t start = npos) const { return s.rfind(needle, start); }
 
     inline ConstString substr(size_t start = 0, size_t n = npos) const { return s.substr(start,n); }
 

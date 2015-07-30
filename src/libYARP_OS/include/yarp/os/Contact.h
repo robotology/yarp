@@ -242,13 +242,13 @@ public:
 
     /**
      * Set the host to be the input parameter
-     * @param the new host
+     * @param host the new host
      */
     void setHost(const ConstString& host);
 
     /**
      * Set the port to be the input parameter
-     * @param the new port
+     * @param port the new port
      */
     void setPort(int port);
 
