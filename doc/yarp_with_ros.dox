@@ -28,10 +28,9 @@ You'll need to turn the following flags on in CMake before (re-)compiling YARP:
 \li ENABLE_yarpcar_rossrv_carrier (tcpros with minor tweaks for services)
 \li ENABLE_yarpcar_xmlrpc_carrier (used by ros nameserver and node interfaces)
 
-If you have an older version of YARP you may find that you
-don't that the yarpidl_rosmsg program used in this tutorial.
-In that case turn on these flags (which are no longer needed
-in newer versions of YARP):
+If you have an older version of YARP, you may need to rely on yarpidl_rosmsg
+program, as per the tutorial. In that case turn on these flags (which are no longer
+required in newer versions of YARP):
 \li CREATE_IDLS (for support of ROS .msg/.srv files).  Reconfigure after setting this flag.
 \li ENABLE_yarpidl_rosmsg (a program to convert .msg/.srv files into YARP-usable form)
 
@@ -45,7 +44,7 @@ in order to interoperate with it across the network.
 Both YARP and ROSCORE usually operate with a name server to help
 track what ports/topics/nodes are where (but see also \ref yarp_without_nameserver).
 
-We assume you have ROS's usual name server ("roscore" running somewhere.  Now, with YARP,
+We assume you have ROS's usual name server "roscore" running somewhere.  Now, with YARP,
 you have several options:
 \li You can configure YARP to use ROS's name server.  So "roscore" will run, but not "yarpserver".  This is the best option if the bulk of the network is ROS-based and you have just one or two YARP modules you want to hook in.
 \li You can configure YARP's name server to talk to ROS's name server.  So both "roscore" and "yarpserver" will run.  This is the best option for mixed networks, with many YARP modules and many ROS modules.
