@@ -791,6 +791,87 @@ public:
         }
         return output.c_str();
     }
+
+    void fromArguments(const char *command, bool wipe=true) {
+        char** szarg = new char*[128 + 1];  // maximum 128 arguments
+        char* szcmd = new char[strlen(command)+1];
+        strcpy(szcmd, command);
+        szarg = new char*[128 + 1];
+        int nargs = 0;
+        parseArguments(szcmd, &nargs, szarg, 128);
+        szarg[nargs]=0;
+        fromCommand(nargs, szarg, wipe);
+        // clear allocated memory for arguments
+        if(szcmd) {
+            delete [] szcmd;
+            szcmd = NULL;
+        }
+        if(szarg) {
+            delete [] szarg;
+            szarg = NULL;
+        }
+    }
+
+    void parseArguments(char *azParam, int *argc, char **argv, int max_arg) {
+        char *pNext = azParam;
+        size_t i;
+        int j;
+        int quoted = 0;
+        size_t len = strlen(azParam);
+
+        // Protect spaces inside quotes, but lose the quotes
+        for(i = 0; i < len; i++) {
+            if ((!quoted) && ('"' == azParam [i])) {
+                quoted = 1;
+                azParam [i] = ' ';
+            } else if ((quoted) && ('"' == azParam [i])) {
+                quoted = 0;
+                azParam [i] = ' ';
+            } else if ((quoted) && (' ' == azParam [i])) {
+                azParam [i] = '\1';
+            }
+        }
+
+        // init
+        memset(argv, 0x00, sizeof(char*) * max_arg);
+        *argc = 1;
+        argv[0] = azParam ;
+
+        while ((NULL != pNext) && (*argc < max_arg)) {
+            splitArguments(pNext, &(argv[*argc]));
+            pNext = argv[*argc];
+
+            if (NULL != argv[*argc]) {
+                *argc += 1;
+            }
+        }
+
+        for(j = 0; j < *argc; j++) {
+            len = strlen(argv[j]);
+            for(i = 0; i < len; i++) {
+                if('\1' == argv[j][i]) {
+                    argv[j][i] = ' ';
+                }
+            }
+        }
+    }
+
+    void splitArguments(char *line, char **args) {
+        char *pTmp = strchr(line, ' ');
+        if (pTmp) {
+           *pTmp = '\0';
+           pTmp++;
+           while ((*pTmp) && (*pTmp == ' ')) {
+               pTmp++;
+           }
+           if (*pTmp == '\0') {
+               pTmp = NULL;
+           }
+        }
+        *args = pTmp;
+    }
+
+
 };
 
 
@@ -921,6 +1002,11 @@ void Property::fromCommand(int argc, char *argv[], bool skipFirst,
 void Property::fromCommand(int argc, const char *argv[], bool skipFirst, bool wipe) {
     summon();
     fromCommand(argc,(char **)argv,skipFirst,wipe);
+}
+
+void Property::fromArguments(const char *arguments, bool wipe) {
+    summon();
+    HELPER(implementation).fromArguments(arguments, wipe);
 }
 
 bool Property::fromConfigDir(const ConstString& dirname, const ConstString& section, bool wipe) {
