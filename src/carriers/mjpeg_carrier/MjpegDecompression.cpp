@@ -161,7 +161,7 @@ public:
             jpeg_read_scanlines(&cinfo, lines, 1);
             at++;
         }
-        if(readEnvelopeCallback) {
+        if(readEnvelopeCallback && cinfo.marker_list && cinfo.marker_list->data_length > 0) {
             Bytes envelope(reinterpret_cast<char*>(cinfo.marker_list->data), cinfo.marker_list->data_length);
             readEnvelopeCallback(readEnvelopeCallbackData, envelope);
         }
