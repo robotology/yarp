@@ -1974,8 +1974,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     Property *p = acquireProperties(false);
                     bool bOk = true;
                     if (p) {
-                        p->put(cmd.get(2).asString(), cmd.get(3));
-                        Bottle* value = cmd.get(3).asList();
+                        p->put(cmd.get(2).asString(), cmd.get(3));                        
 
                         // check if we need to set the PortCoreUnit scheduling policy
                         // e.g., "prop set /portname (sched ((priority 30) (policy 1)))"
@@ -1983,7 +1982,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         // SCHED_OTHER : policy=0, priority=[0 ..  0]
                         // SCHED_FIFO  : policy=1, priority=[1 .. 99]
                         // SCHED_RR    : policy=2, priority=[1 .. 99]
-                        if(value && value->check("sched"))
+                        Bottle& sched = cmd.findGroup("sched");
+                        if(!sched.isNull())
                         {
                             if((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
                                 bOk = false;
@@ -1993,10 +1993,10 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                         Route route = unit->getRoute();
                                         ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
                                         if (portName == cmd.get(2).asString()) {
-                                            Bottle* sched_prop = value->find("sched").asList();
+                                            Bottle* sched_prop = sched.find("sched").asList();
                                             if(sched_prop != NULL) {
                                                 int prio = -1;
-                                                int policy = -1;
+                                                int policy = -1;                                                
                                                 if(sched_prop->check("priority"))
                                                     prio = sched_prop->find("priority").asInt();
                                                 if(sched_prop->check("policy"))
@@ -2016,7 +2016,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         // e.g., "prop set /portname (qos ((priority HIGH)))"
                         // e.g., "prop set /portname (qos ((dscp AF12)))"
                         // e.g., "prop set /portname (qos ((tos 12)))"
-                        if(value && value->check("qos"))
+                        Bottle& qos = cmd.findGroup("qos");
+                        if(!qos.isNull())
                         {
                             if((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
                                 bOk = false;
@@ -2026,7 +2027,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                         Route route = unit->getRoute();
                                         ConstString portName = route.getToName();
                                         if (portName == cmd.get(2).asString()) {
-                                            Bottle* qos_prop = value->find("qos").asList();
+                                            Bottle* qos_prop = qos.find("qos").asList();
                                             if(qos_prop != NULL) {
                                                 if(qos_prop->check("priority")) {
                                                     NetInt32 priority = qos_prop->find("priority").asVocab();

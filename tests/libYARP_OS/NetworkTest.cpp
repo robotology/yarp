@@ -9,11 +9,13 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/QosStyle.h>
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/TcpFace.h>
@@ -226,6 +228,27 @@ public:
         Network::disconnect("/NetworkTest/checkPersistence/p1","NetworkTest/checkPersistence/p2",style);
     }
 
+    void checkConnectionQos() {
+        report(0,"checking connection qos");
+        BufferedPort<Bottle> p1;
+        BufferedPort<Bottle> p2;
+        p1.open("/NetworkTest/checkConnectionQos/p1");
+        p2.open("/NetworkTest/checkConnectionQos/p2");
+        Network::connect(p1.getName(), p2.getName());
+        Bottle &bt = p1.prepare();
+        bt.addString("test");
+        p1.write();
+        yarp::os::QosStyle style;
+        style.threadPriority = 0;
+        style.threadPolicy = 0;
+        style.packetPriority = yarp::os::QosStyle::NORM;
+        checkTrue(Network::setConnectionQos(p1.getName(), p2.getName(), style, style, false),
+                  "connection Qos working");
+        Network::disconnect(p1.getName(), p2.getName());
+        p1.close();
+        p2.close();
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkConnect();
@@ -236,6 +259,7 @@ public:
         checkTimeoutNetworkExists();
         checkTopics();
         checkPersistence();
+        checkConnectionQos();
         Network::setLocalMode(false);
     }
 };

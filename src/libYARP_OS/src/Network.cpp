@@ -720,6 +720,71 @@ ConstString NetworkBase::readString(bool *eof) {
     return ConstString(Companion::readString(eof).c_str());
 }
 
+bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& dest,
+                                   const QosStyle& srcStyle, const QosStyle destStyle,
+                                   bool quite) {
+
+    //e.g.,  prop set /portname (sched ((priority 30) (policy 1))) (qos ((priority HIGH)))
+    yarp::os::Bottle cmd, reply;
+
+    // set the source Qos
+    cmd.addString("prop");
+    cmd.addString("set");
+    cmd.addString(dest.c_str());
+    Bottle& sched = cmd.addList();
+    sched.addString("sched");
+    Property& sched_prop = sched.addDict();
+    sched_prop.put("priority", srcStyle.threadPriority);
+    sched_prop.put("policy", srcStyle.threadPolicy);
+    Bottle& qos = cmd.addList();
+    qos.addString("qos");
+    Property& qos_prop = qos.addDict();
+    qos_prop.put("priority", Vocab::decode(srcStyle.packetPriority));
+    Contact srcCon = Contact::fromString(src);
+    bool ret = write(srcCon, cmd, reply, true, true, 2.0);
+    if(!ret) {
+        if(!quite)
+             ACE_OS::fprintf(stderr, "Cannot write to '%s'\n",src.c_str());
+        return false;
+    }
+    if(reply.get(0).asString() != "ok") {
+        if(!quite)
+             ACE_OS::fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n",
+                             src.c_str(), reply.toString().c_str());
+        return false;
+    }
+
+    // set the destination Qos
+    cmd.clear();
+    reply.clear();
+    cmd.addString("prop");
+    cmd.addString("set");
+    cmd.addString(src.c_str());
+    Bottle& sched2 = cmd.addList();
+    sched2.addString("sched");
+    Property& sched_prop2 = sched2.addDict();
+    sched_prop2.put("priority", destStyle.threadPriority);
+    sched_prop2.put("policy", destStyle.threadPolicy);    
+    //Bottle& qos2 = cmd.addList();
+    //qos2.addString("qos");
+    //Property& qos_prop2 = qos2.addDict();
+    //qos_prop2.put("priority", Vocab::decode(destStyle.packetPriority));
+    Contact destCon = Contact::fromString(dest);
+    ret = write(destCon, cmd, reply, true, true, 2.0);
+    if(!ret) {
+        if(!quite)
+             ACE_OS::fprintf(stderr, "Cannot write to '%s'\n",dest.c_str());
+        return false;
+    }
+    if(reply.get(0).asString() != "ok") {
+        if(!quite)
+             ACE_OS::fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n",
+                             dest.c_str(), reply.toString().c_str());
+        return false;
+    }
+    return true;
+}
+
 bool NetworkBase::write(const Contact& contact,
                        PortWriter& cmd,
                        PortReader& reply,

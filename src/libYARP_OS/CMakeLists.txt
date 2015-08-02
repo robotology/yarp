@@ -117,7 +117,8 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/YarpPluginSelector.h
                  include/yarp/os/YarpPluginSettings.h
                  include/yarp/os/SystemInfo.h
-                 include/yarp/os/SystemInfoSerializer.h)
+                 include/yarp/os/SystemInfoSerializer.h
+                 include/yarp/os/QosStyle.h)
 
 if(NOT YARP_NO_DEPRECATED)
   list(APPEND YARP_OS_HDRS include/yarp/os/begin_pack_for_net.h
@@ -341,7 +342,8 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/WireWriter.cpp
                  src/ydr.cpp
                  src/hmac_sha2.c
-                 src/sha2.c)
+                 src/sha2.c
+                 src/QosStyle.cpp)
 
 
 if (NOT SKIP_ACE)
