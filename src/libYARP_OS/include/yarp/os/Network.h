@@ -16,6 +16,7 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/NameStore.h>
+#include <yarp/os/QosStyle.h>
 
 //protects against some dangerous ACE macros
 #ifdef main
@@ -27,6 +28,7 @@ namespace yarp {
         class NetworkBase;
         class Network;
         class ContactStyle;
+        class QosStyle;
     }
 }
 
@@ -560,6 +562,29 @@ public:
      *
      */
     static int getDefaultPortRange();
+
+    /**
+     * Adjust the Qos preferences of a connection.
+     * @param src the name of an output port
+     * @param dest the name of an input port
+     * @param srcStyle the Qos preference of the output port
+     * @param destStyle the Qos preference of the input port
+     * @return true if the Qos preferences is set correctly
+     */
+    static bool setConnectionQos(const ConstString& src, const ConstString& dest,
+                                 const QosStyle& srcStyle, const QosStyle destStyle,
+                                 bool quiet=true);
+
+    /**
+     * Adjust the Qos preferences of a connection.
+     * @param src the name of an output port
+     * @param dest the name of an input port
+     * @param style the Qos preference of both input and output ports
+     * @return true if the Qos preferences is set correctly
+     */
+    static bool setConnectionQos(const ConstString& src, const ConstString& dest,
+                                 const QosStyle& style, bool quiet=true);
+
 };
 
 /**
