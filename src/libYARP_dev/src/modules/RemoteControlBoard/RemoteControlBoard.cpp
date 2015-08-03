@@ -27,6 +27,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
+#include <yarp/os/QosStyle.h>
 
 #include <stateExtendedReader.hpp>
 
@@ -961,6 +962,29 @@ public:
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
 
+        // check the Qos perefernces if available (local and remote)
+        yarp::os::QosStyle localQos;
+        if (config.check("local_qos")) {
+            Bottle& qos = config.findGroup("local_qos");
+            if(qos.check("thread_priority"))
+                localQos.threadPriority = qos.find("thread_priority").asInt();
+            if(qos.check("thread_policy"))
+                localQos.threadPolicy = qos.find("thread_policy").asInt();
+            if(qos.check("packet_priority"))
+                localQos.packetPriority = (QosStyle::PacketPriorityType) qos.find("packet_priority").asInt();
+        }
+
+        yarp::os::QosStyle remoteQos;
+        if (config.check("remote_qos")) {
+            Bottle& qos = config.findGroup("remote_qos");
+            if(qos.check("thread_priority"))
+                remoteQos.threadPriority = qos.find("thread_priority").asInt();
+            if(qos.check("thread_policy"))
+                remoteQos.threadPolicy = qos.find("thread_policy").asInt();
+            if(qos.check("packet_priority"))
+                remoteQos.packetPriority = (QosStyle::PacketPriorityType) qos.find("packet_priority").asInt();
+        }
+
         bool writeStrict_isFound = config.check("writeStrict");
         if(writeStrict_isFound)
         {
@@ -1035,6 +1059,7 @@ public:
                 yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
             }
+
             s1 = remote;
             s1 += "/command:i";
             s2 = local;
@@ -1046,6 +1071,9 @@ public:
                 yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
             }
+            // set the QoS preferences for the 'command' port
+            if (config.check("local_qos") || config.check("remote_qos"))
+                NetworkBase::setConnectionQos(command_p.getName(), s1.c_str(), localQos, remoteQos, false);
 
             s1 = remote;
             s1 += "/state:o";
@@ -1057,6 +1085,9 @@ public:
                 yError("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
                 connectionProblem = true;
             }
+            // set the QoS preferences for the 'state' port
+            if (config.check("local_qos") || config.check("remote_qos"))
+                NetworkBase::setConnectionQos(s1, state_p.getName(), remoteQos, localQos, false);
 
             s1 = remote;
             s1 += "/stateExt:o";
@@ -1067,6 +1098,9 @@ public:
             if (ok)
             {
                 controlBoardWrapper1_compatibility = false;
+                // set the QoS preferences for the 'state' port
+                if (config.check("local_qos") || config.check("remote_qos"))
+                    NetworkBase::setConnectionQos(s1, extendedIntputStatePort.getName(), remoteQos, localQos, false);
             }
             else
             {
