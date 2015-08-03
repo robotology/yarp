@@ -51,8 +51,8 @@ brew upgrade
 Also, you will need to add the homebrew-x11 and homebrew-science taps:
 
 \code
-brew tap homebrew\x11
-brew tap homebrew\science
+brew tap homebrew/x11
+brew tap homebrew/science
 \endcode
 
 \section install_mac_Homebrew_YARP Installing YARP from Homebrew
