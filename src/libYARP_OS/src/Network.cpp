@@ -721,8 +721,13 @@ ConstString NetworkBase::readString(bool *eof) {
 }
 
 bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& dest,
+                                   const QosStyle& style, bool quiet) {
+    return setConnectionQos(src, dest, style, style, quiet);
+}
+
+bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& dest,
                                    const QosStyle& srcStyle, const QosStyle destStyle,
-                                   bool quite) {
+                                   bool quiet) {
 
     //e.g.,  prop set /portname (sched ((priority 30) (policy 1))) (qos ((priority HIGH)))
     yarp::os::Bottle cmd, reply;
@@ -743,12 +748,12 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
     Contact srcCon = Contact::fromString(src);
     bool ret = write(srcCon, cmd, reply, true, true, 2.0);
     if(!ret) {
-        if(!quite)
+        if(!quiet)
              ACE_OS::fprintf(stderr, "Cannot write to '%s'\n",src.c_str());
         return false;
     }
     if(reply.get(0).asString() != "ok") {
-        if(!quite)
+        if(!quiet)
              ACE_OS::fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n",
                              src.c_str(), reply.toString().c_str());
         return false;
@@ -772,12 +777,12 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
     Contact destCon = Contact::fromString(dest);
     ret = write(destCon, cmd, reply, true, true, 2.0);
     if(!ret) {
-        if(!quite)
+        if(!quiet)
              ACE_OS::fprintf(stderr, "Cannot write to '%s'\n",dest.c_str());
         return false;
     }
     if(reply.get(0).asString() != "ok") {
-        if(!quite)
+        if(!quiet)
              ACE_OS::fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n",
                              dest.c_str(), reply.toString().c_str());
         return false;

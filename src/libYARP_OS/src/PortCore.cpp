@@ -1996,7 +1996,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                             Bottle* sched_prop = sched.find("sched").asList();
                                             if(sched_prop != NULL) {
                                                 int prio = -1;
-                                                int policy = -1;                                                
+                                                int policy = -1;
                                                 if(sched_prop->check("priority"))
                                                     prio = sched_prop->find("priority").asInt();
                                                 if(sched_prop->check("policy"))
