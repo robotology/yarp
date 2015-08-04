@@ -106,6 +106,25 @@ bool ImplementMotor::setTemperatureLimit(int m, const double value)
     return ret;
 }
 
+bool ImplementMotor::getGearboxRatio(int m, double* value)
+{
+    bool ret;
+    int k = castToMapper(helper)->toHw(m);
+
+    ret = imotor->getGearboxRatioRaw(k, value);
+
+    return ret;
+}
+
+bool ImplementMotor::setGearboxRatio(int m, const double value)
+{
+    bool ret;
+    int k = castToMapper(helper)->toHw(m);
+
+    ret = imotor->setGearboxRatioRaw(k, value);
+
+    return ret;
+}
 bool ImplementMotor::setMotorOutputLimit(int m, const double value)
 {
     bool ret;

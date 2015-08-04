@@ -2837,6 +2837,37 @@ bool ControlBoardWrapper::setTemperatureLimit (int m, const double val) {
     return false;
 }
 
+bool ControlBoardWrapper::getGearboxRatio(int m, double* val) {
+    int off = device.lut[m].offset;
+    int subIndex = device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->imotor)
+    {
+        return p->imotor->getGearboxRatio(off + p->base, val);
+    }
+    *val = 0.0;
+    return false;
+}
+
+bool ControlBoardWrapper::setGearboxRatio(int m, const double val) {
+    int off = device.lut[m].offset;
+    int subIndex = device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->imotor)
+    {
+        return p->imotor->setGearboxRatio(off + p->base, val);
+    }
+    return false;
+}
+
 bool ControlBoardWrapper::getMotorOutputLimit (int m, double* val) {
     int off=device.lut[m].offset;
     int subIndex=device.lut[m].deviceEntry;

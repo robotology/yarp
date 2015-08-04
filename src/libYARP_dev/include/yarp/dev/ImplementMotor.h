@@ -59,6 +59,8 @@ public:
     virtual bool setTemperatureLimit (int m, const double val);
     virtual bool getMotorOutputLimit (int m, double* val);
     virtual bool setMotorOutputLimit (int m, const double val);
+    virtual bool getGearboxRatio     (int m, double* val);
+    virtual bool setGearboxRatio     (int m, const double val);
 };
 
 #endif
