@@ -2956,7 +2956,7 @@ bool ControlBoardWrapper::resetMotorEncoders() {
     return ret;
 }
 
-bool ControlBoardWrapper::setMotorEncoder(int m, double val) {
+bool ControlBoardWrapper::setMotorEncoder(int m, const double val) {
     int off=device.lut[m].offset;
     int subIndex=device.lut[m].deviceEntry;
 

@@ -79,7 +79,7 @@ bool ImplementMotorEncoders::resetMotorEncoders()
     return iMotorEncoders->resetMotorEncodersRaw();
 }
 
-bool ImplementMotorEncoders::setMotorEncoder(int m, double val)
+bool ImplementMotorEncoders::setMotorEncoder(int m, const double val)
 {
     int k;
     double enc;
