@@ -34,6 +34,7 @@ using namespace yarp::dev;
 
 extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
+extern DriverCreator *createClientControlBoard();
 extern DriverCreator *createAnalogSensorClient();
 extern DriverCreator *createAnalogWrapper();
 extern DriverCreator *createControlBoardWrapper();
@@ -76,12 +77,13 @@ void Drivers::init() {
                                                     "yarp::dev::DeviceGroup"));
 
     add(createServerInertial());
+    add(createControlBoardWrapper());
     add(createRemoteControlBoard());
     add(createBatteryClient());
-    add(createServerControlBoard());
     add(createAnalogSensorClient());
     add(createAnalogWrapper());
-    add(createControlBoardWrapper());
     add(createVirtualAnalogWrapper());
     add(createBatteryWrapper());
+    add(createClientControlBoard());
+    add(createServerControlBoard());
 }

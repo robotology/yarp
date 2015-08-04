@@ -35,7 +35,7 @@ namespace yarp {
  */
 class YARP_dev_API yarp::dev::TestMotor : public DeviceDriver, 
                                           public IPositionControl, 
-                                          public IEncoders,
+                                          public IEncodersTimed,
                                           public IVelocityControl {
 private:
     int njoints;
@@ -261,6 +261,21 @@ public:
             encs[i] = pos[i];
         }
         return true;
+    }
+
+
+    virtual bool getEncoderTimed(int j, double *encs, double *time)
+    {
+        bool ret = getEncoder(j, encs);
+        *time = yarp::os::Time::now();
+        return ret;
+    }
+
+    virtual bool getEncodersTimed(double *encs, double *time)
+    {
+        bool ret = getEncoders(encs);
+        *time = yarp::os::Time::now();
+        return ret;
     }
 
     virtual bool getEncoderSpeed(int j, double *sp) {

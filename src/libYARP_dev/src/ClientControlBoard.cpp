@@ -1,11 +1,20 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Copyright (C) 2006 RobotCub Consortium
-* Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick
+* Copyright (C) 2014 RobotCub Consortium
+* Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick, Alberto CArdellino
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 *
 */
+
+/*
+ * This device meant to be used coupled with the ServerControlBoard device to
+ * exchange YARP messages aimed to control a motor board.
+ * This device was boarn as a copy of the RemoteControlBoard device, freezed in 
+ * date 04 Mar 2014 to better preserve the backward compatibility with the 
+ * ServerControlBoard capabilities. 
+ */
+
 
 #include <string.h>
 
@@ -28,11 +37,6 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
 
-#include <stateExtendedReader.hpp>
-
-#define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 4
-#define PROTOCOL_VERSION_TWEAK 0
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -40,12 +44,10 @@ using namespace yarp::sig;
 
 namespace yarp{
     namespace dev {
-        class RemoteControlBoard;
+        class ClientControlBoard;
         struct ProtocolVersion;
     }
 }
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 inline bool getTimeStamp(Bottle &bot, Stamp &st)
 {
@@ -60,13 +62,7 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
     return false;
 }
 
-struct yarp::dev::ProtocolVersion
-{
-    int major;
-    int minor;
-    int tweak;
-};
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 // encoders should arrive at least every 0.5s to be considered valide
 // getEncoders will return false otherwise.
@@ -193,6 +189,7 @@ public:
 
 };
 
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
 #include <yarp/os/RateThread.h>
@@ -228,7 +225,7 @@ public:
                 double min;
                 owner->getEstFrequency(it, av, min, max);
                 owner->resetStat();
-                yDebug("%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]\n",
+                printf("%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]\n",
                     ownerName.c_str(),
                     it,
                     av,
@@ -241,21 +238,17 @@ public:
 
 };
 
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
-
-
 /**
 * @ingroup dev_impl_wrapper
 *
 * The client side of the control board, connects to a ServerControlBoard.
 */
-class yarp::dev::RemoteControlBoard :
+class yarp::dev::ClientControlBoard :
     public IPidControl,
     public IPositionControl2,
     public IVelocityControl2,
     public IEncodersTimed,
     public IMotorEncoders,
-    public IMotor,
     public IAmplifierControl,
     public IControlLimits2,
     public IAxisInfo,
@@ -268,13 +261,8 @@ class yarp::dev::RemoteControlBoard :
     public IOpenLoopControl,
     public DeviceDriver,
     public IPositionDirect,
-    public IInteractionMode,
-    public IRemoteCalibrator,
-    public IRemoteVariables
+    public IInteractionMode
 {
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 protected:
     Port rpc_p;
     Port command_p;
@@ -286,24 +274,14 @@ protected:
     bool writeStrict_singleJoint;
     bool writeStrict_moreJoints;
 
-    // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
-    // from the YARP .thrift file
-//  yarp::os::PortReaderBuffer<jointData>           extendedInputState_buffer;  // Buffer storing new data
-    StateExtendedInputPort                          extendedIntputStatePort;  // Buffered port storing new data
     Semaphore extendedPortMutex;
-    jointData last_singleJoint;     // tmp to store last received data for a particular joint
-//    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
-    jointData last_wholePart;         // tmp to store last received data for whole part
-
-    bool controlBoardWrapper1_compatibility;
+  
     ConstString remote;
     ConstString local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
     // Semaphore mutex;
     int nj;
     bool njIsKnown;
-
-    ProtocolVersion protocolVersion;
 
     // Check for number of joints, if needed.
     // This is to allow for delayed connection to the remote control board.
@@ -916,7 +894,7 @@ protected:
             int nj2 = l2.size();
             if(nj2 != len)
             {
-                yError("received an answer with an unexpected number of entries!\n");
+                printf("received an answer with an unexpected number of entries!\n");
                 return false;
             }
             for (i = 0; i < nj2; i++)
@@ -928,24 +906,21 @@ protected:
         return false;
     }
 
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
-
 public:
     /**
      * Constructor.
      */
-    RemoteControlBoard() {
+    ClientControlBoard() {
         nj = 0;
         njIsKnown = false;
         writeStrict_singleJoint = true;
         writeStrict_moreJoints  = false;
-        controlBoardWrapper1_compatibility = false;
     }
 
     /**
      * Destructor.
      */
-    virtual ~RemoteControlBoard() {
+    virtual ~ClientControlBoard() {
     }
 
 
@@ -969,25 +944,20 @@ public:
             {
                 writeStrict_singleJoint = true;
                 writeStrict_moreJoints  = true;
-                yInfo("RemoteControlBoard is ENABLING the writeStrict option for all commands\n");
+                printf("ClientControlBoard is ENABLING the writeStrict option for all commands\n");
             }
             else if(gotStrictVal.asString() == "off")
             {
                 writeStrict_singleJoint = false;
                 writeStrict_moreJoints  = false;
-                yInfo("RemoteControlBoard is DISABLING the writeStrict opition for all commands\n");
+                printf("ClientControlBoard is DISABLING the writeStrict opition for all commands\n");
             }
             else
-                yError("Found writeStrict opition with wrong value. Accepted options are 'on' or 'off'\n");
+                printf("ERROR, found writeStrict opition with wrong value. Accepted options are 'on' or 'off'\n");
         }
 
         if (local=="") {
-            yError("Problem connecting to remote controlboard, 'local' port prefix not given\n");
-            return false;
-        }
-
-        if (remote=="") {
-            yError("Problem connecting to remote controlboard, 'remote' port name not given\n");
+            fprintf(stderr,"Problem connecting to remote controlboard, 'local' port prefix not given\n");
             return false;
         }
 
@@ -1010,12 +980,10 @@ public:
 
             s1 = local;
             s1 += "/stateExt:i";
-            if (!extendedIntputStatePort.open(s1.c_str())) { portProblem = true; }
             //new code
             if (!portProblem)
             {
                 state_p.useCallback();
-                extendedIntputStatePort.useCallback();
             }
         }
 
@@ -1032,7 +1000,7 @@ public:
             // ok=Network::connect(rpc_p.getName(), s1.c_str());    //This should work also with YARP_PORT_PREFIX because getting back the name of the port will return the modified name
             ok=rpc_p.addOutput(s1.c_str());                         //This works because we are manipulating only remote side and let yarp handle the local side
             if (!ok) {
-                yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
             }
             s1 = remote;
@@ -1043,7 +1011,7 @@ public:
             // ok=Network::connect(command_p.getName(), s1.c_str(), carrier); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
             ok = command_p.addOutput(s1.c_str(), carrier);
             if (!ok) {
-                yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
             }
 
@@ -1054,26 +1022,8 @@ public:
             ok = Network::connect(s1, state_p.getName(), carrier);
 
             if (!ok) {
-                yError("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
+                printf("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
                 connectionProblem = true;
-            }
-
-            s1 = remote;
-            s1 += "/stateExt:o";
-            s2 = local;
-            s2 += "/stateExt:i";
-            // not checking return value for now since it is wip (different machines can have different compilation flags
-            ok = Network::connect(s1, extendedIntputStatePort.getName(), carrier);
-            if (ok)
-            {
-                controlBoardWrapper1_compatibility = false;
-            }
-            else
-            {
-                yError("*** Extended port %s was not found on the controlBoardWrapper I'm connecting to. Falling back to compatibility behaviour\n", s1.c_str());
-                yWarning("Updating to newer yarp and the usage of controlBoardWrapper2 is suggested***\n");
-                //connectionProblem = true;     // for compatibility
-                controlBoardWrapper1_compatibility = true;
             }
         }
 
@@ -1082,32 +1032,19 @@ public:
             rpc_p.close();
             command_p.close();
             state_p.close();
-            extendedIntputStatePort.close();
             return false;
         }
 
         state_buffer.setStrict(false);
         command_buffer.attach(command_p);
 
-        if (!checkProtocolVersion(config.check("ignoreProtocolCheck")))
-        {
-            yError() << "checkProtocolVersion failed";
-            command_buffer.detach();
-            rpc_p.close();
-            command_p.close();
-            state_p.close();
-            extendedIntputStatePort.close();
-            return false;
-        }
-
         if (!isLive()) {
             if (remote!="") {
-                yError("Problems with obtaining the number of controlled axes\n");
+                printf("Problems with obtaining the number of controlled axes\n");
                 command_buffer.detach();
                 rpc_p.close();
                 command_p.close();
                 state_p.close();
-                extendedIntputStatePort.close();
                 return false;
             }
         }
@@ -1121,30 +1058,6 @@ public:
         else
             diagnosticThread=0;
 
-        // allocate memory for helper struct
-        // single joint
-        last_singleJoint.jointPosition.resize(1);
-        last_singleJoint.jointVelocity.resize(1);
-        last_singleJoint.jointAcceleration.resize(1);
-        last_singleJoint.motorPosition.resize(1);
-        last_singleJoint.motorVelocity.resize(1);
-        last_singleJoint.motorAcceleration.resize(1);
-        last_singleJoint.torque.resize(1);
-        last_singleJoint.pidOutput.resize(1);
-        last_singleJoint.controlMode.resize(1);
-        last_singleJoint.interactionMode.resize(1);
-
-        // whole part  (safe here because we already got the nj
-        last_wholePart.jointPosition.resize(nj);
-        last_wholePart.jointVelocity.resize(nj);
-        last_wholePart.jointAcceleration.resize(nj);
-        last_wholePart.motorPosition.resize(nj);
-        last_wholePart.motorVelocity.resize(nj);
-        last_wholePart.motorAcceleration.resize(nj);
-        last_wholePart.torque.resize(nj);
-        last_wholePart.pidOutput.resize(nj);
-        last_wholePart.controlMode.resize(nj);
-        last_wholePart.interactionMode.resize(nj);
         return true;
     }
 
@@ -1163,7 +1076,6 @@ public:
         rpc_p.close();
         command_p.close();
         state_p.close();
-        extendedIntputStatePort.close();
         return true;
     }
 
@@ -1491,27 +1403,7 @@ public:
     virtual bool getEncoder(int j, double *v) {
         // return get1V1I1D(VOCAB_ENCODER, j, v);
         double localArrivalTime = 0.0;
-        bool ret;
-
-        if(controlBoardWrapper1_compatibility)
-        {
-            ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
-        }
-        else
-        {
-            extendedPortMutex.wait();
-            ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_singleJoint.jointPosition_isValid)
-                *v = last_singleJoint.jointPosition[0];
-            else
-                ret = false;
-        }
-        if (ret && Time::now()-localArrivalTime>TIMEOUT)
-            ret=false;
-
-        return ret;
+        return state_p.getLast(j, *v, lastStamp, localArrivalTime);
     }
 
     /**
@@ -1524,21 +1416,8 @@ public:
         // return get1V1I1D(VOCAB_ENCODER, j, v);
         double localArrivalTime = 0.0;
         bool ret = false;
-        if(controlBoardWrapper1_compatibility)
-        {
-            ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
-        }
-        else
-        {
-            extendedPortMutex.wait();
-            ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_singleJoint.jointPosition_isValid)
-                *v = last_singleJoint.jointPosition[0];
-            else
-                ret = false;
-        }
+	ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+       
         *t=lastStamp.getTime();
 
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
@@ -1561,40 +1440,27 @@ public:
         // particular case, does not use RPC
         bool ret = false;
         double localArrivalTime=0.0;
+   
+	Vector tmp(nj);
 
-        if(controlBoardWrapper1_compatibility)
-        {
-            Vector tmp(nj);
+	// mutex.wait();
+	ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+	// mutex.post();
 
-            // mutex.wait();
-            ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
-            // mutex.post();
+	if (ret)
+	{
+	    if (tmp.size() != (size_t)nj)
+		fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-            if (ret)
-            {
-                if (tmp.size() != (size_t)nj)
-                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+	    YARP_ASSERT (tmp.size() == (size_t)nj);
+	    memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
 
-                YARP_ASSERT (tmp.size() == (size_t)nj);
-                memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
-
-                ////////////////////////// HANDLE TIMEOUT
-                // fill the vector anyway
-                if (Time::now()-localArrivalTime>TIMEOUT)
-                    ret=false;
-            }
-        }
-        else
-        {
-            extendedPortMutex.wait();
-            ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_wholePart.jointPosition_isValid)
-                std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
-            else
-                ret = false;
-        }
+	    ////////////////////////// HANDLE TIMEOUT
+	    // fill the vector anyway
+	    if (Time::now()-localArrivalTime>TIMEOUT)
+		ret=false;
+	}
+       
         return ret;
     }
 
@@ -1610,41 +1476,25 @@ public:
         double localArrivalTime=0.0;
 
         bool ret=false;
-        if(controlBoardWrapper1_compatibility)
-        {
-            Vector tmp(nj);
-     //       mutex.wait();
-            ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
-     //       mutex.post();
 
-            if (ret)
-            {
-                if (tmp.size() != (size_t)nj)
-                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+	Vector tmp(nj);
+  //       mutex.wait();
+	ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+  //       mutex.post();
 
-                YARP_ASSERT (tmp.size() == (size_t)nj);
-                for(int j=0; j<nj; j++)
-                {
-                    encs[j]=tmp[j];
-                    ts[j]=lastStamp.getTime();
-                }
-            }
-        }
-        else
-        {
-            extendedPortMutex.wait();
-            ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
+	if (ret)
+	{
+	    if (tmp.size() != (size_t)nj)
+		fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-            if(ret && last_wholePart.jointPosition_isValid)
-            {
-                std::copy(last_wholePart.jointPosition.begin(), last_wholePart.jointPosition.end(), encs);
-                std::fill_n(ts, nj, lastStamp.getTime());
-            }
-            else
-                ret = false;
-        }
-
+	    YARP_ASSERT (tmp.size() == (size_t)nj);
+	    for(int j=0; j<nj; j++)
+	    {
+		encs[j]=tmp[j];
+		ts[j]=lastStamp.getTime();
+	    }
+	}
+        
         ////////////////////////// HANDLE TIMEOUT
         if (Time::now()-localArrivalTime>TIMEOUT)
             ret=false;
@@ -1659,26 +1509,7 @@ public:
      */
     virtual bool getEncoderSpeed(int j, double *sp)
     {
-        if(controlBoardWrapper1_compatibility)
-        {
-            return get1V1I1D(VOCAB_ENCODER_SPEED, j, sp);
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_singleJoint.jointVelocity_isValid)
-            {
-                *sp = last_singleJoint.jointVelocity[0];
-            }
-            else
-                ret = false;
-
-            return ret;
-        }
+	return get1V1I1D(VOCAB_ENCODER_SPEED, j, sp);
     }
 
 
@@ -1689,26 +1520,7 @@ public:
      */
     virtual bool getEncoderSpeeds(double *spds)
     {
-        if(controlBoardWrapper1_compatibility)
-        {
-            return get1VDA(VOCAB_ENCODER_SPEEDS, spds);
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_wholePart.jointVelocity_isValid)
-            {
-                std::copy(last_wholePart.jointVelocity.begin(), last_wholePart.jointVelocity.end(), spds);
-            }
-            else
-                ret = false;
-
-            return ret;
-        }
+	return get1VDA(VOCAB_ENCODER_SPEEDS, spds);
     }
 
     /**
@@ -1719,25 +1531,7 @@ public:
 
     virtual bool getEncoderAcceleration(int j, double *acc)
     {
-        if(controlBoardWrapper1_compatibility)
-        {
-            return get1V1I1D(VOCAB_ENCODER_ACCELERATION, j, acc);
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_singleJoint.jointAcceleration_isValid)
-            {
-                *acc = last_singleJoint.jointAcceleration[0];
-            }
-            else
-                ret = false;
-            return ret;
-        }
+	return get1V1I1D(VOCAB_ENCODER_ACCELERATION, j, acc);
     }
 
     /**
@@ -1747,103 +1541,8 @@ public:
      */
     virtual bool getEncoderAccelerations(double *accs)
     {
-        if(controlBoardWrapper1_compatibility)
-        {
-            return get1VDA(VOCAB_ENCODER_ACCELERATIONS, accs);
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_wholePart.jointAcceleration_isValid)
-            {
-                std::copy(last_wholePart.jointAcceleration.begin(), last_wholePart.jointAcceleration.end(), accs);
-            }
-            else
-                ret = false;
-
-            return ret;
-        }
+	return get1VDA(VOCAB_ENCODER_ACCELERATIONS, accs);
     }
-
-    /* IRemoteVariable */
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
-        cmd.addVocab(VOCAB_VARIABLE);
-        cmd.addString(key);
-        bool ok = rpc_p.write(cmd, response);
-        if (CHECK_FAIL(ok, response))
-        {
-            val = *(response.get(2).asList());
-            return true;
-        }
-        return false;
-    }
-
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
-        cmd.addVocab(VOCAB_VARIABLE);
-        cmd.addString(key);
-        cmd.append(val);
-        //std::string s = cmd.toString();
-        bool ok = rpc_p.write(cmd, response);
-
-        return CHECK_FAIL(ok, response);
-    }
-
-
-    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
-        cmd.addVocab(VOCAB_LIST_VARIABLES);
-        bool ok = rpc_p.write(cmd, response);
-        //std::string s = response.toString();
-        if (CHECK_FAIL(ok, response))
-        {
-            *listOfKeys = *(response.get(2).asList());
-            //std::string s = listOfKeys->toString();
-            return true;
-        }
-        return false;
-    }
-
-    /* IMotor */
-    virtual bool getNumberOfMotors(int *num) {
-        return get1V1I(VOCAB_MOTORS_NUMBER, *num);
-    }
-
-    virtual bool getTemperature      (int m, double* val) {
-        return get1V1I1D(VOCAB_TEMPERATURE, m, val);
-    }
-
-    virtual bool getTemperatures     (double *vals) {
-        return get1VDA(VOCAB_TEMPERATURES, vals);
-    }
-
-    virtual bool getTemperatureLimit (int m, double* val) {
-        return get1V1I1D(VOCAB_TEMPERATURE_LIMIT, m, val);
-    }
-
-    virtual bool setTemperatureLimit (int m, const double val) {
-        return set1V1I1D(VOCAB_TEMPERATURE_LIMIT, m, val);
-    }
-
-    virtual bool getMotorOutputLimit (int m, double* val) {
-        return get1V1I1D(VOCAB_MOTOR_OUTPUT_LIMIT, m, val);
-    }
-
-    virtual bool setMotorOutputLimit (int m, const double val) {
-        return set1V1I1D(VOCAB_MOTOR_OUTPUT_LIMIT, m, val);
-    }
-
 
     /* IMotorEncoder */
 
@@ -1870,7 +1569,7 @@ public:
      * @param val new value
      * @return true/false on success/failure
      */
-    virtual bool setMotorEncoder(int j, const double val) {
+    virtual bool setMotorEncoder(int j, double val) {
         return set1V1I1D(VOCAB_MOTOR_ENCODER, j, val);
     }
 
@@ -1911,24 +1610,9 @@ public:
      */
     virtual bool getMotorEncoder(int j, double *v) {
         double localArrivalTime = 0.0;
-        bool ret;
-        if(controlBoardWrapper1_compatibility)
-        {
-             return get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
-        }
-        else
-        {
-            extendedPortMutex.wait();
-            ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_singleJoint.motorPosition_isValid)
-            {
-                *v = last_singleJoint.motorPosition[0];
-            }
-            else
-                ret = false;
-        }
+	bool ret;
+	ret = get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
+       
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
             ret=false;
 
@@ -1944,24 +1628,7 @@ public:
     virtual bool getMotorEncoderTimed(int j, double *v, double *t) {
         double localArrivalTime = 0.0;
         bool ret = false;
-        if(controlBoardWrapper1_compatibility)
-        {
-             return get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
-        }
-        else
-        {
-            extendedPortMutex.wait();
-            ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_singleJoint.motorPosition_isValid)
-            {
-                *v = last_singleJoint.motorPosition[0];
-            }
-            else
-                ret = false;
-        }
-
+	ret = get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
         *t=lastStamp.getTime();
 
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
@@ -1984,43 +1651,24 @@ public:
         // particular case, does not use RPC
         bool ret = false;
         double localArrivalTime=0.0;
+	Vector tmp(nj);
 
+	ret = get1VDA(VOCAB_MOTOR_ENCODERS, tmp.data());
 
-        if(controlBoardWrapper1_compatibility)
-        {
-            Vector tmp(nj);
+	if (ret)
+	{
+	    if (tmp.size() != (size_t)nj)
+		fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-            // mutex.wait();
-            return get1VDA(VOCAB_MOTOR_ENCODERS, tmp.data());
-            // mutex.post();
+	    YARP_ASSERT (tmp.size() == (size_t)nj);
+	    memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
 
-            if (ret)
-            {
-                if (tmp.size() != (size_t)nj)
-                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
-
-                YARP_ASSERT (tmp.size() == (size_t)nj);
-                memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
-
-                ////////////////////////// HANDLE TIMEOUT
-                // fill the vector anyway
-                if (Time::now()-localArrivalTime>TIMEOUT)
-                    ret=false;
-            }
-        }
-        else
-        {
-            extendedPortMutex.wait();
-            ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_wholePart.motorPosition_isValid)
-            {
-                std::copy(last_wholePart.motorPosition.begin(), last_wholePart.motorPosition.end(), encs);
-            }
-            else
-                ret = false;
-        }
+	    ////////////////////////// HANDLE TIMEOUT
+	    // fill the vector anyway
+	    if (Time::now()-localArrivalTime>TIMEOUT)
+		ret=false;
+	}
+      
         return ret;
     }
 
@@ -2034,43 +1682,24 @@ public:
         if (!isLive()) return false;
         // particular case, does not use RPC
         double localArrivalTime=0.0;
-
         bool ret=false;
         double time = yarp::os::Time::now();
-        if(controlBoardWrapper1_compatibility)
-        {
-            Vector tmp(nj);
-     //       mutex.wait();
-            return get1VDA(VOCAB_MOTOR_ENCODERS, tmp.data());
-     //       mutex.post();
 
-            if (ret)
-            {
-                if (tmp.size() != (size_t)nj)
-                    yWarning("tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+	Vector tmp(nj);
+	ret = get1VDA(VOCAB_MOTOR_ENCODERS, tmp.data());
 
-                YARP_ASSERT (tmp.size() == (size_t)nj);
-                for(int j=0; j<nj; j++)
-                {
-                    encs[j]=tmp[j];
-                    ts[j]=time;
-                }
-            }
-        }
-        else
-        {
-            extendedPortMutex.wait();
-            ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
+	if (ret)
+	{
+	    if (tmp.size() != (size_t)nj)
+		fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-            if(ret && last_wholePart.motorPosition_isValid)
-            {
-                std::copy(last_wholePart.motorPosition.begin(), last_wholePart.motorPosition.end(), encs);
-                std::fill_n(ts, nj, lastStamp.getTime());
-            }
-            else
-                ret = false;
-        }
+	    YARP_ASSERT (tmp.size() == (size_t)nj);
+	    for(int j=0; j<nj; j++)
+	    {
+		encs[j]=tmp[j];
+		ts[j]=time;
+	    }
+	}
 
         ////////////////////////// HANDLE TIMEOUT
         if (Time::now()-localArrivalTime>TIMEOUT)
@@ -2086,23 +1715,7 @@ public:
      */
     virtual bool getMotorEncoderSpeed(int j, double *sp)
     {
-        if(controlBoardWrapper1_compatibility)
-            return get1V1I1D(VOCAB_MOTOR_ENCODER_SPEED, j, sp);
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_singleJoint.motorVelocity_isValid)
-            {
-                *sp = last_singleJoint.motorVelocity[0];
-            }
-            else
-                ret = false;
-            return ret;
-        }
+	return get1V1I1D(VOCAB_MOTOR_ENCODER_SPEED, j, sp);
     }
 
 
@@ -2113,25 +1726,7 @@ public:
      */
     virtual bool getMotorEncoderSpeeds(double *spds)
     {
-        if(!controlBoardWrapper1_compatibility)
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_wholePart.motorVelocity_isValid)
-            {
-                std::copy(last_wholePart.motorVelocity.begin(), last_wholePart.motorVelocity.end(), spds);
-            }
-            else
-                ret = false;
-            return ret;
-        }
-        else
-        {
-            return get1VDA(VOCAB_MOTOR_ENCODER_SPEEDS, spds);
-        }
+	return get1VDA(VOCAB_MOTOR_ENCODER_SPEEDS, spds);
     }
 
     /**
@@ -2142,25 +1737,7 @@ public:
 
     virtual bool getMotorEncoderAcceleration(int j, double *acc)
     {
-        if(!controlBoardWrapper1_compatibility)
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_singleJoint.motorAcceleration_isValid)
-            {
-                *acc = last_singleJoint.motorAcceleration[0];
-            }
-            else
-                ret = false;
-            return ret;
-        }
-        else
-        {
-            return get1V1I1D(VOCAB_MOTOR_ENCODER_ACCELERATION, j, acc);
-        }
+	return get1V1I1D(VOCAB_MOTOR_ENCODER_ACCELERATION, j, acc);
     }
 
     /**
@@ -2170,25 +1747,7 @@ public:
      */
     virtual bool getMotorEncoderAccelerations(double *accs)
     {
-        if(!controlBoardWrapper1_compatibility)
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_wholePart.motorAcceleration_isValid)
-            {
-                std::copy(last_wholePart.motorAcceleration.begin(), last_wholePart.motorAcceleration.end(), accs);
-            }
-            else
-                ret = false;
-            return ret;
-        }
-        else
-        {
-            return get1VDA(VOCAB_MOTOR_ENCODER_ACCELERATIONS, accs);
-        }
+	return get1VDA(VOCAB_MOTOR_ENCODER_ACCELERATIONS, accs);
     }
 
     /* IPreciselyTimed */
@@ -2499,7 +2058,6 @@ public:
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_VELOCITY_MOVE);
-        c.head.addInt(j);
         c.body.size(1);
         memcpy(&(c.body[0]), &v, sizeof(double));
         command_buffer.write(writeStrict_singleJoint);
@@ -2737,25 +2295,6 @@ public:
         return true;
     }
 
-    bool setRefTorques(const int n_joint, const int *joints, const double *t)
-    {
-        //return set2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, v);
-        // use the streaming port!
-        if (!isLive()) return false;
-        CommandMessage& c = command_buffer.get();
-        c.head.clear();
-        // in streaming port only SET command can be sent, so it is implicit
-        c.head.addVocab(VOCAB_TORQUES_DIRECT_GROUP);
-        c.head.addInt(n_joint);
-        Bottle &jointList = c.head.addList();
-        for (int i = 0; i < n_joint; i++)
-            jointList.addInt(joints[i]);
-        c.body.size(n_joint);
-        memcpy(&(c.body[0]), t, sizeof(double)*n_joint);
-        command_buffer.write(writeStrict_moreJoints);
-        return true;
-    }
-
     bool getBemfParam(int j, double *t)
     { return get2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, t); }
 
@@ -2829,49 +2368,12 @@ public:
 
     bool getTorque(int j, double *t)
     {
-        if(controlBoardWrapper1_compatibility)
-        {
-            return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t);
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_singleJoint.torque_isValid)
-            {
-                *t = last_singleJoint.torque[0];
-            }
-            else
-                ret = false;
-
-            return ret;
-        }
+	return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t);
     }
 
     bool getTorques(double *t)
     {
-        if(controlBoardWrapper1_compatibility)
-        {
-            return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t);
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_wholePart.torque_isValid)
-            {
-                std::copy(last_wholePart.torque.begin(), last_wholePart.torque.end(), t);
-            }
-            else
-                ret = false;
-            return ret;
-        }
+	return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t);
     }
 
     bool getTorqueRange(int j, double *min, double* max)
@@ -3106,86 +2608,51 @@ public:
     bool getControlMode(int j, int *mode)
     {
         bool ok = false;
-        if(controlBoardWrapper1_compatibility)
-        {
-            Bottle cmd, resp;
-            cmd.addVocab(VOCAB_GET);
-            cmd.addVocab(VOCAB_ICONTROLMODE);
-            cmd.addVocab(VOCAB_CM_CONTROL_MODE);
-            cmd.addInt(j);
+	Bottle cmd, resp;
+	cmd.addVocab(VOCAB_GET);
+	cmd.addVocab(VOCAB_ICONTROLMODE);
+	cmd.addVocab(VOCAB_CM_CONTROL_MODE);
+	cmd.addInt(j);
 
-            ok = rpc_p.write(cmd, resp);
-            if (CHECK_FAIL(ok, resp))
-            {
-                *mode=resp.get(2).asVocab();
-            }
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            ok = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
+	ok = rpc_p.write(cmd, resp);
+	if (CHECK_FAIL(ok, resp))
+	{
+	    *mode=resp.get(2).asVocab();
+	}
 
-            if(ok && last_singleJoint.controlMode_isValid)
-            {
-                *mode = last_singleJoint.controlMode[0];
-            }
-            else
-                ok = false;
-        }
         return ok;
-
     }
 
     // IControlMode2
     bool getControlModes(const int n_joint, const int *joints, int *modes)
     {
         bool ok = false;      
-        if(controlBoardWrapper1_compatibility)
-        {
-            Bottle cmd, resp;
-            cmd.addVocab(VOCAB_GET);
-            cmd.addVocab(VOCAB_ICONTROLMODE);
-            cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
-            cmd.addInt(n_joint);
-            Bottle& l1 = cmd.addList();
-            for (int i = 0; i < n_joint; i++)
-                l1.addInt(joints[i]);
+	Bottle cmd, resp;
+	cmd.addVocab(VOCAB_GET);
+	cmd.addVocab(VOCAB_ICONTROLMODE);
+	cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
+	cmd.addInt(n_joint);
+	Bottle& l1 = cmd.addList();
+	for (int i = 0; i < n_joint; i++)
+	    l1.addInt(joints[i]);
 
-            ok = rpc_p.write(cmd, resp);
+	ok = rpc_p.write(cmd, resp);
 
-            if (CHECK_FAIL(ok, resp))
-            {
-                Bottle& l = *(resp.get(2).asList());
-                if (&l == 0)
-                    return false;
+	if (CHECK_FAIL(ok, resp))
+	{
+	    Bottle& l = *(resp.get(2).asList());
+	    if (&l == 0)
+		return false;
 
-                if (n_joint != l.size())
-                {
-                    yError("getControlModes group received an answer of wrong length. expected %d, actual size is %d", n_joint, l.size());
-                    return false;
-                }
+	    if (n_joint != l.size())
+	    {
+		printf("getControlModes group received an answer of wrong lenght. expected %d, actual size is %d", n_joint, l.size());
+		return false;
+	    }
 
-                for (int i = 0; i < n_joint; i++)
-                    modes[i] = l.get(i).asInt();
-            }
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ok && last_wholePart.controlMode_isValid)
-            {
-                for (int i = 0; i < n_joint; i++)
-                    modes[i] = last_wholePart.controlMode[joints[i]];
-            }
-            else
-                ok = false;
-        }
+	    for (int i = 0; i < n_joint; i++)
+		modes[i] = l.get(i).asInt();
+	}
         return ok;
     }
 
@@ -3193,40 +2660,23 @@ public:
     bool getControlModes(int *modes)
     {
         bool ok = false;
-        if(controlBoardWrapper1_compatibility)
-        {
-            if (!isLive()) return false;
-            Bottle cmd, resp;
-            cmd.addVocab(VOCAB_GET);
-            cmd.addVocab(VOCAB_ICONTROLMODE);
-            cmd.addVocab(VOCAB_CM_CONTROL_MODES);
+	if (!isLive()) return false;
+	Bottle cmd, resp;
+	cmd.addVocab(VOCAB_GET);
+	cmd.addVocab(VOCAB_ICONTROLMODE);
+	cmd.addVocab(VOCAB_CM_CONTROL_MODES);
 
-            ok = rpc_p.write(cmd, resp);
-            if (CHECK_FAIL(ok, resp)) {
-                Bottle& l = *(resp.get(2).asList());
-                if (&l == 0)
-                    return false;
-                int njs = l.size();
-                YARP_ASSERT (nj == njs);
-                for (int i = 0; i < nj; i++)
-                    modes[i] = l.get(i).asInt();
-                return true;
-            }
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ok && last_wholePart.controlMode_isValid)
-            {
-                std::copy(last_wholePart.controlMode.begin(), last_wholePart.controlMode.end(), modes);
-            }
-            else
-                ok = false;
-        }
+	ok = rpc_p.write(cmd, resp);
+	if (CHECK_FAIL(ok, resp)) {
+	    Bottle& l = *(resp.get(2).asList());
+	    if (&l == 0)
+		return false;
+	    int njs = l.size();
+	    YARP_ASSERT (nj == njs);
+	    for (int i = 0; i < nj; i++)
+		modes[i] = l.get(i).asInt();
+	    return true;
+	}
         return ok;
     }
 
@@ -3464,155 +2914,103 @@ public:
     bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
     {
         bool ok = false;
-        if(controlBoardWrapper1_compatibility)
-        {
-            Bottle cmd, response;
+	Bottle cmd, response;
 
-            if (!isLive()) return false;
+	if (!isLive()) return false;
 
-            cmd.addVocab(VOCAB_GET);
-            cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
-            cmd.addVocab(VOCAB_INTERACTION_MODE);
-            cmd.addInt(axis);
+	cmd.addVocab(VOCAB_GET);
+	cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+	cmd.addVocab(VOCAB_INTERACTION_MODE);
+	cmd.addInt(axis);
 
-            ok = rpc_p.write(cmd, response);
+	ok = rpc_p.write(cmd, response);
 
-            if (CHECK_FAIL(ok, response))
-            {
-                YARP_ASSERT (response.size()>=1);
-                *mode = (InteractionModeEnum) response.get(0).asVocab();
-            }
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            ok = extendedIntputStatePort.getLast(axis, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ok && last_singleJoint.interactionMode_isValid)
-            {
-                *mode = (yarp::dev::InteractionModeEnum)last_singleJoint.interactionMode[0];
-            }
-            else
-                ok = false;
-        }
+	if (CHECK_FAIL(ok, response))
+	{
+	    YARP_ASSERT (response.size()>=1);
+	    *mode = (InteractionModeEnum) response.get(0).asVocab();
+	}
         return ok;
     }
 
     bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
     {
         bool ok = false;
-        if(controlBoardWrapper1_compatibility)
-        {
-            Bottle cmd, response;
-            if (!isLive()) return false;
+	Bottle cmd, response;
+	if (!isLive()) return false;
 
-            cmd.addVocab(VOCAB_GET);
-            cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
-            cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
+	cmd.addVocab(VOCAB_GET);
+	cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+	cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
 
-            cmd.addInt(n_joints);
+	cmd.addInt(n_joints);
 
-            Bottle& l1 = cmd.addList();
-            for (int i = 0; i < n_joints; i++)
-                l1.addInt(joints[i]);
+	Bottle& l1 = cmd.addList();
+	for (int i = 0; i < n_joints; i++)
+	    l1.addInt(joints[i]);
 
-            ok = rpc_p.write(cmd, response);
+	ok = rpc_p.write(cmd, response);
 
-            if (CHECK_FAIL(ok, response))
-            {
-                int i;
-                Bottle& list = *(response.get(0).asList());
-                YARP_ASSERT(list.size() >= n_joints)
+	if (CHECK_FAIL(ok, response))
+	{
+	    int i;
+	    Bottle& list = *(response.get(0).asList());
+	    YARP_ASSERT(list.size() >= n_joints)
 
-                if (list.size() != n_joints)
-                {
-                    yError("getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
-                    return false;
-                }
-                else
-                {
-                    for (i = 0; i < n_joints; i++)
-                    {
-                        modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
-                    }
-                    return true;
-                }
-            }
-        }
-        else
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            ok = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ok && last_wholePart.interactionMode_isValid)
-            {
-                for (int i = 0; i < n_joints; i++)
-                    modes[i] = (yarp::dev::InteractionModeEnum)last_wholePart.interactionMode[joints[i]];
-            }
-            else
-                ok = false;
-        }
+	    if (list.size() != n_joints)
+	    {
+		fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
+		return false;
+	    }
+	    else
+	    {
+		for (i = 0; i < n_joints; i++)
+		{
+		    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
+		}
+		return true;
+	    }
+	}
         return ok;
     }
 
     bool getInteractionModes(yarp::dev::InteractionModeEnum* modes)
     {
-        bool ret = false;
-        if(!controlBoardWrapper1_compatibility)
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
+	bool ret = false;
+	Bottle cmd, response;
+	if (!isLive()) return false;
 
-            if(ret && last_wholePart.interactionMode_isValid)
-            {
-                std::copy(last_wholePart.interactionMode.begin(), last_wholePart.interactionMode.end(), (int*)modes);
-            }
-            else
-                ret = false;
-        }
-        else
-        {
-            Bottle cmd, response;
-            if (!isLive()) return false;
+	cmd.addVocab(VOCAB_GET);
+	cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+	cmd.addVocab(VOCAB_INTERACTION_MODES);
 
-            cmd.addVocab(VOCAB_GET);
-            cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
-            cmd.addVocab(VOCAB_INTERACTION_MODES);
+	bool ok = rpc_p.write(cmd, response);
 
-            bool ok = rpc_p.write(cmd, response);
+	if (CHECK_FAIL(ok, response))
+	{
+	    int i;
+	    Bottle& list = *(response.get(0).asList());
+	    YARP_ASSERT(list.size() >= nj)
 
-            if (CHECK_FAIL(ok, response))
-            {
-                int i;
-                Bottle& list = *(response.get(0).asList());
-                YARP_ASSERT(list.size() >= nj)
+	    if (list.size() != nj)
+	    {
+		fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
+		return false;
 
-                if (list.size() != nj)
-                {
-                    yError("getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
-                    return false;
-
-                }
-                else
-                {
-                    for (i = 0; i < nj; i++)
-                    {
-                        modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
-                    }
-                    ret = true;
-                }
-            }
-            else
-            {
-                ret = false;
-            }
-        }
+	    }
+	    else
+	    {
+		for (i = 0; i < nj; i++)
+		{
+		    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
+		}
+		ret = true;
+	    }
+	}
+	else
+	{
+	    ret = false;
+	}
         return ret;
     }
 
@@ -3754,42 +3152,23 @@ public:
 
     virtual bool getOutput(int j, double *out)
     {
-        if(!controlBoardWrapper1_compatibility)
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(j, last_singleJoint, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
+	// both iOpenLoop and iPid getOutputs will pass here and use the VOCAB_OPENLOOP_INTERFACE
+	Bottle cmd, response;
+	cmd.addVocab(VOCAB_GET);
+//        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
+	cmd.addVocab(VOCAB_OUTPUT);
+	cmd.addInt(j);
+	bool ok = rpc_p.write(cmd, response);
 
-            if(ret && last_singleJoint.pidOutput_isValid)
-            {
-                *out = last_singleJoint.pidOutput[0];
-            }
-            else
-                ret = false;
-            return ret;
-        }
-        else
-        {
-            // both iOpenLoop and iPid getOutputs will pass here and use the VOCAB_OPENLOOP_INTERFACE
-            Bottle cmd, response;
-            cmd.addVocab(VOCAB_GET);
-    //        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
-            cmd.addVocab(VOCAB_OUTPUT);
-            cmd.addInt(j);
-            bool ok = rpc_p.write(cmd, response);
-    
-            if (CHECK_FAIL(ok, response))
-            {
-                // ok
-                *out = response.get(2).asDouble();
-    
-                getTimeStamp(response, lastStamp);
-                return true;
-            }
-            else
-                return false;
-        }
+	if (CHECK_FAIL(ok, response))
+	{
+	    *out = response.get(2).asDouble();
+
+	    getTimeStamp(response, lastStamp);
+	    return true;
+	}
+	else
+	    return false;
     }
 
     /**
@@ -3799,209 +3178,15 @@ public:
      */
     virtual bool getOutputs(double *outs)
     {
-        if(!controlBoardWrapper1_compatibility)
-        {
-            double localArrivalTime=0.0;
-            extendedPortMutex.wait();
-            bool ret = extendedIntputStatePort.getLast(last_wholePart, lastStamp, localArrivalTime);
-            extendedPortMutex.post();
-
-            if(ret && last_wholePart.pidOutput_isValid)
-            {
-                std::copy(last_wholePart.pidOutput.begin(), last_wholePart.pidOutput.end(), outs);
-            }
-            else
-                ret = false;
-            return ret;
-        }
-        else
-            return get1VDA(VOCAB_OUTPUTS, outs);
-    }
-
-    bool checkProtocolVersion(bool ignore)
-    {
-        bool error=false;
-        // verify protocol
-        Bottle cmd, reply;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_PROTOCOL_VERSION);
-        rpc_p.write(cmd, reply);
-    
-        // check size and format of messages, expected [prot] int int int [ok]
-        if (reply.size()!=5)
-           error=true;
-
-        if (reply.get(0).asVocab()!=VOCAB_PROTOCOL_VERSION)
-           error=true;
-
-        if (!error)
-        {
-            protocolVersion.major=reply.get(1).asInt();
-            protocolVersion.minor=reply.get(2).asInt();
-            protocolVersion.tweak=reply.get(3).asInt();
-
-            //verify protocol
-            if (protocolVersion.major!=PROTOCOL_VERSION_MAJOR)
-                error=true;
-
-            if (protocolVersion.minor!=PROTOCOL_VERSION_MINOR)
-                error=true;
-        }
-
-        if (!error)
-            return true;
-
-        // protocol did not match
-        yError("expecting protocol %d %d %d, but remotecontrolboard returned protocol version %d %d %d\n",
-                        PROTOCOL_VERSION_MAJOR, PROTOCOL_VERSION_MINOR, PROTOCOL_VERSION_TWEAK,
-                        protocolVersion.major, protocolVersion.minor, protocolVersion.tweak); 
-
-
-        bool ret;
-        if (ignore)
-        {
-            yWarning(" ignoring error but please update YARP or the remotecontrolboard implementation\n");
-            ret = true;
-        }
-        else 
-        {
-            yError(" please update YARP or the remotecontrolboard implementation\n");
-            ret = false;
-        }
-
-        return ret;
-    }
-
-    /* IRemoteCalibrator interface */
-
-    /**
-     * @brief isCalibratorDevicePresent: check if a calibrator device has been set
-     * @return true if a valid calibrator device has been found
-     */
-    bool isCalibratorDevicePresent(bool *isCalib)
-    {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
-        cmd.addVocab(VOCAB_IS_CALIBRATOR_PRESENT);
-        bool ok = rpc_p.write(cmd, response);
-        if(ok)
-        {
-            *isCalib = response.get(2).asInt()!=0;
-        }
-        else
-        {
-            *isCalib = false;
-        }
-        return CHECK_FAIL(ok, response);
-    }
-
-    /**
-     * @brief calibrateSingleJoint: call the calibration procedure for the single joint
-     * @param j: joint to be calibrated
-     * @return true if calibration was successful
-     */
-    bool calibrateSingleJoint(int j)
-    {
-        return set2V1I(VOCAB_REMOTE_CALIBRATOR_INTERFACE, VOCAB_CALIBRATE_SINGLE_JOINT, j);
-    }
-
-    /**
-     * @brief calibrateWholePart: call the procedure for calibrating the whole device
-     * @return true if calibration was successful
-     */
-    bool calibrateWholePart()
-    {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
-        cmd.addVocab(VOCAB_CALIBRATE_WHOLE_PART);
-        bool ok = rpc_p.write(cmd, response);
-        return CHECK_FAIL(ok, response);
-    }
-
-    /**
-     * @brief homingSingleJoint: call the homing procedure for a single joint
-     * @param j: joint to be calibrated
-     * @return true if homing was succesful, false otherwise
-     */
-    bool homingSingleJoint(int j)
-    {
-        return set2V1I(VOCAB_REMOTE_CALIBRATOR_INTERFACE, VOCAB_HOMING_SINGLE_JOINT, j);
-    }
-
-    /**
-     * @brief homingWholePart: call the homing procedure for a the whole part/device
-     * @return true if homing was succesful, false otherwise
-     */
-    bool homingWholePart()
-    {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
-        cmd.addVocab(VOCAB_HOMING_WHOLE_PART);
-        bool ok = rpc_p.write(cmd, response);
-        yDebug() << "Sent homing whole part message";
-        return CHECK_FAIL(ok, response);
-    }
-
-    /**
-     * @brief parkSingleJoint(): start the parking procedure for the single joint
-     * @return true if succesful
-     */
-    bool parkSingleJoint(int j, bool _wait=true)
-    {
-        return set2V1I(VOCAB_REMOTE_CALIBRATOR_INTERFACE, VOCAB_PARK_SINGLE_JOINT, j);
-    }
-
-    /**
-     * @brief parkWholePart: start the parking procedure for the whole part
-     * @return true if succesful
-     */
-    bool parkWholePart()
-    {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
-        cmd.addVocab(VOCAB_PARK_WHOLE_PART);
-        bool ok = rpc_p.write(cmd, response);
-        return CHECK_FAIL(ok, response);
-    }
-
-    /**
-     * @brief quitCalibrate: interrupt the calibration procedure
-     * @return true if succesful
-     */
-    bool quitCalibrate()
-    {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
-        cmd.addVocab(VOCAB_QUIT_CALIBRATE);
-        bool ok = rpc_p.write(cmd, response);
-        return CHECK_FAIL(ok, response);
-    }
-
-    /**
-     * @brief quitPark: interrupt the park procedure
-     * @return true if succesful
-     */
-    bool quitPark()
-    {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
-        cmd.addVocab(VOCAB_QUIT_PARK);
-        bool ok = rpc_p.write(cmd, response);
-        return CHECK_FAIL(ok, response);
+	return get1VDA(VOCAB_OUTPUTS, outs);
     }
 };
 
 // implementation of CommandsHelper
 
-yarp::dev::DriverCreator *createRemoteControlBoard() {
-    return new DriverCreatorOf<RemoteControlBoard>("remote_controlboard",
-        "controlboardwrapper2",
-        "yarp::dev::RemoteControlBoard");
+yarp::dev::DriverCreator *createClientControlBoard() {
+    return new DriverCreatorOf<ClientControlBoard>("clientcontrolboard",
+        "controlboard",
+        "yarp::dev::ClientControlBoard");
 }
 
