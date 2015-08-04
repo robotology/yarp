@@ -98,7 +98,7 @@ public:
     * @param val retrieved gearbox ratio
     * @return true/false
     */
-    virtual bool getGearboxRatioRaw(int m, double *val) { yError("getGearboxRatioRaw() not implemented");  return false; };
+    virtual bool getGearboxRatioRaw(int m, double *val) { yWarning("getGearboxRatioRaw() not implemented");  return false; };
 
     /**
     * Set the gearbox ratio for a specific motor
@@ -106,7 +106,7 @@ public:
     * @param gearbox ratio to be set
     * @return true/false
     */
-    virtual bool setGearboxRatioRaw(int m, const double val) { yError("setGearboxRatioRaw() not implemented");  return false; };
+    virtual bool setGearboxRatioRaw(int m, const double val) { yWarning("setGearboxRatioRaw() not implemented");  return false; };
 };
 
 /**
