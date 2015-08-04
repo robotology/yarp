@@ -2132,6 +2132,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_GEARBOX_RATIO:
+                            {
+                                ok = rpc_IMotor->getGearboxRatio(cmd.get(2).asInt(), &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
                             case VOCAB_TEMPERATURES:
                             {
                                 double *p = new double[controlledJoints];

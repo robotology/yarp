@@ -11,6 +11,7 @@
 #define __YARPMOTOR__
 
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Log.h>
 
 namespace yarp {
     namespace dev {
@@ -90,6 +91,22 @@ public:
      * @return true/false
      */
     virtual bool setMotorOutputLimitRaw(int m, const double limit)=0;
+
+    /**
+    * Get the gearbox ratio for a specific motor
+    * @param m motor number
+    * @param val retrieved gearbox ratio
+    * @return true/false
+    */
+    virtual bool getGearboxRatioRaw(int m, double *val) { yError("getGearboxRatioRaw() not implemented");  return false; };
+
+    /**
+    * Set the gearbox ratio for a specific motor
+    * @param m motor number
+    * @param gearbox ratio to be set
+    * @return true/false
+    */
+    virtual bool setGearboxRatioRaw(int m, const double val) { yError("setGearboxRatioRaw() not implemented");  return false; };
 };
 
 /**
@@ -163,11 +180,28 @@ public:
      * @return true/false
      */
     virtual bool setMotorOutputLimit(int m, const double limit)=0;
+
+    /**
+    * Get the gearbox ratio for a specific motor
+    * @param m motor number
+    * @param val retrieved gearbox ratio
+    * @return true/false
+    */
+    virtual bool getGearboxRatio(int m, double *val) { yError("getGearboxRatioRaw() not implemented");  return false; };
+
+    /**
+    * Set the gearbox ratio for a specific motor
+    * @param m motor number
+    * @param gearbox ratio to be set
+    * @return true/false
+    */
+    virtual bool setGearboxRatio(int m, const double val) { yError("setGearboxRatio() not implemented");  return false; };
 };
 
 // interface IMotorEncoders gets
 #define VOCAB_MOTORS_NUMBER        VOCAB4('m','t','n','m')
 #define VOCAB_TEMPERATURE          VOCAB3('t','m','p')
+#define VOCAB_GEARBOX_RATIO        VOCAB4('g','b','x','r')
 #define VOCAB_TEMPERATURES         VOCAB4('t','m','p','s')
 #define VOCAB_TEMPERATURE_LIMIT    VOCAB4('t','m','p','l')
 #define VOCAB_MOTOR_OUTPUT_LIMIT   VOCAB4('o','u','t','l')

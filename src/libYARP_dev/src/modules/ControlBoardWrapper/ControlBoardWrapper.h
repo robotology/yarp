@@ -1057,6 +1057,10 @@ public:
 
     virtual bool setMotorOutputLimit (int m, const double val);
 
+    virtual bool getGearboxRatio(int m, double* val);
+
+    virtual bool setGearboxRatio(int m, const double val);
+
     /* IAxisInfo */
     virtual bool getAxisName(int j, yarp::os::ConstString& name);
 
