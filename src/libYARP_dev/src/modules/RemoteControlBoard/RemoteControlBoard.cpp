@@ -967,22 +967,22 @@ public:
         if (config.check("local_qos")) {
             Bottle& qos = config.findGroup("local_qos");
             if(qos.check("thread_priority"))
-                localQos.threadPriority = qos.find("thread_priority").asInt();
+                localQos.setThreadPriority(qos.find("thread_priority").asInt());
             if(qos.check("thread_policy"))
-                localQos.threadPolicy = qos.find("thread_policy").asInt();
+                localQos.setThreadPolicy(qos.find("thread_policy").asInt());
             if(qos.check("packet_priority"))
-                localQos.packetPriority = (QosStyle::PacketPriorityType) qos.find("packet_priority").asInt();
+                localQos.setPacketPriorityByType((QosStyle::PacketPriorityType) qos.find("packet_priority").asInt());
         }
 
         yarp::os::QosStyle remoteQos;
         if (config.check("remote_qos")) {
             Bottle& qos = config.findGroup("remote_qos");
             if(qos.check("thread_priority"))
-                remoteQos.threadPriority = qos.find("thread_priority").asInt();
+                remoteQos.setThreadPriority(qos.find("thread_priority").asInt());
             if(qos.check("thread_policy"))
-                remoteQos.threadPolicy = qos.find("thread_policy").asInt();
+                remoteQos.setThreadPolicy(qos.find("thread_policy").asInt());
             if(qos.check("packet_priority"))
-                remoteQos.packetPriority = (QosStyle::PacketPriorityType) qos.find("packet_priority").asInt();
+                remoteQos.setPacketPriorityByType((QosStyle::PacketPriorityType) qos.find("packet_priority").asInt());
         }
 
         bool writeStrict_isFound = config.check("writeStrict");
