@@ -2023,9 +2023,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 bOk = false;
                                 for (unsigned int i=0; i<units.size(); i++) {
                                     PortCoreUnit *unit = units[i];
-                                    if (unit && !unit->isFinished() && unit->isOutput()) {
+                                    if (unit && !unit->isFinished()) {
                                         Route route = unit->getRoute();
-                                        ConstString portName = route.getToName();
+                                        ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
                                         if (portName == cmd.get(2).asString()) {
                                             Bottle* qos_prop = qos.find("qos").asList();
                                             if(qos_prop != NULL) {
@@ -2041,28 +2041,20 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                         case VOCAB4('C','R','I','T'): dscp = 44; break;
                                                         default: dscp = -1;
                                                     };
-                                                    OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
-                                                    if(op && (dscp >= 0) ) {
-                                                        bOk = op->getOutputStream().setTypeOfService(dscp<<2);
-                                                    }
+                                                    if(dscp >= 0)
+                                                        bOk = setTypeOfService(unit, dscp<<2);
                                                 }
                                                 else if(qos_prop->check("dscp")) {
                                                     int dscp = getDSCPByVocab(qos_prop->find("dscp").asVocab());
                                                     if (dscp < 0)
                                                         dscp = qos_prop->find("dscp").asInt();
-                                                    // set the DSCP value of DiffServ
-                                                    OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
-                                                    if(op && (dscp>=0) && (dscp<64)) {
-                                                        bOk = op->getOutputStream().setTypeOfService(dscp<<2);
-                                                    }
+                                                    if((dscp>=0) && (dscp<64))
+                                                        bOk = setTypeOfService(unit, dscp<<2);
                                                 }
                                                 else if(qos_prop->check("tos")) {
                                                     int tos = qos_prop->find("tos").asInt();
                                                     // set the TOS value (backward compatibility)
-                                                    OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
-                                                    if(op) {
-                                                        bOk = op->getOutputStream().setTypeOfService(tos);
-                                                    }
+                                                    bOk = setTypeOfService(unit, tos);
                                                 }
                                             }
                                             else
@@ -2156,6 +2148,25 @@ inline int PortCore::getDSCPByVocab(NetInt32 code) {
         default: dscp = -1;
     };
     return dscp;
+}
+
+bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos) {
+    if(unit->isOutput()) {
+        OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
+        if(op)
+            return op->getOutputStream().setTypeOfService(tos);
+    }
+
+    // Some of the input units may have output stream object to write back to
+    // the connection (e.g., tcp ack and reply). Thus the QoS preferences should be
+    // also configured for them.
+    if(unit->isInput()) {
+        InputProtocol* ip = dynamic_cast<PortCoreInputUnit*>(unit)->getInPutProtocol();
+        if(ip && ip->getOutput().isOk())
+            return ip->getOutput().getOutputStream().setTypeOfService(tos);
+    }
+    // if there is nothing to be set, returns true
+    return true;
 }
 
 void PortCore::reportUnit(PortCoreUnit *unit, bool active) {

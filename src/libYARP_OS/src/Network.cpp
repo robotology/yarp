@@ -770,10 +770,10 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
     Property& sched_prop2 = sched2.addDict();
     sched_prop2.put("priority", destStyle.threadPriority);
     sched_prop2.put("policy", destStyle.threadPolicy);    
-    //Bottle& qos2 = cmd.addList();
-    //qos2.addString("qos");
-    //Property& qos_prop2 = qos2.addDict();
-    //qos_prop2.put("priority", Vocab::decode(destStyle.packetPriority));
+    Bottle& qos2 = cmd.addList();
+    qos2.addString("qos");
+    Property& qos_prop2 = qos2.addDict();
+    qos_prop2.put("priority", Vocab::decode(destStyle.packetPriority));
     Contact destCon = Contact::fromString(dest);
     ret = write(destCon, cmd, reply, true, true, 2.0);
     if(!ret) {
