@@ -2045,7 +2045,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                         bOk = setTypeOfService(unit, dscp<<2);
                                                 }
                                                 else if(qos_prop->check("dscp")) {
-                                                    int dscp = getDSCPByVocab(qos_prop->find("dscp").asVocab());
+                                                    int dscp = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab());
                                                     if (dscp < 0)
                                                         dscp = qos_prop->find("dscp").asInt();
                                                     if((dscp>=0) && (dscp<64))
@@ -2053,6 +2053,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                 }
                                                 else if(qos_prop->check("tos")) {
                                                     int tos = qos_prop->find("tos").asInt();
+                                                    printf("setting tos of %s to %d (dsp: %d)\n", portName.c_str(), tos, tos>>2);
                                                     // set the TOS value (backward compatibility)
                                                     bOk = setTypeOfService(unit, tos);
                                                 }
@@ -2115,40 +2116,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     return true;
 }
 
-//                Class 1          Class 2         Class 3         Class 4
-//          ------------------------------------------------------------------
-// Low Drop	 | AF11 (DSCP 10)	AF21 (DSCP 18)	AF31 (DSCP 26)	AF41 (DSCP 34)
-// Med Drop	 | AF12 (DSCP 12)	AF22 (DSCP 20)	AF32 (DSCP 28)	AF42 (DSCP 36)
-// High Drop | AF13 (DSCP 14)	AF23 (DSCP 22)	AF33 (DSCP 30)	AF43 (DSCP 38)
-inline int PortCore::getDSCPByVocab(NetInt32 code) {
-    int dscp;
-    switch(code) {
-        case VOCAB3('C','S','0')    : dscp = 0; break;
-        case VOCAB3('C','S','1')    : dscp = 8; break;
-        case VOCAB3('C','S','2')    : dscp = 16; break;
-        case VOCAB3('C','S','3')    : dscp = 24; break;
-        case VOCAB3('C','S','4')    : dscp = 32; break;
-        case VOCAB3('C','S','5')    : dscp = 40; break;
-        case VOCAB3('C','S','6')    : dscp = 48; break;
-        case VOCAB3('C','S','7')    : dscp = 56; break;
-        case VOCAB4('A','F','1','1'): dscp = 10; break;
-        case VOCAB4('A','F','1','2'): dscp = 12; break;
-        case VOCAB4('A','F','1','3'): dscp = 14; break;
-        case VOCAB4('A','F','2','1'): dscp = 18; break;
-        case VOCAB4('A','F','2','2'): dscp = 20; break;
-        case VOCAB4('A','F','2','3'): dscp = 22; break;
-        case VOCAB4('A','F','3','1'): dscp = 26; break;
-        case VOCAB4('A','F','3','2'): dscp = 28; break;
-        case VOCAB4('A','F','3','3'): dscp = 30; break;
-        case VOCAB4('A','F','4','1'): dscp = 34; break;
-        case VOCAB4('A','F','4','2'): dscp = 36; break;
-        case VOCAB4('A','F','4','3'): dscp = 38; break;
-        case VOCAB2('V','A')        : dscp = 44; break;
-        case VOCAB2('E','F')        : dscp = 46; break;
-        default: dscp = -1;
-    };
-    return dscp;
-}
 
 bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos) {
     if(unit->isOutput()) {

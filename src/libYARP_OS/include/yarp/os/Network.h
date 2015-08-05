@@ -572,7 +572,7 @@ public:
      * @return true if the Qos preferences is set correctly
      */
     static bool setConnectionQos(const ConstString& src, const ConstString& dest,
-                                 const QosStyle& srcStyle, const QosStyle destStyle,
+                                 const QosStyle& srcStyle, const QosStyle& destStyle,
                                  bool quiet=true);
 
     /**
