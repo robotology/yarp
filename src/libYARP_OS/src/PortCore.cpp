@@ -2053,7 +2053,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                 }
                                                 else if(qos_prop->check("tos")) {
                                                     int tos = qos_prop->find("tos").asInt();
-                                                    printf("setting tos of %s to %d (dsp: %d)\n", portName.c_str(), tos, tos>>2);
                                                     // set the TOS value (backward compatibility)
                                                     bOk = setTypeOfService(unit, tos);
                                                 }
