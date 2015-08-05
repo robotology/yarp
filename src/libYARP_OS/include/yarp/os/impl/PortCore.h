@@ -444,6 +444,7 @@ public:
     void releaseProperties(Property *prop);
 
     int getDSCPByVocab(NetInt32 code);
+    bool setTypeOfService(PortCoreUnit *unit, int tos);
 
     bool setCallbackLock(yarp::os::Mutex *mutex = NULL) {
         removeCallbackLock();
