@@ -239,9 +239,9 @@ public:
         bt.addString("test");
         p1.write();
         yarp::os::QosStyle style;
-        style.threadPriority = 0;
-        style.threadPolicy = 0;
-        style.packetPriority = yarp::os::QosStyle::NORM;
+        style.setThreadPriority(0);
+        style.setThreadPolicy(0);
+        style.setPacketPriorityByLevel(yarp::os::QosStyle::PacketPriorityNormal);
         checkTrue(Network::setConnectionQos(p1.getName(), p2.getName(), style, style, false),
                   "connection Qos working");
         Network::disconnect(p1.getName(), p2.getName());
