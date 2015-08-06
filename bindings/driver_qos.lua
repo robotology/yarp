@@ -17,16 +17,15 @@ options:put("local", "/motor/lua/right_arm")
 options:put("remote", "/icubSim/right_arm")
 
 -- setting QoS pereferences for the driver (local and remote)
-HIGH = 36
 qos_local = options:addGroup("local_qos")
 qos_local:put("thread_priority", 20)
 qos_local:put("thread_policy", 1)
-qos_local:put("packet_priority", HIGH)
+qos_local:put("packet_priority", "LEVEL:HIGH")
 
 qos_remote = options:addGroup("remote_qos")
 qos_remote:put("thread_priority", 30)
 qos_remote:put("thread_policy", 1)
-qos_remote:put("packet_priority", HIGH)
+qos_remote:put("packet_priority", "DSCP:AF42")
 
 -- open the driver
 driver = yarp.PolyDriver(options)

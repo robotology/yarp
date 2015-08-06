@@ -971,7 +971,7 @@ public:
             if(qos.check("thread_policy"))
                 localQos.setThreadPolicy(qos.find("thread_policy").asInt());
             if(qos.check("packet_priority"))
-                localQos.setPacketPriorityByType((QosStyle::PacketPriorityType) qos.find("packet_priority").asInt());
+                localQos.setPacketPriority(qos.find("packet_priority").asString());
         }
 
         yarp::os::QosStyle remoteQos;
@@ -982,7 +982,7 @@ public:
             if(qos.check("thread_policy"))
                 remoteQos.setThreadPolicy(qos.find("thread_policy").asInt());
             if(qos.check("packet_priority"))
-                remoteQos.setPacketPriorityByType((QosStyle::PacketPriorityType) qos.find("packet_priority").asInt());
+                remoteQos.setPacketPriority(qos.find("packet_priority").asString());
         }
 
         bool writeStrict_isFound = config.check("writeStrict");

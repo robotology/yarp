@@ -733,7 +733,7 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
     yarp::os::Bottle cmd, reply;
 
     // ignore if everything left as default
-    if(srcStyle.getPacketPriorty()!=-1 || srcStyle.getThreadPolicy() !=-1) {
+    if(srcStyle.getPacketPriortyAsTOS()!=-1 || srcStyle.getThreadPolicy() !=-1) {
         // set the source Qos
         cmd.addString("prop");
         cmd.addString("set");
@@ -746,7 +746,7 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
         Bottle& qos = cmd.addList();
         qos.addString("qos");
         Property& qos_prop = qos.addDict();
-        qos_prop.put("tos", srcStyle.getPacketPriorty());
+        qos_prop.put("tos", srcStyle.getPacketPriortyAsTOS());
         Contact srcCon = Contact::fromString(src);
         bool ret = write(srcCon, cmd, reply, true, true, 2.0);
         if(!ret) {
@@ -763,7 +763,7 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
     }
 
     // ignore if everything left as default
-    if(destStyle.getPacketPriorty()!=-1 || destStyle.getThreadPolicy() !=-1) {
+    if(destStyle.getPacketPriortyAsTOS()!=-1 || destStyle.getThreadPolicy() !=-1) {
         // set the destination Qos
         cmd.clear();
         reply.clear();
@@ -778,7 +778,7 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
         Bottle& qos2 = cmd.addList();
         qos2.addString("qos");
         Property& qos_prop2 = qos2.addDict();
-        qos_prop2.put("tos", destStyle.getPacketPriorty());
+        qos_prop2.put("tos", destStyle.getPacketPriortyAsTOS());
         Contact destCon = Contact::fromString(dest);
         bool ret = write(destCon, cmd, reply, true, true, 2.0);
         if(!ret) {

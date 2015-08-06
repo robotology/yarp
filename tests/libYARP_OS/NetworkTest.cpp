@@ -241,7 +241,7 @@ public:
         yarp::os::QosStyle style;
         style.setThreadPriority(0);
         style.setThreadPolicy(0);
-        style.setPacketPriorityByType(yarp::os::QosStyle::NORM);
+        style.setPacketPriorityByLevel(yarp::os::QosStyle::PacketPriorityNormal);
         checkTrue(Network::setConnectionQos(p1.getName(), p2.getName(), style, style, false),
                   "connection Qos working");
         Network::disconnect(p1.getName(), p2.getName());

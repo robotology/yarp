@@ -2045,9 +2045,13 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                         bOk = setTypeOfService(unit, dscp<<2);
                                                 }
                                                 else if(qos_prop->check("dscp")) {
-                                                    int dscp = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab());
-                                                    if (dscp < 0)
+                                                    QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab());
+                                                    int dscp = -1;
+                                                    if (dscp_class == QosStyle::DSCP_Invalid) {
                                                         dscp = qos_prop->find("dscp").asInt();
+                                                    } else {
+                                                        dscp = (int)dscp_class;
+                                                    }
                                                     if((dscp>=0) && (dscp<64))
                                                         bOk = setTypeOfService(unit, dscp<<2);
                                                 }
