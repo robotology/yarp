@@ -103,19 +103,21 @@ bool USBCameraDriver::close(void)
 int USBCameraDriver::width () const
 {
     if(deviceRaw)
-        deviceRaw->width();
+        return deviceRaw->width();
     else if (deviceRgb)
-        deviceRgb->width();
-    else return 0;
+        return deviceRgb->width();
+    else
+        return 0;
 }
 
 int USBCameraDriver::height () const
 {
     if(deviceRaw)
-        deviceRaw->height();
+        return deviceRaw->height();
     else if (deviceRgb)
-        deviceRgb->height();
-    else return 0;
+        return deviceRgb->height();
+    else
+        return 0;
 }
 
 bool USBCameraDriver::getRawBuffer(unsigned char *buff)

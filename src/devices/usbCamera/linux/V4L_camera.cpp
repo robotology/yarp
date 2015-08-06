@@ -24,7 +24,7 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE)
     param.height = DEFAULT_HEIGHT;
     param.fps = DEFAULT_FRAMERATE;
     param.io = IO_METHOD_MMAP;
-    param.deviceName = "/dev/video0";
+    param.deviceId = "/dev/video0";
     param.fd  = -1;
     param.image_size = 0;
     param.dst_image = NULL;
@@ -48,25 +48,25 @@ bool V4L_camera::open(yarp::os::Searchable& config)
         return false;
 
     // stat file
-    if (-1 == stat(param.deviceName.c_str(), &st))
+    if (-1 == stat(param.deviceId.c_str(), &st))
     {
-        fprintf(stderr, "Cannot identify '%s': %d, %s\n", param.deviceName.c_str(), errno, strerror(errno));
+        fprintf(stderr, "Cannot identify '%s': %d, %s\n", param.deviceId.c_str(), errno, strerror(errno));
         return false;
     }
 
     // check if it is a device
     if (!S_ISCHR(st.st_mode))
     {
-        fprintf(stderr, "%s is no device\n", param.deviceName.c_str());
+        fprintf(stderr, "%s is no device\n", param.deviceId.c_str());
         return false;
     }
 
     // open device
-    param.fd = v4l2_open(param.deviceName.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
+    param.fd = v4l2_open(param.deviceId.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
 
     // check if opening was successfull
     if (-1 == param.fd) {
-        fprintf(stderr, "Cannot open '%s': %d, %s\n", param.deviceName.c_str(), errno, strerror(errno));
+        fprintf(stderr, "Cannot open '%s': %d, %s\n", param.deviceId.c_str(), errno, strerror(errno));
         return false;
     }
 
@@ -78,11 +78,11 @@ bool V4L_camera::open(yarp::os::Searchable& config)
 
     yarp::os::Time::delay(0.5);
     // re-open device
-    param.fd = v4l2_open(param.deviceName.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
+    param.fd = v4l2_open(param.deviceId.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
 
     // check if opening was successfull
     if (-1 == param.fd) {
-        fprintf(stderr, "Cannot open '%s': %d, %s\n", param.deviceName.c_str(), errno, strerror(errno));
+        fprintf(stderr, "Cannot open '%s': %d, %s\n", param.deviceId.c_str(), errno, strerror(errno));
         return false;
     }
 
@@ -125,19 +125,18 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     else
         param.fps = config.find("framerate").asInt();
 
-    if(!config.check("deviceName") )
+    if(!config.check("d") )
     {
-        yError() << "No 'deviceName' was specified!";
+        yError() << "No camera identifier was specified! (e.g. '--d /dev/video0' on Linux OS)";
         return false;
     }
     else
-        param.deviceName = config.find("deviceName").asString();
+        param.deviceId = config.find("d").asString();
 
 
     if(!config.check("camModel") )
     {
-        yError() << "No 'camModel' was specified!";
-        return false;
+        yWarning() << "No 'camModel' was specified, working with default SEE3CAMCU50 (camModel 1)";
     }
     else
         param.camModel = (supported_cams) config.find("camModel").asInt();
@@ -150,7 +149,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
         return false;
     }
     else
-        type = (supported_cams) config.find("pixelType").asInt();
+        type = config.find("pixelType").asInt();
 
     switch(type)
     {
@@ -170,7 +169,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
             break;
     }
 
-    yDebug() << "using following device " << param.deviceName << "with the configuration: " << param.width << "x" << param.height << "; camModel is " << param.camModel;
+    yDebug() << "using following device " << param.deviceId << "with the configuration: " << param.width << "x" << param.height << "; camModel is " << param.camModel;
     return true;
 }
 
@@ -227,7 +226,7 @@ bool V4L_camera::deviceInit()
     {
         if (EINVAL == errno)
         {
-            fprintf(stderr, "%s is no V4L2 device\n", param.deviceName.c_str());
+            fprintf(stderr, "%s is no V4L2 device\n", param.deviceId.c_str());
         }
         return false;
     }
@@ -236,11 +235,11 @@ bool V4L_camera::deviceInit()
 
     if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
     {
-        fprintf(stderr, "%s is no video capture device\n", param.deviceName.c_str());
+        fprintf(stderr, "%s is no video capture device\n", param.deviceId.c_str());
         return false;
     }
     else
-        fprintf(stderr, "%s is good V4L2_CAP_VIDEO_CAPTURE\n", param.deviceName.c_str());
+        fprintf(stderr, "%s is good V4L2_CAP_VIDEO_CAPTURE\n", param.deviceId.c_str());
 
     switch (param.io)
     {
@@ -248,7 +247,7 @@ bool V4L_camera::deviceInit()
         case IO_METHOD_READ:
         {
             if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
-                fprintf(stderr, "%s does not support read i/o\n", param.deviceName.c_str());
+                fprintf(stderr, "%s does not support read i/o\n", param.deviceId.c_str());
                 return false;
             }
         } break;
@@ -257,13 +256,13 @@ bool V4L_camera::deviceInit()
         case IO_METHOD_USERPTR:
         {
             if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
-                fprintf(stderr, "%s does not support streaming i/o\n", param.deviceName.c_str());
+                fprintf(stderr, "%s does not support streaming i/o\n", param.deviceId.c_str());
                 return false;
             }
         } break;
 
         default:
-            fprintf(stderr, "Unknown io method for device %s\n", param.deviceName.c_str());
+            fprintf(stderr, "Unknown io method for device %s\n", param.deviceId.c_str());
             return false;
             break;
     }
@@ -333,13 +332,13 @@ bool V4L_camera::deviceInit()
     if (param.width != param.src_fmt.fmt.pix.width)
     {
         param.width = param.src_fmt.fmt.pix.width;
-        std::cout << "Image width set to " << param.width << " by device " << param.deviceName << std::endl;
+        std::cout << "Image width set to " << param.width << " by device " << param.deviceId << std::endl;
     }
 
     if (param.height != param.src_fmt.fmt.pix.height)
     {
         param.height = param.src_fmt.fmt.pix.height;
-        std::cout << "Image height set to " << param.height << " by device " << param.deviceName << std::endl;
+        std::cout << "Image height set to " << param.height << " by device " << param.deviceId << std::endl;
     }
 
     /* If the user has set the fps to -1, don't try to set the frame interval */
@@ -539,10 +538,10 @@ void V4L_camera::enumerate_menu (void)
     memset (&querymenu, 0, sizeof (querymenu));
     querymenu.id = queryctrl.id;
 
-    for (querymenu.index = queryctrl.minimum;
-         querymenu.index <= queryctrl.maximum;
-    querymenu.index++) {
-        if (0 == ioctl (param.fd, VIDIOC_QUERYMENU, &querymenu)) {
+    for (querymenu.index = (__u32) queryctrl.minimum;  querymenu.index <= (__u32) queryctrl.maximum;  querymenu.index++)
+    {
+        if (0 == ioctl (param.fd, VIDIOC_QUERYMENU, &querymenu))
+        {
             printf ("  %s\n", querymenu.name);
         } else {
             perror ("VIDIOC_QUERYMENU");
@@ -620,7 +619,7 @@ void* V4L_camera::full_FrameRead(void)
     count = 10;  //trials
 
 
-    for (int i=0; i<count; i++)
+    for (unsigned int i=0; i<count; i++)
     {
         FD_ZERO(&fds);
         FD_SET(param.fd, &fds);
@@ -976,25 +975,25 @@ bool V4L_camera::mmapInit()
     {
         if (EINVAL == errno)
         {
-            fprintf(stderr, "%s does not support memory mapping\n", param.deviceName.c_str());
+            fprintf(stderr, "%s does not support memory mapping\n", param.deviceId.c_str());
             return false;
         }
         else
         {
-            fprintf(stderr, "Error on device %s requesting memory mapping (VIDIOC_REQBUFS)\n", param.deviceName.c_str());
+            fprintf(stderr, "Error on device %s requesting memory mapping (VIDIOC_REQBUFS)\n", param.deviceId.c_str());
             return false;
         }
     }
 
     if (param.req.count < 1)
     {
-        fprintf(stderr, "Insufficient buffer memory on %s\n", param.deviceName.c_str());
+        fprintf(stderr, "Insufficient buffer memory on %s\n", param.deviceId.c_str());
         return false;
     }
 
     if (param.req.count == 1)
     {
-        fprintf(stderr, "Only 1 buffer was available, you may encounter performance issue acquiring images from device %s\n", param.deviceName.c_str());
+        fprintf(stderr, "Only 1 buffer was available, you may encounter performance issue acquiring images from device %s\n", param.deviceId.c_str());
     }
 
     param.buffers = (struct buffer *) calloc(param.req.count, sizeof(*(param.buffers)));
@@ -1053,12 +1052,12 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
     {
         if (EINVAL == errno)
         {
-            fprintf(stderr, "%s does not support user pointer i/o\n", param.deviceName.c_str());
+            fprintf(stderr, "%s does not support user pointer i/o\n", param.deviceId.c_str());
             return false;
         }
         else
         {
-            fprintf(stderr, "Error requesting VIDIOC_REQBUFS for device %s\n", param.deviceName.c_str());
+            fprintf(stderr, "Error requesting VIDIOC_REQBUFS for device %s\n", param.deviceId.c_str());
             return false;
         }
     }

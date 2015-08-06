@@ -82,10 +82,10 @@ struct buffer {
 
 typedef struct
 {
-    std::string     deviceName;
+    std::string     deviceId;
     int             fd;
-    int             width;
-    int             height;
+    __u32           width;
+    __u32           height;
     io_method       io;
     int             fps;
     unsigned int    image_size;
