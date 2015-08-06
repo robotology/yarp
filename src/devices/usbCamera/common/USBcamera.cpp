@@ -97,7 +97,7 @@ bool USBCameraDriver::close(void)
 {
     // close OS dependant device
     os_device->close();
-	return false;
+	return true;
 }
 
 int USBCameraDriver::width () const
@@ -311,12 +311,12 @@ bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
 
 int USBCameraDriverRgb::width () const
 {
-    return 0;
+    return USBCameraDriver::width();
 }
 
 int USBCameraDriverRgb::height () const
 {
-    return 0;
+    return USBCameraDriver::height();
 }
 
 
@@ -343,11 +343,11 @@ bool USBCameraDriverRaw::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& imag
 
 int USBCameraDriverRaw::width () const
 {
-    return 0;
+    return USBCameraDriver::width();
 }
 
 int USBCameraDriverRaw::height () const
 {
-    return 0;
+    return USBCameraDriver::height();
 }
 
