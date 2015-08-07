@@ -33,7 +33,7 @@ fakeIMU::fakeIMU() : RateThread(DEFAULT_PERIOD)
 
 fakeIMU::~fakeIMU()
 {
-
+    close();
 }
 
 bool fakeIMU::open(yarp::os::Searchable &config)
@@ -47,18 +47,15 @@ bool fakeIMU::open(yarp::os::Searchable &config)
     else
         yInfo() << "Using default period of " << DEFAULT_PERIOD << " ms";
 
-
     start();
     return true;
 }
-
 
 bool fakeIMU::close()
 {
     fakeIMU::stop();
     return true;
 }
-
 
 bool fakeIMU::read(Vector &out)
 {
@@ -85,7 +82,6 @@ bool fakeIMU::calibrate(int ch, double v)
 
 bool fakeIMU::threadInit()
 {
-    yInfo() << "ciaoooo";
     lastStamp.update();
     return true;
 }
@@ -95,7 +91,6 @@ void fakeIMU::run()
     dummy_value++;
     lastStamp.update();
 }
-
 
 yarp::os::Stamp fakeIMU::getLastInputStamp()
 {
