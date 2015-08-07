@@ -185,6 +185,12 @@ public:
 
 
     /**
+     * @brief Query the current scheduling policy of the thread, if the OS supports that.
+     * @return the scheduling policy of the theread.
+     */
+    int getPolicy();
+
+    /**
      * Set the default stack size for all threads created after this
      * point.  A value of 0 will use a reasonable default.
      * @param stackSize the desired stack size in bytes.

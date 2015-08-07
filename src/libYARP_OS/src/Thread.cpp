@@ -128,6 +128,10 @@ int Thread::getPriority() {
     return ((ThreadImpl*)implementation)->getPriority();
 }
 
+int Thread::getPolicy() {
+    return ((ThreadImpl*)implementation)->getPolicy();
+}
+
 void Thread::setDefaultStackSize(int stackSize) {
     ThreadImpl::setDefaultStackSize(stackSize);
 }

@@ -363,6 +363,12 @@ int RateThread::getPriority()
     return ((ThreadImpl*)implementation)->getPriority();
 }
 
+int RateThread::getPolicy()
+{
+    return ((ThreadImpl*)implementation)->getPolicy();
+}
+
+
 RateThreadWrapper::RateThreadWrapper(): RateThread(0) {
     helper = NULL;
     owned = false;

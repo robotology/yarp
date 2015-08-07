@@ -197,6 +197,12 @@ public:
      */
     int getPriority();
 
+    /**
+     * @brief Query the current scheduling policy of the thread, if the OS supports that.
+     * @return the scheduling policy of the theread.
+     */
+    int getPolicy();
+
 private:
     bool join(double seconds = -1);
 
