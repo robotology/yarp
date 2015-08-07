@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
  * Author:  Alberto Cardellino
  * email:   alberto.cardellino@iit.it
  * website: www.robotcub.org
