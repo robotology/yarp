@@ -1,9 +1,15 @@
+/*
+ * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Alberto Cardellino
+ * email:   alberto.cardellino@iit.it
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include <list.hpp>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
-// #include <libv4l2.h>
 #include <linux/videodev2.h>
 
 

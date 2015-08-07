@@ -1,19 +1,22 @@
+/*
+ * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Alberto Cardellino
+ * email:   alberto.cardellino@iit.it
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include <stdio.h>
 #include <linux/V4L_camera.hpp>
-// #include <conversions.hpp>
 #include <yarp/os/LogStream.h>
 #include <list.hpp>
 #include <yarp/os/Time.h>
-
-#include <Leopard_MT9M021C.h>
+#include "libv4lconvert.h"
 
 #define errno_exit printf
 
-#include "libv4lconvert.h"
+//#include <Leopard_MT9M021C.h>
 
 struct v4lconvert_data *_v4lconvert_data;
-
 
 using namespace yarp::os;
 using namespace yarp::dev;

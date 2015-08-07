@@ -1,8 +1,5 @@
-#ifndef _CAMERA_V4L_HPP_
-#define _CAMERA_V4L_HPP_
-
 /*
- * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
  * Author:  Alberto Cardellino
  * email:   alberto.cardellino@iit.it
  * website: www.robotcub.org
@@ -25,6 +22,8 @@
 //  L      I  N  NN  U   U   X X
 //  LLLLL  I  N   N   UUU   X   X
 
+#ifndef _V4L_CAMERA_HPP_
+#define _V4L_CAMERA_HPP_
 
 #include <iostream>
 #include <string.h>
@@ -232,4 +231,4 @@ private:
     double get_V4L2_control(uint32_t id);
 };
 
-#endif // _CAMERA_V4L_HPP_
+#endif // _V4L_CAMERA_HPP_
