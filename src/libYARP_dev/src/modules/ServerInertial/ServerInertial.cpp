@@ -36,7 +36,7 @@ yarp::dev::DriverCreator *createServerInertial()
 /**
  * Constructor.
  */
-yarp::dev::ServerInertial::ServerInertial()
+yarp::dev::ServerInertial::ServerInertial() : ownDevices(false), subDeviceOwned(NULL)
 {
     IMU = NULL;
     spoke = false;
@@ -221,6 +221,53 @@ bool ServerInertial::initialize_ROS()
     return success;
 }
 
+bool yarp::dev::ServerInertial::openDeferredAttach(yarp::os::Property& prop)
+{
+//    yarp::os::Value &subdevice = prop.find("subdevice");
+    yDebug( "Really nothing to do here?? Waiting for 'attach' command");
+    return true;
+}
+
+// Iif a subdevice parameter is given to the wrapper, it will open it as well
+// and and attach to it immediatly.
+bool yarp::dev::ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
+{
+    yarp::os::Value &subdevice = prop.find("subdevice");
+    IMU_polydriver = new yarp::dev::PolyDriver;
+
+    yDebug("Subdevice %s\n", subdevice.toString().c_str());
+    if (subdevice.isString())
+    {
+        // maybe user isn't doing nested configuration
+        yarp::os::Property p;
+        p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
+        p.fromString(prop.toString());
+        p.put("device",subdevice.toString());
+        IMU_polydriver->open(p);
+    }
+    else
+        IMU_polydriver->open(subdevice);
+
+    if (!IMU_polydriver->isValid())
+    {
+        yError("cannot create device <%s>\n", subdevice.toString().c_str());
+        return false;
+    }
+
+    // if we are here, poly is valid
+    IMU_polydriver->view(IMU);     // attach to subdevice
+    if(IMU == NULL)
+    {
+        yError("Error, subdevice <%s> has no valid IMU interface\n", subdevice.toString().c_str());
+        IMU_polydriver->close();
+        return false;
+    }
+
+    // iTimed interface
+    IMU_polydriver->view(iTimed);  // not mandatory
+    return true;
+}
+
 /**
  * Configure with a set of options. These are:
  * <TABLE>
@@ -233,58 +280,44 @@ bool ServerInertial::initialize_ROS()
  */
 bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
 {
+    Property prop;
+    prop.fromString(config.toString().c_str());
+    
     p.setReader(*this);
 
     period = config.check("period",yarp::os::Value(0.005),"maximum period").asDouble();
     strict = config.check("strict",yarp::os::Value(false),"strict write").asBool();
 
     //Look for the device name (serial Port). Usually /dev/ttyUSB0
-    yarp::os::Value *name;
-    if (config.check("subdevice",name))
+    // check if we need to create subdevice or if they are
+    // passed later on thorugh attachAll()
+    if(prop.check("subdevice"))
     {
-        yDebug("Subdevice %s\n", name->toString().c_str());
-        if (name->isString())
+        ownDevices=true;
+        if(! openAndAttachSubDevice(prop))
         {
-            // maybe user isn't doing nested configuration
-            yarp::os::Property p;
-            p.setMonitor(config.getMonitor(), "subdevice"); // pass on any monitoring
-            p.fromString(config.toString());
-            p.put("device",name->toString());
-            poly.open(p);
-        }
-        else
-            poly.open(*name);
-        if (!poly.isValid())
-        {
-            yError("cannot make <%s>\n", name->toString().c_str());
+            yError("ControlBoardWrapper: error while opening subdevice\n");
             return false;
         }
     }
     else
     {
-        yError("\"--subdevice <name>\" not set for server_inertial\n");
-        return false;
+        ownDevices=false;
+        if(!openDeferredAttach(prop))
+            return false;
     }
 
-    // if we are here, poly is valid
-    poly.view(IMU);
-    if(IMU == NULL)
-    {
-        yError("Error, subdevice <%s> has no valid IMU interface\n", name->toString().c_str());
-        return false;
-    }
+
     checkROSParams(config);
 
 
-    // iTimed interface
-    poly.view(iTimed);  // not mandatory
 
     //Look for the portname to register (--name option), defaulting to /inertial if missing
     yarp::os::ConstString portName;
     if(useROS != ROS_only)
     {
-        if (config.check("name",name))
-            portName = name->asString();
+        if (config.check("name"))
+            portName = config.find("name").asString();
         else
         {
             yInfo() << "Using default values for port name, you can change it using '--name /myPortName' parameter";
@@ -305,25 +338,25 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if (IMU!=NULL)
+    if( (ownDevices) && (IMU!=NULL) )
     {
         start();
-        return true;
     }
-    else
-        return false;
+
+    return true;
 }
 
 bool yarp::dev::ServerInertial::close()
 {
     yInfo("Closing Server Inertial...\n");
-    if (IMU != NULL)
+    stop();
+
+    if( (ownDevices) && (IMU_polydriver != NULL) )
     {
-        stop();
+        IMU_polydriver->close();
         IMU = NULL;
-        return true;
     }
-    return false;
+    return true;
 }
 
 
@@ -479,4 +512,53 @@ bool yarp::dev::ServerInertial::calibrate(int ch, double v)
 {
     if (IMU==NULL) {return false;}
     return IMU->calibrate(ch, v);
+}
+
+
+bool yarp::dev::ServerInertial::attach(PolyDriver* poly)
+{
+    yTrace();
+    if(!poly)
+    {
+        yError("ServerInertial: device to attach to is not valid!");
+        return false;
+    }
+    IMU_polydriver = poly;
+    IMU_polydriver->view(IMU);
+
+    // iTimed interface
+    IMU_polydriver->view(iTimed);  // not mandatory
+
+    if(IMU != NULL)
+    {
+        if(!Thread::isRunning())
+            start();
+    }
+    else
+    {
+        yError("ControlBoardWrapper: attach to subdevice failed");
+    }
+    return true;
+}
+
+bool yarp::dev::ServerInertial::detach()
+{
+    return true;
+}
+
+bool yarp::dev::ServerInertial::attachAll(const PolyDriverList &imuToAttachTo)
+{
+    if (imuToAttachTo.size() != 1)
+    {
+        yError("ServerInertial: cannot attach more than one device");
+        return false;
+    }
+
+    return attach(imuToAttachTo[0]->poly);
+}
+
+bool yarp::dev::ServerInertial::detachAll()
+{
+    IMU = NULL;
+    return true;
 }
