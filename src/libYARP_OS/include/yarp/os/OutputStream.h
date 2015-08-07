@@ -120,6 +120,12 @@ public:
      */
     virtual bool setTypeOfService(int tos) { return false; }
 
+    /*
+     *
+     * Get the Type Of Service field of all outgoing packets.
+     * @return the TOS byte or -1 if not implemented.
+     */
+    virtual int getTypeOfService() { return -1; }
 };
 
 #endif

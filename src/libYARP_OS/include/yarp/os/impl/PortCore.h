@@ -444,6 +444,7 @@ public:
     void releaseProperties(Property *prop);
 
     bool setTypeOfService(PortCoreUnit *unit, int tos);
+    int  getTypeOfService(PortCoreUnit *unit);
 
     bool setCallbackLock(yarp::os::Mutex *mutex = NULL) {
         removeCallbackLock();

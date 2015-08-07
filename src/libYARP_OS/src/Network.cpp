@@ -796,6 +796,51 @@ bool NetworkBase::setConnectionQos(const ConstString& src, const ConstString& de
     return true;
 }
 
+static bool getPortQos(const ConstString& port, const ConstString& unit,
+                             QosStyle& style, bool quiet) {
+    // request: "prop get /portname"
+    // reply  : "(sched ((priority 30) (policy 1))) (qos ((priority HIGH)))"
+    yarp::os::Bottle cmd, reply;
+
+    // set the source Qos
+    cmd.addString("prop");
+    cmd.addString("get");
+    cmd.addString(unit.c_str());
+    Contact portCon = Contact::fromString(port);
+    bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
+    if(!ret) {
+        if(!quiet)
+             ACE_OS::fprintf(stderr, "Cannot write to '%s'\n", port.c_str());
+        return false;
+    }
+    if(reply.size() == 0 || reply.get(0).asString() == "fail") {
+        if(!quiet)
+             ACE_OS::fprintf(stderr, "Cannot get qos properties of '%s'. (%s)\n",
+                             port.c_str(), reply.toString().c_str());
+        return false;
+    }
+
+    Bottle& sched = reply.findGroup("sched");
+    Bottle* sched_prop = sched.find("sched").asList();
+    style.setThreadPriority(sched_prop->find("priority").asInt());
+    style.setThreadPolicy(sched_prop->find("policy").asInt());
+    Bottle& qos = reply.findGroup("qos");
+    Bottle* qos_prop = qos.find("qos").asList();
+    style.setPacketPrioritybyTOS(qos_prop->find("tos").asInt());
+
+    return true;
+}
+
+bool NetworkBase::getConnectionQos(const ConstString& src, const ConstString& dest,
+                                   QosStyle& srcStyle, QosStyle& destStyle, bool quiet) {
+    if(!getPortQos(src, dest, srcStyle, quiet))
+        return false;
+    if(!getPortQos(dest, src, destStyle, quiet))
+        return false;
+    return true;
+}
+
+
 bool NetworkBase::write(const Contact& contact,
                        PortWriter& cmd,
                        PortReader& reply,

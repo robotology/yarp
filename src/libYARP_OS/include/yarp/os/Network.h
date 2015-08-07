@@ -569,7 +569,7 @@ public:
      * @param dest the name of an input port
      * @param srcStyle the Qos preference of the output port
      * @param destStyle the Qos preference of the input port
-     * @return true if the Qos preferences is set correctly
+     * @return true if the Qos preferences are set correctly
      */
     static bool setConnectionQos(const ConstString& src, const ConstString& dest,
                                  const QosStyle& srcStyle, const QosStyle& destStyle,
@@ -580,11 +580,21 @@ public:
      * @param src the name of an output port
      * @param dest the name of an input port
      * @param style the Qos preference of both input and output ports
-     * @return true if the Qos preferences is set correctly
+     * @return true if the Qos preferences are set correctly
      */
     static bool setConnectionQos(const ConstString& src, const ConstString& dest,
                                  const QosStyle& style, bool quiet=true);
 
+    /**
+     * Gets the Qos preferences of a connection.
+     * @param src the name of an output port
+     * @param dest the name of an input port
+     * @param srcStyle the Qos preference of the output port
+     * @param destStyle the Qos preference of the input port
+     * @return true if the Qos preferences are gotten correctly
+     */
+    static bool getConnectionQos(const ConstString& src, const ConstString& dest,
+                                 QosStyle& srcStyle, QosStyle& destStyle, bool quiet=true);
 };
 
 /**

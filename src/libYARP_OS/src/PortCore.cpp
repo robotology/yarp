@@ -1958,10 +1958,48 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             switch (cmd.get(1).asVocab()) {
             case VOCAB3('g','e','t'):
                 {
-                    Property *p = acquireProperties(true);
+                    Property *p = acquireProperties(false);
                     if (p) {
-                        if (!cmd.get(2).isNull()) {
-                            result.add(p->find(cmd.get(2).asString()));
+                        if (!cmd.get(2).isNull()) {                            
+                            // request: "prop get /portname"
+                            // reply  : "(sched ((priority 30) (policy 1))) (qos ((priority HIGH)))"
+                            ConstString portName = cmd.get(2).asString();
+                            bool bFound = false;
+                            if((portName.size() > 0) && (portName[0] == '/')) {
+                                for (unsigned int i=0; i<units.size(); i++) {
+                                    PortCoreUnit *unit = units[i];
+                                    if (unit && !unit->isFinished()) {
+                                        Route route = unit->getRoute();
+                                        ConstString coreName = (unit->isOutput()) ? route.getToName() : route.getFromName();
+                                        if (portName == coreName) {
+                                            bFound = true;
+                                            int priority = unit->getPriority();
+                                            int policy = unit->getPolicy();
+                                            int tos = getTypeOfService(unit);
+                                            result.clear();
+                                            Bottle& sched = result.addList();
+                                            sched.addString("sched");
+                                            Property& sched_prop = sched.addDict();
+                                            sched_prop.put("priority", priority);
+                                            sched_prop.put("policy", policy);
+                                            Bottle& qos = result.addList();
+                                            qos.addString("qos");
+                                            Property& qos_prop = qos.addDict();
+                                            qos_prop.put("tos", tos);
+                                        }
+                                    } // end isFinished()
+                                } // end for loop
+
+                                if(!bFound) {  // cannot find any port matchs the requested one
+                                    result.clear();
+                                    result.addVocab(Vocab::encode("fail"));
+                                    ConstString msg = "cannot find any connection to/from ";
+                                    msg = msg + portName;
+                                    result.addString(msg.c_str());
+                                }
+                            } // end of (portName[0] == '/')
+                            else
+                                result.add(p->find(cmd.get(2).asString()));
                         } else {
                             result.fromString(p->toString());
                         }
@@ -2137,6 +2175,24 @@ bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos) {
     }
     // if there is nothing to be set, returns true
     return true;
+}
+
+int PortCore::getTypeOfService(PortCoreUnit *unit) {
+    if(unit->isOutput()) {
+        OutputProtocol* op = dynamic_cast<PortCoreOutputUnit*>(unit)->getOutPutProtocol();
+        if(op)
+            return op->getOutputStream().getTypeOfService();
+    }
+
+    // Some of the input units may have output stream object to write back to
+    // the connection (e.g., tcp ack and reply). Thus the QoS preferences should be
+    // also configured for them.
+    if(unit->isInput()) {
+        InputProtocol* ip = dynamic_cast<PortCoreInputUnit*>(unit)->getInPutProtocol();
+        if(ip && ip->getOutput().isOk())
+            return ip->getOutput().getOutputStream().getTypeOfService();
+    }
+    return -1;
 }
 
 void PortCore::reportUnit(PortCoreUnit *unit, bool active) {

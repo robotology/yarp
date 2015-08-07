@@ -832,3 +832,18 @@ bool DgramTwoWayStream::setTypeOfService(int tos) {
 #endif
 
 }
+
+int DgramTwoWayStream::getTypeOfService() {
+    int tos = -1;
+    int optlen;
+    if(!dgram)
+        return tos;
+#ifdef YARP_HAS_ACE
+    dgram->get_option(IPPROTO_IP, IP_TOS,
+                      (int *)&tos, &optlen);
+#else
+    getsockopt(dgram_sockfd, IPPROTO_IP, IP_TOS,
+                (int *)&tos, &optlen);
+#endif
+    return tos;
+}

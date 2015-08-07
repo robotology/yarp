@@ -105,3 +105,10 @@ bool SocketTwoWayStream::setTypeOfService(int tos) {
                               (int *)&tos, (int)sizeof(tos) ) == 0);
 }
 
+int SocketTwoWayStream::getTypeOfService() {
+    int tos = -1;
+    int optlen;
+    stream.get_option(IPPROTO_IP, IP_TOS,
+                      (int *)&tos, &optlen);
+    return tos;
+}

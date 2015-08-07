@@ -178,7 +178,8 @@ public:
         return true;
     }
 
-    virtual bool setTypeOfService(int tos);
+    virtual bool setTypeOfService(int tos);    
+    virtual int getTypeOfService();
 
 private:
     ACE_SOCK_Stream stream;

@@ -120,6 +120,8 @@ public:
 
     virtual bool setTypeOfService(int tos);
 
+    virtual int getTypeOfService();
+
     void setMonitor(const yarp::os::Bytes& data) {
         monitor = yarp::os::ManagedBytes(data,false);
         monitor.copy();
