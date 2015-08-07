@@ -12,7 +12,10 @@ yarp_prepare_device(usbCameraRaw TYPE yarp::dev::USBCameraDriverRaw INCLUDE USBc
 
 IF(ENABLE_icubmod_usbCamera)
 
-    if(UNIX)
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        MESSAGE(SEND_ERROR "USBcamera: device not available yet on iOS platform, please turn off the device")
+        return()
+    elseif(UNIX)
         find_package(libv4l2 REQUIRED)
         find_package(libv4lconvert REQUIRED)
 
