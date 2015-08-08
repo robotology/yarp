@@ -73,7 +73,7 @@ bool yarp::os::QosStyle::setPacketPriority(const ConstString& priority) {
     return false;
 }
 
-yarp::os::QosStyle::PacketPriorityDSCP yarp::os::QosStyle::getPacketPriortyAsDSCP() const
+yarp::os::QosStyle::PacketPriorityDSCP yarp::os::QosStyle::getPacketPriorityAsDSCP() const
 {
     switch(packetPriority) {
         case -1       : return DSCP_Invalid;
@@ -103,7 +103,7 @@ yarp::os::QosStyle::PacketPriorityDSCP yarp::os::QosStyle::getPacketPriortyAsDSC
     }
 }
 
-yarp::os::QosStyle::PacketPriorityLevel yarp::os::QosStyle::getPacketPriortyAsLevel() const
+yarp::os::QosStyle::PacketPriorityLevel yarp::os::QosStyle::getPacketPriorityAsLevel() const
 {
     switch(packetPriority) {
         case -1       : return PacketPriorityInvalid;

@@ -146,7 +146,7 @@ public:
      * @brief returns the packet TOS value
      * @return the TOS
      */
-    int getPacketPriortyAsTOS() const {
+    int getPacketPriorityAsTOS() const {
         return packetPriority;
     }
 
@@ -155,14 +155,14 @@ public:
      * @brief returns the packet DSCP class
      * @return the DSCP class
      */
-    PacketPriorityDSCP getPacketPriortyAsDSCP() const;
+    PacketPriorityDSCP getPacketPriorityAsDSCP() const;
 
 
     /**
      * @brief returns the packet TOS value
      * @return the TOS
      */
-    PacketPriorityLevel getPacketPriortyAsLevel() const;
+    PacketPriorityLevel getPacketPriorityAsLevel() const;
 
 
     /**
