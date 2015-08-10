@@ -54,7 +54,7 @@ namespace yarp
  * 9 10  11  = Calibrated 3-axis (X, Y, Z) magnetometer data
  * \endcode
  *
- * @author Alexis Maldonado, Radu Bogdan Rusu
+ * @author Alexis Maldonado, Radu Bogdan Rusu, Alberto Cardellino
  *
  *
  *  It reads the data from an Inertial measurement unit sensor and sends them through yarp port.
@@ -140,7 +140,7 @@ private:
 
     // ROS data
     ROSTopicUsageType                                   useROS;                     // decide if open ROS topic or not
-    std::string                                         frame_id;                   // name of the frame mesuares are referred to
+    std::string                                         frame_id;                   // name of the frame measures are referred to
     std::string                                         rosNodeName;                // name of the rosNode
     std::string                                         rosTopicName;               // name of the rosTopic
     yarp::os::Node                                      *rosNode;                   // add a ROS node

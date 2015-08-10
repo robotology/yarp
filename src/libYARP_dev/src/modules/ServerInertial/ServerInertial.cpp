@@ -76,7 +76,7 @@ yarp::dev::ServerInertial::ServerInertial() : ownDevices(false), subDeviceOwned(
 //    rosData.orientation.w = 0;
 //    rosData.orientation_covariance = covariance;
 
-    yDebug() << "covariance size is " << covariance.size();
+//     yDebug() << "covariance size is " << covariance.size();
 }
 
 yarp::dev::ServerInertial::~ServerInertial()
@@ -223,8 +223,6 @@ bool ServerInertial::initialize_ROS()
 
 bool yarp::dev::ServerInertial::openDeferredAttach(yarp::os::Property& prop)
 {
-//    yarp::os::Value &subdevice = prop.find("subdevice");
-    yDebug( "Really nothing to do here?? Waiting for 'attach' command");
     return true;
 }
 
@@ -235,7 +233,7 @@ bool yarp::dev::ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
     yarp::os::Value &subdevice = prop.find("subdevice");
     IMU_polydriver = new yarp::dev::PolyDriver;
 
-    yDebug("Subdevice %s\n", subdevice.toString().c_str());
+//     yDebug("Subdevice %s\n", subdevice.toString().c_str());
     if (subdevice.isString())
     {
         // maybe user isn't doing nested configuration
@@ -320,7 +318,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
             portName = config.find("name").asString();
         else
         {
-            yInfo() << "Using default values for port name, you can change it using '--name /myPortName' parameter";
+            yInfo() << "Using default values for port name, you can change it by using '--name /myPortName' parameter";
             portName = "/inertial";
         }
 
@@ -395,7 +393,7 @@ bool yarp::dev::ServerInertial::getInertial(yarp::os::Bottle &bot)
 void yarp::dev::ServerInertial::run()
 {
     double before, now;
-    yInfo("Server Inertial starting\n");
+    yInfo("Starting server Inertial thread\n");
     while (!isStopping())
     {
         before = yarp::os::Time::now();
@@ -456,20 +454,20 @@ void yarp::dev::ServerInertial::run()
                 rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
                 rosData.header.frame_id = frame_id;
 
-                rosData.orientation.x = quaternion[0];  // to be converted into quaternion
-                rosData.orientation.y = quaternion[1];  // to be converted into quaternion
-                rosData.orientation.z = quaternion[2];  // to be converted into quaternion
-                rosData.orientation.w = quaternion[3];  // to be converted into quaternion
+                rosData.orientation.x = quaternion[0];
+                rosData.orientation.y = quaternion[1];
+                rosData.orientation.z = quaternion[2];
+                rosData.orientation.w = quaternion[3];
                 rosData.orientation_covariance = covariance;
 
-                rosData.linear_acceleration.x = imuData.get(3).asDouble();  // to be converted into radiants
-                rosData.linear_acceleration.y = imuData.get(4).asDouble();  // to be converted into radiants
-                rosData.linear_acceleration.z = imuData.get(5).asDouble();  // to be converted into radiants
+                rosData.linear_acceleration.x = imuData.get(3).asDouble();   // [m/s^2]
+                rosData.linear_acceleration.y = imuData.get(4).asDouble();   // [m/s^2]
+                rosData.linear_acceleration.z = imuData.get(5).asDouble();   // [m/s^2]
                 rosData.linear_acceleration_covariance = covariance;
 
-                rosData.angular_velocity.x = imuData.get(6).asDouble();   // to be converted into radiants
-                rosData.angular_velocity.y = imuData.get(7).asDouble();   // to be converted into radiants
-                rosData.angular_velocity.z = imuData.get(8).asDouble();   // to be converted into radiants
+                rosData.angular_velocity.x = imuData.get(6).asDouble();   // to be converted into rad/s (?) - verify with users
+                rosData.angular_velocity.y = imuData.get(7).asDouble();   // to be converted into rad/s (?) - verify with users
+                rosData.angular_velocity.z = imuData.get(8).asDouble();   // to be converted into rad/s (?) - verify with users
                 rosData.angular_velocity_covariance = covariance;
 
                 rosPublisherPort.write();
@@ -483,7 +481,7 @@ void yarp::dev::ServerInertial::run()
             yarp::os::Time::delay(k);
         }
     }
-    yDebug("Server Intertial closed\n");
+    yInfo("Server Intertial thread finished\n");
 }
 
 bool yarp::dev::ServerInertial::read(ConnectionReader& connection)
