@@ -5,7 +5,7 @@
 
 
 IF (COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(fakeIMU TYPE yarp::dev::fakeIMU INCLUDE fakeIMU.h)
+  yarp_prepare_device(fakeIMU TYPE yarp::dev::fakeIMU INCLUDE fakeIMU.h WRAPPER inertial)
   yarp_install(FILES fakeIMU.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
