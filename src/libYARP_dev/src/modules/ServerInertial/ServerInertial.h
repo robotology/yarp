@@ -22,6 +22,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/Wrapper.h>
 
 // ROS state publisher
 #include <yarpRosHelper.h>
@@ -53,7 +54,7 @@ namespace yarp
  * 9 10  11  = Calibrated 3-axis (X, Y, Z) magnetometer data
  * \endcode
  *
- * @author Alexis Maldonado, Radu Bogdan Rusu
+ * @author Alexis Maldonado, Radu Bogdan Rusu, Alberto Cardellino
  *
  *
  *  It reads the data from an Inertial measurement unit sensor and sends them through yarp port.
@@ -63,7 +64,7 @@ namespace yarp
  * |:--------------:|:------: |:--------------:|:-------------:|:--------: |:-------------:|:-----:|
  * | name           | string  |  -             |   -           | Yes       | full name of the port opened by the device, like /robotName/deviceId/sensorType:o | must start with a '/' character |
  * | period         | int     |  s             |   0.005       | No        | refresh period of the broadcasted values in ms (optional, default 5ms) | - |
- * | subdevice      | string  |  -             |   -           | Yes       | name of the IM device to be instantiated | - |
+ * | subdevice      | string  |  -             |   -           | alternative to attach action| name of the yarp IMU device driver to be instantiated | if using robotInterface or custom program the 'attach' action can be used instead |
  * | ROS            | group   |  -             |   -           | No                          | Group containing parameter for ROS topic initialization           | if missing, it is assumed to not use ROS topics |
  * |  useROS        | string  | true/false/only|   -           |  if ROS group is present    | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
  * |  ROS_TopicName | string  |  -             |   -           |  if ROS group is present    | set the name for ROS topic                                        | must start with a leading '/' |
@@ -99,12 +100,25 @@ namespace yarp
  *     <param name="ROS_nodeName">   /IMUPublisher              </param>
  *     <param name="frame_id">       r_shoulder                 </param>
  * </group>
+ *
+ *  <!-- Following parameters are meaningful ONLY for robotInterface -->
+ *  <action phase="startup" level="5" type="attach">
+ *      <paramlist name="networks">
+ *          <!-- The param value must match the device name in the corresponding device configuration file -->
+ *          <elem name="imu_device">  left_upper_arm_mc </elem>
+ *       </paramlist>
+ *  </action>
+ *  <action phase="shutdown" level="5" type="detach" />
+ *
+ *
  * \endcode
  *
  *  ROS message type used is sensor_msgs/Imu.msg
  */
 
 class yarp::dev::ServerInertial : public DeviceDriver,
+            public yarp::dev::IWrapper,
+            public yarp::dev::IMultipleWrapper,
             private yarp::os::Thread,
             public yarp::os::PortReader,
             public yarp::dev::IGenericSensor
@@ -113,7 +127,7 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 private:
     bool spoke;
     yarp::os::ConstString partName;
-    yarp::dev::PolyDriver poly;
+    yarp::dev::PolyDriver *IMU_polydriver;
     IGenericSensor *IMU; //The inertial device
     IPreciselyTimed *iTimed;
     double period;
@@ -126,7 +140,7 @@ private:
 
     // ROS data
     ROSTopicUsageType                                   useROS;                     // decide if open ROS topic or not
-    std::string                                         frame_id;                   // name of the frame mesuares are referred to
+    std::string                                         frame_id;                   // name of the frame measures are referred to
     std::string                                         rosNodeName;                // name of the rosNode
     std::string                                         rosTopicName;               // name of the rosTopic
     yarp::os::Node                                      *rosNode;                   // add a ROS node
@@ -167,6 +181,34 @@ public:
     virtual bool getChannels(int *nc);
 
     virtual bool calibrate(int ch, double v);
+
+    /**    IWrapper interface
+     * Attach to another object.
+     * @param poly the polydriver that you want to attach to.
+     * @return true/false on success failure.
+     */
+    virtual bool attach(PolyDriver *poly);
+    virtual bool detach();
+
+    /**   IMultipleWrapper interface
+     * Attach to a list of objects.
+     * @param p the polydriver list that you want to attach to.
+     * @return true/false on success failure.
+     */
+    virtual bool attachAll(const PolyDriverList &p);
+    virtual bool detachAll();
+
+private:
+
+    bool ownDevices;
+    yarp::dev::PolyDriver *subDeviceOwned;
+
+    // Open the wrapper only, the attach method needs to be called before using it
+    bool openDeferredAttach(yarp::os::Property& prop);
+
+    // Iif a subdevice parameter is given to the wrapper, it will open it as well
+    // and and attach to it immediatly.
+    bool openAndAttachSubDevice(yarp::os::Property& prop);
 };
 
 
