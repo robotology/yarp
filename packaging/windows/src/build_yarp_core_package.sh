@@ -338,6 +338,7 @@ done
 for f in `ls -1 *.$LIBEXT | grep YARP_math`; do
 	nsis_add yarp_math_libraries $f ${YARP_SUB}/lib/$f
 done
+nsis_add_recurse yarp_dlls yarp ${YARP_SUB}/lib/yarp
 cd $YARP_DIR_UNIX/install/bin
 for f in `ls -1 *.dll | grep -v YARP_math`; do
 	nsis_add yarp_dlls $f ${YARP_SUB}/bin/$f
@@ -475,6 +476,7 @@ if $add_debug; then
 	for f in `ls -1 *.lib`; do
 		nsis_add yarp_libraries $f ${YARP_SUB}/lib/$f
 	done
+	nsis_add_recurse yarp_dlls yarp ${YARP_SUB}/lib/yarp
 	cd $YARP_DIR_DBG_UNIX/install/bin || exit 1
 	for f in `ls -1 *.dll`; do
 		nsis_add yarp_dlls $f ${YARP_SUB}/bin/$f
