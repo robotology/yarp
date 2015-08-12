@@ -52,10 +52,11 @@ namespace yarp {
         class IControlCalibration;
         class IControlCalibration2;
         class IAxisInfo;
+        struct CalibrationParameters;
     }
 }
 
-struct calibrationParameters
+struct YARP_dev_API yarp::dev::CalibrationParameters
 {
     unsigned int type;
     double param1;
@@ -545,7 +546,7 @@ public:
     * specific.
     * @return true/false on success failure
     */
-    virtual bool setCalibrationParametersRaw(int axis, const calibrationParameters& params) {return false;}
+    virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) {return false;}
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.
@@ -628,7 +629,7 @@ public:
     * specific.
     * @return true/false on success failure
     */
-    virtual bool setCalibrationParameters(int axis, const calibrationParameters& params) { return false; }
+    virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params) { return false; }
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.

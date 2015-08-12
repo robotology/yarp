@@ -3560,7 +3560,7 @@ bool ControlBoardWrapper::calibrate2(int j, unsigned int ui, double v1, double v
     return false;
 }
 
-bool ControlBoardWrapper::setCalibrationParameters(int j, const calibrationParameters& params)
+bool ControlBoardWrapper::setCalibrationParameters(int j, const CalibrationParameters& params)
 {
     int off = device.lut[j].offset;
     int subIndex = device.lut[j].deviceEntry;

@@ -673,7 +673,7 @@ public:
 
     virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3);
 
-    virtual bool setCalibrationParameters(int axis, const calibrationParameters& params);
+    virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params);
 
     virtual bool done(int j);
 };

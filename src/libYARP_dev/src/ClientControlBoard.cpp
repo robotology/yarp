@@ -2248,11 +2248,11 @@ public:
         return false;
     }
 
-    bool virtual setCalibrationParameters(int j, const calibrationParameters& params)
+    bool virtual setCalibrationParameters(int j, const CalibrationParameters& params)
     {
         Bottle cmd, response;
 
-        cmd.addVocab(VOCAB_CALIBRATE_JOINT);
+        cmd.addVocab(VOCAB_CALIBRATE_JOINT_PARAMS);
         cmd.addInt(j);
         cmd.addInt(params.type);
         cmd.addDouble(params.param1);

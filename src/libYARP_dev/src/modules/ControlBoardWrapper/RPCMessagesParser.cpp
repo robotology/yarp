@@ -1378,7 +1378,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             yDebug("Calling calibrate joint\n");
 
                         int j = cmd.get(1).asInt();
-                        calibrationParameters params;
+                        CalibrationParameters params;
                         params.type = cmd.get(2).asInt();
                         params.param1 = cmd.get(3).asDouble();
                         params.param2 = cmd.get(4).asDouble();

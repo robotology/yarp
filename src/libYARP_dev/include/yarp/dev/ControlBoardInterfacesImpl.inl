@@ -908,7 +908,7 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::calibrate2(int axis, unsi
 }
 
 template <class DERIVED, class IMPLEMENT>
-bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::setCalibrationParameters(int axis, const calibrationParameters& params)
+bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::setCalibrationParameters(int axis, const CalibrationParameters& params)
 {
     int k = castToMapper(helper)->toHw(axis);
 

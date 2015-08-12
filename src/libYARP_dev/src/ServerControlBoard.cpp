@@ -1516,7 +1516,7 @@ public:
         return false;
     }
 
-    virtual bool setCalibrationParameters(int j, const calibrationParameters& params) {
+    virtual bool setCalibrationParameters(int j, const CalibrationParameters& params) {
         if (calib2)
             return calib2->setCalibrationParameters(j, params);
         return false;
@@ -1754,7 +1754,7 @@ case VOCAB_CALIBRATE_JOINT_PARAMS:
     if (caller->verbose())
         yDebug("Calling calibrate joint\n");
 
-    calibrationParameters params;
+    CalibrationParameters params;
     int j = cmd.get(1).asInt();
     params.type = cmd.get(2).asInt();
     params.param1 = cmd.get(3).asDouble();

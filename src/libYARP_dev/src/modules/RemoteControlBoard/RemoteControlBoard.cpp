@@ -2730,7 +2730,7 @@ public:
         return false;
     }
 
-    bool virtual setCalibrationParameters(int j, const calibrationParameters& params)
+    bool virtual setCalibrationParameters(int j, const CalibrationParameters& params)
     {
         Bottle cmd, response;
 

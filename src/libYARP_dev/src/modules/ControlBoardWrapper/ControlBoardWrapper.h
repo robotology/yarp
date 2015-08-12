@@ -1031,7 +1031,7 @@ public:
 
     virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3);
 
-    virtual bool setCalibrationParameters(int j, const calibrationParameters& params);
+    virtual bool setCalibrationParameters(int j, const CalibrationParameters& params);
 
     /**
     * Check whether the calibration has been completed.
