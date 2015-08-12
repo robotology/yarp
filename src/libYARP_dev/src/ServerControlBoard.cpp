@@ -1516,6 +1516,12 @@ public:
         return false;
     }
 
+    virtual bool setCalibrationParameters(int j, const calibrationParameters& params) {
+        if (calib2)
+            return calib2->setCalibrationParameters(j, params);
+        return false;
+    }
+
     /**
     * Check whether the calibration has been completed.
     * @param j is the joint that has started a calibration procedure.
@@ -1741,6 +1747,25 @@ case VOCAB_CALIBRATE_JOINT:
         else
             ok=ical2->calibrate2(j,ui,v1,v2,v3);
     }
+    break;
+case VOCAB_CALIBRATE_JOINT_PARAMS:
+{
+    rec = true;
+    if (caller->verbose())
+        yDebug("Calling calibrate joint\n");
+
+    calibrationParameters params;
+    int j = cmd.get(1).asInt();
+    params.type = cmd.get(2).asInt();
+    params.param1 = cmd.get(3).asDouble();
+    params.param2 = cmd.get(4).asDouble();
+    params.param3 = cmd.get(5).asDouble();
+    params.param4 = cmd.get(6).asDouble();
+    if (ical2 == 0)
+        yError("Sorry I don't have a IControlCalibration2 interface\n");
+    else
+        ok = ical2->setCalibrationParameters(j, params);
+}
     break;
 case VOCAB_CALIBRATE:
     {

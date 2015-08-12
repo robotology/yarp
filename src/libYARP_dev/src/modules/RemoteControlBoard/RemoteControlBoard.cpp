@@ -2730,6 +2730,26 @@ public:
         return false;
     }
 
+    bool virtual setCalibrationParameters(int j, const calibrationParameters& params)
+    {
+        Bottle cmd, response;
+
+        cmd.addVocab(VOCAB_CALIBRATE_JOINT_PARAMS);
+        cmd.addInt(j);
+        cmd.addInt(params.type);
+        cmd.addDouble(params.param1);
+        cmd.addDouble(params.param2);
+        cmd.addDouble(params.param3);
+        cmd.addDouble(params.param4);
+
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response)) {
+            return true;
+        }
+        return false;
+    }
+
     bool virtual done(int j)
     { return send1V1I(VOCAB_CALIBRATE_DONE, j); }
 

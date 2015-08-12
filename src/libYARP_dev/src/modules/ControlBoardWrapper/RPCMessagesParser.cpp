@@ -1371,6 +1371,26 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     }
                     break;
 
+                    case VOCAB_CALIBRATE_JOINT_PARAMS:
+                    {
+                        rec = true;
+                        if (ControlBoardWrapper_p->verbose())
+                            yDebug("Calling calibrate joint\n");
+
+                        int j = cmd.get(1).asInt();
+                        calibrationParameters params;
+                        params.type = cmd.get(2).asInt();
+                        params.param1 = cmd.get(3).asDouble();
+                        params.param2 = cmd.get(4).asDouble();
+                        params.param3 = cmd.get(5).asDouble();
+                        params.param4 = cmd.get(6).asDouble();
+                        if (rpc_Icalib2 == 0)
+                            yError("Sorry I don't have a IControlCalibration2 interface\n");
+                        else
+                            ok = rpc_Icalib2->setCalibrationParameters(j, params);
+                    }
+                    break;
+
                     case VOCAB_CALIBRATE:
                     {
                         rec=true;

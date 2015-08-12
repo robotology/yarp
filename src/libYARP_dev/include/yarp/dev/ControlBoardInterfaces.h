@@ -55,6 +55,15 @@ namespace yarp {
     }
 }
 
+struct calibrationParameters
+{
+    unsigned int type;
+    double param1;
+    double param2;
+    double param3;
+    double param4;
+};
+
 /**
  * @ingroup dev_iface_motor
  *
@@ -532,6 +541,12 @@ public:
      */
     virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3)=0;
 
+    /* Start calibration, this method is very often platform
+    * specific.
+    * @return true/false on success failure
+    */
+    virtual bool setCalibrationParametersRaw(int axis, const calibrationParameters& params) {return false;}
+
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.
      * @return true/false 
@@ -608,6 +623,12 @@ public:
      * @return true/false on success failure
      */
     virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3)=0;
+
+    /* Start calibration, this method is very often platform
+    * specific.
+    * @return true/false on success failure
+    */
+    virtual bool setCalibrationParameters(int axis, const calibrationParameters& params) { return false; }
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.
@@ -747,6 +768,7 @@ public:
 /* Vocabs representing the above interfaces */
 
 #define VOCAB_CALIBRATE_JOINT VOCAB4('c','a','l','j')
+#define VOCAB_CALIBRATE_JOINT_PARAMS VOCAB4('c','l','j','p')
 #define VOCAB_CALIBRATE VOCAB3('c','a','l')
 #define VOCAB_ABORTCALIB VOCAB4('a','b','c','a')
 #define VOCAB_ABORTPARK VOCAB4('a','b','p','a')
