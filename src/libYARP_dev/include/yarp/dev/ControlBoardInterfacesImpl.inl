@@ -907,6 +907,14 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::calibrate2(int axis, unsi
     return iCalibrate->calibrate2Raw(k, type, p1, p2, p3);
 }
 
+template <class DERIVED, class IMPLEMENT>
+bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::setCalibrationParameters(int axis, const CalibrationParameters& params)
+{
+    int k = castToMapper(helper)->toHw(axis);
+
+    return iCalibrate->setCalibrationParametersRaw(k, params);
+}
+
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::done(int j)
 {

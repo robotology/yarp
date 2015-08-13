@@ -3560,6 +3560,19 @@ bool ControlBoardWrapper::calibrate2(int j, unsigned int ui, double v1, double v
     return false;
 }
 
+bool ControlBoardWrapper::setCalibrationParameters(int j, const CalibrationParameters& params)
+{
+    int off = device.lut[j].offset;
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (p && p->calib2)
+    {
+        return p->calib2->setCalibrationParameters(off + p->base, params);
+    }
+    return false;
+}
+
 bool ControlBoardWrapper::done(int j)
 {
     int off=device.lut[j].offset;
