@@ -19,6 +19,7 @@
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/os/Time.h>
 
 #include <errno.h>
@@ -466,7 +467,7 @@ public:
         if (prev!=NULL) {
             double t = prev->get(0).asDouble();
             int flag = prev->get(1).asInt();
-            if (Time::now()-t<RESOURCE_FINDER_CACHE_TIME) {
+            if (SystemClock::nowSystem()-t<RESOURCE_FINDER_CACHE_TIME) {
                 if (flag) return s;
                 return "";
             }
@@ -482,7 +483,7 @@ public:
         bool ok = exists(s.c_str(),isDir);
         Value status;
         yAssert(status.asList());
-        status.asList()->addDouble(Time::now());
+        status.asList()->addDouble(SystemClock::nowSystem());
         status.asList()->addInt(ok?1:0);
         cache.put(s,status);
         if (ok) {
