@@ -80,6 +80,7 @@ public:
     int setPriority(int priority = -1, int policy = -1);
     int getPriority();
     int getPolicy();
+    Platform_hthread_t getThreadID() { return hid; }
 
     static void setDefaultStackSize(int stackSize);
 

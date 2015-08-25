@@ -1976,12 +1976,16 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                             int priority = unit->getPriority();
                                             int policy = unit->getPolicy();
                                             int tos = getTypeOfService(unit);
+                                            int pid =  ACE_OS::getpid();
+                                            double tid = (double) unit->getThreadID();
                                             result.clear();
                                             Bottle& sched = result.addList();
                                             sched.addString("sched");
                                             Property& sched_prop = sched.addDict();
                                             sched_prop.put("priority", priority);
                                             sched_prop.put("policy", policy);
+                                            sched_prop.put("pid", pid);
+                                            sched_prop.put("tid", tid);
                                             Bottle& qos = result.addList();
                                             qos.addString("qos");
                                             Property& qos_prop = qos.addDict();
