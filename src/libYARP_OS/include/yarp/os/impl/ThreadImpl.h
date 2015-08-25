@@ -80,7 +80,7 @@ public:
     int setPriority(int priority = -1, int policy = -1);
     int getPriority();
     int getPolicy();
-    Platform_hthread_t getThreadID() { return hid; }
+    long getTid();
 
     static void setDefaultStackSize(int stackSize);
 
@@ -90,12 +90,14 @@ public:
     static void init();
     static void fini();
 
+    long tid;
+
 private:
     int defaultPriority;
     int defaultPolicy;
     int stackSize;
     Platform_hthread_t hid;
-    Platform_thread_t  id;
+    Platform_thread_t  id;    
     bool active;
     bool opened;
     bool closing;

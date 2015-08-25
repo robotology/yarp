@@ -1966,33 +1966,47 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                             ConstString portName = cmd.get(2).asString();
                             bool bFound = false;
                             if((portName.size() > 0) && (portName[0] == '/')) {
-                                for (unsigned int i=0; i<units.size(); i++) {
-                                    PortCoreUnit *unit = units[i];
-                                    if (unit && !unit->isFinished()) {
-                                        Route route = unit->getRoute();
-                                        ConstString coreName = (unit->isOutput()) ? route.getToName() : route.getFromName();
-                                        if (portName == coreName) {
-                                            bFound = true;
-                                            int priority = unit->getPriority();
-                                            int policy = unit->getPolicy();
-                                            int tos = getTypeOfService(unit);
-                                            int pid =  ACE_OS::getpid();
-                                            double tid = (double) unit->getThreadID();
-                                            result.clear();
-                                            Bottle& sched = result.addList();
-                                            sched.addString("sched");
-                                            Property& sched_prop = sched.addDict();
-                                            sched_prop.put("priority", priority);
-                                            sched_prop.put("policy", policy);
-                                            sched_prop.put("pid", pid);
-                                            sched_prop.put("tid", tid);
-                                            Bottle& qos = result.addList();
-                                            qos.addString("qos");
-                                            Property& qos_prop = qos.addDict();
-                                            qos_prop.put("tos", tos);
-                                        }
-                                    } // end isFinished()
-                                } // end for loop
+                                // check for their own name
+                                if (portName == getName()) {
+                                    bFound = true;
+                                    result.clear();
+                                    Bottle& sched = result.addList();
+                                    sched.addString("sched");
+                                    Property& sched_prop = sched.addDict();
+                                    sched_prop.put("pid", ACE_OS::getpid());
+                                    sched_prop.put("tid", (int)this->getTid());
+                                    sched_prop.put("priority", this->getPriority());
+                                    sched_prop.put("policy", this->getPolicy());
+                                }
+                                else {
+                                    for (unsigned int i=0; i<units.size(); i++) {
+                                        PortCoreUnit *unit = units[i];
+                                        if (unit && !unit->isFinished()) {
+                                            Route route = unit->getRoute();
+                                            ConstString coreName = (unit->isOutput()) ? route.getToName() : route.getFromName();
+                                            if (portName == coreName) {
+                                                bFound = true;
+                                                int priority = unit->getPriority();
+                                                int policy = unit->getPolicy();
+                                                int tos = getTypeOfService(unit);
+                                                int pid =  ACE_OS::getpid();
+                                                int tid = (int) unit->getTid();
+                                                result.clear();
+                                                Bottle& sched = result.addList();
+                                                sched.addString("sched");
+                                                Property& sched_prop = sched.addDict();
+                                                sched_prop.put("pid", pid);
+                                                sched_prop.put("tid", tid);
+                                                sched_prop.put("priority", priority);
+                                                sched_prop.put("policy", policy);
+                                                Bottle& qos = result.addList();
+                                                qos.addString("qos");
+                                                Property& qos_prop = qos.addDict();
+                                                qos_prop.put("tos", tos);
+                                            }
+                                        } // end isFinished()
+                                    } // end for loop
+                                } // end portName == getname()
 
                                 if(!bFound) {  // cannot find any port matchs the requested one
                                     result.clear();

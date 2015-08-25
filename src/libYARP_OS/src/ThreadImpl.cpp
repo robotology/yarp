@@ -19,6 +19,11 @@
 
 #include <stdlib.h>
 
+#if defined(__linux__) // Use the POSIX syscalls for the gettid()
+    #include <sys/syscall.h>
+    #include <unistd.h>
+#endif
+
 using namespace yarp::os::impl;
 
 int ThreadImpl::threadCount = 0;
@@ -76,6 +81,11 @@ static unsigned __stdcall theExecutiveBranch (void *args)
 
     if (success)
     {
+#if defined(__linux__)
+        // Use the POSIX syscalls to get
+        // the real thread ID (gettid) on Linux machine
+        thread->tid = (long) syscall(SYS_gettid);
+#endif
         thread->setPriority();
         thread->run();
         thread->threadRelease();
@@ -104,6 +114,7 @@ ThreadImpl::ThreadImpl() : synchro(0) {
     initWasSuccessful = false;
     defaultPriority = -1;
     defaultPolicy = -1;
+    tid = -1;
     setOptions();
 }
 
@@ -115,6 +126,7 @@ ThreadImpl::ThreadImpl(Runnable *target) : synchro(0) {
     needJoin = false;
     defaultPriority = -1;
     defaultPolicy = -1;
+    tid = -1;
     setOptions();
 }
 
@@ -221,7 +233,7 @@ bool ThreadImpl::start() {
     beforeStart();
 #ifdef YARP_HAS_CXX11
     hid = std::thread(theExecutiveBranch,(void*)this);
-    id = 0;
+    id = 0;    
     int result = hid.joinable()?0:1;
 #else
 #  ifdef YARP_HAS_ACE
@@ -252,10 +264,10 @@ bool ThreadImpl::start() {
     int result = pthread_create(&hid, &attr, theExecutiveBranch, (void*)this);
     id = (long int) hid;
 #  endif
-#endif
-
+#endif    
     if (result==0)
     {
+        tid = id;
         // we must, at some point in the future, join the thread
         needJoin = true;
 
@@ -388,6 +400,10 @@ int ThreadImpl::getPolicy() {
 #endif
     }
     return policy;
+}
+
+long ThreadImpl::getTid() {
+    return tid;
 }
 
 
