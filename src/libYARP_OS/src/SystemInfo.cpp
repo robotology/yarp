@@ -649,3 +649,39 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
     return load;
 }
 
+
+SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
+    SystemInfo::ProcessInfo info;
+    info.pid = -1; // invalid
+#if defined(__linux__)
+    FILE *file;
+    char cmdline[256] = {0};
+    char filename[256];
+    sprintf(filename, "/proc/%d/cmdline", pid);
+    file = fopen(filename, "r");
+    if (file) {
+        fgets(cmdline, sizeof(cmdline) / sizeof(*cmdline), file);
+        fclose(file);
+        char *p = cmdline;
+        while (*p) {
+            p += strlen(p);
+            if (*(p + 1))
+                *p = ' ';
+            p++;
+        }
+        info.pid = pid;
+        // split the cmdline to find the arguments
+        info.name = cmdline;
+        size_t index = info.name.find(" ");
+        if(index != info.name.npos) {
+            info.name = info.name.substr(0, index);
+            info.arguments = info.name.substr(index+1);
+        }
+    }
+#else
+    // TODO: to be implemented
+    info.pid = -1; // invalid
+#endif
+    return info;
+}
+
