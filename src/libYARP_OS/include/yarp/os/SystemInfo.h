@@ -110,6 +110,15 @@ public:
     } NetworkInfo;
     */
 
+    /**
+     * @brief The ProcessInfo stuct provides the operating system proccess information.
+     */
+    typedef struct ProcessInfo {
+        yarp::os::ConstString name;
+        yarp::os::ConstString arguments;
+        int pid;
+    } ProcessInfo;
+
 public:   
     /**
      * @brief getMemoryInfo
@@ -147,7 +156,16 @@ public:
      */
     static UserInfo getUserInfo();
 
-    //static NetworkInfo getNetworkInfo();
+    /**
+     * @brief gets the operating system process information given by its PID.
+     * If the information cannot be retrieved, ProcessInfo.pid is set to -1
+     * otherwise, it is equal to the given PID as paramter.
+     * @param pid the process (task) PID
+     * @return ProcessInfo
+     */
+    static ProcessInfo getProcessInfo(int pid);
+
+    //static NetworkInfo getNetworkInfo();    
 };
 
 #endif //_YARP2_SYSTEMINFO_
