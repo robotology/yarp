@@ -22,6 +22,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/PortInfo.h>
+#include <yarp/os/SystemInfo.h>
 #include <yarp/os/DummyConnector.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
@@ -1961,8 +1962,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     Property *p = acquireProperties(false);
                     if (p) {
                         if (!cmd.get(2).isNull()) {                            
-                            // request: "prop get /portname"
-                            // reply  : "(sched ((priority 30) (policy 1))) (qos ((priority HIGH)))"
+                            // request: "prop get /portname"                            
                             ConstString portName = cmd.get(2).asString();
                             bool bFound = false;
                             if((portName.size() > 0) && (portName[0] == '/')) {
@@ -1972,11 +1972,19 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     result.clear();
                                     Bottle& sched = result.addList();
                                     sched.addString("sched");
-                                    Property& sched_prop = sched.addDict();
-                                    sched_prop.put("pid", ACE_OS::getpid());
+                                    Property& sched_prop = sched.addDict();                                    
                                     sched_prop.put("tid", (int)this->getTid());
                                     sched_prop.put("priority", this->getPriority());
                                     sched_prop.put("policy", this->getPolicy());
+
+                                    int pid =  ACE_OS::getpid();
+                                    SystemInfo::ProcessInfo info = SystemInfo::getProcessInfo(pid);
+                                    Bottle& proc = result.addList();
+                                    proc.addString("process");
+                                    Property& proc_prop = proc.addDict();
+                                    proc_prop.put("pid", pid);
+                                    proc_prop.put("name", (info.pid !=-1) ? info.name : "unkown");
+                                    proc_prop.put("arguments", (info.pid !=-1) ? info.arguments : "unkown");
                                 }
                                 else {
                                     for (unsigned int i=0; i<units.size(); i++) {
@@ -1988,14 +1996,12 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                 bFound = true;
                                                 int priority = unit->getPriority();
                                                 int policy = unit->getPolicy();
-                                                int tos = getTypeOfService(unit);
-                                                int pid =  ACE_OS::getpid();
+                                                int tos = getTypeOfService(unit);                                                
                                                 int tid = (int) unit->getTid();
                                                 result.clear();
                                                 Bottle& sched = result.addList();
                                                 sched.addString("sched");
                                                 Property& sched_prop = sched.addDict();
-                                                sched_prop.put("pid", pid);
                                                 sched_prop.put("tid", tid);
                                                 sched_prop.put("priority", priority);
                                                 sched_prop.put("policy", policy);

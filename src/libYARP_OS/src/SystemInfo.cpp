@@ -675,7 +675,8 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
         size_t index = info.name.find(" ");
         if(index != info.name.npos) {
             info.name = info.name.substr(0, index);
-            info.arguments = info.name.substr(index+1);
+            info.arguments = cmdline;
+            info.arguments = info.arguments.substr(index+1);
         }
     }
 #else
@@ -684,4 +685,3 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
 #endif
     return info;
 }
-
