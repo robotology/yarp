@@ -103,7 +103,7 @@ by the \ref yarpdatadumper.
 
 --connect \e portname
 - The parameter \e portname specifies the name of the port to 
-  connect the dumper to at launch time.
+  connect the dumper to at launch time (\e tcp is used).
 
 --dir \e dirname
 - The parameter \e dirname serves to specify the storage

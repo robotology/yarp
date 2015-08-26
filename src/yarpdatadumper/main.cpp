@@ -583,6 +583,7 @@ public:
             p_bottle=new DumpPort<Bottle>(*q,dwnsample,rxTime,txTime);
             p_bottle->useCallback();
             p_bottle->open(portName.c_str());
+            p_bottle->setStrict();
             p_bottle->setReporter(reporter);
         }
         else
@@ -590,6 +591,7 @@ public:
             p_image=new DumpPort<ImageOf<PixelBgr> >(*q,dwnsample,rxTime,txTime);
             p_image->useCallback();
             p_image->open(portName.c_str());
+            p_image->setStrict();
             p_image->setReporter(reporter);
         }
 
@@ -598,7 +600,7 @@ public:
             string srcPort=rf.find("connect").asString().c_str();
             bool ok=Network::connect(srcPort.c_str(),
                                      (type==bottle)?p_bottle->getName().c_str():
-                                     p_image->getName().c_str());
+                                     p_image->getName().c_str(),"tcp");
 
             ostringstream msg;
             msg << "Connection to " << srcPort << " " << (ok?"successful":"failed");
