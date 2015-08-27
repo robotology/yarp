@@ -76,12 +76,12 @@ DumpObj *factory(Bottle& obj)
 class DumpImage : public DumpObj
 {
 private:
-    ImageOf<PixelBgr> *p;
+    Image *p;
 
 public:
-    DumpImage() { p=new ImageOf<PixelBgr>(); }
-    DumpImage(const DumpImage &obj) { p=new ImageOf<PixelBgr>(*(obj.p)); }
-    DumpImage(const ImageOf<PixelBgr> &img) { p=new ImageOf<PixelBgr>(img); }
+    DumpImage() { p=new Image(); }
+    DumpImage(const DumpImage &obj) { p=new Image(*(obj.p)); }
+    DumpImage(const Image &img) { p=new Image(img); }
     const DumpImage &operator=(const DumpImage &obj) { *p=*(obj.p); return *this; }
     ~DumpImage() { delete p; }
 
@@ -106,7 +106,7 @@ public:
 
 // Object creator of type Image - overloaded
 /**************************************************************************/
-DumpObj *factory(ImageOf<PixelBgr> &obj)
+DumpObj *factory(Image &obj)
 {
     DumpImage *p=new DumpImage(obj);
     return p;
@@ -184,7 +184,8 @@ template <class T>
 class DumpPort : public BufferedPort<T>
 {
 public:
-    DumpPort(DumpQueue &Q, unsigned int _dwnsample=1, bool _rxTime=true, bool _txTime=false) : buf(Q)
+    DumpPort(DumpQueue &Q, unsigned int _dwnsample=1,
+             bool _rxTime=true, bool _txTime=false) : buf(Q)
     {
         rxTime=_rxTime;
         txTime=_txTime;
@@ -479,17 +480,17 @@ public:
 class DumpModule: public RFModule
 {
 private:
-    DumpQueue                    *q;
-    DumpPort<Bottle>             *p_bottle;
-    DumpPort<ImageOf<PixelBgr> > *p_image;
-    DumpThread                   *t;
-    DumpReporter                  reporter;
-    Port                          rpcPort;
-    DumpType                      type;
-    bool                          rxTime;
-    bool                          txTime;
-    unsigned int                  dwnsample;
-    string                        portName;
+    DumpQueue        *q;
+    DumpPort<Bottle> *p_bottle;
+    DumpPort<Image>  *p_image;
+    DumpThread       *t;
+    DumpReporter      reporter;
+    Port              rpcPort;
+    DumpType          type;
+    bool              rxTime;
+    bool              txTime;
+    unsigned int      dwnsample;
+    string            portName;
 
 public:
     DumpModule() { }
@@ -588,7 +589,7 @@ public:
         }
         else
         {
-            p_image=new DumpPort<ImageOf<PixelBgr> >(*q,dwnsample,rxTime,txTime);
+            p_image=new DumpPort<Image>(*q,dwnsample,rxTime,txTime);
             p_image->useCallback();
             p_image->open(portName.c_str());
             p_image->setStrict();
