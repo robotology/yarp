@@ -4,6 +4,8 @@
 
 cmake_minimum_required(VERSION 2.8.9)
 
+include(CMakeDependentOption)
+
 set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
 set(YARP_COLLISION_AVOIDANCE FALSE)
 set(YARP_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -14,22 +16,6 @@ if(YARP_VERSION)
   set(YARP_BASE_DIR ${CMAKE_BINARY_DIR})
 endif()
 option(YARP_COMPILE_BINDINGS "Compile optional language bindings" ${YARP_COMPILE_BINDINGS_DEFAULT})
-
-if(YARP_COMPILE_BINDINGS)
-
-#############################################################################
-## Discourage inplace compilation
-
-if(CMAKE_BINARY_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  option(COMPILE_INPLACE "Allow inplace compilation" FALSE)
-  if(NOT COMPILE_INPLACE)
-    if(NOT BEND_OVER_BACKWARDS_COMPATIBLE)
-      message(FATAL_ERROR "Please don't compile bindings in the source directory, make a separate build directory (ideally one per language).  If CMake has now added a CMakeCache.txt file in the source directory, please delete it.  If you really really want to compile in place, set the COMPILE_INPLACE flag.")
-    endif()
-  endif()
-endif()
-
-
 
 #############################################################################
 ## Options for compiling supported languages.  There's nothing magical
@@ -46,16 +32,33 @@ foreach(lang "Java"
              "Ruby"
              "Lua"
              "Octave")
-    string(TOUPPER "${lang}" LANG)
-    string(REGEX REPLACE " .+" "" LANG "${LANG}")
-    set(CREATE_${LANG} OFF CACHE BOOL "Do you want to create the ${lang} interface")
+  string(TOUPPER "${lang}" LANG)
+  string(REGEX REPLACE " .+" "" LANG "${LANG}")
+  cmake_dependent_option(CREATE_${LANG} "Do you want to create the ${lang} interface" OFF
+                         YARP_COMPILE_BINDINGS OFF)
+  if(YARP_COMPILE_BINDINGS)
     if(CREATE_${LANG})
       message(STATUS " +++ bindings ${lang} is enabled")
     else()
       message(STATUS " +++ bindings ${lang} is not enabled")
     endif()
+  endif()
 endforeach()
 
+
+if(YARP_COMPILE_BINDINGS)
+
+#############################################################################
+## Discourage inplace compilation
+
+if(CMAKE_BINARY_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  option(COMPILE_INPLACE "Allow inplace compilation" FALSE)
+  if(NOT COMPILE_INPLACE)
+    if(NOT BEND_OVER_BACKWARDS_COMPATIBLE)
+      message(FATAL_ERROR "Please don't compile bindings in the source directory, make a separate build directory (ideally one per language).  If CMake has now added a CMakeCache.txt file in the source directory, please delete it.  If you really really want to compile in place, set the COMPILE_INPLACE flag.")
+    endif()
+  endif()
+endif()
 
 #############################################################################
 ## Find SWIG and YARP
