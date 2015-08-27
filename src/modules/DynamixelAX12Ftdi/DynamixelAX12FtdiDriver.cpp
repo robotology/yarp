@@ -637,7 +637,7 @@ bool DynamixelAX12FtdiDriver::getTorque(int j, double *t) {
         load *= (((blankReturn[2] >> 2)&0X01) ? -1 : 1);
         *t = load;
     } else {
-        ACE_OS::fprintf(stderr, message);
+        ACE_OS::fprintf(stderr, "%s\n", message);
         return false;
     }
     return ret;
@@ -790,7 +790,7 @@ bool DynamixelAX12FtdiDriver::getEncoder(int j, double *v) {
             *v = ((double) pos)*300.0 / 1024.0;
             return true;
         } else {
-            ACE_OS::fprintf(stderr, message);
+            ACE_OS::fprintf(stderr, "%s\n", message);
             return false;
         }
 
@@ -832,7 +832,7 @@ bool DynamixelAX12FtdiDriver::getEncoderSpeed(int j, double *sp) {
 
         *sp = speed * 113 / 1024 + 1; /// TODO should be changed. not very accurate, though close
     } else {
-        ACE_OS::fprintf(stderr, message);
+        ACE_OS::fprintf(stderr, "%s\n", message);
         return false;
     }
     return ret;
