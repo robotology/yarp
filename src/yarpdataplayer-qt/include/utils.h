@@ -37,22 +37,22 @@ class QMainWindow;
 
 struct partsData
     {
-        WorkerClass             *worker;                        //personal rate thread
-        yarp::os::Semaphore     mutex;                          //semaphore
-        std::string             name;                           //string containing the name of the part
-        std::string             infoFile;                       //string containing the path of the infoFile
-        std::string             logFile;                        //string containing the path of the logFile
-        std::string             path;                           //string containing the path of the part
-        std::string             type;                           //string containing the type of the data
-        int                     currFrame;                      //integer containing the current frame
-        int                     maxFrame;                       //integer containing the maxFrame
-        yarp::os::Bottle        bot;                            //yarp Bottle containing all the data
-        yarp::sig::Vector       timestamp;                      //yarp Vector containing all the timestamps
-        yarp::os::BufferedPort<yarp::os::Bottle> bottlePort;    //yarp port for sending bottles
-        yarp::os::BufferedPort<yarp::sig::Image> imagePort;     //yarp port for sending images
-        std::string             portName;                       //the name of the port
-        int                     sent;                           //integer used for step from command
-        bool                    hasNotified;                    //boolean used for individual part notification that it has reached eof
+        WorkerClass             *worker;                            //personal rate thread
+        yarp::os::Semaphore     mutex;                              //semaphore
+        std::string             name;                               //string containing the name of the part
+        std::string             infoFile;                           //string containing the path of the infoFile
+        std::string             logFile;                            //string containing the path of the logFile
+        std::string             path;                               //string containing the path of the part
+        std::string             type;                               //string containing the type of the data
+        int                     currFrame;                          //integer containing the current frame
+        int                     maxFrame;                           //integer containing the maxFrame
+        yarp::os::Bottle        bot;                                //yarp Bottle containing all the data
+        yarp::sig::Vector       timestamp;                          //yarp Vector containing all the timestamps
+        yarp::os::BufferedPort<yarp::os::Bottle>        bottlePort; //yarp port for sending bottles
+        yarp::os::BufferedPort<yarp::sig::Image>    imagePort;  //yarp port for sending images
+        std::string             portName;                           //the name of the port
+        int                     sent;                               //integer used for step from command
+        bool                    hasNotified;                        //boolean used for individual part notification that it has reached eof
     };
 
 /**********************************************************/

@@ -154,10 +154,10 @@ int WorkerClass::sendImages(int part, int frame)
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
     } else {
-        cvCvtColor( img, img, CV_BGR2RGB );
         Image &temp = utilities->partDetails[part].imagePort.prepare();
-        temp.resize(img->width,img->height);
-        cvCopy( img, (IplImage *) temp.getIplImage());
+        
+        temp.wrapIplImage(img);
+        
 #else
     if ( !read(img,tmpPath.c_str()) ) {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
