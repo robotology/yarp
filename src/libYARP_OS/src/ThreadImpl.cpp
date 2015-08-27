@@ -267,7 +267,7 @@ bool ThreadImpl::start() {
 #endif    
     if (result==0)
     {
-        tid = id;
+        tid = (long int)id;
         // we must, at some point in the future, join the thread
         needJoin = true;
 
