@@ -132,7 +132,7 @@ int WorkerClass::sendImages(int part, int frame)
 #ifdef HAS_OPENCV
     IplImage* img = NULL;
 #else
-    ImageOf<PixelRgb> img;
+    Image img;
 #endif
     string tmpPath = utilities->partDetails[part].path;
     string tmpName;
@@ -155,7 +155,7 @@ int WorkerClass::sendImages(int part, int frame)
         return 1;
     } else {
         cvCvtColor( img, img, CV_BGR2RGB );
-        ImageOf<PixelRgb> &temp = utilities->partDetails[part].imagePort.prepare();
+        Image &temp = utilities->partDetails[part].imagePort.prepare();
         temp.resize(img->width,img->height);
         cvCopy( img, (IplImage *) temp.getIplImage());
 #else
@@ -164,7 +164,7 @@ int WorkerClass::sendImages(int part, int frame)
         return 1;
     } else {
 
-        ImageOf<PixelRgb> &temp = utilities->partDetails[part].imagePort.prepare();
+        Image &temp = utilities->partDetails[part].imagePort.prepare();
         temp = img;
 
 #endif
