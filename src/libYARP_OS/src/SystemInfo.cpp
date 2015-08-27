@@ -39,11 +39,15 @@ extern char **environ;
 #include <shlobj.h>
 #include <Lmcons.h>
 #include <comdef.h>     // for using bstr_t class
-
+#include <psapi.h>
+//#define _WIN32_DCOM
+#include <wbemidl.h>
 #if (defined(WINVER)) && (WINVER>=0x0502)
 #include <pdh.h>
 #include <pdhmsg.h>
 #pragma comment(lib, "pdh.lib")
+#pragma comment(lib, "psapi.lib")      // for get proocess name for pid
+# pragma comment(lib, "wbemuuid.lib")  // for get process arguments from pid
 #endif 
 
 #include <yarp/os/RateThread.h>
@@ -679,9 +683,66 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
             info.arguments = info.arguments.substr(index+1);
         }
     }
-#else
-    // TODO: to be implemented
-    info.pid = -1; // invalid
+#elif defined(WIN32)  
+    HANDLE hnd = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
+    if(hnd) {
+        TCHAR filename[MAX_PATH];
+        if (GetModuleBaseName(hnd, 0, filename, MAX_PATH)) {
+        info.name = filename;
+            info.pid = pid;
+        }
+        CloseHandle(hnd);
+    }
+    // reterieving arguments 
+    HRESULT hr = 0;
+    IWbemLocator *WbemLocator  = NULL;
+    IWbemServices *WbemServices = NULL;
+    IEnumWbemClassObject *EnumWbem  = NULL;
+
+    //initializate the Windows security
+    hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+    hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
+    hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *) &WbemLocator);
+    //connect to the WMI
+    hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", NULL, NULL, 0, NULL, 0, 0, &WbemServices);   
+    //Run the WQL Query
+    hr = WbemServices->ExecQuery(L"WQL", L"SELECT ProcessId,CommandLine FROM Win32_Process", WBEM_FLAG_FORWARD_ONLY, NULL, &EnumWbem);
+
+    // Iterate over the enumerator
+    if (EnumWbem != NULL) {
+        IWbemClassObject *result = NULL;
+        ULONG returnedCount = 0;
+
+        while((hr = EnumWbem->Next(WBEM_INFINITE, 1, &result, &returnedCount)) == S_OK) {
+            VARIANT ProcessId;
+            VARIANT CommandLine;
+
+            // access the properties
+            hr = result->Get(L"ProcessId", 0, &ProcessId, 0, 0);
+            hr = result->Get(L"CommandLine", 0, &CommandLine, 0, 0);            
+            if (!(CommandLine.vt==VT_NULL) && ProcessId.uintVal == (unsigned int) pid) {
+                // covert BSTR to std::string 
+                int res = WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, NULL, 0, NULL, NULL);
+                info.arguments.resize(res);
+                WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, &info.arguments[0], res, NULL, NULL);
+                size_t idx = info.arguments.find(' ');
+                if(idx == info.arguments.npos)
+                    info.arguments.clear();
+                else
+                    info.arguments = info.arguments.substr(idx+2); // it seems windows adds two spaces after the program name 
+                info.pid = pid;
+                VariantClear(&ProcessId);
+                VariantClear(&CommandLine);
+                break;
+            }            
+            result->Release();
+        }
+    }
+    // Release the resources
+    EnumWbem->Release();
+    WbemServices->Release();
+    WbemLocator->Release();
+    CoUninitialize();    
 #endif
     return info;
 }
