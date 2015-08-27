@@ -1,12 +1,14 @@
-
-#ifndef _XMLRPCVALUE_H_
-#define _XMLRPCVALUE_H_
 //
 // XmlRpc++ Copyright (c) 2002-2003 by Chris Morley
 //
 // Summary for YARP:
 // Copyright: 2002, 2003 Chris Morley
 // CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+#ifndef _XMLRPCVALUE_H_
+#define _XMLRPCVALUE_H_
+
+
 #if defined(_MSC_VER)
 # pragma warning(disable:4786)    // identifier was truncated in debug info
 #endif
@@ -182,7 +184,7 @@ namespace YarpXmlRpc {
       ValueArray*   asArray;
       ValueStruct*  asStruct;
     } _value;
-    
+
   };
 } // namespace YarpXmlRpc
 
