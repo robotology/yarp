@@ -63,7 +63,7 @@ namespace yarp
  * | Parameter name | Type    | Units          | Default Value | Required  | Description   | Notes |
  * |:--------------:|:------: |:--------------:|:-------------:|:--------: |:-------------:|:-----:|
  * | name           | string  |  -             |   -           | Yes       | full name of the port opened by the device, like /robotName/deviceId/sensorType:o | must start with a '/' character |
- * | period         | int     |  s             |   0.005       | No        | refresh period of the broadcasted values in ms (optional, default 5ms) | - |
+ * | period         | double     |  s             |   0.005       | No        | refresh period of the broadcasted values in ms (optional, default 5ms) | - |
  * | subdevice      | string  |  -             |   -           | alternative to attach action| name of the yarp IMU device driver to be instantiated | if using robotInterface or custom program the 'attach' action can be used instead |
  * | ROS            | group   |  -             |   -           | No                          | Group containing parameter for ROS topic initialization           | if missing, it is assumed to not use ROS topics |
  * |  useROS        | string  | true/false/only|   -           |  if ROS group is present    | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
@@ -80,7 +80,7 @@ namespace yarp
  *
  * \code{.unparsed}
  * name         /inertial
- * period       20
+ * period       0.02
  * [ROS]
  * useROS        true
  * ROS_topicName /ROSinertial
@@ -93,7 +93,7 @@ namespace yarp
  * \code{.unparsed}
  *
  * <param name="name">              /inertial                   </param>
- * <param name="period">            20                          </param>
+ * <param name="period">            0.02                          </param>
  * <group name="ROS">
  *     <param name="useROS">         true                       </param>    // use 'only' if you want only ROS topic and NOT yarp ports
  *     <param name="ROS_topicName">  /ROSinertial               </param>
