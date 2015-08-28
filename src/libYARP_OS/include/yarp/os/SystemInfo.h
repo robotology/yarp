@@ -116,6 +116,8 @@ public:
     typedef struct ProcessInfo {
         yarp::os::ConstString name;
         yarp::os::ConstString arguments;
+        int schedPolicy;
+        int schedPriority;
         int pid;
     } ProcessInfo;
 

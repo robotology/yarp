@@ -443,9 +443,6 @@ public:
     Property *acquireProperties(bool readOnly);
     void releaseProperties(Property *prop);
 
-    bool setTypeOfService(PortCoreUnit *unit, int tos);
-    int  getTypeOfService(PortCoreUnit *unit);
-
     bool setCallbackLock(yarp::os::Mutex *mutex = NULL) {
         removeCallbackLock();
         if (mutex) {
@@ -531,6 +528,20 @@ private:
     yarp::os::Mutex *mutex; ///< callback optional access control lock
     bool mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
+
+    // set IP packet TOS
+    bool setTypeOfService(PortCoreUnit *unit, int tos);
+
+    // get IP packet TOS
+    int  getTypeOfService(PortCoreUnit *unit);
+
+    // set the scheduling properties of all threads
+    // whithin the process scope.
+    bool setProcessSchedulingParam(int priority=-1, int policy=-1);
+
+    // cross-platform way of getting process ID (with or whitout ACE)
+    int  getPid();
+
 
     void closeMain();
 

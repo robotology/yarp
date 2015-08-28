@@ -657,6 +657,8 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
 SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
     SystemInfo::ProcessInfo info;
     info.pid = -1; // invalid
+    info.schedPolicy = -1;
+    info.schedPriority = -1;
 #if defined(__linux__)
     FILE *file;
     char cmdline[256] = {0};
@@ -683,6 +685,13 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
             info.arguments = info.arguments.substr(index+1);
         }
     }
+
+    // scheduling params
+    struct sched_param param;
+    if( sched_getparam(pid, &param) == 0 )
+        info.schedPriority = param.__sched_priority;
+    info.schedPolicy = sched_getscheduler(pid);
+
 #elif defined(WIN32)  
     HANDLE hnd = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
     if(hnd) {

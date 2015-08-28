@@ -28,6 +28,13 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #ifdef YARP_HAS_ACE
 #  include <ace/INET_Addr.h>
+#  include <ace/Sched_Params.h>
+#endif
+
+#if defined(__linux__) // used for configuring scheduling properties
+#  include <sys/types.h>
+#  include <unistd.h>
+#  include <dirent.h>
 #endif
 
 
@@ -1524,6 +1531,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         vocab = VOCAB3('b','u','s');
     }
 
+    String infoMsg;
     switch (vocab) {
     case VOCAB4('h','e','l','p'):
         // We give a list of the most useful administrative commands.
@@ -1539,6 +1547,12 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString("[prop] [get] # get port properties");
         result.addString("[prop] [get] $prop # get a port property");
         result.addString("[prop] [set] $prop $val # set a port property");
+        result.addString("[prop] [get] $portname # get Qos properties of a port");
+        result.addString("[prop] [set] $portname # set Qos properies of a port");
+        infoMsg = "[prop] [get] " + getName() + String(" get information about current process (e.g., scheduling priority)");
+        result.addString(infoMsg.c_str());
+        infoMsg = "[prop] [set] " + getName() + String(" set properties of the current process (e.g., scheduling priority)");
+        result.addString(infoMsg.c_str());
         break;
     case VOCAB3('v','e','r'):
         // Gives a version number for the administrative commands.
@@ -1939,7 +1953,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             // ROS-style query for PID.
             result.addInt(1);
             result.addString("");
-            result.addInt(ACE_OS::getpid());
+            result.addInt(getPid());
             reader.requestDrop(); // ROS likes to close down.
         }
         break;
@@ -1977,7 +1991,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     sched_prop.put("priority", this->getPriority());
                                     sched_prop.put("policy", this->getPolicy());
 
-                                    int pid =  ACE_OS::getpid();
+                                    int pid =  getPid();
                                     SystemInfo::ProcessInfo info = SystemInfo::getProcessInfo(pid);
                                     Bottle& proc = result.addList();
                                     proc.addString("process");
@@ -1985,6 +1999,15 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     proc_prop.put("pid", pid);
                                     proc_prop.put("name", (info.pid !=-1) ? info.name : "unkown");
                                     proc_prop.put("arguments", (info.pid !=-1) ? info.arguments : "unkown");
+                                    proc_prop.put("priority", info.schedPriority);
+                                    proc_prop.put("policy", info.schedPolicy);
+
+                                    SystemInfo::PlatformInfo pinfo = SystemInfo::getPlatformInfo();
+                                    Bottle& platform = result.addList();
+                                    platform.addString("platform");
+                                    Property& platform_prop = platform.addDict();
+                                    platform_prop.put("os", pinfo.name);
+                                    platform_prop.put("hostname", address.getHost());
                                 }
                                 else {
                                     for (unsigned int i=0; i<units.size(); i++) {
@@ -2036,8 +2059,30 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     Property *p = acquireProperties(false);
                     bool bOk = true;
                     if (p) {
-                        p->put(cmd.get(2).asString(), cmd.get(3));                        
-
+                        p->put(cmd.get(2).asString(), cmd.get(3));
+                        // setting scheduling properties of all threads within the process
+                        // scope through the admin port
+                        // e.g. prop set /current_port (process ((priority 30) (policy 1)))
+                        Bottle& process = cmd.findGroup("process");
+                        if(!process.isNull()) {
+                            ConstString portName = cmd.get(2).asString();
+                            if((portName.size() > 0) && (portName[0] == '/')) {
+                                // check for their own name
+                                if (portName == getName()) {
+                                    bOk = false;
+                                    Bottle* process_prop = process.find("process").asList();
+                                    if(process_prop != NULL) {
+                                        int prio = -1;
+                                        int policy = -1;
+                                        if(process_prop->check("priority"))
+                                            prio = process_prop->find("priority").asInt();
+                                        if(process_prop->check("policy"))
+                                            policy = process_prop->find("policy").asInt();
+                                        bOk = setProcessSchedulingParam(prio, policy);
+                                    }
+                                }
+                            }
+                        }
                         // check if we need to set the PortCoreUnit scheduling policy
                         // e.g., "prop set /portname (sched ((priority 30) (policy 1)))"
                         // The priority and policy values on Linux are:
@@ -2226,6 +2271,58 @@ void PortCore::reportUnit(PortCoreUnit *unit, bool active) {
             logNeeded = true;
         }
     }
+}
+
+bool PortCore::setProcessSchedulingParam(int priority, int policy) {
+#if defined(__linux__)
+    // set the sched properties of all threads within the process
+    struct sched_param sch_param;
+    sch_param.__sched_priority = priority;
+
+    DIR *dir;
+    char path[PATH_MAX];
+    sprintf(path, "/proc/%d/task/", getPid());
+
+    dir = opendir(path);
+    if(dir==NULL)
+        return false;
+
+    struct dirent *d;
+    char *end;
+    int tid = 0;
+    bool ret = true;
+    while((d = readdir(dir)) != NULL) {
+        if (!isdigit((unsigned char) *d->d_name))
+            continue;
+
+        tid = (pid_t) strtol(d->d_name, &end, 10);
+        if (d->d_name == end || (end && *end)) {
+            closedir(dir);
+            return false;
+        }
+        ret &= (sched_setscheduler(tid, policy, &sch_param) == 0);
+    }
+    closedir(dir);
+    return ret;
+#elif defined(YARP_HAS_ACE) // for other platforms
+    // TODO: Check how to set the scheduling properties of all process's threads in Windows
+    ACE_Sched_Params param(policy, (ACE_Sched_Priority) priority, ACE_SCOPE_PROCESS);
+    int ret = ACE_OS::set_scheduling_params(param, ACE_OS::getpid());
+    return (ret != -1);
+#else
+    return false;
+#endif
+}
+
+int PortCore::getPid() {
+#if defined(YARP_HAS_ACE)
+    return ACE_OS::getpid();
+#elif defined(__linux__)
+    return getpid();
+#elif defined(WIN32)
+    return (int) GetCurrentProcessId();
+#endif
+    return -1;
 }
 
 Property *PortCore::acquireProperties(bool readOnly) {
