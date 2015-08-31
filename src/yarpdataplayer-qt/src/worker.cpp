@@ -132,7 +132,7 @@ int WorkerClass::sendImages(int part, int frame)
 #ifdef HAS_OPENCV
     IplImage* img = NULL;
 #else
-    Image img;
+    ImageOf<PixelRgb> img;
 #endif
     string tmpPath = utilities->partDetails[part].path;
     string tmpName;
