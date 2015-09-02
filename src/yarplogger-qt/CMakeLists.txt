@@ -44,4 +44,8 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
           DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   set_target_properties(yarplogger-qt PROPERTIES OUTPUT_NAME yarplogger)
+  
+  include(YarpOSXBundleUpdateRPATH)
+  yarp_osx_bundle_update_rpath(yarplogger-qt)
+  
 endif()

@@ -56,4 +56,7 @@ if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
     set_target_properties(yarpbatterygui-qt PROPERTIES OUTPUT_NAME yarpbatterygui)
   endif()
 
+  include(YarpOSXBundleUpdateRPATH)
+  yarp_osx_bundle_update_rpath(yarpbatterygui-qt)
+
 endif()

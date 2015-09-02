@@ -101,5 +101,9 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
   if(NOT YARP_DEFAULT_GTK)
     set_target_properties(yarpdataplayer-qt PROPERTIES OUTPUT_NAME yarpdataplayer)
   endif()
+  
+  include(YarpOSXBundleUpdateRPATH)
+  yarp_osx_bundle_update_rpath(yarpdataplayer-qt)
+  
 
 endif()
