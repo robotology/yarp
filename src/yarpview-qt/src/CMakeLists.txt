@@ -21,7 +21,7 @@ source_group("Generated Files" FILES ${yarpview_qt_QRC_GEN_SRCS})
 
 qtyarp_use_qml_plugin()
 
-add_executable(yarpview-qt WIN32 ${yarpview_qt_SRCS}
+add_executable(yarpview-qt WIN32 MACOSX_BUNDLE ${yarpview_qt_SRCS}
                                  ${yarpview_qt_HDRS}
                                  ${yarpview_qt_QRC_GEN_SRCS})
 qt5_use_modules(yarpview-qt Widgets
