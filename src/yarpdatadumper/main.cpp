@@ -87,15 +87,28 @@ public:
 
     const string toFile(const string &dirName, unsigned int cnt)
     {
-        ostringstream fName;
-        fName << setw(8) << setfill('0') << cnt << ".ppm";
-        string ret=fName.str();
+        int code=p->getPixelCode();
+        string ext;
 
+        if (code==VOCAB_PIXEL_MONO_FLOAT)
+            ext=".float";
+        else if ((code==VOCAB_PIXEL_MONO) || (code==VOCAB_PIXEL_MONO16))
+            ext=".pgm";
+        else
+            ext=".ppm";
+
+        ostringstream fName;
+        fName << setw(8) << setfill('0') << cnt << ext;
+        
         string extfName=dirName;
         extfName+="/";
         extfName+=fName.str();
-
         file::write(*p,extfName.c_str());
+
+        string ret=fName.str();
+        ret+=" (";
+        ret+=Vocab::decode(code).c_str();
+        ret+=")";
 
         return ret;
     }
@@ -328,7 +341,7 @@ public:
             finfo<<"Bottle;";
         else if (type==image)
         {
-            finfo<<"Image:ppm;";
+            finfo<<"Image;";
             if (videoOn)
                 finfo<<" Video:"<<videoType<<"(huffyuv);";
         }

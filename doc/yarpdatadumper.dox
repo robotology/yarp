@@ -41,7 +41,7 @@ file as well as the name of the yarp ports connected or
 disconnected to the dumper, as in the following:
 
 \code
-Type: [Bottle | Image:ppm | Image:ppm; Video:ext(huffyuv)]
+Type: [Bottle; | Image; | Image; Video:ext(huffyuv);]
 [local-timestamp] /yarp-port-name [connected]
 [local-timestamp] /yarp-port-name [disconnected]
 \endcode
@@ -117,9 +117,9 @@ by the \ref yarpdatadumper.
 --type \e datatype
 - The parameter \e datatype selects the type of items to be
   stored. It can be \e bottle, \e image or \e video; if not
-  specified \e bottle is assumed. Note that images are stored as
-  ppm files. The data type \e video is available if OpenCV is
-  found and the codec \e huffyuv is installed.
+  specified \e bottle is assumed. Note that images are stored
+  using the corresponding file formats. The data type \e video
+  is available if OpenCV is found and the codec \e huffyuv is installed.
 
 --addVideo
 - In case images are acquired with this option enabled, a video
@@ -199,8 +199,8 @@ yarpdatadumper --name /log --type image --downsample 2
 \endcode
 
 the service will create the listening port /log capable of
-storing images in ppm format within the subdirectory ./log at a
-halved rate with respect to the rate of the sender.
+storing images within the subdirectory ./log at a halved rate
+with respect to the rate of the sender.
 
 Then, by connecting the port to the sender with the usual yarp
 command
