@@ -803,6 +803,7 @@ bool Port::write(PortWriter& writer, PortReader& reader,
  * read something from the port
  */
 bool Port::read(PortReader& reader, bool willReply) {
+    if(!isOpen()) return false;
     PortCoreAdapter& core = IMPL();
     if (willReply) core.alertOnRpc();
     core.alertOnRead();
