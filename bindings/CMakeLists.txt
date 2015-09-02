@@ -130,7 +130,7 @@ if(CREATE_JAVA)
                                                         "${YARP_BASE_DIR}/${TARGET_DIR}/*.java"
                        COMMAND ${JAVA_JAVAC_EXECUTABLE} -source ${JAVA_TARGET_VERSION}
                                                         -target ${JAVA_TARGET_VERSION}
-                                                        -d "${YARP_BASE_DIR}/yarp"
+                                                        -d "${YARP_BASE_DIR}/"
                                                         "${BINDINGS_SRC_DIR}/*.java"
                        WORKING_DIRECTORY ${YARP_BASE_DIR}
                        DEPENDS ${JAVA_FILES} ${target_name})
