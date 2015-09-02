@@ -528,10 +528,12 @@ public:
                         size_t space = buf.find(" ");
                         if (space!=String::npos) {
                             Bottle bot(buf.c_str());
+                            // BEGIN Handle include option
                             if (bot.size()>1) {
                                 if (bot.get(0).toString() == "include") {
                                     including = true;
-                                    if (bot.size()>2) {
+                                    // close an open group if an [include something] tag is found
+                                    if (bot.size()>1) {
                                         if (tag!="") {
                                             if (accum.size()>=1) {
                                                 putBottleCompat(tag.c_str(),
@@ -539,11 +541,15 @@ public:
                                             }
                                             tag = "";
                                         }
+                                    }
+                                    if (bot.size()>2) {
                                         ConstString subName, fname;
                                         if (bot.size()==3) {
                                             // [include section "filename"]
                                             subName = bot.get(1).toString();
                                             fname = bot.get(2).toString();
+
+
                                         } else if (bot.size()==4) {
                                             // [include type section "filename"]
                                             ConstString key;
@@ -603,6 +609,8 @@ public:
                                     }
                                 }
                             }
+                            // END handle include option
+                            // BEGIN handle group
                             if (bot.size()==2 && !including) {
                                 buf = bot.get(1).toString().c_str();
                                 String key = bot.get(0).toString().c_str();
@@ -616,6 +624,7 @@ public:
                                     target->addString(buf.c_str());
                                 }
                             }
+                            // END handle group
                         }
                         if (!including) {
                             isTag = true;

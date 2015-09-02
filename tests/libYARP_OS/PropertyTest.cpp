@@ -467,7 +467,7 @@ check $x $y\n\
     {
         FILE *fout = fopen(filename,"w");
         yAssert(fout!=NULL);
-        fprintf(fout,filecontent);
+        fprintf(fout,"%s",filecontent);
         fclose(fout);
         fout = NULL;
     }
@@ -524,7 +524,9 @@ check $x $y\n\
         // in all groups
 
         Property propRoot,propRootCheck;
+        report(0,"Parsing root_file ");
         propRoot.fromConfigFile(root_file_name);
+        report(0,"Parsing root_file_check ");
         propRootCheck.fromConfigFile(root_file_check_name);
         checkEqual(propRoot.findGroup("root_group").find("bau").asInt(),10,"root_group is found in root_file");
         checkEqual(propRootCheck.findGroup("root_group").find("bau").asInt(),10,"root_group is found in root_file_check");
