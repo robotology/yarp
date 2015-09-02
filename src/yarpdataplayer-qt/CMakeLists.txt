@@ -74,7 +74,7 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
                                        ${yarpdataplayer_qt_THRIFT_GEN_SRCS}
                                        ${yarpdataplayer_qt_THRIFT_GEN_HDRS})
 
-  add_executable(yarpdataplayer-qt WIN32 ${yarpdataplayer_qt_SRCS}
+  add_executable(yarpdataplayer-qt WIN32 MACOSX_BUNDLE ${yarpdataplayer_qt_SRCS}
                                          ${yarpdataplayer_qt_HDRS}
                                          ${yarpdataplayer_qt_QRC_GEN_SRCS}
                                          ${yarpdataplayer_qt_UI_GEN_SRCS}

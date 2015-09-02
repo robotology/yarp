@@ -61,7 +61,7 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
   source_group("Generated Files" FILES ${yarpmanager_qt_QRC_GEN_SRCS}
                                       ${yarpmanager_qt_UI_GEN_SRCS})
 
-  add_executable(yarpmanager-qt WIN32 ${yarpmanager_qt_SRCS}
+  add_executable(yarpmanager-qt WIN32 MACOSX_BUNDLE ${yarpmanager_qt_SRCS}
                                       ${yarpmanager_qt_HDRS}
                                       ${yarpmanager_qt_QRC_GEN_SRCS}
                                       ${yarpmanager_qt_UI_GEN_SRCS})
