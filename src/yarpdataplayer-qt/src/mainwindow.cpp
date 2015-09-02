@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QCheckBox>
+#include <QShortcut>
 #include <QProgressBar>
 #include <include/aboutdlg.h>
 #include <QMessageBox>
@@ -96,6 +97,13 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     connect(this,SIGNAL(internalSetFrame(std::string,int)),this,SLOT(onInternalSetFrame(std::string,int)),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalGetFrame(std::string, int*)),this,SLOT(onInternalGetFrame(std::string,int*)),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalQuit()),this,SLOT(onInternalQuit()),Qt::QueuedConnection);
+    
+    QShortcut *openShortcut = new QShortcut(QKeySequence("Ctrl+O"), parent);
+    QObject::connect(openShortcut, SIGNAL(activated()), this, SLOT(onInternalLoad(QString)));
+    
+    QShortcut *closeShortcut = new QShortcut(QKeySequence("Ctrl+Q"), parent);
+    QObject::connect(closeShortcut, SIGNAL(activated()), this, SLOT(onInternalQuit()));
+    
 }
 
 /**********************************************************/
