@@ -1535,24 +1535,23 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     switch (vocab) {
     case VOCAB4('h','e','l','p'):
         // We give a list of the most useful administrative commands.
-        result.addString("[help] # give this help");
-        result.addString("[add] $targetPort # add an output connection");
-        result.addString("[add] $targetPort $carrier # add an output with a given protocol");
-        result.addString("[del] $targetPort # remove an input or output connection");
-        result.addString("[list] [in] # list input connections");
-        result.addString("[list] [out] # list output connections");
-        result.addString("[list] [in] $sourcePort # give details for input");
-        result.addString("[list] [out] $targetPort # give details for output");
-        result.addString("[ver] # report protocol version information");
-        result.addString("[prop] [get] # get port properties");
-        result.addString("[prop] [get] $prop # get a port property");
-        result.addString("[prop] [set] $prop $val # set a port property");
-        result.addString("[prop] [get] $portname # get Qos properties of a port");
-        result.addString("[prop] [set] $portname # set Qos properies of a port");
-        infoMsg = "[prop] [get] " + getName() + String(" get information about current process (e.g., scheduling priority)");
-        result.addString(infoMsg.c_str());
-        infoMsg = "[prop] [set] " + getName() + String(" set properties of the current process (e.g., scheduling priority)");
-        result.addString(infoMsg.c_str());
+        result.addVocab(VOCAB4('m', 'a', 'n', 'y'));
+        result.addString("[help]                  # give this help");
+        result.addString("[ver]                   # report protocol version information");
+        result.addString("[add] $portname         # add an output connection");
+        result.addString("[add] $portname $car    # add an output with a given protocol");
+        result.addString("[del] $portname         # remove an input or output connection");
+        result.addString("[list] [in]             # list input connections");
+        result.addString("[list] [out]            # list output connections");
+        result.addString("[list] [in]  $portname  # give details for input");
+        result.addString("[list] [out] $portname  # give details for output");
+        result.addString("[prop] [get]            # get all user-defined port properties");
+        result.addString("[prop] [get] $prop      # get a user-defined port property (prop, val)");
+        result.addString("[prop] [set] $prop $val # set a user-defined port property (prop, val)");
+        result.addString("[prop] [get] $portname  # get Qos properties of a connection to/from a port");
+        result.addString("[prop] [set] $portname  # set Qos properies of a connection to/from a port");
+        result.addString("[prop] [get] $cur_port  # get information about current process (e.g., scheduling priority, pid)");
+        result.addString("[prop] [set] $cur_port  # set properties of the current process (e.g., scheduling priority, pid)");
         break;
     case VOCAB3('v','e','r'):
         // Gives a version number for the administrative commands.
