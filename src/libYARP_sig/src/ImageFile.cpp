@@ -466,7 +466,7 @@ bool file::write(const ImageOf<PixelMono> & src, const ConstString& dest)
 bool file::write(const Image& src, const ConstString& dest)
 {
     int code=src.getPixelCode();
-    if ((code==VOCAB_PIXEL_MONO) || (code==VOCAB_PIXEL_MONO16))
+    if (code==VOCAB_PIXEL_MONO)
         return write(static_cast<const ImageOf<PixelMono>&>(src),dest);
     else if (code==VOCAB_PIXEL_MONO_FLOAT)
         return write(static_cast<const ImageOf<PixelFloat>&>(src),dest);
