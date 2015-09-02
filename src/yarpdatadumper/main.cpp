@@ -92,7 +92,7 @@ public:
 
         if (code==VOCAB_PIXEL_MONO_FLOAT)
             ext=".float";
-        else if ((code==VOCAB_PIXEL_MONO) || (code==VOCAB_PIXEL_MONO16))
+        else if (code==VOCAB_PIXEL_MONO)
             ext=".pgm";
         else
             ext=".ppm";
