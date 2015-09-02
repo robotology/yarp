@@ -116,8 +116,7 @@ sudo apt-get install sun-java6-jdk
 
 On OSX, you may already have a JDK installed (<a href="http://stackoverflow.com/questions/1577014/how-install-a-specific-jdk-on-mac-os-x">details</a>).
 
-Done? Now follow the configuration steps in \ref yarp_swig_install.
-
+Once you have the Java SDK installed, you can compile the Java bindings enabling the CREATE_JAVA and PREPARE_CLASS_FILES options.
 
 
 @section yarp_swig_python YARP for Python
@@ -133,8 +132,6 @@ later during configuration that CMake finds the version you expected
 
 On Windows, you can get python from http://www.python.org/getit/windows/
 
-Done? Now follow the configuration steps in \ref yarp_swig_install.
-
 
 @section yarp_swig_matlab YARP for Matlab
 
@@ -149,6 +146,16 @@ file is by typing in Matlab:
 which classpath.txt
 \endverbatim
 
+You also need to add the directory build/lib library to your matlab librarypath.txt file.
+Once again you can find out where this file is by typing in Matlab:
+\verbatim
+which librarypath.txt
+\endverbatim
+
+Once you modified this files, restart matlab and load the Yarp bindings typing LoadYarp in Matlab.
+
+\note An highly experimental (and unsupported) version of Yarp SWIG bindings for Matlab directly using the C++ Mex API without using Java
+      is available at https://github.com/robotology-playground/yarp-matlab-bindings .
 
 @section yarp_swig_octave YARP for Octave
 For using Yarp from octave on Linux, be sure to install octave development packages, e.g. on Debian/Ubuntu:
