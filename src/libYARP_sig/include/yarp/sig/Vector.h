@@ -30,7 +30,7 @@ namespace yarp {
     namespace sig {
 		class VectorBase;
         class Vector;
-        template<class T, int BOTTLE_TAG> class VectorOf;
+        template<class T> class VectorOf;
     }
 }
 
@@ -46,9 +46,8 @@ class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
 {
 public:
     virtual int getElementSize() const = 0;
-    virtual int getBottleTag() const {
-        return BOTTLE_TAG_DOUBLE;
-    }
+    virtual int getBottleTag() const = 0;
+
     virtual size_t getListSize() const = 0;
     virtual const char *getMemoryBlock() const = 0;
     virtual void resize(size_t size) = 0;
@@ -66,31 +65,25 @@ public:
     virtual bool write(yarp::os::ConnectionWriter& connection);
 };
 
-
-
-
-
-template<class T>
-struct DefaultBottleTag
-{
-  static const int bottleTag = BOTTLE_TAG_DOUBLE;
-};
-
-template<>
-struct DefaultBottleTag<int>
-{
-  static const int bottleTag = BOTTLE_TAG_INT;
-};
+/*
+* This is a simple function that maps a type into its corresponding BOTTLE tag. 
+* Used for bottle compatible serialization, called inside getBottleTag().
+* Needs to be instantiated for each type T used in VectorOf<T>.
+*/
+template<class T> 
+  static int MapBottleTag() {
+    return tag;
+  } 
 
 template<>
-struct DefaultBottleTag<double>
-{
-  static const int bottleTag = BOTTLE_TAG_DOUBLE;
-};
+  static int MapBottleTag<double> () {
+    return BOTTLE_TAG_DOUBLE;
+  } 
 
-
-
-
+template<>
+static int MapBottleTag<int> () {
+    return BOTTLE_TAG_INT;
+  } 
 
 /**
 * \ingroup sig_class
@@ -108,7 +101,7 @@ struct DefaultBottleTag<double>
 * be checked to avoid unresolved externals. Network communication assumes
 * same data representation (endianess) between machines.
 */
-template<class T, int BOTTLE_TAG = DefaultBottleTag<T>::bottleTag>
+template<class T>
 class yarp::sig::VectorOf : public VectorBase
 {
 private:
@@ -154,7 +147,7 @@ public:
     }
 
     virtual int getBottleTag() const {
-        return BOTTLE_TAG;
+        return MapBottleTag<T>();
     }
 
     virtual size_t getListSize() const
