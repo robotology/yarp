@@ -120,7 +120,7 @@ Here we provide information for installing the <b>YARP dependencies</b> via <b>H
 In order to install the YARP dependencies enter the following command in a terminal:
 
 \code
-brew install `brew deps --skip-optional --1 yarp | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/ /g'`
+brew install yarp --only-dependencies
 \endcode
  
 
