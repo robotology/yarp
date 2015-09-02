@@ -39,3 +39,6 @@ install(TARGETS yarpview-qt
 if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpview-qt PROPERTIES OUTPUT_NAME yarpview)
 endif()
+
+include(YarpOSXBundleUpdateRPATH)
+yarp_osx_bundle_update_rpath(yarpview-qt)

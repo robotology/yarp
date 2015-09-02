@@ -40,3 +40,6 @@ install(TARGETS yarpscope-qt
 if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpscope-qt PROPERTIES OUTPUT_NAME yarpscope)
 endif()
+
+include(YarpOSXBundleUpdateRPATH)
+yarp_osx_bundle_update_rpath(yarpscope-qt)

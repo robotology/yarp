@@ -71,4 +71,7 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
     set_target_properties(yarpmotorgui-qt PROPERTIES OUTPUT_NAME yarpmotorgui)
   endif()
 
+  include(YarpOSXBundleUpdateRPATH)
+  yarp_osx_bundle_update_rpath(yarpmotorgui-qt)
+
 endif()

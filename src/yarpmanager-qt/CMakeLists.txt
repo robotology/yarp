@@ -81,4 +81,7 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
     set_target_properties(yarpmanager-qt PROPERTIES OUTPUT_NAME yarpmanager)
   endif()
 
+include(YarpOSXBundleUpdateRPATH)
+yarp_osx_bundle_update_rpath(yarpmanager-qt)
+
 endif()
