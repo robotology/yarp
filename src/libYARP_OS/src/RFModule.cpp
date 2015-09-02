@@ -285,7 +285,7 @@ RFModule::RFModule() {
         module = this;
     }
     else {
-        ACE_OS::printf("Module::Module() signal handling currently only good for one module\n");
+        ACE_OS::printf("RFModule::RFModule() signal handling currently only good for one module\n");
     }
 
 #if defined(WIN32)
@@ -343,7 +343,7 @@ int RFModule::runModule() {
         } while (!isStopping());
     }
 
-    ACE_OS::printf("Module closing\n");
+    ACE_OS::printf("RFModule closing\n");
     if (HELPER(implementation).isTerminalAttached())
     {
         ACE_OS::fprintf(stderr, "WARNING: module attached to terminal calling exit() to quit.\n");
@@ -366,14 +366,14 @@ int RFModule::runModule() {
     }
 
     close();
-    ACE_OS::printf("Module finished\n");
+    ACE_OS::printf("RFModule finished\n");
     return 0;
 }
 
 
 int RFModule::runModule(yarp::os::ResourceFinder &rf) {
     if (!configure(rf)) {
-        ACE_OS::printf("Module failed to open\n");
+        ACE_OS::printf("RFModule failed to open\n");
         return 1;
     }
     return runModule();

@@ -24,9 +24,6 @@ namespace yarp {
 
 /**
  * A base-class for standard Yarp modules that supports ResourceFinder.
- *
- * This class is similar to a Module, but it adds support for the
- * ResourceFinder class.
  */
 class YARP_OS_API yarp::os::RFModule {
 
@@ -40,7 +37,6 @@ public:
      * Destructor.
      */
     virtual ~RFModule();
-
 
     /**
      * You can override this to control the approximate periodicity at which
@@ -113,7 +109,7 @@ public:
      *
      * You can override this to respond to messages in your own way.
      * It is useful, if your module doesn't know what to do with a message,
-     * to call Module::respond() for any default responses.
+     * to call RFModule::respond() for any default responses.
      *
      * @param command the message received
      * @param reply the response you wish to make
@@ -201,9 +197,8 @@ public:
      * name.
      * This function can be useful to form port names used by the module.
      * Important: strings are concatenated "as they are", no slashes are
-     * appended at the beginning of the strings (note: this is different from
-     * the previous implementation of getName() in the Module class). To support
-     * legacy code the function will make sure subName contains a trailing
+     * appended at the beginning of the strings. To support legacy
+     * code the function will make sure subName contains a trailing
      * slash (this behavior is deprecated and will disappear).
      *
      * @param subName get nested name with this at the end
