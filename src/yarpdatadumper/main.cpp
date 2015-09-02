@@ -106,9 +106,9 @@ public:
         file::write(*p,extfName.c_str());
 
         string ret=fName.str();
-        ret+=" (";
+        ret+=" [";
         ret+=Vocab::decode(code).c_str();
-        ret+=")";
+        ret+="]";
 
         return ret;
     }
