@@ -48,6 +48,6 @@ public:
 
     yarp::sig::ImageOf<yarp::sig::PixelMono>* asImageOfPixelMono() {
         return self->cast_as<yarp::sig::ImageOf<yarp::sig::PixelMono> >();
-    } 
+    }
 }
 
