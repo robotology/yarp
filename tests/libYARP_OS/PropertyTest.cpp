@@ -463,6 +463,76 @@ check $x $y\n\
         }
     }
 
+    virtual void printStringToFile(const char * filename, const char * filecontent)
+    {
+        FILE *fout = fopen(filename,"w");
+        yAssert(fout!=NULL);
+        fprintf(fout,"%s",filecontent);
+        fclose(fout);
+        fout = NULL;
+    }
+
+    virtual void checkIncludesIssue459() {
+        report(0,"checking that issue https://github.com/robotology/yarp/issues/459 is properly solved");
+
+        // create test files
+        const char *include_one_name = "_yarp_regression_include_one.ini";
+        const char *include_one_content = "[include_one]\n"
+                                          "incl_param1   red\n"
+                                          "incl_param2   green\n"
+                                          "incl_param3   blue\n";
+
+        const char *include_two_name = "_yarp_regression_include_two.ini";
+        const char *include_two_content = "[include_two]\n"
+                                          "incl2_paramA   car\n"
+                                          "incl2_paramB   table\n";
+
+        const char *root_file_name   = "_yarp_regression_root_file.ini";
+        const char *root_file_content   = "[include \"_yarp_regression_include_one.ini\"]\n"
+                                           "                             \n"
+                                           "[include \"_yarp_regression_include_two.ini\"]  \n"
+                                           "[root_group]                 \n"
+                                           "ciao hello                   \n"
+                                           "bau 10                     \n"
+                                           "                             \n"
+                                           "                             \n"
+                                           "                             \n"
+                                           "[end_group]                  \n"
+                                           "lili  lolo                   \n"
+                                           "cici  bubu                   \n";
+
+        const char *root_file_check_name   = "_yarp_regression_root_file_check.ini";
+        const char *root_file_check_content   = "[include \"_yarp_regression_include_one.ini\"]\n"
+                                           "                             \n"
+                                           "[root_group]                 \n"
+                                           "ciao hello                   \n"
+                                           "bau 10                     \n"
+                                           "                             \n"
+                                           "                             \n"
+                                           "[include \"_yarp_regression_include_two.ini\"]  \n"
+                                           "                             \n"
+                                           "[end_group]                  \n"
+                                           "lili  lolo                   \n"
+                                           "cici  bubu                   \n";
+
+        printStringToFile(include_one_name,include_one_content);
+        printStringToFile(include_two_name,include_two_content);
+        printStringToFile(root_file_name,root_file_content);
+        printStringToFile(root_file_check_name,root_file_check_content);
+
+        // load the property and check that root_group is actually present
+        // in all groups
+
+        Property propRoot,propRootCheck;
+        report(0,"Parsing root_file ");
+        propRoot.fromConfigFile(root_file_name);
+        report(0,"Parsing root_file_check ");
+        propRootCheck.fromConfigFile(root_file_check_name);
+        checkEqual(propRoot.findGroup("root_group").find("bau").asInt(),10,"root_group is found in root_file");
+        checkEqual(propRootCheck.findGroup("root_group").find("bau").asInt(),10,"root_group is found in root_file_check");
+
+    }
+
 
     virtual void checkCommand() {
         report(0,"checking command line parsing");
@@ -552,6 +622,7 @@ check $x $y\n\
         checkWipe();
         checkBackslashPath();
         checkIncludes();
+        checkIncludesIssue459();
         checkCommand();
         checkComment();
         checkListWithSpaces();
