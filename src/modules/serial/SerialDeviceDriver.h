@@ -91,10 +91,10 @@ private:
 
     bool deviceOpened;
     
-    // ACE_Thread_Mutex conditionMutex;
-    // ACE_Condition_Thread_Mutex stopCondition;
-    // bool shouldStop;
-    // bool stopAck;
+    ACE_Time_Value receiveTimeout;
+    ACE_Thread_Mutex conditionMutex;
+    ACE_Condition_Thread_Mutex stopCondition;
+    bool shouldStop;
 
 
 public:
@@ -123,10 +123,23 @@ public:
     //bool putMessage(Bottle& msg, bool waitreply, double replytimeout, Bottle& reply, char *replydelimiter, int replysize );
     /**
      * Gets the existing chars in the receive queue.
+     * @note the call is blocking
      * @param msg - the received string
-     * @return - true on success; false if no messages available
+     * @return - true on success; false if an error occurred
      */
     virtual bool receive(Bottle& msg);
+
+    /**
+     * Gests the existing chars in the receive queue.
+     * This function blocks at maximum for the specified timeout
+     *
+     * @param msg              the received string
+     * @param timeoutInSeconds timeout in seconds
+     *
+     * @return true on success. False if an error occurred.
+     */
+    virtual bool receiveWithTimeout(Bottle& msg, double timeoutInSeconds);
+
     /**
      * Gets one single char from the receive queue.
      * @param chr - the received char.

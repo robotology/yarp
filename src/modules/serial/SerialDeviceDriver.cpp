@@ -10,8 +10,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <cmath>
 
-///#include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 
 using namespace yarp::os;
@@ -21,8 +21,10 @@ using namespace yarp::dev;
 
 SerialDeviceDriver::SerialDeviceDriver() :
 line_terminator_char1('\r'), line_terminator_char2('\n'),
-deviceOpened(false)//, stopCondition(conditionMutex),
-//shouldStop(false), stopAck(false)
+deviceOpened(false),
+receiveTimeout(0, 1000), //1 ms of timeout
+stopCondition(conditionMutex),
+shouldStop(false)
  {
     //system_resources = (SerialHandler*) new SerialHandler();
     verbose=false;
@@ -41,14 +43,7 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
     yInfo("Starting Serial Port in %s \n", config.CommChannel);
 
     // Initialize serial port
-    if(_serialConnector.connect(_serial_dev, ACE_DEV_Addr(config.CommChannel),
-                                0, ACE_Addr::sap_any, 0, O_NONBLOCK) == -1)
-    {
-        yError("Invalid communications port in %s \n", config.CommChannel);
-        return false;
-    }
-
-    if(_serialConnector.connect(_send_serial_dev, ACE_DEV_Addr(config.CommChannel)) == -1)
+    if(_serialConnector.connect(_serial_dev, ACE_DEV_Addr(config.CommChannel)) == -1)
     {
         yError("Invalid communications port in %s \n", config.CommChannel);
         return false;
@@ -56,14 +51,6 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
 
     // Set TTY_IO parameter into the ACE_TTY_IO device(_serial_dev)
     if (_serial_dev.control (ACE_TTY_IO::SETPARAMS, &config.SerialParams) == -1)
-    {
-        yError("Can not control communications port %s \n", config.CommChannel);
-        yError("Can not control communications port %s \n", config.CommChannel);
-        return false;
-    }
-
-    // Set TTY_IO parameter into the ACE_TTY_IO device(_serial_dev)
-    if (_send_serial_dev.control (ACE_TTY_IO::SETPARAMS, &config.SerialParams) == -1)
     {
         yError("Can not control communications port %s \n", config.CommChannel);
         return false;
@@ -108,14 +95,13 @@ bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
 
 bool SerialDeviceDriver::close(void) {
     if (!deviceOpened) return true;    
-    // stopAck = false;
-    
-    // conditionMutex.lock();
-    // shouldStop = true;
-    // while(!stopAck) {
-    //     stopCondition.wait();
-    // }
-    // conditionMutex.release();
+
+    conditionMutex.lock();
+    shouldStop = true;
+    while(!shouldStop) {
+        stopCondition.wait();
+    }
+    conditionMutex.release();
 
     _serial_dev.close();
     _send_serial_dev.close();
@@ -138,7 +124,7 @@ bool SerialDeviceDriver::send(const Bottle& msg)
             }
 
             // Write message to the serial device
-            ssize_t bytes_written = _send_serial_dev.send_n((void *) msg.get(0).asString().c_str(), message_size);
+            ssize_t bytes_written = _serial_dev.send_n((void *) msg.get(0).asString().c_str(), message_size);
 
             if (bytes_written == -1) {
                 ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
@@ -244,45 +230,71 @@ bool SerialDeviceDriver::receive(Bottle& msg)
     char message[1001];
 
     //reading from socket.
-    ssize_t bytes_read = _serial_dev.recv ((void *) message, msgSize - 1);
+    ssize_t bytes_read = 0;
     
-   /* conditionMutex.lock();
->>>>>>> 72fe732... Worked on the non-blocking solution
+    while (!shouldStop) {
+        bytes_read = _serial_dev.recv_n((void *) message, msgSize - 1, &receiveTimeout);
+        if (bytes_read != -1 || errno != ETIME) break;
+    }
+
+    bool exit = shouldStop;
+    conditionMutex.lock();
     if (shouldStop) {
-        stopAck = true;
+        shouldStop = false;
         stopCondition.signal();
     }
     conditionMutex.release();
-<<<<<<< HEAD
-    if (shouldStop) return true;
+    if (exit) return true;
 
     if (bytes_read == -1 && errno != ETIME) {
-=======
-    if (shouldStop) return true;*/
-
-    if (bytes_read == -1) {
-        if (errno == EWOULDBLOCK || errno == EAGAIN)
-            return true;
-
-        ACE_ERROR((LM_ERROR, ACE_TEXT ("Error in SerialDeviceDriver::receive(). \n")));
+        yError("Error (%d) in SerialDeviceDriver::receive()", errno);
         return false;
     }
 
     if (bytes_read == 0)  //nothing there
         return true;
 
-    message[bytes_read] = 0;
+    message[bytes_read] = '\0';
 
     if (verbose) {
         yDebug("Data received from serial device: %s",message);
-        if (message[bytes_read - 1] != '\n') {    // Add \n only if reply does not contain it already
-            ACE_OS::printf("\n");
-        }
     }
-
 
     // Put message in the bottle
     msg.addString(message);
 
+    return true;
+}
+
+bool SerialDeviceDriver::receiveWithTimeout(Bottle& msg, double timeoutInSeconds)
+{
+    const int msgSize = 1001;
+    char message[1001];
+
+    time_t seconds = std::floor(timeoutInSeconds);
+    time_t microseconds = (timeoutInSeconds - std::floor(timeoutInSeconds)) * 1e+6;
+
+    ACE_Time_Value timeout(seconds, microseconds);
+
+    //reading from socket.
+    ssize_t bytes_read = _serial_dev.recv_n((void *) message, msgSize - 1, &timeout);
+
+    if (bytes_read == -1 && errno != ETIME) {
+        yError("Error (%d) in SerialDeviceDriver::receive()", errno);
+        return false;
+    }
+
+    if (bytes_read == 0 || errno == ETIME)  //nothing there or timeout
+        return true;
+
+    message[bytes_read] = '\0';
+
+    if (verbose) {
+        yDebug("Data received from serial device: %s",message);
+    }
+
+    // Put message in the bottle
+    msg.addString(message);
+    
     return true;
 }
