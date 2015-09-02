@@ -68,7 +68,19 @@ static Clock *getClock() {
             nc->open(name);
         }
     }
-    return pclock;
+
+    Clock * retClock;
+    if( pclock == 0 )
+    {
+        retClock = 0;
+    }
+    else
+    {
+        lock();
+        retClock = pclock;
+        unlock();
+    }
+    return retClock;
 }
 
 void Time::delay(double seconds) {
