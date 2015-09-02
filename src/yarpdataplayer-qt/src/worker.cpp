@@ -112,7 +112,7 @@ void WorkerClass::run()
                 utilities->partDetails[part].bottlePort.write();
             }
         }
-        if (strcmp (utilities->partDetails[part].type.c_str(),"Image:ppm") == 0){
+        if (strcmp (utilities->partDetails[part].type.c_str(),"Image:ppm") == 0 || strcmp (utilities->partDetails[part].type.c_str(),"Image") == 0){
             sendImages(part, frame);
         }
     }
@@ -129,21 +129,46 @@ double WorkerClass::getFrameRate()
 /**********************************************************/
 int WorkerClass::sendImages(int part, int frame)
 {
+    string tmpPath = utilities->partDetails[part].path;
+    string tmpName, tmp;
+    if (utilities->withExtraColumn){
+        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(1).asString().c_str();
+        tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().tail().toString().c_str();
+    } else {
+        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(0).asString().c_str();
+        tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().toString().c_str();
+    }
+    
+    int code = 0;
+    if (tmp.size()>0)
+    {
+        tmp.erase (tmp.begin());
+        tmp.erase (tmp.end()-1);
+        code = Vocab::encode(tmp);
+    }
+    
+    tmpPath = tmpPath + tmpName;
+    
 #ifdef HAS_OPENCV
     IplImage* img = NULL;
 #else
-    ImageOf<PixelRgb> img;
+    Image* img;
+    
+    if (code==VOCAB_PIXEL_RGB)
+        img = new ImageOf<PixelRgb>;
+    else if (code==VOCAB_PIXEL_BGR)
+        img = new ImageOf<PixelBgr>;
+    else if (code==VOCAB_PIXEL_RGBA)
+        img = new ImageOf<PixelRgba>;
+    else if (code==VOCAB_PIXEL_MONO_FLOAT)
+        img = new ImageOf<PixelFloat>;
+    else if (code==VOCAB_PIXEL_MONO)
+        img = new ImageOf<PixelMono>;
+    else
+        img = new ImageOf<PixelRgb>; // use PixelRgb as default
+    
 #endif
-    string tmpPath = utilities->partDetails[part].path;
-    string tmpName;
-    if (utilities->withExtraColumn){
-        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(1).asString().c_str();
-    } else {
-        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(0).asString().c_str();
-    }
-
-    tmpPath = tmpPath + tmpName;
-
+    
 #ifdef HAS_OPENCV
     img = cvLoadImage( tmpPath.c_str(), CV_LOAD_IMAGE_UNCHANGED );
 #endif
@@ -159,13 +184,54 @@ int WorkerClass::sendImages(int part, int frame)
         temp.wrapIplImage(img);
         
 #else
-    if ( !read(img,tmpPath.c_str()) ) {
+    bool fileValid = true;
+    
+    if (code==VOCAB_PIXEL_RGB)
+    {
+        img = new ImageOf<PixelRgb>;
+        if ( !read(*static_cast<ImageOf<PixelRgb>*> (img),tmpPath.c_str()) )
+            fileValid = false;
+    }
+    else if (code==VOCAB_PIXEL_BGR)
+    {
+        img = new ImageOf<PixelBgr>;
+        if ( !read(*static_cast<ImageOf<PixelBgr>*> (img),tmpPath.c_str()) )
+            fileValid = false;
+    }
+    else if (code==VOCAB_PIXEL_RGBA)
+    {
+        img = new ImageOf<PixelRgba>;
+        if ( !read(*static_cast<ImageOf<PixelRgba>*> (img),tmpPath.c_str()) )
+            fileValid = false;
+    }
+    else if (code==VOCAB_PIXEL_MONO_FLOAT)
+    {
+        img = new ImageOf<PixelFloat>;
+        if ( !read(*static_cast<ImageOf<PixelFloat>*> (img),tmpPath.c_str()) )
+            fileValid = false;
+    }
+    else if (code==VOCAB_PIXEL_MONO)
+    {
+        img = new ImageOf<PixelMono>;
+        if ( !read(*static_cast<ImageOf<PixelMono>*> (img),tmpPath.c_str()) )
+            fileValid = false;
+    }
+    else
+    {
+        img = new ImageOf<PixelRgb>;
+        if ( !read(*static_cast<ImageOf<PixelRgb>*> (img),tmpPath.c_str()) )
+            fileValid = false;
+    }
+
+    if (!fileValid)
+    {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
-    } else {
-
+    }
+    else
+    {
         Image &temp = utilities->partDetails[part].imagePort.prepare();
-        temp = img;
+        temp = *img;
 
 #endif
         //propagate timestamp
@@ -180,7 +246,10 @@ int WorkerClass::sendImages(int part, int frame)
 
 #ifdef HAS_OPENCV
         cvReleaseImage(&img);
+#else
+        delete img;
 #endif
+        
     }
 
     return 0;

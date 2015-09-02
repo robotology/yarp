@@ -309,7 +309,6 @@ void Utilities::getMaxTimeStamp()
             maxTimeStamp = allTimeStamps[i];
             index = i;
         }
-
     }
     LOG("the biggest timestamp is: index %d with value %lf\n",index, allTimeStamps[index] );
 }
@@ -348,14 +347,15 @@ bool Utilities::configurePorts(partsData &part)
             LOG("creating and opening %s port for part %s\n",part.type.c_str(), part.name.c_str());
             part.bottlePort.open(tmp_port_name.c_str());
         }
-    } else if (strcmp (part.type.c_str(),"Image:ppm") == 0){
+    } else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0){
         if ( !yarp::os::Network::exists(tmp_port_name.c_str()) ){
             LOG("need to create new port %s for %s\n",part.type.c_str(), part.name.c_str());
             part.imagePort.close();
             LOG("creating and opening image port for part %s\n",part.name.c_str());
             part.imagePort.open(tmp_port_name.c_str());
         }
-    } else {
+    }
+    else {
         LOG("Something is wrong with the data...%s\nIt seems its missing a type \n",part.name.c_str());
         return false;
     }
@@ -366,7 +366,7 @@ bool Utilities::interruptPorts(partsData &part)
 {
     if (strcmp (part.type.c_str(),"Bottle") == 0){
         part.bottlePort.interrupt();
-    } else if (strcmp (part.type.c_str(),"Image:ppm") == 0){
+    } else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0){
         part.imagePort.interrupt();
     } else {
         return false;
@@ -378,7 +378,7 @@ bool Utilities::closePorts(partsData &part)
 {
     if (strcmp (part.type.c_str(),"Bottle") == 0){
         part.bottlePort.close();
-    } else if (strcmp (part.type.c_str(),"Image:ppm") == 0) {
+    } else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0) {
         part.imagePort.close();
     } else {
         return false;
