@@ -10,6 +10,9 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Os.h>
 
+using namespace yarp::dev;
+using namespace yarp::os;
+
 ServerSerial::ServerSerial() :
         RateThread(10),
         verb(false),
@@ -64,6 +67,16 @@ bool ServerSerial::receive(Bottle& msg)
 {
     if(serial != NULL) {
         serial->receive(msg);
+        return true;
+    }
+    else
+        return false;
+}
+
+bool ServerSerial::receiveWithTimeout(yarp::os::Bottle& msg, double timeoutInSeconds)
+{
+    if(serial != NULL) {
+        serial->receiveWithTimeout(msg, timeoutInSeconds);
         return true;
     }
     else

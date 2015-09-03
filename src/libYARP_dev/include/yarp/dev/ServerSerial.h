@@ -22,12 +22,6 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 
-
-using namespace yarp::os;
-using namespace yarp::sig;
-using namespace yarp::dev;
-
-
 namespace yarp
 {
     namespace dev
@@ -40,7 +34,7 @@ namespace yarp
 /**
  * Callback implementation after buffered input.
  */
-class yarp::dev::ImplementCallbackHelper2 : public TypedReaderCallback<Bottle> {
+class yarp::dev::ImplementCallbackHelper2 : public yarp::os::TypedReaderCallback<yarp::os::Bottle> {
 protected:
     ISerialDevice *ser;
 
@@ -56,7 +50,7 @@ public:
      * Callback function.
      * @param b is the Bottle being received.
      */
-    virtual void onRead(Bottle& b);
+    virtual void onRead(yarp::os::Bottle& b);
 };
 
 
@@ -74,16 +68,16 @@ public:
  */
 class YARP_dev_API yarp::dev::ServerSerial : public DeviceDriver,
                                              public ISerialDevice,
-                                             private RateThread
+                                             private yarp::os::RateThread
 {
 private:
     bool verb;
     PolyDriver poly;
-    Port toDevice;
-    Port fromDevice;
+    yarp::os::Port toDevice;
+    yarp::os::Port fromDevice;
 
-    PortWriterBuffer<Bottle> reply_buffer;
-    PortReaderBuffer<Bottle> command_buffer;
+    yarp::os::PortWriterBuffer<yarp::os::Bottle> reply_buffer;
+    yarp::os::PortReaderBuffer<yarp::os::Bottle> command_buffer;
 
     ISerialDevice *serial;
     ImplementCallbackHelper2 callback_impl;
@@ -93,9 +87,10 @@ private:
 public:
     ServerSerial();
     virtual ~ServerSerial();
-    virtual bool send(const Bottle& msg);
+    virtual bool send(const yarp::os::Bottle& msg);
     virtual bool send(char *msg, size_t size);
-    virtual bool receive(Bottle& msg);
+    virtual bool receive(yarp::os::Bottle& msg);
+    virtual bool receiveWithTimeout(yarp::os::Bottle& msg, double timeoutInSeconds);
     virtual int receiveChar(char& c);
     virtual int flush ();
     virtual int receiveLine(char* line, const int MaxLineLength);
@@ -122,7 +117,7 @@ public:
      * and all parameters requied by the wrapped device driver.
      * @return true iff the object could be configured.
      */
-    virtual bool open(Searchable& prop);
+    virtual bool open(yarp::os::Searchable& prop);
 
     /**
      * Initialization method.

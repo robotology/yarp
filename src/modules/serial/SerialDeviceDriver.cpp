@@ -271,10 +271,9 @@ bool SerialDeviceDriver::receiveWithTimeout(Bottle& msg, double timeoutInSeconds
     const int msgSize = 1001;
     char message[1001];
 
-    time_t seconds = std::floor(timeoutInSeconds);
-    time_t microseconds = (timeoutInSeconds - std::floor(timeoutInSeconds)) * 1e+6;
-
-    ACE_Time_Value timeout(seconds, microseconds);
+    double seconds = 0;
+    double microseconds = std::modf(timeoutInSeconds, &seconds);
+    ACE_Time_Value timeout(static_cast<time_t>(seconds), static_cast<time_t>(round(microseconds * 1e+6)));
 
     //reading from socket.
     ssize_t bytes_read = _serial_dev.recv_n((void *) message, msgSize - 1, &timeout);
