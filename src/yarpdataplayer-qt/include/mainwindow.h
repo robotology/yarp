@@ -18,7 +18,6 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/RpcClient.h>
-#include <yarp/os/Module.h>
 #include <yarp/os/RpcServer.h>
 #include "yarpdataplayer_IDL.h"
 #include "include/loadingwidget.h"
@@ -32,7 +31,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow,public yarp::os::ResourceFinder, public yarp::os::Module, public yarpdataplayer_IDL
+class MainWindow : public QMainWindow, public yarp::os::ResourceFinder, public yarpdataplayer_IDL
 {
     Q_OBJECT
     friend class Utilities;
