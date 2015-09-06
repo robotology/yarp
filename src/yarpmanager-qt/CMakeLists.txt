@@ -61,14 +61,18 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
   source_group("Generated Files" FILES ${yarpmanager_qt_QRC_GEN_SRCS}
                                       ${yarpmanager_qt_UI_GEN_SRCS})
 
+  if (YARP_OSX_GENERATE_BUNDLES)
+    # the icon must be added to the target
+    set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/Resources/AppIcon.icns)
+  endif()
+
   add_executable(yarpmanager-qt WIN32 ${yarpmanager_qt_SRCS}
                                       ${yarpmanager_qt_HDRS}
+                                      ${yarpmanager_qt_QRC_FILES}
                                       ${yarpmanager_qt_QRC_GEN_SRCS}
-                                      ${yarpmanager_qt_UI_GEN_SRCS})
-
-  if (YARP_OSX_GENERATE_BUNDLES)
-    set_target_properties(yarpmanager-qt PROPERTIES MACOSX_BUNDLE TRUE)
-  endif()
+                                      ${yarpmanager_qt_UI_GEN_SRCS}
+                                      ${yarpmanager_qt_UI_FILES}
+                                      ${APP_ICON})
 
   target_link_libraries(yarpmanager-qt YARP_OS
                                        YARP_init
@@ -86,7 +90,17 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
     set_target_properties(yarpmanager-qt PROPERTIES OUTPUT_NAME yarpmanager)
   endif()
 
-include(YarpOSXBundleUpdateRPATH)
-yarp_osx_bundle_update_rpath(yarpmanager-qt)
+  if (YARP_OSX_GENERATE_BUNDLES)
+      set_target_properties(yarpmanager-qt PROPERTIES MACOSX_BUNDLE TRUE)
+      # the following two lines do the following thing:
+      # 1 - specify the app icon (the name should be enogh i think) in the bundle plist 
+      set_target_properties(yarpmanager-qt PROPERTIES MACOSX_BUNDLE_ICON_FILE "AppIcon.icns")
+      # 2 - Copy the resource in the Resources folder in the bundle
+      set_source_files_properties(${APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+      include(YarpOSXBundleUpdateRPATH)
+      yarp_osx_bundle_update_rpath(yarpmanager-qt)
+  endif()
+
+
 
 endif()
