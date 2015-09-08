@@ -98,7 +98,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             image.pixel(2, 0).g = ttxt[7] - '0';
             image.pixel(2, 0).b = ttxt[8] - '0';
 
-            image.pixel(3, 0).r = ttxt[9]; -'0';
+            image.pixel(3, 0).r = ttxt[9] - '0';
             image.pixel(3, 0).g = ttxt[10] - '0';
             image.pixel(3, 0).b = ttxt[11] - '0';
 
