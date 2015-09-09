@@ -21,9 +21,11 @@ source_group("Generated Files" FILES ${yarpscope_qt_QRC_GEN_SRCS})
 
 qtyarp_use_qml_plugin()
 
-add_executable(yarpscope-qt WIN32 MACOSX_BUNDLE ${yarpscope_qt_SRCS}
+add_executable(yarpscope-qt WIN32 ${yarpscope_qt_SRCS}
                                   ${yarpscope_qt_HDRS}
-                                  ${yarpscope_qt_QRC_GEN_SRCS})
+                                  ${yarpscope_qt_QRC_GEN_SRCS}
+                                  ${yarpscope_qt_QRC_FILES}
+                                  ${yarpscope_qt_QML_FILES})
 
 qt5_use_modules(yarpscope-qt Widgets
                              Qml
@@ -41,5 +43,14 @@ if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpscope-qt PROPERTIES OUTPUT_NAME yarpscope)
 endif()
 
-include(YarpOSXBundleUpdateRPATH)
-yarp_osx_bundle_update_rpath(yarpscope-qt)
+if (YARP_OSX_GENERATE_BUNDLES)
+    set_target_properties(yarpscope-qt PROPERTIES MACOSX_BUNDLE TRUE)
+    # the following two lines do the following thing:
+    # 1 - specify the app icon (the name should be enogh i think) in the bundle plist 
+    # set_target_properties(yarpscope-qt PROPERTIES MACOSX_BUNDLE_ICON_FILE "AppIcon.icns")
+    # 2 - Copy the resource in the Resources folder in the bundle
+    # set_source_files_properties(${APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    include(YarpOSXBundleUpdateRPATH)
+    yarp_osx_bundle_update_rpath(yarpscope-qt)
+endif()
+

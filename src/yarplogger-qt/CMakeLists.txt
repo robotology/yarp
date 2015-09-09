@@ -25,10 +25,15 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
   source_group("UI Files" FILES ${yarplogger-qt_UI_FILES})
   source_group("Generated Files" FILES ${yarplogger-qt_QRC_GEN_SRCS} ${yarplogger-qt_UI_GEN_SRCS})
 
-  add_executable(yarplogger-qt WIN32 MACOSX_BUNDLE ${yarplogger-qt_SRCS}
+  add_executable(yarplogger-qt WIN32 ${yarplogger-qt_SRCS}
                                      ${yarplogger-qt_HDRS}
                                      ${yarplogger-qt_QRC_GEN_SRCS}
                                      ${yarplogger-qt_UI_GEN_SRCS})
+
+  if (YARP_OSX_GENERATE_BUNDLES)
+    set_target_properties(yarplogger-qt PROPERTIES MACOSX_BUNDLE TRUE)
+  endif()
+
   target_link_libraries(yarplogger-qt YARP_OS
                                       YARP_init
                                       YARP_logger)

@@ -48,12 +48,17 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
   source_group("Resources Files" FILES ${yarpmotorgui_qt_QRC_FILES})
   source_group("UI Files" FILES ${yarpmotorgui_qt_UI_FILES})
   source_group("Generated Files" FILES ${yarpmotorgui_qt_QRC_GEN_SRCS}
-                                      ${yarpmotorgui_qt_UI_GEN_SRCS})
+                                       ${yarpmotorgui_qt_UI_GEN_SRCS})
 
-  add_executable(yarpmotorgui-qt WIN32 MACOSX_BUNDLE ${yarpmotorgui_qt_SRCS}
+  add_executable(yarpmotorgui-qt WIN32  ${yarpmotorgui_qt_SRCS}
                                         ${yarpmotorgui_qt_HDRS}
                                         ${yarpmotorgui_qt_QRC_GEN_SRCS}
                                         ${yarpmotorgui_qt_UI_GEN_SRCS})
+
+  if (YARP_OSX_GENERATE_BUNDLES)
+    set_target_properties(yarpmotorgui-qt PROPERTIES MACOSX_BUNDLE TRUE)
+  endif()
+
   target_link_libraries(yarpmotorgui-qt YARP_OS
                                          YARP_init
                                          YARP_sig

@@ -35,10 +35,15 @@ if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
   source_group("Generated Files" FILES ${yarpbatterygui_qt_QRC_GEN_SRCS}
                                       ${yarpbatterygui_qt_UI_GEN_SRCS})
 
-  add_executable(yarpbatterygui-qt WIN32 MACOSX_BUNDLE ${yarpbatterygui_qt_SRCS}
+  add_executable(yarpbatterygui-qt WIN32 ${yarpbatterygui_qt_SRCS}
                                         ${yarpbatterygui_qt_HDRS}
                                         ${yarpbatterygui_qt_QRC_GEN_SRCS}
                                         ${yarpbatterygui_qt_UI_GEN_SRCS})
+
+  if (YARP_OSX_GENERATE_BUNDLES)
+    set_target_properties(yarpbatterygui-qt PROPERTIES MACOSX_BUNDLE TRUE)
+  endif()
+
   target_link_libraries(yarpbatterygui-qt YARP_OS
                                          YARP_init
                                          YARP_sig
