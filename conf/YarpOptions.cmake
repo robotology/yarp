@@ -104,11 +104,11 @@ endif(EXISTS ${STATLIB})
 # Control whether libraries are shared or static.
 
 option(CREATE_SHARED_LIBRARY "Compile shared libraries rather than linking statically" TRUE)
-if (WIN32)
+if(WIN32)
   set(YARP_FILTER_API TRUE)
-endif (WIN32)
+endif(WIN32)
 
-if (CREATE_SHARED_LIBRARY)
+if(CREATE_SHARED_LIBRARY)
   set(BUILD_SHARED_LIBS ON)
   set(YARP_DLL ON)
 endif()
@@ -255,7 +255,7 @@ mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
 #########################################################################
 # Control submission of reports
 option(ENABLE_DASHBOARD_SUBMIT "Allow submission of builds to http://dashboard.icub.org/index.php?project=YARP" OFF)
-if (ENABLE_DASHBOARD_SUBMIT)
+if(ENABLE_DASHBOARD_SUBMIT)
     include(CTest)
 endif()
 
@@ -285,7 +285,7 @@ if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
         #  - install_dir/lib for libraries
         # in this way if libraries and executables are moved together everything will continue to work
         file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_BINDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
-        if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
             set(CMAKE_INSTALL_RPATH "@loader_path/${_rel_path}")
         else()
             set(CMAKE_INSTALL_RPATH "\$ORIGIN/${_rel_path}")
@@ -305,13 +305,16 @@ if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
 
 endif()
 
+
+#########################################################################
 # If system is OSX add the option to enable / disable Bundle generation
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     option(YARP_OSX_GENERATE_BUNDLES "Generate OSX bundles for Yarp (.app) instead of plain UNIX binaries" TRUE)
     mark_as_advanced(YARP_OSX_GENERATE_BUNDLES)
     set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_STRING}")
 endif()
+
 
 #########################################################################
 # Compile libraries using -fPIC to produce position independent code.

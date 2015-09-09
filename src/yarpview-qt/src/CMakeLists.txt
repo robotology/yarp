@@ -21,7 +21,7 @@ source_group("Generated Files" FILES ${yarpview_qt_QRC_GEN_SRCS})
 
 qtyarp_use_qml_plugin()
 
-if (YARP_OSX_GENERATE_BUNDLES)
+if(YARP_OSX_GENERATE_BUNDLES)
     # the icon must be added to the target
     set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/icons/AppIcon.icns)
 endif()
@@ -50,7 +50,7 @@ if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpview-qt PROPERTIES OUTPUT_NAME yarpview)
 endif()
 
-if (YARP_OSX_GENERATE_BUNDLES)
+if(YARP_OSX_GENERATE_BUNDLES)
     set_target_properties(yarpview-qt PROPERTIES MACOSX_BUNDLE TRUE)
     # the following two lines do the following thing:
     # 1 - specify the app icon (the name should be enogh i think) in the bundle plist 
@@ -60,4 +60,3 @@ if (YARP_OSX_GENERATE_BUNDLES)
     include(YarpOSXBundleUpdateRPATH)
     yarp_osx_bundle_update_rpath(yarpview-qt)
 endif()
-

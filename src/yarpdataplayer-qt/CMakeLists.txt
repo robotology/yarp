@@ -44,7 +44,7 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
                                  include/UI/genericinfodlg.ui
                                  include/UI/loadingwidget.ui
                                  include/UI/mainwindow.ui)
-                                 
+
   set(yarpdataplayer_qt_THRIFT_FILES yarpdataplayer.thrift)
   if(MSVC)
     set(yarpdataplayer_qt_RC_FILES src/RC/yarpdataplayer_resource.rc)
@@ -83,7 +83,7 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
                                          ${yarpdataplayer_qt_RC_FILES}
                                          ${yarpdataplayer_qt_THRIFT_FILES})
 
-  if (YARP_OSX_GENERATE_BUNDLES)
+  if(YARP_OSX_GENERATE_BUNDLES)
     set_target_properties(yarpdataplayer-qt PROPERTIES MACOSX_BUNDLE TRUE)
   endif()
 
@@ -105,9 +105,8 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
   if(NOT YARP_DEFAULT_GTK)
     set_target_properties(yarpdataplayer-qt PROPERTIES OUTPUT_NAME yarpdataplayer)
   endif()
-  
+
   include(YarpOSXBundleUpdateRPATH)
   yarp_osx_bundle_update_rpath(yarpdataplayer-qt)
-  
 
 endif()

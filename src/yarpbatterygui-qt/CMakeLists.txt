@@ -25,7 +25,7 @@ if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
   set(yarpbatterygui_qt_UI_FILES display.ui)
 
   qt5_add_resources(yarpbatterygui_qt_QRC_GEN_SRCS ${yarpbatterygui_qt_QRC_FILES})
-  
+
   qt5_wrap_ui(yarpbatterygui_qt_UI_GEN_SRCS ${yarpbatterygui_qt_UI_FILES})
 
   source_group("Source Files" FILES ${yarpbatterygui_qt_SRCS})
@@ -40,7 +40,7 @@ if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
                                         ${yarpbatterygui_qt_QRC_GEN_SRCS}
                                         ${yarpbatterygui_qt_UI_GEN_SRCS})
 
-  if (YARP_OSX_GENERATE_BUNDLES)
+  if(YARP_OSX_GENERATE_BUNDLES)
     set_target_properties(yarpbatterygui-qt PROPERTIES MACOSX_BUNDLE TRUE)
   endif()
 

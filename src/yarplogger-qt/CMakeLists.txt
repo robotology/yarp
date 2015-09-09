@@ -4,7 +4,7 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
 
   include(YarpUseQt5)
 
-  GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+  get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_logger_HDRS TARGET YARP_logger PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS} ${YARP_logger_HDRS})
@@ -18,7 +18,7 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
   qt5_add_resources(yarplogger-qt_QRC_GEN_SRCS ${yarplogger-qt_QRC_FILES})
   qt5_wrap_ui(yarplogger-qt_UI_GEN_SRCS ${yarplogger-qt_UI_FILES})
 
-  INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+  include_directories(${YARP_TREE_INCLUDE_DIRS})
   source_group("Source Files" FILES ${yarplogger-qt_SRCS})
   source_group("Header Files" FILES ${yarplogger-qt_HDRS} ${YARP_logger_HDRS})
   source_group("Resources Files" FILES ${yarplogger-qt_QRC_FILES})
@@ -30,7 +30,7 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
                                      ${yarplogger-qt_QRC_GEN_SRCS}
                                      ${yarplogger-qt_UI_GEN_SRCS})
 
-  if (YARP_OSX_GENERATE_BUNDLES)
+  if(YARP_OSX_GENERATE_BUNDLES)
     set_target_properties(yarplogger-qt PROPERTIES MACOSX_BUNDLE TRUE)
   endif()
 
@@ -49,8 +49,8 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
           DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   set_target_properties(yarplogger-qt PROPERTIES OUTPUT_NAME yarplogger)
-  
+
   include(YarpOSXBundleUpdateRPATH)
   yarp_osx_bundle_update_rpath(yarplogger-qt)
-  
+
 endif()
