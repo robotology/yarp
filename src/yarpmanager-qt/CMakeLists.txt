@@ -25,8 +25,8 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
                           applicationviewwidget.cpp
                           logwidget.cpp
                           mainwindow.cpp
-						  aboutdlg.cpp
-						  genericinfodlg.cpp)
+                          aboutdlg.cpp
+                          genericinfodlg.cpp)
   set(yarpmanager_qt_HDRS safe_manager.h
                           mainwindow.h
                           entitiestreewidget.h
@@ -39,8 +39,8 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
                           genericviewwidget.h
                           yscopewindow.h
                           stdoutwindow.h
-						  aboutdlg.h
-						  genericinfodlg.h)
+                          aboutdlg.h
+                          genericinfodlg.h)
   set(yarpmanager_qt_QRC_FILES res.qrc)
   set(yarpmanager_qt_UI_FILES moduleviewwidget.ui
                               stdoutwindow.ui
@@ -48,8 +48,8 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
                               mainwindow.ui
                               resourceviewwidget.ui
                               applicationviewwidget.ui
-							  aboutdlg.ui
-							  genericinfodlg.ui)
+                              aboutdlg.ui
+                              genericinfodlg.ui)
 
   qt5_add_resources(yarpmanager_qt_QRC_GEN_SRCS ${yarpmanager_qt_QRC_FILES})
   qt5_wrap_ui(yarpmanager_qt_UI_GEN_SRCS ${yarpmanager_qt_UI_FILES})
@@ -61,7 +61,7 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
   source_group("Generated Files" FILES ${yarpmanager_qt_QRC_GEN_SRCS}
                                       ${yarpmanager_qt_UI_GEN_SRCS})
 
-  if (YARP_OSX_GENERATE_BUNDLES)
+  if(YARP_OSX_GENERATE_BUNDLES)
     # the icon must be added to the target
     set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/Resources/AppIcon.icns)
   endif()
@@ -90,7 +90,7 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
     set_target_properties(yarpmanager-qt PROPERTIES OUTPUT_NAME yarpmanager)
   endif()
 
-  if (YARP_OSX_GENERATE_BUNDLES)
+  if(YARP_OSX_GENERATE_BUNDLES)
       set_target_properties(yarpmanager-qt PROPERTIES MACOSX_BUNDLE TRUE)
       # the following two lines do the following thing:
       # 1 - specify the app icon (the name should be enogh i think) in the bundle plist 
@@ -100,7 +100,5 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
       include(YarpOSXBundleUpdateRPATH)
       yarp_osx_bundle_update_rpath(yarpmanager-qt)
   endif()
-
-
 
 endif()

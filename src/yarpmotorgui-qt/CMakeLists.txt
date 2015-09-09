@@ -55,7 +55,7 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
                                         ${yarpmotorgui_qt_QRC_GEN_SRCS}
                                         ${yarpmotorgui_qt_UI_GEN_SRCS})
 
-  if (YARP_OSX_GENERATE_BUNDLES)
+  if(YARP_OSX_GENERATE_BUNDLES)
     set_target_properties(yarpmotorgui-qt PROPERTIES MACOSX_BUNDLE TRUE)
   endif()
 

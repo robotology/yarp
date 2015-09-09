@@ -43,7 +43,7 @@ if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpscope-qt PROPERTIES OUTPUT_NAME yarpscope)
 endif()
 
-if (YARP_OSX_GENERATE_BUNDLES)
+if(YARP_OSX_GENERATE_BUNDLES)
     set_target_properties(yarpscope-qt PROPERTIES MACOSX_BUNDLE TRUE)
     # the following two lines do the following thing:
     # 1 - specify the app icon (the name should be enogh i think) in the bundle plist 
@@ -53,4 +53,3 @@ if (YARP_OSX_GENERATE_BUNDLES)
     include(YarpOSXBundleUpdateRPATH)
     yarp_osx_bundle_update_rpath(yarpscope-qt)
 endif()
-

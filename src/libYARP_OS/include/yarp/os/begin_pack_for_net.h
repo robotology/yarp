@@ -8,7 +8,7 @@
 
 #include <yarp/conf/system.h>
 
-YARP_COMPILER_DEPRECATED_WARNING(begin_pack_for_net.h is deprecated. Use YARP_BEGIN_PACK/YARP_END_PACK instead)
+YARP_COMPILER_DEPRECATED_WARNING(<yarp/os/begin_pack_for_net.h> header is deprecated. Use YARP_BEGIN_PACK/YARP_END_PACK instead)
 
 // Left here for compatibility with old code
 #ifndef PACKED_FOR_NET
