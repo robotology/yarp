@@ -72,7 +72,9 @@ public:
 */
 template<class T> 
 inline int BottleTagMap () {
-    return tag;
+    /* make sure this is never called unspecified */
+    YARP_ASSERT(0);
+    return 0;
   } 
 
 template<>
