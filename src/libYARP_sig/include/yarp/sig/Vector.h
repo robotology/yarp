@@ -21,6 +21,7 @@
 #include <yarp/os/ManagedBytes.h>
 
 #include <yarp/sig/api.h>
+#include <yarp/os/Log.h>
 
 /**
 * \file Vector.h contains the definition of a Vector type 
