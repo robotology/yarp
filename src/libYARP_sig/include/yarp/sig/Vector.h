@@ -147,7 +147,7 @@ public:
     }
 
     virtual int getBottleTag() const {
-        return MapBottleTag<T>();
+        return BottleTagMap <T>();
     }
 
     virtual size_t getListSize() const
