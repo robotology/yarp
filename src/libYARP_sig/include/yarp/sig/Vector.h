@@ -71,17 +71,17 @@ public:
 * Needs to be instantiated for each type T used in VectorOf<T>.
 */
 template<class T> 
-int MapBottleTag() {
+int BottleTagMap () {
     return tag;
   } 
 
 template<>
-inline int MapBottleTag<double> () {
+inline int BottleTagMap <double> () {
     return BOTTLE_TAG_DOUBLE;
   } 
 
 template<>
-inline int MapBottleTag<int> () {
+inline int BottleTagMap <int> () {
     return BOTTLE_TAG_INT;
   } 
 
