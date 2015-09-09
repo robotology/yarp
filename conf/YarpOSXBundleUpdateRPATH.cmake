@@ -1,3 +1,7 @@
+# Copyright (C) 2015  iCub Facility, Istituto Italiano di Tecnologia
+# Author: Francesco Romano <francesco.romano@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 
 function(yarp_osx_bundle_update_rpath _target_name)
     if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
