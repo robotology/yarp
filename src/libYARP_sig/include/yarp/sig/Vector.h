@@ -29,7 +29,7 @@
 namespace yarp {
 
     namespace sig {
-		class VectorBase;
+        class VectorBase;
         class Vector;
         template<class T> class VectorOf;
     }
