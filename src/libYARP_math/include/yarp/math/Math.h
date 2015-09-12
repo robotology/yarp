@@ -502,7 +502,8 @@ namespace yarp
         * Returns a dcm (direction cosine matrix) rotation matrix R from
         * axis/angle representation (defined in Math.h).
         * @param v is the axis/angle vector.
-        * @return 4 by 4 rotation matrix of the form [R,1].
+        * @return 4 by 4 homogeneous matrix with the rotation components
+        *         in the top left 3 by 3 submatrix.
         */
         YARP_math_API yarp::sig::Matrix axis2dcm(const yarp::sig::Vector &v);
 
