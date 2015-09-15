@@ -79,6 +79,7 @@ bool USBCameraDriver::open(yarp::os::Searchable& config)
     os_device->view(deviceRgb);
     os_device->view(deviceRaw);
     os_device->view(deviceControls);
+    os_device->view(deviceControls2);
 
     if(deviceRaw)
     {
@@ -212,7 +213,7 @@ bool USBCameraDriver::getWhiteBalance(double& blue, double& red)
 {
     if(deviceControls)
         return deviceControls->getWhiteBalance(blue, red);
-    return 0;
+    return false;
 }
 
     // SET CONTROLS
@@ -221,70 +222,70 @@ bool USBCameraDriver::setBrightness(double v)
     yTrace();
     if(deviceControls)
         return deviceControls->setBrightness(v);
-    return 0;
+    return false;
 }
 
 bool USBCameraDriver::setExposure(double v)
 {
     if(deviceControls)
         return deviceControls->setExposure(v);
-    return 0;
+    return false;
 }
 
 bool USBCameraDriver::setGain(double v)
 {
     if(deviceControls)
         return deviceControls->setGain(v);
-    return 0;
+    return false;
 }
 
 bool USBCameraDriver::setGamma(double v)
 {
     if(deviceControls)
         return deviceControls->setGamma(v);
-    return 0;
+    return false;
 }
 
 bool USBCameraDriver::setHue(double v)
 {
     if(deviceControls)
         return deviceControls->setHue(v);
-    return 0;
+    return false;
 }
 
 bool USBCameraDriver::setIris(double v)
 {
     if(deviceControls)
         return deviceControls->setIris(v);
-    return 0;
+    return false;
 }
 
 bool USBCameraDriver::setSaturation(double v)
 {
     if(deviceControls)
         return deviceControls->setSaturation(v);
-    return 0;
+    return false;
 }
 
 bool USBCameraDriver::setSharpness(double v)
 {
     if(deviceControls)
         return deviceControls->setSharpness(v);
-    return 0;
+    return false;
 }
 
 bool USBCameraDriver::setShutter(double v)
 {
     if(deviceControls)
         return deviceControls->setShutter(v);
-    return 0;
+    return false;
 }
 
 bool USBCameraDriver::setWhiteBalance(double blue, double red)
 {
     if(deviceControls)
         return deviceControls->setWhiteBalance(blue, red);
-    return 0;
+    return false;
 }
 
 
@@ -350,5 +351,77 @@ int USBCameraDriverRaw::width () const
 int USBCameraDriverRaw::height () const
 {
     return USBCameraDriver::height();
+}
+
+/*  Implementation of IFrameGrabberControls2 interface
+ *
+ * Actual function will be implemented by OS specific devices
+ */
+
+bool USBCameraDriver::getCameraDescription(CameraDescriptor *camera)
+{
+    if(deviceControls2)
+        return deviceControls2->getCameraDescription(camera);
+    return false;
+}
+
+bool USBCameraDriver::hasFeature(int feature, bool *hasFeature)
+{
+
+}
+
+bool USBCameraDriver::setFeature(int feature, double *values)
+{
+
+}
+
+bool USBCameraDriver::getFeature(int feature, double *values)
+{
+
+}
+
+bool USBCameraDriver::hasOnOff(int feature, bool *HasOnOff)
+{
+
+}
+
+bool USBCameraDriver::setActive(int feature, bool onoff)
+{
+
+}
+
+bool USBCameraDriver::getActive(int feature, bool *isActive)
+{
+
+}
+
+bool USBCameraDriver::hasAuto(int feature, bool *hasAuto)
+{
+
+}
+
+bool USBCameraDriver::hasManual(int feature, bool *hasManual)
+{
+
+}
+
+bool USBCameraDriver::hasOnePush(int feature, bool *hasOnePush)
+{
+
+}
+
+bool USBCameraDriver::setMode(int feature, FeatureMode mode)
+{
+
+}
+
+bool USBCameraDriver::getMode(int feature, FeatureMode *mode)
+{
+
+}
+
+bool USBCameraDriver::setOnePush(int feature)
+{
+
 }
 

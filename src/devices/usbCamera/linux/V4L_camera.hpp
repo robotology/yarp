@@ -110,6 +110,7 @@ class yarp::dev::V4L_camera :   public yarp::dev::DeviceDriver,
                                 public yarp::dev::IFrameGrabberRgb,
                                 public yarp::dev::IFrameGrabber,
                                 public yarp::dev::IFrameGrabberControls,
+                                public yarp::dev::IFrameGrabberControls2,
                                 public yarp::os::RateThread
 {
 public:
@@ -161,8 +162,23 @@ public:
     double getGain();
     double getIris();
 
-private:
 
+    /* Implementation of IFrameGrabberControls2 interface */
+    virtual bool getCameraDescription(CameraDescriptor *camera);
+    virtual bool hasFeature(int feature, bool *hasFeature);
+    virtual bool setFeature(int feature, double *values);
+    virtual bool getFeature(int feature, double *values);
+    virtual bool hasOnOff(int feature, bool *HasOnOff);
+    virtual bool setActive(int feature, bool onoff);
+    virtual bool getActive(int feature, bool *isActive);
+    virtual bool hasAuto(int feature, bool *hasAuto);
+    virtual bool hasManual(int feature, bool *hasManual);
+    virtual bool hasOnePush(int feature, bool *hasOnePush);
+    virtual bool setMode(int feature, FeatureMode mode);
+    virtual bool getMode(int feature, FeatureMode *mode);
+    virtual bool setOnePush(int feature);
+
+private:
 
     yarp::os::Semaphore mutex;
     Video_params param;

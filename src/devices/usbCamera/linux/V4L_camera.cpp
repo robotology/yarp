@@ -1307,3 +1307,77 @@ bool V4L_camera::setWhiteBalance(double blue, double red)
     return ret;
 }
 
+
+bool V4L_camera::getCameraDescription(CameraDescriptor* camera)
+{
+    yTrace();
+    camera->busType = BUS_USB;
+    camera->deviceDescription = "USB3 camera";
+    return true;
+}
+
+bool V4L_camera::hasFeature(int feature, bool* hasFeature)
+{
+
+}
+
+bool V4L_camera::setFeature(int feature, double* values)
+{
+
+}
+
+bool V4L_camera::getFeature(int feature, double* values)
+{
+
+}
+
+bool V4L_camera::hasOnOff(int feature, bool* hasOnOff)
+{
+
+}
+
+bool V4L_camera::setActive(int feature, bool onoff)
+{
+
+}
+
+bool V4L_camera::getActive(int feature, bool* isActive)
+{
+
+}
+
+bool V4L_camera::hasAuto(int feature, bool* hasAuto)
+{
+
+}
+
+bool V4L_camera::hasManual(int feature, bool* hasManual)
+{
+
+}
+
+bool V4L_camera::hasOnePush(int feature, bool* hasOnePush)
+{
+
+}
+
+bool V4L_camera::setMode(int feature, FeatureMode mode)
+{
+
+}
+
+bool V4L_camera::getMode(int feature, FeatureMode* mode)
+{
+
+}
+
+bool V4L_camera::setOnePush(int feature)
+{
+
+}
+
+
+
+
+
+

@@ -50,8 +50,8 @@ class yarp::dev::USBCameraDriver :
     public IPreciselyTimed,
     public IFrameGrabber,
     public IFrameGrabberRgb,
-    public IFrameGrabberControls
-//     public IFrameGrabberControlsDC1394
+    public IFrameGrabberControls,
+    public IFrameGrabberControls2
 {
 protected:
     USBCameraDriver(const USBCameraDriver&);
@@ -60,6 +60,7 @@ protected:
     IFrameGrabber           *deviceRaw;
     DeviceDriver            *os_device;
     IFrameGrabberControls   *deviceControls;
+    IFrameGrabberControls2  *deviceControls2;
 
     int _width;
     int _height;
@@ -264,6 +265,24 @@ public:
     //virtual bool setAuto(bool bAuto=true);
 
     //virtual void PrintSettings();
+
+    /*  Implementation of IFrameGrabberControls2 interface
+     *
+     * Actual function will be implemented by OS specific devices
+     */
+    virtual bool getCameraDescription(CameraDescriptor *camera);
+    virtual bool hasFeature(int feature, bool *hasFeature);
+    virtual bool setFeature(int feature, double *values);
+    virtual bool getFeature(int feature, double *values);
+    virtual bool hasOnOff(int feature, bool *HasOnOff);
+    virtual bool setActive(int feature, bool onoff);
+    virtual bool getActive(int feature, bool *isActive);
+    virtual bool hasAuto(int feature, bool *hasAuto);
+    virtual bool hasManual(int feature, bool *hasManual);
+    virtual bool hasOnePush(int feature, bool *hasOnePush);
+    virtual bool setMode(int feature, FeatureMode mode);
+    virtual bool getMode(int feature, FeatureMode *mode);
+    virtual bool setOnePush(int feature);
 };
 
 
