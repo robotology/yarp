@@ -22,7 +22,7 @@ namespace yarp {
  * \ingroup key_class
  *
  * A class for thread synchronization and mutual exclusion.
- * An event can in a signaled or reset state.  Threads
+ * An event can be in a signaled or reset state.  Threads
  * can wait for an event to enter a signaled state.
  *
  */
