@@ -102,7 +102,7 @@ public:
         h1.start();
         h2.start();
         Time::delay(0.5);
-        
+
         // removing these checks since they could fail on loaded machine
         checkFalse(h1.done.check(),"first not woken too early");
         checkFalse(h2.done.check(),"second not woken too early");
@@ -119,7 +119,7 @@ public:
         checkBasic();
         checkBlock();
         // Removing this test since it is difficult to implement without
-        // delays/timeouts and this would cause test to depend on current 
+        // delays/timeouts and this would cause test to depend on current
         // load (bad on virtual machines)
         // checkSingleWakeup() also seems to be redundant w.r.t checkMultipleWakeup()
         checkMultipleWakeup();
