@@ -270,7 +270,7 @@ This is the YARP network companion.
 Call with the argument "help" to see a list of ways to use this program.
 \endcode
 
-\subsection install_mac_bash_completion_source Bash completion
+\section install_mac_bash_completion_source Bash completion
 To enable bash completion when building YARP from source, do the following:
 
 \code
