@@ -313,6 +313,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     mark_as_advanced(YARP_OSX_GENERATE_BUNDLES)
     set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_STRING}")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9")
 endif()
 
 
