@@ -8,7 +8,7 @@
     <module>
         <name>yarpview</name>
         <parameters>--x 100 </parameters>
-        <node>/node1</node>
+        <node>localhost</node>
         <prefix>/LeftView</prefix>
         <geometry>(Pos (x 412) (y 103.9))</geometry>
     </module>
@@ -30,8 +30,8 @@
         <geometry>(Pos (x 102.888) (y 177.888))</geometry>
     </application>
     <connection>
-        <from>/Left/grabber</from>
-        <to>/LeftView/yarpview/img:i</to>
+        <from qos="level:high; priority:10; policy:1">/Left/grabber</from>
+        <to qos="dscp:AF42; priority:15; policy:1">/LeftView/yarpview/img:i</to>
         <protocol>udp</protocol>
         <geometry>(Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))  )</geometry>
     </connection>

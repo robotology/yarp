@@ -548,6 +548,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         app.addResource(resource);
                     }
                 }
+                if(from->Attribute("qos"))
+                    connection.setQosFrom(from->Attribute("qos"));
                 if(to->Attribute("external") &&
                     compareString(to->Attribute("external"), "true"))
                 {
@@ -559,6 +561,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         app.addResource(resource);
                     }
                 }
+                if(to->Attribute("qos"))
+                    connection.setQosTo(to->Attribute("qos"));
 
                 //Connections which have the same port name in Port Resources
                 // should also be set as external

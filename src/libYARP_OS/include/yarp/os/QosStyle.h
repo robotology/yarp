@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 2015 iCub Facility
- * Authors: Ali Paikan
+ * Authors: Ali Paikan and Daniele Domenichelli
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
