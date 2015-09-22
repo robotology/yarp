@@ -193,6 +193,9 @@ Here is an example of application description file in XML format:
           <b><font color="#00458A">&lt;port</font></b> <font color="#009900">timeout</font><font color="#990000">=</font><font color="#FF0000">"5.0"</font> <font color="#009900">request</font><font color="#990000">=</font><font color="#FF0000">"ready"</font> <font color="#009900">reply</font><font color="#990000">=</font><font color="#FF0000">"yes"</font><b><font color="#00458A">&gt;&lt;/port&gt;</font></b>
           ...
       <b><font color="#00458A">&lt;/dependencies&gt;</font></b>
+      <b><font color="#00458A">&lt;ensure&gt;</font></b>
+          <b><font color="#00458A">&lt;wait&gt;</font></b>10.0<b><font color="#00458A">&lt;/wait&gt;</font></b>
+      <b><font color="#00458A">&lt;/ensure&gt;</font></b>
   <b><font color="#00458A">&lt;/module&gt;</font></b>
   ...
 
@@ -280,6 +283,7 @@ Here is an example of application description file in XML format:
  - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in yarpmanager).
  - The \<port\> tags inside \<dependencies\> indicate that the execution of the current module should be postponed until the ports become available. (g)yarpmanager waits for the ports and continuously checks their availability. If one of the required ports is not available within the time indicated by the "timeout" property, the module will not be launched.   
  - It is also possible to send a specific RPC request to a port to get status about the internal state of a module. This is useful when launching a module should be postponed until other modules get launched and ready. This can be done by specifying the request using "request" property and the expected reply using "reply" property in a \<port\> tag. The manager sends the request to the relevant port and check if the received reply matches the one indicated in the "reply" property before launching the module. If the reply does not match the expected one, the corresponding module will not launched. 
+ - The \<ensure>\> and \<wait\> tags can be used to enforce an arbitrary wait after launching a module. In this case, the manager waits for that specific time to consider the module successfully launched.  
  - The \<display\> tag specifies the visibility of the process window:
   - \--visible_na (default):the window is visible and inactive (it does not get the focus)
   - \--minimized: the window is minimized 
