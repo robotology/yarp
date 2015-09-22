@@ -80,16 +80,21 @@ public:
     virtual ~Connection(){}
     const char* from(void) { return strFrom.c_str();}
     const char* to(void) { return strTo.c_str();}
+    const char* carrier(void) { return strCarrier.c_str(); }
+    const char* qosFrom(void) { return strQosFrom.c_str(); }
+    const char* qosTo(void) { return strQosTo.c_str(); }
     void setFrom(const char* szFrom) { if(szFrom) strFrom = szFrom; }
     void setTo(const char* szTo) { if(szTo) strTo = szTo; }
     void setCarrier(const char* szCr) { if(szCr) strCarrier = szCr; }
     void setFromExternal(bool ext) { bExternalFrom = ext;}
     void setToExternal(bool ext) { bExternalTo = ext; }
     void setPersistent(bool per) { bPersist = per; }
+    void setQosFrom(const char* szQos) { if(szQos) strQosFrom = szQos; }
+    void setQosTo(const char* szQos) { if(szQos) strQosTo = szQos; }
     bool isExternalFrom(void) { return bExternalFrom; }
     bool isExternalTo(void) { return bExternalTo; }
     bool isPersistent(void) { return bPersist; }
-    const char* carrier(void) { return strCarrier.c_str(); }
+
 
     void setId(const char* id) { if(id) strId = id; }
     const char* getId(void) { return strId.c_str(); }
@@ -128,6 +133,8 @@ private:
     bool bExternalTo;
     bool bExternalFrom;
     string strCarrier;
+    string strQosFrom;
+    string strQosTo;
     bool bPersist;
     Node* appOwner;
     bool bWithPriority;

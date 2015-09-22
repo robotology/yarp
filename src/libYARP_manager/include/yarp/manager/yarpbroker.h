@@ -72,6 +72,9 @@ public:
                         ProcessContainer &processes);
      bool getAllPorts(vector<std::string> &stingList);
 
+     bool setQos(const char* from, const char* to,
+                 const char* qosFrom, const char* qosTo);
+
 public: // for rate thread
     void run();
     bool threadInit();
@@ -93,8 +96,9 @@ private:
     bool bOnlyConnector;
     bool bInitialized;
     yarp::os::Semaphore semParam;
-
     string strStdioUUID;
+    string __trace_message;
+
     yarp::os::BufferedPort<yarp::os::Bottle> stdioPort;
     //yarp::os::Port port;
 
@@ -103,8 +107,8 @@ private:
     int requestServer(yarp::os::Property& config);
     int SendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target,
                 yarp::os::Bottle& resp, float fTimeout=5.0);
+    bool getQosFromString(const char* qos, yarp::os::QosStyle& style);
 
-    string __trace_message;
 };
 
 } // namespace yarp

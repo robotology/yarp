@@ -869,7 +869,11 @@ bool Manager::connect(unsigned int id)
         return false;
     }
 
-    return true;
+    // setting the connection Qos if specified
+    return connector.setQos(connections[id].from(),
+                     connections[id].to(),
+                     connections[id].qosFrom(),
+                     connections[id].qosTo());
 }
 
 bool Manager::connect(void)
@@ -877,7 +881,7 @@ bool Manager::connect(void)
     //YarpBroker connector;
     //connector.init();
     CnnIterator cnn;
-    for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
+    for(cnn=connections.begin(); cnn!=connections.end(); cnn++) {
         if( !connector.connect((*cnn).from(), (*cnn).to(),
                                (*cnn).carrier(), (*cnn).isPersistent()) )
             {
@@ -886,6 +890,14 @@ bool Manager::connect(void)
                 if(bRestricted)
                     return false;
             }
+
+        // setting the connection Qos if specified
+        if(! connector.setQos((*cnn).from(), (*cnn).to(),
+                         (*cnn).qosFrom(), (*cnn).qosTo())) {
+            if(bRestricted)
+                return false;
+        }
+    }
     return true;
 }
 

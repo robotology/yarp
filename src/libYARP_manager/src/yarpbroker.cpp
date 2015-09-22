@@ -12,7 +12,6 @@
 #include <csignal>
 #include <cstring>
 
-
 #define YARPRUN_OK                  0
 #define YARPRUN_NORESPONSE          1
 #define YARPRUN_NOCONNECTION        2
@@ -702,6 +701,62 @@ bool YarpBroker::rmconnect(const char* from, const char* to)
                                  CONNECTION_TIMEOUT);
 }
 
+bool YarpBroker::setQos(const char* from, const char *to,
+                        const char *qosFrom, const char *qosTo) {
+    strError.clear();
+    if(!strlen(qosFrom) && !strlen(qosTo))
+        return true;
+
+    QosStyle styleFrom;
+    QosStyle styleTo;
+    if(qosFrom != NULL && strlen(qosFrom)) {
+        if(!getQosFromString(qosFrom, styleFrom)) {            
+            strError = "Error in parsing Qos properties of " + string(from);
+            return false;
+        }
+    }
+    if(qosTo != NULL && strlen(qosTo))
+        if(!getQosFromString(qosTo, styleTo)) {
+            strError = "Error in parsing Qos properties of " + string(to);
+            return false;
+        }
+    return NetworkBase::setConnectionQos(from, to, styleFrom, styleTo, true);
+}
+
+bool YarpBroker::getQosFromString(const char* qos, yarp::os::QosStyle& style) {
+    string strQos(qos);
+    transform(strQos.begin(), strQos.end(), strQos.begin(),
+              (int(*)(int))toupper);
+    strQos.erase( std::remove_if( strQos.begin(), strQos.end(), ::isspace ), strQos.end() );
+
+    //level:high; priority:10; policy:1
+    stringstream ss(strQos); // Turn the string into a stream.
+    string prop;
+    while(getline(ss, prop, ';')) {
+        size_t p = prop.find(':');
+        if (p != prop.npos) {
+            string key = prop.substr(0, p);
+            string value = prop.substr(p+1);
+            if (key.length() >=0 && value.length() > 0) {
+                if (key == "LEVEL" || key=="DSCP" || key == "TOS") {                    
+                    if(!style.setPacketPriority(prop))
+                        return false;
+                }
+                else if (key == "PRIORITY") {
+                    char* p;
+                    int prio = strtol(value.c_str(), &p, 10);
+                    style.setThreadPriority(prio);
+                }
+                else if (key == "POLICY") {
+                    char* p;
+                    int policy = strtol(value.c_str(), &p, 10);
+                    style.setThreadPolicy(policy);
+                }
+            }
+        }
+    }
+    return true;
+}
 
 const char* YarpBroker::error(void)
 {
