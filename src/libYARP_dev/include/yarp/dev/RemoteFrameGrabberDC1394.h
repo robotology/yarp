@@ -51,6 +51,7 @@ public:
 
         if (remote!="")
         {
+            std::cout << "\nconnecting 1394 "  << local << " to " << remote << std::endl;
             yarp::os::Network::connect(local,remote);
         }
 

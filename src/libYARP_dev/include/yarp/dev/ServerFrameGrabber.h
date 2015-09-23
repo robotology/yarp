@@ -32,80 +32,8 @@ namespace yarp {
     }
 }
 
-#define VOCAB_BRIGHTNESS VOCAB3('b','r','i')
-#define VOCAB_EXPOSURE VOCAB4('e','x','p','o')
-#define VOCAB_SHARPNESS VOCAB4('s','h','a','r')
-#define VOCAB_WHITE VOCAB4('w','h','i','t')
-#define VOCAB_HUE VOCAB3('h','u','e')
-#define VOCAB_SATURATION VOCAB4('s','a','t','u')
-#define VOCAB_GAMMA VOCAB4('g','a','m','m')
-#define VOCAB_SHUTTER VOCAB4('s','h','u','t')
-#define VOCAB_GAIN VOCAB4('g','a','i','n')
-#define VOCAB_IRIS VOCAB4('i','r','i','s')
-//#define VOCAB_TEMPERATURE VOCAB4('t','e','m','p')
-//#define VOCAB_WHITE_SHADING VOCAB4('s','h','a','d')
-//#define VOCAB_OPTICAL_FILTER VOCAB4('f','i','l','t')
-//#define VOCAB_CAPTURE_QUALITY VOCAB4('q','u','a','l')
 
-#define VOCAB_SET VOCAB3('s','e','t')
-#define VOCAB_GET VOCAB3('g','e','t')
-#define VOCAB_IS VOCAB2('i','s')
-#define VOCAB_WIDTH VOCAB1('w')
-#define VOCAB_HEIGHT VOCAB1('h')
 
-#define VOCAB_DRHASFEA VOCAB4('D','R','2','a') // 00
-#define VOCAB_DRSETVAL VOCAB4('D','R','2','b') // 01
-#define VOCAB_DRGETVAL VOCAB4('D','R','2','c') // 02
-
-#define VOCAB_DRHASACT VOCAB4('D','R','2','d') // 03
-#define VOCAB_DRSETACT VOCAB4('D','R','2','e') // 04
-#define VOCAB_DRGETACT VOCAB4('D','R','2','f') // 05
-
-#define VOCAB_DRHASMAN VOCAB4('D','R','2','g') // 06
-#define VOCAB_DRHASAUT VOCAB4('D','R','2','h') // 07
-#define VOCAB_DRHASONP VOCAB4('D','R','2','i') // 08
-#define VOCAB_DRSETMOD VOCAB4('D','R','2','j') // 09
-#define VOCAB_DRGETMOD VOCAB4('D','R','2','k') // 10
-#define VOCAB_DRSETONP VOCAB4('D','R','2','l') // 11
-
-// masks
-#define VOCAB_DRGETMSK VOCAB4('D','R','2','m') // 12
-#define VOCAB_DRGETVMD VOCAB4('D','R','2','n') // 13
-#define VOCAB_DRSETVMD VOCAB4('D','R','2','o') // 14
-
-#define VOCAB_DRGETFPM VOCAB4('D','R','2','p') // 15
-#define VOCAB_DRGETFPS VOCAB4('D','R','2','q') // 16
-#define VOCAB_DRSETFPS VOCAB4('D','R','2','r') // 17
-
-#define VOCAB_DRGETISO VOCAB4('D','R','2','s') // 18
-#define VOCAB_DRSETISO VOCAB4('D','R','2','t') // 19
-
-#define VOCAB_DRGETCCM VOCAB4('D','R','2','u') // 20
-#define VOCAB_DRGETCOD VOCAB4('D','R','2','v') // 21
-#define VOCAB_DRSETCOD VOCAB4('D','R','2','w') // 22
-
-#define VOCAB_DRSETWHB VOCAB4('D','R','2','x') // 23
-#define VOCAB_DRGETWHB VOCAB4('D','R','2','y') // 24
-
-#define VOCAB_DRGETF7M VOCAB4('D','R','2','z') // 25
-#define VOCAB_DRGETWF7 VOCAB4('D','R','2','A') // 26
-#define VOCAB_DRSETWF7 VOCAB4('D','R','2','B') // 27
-
-#define VOCAB_DRSETOPM VOCAB4('D','R','2','C') // 28
-#define VOCAB_DRGETOPM VOCAB4('D','R','2','D') // 29
-#define VOCAB_DRSETTXM VOCAB4('D','R','2','E') // 30
-#define VOCAB_DRGETTXM VOCAB4('D','R','2','F') // 31
-//#define VOCAB_DRSETBAY VOCAB4('D','R','2','G') // 32
-//#define VOCAB_DRGETBAY VOCAB4('D','R','2','H') // 33
-
-#define VOCAB_DRSETBCS VOCAB4('D','R','2','I') // 34
-#define VOCAB_DRSETDEF VOCAB4('D','R','2','J') // 35
-#define VOCAB_DRSETRST VOCAB4('D','R','2','K') // 36
-#define VOCAB_DRSETPWR VOCAB4('D','R','2','L') // 37
-
-#define VOCAB_DRSETCAP VOCAB4('D','R','2','M') // 38
-#define VOCAB_DRSETBPP VOCAB4('D','R','2','N') // 39
-#define VOCAB_DRGETBPP VOCAB4('D','R','2','O') // 40
 
 /**
  * @ingroup dev_impl_wrapper
@@ -156,6 +84,7 @@ class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public IAudioGrabberSound,
             public IAudioVisualGrabber,
             public IFrameGrabberControls,
+            public IFrameGrabberControls2, // we can skip implementing this, like for DC1394 (?)
             public IService,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelMono> >,
@@ -172,7 +101,8 @@ private:
     IFrameGrabberImageRaw *fgImageRaw;
     IAudioGrabberSound *fgSound;
     IAudioVisualGrabber *fgAv;
-    IFrameGrabberControls *fgCtrl;
+    IFrameGrabberControls  *fgCtrl;
+    IFrameGrabberControls2 *fgCtrl2;
     IPreciselyTimed *fgTimed;
     bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
     bool canDrop;
@@ -411,6 +341,34 @@ public:
     }
 
     virtual bool updateService();
+
+    // IFrameGrabberControl2 interface //
+
+    virtual bool getCameraDescription(CameraDescriptor *camera);
+    virtual bool hasFeature(int feature, bool *hasFeature);
+    virtual bool setFeature(int feature, double  values);
+    virtual bool getFeature(int feature, double *values);
+    virtual bool setFeature(int feature, double  value1, double  value2);
+    virtual bool getFeature(int feature, double *value1, double *value2);
+    virtual bool hasOnOff(int feature, bool *HasOnOff);
+    virtual bool setActive(int feature, bool onoff);
+    virtual bool getActive(int feature, bool *isActive);
+    virtual bool hasAuto(int feature, bool *hasAuto);
+    virtual bool hasManual(int feature, bool *hasManual);
+    virtual bool hasOnePush(int feature, bool *hasOnePush);
+    virtual bool setMode(int feature, FeatureMode mode);
+    virtual bool getMode(int feature, FeatureMode *mode);
+
+    /**
+     * Set the requested feature to a value (saturation, brightness ... )
+     * @param feature the identifier of the feature to change
+     * @param value new value of the feature, from 0 to 1 as a percentage of param range
+     * @return returns true on success, false on failure.
+     */
+    virtual bool setOnePush(int feature);
+
+private:
+    bool respondToFrameGrabberControl2(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
 };
 
 #endif
