@@ -525,7 +525,7 @@ public:
 
     /* Set the software limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
-     * @param axis joint number (why am I telling you this)
+     * @param axis joint number
      * @param min the value of the lower limit
      * @param max the value of the upper limit
      * @return true or false on success or failure
@@ -533,7 +533,7 @@ public:
     virtual bool setLimits(int axis, double min, double max);
     
     /* Get the software limits for a particular axis.
-     * @param axis joint number (again... why am I telling you this)
+     * @param axis joint number
      * @param pointer to store the value of the lower limit
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)

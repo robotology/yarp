@@ -86,7 +86,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     connect(ui->buttonPid,SIGNAL(clicked()),this,SLOT(onPidClicked()));
     connect(ui->buttonCalib,SIGNAL(clicked()),this,SLOT(onCalibClicked()));
 
-    ui->groupBox->setTitle(QString("JOINT %1").arg(index));
+    ui->groupBox->setTitle(QString("JOINT %1 (%s)").arg(index).arg(jointName));
     // ui->groupBox->setAlignment(Qt::AlignHCenter);
 
 
@@ -550,6 +550,11 @@ void JointItem::onSliderVelocityMoved(int val)
 
 }
 
+void JointItem::setJointName(QString name)
+{
+    jointName = name;
+}
+
 void JointItem::onSliderMoved(int val)
 {
     motionDone = false;
@@ -979,8 +984,9 @@ void JointItem::setJointInternalState(int mode)
             default:{
                 enableAll();
                 c = variant.value<QColor>();
-                if(ui->groupBox->title() != QString("JOINT %1").arg(jointIndex)){
-                    ui->groupBox->setTitle(QString("JOINT %1").arg(jointIndex));
+                if(ui->groupBox->title() != QString("JOINT %1 (%s)").arg(jointIndex).arg(jointName))
+                {
+                    ui->groupBox->setTitle(QString("JOINT %1 (%s)").arg(jointIndex).arg(jointName));
                 }
                 ui->stackedWidget->setEnabled(true);
                 ui->buttonsContainer->setEnabled(true);
@@ -1028,7 +1034,7 @@ void JointItem::setJointState(JointState newState)
 
     switch (internalState) {
     case Unknown:{
-        ui->groupBox->setTitle(QString("JOINT %1  -  UNKNOWN").arg(jointIndex));
+        ui->groupBox->setTitle(QString("JOINT %1 (%s) -  UNKNOWN").arg(jointIndex).arg(jointName));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
 
@@ -1041,7 +1047,7 @@ void JointItem::setJointState(JointState newState)
         break;
     }
     case Configured:{
-        ui->groupBox->setTitle(QString("JOINT %1  -  CONFIGURED").arg(jointIndex));
+        ui->groupBox->setTitle(QString("JOINT %1 (%s) -  CONFIGURED").arg(jointIndex).arg(jointName));
         ui->stackedWidget->setEnabled(true);
         ui->buttonsContainer->setEnabled(true);
 
@@ -1055,10 +1061,12 @@ void JointItem::setJointState(JointState newState)
     }
 
     case NotConfigured:{
-        ui->groupBox->setTitle(QString("JOINT %1  -  NOT CONFIGURED").arg(jointIndex));
+        ui->groupBox->setTitle(QString("JOINT %1 (%s) -  NOT CONFIGURED").arg(jointIndex).arg(jointName));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
-
+        if (enableCalib){
+            ui->buttonCalib->setEnabled(true);
+        }
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
@@ -1069,7 +1077,7 @@ void JointItem::setJointState(JointState newState)
     }
 
     case CalibDone:{
-        ui->groupBox->setTitle(QString("JOINT %1  -  CALIBRATING DONE").arg(jointIndex));
+        ui->groupBox->setTitle(QString("JOINT %1 (%s) -  CALIBRATING DONE").arg(jointIndex).arg(jointName));
         ui->stackedWidget->setEnabled(true);
         ui->buttonsContainer->setEnabled(true);
 
@@ -1082,7 +1090,7 @@ void JointItem::setJointState(JointState newState)
         break;
     }
     case Calibrating:{
-        ui->groupBox->setTitle(QString("JOINT %1  -  CALIBRATING").arg(jointIndex));
+        ui->groupBox->setTitle(QString("JOINT %1 (%s) -  CALIBRATING").arg(jointIndex).arg(jointName));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
 
@@ -1095,7 +1103,7 @@ void JointItem::setJointState(JointState newState)
         break;
     }
     case HwFault:{
-        ui->groupBox->setTitle(QString("JOINT %1  -  HARDWARE FAULT").arg(jointIndex));
+        ui->groupBox->setTitle(QString("JOINT %1 (%s) -  HARDWARE FAULT").arg(jointIndex).arg(jointName));
         ui->stackedWidget->setEnabled(false);
         //ui->buttonsContainer->setEnabled(false);
         ui->buttonHome->setEnabled(false);
@@ -1114,7 +1122,7 @@ void JointItem::setJointState(JointState newState)
         break;
     }
     case Disconnected:{
-        ui->groupBox->setTitle(QString("JOINT %1  -  DISCONNECTED").arg(jointIndex));
+        ui->groupBox->setTitle(QString("JOINT %1 (%s) -  DISCONNECTED").arg(jointIndex).arg(jointName));
         ui->stackedWidget->setEnabled(false);
         ui->buttonsContainer->setEnabled(false);
 

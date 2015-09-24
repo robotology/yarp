@@ -52,6 +52,7 @@ namespace yarp {
         class IControlCalibration;
         class IControlCalibration2;
         class IAxisInfo;
+        class IAxisInfoRaw;
         struct CalibrationParameters;
     }
 }
@@ -716,7 +717,7 @@ public:
     virtual bool setLimits(int axis, double min, double max)=0;
     
     /* Get the software limits for a particular axis.
-     * @param axis joint number (again... why am I telling you this)
+     * @param axis joint number
      * @param pointer to store the value of the lower limit
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
@@ -745,7 +746,7 @@ public:
     virtual bool setLimitsRaw(int axis, double min, double max)=0;
     
     /* Get the software limits for a particular axis.
-     * @param axis joint number (again... why am I telling you this)
+     * @param axis joint number
      * @param pointer to store the value of the lower limit
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
@@ -756,7 +757,7 @@ public:
 /** 
  * Interface for getting information about specific axes, if available.
  */
-class yarp::dev::IAxisInfo
+class YARP_dev_API yarp::dev::IAxisInfo
 {
 public:
     /**
@@ -764,7 +765,31 @@ public:
      */
     virtual ~IAxisInfo() {}
 
+    /* Get the name for a particular axis.
+    * @param axis joint number
+    * @param name the axis name
+    * @return true if everything goes fine, false otherwise.
+    */
     virtual bool getAxisName(int axis, yarp::os::ConstString& name) = 0;
+};
+
+/**
+* Interface for getting information about specific axes, if available.
+*/
+class yarp::dev::IAxisInfoRaw
+{
+public:
+    /**
+    * Destructor.
+    */
+    virtual ~IAxisInfoRaw() {}
+
+    /* Get the name for a particular axis.
+    * @param axis joint number
+    * @param name the axis name
+    * @return true if everything goes fine, false otherwise.
+    */
+    virtual bool getAxisNameRaw(int axis, yarp::os::ConstString& name) = 0;
 };
 
 /* Vocabs representing the above interfaces */

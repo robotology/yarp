@@ -129,10 +129,11 @@ private:
     IOpenLoopControl *opl;
     ITorqueControl *trq;
     IImpedanceControl *imp;
+    IAxisInfo *iinfo;
 #ifdef DEBUG_INTERFACE
     IDebugInterface *idbg;
 #endif
-    IControlLimits *lim;
+    IControlLimits *ilim;
     IControlCalibration2 *cal;
     IControlMode2 *ctrlmode2;
     IInteractionMode *iinteract;

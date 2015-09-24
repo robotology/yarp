@@ -87,17 +87,17 @@
          </row>
          <row>
           <property name="text">
-           <string>PWM Limit</string>
+           <string>PID Output Limit</string>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>Integral Limit</string>
+           <string>PID Integral Limit</string>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>PWM Offset</string>
+           <string>PID Output Offset</string>
           </property>
          </row>
          <row>
@@ -393,17 +393,17 @@
        </row>
        <row>
         <property name="text">
-         <string>PWM Limit</string>
+         <string>PID Output Limit</string>
         </property>
        </row>
        <row>
         <property name="text">
-         <string>Integral Limit</string>
+         <string>PID Integral Limit</string>
         </property>
        </row>
        <row>
         <property name="text">
-         <string>PWM Offset</string>
+         <string>PID Output Offset</string>
         </property>
        </row>
        <row>
@@ -706,17 +706,17 @@
          </row>
          <row>
           <property name="text">
-           <string>PWM Limit</string>
+           <string>PID Output Limit</string>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>Integral Limit</string>
+           <string>PID Integral Limit</string>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>PWM Offset</string>
+           <string>PID Output Offset</string>
           </property>
          </row>
          <row>
@@ -1523,17 +1523,17 @@
        </row>
        <row>
         <property name="text">
-         <string>PWM Limit</string>
+         <string>PID Output Limit</string>
         </property>
        </row>
        <row>
         <property name="text">
-         <string>Integral Limit</string>
+         <string>PID Integral Limit</string>
         </property>
        </row>
        <row>
         <property name="text">
-         <string>PWM Offset</string>
+         <string>PID Output Offset</string>
         </property>
        </row>
        <column>

@@ -21,6 +21,7 @@
 #include <yarp/dev/ImplementOpenLoopControl.h>
 #include <yarp/dev/ImplementTorqueControl.h>
 #include <yarp/dev/ImplementImpedanceControl.h>
+#include <yarp/dev/ImplementAxisInfo.h>
 #include <yarp/dev/IPositionControl2Impl.h>
 #include <yarp/dev/IVelocityControl2Impl.h>
 #include <yarp/dev/IControlLimits2Impl.h>

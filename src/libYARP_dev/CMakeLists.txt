@@ -49,6 +49,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementImpedanceControl.h
                   include/yarp/dev/ImplementOpenLoopControl.h
                   include/yarp/dev/ImplementTorqueControl.h
+                  include/yarp/dev/ImplementAxisInfo.h
                   include/yarp/dev/IInteractionMode.h
                   include/yarp/dev/IInteractionModeImpl.h
                   include/yarp/dev/IOpenLoopControl.h
@@ -114,7 +115,8 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ServerFrameGrabber.cpp
                   src/ServerSerial.cpp
                   src/TestFrameGrabber.cpp
-                  src/TorqueControlImpl.cpp)
+                  src/TorqueControlImpl.cpp
+                  src/IAxisInfoImpl.cpp)
 
 set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/AnalogSensorClient/AnalogSensorClient.cpp

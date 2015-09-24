@@ -158,7 +158,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 #ifdef DEBUG_INTERFACE
     idbg      = NULL;
 #endif
-    lim       = NULL;
+    ilim       = NULL;
     cal       = NULL;
     ctrlmode2 = NULL;
     iinteract = NULL;
@@ -188,7 +188,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         if(!ok){
             LOG_ERROR("...vel was not ok...");
         }
-        ok &= partsdd->view(lim);
+        ok &= partsdd->view(ilim);
         if(!ok){
             LOG_ERROR("...lim was not ok...");
         }
@@ -229,6 +229,11 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         if (!partsdd->view(remCalib))
         {
             LOG_ERROR("...remCalib was not ok.\n");
+        }
+
+        if (!partsdd->view(iinfo))
+        {
+            LOG_ERROR("...axisInfo was not ok.\n");
         }
 
         if (!ok) {
@@ -297,6 +302,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         yInfo("%s iencs->getEncoders() ok!\n", partName.toLatin1().data());
         double min = 0;
         double max = 100;
+        yarp::os::ConstString jointname;
         //char buffer[40] = {'i', 'n', 'i', 't'};
 
         int NUMBER_OF_JOINTS;
@@ -313,7 +319,9 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
             pos->setRefSpeed(k, ARM_VELOCITY[k]);
 
             //index[k]=k;
-            lim->getLimits(k, &min, &max);
+            ilim->getLimits(k, &min, &max);
+
+            iinfo->getAxisName(k, jointname);
 
             Pid myPid(0,0,0,0,0,0);
             yarp::os::Time::delay(0.005);
@@ -322,6 +330,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 
             JointItem *joint = new JointItem(k);
             joint->setPositionRange(min,max);
+            joint->setJointName(jointname.c_str());
             joint->setOpenLoopRange(-myPid.max_output,myPid.max_output);
             layout->addWidget(joint);
             joint->setEnabledOptions(debug_param_enabled,

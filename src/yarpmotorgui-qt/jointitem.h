@@ -45,6 +45,7 @@ class JointItem : public QWidget
     void setSpeed(double val);
     void setOpenLoop(double val);
     void setMotionDone(bool done);
+    void setJointName(QString name);
     int getJointIndex();
     void setPositionRange(double min, double max);
     void setOpenLoopRange(double min, double max);
@@ -79,6 +80,7 @@ private:
     QString comboStyle1;
     QString comboStyle2;
     int jointIndex;
+    QString jointName;
     bool sliderVelocityPressed;
     bool sliderPositionPressed;
     bool sliderTorquePressed;
