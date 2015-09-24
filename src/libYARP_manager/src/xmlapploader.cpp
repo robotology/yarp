@@ -537,6 +537,13 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 Connection connection(from->GetText(),
                                     to->GetText(),
                                     strCarrier.c_str());
+
+                // check if Qos is set for the connection
+                if(cnn->Attribute("qos")) {
+                    connection.setQosTo(cnn->Attribute("qos"));
+                    connection.setQosFrom(cnn->Attribute("qos"));
+                }
+
                 if(from->Attribute("external") &&
                     compareString(from->Attribute("external"), "true"))
                 {
