@@ -166,14 +166,16 @@ public:
     /* Implementation of IFrameGrabberControls2 interface */
     virtual bool getCameraDescription(CameraDescriptor *camera);
     virtual bool hasFeature(int feature, bool *hasFeature);
-    virtual bool setFeature(int feature, double *values);
-    virtual bool getFeature(int feature, double *values);
-    virtual bool hasOnOff(int feature, bool *HasOnOff);
+    virtual bool setFeature(int feature, double  value);
+    virtual bool getFeature(int feature, double *value);
+    virtual bool setFeature(int feature, double  value1, double  value2);
+    virtual bool getFeature(int feature, double *value1, double *value2);
+    virtual bool hasOnOff(int feature, bool *_hasOnOff);
     virtual bool setActive(int feature, bool onoff);
-    virtual bool getActive(int feature, bool *isActive);
-    virtual bool hasAuto(int feature, bool *hasAuto);
-    virtual bool hasManual(int feature, bool *hasManual);
-    virtual bool hasOnePush(int feature, bool *hasOnePush);
+    virtual bool getActive(int feature, bool *_isActive);
+    virtual bool hasAuto(int feature, bool *_hasAuto);
+    virtual bool hasManual(int feature, bool *_hasManual);
+    virtual bool hasOnePush(int feature, bool *_hasOnePush);
     virtual bool setMode(int feature, FeatureMode mode);
     virtual bool getMode(int feature, FeatureMode *mode);
     virtual bool setOnePush(int feature);
@@ -182,6 +184,7 @@ private:
 
     yarp::os::Semaphore mutex;
     Video_params param;
+    bool isActive_vector[YARP_FEATURE_NUMEBR_OF];
     double timeStart, timeTot, timeNow, timeElapsed;
     int myCounter;
     int frameCounter;
@@ -230,7 +233,7 @@ private:
 
 private:
 
-    // low level stuff
+    // low level stuff - all functions here uses the Linux V4L specific definitions
     /**
      *    Do ioctl and retry if error was EINTR ("A signal was caught during the ioctl() operation."). Parameters are the same as on ioctl.
      *
@@ -241,9 +244,11 @@ private:
      */
     int xioctl(int fd, int request, void* argp);
 
+    int convertYARP_to_V4L(int feature);
     void enumerate_menu();
     bool enumerate_controls();
     bool set_V4L2_control(u_int32_t id, double value);
+    bool check_V4L2_control(uint32_t id);
     double get_V4L2_control(uint32_t id);
 };
 

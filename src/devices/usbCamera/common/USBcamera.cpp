@@ -365,63 +365,350 @@ bool USBCameraDriver::getCameraDescription(CameraDescriptor *camera)
     return false;
 }
 
-bool USBCameraDriver::hasFeature(int feature, bool *hasFeature)
+bool USBCameraDriver::hasFeature(int feature, bool *_hasFeature)
 {
-
+    if(deviceControls2)
+        return deviceControls2->hasFeature(feature, _hasFeature);
+    return false;
 }
 
-bool USBCameraDriver::setFeature(int feature, double *values)
+bool USBCameraDriver::setFeature(int feature, double value)
 {
-
+    if(deviceControls2)
+        return deviceControls2->setFeature(feature, value);
+    return false;
 }
 
-bool USBCameraDriver::getFeature(int feature, double *values)
+bool USBCameraDriver::getFeature(int feature, double *value)
 {
-
+    if(deviceControls2)
+        return deviceControls2->getFeature(feature, value);
+    return false;
 }
 
-bool USBCameraDriver::hasOnOff(int feature, bool *HasOnOff)
+bool USBCameraDriver::getFeature(int feature, double* value1, double* value2)
 {
+    if(deviceControls2)
+        return deviceControls2->getFeature(feature, value1, value2);
+    return false;
+}
 
+bool USBCameraDriver::setFeature(int feature, double value1, double value2)
+{
+    if(deviceControls2)
+        return deviceControls2->setFeature(feature, value1, value2);
+    return false;
+}
+
+bool USBCameraDriver::hasOnOff(int feature, bool *_hasOnOff)
+{
+    if(deviceControls2)
+        return deviceControls2->hasOnOff(feature, _hasOnOff);
+    return false;
 }
 
 bool USBCameraDriver::setActive(int feature, bool onoff)
 {
-
+    if(deviceControls2)
+        return deviceControls2->setActive(feature, onoff);
+    return false;
 }
 
 bool USBCameraDriver::getActive(int feature, bool *isActive)
 {
-
+    if(deviceControls2)
+        return deviceControls2->getActive(feature, isActive);
+    return false;
 }
 
-bool USBCameraDriver::hasAuto(int feature, bool *hasAuto)
+bool USBCameraDriver::hasAuto(int feature, bool *_hasAuto)
 {
-
+    if(deviceControls2)
+        return deviceControls2->hasAuto(feature, _hasAuto);
+    return false;
 }
 
-bool USBCameraDriver::hasManual(int feature, bool *hasManual)
+bool USBCameraDriver::hasManual(int feature, bool *_hasManual)
 {
-
+    if(deviceControls2)
+        return deviceControls2->hasManual(feature, _hasManual);
+    return false;
 }
 
-bool USBCameraDriver::hasOnePush(int feature, bool *hasOnePush)
+bool USBCameraDriver::hasOnePush(int feature, bool *_hasOnePush)
 {
-
+    if(deviceControls2)
+        return deviceControls2->hasOnePush(feature, _hasOnePush);
+    return false;
 }
 
 bool USBCameraDriver::setMode(int feature, FeatureMode mode)
 {
-
+    if(deviceControls2)
+        return deviceControls2->setMode(feature, mode);
+    return false;
 }
 
 bool USBCameraDriver::getMode(int feature, FeatureMode *mode)
 {
-
+    if(deviceControls2)
+        return deviceControls2->getMode(feature, mode);
+    return false;
 }
 
 bool USBCameraDriver::setOnePush(int feature)
 {
+    if(deviceControls2)
+        return deviceControls2->setOnePush(feature);
+    return false;
+}
+
+
+// fake stuff, to be removed
+bool USBCameraDriver::hasFeatureDC1394(int feature)
+{
+    yTrace();
+    return false;
 
 }
+bool USBCameraDriver::setFeatureDC1394(int feature,double value)
+{
+    yTrace();
+    return false;
+
+}
+double USBCameraDriver::getFeatureDC1394(int feature)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::hasOnOffDC1394(int feature)
+{
+
+    yTrace();
+    return false;
+}
+bool USBCameraDriver::setActiveDC1394(int feature, bool onoff)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::getActiveDC1394(int feature)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::hasAutoDC1394(int feature)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::hasManualDC1394(int feature)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::hasOnePushDC1394(int feature)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setModeDC1394(int feature, bool auto_onoff)
+{
+
+    yTrace();
+    return false;
+}
+bool USBCameraDriver::getModeDC1394(int feature)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setOnePushDC1394(int feature)
+{
+    yTrace();
+    return false;
+
+}
+unsigned int USBCameraDriver::getVideoModeMaskDC1394()
+{
+
+    yTrace();
+    return false;
+}
+bool USBCameraDriver::setVideoModeDC1394(int video_mode)
+{
+
+    yTrace();
+    return false;
+}
+unsigned int USBCameraDriver::getVideoModeDC1394()
+{
+    yTrace();
+    return false;
+
+}
+unsigned int USBCameraDriver::getFPSMaskDC1394()
+{
+
+    yTrace();
+    return false;
+}
+unsigned int USBCameraDriver::getFPSDC1394()
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setFPSDC1394(int fps)
+{
+    yTrace();
+    return false;
+
+}
+unsigned int USBCameraDriver::getISOSpeedDC1394()
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setISOSpeedDC1394(int speed)
+{
+    yTrace();
+    return false;
+
+}
+unsigned int USBCameraDriver::getColorCodingMaskDC1394(unsigned int video_mode)
+{
+
+    yTrace();
+    return false;
+}
+unsigned int USBCameraDriver::getColorCodingDC1394()
+{
+
+    yTrace();
+    return false;
+}
+bool USBCameraDriver::setColorCodingDC1394(int coding)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setWhiteBalanceDC1394(double b, double r)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::getWhiteBalanceDC1394(double &b, double &r)
+{
+
+    yTrace();
+    return false;
+}
+bool USBCameraDriver::getFormat7MaxWindowDC1394(unsigned int &xdim,unsigned int &ydim,unsigned int &xstep,unsigned int &ystep,unsigned int &xoffstep,unsigned int &yoffstep)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setFormat7WindowDC1394(unsigned int xdim,unsigned int ydim,int x0,int y0)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::getFormat7WindowDC1394(unsigned int &xdim,unsigned int &ydim,int &x0,int &y0)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setOperationModeDC1394(bool b1394b)
+{
+
+    yTrace();
+    return false;
+}
+bool USBCameraDriver::getOperationModeDC1394()
+{
+    yTrace();
+    return false;
+}
+bool USBCameraDriver::setTransmissionDC1394(bool bTxON)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::getTransmissionDC1394()
+{
+    yTrace();
+    return false;
+
+}
+/*
+ * bool USBCameraDriver::setBayerDC1394(bool bON)
+ * {
+ *    return RES(system_resources)->setBayerDC1394(bON);
+ * }
+ * bool USBCameraDriver::getBayerDC1394()
+ * {
+ *    return RES(system_resources)->getBayerDC1394();
+ * }
+ */
+bool USBCameraDriver::setBroadcastDC1394(bool onoff)
+{
+
+    yTrace();
+    return false;
+}
+bool USBCameraDriver::setDefaultsDC1394()
+{
+
+    yTrace();
+    return false;
+}
+bool USBCameraDriver::setResetDC1394()
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setPowerDC1394(bool onoff)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setCaptureDC1394(bool bON)
+{
+    yTrace();
+    return false;
+
+}
+bool USBCameraDriver::setBytesPerPacketDC1394(unsigned int bpp)
+{
+    yTrace();
+    return false;
+
+}
+unsigned int USBCameraDriver::getBytesPerPacketDC1394()
+{
+    yTrace();
+    return false;
+
+}
+
+
+
 

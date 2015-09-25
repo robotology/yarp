@@ -22,6 +22,38 @@ struct v4lconvert_data *_v4lconvert_data;
 using namespace yarp::os;
 using namespace yarp::dev;
 
+#define NOT_PRESENT -1
+int V4L_camera::convertYARP_to_V4L(int feature)
+{
+    switch (feature)
+    {
+        case YARP_FEATURE_BRIGHTNESS:     return V4L2_CID_BRIGHTNESS;
+        case YARP_FEATURE_SHUTTER:        // this maps also on exposure
+        case YARP_FEATURE_EXPOSURE:       return V4L2_CID_EXPOSURE;
+        case YARP_FEATURE_SHARPNESS:      return V4L2_CID_SHARPNESS;
+        case YARP_FEATURE_HUE:            return V4L2_CID_HUE;
+        case YARP_FEATURE_SATURATION:     return V4L2_CID_SATURATION;
+        case YARP_FEATURE_GAMMA:          return V4L2_CID_GAMMA;
+        case YARP_FEATURE_GAIN:           return V4L2_CID_GAIN;
+        case YARP_FEATURE_IRIS:           return V4L2_CID_IRIS_ABSOLUTE;
+
+//         case YARP_FEATURE_WHITE_BALANCE:  -> this has to e mapped on the couple V4L2_CID_BLUE_BALANCE && V4L2_CID_RED_BALANCE
+
+        //////////////////////////
+        // not yet implemented  //
+        //////////////////////////
+//         case YARP_FEATURE_FOCUS:          return DC1394_FEATURE_FOCUS;
+//         case YARP_FEATURE_TEMPERATURE:    return DC1394_FEATURE_TEMPERATURE;
+//         case YARP_FEATURE_TRIGGER:        return DC1394_FEATURE_TRIGGER;
+//         case YARP_FEATURE_TRIGGER_DELAY:  return DC1394_FEATURE_TRIGGER_DELAY;
+//         case YARP_FEATURE_FRAME_RATE:     return DC1394_FEATURE_FRAME_RATE;
+//         case YARP_FEATURE_ZOOM:           return DC1394_FEATURE_ZOOM;
+//         case YARP_FEATURE_PAN:            return DC1394_FEATURE_PAN;
+//         case YARP_FEATURE_TILT:           return DC1394_FEATURE_TILT;
+    }
+    return NOT_PRESENT;
+}
+
 V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE)
 {
     param.width  = DEFAULT_WIDTH;
@@ -327,6 +359,7 @@ bool V4L_camera::deviceInit()
     else
         printf("DONE: v4lconvert_try_format\n\n");
 
+    printf("param.width = %d; src.width = %d\n", param.width, param.src_fmt.fmt.pix.width);
 
     if (-1 == xioctl(param.fd, VIDIOC_S_FMT, &param.src_fmt))
         std::cout << "xioctl error VIDIOC_S_FMT" << std::endl;
@@ -1102,14 +1135,15 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value)
         if (errno != EINVAL)
         {
             perror ("VIDIOC_QUERYCTRL");
-            return false;
         }
         else
         {
-            printf ("Control %s is not supported\n", queryctrl.name);
+            printf ("Control <%s> is not supported (id %d)\n", queryctrl.name, queryctrl.id);
         }
+        return false;
     }
-    else if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+
+    if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
     {
         printf ("Control %s is disabled\n", queryctrl.name);
         return false;
@@ -1134,6 +1168,33 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value)
     return true;
 }
 
+bool V4L_camera::check_V4L2_control(uint32_t id)
+{
+    yTrace();
+    struct v4l2_queryctrl queryctrl;
+    struct v4l2_control control;
+
+    memset (&control, 0, sizeof (control));
+    memset (&queryctrl, 0, sizeof (queryctrl));
+
+    control.id = id;
+    queryctrl.id = id;
+
+    if (-1 == ioctl (param.fd, VIDIOC_QUERYCTRL, &queryctrl))
+    {
+        if (errno != EINVAL)
+        {
+            perror ("VIDIOC_QUERYCTRL");
+        }
+        else
+        {
+            printf ("Control %s is not supported\n", queryctrl.name);
+        }
+        return false;
+    }
+    return true;
+}
+
 double V4L_camera::get_V4L2_control(uint32_t id)
 {
     yTrace();
@@ -1151,14 +1212,15 @@ double V4L_camera::get_V4L2_control(uint32_t id)
         if (errno != EINVAL)
         {
             perror ("VIDIOC_QUERYCTRL");
-            return false;
         }
         else
         {
             printf ("Control %s is not supported\n", queryctrl.name);
         }
+        return -1.0;
     }
-    else if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+
+    if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
     {
         printf ("Control %s is disabled\n", queryctrl.name);
     }
@@ -1167,7 +1229,7 @@ double V4L_camera::get_V4L2_control(uint32_t id)
         if (-1 == ioctl(param.fd, VIDIOC_G_CTRL, &control))
         {
             perror ("VIDIOC_G_CTRL");
-            return false;
+            return -1.0;
         }
 //         printf("Control %s got value %d!\n", queryctrl.name, control.value);
     }
@@ -1231,13 +1293,15 @@ double V4L_camera::getShutter()
     return false;
 }
 
-bool V4L_camera::getWhiteBalance(double& blue, double& red)
+bool V4L_camera::getWhiteBalance(double &blue, double &red)
 {
     yTrace();
-    bool ret = true;
-    blue = set_V4L2_control(V4L2_CID_RED_BALANCE, blue);
-    red  = set_V4L2_control(V4L2_CID_BLUE_BALANCE, red);
-    return ret;
+    blue = get_V4L2_control(V4L2_CID_RED_BALANCE);
+    red  = get_V4L2_control(V4L2_CID_BLUE_BALANCE);
+    if( (red == -1) || (blue == -1) )
+        return false;
+    else
+        return true;
 }
 
 
@@ -1302,6 +1366,8 @@ bool V4L_camera::setWhiteBalance(double blue, double red)
 {
     yTrace();
     bool ret = true;
+    ret &= set_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE, false);
+    ret &= set_V4L2_control(V4L2_CID_AUTO_N_PRESET_WHITE_BALANCE, V4L2_WHITE_BALANCE_MANUAL);
     ret &= set_V4L2_control(V4L2_CID_RED_BALANCE, blue);
     ret &= set_V4L2_control(V4L2_CID_BLUE_BALANCE, red);
     return ret;
@@ -1316,68 +1382,317 @@ bool V4L_camera::getCameraDescription(CameraDescriptor* camera)
     return true;
 }
 
-bool V4L_camera::hasFeature(int feature, bool* hasFeature)
+bool V4L_camera::hasFeature(int feature, bool *_hasFeature)
 {
+    bool tmpMan(false), tmpAuto(false), tmpOnce(false);
 
+    switch(feature)
+    {
+        case YARP_FEATURE_WHITE_BALANCE:
+        {
+            tmpMan = check_V4L2_control(V4L2_CID_RED_BALANCE) && check_V4L2_control(V4L2_CID_BLUE_BALANCE);
+            if(!tmpMan)
+                yError() << "No manual white_balance!!";
+
+            tmpOnce = check_V4L2_control(V4L2_CID_DO_WHITE_BALANCE);
+            if(!tmpOnce)
+                yInfo() << "No one shot white_balance!!";
+
+            tmpAuto = check_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
+            if(!tmpAuto)
+                yInfo() << "No auto white_balance!!";
+        } break;
+
+        case YARP_FEATURE_EXPOSURE:
+        {
+            tmpMan = check_V4L2_control(V4L2_CID_EXPOSURE);
+            if(!tmpMan)
+                yError() << "No manual exposure!!";
+
+            tmpAuto = check_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
+            if(!tmpAuto)
+                yInfo() << "No auto exposure!!";
+        } break;
+
+        default:
+        {
+            tmpMan = check_V4L2_control(convertYARP_to_V4L(feature));
+        } break;
+    }
+
+    *_hasFeature = tmpMan || tmpOnce || tmpAuto;
+    return true;
 }
 
-bool V4L_camera::setFeature(int feature, double* values)
+bool V4L_camera::setFeature(int feature, double value)
 {
-
+    return set_V4L2_control(convertYARP_to_V4L(feature), value);
 }
 
-bool V4L_camera::getFeature(int feature, double* values)
+bool V4L_camera::getFeature(int feature, double* value)
 {
+    double tmp =  get_V4L2_control(convertYARP_to_V4L(feature));
+    if( tmp == -1)
+        return false;
 
+    *value = tmp;
+    return true;
 }
 
-bool V4L_camera::hasOnOff(int feature, bool* hasOnOff)
+bool V4L_camera::setFeature(int feature, double value1, double value2)
 {
+    if(feature == YARP_FEATURE_WHITE_BALANCE)
+    {
+        return setWhiteBalance(value1, value2);
+    }
+    return false;
+}
 
+bool V4L_camera::getFeature(int feature, double* value1, double* value2)
+{
+    if(feature == YARP_FEATURE_WHITE_BALANCE)
+    {
+        return getWhiteBalance(*value1, *value2);
+    }
+    return false;
+}
+
+bool V4L_camera::hasOnOff(int feature, bool *_hasOnOff)
+{
+    bool _hasAuto;
+    // I can't find any meaning of setting a feature to off on V4l ... what it is supposed to do????
+    switch(feature)
+    {
+        case YARP_FEATURE_WHITE_BALANCE:
+        {
+            if(hasAuto(feature, &_hasAuto) )
+                *_hasOnOff = true;
+            else
+                *_hasOnOff = false;
+        } break;
+
+        case YARP_FEATURE_EXPOSURE:
+        {
+
+        } // break;
+
+        default:
+        {
+            hasAuto(feature, &_hasAuto);
+            if(_hasAuto)
+                *_hasOnOff = true;
+            else
+                *_hasOnOff = false;
+        } break;
+    }
+    return true;
 }
 
 bool V4L_camera::setActive(int feature, bool onoff)
 {
+    // I can't find any meaning of setting a feature to off on V4l ... what it is supposed to do????
+    bool tmp;
+    switch(feature)
+    {
+        case YARP_FEATURE_WHITE_BALANCE:
+        {
+            tmp = set_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE, onoff);
+            if(tmp)
+                isActive_vector[feature] = onoff;
+        } break;
 
+        case YARP_FEATURE_EXPOSURE:
+        {
+            if(onoff)
+            {
+                set_V4L2_control(V4L2_LOCK_EXPOSURE, false);
+
+                hasAuto(feature, &tmp);
+                if(tmp)
+                    tmp = set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_AUTO);
+                else
+                    tmp = set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
+
+                if(tmp)
+                    isActive_vector[feature] = onoff;
+            }
+            else
+            {
+                set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
+                set_V4L2_control(V4L2_LOCK_EXPOSURE, true);
+                isActive_vector[feature] = onoff;
+            }
+        } break;
+
+        default:    // what to do in each case?
+        {
+            if(onoff == true)
+            {
+                isActive_vector[feature] = true;
+                return true;
+            }
+            else
+            {
+                isActive_vector[feature] = false;
+                return false;
+            }
+        } break;
+    }
 }
 
-bool V4L_camera::getActive(int feature, bool* isActive)
+bool V4L_camera::getActive(int feature, bool *_isActive)
 {
+    // I can't find any meaning of setting a feature to off on V4l ... what it is supposed to do????
+    *_isActive = isActive_vector[feature];
+    return true;
 
+    switch(feature)
+    {
+        case YARP_FEATURE_WHITE_BALANCE:
+        {
+            double tmp = get_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
+            if(tmp == 1)
+            {
+                *_isActive = true;
+            }
+            else
+                *_isActive = false;
+        } break;
+
+
+        case YARP_FEATURE_EXPOSURE:
+        {
+            *_isActive = get_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
+            yInfo() << "get active V4L2_CID_EXPOSURE_AUTO is " <<  get_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
+        } break;
+
+        default:
+        {
+            *_isActive = true;
+        } break;
+    }
+
+    return true;
 }
 
-bool V4L_camera::hasAuto(int feature, bool* hasAuto)
+bool V4L_camera::hasAuto(int feature, bool* _hasAuto)
 {
+    switch(feature)
+    {
+        case YARP_FEATURE_WHITE_BALANCE:
+        {
+            *_hasAuto = check_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
+            yWarning() << "_hasAuto for white balance is " << *_hasAuto;
+        } break;
 
+        case YARP_FEATURE_BRIGHTNESS:
+        {
+            *_hasAuto = check_V4L2_control(V4L2_CID_AUTOBRIGHTNESS);
+            yWarning() << "_hasAuto for brightness is " << *_hasAuto;
+        } break;
+
+        case YARP_FEATURE_GAIN:
+        {
+            *_hasAuto = check_V4L2_control(V4L2_CID_AUTOGAIN);
+            yWarning() << "_hasAuto for gain is " << *_hasAuto;
+        } break;
+
+        case YARP_FEATURE_EXPOSURE:
+        {
+            *_hasAuto = check_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
+            yWarning() << "_hasAuto for exposure is " << *_hasAuto;
+        } break;
+
+        case YARP_FEATURE_HUE:
+        {
+            *_hasAuto = check_V4L2_control(V4L2_CID_HUE_AUTO);
+            yWarning() << "_hasAuto for HUE is " << *_hasAuto;
+        } break;
+
+        default:
+        {
+            *_hasAuto = false;
+        } break;
+    }
+    return true;
 }
 
-bool V4L_camera::hasManual(int feature, bool* hasManual)
+bool V4L_camera::hasManual(int feature, bool* _hasManual)
 {
+    if(feature == YARP_FEATURE_WHITE_BALANCE)
+    {
+        *_hasManual = check_V4L2_control(V4L2_CID_RED_BALANCE) && check_V4L2_control(V4L2_CID_BLUE_BALANCE);
+        return true;
+    }
 
+    return hasFeature(feature, _hasManual);
 }
 
-bool V4L_camera::hasOnePush(int feature, bool* hasOnePush)
+bool V4L_camera::hasOnePush(int feature, bool *_hasOnePush)
 {
+    // I'm not able to map a 'onePush' request on V4L api
+    yTrace();
+    switch(feature)
+    {
+        case YARP_FEATURE_WHITE_BALANCE:
+        {
+            *_hasOnePush = check_V4L2_control(V4L2_CID_DO_WHITE_BALANCE);
+            yInfo() << "one push for white balance is " << *_hasOnePush;
+            return true;
+        } break;
 
+        default:
+        {
+            *_hasOnePush = false;
+        } break;
+    }
+    return true;
 }
 
 bool V4L_camera::setMode(int feature, FeatureMode mode)
 {
-
+    if(mode == MODE_MANUAL)
+        return true;
+    else
+        return false;
 }
 
-bool V4L_camera::getMode(int feature, FeatureMode* mode)
+bool V4L_camera::getMode(int feature, FeatureMode *mode)
 {
+    switch(feature)
+    {
+        case YARP_FEATURE_WHITE_BALANCE:
+        {
+            double ret  = get_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
+            *mode = toFeatureMode(ret);
+            yInfo() << "auto mode for white balance is " << *mode;
+        } break;
 
+        case YARP_FEATURE_EXPOSURE:
+        {
+            double ret  = get_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
+            if( ret == V4L2_EXPOSURE_MANUAL)
+                *mode = MODE_MANUAL;
+            else
+                *mode = MODE_AUTO;
+
+            yInfo() << "auto mode for exposure is " << *mode;
+        } break;
+
+        default:
+        {
+            *mode = MODE_MANUAL;
+        } break;
+    }
+    return true;
 }
 
 bool V4L_camera::setOnePush(int feature)
 {
-
+    // I'm not able to map a 'onePush' request on each V4L api
+    if(feature == YARP_FEATURE_WHITE_BALANCE)
+    {
+        return set_V4L2_control(V4L2_CID_DO_WHITE_BALANCE, true);
+    }
+    return false;
 }
-
-
-
-
-
-
