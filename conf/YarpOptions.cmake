@@ -4,6 +4,8 @@
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
+include(YarpRenamedOption)
+include(YarpDeprecatedOption)
 
 
 #########################################################################
@@ -264,14 +266,15 @@ endif()
 #########################################################################
 # Control setting an rpath
 if(NOT MSVC)
-    option(INSTALL_WITH_RPATH "When installing, give executables hard-coded paths to the libraries they need" FALSE)
-    option(ENABLE_FORCE_RPATH "Set an rpath after installing the executables (deprecated, please use INSTALL_WITH_RPATH" FALSE)
-    mark_as_advanced(ENABLE_FORCE_RPATH)
+    option(INSTALL_WITH_RPATH "When installing, give executables hard-coded paths to the libraries they need" OFF)
+    yarp_renamed_option(ENABLE_FORCE_RPATH INSTALL_WITH_RPATH)
+else()
+    yarp_deprecated_option(ENABLE_FORCE_RPATH)
 endif()
 
 # By default do not build with rpath.
 # If this flag is true then all the variables related to RPATH are ignored
-if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
+if(INSTALL_WITH_RPATH)
     # Maintain back-compatibility
     if(${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_GREATER "2.8.12")
         message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
