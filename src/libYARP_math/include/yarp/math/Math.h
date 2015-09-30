@@ -528,7 +528,8 @@ namespace yarp
         * \f[  R = R_z(\alpha) R_y(\beta) R_z(\gamma) \f]
         * @param euler is the input vector (alpha=z-rotation, 
         *              beta=y-rotation, gamma=z-rotation).
-        * @return 3 by 3 matrix representing the ZYZ rotation.
+        * @return 4 by 4 homogeneous matrix representing the ZYZ 
+        *         rotation.
         */
         YARP_math_API yarp::sig::Matrix euler2dcm(const yarp::sig::Vector &euler);
 
@@ -554,7 +555,8 @@ namespace yarp
         * @param rpy is the input vector (\psi=roll 
         *            x-rotation,\theta=pitch y-rotation, \phi=yaw
         *            z-rotation).
-        * @return 3 by 3 matrix representing the ZYX rotation.
+        * @return 4 by 4 homogeneous matrix representing the ZYX 
+        *         rotation.
         */
         YARP_math_API yarp::sig::Matrix rpy2dcm(const yarp::sig::Vector &rpy);
 
