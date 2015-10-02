@@ -164,12 +164,7 @@ void TextureBuffer::createTextureAndBuffers()
     for (int i = 0; i < 2; ++i) {
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboIds[0]);
         glBufferData(GL_PIXEL_UNPACK_BUFFER, bufferSize, 0, GL_STREAM_DRAW);
-
-        // FIXME Is this the right way to clear the buffer at beginning?
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, 0);
-        GLubyte* p = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
-        memset(p, 0, bufferSize);
-        glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     checkGlErrorMacro;
