@@ -281,7 +281,7 @@ bool ServerFrameGrabber::respondToFrameGrabberControl2(const yarp::os::Bottle& c
 
                 case VOCAB_FEATURE2:
                 {
-                    ok = fgCtrl2->setFeature(cmd.get(3).asInt(), cmd.get(4).asDouble(), cmd.get(4).asDouble());
+                    ok = fgCtrl2->setFeature(cmd.get(3).asInt(), cmd.get(4).asDouble(), cmd.get(5).asDouble());
                 } break;
 
                 case VOCAB_ACTIVE:
