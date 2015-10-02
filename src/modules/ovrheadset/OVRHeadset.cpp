@@ -106,7 +106,8 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         hqDistortionEnabled(true),
         flipInputEnabled(true),
         timeWarpEnabled(true),
-        imagePoseEnabled(true)
+        imagePoseEnabled(true),
+        userPoseEnabled(false)
 {
     yTrace();
 
@@ -268,6 +269,11 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     imagePoseEnabled = false;
     if (cfg.check("imagepose", "[I] Enable image pose")) {
         imagePoseEnabled = true;
+    }
+
+    userPoseEnabled = false;
+    if (cfg.check("userpose", "[U] Use user pose instead of camera pose")) {
+        userPoseEnabled = true;
     }
 
 //    userHeight = cfg.check("userHeight", yarp::os::Value(0.),  "User height").asDouble();
@@ -845,19 +851,25 @@ void yarp::dev::OVRHeadset::run()
         // Wait till time-warp point to reduce latency.
         ovr_WaitTillTime(frameTiming.TimewarpPointSeconds - 0.001);
 
+        //static double ttt =yarp::os::Time::now();
+        //yDebug () << yarp::os::Time::now() - ttt;
+        //ttt = yarp::os::Time::now();
         // Update the textures
         for (int i = 0; i<2; i++) {
             displayPorts[i]->eyeRenderTexture->update();
         }
 
 
-        if (imagePoseEnabled) {
-            // Use orientation received from the image
-            for (int i = 0; i<2; i++) {
-                EyeRenderPose[i].Orientation = displayPorts[i]->eyeRenderTexture->eyePose.Orientation;
-            }
-        } else {
-            for (int i = 0; i<2; i++) {
+        for (int i = 0; i<2; i++) {
+            if (imagePoseEnabled) {
+                if (userPoseEnabled) {
+                    // Use orientation read from the HMD at the beginning of the frame
+                    EyeRenderPose[i].Orientation = headpose.ThePose.Orientation;
+                } else {
+                    // Use orientation received from the image
+                    EyeRenderPose[i].Orientation = displayPorts[i]->eyeRenderTexture->eyePose.Orientation;
+                }
+            } else {
                 EyeRenderPose[i].Orientation.w = -1.0f;
                 EyeRenderPose[i].Orientation.x = 0.0f;
                 EyeRenderPose[i].Orientation.y = 0.0f;
@@ -1054,6 +1066,10 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     case GLFW_KEY_I:
         imagePoseEnabled = !imagePoseEnabled;
         yDebug() << "Image pose" << (imagePoseEnabled ? "ON" : "OFF");
+        break;
+    case GLFW_KEY_U:
+        userPoseEnabled = !userPoseEnabled;
+        yDebug() << "User pose" << (userPoseEnabled ? "ON" : "OFF");
         break;
     case GLFW_KEY_ESCAPE:
         this->close();

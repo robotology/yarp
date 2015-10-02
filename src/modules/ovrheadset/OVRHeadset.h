@@ -106,6 +106,7 @@ private:
     bool flipInputEnabled;
     bool timeWarpEnabled;
     bool imagePoseEnabled;
+    bool userPoseEnabled;
 
     double prediction;
 
