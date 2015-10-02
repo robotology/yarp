@@ -81,8 +81,7 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearVelocityPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedAngularAccelerationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearAccelerationPort;
-    yarp::os::BufferedPort<ImageType>* displayPorts[2];
-    InputCallback* displayPortCallbacks[2];
+    InputCallback* displayPorts[2];
     ovrEyeRenderDesc EyeRenderDesc[2];
 
     ovrHmd hmd;

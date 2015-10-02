@@ -10,13 +10,13 @@
 
 #include "ImageType.h"
 
-#include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Image.h>
 
 
 class TextureBuffer;
 
-class InputCallback: public yarp::os::TypedReaderCallback<ImageType>
+class InputCallback: public yarp::os::BufferedPort<ImageType>
 {
 public:
     InputCallback(int eye);
