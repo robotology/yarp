@@ -9,11 +9,12 @@
 #include "InputCallback.h"
 #include "TextureBuffer.h"
 
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
 InputCallback::InputCallback(int eye) :
-        yarp::os::TypedReaderCallback<ImageType>(),
+        yarp::os::BufferedPort<ImageType>(),
         eyeRenderTexture(NULL),
         eye(eye),
         expected(0),
@@ -113,20 +114,28 @@ void InputCallback::onRead(ImageType &img)
             }
         }
 
-//         yDebug() << img.roll << img.pitch << img.yaw;
-//         float roll = OVR::DegreeToRad(static_cast<float>(-img.roll));
-//         float pitch = OVR::DegreeToRad(static_cast<float>(-img.pitch));
-//         float yaw = OVR::DegreeToRad(static_cast<float>(img.yaw));
-//         float x = static_cast<float>(img.x);
-//         float y = static_cast<float>(img.y);
-//         float z = static_cast<float>(img.z);
+//        float roll = OVR::DegreeToRad(static_cast<float>(-img.roll)) + rollOffset;
+//        float pitch = OVR::DegreeToRad(static_cast<float>(img.pitch)) + rollOffset;
+//        float yaw = OVR::DegreeToRad(static_cast<float>(img.yaw)) + rollOffset;
+//        float x = static_cast<float>(img.x);
+//        float y = static_cast<float>(img.y);
+//        float z = static_cast<float>(img.z);
 
-        float roll = 0.0f + rollOffset;
-        float pitch = 0.0f + pitchOffset;
-        float yaw = 0.0f + yawOffset;
         float x = 0.0f;
         float y = 0.0f;
         float z = 0.0f;
+        float roll = rollOffset;
+        float pitch = pitchOffset;
+        float yaw = yawOffset;
+
+        yarp::os::Bottle b;
+        yarp::os::BufferedPort<ImageType>::getEnvelope(b);
+        if (b.size() == 3) {
+            roll += OVR::DegreeToRad(static_cast<float>(b.get(0).asDouble()));
+            pitch += OVR::DegreeToRad(static_cast<float>(b.get(1).asDouble()));
+            yaw += OVR::DegreeToRad(static_cast<float>(b.get(2).asDouble()));
+        }
+        //yDebug() << b.toString() << roll << pitch << yaw;
 
         eyeRenderTexture->eyePose.Orientation.w = (float)(- cos(roll/2) * cos(pitch/2) * cos(yaw/2) - sin(roll/2) * sin(pitch/2) * sin(yaw/2));
         eyeRenderTexture->eyePose.Orientation.x = (float)(- cos(roll/2) * sin(pitch/2) * cos(yaw/2) - sin(roll/2) * cos(pitch/2) * sin(yaw/2));
