@@ -30,7 +30,7 @@ On Linux:
     sudo make install  # Optional
 
 On Windows:
- * Binaries at http://sourceforge.net/projects/yarp0/files/yarp2/
+ * Binaries at https://github.com/robotology/yarp/releases
 
 Regular YARP builds use the ACE library.  On Linux and OSX,
 YARP can be compiled without ACE by adding "-DSKIP_ACE=TRUE" 
