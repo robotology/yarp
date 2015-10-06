@@ -838,7 +838,7 @@ void yarp::dev::OVRHeadset::run()
     }
 
 
-//    if(displayPorts[0]->eyeRenderTexture && displayPorts[1]->eyeRenderTexture) {
+    if(displayPorts[0]->eyeRenderTexture && displayPorts[1]->eyeRenderTexture) {
         // Do distortion rendering, Present and flush/sync
         ovrGLTexture eyeTex[2];
         for (int i = 0; i<2; ++i) {
