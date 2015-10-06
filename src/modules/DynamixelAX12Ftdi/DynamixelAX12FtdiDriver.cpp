@@ -18,11 +18,15 @@ bool NOT_YET_IMPLEMENTED(const char *txt) {
     return false;
 }
 
-DynamixelAX12FtdiDriver::DynamixelAX12FtdiDriver() {
-
-    deviceOpen = false;
-    numOfAxes = 16;
-    jointNumbers = (unsigned char *) malloc(16 * sizeof (unsigned char));
+DynamixelAX12FtdiDriver::DynamixelAX12FtdiDriver() :
+        deviceOpen(false),
+        jointNumbers((unsigned char *) malloc(16 * sizeof (unsigned char))),
+        numOfAxes(16),
+        positions((double *) malloc(numOfAxes * sizeof (double))),
+        speeds((double *) malloc(numOfAxes * sizeof (double))),
+        devlist(NULL),
+        torques((int *) malloc(numOfAxes * sizeof (int)))
+{
     // initialise
     jointNumbers[0] = 0x65;
     jointNumbers[1] = 0x74;
@@ -41,9 +45,7 @@ DynamixelAX12FtdiDriver::DynamixelAX12FtdiDriver() {
     jointNumbers[14] = 0x69;
     jointNumbers[15] = 0x6C;
 
-    positions = (double *) malloc(numOfAxes * sizeof (double));
-    speeds = (double *) malloc(numOfAxes * sizeof (double));
-    torques = (int *) malloc(numOfAxes * sizeof (int));
+    ftdi_init(&ftdic);
 }
 
 DynamixelAX12FtdiDriver::~DynamixelAX12FtdiDriver() {
@@ -58,8 +60,6 @@ DynamixelAX12FtdiDriver::~DynamixelAX12FtdiDriver() {
 bool DynamixelAX12FtdiDriver::open(yarp::os::Searchable& config) {
 
     mutex.wait();
-
-    ftdi_init(&ftdic);
 
     FtdiDeviceSettings ftdiSetting;
     strcpy(ftdiSetting.description, config.check("FTDI_DESCRIPTION", Value("FT232R USB UART"), "Ftdi device description").asString().c_str());
