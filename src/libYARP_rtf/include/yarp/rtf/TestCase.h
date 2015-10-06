@@ -40,45 +40,43 @@ public:
         RTF_ASSERT_ERROR_IF(yarp.checkNetwork(),
                             "YARP network does not seem to be available, is the yarp server accessible?");
 
+        // loading environment properties by parsing the string value
+        // from getEnvironment().
+        std::string strEnv = getEnvironment();
+        yarp::os::Property envprop;
+        envprop.fromArguments(strEnv.c_str());
+        bool useSuitContext = envprop.check("context");
+
         // load the config file and update the environment if available
         // E.g., "--from mytest.ini"
         yarp::os::ResourceFinder rf;
         rf.setVerbose(false);
-        rf.setDefaultContext("RobotTesting");
+        if(useSuitContext)
+            rf.setDefaultContext(envprop.find("context").asString().c_str());
+        else
+            rf.setDefaultContext("RobotTesting");
         rf.configure(argc, argv);
         yarp::os::Property property;
 
-        std::string strEnv = getEnvironment();
-        if(rf.check("from") && strEnv.size()) {
+        if(rf.check("from")) {
 
             std::string cfgname = rf.find("from").asString();
             RTF_ASSERT_ERROR_IF(cfgname.size(),
                                 "Empty value was set for the '--from' property");
 
-            // loading environment properties by parsing the string value
-            // from getEnvironment().
-            yarp::os::Property envprop;
-            char* szenv = new char[strEnv.size()+1];
-            strcpy(szenv, strEnv.c_str());
-            int argc = 0;
-            char** argv = new char*[128]; // maximum 128
-            RTF::Arguments::parse(szenv, &argc, argv);
-            argv[argc]=0;
-            envprop.fromCommand(argc, argv, false);
-            delete [] szenv;
-            delete [] argv;
-
             // loading configuration file indicated by --from
             std::string cfgfile = rf.findFileByName(cfgname.c_str());
 
+            bool useTestContext = rf.check("context");
+
             // if the config file cannot be found from default context or
             // there is not any context, use the robotname environment as context
-            if(!cfgfile.size() && envprop.check("robotname")) {
+            if(!useSuitContext && !useTestContext && !cfgfile.size() && envprop.check("robotname")) {
                 rf.setContext(envprop.find("robotname").asString().c_str());
                 cfgfile = rf.findFileByName(cfgname.c_str());
             }
             RTF_ASSERT_ERROR_IF(cfgfile.size(),
-                                RTF::Asserter::format("Cannot find configuratio file %s", cfgfile.c_str()));
+                                RTF::Asserter::format("Cannot find configuration file %s", cfgfile.c_str()));
 
             // update the properties with environment
             property.fromConfigFile(cfgfile.c_str(), envprop);
