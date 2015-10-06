@@ -102,6 +102,7 @@ void SubDevice::detach()
     posDir=0;
     vel=0;
     vel2=0;
+    amp = 0;
     iJntEnc=0;
     iMotEnc=0;
     lim2=0;
