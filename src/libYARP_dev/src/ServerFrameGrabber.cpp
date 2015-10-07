@@ -374,10 +374,6 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
     int code = cmd.get(0).asVocab();
 
     IFrameGrabberControlsDC1394* fgCtrlDC1394=dynamic_cast<IFrameGrabberControlsDC1394*>(fgCtrl);
-    IFrameGrabberControls2* _fgCtrl2=dynamic_cast<IFrameGrabberControls2*>(fgCtrl);
-
-//     yDebug() << "_fgCtrl2 is " << _fgCtrl2;
-//     yDebug("%s\n", cmd.toString().c_str());
 
     switch (code)
     {

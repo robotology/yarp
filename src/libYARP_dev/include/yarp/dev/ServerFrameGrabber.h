@@ -84,7 +84,7 @@ class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public IAudioGrabberSound,
             public IAudioVisualGrabber,
             public IFrameGrabberControls,
-            public IFrameGrabberControls2, // we can skip implementing this, like for DC1394 (?)
+            public IFrameGrabberControls2,
             public IService,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelMono> >,
