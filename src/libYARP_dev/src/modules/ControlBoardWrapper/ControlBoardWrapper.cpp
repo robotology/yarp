@@ -45,6 +45,7 @@ ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),
     rosNode = NULL;
     rosMsgCounter = 0;
     useROS = ROS_disabled;
+    jointNames.clear();
 }
 
 void ControlBoardWrapper::cleanup_yarpPorts()
@@ -158,7 +159,6 @@ bool ControlBoardWrapper::checkROSParams(Searchable &config)
     if(!config.check("ROS") )
     {
         useROS = ROS_disabled;
-        yInfo()  << "No ROS group found in config file ... skipping ROS initialization.";
         return true;
     }
     else
@@ -226,33 +226,34 @@ bool ControlBoardWrapper::checkROSParams(Searchable &config)
         yInfo() << partName << "rosTopicName is " << rosTopicName;
 
         // check for rosNodeName parameter
+        // UPDATE: joint names are got from MotionControl subdevice now.
+        // An error should be thrown later on in case we fail geting names from device
         if(!rosGroup.check("jointNames"))
         {
-            yError() << partName << " cannot find jointNames parameter, mandatory when using ROS message";
-            useROS = ROS_config_error;
-            return false;
+            yInfo() << partName << "ROS topic has been required, jointNames will be got from motionControl subdevice.";
         }
-
-        Bottle nameList = rosGroup.findGroup("jointNames").tail();
-
-        if (nameList.isNull())
+        else  // if names are there, store them. They will be used for back compatibility if old policy is used.
         {
-            yError() << partName << " jointNames not found\n";
-            useROS = ROS_config_error;
-            return false;
-        }
+            Bottle nameList = rosGroup.findGroup("jointNames").tail();
+            if (nameList.isNull())
+            {
+                yError() << partName << " jointNames not found\n";
+                useROS = ROS_config_error;
+                return false;
+            }
 
-        if(nameList.size() != controlledJoints)
-        {
-            yError() << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected length is " << controlledJoints;
-            useROS = ROS_config_error;
-            return false;
-        }
+            if(nameList.size() != controlledJoints)
+            {
+                yError() << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected length is " << controlledJoints;
+                useROS = ROS_config_error;
+                return false;
+            }
 
-        jointNames.clear();
-        for(int i=0; i<controlledJoints; i++)
-        {
-            jointNames.push_back(nameList.get(i).toString());
+            jointNames.clear();
+            for(int i=0; i<controlledJoints; i++)
+            {
+                jointNames.push_back(nameList.get(i).toString());
+            }
         }
         return true;
     }
@@ -708,6 +709,69 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
 
     // initialization.
     RPC_parser.initialize();
+    updateAxisName();
+    return true;
+}
+
+bool ControlBoardWrapper::updateAxisName()
+{
+    // If attached device has axisName update the internal values, otherwise keep the on from wrapper
+    // config file, if any.
+    // IMPORTANT!! This function has to be called BEFORE the thread starts, because if ROS is enabled,
+    // the name has to be correct right from the first message!!
+
+    // FOR THE FUTURE: this double version will be dropped because it'll create confusion. Only the names
+    // from the motionControl device will be considered good
+
+    // no need to update this variable if we are not using ROS. Yarp RPC will always call the sudevice.
+    if(useROS == ROS_disabled )
+        return true;
+
+    yarp::os::ConstString tmp;
+    // I need a temporary vector because if I'm wrapping more than one subdevice, and one of them
+    // does not have the axesName, then I'd stick with the old names from wrpper config file, if any.
+    vector<string> tmpVect;
+    bool ret = true;
+
+    tmpVect.clear();
+    for(int i=0; i < controlledJoints; i++)
+    {
+        if( (ret = getAxisName(i, tmp) && ret) )
+        {
+            std::string tmp2(tmp.c_str());
+            tmpVect.push_back(tmp2);
+        }
+    }
+
+    if(ret)
+    {
+        if(jointNames.size() != 0)
+        {
+            yWarning() << "Found 2 instance of jointNames parameter: one in the wrapper [ROS] group and another one in the subdevice, the latter one will be used.";
+            std::string fullNames;
+            for(int i=0; i < controlledJoints; i++)  fullNames.append(tmpVect[i]);
+        }
+
+        jointNames.clear();
+        jointNames = tmpVect;
+    }
+    else
+    {
+        if(jointNames.size() == 0)
+        {
+            yError() << "Joint names were not found! they are mandatory when using ROS topic";
+            return false;
+        }
+        else
+        {
+            yWarning() <<
+            "\n************************************************************************************************** \n" <<
+            "* Joint names for ROS topic were found in the [ROS] group in the wrapper config file for\n" <<
+            "* '" << partName << "' device.\n" <<
+            "* They should be in the MotionControl device(s) instead. Please update the config files.\n" <<
+            "**************************************************************************************************";
+        }
+    }
     return true;
 }
 
@@ -768,6 +832,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     // initialization.
     RPC_parser.initialize();
 
+    updateAxisName();
     RateThread::setRate(period);
     RateThread::start();
 
