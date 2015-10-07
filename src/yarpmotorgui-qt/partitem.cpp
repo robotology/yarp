@@ -809,7 +809,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::Position:{
         LOG_ERROR("joint: %d in POSITION mode!\n", jointIndex);
         if(ctrlmode2){
-            ctrlmode2->setPositionMode(jointIndex);
+            ctrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION);
         } else {
             LOG_ERROR("ERROR: cannot do!");
         }
@@ -857,8 +857,11 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::Velocity:{
         //if(positionDirectEnabled){
             LOG_ERROR("joint: %d in VELOCITY mode!\n", jointIndex);
-            if(ctrlmode2){
-                ctrlmode2->setVelocityMode(jointIndex);
+            if(ctrlmode2)
+            {
+                ctrlmode2->setControlMode(jointIndex, VOCAB_CM_VELOCITY);
+                yInfo() << "Changing reference acceleration of joint " << jointIndex << " to 100000";
+                iVel->setRefAcceleration(jointIndex, 100000);
             } else {
                 LOG_ERROR("ERROR: cannot do!");
             }
@@ -878,7 +881,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
         //if(positionDirectEnabled){
             LOG_ERROR("joint: %d in TORQUE mode!\n", jointIndex);
             if(ctrlmode2){
-                ctrlmode2->setTorqueMode(jointIndex);
+                ctrlmode2->setControlMode(jointIndex, VOCAB_CM_TORQUE);
             } else {
                 LOG_ERROR("ERROR: cannot do!");
             }
@@ -897,7 +900,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::OpenLoop:{
         LOG_ERROR("joint: %d in OPENLOOP mode!\n", jointIndex);
         if(ctrlmode2){
-            ctrlmode2->setOpenLoopMode(jointIndex);
+            ctrlmode2->setControlMode(jointIndex, VOCAB_CM_OPENLOOP);
         } else {
             LOG_ERROR("ERROR: cannot do!");
         }
