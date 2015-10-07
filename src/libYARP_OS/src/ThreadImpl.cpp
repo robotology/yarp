@@ -143,11 +143,7 @@ long int ThreadImpl::getKey() {
 }
 
 long int ThreadImpl::getKeyOfCaller() {
-#ifdef YARP_HAS_ACE
-    return (long int)ACE_Thread::self();
-#else
-    return (long int)pthread_self();
-#endif
+    return (long int)PLATFORM_THREAD_SELF();
 }
 
 
