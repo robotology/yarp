@@ -22,6 +22,10 @@
 #include <yarp/os/impl/PlatformList.h>
 #include <yarp/os/impl/PortCorePacket.h>
 
+#ifdef YARP_HAS_ACE
+#include <ace/Malloc_Allocator.h>
+#endif
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
