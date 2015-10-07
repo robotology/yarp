@@ -642,7 +642,7 @@ bool StoreInt::writeRaw(ConnectionWriter& writer) {
 
 String StoreInt64::toStringFlex() const {
     char buf[256];
-    ACE_OS::sprintf(buf,"%"YARP_INT64_FMT,x);
+    ACE_OS::sprintf(buf, "%" YARP_INT64_FMT, x);
     return String(buf);
 }
 
