@@ -737,7 +737,7 @@ bool YarpBroker::getQosFromString(const char* qos, yarp::os::QosStyle& style) {
         if (p != prop.npos) {
             string key = prop.substr(0, p);
             string value = prop.substr(p+1);
-            if (key.length() >=0 && value.length() > 0) {
+            if (key.length() > 0 && value.length() > 0) {
                 if (key == "LEVEL" || key=="DSCP" || key == "TOS") {                    
                     if(!style.setPacketPriority(prop))
                         return false;
