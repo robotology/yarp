@@ -4,6 +4,7 @@
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+include(YarpBackupVariable)
 
 # Let's see what we built, and record it to facilitate in-tree
 # ("uninstalled") use of YARP.
@@ -98,12 +99,18 @@ else()
   set(YARP_CMAKE_DESTINATION ${CMAKE_INSTALL_LIBDIR}/YARP)
 endif()
 
+# Save variables for later
+yarp_backup_variable(YARP_INCLUDE_DIRS)
+yarp_backup_variable(YARP_BINDINGS)
+yarp_backup_variable(YARP_MODULE_DIR)
+yarp_backup_variable(YARP_IDL_BINARY_HINT)
+yarp_backup_variable(YARP_INSTALL_PREFIX)
+
 # Set up a configuration file for installed use of YARP
 set(YARP_INCLUDE_DIRS "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+set(YARP_BINDINGS "${CMAKE_INSTALL_FULL_DATADIR}/yarp/bindings")
 set(YARP_MODULE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/yarp/cmake")
 set(YARP_IDL_BINARY_HINT "${CMAKE_INSTALL_FULL_BINDIR}")
-set(YARP_BINDINGS "${CMAKE_INSTALL_FULL_DATADIR}/yarp/bindings")
-
 set(YARP_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
 configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in"
@@ -133,6 +140,14 @@ configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cma
                               NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION ${YARP_CMAKE_DESTINATION})
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuration DESTINATION ${YARP_CMAKE_DESTINATION})
+
+# Restore variables to their original value
+yarp_restore_variable(YARP_INCLUDE_DIRS)
+yarp_restore_variable(YARP_MODULE_DIR)
+yarp_restore_variable(YARP_IDL_BINARY_HINT)
+yarp_restore_variable(YARP_BINDINGS)
+yarp_restore_variable(YARP_INSTALL_PREFIX)
+
 
 # YARPTargets.cmake (installed)
 install(EXPORT YARP
