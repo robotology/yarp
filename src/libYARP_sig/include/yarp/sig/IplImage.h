@@ -110,9 +110,9 @@ typedef unsigned char uchar;
 #define IPL_DEPTH_16U   16
 #define IPL_DEPTH_32F   32
 
-#define IPL_DEPTH_8S  (IPL_DEPTH_SIGN| 8)
-#define IPL_DEPTH_16S (IPL_DEPTH_SIGN|16)
-#define IPL_DEPTH_32S (IPL_DEPTH_SIGN|32)
+#define IPL_DEPTH_8S  (int)(IPL_DEPTH_SIGN| 8)
+#define IPL_DEPTH_16S (int)(IPL_DEPTH_SIGN|16)
+#define IPL_DEPTH_32S (int)(IPL_DEPTH_SIGN|32)
 
 #define IPL_DATA_ORDER_PIXEL  0
 #define IPL_DATA_ORDER_PLANE  1

@@ -752,9 +752,9 @@ void Image::wrapIplImage(void *iplImage) {
 
     // Type translation is approximate.  Patches welcome to flesh out
     // the types available.
-    if (p->depth == (int)IPL_DEPTH_8U) {
+    if (p->depth == IPL_DEPTH_8U) {
         code = color_code;
-    } else if (p->depth == (int)IPL_DEPTH_8S) {
+    } else if (p->depth == IPL_DEPTH_8S) {
         switch (color_code) {
         case VOCAB_PIXEL_MONO:
             code = VOCAB_PIXEL_MONO_SIGNED;
@@ -766,7 +766,7 @@ void Image::wrapIplImage(void *iplImage) {
             code = color_code; // nothing better available
             break;
         }
-    } else if (p->depth == (int)IPL_DEPTH_16U || p->depth == (int)IPL_DEPTH_16S) {
+    } else if (p->depth == IPL_DEPTH_16U || p->depth == IPL_DEPTH_16S) {
         switch (color_code) {
         case VOCAB_PIXEL_MONO:
             code = VOCAB_PIXEL_MONO16;
@@ -777,7 +777,7 @@ void Image::wrapIplImage(void *iplImage) {
             exit(1);
             break;
         }
-    } else if (p->depth == (int)IPL_DEPTH_32S) {
+    } else if (p->depth == IPL_DEPTH_32S) {
         switch (color_code) {
         case VOCAB_PIXEL_MONO:
             code = VOCAB_PIXEL_INT;
@@ -787,7 +787,7 @@ void Image::wrapIplImage(void *iplImage) {
             code = VOCAB_PIXEL_RGB_INT;
             break;
         }
-    } else if (p->depth == (int)IPL_DEPTH_32F) {
+    } else if (p->depth == IPL_DEPTH_32F) {
         switch (color_code) {
         case VOCAB_PIXEL_MONO:
             code = VOCAB_PIXEL_MONO_FLOAT;
