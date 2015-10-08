@@ -19,6 +19,7 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      MacroExtractVersion.cmake
                      MacroStandardFindModule.cmake
                      YarpDeprecatedWarning.cmake
+                     YarpDeprecatedOption.cmake
                      YarpInstallationHelpers.cmake
                      YarpCMakeWorkarounds.cmake
                      YarpRenamedOption.cmake

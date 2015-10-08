@@ -4,11 +4,10 @@
 
 include(YarpDeprecatedWarning)
 
-function(YARP_RENAMED_OPTION _old _new)
+function(YARP_DEPRECATED_OPTION _old)
   get_property(_old_set CACHE ${_old} PROPERTY VALUE SET)
   if(_old_set)
-    yarp_deprecated_warning("\"${_old}\" is deprecated in favour of \"${_new}\". Updating new cache entry.")
-    set_property(CACHE ${_new} PROPERTY VALUE ${${_old}})
+    yarp_deprecated_warning("\"${_old}\" is deprecated. Removing old cache entry.")
     unset(${_old} CACHE)
   endif()
 endfunction()
