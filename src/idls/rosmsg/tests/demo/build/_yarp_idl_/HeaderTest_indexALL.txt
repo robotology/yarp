@@ -1,3 +1,0 @@
-HeaderTest.h
-TickTime.h
-Header.h

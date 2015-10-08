@@ -58,7 +58,7 @@ Now you are ready to run the application. Hit the \e run button.
 For windows should open like this:
 
 \image html datasetplayer-app1.jpg
-\image latex datasetplayer-app1.eps "Running the yarpdataplayer" width=6cm
+\image latex datasetplayer-app1.jpg "Running the yarpdataplayer" width=6cm
 
 In the \ref yarpdataplayer window select <em>File->Open Directory</em>.
 
@@ -74,7 +74,7 @@ commands should be pretty intuitive). The output will be something like
 this:
 
 \image html datasetplayer-app2.jpg
-\image latex datasetplayer-app2.eps "Playing a recorded sequence with the yarpdataplayer" width=6cm
+\image latex datasetplayer-app2.jpg "Playing a recorded sequence with the yarpdataplayer" width=6cm
 
 \author Lorenzo Natale and Vadim Tikhanoff
 

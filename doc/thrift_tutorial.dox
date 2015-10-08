@@ -115,7 +115,7 @@ Note that there is no trailing semi-colon, and that the fully qualified name of 
 For each enum, a .h and a .cpp file are created, which contain the definition of the enum and a helper class that handles number/string conversion for the enum elements.
 
 \subsection thrift_tutorial_subs_namespace Namespaces
-Namespaces in Thrift are akin to namespaces in C++ or packages in Java  -  they offer a convenient way of organizing (or isolating) your code. Namespaces may also be used to prevent name clashes between type definitions. Thrift allows you to customize the namespace behavior on a per-language basis.
+Namespaces in Thrift are akin to namespaces in C++ or packages in Java: they offer a convenient way of organizing (or isolating) your code. Namespaces may also be used to prevent name clashes between type definitions. Thrift allows you to customize the namespace behavior on a per-language basis.
 YARP example:
 \code
 namespace yarp yarp.test

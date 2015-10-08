@@ -1,7 +1,0 @@
-RotationMatrix.h
-PointXYZ.h
-Polygon.h
-RGBA.h
-SurfaceMesh.h
-Box3D.h
-SurfaceMeshWithBoundingBox.h

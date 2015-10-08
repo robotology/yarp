@@ -1,4 +1,0 @@
-HeaderTest2Reply.h
-TickTime.h
-Header.h
-HeaderTest.h

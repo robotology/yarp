@@ -40,7 +40,7 @@ namespace yarp
 
  * streaming sound samples
  *
- * \author (adapted) Júlio Gomes, VisLab ISR/IST - 2006
+ * \author (adapted) JÃºlio Gomes, VisLab ISR/IST - 2006
  *
  */
 class yarp::dev::ServerSoundGrabber : public DeviceDriver,

@@ -1,2 +1,0 @@
-Wrapping.h
-Wrapping.cpp

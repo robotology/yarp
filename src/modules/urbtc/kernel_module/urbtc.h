@@ -11,7 +11,7 @@
 #ifndef __URBTC_H__
 #define __URBTC_H__
 
-/* IOCTLÍÑÌ¿ÎáÄêµÁ */
+/* IOCTLç”¨å‘½ä»¤å®šç¾© */
 #define URBTC_GET_VENDOR 1
 #define URBTC_GET_PRODUCT 2
 #define URBTC_REQUEST_READ 3

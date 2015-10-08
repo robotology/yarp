@@ -1,4 +1,0 @@
-Point.h
-Point.cpp
-Settings.h
-Settings.cpp

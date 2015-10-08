@@ -14,7 +14,7 @@ When playing it uses the timestamps provided from the time of aquisition
 to synchronize the sending of the data as if the robot was present.
 
 \image html datasetplayer.jpg
-\image latex datasetplayer.eps "The yarpdataplayer GUI running on Windows" width=6cm
+\image latex datasetplayer.jpg "The yarpdataplayer GUI running on Windows" width=6cm
 
 \section lib_sec Libraries
 - OpenCV libraries.

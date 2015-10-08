@@ -28,7 +28,7 @@ for manual in min; do
     echo "ORDER is $order"
     echo -n > order.tex
     for f in $order; do
-	echo "\\include{$f}" >> order.tex
+    echo "\\include{$f}" >> order.tex
     done
 
     # at this point, "order.tex" should have an include line for
@@ -37,14 +37,14 @@ for manual in min; do
     # fix up unresolved links for material not included
     rm -f junk.tex
     for f in `ls *.tex`; do
-	( 
-	    perl -pe "s/\\\\hyperlink\\{\\}\\{([^\\}]*)\\}/\$1/g" | \
-		perl -pe "s/p\\....pageref\\{\\}/see class docs/g" | \
-		perl -pe "s/\\\\doxyref\\{([^\\}]*)\\}\\{p\\.\\}\\{\\}/\$1/g"|\
-		perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$2\$1/g" | \
-		cat
-	    ) < $f > junk.tex
-	mv junk.tex $f
+    (
+        perl -pe "s/\\\\hyperlink\\{\\}\\{([^\\}]*)\\}/\$1/g" | \
+        perl -pe "s/p\\....pageref\\{\\}/see class docs/g" | \
+        perl -pe "s/\\\\doxyref\\{([^\\}]*)\\}\\{p\\.\\}\\{\\}/\$1/g"|\
+        perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$2\$1/g" | \
+        cat
+        ) < $f > junk.tex
+    mv junk.tex $f
     done
 
     # patch the main tex file to link only to what we want
@@ -65,25 +65,25 @@ for manual in min; do
     mv junk.tex refman.tex
     ##for f in `ls *.tex`; do
     ##perl -pe "s/\\\\section/\\\\chapter/g" < $f > junk.tex
-    ##	perl -pe "s/(\\\\(sub)*)subsection/\${1}section/g" < junk.tex > $f
+    ##perl -pe "s/(\\\\(sub)*)subsection/\${1}section/g" < junk.tex > $f
     ##done
 
     # certain lists are generated automatically, but have clumsy
     # formatting.  Here we patch that up.
 
     for f in group__dev__examples.tex; do
-	sed "s/\\\\section.*Modules.*//" -i $f
-	sed "s/\\\\section.Detailed.*//" -i $f
-	( perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" ) < $f > order2.txt
-	order=`cat order2.txt | egrep "[a-z]"`
-	for g in $order; do
-	    sed "s/\\\\chapter/\\\\section/" -i $g.tex
-	    cat $g.tex >> $f
-	done
+    sed "s/\\\\section.*Modules.*//" -i $f
+    sed "s/\\\\section.Detailed.*//" -i $f
+    ( perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" ) < $f > order2.txt
+    order=`cat order2.txt | egrep "[a-z]"`
+    for g in $order; do
+        sed "s/\\\\chapter/\\\\section/" -i $g.tex
+        cat $g.tex >> $f
+    done
     done
 
     sed "s/.*chapter.*//" -i manual_title.tex
     fi
-    
+
     make pdf
 done

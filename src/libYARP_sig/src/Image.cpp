@@ -42,7 +42,7 @@ using namespace yarp::os;
 class ImageStorage {
 public:
     IplImage* pImage;
-    char **Data;  // this is not IPL. it's char to maintain IPL compatibility  
+    char **Data;  // this is not IPL. it's char to maintain IPL compatibility
     int extern_type_id;
     int extern_type_quantum;
     int quantum;
@@ -52,9 +52,9 @@ protected:
     Image& owner;
 
     int type_id;
-  
+
     int is_owner;
-  
+
     // ipl allocation is done in two steps.
     // _alloc allocates the actual ipl pointer.
     // _alloc_data allocates the image array and data.
@@ -66,22 +66,22 @@ protected:
     void _alloc_data (void);
     void _free (void);
     void _free_data (void);
-  
-    void _make_independent(); 
+
+    void _make_independent();
     void _set_ipl_header(int x, int y, int pixel_type, int quantum,
                          bool topIsLow);
     void _free_ipl_header();
     void _alloc_complete(int x, int y, int pixel_type, int quantum,
                          bool topIsLow);
     void _free_complete();
-  
-  
+
+
     // computes the # of padding bytes. These are always at the end of the row.
     int _pad_bytes (int linesize, int align) const;
-  
-    inline int GetPadding() const { 
-        return _pad_bytes (pImage->width * pImage->nChannels, 
-                           YARP_IMAGE_ALIGN); 
+
+    inline int GetPadding() const {
+        return _pad_bytes (pImage->width * pImage->nChannels,
+                           YARP_IMAGE_ALIGN);
     }
 
 public:
@@ -100,7 +100,7 @@ public:
         _free_complete();
     }
 
-    void resize(int x, int y, int pixel_type, 
+    void resize(int x, int y, int pixel_type,
                 int pixel_size, int quantum, bool topIsLow);
 
     void _alloc_complete_extern(void *buf, int x, int y, int pixel_type,
@@ -109,7 +109,7 @@ public:
 };
 
 
-void ImageStorage::resize(int x, int y, int pixel_type, 
+void ImageStorage::resize(int x, int y, int pixel_type,
                           int pixel_size, int quantum, bool topIsLow) {
     int need_recreation = 1;
 
@@ -159,7 +159,7 @@ void ImageStorage::_alloc_extern (void *buf)
     //iplAllocateImage (pImage, 0, 0);
     pImage->imageData = (char*)buf;
     // probably need to do more for real IPL
-  
+
     //iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
 }
 
@@ -182,7 +182,7 @@ void ImageStorage::_alloc_data (void)
     int height = pImage->height;
 
     char * DataArea = pImage->imageData;
-    
+
     for (int r = 0; r < height; r++)
         {
             if (topIsLow) {
@@ -282,8 +282,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           IPL_DEPTH_8U,			
                                           (char *)"GRAY",
                                           (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,	 
-                                          origin,			
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
                                           quantum,		
                                           x,
                                           y,
@@ -299,12 +299,12 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           1,
                                           0,
-                                          IPL_DEPTH_16U,     
+                                          IPL_DEPTH_16U,
                                           (char *)"GRAY",
                                           (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,  
-                                          origin,     
-                                          quantum,    
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -312,7 +312,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           NULL,
                                           NULL);
             break;
-            
+
         case VOCAB_PIXEL_RGB:
             pImage = iplCreateImageHeader(
                                           3,
@@ -320,8 +320,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           IPL_DEPTH_8U,			
                                           (char *)"RGB",
                                           (char *)"RGB",
-                                          IPL_DATA_ORDER_PIXEL,	 
-                                          origin,			
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
                                           quantum,		
                                           x,
                                           y,
@@ -338,8 +338,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           IPL_DEPTH_8U,			
                                           (char *)"RGBA",
                                           (char *)"RGBA",
-                                          IPL_DATA_ORDER_PIXEL,	 
-                                          origin,			
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
                                           quantum,		
                                           x,
                                           y,
@@ -356,8 +356,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           IPL_DEPTH_8U,			
                                           (char *)"BGRA",
                                           (char *)"BGRA",
-                                          IPL_DATA_ORDER_PIXEL,	 
-                                          origin,			
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
                                           quantum,		
                                           x,
                                           y,
@@ -374,8 +374,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           IPL_DEPTH_32S,
                                           (char *)"RGB",
                                           (char *)"RGB",
-                                          IPL_DATA_ORDER_PIXEL,	 
-                                          origin,			
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
                                           quantum,		
                                           x,
                                           y,
@@ -392,8 +392,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           IPL_DEPTH_8U,			
                                           (char *)"HSV",
                                           (char *)"HSV",
-                                          IPL_DATA_ORDER_PIXEL,	 
-                                          origin,			
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
                                           quantum,		
                                           x,
                                           y,
@@ -410,8 +410,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           IPL_DEPTH_8U,			
                                           (char *)"RGB",
                                           (char *)"BGR",
-                                          IPL_DATA_ORDER_PIXEL,	 
-                                          origin,			
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
                                           quantum,		
                                           x,
                                           y,
@@ -428,8 +428,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           IPL_DEPTH_8S,			
                                           (char *)"GRAY",
                                           (char *)"GRAY",
-                                          IPL_DATA_ORDER_PIXEL,	 
-                                          origin,			
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
                                           quantum,		
                                           x,
                                           y,
@@ -468,8 +468,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           IPL_DEPTH_32F,			
                                           (char *)"RGB",
                                           (char *)"RGB",
-                                          IPL_DATA_ORDER_PIXEL,	 
-                                          origin,			
+                                          IPL_DATA_ORDER_PIXEL,
+                                          origin,
                                           quantum,		
                                           x,
                                           y,
@@ -507,7 +507,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             printf ("*** Trying to allocate an invalid pixel type image\n");
             exit(1);
             break;
-  
+
         case -2:
             pImage = iplCreateImageHeader(
                                           1,
@@ -634,8 +634,8 @@ void Image::resize(int imgWidth, int imgHeight) {
     int code = getPixelCode();
     int size = getPixelSize();
     bool change = false;
-    if (code!=imgPixelCode) { 
-        imgPixelCode = code; 
+    if (code!=imgPixelCode) {
+        imgPixelCode = code;
         change = true;
     }
     if (imgPixelCode!=((ImageStorage*)implementation)->extern_type_id) {
@@ -644,8 +644,8 @@ void Image::resize(int imgWidth, int imgHeight) {
     if (imgQuantum!=((ImageStorage*)implementation)->extern_type_quantum) {
         change = true;
     }
-    if (size!=imgPixelSize) { 
-        imgPixelSize = size; 
+    if (size!=imgPixelSize) {
+        imgPixelSize = size;
         change=true;
     }
     if (imgWidth!=width()||imgHeight!=height()) {
@@ -742,7 +742,7 @@ void Image::wrapIplImage(void *iplImage) {
                    str=="graygray"||str=="GRAYGRAY") {
             color_code = VOCAB_PIXEL_MONO;
         } else {
-            printf("specific IPL RGB order (%s) is not yet supported\n", 
+            printf("specific IPL RGB order (%s) is not yet supported\n",
                    str.c_str());
             printf("Try RGB, BGR, or \n");
             printf("Or fix code at %s line %d\n",__FILE__,__LINE__);
@@ -830,14 +830,14 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 
     // auto-convert text mode interaction
     connection.convertTextMode();
-    
+
     ImageNetworkHeader header;
-    
+
     bool ok = connection.expectBlock((char*)&header,sizeof(header));
     if (!ok) return false;
-        
+
     imgPixelCode = header.id;
-    
+
     int q = getQuantum();
     if (q==0) {
         //q = YARP_IMAGE_ALIGN;
@@ -850,7 +850,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             header.quantum = q;
         }
     }
-        
+
     if (getPixelCode()!=header.id||q!=header.quantum) {
         // we're trying to read an incompatible image type
         // rather than just fail, we'll read it (inefficiently)
@@ -864,12 +864,12 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             if (flex.getRawImageSize()!=header.imgSize) {
                 printf("There is a problem reading an image\n");
                 printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
-                       (int)header.width, (int)header.height, 
+                       (int)header.width, (int)header.height,
                        (int)header.id,
                        (int)header.quantum, (int)header.imgSize);
                 printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
                        flex.width(), flex.height(), flex.getPixelCode(),
-                       flex.getQuantum(), 
+                       flex.getQuantum(),
                        flex.getRawImageSize());
             }
             yAssert(flex.getRawImageSize()==header.imgSize);
@@ -887,7 +887,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             if (getRawImageSize()!=header.imgSize) {
                 printf("There is a problem reading an image\n");
                 printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
-                       (int)header.width, (int)header.height, 
+                       (int)header.width, (int)header.height,
                        (int)header.id,
                        (int)header.quantum, (int)header.imgSize);
                 printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
@@ -899,7 +899,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             if (!ok) return false;
         }
     }
-    
+
     return !connection.isError();
 }
 
@@ -924,13 +924,13 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     header.paramBlobTag = BOTTLE_TAG_BLOB;
     header.paramBlobLen = getRawImageSize();
     */
-    
+
     connection.appendBlock((char*)&header,sizeof(header));
     unsigned char *mem = getRawImage();
     if (header.width!=0&&header.height!=0) {
         yAssert(mem!=NULL);
-        
-        // Note use of external block.  
+
+        // Note use of external block.
         // Implies care needed about ownership.
         connection.appendExternalBlock((char *)mem,header.imgSize);
     }
@@ -938,7 +938,7 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.
     connection.convertTextMode();
-    
+
     return !connection.isError();
 }
 

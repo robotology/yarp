@@ -1,2 +1,0 @@
-Point.h
-Settings.h
