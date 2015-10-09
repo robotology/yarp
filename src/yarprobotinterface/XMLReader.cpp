@@ -257,6 +257,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotFile(const s
     path = filename.substr(0, filename.rfind("/"));
 #endif //WIN32
 
+    yDebug() << "Reading file" << filename.c_str();
     TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
@@ -474,6 +475,7 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesFile(c
     std::string old_filename = curr_filename;
     curr_filename = fileName;
 
+    yDebug() << "Reading file" << fileName.c_str();
     TiXmlDocument *doc = new TiXmlDocument(fileName.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
@@ -764,6 +766,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsFile(con
     std::string old_filename = curr_filename;
     curr_filename = fileName;
 
+    yDebug() << "Reading file" << fileName.c_str();
     TiXmlDocument *doc = new TiXmlDocument(fileName.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
@@ -929,6 +932,7 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsFile(c
     std::string old_filename = curr_filename;
     curr_filename = fileName;
 
+    yDebug() << "Reading file" << fileName.c_str();
     TiXmlDocument *doc = new TiXmlDocument(fileName.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
