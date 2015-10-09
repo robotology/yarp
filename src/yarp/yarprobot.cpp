@@ -26,9 +26,9 @@ void yarp_robot_help() {
     printf("  --help       display this help and exit\n");
     printf("  --list  list robots that are available; add optional '--user', '--sysadm' or '--installed' parameters to limit the search locations\n");
 //    printf("  --show <context-name>  show files that make up a context, and the location of each\n");
-    printf("  --import <robot_name> file1 file2 ... import specified robot files to home directory\n");
-    printf("  --import-all import all robots to home directory\n");
-    printf("  --remove  <robot_name> file1 file2 ... remove specified robot files from home directory\n");
+    printf("  --import <robot_name> import specified robot files to home directory\n");
+    printf("  --import-all-robots import all robots to home directory\n");
+    printf("  --remove  <robot_name> remove specified robot files from home directory\n");
     printf("  --diff  <robot_name>  find differences from the robot in the home directory with respect to the installation directory\n");
     printf("  --diff-list  list the robots in the home directory that are different from the installation directory\n");
     //printf("  --where  <context_name>  print full paths to the contexts that are found for <context_name> (the first one is the default one)\n");
@@ -72,7 +72,7 @@ int yarp_robot_main(int argc, char *argv[]) {
         return import(importArg, ROBOTS, options.check("verbose"));
     }
 
-    if(options.check("import-all"))
+    if(options.check("import-all-robots"))
     {
 
         return importAll(ROBOTS, options.check("verbose"));

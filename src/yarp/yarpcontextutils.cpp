@@ -11,6 +11,7 @@
 #include <cstdlib>
 
 #include <yarp/os/Os.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include "yarpcontextutils.h"
 
@@ -605,54 +606,28 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
     //tmp:
     ConstString hiddenDirname=rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName;
     prepareHomeFolder(rf, fType);
-    if (importArg.size() >2 )
-    {
 
-        yarp::os::mkdir((destDirname).c_str());
-        yarp::os::mkdir((hiddenDirname).c_str());
-        bool ok=true;
-        for (int i=2; i<importArg.size(); ++i)
-        {
-            ConstString fileName=importArg.get(i).asString();
-            if(fileName != "")
-            {
-                ok= prepareSubFolders(destDirname, fileName);
-                ok = (recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, destDirname + PATH_SEPARATOR + fileName) >=0 ) && ok;
-                if (ok)
-                {
-                    prepareSubFolders(hiddenDirname, fileName);
-                    recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, hiddenDirname + PATH_SEPARATOR + fileName, true, false);
-                }
-            }
-        }
-        if (ok)
-        {
-            printf("Copied selected files to %s\n", destDirname.c_str());
-            return 0;
-        }
-        else
-        {
-            printf("ERRORS OCCURRED WHILE IMPORTING FILES FOR %s %s\n", fType==CONTEXTS ? "CONTEXT" : "ROBOT" ,  contextName.c_str());
-            return 1;
-        }
-    }
-    else
+    if (importArg.size() <3 )
     {
-
-        int result= recursiveCopy(originalpath, destDirname);
+        int result = recursiveCopy(originalpath, destDirname);
         recursiveCopy(originalpath, hiddenDirname, true, false);
 
         if (result < 0)
-            printf("ERRORS OCCURRED WHILE IMPORTING %s %s\n", fType==CONTEXTS ? "CONTEXT" : "ROBOT", contextName.c_str());
+            printf("ERRORS OCCURRED WHILE IMPORTING %s %s\n", fType == CONTEXTS ? "CONTEXT" : "ROBOT", contextName.c_str());
         else
         {
-            printf("Copied %s %s from %s to %s .\n", fType==CONTEXTS ? "context" : "robot",  contextName.c_str(), originalpath.c_str(), destDirname.c_str());
-            printf("Current locations for this %s:\n", fType==CONTEXTS ? "context" : "robot");
-            yarp::os::Bottle paths=rf.findPaths((getFolderStringName(fType) + PATH_SEPARATOR +contextName).c_str());
-            for (int curCont=0; curCont<paths.size(); ++curCont)
+            printf("Copied %s %s from %s to %s .\n", fType == CONTEXTS ? "context" : "robot", contextName.c_str(), originalpath.c_str(), destDirname.c_str());
+            printf("Current locations for this %s:\n", fType == CONTEXTS ? "context" : "robot");
+            yarp::os::Bottle paths = rf.findPaths((getFolderStringName(fType) + PATH_SEPARATOR + contextName).c_str());
+            for (int curCont = 0; curCont<paths.size(); ++curCont)
                 printf("%s\n", paths.get(curCont).asString().c_str());
         }
         return result;
+    }
+    else
+    {
+        yError("Too many parameters");
+        return 1;
     }
 }
 
@@ -751,44 +726,8 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
         }
         else
         {
-            char choice='n';
-            printf("Are you sure you want to remove files from this folder: %s ? (y/n): ", targetPath.c_str());
-            int got = scanf("%c",&choice);
-            YARP_UNUSED(got);
-            if (choice=='y')
-            {
-                bool ok=true;
-                bool removeHidden=true;
-                ConstString hiddenPath=   rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
-                if (hiddenPath != "")
-                    removeHidden=false;
-
-                for (int i=2; i<removeArg.size(); ++i)
-                {
-                    ConstString fileName=removeArg.get(i).asString();
-                    if(fileName != "")
-                    {
-                        ok = (recursiveRemove(targetPath+ PATH_SEPARATOR + fileName) >=0 ) && ok;
-                        if(removeHidden)
-                            recursiveRemove(hiddenPath + PATH_SEPARATOR + fileName, false);
-                    }
-                }
-                if (ok)
-                {
-                    printf("Removed selected files from %s\n", targetPath.c_str());
-                    return 0;
-                }
-                else
-                {
-                    printf("ERRORS OCCURRED WHILE IMPORTING FILES FOR %s %s\n", fType==CONTEXTS ? "CONTEXT" : "ROBOT" ,  contextName.c_str());
-                    return 1;
-                }
-            }
-            else
-            {
-                printf("Skipped\n");
-                return 0;
-            }
+            yError ("Too many parameters");
+            return 1;
         }
     }
 }
