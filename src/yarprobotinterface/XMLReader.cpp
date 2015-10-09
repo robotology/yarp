@@ -228,7 +228,7 @@ public:
     std::string path;
     RobotInterfaceDTD dtd;
     Robot robot;
-    yarp::os::ResourceFinder &rf;
+    yarp::os::ResourceFinder rf;
 
     std::string curr_filename;
     unsigned int minorVersion;
@@ -237,8 +237,7 @@ public:
 
 
 RobotInterface::XMLReader::Private::Private(XMLReader *p) :
-    parent(p),
-    rf(yarp::os::ResourceFinder::getResourceFinderSingleton())
+    parent(p)
 {
     rf.setVerbose();
 }
