@@ -7,11 +7,11 @@
 
 cmake_minimum_required(VERSION 2.8.9)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-
 # Start a project.
 PROJECT(run_fakebot)
+
+FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
 
 SET(ENABLE_fakebot TRUE CACHE BOOLEAN "we want to use fakebot")
 
@@ -27,6 +27,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/fakebot)
 IF (folder_source)
   ADD_EXECUTABLE(run_fakebot ${folder_source} ${folder_header})
   TARGET_LINK_LIBRARIES(run_fakebot ${YARP_LIBRARIES})
+  INSTALL_TARGETS(/bin run_fakebot)
 ELSE (folder_source)
   MESSAGE(FATAL_ERROR "No source code files found. Please add something")
 ENDIF (folder_source)
