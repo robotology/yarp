@@ -338,6 +338,11 @@ public:
         return true;
     }
 
+    virtual bool getMaxCurrent(int j, double *v) {
+        *v = 0.0;
+        return true;
+    }
+    
     virtual bool getAmpStatus(int *st) {
         *st = 0;
         return true;
