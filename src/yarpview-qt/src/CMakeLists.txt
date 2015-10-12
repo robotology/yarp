@@ -2,6 +2,7 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+include(YarpOSXUtilities)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 
@@ -43,12 +44,9 @@ if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpview-qt PROPERTIES OUTPUT_NAME yarpview)
 endif()
 
-if(YARP_OSX_GENERATE_BUNDLES)
-    include(YarpOSXUtilities)
-    duplicate_and_add_bundle(TARGET yarpview-qt OUTPUT_NAME yarpview 
-                             APP_ICON "AppIcon.icns" APP_ICON_PATH ${CMAKE_CURRENT_SOURCE_DIR}/icons)
-    install(TARGETS yarpview-qt
-            COMPONENT utilities
-            DESTINATION ${CMAKE_INSTALL_BINDIR})
-    
-endif()
+
+yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpview-qt
+                                  TARGET_DEST yarpview-qt.app
+                                  APP_ICON icons/AppIcon.icns
+                                  INSTALL_COMPONENT utilities
+                                  INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")

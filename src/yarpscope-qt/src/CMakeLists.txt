@@ -2,6 +2,7 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+include(YarpOSXUtilities)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 
@@ -43,10 +44,7 @@ if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpscope-qt PROPERTIES OUTPUT_NAME yarpscope)
 endif()
 
-if(YARP_OSX_GENERATE_BUNDLES)
-    include(YarpOSXUtilities)
-    duplicate_and_add_bundle(OUTPUT_NAME yarpscope TARGET yarpscope-qt)
-    install(TARGETS yarpscope-qt
-            COMPONENT utilities
-            DESTINATION ${CMAKE_INSTALL_BINDIR})
-endif()
+yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpscope-qt
+                                  TARGET_DEST yarpscope-qt.app
+                                  INSTALL_COMPONENT utilities
+                                  INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")

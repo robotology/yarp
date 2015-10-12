@@ -5,6 +5,7 @@
 if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
 
   include(YarpUseQt5)
+  include(YarpOSXUtilities)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
@@ -84,11 +85,10 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
     set_target_properties(yarpmanager-qt PROPERTIES OUTPUT_NAME yarpmanager)
   endif()
 
-  if(YARP_OSX_GENERATE_BUNDLES)
-      include(YarpOSXUtilities)
-      duplicate_and_add_bundle(TARGET yarpmanager-qt OUTPUT_NAME yarpmanager 
-                               APP_ICON "AppIcon.icns" APP_ICON_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Resources)
-      install(TARGETS yarpmanager COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endif()
+  yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpmanager-qt
+                                    TARGET_DEST yarpmanager-qt.app
+                                    APP_ICON Resources/AppIcon.icns
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()

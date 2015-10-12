@@ -5,6 +5,7 @@
 if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
 
   include(YarpUseQt5)
+  include(YarpOSXUtilities)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
@@ -56,11 +57,9 @@ if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
     set_target_properties(yarpbatterygui-qt PROPERTIES OUTPUT_NAME yarpbatterygui)
   endif()
 
-  if(YARP_OSX_GENERATE_BUNDLES)
-    include(YarpOSXUtilities)
-    duplicate_and_add_bundle(OUTPUT_NAME yarpbatterygui TARGET yarpbatterygui-qt)
-    install(TARGETS yarpbatterygui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endif()
-
+  yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpbatterygui-qt
+                                    TARGET_DEST yarpbatterygui-qt.app
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()
