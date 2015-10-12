@@ -60,11 +60,11 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
   endif()
 
   target_link_libraries(yarpmotorgui-qt YARP_OS
-                                         YARP_init
-                                         YARP_sig
-                                         YARP_dev)
+                                        YARP_init
+                                        YARP_sig
+                                        YARP_dev)
   qt5_use_modules(yarpmotorgui-qt Widgets
-                                   Gui)
+                                  Gui)
   qtyarp_deprecate_with_cmake_version(2.8.11)
   if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
     target_link_libraries(yarpmotorgui-qt Qt5::WinMain)

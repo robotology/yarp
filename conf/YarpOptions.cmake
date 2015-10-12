@@ -205,6 +205,7 @@ if(YARP_NO_DEPRECATED_WARNINGS)
     add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
 endif()
 
+
 #########################################################################
 # Control whether to build YARP using hardening options
 
@@ -331,7 +332,6 @@ endif()
 set(CMAKE_POSITION_INDEPENDENT_CODE "TRUE")
 
 
-
 #########################################################################
 # Control whether build should be aborted on warnings and errors
 
@@ -353,6 +353,7 @@ if(CXX_HAS_WFATAL_ERROR)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
     endif()
 endif()
+
 
 #########################################################################
 # Display test machine options for reference, if they are set

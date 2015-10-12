@@ -33,23 +33,23 @@ if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
   source_group("Resources Files" FILES ${yarpbatterygui_qt_QRC_FILES})
   source_group("UI Files" FILES ${yarpbatterygui_qt_UI_FILES})
   source_group("Generated Files" FILES ${yarpbatterygui_qt_QRC_GEN_SRCS}
-                                      ${yarpbatterygui_qt_UI_GEN_SRCS})
+                                       ${yarpbatterygui_qt_UI_GEN_SRCS})
 
   add_executable(yarpbatterygui-qt WIN32 ${yarpbatterygui_qt_SRCS}
-                                        ${yarpbatterygui_qt_HDRS}
-                                        ${yarpbatterygui_qt_QRC_GEN_SRCS}
-                                        ${yarpbatterygui_qt_UI_GEN_SRCS})
+                                         ${yarpbatterygui_qt_HDRS}
+                                         ${yarpbatterygui_qt_QRC_GEN_SRCS}
+                                         ${yarpbatterygui_qt_UI_GEN_SRCS})
 
   if(YARP_OSX_GENERATE_BUNDLES)
     set_target_properties(yarpbatterygui-qt PROPERTIES MACOSX_BUNDLE TRUE)
   endif()
 
   target_link_libraries(yarpbatterygui-qt YARP_OS
-                                         YARP_init
-                                         YARP_sig
-                                         YARP_dev)
+                                          YARP_init
+                                          YARP_sig
+                                          YARP_dev)
   qt5_use_modules(yarpbatterygui-qt Widgets
-                                   Gui)
+                                    Gui)
   qtyarp_deprecate_with_cmake_version(2.8.11)
   if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
     target_link_libraries(yarpbatterygui-qt Qt5::WinMain)
