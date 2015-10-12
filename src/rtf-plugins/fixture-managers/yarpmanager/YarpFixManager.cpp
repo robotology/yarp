@@ -81,7 +81,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
     szerror = getLogger()->getLastError();
     RTF_ASSERT_ERROR_IF(ret,
                         "yarpmanager cannot setup the fixture because " +
-                        std::string((szerror) ? szerror : ""));
+                        std::string(getLogger()->getFormatedErrorString()));
     return true;
 }
 
