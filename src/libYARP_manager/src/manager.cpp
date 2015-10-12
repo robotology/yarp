@@ -1064,10 +1064,10 @@ bool Manager::allRunning(void)
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
     {
         RSTATE st = (*itr)->state();
-        if((st == RUNNING) || (st == CONNECTING) || (st==DYING))
-            return true;
+        if((st != RUNNING) && (st != CONNECTING) && (st != DYING))
+            return false;
     }
-    return false;
+    return true;
 }
 
 
