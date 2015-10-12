@@ -83,10 +83,6 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
                                          ${yarpdataplayer_qt_RC_FILES}
                                          ${yarpdataplayer_qt_THRIFT_FILES})
 
-  if(YARP_OSX_GENERATE_BUNDLES)
-    set_target_properties(yarpdataplayer-qt PROPERTIES MACOSX_BUNDLE TRUE)
-  endif()
-
   target_link_libraries(yarpdataplayer-qt YARP_OS
                                           YARP_init
                                           YARP_sig)
@@ -106,7 +102,10 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
     set_target_properties(yarpdataplayer-qt PROPERTIES OUTPUT_NAME yarpdataplayer)
   endif()
 
-  include(YarpOSXBundleUpdateRPATH)
-  yarp_osx_bundle_update_rpath(yarpdataplayer-qt)
+  if(YARP_OSX_GENERATE_BUNDLES)
+    include(YarpOSXUtilities)
+    duplicate_and_add_bundle(OUTPUT_NAME yarpdataplayer TARGET yarpdataplayer-qt)
+    install(TARGETS yarpdataplayer-qt COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+  endif()
 
 endif()

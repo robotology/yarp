@@ -314,6 +314,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     mark_as_advanced(YARP_OSX_GENERATE_BUNDLES)
     set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_STRING}")
+    # this should be removed as soon as CMake is updated
     execute_process(COMMAND /usr/bin/sw_vers -productVersion OUTPUT_VARIABLE OSX_VERSION)
     string(REPLACE "." ";" OSX_VERSION_LIST ${OSX_VERSION})
     list(GET OSX_VERSION_LIST 0 OSX_VERSION_MAJOR)

@@ -21,18 +21,11 @@ source_group("Generated Files" FILES ${yarpview_qt_QRC_GEN_SRCS})
 
 qtyarp_use_qml_plugin()
 
-if(YARP_OSX_GENERATE_BUNDLES)
-    # the icon must be added to the target
-    set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/icons/AppIcon.icns)
-endif()
-
-
 add_executable(yarpview-qt WIN32 ${yarpview_qt_SRCS}
                                  ${yarpview_qt_HDRS}
                                  ${yarpview_qt_QRC_GEN_SRCS}
                                  ${yarpview_qt_QRC_FILES}
-                                 ${yarpview_qt_QML_FILES}
-                                 ${APP_ICON})
+                                 ${yarpview_qt_QML_FILES})
 
 qt5_use_modules(yarpview-qt Widgets
                             Qml
@@ -51,12 +44,11 @@ if(NOT YARP_DEFAULT_GTK)
 endif()
 
 if(YARP_OSX_GENERATE_BUNDLES)
-    set_target_properties(yarpview-qt PROPERTIES MACOSX_BUNDLE TRUE)
-    # the following two lines do the following thing:
-    # 1 - specify the app icon (the name should be enogh i think) in the bundle plist 
-    set_target_properties(yarpview-qt PROPERTIES MACOSX_BUNDLE_ICON_FILE "AppIcon.icns")
-    # 2 - Copy the resource in the Resources folder in the bundle
-    set_source_files_properties(${APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-    include(YarpOSXBundleUpdateRPATH)
-    yarp_osx_bundle_update_rpath(yarpview-qt)
+    include(YarpOSXUtilities)
+    duplicate_and_add_bundle(TARGET yarpview-qt OUTPUT_NAME yarpview 
+                             APP_ICON "AppIcon.icns" APP_ICON_PATH ${CMAKE_CURRENT_SOURCE_DIR}/icons)
+    install(TARGETS yarpview-qt
+            COMPONENT utilities
+            DESTINATION ${CMAKE_INSTALL_BINDIR})
+    
 endif()

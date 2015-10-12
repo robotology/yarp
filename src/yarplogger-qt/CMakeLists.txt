@@ -30,10 +30,6 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
                                      ${yarplogger-qt_QRC_GEN_SRCS}
                                      ${yarplogger-qt_UI_GEN_SRCS})
 
-  if(YARP_OSX_GENERATE_BUNDLES)
-    set_target_properties(yarplogger-qt PROPERTIES MACOSX_BUNDLE TRUE)
-  endif()
-
   target_link_libraries(yarplogger-qt YARP_OS
                                       YARP_init
                                       YARP_logger)
@@ -50,7 +46,12 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
 
   set_target_properties(yarplogger-qt PROPERTIES OUTPUT_NAME yarplogger)
 
-  include(YarpOSXBundleUpdateRPATH)
-  yarp_osx_bundle_update_rpath(yarplogger-qt)
+  if(YARP_OSX_GENERATE_BUNDLES)
+    include(YarpOSXUtilities)
+    duplicate_and_add_bundle(OUTPUT_NAME yarplogger TARGET yarplogger-qt)
+    install(TARGETS yarplogger-qt
+            COMPONENT utilities
+            DESTINATION ${CMAKE_INSTALL_BINDIR})
+  endif()
 
 endif()

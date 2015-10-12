@@ -44,12 +44,9 @@ if(NOT YARP_DEFAULT_GTK)
 endif()
 
 if(YARP_OSX_GENERATE_BUNDLES)
-    set_target_properties(yarpscope-qt PROPERTIES MACOSX_BUNDLE TRUE)
-    # the following two lines do the following thing:
-    # 1 - specify the app icon (the name should be enogh i think) in the bundle plist 
-    # set_target_properties(yarpscope-qt PROPERTIES MACOSX_BUNDLE_ICON_FILE "AppIcon.icns")
-    # 2 - Copy the resource in the Resources folder in the bundle
-    # set_source_files_properties(${APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-    include(YarpOSXBundleUpdateRPATH)
-    yarp_osx_bundle_update_rpath(yarpscope-qt)
+    include(YarpOSXUtilities)
+    duplicate_and_add_bundle(OUTPUT_NAME yarpscope TARGET yarpscope-qt)
+    install(TARGETS yarpscope-qt
+            COMPONENT utilities
+            DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
