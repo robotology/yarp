@@ -144,6 +144,14 @@ const char* ErrorLogger::getLastError(void) {
     return msg.c_str();
 }
 
+const char* ErrorLogger::getFormatedErrorString() {
+    string msgs;
+    char* err;
+    while((err=(char*)getLastError()) != NULL)
+        msgs += string(err) + " ";
+    return msgs.c_str();
+}
+
 const char* ErrorLogger::getLastWarning(void) {
     if(warnings.empty())
         return NULL;
@@ -152,6 +160,15 @@ const char* ErrorLogger::getLastWarning(void) {
     warnings.pop_back();
     return msg.c_str();
 }
+
+const char* ErrorLogger::getFormatedWarningString() {
+    string msgs;
+    char* err;
+    while((err=(char*)getLastWarning()) != NULL)
+        msgs += string(err) + " ";
+    return msgs.c_str();
+}
+
 
 void ErrorLogger::clear(void) {
     errors.clear(); warnings.clear();

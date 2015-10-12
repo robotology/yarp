@@ -75,6 +75,8 @@ public:
     void addError(OSTRINGSTREAM &stream);
     const char* getLastError(void);
     const char* getLastWarning(void);
+    const char* getFormatedErrorString();
+    const char* getFormatedWarningString();
     void clear(void);
     int errorCount(void);
     int warningCount(void);
