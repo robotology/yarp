@@ -20,6 +20,7 @@
 
 
 include(YarpRenamedOption)
+include(CMakeDependentOption)
 
 # USEFUL MACROS:
 
@@ -189,26 +190,16 @@ option(CREATE_YARPDATADUMPER "Do you want to compile yarpdatadumper?" ON)
 
 option(CREATE_GUIS "Do you want to compile GUIs" OFF)
 
-if(CREATE_GUIS)
-    option(CREATE_YARPVIEW "Do you want to compile yarpview?" ON)
-    option(CREATE_YARPMANAGER "Do you want to compile yarpmanager?" ON)
-    option(CREATE_YARPLOGGER "Do you want to create yarplogger?" ON)
-    option(CREATE_YARPSCOPE "Do you want to create yarpscope?" ON)
-    option(CREATE_YARPBUILDER "Do you want to compile YARP Application Builder?" OFF)
-    option(CREATE_YARPDATAPLAYER "Do you want to compile yarpdataplayer?" ON)
-    option(CREATE_YARPMOTORGUI "Do you want to compile yarpmotorgui?" ON)
-    option(CREATE_YARPBATTERYGUI "Do you want to compile yarpbatterygui?" ON)
-    yarp_renamed_option(CREATE_GYARPMANAGER CREATE_YARPMANAGER)
-    yarp_renamed_option(CREATE_GYARPBUILDER CREATE_YARPBUILDER)
-else()
-    unset(CREATE_YARPVIEW CACHE)
-    unset(CREATE_YARPMANAGER CACHE)
-    unset(CREATE_YARPLOGGER CACHE)
-    unset(CREATE_YARPSCOPE CACHE)
-    unset(CREATE_YARPBUILDER CACHE)
-    unset(CREATE_YARPDATAPLAYER CACHE)
-    unset(CREATE_YARPMOTORGUI CACHE)
-endif()
+cmake_dependent_option(CREATE_YARPVIEW "Do you want to compile yarpview?" ON CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPMANAGER "Do you want to compile yarpmanager?" ON CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPLOGGER "Do you want to create yarplogger?" ON CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPSCOPE "Do you want to create yarpscope?" ON CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPBUILDER "Do you want to compile YARP Application Builder?" OFF CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPDATAPLAYER "Do you want to compile yarpdataplayer?" ON CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPMOTORGUI "Do you want to compile yarpmotorgui?" ON CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPBATTERYGUI "Do you want to compile yarpbatterygui?" ON CREATE_GUIS OFF)
+yarp_renamed_option(CREATE_GYARPMANAGER CREATE_YARPMANAGER)
+yarp_renamed_option(CREATE_GYARPBUILDER CREATE_YARPBUILDER)
 
 if(CREATE_YARPMANAGER_CONSOLE OR CREATE_YARPMANAGER OR CREATE_YARPBUILDER)
     set(CREATE_LIB_MANAGER ON CACHE INTERNAL "Create manager library libYARP_manager?")
