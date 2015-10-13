@@ -4,6 +4,8 @@
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
+include(YarpRenamedOption)
+include(YarpDeprecatedOption)
 
 
 #########################################################################
@@ -264,14 +266,15 @@ endif()
 #########################################################################
 # Control setting an rpath
 if(NOT MSVC)
-    option(INSTALL_WITH_RPATH "When installing, give executables hard-coded paths to the libraries they need" FALSE)
-    option(ENABLE_FORCE_RPATH "Set an rpath after installing the executables (deprecated, please use INSTALL_WITH_RPATH" FALSE)
-    mark_as_advanced(ENABLE_FORCE_RPATH)
+    option(INSTALL_WITH_RPATH "When installing, give executables hard-coded paths to the libraries they need" OFF)
+    yarp_renamed_option(ENABLE_FORCE_RPATH INSTALL_WITH_RPATH)
+else()
+    yarp_deprecated_option(ENABLE_FORCE_RPATH)
 endif()
 
 # By default do not build with rpath.
 # If this flag is true then all the variables related to RPATH are ignored
-if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
+if(INSTALL_WITH_RPATH)
     # Maintain back-compatibility
     if(${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_GREATER "2.8.12")
         message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
@@ -308,18 +311,9 @@ endif()
 
 
 #########################################################################
-# If system is OSX add the option to enable / disable Bundle generation
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    option(YARP_OSX_GENERATE_BUNDLES "Generate OSX bundles for Yarp (.app) instead of plain UNIX binaries" TRUE)
-    mark_as_advanced(YARP_OSX_GENERATE_BUNDLES)
-    set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
-    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_STRING}")
-    execute_process(COMMAND /usr/bin/sw_vers -productVersion OUTPUT_VARIABLE OSX_VERSION)
-    string(REPLACE "." ";" OSX_VERSION_LIST ${OSX_VERSION})
-    list(GET OSX_VERSION_LIST 0 OSX_VERSION_MAJOR)
-    list(GET OSX_VERSION_LIST 1 OSX_VERSION_MINOR)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "${OSX_VERSION_MAJOR}.${OSX_VERSION_MINOR}")
-endif()
+# Specify yarp version and copyright into OSX bundles
+set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
+set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_STRING}")
 
 
 #########################################################################

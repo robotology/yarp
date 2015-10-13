@@ -6,6 +6,7 @@
 if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
 
   include(YarpUseQt5)
+  include(YarpOSXUtilities)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
@@ -55,10 +56,6 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
                                         ${yarpmotorgui_qt_QRC_GEN_SRCS}
                                         ${yarpmotorgui_qt_UI_GEN_SRCS})
 
-  if(YARP_OSX_GENERATE_BUNDLES)
-    set_target_properties(yarpmotorgui-qt PROPERTIES MACOSX_BUNDLE TRUE)
-  endif()
-
   target_link_libraries(yarpmotorgui-qt YARP_OS
                                         YARP_init
                                         YARP_sig
@@ -76,7 +73,9 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
     set_target_properties(yarpmotorgui-qt PROPERTIES OUTPUT_NAME yarpmotorgui)
   endif()
 
-  include(YarpOSXBundleUpdateRPATH)
-  yarp_osx_bundle_update_rpath(yarpmotorgui-qt)
+  yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpmotorgui-qt
+                                    TARGET_DEST yarpmotorgui-qt.app
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()

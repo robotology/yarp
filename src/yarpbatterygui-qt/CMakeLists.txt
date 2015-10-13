@@ -2,10 +2,10 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-
 if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
 
   include(YarpUseQt5)
+  include(YarpOSXUtilities)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
@@ -40,10 +40,6 @@ if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
                                          ${yarpbatterygui_qt_QRC_GEN_SRCS}
                                          ${yarpbatterygui_qt_UI_GEN_SRCS})
 
-  if(YARP_OSX_GENERATE_BUNDLES)
-    set_target_properties(yarpbatterygui-qt PROPERTIES MACOSX_BUNDLE TRUE)
-  endif()
-
   target_link_libraries(yarpbatterygui-qt YARP_OS
                                           YARP_init
                                           YARP_sig
@@ -61,7 +57,9 @@ if(CREATE_YARPBATTERYGUI AND YARP_HAS_QT5)
     set_target_properties(yarpbatterygui-qt PROPERTIES OUTPUT_NAME yarpbatterygui)
   endif()
 
-  include(YarpOSXBundleUpdateRPATH)
-  yarp_osx_bundle_update_rpath(yarpbatterygui-qt)
+  yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpbatterygui-qt
+                                    TARGET_DEST yarpbatterygui-qt.app
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()

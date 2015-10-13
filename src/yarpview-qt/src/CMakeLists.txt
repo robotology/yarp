@@ -2,6 +2,7 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+include(YarpOSXUtilities)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 
@@ -21,18 +22,11 @@ source_group("Generated Files" FILES ${yarpview_qt_QRC_GEN_SRCS})
 
 qtyarp_use_qml_plugin()
 
-if(YARP_OSX_GENERATE_BUNDLES)
-    # the icon must be added to the target
-    set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/icons/AppIcon.icns)
-endif()
-
-
 add_executable(yarpview-qt WIN32 ${yarpview_qt_SRCS}
                                  ${yarpview_qt_HDRS}
                                  ${yarpview_qt_QRC_GEN_SRCS}
                                  ${yarpview_qt_QRC_FILES}
-                                 ${yarpview_qt_QML_FILES}
-                                 ${APP_ICON})
+                                 ${yarpview_qt_QML_FILES})
 
 qt5_use_modules(yarpview-qt Widgets
                             Qml
@@ -50,13 +44,9 @@ if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpview-qt PROPERTIES OUTPUT_NAME yarpview)
 endif()
 
-if(YARP_OSX_GENERATE_BUNDLES)
-    set_target_properties(yarpview-qt PROPERTIES MACOSX_BUNDLE TRUE)
-    # the following two lines do the following thing:
-    # 1 - specify the app icon (the name should be enogh i think) in the bundle plist 
-    set_target_properties(yarpview-qt PROPERTIES MACOSX_BUNDLE_ICON_FILE "AppIcon.icns")
-    # 2 - Copy the resource in the Resources folder in the bundle
-    set_source_files_properties(${APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-    include(YarpOSXBundleUpdateRPATH)
-    yarp_osx_bundle_update_rpath(yarpview-qt)
-endif()
+
+yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpview-qt
+                                  TARGET_DEST yarpview-qt.app
+                                  APP_ICON icons/AppIcon.icns
+                                  INSTALL_COMPONENT utilities
+                                  INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")

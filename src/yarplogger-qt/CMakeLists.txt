@@ -3,6 +3,7 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
   project(yarplogger-qt)
 
   include(YarpUseQt5)
+  include(YarpOSXUtilities)
 
   get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
@@ -30,10 +31,6 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
                                      ${yarplogger-qt_QRC_GEN_SRCS}
                                      ${yarplogger-qt_UI_GEN_SRCS})
 
-  if(YARP_OSX_GENERATE_BUNDLES)
-    set_target_properties(yarplogger-qt PROPERTIES MACOSX_BUNDLE TRUE)
-  endif()
-
   target_link_libraries(yarplogger-qt YARP_OS
                                       YARP_init
                                       YARP_logger)
@@ -50,7 +47,9 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
 
   set_target_properties(yarplogger-qt PROPERTIES OUTPUT_NAME yarplogger)
 
-  include(YarpOSXBundleUpdateRPATH)
-  yarp_osx_bundle_update_rpath(yarplogger-qt)
+  yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarplogger-qt
+                                    TARGET_DEST yarplogger-qt.app
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()
