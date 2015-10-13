@@ -199,6 +199,9 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     if ((iVar == 0) && (_subDevVerbose))
         yWarning() << "controlBoardWrapper:  Warning iVar not valid interface";
 
+    if ((info == 0) && (_subDevVerbose))
+        yWarning() << "controlBoardWrapper:  Warning info not valid interface";
+
     int deviceJoints=0;
 
     // checking minimum set of intefaces required

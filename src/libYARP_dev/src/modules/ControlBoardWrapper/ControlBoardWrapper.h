@@ -249,6 +249,7 @@ private:
     bool              _verb;        // make it work and propagate to subdevice if --subdevice option is used
 
     yarp::os::Bottle getOptions();
+    bool updateAxisName();
     bool checkROSParams(yarp::os::Searchable &config);
     bool initialize_ROS();
     bool initialize_YARP(yarp::os::Searchable &prop);
