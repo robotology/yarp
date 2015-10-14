@@ -29,11 +29,11 @@ static ConstString *network_clock_name = NULL;
 static bool network_clock_pending = false;
 
 static void lock() {
-    yarp::os::impl::ThreadImpl::threadMutex2->wait();
+    yarp::os::impl::ThreadImpl::timeMutex->wait();
 }
 
 static void unlock() {
-    yarp::os::impl::ThreadImpl::threadMutex2->post();
+    yarp::os::impl::ThreadImpl::timeMutex->post();
 }
 
 static void removeClock() {
