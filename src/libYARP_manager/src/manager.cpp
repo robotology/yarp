@@ -608,7 +608,10 @@ bool Manager::run(unsigned int id, bool async)
 
     runnables[id]->disableAutoConnect();
     runnables[id]->start();
-
+    if(bWithWatchDog) {
+        yarp::os::Time::delay(1.0);
+        runnables[id]->startWatchDog();
+    }
     if(async)
         return true;
 
@@ -663,6 +666,13 @@ bool Manager::run(void)
     double base = yarp::os::Time::now();
     while(!timeout(base, wait + RUN_TIMEOUT))
         if(allRunning()) break;
+
+    // starting the watchdog if needed
+    if(bWithWatchDog) {
+        for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+            (*itr)->startWatchDog();
+    }
+
     if(!allRunning())
     {
         ExecutablePIterator itr;

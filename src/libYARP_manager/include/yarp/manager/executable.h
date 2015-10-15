@@ -110,6 +110,9 @@ public:
     void disableAutoConnect(void) { bAutoConnect = false; }
     bool autoConnect(void) { return bAutoConnect; }
 
+    bool startWatchDog();
+    void stopWatchDog();
+
 public: // from BrokerEventSink
     void onBrokerStdout(const char* msg);
 

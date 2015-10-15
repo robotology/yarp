@@ -75,18 +75,13 @@ bool Executable::initialize(void)
 
 bool Executable::start(void)
 {
-
-    if(!initialize())
-    {
+    if(!initialize()) {
       event->onExecutableDied(this);
       return false;
     }
 
-    if(!startWrapper->isRunning())
-    {
+    if(!startWrapper->isRunning()) {
         startWrapper->start();
-        if(watchdogWrapper && !watchdogWrapper->isRunning())
-            watchdogWrapper->start();
         return true;
     }
     return false;
@@ -105,10 +100,9 @@ void Executable::stop(void)
 {
     if(!broker->initialized())
         initialize();
-    if(!stopWrapper->isRunning())
-    {
-        if(watchdogWrapper && watchdogWrapper->isRunning())
-            watchdogWrapper->stop();
+
+    if(!stopWrapper->isRunning()) {
+        stopWatchDog();
         stopWrapper->start();
     }
 }
@@ -128,8 +122,7 @@ void Executable::kill(void)
         initialize();
 
     // Notice that kill can be called from multiple threads
-    if(watchdogWrapper && watchdogWrapper->isRunning())
-        watchdogWrapper->stop();
+    stopWatchDog();
     killWrapper->start();
 }
 
@@ -169,6 +162,19 @@ RSTATE Executable::state(void)
     return STUNKNOWN;
 }
 
+bool Executable::startWatchDog() {
+    if(watchdogWrapper == NULL)
+        return false;
+    if(!watchdogWrapper->isRunning())
+        watchdogWrapper->start();
+    return true;
+}
+
+void Executable::stopWatchDog() {
+    if(watchdogWrapper && watchdogWrapper->isRunning())
+        watchdogWrapper->stop();
+}
+
 void Executable::onBrokerStdout(const char* msg)
 {
     event->onExecutableStdout(this, msg);
@@ -177,7 +183,6 @@ void Executable::onBrokerStdout(const char* msg)
 
 void Executable::watchdogImplement(void)
 {
-
     if(!broker->running())
             execMachine->moduleFailed();
 
