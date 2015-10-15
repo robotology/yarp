@@ -27,36 +27,36 @@ namespace yarp {
  * use this for real you should fix it up.
  *
  */
-class yarp::dev::MicrophoneDeviceDriver : 
+class yarp::dev::MicrophoneDeviceDriver :
     public IAudioGrabberSound, public DeviceDriver
 {
 private:
-	MicrophoneDeviceDriver(const MicrophoneDeviceDriver&);
-	void operator=(const MicrophoneDeviceDriver&);
+    MicrophoneDeviceDriver(const MicrophoneDeviceDriver&);
+    void operator=(const MicrophoneDeviceDriver&);
 
 public:
-	/**
-	 * Constructor.
-	 */
-	MicrophoneDeviceDriver();
-
-	/**
-	 * Destructor.
-	 */
-	virtual ~MicrophoneDeviceDriver();
+    /**
+     * Constructor.
+     */
+    MicrophoneDeviceDriver();
 
     /**
-	 * Open the device driver.
+     * Destructor.
+     */
+    virtual ~MicrophoneDeviceDriver();
+
+    /**
+     * Open the device driver.
      * @param config parameters for the device driver
-	 * @return returns true on success, false on failure.
-	 */
+     * @return returns true on success, false on failure.
+     */
     virtual bool open(yarp::os::Searchable& config);
 
-	/**
-	 * Closes the device driver.
-	 * @return returns true/false on success/failure.
-	 */
-	virtual bool close(void);
+    /**
+     * Closes the device driver.
+     * @return returns true/false on success/failure.
+     */
+    virtual bool close(void);
 
     virtual bool getSound(yarp::sig::Sound& sound);
 
@@ -64,7 +64,7 @@ public:
     virtual bool stopRecording();
 
 protected:
-	void *system_resources;
+    void *system_resources;
     int dsp;
 };
 
