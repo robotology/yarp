@@ -93,7 +93,7 @@ void NetworkClock::delay(double seconds) {
         // We are shutting down.  The time signal is no longer available.
         // Make a short delay and return.
         listMutex.unlock();
-        SystemClock::delaySystem(1);
+        SystemClock::delaySystem(seconds);
         return;
     }
     waiter.first = now() + seconds;
