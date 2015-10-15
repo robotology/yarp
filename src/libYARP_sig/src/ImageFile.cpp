@@ -164,7 +164,7 @@ static bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
                     src += inc;
                 }
 
-            ///ACE_OS::fwrite((void *) src, 1, (size_t) (h*w*3), fp);
+            ///fwrite((void *) src, 1, (size_t) (h*w*3), fp);
             fclose(fp);
         }
 

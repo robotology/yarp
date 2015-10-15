@@ -139,7 +139,7 @@ const Vector &Vector::operator=(const Vector &r)
 
     if(storage.size() == r.storage.size())
     {
-        ACE_OS::memcpy(storage.getFirst(), r.storage.getFirst(), sizeof(double)*storage.size());
+        memcpy(storage.getFirst(), r.storage.getFirst(), sizeof(double)*storage.size());
     }
     else
     {
@@ -153,7 +153,7 @@ Vector::Vector(size_t s, const double *p)
 {
     storage.resize(s);
 
-    ACE_OS::memcpy(storage.getFirst(), p, sizeof(double)*s);
+    memcpy(storage.getFirst(), p, sizeof(double)*s);
 
     allocGslData();
     updateGslData();
@@ -161,7 +161,7 @@ Vector::Vector(size_t s, const double *p)
 
 void Vector::zero()
 {
-    ACE_OS::memset(storage.getFirst(), 0, sizeof(double)*storage.size());
+    memset(storage.getFirst(), 0, sizeof(double)*storage.size());
 }
 
 const Vector &Vector::operator=(double v)
