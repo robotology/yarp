@@ -101,3 +101,13 @@ bool MicrophoneDeviceDriver::getSound(yarp::sig::Sound& sound) {
             NUM_SAMPLES, total);
     return true;
 }
+
+bool MicrophoneDeviceDriver::startRecording()
+{
+    return false;
+}
+
+bool MicrophoneDeviceDriver::stopRecording()
+{
+    return false;
+}

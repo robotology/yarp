@@ -60,6 +60,9 @@ public:
 
     virtual bool getSound(yarp::sig::Sound& sound);
 
+    virtual bool startRecording();
+    virtual bool stopRecording();
+
 protected:
 	void *system_resources;
     int dsp;

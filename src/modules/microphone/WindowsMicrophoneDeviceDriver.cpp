@@ -633,3 +633,13 @@ bool MicrophoneDeviceDriver::getSound(yarp::sig::Sound& sound)
 	d.releaseBuffer ();
     return true;
 }
+
+bool MicrophoneDeviceDriver::startRecording()
+{
+    return false;
+}
+
+bool MicrophoneDeviceDriver::stopRecording()
+{
+    return false;
+}
