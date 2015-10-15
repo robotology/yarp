@@ -1063,10 +1063,25 @@ void JointItem::setJointState(JointState newState)
     case NotConfigured:{
         ui->groupBox->setTitle(QString("JOINT %1 (%2) -  NOT CONFIGURED").arg(jointIndex).arg(jointName));
         ui->stackedWidget->setEnabled(false);
-        ui->buttonsContainer->setEnabled(false);
-        if (enableCalib){
+        //activating only calib button
+        if(enableCalib)
+        {
+
+            ui->buttonsContainer->setEnabled(true);
+            ui->buttonIdle->setEnabled(false);
+            ui->buttonPid->setEnabled(false);
+            ui->buttonHome->setEnabled(false);
             ui->buttonCalib->setEnabled(true);
+            ui->buttonRun->setEnabled(false);
+            ui->comboMode->setEnabled(false);
+            ui->comboInteraction->setEnabled(false);
         }
+        //nothing must be activated
+        else
+        {
+            ui->buttonsContainer->setEnabled(false);
+        }
+
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
