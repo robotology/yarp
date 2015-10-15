@@ -49,7 +49,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     VectorPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
-    if (header.listLen > 0 && 
+    if (header.listLen > 0 &&
         header.listTag == BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE) {
         if ((size_t)getListSize() != (size_t)(header.listLen))
             resize(header.listLen);
@@ -95,7 +95,7 @@ ConstString Vector::toString(int precision, int width) const
     ConstString ret = "";
     size_t c;
     char tmp[350];
-    if(width<0){  
+    if(width<0){
         for(c=0;c<length();c++){
             sprintf(tmp, "% .*lf\t", precision, (*this)[c]);
             ret+=tmp;
@@ -105,7 +105,7 @@ ConstString Vector::toString(int precision, int width) const
             sprintf(tmp, "% *.*lf ", width, precision, (*this)[c]);
             ret+=tmp;
         }
-    }       
+    }
 
     if(length()>=1)
         return ret.substr(0, ret.length()-1);
@@ -125,7 +125,7 @@ Vector Vector::subVector(unsigned int first, unsigned int last) const
 }
 
 bool Vector::setSubvector(int position, const Vector &v)
-{    
+{
     if(position+v.size() > storage.size())
         return false;
     for(size_t i=0;i<v.size();i++)
@@ -207,7 +207,7 @@ void Vector::allocGslData()
 {
     gsl_vector *vect=new gsl_vector;
     gsl_block *bl=new gsl_block;
-    
+
     vect->block=bl;
 
     //these are constant (at least for now)
@@ -247,11 +247,11 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
     VectorPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
-    if (header.listLen > 0 && 
+    if (header.listLen > 0 &&
         header.listTag == BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE) {
         if (size() != (size_t)(header.listLen))
             resize(header.listLen);
-        
+
         int k=0;
         for (k=0;k<header.listLen;k++)
             (*this)[k]=connection.expectDouble();
