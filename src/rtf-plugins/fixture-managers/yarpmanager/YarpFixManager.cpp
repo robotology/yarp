@@ -64,23 +64,20 @@ bool YarpFixManager::setup(int argc, char** argv) {
         // load the fixture (application xml)
         char szAppName[] = "fixture";
         ret = addApplication(appfile.c_str(), szAppName);
-        szerror = getLogger()->getLastError();
         RTF_ASSERT_ERROR_IF(ret,
-                            "yarpmanager cannot setup the fixture because " +
-                            std::string((szerror) ? szerror : ""));
+                            "yarpmanager (addApplication) cannot setup the fixture because " +
+                            std::string(getLogger()->getFormatedErrorString()));
         ret = loadApplication(szAppName);
-        szerror = getLogger()->getLastError();
         RTF_ASSERT_ERROR_IF(ret,
-                            "yarpmanager cannot setup the fixture because " +
-                            std::string((szerror) ? szerror : ""));
+                            "yarpmanager (loadApplication) cannot setup the fixture because " +
+                            std::string(getLogger()->getFormatedErrorString()));
         initialized = true;
     }
 
     //run the modules and connect
     ret = run();
-    szerror = getLogger()->getLastError();
     RTF_ASSERT_ERROR_IF(ret,
-                        "yarpmanager cannot setup the fixture because " +
+                        "yarpmanager (run) cannot setup the fixture because " +
                         std::string(getLogger()->getFormatedErrorString()));
     return true;
 }
