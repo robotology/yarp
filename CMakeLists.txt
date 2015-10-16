@@ -28,7 +28,6 @@ set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 # information about what libraries are being built (and their dependencies),
 # along with the include path.  We'll be passing that along to clients
 # using YARP without a global install.
-set_property(GLOBAL PROPERTY YARP_TREE_BUILD TRUE)
 set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
