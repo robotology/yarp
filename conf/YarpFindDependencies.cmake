@@ -330,6 +330,12 @@ if(ENABLE_yarpcar_portmonitor_carrier)
     checkandset_dependency(Lua)
 endif()
 
+if(ENABLE_yarpcar_bayer_carrier)
+    set(Libdc1394_REQUIRED_VERSION 2.0)
+    find_package(Libdc1394 ${Libdc1394_REQUIRED_VERSION})
+    checkandset_dependency(Libdc1394)
+endif()
+
 if(ENABLE_yarpmod_ovrheadset)
     find_package(LibOVR)
     find_package(GLFW3)
@@ -360,6 +366,7 @@ print_dependency(Lua)
 print_dependency(LibOVR)
 print_dependency(GLFW3)
 print_dependency(GLEW)
+print_dependency(Libdc1394)
 
 
 # CHECK DEPENDENCIES:

@@ -2,6 +2,10 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+
+include(YarpDeprecatedOption)
+yarp_deprecated_option(USE_LIBDC1394)
+
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(bayer_carrier TYPE yarp::os::BayerCarrier INCLUDE BayerCarrier.h)
   yarp_install(FILES bayer.ini
@@ -10,42 +14,33 @@ if (COMPILE_PLUGIN_LIBRARY)
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_bayer_carrier)
+  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+  include_directories(${YARP_OS_INCLUDE_DIRS}
+                      ${YARP_sig_INCLUDE_DIRS})
 
-  set(DC1394_FOUND FALSE)
-  set(DC1394_SRC ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/libdc1394_bayer.c)
-  if (NOT WIN32)
-    find_library(lib_raw1394 raw1394)
-    find_library(lib_dc1394 dc1394)
-    if (lib_raw1394 AND lib_dc1394)
-      set(DC1394_FOUND TRUE)
-      set(DC1394_LIBRARIES ${lib_raw1394} ${lib_dc1394})
-    endif ()
-  endif ()
-
-  option(USE_LIBDC1394 "Link DC1394 externally" ${DC1394_FOUND})
-
-  if (USE_LIBDC1394)
-    add_definitions(-DUSE_LIBDC1394)
-    set(DC1394_SRC)
-  else ()
+  if(NOT YARP_HAS_LIBDC1394)
+    set(DC1394_SRC ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/libdc1394_bayer.c)
     include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/)
-  endif ()
-
-  find_package(YARP REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS})
-  yarp_add_plugin(yarp_bayer BayerCarrier.h BayerCarrier.cpp ${DC1394_SRC})
-  if (MSVC AND DC1394_SRC)
-    set_source_files_properties(${DC1394_SRC} PROPERTIES LANGUAGE CXX)
-    set_source_files_properties(${DC1394_SRC} PROPERTIES COMPILE_FLAGS "/wd4309 /wd4244 /wd4018")
-  endif ()
-  if (UNIX AND DC1394_SRC)
-    set_source_files_properties(${DC1394_SRC} PROPERTIES COMPILE_FLAGS -Wno-sign-compare)
-  endif ()
-  target_link_libraries(yarp_bayer YARP_OS YARP_sig)
-  target_link_libraries(yarp_bayer ${ACE_LIBRARIES})
-  if (USE_LIBDC1394)
-    target_link_libraries(yarp_bayer ${DC1394_LIBRARIES})
+    set(Libdc1394_LIBRARIES )
+    if (MSVC AND DC1394_SRC)
+      set_source_files_properties(${DC1394_SRC} PROPERTIES LANGUAGE CXX)
+      set_source_files_properties(${DC1394_SRC} PROPERTIES COMPILE_FLAGS "/wd4309 /wd4244 /wd4018")
+    endif ()
+    if (UNIX AND DC1394_SRC)
+      set_source_files_properties(${DC1394_SRC} PROPERTIES COMPILE_FLAGS -Wno-sign-compare)
+    endif ()
+  else()
+    set(DC1394_SRC )
+    add_definitions(-DUSE_LIBDC1394)
   endif()
+
+  yarp_add_plugin(yarp_bayer BayerCarrier.h BayerCarrier.cpp ${DC1394_SRC})
+
+  target_link_libraries(yarp_bayer YARP_OS
+                                   YARP_sig
+                                   ${ACE_LIBRARIES}
+                                   ${Libdc1394_LIBRARIES})
 
   yarp_install(TARGETS yarp_bayer
                EXPORT YARP

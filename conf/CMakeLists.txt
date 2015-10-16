@@ -27,21 +27,22 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      FindACE.cmake
                      FindAtlas.cmake
                      FindFFMPEG.cmake
+                     FindFreenect.cmake
+                     FindFTDI.cmake
                      FindGooCanvas.cmake
                      FindGooCanvasMM.cmake
                      FindGSL.cmake
                      FindGtkDatabox.cmake
                      FindGtkDataboxMM.cmake
-                     FindOpenCV.cmake
-                     FindPortAudio.cmake
-                     FindSQLite.cmake
-                     FindTinyXML.cmake
-                     FindReadline.cmake
-                     FindFTDI.cmake
-                     FindStage.cmake
-                     FindFreenect.cmake
+                     FindLibdc1394.cmake
                      FindLibUsb1.cmake
-                     FindOpenNI.cmake)
+                     FindOpenCV.cmake
+                     FindOpenNI.cmake
+                     FindPortAudio.cmake
+                     FindReadline.cmake
+                     FindSQLite.cmake
+                     FindStage.cmake
+                     FindTinyXML.cmake)
 
 install(FILES ${YARP_CMAKE_FILES}
        COMPONENT scripts
