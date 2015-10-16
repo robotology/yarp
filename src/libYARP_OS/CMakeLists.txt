@@ -346,7 +346,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/QosStyle.cpp)
 
 
-if (NOT SKIP_ACE)
+if(NOT SKIP_ACE)
   # these carriers have not yet been implemented without ACE
   set(YARP_OS_SRCS ${YARP_OS_SRCS}
                    src/McastCarrier.cpp
@@ -384,11 +384,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(YARP_OS LINK_PRIVATE pthread)
 endif()
 
-if (YARP_USE_READLINE)
+if(YARP_USE_READLINE)
     add_definitions(-DWITH_READLINE)
     include_directories(${Readline_INCLUDE_DIRS})
     target_link_libraries(YARP_OS LINK_PRIVATE ${Readline_LIBRARY})
-endif ()
+endif()
 
 option(YARP_TEST_HEAP "Replace new/delete operators with test harness (may be incompatible with ACE)" FALSE)
 mark_as_advanced(YARP_TEST_HEAP)
