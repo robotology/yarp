@@ -1,16 +1,33 @@
-# Try to find GSL library
-# Once run this will define:
+#.rst:
+# FindGSL
+# -------
 #
-# GSL_FOUND
-# GSL_INCLUDE_DIR and GSL_INCLUDE_DIRS
-# GSL_LIBRARIES
-# GSL_LINK_DIRECTORIES
-# GSLCBLAS_LIBRARY
-# GSL_LIBRARY
+# Try to find GSL library
+# Once run this will define::
+#
+#  GSL_FOUND
+#  GSL_INCLUDE_DIR
+#  GSL_INCLUDE_DIRS
+#  GSL_LIBRARIES
+#  GSL_LINK_DIRECTORIES
+#  GSLCBLAS_LIBRARY
+#  GSL_LIBRARY
 
-# Copyright: (C) 2010 Jan Woetzel
+#=============================================================================
+# Copyright 2010 Jan Woetzel
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
+# (To distribute this file outside of YCM, substitute the full
+#  License text for the above reference.)
+
+
 # Small modifications by Lorenzo Natale and Francesco Nori
-# CopyPolicy: Use under LGPL or BSD license at your choice
 
 #
 # 2004/05 Jan Woetzel, Friso, Daniel Grest 

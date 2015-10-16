@@ -29,8 +29,8 @@
 #  License text for the above reference.)
 
 
-include(MacroStandardFindModule)
-macro_standard_find_module(Libdc1394 libdc1394-2)
+include(StandardFindModule)
+standard_find_module(Libdc1394 libdc1394-2)
 
 # Set package properties if FeatureSummary was included
 if(COMMAND set_package_properties)

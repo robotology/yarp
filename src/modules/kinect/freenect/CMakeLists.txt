@@ -20,10 +20,10 @@ if(NOT SKIP_all_primesensecamera)
   find_library(LIBFREENECT_LIBRARIES freenect ${LIBFREENECT_INCLUDE}/../lib ${LIBFREENECT_INCLUDE}/../build/lib)
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${LIBFREENECT_INCLUDE}/../cmake_modules)
 
-  find_package(libusb-1.0 REQUIRED)
+  find_package(Libusb1 REQUIRED)
 
   # Tell cmake about the include directories
-  include_directories(${CMAKE_SOURCE_DIR} ${LIBFREENECT_INCLUDE} ${LIBUSB_1_INCLUDE_DIRS} ${LIBUSB_1_INCLUDE_DIR} ${LIBUSB_1_INCLUDE_DIR}/libusb-1.0)
+  include_directories(${CMAKE_SOURCE_DIR} ${LIBFREENECT_INCLUDE} ${Libusb1_INCLUDE_DIRS})
   link_libraries(${LIBFREENECT_LIBRARIES} ${USB_LIBRARIES})
 
   #add_definitions(-DDEBUG -g)

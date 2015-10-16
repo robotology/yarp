@@ -1,19 +1,38 @@
-# Originally from VTK project
-# Copyright: 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen
-# CopyPolicy: 3-clause BSD
-
+#.rst:
+# FindFFMPEG
+# ----------
 #
 # Find the native FFMPEG includes and library
 #
-# This module defines
-# FFMPEG_INCLUDE_DIR, where to find avcodec.h, avformat.h ...
-# FFMPEG_LIBRARIES, the libraries to link against to use FFMPEG.
-# FFMPEG_FOUND, If false, do not try to use FFMPEG.
-
-# also defined, but not for general use are
-# FFMPEG_avformat_LIBRARY and FFMPEG_avcodec_LIBRARY, where to find the FFMPEG library.
+# This module defines::
+#
+#  FFMPEG_INCLUDE_DIR, where to find avcodec.h, avformat.h ...
+#  FFMPEG_LIBRARIES, the libraries to link against to use FFMPEG.
+#  FFMPEG_FOUND, If false, do not try to use FFMPEG.
+#
+# also defined, but not for general use are::
+#
+#   FFMPEG_avformat_LIBRARY, where to find the FFMPEG avformat library.
+#   FFMPEG_avcodec_LIBRARY, where to find the FFMPEG avcodec library.
+#
 # This is useful to do it this way so that we can always add more libraries
-# if needed to FFMPEG_LIBRARIES if ffmpeg ever changes...
+# if needed to ``FFMPEG_LIBRARIES`` if ffmpeg ever changes...
+
+#=============================================================================
+# Copyright: 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
+# (To distribute this file outside of YCM, substitute the full
+#  License text for the above reference.)
+
+# Originally from VTK project
+
 
 find_path(FFMPEG_INCLUDE_DIR1 avformat.h
   $ENV{FFMPEG_DIR}

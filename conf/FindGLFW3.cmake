@@ -40,8 +40,8 @@
 # (To distribute this file outside of YCM, substitute the full
 #  License text for the above reference.)
 
-include(MacroStandardFindModule)
-macro_standard_find_module(GLFW3 glfw3)
+include(StandardFindModule)
+standard_find_module(GLFW3 glfw3)
 
 if(NOT GLFW3_FOUND)
   find_path(GLFW3_INCLUDE_DIR

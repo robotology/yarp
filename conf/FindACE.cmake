@@ -1,6 +1,11 @@
+#.rst:
+# FindACE
+# -------
+#
 # Try to find the ACE library
 #
-# Variables set:
+# Variables set::
+#
 #   ACE_FOUND
 #   ACE_LIBRARIES
 #   ACE_INCLUDE_DIRS
@@ -15,14 +20,27 @@
 #   ACE_ADDR_HAS_LOOPBACK_METHOD
 #   ACE_HAS_STRING_HASH
 
-# Copyright: (C) 2009 RobotCub Consortium
-# Copyright: (C) 2013  iCub Facility, Istituto Italiano di Tecnologia
-# Authors: Alexandre Bernardino, Paul Fitzpatrick, Lorenzo Natale, Daniele E. Domenichelli
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+#=============================================================================
+# Copyright 2009 RobotCub Consortium
+# Copyright 2013-2014 iCub Facility, Istituto Italiano di Tecnologia
+#   Authors: Alexandre Bernardino <alex@isr.ist.utl.pt>
+#            Paul Fitzpatrick <paulfitz@alum.mit.edu>
+#            Lorenzo Natale <lorenzo.natale@iit.it>
+#            Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
+# (To distribute this file outside of YCM, substitute the full
+#  License text for the above reference.)
 
 
-include(MacroStandardFindModule)
-macro_standard_find_module(ACE ACE SKIP_CMAKE_CONFIG NOT_REQUIRED)
+include(StandardFindModule)
+standard_find_module(ACE ACE SKIP_CMAKE_CONFIG NOT_REQUIRED)
 
 
 if(ACE_FOUND)

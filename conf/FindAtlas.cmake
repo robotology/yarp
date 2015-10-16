@@ -1,9 +1,22 @@
+#.rst:
+# FindAtlas
+# ---------
+#
 # Find the Atlas (and Lapack) libraries
 
-# Copyright: (C) 2010 RobotCub Consortium
-# Authors: Arjan Gijsberts
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
+#=============================================================================
+# Copyright 2010 RobotCub Consortium
+#   Authors: Arjan Gijsberts <arjan.gijsberts@idiap.ch>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
+# (To distribute this file outside of YCM, substitute the full
+#  License text for the above reference.)
 
 
 set(ATLAS_POSSIBLE_INCLUDE_PATHS

@@ -16,8 +16,8 @@ endforeach(conf)
 # users of YARP.
 set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpIDL.cmake
-                     MacroExtractVersion.cmake
-                     MacroStandardFindModule.cmake
+                     ExtractVersion.cmake
+                     StandardFindModule.cmake
                      YarpDeprecatedWarning.cmake
                      YarpDeprecatedOption.cmake
                      YarpInstallationHelpers.cmake
@@ -35,7 +35,7 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      FindGtkDatabox.cmake
                      FindGtkDataboxMM.cmake
                      FindLibdc1394.cmake
-                     FindLibUsb1.cmake
+                     FindLibusb1.cmake
                      FindOpenCV.cmake
                      FindOpenNI.cmake
                      FindPortAudio.cmake
@@ -86,7 +86,9 @@ if(NOT YARP_NO_DEPRECATED)
                                     deprecated/FindGtkMMUnix.cmake
                                     deprecated/FindGtkMMWin32.cmake
                                     deprecated/FindGtkPlus.cmake
-                                    deprecated/FindGtkWin32.cmake)
+                                    deprecated/FindGtkWin32.cmake
+                                    deprecated/MacroExtractVersion.cmake
+                                    deprecated/MacroStandardFindModule.cmake)
     install(FILES ${YARP_DEPRECATED_CMAKE_FILES}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/deprecated)

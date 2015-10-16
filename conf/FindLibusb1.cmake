@@ -1,21 +1,21 @@
 #.rst:
-# FindTinyXML
+# FindLibusb1
 # -----------
 #
-# Try to find the TinyXML library.
+# Try to find the libusb-1 library.
 # Once done this will define the following variables::
 #
-#  TinyXML_FOUND         - System has TinyXML
-#  TinyXML_INCLUDE_DIRS  - TinyXML include directory
-#  TinyXML_LIBRARIES     - TinyXML libraries
-#  TinyXML_DEFINITIONS   - Additional compiler flags for TinyXML
-#  TinyXML_VERSION       - TinyXML version
-#  TinyXML_MAJOR_VERSION - TinyXML major version
-#  TinyXML_MINOR_VERSION - TinyXML minor version
-#  TinyXML_PATCH_VERSION - TinyXML patch version
+#  Libusb1_FOUND         - System has libusb-1
+#  Libusb1_INCLUDE_DIRS  - libusb-1 include directory
+#  Libusb1_LIBRARIES     - libusb-1 libraries
+#  Libusb1_DEFINITIONS   - Additional compiler flags for libusb-1
+#  Libusb1_VERSION       - libusb-1 version
+#  Libusb1_MAJOR_VERSION - libusb-1 major version
+#  Libusb1_MINOR_VERSION - libusb-1 minor version
+#  Libusb1_PATCH_VERSION - libusb-1 patch version
 
 #=============================================================================
-# Copyright 2012-2013  iCub Facility, Istituto Italiano di Tecnologia
+# Copyright 2012-2014 iCub Facility, Istituto Italiano di Tecnologia
 #   Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 #
 # Distributed under the OSI-approved BSD License (the "License");
@@ -30,10 +30,10 @@
 
 
 include(StandardFindModule)
-standard_find_module(TinyXML tinyxml)
+standard_find_module(Libusb1 libusb-1.0 SKIP_CMAKE_CONFIG)
 
 # Set package properties if FeatureSummary was included
 if(COMMAND set_package_properties)
-    set_package_properties(TinyXML PROPERTIES DESCRIPTION "A small, simple XML parser for the C++ language"
-                                              URL "http://www.grinninglizard.com/tinyxml/index.html")
+    set_package_properties(Libusb1 PROPERTIES DESCRIPTION "Userspace USB programming library"
+                                              URL "http://libusb.org/")
 endif()
