@@ -36,9 +36,12 @@ set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
+# YARP_sig library uses headers from YARP_OS impl, and therefore ACE headers
+# are also required.
+include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
 add_library(YARP_sig ${YARP_sig_SRCS} ${YARP_sig_HDRS})
-target_link_libraries(YARP_sig LINK_PRIVATE YARP_OS)
+target_link_libraries(YARP_sig LINK_PRIVATE YARP_OS ${ACE_LIBRARIES})
 
 set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS})
 set_property(TARGET YARP_sig PROPERTY PRIVATE_HEADER ${YARP_sig_IMPL_HDRS})
