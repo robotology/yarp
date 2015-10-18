@@ -9,8 +9,8 @@ if(CREATE_YARPSCOPE AND YARP_HAS_GTK2)
 
   get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_TREE_INCLUDE_DIRS})
-  include_directories(${GTK2_INCLUDE_DIRS})
-  include_directories(${GtkDataboxMM_INCLUDE_DIRS})
+  include_directories(SYSTEM ${GTK2_INCLUDE_DIRS})
+  include_directories(SYSTEM ${GtkDataboxMM_INCLUDE_DIRS})
   add_definitions(${GTK2_DEFINITIONS})
 
   add_subdirectory(src)

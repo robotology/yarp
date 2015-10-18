@@ -9,8 +9,9 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2)
 
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
                       ${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${GTK2_INCLUDE_DIRS})
+                      ${YARP_sig_INCLUDE_DIRS})
+  include_directories(SYSTEM ${GTK2_INCLUDE_DIRS})
+  add_definitions(${GTK2_DEFINITIONS})
 
   if(YARP_HAS_OPENCV)
     add_definitions(-DHAS_OPENCV)

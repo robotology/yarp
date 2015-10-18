@@ -78,10 +78,10 @@ if(CREATE_YARPBUILDER AND YARP_HAS_GTK2)
 
   include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${YARP_manager_INCLUDE_DIRS})
-  include_directories(${ACE_INCLUDE_DIRS})
-  include_directories(${TinyXML_INCLUDE_DIRS})
-  include_directories(${GTK2_INCLUDE_DIRS})
-  include_directories(${GooCanvasMM_INCLUDE_DIRS})
+  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
+  include_directories(SYSTEM ${TinyXML_INCLUDE_DIRS})
+  include_directories(SYSTEM ${GTK2_INCLUDE_DIRS})
+  include_directories(SYSTEM ${GooCanvasMM_INCLUDE_DIRS})
   include_directories(include)
 
   # GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES

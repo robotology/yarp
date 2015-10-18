@@ -10,11 +10,11 @@ if(CREATE_YARPMANAGER AND YARP_HAS_GTK2)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
 
-  include_directories(${GTK2_INCLUDE_DIRS})
+  include_directories(SYSTEM ${GTK2_INCLUDE_DIRS})
   include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${YARP_manager_INCLUDE_DIRS})
-  include_directories(${ACE_INCLUDE_DIRS})
-  include_directories(${TinyXML_INCLUDE_DIRS})
+  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
+  include_directories(SYSTEM ${TinyXML_INCLUDE_DIRS})
   add_definitions(${GTK2_DEFINITIONS})
 
   set(yarpmanager_gtk_SRCS application_list.cpp
