@@ -363,28 +363,37 @@ else()
       set(HARDENING_FLAGS "${HARDENING_FLAGS} -fPIE -pie")
     endif()
 
-    ## C++11 flags
+
+
+    ## C++11 flags ##
 
     check_cxx_compiler_flag("-std=c++11" CXX_HAS_STD_CXX11)
     check_cxx_compiler_flag("-std=c++0x" CXX_HAS_STD_CXX0X)
     if(CXX_HAS_STD_CXX11)
       set(CXX11_FLAGS "-std=c++11")
     elseif(CXX_HAS_STD_CXX0X)
-      set(CXX11_FLAGS "-std=c++11")
+      set(CXX11_FLAGS "-std=c++0x")
     else()
       set(CXX11_FLAGS)
     endif()
 
-    ## C++14 flags
+
+
+    ## C++14 flags ##
 
     check_cxx_compiler_flag("-std=c++1y" CXX_HAS_STD_CXX1Y)
     if(CXX_HAS_STD_CXX11)
-      set(CXX14_FLAGS "-std=c++11")
+      set(CXX14_FLAGS "-std=c++1y")
+    else()
+      set(CXX14_FLAGS)
     endif()
 
-    check_include_files(execinfo.h YARP_HAS_EXECINFO)
-
 endif()
+
+
+# Try to locate execinfo.h
+check_include_files(execinfo.h YARP_HAS_EXECINFO)
+
 
 # Translate the names of some YARP options, for yarp_config_options.h.in
 # and YARPConfig.cmake.in
