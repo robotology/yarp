@@ -279,21 +279,7 @@ if(CREATE_GUIS)
         set(GTK2_REQUIRED_COMPONENTS gtk)
     endif()
     find_package(GTK2 ${GTK2_REQUIRED_VERSION} COMPONENTS ${GTK2_REQUIRED_COMPONENTS})
-
     checkandset_dependency(GTK2)
-
-    ### FIXME: remove this check when stop supporting debian etch
-    ### FIXME: FindGtkMM reports the wrong version on windows, since
-    ###        this is a problem strictly related to debian etch, for
-    ###        now we do this check only on UNIX.
-    if (UNIX AND CREATE_YARPSCOPE)
-        if (GtkMM_VERSION_MAJOR GREATER 2 OR GtkMM_VERSION_MAJOR EQUAL 2)
-            if (GtkMM_VERSION_MINOR LESS 20)
-                message(STATUS "Detected version of GtkMM that does not support yarpscope, turning off CREATE_YARPSCOPE")
-                set_property(CACHE CREATE_YARPSCOPE PROPERTY VALUE FALSE)
-            endif()
-        endif()
-    endif()
 
     find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport QUIET)
     checkandset_dependency(Qt5)
