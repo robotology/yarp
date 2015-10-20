@@ -451,9 +451,13 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
                 translated_encoding = VOCAB_PIXEL_MONO16;
             }
             break;
+        case VOCAB4('b', 'a', 'y', 'e'):
+            bpp = 1;
+            translated_encoding = VOCAB_PIXEL_MONO;
+            break;
         default:
-            fprintf(stderr,"Sorry, cannot handle [%s] images yet.\n", 
-                    encoding.c_str());
+            fprintf(stderr, "Sorry, cannot handle [%s] images yet.\n",
+                encoding.c_str());
             yarp::os::exit(1);
             break;
         }
