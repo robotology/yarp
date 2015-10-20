@@ -280,7 +280,7 @@ bool Manager::prepare(bool silent)
     {
         Broker* broker = createBroker(*itr);
         broker->setDisplay((*itr)->getDisplay());
-        Executable* exe = new Executable(broker, (MEvent*)this, bWithWatchDog);
+        Executable* exe = new Executable(broker, (MEvent*)this, *itr, bWithWatchDog);
         exe->setID(id++);
         exe->setCommand((*itr)->getName());
         exe->setParam((*itr)->getParam());
