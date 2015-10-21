@@ -454,6 +454,13 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         case VOCAB4('b', 'a', 'y', 'e'):
             bpp = 1;
             translated_encoding = VOCAB_PIXEL_MONO;
+            if (encoding == "bayer_grbg8")
+                translated_encoding = VOCAB_PIXEL_ENCODING_BAYER_GRBG8;
+            else
+            {
+                fprintf(stderr, "Warning automatic debayering not yet supported, keeping raw format.\n");
+            } 
+
             break;
         default:
             fprintf(stderr, "Sorry, cannot handle [%s] images yet.\n",

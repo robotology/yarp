@@ -18,7 +18,8 @@ set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/Sound.h
                   include/yarp/sig/Vector.h)
 
-set(YARP_sig_IMPL_HDRS )
+set(YARP_sig_IMPL_HDRS include/yarp/sig/impl/DeBayer.h
+                       include/yarp/gsl_compatibility.h)
 
 set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Image.cpp
@@ -27,7 +28,8 @@ set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Matrix.cpp
                   src/Sound.cpp
                   src/SoundFile.cpp
-                  src/Vector.cpp)
+                  src/Vector.cpp
+                  src/DeBayer.cpp)
 
 source_group("Source Files" FILES ${YARP_sig_SRCS})
 source_group("Header Files" FILES ${YARP_sig_HDRS})

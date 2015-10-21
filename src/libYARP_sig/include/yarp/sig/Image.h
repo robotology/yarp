@@ -379,7 +379,15 @@ enum YarpVocabPixelTypesEnum
         VOCAB_PIXEL_RGB_INT = VOCAB4('r','g','b','i'),
         VOCAB_PIXEL_MONO_FLOAT = VOCAB3('d','e','c'),
         VOCAB_PIXEL_RGB_FLOAT = VOCAB4('r','g','b','.'),
-        VOCAB_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.')
+        VOCAB_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.'),
+        VOCAB_PIXEL_ENCODING_BAYER_GRBG8 = VOCAB4('g', 'r', 'b', 'g'),   //grbg8
+        VOCAB_PIXEL_ENCODING_BAYER_GRBG16 = VOCAB4('g', 'r', '1', '6'),  //grbg16
+        VOCAB_PIXEL_ENCODING_BAYER_BGGR8 = VOCAB4('b', 'g', 'g', 'r'),     //bggr8
+        VOCAB_PIXEL_ENCODING_BAYER_BGGR16 = VOCAB4('b', 'g', '1', '6'),  //bggr16
+        VOCAB_PIXEL_ENCODING_BAYER_GBRG8 = VOCAB4('g', 'b', 'r', 'g'),  //gbrg8
+        VOCAB_PIXEL_ENCODING_BAYER_GBRG16 = VOCAB4('g', 'b', '1', '6'),  //gbrg16
+        VOCAB_PIXEL_ENCODING_BAYER_RGGB8 = -VOCAB4('r', 'g', 'g', 'b'),   //rggb8
+        VOCAB_PIXEL_ENCODING_BAYER_RGGB16 = VOCAB4('r', 'g', '1', '6')  //rggb16
     };
 
 
