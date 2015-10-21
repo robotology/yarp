@@ -36,17 +36,28 @@ static void unlock() {
     yarp::os::impl::ThreadImpl::timeMutex->post();
 }
 
-static void removeClock() {
-    if (pclock) {
-        if (clock_owned) {
-            delete pclock;
-            clock_owned = false;
-        }
-        pclock = NULL;
-    }
+static void removeClock()
+{
+    Clock *old_pclock = pclock;
+    bool old_clock_owned = clock_owned;
+
+    // make the current clock invalid before destroying it so new request will already
+    // be redirected to the system clock.
+    // Here we are already inside ::lock()
+    pclock = NULL;
+    clock_owned = false;
+
     if (network_clock_name) delete network_clock_name;
     network_clock_name = NULL;
     network_clock_pending = false;
+
+    if (old_pclock) {
+        if (old_clock_owned) {
+            delete old_pclock;          // This will wake up all sleeping threads
+            old_clock_owned = false;
+        }
+        old_pclock = NULL;
+    }
 }
 
 static Clock *getClock() {
@@ -109,6 +120,7 @@ void Time::useSystemClock() {
     lock();
     removeClock();
     unlock();
+    getClock();
 }
 
 void Time::useNetworkClock(const ConstString& clock) {
@@ -117,6 +129,7 @@ void Time::useNetworkClock(const ConstString& clock) {
     network_clock_name = new ConstString(clock);
     network_clock_pending = true;
     unlock();
+    getClock();
 }
 
 void Time::useCustomClock(Clock *clock) {
@@ -125,6 +138,7 @@ void Time::useCustomClock(Clock *clock) {
     pclock = clock;
     yAssert(pclock);
     unlock();
+    getClock();
 }
 
 bool Time::isSystemClock() {

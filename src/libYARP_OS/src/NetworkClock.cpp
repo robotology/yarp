@@ -36,8 +36,14 @@ NetworkClock::~NetworkClock() {
     port.interrupt();
     Waiters& waiters = WAITERS(pwaiters);
     Waiters::iterator waiter_i;
-    for(waiter_i = waiters.begin(); waiter_i != waiters.end(); waiter_i++) {
-        waiter_i->second->post();
+
+    waiter_i = waiters.begin();
+    while (waiter_i != waiters.end())
+    {
+        {
+            waiter_i->second->post();
+            waiter_i = waiters.erase(waiter_i);
+        }
     }
     listMutex.unlock();
     if (pwaiters) {
@@ -87,7 +93,7 @@ void NetworkClock::delay(double seconds) {
         // We are shutting down.  The time signal is no longer available.
         // Make a short delay and return.
         listMutex.unlock();
-        SystemClock::delaySystem(1);
+        SystemClock::delaySystem(seconds);
         return;
     }
     waiter.first = now() + seconds;
@@ -95,12 +101,7 @@ void NetworkClock::delay(double seconds) {
     listMutex.unlock();
 
     waiter.second->wait();
-
-    listMutex.lock();
     delete(waiter.second);
-    waiters.erase(waiterIterator);
-    listMutex.unlock();
-
 }
 
 bool NetworkClock::isValid() const {
@@ -123,13 +124,18 @@ bool NetworkClock::read(ConnectionReader& reader) {
     Waiters& waiters = WAITERS(pwaiters);
     Waiters::iterator waiter_i;
 
-    for(waiter_i = waiters.begin(); waiter_i != waiters.end(); waiter_i++) {
-        if(waiter_i->first - t  < 1E-12 ) // t - waiter_i->seconds >= 0
+    waiter_i = waiters.begin();
+    while (waiter_i != waiters.end())
+    {
+        if(waiter_i->first - t  < 1E-12 )
+        {
             waiter_i->second->post();
+            waiter_i = waiters.erase(waiter_i);
+        }
+        else
+            waiter_i++;
     }
-
     listMutex.unlock();
-
     return true;
 }
 
