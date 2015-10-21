@@ -37,6 +37,31 @@ using namespace yarp::os;
 //	return (rem != 0) ? (pad - rem) : rem;
 //}
 
+/**
+* This helper function groups code to avoid duplication. It is not a member function of Image because 
+* there are problems with ImageNetworkHeader, anyhow the function is state-less and uses only parameters.
+*/
+inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, ConnectionReader& connection)
+{
+    dest.resize(header.width, header.height);
+    unsigned char *mem = dest.getRawImage();
+    int allocatedBytes = dest.getRawImageSize();
+    yAssert(mem != NULL);
+    //this check is redundant with assertion, I would remove it
+    if (dest.getRawImageSize() != header.imgSize) {
+        printf("There is a problem reading an image\n");
+        printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
+            (int)header.width, (int)header.height,
+            (int)header.id,
+            (int)header.quantum, (int)header.imgSize);
+        printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
+            dest.width(), dest.height(), dest.getPixelCode(), dest.getQuantum(), allocatedBytes);
+    }
+    yAssert(allocatedBytes == header.imgSize);
+    bool ok = connection.expectBlock((char *)mem, allocatedBytes);
+    return (!connection.isError() && ok);
+}
+
 
 
 class ImageStorage {
@@ -836,6 +861,13 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     bool ok = connection.expectBlock((char*)&header,sizeof(header));
     if (!ok) return false;
 
+    //first check that the received image size is reasonable
+    if (header.width == 0 || header.height == 0)
+    {
+        // I maintain the prevous logic, although we should probably return false
+        return !connection.isError(); 
+    }
+
     imgPixelCode = header.id;
 
     int q = getQuantum();
@@ -851,56 +883,24 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         }
     }
 
-    if (getPixelCode()!=header.id||q!=header.quantum) {
-        // we're trying to read an incompatible image type
-        // rather than just fail, we'll read it (inefficiently)
-        FlexImage flex;
-        flex.setPixelCode(header.id);
-        flex.setQuantum(header.quantum);
-        flex.resize(header.width,header.height);
-        if (header.width!=0&&header.height!=0) {
-            unsigned char *mem = flex.getRawImage();
-            yAssert(mem!=NULL);
-            if (flex.getRawImageSize()!=header.imgSize) {
-                printf("There is a problem reading an image\n");
-                printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
-                       (int)header.width, (int)header.height,
-                       (int)header.id,
-                       (int)header.quantum, (int)header.imgSize);
-                printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
-                       flex.width(), flex.height(), flex.getPixelCode(),
-                       flex.getQuantum(),
-                       flex.getRawImageSize());
-            }
-            yAssert(flex.getRawImageSize()==header.imgSize);
-            ok = connection.expectBlock((char *)flex.getRawImage(),
-                                        flex.getRawImageSize());
-            if (!ok) return false;
-        }
-        copy(flex);
-    } else {
-        yAssert(getPixelCode()==header.id);
-        resize(header.width,header.height);
-        unsigned char *mem = getRawImage();
-        if (header.width!=0&&header.height!=0) {
-            yAssert(mem!=NULL);
-            if (getRawImageSize()!=header.imgSize) {
-                printf("There is a problem reading an image\n");
-                printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
-                       (int)header.width, (int)header.height,
-                       (int)header.id,
-                       (int)header.quantum, (int)header.imgSize);
-                printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
-                       width(), height(), getPixelCode(), getQuantum(), getRawImageSize());
-            }
-            yAssert(getRawImageSize()==header.imgSize);
-            ok = connection.expectBlock((char *)getRawImage(),
-                                        getRawImageSize());
-            if (!ok) return false;
-        }
+    // handle easy case, received and current image are compatible, no convertion needed
+    if (getPixelCode() == header.id && q == header.quantum)
+    {
+        return readFromConnection(*this, header, connection);
     }
 
-    return !connection.isError();
+    // received and current image are incompatibile, need conversion
+    // rather than just fail, we'll read it (inefficiently)
+    // prepare a FlexImage, set it to be compatible with the received image
+    // read new image into FlexImage then copy from it.
+    FlexImage flex;
+    flex.setPixelCode(header.id);
+    flex.setQuantum(header.quantum);
+    ok = readFromConnection(flex, header, connection);
+    if (ok)
+        copy(flex);
+
+    return ok;    
 }
 
 
@@ -1048,5 +1048,4 @@ bool Image::copy(const Image& alt, int w, int h) {
         }
     return true;
 }
-
 
