@@ -953,8 +953,8 @@ appearing every 2 seconds.
 
 \if MAN_PAGE_COND
 \else
+See also:
 @subpage yarpdev
-
 @subpage yarpview
 \endif
 

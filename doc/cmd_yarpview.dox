@@ -5,61 +5,147 @@
  */
 
 /**
- * @page yarpview The YARP image viewer
+ * @page yarpview The YARP image viewer: yarpview
 
-This is for viewing images transmitted in standard network format.
+\tableofcontents
 
-@section yarpview_base yarpview /PORTNAME
-This is the most common usage.  Starts up a viewer, listing with
-a given port name.  Then if we have an image source, for example:
+\section Introducton
+
+yarpview is a standard graphical interface for viewing images transmitted on the network.
+
+\image html yarpview.png
+\image latex yarpview.png "As an example the images above show two instances of yarpview. In this case the port receives data with the framerate of 30Hz while the display runs at 10Hz. Images are from two instances of test_grabber." width=5cm
+
+Let's experiment with it. We need to create a source of images. The "test_grabber" is a virtual framegrabber which broadcasts images on the network 
+at a given framerate. Let's start test_grabber:
+
 \verbatim
 yarpdev --device test_grabber --name /grabber
 \endverbatim
-We can connect it and see what it is doing:
+
+You can now run yarpview:
 \verbatim
-yarp connect /grabber /PORTNAME
+yarpview
 \endverbatim
 
-This usage is a shorthand for "yarpview --name /PORTNAME".
+By default yarpview uses the port named /yarpview/img:i. You can connect it to the grabber:
 
-@section yarpview_click yarpview --name /PORTNAME --out /CLICK
+\verbatim
+yarp connect /grabber /yarpview/img:i
+\endverbatim
 
-This adds an output port which produces a pair of coordinates
-every time the user clicks on the video stream.  For example,
-you can view this output with:
+Let's get accustomed with the GUI. It displays in the main window the images that are received. 
+To reduce CPU usage yarpview shows these images with a certain refresh (default is 10Hz). You 
+can change the refresh time using the menu (Image->Change refresh interval). 
+If you select Image->Synch display all images will be displayed (assuming there is enough CPU time).
+Freeze stop the refresh and holds the last images that was displayed. 
+
+You can resize and move the window as you like. If you want to restore the size of the GUI to fit
+the size of the images (1:1 ratio) you have to select Image->Original Size. If you prefer you can 
+restore only the original aspect ratio (Image->Original aspect ratio).
+
+From the menu "File" you can also save individual or sequences of frames.
+
+Usually you want to change the port name (especially to execute multiple instances of yarpview):
+
+\verbatim
+yarpview --name /portname
+\endverbatim
+
+Help is displayed with:
+\verbatim
+yarpview_help yarpview --help
+\endverbatim
+
+Print a simple help with all parameters and their usage. This is available only if yarpview
+has access to a console (it depends on the OS).
+
+\section sec-yarpview-stats Debugging connection problems
+
+At its bottom yarpview shows statistics related to the frequency at which it receives 
+ and displays images (respectively Port and Display). The Port statistics helps montoring
+ the performacen of the network and it is useful for debugging. 
+ 
+ As an example the images above show two instances of yarpview. In this case the port receives data with the framerate of 30Hz while the display runs at 10Hz. Images are from two instances of "test_grabber".
+ 
+Notice that the values in Port and Display should be approximatly equal when the option "Synch display" is selected.
+ 
+\section sec-yarpview-getting-clicks Getting image coordinates
+
+You can also get the coordinates of a given point in the image by clicking on it. 
+To enable ths feature you have to run:
+
+\verbatim
+yarpview --name /portname --out /click
+\endverbatim
+
+Now yarpview will produce on the port /click a pair of coordinates (column, row) every time the user 
+clicks on the video stream. The coordinate system is at the top-let (i.e. 0,0 is the topleft corner of the image).
+
+For example, you can display this output with:
 \verbatim
 yarp read /read /CLICK
+yarp: Port /tmp/port/1 active at tcp://192.168.1.185:10007
+yarp: Receiving input from /click to /tmp/port/1 using tcp
+46 60
+46 60
+3 6
+3 6
+38 16
+38 16
+104 34
+104 34
+118 30
+118 30
+yarp: Removing input from /click to /tmp/port/1
 \endverbatim
 
 Note that this will only work if at least one image has been shown by
 the viewer (the image is needed to establish the scale).
+ 
+\section sec-yarpview-compact Sparing space on the screen
 
-@section yarpview_pos yarpview --x X_POSITION --y Y_POSITION
+If you want to spare space on the screen you can remove the menu bar and the widget at the bottom:
 
-Adding these options will place the viewer at the specified location.
+\verbatim
+yarpview --compact 
+\endverbatim
 
+If you really want to see only the images, try this:
+
+\verbatim
+yarpview --minimal
+\endverbatim
+
+\section sec-yarpview-advanced Some advanced options for scripting
+
+The following options allows placing the viewer at specific locations. Ths is useful for scripting:
+
+\verbatim
+yarpview_pos yarpview --x X_POSITION --y Y_POSITION
+\endverbatim
+
+To change the size:
+
+\verbatim
 @section yarpview_size yarpview --w WIDTH --h HEIGHT
+\endverbatim
 
-Adding these options will create the viewer with the specified size.
-
-@section yarpview_framerate Setting the framerate
-
-To set the framerate with which the viewer updates the image:
+You can set the framerate at with which the viewer updates the image:
 
 \verbatim
 yarpview --p framerate
 \endverbatim
 
-Newer versions of yarpview: you can ask yarpview to display all images that are received on the port:
+Notice that this substitutes the parameter --RefreshTime which is now deprecated.
+
+Otherwise you can ask yarpview to display all images that are received on the port:
 \verbatim
 yarpview --synch
 \endverbatim
 
-In this way (if there is enough CPU time free) all images received from the port will be
+In this way (if there is enough CPU time) all images received from the port will be
 displayed in the screen. This is useful if you do not want to lose frames.
 
-@section yarpview_help yarpview --help
-Print a simple help with all parameters and their usage. This is available only if yarpview
-has access to a console (it depends on the OS).
- */
+*/
 
