@@ -25,6 +25,7 @@
 #include "utils.h"
 #include <yarp/os/Event.h>
 #include <yarp/os/Time.h>
+#include <string>
 
 #ifdef HAS_OPENCV
   #include <cv.h>
