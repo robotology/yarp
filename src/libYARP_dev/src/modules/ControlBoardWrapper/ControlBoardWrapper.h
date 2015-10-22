@@ -107,7 +107,7 @@ enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEV
  * |   -            |  useROS        | string  | true/false/only|   -           |  if ROS group is present    | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
  * |   -            |  ROS_TopicName | string  |  -             |   -           |  if ROS group is present    | set the name for ROS topic                                        | must start with a leading '/' |
  * |   -            |  ROS_nodeName  | string  |  -             |   -           |  if ROS group is present    | set the name for ROS node                                         | must start with a leading '/' |
- * |   -            |  jointNames    | string  |  -             |   -           |  if ROS group is present    | name of the joints to be used in ROS message                      | names order must match with the joint order, from 0 to N |
+ * |   -            |  jointNames    | string  |  -             |   -           |  deprecated                 | joints names are now got from attached motionControl device       | names order must match with the joint order, from 0 to N |
  *
  * ROS message type used is sensor_msgs/JointState.msg (http://docs.ros.org/api/sensor_msgs/html/msg/JointState.html)
  * Some example of configuration files:
