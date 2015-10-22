@@ -338,14 +338,14 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
         scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scroll->setWidgetResizable(true);
         part = new PartItem(robotName,
-                                      enabledParts.at(i),
-                                      finder,
-                                      debug_param_enabled,
-                                      speedview_param_enabled,
-                                      enable_calib_all,
-                                      position_direct_enabled,
-                                      openloop_enabled,
-                                      scroll);
+                            enabledParts.at(i),
+                            finder,
+                            debug_param_enabled,
+                            speedview_param_enabled,
+                            enable_calib_all,
+                            position_direct_enabled,
+                            openloop_enabled,
+                            scroll);
 
         if(!part->getInterfaceError()){
             connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
