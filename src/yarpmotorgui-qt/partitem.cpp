@@ -107,7 +107,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     options.put("carrier", "udp");
     partsdd = new PolyDriver(options);
     if (!partsdd->isValid()) {
-        LOG_ERROR("Opening PolyDriver for part %s failed...", robotPartPort.toLatin1().data());
+        yError("Opening PolyDriver for part %s failed...", robotPartPort.toLatin1().data());
         QMessageBox::critical(0,"Error opening a device", QString("Error while opening device for part ").append(robotPartPort.toLatin1().data()));
         interfaceError=true;
     }
@@ -127,7 +127,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         debugOptions.put("carrier", "udp");
         debugdd = new PolyDriver(debugOptions);
         if(debugdd->isValid() == false){
-          LOG_ERROR("Problems opening the debug client \n");
+            yError("Problems opening the debug client!");
         }
     } else {
         debugdd = NULL;
@@ -468,11 +468,11 @@ void PartItem::onJointInteraction(int interaction,JointItem *joint)
     const int jointIndex = joint->getJointIndex();
     switch (interaction) {
     case JointItem::Compliant:
-        LOG_ERROR("joint: %d in COMPLIANT mode!\n", jointIndex);
+        yInfo("interaction mode of joint %d set to COMPLIANT", jointIndex);
         iinteract->setInteractionMode(jointIndex, (yarp::dev::InteractionModeEnum) VOCAB_IM_COMPLIANT);
         break;
     case JointItem::Stiff:
-        LOG_ERROR("joint: %d in STIFF mode!\n", jointIndex);
+        yInfo("interaction mode of joint %d set to STIFF", jointIndex);
         iinteract->setInteractionMode(jointIndex, (yarp::dev::InteractionModeEnum) VOCAB_IM_STIFF);
         break;
     default:
@@ -798,53 +798,53 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     const int jointIndex = joint->getJointIndex();
     switch (mode) {
     case JointItem::Idle:{
-        LOG_ERROR("joint: %d in IDLE mode!\n", jointIndex);
+        yInfo("joint: %d in IDLE mode", jointIndex);
         if(ctrlmode2){
             ctrlmode2->setControlMode(jointIndex, VOCAB_CM_IDLE);
         } else {
-            LOG_ERROR("ERROR: cannot do!");
+            yError("ERROR: cannot do!");
         }
         break;
     }
     case JointItem::Position:{
-        LOG_ERROR("joint: %d in POSITION mode!\n", jointIndex);
+        yInfo("joint: %d in POSITION mode", jointIndex);
         if(ctrlmode2){
             ctrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION);
         } else {
-            LOG_ERROR("ERROR: cannot do!");
+            yError("ERROR: cannot do!");
         }
         break;
     }
     case JointItem::PositionDirect:{
         //if(positionDirectEnabled){
-            LOG_ERROR("joint: %d in POSITION DIRECT mode!\n", jointIndex);
+            yInfo("joint: %d in POSITION DIRECT mode", jointIndex);
             if(ctrlmode2){
                 ctrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION_DIRECT);
             } else {
-                LOG_ERROR("ERROR: cannot do!");
+                yError("ERROR: cannot do!");
             }
             break;
         /*}else{
-            LOG_ERROR("joint: %d in MIXED mode!\n", jointIndex);
+            LOG_ERROR("joint: %d in MIXED mode", jointIndex);
             if(ctrlmode2){
                 ctrlmode2->setControlMode(jointIndex, VOCAB_CM_MIXED);
             } else {
-                LOG_ERROR("ERROR: cannot do!");
+                yError("ERROR: cannot do!");
             }
             break;
         }*/
     }
     case JointItem::Mixed:{
         //if(positionDirectEnabled){
-            LOG_ERROR("joint: %d in MIXED mode!\n", jointIndex);
+            yInfo("joint: %d in MIXED mode", jointIndex);
             if(ctrlmode2){
                 ctrlmode2->setControlMode(jointIndex, VOCAB_CM_MIXED);
             } else {
-                LOG_ERROR("ERROR: cannot do!");
+                yError("ERROR: cannot do!");
             }
             break;
         /*}else{
-            LOG_ERROR("joint: %d in VELOCITY mode!\n", jointIndex);
+            LOG_ERROR("joint: %d in VELOCITY mode", jointIndex);
             if(ctrlmode2){
                 ctrlmode2->setVelocityMode(jointIndex);
             } else {
@@ -856,18 +856,18 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     }
     case JointItem::Velocity:{
         //if(positionDirectEnabled){
-            LOG_ERROR("joint: %d in VELOCITY mode!\n", jointIndex);
+            yInfo("joint: %d in VELOCITY mode", jointIndex);
             if(ctrlmode2)
             {
                 ctrlmode2->setControlMode(jointIndex, VOCAB_CM_VELOCITY);
                 yInfo() << "Changing reference acceleration of joint " << jointIndex << " to 100000";
                 iVel->setRefAcceleration(jointIndex, 100000);
             } else {
-                LOG_ERROR("ERROR: cannot do!");
+                yError("ERROR: cannot do!");
             }
             break;
 //        } else {
-//            LOG_ERROR("joint: %d in TORQUE mode!\n", jointIndex);
+//            LOG_ERROR("joint: %d in TORQUE mode", jointIndex);
 //            if(ctrlmode2){
 //                ctrlmode2->setTorqueMode(jointIndex);
 //            } else {
@@ -879,15 +879,15 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
 
     case JointItem::Torque:{
         //if(positionDirectEnabled){
-            LOG_ERROR("joint: %d in TORQUE mode!\n", jointIndex);
+            yInfo("joint: %d in TORQUE mode", jointIndex);
             if(ctrlmode2){
                 ctrlmode2->setControlMode(jointIndex, VOCAB_CM_TORQUE);
             } else {
-                LOG_ERROR("ERROR: cannot do!");
+                yError("ERROR: cannot do!");
             }
             break;
 //        } else {
-//            LOG_ERROR("joint: %d in OPENLOOP mode!\n", jointIndex);
+//            LOG_ERROR("joint: %d in OPENLOOP mode", jointIndex);
 //            if(ctrlmode2){
 //                ctrlmode2->setOpenLoopMode(jointIndex);
 //            } else {
@@ -898,11 +898,11 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
 
     }
     case JointItem::OpenLoop:{
-        LOG_ERROR("joint: %d in OPENLOOP mode!\n", jointIndex);
+        yInfo("joint: %d in OPENLOOP mode", jointIndex);
         if(ctrlmode2){
             ctrlmode2->setControlMode(jointIndex, VOCAB_CM_OPENLOOP);
         } else {
-            LOG_ERROR("ERROR: cannot do!");
+            yError("ERROR: cannot do!");
         }
         break;
     }
@@ -1318,7 +1318,7 @@ void PartItem::onSaveSequence(QList<SequenceItem> values)
     QString completeFileName = QString("%1/%2.pos%3").arg(fInfo.absolutePath()).arg(fInfo.baseName()).arg(partName);
 
     //QFile file(completeFileName);
-    LOG_ERROR("Saving file %s\n", completeFileName.toLatin1().data());
+    yInfo("Saving file %s\n", completeFileName.toLatin1().data());
 
     QFile file(completeFileName);
     if(!file.open(QIODevice::WriteOnly)){
