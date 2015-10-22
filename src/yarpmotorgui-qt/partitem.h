@@ -58,6 +58,8 @@ public:
 
 
     ~PartItem();
+    void initInterfaces();
+    bool openInterfaces();
     bool getInterfaceError();
     void openSequenceWindow();
     bool cycleAllSeq();
@@ -107,37 +109,38 @@ private:
     QList<SequenceItem> cycleTimeValues;
     int controlModes[MAX_NUMBER_OF_JOINTS];
 
-
     ResourceFinder *finder;
-    Property options;
-    PolyDriver *partsdd;
+
+    PolyDriver    *partsdd;
+    Property   partOptions;
 #ifdef DEBUG_INTERFACE
-    PolyDriver *debugdd;
+    PolyDriver    *debugdd;
+    Property  debugOptions;
 #endif
 
     Port      sequence_port;
     bool interfaceError;
 
 
-    IPositionControl *pos;
-    IPositionDirect  *iDir;
-    IVelocityControl2 *iVel;
-    IRemoteVariables *iVar;
-    IEncoders *iencs;
-    IAmplifierControl *amp;
-    IPidControl *pid;
-    IOpenLoopControl *opl;
-    ITorqueControl *trq;
-    IImpedanceControl *imp;
-    IAxisInfo *iinfo;
+    IPositionControl   *iPos;
+    IPositionDirect    *iDir;
+    IVelocityControl2  *iVel;
+    IRemoteVariables   *iVar;
+    IEncoders         *iencs;
+    IAmplifierControl  *iAmp;
+    IPidControl        *iPid;
+    IOpenLoopControl    *opl;
+    ITorqueControl      *trq;
+    IImpedanceControl   *imp;
+    IAxisInfo         *iinfo;
 #ifdef DEBUG_INTERFACE
-    IDebugInterface *idbg;
+    IDebugInterface    *idbg;
 #endif
-    IControlLimits *ilim;
-    IControlCalibration2 *cal;
-    IControlMode2 *ctrlmode2;
-    IInteractionMode *iinteract;
-    IRemoteCalibrator *remCalib;
+    IControlLimits          *ilim;
+    IControlCalibration2     *cal;
+    IControlMode2           *ctrlmode2;
+    IInteractionMode        *iinteract;
+    IRemoteCalibrator   *remCalib;
 
 
     bool *CURRENT_POS_UPDATE;

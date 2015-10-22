@@ -101,11 +101,11 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 
     interfaceError = false;
 
-    options.put("local", portLocalName.toLatin1().data());
-    options.put("device", "remote_controlboard");
-    options.put("remote", robotPartPort.toLatin1().data());
-    options.put("carrier", "udp");
-    partsdd = new PolyDriver(options);
+    partOptions.put("local", portLocalName.toLatin1().data());
+    partOptions.put("device", "remote_controlboard");
+    partOptions.put("remote", robotPartPort.toLatin1().data());
+    partOptions.put("carrier", "udp");
+    partsdd = new PolyDriver(partOptions);
     if (!partsdd->isValid()) {
         yError("Opening PolyDriver for part %s failed...", robotPartPort.toLatin1().data());
         QMessageBox::critical(0,"Error opening a device", QString("Error while opening device for part ").append(robotPartPort.toLatin1().data()));
@@ -115,7 +115,6 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 #ifdef DEBUG_INTERFACE
     if (debug_param_enabled)
     {
-        Property debugOptions;
         QString portLocalName2=portLocalName;
         // the following complex line of code performs a substring substitution (see example below)
         // "/icub/yarpmotorgui2/right_arm" -> "/icub/yarpmotorgui2/debug/right_arm"
@@ -144,113 +143,8 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     QString sequence_portname = QString("/yarpmotorgui/%1/sequence:o").arg(partName);
     sequence_port.open(sequence_portname.toLatin1().data());
 
-    //default value for unopened interfaces
-    pos       = NULL;
-    iVel      = NULL;
-    iVar      = NULL;
-    iDir      = NULL;
-    iencs     = NULL;
-    amp       = NULL;
-    pid       = NULL;
-    opl       = NULL;
-    trq       = NULL;
-    imp       = NULL;
-#ifdef DEBUG_INTERFACE
-    idbg      = NULL;
-#endif
-    ilim       = NULL;
-    cal       = NULL;
-    ctrlmode2 = NULL;
-    iinteract = NULL;
-    remCalib  = NULL;
-
-    yDebug("Opening interfaces...");
-    bool ok = false;
-
-    if (partsdd->isValid()) {
-        ok  = partsdd->view(pid);
-        if(!ok){
-            LOG_ERROR("...pid was not ok...");
-        }
-        ok &= partsdd->view(amp);
-        if(!ok){
-            LOG_ERROR("...amp was not ok...");
-        }
-        ok &= partsdd->view(pos);
-        if(!ok){
-            LOG_ERROR("...pos was not ok...");
-        }
-        ok &= partsdd->view(iDir);
-        if(!ok){
-            LOG_ERROR("...posDirect was not ok...");
-        }
-        ok &= partsdd->view(iVel);
-        if(!ok){
-            LOG_ERROR("...vel was not ok...");
-        }
-        ok &= partsdd->view(ilim);
-        if(!ok){
-            LOG_ERROR("...lim was not ok...");
-        }
-        ok &= partsdd->view(iencs);
-        if(!ok){
-            LOG_ERROR("...enc was not ok...");
-        }
-        ok &= partsdd->view(cal);
-        if(!ok){
-            LOG_ERROR("...cal was not ok.\n");
-        }
-        ok &= partsdd->view(trq);
-        if(!ok){
-            LOG_ERROR("...trq was not ok.\n");
-        }
-        ok  = partsdd->view(opl);
-        if(!ok){
-            LOG_ERROR("...opl was not ok...");
-        }
-        ok &= partsdd->view(imp);
-        if(!ok){
-            LOG_ERROR("...imp was not ok.\n");
-        }
-        ok &= partsdd->view(ctrlmode2);
-        if(!ok){
-            LOG_ERROR("...ctrlmode2 was not ok.\n");
-        }
-        ok &= partsdd->view(iinteract);
-        if(!ok){
-            LOG_ERROR("...iinteract was not ok.\n");
-        }
-        //optional interfaces
-        if (!partsdd->view(iVar))
-        {
-            LOG_ERROR("...iVar was not ok.\n");
-        }
-
-        if (!partsdd->view(remCalib))
-        {
-            LOG_ERROR("...remCalib was not ok.\n");
-        }
-
-        if (!partsdd->view(iinfo))
-        {
-            LOG_ERROR("...axisInfo was not ok.\n");
-        }
-
-        if (!ok) {
-            LOG_ERROR("Error while acquiring interfaces \n");
-            QMessageBox::critical(0,"Problems acquiring interfaces.","Check if interface is running");
-            interfaceError = true;
-        }
-    }
-
-#ifdef DEBUG_INTERFACE
-    //this interface is not mandatory
-    if (debugdd){
-      ok2 &= debugdd->view(idbg);
-      if (!ok2)
-        LOG_ERROR("...dbg was not ok.\n");
-    }
-#endif
+    initInterfaces();
+    openInterfaces();
 
 //    COPY_STORED_POS=0;
 //    COPY_STORED_VEL=0;
@@ -293,7 +187,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         do {
             ret=iencs->getEncoders(positions);
             if (!ret) {
-                LOG_ERROR("%s iencs->getEncoders() failed, retrying...\n", partName.toLatin1().data());
+                yError("%s iencs->getEncoders() failed, retrying...\n", partName.toLatin1().data());
                 Time::delay(0.050);
             }
         }
@@ -306,7 +200,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         //char buffer[40] = {'i', 'n', 'i', 't'};
 
         int NUMBER_OF_JOINTS;
-        pos->getAxes(&NUMBER_OF_JOINTS);
+        iPos->getAxes(&NUMBER_OF_JOINTS);
 
         for (int k = 0; k<NUMBER_OF_JOINTS; k++){
 
@@ -316,7 +210,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 //            }
 
             //init velocities
-            pos->setRefSpeed(k, ARM_VELOCITY[k]);
+            iPos->setRefSpeed(k, ARM_VELOCITY[k]);
 
             //index[k]=k;
             ilim->getLimits(k, &min, &max);
@@ -325,7 +219,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 
             Pid myPid(0,0,0,0,0,0);
             yarp::os::Time::delay(0.005);
-            pid->getPid(k, &myPid);
+            iPid->getPid(k, &myPid);
 
 
             JointItem *joint = new JointItem(k);
@@ -375,7 +269,6 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     connect(&runTimer,SIGNAL(timeout()),this,SLOT(onRunTimeout()),Qt::QueuedConnection);
 }
 
-
 PartItem::~PartItem()
 {
     disconnect(&runTimer,SIGNAL(timeout()),this,SLOT(onRunTimeout()));
@@ -398,8 +291,8 @@ PartItem::~PartItem()
     for(int i=0;i<layout->count();i++){
         JointItem *joint = (JointItem *)layout->itemAt(i)->widget();
         if(joint){
-            disconnect(joint, SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
-            disconnect(joint, SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
+            disconnect(joint,SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
+            disconnect(joint,SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
             disconnect(joint,SIGNAL(sliderPositionMoved(double,double,int)),this,SLOT(onSliderPositionMoved(double,double,int)));
             disconnect(joint,SIGNAL(sliderTorqueMoved(double,int)),this,SLOT(onSliderTorqueMoved(double,int)));
             disconnect(joint,SIGNAL(sliderOpenloopMoved(double,int)),this,SLOT(onSliderOpenloopMoved(double,int)));
@@ -415,8 +308,128 @@ PartItem::~PartItem()
     if(partsdd){
         partsdd->close();
     }
+}
 
+void PartItem::initInterfaces()
+{
+    yDebug("Initializing interfaces...");
+    //default value for unopened interfaces
+    iPos      = NULL;
+    iVel      = NULL;
+    iVar      = NULL;
+    iDir      = NULL;
+    iencs     = NULL;
+    iAmp      = NULL;
+    iPid      = NULL;
+    opl       = NULL;
+    trq       = NULL;
+    imp       = NULL;
+#ifdef DEBUG_INTERFACE
+    idbg      = NULL;
+#endif
+    ilim      = NULL;
+    cal       = NULL;
+    ctrlmode2 = NULL;
+    iinteract = NULL;
+    remCalib  = NULL;
+}
 
+bool PartItem::openInterfaces()
+{
+    yDebug("Opening interfaces...");
+    bool ok = false;
+
+    if (partsdd->isValid()) {
+        ok  = partsdd->view(iPid);
+        if(!ok){
+            yError("...iPid was not ok...");
+        }
+        ok &= partsdd->view(iAmp);
+        if(!ok){
+            yError("...iAmp was not ok...");
+        }
+        ok &= partsdd->view(iPos);
+        if(!ok){
+            yError("...iPos was not ok...");
+        }
+        ok &= partsdd->view(iDir);
+        if(!ok){
+            yError("...posDirect was not ok...");
+        }
+        ok &= partsdd->view(iVel);
+        if(!ok){
+            yError("...vel was not ok...");
+        }
+        ok &= partsdd->view(ilim);
+        if(!ok){
+            yError("...lim was not ok...");
+        }
+        ok &= partsdd->view(iencs);
+        if(!ok){
+            yError("...enc was not ok...");
+        }
+        ok &= partsdd->view(cal);
+        if(!ok){
+            yError("...cal was not ok...");
+        }
+        ok &= partsdd->view(trq);
+        if(!ok){
+            yError("...trq was not ok...");
+        }
+        ok  = partsdd->view(opl);
+        if(!ok){
+            yError("...opl was not ok...");
+        }
+        ok &= partsdd->view(imp);
+        if(!ok){
+            yError("...imp was not ok...");
+        }
+        ok &= partsdd->view(ctrlmode2);
+        if(!ok){
+            yError("...ctrlmode2 was not ok...");
+        }
+        ok &= partsdd->view(iinteract);
+        if(!ok){
+            yError("...iinteract was not ok...");
+        }
+        //optional interfaces
+        if (!partsdd->view(iVar))
+        {
+            yError("...iVar was not ok...");
+        }
+
+        if (!partsdd->view(remCalib))
+        {
+            yError("...remCalib was not ok...");
+        }
+
+        if (!partsdd->view(iinfo))
+        {
+            yError("...axisInfo was not ok...");
+        }
+
+        if (!ok) {
+            yError("Error while acquiring interfaces!");
+            QMessageBox::critical(0,"Problems acquiring interfaces.","Check if interface is running");
+            interfaceError=true;
+        }
+    }
+    else
+    {
+        yError("Device driver was not valid!");
+        interfaceError=true;
+    }
+
+#ifdef DEBUG_INTERFACE
+    //this interface is not mandatory
+    if (debugdd){
+      ok2 &= debugdd->view(idbg);
+      if (!ok2)
+        yError("...dbg was not ok...");
+    }
+#endif
+
+    return !interfaceError;
 }
 
 bool PartItem::getInterfaceError()
@@ -450,8 +463,8 @@ void PartItem::onSliderPositionMoved(double posVal,double vel,int index)
     ctrlmode2->getControlMode(index, &mode);
 
     if(vel > 0 &&  (( mode == VOCAB_CM_POSITION) || (mode == VOCAB_CM_MIXED))){
-        pos->setRefSpeed(index, vel);
-        pos->positionMove(index, posVal);
+        iPos->setRefSpeed(index, vel);
+        iPos->positionMove(index, posVal);
     }else if(mode == VOCAB_CM_POSITION_DIRECT){
         if (positionDirectEnabled){
             iDir->setPosition(index, posVal);
@@ -549,9 +562,9 @@ void PartItem::onSendTorquePid(int jointIndex,Pid newPid,MotorTorqueParameters n
 void PartItem::onSendPositionPid(int jointIndex,Pid newPid)
 {
     Pid myPosPid(0,0,0,0,0,0);
-    pid->setPid(jointIndex, newPid);
+    iPid->setPid(jointIndex, newPid);
     yarp::os::Time::delay(0.005);
-    pid->getPid(jointIndex, &myPosPid);
+    iPid->getPid(jointIndex, &myPosPid);
 
     if(currentPidDlg){
         currentPidDlg->initPosition(myPosPid);
@@ -593,7 +606,7 @@ void PartItem::onRefreshPids(int jointIndex)
     trq->getTorqueRange(jointIndex, &off_min, &off_max);
 
     // Position
-    pid->getPid(jointIndex, &myPosPid);
+    iPid->getPid(jointIndex, &myPosPid);
     yarp::os::Time::delay(0.005);
 
     // Velocity
@@ -713,7 +726,7 @@ void PartItem::onPidClicked(JointItem *joint)
         idbg->getDebugParameter(jointIndex, debug_base+6, &debug_param[6]);
         idbg->getDebugParameter(jointIndex, debug_base+7, &debug_param[7]);
     } else {
-        LOG_ERROR("WARN: Debug interface not enabled.\n");
+        yWarning("WARN: Debug interface not enabled.\n");
     }
 #endif
 
@@ -746,7 +759,7 @@ void PartItem::onHomeClicked(JointItem *joint)
 {
     int NUMBER_OF_JOINTS;
     const int jointIndex = joint->getJointIndex();
-    pos->getAxes(&NUMBER_OF_JOINTS);
+    iPos->getAxes(&NUMBER_OF_JOINTS);
 
     QString zero = QString("%1_zero").arg(partName);
 
@@ -767,8 +780,8 @@ void PartItem::onHomeClicked(JointItem *joint)
         if(!ok){
             QMessageBox::critical(this,"Error", QString("Check the number of entries in the group %1").arg(zero));
         } else {
-            pos->setRefSpeed(jointIndex, velocityZero);
-            pos->positionMove(jointIndex, positionZero);
+            iPos->setRefSpeed(jointIndex, velocityZero);
+            iPos->positionMove(jointIndex, positionZero);
         }
     }
     else
@@ -1008,7 +1021,7 @@ bool PartItem::homeAll()
 {
     bool ok = true;
     int NUMBER_OF_JOINTS;
-    pos->getAxes(&NUMBER_OF_JOINTS);
+    iPos->getAxes(&NUMBER_OF_JOINTS);
 
     QString zero = QString("%1_zero").arg(partName);
 
@@ -1024,8 +1037,8 @@ bool PartItem::homeAll()
 
                 double velocityZero = ytmp.get(jointIndex+1).asDouble();
 
-                pos->setRefSpeed(jointIndex, velocityZero);
-                pos->positionMove(jointIndex, positionZero);
+                iPos->setRefSpeed(jointIndex, velocityZero);
+                iPos->positionMove(jointIndex, positionZero);
             }
 
         }else{
@@ -1061,7 +1074,7 @@ void PartItem::idleAll()
 {
 
     int NUMBER_OF_JOINTS;
-    pos->getAxes(&NUMBER_OF_JOINTS);
+    iPos->getAxes(&NUMBER_OF_JOINTS);
 
     for (int joint=0; joint < NUMBER_OF_JOINTS; joint++){
         ctrlmode2->setControlMode(joint,VOCAB_CM_IDLE);
@@ -1111,7 +1124,7 @@ bool PartItem::checkAndCycleAllSeq()
 void PartItem::runAll()
 {
     int NUMBER_OF_JOINTS;
-    pos->getAxes(&NUMBER_OF_JOINTS);
+    iPos->getAxes(&NUMBER_OF_JOINTS);
 
     for (int joint=0; joint < NUMBER_OF_JOINTS; joint++){
         //iencs->getEncoder(joint, &posJoint);
@@ -1431,8 +1444,8 @@ void PartItem::onSequenceCycleTime(QList<SequenceItem> values)
 
         setCurrentIndex(vals.getSequenceNumber());
         fixedTimeMove(vals);
-//        pos->setRefSpeeds(cmdVelocities);
-//        pos->positionMove(cmdPositions);
+//        iPos->setRefSpeeds(cmdVelocities);
+//        iPos->positionMove(cmdPositions);
         cycleTimeTimer.start(vals.getTiming() * 1000);
 
         cycleTimeSequence();
@@ -1458,8 +1471,8 @@ void PartItem::onCycleTimeTimerTimeout()
         //fixedTimeMove(vals.getPositions());
         setCurrentIndex(vals.getSequenceNumber());
         fixedTimeMove(vals);
-//        pos->setRefSpeeds(cmdVelocities);
-//        pos->positionMove(cmdPositions);
+//        iPos->setRefSpeeds(cmdVelocities);
+//        iPos->positionMove(cmdPositions);
         cycleTimeTimer.start(vals.getTiming() * 1000);
     }
 }
@@ -1496,8 +1509,8 @@ void PartItem::onSequenceCycle(QList<SequenceItem> values)
 
         setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
-        pos->setRefSpeeds(cmdVelocities);
-        pos->positionMove(cmdPositions);
+        iPos->setRefSpeeds(cmdVelocities);
+        iPos->positionMove(cmdPositions);
         cycleTimer.start(vals.getTiming() * 1000);
 
         cycleSequence();
@@ -1521,8 +1534,8 @@ void PartItem::onCycleTimerTimeout()
 
         setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
-        pos->setRefSpeeds(cmdVelocities);
-        pos->positionMove(cmdPositions);
+        iPos->setRefSpeeds(cmdVelocities);
+        iPos->positionMove(cmdPositions);
 
 
         cycleTimer.start(vals.getTiming() * 1000);
@@ -1561,8 +1574,8 @@ void PartItem::onSequenceRun(QList<SequenceItem> values)
 
         setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
-        pos->setRefSpeeds(cmdVelocities);
-        pos->positionMove(cmdPositions);
+        iPos->setRefSpeeds(cmdVelocities);
+        iPos->positionMove(cmdPositions);
         runTimer.start(vals.getTiming() * 1000);
 
         runSequence();
@@ -1587,8 +1600,8 @@ void PartItem::onRunTimeout()
 
         setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
-        pos->setRefSpeeds(cmdVelocities);
-        pos->positionMove(cmdPositions);
+        iPos->setRefSpeeds(cmdVelocities);
+        iPos->positionMove(cmdPositions);
 
 
         runTimer.start(vals.getTiming() * 1000);
@@ -1646,7 +1659,7 @@ void PartItem::onRunTimerTimeout()
 void PartItem::fixedTimeMove(SequenceItem sequence)
 {
     int NUM_JOINTS;
-    pos->getAxes(&NUM_JOINTS);
+    iPos->getAxes(&NUM_JOINTS);
     double *cmdPositions = new double[NUM_JOINTS];
     double *cmdVelocities = new double[NUM_JOINTS];
     double *startPositions = new double[NUM_JOINTS];
@@ -1668,8 +1681,8 @@ void PartItem::fixedTimeMove(SequenceItem sequence)
         }
     }
 
-  pos->setRefSpeeds(cmdVelocities);
-  pos->positionMove(cmdPositions);
+  iPos->setRefSpeeds(cmdVelocities);
+  iPos->positionMove(cmdPositions);
 
   sequence_port_stamp.update();
   sequence_port.setEnvelope(sequence_port_stamp);
@@ -1693,11 +1706,11 @@ void PartItem::onGo(SequenceItem sequenceItem)
     }
 
     int NUMBER_OF_JOINTS;
-    pos->getAxes(&NUMBER_OF_JOINTS);
+    iPos->getAxes(&NUMBER_OF_JOINTS);
 
     for(int i=0;i<NUMBER_OF_JOINTS;i++){
-        pos->setRefSpeed(i,sequenceItem.getSpeeds().at(i));
-        pos->positionMove(i,sequenceItem.getPositions().at(i));
+        iPos->setRefSpeed(i,sequenceItem.getSpeeds().at(i));
+        iPos->positionMove(i,sequenceItem.getPositions().at(i));
     }
 }
 
@@ -1841,7 +1854,7 @@ void PartItem::updatePart()
     bool done = false;
     bool ret = false;
     int NUMBER_OF_JOINTS=0;
-    pos->getAxes(&NUMBER_OF_JOINTS);
+    iPos->getAxes(&NUMBER_OF_JOINTS);
 
     if (NUMBER_OF_JOINTS == 0){
         LOG_ERROR("Lost connection with iCubInterface. You should save and restart.\n" );
@@ -1880,7 +1893,7 @@ void PartItem::updatePart()
     int k = slowSwitcher%NUMBER_OF_JOINTS;
     slowSwitcher++;
 
-    pos->checkMotionDone(k, &done);
+    iPos->checkMotionDone(k, &done);
     JointItem *joint  = (JointItem*)layout->itemAt(k)->widget();
     if (!done){
         joint->setMotionDone(false);
