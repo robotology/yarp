@@ -101,37 +101,36 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
 
     interfaceError = false;
 
-    partOptions.put("local", portLocalName.toLatin1().data());
-    partOptions.put("device", "remote_controlboard");
-    partOptions.put("remote", robotPartPort.toLatin1().data());
+    // Initializing the polydriver options and instantiating the polydrivers
+    partOptions.put(  "local", portLocalName.toLatin1().data());
+    partOptions.put( "device", "remote_controlboard");
+    partOptions.put( "remote", robotPartPort.toLatin1().data());
     partOptions.put("carrier", "udp");
-    partsdd = new PolyDriver(partOptions);
-    if (!partsdd->isValid()) {
+
+    partsdd = new PolyDriver();
+
+    #ifdef DEBUG_INTERFACE
+        if (debug_param_enabled)
+        {
+            QString portLocalName2=portLocalName;
+
+            portLocalName2.replace(partName,QString("debug/%1").arg(partName));
+            debugOptions.put(  "local", portLocalName2.toLatin1().data());
+            debugOptions.put( "device", "debugInterfaceClient");
+            debugOptions.put( "remote", robotPartPort.toLatin1().data());
+            debugOptions.put("carrier", "udp");
+
+            debugdd = new PolyDriver();
+        }
+    #endif
+
+    // Opening the drivers
+    interfaceError = !openPolyDrivers();
+    if (interfaceError==true)
+    {
         yError("Opening PolyDriver for part %s failed...", robotPartPort.toLatin1().data());
         QMessageBox::critical(0,"Error opening a device", QString("Error while opening device for part ").append(robotPartPort.toLatin1().data()));
-        interfaceError=true;
     }
-
-#ifdef DEBUG_INTERFACE
-    if (debug_param_enabled)
-    {
-        QString portLocalName2=portLocalName;
-        // the following complex line of code performs a substring substitution (see example below)
-        // "/icub/yarpmotorgui2/right_arm" -> "/icub/yarpmotorgui2/debug/right_arm"
-
-        portLocalName2.replace(partName,QString("debug/%1").arg(partName));
-        debugOptions.put("local", portLocalName2.toLatin1().data());
-        debugOptions.put("device", "debugInterfaceClient");
-        debugOptions.put("remote", robotPartPort.toLatin1().data());
-        debugOptions.put("carrier", "udp");
-        debugdd = new PolyDriver(debugOptions);
-        if(debugdd->isValid() == false){
-            yError("Problems opening the debug client!");
-        }
-    } else {
-        debugdd = NULL;
-    }
-#endif
 
     /*********************************************************************/
     /**************** PartMover Content **********************************/
@@ -146,39 +145,40 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     initInterfaces();
     openInterfaces();
 
-//    COPY_STORED_POS=0;
-//    COPY_STORED_VEL=0;
-//    COPY_SEQUENCE=0;
-//    COPY_TIMING=0;
+    // COPY_STORED_POS=0;
+    // COPY_STORED_VEL=0;
+    // COPY_SEQUENCE=0;
+    // COPY_TIMING=0;
 
-    if (interfaceError == false){
-        yDebug("Allocating memory \n");
-//        STORED_POS   = new double* [NUMBER_OF_STORED];
-//        STORED_VEL   = new double* [NUMBER_OF_STORED];
-//        CURRENT_POS_UPDATE = new bool [NUMBER_OF_STORED];
+    if (interfaceError == false)
+    {
+        // yDebug("Allocating memory \n");
+        // STORED_POS   = new double* [NUMBER_OF_STORED];
+        // STORED_VEL   = new double* [NUMBER_OF_STORED];
+        // CURRENT_POS_UPDATE = new bool [NUMBER_OF_STORED];
 
-//        int j,k;
-//        for (j = 0; j < NUMBER_OF_STORED; j++){
-//            CURRENT_POS_UPDATE[j] = true;
-//            STORED_POS[j] = new double [MAX_NUMBER_OF_JOINTS];
-//            STORED_VEL[j] = new double [MAX_NUMBER_OF_JOINTS];
-//        }
+        // int j,k;
+        // for (j = 0; j < NUMBER_OF_STORED; j++){
+        //     CURRENT_POS_UPDATE[j] = true;
+        //     STORED_POS[j] = new double [MAX_NUMBER_OF_JOINTS];
+        //     STORED_VEL[j] = new double [MAX_NUMBER_OF_JOINTS];
+        // }
 
-//        SEQUENCE     = new int [NUMBER_OF_STORED];
-//        INV_SEQUENCE = new int [NUMBER_OF_STORED];
-//        TIMING = new double    [NUMBER_OF_STORED];
-//        index  = new int [MAX_NUMBER_OF_JOINTS];
-//        SEQUENCE_ITERATOR = new int [0];
-//        timeout_seqeunce_id = new uint [0];
-//        entry_id = new uint [0];
-//        *entry_id = -1;
-//        timeout_seqeunce_rate = new uint [0];
+        // SEQUENCE     = new int [NUMBER_OF_STORED];
+        // INV_SEQUENCE = new int [NUMBER_OF_STORED];
+        // TIMING = new double    [NUMBER_OF_STORED];
+        // index  = new int [MAX_NUMBER_OF_JOINTS];
+        // SEQUENCE_ITERATOR = new int [0];
+        // timeout_seqeunce_id = new uint [0];
+        // entry_id = new uint [0];
+        // *entry_id = -1;
+        // timeout_seqeunce_rate = new uint [0];
 
 
-//        for (j = 0; j < NUMBER_OF_STORED; j++){
-//            SEQUENCE[j] = -1;
-//            TIMING[j] = -0.1;
-//        }
+        // for (j = 0; j < NUMBER_OF_STORED; j++){
+        //     SEQUENCE[j] = -1;
+        //     TIMING[j] = -0.1;
+        // }
 
         double positions[MAX_NUMBER_OF_JOINTS];
 
@@ -202,18 +202,18 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         int NUMBER_OF_JOINTS;
         iPos->getAxes(&NUMBER_OF_JOINTS);
 
-        for (int k = 0; k<NUMBER_OF_JOINTS; k++){
-
-//            //init stored
-//            for(j = 0; j < NUMBER_OF_STORED; j++){
-//                STORED_POS[j][k] = 0.0;
-//            }
+        for (int k = 0; k<NUMBER_OF_JOINTS; k++)
+        {
+            // //init stored
+            // for(j = 0; j < NUMBER_OF_STORED; j++){
+            //     STORED_POS[j][k] = 0.0;
+            // }
 
             //init velocities
             iPos->setRefSpeed(k, ARM_VELOCITY[k]);
 
             //index[k]=k;
-            ilim->getLimits(k, &min, &max);
+            iLim->getLimits(k, &min, &max);
 
             iinfo->getAxisName(k, jointname);
 
@@ -245,8 +245,6 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
             connect(joint,SIGNAL(calibClicked(JointItem*)),this,SLOT(onCalibClicked(JointItem*)));
         }
     }
-
-
 
     /*********************************************************************/
     /*********************************************************************/
@@ -310,6 +308,27 @@ PartItem::~PartItem()
     }
 }
 
+bool PartItem::openPolyDrivers()
+{
+    partsdd->open(partOptions);
+    if (!partsdd->isValid()) {
+        return false;
+    }
+
+    #ifdef DEBUG_INTERFACE
+        if (debug_param_enabled)
+        {
+            debugdd->open(debugOptions);
+            if(!debugdd->isValid()){
+                yError("Problems opening the debug client!");
+            }
+        } else {
+            debugdd = NULL;
+        }
+    #endif
+    return true;
+}
+
 void PartItem::initInterfaces()
 {
     yDebug("Initializing interfaces...");
@@ -327,7 +346,7 @@ void PartItem::initInterfaces()
 #ifdef DEBUG_INTERFACE
     idbg      = NULL;
 #endif
-    ilim      = NULL;
+    iLim      = NULL;
     cal       = NULL;
     ctrlmode2 = NULL;
     iinteract = NULL;
@@ -358,11 +377,11 @@ bool PartItem::openInterfaces()
         }
         ok &= partsdd->view(iVel);
         if(!ok){
-            yError("...vel was not ok...");
+            yError("...iVel was not ok...");
         }
-        ok &= partsdd->view(ilim);
+        ok &= partsdd->view(iLim);
         if(!ok){
-            yError("...lim was not ok...");
+            yError("...iLim was not ok...");
         }
         ok &= partsdd->view(iencs);
         if(!ok){
@@ -420,14 +439,14 @@ bool PartItem::openInterfaces()
         interfaceError=true;
     }
 
-#ifdef DEBUG_INTERFACE
-    //this interface is not mandatory
-    if (debugdd){
-      ok2 &= debugdd->view(idbg);
-      if (!ok2)
-        yError("...dbg was not ok...");
-    }
-#endif
+    #ifdef DEBUG_INTERFACE
+        //this interface is not mandatory
+        if (debugdd){
+          ok2 &= debugdd->view(idbg);
+          if (!ok2)
+            yError("...dbg was not ok...");
+        }
+    #endif
 
     return !interfaceError;
 }
@@ -1842,7 +1861,6 @@ void PartItem::updateControlMode()
 
 void PartItem::updatePart()
 {
-
     double refTorques[MAX_NUMBER_OF_JOINTS];
     double torques[MAX_NUMBER_OF_JOINTS];
     double positions[MAX_NUMBER_OF_JOINTS];

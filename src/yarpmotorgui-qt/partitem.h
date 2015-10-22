@@ -58,6 +58,7 @@ public:
 
 
     ~PartItem();
+    bool openPolyDrivers();
     void initInterfaces();
     bool openInterfaces();
     bool getInterfaceError();
@@ -136,7 +137,7 @@ private:
 #ifdef DEBUG_INTERFACE
     IDebugInterface    *idbg;
 #endif
-    IControlLimits          *ilim;
+    IControlLimits          *iLim;
     IControlCalibration2     *cal;
     IControlMode2           *ctrlmode2;
     IInteractionMode        *iinteract;
