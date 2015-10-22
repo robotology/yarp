@@ -49,7 +49,7 @@ struct partsData
         yarp::os::Bottle        bot;                                //yarp Bottle containing all the data
         yarp::sig::Vector       timestamp;                          //yarp Vector containing all the timestamps
         yarp::os::BufferedPort<yarp::os::Bottle>        bottlePort; //yarp port for sending bottles
-        yarp::os::BufferedPort<yarp::sig::Image>    imagePort;  //yarp port for sending images
+        yarp::os::BufferedPort<yarp::sig::Image>        imagePort;  //yarp port for sending images
         std::string             portName;                           //the name of the port
         int                     sent;                               //integer used for step from command
         bool                    hasNotified;                        //boolean used for individual part notification that it has reached eof

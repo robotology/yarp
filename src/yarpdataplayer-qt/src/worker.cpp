@@ -52,6 +52,13 @@ bool WorkerClass::init()
     initTime = 0.0;
     frameRate = 0.0;
     utilities->partDetails[part].hasNotified = false;
+    
+    #ifdef HAS_OPENCV
+        yInfo("USING OPENCV FOR SENDING THE IMAGES\n");
+    #else
+        yInfo("USING YARP IMAGE FOR SENDING THE IMAGES\n");
+    #endif
+    
     return true;
 }
 
