@@ -6,7 +6,7 @@
  */
 
 /**
-\page yarpscope YarpScope: A simple graphical user interface for visualizing the numerical content of a a port.
+\page yarpscope yarpscope: A simple graphical user interface for visualizing the numerical content of a a port.
 
 \author Daniele E. Domenichelli
 \author The original Qt version of portScope was written by Francesco Nori.
@@ -19,12 +19,63 @@ of a YARP port. The input port is assumed to contain a vector of numbers.
  - Each plot can contain one or more graphs.
  - Each graph displays one pair [remote port, index].
 
-\section usage_sec How to initialize the YarpScope
+\section usage_sec How to initialize the yarpscope
 
-At the moment the only way to start YarpScope is by passing an xml file using
-the --xml parameter. The file is located using the YARP default policy.
+yarpscope supports two different modes: simple mode (one remote, one graph) and
+XML mode (multiple remotes, multiple graph).
 
-\subsection xml_file_format XML File Format
+The following options are common to both modes:
+
+\code
+ --help                 Print this help and exit.
+
+ --title [string]       Title of the window (default "YARP Port Scope")
+ --x [uint]             Initial X position of the window.
+ --y [uint]             Initial Y position of the window.
+ --dx [uint]            Initial width of the window.
+ --dy [uint]            Initial height of the window.
+
+ --interval [int]       Initial refresh interval in milliseconds. (default = 50ms)
+\endcode
+
+
+\subsection yarpscope_simple_mode Simple Mode
+
+Simple mode can be used for running yarpscope from the command line, connecting
+to a single remote and displaying multiple plots on a single graph.
+
+The syntax is
+
+\code
+--remote [string]      Remote port to connect to.
+ --carrier [string]     YARP Carrier used for connections (default "mcast")
+ --persistent,          Make normal or persistent connections (default persistent)
+   --no-persistent
+ --index [...]          Index(es) of the vector to plot.
+                        It can be an [uint] or an array of [uint]s
+ --plot_title [string]  Plot title (default = remote)
+ --min [float]          Minimum value for the X axis (default -100)
+ --max [float]          Maximum value for the X axis (default 100)
+ --size [uint]          Plot size (Number of samples to plot) (default 201)
+ --bgcolor [string]     Background color.
+ --color [...]          Graph color(s).
+                        Depending on index it must be a [string] or an array of [string]s.
+ --type [...]           Graph type(s). Accepted values are "points", "lines" and "bars" (default = "lines")
+                        Depending on index it must be a [string] or an array of [string]s.
+ --graph_size [...]     Graph size(s) (thickness of the points) (default = 1)
+                        Depending on index it must be a [uint] or an array of [uint]s.
+\endcode
+
+
+
+\subsection yarpscope_xml_mode XML Mode
+
+
+XML mode can be used to start yarpscope by passing an xml that contains the
+configuration of the window. It can connect to multiple remotes and display
+one or more graphs in a grid.
+To invoke XML mode, yarpscope must be started passing the --xml parameter.
+The file is located using the YARP default policy.
 
 Here is an example of portscope description file in XML format:
 
