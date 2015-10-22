@@ -10,6 +10,8 @@
 
 \author Paul Fitzpatrick
 
+\tableofcontents
+
 Programs that use YARP ports may interoperate with the ROS
 "Robot Operating System" in several ways.  While basic
 interoperability has been possible from YARP version 2.3.4 on,
@@ -272,6 +274,26 @@ It is waiting for us to reply.  We can type in whatever number we like ("7" if w
 \verbatim
 [ INFO] [1386793386.003997149]: Sum: 7
 \endverbatim
+
+\section yarp_with_ros_making_connections An important note on making connections
+
+In YARP we usually make connections using "yarp connect". This may lead to thinking that we can connect a YARP port to a 
+topic using the following sequence of commands:
+
+\verbatim
+$ yarpview --name /view 
+$ yarp connect /topic@/node /view
+\endverbatim
+
+ROS however requires to manage the connections through roscore. Therefore YARP ports need to be registered as topic 
+with "roscore" as described above. In our example this 
+means running yarpview as follows:
+
+\verbatim
+$ yarpview --name /topic@/viewer 
+\endverbatim
+
+and let ROS (roscore)establish the connection with /topic.
 
 \section yarp_with_ros_code Sending/receiving simple messages from code
 
