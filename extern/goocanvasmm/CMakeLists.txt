@@ -136,22 +136,30 @@ set(goocanvasmm_HDRS
     goocanvasmm/goocanvas/goocanvasmm/ellipse.h
 )
 
-add_library(YARP_priv_goocanvasmm STATIC ${goocanvasmm_SRCS} ${goocanvasmm_HDRS})
+add_definitions(${GTK2_DEFINITIONS})
 
-target_link_libraries(YARP_priv_goocanvasmm LINK_PRIVATE ${GooCanvas_LIBRARIES}
-                                                    ${GooCanvasMM_GTK2_LIBRARIES})
+# libsigc++ 2.5.1 or later requires c++11. This is automatically
+# enabled with CMake 3.1 or later (using FindGTK2.cmake from CMake
+# 3.5). With older versions, we enable it here.
+if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.1)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.1)
+  if(NOT ${GTK2_SIGC++_VERSION_MAJOR}.${GTK2_SIGC++_VERSION_MINOR}.${GTK2_SIGC++_VERSION_MICRO} VERSION_LESS 2.5.1)
+    add_definitions(${CXX11_FLAGS})
+  endif()
+endif()
 
 if(MSVC)
     add_definitions(/wd4099 /wd4250 /wd4520 /wd4805 /vd2)
 endif(MSVC)
 
-if(UNIX)
-    if (GtkMM_VERSION_MAJOR GREATER 2 OR GtkMM_VERSION_MAJOR EQUAL 2)
-        if (GtkMM_VERSION_MINOR LESS 22)
-            add_definitions(-DGTKMM_LESS_2_22)
-         endif()
-    endif()
-endif(UNIX)
+add_library(YARP_priv_goocanvasmm STATIC ${goocanvasmm_SRCS} ${goocanvasmm_HDRS})
+
+target_link_libraries(YARP_priv_goocanvasmm LINK_PRIVATE ${GooCanvas_LIBRARIES}
+                                                    ${GooCanvasMM_GTK2_LIBRARIES})
+
+
 
 set(GooCanvasMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/goocanvasmm/goocanvas
                              ${GooCanvas_INCLUDE_DIRS}
