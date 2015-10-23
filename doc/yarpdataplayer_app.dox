@@ -37,10 +37,10 @@ in iCub) if you want to execute this tutorial on your computer.
 Download example sequence. This sequence was recorded while the iCub was
 tracking and grasping a red ball:
 
-Use this link if you <b>have opencv</b> installed (images are jpg compressed 182MB total). 
+Use this link if you <b>have opencv</b> installed (images are jpg compressed 46MB zipped). 
  - <a href="http://www.icub.org/download/software/datasetplayer-demo/testData_20120803_095402.zip">testData_20120803_095402.zip</a>
 
-Use this link if you <b>do not have opencv</b> installed (images are ppm 1000MB total).
+Use this link if you <b>do not have opencv</b> installed (images are ppm 642MB zipped).
  - <a href="http://www.icub.org/download/software/datasetplayer-demo/testData_20151023_100400.zip">testData_20151023_100400.zip</a> 
 
 Unpack the content of the archive in a directory of your choice, e.g.
