@@ -4,8 +4,8 @@
 
 bool deBayer_GRBG8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int pixelSize)
 {
-    yAssert((pixelSize == 3) && (dest.getPixelCode() == VOCAB_PIXEL_BGR) ||
-        (pixelSize == 4 && dest.getPixelCode() == VOCAB_PIXEL_BGRA))
+    yAssert(((pixelSize == 3) && (dest.getPixelCode() == VOCAB_PIXEL_BGR)) ||
+        ((pixelSize == 4 && dest.getPixelCode() == VOCAB_PIXEL_BGRA)))
 
         dest.resize(source.width(), source.height());
     // perform conversion, skip borders
@@ -70,8 +70,8 @@ bool deBayer_GRBG8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int 
 
 bool deBayer_GRBG8_TO_RGB(yarp::sig::Image &source, yarp::sig::Image &dest, int pixelSize)
 {
-    yAssert((pixelSize == 3) && (dest.getPixelCode() == VOCAB_PIXEL_RGB) ||
-    (pixelSize == 4 && dest.getPixelCode() == VOCAB_PIXEL_RGBA))
+    yAssert(((pixelSize == 3) && (dest.getPixelCode() == VOCAB_PIXEL_RGB)) ||
+    ((pixelSize == 4 && dest.getPixelCode() == VOCAB_PIXEL_RGBA)))
 
     dest.resize(source.width(), source.height());
     // perform conversion, skip borders
