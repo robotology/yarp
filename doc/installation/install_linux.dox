@@ -6,24 +6,26 @@
 
 /**
  * @page install_yarp_linux Installing YARP on Linux
- 
+
 \section install_on_linux Installation on Linux
 
 \tableofcontents
- 
+
 \subsection install_linux_from_binaries Install from binaries
 
 Add www.icub.org to your sources.list. Determine the Linux distribution you use.
 
-E.g. for Ubuntu 14.04 Trusty (Note: you need to adapt these instructions according to your distribution).
+E.g. for Ubuntu 14.04 Trusty (Note: you need to adapt these instructions
+according to your distribution).
 
 \code
   sudo sh -c 'echo "deb http://www.icub.org/ubuntu trusty contrib/science" > /etc/apt/sources.list.d/icub.list'
 \endcode
 
 (replace trusty with the name of the distribution).
- 
- For Debian 7.0 Wheezy(Note: you need to adapt these instructions according to your distribution).
+
+For Debian 7.0 Wheezy (Note: you need to adapt these instructions according to
+your distribution).
 
 \code
   sudo sh -c 'echo "deb http://www.icub.org/debian wheezy contrib/science" > /etc/apt/sources.list.d/icub.list'
@@ -41,12 +43,13 @@ You are now ready to check you installation, see \ref check_your_installation.
 
 \subsection install_linux_from_sources Install from sources
 
-Install the following packages to prepare your development environment and get basic dependencies:
+Install the following packages to prepare your development environment and get
+basic dependencies:
 
 \code
-	sudo apt-get install git cmake cmake-curses-gui libgsl0-dev libace-dev libreadline-dev
+  sudo apt-get install git cmake cmake-curses-gui libgsl0-dev libace-dev libreadline-dev
 \endcode
-	
+
 For Qt5 different packages are needed for different systems.
 
 \subsubsection install_qt5_debian_jessie Qt5 for Debian (jessie)
@@ -102,7 +105,9 @@ download a binary release from the
 <a href="http://qt-project.org/downloads">Qt Project website</a>, or
 download the source code, and build it yourself.
 
-Alternatively you can compile all dependencies yourself following the procedure here: \ref dependencies (notice however that this can be tedious, time consuming and error prone).
+Alternatively you can compile all dependencies yourself following the procedure
+here: \ref dependencies (notice however that this can be tedious, time consuming
+and error prone).
 
 \subsubsection compiling_yarp Compiling YARP
 
@@ -130,42 +135,58 @@ Generate makefiles using CMake:
 
 Set the following variables to true:
 
-\code  
+\code
   CREATE_GUIS, set to ON
   CREATE_LIB_MATH, set to ON
 \endcode
 
 (leave default values as they are unless you know better)
 
-\remark CREATE_GUIS and CREATE_LIB_MATH require you have installed the libraries qt and gsl (you have, if you have followed the instructions above).
+\remark CREATE_GUIS and CREATE_LIB_MATH require you have installed the libraries
+qt and gsl (you have, if you have followed the instructions above).
 
-Makefiles generation is an iterative process, hit "c" until the option "Generate" becomes available. Then hit "g" and quit.
+Makefiles generation is an iterative process, hit "c" until the option
+"Generate" becomes available. Then hit "g" and quit.
 
 Compile:
 
-\code 
- make 
+\code
+ make
  sudo make install
  sudo ldconfig
 \endcode
 
 You are now ready to check you installation, see \ref check_your_installation.
 
-\remark If you do not have \c sudo access or you want to install YARP in another location you can optionally change \c CMAKE_INSTALL_PREFIX: this is the directory where you would like to install YARP (default is \c /usr/local). If you do so, you will then need to enable \c INSTALL_WITH_RPATH variable to \c ON to allow YARP programs to find the corresponding YARP libraries if they are not in your system's library path (alternatively you can tweak \c LD_LIBRARY_PATH). In addition you will have to set the \c YARP_DIR and \c YARP_DATA_DIRS environment variables to point to the installation directory, see set_up_your_environment_linux.
+\remark YARP is installed with the RPATH enabled. This allows to install YARP in
+another location by changing the \c CMAKE_INSTALL_PREFIX option (default is
+\c /usr/local). If you install YARP in a system directories, or if you use the
+\c LD_LIBRARY_PATH environment variable, you might want to disable the RPATH.
+In order to do this, you have to enable the \c CMAKE_SKIP_INSTALL_RPATH option
+in cmake.
+
+\remark If YARP is not installed in a system location, you you will have to set
+the \c YARP_DIR and \c YARP_DATA_DIRS environment variables to point to the
+installation directory, see \ref set_up_your_environment_linux.
 
 \remark Do not select other options unless you know what you are doing.
 
-\subsubsection set_up_your_environment_linux Setup your environment (only if you did not install YARP In default location)
+\subsubsection set_up_your_environment_linux Setup your environment
 
-If you have installed YARP in default location you can skip to \ref check_your_installation.
-If you are using YARP without installing it or you have installed it in a custom location, you have to tweak your environment (eidt your bashrc or similar) to:
+If you have installed YARP in default location you can skip to
+\ref check_your_installation.
 
- + Set environment variables \c YARP_DIR and \c YARP_DATA_DIRS to the location where you installed YARP (or CMake's build directory if you did not perform the installation step) to allow cmake to find YARP easily for your own projects.
- + Add \c YARP_DIR/bin to \c PATH to allow your shell to find
-   YARP programs.
- + Add \c YARP_DIR/lib to \c LD_LIBRARY_PATH to allow YARP
-   programs to find YARP libraries, if you did not select INSTALL_WITH_RPATH.
-   
- 
+If you are using YARP without installing it or you have installed it in a custom
+location, or you have disabled RPATH, you have to tweak your environment (edit
+your \c .bashrc or similar) to:
+
+ + Set environment variables \c YARP_DIR and \c YARP_DATA_DIRS to the location
+   where you installed YARP (or CMake's build directory if you did not perform
+   the installation step) to allow cmake to find YARP easily for your own
+   projects.
+ + Add \c YARP_DIR/bin to \c PATH to allow your shell to find YARP programs.
+ + Add \c YARP_DIR/lib to \c LD_LIBRARY_PATH to allow YARP programs to find YARP
+   libraries, if you enabled \c CMAKE_SKIP_INSTALL_RPATH and did not install in
+   a system directory.
 
 */
