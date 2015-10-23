@@ -266,18 +266,11 @@ endif()
 
 #########################################################################
 # Control setting an rpath
-if(NOT MSVC)
-    option(INSTALL_WITH_RPATH "When installing, give executables hard-coded paths to the libraries they need" OFF)
-    yarp_renamed_option(ENABLE_FORCE_RPATH INSTALL_WITH_RPATH)
-else()
-    yarp_deprecated_option(ENABLE_FORCE_RPATH)
-endif()
-
-add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"       # Libraries
-                                   "${CMAKE_INSTALL_FULL_BINDIR}"       # Binaries
+yarp_deprecated_option(ENABLE_FORCE_RPATH)
+yarp_deprecated_option(INSTALL_WITH_RPATH)
+add_install_rpath_support(LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"       # Libraries
+                          BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"       # Binaries
                                    "${CMAKE_INSTALL_FULL_LIBDIR}/yarp"  # Plugins
-                          LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
-                          DEPENDS INSTALL_WITH_RPATH
                           USE_LINK_PATH)
 
 

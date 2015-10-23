@@ -107,7 +107,7 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
     endif()
 
     # Update RPATH
-    if(INSTALL_WITH_RPATH)
+    if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
       file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_BINDIR}/${_target_dest}/Contents/MacOS/" "${CMAKE_INSTALL_FULL_LIBDIR}")
       if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         get_target_property(CURRENT_RPATH "${_target_dest}" INSTALL_RPATH)
