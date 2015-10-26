@@ -40,6 +40,7 @@ void StartDlg::init(QString robotName,QStringList partsName,QList <int> ENA)
         layout->addWidget(check);
         checkList.append(check);
     }
+    adjustSize();
 
     ui->groupBox->setLayout(layout);
 }
