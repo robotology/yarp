@@ -25,7 +25,7 @@
 #include <gtk/gtkmain.h>
 #include "gtkMessages.h"
 
-const int    MAX_NUMBER_ACTIVATED = 8;
+const int    MAX_NUMBER_ACTIVATED = 16;
 const double ARM_VELOCITY[]={10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0};
 const int    MAX_NUMBER_OF_JOINTS = 16;
 const int    NUMBER_OF_STORED = 30;
