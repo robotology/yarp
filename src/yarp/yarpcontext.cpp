@@ -26,6 +26,7 @@ void yarp_context_help() {
     printf("  --help       display this help and exit\n");
     printf("  --list  list contexts that are available; add optional '--user', '--sysadm' or '--installed' parameters to limit the search locations\n");
 //    printf("  --show <context-name>  show files that make up a context, and the location of each\n");
+    printf("  --import <context_name> import all the files of the specified context to home directory\n");
     printf("  --import <context_name> file1 file2 ... import specified context files to home directory\n");
     printf("  --import-all import all contexts to home directory\n");
     printf("  --remove  <context_name> file1 file2 ... remove specified context files from home directory\n");
