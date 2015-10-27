@@ -1,3 +1,6 @@
+sudo: required
+dist: trusty
+
 os:
   - linux
 
@@ -38,11 +41,10 @@ notifications:
     skip_join: true
 
 before_install:
-  - sudo add-apt-repository --yes ppa:kalakris/cmake
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/paulfitz/swigs/releases/download/v0.0.4/swigs.zip; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_DESKTOP=`lsb_release -cs`; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_VERSION=groovy; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_VERSION=indigo; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_PREFIX=ros-${ROS_CI_VERSION}-; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_HOSTNAME=localhost; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_MASTER_URI=http://localhost:11311; fi
@@ -53,15 +55,12 @@ before_install:
 
 install:
   - sudo apt-get install cmake libgsl0-dev
-  - if $TRAVIS_WITH_ACE; then sudo apt-get install libace-dev; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-gmcs; fi
+  - if $TRAVIS_WITH_ACE; then sudo apt-get -y install libace-dev; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-gmcs; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo rosdep init && rosdep update; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/${ROS_CI_VERSION}/setup.bash; fi
-  # see http://gronlier.fr/blog/2015/01/adding-code-coverage-to-your-c-project/
-  - if $TRAVIS_BLESSED; then wget http://ftp.de.debian.org/debian/pool/main/l/lcov/lcov_1.11.orig.tar.gz; fi
-  - if $TRAVIS_BLESSED; then tar xf lcov_1.11.orig.tar.gz; fi
-  - if $TRAVIS_BLESSED; then sudo make -C lcov-1.11/ install; fi
+  - if $TRAVIS_BLESSED; then sudo apt-get -y install lcov; fi
   - if $TRAVIS_BLESSED; then gem install coveralls-lcov; fi
 
 before_script:
