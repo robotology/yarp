@@ -120,7 +120,6 @@ void Time::useSystemClock() {
     lock();
     removeClock();
     unlock();
-    getClock();
 }
 
 void Time::useNetworkClock(const ConstString& clock) {
@@ -129,7 +128,6 @@ void Time::useNetworkClock(const ConstString& clock) {
     network_clock_name = new ConstString(clock);
     network_clock_pending = true;
     unlock();
-    getClock();
 }
 
 void Time::useCustomClock(Clock *clock) {
@@ -138,7 +136,6 @@ void Time::useCustomClock(Clock *clock) {
     pclock = clock;
     yAssert(pclock);
     unlock();
-    getClock();
 }
 
 bool Time::isSystemClock() {
