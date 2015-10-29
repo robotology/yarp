@@ -188,11 +188,20 @@ public:
     int deviceNum;
     int maxJointsNumForDevice;
 
-    int *subdev_jointsVectorLen = NULL;                 // number of joints belonging to each subdevice
-    int **jointNumbers    = NULL;
-    int **modes           = NULL;
-    double **values       = NULL;
-    yarp::dev::impl::SubDevice **subdevices_p = NULL;
+    int *subdev_jointsVectorLen;                 // number of joints belonging to each subdevice
+    int **jointNumbers;
+    int **modes;
+    double **values;
+    yarp::dev::impl::SubDevice **subdevices_p;
+
+    MultiJointData()
+    {
+        subdev_jointsVectorLen  = NULL;
+        jointNumbers            = NULL;
+        modes                   = NULL;
+        values                  = NULL;
+        subdevices_p            = NULL;
+    }
 
     void resize(int _deviceNum, int _maxJointsNumForDevice, yarp::dev::impl::WrappedDevice *_device)
     {
