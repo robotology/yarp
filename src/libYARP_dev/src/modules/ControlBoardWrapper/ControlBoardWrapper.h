@@ -70,6 +70,7 @@ namespace yarp {
             class CommandsHelper;
             class SubDevice;
             class WrappedDevice;
+            class MultiJointData;
         }
     }
 }
@@ -181,6 +182,61 @@ enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEV
  * \endcode
  */
 
+class yarp::dev::impl::MultiJointData
+{
+public:
+    int deviceNum;
+    int maxJointsNumForDevice;
+
+    int *subdev_jointsVectorLen = NULL;                 // number of joints belonging to each subdevice
+    int **jointNumbers    = NULL;
+    int **modes           = NULL;
+    double **values       = NULL;
+    yarp::dev::impl::SubDevice **subdevices_p = NULL;
+
+    void resize(int _deviceNum, int _maxJointsNumForDevice, yarp::dev::impl::WrappedDevice *_device)
+    {
+        deviceNum = _deviceNum;
+        maxJointsNumForDevice = _maxJointsNumForDevice;
+        subdev_jointsVectorLen    = new int  [deviceNum];
+        jointNumbers    = new int *[deviceNum];                             // alloc a vector of pointers
+        jointNumbers[0] = new int[deviceNum * _maxJointsNumForDevice];      // alloc real memory for data
+
+        modes           = new int *[deviceNum];                             // alloc a vector of pointers
+        modes[0]        = new int[deviceNum * _maxJointsNumForDevice];      // alloc real memory for data
+
+        values      = new double *[deviceNum];                          // alloc a vector of pointers
+        values[0]   = new double[deviceNum * _maxJointsNumForDevice];   // alloc real memory for data
+
+        subdevices_p = new yarp::dev::impl::SubDevice *[deviceNum];
+        subdevices_p[0] = _device->getSubdevice(0);
+
+        for (int i = 1; i < deviceNum; i++)
+        {
+            jointNumbers[i] =  jointNumbers[i-1] + _maxJointsNumForDevice;   // set pointer to correct location
+            values      [i] = values[i-1] + _maxJointsNumForDevice;      // set pointer to correct location
+            subdevices_p[i] = _device->getSubdevice(i);
+        }
+    }
+
+    void destroy()
+    {
+        // relese matrix memory
+        delete[] jointNumbers[0];
+        delete[] values[0];
+        delete[] modes[0];
+
+        // relese vector of pointers
+        delete[] jointNumbers;
+        delete[] values;
+        delete[] modes;
+
+        // delete other vectors
+        delete[] subdev_jointsVectorLen;
+        delete[] subdevices_p;
+    }
+};
+
 class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::os::RateThread,
                                         public yarp::dev::IPidControl,
@@ -238,6 +294,11 @@ private:
     yarp::os::PortReaderBuffer<yarp::os::Bottle>    inputRPC_buffer;                // Buffer associated to the inputRPCPort port
     yarp::dev::impl::RPCMessagesParser              RPC_parser;                     // Message parser associated to the inputRPCPort port
     yarp::dev::impl::StreamingMessagesParser        streaming_parser;               // Message parser associated to the inputStreamingPort port
+
+
+    // RPC calls are concurrent from multiple clients, data used inside the calls has to be protected
+    yarp::os::Semaphore                             rpcDataMutex;                   // mutex to avoid concurrency between more clients using rppc port
+    yarp::dev::impl::MultiJointData                 rpcData;                        // Structure used to re-arrange data from "multiple_joints" calls.
 
     yarp::sig::Vector   CBW_encoders;
     std::string         partName;               // to open ports and print more detailed debug messages
