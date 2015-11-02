@@ -17,6 +17,7 @@ endforeach(conf)
 set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpIDL.cmake
                      ExtractVersion.cmake
+                     ReplaceImportedTargets.cmake
                      StandardFindModule.cmake
                      YarpDeprecatedWarning.cmake
                      YarpDeprecatedOption.cmake
@@ -80,7 +81,8 @@ endif()
 
 # Files from CMake 3.5, available only if cmake is older
 if(${CMAKE_VERSION} VERSION_LESS 3.5)
-    set(YARP_CMAKE_3_5_FILES cmake-3.5/Modules/FindFreetype.cmake
+    set(YARP_CMAKE_3_5_FILES cmake-3.5/Modules/CMakeParseArguments.cmake
+                             cmake-3.5/Modules/FindFreetype.cmake
                              cmake-3.5/Modules/FindGTK2.cmake
                              cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake
                              cmake-3.5/Modules/FindPackageMessage.cmake
