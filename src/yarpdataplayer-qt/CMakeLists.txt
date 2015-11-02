@@ -87,7 +87,7 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_QT5)
   target_link_libraries(yarpdataplayer-qt YARP_OS
                                           YARP_init
                                           YARP_sig)
-  yarp_qt5_use_modules(yarpdataplayer-qt Widgets)
+  qtyarp_use_modules(yarpdataplayer-qt Widgets)
   qtyarp_deprecate_with_cmake_version(2.8.11)
   if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
     target_link_libraries(yarpdataplayer-qt Qt5::WinMain)

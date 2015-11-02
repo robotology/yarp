@@ -72,7 +72,7 @@ endmacro()
 # NOTE: when CMake minimum required version is 2.8.12 or later, this
 #       will no longer be required.
 qtyarp_deprecate_with_cmake_version(2.8.12)
-macro(yarp_qt5_use_modules _target)
+macro(qtyarp_use_modules _target)
   if(NOT ${CMAKE_VERSION} VERSION_LESS 2.8.11)
     foreach(_qt5lib ${ARGN})
       target_link_libraries(${_target} Qt5::${_qt5lib})

@@ -28,9 +28,9 @@ add_executable(yarpview-qt WIN32 ${yarpview_qt_SRCS}
                                  ${yarpview_qt_QRC_FILES}
                                  ${yarpview_qt_QML_FILES})
 
-yarp_qt5_use_modules(yarpview-qt Widgets
-                                 Qml
-                                 Quick)
+qtyarp_use_modules(yarpview-qt Widgets
+                               Qml
+                               Quick)
 qtyarp_deprecate_with_cmake_version(2.8.11)
 if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
   target_link_libraries(yarpview-qt Qt5::WinMain)

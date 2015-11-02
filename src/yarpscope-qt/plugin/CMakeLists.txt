@@ -44,11 +44,11 @@ add_library(QtYARPScopePlugin MODULE ${QtYARPScopePlugin_SRCS}
                                      ${QtYARPScopePlugin_QRC_GEN_SRCS})
 target_link_libraries(QtYARPScopePlugin YARP_OS
                                         YARP_init)
-yarp_qt5_use_modules(QtYARPScopePlugin Widgets
-                                       Qml
-                                       Quick
-                                       Xml
-                                       PrintSupport)
+qtyarp_use_modules(QtYARPScopePlugin Widgets
+                                     Qml
+                                     Quick
+                                     Xml
+                                     PrintSupport)
 
 qtyarp_qml_plugin(QtYARPScopePlugin "${QtYARPScopePlugin_QMLDIR}")
 

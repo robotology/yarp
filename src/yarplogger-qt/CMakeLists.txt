@@ -34,8 +34,8 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
   target_link_libraries(yarplogger-qt YARP_OS
                                       YARP_init
                                       YARP_logger)
-  yarp_qt5_use_modules(yarplogger-qt Widgets
-                                     Gui)
+  qtyarp_use_modules(yarplogger-qt Widgets
+                                   Gui)
   qtyarp_deprecate_with_cmake_version(2.8.11)
   if(WIN32)
        target_link_libraries(yarplogger-qt Qt5::WinMain)
