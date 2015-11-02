@@ -79,13 +79,16 @@ set(goocanvas_HDRS
     goocanvas/src/goocanvasitem.h
     goocanvas/src/goocanvasrect.h)
 
-add_library(YARP_priv_goocanvas STATIC ${goocanvas_SRCS} ${goocanvas_HDRS})
-
-target_link_libraries(YARP_priv_goocanvas LINK_PRIVATE ${GooCanvas_GTK2_LIBRARIES})
+add_definitions(${GTK2_DEFINITIONS})
 
 if(MSVC)
     add_definitions(/D_USE_MATH_DEFINES /wd4018 /wd4244)
 endif(MSVC)
+
+add_library(YARP_priv_goocanvas STATIC ${goocanvas_SRCS} ${goocanvas_HDRS})
+
+target_link_libraries(YARP_priv_goocanvas LINK_PRIVATE ${GooCanvas_GTK2_LIBRARIES})
+
 
 if(UNIX)
     include(CheckCCompilerFlag)

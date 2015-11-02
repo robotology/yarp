@@ -72,8 +72,8 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
   target_link_libraries(yarpmanager-qt YARP_OS
                                        YARP_init
                                        YARP_manager)
-  qt5_use_modules(yarpmanager-qt Widgets
-                                Gui)
+  yarp_qt5_use_modules(yarpmanager-qt Widgets
+                                      Gui)
   qtyarp_deprecate_with_cmake_version(2.8.11)
   if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
     target_link_libraries(yarpmanager-qt Qt5::WinMain)

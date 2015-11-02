@@ -79,14 +79,28 @@ set(gtkdataboxmm_HDRS
     gtkdataboxmm/gtkdatabox/gtkdataboxmm/ruler.h
 )
 
-add_library(YARP_priv_gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
+add_definitions(${GTK2_DEFINITIONS})
 
-target_link_libraries(YARP_priv_gtkdataboxmm LINK_PRIVATE ${GtkDatabox_LIBRARIES}
-                                                     ${GtkDataboxMM_GTK2_LIBRARIES})
+# libsigc++ 2.5.1 or later requires c++11. This is automatically
+# enabled with CMake 3.1 or later (using FindGTK2.cmake from CMake
+# 3.5). With older versions, we enable it here.
+if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.1)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.1)
+  if(NOT ${GTK2_SIGC++_VERSION_MAJOR}.${GTK2_SIGC++_VERSION_MINOR}.${GTK2_SIGC++_VERSION_MICRO} VERSION_LESS 2.5.1)
+    add_definitions(${CXX11_FLAGS})
+  endif()
+endif()
 
 if(MSVC)
     add_definitions(/wd4250)
 endif(MSVC)
+
+add_library(YARP_priv_gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
+
+target_link_libraries(YARP_priv_gtkdataboxmm LINK_PRIVATE ${GtkDatabox_LIBRARIES}
+                                                     ${GtkDataboxMM_GTK2_LIBRARIES})
 
 set(GtkDataboxMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox
                               ${GtkDatabox_INCLUDE_DIRS}
