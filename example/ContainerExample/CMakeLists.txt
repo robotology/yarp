@@ -35,7 +35,9 @@ source_group("Resources Files" FILES ${ContainerExample_QRC_FILES})
 source_group("Generated Files" FILES ${ContainerExample_QRC_GEN_FILES})
 
 add_executable(ContainerExample WIN32 ${ContainerExample_SRCS} ${ContainerExample_HDRS} ${ContainerExample_QRC_GEN_FILES})
-qt5_use_modules(ContainerExample Widgets Qml Quick)
+yarp_qt5_use_modules(ContainerExample Widgets
+                                      Qml
+                                      Quick)
 
 
 #-------------------------------------------------------------------------------
