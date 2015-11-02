@@ -14,6 +14,8 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
+#include <string.h>         // for memset function
+
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::impl;
@@ -63,6 +65,8 @@ void ControlBoardWrapper::cleanup_yarpPorts()
 
     extendedOutputStatePort.interrupt();
     extendedOutputStatePort.close();
+
+    rpcData.destroy();
 }
 
 ControlBoardWrapper::~ControlBoardWrapper() { }
@@ -469,20 +473,10 @@ bool ControlBoardWrapper::open(Searchable& config)
             return false;
     }
 
-    /* const values MAX_JOINTS_ON_DEVICE and MAX_DEVICES are used while parsing group joints commands like
-        virtual bool positionMove(const int n_joints, const int *joints, const double *refs)
-        into ControlBoardWrapper2.h file to build a static table to prevent cocurrencu problem.
-        It will suffice to build a table for the rpc port and another one the for streaming port and use the
-        correct one because it is the only source of concurrency inside the object. To be done?
-    */
-    if(controlledJoints > MAX_JOINTS_ON_DEVICE)
-    {
-        yError() << " ERROR: number of subdevices for this wrapper (" << controlledJoints << ") is bigger than maximum currently handled ("  << MAX_JOINTS_ON_DEVICE << ").";
-        yError() << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ ;
-        return false;
-    }
+    // using controlledJoints here will allocate more memory than required, but not so much.
+    rpcData.resize(device.subdevices.size(), controlledJoints, &device);
 
-    /* This must be after the openAndAttachSubDevic e/ openDeferredAttach pair in order to have the correct number of controlledJoints,
+     /* This must be after the openAndAttachSubDevice() or openDeferredAttach() in order to have the correct number of controlledJoints,
         but before the initialize_ROS and initialize_YARP */
     if(!checkROSParams(config) )
     {
@@ -536,21 +530,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
     controlledJoints=prop.find("joints").asInt();
 
-    /*  const values MAX_JOINTS_ON_DEVICE and MAX_DEVICES are used while parsing group joints commands like
-        virtual bool positionMove(const int n_joints, const int *joints, const double *refs)
-        into ControlBoardWrapper2.h file to build a static table to prevent cocurrencu problem.
-        It will suffice to build a table for the rpc port and another one the for streaming port and use the
-        correct one because it is the only source of concurrency inside the object. To be done?
-     */
     int nsubdevices=nets->size();
-
-    if(nsubdevices > MAX_DEVICES)
-    {
-        yError() << " ERROR: number of subdevices for this wrapper (" << nsubdevices << ") is bigger than maximum currently handled ("  << MAX_DEVICES << ").";
-        yError() << " To help fixing this error, please send an email to robotcub-hackers@lists.sourceforge.net with this error message (ControlBoardWrapper2.cpp @ line " << __LINE__ ;
-        return false;
-    }
-
     device.lut.resize(controlledJoints);
     device.subdevices.resize(nsubdevices);
 
@@ -1566,55 +1546,45 @@ bool ControlBoardWrapper::positionMove(const int n_joints, const int *joints, co
 {
     bool ret = true;
 
-/* This table is created here each time to avoid concurrency problems... if this shall not be the case,
- * then it is optimizable by instantiating the table once and for all during the creation of the class.
- * TODO check if concurrency problems are real!!
- */
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
-    int    nDev   = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice   *ps[MAX_DEVICES];
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for(int j=0; j<n_joints; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = refs[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
 
-   for(int i=0; i<nDev; i++)
-   {
-       X_idx[i]=0;
-       ps[i]=device.getSubdevice(i);
-   }
-
-
-   // Create a map of joints for each subDevice
-   int subIndex = 0;
-   for(int j=0; j<n_joints; j++)
-   {
-       subIndex = device.lut[joints[j]].deviceEntry;
-       XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-       XRefs[subIndex][X_idx[subIndex]] = refs[j];
-       X_idx[subIndex]++;
-   }
-
-   for(subIndex=0; subIndex<nDev; subIndex++)
-   {
-       if(ps[subIndex]->pos2)   // Position Control 2
-       {
-           ret= ret && ps[subIndex]->pos2->positionMove(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
-       }
-       else   // Classic Position Control
-       {
-           if(ps[subIndex]->pos)
-           {
-               for(int i = 0; i < X_idx[subIndex]; i++)
-               {
-                   ret=ret && ps[subIndex]->pos->positionMove(XJoints[subIndex][i], XRefs[subIndex][i]);
-               }
-           }
-           else
-           {
-               ret=false;
-           }
-       }
-   }
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->pos2)   // Position Control 2
+        {
+            ret= ret && rpcData.subdevices_p[subIndex]->pos2->positionMove(rpcData.subdev_jointsVectorLen[subIndex],
+                                                                           rpcData.jointNumbers[subIndex],
+                                                                           rpcData.values[subIndex]);
+        }
+        else   // Classic Position Control
+        {
+            if(rpcData.subdevices_p[subIndex]->pos)
+            {
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
+                {
+                    ret=ret && rpcData.subdevices_p[subIndex]->pos->positionMove(rpcData.jointNumbers[subIndex][i],
+                                                                                 rpcData.values[subIndex][i]);
+                }
+            }
+            else
+            {
+                ret=false;
+            }
+        }
+    }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -1675,55 +1645,45 @@ bool ControlBoardWrapper::relativeMove(const int n_joints, const int *joints, co
 {
     bool ret = true;
 
-/* This table is created here each time to avoid concurrency problems... if this shall not be the case,
- * then it is optimizable by instantiating the table once and for all during the creation of the class.
- * TODO check this!!
- */
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
-    int    nDev   = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice   *ps[MAX_DEVICES];
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for(int j=0; j<n_joints; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = deltas[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
 
-    for(int i=0; i<nDev; i++)
-   {
-       X_idx[i]=0;
-       ps[i]=device.getSubdevice(i);
-   }
-
-
-   // Create a map of joints for each subDevice
-   int subIndex = 0;
-   for(int j=0; j<n_joints; j++)
-   {
-       subIndex = device.lut[joints[j]].deviceEntry;
-       XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-       XRefs[subIndex][X_idx[subIndex]] = deltas[j];
-       X_idx[subIndex]++;
-   }
-
-   for(subIndex=0; subIndex<nDev; subIndex++)
-   {
-       if(ps[subIndex]->pos2)   // Position Control 2
-       {
-           ret= ret && ps[subIndex]->pos2->relativeMove(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
-       }
-       else   // Classic Position Control
-       {
-           if(ps[subIndex]->pos)
-           {
-               for(int i = 0; i < X_idx[subIndex]; i++)
-               {
-                   ret=ret && ps[subIndex]->pos->relativeMove(XJoints[subIndex][i], XRefs[subIndex][i]);
-               }
-           }
-           else
-           {
-               ret=false;
-           }
-       }
-   }
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->pos2)   // Position Control 2
+        {
+            ret= ret && rpcData.subdevices_p[subIndex]->pos2->relativeMove(rpcData.subdev_jointsVectorLen[subIndex],
+                                                                           rpcData.jointNumbers[subIndex],
+                                                                           rpcData.values[subIndex]);
+        }
+        else   // Classic Position Control
+        {
+            if(rpcData.subdevices_p[subIndex]->pos)
+            {
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
+                {
+                    ret=ret && rpcData.subdevices_p[subIndex]->pos->relativeMove(rpcData.jointNumbers[subIndex][i],
+                                                                                 rpcData.values[subIndex][i]);
+                }
+            }
+            else
+            {
+                ret=false;
+            }
+        }
+    }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -1783,55 +1743,46 @@ bool ControlBoardWrapper::checkMotionDone(bool *flag) {
 
 /** Check if the current trajectory is terminated. Non blocking.
  * @param joints pointer to the array of joint numbers
- * @param flags  pointer to the array that will store the actual value of the checkMotionDone
+ * @param flag   true if the trajectory is terminated, false otherwise
+ *               (a single value which is the 'and' of all joints')
  * @return true/false if network communication went well.
  */
 bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints, bool *flags)
 {
     bool ret = true;
-
-/* This table is created here each time to avoid concurrency problems... if this shall not be the case,
- * then it is optimizable by instantiating the table once and for all during the creation of the class.
- * TODO check this!!
- */
-
-    int    nDev   = device.subdevices.size();
     bool   XFlags = true;
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice   *ps[MAX_DEVICES];
 
-    for(int i=0; i<nDev; i++)
-   {
-       X_idx[i]=0;
-       ps[i]=device.getSubdevice(i);
-   }
-
+   rpcDataMutex.wait();
+   //Reset subdev_jointsVectorLen vector
+   memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
    // Create a map of joints for each subDevice
-   int subIndex;
+   int subIndex = 0;
    for(int j=0; j<n_joints; j++)
    {
        subIndex = device.lut[joints[j]].deviceEntry;
-       XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-       X_idx[subIndex]++;
+       rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+       rpcData.subdev_jointsVectorLen[subIndex]++;
    }
 
-   for(subIndex=0; subIndex<nDev; subIndex++)
+   for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
    {
-       if(ps[subIndex]->pos2)   // Position Control 2
+       if(rpcData.subdevices_p[subIndex]->pos2)   // Position Control 2
        {
-           ret= ret && ps[subIndex]->pos2->checkMotionDone(X_idx[subIndex], XJoints[subIndex], &XFlags);
-            *flags = flags && XFlags;
+           ret= ret && rpcData.subdevices_p[subIndex]->pos2->checkMotionDone(rpcData.subdev_jointsVectorLen[subIndex],
+                                                                             rpcData.jointNumbers[subIndex],
+                                                                             &XFlags);
+           *flags = flags && XFlags;
        }
        else   // Classic Position Control
        {
-           if(ps[subIndex]->pos)
+           if(rpcData.subdevices_p[subIndex]->pos)
            {
-               for(int i = 0; i < X_idx[subIndex]; i++)
+               for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
                {
-                   ret=ret && ps[subIndex]->pos->checkMotionDone(XJoints[subIndex][i], &XFlags);
-                    *flags = flags && XFlags;
+                   ret=ret && rpcData.subdevices_p[subIndex]->pos->checkMotionDone(rpcData.jointNumbers[subIndex][i],
+                                                                                   &XFlags);
+                   *flags = flags && XFlags;
                }
            }
            else
@@ -1928,56 +1879,48 @@ bool ControlBoardWrapper::setRefSpeeds(const double *spds)
  */
 bool ControlBoardWrapper::setRefSpeeds(const int n_joints, const int *joints, const double *spds)
 {
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check this!!
-     */
-
     bool ret = true;
-    int    nDev   = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    double   XSpeds[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice   *ps[MAX_DEVICES];
 
-    for(int i=0; i<nDev; i++)
-   {
-       X_idx[i]=0;
-       ps[i]=device.getSubdevice(i);
-   }
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for(int j=0; j<n_joints; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =  device.lut[joints[j]].offset +
+                                                                            rpcData.subdevices_p[subIndex]->base;
+        rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = spds[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
 
-   // Create a map of joints for each subDevice
-   int subIndex = 0;
-   for(int j=0; j<n_joints; j++)
-   {
-       subIndex = device.lut[joints[j]].deviceEntry;
-       XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-       XSpeds[subIndex][X_idx[subIndex]] = spds[j];
-       X_idx[subIndex]++;
-   }
-
-   for(subIndex=0; subIndex<nDev; subIndex++)
-   {
-       if(ps[subIndex]->pos2)   // Position Control 2
-       {
-           ret= ret && ps[subIndex]->pos2->setRefSpeeds(X_idx[subIndex], XJoints[subIndex], XSpeds[subIndex]);
-       }
-       else   // Classic Position Control
-       {
-           if(ps[subIndex]->pos)
-           {
-               for(int i = 0; i < X_idx[subIndex]; i++)
-               {
-                   ret=ret && ps[subIndex]->pos->setRefSpeed(XJoints[subIndex][i], XSpeds[subIndex][i]);
-               }
-           }
-           else
-           {
-               ret=false;
-           }
-       }
-   }
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->pos2)   // Position Control 2
+        {
+            ret= ret && rpcData.subdevices_p[subIndex]->pos2->setRefSpeeds( rpcData.subdev_jointsVectorLen[subIndex],
+                                                                            rpcData.jointNumbers[subIndex],
+                                                                            rpcData.values[subIndex]);
+        }
+        else   // Classic Position Control
+        {
+            if(rpcData.subdevices_p[subIndex]->pos)
+            {
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
+                {
+                    ret=ret && rpcData.subdevices_p[subIndex]->pos->setRefSpeed(rpcData.jointNumbers[subIndex][i],
+                                                                                rpcData.values[subIndex][i]);
+                }
+            }
+            else
+            {
+                ret=false;
+            }
+        }
+    }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -2067,56 +2010,48 @@ bool ControlBoardWrapper::setRefAccelerations(const double *accs)
  */
 bool ControlBoardWrapper::setRefAccelerations(const int n_joints, const int *joints, const double *accs)
 {
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check this!!
-     */
-
     bool ret = true;
-    int    nDev   = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    double   XAccs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
 
-    for(int i=0; i<nDev; i++)
-   {
-       X_idx[i]=0;
-       ps[i]=device.getSubdevice(i);
-   }
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for(int j=0; j<n_joints; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =  device.lut[joints[j]].offset +
+        rpcData.subdevices_p[subIndex]->base;
+        rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = accs[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
 
-   // Create a map of joints for each subDevice
-   int subIndex = 0;
-   for(int j=0; j<n_joints; j++)
-   {
-       subIndex = device.lut[joints[j]].deviceEntry;
-       XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-       XAccs[subIndex][X_idx[subIndex]] = accs[j];
-       X_idx[subIndex]++;
-   }
-
-   for(subIndex=0; subIndex<nDev; subIndex++)
-   {
-       if(ps[subIndex]->pos2)   // Position Control 2
-       {
-           ret= ret && ps[subIndex]->pos2->setRefAccelerations(X_idx[subIndex], XJoints[subIndex], XAccs[subIndex]);
-       }
-       else   // Classic Position Control
-       {
-           if(ps[subIndex]->pos)
-           {
-               for(int i = 0; i < X_idx[subIndex]; i++)
-               {
-                   ret=ret && ps[subIndex]->pos->setRefAcceleration(XJoints[subIndex][i], XAccs[subIndex][i]);
-               }
-           }
-           else
-           {
-               ret=false;
-           }
-       }
-   }
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->pos2)   // Position Control 2
+        {
+            ret= ret && rpcData.subdevices_p[subIndex]->pos2->setRefAccelerations(  rpcData.subdev_jointsVectorLen[subIndex],
+                                                                                    rpcData.jointNumbers[subIndex],
+                                                                                    rpcData.values[subIndex]);
+        }
+        else   // Classic Position Control
+        {
+            if(rpcData.subdevices_p[subIndex]->pos)
+            {
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
+                {
+                    ret=ret && rpcData.subdevices_p[subIndex]->pos->setRefAcceleration(rpcData.jointNumbers[subIndex][i],
+                                                                                       rpcData.values[subIndex][i]);
+                }
+            }
+            else
+            {
+                ret=false;
+            }
+        }
+    }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -2182,47 +2117,37 @@ bool ControlBoardWrapper::getRefSpeeds(double *spds) {
  */
 bool ControlBoardWrapper::getRefSpeeds(const int n_joints, const int *joints, double *spds)
 {
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check this!!
-     */
-
     bool ret = true;
-    int    nDev   = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    double  XSpeds[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
 
-    for(int i=0; i<nDev; i++)
-   {
-       X_idx[i]=0;
-       ps[i]=device.getSubdevice(i);
-   }
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-   int subIndex = 0;
-   for(int j=0; j<n_joints; j++)
-   {
-       subIndex = device.lut[joints[j]].deviceEntry;
-       XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-       X_idx[subIndex]++;
-   }
-
-    for(subIndex=0; subIndex<nDev; subIndex++)
+    int subIndex = 0;
+    for(int j=0; j<n_joints; j++)
     {
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if(ps[subIndex]->pos2)   // Position Control 2
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
+
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->pos2)   // Position Control 2
         {
-            ret= ret && p->pos2->getRefSpeeds(X_idx[subIndex], XJoints[subIndex], &XSpeds[subIndex][0]);
+            ret= ret && rpcData.subdevices_p[subIndex]->pos2->getRefSpeeds( rpcData.subdev_jointsVectorLen[subIndex],
+                                                                            rpcData.jointNumbers[subIndex],
+                                                                            rpcData.values[subIndex]);
         }
         else   // Classic Position Control
         {
-            if(ps[subIndex]->pos)
+            if(rpcData.subdevices_p[subIndex]->pos)
             {
-                for(int i = 0; i < X_idx[subIndex]; i++)
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
                 {
-                    ret=ret && ps[subIndex]->pos->getRefSpeed(XJoints[subIndex][i], &XSpeds[subIndex][i]);
+                    ret=ret && rpcData.subdevices_p[subIndex]->pos->getRefSpeed( rpcData.jointNumbers[subIndex][i],
+                                                                                &rpcData.values[subIndex][i]);
                 }
             }
             else
@@ -2235,14 +2160,15 @@ bool ControlBoardWrapper::getRefSpeeds(const int n_joints, const int *joints, do
     if(ret)
     {
         // ReMix values by user expectations
-        for(int i=0; i<nDev; i++)
-            X_idx[i]=0;       // reset index
+        for(int i=0; i<rpcData.deviceNum; i++)
+            rpcData.subdev_jointsVectorLen[i]=0;                  // reset tmp index
 
+        // fill the output vector
         for(int j=0; j<n_joints; j++)
         {
             subIndex = device.lut[joints[j]].deviceEntry;
-            spds[j] = XSpeds[subIndex][X_idx[subIndex]];
-            X_idx[subIndex]++;
+            spds[j]  = rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]];
+            rpcData.subdev_jointsVectorLen[subIndex]++;
         }
     }
     else
@@ -2252,6 +2178,7 @@ bool ControlBoardWrapper::getRefSpeeds(const int n_joints, const int *joints, do
             spds[j] = 0;
         }
     }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -2316,49 +2243,37 @@ bool ControlBoardWrapper::getRefAccelerations(double *accs) {
  */
 bool ControlBoardWrapper::getRefAccelerations(const int n_joints, const int *joints, double *accs)
 {
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check this!!
-     */
-
     bool ret = true;
-    int    nDev   = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    double  XAccs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
 
-    for(int i=0; i<nDev; i++)
-   {
-       X_idx[i]=0;
-       ps[i]=device.getSubdevice(i);
-   }
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
     int subIndex = 0;
     for(int j=0; j<n_joints; j++)
     {
         subIndex = device.lut[joints[j]].deviceEntry;
-        XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-        X_idx[subIndex]++;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
-    for(subIndex=0; subIndex<nDev; subIndex++)
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if(p->pos2)   // Position Control 2
+        if(rpcData.subdevices_p[subIndex]->pos2)   // Position Control 2
         {
-            ret= ret && p->pos2->getRefAccelerations(X_idx[subIndex], XJoints[subIndex], &XAccs[subIndex][0]);
+            ret= ret && rpcData.subdevices_p[subIndex]->pos2->getRefAccelerations(  rpcData.subdev_jointsVectorLen[subIndex],
+                                                                                    rpcData.jointNumbers[subIndex],
+                                                                                    rpcData.values[subIndex]);
         }
         else   // Classic Position Control
         {
-            if(p->pos)
+            if(rpcData.subdevices_p[subIndex]->pos)
             {
-                for(int i = 0; i < X_idx[subIndex]; i++)
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
                 {
-                    int tmp_jDev = XJoints[subIndex][i];
-                    int off=device.lut[tmp_jDev].offset;
-                    ret=ret && p->pos->getRefAcceleration(p->base+off, &XAccs[subIndex][i]);
+                    ret=ret && rpcData.subdevices_p[subIndex]->pos->getRefAcceleration( rpcData.jointNumbers[subIndex][i],
+                                                                                       &rpcData.values[subIndex][i]);
                 }
             }
             else
@@ -2371,15 +2286,15 @@ bool ControlBoardWrapper::getRefAccelerations(const int n_joints, const int *joi
     if(ret)
     {
         // ReMix values by user expectations
-        for(int i=0; i<nDev; i++)
-            X_idx[i]=0;       // reset index
+        for(int i=0; i<rpcData.deviceNum; i++)
+            rpcData.subdev_jointsVectorLen[i]=0;                  // reset tmp index
 
-        subIndex=0;
+        // fill the output vector
         for(int j=0; j<n_joints; j++)
         {
             subIndex = device.lut[joints[j]].deviceEntry;
-            accs[j] = XAccs[subIndex][X_idx[subIndex]];
-            X_idx[subIndex]++;
+            accs[j]  = rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]];
+            rpcData.subdev_jointsVectorLen[subIndex]++;
         }
     }
     else
@@ -2389,7 +2304,7 @@ bool ControlBoardWrapper::getRefAccelerations(const int n_joints, const int *joi
             accs[j] = 0;
         }
     }
-
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -2448,54 +2363,44 @@ bool ControlBoardWrapper::stop() {
  */
 bool ControlBoardWrapper::stop(const int n_joints, const int *joints)
 {
- /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check this!!
-     */
-
     bool ret = true;
-    int    nDev   = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
 
-    for(int i=0; i<nDev; i++)
-   {
-       X_idx[i]=0;
-       ps[i]=device.getSubdevice(i);
-   }
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for(int j=0; j<n_joints; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =  device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
 
-   // Create a map of joints for each subDevice
-   int subIndex = 0;
-   for(int j=0; j<n_joints; j++)
-   {
-       subIndex = device.lut[joints[j]].deviceEntry;
-       XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-       X_idx[subIndex]++;
-   }
-
-   for(subIndex=0; subIndex<nDev; subIndex++)
-   {
-       if(ps[subIndex]->pos2)   // Position Control 2
-       {
-           ret= ret && ps[subIndex]->pos2->stop(X_idx[subIndex], XJoints[subIndex]);
-       }
-       else   // Classic Position Control
-       {
-           if(ps[subIndex]->pos)
-           {
-               for(int i = 0; i < X_idx[subIndex]; i++)
-               {
-                   ret=ret && ps[subIndex]->pos->stop(XJoints[subIndex][i]);
-               }
-           }
-           else
-           {
-               ret=false;
-           }
-       }
-   }
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->pos2)   // Position Control 2
+        {
+            ret= ret && rpcData.subdevices_p[subIndex]->pos2->stop(rpcData.subdev_jointsVectorLen[subIndex],
+                                                                   rpcData.jointNumbers[subIndex]);
+        }
+        else   // Classic Position Control
+        {
+            if(rpcData.subdevices_p[subIndex]->pos)
+            {
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
+                {
+                    ret=ret && rpcData.subdevices_p[subIndex]->pos->stop(rpcData.jointNumbers[subIndex][i]);
+                }
+            }
+            else
+            {
+                ret=false;
+            }
+        }
+    }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -3791,47 +3696,49 @@ bool ControlBoardWrapper::setRefTorque(int j, double t)
     return false;
 }
 
-bool ControlBoardWrapper::setRefTorques(const int n_joint, const int *joints, const double *t)
+bool ControlBoardWrapper::setRefTorques(const int n_joints, const int *joints, const double *t)
 {
     bool ret = true;
 
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check if concurrency problems are real!!
-     */
-    int    nDev  = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-    for(int i=0; i<nDev; i++)
-    {
-        X_idx[i]=0;
-        ps[i]=device.getSubdevice(i);
-    }
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
     int subIndex = 0;
-    for(int j=0; j<n_joint; j++)
+    for(int j=0; j<n_joints; j++)
     {
         subIndex = device.lut[joints[j]].deviceEntry;
-        XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-        XRefs[subIndex][X_idx[subIndex]] = t[j];
-        X_idx[subIndex]++;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = t[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
-    for(subIndex=0; subIndex<nDev; subIndex++)
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(ps[subIndex]->posDir)
+        if(rpcData.subdevices_p[subIndex]->iTorque)   // Position Control 2
         {
-            ret= ret && ps[subIndex]->iTorque->setRefTorques(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
+            ret= ret && rpcData.subdevices_p[subIndex]->iTorque->setRefTorques(rpcData.subdev_jointsVectorLen[subIndex],
+                                                                               rpcData.jointNumbers[subIndex],
+                                                                               rpcData.values[subIndex]);
         }
-        else
+        else   // Classic Position Control
         {
-            ret=false;
+            if(rpcData.subdevices_p[subIndex]->iTorque)
+            {
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
+                {
+                    ret=ret && rpcData.subdevices_p[subIndex]->iTorque->setRefTorque(rpcData.jointNumbers[subIndex][i],
+                                                                                     rpcData.values[subIndex][i]);
+                }
+            }
+            else
+            {
+                ret=false;
+            }
         }
     }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -4659,47 +4566,45 @@ bool ControlBoardWrapper::setControlModes(const int n_joints, const int *joints,
 {
     bool ret = true;
 
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check if concurrency problems are real!!
-     */
-    int    nDev  = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      XModes[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-    for(int i=0; i<nDev; i++)
-    {
-        X_idx[i]=0;
-        ps[i]=device.getSubdevice(i);
-    }
-
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
     int subIndex = 0;
     for(int j=0; j<n_joints; j++)
     {
         subIndex = device.lut[joints[j]].deviceEntry;
-        XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-        XModes[subIndex][X_idx[subIndex]] = modes[j];
-        X_idx[subIndex]++;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.modes[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = modes[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
-    for(subIndex=0; subIndex<nDev; subIndex++)
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(ps[subIndex]->iMode2)
+        if(rpcData.subdevices_p[subIndex]->iMode2)   // Position Control 2
         {
-            ret= ret && ps[subIndex]->iMode2->setControlModes(X_idx[subIndex], XJoints[subIndex], XModes[subIndex]);
+            ret= ret && rpcData.subdevices_p[subIndex]->iMode2->setControlModes(rpcData.subdev_jointsVectorLen[subIndex],
+                                                                                rpcData.jointNumbers[subIndex],
+                                                                                rpcData.modes[subIndex]);
         }
-        else
+        else   // Classic Position Control
         {
-            for(int j = 0; j < X_idx[subIndex]; j++)
+            if(rpcData.subdevices_p[subIndex]->iMode2)
             {
-                ret = ret && legacySetControlMode(XJoints[subIndex][j], XModes[subIndex][j]);
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
+                {
+                    ret=ret && rpcData.subdevices_p[subIndex]->iMode2->setControlMode( rpcData.jointNumbers[subIndex][i],
+                                                                                       rpcData.modes[subIndex][i]);
+                }
+            }
+            else
+            {
+                ret=false;
             }
         }
     }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -4829,43 +4734,36 @@ bool ControlBoardWrapper::setPositions(const int n_joints, const int *joints, do
 {
     bool ret = true;
 
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check if concurrency problems are real!!
-     */
-    int    nDev  = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-    for(int i=0; i<nDev; i++)
-    {
-        X_idx[i]=0;
-        ps[i]=device.getSubdevice(i);
-    }
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
     int subIndex = 0;
     for(int j=0; j<n_joints; j++)
     {
         subIndex = device.lut[joints[j]].deviceEntry;
-        XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-        XRefs[subIndex][X_idx[subIndex]] = dpos[j];
-        X_idx[subIndex]++;
+        int offset = device.lut[joints[j]].offset;
+        int base = rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =  offset + base;
+        rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = dpos[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
-    for(subIndex=0; subIndex<nDev; subIndex++)
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(ps[subIndex]->posDir)
+        if(rpcData.subdevices_p[subIndex]->posDir)   // Position Direct
         {
-            ret= ret && ps[subIndex]->posDir->setPositions(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
+            ret= ret && rpcData.subdevices_p[subIndex]->posDir->setPositions(rpcData.subdev_jointsVectorLen[subIndex],
+                                                                             rpcData.jointNumbers[subIndex],
+                                                                             rpcData.values[subIndex]);
         }
         else
         {
             ret=false;
         }
     }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -4906,47 +4804,36 @@ bool ControlBoardWrapper::velocityMove(const int n_joints, const int *joints, co
 {
     bool ret = true;
 
-    /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
-     * then it is optimizable by instantiating the table once and for all during the creation of the class.
-     * TODO check if concurrency problems are real!!
-     */
-
-    int    nDev  = device.subdevices.size();
-    int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    int      X_idx[MAX_DEVICES];
-    yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
-
-    for(int i=0; i<nDev; i++)
-    {
-        X_idx[i]=0;
-        ps[i]=device.getSubdevice(i);
-    }
-
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
     int subIndex = 0;
     for(int j=0; j<n_joints; j++)
     {
         subIndex = device.lut[joints[j]].deviceEntry;
-        XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-        XRefs[subIndex][X_idx[subIndex]] = spds[j];
-        X_idx[subIndex]++;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = spds[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
-    for(subIndex=0; subIndex<nDev; subIndex++)
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(ps[subIndex]->vel2)   // Velocity Control 2
+        if(rpcData.subdevices_p[subIndex]->vel2)   // Position Control 2
         {
-            ret= ret && ps[subIndex]->vel2->velocityMove(X_idx[subIndex], XJoints[subIndex], XRefs[subIndex]);
+            ret= ret && rpcData.subdevices_p[subIndex]->vel2->velocityMove(rpcData.subdev_jointsVectorLen[subIndex],
+                                                                           rpcData.jointNumbers[subIndex],
+                                                                           rpcData.values[subIndex]);
         }
         else   // Classic Velocity Control
         {
-            if(ps[subIndex]->vel)
+            if(rpcData.subdevices_p[subIndex]->vel)
             {
-                for(int i = 0; i < X_idx[subIndex]; i++)
+                for(int i = 0; i < rpcData.subdev_jointsVectorLen[subIndex]; i++)
                 {
-                    ret=ret && ps[subIndex]->vel->velocityMove(XJoints[subIndex][i], XRefs[subIndex][i]);
+                    ret=ret && rpcData.subdevices_p[subIndex]->vel->velocityMove(rpcData.jointNumbers[subIndex][i],
+                                                                                 rpcData.values[subIndex][i]);
                 }
             }
             else
@@ -4955,6 +4842,7 @@ bool ControlBoardWrapper::velocityMove(const int n_joints, const int *joints, co
             }
         }
     }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -5055,47 +4943,57 @@ bool ControlBoardWrapper::getInteractionMode(int j, yarp::dev::InteractionModeEn
 
 bool ControlBoardWrapper::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    int                              X_idx[MAX_DEVICES];
-    int                              XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    yarp::dev::InteractionModeEnum   XModes[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    yarp::dev::impl::SubDevice       *ps[MAX_DEVICES];
-
-    int  nDev  = device.subdevices.size();
     bool ret = true;
 
-    for(int i=0; i<nDev; i++)
-    {
-        X_idx[i]=0;
-        ps[i]=device.getSubdevice(i);
-    }
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
     int subIndex = 0;
     for(int j=0; j<n_joints; j++)
     {
         subIndex = device.lut[joints[j]].deviceEntry;
-        XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-        X_idx[subIndex]++;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
-    for(subIndex=0; subIndex<nDev; subIndex++)
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if (!ps[subIndex])
-            return false;
-
-        if(ps[subIndex]->iInteract)
+        if(rpcData.subdevices_p[subIndex]->iInteract)   // Position Control 2
         {
-            ret= ret && ps[subIndex]->iInteract->getInteractionModes(X_idx[subIndex], XJoints[subIndex], XModes[subIndex]);
+            ret= ret && rpcData.subdevices_p[subIndex]->iInteract->getInteractionModes(rpcData.subdev_jointsVectorLen[subIndex],
+                                                                                       rpcData.jointNumbers[subIndex],
+                                                                                       (yarp::dev::InteractionModeEnum*) rpcData.modes[subIndex]);
         }
-        else ret = false;
+        else   // Classic Position Control
+        {
+            ret=false;
+        }
     }
 
-    // fill the output vector
-    for(int j=0; j<n_joints; j++)
+    if(ret)
     {
-        subIndex = device.lut[joints[j]].deviceEntry;
-        modes[j] = XModes[subIndex][j];
+        // ReMix values by user expectations
+        for(int i=0; i<rpcData.deviceNum; i++)
+            rpcData.subdev_jointsVectorLen[i]=0;                  // reset tmp index
+
+        // fill the output vector
+        for(int j=0; j<n_joints; j++)
+        {
+            subIndex = device.lut[joints[j]].deviceEntry;
+            modes[j] = (yarp::dev::InteractionModeEnum) rpcData.modes[subIndex][rpcData.subdev_jointsVectorLen[subIndex]];
+            rpcData.subdev_jointsVectorLen[subIndex]++;
+        }
     }
+    else
+    {
+        for(int j=0; j<n_joints; j++)
+        {
+            modes[j] = VOCAB_IM_UNKNOWN;
+        }
+    }
+    rpcDataMutex.post();
     return ret;
 }
 
@@ -5140,41 +5038,36 @@ bool ControlBoardWrapper::setInteractionMode(int j, yarp::dev::InteractionModeEn
 
 bool ControlBoardWrapper::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    int                              X_idx[MAX_DEVICES];
-    int                              XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    yarp::dev::InteractionModeEnum   XModes[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
-    yarp::dev::impl::SubDevice       *ps[MAX_DEVICES];
-
-    int  nDev  = device.subdevices.size();
     bool ret = true;
 
-    for(int i=0; i<nDev; i++)
-    {
-        X_idx[i]=0;
-        ps[i]=device.getSubdevice(i);
-    }
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
     int subIndex = 0;
     for(int j=0; j<n_joints; j++)
     {
         subIndex = device.lut[joints[j]].deviceEntry;
-        XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
-        XModes[subIndex][X_idx[subIndex]] = modes[j];
-        X_idx[subIndex]++;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.modes[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = (int) modes[j];
+        rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
-    for(subIndex=0; subIndex<nDev; subIndex++)
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if (!ps[subIndex])
-            return false;
-
-        if(ps[subIndex]->iInteract)
+        if(rpcData.subdevices_p[subIndex]->vel2)   // Position Control 2
         {
-            ret= ret && ps[subIndex]->iInteract->setInteractionModes(X_idx[subIndex], XJoints[subIndex], XModes[subIndex]);
+            ret= ret && rpcData.subdevices_p[subIndex]->iInteract->setInteractionModes( rpcData.subdev_jointsVectorLen[subIndex],
+                                                                                        rpcData.jointNumbers[subIndex],
+                                                                                        (yarp::dev::InteractionModeEnum*) rpcData.modes[subIndex]);
         }
-        else ret = false;
+        else
+        {
+            ret=false;
+        }
     }
+    rpcDataMutex.post();
     return ret;
 }
 
