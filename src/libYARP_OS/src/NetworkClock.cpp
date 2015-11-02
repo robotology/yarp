@@ -19,13 +19,9 @@
 using namespace yarp::os;
 
 typedef std::list<std::pair<double, Semaphore*> > Waiters;
-#define WAITERS(x) (*((Waiters*)(x)))
 
-NetworkClock::NetworkClock() {
-    closing = false;
-    sec = 0;
-    nsec = 0;
-    t = 0;
+NetworkClock::NetworkClock()
+: pwaiters(0), sec(0), nsec(0), t(0), closing(false){
     pwaiters = new Waiters();
     yAssert(pwaiters!=NULL);
 }
@@ -34,21 +30,25 @@ NetworkClock::~NetworkClock() {
     listMutex.lock();
     closing = true;
     port.interrupt();
-    Waiters& waiters = WAITERS(pwaiters);
-    Waiters::iterator waiter_i;
 
-    waiter_i = waiters.begin();
-    while (waiter_i != waiters.end())
-    {
+    Waiters* waiters = static_cast<Waiters*>(pwaiters);
+    if (waiters) {
+        Waiters::iterator waiter_i;
+        waiter_i = waiters->begin();
+        while (waiter_i != waiters->end())
         {
-            waiter_i->second->post();
-            waiter_i = waiters.erase(waiter_i);
+            Semaphore *waiterSemaphore = waiter_i->second;
+            waiterSemaphore->post();
+            waiter_i = waiters->erase(waiter_i);
+            delete waiterSemaphore;
         }
-    }
-    listMutex.unlock();
-    if (pwaiters) {
-        delete &WAITERS(pwaiters);
+        listMutex.unlock();
+
+        delete waiters;
         pwaiters = NULL;
+    }
+    else {
+        listMutex.unlock();
     }
 }
 
@@ -83,11 +83,6 @@ void NetworkClock::delay(double seconds) {
         return;
     }
 
-    Waiters& waiters = WAITERS(pwaiters);
-    Waiters::iterator waiterIterator;
-    std::pair<double, Semaphore*> waiter;
-    waiter.second = new Semaphore(0);
-    
     listMutex.lock();
     if (closing) {
         // We are shutting down.  The time signal is no longer available.
@@ -96,12 +91,14 @@ void NetworkClock::delay(double seconds) {
         SystemClock::delaySystem(seconds);
         return;
     }
-    waiter.first = now() + seconds;
-    waiterIterator = waiters.insert(waiters.end(), waiter);
+
+    Waiters* waiters = static_cast<Waiters*>(pwaiters);
+
+    std::pair<double, Semaphore*> waiter(now() + seconds, new Semaphore(0));
+    waiters->insert(waiters->end(), waiter);
     listMutex.unlock();
 
     waiter.second->wait();
-    delete(waiter.second);
 }
 
 bool NetworkClock::isValid() const {
@@ -121,16 +118,18 @@ bool NetworkClock::read(ConnectionReader& reader) {
     t = sec + (nsec*1e-9);
     timeMutex.unlock();
 
-    Waiters& waiters = WAITERS(pwaiters);
+    Waiters* waiters = static_cast<Waiters*>(pwaiters);
     Waiters::iterator waiter_i;
 
-    waiter_i = waiters.begin();
-    while (waiter_i != waiters.end())
+    waiter_i = waiters->begin();
+    while (waiter_i != waiters->end())
     {
-        if(waiter_i->first - t  < 1E-12 )
+        if (waiter_i->first - t  < 1E-12 )
         {
-            waiter_i->second->post();
-            waiter_i = waiters.erase(waiter_i);
+            Semaphore *waiterSemaphore = waiter_i->second;
+            waiterSemaphore->post();
+            waiter_i = waiters->erase(waiter_i);
+            delete waiterSemaphore;
         }
         else
             waiter_i++;
