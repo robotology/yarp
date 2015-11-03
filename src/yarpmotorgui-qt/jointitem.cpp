@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Francesco Nori <francesco.nori@iit.it>
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -14,8 +15,142 @@
 
 #include <cmath>
 
+#include <yarp/os/Log.h>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QPainter>
+
+SliderWithTarget::SliderWithTarget(QWidget * parent, bool _hasTargetOption) : QSlider(Qt::Horizontal, 0)
+{
+    sliderLabel = new QLabel(this);
+    sliderLabel->setObjectName(QStringLiteral("sliderLabel"));
+    sliderLabel->setGeometry(QRect(0, 0, 41, 20));
+    sliderLabel->setMinimumSize(QSize(40, 20));
+    sliderLabel->setMaximumSize(QSize(16777215, 20));
+    sliderLabel->setAlignment(Qt::AlignCenter);
+    sliderLabel->setStyleSheet("background-color: rgba(0,0,0,0%)");
+
+    hasTargetOption = _hasTargetOption;
+    enableViewTarget = true;
+    enableViewLabel = true;
+    disableClickOutOfHandle = true;
+    target=-1e50; //default value is intensionally set out of the slider
+    width_at_target = this->width() - 30;
+    sliderStep=1;
+    isDouble = false;
+}
+
+void SliderWithTarget::setSliderStep(double step)
+{
+    sliderStep = step;
+}
+
+double SliderWithTarget::getSliderStep()
+{
+    return sliderStep;
+}
+
+void SliderWithTarget::setIsDouble(bool b)
+{
+    isDouble = b;
+}
+
+bool SliderWithTarget::getIsDouble()
+{
+    return isDouble;
+}
+
+void SliderWithTarget::setValue(double val)
+{
+    if (isDouble)
+    {
+        QSlider::setValue(round(val*sliderStep));
+    }
+    else
+    {
+        QSlider::setValue(val);
+    }
+}
+
+void SliderWithTarget::updateSliderTarget(double t)
+{
+    target = t;
+    width_at_target= this->width()-30;
+}
+
+void SliderWithTarget::resetTarget()
+{
+    target = target = -1e50;
+    width_at_target = this->width() - 30;
+}
+
+void SliderWithTarget::paintEvent(QPaintEvent *e)
+{
+    QSlider::paintEvent(e);
+    if (hasTargetOption && enableViewTarget)
+    {
+        QPainter p(this);
+        double current_width = this->width()-30;
+        QRect r(target / width_at_target * current_width, 17, 30, 15);
+        p.fillRect(r, QBrush(QColor(128, 128, 255, 128)));
+        p.drawRect(r);
+    }
+    if (enableViewLabel)
+    {
+        double  value = this->value();
+        int w = this->width() - 30;
+        int totValues = this->maximum() + abs(this->minimum());
+        double newX = ((double)w / (double)totValues) * ((double)value + abs(this->minimum()));
+        sliderLabel->setGeometry(newX, -10, 40, 20);
+        sliderLabel->setText(QString("%L1").arg((double)value / sliderStep, 0, 'f', 3));
+    }
+}
+
+void SliderWithTarget::mousePressEvent(QMouseEvent * event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        double myx = event->x();
+        QStyleOptionSlider opt;
+        initStyleOption(&opt);
+        QRect sr = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
+
+        //throw aways clicks that are not on the handle
+        if (disableClickOutOfHandle)
+        {
+            if (myx<sr.left()+3 || myx>sr.right()-3)
+            {
+                return;
+            }
+        }
+
+        //setValue(minimum() + ((maximum() - minimum()) * myx) / width());
+        event->accept();
+    }
+    QSlider::mousePressEvent(event);
+}
+
+void JointItem::resetTarget()
+{
+    ui->sliderTrajectoryPosition->resetTarget();
+    ui->sliderMixedPosition->resetTarget();
+}
+
+void JointItem::updateTrajectoryPositionTarget(double val)
+{
+    int w = ui->sliderTrajectoryPosition->width() - 30;
+    int totValues = ui->sliderTrajectoryPosition->maximum() + abs(ui->sliderTrajectoryPosition->minimum());
+    double newX = ((double)w / (double)totValues) * ((double)val + abs(ui->sliderTrajectoryPosition->minimum()));
+    ui->sliderTrajectoryPosition->updateSliderTarget(newX);
+}
+
+void JointItem::updateMixedPositionTarget(double val)
+{
+    int w = ui->sliderMixedPosition->width() - 30;
+    int totValues = ui->sliderMixedPosition->maximum() + abs(ui->sliderMixedPosition->minimum());
+    double newX = ((double)w / (double)totValues) * ((double)val + abs(ui->sliderMixedPosition->minimum()));
+    ui->sliderMixedPosition->updateSliderTarget(newX);
+}
 
 JointItem::JointItem(int index,QWidget *parent) :
     QWidget(parent),
@@ -25,15 +160,33 @@ JointItem::JointItem(int index,QWidget *parent) :
     internalState = StateStarting;
     internalInteraction = InteractionStarting;
     jointIndex = index;
-    sliderPositionPressed = false;
+    sliderDirectPositionPressed = false;
+    sliderMixedPositionPressed = false;
+    sliderMixedVelocityPressed = false;
+    sliderTrajectoryPositionPressed = false;
+    sliderTrajectoryVelocityPressed = false;
     sliderTorquePressed = false;
     sliderOpenloopPressed = false;
     sliderVelocityPressed = false;
-    speed = 10;
     enableCalib = true;
     speedVisible = false;
     lastVelocity = 0;
     velocityModeEnabled = false;
+    motionDone = true;
+
+    positionSliderStepIsAuto = true;
+    velocitySliderStepIsAuto = false;
+    trajectoryVelocitySliderStepIsAuto = false;
+
+    max_position = 0;
+    min_position = 0;
+    max_velocity = 0;
+    min_velocity = 0;
+    max_trajectory_velocity = 0;
+    max_torque = 0;
+    min_torque = 0;
+    ref_torque = 0;
+    ref_openloop = 0;
 
     IDLE            = 0;
     POSITION        = 1;
@@ -48,37 +201,53 @@ JointItem::JointItem(int index,QWidget *parent) :
     connect(ui->comboMode,SIGNAL(currentIndexChanged(int)),this,SLOT(onModeChanged(int)));
     connect(ui->comboInteraction,SIGNAL(currentIndexChanged(int)),this,SLOT(onInteractionChanged(int)));
 
-    ui->sliderPositionPosition->installEventFilter(this);
-    connect(ui->sliderPositionPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
-    connect(ui->sliderPositionPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
-    connect(ui->sliderPositionPosition,SIGNAL(actionTriggered(int)),this,SLOT(onSliderPositionActionTriggered(int)));
+    ui->sliderTrajectoryPosition->installEventFilter(this);
+    connect(ui->sliderTrajectoryPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderTrajectoryPositionPressed()));
+    connect(ui->sliderTrajectoryPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderTrajectoryPositionReleased()));
+    ui->sliderTrajectoryPosition->disableClickOutOfHandle=true;
+    ui->sliderTrajectoryPosition->enableViewTarget = true;
 
     ui->sliderTorqueTorque->installEventFilter(this);
     connect(ui->sliderTorqueTorque,SIGNAL(sliderPressed()),this,SLOT(onSliderTorquePressed()));
     connect(ui->sliderTorqueTorque,SIGNAL(sliderReleased()),this,SLOT(onSliderTorqueReleased()));
+    ui->sliderTorqueTorque->disableClickOutOfHandle = true;
+    ui->sliderTorqueTorque->enableViewTarget = false;
 
     ui->sliderOpenloopOutput->installEventFilter(this);
     connect(ui->sliderOpenloopOutput,SIGNAL(sliderPressed()),this,SLOT(onSliderOpenloopPressed()));
     connect(ui->sliderOpenloopOutput,SIGNAL(sliderReleased()),this,SLOT(onSliderOpenloopReleased()));
+    ui->sliderOpenloopOutput->disableClickOutOfHandle = true;
+    ui->sliderOpenloopOutput->enableViewTarget = false;
 
-    ui->sliderPositionDirect->installEventFilter(this);
-    connect(ui->sliderPositionDirect,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
-    connect(ui->sliderPositionDirect,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
+    ui->sliderDirectPosition->installEventFilter(this);
+    connect(ui->sliderDirectPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderDirectPositionPressed()));
+    connect(ui->sliderDirectPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderDirectPositionReleased()));
+    ui->sliderDirectPosition->disableClickOutOfHandle = true;
+    ui->sliderDirectPosition->enableViewTarget = false;
 
     ui->sliderMixedPosition->installEventFilter(this);
-    connect(ui->sliderMixedPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
-    connect(ui->sliderMixedPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
+    connect(ui->sliderMixedPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderMixedPositionPressed()));
+    connect(ui->sliderMixedPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderMixedPositionReleased()));
+    ui->sliderMixedPosition->disableClickOutOfHandle = true;
+    ui->sliderMixedPosition->enableViewTarget = true;
 
     ui->sliderVelocityVelocity->installEventFilter(this);
     connect(ui->sliderVelocityVelocity,SIGNAL(sliderPressed()),this,SLOT(onSliderVelocityPressed()));
     connect(ui->sliderVelocityVelocity,SIGNAL(sliderReleased()),this,SLOT(onSliderVelocityReleased()));
+    ui->sliderVelocityVelocity->disableClickOutOfHandle = true;
+    ui->sliderVelocityVelocity->enableViewTarget = false;
 
-    ui->sliderPositionVelocity->installEventFilter(this);
-    connect(ui->sliderPositionVelocity,SIGNAL(sliderMoved(int)),this,SLOT(onSliderVelocityMoved(int)));
+    ui->sliderTrajectoryVelocity->installEventFilter(this);
+    connect(ui->sliderTrajectoryVelocity, SIGNAL(sliderPressed()), this, SLOT(onSliderTrajectoryVelocityPressed()));
+    connect(ui->sliderTrajectoryVelocity, SIGNAL(sliderReleased()), this, SLOT(onSliderTrajectoryVelocityReleased()));
+    ui->sliderTrajectoryVelocity->disableClickOutOfHandle = true;
+    ui->sliderTrajectoryVelocity->enableViewTarget = false;
 
     ui->sliderMixedVelocity->installEventFilter(this);
-    connect(ui->sliderMixedVelocity,SIGNAL(sliderMoved(int)),this,SLOT(onSliderVelocityMoved(int)));
-
+    connect(ui->sliderMixedVelocity, SIGNAL(sliderPressed()), this, SLOT(onSliderMixedVelocityPressed()));
+    connect(ui->sliderMixedVelocity, SIGNAL(sliderReleased()), this, SLOT(onSliderMixedVelocityReleased()));
+    ui->sliderMixedVelocity->disableClickOutOfHandle = true;
+    ui->sliderMixedVelocity->enableViewTarget = false;
 
     connect(ui->buttonHome,SIGNAL(clicked()),this,SLOT(onHomeClicked()));
     connect(ui->buttonIdle,SIGNAL(clicked()),this,SLOT(onIdleClicked()));
@@ -204,54 +373,50 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
         if(key == Qt::Key_Left || key == Qt::Key_Right  || key == Qt::Key_Up ||
            key == Qt::Key_Down || key == Qt::Key_PageUp || key == Qt::Key_PageDown){
 
-            QSlider *slider;
-            QLabel *label;
+            //SliderWithTarget *slider=0;
+            QSlider* slider = 0;
 
-            if(obj == ui->sliderPositionPosition){
-                motionDone = false;
-                slider = ui->sliderPositionPosition;
-                label = ui->labelPositionPosition;
+            if(obj == ui->sliderTrajectoryPosition){
+                slider = ui->sliderTrajectoryPosition;
                 if(keyEvent->type() == QEvent::KeyPress){
-                    onSliderPositionPressed();
+                    onSliderTrajectoryPositionPressed();
                 }
                 if(keyEvent->type() == QEvent::KeyRelease){
-                    onSliderPositionReleased();
+                    onSliderTrajectoryPositionReleased();
                 }
             }
-            if(obj == ui->sliderPositionVelocity){
-                motionDone = false;
-                slider = ui->sliderPositionVelocity;
-                label = ui->labelPositionVelocity;
+            if(obj == ui->sliderTrajectoryVelocity){
+                slider = ui->sliderTrajectoryVelocity;
+                if (keyEvent->type() == QEvent::KeyPress){
+                    onSliderTrajectoryVelocityPressed();
+                }
+                if (keyEvent->type() == QEvent::KeyRelease){
+                    onSliderTrajectoryVelocityReleased();
+                }
             }
-            if(obj == ui->sliderPositionDirect){
-                motionDone = false;
-                slider = ui->sliderPositionDirect;
-                label = ui->labelPositionDirectPosition;
+            if(obj == ui->sliderDirectPosition){
+                slider = ui->sliderDirectPosition;
                 if(keyEvent->type() == QEvent::KeyPress){
-                    onSliderPositionPressed();
+                    onSliderDirectPositionPressed();
                 }
                 if(keyEvent->type() == QEvent::KeyRelease){
-                    onSliderPositionReleased();
+                    onSliderDirectPositionReleased();
                 }
             }
             if(obj == ui->sliderMixedPosition){
-                motionDone = false;
                 slider = ui->sliderMixedPosition;
-                label = ui->labelMixedPosition;
                 if(keyEvent->type() == QEvent::KeyPress){
-                    onSliderPositionPressed();
+                    onSliderMixedPositionPressed();
                 }
                 if(keyEvent->type() == QEvent::KeyRelease){
-                    onSliderPositionReleased();
+                    onSliderMixedPositionReleased();
                 }
             }
             if(obj == ui->sliderMixedVelocity){
                 slider = ui->sliderMixedVelocity;
-                label = ui->labelMixedVelocity;
             }
             if(obj == ui->sliderTorqueTorque){
                 slider = ui->sliderTorqueTorque;
-                label = ui->labelTorqueTorque;
                 if(keyEvent->type() == QEvent::KeyPress){
                     onSliderTorquePressed();
                 }
@@ -261,7 +426,6 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
             }
             if(obj == ui->sliderOpenloopOutput){
                 slider = ui->sliderOpenloopOutput;
-                label = ui->labelOpenLoopOutput;
                 if(keyEvent->type() == QEvent::KeyPress){
                     onSliderOpenloopPressed();
                 }
@@ -271,7 +435,6 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
             }
             if(obj == ui->sliderVelocityVelocity){
                 slider = ui->sliderVelocityVelocity;
-                label = ui->labelVelocityVelocity;
                 if(keyEvent->type() == QEvent::KeyPress){
                     onSliderVelocityPressed();
                 }
@@ -279,9 +442,7 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
                     onSliderVelocityReleased();
                 }
             }
-
-
-
+            
             if(keyEvent->type() == QEvent::KeyPress){
                 if(key == Qt::Key_Left || key == Qt::Key_Down){
                     slider->setValue(slider->value() - 1);
@@ -294,11 +455,6 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
                 }
                 if(key == Qt::Key_PageDown){
                     slider->setValue(slider->value() - 10);
-                }
-                if(obj == ui->sliderTorqueTorque){
-                    updateSliderTorqueLabel(slider,label,slider->value());
-                }else{
-                    updateSliderLabel(slider,label,slider->value());
                 }
             }
 
@@ -320,6 +476,12 @@ void JointItem::controlVelocity(bool control)
     if(ui->stackedWidget->currentIndex() == VELOCITY && velocityModeEnabled){
         velocityTimer.start();
     }
+}
+
+void JointItem::viewPositionTarget(bool visible)
+{
+    ui->sliderTrajectoryPosition->enableViewTarget = visible;
+    ui->sliderMixedPosition->enableViewTarget = visible;
 }
 
 void JointItem::setSpeedVisible(bool visible)
@@ -399,6 +561,199 @@ void JointItem::setSpeedVisible(bool visible)
     }
 }
 
+void JointItem::enablePositionSliderDoubleAuto()
+{
+    positionSliderStepIsAuto = true;
+    double positionSliderStep = 1 / (fabs(min_position - max_position) / 100.0);
+    ui->sliderMixedPosition->setSliderStep(positionSliderStep);
+    ui->sliderTrajectoryPosition->setSliderStep(positionSliderStep);
+    ui->sliderDirectPosition->setSliderStep(positionSliderStep);
+    ui->sliderMixedPosition->setIsDouble(true);
+    ui->sliderTrajectoryPosition->setIsDouble(true);
+    ui->sliderDirectPosition->setIsDouble(true);
+    int sliderMin = min_position*positionSliderStep;
+    int sliderMax = max_position*positionSliderStep;
+    ui->sliderMixedPosition->setRange(sliderMin, sliderMax);
+    ui->sliderTrajectoryPosition->setRange(sliderMin, sliderMax);
+    ui->sliderDirectPosition->setRange(sliderMin, sliderMax);
+    ui->sliderMixedPosition->resetTarget();
+    ui->sliderTrajectoryPosition->resetTarget();
+    ui->sliderDirectPosition->resetTarget();
+}
+
+void JointItem::enablePositionSliderDoubleValue(double value)
+{
+    double positionSliderStep = 1 / value;
+    ui->sliderMixedPosition->setSliderStep(positionSliderStep);
+    ui->sliderTrajectoryPosition->setSliderStep(positionSliderStep);
+    ui->sliderDirectPosition->setSliderStep(positionSliderStep);
+    ui->sliderMixedPosition->setIsDouble(true);
+    ui->sliderTrajectoryPosition->setIsDouble(true);
+    ui->sliderDirectPosition->setIsDouble(true);
+    int sliderMin = min_position*positionSliderStep;
+    int sliderMax = max_position*positionSliderStep;
+    ui->sliderMixedPosition->setRange(sliderMin, sliderMax);
+    ui->sliderTrajectoryPosition->setRange(sliderMin, sliderMax);
+    ui->sliderDirectPosition->setRange(sliderMin, sliderMax);
+    ui->sliderMixedPosition->resetTarget();
+    ui->sliderTrajectoryPosition->resetTarget();
+    ui->sliderDirectPosition->resetTarget();
+}
+
+void JointItem::disablePositionSliderDouble()
+{
+    if (fabs(max_position - min_position) < 1.0)
+    {
+        yError("Unable to set integer position slider");
+        return;
+    }
+    double positionSliderStep = 1;
+    ui->sliderMixedPosition->setSliderStep(positionSliderStep);
+    ui->sliderTrajectoryPosition->setSliderStep(positionSliderStep);
+    ui->sliderDirectPosition->setSliderStep(positionSliderStep);
+    ui->sliderMixedPosition->setIsDouble(false);
+    ui->sliderTrajectoryPosition->setIsDouble(false);
+    ui->sliderDirectPosition->setIsDouble(false);
+    int sliderMin = min_position;
+    int sliderMax = max_position;
+    ui->sliderMixedPosition->setRange(sliderMin, sliderMax);
+    ui->sliderTrajectoryPosition->setRange(sliderMin, sliderMax);
+    ui->sliderDirectPosition->setRange(sliderMin, sliderMax);
+    ui->sliderMixedPosition->resetTarget();
+    ui->sliderTrajectoryPosition->resetTarget();
+    ui->sliderDirectPosition->resetTarget();
+}
+
+void JointItem::enableVelocitySliderDoubleAuto()
+{
+    velocitySliderStepIsAuto = true;
+    double velocitySliderStep = 1 / (fabs(-max_velocity - max_velocity) / 100.0); //note that we are using -max_velocity
+    ui->sliderVelocityVelocity->setSliderStep(velocitySliderStep);
+    ui->sliderVelocityVelocity->setIsDouble(true);
+    int sliderMin = -max_velocity*velocitySliderStep; //note that we are using -max_velocity
+    int sliderMax = max_velocity*velocitySliderStep;
+    ui->sliderVelocityVelocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderVelocityVelocity->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+}
+
+void JointItem::enableVelocitySliderDoubleValue(double value)
+{
+    double velocitySliderStep = 1 / value;
+    ui->sliderVelocityVelocity->setSliderStep(velocitySliderStep);
+    ui->sliderVelocityVelocity->setIsDouble(true);
+    int sliderMin = -max_velocity*velocitySliderStep; //note that we are using -max_velocity
+    int sliderMax = max_velocity*velocitySliderStep;
+    ui->sliderVelocityVelocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderVelocityVelocity->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+}
+
+void JointItem::disableVelocitySliderDouble()
+{
+    if (fabs(max_velocity) < 1.0)
+    {
+        yError("Unable to set integer velocity slider");
+        return;
+    }
+    double  velocitySliderStep = 1;
+    ui->sliderVelocityVelocity->setSliderStep(velocitySliderStep);
+    ui->sliderVelocityVelocity->setIsDouble(false);
+    int sliderMin = -max_velocity; //note that we are using -max_velocity
+    int sliderMax = max_velocity;
+    ui->sliderVelocityVelocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderVelocityVelocity->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+}
+
+void JointItem::enableTorqueSliderDoubleAuto()
+{
+    torqueSliderStepIsAuto = true;
+    double torqueSliderStep = 1 / (fabs(-max_torque - max_torque) / 100.0); //note that we are using -max_velocity
+    ui->sliderTorqueTorque->setSliderStep(torqueSliderStep);
+    ui->sliderTorqueTorque->setIsDouble(true);
+    int sliderMin = -max_torque*torqueSliderStep; //note that we are using -max_torque
+    int sliderMax = max_torque*torqueSliderStep;
+    ui->sliderTorqueTorque->setRange(sliderMin, sliderMax);
+    int v = ui->sliderTorqueTorque->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+}
+
+void JointItem::enableTorqueSliderDoubleValue(double value)
+{
+    double torqueSliderStep = 1 / value;
+    ui->sliderTorqueTorque->setSliderStep(torqueSliderStep);
+    ui->sliderTorqueTorque->setIsDouble(true);
+    int sliderMin = -max_torque*torqueSliderStep; //note that we are using -max_torque
+    int sliderMax = max_torque*torqueSliderStep;
+    ui->sliderTorqueTorque->setRange(sliderMin, sliderMax);
+    int v = ui->sliderTorqueTorque->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+}
+
+void JointItem::disableTorqueSliderDouble()
+{
+    if (fabs(max_velocity) < 1.0)
+    {
+        yError("Unable to set integer velocity slider");
+        return;
+    }
+    double torqueSliderStep = 1;
+    ui->sliderTorqueTorque->setSliderStep(torqueSliderStep);
+    ui->sliderTorqueTorque->setIsDouble(false);
+    int sliderMin = -max_torque; //note that we are using -max_torque
+    int sliderMax = max_torque;
+    ui->sliderTorqueTorque->setRange(sliderMin, sliderMax);
+    int v = ui->sliderTorqueTorque->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+}
+
+void JointItem::enableTrajectoryVelocitySliderDoubleAuto()
+{
+    trajectoryVelocitySliderStepIsAuto = true;
+    double trajectoryVelocitySliderStep = 1 / (fabs(0 - max_trajectory_velocity) / 100.0); //note that we are using 0
+    ui->sliderTrajectoryVelocity->setSliderStep(trajectoryVelocitySliderStep);
+    ui->sliderTrajectoryVelocity->setIsDouble(true);
+    int sliderMin = 0 * trajectoryVelocitySliderStep; //note that we are using 0
+    int sliderMax = max_trajectory_velocity*trajectoryVelocitySliderStep;
+    ui->sliderTrajectoryVelocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderTrajectoryVelocity->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+}
+
+void JointItem::enableTrajectoryVelocitySliderDoubleValue(double value)
+{
+    double trajectoryVelocitySliderStep = 1 / value;
+    ui->sliderTrajectoryVelocity->setSliderStep(trajectoryVelocitySliderStep);
+    ui->sliderTrajectoryVelocity->setIsDouble(true);
+    int sliderMin = 0 * trajectoryVelocitySliderStep; //note that we are using 0
+    int sliderMax = max_trajectory_velocity*trajectoryVelocitySliderStep;
+    ui->sliderTrajectoryVelocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderTrajectoryVelocity->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+}
+
+void JointItem::disableTrajectoryVelocitySliderDouble()
+{
+    int sliderMin = 0; //note that we are using 0
+    int sliderMax = max_trajectory_velocity;
+    double trajectoryVelocitySliderStep = 1;
+    ui->sliderTrajectoryVelocity->setSliderStep(trajectoryVelocitySliderStep);
+    ui->sliderTrajectoryVelocity->setRange(sliderMin, sliderMax);
+    ui->sliderTrajectoryVelocity->setIsDouble(false);
+    int v = ui->sliderTrajectoryVelocity->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+}
+
 void JointItem::setEnabledOptions(bool debug_param_enabled,
                                   bool speedview_param_enabled,
                                   bool enable_calib_all,
@@ -443,8 +798,8 @@ JointItem::~JointItem()
     disconnect(ui->comboMode,SIGNAL(currentIndexChanged(int)),this,SLOT(onModeChanged(int)));
     disconnect(ui->comboInteraction,SIGNAL(currentIndexChanged(int)),this,SLOT(onInteractionChanged(int)));
 
-    disconnect(ui->sliderPositionPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
-    disconnect(ui->sliderPositionPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
+    disconnect(ui->sliderTrajectoryPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderTrajectoryPositionPressed()));
+    disconnect(ui->sliderTrajectoryPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderTrajectoryPositionReleased()));
 
     disconnect(ui->sliderTorqueTorque,SIGNAL(sliderPressed()),this,SLOT(onSliderTorquePressed()));
     disconnect(ui->sliderTorqueTorque,SIGNAL(sliderReleased()),this,SLOT(onSliderTorqueReleased()));
@@ -452,14 +807,14 @@ JointItem::~JointItem()
     disconnect(ui->sliderOpenloopOutput,SIGNAL(sliderPressed()),this,SLOT(onSliderOpenloopPressed()));
     disconnect(ui->sliderOpenloopOutput,SIGNAL(sliderReleased()),this,SLOT(onSliderOpenloopReleased()));
 
-    disconnect(ui->sliderPositionDirect,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
-    disconnect(ui->sliderPositionDirect,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
+    disconnect(ui->sliderDirectPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderDirectPositionPressed()));
+    disconnect(ui->sliderDirectPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderDirectPositionReleased()));
 
-    disconnect(ui->sliderMixedPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderPositionPressed()));
-    disconnect(ui->sliderMixedPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderPositionReleased()));
+    disconnect(ui->sliderMixedPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderMixedPositionPressed()));
+    disconnect(ui->sliderMixedPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderMixedPositionReleased()));
 
-    disconnect(ui->sliderPositionVelocity,SIGNAL(sliderMoved(int)),this,SLOT(onSliderVelocityMoved(int)));
-    disconnect(ui->sliderMixedVelocity,SIGNAL(sliderMoved(int)),this,SLOT(onSliderVelocityMoved(int)));
+    disconnect(ui->sliderTrajectoryVelocity, SIGNAL(sliderPressed()), this, SLOT(onSliderTrajectoryVelocityPressed()));
+    disconnect(ui->sliderMixedVelocity, SIGNAL(sliderReleased()), this, SLOT(onSliderMixedVelocityReleased()));
 
     disconnect(ui->buttonHome,SIGNAL(clicked()),this,SLOT(onHomeClicked()));
     disconnect(ui->buttonIdle,SIGNAL(clicked()),this,SLOT(onIdleClicked()));
@@ -482,9 +837,9 @@ void JointItem::installFilter()
 
     ui->sliderMixedPosition->installEventFilter(filter);
     ui->sliderMixedVelocity->installEventFilter(filter);
-    ui->sliderPositionDirect->installEventFilter(filter);
-    ui->sliderPositionPosition->installEventFilter(filter);
-    ui->sliderPositionVelocity->installEventFilter(filter);
+    ui->sliderDirectPosition->installEventFilter(filter);
+    ui->sliderTrajectoryPosition->installEventFilter(filter);
+    ui->sliderTrajectoryVelocity->installEventFilter(filter);
     ui->sliderTorqueTorque->installEventFilter(filter);
 }
 
@@ -499,7 +854,7 @@ void JointItem::onStackedWidgetChanged(int index)
         if(velocityModeEnabled){
             velocityTimer.stop();
             lastVelocity = 0;
-            updateSlider(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,0);
+            updateSliderVelocity(ui->sliderVelocityVelocity,0);
         }
     }
 }
@@ -512,7 +867,6 @@ void JointItem::onModeChanged(int index)
     Q_UNUSED(index);
     int mode = ui->comboMode->currentData(Qt::UserRole).toInt();
     changeMode(mode,this);
-    motionDone = true;
 }
 
 
@@ -521,228 +875,163 @@ void JointItem::onInteractionChanged(int index)
     changeInteraction(index,this);
 }
 
-
-void JointItem::setTorque(double max,double min,double val)
-{
-    max_torque = max;
-    min_torque = min;
-    torque = val;
-}
-
-void JointItem::onVelocitySliderMoved(int val)
-{
-    int index = ui->stackedWidget->currentIndex();
-    if (index == VELOCITY) {
-        updateSliderLabel(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,val);
-    }
-}
-
-void JointItem::onSliderVelocityMoved(int val)
-{
-    int index = ui->stackedWidget->currentIndex();
-    if (index == POSITION) {
-        updateSliderLabel(ui->sliderPositionVelocity,ui->labelPositionVelocity,val);
-        speed = val;
-    } else if (index == MIXED) {
-        updateSliderLabel(ui->sliderMixedVelocity,ui->labelMixedVelocity,val);
-        speed = val;
-    }
-
-}
-
 void JointItem::setJointName(QString name)
 {
     jointName = name;
 }
 
-void JointItem::onSliderMoved(int val)
-{
-    motionDone = false;
-    int index = ui->stackedWidget->currentIndex();
-    if (index == POSITION) {
-        updateSliderLabel(ui->sliderPositionPosition,ui->labelPositionPosition,val);
-    } else if (index == POSITION_DIR) {
-        updateSliderLabel(ui->sliderPositionDirect,ui->labelPositionDirectPosition,val);
-    } else if (index == MIXED) {
-        updateSliderLabel(ui->sliderMixedPosition,ui->labelMixedPosition,val);
-    }
-}
-
-void JointItem::onSliderOpenloopMoved(int val)
-{
-    int index = ui->stackedWidget->currentIndex();
-    if (index == OPENLOOP) {
-        updateSliderLabel(ui->sliderOpenloopOutput,ui->labelOpenLoopOutput,(double)val);
-    }
-}
-
-void JointItem::onSliderTorqueMoved(int val)
-{
-    int index = ui->stackedWidget->currentIndex();
-    if (index == TORQUE) {
-        updateSliderTorqueLabel(ui->sliderTorqueTorque,ui->labelTorqueTorque,(double)val);
-    }
-}
-
 void JointItem::onSliderVelocityPressed()
 {
     sliderVelocityPressed = true;
-    int index = ui->stackedWidget->currentIndex();
-    if (index == VELOCITY) {
-        connect(ui->sliderVelocityVelocity,SIGNAL(sliderMoved(int)),this,SLOT(onVelocitySliderMoved(int)));
-    }
 }
 
 void JointItem::onSliderVelocityReleased()
 {
-    int index = ui->stackedWidget->currentIndex();
-    if (index == VELOCITY) {
-        disconnect(ui->sliderVelocityVelocity,SIGNAL(sliderMoved(int)),this,SLOT(onVelocitySliderMoved(int)));
-        lastVelocity = ui->sliderVelocityVelocity->value();
-        //sliderVelocityMoved(ui->sliderVelocityVelocity->value(),jointIndex);
+    lastVelocity = (double)ui->sliderVelocityVelocity->value() / ui->sliderVelocityVelocity->getSliderStep();
+    sliderVelocityPressed = false;
+}
+
+void JointItem::onSliderMixedVelocityPressed()
+{
+    sliderMixedVelocityPressed = true;
+}
+
+void JointItem::onSliderMixedVelocityReleased()
+{
+    lastVelocity = ui->sliderMixedVelocity->value();
+
+    if (ui->sliderMixedVelocity->getIsDouble())
+    {
+        double val = ui->sliderMixedVelocity->value();
+        sliderMixedVelocityCommand(val / ui->sliderMixedVelocity->getSliderStep(), jointIndex);
+    }
+    else
+    {
+        sliderMixedVelocityCommand(ui->sliderMixedVelocity->value(), jointIndex);
     }
 
-
-    sliderVelocityPressed = false;
+    sliderMixedVelocityPressed = false;
 }
 
 
 void JointItem::onVelocityTimer()
 {
-    if(velocityModeEnabled){
-        sliderVelocityMoved(lastVelocity,jointIndex);
-        if(!sliderVelocityPressed){
-            updateSliderLabel(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,lastVelocity);
-        }
+    if(velocityModeEnabled)
+    {
+        sliderVelocityCommand(lastVelocity,jointIndex);
     }
 }
 
-void JointItem::onSliderPositionPressed()
+void JointItem::onSliderTrajectoryPositionPressed()
 {
-    sliderPositionPressed = true;
-    int index = ui->stackedWidget->currentIndex();
-    if (index == POSITION) {
-        connect(ui->sliderPositionPosition,SIGNAL(sliderMoved(int)),this,SLOT(onSliderMoved(int)));
-    } else if (index == POSITION_DIR) {
-        connect(ui->sliderPositionDirect,SIGNAL(sliderMoved(int)),this,SLOT(onSliderMoved(int)));
-    } else if (index == MIXED) {
-        connect(ui->sliderMixedPosition,SIGNAL(sliderMoved(int)),this,SLOT(onSliderMoved(int)));
-    }
+    sliderTrajectoryPositionPressed = true;
 }
 
-void JointItem::onSliderPositionReleased()
+void JointItem::onSliderTrajectoryPositionReleased()
 {
-    int index = ui->stackedWidget->currentIndex();
-    if (index == POSITION) {
-        disconnect(ui->sliderPositionPosition,SIGNAL(sliderMoved(int)),this,SLOT(onSliderMoved(int)));
-//        updateSliderLabel(ui->sliderPositionDirect,ui->labelPositionDirectPosition,ui->sliderPositionPosition->value());
-//        updateSliderLabel(ui->sliderMixedPosition,ui->labelMixedPosition,ui->sliderPositionPosition->value());
-        sliderPositionMoved(ui->sliderPositionPosition->value(),ui->sliderPositionVelocity->value(),jointIndex);
-    } else if (index == POSITION_DIR) {
-        disconnect(ui->sliderPositionDirect,SIGNAL(sliderMoved(int)),this,SLOT(onSliderMoved(int)));
-//        updateSliderLabel(ui->sliderPositionPosition,ui->labelPositionPosition,ui->sliderPositionDirect->value());
-//        updateSliderLabel(ui->sliderMixedPosition,ui->labelMixedPosition,ui->sliderPositionDirect->value());
-        sliderPositionMoved(ui->sliderPositionDirect->value(),-1,jointIndex);
-    } else if (index == MIXED) {
-        disconnect(ui->sliderMixedPosition,SIGNAL(sliderMoved(int)),this,SLOT(onSliderMoved(int)));
-//        updateSliderLabel(ui->sliderPositionPosition,ui->labelPositionPosition,ui->sliderMixedPosition->value());
-//        updateSliderLabel(ui->sliderPositionDirect,ui->labelPositionDirectPosition,ui->sliderMixedPosition->value());
-        sliderPositionMoved(ui->sliderMixedPosition->value(),ui->sliderMixedVelocity->value(),jointIndex);
+    updateTrajectoryPositionTarget(ui->sliderTrajectoryPosition->value());
+    if (ui->sliderTrajectoryPosition->getIsDouble())
+    {
+        double val = ui->sliderTrajectoryPosition->value();
+        sliderTrajectoryPositionCommand(val / ui->sliderTrajectoryPosition->getSliderStep(), jointIndex);
     }
-
-    sliderPositionPressed = false;
+    else
+    {
+        sliderTrajectoryPositionCommand(ui->sliderTrajectoryPosition->value(), jointIndex);
+    }
+    sliderTrajectoryPositionPressed = false;
+    motionDone = false;
 }
 
-void JointItem::onSliderPositionActionTriggered(int val)
+void JointItem::onSliderMixedPositionPressed()
 {
-    if( !sliderPositionPressed){
-        motionDone = false;
-        int index = ui->stackedWidget->currentIndex();
-        if (index == POSITION) {
-            connect(ui->sliderPositionPosition,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)),Qt::UniqueConnection);
-        } else if (index == POSITION_DIR) {
-            connect(ui->sliderPositionDirect,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)),Qt::UniqueConnection);
-        } else if (index == MIXED) {
-            connect(ui->sliderMixedPosition,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)),Qt::UniqueConnection);
-        }
-
-
-        //onSliderPositionReleased();
-    }
+    sliderMixedPositionPressed = true;
 }
-void JointItem::onSliderPositionValueChanged(int val)
-{
 
-    int index = ui->stackedWidget->currentIndex();
-    if (index == POSITION) {
-        disconnect(ui->sliderPositionPosition,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)));
-    } else if (index == POSITION_DIR) {
-        disconnect(ui->sliderPositionDirect,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)));
-    } else if (index == MIXED) {
-        disconnect(ui->sliderMixedPosition,SIGNAL(valueChanged(int)),this,SLOT(onSliderPositionValueChanged(int)));
+void JointItem::onSliderMixedPositionReleased()
+{
+    updateMixedPositionTarget(ui->sliderMixedPosition->value());
+    if (ui->sliderMixedPosition->getIsDouble())
+    {
+        double val = ui->sliderMixedPosition->value();
+        sliderMixedPositionCommand(val / ui->sliderMixedPosition->getSliderStep(), jointIndex);
     }
-    onSliderMoved(val);
-    onSliderPositionReleased();
+    else
+    {
+        sliderMixedPositionCommand(ui->sliderTrajectoryPosition->value(), jointIndex);
+    }
+
+    sliderMixedPositionPressed = false;
+    motionDone = false;
+}
+
+void JointItem::onSliderDirectPositionPressed()
+{
+    sliderDirectPositionPressed = true;
+}
+
+void JointItem::onSliderDirectPositionReleased()
+{
+    double ref_direct_position = (double)ui->sliderDirectPosition->value() / ui->sliderDirectPosition->getSliderStep();
+    sliderDirectPositionCommand(ref_direct_position, jointIndex);
+    sliderDirectPositionPressed = false;
+    motionDone = false;
+}
+
+void JointItem::onSliderTrajectoryVelocityPressed()
+{
+    sliderTrajectoryVelocityPressed = true;
+}
+
+void JointItem::onSliderTrajectoryVelocityReleased()
+{
+    ref_trajectory_velocity = (double)ui->sliderTrajectoryVelocity->value() / ui->sliderTrajectoryVelocity->getSliderStep();
+    sliderTrajectoryVelocityCommand(ref_trajectory_velocity, jointIndex);
+    sliderTrajectoryVelocityPressed = false;
 }
 
 void JointItem::onSliderOpenloopPressed()
 {
     sliderOpenloopPressed = true;
-
-    int index = ui->stackedWidget->currentIndex();
-    if (index == OPENLOOP) {
-        connect(ui->sliderOpenloopOutput,SIGNAL(sliderMoved(int)),this,SLOT(onSliderOpenloopMoved(int)));
-    }
 }
 
 void JointItem::onSliderOpenloopReleased()
 {
-    int index = ui->stackedWidget->currentIndex();
-    if (index == OPENLOOP) {
-        disconnect(ui->sliderOpenloopOutput,SIGNAL(sliderMoved(int)),this,SLOT(onSliderOpenloopMoved(int)));
-        sliderOpenloopMoved((double)ui->sliderOpenloopOutput->value(),jointIndex);
-    }
+    ref_openloop = (double)ui->sliderOpenloopOutput->value() / ui->sliderOpenloopOutput->getSliderStep();
+    sliderOpenloopCommand(ref_openloop, jointIndex);
     sliderOpenloopPressed = false;
 }
 
 void JointItem::onSliderTorquePressed()
 {
     sliderTorquePressed = true;
-    int index = ui->stackedWidget->currentIndex();
-    if (index == TORQUE) {
-        connect(ui->sliderTorqueTorque,SIGNAL(sliderMoved(int)),this,SLOT(onSliderTorqueMoved(int)));
-    }
 }
 
 void JointItem::onSliderTorqueReleased()
 {
-
-    int index = ui->stackedWidget->currentIndex();
-    if (index == TORQUE) {
-        disconnect(ui->sliderTorqueTorque,SIGNAL(sliderMoved(int)),this,SLOT(onSliderTorqueMoved(int)));
-        sliderTorqueMoved((double)ui->sliderTorqueTorque->value()/10,jointIndex);
-    }
+    ref_torque = (double)ui->sliderTorqueTorque->value() / ui->sliderTorqueTorque->getSliderStep();
+    sliderTorqueCommand(ref_torque, jointIndex);
     sliderTorquePressed = false;
 }
 
 
-double JointItem::getPositionValue()
+double JointItem::getTrajectoryPositionValue()
 {
-    return position;
+    //this function is mainly used used by the sequencer
+    double pos = (double)ui->sliderTrajectoryPosition->value() / ui->sliderTrajectoryPosition->getSliderStep();
+    if (fabs(pos) < 1e-6) pos = 0;
+    return pos;
 }
 
-double JointItem::getPositionSpeed()
+double JointItem::getTrajectoryVelocityValue()
 {
-    return speed;
+    //this function is mainly used used by the sequencer
+    double vel = (double)ui->sliderTrajectoryVelocity->value() / ui->sliderTrajectoryVelocity->getSliderStep();
+    if (fabs(vel) < 1e-6) vel = 0;
+    return vel;
 }
 
-double JointItem::getPositionSliderSpeed()
-{
-    return ui->sliderPositionVelocity->value();
-}
-
-
-void JointItem::setMotionDone(bool done)
+void JointItem::updateMotionDone(bool done)
 {
     motionDone = done;
     int index = ui->stackedWidget->currentIndex();
@@ -767,31 +1056,39 @@ void JointItem::setMotionDone(bool done)
     }
 }
 
-void JointItem::updateSliderLabel(QSlider *slider,QLabel *label,double val)
+void JointItem::updateSliderPosition(SliderWithTarget *slider, double val)
 {
-    int w = slider->width() - 30;
-    int totValues = slider->maximum() + abs(slider->minimum());
-    double newX = ((double)w/(double)totValues) * ((double)val + abs(slider->minimum()));
-    label->setGeometry(newX,0,30,20);
-    label->setText(QString("%1").arg((int)val));
+    if(sliderTrajectoryPositionPressed ||
+        sliderMixedPositionPressed ||
+        sliderDirectPositionPressed) 
+    {
+        return;
+    }
+
+    /*
+    //@@@checkme
+    if (motionDone == false)
+    {
+        return;
+    }*/
+    slider->setValue(val);
 }
 
-void JointItem::updateSliderTorqueLabel(QSlider *slider,QLabel *label,double val)
+void JointItem::updateSliderVelocity(SliderWithTarget *slider, double val)
 {
-    int w = slider->width() - 30;
-    int totValues = slider->maximum() + abs(slider->minimum());
-    double newX = ((double)w/(double)totValues) * ((double)val + abs(slider->minimum()));
-    label->setGeometry(newX,0,30,20);
-    label->setText(QString("%L1").arg((double)val/10,0,'f',1));
-}
-
-void JointItem::updateSlider(QSlider *slider, QLabel *label, double val)
-{
-    if(sliderPositionPressed || !motionDone){
+    if (sliderVelocityPressed)
+    {
         return;
     }
     slider->setValue(val);
-    updateSliderLabel(slider,label,val);
+}
+
+void JointItem::updateSliderOpenloop(double val)
+{
+    if (sliderOpenloopPressed)  {
+        return;
+    }
+    ui->sliderOpenloopOutput->setValue(val);
 }
 
 void JointItem::updateSliderTorque(double val)
@@ -799,10 +1096,16 @@ void JointItem::updateSliderTorque(double val)
     if(sliderTorquePressed){
         return;
     }
-    ui->sliderTorqueTorque->setValue(val*10);
-    updateSliderTorqueLabel(ui->sliderTorqueTorque,ui->labelTorqueTorque,val*10);
+    ui->sliderTorqueTorque->setValue(val);
 }
 
+void JointItem::updateSliderTrajectoryVelocity(double val)
+{
+    if (sliderTrajectoryVelocityPressed){
+        return;
+    }
+    ui->sliderTrajectoryVelocity->setValue(val);
+}
 
 void JointItem::setOpenLoop(double openLoopValue)
 {
@@ -810,17 +1113,23 @@ void JointItem::setOpenLoop(double openLoopValue)
         return;
     }
     if(ui->stackedWidget->currentIndex() == OPENLOOP){
-        updateSlider(ui->sliderOpenloopOutput,ui->labelOpenLoopOutput,openLoopValue);
+        updateSliderOpenloop(openLoopValue);
     }
 }
 
 void JointItem::setPosition(double val)
 {
-    position = val;
-
-
-    position = floor(val * 10)/10;
-    QString sVal = QString("%1").arg(position);
+    QString sVal;
+    if (ui->sliderTrajectoryPosition->getIsDouble())
+    {
+        double pos = val;
+        sVal = QString("%L1").arg(pos, 0, 'f', 3);
+    }
+    else
+    {
+        double pos = floor(val * 10) / 10;
+        sVal = QString("%1").arg(pos);
+    }
 
     if(ui->stackedWidget->currentIndex() == IDLE){
         ui->editIdleCurrentPos->setText(sVal);
@@ -828,17 +1137,18 @@ void JointItem::setPosition(double val)
 
     if(ui->stackedWidget->currentIndex() == POSITION){
         ui->editPositionCurrentPos->setText(sVal);
-        updateSlider(ui->sliderPositionPosition,ui->labelPositionPosition,val);
+        double dt = ui->sliderTrajectoryPosition->value();
+        updateSliderPosition(ui->sliderTrajectoryPosition, val);
     }
 
     if(ui->stackedWidget->currentIndex() == POSITION_DIR){
         ui->editPositionDirCurrentPos->setText(sVal);
-        updateSlider(ui->sliderPositionDirect,ui->labelPositionDirectPosition,val);
+        updateSliderPosition(ui->sliderDirectPosition, val);
     }
 
     if(ui->stackedWidget->currentIndex() == MIXED){
         ui->editMixedCurrentPos->setText(sVal);
-        updateSlider(ui->sliderMixedPosition,ui->labelMixedPosition,val);
+        updateSliderPosition(ui->sliderMixedPosition, val);
     }
 
     if(ui->stackedWidget->currentIndex() == VELOCITY){
@@ -861,10 +1171,16 @@ void JointItem::setRefTorque(double val)
     }
 }
 
+void JointItem::setRefTrajectorySpeed(double val)
+{
+    if (ui->stackedWidget->currentIndex() == POSITION){
+        updateSliderTrajectoryVelocity(val);
+    }
+}
+
 void JointItem::setTorque(double val)
 {
-    torque = val;
-    QString sVal = QString("%L1").arg(torque,0,'f',3);
+    QString sVal = QString("%L1").arg(val,0,'f',3);
 
     if(ui->stackedWidget->currentIndex() == IDLE){
         ui->editIdleTorque->setText(sVal);
@@ -900,7 +1216,7 @@ void JointItem::setSpeed(double val)
     }
     //TODO
 
-    speed = val;
+    double speed = val;
     QString sVal = QString("%1").arg(speed,0,'f',1);
 
     if(ui->stackedWidget->currentIndex() == IDLE){
@@ -1069,7 +1385,7 @@ void JointItem::setJointState(JointState newState)
 
             ui->buttonsContainer->setEnabled(true);
             ui->buttonIdle->setEnabled(false);
-            ui->buttonPid->setEnabled(false);
+            ui->buttonPid->setEnabled(true);
             ui->buttonHome->setEnabled(false);
             ui->buttonCalib->setEnabled(true);
             ui->buttonRun->setEnabled(false);
@@ -1206,20 +1522,59 @@ void JointItem::setOpenLoopRange(double min, double max)
 
 void JointItem::setPositionRange(double min, double max)
 {
-    int sliderMin = 1;
-    int sliderMax = 2;
-
-    if(min < max){
-        sliderMin = min;
-        sliderMax = max;
+    min_position = 1;
+    max_position = 2;
+    if(min < max)
+    {
+        min_position = min;
+        max_position = max;
     }
-    ui->sliderMixedPosition->setRange(sliderMin,sliderMax);
-    ui->sliderPositionPosition->setRange(sliderMin,sliderMax);
-    ui->sliderPositionDirect->setRange(sliderMin,sliderMax);
+    else
+    {
+        //Error
+    }
 }
 
+void JointItem::setVelocityRange(double min, double max)
+{
+    min_velocity = -100;
+    max_velocity = 100;
+    if (min < max)
+    {
+        min_velocity = min;
+        max_velocity = max;
+    }
+    else
+    {
+        //Error
+    }
+}
 
+void JointItem::setTrajectoryVelocityRange( double max)
+{
+    max_trajectory_velocity = 100;
+    if (max >= 0)
+    {
+        max_trajectory_velocity = max;
+    }
+    else
+    {
+        //Error
+    }
+}
 
+void JointItem::setTorqueRange(double max)
+{
+    max_torque = 5;
+    if (max >= 0)
+    {
+        max_torque = max;
+    }
+    else
+    {
+        //Error
+    }
+}
 
 void JointItem::onCalibClicked()
 {
@@ -1267,9 +1622,9 @@ void JointItem::sequenceActivated()
     ui->sliderMixedPosition->setEnabled(false);
     ui->sliderMixedVelocity->setEnabled(false);
     ui->sliderOpenloopOutput->setEnabled(false);
-    ui->sliderPositionDirect->setEnabled(false);
-    ui->sliderPositionPosition->setEnabled(false);
-    ui->sliderPositionVelocity->setEnabled(false);
+    ui->sliderDirectPosition->setEnabled(false);
+    ui->sliderTrajectoryPosition->setEnabled(false);
+    ui->sliderTrajectoryVelocity->setEnabled(false);
     ui->sliderTorqueTorque->setEnabled(false);
 
 }
@@ -1279,9 +1634,9 @@ void JointItem::sequenceStopped()
     ui->sliderMixedPosition->setEnabled(true);
     ui->sliderMixedVelocity->setEnabled(true);
     ui->sliderOpenloopOutput->setEnabled(true);
-    ui->sliderPositionDirect->setEnabled(true);
-    ui->sliderPositionPosition->setEnabled(true);
-    ui->sliderPositionVelocity->setEnabled(true);
+    ui->sliderDirectPosition->setEnabled(true);
+    ui->sliderTrajectoryPosition->setEnabled(true);
+    ui->sliderTrajectoryVelocity->setEnabled(true);
     ui->sliderTorqueTorque->setEnabled(true);
 }
 

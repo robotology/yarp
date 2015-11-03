@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Francesco Nori <francesco.nori@iit.it>
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("Qt Robot Motor GUI V1.0");
     setMinimumWidth(MAX_WIDTH_JOINT + 60);
 
-
+    sliderOpt = 0;
 
     QString globalLabel("Global Joints Commands ");
     globalToolBar = new QToolBar("Global Joints Commands",this);
@@ -49,7 +50,6 @@ MainWindow::MainWindow(QWidget *parent) :
     f.setBold(true);
     label1->setFont(f);
     globalToolBar->addWidget(label1)->setCheckable(false);
-
 
 
     globalToolBar->addSeparator();
@@ -141,22 +141,26 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *viewGlobalToolbar = windows->addAction("Global Commands Toolbar");
     QAction *viewPartToolbar = windows->addAction("Part Commands Toolbar");
     QAction *viewSpeedValues = windows->addAction("View Speed Values");
+    QAction *viewPositionTarget = windows->addAction("View Position Target");
     QAction *controlVelocityMode = windows->addAction("Control Velocity Mode");
+    QAction *sliderOptions = windows->addAction("Slider Options...");
 
     viewGlobalToolbar->setCheckable(true);
     viewPartToolbar->setCheckable(true);
     viewSpeedValues->setCheckable(true);
     controlVelocityMode->setCheckable(true);
-
+    viewPositionTarget->setCheckable(true);
 
     QSettings settings("YARP","yarpmotorgui");
     bool bViewGlobalToolbar = settings.value("GlobalToolVisible",true).toBool();
     bool bViewPartToolbar = settings.value("PartToolVisible",true).toBool();
     bool bSpeedValues = settings.value("SpeedValuesVisible",false).toBool();
+    bool bViewPositionTarget = settings.value("ViewPositionTarget", true).toBool();
 
     viewGlobalToolbar->setChecked(bViewGlobalToolbar);
     viewPartToolbar->setChecked(bViewPartToolbar);
     viewSpeedValues->setChecked(bSpeedValues);
+    viewPositionTarget->setChecked(bViewPositionTarget);
     controlVelocityMode->setChecked(false);
 
     globalToolBar->setVisible(bViewGlobalToolbar);
@@ -165,7 +169,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewGlobalToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewGlobalToolbar(bool)));
     connect(viewPartToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewPartToolbar(bool)));
     connect(viewSpeedValues,SIGNAL(triggered(bool)),this,SLOT(onViewSpeeds(bool)));
+    connect(viewPositionTarget, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTarget(bool)));
     connect(controlVelocityMode,SIGNAL(triggered(bool)),this,SLOT(onControlVelocity(bool)));
+    connect(sliderOptions, SIGNAL(triggered()), this, SLOT(onSliderOptionsClicked()));
 
     connect(this,SIGNAL(internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
@@ -203,7 +209,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::term()
 {
-    internalClose();
+    sig_internalClose();
 }
 
 void MainWindow::onSequenceActivated()
@@ -266,7 +272,17 @@ void MainWindow::onViewPartToolbar(bool val)
 
 void MainWindow::onControlVelocity(bool val)
 {
-    controlVelocity(val);
+    sig_controlVelocity(val);
+}
+
+void MainWindow::onSliderOptionsClicked()
+{
+    sliderOpt = new sliderOptions(this);
+
+    sliderOpt->exec();
+
+    delete sliderOpt;
+    sliderOpt = NULL;
 }
 
 void MainWindow::onViewSpeeds(bool val)
@@ -274,7 +290,28 @@ void MainWindow::onViewSpeeds(bool val)
     QSettings settings("YARP","yarpmotorgui");
     settings.setValue("SpeedValuesVisible",val);
 
-    viewSpeedValues(val);
+    sig_viewSpeedValues(val);
+}
+
+void MainWindow::onViewPositionTarget(bool val)
+{
+    QSettings settings("YARP", "yarpmotorgui");
+    settings.setValue("ViewPositionTarget", val);
+
+    sig_viewPositionTarget(val);
+}
+
+void MainWindow::onSetPosSliderOptionMW(int choice, double val)
+{
+    sig_setPosSliderOptionMW(choice, val);
+}
+void MainWindow::onSetVelSliderOptionMW(int choice, double val)
+{
+    sig_setVelSliderOptionMW(choice, val);
+}
+void MainWindow::onSetTrqSliderOptionMW(int choice, double val)
+{
+    sig_setTrqSliderOptionMW(choice, val);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -350,8 +387,12 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
         if(!part->getInterfaceError()){
             connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
             connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
-            connect(this,SIGNAL(viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
-            connect(this,SIGNAL(controlVelocity(bool)),part,SLOT(onControlVelocity(bool)));
+            connect(this,SIGNAL(sig_viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
+            connect(this, SIGNAL(sig_setPosSliderOptionMW(int, double)), part, SLOT(onSetPosSliderOptionPI(int, double)));
+            connect(this, SIGNAL(sig_setVelSliderOptionMW(int, double)), part, SLOT(onSetVelSliderOptionPI(int, double)));
+            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int, double)), part, SLOT(onSetTrqSliderOptionPI(int, double)));
+            connect(this,SIGNAL(sig_viewPositionTarget(bool)), part, SLOT(onViewPositionTarget(bool)));
+            connect(this,SIGNAL(sig_controlVelocity(bool)),part,SLOT(onControlVelocity(bool)));
 
             scroll->setWidget(part);
             tabPanel->addTab(scroll,enabledParts.at(i));

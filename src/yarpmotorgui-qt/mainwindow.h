@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Francesco Nori <francesco.nori@iit.it>
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -21,6 +22,7 @@
 #include <QTreeWidget>
 
 #include "partitem.h"
+#include "sliderOptions.h"
 
 namespace Ui {
 class MainWindow;
@@ -54,6 +56,7 @@ private:
     QMenu *currentPartMenu;
     QMutex mutex;
     int sequenceActiveCount;
+    sliderOptions* sliderOpt;
 
     QAction *goAll;
     QAction *runAllSeq;
@@ -98,12 +101,22 @@ private slots:
     void onViewGlobalToolbar(bool);
     void onViewPartToolbar(bool);
     void onViewSpeeds(bool);
+    void onViewPositionTarget(bool);
     void onControlVelocity(bool val);
+    void onSliderOptionsClicked();
+    void onSetPosSliderOptionMW(int, double);
+    void onSetVelSliderOptionMW(int, double);
+    void onSetTrqSliderOptionMW(int, double);
 
 signals:
-    void controlVelocity(bool);
-    void viewSpeedValues(bool);
-    void internalClose();
+    void sig_controlVelocity(bool);
+    void sig_viewSpeedValues(bool);
+    void sig_setPosSliderOptionMW(int, double);
+    void sig_setVelSliderOptionMW(int, double);
+    void sig_setTrqSliderOptionMW(int, double);
+    void sig_viewPositionTarget(bool);
+    void sig_internalClose();
+
 };
 
 class ModesTreeWidget : public QTreeWidget

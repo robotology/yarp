@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ */
+
+
+#include "sliderOptions.h"
+#include "ui_sliderOptions.h"
+#include <QSettings>
+
+sliderOptions::sliderOptions( QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::sliderOptions)
+{
+    ui->setupUi(this);
+
+    QString title = QString("SliderOptions");
+    setWindowTitle(title);
+
+    QSettings settings("YARP", "yarpmotorgui");
+    val_pos_choice = settings.value("val_pos_choice", 0).toInt();
+    val_trq_choice = settings.value("val_trq_choice", 0).toInt();
+    val_vel_choice = settings.value("val_vel_choice", 0).toInt();
+    val_pos_custom_step = settings.value("val_pos_custom_step", 1.0).toDouble();
+    val_trq_custom_step = settings.value("val_trq_custom_step", 1.0).toDouble();
+    val_vel_custom_step = settings.value("val_vel_custom_step", 1.0).toDouble();
+
+    ui->pos_step->setValidator(new QDoubleValidator(this));
+    ui->vel_step->setValidator(new QDoubleValidator(this));
+    ui->trq_step->setValidator(new QDoubleValidator(this));
+
+    ui->pos_step->setText(QString("%1").arg(val_pos_custom_step));
+    ui->trq_step->setText(QString("%1").arg(val_trq_custom_step));
+    ui->vel_step->setText(QString("%1").arg(val_vel_custom_step));
+
+    connect(this, SIGNAL(sig_setPosSliderOptionSO(int, double)), parent, SLOT(onSetPosSliderOptionMW(int, double)));
+    connect(this, SIGNAL(sig_setVelSliderOptionSO(int, double)), parent, SLOT(onSetVelSliderOptionMW(int, double)));
+    connect(this, SIGNAL(sig_setTrqSliderOptionSO(int, double)), parent, SLOT(onSetTrqSliderOptionMW(int, double)));
+
+    switch (val_pos_choice)
+    {
+        case 0:
+            ui->radio_pos_auto->setChecked(true);
+        break;
+        case 1:
+            ui->radio_pos_user->setChecked(true);
+        break;
+        case 2:
+            ui->radio_pos_one->setChecked(true);
+        break;
+        default:
+            ui->radio_pos_auto->setChecked(true);
+        break;
+    }
+    switch (val_vel_choice)
+    {
+        case 0:
+            ui->radio_vel_auto->setChecked(true);
+        break;
+        case 1:
+            ui->radio_vel_user->setChecked(true);
+        break;
+        case 2:
+            ui->radio_vel_one->setChecked(true);
+        break;
+        default:
+            ui->radio_vel_auto->setChecked(true);
+        break;
+    }
+    switch (val_trq_choice)
+    {
+        case 0:
+            ui->radio_trq_auto->setChecked(true);
+        break;
+        case 1:
+            ui->radio_trq_user->setChecked(true);
+        break;
+        case 2:
+            ui->radio_trq_one->setChecked(true);
+        break;
+        default:
+            ui->radio_trq_auto->setChecked(true);
+        break;
+    }
+}
+
+sliderOptions::~sliderOptions()
+{
+    if      (ui->radio_pos_auto->isChecked()) val_pos_choice = 0;
+    else if (ui->radio_pos_user->isChecked()) val_pos_choice = 1;
+    else if (ui->radio_pos_one->isChecked())  val_pos_choice = 2;
+
+    if      (ui->radio_vel_auto->isChecked()) val_vel_choice = 0;
+    else if (ui->radio_vel_user->isChecked()) val_vel_choice = 1;
+    else if (ui->radio_vel_one->isChecked())  val_vel_choice = 2;
+
+    if      (ui->radio_trq_auto->isChecked()) val_trq_choice = 0;
+    else if (ui->radio_trq_user->isChecked()) val_trq_choice = 1;
+    else if (ui->radio_trq_one->isChecked())  val_trq_choice = 2;
+
+    val_pos_custom_step = ui->pos_step->text().toDouble();
+    val_vel_custom_step = ui->vel_step->text().toDouble();
+    val_trq_custom_step = ui->trq_step->text().toDouble();
+
+    QSettings settings("YARP", "yarpmotorgui");
+    settings.setValue("val_pos_choice", val_pos_choice);
+    settings.setValue("val_trq_choice", val_trq_choice);
+    settings.setValue("val_vel_choice", val_vel_choice);
+    settings.setValue("val_pos_custom_step", val_pos_custom_step);
+    settings.setValue("val_trq_custom_step", val_trq_custom_step);
+    settings.setValue("val_vel_custom_step", val_vel_custom_step);
+    emit sig_setPosSliderOptionSO(val_pos_choice, val_pos_custom_step);
+    emit sig_setVelSliderOptionSO(val_vel_choice, val_vel_custom_step);
+    emit sig_setTrqSliderOptionSO(val_trq_choice, val_trq_custom_step);
+    disconnect(this, SIGNAL(sig_setPosSliderOptionSO(int, double)), 0, 0);
+    disconnect(this, SIGNAL(sig_setVelSliderOptionSO(int, double)), 0, 0);
+    disconnect(this, SIGNAL(sig_setTrqSliderOptionSO(int, double)), 0, 0);
+    delete ui;
+}
+
+
+
+
+
+
