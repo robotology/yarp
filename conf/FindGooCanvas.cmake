@@ -14,6 +14,9 @@
 #  GooCanvas_MINOR_VERSION - GooCanvas minor version
 #  GooCanvas_PATCH_VERSION - GooCanvas patch version
 #  GooCanvas_TWEAK_VERSION - GooCanvas tweak version
+#
+# If the library is found, the imported target ``GooCanvas::goocanvas`` is
+# created.
 
 #=============================================================================
 # Copyright 2012-2015 iCub Facility, Istituto Italiano di Tecnologia

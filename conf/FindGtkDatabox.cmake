@@ -14,6 +14,9 @@
 #  GtkDatabox_MINOR_VERSION - GtkDatabox minor version
 #  GtkDatabox_PATCH_VERSION - GtkDatabox patch version
 #  GtkDatabox_TWEAK_VERSION - GtkDatabox tweak version
+#
+# If the library is found, the imported target ``GtkDatabox::gtkdatabox`` is
+# created.
 
 #=============================================================================
 # Copyright 2012-2015 iCub Facility, Istituto Italiano di Tecnologia

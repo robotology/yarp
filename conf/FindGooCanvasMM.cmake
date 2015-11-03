@@ -14,6 +14,9 @@
 #  GooCanvasMM_MINOR_VERSION - GooCanvasMM minor version
 #  GooCanvasMM_PATCH_VERSION - GooCanvasMM patch version
 #  GooCanvasMM_TWEAK_VERSION - GooCanvasMM tweak version
+#
+# If the library is found, the imported target ``GooCanvasMM::goocanvasmm`` is
+# created.
 
 #=============================================================================
 # Copyright 2012-2015 iCub Facility, Istituto Italiano di Tecnologia

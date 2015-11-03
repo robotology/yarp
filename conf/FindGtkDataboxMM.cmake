@@ -14,6 +14,9 @@
 #  GtkDataboxMM_MINOR_VERSION - GtkDataboxMM minor version
 #  GtkDataboxMM_PATCH_VERSION - GtkDataboxMM patch version
 #  GtkDataboxMM_TWEAK_VERSION - GtkDataboxMM tweak version
+#
+# If the library is found, the imported target ``GtkDataboxMM::gtkdataboxmm`` is
+# created.
 
 #=============================================================================
 # Copyright 2012-2015 iCub Facility, Istituto Italiano di Tecnologia
