@@ -38,9 +38,9 @@ NetworkClock::~NetworkClock() {
         while (waiter_i != waiters->end())
         {
             Semaphore *waiterSemaphore = waiter_i->second;
-            waiterSemaphore->post();
             waiter_i = waiters->erase(waiter_i);
-            delete waiterSemaphore;
+            if (waiterSemaphore)
+                waiterSemaphore->post();
         }
         listMutex.unlock();
 
@@ -99,6 +99,10 @@ void NetworkClock::delay(double seconds) {
     listMutex.unlock();
 
     waiter.second->wait();
+    if (waiter.second) {
+        delete waiter.second;
+        waiter.second = 0;
+    }
 }
 
 bool NetworkClock::isValid() const {
@@ -110,14 +114,13 @@ bool NetworkClock::read(ConnectionReader& reader) {
     bool ok = bot.read(reader);
     if(!ok) return false;
 
-    listMutex.lock();
-
     timeMutex.lock();
     sec = bot.get(0).asInt();
     nsec = bot.get(1).asInt();
     t = sec + (nsec*1e-9);
     timeMutex.unlock();
 
+    listMutex.lock();
     Waiters* waiters = static_cast<Waiters*>(pwaiters);
     Waiters::iterator waiter_i;
 
@@ -127,9 +130,9 @@ bool NetworkClock::read(ConnectionReader& reader) {
         if (waiter_i->first - t  < 1E-12 )
         {
             Semaphore *waiterSemaphore = waiter_i->second;
-            waiterSemaphore->post();
             waiter_i = waiters->erase(waiter_i);
-            delete waiterSemaphore;
+            if (waiterSemaphore)
+                waiterSemaphore->post();
         }
         else
             waiter_i++;
