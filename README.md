@@ -60,7 +60,7 @@ Status
 ------
 
 [![Build Status (Linux/OSX)](https://img.shields.io/travis/robotology/yarp/master.svg?label=Build Status (Linux/OSX))](https://travis-ci.org/robotology/yarp)
-[![Build status (Windows)](https://img.shields.io/appveyor/ci/paulfitz/yarp/master.svg?label=Build Status (Windows))](https://ci.appveyor.com/project/paulfitz/yarp)
+[![Build status (Windows)](https://img.shields.io/appveyor/ci/robotology/yarp/master.svg?label=Build Status (Windows))](https://ci.appveyor.com/project/robotology/yarp)
 and [more](http://dashboard.icub.org/index.php?project=YARP)
 
 [![Coverage Status](https://img.shields.io/coveralls/robotology/yarp.svg?label=Coverage)](https://coveralls.io/r/robotology/yarp)

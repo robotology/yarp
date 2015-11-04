@@ -1,32 +1,47 @@
-version: 1.0.{build}
+version: appveyor.{build}
+
+init:
+  - cmd: git config --global core.autocrlf true
+  - cmd: dir C:\projects
+  - cmd: cmake --version
+  - cmd: msbuild /version
 
 clone_folder: c:\projects\yarp
+
+platform:
+  - Win32
+#  - x64
+
+configuration:
+  - Release
+  - Debug
+
+branches:
+  except:
+    - travis
 
 install:
   - ps:  $dwntool=New-Object System.Net.WebClient
   - cmd: cinst 7zip.commandline -x86
   - cmd: dir c:\projects
-  #- ps:  $dwntool.DownloadFile('http://download.dre.vanderbilt.edu/previous_versions/ACE-6.2.0.zip','c:\ace.zip')
-  #- cmd: 7z x c:\ace.zip -oc:\ -y > nul
-  - ps:  $dwntool.DownloadFile('http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip','c:\ace.zip')
+  - ps:  if ($env:platform -Match "Win32") {$dwntool.DownloadFile('http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip','c:\ace.zip')}
+#  - ps:  if ($env:platform -Match "x64") {$dwntool.DownloadFile('http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip','c:\ace.zip')}
   - cmd: 7z x c:\ace.zip -oc:\ -y > nul
+  - cmd: set ACE_ROOT=c:\ACE_wrappers
+  - cmd: set PATH=%PATH%;c:\ACE_wrappers\bin;c:\projects\yarp\build\bin\%CONFIGURATION%;c:\projects\yarp\build\lib\%CONFIGURATION%
+  - cmd: set CTEST_OUTPUT_ON_FAILURE=1
+
+before_build:
+  - cmd: md C:\projects\yarp\build
+  - cmd: cd C:\projects\yarp\build
+  - cmd: if "%platform%"=="Win32" cmake -G"Visual Studio 11" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -DYARP_COMPILE_TESTS:BOOL=ON ..
+  - cmd: if "%platform%"=="x64" cmake -G"Visual Studio 11 Win64" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -DYARP_COMPILE_TESTS:BOOL=ON ..
 
 build:
+  project: C:\projects\yarp\build\yarp.sln
 
-build_script:
-  - set ACE_ROOT=c:\ACE_wrappers
-  #- cd c:\ACE_wrappers\ace
-  #- copy config-win32.h config.h
-  #- msbuild /m /p:Configuration=Release /p:Platform="Win32" ace_vc10.sln
-  - cd c:\projects\yarp
-  - md build
-  - cd build
-  - cmake -G"Visual Studio 11" .. -DYARP_COMPILE_TESTS:BOOL=ON
-  - msbuild /m /p:Configuration=Release /p:Platform="Win32" yarp.sln
-  - set PATH=%PATH%;c:\ACE_wrappers\bin;c:\projects\yarp\build\bin\Release;c:\projects\yarp\build\lib\Release
-  - dir c:\ACE_wrappers\bin
-  - dir c:\projects\yarp\build\bin
-  - dir c:\projects\yarp\build\lib
-  - dir c:\projects\yarp\build\bin\Release
-  - dir c:\projects\yarp\build\lib\Release
-  - cmake --build . --target RUN_TESTS --config Release
+after_build:
+  - cmd: cmake --build C:\projects\yarp\build --target INSTALL --config %CONFIGURATION%
+
+test_script:
+  - cmake --build . --target RUN_TESTS --config %CONFIGURATION%
