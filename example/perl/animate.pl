@@ -1,10 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 # Copyright: (C) 2010 RobotCub Consortium
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 use strict;
+use warnings;
 
 sub SafeSystem {
     my $cmd = shift;
