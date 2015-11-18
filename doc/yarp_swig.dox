@@ -34,7 +34,8 @@ Then, install any language-specific packages needed.
  - \ref yarp_swig_matlab
  - \ref yarp_swig_lua
  - \ref yarp_swig_octave
- - \ref Other tested languages are: Perl, Chicken Scheme, C#, Allegro Common Lisp, TCL, and Ruby.  Procedure is same as for Java/Python.  You may need to install a development package for your desired language.  To find out:
+ - \ref yarp_swig_perl
+ - \ref Other tested languages are: Chicken Scheme, C#, Allegro Common Lisp, TCL, and Ruby.  Procedure is same as for Java/Python.  You may need to install a development package for your desired language.  To find out:
    - On Linux: Check http://www.dabeaz.com/cgi-bin/wiki.pl?DeveloperInfo/GettingStarted
    - On OSX: A surprising amount of stuff comes pre-installed.
    - On Windows: Check http://www.swig.org/Doc2.0/Windows.html
@@ -196,6 +197,29 @@ After \ref yarp_swig_compile, make sure that the Lua-Yarp binding shared library
 export LUA_CPATH=";;;/path/to/bindings/build/?.so"
 \endverbatim
 
+
+@section yarp_swig_perl YARP for Perl5
+
+For perl on linux, be sure to install perl, e.g. on Debian/Ubuntu:
+\verbatim
+sudo apt-get install perl
+\endverbatim
+
+If you are using YARP installed in the same prefix as perl vendorprefix (usually
+/usr) you should not need to set any environment variable.
+
+If you are installing YARP in a different directory, you should point the
+PERL5LIB environment variable to the installation directory; e.g., on linux:
+\verbatim
+export PERL5LIB="<CMAKE_INSTALL_PREFIX>/<CMAKE_INSTALL_PERLDIR>"
+\endverbatim
+You can verify both CMAKE_INSTALL_PREFIX and CMAKE_INSTALL_PERLDIR from CMake.
+
+If you are using yarp from the build directory, you should point the PERL5LIB
+environment variable to your build directory; e.g. on linux:
+\verbatim
+export PERL5LIB="<CMAKE_BINARY_DIR>/<CMAKE_INSTALL_PERLDIR>"
+\endverbatim
 
 
 @section yarp_swig_configure Configuring YARP language bindings

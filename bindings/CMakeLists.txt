@@ -230,8 +230,54 @@ if(CREATE_PERL)
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
   find_package(PerlLibs)
   include_directories(${PERL_INCLUDE_PATH})
-  swig_add_module(libperlyarp perl5 yarp.i)
-  set(YARP_COLLISION_AVOIDANCE TRUE)
+
+  get_filename_component(_CMAKE_INSTALL_PERLDIR ${PERL_LIBRARY} PATH)
+  file(RELATIVE_PATH _CMAKE_INSTALL_PERLDIR "${_CMAKE_INSTALL_PERLDIR}" "${PERL_VENDORARCH}")
+  set(_CMAKE_INSTALL_PERLDIR "${CMAKE_INSTALL_LIBDIR}/${_CMAKE_INSTALL_PERLDIR}")
+  set(CMAKE_INSTALL_PERLDIR "${_CMAKE_INSTALL_PERLDIR}" CACHE PATH "perl bindings (${_CMAKE_INSTALL_PERLDIR})")
+  mark_as_advanced(CMAKE_INSTALL_PERLDIR)
+  if(NOT IS_ABSOLUTE ${CMAKE_INSTALL_PERLDIR})
+    set(CMAKE_INSTALL_FULL_PERLDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_PERLDIR}")
+  else()
+    set(CMAKE_INSTALL_FULL_PERLDIR "${CMAKE_INSTALL_PERLDIR}")
+  endif()
+
+  set(target_name yarp)
+  if(YARP_COLLISION_AVOIDANCE)
+    set(target_name yarp_perl)
+    set(CMAKE_SWIG_OUTDIR_SAVE ${CMAKE_SWIG_OUTDIR})
+    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PERLDIR}")
+  endif()
+
+  swig_add_module(${target_name} perl5 yarp.i)
+  set_target_properties(${target_name} PROPERTIES PREFIX "")
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
+  if(YARP_COLLISION_AVOIDANCE)
+    set_target_properties(${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PERLDIR}/auto/yarp")
+  endif()
+
+  # Update RPATH
+  if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
+    file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_PERLDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
+    get_target_property(_current_rpath "${target_name}" INSTALL_RPATH)
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+      list(APPEND _current_rpath "@loader_path/${_rel_path}")
+    else()
+      list(APPEND _current_rpath "\$ORIGIN/${_rel_path}")
+    endif()
+    set_target_properties("${target_name}" PROPERTIES INSTALL_RPATH "${_current_rpath}")
+  endif()
+
+  install(TARGETS ${target_name}
+          DESTINATION ${CMAKE_INSTALL_PERLDIR}/auto/yarp)
+  install(FILES ${CMAKE_SWIG_OUTDIR}/yarp.pm
+          DESTINATION ${CMAKE_INSTALL_PERLDIR})
+
+  if(YARP_COLLISION_AVOIDANCE)
+    set(CMAKE_SWIG_OUTDIR ${CMAKE_SWIG_OUTDIR_SAVE})
+  else()
+    set(YARP_COLLISION_AVOIDANCE TRUE)
+  endif()
 endif(CREATE_PERL)
 
 
