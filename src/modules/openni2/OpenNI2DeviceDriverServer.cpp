@@ -10,11 +10,11 @@
 #include "OpenNI2SkeletonTracker.h"
 #include "OpenNI2DeviceDriverServer.h"
 
-yarp::dev::OpenNI2DeviceDriverServer::OpenNI2DeviceDriverServer(void)
+yarp::dev::OpenNI2DeviceDriverServer::OpenNI2DeviceDriverServer()
 {
 }
 
-yarp::dev::OpenNI2DeviceDriverServer::~OpenNI2DeviceDriverServer(void)
+yarp::dev::OpenNI2DeviceDriverServer::~OpenNI2DeviceDriverServer()
 {
 }
 

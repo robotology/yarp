@@ -60,8 +60,8 @@ class yarp::dev::OpenNI2DeviceDriverServer: public yarp::dev::DeviceDriver,
                                             public yarp::dev::IOpenNI2DeviceDriver
 {
 public:
-    OpenNI2DeviceDriverServer(void);
-    ~OpenNI2DeviceDriverServer(void);
+    OpenNI2DeviceDriverServer();
+    ~OpenNI2DeviceDriverServer();
     // GenericYarpDriver
     virtual bool updateInterface();
     // DeviceDriver
