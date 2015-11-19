@@ -35,7 +35,7 @@ namespace yarp {
  */
 struct yarp::dev::CartesianEventParameters
 {
-    /*! 
+    /*!
      * The signature of the event as specified by the user.
      *
      *  Available events are:
@@ -63,7 +63,7 @@ struct yarp::dev::CartesianEventParameters
  */
 struct yarp::dev::CartesianEventVariables
 {
-    /*! 
+    /*!
      * The signature of the received event as filled by the event
      *  handler.
      */
@@ -86,7 +86,7 @@ struct yarp::dev::CartesianEventVariables
 /*!
  * \ingroup dev_iface_motor
  *
- * \brief Interface for a event notified by the cartesian 
+ * \brief Interface for a event notified by the cartesian
  *              controller.
  */
 class yarp::dev::CartesianEvent
@@ -133,8 +133,8 @@ public:
     virtual ~ICartesianControl() {}
 
     /*!
-     * Set the controller in tracking or non-tracking mode. [wait 
-     * for reply] 
+     * Set the controller in tracking or non-tracking mode. [wait
+     * for reply]
      * \param f true for tracking mode, false otherwise.
      * \return true/false on success/failure.
      *
@@ -268,9 +268,9 @@ public:
      * using axis-angle representation xa,ya,za,theta [m],[rad].
      * \param t set the trajectory duration time [s]. If t<=0
      *         (as by default) the current execution time is kept.
-     * \return true/false on success/failure. 
-     *  
-     * \note The reply is returned as soon as the controller has 
+     * \return true/false on success/failure.
+     *
+     * \note The reply is returned as soon as the controller has
      *       initiated the movement.
      */
     virtual bool goToPoseSync(const yarp::sig::Vector &xd,
@@ -284,9 +284,9 @@ public:
      *          x,y,z [m].
      * \param t set the trajectory duration time [s]. If t<=0
      *         (as by default) the current execution time is kept.
-     * \return true/false on success/failure. 
-     *  
-     * \note The reply is returned as soon as the controller has 
+     * \return true/false on success/failure.
+     *
+     * \note The reply is returned as soon as the controller has
      *       initiated the movement.
      */
     virtual bool goToPositionSync(const yarp::sig::Vector &xd,
@@ -625,7 +625,7 @@ public:
      */
     virtual bool removeTipFrame() = 0;
 
-    /*! 
+    /*!
      * Check once if the current trajectory is terminated. [wait for
      *   reply]
      * \param f where the result is returned.
@@ -633,7 +633,7 @@ public:
      */
     virtual bool checkMotionDone(bool *f) = 0;
 
-    /*! 
+    /*!
      * Wait until the current trajectory is terminated. [wait for
      *   reply]
      * \param period specify the check time period [s].
@@ -646,7 +646,7 @@ public:
     virtual bool waitMotionDone(const double period = 0.1,
                                 const double timeout = 0.0) = 0;
 
-    /*! 
+    /*!
      * Ask for an immediate stop motion. [wait for reply]
      * \return true/false on success/failure.
      *
@@ -655,7 +655,7 @@ public:
      */
     virtual bool stopControl() = 0;
 
-    /*! 
+    /*!
      * Store the controller context. [wait for reply]
      * \param id specify where to store the returned context id.
      * \return true/false on success/failure.
@@ -666,7 +666,7 @@ public:
      */
     virtual bool storeContext(int *id) = 0;
 
-    /*! 
+    /*!
      * Restore the controller context previously stored. [wait for
      *   reply]
      * \param id specify the context id to be restored.

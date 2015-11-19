@@ -29,15 +29,13 @@ public:
     ImplementControlMode(IControlModeRaw *v);
     ~ImplementControlMode();
     bool setTorqueMode(int j);
-	bool setImpedancePositionMode(int j);
-	bool setImpedanceVelocityMode(int j);
-	bool setOpenLoopMode(int j);
+    bool setImpedancePositionMode(int j);
+    bool setImpedanceVelocityMode(int j);
+    bool setOpenLoopMode(int j);
     bool setPositionMode(int j);
     bool setVelocityMode(int j);
     bool getControlMode(int j, int *f);
-	bool getControlModes(int *modes);
+    bool getControlModes(int *modes);
 };
 
 #endif
-
-

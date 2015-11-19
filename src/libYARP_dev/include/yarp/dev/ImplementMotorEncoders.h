@@ -36,7 +36,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -45,14 +45,14 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementMotorEncoders(yarp::dev::IMotorEncodersRaw *y);
-        
+
 
     virtual ~ImplementMotorEncoders();
-    
+
     virtual bool getNumberOfMotorEncoders(int *num);
 
     virtual bool resetMotorEncoder(int m);
@@ -72,4 +72,3 @@ public:
 };
 
 #endif
-

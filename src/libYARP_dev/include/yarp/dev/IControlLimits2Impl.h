@@ -135,5 +135,3 @@ public:
 };
 
 #endif /* ICONTROL_LIMIT2_IMPL_H_ */
-
-

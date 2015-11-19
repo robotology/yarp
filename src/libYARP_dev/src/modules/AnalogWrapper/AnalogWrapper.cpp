@@ -737,8 +737,3 @@ bool AnalogWrapper::close()
     removeHandlers();
     return true;
 }
-
-// eof
-
-
-

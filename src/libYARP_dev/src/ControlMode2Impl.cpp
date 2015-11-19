@@ -25,7 +25,7 @@ bool ImplementControlMode2::initialize(int size, const int *amap)
 {
     if (helper!=0)
         return false;
-    
+
     double *dummy=new double [size];
     for(int k=0;k<size;k++)
         dummy[k]=0;
@@ -55,7 +55,7 @@ bool ImplementControlMode2::uninitialize ()
         delete castToMapper(helper);
         helper=0;
     }
- 
+
     checkAndDestroy(temp_int);
     checkAndDestroy(temp_mode);
     return true;
@@ -145,4 +145,3 @@ bool ImplementControlMode2::setControlModes(int *modes)
 {
     return raw->setControlModesRaw(modes);
 }
-

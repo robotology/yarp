@@ -32,7 +32,7 @@ bool ImplementMotorEncoders:: initialize (int size, const int *amap, const doubl
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     yAssert (helper != 0);
     temp=new double [size];
@@ -53,7 +53,7 @@ bool ImplementMotorEncoders::uninitialize ()
         delete castToMapper(helper);
         helper=0;
     }
-    
+
     checkAndDestroy(temp);
     checkAndDestroy(temp2);
 
@@ -126,15 +126,15 @@ bool ImplementMotorEncoders::getMotorEncoder(int m, double *v)
     ret=iMotorEncoders->getMotorEncoderRaw(k, &enc);
 
     *v=castToMapper(helper)->posE2A(enc, k);
-    
+
     return ret;
 }
-    
+
 bool ImplementMotorEncoders::getMotorEncoders(double *v)
 {
     bool ret;
     castToMapper(helper)->axes();
-    
+
     ret=iMotorEncoders->getMotorEncodersRaw(temp);
 
     castToMapper(helper)->posE2A(temp, v);
@@ -153,17 +153,17 @@ bool ImplementMotorEncoders::getMotorEncoderSpeed(int m, double *v)
     ret=iMotorEncoders->getMotorEncoderSpeedRaw(k, &enc);
 
     *v=castToMapper(helper)->velE2A(enc, k);
-    
+
     return ret;
 }
-    
+
 bool ImplementMotorEncoders::getMotorEncoderSpeeds(double *v)
 {
     bool ret;
     ret=iMotorEncoders->getMotorEncoderSpeedsRaw(temp);
 
     castToMapper(helper)->velE2A(temp, v);
-    
+
     return ret;
 }
 
@@ -178,17 +178,17 @@ bool ImplementMotorEncoders::getMotorEncoderAcceleration(int m, double *v)
     ret=iMotorEncoders->getMotorEncoderAccelerationRaw(k, &enc);
 
     *v=castToMapper(helper)->accE2A(enc, k);
-    
+
     return ret;
 }
-    
+
 bool ImplementMotorEncoders::getMotorEncoderAccelerations(double *v)
 {
     bool ret;
     ret=iMotorEncoders->getMotorEncoderAccelerationsRaw(temp);
 
     castToMapper(helper)->accE2A(temp, v);
-    
+
     return ret;
 }
 
@@ -215,6 +215,6 @@ bool ImplementMotorEncoders::getMotorEncodersTimed(double *v, double *t)
 
     castToMapper(helper)->posE2A(temp, v);
     castToMapper(helper)->toUser(temp2, t);
-    
+
     return ret;
 }

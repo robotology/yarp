@@ -40,13 +40,13 @@ public:
 
     /**
      * Get an image and sound
-     * 
+     *
      * @param image the image to be filled
      * @param sound the sound to be filled
      * @return true/false upon success/failure
      */
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                                yarp::sig::Sound& sound) = 0;    
+                                yarp::sig::Sound& sound) = 0;
 };
 
 
@@ -65,13 +65,13 @@ public:
 
     /**
      * Write an image and sound
-     * 
+     *
      * @param image the image to be written
      * @param sound the sound to be written
      * @return true/false upon success/failure
      */
     virtual bool putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                                yarp::sig::Sound& sound) = 0;    
+                                yarp::sig::Sound& sound) = 0;
 };
 
 
@@ -99,4 +99,3 @@ public:
 };
 
 #endif
-

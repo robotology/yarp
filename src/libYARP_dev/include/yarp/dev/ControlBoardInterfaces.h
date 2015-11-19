@@ -94,9 +94,9 @@ public:
     virtual bool setPidsRaw(const Pid *pids)=0;
 
     /** Set the controller reference point for a given axis.
-     * Warning this method can result in very large torques 
+     * Warning this method can result in very large torques
      * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method. 
+     * this warning you should avoid using this method.
      * Have a look at other interfaces (e.g. position control).
      * @param j joint number
      * @param ref new reference point
@@ -105,9 +105,9 @@ public:
     virtual bool setReferenceRaw(int j, double ref)=0;
 
     /** Set the controller reference points, multiple axes.
-     * Warning this method can result in very large torques 
+     * Warning this method can result in very large torques
      * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method. 
+     * this warning you should avoid using this method.
      * Have a look at other interfaces (e.g. position control).
      * @param refs pointer to the vector that contains the new reference points.
      * @return true/false upon success/failure
@@ -167,7 +167,7 @@ public:
     /** Get the current reference position of the controller for a specific joint.
      * @param j joint number
      * @param ref pointer to storage for return value
-     * @return reference value 
+     * @return reference value
      */
     virtual bool getReferenceRaw(int j, double *ref)=0;
 
@@ -189,7 +189,7 @@ public:
      */
     virtual bool getErrorLimitsRaw(double *limits)=0;
 
-    /** Reset the controller of a given joint, usually sets the 
+    /** Reset the controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
      * the integrator.
      * @param j joint number
@@ -235,9 +235,9 @@ public:
     virtual bool setPids(const Pid *pids)=0;
 
     /** Set the controller reference point for a given axis.
-     * Warning this method can result in very large torques 
+     * Warning this method can result in very large torques
      * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method. 
+     * this warning you should avoid using this method.
      * Have a look at other interfaces (e.g. position control).
      * @param j joint number
      * @param ref new reference point
@@ -246,9 +246,9 @@ public:
     virtual bool setReference(int j, double ref)=0;
 
     /** Set the controller reference points, multiple axes.
-     * Warning this method can result in very large torques 
+     * Warning this method can result in very large torques
      * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method. 
+     * this warning you should avoid using this method.
      * Have a look at other interfaces (e.g. position control).
      * @param refs pointer to the vector that contains the new reference points.
      * @return true/false upon success/failure
@@ -308,7 +308,7 @@ public:
     /** Get the current reference position of the controller for a specific joint.
      * @param j joint number
      * @param ref pointer to storage for return value
-     * @return reference value 
+     * @return reference value
      */
     virtual bool getReference(int j, double *ref)=0;
 
@@ -330,7 +330,7 @@ public:
      */
     virtual bool getErrorLimits(double *limits)=0;
 
-    /** Reset the controller of a given joint, usually sets the 
+    /** Reset the controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
      * the integrator.
      * @param j joint number
@@ -362,7 +362,7 @@ public:
     virtual ~IAmplifierControl() {}
 
     /** Enable the amplifier on a specific joint. Be careful, check that the output
-     * of the controller is appropriate (usually zero), to avoid 
+     * of the controller is appropriate (usually zero), to avoid
      * generating abrupt movements.
      * @return true/false on success/failure
      */
@@ -397,7 +397,7 @@ public:
     */
     virtual bool getMaxCurrent(int j, double *v)=0;
 
-    /* Set the maximum electric current going to a given motor. The behavior 
+    /* Set the maximum electric current going to a given motor. The behavior
      * of the board/amplifier when this limit is reached depends on the
      * implementation.
      * @param j motor number
@@ -407,7 +407,7 @@ public:
     virtual bool setMaxCurrent(int j, double v)=0;
 
     /* Get the status of the amplifiers, coded in a 32 bits integer for
-     * each amplifier (at the moment contains only the fault, it will be 
+     * each amplifier (at the moment contains only the fault, it will be
      * expanded in the future).
      * @param st pointer to storage
      * @return true in good luck, false otherwise.
@@ -436,7 +436,7 @@ public:
     virtual ~IAmplifierControlRaw() {}
 
     /** Enable the amplifier on a specific joint. Be careful, check that the output
-     * of the controller is appropriate (usually zero), to avoid 
+     * of the controller is appropriate (usually zero), to avoid
      * generating abrupt movements.
      * @return true/false on success/failure
      */
@@ -461,7 +461,7 @@ public:
      */
     virtual bool getCurrentRaw(int j, double *val)=0;
 
-    /* Set the maximum electric current going to a given motor. The behavior 
+    /* Set the maximum electric current going to a given motor. The behavior
      * of the board/amplifier when this limit is reached depends on the
      * implementation.
      * @param j motor number
@@ -481,7 +481,7 @@ public:
     virtual bool getMaxCurrentRaw(int j, double *v)=0;
 
     /* Get the status of the amplifiers, coded in a 32 bits integer for
-     * each amplifier (at the moment contains only the fault, it will be 
+     * each amplifier (at the moment contains only the fault, it will be
      * expanded in the future).
      * @param st pointer to storage
      * @return true/false success failure.
@@ -496,7 +496,7 @@ public:
     virtual bool getAmpStatusRaw(int j, int *st)=0;
 };
 
-/** 
+/**
  * @ingroup dev_iface_motor
  *
  * Interface for control devices, calibration commands.
@@ -518,13 +518,13 @@ public:
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.
-     * @return true/false 
+     * @return true/false
      */
     virtual bool doneRaw(int j)=0;
 
 };
 
-/** 
+/**
  * @ingroup dev_iface_motor
  *
  * New interface for control devices, calibration commands.
@@ -552,13 +552,13 @@ public:
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.
-     * @return true/false 
+     * @return true/false
      */
     virtual bool doneRaw(int j)=0;
 
 };
 
-/** 
+/**
  * @ingroup dev_iface_motor
  *
  * Interface for control devices, calibration commands.
@@ -583,7 +583,7 @@ public:
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.
-     * @return true/false 
+     * @return true/false
      */
     virtual bool done(int j)=0;
 
@@ -593,7 +593,7 @@ public:
      */
     virtual bool setCalibrator(ICalibrator *c);
 
-    /* Calibrate robot by using an external calibrator. The external 
+    /* Calibrate robot by using an external calibrator. The external
      * calibrator must be previously set by calling the setCalibration()
      * method.
      * @return true/false on success failure
@@ -604,7 +604,7 @@ public:
 
 };
 
-/** 
+/**
  * @ingroup dev_iface_motor
  *
  * Interface for control devices, calibration commands.
@@ -635,7 +635,7 @@ public:
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.
-     * @return true/false 
+     * @return true/false
      */
     virtual bool done(int j)=0;
 
@@ -645,7 +645,7 @@ public:
      */
     virtual bool setCalibrator(ICalibrator *c);
 
-    /* Calibrate robot by using an external calibrator. The external 
+    /* Calibrate robot by using an external calibrator. The external
      * calibrator must be previously set by calling the setCalibration()
      * method.
      * @return true/false on success failure
@@ -661,7 +661,7 @@ public:
     virtual bool abortPark();
 };
 
-/** 
+/**
  * @ingroup dev_iface_motor
  *
  * Interface for control devices, debug commands.
@@ -674,19 +674,19 @@ public:
      */
     virtual ~IControlDebug() {}
 
-    /* Set the print function, pass here a pointer to your own function 
-     * to print. This function should implement "printf" like parameters. 
+    /* Set the print function, pass here a pointer to your own function
+     * to print. This function should implement "printf" like parameters.
      * @param a pointer to the print function
      * @return I don't see good reasons why it should return false.
      */
     virtual bool setPrintFunction(int (*f) (const char *fmt, ...))=0;
 
     /* Read the content of the board internal memory, this is usually done
-     * at boot time, but can be forced by calling this method. 
+     * at boot time, but can be forced by calling this method.
      * @return true/false on success failure
      */
     virtual bool loadBootMemory()=0;
-    
+
     /* Save the current board configuration to the internal memory,
      * this values are read at boot time or if loadBootMemory() is called.
      * @return true/false on success/failure
@@ -694,7 +694,7 @@ public:
     virtual bool saveBootMemory()=0;
 };
 
-/** 
+/**
  * @ingroup dev_iface_motor
  *
  * Interface for control devices, limits commands.
@@ -715,7 +715,7 @@ public:
      * @return true or false on success or failure
      */
     virtual bool setLimits(int axis, double min, double max)=0;
-    
+
     /* Get the software limits for a particular axis.
      * @param axis joint number
      * @param pointer to store the value of the lower limit
@@ -725,7 +725,7 @@ public:
     virtual bool getLimits(int axis, double *min, double *max)=0;
 };
 
-/** 
+/**
  * Interface for control devices. Limits commands.
  */
 class yarp::dev::IControlLimitsRaw
@@ -744,7 +744,7 @@ public:
      * @return true or false on success or failure
      */
     virtual bool setLimitsRaw(int axis, double min, double max)=0;
-    
+
     /* Get the software limits for a particular axis.
      * @param axis joint number
      * @param pointer to store the value of the lower limit
@@ -754,7 +754,7 @@ public:
     virtual bool getLimitsRaw(int axis, double *min, double *max)=0;
 };
 
-/** 
+/**
  * Interface for getting information about specific axes, if available.
  */
 class YARP_dev_API yarp::dev::IAxisInfo
@@ -891,4 +891,3 @@ public:
 #define VOCAB_PROTOCOL_VERSION VOCAB('p', 'r', 'o', 't')
 
 #endif
-

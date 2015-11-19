@@ -29,7 +29,7 @@ namespace yarp {
 /**
  * @ingroup dev_iface_media
  *
- * Interface for the OpenNI2DeviceServer and OpenNI2DeviceClient.  
+ * Interface for the OpenNI2DeviceServer and OpenNI2DeviceClient.
  * See also http://wiki.icub.org/wiki/OpenNI2
  */
 class yarp::dev::IOpenNI2DeviceDriver {
@@ -52,12 +52,12 @@ public:
      * @return false if the user skeleton is not being tracked
      */
     virtual bool getSkeletonPosition(yarp::sig::Vector *vectorArray, float *confidence, int userID) = 0;
-    
+
     /**
      * Gets the user skeleton state
-     *	- SKELETON_NONE
-     *	- SKELETON_CALIBRATING
-     *	- SKELETON_ TRACKED
+     *  - SKELETON_NONE
+     *  - SKELETON_CALIBRATING
+     *  - SKELETON_TRACKED
      *
      * @param userID id of the user skeleton state to be retrieved
      * @return nite::SkeletonState value of the user skeleton state

@@ -26,10 +26,10 @@
 
 namespace yarp
 {
-	namespace dev
-	{
-		class ServerSoundGrabber;
-	}
+    namespace dev
+    {
+        class ServerSoundGrabber;
+    }
 }
 
 
@@ -44,9 +44,9 @@ namespace yarp
  *
  */
 class yarp::dev::ServerSoundGrabber : public DeviceDriver,
-			private yarp::os::Thread,
-			public yarp::os::PortReader,
-			public IAudioGrabberSound
+                                      private yarp::os::Thread,
+                                      public yarp::os::PortReader,
+                                      public IAudioGrabberSound
 {
 private:
     bool spoke;
@@ -119,7 +119,7 @@ public:
             p.open("/sound_grabber");
 
         //Look for the portname to register (--name option)
-        //			p.open(config.check("name", Value("/microphone")).asString());
+        //          p.open(config.check("name", Value("/microphone")).asString());
 
         if (mic!=NULL)
         {
@@ -143,15 +143,14 @@ public:
 
     virtual void run()
     {
-        while(!isStopping())
-			{
-				if (mic!=NULL)
-                    {
-                        yarp::sig::Sound& snd = writerSound.get();
-                        getSound(snd);
-                        writerSound.write();
-                    }
+        while(!isStopping()) {
+            if (mic!=NULL)
+            {
+                yarp::sig::Sound& snd = writerSound.get();
+                getSound(snd);
+                writerSound.write();
             }
+        }
         yInfo("Sound grabber stopping\n");
     }
 
@@ -189,4 +188,3 @@ public:
 };
 
 #endif
-

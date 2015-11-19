@@ -50,7 +50,7 @@ public:
      * @return true/false.
      */
     virtual bool getBatteryVoltage(double &voltage)=0;
-    
+
     /**
      * Get the instantaneous current measurement
      * @param current the current measurement
@@ -66,7 +66,7 @@ public:
     virtual bool getBatteryCharge(double &charge) = 0;
 
     /**
-    * get the battery status 
+    * get the battery status
     * @param status the battery status
     * @return true/false.
     */
@@ -88,6 +88,3 @@ public:
 };
 
 #endif
-//
-
-

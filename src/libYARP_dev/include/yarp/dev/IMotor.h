@@ -41,7 +41,7 @@ public:
     virtual bool getNumberOfMotorsRaw(int *num) = 0;
 
     /**
-     * Get temperature of a motor. 
+     * Get temperature of a motor.
      * @param m motor number
      * @param val retrieved motor temperature
      * @return true/false
@@ -76,7 +76,7 @@ public:
     /**
      * Get the output limit for a specific motor
      * The specific behavior of the motor when the output limit is exceeded depends on the implementation (saturation recommended)
-     * 
+     *
      * @param m motor number
      * @param limit retrieved output limit
      * @return true/false
@@ -130,7 +130,7 @@ public:
     virtual bool getNumberOfMotors(int *num) = 0;
 
     /**
-     * Get temperature of a motor. 
+     * Get temperature of a motor.
      * @param m motor number
      * @param val retrieved motor temperature
      * @return true/false
@@ -165,7 +165,7 @@ public:
    /**
      * Get the output limit for a specific motor
      * The specific behavior of the motor when the output limit is exceeded depends on the implementation (saturation recommended)
-     * 
+     *
      * @param m motor number
      * @param limit retrieved output limit
      * @return true/false
@@ -208,5 +208,3 @@ public:
 
 
 #endif
-
-

@@ -206,5 +206,3 @@ public:
 #define VOCAB_VEL_PID  VOCAB3('v','p','d')
 #define VOCAB_VEL_PIDS VOCAB4('v','p','d','s')
 #endif
-
-

@@ -35,7 +35,7 @@ public:
     using IControlLimits::setLimits;
     using IControlLimits::getLimits;
 
-    /** 
+    /**
      * Set the software speed limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
      * @param axis joint number
@@ -45,7 +45,7 @@ public:
      */
     virtual bool setVelLimits(int axis, double min, double max)=0;
 
-    /** 
+    /**
      * Get the software speed limits for a particular axis.
      * @param axis joint number
      * @param min pointer to store the value of the lower limit
@@ -73,7 +73,7 @@ public:
     using IControlLimitsRaw::setLimitsRaw;
     using IControlLimitsRaw::getLimitsRaw;
 
-    /** 
+    /**
      * Set the software speed limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
      * @param axis joint number
@@ -83,7 +83,7 @@ public:
      */
     virtual bool setVelLimitsRaw(int axis, double min, double max)=0;
 
-    /** 
+    /**
      * Get the software speed limits for a particular axis.
      * @param axis joint number
      * @param min pointer to store the value of the lower limit

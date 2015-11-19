@@ -89,7 +89,7 @@ public:
 /**
  * @ingroup dev_iface_motor
  *
- * Interface for setting control mode in control board. See IControlMode for 
+ * Interface for setting control mode in control board. See IControlMode for
  * more documentation.
  */
 class yarp::dev::IControlModeRaw
@@ -132,5 +132,3 @@ public:
 #define VOCAB_CM_UNKNOWN            VOCAB4('u','n','k','w')
 
 #endif
-
-

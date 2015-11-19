@@ -33,8 +33,8 @@ namespace yarp {
  * A fake motor control board for testing.
  * Implements the IPositionControl, IEncoders and IVelocityControl interfaces.
  */
-class YARP_dev_API yarp::dev::TestMotor : public DeviceDriver, 
-                                          public IPositionControl, 
+class YARP_dev_API yarp::dev::TestMotor : public DeviceDriver,
+                                          public IPositionControl,
                                           public IEncodersTimed,
                                           public IVelocityControl {
 private:
@@ -291,7 +291,7 @@ public:
         }
         return true;
     }
-    
+
     virtual bool getEncoderAcceleration(int j, double *spds) {
         if (j<njoints) {
             (*spds) = 0;

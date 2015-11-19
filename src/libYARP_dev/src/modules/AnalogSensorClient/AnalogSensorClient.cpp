@@ -174,7 +174,7 @@ void  yarp::dev::AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::strin
 }
 
 bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
-{   
+{
     ConstString carrier = config.check("carrier", Value("udp"), "default carrier for streaming robot state").asString().c_str();
 
     local.clear();

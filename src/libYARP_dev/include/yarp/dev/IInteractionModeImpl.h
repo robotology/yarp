@@ -156,5 +156,3 @@ public:
 };
 
 #endif /* IINTERACTION_MODE_IMPL_H */
-
-

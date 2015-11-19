@@ -672,7 +672,7 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
 
                     // convert it back to yarp message
                     Bottle& b = response.addList();
-                    
+
                     b.addDouble(params.bemf);
                     b.addDouble(params.bemf_scale);
                     b.addDouble(params.ktau);
@@ -2071,7 +2071,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
-                            
+
                             case VOCAB_TEMPERATURE_LIMIT:
                             {
                                 ok = rpc_IMotor->setTemperatureLimit(cmd.get(2).asInt(), cmd.get(3).asDouble());
@@ -2665,7 +2665,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
         else
             response.addVocab(VOCAB_OK);
 
-    // yDebug("--> [%X] done ret %d\n",self, ok);    
+    // yDebug("--> [%X] done ret %d\n",self, ok);
     }
 
         return ok;
@@ -2738,5 +2738,3 @@ void RPCMessagesParser::init(ControlBoardWrapper *x)
     rpc_IInteract         = dynamic_cast<yarp::dev::IInteractionMode *>     (ControlBoardWrapper_p);
     controlledJoints      = 0;
 }
-
-

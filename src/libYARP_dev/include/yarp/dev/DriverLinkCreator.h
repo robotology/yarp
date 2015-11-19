@@ -46,11 +46,11 @@ public:
         holding.view(internal);
         return internal;
     }
-    
+
     virtual yarp::os::ConstString getName() {
         return name;
     }
-    
+
     virtual yarp::os::ConstString getWrapper() {
         return "(link)";
     }

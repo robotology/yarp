@@ -65,7 +65,7 @@ public:
      * @param outs pinter to the vector that will store the output values
      */
     virtual bool getOutputsRaw(double *v)=0;
-    
+
     /**
      * Enable open loop mode.
      */
@@ -136,5 +136,3 @@ public:
 #define VOCAB_OPENLOOP_PWM_OUTPUT  VOCAB3('p','w','m')
 #define VOCAB_OPENLOOP_PWM_OUTPUTS VOCAB4('p','w','m','s')
 #endif
-
-

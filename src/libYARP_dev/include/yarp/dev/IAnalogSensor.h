@@ -48,14 +48,14 @@ public:
      * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
      */
     virtual int read(yarp::sig::Vector &out)=0;
-   
+
     /**
      * Check the state value of a given channel.
      * @param ch channel number.
      * @return status.
      */
     virtual int getState(int ch)=0;
-    
+
     /**
      * Get the number of channels of the sensor.
      * @return number of channels (0 in case of errors).
@@ -92,6 +92,3 @@ public:
 };
 
 #endif
-//
-
-

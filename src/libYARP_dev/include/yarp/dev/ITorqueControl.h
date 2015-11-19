@@ -138,7 +138,7 @@ public:
      */
     virtual bool getTorque(int j, double *t)=0;
 
-    /** Get the value of the torque for all joints (this is 
+    /** Get the value of the torque for all joints (this is
      * the feedback if you have torque sensors).
      * @param t pointer to the array that will store the output
      * @return true/false on success/failure
@@ -231,7 +231,7 @@ public:
      */
     virtual bool getTorqueErrorLimits(double *limits)=0;
 
-    /** Reset the controller of a given joint, usually sets the 
+    /** Reset the controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
      * the integrator.
      * @param j joint number
@@ -251,7 +251,7 @@ public:
      */
     virtual bool enableTorquePid(int j)=0;
 
-	/** Set offset value for a given pid
+    /** Set offset value for a given pid
      * @param j joint number
      * @param v the new value
      * @return true/false on success/failure
@@ -297,7 +297,7 @@ public:
      */
     virtual bool getTorqueRaw(int j, double *t)=0;
 
-    /** Get the value of the torque for all joints (this is 
+    /** Get the value of the torque for all joints (this is
      * the feedback if you have torque sensors).
      * @param t pointer to the array that will store the output
      * @return true/false on success/failure
@@ -460,7 +460,7 @@ public:
      */
     virtual bool getTorqueErrorLimitsRaw(double *limits)=0;
 
-    /** Reset the controller of a given joint, usually sets the 
+    /** Reset the controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
      * the integrator.
      * @param j joint number
@@ -480,7 +480,7 @@ public:
      */
     virtual bool enableTorquePidRaw(int j)=0;
 
-	/** Set offset value for a given pid
+    /** Set offset value for a given pid
      * @param j joint number
      * @param v the new value
      * @return true/false on success/failure
@@ -489,4 +489,3 @@ public:
 };
 
 #endif
-

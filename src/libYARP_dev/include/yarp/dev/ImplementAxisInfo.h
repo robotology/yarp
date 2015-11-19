@@ -34,7 +34,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -43,15 +43,14 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementAxisInfo(yarp::dev::IAxisInfoRaw *y);
-        
+
     virtual ~ImplementAxisInfo();
 
     virtual bool getAxisName(int axis, yarp::os::ConstString& name);
 };
 
 #endif
-

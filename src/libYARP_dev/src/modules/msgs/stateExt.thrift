@@ -17,9 +17,8 @@ struct jointData
   14: bool torque_isValid;
   15: list<double> pidOutput;
   16: bool pidOutput_isValid;
-  17: list<i32>	  controlMode;
+  17: list<i32> controlMode;
   18: bool controlMode_isValid;
-  19: list<i32>	  interactionMode;
+  19: list<i32> interactionMode;
   20: bool interactionMode_isValid;
 }
-

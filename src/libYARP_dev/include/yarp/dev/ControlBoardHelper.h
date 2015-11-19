@@ -43,7 +43,7 @@ inline void checkAndDestroy(T* &p) {
 class ControlBoardHelper
 {
 public:
-    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *nw): zeros(0), 
+    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *nw): zeros(0),
         signs(0),
         axisMap(0),
         invAxisMap(0),
@@ -89,9 +89,9 @@ public:
             }
         }
 
-    } 
+    }
 
-    ~ControlBoardHelper() 
+    ~ControlBoardHelper()
     {
         dealloc();
     }
@@ -476,4 +476,4 @@ public:
 inline ControlBoardHelper *castToMapper(void *p)
 { return static_cast<ControlBoardHelper *>(p); }
 
-#endif 
+#endif

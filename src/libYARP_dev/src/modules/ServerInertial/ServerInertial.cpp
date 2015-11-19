@@ -280,7 +280,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
 {
     Property prop;
     prop.fromString(config.toString().c_str());
-    
+
     p.setReader(*this);
 
     period = config.check("period",yarp::os::Value(0.005),"maximum period").asDouble();

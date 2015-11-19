@@ -23,7 +23,7 @@ bool ImplementControlMode::initialize(int size, const int *amap)
 {
     if (helper!=0)
         return false;
-    
+
     double *dummy=new double [size];
     for(int k=0;k<size;k++)
         dummy[k]=0;
@@ -47,7 +47,7 @@ bool ImplementControlMode::uninitialize ()
         delete castToMapper(helper);
         helper=0;
     }
- 
+
     return true;
 }
 
@@ -95,11 +95,10 @@ bool ImplementControlMode::getControlMode(int j, int *f)
 
 bool ImplementControlMode::getControlModes(int *modes)
 {
-	int nj = castToMapper(helper)->axes();
+    int nj = castToMapper(helper)->axes();
     int *tmp=new int [nj];
     bool ret=raw->getControlModesRaw(tmp);
     castToMapper(helper)->toUser(tmp, modes);
-	delete [] tmp;
+    delete [] tmp;
     return ret;
 }
-

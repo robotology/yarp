@@ -51,7 +51,7 @@ public:
      */
     virtual void changebpp(int bytespp) = 0;
     /**
-     * It changes the size of each pixel (the type each pixel's element is). 
+     * It changes the size of each pixel (the type each pixel's element is).
      * @param newtype the new pixel's elements type (cfr. enum YarpVocabPixelTypesEnum under image.h)
      */
     virtual void changetype(int newtype) = 0;
@@ -111,4 +111,3 @@ public:
 };
 
 #endif
-//

@@ -34,7 +34,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -43,11 +43,11 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementRemoteVariables(yarp::dev::IRemoteVariablesRaw *y);
-        
+
     virtual ~ImplementRemoteVariables();
 
     virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val);
@@ -58,4 +58,3 @@ public:
 };
 
 #endif
-

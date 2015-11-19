@@ -10,7 +10,7 @@
 
 using namespace yarp::dev;
 
-Pid::Pid(double p, double d, double i, 
+Pid::Pid(double p, double d, double i,
          double intm, double sc, double omax)
 {
     kp=p;
@@ -24,7 +24,7 @@ Pid::Pid(double p, double d, double i,
     stiction_down_val = 0;
 }
 
-Pid::Pid(double p, double d, double i, 
+Pid::Pid(double p, double d, double i,
          double intm, double sc, double omax, double st_up, double st_down, double ff)
 {
     kp=p;
@@ -103,4 +103,3 @@ void Pid::setKff(double ff)
 {
     kff=ff;
 }
-

@@ -104,7 +104,7 @@ public:
  * M is the class implementing CanMessage for your type.
  * IMPL is the internal representation of the can message.
  */
-template<class M, class IMPL> 
+template<class M, class IMPL>
 class yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
 {
 public:
@@ -118,7 +118,7 @@ public:
         M *tmp=new M[elem];
 
         memset(storage, 0, sizeof(IMPL)*elem);
-    
+
         for(int k=0;k<elem;k++)
             {
                 messages[k]=&tmp[k];
@@ -134,7 +134,7 @@ public:
         CanMessage **m=buffer.getPointer();
         IMPL *storage=0;
         M *msgs=0;
-    
+
         if (m==0)
             {
                 yError("Warning trying to detroy non valid buffer\n");
@@ -170,8 +170,8 @@ class yarp::dev::ICanBus
     virtual bool canIdAdd(unsigned int id)=0;
     virtual bool canIdDelete(unsigned int id)=0;
 
-    virtual bool canRead(CanBuffer &msgs, 
-                         unsigned int size, 
+    virtual bool canRead(CanBuffer &msgs,
+                         unsigned int size,
                          unsigned int *read,
                          bool wait=false)=0;
 
@@ -190,4 +190,3 @@ public:
 };
 
 #endif
-

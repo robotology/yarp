@@ -1929,7 +1929,7 @@ public:
      * @param m motor encoder number
      * @param cpr pointer to storage for the return value
      * @return true/false
-     */ 
+     */
     virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr) {
          return get1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
     }
@@ -2499,7 +2499,7 @@ public:
 
     /** Stop motion for subset of joints
      * @param len size of joint list
-     * @param val1 list of joints 
+     * @param val1 list of joints
      * @return true/false on success/failure
      */
     virtual bool stop(const int len, const int *val1)
@@ -3201,7 +3201,7 @@ public:
     // IControlMode2
     bool getControlModes(const int n_joint, const int *joints, int *modes)
     {
-        bool ok = false;      
+        bool ok = false;
         if(controlBoardWrapper1_compatibility)
         {
             Bottle cmd, resp;
@@ -3838,12 +3838,12 @@ public:
             cmd.addVocab(VOCAB_OUTPUT);
             cmd.addInt(j);
             bool ok = rpc_p.write(cmd, response);
-    
+
             if (CHECK_FAIL(ok, response))
             {
                 // ok
                 *out = response.get(2).asDouble();
-    
+
                 getTimeStamp(response, lastStamp);
                 return true;
             }
@@ -3886,7 +3886,7 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_PROTOCOL_VERSION);
         rpc_p.write(cmd, reply);
-    
+
         // check size and format of messages, expected [prot] int int int [ok]
         if (reply.size()!=5)
            error=true;
@@ -3914,7 +3914,7 @@ public:
         // protocol did not match
         yError("expecting protocol %d %d %d, but remotecontrolboard returned protocol version %d %d %d\n",
                         PROTOCOL_VERSION_MAJOR, PROTOCOL_VERSION_MINOR, PROTOCOL_VERSION_TWEAK,
-                        protocolVersion.major, protocolVersion.minor, protocolVersion.tweak); 
+                        protocolVersion.major, protocolVersion.minor, protocolVersion.tweak);
 
 
         bool ret;
@@ -3923,7 +3923,7 @@ public:
             yWarning(" ignoring error but please update YARP or the remotecontrolboard implementation\n");
             ret = true;
         }
-        else 
+        else
         {
             yError(" please update YARP or the remotecontrolboard implementation\n");
             ret = false;
@@ -4064,4 +4064,3 @@ yarp::dev::DriverCreator *createRemoteControlBoard() {
         "controlboardwrapper2",
         "yarp::dev::RemoteControlBoard");
 }
-

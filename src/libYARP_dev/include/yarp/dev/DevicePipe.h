@@ -27,7 +27,7 @@ namespace yarp{
  * Tries to connect the output of one device to the input of another.
  *
  */
-class YARP_dev_API yarp::dev::DevicePipe : public DeviceDriver, 
+class YARP_dev_API yarp::dev::DevicePipe : public DeviceDriver,
                                            public IService {
 
 public:
@@ -49,7 +49,7 @@ public:
 protected:
     PolyDriver source, sink;
 
-    bool open(const char *key, PolyDriver& poly, 
+    bool open(const char *key, PolyDriver& poly,
               yarp::os::Searchable& config, const char *comment);
 };
 

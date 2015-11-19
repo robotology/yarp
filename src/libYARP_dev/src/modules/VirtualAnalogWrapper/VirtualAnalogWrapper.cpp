@@ -116,7 +116,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
     yDebug() << config.toString().c_str();
 
     mIsVerbose = (config.check("verbose","if present, give detailed output"));
- 
+
     if (mIsVerbose) yDebug() << "running with verbose output\n";
 
     //thus thread period is useful for output port... this input port has callback so maybe can skip it (?)
@@ -133,7 +133,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
     Bottle *networks=config.find("networks").asList();
     mNSubdevs=networks->size();
     mSubdevices.resize(mNSubdevs);
-    
+
     mChan2Board.resize(MAX_ENTRIES);
     mChan2BAddr.resize(MAX_ENTRIES);
     for (int i=0; i< MAX_ENTRIES; i++)
@@ -207,7 +207,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
 
 bool VirtualAnalogWrapper::close()
 {
-	mPortInputTorques.interrupt();
+    mPortInputTorques.interrupt();
     mPortInputTorques.close();
     Thread::stop();
     return true;
@@ -223,7 +223,7 @@ bool VirtualAnalogWrapper::attachAll(const PolyDriverList &polylist)
 
         // find appropriate entry in list of subdevices and attach
         for (unsigned int k=0; k<mSubdevices.size(); ++k)
-        {    
+        {
             if (mSubdevices[k].getKey()==key)
             {
                 if (!mSubdevices[k].attach(polylist[p]->poly,key))
@@ -378,6 +378,3 @@ void VirtualAnalogWrapper::run()
         }
     }
 }
-
-// eof
-

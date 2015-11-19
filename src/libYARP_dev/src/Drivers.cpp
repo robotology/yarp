@@ -196,7 +196,7 @@ public:
         return dev.isValid();
     }
 
-    virtual bool open(yarp::os::Searchable& config) { 
+    virtual bool open(yarp::os::Searchable& config) {
         if (!isValid()) return false;
         return dev.getContent().open(config);
     }
@@ -492,7 +492,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             s += v->toString();
             s += "/quit";
         }
-        if (s.find("=") == ConstString::npos && 
+        if (s.find("=") == ConstString::npos &&
             s.find("@") == ConstString::npos) {
             terminee = new Terminee(s.c_str());
             terminatorKey = s.c_str();
@@ -578,11 +578,5 @@ DeviceDriver *StubDriverCreator::create() {
 }
 
 
-
-
-
 // defined in PopulateDrivers.cpp:
 //   DeviceDriver *Drivers::init()
-
-
-

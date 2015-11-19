@@ -76,8 +76,8 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool setRefAccelerationsRaw(const double *accs)=0;
- 
-    /** Get reference acceleration for a joint. Returns the acceleration used to 
+
+    /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
      * @param j joint number
      * @param acc pointer to storage for the return value
@@ -88,7 +88,7 @@ public:
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
-     * @return true/false on success or failure 
+     * @return true/false on success or failure
      */
     virtual bool getRefAccelerationsRaw(double *accs)=0;
 
@@ -98,7 +98,7 @@ public:
      */
     virtual bool stopRaw(int j)=0;
 
-    /** Stop motion, multiple joints 
+    /** Stop motion, multiple joints
      * @return true/false on success or failure
      */
     virtual bool stopRaw()=0;
@@ -163,8 +163,8 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool setRefAccelerations(const double *accs)=0;
- 
-    /** Get reference acceleration for a joint. Returns the acceleration used to 
+
+    /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
      * @param j joint number
      * @param acc pointer to storage for the return value
@@ -175,7 +175,7 @@ public:
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
-     * @return true/false on success or failure 
+     * @return true/false on success or failure
      */
     virtual bool getRefAccelerations(double *accs)=0;
 
@@ -185,7 +185,7 @@ public:
      */
     virtual bool stop(int j)=0;
 
-    /** Stop motion, multiple joints 
+    /** Stop motion, multiple joints
      * @return true/false on success or failure
      */
     virtual bool stop()=0;
@@ -193,5 +193,3 @@ public:
 
 
 #endif
-
-

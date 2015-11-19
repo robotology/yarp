@@ -157,4 +157,3 @@ public:
 #define VOCAB_CM_CONFIGURED     VOCAB4('c','m','c','f')
 */
 #endif
-

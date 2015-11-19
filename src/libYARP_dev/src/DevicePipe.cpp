@@ -31,7 +31,7 @@ bool DevicePipe::open(yarp::os::Searchable& config) {
 }
 
 
-bool DevicePipe::open(const char *key, PolyDriver& poly, 
+bool DevicePipe::open(const char *key, PolyDriver& poly,
                       yarp::os::Searchable& config, const char *comment) {
 
     Value *name;
@@ -108,7 +108,7 @@ bool DevicePipe::updateService() {
         Sound tmpSound;
         imgSndSource->getAudioVisual(tmp,tmpSound);
         imgSndSink->putAudioVisual(tmp,tmpSound);
-        printf("piped %dx%d image, %dx%d sound\n", 
+        printf("piped %dx%d image, %dx%d sound\n",
                tmp.width(), tmp.height(),
                tmpSound.getSamples(), tmpSound.getChannels());
     } else if (imgSource!=NULL&&imgSink!=NULL) {
@@ -129,5 +129,3 @@ bool DevicePipe::updateService() {
     }
     return true;
 }
-
-

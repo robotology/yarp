@@ -19,7 +19,7 @@ namespace yarp {
     }
 }
 
-/** 
+/**
  * @ingroup dev_iface_other
  *
  * Common interface for devices that act like services (by which we
@@ -43,19 +43,19 @@ public:
     virtual bool startService() {
         return false;
     }
-    
+
     /**
      * Give the service the chance to run for a while.  This is an
-     * alternative to calling startService().  It is more 
+     * alternative to calling startService().  It is more
      * appropriate in a single-threaded environment.
      * @return true iff the service is willing to run
-     * some more.  A return value of false means that the service 
+     * some more.  A return value of false means that the service
      * would like to stop.
      */
     virtual bool updateService() {
         return false;
     }
-    
+
     /**
      * Shut down the service, whatever it is.
      * @return true iff the service shut down ok.

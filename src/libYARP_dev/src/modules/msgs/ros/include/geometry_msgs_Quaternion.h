@@ -1,12 +1,12 @@
 // This is an automatically generated file.
 // Generated from this geometry_msgs_Quaternion.msg definition:
 //   # This represents an orientation in free space in quaternion form.
-//   
+//
 //   float64 x
 //   float64 y
 //   float64 z
 //   float64 w
-//   
+//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 

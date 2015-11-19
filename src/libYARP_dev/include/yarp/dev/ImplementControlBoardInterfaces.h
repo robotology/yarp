@@ -29,7 +29,7 @@ namespace yarp{
     }
 }
 
-/** 
+/**
  * Default implementation of the IPositionControl interface. This template class can
  * be used to easily provide an implementation of IPositionControl. It takes two
  * arguments, the class it is derived from and the class it is implementing, typically
@@ -41,7 +41,7 @@ namespace yarp{
  * are done with normal classes. If you need to implement something similar have a look
  * at implementations of other interfaes (e.g ITorqueControl or IOpenLoopControl).
  */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementPositionControl : public IMPLEMENT
 {
 protected:
@@ -58,7 +58,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos);
-        
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -68,24 +68,24 @@ protected:
 public:
     /**
      * Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementPositionControl(DERIVED *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
     virtual ~ImplementPositionControl();
-        
-        
+
+
     /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
     virtual bool getAxes(int *axis);
-        
+
     virtual bool setPositionMode();
     virtual bool positionMove(int j, double ref);
     virtual bool positionMove(const double *refs);
@@ -103,9 +103,9 @@ public:
     virtual bool getRefAccelerations(double *accs);
     virtual bool stop(int j);
     virtual bool stop();
-};  
+};
 
-/** 
+/**
  * Default implementation of the IVelocityControl interface. This template class can
  * be used to easily provide an implementation of IVelocityControl. It takes two
  * arguments, the class it is derived from and the class it is implementing, typically
@@ -113,14 +113,14 @@ public:
  * "<IMPLEMENT>" makes only explicit that the class is implementing IVelocityControl and
  * appears in the inheritance list of the derived class.
  */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementVelocityControl : public IMPLEMENT
 {
 protected:
     IVelocityControlRaw *iVelocity;
     void *helper;
     double *temp;
-        
+
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.
@@ -130,30 +130,30 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
      */
     bool uninitialize ();
-          
+
 public:
     /**
      * Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementVelocityControl(DERIVED *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
     virtual ~ImplementVelocityControl();
-        
+
     virtual bool getAxes(int *axes);
-        
+
     virtual bool setVelocityMode();
-        
+
     virtual bool velocityMove(int j, double v);
     virtual bool velocityMove(const double *v);
     virtual bool setRefAcceleration(int j, double acc);
@@ -164,7 +164,7 @@ public:
     virtual bool stop();
 };
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementPidControl : public IMPLEMENT
 {
 protected:
@@ -172,7 +172,7 @@ protected:
     Pid *tmpPids;
     void *helper;
     double *temp;
-        
+
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.
@@ -182,26 +182,26 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
      */
     bool uninitialize ();
-          
+
 public:
     /**
      * Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementPidControl(DERIVED *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
     virtual ~ImplementPidControl();
-        
+
     /** Set new pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value
@@ -216,9 +216,9 @@ public:
     virtual bool setPids(const Pid *pids);
 
     /** Set the controller reference point for a given axis.
-     * Warning this method can result in very large torques 
+     * Warning this method can result in very large torques
      * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method. 
+     * this warning you should avoid using this method.
      * Have a look at other interfaces (e.g. position control).
      * @param j joint number
      * @param ref new reference point
@@ -227,9 +227,9 @@ public:
     virtual bool setReference(int j, double ref);
 
     /** Set the controller reference points, multiple axes.
-     * Warning this method can result in very large torques 
+     * Warning this method can result in very large torques
      * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method. 
+     * this warning you should avoid using this method.
      * Have a look at other interfaces (e.g. position control).
      * @param refs pointer to the vector that contains the new reference points.
      * @return true/false upon success/failure
@@ -289,7 +289,7 @@ public:
     /** Get the current reference position of the controller for a specific joint.
      * @param j joint number
      * @param ref pointer to storage for return value
-     * @return reference value 
+     * @return reference value
      */
     virtual bool getReference(int j, double *ref);
 
@@ -311,7 +311,7 @@ public:
      */
     virtual bool getErrorLimits(double *limits);
 
-    /** Reset the controller of a given joint, usually sets the 
+    /** Reset the controller of a given joint, usually sets the
      * current position of the joint as the reference value for the PID, and resets
      * the integrator.
      * @param j joint number
@@ -329,7 +329,7 @@ public:
     virtual bool setOffset(int j, double v);
 };
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementEncoders : public IMPLEMENT
 {
 protected:
@@ -346,7 +346,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -355,11 +355,11 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementEncoders(DERIVED *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
@@ -374,20 +374,20 @@ public:
     virtual bool getAxes(int *ax);
 
     /**
-     * Reset encoder, single joint. Set the encoder value to zero 
+     * Reset encoder, single joint. Set the encoder value to zero
      * @param j encoder number
      * @return true/false
      */
     virtual bool resetEncoder(int j);
 
     /**
-     * Reset encoders. Set the encoders value to zero 
+     * Reset encoders. Set the encoders value to zero
      * @return true/false
      */
     virtual bool resetEncoders();
 
     /**
-     * Set the value of the encoder for a given joint. 
+     * Set the value of the encoder for a given joint.
      * @param j encoder number
      * @param val new value
      * @return true/false
@@ -430,7 +430,7 @@ public:
      * @return guess what? (true/false on success or failure).
      */
     virtual bool getEncoderSpeeds(double *spds);
-    
+
     /**
      * Read the instantaneous acceleration of an axis.
      * @param j axis number
@@ -441,12 +441,12 @@ public:
     /**
      * Read the instantaneous acceleration of all axes.
      * @param accs pointer to the array that will contain the output
-     * @return true if all goes well, false if anything bad happens. 
+     * @return true if all goes well, false if anything bad happens.
      */
     virtual bool getEncoderAccelerations(double *accs);
 };
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementControlCalibration: public IMPLEMENT
 {
 protected:
@@ -463,7 +463,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -472,11 +472,11 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementControlCalibration(DERIVED *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
@@ -487,7 +487,7 @@ public:
     virtual bool done(int j);
 };
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementControlLimits: public IMPLEMENT
 {
 protected:
@@ -504,7 +504,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -513,11 +513,11 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementControlLimits(DERIVED *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
@@ -531,7 +531,7 @@ public:
      * @return true or false on success or failure
      */
     virtual bool setLimits(int axis, double min, double max);
-    
+
     /* Get the software limits for a particular axis.
      * @param axis joint number
      * @param pointer to store the value of the lower limit
@@ -542,7 +542,7 @@ public:
 };
 
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementAmplifierControl: public IMPLEMENT
 {
 protected:
@@ -560,7 +560,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -569,18 +569,18 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementAmplifierControl(DERIVED *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
     virtual ~ImplementAmplifierControl();
 
     /** Enable the amplifier on a specific joint. Be careful, check that the output
-     * of the controller is appropriate (usually zero), to avoid 
+     * of the controller is appropriate (usually zero), to avoid
      * generating abrupt movements.
      * @return true/false on success/failure
      */
@@ -605,7 +605,7 @@ public:
      */
     virtual bool getCurrent(int j, double *val);
 
-    /* Set the maximum electric current going to a given motor. The behavior 
+    /* Set the maximum electric current going to a given motor. The behavior
      * of the board/amplifier when this limit is reached depends on the
      * implementation.
      * @param j motor number
@@ -625,7 +625,7 @@ public:
     virtual bool getMaxCurrent(int j, double *v);
 
     /* Get the status of the amplifiers, coded in a 32 bits integer for
-     * each amplifier (at the moment contains only the fault, it will be 
+     * each amplifier (at the moment contains only the fault, it will be
      * expanded in the future).
      * @param st pointer to storage
      * @return true in good luck, false otherwise.
@@ -635,7 +635,7 @@ public:
     virtual bool getAmpStatus(int j, int *st);
 };
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementControlCalibration2: public IMPLEMENT
 {
 protected:
@@ -652,7 +652,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -661,11 +661,11 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementControlCalibration2(DERIVED *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
@@ -678,13 +678,13 @@ public:
     virtual bool done(int j);
 };
 
-/** 
- * Stub implementation of IPidControlRaw interface. 
+/**
+ * Stub implementation of IPidControlRaw interface.
  * Inherit from this class if you want a stub implementation
  * of methods in IPositionControlRaw. This class allows to
  * gradually implement an interface; you just have to implement
  * functions that are useful for the underlying device.
- * Another way to see this class is as a means to convert 
+ * Another way to see this class is as a means to convert
  * compile time errors in runtime errors.
  *
  * If you use this class please be aware that the device
@@ -766,13 +766,13 @@ public:
     {return NOT_YET_IMPLEMENTED("setOffsetRaw");}
 };
 
-/** 
- * Stub implementation of IPositionControlRaw interface. 
+/**
+ * Stub implementation of IPositionControlRaw interface.
  * Inherit from this class if you want a stub implementation
  * of methods in IPositionControlRaw. This class allows to
  * gradually implement an interface; you just have to implement
  * functions that are useful for the underlying device.
- * Another way to see this class is as a means to convert 
+ * Another way to see this class is as a means to convert
  * compile time errors in runtime errors.
  *
  * If you use this class please be aware that the device
@@ -847,13 +847,13 @@ public:
     {return NOT_YET_IMPLEMENTED("stopRaw");}
 };
 
-/** 
- * Stub implementation of IEncodersRaw interface. 
+/**
+ * Stub implementation of IEncodersRaw interface.
  * Inherit from this class if you want a stub implementation
  * of methods in IPositionControlRaw. This class allows to
  * gradually implement an interface; you just have to implement
  * functions that are useful for the underlying device.
- * Another way to see this class is as a means to convert 
+ * Another way to see this class is as a means to convert
  * compile time errors in runtime errors.
  *
  * If you use this class please be aware that the device
@@ -908,5 +908,3 @@ public:
 };
 
 #endif
-
-

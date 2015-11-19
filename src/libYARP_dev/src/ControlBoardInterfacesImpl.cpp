@@ -43,4 +43,3 @@ bool StubImplPidControlRaw::NOT_YET_IMPLEMENTED(const char *func)
 
     return false;
 }
-

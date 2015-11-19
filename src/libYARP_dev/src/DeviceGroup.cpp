@@ -200,5 +200,3 @@ DeviceGroup::~DeviceGroup() {
         implementation = NULL;
     }
 }
-
-

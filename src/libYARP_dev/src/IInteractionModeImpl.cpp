@@ -126,4 +126,3 @@ bool ImplementInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnu
     }
     return iInteraction->setInteractionModesRaw(temp_modes);
 }
-

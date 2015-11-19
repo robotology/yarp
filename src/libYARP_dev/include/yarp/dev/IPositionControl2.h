@@ -100,7 +100,7 @@ public:
      */
     virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)=0;
 
-    /** Get reference acceleration for a joint. Returns the acceleration used to 
+    /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
      * @param joints pointer to the array of joint numbers
      * @param accs   pointer to the array that will store the acceleration values
@@ -212,5 +212,3 @@ public:
 #define VOCAB_REF_ACCELERATION_GROUP VOCAB4('a','c','c','g')
 #define VOCAB_STOP_GROUP             VOCAB4('s','t','o','g')
 #endif
-
-

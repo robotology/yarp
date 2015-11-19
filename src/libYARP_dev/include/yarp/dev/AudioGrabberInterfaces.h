@@ -36,7 +36,7 @@ public:
 
     /**
      * Get a sound from a device.
-     * 
+     *
      * @param sound the sound to be filled
      * @return true/false upon success/failure
      */
@@ -44,14 +44,14 @@ public:
 
     /**
      * Start the recording.
-     * 
+     *
      * @return true/false upon success/failure
      */
     virtual bool startRecording() = 0;
 
      /**
      * Stop the recording.
-     * 
+     *
      * @return true/false upon success/failure
      */
     virtual bool stopRecording() = 0;
@@ -68,7 +68,7 @@ public:
 
     /**
      * Render a sound using a device (i.e. send it to the speakers).
-     * 
+     *
      * @param sound the sound to be rendered
      * @return true/false upon success/failure
      */

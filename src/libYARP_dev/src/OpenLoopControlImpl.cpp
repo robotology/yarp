@@ -24,7 +24,7 @@ bool ImplementOpenLoopControl::initialize(int size, const int *amap)
 {
     if (helper!=0)
         return false;
-    
+
     double *dummy=new double [size];
     for(int k=0;k<size;k++)
         dummy[k]=0;
@@ -48,7 +48,7 @@ bool ImplementOpenLoopControl::uninitialize ()
         delete castToMapper(helper);
         helper=0;
     }
- 
+
     return true;
 }
 

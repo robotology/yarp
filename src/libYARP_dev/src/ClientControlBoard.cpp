@@ -10,9 +10,9 @@
 /*
  * This device meant to be used coupled with the ServerControlBoard device to
  * exchange YARP messages aimed to control a motor board.
- * This device was boarn as a copy of the RemoteControlBoard device, freezed in 
- * date 04 Mar 2014 to better preserve the backward compatibility with the 
- * ServerControlBoard capabilities. 
+ * This device was boarn as a copy of the RemoteControlBoard device, freezed in
+ * date 04 Mar 2014 to better preserve the backward compatibility with the
+ * ServerControlBoard capabilities.
  */
 
 
@@ -275,7 +275,7 @@ protected:
     bool writeStrict_moreJoints;
 
     Semaphore extendedPortMutex;
-  
+
     ConstString remote;
     ConstString local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
@@ -1416,8 +1416,8 @@ public:
         // return get1V1I1D(VOCAB_ENCODER, j, v);
         double localArrivalTime = 0.0;
         bool ret = false;
-	ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
-       
+        ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+
         *t=lastStamp.getTime();
 
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
@@ -1440,27 +1440,27 @@ public:
         // particular case, does not use RPC
         bool ret = false;
         double localArrivalTime=0.0;
-   
-	Vector tmp(nj);
 
-	// mutex.wait();
-	ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
-	// mutex.post();
+        Vector tmp(nj);
 
-	if (ret)
-	{
-	    if (tmp.size() != (size_t)nj)
-		fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+        // mutex.wait();
+        ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+        // mutex.post();
 
-	    YARP_ASSERT (tmp.size() == (size_t)nj);
-	    memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
+        if (ret)
+        {
+            if (tmp.size() != (size_t)nj)
+                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-	    ////////////////////////// HANDLE TIMEOUT
-	    // fill the vector anyway
-	    if (Time::now()-localArrivalTime>TIMEOUT)
-		ret=false;
-	}
-       
+            YARP_ASSERT (tmp.size() == (size_t)nj);
+            memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
+
+            ////////////////////////// HANDLE TIMEOUT
+            // fill the vector anyway
+            if (Time::now()-localArrivalTime>TIMEOUT)
+                ret=false;
+        }
+
         return ret;
     }
 
@@ -1477,24 +1477,24 @@ public:
 
         bool ret=false;
 
-	Vector tmp(nj);
-  //       mutex.wait();
-	ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
-  //       mutex.post();
+        Vector tmp(nj);
+        // mutex.wait();
+        ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+        // mutex.post();
 
-	if (ret)
-	{
-	    if (tmp.size() != (size_t)nj)
-		fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+        if (ret)
+        {
+            if (tmp.size() != (size_t)nj)
+                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-	    YARP_ASSERT (tmp.size() == (size_t)nj);
-	    for(int j=0; j<nj; j++)
-	    {
-		encs[j]=tmp[j];
-		ts[j]=lastStamp.getTime();
-	    }
-	}
-        
+            YARP_ASSERT (tmp.size() == (size_t)nj);
+            for(int j=0; j<nj; j++)
+            {
+                encs[j]=tmp[j];
+                ts[j]=lastStamp.getTime();
+            }
+        }
+
         ////////////////////////// HANDLE TIMEOUT
         if (Time::now()-localArrivalTime>TIMEOUT)
             ret=false;
@@ -1509,7 +1509,7 @@ public:
      */
     virtual bool getEncoderSpeed(int j, double *sp)
     {
-	return get1V1I1D(VOCAB_ENCODER_SPEED, j, sp);
+        return get1V1I1D(VOCAB_ENCODER_SPEED, j, sp);
     }
 
 
@@ -1520,7 +1520,7 @@ public:
      */
     virtual bool getEncoderSpeeds(double *spds)
     {
-	return get1VDA(VOCAB_ENCODER_SPEEDS, spds);
+        return get1VDA(VOCAB_ENCODER_SPEEDS, spds);
     }
 
     /**
@@ -1531,7 +1531,7 @@ public:
 
     virtual bool getEncoderAcceleration(int j, double *acc)
     {
-	return get1V1I1D(VOCAB_ENCODER_ACCELERATION, j, acc);
+        return get1V1I1D(VOCAB_ENCODER_ACCELERATION, j, acc);
     }
 
     /**
@@ -1541,7 +1541,7 @@ public:
      */
     virtual bool getEncoderAccelerations(double *accs)
     {
-	return get1VDA(VOCAB_ENCODER_ACCELERATIONS, accs);
+        return get1VDA(VOCAB_ENCODER_ACCELERATIONS, accs);
     }
 
     /* IMotorEncoder */
@@ -1588,7 +1588,7 @@ public:
      * @param m motor encoder number
      * @param cpr pointer to storage for the return value
      * @return true/false
-     */ 
+     */
     virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr) {
          return get1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
     }
@@ -1610,9 +1610,9 @@ public:
      */
     virtual bool getMotorEncoder(int j, double *v) {
         double localArrivalTime = 0.0;
-	bool ret;
-	ret = get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
-       
+        bool ret;
+        ret = get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
+
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
             ret=false;
 
@@ -1628,7 +1628,7 @@ public:
     virtual bool getMotorEncoderTimed(int j, double *v, double *t) {
         double localArrivalTime = 0.0;
         bool ret = false;
-	ret = get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
+        ret = get1V1I1D(VOCAB_MOTOR_ENCODER, j, v);
         *t=lastStamp.getTime();
 
         if (ret && Time::now()-localArrivalTime>TIMEOUT)
@@ -1651,24 +1651,24 @@ public:
         // particular case, does not use RPC
         bool ret = false;
         double localArrivalTime=0.0;
-	Vector tmp(nj);
+        Vector tmp(nj);
 
-	ret = get1VDA(VOCAB_MOTOR_ENCODERS, tmp.data());
+        ret = get1VDA(VOCAB_MOTOR_ENCODERS, tmp.data());
 
-	if (ret)
-	{
-	    if (tmp.size() != (size_t)nj)
-		fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+        if (ret)
+        {
+            if (tmp.size() != (size_t)nj)
+                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-	    YARP_ASSERT (tmp.size() == (size_t)nj);
-	    memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
+            YARP_ASSERT (tmp.size() == (size_t)nj);
+            memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
 
-	    ////////////////////////// HANDLE TIMEOUT
-	    // fill the vector anyway
-	    if (Time::now()-localArrivalTime>TIMEOUT)
-		ret=false;
-	}
-      
+            ////////////////////////// HANDLE TIMEOUT
+            // fill the vector anyway
+            if (Time::now()-localArrivalTime>TIMEOUT)
+                ret=false;
+        }
+
         return ret;
     }
 
@@ -1685,21 +1685,21 @@ public:
         bool ret=false;
         double time = yarp::os::Time::now();
 
-	Vector tmp(nj);
-	ret = get1VDA(VOCAB_MOTOR_ENCODERS, tmp.data());
+        Vector tmp(nj);
+        ret = get1VDA(VOCAB_MOTOR_ENCODERS, tmp.data());
 
-	if (ret)
-	{
-	    if (tmp.size() != (size_t)nj)
-		fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+        if (ret)
+        {
+            if (tmp.size() != (size_t)nj)
+                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-	    YARP_ASSERT (tmp.size() == (size_t)nj);
-	    for(int j=0; j<nj; j++)
-	    {
-		encs[j]=tmp[j];
-		ts[j]=time;
-	    }
-	}
+            YARP_ASSERT (tmp.size() == (size_t)nj);
+            for(int j=0; j<nj; j++)
+            {
+                encs[j]=tmp[j];
+                ts[j]=time;
+            }
+        }
 
         ////////////////////////// HANDLE TIMEOUT
         if (Time::now()-localArrivalTime>TIMEOUT)
@@ -1715,7 +1715,7 @@ public:
      */
     virtual bool getMotorEncoderSpeed(int j, double *sp)
     {
-	return get1V1I1D(VOCAB_MOTOR_ENCODER_SPEED, j, sp);
+        return get1V1I1D(VOCAB_MOTOR_ENCODER_SPEED, j, sp);
     }
 
 
@@ -1726,7 +1726,7 @@ public:
      */
     virtual bool getMotorEncoderSpeeds(double *spds)
     {
-	return get1VDA(VOCAB_MOTOR_ENCODER_SPEEDS, spds);
+        return get1VDA(VOCAB_MOTOR_ENCODER_SPEEDS, spds);
     }
 
     /**
@@ -1737,7 +1737,7 @@ public:
 
     virtual bool getMotorEncoderAcceleration(int j, double *acc)
     {
-	return get1V1I1D(VOCAB_MOTOR_ENCODER_ACCELERATION, j, acc);
+        return get1V1I1D(VOCAB_MOTOR_ENCODER_ACCELERATION, j, acc);
     }
 
     /**
@@ -1747,7 +1747,7 @@ public:
      */
     virtual bool getMotorEncoderAccelerations(double *accs)
     {
-	return get1VDA(VOCAB_MOTOR_ENCODER_ACCELERATIONS, accs);
+        return get1VDA(VOCAB_MOTOR_ENCODER_ACCELERATIONS, accs);
     }
 
     /* IPreciselyTimed */
@@ -1757,9 +1757,9 @@ public:
      */
     virtual Stamp getLastInputStamp() {
         Stamp ret;
-//        mutex.wait();
+        // mutex.wait();
         ret = lastStamp;
-//        mutex.post();
+        // mutex.post();
         return ret;
     }
 
@@ -2018,7 +2018,7 @@ public:
 
     /** Stop motion for subset of joints
      * @param len size of joint list
-     * @param val1 list of joints 
+     * @param val1 list of joints
      * @return true/false on success/failure
      */
     virtual bool stop(const int len, const int *val1)
@@ -2096,11 +2096,13 @@ public:
      * generating abrupt movements.
      * @return true/false on success/failure
      */
-    virtual bool enableAmp(int j)
-    { return set1V1I(VOCAB_AMP_ENABLE, j); }
+    virtual bool enableAmp(int j) {
+        return set1V1I(VOCAB_AMP_ENABLE, j);
+    }
 
-    virtual bool setOffset(int j, double v)
-    { return set1V1I1D(VOCAB_OFFSET, j, v); }
+    virtual bool setOffset(int j, double v) {
+        return set1V1I1D(VOCAB_OFFSET, j, v);
+    }
 
     /**
      * Disable the amplifier on a specific joint. All computations within the board
@@ -2171,8 +2173,7 @@ public:
      * @param st storage for return value
      * @return true/false success failure.
      */
-    virtual bool getAmpStatus(int j, int *st)
-    {
+    virtual bool getAmpStatus(int j, int *st) {
         return get1V1I1I(VOCAB_AMP_STATUS_SINGLE, j, st);
     }
 
@@ -2217,17 +2218,21 @@ public:
     }
 
     /* IControlCalibration */
-    bool virtual calibrate()
-    { return send1V(VOCAB_CALIBRATE); }
+    bool virtual calibrate() {
+        return send1V(VOCAB_CALIBRATE);
+    }
 
-    bool virtual abortCalibration()
-    { return send1V(VOCAB_ABORTCALIB); }
+    bool virtual abortCalibration() {
+        return send1V(VOCAB_ABORTCALIB);
+    }
 
-    bool virtual abortPark()
-    { return send1V(VOCAB_ABORTPARK); }
+    bool virtual abortPark() {
+        return send1V(VOCAB_ABORTPARK);
+    }
 
-    bool virtual park(bool wait=true)
-    { return send1V(VOCAB_PARK); }
+    bool virtual park(bool wait=true) {
+        return send1V(VOCAB_PARK);
+    }
 
     bool virtual calibrate2(int j, unsigned int ui, double v1, double v2, double v3)
     {
@@ -2268,17 +2273,21 @@ public:
         return false;
     }
 
-    bool virtual done(int j)
-    { return send1V1I(VOCAB_CALIBRATE_DONE, j); }
+    bool virtual done(int j) {
+        return send1V1I(VOCAB_CALIBRATE_DONE, j);
+    }
 
-    bool setTorqueMode()
-    { return set1V(VOCAB_TORQUE_MODE); }
+    bool setTorqueMode() {
+        return set1V(VOCAB_TORQUE_MODE);
+    }
 
-    bool getRefTorque(int j, double *t)
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, t); }
+    bool getRefTorque(int j, double *t) {
+        return get2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, t);
+    }
 
-    bool getRefTorques(double *t)
-    { return get2V1DA(VOCAB_TORQUE, VOCAB_REFS, t); }
+    bool getRefTorques(double *t) {
+        return get2V1DA(VOCAB_TORQUE, VOCAB_REFS, t);
+    }
 
     bool setRefTorques(const double *t)
     {
@@ -2315,11 +2324,13 @@ public:
         return true;
     }
 
-    bool getBemfParam(int j, double *t)
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, t); }
+    bool getBemfParam(int j, double *t) {
+        return get2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, t);
+    }
 
-    bool setBemfParam(int j, double v)
-    { return set2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, v); }
+    bool setBemfParam(int j, double v) {
+        return set2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, v);
+    }
 
     bool setMotorTorqueParams(int j, const MotorTorqueParameters params)
     {
@@ -2388,19 +2399,22 @@ public:
 
     bool getTorque(int j, double *t)
     {
-	return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t);
+        return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t);
     }
 
     bool getTorques(double *t)
     {
-	return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t);
+        return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t);
     }
 
-    bool getTorqueRange(int j, double *min, double* max)
-    { return get2V1I2D(VOCAB_TORQUE, VOCAB_RANGE, j, min, max); }
+    bool getTorqueRange(int j, double *min, double* max) {
+        return get2V1I2D(VOCAB_TORQUE, VOCAB_RANGE, j, min, max);
+    }
 
     bool getTorqueRanges(double *min, double *max)
-    { return get2V2DA(VOCAB_TORQUE, VOCAB_RANGES, min, max); }
+    {
+        return get2V2DA(VOCAB_TORQUE, VOCAB_RANGES, min, max);
+    }
 
     bool setTorquePids(const Pid *pids)
     {
@@ -2413,23 +2427,29 @@ public:
         return ret;
     }
 
-    bool setTorqueErrorLimit(int j, double limit)
-    { return set2V1I1D(VOCAB_TORQUE, VOCAB_LIM, j, limit); }
+    bool setTorqueErrorLimit(int j, double limit) {
+        return set2V1I1D(VOCAB_TORQUE, VOCAB_LIM, j, limit);
+    }
 
-    bool setTorqueErrorLimits(const double *limits)
-    { return set2V1DA(VOCAB_TORQUE, VOCAB_LIM, limits); }
+    bool setTorqueErrorLimits(const double *limits) {
+        return set2V1DA(VOCAB_TORQUE, VOCAB_LIM, limits);
+    }
 
-    bool getTorqueError(int j, double *err)
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_ERR, j, err); }
+    bool getTorqueError(int j, double *err) {
+        return get2V1I1D(VOCAB_TORQUE, VOCAB_ERR, j, err);
+    }
 
-    bool getTorqueErrors(double *errs)
-    { return get2V1DA(VOCAB_TORQUE, VOCAB_ERRS, errs); }
+    bool getTorqueErrors(double *errs) {
+        return get2V1DA(VOCAB_TORQUE, VOCAB_ERRS, errs);
+    }
 
-    bool getTorquePidOutput(int j, double *out)
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_OUTPUT, j, out); }
+    bool getTorquePidOutput(int j, double *out) {
+        return get2V1I1D(VOCAB_TORQUE, VOCAB_OUTPUT, j, out);
+    }
 
-    bool getTorquePidOutputs(double *out)
-    { return get2V1DA(VOCAB_TORQUE, VOCAB_OUTPUTS, out); }
+    bool getTorquePidOutputs(double *out) {
+        return get2V1DA(VOCAB_TORQUE, VOCAB_OUTPUTS, out);
+    }
 
     bool getTorquePid(int j, Pid *pid)
     {
@@ -2558,23 +2578,29 @@ public:
         return ret;
     }
 
-    bool getTorqueErrorLimit(int j, double *limit)
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_LIM, j, limit); }
+    bool getTorqueErrorLimit(int j, double *limit) {
+        return get2V1I1D(VOCAB_TORQUE, VOCAB_LIM, j, limit);
+    }
 
-    bool getTorqueErrorLimits(double *limits)
-    { return get2V1DA(VOCAB_TORQUE, VOCAB_LIM, limits); }
+    bool getTorqueErrorLimits(double *limits) {
+        return get2V1DA(VOCAB_TORQUE, VOCAB_LIM, limits);
+    }
 
-    bool resetTorquePid(int j)
-    { return set2V1I(VOCAB_TORQUE, VOCAB_RESET, j); }
+    bool resetTorquePid(int j) {
+        return set2V1I(VOCAB_TORQUE, VOCAB_RESET, j);
+    }
 
-    bool disableTorquePid(int j)
-    { return set2V1I(VOCAB_TORQUE, VOCAB_DISABLE, j);}
+    bool disableTorquePid(int j) {
+        return set2V1I(VOCAB_TORQUE, VOCAB_DISABLE, j);
+    }
 
-    bool enableTorquePid(int j)
-    { return set2V1I(VOCAB_TORQUE, VOCAB_ENABLE, j); }
+    bool enableTorquePid(int j) {
+        return set2V1I(VOCAB_TORQUE, VOCAB_ENABLE, j);
+    }
 
-    bool setTorqueOffset(int j, double o)
-    { return set2V1I1D(VOCAB_TORQUE, VOCAB_ENABLE, j, o); }
+    bool setTorqueOffset(int j, double o) {
+        return set2V1I1D(VOCAB_TORQUE, VOCAB_ENABLE, j, o);
+    }
 
     // IControlMode
     bool setPositionMode(int j)
@@ -2628,17 +2654,17 @@ public:
     bool getControlMode(int j, int *mode)
     {
         bool ok = false;
-	Bottle cmd, resp;
-	cmd.addVocab(VOCAB_GET);
-	cmd.addVocab(VOCAB_ICONTROLMODE);
-	cmd.addVocab(VOCAB_CM_CONTROL_MODE);
-	cmd.addInt(j);
+        Bottle cmd, resp;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_ICONTROLMODE);
+        cmd.addVocab(VOCAB_CM_CONTROL_MODE);
+        cmd.addInt(j);
 
-	ok = rpc_p.write(cmd, resp);
-	if (CHECK_FAIL(ok, resp))
-	{
-	    *mode=resp.get(2).asVocab();
-	}
+        ok = rpc_p.write(cmd, resp);
+        if (CHECK_FAIL(ok, resp))
+        {
+            *mode=resp.get(2).asVocab();
+        }
 
         return ok;
     }
@@ -2646,33 +2672,33 @@ public:
     // IControlMode2
     bool getControlModes(const int n_joint, const int *joints, int *modes)
     {
-        bool ok = false;      
-	Bottle cmd, resp;
-	cmd.addVocab(VOCAB_GET);
-	cmd.addVocab(VOCAB_ICONTROLMODE);
-	cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
-	cmd.addInt(n_joint);
-	Bottle& l1 = cmd.addList();
-	for (int i = 0; i < n_joint; i++)
-	    l1.addInt(joints[i]);
+        bool ok = false;
+        Bottle cmd, resp;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_ICONTROLMODE);
+        cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
+        cmd.addInt(n_joint);
+        Bottle& l1 = cmd.addList();
+        for (int i = 0; i < n_joint; i++)
+            l1.addInt(joints[i]);
 
-	ok = rpc_p.write(cmd, resp);
+        ok = rpc_p.write(cmd, resp);
 
-	if (CHECK_FAIL(ok, resp))
-	{
-	    Bottle& l = *(resp.get(2).asList());
-	    if (&l == 0)
-		return false;
+        if (CHECK_FAIL(ok, resp))
+        {
+            Bottle& l = *(resp.get(2).asList());
+            if (&l == 0)
+                return false;
 
-	    if (n_joint != l.size())
-	    {
-		printf("getControlModes group received an answer of wrong lenght. expected %d, actual size is %d", n_joint, l.size());
-		return false;
-	    }
+            if (n_joint != l.size())
+            {
+                printf("getControlModes group received an answer of wrong lenght. expected %d, actual size is %d", n_joint, l.size());
+                return false;
+            }
 
-	    for (int i = 0; i < n_joint; i++)
-		modes[i] = l.get(i).asInt();
-	}
+            for (int i = 0; i < n_joint; i++)
+                modes[i] = l.get(i).asInt();
+        }
         return ok;
     }
 
@@ -2680,23 +2706,23 @@ public:
     bool getControlModes(int *modes)
     {
         bool ok = false;
-	if (!isLive()) return false;
-	Bottle cmd, resp;
-	cmd.addVocab(VOCAB_GET);
-	cmd.addVocab(VOCAB_ICONTROLMODE);
-	cmd.addVocab(VOCAB_CM_CONTROL_MODES);
+        if (!isLive()) return false;
+        Bottle cmd, resp;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_ICONTROLMODE);
+        cmd.addVocab(VOCAB_CM_CONTROL_MODES);
 
-	ok = rpc_p.write(cmd, resp);
-	if (CHECK_FAIL(ok, resp)) {
-	    Bottle& l = *(resp.get(2).asList());
-	    if (&l == 0)
-		return false;
-	    int njs = l.size();
-	    YARP_ASSERT (nj == njs);
-	    for (int i = 0; i < nj; i++)
-		modes[i] = l.get(i).asInt();
-	    return true;
-	}
+        ok = rpc_p.write(cmd, resp);
+        if (CHECK_FAIL(ok, resp)) {
+            Bottle& l = *(resp.get(2).asList());
+            if (&l == 0)
+                return false;
+            int njs = l.size();
+            YARP_ASSERT (nj == njs);
+            for (int i = 0; i < nj; i++)
+                modes[i] = l.get(i).asInt();
+            return true;
+        }
         return ok;
     }
 
@@ -2934,103 +2960,102 @@ public:
     bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
     {
         bool ok = false;
-	Bottle cmd, response;
+        Bottle cmd, response;
 
-	if (!isLive()) return false;
+        if (!isLive()) return false;
 
-	cmd.addVocab(VOCAB_GET);
-	cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
-	cmd.addVocab(VOCAB_INTERACTION_MODE);
-	cmd.addInt(axis);
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+        cmd.addVocab(VOCAB_INTERACTION_MODE);
+        cmd.addInt(axis);
 
-	ok = rpc_p.write(cmd, response);
+        ok = rpc_p.write(cmd, response);
 
-	if (CHECK_FAIL(ok, response))
-	{
-	    YARP_ASSERT (response.size()>=1);
-	    *mode = (InteractionModeEnum) response.get(0).asVocab();
-	}
+        if (CHECK_FAIL(ok, response))
+        {
+            YARP_ASSERT (response.size()>=1);
+            *mode = (InteractionModeEnum) response.get(0).asVocab();
+        }
         return ok;
     }
 
     bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
     {
         bool ok = false;
-	Bottle cmd, response;
-	if (!isLive()) return false;
+        Bottle cmd, response;
+        if (!isLive()) return false;
 
-	cmd.addVocab(VOCAB_GET);
-	cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
-	cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+        cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
 
-	cmd.addInt(n_joints);
+        cmd.addInt(n_joints);
 
-	Bottle& l1 = cmd.addList();
-	for (int i = 0; i < n_joints; i++)
-	    l1.addInt(joints[i]);
+        Bottle& l1 = cmd.addList();
+        for (int i = 0; i < n_joints; i++)
+            l1.addInt(joints[i]);
 
-	ok = rpc_p.write(cmd, response);
+        ok = rpc_p.write(cmd, response);
 
-	if (CHECK_FAIL(ok, response))
-	{
-	    int i;
-	    Bottle& list = *(response.get(0).asList());
-	    YARP_ASSERT(list.size() >= n_joints)
+        if (CHECK_FAIL(ok, response))
+        {
+            int i;
+            Bottle& list = *(response.get(0).asList());
+            YARP_ASSERT(list.size() >= n_joints)
 
-	    if (list.size() != n_joints)
-	    {
-		fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
-		return false;
-	    }
-	    else
-	    {
-		for (i = 0; i < n_joints; i++)
-		{
-		    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
-		}
-		return true;
-	    }
-	}
+            if (list.size() != n_joints)
+            {
+                fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
+                return false;
+            }
+            else
+            {
+                for (i = 0; i < n_joints; i++)
+                {
+                    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
+                }
+                return true;
+            }
+        }
         return ok;
     }
 
     bool getInteractionModes(yarp::dev::InteractionModeEnum* modes)
     {
-	bool ret = false;
-	Bottle cmd, response;
-	if (!isLive()) return false;
+        bool ret = false;
+        Bottle cmd, response;
+        if (!isLive()) return false;
 
-	cmd.addVocab(VOCAB_GET);
-	cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
-	cmd.addVocab(VOCAB_INTERACTION_MODES);
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+        cmd.addVocab(VOCAB_INTERACTION_MODES);
 
-	bool ok = rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
 
-	if (CHECK_FAIL(ok, response))
-	{
-	    int i;
-	    Bottle& list = *(response.get(0).asList());
-	    YARP_ASSERT(list.size() >= nj)
+        if (CHECK_FAIL(ok, response))
+        {
+            int i;
+            Bottle& list = *(response.get(0).asList());
+            YARP_ASSERT(list.size() >= nj)
 
-	    if (list.size() != nj)
-	    {
-		fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
-		return false;
-
-	    }
-	    else
-	    {
-		for (i = 0; i < nj; i++)
-		{
-		    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
-		}
-		ret = true;
-	    }
-	}
-	else
-	{
-	    ret = false;
-	}
+            if (list.size() != nj)
+            {
+                fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
+                return false;
+            }
+            else
+            {
+                for (i = 0; i < nj; i++)
+                {
+                    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
+                }
+                ret = true;
+            }
+        }
+        else
+        {
+            ret = false;
+        }
         return ret;
     }
 
@@ -3172,23 +3197,25 @@ public:
 
     virtual bool getOutput(int j, double *out)
     {
-	// both iOpenLoop and iPid getOutputs will pass here and use the VOCAB_OPENLOOP_INTERFACE
-	Bottle cmd, response;
-	cmd.addVocab(VOCAB_GET);
-//        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
-	cmd.addVocab(VOCAB_OUTPUT);
-	cmd.addInt(j);
-	bool ok = rpc_p.write(cmd, response);
+        // both iOpenLoop and iPid getOutputs will pass here and use the VOCAB_OPENLOOP_INTERFACE
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+    //        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
+        cmd.addVocab(VOCAB_OUTPUT);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
 
-	if (CHECK_FAIL(ok, response))
-	{
-	    *out = response.get(2).asDouble();
+        if (CHECK_FAIL(ok, response))
+        {
+            *out = response.get(2).asDouble();
 
-	    getTimeStamp(response, lastStamp);
-	    return true;
-	}
-	else
-	    return false;
+            getTimeStamp(response, lastStamp);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
@@ -3198,7 +3225,7 @@ public:
      */
     virtual bool getOutputs(double *outs)
     {
-	return get1VDA(VOCAB_OUTPUTS, outs);
+        return get1VDA(VOCAB_OUTPUTS, outs);
     }
 };
 
@@ -3209,4 +3236,3 @@ yarp::dev::DriverCreator *createClientControlBoard() {
         "controlboard",
         "yarp::dev::ClientControlBoard");
 }
-

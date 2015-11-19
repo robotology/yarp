@@ -102,5 +102,3 @@ void DeviceResponder::makeUsage() {
     addUsage("[help]", "list usage");
     addUsage("[help] [more]", "list usage with some comments");
 }
-
-

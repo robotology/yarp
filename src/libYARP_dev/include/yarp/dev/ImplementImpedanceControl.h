@@ -19,7 +19,7 @@ namespace yarp {
     }
 }
 
-class YARP_dev_API yarp::dev::ImplementImpedanceControl: public IImpedanceControl 
+class YARP_dev_API yarp::dev::ImplementImpedanceControl: public IImpedanceControl
 {
 protected:
     yarp::dev::IImpedanceControlRaw *iImpedanceRaw;
@@ -32,7 +32,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos, const double *nw);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -41,25 +41,23 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementImpedanceControl(yarp::dev::IImpedanceControlRaw *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
     virtual ~ImplementImpedanceControl();
 
     virtual bool getAxes(int *ax);
-	virtual bool getImpedance(int j, double *stiffness, double *damping);
+    virtual bool getImpedance(int j, double *stiffness, double *damping);
     virtual bool setImpedance(int j, double  stiffness, double  damping);
-	virtual bool setImpedanceOffset(int j, double offset);
-	virtual bool getImpedanceOffset(int j, double* offset);
-	virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
+    virtual bool setImpedanceOffset(int j, double offset);
+    virtual bool getImpedanceOffset(int j, double* offset);
+    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
 
 };
 
 #endif
-
-

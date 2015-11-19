@@ -19,13 +19,13 @@ namespace yarp {
     }
 }
 
-class YARP_dev_API yarp::dev::ImplementTorqueControl: public ITorqueControl 
+class YARP_dev_API yarp::dev::ImplementTorqueControl: public ITorqueControl
 {
 protected:
     yarp::dev::ITorqueControlRaw *iTorqueRaw;
     void *helper;
     double *temp;
-	double *temp2;
+    double *temp2;
     int    *temp_int;
     Pid *tmpPids;
 
@@ -38,7 +38,7 @@ protected:
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
     bool initialize (int size, const int *amap, const double *enc, const double *zos, const double *nw);
-          
+
     /**
      * Clean up internal data and memory.
      * @return true if uninitialization is executed, false otherwise.
@@ -47,11 +47,11 @@ protected:
 
 public:
     /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this 
+     * @param y is the pointer to the class instance inheriting from this
      *  implementation.
      */
     ImplementTorqueControl(yarp::dev::ITorqueControlRaw *y);
-        
+
     /**
      * Destructor. Perform uninitialize if needed.
      */
@@ -91,5 +91,3 @@ public:
 };
 
 #endif
-
-

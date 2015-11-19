@@ -4,7 +4,7 @@
 //   # its linear and angular parts.
 //   Vector3  force
 //   Vector3  torque
-//   
+//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 

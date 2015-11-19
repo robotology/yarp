@@ -40,20 +40,20 @@ public:
     virtual bool getAxes(int *ax) = 0;
 
     /**
-     * Reset encoder, single joint. Set the encoder value to zero 
+     * Reset encoder, single joint. Set the encoder value to zero
      * @param j encoder number
      * @return true/false
      */
     virtual bool resetEncoderRaw(int j)=0;
 
     /**
-     * Reset encoders. Set the encoders value to zero 
+     * Reset encoders. Set the encoders value to zero
      * @return true/false
      */
     virtual bool resetEncodersRaw()=0;
 
     /**
-     * Set the value of the encoder for a given joint. 
+     * Set the value of the encoder for a given joint.
      * @param j encoder number
      * @param val new value
      * @return true/false
@@ -96,7 +96,7 @@ public:
      * @return guess what? (true/false on success or failure).
      */
     virtual bool getEncoderSpeedsRaw(double *spds)=0;
-    
+
     /**
      * Read the instantaneous acceleration of an axis.
      * @param j axis number
@@ -107,7 +107,7 @@ public:
     /**
      * Read the instantaneous acceleration of all axes.
      * @param accs pointer to the array that will contain the output
-     * @return true if all goes well, false if anything bad happens. 
+     * @return true if all goes well, false if anything bad happens.
      */
     virtual bool getEncoderAccelerationsRaw(double *accs)=0;
 };
@@ -133,20 +133,20 @@ public:
     virtual bool getAxes(int *ax) = 0;
 
     /**
-     * Reset encoder, single joint. Set the encoder value to zero 
+     * Reset encoder, single joint. Set the encoder value to zero
      * @param j encoder number
      * @return true/false
      */
     virtual bool resetEncoder(int j)=0;
 
     /**
-     * Reset encoders. Set the encoders value to zero 
+     * Reset encoders. Set the encoders value to zero
      * @return true/false
      */
     virtual bool resetEncoders()=0;
 
     /**
-     * Set the value of the encoder for a given joint. 
+     * Set the value of the encoder for a given joint.
      * @param j encoder number
      * @param val new value
      * @return true/false
@@ -189,7 +189,7 @@ public:
      * @return guess what? (true/false on success or failure).
      */
     virtual bool getEncoderSpeeds(double *spds)=0;
-    
+
     /**
      * Read the instantaneous acceleration of an axis.
      * @param j axis number
@@ -200,7 +200,7 @@ public:
     /**
      * Read the instantaneous acceleration of all axes.
      * @param accs pointer to the array that will contain the output
-     * @return true if all goes well, false if anything bad happens. 
+     * @return true if all goes well, false if anything bad happens.
      */
     virtual bool getEncoderAccelerations(double *accs)=0;
 };
@@ -218,5 +218,3 @@ public:
 #define VOCAB_ENCODER_ACCELERATIONS VOCAB4('e','a','c','s')
 
 #endif
-
-

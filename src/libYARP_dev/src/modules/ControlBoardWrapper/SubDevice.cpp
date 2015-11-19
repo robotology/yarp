@@ -195,7 +195,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if ((imotor==0) && (_subDevVerbose))
         yWarning() << "controlBoardWrapper:  Warning iMotor not valid interface";
-  
+
     if ((iVar == 0) && (_subDevVerbose))
         yWarning() << "controlBoardWrapper:  Warning iVar not valid interface";
 

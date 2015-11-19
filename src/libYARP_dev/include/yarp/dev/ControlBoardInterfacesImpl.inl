@@ -17,21 +17,21 @@
 
 using namespace yarp::dev;
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementPositionControl<DERIVED, IMPLEMENT>::ImplementPositionControl(DERIVED *y)
 {
     iPosition = dynamic_cast<IPositionControlRaw *> (y);
-    helper = 0;        
+    helper = 0;
     temp=0;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementPositionControl<DERIVED, IMPLEMENT>::~ImplementPositionControl()
 {
     uninitialize();
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::positionMove(int j, double v)
 {
     int k;
@@ -40,7 +40,7 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::positionMove(int j, double v)
     return iPosition->positionMoveRaw(k, enc);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::setPositionMode()
 {
     if (helper==0) return false;
@@ -48,47 +48,47 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::setPositionMode()
     return true;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::positionMove(const double *refs)
 {
     castToMapper(helper)->posA2E(refs, temp);
-    
+
     return iPosition->positionMoveRaw(temp);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::relativeMove(int j, double delta)
 {
     int k;
     double enc;
     castToMapper(helper)->velA2E(delta, j, enc, k);
-    
+
     return iPosition->relativeMoveRaw(k,enc);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::relativeMove(const double *deltas)
 {
     castToMapper(helper)->velA2E(deltas, temp);
-    
+
     return iPosition->relativeMoveRaw(temp);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::checkMotionDone(int j, bool *flag)
 {
     int k=castToMapper(helper)->toHw(j);
-    
+
     return iPosition->checkMotionDoneRaw(k,flag);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::checkMotionDone(bool *flag)
 {
     return iPosition->checkMotionDoneRaw(flag);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::setRefSpeed(int j, double sp)
 {
     int k;
@@ -97,47 +97,47 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::setRefSpeed(int j, double sp)
     return iPosition->setRefSpeedRaw(k, enc);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::setRefSpeeds(const double *spds)
 {
     castToMapper(helper)->velA2E_abs(spds, temp);
-    
+
     return iPosition->setRefSpeedsRaw(temp);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::setRefAcceleration(int j, double acc)
 {
     int k;
     double enc;
-    
+
     castToMapper(helper)->accA2E_abs(acc, j, enc, k);
     return iPosition->setRefAccelerationRaw(k, enc);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::setRefAccelerations(const double *accs)
 {
     castToMapper(helper)->accA2E_abs(accs, temp);
-    
+
     return iPosition->setRefAccelerationsRaw(temp);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefSpeed(int j, double *ref)
 {
     int k;
     double enc;
     k=castToMapper(helper)->toHw(j);
-    
+
     bool ret = iPosition->getRefSpeedRaw(k, &enc);
-    
+
     *ref=(castToMapper(helper)->velE2A_abs(enc, k));
-    
+
     return ret;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefSpeeds(double *spds)
 {
     bool ret = iPosition->getRefSpeedsRaw(temp);
@@ -145,7 +145,7 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefSpeeds(double *spds)
     return ret;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefAccelerations(double *accs)
 {
     bool ret=iPosition->getRefAccelerationsRaw(temp);
@@ -153,48 +153,48 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefAccelerations(double *a
     return ret;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefAcceleration(int j, double *acc)
 {
     int k;
     double enc;
     k=castToMapper(helper)->toHw(j);
     bool ret = iPosition->getRefAccelerationRaw(k, &enc);
-    
+
     *acc=castToMapper(helper)->accE2A_abs(enc, k);
-    
+
     return ret;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::stop(int j)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
-    
+
     return iPosition->stopRaw(k);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::stop()
 {
     return iPosition->stopRaw();
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::getAxes(int *axis)
 {
     (*axis)=castToMapper(helper)->axes();
-    
-    return true;     
+
+    return true;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     yAssert (helper != 0);
     temp=new double [size];
@@ -207,7 +207,7 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
 * Clean up internal data and memory.
 * @return true if uninitialization is executed, false otherwise.
 */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
@@ -226,7 +226,7 @@ template <class DERIVED, class IMPLEMENT> ImplementVelocityControl<DERIVED, IMPL
 ImplementVelocityControl(DERIVED *y)
 {
     iVelocity = dynamic_cast<IVelocityControlRaw *> (y);
-    helper = 0;        
+    helper = 0;
     temp=0;
 }
 
@@ -236,12 +236,12 @@ template <class DERIVED, class IMPLEMENT> ImplementVelocityControl<DERIVED, IMPL
     uninitialize();
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     yAssert (helper != 0);
     temp=new double [size];
@@ -254,7 +254,7 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
 * Clean up internal data and memory.
 * @return true if uninitialization is executed, false otherwise.
 */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
@@ -297,25 +297,25 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>::velocityMove(const double *sp
     return iVelocity->velocityMoveRaw(temp);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::setRefAcceleration(int j, double acc)
 {
     int k;
     double enc;
-    
+
     castToMapper(helper)->accA2E_abs(acc, j, enc, k);
     return iVelocity->setRefAccelerationRaw(k, enc);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::setRefAccelerations(const double *accs)
 {
     castToMapper(helper)->accA2E_abs(accs, temp);
-    
+
     return iVelocity->setRefAccelerationsRaw(temp);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::getRefAccelerations(double *accs)
 {
     bool ret=iVelocity->getRefAccelerationsRaw(temp);
@@ -323,29 +323,29 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>::getRefAccelerations(double *a
     return ret;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::getRefAcceleration(int j, double *acc)
 {
     int k;
     double enc;
     k=castToMapper(helper)->toHw(j);
     bool ret = iVelocity->getRefAccelerationRaw(k, &enc);
-    
+
     *acc=castToMapper(helper)->accE2A_abs(enc, k);
-    
+
     return ret;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::stop(int j)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
-    
+
     return iVelocity->stopRaw(k);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::stop()
 {
     return iVelocity->stopRaw();
@@ -357,7 +357,7 @@ template <class DERIVED, class IMPLEMENT> ImplementPidControl<DERIVED, IMPLEMENT
 ImplementPidControl(DERIVED *y)
 {
     iPid= dynamic_cast<IPidControlRaw *> (y);
-    helper = 0;        
+    helper = 0;
     temp=0;
     tmpPids=0;
 }
@@ -368,19 +368,19 @@ template <class DERIVED, class IMPLEMENT> ImplementPidControl<DERIVED, IMPLEMENT
     uninitialize();
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPidControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     yAssert (helper != 0);
     temp=new double [size];
     yAssert (temp != 0);
     tmpPids=new Pid[size];
     yAssert (tmpPids != 0);
-    
+
     return true;
 }
 
@@ -388,12 +388,12 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *
 * Clean up internal data and memory.
 * @return true if uninitialization is executed, false otherwise.
 */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementPidControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
         delete castToMapper(helper);
-    helper=0;    
+    helper=0;
 
     checkAndDestroy(tmpPids);
     checkAndDestroy(temp);
@@ -419,7 +419,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::setPids(const Pid *pids)
         tmp=castToMapper(helper)->toHw(j);
         tmpPids[tmp]=pids[j];
     }
-    
+
     return iPid->setPidsRaw(tmpPids);
 }
 
@@ -447,7 +447,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::setErrorLimit(int j, double limit)
     int k;
     double enc;
     castToMapper(helper)->posA2E(limit, j, enc, k);
-    
+
     return iPid->setErrorLimitRaw(k, enc);
 }
 
@@ -459,7 +459,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::setErrorLimits(const double *limit
     return iPid->setErrorLimitsRaw(temp);
 }
 
- 
+
 template<class DERIVED, class IMPLEMENT>
 bool ImplementPidControl<DERIVED, IMPLEMENT>::getError(int j, double *err)
 {
@@ -524,7 +524,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::getPids(Pid *pids)
 
     for(int j=0;j<nj;j++)
         pids[castToMapper(helper)->toUser(j)]=tmpPids[j];
-    
+
     return ret;
 }
 
@@ -538,7 +538,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::getReference(int j, double *ref)
     k=castToMapper(helper)->toHw(j);
 
     ret=iPid->getReferenceRaw(k, &enc);
-    
+
     *ref=castToMapper(helper)->posE2A(enc, k);
     return ret;
 }
@@ -563,7 +563,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::getErrorLimit(int j, double *ref)
     k=castToMapper(helper)->toHw(j);
 
     ret=iPid->getErrorLimitRaw(k, &enc);
-    
+
     *ref=castToMapper(helper)->posE2A(enc, k);
     return ret;
 }
@@ -578,7 +578,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::getErrorLimits(double *refs)
     return ret;
 }
 
- 
+
 template<class DERIVED, class IMPLEMENT>
 bool ImplementPidControl<DERIVED, IMPLEMENT>::resetPid(int j)
 {
@@ -617,26 +617,26 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::setOffset(int j, double v)
 
 ////////////////////////
 // Encoder Interface Implementation
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementEncoders<DERIVED, IMPLEMENT>::ImplementEncoders(DERIVED *y)
 {
     iEncoders= dynamic_cast<IEncodersRaw *> (y);
-    helper = 0;        
+    helper = 0;
     temp=0;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementEncoders<DERIVED, IMPLEMENT>::~ImplementEncoders()
 {
     uninitialize();
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementEncoders<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     yAssert (helper != 0);
     temp=new double [size];
@@ -648,7 +648,7 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>:: initialize (int size, const int *am
 * Clean up internal data and memory.
 * @return true if uninitialization is executed, false otherwise.
 */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementEncoders<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
@@ -656,7 +656,7 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>::uninitialize ()
         delete castToMapper(helper);
         helper=0;
     }
-    
+
     checkAndDestroy(temp);
 
     return true;
@@ -716,16 +716,16 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>::getEncoder(int j, double *v)
     ret=iEncoders->getEncoderRaw(k, &enc);
 
     *v=castToMapper(helper)->posE2A(enc, k);
-    
+
     return ret;
 }
-    
+
 template <class DERIVED, class IMPLEMENT>
 bool ImplementEncoders<DERIVED, IMPLEMENT>::getEncoders(double *v)
 {
     bool ret;
     castToMapper(helper)->axes();
-    
+
     ret=iEncoders->getEncodersRaw(temp);
 
     castToMapper(helper)->posE2A(temp, v);
@@ -745,10 +745,10 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>::getEncoderSpeed(int j, double *v)
     ret=iEncoders->getEncoderSpeedRaw(k, &enc);
 
     *v=castToMapper(helper)->velE2A(enc, k);
-    
+
     return ret;
 }
-    
+
 template <class DERIVED, class IMPLEMENT>
 bool ImplementEncoders<DERIVED, IMPLEMENT>::getEncoderSpeeds(double *v)
 {
@@ -756,7 +756,7 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>::getEncoderSpeeds(double *v)
     ret=iEncoders->getEncoderSpeedsRaw(temp);
 
     castToMapper(helper)->velE2A(temp, v);
-    
+
     return ret;
 }
 
@@ -772,10 +772,10 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>::getEncoderAcceleration(int j, double
     ret=iEncoders->getEncoderAccelerationRaw(k, &enc);
 
     *v=castToMapper(helper)->accE2A(enc, k);
-    
+
     return ret;
 }
-    
+
 template <class DERIVED, class IMPLEMENT>
 bool ImplementEncoders<DERIVED, IMPLEMENT>::getEncoderAccelerations(double *v)
 {
@@ -783,32 +783,32 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>::getEncoderAccelerations(double *v)
     ret=iEncoders->getEncoderAccelerationsRaw(temp);
 
     castToMapper(helper)->accE2A(temp, v);
-    
+
     return ret;
 }
 
 ////////////////////////
 // ControlCalibration Interface Implementation
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementControlCalibration<DERIVED, IMPLEMENT>::ImplementControlCalibration(DERIVED *y)
 {
     iCalibrate= dynamic_cast<IControlCalibrationRaw *> (y);
-    helper = 0;        
+    helper = 0;
     temp=0;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementControlCalibration<DERIVED, IMPLEMENT>::~ImplementControlCalibration()
 {
     uninitialize();
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     yAssert (helper != 0);
     temp=new double [size];
@@ -820,7 +820,7 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>:: initialize (int size, con
 * Clean up internal data and memory.
 * @return true if uninitialization is executed, false otherwise.
 */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
@@ -828,21 +828,21 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::uninitialize ()
         delete castToMapper(helper);
         helper=0;
     }
-    
+
     checkAndDestroy(temp);
 
     return true;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int j, double p)
 {
     int k=castToMapper(helper)->toHw(j);
 
     return iCalibrate->calibrateRaw(k, p);
 }
- 
-template <class DERIVED, class IMPLEMENT> 
+
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration<DERIVED, IMPLEMENT>::done(int j)
 {
     int k=castToMapper(helper)->toHw(j);
@@ -854,26 +854,26 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::done(int j)
 
 ////////////////////////
 // ControlCalibration2 Interface Implementation
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementControlCalibration2<DERIVED, IMPLEMENT>::ImplementControlCalibration2(DERIVED *y)
 {
     iCalibrate= dynamic_cast<IControlCalibration2Raw *> (y);
-    helper = 0;        
+    helper = 0;
     temp=0;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementControlCalibration2<DERIVED, IMPLEMENT>::~ImplementControlCalibration2()
 {
     uninitialize();
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration2<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     yAssert (helper != 0);
     temp=new double [size];
@@ -885,7 +885,7 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>:: initialize (int size, co
 * Clean up internal data and memory.
 * @return true if uninitialization is executed, false otherwise.
 */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
@@ -893,13 +893,13 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::uninitialize ()
         delete castToMapper(helper);
         helper=0;
     }
-    
+
     checkAndDestroy(temp);
 
     return true;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::calibrate2(int axis, unsigned int type, double p1, double p2, double p3)
 {
     int k=castToMapper(helper)->toHw(axis);
@@ -915,7 +915,7 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::setCalibrationParameters(
     return iCalibrate->setCalibrationParametersRaw(k, params);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::done(int j)
 {
     int k=castToMapper(helper)->toHw(j);
@@ -925,26 +925,26 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::done(int j)
 
 
 ///////////////// ImplementControlLimits
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementControlLimits<DERIVED, IMPLEMENT>::ImplementControlLimits(DERIVED *y)
 {
     iLimits= dynamic_cast<IControlLimitsRaw *> (y);
-    helper = 0;        
+    helper = 0;
     temp=0;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementControlLimits<DERIVED, IMPLEMENT>::~ImplementControlLimits()
 {
     uninitialize();
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlLimits<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
     if (helper!=0)
         return false;
-    
+
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
@@ -958,7 +958,7 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>:: initialize (int size, const in
 * Clean up internal data and memory.
 * @return true if uninitialization is executed, false otherwise.
 */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlLimits<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
@@ -970,7 +970,7 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::uninitialize ()
     return true;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlLimits<DERIVED, IMPLEMENT>::setLimits(int j, double min, double max)
 {
     double minEnc=0;
@@ -991,7 +991,7 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::setLimits(int j, double min, do
     return iLimits->setLimitsRaw(k, minEnc, maxEnc);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementControlLimits<DERIVED, IMPLEMENT>::getLimits(int j, double *min, double *max)
 {
     double minEnc=0;
@@ -1014,28 +1014,28 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::getLimits(int j, double *min, d
 }
 
 //////////////////////////////
-///////////////// Implement 
-template <class DERIVED, class IMPLEMENT> 
+///////////////// Implement
+template <class DERIVED, class IMPLEMENT>
 ImplementAmplifierControl<DERIVED, IMPLEMENT>::ImplementAmplifierControl(DERIVED *y)
 {
     iAmplifier= dynamic_cast<IAmplifierControlRaw *> (y);
-    helper = 0;        
+    helper = 0;
     dTemp=0;
     iTemp=0;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 ImplementAmplifierControl<DERIVED, IMPLEMENT>::~ImplementAmplifierControl()
 {
     uninitialize();
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
     if (helper!=0)
         return false;
-    
+
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
@@ -1044,7 +1044,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const
     yAssert (dTemp != 0);
     iTemp=new int[size];
     yAssert (iTemp != 0);
-    
+
     return true;
 }
 
@@ -1052,22 +1052,22 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const
 * Clean up internal data and memory.
 * @return true if uninitialization is executed, false otherwise.
 */
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
         delete castToMapper(helper);
-    
+
     delete [] dTemp;
     delete [] iTemp;
-    
+
     helper=0;
     dTemp=0;
     iTemp=0;
     return true;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::enableAmp(int j)
 {
     int k=castToMapper(helper)->toHw(j);
@@ -1075,7 +1075,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::enableAmp(int j)
     return iAmplifier->enableAmpRaw(k);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::disableAmp(int j)
 {
     int k=castToMapper(helper)->toHw(j);
@@ -1083,7 +1083,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::disableAmp(int j)
     return iAmplifier->disableAmpRaw(k);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrents(double *currs)
 {
     bool ret=iAmplifier->getCurrentsRaw(dTemp);
@@ -1093,7 +1093,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrents(double *currs)
     return ret;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrent(int j, double *c)
 {
     int k=castToMapper(helper)->toHw(j);
@@ -1103,7 +1103,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrent(int j, double *c)
     return ret;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setMaxCurrent(int j, double v)
 {
     int k=castToMapper(helper)->toHw(j);
@@ -1111,7 +1111,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setMaxCurrent(int j, double 
     return iAmplifier->setMaxCurrentRaw(k, v);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getMaxCurrent(int j, double* v)
 {
     int k=castToMapper(helper)->toHw(j);
@@ -1119,7 +1119,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getMaxCurrent(int j, double*
     return iAmplifier->getMaxCurrentRaw(k, v);
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getAmpStatus(int *st)
 {
     bool ret=iAmplifier->getAmpStatusRaw(iTemp);
@@ -1129,7 +1129,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getAmpStatus(int *st)
     return ret;
 }
 
-template <class DERIVED, class IMPLEMENT> 
+template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getAmpStatus(int k, int *st)
 {
     int j=castToMapper(helper)->toHw(k);
@@ -1137,6 +1137,3 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getAmpStatus(int k, int *st)
 
     return ret;
 }
-
-/////////////////////////////
-

@@ -32,7 +32,7 @@ bool ImplementMotor:: initialize (int size, const int *amap)
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, 0, 0, 0));
     yAssert (helper != 0);
     temp1=new double [size];
@@ -53,7 +53,7 @@ bool ImplementMotor::uninitialize ()
         delete castToMapper(helper);
         helper=0;
     }
-    
+
     checkAndDestroy(temp1);
     checkAndDestroy(temp2);
 
@@ -139,7 +139,7 @@ bool ImplementMotor::getTemperatures(double *v)
 {
     bool ret;
     castToMapper(helper)->axes();
-    
+
     ret=imotor->getTemperaturesRaw(v);
 
     return ret;

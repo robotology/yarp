@@ -9,9 +9,9 @@
 
 // This is a trivial file.
 // When device modules are compiled, and configured to be automatically
-// loaded, all device code is moved to the "yarpmod" library in order to 
+// loaded, all device code is moved to the "yarpmod" library in order to
 // avoid a circular dependency which can occasionally cause trouble.
 
 extern "C" int libYARP_dev_dummmy() {
-	return 1;
+    return 1;
 }

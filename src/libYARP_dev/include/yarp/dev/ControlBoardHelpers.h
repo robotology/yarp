@@ -15,7 +15,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-/* the control command message type 
+/* the control command message type
  * head is a Bottle which contains the specification of the message type
  * body is a Vector which move the robot accordingly
  */

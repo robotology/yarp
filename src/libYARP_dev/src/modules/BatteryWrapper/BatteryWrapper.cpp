@@ -254,5 +254,3 @@ bool BatteryWrapper::close()
     detachAll();
     return true;
 }
-
-// eof

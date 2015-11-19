@@ -54,7 +54,7 @@ public:
      * @return number of channels (0 in case of errors).
      */
     virtual int getChannels()=0;
-    
+
     /**
      * Set a vector of torque values for virtual sensor
      * @param measure a vector containing the sensor's last readings.
@@ -66,4 +66,3 @@ public:
 };
 
 #endif
-//

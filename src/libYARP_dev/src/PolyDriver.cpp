@@ -304,6 +304,3 @@ bool PolyDriver::give(DeviceDriver *dd, bool own) {
     }
     return true;
 }
-
-
-

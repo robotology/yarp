@@ -39,7 +39,7 @@ bool StreamingMessagesParser::initialize()
     stream_nJoints=0;
     if (stream_IPosCtrl)
         stream_IPosCtrl->getAxes(&stream_nJoints);
-    
+
     return true;
 }
 
@@ -160,7 +160,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
             }
         }
         break;
-        
+
         case VOCAB_TORQUES_DIRECT:
         {
             if (stream_ITorque)
@@ -171,7 +171,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
             }
         }
         break;
-        
+
         case VOCAB_TORQUES_DIRECTS:
         {
             if (stream_ITorque)
@@ -273,5 +273,3 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
             break;
         }
 }
-
-

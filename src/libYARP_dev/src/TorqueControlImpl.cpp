@@ -4,7 +4,7 @@
  * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- * 
+ *
  */
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
@@ -32,7 +32,7 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw));
     yAssert (helper != 0);
     temp=new double [size];
@@ -100,14 +100,14 @@ bool ImplementTorqueControl::setBemfParam(int j, double bemf)
     return ret;
 }
 
-bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params) 
+bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
     return iTorqueRaw->setMotorTorqueParamsRaw(k, params);
 }
 
-bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params) 
+bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
 {
   int k=castToMapper(helper)->toHw(j);
   return iTorqueRaw->getMotorTorqueParamsRaw(k, params);
@@ -190,7 +190,7 @@ bool ImplementTorqueControl::setTorquePids(const Pid *pids)
         tmp=castToMapper(helper)->toHw(j);
         tmpPids[tmp]=pids[j];
     }
-    
+
     return iTorqueRaw->setTorquePidsRaw(tmpPids);
 }
 
@@ -232,7 +232,7 @@ bool ImplementTorqueControl::getTorqueErrors(double *errs)
     castToMapper(helper)->trqS2N(temp, errs);
     return ret;
 }
-    
+
 bool ImplementTorqueControl::getTorquePidOutput(int j, double *out)
 {
     int k=castToMapper(helper)->toHw(j);
@@ -277,19 +277,19 @@ bool ImplementTorqueControl::getTorqueErrorLimits(double *limits)
 
 bool ImplementTorqueControl::resetTorquePid(int j)
 {
-    int k=castToMapper(helper)->toHw(j);    
+    int k=castToMapper(helper)->toHw(j);
     return iTorqueRaw->resetTorquePidRaw(k);
 }
 
 bool ImplementTorqueControl::disableTorquePid(int j)
 {
-    int k=castToMapper(helper)->toHw(j);    
+    int k=castToMapper(helper)->toHw(j);
     return iTorqueRaw->disableTorquePidRaw(k);
 }
 
 bool ImplementTorqueControl::enableTorquePid(int j)
 {
-    int k=castToMapper(helper)->toHw(j);    
+    int k=castToMapper(helper)->toHw(j);
     return iTorqueRaw->enableTorquePidRaw(k);
 }
 bool ImplementTorqueControl::setTorqueOffset(int j, double v)
@@ -297,4 +297,3 @@ bool ImplementTorqueControl::setTorqueOffset(int j, double v)
     int k=castToMapper(helper)->toHw(j);
     return iTorqueRaw->setTorqueOffsetRaw(k, v);
 }
-

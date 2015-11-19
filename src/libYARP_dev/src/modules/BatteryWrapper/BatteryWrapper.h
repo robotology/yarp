@@ -88,7 +88,7 @@ private:
 
     bool initialize_YARP(yarp::os::Searchable &config);
     virtual bool read(yarp::os::ConnectionReader& connection);
-    
+
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };
 

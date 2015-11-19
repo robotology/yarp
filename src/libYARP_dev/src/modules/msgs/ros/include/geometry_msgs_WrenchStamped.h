@@ -3,7 +3,7 @@
 //   # A wrench with reference coordinate frame and timestamp
 //   Header header
 //   Wrench wrench
-//   
+//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 

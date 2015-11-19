@@ -27,7 +27,7 @@ namespace yarp{
  * Lets you make a bunch of devices as a group.
  *
  */
-class YARP_dev_API yarp::dev::DeviceGroup : public DeviceDriver, 
+class YARP_dev_API yarp::dev::DeviceGroup : public DeviceDriver,
                                             public IService {
 
 public:
@@ -39,7 +39,7 @@ public:
 
     virtual bool open(yarp::os::Searchable& config);
 
-    virtual bool close() { 
+    virtual bool close() {
         return closeMain();
     }
 

@@ -96,7 +96,7 @@ public:
     bool open(yarp::os::Searchable& config);
     bool close();
 
-    
+
     /* IPreciselyTimed methods */
     /**
     * Get the time stamp for the last read data

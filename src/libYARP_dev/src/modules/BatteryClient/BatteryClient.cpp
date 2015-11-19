@@ -170,7 +170,7 @@ void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &mi
 }
 
 bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
-{   
+{
     local.clear();
     remote.clear();
 

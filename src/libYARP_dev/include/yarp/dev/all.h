@@ -36,5 +36,3 @@
 #include<yarp/dev/Wrapper.h>
 
 #endif
-
-

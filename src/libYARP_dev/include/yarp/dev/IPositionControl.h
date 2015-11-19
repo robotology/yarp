@@ -60,7 +60,7 @@ public:
      */
     virtual bool positionMoveRaw(const double *refs)=0;
 
-    /** Set relative position. The command is relative to the 
+    /** Set relative position. The command is relative to the
      * current position of the axis.
      * @param j joint axis number
      * @param delta relative command
@@ -119,7 +119,7 @@ public:
      */
     virtual bool setRefAccelerationsRaw(const double *accs)=0;
 
-    /** Get reference speed for a joint. Returns the speed used to 
+    /** Get reference speed for a joint. Returns the speed used to
      * generate the trajectory profile.
      * @param j joint number
      * @param ref pointer to storage for the return value
@@ -133,7 +133,7 @@ public:
      */
     virtual bool getRefSpeedsRaw(double *spds)=0;
 
-    /** Get reference acceleration for a joint. Returns the acceleration used to 
+    /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
      * @param j joint number
      * @param acc pointer to storage for the return value
@@ -144,7 +144,7 @@ public:
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
-     * @return true/false on success or failure 
+     * @return true/false on success or failure
      */
     virtual bool getRefAccelerationsRaw(double *accs)=0;
 
@@ -154,7 +154,7 @@ public:
      */
     virtual bool stopRaw(int j)=0;
 
-    /** Stop motion, multiple joints 
+    /** Stop motion, multiple joints
      * @return true/false on success/failure
      */
     virtual bool stopRaw()=0;
@@ -202,7 +202,7 @@ public:
      */
     virtual bool positionMove(const double *refs)=0;
 
-    /** Set relative position. The command is relative to the 
+    /** Set relative position. The command is relative to the
      * current position of the axis.
      * @param j joint axis number
      * @param delta relative command
@@ -261,7 +261,7 @@ public:
      */
     virtual bool setRefAccelerations(const double *accs)=0;
 
-    /** Get reference speed for a joint. Returns the speed used to 
+    /** Get reference speed for a joint. Returns the speed used to
      * generate the trajectory profile.
      * @param j joint number
      * @param ref pointer to storage for the return value
@@ -275,7 +275,7 @@ public:
      */
     virtual bool getRefSpeeds(double *spds)=0;
 
-    /** Get reference acceleration for a joint. Returns the acceleration used to 
+    /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
      * @param j joint number
      * @param acc pointer to storage for the return value
@@ -286,7 +286,7 @@ public:
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
-     * @return true/false on success or failure 
+     * @return true/false on success or failure
      */
     virtual bool getRefAccelerations(double *accs)=0;
 
@@ -296,12 +296,10 @@ public:
      */
     virtual bool stop(int j)=0;
 
-    /** Stop motion, multiple joints 
+    /** Stop motion, multiple joints
      * @return true/false on success/failure
      */
     virtual bool stop()=0;
 };
 
 #endif
-
-

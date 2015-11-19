@@ -69,7 +69,7 @@ public:
     virtual bool getMotorEncoderCountsPerRevolutionRaw(int m, double *cpr)=0;
 
     /**
-     * Set the value of the motor encoder for a given motor. 
+     * Set the value of the motor encoder for a given motor.
      * @param m motor number
      * @param val new value
      * @return true/false
@@ -129,7 +129,7 @@ public:
      * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncoderSpeedsRaw(double *spds)=0;
-    
+
     /**
      * Read the instantaneous acceleration of a motor encoder
      * @param m motor number
@@ -140,7 +140,7 @@ public:
 
     /**
      * Read the instantaneous acceleration of all motor encoders.
-     * @param accs pointer to the array that will contain the output 
+     * @param accs pointer to the array that will contain the output
      * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncoderAccelerationsRaw(double *accs)=0;
@@ -196,7 +196,7 @@ public:
     virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr)=0;
 
     /**
-     * Set the value of the motor encoder for a given motor. 
+     * Set the value of the motor encoder for a given motor.
      * @param m motor number
      * @param val new value
      * @return true/false
@@ -256,7 +256,7 @@ public:
      * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncoderSpeeds(double *spds)=0;
-    
+
     /**
      * Read the instantaneous acceleration of a motor encoder
      * @param m motor number
@@ -267,7 +267,7 @@ public:
 
     /**
      * Read the instantaneous acceleration of all motor encoders.
-     * @param accs pointer to the array that will contain the output 
+     * @param accs pointer to the array that will contain the output
      * @return true if successful, false otherwise.
      */
     virtual bool getMotorEncoderAccelerations(double *accs)=0;
@@ -288,5 +288,3 @@ public:
 #define VOCAB_MOTOR_ENCODER_ACCELERATIONS VOCAB4('m','a','c','s')
 
 #endif
-
-

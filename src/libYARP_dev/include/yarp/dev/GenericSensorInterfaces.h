@@ -37,8 +37,8 @@ public:
      * @return true/false success/failure
      */
     virtual bool read(yarp::sig::Vector &out)=0;
-    
-    /** 
+
+    /**
      * Get the number of channels of the sensor.
      * @param nc pointer to storage, return value
      * @return true/false success/failure
@@ -55,4 +55,3 @@ public:
 };
 
 #endif
-//

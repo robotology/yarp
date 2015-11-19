@@ -88,7 +88,7 @@ public:
         else
         {
             deltaT=now-timePrevious;
-            cumulativeT+=deltaT; 
+            cumulativeT+=deltaT;
             if (deltaT>maxT)
                maxT=deltaT;
             if (deltaT<minT)
@@ -104,7 +104,7 @@ public:
                 yInfo("Read [%d] frames in %d[s], average period %.2lf[ms], min %.2lf[ms], max %.2lf[ms]\n",
                                 counter,
                                 REPORT_TIME,
-                                (cumulativeT/counter)*1000, 
+                                (cumulativeT/counter)*1000,
                                 minT*1000, maxT*1000);
                 cumulativeT=0;
                 counter=0;
@@ -154,11 +154,11 @@ private:
     bool addStamp;
     yarp::os::Stamp stamp;
 public:
-    DataWriter2(yarp::os::Port& port1, 
+    DataWriter2(yarp::os::Port& port1,
                 yarp::os::Port& port2,
                 DataSource2<T1,T2>& dater,
                 bool canDrop=true,
-                bool addStamp=false) : 
+                bool addStamp=false) :
         port1(port1), port2(port2), dater(dater), canDrop(canDrop),
         addStamp(addStamp)
     {

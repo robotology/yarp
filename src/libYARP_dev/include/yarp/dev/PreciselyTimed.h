@@ -25,10 +25,9 @@ class YARP_dev_API yarp::dev::IPreciselyTimed {
 public:
     /**
     * Return the time stamp relative to the last acquisition.
-    */ 
-	virtual yarp::os::Stamp getLastInputStamp() = 0;
-	virtual ~IPreciselyTimed(){}
+    */
+    virtual yarp::os::Stamp getLastInputStamp() = 0;
+    virtual ~IPreciselyTimed(){}
 };
 
 #endif
-

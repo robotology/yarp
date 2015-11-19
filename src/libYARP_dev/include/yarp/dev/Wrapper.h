@@ -27,7 +27,7 @@ namespace yarp {
  * Interface for an object that can wrap/or "attach" to another. This is useful
  * for example when an object refers internally to another device, but
  * you want to decouple the creation of the two objects. In this case
- * you first creates the two objects separately then you can attach one 
+ * you first creates the two objects separately then you can attach one
  * to the other.
  */
 class yarp::dev::IWrapper
@@ -58,7 +58,7 @@ public:
  * Interface for an object that can wrap/attach to to another. This is useful
  * for example when an object refers internally to another device, but
  * you want to decouple the creation of the two objects. In this case
- * you first creates the two objects separately then you can attach one 
+ * you first creates the two objects separately then you can attach one
  * to the other. This class is similar to IWrapper, but allows attaching
  * to more than one object by subsequent calls to attach.
  */
@@ -85,4 +85,3 @@ public:
 };
 
 #endif
-

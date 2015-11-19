@@ -32,7 +32,7 @@ bool ImplementEncodersTimed:: initialize (int size, const int *amap, const doubl
 {
     if (helper!=0)
         return false;
-    
+
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     yAssert (helper != 0);
     temp=new double [size];
@@ -53,7 +53,7 @@ bool ImplementEncodersTimed::uninitialize ()
         delete castToMapper(helper);
         helper=0;
     }
-    
+
     checkAndDestroy(temp);
     checkAndDestroy(temp2);
 
@@ -107,15 +107,15 @@ bool ImplementEncodersTimed::getEncoder(int j, double *v)
     ret=iEncoders->getEncoderRaw(k, &enc);
 
     *v=castToMapper(helper)->posE2A(enc, k);
-    
+
     return ret;
 }
-    
+
 bool ImplementEncodersTimed::getEncoders(double *v)
 {
     bool ret;
     castToMapper(helper)->axes();
-    
+
     ret=iEncoders->getEncodersRaw(temp);
 
     castToMapper(helper)->posE2A(temp, v);
@@ -134,17 +134,17 @@ bool ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
     ret=iEncoders->getEncoderSpeedRaw(k, &enc);
 
     *v=castToMapper(helper)->velE2A(enc, k);
-    
+
     return ret;
 }
-    
+
 bool ImplementEncodersTimed::getEncoderSpeeds(double *v)
 {
     bool ret;
     ret=iEncoders->getEncoderSpeedsRaw(temp);
 
     castToMapper(helper)->velE2A(temp, v);
-    
+
     return ret;
 }
 
@@ -159,17 +159,17 @@ bool ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
     ret=iEncoders->getEncoderAccelerationRaw(k, &enc);
 
     *v=castToMapper(helper)->accE2A(enc, k);
-    
+
     return ret;
 }
-    
+
 bool ImplementEncodersTimed::getEncoderAccelerations(double *v)
 {
     bool ret;
     ret=iEncoders->getEncoderAccelerationsRaw(temp);
 
     castToMapper(helper)->accE2A(temp, v);
-    
+
     return ret;
 }
 
@@ -196,6 +196,6 @@ bool ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
 
     castToMapper(helper)->posE2A(temp, v);
     castToMapper(helper)->toUser(temp2, t);
-    
+
     return ret;
 }
