@@ -18,63 +18,63 @@ yarp::dev::OpenNI2DeviceDriverServer::~OpenNI2DeviceDriverServer(void)
 {
 }
 
-void yarp::dev::OpenNI2DeviceDriverServer::openPorts(string portPrefix, bool userTracking, bool colorON){
-    
+void yarp::dev::OpenNI2DeviceDriverServer::openPorts(string portPrefix, bool userTracking, bool colorON) {
+
     string receivingPortName = portPrefix+":i";
     receivingPort = new BufferedPort<Bottle>();
     receivingPort->open(receivingPortName.c_str());
-    
-    if(userTracking){
+
+    if(userTracking) {
         string skeletonPortName = portPrefix+PORTNAME_SKELETON+":o";
         skeletonPort = new BufferedPort<Bottle>();
         skeletonPort->open(skeletonPortName.c_str());
     }
-    
-        depthFramePort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono16> >();
-        string strTemp = portPrefix+PORTNAME_DEPTHFRAME+":o";
-        depthFramePort->open(strTemp.c_str());
-        if(colorON){
+
+    depthFramePort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono16> >();
+    string strTemp = portPrefix+PORTNAME_DEPTHFRAME+":o";
+    depthFramePort->open(strTemp.c_str());
+    if(colorON) {
         imageFramePort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >();
         strTemp = portPrefix+PORTNAME_IMAGEFRAME+":o";
         imageFramePort->open(strTemp.c_str());
     }
 }
 
-void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
+void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData() {
     OpenNI2SkeletonTracker::UserSkeleton *userSkeleton = OpenNI2SkeletonTracker::getSensor()->userSkeleton;
     double *joint;
     int index = 0;
-    
+
     // creating a timestamp with the current system time in seconds.milliseconds
     Stamp timestamp(index,Time::now());
     // cameras data
-    if(colorON){
+    if(colorON) {
         // image frame data
         imageFramePort->prepare() = OpenNI2SkeletonTracker::getSensor()->imageFrame;
         imageFramePort->setEnvelope(timestamp);
         imageFramePort->write();
-        }
+    }
 
-        // depth frame data
-        depthFramePort->prepare() = OpenNI2SkeletonTracker::getSensor()->depthFrame;
-        depthFramePort->setEnvelope(timestamp);
-        depthFramePort->write();
-    
+    // depth frame data
+    depthFramePort->prepare() = OpenNI2SkeletonTracker::getSensor()->depthFrame;
+    depthFramePort->setEnvelope(timestamp);
+    depthFramePort->write();
+
     // sending skeleton data
-    
+
     // if skeleton is tracked
     if(userTracking)
-        for(int i = 0; i < MAX_USERS; i++){
-            if(userSkeleton[i].skeletonState == nite::SKELETON_TRACKED && userSkeleton[i].stillTracking == true){
+        for(int i = 0; i < MAX_USERS; i++) {
+            if(userSkeleton[i].skeletonState == nite::SKELETON_TRACKED && userSkeleton[i].stillTracking == true) {
                 Bottle &botSkeleton = skeletonPort->prepare();
                 botSkeleton.clear();
                 skeletonPort->setEnvelope(timestamp);
-                
+
                 // user ID number
                 Bottle &userBot = botSkeleton.addList();
                 userBot.addVocab(USER_VOCAB);
                 userBot.addInt(userSkeleton[i].uID);
-                for(int jointIndex = 0; jointIndex < TOTAL_JOINTS; jointIndex++){
+                for(int jointIndex = 0; jointIndex < TOTAL_JOINTS; jointIndex++) {
                     // position
                     botSkeleton.addVocab(POSITION_VOCAB);
                     joint = userSkeleton[i].skeletonPointsPos[jointIndex].data();
@@ -95,7 +95,7 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
                 }
                 skeletonPort->write();
             }
-            
+
             // if skeleton calibrating
             else if(userSkeleton[i].skeletonState == nite::SKELETON_CALIBRATING) {
                 Bottle &botCalib = skeletonPort->prepare();
@@ -105,17 +105,17 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
                 botCalib.addInt(userSkeleton[i].uID);
                 skeletonPort->write();
             }
-            
+
             // if no skeleton found
-              else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE){
+              else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE) {
               }
         }
 }
 
 
 // device driver stuff
-bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
-    
+bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config) {
+
     // this function is used in case of the Yarp Device being used as server
     std::cout << "Starting OpenNI2 YARP Device please wait..." << endl;
     string portPrefix;
@@ -125,130 +125,115 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
 
     if(config.check("noRGB", "Use only depth sensor")) {
         colorON = false;
-    }
-    else {
+    } else {
         colorON = true;
     }
 
     if(config.check("noMirror", "Disable mirroring")) {
         mirrorON = false;
-    }
-    else {
+    } else {
         mirrorON = true;
     }
-    
+
     if(config.check("noUserTracking", "Disable user tracking")) {
         userTracking = false;
-    }
-    else {
+    } else {
         userTracking = true;
     }
-    
-    if(config.check("printVideoModes", "Print supported video modes"))
-    {
+
+    if(config.check("printVideoModes", "Print supported video modes")) {
         printMode = true;
-    }
-    else
-    {
+    } else {
         printMode = false;
     }
 
-    if(config.check("depthVideoMode", "Depth video mode (default=0)")){
+    if(config.check("depthVideoMode", "Depth video mode (default=0)")) {
         dMode = config.find("depthVideoMode").asInt();
-    } 
-    else {
+    } else {
         dMode = 0;
     }
-   
-   if(config.check("colorVideoMode", "Color video mode (default=0)")){
-         cMode = config.find("colorVideoMode").asInt();
-    }
-   else{
-      cMode = 0; 
-   }
 
-   if(config.check("playback", "Play from .oni file")) {
+    if(config.check("colorVideoMode", "Color video mode (default=0)")) {
+         cMode = config.find("colorVideoMode").asInt();
+    } else {
+        cMode = 0;
+    }
+
+    if(config.check("playback", "Play from .oni file")) {
         oniPlayback = true;
         fileDevice = config.find("playback").asString();
-    }
-    else {
+    } else {
         oniPlayback = false;
     }
 
     if(config.check("record", "Record to .oni file")) {
         oniRecord = true;
         oniOutputFile = config.find("record").asString();
-    }
-    else {
+    } else {
         oniRecord = false;
     }
-    
-    if(config.check("name", "Name for the port prefix (default=/OpenNI2)")){
+
+    if(config.check("name", "Name for the port prefix (default=/OpenNI2)")) {
         portPrefix = config.find("name").asString();
         withOpenPorts = true;
         openPorts(portPrefix, userTracking, colorON);
-    }
-    else {
+    } else {
         portPrefix = "/OpenNI2";
         withOpenPorts  = true;
         openPorts(portPrefix, userTracking, colorON);
     }
 
-    if (config.check("minConfidence", "Set minimum confidence (default=0.6)")){
+    if (config.check("minConfidence", "Set minimum confidence (default=0.6)")) {
         mConf = config.find("minConfidence").asDouble();
-    }
-    else {
+    } else {
         mConf = MINIMUM_CONFIDENCE;
     }
-    
-    if (config.check("loop", "Set playback to loop")){
+
+    if (config.check("loop", "Set playback to loop")) {
         loop = true;
-    }
-    else{
+    } else {
         loop = false;
     }
-    
-    if (config.check("syncFrames", "Synchronize frames")){
-	frameSync = true;
+
+    if (config.check("syncFrames", "Synchronize frames")) {
+        frameSync = true;
+    } else {
+        frameSync = false;
     }
-    else{
-	frameSync = false;
+
+    if (config.check("imageRegistration", "Register Images")) {
+        imageRegistration = true;
+    } else {
+        imageRegistration = false;
     }
-    
-    if (config.check("imageRegistration", "Register Images")){
-	imageRegistration = true;
-    }
-    else{
-	imageRegistration = false;
-    }
-    
+
     skeleton = new OpenNI2SkeletonTracker(userTracking, colorON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop, frameSync, imageRegistration, printMode, dMode, cMode);
-    
+
     if (skeleton->getDeviceStatus() == 0) {
-    cout << "OpenNI2 Yarp Device started." << endl;
-    return true;
+        cout << "OpenNI2 Yarp Device started." << endl;
+        return true;
     }
-    
-    else if (skeleton->getDeviceStatus()!= 0){
+
+    else if (skeleton->getDeviceStatus()!= 0) {
         cout << "***ERROR*** Device could not be initialized." << endl;
         close();
         return false;
     }
 }
 
-bool yarp::dev::OpenNI2DeviceDriverServer::close(){
+bool yarp::dev::OpenNI2DeviceDriverServer::close() {
     if (skeleton->getDeviceStatus() == openni::STATUS_OK) {
         skeleton->close();
     }
-    if(withOpenPorts){
+    if(withOpenPorts) {
         cout << "Closing ports...";
-        
+
         if(userTracking) {
             skeletonPort->close();
         }
-       
-        depthFramePort->close(); 
-        if(colorON){
+
+        depthFramePort->close();
+        if(colorON) {
             imageFramePort->close();
         }
         receivingPort->close();
@@ -258,41 +243,41 @@ bool yarp::dev::OpenNI2DeviceDriverServer::close(){
     return true;
 }
 
-bool yarp::dev::OpenNI2DeviceDriverServer::updateInterface(){
-    
+bool yarp::dev::OpenNI2DeviceDriverServer::updateInterface() {
+
     // update sensor dataoniPlayback
     skeleton->updateSensor();
-    
+
     // send sensor data to ports
-    if(withOpenPorts){
+    if(withOpenPorts) {
         sendSensorData();
     }
     return true;
 }
 
 
-bool yarp::dev::OpenNI2DeviceDriverServer::startService(){
-    
+bool yarp::dev::OpenNI2DeviceDriverServer::startService() {
+
     // returns false so that the updateService is started
     return false;
 }
 
-bool yarp::dev::OpenNI2DeviceDriverServer::updateService(){
+bool yarp::dev::OpenNI2DeviceDriverServer::updateService() {
     updateInterface();
     return true;
 }
 
-bool yarp::dev::OpenNI2DeviceDriverServer::stopService(){
+bool yarp::dev::OpenNI2DeviceDriverServer::stopService() {
     return close();
 }
 
 
 // returns false if the user skeleton is not being tracked
-bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID){
+bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID) {
     updateInterface();
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;
-    for(int i = 0; i < TOTAL_JOINTS; i++){
+    for(int i = 0; i < TOTAL_JOINTS; i++) {
         vectorArray[i].resize(4);
         vectorArray[i].zero();
         vectorArray[i] = OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonPointsOri[i];
@@ -302,11 +287,11 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vector
 }
 
 // returns false if the user skeleton is not being tracked
-bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID){
+bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID) {
     updateInterface();
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;
-    for(int i = 0; i < TOTAL_JOINTS; i++){
+    for(int i = 0; i < TOTAL_JOINTS; i++) {
         vectorArray[i].resize(3);
         vectorArray[i].zero();
         vectorArray[i] = OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonPointsPos[i];
@@ -315,18 +300,17 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArr
     return true;
 }
 
-nite::SkeletonState yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID){
+nite::SkeletonState yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID) {
     updateInterface();
     return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID-1].skeletonState;
 }
 
-ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverServer::getImageFrame(){
+ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverServer::getImageFrame() {
     updateInterface();
     return OpenNI2SkeletonTracker::getSensor()->imageFrame;
 }
 
-ImageOf<PixelMono16> yarp::dev::OpenNI2DeviceDriverServer::getDepthFrame(){
+ImageOf<PixelMono16> yarp::dev::OpenNI2DeviceDriverServer::getDepthFrame() {
     updateInterface();
     return OpenNI2SkeletonTracker::getSensor()->depthFrame;
 }
-

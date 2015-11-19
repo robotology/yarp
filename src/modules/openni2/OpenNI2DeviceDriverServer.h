@@ -50,13 +50,15 @@ namespace yarp {
  *
  * An OpenNI2 sensor device implementation to get the data from a sensor conected locally.
  * This implementation opens 4 ports:
- *	- [portPrefix]:i - input port (does nothing)
- *	- [portPrefix]/userSkeleton:o - userSkeleton detection port (only opened if user detection is on)
- *	- [portPrefix]/depthFrame:o - depth frame port
- *	- [portPrefix]/imageFrame:o - rgb camera frame port
+ *  - [portPrefix]:i - input port (does nothing)
+ *  - [portPrefix]/userSkeleton:o - userSkeleton detection port (only opened if user detection is on)
+ *  - [portPrefix]/depthFrame:o - depth frame port
+ *  - [portPrefix]/imageFrame:o - rgb camera frame port
  */
-class yarp::dev::OpenNI2DeviceDriverServer: public IService, public yarp::dev::IOpenNI2DeviceDriver,
-public yarp::dev::DeviceDriver{
+class yarp::dev::OpenNI2DeviceDriverServer: public yarp::dev::DeviceDriver,
+                                            public yarp::dev::IService,
+                                            public yarp::dev::IOpenNI2DeviceDriver
+{
 public:
     OpenNI2DeviceDriverServer(void);
     ~OpenNI2DeviceDriverServer(void);
@@ -100,8 +102,8 @@ private:
 /**
  * @ingroup dev_runtime
  * \defgroup cmd_device_openni2_device_server openni2_device_server
- 
+
  OpenNI2 device interface implementation - http://wiki.icub.org/wiki/OpenNI2
- 
+
  */
 #endif
