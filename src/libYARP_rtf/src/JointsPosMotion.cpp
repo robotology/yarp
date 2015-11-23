@@ -103,6 +103,7 @@ bool jointsPosMotion::setAndCheckPosControlMode()
 
     }
 
+    return true;
 }
 
 void jointsPosMotion::setTimeout(double timeout){timeout = timeout;}
