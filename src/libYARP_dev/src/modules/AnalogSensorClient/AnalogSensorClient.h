@@ -38,8 +38,7 @@ namespace yarp {
 }
 
 /**
-*  @ingroup yarp_dev_modules
-*  \defgroup analogsensorclient analogsensorclient
+*  @ingroup dev_impl_wrapper
 *
 * \section analogsensorclient_parameter Description of input parameters
 *
