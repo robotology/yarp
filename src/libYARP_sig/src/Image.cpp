@@ -24,6 +24,8 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Time.h>
 
+#include <yarp/sig/impl/DeBayer.h>
+
 #include <string.h>
 
 using namespace yarp::sig;
@@ -36,6 +38,31 @@ using namespace yarp::os;
 //	const int rem = len % pad;
 //	return (rem != 0) ? (pad - rem) : rem;
 //}
+
+/**
+* This helper function groups code to avoid duplication. It is not a member function of Image because 
+* there are problems with ImageNetworkHeader, anyhow the function is state-less and uses only parameters.
+*/
+inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, ConnectionReader& connection)
+{
+    dest.resize(header.width, header.height);
+    unsigned char *mem = dest.getRawImage();
+    int allocatedBytes = dest.getRawImageSize();
+    yAssert(mem != NULL);
+    //this check is redundant with assertion, I would remove it
+    if (dest.getRawImageSize() != header.imgSize) {
+        printf("There is a problem reading an image\n");
+        printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
+            (int)header.width, (int)header.height,
+            (int)header.id,
+            (int)header.quantum, (int)header.imgSize);
+        printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
+            dest.width(), dest.height(), dest.getPixelCode(), dest.getQuantum(), allocatedBytes);
+    }
+    yAssert(allocatedBytes == header.imgSize);
+    bool ok = connection.expectBlock((char *)mem, allocatedBytes);
+    return (!connection.isError() && ok);
+}
 
 
 
@@ -836,6 +863,13 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     bool ok = connection.expectBlock((char*)&header,sizeof(header));
     if (!ok) return false;
 
+    //first check that the received image size is reasonable
+    if (header.width == 0 || header.height == 0)
+    {
+        // I maintain the prevous logic, although we should probably return false
+        return !connection.isError(); 
+    }
+
     imgPixelCode = header.id;
 
     int q = getQuantum();
@@ -851,56 +885,72 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         }
     }
 
-    if (getPixelCode()!=header.id||q!=header.quantum) {
-        // we're trying to read an incompatible image type
-        // rather than just fail, we'll read it (inefficiently)
+    // handle easy case, received and current image are compatible, no conversion needed
+    if (getPixelCode() == header.id && q == header.quantum)
+    {
+        return readFromConnection(*this, header, connection);
+    }
+
+    // image is bayer 8 bits, current image is MONO, copy as is (keep raw format)
+    if (getPixelCode() == VOCAB_PIXEL_MONO && isBayer8(header.id))
+    {
+        return readFromConnection(*this, header, connection);
+    }
+    // image is bayer 16 bits, current image is MONO16, copy as is (keep raw format)
+    if (getPixelCode() == VOCAB_PIXEL_MONO16 && isBayer16(header.id))
+    {
+        return readFromConnection(*this, header, connection);
+    }
+
+    ////////////////////
+    // Received and current images are binary incompatible do our best to convert
+    //
+
+    // handle here all bayer encoding 8 bits
+    if (isBayer8(header.id))
+    {
         FlexImage flex;
-        flex.setPixelCode(header.id);
+        flex.setPixelCode(VOCAB_PIXEL_MONO);
         flex.setQuantum(header.quantum);
-        flex.resize(header.width,header.height);
-        if (header.width!=0&&header.height!=0) {
-            unsigned char *mem = flex.getRawImage();
-            yAssert(mem!=NULL);
-            if (flex.getRawImageSize()!=header.imgSize) {
-                printf("There is a problem reading an image\n");
-                printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
-                       (int)header.width, (int)header.height,
-                       (int)header.id,
-                       (int)header.quantum, (int)header.imgSize);
-                printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
-                       flex.width(), flex.height(), flex.getPixelCode(),
-                       flex.getQuantum(),
-                       flex.getRawImageSize());
-            }
-            yAssert(flex.getRawImageSize()==header.imgSize);
-            ok = connection.expectBlock((char *)flex.getRawImage(),
-                                        flex.getRawImageSize());
-            if (!ok) return false;
-        }
-        copy(flex);
-    } else {
-        yAssert(getPixelCode()==header.id);
-        resize(header.width,header.height);
-        unsigned char *mem = getRawImage();
-        if (header.width!=0&&header.height!=0) {
-            yAssert(mem!=NULL);
-            if (getRawImageSize()!=header.imgSize) {
-                printf("There is a problem reading an image\n");
-                printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
-                       (int)header.width, (int)header.height,
-                       (int)header.id,
-                       (int)header.quantum, (int)header.imgSize);
-                printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
-                       width(), height(), getPixelCode(), getQuantum(), getRawImageSize());
-            }
-            yAssert(getRawImageSize()==header.imgSize);
-            ok = connection.expectBlock((char *)getRawImage(),
-                                        getRawImageSize());
-            if (!ok) return false;
+
+        bool ok = readFromConnection(flex, header, connection);
+        if (!ok)
+            return false;
+
+        if (getPixelCode() == VOCAB_PIXEL_BGR && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8)
+            return deBayer_GRBG8_TO_BGR(flex, *this, 3);
+        else if (getPixelCode() == VOCAB_PIXEL_BGRA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8)
+            return deBayer_GRBG8_TO_BGR(flex, *this, 4);
+        if (getPixelCode() == VOCAB_PIXEL_RGB && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8)
+            return deBayer_GRBG8_TO_RGB(flex, *this, 3);
+        if (getPixelCode() == VOCAB_PIXEL_RGBA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8)
+            return deBayer_GRBG8_TO_RGB(flex, *this, 4);
+        else
+        {
+            YARP_FIXME_NOTIMPLEMENTED("Convertion from bayer encoding not yet implemented\n"); 
+            return false;
         }
     }
 
-    return !connection.isError();
+    // handle here all bayer encodings 16 bits
+    if (isBayer16(header.id))
+    {
+        // as bayer16 seems unlikely we defer implementation for later
+        YARP_FIXME_NOTIMPLEMENTED("Convertion from bayer encoding 16 bits not yet implemented\n");
+        return false;
+    }
+
+    // Received image has valid YARP pixels and can be converted using Image primitives
+    // prepare a FlexImage, set it to be compatible with the received image
+    // read new image into FlexImage then copy from it.
+    FlexImage flex;
+    flex.setPixelCode(header.id);
+    flex.setQuantum(header.quantum);
+    ok = readFromConnection(flex, header, connection);
+    if (ok)
+        copy(flex);
+
+    return ok;    
 }
 
 
@@ -1048,5 +1098,4 @@ bool Image::copy(const Image& alt, int w, int h) {
         }
     return true;
 }
-
 
