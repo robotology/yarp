@@ -514,6 +514,19 @@ public:
         testName = "a x b = -b x a";
         assertEqual(cross(an, bn), -1.0*cross(bn, an), testName);
     }
+    
+    void quaternionConversion()
+    {
+        Matrix R=zeros(4,4);
+        R(0,1)=R(1,2)=R(2,0)=R(3,3)=1.0;
+        Vector q(4,0.5);
+        
+        report(0,"checking dcm2quat()...");
+        assertEqual(dcm2quat(R),q,"dcm2quat([0 1 0; 0 0 1; 1 0 0]) = [1; 1; 1; 1]/2)");
+
+        report(0,"checking quat2dcm()...");
+        assertEqual(quat2dcm(q),R,"quat2dcm([1; 1; 1; 1]/2) = [0 1 0; 0 0 1; 1 0 0]");
+    }
 
     virtual void runTests() 
     {
@@ -527,6 +540,7 @@ public:
         productOperator();
         divisionOperator();
         crossProduct();
+        quaternionConversion();
     }
 };
 
