@@ -21,6 +21,7 @@
 #include <yarp/os/ManagedBytes.h>
 
 #include <yarp/sig/api.h>
+#include <yarp/os/Log.h>
 
 /**
 * \file Vector.h contains the definition of a Vector type 
@@ -28,7 +29,7 @@
 namespace yarp {
 
     namespace sig {
-		class VectorBase;
+        class VectorBase;
         class Vector;
         template<class T> class VectorOf;
     }
@@ -46,6 +47,8 @@ class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
 {
 public:
     virtual int getElementSize() const = 0;
+    virtual int getBottleTag() const = 0;
+
     virtual size_t getListSize() const = 0;
     virtual const char *getMemoryBlock() const = 0;
     virtual void resize(size_t size) = 0;
@@ -63,6 +66,27 @@ public:
     virtual bool write(yarp::os::ConnectionWriter& connection);
 };
 
+/*
+* This is a simple function that maps a type into its corresponding BOTTLE tag. 
+* Used for bottle compatible serialization, called inside getBottleTag().
+* Needs to be instantiated for each type T used in VectorOf<T>.
+*/
+template<class T> 
+inline int BottleTagMap () {
+    /* make sure this is never called unspecified */
+    YARP_ASSERT(0);
+    return 0;
+  } 
+
+template<>
+inline int BottleTagMap <double> () {
+    return BOTTLE_TAG_DOUBLE;
+  } 
+
+template<>
+inline int BottleTagMap <int> () {
+    return BOTTLE_TAG_INT;
+  } 
 
 /**
 * \ingroup sig_class
@@ -123,6 +147,10 @@ public:
 
     virtual int getElementSize() const {
         return sizeof(T);
+    }
+
+    virtual int getBottleTag() const {
+        return BottleTagMap <T>();
     }
 
     virtual size_t getListSize() const

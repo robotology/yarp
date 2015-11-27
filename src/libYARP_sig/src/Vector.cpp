@@ -49,8 +49,9 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     VectorPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
-    if (header.listLen > 0 &&
-        header.listTag == BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE) {
+    if (header.listLen > 0 && 
+      header.listTag == (BOTTLE_TAG_LIST | getBottleTag()))
+    {
         if ((size_t)getListSize() != (size_t)(header.listLen))
             resize(header.listLen);
         const char *ptr = getMemoryBlock();
@@ -69,7 +70,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     VectorPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
-    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
+    header.listTag = (BOTTLE_TAG_LIST | getBottleTag());
     header.listLen = (int)getListSize();
 
     connection.appendBlock((char*)&header, sizeof(header));
@@ -247,8 +248,9 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
     VectorPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
-    if (header.listLen > 0 &&
-        header.listTag == BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE) {
+
+    if (header.listLen > 0 && 
+        header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE)) {
         if (size() != (size_t)(header.listLen))
             resize(header.listLen);
 
@@ -265,7 +267,7 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
 bool Vector::write(yarp::os::ConnectionWriter& connection) {
     VectorPortContentHeader header;
 
-    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
+    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE);
     header.listLen = (int)size();
 
     connection.appendBlock((char*)&header, sizeof(header));
