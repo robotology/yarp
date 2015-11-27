@@ -8,6 +8,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include <algorithm>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -51,6 +52,10 @@
 
 using namespace std;
 
+bool AppTemplateCompare(const yarp::manager::AppTemplate &t1,
+                        const yarp::manager::AppTemplate &t2) {
+    return t1.name < t2.name;
+}
 
 bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
    if (path[0]=='/'||path[0]=='\\') {
@@ -128,6 +133,7 @@ void MainWindow::init(yarp::os::Property config)
     this->config = config;
 
     string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
+    templateList.clear();
 
     if(config.check("modpath")){
         string strPath;
@@ -171,7 +177,6 @@ void MainWindow::init(yarp::os::Property config)
 
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
-
     if(config.check("apppath")){
         string strPath;
         string appPaths(config.find("apppath").asString().c_str());
@@ -191,8 +196,13 @@ void MainWindow::init(yarp::os::Property config)
             if(config.find("load_subfolders").asString() == "yes"){
                 if(!loadRecursiveApplications(strPath.c_str())){
                     logger->addError("Cannot load the applications from  " + strPath);
-                }
+                }                
                 loadRecursiveTemplates(strPath.c_str());
+                std::sort(templateList.begin(),
+                          templateList.end(), AppTemplateCompare);
+                std::vector<yarp::manager::AppTemplate>::iterator itr;
+                for(itr=templateList.begin(); itr!=templateList.end(); itr++)
+                    ui->entitiesTree->addAppTemplate(&(*itr));
             }
             else{
                 lazyManager.addApplications(strPath.c_str());
@@ -215,8 +225,15 @@ void MainWindow::init(yarp::os::Property config)
                 strPath=basepath+strPath;
             }
 
-            if(!loadRecursiveTemplates(strPath.c_str())){
+            if(!loadRecursiveTemplates(strPath.c_str()))
                 logger->addError("Cannot load the templates from  " + strPath);
+            else {
+                ui->entitiesTree->clearTemplates();
+                std::sort(templateList.begin(),
+                          templateList.end(), AppTemplateCompare);
+                std::vector<yarp::manager::AppTemplate>::iterator itr;
+                for(itr=templateList.begin(); itr!=templateList.end(); itr++)
+                    ui->entitiesTree->addAppTemplate(&(*itr));
             }
 
             if (pos==string::npos){
@@ -340,19 +357,16 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
     // loading from current folder
     yarp::manager::AppTemplate* tmp;
     yarp::manager::XmlTempLoader tempload(strPath.c_str(), NULL);
-    if(tempload.init())
-    {
+    if(tempload.init()) {
         while((tmp = tempload.getNextAppTemplate())){
-            ui->entitiesTree->addAppTemplate(tmp);
+            templateList.push_back(*tmp);
         }
     }
 
     while((entry = readdir(dir)))
     {
         if((string(entry->d_name) != string("."))
-        && (string(entry->d_name) != string("..")))
-        {
-
+        && (string(entry->d_name) != string(".."))) {
             string name = strPath + string(entry->d_name);
             loadRecursiveTemplates(name.c_str());
         }

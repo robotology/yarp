@@ -19,6 +19,7 @@
 #include "entitiestreewidget.h"
 //#include "message_list.h"
 //#include "application_list.h"
+#include <vector>
 
 namespace Ui {
 class MainWindow;
@@ -30,7 +31,6 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     explicit MainWindow(QWidget *parent = 0);
     void init(yarp::os::Property config);
@@ -52,6 +52,7 @@ private:
     EntitiesTreeWidget *entitiesTree;
 
     string ext_editor;
+    std::vector<yarp::manager::AppTemplate> templateList;
 
 private slots:
     void onOpen();
@@ -86,7 +87,7 @@ public slots:
     void onRemoveResource(QString);
     void onReopenApplication(QString,QString);
     void onReopenModule(QString,QString);
-    void onReopenResource(QString,QString);
+    void onReopenResource(QString,QString);    
 };
 
 #endif // MAINWINDOW_H

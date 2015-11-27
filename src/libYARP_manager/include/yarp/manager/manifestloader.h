@@ -98,10 +98,10 @@ private:
  * Abstract Class TempLoader
  */
 
-typedef struct _AppTemplate {
+struct AppTemplate {
     string name;
     string tmpFileName;
-} AppTemplate;
+};
 
 
 class TempLoader {
