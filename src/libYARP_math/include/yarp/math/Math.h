@@ -565,15 +565,19 @@ namespace yarp
         /**
         * Converts a dcm (direction cosine matrix) rotation matrix to a 
         * quaternion (defined in Math.h).
-        * @param R is the input rotation matrix.
-        * @return 4 by 1 vector for the quaternion representation. 
+        * @param R the input rotation matrix.
+        * @return 4 by 1 vector for the quaternion representation in the 
+        *         form \f[ \mathbf{q}=q_0 + i \cdot q_1 + j \cdot q_2 +
+        *         k \cdot q_3 \f] .
         */
         YARP_math_API yarp::sig::Vector dcm2quat(const yarp::sig::Matrix &R);
 
         /**
         * Converts a quaternion in a dcm (direction cosine matrix) 
         * rotation matrix (defined in Math.h). 
-        * @param q is the 4 by 1 input quaternion input.
+        * @param q the 4 by 1 input quaternion in the form \f[ 
+        *         \mathbf{q}=q_0 + i \cdot q_1 + j \cdot q_2 + k \cdot
+        *                q_3 \f] .
         * @return 4 by 4 homogeneous matrix representing with the
         *         rotation components in the top left 3 by 3 submatrix.
         */
