@@ -872,6 +872,90 @@ Matrix yarp::math::rpy2dcm(const Vector &v)
     return Rz*Ry*Rx;
 }
 
+Vector yarp::math::dcm2quat(const Matrix &R)
+{
+    if ((R.rows()<3) || (R.cols()<3))
+    {
+        yError("dcm2quat() failed");
+        return Vector(0);
+    }
+    
+    Vector q(4,0.0);
+    double tr=R(0,0)+R(1,1)+R(2,2);
+
+    if (tr>0.0)
+    {
+        double sqtrp1=sqrt(tr+1.0);
+        double sqtrp12=2.0*sqtrp1;
+        q[0]=0.5*sqtrp1;
+        q[1]=(R(1,2)-R(2,1))/sqtrp12;
+        q[2]=(R(2,0)-R(0,2))/sqtrp12;
+        q[3]=(R(0,1)-R(1,0))/sqtrp12;
+    }
+    else if ((R(1,1)>R(0,0)) && (R(1,1)>R(2,2)))
+    {
+        double sqdip1=sqrt(R(1,1)-R(0,0)-R(2,2)+1.0);            
+        q[2]=0.5*sqdip1; 
+        
+        if (sqdip1>0.0)
+            sqdip1=0.5/sqdip1;
+        
+        q[0]=(R(2,0)-R(0,2))*sqdip1; 
+        q[1]=(R(0,1)+R(1,0))*sqdip1; 
+        q[3]=(R(1,2)+R(2,1))*sqdip1; 
+    }
+    else if (R(2,2)>R(0,0))
+    {
+        double sqdip1=sqrt(R(2,2)-R(0,0)-R(1,1)+1.0);            
+        q[3]=0.5*sqdip1; 
+        
+        if (sqdip1>0.0)
+            sqdip1=0.5/sqdip1;
+        
+        q[0]=(R(0,1)-R(1,0))*sqdip1;
+        q[1]=(R(2,0)+R(0,2))*sqdip1; 
+        q[2]=(R(1,2)+R(2,1))*sqdip1; 
+    }
+    else
+    {
+        double sqdip1=sqrt(R(0,0)-R(1,1)-R(2,2)+1.0);            
+        q[1]=0.5*sqdip1;
+        
+        if (sqdip1>0.0)
+            sqdip1=0.5/sqdip1;
+        
+        q[0]=(R(1,2)-R(2,1))*sqdip1; 
+        q[2]=(R(0,1)+R(1,0))*sqdip1; 
+        q[3]=(R(2,0)+R(0,2))*sqdip1; 
+    }
+
+    return q;
+}
+
+Matrix yarp::math::quat2dcm(const Vector &q)
+{
+    if (q.length()<4)
+    {
+        yError("quat2dcm() failed");
+        return Matrix(0,0);
+    }
+
+    Vector qin=(1.0/norm(q))*q;
+
+    Matrix R=eye(4,4);
+    R(0,0)=qin[0]*qin[0]+qin[1]*qin[1]-qin[2]*qin[2]-qin[3]*qin[3];
+    R(0,1)=2.0*(qin[1]*qin[2]+qin[0]*qin[3]);
+    R(0,2)=2.0*(qin[1]*qin[3]-qin[0]*qin[2]);
+    R(1,0)=2.0*(qin[1]*qin[2]-qin[0]*qin[3]);
+    R(1,1)=qin[0]*qin[0]-qin[1]*qin[1]+qin[2]*qin[2]-qin[3]*qin[3];
+    R(1,2)=2.0*(qin[2]*qin[3]+qin[0]*qin[1]);
+    R(2,0)=2.0*(qin[1]*qin[3]+qin[0]*qin[2]);
+    R(2,1)=2.0*(qin[2]*qin[3]-qin[0]*qin[1]);
+    R(2,2)=qin[0]*qin[0]-qin[1]*qin[1]-qin[2]*qin[2]+qin[3]*qin[3];
+
+    return R;
+}
+
 Matrix yarp::math::SE3inv(const Matrix &H)
 {    
     if ((H.rows()!=4) || (H.cols()!=4))
