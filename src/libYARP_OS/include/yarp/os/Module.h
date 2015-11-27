@@ -10,6 +10,9 @@
 #ifndef __YARP2_MODULE__
 #define __YARP2_MODULE__
 
+
+#ifndef YARP_NO_DEPRECATED
+
 #include <yarp/os/IConfig.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
@@ -39,8 +42,14 @@ namespace yarp {
  * input/output to the respond() method as well using
  * attachTerminal().
  *
+ * \deprecated Since 2.3.65. Use yarp::os::RFModule instead.
+ *
  */
-class YARP_OS_API yarp::os::Module : public IConfig {
+class YARP_DEPRECATED YARP_OS_API yarp::os::Module : public IConfig {
+protected:
+    // HACK Issue a deprecated warning in classes derived from yarp::os::Module
+    class YARP_DEPRECATED yarp__os__Module_is_deprecated_use_yarp__os__RFModule_instead {};
+    yarp__os__Module_is_deprecated_use_yarp__os__RFModule_instead issue_warning;
 
 public:
     /**
@@ -214,5 +223,8 @@ private:
     bool stopFlag;
     ConstString name;
 };
+#endif // YARP_NO_DEPRECATED
+
+
 
 #endif

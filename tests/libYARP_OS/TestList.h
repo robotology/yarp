@@ -47,7 +47,7 @@ extern yarp::os::impl::UnitTest& getPortablePairTest();
 extern yarp::os::impl::UnitTest& getTerminatorTest();
 extern yarp::os::impl::UnitTest& getRateThreadTest();
 extern yarp::os::impl::UnitTest& getStampTest();
-extern yarp::os::impl::UnitTest& getModuleTest();
+extern yarp::os::impl::UnitTest& getRFModuleTest();
 extern yarp::os::impl::UnitTest& getPortReaderBufferTest();
 extern yarp::os::impl::UnitTest& getNetworkTest();
 extern yarp::os::impl::UnitTest& getResourceFinderTest();
@@ -91,7 +91,7 @@ public:
         root.add(getPortablePairTest());
         root.add(getTerminatorTest());
         root.add(getStampTest());
-        root.add(getModuleTest());
+        root.add(getRFModuleTest());
         root.add(getPortReaderBufferTest());
         root.add(getNetworkTest());
         root.add(getResourceFinderTest());

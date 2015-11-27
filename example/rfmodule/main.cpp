@@ -1,6 +1,5 @@
 #include <iostream>
 #include <yarp/os/RFModule.h>
-#include <yarp/os/Module.h>
 #include <yarp/os/Network.h>
 
 using namespace std;

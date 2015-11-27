@@ -37,7 +37,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/ManagedBytes.h
                  include/yarp/os/MessageStack.h
                  include/yarp/os/ModifyingCarrier.h
-                 include/yarp/os/Module.h
                  include/yarp/os/MultiNameSpace.h
                  include/yarp/os/Mutex.h
                  include/yarp/os/Name.h
@@ -122,7 +121,8 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
 
 if(NOT YARP_NO_DEPRECATED)
   list(APPEND YARP_OS_HDRS include/yarp/os/begin_pack_for_net.h
-                           include/yarp/os/end_pack_for_net.h)
+                           include/yarp/os/end_pack_for_net.h
+                           include/yarp/os/Module.h)
 endif()
 
 set(YARP_OS_IDL_HDRS include/yarp/os/idl/BareStyle.h
@@ -245,7 +245,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ManagedBytes.cpp
                  src/MessageStack.cpp
                  src/ModifyingCarrier.cpp
-                 src/Module.cpp
                  src/MultiNameSpace.cpp
                  src/Mutex.cpp
                  src/NameClient.cpp
@@ -344,6 +343,15 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/hmac_sha2.c
                  src/sha2.c
                  src/QosStyle.cpp)
+
+if(NOT YARP_NO_DEPRECATED)
+  list(APPEND YARP_OS_SRCS src/Module.cpp)
+  check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+  if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+    set_source_files_properties(src/Module.cpp
+                                PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  endif()
+endif()
 
 
 if(NOT SKIP_ACE)

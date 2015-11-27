@@ -60,7 +60,6 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/Module.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/RpcClient.h>

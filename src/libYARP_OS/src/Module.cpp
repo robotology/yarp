@@ -7,6 +7,7 @@
  *
  */
 
+#ifndef YARP_NO_DEPRECATED
 
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
@@ -434,3 +435,4 @@ ConstString Module::getName(const char *subName) {
     return base.c_str();
 }
 
+#endif // YARP_NO_DEPRECATED
