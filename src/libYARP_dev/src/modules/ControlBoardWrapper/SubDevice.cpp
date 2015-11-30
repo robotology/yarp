@@ -233,7 +233,12 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     {
         if (!pos->getAxes(&deviceJoints))
         {
-            yError("ControlBoarWrapper: attached device has 0 axes");
+            yError() << "ControlBoarWrapper: failed to get axes number for subdevice " << k.c_str();
+            return false;
+        }
+        if(deviceJoints <= 0)
+        {
+            yError("ControlBoarWrapper: attached device has an invalid number of joints (%d)", deviceJoints);
             return false;
         }
     }
@@ -241,14 +246,19 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     {
         if (!pos2->getAxes(&deviceJoints))
         {
-            yError("ControlBoarWrapper: attached device has 0 axes");
+            yError() << "ControlBoarWrapper: failed to get axes number for subdevice " << k.c_str();
+            return false;
+        }
+        if(deviceJoints <=0)
+        {
+            yError("ControlBoarWrapper: attached device has an invalid number of joints (%d)", deviceJoints);
             return false;
         }
     }
 
     if (deviceJoints<axes)
     {
-        yError()<<"ControlBoarWrapper: check device configuration, number of joints of attached device less than the one specified during configuration";
+        yError("ControlBoarWrapper: check device configuration, number of joints of attached device '%d' less than the one specified during configuration '%d' for %s.", deviceJoints, axes, k.c_str());
         return false;
     }
     attachedF=true;
