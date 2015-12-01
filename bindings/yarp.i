@@ -424,6 +424,7 @@ MAKE_COMMS(Bottle)
   %template(DVector) std::vector<double>;
   %template(BVector) std::vector<bool>;
   %template(SVector) std::vector<std::string>;
+  %template(IVector) std::vector<int>;
   #if defined(SWIGCSHARP)
       SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
   #endif
@@ -983,6 +984,20 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return self->getLimits(axis, &min[0], &max[0]);
     }
 }
+
+%extend yarp::dev::IControlMode {
+    int getControlMode(int j) {
+        int buffer;
+        bool ok = self->getControlMode(j, &buffer);
+        if (!ok) return -1;
+        return buffer;
+    }
+
+    bool getControlModes(std::vector<int>& data) {
+        return self->getControlModes(&data[0]);
+    }
+}
+
 
 %extend yarp::sig::Vector {
 
