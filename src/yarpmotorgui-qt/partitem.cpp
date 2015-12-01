@@ -1955,19 +1955,21 @@ void PartItem::updateControlMode()
 
 void PartItem::updatePart()
 {
-    double refTrajectorySpeeds[MAX_NUMBER_OF_JOINTS];
-    double refTorques[MAX_NUMBER_OF_JOINTS];
-    double torques[MAX_NUMBER_OF_JOINTS];
-    double positions[MAX_NUMBER_OF_JOINTS];
-    double speeds[MAX_NUMBER_OF_JOINTS];
+    static double refTrajectorySpeeds[MAX_NUMBER_OF_JOINTS];
+    static double refTorques[MAX_NUMBER_OF_JOINTS];
+    static double refVelocitySpeeds[MAX_NUMBER_OF_JOINTS];
+    static double torques[MAX_NUMBER_OF_JOINTS];
+    static double positions[MAX_NUMBER_OF_JOINTS];
+    static double speeds[MAX_NUMBER_OF_JOINTS];
+    static bool   done[MAX_NUMBER_OF_JOINTS];
+    //static int controlModes[MAX_NUMBER_OF_JOINTS];
+    static yarp::dev::InteractionModeEnum interactionModes[MAX_NUMBER_OF_JOINTS];
 
-    //int controlModes[MAX_NUMBER_OF_JOINTS];
-    yarp::dev::InteractionModeEnum interactionModes[MAX_NUMBER_OF_JOINTS];
-
-    bool done = false;
     bool ret = false;
     int NUMBER_OF_JOINTS=0;
     iPos->getAxes(&NUMBER_OF_JOINTS);
+    int slow_k = slowSwitcher%NUMBER_OF_JOINTS;
+    slowSwitcher++;
 
     if (NUMBER_OF_JOINTS == 0){
         LOG_ERROR("Lost connection with iCubInterface. You should save and restart.\n" );
@@ -1980,47 +1982,35 @@ void PartItem::updatePart()
         return;
     }
 
-    if (!iencs->getEncoders(positions)){
-          return;
-    }
-
-    iTrq->getTorques(torques);
-    iencs->getEncoderSpeeds(speeds);
+    // *** update measured encoders, velocity, torques ***
+    if (!iencs->getEncoders(positions))   { yWarning("Unable to update encoders"); return; }
+    if (!iTrq->getTorques(torques))       { yWarning("Unable to update torques"); }
+    if (!iencs->getEncoderSpeeds(speeds)) { yWarning("Unable to update speeds"); }
     
-    //beware bandwidth consumption! //@@@@
-    iTrq->getRefTorques(refTorques); //@@@@
-    iPos->getRefSpeeds(refTrajectorySpeeds); //@@@@
-    
-
-    for (int k = 0; k < NUMBER_OF_JOINTS; k++) {
-        JointItem *joint  = (JointItem*)layout->itemAt(k)->widget();
-        joint->setPosition(positions[k]);
-        joint->setTorque(torques[k]);
-        joint->setRefTorque(refTorques[k]);
-        joint->setRefTrajectorySpeed(refTrajectorySpeeds[k]);
-        joint->setSpeed(speeds[k]);
-    }
-
-    // *** update the checkMotionDone box section ***
+    // *** update checkMotionDone, refTorque, refTrajectorySpeed, refSpeed ***
     // (only one at a time in order to save badwidth)
-    int k = slowSwitcher%NUMBER_OF_JOINTS;
-    slowSwitcher++;
+    iPos->checkMotionDone(slow_k, &done[slow_k]); //using k to save bandwidth
+    iTrq->getRefTorque(slow_k, &refTorques[slow_k]); //using k to save bandwidth
+    iPos->getRefSpeed(slow_k, &refTrajectorySpeeds[slow_k]); //using k to save bandwidth
+    //iVel->getRefSpeed(slow_k,&refVelocitySpeeds[slow_k]); //this interface is missing!
 
-    iPos->checkMotionDone(k, &done);
-    JointItem *joint  = (JointItem*)layout->itemAt(k)->widget();
-    if (!done){
-        joint->updateMotionDone(false);
-    } else {
-        joint->updateMotionDone(true);
+    // *** update the widget ***
+    for (int jk = 0; jk < NUMBER_OF_JOINTS; jk++) {
+        JointItem *joint = (JointItem*)layout->itemAt(jk)->widget();
+        joint->setPosition(positions[jk]);
+        joint->setTorque(torques[jk]);
+        joint->setRefTorque(refTorques[jk]);
+        joint->setRefTrajectorySpeed(refTrajectorySpeeds[jk]);
+        joint->setSpeed(speeds[jk]);
+        joint->updateMotionDone(done[jk]);
     }
 
-    // *** update the controlMode section ***
-    // the new icubinterface does not increase the bandwidth consumption
-    // ret = true; useless guys!
-//    ret=ctrlmode2->getControlModes(controlModes);
-//    if(ret==false){
-//        LOG_ERROR("ictrl->getControlMode failed\n" );
-//    }
+    // *** update the controlMode, interactionMode ***
+    // this is already done by updateControlMode() (because it also needs to update the tree, not only the single joint widget)
+    //    ret=ctrlmode2->getControlModes(controlModes);
+    //    if(ret==false){
+    //        LOG_ERROR("ictrl->getControlMode failed\n" );
+    //    }
     ret=iinteract->getInteractionModes(interactionModes);
     if(ret==false){
         LOG_ERROR("iint->getInteractionlMode failed\n" );
