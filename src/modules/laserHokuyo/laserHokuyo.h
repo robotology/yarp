@@ -19,7 +19,7 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IAnalogSensor.h>
+#include <yarp/dev/ILaserRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/SerialInterfaces.h>
 #include <yarp/sig/Vector.h>
@@ -27,48 +27,51 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-class laserHokuyo : public RateThread, public yarp::dev::IAnalogSensor, public DeviceDriver 
+class laserHokuyo : public RateThread, public yarp::dev::ILaserRangefinder2D, public DeviceDriver
 {
 protected:
-	PolyDriver driver;
+    PolyDriver driver;
     ISerialDevice *pSerial;
    
     yarp::os::Semaphore mutex;
 
     bool fake;
     int cardId;
-	int period;
+    int period;
     int sensorsNum;
-	int start_position;
-	int end_position;
-	int error_codes;
+    int start_position;
+    int end_position;
+    int error_codes;
     int internal_status;
+    std::string info;
+    int device_status;
+
     enum units_enum {UNITS_M =0, UNITS_MM, UNITS_INCH, UNITS_FEET} measurement_units;
-	enum laser_mode_type {FAKE_MODE=2, GD_MODE=1, MD_MODE=0};
-	enum error_code
-	{
-		STATUS_ACQUISITION_COMPLETE =1,
-		STATUS_OK = 0,
-		STATUS_ERROR_BUSY = -1,
-		STATUS_ERROR_INVALID_COMMAND = -2,
-		STATUS_ERROR_INVALID_CHECKSUM = -3,
-		STATUS_ERROR_NOTHING_RECEIVED = -4,
+    enum laser_mode_type {FAKE_MODE=2, GD_MODE=1, MD_MODE=0};
+    enum error_code
+    {
+        STATUS_ACQUISITION_COMPLETE =1,
+        STATUS_OK = 0,
+        STATUS_ERROR_BUSY = -1,
+        STATUS_ERROR_INVALID_COMMAND = -2,
+        STATUS_ERROR_INVALID_CHECKSUM = -3,
+        STATUS_ERROR_NOTHING_RECEIVED = -4,
         STATUS_NOT_READY = -5
-	};
+    };
 
-	laser_mode_type laser_mode;
+    laser_mode_type laser_mode;
 
-	struct sensor_property_struct 
-	{
-		std::string MODL;
-		int DMIN;
-		int DMAX;
-		int ARES;
-		int AMIN;
-		int AMAX;
-		int AFRT;
-		int SCAN;
-	} sensor_properties;
+    struct sensor_property_struct 
+    {
+        std::string MODL;
+        int DMIN;
+        int DMAX;
+        int ARES;
+        int AMIN;
+        int AMAX;
+        int AFRT;
+        int SCAN;
+    } sensor_properties;
 
     yarp::sig::Vector laser_data;
 
@@ -85,17 +88,13 @@ public:
     virtual bool close();
    
     
-    //IAnalogSensor interface
-    virtual int read(yarp::sig::Vector &out);
-    virtual int getState(int ch);
-    virtual int getChannels();
-    virtual int calibrateChannel(int ch, double v);
-    virtual int calibrateSensor();
-	virtual int calibrateChannel(int ch);
-	virtual int calibrateSensor(const yarp::sig::Vector& v);
-	virtual bool threadInit();
+    //ILaserRangefinder2D interface
+    virtual int getRangeData(yarp::sig::Vector &out);
+    virtual bool getDeviceStatus(int &status);
+    virtual bool threadInit();
     virtual void threadRelease();
     virtual void run();
+    virtual bool getDeviceInfo(yarp::os::ConstString &device_info);
 
 	//laser methods
 	int  calculateCheckSum(const char* buffer, int size, char actual_sum);

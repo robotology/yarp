@@ -28,6 +28,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
+                  include/yarp/dev/ILaserRangefinder2D.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode.h
@@ -122,6 +123,8 @@ set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/AnalogSensorClient/AnalogSensorClient.cpp
                         src/modules/BatteryWrapper/BatteryWrapper.cpp
                         src/modules/BatteryClient/BatteryClient.cpp
+                        src/modules/laserRangefinder2DWrapper/laserRangefinder2DWrapper.cpp
+                        src/modules/laserRangefinder2DClient/laserRangefinder2DClient.cpp
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
 
@@ -129,6 +132,8 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/AnalogSensorClient/AnalogSensorClient.h
                         src/modules/BatteryWrapper/BatteryWrapper.h
                         src/modules/BatteryClient/BatteryClient.h
+                        src/modules/laserRangefinder2DWrapper/laserRangefinder2DWrapper.h
+                        src/modules/laserRangefinder2DClient/laserRangefinder2DClient.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
 
