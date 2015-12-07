@@ -10,13 +10,11 @@
 #ifndef _YARP2_IMAGEDRAW_
 #define _YARP2_IMAGEDRAW_
 
-#include <math.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 #include <yarp/sig/Image.h>
 
-#ifndef M_PI
-#define M_PI 3.1415926535897932
-#endif
 
 namespace yarp {
     namespace sig{

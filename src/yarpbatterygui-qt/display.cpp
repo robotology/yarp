@@ -6,17 +6,17 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#include <math.h>
-#include "display.h"
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+
+#include "display.h"
 #include <QGraphicsPixmapItem>
 #include <QBitmap>
 
-#ifndef M_PI
-#define M_PI 3.1415927
-#endif
 
 using namespace std;
 
