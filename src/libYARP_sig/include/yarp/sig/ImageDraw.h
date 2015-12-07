@@ -10,7 +10,6 @@
 #ifndef _YARP2_IMAGEDRAW_
 #define _YARP2_IMAGEDRAW_
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include <yarp/sig/Image.h>
