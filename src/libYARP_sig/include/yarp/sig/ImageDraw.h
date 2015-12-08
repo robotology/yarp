@@ -10,7 +10,7 @@
 #ifndef _YARP2_IMAGEDRAW_
 #define _YARP2_IMAGEDRAW_
 
-#include <cmath>
+#include <math.h>
 
 #include <yarp/sig/Image.h>
 
@@ -83,7 +83,7 @@ namespace yarp {
             void addOvalOutline(ImageOf<T>& dest, const T& pix, 
                                 int i, int j, int h2, int w2) {
                 float x, y;
-                for (float th=0; th<2*M_PI; th+=0.01) {
+                for (float th=0; th<2.0*3.14159; th+=0.01) {
                     x = j+w2*cos(th);
                     y = i+h2*sin(th);
                     dest.safePixel((int)y,(int)x) = pix;
