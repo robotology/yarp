@@ -6,7 +6,9 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#define _USE_MATH_DEFINES
+#ifdef MSVC
+    #define _USE_MATH_DEFINES
+#endif
 #include <cmath>
 
 #include <yarp/os/Time.h>
