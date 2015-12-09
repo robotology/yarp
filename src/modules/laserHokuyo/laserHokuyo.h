@@ -44,19 +44,20 @@ protected:
     int error_codes;
     int internal_status;
     std::string info;
-    int device_status;
+    laser_status device_status;
 
-    enum units_enum {UNITS_M =0, UNITS_MM, UNITS_INCH, UNITS_FEET} measurement_units;
+    laser_units_enum measurement_units;
+
     enum laser_mode_type {FAKE_MODE=2, GD_MODE=1, MD_MODE=0};
     enum error_code
     {
-        STATUS_ACQUISITION_COMPLETE =1,
-        STATUS_OK = 0,
-        STATUS_ERROR_BUSY = -1,
-        STATUS_ERROR_INVALID_COMMAND = -2,
-        STATUS_ERROR_INVALID_CHECKSUM = -3,
-        STATUS_ERROR_NOTHING_RECEIVED = -4,
-        STATUS_NOT_READY = -5
+        HOKUYO_STATUS_ACQUISITION_COMPLETE =1,
+        HOKUYO_STATUS_OK = 0,
+        HOKUYO_STATUS_ERROR_BUSY = -1,
+        HOKUYO_STATUS_ERROR_INVALID_COMMAND = -2,
+        HOKUYO_STATUS_ERROR_INVALID_CHECKSUM = -3,
+        HOKUYO_STATUS_ERROR_NOTHING_RECEIVED = -4,
+        HOKUYO_STATUS_NOT_READY = -5
     };
 
     laser_mode_type laser_mode;
@@ -86,21 +87,31 @@ public:
 
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-   
-    
-    //ILaserRangefinder2D interface
-    virtual int getRangeData(yarp::sig::Vector &out);
-    virtual bool getDeviceStatus(int &status);
     virtual bool threadInit();
     virtual void threadRelease();
     virtual void run();
-    virtual bool getDeviceInfo(yarp::os::ConstString &device_info);
 
-	//laser methods
-	int  calculateCheckSum(const char* buffer, int size, char actual_sum);
-	long decodeDataValue(const char* data, int data_byte);
-	int  readData(const laser_mode_type laser_mode, const char* text_data, const int lext_data_len, int current_line, yarp::sig::Vector& values);
-   
+public:
+    //ILaserRangefinder2D interface
+    virtual bool getMeasurementData  (yarp::sig::Vector &out);
+    virtual bool getDeviceStatus     (laser_status &status);
+    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info);
+    virtual bool getMeasurementUnits (laser_units_enum& units);
+    virtual bool setMeasurementUnits (laser_units_enum units);
+    virtual bool getDistanceRange    (double& min, double& max);
+    virtual bool setDistanceRange    (double min, double max);
+    virtual bool getScanAngle        (double& min, double& max);
+    virtual bool setScanAngle        (double min, double max);
+    virtual bool getAngularStep      (double& step);
+    virtual bool setAngularStep      (double step);
+    virtual bool getScanRate         (double& rate);
+    virtual bool setScanRate         (double rate);
+
+private:
+    //laser methods
+    int  calculateCheckSum(const char* buffer, int size, char actual_sum);
+    long decodeDataValue(const char* data, int data_byte);
+    int  readData(const laser_mode_type laser_mode, const char* text_data, const int lext_data_len, int current_line, yarp::sig::Vector& values);
 };
 
 #endif

@@ -53,7 +53,7 @@ void LaserRangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
         //compare network time
         if (tmpDT*1000<LASER_TIMEOUT)
         {
-            state = b.get(5).asInt();
+            state = b.get(1).asInt();
         }
         else
         {
@@ -77,7 +77,7 @@ void LaserRangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
     //now compare timestamps
     if ((1000*(newStamp.getTime()-lastStamp.getTime()))<LASER_TIMEOUT)
     {
-        state = b.get(5).asInt();
+        state = b.get(1).asInt();
     }
     else
     {
@@ -105,19 +105,19 @@ inline int LaserRangefinder2DInputPortProcessor::getLast(yarp::os::Bottle &data,
 bool LaserRangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
 {
     mutex.wait();
-    ranges.resize(10);
-    for (int i = 0; i < 1; i++)
-    {
-        ranges[0] = lastBottle.get(0).asInt();
-    }
+    if (lastBottle.size()==0) { mutex.post(); return false; }
+    unsigned int size = lastBottle.get(0).asList()->size();
+    ranges.resize(size);
+    for (unsigned int i = 0; i < size; i++)
+        ranges[i] = lastBottle.get(0).asList()->get(i).asDouble();
     mutex.post();
     return true;
 }
 
-int    LaserRangefinder2DInputPortProcessor::getStatus()
+yarp::dev::ILaserRangefinder2D::laser_status LaserRangefinder2DInputPortProcessor::getStatus()
 {
     mutex.wait();
-    int status = lastBottle.get(3).asInt();
+    yarp::dev::ILaserRangefinder2D::laser_status status = (yarp::dev::ILaserRangefinder2D::laser_status) lastBottle.get(3).asInt();
     mutex.post();
     return status;
 }
@@ -220,13 +220,146 @@ bool yarp::dev::LaserRangefinder2DClient::close()
     return true;
 }
 
-int yarp::dev::LaserRangefinder2DClient::getRangeData(yarp::sig::Vector &out)
+bool yarp::dev::LaserRangefinder2DClient::getMeasurementData(yarp::sig::Vector &out)
 {
     inputPort.getData(out);
     return true;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getDeviceStatus(int &status)
+bool yarp::dev::LaserRangefinder2DClient::getMeasurementUnits(laser_units_enum& units)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_DEVICE_UNITS);
+    bool ok = rpcPort.write(cmd, response);
+    if (CHECK_FAIL(ok, response) != false)
+    {
+        units = (laser_units_enum) response.get(2).asInt();
+        return true;
+    }
+    return false;
+}
+
+bool yarp::dev::LaserRangefinder2DClient::setMeasurementUnits(laser_units_enum units)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_SET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_DEVICE_UNITS);
+    bool ok = rpcPort.write(cmd, response);
+    return (CHECK_FAIL(ok, response));
+}
+
+bool yarp::dev::LaserRangefinder2DClient::getDistanceRange(double& min, double& max)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_LASER_DISTANCE_RANGE);
+    bool ok = rpcPort.write(cmd, response);
+    if (CHECK_FAIL(ok, response) != false)
+    {
+        min = response.get(2).asDouble();
+        max = response.get(3).asDouble();
+        return true;
+    }
+    return false;
+}
+
+bool yarp::dev::LaserRangefinder2DClient::setDistanceRange(double min, double max)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_SET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_LASER_DISTANCE_RANGE);
+    cmd.addDouble(min);
+    cmd.addDouble(max);
+    bool ok = rpcPort.write(cmd, response);
+    return (CHECK_FAIL(ok, response));
+}
+
+bool yarp::dev::LaserRangefinder2DClient::getScanAngle(double& min, double& max)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_LASER_ANGULAR_RANGE);
+    bool ok = rpcPort.write(cmd, response);
+    if (CHECK_FAIL(ok, response) != false)
+    {
+        min = response.get(2).asDouble();
+        max = response.get(3).asDouble();
+        return true;
+    }
+    return false;
+}
+
+bool yarp::dev::LaserRangefinder2DClient::setScanAngle(double min, double max)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_SET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_LASER_ANGULAR_RANGE);
+    cmd.addDouble(min);
+    cmd.addDouble(max);
+    bool ok = rpcPort.write(cmd, response);
+    return (CHECK_FAIL(ok, response));
+}
+
+bool yarp::dev::LaserRangefinder2DClient::getAngularStep(double& step)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_LASER_ANGULAR_STEP);
+    bool ok = rpcPort.write(cmd, response);
+    if (CHECK_FAIL(ok, response) != false)
+    {
+        step = response.get(2).asDouble();
+        return true;
+    }
+    return false;
+}
+
+bool yarp::dev::LaserRangefinder2DClient::setAngularStep(double step)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_SET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_LASER_ANGULAR_STEP);
+    cmd.addDouble(step);
+    bool ok = rpcPort.write(cmd, response);
+    return (CHECK_FAIL(ok, response));
+}
+
+bool yarp::dev::LaserRangefinder2DClient::getScanRate(double& rate)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_LASER_SCAN_RATE);
+    bool ok = rpcPort.write(cmd, response);
+    if (CHECK_FAIL(ok, response) != false)
+    {
+        rate = response.get(2).asDouble();
+        return true;
+    }
+    return false;
+}
+
+bool yarp::dev::LaserRangefinder2DClient::setScanRate(double rate)
+{
+    Bottle cmd, response;
+    cmd.addVocab(VOCAB_SET);
+    cmd.addVocab(VOCAB_ILASER2D);
+    cmd.addVocab(VOCAB_LASER_SCAN_RATE);
+    cmd.addDouble(rate);
+    bool ok = rpcPort.write(cmd, response);
+    return (CHECK_FAIL(ok, response));
+}
+
+bool yarp::dev::LaserRangefinder2DClient::getDeviceStatus(laser_status &status)
 {
     status = inputPort.getStatus();
     return true;
@@ -235,6 +368,7 @@ bool yarp::dev::LaserRangefinder2DClient::getDeviceStatus(int &status)
 bool yarp::dev::LaserRangefinder2DClient::getDeviceInfo(yarp::os::ConstString &device_info)
 {
     Bottle cmd, response;
+    cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_ILASER2D);
     cmd.addVocab(VOCAB_DEVICE_INFO);
     bool ok = rpcPort.write(cmd, response);

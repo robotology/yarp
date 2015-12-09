@@ -13,6 +13,8 @@
 #include <laserHokuyo.h>
 
 #include <yarp/os/Time.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
@@ -24,7 +26,7 @@ using namespace std;
 bool laserHokuyo::open(yarp::os::Searchable& config)
 {
     bool correct=true;
-    internal_status = STATUS_NOT_READY;
+    internal_status = HOKUYO_STATUS_NOT_READY;
     info = "Hokuyo Laser";
     device_status = LASER_OK_STANBY;
 
@@ -280,23 +282,93 @@ bool laserHokuyo::close()
     return true;
 }
 
-int laserHokuyo::getRangeData(yarp::sig::Vector &out)
+bool laserHokuyo::getMeasurementUnits(laser_units_enum& units)
 {
-    if (internal_status!=STATUS_NOT_READY)
-    {
-        mutex.wait();
-    #if LASER_DEBUG
-        //yDebug("data: %s\n", laser_data.toString().c_str());
-    #endif
-        out=laser_data;
-        mutex.post();
-        return yarp::dev::ILaserRangefinder2D::LASER_OK_IN_USE;
-    }
-    else
-        return yarp::dev::ILaserRangefinder2D::LASER_GENERAL_ERROR;
+    this->mutex.wait();
+    units = measurement_units;
+    this->mutex.post();
+    return true;
 }
 
-bool laserHokuyo::getDeviceStatus(int &status)
+bool laserHokuyo::setMeasurementUnits(laser_units_enum units)
+{
+    yError("setMeasurementUnits NOT YET IMPLEMENTED");
+    return false;
+}
+
+bool laserHokuyo::getDistanceRange(double& min, double& max)
+{
+    //should return range 0.1-30m (or 100, 30000mm depending on the measurment units)
+    min = 0.1;
+    max = 30;
+    return true;
+}
+
+bool laserHokuyo::setDistanceRange(double min, double max)
+{
+    yError("setDistanceRange NOT YET IMPLEMENTED");
+    return false;
+}
+
+bool laserHokuyo::getScanAngle(double& min, double& max)
+{
+    //degrees
+    min = 0;
+    max = 270;
+    return true;
+}
+
+bool laserHokuyo::setScanAngle(double min, double max)
+{
+    yError("setScanAngle NOT YET IMPLEMENTED");
+    return false;
+}
+
+bool laserHokuyo::getAngularStep(double& step)
+{
+    step = 0.25; //deg //1080*0.25=270
+    return true;
+}
+
+bool laserHokuyo::setAngularStep(double step)
+{
+    yError("setAngularStep NOT YET IMPLEMENTED");
+    return false;
+}
+
+bool laserHokuyo::getScanRate(double& rate)
+{
+    rate = 20; //20 Hz = 50 ms
+    return true;
+}
+
+bool laserHokuyo::setScanRate(double rate)
+{
+    yError("setScanRate NOT YET IMPLEMENTED");
+    return false;
+}
+
+
+bool laserHokuyo::getMeasurementData(yarp::sig::Vector &out)
+{
+    if (internal_status != HOKUYO_STATUS_NOT_READY)
+    {
+        mutex.wait();
+#if LASER_DEBUG
+        //yDebug("data: %s\n", laser_data.toString().c_str());
+#endif
+        out = laser_data;
+        mutex.post();
+        device_status = yarp::dev::ILaserRangefinder2D::LASER_OK_IN_USE;
+        return true;
+    }
+    else
+        device_status = yarp::dev::ILaserRangefinder2D::LASER_GENERAL_ERROR;
+        return false;
+
+}
+
+bool laserHokuyo::getDeviceStatus(laser_status &status)
 {
     mutex.wait();
     status = device_status;
@@ -346,7 +418,7 @@ int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_dat
 
     if (text_data_len==0)
     {
-        return  STATUS_ERROR_NOTHING_RECEIVED; 
+        return  HOKUYO_STATUS_ERROR_NOTHING_RECEIVED;
     }
 
     long int timestamp = 0 ;
@@ -378,7 +450,7 @@ int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_dat
                         data.push_back(value/1000.0); break;
                 }
             }
-            return STATUS_ACQUISITION_COMPLETE; 
+            return HOKUYO_STATUS_ACQUISITION_COMPLETE;
         }
 
     // check in the first line if it is a valid answer to GD command
@@ -391,10 +463,10 @@ int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_dat
                 #if LASER_DEBUG
                 yDebug("Invalid answer to a MD command: %s\n", text_data);
                 #endif
-                return STATUS_ERROR_INVALID_COMMAND; 
+                return HOKUYO_STATUS_ERROR_INVALID_COMMAND;
             }
             else
-                return  STATUS_OK; 
+                return  HOKUYO_STATUS_OK;
     }
 
     // check in the second line if the status of the sensor is ok
@@ -406,10 +478,10 @@ int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_dat
                 #if LASER_DEBUG
                 yDebug("Invalid sensor status: %s\n", text_data);
                 #endif
-                return STATUS_ERROR_BUSY; 
+                return HOKUYO_STATUS_ERROR_BUSY;
             }
             else
-                return STATUS_OK; 
+                return HOKUYO_STATUS_OK;
     }
 
     // verify the checksum for all the following lines
@@ -421,7 +493,7 @@ int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_dat
             #if LASER_DEBUG
             yDebug("Cheksum error, line: %d: %s\n", current_line, text_data);
             #endif
-            return STATUS_ERROR_INVALID_CHECKSUM; 
+            return HOKUYO_STATUS_ERROR_INVALID_CHECKSUM;
         }
     }
 
@@ -440,7 +512,7 @@ int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_dat
     //increments the lines counter
     //current_line++;
 
-  return STATUS_OK;
+    return HOKUYO_STATUS_OK;
 }
 
 void laserHokuyo::run()
@@ -448,7 +520,7 @@ void laserHokuyo::run()
     if (fake)
     {
         mutex.wait();
-        internal_status=STATUS_OK;
+        internal_status = HOKUYO_STATUS_OK;
         laser_data.clear();
         for (int i=0; i<1080; i++)
             laser_data.push_back(i/100.0);
@@ -483,10 +555,18 @@ void laserHokuyo::run()
         //yDebug ("1status: %d!\n",internal_status);
         int answer_len = pSerial->receiveLine(answer, buffer_size);
         internal_status = readData(laser_mode, answer,answer_len,current_line,data_vector);
-        if (internal_status <  0 && internal_status != STATUS_ERROR_NOTHING_RECEIVED) 
+        if (internal_status <  0 && internal_status != HOKUYO_STATUS_ERROR_NOTHING_RECEIVED)
+        {
             error = true;
-        if (internal_status == STATUS_OK) current_line ++;
-        if (internal_status == STATUS_ACQUISITION_COMPLETE) rx_completed = true;
+        }
+        if (internal_status == HOKUYO_STATUS_OK)
+        {
+            current_line++;
+        }
+        if (internal_status == HOKUYO_STATUS_ACQUISITION_COMPLETE)
+        {
+            rx_completed = true;
+        }
         t2 = yarp::os::Time::now();
         if (t2-t1>maxtime) timeout = true;
     }
@@ -508,7 +588,7 @@ void laserHokuyo::run()
 
     if (rx_completed)
     {
-        //data_vector_size = data_vector.size();
+        data_vector_size = data_vector.size();
         laser_data=data_vector;
     }
 

@@ -25,7 +25,7 @@ yarp::dev::DriverCreator *createLaserRangefinder2DWrapper() {
 
 
 /**
-  * It reads the data from an battery sensor and sends them on one port.
+  * It reads the data from an laser range finder sensor and sends them on one port.
   * It also creates one rpc port.
   */
 
@@ -42,7 +42,7 @@ LaserRangefinder2DWrapper::~LaserRangefinder2DWrapper()
 }
 
 /**
-  * Specify which battery sensor this thread has to read from.
+  * Specify which sensor this thread has to read from.
   */
 
 bool LaserRangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
@@ -96,31 +96,195 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
     if (!ok) return false;
 
     // parse in, prepare out
-    int code = in.get(0).asVocab();
+    int action = in.get(0).asVocab();
+    int inter  = in.get(1).asVocab();
     bool ret = false;
-    if (code == VOCAB_ILASER2D)
+
+    if (inter == VOCAB_ILASER2D)
     {
-        int cmd = in.get(1).asVocab();
-        if (cmd == VOCAB_DEVICE_INFO)
+        if (action == VOCAB_GET)
         {
-            if (laser_p)
+            int cmd = in.get(2).asVocab();
+            if (cmd == VOCAB_DEVICE_INFO)
             {
-                yarp::os::ConstString info;
-                laser_p->getDeviceInfo(info);
-                out.addVocab(VOCAB_IS);
-                out.addVocab(cmd);
-                out.addString(info);
-                ret = true;
+                if (laser_p)
+                {
+                    yarp::os::ConstString info;
+                    if (laser_p->getDeviceInfo(info))
+                    {
+                        out.addVocab(VOCAB_IS);
+                        out.addVocab(cmd);
+                        out.addString(info);
+                        ret = true;
+                    }
+                    else
+                    {
+                        ret = false;
+                    }
+                }
+            }
+            else if (cmd == VOCAB_DEVICE_UNITS)
+            {
+                if (laser_p)
+                {
+                    ILaserRangefinder2D::laser_units_enum units;
+                    if (laser_p->getMeasurementUnits(units))
+                    {
+                        out.addVocab(VOCAB_IS);
+                        out.addVocab(cmd);
+                        out.addInt((int)units);
+                        ret = true;
+                    }
+                    else
+                    {
+                        ret = false;
+                    }
+                }
+            }
+            else if (cmd == VOCAB_LASER_DISTANCE_RANGE)
+            {
+                if (laser_p)
+                {
+                    double max = 0;
+                    double min = 0;
+                    if (laser_p->getDistanceRange(min, max))
+                    {
+                        out.addVocab(VOCAB_IS);
+                        out.addVocab(cmd);
+                        out.addDouble(min);
+                        out.addDouble(max);
+                        ret = true;
+                    }
+                    else
+                    {
+                        ret = false;
+                    }
+                }
+            }
+            else if (cmd == VOCAB_LASER_ANGULAR_RANGE)
+            {
+                if (laser_p)
+                {
+                    double max = 0;
+                    double min = 0;
+                    if (laser_p->getScanAngle(min, max))
+                    {
+                        out.addVocab(VOCAB_IS);
+                        out.addVocab(cmd);
+                        out.addDouble(min);
+                        out.addDouble(max);
+                        ret = true;
+                    }
+                    else
+                    {
+                        ret = false;
+                    }
+                }
+            }
+            else if (cmd == VOCAB_LASER_ANGULAR_STEP)
+            {
+                if (laser_p)
+                {
+                    double step = 0;
+                    if (laser_p->getAngularStep(step))
+                    {
+                        out.addVocab(VOCAB_IS);
+                        out.addVocab(cmd);
+                        out.addDouble(step);
+                        ret = true;
+                    }
+                    else
+                    {
+                        ret = false;
+                    }
+                }
+            }
+            else if (cmd == VOCAB_LASER_SCAN_RATE)
+            {
+                if (laser_p)
+                {
+                    double rate = 0;
+                    if (laser_p->getScanRate(rate))
+                    {
+                        out.addVocab(VOCAB_IS);
+                        out.addVocab(cmd);
+                        out.addDouble(rate);
+                        ret = true;
+                    }
+                    else
+                    {
+                        ret = false;
+                    }
+                }
+            }
+            else
+            {
+                yError("Invalid command received in LaserRangefinder2DWrapper");
+            }
+        }
+        else if (action == VOCAB_SET)
+        {
+            int cmd = in.get(2).asVocab();
+            if (cmd == VOCAB_DEVICE_UNITS)
+            {
+                if (laser_p)
+                {
+                    ILaserRangefinder2D::laser_units_enum units = (ILaserRangefinder2D::laser_units_enum) in.get(3).asInt();
+                    laser_p->setMeasurementUnits(units);
+                    ret = true;
+                }
+            }
+            else if (cmd == VOCAB_LASER_DISTANCE_RANGE)
+            {
+                if (laser_p)
+                {
+                    double min = in.get(3).asInt();
+                    double max = in.get(4).asInt();
+                    laser_p->setDistanceRange(min, max);
+                    ret = true;
+                }
+            }
+            else if (cmd == VOCAB_LASER_ANGULAR_RANGE)
+            {
+                if (laser_p)
+                {
+                    double min = in.get(3).asInt();
+                    double max = in.get(4).asInt();
+                    laser_p->setScanAngle(min, max);
+                    ret = true;
+                }
+            }
+            else if (cmd == VOCAB_LASER_SCAN_RATE)
+            {
+                if (laser_p)
+                {
+                    double rate = in.get(3).asInt();
+                    laser_p->setScanRate(rate);
+                    ret = true;
+                }
+            }
+            else if (cmd == VOCAB_LASER_ANGULAR_STEP)
+            {
+                if (laser_p)
+                {
+                    double step = in.get(3).asDouble();
+                    laser_p->setAngularStep(step);
+                    ret = true;
+                }
+            }
+            else
+            {
+                yError("Invalid command received in LaserRangefinder2DWrapper");
             }
         }
         else
         {
-            yError("Invalid vocab received in LaserRangefinder2DWrapper");
+            yError("Invalid action received in LaserRangefinder2DWrapper");
         }
     }
     else
     {
-        yError("Invalid vocab received in LaserRangefinder2DWrapper");
+        yError("Invalid interface vocab received in LaserRangefinder2DWrapper");
     }
 
     if (!ret)
@@ -165,7 +329,7 @@ bool LaserRangefinder2DWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("period"))
     {
-        yError() << "BatteryWrapper: missing 'period' parameter. Check you configuration file\n";
+        yError() << "LaserRangefinder2DWrapper: missing 'period' parameter. Check you configuration file\n";
         return false;
     }
     else
@@ -173,7 +337,7 @@ bool LaserRangefinder2DWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("name"))
     {
-        yError() << "BatteryWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
+        yError() << "LaserRangefinder2DWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
         yError() << "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
         return false;
     }
@@ -181,7 +345,7 @@ bool LaserRangefinder2DWrapper::open(yarp::os::Searchable &config)
     {
         streamingPortName  = config.find("name").asString().c_str();
         rpcPortName = streamingPortName + "/rpc:i";
-        setId("batteryWrapper");
+        setId("LaserRangefinder2DWrapper");
     }
 
     if(!initialize_YARP(config) )
@@ -215,20 +379,24 @@ void LaserRangefinder2DWrapper::run()
         yarp::sig::Vector ranges;
 
         bool ret = true;
-        ret &= laser_p->getRangeData(ranges);
+        ILaserRangefinder2D::laser_status status;
+        ret &= laser_p->getMeasurementData(ranges);
+        ret &= laser_p->getDeviceStatus(status);
 
         if (ret)
         {
             lastStateStamp.update();
             yarp::os::Bottle& b = streamingPort.prepare();
             b.clear();
-            b.addDouble(ranges[0]);
+            Bottle& bl = b.addList();
+            bl.read(ranges);
+            b.addInt(status);
             streamingPort.setEnvelope(lastStateStamp);
             streamingPort.write();
         }
         else
         {
-            yError("BatteryWrapper: %s: Sensor returned error", sensorId.c_str());
+            yError("LaserRangefinder2DWrapper: %s: Sensor returned error", sensorId.c_str());
         }
     }
 }

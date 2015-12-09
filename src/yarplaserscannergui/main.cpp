@@ -76,6 +76,8 @@ Windows, Linux
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Image.h>
 #include <yarp/dev/ILaserRangefinder2D.h>
@@ -187,7 +189,7 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img)
 {
     if (display->size()==8)
     {
-        printf ("wrong format!\n");
+        yError ("wrong image format!");
         return;
     }
     double c0 = display->get(0).asDouble();
@@ -228,7 +230,7 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
-void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img)
+void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img, double angle_tot, int scans)
 {
     cvZero(img);
     cvRectangle(img,cvPoint(0,0),cvPoint(img->width,img->height),cvScalar(255,0,0),-1);
@@ -250,17 +252,17 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
     }
 
     double curr_time=yarp::os::Time::now();
-    if (verbose) fprintf(stderr,"received vector size:%d ",int(las->size()));
+    if (verbose) yError("received vector size:%d ",int(las->size()));
     static int timeout_count=0;
     if (curr_time-old_time > 0.40) timeout_count++;
-    if (verbose) fprintf(stderr,"time:%f timeout:%d\n",curr_time-old_time, timeout_count);
+    if (verbose) yWarning("time:%f timeout:%d\n", curr_time - old_time, timeout_count);
     old_time = curr_time;
-    for (int i=0; i<1080; i++)
+    for (int i = 0; i<scans; i++)
     {
         lenght=(*las)[i];
         if      (lenght<0)     lenght = 0;
         else if (lenght>15)    lenght = 15; //15m maximum
-        angle=i/1080.0*270.0-(90-(360-270)/2);
+        angle = (double)i / (double)scans *angle_tot - ((360 - angle_tot) - (360 - angle_tot) / 2);
 
         //lenght=i; //this line is for debug only
         angle-=center_angle;
@@ -294,8 +296,6 @@ int main(int argc, char *argv[])
 {
     Network yarp;
 
-    string laser_port_name;
-    laser_port_name = "/laserScannerGui/laser:i";
     string laser_map_port_name;
     laser_map_port_name = "/laserScannerGui/laser_map:i";
     string compass_port_name;
@@ -306,14 +306,34 @@ int main(int argc, char *argv[])
     int width = 600;
     int height = 600;
 
-    yarp::dev::PolyDriver* drv = 0;
+    yarp::dev::PolyDriver* drv = new yarp::dev::PolyDriver;
     Property   lasOptions;
-    drv->open(lasOptions);
+    lasOptions.put("device", "laserRangefinder2DClient");
+    lasOptions.put("local", "/laserScannerGui/laser:i");
+    lasOptions.put("remote", "/ikart/laser:o");
+    lasOptions.put("period", "10");
+    bool b = drv->open(lasOptions);
+    if (!b)
+    {
+        yError() << "Unable to open polydriver";
+        return 0;
+    }
     yarp::dev::ILaserRangefinder2D* iLas = 0;
     drv->view(iLas);
+    if (iLas == 0)
+    {
+        yError() << "Unable to ILaserRangefinder2D interface";
+        return 0;
+    }
 
-    yarp::sig::Vector vec;
-    iLas->getRangeData(vec);
+    double angle_min = 0;
+    double angle_max = 0;
+    double angle_step = 0;
+    iLas->getScanAngle(angle_min, angle_max);
+    double angle_tot = (angle_max - angle_min);
+    iLas->getAngularStep(angle_step);
+    int scans = (int)(angle_tot / angle_step);
+    yarp::sig::Vector laser_data;
 
     BufferedPort<yarp::os::Bottle> laserMapInPort;
     laserMapInPort.open(laser_map_port_name.c_str());
@@ -331,10 +351,7 @@ int main(int argc, char *argv[])
     bool exit = false;
     yarp::sig::Vector compass_data;
     compass_data.resize(3, 0.0);
-
-    yarp::sig::Vector laser_data;
     lasermap_type     lasermap_data [1080];
-    laser_data.resize(1080, 0.0);
 
     while(!exit)
     {
@@ -344,8 +361,8 @@ int main(int argc, char *argv[])
             if (cmp) compass_data = *cmp;
         }
 
-     //@@@@@   yarp::sig::Vector *las = iLas->read(laser_data);
-     //@@@@@   if (las) laser_data = *las;
+        iLas->getMeasurementData(laser_data);
+        int laser_data_size = laser_data.size();
 
         yarp::os::Bottle *las_map = laserMapInPort.read(false);
         if (las_map)
@@ -361,9 +378,28 @@ int main(int argc, char *argv[])
         //The drawing functions.
         {
             if (las_map)
-            {drawLaser(&compass_data,&laser_data,lasermap_data,img);}
+            {
+                if (laser_data_size != scans)
+                {
+                    drawLaser(&compass_data, &laser_data, lasermap_data, img, angle_tot, scans);
+                }
+                else
+                {
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans);
+                }
+            }
             else
-            {drawLaser(&compass_data,&laser_data,0,img);}
+            {
+                if (laser_data_size != scans) 
+                {
+                    yWarning() << "Problem detected in size of laser measurement vector";
+                }
+                else
+                {
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans);
+                }
+
+            }
             drawRobot(img2);
             drawGrid(img);
             if (compass) drawCompass(&compass_data,img);
@@ -388,25 +424,25 @@ int main(int argc, char *argv[])
         {
             //scale+=0.001;
             scale*=1.02;
-            fprintf(stderr,"scale factor is now:%.3f\n",scale);
+            yInfo("scale factor is now:%.3f",scale);
         }
         if(keypressed == 's' && scale >15) 
         {
            //scale-=0.001;
            scale/=1.02;
-            fprintf(stderr,"scale factor is now:%.3f\n",scale);
+           yInfo("scale factor is now:%.3f", scale);
         }
         if(keypressed == 'v' ) 
         {
            verbose= (!verbose);
-            if (verbose) fprintf(stderr,"verbose mode is now ON\n");
-        else         fprintf(stderr,"verbose mode is now OFF\n");
+           if (verbose) yInfo("verbose mode is now ON");
+           else         yInfo("verbose mode is now OFF");
         }
         if(keypressed == 'a' )
         {
             absolute= (!absolute);
-            if (absolute) fprintf(stderr,"display is now in ABSOLUTE mode\n");
-            else          fprintf(stderr,"display is now in RELATIVE mode\n");
+            if (absolute) yInfo("display is now in ABSOLUTE mode");
+            else          yInfo("display is now in RELATIVE mode");
         }
         if(keypressed == 'r' )
         {
@@ -414,26 +450,24 @@ int main(int argc, char *argv[])
             else if (rate==50) rate = 100;
             else if (rate==100) rate = 200;
             else if (rate==200) rate = 0;
-         fprintf(stderr,"refresh rate set to %d ms.\n", rate);
+            yInfo( "refresh rate set to %d ms.", rate);
         }
         if(keypressed == 'c' )
         {
             compass= (!compass);
-            if (compass) {fprintf(stderr,"compass is now ON\n"); }
-            else         {fprintf(stderr,"compass is now OFF\n"); compass_data.zero();}
+            if (compass) { yInfo( "compass is now ON"); }
+            else         { yInfo( "compass is now OFF"); compass_data.zero(); }
         }
         if(keypressed == 'h' || 
             keypressed == 'H')
         {
-            fprintf(stderr,"\n");
-            fprintf(stderr,"available commands:\n");
-            fprintf(stderr,"c ...... enables/disables compass.\n");
-            fprintf(stderr,"a ...... set absolute/relative mode.\n");
-            fprintf(stderr,"w ...... zoom in.\n");
-            fprintf(stderr,"s ...... zoom out.\n");
-            fprintf(stderr,"v ...... set verbose mode on/off.\n");
-            fprintf(stderr,"r ...... set refresh rate.\n");
-           fprintf(stderr,"\n");
+            yInfo("available commands:");
+            yInfo("c ...... enables/disables compass.");
+            yInfo("a ...... set absolute/relative mode.");
+            yInfo("w ...... zoom in.");
+            yInfo("s ...... zoom out.");
+            yInfo("v ...... set verbose mode on/off.");
+            yInfo("r ...... set refresh rate.");
         }
     }
 
@@ -442,4 +476,5 @@ int main(int argc, char *argv[])
     navDisplayInPort.close();
     cvDestroyAllWindows();
     cvReleaseImage(&img);
+    if (drv) delete drv;
 }

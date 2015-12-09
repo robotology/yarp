@@ -14,7 +14,12 @@
 #include <yarp/sig/Vector.h>
 
 #define VOCAB_ILASER2D     VOCAB4('i','l','a','s')
-#define VOCAB_DEVICE_INFO VOCAB4('d','v','n','f')
+#define VOCAB_DEVICE_INFO  VOCAB4('l','s','n','f')
+#define VOCAB_DEVICE_UNITS VOCAB4('l','s','u','s')
+#define VOCAB_LASER_DISTANCE_RANGE VOCAB4('l','s','d','r')
+#define VOCAB_LASER_ANGULAR_RANGE  VOCAB4('l','s','a','r')
+#define VOCAB_LASER_ANGULAR_STEP   VOCAB4('l','s','a','s')
+#define VOCAB_LASER_SCAN_RATE      VOCAB4('l','s','s','r')
 
 namespace yarp {
     namespace dev {
@@ -30,7 +35,7 @@ namespace yarp {
 class YARP_dev_API yarp::dev::ILaserRangefinder2D
 {
 public:
-    enum
+    enum laser_status
     {
         LASER_OK_STANBY        = 0,
         LASER_OK_IN_USE        = 1,
@@ -38,25 +43,107 @@ public:
         LASER_TIMEOUT          = 3
     };
 
+    enum laser_units_enum
+    {
+        UNITS_M = 0,
+        UNITS_MM = 1,
+        UNITS_INCH = 2,
+        UNITS_FEET = 3
+    };
+
     virtual ~ILaserRangefinder2D(){}
 
     /**
-     * Get the instantaneous voltage measurement
-     * @param voltage the voltage measurement
-     * @return true/false.
-     */
-    virtual int getRangeData(yarp::sig::Vector &data) = 0;
-
-    /**
-    * get the battery status
-    * @param status the battery status
+    * Get the distance measurements
+    * @param ranges the vector containing the distance measurement
     * @return true/false.
     */
-    virtual bool getDeviceStatus(int &status) = 0;
+    virtual bool getMeasurementData(yarp::sig::Vector &data) = 0;
+
+    /**
+    * Get the measurements units
+    * @param units the enum indicating the measurement units
+    * @return true/false.
+    */
+    virtual bool getMeasurementUnits(laser_units_enum& units) = 0;
+
+    /**
+    * Set the measurements units
+    * @param units the enum indicating the measurement units
+    * @return true/false.
+    */
+    virtual bool setMeasurementUnits(laser_units_enum units) = 0;
+
+    /**
+    * get the device status
+    * @param status the device status
+    * @return true/false.
+    */
+    virtual bool getDeviceStatus(laser_status& status) = 0;
+
+    /**
+    * get the device detection range
+    * @param min the minimum detection distance
+    * @param max the maximum detection distance
+    * @return true/false.
+    */
+    virtual bool getDistanceRange(double& min, double& max) = 0;
+
+    /**
+    * set the device detection range. Invalid setting will be discarded.
+    * @param min the minimum detection distance
+    * @param max the maximum detection distance
+    * @return true/false on success/failure.
+    */
+    virtual bool setDistanceRange(double min, double max) = 0;
+
+    /**
+    * get the scan angular range.
+    * @param min start angle of the scan
+    * @param max end angle of the scan
+    * @return true/false.
+    */
+    virtual bool getScanAngle(double& min, double& max) = 0;
+
+    /**
+    * set the scan angular range.
+    * @param min start angle of the scan
+    * @param max end angle of the scan
+    * @return true/false on success/failure.
+    */
+    virtual bool setScanAngle(double min, double max) = 0;
+
+    /**
+    * get the angular step between two measurments.
+    * @param step the angular step between two measurments
+    * @return true/false.
+    */
+    virtual bool getAngularStep(double& step) = 0;
+
+    /**
+    * get the angular step between two measurments (if available)
+    * @param step the angular step between two measurments
+    * @return true/false on success/failure.
+    */
+    virtual bool setAngularStep(double step) = 0;
+
+    /**
+    * get the scan rate (scans per seconds)
+    * @param rate the scan rate
+    * @return true/false.
+    */
+    virtual bool getScanRate(double& rate) = 0;
+
+    /**
+    * set the scan rate (scans per seconds)
+    * @param rate the scan rate
+    * @return true/false on success/failure.
+    */
+    virtual bool setScanRate(double rate) = 0;
 
     /**
     * get the device hardware charactestics
-    * @param a string containing the device infos
+    * @param device_info string containing the device infos
     * @return true/false.
     */
     virtual bool getDeviceInfo(yarp::os::ConstString &device_info) = 0;
