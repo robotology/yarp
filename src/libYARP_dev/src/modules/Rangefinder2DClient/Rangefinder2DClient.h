@@ -5,14 +5,14 @@
 *
 */
 
-#ifndef LASERRANGEFINDER2D_CLIENT_H
-#define LASERRANGEFINDER2D_CLIENT_H
+#ifndef _RANGEFINDER2D_CLIENT_H_
+#define _RANGEFINDER2D_CLIENT_H_
 
 
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PreciselyTimed.h>
-#include <yarp/dev/ILaserRangefinder2D.h>
+#include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
@@ -22,7 +22,7 @@
 
 namespace yarp {
     namespace dev {
-        class LaserRangefinder2DClient;
+        class Rangefinder2DClient;
     }
 }
 
@@ -31,7 +31,7 @@ const int LASER_TIMEOUT=100; //ms
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class LaserRangefinder2DInputPortProcessor : public yarp::os::BufferedPort<yarp::os::Bottle>
+class Rangefinder2DInputPortProcessor : public yarp::os::BufferedPort<yarp::os::Bottle>
 {
     yarp::os::Bottle lastBottle;
     yarp::os::Semaphore mutex;
@@ -49,7 +49,7 @@ public:
 
     inline void resetStat();
 
-    LaserRangefinder2DInputPortProcessor();
+    Rangefinder2DInputPortProcessor();
 
     virtual void onRead(yarp::os::Bottle &v);
 
@@ -61,7 +61,7 @@ public:
     void getEstFrequency(int &ite, double &av, double &min, double &max);
 
     bool getData(yarp::sig::Vector &data);
-    yarp::dev::ILaserRangefinder2D::Device_status getStatus();
+    yarp::dev::IRangefinder2D::Device_status getStatus();
 
 };
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
@@ -72,13 +72,13 @@ public:
 * The client side of any ILaserRangefinder2D capable device.
 * Still single thread! concurrent access is unsafe.
 */
-class yarp::dev::LaserRangefinder2DClient: public DeviceDriver,
+class yarp::dev::Rangefinder2DClient: public DeviceDriver,
                           public IPreciselyTimed,
-                          public ILaserRangefinder2D
+                          public IRangefinder2D
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
-    LaserRangefinder2DInputPortProcessor inputPort;
+    Rangefinder2DInputPortProcessor inputPort;
     yarp::os::Port rpcPort;
     yarp::os::ConstString local;
     yarp::os::ConstString remote;

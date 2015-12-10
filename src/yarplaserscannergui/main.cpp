@@ -228,7 +228,7 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
-void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img, double angle_tot, int scans, double laser_position, double scale, bool absolute, bool verbose)
+void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img, double angle_tot, int scans, double sens_position, double scale, bool absolute, bool verbose)
 {
     cvZero(img);
     cvRectangle(img,cvPoint(0,0),cvPoint(img->width,img->height),cvScalar(255,0,0),-1);
@@ -237,8 +237,8 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
     double center_angle;
     if (!absolute) center_angle=0;
     else center_angle = -180-(*comp)[0];
-    center.x = (int)(img->width/2  + (laser_position*scale)*sin(center_angle/180*3.14) );
-    center.y = (int)(img->height/2 - (laser_position*scale)*cos(center_angle/180*3.14) );
+    center.x = (int)(img->width/2  + (sens_position*scale)*sin(center_angle/180*3.14) );
+    center.y = (int)(img->height/2 - (sens_position*scale)*cos(center_angle/180*3.14) );
 
     double angle =0;
     double lenght=0;
@@ -282,8 +282,8 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
             CvPoint ray2;
             ray2.x=int(lmap[i].x*scale);
             ray2.y= -int(lmap[i].y*scale);
-            ray2.x += (center.x - int((laser_position*scale)*sin(center_angle/180*M_PI)));
-            ray2.y += (center.y + int((laser_position*scale)*cos(center_angle/180*M_PI)));
+            ray2.x += (center.x - int((sens_position*scale)*sin(center_angle/180*M_PI)));
+            ray2.y += (center.y + int((sens_position*scale)*cos(center_angle/180*M_PI)));
             cvLine(img,center,ray2,color_bwhite,thickness);
         }
     }
@@ -304,12 +304,12 @@ int main(int argc, char *argv[])
 
     double scale = finder->check("scale", Value(100), "global scale factor").asDouble(); 
     double robot_radius = finder->check("robot_radius", Value(0.001), "robot radius [m]").asDouble();
-    double laser_position = finder->check("laser_position", Value(0), "laser_position [m]").asDouble();
+    double sens_position = finder->check("sens_position", Value(0), "sens_position [m]").asDouble();
     bool verbose = finder->check("verbose", Value(false), "verbose [0/1]").asBool();
     bool absolute = finder->check("absolute", Value(false), "absolute [0/1]").asBool();
     bool compass = finder->check("compass", Value(true), "compass [0/1]").asBool();
     int period = finder->check("rate",Value(50),"period [ms]").asInt(); //ms
-    string laserport = finder->check("laser_port", Value("/ikart/laser:o"), "laser port name").asString();
+    string laserport = finder->check("sens_port", Value("/ikart/laser:o"), "laser port name").asString();
 
     string laser_map_port_name;
     laser_map_port_name = "/laserScannerGui/laser_map:i";
@@ -396,11 +396,11 @@ int main(int argc, char *argv[])
             {
                 if (laser_data_size != scans)
                 {
-                    drawLaser(&compass_data, &laser_data, lasermap_data, img, angle_tot, scans, laser_position, scale, absolute, verbose);
+                    drawLaser(&compass_data, &laser_data, lasermap_data, img, angle_tot, scans, sens_position, scale, absolute, verbose);
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, laser_position, scale, absolute, verbose);
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose);
                 }
             }
             else
@@ -411,7 +411,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, laser_position, scale, absolute, verbose);
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose);
                 }
 
             }

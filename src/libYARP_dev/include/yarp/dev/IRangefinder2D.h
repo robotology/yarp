@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPLASERRANGEFINDER2DINTERFACE__
-#define __YARPLASERRANGEFINDER2DINTERFACE__
+#ifndef __YARPRANGEFINDER2DINTERFACE__
+#define __YARPRANGEFINDER2DINTERFACE__
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>

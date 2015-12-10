@@ -5,8 +5,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef LASERRANGEFINDER2D_SERVER_H_
-#define LASERRANGEFINDER2D_SERVER_H_
+#ifndef _RANGEFINDER2D_SERVER_H_
+#define _RANGEFINDER2D_SERVER_H_
 
  //#include <list>
 #include <vector>
@@ -27,7 +27,7 @@
 
 #include <yarp/sig/Vector.h>
 
-#include <yarp/dev/ILaserRangefinder2D.h>
+#include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/Wrapper.h>
@@ -40,20 +40,20 @@
 
 namespace yarp{
     namespace dev{
-        class LaserRangefinder2DWrapper;
+        class Rangefinder2DWrapper;
         }
 }
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
-class yarp::dev::LaserRangefinder2DWrapper: public yarp::os::RateThread,
+class yarp::dev::Rangefinder2DWrapper: public yarp::os::RateThread,
                                 public yarp::dev::DeviceDriver,
                                 public yarp::dev::IMultipleWrapper,
                                 public yarp::os::PortReader
 {
 public:
-    LaserRangefinder2DWrapper();
-    ~LaserRangefinder2DWrapper();
+    Rangefinder2DWrapper();
+    ~Rangefinder2DWrapper();
 
     bool open(yarp::os::Searchable &params);
     bool close();
@@ -68,7 +68,7 @@ public:
     bool attachAll(const PolyDriverList &p);
     bool detachAll();
 
-    void attach(yarp::dev::ILaserRangefinder2D *s);
+    void attach(yarp::dev::IRangefinder2D *s);
     void detach();
 
     bool threadInit();
@@ -81,7 +81,7 @@ private:
     yarp::os::ConstString rpcPortName;
     yarp::os::Port rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> streamingPort;
-    yarp::dev::ILaserRangefinder2D *laser_p;
+    yarp::dev::IRangefinder2D *sens_p;
     yarp::os::Stamp lastStateStamp;
     int _rate;
     std::string sensorId;

@@ -6,7 +6,7 @@
  */
 
 #include <sstream>
-#include "laserRangefinder2DWrapper.h"
+#include "Rangefinder2DWrapper.h"
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
@@ -18,27 +18,27 @@ using namespace std;
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createRangefinder2DWrapper() {
-    return new DriverCreatorOf<yarp::dev::Rangefinder2DWrapper>("laserRangefinder2DWrapper",
-        "laserRangefinder2DWrapper",
+    return new DriverCreatorOf<yarp::dev::Rangefinder2DWrapper>("Rangefinder2DWrapper",
+        "Rangefinder2DWrapper",
         "yarp::dev::Rangefinder2Dwrapper");
 }
 
 
 /**
-  * It reads the data from an laser range finder sensor and sends them on one port.
+  * It reads the data from a rangefinder sensor and sends them on one port.
   * It also creates one rpc port.
   */
 
 Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
 {
     _rate = DEFAULT_THREAD_PERIOD;
-    laser_p = NULL;
+    sens_p = NULL;
 }
 
 Rangefinder2DWrapper::~Rangefinder2DWrapper()
 {
     threadRelease();
-    laser_p = NULL;
+    sens_p = NULL;
 }
 
 /**
@@ -57,15 +57,15 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
 
     if (Idevice2attach->isValid())
     {
-        Idevice2attach->view(laser_p);
+        Idevice2attach->view(sens_p);
     }
 
-    if (NULL == laser_p)
+    if (NULL == sens_p)
     {
         yError("Rangefinder2DWrapper: subdevice passed to attach method is invalid");
         return false;
     }
-    attach(laser_p);
+    attach(sens_p);
     RateThread::setRate(_rate);
     RateThread::start();
 
@@ -74,18 +74,18 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
 
 bool Rangefinder2DWrapper::detachAll()
 {
-    laser_p = NULL;
+    sens_p = NULL;
     return true;
 }
 
 void Rangefinder2DWrapper::attach(yarp::dev::IRangefinder2D *s)
 {
-    laser_p = s;
+    sens_p = s;
 }
 
 void Rangefinder2DWrapper::detach()
 {
-    laser_p = NULL;
+    sens_p = NULL;
 }
 
 bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
@@ -107,10 +107,10 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             int cmd = in.get(2).asVocab();
             if (cmd == VOCAB_DEVICE_INFO)
             {
-                if (laser_p)
+                if (sens_p)
                 {
                     yarp::os::ConstString info;
-                    if (laser_p->getDeviceInfo(info))
+                    if (sens_p->getDeviceInfo(info))
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
@@ -125,11 +125,11 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             }
             else if (cmd == VOCAB_LASER_DISTANCE_RANGE)
             {
-                if (laser_p)
+                if (sens_p)
                 {
                     double max = 0;
                     double min = 0;
-                    if (laser_p->getDistanceRange(min, max))
+                    if (sens_p->getDistanceRange(min, max))
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
@@ -145,11 +145,11 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             }
             else if (cmd == VOCAB_LASER_ANGULAR_RANGE)
             {
-                if (laser_p)
+                if (sens_p)
                 {
                     double max = 0;
                     double min = 0;
-                    if (laser_p->getScanLimits(min, max))
+                    if (sens_p->getScanLimits(min, max))
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
@@ -165,10 +165,10 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             }
             else if (cmd == VOCAB_LASER_ANGULAR_STEP)
             {
-                if (laser_p)
+                if (sens_p)
                 {
                     double step = 0;
-                    if (laser_p->getHorizontalResolution(step))
+                    if (sens_p->getHorizontalResolution(step))
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
@@ -183,10 +183,10 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             }
             else if (cmd == VOCAB_LASER_SCAN_RATE)
             {
-                if (laser_p)
+                if (sens_p)
                 {
                     double rate = 0;
-                    if (laser_p->getScanRate(rate))
+                    if (sens_p->getScanRate(rate))
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
@@ -209,39 +209,39 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             int cmd = in.get(2).asVocab();
             if (cmd == VOCAB_LASER_DISTANCE_RANGE)
             {
-                if (laser_p)
+                if (sens_p)
                 {
                     double min = in.get(3).asInt();
                     double max = in.get(4).asInt();
-                    laser_p->setDistanceRange(min, max);
+                    sens_p->setDistanceRange(min, max);
                     ret = true;
                 }
             }
             else if (cmd == VOCAB_LASER_ANGULAR_RANGE)
             {
-                if (laser_p)
+                if (sens_p)
                 {
                     double min = in.get(3).asInt();
                     double max = in.get(4).asInt();
-                    laser_p->setScanLimits(min, max);
+                    sens_p->setScanLimits(min, max);
                     ret = true;
                 }
             }
             else if (cmd == VOCAB_LASER_SCAN_RATE)
             {
-                if (laser_p)
+                if (sens_p)
                 {
                     double rate = in.get(3).asInt();
-                    laser_p->setScanRate(rate);
+                    sens_p->setScanRate(rate);
                     ret = true;
                 }
             }
             else if (cmd == VOCAB_LASER_ANGULAR_STEP)
             {
-                if (laser_p)
+                if (sens_p)
                 {
                     double step = in.get(3).asDouble();
-                    laser_p->setHorizontalResolution(step);
+                    sens_p->setHorizontalResolution(step);
                     ret = true;
                 }
             }
@@ -347,14 +347,14 @@ void Rangefinder2DWrapper::threadRelease()
 
 void Rangefinder2DWrapper::run()
 {
-    if (laser_p!=0)
+    if (sens_p!=0)
     {
         yarp::sig::Vector ranges;
 
         bool ret = true;
         IRangefinder2D::Device_status status;
-        ret &= laser_p->getMeasurementData(ranges);
-        ret &= laser_p->getDeviceStatus(status);
+        ret &= sens_p->getMeasurementData(ranges);
+        ret &= sens_p->getDeviceStatus(status);
 
         if (ret)
         {
