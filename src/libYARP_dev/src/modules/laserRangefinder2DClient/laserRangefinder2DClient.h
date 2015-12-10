@@ -61,7 +61,7 @@ public:
     void getEstFrequency(int &ite, double &av, double &min, double &max);
 
     bool getData(yarp::sig::Vector &data);
-    yarp::dev::ILaserRangefinder2D::laser_status getStatus();
+    yarp::dev::ILaserRangefinder2D::Device_status getStatus();
 
 };
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
@@ -109,25 +109,11 @@ public:
     bool getMeasurementData(yarp::sig::Vector & ranges);
 
     /**
-    * Get the measurements units
-    * @param units the enum indicating the measurement units
-    * @return true/false.
-    */
-    bool getMeasurementUnits(laser_units_enum& units);
-
-    /**
-    * Set the measurements units
-    * @param units the enum indicating the measurement units
-    * @return true/false.
-    */
-    bool setMeasurementUnits(laser_units_enum units);
-
-    /**
     * get the device status
     * @param status the device status
     * @return true/false.
     */
-    bool getDeviceStatus(laser_status &status);
+    bool getDeviceStatus(Device_status &status);
 
     /**
     * get the device detection range
@@ -151,7 +137,7 @@ public:
     * @param max end angle of the scan
     * @return true/false.
     */
-    bool getScanAngle(double& min, double& max);
+    bool getScanLimits(double& min, double& max);
 
     /**
     * set the scan angular range.
@@ -159,21 +145,21 @@ public:
     * @param max end angle of the scan
     * @return true/false on success/failure.
     */
-    bool setScanAngle(double min, double max);
+    bool setScanLimits(double min, double max);
 
     /**
     * get the angular step between two measurments.
     * @param step the angular step between two measurments
     * @return true/false.
     */
-    bool getAngularStep(double& step);
+    bool getHorizontalResolution(double& step);
 
     /**
     * get the angular step between two measurments (if available)
     * @param step the angular step between two measurments
     * @return true/false on success/failure.
     */
-    bool setAngularStep(double step);
+    bool setHorizontalResolution(double step);
 
     /**
     * get the scan rate (scans per seconds)

@@ -77,6 +77,7 @@ Windows, Linux
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Image.h>
@@ -87,13 +88,6 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
 
-double scale =100; //global scale factor 
-double robot_radius = 715.0/2.0/1000.0; //m
-double laser_position = 245.0/1000.0; //m
-bool verbose = false;
-bool absolute = false;
-bool compass  = true;
-int rate=50; //ms
 CvFont font;
 CvFont fontBig;
 
@@ -115,7 +109,7 @@ struct lasermap_type
     lasermap_type() {x=y=0.0;}
 };
 
-void drawGrid(IplImage *img)
+void drawGrid(IplImage *img, double scale)
 {
     cvLine(img,cvPoint(0,0),cvPoint(img->width,img->height),color_black);
     cvLine(img,cvPoint(img->width,0),cvPoint(0,img->height),color_black);
@@ -143,17 +137,21 @@ void drawGrid(IplImage *img)
 
 }
 
-void drawRobot (IplImage *img)
+void drawRobot (IplImage *img, double robot_radius, double scale)
 {
     cvRectangle(img,cvPoint(0,0),cvPoint(img->width,img->height),cvScalar(0,0,0),CV_FILLED);
 
     //draw a circle
-    cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(robot_radius*scale),color_gray,CV_FILLED);
-    cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(robot_radius*scale-1),color_black);
-    cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(robot_radius*scale-2),color_black);
+    double v1 = robot_radius*scale; if (v1 < 0) v1 = 0;
+    double v2 = robot_radius*scale - 1; if (v2 < 0) v2 = 0;
+    double v3 = robot_radius*scale - 2; if (v3 < 0) v3 = 0;
+
+    cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(v1),color_gray,CV_FILLED);
+    cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(v2),color_black);
+    cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(v3),color_black);
 }
 
-void drawCompass(const Vector *comp, IplImage *img)
+void drawCompass(const Vector *comp, IplImage *img, bool absolute)
 {
     int sx = 0;
     int sy = 0;
@@ -185,7 +183,7 @@ void drawCompass(const Vector *comp, IplImage *img)
     }
 }
 
-void drawNav(const yarp::os::Bottle *display, IplImage *img)
+void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
 {
     if (display->size()==8)
     {
@@ -230,7 +228,7 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
-void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img, double angle_tot, int scans)
+void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img, double angle_tot, int scans, double laser_position, double scale, bool absolute, bool verbose)
 {
     cvZero(img);
     cvRectangle(img,cvPoint(0,0),cvPoint(img->width,img->height),cvScalar(255,0,0),-1);
@@ -296,6 +294,23 @@ int main(int argc, char *argv[])
 {
     Network yarp;
 
+    ResourceFinder *finder=0;
+    finder = new ResourceFinder;
+
+    //retrieve information for the list of parts
+    finder->setVerbose();
+    finder->setDefaultConfigFile("yarplaserscannergui.ini");
+    finder->configure(argc, argv);
+
+    double scale = finder->check("scale", Value(100), "global scale factor").asDouble(); 
+    double robot_radius = finder->check("robot_radius", Value(0.001), "robot radius [m]").asDouble();
+    double laser_position = finder->check("laser_position", Value(0), "laser_position [m]").asDouble();
+    bool verbose = finder->check("verbose", Value(false), "verbose [0/1]").asBool();
+    bool absolute = finder->check("absolute", Value(false), "absolute [0/1]").asBool();
+    bool compass = finder->check("compass", Value(true), "compass [0/1]").asBool();
+    int period = finder->check("rate",Value(50),"period [ms]").asInt(); //ms
+    string laserport = finder->check("laser_port", Value("/ikart/laser:o"), "laser port name").asString();
+
     string laser_map_port_name;
     laser_map_port_name = "/laserScannerGui/laser_map:i";
     string compass_port_name;
@@ -310,7 +325,7 @@ int main(int argc, char *argv[])
     Property   lasOptions;
     lasOptions.put("device", "laserRangefinder2DClient");
     lasOptions.put("local", "/laserScannerGui/laser:i");
-    lasOptions.put("remote", "/ikart/laser:o");
+    lasOptions.put("remote", laserport);
     lasOptions.put("period", "10");
     bool b = drv->open(lasOptions);
     if (!b)
@@ -329,9 +344,9 @@ int main(int argc, char *argv[])
     double angle_min = 0;
     double angle_max = 0;
     double angle_step = 0;
-    iLas->getScanAngle(angle_min, angle_max);
+    iLas->getScanLimits(angle_min, angle_max);
     double angle_tot = (angle_max - angle_min);
-    iLas->getAngularStep(angle_step);
+    iLas->getHorizontalResolution(angle_step);
     int scans = (int)(angle_tot / angle_step);
     yarp::sig::Vector laser_data;
 
@@ -381,11 +396,11 @@ int main(int argc, char *argv[])
             {
                 if (laser_data_size != scans)
                 {
-                    drawLaser(&compass_data, &laser_data, lasermap_data, img, angle_tot, scans);
+                    drawLaser(&compass_data, &laser_data, lasermap_data, img, angle_tot, scans, laser_position, scale, absolute, verbose);
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans);
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, laser_position, scale, absolute, verbose);
                 }
             }
             else
@@ -396,25 +411,25 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans);
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, laser_position, scale, absolute, verbose);
                 }
 
             }
-            drawRobot(img2);
-            drawGrid(img);
-            if (compass) drawCompass(&compass_data,img);
+            drawRobot(img2,robot_radius, scale);
+            drawGrid(img,scale);
+            if (compass) drawCompass(&compass_data,img,absolute);
 
             yarp::os::Bottle *nav_display = navDisplayInPort.read(false);
             if (nav_display)
             {
-                drawNav(nav_display,img);
+                drawNav(nav_display,img,scale);
             }
 
             cvAddWeighted(img, 0.7, img2, 0.3, 0.0, img);
             cvShowImage("Laser Scanner GUI",img);
         }
 
-        Time::delay(double(rate)/1000.0+0.005);
+        Time::delay(double(period)/1000.0+0.005);
 
         //if ESC is pressed, exit.
         int keypressed = cvWaitKey(2); //wait 2ms. Lower values do not work under Linux
@@ -446,11 +461,11 @@ int main(int argc, char *argv[])
         }
         if(keypressed == 'r' )
         {
-            if      (rate==0)  rate = 50;
-            else if (rate==50) rate = 100;
-            else if (rate==100) rate = 200;
-            else if (rate==200) rate = 0;
-            yInfo( "refresh rate set to %d ms.", rate);
+            if      (period == 0)  period = 50;
+            else if (period == 50) period = 100;
+            else if (period == 100) period = 200;
+            else if (period == 200) period = 0;
+            yInfo("refresh period set to %d ms.", period);
         }
         if(keypressed == 'c' )
         {
@@ -477,4 +492,5 @@ int main(int argc, char *argv[])
     cvDestroyAllWindows();
     cvReleaseImage(&img);
     if (drv) delete drv;
+    if (finder) delete finder;
 }

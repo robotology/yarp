@@ -44,12 +44,10 @@ protected:
     int error_codes;
     int internal_status;
     std::string info;
-    laser_status device_status;
+    Device_status device_status;
 
-    laser_units_enum measurement_units;
-
-    enum laser_mode_type {FAKE_MODE=2, GD_MODE=1, MD_MODE=0};
-    enum error_code
+    enum Laser_mode_type {FAKE_MODE=2, GD_MODE=1, MD_MODE=0};
+    enum Error_code
     {
         HOKUYO_STATUS_ACQUISITION_COMPLETE =1,
         HOKUYO_STATUS_OK = 0,
@@ -60,7 +58,7 @@ protected:
         HOKUYO_STATUS_NOT_READY = -5
     };
 
-    laser_mode_type laser_mode;
+    Laser_mode_type laser_mode;
 
     struct sensor_property_struct 
     {
@@ -94,16 +92,14 @@ public:
 public:
     //ILaserRangefinder2D interface
     virtual bool getMeasurementData  (yarp::sig::Vector &out);
-    virtual bool getDeviceStatus     (laser_status &status);
+    virtual bool getDeviceStatus     (Device_status &status);
     virtual bool getDeviceInfo       (yarp::os::ConstString &device_info);
-    virtual bool getMeasurementUnits (laser_units_enum& units);
-    virtual bool setMeasurementUnits (laser_units_enum units);
     virtual bool getDistanceRange    (double& min, double& max);
     virtual bool setDistanceRange    (double min, double max);
-    virtual bool getScanAngle        (double& min, double& max);
-    virtual bool setScanAngle        (double min, double max);
-    virtual bool getAngularStep      (double& step);
-    virtual bool setAngularStep      (double step);
+    virtual bool getScanLimits        (double& min, double& max);
+    virtual bool setScanLimits        (double min, double max);
+    virtual bool getHorizontalResolution      (double& step);
+    virtual bool setHorizontalResolution      (double step);
     virtual bool getScanRate         (double& rate);
     virtual bool setScanRate         (double rate);
 
@@ -111,7 +107,7 @@ private:
     //laser methods
     int  calculateCheckSum(const char* buffer, int size, char actual_sum);
     long decodeDataValue(const char* data, int data_byte);
-    int  readData(const laser_mode_type laser_mode, const char* text_data, const int lext_data_len, int current_line, yarp::sig::Vector& values);
+    int  readData(const Laser_mode_type laser_mode, const char* text_data, const int lext_data_len, int current_line, yarp::sig::Vector& values);
 };
 
 #endif

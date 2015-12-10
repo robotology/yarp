@@ -15,7 +15,6 @@
 
 #define VOCAB_ILASER2D     VOCAB4('i','l','a','s')
 #define VOCAB_DEVICE_INFO  VOCAB4('l','s','n','f')
-#define VOCAB_DEVICE_UNITS VOCAB4('l','s','u','s')
 #define VOCAB_LASER_DISTANCE_RANGE VOCAB4('l','s','d','r')
 #define VOCAB_LASER_ANGULAR_RANGE  VOCAB4('l','s','a','r')
 #define VOCAB_LASER_ANGULAR_STEP   VOCAB4('l','s','a','s')
@@ -35,20 +34,12 @@ namespace yarp {
 class YARP_dev_API yarp::dev::ILaserRangefinder2D
 {
 public:
-    enum laser_status
+    enum Device_status
     {
-        LASER_OK_STANBY        = 0,
-        LASER_OK_IN_USE        = 1,
-        LASER_GENERAL_ERROR    = 2,
-        LASER_TIMEOUT          = 3
-    };
-
-    enum laser_units_enum
-    {
-        UNITS_M = 0,
-        UNITS_MM = 1,
-        UNITS_INCH = 2,
-        UNITS_FEET = 3
+        DEVICE_OK_STANBY        = 0,
+        DEVICE_OK_IN_USE        = 1,
+        DEVICE_GENERAL_ERROR    = 2,
+        DEVICE_TIMEOUT          = 3
     };
 
     virtual ~ILaserRangefinder2D(){}
@@ -61,25 +52,11 @@ public:
     virtual bool getMeasurementData(yarp::sig::Vector &data) = 0;
 
     /**
-    * Get the measurements units
-    * @param units the enum indicating the measurement units
-    * @return true/false.
-    */
-    virtual bool getMeasurementUnits(laser_units_enum& units) = 0;
-
-    /**
-    * Set the measurements units
-    * @param units the enum indicating the measurement units
-    * @return true/false.
-    */
-    virtual bool setMeasurementUnits(laser_units_enum units) = 0;
-
-    /**
     * get the device status
     * @param status the device status
     * @return true/false.
     */
-    virtual bool getDeviceStatus(laser_status& status) = 0;
+    virtual bool getDeviceStatus(Device_status& status) = 0;
 
     /**
     * get the device detection range
@@ -103,7 +80,7 @@ public:
     * @param max end angle of the scan
     * @return true/false.
     */
-    virtual bool getScanAngle(double& min, double& max) = 0;
+    virtual bool getScanLimits(double& min, double& max) = 0;
 
     /**
     * set the scan angular range.
@@ -111,21 +88,21 @@ public:
     * @param max end angle of the scan
     * @return true/false on success/failure.
     */
-    virtual bool setScanAngle(double min, double max) = 0;
+    virtual bool setScanLimits(double min, double max) = 0;
 
     /**
     * get the angular step between two measurments.
     * @param step the angular step between two measurments
     * @return true/false.
     */
-    virtual bool getAngularStep(double& step) = 0;
+    virtual bool getHorizontalResolution(double& step) = 0;
 
     /**
     * get the angular step between two measurments (if available)
     * @param step the angular step between two measurments
     * @return true/false on success/failure.
     */
-    virtual bool setAngularStep(double step) = 0;
+    virtual bool setHorizontalResolution(double step) = 0;
 
     /**
     * get the scan rate (scans per seconds)

@@ -32,7 +32,7 @@ inline void  LaserRangefinder2DInputPortProcessor::resetStat()
 
 LaserRangefinder2DInputPortProcessor::LaserRangefinder2DInputPortProcessor()
 {
-    state = ILaserRangefinder2D::LASER_GENERAL_ERROR;
+    state = ILaserRangefinder2D::DEVICE_GENERAL_ERROR;
     resetStat();
 }
 
@@ -57,7 +57,7 @@ void LaserRangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
         }
         else
         {
-            state = ILaserRangefinder2D::LASER_TIMEOUT;
+            state = ILaserRangefinder2D::DEVICE_TIMEOUT;
         }
     }
 
@@ -81,7 +81,7 @@ void LaserRangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
     }
     else
     {
-        state = ILaserRangefinder2D::LASER_TIMEOUT;
+        state = ILaserRangefinder2D::DEVICE_TIMEOUT;
     }
     lastStamp = newStamp;
 
@@ -92,7 +92,7 @@ inline int LaserRangefinder2DInputPortProcessor::getLast(yarp::os::Bottle &data,
 {
     mutex.wait();
     int ret=state;
-    if (ret != ILaserRangefinder2D::LASER_GENERAL_ERROR)
+    if (ret != ILaserRangefinder2D::DEVICE_GENERAL_ERROR)
     {
         data=lastBottle;
         stmp = lastStamp;
@@ -114,10 +114,10 @@ bool LaserRangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
     return true;
 }
 
-yarp::dev::ILaserRangefinder2D::laser_status LaserRangefinder2DInputPortProcessor::getStatus()
+yarp::dev::ILaserRangefinder2D::Device_status LaserRangefinder2DInputPortProcessor::getStatus()
 {
     mutex.wait();
-    yarp::dev::ILaserRangefinder2D::laser_status status = (yarp::dev::ILaserRangefinder2D::laser_status) lastBottle.get(3).asInt();
+    yarp::dev::ILaserRangefinder2D::Device_status status = (yarp::dev::ILaserRangefinder2D::Device_status) lastBottle.get(3).asInt();
     mutex.post();
     return status;
 }
@@ -226,31 +226,6 @@ bool yarp::dev::LaserRangefinder2DClient::getMeasurementData(yarp::sig::Vector &
     return true;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getMeasurementUnits(laser_units_enum& units)
-{
-    Bottle cmd, response;
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_DEVICE_UNITS);
-    bool ok = rpcPort.write(cmd, response);
-    if (CHECK_FAIL(ok, response) != false)
-    {
-        units = (laser_units_enum) response.get(2).asInt();
-        return true;
-    }
-    return false;
-}
-
-bool yarp::dev::LaserRangefinder2DClient::setMeasurementUnits(laser_units_enum units)
-{
-    Bottle cmd, response;
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_DEVICE_UNITS);
-    bool ok = rpcPort.write(cmd, response);
-    return (CHECK_FAIL(ok, response));
-}
-
 bool yarp::dev::LaserRangefinder2DClient::getDistanceRange(double& min, double& max)
 {
     Bottle cmd, response;
@@ -279,7 +254,7 @@ bool yarp::dev::LaserRangefinder2DClient::setDistanceRange(double min, double ma
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getScanAngle(double& min, double& max)
+bool yarp::dev::LaserRangefinder2DClient::getScanLimits(double& min, double& max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -295,7 +270,7 @@ bool yarp::dev::LaserRangefinder2DClient::getScanAngle(double& min, double& max)
     return false;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::setScanAngle(double min, double max)
+bool yarp::dev::LaserRangefinder2DClient::setScanLimits(double min, double max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -307,7 +282,7 @@ bool yarp::dev::LaserRangefinder2DClient::setScanAngle(double min, double max)
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getAngularStep(double& step)
+bool yarp::dev::LaserRangefinder2DClient::getHorizontalResolution(double& step)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -322,7 +297,7 @@ bool yarp::dev::LaserRangefinder2DClient::getAngularStep(double& step)
     return false;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::setAngularStep(double step)
+bool yarp::dev::LaserRangefinder2DClient::setHorizontalResolution(double step)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -359,7 +334,7 @@ bool yarp::dev::LaserRangefinder2DClient::setScanRate(double rate)
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getDeviceStatus(laser_status &status)
+bool yarp::dev::LaserRangefinder2DClient::getDeviceStatus(Device_status &status)
 {
     status = inputPort.getStatus();
     return true;

@@ -123,24 +123,6 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     }
                 }
             }
-            else if (cmd == VOCAB_DEVICE_UNITS)
-            {
-                if (laser_p)
-                {
-                    ILaserRangefinder2D::laser_units_enum units;
-                    if (laser_p->getMeasurementUnits(units))
-                    {
-                        out.addVocab(VOCAB_IS);
-                        out.addVocab(cmd);
-                        out.addInt((int)units);
-                        ret = true;
-                    }
-                    else
-                    {
-                        ret = false;
-                    }
-                }
-            }
             else if (cmd == VOCAB_LASER_DISTANCE_RANGE)
             {
                 if (laser_p)
@@ -167,7 +149,7 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                 {
                     double max = 0;
                     double min = 0;
-                    if (laser_p->getScanAngle(min, max))
+                    if (laser_p->getScanLimits(min, max))
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
@@ -186,7 +168,7 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                 if (laser_p)
                 {
                     double step = 0;
-                    if (laser_p->getAngularStep(step))
+                    if (laser_p->getHorizontalResolution(step))
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
@@ -225,16 +207,7 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
         else if (action == VOCAB_SET)
         {
             int cmd = in.get(2).asVocab();
-            if (cmd == VOCAB_DEVICE_UNITS)
-            {
-                if (laser_p)
-                {
-                    ILaserRangefinder2D::laser_units_enum units = (ILaserRangefinder2D::laser_units_enum) in.get(3).asInt();
-                    laser_p->setMeasurementUnits(units);
-                    ret = true;
-                }
-            }
-            else if (cmd == VOCAB_LASER_DISTANCE_RANGE)
+            if (cmd == VOCAB_LASER_DISTANCE_RANGE)
             {
                 if (laser_p)
                 {
@@ -250,7 +223,7 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                 {
                     double min = in.get(3).asInt();
                     double max = in.get(4).asInt();
-                    laser_p->setScanAngle(min, max);
+                    laser_p->setScanLimits(min, max);
                     ret = true;
                 }
             }
@@ -268,7 +241,7 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                 if (laser_p)
                 {
                     double step = in.get(3).asDouble();
-                    laser_p->setAngularStep(step);
+                    laser_p->setHorizontalResolution(step);
                     ret = true;
                 }
             }
@@ -379,7 +352,7 @@ void LaserRangefinder2DWrapper::run()
         yarp::sig::Vector ranges;
 
         bool ret = true;
-        ILaserRangefinder2D::laser_status status;
+        ILaserRangefinder2D::Device_status status;
         ret &= laser_p->getMeasurementData(ranges);
         ret &= laser_p->getDeviceStatus(status);
 

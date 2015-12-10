@@ -28,7 +28,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     bool correct=true;
     internal_status = HOKUYO_STATUS_NOT_READY;
     info = "Hokuyo Laser";
-    device_status = LASER_OK_STANBY;
+    device_status = DEVICE_OK_STANBY;
 
 #if LASER_DEBUG
     yDebug("%s\n", config.toString().c_str());
@@ -51,13 +51,10 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     error_codes = general_config.check("Convert_Error_Codes", Value(0), "Substitute error codes with legal measurments").asInt();
     yarp::os::ConstString s = general_config.check("Laser_Mode", Value("GD"), "Laser Mode (GD/MD").asString();
 
-    yarp::os::ConstString u = general_config.check("Measurement_Units", Value("M"), "Measurment units (M/MM/INCH/FEET").asString();
-    if      (u=="MM")   measurement_units= UNITS_MM;
-    else if (u=="M")    measurement_units= UNITS_M;
-    else if (u=="INCH") measurement_units= UNITS_INCH;
-    else if (u=="FEET") measurement_units= UNITS_FEET;
-    else                measurement_units= UNITS_M;
-
+    if (general_config.check("Measurement_Units"))
+    {
+        yError() << "Deprecated parameter 'Measurement_Units'. Please Remove it from the configuration file.";
+    }
 
     if (error_codes==1)
     {
@@ -282,20 +279,6 @@ bool laserHokuyo::close()
     return true;
 }
 
-bool laserHokuyo::getMeasurementUnits(laser_units_enum& units)
-{
-    this->mutex.wait();
-    units = measurement_units;
-    this->mutex.post();
-    return true;
-}
-
-bool laserHokuyo::setMeasurementUnits(laser_units_enum units)
-{
-    yError("setMeasurementUnits NOT YET IMPLEMENTED");
-    return false;
-}
-
 bool laserHokuyo::getDistanceRange(double& min, double& max)
 {
     //should return range 0.1-30m (or 100, 30000mm depending on the measurment units)
@@ -310,7 +293,7 @@ bool laserHokuyo::setDistanceRange(double min, double max)
     return false;
 }
 
-bool laserHokuyo::getScanAngle(double& min, double& max)
+bool laserHokuyo::getScanLimits(double& min, double& max)
 {
     //degrees
     min = 0;
@@ -318,21 +301,21 @@ bool laserHokuyo::getScanAngle(double& min, double& max)
     return true;
 }
 
-bool laserHokuyo::setScanAngle(double min, double max)
+bool laserHokuyo::setScanLimits(double min, double max)
 {
-    yError("setScanAngle NOT YET IMPLEMENTED");
+    yError("setScanLimits NOT YET IMPLEMENTED");
     return false;
 }
 
-bool laserHokuyo::getAngularStep(double& step)
+bool laserHokuyo::getHorizontalResolution(double& step)
 {
     step = 0.25; //deg //1080*0.25=270
     return true;
 }
 
-bool laserHokuyo::setAngularStep(double step)
+bool laserHokuyo::setHorizontalResolution(double step)
 {
-    yError("setAngularStep NOT YET IMPLEMENTED");
+    yError("setHorizontalResolution NOT YET IMPLEMENTED");
     return false;
 }
 
@@ -359,16 +342,16 @@ bool laserHokuyo::getMeasurementData(yarp::sig::Vector &out)
 #endif
         out = laser_data;
         mutex.post();
-        device_status = yarp::dev::ILaserRangefinder2D::LASER_OK_IN_USE;
+        device_status = yarp::dev::ILaserRangefinder2D::DEVICE_OK_IN_USE;
         return true;
     }
     else
-        device_status = yarp::dev::ILaserRangefinder2D::LASER_GENERAL_ERROR;
+        device_status = yarp::dev::ILaserRangefinder2D::DEVICE_GENERAL_ERROR;
         return false;
 
 }
 
-bool laserHokuyo::getDeviceStatus(laser_status &status)
+bool laserHokuyo::getDeviceStatus(Device_status &status)
 {
     mutex.wait();
     status = device_status;
@@ -412,7 +395,7 @@ inline long laserHokuyo::decodeDataValue(const char* data, int data_byte)
   return value;
 }
 
-int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_data, const int text_data_len, int current_line, yarp::sig::Vector& data)
+int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_data, const int text_data_len, int current_line, yarp::sig::Vector& data)
 { 
     static char data_block [4000];
 
@@ -436,19 +419,8 @@ int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_dat
                 {
                     value=sensor_properties.DMAX;
                 }
-                switch (measurement_units)
-                {
-                    case UNITS_M:
-                        data.push_back(value/1000.0); break;
-                    case UNITS_MM:
-                        data.push_back(value); break;
-                    case UNITS_INCH:
-                        data.push_back(value/25.4); break;
-                    case UNITS_FEET:
-                        data.push_back(value/304.8); break;
-                    default:
-                        data.push_back(value/1000.0); break;
-                }
+                //units are m
+                 data.push_back(value/1000.0); break;
             }
             return HOKUYO_STATUS_ACQUISITION_COMPLETE;
         }
