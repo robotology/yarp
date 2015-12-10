@@ -7,18 +7,18 @@
 *
 */
 
-#include "laserRangefinder2DClient.h"
+#include "Rangefinder2DClient.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
-/*! \file laserRangefinder2DClient.cpp */
+/*! \file Rangefinder2DClient.cpp */
 
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
 
-inline void  LaserRangefinder2DInputPortProcessor::resetStat()
+inline void  Rangefinder2DInputPortProcessor::resetStat()
 {
     mutex.wait();
     count=0;
@@ -30,13 +30,13 @@ inline void  LaserRangefinder2DInputPortProcessor::resetStat()
     mutex.post();
 }
 
-LaserRangefinder2DInputPortProcessor::LaserRangefinder2DInputPortProcessor()
+Rangefinder2DInputPortProcessor::Rangefinder2DInputPortProcessor()
 {
-    state = ILaserRangefinder2D::DEVICE_GENERAL_ERROR;
+    state = IRangefinder2D::DEVICE_GENERAL_ERROR;
     resetStat();
 }
 
-void LaserRangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
+void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
 {
     now=Time::now();
     mutex.wait();
@@ -57,7 +57,7 @@ void LaserRangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
         }
         else
         {
-            state = ILaserRangefinder2D::DEVICE_TIMEOUT;
+            state = IRangefinder2D::DEVICE_TIMEOUT;
         }
     }
 
@@ -81,18 +81,18 @@ void LaserRangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
     }
     else
     {
-        state = ILaserRangefinder2D::DEVICE_TIMEOUT;
+        state = IRangefinder2D::DEVICE_TIMEOUT;
     }
     lastStamp = newStamp;
 
     mutex.post();
 }
 
-inline int LaserRangefinder2DInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
+inline int Rangefinder2DInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
 {
     mutex.wait();
     int ret=state;
-    if (ret != ILaserRangefinder2D::DEVICE_GENERAL_ERROR)
+    if (ret != IRangefinder2D::DEVICE_GENERAL_ERROR)
     {
         data=lastBottle;
         stmp = lastStamp;
@@ -102,7 +102,7 @@ inline int LaserRangefinder2DInputPortProcessor::getLast(yarp::os::Bottle &data,
     return ret;
 }
 
-bool LaserRangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
+bool Rangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
 {
     mutex.wait();
     if (lastBottle.size()==0) { mutex.post(); return false; }
@@ -114,15 +114,15 @@ bool LaserRangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
     return true;
 }
 
-yarp::dev::ILaserRangefinder2D::Device_status LaserRangefinder2DInputPortProcessor::getStatus()
+yarp::dev::IRangefinder2D::Device_status Rangefinder2DInputPortProcessor::getStatus()
 {
     mutex.wait();
-    yarp::dev::ILaserRangefinder2D::Device_status status = (yarp::dev::ILaserRangefinder2D::Device_status) lastBottle.get(3).asInt();
+    yarp::dev::IRangefinder2D::Device_status status = (yarp::dev::IRangefinder2D::Device_status) lastBottle.get(3).asInt();
     mutex.post();
     return status;
 }
 
-inline int LaserRangefinder2DInputPortProcessor::getIterations()
+inline int Rangefinder2DInputPortProcessor::getIterations()
 {
     mutex.wait();
     int ret=count;
@@ -131,7 +131,7 @@ inline int LaserRangefinder2DInputPortProcessor::getIterations()
 }
 
 // time is in ms
-void LaserRangefinder2DInputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
+void Rangefinder2DInputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
     mutex.wait();
     ite=count;
@@ -149,7 +149,7 @@ void LaserRangefinder2DInputPortProcessor::getEstFrequency(int &ite, double &av,
     mutex.post();
 }
 
-bool yarp::dev::LaserRangefinder2DClient::open(yarp::os::Searchable &config)
+bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
 {
     local.clear();
     remote.clear();
@@ -159,12 +159,12 @@ bool yarp::dev::LaserRangefinder2DClient::open(yarp::os::Searchable &config)
 
     if (local=="")
     {
-        yError("LaserRangefinder2DClient::open() error you have to provide valid local name");
+        yError("Rangefinder2DClient::open() error you have to provide valid local name");
         return false;
     }
     if (remote=="")
     {
-        yError("LaserRangefinder2DClient::open() error you have to provide valid remote name");
+        yError("Rangefinder2DClient::open() error you have to provide valid remote name");
         return false;
     }
 
@@ -174,7 +174,7 @@ bool yarp::dev::LaserRangefinder2DClient::open(yarp::os::Searchable &config)
     }
     else
     {
-        yError("LaserRangefinder2DClient::open() missing period parameter");
+        yError("Rangefinder2DClient::open() missing period parameter");
         return false;
     }
 
@@ -185,48 +185,48 @@ bool yarp::dev::LaserRangefinder2DClient::open(yarp::os::Searchable &config)
 
     if (!inputPort.open(local.c_str()))
     {
-        yError("LaserRangefinder2DClient::open() error could not open port %s, check network\n",local.c_str());
+        yError("Rangefinder2DClient::open() error could not open port %s, check network\n",local.c_str());
         return false;
     }
     inputPort.useCallback();
 
     if (!rpcPort.open(local_rpc.c_str()))
     {
-        yError("LaserRangefinder2DClient::open() error could not open rpc port %s, check network\n", local_rpc.c_str());
+        yError("Rangefinder2DClient::open() error could not open rpc port %s, check network\n", local_rpc.c_str());
         return false;
     }
 
     bool ok=Network::connect(remote.c_str(), local.c_str(), "udp");
     if (!ok)
     {
-        yError("LaserRangefinder2DClient::open() error could not connect to %s\n", remote.c_str());
+        yError("Rangefinder2DClient::open() error could not connect to %s\n", remote.c_str());
         return false;
     }
 
     ok=Network::connect(local_rpc.c_str(), remote_rpc.c_str());
     if (!ok)
     {
-        yError("LaserRangefinder2DClient::open() error could not connect to %s\n", remote_rpc.c_str());
+        yError("Rangefinder2DClient::open() error could not connect to %s\n", remote_rpc.c_str());
        return false;
     }
 
     return true;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::close()
+bool yarp::dev::Rangefinder2DClient::close()
 {
     rpcPort.close();
     inputPort.close();
     return true;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getMeasurementData(yarp::sig::Vector &out)
+bool yarp::dev::Rangefinder2DClient::getMeasurementData(yarp::sig::Vector &out)
 {
     inputPort.getData(out);
     return true;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getDistanceRange(double& min, double& max)
+bool yarp::dev::Rangefinder2DClient::getDistanceRange(double& min, double& max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -242,7 +242,7 @@ bool yarp::dev::LaserRangefinder2DClient::getDistanceRange(double& min, double& 
     return false;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::setDistanceRange(double min, double max)
+bool yarp::dev::Rangefinder2DClient::setDistanceRange(double min, double max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -254,7 +254,7 @@ bool yarp::dev::LaserRangefinder2DClient::setDistanceRange(double min, double ma
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getScanLimits(double& min, double& max)
+bool yarp::dev::Rangefinder2DClient::getScanLimits(double& min, double& max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -270,7 +270,7 @@ bool yarp::dev::LaserRangefinder2DClient::getScanLimits(double& min, double& max
     return false;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::setScanLimits(double min, double max)
+bool yarp::dev::Rangefinder2DClient::setScanLimits(double min, double max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -282,7 +282,7 @@ bool yarp::dev::LaserRangefinder2DClient::setScanLimits(double min, double max)
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getHorizontalResolution(double& step)
+bool yarp::dev::Rangefinder2DClient::getHorizontalResolution(double& step)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -297,7 +297,7 @@ bool yarp::dev::LaserRangefinder2DClient::getHorizontalResolution(double& step)
     return false;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::setHorizontalResolution(double step)
+bool yarp::dev::Rangefinder2DClient::setHorizontalResolution(double step)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -308,7 +308,7 @@ bool yarp::dev::LaserRangefinder2DClient::setHorizontalResolution(double step)
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getScanRate(double& rate)
+bool yarp::dev::Rangefinder2DClient::getScanRate(double& rate)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -323,7 +323,7 @@ bool yarp::dev::LaserRangefinder2DClient::getScanRate(double& rate)
     return false;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::setScanRate(double rate)
+bool yarp::dev::Rangefinder2DClient::setScanRate(double rate)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -334,13 +334,13 @@ bool yarp::dev::LaserRangefinder2DClient::setScanRate(double rate)
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getDeviceStatus(Device_status &status)
+bool yarp::dev::Rangefinder2DClient::getDeviceStatus(Device_status &status)
 {
     status = inputPort.getStatus();
     return true;
 }
 
-bool yarp::dev::LaserRangefinder2DClient::getDeviceInfo(yarp::os::ConstString &device_info)
+bool yarp::dev::Rangefinder2DClient::getDeviceInfo(yarp::os::ConstString &device_info)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -355,13 +355,13 @@ bool yarp::dev::LaserRangefinder2DClient::getDeviceInfo(yarp::os::ConstString &d
     return false;
 }
 
-Stamp yarp::dev::LaserRangefinder2DClient::getLastInputStamp()
+Stamp yarp::dev::Rangefinder2DClient::getLastInputStamp()
 {
     return lastTs;
 }
 
-yarp::dev::DriverCreator *createLaserRangefinder2DClient() {
-    return new DriverCreatorOf<LaserRangefinder2DClient>("laserRangefinder2DClient",
+yarp::dev::DriverCreator *createRangefinder2DClient() {
+    return new DriverCreatorOf<Rangefinder2DClient>("Rangefinder2DClient",
         "",
-        "laserRangefinder2DClient");
+        "Rangefinder2DClient");
 }

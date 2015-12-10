@@ -342,11 +342,11 @@ bool laserHokuyo::getMeasurementData(yarp::sig::Vector &out)
 #endif
         out = laser_data;
         mutex.post();
-        device_status = yarp::dev::ILaserRangefinder2D::DEVICE_OK_IN_USE;
+        device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
         return true;
     }
     else
-        device_status = yarp::dev::ILaserRangefinder2D::DEVICE_GENERAL_ERROR;
+        device_status = yarp::dev::IRangefinder2D::DEVICE_GENERAL_ERROR;
         return false;
 
 }

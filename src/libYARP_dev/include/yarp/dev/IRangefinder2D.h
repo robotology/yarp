@@ -22,7 +22,7 @@
 
 namespace yarp {
     namespace dev {
-        class ILaserRangefinder2D;
+        class IRangefinder2D;
     }
 }
 
@@ -31,7 +31,7 @@ namespace yarp {
  *
  * A generic interface for planar laser range finders
  */
-class YARP_dev_API yarp::dev::ILaserRangefinder2D
+class YARP_dev_API yarp::dev::IRangefinder2D
 {
 public:
     enum Device_status
@@ -42,7 +42,7 @@ public:
         DEVICE_TIMEOUT          = 3
     };
 
-    virtual ~ILaserRangefinder2D(){}
+    virtual ~IRangefinder2D(){}
 
     /**
     * Get the distance measurements

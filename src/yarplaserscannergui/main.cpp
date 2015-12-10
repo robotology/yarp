@@ -81,7 +81,7 @@ Windows, Linux
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Image.h>
-#include <yarp/dev/ILaserRangefinder2D.h>
+#include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
 
 using namespace std;
@@ -333,11 +333,11 @@ int main(int argc, char *argv[])
         yError() << "Unable to open polydriver";
         return 0;
     }
-    yarp::dev::ILaserRangefinder2D* iLas = 0;
+    yarp::dev::IRangefinder2D* iLas = 0;
     drv->view(iLas);
     if (iLas == 0)
     {
-        yError() << "Unable to ILaserRangefinder2D interface";
+        yError() << "Unable to IRangefinder2D interface";
         return 0;
     }
 

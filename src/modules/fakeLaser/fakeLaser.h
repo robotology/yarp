@@ -15,14 +15,14 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/ILaserRangefinder2D.h>
+#include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 
-class FakeLaser : public RateThread, public yarp::dev::ILaserRangefinder2D, public DeviceDriver
+class FakeLaser : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     PolyDriver driver;
@@ -59,7 +59,7 @@ public:
     virtual void run();
 
 public:
-    //ILaserRangefinder2D interface
+    //IRangefinder2D interface
     virtual bool getMeasurementData  (yarp::sig::Vector &out);
     virtual bool getDeviceStatus     (Device_status &status);
     virtual bool getDeviceInfo       (yarp::os::ConstString &device_info);

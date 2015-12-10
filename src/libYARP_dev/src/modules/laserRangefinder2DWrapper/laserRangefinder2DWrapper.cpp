@@ -17,10 +17,10 @@ using namespace yarp::os;
 using namespace std;
 
 // needed for the driver factory.
-yarp::dev::DriverCreator *createLaserRangefinder2DWrapper() {
-    return new DriverCreatorOf<yarp::dev::LaserRangefinder2DWrapper>("laserRangefinder2DWrapper",
+yarp::dev::DriverCreator *createRangefinder2DWrapper() {
+    return new DriverCreatorOf<yarp::dev::Rangefinder2DWrapper>("laserRangefinder2DWrapper",
         "laserRangefinder2DWrapper",
-        "yarp::dev::LaserRangefinder2Dwrapper");
+        "yarp::dev::Rangefinder2Dwrapper");
 }
 
 
@@ -29,13 +29,13 @@ yarp::dev::DriverCreator *createLaserRangefinder2DWrapper() {
   * It also creates one rpc port.
   */
 
-LaserRangefinder2DWrapper::LaserRangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
+Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
 {
     _rate = DEFAULT_THREAD_PERIOD;
     laser_p = NULL;
 }
 
-LaserRangefinder2DWrapper::~LaserRangefinder2DWrapper()
+Rangefinder2DWrapper::~Rangefinder2DWrapper()
 {
     threadRelease();
     laser_p = NULL;
@@ -45,11 +45,11 @@ LaserRangefinder2DWrapper::~LaserRangefinder2DWrapper()
   * Specify which sensor this thread has to read from.
   */
 
-bool LaserRangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
+bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
 {
     if (device2attach.size() != 1)
     {
-        yError("LaserRangefinder2DWrapper: cannot attach more than one device");
+        yError("Rangefinder2DWrapper: cannot attach more than one device");
         return false;
     }
 
@@ -62,7 +62,7 @@ bool LaserRangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
 
     if (NULL == laser_p)
     {
-        yError("LaserRangefinder2DWrapper: subdevice passed to attach method is invalid");
+        yError("Rangefinder2DWrapper: subdevice passed to attach method is invalid");
         return false;
     }
     attach(laser_p);
@@ -72,23 +72,23 @@ bool LaserRangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
     return true;
 }
 
-bool LaserRangefinder2DWrapper::detachAll()
+bool Rangefinder2DWrapper::detachAll()
 {
     laser_p = NULL;
     return true;
 }
 
-void LaserRangefinder2DWrapper::attach(yarp::dev::ILaserRangefinder2D *s)
+void Rangefinder2DWrapper::attach(yarp::dev::IRangefinder2D *s)
 {
     laser_p = s;
 }
 
-void LaserRangefinder2DWrapper::detach()
+void Rangefinder2DWrapper::detach()
 {
     laser_p = NULL;
 }
 
-bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
+bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::Bottle in;
     yarp::os::Bottle out;
@@ -201,7 +201,7 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             }
             else
             {
-                yError("Invalid command received in LaserRangefinder2DWrapper");
+                yError("Invalid command received in Rangefinder2DWrapper");
             }
         }
         else if (action == VOCAB_SET)
@@ -247,17 +247,17 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             }
             else
             {
-                yError("Invalid command received in LaserRangefinder2DWrapper");
+                yError("Invalid command received in Rangefinder2DWrapper");
             }
         }
         else
         {
-            yError("Invalid action received in LaserRangefinder2DWrapper");
+            yError("Invalid action received in Rangefinder2DWrapper");
         }
     }
     else
     {
-        yError("Invalid interface vocab received in LaserRangefinder2DWrapper");
+        yError("Invalid interface vocab received in Rangefinder2DWrapper");
     }
 
     if (!ret)
@@ -273,36 +273,36 @@ bool LaserRangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool LaserRangefinder2DWrapper::threadInit()
+bool Rangefinder2DWrapper::threadInit()
 {
     // open data port
     if (!streamingPort.open(streamingPortName.c_str()))
         {
-            yError("LaserRangefinder2DWrapper: failed to open port %s", streamingPortName.c_str());
+            yError("Rangefinder2DWrapper: failed to open port %s", streamingPortName.c_str());
             return false;
         }
     return true;
 }
 
-void LaserRangefinder2DWrapper::setId(const std::string &id)
+void Rangefinder2DWrapper::setId(const std::string &id)
 {
     sensorId=id;
 }
 
-std::string LaserRangefinder2DWrapper::getId()
+std::string Rangefinder2DWrapper::getId()
 {
     return sensorId;
 }
 
 
-bool LaserRangefinder2DWrapper::open(yarp::os::Searchable &config)
+bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString().c_str());
 
     if (!config.check("period"))
     {
-        yError() << "LaserRangefinder2DWrapper: missing 'period' parameter. Check you configuration file\n";
+        yError() << "Rangefinder2DWrapper: missing 'period' parameter. Check you configuration file\n";
         return false;
     }
     else
@@ -310,7 +310,7 @@ bool LaserRangefinder2DWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("name"))
     {
-        yError() << "LaserRangefinder2DWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
+        yError() << "Rangefinder2DWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
         yError() << "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
         return false;
     }
@@ -318,7 +318,7 @@ bool LaserRangefinder2DWrapper::open(yarp::os::Searchable &config)
     {
         streamingPortName  = config.find("name").asString().c_str();
         rpcPortName = streamingPortName + "/rpc:i";
-        setId("LaserRangefinder2DWrapper");
+        setId("Rangefinder2DWrapper");
     }
 
     if(!initialize_YARP(config) )
@@ -329,7 +329,7 @@ bool LaserRangefinder2DWrapper::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool LaserRangefinder2DWrapper::initialize_YARP(yarp::os::Searchable &params)
+bool Rangefinder2DWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
     streamingPort.open(streamingPortName.c_str());
     rpcPort.open(rpcPortName.c_str() );
@@ -337,7 +337,7 @@ bool LaserRangefinder2DWrapper::initialize_YARP(yarp::os::Searchable &params)
     return true;
 }
 
-void LaserRangefinder2DWrapper::threadRelease()
+void Rangefinder2DWrapper::threadRelease()
 {
     streamingPort.interrupt();
     streamingPort.close();
@@ -345,14 +345,14 @@ void LaserRangefinder2DWrapper::threadRelease()
     rpcPort.close();
 }
 
-void LaserRangefinder2DWrapper::run()
+void Rangefinder2DWrapper::run()
 {
     if (laser_p!=0)
     {
         yarp::sig::Vector ranges;
 
         bool ret = true;
-        ILaserRangefinder2D::Device_status status;
+        IRangefinder2D::Device_status status;
         ret &= laser_p->getMeasurementData(ranges);
         ret &= laser_p->getDeviceStatus(status);
 
@@ -369,14 +369,14 @@ void LaserRangefinder2DWrapper::run()
         }
         else
         {
-            yError("LaserRangefinder2DWrapper: %s: Sensor returned error", sensorId.c_str());
+            yError("Rangefinder2DWrapper: %s: Sensor returned error", sensorId.c_str());
         }
     }
 }
 
-bool LaserRangefinder2DWrapper::close()
+bool Rangefinder2DWrapper::close()
 {
-    yTrace("LaserRangefinder2DWrapper::Close");
+    yTrace("Rangefinder2DWrapper::Close");
     if (RateThread::isRunning())
     {
         RateThread::stop();

@@ -42,8 +42,8 @@ extern DriverCreator *createVirtualAnalogWrapper();
 extern DriverCreator *createServerInertial();
 extern DriverCreator *createBatteryWrapper();
 extern DriverCreator *createBatteryClient();
-extern DriverCreator *createLaserRangefinder2DWrapper();
-extern DriverCreator *createLaserRangefinder2DClient();
+extern DriverCreator *createRangefinder2DWrapper();
+extern DriverCreator *createRangefinder2DClient();
 
 void Drivers::init() {
 
@@ -82,12 +82,12 @@ void Drivers::init() {
     add(createControlBoardWrapper());
     add(createRemoteControlBoard());
     add(createBatteryClient());
-    add(createLaserRangefinder2DClient());
+    add(createRangefinder2DClient());
     add(createAnalogSensorClient());
     add(createAnalogWrapper());
     add(createVirtualAnalogWrapper());
     add(createBatteryWrapper());
-    add(createLaserRangefinder2DWrapper());
+    add(createRangefinder2DWrapper());
     add(createClientControlBoard());
     add(createServerControlBoard());
 }

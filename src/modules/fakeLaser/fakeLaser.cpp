@@ -137,7 +137,7 @@ bool FakeLaser::getMeasurementData(yarp::sig::Vector &out)
     mutex.wait();
     out = laser_data;
     mutex.post();
-    device_status = yarp::dev::ILaserRangefinder2D::DEVICE_OK_IN_USE;
+    device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
 }
 
