@@ -1791,6 +1791,7 @@ bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints,
            }
        }
    }
+    rpcDataMutex.post();
     return ret;
 }
 
