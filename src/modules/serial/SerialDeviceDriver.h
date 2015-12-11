@@ -129,6 +129,14 @@ public:
      * @return - the number of received characters (including the '\n''\r' chars, plus the buffer terminator '\0'). The function returns 0 if no chars are received.
      */
     virtual int  receiveLine(char* line, const int MaxLineLength);
+
+    /**
+    * Enable/Disable DTR protocol
+    * @param enable Enable/Disable DTR protocol
+    * @return true on success
+    */
+    virtual bool setDTR(bool value);
+
     /**
      * Flushes the internal buffer.
      * @return - the number of flushed characters.

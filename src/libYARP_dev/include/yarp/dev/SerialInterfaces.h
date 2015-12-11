@@ -58,6 +58,12 @@ public:
      */
     virtual int  receiveLine(char* line, const int MaxLineLength) = 0;
     /**
+    * Enable/Disable DTR protocol
+    * @param enable Enable/Disable DTR protocol
+    * @return true on success
+    */
+    virtual bool setDTR(bool enable) = 0;
+    /**
      * Flushes the internal buffer.
      * \return - the number of flushed characters.
      */

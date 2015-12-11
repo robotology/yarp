@@ -94,6 +94,16 @@ bool SerialDeviceDriver::close(void) {
     return true;
 }
 
+bool SerialDeviceDriver::setDTR(bool value) {
+    ACE_TTY_IO::Serial_Params arg;
+    int ret = _serial_dev.control(_serial_dev.GETPARAMS, &arg);
+    if (ret == -1) return false;
+    arg.dtrdisable = !value;
+    ret = _serial_dev.control(_serial_dev.SETPARAMS, &arg);
+    if (ret == -1) return false;
+    return true;
+}
+
 bool SerialDeviceDriver::send(const Bottle& msg)
 {
     if (msg.size() > 0) {
@@ -106,7 +116,6 @@ bool SerialDeviceDriver::send(const Bottle& msg)
             }
     
             // Write message to the serial device
-	    
             ssize_t bytes_written = _serial_dev.send_n((void *) msg.get(0).asString().c_str(), message_size);
 
             if (bytes_written == -1) {

@@ -114,6 +114,7 @@ public:
     virtual int receiveChar(char& c);
     virtual int flush ();
     virtual int receiveLine(char* line, const int MaxLineLength);
+    virtual bool setDTR(bool enable);
 
     /**
     * Default open() method.

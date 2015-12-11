@@ -75,6 +75,15 @@ int ServerSerial::flush()
         return -1;
 }
 
+bool ServerSerial::setDTR(bool enable)
+{
+    if (serial != NULL) {
+        return serial->setDTR(enable);
+    }
+    else
+        return false;
+}
+
 int ServerSerial::receiveLine(char* line, const int MaxLineLength)
 {
     if(serial != NULL) {
