@@ -44,7 +44,6 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 
     //list of mandatory options
     //TODO change comments
-    fake = general_config.check("fake");
     period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt();
     start_position = general_config.check("Start_Position", Value(0), "Start position").asInt();
     end_position = general_config.check("End_Position", Value(1080), "End Position").asInt();
@@ -74,17 +73,6 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     {
         laser_mode = GD_MODE;
         yError("Laser_mode not found. Using GD mode (single acquisition)");
-    }
-
-    if (fake)
-    {
-        sensorsNum=16*12;
-        laser_data.resize(sensorsNum);
-        laser_mode = FAKE_MODE;
-        yInfo("fake option found. Entering debug mode: Using recorded data, not the real sensor");
-        Time::turboBoost();
-        RateThread::start();
-        return true;
     }
 
     bool ok = general_config.check("Serial_Configuration");
@@ -489,17 +477,6 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
 
 void laserHokuyo::run()
 {
-    if (fake)
-    {
-        mutex.wait();
-        internal_status = HOKUYO_STATUS_OK;
-        laser_data.clear();
-        for (int i=0; i<1080; i++)
-            laser_data.push_back(i/100.0);
-        mutex.post();
-        return;
-    }
-
     mutex.wait();
 
     //send the GD command: get one single measurement, D precision

@@ -35,7 +35,6 @@ protected:
    
     yarp::os::Semaphore mutex;
 
-    bool fake;
     int cardId;
     int period;
     int sensorsNum;
