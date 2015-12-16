@@ -629,7 +629,6 @@ const char* KnowledgeBase::getUniqueAppID(Application* parent, const char* szApp
     OSTRINGSTREAM newname;
     newname<<parent->getName()<<":";
     newname<<szAppName<<":"<<appList[szAppName];
-    printf("KnowledgeBase::getUniqueAppID: %s\n", newname.str().c_str());
     return newname.str().c_str();
 }
 
