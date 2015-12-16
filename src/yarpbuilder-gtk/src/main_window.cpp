@@ -965,7 +965,7 @@ void MainWindow::onMenuFileNewApp()
         }
 
         char szAppName[255];
-        if(lazyManager.addApplication(fname.c_str(), szAppName))
+        if(lazyManager.addApplication(fname.c_str(), szAppName, 254))
         {
             syncApplicationList();
             manageApplication(szAppName);
@@ -1282,7 +1282,7 @@ void MainWindow::onMenuFileSaveAs()
             if(appWnd->onSave(fname.c_str()))
             {
                 char szAppName[255];
-                if(lazyManager.addApplication(fname.c_str(), szAppName))
+                if(lazyManager.addApplication(fname.c_str(), szAppName, 254))
                 {
                     syncApplicationList();
                     manageApplication(szAppName);
@@ -2170,7 +2170,7 @@ void MainWindow::manageTemplate(const char* szName)
         if(appSaver.save(application))
         {
             char szAppName[255];
-            if(lazyManager.addApplication(fname.c_str(), szAppName))
+            if(lazyManager.addApplication(fname.c_str(), szAppName, 254))
             {
                 syncApplicationList();
                 manageApplication(szAppName);

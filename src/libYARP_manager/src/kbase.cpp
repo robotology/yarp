@@ -75,7 +75,7 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
 }
 
 
-bool KnowledgeBase::addApplication(Application* app, char* szAppName_)
+bool KnowledgeBase::addApplication(Application* app, char* szAppName_, int len)
 {
     __CHECK_NULLPTR(app);
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -96,10 +96,8 @@ bool KnowledgeBase::addApplication(Application* app, char* szAppName_)
         app->setLabel(newlable.str().c_str());
     }
 
-    if(szAppName_) {
-        app->setName(szAppName_);
-        app->setLabel(szAppName_);
-    }
+    if(szAppName_)
+        strncpy(szAppName_, app->getName(), len);
     if(!kbGraph.addNode(app))
     {
         OSTRINGSTREAM msg;
@@ -631,6 +629,7 @@ const char* KnowledgeBase::getUniqueAppID(Application* parent, const char* szApp
     OSTRINGSTREAM newname;
     newname<<parent->getName()<<":";
     newname<<szAppName<<":"<<appList[szAppName];
+    printf("KnowledgeBase::getUniqueAppID: %s\n", newname.str().c_str());
     return newname.str().c_str();
 }
 
