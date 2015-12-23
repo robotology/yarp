@@ -40,6 +40,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IMotor.h
                   include/yarp/dev/IRemoteVariables.h
                   include/yarp/dev/IImpedanceControl.h
+                  include/yarp/dev/IDepthSensor.h
                   include/yarp/dev/IKinectDeviceDriver.h
                   include/yarp/dev/ImplementControlBoardInterfaces.h
                   include/yarp/dev/ImplementControlMode.h
