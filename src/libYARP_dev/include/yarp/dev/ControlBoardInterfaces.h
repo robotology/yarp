@@ -64,7 +64,9 @@ struct YARP_dev_API yarp::dev::CalibrationParameters
     double param2;
     double param3;
     double param4;
-    CalibrationParameters() { type = 0; param1 = 0; param2 = 0; param3 = 0; param4 = 0; }
+    double param5;
+    double paramZero;
+    CalibrationParameters() { type = 0; param1 = 0; param2 = 0; param3 = 0; param4 = 0; param5 = 0; paramZero = 0; }
 };
 
 /**
