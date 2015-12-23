@@ -33,7 +33,7 @@
 
 #define PROTOCOL_VERSION_MAJOR 1
 #define PROTOCOL_VERSION_MINOR 4
-#define PROTOCOL_VERSION_TWEAK 0
+#define PROTOCOL_VERSION_TWEAK 1
 
 using namespace yarp::os;
 using namespace yarp::dev;
