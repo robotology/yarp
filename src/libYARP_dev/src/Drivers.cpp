@@ -526,6 +526,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             service = NULL;
         }
     }
+
     while (dd.isValid() && !(terminated||(terminee&&terminee->mustQuit()))) {
         if (service!=NULL) {
             double now = Time::now();

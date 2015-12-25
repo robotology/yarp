@@ -44,6 +44,7 @@ bool Terminator::terminateByName(const char *name) {
 
     Bottle cmd("quit"), reply;
     Contact c = NetworkBase::queryName(s.c_str());
+
     if (!c.isValid()) {
         fprintf(stderr,"Terminator port not found\n");
         return false;

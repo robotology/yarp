@@ -13,20 +13,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/SerialInterfaces.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/Thread.h>
+#include <yarp/os/RateThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
-
-
-using namespace yarp::os;
-using namespace yarp::sig;
-using namespace yarp::dev;
-
+#include <yarp/os/BufferedPort.h>
 
 namespace yarp
 {
@@ -40,7 +34,7 @@ namespace yarp
 /**
  * Callback implementation after buffered input.
  */
-class yarp::dev::ImplementCallbackHelper2 : public TypedReaderCallback<Bottle> {
+class yarp::dev::ImplementCallbackHelper2 : public yarp::os::TypedReaderCallback<yarp::os::Bottle> {
 protected:
     ISerialDevice *ser;
 
@@ -56,7 +50,7 @@ public:
      * Callback function.
      * @param b is the Bottle being received.
      */
-    virtual void onRead(Bottle& b);
+    virtual void onRead(yarp::os::Bottle& b);
 };
 
 
@@ -74,43 +68,29 @@ public:
  */
 class YARP_dev_API yarp::dev::ServerSerial : public DeviceDriver,
                                              public ISerialDevice,
-                                             private Thread
+                                             private yarp::os::RateThread
 {
 private:
     bool verb;
     PolyDriver poly;
-    Port toDevice;
-    Port fromDevice;
+    yarp::os::Port toDevice;
+    yarp::os::Port fromDevice;
 
-    PortWriterBuffer <Bottle> reply_buffer;
-    PortReaderBuffer <Bottle> command_buffer;
+    yarp::os::PortWriterBuffer<yarp::os::Bottle> reply_buffer;
+    yarp::os::PortReaderBuffer<yarp::os::Bottle> command_buffer;
 
     ISerialDevice *serial;
-    yarp::dev::ImplementCallbackHelper2 callback_impl;
+    ImplementCallbackHelper2 callback_impl;
 
-
-    bool closeMain() {
-        if (Thread::isRunning()) {
-            Thread::stop();
-        }
-        //close the port connection here
-        toDevice.close();
-        fromDevice.close();
-        poly.close();
-        return true;
-    }
+    bool closeMain();
 
 public:
-    /**
-     * Constructor.
-     */
     ServerSerial();
-
     virtual ~ServerSerial();
-
-    virtual bool send(const Bottle& msg);
+    virtual bool send(const yarp::os::Bottle& msg);
     virtual bool send(char *msg, size_t size);
-    virtual bool receive(Bottle& msg);
+    virtual bool receive(yarp::os::Bottle& msg);
+    virtual bool receiveWithTimeout(yarp::os::Bottle& msg, double timeoutInSeconds);
     virtual int receiveChar(char& c);
     virtual int flush ();
     virtual int receiveLine(char* line, const int MaxLineLength);
@@ -138,7 +118,17 @@ public:
      * and all parameters requied by the wrapped device driver.
      * @return true iff the object could be configured.
      */
-    virtual bool open(Searchable& prop);
+    virtual bool open(yarp::os::Searchable& prop);
+
+    /**
+     * Initialization method.
+     */
+    virtual bool threadInit();
+
+    /**
+     * Release method.
+     */
+    virtual void threadRelease();
 
     /**
      * The thread main loop deals with writing on ports here.

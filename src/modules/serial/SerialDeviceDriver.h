@@ -16,6 +16,7 @@
 #include <ace/DEV_Connector.h>
 #include <ace/TTY_IO.h>
 #include <ace/OS_NS_stdio.h>
+#include <ace/Condition_Thread_Mutex.h>
 
 namespace yarp {
     namespace dev {
@@ -81,10 +82,20 @@ private:
     void operator=(const SerialDeviceDriver&);
 
     ACE_TTY_IO _serial_dev;
+    ACE_TTY_IO _send_serial_dev;
     ACE_DEV_Connector _serialConnector;
+
     bool verbose;     // If enabled (1), the data sent/received by the serial device is print on screen
     char line_terminator_char1;
     char line_terminator_char2;
+
+    bool deviceOpened;
+    
+    ACE_Time_Value receiveTimeout;
+    ACE_Thread_Mutex conditionMutex;
+    ACE_Condition_Thread_Mutex stopCondition;
+    bool shouldStop;
+
 
 public:
     SerialDeviceDriver();
@@ -112,10 +123,23 @@ public:
     //bool putMessage(Bottle& msg, bool waitreply, double replytimeout, Bottle& reply, char *replydelimiter, int replysize );
     /**
      * Gets the existing chars in the receive queue.
+     * @note the call is blocking
      * @param msg - the received string
-     * @return - true on success; false if no messages available
+     * @return - true on success; false if an error occurred
      */
     virtual bool receive(Bottle& msg);
+
+    /**
+     * Gests the existing chars in the receive queue.
+     * This function blocks at maximum for the specified timeout
+     *
+     * @param msg              the received string
+     * @param timeoutInSeconds timeout in seconds
+     *
+     * @return true on success. False if an error occurred.
+     */
+    virtual bool receiveWithTimeout(Bottle& msg, double timeoutInSeconds);
+
     /**
      * Gets one single char from the receive queue.
      * @param chr - the received char.
