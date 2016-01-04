@@ -937,9 +937,9 @@ const Property& Property::operator = (const Property& prop) {
 }
 
 
-void Property::put(const ConstString& key, const ConstString& val) {
+void Property::put(const ConstString& key, const ConstString& value) {
     summon();
-    HELPER(implementation).put(key,val);
+    HELPER(implementation).put(key,value);
 }
 
 void Property::put(const ConstString& key, const Value& value) {
@@ -953,14 +953,14 @@ void Property::put(const ConstString& key, Value *value) {
     HELPER(implementation).put(key,value);
 }
 
-void Property::put(const ConstString& key, int v) {
+void Property::put(const ConstString& key, int value) {
     summon();
-    put(key,Value::makeInt(v));
+    put(key,Value::makeInt(value));
 }
 
-void Property::put(const ConstString& key, double v) {
+void Property::put(const ConstString& key, double value) {
     summon();
-    put(key,Value::makeDouble(v));
+    put(key,Value::makeDouble(value));
 }
 
 bool Property::check(const ConstString& key) const {

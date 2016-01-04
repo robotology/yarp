@@ -14,19 +14,19 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-NetInt32 Vocab::encode(const ConstString& s) {
+NetInt32 Vocab::encode(const ConstString& str) {
     char a = '\0';
     char b = '\0';
     char c = '\0';
     char d = '\0';
-    if (s.length()>=1) {
-        a = s[0];
-        if (s.length()>=2) {
-            b = s[1];
-            if (s.length()>=3) {
-                c = s[2];
-                if (s.length()>=4) {
-                    d = s[3];
+    if (str.length()>=1) {
+        a = str[0];
+        if (str.length()>=2) {
+            b = str[1];
+            if (str.length()>=3) {
+                c = str[2];
+                if (str.length()>=4) {
+                    d = str[3];
                 }
             }
         }
@@ -36,15 +36,15 @@ NetInt32 Vocab::encode(const ConstString& s) {
 
 
 ConstString Vocab::decode(NetInt32 code) {
-    ConstString s;
+    ConstString str;
     for (int i=0; i<4; i++) {
         int ch = code%256;
         if (ch>0) {
-            s += ((char)ch);
+            str += ((char)ch);
         }
         code /= 256;
     }
-    return s;
+    return str;
 }
 
 

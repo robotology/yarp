@@ -173,9 +173,9 @@ ConstString Bottle::toString() const {
     return ConstString(HELPER(implementation).toString().c_str());
 }
 
-void Bottle::fromBinary(const char *text, int len) {
+void Bottle::fromBinary(const char *buf, int len) {
     edit();
-    HELPER(implementation).fromBinary(text,len);
+    HELPER(implementation).fromBinary(buf,len);
 }
 
 

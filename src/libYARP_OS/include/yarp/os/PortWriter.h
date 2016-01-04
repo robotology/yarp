@@ -39,10 +39,10 @@ public:
      * protocol they use, and how efficient the YARP implementation is,
      * this method may be called once, twice, or many times, as the
      * result of a single call to Port::write
-     * @param connection an interface to the network connection for writing
+     * @param writer an interface to the network connection for writing
      * @return true iff the object is successfully written
      */
-    virtual bool write(ConnectionWriter& connection) = 0;
+    virtual bool write(ConnectionWriter& writer) = 0;
 
     /**
      * This is called when the port has finished all writing operations.

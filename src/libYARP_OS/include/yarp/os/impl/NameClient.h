@@ -104,10 +104,10 @@ public:
     /**
      * Register a port with a given name and a partial address.
      * @param name the name of the port
-     * @param address a partially completed address
+     * @param suggest a partially completed address
      * @return the address associated with the port
      */
-    Contact registerName(const ConstString& name, const Contact& address);
+    Contact registerName(const ConstString& name, const Contact& suggest);
 
     /**
      * Register disassociation of name from port.

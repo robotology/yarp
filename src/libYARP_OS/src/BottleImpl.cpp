@@ -1186,11 +1186,11 @@ void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
 
 
 
-Value& Storable::find(const ConstString& txt) const {
+Value& Storable::find(const ConstString& key) const {
     return BottleImpl::getNull();
 }
 
-Bottle& Storable::findGroup(const ConstString& txt) const {
+Bottle& Storable::findGroup(const ConstString& key) const {
     return Bottle::getNullBottle();
 }
 

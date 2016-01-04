@@ -177,7 +177,7 @@ public:
 
 private:
     void show(int level, const String& txt);
-    void exit(int result);
+    void exit(int level);
 
     static Logger *root;
     String prefix;

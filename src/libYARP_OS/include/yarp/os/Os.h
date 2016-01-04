@@ -27,9 +27,9 @@ namespace yarp {
         * Wrapper for the ACE_OS::signal signal.
         * Attach a function handler to a signal.
         * @param signum signal number (e.g. SIGTERM/SIGINT) to handle
-        * @param sig handler function
+        * @param sighandler handler function
         */
-        YARP_OS_API YarpSignalHandler signal(int signum, YarpSignalHandler sig);
+        YARP_OS_API YarpSignalHandler signal(int signum, YarpSignalHandler sighandler);
 
         /**
         * Wrapper for ACE_OS::exit().
@@ -43,10 +43,10 @@ namespace yarp {
 
         /**
         * Wrapper for ACE_OS::getenv().
-        * @param v string that containt the environment variable name
+        * @param var string that containt the environment variable name
         * @return the value corresponding to the envarionment variable v
         */
-        YARP_OS_API const char *getenv(const char *v);
+        YARP_OS_API const char *getenv(const char *var);
 
         /**
         * Wrapper for ACE_OS::getppid().
@@ -104,7 +104,7 @@ namespace yarp {
         /**
         * Wrapper for ACE_OS::stat() function.
         */
-        YARP_OS_API int stat(const char *f);
+        YARP_OS_API int stat(const char *path);
     }
 }
 

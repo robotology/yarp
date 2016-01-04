@@ -238,10 +238,10 @@ public:
 
 
 
-RateThread::RateThread(int p)
+RateThread::RateThread(int period)
 {
-    // use p
-    implementation = new RateThreadCallbackAdapter(*this, p);
+    // use period
+    implementation = new RateThreadCallbackAdapter(*this, period);
     yAssert(implementation!=0);
 }
 
@@ -253,9 +253,9 @@ RateThread::~RateThread()
     }
 }
 
-bool RateThread::setRate(int p)
+bool RateThread::setRate(int period)
 {
-    return ((RateThreadCallbackAdapter*)implementation)->setRate(p);
+    return ((RateThreadCallbackAdapter*)implementation)->setRate(period);
 }
 
 double RateThread::getRate()
@@ -350,7 +350,7 @@ void RateThread::threadRelease()
 void RateThread::beforeStart()
 {}
 
-void RateThread::afterStart(bool s)
+void RateThread::afterStart(bool success)
 {}
 
 int RateThread::setPriority(int priority, int policy)

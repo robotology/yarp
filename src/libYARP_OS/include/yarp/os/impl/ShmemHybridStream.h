@@ -100,7 +100,7 @@ protected:
     ShmemOutputStreamImpl out;
 
     // FUNCTIONS
-    int connect(const ACE_INET_Addr &address);
+    int connect(const ACE_INET_Addr &ace_address);
 };
 
 #endif
