@@ -204,7 +204,7 @@ else()
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wcast-align")
     endif()
 
-    check_cxx_compiler_flag("-Wunused" CXX_HAS_UNUSED)
+    check_cxx_compiler_flag("-Wunused" CXX_HAS_WUNUSED)
     if(CXX_HAS_WUNUSED)
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wunused")
     endif()
