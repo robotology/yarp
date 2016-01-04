@@ -11,6 +11,8 @@
 
 #include "StyleNameService.h"
 
+#include <yarp/os/Value.h>
+
 using namespace yarp::os;
 
 bool yarp::name::StyleNameService::apply(yarp::os::Bottle& cmd, 

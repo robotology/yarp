@@ -228,10 +228,10 @@ int main(int argc, char *argv[]) {
         show_usage();
         return 0;
     }
-    if (ConstString(argv[1])=="help" || 
+    if (ConstString(argv[1])=="help" ||
         ConstString(argv[1])=="--help") {
         show_usage();
-        return 0;        
+        return 0;
     }
 
     Network yarp;
@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
     if (options.check("verbose")) {
         verbose = true;
     }
-  
+
     // Get the command tag
     ConstString tag = cmd.get(0).asString();
 
@@ -266,7 +266,7 @@ int main(int argc, char *argv[]) {
             }
             Bottle reply;
             register_port("/roscore", "xmlrpc",
-                          cmd.get(1).asString().c_str(), cmd.get(2).asInt(), 
+                          cmd.get(1).asString().c_str(), cmd.get(2).asInt(),
                           reply);
             printf("%s\n", reply.toString().c_str());
         } else {
@@ -277,7 +277,7 @@ int main(int argc, char *argv[]) {
                 return 1;
             }
             register_port("/roscore", "xmlrpc",
-                          c.getHost().c_str(), c.getPort(), 
+                          c.getHost().c_str(), c.getPort(),
                           reply);
             printf("%s\n", reply.toString().c_str());
         }
@@ -339,7 +339,7 @@ int main(int argc, char *argv[]) {
                       lookup.portnum,
                       reply);
         printf("%s\n", reply.toString().c_str());
-        return ok?0:1;        
+        return ok?0:1;
     } else if (tag=="subscriber"||tag=="sub") {
         Bottle req, reply;
         if (cmd.size()!=3 && cmd.size()!=4) {
@@ -396,17 +396,17 @@ int main(int argc, char *argv[]) {
         p.read(b);
         string r;
         if (in&&b.get(0).asVocab()==VOCAB3('r','p','c')&&b.get(1).isList()) {
-            
+
             r = showFormat(*b.get(1).asList(),"v");
         } else {
-            r = showFormat(b,"v");            
+            r = showFormat(b,"v");
         }
         printf("Got message:\n%s\n",r.c_str());
         return 0;
     } else {
         fprintf(stderr,"unknown command, run with no arguments for help\n");
         return 1;
-    }  
+    }
     return 0;
 }
 

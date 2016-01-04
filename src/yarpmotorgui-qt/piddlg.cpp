@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QPushButton>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Value.h>
 
 #define     TAB_POSITION    0
 #define     TAB_VELOCITY    1

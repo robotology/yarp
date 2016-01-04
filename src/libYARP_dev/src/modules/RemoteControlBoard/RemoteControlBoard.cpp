@@ -73,7 +73,7 @@ struct yarp::dev::ProtocolVersion
 // getEncoders will return false otherwise.
 const double TIMEOUT=0.5;
 
-class StateInputPort:public BufferedPort<yarp::sig::Vector>
+class StateInputPort : public yarp::os::BufferedPort<yarp::sig::Vector>
 {
     yarp::sig::Vector last;
     Semaphore mutex;

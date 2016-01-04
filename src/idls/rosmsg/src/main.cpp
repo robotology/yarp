@@ -37,7 +37,8 @@
 using namespace yarp::os;
 using namespace std;
 
-void show_usage() {
+void show_usage()
+{
     printf("Usage:\n");
     printf("\n  yarpidl_rosmsg <Foo>.msg\n");
     printf("    Translates a ROS-format .msg file to a YARP-compatible .h file\n");
@@ -54,25 +55,26 @@ void show_usage() {
     printf("    Start up a service with the given port name for querying types.\n");
 }
 
-static void generateTypeMap1(RosType& t, ConstString& txt) {
+static void generateTypeMap1(RosType& t, ConstString& txt)
+{
     if (!t.isValid) return;
     RosType::RosTypes& lst = t.subRosType;
     if (lst.size()>0) {
         bool simple = true;
-        for (size_t i=0; i<lst.size(); i++) { 
+        for (size_t i=0; i<lst.size(); i++) {
             if (lst[i].rosType != lst[0].rosType ||
                 (!lst[i].isPrimitive) ||
                 lst[i].isArray) {
                 simple = false;
                 break;
             }
-            
+
         }
         if (!simple) {
             txt += " list ";
             txt += NetType::toString((int)lst.size());
-            
-            for (size_t i=0; i<lst.size(); i++) { 
+
+            for (size_t i=0; i<lst.size(); i++) {
                 generateTypeMap1(lst[i],txt);
             }
         } else {
@@ -95,7 +97,8 @@ static void generateTypeMap1(RosType& t, ConstString& txt) {
     txt += " *";
 }
 
-static void generateTypeMap(RosType& t, ConstString& txt) {
+static void generateTypeMap(RosType& t, ConstString& txt)
+{
     txt = "";
     generateTypeMap1(t,txt);
     if (txt.length()>0) {
@@ -103,10 +106,11 @@ static void generateTypeMap(RosType& t, ConstString& txt) {
     }
     if (!t.reply) return;
     txt += " ---";
-    generateTypeMap1(*(t.reply),txt);    
+    generateTypeMap1(*(t.reply),txt);
 }
 
-void configure_search(RosTypeSearch& env, Searchable& p) {
+void configure_search(RosTypeSearch& env, Searchable& p)
+{
     if (p.check("out")) {
         env.setTargetDirectory(p.find("out").toString().c_str());
     }
@@ -119,7 +123,8 @@ void configure_search(RosTypeSearch& env, Searchable& p) {
     env.lookForService(p.check("service"));
 }
 
-int generate_cpp(int argc, char *argv[]) {
+int generate_cpp(int argc, char *argv[])
+{
     bool is_service = false;
 
     Property p;
@@ -137,7 +142,7 @@ int generate_cpp(int argc, char *argv[]) {
     if (is_service) {
         p.put("service",1);
     }
- 
+
     RosTypeSearch env;
     RosType t;
 
@@ -156,14 +161,15 @@ int generate_cpp(int argc, char *argv[]) {
     return 0;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     if (argc<=1) {
         show_usage();
         return 0;
     }
     if (std::string("help")==argv[1] || std::string("--help")==argv[1]) {
         show_usage();
-        return 0;        
+        return 0;
     }
 
     Property p;

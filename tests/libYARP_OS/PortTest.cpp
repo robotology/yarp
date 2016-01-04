@@ -228,7 +228,7 @@ public:
 
     virtual void onRead(Bottle& b) {
         ct++;
-     }
+    }
 };
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

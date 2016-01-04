@@ -38,11 +38,10 @@
 #  endif
 #endif
 
-using namespace std;
 
-vector<string> normalizedMessage(const string& line) {
-    vector<string> all;
-    string result;
+std::vector<std::string> normalizedMessage(const std::string& line) {
+    std::vector<std::string> all;
+    std::string result;
     bool quote = false;
     bool pending = false;
     bool can_quote = true;
@@ -107,7 +106,7 @@ const RosType::RosTypes& RosType::RosTypes::operator=(const RosTypes& alt) {
     HELPER(system_resource) = HELPER(alt.system_resource);
     return *this;
 }
-        
+
 
 
 void RosType::RosTypes::clear() {
@@ -133,24 +132,26 @@ const RosType& RosType::RosTypes::operator[](int i) const {
 
 bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                    int nesting) {
-    string indent = "";
+    std::string indent = "";
     for (int i=0; i<nesting; i++) {
         indent += "  ";
     }
     if (nesting>0) env.lookForService(false); // no srv nesting allowed in ros
     //printf("Checking %s\n", tname);
     clear();
-    
-    string base = tname;
+
+    std::string base = tname;
     rosType = base;
-    if (base.length()==0) return false;
+    if (base.length()==0) {
+        return false;
+    }
     if (base[base.length()-1]==']') {
         size_t at = base.rfind('[');
-        if (at==string::npos) {
+        if (at==std::string::npos) {
             fprintf(stderr,"dodgy array? %s\n", base.c_str());
             return false;
         }
-        string idx = base.substr(at+1,base.length()-at-2);
+        std::string idx = base.substr(at+1,base.length()-at-2);
         if (idx!="") {
             yarp::os::Bottle b(idx.c_str());
             arrayLength = b.get(0).asInt();
@@ -164,7 +165,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
 
     isStruct = true;
     rosRawType = base;
-    if (base[0]>='a'&&base[0]<='z'&&base.find("/")==string::npos&&base.find(".")==string::npos) {
+    if (base[0]>='a'&&base[0]<='z'&&base.find("/")==std::string::npos&&base.find(".")==std::string::npos) {
         isStruct = false;
         if (base=="time"||base=="duration") {
             if (gen.hasNativeTimeClass()) {
@@ -191,12 +192,12 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         isValid = true;
         return true;
     }
-    if (rosType.find(".")!=string::npos) {
+    if (rosType.find(".")!=std::string::npos) {
         rosType = rosType.substr(0,rosType.rfind("."));
     }
 
     if (isStruct && rosType!="Header") {
-        if (rosType.find("/")!=string::npos) {
+        if (rosType.find("/")!=std::string::npos) {
             package = rosType.substr(0,rosType.find("/"));
         } else if (package!="") {
             rosType = package + "/" + rosType;
@@ -205,9 +206,9 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     }
 
     bool ok = true;
-    string path = env.findFile(base.c_str());
+    std::string path = env.findFile(base.c_str());
     rosPath = path;
- 
+
     FILE *fin = fopen((env.getTargetDirectory() + "/" + path).c_str(),"r");
     if (!fin) {
         fin = fopen(path.c_str(),"r");
@@ -237,8 +238,8 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                 break;
             }
         }
-        string row = result;
-        vector<string> msg = normalizedMessage(row);
+        std::string row = result;
+        std::vector<std::string> msg = normalizedMessage(row);
         if (msg.size()==0) { continue; }
         if (msg[0] == "---") {
             printf("--- reply ---\n");
@@ -250,7 +251,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             continue;
         }
         bool have_const = false;
-        string const_txt = "";
+        std::string const_txt = "";
         if (msg.size()>2) {
             if (msg[2]=="=") {
                 have_const = true;
@@ -268,9 +269,9 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             }
             continue;
         }
-        string t = msg[0];
-        string n = msg[1];
-        fprintf(stderr,"[type]%s   %s %s", indent.c_str(), t.c_str(), 
+        std::string t = msg[0];
+        std::string n = msg[1];
+        fprintf(stderr,"[type]%s   %s %s", indent.c_str(), t.c_str(),
                 n.c_str());
         if (const_txt!="") {
             fprintf(stderr," = %s", const_txt.c_str());
@@ -279,14 +280,14 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         RosType sub;
         sub.package = package;
         if (!sub.read(t.c_str(),env,gen,nesting+1)) {
-            fprintf(stderr, "[type]%s Type not complete: %s\n", 
-                    indent.c_str(), 
+            fprintf(stderr, "[type]%s Type not complete: %s\n",
+                    indent.c_str(),
                     row.c_str());
             ok = false;
         }
         sub.rosName = n;
         const_txt.erase(0,const_txt.find_first_not_of(" \t"));
-        if (const_txt.find_first_of(" \t#")!=string::npos) {
+        if (const_txt.find_first_of(" \t#")!=std::string::npos) {
             const_txt = const_txt.substr(0,const_txt.find_first_of(" \t#"));
         }
         sub.initializer = const_txt;
@@ -296,7 +297,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     fclose(fin);
 
     if (rosType == "Header") {
-        string preamble = "[std_msgs/Header]:";
+        std::string preamble = "[std_msgs/Header]:";
         if (source.find(preamble)==0) {
             source = source.substr(preamble.length()+1,source.length());
         }
@@ -306,10 +307,10 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     return isValid;
 }
 
-bool RosType::cache(const char *tname, RosTypeSearch& env, 
+bool RosType::cache(const char *tname, RosTypeSearch& env,
                     RosTypeCodeGen& gen) {
-    string rosType = tname;
-    if (rosType.find(".")==string::npos) {
+    std::string rosType = tname;
+    if (rosType.find(".")==std::string::npos) {
         return false;
     }
     rosType = rosType.substr(0,rosType.rfind("."));
@@ -378,10 +379,10 @@ bool RosType::emitType(RosTypeCodeGen& gen,
             if (!e.emitType(gen,state)) return false;
 
             if (e.isConst()) {
-                string add = e.rosType + " " + e.rosName + "=" + e.initializer + "\n";
+                std::string add = e.rosType + " " + e.rosName + "=" + e.initializer + "\n";
                 checksum_const_text.push_back(add);
             } else {
-                string add = "";
+                std::string add = "";
                 if (!e.isStruct) {
                     add += e.rosRawType;
                 } else {
@@ -402,12 +403,12 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         }
     }
 
-    string sum = "";
-    for (list<string>::iterator it=checksum_const_text.begin();
+    std::string sum = "";
+    for (std::list<std::string>::iterator it=checksum_const_text.begin();
          it!=checksum_const_text.end(); it++) {
         sum += *it;
     }
-    for (list<string>::iterator it=checksum_var_text.begin();
+    for (std::list<std::string>::iterator it=checksum_var_text.begin();
          it!=checksum_var_text.end(); it++) {
         sum += *it;
     }
@@ -420,14 +421,14 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     md5_finish(&cstate, digest);
     char hex_output[16*2 + 1];
     for (int di = 0; di<16; di++) {
-	    sprintf(hex_output + di * 2, "%02x", digest[di]);
+        sprintf(hex_output + di * 2, "%02x", digest[di]);
     }
     checksum = (char *)hex_output;
 
     if (reply!=NULL) {
         if (!reply->emitType(gen,state)) return false;
     }
-    
+
 
     state.usedVariables.clear();
     state.txt = txt;
@@ -508,14 +509,14 @@ std::string RosTypeSearch::readFile(const char *fname) {
 
 static bool checkWeb(const char *tname,
                      bool find_service,
-                     const string& target_full) {
+                     const std::string& target_full) {
     bool success = false;
-    string name = tname;
+    std::string name = tname;
     size_t idx = name.find("/");
-    if (idx!=string::npos) {
-        string package = name.substr(0,idx);
-        string typ = name.substr(idx+1,name.length());
-        string url = "http://docs.ros.org:80/api/";
+    if (idx!=std::string::npos) {
+        std::string package = name.substr(0,idx);
+        std::string typ = name.substr(idx+1,name.length());
+        std::string url = "http://docs.ros.org:80/api/";
         url += package;
         if (find_service) {
             url += "/html/srv/";
@@ -532,9 +533,9 @@ static bool checkWeb(const char *tname,
         yarp::os::Bottle cmd, reply;
         cmd.addString("1");
         port.write(cmd,reply);
-        string txt = reply.get(0).asString() + "\n";
+        std::string txt = reply.get(0).asString() + "\n";
         printf("GOT %s for %s\n", txt.c_str(), url.c_str());
-        vector<string> lines;
+        std::vector<std::string> lines;
         split(txt,'\n',lines);
         for (size_t i=0; i<lines.size(); i++) {
             std::string line = lines[i];
@@ -578,7 +579,7 @@ static bool checkWeb(const char *tname,
 bool RosTypeSearch::fetchFromRos(const std::string& file_name,
                                  const std::string& type_name,
                                  bool find_service) {
-    string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+type_name+" > " + file_name + " || rm -f " + type_name;
+    std::string cmd = std::string(find_service?"rossrv":"rosmsg") + " show -r "+type_name+" > " + file_name + " || rm -f " + type_name;
     fprintf(stderr,"[ros]  %s\n", cmd.c_str());
     pid_t p = ACE_OS::fork();
     if (p==0) {
@@ -618,8 +619,8 @@ std::string RosTypeSearch::findFile(const char *tname) {
 	if (stat(tname, &dummy)==0) {
         return tname;
     }
-    string target = string(tname);
-    if (target.find(".")!=string::npos) {
+    std::string target = std::string(tname);
+    if (target.find(".")!=std::string::npos) {
         return tname;
     }
     for (int i=0; i<(int)target.length(); i++) {
@@ -627,7 +628,7 @@ std::string RosTypeSearch::findFile(const char *tname) {
             target[i] = '_';
         }
     }
-    string target_full = target_dir + "/" + target;
+    std::string target_full = target_dir + "/" + target;
 	if (stat(target_full.c_str(), &dummy)==0) {
         return target;
     }

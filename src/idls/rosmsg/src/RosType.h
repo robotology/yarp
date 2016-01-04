@@ -26,11 +26,12 @@ private:
                       const std::string& type_name,
                       bool find_service);
 public:
-    RosTypeSearch() {
-        find_service = false;
-        target_dir = ".";
-        allow_web = false;
-        abort_on_error = true;
+    RosTypeSearch() :
+            find_service(false),
+            target_dir("."),
+            allow_web(false),
+            abort_on_error(true)
+    {
     }
 
     void lookForService(bool flag) {
@@ -146,9 +147,9 @@ public:
     bool cache(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen);
     void show();
 
-    bool emitType(RosTypeCodeGen& gen, 
+    bool emitType(RosTypeCodeGen& gen,
                   RosTypeCodeGenState& state);
-    
+
     bool isConst() const {
         return initializer != "";
     }
@@ -194,7 +195,7 @@ public:
     virtual bool constructField(const RosField& field) { return true; }
     virtual bool endConstruct() { return true; }
 
-    virtual bool beginRead(bool bare, int len) { return true; } 
+    virtual bool beginRead(bool bare, int len) { return true; }
     virtual bool readField(bool bare, const RosField& field) = 0;
     virtual bool endRead(bool bare) { return true; }
 

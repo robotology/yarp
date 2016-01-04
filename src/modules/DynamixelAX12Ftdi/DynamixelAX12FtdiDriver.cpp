@@ -5,8 +5,10 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
- 
- #include "DynamixelAX12FtdiDriver.h"
+
+#include "DynamixelAX12FtdiDriver.h"
+
+#include <yarp/os/Value.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;

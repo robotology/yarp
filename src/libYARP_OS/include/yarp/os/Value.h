@@ -90,7 +90,7 @@ public:
      * @param alt the value to copy
      * @return this object itself
      */
-    const Value& operator = (const Value& alt);
+    const Value& operator=(const Value& alt);
 
     /**
      * Destructor
@@ -257,22 +257,22 @@ public:
      * @param alt the value to compare against
      * @result true iff the values are equal
      */
-    virtual bool operator == (const Value& alt) const;
+    virtual bool operator==(const Value& alt) const;
 
     /**
      * Inequality test.
      * @param alt the value to compare against
      * @result true iff the values are not equal
      */
-    virtual bool operator != (const Value& alt) const;
+    virtual bool operator!=(const Value& alt) const;
 
     // comparisons with strings worked "accidentally", users depend on them
-    virtual bool operator == (const char *alt) const {
+    virtual bool operator==(const char *alt) const {
         return asString() == alt;
     }
 
     // comparisons with strings worked "accidentally", users depend on them
-    virtual bool operator != (const char *alt) const {
+    virtual bool operator!=(const char *alt) const {
         return asString() != alt;
     }
 

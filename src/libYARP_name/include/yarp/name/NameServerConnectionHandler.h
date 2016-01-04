@@ -18,6 +18,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Value.h>
 
 #include <yarp/name/NameService.h>
 

@@ -12,6 +12,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Value.h>
 
 InputCallback::InputCallback(int eye) :
         yarp::os::BufferedPort<ImageType>(),

@@ -9,6 +9,7 @@
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/Value.h>
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>

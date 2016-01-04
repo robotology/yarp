@@ -114,7 +114,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         string alt_fname = root + part + ".h";
         out = fopen(alt_fname.c_str(),"w");
         if (!out) {
-            fprintf(stderr,"Failed to open %s for writing\n", 
+            fprintf(stderr,"Failed to open %s for writing\n",
                     alt_fname.c_str());
             exit(1);
         }
@@ -158,7 +158,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
 
 bool RosTypeCodeGenYarp::beginDeclare() {
     return true;
-}           
+}
 
 bool RosTypeCodeGenYarp::declareField(const RosField& field) {
     RosYarpType t = mapPrimitive(field);
@@ -169,7 +169,7 @@ bool RosTypeCodeGenYarp::declareField(const RosField& field) {
             fprintf(out,"  %s %s;\n", t.yarpType.c_str(), field.rosName.c_str());
         }
     } else {
-        fprintf(out,"  std::vector<%s> %s;\n", t.yarpType.c_str(), 
+        fprintf(out,"  std::vector<%s> %s;\n", t.yarpType.c_str(),
                 field.rosName.c_str());
     }
     return true;
@@ -183,17 +183,17 @@ bool RosTypeCodeGenYarp::endDeclare() {
 bool RosTypeCodeGenYarp::beginConstruct() {
     fprintf(out,"  %s() {\n", className.c_str());
     return true;
-}           
+}
 
 bool RosTypeCodeGenYarp::constructField(const RosField& field) {
     if (field.isArray && field.arrayLength!=-1) {
         RosYarpType t = mapPrimitive(field);
         if (t.yarpDefaultValue!="") {
-            fprintf(out,"    %s.resize(%d,%s);\n", 
+            fprintf(out,"    %s.resize(%d,%s);\n",
                     field.rosName.c_str(), field.arrayLength,
                     t.yarpDefaultValue.c_str());
         } else {
-            fprintf(out,"    %s.resize(%d);\n", 
+            fprintf(out,"    %s.resize(%d);\n",
                     field.rosName.c_str(), field.arrayLength);
         }
     }
@@ -247,10 +247,10 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
                         usedLen?"":"int ",len.c_str(),field.arrayLength);
             }
             usedLen = true;
-            fprintf(out,"    %s.resize(%s);\n", 
+            fprintf(out,"    %s.resize(%s);\n",
                    field.rosName.c_str(),
                    len.c_str());
-            fprintf(out,"    for (int %s=0; %s<%s; %s++) {\n", 
+            fprintf(out,"    for (int %s=0; %s<%s; %s++) {\n",
                    counter.c_str(),
                    counter.c_str(),
                    len.c_str(),
@@ -258,14 +258,14 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
             fprintf(out,"      %s%s = connection.expectInt();\n",
                    "int ",
                    len2.c_str());
-            fprintf(out,"      %s[i].resize(%s);\n", 
+            fprintf(out,"      %s[i].resize(%s);\n",
                    field.rosName.c_str(),
                    len2.c_str());
             fprintf(out,"      if (!connection.expectBlock((char*)%s[%s].c_str(),%s)) return false;\n",
                    field.rosName.c_str(),
                    counter.c_str(),
                    len2.c_str());
-            fprintf(out,"    }\n");                  
+            fprintf(out,"    }\n");
         } else {
             if (!bare) {
                 fprintf(out,"    if (!reader.readString(%s)) return false;\n",
@@ -275,7 +275,7 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
                         usedLen?"":"int ",
                         len.c_str());
                 usedLen = true;
-                fprintf(out,"    %s.resize(%s);\n", 
+                fprintf(out,"    %s.resize(%s);\n",
                         field.rosName.c_str(),
                         len.c_str());
                 fprintf(out,"    if (!connection.expectBlock((char*)%s.c_str(),%s)) return false;\n",
@@ -298,7 +298,7 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
                         usedLen?"":"int ",len.c_str(),field.arrayLength);
             }
             usedLen = true;
-            fprintf(out,"    %s.resize(%s);\n", 
+            fprintf(out,"    %s.resize(%s);\n",
                    field.rosName.c_str(),
                    len.c_str());
             if (!bare) {
@@ -338,10 +338,10 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
                    usedLen?"":"int ",
                    len.c_str());
             usedLen = true;
-            fprintf(out,"    %s.resize(%s);\n", 
+            fprintf(out,"    %s.resize(%s);\n",
                    field.rosName.c_str(),
                    len.c_str());
-            fprintf(out,"    for (int %s=0; %s<%s; %s++) {\n", 
+            fprintf(out,"    for (int %s=0; %s<%s; %s++) {\n",
                    counter.c_str(),
                    counter.c_str(),
                    len.c_str(),
@@ -349,7 +349,7 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
             fprintf(out,"      if (!%s[%s].read(connection)) return false;\n",
                    field.rosName.c_str(),
                    counter.c_str());
-            fprintf(out,"    }\n");                  
+            fprintf(out,"    }\n");
         } else {
             fprintf(out,"    if (!%s.read(connection)) return false;\n",
                    field.rosName.c_str());
@@ -401,7 +401,7 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                 fprintf(out,"    connection.appendInt(%s.size());\n",
                         field.rosName.c_str());
             }
-            fprintf(out,"    for (size_t %s=0; %s<%s.size(); %s++) {\n", 
+            fprintf(out,"    for (size_t %s=0; %s<%s.size(); %s++) {\n",
                     counter.c_str(),
                     counter.c_str(),
                     field.rosName.c_str(),
@@ -414,7 +414,7 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                     counter.c_str(),
                     field.rosName.c_str(),
                     counter.c_str());
-            fprintf(out,"    }\n");                  
+            fprintf(out,"    }\n");
         } else {
             if (!bare) {
                 fprintf(out,"    connection.appendInt(BOTTLE_TAG_STRING);\n");
@@ -437,7 +437,7 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                 fprintf(out,"      connection.%s(%s%s[i]);\n",
                         t.yarpWriter.c_str(),
                         t.yarpWriterCast.c_str(),
-                        field.rosName.c_str());                
+                        field.rosName.c_str());
                 fprintf(out,"    }\n");
             } else {
                 if (field.arrayLength==-1) {
@@ -456,7 +456,7 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                 fprintf(out,"    connection.%s(%s%s);\n",
                         t.yarpWriter.c_str(),
                         t.yarpWriterCast.c_str(),
-                        field.rosName.c_str());                
+                        field.rosName.c_str());
             } else if (t.len!=0) {
                 fprintf(out,"    connection.appendBlock((char*)&%s,%d);\n",
                        field.rosName.c_str(),
@@ -476,7 +476,7 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
                 fprintf(out,"    connection.appendInt(%s.size());\n",
                         field.rosName.c_str());
             }
-            fprintf(out,"    for (size_t %s=0; %s<%s.size(); %s++) {\n", 
+            fprintf(out,"    for (size_t %s=0; %s<%s.size(); %s++) {\n",
                    counter.c_str(),
                    counter.c_str(),
                    field.rosName.c_str(),
@@ -484,7 +484,7 @@ bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field) {
             fprintf(out,"      if (!%s[%s].write(connection)) return false;\n",
                    field.rosName.c_str(),
                    counter.c_str());
-            fprintf(out,"    }\n");                  
+            fprintf(out,"    }\n");
         } else {
             fprintf(out,"    if (!%s.write(connection)) return false;\n",
                    field.rosName.c_str());

@@ -11,6 +11,7 @@
 #include <yarp/manager/utility.h>
 #include <yarp/manager/ymm-dir.h>
 
+#include <yarp/os/Value.h>
 #ifdef WITH_GEOMETRY
 #include <yarp/os/Property.h> // for parsing geometry information
 #endif

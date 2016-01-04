@@ -33,7 +33,7 @@ bool file::write(const ImageOf<PixelFloat>& src, const ConstString& dest)
     if (fp==NULL) {
         return false;
     }
-    
+
     for (int i=0; i<src.height(); i++) {
         for (int j=0; j<src.width(); j++) {
             fprintf(fp,"%g ", src(j,i));
@@ -58,7 +58,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const ConstString& src)
     while (!feof(fp)) {
         int ch = fgetc(fp);
         if (ch==' ' || ch == '\t' || ch == '\r' ||ch == '\n'|| feof(fp)){
-            if (!blank) { 
+            if (!blank) {
                 if (curr==0) {
                     hh++;
                 }
@@ -122,7 +122,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const ConstString& src)
 static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
 {
     FILE *fp = fopen(filename, "wb");
-    if (!fp) 
+    if (!fp)
         {
             printf("cannot open file %s for writing\n", filename);
             return false;
@@ -148,7 +148,7 @@ static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
 static bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
 {
     FILE *fp = fopen(filename, "wb");
-    if (!fp) 
+    if (!fp)
         {
             printf("cannot open file %s for writing\n", filename);
             return false;
@@ -180,7 +180,7 @@ static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
     *color = 0;
 
     //// LATER: replace fscanf (said to be non portable) with getc style functions.
-    if (fscanf(fp, "P%c\n", &ch) != 1 || (ch!='6'&&ch!='5')) 
+    if (fscanf(fp, "P%c\n", &ch) != 1 || (ch!='6'&&ch!='5'))
         //die("file is not in pgm/ppm raw format; cannot read");
         {
             warn("file is not in pgm/ppm raw format; cannot read");
@@ -193,12 +193,12 @@ static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
     ch = fgetc(fp);
     while (ch == '#')
         {
-            do 
+            do
                 {
                     ch = fgetc(fp);
-                } 
-            while (ch != '\n');   
-            ch = fgetc(fp);    
+                }
+            while (ch != '\n');
+            ch = fgetc(fp);
         }
     /*
       while (ch=='\n' || ch=='\r')
@@ -276,7 +276,7 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
             img.copy(tmp);
             return true;
         }
-    
+
     img.resize(width,height);
 
     const int w = img.width() * img.getPixelSize();
@@ -290,7 +290,7 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
             num += (int)fread((void *) dst, 1, (size_t) w, fp);
             dst += pad;
         }
-    
+
     fclose(fp);
 
     return true;
@@ -321,7 +321,7 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
             fprintf(stderr, "File is grayscale, conversion not yet supported\n");
             return false;
         }
-    
+
     ImageOf<PixelRgb> tmpImg;
     tmpImg.resize(width, height);
 
@@ -338,7 +338,7 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
         }
 
     fclose(fp);
-    
+
     return img.copy(tmpImg);
 }
 
@@ -367,7 +367,7 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
             fprintf(stderr, "File is color, conversion not yet supported\n");
             return false;
         }
-    
+
     img.resize(width,height);
 
     const int w = img.width() * img.getPixelSize();
@@ -398,7 +398,7 @@ static bool ImageWriteBGR(ImageOf<PixelBgr>& img, const char *filename)
 {
     ImageOf<PixelRgb> img2;
     img2.copy(img);
-    return SavePPM((char*)img2.getRawImage(),filename,img2.height(), img2.width(), img2.getRowSize());    
+    return SavePPM((char*)img2.getRawImage(),filename,img2.height(), img2.width(), img2.getRowSize());
 }
 
 

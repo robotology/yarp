@@ -10,6 +10,7 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Value.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;

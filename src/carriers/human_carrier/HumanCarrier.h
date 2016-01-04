@@ -147,7 +147,7 @@ public:
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);
-        if (!ok) cout << "YOU DID NOT SAY 'human says '" << endl;
+        if (!ok) std::cout << "YOU DID NOT SAY 'human says '" << std::endl;
         return ok;
     }
 
@@ -166,7 +166,7 @@ public:
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);
-        if (!ok) cout << "YOU DID NOT SAY 'computers rule!'" << endl;
+        if (!ok) std::cout << "YOU DID NOT SAY 'computers rule!'" << std::endl;
         return ok;
     }
 
