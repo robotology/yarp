@@ -19,30 +19,51 @@ class RosTypeSearch {
 private:
     bool find_service;
     std::string target_dir;
+    std::string source_dir;
+    std::string package_name;
+    bool allow_ros;
     bool allow_web;
     bool abort_on_error;
+    bool verbose;
 
-    bool fetchFromRos(const std::string& file_name,
+    bool fetchFromRos(const std::string& target_file,
+                      const std::string& type_name,
+                      bool find_service);
+
+    bool fetchFromWeb(const std::string& target_file,
                       const std::string& type_name,
                       bool find_service);
 public:
-    RosTypeSearch() {
-        find_service = false;
-        target_dir = ".";
-        allow_web = false;
-        abort_on_error = true;
+    RosTypeSearch() :
+            find_service(false),
+            target_dir("."),
+            source_dir(""),
+            package_name(""),
+            allow_ros(true),
+            allow_web(false),
+            abort_on_error(true),
+            verbose(false)
+    {
     }
 
     void lookForService(bool flag) {
         find_service = flag;
     }
 
-    void allowWeb() {
+    void disableRos() {
+        allow_ros = false;
+    }
+
+    void enableWeb() {
         allow_web = true;
     }
 
     void softFail() {
         abort_on_error = false;
+    }
+
+    void setVerbose() {
+        verbose = true;
     }
 
     std::string findFile(const char *tname);
@@ -108,6 +129,7 @@ public:
     std::string source;
     RosType *reply;
     std::string package;
+    bool verbose;
 
     RosType() {
         reply = 0 /*NULL*/;
@@ -135,6 +157,7 @@ public:
         checksum = "";
         source = "";
         //package = "";
+        verbose = false;
     }
 
     virtual ~RosType() {
@@ -146,11 +169,15 @@ public:
     bool cache(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen);
     void show();
 
-    bool emitType(RosTypeCodeGen& gen, 
+    bool emitType(RosTypeCodeGen& gen,
                   RosTypeCodeGenState& state);
-    
+
     bool isConst() const {
         return initializer != "";
+    }
+
+    void setVerbose() {
+        verbose = true;
     }
 };
 
@@ -180,7 +207,10 @@ public:
 };
 
 class RosTypeCodeGen {
+protected:
+    bool verbose;
 public:
+    RosTypeCodeGen() : verbose(false) {}
     virtual ~RosTypeCodeGen() {}
 
     virtual bool beginType(const std::string& tname,
@@ -194,7 +224,7 @@ public:
     virtual bool constructField(const RosField& field) { return true; }
     virtual bool endConstruct() { return true; }
 
-    virtual bool beginRead(bool bare, int len) { return true; } 
+    virtual bool beginRead(bool bare, int len) { return true; }
     virtual bool readField(bool bare, const RosField& field) = 0;
     virtual bool endRead(bool bare) { return true; }
 
@@ -207,6 +237,10 @@ public:
 
     virtual bool hasNativeTimeClass() const {
         return false;
+    }
+
+    void setVerbose() {
+        verbose = true;
     }
 };
 

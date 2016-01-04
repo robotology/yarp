@@ -167,9 +167,10 @@ know what type of data they are dealing with.
 You can override the port's onRead method:
 \code
 class DataPort : public BufferedPort<Bottle> {
-     virtual void onRead(Bottle& b) {
-          // process data in b
-     }
+    using BufferedPort<Bottle>::onRead;
+    virtual void onRead(Bottle& b) {
+        // process data in b
+    }
 };
 ...
 DataPort p;
@@ -180,9 +181,10 @@ Alternatively, you can leave the port unchanged and use
 an external callback as follows:
 \code
 class DataProcessor : public TypedReaderCallback<Bottle> {
-     virtual void onRead(Bottle& b) {
-          // process data in b
-     }
+    using TypedReaderCallback<Bottle>::onRead;
+    virtual void onRead(Bottle& b) {
+        // process data in b
+    }
 };
 ...
 DataProcessor processor;

@@ -102,8 +102,10 @@ public:
 
     virtual void closeMain();
 
+    using yarp::os::InputStream::read;
     virtual YARP_SSIZE_T read(const yarp::os::Bytes& b);
 
+    using yarp::os::OutputStream::write;
     virtual void write(const yarp::os::Bytes& b);
 
     virtual void flush();

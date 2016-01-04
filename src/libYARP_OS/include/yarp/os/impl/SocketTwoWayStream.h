@@ -95,6 +95,7 @@ public:
         happy = false;
     }
 
+    using yarp::os::InputStream::read;
     virtual YARP_SSIZE_T read(const Bytes& b) {
         if (!isOk()) { return -1; }
         YARP_SSIZE_T result;
@@ -127,6 +128,7 @@ public:
         return result;
     }
 
+    using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b) {
         if (!isOk()) { return; }
         YARP_SSIZE_T result;

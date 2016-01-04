@@ -103,7 +103,7 @@ public:
                        yarp::os::PortReader *reader,
                        yarp::os::PortWriter *callback,
                        void *tracker,
-                       const String& envelope,
+                       const String& envelopeString,
                        bool waitAfter,
                        bool waitBefore,
                        bool *gotReply);

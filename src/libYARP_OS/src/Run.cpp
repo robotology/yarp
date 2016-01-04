@@ -2425,11 +2425,11 @@ void parseArguments(char *io_pLine, int *o_pArgc, char **o_pArgv)
     }
 }
 
-void yarp::os::Run::CleanZombie(int zombie)
+void yarp::os::Run::CleanZombie(int pid)
 {
-    bool bFound=mProcessVector && mProcessVector->CleanZombie(zombie);
+    bool bFound=mProcessVector && mProcessVector->CleanZombie(pid);
 
-    if (!bFound) if (mStdioVector)  mStdioVector->CleanZombie(zombie);
+    if (!bFound) if (mStdioVector)  mStdioVector->CleanZombie(pid);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

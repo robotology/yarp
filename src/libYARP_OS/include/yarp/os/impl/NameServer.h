@@ -97,7 +97,7 @@ public:
     virtual void onEvent(yarp::os::Bottle& event) {
     }
 
-    static String textify(const Contact& addr);
+    static String textify(const Contact& address);
     static yarp::os::Bottle botify(const Contact& address);
 
     void setBasePort(int basePort) {

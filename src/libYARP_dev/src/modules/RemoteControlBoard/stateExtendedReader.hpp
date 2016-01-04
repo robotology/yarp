@@ -60,6 +60,8 @@ public:
 
     inline void resetStat();
     void init(int numberOfJoints);
+
+    using yarp::os::BufferedPort<jointData>::onRead;
     virtual void onRead(jointData &v);
 
     bool getLast(int j, jointData &data, Stamp &stamp, double &localArrivalTime);

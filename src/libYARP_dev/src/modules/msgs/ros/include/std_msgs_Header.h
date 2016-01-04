@@ -1,5 +1,5 @@
 // This is an automatically generated file.
-// Generated from this Header.msg definition:
+// Generated from this std_msgs_Header.msg definition:
 //   [std_msgs/Header]:
 //   # Standard metadata for higher-level stamped data types.
 //   # This is generally used to communicate timestamped data
@@ -16,12 +16,11 @@
 //   # 0: no frame
 //   # 1: global frame
 //   string frame_id
-//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
-#ifndef YARPMSG_TYPE_Header
-#define YARPMSG_TYPE_Header
+#ifndef YARPMSG_TYPE_std_msgs_Header
+#define YARPMSG_TYPE_std_msgs_Header
 
 #include <string>
 #include <vector>
@@ -29,13 +28,13 @@
 #include <yarp/os/idl/WireTypes.h>
 #include "TickTime.h"
 
-class Header : public yarp::os::idl::WirePortable {
+class std_msgs_Header : public yarp::os::idl::WirePortable {
 public:
   yarp::os::NetUint32 seq;
   TickTime stamp;
   std::string frame_id;
 
-  Header() {
+  std_msgs_Header() {
   }
 
   bool readBare(yarp::os::ConnectionReader& connection) {
@@ -68,6 +67,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::read;
   bool read(yarp::os::ConnectionReader& connection) {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
@@ -99,12 +99,13 @@ public:
 
     // *** frame_id ***
     connection.appendInt(BOTTLE_TAG_STRING);
-    connection.appendInt(frame_id.length()+1);
-    connection.appendExternalBlock((char*)frame_id.c_str(),frame_id.length()+1);
+    connection.appendInt(frame_id.length());
+    connection.appendExternalBlock((char*)frame_id.c_str(),frame_id.length());
     connection.convertTextMode();
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::write;
   bool write(yarp::os::ConnectionWriter& connection) {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
@@ -112,16 +113,17 @@ public:
 
   // This class will serialize ROS style or YARP style depending on protocol.
   // If you need to force a serialization style, use one of these classes:
-  typedef yarp::os::idl::BareStyle<Header> rosStyle;
-  typedef yarp::os::idl::BottleStyle<Header> bottleStyle;
+  typedef yarp::os::idl::BareStyle<std_msgs_Header> rosStyle;
+  typedef yarp::os::idl::BottleStyle<std_msgs_Header> bottleStyle;
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "# Standard metadata for higher-level stamped data types.\n\
-# This is generally used to communicate timestamped data \n\
+    return "[std_msgs/Header]:\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data\n\
 # in a particular coordinate frame.\n\
-# \n\
-# sequence ID: consecutively increasing ID \n\
+#\n\
+# sequence ID: consecutively increasing ID\n\
 uint32 seq\n\
 #Two-integer timestamp that is expressed as:\n\
 # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
@@ -131,13 +133,12 @@ time stamp\n\
 #Frame this data is associated with\n\
 # 0: no frame\n\
 # 1: global frame\n\
-string frame_id\n\
-";
+string frame_id";
   }
 
   // Name the class, ROS will need this
   yarp::os::Type getType() {
-    yarp::os::Type typ = yarp::os::Type::byName("Header","Header");
+    yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Header","std_msgs/Header");
     typ.addProperty("md5sum",yarp::os::Value("2176decaecbce78abc3b96ef049fabed"));
     typ.addProperty("message_definition",yarp::os::Value(getTypeText()));
     return typ;

@@ -2,9 +2,6 @@
 # Authors: Elena Ceseracciu
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-file(GLOB globbedHeaders RELATIVE @dir@/ "@dir@/*.h")
-file(GLOB globbedSources RELATIVE @dir@/ "@dir@/*.cpp")
-
 set(headers)
 set(sources)
 
@@ -14,41 +11,43 @@ if (include_prefix)
   set(prefix ${include_prefix}/)
 endif()
 
-# check that globbed files are really the ones we need from generated listfile
 file(STRINGS @dir@/@yarpidlName@_indexALL.txt index)
-#prepare include and src directories in the source tree
-make_directory("@output_dir@/include/${prefix}")
-make_directory("@output_dir@/src/${prefix}")
-
 foreach(genFile ${index})
   get_filename_component(type ${genFile} EXT)
   get_filename_component(main ${genFile} NAME_WE)
   if(${type} STREQUAL ".h")
-    list(FIND globbedHeaders ${genFile} inclFound)
-    if(${inclFound} EQUAL -1)
-      message(WARNING "${genFile} not found in @yarpidlName@ dir!")
+    if(EXISTS @dir@/${genFile})
+      configure_file("@dir@/${genFile}"
+                     "@output_dir@/include/${genFile}"
+                     COPYONLY)
+      list(APPEND headers "include/${genFile}")
+      list(REMOVE_DUPLICATES headers)
     else()
-      file(COPY @dir@/${genFile} DESTINATION @output_dir@/include/${prefix})
-      list(APPEND headers "include/${prefix}${genFile}")
+      message(WARNING "${genFile} not found in @yarpidlName@ dir!")
     endif()
-    list(FIND globbedHeaders ${main}Reply${type} inclFound)
-    if (NOT ${inclFound} EQUAL -1)
-      file(COPY @dir@/${main}Reply${type} DESTINATION @output_dir@/include/${prefix})
-      list(APPEND headers "include/${prefix}${main}Reply${type}")
+    if(EXISTS @dir@/${main}Reply${type})
+      configure_file("@dir@/${main}Reply${type}"
+                     "@output_dir@/include/${main}Reply${type}"
+                     COPYONLY)
+      list(APPEND headers "include/${main}Reply${type}")
+      list(REMOVE_DUPLICATES headers)
     endif()
   elseif(${type} STREQUAL ".cpp")
-    list(FIND globbedSources ${genFile} srcFound)
-    if (${srcFound} EQUAL -1)
-      message(WARNING "${genFile} not found in @yarpidlName@ dir!")
+    if(EXISTS @dir@/${genFile})
+      configure_file("@dir@/${genFile}"
+                     "@output_dir@/src/${genFile}"
+                     COPYONLY)
+      list(APPEND sources "src/${genFile}")
+      list(REMOVE_DUPLICATES sources)
     else()
-      file(COPY @dir@/${genFile} DESTINATION @output_dir@/src/${prefix})
-      list(APPEND sources "src/${prefix}${genFile}")
+      message(WARNING "${genFile} not found in @yarpidlName@ dir!")
     endif()
 
   else()
     message(WARNING "Filename extension of ${genFile} is neither .h nor .cpp")
   endif()
 endforeach(genFile)
+
 
 file(WRITE @output_dir@/@yarpidl_target_name@.cmake
 "## This is an automatically-generated file.

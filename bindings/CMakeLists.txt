@@ -48,6 +48,7 @@ endforeach()
 
 if(YARP_COMPILE_BINDINGS)
 
+
 #############################################################################
 ## Discourage inplace compilation
 
@@ -92,6 +93,17 @@ link_libraries(${YARP_LIBRARIES})
 set_source_files_properties(yarp.i PROPERTIES CPLUSPLUS ON)
 
 
+#############################################################################
+## Disable deprecated warnings, since we are building bindings also for
+## deprecated methods
+
+if(NOT YARP_NO_DEPRECATED)
+  check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+  if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+    add_definitions(-Wno-deprecated-declarations)
+  endif()
+endif()
+
 
 #############################################################################
 ## Create Java bindings
@@ -113,7 +125,7 @@ if(CREATE_JAVA)
   set(JAVA_SRCS LoadYarp.java
                 YarpImageHelper.java
                 Example1.java)
-  include_directories(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
+  include_directories(SYSTEM ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
   set(target_name jyarp)
   swig_add_module(${target_name} java yarp.i)
   if(PREPARE_CLASS_FILES)
@@ -172,7 +184,7 @@ if(CREATE_PYTHON)
     set (YARP_USE_PYTHON_VERSION ${PYTHON_VERSION_STRING})
   endif()
   find_package(PythonLibs ${YARP_USE_PYTHON_VERSION} EXACT)
-  include_directories(${PYTHON_INCLUDE_PATH})
+  include_directories(SYSTEM ${PYTHON_INCLUDE_PATH})
 
   ## in Windows it seems necessary to declare explictly the link_directory
   if(WIN32)
@@ -229,7 +241,7 @@ endif(CREATE_PYTHON)
 if(CREATE_PERL)
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
   find_package(PerlLibs)
-  include_directories(${PERL_INCLUDE_PATH})
+  include_directories(SYSTEM ${PERL_INCLUDE_PATH})
 
   get_filename_component(_CMAKE_INSTALL_PERLDIR ${PERL_LIBRARY} PATH)
   file(RELATIVE_PATH _CMAKE_INSTALL_PERLDIR "${_CMAKE_INSTALL_PERLDIR}" "${PERL_VENDORARCH}")
@@ -327,7 +339,7 @@ endif()
 if(CREATE_TCL)
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
   find_package(TCL REQUIRED)
-  include_directories(${TCL_INCLUDE_PATH})
+  include_directories(SYSTEM ${TCL_INCLUDE_PATH})
   link_libraries(${TCL_LIBRARY})
   swig_add_module(libtclyarp tcl yarp.i)
   set(YARP_COLLISION_AVOIDANCE TRUE)
@@ -384,7 +396,7 @@ endif(CREATE_CSHARP)
 if(CREATE_RUBY)
   find_package(Ruby)
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
-  include_directories(${RUBY_INCLUDE_PATH})
+  include_directories(SYSTEM ${RUBY_INCLUDE_PATH})
   set(target_name yarp)
   if(YARP_COLLISION_AVOIDANCE)
     set(target_name yarp_ruby)
@@ -406,7 +418,7 @@ if(CREATE_LUA)
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
   find_package(Lua REQUIRED)
   set(target_name yarp_lua)
-  include_directories(${LUA_INCLUDE_DIR})
+  include_directories(SYSTEM ${LUA_INCLUDE_DIR})
   swig_add_module(${target_name} lua yarp.i)
   swig_link_libraries(${target_name} ${LUA_LIBRARY})
   set_target_properties(${target_name} PROPERTIES PREFIX "")
@@ -431,7 +443,7 @@ if(CREATE_OCTAVE)
   find_package(Octave REQUIRED)
   set(target_name yarp_octave)
   get_filename_component(OCTAVE_INCLUDE_TOP ${OCTAVE_INCLUDE_DIR} DIRECTORY)
-  include_directories(${OCTAVE_INCLUDE_DIRS} ${OCTAVE_INCLUDE_TOP})
+  include_directories(SYSTEM ${OCTAVE_INCLUDE_DIRS} ${OCTAVE_INCLUDE_TOP})
   swig_add_module(${target_name} octave yarp.i)
   swig_link_libraries(${target_name} ${OCTAVE_LIBRARIES})
   set_target_properties(${target_name} PROPERTIES PREFIX "")

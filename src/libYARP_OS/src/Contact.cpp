@@ -94,9 +94,9 @@ Contact Contact::addCarrier(const ConstString& carrier) const {
 }
 
 
-Contact Contact::addHost(const ConstString& host) const {
+Contact Contact::addHost(const ConstString& hostname) const {
     Contact result(*this);
-    result.hostName = host;
+    result.hostName = hostname;
     return result;
 }
 
@@ -107,22 +107,22 @@ Contact Contact::addPort(int portnumber) const {
 }
 
 Contact Contact::bySocket(const ConstString& carrier,
-                          const ConstString& machineName,
+                          const ConstString& hostname,
                           int portNumber) {
     Contact result;
     result.carrier = carrier;
-    result.hostName = machineName;
+    result.hostName = hostname;
     result.port = portNumber;
     return result;
 }
 
 
 Contact Contact::addSocket(const ConstString& carrier, 
-                           const ConstString& machineName,
+                           const ConstString& hostname,
                            int portNumber) const {
     Contact result(*this);
     result.carrier = carrier;
-    result.hostName = machineName;
+    result.hostName = hostname;
     result.port = portNumber;
     return result;
 }

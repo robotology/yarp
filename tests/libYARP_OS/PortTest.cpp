@@ -134,6 +134,7 @@ public:
 
     DelegatedCallback() : produce(0) {}
 
+    using TypedReaderCallback<Bottle>::onRead;
     virtual void onRead(Bottle& bot) {
         saved = bot;
         produce.post();
@@ -226,9 +227,10 @@ public:
         ct = 0;
     }
 
+    using BufferedPort<Bottle>::onRead;
     virtual void onRead(Bottle& b) {
         ct++;
-     }
+    }
 };
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

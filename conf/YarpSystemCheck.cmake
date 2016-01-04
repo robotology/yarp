@@ -204,9 +204,14 @@ else()
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wcast-align")
     endif()
 
-    check_cxx_compiler_flag("-Wunused" CXX_HAS_UNUSED)
+    check_cxx_compiler_flag("-Wunused" CXX_HAS_WUNUSED)
     if(CXX_HAS_WUNUSED)
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wunused")
+    endif()
+
+    check_cxx_compiler_flag("-Wunused-but-set-variable" CXX_HAS_WUNUSED_BUT_SET_VARIABLE)
+    if(CXX_HAS_WUNUSED_BUT_SET_VARIABLE)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wunused-but-set-variable")
     endif()
 
     check_cxx_compiler_flag("-Wvla" CXX_HAS_WVLA)
@@ -214,11 +219,35 @@ else()
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wvla")
     endif()
 
+    check_cxx_compiler_flag("-Wmissing-include-dirs" CXX_HAS_WMISSING_INCLUDE_DIRS)
+    if(CXX_HAS_WMISSING_INCLUDE_DIRS)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wmissing-include-dirs")
+    endif()
+
+    check_cxx_compiler_flag("-Wlogical-op" CXX_HAS_WLOGICAL_OP)
+    if(CXX_HAS_WLOGICAL_OP)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wlogical-op")
+    endif()
+
+    check_cxx_compiler_flag("-Wreorder" CXX_HAS_WREORDER)
+    if(CXX_HAS_WREORDER)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wreorder")
+    endif()
+
+    check_cxx_compiler_flag("-Wsizeof-pointer-memaccess" CXX_HAS_WSIZEOF_POINTER_MEMACCESS)
+    if(CXX_HAS_WSIZEOF_POINTER_MEMACCESS)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wsizeof-pointer-memaccess")
+    endif()
+
+    check_cxx_compiler_flag("-Woverloaded-virtual" CXX_HAS_WOVERLOADED_VIRTUAL)
+    if(CXX_HAS_WOVERLOADED_VIRTUAL)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Woverloaded-virtual")
+    endif()
+
     check_cxx_compiler_flag("-Wc++11-compat" CXX_HAS_CXX11_COMPAT)
     if(CXX_HAS_CXX11_COMPAT)
       set(CXX11_FLAGS "${CXX11_FLAGS} -Wc++11-compat")
     endif()
-
 
     ## Unwanted warning flags ##
 
@@ -253,11 +282,6 @@ else()
       set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wundef")
     endif()
 
-    check_cxx_compiler_flag("-Woverloaded-virtual" CXX_HAS_WOVERLOADED_VIRTUAL)
-    if(CXX_HAS_WOVERLOADED_VIRTUAL)
-      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Woverloaded-virtual")
-    endif()
-
     check_cxx_compiler_flag("-Wconversion" CXX_HAS_WCONVERSION)
     if(CXX_HAS_WCONVERSION)
       set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wconversion")
@@ -283,6 +307,10 @@ else()
       set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Winline")
     endif()
 
+    check_cxx_compiler_flag("-Wfloat-equal" CXX_HAS_FLOAT_EQUAL)
+    if(CXX_HAS_FLOAT_EQUAL)
+      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wfloat-equal")
+    endif()
 
 
     ## Visibility hidden flags ##

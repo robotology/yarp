@@ -22,7 +22,7 @@ public:
 
     static YarprunCheckpoints& instance();
 
-    void checkpoint(const char* prefix,const char* label,const char* sFile,int line);
+    void checkpoint(const char* prefix, const char* sFile, const char* sFunction, int line);
 
 private:
     FILE* mLogFile;

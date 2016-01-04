@@ -170,8 +170,6 @@ list(APPEND YARP_devices_HDRS ${serverInertial_hdrs}
 include_directories(${serverInertial_incl_dirs})
 
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/modules/ControlBoardWrapper/jointstate )
-
 source_group("Source Files" FILES ${YARP_dev_SRCS})
 source_group("Header Files" FILES ${YARP_dev_HDRS})
 source_group("Implementation Header Files" FILES ${YARP_dev_IMPL_HDRS})

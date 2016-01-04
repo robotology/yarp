@@ -105,17 +105,17 @@ public:
      * Associate the given key with the given integer, so that
      * find(key).asInt() will give that integer.
      * @param key the key
-     * @param v the integer value
+     * @param value the integer value
      */
-    void put(const ConstString& key, int v);
+    void put(const ConstString& key, int value);
 
     /**
      * Associate the given key with the given floating point number, so that
      * find(key).asDouble() will give that number.
      * @param key the key
-     * @param v the floating point value
+     * @param value the floating point value
      */
-    void put(const ConstString& key, double v);
+    void put(const ConstString& key, double value);
 
     /**
      *
@@ -272,7 +272,7 @@ public:
      * @param wipe should Property be emptied first
      * @return true if file exists and can be read
      */
-    bool fromConfigDir(const ConstString& firname,
+    bool fromConfigDir(const ConstString& dirname,
                        const ConstString& section = ConstString(),
                        bool wipe = true);
 
@@ -312,10 +312,10 @@ public:
     ConstString toString() const;
 
     // documented in Portable
-    bool read(ConnectionReader& connection);
+    bool read(ConnectionReader& reader);
 
     // documented in Portable
-    bool write(ConnectionWriter& connection);
+    bool write(ConnectionWriter& writer);
 
 private:
     void *implementation;

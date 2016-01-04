@@ -216,6 +216,7 @@ private:
     bool rxTime;
     bool txTime;
 
+    using BufferedPort<T>::onRead;
     void onRead(T &obj)
     {
         if (++cnt==dwnsample)

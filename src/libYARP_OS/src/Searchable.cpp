@@ -33,17 +33,17 @@ yarp::os::Searchable::Searchable() :
 yarp::os::Searchable::~Searchable() {
 }
 
-bool yarp::os::Searchable::check(const ConstString& txt,
+bool yarp::os::Searchable::check(const ConstString& key,
                                  yarp::os::Value *& result,
                                  const ConstString& comment) const {
     if (getMonitor()!=NULL && comment!="") {
         SearchReport report;
-        report.key = txt;
+        report.key = key;
         report.value = comment;
         report.isComment = true;
         reportToMonitor(report);
     }
-    yarp::os::Value& bit = find(txt);
+    yarp::os::Value& bit = find(key);
     bool ok = !(bit.isNull());
     if (ok) {
         result = &bit;
@@ -51,24 +51,24 @@ bool yarp::os::Searchable::check(const ConstString& txt,
     return ok;
 }
 
-yarp::os::Value yarp::os::Searchable::check(const ConstString& txt,
-                                  const yarp::os::Value& fallback,
-                                  const ConstString& comment) const {
+yarp::os::Value yarp::os::Searchable::check(const ConstString& key,
+                                            const yarp::os::Value& fallback,
+                                            const ConstString& comment) const {
     if (getMonitor()!=NULL && comment!="") {
         yarp::os::SearchReport report;
-        report.key = txt;
+        report.key = key;
         report.value = comment;
         report.isComment = true;
         reportToMonitor(report);
     }
     if (getMonitor()!=NULL) {
         yarp::os::SearchReport report;
-        report.key = txt;
+        report.key = key;
         report.value = fallback.toString();
         report.isDefault = true;
         reportToMonitor(report);
     }
-    yarp::os::Value& bit = find(txt);
+    yarp::os::Value& bit = find(key);
     bool ok = !(bit.isNull());
     if (ok) {
         return bit;

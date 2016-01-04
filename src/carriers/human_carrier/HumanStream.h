@@ -14,7 +14,6 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
 using namespace yarp::os;
 
 
@@ -22,8 +21,8 @@ class HumanStream : public TwoWayStream, public InputStream, public OutputStream
 private:
     bool interrupting;
     bool needInterrupt;
-    string inputCache;
-    string outputCache;
+    std::string inputCache;
+    std::string outputCache;
 public:
     HumanStream() {
         interrupting = false;
@@ -32,7 +31,7 @@ public:
     }
 
     virtual void close() {
-        cout << "Bye bye" << endl;
+        std::cout << "Bye bye" << std::endl;
     }
 
     virtual bool isOk() {
@@ -42,7 +41,7 @@ public:
     virtual void interrupt() {
         interrupting = true;
         while (needInterrupt) {
-            cout << "*** INTERRUPT: Please hit enter ***" << endl;
+            std::cout << "*** INTERRUPT: Please hit enter ***" << std::endl;
             for (int i=0; i<10 && needInterrupt; i++) {
                 Time::delay(0.1);
             }
@@ -50,11 +49,11 @@ public:
     }
 
     // InputStream
-
+    using yarp::os::InputStream::read;
     virtual YARP_SSIZE_T read(const Bytes& b);
 
     // OutputStream
-
+    using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b);
 
     // TwoWayStream
@@ -79,17 +78,17 @@ public:
 
     virtual void reset() {
         inputCache = outputCache = "";
-        cout << "Stream reset" << endl;
+        std::cout << "Stream reset" << std::endl;
     }
 
     virtual void beginPacket() {
-        cout << "Packet begins" << endl;
+        std::cout << "Packet begins" << std::endl;
         inputCache = "";
         outputCache = "";
     }
 
     virtual void endPacket() {
-        cout << "Packet ends" << endl;
+        std::cout << "Packet ends" << std::endl;
     }
 
 private:

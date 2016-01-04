@@ -229,19 +229,19 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
     return contact.addName(node);
 }
 
-Contact RosNameSpace::unregisterName(const ConstString& rname) {
-    return unregisterAdvanced(rname,NULL);
+Contact RosNameSpace::unregisterName(const ConstString& name) {
+    return unregisterAdvanced(name,NULL);
 }
 
-Contact RosNameSpace::unregisterAdvanced(const ConstString& rname, NameStore *store) {
+Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *store) {
     NestedContact nc;
-    nc.fromString(rname);
+    nc.fromString(name);
     ConstString cat = nc.getCategory();
 
     if (nc.getNestedName()!="") {
         if (cat == "-1") {
             Nodes& nodes = NameClient::getNameClient().getNodes();
-            Contact c = rosify(nodes.getURI(rname).addCarrier("rosrpc"));
+            Contact c = rosify(nodes.getURI(name).addCarrier("rosrpc"));
             Bottle cmd, reply;
             cmd.clear();
             cmd.addString("unregisterService");
@@ -262,7 +262,7 @@ Contact RosNameSpace::unregisterAdvanced(const ConstString& rname, NameStore *st
                 c = rosify(store->query(nc.getNodeName()));
             } else {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
-                c = rosify(nodes.getParent(rname));
+                c = rosify(nodes.getParent(name));
             }
             cmd.addString(c.toString());
             bool ok = NetworkBase::write(getNameServerContact(),
@@ -274,27 +274,27 @@ Contact RosNameSpace::unregisterAdvanced(const ConstString& rname, NameStore *st
 
     // Remainder of method is supporting older /name+#/foo syntax
 
-    ConstString full = rname;
-    ConstString name = full;
-    size_t pub_idx = name.find("+#");
-    size_t sub_idx = name.find("-#");
+    ConstString full = name;
+    ConstString xname = full;
+    size_t pub_idx = xname.find("+#");
+    size_t sub_idx = xname.find("-#");
 
     ConstString node = "";
     ConstString pub = "";
     ConstString sub = "";
     if (pub_idx!=ConstString::npos) {
-        node = name.substr(0,pub_idx);
-        pub = name.substr(pub_idx+2,name.length());
+        node = xname.substr(0,pub_idx);
+        pub = xname.substr(pub_idx+2,xname.length());
     }
     if (sub_idx!=ConstString::npos) {
-        node = name.substr(0,sub_idx);
-        sub = name.substr(sub_idx+2,name.length());
+        node = xname.substr(0,sub_idx);
+        sub = xname.substr(sub_idx+2,xname.length());
     }
     if (node=="") {
-        node = name;
+        node = xname;
     }
     YARP_SPRINTF3(Logger::get(),debug,"Name [%s] sub [%s] pub [%s]\n",
-                  name.c_str(), sub.c_str(), pub.c_str());
+                  xname.c_str(), sub.c_str(), pub.c_str());
 
     if (pub!="") {
         NetworkBase::disconnect(full,ConstString("topic:/") + pub);
@@ -303,10 +303,10 @@ Contact RosNameSpace::unregisterAdvanced(const ConstString& rname, NameStore *st
         NetworkBase::disconnect(ConstString("topic:/") + sub, full);
     }
 
-    Contact contact = NetworkBase::queryName(rname);
+    Contact contact = NetworkBase::queryName(name);
     Bottle cmd,reply;
     cmd.addString("unregisterPublisher");
-    cmd.addString(rname);
+    cmd.addString(name);
     cmd.addString("/yarp/registration");
     Contact c = Contact::bySocket("http",contact.getHost().c_str(),
                                   contact.getPort());

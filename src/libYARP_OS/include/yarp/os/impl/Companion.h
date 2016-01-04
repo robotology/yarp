@@ -69,7 +69,7 @@ public:
     static int disconnect(const char *src, const char *dest,
                           bool silent = false);
 
-    static int disconnectInput(const char *target, const char *src,
+    static int disconnectInput(const char *src, const char *dest,
                                bool silent = false);
 
     static int poll(const char *target, bool silent = false); 
@@ -128,7 +128,7 @@ public:
 
     static int sendMessage(const String& port, yarp::os::PortWriter& writable, 
                            String& output,
-                           bool silent);
+                           bool quiet);
 
 
     static Companion& getInstance() {

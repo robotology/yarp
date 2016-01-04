@@ -60,6 +60,7 @@ public:
     */
     void init(yarp::dev::ServerControlBoard *x);
 
+    using yarp::os::TypedReaderCallback<CommandMessage>::onRead;
     /**
     * Callback function.
     * @param v is the Vector being received.
@@ -1190,6 +1191,7 @@ public:
         return false;
     }
 
+    using yarp::dev::ITorqueControl::setRefTorques;
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
      * @return true/false

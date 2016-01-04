@@ -154,7 +154,7 @@ public:
         yInfo("Sound grabber stopping\n");
     }
 
-    virtual bool read(ConnectionReader& connection)
+    virtual bool read(yarp::os::ConnectionReader& connection)
     {
         yarp::os::Bottle cmd, response;
         cmd.read(connection);

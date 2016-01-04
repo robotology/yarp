@@ -27,6 +27,7 @@ class yarp::os::impl::MemoryOutputStream : public yarp::os::OutputStream {
 public:
     MemoryOutputStream(char* location): _location(location) {
     }
+    using yarp::os::OutputStream::write;
     void write(const yarp::os::Bytes& b) {
         memcpy(_location, b.get(), b.length());
         _location += b.length();

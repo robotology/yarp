@@ -91,7 +91,7 @@ public:
         Contact dynamicSrc = src;
         Contact dynamicDest = dest;
         Bottle cmd, reply;
-        cmd.add(dir.c_str());
+        cmd.addString(dir.c_str());
         if (style.carrier!="") {
             if (!destIsTopic) {
                 dynamicDest = dynamicDest.addCarrier(style.carrier);
@@ -99,15 +99,15 @@ public:
                 dynamicSrc = dynamicSrc.addCarrier(style.carrier);
             }
         }
-        cmd.add(dynamicSrc.toString().c_str());
-        cmd.add(dynamicDest.toString().c_str());
+        cmd.addString(dynamicSrc.toString().c_str());
+        cmd.addString(dynamicDest.toString().c_str());
         if (style.persistent) {
             switch (style.persistenceType) {
             case ContactStyle::END_WITH_FROM_PORT:
-                cmd.add("from");
+                cmd.addString("from");
                 break;
             case ContactStyle::END_WITH_TO_PORT:
-                cmd.add("to");
+                cmd.addString("to");
                 break;
             default:
                 break;

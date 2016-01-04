@@ -639,8 +639,8 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
             return 1;
         }
     }
-    else if (fType == ROBOTS   && importArg.size() == 2 ||
-             fType == CONTEXTS && importArg.size() == 2)
+    else if ((fType == ROBOTS   && importArg.size() == 2) ||
+             (fType == CONTEXTS && importArg.size() == 2))
     {
         int result = recursiveCopy(originalpath, destDirname);
         recursiveCopy(originalpath, hiddenDirname, true, false);
@@ -732,8 +732,8 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
     }
     else
     {
-        if (fType == ROBOTS && removeArg.size() == 2 ||
-            fType == CONTEXTS && removeArg.size() == 2)
+        if ((fType == ROBOTS && removeArg.size() == 2) ||
+            (fType == CONTEXTS && removeArg.size() == 2))
         {
             char choice = 'n';
             printf("Are you sure you want to remove this folder: %s ? (y/n): ", targetPath.c_str());

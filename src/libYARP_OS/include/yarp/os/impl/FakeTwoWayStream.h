@@ -99,6 +99,7 @@ private:
         ActiveStringOutputStream() : owner(NULL) {
         }
 
+        using yarp::os::OutputStream::write;
         virtual void write(const Bytes& b) {
             StringOutputStream::write(b);
             if (owner) {

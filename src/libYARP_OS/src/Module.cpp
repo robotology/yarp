@@ -49,6 +49,7 @@ public:
      */
     virtual bool read(yarp::os::ConnectionReader& connection);
 
+    using yarp::os::TypedReaderCallback<yarp::os::Bottle>::onRead;
     /**
      * Alternative handler for reading messages from the network, and passing
      * them on to the respond() method.  There can be no replies made

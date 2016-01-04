@@ -32,7 +32,7 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::NameConfig {
 public:
 
-    static String expandFilename(const char *name);
+    static String expandFilename(const char *fname);
 
     String getSafeString(const String& txt);
 

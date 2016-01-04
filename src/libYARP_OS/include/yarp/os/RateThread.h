@@ -106,10 +106,10 @@ public:
 
     /**
      * Set the (new) rate of the thread.
-     * @param p the rate [ms]
+     * @param period the rate [ms]
      * @return true.
      */
-    bool setRate(int p);
+    bool setRate(int period);
 
     /**
      * Return the current rate of the thread.

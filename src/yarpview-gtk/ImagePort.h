@@ -33,6 +33,7 @@ public:
 
     void mustDraw(bool f);
 
+    using yarp::os::TypedReaderCallback<yarp::sig::FlexImage>::onRead;
     virtual void onRead(yarp::sig::FlexImage &img);
 
     void resetStats();

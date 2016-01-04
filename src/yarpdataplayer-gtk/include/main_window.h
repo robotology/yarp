@@ -116,6 +116,7 @@ public:
      */
     bool getPartPort(const char* szName, char* dest);
 
+    using yarp::os::Module::attach;
     /**
      * function that that attaches the rpcServer port for IDL
      */

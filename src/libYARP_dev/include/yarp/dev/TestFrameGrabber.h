@@ -21,6 +21,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/Value.h>
 
 #define VOCAB_LINE VOCAB4('l','i','n','e')
 

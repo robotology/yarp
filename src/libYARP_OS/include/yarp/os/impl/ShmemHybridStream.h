@@ -55,11 +55,13 @@ public:
         close();
     }
 
+    using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b)
     {
         if (!out.write(b)) close();
     }
 
+    using yarp::os::InputStream::read;
     virtual YARP_SSIZE_T read(const Bytes& b)
     {
         YARP_SSIZE_T ret=in.read(b);
@@ -100,7 +102,7 @@ protected:
     ShmemOutputStreamImpl out;
 
     // FUNCTIONS
-    int connect(const ACE_INET_Addr &address);
+    int connect(const ACE_INET_Addr &ace_address);
 };
 
 #endif

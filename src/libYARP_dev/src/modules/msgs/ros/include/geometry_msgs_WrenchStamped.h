@@ -3,7 +3,6 @@
 //   # A wrench with reference coordinate frame and timestamp
 //   Header header
 //   Wrench wrench
-//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -15,13 +14,13 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include "TickTime.h"
-#include "Header.h"
+#include "std_msgs_Header.h"
 #include "geometry_msgs_Vector3.h"
 #include "geometry_msgs_Wrench.h"
 
 class geometry_msgs_WrenchStamped : public yarp::os::idl::WirePortable {
 public:
-  Header header;
+  std_msgs_Header header;
   geometry_msgs_Wrench wrench;
 
   geometry_msgs_WrenchStamped() {
@@ -49,6 +48,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::read;
   bool read(yarp::os::ConnectionReader& connection) {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
@@ -76,6 +76,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::write;
   bool write(yarp::os::ConnectionWriter& connection) {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
@@ -90,14 +91,14 @@ public:
   yarp::os::ConstString getTypeText() {
     return "# A wrench with reference coordinate frame and timestamp\n\
 Header header\n\
-Wrench wrench\n\
-\n================================================================================\n\
+Wrench wrench\n================================================================================\n\
 MSG: std_msgs/Header\n\
+[std_msgs/Header]:\n\
 # Standard metadata for higher-level stamped data types.\n\
-# This is generally used to communicate timestamped data \n\
+# This is generally used to communicate timestamped data\n\
 # in a particular coordinate frame.\n\
-# \n\
-# sequence ID: consecutively increasing ID \n\
+#\n\
+# sequence ID: consecutively increasing ID\n\
 uint32 seq\n\
 #Two-integer timestamp that is expressed as:\n\
 # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
@@ -107,16 +108,14 @@ time stamp\n\
 #Frame this data is associated with\n\
 # 0: no frame\n\
 # 1: global frame\n\
-string frame_id\n\
-\n================================================================================\n\
+string frame_id\n================================================================================\n\
 MSG: geometry_msgs/Wrench\n\
 # This represents force in free space, separated into\n\
 # its linear and angular parts.\n\
 Vector3  force\n\
-Vector3  torque\n\
-\n================================================================================\n\
+Vector3  torque\n================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-# This represents a vector in free space. \n\
+# This represents a vector in free space.\n\
 \n\
 float64 x\n\
 float64 y\n\

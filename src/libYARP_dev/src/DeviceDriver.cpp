@@ -10,6 +10,7 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Value.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -22,11 +23,11 @@ DeviceResponder::DeviceResponder() {
 }
 
 void DeviceResponder::addUsage(const char *txt, const char *explain) {
-    examples.add(txt); //Value::makeList(txt));
-    explains.add((explain!=NULL)?explain:"");
+    examples.addString(txt); //Value::makeList(txt));
+    explains.addString((explain!=NULL)?explain:"");
     details.add(Value::makeList(txt));
     ConstString more = ConstString("   ") + explain;
-    details.add(more.c_str());
+    details.addString(more.c_str());
 }
 
 
@@ -47,12 +48,12 @@ bool DeviceResponder::respond(const Bottle& command, Bottle& reply) {
             }
             return true;
         } else {
-            reply.add("no documentation available");
+            reply.addString("no documentation available");
             return false;
         }
         break;
     default:
-        reply.add("command not recognized");
+        reply.addString("command not recognized");
         return false;
     }
     return false;

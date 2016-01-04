@@ -6,7 +6,6 @@ if(YARP_COMPILE_TESTS)
 
     if(YARP_USE_PERSISTENT_NAMESERVER)
         add_definitions(-DYARP_USE_PERSISTENT_NAMESERVER=1)
-        include_directories(${CMAKE_SOURCE_DIR}/src/yarpserver/include)
     endif()
 
     add_executable(testModule ${CMAKE_SOURCE_DIR}/tests/libYARP_OS/testModule/module.cpp)

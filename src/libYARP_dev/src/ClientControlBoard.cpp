@@ -68,7 +68,7 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
 // getEncoders will return false otherwise.
 const double TIMEOUT=0.5;
 
-class StateInputPort:public BufferedPort<yarp::sig::Vector>
+class StateInputPort : public yarp::os::BufferedPort<yarp::sig::Vector>
 {
     yarp::sig::Vector last;
     Semaphore mutex;
@@ -101,6 +101,7 @@ public:
         resetStat();
     }
 
+    using yarp::os::BufferedPort<yarp::sig::Vector>::onRead;
     virtual void onRead(yarp::sig::Vector &v)
     {
         now=Time::now();
@@ -2289,6 +2290,7 @@ public:
         return get2V1DA(VOCAB_TORQUE, VOCAB_REFS, t);
     }
 
+    using yarp::dev::ITorqueControl::setRefTorques;
     bool setRefTorques(const double *t)
     {
         //Now we use streaming instead of rpc

@@ -36,10 +36,10 @@ public:
     /**
      * Read this object from a network connection.
      * Override this for your particular class.
-     * @param connection an interface to the network connection for reading
+     * @param reader an interface to the network connection for reading
      * @return true iff the object is successfully read
      */
-    virtual bool read(ConnectionReader& connection) = 0;
+    virtual bool read(ConnectionReader& reader) = 0;
 
     virtual Type getReadType() { return Type::anon(); }
 };

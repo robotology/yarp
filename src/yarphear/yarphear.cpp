@@ -63,7 +63,7 @@ public:
                 yError("cannot open driver\n");
                 return false;
             }
-            
+
             if (!p.check("mute")) {
                 // Make sure we can write sound
                 poly.view(put);
@@ -73,13 +73,13 @@ public:
                 }
             }
         }
-            
+
         port.setStrict(true);
         if (!port.open(p.check("name",Value("/yarphear")).asString())) {
             yError("Communication problem\n");
             return false;
         }
-        
+
         if (p.check("remote")) {
             Network::connect(p.check("remote",Value("/remote")).asString(),
                              port.getName());
@@ -88,6 +88,7 @@ public:
         return true;
     }
 
+    using TypedReaderCallback<Sound>::onRead;
     void onRead(Sound& sound)
      {
         #ifdef TEST
@@ -145,7 +146,7 @@ public:
         sounds.push_back(sound);
         samples += sound.getSamples();
         channels = sound.getChannels();
-        yDebug("  %ld sound frames buffered in memory (%ld samples)\n", 
+        yDebug("  %ld sound frames buffered in memory (%ld samples)\n",
                (long int) sounds.size(),
                (long int) samples);
     }
@@ -262,4 +263,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-

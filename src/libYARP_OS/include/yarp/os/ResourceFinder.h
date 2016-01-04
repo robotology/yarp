@@ -175,7 +175,7 @@ public:
      * \ref yarp_resource_finder_tutorials.
      *
      */
-    yarp::os::ConstString findFile(const ConstString& key);
+    yarp::os::ConstString findFile(const ConstString& name);
 
     /**
      *
@@ -184,7 +184,7 @@ public:
      * The file is searched in a hierarchy of paths as defined in
      * \ref yarp_resource_finder_tutorials.
      */
-    yarp::os::ConstString findFileByName(const ConstString& fileName);
+    yarp::os::ConstString findFileByName(const ConstString& name);
 
     /**
      *
@@ -201,7 +201,7 @@ public:
      * The path is searched in a hierarchy of paths as defined in
      * \ref yarp_resource_finder_tutorials.
      */
-    yarp::os::ConstString findPath(const ConstString& key);
+    yarp::os::ConstString findPath(const ConstString& name);
 
     /**
      *
@@ -217,7 +217,7 @@ public:
      * The path is searched in a hierarchy of paths as defined in
      * \ref yarp_resource_finder_tutorials.
      */
-    yarp::os::Bottle findPaths(const ConstString& key);
+    yarp::os::Bottle findPaths(const ConstString& name);
 
     /**
      *
@@ -403,16 +403,16 @@ public:
      */
     static Bottle getConfigDirs();
 
-    yarp::os::Bottle findPaths(const ConstString& key,
+    yarp::os::Bottle findPaths(const ConstString& name,
                                const ResourceFinderOptions& options);
 
-    yarp::os::ConstString findPath(const ConstString& key,
+    yarp::os::ConstString findPath(const ConstString& name,
                                    const ResourceFinderOptions& options);
 
-    yarp::os::ConstString findFile(const ConstString& key,
+    yarp::os::ConstString findFile(const ConstString& name,
                                    const ResourceFinderOptions& options);
 
-    yarp::os::ConstString findFileByName(const ConstString& fileName,
+    yarp::os::ConstString findFileByName(const ConstString& name,
                                    const ResourceFinderOptions& options);
 
     bool readConfig(Property& config,
@@ -424,7 +424,7 @@ public:
 private:
 
     // this might be useful, but is not in spec
-    bool addContext(const char *contextName);
+    bool addContext(const char *appName);
 
     // this might be useful, but is not in spec
     bool clearContext();

@@ -127,7 +127,10 @@ public:
     virtual void beginPacket();
     virtual void endPacket();
 
+    using yarp::os::InputStream::read;
     virtual YARP_SSIZE_T read(const Bytes& b);
+
+    using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b);
 };
 

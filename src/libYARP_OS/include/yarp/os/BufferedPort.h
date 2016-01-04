@@ -39,6 +39,7 @@ class yarp::os::BufferedPort : public Contactable,
 {
 public:
     using Contactable::open;
+    using yarp::os::TypedReaderCallback<T>::onRead;
 
     /**
      * The type of content stored by this BufferedPort.

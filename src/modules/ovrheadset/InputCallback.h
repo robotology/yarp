@@ -22,6 +22,7 @@ public:
     InputCallback(int eye);
     ~InputCallback();
 
+    using yarp::os::BufferedPort<ImageType>::onRead;
     virtual void onRead(ImageType &img);
 
     TextureBuffer *eyeRenderTexture;

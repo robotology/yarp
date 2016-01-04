@@ -37,16 +37,16 @@ public:
     virtual Contact registerContact(const Contact& contact);
     virtual Contact unregisterName(const ConstString& name);
     virtual Contact unregisterContact(const Contact& contact);
-    virtual Contact registerAdvanced(const Contact& contact, 
+    virtual Contact registerAdvanced(const Contact& contact,
                                      NameStore *store);
-    virtual Contact unregisterAdvanced(const ConstString& name, 
+    virtual Contact unregisterAdvanced(const ConstString& name,
                                        NameStore *store);
 
-    virtual bool setProperty(const ConstString& name, 
-                             const ConstString& key, 
+    virtual bool setProperty(const ConstString& name,
+                             const ConstString& key,
                              const Value& value);
 
-    virtual Value *getProperty(const ConstString& name, 
+    virtual Value *getProperty(const ConstString& name,
                                const ConstString& key);
 
     virtual bool connectPortToTopic(const Contact& src,

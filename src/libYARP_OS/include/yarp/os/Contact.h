@@ -78,7 +78,7 @@ public:
      */
     Contact addCarrier(const ConstString& carrier) const;
 
-    Contact addHost(const ConstString& host) const;
+    Contact addHost(const ConstString& hostname) const;
 
     /**
      * Returns a new Contact with the previous information plus the updated
@@ -93,13 +93,13 @@ public:
      * Creates an unnamed contact, with information about
      * how to reach it using socket communication.
      * @param carrier the carrier (network protocol) to use
-     * @param host the name of the host machine (usually expressed as an
-     *             IP address)
+     * @param hostname the name of the host machine (usually expressed as an
+     *                 IP address)
      * @param portNumber the number of the socket port to use
      * @return an unnamed contact with socket communication parameters
      */
     static Contact bySocket(const ConstString& carrier,
-                            const ConstString& host,
+                            const ConstString& hostname,
                             int portNumber);
 
 
@@ -107,13 +107,13 @@ public:
      * Add information to a contact about
      * how to reach it using socket communication.
      * @param carrier the carrier (network protocol) to use
-     * @param host the name of the host machine (usually expressed as an
-     *             IP address)
+     * @param hostname the name of the host machine (usually expressed as an
+     *                 IP address)
      * @param portNumber the number of the socket port to use
      * @return the new contact with socket communication parameters
      */
     Contact addSocket(const ConstString& carrier,
-                      const ConstString& host,
+                      const ConstString& hostname,
                       int portNumber) const;
 
     Contact addNested(const NestedContact& nc) const;

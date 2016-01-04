@@ -11,6 +11,7 @@
 #include "XmlRpcValue.h"
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Value.h>
 
 using namespace yarp::os;
 using namespace YarpXmlRpc;

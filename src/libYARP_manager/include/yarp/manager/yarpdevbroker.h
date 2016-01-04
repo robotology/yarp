@@ -27,6 +27,7 @@ class YarpdevLocalBroker: public LocalBroker
 public:
     YarpdevLocalBroker() : LocalBroker() {}
      virtual ~YarpdevLocalBroker() {}
+     using yarp::manager::LocalBroker::init;
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
             const char* szworkdir, const char* szenv ) {
@@ -49,6 +50,7 @@ class YarpdevYarprunBroker: public YarpBroker
 public:
     YarpdevYarprunBroker() : YarpBroker() {}
      virtual ~YarpdevYarprunBroker() {}
+     using yarp::manager::YarpBroker::init;
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
             const char* szworkdir, const char* szenv ) {
