@@ -214,6 +214,11 @@ else()
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wvla")
     endif()
 
+    check_cxx_compiler_flag("-Wmissing-include-dirs" CXX_HAS_WMISSING_INCLUDE_DIRS)
+    if(CXX_HAS_WMISSING_INCLUDE_DIRS)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wmissing-include-dirs")
+    endif()
+
     check_cxx_compiler_flag("-Wc++11-compat" CXX_HAS_CXX11_COMPAT)
     if(CXX_HAS_CXX11_COMPAT)
       set(CXX11_FLAGS "${CXX11_FLAGS} -Wc++11-compat")
