@@ -4,7 +4,6 @@
 //   # its linear and angular parts.
 //   Vector3  force
 //   Vector3  torque
-//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -16,7 +15,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include "TickTime.h"
-#include "Header.h"
+#include "std_msgs_Header.h"
 #include "geometry_msgs_Vector3.h"
 
 class geometry_msgs_Wrench : public yarp::os::idl::WirePortable {
@@ -49,6 +48,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::read;
   bool read(yarp::os::ConnectionReader& connection) {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
@@ -76,6 +76,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::write;
   bool write(yarp::os::ConnectionWriter& connection) {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
@@ -91,10 +92,9 @@ public:
     return "# This represents force in free space, separated into\n\
 # its linear and angular parts.\n\
 Vector3  force\n\
-Vector3  torque\n\
-\n================================================================================\n\
+Vector3  torque\n================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-# This represents a vector in free space. \n\
+# This represents a vector in free space.\n\
 \n\
 float64 x\n\
 float64 y\n\

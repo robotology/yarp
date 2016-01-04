@@ -18,15 +18,14 @@
 //   # All arrays in this message should have the same size, or be empty.
 //   # This is the only way to uniquely associate the joint name with the correct
 //   # states.
-//
-//
+//   
+//   
 //   Header header
-//
+//   
 //   string[] name
 //   float64[] position
 //   float64[] velocity
 //   float64[] effort
-//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -38,11 +37,11 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include "TickTime.h"
-#include "Header.h"
+#include "std_msgs_Header.h"
 
 class sensor_msgs_JointState : public yarp::os::idl::WirePortable {
 public:
-  Header header;
+  std_msgs_Header header;
   std::vector<std::string> name;
   std::vector<yarp::os::NetFloat64> position;
   std::vector<yarp::os::NetFloat64> velocity;
@@ -125,6 +124,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::read;
   bool read(yarp::os::ConnectionReader& connection) {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
@@ -166,8 +166,8 @@ public:
     connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
     connection.appendInt(name.size());
     for (size_t i=0; i<name.size(); i++) {
-      connection.appendInt(name[i].length()+1);
-      connection.appendExternalBlock((char*)name[i].c_str(),name[i].length()+1);
+      connection.appendInt(name[i].length());
+      connection.appendExternalBlock((char*)name[i].c_str(),name[i].length());
     }
 
     // *** position ***
@@ -194,6 +194,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::write;
   bool write(yarp::os::ConnectionWriter& connection) {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
@@ -206,20 +207,20 @@ public:
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "# This is a message that holds data to describe the state of a set of torque controlled joints. \n\
+    return "# This is a message that holds data to describe the state of a set of torque controlled joints.\n\
 #\n\
 # The state of each joint (revolute or prismatic) is defined by:\n\
 #  * the position of the joint (rad or m),\n\
-#  * the velocity of the joint (rad/s or m/s) and \n\
+#  * the velocity of the joint (rad/s or m/s) and\n\
 #  * the effort that is applied in the joint (Nm or N).\n\
 #\n\
 # Each joint is uniquely identified by its name\n\
 # The header specifies the time at which the joint states were recorded. All the joint states\n\
 # in one message have to be recorded at the same time.\n\
 #\n\
-# This message consists of a multiple arrays, one for each part of the joint state. \n\
+# This message consists of a multiple arrays, one for each part of the joint state.\n\
 # The goal is to make each of the fields optional. When e.g. your joints have no\n\
-# effort associated with them, you can leave the effort array empty. \n\
+# effort associated with them, you can leave the effort array empty.\n\
 #\n\
 # All arrays in this message should have the same size, or be empty.\n\
 # This is the only way to uniquely associate the joint name with the correct\n\
@@ -231,14 +232,14 @@ Header header\n\
 string[] name\n\
 float64[] position\n\
 float64[] velocity\n\
-float64[] effort\n\
-\n================================================================================\n\
+float64[] effort\n================================================================================\n\
 MSG: std_msgs/Header\n\
+[std_msgs/Header]:\n\
 # Standard metadata for higher-level stamped data types.\n\
-# This is generally used to communicate timestamped data \n\
+# This is generally used to communicate timestamped data\n\
 # in a particular coordinate frame.\n\
-# \n\
-# sequence ID: consecutively increasing ID \n\
+#\n\
+# sequence ID: consecutively increasing ID\n\
 uint32 seq\n\
 #Two-integer timestamp that is expressed as:\n\
 # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
@@ -248,8 +249,7 @@ time stamp\n\
 #Frame this data is associated with\n\
 # 0: no frame\n\
 # 1: global frame\n\
-string frame_id\n\
-";
+string frame_id";
   }
 
   // Name the class, ROS will need this

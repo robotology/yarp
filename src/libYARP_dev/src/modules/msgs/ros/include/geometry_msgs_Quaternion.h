@@ -1,12 +1,11 @@
 // This is an automatically generated file.
 // Generated from this geometry_msgs_Quaternion.msg definition:
 //   # This represents an orientation in free space in quaternion form.
-//
+//   
 //   float64 x
 //   float64 y
 //   float64 z
 //   float64 w
-//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -18,7 +17,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include "TickTime.h"
-#include "Header.h"
+#include "std_msgs_Header.h"
 
 class geometry_msgs_Quaternion : public yarp::os::idl::WirePortable {
 public:
@@ -64,6 +63,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::read;
   bool read(yarp::os::ConnectionReader& connection) {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
@@ -107,6 +107,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::write;
   bool write(yarp::os::ConnectionWriter& connection) {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
@@ -124,8 +125,7 @@ public:
 float64 x\n\
 float64 y\n\
 float64 z\n\
-float64 w\n\
-";
+float64 w";
   }
 
   // Name the class, ROS will need this

@@ -13,18 +13,17 @@
 //   # estimate), please set element 0 of the associated covariance matrix to -1
 //   # If you are interpreting this message, please check for a value of -1 in the first element of each
 //   # covariance matrix, and disregard the associated estimate.
-//
+//   
 //   Header header
-//
+//   
 //   geometry_msgs/Quaternion orientation
 //   float64[9] orientation_covariance # Row major about x, y, z axes
-//
+//   
 //   geometry_msgs/Vector3 angular_velocity
 //   float64[9] angular_velocity_covariance # Row major about x, y, z axes
-//
+//   
 //   geometry_msgs/Vector3 linear_acceleration
 //   float64[9] linear_acceleration_covariance # Row major x, y z
-//
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -36,13 +35,13 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include "TickTime.h"
-#include "Header.h"
+#include "std_msgs_Header.h"
 #include "geometry_msgs_Quaternion.h"
 #include "geometry_msgs_Vector3.h"
 
 class sensor_msgs_Imu : public yarp::os::idl::WirePortable {
 public:
-  Header header;
+  std_msgs_Header header;
   geometry_msgs_Quaternion orientation;
   std::vector<yarp::os::NetFloat64> orientation_covariance;
   geometry_msgs_Vector3 angular_velocity;
@@ -129,6 +128,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::read;
   bool read(yarp::os::ConnectionReader& connection) {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
@@ -198,6 +198,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::write;
   bool write(yarp::os::ConnectionWriter& connection) {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
@@ -214,14 +215,14 @@ public:
 #\n\
 # Accelerations should be in m/s^2 (not in g's), and rotational velocity should be in rad/sec\n\
 #\n\
-# If the covariance of the measurement is known, it should be filled in (if all you know is the \n\
+# If the covariance of the measurement is known, it should be filled in (if all you know is the\n\
 # variance of each measurement, e.g. from the datasheet, just put those along the diagonal)\n\
 # A covariance matrix of all zeros will be interpreted as \"covariance unknown\", and to use the\n\
 # data a covariance will have to be assumed or gotten from some other source\n\
 #\n\
-# If you have no estimate for one of the data elements (e.g. your IMU doesn't produce an orientation \n\
+# If you have no estimate for one of the data elements (e.g. your IMU doesn't produce an orientation\n\
 # estimate), please set element 0 of the associated covariance matrix to -1\n\
-# If you are interpreting this message, please check for a value of -1 in the first element of each \n\
+# If you are interpreting this message, please check for a value of -1 in the first element of each\n\
 # covariance matrix, and disregard the associated estimate.\n\
 \n\
 Header header\n\
@@ -233,14 +234,14 @@ geometry_msgs/Vector3 angular_velocity\n\
 float64[9] angular_velocity_covariance # Row major about x, y, z axes\n\
 \n\
 geometry_msgs/Vector3 linear_acceleration\n\
-float64[9] linear_acceleration_covariance # Row major x, y z \n\
-\n================================================================================\n\
+float64[9] linear_acceleration_covariance # Row major x, y z\n================================================================================\n\
 MSG: std_msgs/Header\n\
+[std_msgs/Header]:\n\
 # Standard metadata for higher-level stamped data types.\n\
-# This is generally used to communicate timestamped data \n\
+# This is generally used to communicate timestamped data\n\
 # in a particular coordinate frame.\n\
-# \n\
-# sequence ID: consecutively increasing ID \n\
+#\n\
+# sequence ID: consecutively increasing ID\n\
 uint32 seq\n\
 #Two-integer timestamp that is expressed as:\n\
 # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
@@ -250,18 +251,16 @@ time stamp\n\
 #Frame this data is associated with\n\
 # 0: no frame\n\
 # 1: global frame\n\
-string frame_id\n\
-\n================================================================================\n\
+string frame_id\n================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
 # This represents an orientation in free space in quaternion form.\n\
 \n\
 float64 x\n\
 float64 y\n\
 float64 z\n\
-float64 w\n\
-\n================================================================================\n\
+float64 w\n================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-# This represents a vector in free space. \n\
+# This represents a vector in free space.\n\
 \n\
 float64 x\n\
 float64 y\n\

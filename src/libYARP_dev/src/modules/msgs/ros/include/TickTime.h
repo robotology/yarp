@@ -41,6 +41,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::read;
   bool read(yarp::os::ConnectionReader& connection) {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
@@ -70,6 +71,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::write;
   bool write(yarp::os::ConnectionWriter& connection) {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);

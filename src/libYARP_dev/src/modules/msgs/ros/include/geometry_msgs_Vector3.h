@@ -1,7 +1,7 @@
 // This is an automatically generated file.
 // Generated from this geometry_msgs_Vector3.msg definition:
 //   # This represents a vector in free space.
-//
+//   
 //   float64 x
 //   float64 y
 //   float64 z
@@ -16,7 +16,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include "TickTime.h"
-#include "Header.h"
+#include "std_msgs_Header.h"
 
 class geometry_msgs_Vector3 : public yarp::os::idl::WirePortable {
 public:
@@ -55,6 +55,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::read;
   bool read(yarp::os::ConnectionReader& connection) {
     if (connection.isBareMode()) return readBare(connection);
     return readBottle(connection);
@@ -91,6 +92,7 @@ public:
     return !connection.isError();
   }
 
+  using yarp::os::idl::WirePortable::write;
   bool write(yarp::os::ConnectionWriter& connection) {
     if (connection.isBareMode()) return writeBare(connection);
     return writeBottle(connection);
@@ -103,7 +105,7 @@ public:
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "# This represents a vector in free space. \n\
+    return "# This represents a vector in free space.\n\
 \n\
 float64 x\n\
 float64 y\n\
