@@ -18,3 +18,9 @@ tags
 /source-package/
 *.dox.fail
 *.kate-swp
+/CMakeLists.txt.user
+*.bak
+*.pyc
+/compile_commands.json
+/.ycm_extra_conf.py
+/.clang-format
