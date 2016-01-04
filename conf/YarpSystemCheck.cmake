@@ -209,6 +209,11 @@ else()
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wunused")
     endif()
 
+    check_cxx_compiler_flag("-Wunused-but-set-variable" CXX_HAS_WUNUSED_BUT_SET_VARIABLE)
+    if(CXX_HAS_WUNUSED_BUT_SET_VARIABLE)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wunused-but-set-variable")
+    endif()
+
     check_cxx_compiler_flag("-Wvla" CXX_HAS_WVLA)
     if(CXX_HAS_WVLA)
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wvla")
@@ -222,6 +227,16 @@ else()
     check_cxx_compiler_flag("-Wlogical-op" CXX_HAS_WLOGICAL_OP)
     if(CXX_HAS_WLOGICAL_OP)
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wlogical-op")
+    endif()
+
+    check_cxx_compiler_flag("-Wreorder" CXX_HAS_WREORDER)
+    if(CXX_HAS_WREORDER)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wreorder")
+    endif()
+
+    check_cxx_compiler_flag("-Wsizeof-pointer-memaccess" CXX_HAS_WSIZEOF_POINTER_MEMACCESS)
+    if(CXX_HAS_WSIZEOF_POINTER_MEMACCESS)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wsizeof-pointer-memaccess")
     endif()
 
     check_cxx_compiler_flag("-Wc++11-compat" CXX_HAS_CXX11_COMPAT)
@@ -293,6 +308,10 @@ else()
       set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Winline")
     endif()
 
+    check_cxx_compiler_flag("-Wfloat-equal" CXX_HAS_FLOAT_EQUAL)
+    if(CXX_HAS_FLOAT_EQUAL)
+      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wfloat-equal")
+    endif()
 
 
     ## Visibility hidden flags ##
