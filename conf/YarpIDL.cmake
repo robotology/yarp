@@ -56,14 +56,22 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
         message(FATAL_ERROR "yarp_idl_to_dir does not know what to do with ${yarpidl_file}, unrecognized extension ${yarpidlExt}")
     endif ()
 
+    if("${family}" STREQUAL "rosmsg")
+        get_filename_component(rospkg_name "${include_prefix}" NAME)
+        get_filename_component(include_prefix "${include_prefix}" PATH)
+        set(yarpidl_target_name "${rospkg_name}_${yarpidlName}${yarpidlExt}")
+    else()
+        set(yarpidl_target_name "${yarpidlName}${yarpidlExt}")
+    endif()
+    string(REGEX REPLACE "[^a-zA-Z0-9]" "_" yarpidl_target_name ${yarpidl_target_name})
+
     string(LENGTH "${include_prefix}" include_prefix_len)
-    if (include_prefix_len GREATER 0) 
+    if (include_prefix_len GREATER 0)
       set(include_prefix "/${include_prefix}")
     endif ()
 
     # Set intermediate output directory.
     set(dir ${CMAKE_CURRENT_BINARY_DIR}/_yarp_idl_${include_prefix}${dir_add})
-    string(REGEX REPLACE "[^a-zA-Z0-9]" "_" yarpidl_target_name ${yarpidl_file})
     set(settings_file ${output_dir}/${yarpidl_target_name}.cmake)
 
     # Check if generation has never happened.
@@ -89,7 +97,9 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
         # Go ahead and generate files.
         execute_process(COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                        RESULT_VARIABLE res)
+                        RESULT_VARIABLE res
+                        OUTPUT_QUIET
+                        ERROR_QUIET)
         # Failure is bad news, let user know.
         if (NOT "${res}" STREQUAL "0")
             message(FATAL_ERROR "yarpidl_${family} (${YARPIDL_${family}_LOCATION}) failed, aborting.")

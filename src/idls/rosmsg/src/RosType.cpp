@@ -196,10 +196,18 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         rosType = rosType.substr(0,rosType.rfind("."));
     }
 
-    if (isStruct && rosType!="Header") {
-        if (rosType.find("/")!=std::string::npos) {
-            package = rosType.substr(0,rosType.find("/"));
-        } else if (package!="") {
+    if (isStruct) {
+        size_t at = rosType.rfind("/");
+        if (at != std::string::npos) {
+            package = rosType.substr(0, at);
+            size_t at = package.rfind("/");
+            if (at != std::string::npos) {
+                package = package.substr(at+1);
+            }
+        } else if (rosType == "Header") {
+            rosType = "std_msgs/Header";
+            base = "std_msgs/Header";
+        } else if (package != "" && package != ".") {
             rosType = package + "/" + rosType;
             base = package + "/" + base;
         }
@@ -218,7 +226,9 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         exit(1);
     }
 
-    fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
+    if (verbose) {
+        fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
+    }
     char *result = NULL;
     txt = "";
     source = "";
@@ -242,7 +252,9 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         std::vector<std::string> msg = normalizedMessage(row);
         if (msg.size()==0) { continue; }
         if (msg[0] == "---") {
-            printf("--- reply ---\n");
+            if (verbose) {
+                printf("--- reply ---\n");
+            }
             cursor->isValid = ok;
             ok = true;
             cursor->reply = new RosType();
@@ -263,7 +275,9 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         if (msg.size()!=2 && !have_const) {
             if (msg.size()>0) {
                 if (msg[0][0]!='[') {
-                    fprintf(stderr,"[type] skip %s\n", row.c_str());
+                    if (verbose) {
+                        fprintf(stderr,"[type] skip %s\n", row.c_str());
+                    }
                     ok = false;
                 }
             }
@@ -271,12 +285,13 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         }
         std::string t = msg[0];
         std::string n = msg[1];
-        fprintf(stderr,"[type]%s   %s %s", indent.c_str(), t.c_str(),
-                n.c_str());
-        if (const_txt!="") {
-            fprintf(stderr," = %s", const_txt.c_str());
+        if (verbose) {
+            fprintf(stderr,"[type]%s   %s %s", indent.c_str(), t.c_str(), n.c_str());
+            if (const_txt!="") {
+                fprintf(stderr," = %s", const_txt.c_str());
+            }
+            fprintf(stderr,"\n");
         }
-        fprintf(stderr,"\n");
         RosType sub;
         sub.package = package;
         if (!sub.read(t.c_str(),env,gen,nesting+1)) {
@@ -293,7 +308,9 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         sub.initializer = const_txt;
         cursor->subRosType.push_back(sub);
     } while (result!=NULL);
-    fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
+    if (verbose) {
+        fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
+    }
     fclose(fin);
 
     if (rosType == "Header") {
@@ -506,16 +523,54 @@ std::string RosTypeSearch::readFile(const char *fname) {
     return result;
 }
 
+bool RosTypeSearch::fetchFromRos(const std::string& target_file,
+                                 const std::string& type_name,
+                                 bool find_service) {
+    std::string cmd = std::string(find_service?"rossrv":"rosmsg") + " show -r "+type_name+" > " + target_file + " || rm -f " + type_name;
+    if (verbose) {
+        fprintf(stderr,"[ros]  %s\n", cmd.c_str());
+    }
+    pid_t p = ACE_OS::fork();
+    if (p==0) {
+#ifdef __linux__
+        // This was ACE_OS::execlp, but that fails
+        ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#else
+        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#endif
+        exit(0);
+    } else {
+        ACE_OS::wait(NULL);
+    }
 
-static bool checkWeb(const char *tname,
-                     bool find_service,
-                     const std::string& target_full) {
+    bool success = true;
+
+    FILE *fin = fopen(target_file.c_str(),"r");
+    if (!fin) {
+        fprintf(stderr, "[type] FAILED to open %s\n", target_file.c_str());
+        success = false;
+    } else {
+        char buf[10];
+        char *result = fgets(buf,sizeof(buf),fin);
+        fclose(fin);
+        if (result==NULL) {
+            fprintf(stderr, "[type] File is blank: %s\n", target_file.c_str());
+            ACE_OS::unlink(target_file.c_str());
+            success = false;
+        }
+    }
+
+    return success;
+}
+
+bool RosTypeSearch::fetchFromWeb(const std::string& target_file,
+                                 const std::string& type_name,
+                                 bool find_service) {
     bool success = false;
-    std::string name = tname;
-    size_t idx = name.find("/");
+    size_t idx = type_name.find("/");
     if (idx!=std::string::npos) {
-        std::string package = name.substr(0,idx);
-        std::string typ = name.substr(idx+1,name.length());
+        std::string package = type_name.substr(0,idx);
+        std::string typ = type_name.substr(idx+1,type_name.length());
         std::string url = "http://docs.ros.org:80/api/";
         url += package;
         if (find_service) {
@@ -525,7 +580,9 @@ static bool checkWeb(const char *tname,
         }
         url += typ;
         url += ".html";
-        fprintf(stderr, "Trying the web: %s\n", url.c_str());
+        if (verbose) {
+            fprintf(stderr, "Trying the web: %s\n", url.c_str());
+        }
         yarp::os::Network yarp;
         yarp::os::Port port;
         port.openFake("base");
@@ -534,7 +591,9 @@ static bool checkWeb(const char *tname,
         cmd.addString("1");
         port.write(cmd,reply);
         std::string txt = reply.get(0).asString() + "\n";
-        printf("GOT %s for %s\n", txt.c_str(), url.c_str());
+        if (verbose) {
+            printf("GOT %s for %s\n", txt.c_str(), url.c_str());
+        }
         std::vector<std::string> lines;
         split(txt,'\n',lines);
         for (size_t i=0; i<lines.size(); i++) {
@@ -563,8 +622,8 @@ static bool checkWeb(const char *tname,
                         def2 += ch;
                     }
                 }
-                yarp::os::mkdir_p(target_full.c_str(),1);
-                FILE *fout = fopen(target_full.c_str(),"w");
+                yarp::os::mkdir_p(target_file.c_str(),1);
+                FILE *fout = fopen(target_file.c_str(),"w");
                 if (fout) {
                     fprintf(fout,"%s",def2.c_str());
                     fclose(fout);
@@ -576,101 +635,89 @@ static bool checkWeb(const char *tname,
     return success;
 }
 
-bool RosTypeSearch::fetchFromRos(const std::string& file_name,
-                                 const std::string& type_name,
-                                 bool find_service) {
-    std::string cmd = std::string(find_service?"rossrv":"rosmsg") + " show -r "+type_name+" > " + file_name + " || rm -f " + type_name;
-    fprintf(stderr,"[ros]  %s\n", cmd.c_str());
-    pid_t p = ACE_OS::fork();
-    if (p==0) {
-#ifdef __linux__
-        // This was ACE_OS::execlp, but that fails
-        ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#else
-        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#endif
-        exit(0);
-    } else {
-        ACE_OS::wait(NULL);
-    }
-
-    bool success = true;
-
-    FILE *fin = fopen(file_name.c_str(),"r");
-    if (!fin) {
-        fprintf(stderr, "[type] FAILED to open %s\n", file_name.c_str());
-        success = false;
-    } else {
-        char buf[10];
-        char *result = fgets(buf,sizeof(buf),fin);
-        fclose(fin);
-        if (result==NULL) {
-            fprintf(stderr, "[type] File is blank: %s\n", file_name.c_str());
-            ACE_OS::unlink(file_name.c_str());
-            success = false;
-        }
-    }
-
-    return success;
-}
-
 std::string RosTypeSearch::findFile(const char *tname) {
     struct stat dummy;
-	if (stat(tname, &dummy)==0) {
-        return tname;
-    }
     std::string target = std::string(tname);
-    if (target.find(".")!=std::string::npos) {
-        return tname;
-    }
-    for (int i=0; i<(int)target.length(); i++) {
-        if (target[i]=='/') {
-            target[i] = '_';
+
+    // If this is a path to a file, return the path, if the file exists.
+    if (stat(tname, &dummy) == 0) {
+        if (source_dir.empty() && package_name.empty()) {
+            size_t at = target.rfind("/");
+            if (at != std::string::npos) {
+                source_dir = target.substr(0, at);
+                at = source_dir.rfind("/");
+                if (at != std::string::npos) {
+                    package_name = source_dir.substr(at+1);
+                    source_dir = source_dir.substr(0, at);
+                }
+            } else {
+                source_dir = ".";
+            }
         }
-    }
-    std::string target_full = target_dir + "/" + target;
-	if (stat(target_full.c_str(), &dummy)==0) {
         return target;
     }
 
-    bool success = false;
-
-    if (std::string(tname)=="Header") {
-        success = fetchFromRos(target_full,tname,false);
-        if (!success) {
-            // support Header natively, for the sake of tests
-            yarp::os::mkdir_p(target_full.c_str(),1);
-            FILE *fout = fopen(target_full.c_str(),"w");
-            if (fout) {
-                fprintf(fout,"uint32 seq\n");
-                fprintf(fout,"time stamp\n");
-                fprintf(fout,"string frame_id\n");
-            }
-            fclose(fout);
-            success = true;
+    if (!source_dir.empty()) {
+        // Search in source directory
+        std::string source_full = source_dir + "/" + target + (find_service? ".srv" : ".msg");
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
         }
-    } else {
-        success = fetchFromRos(target_full,tname,find_service);
-        if (!success) {
-            success = fetchFromRos(target_full,tname,!find_service);
-        }
-    } 
 
-    if (allow_web && !success) {
-        success = checkWeb(tname,find_service,target_full);
-        if (!success) {
-            if (!find_service) {
-                success = checkWeb(tname,true,target_full);
-            }
+        // Search for current package in source directory
+        source_full = source_dir + "/" + package_name + "/" + target + (find_service? ".srv" : ".msg");
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
+        // Search for std_msgs package in source directory
+        source_full = source_dir + "/std_msgs/" + target + (find_service? ".srv" : ".msg");
+        if (stat(source_full.c_str(), &dummy)==0) {
+            return source_full;
+        }
+
+    }
+
+    // Search in target directory (already fetched from ROS/web, no need to
+    // fetch it again)
+    std::string target_full = target_dir + "/" + target + (find_service? ".srv" : ".msg");
+    if (stat(target_full.c_str(), &dummy)==0) {
+        return target_full;
+    }
+
+    // If not in sources, try to fetch it from ROS
+    if (allow_ros) {
+        bool success = fetchFromRos(target_full, tname, find_service);
+        if (success) {
+            return target_full;
         }
     }
 
-    if (!success) {
-        target = "";
-        if (abort_on_error) exit(1);
+    // try to fetch it from the web
+    if (allow_web) {
+        bool success = fetchFromWeb(target_full, tname, find_service);
+        if (success) {
+            return target_full;
+        }
     }
 
-    return target;
+    // support Header natively, for the sake of tests
+    if (target == "std_msgs/Header") {
+        yarp::os::mkdir_p(target_full.c_str(),1);
+        FILE *fout = fopen(target_full.c_str(),"w");
+        if (fout) {
+            fprintf(fout,"uint32 seq\n");
+            fprintf(fout,"time stamp\n");
+            fprintf(fout,"string frame_id\n");
+        }
+        fclose(fout);
+        return target_full;
+    }
+
+    // File not found. abort if needed
+    if (abort_on_error) {
+        exit(1);
+    }
+
+    return std::string();
 }
-
-

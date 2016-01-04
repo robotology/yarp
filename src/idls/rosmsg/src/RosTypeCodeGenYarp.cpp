@@ -13,20 +13,33 @@
 #include <stdlib.h>
 
 #include <yarp/os/Os.h>
-
+#include <iostream>
 using namespace std;
 
-static std::string getSafeName(const std::string& tname) {
-    string safe_tname = tname;
-    if (safe_tname.find(".")!=string::npos) {
-        safe_tname = safe_tname.substr(0,safe_tname.rfind("."));
-    }
-    for (int i=0; i<(int)safe_tname.length(); i++) {
-        if (safe_tname[i]=='/') {
-            safe_tname[i] = '_';
+static std::string getPackageName(const std::string& name) {
+
+    string tname = name;
+    string pname = "";
+    if (name == "Header") {
+        tname = "std_msgs";
+    } else {
+        size_t at = tname.rfind("/");
+        if (at==string::npos) {
+            tname = "";
+        } else {
+            tname = pname = tname.substr(0,at);
+            do {
+                at = pname.rfind("/");
+                if (at == string::npos) break;
+                tname = pname.substr(at+1,pname.length());
+                pname = pname.substr(0,at);
+            } while (tname=="srv"||tname=="msg");
+        }
+        if (tname == ".") {
+            tname = "";
         }
     }
-    return safe_tname;
+    return tname;
 }
 
 static std::string getPartName(const std::string& tname) {
@@ -35,44 +48,31 @@ static std::string getPartName(const std::string& tname) {
     if (at!=string::npos) {
         part_tname = tname.substr(at+1,tname.length());
     }
+    if (part_tname.find(".")!=string::npos) {
+        part_tname = part_tname.substr(0,part_tname.rfind("."));
+    }
     return part_tname;
 }
 
-static std::string getDirName(const std::string& tname) {
-    size_t at = tname.rfind("/");
-    if (at==string::npos) return "";
-    return tname.substr(0,at);
- }
-
-static std::string getPackageName(const std::string& name) {
-    string tname = name;
-    string pname = "";
-    size_t at = tname.rfind("/");
-    if (at==string::npos) return "";
-    tname = pname = tname.substr(0,at);
-    do {
-        at = pname.rfind("/");
-        if (at == string::npos) break;
-        tname = pname.substr(at+1,pname.length());
-        pname = pname.substr(0,at);
-    } while (tname=="srv"||tname=="msg");
-    return tname;
+static std::string getSafeName(const std::string& tname) {
+    string pack = getPackageName(tname);
+    string part = getPartName(tname);
+    string safe_tname;
+    if (pack!="") {
+        safe_tname = pack + "_" + part;
+    } else {
+        safe_tname = part;
+    }
+    return safe_tname;
 }
 
 static std::string getDoubleName(const std::string& tname) {
     string package_name = getPackageName(tname);
     string part_name = getPartName(tname);
     if (package_name!="") {
-        return package_name + "/" + part_name;
+        part_name = package_name + "/" + part_name;
     }
     return part_name;
-}
-
-static std::string getSillyName(const std::string& tname) {
-    string pack = getDirName(tname);
-    string safe = getSafeName(tname);
-    if (pack!="") return pack + "/" + safe;
-    return safe;
 }
 
 bool RosTypeCodeGenYarp::beginType(const std::string& tname,
@@ -96,10 +96,13 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         if (index!=NULL) {
             fprintf(index,"%s\n",fname.c_str());
             if (pack!="") {
-                fprintf(index,"%s.h\n",part.c_str());
+                fprintf(index,"%s/%s.h\n", pack.c_str(), part.c_str());
             }
             for (int i=0; i<(int)state.dependencies.size(); i++) {
                 fprintf(index,"%s.h\n",getSafeName(state.dependenciesAsPaths[i]).c_str());
+                if(getPackageName(state.dependenciesAsPaths[i]) != "") {
+                    fprintf(index,"%s.h\n", getDoubleName(state.dependenciesAsPaths[i]).c_str());
+                }
             }
             fclose(index);
             index = NULL;
@@ -111,18 +114,21 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
 
     if (pack!=""&&target!="") {
         // Make header file names more sensible
-        string alt_fname = root + part + ".h";
+        string alt_fname =  root + pack + "/" + part + ".h";
+        yarp::os::mkdir_p(alt_fname.c_str(),1);
         out = fopen(alt_fname.c_str(),"w");
         if (!out) {
             fprintf(stderr,"Failed to open %s for writing\n",
                     alt_fname.c_str());
             exit(1);
         }
-        printf("Generating %s\n", alt_fname.c_str());
+        if (verbose) {
+            printf("Generating %s\n", alt_fname.c_str());
+        }
         fprintf(out,"// This is an automatically generated file.\n");
         fprintf(out,"#ifndef YARPMSG_TYPE_wrap_%s\n", safe_tname.c_str());
         fprintf(out,"#define YARPMSG_TYPE_wrap_%s\n\n", safe_tname.c_str());
-        fprintf(out,"#include <%s.h>\n\n",getSillyName(tname).c_str());
+        fprintf(out,"#include <%s.h>\n\n",getSafeName(tname).c_str());
         fprintf(out,"namespace %s {\n", pack.c_str());
         fprintf(out,"  typedef %s %s;\n", safe_tname.c_str(), part.c_str());
         fprintf(out,"}\n\n");
@@ -148,7 +154,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out,"#include <yarp/os/Wire.h>\n");
     fprintf(out,"#include <yarp/os/idl/WireTypes.h>\n");
     for (int i=0; i<(int)state.dependencies.size(); i++) {
-        fprintf(out,"#include \"%s.h\"\n",getSillyName(state.dependenciesAsPaths[i]).c_str());
+        fprintf(out,"#include \"%s.h\"\n",getSafeName(state.dependenciesAsPaths[i]).c_str());
     }
     fprintf(out,"\n");
     fprintf(out,"class %s : public yarp::os::idl::WirePortable {\n", safe_tname.c_str());
@@ -302,7 +308,7 @@ bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field) {
                    field.rosName.c_str(),
                    len.c_str());
             if (!bare) {
-                fprintf(out,"    for (size_t i=0; i<%s; i++) {\n", len.c_str());
+                fprintf(out,"    for (int i=0; i<%s; i++) {\n", len.c_str());
                 fprintf(out,"      %s[i] = (%s)connection.%s();\n",
                         field.rosName.c_str(),
                         t.yarpType.c_str(),
@@ -362,6 +368,7 @@ bool RosTypeCodeGenYarp::endRead(bool bare) {
     fprintf(out,"    return !connection.isError();\n");
     fprintf(out,"  }\n\n");
     if (!bare) {
+        fprintf(out,"  using yarp::os::idl::WirePortable::read;\n");
         fprintf(out,"  bool read(yarp::os::ConnectionReader& connection) {\n");
         fprintf(out,"    if (connection.isBareMode()) return readBare(connection);\n");
         fprintf(out,"    return readBottle(connection);\n");
@@ -500,6 +507,7 @@ bool RosTypeCodeGenYarp::endWrite(bool bare) {
     fprintf(out,"    return !connection.isError();\n");
     fprintf(out,"  }\n\n");
     if (!bare) {
+        fprintf(out,"  using yarp::os::idl::WirePortable::write;\n");
         fprintf(out,"  bool write(yarp::os::ConnectionWriter& connection) {\n");
         fprintf(out,"    if (connection.isBareMode()) return writeBare(connection);\n");
         fprintf(out,"    return writeBottle(connection);\n");

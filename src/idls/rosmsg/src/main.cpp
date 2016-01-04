@@ -40,19 +40,26 @@ using namespace std;
 void show_usage()
 {
     printf("Usage:\n");
-    printf("\n  yarpidl_rosmsg <Foo>.msg\n");
+    printf("\n");
+    printf("  yarpidl_rosmsg [OPTIONS] [<Foo>.msg|<package>/<Foo>]\n");
     printf("    Translates a ROS-format .msg file to a YARP-compatible .h file\n");
-    printf("\n  yarpidl_rosmsg <package>/<Foo>\n");
-    printf("    Calls 'rosmsg' to find type Foo, then makes a .h file for it\n");
-    printf("\n  yarpidl_rosmsg --web true <package>/<Foo>\n");
-    printf("    Allow YARP to look up missing types on ROS website\n");
-    printf("\n  yarpidl_rosmsg --out <dir> <Foo>.msg\n");
-    printf("    Generates .h file in the specified directory\n");
-    printf("\n  yarpidl_rosmsg <Foo>.srv\n");
+    printf("  yarpidl_rosmsg [OPTIONS] [<Foo>.srv]\n");
     printf("    Translates a ROS-format .srv file to a pair of YARP-compatible .h files\n");
     printf("    The classes generated for Foo.srv are Foo and FooReply.\n");
-    printf("\n  yarpidl_rosmsg --name /name\n");
+    printf("  yarpidl_rosmsg --name [/name]\n");
     printf("    Start up a service with the given port name for querying types.\n");
+    printf("\n");
+    printf("Options:\n");
+    printf("\n");
+    printf("  --no-ros true\n");
+    printf("    Do not try to fetch missing types from rosmsg/rossrv\n");
+    printf("  --web true\n");
+    printf("    Allow YARP to look up missing types on ROS website\n");
+    printf("  --out <dir>\n");
+    printf("    Generates .h file in the specified directory\n");
+    printf("  --verbose\n");
+    printf("    Verbose output\n");
+    printf("\n");
 }
 
 static void generateTypeMap1(RosType& t, ConstString& txt)
@@ -114,8 +121,11 @@ void configure_search(RosTypeSearch& env, Searchable& p)
     if (p.check("out")) {
         env.setTargetDirectory(p.find("out").toString().c_str());
     }
+    if (p.check("no-ros",Value(0)).asInt()!=0 || p.findGroup("no-ros").size()==1) {
+        env.disableRos();
+    }
     if (p.check("web",Value(0)).asInt()!=0 || p.findGroup("web").size()==1) {
-        env.allowWeb();
+        env.enableWeb();
     }
     if (p.check("soft",Value(0)).asInt()!=0 || p.findGroup("soft").size()==1) {
         env.softFail();
@@ -130,6 +140,7 @@ int generate_cpp(int argc, char *argv[])
     Property p;
     string fname;
     p.fromCommand(argc,argv);
+    bool verbose = p.check("verbose");
 
     fname = argv[argc-1];
 
@@ -145,8 +156,13 @@ int generate_cpp(int argc, char *argv[])
 
     RosTypeSearch env;
     RosType t;
-
     RosTypeCodeGenYarp gen;
+    if (verbose) {
+        env.setVerbose();
+        t.setVerbose();
+        gen.setVerbose();
+    }
+
     if (p.check("out")) {
         gen.setTargetDirectory(p.find("out").toString().c_str());
     }
