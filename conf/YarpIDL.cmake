@@ -215,15 +215,17 @@ endfunction()
 
 # Internal function.
 # Calculate a list of sources generated from a .msg or a .srv file
-function(_YARP_IDL_ROSMSG_TO_FILE_LIST file path basename ext gen_srcs_var gen_hdrs_var)
+function(_YARP_IDL_ROSMSG_TO_FILE_LIST file path pkg basename ext gen_srcs_var gen_hdrs_var)
   set(gen_srcs )
-  set(gen_hdrs ${basename}.h)
+  set(gen_hdrs )
 
   get_filename_component(ext ${file} EXT)
 
-  if(NOT "${path}" STREQUAL "")
-    string(REGEX REPLACE "[^a-zA-Z0-9]" "_" clean_path ${path})
-    list(APPEND gen_hdrs ${clean_path}_${basename}.h)
+  if(NOT "${pkg}" STREQUAL "")
+    set(gen_hdrs "${pkg}/${basename}.h"
+                 "${pkg}_${basename}.h")
+  else()
+    set(gen_hdrs "${basename}.h")
   endif()
   if("${ext}" STREQUAL ".srv")
     list(APPEND gen_hdrs ${basename}Reply.h)
@@ -235,9 +237,9 @@ function(_YARP_IDL_ROSMSG_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
   # Read rosmsg file
   file(READ ${file} file_content)
 
-  # Check if Header.h or TickTime.h will be created
+  # Check if std_msgs/Header.h or TickTime.h will be created
   if("${file_content}" MATCHES "(^|\n)Header[ \t]")
-    list(APPEND gen_hdrs Header.h TickTime.h)
+    list(APPEND gen_hdrs std_msgs/Header.h std_msgs_Header.h TickTime.h)
   elseif("${file_content}" MATCHES "(^|\n)time[ \t]")
     list(APPEND gen_hdrs TickTime.h)
   endif()
@@ -273,7 +275,9 @@ function(YARP_ADD_IDL var first_file)
       _yarp_idl_thrift_to_file_list("${file}" "${path}" "${basename}" ${ext} gen_srcs gen_hdrs)
     elseif("${ext}" MATCHES "^\\.(msg|srv)$")
       set(family rosmsg)
-      _yarp_idl_rosmsg_to_file_list("${file}" "${path}" "${basename}" ${ext} gen_srcs gen_hdrs)
+      get_filename_component(pkg "${path}" NAME)
+      get_filename_component(path "${path}" PATH)
+      _yarp_idl_rosmsg_to_file_list("${file}" "${path}" "${pkg}" "${basename}" ${ext} gen_srcs gen_hdrs)
     else()
         message(FATAL_ERROR "Unknown extension ${ext}. Supported extensiona are .thrift, .msg, and .srv")
     endif()
@@ -297,32 +301,42 @@ function(YARP_ADD_IDL var first_file)
     make_directory(${tmp_dir})
 
     # Set output directories and remove extra "/"
-    set(srcs_out_dir "${CMAKE_CURRENT_BINARY_DIR}/src/${path}")
-    set(hdrs_out_dir "${CMAKE_CURRENT_BINARY_DIR}/include/${path}")
+    set(srcs_out_dir "${CMAKE_CURRENT_BINARY_DIR}/src")
+    set(hdrs_out_dir "${CMAKE_CURRENT_BINARY_DIR}/include")
     string(REGEX REPLACE "/(/|$)" "\\1" srcs_out_dir "${srcs_out_dir}")
     string(REGEX REPLACE "/(/|$)" "\\1" hdrs_out_dir "${hdrs_out_dir}")
 
 
     # Prepare main command
-    set(cmd ${YARPIDL_${family}_COMMAND} --out "${tmp_dir}" --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" "${file}")
+    if("${family}" STREQUAL "thrift")
+      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
+    else()
+      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --out "${CMAKE_CURRENT_BINARY_DIR}/include" "${file}")
+    endif()
 
-    # Ensure that they are executed in the order they are added
-    # FIXME is this an issue?
-    set(extra_deps ${${var}})
-
-    # Prepare copy command and populate output variable
+    # Prepare copy command (thrift only) and populate output variable
     unset(output)
     foreach(gen_file ${gen_srcs})
-      set(in "${tmp_dir}/${gen_file}")
       set(out "${srcs_out_dir}/${gen_file}")
-      list(APPEND output "${out}")
-      list(APPEND cmd COMMAND ${CMAKE_COMMAND} -E copy "${in}" "${out}")
+      list(FIND ${var} ${out} x)
+      if(x EQUAL -1)
+        list(APPEND output "${out}")
+        if("${family}" STREQUAL "thrift")
+          set(in "${tmp_dir}/${gen_file}")
+          list(APPEND cmd COMMAND ${CMAKE_COMMAND} -E copy "${in}" "${out}")
+        endif()
+      endif()
     endforeach()
     foreach(gen_file ${gen_hdrs})
-      set(in "${tmp_dir}/${gen_file}")
       set(out "${hdrs_out_dir}/${gen_file}")
-      list(APPEND output "${out}")
-      list(APPEND cmd COMMAND ${CMAKE_COMMAND} -E copy "${in}" "${out}")
+      list(FIND ${var} ${out} x)
+      if(x EQUAL -1)
+        list(APPEND output "${out}")
+        if("${family}" STREQUAL "thrift")
+          set(in "${tmp_dir}/${gen_file}")
+          list(APPEND cmd COMMAND ${CMAKE_COMMAND} -E copy "${in}" "${out}")
+        endif()
+      endif()
     endforeach()
 
     if(NOT "${output}" STREQUAL "")
