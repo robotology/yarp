@@ -1,37 +1,39 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006, 2008 RobotCub Consortium, Arjan Gijsberts
  * Authors: Paul Fitzpatrick, Arjan Gijsberts
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef _YARP2_BOTTLE_
 #define _YARP2_BOTTLE_
 
-#include <yarp/os/ConstString.h>
 #include <yarp/os/Portable.h>
-#include <yarp/os/Value.h>
-#include <yarp/conf/numeric.h>
+#include <yarp/os/Searchable.h>
 
-#define BOTTLE_TAG_INT 1
-#define BOTTLE_TAG_VOCAB (1+8)
-#define BOTTLE_TAG_DOUBLE (2+8)
-#define BOTTLE_TAG_STRING (4)
-#define BOTTLE_TAG_BLOB (4+8)
-#define BOTTLE_TAG_INT64 (1+16)
-#define BOTTLE_TAG_LIST 256
-#define BOTTLE_TAG_DICT 512
+
+#define BOTTLE_TAG_INT 1          // 0000 0000 0001
+#define BOTTLE_TAG_VOCAB (1 + 8)  // 0000 0000 1001
+#define BOTTLE_TAG_DOUBLE (2 + 8) // 0000 0000 1010
+#define BOTTLE_TAG_STRING (4)     // 0000 0000 0100
+#define BOTTLE_TAG_BLOB (4 + 8)   // 0000 0000 1100
+#define BOTTLE_TAG_INT64 (1 + 16) // 0000 0001 0001
+#define BOTTLE_TAG_LIST 256       // 0001 0000 0000
+#define BOTTLE_TAG_DICT 512       // 0010 0000 0000
 
 namespace yarp {
     namespace os {
         class Bottle;
+        class ConstString;
         class Property;
         class NetworkBase;
+        class Value;
+        namespace impl {
+            class BottleImpl;
+            class Storable;
+            class StoreList;
+        }
     }
 }
-
 
 /**
  * \ingroup key_class
@@ -52,7 +54,8 @@ namespace yarp {
  * will eventually wash ashore somewhere else.  In the very early days
  * of YARP, that is what communication felt like.
  */
-class YARP_OS_API yarp::os::Bottle : public Portable, public Searchable {
+class YARP_OS_API yarp::os::Bottle : public Portable, public Searchable
+{
 public:
     using Searchable::check;
     using Searchable::findGroup;
@@ -72,7 +75,7 @@ public:
      *
      * @param text the textual form of the bottle to be interpreted.
      */
-    Bottle(const ConstString& text);
+    explicit Bottle(const ConstString& text);
 
     /**
      * Copy constructor.
@@ -81,6 +84,18 @@ public:
      */
     Bottle(const Bottle& bottle);
 
+    /**
+     * Assignment operator.
+     *
+     * @param bottle The object to copy.
+     * @return the Bottle itself.
+     */
+    Bottle& operator=(const Bottle& bottle);
+
+    /**
+     * Destructor.
+     */
+    virtual ~Bottle();
 
     /**
      * Empties the bottle of any objects it contains.
@@ -121,7 +136,7 @@ public:
      *
      * @param str the string to add.
      */
-    void addString(const char *str);
+    void addString(const char* str);
 
     /**
      * Places a string in the bottle, at the end of the list.
@@ -137,11 +152,6 @@ public:
      */
     void add(const Value& value);
 
-    // worked "accidentally", user code relies on this
-    void add(const char *txt) {
-        addString(txt);
-    }
-
     /**
      * Add a Value to the bottle, at the end of the list.
      *
@@ -151,7 +161,7 @@ public:
      *
      * @param value the Value to add.
      */
-    void add(Value *value);
+    void add(Value* value);
 
     /**
      * Places an empty nested list in the bottle, at the end of the
@@ -200,8 +210,6 @@ public:
      */
     int size() const;
 
-
-
     /**
      * Initializes bottle from a string.
      *
@@ -220,8 +228,7 @@ public:
      * @param buf the binary form of the bottle to be interpreted.
      * @param len the length of the binary form.
      */
-    void fromBinary(const char *buf, int len);
-
+    void fromBinary(const char* buf, int len);
 
     /**
      * Returns binary representation of bottle.
@@ -233,8 +240,7 @@ public:
      * @return pointer to a buffer holding the binary representation of
      *         the bottle.
      */
-    const char *toBinary(size_t *size = 0/*NULL*/);
-
+    const char* toBinary(size_t* size = 0 /*NULL*/);
 
     /**
      * Gives a human-readable textual representation of the bottle.
@@ -285,7 +291,6 @@ public:
      */
     bool read(PortWriter& writer, bool textMode = false);
 
-
     void onCommencement();
 
     virtual bool check(const ConstString& key) const;
@@ -295,22 +300,6 @@ public:
     Bottle& findGroup(const ConstString& key) const;
 
     virtual bool isNull() const;
-
-    /**
-     * Assignment operator.
-     *
-     * @param bottle The object to copy.
-     * @return the Bottle itself.
-     */
-    const Bottle& operator = (const Bottle& bottle);
-
-
-    /**
-     * Destructor.
-     */
-    virtual ~Bottle();
-
-
 
     /**
      * Copy all or part of another Bottle.
@@ -328,14 +317,13 @@ public:
      */
     static Bottle& getNullBottle();
 
-
     /**
      * Equality test.
      *
      * @param alt the value to compare against.
      * @result true iff the values are equal.
      */
-    virtual bool operator == (const Bottle& alt);
+    virtual bool operator==(const Bottle& alt);
 
     /**
      * Inequality test.
@@ -343,7 +331,7 @@ public:
      * @param alt the value to compare against.
      * @result true iff the values are not equal.
      */
-    virtual bool operator != (const Bottle& alt);
+    virtual bool operator!=(const Bottle& alt);
 
     /**
      * Append the content of the given bottle to the current
@@ -361,17 +349,6 @@ public:
      */
     Bottle tail() const;
 
-
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    // this is needed for implementation reasons -- could go away
-    // with judicious use of friend declarations
-    void specialize(int subCode);
-    int getSpecialization();
-    void setNested(bool nested);
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
-
     /**
      * Declare that the content of the Bottle has been changed.
      *
@@ -384,6 +361,13 @@ public:
     static ConstString toString(int x);
 
     /**
+     * Get numeric bottle code for this bottle.
+     *
+     * @return the numeric code
+     */
+    int getSpecialization();
+
+    /**
      *
      * Convert a numeric bottle code to a string.
      * @param the code to convert
@@ -392,107 +376,27 @@ public:
      */
     static ConstString describeBottleCode(int code);
 
+#ifndef YARP_NO_DEPRECATED
+    // worked "accidentally", user code relies on this
+    /**
+     * @deprecated since YARP 2.3.65
+     */
+    YARP_DEPRECATED void add(const char* txt);
+#endif
+
 
 protected:
+    void setReadOnly(bool readOnly);
 
-    virtual void setReadOnly(bool readOnly) { 
-        ro = readOnly;
-    }
 
 private:
-
-    void edit();
-
-    Value& findGroupBit(const ConstString& key) const;
-    Value& findBit(const ConstString& key) const;
-
-    virtual Bottle *create();
-
-    virtual Bottle *clone();
-
-    //Value& find(const char *key);
-    void *implementation;
-    bool invalid;
-    bool ro;
-
-
-    ///////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////
-    // the methods below are no longer used
-    ///////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////
-
-    /**
-     * Reads an integer from a certain part of the list.
-     * @param index the part of the list to read from
-     * @return the integer - result is undefined if it is not actually an
-     *         integer - see Bottle::isInt
-     */
-    int getInt(int index);
-
-    /**
-     * Reads a string from a certain part of the list.
-     * @param index the part of the list to read from
-     * @return the string - result is undefined if it is not actually an
-     *         string - see Bottle::isString
-     */
-    ConstString getString(int index);
-
-    /**
-     * Reads a floating point number from a certain part of the list.
-     * @param index the part of the list to read from
-     * @return the floating point number - result is undefined if it is not
-     *         actually a floating point number - see Bottle::isDouble
-     */
-    double getDouble(int index);
-
-    /**
-     * Reads a nested list from a certain part of the list.
-     * @param index the part of the list to read from
-     * @return a pointer to the nested list, or NULL if it isn't a list -
-     * see Bottle::isList
-     */
-    Bottle *getList(int index);
-
-    /**
-     * Checks if a certain part of the list is an integer.
-     * @param index the part of the list to check
-     * @return true iff that part of the list is indeed an integer
-     */
-    bool isInt(int index);
-
-    /**
-     * Checks if a certain part of the list is a floating point number.
-     * @param index the part of the list to check
-     * @return true iff that part of the list is indeed a floating point number
-     */
-    bool isDouble(int index);
-
-    /**
-     * Checks if a certain part of the list is a string.
-     * @param index the part of the list to check
-     * @return true iff that part of the list is indeed a string
-     */
-    bool isString(int index);
-
-    /**
-     * Checks if a certain part of the list is a nested list.
-     * @param index the part of the list to check
-     * @return true iff that part of the list is indeed a nested list
-     */
-    bool isList(int index);
-
-
-    virtual bool isList();
-
-    //virtual Bottle *asList() {
-    //  return this;
-    //}
+    friend class yarp::os::NetworkBase;
+    friend class yarp::os::impl::Storable;
+    friend class yarp::os::impl::StoreList;
+    friend class yarp::os::impl::BottleImpl;
+    yarp::os::impl::BottleImpl* const implementation;
 
     static void fini();
-    friend class NetworkBase;
-
 };
 
 #endif
-
