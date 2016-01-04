@@ -782,7 +782,6 @@ void t_yarp_generator::generate_program() {
   f_out3_.close();
   if(f_out_common_.is_open()){
       f_out_common_ << "#endif" << endl;
-      f_out_common_ << endl;
       f_out_common_.close();
   }
 
@@ -1597,7 +1596,6 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   out << endl;
 
   out << "#endif" << endl;
-  out << endl;
 
 
   // header done - now generate source
@@ -2382,7 +2380,6 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     f_cpp_ << endl << endl;
 
     f_srv_ << "#endif" << endl;
-    f_srv_ << endl;
   }
 }
 
