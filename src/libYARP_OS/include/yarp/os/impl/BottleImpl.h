@@ -92,7 +92,7 @@ public:
     virtual yarp::os::Value& find(const yarp::os::ConstString& key) const;
     virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) const;
 
-    virtual bool operator==(const yarp::os::Value& alt) const;
+    bool operator==(const yarp::os::Value& alt) const;
 
     virtual yarp::os::Value* create() const { return createStorable(); }
     virtual yarp::os::Value* clone() const { return cloneStorable(); }
