@@ -14,6 +14,8 @@
 
 using yarp::os::Bottle;
 using yarp::os::ConstString;
+using yarp::os::ConnectionReader;
+using yarp::os::ConnectionWriter;
 using yarp::os::Property;
 using yarp::os::Value;
 using yarp::os::impl::BottleImpl;
