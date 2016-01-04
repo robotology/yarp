@@ -10,6 +10,7 @@
 #include <yarp/os/LogStream.h>
 #include <list.hpp>
 #include <yarp/os/Time.h>
+#include <yarp/os/Value.h>
 #include "libv4lconvert.h"
 
 #define errno_exit printf
