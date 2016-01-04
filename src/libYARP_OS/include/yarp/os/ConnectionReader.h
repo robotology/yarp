@@ -24,10 +24,6 @@ namespace yarp {
         class Portable;
         class InputStream;
     }
-
-    // place in both namespaces
-    using os::ConnectionReader;
-    using os::ConnectionWriter;
 }
 
 /**

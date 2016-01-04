@@ -174,7 +174,7 @@ public:
 
     virtual void run();
 
-    virtual bool read(ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection);
 
     virtual bool read(yarp::sig::Vector &out);
 

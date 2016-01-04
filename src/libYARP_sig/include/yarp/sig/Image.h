@@ -269,13 +269,13 @@ public:
      * Read image from a connection.
      * @return true iff image was read correctly
      */
-    virtual bool read(ConnectionReader& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection);
 
     /**
      * Write image to a connection.
      * @return true iff image was written correctly
      */
-    virtual bool write(ConnectionWriter& connection);
+    virtual bool write(yarp::os::ConnectionWriter& connection);
 
     void setQuantum(int imgQuantum);
 
