@@ -473,7 +473,7 @@ bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
    //     interruptModule();
         return true;
     default:
-        reply.add("command not recognized");
+        reply.addString("command not recognized");
         return false;
     }
     return false;
