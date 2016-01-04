@@ -32,6 +32,7 @@ using yarp::os::impl::BottleImpl;
 using yarp::os::impl::Storable;
 using yarp::os::Bottle;
 using yarp::os::ConstString;
+using yarp::os::Searchable;
 using yarp::os::Value;
 
 #define YARP_STRINIT(len) ((size_t)(len)), 0
