@@ -239,11 +239,15 @@ else()
       set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wsizeof-pointer-memaccess")
     endif()
 
+    check_cxx_compiler_flag("-Woverloaded-virtual" CXX_HAS_WOVERLOADED_VIRTUAL)
+    if(CXX_HAS_WOVERLOADED_VIRTUAL)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Woverloaded-virtual")
+    endif()
+
     check_cxx_compiler_flag("-Wc++11-compat" CXX_HAS_CXX11_COMPAT)
     if(CXX_HAS_CXX11_COMPAT)
       set(CXX11_FLAGS "${CXX11_FLAGS} -Wc++11-compat")
     endif()
-
 
     ## Unwanted warning flags ##
 
@@ -276,11 +280,6 @@ else()
     check_cxx_compiler_flag("-Wundef" CXX_HAS_WUNDEF)
     if(CXX_HAS_WUNDEF)
       set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wundef")
-    endif()
-
-    check_cxx_compiler_flag("-Woverloaded-virtual" CXX_HAS_WOVERLOADED_VIRTUAL)
-    if(CXX_HAS_WOVERLOADED_VIRTUAL)
-      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Woverloaded-virtual")
     endif()
 
     check_cxx_compiler_flag("-Wconversion" CXX_HAS_WCONVERSION)

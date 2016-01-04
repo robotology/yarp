@@ -77,6 +77,7 @@ public:
 
     virtual bool isOk();
     virtual void reset();
+    using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b);
     virtual void apply(char ch);
     virtual void close();

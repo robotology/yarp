@@ -52,6 +52,7 @@ public:
     ImplementCallbackHelper2();
     ImplementCallbackHelper2(yarp::dev::ServerSerial *x);
 
+    using yarp::os::TypedReaderCallback<Bottle>::onRead;
     /**
      * Callback function.
      * @param b is the Bottle being received.

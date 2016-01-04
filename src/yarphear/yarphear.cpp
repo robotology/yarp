@@ -88,6 +88,7 @@ public:
         return true;
     }
 
+    using TypedReaderCallback<Sound>::onRead;
     void onRead(Sound& sound)
      {
         #ifdef TEST

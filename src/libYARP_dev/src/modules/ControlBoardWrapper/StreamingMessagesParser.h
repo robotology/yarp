@@ -94,6 +94,7 @@ public:
     */
     void init(yarp::dev::ControlBoardWrapper *x);
 
+    using yarp::os::TypedReaderCallback<CommandMessage>::onRead;
     /**
     * Callback function.
     * @param v is the Vector being received.

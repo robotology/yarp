@@ -55,11 +55,13 @@ public:
         close();
     }
 
+    using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b)
     {
         if (!out.write(b)) close();
     }
 
+    using yarp::os::InputStream::read;
     virtual YARP_SSIZE_T read(const Bytes& b)
     {
         YARP_SSIZE_T ret=in.read(b);

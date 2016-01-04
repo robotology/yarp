@@ -49,11 +49,11 @@ public:
     }
 
     // InputStream
-
+    using yarp::os::InputStream::read;
     virtual YARP_SSIZE_T read(const Bytes& b);
 
     // OutputStream
-
+    using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b);
 
     // TwoWayStream

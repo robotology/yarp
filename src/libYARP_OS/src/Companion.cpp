@@ -2547,6 +2547,7 @@ public:
         this->sema = &sema;
     }
 
+    using yarp::os::TypedReaderCallback<Bottle>::onRead;
     virtual void onRead(Bottle& datum) {
         mutex.wait();
         value = datum;

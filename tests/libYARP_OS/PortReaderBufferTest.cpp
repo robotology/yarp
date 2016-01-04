@@ -28,6 +28,7 @@ public:
         count = 0;
     }
 
+    using BufferedPort<Bottle>::onRead;
     void onRead(Bottle& datum) {
         count += datum.size();
     }

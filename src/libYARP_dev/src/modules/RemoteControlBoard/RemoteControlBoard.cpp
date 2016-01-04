@@ -106,6 +106,7 @@ public:
         resetStat();
     }
 
+    using yarp::os::BufferedPort<yarp::sig::Vector>::onRead;
     virtual void onRead(yarp::sig::Vector &v)
     {
         now=Time::now();

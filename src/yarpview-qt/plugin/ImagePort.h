@@ -44,9 +44,12 @@ public:
     InputCallback();
     ~InputCallback();
     void setSignalHandler(SignalHandler*);
+
 #ifdef YARP_LITTLE_ENDIAN
+    using yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelBgra> >::onRead;
     void onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img);
 #else
+    using yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >::onRead;
     void onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img);
 #endif
  

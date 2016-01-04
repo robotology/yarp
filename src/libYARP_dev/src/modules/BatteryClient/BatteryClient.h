@@ -51,6 +51,7 @@ public:
 
     BatteryInputPortProcessor();
 
+    using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
     virtual void onRead(yarp::os::Bottle &v);
 
     inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);

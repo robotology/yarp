@@ -49,6 +49,7 @@ public:
     virtual void beginPacket();
     virtual void endPacket();
 
+    using yarp::os::InputStream::read;
     virtual YARP_SSIZE_T read(const yarp::os::Bytes& b);
 };
 

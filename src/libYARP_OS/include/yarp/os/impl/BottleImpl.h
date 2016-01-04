@@ -86,6 +86,7 @@ public:
     virtual bool readRaw(ConnectionReader& connection) = 0;
     virtual bool writeRaw(ConnectionWriter& connection) = 0;
 
+    using yarp::os::Searchable::check;
     virtual bool check(const yarp::os::ConstString& key) const;
 
     virtual yarp::os::Value& find(const yarp::os::ConstString& key) const;
