@@ -12,7 +12,6 @@
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
 
-#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/MemoryOutputStream.h>
 #include <yarp/os/impl/PlatformStdio.h>
