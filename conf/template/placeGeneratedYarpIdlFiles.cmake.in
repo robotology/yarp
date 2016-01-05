@@ -18,7 +18,7 @@ foreach(genFile ${index})
   if(${type} STREQUAL ".h")
     if(EXISTS @dir@/${genFile})
       configure_file("@dir@/${genFile}"
-                     "@output_dir@/include/${genFile}"
+                     "@output_dir@/include/${prefix}${genFile}"
                      COPYONLY)
       list(APPEND headers "include/${genFile}")
       list(REMOVE_DUPLICATES headers)
@@ -27,7 +27,7 @@ foreach(genFile ${index})
     endif()
     if(EXISTS @dir@/${main}Reply${type})
       configure_file("@dir@/${main}Reply${type}"
-                     "@output_dir@/include/${main}Reply${type}"
+                     "@output_dir@/include/${prefix}${main}Reply${type}"
                      COPYONLY)
       list(APPEND headers "include/${main}Reply${type}")
       list(REMOVE_DUPLICATES headers)
