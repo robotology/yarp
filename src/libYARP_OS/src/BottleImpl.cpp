@@ -12,6 +12,7 @@
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
 
+#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/MemoryOutputStream.h>
 #include <yarp/os/impl/PlatformStdio.h>
@@ -20,6 +21,7 @@
 
 #include <clocale>
 
+using yarp::os::impl::String;
 using yarp::os::impl::StoreInt;
 using yarp::os::impl::StoreVocab;
 using yarp::os::impl::StoreDouble;
@@ -30,6 +32,9 @@ using yarp::os::impl::StoreDict;
 using yarp::os::impl::StoreInt64;
 using yarp::os::impl::BottleImpl;
 using yarp::os::impl::Storable;
+using yarp::os::Bytes;
+using yarp::os::ConnectionReader;
+using yarp::os::ConnectionWriter;
 using yarp::os::Bottle;
 using yarp::os::ConstString;
 using yarp::os::Searchable;
