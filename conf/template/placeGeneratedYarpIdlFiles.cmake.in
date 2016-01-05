@@ -7,7 +7,7 @@ set(sources)
 
 set(prefix)
 set(include_prefix @include_prefix@)
-if (include_prefix AND "@family" STREQUAL "thrift")
+if (include_prefix AND "@family@" STREQUAL "thrift")
   set(prefix ${include_prefix}/)
 endif()
 
