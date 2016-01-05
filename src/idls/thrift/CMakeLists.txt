@@ -87,7 +87,10 @@ install(TARGETS yarpidl_thrift
 
 set_property(GLOBAL APPEND PROPERTY YARP_TOOLS yarpidl_thrift)
 
-option(TEST_yarpidl_thrift "Test thrift-based IDL" OFF)
+include (CMakeDependentOption)
+cmake_dependent_option(TEST_yarpidl_thrift "Test thrift-based IDL" OFF
+                       YARP_COMPILE_TESTS OFF)
+mark_as_advanced(TEST_yarpidl_thrift)
 if (TEST_yarpidl_thrift)
 add_subdirectory(tests)
 endif ()
