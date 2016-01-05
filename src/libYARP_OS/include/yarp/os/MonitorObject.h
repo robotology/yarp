@@ -56,7 +56,7 @@ public:
    
     /**
      * This will be called when one of the peer connections to the same import port receives data
-     * \Note this is available only if the portmonitor object attached to the input port
+     * @note this is available only if the portmonitor object attached to the input port
      */
     virtual void trig(void) { }
 
@@ -77,7 +77,7 @@ public:
      *
      * @param thing An instance of yarp::os::Thing object which can be used
      *        to typecast the data to the correct type. 
-     * @ return An instance of modified data in form of Thing
+     * @return An instance of modified data in form of Thing
      */
     virtual yarp::os::Things& update(yarp::os::Things& thing) { return thing; }
 
@@ -88,7 +88,7 @@ public:
      *
      * @param thing An instance of yarp::os::Thing object which can be used
      *        to typecast the data to the correct type.
-     * @ return An instance of modified data in form of Thing
+     * @return An instance of modified data in form of Thing
      */
     virtual yarp::os::Things& updateReply(yarp::os::Things& thing) { return thing; }
 };
