@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _MONITORBINDING_INC_
-#define _MONITORBINDING_INC_
+#ifndef MONITORBINDING_INC
+#define MONITORBINDING_INC
 
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Property.h>

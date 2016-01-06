@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CONNECTIONWRITER_
-#define _YARP2_CONNECTIONWRITER_
+#ifndef YARP2_CONNECTIONWRITER
+#define YARP2_CONNECTIONWRITER
 
 #include <yarp/os/ConstString.h>
 #include <yarp/conf/numeric.h>

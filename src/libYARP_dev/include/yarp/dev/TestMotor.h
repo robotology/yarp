@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP2_TESTMOTOR_
-#define _YARP2_TESTMOTOR_
+#ifndef YARP2_TESTMOTOR
+#define YARP2_TESTMOTOR
 
 #include <stdio.h>
 

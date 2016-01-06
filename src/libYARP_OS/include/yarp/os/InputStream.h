@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_INPUTSTREAM_
-#define _YARP2_INPUTSTREAM_
+#ifndef YARP2_INPUTSTREAM
+#define YARP2_INPUTSTREAM
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Bytes.h>

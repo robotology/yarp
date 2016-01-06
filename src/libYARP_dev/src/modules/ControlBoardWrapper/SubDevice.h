@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef __SUBDEVICE__
-#define __SUBDEVICE__
+#ifndef SUBDEVICE
+#define SUBDEVICE
 
 /*
 * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia

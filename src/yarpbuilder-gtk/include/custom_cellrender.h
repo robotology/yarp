@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef __CUSTOM_CELLRENDER__
-#define __CUSTOM_CELLRENDER__
+#ifndef CUSTOM_CELLRENDER
+#define CUSTOM_CELLRENDER
 
 
 #include <yarp/manager/ymm-types.h>
@@ -325,5 +325,5 @@ Gtk::CellEditable* CellRendererRouter::start_editing_vfunc(GdkEvent* event, Gtk:
 }
 
 
-#endif //__CUSTOM_CELLRENDER_
+#endif //CUSTOM_CELLRENDER
 

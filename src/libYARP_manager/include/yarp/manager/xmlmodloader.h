@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_XMLMODLOADER__
-#define __YARP_MANAGER_XMLMODLOADER__
+#ifndef YARP_MANAGER_XMLMODLOADER
+#define YARP_MANAGER_XMLMODLOADER
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/module.h>

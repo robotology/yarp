@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __MicrophoneDeviceDriverh__
-#define __MicrophoneDeviceDriverh__
+#ifndef MicrophoneDeviceDriverh
+#define MicrophoneDeviceDriverh
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>

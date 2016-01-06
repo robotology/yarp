@@ -11,8 +11,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_YMMDIR__
-#define __YARP_MANAGER_YMMDIR__
+#ifndef YARP_MANAGER_YMMDIR
+#define YARP_MANAGER_YMMDIR
 
 
 #if defined(WIN32)

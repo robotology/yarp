@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_TCPFACE_
-#define _YARP2_TCPFACE_
+#ifndef YARP2_TCPFACE
+#define YARP2_TCPFACE
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Face.h>

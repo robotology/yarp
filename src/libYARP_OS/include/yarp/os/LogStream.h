@@ -6,8 +6,8 @@
  */
 
 
-#ifndef _YARP2_LOGSTREAM_
-#define _YARP2_LOGSTREAM_
+#ifndef YARP2_LOGSTREAM
+#define YARP2_LOGSTREAM
 
 #include <iosfwd>
 #include <sstream>

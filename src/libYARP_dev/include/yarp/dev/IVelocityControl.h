@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPVELOCITYCONTROL__
-#define __YARPVELOCITYCONTROL__
+#ifndef YARPVELOCITYCONTROL
+#define YARPVELOCITYCONTROL
 
 namespace yarp {
     namespace dev {

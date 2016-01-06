@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PUBLISHER_
-#define _YARP2_PUBLISHER_
+#ifndef YARP2_PUBLISHER
+#define YARP2_PUBLISHER
 
 #include <yarp/os/Log.h>
 #include <yarp/os/AbstractContactable.h>

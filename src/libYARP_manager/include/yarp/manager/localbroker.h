@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_LOCALBROKER__
-#define __YARP_MANAGER_LOCALBROKER__
+#ifndef YARP_MANAGER_LOCALBROKER
+#define YARP_MANAGER_LOCALBROKER
 
 #include <cstdio>
 #include <string>

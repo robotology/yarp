@@ -6,8 +6,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef _YARP2_NETFLOAT64_
-#define _YARP2_NETFLOAT64_
+#ifndef YARP2_NETFLOAT64
+#define YARP2_NETFLOAT64
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/api.h>

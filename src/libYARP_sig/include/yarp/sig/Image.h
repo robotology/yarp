@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_IMAGE_
-#define _YARP2_IMAGE_
+#ifndef YARP2_IMAGE
+#define YARP2_IMAGE
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Portable.h>

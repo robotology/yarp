@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef __YARP__ROS__HELPER__
-#define __YARP__ROS__HELPER__
+#ifndef YARP__ROS__HELPER
+#define YARP__ROS__HELPER
 
 /*
  * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia

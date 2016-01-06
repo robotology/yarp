@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_RESOURCEFINDER_
-#define _YARP2_RESOURCEFINDER_
+#ifndef YARP2_RESOURCEFINDER
+#define YARP2_RESOURCEFINDER
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Searchable.h>

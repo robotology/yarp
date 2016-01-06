@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NAME_
-#define _YARP2_NAME_
+#ifndef YARP2_NAME
+#define YARP2_NAME
 
 #include <yarp/os/Contact.h>
 

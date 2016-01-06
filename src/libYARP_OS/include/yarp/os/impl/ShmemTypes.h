@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __SHMEM_TYPES_H__
-#define __SHMEM_TYPES_H__
+#ifndef SHMEM_TYPES_H
+#define SHMEM_TYPES_H
 
 #define SHMEM_DEFAULT_SIZE 4096
 

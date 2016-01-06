@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CONNECTION_
-#define _YARP2_CONNECTION_
+#ifndef YARP2_CONNECTION
+#define YARP2_CONNECTION
 
 #include <yarp/os/api.h>
 

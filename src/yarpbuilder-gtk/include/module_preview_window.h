@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _MODULE_PREVIEW_WINDOW_H_
-#define _MODULE_PREVIEW_WINDOW_H_
+#ifndef MODULE_PREVIEW_WINDOW_H
+#define MODULE_PREVIEW_WINDOW_H
 
 
 #if defined(WIN32)

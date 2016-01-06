@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NAMECLIENT_
-#define _YARP2_NAMECLIENT_
+#ifndef YARP2_NAMECLIENT
+#define YARP2_NAMECLIENT
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>

@@ -8,8 +8,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __FPSSTATS__
-#define __FPSSTATS__
+#ifndef FPSSTATS
+#define FPSSTATS
 
 #include <yarp/os/Time.h>
 

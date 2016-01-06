@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _ARROW_MODEL__
-#define _ARROW_MODEL__
+#ifndef ARROW_MODEL_
+#define ARROW_MODEL_
 
 #include <vector>
 #include <goocanvasmm.h>

@@ -10,8 +10,8 @@
 // *** THIS FILE IS CURRENTLY UNDER DEVELOPMENT / DEBUG ***
 // ********************************************************
 
-#ifndef __LASERHOKUYO_THREAD_H__
-#define __LASERHOKUYO_THREAD_H__
+#ifndef LASERHOKUYO_THREAD_H
+#define LASERHOKUYO_THREAD_H
 
 //#include <stdio.h>
 #include <string>

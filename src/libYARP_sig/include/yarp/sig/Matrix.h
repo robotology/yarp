@@ -11,8 +11,8 @@
 
 // $Id: Matrix.h,v 1.16 2008-10-27 19:00:32 natta Exp $ 
 
-#ifndef _YARP2_MATRIX_
-#define _YARP2_MATRIX_
+#ifndef YARP2_MATRIX
+#define YARP2_MATRIX
 
 #include <stdlib.h> //defines size_t
 #include <memory.h> //memset

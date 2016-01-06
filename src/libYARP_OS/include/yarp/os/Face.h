@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_FACE_
-#define _YARP2_FACE_
+#ifndef YARP2_FACE
+#define YARP2_FACE
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/InputProtocol.h>

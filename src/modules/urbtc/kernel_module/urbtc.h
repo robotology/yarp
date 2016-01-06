@@ -8,8 +8,8 @@
  */
 
 
-#ifndef __URBTC_H__
-#define __URBTC_H__
+#ifndef URBTC_H
+#define URBTC_H
 
 /* IOCTL用命令定義 */
 #define URBTC_GET_VENDOR 1

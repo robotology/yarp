@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_YARPPLUGINSELECTOR_
-#define _YARP2_YARPPLUGINSELECTOR_
+#ifndef YARP2_YARPPLUGINSELECTOR
+#define YARP2_YARPPLUGINSELECTOR
 
 #include <yarp/os/api.h>
 #include <yarp/os/Bottle.h>

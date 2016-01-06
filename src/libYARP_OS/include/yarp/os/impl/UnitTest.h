@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_UNITTEST_
-#define _YARP2_UNITTEST_
+#ifndef YARP2_UNITTEST
+#define YARP2_UNITTEST
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bottle.h>

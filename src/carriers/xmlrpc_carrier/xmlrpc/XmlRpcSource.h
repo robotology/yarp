@@ -1,6 +1,6 @@
 
-#ifndef _XMLRPCSOURCE_H_
-#define _XMLRPCSOURCE_H_
+#ifndef XMLRPCSOURCE_H
+#define XMLRPCSOURCE_H
 //
 // XmlRpc++ Copyright (c) 2002-2003 by Chris Morley
 //

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_ELECTION_
-#define _YARP2_ELECTION_
+#ifndef YARP2_ELECTION
+#define YARP2_ELECTION
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Semaphore.h>

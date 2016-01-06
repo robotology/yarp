@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPREMOTEVARIABLESIMPL__
-#define __YARPREMOTEVARIABLESIMPL__
+#ifndef YARPREMOTEVARIABLESIMPL
+#define YARPREMOTEVARIABLESIMPL
 
 #include <yarp/dev/IRemoteVariables.h>
 

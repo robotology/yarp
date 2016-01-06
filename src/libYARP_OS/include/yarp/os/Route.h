@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_ROUTE_
-#define _YARP2_ROUTE_
+#ifndef YARP2_ROUTE
+#define YARP2_ROUTE
 
 #include <yarp/os/api.h>
 #include <yarp/os/ConstString.h>

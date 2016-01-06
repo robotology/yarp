@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __TERMINATORH__
-#define __TERMINATORH__
+#ifndef TERMINATORH
+#define TERMINATORH
 
 // $Id: Terminator.h,v 1.11 2008-12-11 18:55:46 natta Exp $
 

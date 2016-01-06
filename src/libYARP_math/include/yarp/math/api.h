@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_math_API_
-#define _YARP2_math_API_
+#ifndef YARP2_math_API
+#define YARP2_math_API
 
 #include <yarp/conf/api.h>
 #ifndef YARP_math_API

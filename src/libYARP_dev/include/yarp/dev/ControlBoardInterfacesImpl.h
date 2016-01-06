@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __CONTROLBOARDIMPL__
-#define __CONTROLBOARDIMPL__
+#ifndef CONTROLBOARDIMPL
+#define CONTROLBOARDIMPL
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 

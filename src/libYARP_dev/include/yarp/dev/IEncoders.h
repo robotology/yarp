@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPIENCODERS__
-#define __YARPIENCODERS__
+#ifndef YARPIENCODERS
+#define YARPIENCODERS
 
 #include <yarp/os/Vocab.h>
 

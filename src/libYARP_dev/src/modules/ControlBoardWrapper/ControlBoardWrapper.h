@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef __CONTROLBOARDWRAPPER2__
-#define __CONTROLBOARDWRAPPER2__
+#ifndef CONTROLBOARDWRAPPER2
+#define CONTROLBOARDWRAPPER2
 
 /*
 * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia

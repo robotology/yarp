@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_DATA__
-#define __YARP_MANAGER_DATA__
+#ifndef YARP_MANAGER_DATA
+#define YARP_MANAGER_DATA
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/node.h>

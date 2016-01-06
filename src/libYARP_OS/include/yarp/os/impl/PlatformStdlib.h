@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PLATFORMSTDLIB_
-#define _YARP2_PLATFORMSTDLIB_
+#ifndef YARP2_PLATFORMSTDLIB
+#define YARP2_PLATFORMSTDLIB
 
 #include <yarp/conf/system.h>
 #ifdef YARP_HAS_ACE

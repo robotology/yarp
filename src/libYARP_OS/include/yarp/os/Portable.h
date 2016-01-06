@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_OS_PORTABLE_
-#define _YARP2_OS_PORTABLE_
+#ifndef YARP2_OS_PORTABLE
+#define YARP2_OS_PORTABLE
 
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>

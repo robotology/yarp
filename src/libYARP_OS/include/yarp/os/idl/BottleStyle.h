@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_BOTTLESTYLE_
-#define _YARP2_BOTTLESTYLE_
+#ifndef YARP2_BOTTLESTYLE
+#define YARP2_BOTTLESTYLE
 
 #include <yarp/os/idl/WirePortable.h>
 #include <yarp/os/idl/WireReader.h>

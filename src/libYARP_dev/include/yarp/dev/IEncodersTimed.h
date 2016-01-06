@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPIENCODERS_TIMED__
-#define __YARPIENCODERS_TIMED__
+#ifndef YARPIENCODERS_TIMED
+#define YARPIENCODERS_TIMED
 
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/api.h>

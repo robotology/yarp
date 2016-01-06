@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPIMOTORENCODERSIMPL__
-#define __YARPIMOTORENCODERSIMPL__
+#ifndef YARPIMOTORENCODERSIMPL
+#define YARPIMOTORENCODERSIMPL
 
 #include <yarp/dev/IMotorEncoders.h>
 

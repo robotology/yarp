@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP2_DEV_ALL__
-#define __YARP2_DEV_ALL__
+#ifndef YARP2_DEV_ALL
+#define YARP2_DEV_ALL
 
 #include<yarp/dev/AudioGrabberInterfaces.h>
 #include<yarp/dev/AudioVisualInterfaces.h>

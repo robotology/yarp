@@ -1,5 +1,5 @@
-#ifndef _XMLRPCUTIL_H_
-#define _XMLRPCUTIL_H_
+#ifndef XMLRPCUTIL_H
+#define XMLRPCUTIL_H
 //
 // XmlRpc++ Copyright (c) 2002-2003 by Chris Morley
 //

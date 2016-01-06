@@ -5,8 +5,8 @@
 *
 */
 
-#ifndef _RANGEFINDER2D_CLIENT_H_
-#define _RANGEFINDER2D_CLIENT_H_
+#ifndef RANGEFINDER2D_CLIENT_H
+#define RANGEFINDER2D_CLIENT_H
 
 
 #include <yarp/os/Network.h>

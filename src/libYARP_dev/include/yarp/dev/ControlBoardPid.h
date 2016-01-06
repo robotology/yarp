@@ -9,8 +9,8 @@
 
 #include <yarp/dev/api.h>
 
-#ifndef __YARPCONTROLBOARDPID__
-#define __YARPCONTROLBOARDPID__
+#ifndef YARPCONTROLBOARDPID
+#define YARPCONTROLBOARDPID
 
 /*!
  * \file ControlBoardPid.h define control board standard interfaces

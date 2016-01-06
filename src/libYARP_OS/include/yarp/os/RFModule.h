@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __YARP2_RFMODULE__
-#define __YARP2_RFMODULE__
+#ifndef YARP2_RFMODULE
+#define YARP2_RFMODULE
 
 /*
 * Author: Lorenzo Natale.

@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _MAIN_WINDOW_
-#define _MAIN_WINDOW_
+#ifndef MAIN_WINDOW
+#define MAIN_WINDOW
 
 #include <gtkmm.h>
 #include <yarp/os/Network.h>

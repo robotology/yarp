@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __SHMEM_INPUT_STREAM_IMPL__
-#define __SHMEM_INPUT_STREAM_IMPL__
+#ifndef SHMEM_INPUT_STREAM_IMPL
+#define SHMEM_INPUT_STREAM_IMPL
 
 #include <ace/config.h>
 #include <ace/Mutex.h>

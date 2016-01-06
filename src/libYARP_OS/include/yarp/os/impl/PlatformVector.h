@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PLATFORMVECTOR_
-#define _YARP2_PLATFORMVECTOR_
+#ifndef YARP2_PLATFORMVECTOR
+#define YARP2_PLATFORMVECTOR
 
 #include <yarp/conf/system.h>
 #ifndef YARP_USE_STL

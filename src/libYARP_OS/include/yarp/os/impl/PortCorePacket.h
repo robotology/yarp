@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTCOREPACKET_
-#define _YARP2_PORTCOREPACKET_
+#ifndef YARP2_PORTCOREPACKET
+#define YARP2_PORTCOREPACKET
 
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/NetType.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_LOGGER_
-#define _YARP2_LOGGER_
+#ifndef YARP2_LOGGER
+#define YARP2_LOGGER
 
 #include <stdio.h>
 #include <yarp/conf/api.h>

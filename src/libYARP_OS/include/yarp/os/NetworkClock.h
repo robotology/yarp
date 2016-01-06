@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NETWORKCLOCK_
-#define _YARP2_NETWORKCLOCK_
+#ifndef YARP2_NETWORKCLOCK
+#define YARP2_NETWORKCLOCK
 
 #include <yarp/os/Clock.h>
 #include <yarp/os/BufferedPort.h>

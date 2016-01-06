@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_WIREVOCAB_
-#define _YARP2_WIREVOCAB_
+#ifndef YARP2_WIREVOCAB
+#define YARP2_WIREVOCAB
 
 #include <yarp/os/api.h>
 

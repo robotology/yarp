@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _EXTPORT_MODEL__
-#define _EXTPORT_MODEL__
+#ifndef EXTPORT_MODEL_
+#define EXTPORT_MODEL_
 
 #include <vector>
 #include <goocanvasmm.h>

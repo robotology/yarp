@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_ARBITRATOR__
-#define __YARP_MANAGER_ARBITRATOR__
+#ifndef YARP_MANAGER_ARBITRATOR
+#define YARP_MANAGER_ARBITRATOR
 
 #include <map>
 #include <vector>

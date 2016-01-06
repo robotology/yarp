@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPCONTROLBOARDINTERFACES__
-#define __YARPCONTROLBOARDINTERFACES__
+#ifndef YARPCONTROLBOARDINTERFACES
+#define YARPCONTROLBOARDINTERFACES
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardPid.h>

@@ -14,8 +14,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __IMGPORT__
-#define __IMGPORT__
+#ifndef IMGPORT
+#define IMGPORT
 
 #include <yarp/sig/Image.h>
 #include <yarp/os/BufferedPort.h>

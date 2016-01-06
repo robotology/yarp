@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _STDOUTWINDOW_H_
-#define _STDOUTWINDOW_H_
+#ifndef STDOUTWINDOW_H
+#define STDOUTWINDOW_H
 
 #include <gtkmm.h>
 

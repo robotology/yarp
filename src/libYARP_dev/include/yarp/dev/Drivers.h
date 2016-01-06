@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP2_DRIVERS__
-#define __YARP2_DRIVERS__
+#ifndef YARP2_DRIVERS
+#define YARP2_DRIVERS
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>

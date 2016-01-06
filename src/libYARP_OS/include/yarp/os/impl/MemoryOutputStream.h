@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef _YARP2_MEMORYOUTPUTSTREAM_
-#define _YARP2_MEMORYOUTPUTSTREAM_
+#ifndef YARP2_MEMORYOUTPUTSTREAM
+#define YARP2_MEMORYOUTPUTSTREAM
 
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Bytes.h>

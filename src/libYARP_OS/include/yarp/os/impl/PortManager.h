@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTMANAGER_
-#define _YARP2_PORTMANAGER_
+#ifndef YARP2_PORTMANAGER
+#define YARP2_PORTMANAGER
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/OutputStream.h>

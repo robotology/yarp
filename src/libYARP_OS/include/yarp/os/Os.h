@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#ifndef __YARPOSH__
-#define __YARPOSH__
+#ifndef YARPOSH
+#define YARPOSH
 
 #include <yarp/os/api.h>
 

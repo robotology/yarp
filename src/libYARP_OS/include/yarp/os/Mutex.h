@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_MUTEX_
-#define _YARP2_MUTEX_
+#ifndef YARP2_MUTEX
+#define YARP2_MUTEX
 
 #include <yarp/os/api.h>
 

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPREMOTEVARIABLES__
-#define __YARPREMOTEVARIABLES__
+#ifndef YARPREMOTEVARIABLES
+#define YARPREMOTEVARIABLES
 
 #include <yarp/os/Vocab.h>
 

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_EVENT_
-#define _YARP2_EVENT_
+#ifndef YARP2_EVENT
+#define YARP2_EVENT
 
 #include <yarp/os/api.h>
 

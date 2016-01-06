@@ -6,8 +6,8 @@
  * author Alessandro Scalzo alessandro.scalzo@iit.it
  */
 
-#ifndef __YARPRUN_RUN_CHECKPOINTS__
-#define __YARPRUN_RUN_CHECKPOINTS__
+#ifndef YARPRUN_RUN_CHECKPOINTS
+#define YARPRUN_RUN_CHECKPOINTS
 
 #include <string>
 #include <list>

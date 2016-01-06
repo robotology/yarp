@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_TCPCARRIER_
-#define _YARP2_TCPCARRIER_
+#ifndef YARP2_TCPCARRIER
+#define YARP2_TCPCARRIER
 
 #include <yarp/os/AbstractCarrier.h>
 

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_LOCKGUARD_
-#define _YARP2_LOCKGUARD_
+#ifndef YARP2_LOCKGUARD
+#define YARP2_LOCKGUARD
 
 #include <yarp/os/api.h>
 

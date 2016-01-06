@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTREPORT_
-#define _YARP2_PORTREPORT_
+#ifndef YARP2_PORTREPORT
+#define YARP2_PORTREPORT
 
 #include <yarp/os/api.h>
 

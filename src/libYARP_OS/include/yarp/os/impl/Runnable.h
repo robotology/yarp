@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_RUNNABLE_
-#define _YARP2_RUNNABLE_
+#ifndef YARP2_RUNNABLE
+#define YARP2_RUNNABLE
 
 #include <yarp/os/Runnable.h>
 

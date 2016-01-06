@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPBATTERYINTERFACE__
-#define __YARPBATTERYINTERFACE__
+#ifndef YARPBATTERYINTERFACE
+#define YARPBATTERYINTERFACE
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>

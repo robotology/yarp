@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_CONTROL_MODE_INTERFACE__
-#define __YARP_CONTROL_MODE_INTERFACE__
+#ifndef YARP_CONTROL_MODE_INTERFACE
+#define YARP_CONTROL_MODE_INTERFACE
 
 namespace yarp {
     namespace dev {

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_OPEN_LOOP_IMPL__
-#define __YARP_OPEN_LOOP_IMPL__
+#ifndef YARP_OPEN_LOOP_IMPL
+#define YARP_OPEN_LOOP_IMPL
 
 #include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/api.h>

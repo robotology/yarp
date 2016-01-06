@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_APPLICATION__
-#define __YARP_MANAGER_APPLICATION__
+#ifndef YARP_MANAGER_APPLICATION
+#define YARP_MANAGER_APPLICATION
 
 #include <map>
 

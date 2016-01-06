@@ -26,8 +26,8 @@
  * Part of the work is initially from Sven Magg, 2009
  */
 
-#ifndef __DynamixelAX12Driverh__
-#define __DynamixelAX12Driverh__
+#ifndef DynamixelAX12Driverh
+#define DynamixelAX12Driverh
 
 //#define __DEBUG__
 

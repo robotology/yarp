@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP2_MODULE__
-#define __YARP2_MODULE__
+#ifndef YARP2_MODULE
+#define YARP2_MODULE
 
 
 #ifndef YARP_NO_DEPRECATED

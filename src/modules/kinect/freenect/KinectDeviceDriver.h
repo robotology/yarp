@@ -8,8 +8,8 @@
  * before it works. If launched too early, garbled images may result.
  */
 
-#ifndef _KINECTDEVICEDRIVER_H_
-#define _KINECTDEVICEDRIVER_H_
+#ifndef KINECTDEVICEDRIVER_H
+#define KINECTDEVICEDRIVER_H
 
 #include <memory.h>
 #include <libusb.h>

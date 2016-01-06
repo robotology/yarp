@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_WIRE_
-#define _YARP2_WIRE_
+#ifndef YARP2_WIRE
+#define YARP2_WIRE
 
 #include <yarp/os/WireLink.h>
 

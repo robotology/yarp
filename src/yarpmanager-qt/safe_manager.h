@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _SAFE_MANAGER_H_
-#define _SAFE_MANAGER_H_
+#ifndef SAFE_MANAGER_H
+#define SAFE_MANAGER_H
 
 
 #include <yarp/os/Thread.h>

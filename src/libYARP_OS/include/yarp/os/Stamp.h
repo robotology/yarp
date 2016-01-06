@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_STAMP_
-#define _YARP2_STAMP_
+#ifndef YARP2_STAMP
+#define YARP2_STAMP
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP_MPIBCASTCARRIER_
-#define _YARP_MPIBCASTCARRIER_
+#ifndef YARP_MPIBCASTCARRIER
+#define YARP_MPIBCASTCARRIER
 
 #include <yarp/os/MpiCarrier.h>
 #include <yarp/os/MpiBcastStream.h>

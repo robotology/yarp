@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_LOCALCARRIER_
-#define _YARP2_LOCALCARRIER_
+#ifndef YARP2_LOCALCARRIER
+#define YARP2_LOCALCARRIER
 
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/SocketTwoWayStream.h>

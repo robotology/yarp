@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_MODIFYINGCARRIER_
-#define _YARP2_MODIFYINGCARRIER_
+#ifndef YARP2_MODIFYINGCARRIER
+#define YARP2_MODIFYINGCARRIER
 
 #include <yarp/os/AbstractCarrier.h>
 

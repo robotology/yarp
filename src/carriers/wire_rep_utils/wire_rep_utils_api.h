@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_wire_rep_utils_api_API_
-#define _YARP2_wire_rep_utils_api_API_
+#ifndef YARP2_wire_rep_utils_api_API
+#define YARP2_wire_rep_utils_api_API
 
 #include <yarp/conf/api.h>
 

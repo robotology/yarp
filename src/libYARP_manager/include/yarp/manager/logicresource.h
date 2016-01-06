@@ -8,8 +8,8 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __YARP_MANAGER_LOGICRESOURCE__
-#define __YARP_MANAGER_LOGICRESOURCE__
+#ifndef YARP_MANAGER_LOGICRESOURCE
+#define YARP_MANAGER_LOGICRESOURCE
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/node.h>

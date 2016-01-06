@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PLATFORMLIST_
-#define _YARP2_PLATFORMLIST_
+#ifndef YARP2_PLATFORMLIST
+#define YARP2_PLATFORMLIST
 
 #include <yarp/conf/system.h>
 #ifndef YARP_USE_STL

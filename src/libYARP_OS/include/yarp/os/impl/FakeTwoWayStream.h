@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_FAKETWOWAYSTREAM_
-#define _YARP2_FAKETWOWAYSTREAM_
+#ifndef YARP2_FAKETWOWAYSTREAM
+#define YARP2_FAKETWOWAYSTREAM
 
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/StringInputStream.h>

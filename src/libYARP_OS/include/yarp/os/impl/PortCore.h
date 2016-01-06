@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTCORE_
-#define _YARP2_PORTCORE_
+#ifndef YARP2_PORTCORE
+#define YARP2_PORTCORE
 
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/SemaphoreImpl.h>

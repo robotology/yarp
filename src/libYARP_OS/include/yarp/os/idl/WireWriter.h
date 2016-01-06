@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_WIREWRITER_
-#define _YARP2_WIREWRITER_
+#ifndef YARP2_WIREWRITER
+#define YARP2_WIREWRITER
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/api.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PLATFORMSIZE_
-#define _YARP2_PLATFORMSIZE_
+#ifndef YARP2_PLATFORMSIZE
+#define YARP2_PLATFORMSIZE
 
 // We may use ssize_t in YARP internals, not in public API.
 // In public API, YARP_SSIZE_T is now available via yarp/conf/numeric.h

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_MESSAGESTACK_
-#define _YARP2_MESSAGESTACK_
+#ifndef YARP2_MESSAGESTACK
+#define YARP2_MESSAGESTACK
 
 #include <yarp/os/Portable.h>
 

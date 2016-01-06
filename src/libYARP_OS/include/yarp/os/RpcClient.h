@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_RPCCLIENT_
-#define _YARP2_RPCCLIENT_
+#ifndef YARP2_RPCCLIENT
+#define YARP2_RPCCLIENT
 
 #include <yarp/os/AbstractContactable.h>
 

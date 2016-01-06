@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NETWORK_
-#define _YARP2_NETWORK_
+#ifndef YARP2_NETWORK
+#define YARP2_NETWORK
 
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Contact.h>

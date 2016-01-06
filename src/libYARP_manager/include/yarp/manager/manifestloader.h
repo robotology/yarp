@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_MANIFESTLOADER__
-#define __YARP_MANAGER_MANIFESTLOADER__
+#ifndef YARP_MANAGER_MANIFESTLOADER
+#define YARP_MANAGER_MANIFESTLOADER
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/module.h>

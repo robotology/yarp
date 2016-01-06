@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_BINPORTABLE_
-#define _YARP2_BINPORTABLE_
+#ifndef YARP2_BINPORTABLE
+#define YARP2_BINPORTABLE
 
 #include <yarp/os/Portable.h>
 

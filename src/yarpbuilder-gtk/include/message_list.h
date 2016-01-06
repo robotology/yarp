@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _MESSAGESLIST_H_
-#define _MESSAGESLIST_H_
+#ifndef MESSAGESLIST_H
+#define MESSAGESLIST_H
 
 #include <gtkmm.h>
 

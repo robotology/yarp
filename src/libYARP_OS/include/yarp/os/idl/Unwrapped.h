@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_UNWRAPPED_
-#define _YARP2_UNWRAPPED_
+#ifndef YARP2_UNWRAPPED
+#define YARP2_UNWRAPPED
 
 #include <yarp/os/idl/WirePortable.h>
 #include <yarp/os/idl/WireReader.h>

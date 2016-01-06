@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _MONITOR_SHAREDLIB_INC_
-#define _MONITOR_SHAREDLIB_INC_
+#ifndef MONITOR_SHAREDLIB_INC
+#define MONITOR_SHAREDLIB_INC
 
 #include <string>
 #include <yarp/os/ConstString.h>

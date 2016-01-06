@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CARRIERS_
-#define _YARP2_CARRIERS_
+#ifndef YARP2_CARRIERS
+#define YARP2_CARRIERS
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>

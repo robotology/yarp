@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PROPERTY_
-#define _YARP2_PROPERTY_
+#ifndef YARP2_PROPERTY
+#define YARP2_PROPERTY
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Bottle.h>

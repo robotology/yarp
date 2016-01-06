@@ -6,8 +6,8 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#ifndef __YARPCARTESIANCONTROLINTERFACES__
-#define __YARPCARTESIANCONTROLINTERFACES__
+#ifndef YARPCARTESIANCONTROLINTERFACES
+#define YARPCARTESIANCONTROLINTERFACES
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Stamp.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP2_FRAME_GRABBER__
-#define __YARP2_FRAME_GRABBER__
+#ifndef YARP2_FRAME_GRABBER
+#define YARP2_FRAME_GRABBER
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Image.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTCOMMAND_
-#define _YARP2_PORTCOMMAND_
+#ifndef YARP2_PORTCOMMAND
+#define YARP2_PORTCOMMAND
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConnectionReader.h>

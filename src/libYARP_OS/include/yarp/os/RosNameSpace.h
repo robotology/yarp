@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_ROSNAMESPACE_
-#define _YARP2_ROSNAMESPACE_
+#ifndef YARP2_ROSNAMESPACE
+#define YARP2_ROSNAMESPACE
 
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/Network.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_name_ALL_
-#define _YARP2_name_ALL_
+#ifndef YARP2_name_ALL
+#define YARP2_name_ALL
 
 #include <yarp/name/NameService.h>
 #include <yarp/name/NameServerConnectionHandler.h>

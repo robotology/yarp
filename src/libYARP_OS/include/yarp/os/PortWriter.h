@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTWRITER_
-#define _YARP2_PORTWRITER_
+#ifndef YARP2_PORTWRITER
+#define YARP2_PORTWRITER
 
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Type.h>

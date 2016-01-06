@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP2_VOCAB_
-#define _YARP2_VOCAB_
+#ifndef YARP2_VOCAB
+#define YARP2_VOCAB
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/ConstString.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SHAREDLIBRARYCLASS_
-#define _YARP2_SHAREDLIBRARYCLASS_
+#ifndef YARP2_SHAREDLIBRARYCLASS
+#define YARP2_SHAREDLIBRARYCLASS
 
 #include <yarp/os/SharedLibraryClassFactory.h>
 #include <yarp/os/Network.h>

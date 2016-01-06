@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_MANAGER__
-#define __YARP_MANAGER_MANAGER__
+#ifndef YARP_MANAGER_MANAGER
+#define YARP_MANAGER_MANAGER
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/kbase.h>

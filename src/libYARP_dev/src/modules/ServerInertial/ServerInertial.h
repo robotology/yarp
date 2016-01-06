@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP2_SERVERINERTIAL_
-#define _YARP2_SERVERINERTIAL_
+#ifndef YARP2_SERVERINERTIAL
+#define YARP2_SERVERINERTIAL
 
 #include <stdio.h>
 

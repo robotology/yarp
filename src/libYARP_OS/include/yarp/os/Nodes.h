@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NODES_
-#define _YARP2_NODES_
+#ifndef YARP2_NODES
+#define YARP2_NODES
 
 #include <yarp/os/Contactables.h>
 

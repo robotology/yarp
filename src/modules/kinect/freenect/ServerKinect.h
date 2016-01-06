@@ -14,8 +14,8 @@
  *                 (Default: 0)
  */
 
-#ifndef _SERVERKINECT_H_
-#define _SERVERKINECT_H_
+#ifndef SERVERKINECT_H
+#define SERVERKINECT_H
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Time.h>

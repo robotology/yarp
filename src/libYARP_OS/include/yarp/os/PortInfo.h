@@ -6,8 +6,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef _YARP2_PORTINFO_
-#define _YARP2_PORTINFO_
+#ifndef YARP2_PORTINFO
+#define YARP2_PORTINFO
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Vocab.h>

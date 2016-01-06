@@ -5,8 +5,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef _RANGEFINDER2D_SERVER_H_
-#define _RANGEFINDER2D_SERVER_H_
+#ifndef RANGEFINDER2D_SERVER_H
+#define RANGEFINDER2D_SERVER_H
 
  //#include <list>
 #include <vector>

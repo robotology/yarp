@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_YARPPLUGINSETTINGS_
-#define _YARP2_YARPPLUGINSETTINGS_
+#ifndef YARP2_YARPPLUGINSETTINGS
+#define YARP2_YARPPLUGINSETTINGS
 
 #include <yarp/os/YarpPluginSelector.h>
 #include <yarp/os/SharedLibraryClass.h>

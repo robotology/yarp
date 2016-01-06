@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef __SerialDeviceDriverh__
-#define __SerialDeviceDriverh__
+#ifndef SerialDeviceDriverh
+#define SerialDeviceDriverh
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/SerialInterfaces.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP2_DEVICEDRIVER__
-#define __YARP2_DEVICEDRIVER__
+#ifndef YARP2_DEVICEDRIVER
+#define YARP2_DEVICEDRIVER
 
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>

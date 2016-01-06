@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_Exec_State__
-#define __YARP_MANAGER_Exec_State__
+#ifndef YARP_MANAGER_Exec_State
+#define YARP_MANAGER_Exec_State
 
 #include <yarp/manager/fsm.h>
 

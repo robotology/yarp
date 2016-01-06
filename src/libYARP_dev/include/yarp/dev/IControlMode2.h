@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_CONTROL_MODE2_INTERFACE__
-#define __YARP_CONTROL_MODE2_INTERFACE__
+#ifndef YARP_CONTROL_MODE2_INTERFACE
+#define YARP_CONTROL_MODE2_INTERFACE
 
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/api.h>

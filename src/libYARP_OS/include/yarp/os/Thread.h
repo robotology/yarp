@@ -9,8 +9,8 @@
 
 // initThread/releaseThread methods, synchronization on init failure/success -nat
 
-#ifndef _YARP2_THREAD_
-#define _YARP2_THREAD_
+#ifndef YARP2_THREAD
+#define YARP2_THREAD
 
 #include <yarp/os/api.h>
 

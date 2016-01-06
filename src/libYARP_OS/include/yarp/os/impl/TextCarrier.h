@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_TEXTCARRIER_
-#define _YARP2_TEXTCARRIER_
+#ifndef YARP2_TEXTCARRIER
+#define YARP2_TEXTCARRIER
 
 #include <yarp/os/impl/TcpCarrier.h>
 

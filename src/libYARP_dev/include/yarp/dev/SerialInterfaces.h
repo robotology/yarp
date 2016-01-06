@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef __YARPSERIALINTERFACES__
-#define __YARPSERIALINTERFACES__
+#ifndef YARPSERIALINTERFACES
+#define YARPSERIALINTERFACES
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>

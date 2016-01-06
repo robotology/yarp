@@ -7,8 +7,8 @@
  */
 
 
-#ifndef __YARPP_DIRECTOSITION_INTERFACE__
-#define __YARPP_DIRECTOSITION_INTERFACE__
+#ifndef YARPP_DIRECTOSITION_INTERFACE
+#define YARPP_DIRECTOSITION_INTERFACE
 
 namespace yarp {
     namespace dev {

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _RESOURCE_WINDOW_H_
-#define _RESOURCE_WINDOW_H_
+#ifndef RESOURCE_WINDOW_H
+#define RESOURCE_WINDOW_H
 
 #include <gtkmm.h>
 #include <yarp/manager/primresource.h>

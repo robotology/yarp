@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_TYPE_
-#define _YARP2_TYPE_
+#ifndef YARP2_TYPE
+#define YARP2_TYPE
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Searchable.h>

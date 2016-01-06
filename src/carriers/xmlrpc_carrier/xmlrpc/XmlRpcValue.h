@@ -5,8 +5,8 @@
 // Copyright: 2002, 2003 Chris Morley
 // CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-#ifndef _XMLRPCVALUE_H_
-#define _XMLRPCVALUE_H_
+#ifndef XMLRPCVALUE_H
+#define XMLRPCVALUE_H
 
 
 #if defined(_MSC_VER)

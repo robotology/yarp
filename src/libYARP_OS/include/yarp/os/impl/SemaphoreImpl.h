@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SEMAPHOREIMPL_
-#define _YARP2_SEMAPHOREIMPL_
+#ifndef YARP2_SEMAPHOREIMPL
+#define YARP2_SEMAPHOREIMPL
 
 
 // Pre-declare semaphore

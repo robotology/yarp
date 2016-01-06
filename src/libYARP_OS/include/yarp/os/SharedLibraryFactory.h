@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_YARPSHAREDLIBRARYFACTORY_
-#define _YARP2_YARPSHAREDLIBRARYFACTORY_
+#ifndef YARP2_YARPSHAREDLIBRARYFACTORY
+#define YARP2_YARPSHAREDLIBRARYFACTORY
 
 #include <yarp/os/api.h>
 #include <yarp/os/Vocab.h>

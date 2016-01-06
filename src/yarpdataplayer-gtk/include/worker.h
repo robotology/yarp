@@ -15,8 +15,8 @@
  * Public License for more details
 */
 
-#ifndef __WORKER_H__
-#define __WORKER_H__
+#ifndef WORKER_H
+#define WORKER_H
 
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>

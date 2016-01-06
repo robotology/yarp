@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPOPENLOOP__
-#define __YARPOPENLOOP__
+#ifndef YARPOPENLOOP
+#define YARPOPENLOOP
 
 #include <yarp/dev/api.h>
 

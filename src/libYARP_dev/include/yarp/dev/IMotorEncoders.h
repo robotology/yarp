@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPIMOTORENCODERS__
-#define __YARPIMOTORENCODERS__
+#ifndef YARPIMOTORENCODERS
+#define YARPIMOTORENCODERS
 
 #include <yarp/os/Vocab.h>
 

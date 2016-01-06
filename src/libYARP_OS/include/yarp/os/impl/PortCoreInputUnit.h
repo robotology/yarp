@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTCOREINPUTUNIT_
-#define _YARP2_PORTCOREINPUTUNIT_
+#ifndef YARP2_PORTCOREINPUTUNIT
+#define YARP2_PORTCOREINPUTUNIT
 
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>

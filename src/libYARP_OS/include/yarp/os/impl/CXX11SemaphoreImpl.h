@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CXX11SEMAPHOREIMPL_
-#define _YARP2_CXX11SEMAPHOREIMPL_
+#ifndef YARP2_CXX11SEMAPHOREIMPL
+#define YARP2_CXX11SEMAPHOREIMPL
 
 #include <mutex>
 #include <condition_variable>

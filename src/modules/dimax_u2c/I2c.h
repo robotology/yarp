@@ -14,8 +14,8 @@
 // GNU General Public License for more details.
 
 //#pragma once
-#ifndef __I2C_H__
-#define __I2C_H__
+#ifndef I2C_H
+#define I2C_H
 #include "i2cbridge.h"
 
 

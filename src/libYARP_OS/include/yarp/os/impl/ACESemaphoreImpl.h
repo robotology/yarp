@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_ACESEMAPHOREIMPL_
-#define _YARP2_ACESEMAPHOREIMPL_
+#ifndef YARP2_ACESEMAPHOREIMPL
+#define YARP2_ACESEMAPHOREIMPL
 
 #include <ace/Synch.h>
 

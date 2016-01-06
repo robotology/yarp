@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTREADER_
-#define _YARP2_PORTREADER_
+#ifndef YARP2_PORTREADER
+#define YARP2_PORTREADER
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ConnectionReader.h>

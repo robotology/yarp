@@ -9,8 +9,8 @@
 
 //added threadInit/threadRelease functions, and synchronization -nat
 
-#ifndef _YARP2_THREADIMPL_
-#define _YARP2_THREADIMPL_
+#ifndef YARP2_THREADIMPL
+#define YARP2_THREADIMPL
 
 #include <yarp/os/impl/Runnable.h>
 #include <yarp/os/impl/SemaphoreImpl.h>

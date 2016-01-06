@@ -1,6 +1,6 @@
 
-#ifndef _XMLRPCEXCEPTION_H_
-#define _XMLRPCEXCEPTION_H_
+#ifndef XMLRPCEXCEPTION_H
+#define XMLRPCEXCEPTION_H
 //
 // XmlRpc++ Copyright (c) 2002-2003 by Chris Morley
 // Summary for YARP:

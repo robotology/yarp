@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORT_
-#define _YARP2_PORT_
+#ifndef YARP2_PORT
+#define YARP2_PORT
 
 #include <yarp/os/api.h>
 #include <yarp/os/Portable.h>

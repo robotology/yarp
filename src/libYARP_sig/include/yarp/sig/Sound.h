@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SOUND_
-#define _YARP2_SOUND_
+#ifndef YARP2_SOUND
+#define YARP2_SOUND
 
 #include <yarp/os/Portable.h>
 

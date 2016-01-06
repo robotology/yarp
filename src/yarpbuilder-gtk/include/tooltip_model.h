@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _TOOLTIP_MODEL__
-#define _TOOLTIP_MODEL__
+#ifndef TOOLTIP_MODEL
+#define TOOLTIP_MODEL
 
 
 #include <string>

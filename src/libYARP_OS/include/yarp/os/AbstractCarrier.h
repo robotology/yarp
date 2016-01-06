@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_ABSTRACTCARRIER_
-#define _YARP2_ABSTRACTCARRIER_
+#ifndef YARP2_ABSTRACTCARRIER
+#define YARP2_ABSTRACTCARRIER
 
 #include <yarp/os/Carrier.h>
 #include <yarp/os/NetType.h>

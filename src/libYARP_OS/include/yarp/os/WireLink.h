@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_WIRELINK_
-#define _YARP2_WIRELINK_
+#ifndef YARP2_WIRELINK
+#define YARP2_WIRELINK
 
 #include <yarp/os/Port.h>
 #include <yarp/os/ContactStyle.h>

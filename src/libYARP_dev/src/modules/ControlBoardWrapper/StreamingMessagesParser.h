@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef __STREAMING_MESSAGES_PARSER__
-#define __STREAMING_MESSAGES_PARSER__
+#ifndef STREAMING_MESSAGES_PARSER
+#define STREAMING_MESSAGES_PARSER
 
 /*
 * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia

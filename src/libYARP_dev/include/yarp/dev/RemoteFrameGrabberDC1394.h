@@ -9,8 +9,8 @@
 */
 
 
-#ifndef _YARP2_REMOTEFRAMEGRABBERDC1394_
-#define _YARP2_REMOTEFRAMEGRABBERDC1394_
+#ifndef YARP2_REMOTEFRAMEGRABBERDC1394
+#define YARP2_REMOTEFRAMEGRABBERDC1394
 
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/os/Network.h>

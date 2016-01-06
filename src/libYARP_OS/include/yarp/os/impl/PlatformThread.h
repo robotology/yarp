@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PLATFORMTHREAD_
-#define _YARP2_PLATFORMTHREAD_
+#ifndef YARP2_PLATFORMTHREAD
+#define YARP2_PLATFORMTHREAD
 
 #include <yarp/conf/system.h>
 #ifdef YARP_HAS_CXX11

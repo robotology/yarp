@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_BINEXPARSER__
-#define __YARP_MANAGER_BINEXPARSER__
+#ifndef YARP_MANAGER_BINEXPARSER
+#define YARP_MANAGER_BINEXPARSER
 
 #include <string>
 #include <cstdio>

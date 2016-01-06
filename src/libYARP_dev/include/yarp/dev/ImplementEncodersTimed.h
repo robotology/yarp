@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPIENCODERSTIMEDIMPL__
-#define __YARPIENCODERSTIMEDIMPL__
+#ifndef YARPIENCODERSTIMEDIMPL
+#define YARPIENCODERSTIMEDIMPL
 
 #include <yarp/dev/IEncodersTimed.h>
 

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_TIME_
-#define _YARP2_TIME_
+#ifndef YARP2_TIME
+#define YARP2_TIME
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Clock.h>

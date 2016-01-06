@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef __RPC_MESSAGES_PARSER__
-#define __RPC_MESSAGES_PARSER__
+#ifndef RPC_MESSAGES_PARSER
+#define RPC_MESSAGES_PARSER
 
 /*
 * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia

@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_XMLAPPSAVER__
-#define __YARP_MANAGER_XMLAPPSAVER__
+#ifndef YARP_MANAGER_XMLAPPSAVER
+#define YARP_MANAGER_XMLAPPSAVER
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>

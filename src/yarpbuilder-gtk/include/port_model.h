@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _PORT_MODEL__
-#define _PORT_MODEL__
+#ifndef PORT_MODEL
+#define PORT_MODEL
 
 #include <vector>
 #include <goocanvasmm.h>

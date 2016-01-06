@@ -14,8 +14,8 @@
 // This is part of an experiment to unify some APIs with the player project
 
 
-#ifndef __YARP2_YDR__
-#define __YARP2_YDR__
+#ifndef YARP2_YDR
+#define YARP2_YDR
 
 #ifdef __cplusplus
 extern "C" {

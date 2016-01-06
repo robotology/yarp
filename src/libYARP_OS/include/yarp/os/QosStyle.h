@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_QOSSTYLE_
-#define _YARP2_QOSSTYLE_
+#ifndef YARP2_QOSSTYLE
+#define YARP2_QOSSTYLE
 
 #include <yarp/os/api.h>
 

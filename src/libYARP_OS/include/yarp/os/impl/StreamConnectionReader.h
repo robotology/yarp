@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_STREAMBLOCKREADER_
-#define _YARP2_STREAMBLOCKREADER_
+#ifndef YARP2_STREAMBLOCKREADER
+#define YARP2_STREAMBLOCKREADER
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/TwoWayStream.h>

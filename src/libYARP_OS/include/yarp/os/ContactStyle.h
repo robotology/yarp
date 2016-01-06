@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CONTACTSTYLE_
-#define _YARP2_CONTACTSTYLE_
+#ifndef YARP2_CONTACTSTYLE
+#define YARP2_CONTACTSTYLE
 
 #include <yarp/os/ConstString.h>
 

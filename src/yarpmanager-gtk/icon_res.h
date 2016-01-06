@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _ICON_RES_
-#define _ICON_RES_
+#ifndef ICON_RES
+#define ICON_RES
 
 #include <gtkmm.h>
 

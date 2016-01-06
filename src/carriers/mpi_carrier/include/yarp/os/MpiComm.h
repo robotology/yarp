@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP_MPICOMM_
-#define _YARP_MPICOMM_
+#ifndef YARP_MPICOMM
+#define YARP_MPICOMM
 
 #include <yarp/os/all.h>
 

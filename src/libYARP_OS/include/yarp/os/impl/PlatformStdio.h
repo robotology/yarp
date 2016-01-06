@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PLATFORMSTDIO_
-#define _YARP2_PLATFORMSTDIO_
+#ifndef YARP2_PLATFORMSTDIO
+#define YARP2_PLATFORMSTDIO
 
 #include <yarp/conf/system.h>
 #ifdef YARP_HAS_ACE

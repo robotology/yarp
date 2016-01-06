@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTCOREPACKETS_
-#define _YARP2_PORTCOREPACKETS_
+#ifndef YARP2_PORTCOREPACKETS
+#define YARP2_PORTCOREPACKETS
 
 #include <yarp/os/impl/PortCorePacket.h>
 #include <yarp/os/impl/PlatformList.h>

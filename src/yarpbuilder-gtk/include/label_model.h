@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _LABEL_MODEL__
-#define _LABEL_MODEL__
+#ifndef LABEL_MODEL
+#define LABEL_MODEL
 
 
 #include <string>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PROTOCOL_
-#define _YARP2_PROTOCOL_
+#ifndef YARP2_PROTOCOL
+#define YARP2_PROTOCOL
 
 #include <yarp/os/Carrier.h>
 #include <yarp/os/impl/Logger.h>

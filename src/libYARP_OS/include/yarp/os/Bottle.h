@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef _YARP2_BOTTLE_
-#define _YARP2_BOTTLE_
+#ifndef YARP2_BOTTLE
+#define YARP2_BOTTLE
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/Searchable.h>

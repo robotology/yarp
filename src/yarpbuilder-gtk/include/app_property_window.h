@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _APLICATION_PROPERTY_WINDOW_H_
-#define _APLICATION_PROPERTY_WINDOW_H_
+#ifndef APLICATION_PROPERTY_WINDOW_H
+#define APLICATION_PROPERTY_WINDOW_H
 
 #include <gtkmm.h>
 #include <yarp/manager/application.h>

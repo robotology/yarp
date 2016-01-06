@@ -11,8 +11,8 @@
 
 // $Id: Vector.h,v 1.27 2009-03-26 13:15:44 natta Exp $
 
-#ifndef _YARP2_VECTOR_
-#define _YARP2_VECTOR_
+#ifndef YARP2_VECTOR
+#define YARP2_VECTOR
 
 //#include <stdlib.h> //defines size_t
 #include <stddef.h> //defines size_t

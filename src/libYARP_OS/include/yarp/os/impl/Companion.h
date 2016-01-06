@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_COMPANION_
-#define _YARP2_COMPANION_
+#ifndef YARP2_COMPANION
+#define YARP2_COMPANION
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/PortWriter.h>

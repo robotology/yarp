@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_DGRAMTWOWAYSTREAM_
-#define _YARP2_DGRAMTWOWAYSTREAM_
+#ifndef YARP2_DGRAMTWOWAYSTREAM
+#define YARP2_DGRAMTWOWAYSTREAM
 
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>

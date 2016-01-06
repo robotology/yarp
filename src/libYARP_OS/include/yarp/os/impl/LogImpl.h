@@ -7,8 +7,8 @@
  */
 
 
-#ifndef _YARP2_LOGIMPL_
-#define _YARP2_LOGIMPL_
+#ifndef YARP2_LOGIMPL
+#define YARP2_LOGIMPL
 
 #include <yarp/os/Log.h>
 

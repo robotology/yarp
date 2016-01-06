@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_ABSTRACTCONTACTABLE_
-#define _YARP2_ABSTRACTCONTACTABLE_
+#ifndef YARP2_ABSTRACTCONTACTABLE
+#define YARP2_ABSTRACTCONTACTABLE
 
 #include <yarp/os/Contactable.h>
 #include <yarp/os/UnbufferedContactable.h>

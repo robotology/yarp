@@ -7,8 +7,8 @@
 */
 
 
-#ifndef __FAKE_LASER_H__
-#define __FAKE_LASER_H__
+#ifndef FAKE_LASER_H
+#define FAKE_LASER_H
 
 #include <string>
 

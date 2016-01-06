@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_YARPLIBRARYCLASSAPI_
-#define _YARP2_YARPLIBRARYCLASSAPI_
+#ifndef YARP2_YARPLIBRARYCLASSAPI
+#define YARP2_YARPLIBRARYCLASSAPI
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Vocab.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPTORQUECONTROL__
-#define __YARPTORQUECONTROL__
+#ifndef YARPTORQUECONTROL
+#define YARPTORQUECONTROL
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/ControlBoardPid.h>

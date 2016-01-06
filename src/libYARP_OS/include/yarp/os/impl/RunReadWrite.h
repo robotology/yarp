@@ -5,8 +5,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __RUN_READ_WRITE_H__
-#define __RUN_READ_WRITE_H__
+#ifndef RUN_READ_WRITE_H
+#define RUN_READ_WRITE_H
 
 #include <string>
 #include <yarp/os/Port.h>

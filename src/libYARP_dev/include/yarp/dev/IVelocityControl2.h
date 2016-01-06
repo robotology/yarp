@@ -7,8 +7,8 @@
  */
 
 
-#ifndef __YARPVELOCITYCONTROL_V2__
-#define __YARPVELOCITYCONTROL_V2__
+#ifndef YARPVELOCITYCONTROL_V2
+#define YARPVELOCITYCONTROL_V2
 
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/ControlBoardPid.h>
