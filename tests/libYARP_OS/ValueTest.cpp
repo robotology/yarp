@@ -139,12 +139,113 @@ public:
         }
     }
 
+    void checkEqualityOperator() {
+        report(0,"check equality operator");
+
+        {
+            Value v1(10);
+            Value v2(10);
+            checkTrue(v2.isInt(),"(ctor) type ok");
+            checkTrue((v1==v2), "(ctor) operator== ok");
+        }
+
+        {
+            Value v1(10);
+            Value v2(v1);
+            checkTrue(v2.isInt(),"(copy) type ok");
+            checkTrue((v1==v2), "(copy) operator== ok");
+        }
+
+        {
+            Value v1(10);
+            Value v2;
+            v2.fromString("10");
+            checkTrue(v2.isInt(),"(\"10\") type ok");
+            checkTrue((v1==v2), "(\"10\") operator== ok");
+
+            v2.fromString("15");
+            checkTrue(v2.isInt(),"(\"15\") type ok");
+            checkTrue((v1!=v2), "(\"15\") operator!= ok");
+
+            v2.fromString("10.0");
+            checkTrue(v2.isDouble(),"(\"10.0\") type ok");
+            checkTrue((v1!=v2), "(\"10.0\") operator!= ok"); // FIXME why not?
+            checkTrue((v1.asInt()==v2.asInt()), "(\"10.0\") value ok");
+
+            v2.fromString("(10)");
+            checkTrue(v2.isList(),"(\"(10)\") type ok");
+            checkTrue((v1==v2), "(\"(10)\") operator== ok");
+
+            v2.fromString("(15)");
+            checkTrue(v2.isList(),"(\"(15)\") type ok");
+            checkTrue((v1!=v2), "(\"(15)\") operator!= ok");
+
+            v2.fromString("(10 15)");
+            checkTrue(v2.isList(),"(\"(10 15)\") type ok");
+            checkTrue((v1!=v2), "(\"(10 15)\") operator!= ok");
+            checkTrue((v1==v2.asList()->get(0)), "(\"(10 15)\") value ok");
+
+            v2.fromString("(10.0)");
+            checkTrue(v2.isList(),"(\"(10.0)\") type ok");
+            checkTrue((v1!=v2), "(\"(10.0)\") operator!= ok");
+            checkTrue((v1!=v2.asList()->get(0)), "(\"(10.0)\") value ok");  // FIXME why not?
+            checkTrue((v1==v2.asList()->get(0).asInt()), "(\"(10.0)\") value ok");
+
+            v2.fromString("\"10\"");
+            checkTrue(v2.isString(),"(\"\\\"10\\\"\") type ok");
+            checkTrue((v1==v2), "(\"\\\"10\\\"\") operator== ok");
+
+            v2.fromString("\"ten\"");
+            checkTrue(v2.isString(),"(\"ten\") type ok");
+            checkTrue((v1!=v2), "(\"ten\") operator!= ok");
+
+            v2.fromString("true");
+            checkTrue(v2.isBool(),"(\"true\") type ok");
+            checkTrue((v1!=v2), "(\"true\") operator!= ok");
+        }
+
+        {
+            Value v1(10);
+            Bottle b1;
+            b1.addInt64(10);
+            Value v2 = b1.get(0);
+            checkTrue(v2.isInt64(),"(int64) type ok");
+            checkTrue((v1==v2), "(int64) operator!= ok");
+        }
+
+        {
+            Value v1(10);
+            Value v2(10, true);
+            checkTrue(v2.isVocab(),"(vocab) type ok");
+            checkTrue((v1!=v2), "(vocab) operator!= ok");
+        }
+
+        {
+            Value v1(10);
+            int i = 10;
+            Value v2(&i, sizeof(int));
+            checkTrue(v2.isBlob(),"(blob) type ok");
+            checkTrue((v1!=v2), "(blob) operator!= ok");
+            checkTrue((v1==*(reinterpret_cast<const int*>(v2.asBlob()))), "(blob) value ok");
+        }
+
+        {
+            Value v1(15);
+            int i = 10;
+            Value v2(&i, sizeof(int));
+            checkTrue(v2.isBlob(),"(blob) type ok");
+            checkTrue((v1!=v2), "(blob) operator!= ok");
+            checkTrue((v1!=*(reinterpret_cast<const int*>(v2.asBlob()))), "(blob) value ok");
+        }
+    }
+
     virtual void runTests() {
         checkCopy();
         checkMixedCopy();
         checkReadWrite();
         checkAssignment();
         checkInt64();
+        checkEqualityOperator();
     }
 };
 
