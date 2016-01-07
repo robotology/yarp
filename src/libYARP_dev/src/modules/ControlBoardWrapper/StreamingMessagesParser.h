@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef STREAMING_MESSAGES_PARSER
-#define STREAMING_MESSAGES_PARSER
+#ifndef YARP_DEV_CONTROLBOARDWRAPPER_STREAMINGMESSAGESPARSER_H
+#define YARP_DEV_CONTROLBOARDWRAPPER_STREAMINGMESSAGESPARSER_H
 
 /*
 * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
@@ -109,4 +109,4 @@ public:
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-#endif  //__STREAMING_MESSAGES_PARSER__
+#endif  //YARP_DEV_CONTROLBOARDWRAPPER_STREAMINGMESSAGESPARSER_H

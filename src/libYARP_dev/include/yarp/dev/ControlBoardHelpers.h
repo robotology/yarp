@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef CONTROLBOARDHELPERS
-#define CONTROLBOARDHELPERS
+#ifndef YARP_DEV_CONTROLBOARDHELPERS_H
+#define YARP_DEV_CONTROLBOARDHELPERS_H
 
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Bottle.h>

@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef VIRTUALANALOGSERVER
-#define VIRTUALANALOGSERVER
+#ifndef YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H
+#define YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H
 
 /*
 * Copyright (C) 2013 RobotCub Consortium

@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef SUBDEVICE
-#define SUBDEVICE
+#ifndef YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
+#define YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
 
 /*
 * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
@@ -170,4 +170,4 @@ public:
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-#endif  //__SUBDEVICE__
+#endif  //YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H

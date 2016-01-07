@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef POLYDRIVERDESCRIPTOR
-#define POLYDRIVERDESCRIPTOR
+#ifndef YARP_DEV_POLYDRIVERDESCRIPTOR_H
+#define YARP_DEV_POLYDRIVERDESCRIPTOR_H
 
 /*
 * Copyright (C) 2008 RobotCub Consortium

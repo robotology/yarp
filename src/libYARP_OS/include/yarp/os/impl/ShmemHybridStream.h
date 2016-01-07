@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef SHMEM_HYBRID_STREAM
-#define SHMEM_HYBRID_STREAM
+#ifndef YARP_OS_IMPL_SHMEMHYBRIDSTREAM_H
+#define YARP_OS_IMPL_SHMEMHYBRIDSTREAM_H
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>

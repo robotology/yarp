@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef SHMEM_TYPES_H
-#define SHMEM_TYPES_H
+#ifndef YARP_OS_IMPL_SHMEMTYPES_H
+#define YARP_OS_IMPL_SHMEMTYPES_H
 
 #define SHMEM_DEFAULT_SIZE 4096
 

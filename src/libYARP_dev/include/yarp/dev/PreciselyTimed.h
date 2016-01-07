@@ -8,8 +8,8 @@
  */
 
 
-#ifndef IPRECISELYTIMED
-#define IPRECISELYTIMED
+#ifndef YARP_DEV_PRECISELYTIMED_H
+#define YARP_DEV_PRECISELYTIMED_H
 
 #include <yarp/os/Stamp.h>
 

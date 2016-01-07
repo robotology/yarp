@@ -34,8 +34,8 @@
 // License summary for YARP
 // CopyPolicy: 3-clause BSD
 
-#ifndef HMAC_SHA2H
-#define HMAC_SHA2H
+#ifndef YARP_OS_IMPL_HMACSHA2_H
+#define YARP_OS_IMPL_HMACSHA2_H
 
 #include <yarp/os/impl/hmac/sha2.h>
 
