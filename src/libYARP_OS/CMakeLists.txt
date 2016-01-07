@@ -37,6 +37,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/ManagedBytes.h
                  include/yarp/os/MessageStack.h
                  include/yarp/os/ModifyingCarrier.h
+                 include/yarp/os/MonitorObject.h
                  include/yarp/os/MultiNameSpace.h
                  include/yarp/os/Mutex.h
                  include/yarp/os/Name.h
