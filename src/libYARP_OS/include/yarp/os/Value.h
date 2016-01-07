@@ -20,6 +20,9 @@ namespace yarp {
     namespace os {
         class Value;
         class Property;
+        namespace impl {
+            class Storable;
+        }
     }
 }
 
@@ -35,9 +38,9 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::Value : public Portable, public Searchable {
 private:
-    Value *proxy;
+    yarp::os::impl::Storable *proxy;
 
-    void setProxy(Value *proxy);
+    void setProxy(yarp::os::impl::Storable *proxy);
     void ok() const;
 
 
