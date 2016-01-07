@@ -50,9 +50,9 @@ public:
         {
             Value a(0);
             Value b("zero");
-            
+
             a = b;
-            
+
             checkEqual(a.asString().c_str(),"zero","string asString ok");
             checkEqual(a.toString().c_str(),"zero","string toString ok");
         }
