@@ -200,24 +200,6 @@ static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
             while (ch != '\n');
             ch = fgetc(fp);
         }
-    /*
-      while (ch=='\n' || ch=='\r')
-      {
-      ch = getc(fp);
-      }
-      ungetc(ch,fp);
-    */
-
-    while(ch<'0'&&ch>'9'&&ch!=-1)
-        {
-            ch = fgetc(fp);
-        }
-
-    if (ch<'0'&&ch>'9')
-        {
-            warn("cannot read header information from pgm/ppm file");
-            return false;
-        }
     ungetc(ch, fp);
 
     /// LATER: not portable?
