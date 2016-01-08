@@ -14,38 +14,38 @@ compiler:
 
 env:
   # Normal build
-  - TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+  - TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
   # Normal build with ninja
-  - TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Ninja" TRAVIS_BUILD_TYPE=Release
+  - TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Ninja" TRAVIS_BUILD_TYPE=Release
   # No ACE build
-  - TRAVIS_WITH_ACE=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+  - TRAVIS_WITH_ACE=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
   # Normal build with integration tests (likely to fail due to timeout)
-  - TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+  - TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
 
 matrix:
   exclude:
     - os: osx
 
   include:
-    # "Blessed" build (profile build with coverage)
+    # Coverage build
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=true TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Profile
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Profile
     # OSX, Unix Makefiles, gcc build
     - os: osx
       compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
     # OSX, Unix Makefiles, clang build
     - os: osx
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
     # OSX, Xcode, clang build
     - os: osx
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Xcode" TRAVIS_BUILD_TYPE=Release
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Xcode" TRAVIS_BUILD_TYPE=Release
 
   allow_failures:
-    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
 
 branches:
   except:
@@ -89,8 +89,8 @@ install:
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo rosdep init && rosdep update; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/${ROS_CI_VERSION}/setup.bash; fi
-  - if $TRAVIS_BLESSED; then sudo apt-get -y install lcov; fi
-  - if $TRAVIS_BLESSED; then gem install coveralls-lcov; fi
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then sudo apt-get -y install lcov; fi
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then gem install coveralls-lcov; fi
 
 before_script:
   - cmake --version
@@ -102,7 +102,7 @@ before_script:
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=TRUE -DYARP_TEST_HEAP=TRUE"; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=TRUE"; fi
   - cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ..
-  - if $TRAVIS_BLESSED; then lcov --directory . --zerocounters; fi
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --directory . --zerocounters; fi
   - cd ..
 
 script:
@@ -116,11 +116,11 @@ script:
 after_success:
   - cd build
   # capture coverage info
-  - if $TRAVIS_BLESSED; then lcov --directory . --capture --output-file coverage.info; fi
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --directory . --capture --output-file coverage.info; fi
   # filter out system and test code
-  - if $TRAVIS_BLESSED; then lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'idls/*' '*/harness/*' 'yarp/build/*' 'src/libYARP_sig/*' 'src/libYARP_serversql/*' 'src/libYARP_name/*' 'src/libYARP_dev/*' 'src/libYARP_math/*' --output-file coverage.info; fi
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'idls/*' '*/harness/*' 'yarp/build/*' 'src/libYARP_sig/*' 'src/libYARP_serversql/*' 'src/libYARP_name/*' 'src/libYARP_dev/*' 'src/libYARP_math/*' --output-file coverage.info; fi
   # debug before upload
-  - if $TRAVIS_BLESSED; then lcov --list coverage.info; fi
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --list coverage.info; fi
   # uploads to coveralls
-  - if $TRAVIS_BLESSED; then coveralls-lcov --source-encoding=ISO-8859-1 coverage.info; fi
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then coveralls-lcov --source-encoding=ISO-8859-1 coverage.info; fi
   - cd ..
