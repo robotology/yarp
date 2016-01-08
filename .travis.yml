@@ -20,6 +20,8 @@ env:
   - TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=true TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Profile
   # Normal build with integration tests (likely to fail due to timeout)
   - TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+  # Normal build with ninja
+  - TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Ninja" TRAVIS_BUILD_TYPE=Release
 
 matrix:
   exclude:
@@ -60,6 +62,7 @@ before_install:
 install:
   - sudo apt-get install cmake libgsl0-dev
   - if $TRAVIS_WITH_ACE; then sudo apt-get -y install libace-dev; fi
+  - if [ "$TRAVIS_CMAKE_GENERATOR" == "Ninja" ]; then sudo apt-get install ninja-build; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-gmcs; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo rosdep init && rosdep update; fi
