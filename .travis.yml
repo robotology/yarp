@@ -93,7 +93,7 @@ after_success:
   # capture coverage info
   - if $TRAVIS_BLESSED; then lcov --directory . --capture --output-file coverage.info; fi
   # filter out system and test code
-  - if $TRAVIS_BLESSED; then lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'idls/*' '*/harness/*' 'yarp/build/*' --output-file coverage.info; fi
+  - if $TRAVIS_BLESSED; then lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'idls/*' '*/harness/*' 'yarp/build/*' 'src/libYARP_sig/*' 'src/libYARP_serversql/*' 'src/libYARP_name/*' 'src/libYARP_dev/*' 'src/libYARP_math/*' --output-file coverage.info; fi
   # debug before upload
   - if $TRAVIS_BLESSED; then lcov --list coverage.info; fi
   # uploads to coveralls
