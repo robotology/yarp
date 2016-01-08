@@ -10,7 +10,6 @@
 #include <yarp/os/Bottle.h>
 
 #include <yarp/os/impl/BottleImpl.h>
-#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -28,11 +27,10 @@ Value::Value(int x, bool isVocab) :
         proxy(NULL)
 {
     if (!isVocab) {
-        setProxy(dynamic_cast<Storable*>(makeInt(x)));
+        setProxy(static_cast<Storable*>(makeInt(x)));
     } else {
-        setProxy(dynamic_cast<Storable*>(makeVocab(x)));
+        setProxy(static_cast<Storable*>(makeVocab(x)));
     }
-    yAssert(proxy != NULL);
 }
 
 Value::Value(double x) :
@@ -40,8 +38,7 @@ Value::Value(double x) :
         Searchable(),
         proxy(NULL)
 {
-    setProxy(dynamic_cast<Storable*>(makeDouble(x)));
-    yAssert(proxy != NULL);
+    setProxy(static_cast<Storable*>(makeDouble(x)));
 }
 
 Value::Value(const ConstString& str, bool isVocab) :
@@ -50,11 +47,10 @@ Value::Value(const ConstString& str, bool isVocab) :
         proxy(NULL)
 {
     if (!isVocab) {
-        setProxy(dynamic_cast<Storable*>(makeString(str)));
+        setProxy(static_cast<Storable*>(makeString(str)));
     } else {
-        setProxy(dynamic_cast<Storable*>(makeVocab(str)));
+        setProxy(static_cast<Storable*>(makeVocab(str)));
     }
-    yAssert(proxy != NULL);
 }
 
 Value::Value(void *data, int length) :
@@ -62,8 +58,7 @@ Value::Value(void *data, int length) :
         Searchable(),
         proxy(NULL)
 {
-    setProxy(dynamic_cast<Storable*>(makeBlob(data, length)));
-    yAssert(proxy != NULL);
+    setProxy(static_cast<Storable*>(makeBlob(data, length)));
 }
 
 Value::Value(const Value& alt) :
@@ -71,8 +66,7 @@ Value::Value(const Value& alt) :
         Searchable(),
         proxy(NULL)
 {
-    setProxy(dynamic_cast<Storable*>(alt.clone()));
-    yAssert(proxy != NULL);
+    setProxy(static_cast<Storable*>(alt.clone()));
 }
 
 
@@ -84,7 +78,7 @@ const Value& Value::operator=(const Value& alt)
                 // we are guaranteed to be a Storable
                 ((Storable*)this)->copy(*((Storable*)alt.proxy));
             } else {
-                setProxy(dynamic_cast<Storable*>(alt.clone()));
+                setProxy(static_cast<Storable*>(alt.clone()));
             }
         } else {
             if (alt.proxy) {
@@ -92,7 +86,7 @@ const Value& Value::operator=(const Value& alt)
                     // proxies are guaranteed to be Storable
                     ((Storable*)proxy)->copy(*((Storable*)alt.proxy));
                 } else {
-                    setProxy(dynamic_cast<Storable*>(alt.clone()));
+                    setProxy(static_cast<Storable*>(alt.clone()));
                 }
             } else {
                 if (proxy) {
@@ -100,7 +94,7 @@ const Value& Value::operator=(const Value& alt)
                     proxy = NULL;
                 }
                 if (alt.isLeaf()) {
-                    setProxy(dynamic_cast<Storable*>(alt.clone()));
+                    setProxy(static_cast<Storable*>(alt.clone()));
                 }
             }
         }
@@ -304,7 +298,7 @@ bool Value::operator!=(const Value& alt) const
 }
 
 void Value::fromString(const char *str) {
-    setProxy(dynamic_cast<Storable*>(makeValue(str)));
+    setProxy(static_cast<Storable*>(makeValue(str)));
 }
 
 ConstString Value::toString() const
@@ -418,7 +412,6 @@ void Value::setProxy(Storable *proxy)
         this->proxy = NULL;
     }
     this->proxy = proxy;
-    yAssert(this->proxy!=NULL);
 }
 
 
@@ -426,6 +419,6 @@ void Value::ok() const
 {
     const Value *op = this;
     if (proxy==NULL) {
-        ((Value*)op)->setProxy(dynamic_cast<Storable*>(makeList()));
+        ((Value*)op)->setProxy(static_cast<Storable*>(makeList()));
     }
 }
