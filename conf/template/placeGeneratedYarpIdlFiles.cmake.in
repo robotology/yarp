@@ -6,9 +6,8 @@ set(headers)
 set(sources)
 
 set(prefix)
-set(include_prefix @include_prefix@)
-if (include_prefix AND "@family@" STREQUAL "thrift")
-  set(prefix ${include_prefix}/)
+if ("@family@" STREQUAL "thrift")
+  string(REGEX REPLACE "^/*([^/].+[^/])/*$" "\\1/" prefix "@include_prefix@")
 endif()
 
 file(STRINGS @dir@/@yarpidlName@_indexALL.txt index)
@@ -20,7 +19,7 @@ foreach(genFile ${index})
       configure_file("@dir@/${genFile}"
                      "@output_dir@/include/${prefix}${genFile}"
                      COPYONLY)
-      list(APPEND headers "include/${genFile}")
+      list(APPEND headers "include/${prefix}${genFile}")
       list(REMOVE_DUPLICATES headers)
     else()
       message(WARNING "${genFile} not found in @yarpidlName@ dir!")
@@ -29,7 +28,7 @@ foreach(genFile ${index})
       configure_file("@dir@/${main}Reply${type}"
                      "@output_dir@/include/${prefix}${main}Reply${type}"
                      COPYONLY)
-      list(APPEND headers "include/${main}Reply${type}")
+      list(APPEND headers "include/${prefix}${main}Reply${type}")
       list(REMOVE_DUPLICATES headers)
     endif()
   elseif(${type} STREQUAL ".cpp")
