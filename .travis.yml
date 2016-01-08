@@ -111,8 +111,8 @@ script:
   - cd build
   - cmake --build . --config ${TRAVIS_BUILD_TYPE}
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then bin/yarp conf 0 0 local; fi
-  - ctest -VV --build . --config ${TRAVIS_BUILD_TYPE}
-  - ctest -N --build . --config ${TRAVIS_BUILD_TYPE}
+  - ctest -VV --build . -C ${TRAVIS_BUILD_TYPE}
+  - ctest -N --build . -C ${TRAVIS_BUILD_TYPE}
   - cd ..
 
 after_success:
