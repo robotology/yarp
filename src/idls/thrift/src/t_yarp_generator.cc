@@ -453,7 +453,7 @@ string t_yarp_generator::base_type_name(t_base_type::t_base tbase) {
   case t_base_type::TYPE_I32:
     return "int32_t";
   case t_base_type::TYPE_I64:
-    return "int64_t";
+    return "YARP_INT64";
   case t_base_type::TYPE_DOUBLE:
     return "double";
   default:

@@ -3,6 +3,7 @@ dist: trusty
 
 os:
   - linux
+  - osx
 
 language:
   - cpp
@@ -27,6 +28,20 @@ matrix:
   exclude:
     - compiler: clang
       env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=true TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Profile
+    - os: linux
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Xcode" TRAVIS_BUILD_TYPE=Release
+    - os: osx
+  include:
+    - os: osx
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+    - os: osx
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+    - os: osx
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Xcode" TRAVIS_BUILD_TYPE=Release
+
   allow_failures:
     - compiler: gcc
       env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_BLESSED=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
@@ -57,12 +72,20 @@ before_install:
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROBOT=sim; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then echo "deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main" | sudo tee /etc/apt/sources.list.d/ros-latest.list; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget http://packages.ros.org/ros.key -O - | sudo apt-key add -; fi
-  - sudo apt-get update -qq
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -qq; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/x11; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/science; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
 
 install:
-  - sudo apt-get install cmake libgsl0-dev
-  - if $TRAVIS_WITH_ACE; then sudo apt-get -y install libace-dev; fi
-  - if [ "$TRAVIS_CMAKE_GENERATOR" == "Ninja" ]; then sudo apt-get install ninja-build; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install cmake libgsl0-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_ACE; then sudo apt-get -y install libace-dev; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_CMAKE_GENERATOR" == "Ninja" ]; then sudo apt-get install ninja-build; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install yarp --only-dependencies; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gtkmm gtk+; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link --force gettext; fi # Fix goocanvas build
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install swig; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-gmcs; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo rosdep init && rosdep update; fi
@@ -87,8 +110,8 @@ script:
   - cd build
   - cmake --build . --config ${TRAVIS_BUILD_TYPE}
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then bin/yarp conf 0 0 local; fi
-  - ctest -VV --build . --config ${TRAVIS_BUILD_TYPE}
-  - ctest -N --build . --config ${TRAVIS_BUILD_TYPE}
+  - ctest -VV --build . -C ${TRAVIS_BUILD_TYPE}
+  - ctest -N --build . -C ${TRAVIS_BUILD_TYPE}
   - cd ..
 
 after_success:
