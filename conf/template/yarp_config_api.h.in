@@ -62,7 +62,11 @@ recommended usage of this header within YARP is:
 #     define YARP_HELPER_DLL_IMPORT_EXTERN
 #     define YARP_HELPER_DLL_EXPORT_EXTERN
 #  endif
-#  if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+#  if defined(__clang__)
+#    ifndef YARP_NO_DEPRECATED_WARNINGS
+#      define YARP_DEPRECATED __attribute__((deprecated()))
+#    endif
+#  elif (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #    ifndef YARP_NO_DEPRECATED_WARNINGS
 #      define YARP_DEPRECATED __attribute__ ((__deprecated__))
 #    endif
