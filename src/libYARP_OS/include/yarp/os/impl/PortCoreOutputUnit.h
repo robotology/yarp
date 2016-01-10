@@ -34,7 +34,7 @@ public:
      * Constructor.
      * @param owner the port we call home
      * @param index an id for this connection
-     * @param ip the protocol object used to read/write to connection
+     * @param op the protocol object used to read/write to connection
      *
      */
     PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :

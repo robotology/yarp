@@ -370,7 +370,7 @@ public:
     /**
      *
      * Convert a numeric bottle code to a string.
-     * @param the code to convert
+     * @param code the code to convert
      * @return a string representation of the code's meaning
      *
      */

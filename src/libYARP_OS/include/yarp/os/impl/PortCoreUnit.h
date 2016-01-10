@@ -265,14 +265,14 @@ public:
     /**
      *
      * Set arbitrary parameters for this connection.
-     * @param parms the parameters to set
+     * @param params the parameters to set
      *
      */
     virtual void setCarrierParams(const yarp::os::Property& params) { }
 
     /**
      *
-     * @return parameters set by setCarrierParams()
+     * @param [out]params parameters set by setCarrierParams()
      *
      */
     virtual void getCarrierParams(yarp::os::Property& params) { }
