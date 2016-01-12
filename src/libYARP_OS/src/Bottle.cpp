@@ -66,7 +66,7 @@ Bottle& Bottle::operator=(const Bottle& bottle)
 
 Bottle::~Bottle()
 {
-    if (implementation == NULL) {
+    if (implementation) {
         delete implementation;
     }
 }
