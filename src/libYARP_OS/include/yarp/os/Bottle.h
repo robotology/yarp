@@ -10,6 +10,9 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/Searchable.h>
 
+#include <yarp/os/ConstString.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
 
 #define BOTTLE_TAG_INT 1          // 0000 0000 0001
 #define BOTTLE_TAG_VOCAB (1 + 8)  // 0000 0000 1001
@@ -23,10 +26,7 @@
 namespace yarp {
     namespace os {
         class Bottle;
-        class ConstString;
-        class Property;
         class NetworkBase;
-        class Value;
         namespace impl {
             class BottleImpl;
             class Storable;
