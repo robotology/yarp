@@ -46,6 +46,9 @@ matrix:
 
   allow_failures:
     - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+    - os: osx
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Xcode" TRAVIS_BUILD_TYPE=Release
 
 branches:
   except:
