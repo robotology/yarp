@@ -140,6 +140,23 @@ if(YARP_COMPILE_TESTS)
     enable_testing()
 endif()
 
+#########################################################################
+# Turn on testing on Valgrind
+
+cmake_dependent_option(YARP_VALGRIND_TESTS
+                       "Run YARP tests under Valgrind to check memory leaks" OFF
+                       "YARP_COMPILE_TESTS" OFF)
+mark_as_advanced(YARP_VALGRIND_TESTS)
+if(YARP_VALGRIND_TESTS)
+    find_program(VALGRIND_PROGRAM NAMES valgrind)
+    if(VALGRIND_PROGRAM)
+        set(VALGRIND_COMMAND "${VALGRIND_PROGRAM}" --leak-check=full --error-exitcode=1)
+    else()
+        message(WARNING "Valgrind not found.")
+        unset(VALGRIND_COMMAND)
+    endif()
+endif()
+
 
 #########################################################################
 # Enable these messages for debugging flags
