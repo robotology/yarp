@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_DISPATCHER_
-#define _YARP2_DISPATCHER_
+#ifndef YARP2_DISPATCHER
+#define YARP2_DISPATCHER
 
 #include <yarp/os/impl/String.h>
 

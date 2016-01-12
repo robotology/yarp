@@ -5,8 +5,8 @@
  */
 
 
-#ifndef __URBTCCONTROL__
-#define __URBTCCONTROL__
+#ifndef URBTCCONTROL
+#define URBTCCONTROL
 
 #include <unistd.h>         /* for read, write, close */
 #include <sys/ioctl.h>      /* for ioctl */

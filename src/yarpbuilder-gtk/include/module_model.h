@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _MODULE_MODEL__
-#define _MODULE_MODEL__
+#ifndef MODULE_MODEL
+#define MODULE_MODEL
 
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>

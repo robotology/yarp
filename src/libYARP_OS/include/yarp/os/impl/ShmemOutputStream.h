@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __SHMEM_OUTPUT_STREAM__
-#define __SHMEM_OUTPUT_STREAM__
+#ifndef YARP_OS_IMPL_SHMEMOUTPUTSTREAM_H
+#define YARP_OS_IMPL_SHMEMOUTPUTSTREAM_H
 
 #include <ace/config.h>
 #include <ace/Mutex.h>

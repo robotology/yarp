@@ -9,8 +9,8 @@
 
 //added threadRelease/threadInit methods and synchronization -nat
 
-#ifndef _YARP2_RATETHREAD_
-#define _YARP2_RATETHREAD_
+#ifndef YARP2_RATETHREAD
+#define YARP2_RATETHREAD
 
 #include <yarp/os/Runnable.h>
 

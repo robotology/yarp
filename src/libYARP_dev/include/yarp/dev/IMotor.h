@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPMOTOR__
-#define __YARPMOTOR__
+#ifndef YARPMOTOR
+#define YARPMOTOR
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>

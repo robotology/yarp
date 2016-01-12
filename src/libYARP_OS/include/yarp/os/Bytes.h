@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_BYTES_
-#define _YARP2_BYTES_
+#ifndef YARP2_BYTES
+#define YARP2_BYTES
 
 #include <yarp/os/api.h>
 #include <stddef.h> //defines size_t

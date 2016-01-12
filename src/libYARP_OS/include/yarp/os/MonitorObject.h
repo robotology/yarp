@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_MONITOROBJECT_
-#define _YARP2_MONITOROBJECT_
+#ifndef YARP2_MONITOROBJECT
+#define YARP2_MONITOROBJECT
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Things.h>
@@ -93,5 +93,5 @@ public:
     virtual yarp::os::Things& updateReply(yarp::os::Things& thing) { return thing; }
 };
 
-#endif //_YARP2_MONITOROBJECT_
+#endif //YARP2_MONITOROBJECT
 

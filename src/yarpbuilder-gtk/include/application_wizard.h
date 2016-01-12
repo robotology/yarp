@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _APPLICATION_WIZARD_H_
-#define _APPLICATION_WIZARD_H_
+#ifndef APPLICATION_WIZARD_H
+#define APPLICATION_WIZARD_H
 
 #include <gtkmm.h>
 #include <yarp/manager/application.h>

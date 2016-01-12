@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_XMLRESLOADER__
-#define __YARP_MANAGER_XMLRESLOADER__
+#ifndef YARP_MANAGER_XMLRESLOADER
+#define YARP_MANAGER_XMLRESLOADER
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/resource.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTABLEPAIR_
-#define _YARP2_PORTABLEPAIR_
+#ifndef YARP2_PORTABLEPAIR
+#define YARP2_PORTABLEPAIR
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/Bottle.h>

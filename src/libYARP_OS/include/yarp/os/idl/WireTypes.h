@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP2_WIRETYPES_
-#define _YARP2_WIRETYPES_
+#ifndef YARP2_WIRETYPES
+#define YARP2_WIRETYPES
 
 #if defined(_WIN32) && !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER<1600)
   typedef __int32 int32_t;

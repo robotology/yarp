@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CARRIER_
-#define _YARP2_CARRIER_
+#ifndef YARP2_CARRIER
+#define YARP2_CARRIER
 
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/SizedWriter.h>

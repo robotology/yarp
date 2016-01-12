@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPUTILS_H__
-#define __YARPUTILS_H__
+#ifndef YARPUTILS_H
+#define YARPUTILS_H
 
 //#define FUSE_USE_VERSION 26
 

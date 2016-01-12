@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SEARCHABLE_
-#define _YARP2_SEARCHABLE_
+#ifndef YARP2_SEARCHABLE
+#define YARP2_SEARCHABLE
 
 #include <cstddef>
 #include <yarp/os/ConstString.h>

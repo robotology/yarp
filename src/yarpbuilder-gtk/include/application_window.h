@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _APPLICATION_WINDOW_H_
-#define _APPLICATION_WINDOW_H_
+#ifndef APPLICATION_WINDOW_H
+#define APPLICATION_WINDOW_H
 
 #include <gtkmm.h>
 #include <goocanvasmm.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SHMEMCARRIER_
-#define _YARP2_SHMEMCARRIER_
+#ifndef YARP2_SHMEMCARRIER
+#define YARP2_SHMEMCARRIER
 
 #include <yarp/os/AbstractCarrier.h>
 

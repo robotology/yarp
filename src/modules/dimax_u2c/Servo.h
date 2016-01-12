@@ -3,8 +3,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
-#ifndef __SERVO_H__
-#define __SERVO_H__
+#ifndef SERVO_H
+#define SERVO_H
 
 #include "I2c.h"
 #include "i2cbridge.h"

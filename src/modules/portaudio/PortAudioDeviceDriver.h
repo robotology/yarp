@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __PortAudioDeviceDriverh__
-#define __PortAudioDeviceDriverh__
+#ifndef PortAudioDeviceDriverh
+#define PortAudioDeviceDriverh
 
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Thread.h>

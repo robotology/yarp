@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_WIREREADER_
-#define _YARP2_WIREREADER_
+#ifndef YARP2_WIREREADER
+#define YARP2_WIREREADER
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/NullConnectionReader.h>

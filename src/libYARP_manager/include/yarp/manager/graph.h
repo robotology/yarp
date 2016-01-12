@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_GRAPH__
-#define __YARP_MANAGER_GRAPH__
+#ifndef YARP_MANAGER_GRAPH
+#define YARP_MANAGER_GRAPH
 
 #include <map>
 #include <string>

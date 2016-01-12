@@ -8,8 +8,8 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __YARP_MANAGER_SINGLEAPPLOADER__
-#define __YARP_MANAGER_SINGLEAPPLOADER__
+#ifndef YARP_MANAGER_SINGLEAPPLOADER
+#define YARP_MANAGER_SINGLEAPPLOADER
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>

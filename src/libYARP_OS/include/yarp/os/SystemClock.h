@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SYSTEMCLOCKTIME_
-#define _YARP2_SYSTEMCLOCKTIME_
+#ifndef YARP2_SYSTEMCLOCKTIME
+#define YARP2_SYSTEMCLOCKTIME
 
 #include <yarp/os/Clock.h>
 

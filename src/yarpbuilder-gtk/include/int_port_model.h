@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _INPORT_MODEL__
-#define _INPORT_MODEL__
+#ifndef INPORT_MODEL_
+#define INPORT_MODEL_
 
 #include <vector>
 #include <goocanvasmm.h>

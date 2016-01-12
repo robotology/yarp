@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP2_TESTFRAMEGRABBER_
-#define _YARP2_TESTFRAMEGRABBER_
+#ifndef YARP2_TESTFRAMEGRABBER
+#define YARP2_TESTFRAMEGRABBER
 
 #include <stdio.h>
 

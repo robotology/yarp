@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_name_API_
-#define _YARP2_name_API_
+#ifndef YARP2_name_API
+#define YARP2_name_API
 
 #include <yarp/conf/api.h>
 #ifndef YARP_name_API

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SHIFTSTREAM_
-#define _YARP2_SHIFTSTREAM_
+#ifndef YARP2_SHIFTSTREAM
+#define YARP2_SHIFTSTREAM
 
 #include <yarp/os/TwoWayStream.h>
 

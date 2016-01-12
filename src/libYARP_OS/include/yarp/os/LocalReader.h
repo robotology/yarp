@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_LOCALREADER_
-#define _YARP2_LOCALREADER_
+#ifndef YARP2_LOCALREADER
+#define YARP2_LOCALREADER
 
 #include <yarp/os/PortReader.h>
 

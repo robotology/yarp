@@ -5,8 +5,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __YARPGPUINTERFACES__
-#define __YARPGPUINTERFACES__
+#ifndef YARPGPUINTERFACES
+#define YARPGPUINTERFACES
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Image.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP2_AUDIO_GRABBER_INTERFACES__
-#define __YARP2_AUDIO_GRABBER_INTERFACES__
+#ifndef YARP2_AUDIO_GRABBER_INTERFACES
+#define YARP2_AUDIO_GRABBER_INTERFACES
 
 #include <yarp/sig/Sound.h>
 

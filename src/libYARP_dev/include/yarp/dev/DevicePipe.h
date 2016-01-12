@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP2_DEVICEPIPE_
-#define _YARP2_DEVICEPIPE_
+#ifndef YARP2_DEVICEPIPE
+#define YARP2_DEVICEPIPE
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>

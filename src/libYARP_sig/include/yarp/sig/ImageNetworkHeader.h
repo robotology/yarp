@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_IMAGENETWORKHEADER_
-#define _YARP2_IMAGENETWORKHEADER_
+#ifndef YARP2_IMAGENETWORKHEADER
+#define YARP2_IMAGENETWORKHEADER
 
 #include <yarp/conf/system.h>
 

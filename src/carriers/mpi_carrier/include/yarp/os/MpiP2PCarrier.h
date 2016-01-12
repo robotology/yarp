@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP_MPIP2PCARRIER_
-#define _YARP_MPIP2PCARRIER_
+#ifndef YARP_MPIP2PCARRIER
+#define YARP_MPIP2PCARRIER
 
 #include <yarp/os/MpiCarrier.h>
 #include <yarp/os/MpiP2PStream.h>

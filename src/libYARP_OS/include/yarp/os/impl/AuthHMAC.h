@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef _YARP2_AUTHHMAC_
-#define _YARP2_AUTHHMAC_
+#ifndef YARP2_AUTHHMAC
+#define YARP2_AUTHHMAC
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>

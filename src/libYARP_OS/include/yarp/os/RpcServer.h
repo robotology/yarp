@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_RPCSERVER_
-#define _YARP2_RPCSERVER_
+#ifndef YARP2_RPCSERVER
+#define YARP2_RPCSERVER
 
 #include <yarp/os/AbstractContactable.h>
 

@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_FSM__
-#define __YARP_MANAGER_FSM__
+#ifndef YARP_MANAGER_FSM
+#define YARP_MANAGER_FSM
 
 #include <iostream>
 #include <string>

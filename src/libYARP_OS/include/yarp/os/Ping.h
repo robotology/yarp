@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PING_
-#define _YARP2_PING_
+#ifndef YARP2_PING
+#define YARP2_PING
 
 #include <math.h>
 #include <yarp/os/ConstString.h>

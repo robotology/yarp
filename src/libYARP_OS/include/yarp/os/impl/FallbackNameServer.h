@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_FALLBACKNAMESERVER_
-#define _YARP2_FALLBACKNAMESERVER_
+#ifndef YARP2_FALLBACKNAMESERVER
+#define YARP2_FALLBACKNAMESERVER
 
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/Contact.h>

@@ -10,8 +10,8 @@
 
 // everything for the yarp::os namespace
 
-#ifndef __YARP2_OS_ALL__
-#define __YARP2_OS_ALL__
+#ifndef YARP2_OS_ALL
+#define YARP2_OS_ALL
 
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_OUTPUTSTREAM_
-#define _YARP2_OUTPUTSTREAM_
+#ifndef YARP2_OUTPUTSTREAM
+#define YARP2_OUTPUTSTREAM
 
 #include <yarp/os/Bytes.h>
 

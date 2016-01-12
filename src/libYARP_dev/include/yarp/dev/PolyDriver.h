@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP2_POLYDRIVER__
-#define __YARP2_POLYDRIVER__
+#ifndef YARP_DEV_POLYDRIVER_H
+#define YARP_DEV_POLYDRIVER_H
 
 #include <yarp/dev/Drivers.h>
 

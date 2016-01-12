@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP2_UDPCARRIER_
-#define _YARP2_UDPCARRIER_
+#ifndef YARP2_UDPCARRIER
+#define YARP2_UDPCARRIER
 
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>

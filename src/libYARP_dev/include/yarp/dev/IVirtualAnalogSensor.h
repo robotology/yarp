@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPVIRTUALANALOGSENSORINTERFACE__
-#define __YARPVIRTUALANALOGSENSORINTERFACE__
+#ifndef YARPVIRTUALANALOGSENSORINTERFACE
+#define YARPVIRTUALANALOGSENSORINTERFACE
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NESTEDCONTACT_
-#define _YARP2_NESTEDCONTACT_
+#ifndef YARP2_NESTEDCONTACT
+#define YARP2_NESTEDCONTACT
 
 #include <yarp/os/ConstString.h>
 

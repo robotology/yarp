@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_WIREPORTABLE_
-#define _YARP2_WIREPORTABLE_
+#ifndef YARP2_WIREPORTABLE
+#define YARP2_WIREPORTABLE
 
 #include <yarp/os/Portable.h>
 

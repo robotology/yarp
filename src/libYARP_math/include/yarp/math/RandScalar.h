@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_MATH_RANDSCALAR__
-#define __YARP_MATH_RANDSCALAR__
+#ifndef YARP_MATH_RANDSCALAR
+#define YARP_MATH_RANDSCALAR
 
 #include <yarp/math/api.h>
 

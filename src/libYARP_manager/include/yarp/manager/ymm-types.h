@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_YMMTYPES__
-#define __YARP_MANAGER_YMMTYPES__
+#ifndef YARP_MANAGER_YMMTYPES
+#define YARP_MANAGER_YMMTYPES
 
 namespace yarp {
 namespace manager {

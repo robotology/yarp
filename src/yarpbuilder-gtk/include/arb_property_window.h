@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _ARBITRATOR_PROPERTY_WINDOW_H_
-#define _ARBITRATOR_PROPERTY_WINDOW_H_
+#ifndef ARBITRATOR_PROPERTY_WINDOW_H
+#define ARBITRATOR_PROPERTY_WINDOW_H
 
 #include <gtkmm.h>
 #include <yarp/manager/application.h>

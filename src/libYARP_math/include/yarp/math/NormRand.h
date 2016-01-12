@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_MATH_NORMRAND__
-#define __YARP_MATH_NORMRAND__
+#ifndef YARP_MATH_NORMRAND
+#define YARP_MATH_NORMRAND
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>

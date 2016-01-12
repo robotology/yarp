@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _APPLICATION_LIST_
-#define _APPLICATION_LIST_
+#ifndef APPLICATION_LIST
+#define APPLICATION_LIST
 
 
 #include <gtkmm.h>

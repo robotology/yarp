@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_IMAGEDRAW_
-#define _YARP2_IMAGEDRAW_
+#ifndef YARP2_IMAGEDRAW
+#define YARP2_IMAGEDRAW
 
 #include <math.h>
 

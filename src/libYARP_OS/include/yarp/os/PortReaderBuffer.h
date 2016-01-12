@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PORTREADERBUFFER_
-#define _YARP2_PORTREADERBUFFER_
+#ifndef YARP2_PORTREADERBUFFER
+#define YARP2_PORTREADERBUFFER
 
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Port.h>

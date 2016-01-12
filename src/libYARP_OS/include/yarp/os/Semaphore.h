@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SEMAPHORE_
-#define _YARP2_SEMAPHORE_
+#ifndef YARP2_SEMAPHORE
+#define YARP2_SEMAPHORE
 
 #include <yarp/os/api.h>
 

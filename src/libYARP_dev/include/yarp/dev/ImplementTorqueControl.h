@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPTORQUECONTROLIMPL__
-#define __YARPTORQUECONTROLIMPL__
+#ifndef YARPTORQUECONTROLIMPL
+#define YARPTORQUECONTROLIMPL
 
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/dev/api.h>

@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_Executable__
-#define __YARP_MANAGER_Executable__
+#ifndef YARP_MANAGER_Executable
+#define YARP_MANAGER_Executable
 
 #include <string>
 #include <vector>

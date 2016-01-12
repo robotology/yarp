@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_MATH__
-#define __YARP_MATH__
+#ifndef YARP_MATH
+#define YARP_MATH
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>

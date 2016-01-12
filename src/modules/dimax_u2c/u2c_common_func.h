@@ -14,8 +14,8 @@
 // GNU General Public License for more details.
 
 //#pragma once
-#ifndef __U2C_COMMON_FUNC_H__
-#define __U2C_COMMON_FUNC_H__
+#ifndef U2C_COMMON_FUNC_H
+#define U2C_COMMON_FUNC_H
 
 HANDLE _stdcall OpenU2C();
 bool _stdcall CheckDriverVersion(HANDLE hDevice);

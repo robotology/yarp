@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SUBSCRIBER_
-#define _YARP2_SUBSCRIBER_
+#ifndef YARP2_SUBSCRIBER
+#define YARP2_SUBSCRIBER
 
 #include <yarp/os/Log.h>
 #include <yarp/os/AbstractContactable.h>

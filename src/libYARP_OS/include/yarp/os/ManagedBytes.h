@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_MANAGEDBYTES_
-#define _YARP2_MANAGEDBYTES_
+#ifndef YARP2_MANAGEDBYTES
+#define YARP2_MANAGEDBYTES
 
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Network.h>

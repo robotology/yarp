@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_STRING_
-#define _YARP2_STRING_
+#ifndef YARP2_STRING
+#define YARP2_STRING
 
 #include <yarp/os/ConstString.h>
 

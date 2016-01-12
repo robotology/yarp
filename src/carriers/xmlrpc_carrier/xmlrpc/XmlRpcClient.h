@@ -1,6 +1,6 @@
 
-#ifndef _XMLRPCCLIENT_H_
-#define _XMLRPCCLIENT_H_
+#ifndef XMLRPCCLIENT_H
+#define XMLRPCCLIENT_H
 //
 // XmlRpc++ Copyright (c) 2002-2003 by Chris Morley
 //

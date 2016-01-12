@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CONNECTIONREADER_
-#define _YARP2_CONNECTIONREADER_
+#ifndef YARP2_CONNECTIONREADER
+#define YARP2_CONNECTIONREADER
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Contact.h>

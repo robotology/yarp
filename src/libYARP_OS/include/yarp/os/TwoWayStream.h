@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_TWOWAYSTREAM_
-#define _YARP2_TWOWAYSTREAM_
+#ifndef YARP2_TWOWAYSTREAM
+#define YARP2_TWOWAYSTREAM
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Contact.h>

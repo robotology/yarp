@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_MULTINAMESPACE_
-#define _YARP2_MULTINAMESPACE_
+#ifndef YARP2_MULTINAMESPACE
+#define YARP2_MULTINAMESPACE
 
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/NameStore.h>

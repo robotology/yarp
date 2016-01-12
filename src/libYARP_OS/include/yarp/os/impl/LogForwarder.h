@@ -6,8 +6,8 @@
  */
 
 
-#ifndef _YARP2_LOG_FORWARDER_
-#define _YARP2_LOG_FORWARDER_
+#ifndef YARP2_LOG_FORWARDER
+#define YARP2_LOG_FORWARDER
 
 #include <yarp/os/api.h>
 #include <yarp/os/BufferedPort.h>

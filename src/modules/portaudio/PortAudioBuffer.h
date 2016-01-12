@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __PortAudioBufferh__
-#define __PortAudioBufferh__
+#ifndef PortAudioBufferh
+#define PortAudioBufferh
 
 #include <portaudio.h>
 #include <stdio.h>

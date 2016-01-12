@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_MODULE_H_
-#define __YARP_MANAGER_MODULE_H_
+#ifndef YARP_MANAGER_MODULE_H
+#define YARP_MANAGER_MODULE_H
 
 
 #include <yarp/manager/ymm-types.h>
@@ -273,4 +273,4 @@ typedef vector<Module*>::iterator ModulePIterator;
 } // namespace manager
 
 
-#endif // __YARP_MANAGER_MODULE__
+#endif // YARP_MANAGER_MODULE

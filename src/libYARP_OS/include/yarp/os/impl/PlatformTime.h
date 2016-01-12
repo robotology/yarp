@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PLATFORMTIME_
-#define _YARP2_PLATFORMTIME_
+#ifndef YARP2_PLATFORMTIME
+#define YARP2_PLATFORMTIME
 
 #include <yarp/conf/system.h>
 

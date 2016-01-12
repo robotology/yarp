@@ -16,8 +16,8 @@
  * Public License for more details
 */
 
-#ifndef _YARP_LOGGER_
-#define _YARP_LOGGER_
+#ifndef YARP_LOGGER
+#define YARP_LOGGER
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>

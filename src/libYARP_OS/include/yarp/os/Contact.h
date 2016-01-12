@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CONTACT_
-#define _YARP2_CONTACT_
+#ifndef YARP2_CONTACT
+#define YARP2_CONTACT
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Searchable.h>

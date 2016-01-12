@@ -7,8 +7,8 @@
  */
 
 
-#ifndef _YARP2_LOG_
-#define _YARP2_LOG_
+#ifndef YARP2_LOG
+#define YARP2_LOG
 
 #include <yarp/os/api.h>
 #include <iosfwd>

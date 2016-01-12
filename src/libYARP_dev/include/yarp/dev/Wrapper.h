@@ -6,8 +6,8 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#ifndef __YARPWRAPPERINTERFACE__
-#define __YARPWRAPPERINTERFACE__
+#ifndef YARPWRAPPERINTERFACE
+#define YARPWRAPPERINTERFACE
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>

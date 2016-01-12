@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_INPUTPROTOCOL_
-#define _YARP2_INPUTPROTOCOL_
+#ifndef YARP2_INPUTPROTOCOL
+#define YARP2_INPUTPROTOCOL
 
 #include <yarp/os/Route.h>
 #include <yarp/os/ConnectionReader.h>

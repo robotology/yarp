@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NAMESTORE_
-#define _YARP2_NAMESTORE_
+#ifndef YARP2_NAMESTORE
+#define YARP2_NAMESTORE
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>

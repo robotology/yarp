@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SIZEDWRITER_
-#define _YARP2_SIZEDWRITER_
+#ifndef YARP2_SIZEDWRITER
+#define YARP2_SIZEDWRITER
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/OutputStream.h>

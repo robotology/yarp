@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CONNECTIONSTATE_
-#define _YARP2_CONNECTIONSTATE_
+#ifndef YARP2_CONNECTIONSTATE
+#define YARP2_CONNECTIONSTATE
 
 #include <yarp/os/Route.h>
 #include <yarp/os/TwoWayStream.h>

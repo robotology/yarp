@@ -11,8 +11,8 @@
 * debayering by chaining carriers this code could be removed completely.
 */
 
-#ifndef _YARP_IMAGE_DEBAYER_
-#define _YARP_IMAGE_DEBAYER_
+#ifndef YARP_IMAGE_DEBAYER
+#define YARP_IMAGE_DEBAYER
 
 #include <yarp/sig/Image.h>
 

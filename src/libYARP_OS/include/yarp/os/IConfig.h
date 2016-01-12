@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP2_ICONFIG_
-#define _YARP2_ICONFIG_
+#ifndef YARP2_ICONFIG
+#define YARP2_ICONFIG
 
 
 #include <yarp/os/Searchable.h>

@@ -7,8 +7,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __YARPIMAGE2PIXBUF__
-#define __YARPIMAGE2PIXBUF__
+#ifndef YARPIMAGE2PIXBUF
+#define YARPIMAGE2PIXBUF
 
 #include <yarp/sig/Image.h>
 #include <gtk/gtk.h>

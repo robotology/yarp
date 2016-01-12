@@ -6,8 +6,8 @@
  * author Alessandro Scalzo alessandro@liralab.it
  */
 
-#ifndef _YARP2_RUN_
-#define _YARP2_RUN_
+#ifndef YARP2_RUN
+#define YARP2_RUN
 
 #include <string.h>
 #include <yarp/os/api.h>

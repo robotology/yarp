@@ -7,8 +7,8 @@
 */
 
 
-#ifndef __MEIMotionControlh__
-#define __MEIMotionControlh__
+#ifndef MEIMotionControlh
+#define MEIMotionControlh
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>

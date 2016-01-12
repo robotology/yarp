@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __TERMINATORH__
-#define __TERMINATORH__
+#ifndef YARP_OS_TERMINATOR_H
+#define YARP_OS_TERMINATOR_H
 
 // $Id: Terminator.h,v 1.11 2008-12-11 18:55:46 natta Exp $
 

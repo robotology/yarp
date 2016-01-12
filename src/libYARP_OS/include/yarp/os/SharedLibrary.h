@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SHAREDLIBRARY_
-#define _YARP2_SHAREDLIBRARY_
+#ifndef YARP2_SHAREDLIBRARY
+#define YARP2_SHAREDLIBRARY
 
 #include <yarp/os/api.h>
 

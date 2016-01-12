@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _MIDPOINT_MODEL__
-#define _MIDPOINT_MODEL__
+#ifndef MIDPOINT_MODEL
+#define MIDPOINT_MODEL
 
 
 #include <goocanvasmm.h>

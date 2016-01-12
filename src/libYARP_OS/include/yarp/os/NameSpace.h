@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NAMESPACE_
-#define _YARP2_NAMESPACE_
+#ifndef YARP2_NAMESPACE
+#define YARP2_NAMESPACE
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/Value.h>

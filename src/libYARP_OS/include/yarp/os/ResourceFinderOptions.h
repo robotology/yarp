@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_RESOURCEFINDEROPTIONS_
-#define _YARP2_RESOURCEFINDEROPTIONS_
+#ifndef YARP2_RESOURCEFINDEROPTIONS
+#define YARP2_RESOURCEFINDEROPTIONS
 
 #include <yarp/os/api.h>
 #include <yarp/os/ConstString.h>

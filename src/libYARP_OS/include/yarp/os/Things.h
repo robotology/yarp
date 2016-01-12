@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_THINGS_
-#define _YARP2_THINGS_
+#ifndef YARP2_THINGS
+#define YARP2_THINGS
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConnectionReader.h>

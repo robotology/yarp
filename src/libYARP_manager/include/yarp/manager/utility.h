@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_UTILITY__
-#define __YARP_MANAGER_UTILITY__
+#ifndef YARP_MANAGER_UTILITY
+#define YARP_MANAGER_UTILITY
 
 #include <algorithm>
 #include <cctype>

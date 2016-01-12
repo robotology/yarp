@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_MATH_RANDVECTOR__
-#define __YARP_MATH_RANDVECTOR__
+#ifndef YARP_MATH_RANDVECTOR
+#define YARP_MATH_RANDVECTOR
 
 #include <yarp/sig/Vector.h>
 #include <yarp/math/RandScalar.h>

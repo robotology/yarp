@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_IOEXCEPTION_
-#define _YARP2_IOEXCEPTION_
+#ifndef YARP2_IOEXCEPTION
+#define YARP2_IOEXCEPTION
 
 #include <yarp/os/impl/String.h>
 

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SOCKETTWOWAYSTREAM_
-#define _YARP2_SOCKETTWOWAYSTREAM_
+#ifndef YARP2_SOCKETTWOWAYSTREAM
+#define YARP2_SOCKETTWOWAYSTREAM
 
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>

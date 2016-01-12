@@ -1,5 +1,5 @@
-#ifndef _XMLRPC_H_
-#define _XMLRPC_H_
+#ifndef XMLRPC_H
+#define XMLRPC_H
 //
 // XmlRpc++ Copyright (c) 2002-2003 by Chris Morley
 // This library is free software; you can redistribute it and/or

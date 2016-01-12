@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_IMPLEMENT_IMPEDANCE_CONTROL__
-#define __YARP_IMPLEMENT_IMPEDANCE_CONTROL__
+#ifndef YARP_IMPLEMENT_IMPEDANCE_CONTROL
+#define YARP_IMPLEMENT_IMPEDANCE_CONTROL
 
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/api.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_CONTROL_BOARD_HELPER__
-#define __YARP_CONTROL_BOARD_HELPER__
+#ifndef YARP_CONTROL_BOARD_HELPER
+#define YARP_CONTROL_BOARD_HELPER
 
 #include <string.h> // for memset
 #include <stdio.h> // for printf

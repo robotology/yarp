@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_POSIXSEMAPHOREIMPL_
-#define _YARP2_POSIXSEMAPHOREIMPL_
+#ifndef YARP2_POSIXSEMAPHOREIMPL
+#define YARP2_POSIXSEMAPHOREIMPL
 
 #include <semaphore.h>
 #include <time.h>

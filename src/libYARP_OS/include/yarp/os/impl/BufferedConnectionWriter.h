@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_BUFFEREDCONNECTIONWRITER_
-#define _YARP2_BUFFEREDCONNECTIONWRITER_
+#ifndef YARP2_BUFFEREDCONNECTIONWRITER
+#define YARP2_BUFFEREDCONNECTIONWRITER
 
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ConnectionReader.h>

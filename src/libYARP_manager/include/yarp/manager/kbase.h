@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_KBASE__
-#define __YARP_MANAGER_KBASE__
+#ifndef YARP_MANAGER_KBASE
+#define YARP_MANAGER_KBASE
 
 #include <cstring>
 #include <algorithm>

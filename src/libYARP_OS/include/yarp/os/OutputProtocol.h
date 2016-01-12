@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_OUTPUTPROTOCOL_
-#define _YARP2_OUTPUTPROTOCOL_
+#ifndef YARP2_OUTPUTPROTOCOL
+#define YARP2_OUTPUTPROTOCOL
 
 #include <yarp/os/Route.h>
 #include <yarp/os/InputStream.h>

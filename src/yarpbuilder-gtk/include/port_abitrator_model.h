@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _PORT_ARBITRATOR_MODEL__
-#define _PORT_ARBITRATOR_MODEL__
+#ifndef PORT_ARBITRATOR_MODEL
+#define PORT_ARBITRATOR_MODEL
 
 #include <vector>
 #include <goocanvasmm.h>

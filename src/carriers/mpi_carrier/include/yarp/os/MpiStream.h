@@ -8,8 +8,8 @@
  */
 
 
-#ifndef _YARP_MPISTREAM_
-#define _YARP_MPISTREAM_
+#ifndef YARP_MPISTREAM
+#define YARP_MPISTREAM
 
 #include <yarp/os/all.h>
 

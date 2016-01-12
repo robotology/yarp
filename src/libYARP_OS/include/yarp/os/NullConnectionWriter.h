@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NULLCONNECTIONWRITER_
-#define _YARP2_NULLCONNECTIONWRITER_
+#ifndef YARP2_NULLCONNECTIONWRITER
+#define YARP2_NULLCONNECTIONWRITER
 
 #include <yarp/os/api.h>
 #include <yarp/os/ConnectionWriter.h>

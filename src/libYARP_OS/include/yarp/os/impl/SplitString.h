@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_SPLITSTRING_
-#define _YARP2_SPLITSTRING_
+#ifndef YARP2_SPLITSTRING
+#define YARP2_SPLITSTRING
 
 #include <yarp/os/impl/PlatformStdlib.h>
 

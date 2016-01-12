@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CONTACTABLE_
-#define _YARP2_CONTACTABLE_
+#ifndef YARP2_CONTACTABLE
+#define YARP2_CONTACTABLE
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/PortWriter.h>

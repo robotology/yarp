@@ -9,8 +9,8 @@
 
 //added threadRelease/threadInit methods and synchronization -nat
 
-#ifndef _YARP2_OS_RUNNABLE_
-#define _YARP2_OS_RUNNABLE_
+#ifndef YARP2_OS_RUNNABLE
+#define YARP2_OS_RUNNABLE
 
 #include <yarp/os/api.h>
 

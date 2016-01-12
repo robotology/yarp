@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPCANBUSINTERFACE__
-#define __YARPCANBUSINTERFACE__
+#ifndef YARPCANBUSINTERFACE
+#define YARPCANBUSINTERFACE
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Log.h>

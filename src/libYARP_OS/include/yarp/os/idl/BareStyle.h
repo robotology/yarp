@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_BARESTYLE_
-#define _YARP2_BARESTYLE_
+#ifndef YARP2_BARESTYLE
+#define YARP2_BARESTYLE
 
 #include <yarp/os/idl/WirePortable.h>
 #include <yarp/os/idl/WireReader.h>

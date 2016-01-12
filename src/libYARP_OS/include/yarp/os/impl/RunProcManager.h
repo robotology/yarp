@@ -5,8 +5,8 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#ifndef __RUN_PROC_MANAGER_H__
-#define __RUN_PROC_MANAGER_H__
+#ifndef YARP_OS_IMPL_RUNPROCMANAGER_H
+#define YARP_OS_IMPL_RUNPROCMANAGER_H
 
 #if defined(WIN32)
 #  if !defined(WIN32_LEAN_AND_MEAN)

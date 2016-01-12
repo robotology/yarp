@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NETTYPE_
-#define _YARP2_NETTYPE_
+#ifndef YARP2_NETTYPE
+#define YARP2_NETTYPE
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/ConstString.h>

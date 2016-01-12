@@ -7,8 +7,8 @@
  */
 
 
-#ifndef _YARP2_SERVERSERIAL_
-#define _YARP2_SERVERSERIAL_
+#ifndef YARP2_SERVERSERIAL
+#define YARP2_SERVERSERIAL
 
 #include <stdio.h>
 #include <stdlib.h>

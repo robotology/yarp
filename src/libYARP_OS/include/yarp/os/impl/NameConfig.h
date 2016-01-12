@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NAMECONFIG_
-#define _YARP2_NAMECONFIG_
+#ifndef YARP2_NAMECONFIG
+#define YARP2_NAMECONFIG
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Contact.h>

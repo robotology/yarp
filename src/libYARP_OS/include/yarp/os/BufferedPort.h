@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_BUFFEREDPORT_
-#define _YARP2_BUFFEREDPORT_
+#ifndef YARP2_BUFFEREDPORT
+#define YARP2_BUFFEREDPORT
 
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Port.h>

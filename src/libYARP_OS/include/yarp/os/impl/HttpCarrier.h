@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_HTTPCARRIER_
-#define _YARP2_HTTPCARRIER_
+#ifndef YARP2_HTTPCARRIER
+#define YARP2_HTTPCARRIER
 
 #include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/NetType.h>

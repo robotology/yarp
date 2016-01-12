@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP2_DRIVERLINKCREATOR__
-#define __YARP2_DRIVERLINKCREATOR__
+#ifndef YARP2_DRIVERLINKCREATOR
+#define YARP2_DRIVERLINKCREATOR
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>

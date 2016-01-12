@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_IMPLEMENTCONTROLBOARDINTERFACES__
-#define __YARP_IMPLEMENTCONTROLBOARDINTERFACES__
+#ifndef YARP_IMPLEMENTCONTROLBOARDINTERFACES
+#define YARP_IMPLEMENTCONTROLBOARDINTERFACES
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/api.h>

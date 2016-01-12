@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_RANDOM_
-#define _YARP2_RANDOM_
+#ifndef YARP2_RANDOM
+#define YARP2_RANDOM
 
 #include <yarp/os/api.h>
 

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPMOTORIMPL__
-#define __YARPMOTORIMPL__
+#ifndef YARPMOTORIMPL
+#define YARPMOTORIMPL
 
 #include <yarp/dev/IMotor.h>
 

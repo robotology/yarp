@@ -5,8 +5,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __VIEWERRESOURCES__
-#define __VIEWERRESOURCES__
+#ifndef VIEWERRESOURCES
+#define VIEWERRESOURCES
 
 #include <gtk/gtk.h>
 #include "YarpImage2Pixbuf.h"

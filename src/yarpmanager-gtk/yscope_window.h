@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _INSPECT_YSCOPE_WINDOW_H_
-#define _INSPECT_YSCOPE_WINDOW_H_
+#ifndef INSPECT_YSCOPE_WINDOW_H
+#define INSPECT_YSCOPE_WINDOW_H
 
 #include <gtkmm.h>
 

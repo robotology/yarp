@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPTRACKERINTERFACES__
-#define __YARPTRACKERINTERFACES__
+#ifndef YARPTRACKERINTERFACES
+#define YARPTRACKERINTERFACES
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>

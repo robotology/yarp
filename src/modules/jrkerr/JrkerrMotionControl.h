@@ -19,8 +19,8 @@
 
 ************************************************************************/
 
-#ifndef __JrkerrMotionControlh__
-#define __JrkerrMotionControlh__
+#ifndef JrkerrMotionControlh
+#define JrkerrMotionControlh
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>

@@ -1,6 +1,6 @@
 
-#ifndef _XMLRPCSERVER_H_
-#define _XMLRPCSERVER_H_
+#ifndef XMLRPCSERVER_H
+#define XMLRPCSERVER_H
 //
 // XmlRpc++ Copyright (c) 2002-2003 by Chris Morley
 //

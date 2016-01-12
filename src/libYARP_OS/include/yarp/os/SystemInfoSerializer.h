@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _YARP2_SYSTEMINFO_SERIALIZER_
-#define _YARP2_SYSTEMINFO_SERIALIZER_
+#ifndef YARP2_SYSTEMINFO_SERIALIZER
+#define YARP2_SYSTEMINFO_SERIALIZER
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/SystemInfo.h>

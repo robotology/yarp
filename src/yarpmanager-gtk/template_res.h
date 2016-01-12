@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _TEMPLATE_RES_
-#define _TEMPLATE_RES_
+#ifndef TEMPLATE_RES
+#define TEMPLATE_RES
 
 #include <string>
 

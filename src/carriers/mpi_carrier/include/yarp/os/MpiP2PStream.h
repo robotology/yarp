@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP_MPIP2PSTREAM_
-#define _YARP_MPIP2PSTREAM_
+#ifndef YARP_MPIP2PSTREAM
+#define YARP_MPIP2PSTREAM
 
 #include <yarp/os/MpiStream.h>
 

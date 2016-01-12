@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARPAXISINFOIMPL__
-#define __YARPAXISINFOIMPL__
+#ifndef YARPAXISINFOIMPL
+#define YARPAXISINFOIMPL
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 

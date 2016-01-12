@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_WIRESTATE_
-#define _YARP2_WIRESTATE_
+#ifndef YARP2_WIRESTATE
+#define YARP2_WIRESTATE
 
 #include <yarp/os/api.h>
 

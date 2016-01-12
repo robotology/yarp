@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_MACHSEMAPHOREIMPL_
-#define _YARP2_MACHSEMAPHOREIMPL_
+#ifndef YARP2_MACHSEMAPHOREIMPL
+#define YARP2_MACHSEMAPHOREIMPL
 
 #include <mach/mach_init.h>
 #include <mach/semaphore.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _CONNECTION_PROPERTY_WINDOW_H_
-#define _CONNECTION_PROPERTY_WINDOW_H_
+#ifndef CONNECTION_PROPERTY_WINDOW_H
+#define CONNECTION_PROPERTY_WINDOW_H
 
 #include <gtkmm.h>
 #include <yarp/manager/application.h>

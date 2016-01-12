@@ -10,8 +10,8 @@
  */
 
 
-#ifndef __YCONSOLEMANAGER__
-#define __YCONSOLEMANAGER__
+#ifndef YCONSOLEMANAGER
+#define YCONSOLEMANAGER
 
 
 #include <yarp/manager/manager.h>
@@ -69,4 +69,4 @@ private:
 };
 
 
-#endif //__YCONSOLEMANAGER__
+#endif //YCONSOLEMANAGER

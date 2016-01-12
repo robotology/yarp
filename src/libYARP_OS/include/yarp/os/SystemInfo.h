@@ -11,8 +11,8 @@
  */
 
 
-#ifndef _YARP2_SYSTEMINFO_
-#define _YARP2_SYSTEMINFO_
+#ifndef YARP2_SYSTEMINFO
+#define YARP2_SYSTEMINFO
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _MODULE_PROPERTY_WINDOW_H_
-#define _MODULE_PROPERTY_WINDOW_H_
+#ifndef MODULE_PROPERTY_WINDOW_H
+#define MODULE_PROPERTY_WINDOW_H
 
 #include <gtkmm.h>
 #include <yarp/manager/module.h>

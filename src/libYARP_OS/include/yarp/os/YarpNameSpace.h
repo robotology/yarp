@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_YARPNAMESPACE_
-#define _YARP2_YARPNAMESPACE_
+#ifndef YARP2_YARPNAMESPACE
+#define YARP2_YARPNAMESPACE
 
 #include <yarp/os/NameSpace.h>
 

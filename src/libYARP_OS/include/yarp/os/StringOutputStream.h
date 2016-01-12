@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_STRINGOUTPUTSTREAM_
-#define _YARP2_STRINGOUTPUTSTREAM_
+#ifndef YARP2_STRINGOUTPUTSTREAM
+#define YARP2_STRINGOUTPUTSTREAM
 
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/ConstString.h>

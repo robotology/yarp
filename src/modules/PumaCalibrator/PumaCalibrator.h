@@ -7,8 +7,8 @@
 */
 
 
-#ifndef __PUMA_CALIBRATOR__
-#define __PUMA_CALIBRATOR__
+#ifndef PUMA_CALIBRATOR
+#define PUMA_CALIBRATOR
 
 //#include <yarp/dev/DeviceDriver.h>
 //#include <yarp/dev/CalibratorInterfaces.h>

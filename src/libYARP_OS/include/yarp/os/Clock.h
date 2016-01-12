@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CLOCKTIME_
-#define _YARP2_CLOCKTIME_
+#ifndef YARP2_CLOCKTIME
+#define YARP2_CLOCKTIME
 
 #include <yarp/os/api.h>
 

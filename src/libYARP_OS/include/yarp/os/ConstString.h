@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_CONSTSTRING_
-#define _YARP2_CONSTSTRING_
+#ifndef YARP2_CONSTSTRING
+#define YARP2_CONSTSTRING
 
 #include <yarp/os/api.h>
 #include <yarp/conf/system.h>

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NAMESERVER_
-#define _YARP2_NAMESERVER_
+#ifndef YARP2_NAMESERVER
+#define YARP2_NAMESERVER
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Contact.h>

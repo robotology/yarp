@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_FAKEFACE_
-#define _YARP2_FAKEFACE_
+#ifndef YARP2_FAKEFACE
+#define YARP2_FAKEFACE
 
 #include <yarp/os/Face.h>
 

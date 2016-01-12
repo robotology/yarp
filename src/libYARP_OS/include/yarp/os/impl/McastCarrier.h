@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_MCASTCARRIER_
-#define _YARP2_MCASTCARRIER_
+#ifndef YARP2_MCASTCARRIER
+#define YARP2_MCASTCARRIER
 
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/UdpCarrier.h>

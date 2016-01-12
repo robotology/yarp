@@ -10,8 +10,8 @@
 
 // everything for namespace yarp::sig
 
-#ifndef __YARP2_SIG_ALL__
-#define __YARP2_SIG_ALL__
+#ifndef YARP2_SIG_ALL
+#define YARP2_SIG_ALL
 
 #include <yarp/sig/ImageDraw.h>
 #include <yarp/sig/ImageFile.h>

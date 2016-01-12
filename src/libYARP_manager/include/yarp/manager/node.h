@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_NODE__
-#define __YARP_MANAGER_NODE__
+#ifndef YARP_MANAGER_NODE
+#define YARP_MANAGER_NODE
 
 #include <iostream>
 #include <vector>

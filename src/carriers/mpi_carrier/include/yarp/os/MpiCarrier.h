@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP_MPICARRIER_
-#define _YARP_MPICARRIER_
+#ifndef YARP_MPICARRIER
+#define YARP_MPICARRIER
 
 #include <yarp/os/all.h>
 

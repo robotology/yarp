@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARP_MANAGER_YARPBROKER__
-#define __YARP_MANAGER_YARPBROKER__
+#ifndef YARP_MANAGER_YARPBROKER
+#define YARP_MANAGER_YARPBROKER
 
 #include <string>
 #include <iostream>

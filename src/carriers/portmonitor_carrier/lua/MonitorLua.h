@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _MONITORLUA_INC_
-#define _MONITORLUA_INC_
+#ifndef MONITORLUA_INC
+#define MONITORLUA_INC
 
 #include <string>
 #include <yarp/os/ConstString.h>

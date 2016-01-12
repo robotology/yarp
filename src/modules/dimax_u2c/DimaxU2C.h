@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
-#ifndef __KASPAR_CONTROL_DEVICE_H__
-#define __KASPAR_CONTROL_DEVICE_H__
+#ifndef KASPAR_CONTROL_DEVICE_H
+#define KASPAR_CONTROL_DEVICE_H
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>

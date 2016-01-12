@@ -7,8 +7,8 @@
 */
 
 
-#ifndef _YARP2_REMOTEFRAMEGRABBER_
-#define _YARP2_REMOTEFRAMEGRABBER_
+#ifndef YARP2_REMOTEFRAMEGRABBER
+#define YARP2_REMOTEFRAMEGRABBER
 
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/os/Network.h>

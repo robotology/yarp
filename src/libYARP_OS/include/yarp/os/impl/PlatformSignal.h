@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_PLATFORMSIGNAL_
-#define _YARP2_PLATFORMSIGNAL_
+#ifndef YARP2_PLATFORMSIGNAL
+#define YARP2_PLATFORMSIGNAL
 
 #include <yarp/conf/system.h>
 #ifdef YARP_HAS_ACE

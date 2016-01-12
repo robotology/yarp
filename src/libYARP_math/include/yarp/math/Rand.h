@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP_MATH_RAND__
-#define __YARP_MATH_RAND__
+#ifndef YARP_MATH_RAND
+#define YARP_MATH_RAND
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>

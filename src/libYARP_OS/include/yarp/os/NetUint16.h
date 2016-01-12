@@ -6,8 +6,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef _YARP2_NETUINT16_
-#define _YARP2_NETUINT16_
+#ifndef YARP2_NETUINT16
+#define YARP2_NETUINT16
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/api.h>

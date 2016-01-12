@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __YARP2_CALLIBRATOR_INTERFACES__
-#define __YARP2_CALLIBRATOR_INTERFACES__
+#ifndef YARP2_CALLIBRATOR_INTERFACES
+#define YARP2_CALLIBRATOR_INTERFACES
 
 #include <yarp/dev/DeviceDriver.h>
 

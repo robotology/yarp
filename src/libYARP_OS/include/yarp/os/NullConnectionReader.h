@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _YARP2_NULLCONNECTIONREADER_
-#define _YARP2_NULLCONNECTIONREADER_
+#ifndef YARP2_NULLCONNECTIONREADER
+#define YARP2_NULLCONNECTIONREADER
 
 #include <yarp/os/api.h>
 #include <yarp/os/ConnectionReader.h>
