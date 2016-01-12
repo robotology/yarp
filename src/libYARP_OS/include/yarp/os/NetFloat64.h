@@ -1,13 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef YARP2_NETFLOAT64
-#define YARP2_NETFLOAT64
+#ifndef YARP_OS_NETFLOAT64_H
+#define YARP_OS_NETFLOAT64_H
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/api.h>
@@ -77,4 +75,4 @@ namespace yarp {
 
 #endif // YARP_FLOAT64
 
-#endif // _YARP2_NETFLOAT64_
+#endif // YARP_OS_NETFLOAT64_H

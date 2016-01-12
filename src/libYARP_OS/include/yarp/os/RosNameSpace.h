@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_ROSNAMESPACE
-#define YARP2_ROSNAMESPACE
+#ifndef YARP_OS_ROSNAMESPACE_H
+#define YARP_OS_ROSNAMESPACE_H
 
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/Network.h>
@@ -107,4 +104,4 @@ private:
     Semaphore mutex;
 };
 
-#endif
+#endif // YARP_OS_ROSNAMESPACE_H

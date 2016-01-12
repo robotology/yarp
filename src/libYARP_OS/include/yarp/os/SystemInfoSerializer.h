@@ -1,17 +1,11 @@
 /*
- *  Yarp Modules Manager
  *  Copyright: (C) 2010 RobotCub Consortium
- *              Italian Institute of Technology (IIT)
- *              Via Morego 30, 16163, 
- *              Genova, Italy
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef YARP2_SYSTEMINFO_SERIALIZER
-#define YARP2_SYSTEMINFO_SERIALIZER
+#ifndef YARP_OS_SYSTEMINFOSERIALIZER_H
+#define YARP_OS_SYSTEMINFOSERIALIZER_H
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/SystemInfo.h>
@@ -62,7 +56,7 @@ public:
     /**
      * @brief system storage information
      */
-    yarp::os::SystemInfo::StorageInfo storage;    
+    yarp::os::SystemInfo::StorageInfo storage;
 
     /**
      * @brief system processor type information
@@ -87,4 +81,4 @@ public:
     //yarp::os::SystemInfo::NetworkInfo network;
 };
 
-#endif //_YARP2_SYSTEMINFO_SERIALIZER_
+#endif // YARP_OS_SYSTEMINFOSERIALIZER_H

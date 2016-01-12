@@ -1,16 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Giorgio Metta
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef YARP_OS_TERMINATOR_H
 #define YARP_OS_TERMINATOR_H
-
-// $Id: Terminator.h,v 1.11 2008-12-11 18:55:46 natta Exp $
 
 
 #include <yarp/os/Thread.h>
@@ -101,4 +96,4 @@ public:
 };
 
 
-#endif
+#endif // YARP_OS_TERMINATOR_H

@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_CONTACTSTYLE
-#define YARP2_CONTACTSTYLE
+#ifndef YARP_OS_CONTACTSTYLE_H
+#define YARP_OS_CONTACTSTYLE_H
 
 #include <yarp/os/ConstString.h>
 
@@ -109,4 +106,4 @@ public:
     explicit ContactStyle();
 };
 
-#endif
+#endif // YARP_OS_CONTACTSTYLE_H

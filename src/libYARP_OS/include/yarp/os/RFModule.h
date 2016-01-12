@@ -1,14 +1,12 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
-#ifndef YARP2_RFMODULE
-#define YARP2_RFMODULE
-
 /*
-* Author: Lorenzo Natale.
-* Copyright (C) 2009 The Robotcub consortium
-* Based on code by Paul Fitzpatrick 2007.
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2009 The Robotcub consortium
+ * Author: Lorenzo Natale.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Based on code by Paul Fitzpatrick 2007.
+ */
+
+#ifndef YARP_OS_RFMODULE_H
+#define YARP_OS_RFMODULE_H
 
 #include <yarp/os/Port.h>
 #include <yarp/os/PortReaderBuffer.h>
@@ -229,4 +227,4 @@ private:
     virtual bool basicRespond(const Bottle& command, Bottle& reply);
 };
 
-#endif
+#endif // YARP_OS_RFMODULE_H

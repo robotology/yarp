@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2014 iCub Facility
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_MONITOROBJECT
-#define YARP2_MONITOROBJECT
+#ifndef YARP_OS_MONITOROBJECT_H
+#define YARP_OS_MONITOROBJECT_H
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Things.h>
@@ -93,5 +90,4 @@ public:
     virtual yarp::os::Things& updateReply(yarp::os::Things& thing) { return thing; }
 };
 
-#endif //YARP2_MONITOROBJECT
-
+#endif // YARP_OS_MONITOROBJECT_H

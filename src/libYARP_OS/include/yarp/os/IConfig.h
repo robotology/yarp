@@ -1,15 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2007 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-
-#ifndef YARP2_ICONFIG
-#define YARP2_ICONFIG
+#ifndef YARP_OS_ICONFIG_H
+#define YARP_OS_ICONFIG_H
 
 
 #include <yarp/os/Searchable.h>
@@ -60,4 +56,4 @@ public:
     virtual bool configure(Searchable& config);
 };
 
-#endif
+#endif // YARP_OS_ICONFIG_H

@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_FACE
-#define YARP2_FACE
+#ifndef YARP_OS_FACE_H
+#define YARP_OS_FACE_H
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/InputProtocol.h>
@@ -89,5 +86,4 @@ public:
     }
 };
 
-#endif
-
+#endif // YARP_OS_FACE_H

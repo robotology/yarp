@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2013 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_YARPSHAREDLIBRARYFACTORY
-#define YARP2_YARPSHAREDLIBRARYFACTORY
+#ifndef YARP_OS_SHAREDLIBRARYFACTORY_H
+#define YARP_OS_SHAREDLIBRARYFACTORY_H
 
 #include <yarp/os/api.h>
 #include <yarp/os/Vocab.h>
@@ -160,4 +157,4 @@ private:
 };
 
 
-#endif
+#endif // YARP_OS_SHAREDLIBRARYFACTORY_H

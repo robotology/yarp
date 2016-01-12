@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2009 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_RPCCLIENT
-#define YARP2_RPCCLIENT
+#ifndef YARP_OS_RPCCLIENT_H
+#define YARP_OS_RPCCLIENT_H
 
 #include <yarp/os/AbstractContactable.h>
 
@@ -72,4 +69,4 @@ private:
     const RpcClient& operator = (const RpcClient& alt);
 };
 
-#endif
+#endif // YARP_OS_RPCCLIENT_H

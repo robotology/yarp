@@ -1,13 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2007-2009 RobotCub Consortium
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- * author Alessandro Scalzo alessandro@liralab.it
+ * Author: Alessandro Scalzo <alessandro@liralab.it>
  */
 
-#ifndef YARP2_RUN
-#define YARP2_RUN
+#ifndef YARP_OS_RUN_H
+#define YARP_OS_RUN_H
 
 #include <string.h>
 #include <yarp/os/api.h>
@@ -216,4 +214,4 @@ protected:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 };
 
-#endif
+#endif // YARP_OS_RUN_H

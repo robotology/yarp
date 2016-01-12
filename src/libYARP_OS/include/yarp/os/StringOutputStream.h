@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_STRINGOUTPUTSTREAM
-#define YARP2_STRINGOUTPUTSTREAM
+#ifndef YARP_OS_STRINGOUTPUTSTREAM_H
+#define YARP_OS_STRINGOUTPUTSTREAM_H
 
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/ConstString.h>
@@ -54,5 +51,4 @@ private:
     ConstString data;
 };
 
-#endif
-
+#endif // YARP_OS_STRINGOUTPUTSTREAM_H

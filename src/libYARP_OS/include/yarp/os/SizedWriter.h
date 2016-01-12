@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SIZEDWRITER
-#define YARP2_SIZEDWRITER
+#ifndef YARP_OS_SIZEDWRITER_H
+#define YARP_OS_SIZEDWRITER_H
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/OutputStream.h>
@@ -79,4 +76,4 @@ public:
     virtual void clear() {}
 };
 
-#endif
+#endif // YARP_OS_SIZEDWRITER_H

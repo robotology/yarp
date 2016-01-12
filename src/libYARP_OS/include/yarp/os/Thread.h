@@ -1,16 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006, 2008 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-// initThread/releaseThread methods, synchronization on init failure/success -nat
-
-#ifndef YARP2_THREAD
-#define YARP2_THREAD
+#ifndef YARP_OS_THREAD_H
+#define YARP_OS_THREAD_H
 
 #include <yarp/os/api.h>
 
@@ -211,4 +206,4 @@ private:
     bool stopping;
 };
 
-#endif
+#endif // YARP_OS_THREAD_H

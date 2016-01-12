@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2013 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_UNBUFFEREDCONTACTABLE
-#define YARP2_UNBUFFEREDCONTACTABLE
+#ifndef YARP_OS_UNBUFFEREDCONTACTABLE_H
+#define YARP_OS_UNBUFFEREDCONTACTABLE_H
 
 #include <yarp/os/Contactable.h>
 
@@ -79,5 +76,4 @@ public:
     virtual bool replyAndDrop(PortWriter& writer) = 0;
 };
 
-#endif
-
+#endif // YARP_OS_UNBUFFEREDCONTACTABLE_H

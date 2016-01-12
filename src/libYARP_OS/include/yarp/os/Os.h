@@ -1,18 +1,16 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+/*
+* Copyright (C) 2009 RobotCub Consortium
+* Author: Lorenzo Natale
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+*/
 
-#ifndef YARPOSH
-#define YARPOSH
+#ifndef YARP_OS_OS_H
+#define YARP_OS_OS_H
 
 #include <yarp/os/api.h>
 
 #include <cstddef>
 
-/*
-* Copyright (C) 2009 RobotCub Consortium
-* Author: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
 
 namespace yarp {
     namespace os {
@@ -108,4 +106,4 @@ namespace yarp {
     }
 }
 
-#endif
+#endif // YARP_OS_OS_H

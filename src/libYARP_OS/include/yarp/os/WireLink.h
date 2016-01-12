@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2012 IITRBCS
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_WIRELINK
-#define YARP2_WIRELINK
+#ifndef YARP_OS_WIRELINK_H
+#define YARP_OS_WIRELINK_H
 
 #include <yarp/os/Port.h>
 #include <yarp/os/ContactStyle.h>
@@ -213,4 +210,4 @@ public:
 };
 
 
-#endif
+#endif // YARP_OS_WIRELINK_H

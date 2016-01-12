@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2013 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_CONNECTIONSTATE
-#define YARP2_CONNECTIONSTATE
+#ifndef YARP_OS_CONNECTIONSTATE_H
+#define YARP_OS_CONNECTIONSTATE_H
 
 #include <yarp/os/Route.h>
 #include <yarp/os/TwoWayStream.h>
@@ -174,4 +171,4 @@ public:
     virtual const ConstString& getEnvelope() = 0;
 };
 
-#endif
+#endif // YARP_OS_CONNECTIONSTATE_H

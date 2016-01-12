@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_MULTINAMESPACE
-#define YARP2_MULTINAMESPACE
+#ifndef YARP_OS_MULTINAMESPACE_H
+#define YARP_OS_MULTINAMESPACE_H
 
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/NameStore.h>
@@ -108,4 +105,4 @@ private:
     NameStore *altStore;
 };
 
-#endif
+#endif // YARP_OS_MULTINAMESPACE_H

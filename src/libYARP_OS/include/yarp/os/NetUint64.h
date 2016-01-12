@@ -1,13 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2013 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef YARP2_NETUINT64
-#define YARP2_NETUINT64
+#ifndef YARP_OS_NETUINT64_H
+#define YARP_OS_NETUINT64_H
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/api.h>
@@ -79,6 +77,6 @@ namespace yarp {
 
 #error "NetInt64 not defined"
 
-#endif  // YARP_INT32
+#endif // YARP_INT32
 
-#endif /* _YARP2_NETINT64_ */
+#endif // YARP_OS_NETINT64_H

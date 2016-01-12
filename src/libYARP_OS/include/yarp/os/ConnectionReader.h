@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_CONNECTIONREADER
-#define YARP2_CONNECTIONREADER
+#ifndef YARP_OS_CONNECTIONREADER_H
+#define YARP_OS_CONNECTIONREADER_H
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Contact.h>
@@ -198,4 +195,4 @@ public:
     static bool readFromStream(PortReader& portable, InputStream& is);
 };
 
-#endif
+#endif // YARP_OS_CONNECTIONREADER_H

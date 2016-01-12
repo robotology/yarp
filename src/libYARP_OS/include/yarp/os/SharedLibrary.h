@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SHAREDLIBRARY
-#define YARP2_SHAREDLIBRARY
+#ifndef YARP_OS_SHAREDLIBRARY_H
+#define YARP_OS_SHAREDLIBRARY_H
 
 #include <yarp/os/api.h>
 
@@ -77,4 +74,4 @@ private:
     SharedLibrary& operator=(const SharedLibrary&); // Not implemented
 };
 
-#endif
+#endif // YARP_OS_SHAREDLIBRARY_H

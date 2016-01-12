@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2010 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_EVENT
-#define YARP2_EVENT
+#ifndef YARP_OS_EVENT_H
+#define YARP_OS_EVENT_H
 
 #include <yarp/os/api.h>
 
@@ -74,4 +71,4 @@ private:
     void *implementation;
 };
 
-#endif
+#endif // YARP_OS_EVENT_H

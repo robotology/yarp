@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2010 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_OS_API
-#define YARP2_OS_API
+#ifndef YARP_OS_API_H
+#define YARP_OS_API_H
 
 #include <yarp/conf/api.h>
 #ifndef YARP_OS_API
@@ -38,4 +35,4 @@
 //#  endif
 #endif
 
-#endif
+#endif // YARP_OS_API_H

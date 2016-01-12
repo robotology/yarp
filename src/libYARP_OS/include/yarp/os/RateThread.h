@@ -1,16 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-//added threadRelease/threadInit methods and synchronization -nat
-
-#ifndef YARP2_RATETHREAD
-#define YARP2_RATETHREAD
+#ifndef YARP_OS_RATETHREAD_H
+#define YARP_OS_RATETHREAD_H
 
 #include <yarp/os/Runnable.h>
 
@@ -246,4 +241,4 @@ public:
     Runnable *getAttachment() const;
 };
 
-#endif
+#endif // YARP_OS_RATETHREAD_H

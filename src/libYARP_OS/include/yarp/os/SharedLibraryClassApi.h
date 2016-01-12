@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2013 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_YARPLIBRARYCLASSAPI
-#define YARP2_YARPLIBRARYCLASSAPI
+#ifndef YARP_OS_SHAREDLIBRARYCLASSAPI_H
+#define YARP_OS_SHAREDLIBRARYCLASSAPI_H
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Vocab.h>
@@ -117,4 +114,4 @@ extern "C" {
 #define YARP_DEFINE_DEFAULT_SHARED_CLASS(classname) YARP_DEFINE_SHARED_SUBCLASS(yarp_default_factory,classname,classname)
 #define YARP_DEFINE_SHARED_CLASS(factoryname,classname) YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,classname)
 
-#endif
+#endif // YARP_OS_SHAREDLIBRARYCLASS_H

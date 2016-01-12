@@ -1,12 +1,10 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2007 Freyr Magnusson
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
-#ifndef DUMMYCONNECTOR_H
-#define DUMMYCONNECTOR_H
+
+#ifndef YARP_OS_DUMMYCONNECTOR_H
+#define YARP_OS_DUMMYCONNECTOR_H
 
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
@@ -88,4 +86,4 @@ private:
 };
 
 
-#endif
+#endif // DUMMYCONNECTOR_H

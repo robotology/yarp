@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_VALUE
-#define YARP2_VALUE
+#ifndef YARP_OS_VALUE_H
+#define YARP_OS_VALUE_H
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Searchable.h>
@@ -385,4 +382,4 @@ public:
 };
 
 
-#endif
+#endif // YARP_OS_VALUE_H

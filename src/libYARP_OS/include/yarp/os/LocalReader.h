@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_LOCALREADER
-#define YARP2_LOCALREADER
+#ifndef YARP_OS_LOCALREADER_H
+#define YARP_OS_LOCALREADER_H
 
 #include <yarp/os/PortReader.h>
 
@@ -34,16 +31,14 @@ public:
      * Send object obj; expect callback to wrapper
      * when obj is no longer in use.
      */
-    virtual bool acceptObject(T *obj,
-                              PortWriter *wrapper) = 0;
+    virtual bool acceptObject(T *obj, PortWriter *wrapper) = 0;
 
     /**
      * Sender is no longer interested in getting callbacks.
      */
-    virtual bool forgetObject(T *obj,
-                              PortWriter *wrapper) = 0;
+    virtual bool forgetObject(T *obj, PortWriter *wrapper) = 0;
 };
 
 
-#endif
+#endif // YARP_OS_LOCALREADER_H
 

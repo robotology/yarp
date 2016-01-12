@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef YARP2_BOTTLE
-#define YARP2_BOTTLE
+#ifndef YARP_OS_BOTTLE_H
+#define YARP_OS_BOTTLE_H
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/Searchable.h>
@@ -399,4 +399,4 @@ private:
     static void fini();
 };
 
-#endif
+#endif // YARP_OS_BOTTLE_H

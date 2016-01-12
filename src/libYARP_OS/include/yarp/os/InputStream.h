@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_INPUTSTREAM
-#define YARP2_INPUTSTREAM
+#ifndef YARP_OS_INPUTSTREAM_H
+#define YARP_OS_INPUTSTREAM_H
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Bytes.h>
@@ -181,4 +178,4 @@ public:
     virtual bool setReadEnvelopeCallback(readEnvelopeCallbackType callback, void* data) { return false; }
 };
 
-#endif
+#endif // YARP_OS_INPUTSTREAM_H

@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2013 iCub Facility
  * Authors: Paul Fitzpatrick, Daniele Domenichelli
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_RESOURCEFINDEROPTIONS
-#define YARP2_RESOURCEFINDEROPTIONS
+#ifndef YARP_OS_RESOURCEFINDEROPTIONS_H
+#define YARP_OS_RESOURCEFINDEROPTIONS_H
 
 #include <yarp/os/api.h>
 #include <yarp/os/ConstString.h>
@@ -87,4 +84,4 @@ public:
     }
 };
 
-#endif
+#endif // YARP_OS_RESOURCEFINDER_H

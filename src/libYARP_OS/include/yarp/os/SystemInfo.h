@@ -1,18 +1,12 @@
 /*
- *  Yarp Modules Manager
  *  Copyright: (C) 2010 RobotCub Consortium
- *              Italian Institute of Technology (IIT)
- *              Via Morego 30, 16163, 
- *              Genova, Italy
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
-#ifndef YARP2_SYSTEMINFO
-#define YARP2_SYSTEMINFO
+#ifndef YARP_OS_SYSTEMINFO_H
+#define YARP_OS_SYSTEMINFO_H
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
@@ -121,7 +115,7 @@ public:
         int pid;
     } ProcessInfo;
 
-public:   
+public:
     /**
      * @brief getMemoryInfo
      * @return  information about the system memory
@@ -167,8 +161,8 @@ public:
      */
     static ProcessInfo getProcessInfo(int pid);
 
-    //static NetworkInfo getNetworkInfo();    
+    //static NetworkInfo getNetworkInfo();
 };
 
-#endif //_YARP2_SYSTEMINFO_
+#endif // YARP_OS_SYSTEMINFO_H
 

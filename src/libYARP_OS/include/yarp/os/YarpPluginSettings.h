@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2013 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_YARPPLUGINSETTINGS
-#define YARP2_YARPPLUGINSETTINGS
+#ifndef YARP_OS_YARPPLUGINSETTINGS_H
+#define YARP_OS_YARPPLUGINSETTINGS_H
 
 #include <yarp/os/YarpPluginSelector.h>
 #include <yarp/os/SharedLibraryClass.h>
@@ -262,4 +259,4 @@ private:
     }
 };
 
-#endif
+#endif // YARP_OS_YARPPLUGINSELECTOR_H

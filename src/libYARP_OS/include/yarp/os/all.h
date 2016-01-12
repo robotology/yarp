@@ -1,18 +1,13 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006, 2010 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
+#ifndef YARP_OS_ALL_H
+#define YARP_OS_ALL_H
 
 // everything for the yarp::os namespace
-
-#ifndef YARP2_OS_ALL
-#define YARP2_OS_ALL
-
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/NetInt16.h>
@@ -72,6 +67,5 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/MessageStack.h>
-#endif
 
-
+#endif // YARP_OS_ALL_H

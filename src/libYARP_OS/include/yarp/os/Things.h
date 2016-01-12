@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2012 IITRBCS
  * Authors: Ali Paikan and Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_THINGS
-#define YARP2_THINGS
+#ifndef YARP_OS_THINGS_H
+#define YARP_OS_THINGS_H
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConnectionReader.h>
@@ -26,13 +23,13 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::Things {
 public:
-  
+
     Things();
 
     virtual ~Things();
 
-    /**     
-     * Set the reference to a PortWriter object 
+    /**
+     * Set the reference to a PortWriter object
      *
      */
     void setPortWriter(yarp::os::PortWriter* writer) {
@@ -62,7 +59,7 @@ public:
         conReader = &reader;
         if(portable)
             delete portable;
-        portable = NULL;    
+        portable = NULL;
         return true;
     }
 
@@ -72,14 +69,14 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) {
         if(writer)
             return writer->write(connection);
-        if(portable)    
+        if(portable)
             return portable->write(connection);
-        return false;    
+        return false;
     }
 
     void reset() {
         if(portable)
-            delete portable;        
+            delete portable;
         conReader = NULL;
         writer = NULL;
         reader = NULL;
@@ -96,27 +93,27 @@ public:
         if(this->reader)
             return dynamic_cast<T*>(this->reader);
 
-        if(!this->portable) 
+        if(!this->portable)
         {
             if(!this->conReader)
                 return NULL;
-            this->portable = new T(); 
-            if(!this->portable->read(*this->conReader)) 
+            this->portable = new T();
+            if(!this->portable->read(*this->conReader))
             {
-                delete this->portable; 
-                this->portable = NULL; 
-                return NULL; 
+                delete this->portable;
+                this->portable = NULL;
+                return NULL;
             }
             beenRead = true;
         }
         return dynamic_cast<T*>(this->portable);
     }
 
-    bool hasBeenRead() { 
+    bool hasBeenRead() {
         return beenRead;
     }
 
-private: 
+private:
     bool beenRead;
     yarp::os::ConnectionReader* conReader;
     yarp::os::PortWriter* writer;
@@ -125,4 +122,4 @@ private:
 
 };
 
-#endif
+#endif // YARP_OS_THINGS_H

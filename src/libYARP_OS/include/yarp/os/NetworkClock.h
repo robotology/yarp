@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2014 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_NETWORKCLOCK
-#define YARP2_NETWORKCLOCK
+#ifndef YARP_OS_NETWORKCLOCK_H
+#define YARP_OS_NETWORKCLOCK_H
 
 #include <yarp/os/Clock.h>
 #include <yarp/os/BufferedPort.h>
@@ -49,7 +46,4 @@ private:
     bool closing;
 };
 
-#endif
-
-
-
+#endif // YARP_OS_NETWORKCLOCK_H

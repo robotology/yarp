@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2013 iCub Facility
  * Authors: Francesco Romano
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_LOCKGUARD
-#define YARP2_LOCKGUARD
+#ifndef YARP_OS_LOCKGUARD_H
+#define YARP_OS_LOCKGUARD_H
 
 #include <yarp/os/api.h>
 
@@ -81,4 +78,4 @@ yarp::os::AbstractLockGuard<Lockable>::AbstractLockGuard(const AbstractLockGuard
 template <typename Lockable>
 yarp::os::AbstractLockGuard<Lockable>& yarp::os::AbstractLockGuard<Lockable>::operator=(const AbstractLockGuard&) { return *this; }
 
-#endif
+#endif // YARP_OS_LOCKGUARD_H

@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2014 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SUBSCRIBER
-#define YARP2_SUBSCRIBER
+#ifndef YARP_OS_SUBSCRIBER_H
+#define YARP_OS_SUBSCRIBER_H
 
 #include <yarp/os/Log.h>
 #include <yarp/os/AbstractContactable.h>
@@ -152,5 +149,4 @@ private:
     }
 };
 
-#endif
-
+#endif // YARP_OS_SUBSCRIBER_H

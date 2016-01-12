@@ -1,13 +1,11 @@
 /*
  * Copyright (C) 2012-2014  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
-#ifndef YARP2_LOGSTREAM
-#define YARP2_LOGSTREAM
+#ifndef YARP_OS_LOGSTREAM_H
+#define YARP_OS_LOGSTREAM_H
 
 #include <iosfwd>
 #include <sstream>
@@ -181,4 +179,4 @@ inline std::ostream& std::operator<<(std::ostream &os, const std::vector<T> &t)
     return os;
 }
 
-#endif // _YARP2_LOGSTREAM_
+#endif // YARP_OS_LOGSTREAM_H

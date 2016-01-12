@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2014 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_CLOCKTIME
-#define YARP2_CLOCKTIME
+#ifndef YARP_OS_CLOCKTIME_H
+#define YARP_OS_CLOCKTIME_H
 
 #include <yarp/os/api.h>
 
@@ -52,4 +49,4 @@ public:
     virtual bool isValid() const = 0;
 };
 
-#endif
+#endif // YARP_OS_CLOCKTIME_H

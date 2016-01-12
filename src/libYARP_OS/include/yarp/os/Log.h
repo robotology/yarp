@@ -1,14 +1,13 @@
 /*
  * Copyright (C) 2012-2014  iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- *          Marco Randazzo          <marco.randazzo@iit.it>
- *
+ *          Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
-#ifndef YARP2_LOG
-#define YARP2_LOG
+#ifndef YARP_OS_LOG_H
+#define YARP_OS_LOG_H
 
 #include <yarp/os/api.h>
 #include <iosfwd>
@@ -158,4 +157,4 @@ YARP_OS_API YARP_DEPRECATED inline bool yarp_show_debug() { return true; } ///< 
 
 #endif // YARP_NO_DEPRECATED
 
-#endif // _YARP2_LOG_
+#endif // YARP_OS_LOG_H

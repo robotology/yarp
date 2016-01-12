@@ -1,13 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef YARP2_NETUINT16
-#define YARP2_NETUINT16
+#ifndef YARP_OS_NETUINT16_H
+#define YARP_OS_NETUINT16_H
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/api.h>
@@ -76,6 +74,6 @@ namespace yarp {
 
 #error "NetUint16 not defined"
 
-#endif  // YARP_INT16
+#endif // YARP_INT16
 
-#endif // _YARP2_NETUINT16_
+#endif // YARP_OS_NETUINT16_H

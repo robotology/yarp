@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SHIFTSTREAM
-#define YARP2_SHIFTSTREAM
+#ifndef YARP_OS_SHIFTSTREAM_H
+#define YARP_OS_SHIFTSTREAM_H
 
 #include <yarp/os/TwoWayStream.h>
 
@@ -144,4 +141,4 @@ private:
     NullStream nullStream;
 };
 
-#endif
+#endif // YARP_OS_SHIFTSTREAM_H

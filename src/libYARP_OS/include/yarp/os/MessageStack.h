@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2014 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_MESSAGESTACK
-#define YARP2_MESSAGESTACK
+#ifndef YARP_OS_MESSAGESTACK_H
+#define YARP_OS_MESSAGESTACK_H
 
 #include <yarp/os/Portable.h>
 
@@ -63,4 +60,4 @@ private:
     void *implementation;
 };
 
-#endif
+#endif // YARP_OS_MESSAGESTACK_H

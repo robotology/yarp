@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_MANAGEDBYTES
-#define YARP2_MANAGEDBYTES
+#ifndef YARP_OS_MANAGEDBYTES_H
+#define YARP_OS_MANAGEDBYTES_H
 
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Network.h>
@@ -146,4 +143,4 @@ private:
     bool use_set;
 };
 
-#endif
+#endif // YARP_OS_MANAGEDBYTES_H

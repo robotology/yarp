@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2015 iCub Facility
  * Authors: Ali Paikan and Daniele Domenichelli
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_QOSSTYLE
-#define YARP2_QOSSTYLE
+#ifndef YARP_OS_QOSSTYLE_H
+#define YARP_OS_QOSSTYLE_H
 
 #include <yarp/os/api.h>
 
@@ -206,4 +203,4 @@ private:
 
 };
 
-#endif
+#endif // YARP_OS_QOSSTYLE_H

@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006, 2007 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PORT
-#define YARP2_PORT
+#ifndef YARP_OS_PORT_H
+#define YARP_OS_PORT_H
 
 #include <yarp/os/api.h>
 #include <yarp/os/Portable.h>
@@ -302,4 +299,4 @@ private:
 
 };
 
-#endif
+#endif // YARP_OS_PORT_H

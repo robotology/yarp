@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_CARRIER
-#define YARP2_CARRIER
+#ifndef YARP_OS_CARRIER_H
+#define YARP_OS_CARRIER_H
 
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/SizedWriter.h>
@@ -481,4 +478,4 @@ public:
 
 };
 
-#endif
+#endif // YARP_OS_CARRIER_H

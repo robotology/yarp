@@ -1,14 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_OUTPUTPROTOCOL
-#define YARP2_OUTPUTPROTOCOL
+#ifndef YARP_OS_OUTPUTPROTOCOL_H
+#define YARP_OS_OUTPUTPROTOCOL_H
 
 #include <yarp/os/Route.h>
 #include <yarp/os/InputStream.h>
@@ -153,4 +150,4 @@ public:
     virtual void beginWrite() = 0;
 };
 
-#endif
+#endif // YARP_OS_OUTPUTPROTOCOL_H
