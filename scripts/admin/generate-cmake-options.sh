@@ -1,6 +1,6 @@
 ### parameters are 
 # $1: hostname (could be also buildtype)
-# $2: os type (macos, winxp, lenny, etch, karmic ...)
+# $2: os (macos, winxp, lenny, etch, karmic ...)
 # $3: test type: nightly continuous experimental
 
 CMAKE_OPTIONS="\
@@ -25,6 +25,21 @@ CMAKE_OPTIONS="\
 -DTEST_yarpidl_rosmsg:BOOL=TRUE \
 -DTEST_yarpidl_thrift:BOOL=TRUE \
 "
+OS_TYPE=""
+echo "$2" | grep -iq "Debian\|Ubuntu"
+if [ "$?" == "0" ]; then
+  OS_TYPE="linux"
+fi
+
+echo "$2" | grep -iq "Windows"
+if [ "$?" == "0" ]; then
+  OS_TYPE="windows"
+fi
+
+echo "$2" | grep -iq "MacOSX"
+if [ "$?" == "0" ]; then
+  OS_TYPE="macosx"
+fi
 
 case $3 in
    "Experimental" )
@@ -40,6 +55,12 @@ case $3 in
    "Nightly" )
       CMAKE_OPTIONS=" \
         $CMAKE_OPTIONS \
-      " 
+      "
+      if [ "$OS_TYPE" == "linux" ]; then
+        CMAKE_OPTIONS=" \
+          $CMAKE_OPTIONS \
+          -DYARP_VALGRIND_TESTS=ON
+        "
+      fi
      ;;
 esac
