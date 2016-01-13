@@ -93,6 +93,41 @@ bool ImplementPositionDirect::setPositions(const double *refs)
     return iPDirect->setPositionsRaw(temp_double);
 }
 
+bool ImplementPositionDirect::getRefPosition(const int j, double* ref)
+{
+    int k;
+    double tmp;
+    k=castToMapper(helper)->toHw(j);
+
+    bool ret = iPDirect->getRefPositionRaw(k, &tmp);
+
+    *ref=(castToMapper(helper)->posE2A(tmp, k));
+    return ret;
+}
+
+bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* joints, double* refs)
+{
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
+    }
+
+    bool ret = iPDirect->getRefPositionsRaw(n_joint, temp_int, temp_double);
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        refs[idx]=castToMapper(helper)->posE2A(temp_double[idx], temp_int[idx]);
+    }
+    return ret;
+}
+
+bool ImplementPositionDirect::getRefPositions(double* refs)
+{
+    bool ret = iPDirect->getRefPositionsRaw(temp_double);
+    castToMapper(helper)->posE2A(temp_double, refs);
+    return ret;
+}
+
 
 // Stub impl
 
