@@ -5,7 +5,7 @@
 
 get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${QCustomPlot_INCLUDE_DIR})
+                    ${QCustomPlot_INCLUDE_DIRS})
 
 set(QtYARPScopePlugin_SRCS portreader.cpp
                            simpleloader.cpp
