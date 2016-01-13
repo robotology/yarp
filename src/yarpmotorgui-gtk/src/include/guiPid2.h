@@ -1,26 +1,12 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Author: Francesco Nori
- * email:  francesco.nori@iit.it
- * website: www.robotcub.org
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
- *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
+ * Author: Francesco Nori <francesco.nori@iit.it>
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
 
+#ifndef YARP_YARPMOTORGUI_GTK_GUIPID2_H
+#define YARP_YARPMOTORGUI_GTK_GUIPID2_H
 
-#ifndef GUIPIDTRQ_H
-#define GUIPIDTRQ_H
 
 #include <gtk/gtk.h>
 #include <gtk/gtkmain.h>
@@ -158,4 +144,4 @@ namespace guiPid2
     void changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label, bool small = false);
 };
 
-#endif
+#endif // YARP_YARPMOTORGUI_GTK_GUIPID2_H
