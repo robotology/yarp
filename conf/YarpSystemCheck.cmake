@@ -246,7 +246,7 @@ else()
 
     check_cxx_compiler_flag("-Wc++11-compat" CXX_HAS_CXX11_COMPAT)
     if(CXX_HAS_CXX11_COMPAT)
-      set(WANTED_WARNING_FLAGS "${CXX11_FLAGS} -Wc++11-compat")
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wc++11-compat")
     endif()
 
     check_cxx_compiler_flag("-Wtautological-undefined-compare" CXX_HAS_WTAUTOLOGICAL_UNDEFINED_COMPARE)
