@@ -1707,9 +1707,9 @@ void PartItem::fixedTimeMove(SequenceItem sequence)
   sequence_port.setEnvelope(sequence_port_stamp);
   Vector v(NUM_JOINTS,cmdPositions);
   sequence_port.write(v);
-  delete cmdVelocities;
-  delete startPositions;
-  delete cmdPositions;
+  delete[] cmdVelocities;
+  delete[] startPositions;
+  delete[] cmdPositions;
   return;
 }
 

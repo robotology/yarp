@@ -249,6 +249,21 @@ else()
       set(WANTED_WARNING_FLAGS "${CXX11_FLAGS} -Wc++11-compat")
     endif()
 
+    check_cxx_compiler_flag("-Wtautological-undefined-compare" CXX_HAS_WTAUTOLOGICAL_UNDEFINED_COMPARE)
+    if(CXX_HAS_WTAUTOLOGICAL_UNDEFINED_COMPARE)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wtautological-undefined-compare")
+    endif()
+
+    check_cxx_compiler_flag("-Wmismatched-new-delete" CXX_HAS_WMISMATCHED_NEW_DELETE)
+    if(CXX_HAS_WMISMATCHED_NEW_DELETE)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wmismatched-new-delete")
+    endif()
+
+    check_cxx_compiler_flag("-Wparentheses-equality" CXX_HAS_WPARENTHESES_EQUALITY)
+    if(CXX_HAS_WPARENTHESES_EQUALITY)
+      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wmismatched-new-delete")
+    endif()
+
     ## Unwanted warning flags ##
 
     set(UNWANTED_WARNING_FLAGS)

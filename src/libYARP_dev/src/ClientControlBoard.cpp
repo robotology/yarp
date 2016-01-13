@@ -743,9 +743,10 @@ protected:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
 
             int njs = l.size();
             YARP_ASSERT (nj == njs);
@@ -773,9 +774,10 @@ protected:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
 
             int njs = l.size();
             YARP_ASSERT (nj == njs);
@@ -806,9 +808,10 @@ protected:
 
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
 
             int njs = l.size();
             YARP_ASSERT (nj == njs);
@@ -832,12 +835,14 @@ protected:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle& l1 = *(response.get(2).asList());
-            if (&l1 == 0)
+            Bottle* lp1 = response.get(2).asList();
+            if (lp1 == 0)
                 return false;
-            Bottle& l2 = *(response.get(3).asList());
-            if (&l2 == 0)
+            Bottle& l1 = *lp1;
+            Bottle* lp2 = response.get(3).asList();
+            if (lp2 == 0)
                 return false;
+            Bottle& l2 = *lp2;
 
             int nj1 = l1.size();
             int nj2 = l2.size();
@@ -888,9 +893,10 @@ protected:
 
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle& l2 = *(response.get(2).asList());
-            if (&l2 == 0)
+            Bottle* lp2 = response.get(2).asList();
+            if (lp2 == 0)
                 return false;
+            Bottle& l2 = *lp2;
 
             int nj2 = l2.size();
             if(nj2 != len)
@@ -1235,9 +1241,10 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             pid->kp = l.get(0).asDouble();
             pid->kd = l.get(1).asDouble();
             pid->ki = l.get(2).asDouble();
@@ -1266,16 +1273,18 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             const int njs = l.size();
             YARP_ASSERT (njs == nj);
             for (i = 0; i < nj; i++)
             {
-                Bottle& m = *(l.get(i).asList());
-                if (&m == 0)
+                Bottle* mp = l.get(i).asList();
+                if (mp == 0)
                     return false;
+                Bottle& m = *mp;
                 pids[i].kp = m.get(0).asDouble();
                 pids[i].kd = m.get(1).asDouble();
                 pids[i].ki = m.get(2).asDouble();
@@ -2359,9 +2368,10 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             if (l.size() != 4)
             {
                 yError("getMotorTorqueParams return value not understood, size!=4");
@@ -2462,9 +2472,10 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             pid->kp = l.get(0).asDouble();
             pid->kd = l.get(1).asDouble();
             pid->ki = l.get(2).asDouble();
@@ -2489,9 +2500,10 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             *stiffness = l.get(0).asDouble();
             *damping   = l.get(1).asDouble();
             return true;
@@ -2508,9 +2520,10 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             *offset    = l.get(0).asDouble();
             return true;
         }
@@ -2557,9 +2570,10 @@ public:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             *min_stiff    = l.get(0).asDouble();
             *max_stiff    = l.get(1).asDouble();
             *min_damp     = l.get(2).asDouble();
@@ -2688,9 +2702,10 @@ public:
 
         if (CHECK_FAIL(ok, resp))
         {
-            Bottle& l = *(resp.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = resp.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
 
             if (n_joint != l.size())
             {
@@ -2716,9 +2731,10 @@ public:
 
         ok = rpc_p.write(cmd, resp);
         if (CHECK_FAIL(ok, resp)) {
-            Bottle& l = *(resp.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = resp.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             int njs = l.size();
             YARP_ASSERT (nj == njs);
             for (int i = 0; i < nj; i++)
@@ -2904,9 +2920,10 @@ public:
 
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             pid->kp = l.get(0).asDouble();
             pid->kd = l.get(1).asDouble();
             pid->ki = l.get(2).asDouble();
@@ -2932,16 +2949,18 @@ public:
         if (CHECK_FAIL(ok, response))
         {
             int i;
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
             const int njs = l.size();
             YARP_ASSERT (njs == nj);
             for (i = 0; i < nj; i++)
             {
-                Bottle& m = *(l.get(i).asList());
-                if (&m == 0)
+                Bottle* mp = l.get(i).asList();
+                if (mp == 0)
                     return false;
+                Bottle& m = *mp;
                 pids[i].kp = m.get(0).asDouble();
                 pids[i].kd = m.get(1).asDouble();
                 pids[i].ki = m.get(2).asDouble();

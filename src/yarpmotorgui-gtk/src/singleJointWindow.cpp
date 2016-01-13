@@ -579,18 +579,18 @@ void partMover::slider_release(GtkRange *range, gtkClassData* currentClassData)
 
   if (!POS_UPDATE[*joint])
     {
-      if( ( mode == VOCAB_CM_POSITION) || (mode == VOCAB_CM_MIXED) )
+      if ( ( mode == VOCAB_CM_POSITION) || (mode == VOCAB_CM_MIXED) )
       {
          ipos->setRefSpeed(*joint, valVel);
          ipos->positionMove(*joint, val);
       }
-      else if( ( mode == VOCAB_CM_IMPEDANCE_POS))
+      else if (mode == VOCAB_CM_IMPEDANCE_POS)
       {
          fprintf(stderr, " using old 'impedance_position' mode, this control mode is deprecated!");
          ipos->setRefSpeed(*joint, valVel);
          ipos->positionMove(*joint, val);
       }
-      else if ( mode == VOCAB_CM_POSITION_DIRECT)
+      else if (mode == VOCAB_CM_POSITION_DIRECT)
       {
          if (position_direct_enabled)
          {

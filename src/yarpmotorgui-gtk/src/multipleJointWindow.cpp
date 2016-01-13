@@ -88,8 +88,8 @@ void partMover::fixed_time_move(const double *cmdPositions, double cmdTime, part
   currentPart->sequence_port.setEnvelope(currentPart->sequence_port_stamp);
   Vector v(NUM_JOINTS,cmdPositions);
   currentPart->sequence_port.write(v);
-  delete cmdVelocities;
-  delete startPositions;
+  delete[] cmdVelocities;
+  delete[] startPositions;
   return;
 }
 
