@@ -148,9 +148,14 @@ cmake_dependent_option(YARP_VALGRIND_TESTS
                        "YARP_COMPILE_TESTS" OFF)
 mark_as_advanced(YARP_VALGRIND_TESTS)
 if(YARP_VALGRIND_TESTS)
-    find_program(VALGRIND_PROGRAM NAMES valgrind)
-    if(VALGRIND_PROGRAM)
-        set(VALGRIND_COMMAND "${VALGRIND_PROGRAM}" --leak-check=full --error-exitcode=1)
+    find_program(VALGRIND_EXECUTABLE NAMES valgrind)
+    if(VALGRIND_EXECUTABLE)
+        set(VALGRIND_OPTIONS "--tool=memcheck --leak-check=full"
+            CACHE STRING "Valgrind options (--error-exitcode=1 will be appended)")
+        separate_arguments(VALGRIND_OPTIONS UNIX_COMMAND "${VALGRIND_OPTIONS}")
+        set(VALGRIND_COMMAND "${VALGRIND_EXECUTABLE}" ${VALGRIND_OPTIONS} --error-exitcode=1)
+        mark_as_advanced(VALGRIND_EXECUTABLE
+                         VALGRIND_OPTIONS)
     else()
         message(WARNING "Valgrind not found.")
         unset(VALGRIND_COMMAND)
