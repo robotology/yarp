@@ -175,260 +175,110 @@ if(WIN32)
   endif()
 else()
 
+    macro(YARP_CHECK_AND_APPEND_CXX_COMPILER_FLAG _out _flag)
+      string(TOUPPER "${_flag}" _VAR)
+      string(REGEX REPLACE " .+" "" _VAR "${_VAR}")
+      string(REGEX REPLACE "[^A-Za-z0-9]" "_" _VAR "${_VAR}")
+      set(_VAR CXX_HAS${_VAR})
+      check_cxx_compiler_flag("${_flag}" ${_VAR})
+      if(${_VAR})
+        if(CMAKE_VERSION VERSION_LESS 3.0)
+          string(CONCAT ${_out} ${_flag})
+        else()
+          set(${_out} "${${_out}} ${_flag}")
+        endif()
+      endif()
+      unset(_VAR)
+    endmacro()
+
     ## Wanted warnings flags ##
-
-    set(WANTED_WARNING_FLAGS "-Wall -Wextra")
-
-    check_cxx_compiler_flag("-Wsign-compare" CXX_HAS_WSIGN_COMPARE)
-    if(CXX_HAS_WSIGN_COMPARE)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wsign-compare")
-    endif()
-
-    check_cxx_compiler_flag("-Wpointer-arith" CXX_HAS_WPOINTER_ARITH)
-    if(CXX_HAS_WPOINTER_ARITH)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wpointer-arith")
-    endif()
-
-    check_cxx_compiler_flag("-Winit-self" CXX_HAS_WINIT_SELF)
-    if(CXX_HAS_WINIT_SELF)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Winit-self")
-    endif()
-
-    check_cxx_compiler_flag("-Wnon-virtual-dtor" CXX_HAS_WNON_VIRTUAL_DTOR)
-    if(CXX_HAS_WNON_VIRTUAL_DTOR)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wnon-virtual-dtor")
-    endif()
-
-    check_cxx_compiler_flag("-Wcast-align" CXX_HAS_WCAST_ALIGN)
-    if(CXX_HAS_WCAST_ALIGN)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wcast-align")
-    endif()
-
-    check_cxx_compiler_flag("-Wunused" CXX_HAS_WUNUSED)
-    if(CXX_HAS_WUNUSED)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wunused")
-    endif()
-
-    check_cxx_compiler_flag("-Wunused-but-set-variable" CXX_HAS_WUNUSED_BUT_SET_VARIABLE)
-    if(CXX_HAS_WUNUSED_BUT_SET_VARIABLE)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wunused-but-set-variable")
-    endif()
-
-    check_cxx_compiler_flag("-Wvla" CXX_HAS_WVLA)
-    if(CXX_HAS_WVLA)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wvla")
-    endif()
-
-    check_cxx_compiler_flag("-Wmissing-include-dirs" CXX_HAS_WMISSING_INCLUDE_DIRS)
-    if(CXX_HAS_WMISSING_INCLUDE_DIRS)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wmissing-include-dirs")
-    endif()
-
-    check_cxx_compiler_flag("-Wlogical-op" CXX_HAS_WLOGICAL_OP)
-    if(CXX_HAS_WLOGICAL_OP)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wlogical-op")
-    endif()
-
-    check_cxx_compiler_flag("-Wreorder" CXX_HAS_WREORDER)
-    if(CXX_HAS_WREORDER)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wreorder")
-    endif()
-
-    check_cxx_compiler_flag("-Wsizeof-pointer-memaccess" CXX_HAS_WSIZEOF_POINTER_MEMACCESS)
-    if(CXX_HAS_WSIZEOF_POINTER_MEMACCESS)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wsizeof-pointer-memaccess")
-    endif()
-
-    check_cxx_compiler_flag("-Woverloaded-virtual" CXX_HAS_WOVERLOADED_VIRTUAL)
-    if(CXX_HAS_WOVERLOADED_VIRTUAL)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Woverloaded-virtual")
-    endif()
-
-    check_cxx_compiler_flag("-Wc++11-compat" CXX_HAS_CXX11_COMPAT)
-    if(CXX_HAS_CXX11_COMPAT)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wc++11-compat")
-    endif()
-
-    check_cxx_compiler_flag("-Wtautological-undefined-compare" CXX_HAS_WTAUTOLOGICAL_UNDEFINED_COMPARE)
-    if(CXX_HAS_WTAUTOLOGICAL_UNDEFINED_COMPARE)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wtautological-undefined-compare")
-    endif()
-
-    check_cxx_compiler_flag("-Wmismatched-new-delete" CXX_HAS_WMISMATCHED_NEW_DELETE)
-    if(CXX_HAS_WMISMATCHED_NEW_DELETE)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wmismatched-new-delete")
-    endif()
-
-    check_cxx_compiler_flag("-Wparentheses-equality" CXX_HAS_WPARENTHESES_EQUALITY)
-    if(CXX_HAS_WPARENTHESES_EQUALITY)
-      set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wmismatched-new-delete")
-    endif()
+    unset(WANTED_WARNING_FLAGS)
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wall")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wextra")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wsign-compare")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wpointer-arith")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Winit-self")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wnon-virtual-dtor")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wcast-align")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunused")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunused-but-set-variable")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wvla")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmissing-include-dirs")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wlogical-op")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wreorder")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wsizeof-pointer-memaccess")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Woverloaded-virtual")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wc++11-compat")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wtautological-undefined-compare")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmismatched-new-delete")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wparentheses-equality")
 
     ## Unwanted warning flags ##
-
-    set(UNWANTED_WARNING_FLAGS)
-
-    # FIXME this warning should be enabled later.
-    check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
-    if(CXX_HAS_WNO_UNUSED_PARAMETER)
-      set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-unused-parameter")
-    endif()
-
-    check_cxx_compiler_flag("-Wno-long-long" CXX_HAS_WNO_LONG_LONG)
-    if(CXX_HAS_WNO_LONG_LONG)
-      set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-long-long")
-    endif()
-
-    # FIXME this warning should be enabled later.
-    check_cxx_compiler_flag("-Wno-cast-align" CXX_HAS_WNO_CAST_ALIGN)
-    if(CXX_HAS_WNO_CAST_ALIGN)
-      set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-cast-align")
-    endif()
-
+    unset(UNWANTED_WARNING_FLAGS)
+    yarp_check_and_append_cxx_compiler_flag(UNWANTED_WARNING_FLAGS "-Wno-unused-parameter") # FIXME Enable later
+    yarp_check_and_append_cxx_compiler_flag(UNWANTED_WARNING_FLAGS "-Wno-long-long")
+    yarp_check_and_append_cxx_compiler_flag(UNWANTED_WARNING_FLAGS "-Wno-cast-align") # FIXME Enable later
 
 
     ## Experimental warning flags ##
     # FIXME Those warnings should be enabled later
-
-    set(EXPERIMENTAL_WARNING_FLAGS)
-
-    check_cxx_compiler_flag("-Wundef" CXX_HAS_WUNDEF)
-    if(CXX_HAS_WUNDEF)
-      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wundef")
-    endif()
-
-    check_cxx_compiler_flag("-Wconversion" CXX_HAS_WCONVERSION)
-    if(CXX_HAS_WCONVERSION)
-      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wconversion")
-    endif()
-
-    check_cxx_compiler_flag("-Wsign-conversion" CXX_HAS_WSIGN_CONVERSION)
-    if(CXX_HAS_WSIGN_CONVERSION)
-      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wsign-conversion")
-    endif()
-
-    check_cxx_compiler_flag("-Wold-style-cast" CXX_HAS_WOLD_STYLE_CAST)
-    if(CXX_HAS_WOLD_STYLE_CAST)
-      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wold-style-cast")
-    endif()
-
-    check_cxx_compiler_flag("-Wredundant-decls" CXX_HAS_WREDUNDANT_DECLS)
-    if(CXX_HAS_WREDUNDANT_DECLS)
-      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wredundant-decls")
-    endif()
-
-    check_cxx_compiler_flag("-Winline" CXX_HAS_WINLINE)
-    if(CXX_HAS_WINLINE)
-      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Winline")
-    endif()
-
-    check_cxx_compiler_flag("-Wfloat-equal" CXX_HAS_FLOAT_EQUAL)
-    if(CXX_HAS_FLOAT_EQUAL)
-      set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wfloat-equal")
-    endif()
+    unset(EXPERIMENTAL_WARNING_FLAGS)
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wundef")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wconversion")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wsign-conversion")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wold-style-cast")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wredundant-decls")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Winline")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wfloat-equal")
 
 
     ## Visibility hidden flags ##
-
-    set(VISIBILITY_HIDDEN_FLAGS)
-
-    check_cxx_compiler_flag("-fvisibility=hidden" CXX_HAS_FVISIBILITY_HIDDEN)
-    if(CXX_HAS_FVISIBILITY_HIDDEN)
-      set(VISIBILITY_HIDDEN_FLAGS "-fvisibility=hidden")
-    endif()
-
-    check_cxx_compiler_flag("-fvisibility-inlines-hidden" CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
-    if(CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
-      set(VISIBILITY_HIDDEN_FLAGS "${VISIBILITY_HIDDEN_FLAGS} -fvisibility-inlines-hidden")
-    endif()
-
+    unset(VISIBILITY_HIDDEN_FLAGS)
+    yarp_check_and_append_cxx_compiler_flag(VISIBILITY_HIDDEN_FLAGS "-fvisibility=hidden")
+    yarp_check_and_append_cxx_compiler_flag(VISIBILITY_HIDDEN_FLAGS "-fvisibility-inlines-hidden")
 
 
     ## Deprcated declarations flags ##
-
-    set(DEPRECATED_DECLARATIONS_FLAGS)
-
-    check_cxx_compiler_flag("-Wdeprecated-declarations" CXX_HAS_WDEPRECATED_DECLARATIONS)
-    if(CXX_HAS_WDEPRECATED_DECLARATIONS)
-      set(DEPRECATED_DECLARATIONS_FLAGS "-Wdeprecated-declarations")
-    endif()
-
+    unset(DEPRECATED_DECLARATIONS_FLAGS)
+    yarp_check_and_append_cxx_compiler_flag(DEPRECATED_DECLARATIONS_FLAGS "-Wdeprecated-declarations")
 
 
     ## Hardening flags ##
-
-    set(HARDENING_FLAGS)
-
+    unset(HARDENING_FLAGS)
     check_cxx_compiler_flag("-Wformat" CXX_HAS_WFORMAT)
     if(CXX_HAS_WFORMAT)
-
       check_cxx_compiler_flag("-Wformat=2" CXX_HAS_WFORMAT_2)
       if(CXX_HAS_WFORMAT_2)
         set(HARDENING_FLAGS "-Wformat=2")
       else()
         set(HARDENING_FLAGS "-Wformat")
       endif()
-
-      check_cxx_compiler_flag("-Wformat-security -Werror=format-security" CXX_HAS_WFORMAT_SECURITY)
-      if(CXX_HAS_WFORMAT_SECURITY)
-        set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wformat-security -Werror=format-security")
-      endif()
-
-      check_cxx_compiler_flag("-Wformat-y2k" CXX_HAS_WFORMAT_Y2K)
-      if(CXX_HAS_WFORMAT_Y2K)
-        set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wformat-y2k")
-      endif()
-
-      check_cxx_compiler_flag("-Wformat-nonliteral" CXX_HAS_WFORMAT_NONLITERAL)
-      if(CXX_HAS_WFORMAT_NONLITERAL)
-        set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wformat-nonliteral")
-      endif()
-
+      yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-Wformat-security")
+      yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-Wformat-y2k")
+      yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-Wformat-nonliteral")
     endif()
-
-    check_cxx_compiler_flag("-fstack-protector --param=ssp-buffer-size=4" CXX_HAS_STACK_PROTECTOR)
-    if(CXX_HAS_STACK_PROTECTOR)
-      set(HARDENING_FLAGS "${HARDENING_FLAGS} -fstack-protector --param=ssp-buffer-size=4")
-    endif()
-
-    check_cxx_compiler_flag("-Wl,-zrelro" CXX_HAS_WL__ZRELRO)
-    if(CXX_HAS_WL__ZRELRO)
-      set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wl,-zrelro")
-    endif()
-
-    check_cxx_compiler_flag("-Wl,-znow" CXX_HAS_WL__ZNOW)
-    if(CXX_HAS_WL__ZNOW)
-      set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wl,-znow")
-    endif()
-
-    check_cxx_compiler_flag("-fPIE -pie" CXX_HAS_FPIE)
-    if(CXX_HAS_FPIE)
-      set(HARDENING_FLAGS "${HARDENING_FLAGS} -fPIE -pie")
-    endif()
-
+    yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-fstack-protector --param=ssp-buffer-size=4")
+    yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-Wl,-zrelro")
+    yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-Wl,-znow")
+    yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-fPIE -pie")
 
 
     ## C++11 flags ##
-
+    unset(CXX11_FLAGS)
     check_cxx_compiler_flag("-std=c++11" CXX_HAS_STD_CXX11)
     check_cxx_compiler_flag("-std=c++0x" CXX_HAS_STD_CXX0X)
     if(CXX_HAS_STD_CXX11)
       set(CXX11_FLAGS "-std=c++11")
     elseif(CXX_HAS_STD_CXX0X)
       set(CXX11_FLAGS "-std=c++0x")
-    else()
-      set(CXX11_FLAGS)
     endif()
 
 
-
     ## C++14 flags ##
-
+    unset(CXX14_FLAGS)
     check_cxx_compiler_flag("-std=c++1y" CXX_HAS_STD_CXX1Y)
     if(CXX_HAS_STD_CXX11)
       set(CXX14_FLAGS "-std=c++1y")
-    else()
-      set(CXX14_FLAGS)
     endif()
 
 endif()
