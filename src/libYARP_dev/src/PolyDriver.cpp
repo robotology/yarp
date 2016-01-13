@@ -154,6 +154,13 @@ bool PolyDriver::link(PolyDriver& alt) {
     if (!alt.isValid()) return false;
     if (isValid()) return false;
     dd = alt.dd;
+    if (system_resource!=NULL) {
+        int ct = HELPER(system_resource).removeRef();
+        if (ct==0) {
+            yAssert(system_resource!=NULL);
+            delete &HELPER(system_resource);
+        }
+    }
     system_resource = alt.system_resource;
     yAssert(dd!=NULL);
     yAssert(system_resource!=NULL);
