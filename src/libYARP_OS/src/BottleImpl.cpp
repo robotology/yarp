@@ -569,7 +569,7 @@ bool BottleImpl::read(ConnectionReader& reader)
         fromString(str);
         result = true;
     } else {
-#if USE_YARP1_PREFIX
+#ifdef USE_YARP1_PREFIX
         if (!nested) {
             int len = reader.expectInt();
             if (reader.isError()) {

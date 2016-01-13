@@ -480,7 +480,7 @@ static void myMain2(GtkButton *button,  int *position)
             Time::delay(0.1);
         }
 
-    #if CARTESIAN_MOVER
+    #ifdef CARTESIAN_MOVER
     fprintf(stderr, "Closing the cartesianMovers. Number of activated parts was %d. \n", NUMBER_OF_ACTIVATED_CARTESIAN);
     for (int i = 0; i < NUMBER_OF_ACTIVATED_CARTESIAN; i++)
         {

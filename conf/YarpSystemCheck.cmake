@@ -215,6 +215,8 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wtautological-undefined-compare")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmismatched-new-delete")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wparentheses-equality")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wundef")
+
 
     ## Unwanted warning flags ##
     unset(UNWANTED_WARNING_FLAGS)
@@ -226,7 +228,6 @@ else()
     ## Experimental warning flags ##
     # FIXME Those warnings should be enabled later
     unset(EXPERIMENTAL_WARNING_FLAGS)
-    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wundef")
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wconversion")
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wsign-conversion")
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wold-style-cast")
