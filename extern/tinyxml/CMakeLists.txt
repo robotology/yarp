@@ -21,6 +21,8 @@ add_definitions("-DTIXML_USE_STL")
 
 add_library(YARP_priv_tinyxml STATIC ${tinyxml_SRCS})
 
+set_property(TARGET YARP_priv_tinyxml PROPERTY FOLDER "External Libraries")
+
 set(TinyXML_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/tinyxml PARENT_SCOPE)
 set(TinyXML_LIBRARIES "YARP_priv_tinyxml" PARENT_SCOPE)
 set(TinyXML_DEFINITIONS "-DTIXML_USE_STL" PARENT_SCOPE)

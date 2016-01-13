@@ -159,6 +159,7 @@ add_library(YARP_priv_goocanvasmm STATIC ${goocanvasmm_SRCS} ${goocanvasmm_HDRS}
 target_link_libraries(YARP_priv_goocanvasmm LINK_PRIVATE ${GooCanvas_LIBRARIES}
                                                     ${GooCanvasMM_GTK2_LIBRARIES})
 
+set_property(TARGET YARP_priv_goocanvasmm PROPERTY FOLDER "External Libraries")
 
 
 set(GooCanvasMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/goocanvasmm/goocanvas

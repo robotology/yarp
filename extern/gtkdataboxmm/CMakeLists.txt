@@ -102,6 +102,8 @@ add_library(YARP_priv_gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
 target_link_libraries(YARP_priv_gtkdataboxmm LINK_PRIVATE ${GtkDatabox_LIBRARIES}
                                                      ${GtkDataboxMM_GTK2_LIBRARIES})
 
+set_property(TARGET YARP_priv_gtkdataboxmm PROPERTY FOLDER "External Libraries")
+
 set(GtkDataboxMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox
                               ${GtkDatabox_INCLUDE_DIRS}
                               ${GtkDataboxMM_GTK2_INCLUDE_DIRS}

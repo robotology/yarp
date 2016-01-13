@@ -89,6 +89,7 @@ add_library(YARP_priv_goocanvas STATIC ${goocanvas_SRCS} ${goocanvas_HDRS})
 
 target_link_libraries(YARP_priv_goocanvas LINK_PRIVATE ${GooCanvas_GTK2_LIBRARIES})
 
+set_property(TARGET YARP_priv_goocanvas PROPERTY FOLDER "External Libraries")
 
 if(UNIX)
     include(CheckCCompilerFlag)

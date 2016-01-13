@@ -71,6 +71,7 @@ add_library(YARP_priv_gtkdatabox STATIC ${gtkdatabox_SRCS})
 
 target_link_libraries(YARP_priv_gtkdatabox LINK_PRIVATE ${GtkDatabox_GTK2_LIBRARIES})
 
+set_property(TARGET YARP_priv_gtkdatabox PROPERTY FOLDER "External Libraries")
 
 if(UNIX)
     include(CheckCCompilerFlag)

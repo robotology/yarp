@@ -16,6 +16,8 @@ add_library(YARP_priv_qcustomplot STATIC ${qcustomplot_SRCS})
 
 qtyarp_use_modules(YARP_priv_qcustomplot Widgets)
 
+set_property(TARGET YARP_priv_qcustomplot PROPERTY FOLDER "External Libraries")
+
 set(QCustomPlot_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/qcustomplot PARENT_SCOPE)
 set(QCustomPlot_LIBRARIES "YARP_priv_qcustomplot" PARENT_SCOPE)
 set(QCustomPlot_DEFINITIONS "" PARENT_SCOPE)
