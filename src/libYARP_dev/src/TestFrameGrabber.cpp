@@ -85,7 +85,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                 image.pixel(i,ct).r = 255;
             }
             char ttxt[50];
-            sprintf(ttxt, "%10.10f", t);
+            sprintf(ttxt, "%021.10f", t);
             image.pixel(0, 0).r = ttxt[0] - '0';
             image.pixel(0, 0).g = ttxt[1] - '0';
             image.pixel(0, 0).b = ttxt[2] - '0';
