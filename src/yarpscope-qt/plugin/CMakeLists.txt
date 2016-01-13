@@ -4,11 +4,11 @@
 
 
 get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS})
+include_directories(${YARP_OS_INCLUDE_DIRS}
+                    ${QCustomPlot_INCLUDE_DIR})
 
 set(QtYARPScopePlugin_SRCS portreader.cpp
                            simpleloader.cpp
-                           qcustomplot.cpp
                            qtyarpscope.cpp
                            plotter.cpp
                            genericloader.cpp
@@ -22,8 +22,7 @@ set(QtYARPScopePlugin_HDRS portreader.h
                            qtyarpscopeplugin_plugin.h
                            plotter.h
                            xmlloader.h
-                           simpleloader.h
-                           qcustomplot.h)
+                           simpleloader.h)
 set(QtYARPScopePlugin_QRC_FILES res.qrc)
 set(QtYARPScopePlugin_QML_FILES YARPScopeAbout.qml
                                 YARPScopeMenu.qml
@@ -43,7 +42,8 @@ add_library(QtYARPScopePlugin MODULE ${QtYARPScopePlugin_SRCS}
                                      ${QtYARPScopePlugin_HDRS}
                                      ${QtYARPScopePlugin_QRC_GEN_SRCS})
 target_link_libraries(QtYARPScopePlugin YARP_OS
-                                        YARP_init)
+                                        YARP_init
+                                        ${QCustomPlot_LIBRARIES})
 qtyarp_use_modules(QtYARPScopePlugin Widgets
                                      Qml
                                      Quick
