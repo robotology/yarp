@@ -154,6 +154,10 @@ if(MSVC)
     add_definitions(/wd4099 /wd4250 /wd4520 /wd4805 /vd2)
 endif(MSVC)
 
+if(CXX_HAS_WREDUNDANT_DECLS)
+    add_definitions(-Wno-redundant-decls)
+endif()
+
 add_library(YARP_priv_goocanvasmm STATIC ${goocanvasmm_SRCS} ${goocanvasmm_HDRS})
 
 target_link_libraries(YARP_priv_goocanvasmm LINK_PRIVATE ${GooCanvas_LIBRARIES}
