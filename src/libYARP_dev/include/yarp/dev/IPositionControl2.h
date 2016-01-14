@@ -113,6 +113,39 @@ public:
      * @return true/false on success/failure
      */
     virtual bool stopRaw(const int n_joint, const int *joints)=0;
+
+    /** Get the last position reference for the specified axis.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositionRaw(const int joint, double *ref) { return false;};
+
+    /** Get the last position reference for all axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositionsRaw(double *refs) { return false;};
+
+    /** Get the last position reference for the specified group of axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs) { return false;};
 };
 
 /**
@@ -203,6 +236,39 @@ public:
      * @return true/false on success/failure
      */
     virtual bool stop(const int n_joint, const int *joints)=0;
+
+        /** Get the last position reference for the specified axis.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPosition(const int joint, double *ref) { return false;};
+
+    /** Get the last position reference for all axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositions(double *refs) { return false;};
+
+    /** Get the last position reference for the specified group of axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs) { return false;};
 };
 
 #define VOCAB_POSITION_MOVE_GROUP    VOCAB4('p','o','s','g')

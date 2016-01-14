@@ -96,6 +96,9 @@ public:
     virtual bool stop(int j);
     virtual bool stop(const int n_joint, const int *joints);
     virtual bool stop();
+    virtual bool getTargetPosition(const int joint, double *ref);
+    virtual bool getTargetPositions(double *refs);
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
 };
 
 
@@ -201,6 +204,15 @@ public:
     {return NOT_YET_IMPLEMENTED("stopRaw");}
 
     virtual bool stopRaw()
+    {return NOT_YET_IMPLEMENTED("stopRaw");}
+
+    virtual bool getTargetPositionRaw(const int joint, double *ref)
+    {return NOT_YET_IMPLEMENTED("stopRaw");}
+
+    virtual bool getTargetPositionsRaw(double *refs)
+    {return NOT_YET_IMPLEMENTED("stopRaw");}
+
+    virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs)
     {return NOT_YET_IMPLEMENTED("stopRaw");}
 };
 
