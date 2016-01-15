@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
- * Authors: Paul Fitzpatrick
+ * Copyright (C) 2011 Robotics Brain and Cognitive Sciences, Istituto Italiano di Tecnologia
+ * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -12,6 +13,10 @@
 namespace yarp {
     namespace os {
         class SharedLibrary;
+        class ConstString;
+        namespace impl {
+            class SharedLibraryImpl;
+        }
     }
 }
 
@@ -56,6 +61,14 @@ public:
     bool close();
 
     /**
+     * Returns a human-readable string describing the most recent error that
+     * occurred from a call to one of its functions.
+     *
+     * @return the most recent error
+     */
+    ConstString error();
+
+    /**
      * Look up a symbol in the shared library.
      */
     void *getSymbol(const char *symbolName);
@@ -68,7 +81,7 @@ public:
     bool isValid() const;
 
 private:
-    void *implementation;
+    yarp::os::impl::SharedLibraryImpl* const implementation;
 
     SharedLibrary(const SharedLibrary&); // Not implemented
     SharedLibrary& operator=(const SharedLibrary&); // Not implemented
