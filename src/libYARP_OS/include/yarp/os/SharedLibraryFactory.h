@@ -89,6 +89,13 @@ public:
     int getStatus() const;
 
     /**
+     * Get the latest error of the factory.
+     *
+     * @return the latest error.
+     */
+    ConstString getError() const;
+
+    /**
      * Get the factory API, which has creation/deletion methods.
      *
      * @return the factory API
@@ -156,6 +163,7 @@ private:
     ConstString name;
     ConstString className;
     ConstString baseClassName;
+    ConstString error;
 };
 
 

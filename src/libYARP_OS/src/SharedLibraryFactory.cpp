@@ -35,6 +35,7 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
     className = "";
     baseClassName = "";
     status = STATUS_NONE;
+    error = "";
     api.startCheck = 0;
     if (!lib.open(dll_name)) {
         if (yarp::os::stat(dll_name) != 0) {
@@ -42,16 +43,19 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
         } else {
             status = STATUS_LIBRARY_NOT_LOADED;
         }
+        error = lib.error();
         return false;
     }
     void *fn = lib.getSymbol((fn_name != NULL) ? fn_name : YARP_DEFAULT_FACTORY_NAME);
     if (fn == NULL) {
-        lib.close();
         status = STATUS_FACTORY_NOT_FOUND;
+        error = lib.error();
+        lib.close();
         return false;
     }
     if (!useFactoryFunction(fn)) {
         status = STATUS_FACTORY_NOT_FUNCTIONAL;
+        error = "YARP hook in shared library misbehaved";
         return false;
     }
     status = STATUS_OK;
@@ -90,6 +94,12 @@ int yarp::os::SharedLibraryFactory::getStatus() const
 {
     return status;
 }
+
+yarp::os::ConstString yarp::os::SharedLibraryFactory::getError() const
+{
+    return error;
+}
+
 const yarp::os::SharedLibraryClassApi& yarp::os::SharedLibraryFactory::getApi() const
 {
     return api;
