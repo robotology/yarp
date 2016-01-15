@@ -1,10 +1,7 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2013 iCub Facility
- * Authors: Paul Fitzpatrick
+ * Copyright (C) 2013 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/SharedLibraryFactory.h>
@@ -14,21 +11,25 @@
 yarp::os::SharedLibraryFactory::SharedLibraryFactory() :
         status(STATUS_NONE),
         returnValue(0),
-        rct(1) {
+        rct(1)
+{
 }
 
 yarp::os::SharedLibraryFactory::SharedLibraryFactory(const char *dll_name,
                                                      const char *fn_name) :
         status(STATUS_NONE),
         returnValue(0),
-        rct(1) {
+        rct(1)
+{
     open(dll_name,fn_name);
 }
 
-yarp::os::SharedLibraryFactory::~SharedLibraryFactory() {
+yarp::os::SharedLibraryFactory::~SharedLibraryFactory()
+{
 }
 
-bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_name) {
+bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_name)
+{
     returnValue = 0;
     name = "";
     className = "";
@@ -40,14 +41,13 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
         status = STATUS_LIBRARY_NOT_LOADED;
         return false;
     }
-    void *fn = lib.getSymbol((fn_name!=0/*NULL*/)?fn_name:YARP_DEFAULT_FACTORY_NAME);
-    if (fn==0/*NULL*/) {
+    void *fn = lib.getSymbol((fn_name != NULL) ? fn_name : YARP_DEFAULT_FACTORY_NAME);
+    if (fn == NULL) {
         lib.close();
         status = STATUS_FACTORY_NOT_FOUND;
         return false;
     }
-    useFactoryFunction(fn);
-    if (!isValid()) {
+    if (!useFactoryFunction(fn)) {
         status = STATUS_FACTORY_NOT_FUNCTIONAL;
         return false;
     }
@@ -63,7 +63,8 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
     return true;
 }
 
-bool yarp::os::SharedLibraryFactory::isValid() const {
+bool yarp::os::SharedLibraryFactory::isValid() const
+{
     if (returnValue != VOCAB4('Y','A','R','P')) {
         return false;
     }
@@ -82,41 +83,50 @@ bool yarp::os::SharedLibraryFactory::isValid() const {
     return true;
 }
 
-int yarp::os::SharedLibraryFactory::getStatus() const {
+int yarp::os::SharedLibraryFactory::getStatus() const
+{
     return status;
 }
-const yarp::os::SharedLibraryClassApi& yarp::os::SharedLibraryFactory::getApi() const {
+const yarp::os::SharedLibraryClassApi& yarp::os::SharedLibraryFactory::getApi() const
+{
     return api;
 }
 
-int yarp::os::SharedLibraryFactory::getReferenceCount() const {
+int yarp::os::SharedLibraryFactory::getReferenceCount() const
+{
     return rct;
 }
 
 
-int yarp::os::SharedLibraryFactory::addRef() {
+int yarp::os::SharedLibraryFactory::addRef()
+{
     rct++;
     return rct;
 }
 
-int yarp::os::SharedLibraryFactory::removeRef() {
+int yarp::os::SharedLibraryFactory::removeRef()
+{
     rct--;
     return rct;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getName() const {
+yarp::os::ConstString yarp::os::SharedLibraryFactory::getName() const
+{
     return name;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getClassName() const {
+yarp::os::ConstString yarp::os::SharedLibraryFactory::getClassName() const
+{
     return className;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getBaseClassName() const {
+yarp::os::ConstString yarp::os::SharedLibraryFactory::getBaseClassName() const
+{
     return baseClassName;
 }
 
-bool yarp::os::SharedLibraryFactory::useFactoryFunction(void *factory) {
+bool yarp::os::SharedLibraryFactory::useFactoryFunction(void *factory)
+{
     api.startCheck = 0;
     if (factory == NULL) {
         return false;

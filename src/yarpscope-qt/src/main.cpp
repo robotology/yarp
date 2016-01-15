@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     QObject *topLevel = engine.rootObjects().value(0);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
-    // Pack the argc and argv to a QStrinList so we can pass them easily to the plugin
+    // Pack the argc and argv to a QStringList so we can pass them easily to the plugin
     QStringList params;
     for(int i=0;i<argc;i++){
         params.append(argv[i]);

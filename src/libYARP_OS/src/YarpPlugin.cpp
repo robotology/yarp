@@ -1,15 +1,11 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2012 IITRBCS
- * Authors: Paul Fitzpatrick
+ * Copyright (C) 2012 Robotics Brain and Cognitive Sciences, Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#include <stdio.h>
-
 #include <yarp/os/YarpPlugin.h>
+
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/String.h>
@@ -18,6 +14,8 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
+
+#include <stdio.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -133,7 +131,9 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
 
 void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const {
     int problem = factory.getStatus();
-    if (problem==0) return;
+    if (problem==0) {
+        return;
+    }
     switch (problem) {
     case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
         if (verbose) {

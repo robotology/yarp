@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2013 iCub Facility
- * Authors: Paul Fitzpatrick
+ * Copyright (C) 2013 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 

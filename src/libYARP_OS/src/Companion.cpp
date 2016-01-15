@@ -1,10 +1,7 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
- * Authors: Paul Fitzpatrick
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <stdio.h>
