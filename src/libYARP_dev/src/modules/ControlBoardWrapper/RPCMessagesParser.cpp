@@ -2298,6 +2298,98 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_POSITION_MOVE:
+                            {
+                                if (ControlBoardWrapper_p->verbose())
+                                    yDebug("getTargetPosition\n");
+
+                                ok = rpc_IPosCtrl2->getTargetPosition(cmd.get(2).asInt(), &dtmp);
+
+                                response.addDouble(dtmp);
+                                rec=true;
+                            }
+                            break;
+
+                            case VOCAB_POSITION_MOVE_GROUP:
+                            {
+                                int len = cmd.get(2).asInt();
+                                Bottle& in = *(cmd.get(3).asList());
+                                int *jointList = new int[len];
+                                double *refs = new double[len];
+
+                                for(int j=0; j<len; j++)
+                                {
+                                    jointList[j] = in.get(j).asInt();
+                                }
+                                ok = rpc_IPosCtrl2->getTargetPositions(len, jointList, refs);
+
+                                Bottle& b = response.addList();
+                                for (int i = 0; i < len; i++)
+                                    b.addDouble(refs[i]);
+
+                                delete[] jointList;
+                                delete[] refs;
+                            }
+                            break;
+
+                            case VOCAB_POSITION_MOVES:
+                            {
+                                double *refs = new double[controlledJoints];
+                                ok = rpc_IPosCtrl2->getTargetPositions(refs);
+                                Bottle& b = response.addList();
+                                int i;
+                                for (i = 0; i < controlledJoints; i++)
+                                    b.addDouble(refs[i]);
+                                delete[] refs;
+                            }
+                            break;
+
+                            case VOCAB_POSITION_DIRECT:
+                            {
+                                if (ControlBoardWrapper_p->verbose())
+                                    yDebug("getRefPosition\n");
+
+                                ok = rpc_IPosDirect->getRefPosition(cmd.get(2).asInt(), &dtmp);
+
+                                response.addDouble(dtmp);
+                                rec=true;
+                            }
+                            break;
+
+                            case VOCAB_POSITION_DIRECT_GROUP:
+                            {
+                                int len = cmd.get(2).asInt();
+                                Bottle& in = *(cmd.get(3).asList());
+                                int *jointList = new int[len];
+                                double *refs = new double[len];
+
+                                for(int j=0; j<len; j++)
+                                {
+                                    jointList[j] = in.get(j).asInt();
+                                }
+                                ok = rpc_IPosDirect->getRefPositions(len, jointList, refs);
+
+                                Bottle& b = response.addList();
+                                for (int i = 0; i < len; i++)
+                                    b.addDouble(refs[i]);
+
+                                delete[] jointList;
+                                delete[] refs;
+                            }
+                            break;
+
+                            case VOCAB_POSITION_DIRECTS:
+                            {
+                                double *refs = new double[controlledJoints];
+                                ok = rpc_IPosDirect->getRefPositions(refs);
+                                Bottle& b = response.addList();
+                                int i;
+                                for (i = 0; i < controlledJoints; i++)
+                                    b.addDouble(refs[i]);
+                                delete[] refs;
+                            }
+                            break;
+
                             case VOCAB_LIM:
                             {
                                 ok = rpc_IPid->getErrorLimit(cmd.get(2).asInt(), &dtmp);
@@ -2333,7 +2425,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
-                          case VOCAB_MOTION_DONE_GROUP:
+                            case VOCAB_MOTION_DONE_GROUP:
                             {
                                 bool x = false;
                                 int len = cmd.get(2).asInt();
