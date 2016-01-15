@@ -6,7 +6,7 @@
 
 #include <yarp/os/SharedLibraryFactory.h>
 #include <yarp/os/ConstString.h>
-
+#include <yarp/os/Os.h>
 
 yarp::os::SharedLibraryFactory::SharedLibraryFactory() :
         status(STATUS_NONE),
@@ -37,8 +37,11 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
     status = STATUS_NONE;
     api.startCheck = 0;
     if (!lib.open(dll_name)) {
-        //fprintf(stderr,"Failed to open library %s\n", dll_name);
-        status = STATUS_LIBRARY_NOT_LOADED;
+        if (yarp::os::stat(dll_name) != 0) {
+            status = STATUS_LIBRARY_NOT_FOUND;
+        } else {
+            status = STATUS_LIBRARY_NOT_LOADED;
+        }
         return false;
     }
     void *fn = lib.getSymbol((fn_name != NULL) ? fn_name : YARP_DEFAULT_FACTORY_NAME);
