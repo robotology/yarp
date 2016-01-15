@@ -135,7 +135,6 @@ public:
         this->dll_name = iname;
         this->fn_name = pname;
         this->wrapper_name = options.find("wrapper").toString();
-        verbose = false;
         return true;
     }
 
