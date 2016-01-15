@@ -2360,21 +2360,7 @@ static bool plugin_test(YarpPluginSettings& settings) {
     SharedLibraryFactory lib;
     settings.open(lib);
     if (!lib.isValid()) {
-        int problem = lib.getStatus();
-        switch (problem) {
-        case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
-            fprintf(stderr,"  Cannot find or load shared library\n");
-            return false;
-        case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
-            fprintf(stderr,"  Cannot find YARP hook in shared library\n");
-            return false;
-        case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
-            fprintf(stderr,"  YARP hook in shared library misbehaved\n");
-            return false;
-        default:
-            fprintf(stderr,"  Unknown error\n");
-            return false;
-        }
+        fprintf(stderr,"    Cannot find or load shared library\n");
     } else {
         const SharedLibraryClassApi& api = lib.getApi();
         char className[256] = "unknown";
@@ -2421,14 +2407,14 @@ static void plugin_usage()
     printf("\n");
     printf("Usage:\n");
     printf(" * Test a specific plugin:\n");
-    printf("     yarp plugin <pluginname>\n");
-    printf("     yarp plugin /path/to/plugin/<libraryname>.(so|dll|dylib) <pluginpart>\n");
+    printf("     yarp plugin [--verbose] <pluginname>\n");
+    printf("     yarp plugin [--verbose] /path/to/plugin/<libraryname>.(so|dll|dylib) <pluginpart>\n");
     printf(" * Test all the plugins:\n");
-    printf("     yarp plugin --all\n");
+    printf("     yarp plugin [--verbose] --all\n");
     printf(" * Print a list of plugins:\n");
-    printf("     yarp plugin --list\n");
+    printf("     yarp plugin [--verbose] --list\n");
     printf(" * Print plugin search path:\n");
-    printf("     yarp plugin --search-path\n");
+    printf("     yarp plugin [--verbose] --search-path\n");
     printf(" * Print this help and exit:\n");
     printf("     yarp plugin --help\n");
     printf("\n");
@@ -2448,6 +2434,14 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         return 0;
     }
 
+    bool verbose = false;
+    if (arg=="--verbose") {
+        verbose = true;
+        argc--;
+        argv++;
+        arg = argv[0];
+    }
+
     YarpPluginSelector selector;
     selector.scan();
 
@@ -2464,7 +2458,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
             ConstString path = options.check("path",Value("unknown path")).asString();
             ConstString type = options.check("type",Value("unknown type")).asString();
             if (type == "shared") {
-                printf("  * %s:\t%s\n", name.c_str(), path.c_str());
+                printf("  %15s:\t%s\n", name.c_str(), path.c_str());
             }
         }
         return 0;
@@ -2497,7 +2491,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
             options.asList()->pop();
             printf("  * config:         %s\n", options.toString().c_str());
             YarpPluginSettings settings;
-            settings.setVerboseMode(true);
+            settings.setVerboseMode(verbose);
             settings.setSelector(selector);
             settings.readFromSearchable(options, name);
             ok &= plugin_test(settings);
@@ -2506,7 +2500,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
     } else {
         Property p;
         YarpPluginSettings settings;
-        settings.setVerboseMode(true);
+        settings.setVerboseMode(verbose);
         if (argc>=2) {
             settings.setLibraryMethodName(argv[0],argv[1]);
         } else {

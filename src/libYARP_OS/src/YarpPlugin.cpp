@@ -47,7 +47,7 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
                   dll_name.c_str(),fn_name.c_str());
     bool ok = factory.open(dll_name.c_str(),fn_name.c_str());
     if (verbose) {
-        fprintf(stderr,"Trying to find library '%s' containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok?"found":"not found");
+        fprintf(stderr,"Trying to find library '%s' containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok ? "found" :"fail");
     }
     if (ok) {
         YARP_SPRINTF2(impl::Logger::get(),debug,
@@ -55,6 +55,8 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
                       dll_name.c_str(),fn_name.c_str());
         this->dll_name = dll_name;
         this->fn_name = fn_name;
+    } else if (verbose || (factory.getStatus() != SharedLibraryFactory::STATUS_LIBRARY_NOT_FOUND)) {
+        fprintf(stderr, "error while opening %s:\n  %s\n", dll_name.c_str(), factory.getError().c_str());
     }
     return ok;
 }
@@ -138,17 +140,25 @@ void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const {
     case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
         if (verbose) {
             fprintf(stderr,"Cannot load plugin from shared library (%s)\n", dll_name.c_str());
+            fprintf(stderr,"(%s)\n", factory.getError().c_str());
         }
+        break;
+    case SharedLibraryFactory::STATUS_LIBRARY_NOT_FOUND:
+        fprintf(stderr,"Cannot load plugin from shared library (%s)\n", dll_name.c_str());
+        fprintf(stderr,"(%s)\n", factory.getError().c_str());
         break;
     case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
         fprintf(stderr,"cannot find YARP hook in shared library (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
+        fprintf(stderr,"(%s)\n", factory.getError().c_str());
         break;
     case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
         fprintf(stderr,"YARP hook in shared library misbehaved (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
         fprintf(stderr,"(the library may be too old/new and need to be recompiled to match YARP version)\n");
+        fprintf(stderr,"(%s)\n", factory.getError().c_str());
         break;
     default:
         fprintf(stderr,"Unknown error (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
+        fprintf(stderr,"(%s)\n", factory.getError().c_str());
         break;
     }
 }
