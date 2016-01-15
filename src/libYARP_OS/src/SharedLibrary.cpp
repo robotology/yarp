@@ -24,7 +24,7 @@ using yarp::os::ConstString;
 using yarp::os::impl::SharedLibraryImpl;
 
 
-class SharedLibraryImpl
+class yarp::os::impl::SharedLibraryImpl
 {
 public:
     SharedLibraryImpl() : dll(NULL), error(ConstString()) {}
