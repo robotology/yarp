@@ -2361,6 +2361,7 @@ static bool plugin_test(YarpPluginSettings& settings) {
     settings.open(lib);
     if (!lib.isValid()) {
         fprintf(stderr,"    Cannot find or load shared library\n");
+        return false;
     } else {
         const SharedLibraryClassApi& api = lib.getApi();
         char className[256] = "unknown";
