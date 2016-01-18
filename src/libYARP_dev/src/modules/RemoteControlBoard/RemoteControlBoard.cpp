@@ -865,7 +865,7 @@ protected:
 
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle& l = *(response.get(1).asList());
+            Bottle& l = *(response.get(2).asList());
             if (&l == 0)
                 return false;
 
