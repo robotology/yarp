@@ -559,6 +559,39 @@ public:
      */
     virtual bool positionMove(const int n_joints, const int *joints, const double *refs);
 
+/** Get the last position reference for the specified axis.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPosition(const int joint, double *ref);
+
+    /** Get the last position reference for all axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositions(double *refs);
+
+    /** Get the last position reference for the specified group of axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
+
     /** Set relative position. The command is relative to the
     * current position of the axis.
     * @param j joint axis number
@@ -663,7 +696,6 @@ public:
     * @return true/false on success/failure.
     */
     virtual bool getRefSpeeds(double *spds);
-
 
     /** Get reference speed of all joints. These are the  values used during the
      * interpolation of the trajectory.
@@ -1238,13 +1270,46 @@ public:
 
     virtual bool setRefOutputs(const double *outs);
 
-    virtual bool setPosition(int j, double ref);
-
     virtual bool setPositionDirectMode();
+
+    virtual bool setPosition(int j, double ref);
 
     virtual bool setPositions(const int n_joints, const int *joints, double *dpos);
 
     virtual bool setPositions(const double *refs);
+
+        /** Get the last position reference for the specified axis.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPosition(const int joint, double *ref);
+
+    /** Get the last position reference for all axes.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref array containing last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPositions(double *refs);
+
+    /** Get the last position reference for the specified group of axes.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref array containing last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs);
 
     virtual yarp::os::Stamp getLastInputStamp();
 
