@@ -44,7 +44,7 @@ public:
     using IVelocityControl::getRefAccelerations;
     using IVelocityControl::stop;
 
-    /** Start motion at a given speed for a subset of joints..
+    /** Start motion at a given speed for a subset of joints.
      * @param n_joint how many joints this command is referring to
      * @param joints of joints controlled. The size of this array is n_joints
      * @param spds pointer to the array containing the new speed values, one value for each joint, the size of the array is n_joints.
@@ -56,6 +56,28 @@ public:
      * @return true/false on success/failure
      */
     virtual bool velocityMove(const int n_joint, const int *joints, const double *spds)=0;
+
+    /** Get the last reference speed set by velocityMove for single joint.
+     * @param j joint number
+     * @param vel returns the requested reference.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocity(const int joint, double *vel) {return false;};
+
+    /** Get the last reference speed set by velocityMove for all joints.
+     * @param vels pointer to the array containing the new speed values, one value for each joint
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocities(double *vels) {return false;};
+
+    /** Get the last reference speed set by velocityMove for a group of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints of joints controlled. The size of this array is n_joints
+     * @param vels pointer to the array containing the requested values, one value for each joint.
+     *  The size of the array is n_joints.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels) { return false;};
 
     /** Set reference acceleration for a subset of joints. This is the valure that is
      * used during the generation of the trajectory.
@@ -152,6 +174,28 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds)=0;
+
+     /** Get the last reference speed set by velocityMove for single joint.
+     * @param j joint number
+     * @param vel returns the requested reference.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocityRaw(const int joint, double *vel) {return false;};
+
+    /** Get the last reference speed set by velocityMove for all joints.
+     * @param vels pointer to the array containing the new speed values, one value for each joint
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocitiesRaw(double *vels) {return false;};
+
+    /** Get the last reference speed set by velocityMove for a group of joints.
+     * @param n_joint how many joints this command is referring to
+     * @param joints of joints controlled. The size of this array is n_joints
+     * @param vels pointer to the array containing the requested values, one value for each joint.
+     *  The size of the array is n_joints.
+     * @return true/false on success/failure
+     */
+    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels) { return false;};
 
     /** Set reference acceleration for a subset of joints. This is the valure that is
      * used during the generation of the trajectory.

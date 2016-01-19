@@ -95,6 +95,39 @@ bool ImplementVelocityControl2::velocityMove(const double *sp)
     return iVelocity2->velocityMoveRaw(temp_double);
 }
 
+bool ImplementVelocityControl2::getRefVelocity(const int j, double* vel)
+{
+    int k;
+    double tmp;
+    k=castToMapper(helper)->toHw(j);
+    bool ret = iVelocity2->getRefVelocityRaw(j, &tmp);
+    *vel=castToMapper(helper)->velE2A(tmp, k);
+    return ret;
+}
+
+bool ImplementVelocityControl2::getRefVelocities(double *vels)
+{
+    bool ret=iVelocity2->getRefVelocitiesRaw(temp_double);
+    castToMapper(helper)->velE2A(temp_double, vels);
+    return ret;
+}
+
+bool ImplementVelocityControl2::getRefVelocities(const int n_joint, const int *joints, double *vels)
+{
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
+    }
+
+    bool ret = iVelocity2->getRefVelocitiesRaw(n_joint, temp_int, temp_double);
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        vels[idx]=castToMapper(helper)->velE2A(temp_double[idx], temp_int[idx]);
+    }
+    return ret;
+}
+
 bool ImplementVelocityControl2::setRefAcceleration(int j, double acc)
 {
     int k;
@@ -127,7 +160,6 @@ bool ImplementVelocityControl2::getRefAcceleration(int j, double *acc)
     *acc=castToMapper(helper)->accE2A_abs(enc, k);
     return ret;
 }
-
 
 bool ImplementVelocityControl2::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {

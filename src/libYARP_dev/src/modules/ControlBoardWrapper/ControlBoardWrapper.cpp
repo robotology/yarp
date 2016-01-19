@@ -1588,6 +1588,107 @@ bool ControlBoardWrapper::positionMove(const int n_joints, const int *joints, co
     return ret;
 }
 
+bool ControlBoardWrapper::getTargetPosition(const int j, double* ref)
+{
+    int off=device.lut[j].offset;
+    int subIndex=device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+
+    if (!p)
+        return false;
+
+    if (p->pos2)
+    {
+        bool ret = p->pos2->getTargetPosition(off+p->base, ref);
+        return ret;
+    }
+    *ref=0;
+    return false;
+}
+
+
+/** Get reference speed of all joints. These are the  values used during the
+* interpolation of the trajectory.
+* @param spds pointer to the array that will store the speed values.
+* @return true/false on success/failure.
+*/
+bool ControlBoardWrapper::getTargetPositions(double *spds) {
+    bool ret=true;
+
+    for(int l=0;l<controlledJoints;l++)
+    {
+        int off=device.lut[l].offset;
+        int subIndex=device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+
+        if (!p)
+            return false;
+
+        if (p->pos2)
+        {
+            ret=ret&&p->pos2->getTargetPosition(off+p->base, spds+l);
+        }
+        else
+            ret=false;
+    }
+    return ret;
+}
+
+
+bool ControlBoardWrapper::getTargetPositions(const int n_joints, const int *joints, double *targets)
+{
+    bool ret = true;
+
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
+
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for(int j=0; j<n_joints; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
+
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->pos2)   // Position Control 2
+        {
+            ret= ret && rpcData.subdevices_p[subIndex]->pos2->getTargetPositions( rpcData.subdev_jointsVectorLen[subIndex],
+                                                                            rpcData.jointNumbers[subIndex],
+                                                                            rpcData.values[subIndex]);
+        }
+    }
+
+    if(ret)
+    {
+        // ReMix values by user expectations
+        for(int i=0; i<rpcData.deviceNum; i++)
+            rpcData.subdev_jointsVectorLen[i]=0;                  // reset tmp index
+
+        // fill the output vector
+        for(int j=0; j<n_joints; j++)
+        {
+            subIndex = device.lut[joints[j]].deviceEntry;
+            targets[j]  = rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]];
+            rpcData.subdev_jointsVectorLen[subIndex]++;
+        }
+    }
+    else
+    {
+        for(int j=0; j<n_joints; j++)
+        {
+            targets[j] = 0;
+        }
+    }
+    rpcDataMutex.post();
+    return ret;
+}
+
 /** Set relative position. The command is relative to the
 * current position of the axis.
 * @param j joint axis number
@@ -4798,6 +4899,102 @@ yarp::os::Stamp ControlBoardWrapper::getLastInputStamp() {
     return ret;
 }
 
+bool ControlBoardWrapper::getRefPosition(const int j, double* ref)
+{
+    int off=device.lut[j].offset;
+    int subIndex=device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+
+    if (!p)
+        return false;
+
+    if (p->posDir)
+    {
+        bool ret = p->posDir->getRefPosition(off+p->base, ref);
+        return ret;
+    }
+    *ref=0;
+    return false;
+}
+
+bool ControlBoardWrapper::getRefPositions(double *spds) {
+    bool ret=true;
+
+    for(int l=0;l<controlledJoints;l++)
+    {
+        int off=device.lut[l].offset;
+        int subIndex=device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+
+        if (!p)
+            return false;
+
+        if (p->posDir)
+        {
+            ret=ret&&p->posDir->getRefPosition(off+p->base, spds+l);
+        }
+        else
+            ret=false;
+    }
+    return ret;
+}
+
+
+bool ControlBoardWrapper::getRefPositions(const int n_joints, const int *joints, double *targets)
+{
+    bool ret = true;
+
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
+
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for(int j=0; j<n_joints; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
+
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->posDir)
+        {
+            ret= ret && rpcData.subdevices_p[subIndex]->posDir->getRefPositions( rpcData.subdev_jointsVectorLen[subIndex],
+                                                                            rpcData.jointNumbers[subIndex],
+                                                                            rpcData.values[subIndex]);
+        }
+    }
+
+    if(ret)
+    {
+        // ReMix values by user expectations
+        for(int i=0; i<rpcData.deviceNum; i++)
+            rpcData.subdev_jointsVectorLen[i]=0;                  // reset tmp index
+
+        // fill the output vector
+        for(int j=0; j<n_joints; j++)
+        {
+            subIndex = device.lut[joints[j]].deviceEntry;
+            targets[j]  = rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]];
+            rpcData.subdev_jointsVectorLen[subIndex]++;
+        }
+    }
+    else
+    {
+        for(int j=0; j<n_joints; j++)
+        {
+            targets[j] = 0;
+        }
+    }
+    rpcDataMutex.post();
+    return ret;
+}
+
+
 //
 // IVelocityControl2 Interface
 //
@@ -4846,6 +5043,112 @@ bool ControlBoardWrapper::velocityMove(const int n_joints, const int *joints, co
     rpcDataMutex.post();
     return ret;
 }
+
+bool ControlBoardWrapper::getRefVelocity(const int j, double* vel)
+{
+    if(verbose())
+        yTrace();
+
+    int off=device.lut[j].offset;
+    int subIndex=device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+
+    if (!p)
+        return false;
+
+    if (p->vel2)
+    {
+        bool ret = p->vel2->getRefVelocity(off+p->base, vel);
+        return ret;
+    }
+    *vel=0;
+    return false;
+}
+
+
+bool ControlBoardWrapper::getRefVelocities(double* vels)
+{
+    if(verbose())
+        yTrace();
+
+    bool ret=true;
+
+    for(int l=0;l<controlledJoints;l++)
+    {
+        int off=device.lut[l].offset;
+        int subIndex=device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+
+        if (!p)
+            return false;
+
+        if (p->vel2)
+        {
+            ret=ret&&p->vel2->getRefVelocity(off+p->base, vels+l);
+        }
+        else
+            ret=false;
+    }
+    return ret;
+}
+
+bool ControlBoardWrapper::getRefVelocities(const int n_joints, const int* joints, double* vels)
+{
+    if(verbose())
+        yTrace();
+
+    bool ret = true;
+
+    rpcDataMutex.wait();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
+
+    // Create a map of joints for each subDevice
+    int subIndex = 0;
+    for(int j=0; j<n_joints; j++)
+    {
+        subIndex = device.lut[joints[j]].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
+
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->posDir)
+        {
+            ret= ret && rpcData.subdevices_p[subIndex]->vel2->getRefVelocities( rpcData.subdev_jointsVectorLen[subIndex],
+                                                                                rpcData.jointNumbers[subIndex],
+                                                                                rpcData.values[subIndex]);
+        }
+    }
+
+    if(ret)
+    {
+        // ReMix values by user expectations
+        for(int i=0; i<rpcData.deviceNum; i++)
+            rpcData.subdev_jointsVectorLen[i]=0;    // reset tmp index
+
+        // fill the output vector
+        for(int j=0; j<n_joints; j++)
+        {
+            subIndex = device.lut[joints[j]].deviceEntry;
+            vels[j]  = rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]];
+            rpcData.subdev_jointsVectorLen[subIndex]++;
+        }
+    }
+    else
+    {
+        for(int j=0; j<n_joints; j++)
+        {
+            vels[j] = 0;
+        }
+    }
+    rpcDataMutex.post();
+    return ret;
+}
+
 
 bool ControlBoardWrapper::setVelPid(int j, const Pid &pid)
 {

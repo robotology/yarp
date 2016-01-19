@@ -739,6 +739,44 @@ protected:
         return false;
     }
 
+    bool get2V1I1IA1DA(int v1, int v2, const int n_joints, const int *joints, double *retVals, yarp::os::ConstString functionName = "")
+    {
+        Bottle cmd, response;
+        if (!isLive()) return false;
+
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(v1);
+        cmd.addVocab(v2);
+        cmd.addInt(n_joints);
+
+        Bottle& l1 = cmd.addList();
+        for (int i = 0; i < n_joints; i++)
+            l1.addInt(joints[i]);
+
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response))
+        {
+            int i;
+            Bottle& list = *(response.get(0).asList());
+            YARP_ASSERT(list.size() >= n_joints)
+
+            if (list.size() != n_joints)
+            {
+                yError("%s length of response does not match: expected %d, received %d\n ", functionName.c_str(), n_joints , list.size() );
+                return false;
+            }
+            else
+            {
+                for (i = 0; i < n_joints; i++)
+                {
+                    retVals[i] = (double) list.get(i).asDouble();
+                }
+                return true;
+            }
+        }
+    }
+
     bool get1V1B(int v, bool &val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -808,6 +846,38 @@ protected:
                 val[i] = l.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Helper method to get an array of double from the remote peer.
+     * @param v1 is the name of the command
+     * @param val is the array of double
+     * @return true/false on success/failure
+     */
+    bool get1V1DA(int v1, double *val) {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(v1);
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response)) {
+            int i;
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+
+            int njs = l.size();
+            YARP_ASSERT (nj == njs);
+            for (i = 0; i < nj; i++)
+                val[i] = l.get(i).asDouble();
+
+            getTimeStamp(response, lastStamp);
+
 
             return true;
         }
@@ -2316,6 +2386,47 @@ public:
         return set1VDA(VOCAB_POSITION_MOVES, refs);
     }
 
+    /** Get the last position reference for the specified axis.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPosition(const int joint, double *ref)
+    {
+        return get1V1I1D(VOCAB_POSITION_MOVE, joint, ref);
+    }
+
+    /** Get the last position reference for all axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositions(double *refs)
+    {
+        return get1V1DA(VOCAB_POSITION_MOVES, refs);
+    }
+
+    /** Get the last position reference for the specified group of axes.
+     *  This is the dual of PositionMove and shall return only values sent using
+     *  IPositionControl interface.
+     *  If other interfaces like IPositionDirect are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionDirect::SetPosition
+     * @param ref last reference sent using PositionMove functions
+     * @return true/false on success/failure
+     */
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs)
+    {
+        return get1V1I1IA1DA(VOCAB_POSITION_MOVE_GROUP, n_joint, joints, refs);
+    }
 
     /**
      * Set relative position. The command is relative to the
@@ -3360,6 +3471,9 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
+    //
+    // IPositionDirect Interface
+    //
     bool setPositionDirectMode()
     {
         return set1V(VOCAB_POSITION_DIRECT);
@@ -3406,6 +3520,21 @@ public:
         return true;
     }
 
+    bool getRefPosition(const int joint, double* ref)
+    {
+        return get1V1I1D(VOCAB_POSITION_DIRECT, joint, ref);
+    }
+
+    bool getRefPositions(double* refs)
+    {
+        return get1V1DA(VOCAB_POSITION_DIRECTS, refs);
+    }
+
+    bool getRefPositions(const int n_joint, const int* joints, double* refs)
+    {
+        return get1V1I1IA1DA(VOCAB_POSITION_DIRECT_GROUP, n_joint, joints, refs);
+    }
+
     //
     // IVelocityControl2 Interface
     //
@@ -3425,6 +3554,22 @@ public:
         memcpy(&(c.body[0]), spds, sizeof(double)*n_joint);
         command_buffer.write(writeStrict_moreJoints);
         return true;
+    }
+
+    bool getRefVelocity(const int joint, double* vel)
+    {
+        return get1V1I1D(VOCAB_VELOCITY_MOVE, joint, vel);
+    }
+
+    bool getRefVelocities(double* vels)
+    {
+        return get1VDA(VOCAB_VELOCITY_MOVES, vels);
+    }
+
+    bool getRefVelocities(const int n_joint, const int* joints, double* vels)
+    {
+        yTrace();
+        return get1V1I1IA1DA(VOCAB_VELOCITY_MOVE_GROUP, n_joint, joints, vels);
     }
 
     bool setVelPid(int j, const Pid &pid)

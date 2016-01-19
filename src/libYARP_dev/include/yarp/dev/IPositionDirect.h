@@ -75,6 +75,39 @@ public:
      * @return true/false on success/failure
      */
     virtual bool setPositions(const double *refs)=0;
+
+    /** Get the last position reference for the specified axis.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPosition(const int joint, double *ref) {return false;};
+
+    /** Get the last position reference for all axes.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref array containing last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPositions(double *refs) {return false;};
+
+    /** Get the last position reference for the specified group of axes.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref array containing last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs) {return false;};
 };
 
 
@@ -87,10 +120,8 @@ public:
  * This interface is used to send high frequency streaming commands to the boards, the aim
  * is to reach low level control in firmware bypassing the trajetory generator, raw functions.
  */
-
 class yarp::dev::IPositionDirectRaw
 {
-
 public:
     /**
      * Destructor.
@@ -132,11 +163,45 @@ public:
     virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)=0;
 
 
-    /** Set new position for a set of axis.
+    /** Set new position for a set of axes.
      * @param refs specifies the new reference points
      * @return true/false on success/failure
      */
     virtual bool setPositionsRaw(const double *refs)=0;
+
+    /** Get the last position reference for the specified axis.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPositionRaw(const int joint, double *ref) {return false;};
+
+    /** Get the last position reference for all axes.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref array containing last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPositionsRaw(double *refs) {return false;};
+
+
+    /** Get the last position reference for the specified group of axes.
+     *  This is the dual of setPositionsRaw and shall return only values sent using
+     *  IPositionDirect interface.
+     *  If other interfaces like IPositionControl are implemented by the device, this call
+     *  must ignore their values, i.e. this call must never return a reference sent using
+     *  IPositionControl::PositionMove.
+     * @param ref array containing last reference sent using setPosition(s) functions
+     * @return true/false on success/failure
+     */
+    virtual bool getRefPositionsRaw(const int n_joint, const int *joints, double *refs) {return false;};
 };
 
 #define VOCAB_POSITION_DIRECT           VOCAB3('d','p','o')

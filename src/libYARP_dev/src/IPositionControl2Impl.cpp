@@ -222,7 +222,6 @@ bool ImplementPositionControl2::getRefSpeeds(const int n_joint, const int *joint
     {
         spds[idx]=castToMapper(helper)->velE2A_abs(temp_double[idx], temp_int[idx]);
     }
-
     return ret;
 }
 
@@ -299,6 +298,40 @@ bool ImplementPositionControl2::getAxes(int *axis)
 }
 
 
+bool ImplementPositionControl2::getTargetPosition(const int joint, double* ref)
+{
+    int k;
+    double enc;
+    k=castToMapper(helper)->toHw(joint);
+    bool ret = iPosition2->getTargetPositionRaw(k, &enc);
+
+    *ref=castToMapper(helper)->posE2A(enc, k);
+
+    return ret;
+}
+
+bool ImplementPositionControl2::getTargetPositions(double* refs)
+{
+    bool ret=iPosition2->getTargetPositionsRaw(temp_double);
+    castToMapper(helper)->posE2A(temp_double, refs);
+    return ret;
+}
+
+bool ImplementPositionControl2::getTargetPositions(const int n_joint, const int* joints, double* refs)
+{
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
+    }
+
+    bool ret = iPosition2->getTargetPositionsRaw(n_joint, temp_int, temp_double);
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        refs[idx]=castToMapper(helper)->posE2A(temp_double[idx], temp_int[idx]);
+    }
+    return ret;
+}
 /////////////////// End Implement PostionControl2
 
 

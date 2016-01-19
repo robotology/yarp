@@ -74,6 +74,9 @@ public:
 
     // specific of IVelocityControl2
     virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
+    virtual bool getRefVelocity(const int joint, double *vel);
+    virtual bool getRefVelocities(double *vels);
+    virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels);
     virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
     virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
     virtual bool stop(const int n_joint, const int *joints);
@@ -149,6 +152,15 @@ public:
     // specific of IVelocityControl2
     virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
     {return NOT_YET_IMPLEMENTED("velocityMoveRaw");}
+
+    virtual bool getRefVelocityRaw(const int joint, double *vel)
+    {return NOT_YET_IMPLEMENTED("getRefVelocityRaw");}
+
+    virtual bool getRefVelocitiesRaw(double *vels)
+    {return NOT_YET_IMPLEMENTED("getRefVelocitiesRaw");}
+
+    virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels)
+    {return NOT_YET_IMPLEMENTED("getRefVelocitiesRaw");}
 
     virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
     {return NOT_YET_IMPLEMENTED("setRefAccelerationsRaw");}
