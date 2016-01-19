@@ -2397,6 +2397,58 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_VELOCITY_MOVE:
+                            {
+                                if (ControlBoardWrapper_p->verbose())
+                                    yDebug("getVelocityMove - cmd: %s\n", cmd.toString().c_str());
+
+                                ok = rpc_IVelCtrl2->getRefVelocity(cmd.get(2).asInt(), &dtmp);
+
+                                response.addDouble(dtmp);
+                                rec=true;
+                            }
+                            break;
+
+                            case VOCAB_VELOCITY_MOVE_GROUP:
+                            {
+                                if (ControlBoardWrapper_p->verbose())
+                                    yDebug("getVelocityMove_group - cmd: %s\n", cmd.toString().c_str());
+
+                                int len = cmd.get(2).asInt();
+                                Bottle& in = *(cmd.get(3).asList());
+                                int *jointList = new int[len];
+                                double *refs = new double[len];
+
+                                for(int j=0; j<len; j++)
+                                {
+                                    jointList[j] = in.get(j).asInt();
+                                }
+                                ok = rpc_IVelCtrl2->getRefVelocities(len, jointList, refs);
+
+                                Bottle& b = response.addList();
+                                for (int i = 0; i < len; i++)
+                                    b.addDouble(refs[i]);
+
+                                delete[] jointList;
+                                delete[] refs;
+                            }
+                            break;
+
+                            case VOCAB_VELOCITY_MOVES:
+                            {
+                                if (ControlBoardWrapper_p->verbose())
+                                    yDebug("getVelocityMoves - cmd: %s\n", cmd.toString().c_str());
+
+                                double *refs = new double[controlledJoints];
+                                ok = rpc_IVelCtrl2->getRefVelocities(refs);
+                                Bottle& b = response.addList();
+                                int i;
+                                for (i = 0; i < controlledJoints; i++)
+                                    b.addDouble(refs[i]);
+                                delete[] refs;
+                            }
+                            break;
+
                             case VOCAB_LIMS:
                             {
                                 double *p = new double[controlledJoints];

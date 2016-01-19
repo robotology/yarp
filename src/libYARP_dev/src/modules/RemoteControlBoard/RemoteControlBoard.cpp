@@ -3540,6 +3540,22 @@ public:
         return true;
     }
 
+    bool getRefVelocity(const int joint, double* vel)
+    {
+        return get1V1I1D(VOCAB_VELOCITY_MOVE, joint, vel);
+    }
+
+    bool getRefVelocities(double* vels)
+    {
+        return get1VDA(VOCAB_VELOCITY_MOVES, vels);
+    }
+
+    bool getRefVelocities(const int n_joint, const int* joints, double* vels)
+    {
+        yTrace();
+        return get1V1I1IA1DA(VOCAB_VELOCITY_MOVE_GROUP, n_joint, joints, vels);
+    }
+
     bool setVelPid(int j, const Pid &pid)
     {
         Bottle cmd, response;

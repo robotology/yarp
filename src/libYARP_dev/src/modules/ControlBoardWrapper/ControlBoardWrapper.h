@@ -1318,6 +1318,12 @@ public:
     //
     virtual bool velocityMove(const int n_joints, const int *joints, const double *spds);
 
+    virtual bool getRefVelocity(const int joint, double* vel);
+
+    virtual bool getRefVelocities(double* vels);
+
+    virtual bool getRefVelocities(const int n_joint, const int* joints, double* vels);
+
     virtual bool setVelPid(int j, const Pid &pid);
 
     virtual bool setVelPids(const Pid *pids);
