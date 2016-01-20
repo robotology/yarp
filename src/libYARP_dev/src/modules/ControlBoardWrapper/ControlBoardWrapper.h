@@ -1169,6 +1169,8 @@ public:
     /* IAxisInfo */
     virtual bool getAxisName(int j, yarp::os::ConstString& name);
 
+    virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type);
+
     virtual bool setTorqueMode();
 
     virtual bool getRefTorques(double *refs);

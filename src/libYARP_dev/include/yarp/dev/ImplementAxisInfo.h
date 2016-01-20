@@ -51,6 +51,7 @@ public:
     virtual ~ImplementAxisInfo();
 
     virtual bool getAxisName(int axis, yarp::os::ConstString& name);
+    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type);
 };
 
 #endif

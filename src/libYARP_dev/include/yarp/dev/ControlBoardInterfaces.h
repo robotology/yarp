@@ -54,6 +54,13 @@ namespace yarp {
         class IAxisInfo;
         class IAxisInfoRaw;
         struct CalibrationParameters;
+
+        enum JointTypeEnum
+        {
+            VOCAB_JOINTTYPE_REVOLUTE  = VOCAB4('a', 't', 'r', 'v'),
+            VOCAB_JOINTTYPE_PRISMATIC = VOCAB4('a', 't', 'p', 'r'),
+            VOCAB_JOINTTYPE_UNKNOWN   = VOCAB4('u', 'n', 'k', 'n')
+        };
     }
 }
 
@@ -773,6 +780,13 @@ public:
     * @return true if everything goes fine, false otherwise.
     */
     virtual bool getAxisName(int axis, yarp::os::ConstString& name) = 0;
+
+    /* Get the joint type (e.g. revolute/prismatic) for a particular axis.
+    * @param axis joint number
+    * @param type the joint type
+    * @return true if everything goes fine, false otherwise.
+    */
+    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) = 0;
 };
 
 /**
@@ -792,6 +806,13 @@ public:
     * @return true if everything goes fine, false otherwise.
     */
     virtual bool getAxisNameRaw(int axis, yarp::os::ConstString& name) = 0;
+
+    /* Get the joint type (e.g. revolute/prismatic) for a particular axis.
+    * @param axis joint number
+    * @param type the joint type
+    * @return true if everything goes fine, false otherwise.
+    */
+    virtual bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type) = 0;
 };
 
 /* Vocabs representing the above interfaces */
@@ -872,6 +893,7 @@ public:
 
 // interface IAxisInfo
 #define VOCAB_INFO_NAME VOCAB4('n','a','m','e')
+#define VOCAB_INFO_TYPE VOCAB4('t','y','p','e')
 
 #define VOCAB_TIMESTAMP VOCAB4('t','s','t','a')
 #define VOCAB_TORQUE VOCAB4('t','o','r','q')

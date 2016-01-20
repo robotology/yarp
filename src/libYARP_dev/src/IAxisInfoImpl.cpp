@@ -67,4 +67,13 @@ bool ImplementAxisInfo::getAxisName(int axis, yarp::os::ConstString& name)
     ret = iinfo->getAxisNameRaw(k, name);
     return ret;
 }
+
+bool ImplementAxisInfo::getJointType(int axis, yarp::dev::JointTypeEnum& type)
+{
+    bool ret;
+    int k = castToMapper(helper)->toHw(axis);
+    ret = iinfo->getJointTypeRaw(k, type);
+    return ret;
+}
+
 bool ret;

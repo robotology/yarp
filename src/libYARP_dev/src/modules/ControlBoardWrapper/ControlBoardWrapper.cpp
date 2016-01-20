@@ -3691,6 +3691,22 @@ bool ControlBoardWrapper::getAxisName(int j, yarp::os::ConstString& name)
     return false;
 }
 
+bool ControlBoardWrapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
+{
+    int off = device.lut[j].offset;
+    int subIndex = device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->info)
+    {
+        return p->info->getJointType(off + p->base, type);
+    }
+    return false;
+}
+
 bool ControlBoardWrapper::setTorqueMode()
 {
     bool ret=true;

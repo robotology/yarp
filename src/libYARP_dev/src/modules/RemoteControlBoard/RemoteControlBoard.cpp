@@ -2819,6 +2819,10 @@ public:
         return get1V1I1S(VOCAB_INFO_NAME, j, name);
     }
 
+    virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type) {
+        return get1V1I1I(VOCAB_INFO_NAME, j, (int*)&type);
+    }
+
     /* IControlCalibration */
     bool virtual calibrate()
     { return send1V(VOCAB_CALIBRATE); }

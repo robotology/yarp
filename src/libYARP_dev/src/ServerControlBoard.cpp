@@ -1543,6 +1543,14 @@ public:
         return false;
     }
 
+    /* IAxisInfo */
+    virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type) {
+        if (info) {
+            return info->getJointType(j, type);
+        }
+        return false;
+    }
+
     /* IPreciselyTimed */
     /**
     * Get the time stamp for the last read data
@@ -2568,6 +2576,13 @@ case VOCAB_INFO_NAME:
         ConstString name = "undocumented";
         ok = info->getAxisName(cmd.get(2).asInt(),name);
         response.addString(name.c_str());
+    }
+    break;
+case VOCAB_INFO_TYPE:
+    {
+        yarp::dev::JointTypeEnum type;
+        ok = info->getJointType(cmd.get(2).asInt(), type);
+        response.addVocab(type);
     }
     break;
 default:
