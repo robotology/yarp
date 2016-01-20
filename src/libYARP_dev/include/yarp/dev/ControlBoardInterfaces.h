@@ -786,7 +786,7 @@ public:
     * @param type the joint type
     * @return true if everything goes fine, false otherwise.
     */
-    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) = 0;
+    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) {return false;}
 };
 
 /**
