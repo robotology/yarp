@@ -43,18 +43,19 @@ inline void checkAndDestroy(T* &p) {
 class ControlBoardHelper
 {
 public:
-    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *nw): zeros(0),
+    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *nw, const double *amps=NULL, const double *volts=NULL): zeros(0),
         signs(0),
         axisMap(0),
         invAxisMap(0),
         angleToEncoders(0),
-        newtonsToSensors(0)
+        newtonsToSensors(0),
+        ampereToSensors(0),
+        voltToSensors(0)
     {
         yAssert(n>=0);         // if number of joints is negative complain!
         yAssert(aMap!=0);      // at least the axisMap is required
 
-        nj=n;
-        alloc(n);
+        alloc(n, amps, volts);
 
         memcpy(axisMap, aMap, sizeof(int)*nj);
 
@@ -72,6 +73,12 @@ public:
             memcpy(newtonsToSensors, nw, sizeof(double)*nj);
         else
             memset(newtonsToSensors, 0, sizeof(double)*nj);
+
+        if (amps!=0)
+            memcpy(ampereToSensors, amps, sizeof(double)*nj);
+
+        if (volts!=0)
+            memcpy(voltToSensors, volts, sizeof(double)*nj);;
 
         // invert the axis map
         memset (invAxisMap, 0, sizeof(int) * nj);
@@ -96,7 +103,7 @@ public:
         dealloc();
     }
 
-    bool alloc(int n)
+    bool alloc(int n, const double *amps, const double *volts)
     {
         nj=n;
         if (nj<=0)
@@ -111,8 +118,20 @@ public:
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
         newtonsToSensors=new double [nj];
-        yAssert(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && newtonsToSensors != 0);
 
+        if(amps)
+        {
+            ampereToSensors=new double [nj];
+            yAssert(ampereToSensors != 0);
+        }
+
+        if(volts)
+        {
+            voltToSensors=new double [nj];
+            yAssert(voltToSensors != 0);
+        }
+
+        yAssert(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && newtonsToSensors != 0);
         return true;
     }
 
@@ -124,6 +143,8 @@ public:
         checkAndDestroy<int> (invAxisMap);
         checkAndDestroy<double> (angleToEncoders);
         checkAndDestroy<double> (newtonsToSensors);
+        checkAndDestroy<double> (ampereToSensors);
+        checkAndDestroy<double> (voltToSensors);
         return true;
     }
 
@@ -461,6 +482,128 @@ public:
         }
     }
 
+    //***************** current ******************//
+    inline void ampereA2S(double ampere, int j, double &sens, int &k)
+    {
+        if(ampereToSensors)
+            sens=ampere*ampereToSensors[j];
+        else
+            sens=ampere;
+        k=toHw(j);
+    }
+
+    inline double ampereA2S(double ampere, int j)
+    {
+        if(ampereToSensors)
+            return ampere*ampereToSensors[j];
+        else
+            return ampere;
+    }
+
+    //map a vector, convert from ampere to sensors
+    inline void ampereA2S(const double *ampere, double *sens)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            ampereA2S(ampere[j], j, tmp, index);
+            sens[index]=tmp;
+        }
+    }
+
+    //map a vector, convert from sensor to ampere
+    inline void ampereS2A(const double *sens, double *ampere)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            ampereS2A(sens[j], j, tmp, index);
+            ampere[index]=tmp;
+        }
+    }
+
+    inline void ampereS2A(double sens, int j, double &ampere, int &k)
+    {
+        k=toUser(j);
+        if(ampereToSensors)
+            ampere=(sens/ampereToSensors[k]);
+        else
+            ampere=sens;  //conversion factor = 1 if not defined;
+    }
+
+    inline double ampereS2A(double sens, int j)
+    {
+        int k=toUser(j);
+
+        if(ampereToSensors)
+            return sens/ampereToSensors[k];
+        else
+            return sens;  //conversion factor = 1 if not defined;
+    }
+    // *******************************************//
+
+    //***************** voltage ******************//
+    inline void voltageV2S(double voltage, int j, double &sens, int &k)
+    {
+        if(voltToSensors)
+            sens=voltage*voltToSensors[j];
+        else
+            sens=voltage;
+        k=toHw(j);
+    }
+
+    inline double voltageV2S(double voltage, int j)
+    {
+        if(voltToSensors)
+            return voltage*voltToSensors[j];
+        else
+            return voltage;
+    }
+
+    //map a vector, convert from voltage to sensors
+    inline void voltageV2S(const double *voltage, double *sens)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            voltageV2S(voltage[j], j, tmp, index);
+            sens[index]=tmp;
+        }
+    }
+
+    //map a vector, convert from sensor to newtons
+    inline void voltageS2V(const double *sens, double *voltage)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            voltageS2V(sens[j], j, tmp, index);
+            voltage[index]=tmp;
+        }
+    }
+
+    inline void voltageS2V(double sens, int j, double &voltage, int &k)
+    {
+        k=toUser(j);
+
+        if(voltToSensors)
+            voltage=(sens/voltToSensors[k]);
+        else
+            voltage = sens;
+    }
+
+    inline double voltageS2V(double sens, int j)
+    {
+        int k=toUser(j);
+
+        return (sens/voltToSensors[k]);
+    }
+    // *******************************************//
+
     inline int axes()
     { return nj; }
 
@@ -472,6 +615,8 @@ public:
     int *invAxisMap;
     double *angleToEncoders;
     double *newtonsToSensors;
+    double *voltToSensors;
+    double *ampereToSensors;
 };
 inline ControlBoardHelper *castToMapper(void *p)
 { return static_cast<ControlBoardHelper *>(p); }

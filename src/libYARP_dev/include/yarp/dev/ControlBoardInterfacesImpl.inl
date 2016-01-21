@@ -1031,14 +1031,14 @@ ImplementAmplifierControl<DERIVED, IMPLEMENT>::~ImplementAmplifierControl()
 }
 
 template <class DERIVED, class IMPLEMENT>
-bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos, const double *ampereFactor, const double *voltFactor)
 {
     if (helper!=0)
         return false;
 
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0, ampereFactor, voltFactor));
     yAssert (helper != 0);
     dTemp=new double[size];
     yAssert (dTemp != 0);
@@ -1104,26 +1104,9 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrent(int j, double *c)
 }
 
 template <class DERIVED, class IMPLEMENT>
-bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setMaxCurrent(int j, double v)
-{
-    int k=castToMapper(helper)->toHw(j);
-
-    return iAmplifier->setMaxCurrentRaw(k, v);
-}
-
-template <class DERIVED, class IMPLEMENT>
-bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getMaxCurrent(int j, double* v)
-{
-    int k=castToMapper(helper)->toHw(j);
-
-    return iAmplifier->getMaxCurrentRaw(k, v);
-}
-
-template <class DERIVED, class IMPLEMENT>
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getAmpStatus(int *st)
 {
     bool ret=iAmplifier->getAmpStatusRaw(iTemp);
-
     castToMapper(helper)->toUser(iTemp, st);
 
     return ret;
@@ -1136,4 +1119,90 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getAmpStatus(int k, int *st)
     bool ret=iAmplifier->getAmpStatusRaw(j, st);
 
     return ret;
+}
+
+template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setMaxCurrent(int m, double v)
+{
+    int k;
+    double curr;
+    castToMapper(helper)->ampereA2S(curr, m, curr, k);
+    return iAmplifier->setMaxCurrentRaw(k, curr);
+}
+
+template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getMaxCurrent(int j, double* v)
+{
+    double val;
+    int k=castToMapper(helper)->toHw(j);
+    bool ret = iAmplifier->getMaxCurrentRaw(k, &val);
+    *v = castToMapper(helper)->ampereS2A(val, k);
+    return ret;
+}
+
+template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getNominalCurrent(int m, double *curr)
+{
+    int k;
+    bool ret;
+    double tmp;
+
+    k=castToMapper(helper)->toHw(m);
+    ret=iAmplifier->getNominalCurrentRaw(k, &tmp);
+    *curr=castToMapper(helper)->ampereS2A(tmp, k);
+    return ret;
+}
+
+template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getPeakCurrent(int m, double *curr)
+{
+    int k;
+    bool ret;
+    double tmp;
+
+    k=castToMapper(helper)->toHw(m);
+    ret=iAmplifier->getPeakCurrentRaw(k, &tmp);
+    *curr=castToMapper(helper)->ampereS2A(tmp, k);
+    return ret;
+}
+
+template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setPeakCurrent(int m, const double curr)
+{
+    int k;
+    double val;
+    castToMapper(helper)->ampereA2S(curr, m, val, k);
+    return iAmplifier->setPeakCurrentRaw(k, val);
+}
+
+template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getPWM(int m, double* pwm)
+{
+    int k;
+    k=castToMapper(helper)->toHw(m);
+    return iAmplifier->getPWMRaw(k, pwm);
+}
+
+template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getPWMLimit(int m, double* limit)
+{
+    int k;
+    k=castToMapper(helper)->toHw(m);
+    return iAmplifier->getPWMLimitRaw(k, limit);
+}
+
+template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setPWMLimit(int m, const double limit)
+{
+    int k;
+    k=castToMapper(helper)->toHw(m);
+    return iAmplifier->setPWMLimitRaw(k, limit);
+}
+
+template <class DERIVED, class IMPLEMENT>
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getPowerSupplyVoltage(int m, double *voltage)
+{
+    int k;
+    k=castToMapper(helper)->toHw(m);
+    return iAmplifier->getPowerSupplyVoltageRaw(k, voltage);
 }
