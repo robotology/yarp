@@ -559,7 +559,7 @@ protected:
      * @param zos is an array containing the zeros of the encoders.
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
-    bool initialize (int size, const int *amap, const double *enc, const double *zos);
+    bool initialize (int size, const int *amap, const double *enc, const double *zos, const double *ampereFactor=NULL, const double *voltFactor=NULL);
 
     /**
      * Clean up internal data and memory.
@@ -591,6 +591,16 @@ public:
      * @return true/false on success/failure
      */
     virtual bool disableAmp(int j);
+
+    /* Get the status of the amplifiers, coded in a 32 bits integer for
+     * each amplifier (at the moment contains only the fault, it will be
+     * expanded in the future).
+     * @param st pointer to storage
+     * @return true in good luck, false otherwise.
+     */
+    virtual bool getAmpStatus(int *st);
+
+    virtual bool getAmpStatus(int j, int *st);
 
     /* Read the electric current going to all motors.
      * @param vals pointer to storage for the output values
@@ -624,15 +634,69 @@ public:
     */
     virtual bool getMaxCurrent(int j, double *v);
 
-    /* Get the status of the amplifiers, coded in a 32 bits integer for
-     * each amplifier (at the moment contains only the fault, it will be
-     * expanded in the future).
-     * @param st pointer to storage
-     * @return true in good luck, false otherwise.
+    /* Get the the nominal current which can be kept for an indefinite amount of time
+     * without harming the motor. This value is specific for each motor and it is typically
+     * found in its datasheet. The units are Ampere.
+     * This value and the peak current may be used by the firmware to configure
+     * an I2T filter.
+     * @param j joint number
+     * @param val storage for return value. [Ampere]
+     * @return true/false success failure.
      */
-    virtual bool getAmpStatus(int *st);
+    virtual bool getNominalCurrent(int m, double *val);
 
-    virtual bool getAmpStatus(int j, int *st);
+    /* Get the the peak current which causes damage to the motor if maintained
+     * for a long amount of time.
+     * The value is often found in the motor datasheet, units are Ampere.
+     * This value and the nominal current may be used by the firmware to configure
+     * an I2T filter.
+     * @param j joint number
+     * @param val storage for return value. [Ampere]
+     * @return true/false success failure.
+     */
+    virtual bool getPeakCurrent(int m, double *val);
+
+    /* Set the the peak current. This value  which causes damage to the motor if maintained
+     * for a long amount of time.
+     * The value is often found in the motor datasheet, units are Ampere.
+     * This value and the nominal current may be used by the firmware to configure
+     * an I2T filter.
+     * @param j joint number
+     * @param val storage for return value. [Ampere]
+     * @return true/false success failure.
+     */
+    virtual bool setPeakCurrent(int m, const double val);
+
+    /* Get the the current PWM value used to control the motor.
+     * The units are firmware dependent, either machine units or percentage.
+     * @param j joint number
+     * @param val filled with PWM value.
+     * @return true/false success failure.
+     */
+    virtual bool getPWM(int j, double* val);
+
+    /* Get the PWM limit fot the given motor.
+     * The units are firmware dependent, either machine units or percentage.
+     * @param j joint number
+     * @param val filled with PWM limit value.
+     * @return true/false success failure.
+     */
+    virtual bool getPWMLimit(int j, double* val);
+
+    /* Set the PWM limit fot the given motor.
+     * The units are firmware dependent, either machine units or percentage.
+     * @param j joint number
+     * @param val new value for the PWM limit.
+     * @return true/false success failure.
+     */
+    virtual bool setPWMLimit(int j, const double val);
+
+    /* Get the power source voltage for the given motor in Volt.
+     * @param j joint number
+     * @param val filled with return value.
+     * @return true/false success failure.
+     */
+    virtual bool getPowerSupplyVoltage(int j, double* val);
 };
 
 template <class DERIVED, class IMPLEMENT>
