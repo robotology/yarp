@@ -786,7 +786,7 @@ public:
     * @param type the joint type
     * @return true if everything goes fine, false otherwise.
     */
-    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) {return false;}
+    virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type) { yFatal("getJointType() not implemented on your device, cannot proceed further. Please report the problem on yarp issue tracker"); return false; }
 };
 
 /**
