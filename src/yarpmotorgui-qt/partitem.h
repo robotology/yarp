@@ -118,7 +118,7 @@ private:
     bool interfaceError;
 
 
-    IPositionControl   *iPos;
+    IPositionControl2  *iPos;
     IPositionDirect    *iDir;
     IVelocityControl2  *iVel;
     IRemoteVariables   *iVar;

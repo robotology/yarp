@@ -484,6 +484,98 @@ void JointItem::viewPositionTarget(bool visible)
     ui->sliderMixedPosition->enableViewTarget = visible;
 }
 
+void JointItem::setUnits(yarp::dev::JointTypeEnum t)
+{
+    QString pos_metric_revolute("deg");
+    QString trq_metric_revolute("trq");
+    QString vel_metric_revolute("deg/s");
+    QString pos_metric_prism("m");
+    QString trq_metric_prism("Nm");
+    QString vel_metric_prism("m/s");
+
+    if (t == yarp::dev::VOCAB_JOINTTYPE_REVOLUTE)
+    {
+        ui->label_velUnits->setText(vel_metric_revolute);
+        ui->label_velUnits_2->setText(vel_metric_revolute);
+        ui->label_velUnits_3->setText(vel_metric_revolute);
+        ui->label_velUnits_4->setText(vel_metric_revolute);
+        ui->label_velUnits_5->setText(vel_metric_revolute);
+        ui->label_velUnits_6->setText(vel_metric_revolute);
+        ui->label_velUnits_7->setText(vel_metric_revolute);
+
+        ui->label_posUnits->setText(pos_metric_revolute);
+        ui->label_posUnits_2->setText(pos_metric_revolute);
+        ui->label_posUnits_3->setText(pos_metric_revolute);
+        ui->label_posUnits_4->setText(pos_metric_revolute);
+        ui->label_posUnits_5->setText(pos_metric_revolute);
+        ui->label_posUnits_6->setText(pos_metric_revolute);
+        ui->label_posUnits_7->setText(pos_metric_revolute);
+
+        ui->label_trqUnits->setText(trq_metric_revolute);
+        ui->label_trqUnits_2->setText(trq_metric_revolute);
+        ui->label_trqUnits_3->setText(trq_metric_revolute);
+        ui->label_trqUnits_4->setText(trq_metric_revolute);
+        ui->label_trqUnits_5->setText(trq_metric_revolute);
+        ui->label_trqUnits_6->setText(trq_metric_revolute);
+        ui->label_velUnits_7->setText(trq_metric_revolute);
+    }
+    else if (t == yarp::dev::VOCAB_JOINTTYPE_PRISMATIC)
+    {
+        ui->label_velUnits->setText(vel_metric_prism);
+        ui->label_velUnits_2->setText(vel_metric_prism);
+        ui->label_velUnits_3->setText(vel_metric_prism);
+        ui->label_velUnits_4->setText(vel_metric_prism);
+        ui->label_velUnits_5->setText(vel_metric_prism);
+        ui->label_velUnits_6->setText(vel_metric_prism);
+        ui->label_velUnits_7->setText(vel_metric_prism);
+
+        ui->label_posUnits->setText(pos_metric_prism);
+        ui->label_posUnits_2->setText(pos_metric_prism);
+        ui->label_posUnits_3->setText(pos_metric_prism);
+        ui->label_posUnits_4->setText(pos_metric_prism);
+        ui->label_posUnits_5->setText(pos_metric_prism);
+        ui->label_posUnits_6->setText(pos_metric_prism);
+        ui->label_posUnits_7->setText(pos_metric_prism);
+
+        ui->label_trqUnits->setText(trq_metric_prism);
+        ui->label_trqUnits_2->setText(trq_metric_prism);
+        ui->label_trqUnits_3->setText(trq_metric_prism);
+        ui->label_trqUnits_4->setText(trq_metric_prism);
+        ui->label_trqUnits_5->setText(trq_metric_prism);
+        ui->label_trqUnits_6->setText(trq_metric_prism);
+        ui->label_velUnits_7->setText(trq_metric_prism);
+    }
+    else
+    {
+        yWarning("Unspecified joint type. Assuming REVOLUTE_JOINT");
+        {
+            ui->label_velUnits->setText(vel_metric_revolute);
+            ui->label_velUnits_2->setText(vel_metric_revolute);
+            ui->label_velUnits_3->setText(vel_metric_revolute);
+            ui->label_velUnits_4->setText(vel_metric_revolute);
+            ui->label_velUnits_5->setText(vel_metric_revolute);
+            ui->label_velUnits_6->setText(vel_metric_revolute);
+            ui->label_velUnits_7->setText(vel_metric_revolute);
+
+            ui->label_posUnits->setText(pos_metric_revolute);
+            ui->label_posUnits_2->setText(pos_metric_revolute);
+            ui->label_posUnits_3->setText(pos_metric_revolute);
+            ui->label_posUnits_4->setText(pos_metric_revolute);
+            ui->label_posUnits_5->setText(pos_metric_revolute);
+            ui->label_posUnits_6->setText(pos_metric_revolute);
+            ui->label_posUnits_7->setText(pos_metric_revolute);
+
+            ui->label_trqUnits->setText(trq_metric_revolute);
+            ui->label_trqUnits_2->setText(trq_metric_revolute);
+            ui->label_trqUnits_3->setText(trq_metric_revolute);
+            ui->label_trqUnits_4->setText(trq_metric_revolute);
+            ui->label_trqUnits_5->setText(trq_metric_revolute);
+            ui->label_trqUnits_6->setText(trq_metric_revolute);
+            ui->label_velUnits_7->setText(trq_metric_revolute);
+        }
+    }
+}
+
 void JointItem::setSpeedVisible(bool visible)
 {
     speedVisible = visible;
@@ -496,19 +588,19 @@ void JointItem::setSpeedVisible(bool visible)
     ui->editVelocitySpeed->setVisible(visible);
 
     ui->labelSpeed->setVisible(visible);
-    ui->labelSpeed1->setVisible(visible);
+    ui->label_velUnits->setVisible(visible);
     ui->labelSpeed2->setVisible(visible);
-    ui->labelSpeed3->setVisible(visible);
+    ui->label_velUnits_2->setVisible(visible);
     ui->labelSpeed4->setVisible(visible);
-    ui->labelSpeed5->setVisible(visible);
+    ui->label_velUnits_3->setVisible(visible);
     ui->labelSpeed6->setVisible(visible);
-    ui->labelSpeed7->setVisible(visible);
+    ui->label_velUnits_4->setVisible(visible);
     ui->labelSpeed8->setVisible(visible);
-    ui->labelSpeed9->setVisible(visible);
+    ui->label_velUnits_5->setVisible(visible);
     ui->labelSpeed10->setVisible(visible);
-    ui->labelSpeed11->setVisible(visible);
+    ui->label_velUnits_6->setVisible(visible);
     ui->labelSpeed10_2->setVisible(visible);
-    ui->labelSpeed11_2->setVisible(visible);
+    ui->label_velUnits_7->setVisible(visible);
 
 
     if(!visible){
@@ -521,19 +613,19 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editVelocitySpeed->setMinimumHeight(0);
 
         ui->labelSpeed->setMinimumHeight(0);
-        ui->labelSpeed1->setMinimumHeight(0);
+        ui->label_velUnits->setMinimumHeight(0);
         ui->labelSpeed2->setMinimumHeight(0);
-        ui->labelSpeed3->setMinimumHeight(0);
+        ui->label_velUnits_2->setMinimumHeight(0);
         ui->labelSpeed4->setMinimumHeight(0);
-        ui->labelSpeed5->setMinimumHeight(0);
+        ui->label_velUnits_3->setMinimumHeight(0);
         ui->labelSpeed6->setMinimumHeight(0);
-        ui->labelSpeed7->setMinimumHeight(0);
+        ui->label_velUnits_4->setMinimumHeight(0);
         ui->labelSpeed8->setMinimumHeight(0);
-        ui->labelSpeed9->setMinimumHeight(0);
+        ui->label_velUnits_5->setMinimumHeight(0);
         ui->labelSpeed10->setMinimumHeight(0);
-        ui->labelSpeed11->setMinimumHeight(0);
+        ui->label_velUnits_6->setMinimumHeight(0);
         ui->labelSpeed10_2->setMinimumHeight(0);
-        ui->labelSpeed11_2->setMinimumHeight(0);
+        ui->label_velUnits_7->setMinimumHeight(0);
 
     }else{
         ui->editIdleSpeed->setMinimumHeight(20);
@@ -545,19 +637,19 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editVelocitySpeed->setMinimumHeight(20);
 
         ui->labelSpeed->setMinimumHeight(20);
-        ui->labelSpeed1->setMinimumHeight(20);
+        ui->label_velUnits->setMinimumHeight(20);
         ui->labelSpeed2->setMinimumHeight(20);
-        ui->labelSpeed3->setMinimumHeight(20);
+        ui->label_velUnits_2->setMinimumHeight(20);
         ui->labelSpeed4->setMinimumHeight(20);
-        ui->labelSpeed5->setMinimumHeight(20);
+        ui->label_velUnits_3->setMinimumHeight(20);
         ui->labelSpeed6->setMinimumHeight(20);
-        ui->labelSpeed7->setMinimumHeight(20);
+        ui->label_velUnits_4->setMinimumHeight(20);
         ui->labelSpeed8->setMinimumHeight(20);
-        ui->labelSpeed9->setMinimumHeight(20);
+        ui->label_velUnits_5->setMinimumHeight(20);
         ui->labelSpeed10->setMinimumHeight(20);
-        ui->labelSpeed11->setMinimumHeight(20);
+        ui->label_velUnits_6->setMinimumHeight(20);
         ui->labelSpeed10_2->setMinimumHeight(20);
-        ui->labelSpeed11_2->setMinimumHeight(20);
+        ui->label_velUnits_7->setMinimumHeight(20);
     }
 }
 
@@ -929,7 +1021,7 @@ void JointItem::onSliderTrajectoryPositionPressed()
 
 void JointItem::onSliderTrajectoryPositionReleased()
 {
-    updateTrajectoryPositionTarget(ui->sliderTrajectoryPosition->value());
+    //updateTrajectoryPositionTarget(ui->sliderTrajectoryPosition->value());
     if (ui->sliderTrajectoryPosition->getIsDouble())
     {
         double val = ui->sliderTrajectoryPosition->value();
@@ -1175,6 +1267,13 @@ void JointItem::setRefTrajectorySpeed(double val)
 {
     if (ui->stackedWidget->currentIndex() == POSITION){
         updateSliderTrajectoryVelocity(val);
+    }
+}
+
+void JointItem::setRefTrajectoryPosition(double val)
+{
+    if (ui->stackedWidget->currentIndex() == POSITION){
+        updateTrajectoryPositionTarget(val);
     }
 }
 

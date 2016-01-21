@@ -320,7 +320,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_8">
+                 <widget class="QLabel" name="label_posUnits">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -365,7 +365,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="label_trqUnits">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -395,7 +395,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed1">
+              <widget class="QLabel" name="label_velUnits">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -517,7 +517,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_30">
+                 <widget class="QLabel" name="label_posUnits_2">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -625,7 +625,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_26">
+              <widget class="QLabel" name="label_trqUnits_2">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -655,7 +655,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed3">
+              <widget class="QLabel" name="label_velUnits_2">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -764,7 +764,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_12">
+                 <widget class="QLabel" name="label_posUnits_3">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -809,7 +809,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_10">
+              <widget class="QLabel" name="label_trqUnits_3">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -839,7 +839,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed5">
+              <widget class="QLabel" name="label_velUnits_3">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -960,7 +960,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_14">
+                 <widget class="QLabel" name="label_posUnits_4">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -1068,7 +1068,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_16">
+              <widget class="QLabel" name="label_trqUnits_4">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -1098,7 +1098,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed7">
+              <widget class="QLabel" name="label_velUnits_4">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -1234,7 +1234,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_28">
+                 <widget class="QLabel" name="label_posUnits_5">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -1279,7 +1279,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_32">
+              <widget class="QLabel" name="label_trqUnits_5">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -1309,7 +1309,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed11_2">
+              <widget class="QLabel" name="label_velUnits_5">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -1442,7 +1442,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_18">
+                 <widget class="QLabel" name="label_posUnits_6">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -1487,7 +1487,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_20">
+              <widget class="QLabel" name="label_trqUnits_6">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -1517,7 +1517,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed9">
+              <widget class="QLabel" name="label_velUnits_6">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -1656,7 +1656,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_22">
+                 <widget class="QLabel" name="label_posUnits_7">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -1701,7 +1701,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_24">
+              <widget class="QLabel" name="label_trqUnits_7">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -1731,7 +1731,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed11">
+              <widget class="QLabel" name="label_velUnits_7">
                <property name="text">
                 <string>deg/s</string>
                </property>

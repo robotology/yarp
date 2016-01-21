@@ -186,12 +186,13 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
             }
 
             iinfo->getAxisName(k, jointname);
+            yarp::dev::JointTypeEnum jtype = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
+            iinfo->getJointType(k, jtype);
 
             Pid myPid(0,0,0,0,0,0);
             yarp::os::Time::delay(0.005);
             iPid->getPid(k, &myPid);
-
-
+            
             JointItem *joint = new JointItem(k);
             joint->setJointName(jointname.c_str());
             joint->setOpenLoopRange(-myPid.max_output,myPid.max_output);
@@ -200,6 +201,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
             joint->setVelocityRange(min_vel, max_vel);
             joint->setTrajectoryVelocityRange(max_vel);
             joint->setTorqueRange(5.0);
+            joint->setUnits(jtype);
 
             QSettings settings("YARP", "yarpmotorgui");
             int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
@@ -1956,6 +1958,7 @@ void PartItem::updateControlMode()
 void PartItem::updatePart()
 {
     static double refTrajectorySpeeds[MAX_NUMBER_OF_JOINTS];
+    static double refTrajectoryPositions[MAX_NUMBER_OF_JOINTS];
     static double refTorques[MAX_NUMBER_OF_JOINTS];
     static double refVelocitySpeeds[MAX_NUMBER_OF_JOINTS];
     static double torques[MAX_NUMBER_OF_JOINTS];
@@ -1993,6 +1996,7 @@ void PartItem::updatePart()
     iTrq->getRefTorque(slow_k, &refTorques[slow_k]); //using k to save bandwidth
     iPos->getRefSpeed(slow_k, &refTrajectorySpeeds[slow_k]); //using k to save bandwidth
     //iVel->getRefSpeed(slow_k,&refVelocitySpeeds[slow_k]); //this interface is missing!
+    iPos->getTargetPosition(slow_k, &refTrajectoryPositions[slow_k]);
 
     // *** update the widget ***
     for (int jk = 0; jk < NUMBER_OF_JOINTS; jk++) {
@@ -2001,6 +2005,7 @@ void PartItem::updatePart()
         joint->setTorque(torques[jk]);
         joint->setRefTorque(refTorques[jk]);
         joint->setRefTrajectorySpeed(refTrajectorySpeeds[jk]);
+        joint->setRefTrajectoryPosition(refTrajectoryPositions[jk]);
         joint->setSpeed(speeds[jk]);
         joint->updateMotionDone(done[jk]);
     }

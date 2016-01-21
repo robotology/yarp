@@ -15,6 +15,7 @@
 #include <QSlider>
 #include <QLabel>
 #include <QTimer>
+#include <yarp/dev/ControlBoardInterfaces.h>
 
 namespace Ui {
 class JointItem;
@@ -70,6 +71,7 @@ class JointItem : public QWidget
     void setTorque(double val);
     void setRefTorque(double val);
     void setRefTrajectorySpeed(double val);
+    void setRefTrajectoryPosition(double val);
     void setSpeed(double val);
     void setOpenLoop(double val);
     void updateMotionDone(bool done);
@@ -89,6 +91,7 @@ class JointItem : public QWidget
                            bool openloop_enabled);
 
     void setSpeedVisible(bool);
+    void setUnits(yarp::dev::JointTypeEnum t);
     void viewPositionTarget(bool);
     void controlVelocity(bool control);
     void sequenceActivated();
