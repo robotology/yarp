@@ -2065,6 +2065,18 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_AMP_PEAK_CURRENT:
+                            {
+                                ok = rcp_IAmp->setPeakCurrent(cmd.get(2).asInt(), cmd.get(3).asDouble());
+                            }
+                            break;
+
+                            case VOCAB_AMP_PWM_LIMIT:
+                            {
+                                ok = rcp_IAmp->setPWMLimit(cmd.get(2).asInt(), cmd.get(3).asDouble());
+                            }
+                            break;
+
                             case VOCAB_LIMITS:
                             {
                                 ok = rcp_Ilim2->setLimits(cmd.get(2).asInt(), cmd.get(3).asDouble(), cmd.get(4).asDouble());
@@ -2751,6 +2763,47 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                                 int itmp;
                                 ok = rcp_IAmp->getAmpStatus(j, &itmp);
                                 response.addInt(itmp);
+                            }
+                            break;
+
+                            case VOCAB_AMP_NOMINAL_CURRENT:
+                            {
+                                int m=cmd.get(2).asInt();
+                                ok = rcp_IAmp->getNominalCurrent(m, &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_AMP_PEAK_CURRENT:
+                            {
+                                int m=cmd.get(2).asInt();
+                                ok = rcp_IAmp->getPeakCurrent(m, &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_AMP_PWM:
+                            {
+                                int m=cmd.get(2).asInt();
+                                ok = rcp_IAmp->getPWM(m, &dtmp);
+                                yDebug() << "RPC parser::getPWM: j" << m << " val " << dtmp;
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_AMP_PWM_LIMIT:
+                            {
+                                int m=cmd.get(2).asInt();
+                                ok = rcp_IAmp->getPWMLimit(m, &dtmp);
+                                response.addDouble(dtmp);
+                            }
+                            break;
+
+                            case VOCAB_AMP_VOLTAGE_SUPPLY:
+                            {
+                                int m=cmd.get(2).asInt();
+                                ok = rcp_IAmp->getPowerSupplyVoltage(m, &dtmp);
+                                response.addDouble(dtmp);
                             }
                             break;
 

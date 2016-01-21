@@ -3325,6 +3325,44 @@ bool ControlBoardWrapper::disableAmp(int j)
         return false;
 }
 
+bool ControlBoardWrapper::getAmpStatus(int *st)
+{
+    bool ret=true;
+
+    for(int l=0;l<controlledJoints;l++)
+    {
+        int subIndex=device.lut[l].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+        if (p->amp)
+            {
+
+                st[l]=0;
+                //getAmpStatus for single joint does not exist!!
+                // AMP_STATUS TODO
+                //ret=ret&&p->amp->getAmpStatus(off+p->base, st+l);
+            }
+        else
+            ret=false;
+    }
+
+    return ret;
+}
+
+bool ControlBoardWrapper::getAmpStatus(int j, int *v)
+{
+    int off=device.lut[j].offset;
+    int subIndex=device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (p->amp)
+        {
+            return p->amp->getAmpStatus(off+p->base,v);
+        }
+    *v=0;
+    return false;
+}
+
 bool ControlBoardWrapper::getCurrents(double *vals)
 {
     bool ret=true;
@@ -3401,43 +3439,139 @@ bool ControlBoardWrapper::getMaxCurrent(int j, double* v)
     return false;
 }
 
-bool ControlBoardWrapper::getAmpStatus(int *st)
+bool ControlBoardWrapper::getNominalCurrent(int m, double *val)
 {
-    bool ret=true;
-
-    for(int l=0;l<controlledJoints;l++)
-    {
-        int subIndex=device.lut[l].deviceEntry;
-
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-        if (p->amp)
-            {
-
-                st[l]=0;
-                //getAmpStatus for single joint does not exist!!
-                // AMP_STATUS TODO
-                //ret=ret&&p->amp->getAmpStatus(off+p->base, st+l);
-            }
-        else
-            ret=false;
-    }
-
-    return ret;
-}
-
-bool ControlBoardWrapper::getAmpStatus(int j, int *v)
-{
-    int off=device.lut[j].offset;
-    int subIndex=device.lut[j].deviceEntry;
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (p->amp)
-        {
-            return p->amp->getAmpStatus(off+p->base,v);
-        }
-    *v=0;
-    return false;
+    if(!p)
+    {
+        *val=0.0;
+        return false;
+    }
+
+    if(!p->amp)
+    {
+        *val=0.0;
+        return false;
+    }
+    return p->amp->getNominalCurrent(off+p->base, val);
 }
+
+bool ControlBoardWrapper::getPeakCurrent(int m, double *val)
+{
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if(!p)
+    {
+        *val=0.0;
+        return false;
+    }
+
+    if(!p->amp)
+    {
+        *val=0.0;
+        return false;
+    }
+    return p->amp->getPeakCurrent(off+p->base, val);
+}
+
+bool ControlBoardWrapper::setPeakCurrent(int m, const double val)
+{
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (!p->amp)
+    {
+        return false;
+    }
+    return p->amp->setPeakCurrent(off+p->base, val);
+}
+
+bool ControlBoardWrapper::getPWM(int m, double* val)
+{
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+
+    yDebug() << "CBW2::getPWMlimit j" << off+p->base << " p " << (p?"1":"0") << " amp " << (p->amp?"1":"0");
+    if(!p)
+    {
+        *val=0.0;
+        return false;
+    }
+
+    if(!p->amp)
+    {
+        *val=0.0;
+        return false;
+    }
+    return p->amp->getPWM(off+p->base, val);
+}
+bool ControlBoardWrapper::getPWMLimit(int m, double* val)
+{
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    yDebug() << "CBW2::getPWMlimit j" << off+p->base << " p " << (p?"1":"0") << " amp " << (p->amp?"1":"0");
+
+    if(!p)
+    {
+        *val=0.0;
+        return false;
+    }
+
+    if(!p->amp)
+    {
+        *val=0.0;
+        return false;
+    }
+    return p->amp->getPWMLimit(off+p->base, val);
+}
+bool ControlBoardWrapper::setPWMLimit(int m, const double val)
+{
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (!p->amp)
+    {
+        return false;
+    }
+    return p->amp->setPWMLimit(off+p->base, val);
+}
+
+bool ControlBoardWrapper::getPowerSupplyVoltage(int m, double* val)
+{
+    int off=device.lut[m].offset;
+    int subIndex=device.lut[m].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if(!p)
+    {
+        *val=0.0;
+        return false;
+    }
+
+    if(!p->amp)
+    {
+        *val=0.0;
+        return false;
+    }
+    return p->amp->getPowerSupplyVoltage(off+p->base, val);
+}
+
 
 /* IControlLimits */
 

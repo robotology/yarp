@@ -32,7 +32,7 @@
 #include <stateExtendedReader.hpp>
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 4
+#define PROTOCOL_VERSION_MINOR 5
 #define PROTOCOL_VERSION_TWEAK 1
 
 using namespace yarp::os;
@@ -612,6 +612,9 @@ protected:
         cmd.addVocab(v);
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
+
+        std::cout << "cmd: " << cmd.toString() << "\nresp: " << response.toString() << std::endl;
+        std::cout << "val: " << val << std::endl;
         if (CHECK_FAIL(ok, response)) {
             // ok
             *val = response.get(2).asDouble();
@@ -2716,49 +2719,6 @@ public:
     }
 
     /**
-     * Read the electric current going to all motors.
-     * @param vals pointer to storage for the output values
-     * @return hopefully true, false in bad luck.
-     */
-    virtual bool getCurrents(double *vals) {
-        return get1VDA(VOCAB_AMP_CURRENTS, vals);
-    }
-
-    /**
-     * Read the electric current going to a given motor.
-     * @param j motor number
-     * @param val pointer to storage for the output value
-     * @return probably true, might return false in bad time
-     */
-    virtual bool getCurrent(int j, double *val) {
-        return get1V1I1D(VOCAB_AMP_CURRENT, j, val);
-    }
-
-    /**
-     * Set the maximum electric current going to a given motor. The behavior
-     * of the board/amplifier when this limit is reached depends on the
-     * implementation.
-     * @param j motor number
-     * @param v the new value
-     * @return probably true, might return false in bad time
-     */
-    virtual bool setMaxCurrent(int j, double v) {
-        return set1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
-    }
-
-    /**
-    * Returns the maximum electric current allowed for a given motor. The behavior
-    * of the board/amplifier when this limit is reached depends on the
-    * implementation.
-    * @param j motor number
-    * @param v the return value
-    * @return probably true, might return false in bad times
-    */
-    virtual bool getMaxCurrent(int j, double *v) {
-        return get1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
-    }
-
-    /**
      * Get the status of the amplifiers, coded in a 32 bits integer for
      * each amplifier (at the moment contains only the fault, it will be
      * expanded in the future).
@@ -2770,13 +2730,142 @@ public:
     }
 
     /* Get the status of a single amplifier, coded in a 32 bits integer
-     * @param j joint number
+     * @param m motor number
      * @param st storage for return value
      * @return true/false success failure.
      */
     virtual bool getAmpStatus(int j, int *st)
     {
         return get1V1I1I(VOCAB_AMP_STATUS_SINGLE, j, st);
+    }
+
+    /**
+     * Read the electric current going to all motors.
+     * @param vals pointer to storage for the output values
+     * @return hopefully true, false in bad luck.
+     */
+    virtual bool getCurrents(double *vals) {
+        return get1VDA(VOCAB_AMP_CURRENTS, vals);
+    }
+
+    /**
+     * Read the electric current going to a given motor.
+     * @param m motor number
+     * @param val pointer to storage for the output value
+     * @return probably true, might return false in bad time
+     */
+    virtual bool getCurrent(int j, double *val) {
+        return get1V1I1D(VOCAB_AMP_CURRENT, j, val);
+    }
+
+    /**
+     * Set the maximum electric current going to a given motor. The behavior
+     * of the board/amplifier when this limit is reached depends on the
+     * implementation.
+     * @param m motor number
+     * @param v the new value
+     * @return probably true, might return false in bad time
+     */
+    virtual bool setMaxCurrent(int j, double v) {
+        return set1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
+    }
+
+    /**
+    * Returns the maximum electric current allowed for a given motor. The behavior
+    * of the board/amplifier when this limit is reached depends on the
+    * implementation.
+     * @param m motor number
+    * @param v the return value
+    * @return probably true, might return false in bad times
+    */
+    virtual bool getMaxCurrent(int j, double *v) {
+        return get1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
+    }
+
+    /* Get the the nominal current which can be kept for an indefinite amount of time
+     * without harming the motor. This value is specific for each motor and it is typically
+     * found in its datasheet. The units are Ampere.
+     * This value and the peak current may be used by the firmware to configure
+     * an I2T filter.
+     * @param m motor number
+     * @param val storage for return value. [Ampere]
+     * @return true/false success failure.
+     */
+    virtual bool getNominalCurrent(int m, double *val)
+    {
+        return get1V1I1D(VOCAB_AMP_NOMINAL_CURRENT, m, val);
+    }
+
+    /* Get the the peak current which causes damage to the motor if maintained
+     * for a long amount of time.
+     * The value is often found in the motor datasheet, units are Ampere.
+     * This value and the nominal current may be used by the firmware to configure
+     * an I2T filter.
+     * @param m motor number
+     * @param val storage for return value. [Ampere]
+     * @return true/false success failure.
+     */
+    virtual bool getPeakCurrent(int m, double *val)
+    {
+        return get1V1I1D(VOCAB_AMP_PEAK_CURRENT, m, val);
+    }
+
+
+    /* Set the the peak current. This value  which causes damage to the motor if maintained
+     * for a long amount of time.
+     * The value is often found in the motor datasheet, units are Ampere.
+     * This value and the nominal current may be used by the firmware to configure
+     * an I2T filter.
+     * @param m motor number
+     * @param val storage for return value. [Ampere]
+     * @return true/false success failure.
+     */
+    virtual bool setPeakCurrent(int m, const double val)
+    {
+        return set1V1I1D(VOCAB_AMP_PEAK_CURRENT, m, val);
+    }
+
+    /* Get the the current PWM value used to control the motor.
+     * The units are firmware dependent, either machine units or percentage.
+     * @param m motor number
+     * @param val filled with PWM value.
+     * @return true/false success failure.
+     */
+    virtual bool getPWM(int m, double* val)
+    {
+        return get1V1I1D(VOCAB_AMP_PWM, m, val);
+    }
+
+    /* Get the PWM limit fot the given motor.
+     * The units are firmware dependent, either machine units or percentage.
+     * @param m motor number
+     * @param val filled with PWM limit value.
+     * @return true/false success failure.
+     */
+    virtual bool getPWMLimit(int m, double* val)
+    {
+        return get1V1I1D(VOCAB_AMP_PWM_LIMIT, m, val);
+    }
+
+    /* Set the PWM limit fot the given motor.
+     * The units are firmware dependent, either machine units or percentage.
+     * @param m motor number
+     * @param val new value for the PWM limit.
+     * @return true/false success failure.
+     */
+    virtual bool setPWMLimit(int m, const double val)
+    {
+        return set1V1I1D(VOCAB_AMP_PWM_LIMIT, m, val);
+    }
+
+    /* Get the power source voltage for the given motor in Volt.
+     * @param m motor number
+     * @param val filled with return value.
+     * @return true/false success failure.
+     */
+    virtual bool getPowerSupplyVoltage(int m, double* val)
+    {
+        return get1V1I1D(VOCAB_AMP_VOLTAGE_SUPPLY, m, val);
     }
 
     /* IControlLimits */
