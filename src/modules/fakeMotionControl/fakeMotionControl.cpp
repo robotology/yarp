@@ -5,19 +5,13 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
-
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <string.h>
 #include <iostream>
-#include <boost/iterator/iterator_concepts.hpp>
-
 #include <fakeMotionControl.h>
-
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
-#include <../../../../icub-src/icub-main/src/libraries/icubmod/imu3DM_GX3/dataTypes.h>
 
 
 using namespace std;
@@ -232,29 +226,40 @@ FakeMotionControl::FakeMotionControl() :
 //     SAFETY_THRESHOLD(2.0)
 {
     verbose = VERY_VERBOSE;
-    njoints = 2;
+    _njoints = 2;
     opened = false;
-    pos.size(njoints);
-    dpos.size(njoints);
-    vel.size(njoints);
-    speed.size(njoints);
-    acc.size(njoints);
-    loc.size(njoints);
-    amp.size(njoints);
+    pos.resize(_njoints);
+    dpos.resize(_njoints);
+    vel.resize(_njoints);
+    speed.resize(_njoints);
+    acc.resize(_njoints);
+    loc.resize(_njoints);
+    amp.resize(_njoints);
+
+    current.resize(_njoints);
+    nominalCurrent.resize(_njoints);
+    maxCurrent.resize(_njoints);
+    peakCurrent.resize(_njoints);
+    pwm.resize(_njoints);
+    pwmLimit.resize(_njoints);
+
+    pos.zero();
+    dpos.zero();
+    vel.zero();
+    speed.zero();
+    acc.zero();
+    loc.zero();
+    amp.zero();
+
+    current.zero();
+    maxCurrent.zero();
+    peakCurrent.zero();
+    pwm.zero();
+    pwmLimit.zero();
 
     _controlModes = NULL;
     _interactMode = NULL;
 
-    for (int i=0; i<njoints; i++)
-    {
-        pos[i] = 0;
-        dpos[i] = 0;
-        vel[i] = 0;
-        speed[i] = 0;
-        acc[i] = 0;
-        loc[i] = 0;
-        amp[i] = 1; // initially on - ok for simulator
-    }
     lifetime = -1;
     init();
 
@@ -1911,6 +1916,7 @@ bool FakeMotionControl::disableAmpRaw(int j)
 
 bool FakeMotionControl::getCurrentRaw(int j, double *value)
 {
+    *value = current[j];
     return true;
 }
 
@@ -1924,13 +1930,15 @@ bool FakeMotionControl::getCurrentsRaw(double *vals)
     return ret;
 }
 
-bool FakeMotionControl::setMaxCurrentRaw(int j, double val)
+bool FakeMotionControl::setMaxCurrentRaw(int m, double val)
 {
+    maxCurrent[m] = val;
     return true;
 }
 
-bool FakeMotionControl::getMaxCurrentRaw(int j, double *val)
+bool FakeMotionControl::getMaxCurrentRaw(int m, double *val)
 {
+    *val = maxCurrent[m];
     return true;
 }
 
@@ -1947,8 +1955,52 @@ bool FakeMotionControl::getAmpStatusRaw(int *sts)
     {
         sts[j] = _enabledAmp[j];
     }
-
     return ret;
+}
+
+bool FakeMotionControl::getPeakCurrentRaw(int m, double *val)
+{
+    *val = peakCurrent[m];
+    return true;
+}
+
+bool FakeMotionControl::setPeakCurrentRaw(int m, const double val)
+{
+    peakCurrent[m] = val;
+    return true;
+}
+
+bool FakeMotionControl::getNominalCurrentRaw(int m, double *val)
+{
+//     *val = nominalCurrent[m];
+    *val = 100+m;
+    return true;
+}
+
+bool FakeMotionControl::getPWMRaw(int m, double *val)
+{
+//     *val = pwm[m];
+    *val = 666*m;
+    std::cout << "getPWM: j " << m << " val " << *val;
+    return true;
+}
+
+bool FakeMotionControl::getPWMLimitRaw(int m, double* val)
+{
+    *val = pwmLimit[m];
+    return true;
+}
+
+bool FakeMotionControl::setPWMLimitRaw(int m, const double val)
+{
+    pwmLimit[m] = val;
+    return true;
+}
+
+bool FakeMotionControl::getPowerSupplyVoltageRaw(int m, double* val)
+{
+    *val = m*10;
+    return true;
 }
 
 
@@ -2541,45 +2593,6 @@ bool FakeMotionControl::setMotorOutputLimitRaw(int m, const double limit)
     return DEPRECATED("setMotorOutputLimitRaw");
 }
 
-bool FakeMotionControl::getPeakCurrentRaw(int m, double *val)
-{
-    return false;
-}
-
-bool FakeMotionControl::setPeakCurrentRaw(int m, const double val)
-{
-    return false;
-}
-
-bool FakeMotionControl::getNominalCurrentRaw(int m, double *val)
-{
-    return false;
-}
-
-bool FakeMotionControl::setNominalCurrentRaw(int m, const double val)
-{
-    return false;
-}
-
-bool FakeMotionControl::getPWMRaw(int j, double* val)
-{
-    return false;
-}
-
-bool FakeMotionControl::getPWMLimitRaw(int j, double* val)
-{
-    return false;
-}
-
-bool FakeMotionControl::setPWMLimitRaw(int j, const double val)
-{
-    return false;
-}
-
-bool FakeMotionControl::getPowerSupplyVoltageRaw(int j, double* val)
-{
-    return false;
-}
 
 // bool FakeMotionControl::checkRemoteControlModeStatus(int joint, int target_mode)
 // {

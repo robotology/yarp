@@ -204,9 +204,6 @@ private:
     enum       positionControlUnitsType {P_MACHINE_UNITS=0, P_METRIC_UNITS=1};
     positionControlUnitsType _positionControlUnits;
 
-
-    int njoints;
-
     // internal stuff
     double noiseLevel;
     int     *_controlModes;
@@ -220,6 +217,8 @@ private:
     double  *_command_speeds;       // used for velocity control.
     double  *_ref_accs;             // for velocity control, in position min jerk eq is used.
     double  *_ref_torques;          // for torque control.
+    yarp::sig::Vector       current, nominalCurrent, maxCurrent, peakCurrent;
+    yarp::sig::Vector       pwm, pwmLimit;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
     double lifetime;
     bool opened;
@@ -385,8 +384,11 @@ public:
     virtual bool disableAmpRaw(int j);
     virtual bool getCurrentsRaw(double *vals);
     virtual bool getCurrentRaw(int j, double *val);
+    virtual bool getNominalCurrentRaw(int m, double *val);
     virtual bool setMaxCurrentRaw(int j, double val);
     virtual bool getMaxCurrentRaw(int j, double *val);
+    virtual bool getPeakCurrentRaw(int m, double *val);
+    virtual bool setPeakCurrentRaw(int m, const double val);
     virtual bool getAmpStatusRaw(int *st);
     virtual bool getAmpStatusRaw(int j, int *st);
     virtual bool getPWMRaw(int j, double* val);
@@ -477,10 +479,6 @@ public:
     virtual bool setTemperatureLimitRaw(int m, const double temp);
     virtual bool getMotorOutputLimitRaw(int m, double *limit);
     virtual bool setMotorOutputLimitRaw(int m, const double limit);
-    virtual bool getPeakCurrentRaw(int m, double *val);
-    virtual bool setPeakCurrentRaw(int m, const double val);
-    virtual bool getNominalCurrentRaw(int m, double *val);
-    virtual bool setNominalCurrentRaw(int m, const double val);
 
     // OPENLOOP interface
     virtual bool setRefOutputRaw(int j, double v);
