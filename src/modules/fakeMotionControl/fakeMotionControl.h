@@ -361,6 +361,7 @@ public:
 
     //////////////////////// BEGIN IAxisInfo Interface
     virtual bool getAxisNameRaw(int axis, yarp::os::ConstString& name);
+    virtual bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type);
     ///////////////////////// END IAxisInfo Interface
 
     //Internal use, not exposed by Yarp (yet)

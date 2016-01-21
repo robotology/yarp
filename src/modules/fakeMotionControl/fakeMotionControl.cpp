@@ -2088,6 +2088,11 @@ bool FakeMotionControl::getAxisNameRaw(int axis, yarp::os::ConstString& name)
     return false;
 }
 
+bool FakeMotionControl::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type)
+{
+    return false;
+}
+
 // IControlLimits2
 bool FakeMotionControl::setVelLimitsRaw(int axis, double min, double max)
 {
