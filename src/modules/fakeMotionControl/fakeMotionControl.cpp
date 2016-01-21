@@ -5,14 +5,14 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include <iostream>
+#include <string.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
-#include <string.h>
-#include <iostream>
-#include <fakeMotionControl.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
 
+#include <fakeMotionControl.h>
 
 using namespace std;
 using namespace yarp::dev;
@@ -1213,7 +1213,6 @@ bool FakeMotionControl::setVelocityModeRaw()
 
 bool FakeMotionControl::velocityMoveRaw(int j, double sp)
 {
-    yTrace() << "j: " << j << "ref: " << sp;
     int mode=0;
     getControlModeRaw(j, &mode);
     if( (mode != VOCAB_CM_VELOCITY) &&
@@ -1244,15 +1243,12 @@ bool FakeMotionControl::velocityMoveRaw(const double *sp)
 bool FakeMotionControl::setCalibrationParametersRaw(int j, const CalibrationParameters& params)
 {
     yTrace() << "setCalibrationParametersRaw for joint" << j;
-
     return true;
 }
 
 bool FakeMotionControl::calibrate2Raw(int j, unsigned int type, double p1, double p2, double p3)
 {
     yTrace() << "calibrate2Raw for joint" << j;
-
-
     return true;
 }
 
@@ -1283,6 +1279,7 @@ bool FakeMotionControl::positionMoveRaw(int j, double ref)
 {
     if(verbose >= VERY_VERBOSE)
         yTrace() << "j " << j << " ref " << ref;
+
 //     if (yarp::os::Time::now()-_last_position_move_time[j]<MAX_POSITION_MOVE_INTERVAL)
 //     {
 //         yWarning() << "Performance warning: You are using positionMove commands at high rate (<"<< MAX_POSITION_MOVE_INTERVAL*1000.0 <<" ms). Probably position control mode is not the right control mode to use.";
@@ -1981,7 +1978,6 @@ bool FakeMotionControl::getPWMRaw(int m, double *val)
 {
 //     *val = pwm[m];
     *val = 666*m;
-    std::cout << "getPWM: j " << m << " val " << *val;
     return true;
 }
 
@@ -2292,7 +2288,6 @@ bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParamete
 // IVelocityControl2
 bool FakeMotionControl::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
-    yTrace();
     bool ret = true;
     for(int i=0; i<n_joint; i++)
     {
@@ -2329,7 +2324,6 @@ bool FakeMotionControl::setPositionDirectModeRaw()
 
 bool FakeMotionControl::setPositionRaw(int j, double ref)
 {
-    yTrace() << " j: " << j << " ref: " << ref;
     _posDir_references[j] = ref;
     return true;
 }
@@ -2338,7 +2332,6 @@ bool FakeMotionControl::setPositionsRaw(const int n_joint, const int *joints, do
 {
     for(int i=0; i< n_joint; i++)
     {
-        yTrace() << " j: " << joints[i] << " ref: " << refs[i];
         _posDir_references[joints[i]] = refs[i];
     }
     return true;
@@ -2348,7 +2341,6 @@ bool FakeMotionControl::setPositionsRaw(const double *refs)
 {
     for(int i=0; i< _njoints; i++)
     {
-        yTrace() << " j: " << i << " ref: " << refs[i];
         _posDir_references[i] = refs[i];
     }
     return true;
@@ -2359,6 +2351,7 @@ bool FakeMotionControl::getTargetPositionRaw(int axis, double *ref)
 {
     if(verbose >= VERY_VERBOSE)
         yTrace() << "j " << axis << " ref " << _posCtrl_references[axis];
+
     int mode = 0;
     getControlModeRaw(axis, &mode);
     if( (mode != VOCAB_CM_POSITION) &&
@@ -2394,13 +2387,11 @@ bool FakeMotionControl::getRefVelocityRaw(int axis, double *ref)
 {
     yTrace();
     *ref = _command_speeds[axis];
-    yTrace() << "j: " << axis << " ref " << *ref;
     return true;
 }
 
 bool FakeMotionControl::getRefVelocitiesRaw(double *refs)
 {
-    yTrace();
     bool ret = true;
     for (int i = 0; i<_njoints; i++)
     {
@@ -2411,7 +2402,6 @@ bool FakeMotionControl::getRefVelocitiesRaw(double *refs)
 
 bool FakeMotionControl::getRefVelocitiesRaw(int nj, const int * jnts, double *refs)
 {
-    yTrace();
     bool ret = true;
     for (int i = 0; i<nj; i++)
     {
@@ -2438,7 +2428,6 @@ bool FakeMotionControl::getRefPositionRaw(int axis, double *ref)
 
 bool FakeMotionControl::getRefPositionsRaw(double *refs)
 {
-    yTrace();
     bool ret = true;
     for (int i = 0; i<_njoints; i++)
     {
@@ -2449,7 +2438,6 @@ bool FakeMotionControl::getRefPositionsRaw(double *refs)
 
 bool FakeMotionControl::getRefPositionsRaw(int nj, const int * jnts, double *refs)
 {
-    yTrace();
     bool ret = true;
     for (int i = 0; i<nj; i++)
     {
@@ -2472,7 +2460,6 @@ bool FakeMotionControl::getInteractionModesRaw(int n_joints, int *joints, yarp::
 
 bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
-//    std::cout << "eoMC getInteractionModeRaw ALL joints" << std::endl;
     bool ret = true;
     for(int j=0; j<_njoints; j++)
         ret = ret && getInteractionModeRaw(j, &modes[j]);
