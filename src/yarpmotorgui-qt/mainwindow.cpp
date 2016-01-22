@@ -375,6 +375,7 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
         scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scroll->setWidgetResizable(true);
         part = new PartItem(robotName,
+                            i,
                             enabledParts.at(i),
                             finder,
                             debug_param_enabled,

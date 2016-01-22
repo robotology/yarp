@@ -24,7 +24,7 @@
 #include <QSettings>
 #include <cmath>
 
-PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
+PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *finder,
                    bool debug_param_enabled,
                    bool speedview_param_enabled,
                    bool enable_calib_all,
@@ -35,6 +35,7 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     layout = new FlowLayout();
     setLayout(layout);
 
+    partId = id;
     this->finder = NULL;
     node = NULL;
     currentPidDlg = NULL;
@@ -178,16 +179,20 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
             // }
 
             //index[k]=k;
-            iLim->getLimits(k, &min_pos, &max_pos);
-            iLim->getVelLimits(k, &min_vel, &max_vel);
-            if (min_vel == 0 && max_vel == 0)
+            bool bpl = iLim->getLimits(k, &min_pos, &max_pos);
+            bool bvl = iLim->getVelLimits(k, &min_vel, &max_vel);
+            if (bpl == false)
             {
-                yError() << "Error while getting velocity limits";
+                yError() << "Error while getting position limits, part " << partName.toStdString() << " joint " << k;
+            }
+            if (bvl == false || (min_vel == 0 && max_vel == 0))
+            {
+                yError() << "Error while getting velocity limits, part " << partName.toStdString() << " joint " << k;
             }
 
             iinfo->getAxisName(k, jointname);
             yarp::dev::JointTypeEnum jtype = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
-            iinfo->getJointType(k, jtype);
+            bool bjt = iinfo->getJointType(k, jtype);
 
             Pid myPid(0,0,0,0,0,0);
             yarp::os::Time::delay(0.005);
@@ -1971,6 +1976,7 @@ void PartItem::updatePart()
     bool ret = false;
     int NUMBER_OF_JOINTS=0;
     iPos->getAxes(&NUMBER_OF_JOINTS);
+    if (NUMBER_OF_JOINTS == 0) yFatal("Number of joints = 0. Closing");
     int slow_k = slowSwitcher%NUMBER_OF_JOINTS;
     slowSwitcher++;
 
@@ -1992,23 +1998,60 @@ void PartItem::updatePart()
     
     // *** update checkMotionDone, refTorque, refTrajectorySpeed, refSpeed ***
     // (only one at a time in order to save badwidth)
-    iPos->checkMotionDone(slow_k, &done[slow_k]); //using k to save bandwidth
-    iTrq->getRefTorque(slow_k, &refTorques[slow_k]); //using k to save bandwidth
-    iPos->getRefSpeed(slow_k, &refTrajectorySpeeds[slow_k]); //using k to save bandwidth
-    //iVel->getRefSpeed(slow_k,&refVelocitySpeeds[slow_k]); //this interface is missing!
-    iPos->getTargetPosition(slow_k, &refTrajectoryPositions[slow_k]);
+    bool b_motdone     = iPos->checkMotionDone(slow_k, &done[slow_k]); //using k to save bandwidth
+    bool b_refTrq      = iTrq->getRefTorque(slow_k, &refTorques[slow_k]); //using k to save bandwidth
+    bool b_refPosSpeed = iPos->getRefSpeed(slow_k, &refTrajectorySpeeds[slow_k]); //using k to save bandwidth
+    bool b_refVel      = iVel->getRefVelocity(slow_k,&refVelocitySpeeds[slow_k]); //this interface is missing!
+    bool b_refPos      = iPos->getTargetPosition(slow_k, &refTrajectoryPositions[slow_k]);
 
-    // *** update the widget ***
-    for (int jk = 0; jk < NUMBER_OF_JOINTS; jk++) {
-        JointItem *joint = (JointItem*)layout->itemAt(jk)->widget();
-        joint->setPosition(positions[jk]);
-        joint->setTorque(torques[jk]);
-        joint->setRefTorque(refTorques[jk]);
-        joint->setRefTrajectorySpeed(refTrajectorySpeeds[jk]);
-        joint->setRefTrajectoryPosition(refTrajectoryPositions[jk]);
-        joint->setSpeed(speeds[jk]);
-        joint->updateMotionDone(done[jk]);
+    if (!b_refPos)
+    {
+        yError() << "Missing Implementation of getTargetPosition()";
     }
+    if (!b_refVel)
+    {
+        yError() << "Missing Implementation of getRefVelocity()";
+    }
+    if (!b_refPosSpeed)
+    {
+        yError() << "Missing Implementation of getRefSpeed()";
+    }
+    if (!b_refTrq)
+    {
+        yError() << "Missing Implementation of getRefTorque()";
+    }
+    if (!b_motdone)
+    {
+        yError() << "Missing Implementation of checkMotionDone()";
+    }
+
+    // *** update the widget every cycle ***
+    for (int jk = 0; jk < NUMBER_OF_JOINTS; jk++)
+    {
+        JointItem *joint = (JointItem*)layout->itemAt(jk)->widget();
+        if (1) { joint->setPosition(positions[jk]); }
+        else {}
+        if (1) { joint->setTorque(torques[jk]); }
+        else {}
+        if (1) { joint->setSpeed(speeds[jk]); }
+        else {}
+    }
+    
+    // *** update the widget NOT every cycle ***
+    {
+        JointItem *joint_slow_k = (JointItem*)layout->itemAt(slow_k)->widget();
+        if (b_refTrq) { joint_slow_k->setRefTorque(refTorques[slow_k]); }
+        else {}
+        if (b_refPosSpeed) { joint_slow_k->setRefTrajectorySpeed(refTrajectorySpeeds[slow_k]); }
+        else {}
+        if (b_refPos) { joint_slow_k->setRefTrajectoryPosition(refTrajectoryPositions[slow_k]); }
+        else {}
+        if (b_refVel) { joint_slow_k->setRefVelocitySpeed(refVelocitySpeeds[slow_k]); }
+        else {}
+        if (b_motdone) { joint_slow_k->updateMotionDone(done[slow_k]); }
+        else {}
+    }
+
 
     // *** update the controlMode, interactionMode ***
     // this is already done by updateControlMode() (because it also needs to update the tree, not only the single joint widget)

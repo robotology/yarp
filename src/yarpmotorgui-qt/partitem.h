@@ -46,6 +46,7 @@ class PartItem : public QWidget
     Q_OBJECT
 public:
     explicit PartItem(QString robotName,
+                      int partId,
                       QString partName,
                       ResourceFinder *finder,
                       bool debug_param_enabled,
@@ -94,6 +95,7 @@ private:
     FlowLayout *layout;
     SequenceWindow *sequenceWindow;
     QString partName;
+    int     partId;
     bool positionDirectEnabled;
     bool openloopEnabled;
     PidDlg *currentPidDlg;

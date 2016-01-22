@@ -70,6 +70,7 @@ class JointItem : public QWidget
     void setPosition(double val);
     void setTorque(double val);
     void setRefTorque(double val);
+    void setRefVelocitySpeed(double val);
     void setRefTrajectorySpeed(double val);
     void setRefTrajectoryPosition(double val);
     void setSpeed(double val);
@@ -121,7 +122,7 @@ private:
     void setJointInternalInteraction(int interaction);
 
     void updateSliderPosition                (SliderWithTarget *slider, double val);
-    void updateSliderVelocity                (SliderWithTarget *slider, double val);
+    void updateSliderVelocity                (double val);
     void updateSliderTrajectoryVelocity      (double val);
     void updateSliderOpenloop                (double val);
     void updateSliderTorque                  (double val);

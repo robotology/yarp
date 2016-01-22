@@ -138,17 +138,23 @@ void JointItem::resetTarget()
 
 void JointItem::updateTrajectoryPositionTarget(double val)
 {
-    int w = ui->sliderTrajectoryPosition->width() - 30;
-    int totValues = ui->sliderTrajectoryPosition->maximum() + abs(ui->sliderTrajectoryPosition->minimum());
-    double newX = ((double)w / (double)totValues) * ((double)val + abs(ui->sliderTrajectoryPosition->minimum()));
+    int w = ui->sliderTrajectoryPosition->width()- 30;
+    double mmin = this->min_position;
+    double mmax = this->max_position;
+    int totValues = fabs(mmax - mmin);
+    double cursor = fabs(val - mmin);
+    double newX = cursor * (double)w / (double)totValues;
     ui->sliderTrajectoryPosition->updateSliderTarget(newX);
 }
 
 void JointItem::updateMixedPositionTarget(double val)
 {
     int w = ui->sliderMixedPosition->width() - 30;
-    int totValues = ui->sliderMixedPosition->maximum() + abs(ui->sliderMixedPosition->minimum());
-    double newX = ((double)w / (double)totValues) * ((double)val + abs(ui->sliderMixedPosition->minimum()));
+    double mmin = this->min_position;
+    double mmax = this->max_position;
+    int totValues = fabs(mmax - mmin);
+    double cursor = fabs(val - mmin);
+    double newX = cursor * (double)w / (double)totValues;
     ui->sliderMixedPosition->updateSliderTarget(newX);
 }
 
@@ -487,10 +493,12 @@ void JointItem::viewPositionTarget(bool visible)
 void JointItem::setUnits(yarp::dev::JointTypeEnum t)
 {
     QString pos_metric_revolute("deg");
-    QString trq_metric_revolute("trq");
+    QString trq_metric_revolute("Nm");
+    QString trq_metric_revolute_title("Torque:");
     QString vel_metric_revolute("deg/s");
     QString pos_metric_prism("m");
-    QString trq_metric_prism("Nm");
+    QString trq_metric_prism("N");
+    QString trq_metric_prism_title("Force:");
     QString vel_metric_prism("m/s");
 
     if (t == yarp::dev::VOCAB_JOINTTYPE_REVOLUTE)
@@ -502,6 +510,14 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->label_velUnits_5->setText(vel_metric_revolute);
         ui->label_velUnits_6->setText(vel_metric_revolute);
         ui->label_velUnits_7->setText(vel_metric_revolute);
+
+        ui->label_trqTitle->setText(trq_metric_revolute_title);
+        ui->label_trqTitle_2->setText(trq_metric_revolute_title);
+        ui->label_trqTitle_3->setText(trq_metric_revolute_title);
+        ui->label_trqTitle_4->setText(trq_metric_revolute_title);
+        ui->label_trqTitle_5->setText(trq_metric_revolute_title);
+        ui->label_trqTitle_6->setText(trq_metric_revolute_title);
+        ui->label_trqTitle_7->setText(trq_metric_revolute_title);
 
         ui->label_posUnits->setText(pos_metric_revolute);
         ui->label_posUnits_2->setText(pos_metric_revolute);
@@ -529,6 +545,14 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->label_velUnits_6->setText(vel_metric_prism);
         ui->label_velUnits_7->setText(vel_metric_prism);
 
+        ui->label_trqTitle->setText(trq_metric_prism_title);
+        ui->label_trqTitle_2->setText(trq_metric_prism_title);
+        ui->label_trqTitle_3->setText(trq_metric_prism_title);
+        ui->label_trqTitle_4->setText(trq_metric_prism_title);
+        ui->label_trqTitle_5->setText(trq_metric_prism_title);
+        ui->label_trqTitle_6->setText(trq_metric_prism_title);
+        ui->label_trqTitle_7->setText(trq_metric_prism_title);
+
         ui->label_posUnits->setText(pos_metric_prism);
         ui->label_posUnits_2->setText(pos_metric_prism);
         ui->label_posUnits_3->setText(pos_metric_prism);
@@ -547,32 +571,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
     }
     else
     {
-        yWarning("Unspecified joint type. Assuming REVOLUTE_JOINT");
-        {
-            ui->label_velUnits->setText(vel_metric_revolute);
-            ui->label_velUnits_2->setText(vel_metric_revolute);
-            ui->label_velUnits_3->setText(vel_metric_revolute);
-            ui->label_velUnits_4->setText(vel_metric_revolute);
-            ui->label_velUnits_5->setText(vel_metric_revolute);
-            ui->label_velUnits_6->setText(vel_metric_revolute);
-            ui->label_velUnits_7->setText(vel_metric_revolute);
-
-            ui->label_posUnits->setText(pos_metric_revolute);
-            ui->label_posUnits_2->setText(pos_metric_revolute);
-            ui->label_posUnits_3->setText(pos_metric_revolute);
-            ui->label_posUnits_4->setText(pos_metric_revolute);
-            ui->label_posUnits_5->setText(pos_metric_revolute);
-            ui->label_posUnits_6->setText(pos_metric_revolute);
-            ui->label_posUnits_7->setText(pos_metric_revolute);
-
-            ui->label_trqUnits->setText(trq_metric_revolute);
-            ui->label_trqUnits_2->setText(trq_metric_revolute);
-            ui->label_trqUnits_3->setText(trq_metric_revolute);
-            ui->label_trqUnits_4->setText(trq_metric_revolute);
-            ui->label_trqUnits_5->setText(trq_metric_revolute);
-            ui->label_trqUnits_6->setText(trq_metric_revolute);
-            ui->label_velUnits_7->setText(trq_metric_revolute);
-        }
+        yFatal("Unspecified joint type");
     }
 }
 
@@ -943,10 +942,11 @@ void JointItem::onStackedWidgetChanged(int index)
             velocityTimer.start();
         }
     }else{
-        if(velocityModeEnabled){
+        if(velocityModeEnabled)
+        {
             velocityTimer.stop();
             lastVelocity = 0;
-            updateSliderVelocity(ui->sliderVelocityVelocity,0);
+            updateSliderVelocity(0);
         }
     }
 }
@@ -1166,13 +1166,13 @@ void JointItem::updateSliderPosition(SliderWithTarget *slider, double val)
     slider->setValue(val);
 }
 
-void JointItem::updateSliderVelocity(SliderWithTarget *slider, double val)
+void JointItem::updateSliderVelocity(double val)
 {
     if (sliderVelocityPressed)
     {
         return;
     }
-    slider->setValue(val);
+    ui->sliderVelocityVelocity->setValue(val);
 }
 
 void JointItem::updateSliderOpenloop(double val)
@@ -1260,6 +1260,13 @@ void JointItem::setRefTorque(double val)
 {
     if(ui->stackedWidget->currentIndex() == TORQUE){
         updateSliderTorque(val);
+    }
+}
+
+void JointItem::setRefVelocitySpeed(double val)
+{
+    if (ui->stackedWidget->currentIndex() == VELOCITY){
+        updateSliderVelocity(val);
     }
 }
 

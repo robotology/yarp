@@ -253,7 +253,7 @@ QSlider::groove:horizontal:disabled {
  }</string>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="pageIdle">
          <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -342,7 +342,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="label_trqTitle">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -602,7 +602,7 @@ QSlider::groove:horizontal:disabled {
               <number>6</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_25">
+              <widget class="QLabel" name="label_trqTitle_2">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -786,7 +786,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_9">
+              <widget class="QLabel" name="label_trqTitle_3">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1045,7 +1045,7 @@ QSlider::groove:horizontal:disabled {
               <number>6</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_15">
+              <widget class="QLabel" name="label_trqTitle_4">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1256,7 +1256,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_31">
+              <widget class="QLabel" name="label_trqTitle_5">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1464,7 +1464,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_19">
+              <widget class="QLabel" name="label_trqTitle_6">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1678,7 +1678,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_23">
+              <widget class="QLabel" name="label_trqTitle_7">
                <property name="text">
                 <string>Torque:</string>
                </property>
