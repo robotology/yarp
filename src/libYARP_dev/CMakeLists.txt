@@ -22,6 +22,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/DevicePipe.h
                   include/yarp/dev/DriverLinkCreator.h
                   include/yarp/dev/Drivers.h
+                  include/yarp/dev/FrameGrabberControl2.h
                   include/yarp/dev/FrameGrabberInterfaces.h
                   include/yarp/dev/GazeControl.h
                   include/yarp/dev/GenericSensorInterfaces.h
