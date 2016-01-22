@@ -242,6 +242,7 @@ FakeMotionControl::FakeMotionControl() :
     peakCurrent.resize(_njoints);
     pwm.resize(_njoints);
     pwmLimit.resize(_njoints);
+    supplyVoltage.resize(_njoints);
 
     pos.zero();
     dpos.zero();
@@ -256,6 +257,7 @@ FakeMotionControl::FakeMotionControl() :
     peakCurrent.zero();
     pwm.zero();
     pwmLimit.zero();
+    supplyVoltage.zero();
 
     _controlModes = NULL;
     _interactMode = NULL;
@@ -580,7 +582,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         _axisType[_axisMap[i - 1]] = xtmp.get(i).asString();
 */
 
-    double tmp_A2E;
+//     double tmp_A2E;
     // Encoder scales
     if (extractGroup(general, xtmp, "Encoder", "a list of scales for the encoders", _njoints))
     {
@@ -1032,6 +1034,16 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
 bool FakeMotionControl::init()
 {
     yTrace();
+    for(int i=0; i<_njoints; i++)
+    {
+        pwm[i]              = 33+i;
+        pwmLimit[i]         = (33+i)*10;
+        current[i]          = (33+i)*100;
+        maxCurrent[i]       = (33+i)*1000;
+        peakCurrent[i]      = (33+i)*2;
+        nominalCurrent[i]   = (33+i)*20;
+        supplyVoltage[i]    = (33+i)*200;
+    }
     return true;
 }
 
@@ -1138,7 +1150,7 @@ bool FakeMotionControl::getErrorsRaw(double *errs)
 
 bool FakeMotionControl::getPidRaw(int j, Pid *pid)
 {
-
+    return false;
 }
 
 bool FakeMotionControl::getPidsRaw(Pid *pids)
@@ -1156,7 +1168,7 @@ bool FakeMotionControl::getPidsRaw(Pid *pids)
 
 bool FakeMotionControl::getReferenceRaw(int j, double *ref)
 {
-
+    return false;
 }
 
 bool FakeMotionControl::getReferencesRaw(double *refs)
@@ -1969,15 +1981,13 @@ bool FakeMotionControl::setPeakCurrentRaw(int m, const double val)
 
 bool FakeMotionControl::getNominalCurrentRaw(int m, double *val)
 {
-//     *val = nominalCurrent[m];
-    *val = 100+m;
+    *val = nominalCurrent[m];
     return true;
 }
 
 bool FakeMotionControl::getPWMRaw(int m, double *val)
 {
-//     *val = pwm[m];
-    *val = 666*m;
+    *val = pwm[m];
     return true;
 }
 
@@ -1995,7 +2005,7 @@ bool FakeMotionControl::setPWMLimitRaw(int m, const double val)
 
 bool FakeMotionControl::getPowerSupplyVoltageRaw(int m, double* val)
 {
-    *val = m*10;
+    *val = supplyVoltage[m];
     return true;
 }
 

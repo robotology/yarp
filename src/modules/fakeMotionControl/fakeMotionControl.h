@@ -218,7 +218,7 @@ private:
     double  *_ref_accs;             // for velocity control, in position min jerk eq is used.
     double  *_ref_torques;          // for torque control.
     yarp::sig::Vector       current, nominalCurrent, maxCurrent, peakCurrent;
-    yarp::sig::Vector       pwm, pwmLimit;
+    yarp::sig::Vector       pwm, pwmLimit, supplyVoltage;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
     double lifetime;
     bool opened;
