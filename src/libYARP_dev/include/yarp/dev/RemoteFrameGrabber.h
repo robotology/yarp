@@ -573,12 +573,11 @@ return response.get(0).asInt()!=0? true:false;
  * the network protocol used.
  *
  */
-class yarp::dev::RemoteFrameGrabber : public IFrameGrabberImage, 
-//             public IFrameGrabberControls,
-            public IFrameGrabberControls2,
-            public ImplementDC1394,
-            public DeviceDriver {
-
+class YARP_dev_API yarp::dev::RemoteFrameGrabber :  public IFrameGrabberImage,
+                                                    public IFrameGrabberControls2,
+                                                    public ImplementDC1394,
+                                                    public DeviceDriver
+{
 public:
     /**
      * Constructor.
