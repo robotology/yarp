@@ -54,7 +54,6 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
 
     if( img->getPixelCode() == VOCAB_PIXEL_MONO_FLOAT)
     {
-//         printf("DepthImageConverter: got %s, ok!\n", yarp::os::Vocab::decode(VOCAB_PIXEL_MONO_FLOAT).c_str());
         return true;
     }
 
@@ -71,8 +70,6 @@ yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
     outImg.setPixelSize(1);
     outImg.resize(img->width(), img->height());
 
-//     outMatrix = (unsigned char **) outImg.getRawImage();
-
     outImg.zero();
     float *inPixels = (float *)img->getRawImage();
     unsigned char *pixels = outImg.getRawImage();
@@ -82,34 +79,15 @@ yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
         {
             float inVal = inPixels[w + (h * img->width())];
             int val = (int) (inVal * 255 / (max - min));
-//             int val = (int) floor(( *(float *)(img->getPixelAddress(w, h)) * 255.0/(max - min)));
             if(val >= 255)
                 val = 250;
             if(val <= 1)
                 val = 1;
             pixels[w + (h * (img->width() ))] = (char) val;
-//             *(outImg.getPixelAddress(w, h)) = h;
-//             outMatrix[h][w] = inMatrix[h][w] * 255.0/(max - min);
-//             *outImg.getPixelAddress(w, h) = 200; //*(float *)(img->getPixelAddress(w, h)) * 255.0/(max - min);
-            if(w==0)
-                printf("w: %3d h: %3d f:%4.2f o: %d (%d) - sizeIn %d sizeOut %d \n", w, h, inVal, pixels[w + (h * (img->width() ))], val, img->getPixelSize(), outImg.getPixelSize());
             fflush(stdout);
-/*
-            if(inMatrix[h][w] < min)
-                outMatrix[h][w] = 0;
-
-            if(inMatrix[h][w] > max)
-                outMatrix[h][w] = 255;*/
-
         }
     }
-
-//     printf("ciao\n");
-//     fflush(stdout);
-//     fflush(stdout);
-
     th.setPortWriter(&outImg);
-//     th.setPortWriter(img);
     return th;
 }
 
