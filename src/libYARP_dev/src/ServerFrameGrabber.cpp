@@ -12,8 +12,9 @@
 
 #include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
-#include <yarp/dev/RemoteFrameGrabber.h>
+//#include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -26,6 +27,7 @@ ServerFrameGrabber::ServerFrameGrabber() {
     fgSound = NULL;
     fgAv = NULL;
     fgCtrl = NULL;
+    fgCtrl2 = NULL;
     fgTimed = NULL;
     spoke = false;
     canDrop = true;
@@ -94,6 +96,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
             poly.view(fgAv);
         }
         poly.view(fgCtrl);
+        poly.view(fgCtrl2);
         poly.view(fgTimed);
     }
 
@@ -194,16 +197,193 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     return true;
 }
 
+bool ServerFrameGrabber::respondToFrameGrabberControl2(const yarp::os::Bottle& cmd, yarp::os::Bottle& response)
+{
+    bool ok = false;
+    int action = cmd.get(1).asVocab();
+    int param  = cmd.get(2).asVocab();
+
+//     yTrace() << "cmd received\n\t" << cmd.toString().c_str();
+
+
+    if(!fgCtrl2)
+    {
+        yError() << " Selected camera device has no IFrameGrabberControl2 interface";
+        return false;
+    }
+
+    response.clear();
+
+
+    switch (action)
+    {
+        case VOCAB_HAS:
+        {
+            response.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+            response.addVocab(VOCAB_HAS);
+            response.addVocab(VOCAB_FEATURE);
+            response.addInt(param);
+            switch (param)
+            {
+                case VOCAB_FEATURE:
+                {
+                    bool _hasFeat;
+                    ok = fgCtrl2->hasFeature(cmd.get(3).asInt(), &_hasFeat);
+                    response.addInt(_hasFeat);
+                } break;
+
+                case VOCAB_ONOFF:
+                {
+                    bool _hasOnOff;
+                    ok = fgCtrl2->hasOnOff(cmd.get(3).asInt(), &_hasOnOff);
+                    response.addInt(_hasOnOff);
+                } break;
+
+                case VOCAB_AUTO:
+                {
+                    bool _hasAuto;
+                    ok = fgCtrl2->hasAuto(cmd.get(3).asInt(), &_hasAuto);
+                    response.addInt(_hasAuto);
+                } break;
+
+                case VOCAB_MANUAL:
+                {
+                    bool _hasManual;
+                    ok = fgCtrl2->hasManual(cmd.get(3).asInt(), &_hasManual);
+                    response.addInt(_hasManual);
+                } break;
+
+                case VOCAB_ONEPUSH:
+                {
+                    bool _hasOnePush;
+                    ok = fgCtrl2->hasOnePush(cmd.get(3).asInt(), &_hasOnePush);
+                    response.addInt(_hasOnePush);
+                } break;
+
+                default:
+                {
+                    yError() << "Unknown command 'HAS " << Vocab::decode(param) << "' received on IFrameGrabber2 interface";
+                    response.clear();
+                    ok = false;
+                } break;
+            } break; // end switch (param)
+
+        } break; // end VOCAB_HAS
+
+        case VOCAB_SET:
+        {
+            switch (param)
+            {
+                case VOCAB_FEATURE:
+                {
+                    ok = fgCtrl2->setFeature(cmd.get(3).asInt(), cmd.get(4).asDouble());
+                } break;
+
+                case VOCAB_FEATURE2:
+                {
+                    ok = fgCtrl2->setFeature(cmd.get(3).asInt(), cmd.get(4).asDouble(), cmd.get(5).asDouble());
+                } break;
+
+                case VOCAB_ACTIVE:
+                {
+                    ok = fgCtrl2->setActive(cmd.get(3).asInt(), cmd.get(4).asInt());
+                } break;
+
+                case VOCAB_MODE:
+                {
+                    ok = fgCtrl2->setMode(cmd.get(3).asInt(), (FeatureMode) cmd.get(4).asInt());
+                } break;
+
+                case VOCAB_ONEPUSH:
+                {
+                    ok = fgCtrl2->setOnePush(cmd.get(3).asInt());
+                } break;
+
+                default:
+                {
+                    yError() << "Unknown command 'SET " << Vocab::decode(param) << "' received on IFrameGrabber2 interface";
+                    response.clear();
+                    ok = false;
+                }
+            } break; // end switch (param)
+
+        } break; // end VOCAB_SET
+
+        case VOCAB_GET:
+        {
+            response.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
+            response.addVocab(param);
+            response.addVocab(VOCAB_IS);
+            switch (param)
+            {
+                case VOCAB_CAMERA_DESCRIPTION:
+                {
+                    CameraDescriptor camera;
+                    ok = fgCtrl2->getCameraDescription(&camera);
+                    response.addInt(camera.busType);
+                    response.addString(camera.deviceDescription);
+                    yDebug() << "Response is " << response.toString();
+                } break;
+
+                case VOCAB_FEATURE:
+                {
+                    double value;
+                    ok = fgCtrl2->getFeature(cmd.get(3).asInt(), &value);
+                    response.addDouble(value);
+                } break;
+
+                case VOCAB_FEATURE2:
+                {
+                    double value1, value2;
+                    ok = fgCtrl2->getFeature(cmd.get(3).asInt(), &value1, &value2);
+                    response.addDouble(value1);
+                    response.addDouble(value2);
+                } break;
+
+                case VOCAB_ACTIVE:
+                {
+                    bool _isActive;
+                    ok = fgCtrl2->getActive(cmd.get(3).asInt(), &_isActive);
+                    response.addInt(_isActive);
+                } break;
+
+                case VOCAB_MODE:
+                {
+                    FeatureMode _mode;
+                    ok = fgCtrl2->getMode(cmd.get(3).asInt(), &_mode);
+                    response.addInt(_mode);
+                } break;
+
+                default:
+                {
+                    yError() << "Unknown command 'GET " << Vocab::decode(param) << "' received on IFrameGrabber2 interface";
+                    response.clear();
+                    ok = false;
+                }
+
+            } break; // end switch (param)
+
+        } break; // end VOCAB_GET
+    }
+//     yTrace() << "response is\n\t" << response.toString().c_str();
+    return ok;
+}
+
 bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                                  yarp::os::Bottle& response) {
     int code = cmd.get(0).asVocab();
 
     IFrameGrabberControlsDC1394* fgCtrlDC1394=dynamic_cast<IFrameGrabberControlsDC1394*>(fgCtrl);
 
-    //yDebug("%s\n",cmd.toString().c_str());
-
     switch (code)
     {
+    // first check if requests are coming from new iFrameGrabberControl2 interface and process them
+    case VOCAB_FRAMEGRABBER_CONTROL2:
+    {
+        return respondToFrameGrabberControl2(cmd, response);  // I don't like all those returns everywhere!!! :-(
+
+    } break;
+
     case VOCAB_SET:
         yDebug("set command received\n");
 
@@ -574,6 +754,98 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
     return true;
 }
 */
+
+
+// In case of function call instead of yarp message(?)
+bool ServerFrameGrabber::getCameraDescription(CameraDescriptor* camera)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::hasFeature(int feature, bool* hasFeature)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::setFeature(int feature, double value)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::getFeature(int feature, double* values)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::setFeature(int feature, double  value1, double  value2)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::getFeature(int feature, double *value1, double *value2)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::hasOnOff(int feature, bool* HasOnOff)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::setActive(int feature, bool onoff)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::getActive(int feature, bool* isActive)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::hasAuto(int feature, bool* hasAuto)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::hasManual(int feature, bool* hasManual)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::hasOnePush(int feature, bool* hasOnePush)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::setMode(int feature, FeatureMode mode)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::getMode(int feature, FeatureMode* mode)
+{
+    yTrace();
+    return false;
+}
+
+bool ServerFrameGrabber::setOnePush(int feature)
+{
+    yTrace();
+    return false;
+}
 
 bool ServerFrameGrabber::startService() {
     if (singleThreaded) {

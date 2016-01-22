@@ -507,6 +507,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString().c_str());
+    yTrace() << "AnalogServer params are: " << config.toString();
 
     if (!config.check("period"))
     {
@@ -522,6 +523,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
         {
             yError() << "AnalogServer: missing 'name' parameter. Check you configuration file; it must be like:\n"
                         "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
+            return false;
         }
     }
     else
