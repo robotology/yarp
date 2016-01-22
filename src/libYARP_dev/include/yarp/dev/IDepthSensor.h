@@ -24,6 +24,14 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Image.h>
+#include <yarp/os/Stamp.h>
+
+// Common usage vocabs (also defined in ControlBoardInterfaces.h)
+#define VOCAB_SET VOCAB3('s','e','t')
+#define VOCAB_GET VOCAB3('g','e','t')
+#define VOCAB_IS  VOCAB2('i','s')
+#define VOCAB_OK  VOCAB2('o','k')
+#define VOCAB_FAILED VOCAB4('f','a','i','l')
 
 #define VOCAB_IDEPTH_SENSOR         VOCAB4('i','d','p','t')
 #define VOCAB_SENSOR_INFO           VOCAB4('i','n','f','o')
@@ -70,6 +78,17 @@ public:
         DEPTHSENSOR_TIMEOUT          = 4
     };
 
+    enum VerboseLevel
+    {
+        MUTE                = 0,    // only errors that prevent device from working
+        QUIET               = 1,    // adds errors that can cause misfunctioning
+        DEFAULT             = 2,    // adds warnings // DEFAULT // show noisy messages about back-compatible changes
+        CHATTY              = 3,    // adds info messages
+        VERBOSE             = 4,    // adds debug messages
+        VERY_VERBOSE        = 5,    // adds trace of events (shows thread running and catch if they get stuck)
+        VERY_VERY_VERBOSE   = 6     // adds messages printed every cycle, so too much verbose for usage, only for deep debugging
+    };
+
     virtual ~IDepthSensor(){}
 
    /**
@@ -80,18 +99,11 @@ public:
     virtual bool getDeviceInfo(yarp::os::Searchable &device_info) = 0;
 
    /**
-    * Get the distance measurements as a Matrix
-    * @param ranges the vector containing the distance measurement
-    * @return true if able to get measurement data.
-    */
-    virtual bool getMeasurementData(yarp::sig::Matrix &data) = 0;
-
-   /**
     * Get the distance measurements as an image
     * @param ranges the vector containing the distance measurement
     * @return true if able to get measurement data.
     */
-    virtual bool getMeasurementData(yarp::sig::FlexImage &image) = 0;
+    virtual bool getMeasurementData(yarp::sig::FlexImage &image, yarp::os::Stamp *stamp=NULL) = 0;
 
    /**
     * get the device status
