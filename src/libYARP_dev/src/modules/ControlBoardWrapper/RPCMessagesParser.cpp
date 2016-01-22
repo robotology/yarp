@@ -2833,6 +2833,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_INFO_TYPE:
+                            {
+                                 yarp::dev::JointTypeEnum type;
+                                 ok = rpc_AxisInfo->getJointType(cmd.get(2).asInt(), type);
+                                 response.addInt(type);
+                            }
+                            break;
+
                             default:
                             {
                                  yError("received an unknown request after a VOCAB_GET: %s\n", yarp::os::Vocab::decode(cmd.get(1).asVocab()).c_str());

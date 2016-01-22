@@ -2582,7 +2582,7 @@ case VOCAB_INFO_TYPE:
     {
         yarp::dev::JointTypeEnum type;
         ok = info->getJointType(cmd.get(2).asInt(), type);
-        response.addVocab(type);
+        response.addInt(type);
     }
     break;
 default:
