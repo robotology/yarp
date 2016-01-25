@@ -76,69 +76,18 @@ const yarp::dev::IDepthSensor::VerboseLevel DEFAULT_VERBOSE_LEVEL = yarp::dev::I
  * | imagePort      |      -         | string  | -              |   -           | Yes, unless useROS='only'      | full name of the port for streaming color image, e.g. /robotName/image_camera  | '/rpc' port will be added for remote operations      |
  * | depthPort      |      -         | string  | -              |   -           | Yes, unless useROS='only'      | full name of the port for streaming depth image, e.g. /robotName/depth_camera  | '/rpc' port will be added for remote operations      |
  * | subdevice      |      -         | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                                  | when used, parameters for the subdevice must be provided as well |
- * | ROS            |      -         | group   | -              |   -           | No                             | Group containing parameter for ROS topic initialization                        | if missing, it is assumed to not use ROS topics |
- * |   -            |  useROS        | string  | true/false/only|   -           |  if ROS group is present       | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
- * |   -            |  imageTopic    | string  |  -             |   -           |  if ROS group is present       | set the name for ROS image topic                                               |  |
- * |   -            |  depthTopic    | string  |  -             |   -           |  if ROS group is present       | set the name for ROS depth topic                                               |  |
- * |   -            |  nodeName      | string  |  -             |   -           |  if ROS group is present       | set the name for ROS node                                                      |  |
  *
  * ROS message type used is sensor_msgs/Image.msg ( http://docs.ros.org/api/sensor_msgs/html/msg/Image.html)
  * Some example of configuration files:
  *
- * Configuration file using .ini format, using subdevice keyword.
+ * Example of configuration file using .ini format.
  *
  * \code{.unparsed}
- *  device controlboardwrapper2
- *  subdevice fakebot
- *  name /icub/head
- *
- * ** parameter for 'fakebot' subdevice follows here **
- * ...
- * \endcode
- *
- * XML format, using 'networks' keywork. This file is meant to be used in junction with robotInterface executable,
- * therefore has an addictional section at the end.
- *
- * \code{.xml}
- *  <!-- Following parameters are meaningful ONLY for robotInterface -->
- *
- * <param name="period"> 20                 </param>
- * <param name="name">   /icub/left_arm     </param>
- *
- *  <action phase="startup" level="5" type="attach">
- *      <paramlist name="networks">
- *          <!-- The param value must match the device name in the corresponding emsX file -->
- *          <elem name="imageSource">  left_upper_arm_mc </elem>
- *          <elem name="depthSource">  left_lower_arm_mc </elem>
- *       </paramlist>
- *  </action>
- *  <action phase="shutdown" level="5" type="detach" />
- * \endcode
- *
- * Configuration file using .ini format, using network keyword
- *
- * \code{.unparsed}
- *  device controlboardwrapper2
- *  name  /robotName/partName
- *  period 10
-
- * \endcode
- *
- * Configuration for ROS topic using .ini format
- * \code{.unparsed}
- * [ROS]
- * useROS         true
- * ROS_topicName  /JointState
- * ROS_nodeName   /robotPublisher
- * \endcode
- *
- * Configuration for ROS topic using .xml format
- * \code{.unparsed}
- * <group name="ROS">
- *     <param name="useROS">         true             </param>    // use 'only' if you want only ROS topic and NOT yarp port
- *     <param name="ROS_topicName">  /JointState      </param>
- *     <param name="ROS_nodeName">   /robotPublisher  </param>
- * </group>
+ * device RGBDSensorWrapper
+ * subdevice RGBDsensor
+ * period 30
+ * imagePort /<robotName>/colorCamera
+ * depthPort /<robotName>/depthCamera
  * \endcode
  */
 
@@ -176,7 +125,6 @@ private:
     bool initialize_YARP(yarp::os::Searchable &config);
     bool initialize_ROS(yarp::os::Searchable &config);
     bool read(yarp::os::ConnectionReader& connection);
-
 
     // Open the wrapper only, the attach method needs to be called before using it
     // Typical usage: robotInterface

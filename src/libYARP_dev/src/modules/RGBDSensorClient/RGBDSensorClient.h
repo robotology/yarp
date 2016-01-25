@@ -66,26 +66,18 @@ namespace yarp {
  * | localDepthPort  |      -         | string  | -              |   -           | Yes, unless useROS='true'      | Full name of the local port to open, e.g. /myApp/depth_camera                  | '/rpc' port will be added for remote operations      |
  * | remoteImagePort |      -         | string  | -              |   -           | Yes, unless useROS='true'      | Full name of the port to read color images from, e.g. /robotName/image_camera  | '/rpc' port will be added for remote operations      |
  * | remoteDepthPort |      -         | string  | -              |   -           | Yes, unless useROS='true'      | Full name of the port to read depth images from, e.g. /robotName/depth_camera  | '/rpc' port will be added for remote operations      |
- * | ROS             |      -         | group   | -              |   -           | No                             | Group containing parameter for ROS topic initialization                        | if missing, it is assumed to not use ROS topics |
- * |   -             |  useROS        | string  | true/false     |   -           |  alternative to YARP           | Set 'true' to read from ROS topic instead of YARP port                         |  -  |
- * |   -             |  imageTopic    | string  |  -             |   -           |  alternative to imagePort      | Set the name for ROS image topic                                               |  -  |
- * |   -             |  depthTopic    | string  |  -             |   -           |  alternative to depthPort      | Set the name for ROS depth topic                                               |  -  |
- * |   -             |  nodeName      | string  |  -             |   -           |  if ROS group is present       | Set the name for the equivalent ROS node                                       |  -  |
  * | synchPolicy     |      -         | string  |  -             |  latest       | No                             | Choose the policy to use to synch color and depth frame together               | Values are 'latest', 'seqNum', 'time' (this may require an addictional parameter)|
  * | watchdog        |      -         | double  |  ms            |   -           | Yes                            | Verify refresh of data on ports whitin this time, otherwise throws an error    |  - |
- *
- * ROS message type used is sensor_msgs/Image.msg ( http://docs.ros.org/api/sensor_msgs/html/msg/Image.html)
- * Some example of configuration files:
  *
  * Configuration file using .ini format, using subdevice keyword.
  *
  * \code{.unparsed}
- *  device controlboardwrapper2
- *  subdevice fakebot
- *  name /icub/head
- *
- * ** parameter for 'fakebot' subdevice follows here **
- * ...
+ * device RGBDSensorClient
+ * localImagePort     /localImagePort
+ * localDepthPort     /localDepthPort
+ * remoteImagePort    /iCub/colorCamera
+ * remoteDepthPort    /iCub/depthCamera
+ * watchdog 200
  * \endcode
  *
  * XML format, using 'networks' keywork. This file is meant to be used in junction with robotInterface executable,
@@ -94,44 +86,13 @@ namespace yarp {
  * \code{.xml}
  *  <!-- Following parameters are meaningful ONLY for robotInterface -->
  *
- * <param name="period"> 20                 </param>
- * <param name="name">   /icub/left_arm     </param>
- *
- *  <action phase="startup" level="5" type="attach">
- *      <paramlist name="networks">
- *          <!-- The param value must match the device name in the corresponding emsX file -->
- *          <elem name="imageSource">  left_upper_arm_mc </elem>
- *          <elem name="depthSource">  left_lower_arm_mc </elem>
- *       </paramlist>
- *  </action>
- *  <action phase="shutdown" level="5" type="detach" />
+ * <param name="localImagePort">    /<robotName>/localImagePort    </param>
+ * <param name="localDepthPort">    /<robotName>/localDepthPort    </param>
+ * <param name="remoteImagePort">   /<robotName>/colorCamera       </param>
+ * <param name="remoteDepthPort">   /<robotName>/depthCamera       </param>
+ * <param name="watchdog">          200                            </param>
  * \endcode
  *
- * Configuration file using .ini format, using network keyword
- *
- * \code{.unparsed}
- *  device controlboardwrapper2
- *  name  /robotName/partName
- *  period 10
-
- * \endcode
- *
- * Configuration for ROS topic using .ini format
- * \code{.unparsed}
- * [ROS]
- * useROS         true
- * ROS_topicName  /JointState
- * ROS_nodeName   /robotPublisher
- * \endcode
- *
- * Configuration for ROS topic using .xml format
- * \code{.unparsed}
- * <group name="ROS">
- *     <param name="useROS">         true             </param>    // use 'only' if you want only ROS topic and NOT yarp port
- *     <param name="ROS_topicName">  /JointState      </param>
- *     <param name="ROS_nodeName">   /robotPublisher  </param>
- * </group>
- * \endcode
  */
 
 class yarp::dev::RGBDSensorClient:  public DeviceDriver,
