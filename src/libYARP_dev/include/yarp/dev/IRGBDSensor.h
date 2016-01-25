@@ -108,7 +108,7 @@ public:
     * @param depthStamp pointer to memory to hold the Stamp of the depth frame
     * @return true if able to get both data.
     */
-    virtual bool getRGBD_Frames(yarp::sig::FlexImage *colorFrame, yarp::sig::FlexImage *depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL) = 0;
+    virtual bool getRGBD_Frames(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL) = 0;
 };
 
 #endif   // __YARP_RGBD_INTERFACE__

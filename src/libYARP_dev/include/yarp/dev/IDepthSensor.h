@@ -96,7 +96,7 @@ public:
     * @param device_info Searchable struct containing the device info
     * @return true if able to get information about the device.
     */
-    virtual bool getDeviceInfo(yarp::os::Searchable &device_info) = 0;
+    virtual bool getDeviceInfo(yarp::os::Searchable *device_info) = 0;
 
    /**
     * Get the distance measurements as an image
@@ -110,7 +110,7 @@ public:
     * @param status the device status
     * @return true/false.
     */
-    virtual bool getDeviceStatus(DepthSensor_status& status) = 0;
+    virtual bool getDeviceStatus(DepthSensor_status *status) = 0;
 
    /**
     * get the device detection range
@@ -118,7 +118,7 @@ public:
     * @param max the maximum detection distance from the sensor [meter]
     * @return true if able to get required info.
     */
-    virtual bool getDistanceRange(double& min, double& max) = 0;
+    virtual bool getDistanceRange(double *min, double *max) = 0;
 
    /**
     * set the device detection range. Invalid setting will be discarded.
@@ -137,7 +137,7 @@ public:
     * @param max end angle of the scan    [degrees]
     * @return true if able to get required info.
     */
-    virtual bool getHorizontalScanLimits(double& min, double& max) = 0;
+    virtual bool getHorizontalScanLimits(double *min, double *max) = 0;
 
    /**
     * set the horizontal scan limits / field of view with respect to the
@@ -157,7 +157,7 @@ public:
     * @param max end angle of the scan    [degrees]
     * @return true if able to get required info.
     */
-    virtual bool getverticalScanLimits(double& min, double& max) = 0;
+    virtual bool getverticalScanLimits(double *min, double *max) = 0;
 
    /**
     * set the vertical scan limits / field of view with respect to the
@@ -175,7 +175,7 @@ public:
     * @param vertical   height of image, number of points in the vertical scan [num]
     * @return true if able to get required info.
     */
-    virtual bool getDataSize(double& horizontal, double &vertical) = 0;
+    virtual bool getDataSize(double *horizontal, double *vertical) = 0;
 
    /**
     * set the size of measured data from the device.
@@ -184,7 +184,7 @@ public:
     * @param vertical   height of image, number of points in the vertical scan [num]
     * @return true if message was correctly delivered to the HW device.
     */
-    virtual bool setDataSize(double& horizontal, double &vertical) = 0;
+    virtual bool setDataSize(double horizontal, double vertical) = 0;
 
    /**
     * get the device resolution, using the current settings of scan limits
@@ -193,7 +193,7 @@ public:
     * @param vRes vertical resolution [meter]
     * @return true if able to get required info.
     */
-    virtual bool getResolution(double& hRes, double &vRes) = 0;
+    virtual bool getResolution(double *hRes, double *vRes) = 0;
 
    /**
     * set the device resolution.
@@ -205,14 +205,14 @@ public:
     * @param vRes vertical resolution [meter]
     * @return true if message was correctly delivered to the HW device.
     */
-    virtual bool setResolution(double& hRes, double &vRes) = 0;
+    virtual bool setResolution(double hRes, double vRes) = 0;
 
    /**
     * get the scan rate (scans per seconds)
     * @param rate the scan rate
     * @return true if able to get required info.
     */
-    virtual bool getScanRate(double& rate) = 0;
+    virtual bool getScanRate(double *rate) = 0;
 
    /**
     * set the scan rate (scans per seconds)

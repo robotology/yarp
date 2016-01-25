@@ -389,7 +389,7 @@ void RGBDSensorWrapper::run()
 //             colorImage.resize(hDim, vDim);  // Has this to be done each time? If size is the same what it does?
 //             depthImage.resize(hDim, vDim);
 
-            bool ret = sensor_p->getRGBD_Frames(&colorImage, &depthImage, &colorStamp, &depthStamp);
+            bool ret = sensor_p->getRGBD_Frames(colorImage, depthImage, &colorStamp, &depthStamp);
 
             // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
             if(ret)

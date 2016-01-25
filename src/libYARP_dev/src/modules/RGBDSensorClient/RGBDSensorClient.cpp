@@ -7,11 +7,9 @@
  *
  */
 
-#include <RGBDSensorClient.h>
+#include "RGBDSensorClient.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-
-/*! \file RGBDSensorClient.cpp */
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -28,8 +26,8 @@ yarp::dev::DriverCreator *createRGBDSensorClient() {
 RGBDSensorClient::RGBDSensorClient()
 {
     // TBD: default values for hDim and vDim should be zero, using standard values just for easy testing
-//     hDim = 640;
-//     vDim = 480;
+    hDim = 640;
+    vDim = 480;
     watchdog = -1;
     sensor_p = NULL;
     use_ROS  = false;
@@ -241,7 +239,7 @@ bool RGBDSensorClient::close()
     * @param image the image to be filled
     * @return true/false upon success/failure
     */
-bool RGBDSensorClient::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+bool RGBDSensorClient::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> &image)
 {
     return false;
 }
@@ -252,7 +250,7 @@ bool RGBDSensorClient::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
     * @param image the image to be filled
     * @return true/false upon success/failure
     */
-bool RGBDSensorClient::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+bool RGBDSensorClient::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &image)
 {
     return false;
 }
@@ -284,7 +282,7 @@ int RGBDSensorClient::width() const
 * @param device_info Searchable struct containing the device info
 * @return true if able to get information about the device.
 */
-bool RGBDSensorClient::getDeviceInfo(yarp::os::Searchable &device_info)
+bool RGBDSensorClient::getDeviceInfo(yarp::os::Searchable *device_info)
 {
     return false;
 }
@@ -303,7 +301,7 @@ bool RGBDSensorClient::getMeasurementData(yarp::sig::FlexImage &image, yarp::os:
 * @param status the device status
 * @return true/false.
 */
-bool RGBDSensorClient::getDeviceStatus(DepthSensor_status& status)
+bool RGBDSensorClient::getDeviceStatus(DepthSensor_status *status)
 {
     return false;
 }
@@ -313,7 +311,7 @@ bool RGBDSensorClient::getDeviceStatus(DepthSensor_status& status)
 * @param max the maximum detection distance from the sensor [meter]
 * @return true if able to get required info.
 */
-bool RGBDSensorClient::getDistanceRange(double& min, double& max)
+bool RGBDSensorClient::getDistanceRange(double *min, double *max)
 {
     return false;
 }
@@ -336,7 +334,7 @@ bool RGBDSensorClient::setDistanceRange(double min, double max)
 * @param max end angle of the scan    [degrees]
 * @return true if able to get required info.
 */
-bool RGBDSensorClient::getHorizontalScanLimits(double& min, double& max)
+bool RGBDSensorClient::getHorizontalScanLimits(double *min, double *max)
 {
     return false;
 }
@@ -360,7 +358,7 @@ bool RGBDSensorClient::setHorizontalScanLimits(double min, double max)
 * @param max end angle of the scan    [degrees]
 * @return true if able to get required info.
 */
-bool RGBDSensorClient::getverticalScanLimits(double& min, double& max)
+bool RGBDSensorClient::getverticalScanLimits(double *min, double *max)
 {
     return false;
 }
@@ -382,7 +380,7 @@ bool RGBDSensorClient::setverticalScanLimits(double min, double max)
 * @param vertical   height of image, number of points in the vertical scan [num]
 * @return true if able to get required info.
 */
-bool RGBDSensorClient::getDataSize(double& horizontal, double &vertical)
+bool RGBDSensorClient::getDataSize(double *horizontal, double *vertical)
 {
     return false;
 }
@@ -393,7 +391,7 @@ bool RGBDSensorClient::getDataSize(double& horizontal, double &vertical)
 * @param vertical   height of image, number of points in the vertical scan [num]
 * @return true if message was correctly delivered to the HW device.
 */
-bool RGBDSensorClient::setDataSize(double& horizontal, double &vertical)
+bool RGBDSensorClient::setDataSize(double horizontal, double vertical)
 {
     return false;
 }
@@ -404,7 +402,7 @@ bool RGBDSensorClient::setDataSize(double& horizontal, double &vertical)
 * @param vRes vertical resolution [meter]
 * @return true if able to get required info.
 */
-bool RGBDSensorClient::getResolution(double& hRes, double &vRes)
+bool RGBDSensorClient::getResolution(double *hRes, double *vRes)
 {
     return false;
 }
@@ -418,7 +416,7 @@ bool RGBDSensorClient::getResolution(double& hRes, double &vRes)
 * @param vRes vertical resolution [meter]
 * @return true if message was correctly delivered to the HW device.
 */
-bool RGBDSensorClient::setResolution(double& hRes, double &vRes)
+bool RGBDSensorClient::setResolution(double hRes, double vRes)
 {
     return false;
 }
@@ -427,7 +425,7 @@ bool RGBDSensorClient::setResolution(double& hRes, double &vRes)
 * @param rate the scan rate
 * @return true if able to get required info.
 */
-bool RGBDSensorClient::getScanRate(double& rate)
+bool RGBDSensorClient::getScanRate(double *rate)
 {
     return false;
 }
@@ -458,7 +456,7 @@ bool RGBDSensorClient::getRGBDSensor_Status(RGBDSensor_status *status)
 * @param depthStamp pointer to memory to hold the Stamp of the depth frame
 * @return true if able to get both data.
 */
-bool RGBDSensorClient::getRGBD_Frames(yarp::sig::FlexImage *colorFrame, yarp::sig::FlexImage *depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
+bool RGBDSensorClient::getRGBD_Frames(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
 {
     streamingReader.synchRead(colorFrame, depthFrame);
     return false;
