@@ -615,8 +615,8 @@ public:
     int *invAxisMap;
     double *angleToEncoders;
     double *newtonsToSensors;
-    double *voltToSensors;
     double *ampereToSensors;
+    double *voltToSensors;
 };
 inline ControlBoardHelper *castToMapper(void *p)
 { return static_cast<ControlBoardHelper *>(p); }

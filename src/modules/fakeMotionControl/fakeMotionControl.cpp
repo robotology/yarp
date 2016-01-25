@@ -33,12 +33,6 @@ void FakeMotionControl::run() {
     }
 }
 
-
-static double convertA2I(double angle_in_degrees, double zero, double factor)
-{
-    return (angle_in_degrees + zero) * factor;
-}
-
 static inline bool NOT_YET_IMPLEMENTED(const char *txt)
 {
     yError() << txt << " is not yet implemented for FakeMotionControl";
@@ -553,7 +547,7 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
 bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
 {
     Bottle xtmp;
-    int i,j;
+    int i;
     Bottle general = config.findGroup("GENERAL");
 
     // leggere i valori da file
