@@ -26,7 +26,6 @@ bool dummyRemoteFrameGrabberMethod() {
 
 bool RemoteFrameGrabber::getCameraDescription(CameraDescriptor* camera)
 {
-    yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_GET);
@@ -36,15 +35,11 @@ bool RemoteFrameGrabber::getCameraDescription(CameraDescriptor* camera)
     // response should be [fgc2] [camd] [is] [busType] [description]
     camera->busType = (BusType) response.get(3).asInt();
     camera->deviceDescription = response.get(4).asString();
-
-    yDebug() << "ret is " << ret << "; resp is " << response.toString();
-    yDebug() << "Type is " << camera->busType << " description is " << camera->deviceDescription;
-    return true;
+    return ret;
 }
 
 bool RemoteFrameGrabber::hasFeature(int feature, bool* hasFeature)
 {
-    yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
@@ -52,13 +47,12 @@ bool RemoteFrameGrabber::hasFeature(int feature, bool* hasFeature)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    *hasFeature = (bool) response.get(4).asInt() ;
+    *hasFeature = response.get(4).asInt() !=0? true:false;
     return ret;
 }
 
 bool RemoteFrameGrabber::setFeature(int feature, double value)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
@@ -70,7 +64,6 @@ bool RemoteFrameGrabber::setFeature(int feature, double value)
 
 bool RemoteFrameGrabber::setFeature(int feature, double  value1, double  value2)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
@@ -83,7 +76,6 @@ bool RemoteFrameGrabber::setFeature(int feature, double  value1, double  value2)
 
 bool RemoteFrameGrabber::getFeature(int feature, double* value)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_GET);
@@ -97,7 +89,6 @@ bool RemoteFrameGrabber::getFeature(int feature, double* value)
 
 bool RemoteFrameGrabber::getFeature(int feature, double *value1, double *value2)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_GET);
@@ -112,7 +103,6 @@ bool RemoteFrameGrabber::getFeature(int feature, double *value1, double *value2)
 
 bool RemoteFrameGrabber::hasOnOff(int feature, bool* _hasOnOff)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
@@ -120,13 +110,12 @@ bool RemoteFrameGrabber::hasOnOff(int feature, bool* _hasOnOff)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    *_hasOnOff = (bool) response.get(4).asInt();
+    *_hasOnOff = response.get(4).asInt() !=0? true:false;
     return ret;
 }
 
 bool RemoteFrameGrabber::setActive(int feature, bool onoff)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
@@ -138,7 +127,6 @@ bool RemoteFrameGrabber::setActive(int feature, bool onoff)
 
 bool RemoteFrameGrabber::getActive(int feature, bool* _isActive)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_GET);
@@ -146,13 +134,12 @@ bool RemoteFrameGrabber::getActive(int feature, bool* _isActive)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    *_isActive = (bool) response.get(3).asInt();
+    *_isActive = response.get(3).asInt() !=0? true:false;
     return ret;
 }
 
 bool RemoteFrameGrabber::hasAuto(int feature, bool* _hasAuto)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
@@ -160,14 +147,12 @@ bool RemoteFrameGrabber::hasAuto(int feature, bool* _hasAuto)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    yDebug() << "HAS_AUTO response is " << response.toString();
-    *_hasAuto = (bool) response.get(4).asInt();
+    *_hasAuto = response.get(4).asInt() !=0? true:false;;
     return ret;
 }
 
 bool RemoteFrameGrabber::hasManual(int feature, bool* _hasManual)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
@@ -175,13 +160,12 @@ bool RemoteFrameGrabber::hasManual(int feature, bool* _hasManual)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    *_hasManual = response.get(4).asInt();
+    *_hasManual = response.get(4).asInt() !=0? true:false;
     return ret;
 }
 
 bool RemoteFrameGrabber::hasOnePush(int feature, bool* _hasOnePush)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
@@ -189,13 +173,12 @@ bool RemoteFrameGrabber::hasOnePush(int feature, bool* _hasOnePush)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    *_hasOnePush = (bool) response.get(4).asInt();
+    *_hasOnePush = response.get(4).asInt() !=0? true:false;
     return ret;
 }
 
 bool RemoteFrameGrabber::setMode(int feature, FeatureMode mode)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
@@ -207,7 +190,6 @@ bool RemoteFrameGrabber::setMode(int feature, FeatureMode mode)
 
 bool RemoteFrameGrabber::getMode(int feature, FeatureMode* mode)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_GET);
@@ -221,7 +203,6 @@ bool RemoteFrameGrabber::getMode(int feature, FeatureMode* mode)
 
 bool RemoteFrameGrabber::setOnePush(int feature)
 {
-//     yTrace();
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
