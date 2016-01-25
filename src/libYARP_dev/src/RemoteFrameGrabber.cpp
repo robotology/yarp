@@ -52,7 +52,7 @@ bool RemoteFrameGrabber::hasFeature(int feature, bool* hasFeature)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    *hasFeature = response.get(4).asInt();
+    *hasFeature = (bool) response.get(4).asInt() ;
     return ret;
 }
 
@@ -120,7 +120,7 @@ bool RemoteFrameGrabber::hasOnOff(int feature, bool* _hasOnOff)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    *_hasOnOff = response.get(4).asInt();
+    *_hasOnOff = (bool) response.get(4).asInt();
     return ret;
 }
 
@@ -146,7 +146,7 @@ bool RemoteFrameGrabber::getActive(int feature, bool* _isActive)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    *_isActive = response.get(3).asInt();
+    *_isActive = (bool) response.get(3).asInt();
     return ret;
 }
 
@@ -161,7 +161,7 @@ bool RemoteFrameGrabber::hasAuto(int feature, bool* _hasAuto)
     bool ret = port.write(cmd,response);
 
     yDebug() << "HAS_AUTO response is " << response.toString();
-    *_hasAuto = response.get(4).asInt();
+    *_hasAuto = (bool) response.get(4).asInt();
     return ret;
 }
 
@@ -189,7 +189,7 @@ bool RemoteFrameGrabber::hasOnePush(int feature, bool* _hasOnePush)
     cmd.addInt(feature);
     bool ret = port.write(cmd,response);
 
-    *_hasOnePush = response.get(4).asInt();
+    *_hasOnePush = (bool) response.get(4).asInt();
     return ret;
 }
 
