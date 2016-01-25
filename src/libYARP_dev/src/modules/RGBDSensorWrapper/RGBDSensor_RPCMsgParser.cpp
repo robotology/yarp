@@ -23,7 +23,23 @@ RGBDSensor_RPCMgsParser::~RGBDSensor_RPCMgsParser()
 
 bool RGBDSensor_RPCMgsParser::respond(const yarp::os::Bottle& command, yarp::os::Bottle& reply)
 {
+    // TBD: TO BE DONE!!
     if(verbose >= IRGBDSensor::VERY_VERBOSE)
         yTrace() << "\nRGBDSensor_RPCMgsParser Received command:\n\t " << command.toString();
-    return yarp::dev::DeviceResponder::respond(command, reply);
+
+    bool ok  = false;   // command succesfull
+//     bool rec = false;   // command recognized -- maybe useless here
+
+    switch(command.get(0).asInt())
+    {
+        case 0:
+            reply.clear();
+            reply.addString("Reply to command: " + command.toString());
+            ok = true;
+        break;
+
+        default:
+            ok = yarp::dev::DeviceResponder::respond(command, reply);
+    }
+    return ok;
 }
