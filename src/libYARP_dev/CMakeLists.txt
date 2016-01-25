@@ -30,6 +30,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
                   include/yarp/dev/IRangefinder2D.h
+                  include/yarp/dev/IDepthSensor.h
+                  include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode.h
