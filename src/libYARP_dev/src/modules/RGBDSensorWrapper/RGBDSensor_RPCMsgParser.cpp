@@ -1,7 +1,12 @@
+/*
+* Copyright (C) 2016 RobotCub Consortium
+* Author: Alberto Cardellino
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+*
+*/
 
-
-#include <RGBDSensor_RPCMsgParser.h>
 #include <yarp/os/LogStream.h>
+#include "RGBDSensor_RPCMsgParser.h"
 
 using namespace sensor::depth;
 using namespace yarp::dev;

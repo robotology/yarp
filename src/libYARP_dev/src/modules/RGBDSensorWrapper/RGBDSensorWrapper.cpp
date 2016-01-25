@@ -6,9 +6,9 @@
  */
 
 #include <sstream>
-#include <RGBDSensorWrapper.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include "RGBDSensorWrapper.h"
 
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -17,9 +17,7 @@ using namespace std;
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createRGBDSensorWrapper() {
-    return new DriverCreatorOf<yarp::dev::RGBDSensorWrapper>("RGBDSensorWrapper",
-        "RGBDSensorWrapper",
-        "yarp::dev::RGBDSensorWrapper");
+    return new DriverCreatorOf<yarp::dev::RGBDSensorWrapper>("RGBDSensorWrapper", "RGBDSensorWrapper", "yarp::dev::RGBDSensorWrapper");
 }
 
 RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
@@ -332,6 +330,7 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
 bool RGBDSensorWrapper::detach()
 {
     sensor_p = NULL;
+    return true;
 }
 
 /* IRateThread interface */

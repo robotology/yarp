@@ -38,7 +38,7 @@
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MINOR 0
 
-#include <RGBDSensor_StreamingMsgParser.h>
+#include "RGBDSensor_StreamingMsgParser.h"
 
 namespace yarp {
     namespace dev {
@@ -106,8 +106,6 @@ protected:
     yarp::os::ConstString remote_depthFrame_StreamingPort_Name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> colorFrame_StreamingPort;
     yarp::os::BufferedPort<yarp::sig::FlexImage> depthFrame_StreamingPort;
-//     yarp::os::Port colorFrame_StreamingPort;
-//     yarp::os::Port depthFrame_StreamingPort;
 
     yarp::os::ConstString local_colorFrame_rpcPort_Name;
     yarp::os::ConstString local_depthFrame_rpcPort_Name;
@@ -119,7 +117,6 @@ protected:
     // It should be possible to attach this guy to more than one port, try to see what
     // will happen when receiving 2 calls at the same time (receive one calls while serving
     // another one, it will result in concurrent thread most probably) and buffering issues.
-//     sensor::depth::RGBDSensor_RPCMgsParser RPC_parser;
 
     // Image data specs
     int hDim, vDim;
@@ -132,13 +129,11 @@ protected:
     bool use_ROS;  // if false (default) read from YARP port, if true read from ROS topic instead (Both at the same time is not possible).
     bool initialize_YARP(yarp::os::Searchable &config);
     bool initialize_ROS(yarp::os::Searchable &config);
-//     bool read(yarp::os::ConnectionReader& connection);
 
     // Synch
     double watchdog;
     yarp::os::Stamp colorStamp;
     yarp::os::Stamp depthStamp;
-//     RGBDSensor_StreamingMsgParser<yarp::sig::FlexImage, yarp::sig::FlexImage> reader;
     RGBDSensor_StreamingMsgParser streamingReader;
     bool fromConfig(yarp::os::Searchable &config);
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
