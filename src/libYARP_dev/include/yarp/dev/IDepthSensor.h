@@ -18,8 +18,8 @@
  * Public License for more details
  */
 
-#ifndef __YARP_DEPTHSENSOR_INTERFACE__
-#define __YARP_DEPTHSENSOR_INTERFACE__
+#ifndef YARP_DEPTHSENSOR_INTERFACE
+#define YARP_DEPTHSENSOR_INTERFACE
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Matrix.h>
@@ -157,7 +157,7 @@ public:
     * @param max end angle of the scan    [degrees]
     * @return true if able to get required info.
     */
-    virtual bool getverticalScanLimits(double *min, double *max) = 0;
+    virtual bool getVerticalScanLimits(double *min, double *max) = 0;
 
    /**
     * set the vertical scan limits / field of view with respect to the
@@ -166,7 +166,7 @@ public:
     * @param max end angle of the scan    [degrees]
     * @return true if message was correctly delivered to the HW device.
     */
-    virtual bool setverticalScanLimits(double min, double max) = 0;
+    virtual bool setVerticalScanLimits(double min, double max) = 0;
 
    /**
     * get the size of measured data from the device.

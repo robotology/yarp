@@ -254,7 +254,7 @@ public:
     * @param max end angle of the scan    [degrees]
     * @return true if able to get required info.
     */
-    virtual bool getverticalScanLimits(double *min, double *max);
+    virtual bool getVerticalScanLimits(double *min, double *max);
 
     /**
     * set the vertical scan limits / field of view with respect to the
@@ -263,7 +263,7 @@ public:
     * @param max end angle of the scan    [degrees]
     * @return true if message was correctly delivered to the HW device.
     */
-    virtual bool setverticalScanLimits(double min, double max);
+    virtual bool setVerticalScanLimits(double min, double max);
 
     /**
     * get the size of measured data from the device.

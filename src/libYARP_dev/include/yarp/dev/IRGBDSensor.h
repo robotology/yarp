@@ -19,8 +19,8 @@
  */
 
 
-#ifndef __YARP_RGBD_INTERFACE__
-#define __YARP_RGBD_INTERFACE__
+#ifndef YARP_RGBD_SENSOR_INTERFACE
+#define YARP_RGBD_SENSOR_INTERFACE
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Matrix.h>
@@ -77,8 +77,8 @@ public:
     using IDepthSensor::setDistanceRange;
     using IDepthSensor::getHorizontalScanLimits;
     using IDepthSensor::setHorizontalScanLimits;
-    using IDepthSensor::getverticalScanLimits;
-    using IDepthSensor::setverticalScanLimits;
+    using IDepthSensor::getVerticalScanLimits;
+    using IDepthSensor::setVerticalScanLimits;
     using IDepthSensor::getDataSize;
     using IDepthSensor::setDataSize;
     using IDepthSensor::getResolution;

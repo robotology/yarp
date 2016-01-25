@@ -358,7 +358,7 @@ bool RGBDSensorClient::setHorizontalScanLimits(double min, double max)
 * @param max end angle of the scan    [degrees]
 * @return true if able to get required info.
 */
-bool RGBDSensorClient::getverticalScanLimits(double *min, double *max)
+bool RGBDSensorClient::getVerticalScanLimits(double *min, double *max)
 {
     return false;
 }
@@ -369,7 +369,7 @@ bool RGBDSensorClient::getverticalScanLimits(double *min, double *max)
 * @param max end angle of the scan    [degrees]
 * @return true if message was correctly delivered to the HW device.
 */
-bool RGBDSensorClient::setverticalScanLimits(double min, double max)
+bool RGBDSensorClient::setVerticalScanLimits(double min, double max)
 {
     return false;
 }
