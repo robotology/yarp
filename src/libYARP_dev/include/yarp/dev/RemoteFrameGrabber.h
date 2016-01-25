@@ -25,7 +25,7 @@ namespace yarp{
 }
 
 
-class yarp::dev::ImplementDC1394 : public IFrameGrabberControlsDC1394
+class YARP_dev_API yarp::dev::ImplementDC1394 : public IFrameGrabberControlsDC1394
 {
 private:
     yarp::os::Port *_port;
