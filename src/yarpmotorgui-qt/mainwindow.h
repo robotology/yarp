@@ -102,14 +102,18 @@ private slots:
     void onViewPartToolbar(bool);
     void onViewSpeeds(bool);
     void onViewPositionTarget(bool);
-    void onControlVelocity(bool val);
+    void onEnableControlVelocity(bool val);
+    void onEnableControlPositionDirect(bool val);
+    void onEnableControlOpenloop(bool val);
     void onSliderOptionsClicked();
     void onSetPosSliderOptionMW(int, double);
     void onSetVelSliderOptionMW(int, double);
     void onSetTrqSliderOptionMW(int, double);
 
 signals:
-    void sig_controlVelocity(bool);
+    void sig_enableControlVelocity(bool);
+    void sig_enableControlPositionDirect(bool);
+    void sig_enableControlOpenloop(bool);
     void sig_viewSpeedValues(bool);
     void sig_setPosSliderOptionMW(int, double);
     void sig_setVelSliderOptionMW(int, double);

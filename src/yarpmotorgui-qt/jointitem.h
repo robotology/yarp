@@ -61,14 +61,14 @@ class JointItem : public QWidget
     double getTrajectoryVelocityValue();
     void setEnabledOptions(bool debug_param_enabled,
                            bool speedview_param_enabled,
-                           bool enable_calib_all,
-                           bool position_direct_enabled,
-                           bool openloop_enabled);
+                           bool enable_calib_all);
 
     void setSpeedVisible(bool);
     void setUnits(yarp::dev::JointTypeEnum t);
     void viewPositionTarget(bool);
-    void controlVelocity(bool control);
+    void enableControlVelocity(bool control);
+    void enableControlPositionDirect(bool control);
+    void enableControlOpenloop(bool control);
     void sequenceActivated();
     void sequenceStopped();
 

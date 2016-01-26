@@ -207,6 +207,8 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
             joint->setTrajectoryVelocityRange(max_vel);
             joint->setTorqueRange(5.0);
             joint->setUnits(jtype);
+            joint->enableControlPositionDirect(positionDirectEnabled);
+            joint->enableControlOpenloop(openloopEnabled);
 
             QSettings settings("YARP", "yarpmotorgui");
             int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
@@ -221,9 +223,8 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
 
             joint->setEnabledOptions(debug_param_enabled,
                                      speedview_param_enabled,
-                                     enable_calib_all,
-                                     position_direct_enabled,
-                                     openloop_enabled);
+                                     enable_calib_all);
+
             connect(joint, SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
             connect(joint, SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
             connect(joint, SIGNAL(sliderTrajectoryPositionCommand(double, int)), this, SLOT(onSliderTrajectoryPositionCommand(double, int)));
@@ -1782,11 +1783,27 @@ void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
     sendPartJointsValues(sequenceNum,values,speeds);
 }
 
-void PartItem::onControlVelocity(bool control)
+void PartItem::onEnableControlVelocity(bool control)
 {
     for(int i=0;i<layout->count();i++){
         JointItem *joint  = (JointItem*)layout->itemAt(i)->widget();
-        joint->controlVelocity(control);
+        joint->enableControlVelocity(control);
+    }
+}
+
+void PartItem::onEnableControlPositionDirect(bool control)
+{
+    for (int i = 0; i<layout->count(); i++){
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        joint->enableControlPositionDirect(control);
+    }
+}
+
+void PartItem::onEnableControlOpenloop(bool control)
+{
+    for (int i = 0; i<layout->count(); i++){
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        joint->enableControlOpenloop(control);
     }
 }
 

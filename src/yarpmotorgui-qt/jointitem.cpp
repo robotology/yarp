@@ -364,13 +364,23 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
     }
 }
 
-void JointItem::controlVelocity(bool control)
+void JointItem::enableControlVelocity(bool control)
 {
     velocityModeEnabled = control;
     ui->stackedWidget->widget(VELOCITY)->setEnabled(velocityModeEnabled);
     if(ui->stackedWidget->currentIndex() == VELOCITY && velocityModeEnabled){
         velocityTimer.start();
     }
+}
+
+void JointItem::enableControlPositionDirect(bool control)
+{
+    ui->stackedWidget->widget(POSITION_DIR)->setEnabled(control);
+}
+
+void JointItem::enableControlOpenloop(bool control)
+{
+    ui->stackedWidget->widget(OPENLOOP)->setEnabled(control);
 }
 
 void JointItem::viewPositionTarget(bool visible)
@@ -744,42 +754,18 @@ void JointItem::disableTrajectoryVelocitySliderDouble()
 }
 
 void JointItem::setEnabledOptions(bool debug_param_enabled,
-                                  bool speedview_param_enabled,
-                                  bool enable_calib_all,
-                                  bool position_direct_enabled,
-                                  bool openloop_enabled)
+    bool speedview_param_enabled,
+    bool enable_calib_all)
 {
     Q_UNUSED(debug_param_enabled);
     Q_UNUSED(speedview_param_enabled);
 
     enableCalib = enable_calib_all;
-    if(!enable_calib_all){
+    if (!enable_calib_all){
         ui->buttonCalib->setEnabled(false);
     }
 
-    if(!position_direct_enabled){
-        ui->stackedWidget->widget(POSITION_DIR)->setEnabled(false);
-//        ui->stackedWidget->removeWidget(ui->stackedWidget->widget(POSITION_DIR));
-//        ui->comboMode->removeItem(POSITION_DIR);
-//        POSITION_DIR = -1;
-//        MIXED--;
-//        VELOCITY--;
-//        TORQUE--;
-//        OPENLOOP--;
-    }
-
-    if(!openloop_enabled){
-        //ui->stackedWidget->removeWidget(ui->stackedWidget->widget(OPENLOOP));
-        //ui->comboMode->removeItem(OPENLOOP);
-        ui->stackedWidget->widget(OPENLOOP)->setEnabled(false);
-        //OPENLOOP = -1;
-    }
-
-
-    connect(ui->stackedWidget,SIGNAL(currentChanged(int)),this,SLOT(onStackedWidgetChanged(int)));
-
-
-
+    connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(onStackedWidgetChanged(int)));
 }
 
 JointItem::~JointItem()
