@@ -122,7 +122,7 @@ protected:
     std::string sensorId;
     yarp::dev::IRGBDSensor *sensor_p;
     IRGBDSensor::RGBDSensor_status sensorStatus;
-    yarp::dev::IDepthSensor::VerboseLevel verbose;
+    int verbose;
 
     bool use_ROS;  // if false (default) read from YARP port, if true read from ROS topic instead (Both at the same time is not possible).
     bool initialize_YARP(yarp::os::Searchable &config);

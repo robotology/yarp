@@ -50,7 +50,6 @@ namespace yarp{
 }
 
 #define DEFAULT_THREAD_PERIOD 30 //ms
-const yarp::dev::IDepthSensor::VerboseLevel DEFAULT_VERBOSE_LEVEL = yarp::dev::IDepthSensor::DEFAULT;
 
 // Following three definitions would fit better in a header file
 // shared between client and server ... where to place it?
@@ -113,12 +112,12 @@ private:
     sensor::depth::RGBDSensor_RPCMgsParser RPC_parser;
 
     // Image data specs
-    int hDim, vDim;
-    int _rate;
+//     int hDim, vDim;
+    int rate;
     std::string sensorId;
     yarp::dev::IRGBDSensor *sensor_p;
-    IRGBDSensor::RGBDSensor_status _sensorStatus;
-    yarp::dev::IDepthSensor::VerboseLevel verbose;
+    IRGBDSensor::RGBDSensor_status sensorStatus;
+    int verbose;
 
     bool use_YARP;
     bool use_ROS;
@@ -132,7 +131,7 @@ private:
 
     // If a subdevice parameter is given, the wrapper will open it and attach to immediatly.
     // Typical usage: simulator or command line
-    bool _isSubdeviceOwned;
+    bool isSubdeviceOwned;
     yarp::dev::PolyDriver *subDeviceOwned;
     bool openAndAttachSubDevice(yarp::os::Searchable& prop);
 

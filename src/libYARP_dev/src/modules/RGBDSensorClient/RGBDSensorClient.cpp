@@ -26,7 +26,7 @@ RGBDSensorClient::RGBDSensorClient()
     watchdog = -1;
     sensor_p = NULL;
     use_ROS  = false;
-    verbose  = yarp::dev::IDepthSensor::DEFAULT;
+    verbose  = 2;
     sensorStatus = IRGBDSensor::RGBD_SENSOR_NOT_READY;
 }
 
@@ -37,7 +37,7 @@ RGBDSensorClient::~RGBDSensorClient()
 
 bool RGBDSensorClient::open(yarp::os::Searchable& config)
 {
-    if(verbose >= yarp::dev::IDepthSensor::VERY_VERBOSE)
+    if(verbose >= 5)
         yTrace() << "\n Paramerters are: \n" << config.toString();
 
     if(!fromConfig(config))
@@ -68,13 +68,13 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
     Bottle &rosGroup = config.findGroup("ROS");
     if(rosGroup.isNull())
     {
-        if(verbose >= IDepthSensor::CHATTY)
+        if(verbose >= 3)
             yInfo() << "RGBDSensorClient: ROS configuration paramters are not set, skipping ROS topic initialization.";
         use_ROS  = false;
     }
     else
     {
-        if(verbose >= IDepthSensor::DEFAULT)
+        if(verbose >= 2)
             yWarning() << "RGBDSensorClient: ROS topic support is not yet implemented";
         use_ROS = false;
     }
@@ -136,13 +136,13 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
     yarp::os::Bottle &ROS_parameters = config.findGroup("ROS");
     if(!ROS_parameters.isNull())
     {
-        if(verbose >= IRGBDSensor::VERY_VERBOSE)
+        if(verbose >= 5)
             yInfo() << "RGBDSensorClient: found 'ROS' group in config file, parsing ROS specific parameters.";
         return false;
     }
     else
     {
-        if(verbose >= IRGBDSensor::VERY_VERBOSE)
+        if(verbose >= 5)
             yInfo() << "RGBDSensorClient: 'ROS' group was NOT found in config file, skipping ROS specific parameters.";
     }
 

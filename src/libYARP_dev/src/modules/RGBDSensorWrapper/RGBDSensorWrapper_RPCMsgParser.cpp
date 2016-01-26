@@ -24,7 +24,7 @@ RGBDSensor_RPCMgsParser::~RGBDSensor_RPCMgsParser()
 bool RGBDSensor_RPCMgsParser::respond(const yarp::os::Bottle& command, yarp::os::Bottle& reply)
 {
     // TBD: TO BE DONE!!
-    if(verbose >= IRGBDSensor::VERY_VERBOSE)
+    if(verbose >= 5)
         yTrace() << "\nRGBDSensor_RPCMgsParser Received command:\n\t " << command.toString();
 
     bool ok  = false;   // command succesfull

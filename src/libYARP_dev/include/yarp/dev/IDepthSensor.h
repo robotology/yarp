@@ -76,17 +76,6 @@ public:
         DEPTHSENSOR_TIMEOUT          = 4
     };
 
-    enum VerboseLevel
-    {
-        MUTE                = 0,    // only errors that prevent device from working
-        QUIET               = 1,    // adds errors that can cause misfunctioning
-        DEFAULT             = 2,    // adds warnings // DEFAULT // show noisy messages about back-compatible changes
-        CHATTY              = 3,    // adds info messages
-        VERBOSE             = 4,    // adds debug messages
-        VERY_VERBOSE        = 5,    // adds trace of events (shows thread running and catch if they get stuck)
-        VERY_VERY_VERBOSE   = 6     // adds messages printed every cycle, so too much verbose for usage, only for deep debugging
-    };
-
     virtual ~IDepthSensor(){}
 
    /**

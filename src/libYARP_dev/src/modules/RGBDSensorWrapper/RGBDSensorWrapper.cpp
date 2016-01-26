@@ -20,18 +20,15 @@ yarp::dev::DriverCreator *createRGBDSensorWrapper() {
 }
 
 RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
-                                        _rate(DEFAULT_THREAD_PERIOD)
+                                        rate(DEFAULT_THREAD_PERIOD)
 {
-    // TBD: default values for hDim and vDim should be zero, using standard values just for easy testing
-//     hDim = 640;
-//     vDim = 480;
     sensor_p = NULL;
     use_YARP = true;
     use_ROS  = false;
     subDeviceOwned = NULL;
-    _isSubdeviceOwned = false;
-    verbose  = DEFAULT_VERBOSE_LEVEL;
-    _sensorStatus = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    isSubdeviceOwned = false;
+    verbose  = 4;
+    sensorStatus = IRGBDSensor::RGBD_SENSOR_NOT_READY;
 }
 
 RGBDSensorWrapper::~RGBDSensorWrapper()
@@ -48,7 +45,7 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
 //     addUsage("[set] [bri] $fBrightness", "set brightness");
 //     addUsage("[set] [expo] $fExposure", "set exposure");
 //
-    if(verbose >= yarp::dev::IDepthSensor::VERY_VERBOSE)
+    if(verbose >= 5)
         yTrace() << "\nParameters are: \n" << config.toString();
 
     if(!fromConfig(config))
@@ -77,23 +74,23 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
 {
     if (!config.check("period", "refresh period of the broadcasted values in ms"))
     {
-        if(verbose >= IDepthSensor::CHATTY)
+        if(verbose >= 3)
             yInfo() << "RGBDSensorWrapper: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "ms";
     }
     else
-        _rate = config.find("period").asInt();
+        rate = config.find("period").asInt();
 
     Bottle &rosGroup = config.findGroup("ROS");
     if(rosGroup.isNull())
     {
-        if(verbose >= IDepthSensor::CHATTY)
+        if(verbose >= 3)
             yInfo() << "RGBDSensorWrapper: ROS configuration paramters are not set, skipping ROS topic initialization.";
         use_ROS  = false;
         use_YARP = true;
     }
     else
     {
-        if(verbose >= IDepthSensor::DEFAULT)
+        if(verbose >= 2)
             yWarning() << "RGBDSensorWrapper: ROS topic support is not yet implemented";
         use_ROS = false;
     }
@@ -129,7 +126,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
     // passed later on thorugh attachAll()
     if(config.check("subdevice"))
     {
-        _isSubdeviceOwned=true;
+        isSubdeviceOwned=true;
         if(! openAndAttachSubDevice(config))
         {
             yError("ControlBoardWrapper: error while opening subdevice\n");
@@ -138,7 +135,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
     }
     else
     {
-        _isSubdeviceOwned=false;
+        isSubdeviceOwned=false;
         if(!openDeferredAttach(config))
             return false;
     }
@@ -148,7 +145,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
 bool RGBDSensorWrapper::openDeferredAttach(Searchable& prop)
 {
     // I dunno what to do here now...
-    _isSubdeviceOwned = false;
+    isSubdeviceOwned = false;
     return true;
 }
 
@@ -171,11 +168,11 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
         yError("opening controlBoardWrapper2 subdevice... FAILED\n");
         return false;
     }
-    _isSubdeviceOwned = true;
+    isSubdeviceOwned = true;
     if(!attach(subDeviceOwned))
         return false;
 
-    RateThread::setRate(_rate);
+    RateThread::setRate(rate);
     RateThread::start();
     return true;
 }
@@ -186,13 +183,13 @@ bool RGBDSensorWrapper::close()
     detachAll();
 
     // close subdevice if it was created inside the open (--subdevice option)
-    if(_isSubdeviceOwned)
+    if(isSubdeviceOwned)
     {
         if(subDeviceOwned)
             subDeviceOwned->close();
         subDeviceOwned = NULL;
         sensor_p = NULL;
-        _isSubdeviceOwned = false;
+        isSubdeviceOwned = false;
     }
 
     // Closing port
@@ -283,7 +280,7 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
     if(!attach(sensor_p))
         return false;
 
-    RateThread::setRate(_rate);
+    RateThread::setRate(rate);
     RateThread::start();
 
     return true;
@@ -295,7 +292,7 @@ bool RGBDSensorWrapper::detachAll()
         yarp::os::RateThread::stop();
 
     //check if we already instantiated a subdevice previously
-    if (_isSubdeviceOwned)
+    if (isSubdeviceOwned)
         return false;
 
     sensor_p = NULL;
@@ -374,9 +371,9 @@ void RGBDSensorWrapper::run()
 {
     if (sensor_p!=0)
     {
-        sensor_p->getRGBDSensor_Status(&_sensorStatus);
+        sensor_p->getRGBDSensor_Status(&sensorStatus);
         // convert to switch case
-        if (_sensorStatus == IRGBDSensor::RGBD_SENSOR_OK_IN_USE)
+        if (sensorStatus == IRGBDSensor::RGBD_SENSOR_OK_IN_USE)
         {
             yarp::sig::FlexImage& colorImage = colorFrame_StreamingPort.prepare();
             yarp::sig::FlexImage& depthImage = depthFrame_StreamingPort.prepare();
@@ -401,13 +398,13 @@ void RGBDSensorWrapper::run()
         }
         else
         {
-            if(verbose >= IDepthSensor::QUIET)   // better not to print it every cycle anyway, too noisy
+            if(verbose >= 1)   // better not to print it every cycle anyway, too noisy
                 yError("RGBDSensorWrapper: %s: Sensor returned error", sensorId.c_str());
         }
     }
     else
     {
-        if(verbose >= IDepthSensor::VERY_VERY_VERBOSE)
+        if(verbose >= 6)
             yError("RGBDSensorWrapper: %s: Sensor interface is not valid", sensorId.c_str());
     }
 }
