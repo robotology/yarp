@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2016 iCub Facility
  * Authors: Alberto Cardellino
@@ -24,14 +22,12 @@ bool DepthImageConverter::create(const yarp::os::Property& options)
     max = 10.0;
     inMatrix = NULL;
     outMatrix = NULL;
-    printf("created!\n");
     outImg.setPixelCode(VOCAB_PIXEL_MONO);
     return true;
 }
 
 void DepthImageConverter::destroy(void)
 {
-    printf("destroyed!\n");
 }
 
 bool DepthImageConverter::setparam(const yarp::os::Property& params)

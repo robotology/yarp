@@ -7,7 +7,7 @@
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/LogStream.h>
-#include "RGBDSensor_StreamingMsgParser.h"
+#include "RGBDSensorClient_StreamingMsgParser.h"
 
 
 using namespace yarp::dev;

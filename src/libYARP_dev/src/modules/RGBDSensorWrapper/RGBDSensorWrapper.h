@@ -41,7 +41,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 
-#include "RGBDSensor_RPCMsgParser.h"
+#include "RGBDSensorWrapper_RPCMsgParser.h"
 
 namespace yarp{
     namespace dev{

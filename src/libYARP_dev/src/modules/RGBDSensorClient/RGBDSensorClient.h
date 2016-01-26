@@ -38,7 +38,7 @@
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MINOR 0
 
-#include "RGBDSensor_StreamingMsgParser.h"
+#include "RGBDSensorClient_StreamingMsgParser.h"
 
 namespace yarp {
     namespace dev {
@@ -119,11 +119,9 @@ protected:
     // another one, it will result in concurrent thread most probably) and buffering issues.
 
     // Image data specs
-    int hDim, vDim;
-    int _rate;
     std::string sensorId;
     yarp::dev::IRGBDSensor *sensor_p;
-    IRGBDSensor::RGBDSensor_status _sensorStatus;
+    IRGBDSensor::RGBDSensor_status sensorStatus;
     yarp::dev::IDepthSensor::VerboseLevel verbose;
 
     bool use_ROS;  // if false (default) read from YARP port, if true read from ROS topic instead (Both at the same time is not possible).
@@ -143,9 +141,20 @@ public:
     RGBDSensorClient();
     ~RGBDSensorClient();
 
-    //
-    // Device Driver interface
-    //
+    // Device Driver interface //
+    /**
+     * Create and configure a device, by name.  The config
+     * object should have a property called "device" that
+     * is set to the common name of the device.  All other
+     * properties are passed on the the device's
+     * DeviceDriver::open method.
+     *
+     * @param config configuration options for the device
+     *
+     * @return  the device, if it could be created and configured,
+     * otherwise NULL. The user is responsible for deallocating the
+     * device.
+     */
     virtual bool open(yarp::os::Searchable& config);
 
     /**

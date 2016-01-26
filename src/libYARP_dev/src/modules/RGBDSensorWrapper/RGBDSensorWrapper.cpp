@@ -1,4 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /*
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
  * Authors: Alberto Cardellino <Alberto.Cardellino@iit.it>
@@ -343,8 +342,8 @@ bool RGBDSensorWrapper::read(yarp::os::ConnectionReader& connection)
     if (!ok) return false;
 
     // parse in, prepare out
-    int action = in.get(0).asVocab();
-    int inter  = in.get(1).asVocab();
+//     int action = in.get(0).asVocab();
+//     int inter  = in.get(1).asVocab();
     bool ret = false;
 
     if (!ret)

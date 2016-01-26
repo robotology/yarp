@@ -17,6 +17,9 @@
  * Public License for more details
  */
 
+#ifndef YARP_DEV_RGBDSENSORWRAPPER_RPCMESSAGEPARSER_H
+#define YARP_DEV_RGBDSENSORWRAPPER_RPCMESSAGEPARSER_H
+
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/DeviceDriver.h>
 
@@ -53,3 +56,5 @@ public:
     int getVerbose();
     int getMaxVerbose();
 };
+
+#endif // YARP_DEV_RGBDSENSORWRAPPER_RPCMESSAGEPARSER_H

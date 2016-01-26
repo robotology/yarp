@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
  * Author: Alberto Cardellino <alberto.cardellino@iit.it>
@@ -25,14 +23,11 @@ yarp::dev::DriverCreator *createRGBDSensorClient() {
 
 RGBDSensorClient::RGBDSensorClient()
 {
-    // TBD: default values for hDim and vDim should be zero, using standard values just for easy testing
-    hDim = 640;
-    vDim = 480;
     watchdog = -1;
     sensor_p = NULL;
     use_ROS  = false;
     verbose  = yarp::dev::IDepthSensor::DEFAULT;
-    _sensorStatus = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    sensorStatus = IRGBDSensor::RGBD_SENSOR_NOT_READY;
 }
 
 RGBDSensorClient::~RGBDSensorClient()

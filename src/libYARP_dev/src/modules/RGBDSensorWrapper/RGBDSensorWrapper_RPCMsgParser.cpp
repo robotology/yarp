@@ -6,7 +6,7 @@
 */
 
 #include <yarp/os/LogStream.h>
-#include "RGBDSensor_RPCMsgParser.h"
+#include "RGBDSensorWrapper_RPCMsgParser.h"
 
 using namespace sensor::depth;
 using namespace yarp::dev;

@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
  * Author:  Alberto Cardellino
@@ -18,8 +16,8 @@
  * Public License for more details
  */
 
-#ifndef YARP_DEPTHSENSOR_INTERFACE
-#define YARP_DEPTHSENSOR_INTERFACE
+#ifndef YARP_DEV_IDEPTHSENSOR_H
+#define YARP_DEV_IDEPTHSENSOR_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Matrix.h>
@@ -222,4 +220,4 @@ public:
     virtual bool setScanRate(double rate) = 0;
 };
 
-#endif   // __YARP_DEPTHSENSOR_INTERFACE__
+#endif   // YARP_DEV_IDEPTHSENSOR_H
