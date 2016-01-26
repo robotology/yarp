@@ -102,7 +102,7 @@ by the \ref yarpdatadumper.
   provided.
 
 --connect \e portname
-- The parameter \e portname specifies the name of the port to 
+- The parameter \e portname specifies the name of the port to
   connect the dumper to at launch time (\e tcp is used).
 
 --dir \e dirname
@@ -214,6 +214,57 @@ the acquisition will start.
 By pressing CTRL+C the acquisition is terminated.
 
 So, now, have a look inside the directory ./log
+
+\section application_sec Generate a yarpmanager application
+
+To dump data from several yarp ports, it may be convenient
+to launch several yarpdatadumper instances using the yarpmanager.
+
+If you have Python installed on your machine, you can use the
+yarpdatadumperAppGenerator.py utility script to generate a yarpmanager
+application that will launch and connect as many yarpdatadumper as you need.
+
+If for example you need to read the ports /icub/left_leg/stateExt:o and
+/icub/left_leg/analog:o on the host icub15, you can run the generator
+with the following option:
+
+\code
+yarpdatadumperAppGenerator.py  --ports /icub/left_leg/analog:o /icub/left_leg/stateExt:o  --host icub15 --name leftLegDumper
+\endcode
+
+This will generate the following yarpmanager application in the leftLegDumper.xml file:
+
+\code
+<application>
+    <name>leftLegDumper</name>
+    <dependencies>
+        <port>/icub/left_leg/analog:o</port>
+        <port>/icub/left_leg/stateExt:o</port>
+    </dependencies>
+    <module>
+        <name>yarpdatadumper</name>
+        <parameters>--name /dumper/icub/left_leg/analog:o --type bottle </parameters>
+        <node>icub15</node>
+        <tag>data-dumper-icub-left_leg-analog-o</tag>
+    </module>
+    <connection>
+        <from>/icub/left_leg/analog:o</from>
+        <to>/dumper/icub/left_leg/analog:o</to>
+        <protocol>udp</protocol>
+    </connection>
+    <module>
+        <name>yarpdatadumper</name>
+        <parameters>--name /dumper/icub/left_leg/stateExt:o --type bottle </parameters>
+        <node>icub15</node>
+        <tag>data-dumper-icub-left_leg-stateExt-o</tag>
+    </module>
+    <connection>
+        <from>/icub/left_leg/stateExt:o</from>
+        <to>/dumper/icub/left_leg/stateExt:o</to>
+        <protocol>udp</protocol>
+    </connection>
+</application>
+\endcode
 
 \author Ugo Pattacini
 
