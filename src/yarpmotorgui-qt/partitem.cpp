@@ -1981,7 +1981,7 @@ void PartItem::updatePart()
     slowSwitcher++;
 
     if (NUMBER_OF_JOINTS == 0){
-        LOG_ERROR("Lost connection with iCubInterface. You should save and restart.\n" );
+        LOG_ERROR("Lost connection with the robot. You should save and restart.\n" );
         Time::delay(0.1);
 
         for(int i=0;i<layout->count();i++){

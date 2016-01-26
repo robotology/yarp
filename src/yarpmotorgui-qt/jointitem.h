@@ -16,6 +16,7 @@
 #include <QLabel>
 #include <QTimer>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include "sliderWithTarget.h"
 
 namespace Ui {
 class JointItem;
@@ -27,33 +28,6 @@ class WheelEventFilter;
 
 #define     STIFF           0
 #define     COMPLIANT       1
-
-class SliderWithTarget : public QSlider
-{
-public:
-    bool enableViewLabel;
-    bool enableViewTarget;
-    bool disableClickOutOfHandle;
-    SliderWithTarget(QWidget * parent = 0, bool _hasTargetOption = true);
-    ~SliderWithTarget() { if (sliderLabel) { delete sliderLabel; sliderLabel = 0; } }
-    void updateSliderTarget(double val);
-    void resetTarget();
-    void setSliderStep(double val);
-    double getSliderStep();
-    void setValue(double val);
-    void setIsDouble(bool b);
-    bool getIsDouble();
-
-protected:
-    bool isDouble;
-    QLabel* sliderLabel;
-    double target;
-    double width_at_target;
-    double sliderStep;
-    bool hasTargetOption;
-    void paintEvent(QPaintEvent *ev) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent * event);
-};
 
 class JointItem : public QWidget
 {
@@ -191,6 +165,7 @@ private:
 
     //double speed;
 
+    double ref_speed;
     double ref_torque;
     double ref_openloop;
     double ref_trajectory_velocity;

@@ -24,7 +24,8 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
                            partitem.cpp
                            piddlg.cpp
                            sequencewindow.cpp
-						   sliderOptions.cpp
+                           sliderOptions.cpp
+                           sliderWithTarget.cpp
                            startdlg.cpp)
   set(yarpmotorgui_qt_HDRS flowlayout.h
                            jointitem.h
@@ -32,7 +33,8 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
                            mainwindow.h
                            partitem.h
                            piddlg.h
-						   sliderOptions.h
+                           sliderOptions.h
+                           sliderWithTarget.h
                            yarpmotorgui.h
                            sequencewindow.h
                            startdlg.h)
