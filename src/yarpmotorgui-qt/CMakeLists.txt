@@ -44,7 +44,7 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
                                piddlg.ui
                                sequencewindow.ui
                                startdlg.ui
-							   sliderOptions.ui)
+                               sliderOptions.ui)
 
   qt5_add_resources(yarpmotorgui_qt_QRC_GEN_SRCS ${yarpmotorgui_qt_QRC_FILES})
   qt5_wrap_ui(yarpmotorgui_qt_UI_GEN_SRCS ${yarpmotorgui_qt_UI_FILES})

@@ -190,8 +190,12 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
                 yError() << "Error while getting velocity limits, part " << partName.toStdString() << " joint " << k;
             }
 
+            QSettings settings("YARP", "yarpmotorgui");
+            double max_slider_vel = settings.value("velocity_slider_limit", 100.0).toDouble();
+            if (max_vel > max_slider_vel) max_vel = max_slider_vel;
+
             iinfo->getAxisName(k, jointname);
-            yarp::dev::JointTypeEnum jtype = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
+            yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
             bool bjt = iinfo->getJointType(k, jtype);
 
             Pid myPid(0,0,0,0,0,0);
@@ -210,7 +214,6 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
             joint->enableControlPositionDirect(positionDirectEnabled);
             joint->enableControlOpenloop(openloopEnabled);
 
-            QSettings settings("YARP", "yarpmotorgui");
             int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
             int val_trq_choice = settings.value("val_trq_choice", 0).toInt();
             int val_vel_choice = settings.value("val_vel_choice", 0).toInt();

@@ -32,9 +32,15 @@ private:
     double val_pos_custom_step;
     double val_vel_custom_step;
     double val_trq_custom_step;
+    double val_vel_limit;
     int val_pos_choice;
     int val_vel_choice;
     int val_trq_choice;
+    QDoubleValidator* pos_step_validator;
+    QDoubleValidator* vel_step_validator;
+    QDoubleValidator* trq_step_validator;
+    QDoubleValidator* vel_lims_validator;
+
 
 signals:
     void sig_setPosSliderOptionSO(int, double);

@@ -13,7 +13,7 @@
 #include <QSlider>
 #include <QLabel>
 #include <QTimer>
-#include <qstyleoption>
+#include <QStyleOptionSlider>
 
 class SliderWithTarget : public QSlider
 {

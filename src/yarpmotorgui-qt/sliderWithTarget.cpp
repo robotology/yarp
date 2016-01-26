@@ -9,6 +9,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QStyle>
+#include <math.h>
 
 SliderWithTarget::SliderWithTarget(QWidget * parent, bool _hasTargetOption) : QSlider(Qt::Horizontal, 0)
 {

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>632</width>
-    <height>321</height>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -200,6 +200,30 @@
         <width>81</width>
         <height>20</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="vel_limiter">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>290</y>
+        <width>51</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>280</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Limiter on joint 
+max vel: (0-100)</string>
       </property>
      </widget>
     </widget>
