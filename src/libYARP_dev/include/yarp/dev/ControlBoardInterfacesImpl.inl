@@ -1126,7 +1126,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setMaxCurrent(int m, double 
 {
     int k;
     double curr;
-    castToMapper(helper)->ampereA2S(curr, m, curr, k);
+    castToMapper(helper)->ampereA2S(v, m, curr, k);
     return iAmplifier->setMaxCurrentRaw(k, curr);
 }
 
