@@ -16,8 +16,8 @@
 * Public License for more details
 */
 
-#ifndef ANALOGSENSORCLIENT_H
-#define ANALOGSENSORCLIENT_H
+#ifndef YARP_DEV_ANALOGSENSORCLIENT_H
+#define YARP_DEV_ANALOGSENSORCLIENT_H
 
 
 #include <yarp/os/Network.h>
@@ -37,29 +37,12 @@ namespace yarp {
     }
 }
 
-/**
-*  @ingroup dev_impl_wrapper
-*
-* \section analogsensorclient_parameter Description of input parameters
-*
-*  This device will connect to the proper analogServer and read the data broadcasted making them available to use for the user application. It also made available some function to check and control the state of the remote sensor.
-*
-* Parameters accepted in the config argument of the open method:
-* | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
-* |:--------------:|:------:|:-----:|:-------------:|:--------: |:-------------:|:-----:|
-* | local          | string |       |               | Yes       | full name if the port opened by the device  | must start with a '/' character |
-* | remote         | string |       |               | Yes       | full name of the port the device need to connect to | must start with a '/' character |
-* | carrier        | string |       | udp           | No        | type of carrier to use, like tcp, udp and so on ...  | - |
-* | period         | int    | ms    | 20            | No        | Publication period (in ms) of the sensor reading on the Can Bus | - |
-*  The device will create a port with name <local> and will connect to a port colled <remote> at startup,
-* ex: <b> /myModule/left_arm/ForceTorque </b>, and will connect to a port called <b> /icub/left_arm/ForceTorque<b>.
-*
-**/
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 const int ANALOG_TIMEOUT=100; //ms
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 class InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Vector>
 {
@@ -95,17 +78,35 @@ public:
 
     int getChannels();
 };
+
+/**
+ *
+ * The client side of any IAnalogSensor capable device.
+ * Still single thread! concurrent access is unsafe.
+ */
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
-* @ingroup dev_impl_wrapper
+*  @ingroup dev_impl_wrapper
 *
-* The client side of any IAnalogSensor capable device.
-* Still single thread! concurrent access is unsafe.
-*/
-class yarp::dev::AnalogSensorClient: public DeviceDriver,
-                          public IPreciselyTimed,
-                          public IAnalogSensor
+* \section AnalogSensorClient Description of input parameters
+*
+*  This device will connect to the proper analogServer and read the data broadcasted making them available to use for the user application. It also made available some function to check and control the state of the remote sensor.
+*
+* Parameters accepted in the config argument of the open method:
+* | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
+* |:--------------:|:------:|:-----:|:-------------:|:--------: |:-------------:|:-----:|
+* | local          | string |       |               | Yes       | full name if the port opened by the device  | must start with a '/' character |
+* | remote         | string |       |               | Yes       | full name of the port the device need to connect to | must start with a '/' character |
+* | carrier        | string |       | udp           | No        | type of carrier to use, like tcp, udp and so on ...  | - |
+* | period         | int    | ms    | 20            | No        | Publication period (in ms) of the sensor reading on the Can Bus | - |
+*  The device will create a port with name <local> and will connect to a port colled <remote> at startup,
+* ex: <b> /myModule/left_arm/ForceTorque </b>, and will connect to a port called <b> /icub/left_arm/ForceTorque<b>.
+*
+**/
+class yarp::dev::AnalogSensorClient:    public DeviceDriver,
+                                        public IPreciselyTimed,
+                                        public IAnalogSensor
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
@@ -175,4 +176,4 @@ public:
     yarp::os::Stamp getLastInputStamp();
 };
 
-#endif // ANALOGSENSORCLIENT_H
+#endif // YARP_DEV_ANALOGSENSORCLIENT_H

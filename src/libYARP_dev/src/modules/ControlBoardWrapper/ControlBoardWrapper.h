@@ -33,6 +33,8 @@
 #include <string>
 #include <vector>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <jointData.h>           // struct for YARP extended port
 
 #include "StreamingMessagesParser.h"
@@ -44,6 +46,7 @@
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <sensor_msgs_JointState.h>  // Defines ROS jointState msg; it already includes TickTime and Header
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef MSVC
     #pragma warning(disable:4355)
@@ -78,15 +81,79 @@ namespace yarp {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-
 enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEVICE=32};
+
+
+class yarp::dev::impl::MultiJointData
+{
+public:
+    int deviceNum;
+    int maxJointsNumForDevice;
+
+    int *subdev_jointsVectorLen;                 // number of joints belonging to each subdevice
+    int **jointNumbers;
+    int **modes;
+    double **values;
+    yarp::dev::impl::SubDevice **subdevices_p;
+
+    MultiJointData()
+    {
+        subdev_jointsVectorLen  = NULL;
+        jointNumbers            = NULL;
+        modes                   = NULL;
+        values                  = NULL;
+        subdevices_p            = NULL;
+    }
+
+    void resize(int _deviceNum, int _maxJointsNumForDevice, yarp::dev::impl::WrappedDevice *_device)
+    {
+        deviceNum = _deviceNum;
+        maxJointsNumForDevice = _maxJointsNumForDevice;
+        subdev_jointsVectorLen    = new int  [deviceNum];
+        jointNumbers    = new int *[deviceNum];                             // alloc a vector of pointers
+        jointNumbers[0] = new int[deviceNum * _maxJointsNumForDevice];      // alloc real memory for data
+
+        modes           = new int *[deviceNum];                             // alloc a vector of pointers
+        modes[0]        = new int[deviceNum * _maxJointsNumForDevice];      // alloc real memory for data
+
+        values      = new double *[deviceNum];                          // alloc a vector of pointers
+        values[0]   = new double[deviceNum * _maxJointsNumForDevice];   // alloc real memory for data
+
+        subdevices_p = new yarp::dev::impl::SubDevice *[deviceNum];
+        subdevices_p[0] = _device->getSubdevice(0);
+
+        for (int i = 1; i < deviceNum; i++)
+        {
+            jointNumbers[i] =  jointNumbers[i-1] + _maxJointsNumForDevice;   // set pointer to correct location
+            values      [i] = values[i-1] + _maxJointsNumForDevice;      // set pointer to correct location
+            subdevices_p[i] = _device->getSubdevice(i);
+        }
+    }
+
+    void destroy()
+    {
+        // relese matrix memory
+        delete[] jointNumbers[0];
+        delete[] values[0];
+        delete[] modes[0];
+
+        // relese vector of pointers
+        delete[] jointNumbers;
+        delete[] values;
+        delete[] modes;
+
+        // delete other vectors
+        delete[] subdev_jointsVectorLen;
+        delete[] subdevices_p;
+    }
+};
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /**
  *  @ingroup dev_impl_wrapper
  *
- * \section ControlBoardWrapper2_parameter Description of input parameters
+ * \section ControlBoardWrapper Description of input parameters
  * A updated version of the controlBoard network wrapper.
  * It can merge toghether more than one control board device, or use only a
  * portion of it by remapping functionality.
@@ -181,70 +248,6 @@ enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEV
  * </group>
  * \endcode
  */
-
-class yarp::dev::impl::MultiJointData
-{
-public:
-    int deviceNum;
-    int maxJointsNumForDevice;
-
-    int *subdev_jointsVectorLen;                 // number of joints belonging to each subdevice
-    int **jointNumbers;
-    int **modes;
-    double **values;
-    yarp::dev::impl::SubDevice **subdevices_p;
-
-    MultiJointData()
-    {
-        subdev_jointsVectorLen  = NULL;
-        jointNumbers            = NULL;
-        modes                   = NULL;
-        values                  = NULL;
-        subdevices_p            = NULL;
-    }
-
-    void resize(int _deviceNum, int _maxJointsNumForDevice, yarp::dev::impl::WrappedDevice *_device)
-    {
-        deviceNum = _deviceNum;
-        maxJointsNumForDevice = _maxJointsNumForDevice;
-        subdev_jointsVectorLen    = new int  [deviceNum];
-        jointNumbers    = new int *[deviceNum];                             // alloc a vector of pointers
-        jointNumbers[0] = new int[deviceNum * _maxJointsNumForDevice];      // alloc real memory for data
-
-        modes           = new int *[deviceNum];                             // alloc a vector of pointers
-        modes[0]        = new int[deviceNum * _maxJointsNumForDevice];      // alloc real memory for data
-
-        values      = new double *[deviceNum];                          // alloc a vector of pointers
-        values[0]   = new double[deviceNum * _maxJointsNumForDevice];   // alloc real memory for data
-
-        subdevices_p = new yarp::dev::impl::SubDevice *[deviceNum];
-        subdevices_p[0] = _device->getSubdevice(0);
-
-        for (int i = 1; i < deviceNum; i++)
-        {
-            jointNumbers[i] =  jointNumbers[i-1] + _maxJointsNumForDevice;   // set pointer to correct location
-            values      [i] = values[i-1] + _maxJointsNumForDevice;      // set pointer to correct location
-            subdevices_p[i] = _device->getSubdevice(i);
-        }
-    }
-
-    void destroy()
-    {
-        // relese matrix memory
-        delete[] jointNumbers[0];
-        delete[] values[0];
-        delete[] modes[0];
-
-        // relese vector of pointers
-        delete[] jointNumbers;
-        delete[] values;
-        delete[] modes;
-
-        // delete other vectors
-        delete[] subdev_jointsVectorLen;
-        delete[] subdevices_p;
-    }
-};
 
 class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::os::RateThread,
