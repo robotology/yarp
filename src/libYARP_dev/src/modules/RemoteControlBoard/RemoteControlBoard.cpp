@@ -613,8 +613,6 @@ protected:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
 
-        std::cout << "cmd: " << cmd.toString() << "\nresp: " << response.toString() << std::endl;
-        std::cout << "val: " << val << std::endl;
         if (CHECK_FAIL(ok, response)) {
             // ok
             *val = response.get(2).asDouble();
@@ -880,8 +878,6 @@ protected:
                 val[i] = l.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
-
-
             return true;
         }
         return false;
@@ -915,8 +911,6 @@ protected:
                 val[i] = l.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
-
-
             return true;
         }
         return false;
@@ -951,7 +945,6 @@ protected:
                 val2[i] = l2.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
-
             return true;
         }
         return false;
