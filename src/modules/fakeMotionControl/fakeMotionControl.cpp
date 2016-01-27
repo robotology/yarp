@@ -2394,7 +2394,6 @@ bool FakeMotionControl::getTargetPositionsRaw(int nj, const int * jnts, double *
 
 bool FakeMotionControl::getRefVelocityRaw(int axis, double *ref)
 {
-    yTrace();
     *ref = _command_speeds[axis];
     return true;
 }
@@ -2431,7 +2430,6 @@ bool FakeMotionControl::getRefPositionRaw(int axis, double *ref)
         this call is for reference only and may not reflect the actual behaviour of the motor/firmware.";
     }
     *ref = _posDir_references[axis];
-    yTrace() << "j: " << axis << " ref: " << *ref;
     return true;
 }
 

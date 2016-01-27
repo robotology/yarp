@@ -3661,7 +3661,6 @@ public:
 
     bool getRefVelocities(const int n_joint, const int* joints, double* vels)
     {
-        yTrace();
         return get1V1I1IA1DA(VOCAB_VELOCITY_MOVE_GROUP, n_joint, joints, vels);
     }
 
