@@ -114,16 +114,8 @@ bool ImplementControlLimits2::setVelLimits(int axis, double min, double max)
     double maxEnc=0;
 
     int k=0;
-    castToMapper(helper)->velA2E(min, axis, minEnc, k);
-    castToMapper(helper)->velA2E(max, axis, maxEnc, k);
-
-    if( (max > min) && (minEnc > maxEnc)) //angle to encoder conversion factor is negative
-    {
-        double temp;   // exchange max and min limits
-        temp = minEnc;
-        minEnc = maxEnc;
-        maxEnc = temp;
-    }
+    castToMapper(helper)->velA2E_abs(min, axis, minEnc, k);
+    castToMapper(helper)->velA2E_abs(max, axis, maxEnc, k);
 
     return iLimits2->setVelLimitsRaw(k, minEnc, maxEnc);
 }
@@ -136,15 +128,8 @@ bool ImplementControlLimits2::getVelLimits(int axis, double *min, double *max)
     int k=castToMapper(helper)->toHw(axis);
     bool ret=iLimits2->getVelLimitsRaw(k, &minEnc, &maxEnc);
 
-    *min=castToMapper(helper)->velE2A(minEnc, k);
-    *max=castToMapper(helper)->velE2A(maxEnc, k);
+    *min = castToMapper(helper)->velE2A_abs(minEnc, k);
+    *max = castToMapper(helper)->velE2A_abs(maxEnc, k);
 
-    if( (*max < *min) && (minEnc < maxEnc)) //angle to encoder conversion factor is negative
-    {
-        double temp;   // exchange max and min limits
-        temp = *min;
-        *min = *max;
-        *max = temp;
-    }
     return ret;
 }
