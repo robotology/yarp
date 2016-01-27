@@ -44,6 +44,8 @@ extern DriverCreator *createBatteryWrapper();
 extern DriverCreator *createBatteryClient();
 extern DriverCreator *createRangefinder2DWrapper();
 extern DriverCreator *createRangefinder2DClient();
+extern DriverCreator *createRGBDSensorWrapper();
+extern DriverCreator *createRGBDSensorClient();
 
 void Drivers::init() {
 
@@ -90,4 +92,6 @@ void Drivers::init() {
     add(createRangefinder2DWrapper());
     add(createClientControlBoard());
     add(createServerControlBoard());
+    add(createRGBDSensorWrapper());
+    add(createRGBDSensorClient());
 }
