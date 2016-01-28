@@ -122,7 +122,7 @@ class logger_module : public yarp::os::RFModule
             the_logger->get_messages_by_process(proc_name, m);
             std::list<MessageEntry>::iterator it;
             for (it = m.begin(); it != m.end(); it++)
-                printf(" %s %d %s \n",it->yarprun_timestamp.c_str(), it->level, it->text.c_str());
+                printf(" %s %d %s \n",it->yarprun_timestamp.c_str(), it->level.toInt(), it->text.c_str());
             reply.addString("ack");
         }
         else if (command.get(0).asString()=="ask_all")
@@ -131,7 +131,7 @@ class logger_module : public yarp::os::RFModule
              the_logger->get_messages(m);
              std::list<MessageEntry>::iterator it;
              for (it = m.begin(); it != m.end(); it++)
-                 printf(" %s %d %s \n",it->yarprun_timestamp.c_str(), it->level, it->text.c_str());
+                 printf(" %s %d %s \n",it->yarprun_timestamp.c_str(), it->level.toInt(), it->text.c_str());
              reply.addString("ack");
         }
         else if (command.get(0).asString()=="discover")
