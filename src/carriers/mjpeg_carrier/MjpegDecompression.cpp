@@ -13,9 +13,20 @@
 #define INT32 long  // jpeg's definition
 #define QGLOBAL_H 1
 #endif
+
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable : 4091)
+#endif
+
 extern "C" {
 #include <jpeglib.h>
 }
+
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
+
 #ifdef WIN32
 #undef INT32
 #undef QGLOBAL_H
