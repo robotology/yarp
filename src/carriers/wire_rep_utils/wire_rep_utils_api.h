@@ -18,8 +18,15 @@
 #ifndef YARP_wire_rep_utils_API
 #  ifdef wire_rep_utils_EXPORTS
 #    define YARP_wire_rep_utils_API YARP_EXPORT
+#    define YARP_wire_rep_utils_EXTERN YARP_EXPORT_EXTERN
 #  else
-#     define YARP_wire_rep_utils_API YARP_IMPORT
+#    define YARP_wire_rep_utils_API YARP_IMPORT
+#    define YARP_wire_rep_utils_EXTERN YARP_IMPORT_EXTERN
+#  endif
+#  ifdef YARP_NO_DEPRECATED
+#    define YARP_wire_rep_utils_DEPRECATED_API YARP_DEPRECATED
+#  else
+#    define YARP_wire_rep_utils_DEPRECATED_API YARP_DEPRECATED YARP_wire_rep_utils_API
 #  endif
 #endif
 

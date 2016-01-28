@@ -11,16 +11,30 @@
 #ifndef YARP_OS_API
 #  ifdef YARP_OS_EXPORTS
 #    define YARP_OS_API YARP_EXPORT
+#    define YARP_OS_EXTERN YARP_EXPORT_EXTERN
 #  else
-#     define YARP_OS_API YARP_IMPORT
+#    define YARP_OS_API YARP_IMPORT
+#    define YARP_OS_EXTERN YARP_IMPORT_EXTERN
+#  endif
+#  ifdef YARP_NO_DEPRECATED
+#    define YARP_OS_DEPRECATED_API YARP_DEPRECATED
+#  else
+#    define YARP_OS_DEPRECATED_API YARP_DEPRECATED YARP_OS_API
 #  endif
 #endif
 
 #ifndef YARP_init_API
 #  ifdef YARP_init_EXPORTS
 #    define YARP_init_API YARP_EXPORT
+#    define YARP_init_EXTERN YARP_EXPORT_EXTERN
 #  else
-#     define YARP_init_API YARP_IMPORT
+#    define YARP_init_API YARP_IMPORT
+#    define YARP_init_EXTERN YARP_IMPORT_EXTERN
+#  endif
+#  ifdef YARP_NO_DEPRECATED
+#    define YARP_init_DEPRECATED_API YARP_DEPRECATED
+#  else
+#    define YARP_init_DEPRECATED_API YARP_DEPRECATED YARP_init_API
 #  endif
 #endif
 

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef YARP2_tcpros_carrier_api_API
-#define YARP2_tcpros_carrier_api_API
+#ifndef YARP_TCPROS_CARRIER_API_H
+#define YARP_TCPROS_CARRIER_API_H
 
 #include <yarp/conf/api.h>
 
@@ -18,9 +18,16 @@
 #ifndef YARP_tcpros_carrier_API
 #  ifdef yarp_tcpros_EXPORTS
 #    define YARP_tcpros_carrier_API YARP_EXPORT
+#    define YARP_tcpros_carrier_EXTERN YARP_EXPORT_EXTERN
 #  else
-#     define YARP_tcpros_carrier_API YARP_IMPORT
+#    define YARP_tcpros_carrier_API YARP_IMPORT
+#    define YARP_tcpros_carrier_EXTERN YARP_IMPORT_EXTERN
+#  endif
+#  ifdef YARP_NO_DEPRECATED
+#    define YARP_tcpros_carrier_DEPRECATED_API YARP_DEPRECATED
+#  else
+#    define YARP_tcpros_carrier_DEPRECATED_API YARP_DEPRECATED YARP_wire_rep_utils_API
 #  endif
 #endif
 
-#endif
+#endif // YARP_TCPROS_CARRIER_API_H

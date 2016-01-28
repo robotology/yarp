@@ -21,8 +21,15 @@
 #ifndef yarpserversql_API
 #  ifdef yarpserversql_EXPORTS
 #    define yarpserversql_API YARP_EXPORT
+#    define yarpserversql_EXTERN YARP_EXPORT_EXTERN
 #  else
-#     define yarpserversql_API YARP_IMPORT
+#    define yarpserversql_API YARP_IMPORT
+#    define yarpserversql_EXTERN YARP_IMPORT_EXTERN
+#  endif
+#  ifdef YARP_NO_DEPRECATED
+#    define yarpserversql_DEPRECATED_API YARP_DEPRECATED
+#  else
+#    define yarpserversql_DEPRECATED_API YARP_DEPRECATED yarpserversql_API
 #  endif
 #endif
 

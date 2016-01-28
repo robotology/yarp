@@ -6,8 +6,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef _YARP2_API_
-#define _YARP2_API_
+#ifndef YARP_CONF_API_H
+#define YARP_CONF_API_H
 
 /*
 
@@ -24,8 +24,15 @@ recommended usage of this header within YARP is:
 #ifndef YARP_OS_API
 #  ifdef YARP_OS_EXPORTS
 #    define YARP_OS_API YARP_EXPORT
+#    define YARP_OS_EXTERN YARP_EXPORT_EXTERN
 #  else
-#     define YARP_OS_API YARP_IMPORT
+#    define YARP_OS_API YARP_IMPORT
+#    define YARP_OS_EXTERN YARP_IMPORT_EXTERN
+#  endif
+#  ifdef YARP_NO_DEPRECATED
+#    define YARP_OS_DEPRECATED_API YARP_DEPRECATED
+#  else
+#    define YARP_OS_DEPRECATED_API YARP_DEPRECATED YARP_OS_API
 #  endif
 #endif
 
@@ -93,4 +100,4 @@ recommended usage of this header within YARP is:
 // YARP_UNUSED: Suppress unused variable warnings
 #define YARP_UNUSED(var) (void)var
 
-#endif /* _YARP2_API_ */
+#endif // YARP_CONF_API_H
