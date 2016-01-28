@@ -85,7 +85,7 @@ void MainWindow::updateMain()
                 model_yarprunports->item(i,5)->setText(logwarnings_text);
 
                 QColor rowcolor = QColor(Qt::white);
-                yarp::yarpLogger::LogLevelEnum last_error = it->getLastError();
+                yarp::yarpLogger::LogLevel last_error = it->getLastError();
 
                 bool     log_enabled =  this->theLogger->get_log_enable_by_port_complete(it->port_complete);
                 if (log_enabled)

@@ -28,12 +28,12 @@ advanced_dialog::advanced_dialog(yarp::yarpLogger::LoggerEngine* logger, QWidget
     ui->log_max_size->setValidator   ( new QIntValidator(100, 100000, this) );
     ui->ports_max_size->setValidator ( new QIntValidator(10,  1000,   this) );
     ui->refresh_rate->setValidator   ( new QIntValidator(10,  100000, this) );
-    ui->cap_error->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_ERROR));
-    ui->cap_warning->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_WARNING));
-    ui->cap_debug->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_DEBUG));
-    ui->cap_info->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_INFO));
-    ui->cap_trace->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_TRACE));
-    ui->cap_unformatted->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_UNDEFINED));
+    ui->cap_error->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LogLevel(yarp::yarpLogger::LOGLEVEL_ERROR)));
+    ui->cap_warning->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LogLevel(yarp::yarpLogger::LOGLEVEL_WARNING)));
+    ui->cap_debug->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LogLevel(yarp::yarpLogger::LOGLEVEL_DEBUG)));
+    ui->cap_info->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LogLevel(yarp::yarpLogger::LOGLEVEL_INFO)));
+    ui->cap_trace->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LogLevel(yarp::yarpLogger::LOGLEVEL_TRACE)));
+    ui->cap_unformatted->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LogLevel(yarp::yarpLogger::LOGLEVEL_UNDEFINED)));
 
     bool enable_log_lines_limit;
     int  log_lines_limit;

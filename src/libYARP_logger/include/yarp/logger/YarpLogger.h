@@ -43,15 +43,71 @@ namespace yarp
         class  LogEntry;
         class  LogEntryInfo;
         struct MessageEntry;
-        enum   LogLevelEnum
+
+        enum loglLevelEnum
         {
             LOGLEVEL_UNDEFINED = 0,
-            LOGLEVEL_TRACE     = 1,
-            LOGLEVEL_DEBUG     = 2,
-            LOGLEVEL_INFO      = 3,
-            LOGLEVEL_WARNING   = 4,
-            LOGLEVEL_ERROR     = 5,
-            LOGLEVEL_FATAL     = 6
+            LOGLEVEL_TRACE = 1,
+            LOGLEVEL_DEBUG = 2,
+            LOGLEVEL_INFO = 3,
+            LOGLEVEL_WARNING = 4,
+            LOGLEVEL_ERROR = 5,
+            LOGLEVEL_FATAL = 6
+        };
+
+        class  LogLevel
+        {
+            private:
+            int e_level;
+
+            public:
+            LogLevel()
+            {
+                e_level = 0;
+            }
+            LogLevel(int l)
+            {
+                    e_level = l;
+            }
+            void setLevel(loglLevelEnum level)
+            {
+                e_level = level;
+            }
+            void setLevel(int level)
+            {
+                e_level = level;
+            }
+            int toInt()
+            {
+                return e_level;
+            }
+            std::string toString()
+            {
+                if (e_level == 0) { return "<UNDEFINED>"; }
+                if (e_level == 1) { return "<TRACE>"; }
+                if (e_level == 2) { return "<DEBUG>"; }
+                if (e_level == 3) { return "<INFO>"; }
+                if (e_level == 4) { return "<WARNING>"; }
+                if (e_level == 5) { return "<ERROR>"; }
+                if (e_level == 6) { return "<FATAL>"; }
+                else { return "<UNDEFINED>"; }
+            }
+            void operator = (loglLevelEnum level)
+            {
+                e_level = level;
+            }
+            bool operator == (const LogLevel& other)
+            {
+                return this->e_level == other.e_level;
+            }
+            bool operator == (const loglLevelEnum& other)
+            {
+                return this->e_level == other;
+            }
+            bool operator > (const LogLevel& other)
+            {
+                return this->e_level > other.e_level;
+            }
         };
         enum   LogSystemEnum
         {
@@ -63,7 +119,7 @@ namespace yarp
 
 struct yarp::yarpLogger::MessageEntry
 {
-    LogLevelEnum  level;
+    LogLevel      level;
     std::string   text;
     std::string   yarprun_timestamp;
     std::string   local_timestamp;
@@ -72,7 +128,7 @@ struct yarp::yarpLogger::MessageEntry
 class yarp::yarpLogger::LogEntryInfo
 {
     private:
-    LogLevelEnum  highest_error;
+    LogLevel      highest_error;
     unsigned int  number_of_traces;
     unsigned int  number_of_debugs;
     unsigned int  number_of_infos;
@@ -93,9 +149,9 @@ class yarp::yarpLogger::LogEntryInfo
     LogEntryInfo  ()  {clear();}
     void          clear ();
 
-    LogLevelEnum  getLastError           ();
+    LogLevel      getLastError           ();
     void          clearLastError         ();
-    void          setNewError            (LogLevelEnum level);
+    void          setNewError            (LogLevel level);
     unsigned int  get_number_of_traces   () { return number_of_traces;   }
     unsigned int  get_number_of_debugs   () { return number_of_debugs;   }
     unsigned int  get_number_of_infos    () { return number_of_infos;    }
@@ -194,10 +250,10 @@ class yarp::yarpLogger::LoggerEngine
     void set_log_enable_by_port_complete (std::string  port, bool enable);
     bool get_log_enable_by_port_complete (std::string  port);
 
-    void set_listen_option               (LogLevelEnum  logLevel,  bool enable);
+    void set_listen_option               (LogLevel      logLevel,  bool enable);
     void set_listen_option               (std::string   option,    bool enable);
     void set_listen_option               (LogSystemEnum logSystem, bool enable);
-    bool get_listen_option               (LogLevelEnum  logLevel);
+    bool get_listen_option               (LogLevel      logLevel);
     bool get_listen_option               (std::string   option);
     bool get_listen_option               (LogSystemEnum logSystem);
 

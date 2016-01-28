@@ -83,7 +83,7 @@ void LogEntryInfo::clear()
     last_update=-1;
 }
 
-LogLevelEnum  LogEntryInfo::getLastError()
+LogLevel LogEntryInfo::getLastError()
 {
     return highest_error;
 }
@@ -93,7 +93,7 @@ void LogEntryInfo::clearLastError()
     highest_error=LOGLEVEL_UNDEFINED;
 }
 
-void LogEntryInfo::setNewError(LogLevelEnum level)
+void LogEntryInfo::setNewError(LogLevel level)
 {
     if      (level==LOGLEVEL_TRACE)   number_of_traces++;
     else if (level==LOGLEVEL_DEBUG)   number_of_debugs++;
@@ -623,13 +623,14 @@ const std::list<MessageEntry> filter_by_level (int level, const std::list<Messag
     std::list<MessageEntry>::const_iterator it;
     for (it = messages.begin(); it != messages.end(); it++)
     {
-        if (it->level==level)
+        LogLevel llevel = it->level;
+        if (llevel.toInt() == level)
             ret.push_back(*it);
     }
     return ret;
 }
 
-void LoggerEngine::set_listen_option               (LogLevelEnum logLevel, bool enable)
+void LoggerEngine::set_listen_option               (LogLevel logLevel, bool enable)
 {
     if (log_updater == NULL) return;
     log_updater->mutex.wait();
@@ -643,7 +644,7 @@ void LoggerEngine::set_listen_option               (LogLevelEnum logLevel, bool 
     log_updater->mutex.post();
 }
 
-bool LoggerEngine::get_listen_option               (LogLevelEnum logLevel)
+bool LoggerEngine::get_listen_option               (LogLevel logLevel)
 {
     if (log_updater == NULL) return false;
     if (logLevel == LOGLEVEL_UNDEFINED) {return log_updater->listen_to_LOGLEVEL_UNDEFINED;}
@@ -703,7 +704,7 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
             std::vector<MessageEntry>::iterator it1;
             for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
             {
-                file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " " << it1->level << " " << it1->text << " " << std::endl;
+                file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " " << it1->level.toString() << " " << it1->text << " " << std::endl;
             }
             file1.close();
         }
@@ -752,7 +753,7 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
         {
             file1 << it1->yarprun_timestamp << std::endl;
             file1 << it1->local_timestamp << std::endl;
-            file1 << it1->level << std::endl;
+            file1 << it1->level.toInt() << std::endl;
             file1 << start_string;
             for (unsigned int s=0; s< it1->text.size(); s++) file1.put(it1->text[s]);
             file1 << end_string <<endl;
@@ -837,7 +838,7 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
                 file1 >> m_tmp.local_timestamp;
                 int tmp_level;
                 file1 >> tmp_level;
-                m_tmp.level = static_cast<LogLevelEnum>(tmp_level);
+                m_tmp.level.setLevel(tmp_level);
                 std::streamoff start_p = get_tag(file1, start_string.c_str());
                 std::streamoff end_p = get_tag(file1, end_string.c_str());
                 //validity check
