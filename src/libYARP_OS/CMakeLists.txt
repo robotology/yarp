@@ -347,10 +347,15 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
 
 if(NOT YARP_NO_DEPRECATED)
   list(APPEND YARP_OS_SRCS src/Module.cpp)
-  check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-  if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+  if(MSVC)
     set_source_files_properties(src/Module.cpp
-                                PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+                                PROPERTIES COMPILE_FLAGS "/wd4996")
+  else()
+    check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+    if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+      set_source_files_properties(src/Module.cpp
+                                  PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+    endif()
   endif()
 endif()
 
