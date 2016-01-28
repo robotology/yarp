@@ -16,6 +16,10 @@ set(sqlite_HDRS
     sqlite/sqlite3.h
 )
 
+if(MSVC)
+    set_source_files_properties(sqlite/sqlite3.c PROPERTIES COMPILE_FLAGS "/wd4996")
+endif()
+
 add_definitions(-DSQLITE_OMIT_LOAD_EXTENSION)
 
 add_library(YARP_priv_sqlite STATIC ${sqlite_SRCS})
