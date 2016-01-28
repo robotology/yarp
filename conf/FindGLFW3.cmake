@@ -65,7 +65,8 @@ if(NOT GLFW3_FOUND)
   if(WIN32)
     find_library(GLFW3_OPENGL_LIBRARY
                  NAMES OpenGL32
-                 PATHS "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\Lib") # FIXME
+                 PATHS "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\Lib"
+                       "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.1A\\Lib")
   endif()
 
   set(GLFW3_GLFW_glfw3_h "${GLFW3_INCLUDE_DIR}/GLFW/glfw3.h")
