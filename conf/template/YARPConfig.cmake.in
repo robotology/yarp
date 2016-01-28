@@ -28,10 +28,15 @@ if(YARP_NO_DEPRECATED)
 endif(YARP_NO_DEPRECATED)
 
 # Disable deprecated warnings, but add an option to enable it
-# FIXME 2.4 enable by default
 include(CMakeDependentOption)
+# FIXME 2.4 Workaround to reset this value to its default, remove it
+#           at some point.
+if(NOT YARP_NO_DEPRECATED_WARNINGS_DEFAULT_UPDATED)
+    unset(YARP_NO_DEPRECATED_WARNINGS CACHE)
+    set(YARP_NO_DEPRECATED_WARNINGS_DEFAULT_UPDATED TRUE CACHE BOOL "Workaround to reset this value to its default" INTERNAL)
+endif()
 cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
-                       "Do not warn when using YARP deprecated declarations" TRUE
+                       "Do not warn when using YARP deprecated declarations" FALSE
                        "NOT YARP_NO_DEPRECATED" FALSE)
 mark_as_advanced(YARP_NO_DEPRECATED_WARNINGS)
 if(YARP_NO_DEPRECATED_WARNINGS)
