@@ -34,6 +34,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
 {
     layout = new FlowLayout();
     setLayout(layout);
+    slow_k = 0;
 
     partId = id;
     this->finder = NULL;
@@ -42,7 +43,6 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
     sequenceWindow = NULL;
     this->finder = finder;
     this->partName = partName;
-    slowSwitcher = 0;
     positionDirectEnabled = position_direct_enabled;
     openloopEnabled = openloop_enabled;
 
@@ -1980,7 +1980,7 @@ void PartItem::updateControlMode()
     }
 }
 
-void PartItem::updatePart()
+bool PartItem::updatePart()
 {
     static double refTrajectorySpeeds[MAX_NUMBER_OF_JOINTS];
     static double refTrajectoryPositions[MAX_NUMBER_OF_JOINTS];
@@ -1994,13 +1994,13 @@ void PartItem::updatePart()
     static yarp::dev::InteractionModeEnum interactionModes[MAX_NUMBER_OF_JOINTS];
 
     bool ret = false;
-    int NUMBER_OF_JOINTS=0;
-    iPos->getAxes(&NUMBER_OF_JOINTS);
-    if (NUMBER_OF_JOINTS == 0) yFatal("Number of joints = 0. Closing");
-    int slow_k = slowSwitcher%NUMBER_OF_JOINTS;
-    slowSwitcher++;
+    int number_of_joints=0;
+    iPos->getAxes(&number_of_joints);
+    if (slow_k >= number_of_joints-1) slow_k = 0;
+    else slow_k++;
 
-    if (NUMBER_OF_JOINTS == 0){
+    if (number_of_joints == 0)
+    {
         LOG_ERROR("Lost connection with the robot. You should save and restart.\n" );
         Time::delay(0.1);
 
@@ -2008,11 +2008,11 @@ void PartItem::updatePart()
             JointItem *joint  = (JointItem*)layout->itemAt(i)->widget();
             joint->setJointState(JointItem::Disconnected);
         }
-        return;
+        return false;
     }
 
     // *** update measured encoders, velocity, torques ***
-    if (!iencs->getEncoders(positions))   { yWarning("Unable to update encoders"); return; }
+    if (!iencs->getEncoders(positions))   { yWarning("Unable to update encoders"); return false; }
     if (!iTrq->getTorques(torques))       { yWarning("Unable to update torques"); }
     if (!iencs->getEncoderSpeeds(speeds)) { yWarning("Unable to update speeds"); }
     
@@ -2046,7 +2046,7 @@ void PartItem::updatePart()
     }
 
     // *** update the widget every cycle ***
-    for (int jk = 0; jk < NUMBER_OF_JOINTS; jk++)
+    for (int jk = 0; jk < number_of_joints; jk++)
     {
         JointItem *joint = (JointItem*)layout->itemAt(jk)->widget();
         if (1) { joint->setPosition(positions[jk]); }
@@ -2084,72 +2084,70 @@ void PartItem::updatePart()
         LOG_ERROR("iint->getInteractionlMode failed\n" );
     }
 
-    for (int k = 0; k < NUMBER_OF_JOINTS; k++){
+    for (int k = 0; k < number_of_joints; k++)
+    {
         JointItem *joint  = (JointItem*)layout->itemAt(k)->widget();
         switch (controlModes[k])
         {
-        case VOCAB_CM_IDLE:
-            joint->setJointState(JointItem::Idle);
-            break;
-        case VOCAB_CM_POSITION:
-            joint->setJointState(JointItem::Position);
-            break;
-        case VOCAB_CM_POSITION_DIRECT:
-            joint->setJointState(JointItem::PositionDirect);
-            break;
-        case VOCAB_CM_MIXED:
-            joint->setJointState(JointItem::Mixed);
-            break;
-        case VOCAB_CM_VELOCITY:
-            joint->setJointState(JointItem::Velocity);
-            break;
-        case VOCAB_CM_TORQUE:
-            joint->setJointState(JointItem::Torque);
-            break;
-        case VOCAB_CM_OPENLOOP:{
-            joint->setJointState(JointItem::OpenLoop);
-            double openLoopValue = 0;
-            iOpl->getRefOutput(k, &openLoopValue);
-            joint->setOpenLoop(openLoopValue);
-            break;
+            case VOCAB_CM_IDLE:
+                joint->setJointState(JointItem::Idle);
+                break;
+            case VOCAB_CM_POSITION:
+                joint->setJointState(JointItem::Position);
+                break;
+            case VOCAB_CM_POSITION_DIRECT:
+                joint->setJointState(JointItem::PositionDirect);
+                break;
+            case VOCAB_CM_MIXED:
+                joint->setJointState(JointItem::Mixed);
+                break;
+            case VOCAB_CM_VELOCITY:
+                joint->setJointState(JointItem::Velocity);
+                break;
+            case VOCAB_CM_TORQUE:
+                joint->setJointState(JointItem::Torque);
+                break;
+            case VOCAB_CM_OPENLOOP:
+            {
+                joint->setJointState(JointItem::OpenLoop);
+                double openLoopValue = 0;
+                iOpl->getRefOutput(k, &openLoopValue);
+                joint->setOpenLoop(openLoopValue);
+                break;
+            }
+            case VOCAB_CM_HW_FAULT:
+                joint->setJointState(JointItem::HwFault);
+                break;
+            case VOCAB_CM_CALIBRATING:
+                joint->setJointState(JointItem::Calibrating);
+                break;
+            case VOCAB_CM_CALIB_DONE:
+                joint->setJointState(JointItem::CalibDone);
+                break;
+            case VOCAB_CM_NOT_CONFIGURED:
+                joint->setJointState(JointItem::NotConfigured);
+                break;
+            case VOCAB_CM_CONFIGURED:
+                joint->setJointState(JointItem::Configured);
+                break;
+            default:
+            case VOCAB_CM_UNKNOWN:
+                joint->setJointState(JointItem::Unknown);
+                break;
         }
-        case VOCAB_CM_HW_FAULT:
-            joint->setJointState(JointItem::HwFault);
-            break;
-        case VOCAB_CM_CALIBRATING:
-            joint->setJointState(JointItem::Calibrating);
-            break;
-        case VOCAB_CM_CALIB_DONE:
-            joint->setJointState(JointItem::CalibDone);
-            break;
-        case VOCAB_CM_NOT_CONFIGURED:
-            joint->setJointState(JointItem::NotConfigured);
-            break;
-        case VOCAB_CM_CONFIGURED:
-            joint->setJointState(JointItem::Configured);
-            break;
-        default:
-        case VOCAB_CM_UNKNOWN:
-            joint->setJointState(JointItem::Unknown);
-            break;
-        }
-
         switch (interactionModes[k])
         {
-        case VOCAB_IM_STIFF:
-            joint->setJointInteraction(JointItem::Stiff);
-            break;
-        case VOCAB_IM_COMPLIANT:
-            joint->setJointInteraction(JointItem::Compliant);
-            break;
-        default:
-        case VOCAB_IM_UNKNOWN:
-            //joint->setJointInteraction(JointItem::Stiff); TODO
-            break;
+            case VOCAB_IM_STIFF:
+                joint->setJointInteraction(JointItem::Stiff);
+                break;
+            case VOCAB_IM_COMPLIANT:
+                joint->setJointInteraction(JointItem::Compliant);
+                break;
+            default:
+            case VOCAB_IM_UNKNOWN:
+                //joint->setJointInteraction(JointItem::Stiff); TODO
+                break;
         }
     }
-
-
-
-
+    return true;
 }

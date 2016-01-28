@@ -905,15 +905,17 @@ void JointItem::onSliderTrajectoryPositionPressed()
 
 void JointItem::onSliderTrajectoryPositionReleased()
 {
-    //updateTrajectoryPositionTarget(ui->sliderTrajectoryPosition->value());
     if (ui->sliderTrajectoryPosition->getIsDouble())
     {
         double val = ui->sliderTrajectoryPosition->value();
         sliderTrajectoryPositionCommand(val / ui->sliderTrajectoryPosition->getSliderStep(), jointIndex);
+        updateTrajectoryPositionTarget(val / ui->sliderTrajectoryPosition->getSliderStep());
     }
     else
     {
-        sliderTrajectoryPositionCommand(ui->sliderTrajectoryPosition->value(), jointIndex);
+        double val = ui->sliderTrajectoryPosition->value();
+        sliderTrajectoryPositionCommand(val, jointIndex);
+        updateTrajectoryPositionTarget(val);
     }
     sliderTrajectoryPositionPressed = false;
     motionDone = false;
@@ -926,15 +928,17 @@ void JointItem::onSliderMixedPositionPressed()
 
 void JointItem::onSliderMixedPositionReleased()
 {
-    updateMixedPositionTarget(ui->sliderMixedPosition->value());
     if (ui->sliderMixedPosition->getIsDouble())
     {
         double val = ui->sliderMixedPosition->value();
         sliderMixedPositionCommand(val / ui->sliderMixedPosition->getSliderStep(), jointIndex);
+        updateMixedPositionTarget(val / ui->sliderMixedPosition->getSliderStep());
     }
     else
     {
-        sliderMixedPositionCommand(ui->sliderTrajectoryPosition->value(), jointIndex);
+        double val = ui->sliderMixedPosition->value();
+        sliderMixedPositionCommand(val, jointIndex);
+        updateMixedPositionTarget(val);
     }
 
     sliderMixedPositionPressed = false;

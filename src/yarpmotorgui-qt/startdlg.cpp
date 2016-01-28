@@ -19,7 +19,7 @@ StartDlg::StartDlg(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle("Qt Robot Motor GUI V1.0 - Select Parts");
+    setWindowTitle("Qt Robot Motor GUI V2.0 - Select Parts");
 }
 
 StartDlg::~StartDlg()

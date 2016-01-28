@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tabPanel = NULL;
     sequenceActiveCount = 0;
 
-    setWindowTitle("Qt Robot Motor GUI V1.0");
+    setWindowTitle("Qt Robot Motor GUI V2.0");
     setMinimumWidth(MAX_WIDTH_JOINT + 60);
 
     sliderOpt = 0;

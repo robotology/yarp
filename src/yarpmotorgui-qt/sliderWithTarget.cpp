@@ -67,12 +67,14 @@ void SliderWithTarget::updateSliderTarget(double t)
 {
     target = t;
     width_at_target= this->width()-30;
+    this->update(); //force the reapint of the widget
 }
 
 void SliderWithTarget::resetTarget()
 {
     target = target = -1e50;
     width_at_target = this->width() - 30;
+    this->update(); //force the reapint of the widget
 }
 
 void SliderWithTarget::paintEvent(QPaintEvent *e)

@@ -157,7 +157,7 @@ private:
     int        COPY_SEQUENCE;
     double       COPY_TIMING;
 
-    int slowSwitcher;
+    int slow_k;
 
 signals:
     void sendPartJointsValues(int,QList<double>,QList<double>);
@@ -172,7 +172,7 @@ signals:
 
 public slots:
     void updateControlMode();
-    void updatePart();
+    bool updatePart();
     void onViewSpeedValues(bool);
     void onSetPosSliderOptionPI(int mode, double step);
     void onSetVelSliderOptionPI(int mode, double step);
