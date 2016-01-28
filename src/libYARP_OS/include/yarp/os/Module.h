@@ -42,7 +42,7 @@ namespace yarp {
  * \deprecated Since 2.3.65. Use yarp::os::RFModule instead.
  *
  */
-class YARP_DEPRECATED YARP_OS_API yarp::os::Module : public IConfig {
+class YARP_OS_DEPRECATED_API yarp::os::Module : public IConfig {
 protected:
     // HACK Issue a deprecated warning in classes derived from yarp::os::Module
     class YARP_DEPRECATED yarp__os__Module_is_deprecated_use_yarp__os__RFModule_instead {};
