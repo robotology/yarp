@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="ModesTreeWidget" name="treeWidgetMode">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>225</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <attribute name="headerDefaultSectionSize">
+        <number>100</number>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Parts</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Mode</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QWidget" name="mainContainer" native="true"/>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpen_Sequence_Tab">
+   <property name="text">
+    <string>Open Sequence Tab</string>
+   </property>
+  </action>
+  <action name="actionRun_All">
+   <property name="text">
+    <string>Run All</string>
+   </property>
+  </action>
+  <action name="actionCalibrate_All">
+   <property name="text">
+    <string>Calibrate All</string>
+   </property>
+  </action>
+  <action name="actionHome_All">
+   <property name="text">
+    <string>Home All</string>
+   </property>
+  </action>
+  <action name="actionIdle_All">
+   <property name="text">
+    <string>Idle All</string>
+   </property>
+  </action>
+  <action name="actionGo_All">
+   <property name="text">
+    <string>Go All</string>
+   </property>
+  </action>
+  <action name="actionRun_All_Sequences">
+   <property name="text">
+    <string>Run All Sequences</string>
+   </property>
+  </action>
+  <action name="actionRun_All_Sequences_time">
+   <property name="text">
+    <string>Run All Sequences (time)</string>
+   </property>
+  </action>
+  <action name="actionSave_All_Sequence">
+   <property name="text">
+    <string>Save All Sequence</string>
+   </property>
+  </action>
+  <action name="actionLoad_All_Sequnces">
+   <property name="text">
+    <string>Load All Sequnces</string>
+   </property>
+  </action>
+  <action name="actionCycle_All_Sequences">
+   <property name="text">
+    <string>Cycle All Sequences</string>
+   </property>
+  </action>
+  <action name="actionStop_All_Sequences">
+   <property name="text">
+    <string>Stop All Sequences</string>
+   </property>
+  </action>
+  <action name="actionRun_All_Parts">
+   <property name="text">
+    <string>Run All Parts</string>
+   </property>
+  </action>
+  <action name="actionRun_All_Parts_2">
+   <property name="text">
+    <string>Run All Parts</string>
+   </property>
+  </action>
+  <action name="actionHome_All_Parts">
+   <property name="text">
+    <string>Home All Parts</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ModesTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>mainwindow.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,8 @@
+C:/software/yarp/example/portaudio/build/CMakeFiles/ALL_BUILD.dir
+C:/software/yarp/example/portaudio/build/CMakeFiles/ZERO_CHECK.dir
+C:/software/yarp/example/portaudio/build/CMakeFiles/sound_loopback.dir
+C:/software/yarp/example/portaudio/build/CMakeFiles/sound_receiver.dir
+C:/software/yarp/example/portaudio/build/CMakeFiles/sound_sender_file.dir
+C:/software/yarp/example/portaudio/build/CMakeFiles/sound_sender_file_chunks.dir
+C:/software/yarp/example/portaudio/build/CMakeFiles/sound_sender_file_sum.dir
+C:/software/yarp/example/portaudio/build/CMakeFiles/sound_sender_mic.dir

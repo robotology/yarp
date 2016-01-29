@@ -1,0 +1,32 @@
+﻿Build started 05/03/2015 16:46:37.
+     1>Project "C:\software\yarp\example\portaudio\build\sound_sender_file.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "sound_sender_file.dir\Debug\sound_sender_file.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       CustomBuild:
+         Building Custom Rule C:/software/yarp/example/portaudio/CMakeLists.txt
+         CMake does not need to re-run because C:\software\yarp\example\portaudio\build\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\software\yarp\build\generated_include /IC:\software\yarp\src\libYARP_OS\include /IC:\software\yarp\src\libYARP_sig\include /IC:\software\yarp\src\libYARP_math\include /IC:\software\yarp\src\libYARP_dev\include /IC:\software\yarp\src\libYARP_name\include /IC:\software\yarp\src\libYARP_manager\include /IC:\software\yarp\src\libYARP_logger\include /IC:\software\yarp\src\yarpserver\include /Zi /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D YARP_NO_DEPRECATED_WARNINGS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"sound_sender_file.dir\Debug\\" /Fd"sound_sender_file.dir\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ..\sound_sender_file.cpp
+         sound_sender_file.cpp
+     1>..\sound_sender_file.cpp(46): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : see declaration of 'strcpy'
+       ManifestResourceCompile:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"sound_sender_file.dir\Debug\sound_sender_file.exe.embed.manifest.res" sound_sender_file.dir\Debug\sound_sender_file_manifest.rc 
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\software\yarp\example\portaudio\build\Debug\sound_sender_file.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib C:\software\yarp\build\lib\Debug\YARP_OSd.lib C:\software\yarp\build\lib\Debug\YARP_sigd.lib C:\software\yarp\build\lib\Debug\YARP_mathd.lib C:\software\yarp\build\lib\Debug\YARP_devd.lib C:\software\yarp\build\lib\Debug\YARP_named.lib C:\software\yarp\build\lib\Debug\YARP_initd.lib C:\software\yarp\build\lib\Debug\YARP_OSd.lib C:\software\yarp\build\lib\Debug\YARP_sigd.lib C:\software\yarp\build\lib\Debug\YARP_mathd.lib C:\software\yarp\build\lib\Debug\YARP_devd.lib C:\software\yarp\build\lib\Debug\YARP_named.lib C:\software\yarp\build\lib\Debug\YARP_initd.lib C:\software\yarp\build\lib\Debug\YARP_sigd.lib C:\software\yarp\build\lib\Debug\YARP_OSd.lib /MANIFEST /ManifestFile:"sound_sender_file.dir\Debug\sound_sender_file.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/software/yarp/example/portaudio/build/Debug/sound_sender_file.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/software/yarp/example/portaudio/build/Debug/sound_sender_file.lib" /MACHINE:X86 sound_sender_file.dir\Debug\sound_sender_file.exe.embed.manifest.res
+         sound_sender_file.dir\Debug\sound_sender_file.obj  /machine:X86 /debug 
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"sound_sender_file.dir\Debug\sound_sender_file.exe.embed.manifest" /manifest sound_sender_file.dir\Debug\sound_sender_file.exe.intermediate.manifest
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"sound_sender_file.dir\Debug\sound_sender_file.exe.embed.manifest.res" sound_sender_file.dir\Debug\sound_sender_file_manifest.rc 
+       LinkEmbedManifest:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\software\yarp\example\portaudio\build\Debug\sound_sender_file.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib C:\software\yarp\build\lib\Debug\YARP_OSd.lib C:\software\yarp\build\lib\Debug\YARP_sigd.lib C:\software\yarp\build\lib\Debug\YARP_mathd.lib C:\software\yarp\build\lib\Debug\YARP_devd.lib C:\software\yarp\build\lib\Debug\YARP_named.lib C:\software\yarp\build\lib\Debug\YARP_initd.lib C:\software\yarp\build\lib\Debug\YARP_OSd.lib C:\software\yarp\build\lib\Debug\YARP_sigd.lib C:\software\yarp\build\lib\Debug\YARP_mathd.lib C:\software\yarp\build\lib\Debug\YARP_devd.lib C:\software\yarp\build\lib\Debug\YARP_named.lib C:\software\yarp\build\lib\Debug\YARP_initd.lib C:\software\yarp\build\lib\Debug\YARP_sigd.lib C:\software\yarp\build\lib\Debug\YARP_OSd.lib /MANIFEST /ManifestFile:"sound_sender_file.dir\Debug\sound_sender_file.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/software/yarp/example/portaudio/build/Debug/sound_sender_file.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/software/yarp/example/portaudio/build/Debug/sound_sender_file.lib" /MACHINE:X86 sound_sender_file.dir\Debug\sound_sender_file.exe.embed.manifest.res
+         sound_sender_file.dir\Debug\sound_sender_file.obj  /machine:X86 /debug 
+         sound_sender_file.vcxproj -> C:\software\yarp\example\portaudio\build\Debug\sound_sender_file.exe
+       FinalizeBuildStatus:
+         Deleting file "sound_sender_file.dir\Debug\sound_sender_file.unsuccessfulbuild".
+         Touching "sound_sender_file.dir\Debug\sound_sender_file.lastbuildstate".
+     1>Done Building Project "C:\software\yarp\example\portaudio\build\sound_sender_file.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.78

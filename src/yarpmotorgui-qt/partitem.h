@@ -52,8 +52,6 @@ public:
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
                       bool enable_calib_all,
-                      bool position_direct_enabled,
-                      bool openloop_enabled,
                       QWidget *parent = 0);
 
 
@@ -96,6 +94,7 @@ private:
     SequenceWindow *sequenceWindow;
     QString partName;
     int     partId;
+    bool mixedEnabled;
     bool positionDirectEnabled;
     bool openloopEnabled;
     PidDlg *currentPidDlg;
@@ -179,6 +178,7 @@ public slots:
     void onSetTrqSliderOptionPI(int mode, double step);
     void onViewPositionTarget(bool);
     void onEnableControlVelocity(bool control);
+    void onEnableControlMixed(bool control);
     void onEnableControlPositionDirect(bool control);
     void onEnableControlOpenloop(bool control);
 

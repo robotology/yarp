@@ -1,0 +1,3 @@
+C:/software/yarp/example/log/build/CMakeFiles/ALL_BUILD.dir
+C:/software/yarp/example/log/build/CMakeFiles/ZERO_CHECK.dir
+C:/software/yarp/example/log/build/CMakeFiles/log_test.dir

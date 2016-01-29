@@ -1,0 +1,16 @@
+﻿Build started 05/03/2015 16:46:39.
+     1>Project "C:\software\yarp\example\portaudio\build\ALL_BUILD.vcxproj" on node 8 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Win32\Debug\ALL_BUILD\ALL_BUILD.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       CustomBuild:
+         Building Custom Rule C:/software/yarp/example/portaudio/CMakeLists.txt
+         CMake does not need to re-run because C:\software\yarp\example\portaudio\build\CMakeFiles\generate.stamp is up-to-date.
+         Build all projects
+       FinalizeBuildStatus:
+         Deleting file "Win32\Debug\ALL_BUILD\ALL_BUILD.unsuccessfulbuild".
+         Touching "Win32\Debug\ALL_BUILD\ALL_BUILD.lastbuildstate".
+     1>Done Building Project "C:\software\yarp\example\portaudio\build\ALL_BUILD.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.16

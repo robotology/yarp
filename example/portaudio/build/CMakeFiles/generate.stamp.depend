@@ -1,0 +1,24 @@
+# CMake generation dependency list for this directory.
+C:/software/yarp/example/portaudio/CMakeLists.txt
+C:/software/yarp/example/portaudio/build/CMakeFiles/2.8.12.2/CMakeSystem.cmake
+C:/software/yarp/example/portaudio/build/CMakeFiles/2.8.12.2/CMakeCCompiler.cmake
+C:/software/yarp/example/portaudio/build/CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeSystemSpecificInformation.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeGenericSystem.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/WindowsPaths.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCInformation.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows-MSVC-C.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows-MSVC.cmake
+C:/software/yarp/example/portaudio/build/CMakeFiles/2.8.12.2/CMakeRCCompiler.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeRCInformation.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCommonLanguageInclude.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCXXInformation.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows-MSVC-CXX.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows-MSVC.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCommonLanguageInclude.cmake
+C:/software/yarp/build/YARPConfigVersion.cmake
+C:/software/yarp/build/YARPConfig.cmake
+C:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDependentOption.cmake
+C:/software/yarp/build/YARPTargets.cmake
+C:/software/yarp/conf/YarpIDL.cmake

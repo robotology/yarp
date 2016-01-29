@@ -1,0 +1,23 @@
+﻿Build started 05/03/2015 16:47:31.
+     1>Project "C:\software\yarp\example\portaudio\build\sound_sender_mic.vcxproj" on node 3 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "sound_sender_mic.dir\Release\sound_sender_mic.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       CustomBuild:
+         Building Custom Rule C:/software/yarp/example/portaudio/CMakeLists.txt
+         CMake does not need to re-run because C:\software\yarp\example\portaudio\build\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\software\yarp\build\generated_include /IC:\software\yarp\src\libYARP_OS\include /IC:\software\yarp\src\libYARP_sig\include /IC:\software\yarp\src\libYARP_math\include /IC:\software\yarp\src\libYARP_dev\include /IC:\software\yarp\src\libYARP_name\include /IC:\software\yarp\src\libYARP_manager\include /IC:\software\yarp\src\libYARP_logger\include /IC:\software\yarp\src\yarpserver\include /nologo /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D YARP_NO_DEPRECATED_WARNINGS /D "CMAKE_INTDIR=\"Release\"" /D _MBCS /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"sound_sender_mic.dir\Release\\" /Fd"sound_sender_mic.dir\Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ..\sound_sender_mic.cpp
+         sound_sender_mic.cpp
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\software\yarp\example\portaudio\build\Release\sound_sender_mic.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib C:\software\yarp\build\lib\Release\YARP_OS.lib C:\software\yarp\build\lib\Release\YARP_sig.lib C:\software\yarp\build\lib\Release\YARP_math.lib C:\software\yarp\build\lib\Release\YARP_dev.lib C:\software\yarp\build\lib\Release\YARP_name.lib C:\software\yarp\build\lib\Release\YARP_init.lib C:\software\yarp\build\lib\Release\YARP_OS.lib C:\software\yarp\build\lib\Release\YARP_sig.lib C:\software\yarp\build\lib\Release\YARP_math.lib C:\software\yarp\build\lib\Release\YARP_dev.lib C:\software\yarp\build\lib\Release\YARP_name.lib C:\software\yarp\build\lib\Release\YARP_init.lib C:\software\yarp\build\lib\Release\YARP_sig.lib C:\software\yarp\build\lib\Release\YARP_OS.lib /MANIFEST /ManifestFile:"sound_sender_mic.dir\Release\sound_sender_mic.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /PDB:"C:/software/yarp/example/portaudio/build/Release/sound_sender_mic.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/software/yarp/example/portaudio/build/Release/sound_sender_mic.lib" /MACHINE:X86 sound_sender_mic.dir\Release\sound_sender_mic.obj  /machine:X86 
+         sound_sender_mic.vcxproj -> C:\software\yarp\example\portaudio\build\Release\sound_sender_mic.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\software\yarp\example\portaudio\build\Release\sound_sender_mic.exe;#1" /manifest sound_sender_mic.dir\Release\sound_sender_mic.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "sound_sender_mic.dir\Release\sound_sender_mic.unsuccessfulbuild".
+         Touching "sound_sender_mic.dir\Release\sound_sender_mic.lastbuildstate".
+     1>Done Building Project "C:\software\yarp\example\portaudio\build\sound_sender_mic.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.03
