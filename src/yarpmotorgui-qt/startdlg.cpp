@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Francesco Nori <francesco.nori@iit.it>
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -18,7 +19,7 @@ StartDlg::StartDlg(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle("Qt Robot Motor GUI V1.0 - Select Parts");
+    setWindowTitle("Qt Robot Motor GUI V2.0 - Select Parts");
 }
 
 StartDlg::~StartDlg()

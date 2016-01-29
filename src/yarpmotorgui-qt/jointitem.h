@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Francesco Nori <francesco.nori@iit.it>
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -14,6 +15,8 @@
 #include <QSlider>
 #include <QLabel>
 #include <QTimer>
+#include <yarp/dev/ControlBoardInterfaces.h>
+#include "sliderWithTarget.h"
 
 namespace Ui {
 class JointItem;
@@ -38,30 +41,52 @@ class JointItem : public QWidget
     ~JointItem();
     void setJointInteraction(JointInteraction interaction);
     void setJointState(JointState);
-    void setTorque(double max,double min,double val);
     void setPosition(double val);
     void setTorque(double val);
     void setRefTorque(double val);
+    void setRefVelocitySpeed(double val);
+    void setRefTrajectorySpeed(double val);
+    void setRefTrajectoryPosition(double val);
     void setSpeed(double val);
     void setOpenLoop(double val);
-    void setMotionDone(bool done);
+    void updateMotionDone(bool done);
     void setJointName(QString name);
     int getJointIndex();
     void setPositionRange(double min, double max);
+    void setVelocityRange(double min, double max);
+    void setTrajectoryVelocityRange(double max);
     void setOpenLoopRange(double min, double max);
-    double getPositionValue();
-    double getPositionSpeed();
-    double getPositionSliderSpeed();
+    void setTorqueRange(double max);
+    double getTrajectoryPositionValue();
+    double getTrajectoryVelocityValue();
     void setEnabledOptions(bool debug_param_enabled,
                            bool speedview_param_enabled,
-                           bool enable_calib_all,
-                           bool position_direct_enabled,
-                           bool openloop_enabled);
+                           bool enable_calib_all);
 
     void setSpeedVisible(bool);
-    void controlVelocity(bool control);
+    void setUnits(yarp::dev::JointTypeEnum t);
+    void viewPositionTarget(bool);
+    void enableControlVelocity(bool control);
+    void enableControlMixed(bool control);
+    void enableControlPositionDirect(bool control);
+    void enableControlOpenloop(bool control);
     void sequenceActivated();
     void sequenceStopped();
+
+    void enablePositionSliderDoubleAuto();
+    void enablePositionSliderDoubleValue(double value);
+    void disablePositionSliderDouble();
+    void enableVelocitySliderDoubleAuto();
+    void enableVelocitySliderDoubleValue(double value);
+    void disableVelocitySliderDouble();
+    void enableTorqueSliderDoubleAuto();
+    void enableTorqueSliderDoubleValue(double value);
+    void disableTorqueSliderDouble();
+    void enableTrajectoryVelocitySliderDoubleAuto();
+    void enableTrajectoryVelocitySliderDoubleValue(double value);
+    void disableTrajectoryVelocitySliderDouble();
+    void resetTarget();
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
@@ -70,10 +95,15 @@ private:
     void installFilter();
     void setJointInternalState(int mode);
     void setJointInternalInteraction(int interaction);
-    void updateSlider(QSlider *slider, QLabel *label, double val);
-    void updateSliderTorque(double val);
-    void updateSliderLabel(QSlider *slider,QLabel *label,double val);
-    void updateSliderTorqueLabel(QSlider *slider,QLabel *label,double val);
+
+    void updateSliderPosition                (SliderWithTarget *slider, double val);
+    void updateSliderVelocity                (double val);
+    void updateSliderTrajectoryVelocity      (double val);
+    void updateSliderOpenloop                (double val);
+    void updateSliderTorque                  (double val);
+
+    void updateTrajectoryPositionTarget      (double val);
+    void updateMixedPositionTarget           (double val);
 
 private:
     Ui::JointItem *ui;
@@ -82,16 +112,24 @@ private:
     int jointIndex;
     QString jointName;
     bool sliderVelocityPressed;
-    bool sliderPositionPressed;
+    bool sliderDirectPositionPressed;
+    bool sliderMixedPositionPressed;
+    bool sliderMixedVelocityPressed;
+    bool sliderTrajectoryVelocityPressed;
+    bool sliderTrajectoryPositionPressed;
     bool sliderTorquePressed;
     bool sliderOpenloopPressed;
+    bool motionDone;
     QString movingSliderStyle;
     bool enableCalib;
     bool speedVisible;
     QTimer velocityTimer;
     double lastVelocity;
-    bool motionDone;
     bool velocityModeEnabled;
+    bool positionSliderStepIsAuto;
+    bool velocitySliderStepIsAuto;
+    bool torqueSliderStepIsAuto;
+    bool trajectoryVelocitySliderStepIsAuto;
 
     int     IDLE;
     int     POSITION;
@@ -120,30 +158,49 @@ private:
 
     double max_torque;
     double min_torque;
-    double torque;
-    double position;
-    double speed;
+    double max_position;
+    double min_position;
+    double max_velocity;
+    double min_velocity;
+    double max_trajectory_velocity;
+
+    //double speed;
+
+    double ref_speed;
+    double ref_torque;
+    double ref_openloop;
+    double ref_trajectory_velocity;
 
 
 
 private slots:
     void onModeChanged(int index);
     void onInteractionChanged(int index);
-    void onSliderPositionPressed();
-    void onSliderPositionReleased();
-    void onSliderPositionValueChanged(int);
-    void onSliderPositionActionTriggered(int);
+
+    void onSliderTrajectoryPositionPressed();
+    void onSliderTrajectoryPositionReleased();
+
+    void onSliderDirectPositionPressed();
+    void onSliderDirectPositionReleased();
+
+    void onSliderMixedPositionPressed();
+    void onSliderMixedPositionReleased();
+
+    void onSliderTrajectoryVelocityReleased();
+    void onSliderTrajectoryVelocityPressed();
+
+    void onSliderMixedVelocityReleased();
+    void onSliderMixedVelocityPressed();
+
     void onSliderTorquePressed();
     void onSliderTorqueReleased();
+
     void onSliderOpenloopPressed();
     void onSliderOpenloopReleased();
+
     void onSliderVelocityReleased();
     void onSliderVelocityPressed();
-    void onSliderMoved(int);
-    void onSliderTorqueMoved(int val);
-    void onSliderOpenloopMoved(int val);
-    void onSliderVelocityMoved(int val);
-    void onVelocitySliderMoved(int val);
+
     void onCalibClicked();
     void onHomeClicked();
     void onIdleClicked();
@@ -151,6 +208,7 @@ private slots:
     void onPidClicked();
     void onVelocityTimer();
     void onStackedWidgetChanged(int);
+
 signals:
     void calibClicked(JointItem *joint);
     void pidClicked(JointItem *joint);
@@ -159,10 +217,15 @@ signals:
     void runClicked(JointItem *joint);
     void changeMode(int mode,JointItem *joint);
     void changeInteraction(int interaction,JointItem *joint);
-    void sliderPositionMoved(double val, double speedVal, int jointIndex);
-    void sliderTorqueMoved(double val, int jointIndex);
-    void sliderOpenloopMoved(double val, int jointIndex);
-    void sliderVelocityMoved(double val, int jointIndex);
+
+    void sliderTrajectoryPositionCommand(double val, int jointIndex);
+    void sliderMixedPositionCommand(double val,  int jointIndex);
+    void sliderMixedVelocityCommand(double val, int jointIndex);
+    void sliderDirectPositionCommand(double val, int jointIndex);
+    void sliderTrajectoryVelocityCommand(double val, int jointIndex);
+    void sliderTorqueCommand(double val, int jointIndex);
+    void sliderOpenloopCommand(double val, int jointIndex);
+    void sliderVelocityCommand(double val, int jointIndex);
 };
 
 

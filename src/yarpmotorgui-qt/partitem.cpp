@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Authors: Francesco Nori <francesco.nori@iit.it>
+ * Authors: Marco Randazzo <marco.randazzo@iit.it>
+ *          Francesco Nori <francesco.nori@iit.it>
  *          Davide Perrone <dperrone@aitek.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
@@ -20,49 +21,28 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttribute>
 #include <QMessageBox>
-
+#include <QSettings>
 #include <cmath>
 
-double filt (double& v)
-{
-    double sampling = 1000;
-    v/=1000; //from mHz to Hz
-    double s = -2*tan(3.14159265*v/sampling); // v frequency in hertz
-    v = (2+s)/(2-s);
-    v *= 10000;
-    return v;
-}
-
-double unfilt (double& v)
-{
-    double sampling = 1000;
-    v /= 10000;
-    double s = (2*v-2)/(1+v);
-    v = atan(s/-2)*sampling/3.14159265;
-    v *= 1000; //from Hz to mHz
-    return v;
-}
-
-PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
+PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *finder,
                    bool debug_param_enabled,
                    bool speedview_param_enabled,
-                   bool enable_calib_all,
-                   bool position_direct_enabled,
-                   bool openloop_enabled, QWidget *parent) :
-    QWidget(parent)
+                   bool enable_calib_all, QWidget *parent) :   QWidget(parent)
 {
     layout = new FlowLayout();
     setLayout(layout);
+    slow_k = 0;
 
+    partId = id;
     this->finder = NULL;
     node = NULL;
     currentPidDlg = NULL;
     sequenceWindow = NULL;
     this->finder = finder;
     this->partName = partName;
-    slowSwitcher = 0;
-    positionDirectEnabled = position_direct_enabled;
-    openloopEnabled = openloop_enabled;
+    mixedEnabled = false;
+    positionDirectEnabled = false;
+    openloopEnabled = false;
 
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
@@ -108,21 +88,6 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
     partOptions.put("carrier", "udp");
 
     partsdd = new PolyDriver();
-
-    #ifdef DEBUG_INTERFACE
-        if (debug_param_enabled)
-        {
-            QString portLocalName2=portLocalName;
-
-            portLocalName2.replace(partName,QString("debug/%1").arg(partName));
-            debugOptions.put(  "local", portLocalName2.toLatin1().data());
-            debugOptions.put( "device", "debugInterfaceClient");
-            debugOptions.put( "remote", robotPartPort.toLatin1().data());
-            debugOptions.put("carrier", "udp");
-
-            debugdd = new PolyDriver();
-        }
-    #endif
 
     // Opening the drivers
     interfaceError = !openPolyDrivers();
@@ -194,8 +159,10 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
         while (!ret);
 
         yInfo("%s iencs->getEncoders() ok!\n", partName.toLatin1().data());
-        double min = 0;
-        double max = 100;
+        double min_pos = 0;
+        double max_pos = 100;
+        double min_vel = 0;
+        double max_vel = 100;
         yarp::os::ConstString jointname;
         //char buffer[40] = {'i', 'n', 'i', 't'};
 
@@ -209,40 +176,72 @@ PartItem::PartItem(QString robotName, QString partName, ResourceFinder *finder,
             //     STORED_POS[j][k] = 0.0;
             // }
 
-            //init velocities
-            iPos->setRefSpeed(k, ARM_VELOCITY[k]);
-
             //index[k]=k;
-            iLim->getLimits(k, &min, &max);
+            bool bpl = iLim->getLimits(k, &min_pos, &max_pos);
+            bool bvl = iLim->getVelLimits(k, &min_vel, &max_vel);
+            if (bpl == false)
+            {
+                yError() << "Error while getting position limits, part " << partName.toStdString() << " joint " << k;
+            }
+            if (bvl == false || (min_vel == 0 && max_vel == 0))
+            {
+                yError() << "Error while getting velocity limits, part " << partName.toStdString() << " joint " << k;
+            }
+
+            QSettings settings("YARP", "yarpmotorgui");
+            double max_slider_vel = settings.value("velocity_slider_limit", 100.0).toDouble();
+            if (max_vel > max_slider_vel) max_vel = max_slider_vel;
 
             iinfo->getAxisName(k, jointname);
+            yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
+            bool bjt = iinfo->getJointType(k, jtype);
 
             Pid myPid(0,0,0,0,0,0);
             yarp::os::Time::delay(0.005);
             iPid->getPid(k, &myPid);
-
-
+            
             JointItem *joint = new JointItem(k);
-            joint->setPositionRange(min,max);
             joint->setJointName(jointname.c_str());
             joint->setOpenLoopRange(-myPid.max_output,myPid.max_output);
             layout->addWidget(joint);
+            joint->setPositionRange(min_pos, max_pos);
+            joint->setVelocityRange(min_vel, max_vel);
+            joint->setTrajectoryVelocityRange(max_vel);
+            joint->setTorqueRange(5.0);
+            joint->setUnits(jtype);
+            joint->enableControlPositionDirect(positionDirectEnabled);
+            joint->enableControlMixed(mixedEnabled);
+            joint->enableControlOpenloop(openloopEnabled);
+
+            int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
+            int val_trq_choice = settings.value("val_trq_choice", 0).toInt();
+            int val_vel_choice = settings.value("val_vel_choice", 0).toInt();
+            double val_pos_custom_step = settings.value("val_pos_custom_step", 1.0).toDouble();
+            double val_trq_custom_step = settings.value("val_trq_custom_step", 1.0).toDouble();
+            double val_vel_custom_step = settings.value("val_vel_custom_step", 1.0).toDouble();
+            onSetPosSliderOptionPI(val_pos_choice, val_pos_custom_step);
+            onSetVelSliderOptionPI(val_vel_choice, val_vel_custom_step);
+            onSetTrqSliderOptionPI(val_trq_choice, val_trq_custom_step);
+
             joint->setEnabledOptions(debug_param_enabled,
                                      speedview_param_enabled,
-                                     enable_calib_all,
-                                     position_direct_enabled,
-                                     openloop_enabled);
+                                     enable_calib_all);
+
             connect(joint, SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
             connect(joint, SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
-            connect(joint,SIGNAL(sliderPositionMoved(double,double,int)),this,SLOT(onSliderPositionMoved(double,double,int)));
-            connect(joint,SIGNAL(sliderTorqueMoved(double,int)),this,SLOT(onSliderTorqueMoved(double,int)));
-            connect(joint,SIGNAL(sliderOpenloopMoved(double,int)),this,SLOT(onSliderOpenloopMoved(double,int)));
-            connect(joint,SIGNAL(sliderVelocityMoved(double,int)),this,SLOT(onSliderVelocityMoved(double,int)));
-            connect(joint,SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
-            connect(joint,SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
-            connect(joint,SIGNAL(runClicked(JointItem*)),this,SLOT(onRunClicked(JointItem*)));
-            connect(joint,SIGNAL(pidClicked(JointItem*)),this,SLOT(onPidClicked(JointItem*)));
-            connect(joint,SIGNAL(calibClicked(JointItem*)),this,SLOT(onCalibClicked(JointItem*)));
+            connect(joint, SIGNAL(sliderTrajectoryPositionCommand(double, int)), this, SLOT(onSliderTrajectoryPositionCommand(double, int)));
+            connect(joint, SIGNAL(sliderTrajectoryVelocityCommand(double, int)), this, SLOT(onSliderTrajectoryVelocityCommand(double, int)));
+            connect(joint, SIGNAL(sliderMixedPositionCommand(double, int)), this, SLOT(onSliderMixedPositionCommand(double, int)));
+            connect(joint, SIGNAL(sliderMixedVelocityCommand(double, int)), this, SLOT(onSliderMixedVelocityCommand(double, int)));
+            connect(joint, SIGNAL(sliderTorqueCommand(double, int)), this, SLOT(onSliderTorqueCommand(double, int)));
+            connect(joint, SIGNAL(sliderDirectPositionCommand(double, int)), this, SLOT(onSliderDirectPositionCommand(double, int)));
+            connect(joint, SIGNAL(sliderOpenloopCommand(double, int)), this, SLOT(onSliderOpenloopCommand(double, int)));
+            connect(joint, SIGNAL(sliderVelocityCommand(double, int)), this, SLOT(onSliderVelocityCommand(double, int)));
+            connect(joint, SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
+            connect(joint, SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
+            connect(joint, SIGNAL(runClicked(JointItem*)),this,SLOT(onRunClicked(JointItem*)));
+            connect(joint, SIGNAL(pidClicked(JointItem*)),this,SLOT(onPidClicked(JointItem*)));
+            connect(joint, SIGNAL(calibClicked(JointItem*)),this,SLOT(onCalibClicked(JointItem*)));
         }
     }
 
@@ -291,9 +290,6 @@ PartItem::~PartItem()
         if(joint){
             disconnect(joint,SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
             disconnect(joint,SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
-            disconnect(joint,SIGNAL(sliderPositionMoved(double,double,int)),this,SLOT(onSliderPositionMoved(double,double,int)));
-            disconnect(joint,SIGNAL(sliderTorqueMoved(double,int)),this,SLOT(onSliderTorqueMoved(double,int)));
-            disconnect(joint,SIGNAL(sliderOpenloopMoved(double,int)),this,SLOT(onSliderOpenloopMoved(double,int)));
             disconnect(joint,SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
             disconnect(joint,SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
             disconnect(joint,SIGNAL(runClicked(JointItem*)),this,SLOT(onRunClicked(JointItem*)));
@@ -340,12 +336,9 @@ void PartItem::initInterfaces()
     iencs     = NULL;
     iAmp      = NULL;
     iPid      = NULL;
-    opl       = NULL;
-    trq       = NULL;
-    imp       = NULL;
-#ifdef DEBUG_INTERFACE
-    idbg      = NULL;
-#endif
+    iOpl      = NULL;
+    iTrq      = NULL;
+    iImp = NULL;
     iLim      = NULL;
     cal       = NULL;
     ctrlmode2 = NULL;
@@ -391,15 +384,15 @@ bool PartItem::openInterfaces()
         if(!ok){
             yError("...cal was not ok...");
         }
-        ok &= partsdd->view(trq);
+        ok &= partsdd->view(iTrq);
         if(!ok){
             yError("...trq was not ok...");
         }
-        ok  = partsdd->view(opl);
+        ok = partsdd->view(iOpl);
         if(!ok){
             yError("...opl was not ok...");
         }
-        ok &= partsdd->view(imp);
+        ok &= partsdd->view(iImp);
         if(!ok){
             yError("...imp was not ok...");
         }
@@ -439,15 +432,6 @@ bool PartItem::openInterfaces()
         interfaceError=true;
     }
 
-    #ifdef DEBUG_INTERFACE
-        //this interface is not mandatory
-        if (debugdd){
-          ok2 &= debugdd->view(idbg);
-          if (!ok2)
-            yError("...dbg was not ok...");
-        }
-    #endif
-
     return !interfaceError;
 }
 
@@ -461,37 +445,86 @@ QString PartItem::getPartName()
     return partName;
 }
 
-void PartItem::onSliderOpenloopMoved(double torqueVal,int index)
+void PartItem::onSliderOpenloopCommand(double torqueVal, int index)
 {
-    opl->setRefOutput(index,torqueVal);
+    iOpl->setRefOutput(index, torqueVal);
 }
 
-void PartItem::onSliderVelocityMoved(double speedVal,int index)
+void PartItem::onSliderVelocityCommand(double speedVal, int index)
 {
     iVel->velocityMove(index,speedVal);
 }
 
-void PartItem::onSliderTorqueMoved(double torqueVal,int index)
+void PartItem::onSliderTorqueCommand(double torqueVal, int index)
 {
-    trq->setRefTorque(index,torqueVal);
+    iTrq->setRefTorque(index, torqueVal);
 }
 
-void PartItem::onSliderPositionMoved(double posVal,double vel,int index)
+void PartItem::onSliderTrajectoryVelocityCommand(double trajspeedVal, int index)
+{
+    iPos->setRefSpeed(index, trajspeedVal);
+}
+
+
+void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
+{
+    int mode;
+    ctrlmode2->getControlMode(index, &mode);
+    if (mode == VOCAB_CM_POSITION_DIRECT)
+    {
+        if (positionDirectEnabled)
+        {
+            iDir->setPosition(index, dirpos);
+        }
+        else
+        {
+            yWarning("You cannot send direct position commands without using --direct option!");
+        }
+    }
+}
+
+void PartItem::onSliderTrajectoryPositionCommand(double posVal, int index)
 {
     int mode;
     ctrlmode2->getControlMode(index, &mode);
 
-    if(vel > 0 &&  (( mode == VOCAB_CM_POSITION) || (mode == VOCAB_CM_MIXED))){
-        iPos->setRefSpeed(index, vel);
+    if ( mode == VOCAB_CM_POSITION) 
+    {
         iPos->positionMove(index, posVal);
-    }else if(mode == VOCAB_CM_POSITION_DIRECT){
-        if (positionDirectEnabled){
-            iDir->setPosition(index, posVal);
-        } else {
-            LOG_ERROR("You cannot send direct position commands without using --direct option!");
-        }
-    }else{
-        LOG_ERROR("Joint not in position nor positionDirect so cannot send references");
+    }
+    else
+    {
+        yWarning("Joint not in position mode so cannot send references");
+    }
+}
+
+void PartItem::onSliderMixedPositionCommand(double posVal, int index)
+{
+    int mode;
+    ctrlmode2->getControlMode(index, &mode);
+
+    if ( mode == VOCAB_CM_MIXED)
+    {
+        iPos->positionMove(index, posVal);
+    }
+    else
+    {
+        LOG_ERROR("Joint not in mixed mode so cannot send references");
+    }
+}
+
+void PartItem::onSliderMixedVelocityCommand( double vel, int index)
+{
+    int mode;
+    ctrlmode2->getControlMode(index, &mode);
+
+    if (mode == VOCAB_CM_MIXED)
+    {
+        iVel->velocityMove(index, vel);
+    }
+    else
+    {
+        LOG_ERROR("Joint not in mixed mode so cannot send references");
     }
 }
 
@@ -518,12 +551,12 @@ void PartItem::onSendOpenLoop(int jointIndex, int openLoopVal)
     double openloop_reference = 0;
     double openloop_current_pwm = 0;
 
-    opl->setRefOutput(jointIndex, openLoopVal);
+    iOpl->setRefOutput(jointIndex, openLoopVal);
 
     yarp::os::Time::delay(0.010);
-    opl->getRefOutput(jointIndex, &openloop_reference);  //This is the reference reference
+    iOpl->getRefOutput(jointIndex, &openloop_reference);  //This is the reference reference
     yarp::os::Time::delay(0.010);
-    opl->getOutput (jointIndex, &openloop_current_pwm);  //This is the reak PWM output
+    iOpl->getOutput(jointIndex, &openloop_current_pwm);  //This is the reak PWM output
 
     if(currentPidDlg){
         currentPidDlg->initOpenLoop(openloop_reference,openloop_current_pwm);
@@ -537,11 +570,11 @@ void PartItem::onSendStiffness(int jointIdex,double stiff,double damp,double for
     double damp_val=0;
     double offset_val=0;
 
-    imp->setImpedance(jointIdex,  stiff,  damp);
-    //imp->setImpedanceOffset(jointIdex, force); //DANGEROUS,DO NOT USE! WRONG USER VALUES MAY BREAK THE ROBOT!
+    iImp->setImpedance(jointIdex, stiff, damp);
+    //imp->setImpedanceOffset(jointIdex, force);
     yarp::os::Time::delay(0.005);
-    imp->getImpedance(jointIdex, &stiff_val, &damp_val);
-    imp->getImpedanceOffset(jointIdex, &offset_val);
+    iImp->getImpedance(jointIdex, &stiff_val, &damp_val);
+    iImp->getImpedanceOffset(jointIdex, &offset_val);
 
     //update the impedance limits
     double stiff_max=0.0;
@@ -550,8 +583,8 @@ void PartItem::onSendStiffness(int jointIdex,double stiff,double damp,double for
     double damp_min=0.0;
     double off_max=0.0;
     double off_min=0.0;
-    imp->getCurrentImpedanceLimit(jointIdex, &stiff_min, &stiff_max, &damp_min, &damp_max);
-    trq->getTorqueRange(jointIdex, &off_min, &off_max);
+    iImp->getCurrentImpedanceLimit(jointIdex, &stiff_min, &stiff_max, &damp_min, &damp_max);
+    iTrq->getTorqueRange(jointIdex, &off_min, &off_max);
 
     if(currentPidDlg){
         currentPidDlg->initStiffness(stiff_val,stiff_min,stiff_max,
@@ -566,12 +599,12 @@ void PartItem::onSendTorquePid(int jointIndex,Pid newPid,MotorTorqueParameters n
 {
     Pid myTrqPid(0,0,0,0,0,0);
     yarp::dev::MotorTorqueParameters TrqParam;
-    trq->setTorquePid(jointIndex, newPid);
+    iTrq->setTorquePid(jointIndex, newPid);
 
-    trq->setMotorTorqueParams(jointIndex, newTrqParam);
+    iTrq->setMotorTorqueParams(jointIndex, newTrqParam);
     yarp::os::Time::delay(0.005);
-    trq->getTorquePid(jointIndex, &myTrqPid);
-    trq->getMotorTorqueParams(jointIndex, &TrqParam);
+    iTrq->getTorquePid(jointIndex, &myTrqPid);
+    iTrq->getMotorTorqueParams(jointIndex, &TrqParam);
 
     if(currentPidDlg){
         currentPidDlg->initTorque(myTrqPid,TrqParam);
@@ -621,8 +654,8 @@ void PartItem::onRefreshPids(int jointIndex)
     double openloop_reference = 0;
     double openloop_current_pwm = 0;
 
-    imp->getCurrentImpedanceLimit(jointIndex, &stiff_min, &stiff_max, &damp_min, &damp_max);
-    trq->getTorqueRange(jointIndex, &off_min, &off_max);
+    iImp->getCurrentImpedanceLimit(jointIndex, &stiff_min, &stiff_max, &damp_min, &damp_max);
+    iTrq->getTorqueRange(jointIndex, &off_min, &off_max);
 
     // Position
     iPid->getPid(jointIndex, &myPosPid);
@@ -637,18 +670,18 @@ void PartItem::onRefreshPids(int jointIndex)
     yarp::os::Time::delay(0.005);
 
     // Torque
-    trq->getTorquePid(jointIndex, &myTrqPid);
-    trq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
+    iTrq->getTorquePid(jointIndex, &myTrqPid);
+    iTrq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
     yarp::os::Time::delay(0.005);
 
     //Stiff
-    imp->getImpedance(jointIndex, &stiff_val, &damp_val);
-    imp->getImpedanceOffset(jointIndex, &impedance_offset_val);
+    iImp->getImpedance(jointIndex, &stiff_val, &damp_val);
+    iImp->getImpedanceOffset(jointIndex, &impedance_offset_val);
     yarp::os::Time::delay(0.005);
 
     // Openloop
-    opl->getRefOutput(jointIndex, &openloop_reference);
-    opl->getOutput(jointIndex, &openloop_current_pwm);
+    iOpl->getRefOutput(jointIndex, &openloop_reference);
+    iOpl->getOutput(jointIndex, &openloop_current_pwm);
 
     if (currentPidDlg)
     {
@@ -716,38 +749,17 @@ void PartItem::onPidClicked(JointItem *joint)
     const int jointIndex = joint->getJointIndex();
 
     currentPidDlg = new PidDlg(partName,jointIndex);
-    connect(currentPidDlg,SIGNAL(sendPositionPid(int,Pid)),this,SLOT(onSendPositionPid(int,Pid)));
-    connect(currentPidDlg,SIGNAL(sendVelocityPid(int, Pid)), this, SLOT(onSendVelocityPid(int, Pid)));
-    connect(currentPidDlg,SIGNAL(sendCurrentPid(int, Pid)), this, SLOT(onSendCurrentPid(int, Pid)));
+    connect(currentPidDlg, SIGNAL(sendPositionPid(int,Pid)),this,SLOT(onSendPositionPid(int,Pid)));
+    connect(currentPidDlg, SIGNAL(sendVelocityPid(int, Pid)), this, SLOT(onSendVelocityPid(int, Pid)));
+    connect(currentPidDlg, SIGNAL(sendCurrentPid(int, Pid)), this, SLOT(onSendCurrentPid(int, Pid)));
     connect(currentPidDlg, SIGNAL(sendSingleRemoteVariable(std::string, yarp::os::Bottle)), this, SLOT(onSendSingleRemoteVariable(std::string, yarp::os::Bottle)));
     connect(currentPidDlg, SIGNAL(updateAllRemoteVariables()), this, SLOT(onUpdateAllRemoteVariables()));
-    connect(currentPidDlg,SIGNAL(sendTorquePid(int,Pid,MotorTorqueParameters)),this,SLOT(onSendTorquePid(int,Pid,MotorTorqueParameters)));
-    connect(currentPidDlg,SIGNAL(sendStiffness(int,double,double,double)),this,SLOT(onSendStiffness(int,double,double,double)));
-    connect(currentPidDlg,SIGNAL(sendOpenLoop(int,int)),this,SLOT(onSendOpenLoop(int,int)));
+    connect(currentPidDlg, SIGNAL(sendTorquePid(int,Pid,MotorTorqueParameters)),this,SLOT(onSendTorquePid(int,Pid,MotorTorqueParameters)));
+    connect(currentPidDlg, SIGNAL(sendStiffness(int,double,double,double)),this,SLOT(onSendStiffness(int,double,double,double)));
+    connect(currentPidDlg, SIGNAL(sendOpenLoop(int,int)),this,SLOT(onSendOpenLoop(int,int)));
     connect(currentPidDlg, SIGNAL(refreshPids(int)), this, SLOT(onRefreshPids(int)));
 
     this->onRefreshPids(jointIndex);
-
-#ifdef DEBUG_INTERFACE
-    // Debug
-    int debug_base = 0;
-    double debug_param [8];
-    for (int i=0; i<8; i++) {
-      debug_param[i] = 0;
-    }
-    if (idbg != 0){
-        idbg->getDebugParameter(jointIndex, debug_base+0, &debug_param[0]);
-        idbg->getDebugParameter(jointIndex, debug_base+1, &debug_param[1]);
-        idbg->getDebugParameter(jointIndex, debug_base+2, &debug_param[2]);
-        idbg->getDebugParameter(jointIndex, debug_base+3, &debug_param[3]);
-        idbg->getDebugParameter(jointIndex, debug_base+4, &debug_param[4]);
-        idbg->getDebugParameter(jointIndex, debug_base+5, &debug_param[5]); unfilt(debug_param[5]);
-        idbg->getDebugParameter(jointIndex, debug_base+6, &debug_param[6]);
-        idbg->getDebugParameter(jointIndex, debug_base+7, &debug_param[7]);
-    } else {
-        yWarning("WARN: Debug interface not enabled.\n");
-    }
-#endif
 
     currentPidDlg->exec();
 
@@ -842,6 +854,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
         yInfo("joint: %d in POSITION mode", jointIndex);
         if(ctrlmode2){
             ctrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION);
+            joint->resetTarget();
         } else {
             yError("ERROR: cannot do!");
         }
@@ -851,6 +864,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
         //if(positionDirectEnabled){
             yInfo("joint: %d in POSITION DIRECT mode", jointIndex);
             if(ctrlmode2){
+                joint->resetTarget();
                 ctrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION_DIRECT);
             } else {
                 yError("ERROR: cannot do!");
@@ -870,6 +884,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
         //if(positionDirectEnabled){
             yInfo("joint: %d in MIXED mode", jointIndex);
             if(ctrlmode2){
+                joint->resetTarget();
                 ctrlmode2->setControlMode(jointIndex, VOCAB_CM_MIXED);
             } else {
                 yError("ERROR: cannot do!");
@@ -1763,18 +1778,42 @@ void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
     QList<double>speeds;
     for(int i=0;i<layout->count();i++){
         JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
-        values.append(joint->getPositionValue());
-        speeds.append(joint->getPositionSliderSpeed());
+        values.append(joint->getTrajectoryPositionValue());
+        speeds.append(joint->getTrajectoryVelocityValue());
     }
 
     sendPartJointsValues(sequenceNum,values,speeds);
 }
 
-void PartItem::onControlVelocity(bool control)
+void PartItem::onEnableControlVelocity(bool control)
 {
     for(int i=0;i<layout->count();i++){
         JointItem *joint  = (JointItem*)layout->itemAt(i)->widget();
-        joint->controlVelocity(control);
+        joint->enableControlVelocity(control);
+    }
+}
+
+void PartItem::onEnableControlMixed(bool control)
+{
+    for (int i = 0; i<layout->count(); i++){
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        joint->enableControlMixed(control);
+    }
+}
+
+void PartItem::onEnableControlPositionDirect(bool control)
+{
+    for (int i = 0; i<layout->count(); i++){
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        joint->enableControlPositionDirect(control);
+    }
+}
+
+void PartItem::onEnableControlOpenloop(bool control)
+{
+    for (int i = 0; i<layout->count(); i++){
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        joint->enableControlOpenloop(control);
     }
 }
 
@@ -1786,6 +1825,95 @@ void PartItem::onViewSpeedValues(bool view)
     }
 }
 
+void PartItem::onViewPositionTarget(bool ena)
+{
+    for (int i = 0; i<layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        if (ena)
+        {
+            joint->viewPositionTarget(ena);
+        }
+        else
+        {
+            joint->viewPositionTarget(ena);
+        }
+    }
+}
+
+void PartItem::onSetPosSliderOptionPI(int mode, double step)
+{
+    for (int i = 0; i<layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        if (mode==0)
+        {
+            joint->enablePositionSliderDoubleAuto();
+        }
+        else if(mode ==1)
+        {
+            joint->enablePositionSliderDoubleValue(step);
+        }
+        else if (mode == 2)
+        {
+            joint->enablePositionSliderDoubleValue(1.0);
+        }
+        else 
+        {
+            joint->disablePositionSliderDouble();
+        }
+    }
+}
+void PartItem::onSetVelSliderOptionPI(int mode, double step)
+{
+    for (int i = 0; i<layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        if (mode == 0)
+        {
+            joint->enableVelocitySliderDoubleAuto();
+            joint->enableTrajectoryVelocitySliderDoubleAuto();
+        }
+        else if (mode == 1)
+        {
+            joint->enableVelocitySliderDoubleValue(step);
+            joint->enableTrajectoryVelocitySliderDoubleValue(step);
+        }
+        else if (mode == 2)
+        {
+            joint->enableVelocitySliderDoubleValue(1.0);
+            joint->enableTrajectoryVelocitySliderDoubleValue(1.0);
+        }
+        else 
+        {
+            joint->disableVelocitySliderDouble();
+            joint->disableTrajectoryVelocitySliderDouble();
+        }
+    }
+}
+void PartItem::onSetTrqSliderOptionPI(int mode, double step)
+{
+    for (int i = 0; i<layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        if (mode == 0)
+        {
+            joint->enableTorqueSliderDoubleAuto();
+        }
+        else if(mode == 1)
+        {
+            joint->enableTorqueSliderDoubleValue(step);
+        }
+        else if(mode == 2)
+        {
+            joint->enableTorqueSliderDoubleValue(1.0);
+        }
+        else 
+        {
+            joint->disableTorqueSliderDouble();
+        }
+    }
+}
 QTreeWidgetItem *PartItem::getTreeWidgetModeNode()
 {
     return node;
@@ -1859,144 +1987,174 @@ void PartItem::updateControlMode()
     }
 }
 
-void PartItem::updatePart()
+bool PartItem::updatePart()
 {
-    double refTorques[MAX_NUMBER_OF_JOINTS];
-    double torques[MAX_NUMBER_OF_JOINTS];
-    double positions[MAX_NUMBER_OF_JOINTS];
-    double speeds[MAX_NUMBER_OF_JOINTS];
+    static double refTrajectorySpeeds[MAX_NUMBER_OF_JOINTS];
+    static double refTrajectoryPositions[MAX_NUMBER_OF_JOINTS];
+    static double refTorques[MAX_NUMBER_OF_JOINTS];
+    static double refVelocitySpeeds[MAX_NUMBER_OF_JOINTS];
+    static double torques[MAX_NUMBER_OF_JOINTS];
+    static double positions[MAX_NUMBER_OF_JOINTS];
+    static double speeds[MAX_NUMBER_OF_JOINTS];
+    static bool   done[MAX_NUMBER_OF_JOINTS];
+    //static int controlModes[MAX_NUMBER_OF_JOINTS];
+    static yarp::dev::InteractionModeEnum interactionModes[MAX_NUMBER_OF_JOINTS];
 
-    //int controlModes[MAX_NUMBER_OF_JOINTS];
-    yarp::dev::InteractionModeEnum interactionModes[MAX_NUMBER_OF_JOINTS];
-
-    bool done = false;
     bool ret = false;
-    int NUMBER_OF_JOINTS=0;
-    iPos->getAxes(&NUMBER_OF_JOINTS);
+    int number_of_joints=0;
+    iPos->getAxes(&number_of_joints);
+    if (slow_k >= number_of_joints-1) slow_k = 0;
+    else slow_k++;
 
-    if (NUMBER_OF_JOINTS == 0){
-        LOG_ERROR("Lost connection with iCubInterface. You should save and restart.\n" );
+    if (number_of_joints == 0)
+    {
+        LOG_ERROR("Lost connection with the robot. You should save and restart.\n" );
         Time::delay(0.1);
 
         for(int i=0;i<layout->count();i++){
             JointItem *joint  = (JointItem*)layout->itemAt(i)->widget();
             joint->setJointState(JointItem::Disconnected);
         }
-        return;
+        return false;
     }
 
-    for (int k = 0; k < NUMBER_OF_JOINTS; k++) {
-        JointItem *joint  = (JointItem*)layout->itemAt(k)->widget();
-        joint->setTorque(0,0,0);
-    }
-
-    if (!iencs->getEncoders(positions)){
-          return;
-    }
-    trq->getRefTorques(refTorques);
-    trq->getTorques(torques);
-    iencs->getEncoderSpeeds(speeds);
-
-
-    for (int k = 0; k < NUMBER_OF_JOINTS; k++) {
-        JointItem *joint  = (JointItem*)layout->itemAt(k)->widget();
-        joint->setPosition(positions[k]);
-        joint->setTorque(torques[k]);
-        joint->setRefTorque(refTorques[k]);
-        joint->setSpeed(speeds[k]);
-    }
-
-    // *** update the checkMotionDone box section ***
+    // *** update measured encoders, velocity, torques ***
+    if (!iencs->getEncoders(positions))   { yWarning("Unable to update encoders"); return false; }
+    if (!iTrq->getTorques(torques))       { yWarning("Unable to update torques"); }
+    if (!iencs->getEncoderSpeeds(speeds)) { yWarning("Unable to update speeds"); }
+    
+    // *** update checkMotionDone, refTorque, refTrajectorySpeed, refSpeed ***
     // (only one at a time in order to save badwidth)
-    int k = slowSwitcher%NUMBER_OF_JOINTS;
-    slowSwitcher++;
+    bool b_motdone     = iPos->checkMotionDone(slow_k, &done[slow_k]); //using k to save bandwidth
+    bool b_refTrq      = iTrq->getRefTorque(slow_k, &refTorques[slow_k]); //using k to save bandwidth
+    bool b_refPosSpeed = iPos->getRefSpeed(slow_k, &refTrajectorySpeeds[slow_k]); //using k to save bandwidth
+    bool b_refVel      = iVel->getRefVelocity(slow_k,&refVelocitySpeeds[slow_k]); //this interface is missing!
+    bool b_refPos      = iPos->getTargetPosition(slow_k, &refTrajectoryPositions[slow_k]);
 
-    iPos->checkMotionDone(k, &done);
-    JointItem *joint  = (JointItem*)layout->itemAt(k)->widget();
-    if (!done){
-        joint->setMotionDone(false);
-    } else {
-        joint->setMotionDone(true);
+    if (!b_refPos)
+    {
+        yError() << "Missing Implementation of getTargetPosition()";
+    }
+    if (!b_refVel)
+    {
+        yError() << "Missing Implementation of getRefVelocity()";
+    }
+    if (!b_refPosSpeed)
+    {
+        yError() << "Missing Implementation of getRefSpeed()";
+    }
+    if (!b_refTrq)
+    {
+        yError() << "Missing Implementation of getRefTorque()";
+    }
+    if (!b_motdone)
+    {
+        yError() << "Missing Implementation of checkMotionDone()";
     }
 
-    // *** update the controlMode section ***
-    // the new icubinterface does not increase the bandwidth consumption
-    // ret = true; useless guys!
-//    ret=ctrlmode2->getControlModes(controlModes);
-//    if(ret==false){
-//        LOG_ERROR("ictrl->getControlMode failed\n" );
-//    }
+    // *** update the widget every cycle ***
+    for (int jk = 0; jk < number_of_joints; jk++)
+    {
+        JointItem *joint = (JointItem*)layout->itemAt(jk)->widget();
+        if (1) { joint->setPosition(positions[jk]); }
+        else {}
+        if (1) { joint->setTorque(torques[jk]); }
+        else {}
+        if (1) { joint->setSpeed(speeds[jk]); }
+        else {}
+    }
+    
+    // *** update the widget NOT every cycle ***
+    {
+        JointItem *joint_slow_k = (JointItem*)layout->itemAt(slow_k)->widget();
+        if (b_refTrq) { joint_slow_k->setRefTorque(refTorques[slow_k]); }
+        else {}
+        if (b_refPosSpeed) { joint_slow_k->setRefTrajectorySpeed(refTrajectorySpeeds[slow_k]); }
+        else {}
+        if (b_refPos) { joint_slow_k->setRefTrajectoryPosition(refTrajectoryPositions[slow_k]); }
+        else {}
+        if (b_refVel) { joint_slow_k->setRefVelocitySpeed(refVelocitySpeeds[slow_k]); }
+        else {}
+        if (b_motdone) { joint_slow_k->updateMotionDone(done[slow_k]); }
+        else {}
+    }
+
+
+    // *** update the controlMode, interactionMode ***
+    // this is already done by updateControlMode() (because it also needs to update the tree, not only the single joint widget)
+    //    ret=ctrlmode2->getControlModes(controlModes);
+    //    if(ret==false){
+    //        LOG_ERROR("ictrl->getControlMode failed\n" );
+    //    }
     ret=iinteract->getInteractionModes(interactionModes);
     if(ret==false){
         LOG_ERROR("iint->getInteractionlMode failed\n" );
     }
 
-    for (int k = 0; k < NUMBER_OF_JOINTS; k++){
+    for (int k = 0; k < number_of_joints; k++)
+    {
         JointItem *joint  = (JointItem*)layout->itemAt(k)->widget();
         switch (controlModes[k])
         {
-        case VOCAB_CM_IDLE:
-            joint->setJointState(JointItem::Idle);
-            break;
-        case VOCAB_CM_POSITION:
-            joint->setJointState(JointItem::Position);
-            break;
-        case VOCAB_CM_POSITION_DIRECT:
-            joint->setJointState(JointItem::PositionDirect);
-            break;
-        case VOCAB_CM_MIXED:
-            joint->setJointState(JointItem::Mixed);
-            break;
-        case VOCAB_CM_VELOCITY:
-            joint->setJointState(JointItem::Velocity);
-            break;
-        case VOCAB_CM_TORQUE:
-            joint->setJointState(JointItem::Torque);
-            break;
-        case VOCAB_CM_OPENLOOP:{
-            joint->setJointState(JointItem::OpenLoop);
-            double openLoopValue = 0;
-            opl->getRefOutput(k,&openLoopValue);
-            joint->setOpenLoop(openLoopValue);
-            break;
+            case VOCAB_CM_IDLE:
+                joint->setJointState(JointItem::Idle);
+                break;
+            case VOCAB_CM_POSITION:
+                joint->setJointState(JointItem::Position);
+                break;
+            case VOCAB_CM_POSITION_DIRECT:
+                joint->setJointState(JointItem::PositionDirect);
+                break;
+            case VOCAB_CM_MIXED:
+                joint->setJointState(JointItem::Mixed);
+                break;
+            case VOCAB_CM_VELOCITY:
+                joint->setJointState(JointItem::Velocity);
+                break;
+            case VOCAB_CM_TORQUE:
+                joint->setJointState(JointItem::Torque);
+                break;
+            case VOCAB_CM_OPENLOOP:
+            {
+                joint->setJointState(JointItem::OpenLoop);
+                double openLoopValue = 0;
+                iOpl->getRefOutput(k, &openLoopValue);
+                joint->setOpenLoop(openLoopValue);
+                break;
+            }
+            case VOCAB_CM_HW_FAULT:
+                joint->setJointState(JointItem::HwFault);
+                break;
+            case VOCAB_CM_CALIBRATING:
+                joint->setJointState(JointItem::Calibrating);
+                break;
+            case VOCAB_CM_CALIB_DONE:
+                joint->setJointState(JointItem::CalibDone);
+                break;
+            case VOCAB_CM_NOT_CONFIGURED:
+                joint->setJointState(JointItem::NotConfigured);
+                break;
+            case VOCAB_CM_CONFIGURED:
+                joint->setJointState(JointItem::Configured);
+                break;
+            default:
+            case VOCAB_CM_UNKNOWN:
+                joint->setJointState(JointItem::Unknown);
+                break;
         }
-        case VOCAB_CM_HW_FAULT:
-            joint->setJointState(JointItem::HwFault);
-            break;
-        case VOCAB_CM_CALIBRATING:
-            joint->setJointState(JointItem::Calibrating);
-            break;
-        case VOCAB_CM_CALIB_DONE:
-            joint->setJointState(JointItem::CalibDone);
-            break;
-        case VOCAB_CM_NOT_CONFIGURED:
-            joint->setJointState(JointItem::NotConfigured);
-            break;
-        case VOCAB_CM_CONFIGURED:
-            joint->setJointState(JointItem::Configured);
-            break;
-        default:
-        case VOCAB_CM_UNKNOWN:
-            joint->setJointState(JointItem::Unknown);
-            break;
-        }
-
         switch (interactionModes[k])
         {
-        case VOCAB_IM_STIFF:
-            joint->setJointInteraction(JointItem::Stiff);
-            break;
-        case VOCAB_IM_COMPLIANT:
-            joint->setJointInteraction(JointItem::Compliant);
-            break;
-        default:
-        case VOCAB_IM_UNKNOWN:
-            //joint->setJointInteraction(JointItem::Stiff); TODO
-            break;
+            case VOCAB_IM_STIFF:
+                joint->setJointInteraction(JointItem::Stiff);
+                break;
+            case VOCAB_IM_COMPLIANT:
+                joint->setJointInteraction(JointItem::Compliant);
+                break;
+            default:
+            case VOCAB_IM_UNKNOWN:
+                //joint->setJointInteraction(JointItem::Stiff); TODO
+                break;
         }
     }
-
-
-
-
+    return true;
 }

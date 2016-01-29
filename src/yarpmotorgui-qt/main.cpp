@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Francesco Nori <francesco.nori@iit.it>
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -37,8 +38,6 @@ int PART;
 bool debug_param_enabled = false;
 bool speedview_param_enabled =false;
 bool enable_calib_all =false;
-bool position_direct_enabled = false;
-bool openloop_enabled = false;
 bool old_impedance_enabled = false;
 
 MainWindow *mainW = NULL;
@@ -91,8 +90,6 @@ int main(int argc, char *argv[])
         LOG("Admin mode on.\n");
         enable_calib_all = true;
         debug_param_enabled = false;
-        position_direct_enabled = true;
-        openloop_enabled = true;
         old_impedance_enabled = true;
     }
     if (finder->check("debug")){
@@ -102,14 +99,6 @@ int main(int argc, char *argv[])
     if (finder->check("speed")){
         LOG("Speed view requested.\n");
         speedview_param_enabled = true;
-    }
-    if (finder->check("direct")){
-        LOG("Position direct requested.\n");
-        position_direct_enabled = true;
-    }
-    if (finder->check("openloop")){
-        LOG("Openloop requested.\n");
-        openloop_enabled = true;
     }
 
     bool deleteParts=false;
@@ -181,7 +170,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     mainW = &w;
     int appRet = 0;
-    bool ret = w.init(newRobotName,enabledParts,finder,debug_param_enabled,speedview_param_enabled,enable_calib_all,position_direct_enabled,openloop_enabled);
+    bool ret = w.init(newRobotName,enabledParts,finder,debug_param_enabled,speedview_param_enabled,enable_calib_all);
     if(ret){
         w.show();
         appRet = a.exec();

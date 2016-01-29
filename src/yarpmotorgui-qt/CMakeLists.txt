@@ -24,6 +24,8 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
                            partitem.cpp
                            piddlg.cpp
                            sequencewindow.cpp
+                           sliderOptions.cpp
+                           sliderWithTarget.cpp
                            startdlg.cpp)
   set(yarpmotorgui_qt_HDRS flowlayout.h
                            jointitem.h
@@ -31,6 +33,8 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
                            mainwindow.h
                            partitem.h
                            piddlg.h
+                           sliderOptions.h
+                           sliderWithTarget.h
                            yarpmotorgui.h
                            sequencewindow.h
                            startdlg.h)
@@ -39,7 +43,8 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
                                mainwindow.ui
                                piddlg.ui
                                sequencewindow.ui
-                               startdlg.ui)
+                               startdlg.ui
+                               sliderOptions.ui)
 
   qt5_add_resources(yarpmotorgui_qt_QRC_GEN_SRCS ${yarpmotorgui_qt_QRC_FILES})
   qt5_wrap_ui(yarpmotorgui_qt_UI_GEN_SRCS ${yarpmotorgui_qt_UI_FILES})

@@ -320,9 +320,9 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_8">
+                 <widget class="QLabel" name="label_posUnits">
                   <property name="text">
-                   <string>Deg</string>
+                   <string>deg</string>
                   </property>
                  </widget>
                 </item>
@@ -342,7 +342,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="label_trqTitle">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -365,7 +365,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="label_trqUnits">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -395,9 +395,9 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed1">
+              <widget class="QLabel" name="label_velUnits">
                <property name="text">
-                <string>deg/S</string>
+                <string>deg/s</string>
                </property>
               </widget>
              </item>
@@ -451,56 +451,29 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_3" native="true">
+              <widget class="SliderWithTarget" name="sliderTrajectoryPosition">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>20</height>
+                 <height>40</height>
                 </size>
                </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <widget class="QLabel" name="labelPositionPosition">
-                <property name="geometry">
-                 <rect>
-                  <x>0</x>
-                  <y>0</y>
-                  <width>30</width>
-                  <height>20</height>
-                 </rect>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>30</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>0</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="sliderPositionPosition">
                <property name="mouseTracking">
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">margin-top:10px;
+
+</string>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>0</number>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -544,9 +517,9 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_30">
+                 <widget class="QLabel" name="label_posUnits_2">
                   <property name="text">
-                   <string>Deg</string>
+                   <string>deg</string>
                   </property>
                  </widget>
                 </item>
@@ -578,53 +551,20 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_5" native="true">
+              <widget class="SliderWithTarget" name="sliderTrajectoryVelocity">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>20</height>
+                 <height>40</height>
                 </size>
                </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <widget class="QLabel" name="labelPositionVelocity">
-                <property name="geometry">
-                 <rect>
-                  <x>16</x>
-                  <y>0</y>
-                  <width>30</width>
-                  <height>20</height>
-                 </rect>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>30</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>10</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="sliderPositionVelocity">
                <property name="mouseTracking">
                 <bool>false</bool>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">margin-top:10px;
+
+</string>
                </property>
                <property name="minimum">
                 <number>1</number>
@@ -662,7 +602,7 @@ QSlider::groove:horizontal:disabled {
               <number>6</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_25">
+              <widget class="QLabel" name="label_trqTitle_2">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -685,7 +625,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_26">
+              <widget class="QLabel" name="label_trqUnits_2">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -715,9 +655,9 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed3">
+              <widget class="QLabel" name="label_velUnits_2">
                <property name="text">
-                <string>deg/S</string>
+                <string>deg/s</string>
                </property>
               </widget>
              </item>
@@ -768,50 +708,20 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_7" native="true">
+              <widget class="SliderWithTarget" name="sliderDirectPosition">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>20</height>
+                 <height>40</height>
                 </size>
                </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <widget class="QLabel" name="labelPositionDirectPosition">
-                <property name="geometry">
-                 <rect>
-                  <x>0</x>
-                  <y>0</y>
-                  <width>30</width>
-                  <height>20</height>
-                 </rect>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>30</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>0</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="sliderPositionDirect">
                <property name="mouseTracking">
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">margin-top:10px;
+
+</string>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -854,9 +764,9 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_12">
+                 <widget class="QLabel" name="label_posUnits_3">
                   <property name="text">
-                   <string>Deg</string>
+                   <string>deg</string>
                   </property>
                  </widget>
                 </item>
@@ -876,7 +786,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_9">
+              <widget class="QLabel" name="label_trqTitle_3">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -899,7 +809,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_10">
+              <widget class="QLabel" name="label_trqUnits_3">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -929,9 +839,9 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed5">
+              <widget class="QLabel" name="label_velUnits_3">
                <property name="text">
-                <string>deg/S</string>
+                <string>deg/s</string>
                </property>
               </widget>
              </item>
@@ -987,56 +897,26 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_10" native="true">
+              <widget class="SliderWithTarget" name="sliderMixedPosition">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>20</height>
+                 <height>40</height>
                 </size>
                </property>
-               <property name="maximumSize">
+               <property name="baseSize">
                 <size>
-                 <width>16777215</width>
-                 <height>20</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
-               <widget class="QLabel" name="labelMixedPosition">
-                <property name="geometry">
-                 <rect>
-                  <x>0</x>
-                  <y>0</y>
-                  <width>30</width>
-                  <height>20</height>
-                 </rect>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>30</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>0</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="sliderMixedPosition">
                <property name="mouseTracking">
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">margin-top:10px;
+
+</string>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -1080,9 +960,9 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_14">
+                 <widget class="QLabel" name="label_posUnits_4">
                   <property name="text">
-                   <string>Deg</string>
+                   <string>deg</string>
                   </property>
                  </widget>
                 </item>
@@ -1114,53 +994,20 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_12" native="true">
+              <widget class="SliderWithTarget" name="sliderMixedVelocity">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>20</height>
+                 <height>40</height>
                 </size>
                </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <widget class="QLabel" name="labelMixedVelocity">
-                <property name="geometry">
-                 <rect>
-                  <x>13</x>
-                  <y>0</y>
-                  <width>30</width>
-                  <height>20</height>
-                 </rect>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>30</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>10</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="sliderMixedVelocity">
                <property name="mouseTracking">
                 <bool>false</bool>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">margin-top:10px;
+
+</string>
                </property>
                <property name="minimum">
                 <number>1</number>
@@ -1198,7 +1045,7 @@ QSlider::groove:horizontal:disabled {
               <number>6</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_15">
+              <widget class="QLabel" name="label_trqTitle_4">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1221,7 +1068,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_16">
+              <widget class="QLabel" name="label_trqUnits_4">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -1251,9 +1098,9 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed7">
+              <widget class="QLabel" name="label_velUnits_4">
                <property name="text">
-                <string>deg/S</string>
+                <string>deg/s</string>
                </property>
               </widget>
              </item>
@@ -1301,44 +1148,20 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_14" native="true">
+              <widget class="SliderWithTarget" name="sliderVelocityVelocity">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>20</height>
+                 <height>40</height>
                 </size>
                </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <widget class="QLabel" name="labelVelocityVelocity">
-                <property name="geometry">
-                 <rect>
-                  <x>64</x>
-                  <y>0</y>
-                  <width>30</width>
-                  <height>20</height>
-                 </rect>
-                </property>
-                <property name="text">
-                 <string>0</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="sliderVelocityVelocity">
                <property name="mouseTracking">
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">margin-top:10px;
+
+</string>
                </property>
                <property name="minimum">
                 <number>-30</number>
@@ -1411,9 +1234,9 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_28">
+                 <widget class="QLabel" name="label_posUnits_5">
                   <property name="text">
-                   <string>Deg</string>
+                   <string>deg</string>
                   </property>
                  </widget>
                 </item>
@@ -1433,7 +1256,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_31">
+              <widget class="QLabel" name="label_trqTitle_5">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1456,7 +1279,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_32">
+              <widget class="QLabel" name="label_trqUnits_5">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -1486,9 +1309,9 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed11_2">
+              <widget class="QLabel" name="label_velUnits_5">
                <property name="text">
-                <string>deg/S</string>
+                <string>deg/s</string>
                </property>
               </widget>
              </item>
@@ -1536,50 +1359,20 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_17" native="true">
+              <widget class="SliderWithTarget" name="sliderTorqueTorque">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>20</height>
+                 <height>40</height>
                 </size>
                </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <widget class="QLabel" name="labelTorqueTorque">
-                <property name="geometry">
-                 <rect>
-                  <x>65</x>
-                  <y>0</y>
-                  <width>30</width>
-                  <height>20</height>
-                 </rect>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>30</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>0</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="sliderTorqueTorque">
                <property name="mouseTracking">
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">margin-top:10px;
+
+</string>
                </property>
                <property name="minimum">
                 <number>-50</number>
@@ -1649,9 +1442,9 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_18">
+                 <widget class="QLabel" name="label_posUnits_6">
                   <property name="text">
-                   <string>Deg</string>
+                   <string>deg</string>
                   </property>
                  </widget>
                 </item>
@@ -1671,7 +1464,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_19">
+              <widget class="QLabel" name="label_trqTitle_6">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1694,7 +1487,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_20">
+              <widget class="QLabel" name="label_trqUnits_6">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -1724,9 +1517,9 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed9">
+              <widget class="QLabel" name="label_velUnits_6">
                <property name="text">
-                <string>deg/S</string>
+                <string>deg/s</string>
                </property>
               </widget>
              </item>
@@ -1774,44 +1567,26 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="QWidget" name="widget_20" native="true">
+              <widget class="SliderWithTarget" name="sliderOpenloopOutput">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>20</height>
+                 <height>40</height>
                 </size>
                </property>
-               <property name="maximumSize">
+               <property name="baseSize">
                 <size>
-                 <width>16777215</width>
-                 <height>20</height>
+                 <width>0</width>
+                 <height>40</height>
                 </size>
                </property>
-               <widget class="QLabel" name="labelOpenLoopOutput">
-                <property name="geometry">
-                 <rect>
-                  <x>64</x>
-                  <y>0</y>
-                  <width>30</width>
-                  <height>20</height>
-                 </rect>
-                </property>
-                <property name="text">
-                 <string>0</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="sliderOpenloopOutput">
                <property name="mouseTracking">
                 <bool>false</bool>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">margin-top:10px;
+
+</string>
                </property>
                <property name="minimum">
                 <number>-50</number>
@@ -1881,9 +1656,9 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_22">
+                 <widget class="QLabel" name="label_posUnits_7">
                   <property name="text">
-                   <string>Deg</string>
+                   <string>deg</string>
                   </property>
                  </widget>
                 </item>
@@ -1903,7 +1678,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_23">
+              <widget class="QLabel" name="label_trqTitle_7">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1926,7 +1701,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_24">
+              <widget class="QLabel" name="label_trqUnits_7">
                <property name="text">
                 <string>Nm</string>
                </property>
@@ -1956,9 +1731,9 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelSpeed11">
+              <widget class="QLabel" name="label_velUnits_7">
                <property name="text">
-                <string>deg/S</string>
+                <string>deg/s</string>
                </property>
               </widget>
              </item>
@@ -1974,6 +1749,13 @@ QSlider::groove:horizontal:disabled {
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SliderWithTarget</class>
+   <extends>QSlider</extends>
+   <header>jointitem.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

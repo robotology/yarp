@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Francesco Nori <francesco.nori@iit.it>
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -20,6 +21,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
@@ -30,9 +32,6 @@
 #include <QTimer>
 
 
-#ifdef DEBUG_INTERFACE
-#include <iCub/DebugInterfaces.h>
-#endif
 
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -47,13 +46,12 @@ class PartItem : public QWidget
     Q_OBJECT
 public:
     explicit PartItem(QString robotName,
+                      int partId,
                       QString partName,
                       ResourceFinder *finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
                       bool enable_calib_all,
-                      bool position_direct_enabled,
-                      bool openloop_enabled,
                       QWidget *parent = 0);
 
 
@@ -95,6 +93,8 @@ private:
     FlowLayout *layout;
     SequenceWindow *sequenceWindow;
     QString partName;
+    int     partId;
+    bool mixedEnabled;
     bool positionDirectEnabled;
     bool openloopEnabled;
     PidDlg *currentPidDlg;
@@ -114,30 +114,23 @@ private:
 
     PolyDriver    *partsdd;
     Property   partOptions;
-#ifdef DEBUG_INTERFACE
-    PolyDriver    *debugdd;
-    Property  debugOptions;
-#endif
 
     Port      sequence_port;
     bool interfaceError;
 
 
-    IPositionControl   *iPos;
+    IPositionControl2  *iPos;
     IPositionDirect    *iDir;
     IVelocityControl2  *iVel;
     IRemoteVariables   *iVar;
-    IEncoders         *iencs;
+    IEncoders          *iencs;
     IAmplifierControl  *iAmp;
     IPidControl        *iPid;
-    IOpenLoopControl    *opl;
-    ITorqueControl      *trq;
-    IImpedanceControl   *imp;
+    IOpenLoopControl   *iOpl;
+    ITorqueControl     *iTrq;
+    IImpedanceControl  *iImp;
     IAxisInfo         *iinfo;
-#ifdef DEBUG_INTERFACE
-    IDebugInterface    *idbg;
-#endif
-    IControlLimits          *iLim;
+    IControlLimits2          *iLim;
     IControlCalibration2     *cal;
     IControlMode2           *ctrlmode2;
     IInteractionMode        *iinteract;
@@ -163,7 +156,7 @@ private:
     int        COPY_SEQUENCE;
     double       COPY_TIMING;
 
-    int slowSwitcher;
+    int slow_k;
 
 signals:
     void sendPartJointsValues(int,QList<double>,QList<double>);
@@ -178,9 +171,16 @@ signals:
 
 public slots:
     void updateControlMode();
-    void updatePart();
+    bool updatePart();
     void onViewSpeedValues(bool);
-    void onControlVelocity(bool control);
+    void onSetPosSliderOptionPI(int mode, double step);
+    void onSetVelSliderOptionPI(int mode, double step);
+    void onSetTrqSliderOptionPI(int mode, double step);
+    void onViewPositionTarget(bool);
+    void onEnableControlVelocity(bool control);
+    void onEnableControlMixed(bool control);
+    void onEnableControlPositionDirect(bool control);
+    void onEnableControlOpenloop(bool control);
 
 private slots:
     void onSequenceActivated();
@@ -200,10 +200,14 @@ private slots:
     void onCalibClicked(JointItem *joint);
     void onJointChangeMode(int mode,JointItem *joint);
     void onJointInteraction(int interaction,JointItem *joint);
-    void onSliderPositionMoved(double pos, double vel, int index);
-    void onSliderTorqueMoved(double torqueVal,int index);
-    void onSliderOpenloopMoved(double torqueVal,int index);
-    void onSliderVelocityMoved(double speedVal,int index);
+    void onSliderDirectPositionCommand(double dirpos, int index);
+    void onSliderMixedPositionCommand(double pos, int index);
+    void onSliderMixedVelocityCommand(double vel, int index);
+    void onSliderTorqueCommand(double torqueVal, int index);
+    void onSliderTrajectoryPositionCommand(double pos, int index);
+    void onSliderTrajectoryVelocityCommand(double speedVal, int index);
+    void onSliderOpenloopCommand(double openloopVal, int index);
+    void onSliderVelocityCommand(double speedVal, int index);
     void onSequenceWindowDoubleClicked(int sequenceNum);
     void onHomeClicked(JointItem *joint);
     void onIdleClicked(JointItem *joint);

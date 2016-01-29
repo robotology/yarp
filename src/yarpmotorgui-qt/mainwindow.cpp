@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Francesco Nori <francesco.nori@iit.it>
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
  * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
  */
@@ -36,10 +37,10 @@ MainWindow::MainWindow(QWidget *parent) :
     tabPanel = NULL;
     sequenceActiveCount = 0;
 
-    setWindowTitle("Qt Robot Motor GUI V1.0");
+    setWindowTitle("Qt Robot Motor GUI V2.0");
     setMinimumWidth(MAX_WIDTH_JOINT + 60);
 
-
+    sliderOpt = 0;
 
     QString globalLabel("Global Joints Commands ");
     globalToolBar = new QToolBar("Global Joints Commands",this);
@@ -49,7 +50,6 @@ MainWindow::MainWindow(QWidget *parent) :
     f.setBold(true);
     label1->setFont(f);
     globalToolBar->addWidget(label1)->setCheckable(false);
-
 
 
     globalToolBar->addSeparator();
@@ -141,23 +141,36 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *viewGlobalToolbar = windows->addAction("Global Commands Toolbar");
     QAction *viewPartToolbar = windows->addAction("Part Commands Toolbar");
     QAction *viewSpeedValues = windows->addAction("View Speed Values");
-    QAction *controlVelocityMode = windows->addAction("Control Velocity Mode");
+    QAction *viewPositionTarget = windows->addAction("View Position Target");
+    QAction *enableControlVelocity = windows->addAction("Enable Velocity Control");
+    QAction *enableControlMixed = windows->addAction("Enable Mixed Control");
+    QAction *enableControlPositionDirect = windows->addAction("Enable Position Direct Control");
+    QAction *enableControlOpenloop = windows->addAction("Enable Openloop Control");
+    QAction *sliderOptions = windows->addAction("Slider Options...");
 
     viewGlobalToolbar->setCheckable(true);
     viewPartToolbar->setCheckable(true);
     viewSpeedValues->setCheckable(true);
-    controlVelocityMode->setCheckable(true);
-
+    enableControlVelocity->setCheckable(true);
+    enableControlMixed->setCheckable(true);
+    enableControlPositionDirect->setCheckable(true);
+    enableControlOpenloop->setCheckable(true);
+    viewPositionTarget->setCheckable(true);
 
     QSettings settings("YARP","yarpmotorgui");
     bool bViewGlobalToolbar = settings.value("GlobalToolVisible",true).toBool();
     bool bViewPartToolbar = settings.value("PartToolVisible",true).toBool();
     bool bSpeedValues = settings.value("SpeedValuesVisible",false).toBool();
+    bool bViewPositionTarget = settings.value("ViewPositionTarget", true).toBool();
 
     viewGlobalToolbar->setChecked(bViewGlobalToolbar);
     viewPartToolbar->setChecked(bViewPartToolbar);
     viewSpeedValues->setChecked(bSpeedValues);
-    controlVelocityMode->setChecked(false);
+    viewPositionTarget->setChecked(bViewPositionTarget);
+    enableControlVelocity->setChecked(false);
+    enableControlMixed->setChecked(false);
+    enableControlPositionDirect->setChecked(false);
+    enableControlOpenloop->setChecked(false);
 
     globalToolBar->setVisible(bViewGlobalToolbar);
     partToolBar->setVisible(bViewPartToolbar);
@@ -165,7 +178,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewGlobalToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewGlobalToolbar(bool)));
     connect(viewPartToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewPartToolbar(bool)));
     connect(viewSpeedValues,SIGNAL(triggered(bool)),this,SLOT(onViewSpeeds(bool)));
-    connect(controlVelocityMode,SIGNAL(triggered(bool)),this,SLOT(onControlVelocity(bool)));
+    connect(viewPositionTarget, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTarget(bool)));
+    connect(enableControlVelocity, SIGNAL(triggered(bool)), this, SLOT(onEnableControlVelocity(bool)));
+    connect(enableControlMixed, SIGNAL(triggered(bool)), this, SLOT(onEnableControlMixed(bool)));
+    connect(enableControlPositionDirect, SIGNAL(triggered(bool)), this, SLOT(onEnableControlPositionDirect(bool)));
+    connect(enableControlOpenloop, SIGNAL(triggered(bool)), this, SLOT(onEnableControlOpenloop(bool)));
+    connect(sliderOptions, SIGNAL(triggered()), this, SLOT(onSliderOptionsClicked()));
 
     connect(this,SIGNAL(internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
@@ -203,7 +221,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::term()
 {
-    internalClose();
+    sig_internalClose();
 }
 
 void MainWindow::onSequenceActivated()
@@ -264,9 +282,34 @@ void MainWindow::onViewPartToolbar(bool val)
     }
 }
 
-void MainWindow::onControlVelocity(bool val)
+void MainWindow::onEnableControlVelocity(bool val)
 {
-    controlVelocity(val);
+    sig_enableControlVelocity(val);
+}
+
+void MainWindow::onEnableControlMixed(bool val)
+{
+    sig_enableControlMixed(val);
+}
+
+void MainWindow::onEnableControlPositionDirect(bool val)
+{
+    sig_enableControlPositionDirect(val);
+}
+
+void MainWindow::onEnableControlOpenloop(bool val)
+{
+    sig_enableControlOpenloop(val);
+}
+
+void MainWindow::onSliderOptionsClicked()
+{
+    sliderOpt = new sliderOptions(this);
+
+    sliderOpt->exec();
+
+    delete sliderOpt;
+    sliderOpt = NULL;
 }
 
 void MainWindow::onViewSpeeds(bool val)
@@ -274,7 +317,28 @@ void MainWindow::onViewSpeeds(bool val)
     QSettings settings("YARP","yarpmotorgui");
     settings.setValue("SpeedValuesVisible",val);
 
-    viewSpeedValues(val);
+    sig_viewSpeedValues(val);
+}
+
+void MainWindow::onViewPositionTarget(bool val)
+{
+    QSettings settings("YARP", "yarpmotorgui");
+    settings.setValue("ViewPositionTarget", val);
+
+    sig_viewPositionTarget(val);
+}
+
+void MainWindow::onSetPosSliderOptionMW(int choice, double val)
+{
+    sig_setPosSliderOptionMW(choice, val);
+}
+void MainWindow::onSetVelSliderOptionMW(int choice, double val)
+{
+    sig_setVelSliderOptionMW(choice, val);
+}
+void MainWindow::onSetTrqSliderOptionMW(int choice, double val)
+{
+    sig_setTrqSliderOptionMW(choice, val);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -313,9 +377,7 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
                       ResourceFinder *finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
-                      bool enable_calib_all,
-                      bool position_direct_enabled,
-                      bool openloop_enabled)
+                      bool enable_calib_all)
 {
 
     int count = enabledParts.count();
@@ -338,20 +400,26 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
         scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scroll->setWidgetResizable(true);
         part = new PartItem(robotName,
+                            i,
                             enabledParts.at(i),
                             finder,
                             debug_param_enabled,
                             speedview_param_enabled,
                             enable_calib_all,
-                            position_direct_enabled,
-                            openloop_enabled,
                             scroll);
 
         if(!part->getInterfaceError()){
             connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
             connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
-            connect(this,SIGNAL(viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
-            connect(this,SIGNAL(controlVelocity(bool)),part,SLOT(onControlVelocity(bool)));
+            connect(this,SIGNAL(sig_viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
+            connect(this, SIGNAL(sig_setPosSliderOptionMW(int, double)), part, SLOT(onSetPosSliderOptionPI(int, double)));
+            connect(this, SIGNAL(sig_setVelSliderOptionMW(int, double)), part, SLOT(onSetVelSliderOptionPI(int, double)));
+            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int, double)), part, SLOT(onSetTrqSliderOptionPI(int, double)));
+            connect(this,SIGNAL(sig_viewPositionTarget(bool)), part, SLOT(onViewPositionTarget(bool)));
+            connect(this, SIGNAL(sig_enableControlVelocity(bool)), part, SLOT(onEnableControlVelocity(bool)));
+            connect(this, SIGNAL(sig_enableControlMixed(bool)), part, SLOT(onEnableControlMixed(bool)));
+            connect(this, SIGNAL(sig_enableControlPositionDirect(bool)), part, SLOT(onEnableControlPositionDirect(bool)));
+            connect(this, SIGNAL(sig_enableControlOpenloop(bool)), part, SLOT(onEnableControlOpenloop(bool)));
 
             scroll->setWidget(part);
             tabPanel->addTab(scroll,enabledParts.at(i));

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>sliderOptions</class>
+ <widget class="QDialog" name="sliderOptions">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>632</width>
+    <height>350</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Position Slider</string>
+     </property>
+     <widget class="QRadioButton" name="radio_pos_auto">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>23</y>
+        <width>95</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Automatic step</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_pos_user">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>114</y>
+        <width>70</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>User Step</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_pos_one">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>214</y>
+        <width>99</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Predefined step</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>240</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step size = 1</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>140</y>
+        <width>61</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step size =</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>50</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step size = (Max-Min)/100</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="pos_step">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>140</y>
+        <width>91</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Velocity Slider</string>
+     </property>
+     <widget class="QRadioButton" name="radio_vel_auto">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>23</y>
+        <width>95</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Automatic step</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>240</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step size = 1</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_vel_user">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>114</y>
+        <width>70</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>User Step</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>140</y>
+        <width>61</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step size =</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_vel_one">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>214</y>
+        <width>99</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Predefined step</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>50</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step size = (Max-Min)/100</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="vel_step">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>140</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="vel_limiter">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>290</y>
+        <width>51</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>280</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Limiter on joint 
+max vel: (0-100)</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Torque Slider</string>
+     </property>
+     <widget class="QRadioButton" name="radio_trq_auto">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>23</y>
+        <width>95</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Automatic step</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>240</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step size = 1</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_trq_user">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>114</y>
+        <width>70</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>User Step</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>140</y>
+        <width>61</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step size =</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_trq_one">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>214</y>
+        <width>99</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Predefined step</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>50</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step size = (Max-Min)/100</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="trq_step">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>140</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
