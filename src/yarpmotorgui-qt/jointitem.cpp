@@ -373,6 +373,11 @@ void JointItem::enableControlVelocity(bool control)
     }
 }
 
+void JointItem::enableControlMixed(bool control)
+{
+    ui->stackedWidget->widget(MIXED)->setEnabled(control);
+}
+
 void JointItem::enableControlPositionDirect(bool control)
 {
     ui->stackedWidget->widget(POSITION_DIR)->setEnabled(control);

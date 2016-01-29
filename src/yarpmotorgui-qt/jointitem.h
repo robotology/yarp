@@ -67,6 +67,7 @@ class JointItem : public QWidget
     void setUnits(yarp::dev::JointTypeEnum t);
     void viewPositionTarget(bool);
     void enableControlVelocity(bool control);
+    void enableControlMixed(bool control);
     void enableControlPositionDirect(bool control);
     void enableControlOpenloop(bool control);
     void sequenceActivated();

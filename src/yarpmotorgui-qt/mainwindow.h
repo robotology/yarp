@@ -39,7 +39,7 @@ public:
               ResourceFinder *finder,
               bool debug_param_enabled,
               bool speedview_param_enabled,
-              bool enable_calib_all, bool position_direct_enabled, bool openloop_enabled);
+              bool enable_calib_all);
     ~MainWindow();
 
     void term();
@@ -103,6 +103,7 @@ private slots:
     void onViewSpeeds(bool);
     void onViewPositionTarget(bool);
     void onEnableControlVelocity(bool val);
+    void onEnableControlMixed(bool val);
     void onEnableControlPositionDirect(bool val);
     void onEnableControlOpenloop(bool val);
     void onSliderOptionsClicked();
@@ -112,6 +113,7 @@ private slots:
 
 signals:
     void sig_enableControlVelocity(bool);
+    void sig_enableControlMixed(bool);
     void sig_enableControlPositionDirect(bool);
     void sig_enableControlOpenloop(bool);
     void sig_viewSpeedValues(bool);

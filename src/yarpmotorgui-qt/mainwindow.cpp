@@ -143,6 +143,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *viewSpeedValues = windows->addAction("View Speed Values");
     QAction *viewPositionTarget = windows->addAction("View Position Target");
     QAction *enableControlVelocity = windows->addAction("Enable Velocity Control");
+    QAction *enableControlMixed = windows->addAction("Enable Mixed Control");
     QAction *enableControlPositionDirect = windows->addAction("Enable Position Direct Control");
     QAction *enableControlOpenloop = windows->addAction("Enable Openloop Control");
     QAction *sliderOptions = windows->addAction("Slider Options...");
@@ -151,6 +152,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewPartToolbar->setCheckable(true);
     viewSpeedValues->setCheckable(true);
     enableControlVelocity->setCheckable(true);
+    enableControlMixed->setCheckable(true);
     enableControlPositionDirect->setCheckable(true);
     enableControlOpenloop->setCheckable(true);
     viewPositionTarget->setCheckable(true);
@@ -166,6 +168,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewSpeedValues->setChecked(bSpeedValues);
     viewPositionTarget->setChecked(bViewPositionTarget);
     enableControlVelocity->setChecked(false);
+    enableControlMixed->setChecked(false);
     enableControlPositionDirect->setChecked(false);
     enableControlOpenloop->setChecked(false);
 
@@ -177,6 +180,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewSpeedValues,SIGNAL(triggered(bool)),this,SLOT(onViewSpeeds(bool)));
     connect(viewPositionTarget, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTarget(bool)));
     connect(enableControlVelocity, SIGNAL(triggered(bool)), this, SLOT(onEnableControlVelocity(bool)));
+    connect(enableControlMixed, SIGNAL(triggered(bool)), this, SLOT(onEnableControlMixed(bool)));
     connect(enableControlPositionDirect, SIGNAL(triggered(bool)), this, SLOT(onEnableControlPositionDirect(bool)));
     connect(enableControlOpenloop, SIGNAL(triggered(bool)), this, SLOT(onEnableControlOpenloop(bool)));
     connect(sliderOptions, SIGNAL(triggered()), this, SLOT(onSliderOptionsClicked()));
@@ -283,6 +287,11 @@ void MainWindow::onEnableControlVelocity(bool val)
     sig_enableControlVelocity(val);
 }
 
+void MainWindow::onEnableControlMixed(bool val)
+{
+    sig_enableControlMixed(val);
+}
+
 void MainWindow::onEnableControlPositionDirect(bool val)
 {
     sig_enableControlPositionDirect(val);
@@ -368,9 +377,7 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
                       ResourceFinder *finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
-                      bool enable_calib_all,
-                      bool position_direct_enabled,
-                      bool openloop_enabled)
+                      bool enable_calib_all)
 {
 
     int count = enabledParts.count();
@@ -399,8 +406,6 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
                             debug_param_enabled,
                             speedview_param_enabled,
                             enable_calib_all,
-                            position_direct_enabled,
-                            openloop_enabled,
                             scroll);
 
         if(!part->getInterfaceError()){
@@ -412,6 +417,7 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
             connect(this, SIGNAL(sig_setTrqSliderOptionMW(int, double)), part, SLOT(onSetTrqSliderOptionPI(int, double)));
             connect(this,SIGNAL(sig_viewPositionTarget(bool)), part, SLOT(onViewPositionTarget(bool)));
             connect(this, SIGNAL(sig_enableControlVelocity(bool)), part, SLOT(onEnableControlVelocity(bool)));
+            connect(this, SIGNAL(sig_enableControlMixed(bool)), part, SLOT(onEnableControlMixed(bool)));
             connect(this, SIGNAL(sig_enableControlPositionDirect(bool)), part, SLOT(onEnableControlPositionDirect(bool)));
             connect(this, SIGNAL(sig_enableControlOpenloop(bool)), part, SLOT(onEnableControlOpenloop(bool)));
 

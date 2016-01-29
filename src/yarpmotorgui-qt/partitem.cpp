@@ -27,10 +27,7 @@
 PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *finder,
                    bool debug_param_enabled,
                    bool speedview_param_enabled,
-                   bool enable_calib_all,
-                   bool position_direct_enabled,
-                   bool openloop_enabled, QWidget *parent) :
-    QWidget(parent)
+                   bool enable_calib_all, QWidget *parent) :   QWidget(parent)
 {
     layout = new FlowLayout();
     setLayout(layout);
@@ -43,8 +40,9 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
     sequenceWindow = NULL;
     this->finder = finder;
     this->partName = partName;
-    positionDirectEnabled = position_direct_enabled;
-    openloopEnabled = openloop_enabled;
+    mixedEnabled = false;
+    positionDirectEnabled = false;
+    openloopEnabled = false;
 
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
@@ -212,6 +210,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
             joint->setTorqueRange(5.0);
             joint->setUnits(jtype);
             joint->enableControlPositionDirect(positionDirectEnabled);
+            joint->enableControlMixed(mixedEnabled);
             joint->enableControlOpenloop(openloopEnabled);
 
             int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
@@ -1791,6 +1790,14 @@ void PartItem::onEnableControlVelocity(bool control)
     for(int i=0;i<layout->count();i++){
         JointItem *joint  = (JointItem*)layout->itemAt(i)->widget();
         joint->enableControlVelocity(control);
+    }
+}
+
+void PartItem::onEnableControlMixed(bool control)
+{
+    for (int i = 0; i<layout->count(); i++){
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        joint->enableControlMixed(control);
     }
 }
 
