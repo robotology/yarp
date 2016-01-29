@@ -30,7 +30,7 @@ void JointItem::updateTrajectoryPositionTarget(double val)
     int w = ui->sliderTrajectoryPosition->width()- 30;
     double mmin = this->min_position;
     double mmax = this->max_position;
-    int totValues = fabs(mmax - mmin);
+    double totValues = fabs(mmax - mmin);
     double cursor = fabs(val - mmin);
     double newX = cursor * (double)w / (double)totValues;
     ui->sliderTrajectoryPosition->updateSliderTarget(newX);
@@ -41,7 +41,7 @@ void JointItem::updateMixedPositionTarget(double val)
     int w = ui->sliderMixedPosition->width() - 30;
     double mmin = this->min_position;
     double mmax = this->max_position;
-    int totValues = fabs(mmax - mmin);
+    double totValues = fabs(mmax - mmin);
     double cursor = fabs(val - mmin);
     double newX = cursor * (double)w / (double)totValues;
     ui->sliderMixedPosition->updateSliderTarget(newX);
