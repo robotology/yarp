@@ -11,6 +11,12 @@
 #include <QStyle>
 #include <math.h>
 
+//just because old VS2010 does not implement round() function in math.h
+double my_round(double number)
+{
+    return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
+}
+
 SliderWithTarget::SliderWithTarget(QWidget * parent, bool _hasTargetOption) : QSlider(Qt::Horizontal, 0)
 {
     sliderLabel = new QLabel(this);
@@ -55,7 +61,8 @@ void SliderWithTarget::setValue(double val)
 {
     if (isDouble)
     {
-        QSlider::setValue(round(val*sliderStep));
+        //QSlider::setValue(round(val*sliderStep));
+        QSlider::setValue(my_round(val*sliderStep));
     }
     else
     {
