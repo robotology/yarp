@@ -110,7 +110,7 @@ public:
     bool setApplicationPrefix(Application* app, const char* szPrefix, bool updateBasePref=true);
     bool saveApplication(AppSaver* appSaver, Application* application);
 
-    const char* getUniqueAppID(Application* parent, const char* szAppName);
+    const string getUniqueAppID(Application* parent, const char* szAppName);
 
     bool exportAppGraph(const char* szFileName) {
             return exportDotGraph(tmpGraph, szFileName); }

@@ -622,14 +622,14 @@ bool KnowledgeBase::removeConnectionFromApplication(Application* application, Co
     return application->removeConnection(cnn);
 }
 
-const char* KnowledgeBase::getUniqueAppID(Application* parent, const char* szAppName)
+const std::string KnowledgeBase::getUniqueAppID(Application* parent, const char* szAppName)
 {
     if(appList.find(string(szAppName)) == appList.end())
         appList[szAppName] = 1;
     OSTRINGSTREAM newname;
     newname<<parent->getName()<<":";
     newname<<szAppName<<":"<<appList[szAppName];
-    return newname.str().c_str();
+    return newname.str();
 }
 
 Application* KnowledgeBase::addIApplicationToApplication(Application* application,
