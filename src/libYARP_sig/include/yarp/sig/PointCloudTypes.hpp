@@ -19,7 +19,6 @@
 
 namespace yarp {
     namespace sig {
-        class PointCloud;
         class PointCloud_NetworkHeader;
     }
 }
@@ -63,7 +62,8 @@ typedef struct
             char r;
             char a;
         };
-    yarp::os::NetInt32 rgba;
+        yarp::os::NetInt32 rgba;
+        float data_c[4];
     };
 } RGBA_DATA;
 YARP_END_PACK
@@ -139,6 +139,7 @@ typedef struct
             float x;
             float y;
             float z;
+            float xyz_padding;
         };
     };
 
@@ -152,6 +153,7 @@ typedef struct
             char a;
         };
         yarp::os::NetInt32 rgba;
+        float rgba_padding[4];
     };
 } XYZ_RGBA_DATA;
 YARP_END_PACK
@@ -203,7 +205,7 @@ typedef struct
         {
             float strength;
         };
-        float filler_p[4];
+        float strength_padding[4];
     };
 } INTEREST_POINT_XYZ_DATA;
 YARP_END_PACK

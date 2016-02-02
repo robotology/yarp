@@ -10,7 +10,6 @@
 
 namespace yarp {
     namespace sig {
-        class PointCloud;
         class PointCloud_NetworkHeader;
     }
 }
@@ -19,7 +18,7 @@ namespace yarp {
 // How to let the user to add his own type?
 
 // Define a bit for each piece of information we want to carry
-// Is enum better??
+// Is enum better?? Define some helper to get a string from number
 #define   PC_XY_DATA                        1 << 0
 #define   PC_XYZ_DATA                       1 << 1
 #define   PC_RGBA_DATA                      1 << 2
@@ -42,6 +41,7 @@ namespace yarp {
 #define   PC_SCALE_DATA                     1 << 19
 #define   PC_CONFIDENCE_DATA                1 << 20
 #define   PC_RADIUS_DATA                    1 << 21
+#define   PC_USER_DEFINED                   1 << 22
 
 // Shortcuts names for matching PCL predefined types
 #define   PCL_POINT2D_XY                (PC_XY_DATA)
@@ -103,24 +103,24 @@ public:
     PointCloud_NetworkHeader() :    width(10),
                                     height(1),
                                     isDense(false),
-                                    pose(4, 0.0f),
-                                    orientation(4, 0.0f),
+//                                     pose(4, 0.0f),
+//                                     orientation(4, 0.0f),
                                     hasCustomData(false)
                                     { }
     // PCL like fields
     yarp::os::NetInt32  width;
     yarp::os::NetInt32  height;
     bool                isDense;         // this guy is mis-aligned // convert to (char?) when serialized
-    yarp::sig::Vector   pose;            // translation from origin -- could be an Eigen::Vector4f for better PCL compatibility if yarp can afford to depend from it
-    yarp::sig::Vector   orientation;     // orientation wrt origin  -- could be an Eigen::Quaternion for better PCL compatibility if yarp can afford to depend from it
+//     yarp::sig::Vector   pose;            // translation from origin -- could be an Eigen::Vector4f for better PCL compatibility if yarp can afford to depend from it
+//     yarp::sig::Vector   orientation;     // orientation wrt origin  -- could be an Eigen::Quaternion for better PCL compatibility if yarp can afford to depend from it
 
     // YARPish fileds
     yarp::os::NetInt32  pointType;       // bitwise of all possible informations -> could also be int64 or just an enum, but I thin bitwise gives more freedom about all possible combinations
-    char                *data;           // actual pointCloud data.
+//     char                *data;           // actual pointCloud data.
 
     // Other
     bool                hasCustomData;   // this guy is mis-aligned --> for future use, to have addictional data not initially forseen or fields from ROS which does not fit into yarp pointTypes
-    yarp::os::Bottle    *customData;     // used in case of custom data, to check if a different type can be better optimized for transmission?
+//     yarp::os::Bottle    *customData;     // used in case of custom data, to check if a different type can be better optimized for transmission?
 };
 // YARP_END_PACK
 
