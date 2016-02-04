@@ -472,14 +472,11 @@ void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
     ctrlmode2->getControlMode(index, &mode);
     if (mode == VOCAB_CM_POSITION_DIRECT)
     {
-        if (positionDirectEnabled)
-        {
-            iDir->setPosition(index, dirpos);
-        }
-        else
-        {
-            yWarning("You cannot send direct position commands without using --direct option!");
-        }
+        iDir->setPosition(index, dirpos);
+    }
+    else
+    {
+        yWarning("Joint not in position direct mode so cannot send references");
     }
 }
 
