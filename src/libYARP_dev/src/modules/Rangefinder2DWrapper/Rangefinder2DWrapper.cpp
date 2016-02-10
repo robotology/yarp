@@ -33,12 +33,155 @@ Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
 {
     _rate = DEFAULT_THREAD_PERIOD;
     sens_p = NULL;
+
+    // init ROS data
+    frame_id = "";
+    rosNodeName = "";
+    rosTopicName = "";
+    partName = "Rangefinder2DWrapper";
+    rosNode = NULL;
+    rosMsgCounter = 0;
+    useROS = ROS_disabled;
 }
 
 Rangefinder2DWrapper::~Rangefinder2DWrapper()
 {
     threadRelease();
     sens_p = NULL;
+}
+
+bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
+{
+    // check for ROS parameter group
+    if (!config.check("ROS"))
+    {
+        useROS = ROS_disabled;
+        yInfo() << "No ROS group found in config file ... skipping ROS initialization.";
+        return true;
+    }
+    else
+    {
+        yInfo() << "ROS group was FOUND in config file.";
+
+        Bottle &rosGroup = config.findGroup("ROS");
+        if (rosGroup.isNull())
+        {
+            yError() << partName << "ROS group params is not a valid group or empty";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        // check for useROS parameter
+        if (!rosGroup.check("useROS"))
+        {
+            yError() << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
+                                                            Allowed values are true, false, ROS_only";
+            useROS = ROS_config_error;
+            return false;
+        }
+        yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+        if (ros_use_type == "false")
+        {
+            yInfo() << partName << "useROS topic if set to 'false'";
+            useROS = ROS_disabled;
+            return true;
+        }
+        else if (ros_use_type == "true")
+        {
+            yInfo() << partName << "useROS topic if set to 'true'";
+            useROS = ROS_enabled;
+        }
+        else if (ros_use_type == "only")
+        {
+            yInfo() << partName << "useROS topic if set to 'only";
+            useROS = ROS_only;
+        }
+        else
+        {
+            yInfo() << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        // check for ROS_nodeName parameter
+        if (!rosGroup.check("ROS_nodeName"))
+        {
+            yError() << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+            useROS = ROS_config_error;
+            return false;
+        }
+        rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
+        yInfo() << partName << "rosNodeName is " << rosNodeName;
+
+        // check for ROS_topicName parameter
+        if (!rosGroup.check("ROS_topicName"))
+        {
+            yError() << partName << " cannot find rosTopicName parameter, mandatory when using ROS message";
+            useROS = ROS_config_error;
+            return false;
+        }
+        rosTopicName = rosGroup.find("ROS_topicName").asString();
+        yInfo() << partName << "rosTopicName is " << rosTopicName;
+
+        // check for frame_id parameter
+        if (!rosGroup.check("frame_id"))
+        {
+            yError() << partName << " cannot find rosTopicName parameter, mandatory when using ROS message";
+            useROS = ROS_config_error;
+            return false;
+        }
+        frame_id = rosGroup.find("frame_id").asString();
+        yInfo() << partName << "frame_id is " << frame_id;
+
+        return true;
+    }
+    yError() << partName << "should never get here!" << __LINE__;
+    return false;  // should never get here
+}
+
+bool Rangefinder2DWrapper::initialize_ROS()
+{
+    bool success = false;
+    switch (useROS)
+    {
+        case ROS_enabled:
+        case ROS_only:
+        {
+            rosNode = new yarp::os::Node(rosNodeName);   // add a ROS node
+            if (rosNode == NULL)
+            {
+                yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
+                success = false;
+                break;
+            }
+            if (!rosPublisherPort.topic(rosTopicName))
+            {
+                yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
+                success = false;
+                break;
+            }
+            success = true;
+        } break;
+
+        case ROS_disabled:
+        {
+            yInfo() << partName << ": no ROS initialization required";
+            success = true;
+        } break;
+
+        case ROS_config_error:
+        {
+            yError() << partName << " ROS parameter are not correct, check your configuration file";
+            success = false;
+        } break;
+
+        default:
+        {
+            yError() << partName << " something went wrong with ROS configuration, we should never be here!!!";
+            success = false;
+        } break;
+    }
+    return success;
 }
 
 /**
@@ -326,6 +469,15 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
         yError() << sensorId << "Error initializing YARP ports";
         return false;
     }
+
+    checkROSParams(config);
+
+    // call ROS node/topic initilization, if needed
+    if (!initialize_ROS())
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -358,6 +510,8 @@ void Rangefinder2DWrapper::run()
 
         if (ret)
         {
+            int ranges_size = ranges.size();
+
             lastStateStamp.update();
             yarp::os::Bottle& b = streamingPort.prepare();
             b.clear();
@@ -366,6 +520,31 @@ void Rangefinder2DWrapper::run()
             b.addInt(status);
             streamingPort.setEnvelope(lastStateStamp);
             streamingPort.write();
+
+            // publish ROS topic if required
+            if (useROS != ROS_disabled)
+            {
+                sensor_msgs_LaserScan &rosData = rosPublisherPort.prepare();
+
+                rosData.header.seq = rosMsgCounter++;
+                rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                rosData.header.frame_id = frame_id;
+
+                rosData.angle_increment = 0;
+                rosData.time_increment = 0;
+                rosData.angle_max = 0;
+                rosData.angle_min = 0;
+                rosData.scan_time = 0;
+                rosData.range_max = 0;
+                rosData.range_min = 0;
+                for (int i = 0; i < ranges_size; i++)
+                {
+                    rosData.ranges[i] = ranges[i];
+                    rosData.intensities[i] = 0.0;
+                }
+
+                rosPublisherPort.write();
+            }
         }
         else
         {

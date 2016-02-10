@@ -33,10 +33,11 @@
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/api.h>
 
-
-/* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
- * name conflicts
- */
+// ROS state publisher
+#include <yarpRosHelper.h>
+#include <yarp/os/Node.h>
+#include <yarp/os/Publisher.h>
+#include <sensor_msgs_LaserScan.h>
 
 namespace yarp{
     namespace dev{
@@ -77,6 +78,7 @@ public:
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+    yarp::os::ConstString partName;
     yarp::os::ConstString streamingPortName;
     yarp::os::ConstString rpcPortName;
     yarp::os::Port rpcPort;
@@ -86,8 +88,19 @@ private:
     int _rate;
     std::string sensorId;
 
+    bool checkROSParams(yarp::os::Searchable &config);
+    bool initialize_ROS();
     bool initialize_YARP(yarp::os::Searchable &config);
     virtual bool read(yarp::os::ConnectionReader& connection);
+
+    // ROS data
+    ROSTopicUsageType                                   useROS;                     // decide if open ROS topic or not
+    std::string                                         frame_id;                   // name of the frame measures are referred to
+    std::string                                         rosNodeName;                // name of the rosNode
+    std::string                                         rosTopicName;               // name of the rosTopic
+    yarp::os::Node                                      *rosNode;                   // add a ROS node
+    yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
+    yarp::os::Publisher<sensor_msgs_LaserScan>          rosPublisherPort;           // Dedicated ROS topic publisher
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };

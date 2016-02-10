@@ -93,6 +93,15 @@ int ServerSerial::receiveLine(char* line, const int MaxLineLength)
         return -1;
 }
 
+int ServerSerial::receiveBytes(unsigned char* bytes, const int size)
+{
+    if (serial != NULL) {
+        return serial->receiveBytes(bytes, size);
+    }
+    else
+        return -1;
+}
+
 bool ServerSerial::open()  {
     return false;
 }

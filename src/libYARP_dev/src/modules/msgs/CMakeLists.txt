@@ -6,18 +6,28 @@ yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/stateExt.thrift"
                 yarp_msg_headers
                 yarp_msg_include_dirs)
 include("${CMAKE_CURRENT_SOURCE_DIR}/yarp/stateExt_thrift.cmake")
+
 yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/sensor_msgs/JointState.msg"
                 "${CMAKE_CURRENT_SOURCE_DIR}/ros"
                 ros_msg_sources
                 ros_msg_headers
                 ros_msg_include_dirs)
 include(${CMAKE_CURRENT_SOURCE_DIR}/ros/sensor_msgs_JointState_msg.cmake)
+
 yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/sensor_msgs/Imu.msg"
                 "${CMAKE_CURRENT_SOURCE_DIR}/ros"
                 ros_msg_sources
                 ros_msg_headers
                 ros_msg_include_dirs)
 include(${CMAKE_CURRENT_SOURCE_DIR}/ros/sensor_msgs_Imu_msg.cmake)
+
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/sensor_msgs/LaserScan.msg"
+                "${CMAKE_CURRENT_SOURCE_DIR}/ros"
+                ros_msg_sources
+                ros_msg_headers
+                ros_msg_include_dirs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ros/sensor_msgs_LaserScan_msg.cmake)
+
 yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/ros/msg_file/geometry_msgs/WrenchStamped.msg"
                 "${CMAKE_CURRENT_SOURCE_DIR}/ros"
                 ros_msg_sources
