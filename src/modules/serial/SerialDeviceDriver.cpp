@@ -60,15 +60,15 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
 bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
     SerialDeviceDriverSettings config2;
     strcpy(config2.CommChannel, config.check("comport",Value("COM3"),"name of the serial channel").asString().c_str());
-	this->verbose = (config.check("verbose",Value(1),"Specifies if the device is in verbose mode (0/1).").asInt())>0;
-	config2.SerialParams.baudrate = config.check("baudrate",Value(9600),"Specifies the baudrate at which the communication port operates.").asInt();
+    this->verbose = (config.check("verbose",Value(1),"Specifies if the device is in verbose mode (0/1).").asInt())>0;
+    config2.SerialParams.baudrate = config.check("baudrate",Value(9600),"Specifies the baudrate at which the communication port operates.").asInt();
     config2.SerialParams.xonlim = config.check("xonlim",Value(0),"Specifies the minimum number of bytes in input buffer before XON char is sent. Negative value indicates that default value should be used (Win32)").asInt();
     config2.SerialParams.xofflim = config.check("xofflim",Value(0),"Specifies the maximum number of bytes in input buffer before XOFF char is sent. Negative value indicates that default value should be used (Win32). ").asInt();
     config2.SerialParams.readmincharacters = config.check("readmincharacters",Value(1),"Specifies the minimum number of characters for non-canonical read (POSIX).").asInt();
     config2.SerialParams.readtimeoutmsec = config.check("readtimeoutmsec",Value(100),"Specifies the time to wait before returning from read. Negative value means infinite timeout.").asInt();
     // config2.SerialParams.parityenb = config.check("parityenb",Value(0),"Enable/disable parity checking.").asInt();
-	yarp::os::ConstString temp = config.check("paritymode",Value("EVEN"),"Specifies the parity mode (EVEN, ODD, NONE). POSIX supports even and odd parity. Additionally Win32 supports mark and space parity modes.").asString().c_str();
-	config2.SerialParams.paritymode = temp.c_str();
+    yarp::os::ConstString temp = config.check("paritymode",Value("EVEN"),"Specifies the parity mode (EVEN, ODD, NONE). POSIX supports even and odd parity. Additionally Win32 supports mark and space parity modes.").asString().c_str();
+    config2.SerialParams.paritymode = temp.c_str();
     config2.SerialParams.ctsenb = config.check("ctsenb",Value(0),"Enable & set CTS mode. Note that RTS & CTS are enabled/disabled together on some systems (RTS/CTS is enabled if either <code>ctsenb</code> or <code>rtsenb</code> is set).").asInt();
     config2.SerialParams.rtsenb = config.check("rtsenb",Value(0),"Enable & set RTS mode. Note that RTS & CTS are enabled/disabled together on some systems (RTS/CTS is enabled if either <code>ctsenb</code> or <code>rtsenb</code> is set).\n- 0 = Disable RTS.\n- 1 = Enable RTS.\n- 2 = Enable RTS flow-control handshaking (Win32).\n- 3 = Specifies that RTS line will be high if bytes are available for transmission.\nAfter transmission RTS will be low (Win32).").asInt();
     config2.SerialParams.xinenb = config.check("xinenb",Value(0),"Enable/disable software flow control on input.").asInt();
@@ -106,10 +106,12 @@ bool SerialDeviceDriver::setDTR(bool value) {
 
 bool SerialDeviceDriver::send(const Bottle& msg)
 {
-    if (msg.size() > 0) {
+    if (msg.size() > 0)
+    {
         int message_size = msg.get(0).asString().length();
 
-        if (message_size > 0) {
+        if (message_size > 0)
+        {
             if (verbose)
             {
                 yDebug("Sending string: %s", msg.get(0).asString().c_str());
@@ -118,15 +120,20 @@ bool SerialDeviceDriver::send(const Bottle& msg)
             // Write message to the serial device
             ssize_t bytes_written = _serial_dev.send_n((void *) msg.get(0).asString().c_str(), message_size);
 
-            if (bytes_written == -1) {
-                ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
+            if (bytes_written == -1)
+            {
+                yError("Unable to write to serial port");
                 return false;
             }
-        } else {
-           if (verbose) yDebug("The input command bottle contains an empty string. \n");
+        }
+        else
+        {
+           if (verbose) yDebug("The input command bottle contains an empty string.");
            return false;
         }
-    } else {
+    }
+    else
+    {
         if (verbose) yDebug("The input command bottle is empty. \n");
         return false;
     }
@@ -136,20 +143,24 @@ bool SerialDeviceDriver::send(const Bottle& msg)
 
 bool SerialDeviceDriver::send(char *msg, size_t size)
 {
-    if (size > 0) {
+    if (size > 0)
+    {
         if (verbose)
         {
             yDebug("Sending string: %s", msg);
         }
     
-	    // Write message in the serial device
+        // Write message in the serial device
         ssize_t bytes_written = _serial_dev.send_n((void *)msg, size);
 
-        if (bytes_written == -1) {
-            ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
+        if (bytes_written == -1)
+        {
+            yError("Unable to write to serial port");
             return false;
         }
-    } else {
+    }
+    else
+    {
         if (verbose) yDebug("The input message is empty. \n");
         return false;
     }
@@ -159,61 +170,82 @@ bool SerialDeviceDriver::send(char *msg, size_t size)
 
 int SerialDeviceDriver::receiveChar(char& c)
 {
-	char chr;
-	
-	//this function call blocks
+    char chr;
+    
+    //this function call blocks
     ssize_t bytes_read = _serial_dev.recv ((void *) &chr, 1);
 
     if (bytes_read == -1)
-	{
-		ACE_ERROR((LM_ERROR, ACE_TEXT ("Error in SerialDeviceDriver::receive(). \n")));
-		return 0;
-	}
+    {
+        yError("Error in SerialDeviceDriver::receive()");
+        return 0;
+    }
 
     if (bytes_read == 0)
-	{
+    {
         return 0;
-	}
+    }
 
-	c=chr;
-	return 1;
+    c=chr;
+    return 1;
 }
 
 int  SerialDeviceDriver::flush()
 {
-	char chr;
-	int count=0;
-	ssize_t bytes_read=0;
-	do
-	{
-		bytes_read = _serial_dev.recv ((void *) &chr, 1);
-		count+=bytes_read;
-	}
-	while (bytes_read>0);
-	return count;
+    char chr;
+    int count=0;
+    ssize_t bytes_read=0;
+    do
+    {
+        bytes_read = _serial_dev.recv ((void *) &chr, 1);
+        count+=bytes_read;
+    }
+    while (bytes_read>0);
+    return count;
+}
+
+int SerialDeviceDriver::receiveBytes(unsigned char* bytes, const int size)
+{
+    int i;
+    for (i = 0; i < size ; ++i)
+    {
+        char recv_ch;
+        int n = receiveChar(recv_ch);
+        if (n <= 0)
+        {
+            return i;
+        }
+        bytes[i] = recv_ch;
+    }
+    return i;
 }
 
 int SerialDeviceDriver::receiveLine(char* buffer, const int MaxLineLength)
 {
-	int i;
-	for (i = 0; i < MaxLineLength -1; ++i)
-	{
-		char recv_ch;
-		int n = receiveChar(recv_ch);
-		if (n <= 0)
-		{
-			return 0;
-		}
-		if ((recv_ch == line_terminator_char1) || (recv_ch == line_terminator_char2))
-		{
-			buffer[i] = recv_ch;
-			i++;
-		    break;
-		}
-		buffer[i] = recv_ch;
-	 }
-	 buffer[i] = '\0';
-	 return i;
+    int i;
+    for (i = 0; i < MaxLineLength -1; ++i)
+    {
+        char recv_ch;
+        int n = receiveChar(recv_ch);
+        if (n <= 0)
+        {
+            //this invalidates the whole line, because no line terminator \n was found
+            return 0;
+
+            //use this commented code here if you do NOT want to invalidate the line
+            //buffer[i] = '\0';
+            //return i;
+        }
+        if ((recv_ch == line_terminator_char1) || (recv_ch == line_terminator_char2))
+        {
+            buffer[i] = recv_ch;
+            i++;
+            break;
+        }
+        buffer[i] = recv_ch;
+     }
+     buffer[i] = '\0';
+     return i;
 }
 
 bool SerialDeviceDriver::receive(Bottle& msg)
@@ -224,8 +256,9 @@ bool SerialDeviceDriver::receive(Bottle& msg)
     //this function call blocks
     ssize_t bytes_read = _serial_dev.recv ((void *) message, msgSize - 1);
 
-    if (bytes_read == -1) {
-        ACE_ERROR((LM_ERROR, ACE_TEXT ("Error in SerialDeviceDriver::receive(). \n")));
+    if (bytes_read == -1)
+    {
+        yError("Error in SerialDeviceDriver::receive()");
         return false;
     }
 

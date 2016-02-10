@@ -115,6 +115,7 @@ public:
     virtual int receiveChar(char& c);
     virtual int flush ();
     virtual int receiveLine(char* line, const int MaxLineLength);
+    virtual int receiveBytes(unsigned char* bytes, const int size);
     virtual bool setDTR(bool enable);
 
     /**
