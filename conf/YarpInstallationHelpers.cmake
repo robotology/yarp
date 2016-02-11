@@ -310,7 +310,6 @@ endfunction()
 # In addition accepts the "PLUGINS" that builds the plugin in the
 # appropriate folder, and exports it only if it is not a module
 macro(YARP_INSTALL _what)
-
   # Ensure that we know how to handle this
   if(NOT "${_what}" MATCHES "^(FILES|DIRECTORY|PROGRAMS|TARGETS)$")
     message(FATAL_ERROR "Unknown option \"${_what}\"")
@@ -333,7 +332,8 @@ macro(YARP_INSTALL _what)
                       DIRECTORY
                       PROGRAMS
                       TARGETS)
-  cmake_parse_arguments(_YI "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" "${_what};${_fixedARGN}")
+  set(arguments ${_what} ${_fixedARGN})
+  cmake_parse_arguments(_YI "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${arguments})
 
   if("${_what}" STREQUAL "FILES" OR
      "${_what}" STREQUAL "DIRECTORY" OR
