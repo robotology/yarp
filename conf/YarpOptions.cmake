@@ -173,6 +173,7 @@ endif()
 #message(STATUS "DEPRECATED_DECLARATIONS_FLAGS = ${DEPRECATED_DECLARATIONS_FLAGS}")
 #message(STATUS "HARDENING_FLAGS = ${HARDENING_FLAGS}")
 #message(STATUS "CXX11_FLAGS = ${CXX11_FLAGS}")
+#message(STATUS "CXX14_FLAGS = ${CXX14_FLAGS}")
 
 
 #########################################################################
