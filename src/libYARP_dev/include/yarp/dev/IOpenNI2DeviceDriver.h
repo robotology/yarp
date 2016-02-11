@@ -11,7 +11,14 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Image.h>
-#include <NiTE.h>
+
+#ifdef _USE_NITE2_
+    #include <NiTE.h>
+#else
+namespace nite{
+    typedef int SkeletonState;
+}
+#endif
 
 //Constants from the OpenNI2SkeletonData
 #define MAX_USERS 10
@@ -32,6 +39,8 @@ namespace yarp {
  */
 class yarp::dev::IOpenNI2DeviceDriver {
 public:
+//     virtual ~IOpenNI2DeviceDriver() {}
+
     /**
      * Gets sensor's skeleton joints orientation quarternion
      *
@@ -51,6 +60,7 @@ public:
      */
     virtual bool getSkeletonPosition(yarp::sig::Vector *vectorArray, float *confidence, int userID) = 0;
 
+
     /**
      * Gets the user skeleton state
      *  - SKELETON_NONE
@@ -61,6 +71,7 @@ public:
      * @return nite::SkeletonState value of the user skeleton state
      */
     virtual nite::SkeletonState getSkeletonState(int userID) = 0;
+
     /**
      * Get RGB camera image
      *

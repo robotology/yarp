@@ -22,19 +22,36 @@ if (NOT SKIP_OpenNI2Device)
     find_library(OPENNI2_LIBRARY NAMES OpenNI2 libOpenNI2.dylib libOpenNI2 HINTS $ENV{OPENNI2_REDIST})
     find_path(NITE2_INCLUDE_LOCAL NAMES NiTE.h HINTS $ENV{NITE2_INCLUDE})
     find_library(NITE2_LIBRARY NAMES NiTE2 HINTS $ENV{NITE2_REDIST64})
+    if(NOT NITE2_INCLUDE_LOCAL)
+        set(NITE2_FOUND FALSE)
+    endif()
 
+    if(NOT NITE2_FOUND)
+        message(WARNING "OpenNI2Device: NITE2 library was not found, skeleton extraction feature will be skipped by driver. "
+         "If you need this feature please install NITE2 library.")
+    else()
+        add_definitions(-DOPENNI2_DRIVER_USES_NITE2)
+    endif()
 
-    include_directories(${OPENNI2_INCLUDE_LOCAL} ${NITE2_INCLUDE_LOCAL} ${YARP_INCLUDE_DIRS})
-    link_libraries(${OPENNI2_LIBRARY} ${NITE2_LIBRARY} ${YARP_LIBRARIES})
+    include_directories(${OPENNI2_INCLUDE_LOCAL} ${YARP_INCLUDE_DIRS})
+    if(NITE2_FOUND)
+        include_directories( ${NITE2_INCLUDE_LOCAL})
+    endif()
 
     # Search for source code.
     file(GLOB folder_source *.cpp *.cc *.c)
     file(GLOB folder_header *.h)
+
     source_group("Source Files" FILES ${folder_source})
     source_group("Header Files" FILES ${folder_header})
 
     yarp_add_plugin(yarp_OpenNI2Device ${folder_source} ${folder_header})
-    target_link_libraries(yarp_OpenNI2Device ${YARP_LIBRARIES} ${LINK_LIBRARIES})
+    target_link_libraries(yarp_OpenNI2Device ${OPENNI2_LIBRARY} ${YARP_LIBRARIES})
+
+    if(NITE2_FOUND)
+        target_link_libraries(yarp_OpenNI2Device ${NITE2_LIBRARY})
+    endif()
+
     yarp_install(TARGETS yarp_OpenNI2Device
                  EXPORT YARP
                  COMPONENT runtime

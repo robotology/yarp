@@ -28,7 +28,9 @@ void OpenNI2SkeletonData::initUserSkeletons(){
             tuserSkeleton->skeletonPointsPos[j].zero();
             tuserSkeleton->skeletonPosConf[j] = -1;
             tuserSkeleton->skeletonOriConf[j] = -1;
+#ifdef OPENNI2_DRIVER_USES_NITE2
             tuserSkeleton->skeletonState = nite::SKELETON_NONE;
+#endif
             tuserSkeleton->uID = i+1;
         }
     }
@@ -49,15 +51,20 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
     if(b.get(0).isString()){
         userID = b.get(1).asInt();
         string vocab = b.get(0).asString().c_str();
-        if(vocab.compare("CALIBRATING FOR USER") == 0){
+        if(vocab.compare("CALIBRATING FOR USER") == 0)
+        {
+#ifdef OPENNI2_DRIVER_USES_NITE2
             userSkeleton[userID-1].skeletonState = nite::SKELETON_CALIBRATING;
+#endif
         }
     }
     
     else if(b.get(0).isList()){
         list = b.get(0).asList();
         userID = list->get(1).asInt();
+#ifdef OPENNI2_DRIVER_USES_NITE2
         userSkeleton[userID-1].skeletonState = nite::SKELETON_TRACKED;//USER STATUS
+#endif
         tuserSkeleton = &(userSkeleton[userID-1]);
         int jointIndex = 0;
         for(int i = 1; i < b.size(); i+=6){
@@ -93,9 +100,11 @@ float* OpenNI2SkeletonData::getPositionConf(int userID){
     return userSkeleton[userID-1].skeletonPosConf;
 }
 
+#ifdef OPENNI2_DRIVER_USES_NITE2
 nite::SkeletonState OpenNI2SkeletonData::getSkeletonState(int userID){
     return userSkeleton[userID-1].skeletonState;
 }
+#endif
 
 ImageOf<PixelMono16> OpenNI2SkeletonData::getDepthFrame(){
     return depthFrame;
