@@ -147,7 +147,11 @@ function(ADD_INSTALL_RPATH_SUPPORT)
         endforeach()
       endif("${isSystemDir}" STREQUAL "-1")
     endforeach()
-    list(REMOVE_DUPLICATES CMAKE_INSTALL_RPATH)
+    
+    if (NOT "${CMAKE_INSTALL_RPATH}" STREQUAL "")
+        list(REMOVE_DUPLICATES CMAKE_INSTALL_RPATH)
+    endif()
+        
     set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} PARENT_SCOPE)
 
     # add the automatically determined parts of the RPATH
