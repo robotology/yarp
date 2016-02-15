@@ -156,7 +156,7 @@ void partMover::home_click(GtkButton *button, gtkClassData* currentClassData)
           return;
       }
 
-      strcpy(buffer2, "Asking the robotInterface to homing part ");
+      strcpy(buffer2, "Asking the yarprobotinterface to homing part ");
       strcat(buffer2, buffer1);
 
       dialog_message(GTK_MESSAGE_INFO, buffer2, (char *) " through the remoteCalibrator interface, since no custom zero group found in the supplied file", true);
@@ -313,7 +313,7 @@ bool partMover::entry_update(partMover *currentPart)
 
   if (NUMBER_OF_JOINTS == 0)
   {
-      fprintf(stderr,"Lost connection with robotInterface. You should save and restart.\n" );
+      fprintf(stderr,"Lost connection with yarprobotinterface. You should save and restart.\n" );
       Time::delay(0.1);
       pColor=&color_grey;
       strcpy(frame_title,"DISCONNECTED");

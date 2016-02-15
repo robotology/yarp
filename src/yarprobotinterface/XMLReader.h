@@ -5,8 +5,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef ROBOTINTERFACE_XMLREADER_H
-#define ROBOTINTERFACE_XMLREADER_H
+#ifndef YARP_YARPROBOTINTERFACE_XMLREADER_H
+#define YARP_YARPROBOTINTERFACE_XMLREADER_H
 
 #include <string>
 
@@ -29,4 +29,4 @@ private:
 
 } // namespace RobotInterface
 
-#endif // ROBOTINTERFACE_XMLREADER_H
+#endif // YARP_YARPROBOTINTERFACE_XMLREADER_H

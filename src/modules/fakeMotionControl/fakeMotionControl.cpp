@@ -355,7 +355,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
 
 //     if (!config.findGroup("GENERAL").find("MotioncontrolVersion").isInt())
 //     {
-//         yError() << "Missing MotioncontrolVersion parameter. RobotInterface cannot start. Please contact icub-support@iit.it";
+//         yError() << "Missing MotioncontrolVersion parameter. yarprobotinterface cannot start. Please contact icub-support@iit.it";
 //         return false;
 //     }
 //     else
@@ -363,7 +363,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
 //         int mcv = config.findGroup("GENERAL").find("MotioncontrolVersion").asInt();
 //         if (mcv != 2)
 //         {
-//             yError() << "Wrong MotioncontrolVersion parameter. RobotInterface cannot start. Please contact icub-support@iit.it";
+//             yError() << "Wrong MotioncontrolVersion parameter. yarprobotinterface cannot start. Please contact icub-support@iit.it";
 //             return false;
 //         }
 //     }
@@ -843,12 +843,12 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
 //                }
 //                else if (s_controlaw==string("not_implemented"))
 //                {
-//                    yDebug() << "found 'not_impelemented' in position control_law. This will terminate robotInterface execution.";
+//                    yDebug() << "found 'not_impelemented' in position control_law. This will terminate yarprobotinterface execution.";
 //                    return false;
 //                }
 //                else if (s_controlaw==string("disabled"))
 //                {
-//                    yDebug() << "found 'disabled' in position control_law. This will terminat robotInterface execution.";
+//                    yDebug() << "found 'disabled' in position control_law. This will terminate yarprobotinterface execution.";
 //                    return false;
 //                }
 //                else

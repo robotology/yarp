@@ -5,8 +5,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef ROBOTINTERFACE_DEVICE_H
-#define ROBOTINTERFACE_DEVICE_H
+#ifndef YARP_YARPROBOTINTERFACE_DEVICE_H
+#define YARP_YARPROBOTINTERFACE_DEVICE_H
 
 #include "Types.h"
 
@@ -85,4 +85,4 @@ namespace std { std::ostream& operator<<(std::ostream &oss, const RobotInterface
 yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Device &t);
 
 
-#endif // ROBOTINTERFACE_DEVICE_H
+#endif // YARP_YARPROBOTINTERFACE_DEVICE_H

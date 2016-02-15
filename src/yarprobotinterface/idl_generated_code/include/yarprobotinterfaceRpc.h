@@ -1,18 +1,18 @@
 // This is an automatically-generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_robotInterfaceRpc
-#define YARP_THRIFT_GENERATOR_robotInterfaceRpc
+#ifndef YARP_THRIFT_GENERATOR_yarprobotinterfaceRpc
+#define YARP_THRIFT_GENERATOR_yarprobotinterfaceRpc
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-class robotInterfaceRpc;
+class yarprobotinterfaceRpc;
 
 
-class robotInterfaceRpc : public yarp::os::Wire {
+class yarprobotinterfaceRpc : public yarp::os::Wire {
 public:
-  robotInterfaceRpc();
+  yarprobotinterfaceRpc();
   /**
    * Returns current phase.
    */
@@ -26,20 +26,20 @@ public:
    */
   virtual std::string get_robot();
   /**
-   * Returns true if robotInterface is ready (all startup actions
+   * Returns true if yarprobotinterface is ready (all startup actions
    * performed and no interrupt called).
    */
   virtual bool is_ready();
   /**
-   * Closes robotInterface.
+   * Closes yarprobotinterface.
    */
   virtual std::string quit();
   /**
-   * Closes robotInterface.
+   * Closes yarprobotinterface.
    */
   virtual std::string bye();
   /**
-   * Closes robotInterface.
+   * Closes yarprobotinterface.
    */
   virtual std::string exit();
   virtual bool read(yarp::os::ConnectionReader& connection);

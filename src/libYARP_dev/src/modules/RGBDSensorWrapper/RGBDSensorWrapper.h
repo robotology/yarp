@@ -126,7 +126,7 @@ private:
     bool read(yarp::os::ConnectionReader& connection);
 
     // Open the wrapper only, the attach method needs to be called before using it
-    // Typical usage: robotInterface
+    // Typical usage: yarprobotinterface
     bool openDeferredAttach(yarp::os::Searchable& prop);
 
     // If a subdevice parameter is given, the wrapper will open it and attach to immediatly.

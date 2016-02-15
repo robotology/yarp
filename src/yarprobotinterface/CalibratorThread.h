@@ -5,6 +5,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#ifndef YARP_YARPROBOTINTERFACE_CALIBRATORTHREAD_H
+#define YARP_YARPROBOTINTERFACE_CALIBRATORTHREAD_H
 
 #include "Types.h"
 
@@ -40,3 +42,5 @@ private:
 };
 
 } // namespace RobotInterface
+
+#endif // YARP_YARPROBOTINTERFACE_CALIBRATORTHREAD_H

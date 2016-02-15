@@ -5,8 +5,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef ROBOTINTERFACE_TYPES_H
-#define ROBOTINTERFACE_TYPES_H
+#ifndef YARP_YARPROBOTINTERFACE_TYPES_H
+#define YARP_YARPROBOTINTERFACE_TYPES_H
 
 #include <vector>
 #include <iosfwd>
@@ -73,4 +73,4 @@ void operator>>(const std::stringstream &sstream, RobotInterface::ActionType &ac
 
 }
 
-#endif // ROBOTINTERFACE_TYPES_H
+#endif // YARP_YARPROBOTINTERFACE_TYPES_H

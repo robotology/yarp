@@ -1,22 +1,14 @@
-project(robot-interface)
+project(yarprobotinterface)
 
-#set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
 
 
-#find_package(TinyXML 2.6 QUIET)
+include_directories(${YARP_OS_INCLUDE_DIRS}
+                    ${YARP_dev_INCLUDE_DIRS}
+                    ${TinyXML_INCLUDE_DIRS})
 
-#if(TinyXML_FOUND)
-#    option(USE_SYSTEM_TINYXML ON "")
-#endif()
-#if(NOT USE_SYSTEM_TINYXML)
-    add_subdirectory(extern)
-#endif()
-
-include_directories(${YARP_INCLUDE_DIRS})
-include_directories(${iCubDev_INCLUDE_DIRS})
-include_directories(${TinyXML_INCLUDE_DIRS})
-
-set(robotInterface_SRCS
+set(yarprobotinterface_SRCS
     main.cpp
     Action.cpp
     CalibratorThread.cpp
@@ -28,7 +20,7 @@ set(robotInterface_SRCS
     XMLReader.cpp
 )
 
-set(robotInterface_HDRS
+set(yarprobotinterface_HDRS
     Action.h
     CalibratorThread.h
     Device.h
@@ -39,28 +31,28 @@ set(robotInterface_HDRS
     XMLReader.h
 )
 
-set(robotInterface_IDLS
-    robotInterface.thrift)
+set(yarprobotinterface_IDLS
+    yarprobotinterface.thrift)
 
 include(YarpIDL)
-yarp_idl_to_dir(${robotInterface_IDLS}
+yarp_idl_to_dir(${yarprobotinterface_IDLS}
                 "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                robotInterface_IDLS_SRCS
-                robotInterface_IDLS_HDRS
-                robotInterface_IDLS_INCLUDE_DIRS)
-include_directories("${robotInterface_IDLS_INCLUDE_DIRS}")
+                yarprobotinterface_IDLS_SRCS
+                yarprobotinterface_IDLS_HDRS
+                yarprobotinterface_IDLS_INCLUDE_DIRS)
+include_directories("${yarprobotinterface_IDLS_INCLUDE_DIRS}")
 
-add_executable(robotInterface ${robotInterface_SRCS}
-                              ${robotInterface_HDRS}
-                              ${robotInterface_IDLS_SRCS}
-                              ${robotInterface_IDLS_HDRS})
+add_executable(yarprobotinterface ${yarprobotinterface_SRCS}
+                              ${yarprobotinterface_HDRS}
+                              ${yarprobotinterface_IDLS_SRCS}
+                              ${yarprobotinterface_IDLS_HDRS})
 
-target_link_libraries(robotInterface
-                      YARP::YARP_OS
-                      YARP::YARP_dev
-                      YARP::YARP_init
+target_link_libraries(yarprobotinterface
+                      YARP_OS
+                      YARP_dev
+                      YARP_init
                       ${TinyXML_LIBRARIES})
 
-install(TARGETS robotInterface
-        DESTINATION bin
-        COMPONENT Runtime)
+install(TARGETS yarprobotinterface
+        COMPONENT utilities
+        DESTINATION ${CMAKE_INSTALL_BINDIR})

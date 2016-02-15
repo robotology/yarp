@@ -36,7 +36,7 @@
 namespace {
 
 // Represent something like this in the xml file
-// <!DOCTYPE robot PUBLIC "-//YARP//DTD robotInterface 1.0//EN" "http://www.icub.org/DTD/robotInterfaceV1.0.dtd">
+// <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
 class RobotInterfaceDTD
 {
 public:
@@ -61,8 +61,8 @@ public:
 
     void setDefault() {
         type = RobotInterfaceDTD::DocTypeUnknown;
-        identifier = "-//YARP//DTD robotInterface 1.0//EN";
-        uri = "http://www.icub.org/DTD/robotInterfaceV1.0.dtd";
+        identifier = "-//YARP//DTD yarprobotinterface 1.0//EN";
+        uri = "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd";
         majorVersion = 1;
         minorVersion = 0;
     }
@@ -77,7 +77,7 @@ public:
     static const std::string ext;
 };
 
-const std::string RobotInterfaceDTD::baseUri("http://www.icub.org/DTD/robotInterfaceV");
+const std::string RobotInterfaceDTD::baseUri("http://www.yarp.it/DTD/yarprobotinterfaceV");
 const std::string RobotInterfaceDTD::ext(".dtd");
 
 
@@ -276,7 +276,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotFile(const s
     }
 
     if (!dtd.valid()) {
-        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version robotInterfaceV1.0";
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version yarprobotinterfaceV1.0";
         dtd.setDefault();
         dtd.type = RobotInterfaceDTD::DocTypeRobot;
     }
@@ -287,7 +287,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotFile(const s
     }
 
     if(dtd.majorVersion != 1 || dtd.minorVersion != 0) {
-        SYNTAX_WARNING(doc->Row()) << "Only robotInterface DTD version 1.0 is supported";
+        SYNTAX_WARNING(doc->Row()) << "Only yarprobotinterface DTD version 1.0 is supported";
     }
 
     readRobotTag(doc->RootElement());
@@ -495,7 +495,7 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesFile(c
     }
 
     if (!devicesFileDTD.valid()) {
-        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version robotInterfaceV1.0";
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version yarprobotinterfaceV1.0";
         devicesFileDTD.setDefault();
         devicesFileDTD.type = RobotInterfaceDTD::DocTypeDevices;
     }
@@ -506,7 +506,7 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesFile(c
     }
 
     if (devicesFileDTD.majorVersion != dtd.majorVersion) {
-        SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different robotInterface DTD version";
+        SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different yarprobotinterface DTD version";
     }
 
     RobotInterface::DeviceList devices = readDevicesTag(doc->RootElement());
@@ -786,7 +786,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsFile(con
     }
 
     if (!paramsFileDTD.valid()) {
-        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version robotInterfaceV1.0";
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version yarprobotinterfaceV1.0";
         paramsFileDTD.setDefault();
         paramsFileDTD.type = RobotInterfaceDTD::DocTypeParams;
     }
@@ -797,7 +797,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsFile(con
     }
 
     if (paramsFileDTD.majorVersion != dtd.majorVersion) {
-        SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different robotInterface DTD version";
+        SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different yarprobotinterface DTD version";
     }
 
     RobotInterface::ParamList params = readParamsTag(doc->RootElement());
@@ -952,7 +952,7 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsFile(c
     }
 
     if (!actionsFileDTD.valid()) {
-        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version robotInterfaceV1.0";
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version yarprobotinterfaceV1.0";
         actionsFileDTD.setDefault();
         actionsFileDTD.type = RobotInterfaceDTD::DocTypeActions;
     }
@@ -963,7 +963,7 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsFile(c
     }
 
     if (actionsFileDTD.majorVersion != dtd.majorVersion) {
-        SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different robotInterface DTD version";
+        SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different yarprobotinterface DTD version";
     }
 
     RobotInterface::ActionList actions = readActionsTag(doc->RootElement());

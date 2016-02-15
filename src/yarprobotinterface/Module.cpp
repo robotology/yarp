@@ -72,7 +72,7 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     // argument
     setName(mPriv->robot.portprefix().c_str());
 
-    yarp::os::ConstString rpcPortName("/" + getName() + "/robotInterface");
+    yarp::os::ConstString rpcPortName("/" + getName() + "/yarprobotinterface");
     mPriv->rpcPort.open(rpcPortName);
     attach(mPriv->rpcPort);
 

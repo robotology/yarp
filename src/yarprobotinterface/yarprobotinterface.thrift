@@ -5,7 +5,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-service robotInterfaceRpc {
+service yarprobotinterfaceRpc {
 
     /**
      * Returns current phase.
@@ -23,23 +23,23 @@ service robotInterfaceRpc {
     string get_robot();
 
     /**
-     * Returns true if robotInterface is ready (all startup actions
+     * Returns true if yarprobotinterface is ready (all startup actions
      * performed and no interrupt called).
      */
     bool is_ready();
 
     /**
-     * Closes robotInterface.
+     * Closes yarprobotinterface.
      */
     string quit();
 
     /**
-     * Closes robotInterface.
+     * Closes yarprobotinterface.
      */
     string bye();
 
     /**
-     * Closes robotInterface.
+     * Closes yarprobotinterface.
      */
     string exit();
 }

@@ -5,17 +5,17 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef ROBOTINTERFACE_MODULE_H
-#define ROBOTINTERFACE_MODULE_H
+#ifndef YARP_YARPROBOTINTERFACE_MODULE_H
+#define YARP_YARPROBOTINTERFACE_MODULE_H
 
 #include <yarp/os/RFModule.h>
-#include <robotInterfaceRpc.h>
+#include <yarprobotinterfaceRpc.h>
 
 namespace RobotInterface
 {
 
 class Module : public yarp::os::RFModule,
-               public robotInterfaceRpc
+               public yarprobotinterfaceRpc
 {
 public:
     explicit Module();
@@ -27,9 +27,11 @@ public:
     virtual bool close();
     virtual bool interruptModule();
     virtual bool configure(yarp::os::ResourceFinder &rf);
+
+    using yarp::os::RFModule::attach;
     virtual bool attach(yarp::os::RpcServer &source);
 
-    // robotInterfaceRpc
+    // yarprobotinterfaceRpc
     virtual std::string get_phase();
     virtual int32_t get_level();
     virtual bool is_ready();
@@ -46,4 +48,4 @@ private:
 
 } // namespace RobotInterface
 
-#endif // ROBOTINTERFACE_MODULE_H
+#endif // YARP_YARPROBOTINTERFACE_MODULE_H

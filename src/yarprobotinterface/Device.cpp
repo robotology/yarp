@@ -103,8 +103,6 @@ public:
         // is empty. This will avoid calling delete twice.
         // stopThreads() must pass this semaphore, but in order to avoid to
         // stop an already deleted thread we need a second semaphore.
-        bool cippa = false;
-        if(!thr()->empty()) cippa = true;
         reg_sem()->wait();
         RobotInterface::ThreadList::iterator tit = thr()->begin();
         while (tit != thr()->end()) {
@@ -353,13 +351,13 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
     if(!target.driver()->view(rem_calibrator_wrap)) {
         yWarning() << "Device " << target.name() << "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot attach to a Calibrator device. \n \
                                                      Please verify that the target of calibrate action is a controlBoardWrapper2 device.  \
-                                                     This doesn't prevent the robotInterface to correctly operate, but no remote calibration and homing will be available";
+                                                     This doesn't prevent the yarprobotinterface to correctly operate, but no remote calibration and homing will be available";
         rem_calibrator_available = false;
     }
 
     if( (rem_calibrator_available) && (!driver()->view(rem_calibrator_calib)) ) {
         yWarning() << "Device " << name() <<  "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot be used as a remote calibration device. \n \
-                                               This doesn't prevent the robotInterface to correctly operate, but no remote calibration and homing will be available";
+                                               This doesn't prevent the yarprobotinterface to correctly operate, but no remote calibration and homing will be available";
         rem_calibrator_available = false;
     }
 

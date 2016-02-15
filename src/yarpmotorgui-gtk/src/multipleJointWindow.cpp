@@ -369,7 +369,7 @@ void partMover::home_all(GtkButton *button, partMover* currentPart)
             return;
         }
 
-      strcpy(buffer2, "Asking the robotInterface to homing part ");
+      strcpy(buffer2, "Asking the yarprobotinterface to homing part ");
       strcat(buffer2, buffer1);
 
 
