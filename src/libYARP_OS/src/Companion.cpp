@@ -171,9 +171,6 @@ static void companion_sigint_handler(int sig) {
         }
         if (port!=NULL) {
             port->interrupt();
-#ifndef YARP2_WINDOWS
-            port->close();
-#endif
         }
     } else {
         fprintf(stderr,"Aborting...\n");
