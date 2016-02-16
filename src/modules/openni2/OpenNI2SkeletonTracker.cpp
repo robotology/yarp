@@ -12,11 +12,12 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColorOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withColorOn, bool withRgbMirrorOn, bool withDepthMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration, bool prMode, int depthMode, int colorMode)
 {
     userTracking= withTracking;
     colorON = withColorOn;
-    mirrorON = withMirrorOn;
+    rgbMirrorON = withRgbMirrorOn;
+    depthMirrorON = withDepthMirrorOn;
     colorVideoMode=DEFAULT_COLOR_MODE;
     depthVideoMode=DEFAULT_DEPTH_MODE;
     
@@ -174,6 +175,29 @@ int OpenNI2SkeletonTracker::init(){
             {
                 depthStream.setVideoMode(depthModes[depthVideoMode]);
             }
+
+            // If not playback, set depth mirroring (default: off)
+            if (!oniPlayback) 
+            {   
+                depthStream.setMirroringEnabled(depthMirrorON);
+                bool dMirror = depthStream.getMirroringEnabled();
+                
+                if (!dMirror && depthMirrorON) 
+                {
+                    cout << "WARNING: Could not turn on mirroring for depth stream" << endl;
+                }
+                    
+                else if (dMirror && depthMirrorON)
+                {
+                    cout << "Depth stream mirroring: ON" << endl;
+                }
+                    
+                else 
+                {
+                    cout << "Depth stream mirroring: OFF" << endl;
+                }
+            }
+
         }
         if (oniRecord) {
             recorder.attach(depthStream);
@@ -207,7 +231,6 @@ int OpenNI2SkeletonTracker::init(){
                 return rc;
             }
            
-
             // if not playback, set resolution and fps settings for RGB stream
             colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
             const openni::Array<openni::VideoMode>& colorModes = colorInfo->getSupportedVideoModes();
@@ -215,7 +238,29 @@ int OpenNI2SkeletonTracker::init(){
             {
                 imageStream.setVideoMode(colorModes[colorVideoMode]);
             }
-        
+      
+            // If not playback, set RGB mirroring (default: off)
+            if (!oniPlayback)
+            {
+               imageStream.setMirroringEnabled(rgbMirrorON);
+               bool rgbMirror = imageStream.getMirroringEnabled();
+
+               if (!rgbMirror && rgbMirrorON)
+               {
+                   cout << "WARNING: Could not turn on mirroring for RGB stream" << endl;
+               }
+
+               else if (rgbMirror && rgbMirrorON)
+               {
+                   cout << "RGB mirroring: ON" << endl;
+               }
+
+               else
+               {
+                   cout << "RGB stream mirroring: OFF" << endl;
+               }
+            }
+               
             if (oniRecord) {
             recorder.attach(imageStream);
             }
