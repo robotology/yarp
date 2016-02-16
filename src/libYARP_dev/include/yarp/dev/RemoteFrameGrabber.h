@@ -655,33 +655,33 @@ public:
     }
 
     virtual bool setBrightness(double v) {
-        return setCommand(VOCAB_BRIGHTNESS,v);
+        return setCommand(VOCAB_BRIGHTNESS, v);
     }
     virtual double getBrightness() {
         return getCommand(VOCAB_BRIGHTNESS);
     }
-	virtual bool setExposure(double v) {
-        return setCommand(VOCAB_EXPOSURE,v);
+    virtual bool setExposure(double v) {
+        return setCommand(VOCAB_EXPOSURE, v);
     }
     virtual double getExposure() {
         return getCommand(VOCAB_EXPOSURE);
     }
 
     virtual bool setSharpness(double v) {
-        return setCommand(VOCAB_SHARPNESS,v);
+        return setCommand(VOCAB_SHARPNESS, v);
     }
     virtual double getSharpness() {
         return getCommand(VOCAB_SHARPNESS);
     }
 
-	virtual bool setWhiteBalance(double blue, double red)
-	{
-		return setCommand(VOCAB_WHITE, blue, red);
-	}
-	virtual bool getWhiteBalance(double &blue, double &red)
-	{
-		return getCommand(VOCAB_WHITE, blue, red);
-	}
+    virtual bool setWhiteBalance(double blue, double red)
+    {
+        return setCommand(VOCAB_WHITE, blue, red);
+    }
+    virtual bool getWhiteBalance(double &blue, double &red)
+    {
+        return getCommand(VOCAB_WHITE, blue, red);
+    }
 
     virtual bool setHue(double v) {
         return setCommand(VOCAB_HUE,v);
@@ -725,36 +725,6 @@ public:
         return getCommand(VOCAB_IRIS);
     }
 
-    /*
-    virtual bool setTemperature(double v) {
-        return setCommand(VOCAB_TEMPERATURE,v);
-    }
-    virtual double getTemperature() const {
-        return getCommand(VOCAB_TEMPERATURE);
-    }
-    
-    virtual bool setWhiteShading(double r,double g,double b) {
-        return setCommand(VOCAB_WHITE_SHADING,r,g,b);
-    }
-    virtual bool getWhiteShading(double &r,double &g,double &b) const {
-        return getCommand(VOCAB_WHITE_SHADING,r,g,b);
-    }
-  
-    virtual bool setOpticalFilter(double v) {
-        return setCommand(VOCAB_OPTICAL_FILTER,v);
-    }
-    virtual double getOpticalFilter() const {
-        return getCommand(VOCAB_OPTICAL_FILTER);
-    }
-
-	virtual bool setCaptureQuality(double v) {
-        return setCommand(VOCAB_CAPTURE_QUALITY,v);
-    }
-    virtual double getCaptureQuality() const {
-        return getCommand(VOCAB_CAPTURE_QUALITY);
-    }
-    */
-
     /* Implementation of IFrameGrabberControls2 interface */
     virtual bool getCameraDescription(CameraDescriptor *camera);
     virtual bool hasFeature(int feature, bool *hasFeature);
@@ -792,12 +762,12 @@ protected:
         return true;
     }
 
-	bool setCommand(int code, double b, double r) {
+    bool setCommand(int code, double b, double r) {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addDouble(b);
-		cmd.addDouble(r);
+        cmd.addDouble(r);
         port.write(cmd,response);
         return true;
     }
@@ -811,7 +781,7 @@ protected:
         return response.get(2).asDouble();
     }
 
-	bool getCommand(int code, double &b, double &r) const
+    bool getCommand(int code, double &b, double &r) const
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
