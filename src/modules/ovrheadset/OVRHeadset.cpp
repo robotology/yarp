@@ -1259,7 +1259,7 @@ void yarp::dev::OVRHeadset::DebugHmd(ovrHmd hmd)
     yDebug("  * ProductName: %s", hmd->ProductName);
     yDebug("  * Manufacturer: %s", hmd->Manufacturer);
     yDebug("  * VendorId:ProductId: %04X:%04X", hmd->VendorId, hmd->ProductId);
-    yDebug("  * SerialNumber: %X", hmd->SerialNumber);
+    yDebug("  * SerialNumber: %s", hmd->SerialNumber);
     yDebug("  * Firmware Version: %d.%d", hmd->FirmwareMajor, hmd->FirmwareMinor);
     yDebug("  * Resolution: %dx%d", hmd->Resolution.w, hmd->Resolution.h);
 }
