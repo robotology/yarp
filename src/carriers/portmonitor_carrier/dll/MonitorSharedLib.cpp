@@ -38,7 +38,7 @@ bool MonitorSharedLib::load(const yarp::os::Property& options)
     if(!monitorFactory.isValid()) {
         string msg = string("Cannot load shared library ") + filename  + string(" (");
         msg += Vocab::decode(monitorFactory.getStatus()) + string(")");
-        yError(msg.c_str());
+        yError("%s", msg.c_str());
         return false;
     }
 

@@ -51,7 +51,7 @@ MonitorLua::~MonitorLua()
         if(getLocalFunction("destroy"))
         {
             if(lua_pcall(L, 0, 0, 0) != 0)
-                yError(lua_tostring(L, -1));
+                yError("%s", lua_tostring(L, -1));
         }
         // closing lua state handler
         lua_close(L);
@@ -64,7 +64,7 @@ bool MonitorLua::load(const Property &options)
     if(luaL_loadfile(L, options.find("filename").asString().c_str()))
     {   
         yError("Cannot load script file");
-        yError(lua_tostring(L, -1));
+        yError("%s", lua_tostring(L, -1));
         lua_pop(L,1);
         lua_close(L);
         L = NULL;
@@ -74,7 +74,7 @@ bool MonitorLua::load(const Property &options)
     if(lua_pcall(L,0, LUA_MULTRET, 0))
     {
         yError("Cannot run script file");
-        yError(lua_tostring(L, -1));
+        yError("%s", lua_tostring(L, -1));
         lua_pop(L,1);
         lua_close(L);
         L = NULL;
@@ -115,7 +115,7 @@ bool MonitorLua::load(const Property &options)
         SWIG_NewPointerObj(L, &options, propType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            yError(lua_tostring(L, -1));
+            yError("%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             lua_close(L);
             L = NULL;
@@ -161,7 +161,7 @@ bool MonitorLua::acceptData(Things &thing)
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            yError(lua_tostring(L, -1));
+            yError("%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -199,7 +199,7 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            yError(lua_tostring(L, -1));
+            yError("%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
@@ -246,7 +246,7 @@ yarp::os::Things& MonitorLua::updateReply(yarp::os::Things& thing)
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            yError(lua_tostring(L, -1));
+            yError("%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
@@ -293,7 +293,7 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
         SWIG_NewPointerObj(L, &params, propType, 0);
         if(lua_pcall(L, 1, 0, 0) != 0)
         {
-            yError(lua_tostring(L, -1));
+            yError("%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -325,7 +325,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         // calling PortMonitor.getparam from lua
         if(lua_pcall(L, 0, 1, 0) != 0)
         {
-            yError(lua_tostring(L, -1));
+            yError("%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -361,7 +361,7 @@ bool MonitorLua::peerTrigged(void)
     {
         if(lua_pcall(L, 0, 0, 0) != 0)
         {
-            yError(lua_tostring(L, -1));
+            yError("%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -443,13 +443,13 @@ bool MonitorLua::canAccept(void)
 
     if(luaL_dostring(L, strConstraint.c_str()) != 0)
     {        
-        yError(lua_tostring(L, -1));
+        yError("%s", lua_tostring(L, -1));
         return false;
     }
     
     if(!lua_isboolean(L, -1))
     {
-        yError(lua_tostring(L, -1));
+        yError("%s", lua_tostring(L, -1));
         return false;      
     }
     
