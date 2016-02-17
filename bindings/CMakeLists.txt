@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 2.8.9)
 
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
+include(GNUInstallDirs)
 
 set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
 set(YARP_COLLISION_AVOIDANCE FALSE)
