@@ -429,10 +429,29 @@ if(CREATE_LUA)
   endif()
   set(YARP_COLLISION_AVOIDANCE TRUE)
 
-  set(LUA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/lua/${LUA_VERSION_MAJOR}.${LUA_VERSION_MINOR})
+  set(_CMAKE_INSTALL_LUADIR "lib/lua/${LUA_VERSION_MAJOR}.${LUA_VERSION_MINOR}")
+  set(CMAKE_INSTALL_LUADIR ${_CMAKE_INSTALL_LUADIR} CACHE PATH "lua bindings (${_CMAKE_INSTALL_LUADIR})")
+  mark_as_advanced(CMAKE_INSTALL_LUADIR)
+  if(NOT IS_ABSOLUTE ${CMAKE_INSTALL_LUADIR})
+    set(CMAKE_INSTALL_FULL_LUADIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LUADIR}")
+  else()
+    set(CMAKE_INSTALL_FULL_LUADIR "${CMAKE_INSTALL_LUADIR}")
+  endif()
+
+  # Update RPATH
+  if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
+    file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_LUADIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
+    get_target_property(_current_rpath "${target_name}" INSTALL_RPATH)
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+      list(APPEND _current_rpath "@loader_path/${_rel_path}")
+    else()
+      list(APPEND _current_rpath "\$ORIGIN/${_rel_path}")
+    endif()
+    set_target_properties("${target_name}" PROPERTIES INSTALL_RPATH "${_current_rpath}")
+  endif()
 
   install(TARGETS ${target_name}
-          DESTINATION ${LUA_INSTALL_DIR})
+          DESTINATION ${CMAKE_INSTALL_LUADIR})
 
 endif(CREATE_LUA)
 
