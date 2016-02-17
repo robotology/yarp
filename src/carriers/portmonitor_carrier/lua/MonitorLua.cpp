@@ -19,7 +19,7 @@ using namespace std;
 /**
  * Class MonitorLua
  */
-MonitorLua::MonitorLua(void) : bHasAcceptCallback(false), 
+MonitorLua::MonitorLua(void) : bHasAcceptCallback(false),
                                bHasUpdateCallback(false),
                                bHasUpdateReplyCallback(false),
                                trigger(NULL)
@@ -34,7 +34,7 @@ MonitorLua::MonitorLua(void) : bHasAcceptCallback(false),
      *  - PortMonitor.setConstraint()
      *  - PortMonitor.getConstraint()
      *  - portMonitor.setTrigInterval()
-     */ 
+     */
     registerExtraFunctions();
 }
 
@@ -62,7 +62,7 @@ bool MonitorLua::load(const Property &options)
 {
     //printf("%s (%d)\n", __FILE__, __LINE__);
     if(luaL_loadfile(L, options.find("filename").asString().c_str()))
-    {   
+    {
         yError("Cannot load script file");
         yError("%s", lua_tostring(L, -1));
         lua_pop(L,1);
@@ -88,7 +88,7 @@ bool MonitorLua::load(const Property &options)
     lua_setglobal(L, "PortMonitor_Owner");
 
     lua_getglobal(L, "PortMonitor");
-    if(lua_istable(L, -1) == 0) 
+    if(lua_istable(L, -1) == 0)
     {
         yError("The script file does not contain any valid \'PortMonitor\' object.");
         lua_pop(L, 1);
@@ -122,11 +122,11 @@ bool MonitorLua::load(const Property &options)
             luaMutex.unlock();
             return false;
         }
-        else    
+        else
             result = lua_toboolean(L, -1);
-    }  
+    }
     lua_pop(L,1);
-    
+
     // Check if there is accept callback
     bHasAcceptCallback = getLocalFunction("accept");
     lua_pop(L,1);
@@ -150,13 +150,13 @@ bool MonitorLua::acceptData(Things &thing)
         // mapping to swig type
         swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");
         if(!thingsType)
-        {            
+        {
             yError("Swig type of Things is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
         }
-        
+
         // getting the swig-type pointer
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
@@ -166,12 +166,12 @@ bool MonitorLua::acceptData(Things &thing)
             luaMutex.unlock();
             return false;
         }
-            
-        // converting the results        
+
+        // converting the results
         bool result = lua_toboolean(L, -1);
         lua_pop(L, 1);
         luaMutex.unlock();
-        return result;        
+        return result;
     }
 
     lua_pop(L, 1);
@@ -186,15 +186,15 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
     if(getLocalFunction("update"))
     {
         // mapping to swig type
-        swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");        
+        swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");
         if(!thingsType)
-        {            
+        {
             yError("Swig type of Things is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
         }
-        
+
         // getting the swig-type pointer
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
@@ -213,8 +213,8 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
-        }   
-        else        
+        }
+        else
         {
             lua_pop(L, 1);
             luaMutex.unlock();
@@ -282,13 +282,13 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
         // mapping to swig type
         swig_type_info *propType = SWIG_TypeQuery(L, "yarp::os::Property *");
         if(!propType)
-        {            
+        {
             yError("Swig type of Property is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
         }
-        
+
         // getting the swig-type pointer
         SWIG_NewPointerObj(L, &params, propType, 0);
         if(lua_pcall(L, 1, 0, 0) != 0)
@@ -315,13 +315,13 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         // mapping to swig type
         swig_type_info *propType = SWIG_TypeQuery(L, "yarp::os::Property *");
         if(!propType)
-        {            
+        {
             yError("Swig type of Property is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
         }
-        
+
         // calling PortMonitor.getparam from lua
         if(lua_pcall(L, 0, 1, 0) != 0)
         {
@@ -339,8 +339,8 @@ bool MonitorLua::getParams(yarp::os::Property& params)
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
-        }   
-        else        
+        }
+        else
         {
             params = *result;
             lua_pop(L, 1);
@@ -376,7 +376,7 @@ bool MonitorLua::peerTrigged(void)
 }
 
 
-bool MonitorLua::getLocalFunction(const char *name) 
+bool MonitorLua::getLocalFunction(const char *name)
 {
   lua_pushstring(L, name);
   lua_gettable(L, -2);
@@ -389,12 +389,12 @@ bool MonitorLua::registerExtraFunctions(void)
 #if LUA_VERSION_NUM > 501
     lua_newtable(L);
     luaL_setfuncs (L, MonitorLua::portMonitorLib, 0);
-    lua_pushvalue(L, -1); 
-    lua_setglobal(L, "PortMonitor"); 
+    lua_pushvalue(L, -1);
+    lua_setglobal(L, "PortMonitor");
 #else
-    // deprecated 
+    // deprecated
     //luaL_openlib(L, "PortMonitor", MonitorLua::portMonitorLib, 0);
-    luaL_register(L, "PortMonitor", MonitorLua::portMonitorLib);   
+    luaL_register(L, "PortMonitor", MonitorLua::portMonitorLib);
 #endif
     return true;
 }
@@ -406,25 +406,25 @@ bool MonitorLua::canAccept(void)
         return true;
 
     MonitorEventRecord& record = MonitorEventRecord::getInstance();
-   
+
     /**
      * following piece of code replaces each event symbolic name
-     * with a boolean value based on their existance in MonitorEventRecord 
+     * with a boolean value based on their existance in MonitorEventRecord
      */
     string strConstraint = constraint;
     string strDummy = strConstraint;
     searchReplace(strDummy, "(", " ");
     searchReplace(strDummy, ")", " ");
     // wrap it with some  guard space
-    strDummy = " " + strDummy + " "; 
+    strDummy = " " + strDummy + " ";
     string delimiter = " ";
     size_t pos = 0;
     string token;
-    while ((pos = strDummy.find(delimiter)) != string::npos) 
+    while ((pos = strDummy.find(delimiter)) != string::npos)
     {
         token = strDummy.substr(0, pos);
         if(token.size() && !isKeyword(token.c_str()))
-        {    
+        {
             record.lock();
             string value = (record.hasEvent(token.c_str())) ? "true" : "false";
             record.unlock();
@@ -436,23 +436,23 @@ bool MonitorLua::canAccept(void)
 
     /*
      *  Using lua to evaluate the boolean expression
-     *  Note: this can be replaced by a homebrew boolean 
+     *  Note: this can be replaced by a homebrew boolean
      *  expression validator (e.g., BinNodeType from libyarpmanager)
      */
     strConstraint = "return " + strConstraint;
 
     if(luaL_dostring(L, strConstraint.c_str()) != 0)
-    {        
+    {
         yError("%s", lua_tostring(L, -1));
         return false;
     }
-    
+
     if(!lua_isboolean(L, -1))
     {
         yError("%s", lua_tostring(L, -1));
-        return false;      
+        return false;
     }
-    
+
     bool accepted = (lua_toboolean(L,-1) == 1);
     lua_pop(L, 1);
     return accepted;
@@ -480,8 +480,8 @@ inline void MonitorLua::trimString(string& str)
   else str.erase(str.begin(), str.end());
 }
 
-inline bool MonitorLua::isKeyword(const char* str) 
-{    
+inline bool MonitorLua::isKeyword(const char* str)
+{
     if(!str)
         return false;
 
@@ -494,7 +494,7 @@ inline bool MonitorLua::isKeyword(const char* str)
 
 
 /**
- * static members 
+ * static members
  */
 
 int MonitorLua::setConstraint(lua_State* L)
@@ -535,12 +535,12 @@ int MonitorLua::getConstraint(lua_State* L)
 int MonitorLua::setEvent(lua_State* L)
 {
     double lifetime = -1.0;
-    int n_args =  lua_gettop(L); 
+    int n_args =  lua_gettop(L);
     const char *event_name = luaL_checkstring(L, 1);
     if(event_name)
     {
         // check if the event's lifetime is given as argument
-        if(n_args > 1)                          
+        if(n_args > 1)
         {
             if(lua_isnumber(L,2))
                 lifetime = (double) luaL_checknumber(L,2);
@@ -565,7 +565,7 @@ int MonitorLua::setEvent(lua_State* L)
         record.lock();
         record.setEvent(event_name, owner, lifetime);
         record.unlock();
-    }        
+    }
     return 0;
 }
 

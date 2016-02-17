@@ -10,11 +10,11 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/ConstString.h>
 
-#ifdef WITH_YARPMATH 
+#ifdef WITH_YARPMATH
 #include <yarp/math/Math.h>
 #include <yarp/math/SVD.h>
 using namespace yarp::math;
-#endif 
+#endif
 
 #include "PriorityCarrier.h"
 
@@ -25,7 +25,7 @@ using namespace yarp::os;
 #define safe_printf sprintf_s
 #else
 #define safe_printf snprintf
-#endif 
+#endif
 
 
 /**
@@ -127,7 +127,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
 }
 
 
-double PriorityCarrier::getActualStimulation(double t) 
+double PriorityCarrier::getActualStimulation(double t)
 {
     //
     // +P|   ---___
@@ -195,8 +195,8 @@ double PriorityCarrier::getActualStimulation(double t)
     return actualStimulation;
 }
 
-double PriorityCarrier::getActualInput(double t) 
-{  
+double PriorityCarrier::getActualInput(double t)
+{
     // calculating E(t) = Sum(e.I(t)) + b
     if(!isActive)
         return 0.0;
@@ -223,7 +223,7 @@ double PriorityCarrier::getActualInput(double t)
     }
     E += baias;
     double I = E * getActualStimulation(t);
-    return ((I<0) ? 0 : I);     //I'(t)                
+    return ((I<0) ? 0 : I);     //I'(t)
 }
 
 
@@ -231,11 +231,11 @@ double PriorityCarrier::getActualInput(double t)
  * Class PriorityGroup
  */
 
-bool PriorityGroup::recalculate(double t) 
+bool PriorityGroup::recalculate(double t)
 {
-#ifdef WITH_YARPMATH    
+#ifdef WITH_YARPMATH
     //TODO: find the correct way to get the size of peerSet
-    int nConnections = 0;    
+    int nConnections = 0;
     for(PriorityGroup::iterator it=peerSet.begin(); it!=peerSet.end(); it++)
         nConnections++;
 
@@ -251,7 +251,7 @@ bool PriorityGroup::recalculate(double t)
     {
         PriorityCarrier *peer = rowItr->first;
         // call 'getActualStimulation' to update 'isActive'
-        peer->getActualStimulation(t); 
+        peer->getActualStimulation(t);
         double xi = (peer->isActive) ? STIMUL_THRESHOLD : 0.0;
         B(row,0) = peer->baias * xi;
         X(row,0) = xi;
@@ -286,14 +286,14 @@ bool PriorityGroup::recalculate(double t)
         return false;
     }
 
-    // inverting the weigth matrix 
+    // inverting the weigth matrix
     InvA = yarp::math::luinv(InvA);
     Y = InvA * B;
 
     //fprintf(stdout, "X:\n %s\n", X.toString(1).c_str());
     //fprintf(stdout, "B:\n %s\n", B.toString(1).c_str());
     //fprintf(stdout, "Y:\n %s\n", Y.toString(1).c_str());
-    
+
     return true;
 #else
     return false;
@@ -310,7 +310,7 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
     double tNow = yarp::os::Time::now();
     source->stimulate(tNow);
 
-#ifdef WITH_YARPMATH   
+#ifdef WITH_YARPMATH
     if(!recalculate(tNow))
         return false;
 
@@ -326,15 +326,15 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
         if(!peer->isVirtual)
         {
             if(output > maxStimuli)
-            {   
+            {
                 maxStimuli = output;
                 maxPeer = peer;
             }
-        }            
+        }
         row++;
     }
     accept = (maxPeer == source);
-    
+
 #else
     // first checks whether actual input signal is positive or not
     double actualInput = source->getActualInput(tNow);
@@ -389,11 +389,11 @@ void PriorityDebugThread::run()
     double t = yarp::os::Time::now();
     v[0] = t;
     v[1] = pcarrier->getActualStimulation(t);
-#ifdef WITH_YARPMATH 
+#ifdef WITH_YARPMATH
     v[2] = pcarrier->yi;
 #else
     v[2] = pcarrier->getActualInput(t);
-#endif    
+#endif
     debugPort.write();
 }
 
