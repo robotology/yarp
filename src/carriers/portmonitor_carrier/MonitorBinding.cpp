@@ -8,10 +8,14 @@
  */
 
 #include "MonitorBinding.h"
-#include "MonitorLua.h"
 #include "MonitorSharedLib.h"
 
+#ifdef ENABLED_PORTMONITOR_LUA
+    #include "MonitorLua.h"
+#endif
+
 #include <yarp/os/ConstString.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 
@@ -25,8 +29,14 @@ MonitorBinding::~MonitorBinding()
 
 MonitorBinding* MonitorBinding::create(const char* script_type)
 {
-    if(ConstString(script_type) == "lua")
+    if(ConstString(script_type) == "lua") {
+#ifdef ENABLED_PORTMONITOR_LUA
         return new MonitorLua();
+#else
+        yError()<<"Lua portmonitor plugin is not enabled!";
+        return NULL;
+#endif
+    }
 
     if(ConstString(script_type) == "dll")
         return new MonitorSharedLib();
