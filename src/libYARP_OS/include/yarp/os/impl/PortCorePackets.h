@@ -65,7 +65,7 @@ public:
     PortCorePacket *getFreePacket() {
         if (PLATFORM_LIST_EMPTY(inactive)) {
             PortCorePacket *obj = NULL;
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE) && !defined(YARP_HAS_CXX11)
             size_t obj_size = sizeof (PortCorePacket);
             ACE_NEW_MALLOC_RETURN (obj,
                                    (PortCorePacket *)

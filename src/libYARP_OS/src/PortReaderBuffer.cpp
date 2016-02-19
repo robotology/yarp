@@ -119,7 +119,7 @@ public:
     PortReaderPacket *getInactivePacket() {
         if (PLATFORM_LIST_EMPTY(inactive)) {
             PortReaderPacket *obj = NULL;
-#ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_ACE) && !defined(YARP_HAS_CXX11)
             size_t obj_size = sizeof (PortReaderPacket);
             ACE_NEW_MALLOC_RETURN (obj,
                                    (PortReaderPacket *)
