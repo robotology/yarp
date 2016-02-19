@@ -7,7 +7,7 @@
 *
 */
 
-// added test for threadRelease/threadInit functions, synchronization and 
+// added test for threadRelease/threadInit functions, synchronization and
 // thread init success/failure notification, for thread and runnable classes
 // -nat
 
@@ -130,7 +130,7 @@ private:
     class Thread3: public Thread {
     public:
         Thread3():state(-1){}
-    
+
         bool onStopCalled;
         int state;
         virtual bool threadInit()
@@ -209,7 +209,7 @@ private:
                 state++;
         }
 
-        virtual void run() 
+        virtual void run()
         {}
 
         virtual void threadRelease()
@@ -225,10 +225,8 @@ private:
         long int dynamicId;
         long int staticId;
 
-        ThreadIdentity() {
-            dynamicId = staticId = -1;
-        }
-        
+        ThreadIdentity() : dynamicId(-1), staticId(-1) { }
+
         virtual void run() {
             dynamicId = getKey();
             staticId = Thread::getKeyOfCaller();
@@ -237,8 +235,8 @@ private:
 
     class Runnable1: public Runnable {
     public:
-        Runnable1():initCalled(false), 
-            notified(false), 
+        Runnable1():initCalled(false),
+            notified(false),
             releaseCalled(false),
             executed(false)
             {}
@@ -318,7 +316,7 @@ public:
         checkTrue(t.isRunning(),"active");
         t.stop();
         checkTrue(!t.isRunning(),"not active");
-        
+
         checkTrue(t.onStopCalled, "onStop was called");
         report(0,"done");
     }
@@ -386,7 +384,7 @@ public:
         checkTrue(foo.releaseCalled, "threadRelease was called");
         report(0, "done");
     }
- 
+
     virtual void testMin() {
         report(0,"testing minimal thread functions to check for mem leakage...");
         for (int i=0; i<20; i++) {

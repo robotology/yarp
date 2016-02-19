@@ -50,10 +50,11 @@ public:
 };
 
 
-Thread::Thread() {
-    implementation = new ThreadCallbackAdapter(*this);
+Thread::Thread() :
+        implementation(new ThreadCallbackAdapter(*this)),
+        stopping(false)
+{
     yAssert(implementation!=NULL);
-    stopping = false;
 }
 
 

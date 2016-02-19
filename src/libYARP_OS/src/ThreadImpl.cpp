@@ -50,7 +50,7 @@ void ThreadImpl::fini() {
 #ifdef __WIN32__
 static unsigned __stdcall theExecutiveBranch (void *args)
 #else
-    PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
+PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
 #endif
 {
     // just for now -- rather deal with broken pipes through normal procedures
@@ -106,27 +106,31 @@ static unsigned __stdcall theExecutiveBranch (void *args)
 }
 
 
-ThreadImpl::ThreadImpl() : synchro(0) {
-    delegate = NULL;
-    active = false;
-    closing = false;
-    needJoin = false;
-    initWasSuccessful = false;
-    defaultPriority = -1;
-    defaultPolicy = -1;
-    tid = -1;
+ThreadImpl::ThreadImpl() :
+        tid(-1),
+        defaultPriority(-1),
+        defaultPolicy(-1),
+        active(false),
+        closing(false),
+        needJoin(false),
+        delegate(NULL),
+        synchro(0),
+        initWasSuccessful(false)
+{
     setOptions();
 }
 
 
-ThreadImpl::ThreadImpl(Runnable *target) : synchro(0) {
-    delegate = target;
-    active = false;
-    closing = false;
-    needJoin = false;
-    defaultPriority = -1;
-    defaultPolicy = -1;
-    tid = -1;
+ThreadImpl::ThreadImpl(Runnable *target) :
+        tid(-1),
+        defaultPriority(-1),
+        defaultPolicy(-1),
+        active(false),
+        closing(false),
+        needJoin(false),
+        delegate(target),
+        synchro(0)
+{
     setOptions();
 }
 
@@ -227,12 +231,11 @@ bool ThreadImpl::start() {
     closing = false;
     initWasSuccessful = false;
     beforeStart();
-#ifdef YARP_HAS_CXX11
-    hid = std::thread(theExecutiveBranch,(void*)this);
-    id = 0;    
-    int result = hid.joinable()?0:1;
-#else
-#  ifdef YARP_HAS_ACE
+#if defined(YARP_HAS_CXX11)
+    hid = std::thread(theExecutiveBranch, (void*)this);
+    id = 0;
+    int result = hid.joinable() ? 0 : 1;
+#elif defined(YARP_HAS_ACE)
     size_t s = stackSize;
     if (s==0) {
         s = (size_t)defaultStackSize;
@@ -245,7 +248,7 @@ bool ThreadImpl::start() {
                                    ACE_DEFAULT_THREAD_PRIORITY,
                                    0,
                                    s);
-#  else
+#else
     pthread_attr_t attr;
     int s = pthread_attr_init(&attr);
     if (s != 0)
@@ -259,8 +262,7 @@ bool ThreadImpl::start() {
 
     int result = pthread_create(&hid, &attr, theExecutiveBranch, (void*)this);
     id = (long int) hid;
-#  endif
-#endif    
+#endif
     if (result==0)
     {
         tid = (long int)id;
@@ -339,18 +341,17 @@ int ThreadImpl::setPriority(int priority, int policy) {
     if (active && priority!=-1) {
 
 #if defined(YARP_HAS_CXX11)
+        // FIXME Use std::thread::native_handle()
         YARP_ERROR(Logger::get(),"Cannot set priority with C++11");
-#else
-    #if defined(YARP_HAS_ACE) // Use ACE API
+#elif defined(YARP_HAS_ACE) // Use ACE API
         return ACE_Thread::setprio(hid, priority, policy);
-    #elif defined(UNIX) // Use the POSIX syscalls
+#elif defined(UNIX) // Use the POSIX syscalls
         struct sched_param thread_param;
         thread_param.sched_priority = priority;
         int ret pthread_setschedparam(hid, policy, &thread_param);
         return (ret != 0) ? -1 : 0;
-    #else
+#else
         YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
-    #endif
 #endif
     }
     return 0;
@@ -360,18 +361,17 @@ int ThreadImpl::getPriority() {
     int prio = defaultPriority;
     if (active) {
 #if defined(YARP_HAS_CXX11)
+        // FIXME Use std::thread::native_handle()
         YARP_ERROR(Logger::get(),"Cannot get priority with C++11");
-#else
-    #if defined(YARP_HAS_ACE) // Use ACE API
+#elif defined(YARP_HAS_ACE) // Use ACE API
         ACE_Thread::getprio(hid, prio);
-    #elif defined(UNIX) // Use the POSIX syscalls
+#elif defined(UNIX) // Use the POSIX syscalls
         struct sched_param thread_param;
         int policy;
         if(pthread_getschedparam(hid, &policy, &thread_param) == 0)
             prio = thread_param.priority;
-    #else
+#else
         YARP_ERROR(Logger::get(),"Cannot read priority without ACE");
-    #endif
 #endif
     }
     return prio;
@@ -381,18 +381,17 @@ int ThreadImpl::getPolicy() {
     int policy = defaultPolicy;
     if (active) {
 #if defined(YARP_HAS_CXX11)
+        // FIXME Use std::thread::native_handle()
         YARP_ERROR(Logger::get(),"Cannot get scheduiling policy with C++11");
-#else
-    #if defined(YARP_HAS_ACE) // Use ACE API
+#elif defined(YARP_HAS_ACE) // Use ACE API
         int prio;
         ACE_Thread::getprio(hid, prio, policy);
-    #elif defined(UNIX) // Use the POSIX syscalls
+#elif defined(UNIX) // Use the POSIX syscalls
         struct sched_param thread_param;
         if(pthread_getschedparam(hid, &policy, &thread_param) != 0)
             policy = defaultPolicy;
-    #else
+#else
         YARP_ERROR(Logger::get(),"Cannot read scheduling policy without ACE");
-    #endif
 #endif
     }
     return policy;

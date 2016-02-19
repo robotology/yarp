@@ -31,7 +31,7 @@ namespace yarp {
  */
 class YARP_OS_impl_API yarp::os::impl::ThreadImpl : public Runnable {
 public:
-    
+
     ThreadImpl();
     ThreadImpl(Runnable *target);
 
@@ -97,7 +97,7 @@ private:
     int defaultPolicy;
     int stackSize;
     Platform_hthread_t hid;
-    Platform_thread_t  id;    
+    Platform_thread_t  id;
     bool active;
     bool opened;
     bool closing;
