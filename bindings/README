@@ -149,9 +149,9 @@ OLD> PidVector class.  One solution is to just remove that and all
 OLD> references to it.
 
 Now try:
-  gmcs -out:example.exe *.cs
+  mcs -out:example.exe *.cs
 or whatever your compiler is (the mcs compiler is in the debian/ubuntu
-"mono-gmcs" package).  If it works, then:
+"mono-mcs" package).  If it works, then:
   ./example.exe
 should do something yarpy.
 

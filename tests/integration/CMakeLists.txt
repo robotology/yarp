@@ -19,24 +19,23 @@ if(ROS_ROSCORE_EXECUTABLE)
 endif()
 
 # Generate a matrix of SWIG tests
-# Dropping PERL for now since it is is crashing the clang compiler on travis
-# and it has no known users (does seem to work fine though)
-foreach (lang PYTHON JAVA LUA RUBY CSHARP TCL)
+foreach (lang PYTHON JAVA LUA RUBY CSHARP TCL PERL)
   foreach (swig 1.3.40 2.0.12 3.0.2)
     set(test_name "integration::swig::${lang}::${swig}")
-    add_test(${test_name} ${CMAKE_SOURCE_DIR}/scripts/admin/check-bindings.sh ${swig} ${lang})
+    add_test(${test_name} ${CMAKE_CURRENT_SOURCE_DIR}/check-bindings.sh ${swig} ${lang})
     set_property(TEST ${test_name} PROPERTY ENVIRONMENT "YARP_ROOT=${CMAKE_SOURCE_DIR}" "YARP_DIR=${CMAKE_BINARY_DIR}")
     set_property(TEST ${test_name} PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
   endforeach()
 endforeach()
 
 # Add a "runtime" test for using plugins against yarp with static/shared linking
-add_test("integration::runtime" ${CMAKE_SOURCE_DIR}/scripts/admin/check-runtime.sh)
+add_test("integration::runtime" ${CMAKE_CURRENT_SOURCE_DIR}/check-runtime.sh)
 set_property(TEST "integration::runtime" PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
 
 set(SIMPLE_TESTS
-  http # Sanity check for YARP http support against curl
-  rpc  # Make sure replies get through when port closed immediately
+  http  # Sanity check for YARP http support against curl
+  rpc   # Make sure replies get through when port closed immediately
+#  mcast # Test mcast protocol
 )
 
 foreach(test ${SIMPLE_TESTS})

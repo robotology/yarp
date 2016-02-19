@@ -313,7 +313,7 @@ namespace yarp {
  }
 
 #if defined(SWIGCSHARP)
-    %define _YARP2_VOCAB_ 1
+    %define YARP_OS_VOCAB_H 1
     %enddef
     %define VOCAB(a,b,c,d) 0
     %enddef
@@ -325,7 +325,7 @@ namespace yarp {
     %enddef
     %define VOCAB1(a) VOCAB((a),(0),(0),(0))
     %enddef
-    #endif
+#endif
 
 %define YARP_BEGIN_PACK
 %enddef

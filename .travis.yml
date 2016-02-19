@@ -90,7 +90,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link --force gettext; fi # Fix goocanvas build
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install swig; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-gmcs; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-mcs; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo rosdep init && rosdep update; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/${ROS_CI_VERSION}/setup.bash; fi
