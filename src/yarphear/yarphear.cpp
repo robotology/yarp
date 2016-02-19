@@ -248,7 +248,7 @@ int main(int argc, char *argv[]) {
                 fname = b.get(1).asString();
             }
             char buf[2560];
-            yInfo(buf, fname.c_str(), ct);
+            sprintf(buf, fname.c_str(), ct);
             echo.saveFile(buf);
             ct++;
         } else if (cmd=="q"||cmd=="quit") {
