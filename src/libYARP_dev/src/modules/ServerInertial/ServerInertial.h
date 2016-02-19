@@ -64,7 +64,7 @@ namespace yarp
  * |:--------------:|:------: |:--------------:|:-------------:|:--------: |:-------------:|:-----:|
  * | name           | string  |  -             |   -           | Yes       | full name of the port opened by the device, like /robotName/deviceId/sensorType:o | must start with a '/' character |
  * | period         | double     |  s             |   0.005       | No        | refresh period of the broadcasted values in ms (optional, default 5ms) | - |
- * | subdevice      | string  |  -             |   -           | alternative to attach action| name of the yarp IMU device driver to be instantiated | if using robotInterface or custom program the 'attach' action can be used instead |
+ * | subdevice      | string  |  -             |   -           | alternative to attach action| name of the yarp IMU device driver to be instantiated | if using yarprobotinterface or custom program the 'attach' action can be used instead |
  * | ROS            | group   |  -             |   -           | No                          | Group containing parameter for ROS topic initialization           | if missing, it is assumed to not use ROS topics |
  * |  useROS        | string  | true/false/only|   -           |  if ROS group is present    | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
  * |  ROS_TopicName | string  |  -             |   -           |  if ROS group is present    | set the name for ROS topic                                        | must start with a leading '/' |
@@ -101,7 +101,7 @@ namespace yarp
  *     <param name="frame_id">       r_shoulder                 </param>
  * </group>
  *
- *  <!-- Following parameters are meaningful ONLY for robotInterface -->
+ *  <!-- Following parameters are meaningful ONLY for yarprobotinterface -->
  *  <action phase="startup" level="5" type="attach">
  *      <paramlist name="networks">
  *          <!-- The param value must match the device name in the corresponding device configuration file -->

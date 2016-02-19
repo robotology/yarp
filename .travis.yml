@@ -80,7 +80,9 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
 
 install:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install cmake libgsl0-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y cmake libgsl0-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgtkmm-2.4-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_ACE; then sudo apt-get -y install libace-dev; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_CMAKE_GENERATOR" == "Ninja" ]; then sudo apt-get install ninja-build; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install yarp --only-dependencies; fi

@@ -12,6 +12,8 @@
 # YARP_HAS_${PACKAGE}: Internal flag. It should be used to check if a part of
 #                      Yarp should be built. It is on if YARP_USE_${PACKAGE} is
 #                      on and either the package was found or will be built.
+# YARP_BUILD_${PACKAGE}: Internal flag. Used to check if yarp has to build an
+#                        external package.
 # YARP_USE_SYSTEM_${PACKAGE}: This flag is shown only for packages in the
 #                             extern folder that were also found on the system
 #                             (TRUE by default). If this flag is enabled, the
@@ -77,6 +79,27 @@ macro(checkbuildandset_dependency package)
 
     # YARP_HAS_${PKG}
     set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
+
+    # YARP_BUILD_${PKG}
+    if(YARP_USE_${PKG} AND NOT YARP_USE_SYSTEM_${PKG})
+        set(YARP_BUILD_${PKG} TRUE)
+    else()
+        set(YARP_BUILD_${PKG} FALSE)
+    endif()
+
+    if(YARP_USE_${PKG} AND NOT YARP_USE_SYSTEM_${PKG})
+        if(${ARGC} GREATER 1)
+            foreach(_dep ${ARGN})
+                string(TOUPPER ${_dep} _DEP)
+                if(NOT YARP_HAS_${_DEP})
+                    message(WARNING "${_dep} (required to build ${package}) not found.")
+                    set(YARP_HAS_${PKG} FALSE)
+                    set(YARP_BUILD_${PKG} FALSE)
+                endif()
+            endforeach()
+        endif()
+    endif()
+
 
 endmacro(checkbuildandset_dependency)
 
@@ -148,6 +171,10 @@ macro(print_dependency package)
 #    message("YARP_USE_${PKG} = ${YARP_USE_${PKG}}")
 #    message("YARP_USE_SYSTEM_${PKG} = ${YARP_USE_SYSTEM_${PKG}}")
 #    message("YARP_HAS_${PKG} = ${YARP_HAS_${PKG}}")
+#    if(NOT "${YARP_BUILD_${PKG}}" STREQUAL "")
+#        message("YARP_BUILD_${PKG} = ${YARP_BUILD_${PKG}}")
+#    endif()
+
     if(DEFINED ${package}_REQUIRED_VERSION)
         set(_version " (${${package}_REQUIRED_VERSION})")
     endif()
@@ -183,13 +210,10 @@ else()
     unset(YARP_USE_ATLAS)
 endif()
 
-option(CREATE_YARPMANAGER_CONSOLE "Do you want to compile YARP Module Manager (console)?" ON)
-yarp_renamed_option(CREATE_YMANAGER CREATE_YARPMANAGER_CONSOLE)
-
-option(CREATE_YARPDATADUMPER "Do you want to compile yarpdatadumper?" ON)
-
-option(CREATE_GUIS "Do you want to compile GUIs" OFF)
-
+cmake_dependent_option(CREATE_YARPROBOTINTERFACE "Do you want to compile yarprobotinterface?" ON YARP_COMPILE_EXECUTABLES OFF)
+cmake_dependent_option(CREATE_YARPMANAGER_CONSOLE "Do you want to compile YARP Module Manager (console)?" ON YARP_COMPILE_EXECUTABLES OFF)
+cmake_dependent_option(CREATE_YARPDATADUMPER "Do you want to compile yarpdatadumper?" ON YARP_COMPILE_EXECUTABLES OFF)
+cmake_dependent_option(CREATE_GUIS "Do you want to compile GUIs" OFF YARP_COMPILE_EXECUTABLES OFF)
 cmake_dependent_option(CREATE_YARPVIEW "Do you want to compile yarpview?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPMANAGER "Do you want to compile yarpmanager?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPLOGGER "Do you want to create yarplogger?" ON CREATE_GUIS OFF)
@@ -199,6 +223,8 @@ cmake_dependent_option(CREATE_YARPDATAPLAYER "Do you want to compile yarpdatapla
 cmake_dependent_option(CREATE_YARPMOTORGUI "Do you want to compile yarpmotorgui?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPLASERSCANNERGUI  "Do you want to compile yarplaserscannergui?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPBATTERYGUI "Do you want to compile yarpbatterygui?" ON CREATE_GUIS OFF)
+
+yarp_renamed_option(CREATE_YMANAGER CREATE_YARPMANAGER_CONSOLE)
 yarp_renamed_option(CREATE_GYARPMANAGER CREATE_YARPMANAGER)
 yarp_renamed_option(CREATE_GYARPBUILDER CREATE_YARPBUILDER)
 
@@ -262,7 +288,7 @@ if(CREATE_LIB_MATH)
     endif()
 endif()
 
-if(CREATE_YARPSCOPE OR CREATE_LIB_MANAGER)
+if(CREATE_YARPROBOTINTERFACE OR CREATE_YARPSCOPE OR CREATE_LIB_MANAGER)
     set(TinyXML_REQUIRED_VERSION 2.6)
     find_package(TinyXML ${TinyXML_REQUIRED_VERSION})
     checkbuildandset_dependency(TinyXML)
@@ -288,27 +314,31 @@ if(CREATE_GUIS)
 endif()
 
 if(CREATE_YARPSCOPE)
-    set(STANDARD_FIND_MODULE_USE_IMPORTED_TARGET_GtkDatabox 1)
-    find_package(GtkDatabox)
-    checkbuildandset_dependency(GtkDatabox)
+    if(YARP_HAS_GTK2)
+        set(STANDARD_FIND_MODULE_USE_IMPORTED_TARGET_GtkDatabox 1)
+        find_package(GtkDatabox)
+        checkbuildandset_dependency(GtkDatabox GTK2)
 
-    set(GtkDataboxMM_REQUIRED_VERSION 0.9.3)
-    set(STANDARD_FIND_MODULE_USE_IMPORTED_TARGET_GtkDataboxMM 1)
-    find_package(GtkDataboxMM ${GtkDataboxMM_REQUIRED_VERSION})
-    checkbuildandset_dependency(GtkDataboxMM)
+        set(GtkDataboxMM_REQUIRED_VERSION 0.9.3)
+        set(STANDARD_FIND_MODULE_USE_IMPORTED_TARGET_GtkDataboxMM 1)
+        find_package(GtkDataboxMM ${GtkDataboxMM_REQUIRED_VERSION})
+        checkbuildandset_dependency(GtkDataboxMM GTK2 GtkDatabox)
+    endif()
 
-    find_package(QCustomPlot)
-    checkbuildandset_dependency(QCustomPlot)
+    if(YARP_HAS_QT5)
+        find_package(QCustomPlot)
+        checkbuildandset_dependency(QCustomPlot Qt5)
+    endif()
 endif()
 
 if(CREATE_YARPBUILDER)
     set(STANDARD_FIND_MODULE_USE_IMPORTED_TARGET_GooCanvas 1)
     find_package(GooCanvas)
-    checkbuildandset_dependency(GooCanvas)
+    checkbuildandset_dependency(GooCanvas GTK2)
 
     set(STANDARD_FIND_MODULE_USE_IMPORTED_TARGET_GooCanvasMM 1)
     find_package(GooCanvasMM)
-    checkbuildandset_dependency(GooCanvasMM)
+    checkbuildandset_dependency(GooCanvasMM GTK2 GooCanvas)
 endif()
 
 if(YARP_COMPILE_BINDINGS)
@@ -376,9 +406,7 @@ check_optional_dependency(YARP_USE_ATLAS Atlas)
 check_optional_dependency(CREATE_LIB_MANAGER TinyXML)
 check_optional_dependency(CREATE_YARPSCOPE TinyXML)
 check_alternative_dependency(CREATE_GUIS GTK2 Qt5)
-check_alternative_dependency(CREATE_YARPSCOPE GtkDatabox QCustomPlot)
 check_alternative_dependency(CREATE_YARPSCOPE GtkDataboxMM QCustomPlot)
-check_optional_dependency(CREATE_YARPBUILDER GooCanvas)
 check_optional_dependency(CREATE_YARPBUILDER GooCanvasMM)
 check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
 check_optional_dependency(ENABLE_yarpmod_opencv_grabber OpenCV)

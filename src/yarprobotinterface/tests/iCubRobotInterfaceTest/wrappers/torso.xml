@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
+
+<devices robot="icubRobotInterfaceTest" build="1">
+    <device name="torso_wrapper" type="controlboardwrapper2">
+        <param name="period">20</param>
+        <param name="name">icub/torso</param>
+        <param name="ports">torso</param>
+        <param name="threadrate">100</param>
+        <param name="joints">5</param>
+        <paramlist name="networks">
+            <elem name="net_headtorso">0 4 0 4</elem>
+        </paramlist>
+
+        <param name="canbusdevice">fakecan</param>
+
+        <actions file="wrappers/torso_actions.xml" />
+    </device>
+</devices>

@@ -191,7 +191,7 @@ public:
  * ...
  * \endcode
  *
- * XML format, using 'networks' keywork. This file is meant to be used in junction with robotInterface executable,
+ * XML format, using 'networks' keywork. This file is meant to be used in junction with yarprobotinterface executable,
  * therefore has an addictional section at the end.
  *
  * \code{.xml}
@@ -206,7 +206,7 @@ public:
  * <param name="joints"> 7                  </param>
  *
  *
- *  <!-- Following parameters are meaningful ONLY for robotInterface -->
+ *  <!-- Following parameters are meaningful ONLY for yarprobotinterface -->
  *  <action phase="startup" level="5" type="attach">
  *      <paramlist name="networks">
  *          <!-- The param value must match the device name in the corresponding emsX file -->

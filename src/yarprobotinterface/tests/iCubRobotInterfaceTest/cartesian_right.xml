@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
+
+<devices robot="icubRobotInterfaceTest" build="1">
+    <device name="right_arm_cartesian" type="cartesiancontrollerserver">
+        <group name="GENERAL">
+            <param name="ControllerName">icub/cartesianController/right_arm</param>
+            <param name="ControllerPeriod">10</param>
+            <param name="TaskRefVelPeriodFactor">4</param>
+            <param name="SolverNameToConnect">cartesianSolver/right_arm</param>
+            <param name="KinematicPart">arm</param>
+            <param name="KinematicType">right</param>
+            <param name="NumberOfDrivers">2</param>
+        </group>
+
+        <group name="DRIVER_0">
+            <param name="Key">torso</param>
+            <param name="JointsOrder">reversed</param>
+            <param name="MinAbsVels">(0.35 0.35 0.35)</param>
+        </group>
+
+        <group name="DRIVER_1">
+            <param name="Key">right_arm</param>
+            <param name="JointsOrder">direct</param>
+            <param name="MinAbsVels">(0.35 0.35 0.35 0.35 0.35 0.35 0.35)</param>
+        </group>
+
+        <group name="PLANT_MODEL">
+            <!-- P(s)=(Kp/s)*((1+Tz*s)/(1+2*Zeta*Tw*s+(Tw*s)^2))*exp(-Td*s) -->
+            <param name="plant_compensator">on</param>
+            <param name="smith_predictor">off</param>
+
+            <param name="joint_0">((Kp 1.022) (Tz 0.405) (Tw 0.248) (Zeta 0.797) (Td 0.000))</param>
+            <param name="joint_1">((Kp 1.026) (Tz 0.407) (Tw 0.243) (Zeta 0.822) (Td 0.000))</param>
+            <param name="joint_2">((Kp 1.040) (Tz 0.344) (Tw 0.160) (Zeta 1.110) (Td 0.000))</param>
+            <param name="joint_3">((Kp 1.035) (Tz 0.410) (Tw 0.178) (Zeta 1.198) (Td 0.000))</param>
+            <param name="joint_4">((Kp 1.016) (Tz 0.384) (Tw 0.159) (Zeta 1.222) (Td 0.000))</param>
+            <param name="joint_5">((Kp 1.025) (Tz 0.823) (Tw 0.405) (Zeta 1.030) (Td 0.000))</param>
+            <param name="joint_6">((Kp 1.022) (Tz 0.300) (Tw 0.120) (Zeta 1.303) (Td 0.000))</param>
+            <param name="joint_7">((Kp 1.016) (Tz 0.123) (Tw 0.030) (Zeta 2.204) (Td 0.000))</param>
+            <param name="joint_8">((Kp 1.000) (Tz 0.000) (Tw 0.000) (Zeta 0.000) (Td 0.000))</param>
+            <param name="joint_9">((Kp 1.000) (Tz 0.000) (Tw 0.000) (Zeta 0.000) (Td 0.000))</param>
+        </group>
+
+        <action phase="startup" level="15" type="attach">
+            <paramlist name="networks">
+                <elem name="torso">torso</elem>
+                <elem name="right_arm">right_arm_mc_wrapper</elem>
+          </paramlist>
+        </action>
+
+        <action phase="shutdown" level="2" type="detach" />
+
+    </device>
+</devices>

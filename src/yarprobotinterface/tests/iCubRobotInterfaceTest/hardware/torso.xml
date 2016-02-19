@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
+
+<devices robot="icubRobotInterfaceTest" build="1">
+    <device name="torso" type="canmotioncontrol">
+        <param name="canbusdevice">fakecan</param> <!-- FIXME -->
+
+        <params file="hardware/electronics/torso_can.xml" />
+        <params file="hardware/mechanicals/torso_joints.xml" />
+    </device>
+</devices>

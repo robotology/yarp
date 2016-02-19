@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
+
+<devices robot="icubRobotInterfaceTest" build="1">
+    <device name="right_arm" type="canmotioncontrol">
+        <param name="canbusdevice">fakecan</param>
+    </device>
+</devices>

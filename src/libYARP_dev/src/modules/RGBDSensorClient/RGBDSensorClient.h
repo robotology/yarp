@@ -80,11 +80,11 @@ namespace yarp {
  * watchdog 200
  * \endcode
  *
- * XML format, using 'networks' keywork. This file is meant to be used in junction with robotInterface executable,
+ * XML format, using 'networks' keywork. This file is meant to be used in junction with yarprobotinterface executable,
  * therefore has an addictional section at the end.
  *
  * \code{.xml}
- *  <!-- Following parameters are meaningful ONLY for robotInterface -->
+ *  <!-- Following parameters are meaningful ONLY for yarprobotinterface -->
  *
  * <param name="localImagePort">    /<robotName>/localImagePort    </param>
  * <param name="localDepthPort">    /<robotName>/localDepthPort    </param>

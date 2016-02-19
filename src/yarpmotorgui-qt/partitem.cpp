@@ -820,7 +820,7 @@ void PartItem::onHomeClicked(JointItem *joint)
             return;
         }
 
-        QMessageBox::information(this,"Info", QString("Asking the robotInterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file").arg(partName));
+        QMessageBox::information(this,"Info", QString("Asking the yarprobotinterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file").arg(partName));
         if(!remCalib->homingSingleJoint(jointIndex) )
         {
             // provide better feedback to user by verifying if the calibrator device was set or not
@@ -1085,7 +1085,7 @@ bool PartItem::homeAll()
             return false;
         }
 
-        QMessageBox::information(this,"Info", QString("Asking the robotInterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file.").arg(partName));
+        QMessageBox::information(this,"Info", QString("Asking the yarprobotinterface to homing part %1 through the remoteCalibrator interface, since no custom zero group found in the supplied file.").arg(partName));
         ok = remCalib->homingWholePart();
         if(!ok)
         {

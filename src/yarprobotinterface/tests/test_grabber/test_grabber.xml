@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
+
+<devices robot="icub" build="1">
+    <device name="grabber_left" type="grabber">
+        <param name="subdevice">test_grabber</param>
+        <param name="name">/left</param>
+        <param name="width">360</param>
+        <param name="height">240</param>
+        <param name="mode">random</param>
+    </device>
+
+    <device name="grabber_right" type="grabber">
+        <param name="subdevice">test_grabber</param>
+        <param name="name">/right</param>
+        <param name="width">360</param>
+        <param name="height">240</param>
+        <param name="mode">grid</param>
+        <param name="verbose">1</param>
+    </device>
+</devices>

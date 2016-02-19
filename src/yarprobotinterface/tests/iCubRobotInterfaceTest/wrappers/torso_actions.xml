@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE actions PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
+
+<actions robot="icubRobotInterfaceTest" build="1">
+    <action phase="startup" level="5" type="attach">
+        <paramlist name="networks">
+            <elem name="net_headtorso">torso</elem>
+        </paramlist>
+    </action>
+
+    <action phase="shutdown" level="5" type="detach" />
+
+<!-- Alternative
+    <action phase="startup" level="5" type="attach">
+        <param name="device">torso</param>
+        <param name="network">net_headtorso</param>
+    </action>
+    <action phase="shutdown" type="detach" level="5">
+        <param name="device">torso</param>
+        <param name="network">net_headtorso</param>
+    </action>
+-->
+
+
+<!--
+    <action phase="interrupt" type="abort" level="5" />
+
+    <action phase="shutdown" type="custom" level="1" />
+    <action phase="shutdown" type="custom" level="10" />
+    <action phase="shutdown" type="custom" level="30" />
+    <action phase="shutdown" type="custom" level="2" />
+-->
+
+</actions>
