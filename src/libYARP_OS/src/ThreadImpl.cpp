@@ -233,7 +233,7 @@ bool ThreadImpl::start() {
     beforeStart();
 #if defined(YARP_HAS_CXX11)
     hid = std::thread(theExecutiveBranch, (void*)this);
-    id = 0;
+    id = std::hash<std::thread::id>()(hid.get_id());
     int result = hid.joinable() ? 0 : 1;
 #elif defined(YARP_HAS_ACE)
     size_t s = stackSize;
