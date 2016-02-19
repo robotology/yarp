@@ -33,7 +33,7 @@ MonitorBinding* MonitorBinding::create(const char* script_type)
 #ifdef ENABLED_PORTMONITOR_LUA
         return new MonitorLua();
 #else
-        yError()<<"Lua portmonitor plugin is not enabled!";
+        yError()<<"Cannot load LUA plugin. YARP portmonitor was built without LUA support";
         return NULL;
 #endif
     }
