@@ -176,6 +176,17 @@ int OpenNI2SkeletonTracker::init(){
             {
                 depthStream.setVideoMode(depthModes[depthVideoMode]);
             }
+
+            // If not playback, set mirroring (default: off)
+            if (!oniPlayback)
+            {
+                openni::Status ret = depthStream.setMirroringEnabled(mirrorON);  // Not sure if safe to reuse rc here
+                if(ret != openni::STATUS_OK)
+                {
+                    yError("depthStream.setMirroringEnabled returned: %d",ret);
+                }
+            }
+
         }
         if (oniRecord) {
             recorder.attach(depthStream);
@@ -209,7 +220,6 @@ int OpenNI2SkeletonTracker::init(){
                 return rc;
             }
            
-
             // if not playback, set resolution and fps settings for RGB stream
             colorInfo = device.getSensorInfo(openni::SENSOR_COLOR);
             const openni::Array<openni::VideoMode>& colorModes = colorInfo->getSupportedVideoModes();
@@ -217,7 +227,17 @@ int OpenNI2SkeletonTracker::init(){
             {
                 imageStream.setVideoMode(colorModes[colorVideoMode]);
             }
-        
+
+            // if not playback, set mirroring (default: off)
+            if (!oniPlayback)
+            {
+                openni::Status ret = imageStream.setMirroringEnabled(mirrorON);  // Not sure if safe to reuse rc here
+                if(ret != openni::STATUS_OK)
+                {
+                    yError("imageStream.setMirroringEnabled returned: %d",ret);
+                }
+            }
+
             if (oniRecord) {
             recorder.attach(imageStream);
             }
