@@ -91,13 +91,13 @@ public:
     static void fini();
 
     long tid;
+    Platform_thread_t  id;
 
 private:
     int defaultPriority;
     int defaultPolicy;
     int stackSize;
     Platform_hthread_t hid;
-    Platform_thread_t  id;
     bool active;
     bool opened;
     bool closing;

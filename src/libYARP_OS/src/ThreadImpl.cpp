@@ -86,6 +86,14 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
         // the real thread ID (gettid) on Linux machine
         thread->tid = (long) syscall(SYS_gettid);
 #endif
+
+        // c++11 std::thread and pthread do not return the thread id, therefore
+        // it must be set before calling run(), to avoid a race condition in
+        // case the run() method checks it.
+#if defined(YARP_HAS_CXX11) || !defined(YARP_HAS_ACE)
+        thread->id = PLATFORM_THREAD_SELF();
+#endif
+
         thread->setPriority();
         thread->run();
         thread->threadRelease();
@@ -233,7 +241,6 @@ bool ThreadImpl::start() {
     beforeStart();
 #if defined(YARP_HAS_CXX11)
     hid = std::thread(theExecutiveBranch, (void*)this);
-    id = std::hash<std::thread::id>()(hid.get_id());
     int result = hid.joinable() ? 0 : 1;
 #elif defined(YARP_HAS_ACE)
     size_t s = stackSize;
@@ -261,7 +268,6 @@ bool ThreadImpl::start() {
     }
 
     int result = pthread_create(&hid, &attr, theExecutiveBranch, (void*)this);
-    id = (long int) hid;
 #endif
     if (result==0)
     {
