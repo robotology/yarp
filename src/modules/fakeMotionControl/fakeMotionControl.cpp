@@ -2577,16 +2577,6 @@ bool FakeMotionControl::setTemperatureLimitRaw(int m, const double temp)
     return false;
 }
 
-bool FakeMotionControl::getMotorOutputLimitRaw(int m, double *limit)
-{
-    return DEPRECATED("getMotorOutputLimitRaw");
-}
-
-bool FakeMotionControl::setMotorOutputLimitRaw(int m, const double limit)
-{
-    return DEPRECATED("setMotorOutputLimitRaw");
-}
-
 
 // bool FakeMotionControl::checkRemoteControlModeStatus(int joint, int target_mode)
 // {

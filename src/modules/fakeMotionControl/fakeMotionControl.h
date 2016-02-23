@@ -478,8 +478,6 @@ public:
     virtual bool getTemperaturesRaw(double *vals);
     virtual bool getTemperatureLimitRaw(int m, double *temp);
     virtual bool setTemperatureLimitRaw(int m, const double temp);
-    virtual bool getMotorOutputLimitRaw(int m, double *limit);
-    virtual bool setMotorOutputLimitRaw(int m, const double limit);
 
     // OPENLOOP interface
     virtual bool setRefOutputRaw(int j, double v);

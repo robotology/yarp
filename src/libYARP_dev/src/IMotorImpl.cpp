@@ -84,16 +84,6 @@ bool ImplementMotor::getTemperatureLimit(int m, double* value)
     return ret;
 }
 
-bool ImplementMotor::getMotorOutputLimit(int m, double* value)
-{
-    bool ret;
-    int k=castToMapper(helper)->toHw(m);
-
-    ret=imotor->getMotorOutputLimitRaw(k, value);
-
-    return ret;
-}
-
 bool ImplementMotor::setTemperatureLimit(int m, const double value)
 {
     bool ret;
@@ -120,15 +110,6 @@ bool ImplementMotor::setGearboxRatio(int m, const double value)
     int k = castToMapper(helper)->toHw(m);
 
     ret = imotor->setGearboxRatioRaw(k, value);
-
-    return ret;
-}
-bool ImplementMotor::setMotorOutputLimit(int m, const double value)
-{
-    bool ret;
-    int k=castToMapper(helper)->toHw(m);
-
-    ret=imotor->setMotorOutputLimitRaw(k, value);
 
     return ret;
 }

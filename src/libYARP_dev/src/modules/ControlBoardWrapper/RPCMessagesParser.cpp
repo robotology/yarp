@@ -2088,12 +2088,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
-                            case VOCAB_MOTOR_OUTPUT_LIMIT:
-                            {
-                                ok = rpc_IMotor->setMotorOutputLimit(cmd.get(2).asInt(), cmd.get(3).asDouble());
-                            }
-                            break;
-
                             case VOCAB_VEL_LIMITS:
                             {
                                 ok = rcp_Ilim2->setVelLimits(cmd.get(2).asInt(), cmd.get(3).asDouble(), cmd.get(4).asDouble());
@@ -2144,13 +2138,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             case VOCAB_TEMPERATURE_LIMIT:
                             {
                                 ok = rpc_IMotor->getTemperatureLimit(cmd.get(2).asInt(), &dtmp);
-                                response.addDouble(dtmp);
-                            }
-                            break;
-
-                            case VOCAB_MOTOR_OUTPUT_LIMIT:
-                            {
-                                ok = rpc_IMotor->getMotorOutputLimit(cmd.get(2).asInt(), &dtmp);
                                 response.addDouble(dtmp);
                             }
                             break;

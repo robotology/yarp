@@ -1944,14 +1944,6 @@ public:
         return set1V1I1D(VOCAB_TEMPERATURE_LIMIT, m, val);
     }
 
-    virtual bool getMotorOutputLimit (int m, double* val) {
-        return get1V1I1D(VOCAB_MOTOR_OUTPUT_LIMIT, m, val);
-    }
-
-    virtual bool setMotorOutputLimit (int m, const double val) {
-        return set1V1I1D(VOCAB_MOTOR_OUTPUT_LIMIT, m, val);
-    }
-
     virtual bool getGearboxRatio(int m, double* val) {
         return get1V1I1D(VOCAB_GEARBOX_RATIO, m, val);
     }

@@ -72,25 +72,6 @@ public:
     virtual bool setTemperatureLimitRaw(int m, const double temp)=0;
 
     /**
-     * Get the output limit for a specific motor
-     * The specific behavior of the motor when the output limit is exceeded depends on the implementation (saturation recommended)
-     *
-     * @param m motor number
-     * @param limit retrieved output limit
-     * @return true/false
-     */
-    virtual bool getMotorOutputLimitRaw(int m, double *limit)=0;
-
-    /**
-     * Set the output limit for a specific motor
-     * The specific behavior of the motor when the output limit is exceeded depends on the implementation (saturation recommended)
-     * @param m motor number
-     * @param limit output limit to be set
-     * @return true/false
-     */
-    virtual bool setMotorOutputLimitRaw(int m, const double limit)=0;
-
-    /**
     * Get the gearbox ratio for a specific motor
     * @param m motor number
     * @param val retrieved gearbox ratio
@@ -160,25 +141,6 @@ public:
      */
     virtual bool setTemperatureLimit(int m, const double temp)=0;
 
-   /**
-     * Get the output limit for a specific motor
-     * The specific behavior of the motor when the output limit is exceeded depends on the implementation (saturation recommended)
-     *
-     * @param m motor number
-     * @param limit retrieved output limit
-     * @return true/false
-     */
-    virtual bool getMotorOutputLimit(int m, double *limit)=0;
-
-    /**
-     * Set the output limit for a specific motor
-     * The specific behavior of the motor when the output limit is exceeded depends on the implementation (saturation recommended)
-     * @param m motor number
-     * @param limit output limit to be set
-     * @return true/false
-     */
-    virtual bool setMotorOutputLimit(int m, const double limit)=0;
-
     /**
     * Get the gearbox ratio for a specific motor
     * @param m motor number
@@ -202,7 +164,6 @@ public:
 #define VOCAB_GEARBOX_RATIO        VOCAB4('g','b','x','r')
 #define VOCAB_TEMPERATURES         VOCAB4('t','m','p','s')
 #define VOCAB_TEMPERATURE_LIMIT    VOCAB4('t','m','p','l')
-#define VOCAB_MOTOR_OUTPUT_LIMIT   VOCAB4('o','u','t','l')
 
 
 #endif

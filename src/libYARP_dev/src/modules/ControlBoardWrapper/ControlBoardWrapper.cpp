@@ -2938,37 +2938,6 @@ bool ControlBoardWrapper::setGearboxRatio(int m, const double val) {
     return false;
 }
 
-bool ControlBoardWrapper::getMotorOutputLimit (int m, double* val) {
-    int off=device.lut[m].offset;
-    int subIndex=device.lut[m].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->imotor)
-    {
-        return p->imotor->getMotorOutputLimit(off+p->base, val);
-    }
-    *val=0.0;
-    return false;
-}
-
-bool ControlBoardWrapper::setMotorOutputLimit (int m, const double val) {
-    int off=device.lut[m].offset;
-    int subIndex=device.lut[m].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->imotor)
-    {
-        return p->imotor->setMotorOutputLimit(off+p->base,val);
-    }
-    return false;
-}
-
 /* IRemoteVariables */
 bool ControlBoardWrapper::getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) {
     bool b = true;
