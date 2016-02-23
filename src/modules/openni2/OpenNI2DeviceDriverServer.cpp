@@ -321,7 +321,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArr
 nite::SkeletonState yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID) {
     updateInterface();
 #ifdef OPENNI2_DRIVER_USES_NITE2
-    return reinterpret_cast<int>(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID-1].skeletonState);
+    return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID-1].skeletonState;
 #else
     return 0;
 #endif

@@ -5,9 +5,9 @@
 if (COMPILE_DEVICE_LIBRARY)
     yarp_prepare_device(OpenNI2DeviceServer TYPE yarp::dev::OpenNI2DeviceDriverServer INCLUDE OpenNI2DeviceDriverServer.h)
     yarp_prepare_device(OpenNI2DeviceClient TYPE yarp::dev::OpenNI2DeviceDriverClient INCLUDE OpenNI2DeviceDriverClient.h)
-  yarp_install(FILES openni2.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+    yarp_install(FILES openni2.ini
+                 COMPONENT runtime
+                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 if (SKIP_OpenNI2DeviceServer AND SKIP_OpenNI2DeviceClient)
@@ -22,7 +22,9 @@ if (NOT SKIP_OpenNI2Device)
     find_library(OPENNI2_LIBRARY NAMES OpenNI2 libOpenNI2.dylib libOpenNI2 HINTS $ENV{OPENNI2_REDIST})
     find_path(NITE2_INCLUDE_LOCAL NAMES NiTE.h HINTS $ENV{NITE2_INCLUDE})
     find_library(NITE2_LIBRARY NAMES NiTE2 HINTS $ENV{NITE2_REDIST64})
-    if(NOT NITE2_INCLUDE_LOCAL)
+    if(NITE2_INCLUDE_LOCAL)
+        set(NITE2_FOUND TRUE)
+    else()
         set(NITE2_FOUND FALSE)
     endif()
 

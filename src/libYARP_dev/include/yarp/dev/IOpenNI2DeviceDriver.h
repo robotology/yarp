@@ -12,7 +12,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Image.h>
 
-#ifdef _USE_NITE2_
+#ifdef OPENNI2_DRIVER_USES_NITE2
     #include <NiTE.h>
 #else
 namespace nite{
