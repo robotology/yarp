@@ -68,7 +68,7 @@ notifications:
     skip_join: true
 
 before_install:
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.4/swigs.zip; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_DESKTOP=`lsb_release -cs`; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_VERSION=indigo; fi

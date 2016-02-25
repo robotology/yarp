@@ -19,12 +19,20 @@ if(ROS_ROSCORE_EXECUTABLE)
 endif()
 
 # Generate a matrix of SWIG tests
-foreach (lang PYTHON JAVA LUA RUBY CSHARP TCL PERL)
-  foreach (swig 1.3.40 2.0.12 3.0.2)
+foreach(lang PYTHON JAVA LUA RUBY CSHARP TCL PERL)
+  foreach(swig 1.3.40
+               2.0.12
+               3.0.8)
     set(test_name "integration::swig::${lang}::${swig}")
-    add_test(${test_name} ${CMAKE_CURRENT_SOURCE_DIR}/check-bindings.sh ${swig} ${lang})
-    set_property(TEST ${test_name} PROPERTY ENVIRONMENT "YARP_ROOT=${CMAKE_SOURCE_DIR}" "YARP_DIR=${CMAKE_BINARY_DIR}")
-    set_property(TEST ${test_name} PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
+    if("${test_name}" MATCHES "^integration::swig::PYTHON::1.3.37" OR
+       "${test_name}" MATCHES "^integration::swig::(RUBY|LUA)::1.3.(37|38|39|40)$" OR
+       "${test_name}" MATCHES "^integration::swig::(LUA)::2.0.(1|2|3|4|5|6)$")
+      # Skip tests that are known to be broken due to swig
+    else()
+      add_test(${test_name} ${CMAKE_CURRENT_SOURCE_DIR}/check-bindings.sh ${swig} ${lang})
+      set_property(TEST ${test_name} PROPERTY ENVIRONMENT "YARP_ROOT=${CMAKE_SOURCE_DIR}" "YARP_DIR=${CMAKE_BINARY_DIR}")
+      set_property(TEST ${test_name} PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
+    endif()
   endforeach()
 endforeach()
 
