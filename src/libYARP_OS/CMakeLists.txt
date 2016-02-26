@@ -151,8 +151,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/FakeTwoWayStream.h
                       include/yarp/os/impl/FallbackNameClient.h
                       include/yarp/os/impl/FallbackNameServer.h
-                      include/yarp/os/impl/hmac/hmac_sha2.h
-                      include/yarp/os/impl/hmac/sha2.h
                       include/yarp/os/impl/HttpCarrier.h
                       include/yarp/os/impl/IOException.h
                       include/yarp/os/impl/LocalCarrier.h
@@ -213,6 +211,9 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/UdpCarrier.h
                       include/yarp/os/impl/UnitTest.h
                       include/yarp/os/impl/ydr.h)
+
+set(YARP_OS_IMPL_HMAC_HDRS include/yarp/os/impl/hmac/hmac_sha2.h
+                           include/yarp/os/impl/hmac/sha2.h)
 
 set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/AuthHMAC.cpp
@@ -370,7 +371,8 @@ endif()
 source_group("Source Files" FILES ${YARP_OS_SRCS})
 source_group("Header Files" FILES ${YARP_OS_HDRS})
 source_group("IDL Header Files" FILES ${YARP_OS_IDL_HDRS})
-source_group("Implementation Header Files" FILES ${YARP_OS_IMPL_HDRS})
+source_group("Implementation Header Files" FILES ${YARP_OS_IMPL_HDRS}
+                                                 ${YARP_OS_IMPL_HMAC_HDRS})
 
 option(ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
 if (ENABLE_YARPRUN_LOG)
@@ -388,7 +390,8 @@ endif ()
 add_library(YARP_OS ${YARP_OS_SRCS}
                     ${YARP_OS_HDRS}
                     ${YARP_OS_IDL_HDRS}
-                    ${YARP_OS_IMPL_HDRS})
+                    ${YARP_OS_IMPL_HDRS}
+                    ${YARP_OS_IMPL_HMAC_HDRS})
 target_link_libraries(YARP_OS LINK_PRIVATE ${ACE_LIBRARIES})
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
@@ -421,6 +424,9 @@ install(TARGETS YARP_OS
 install(FILES ${YARP_OS_IDL_HDRS}
         COMPONENT development
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/idl)
+install(FILES ${YARP_OS_IMPL_HMAC_HDRS}
+        COMPONENT development
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl/hmac)
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
 set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
