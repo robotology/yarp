@@ -50,6 +50,13 @@ endforeach()
 
 if(YARP_COMPILE_BINDINGS)
 
+#############################################################################
+## Do not build deprecated functions when disabled
+
+if(YARP_NO_DEPRECATED)
+  set(SWIG_COMMON_FLAGS "-DYARP_NO_DEPRECATED")
+endif()
+
 
 #############################################################################
 ## Discourage inplace compilation
@@ -118,7 +125,7 @@ if(CREATE_JAVA)
   set(JAVA_TARGET_VERSION 1.6 CACHE STRING "Java target version")
   set(CMAKE_SWIG_OUTDIR_SAVE ${CMAKE_SWIG_OUTDIR})
   set(CMAKE_SWIG_OUTDIR "${YARP_BASE_DIR}/generated_src/java")
-  set(CMAKE_SWIG_FLAGS "-package;yarp;-Wall;-module;yarp")
+  set(CMAKE_SWIG_FLAGS "-package;yarp;-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
   set(TARGET_DIR generated_src/java)
   file(MAKE_DIRECTORY "${YARP_BASE_DIR}/${TARGET_DIR}")
   if(NOT BINDINGS_SRC_DIR)
@@ -172,7 +179,7 @@ endif(CREATE_JAVA)
 ## Create Python bindings
 
 if(CREATE_PYTHON)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads")
+  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads;${SWIG_COMMON_FLAGS}")
   if(CREATE_PYTHON_VERSION)
     message(WARNING "CREATE_PYTHON_VERSION was renamed YARP_USE_PYTHON_VERSION")
     set(YARP_USE_PYTHON_VERSION "${CREATE_PYTHON_VERSION}" CACHE STRING "Specify python version to use" )
@@ -241,7 +248,7 @@ endif(CREATE_PYTHON)
 ## Create Perl bindings
 
 if(CREATE_PERL)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
   find_package(PerlLibs)
   include_directories(SYSTEM ${PERL_INCLUDE_PATH})
 
@@ -301,7 +308,7 @@ endif(CREATE_PERL)
 ## Create Chicken bindings
 
 if(CREATE_CHICKEN)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp")
+  set(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp;${SWIG_COMMON_FLAGS}")
   swig_add_module(libcyarp chicken yarp.i)
   set(YARP_COLLISION_AVOIDANCE TRUE)
 endif(CREATE_CHICKEN)
@@ -320,7 +327,7 @@ if(CREATE_ALLEGRO)
   set(allegro_SRC_FILE yarp.cl)
   set(allegro_LIBS yarp-allegro.so)
 
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-identifier-converter;lispify")
+  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-identifier-converter;lispify;${SWIG_COMMON_FLAGS}")
   swig_add_module(yarp-allegro allegrocl yarp.i)
 
   string(REGEX REPLACE "\\.cl" ".lisp" allegro_DEST_FILE ${allegro_SRC_FILE})
@@ -339,7 +346,7 @@ if(CREATE_ALLEGRO)
 endif()
 
 if(CREATE_TCL)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
   find_package(TCL REQUIRED)
   include_directories(SYSTEM ${TCL_INCLUDE_PATH})
   link_libraries(${TCL_LIBRARY})
@@ -365,9 +372,9 @@ if(CREATE_CSHARP)
   endif()
   # -dllimport is actually needed only for CMake versions prior to 3.0 ( http://public.kitware.com/Bug/view.php?id=13814 )
   if(${CMAKE_VERSION} VERSION_LESS 3.0)
-    set(CMAKE_SWIG_FLAGS "-Wall;-dllimport;${target_name}")
+    set(CMAKE_SWIG_FLAGS "-Wall;-dllimport;${target_name};${SWIG_COMMON_FLAGS}")
   else()
-    set(CMAKE_SWIG_FLAGS "-Wall")
+    set(CMAKE_SWIG_FLAGS "-Wall;${SWIG_COMMON_FLAGS}")
   endif()
 
   if(WIN32 AND NOT CYGWIN)
@@ -397,7 +404,7 @@ endif(CREATE_CSHARP)
 
 if(CREATE_RUBY)
   find_package(Ruby)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
   include_directories(SYSTEM ${RUBY_INCLUDE_PATH})
   set(target_name yarp)
   if(YARP_COLLISION_AVOIDANCE)
@@ -417,7 +424,7 @@ endif(CREATE_RUBY)
 ## Create Lua bindings
 
 if(CREATE_LUA)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
   find_package(Lua REQUIRED)
   set(target_name yarp_lua)
   include_directories(SYSTEM ${LUA_INCLUDE_DIR})
@@ -460,7 +467,7 @@ endif(CREATE_LUA)
 ## Create Octave bindings
 
 if(CREATE_OCTAVE)
-  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+  set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;${SWIG_COMMON_FLAGS}")
   find_package(Octave REQUIRED)
   set(target_name yarp_octave)
   get_filename_component(OCTAVE_INCLUDE_TOP ${OCTAVE_INCLUDE_DIR} DIRECTORY)

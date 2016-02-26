@@ -634,10 +634,11 @@ bool yarp::math::eigenValues(const Matrix& in, Vector &real, Vector &img)
 #endif
 }
 
+#ifndef YARP_NO_DEPRECATED
 bool yarp::math::eingenValues(const Matrix& in, Vector &real, Vector &img) {
     return eigenValues(in, real, img);
 }
-
+#endif // YARP_NO_DEPRECATED
 
 /* depends on GSL 1.12, put back in when verified that 1.12 is standard
 Matrix yarp::math::chinv(const Matrix& in) 

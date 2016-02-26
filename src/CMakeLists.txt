@@ -53,12 +53,14 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarplaserscannergui)
 
     # GTK2 GUIs
-    add_subdirectory(yarpview-gtk)
-    add_subdirectory(yarpscope-gtk)
-    add_subdirectory(yarpmanager-gtk)
     add_subdirectory(yarpbuilder-gtk)
-    add_subdirectory(yarpdataplayer-gtk)
-    add_subdirectory(yarpmotorgui-gtk)
+    if(NOT YARP_NO_DEPRECATED)
+        add_subdirectory(yarpview-gtk)
+        add_subdirectory(yarpscope-gtk)
+        add_subdirectory(yarpmanager-gtk)
+        add_subdirectory(yarpmotorgui-gtk)
+        add_subdirectory(yarpdataplayer-gtk)
+    endif()
 endif()
 
 

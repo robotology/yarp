@@ -70,9 +70,9 @@ RobotInterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calib
                                                    RobotInterface::CalibratorThread::Action action) :
         mPriv(new Private(this))
 {
-    YARP_ASSERT(calibrator);
-    YARP_ASSERT(target);
-    YARP_ASSERT(action == ActionCalibrate || action == ActionPark);
+    yAssert(calibrator);
+    yAssert(target);
+    yAssert(action == ActionCalibrate || action == ActionPark);
 
     mPriv->calibrator = calibrator;
     mPriv->calibratorName = calibratorName;

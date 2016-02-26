@@ -469,7 +469,8 @@ namespace yarp
         * @deprecated since YARP 2.3.65
         */
         YARP_math_DEPRECATED_API bool eingenValues(const yarp::sig::Matrix& in, yarp::sig::Vector &real, yarp::sig::Vector &img);
-#endif
+#endif // YARP_NO_DEPRECATED
+
         /**
         * Invert a symmetric and positive definite matrix using Cholesky decomposition (defined in Math.h). 
         * @param in symmetric and positive definite matrix
