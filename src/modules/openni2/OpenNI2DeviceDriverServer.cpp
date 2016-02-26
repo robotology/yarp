@@ -10,6 +10,11 @@
 
 yarp::dev::OpenNI2DeviceDriverServer::OpenNI2DeviceDriverServer()
 {
+#ifdef OPENNI2_DRIVER_USES_NITE2
+    userTracking = true;
+#else
+    userTracking = false;
+#endif
 }
 
 yarp::dev::OpenNI2DeviceDriverServer::~OpenNI2DeviceDriverServer()
@@ -147,8 +152,6 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config) {
 
     if(config.check("noUserTracking", "Disable user tracking")) {
         userTracking = false;
-    } else {
-        userTracking = true;
     }
 
     if(config.check("printVideoModes", "Print supported video modes")) {
