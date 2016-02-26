@@ -163,7 +163,7 @@ YARP_OS_API YARP_DEPRECATED inline bool yarp_show_debug() { return true; } ///< 
  *
  * \deprecated since YARP 2.3.64
  */
-#define YARP_ASSERT(x) yAssert(x)
+#define YARP_ASSERT(x) YARP_COMPILER_DEPRECATED_WARNING(YARP_ASSERT is deprecated. Use yAssert instead.); yAssert(x)
 
 #endif // YARP_NO_DEPRECATED
 
