@@ -539,7 +539,88 @@ public:
         divisionOperator();
         crossProduct();
         quaternionConversion();
+        eulerTests();
+        signTest();
+        eigenTest();
     }
+
+    //tests written by Giulia V
+    void eulerTests()
+    {
+        report(0, "checking conversions from euler angles to matrix...");
+        //test with zero angles
+        Vector euler;
+        euler.resize(3,0.0);
+        Matrix R;
+        R.resize(4,4);
+        R.eye();
+        assertEqual(euler2dcm(euler),R, "euler2dcm([0 0 0]) = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1]");
+        //test with random angles
+        euler[0]=0;
+        euler[1]=M_PI/2;
+        euler[2]=M_PI;
+        R(0,0)=0.0;
+        R(0,2)=1.0;
+        R(1,1)=-1.0;
+        R(2,0)=1.0;
+        R(2,2)=0.0;
+        assertEqual(euler2dcm(euler),R.transposed(), "euler2dcm([pi, pi/2, -pi]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1]");
+
+        report(0, "checking conversions from matrix to euler angles...");
+        assertEqual(dcm2euler(R),euler, " dcm2euler(matrix-of-previous-test)=[0, pi/2, -pi]");
+
+        report(0, "checking conversions from matrix to axis/angle...");
+        R.eye();
+        R(0,0)=-1.0;
+        R(0,1)=0.0;
+        R(2,2)=-1.0;
+        Vector axis;
+        axis.resize(4,0.0);
+        axis[0]=axis[2]=0;
+        axis[1]=1;
+        axis[3]=M_PI;
+        assertEqual(dcm2axis(R),axis, "dcm2axis([-1.0 0 0 0; 0 1 0 0; 0 0 -1 0; 0 0 O 1]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1]");
+    }
+
+    void signTest()
+    {
+        report(0, "checking sign function...");
+        double a;
+        a=-2.0;
+        assertEqual(sign(a), -1.0, "sign(-2.0)=-1.0");
+
+        Vector b,c;
+        b.resize(3,0.0);
+        c.resize(3,0.0);
+        b[0]=-0.8;
+        b[1]=1.3;
+        b[2]=-2.4;
+        c[0]=-1.0;
+        c[1]=1.0;
+        c[2]=-1.0;
+        assertEqual(sign(b), c, "sign([-0.8, 1.3, -2.4])=[-1.0, 1.0, -1.0]");
+    }
+
+    void eigenTest()
+    {
+        Matrix A;
+        Vector real, img;
+        real.resize(3,0.0);
+        img.resize(3,0.0);
+        A.resize(3,3);
+        A.eye();
+        A(0,1)=0.1;
+        A(0,2)=3.1;
+        A(1,0)=-0.7;
+        A(1,2)=5.2;
+        A(2,1)=-4.9;
+        eingenValues(A, real, img);
+        cout<<" "<<  real.toString().c_str()<<endl<<endl;
+        cout<<" "<<  img.toString().c_str()<<endl<<endl;
+
+    }
+
+
 };
 
 static MathTest theMathTest;
