@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Welcome to the "PopulateDrivers" source file, where factories
  * are created for YARP device drivers.

@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2007 the Wine project
  * CopyPolicy: Released under the terms of the GNU LGPL v2.1. or later

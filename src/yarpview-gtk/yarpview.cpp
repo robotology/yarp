@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006, 2008 Matteo Brunettini, Lorenzo Natale
  * Lorenzo Natale, 2008. Added multithread support, cleaned code, added fps count

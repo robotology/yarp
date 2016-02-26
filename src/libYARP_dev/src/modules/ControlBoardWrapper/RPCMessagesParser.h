@@ -1,12 +1,12 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H
-#define YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H
-
 /*
 * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
 * Author: Alberto Cardellino
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
+
+#ifndef YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H
+#define YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H
+
 
 // This file contains helper functions for the ControlBoardWrapper
 

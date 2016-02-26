@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006 RobotCub Consortium, European Commission FP6 Project IST-004370
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT

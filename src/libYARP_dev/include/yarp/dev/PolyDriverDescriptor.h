@@ -1,12 +1,12 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef YARP_DEV_POLYDRIVERDESCRIPTOR_H
-#define YARP_DEV_POLYDRIVERDESCRIPTOR_H
-
 /*
 * Copyright (C) 2008 RobotCub Consortium
 * Authors: Lorenzo Natale
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
+
+#ifndef YARP_DEV_POLYDRIVERDESCRIPTOR_H
+#define YARP_DEV_POLYDRIVERDESCRIPTOR_H
+
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/ConstString.h>

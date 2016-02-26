@@ -1,13 +1,12 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H
-#define YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H
-
 /*
 * Copyright (C) 2013 RobotCub Consortium
 * Author: Alberto Cardellino
 * CopyPolicy: Released under the terms of the GNU GPL v2.0.
-*
 */
+
+#ifndef YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H
+#define YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H
+
 
 // VirtualAnalogWrapper
 // A server that opens an input port getting externally measured analog values

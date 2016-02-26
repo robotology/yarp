@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2006, 2008 RobotCub Consortium, Arjan Gijsberts
  * Authors: Paul Fitzpatrick, Arjan Gijsberts

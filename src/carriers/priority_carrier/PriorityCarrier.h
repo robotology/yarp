@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2012 IITRBCS
  * Authors: Ali Paikan and Paul Fitzpatrick

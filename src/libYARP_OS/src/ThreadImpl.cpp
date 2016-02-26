@@ -1,5 +1,3 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
 /*
 * Author: Lorenzo Natale, Paul Fitzpatrick, Anne van Rossum
 * Copyright (C) 2006 The Robotcub consortium

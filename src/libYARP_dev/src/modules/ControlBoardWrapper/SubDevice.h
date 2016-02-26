@@ -1,13 +1,12 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-#ifndef YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
-#define YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
-
 /*
 * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
 * Author: Lorenzo Natale
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
 */
+
+#ifndef YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
+#define YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
+
 
 // ControlBoardWrapper
 // A modified version of the remote control board class

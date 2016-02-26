@@ -1,5 +1,7 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
+/*
+ * Copyright: (C) 1994 Everett F. Carter Jr.
+ * CopyPolicy: Preserve copyright notice
+ */
 
 #include <yarp/os/Random.h>
 
