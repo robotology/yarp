@@ -128,15 +128,16 @@ YARP_OS_API void yarp_print_trace(FILE *out, const char *file, int line);
 
 #ifndef YARP_NO_DEPRECATED
 
-YARP_OS_API YARP_DEPRECATED inline void __yarp_debug(const yarp::os::ConstString& str) { yDebug("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
-YARP_OS_API YARP_DEPRECATED inline void __yarp_info(const yarp::os::ConstString& str) { yInfo("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
-YARP_OS_API YARP_DEPRECATED inline void __yarp_warn(const yarp::os::ConstString& str) { yWarning("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
-YARP_OS_API YARP_DEPRECATED inline void __yarp_error(const yarp::os::ConstString& str) { yError("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
+YARP_OS_DEPRECATED_API inline void __yarp_debug(const yarp::os::ConstString& str) { yDebug("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
+YARP_OS_DEPRECATED_API inline void __yarp_info(const yarp::os::ConstString& str) { yInfo("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
+YARP_OS_DEPRECATED_API inline void __yarp_warn(const yarp::os::ConstString& str) { yWarning("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
+YARP_OS_DEPRECATED_API inline void __yarp_error(const yarp::os::ConstString& str) { yError("%s", str.c_str()); } ///< \deprecated since YARP 2.3.64
 
-YARP_OS_API YARP_DEPRECATED inline bool yarp_show_error() { return true; } ///< \deprecated since YARP 2.3.64
-YARP_OS_API YARP_DEPRECATED inline bool yarp_show_warn() { return true; } ///< \deprecated since YARP 2.3.64
-YARP_OS_API YARP_DEPRECATED inline bool yarp_show_info() { return true; } ///< \deprecated since YARP 2.3.64
-YARP_OS_API YARP_DEPRECATED inline bool yarp_show_debug() { return true; } ///< \deprecated since YARP 2.3.64
+
+YARP_OS_DEPRECATED_API inline bool yarp_show_error() { return true; } ///< \deprecated since YARP 2.3.64
+YARP_OS_DEPRECATED_API inline bool yarp_show_warn() { return true; } ///< \deprecated since YARP 2.3.64
+YARP_OS_DEPRECATED_API inline bool yarp_show_info() { return true; } ///< \deprecated since YARP 2.3.64
+YARP_OS_DEPRECATED_API inline bool yarp_show_debug() { return true; } ///< \deprecated since YARP 2.3.64
 
 /**
  * \deprecated since YARP 2.3.64
