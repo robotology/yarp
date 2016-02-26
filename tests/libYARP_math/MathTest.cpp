@@ -542,6 +542,8 @@ public:
         eulerTests();
         signTest();
         eigenTest();
+        elementTest();
+        catAndPileTest();
     }
 
     //tests written by Giulia V
@@ -587,7 +589,7 @@ public:
         report(0, "checking sign function...");
         double a;
         a=-2.0;
-        assertEqual(sign(a), -1.0, "sign(-2.0)=-1.0");
+        assertEqual(sign(a), -1.0, "sign(double)= +/-1");
 
         Vector b,c;
         b.resize(3,0.0);
@@ -598,15 +600,18 @@ public:
         c[0]=-1.0;
         c[1]=1.0;
         c[2]=-1.0;
-        assertEqual(sign(b), c, "sign([-0.8, 1.3, -2.4])=[-1.0, 1.0, -1.0]");
+        assertEqual(sign(b), c, "sign(vector)=vector cointaing signs of elements ");
     }
 
     void eigenTest()
     {
+        report(0, "checking eigenValues function...");
         Matrix A;
-        Vector real, img;
+        Vector real, img, real2, img2;
         real.resize(3,0.0);
         img.resize(3,0.0);
+        real2.resize(3,0.0);
+        img2.resize(3,0.0);
         A.resize(3,3);
         A.eye();
         A(0,1)=0.1;
@@ -615,11 +620,62 @@ public:
         A(1,2)=5.2;
         A(2,1)=-4.9;
         eingenValues(A, real, img);
-        cout<<" "<<  real.toString().c_str()<<endl<<endl;
-        cout<<" "<<  img.toString().c_str()<<endl<<endl;
-
+        real2[0]=1.4134;
+        real2[1]=0.7933;
+        real2[2]=0.7933;
+        assertEqual(real, real2, "eigenValues(m)=real part of eigenValues");
+        assertEqual(img, img2, "eigenValues(m)=img part of eigenValues");
     }
 
+    void elementTest()
+    {
+        report(0, "checking max and min element..");
+        Vector a;
+        a.resize(3,0.0);
+        a[0]=2.5;
+        a[1]=3.1;
+        a[2]=4.7;
+        assertEqual(findMax(a), 4.7, "findMax(vector)=max-elem");
+        assertEqual(findMin(a), 2.5, "findMin(vector)=min-elem");
+    }
+
+    void catAndPileTest()
+    {
+        report(0, "checking Matrix concatenations..");
+        Matrix a, b, c;
+        b.resize(2,1);
+        c.resize(3,1);
+        a.resize(5,1);
+        b(0,0)=b(1,0)=1;
+        c(0,0)=c(1,0)=c(2,0)=2;
+        a(0,0)=a(1,0)=1;
+        a(2,0)=a(3,0)=a(4,0)=2;
+        assertEqual(pile(b,c),a, "pile(m1, m2)=[m1; m2]");
+
+        Vector d;
+        d.resize(1,0.0);
+        d[0]=4;
+        a.resize(3,1);
+        a(0,0)=a(0,1)=1;
+        a(0,2)=4;
+        assertEqual(pile(b,d),a, "pile(matrix, vector)=[matrix; vector]");
+        a(0,0)=4;
+        a(0,2)=1;
+        assertEqual(pile(d,b),a, "pile(vector, matrix)=[vector; matrix]");
+        Vector e,f;
+        e.resize(1,0.0);
+        e[0]=-3;
+        f.resize(2,0.0);
+        f[0]=4;
+        f[1]=-3;
+        assertEqual(pile(d,e),f, "pile(vector, vector)=[vector; vector]");
+
+
+
+
+
+
+    }
 
 };
 
