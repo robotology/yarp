@@ -165,7 +165,7 @@ bool Arbitrator::validate(void)
 
     yarp::sig::Vector real;
     yarp::sig::Vector img;
-    yarp::math::eingenValues(A, real, img);
+    yarp::math::eigenValues(A, real, img);
     bool bStable = true;
     for(size_t i=0; i<real.size(); i++)
     {

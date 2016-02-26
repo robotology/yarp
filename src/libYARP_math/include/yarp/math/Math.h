@@ -441,7 +441,7 @@ namespace yarp
         * @param c number of columns
         */
         YARP_math_API yarp::sig::Matrix zeros(int r, int c);
-        
+
         /**
         * Computes the determinant of a matrix (defined in Math.h).
         * @param in the matrix
@@ -456,14 +456,20 @@ namespace yarp
         YARP_math_API yarp::sig::Matrix luinv(const yarp::sig::Matrix& in);
 
         /**
-        * Computes eigenvalues of the n-by-n real nonsymmetric matrix (defined in Math.h). 
+        * Computes eigenvalues of the n-by-n real nonsymmetric matrix (defined in Math.h).
         * @param in nonsymmetric n-by-n matrix
-        * @param real the real part of eingen values
-        * @param img the imaginary part of eingen values
-        * @return the real and imaginary part of the eingen values in seperate matrices
+        * @param real the real part of eigen values
+        * @param img the imaginary part of eigen values
+        * @return the real and imaginary part of the eigen values in seperate matrices
         */
-        YARP_math_API bool eingenValues(const yarp::sig::Matrix& in, yarp::sig::Vector &real, yarp::sig::Vector &img);
+        YARP_math_API bool eigenValues(const yarp::sig::Matrix& in, yarp::sig::Vector &real, yarp::sig::Vector &img);
 
+#ifndef YARP_NO_DEPRECATED
+        /**
+        * @deprecated since YARP 2.3.65
+        */
+        YARP_math_DEPRECATED_API bool eingenValues(const yarp::sig::Matrix& in, yarp::sig::Vector &real, yarp::sig::Vector &img);
+#endif
         /**
         * Invert a symmetric and positive definite matrix using Cholesky decomposition (defined in Math.h). 
         * @param in symmetric and positive definite matrix

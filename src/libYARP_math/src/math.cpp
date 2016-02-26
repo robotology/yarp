@@ -603,7 +603,7 @@ Matrix yarp::math::luinv(const Matrix& in) {
     return ret;
 }
 
-bool yarp::math::eingenValues(const Matrix& in, Vector &real, Vector &img)
+bool yarp::math::eigenValues(const Matrix& in, Vector &real, Vector &img)
 {
     // return error for non-square matrix
     if(in.cols() != in.rows())
@@ -633,6 +633,11 @@ bool yarp::math::eingenValues(const Matrix& in, Vector &real, Vector &img)
     return false;
 #endif
 }
+
+bool yarp::math::eingenValues(const Matrix& in, Vector &real, Vector &img) {
+    return eigenValues(in, real, img);
+}
+
 
 /* depends on GSL 1.12, put back in when verified that 1.12 is standard
 Matrix yarp::math::chinv(const Matrix& in) 
