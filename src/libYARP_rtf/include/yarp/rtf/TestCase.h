@@ -77,7 +77,7 @@ public:
             }
             RTF_ASSERT_ERROR_IF(cfgfile.size(),
                                 RTF::Asserter::format("Cannot find configuration file %s", cfgfile.c_str()));
-
+            RTF_TEST_REPORT(RTF::Asserter::format("Loading configuration from %s", cfgfile.c_str()));
             // update the properties with environment
             property.fromConfigFile(cfgfile.c_str(), envprop);
         }
