@@ -546,7 +546,6 @@ public:
         catAndPileTest();
     }
 
-    //tests written by Giulia V
     void eulerTests()
     {
         report(0, "checking conversions from euler angles to matrix...");
@@ -611,17 +610,13 @@ public:
         real2.resize(2,0.0);
         img2.resize(2,0.0);
         A.resize(2,2);
-        A(0,0)=-1;
+        A(0,0)=0;
         A(0,1)= 2;
         A(1,0)= -2;
         A(1,1)= -4;
-        cout<<"Matrix of interest before eigenValues: "<<endl;
-        cout<<"     "<<A.toString()<<endl;
         eigenValues(A, real, img);
         real2[0]=-2.0;
         real2[1]=-2.0;
-        cout<<"Matrix of interest after eigenValues: "<<endl;
-        cout<<"     "<<A.toString()<<endl;
         assertEqual(real, real2, " eigenValues(matrix)=real part of eigenValues ");
         assertEqual(img, img2, " eigenValues(matrix)=img part of eigenValues ");
     }
