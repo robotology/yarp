@@ -539,7 +539,157 @@ public:
         divisionOperator();
         crossProduct();
         quaternionConversion();
+        eulerTests();
+        signTest();
+        eigenTest();
+        elementTest();
+        catAndPileTest();
     }
+
+    void eulerTests()
+    {
+        report(0, "checking conversions from euler angles to matrix...");
+        Vector euler;
+        euler.resize(3,0.0);
+        Matrix R;
+        R.resize(4,4);
+        R.eye();
+        assertEqual(euler2dcm(euler),R, " euler2dcm([0 0 0]) = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1] ");
+        euler[0]=0;
+        euler[1]=M_PI/2;
+        euler[2]=M_PI;
+        R(0,0)=0.0;
+        R(0,2)=1.0;
+        R(1,1)=-1.0;
+        R(2,0)=1.0;
+        R(2,2)=0.0;
+        assertEqual(euler2dcm(euler),R.transposed(), " euler2dcm([pi, pi/2, -pi]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1] ");
+
+        report(0, "checking conversions from matrix to euler angles...");
+        assertEqual(dcm2euler(R),euler, " dcm2euler(matrix-of-previous-test)=[0, pi/2, -pi] ");
+
+        report(0, "checking conversions from matrix to axis/angle...");
+        R.eye();
+        R(0,0)=-1.0;
+        R(0,1)=0.0;
+        R(2,2)=-1.0;
+        Vector axis;
+        axis.resize(4,0.0);
+        axis[0]=axis[2]=0;
+        axis[1]=1;
+        axis[3]=M_PI;
+        assertEqual(dcm2axis(R),axis, " dcm2axis([-1.0 0 0 0; 0 1 0 0; 0 0 -1 0; 0 0 O 1]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1] ");
+    }
+
+    void signTest()
+    {
+        report(0, "checking sign function...");
+        double a;
+        a=-2.0;
+        assertEqual(sign(a), -1.0, " sign(double)= +/-1 ");
+
+        Vector b,c;
+        b.resize(3,0.0);
+        c.resize(3,0.0);
+        b[0]=-0.8;
+        b[1]=1.3;
+        b[2]=-2.4;
+        c[0]=-1.0;
+        c[1]=1.0;
+        c[2]=-1.0;
+        assertEqual(sign(b), c, "  sign(vector)=vector cointaing signs of elements ");
+    }
+
+    void eigenTest()
+    {
+        report(0, "checking eigenValues function...");
+        Matrix A;
+        Vector real, img, real2, img2;
+        real.resize(2,0.0);
+        img.resize(2,0.0);
+        real2.resize(2,0.0);
+        img2.resize(2,0.0);
+        A.resize(2,2);
+        A(0,0)=0;
+        A(0,1)= 1.0;
+        A(1,0)= -2.0;
+        A(1,1)= 2.0;
+        eigenValues(A, real, img);
+        real2[0]=1.0;
+        real2[1]=1.0;
+        img2[0]=1.0;
+        img2[1]=-1.0;
+        assertEqual(real, real2, " eigenValues(matrix)=real part of eigenValues ");
+        assertEqual(img, img2, " eigenValues(matrix)=img part of eigenValues ");
+    }
+
+    void elementTest()
+    {
+        report(0, "checking max and min element..");
+        Vector a;
+        a.resize(3,0.0);
+        a[0]=2.5;
+        a[1]=3.1;
+        a[2]=4.7;
+        assertEqual(findMax(a), 4.7, " findMax(vector)=max-elem ");
+        assertEqual(findMin(a), 2.5, " findMin(vector)=min-elem ");
+    }
+
+    void catAndPileTest()
+    {
+        report(0, "checking Matrix concatenations..");        
+        Matrix a, b, c;
+        b.resize(2,1);
+        c.resize(3,1);
+        a.resize(5,1);
+        b(0,0)=b(1,0)=1;
+        c(0,0)=c(1,0)=c(2,0)=2;
+        a(0,0)=a(1,0)=1;
+        a(2,0)=a(3,0)=a(4,0)=2;
+        assertEqual(pile(b,c),a, " pile(matrix1, matrix2)=[matrix1; matrix2] ");
+
+        Vector d;
+        d.resize(1,0.0);
+        d[0]=4;
+        a.resize(3,1);
+        a(0,0)=a(0,1)=1;
+        a(0,2)=4;
+        assertEqual(pile(b,d),a, " pile(matrix, vector)=[matrix; vector] ");
+        a(0,0)=4;
+        a(0,2)=1;
+        assertEqual(pile(d,b),a, " pile(vector, matrix)=[vector; matrix] ");
+
+        Vector e,f;
+        e.resize(1,0.0);
+        e[0]=-3;
+        f.resize(2,0.0);
+        f[0]=4;
+        f[1]=-3;
+        assertEqual(pile(d,e),f, " pile(vector, vector)=[vector; vector] ");
+        a.resize(1,5);
+        a(0,0)=a(0,1)=1;
+        a(0,2)=a(0,3)=a(0,4)=2;
+        assertEqual(cat(b.transposed(), c.transposed()), a, " cat(matrix1, matrix2)=[matrix1, matrix2] ");
+        a.resize(1,3);
+        a(0,2)=4;
+        assertEqual(cat(b.transposed(),d), a, " cat(matrix,v)=[matrix, vector] ");
+        a(0,0)=4;
+        a(0,2)=1;
+        assertEqual(cat(d,b.transposed()), a, " cat(v, matrix)=[vector, matrix] ");
+        f[1]=2.0;
+        assertEqual(cat(d,2.0),f, " cat(vector, double)=[vector, double] ");
+        f[0]=2.0;
+        f[1]=4.0;
+        assertEqual(cat(2.0,d),f, " cat(double, vector)=[double, vector] ");
+        f.resize(5,0.0);
+        f[0]=1.0;
+        f[1]=2.0;
+        f[2]=3.0;
+        f[3]=4.0;
+        f[4]=5.0;
+        assertEqual(cat(1.0, 2.0, 3.0, 4.0, 5.0), f, " cat(n1, n2, n3, n4, n5)=[n1, n2, n3, n4, n5] " );
+    }
+
 };
 
 static MathTest theMathTest;
