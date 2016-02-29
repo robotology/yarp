@@ -95,38 +95,44 @@ fi
 
 # Go ahead and download YARP
 echo "BUNDLE_YARP_VERSION: $BUNDLE_YARP_VERSION"
-fname="yarp"
+source_name="yarp"
+source_url="https://github.com/robotology/${source_name}" 
 
-if [ ! -e "$fname" ]; then
-	if [ "$BUNDLE_YARP_VERSION" == "trunk" ]; then
-			svn co https://github.com/robotology/yarp/trunk $fname || {
-				echo "Cannot fetch YARP"
-				exit 1
-		}
-	else
-		if [ "$BUNDLE_YARP_REVISION" == "" ]; then
-				fname="${fname}-${BUNDLE_YARP_VERSION}"
-				svn co https://github.com/robotology/yarp/tags/v${BUNDLE_YARP_VERSION} $fname || {
-					echo "Cannot fetch YARP"
-					exit 1
-			}
-		else
-			fname="${fname}-rev${BUNDLE_YARP_REVISION}"
-			svn co https://github.com/robotology/yarp/trunk -r $BUNDLE_YARP_REVISION $fname || {
-				echo "Cannot fetch YARP"
-				exit 1
-			}
-		fi
-	fi
+if [ ! -e "$source_name" ]; then
+  git clone $source_url || {
+    echo "Cannot fetch ${source_name} from $source_url"
+	exit 1
+  }
 fi
-
+cd $source_name
+git  pull || {
+    echo "Cannot update $source_name from $source_url"
+	exit 1
+  }
+if [ "$BUNDLE_YARP_VERSION" == "" ] || [ "$BUNDLE_YARP_VERSION" == "trunk" ] || [ "$BUNDLE_YARP_VERSION" == "master" ]
+then
+  git checkout master || {
+    echo "Cannot fetch YARP trunk"
+    exit 1
+  }
+else
+  git checkout  v${BUNDLE_YARP_VERSION} || {
+    echo "Cannot fetch YARP v${BUNDLE_YARP_VERSION}"
+    exit 1
+  }
+fi
+cd ..
 # Make and enter build directory
-fname2=${fname}-${OPT_COMPILER}-${OPT_VARIANT}-${OPT_BUILD}
-mkdir -p $fname2
-cd $fname2 || exit 1
+build_path="${source_name}-${OPT_COMPILER}-${OPT_VARIANT}-${OPT_BUILD}"
+echo "Building to ${build_path}"
+if [ -d "$build_path" ]; then
+  rm -rf $build_path
+fi
+mkdir -p $build_path
+cd $build_path
 
 YARP_DIR=`cygpath --mixed "$PWD"`
-YARP_ROOT=`cygpath --mixed "$PWD/../${fname}"`
+YARP_ROOT=`cygpath --mixed "$PWD/../${source_name}"`
 
 echo "Using ACE from $ACE_ROOT"
 echo "Using GSL from $GSL_DIR"
@@ -136,7 +142,7 @@ echo "Using GSL from $GSL_DIR"
 cat << XXX
 	source $SETTINGS_SOURCE_DIR/src/restrict_path.sh
 
-	"$CMAKE_BIN" -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION $YARP_CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DGSL_DIR="$GSL_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" ../$fname || exit 1
+	"$CMAKE_BIN" -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION $YARP_CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DGSL_DIR="$GSL_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" ../$source_name || exit 1
 	target_name "YARP"
 	$OPT_BUILDER  \$user_target \$TARGET $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
 	# if [ ! -e install ]; then

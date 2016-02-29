@@ -279,6 +279,8 @@ SectionGroup "Qt" SecQt
       ExecWait '"$INSTDIR\${QT_SUB}\bin\qtpathcorrector.exe" patch -n "$INSTDIR\${QT_SUB}" -f "$INSTDIR\${QT_SUB}\bin\Qt5Cored.dll"' $0
       ExecWait '"$INSTDIR\${QT_SUB}\bin\qtpathcorrector.exe" patch -n "$INSTDIR\${QT_SUB}" -f "$INSTDIR\${QT_SUB}\bin\qmake.exe"' $0
       Delete "$INSTDIR\${QT_SUB}\bin\qtpathcorrector.exe"
+      Delete "$INSTDIR\${QT_SUB}\bin\msvcp100.dll"
+      Delete "$INSTDIR\${QT_SUB}\bin\msvcr100.dll"
       FileOpen $1 '$INSTDIR\${QT_SUB}\bin\qtenv2.bat' w
       FileWrite $1 'echo off'
       FileWrite $1 '$\r$\n'
