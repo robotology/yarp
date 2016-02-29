@@ -79,7 +79,7 @@ fi
 
 # Go ahead and download GSL source code
 fname=gsl-$BUNDLE_GSL_VERSION
-link=ftp://gnu.mirrors.pair.com/gnu/gnu/gsl/$fname.tar.gz
+link="http://ftpmirror.gnu.org/gsl/$fname.tar.gz"
 if [ ! -e $fname ]; then
 	if [ ! -e $fname.tar.gz ]; then
 		wget $link || {

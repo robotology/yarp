@@ -138,22 +138,28 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
 	if [ "$OPT_COMPILER" == "v12" ] ; then
 		if [ "$OPT_VARIANT" == "x86" ] ; then
 			OPT_GENERATOR="Visual Studio 12"
+            REDIST_VARIANT="x86"
 		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
 			OPT_GENERATOR="Visual Studio 12 Win64"
+            REDIST_VARIANT="x64"
 		fi		
 	fi
 	if [ "$OPT_COMPILER" == "v11" ] ; then
 		if [ "$OPT_VARIANT" == "x86" ] ; then
 			OPT_GENERATOR="Visual Studio 11"
+            REDIST_VARIANT="x86"
 		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
 			OPT_GENERATOR="Visual Studio 11 Win64"
+            REDIST_VARIANT="x64"
 		fi		
 	fi
 	if [ "$OPT_COMPILER" == "v10" ] ; then
 		if [ "$OPT_VARIANT" == "x86" ] ; then
 			OPT_GENERATOR="Visual Studio 10"
+            REDIST_VARIANT="x86"
 		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
 			OPT_GENERATOR="Visual Studio 10 Win64"
+            REDIST_VARIANT="x64"
 		fi
 	fi
 	if [ "$OPT_COMPILER" == "v9" ] ; then
@@ -181,7 +187,7 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
 
 	OPT_VC_REDIST_CRT=""
 	if [ ! "k$REDIST_PATH" = "k" ] ; then
-		OPT_VC_REDIST_CRT="$REDIST_PATH/$OPT_VARIANT/Microsoft.$OPT_VCNNN.CRT"
+		OPT_VC_REDIST_CRT="${REDIST_PATH}/${REDIST_VARIANT}/Microsoft.${OPT_VCNNN}.CRT"
 		if [ ! -e "$OPT_VC_REDIST_CRT" ] ; then
 			OPT_VC_REDIST_CRT=""
 		fi
