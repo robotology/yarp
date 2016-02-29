@@ -611,12 +611,14 @@ public:
         img2.resize(2,0.0);
         A.resize(2,2);
         A(0,0)=0;
-        A(0,1)= 2;
-        A(1,0)= -2;
-        A(1,1)= -4;
+        A(0,1)= 1.0;
+        A(1,0)= -2.0;
+        A(1,1)= 2.0;
         eigenValues(A, real, img);
-        real2[0]=-2.0;
-        real2[1]=-2.0;
+        real2[0]=1.0;
+        real2[1]=1.0;
+        img2[0]=1.0;
+        img2[1]=-1.0;
         assertEqual(real, real2, " eigenValues(matrix)=real part of eigenValues ");
         assertEqual(img, img2, " eigenValues(matrix)=img part of eigenValues ");
     }
