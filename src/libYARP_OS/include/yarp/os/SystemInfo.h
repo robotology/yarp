@@ -64,7 +64,7 @@ public:
 
 
     /**
-     * @brief The LoadInfo stuct holda the current cpu load information
+     * @brief The LoadInfo stuct holds the current cpu load information
      */
     typedef struct LoadInfo {
         double cpuLoad1;
