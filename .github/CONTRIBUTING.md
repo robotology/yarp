@@ -1,0 +1,124 @@
+Code Style
+==========
+
+This is the recommended code style for YARP.
+
+## C++
+
+* 4 spaces indentation
+* No tabs
+* No white spaces at the end of the line
+* One EOL at the end of the file
+* All files should use UNIX end of lines
+
+### Header guards
+
+* Do not use `#pragma once`, use instead `#ifndef ... #define ... #endif` macro
+* Main libraries: `YARP_<LIB>_<FILENAME_H>` i.e. `YARP_OS_FOO_H`
+* Impl headers: `YARP_<LIB>_IMPL_<FILENAME_H>` i.e. `YARP_OS_IMPL_FOO_H`
+* Plugins (carriers and modules): `YARP_<NAME>_<CARRIER/DEVICE>_FILENAME_H` i.e. `YARP_HUMAN_CARRIER_HUMANSTREAM_H` and `YARP_FAKEBOT_DEVICE_FAKEBOT_H`
+* Executables (tools and GUIs): `YARP_<NAME>_FILENAME_H` i.e. `YARP_YARP_YARPROBOT_H` and `YARP_YARPMANAGER_QT_YSCOPEWINDOW_H`
+
+
+## CMake
+
+* 2 spaces indentation
+* No tabs.
+* Lowercase commands, i.e. `if` instead of `IF`
+* No spaces between the command and the bracket, i.e. `if()` instead of `if ()`
+* Do not repeat the argument in the commands closing blocks, i.e. `if(FOO) ... else() ... endif()` instead of `if(FOO) ... else(FOO) ... endif(FOO)`
+* Do not use the new CMake comment style, as that is supported only starting from CMake 3.0
+* No white spaces at the end of the line
+* One EOL at the end of the file
+* All files should use UNIX end of lines
+
+
+Workflow
+========
+
+## Stable branch: `master`
+
+The `master` branch is stable and **should not receive new features**.
+Only **bug fixes** are accepted.
+
+This is the typical workflow to fix a bug in the master branch.
+
+* Identify a bug that does not require breaking changes of the API/ABI.
+* Open an issue on github.
+* Add some label (FIXME which label?).
+* Assign the issue to yourself.
+* Create a new branch starting from the `master` branch:
+```
+git fetch origin
+git checkout -b <branch_name> origin/master
+```
+* Fix the bug and make one or more commits.
+* [Push the branch on your fork and create a pull request](https://help.github.com/categories/collaborating-on-projects-using-pull-requests/).
+* Wait for someone else to review your fix and merge your pull request.
+* Your fix is now in the `master` branch, now you need to port it to the `devel`
+  branch.
+  * Ensure that your branches are in sync with `origin`:
+```
+git checkout master
+git pull --rebase origin/master
+git checkout devel
+git pull --rebase origin/devel
+```
+  * Merge master into devel and eventually fix the conflicts.
+```
+git merge master
+
+```
+
+
+
+## Development branch: `devel`
+
+
+We use the branch `devel` to collect the ongoing work, which is given in terms
+of **new features** and **bug fixes**.
+
+When we introduce a new feature that will cause downstream projects to be aware
+of such update, we do increase the tweak number (always sticking to
+_odd numbers_).
+
+When we decide to publish these new features in a new software release (roughly
+each _3 months_), we merge the new modifications into `master`, doing:
+
+```sh
+git checkout master
+git merge --no-ff devel
+git push origin master
+```
+
+
+
+## Example
+
+This is an example of workflow involving:
+* the development of a new feature developed in the `feature_foo` branch (orange)
+  and later merged in the `devel` branch (purple).
+* A bug fixed in the `bugfix_xxx` branch (gray) and later merged on the `master`
+  branch (blue).
+* A few stable tags in the `master` branch:
+  * **v2.3.64.5** is latest stable tag for the YARP 2.3.64 release series.
+  * **v2.3.66** is the first stable tag for the YARP 2.3.66 release series.
+  * **v2.3.66.1** is a stable tag (bug fixes only) for the YARP 2.3.66 release
+    series. **v2.3.66** and **v2.3.66.1** are compatible (both API and ABI).
+* One development tag in the `devel` branch (**v2.3.67.1**) that includes one new
+  feature. This kind of tag is used to ensure that other projects can require a
+  specific feature and print an error that is easy to understand when that
+  feature is not available.
+
+![YARP Workflow](/.github/workflow.png)
+
+
+## Terminology
+
+- **Downstream projects**: code repositories that depend on the project under
+  subject.
+- **Versioning format**: the versioning system we adopt complies with the format
+  <**major**>.<**minor**>.<**patch**>.<**tweak**>.
+  Starting with YARP 2.3.66, the _patch_ version number is an _even_ number for
+  stable releases (tagged in `master`), and an _odd_ number for unstable releases
+  (tagged in `devel`).
