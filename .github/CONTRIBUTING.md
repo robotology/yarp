@@ -30,11 +30,26 @@ This is the recommended code style for YARP.
 
 ### Header guards
 
-* Do not use `#pragma once`, use instead `#ifndef ... #define ... #endif` macro
-* Main libraries: `YARP_<LIB>_<FILENAME_H>` i.e. `YARP_OS_FOO_H`
-* Impl headers: `YARP_<LIB>_IMPL_<FILENAME_H>` i.e. `YARP_OS_IMPL_FOO_H`
-* Plugins (carriers and modules): `YARP_<NAME>_<CARRIER/DEVICE>_FILENAME_H` i.e. `YARP_HUMAN_CARRIER_HUMANSTREAM_H` and `YARP_FAKEBOT_DEVICE_FAKEBOT_H`
-* Executables (tools and GUIs): `YARP_<NAME>_FILENAME_H` i.e. `YARP_YARP_YARPROBOT_H` and `YARP_YARPMANAGER_QT_YSCOPEWINDOW_H`
+* Do not use `#pragma once`, use instead `#ifndef ... #define ... #endif` macro.
+* The defined macro should have this format:
+  * Main libraries: `YARP_<LIB>_<FILENAME_H>` i.e. `YARP_OS_FOO_H`
+  * Impl headers: `YARP_<LIB>_IMPL_<FILENAME_H>` i.e. `YARP_OS_IMPL_FOO_H`
+  * Plugins (carriers and modules): `YARP_<NAME>_<CARRIER/DEVICE>_FILENAME_H` i.e.
+    `YARP_HUMAN_CARRIER_HUMANSTREAM_H` and`YARP_FAKEBOT_DEVICE_FAKEBOT_H`
+  * Executables (tools and GUIs): `YARP_<NAME>_FILENAME_H` i.e. `YARP_YARP_YARPROBOT_H`
+    and `YARP_YARPMANAGER_QT_YSCOPEWINDOW_H`
+* Add a comment in the final `#endif` containing the closed `#ifndef`.
+
+Example:
+
+```
+#ifndef YARP_OS_FOO_H
+#define YARP_OS_FOO_H
+
+[...]
+
+#endif // YARP_OS_FOO_H
+```
 
 
 ## CMake
