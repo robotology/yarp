@@ -9,6 +9,7 @@
   - [Git](#git)
 - [Workflow](#workflow)
   - [Stable branch: `master`](#stable-branch-master)
+  - [Development branch: `devel`](#development-branch-devel)
   - [Example](#example)
   - [Terminology](#terminology)
 
