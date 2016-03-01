@@ -1,3 +1,19 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Code Style](#code-style)
+  - [C++](#c)
+    - [Header guards](#header-guards)
+  - [CMake](#cmake)
+  - [Git](#git)
+- [Workflow](#workflow)
+  - [Stable branch: `master`](#stable-branch-master)
+  - [Example](#example)
+  - [Terminology](#terminology)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Code Style
 ==========
 
