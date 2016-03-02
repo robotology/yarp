@@ -30,7 +30,17 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
 
     Property options;
     options.fromString(proto.getSenderSpecifier().c_str());
+    options.put("source", sourceName);
+    options.put("destination", portName);
+    options.put("sender_side",
+             (proto.getContactable()->getName() == sourceName) ? 1 : 0);
+    options.put("receiver_side",
+             (proto.getContactable()->getName() == portName) ? 1 : 0);
+    options.put("carrier", proto.getRoute().getCarrierName());
+    return configureFromProperty(options);
+}
 
+bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     if(binder) delete binder;
     binder = NULL;
 
@@ -68,18 +78,17 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     info.clear();
     info.put("filename", strFile);
     info.put("type", script);
-    info.put("sender_side",
-             (proto.getContactable()->getName() == sourceName));
-    info.put("receiver_side",
-             (proto.getContactable()->getName() == portName));
-    info.put("source", sourceName);
-    info.put("destination", portName);
-    info.put("carrier", proto.getRoute().getCarrierName());
+    info.put("source", options.find("source").asString());
+    info.put("destination", options.find("destination").asString());
+    info.put("sender_side",  options.find("sender_side").asInt());
+    info.put("receiver_side",options.find("receiver_side").asInt());
+    info.put("carrier", options.find("carrier").asString());
 
     PortMonitor::lock();
     bReady =  binder->load(info);
     PortMonitor::unlock();
     return bReady;
+    return false;
 }
 
 void PortMonitor::setCarrierParams(const yarp::os::Property& params)
@@ -152,10 +161,11 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         }
     }
 
-    getPeers().lock();
-    yAssert(group);
-    result = group->acceptIncomingData(this);
-    getPeers().unlock();
+    if(group!=NULL) {
+        getPeers().lock();
+        result = group->acceptIncomingData(this);
+        getPeers().unlock();
+    }
     return result;
 }
 

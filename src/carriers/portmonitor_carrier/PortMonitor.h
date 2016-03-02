@@ -86,7 +86,8 @@ public:
     }
 
     virtual bool configure(yarp::os::ConnectionState& proto);
-    
+    virtual bool configureFromProperty(yarp::os::Property& options);
+
     //virtual bool modifiesIncomingData();
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader);
 

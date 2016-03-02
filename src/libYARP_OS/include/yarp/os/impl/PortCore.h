@@ -23,6 +23,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Mutex.h>
 
+#include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
@@ -40,6 +41,7 @@ namespace yarp {
         namespace impl {
             class PortCore;
             class PortCoreUnit;
+            class PortDataModifier;
         }
     }
 }
@@ -106,6 +108,45 @@ namespace yarp {
  * message may be associated with many connections.
  *
  */
+
+/**
+ * @brief The yarp::os::impl::PortDataModifier class is a helper
+ *  class to manage the port data modifiers
+ */
+class YARP_OS_impl_API yarp::os::impl::PortDataModifier {
+public:
+    PortDataModifier() {
+        outputModifier = NULL;
+        inputModifier = NULL;
+    }
+    virtual ~PortDataModifier() {
+        releaseOutModifier();
+        releaseInModifier();
+    }
+
+    void releaseOutModifier() {
+        if(outputModifier != NULL) {
+            outputModifier->close();
+            delete outputModifier;
+            outputModifier = NULL;
+        }
+    }
+
+    void releaseInModifier() {
+        if(inputModifier != NULL) {
+            inputModifier->close();
+            delete inputModifier;
+            inputModifier = NULL;
+        }
+    }
+
+public:
+    yarp::os::Carrier* outputModifier;
+    yarp::os::Carrier* inputModifier;
+    yarp::os::Mutex    outputMutex;
+    yarp::os::Mutex    inputMutex;
+};
+
 class YARP_OS_impl_API yarp::os::impl::PortCore : public ThreadImpl, public PortManager, public yarp::os::PortReader {
 public:
 
@@ -481,6 +522,10 @@ public:
     void take(PortCore *alt) {
     }
 
+    yarp::os::impl::PortDataModifier& getPortModifier() {
+        return modifier;
+    }
+
 private:
 
     // main internal PortCore state and operations
@@ -527,6 +572,9 @@ private:
     bool mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
 
+    // port data modifier
+    yarp::os::impl::PortDataModifier modifier;
+
     // set IP packet TOS
     bool setTypeOfService(PortCoreUnit *unit, int tos);
 
@@ -540,6 +588,11 @@ private:
     // cross-platform way of getting process ID (with or whitout ACE)
     int  getPid();
 
+    // attach a portmonitor plugin to the port or to a specific connection
+    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, String &errMsg);
+
+    // detach the portmonitor from the port or specific connection
+    bool dettachPortMonitor(bool isOutput);
 
     void closeMain();
 
