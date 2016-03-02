@@ -170,13 +170,13 @@ This is an example of workflow involving:
 * The development of a new feature developed in the `feature_foo` branch (orange)
   and later merged in the `devel` branch (purple).
 * Two fake development tag in the `devel` branch:
-  * **(v2.3.67)** that represents the beginning of the development of the next
+  * **v2.3.67** that represents the beginning of the development of the next
     stable release.
-  * **(v2.3.67.1)** that includes one new feature.
+  * **v2.3.67.1** that includes one new feature.
   These are not tagged for real in the repository, but represents the actual
   version number that other projects can check in order to require a specific
   feature and print an error that is easy to understand when that feature is not
-  available (i.e. in CMake `find_package(YARP 2.3.67.1 REQUIRED)`
+  available (i.e. in CMake `find_package(YARP 2.3.67.1 REQUIRED)`)
 
 ![YARP Workflow](workflow.png)
 
@@ -202,7 +202,7 @@ Deprecated methods, features, classes, and tools are marked as deprecated
 instead of removed. This will generate a warning when using these from other
 projects, or an error if YARP is built with `YARP_NO_DEPRECATED`
 
-No bugfixes or new features will be added to these, unless it absolutely
+No bugfixes or new features will be added to these, unless it is absolutely
 necessary for some reason.
 
 Deprecated features are definitely removed every 4 release series.
