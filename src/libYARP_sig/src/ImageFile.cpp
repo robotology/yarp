@@ -4,10 +4,6 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-///
-/// $Id: ImageFile.cpp,v 1.20 2007-12-01 18:34:12 eshuy Exp $
-///
-///
 
 #include <cstdio>
 

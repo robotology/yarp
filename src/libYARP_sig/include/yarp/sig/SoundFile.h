@@ -2,14 +2,8 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-
-//
-// $Id: SoundFile.h,v 1.3 2007-03-20 11:29:32 eshuy Exp $
-//
-//
 
 #ifndef YARP2SoundFile_INC
 #define YARP2SoundFile_INC
@@ -52,7 +46,7 @@ namespace yarp {
 
                 public:
                 soundStreamReader()
-                { 
+                {
                     fp = 0;
                     index=0;
                     fname[0]=0;

@@ -2,12 +2,8 @@
 * Copyright (C) 2007 RobotCub Consortium
 * Authors: Lorenzo Natale
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
 */
 
-// 26/01/2012: Changed storage from vector to double *. Resize() now maintain old content.
-
-// $Id: Matrix.h,v 1.16 2008-10-27 19:00:32 natta Exp $ 
 
 #ifndef YARP2_MATRIX
 #define YARP2_MATRIX
@@ -19,7 +15,7 @@
 #include <yarp/os/ManagedBytes.h>
 
 /**
-* \file Matrix.h contains the definition of a Matrix type 
+* \file Matrix.h contains the definition of a Matrix type
 */
 
 namespace yarp {
@@ -39,7 +35,7 @@ namespace yarp {
 /**
 * \ingroup sig_class
 *
-* A class for a Matrix. A Matrix can be sent/read to/from 
+* A class for a Matrix. A Matrix can be sent/read to/from
 * a port. Use the [] operator to access the r row of the matrix.
 * The function returns a pointer so [][] access the r,c element
 * in the matrix.
@@ -129,7 +125,7 @@ public:
       { return matrix[r]; }
 
       /**
-      * Single element access, no range check (const version). 
+      * Single element access, no range check (const version).
       * Returns a pointer to the r-th row.
       * @param r row number.
       * @return a (const) pointer to the first element of the row.
@@ -138,7 +134,7 @@ public:
       { return matrix[r]; }
 
       /**
-      * Single element access, no range check. 
+      * Single element access, no range check.
       * @param r row number.
       * @param c col number.
       * @return a reference to the element.
@@ -147,7 +143,7 @@ public:
       { return matrix[r][c]; }
 
       /**
-      * Single element access, no range check. 
+      * Single element access, no range check.
       * @param r row number.
       * @param c col number.
       * @return a (const) reference to the element.
@@ -177,7 +173,7 @@ public:
       bool setCol(int col, const Vector &c);
 
       /**
-      * Return the transposed of the matrix. 
+      * Return the transposed of the matrix.
       * @return the transposed copy of the matrix.
       */
       Matrix transposed() const;
@@ -195,7 +191,7 @@ public:
       const Matrix &diagonal(const Vector &d);
 
       /**
-      * Extract a submatrix from (r1,c1) to (r2,c2) (extremes included), as in 
+      * Extract a submatrix from (r1,c1) to (r2,c2) (extremes included), as in
       * Matlab B=A(r1:r2, c1:c2).
       *
       * @param r1 start row
@@ -215,7 +211,7 @@ public:
 
       /**
       * Set a portion of this matrix with the values of the specified matrix m.
-      * The portion to be set is from row r to row r+m.rows()-1 and from column c 
+      * The portion to be set is from row r to row r+m.rows()-1 and from column c
       * to column c+m.cols()-1.
       *
       * @param m matrix containing the values to set

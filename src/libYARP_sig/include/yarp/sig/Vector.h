@@ -2,12 +2,8 @@
 * Copyright (C) 2007 RobotCub Consortium
 * Authors: Lorenzo Natale
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
 */
 
-// 26/01/2012: Changed storage from vector to double *. Resize() now maintain old content.
-
-// $Id: Vector.h,v 1.27 2009-03-26 13:15:44 natta Exp $
 
 #ifndef YARP2_VECTOR
 #define YARP2_VECTOR
@@ -22,7 +18,7 @@
 #include <yarp/os/Log.h>
 
 /**
-* \file Vector.h contains the definition of a Vector type 
+* \file Vector.h contains the definition of a Vector type
 */
 namespace yarp {
 
@@ -37,8 +33,8 @@ namespace yarp {
 /**
 * \ingroup sig_class
 *
-* A Base class for a VectorOf<T>, provide default implementation for 
-* read/write methods. Warning: the current implementation assumes the same 
+* A Base class for a VectorOf<T>, provide default implementation for
+* read/write methods. Warning: the current implementation assumes the same
 * representation for data type (endianess).
 */
 class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
@@ -65,26 +61,26 @@ public:
 };
 
 /*
-* This is a simple function that maps a type into its corresponding BOTTLE tag. 
+* This is a simple function that maps a type into its corresponding BOTTLE tag.
 * Used for bottle compatible serialization, called inside getBottleTag().
 * Needs to be instantiated for each type T used in VectorOf<T>.
 */
-template<class T> 
+template<class T>
 inline int BottleTagMap () {
     /* make sure this is never called unspecified */
     yAssert(0);
     return 0;
-  } 
+  }
 
 template<>
 inline int BottleTagMap <double> () {
     return BOTTLE_TAG_DOUBLE;
-  } 
+  }
 
 template<>
 inline int BottleTagMap <int> () {
     return BOTTLE_TAG_INT;
-  } 
+  }
 
 /**
 * \ingroup sig_class
@@ -98,7 +94,7 @@ inline int BottleTagMap <int> () {
 * - use operator= to copy Vectors
 * - read/write network methods
 * Warning: the class is designed to work with simple types (i.e. types
-* that do not allocate internal memory). Template instantiation needs to 
+* that do not allocate internal memory). Template instantiation needs to
 * be checked to avoid unresolved externals. Network communication assumes
 * same data representation (endianess) between machines.
 */
@@ -182,11 +178,11 @@ public:
 
     void resize(size_t size, const T&def)
     {
-        /* 
+        /*
         bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
         bytes.setUsed(size*sizeof(T));
         _updatePointers(); */
-        resize(size); 
+        resize(size);
         for (size_t i=0; i<size; i++) { (*this)[i] = def; }
     }
 
@@ -267,8 +263,8 @@ public:
 /**
 * \ingroup sig_class
 *
-* A class for a Vector. A Vector can be sent/read to/from 
-* a port. Use the [] and () operator for single element 
+* A class for a Vector. A Vector can be sent/read to/from
+* a port. Use the [] and () operator for single element
 * access.
 */
 class YARP_sig_API yarp::sig::Vector : public yarp::os::Portable
@@ -279,7 +275,7 @@ class YARP_sig_API yarp::sig::Vector : public yarp::os::Portable
     void allocGslData();
     void freeGslData();
     void updateGslData();
-    
+
 public:
     Vector()
     {
@@ -310,7 +306,7 @@ public:
     }
 
     /**
-    * Builds a vector and initialize it with 
+    * Builds a vector and initialize it with
     * values from 'p'. Copies memory.
     */
     Vector(size_t s, const double *p);
@@ -402,7 +398,7 @@ public:
      * Set a portion of this vector with the values of the specified vector.
      * If the specified vector v is to big the method does not resize the vector,
      * but return false.
-     * 
+     *
      * @param position index of the first value to set
      * @param v vector containing the values to set
      * @return true if the operation succeeded, false otherwise
@@ -457,7 +453,7 @@ public:
     * This pointer can be safely cast to a gsl_vector*.
     */
     void *getGslVector();
-    
+
     /**
     * Return a void pointer to a gsl compatible structure.
     * This pointer can be safely cast to a gsl_vector*.

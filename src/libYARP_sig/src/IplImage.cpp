@@ -2,13 +2,8 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Giorgio Metta
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-///
-/// $Id: IplImage.cpp,v 1.8 2008-10-14 15:56:49 eshuy Exp $
-///
-///
 
 #include <stdio.h>
 #include <string.h>

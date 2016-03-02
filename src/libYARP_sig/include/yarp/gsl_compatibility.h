@@ -2,18 +2,15 @@
 * Copyright (C) 2007 RobotCub Consortium
 * Authors: Lorenzo Natale
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
 */
 
-// $Id: gsl_compatibility.h,v 1.7 2007-03-27 15:10:45 babybot Exp $
-
-/** 
-* Defines types for binary compatibily with the GSL. Included by cpp 
+/**
+* Defines types for binary compatibily with the GSL. Included by cpp
 * files within yarp.
 */
 
 #ifndef gsl_block
-typedef struct 
+typedef struct
 {
   size_t size;
   double *data;
@@ -25,7 +22,7 @@ struct gsl_vector
 {
   size_t size;
   size_t stride;
-  double *data; 
+  double *data;
   gsl_block *block;
   int owner;
 };
