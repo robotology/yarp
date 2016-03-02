@@ -21,6 +21,9 @@
 
 #include <yarp/os/Time.h>
 
+#if defined(_MSC_VER)
+# define _USE_MATH_DEFINES
+#endif
 #include <math.h>
 #include <string>
 
