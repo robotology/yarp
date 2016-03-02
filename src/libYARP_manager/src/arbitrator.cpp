@@ -136,7 +136,7 @@ bool Arbitrator::validate(void)
         return false;
 
 #ifdef WITH_YARPMATH
-//#if (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14)
+//#if (GSL_MAJOR_VERSION >= 2 || (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14))
     int n = alphas.size();
     if(n == 0)
         return true;

@@ -612,7 +612,7 @@ bool yarp::math::eigenValues(const Matrix& in, Vector &real, Vector &img)
     real.clear();
     img.clear();
 
-#if (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14)
+#if (GSL_MAJOR_VERSION >= 2 || (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14))
     size_t n = in.rows();
     gsl_vector_complex *eval = gsl_vector_complex_alloc(n);
     gsl_matrix_complex *evec = gsl_matrix_complex_alloc(n, n);
