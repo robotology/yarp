@@ -214,6 +214,8 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wundef")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wredundant-decls")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunknown-pragmas")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunused-result")
+
 
 
     ## Unwanted warning flags ##
