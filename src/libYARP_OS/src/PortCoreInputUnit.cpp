@@ -276,11 +276,28 @@ void PortCoreInputUnit::run() {
                     localReader->read(br);
                     if (!br.isActive()) { done = true; break; }
                 } else {
-                    if (ip->getReceiver().acceptIncomingData(br)) {
-                        man.readBlock(ip->getReceiver().modifyIncomingData(br),id,os);
-                    } else {
-                        skipIncomingData(br);
+                    if(ip->getReceiver().acceptIncomingData(br)) {
+                        ConnectionReader* cr = &(ip->getReceiver().modifyIncomingData(br));
+                        yarp::os::impl::PortDataModifier& modifier = getOwner().getPortModifier();
+                        modifier.inputMutex.lock();
+                        if(modifier.inputModifier) {
+                           if(modifier.inputModifier->acceptIncomingData(*cr)) {
+                               cr = &(modifier.inputModifier->modifyIncomingData(*cr));
+                               modifier.inputMutex.unlock();
+                               man.readBlock(*cr,id,os);
+                           }
+                           else {
+                               modifier.inputMutex.unlock();
+                               skipIncomingData(*cr);
+                           }
+                        }
+                        else {
+                            modifier.inputMutex.unlock();
+                            man.readBlock(*cr,id,os);
+                        }
                     }
+                    else
+                        skipIncomingData(br);
                     if (!br.isActive()) { done = true; break; }
                 }
             }

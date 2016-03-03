@@ -1613,10 +1613,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             }
             break;
             case VOCAB2('i','n'): {
-                result.clear();
-                result.addVocab(Vocab::encode("fail"));
-                result.addString("attaching plug-in at input port is not supported!");
-                /*
                 String propString = cmd.get(2).asString().c_str();
                 Property prop(propString.c_str());
                 String errMsg;
@@ -1628,8 +1624,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                 else {
                     result.clear();
                     result.addVocab(Vocab::encode("ok"));
-                }
-                */
+                }                
             }
             break;
             default:
