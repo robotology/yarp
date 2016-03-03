@@ -127,10 +127,16 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config) {
         colorON = true;
     }
 
-    if(config.check("noMirror", "Disable mirroring")) {
-        mirrorON = false;
+    if(config.check("noRGBMirror", "enable RGB  mirroring")) {
+        rgbMirrorON = false;
     } else {
-        mirrorON = true;
+        rgbMirrorON = true;
+    }
+
+    if(config.check("noDepthMirror", "enable depth mirroring")) {
+        depthMirrorON = false;
+    } else {
+        depthMirrorON = true;
     }
 
     if(config.check("noUserTracking", "Disable user tracking")) {
@@ -205,7 +211,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config) {
         imageRegistration = false;
     }
 
-    skeleton = new OpenNI2SkeletonTracker(userTracking, colorON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop, frameSync, imageRegistration, printMode, dMode, cMode);
+    skeleton = new OpenNI2SkeletonTracker(userTracking, colorON, rgbMirrorON, depthMirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop, frameSync, imageRegistration, printMode, dMode, cMode);
 
     if (skeleton->getDeviceStatus() == 0) {
         cout << "OpenNI2 Yarp Device started." << endl;
