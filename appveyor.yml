@@ -44,4 +44,4 @@ after_build:
   - cmd: cmake --build C:\projects\yarp\build --target INSTALL --config %CONFIGURATION%
 
 test_script:
-  - cmake --build . --target RUN_TESTS --config %CONFIGURATION%
+  - cmd: ctest --output-on-failure --build . -C %CONFIGURATION%
