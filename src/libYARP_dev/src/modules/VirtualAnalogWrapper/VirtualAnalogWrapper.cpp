@@ -359,9 +359,9 @@ void VirtualAnalogWrapper::run()
             yarp::os::Time::delay(0.001);
         }
 
-        if ((lastRecv+0.050 < timeNow) && (!sendLastValueBeforeTimeout))
+        if ((lastRecv+0.080 < timeNow) && (!sendLastValueBeforeTimeout))
         {
-            /* If 50ms have passed since the last received message, reset values.
+            /* If 80ms have passed since the last received message, reset values to zero (just once).
              * Sending time will be 1ms due to the delay above (else case).
              */
             for (int d=0; d<mNSubdevs; ++d)
@@ -369,9 +369,10 @@ void VirtualAnalogWrapper::run()
                 mSubdevices[d].resetTorque();
                 mSubdevices[d].flushTorques();
 
-//                Virtual Sensor status is not handled now because server DO NOT implement IVirtual AnalogSensor Interface.
-//                status=IAnalogSensor::AS_TIMEOUT;
             }
+//          Virtual Sensor status is not handled now because server DO NOT implement IVirtual AnalogSensor Interface.		
+//	    status=IAnalogSensor::AS_TIMEOUT;
+	    yError() << "Virtual analog sensor timeout!! No new value received for more than " << timeNow  << " secs.";
             sendLastValueBeforeTimeout = true;
         }
     }
