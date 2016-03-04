@@ -49,11 +49,17 @@ if(YARP_COMPILE_TESTS)
         endif()
         foreach(test ${harness_code})
             get_filename_component(XN ${test} NAME_WE)
+            set(_cmd $<TARGET_FILE:${EXE}> verbose regression ${XN})
             #message(STATUS ${XN})
-            add_test(NAME "${test_family}::${XN}" COMMAND $<TARGET_FILE:${EXE}> regression ${XN})
-            if(YARP_VALGRIND_TESTS AND VALGRIND_COMMAND)
-                add_test(NAME "MemCheck::${test_family}::${XN}" COMMAND ${VALGRIND_COMMAND} $<TARGET_FILE:${EXE}> regression ${XN})
-            endif()
+            add_test(NAME "${test_family}::${XN}"
+                     COMMAND ${_cmd})
+            foreach(_Tool ${YARP_VALGRIND_TOOLS})
+                string(TOUPPER "${_Tool}" _TOOL)
+                if(YARP_VALGRIND_${_TOOL}_TESTS)
+                    add_test(NAME "${test_family}::${XN}::Valgrind::${_Tool}"
+                             COMMAND ${VALGRIND_${_TOOL}_COMMAND} ${_cmd})
+                endif()
+            endforeach()
         endforeach()
     endforeach()
 
@@ -73,10 +79,18 @@ if(YARP_COMPILE_TESTS)
             # need to cache examples for reference
             set(DOC_DIR "${CMAKE_SOURCE_DIR}/doc/device_invocation")
             set(XDOX ${DOC_DIR}/${XN}.dox)
-            add_test(device::${XN} ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/harness_dev --file "${XINI}" --doc "${XDOX}")
-            if(YARP_VALGRIND_TESTS AND VALGRIND_COMMAND)
-                add_test(${VALGRIND_COMMAND} device::${XN} ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/harness_dev --file "${XINI}" --doc "${XDOX}")
-            endif()
+            set(_cmd $<TARGET_FILE:harness_dev> --file "${XINI}" --doc "${XDOX}")
+            add_test(NAME "device::${XN}"
+                     COMMAND ${_cmd}
+                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness)
+            foreach(_Tool ${YARP_VALGRIND_TOOLS})
+                string(TOUPPER "${_Tool}" _TOOL)
+                if(YARP_VALGRIND_${_TOOL}_TESTS)
+                    add_test(NAME "device::${XN}::Valgrind::${_Tool}"
+                             COMMAND ${VALGRIND_MEMCHECK_COMMAND} ${_cmd}
+                             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness)
+                endif()
+            endforeach()
         endforeach(X ${inis})
     endif()
 

@@ -141,25 +141,57 @@ if(YARP_COMPILE_TESTS)
 endif()
 
 #########################################################################
-# Turn on testing on Valgrind
+# Run tests under Valgrind
 
+yarp_deprecated_option(VALGRIND_OPTIONS)
 cmake_dependent_option(YARP_VALGRIND_TESTS
-                       "Run YARP tests under Valgrind to check memory leaks" OFF
+                       "Run YARP tests under Valgrind" OFF
                        "YARP_COMPILE_TESTS" OFF)
 mark_as_advanced(YARP_VALGRIND_TESTS)
+
 if(YARP_VALGRIND_TESTS)
-    find_program(VALGRIND_EXECUTABLE NAMES valgrind)
-    if(VALGRIND_EXECUTABLE)
-        set(VALGRIND_OPTIONS "--tool=memcheck --leak-check=full"
-            CACHE STRING "Valgrind options (--error-exitcode=1 will be appended)")
-        separate_arguments(VALGRIND_OPTIONS UNIX_COMMAND "${VALGRIND_OPTIONS}")
-        set(VALGRIND_COMMAND "${VALGRIND_EXECUTABLE}" ${VALGRIND_OPTIONS} --error-exitcode=1)
-        mark_as_advanced(VALGRIND_EXECUTABLE
-                         VALGRIND_OPTIONS)
-    else()
-        message(WARNING "Valgrind not found.")
-        unset(VALGRIND_COMMAND)
+  find_program(VALGRIND_EXECUTABLE NAMES valgrind)
+  mark_as_advanced(VALGRIND_EXECUTABLE)
+
+  set(YARP_VALGRIND_TOOLS MemCheck
+                          Helgrind
+                          DRD
+                          SGCheck)
+
+  set(YARP_VALGRIND_MEMCHECK_TESTS_DEFAULT ON)
+  set(YARP_VALGRIND_HELGRIND_TESTS_DEFAULT OFF)
+  set(YARP_VALGRIND_DRD_TESTS_DEFAULT OFF)
+  set(YARP_VALGRIND_SGCHECK_TESTS_DEFAULT OFF)
+
+  set(VALGRIND_MEMCHECK_OPTIONS_DEFAULT "--leak-check=full")
+  set(VALGRIND_HELGRIND_OPTIONS_DEFAULT "")
+  set(VALGRIND_DRD_OPTIONS_DEFAULT "")
+  set(VALGRIND_SGCHECK_OPTIONS_DEFAULT "")
+
+  foreach(_Tool ${YARP_VALGRIND_TOOLS})
+    string(TOUPPER "${_Tool}" _TOOL)
+    string(TOLOWER "${_Tool}" _tool)
+    if("${_tool}" MATCHES "sgcheck")
+      set(_tool "exp-${_tool}")
     endif()
+
+    cmake_dependent_option(YARP_VALGRIND_${_TOOL}_TESTS
+                            "Run YARP tests under Valgrind ${_Tool} tool" ${YARP_VALGRIND_${_TOOL}_TESTS_DEFAULT}
+                            "YARP_VALGRIND_TESTS" OFF)
+
+    if(VALGRIND_EXECUTABLE)
+      set(VALGRIND_${_TOOL}_OPTIONS "${VALGRIND_${_TOOL}_OPTIONS_DEFAULT}"
+          CACHE STRING "Valgrind ${_Tool} tool options (--error-exitcode=1 will be appended)")
+      separate_arguments(VALGRIND_${_TOOL}_OPTIONS UNIX_COMMAND "${VALGRIND_${_TOOL}_OPTIONS}")
+      set(VALGRIND_${_TOOL}_COMMAND "${VALGRIND_EXECUTABLE}" --tool=${_tool} ${VALGRIND_${_TOOL}_OPTIONS} --error-exitcode=1)
+      mark_as_advanced(VALGRIND_${_TOOL}_OPTIONS)
+    else()
+      message(WARNING "Valgrind not found. Cannot enable ${_Tool} tests.")
+      unset(VALGRIND_${_TOOL}_COMMAND)
+    endif()
+
+    message("VALGRIND_${_TOOL}_COMMAND = ${VALGRIND_${_TOOL}_COMMAND}")
+  endforeach()
 endif()
 
 
