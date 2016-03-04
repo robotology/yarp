@@ -9,7 +9,6 @@ def printPortTags(out_file, ports, port_type, host, additional_flags):
         out_file.write("\t\t<name>yarpdatadumper</name>\n");
         out_file.write("\t\t<parameters>--name /dumper"+port+" --type "+port_type+" "+additional_flags+"</parameters>\n");
         out_file.write("\t\t<node>"+host+"</node>\n");
-        out_file.write("\t\t<tag>data-dumper"+port.replace('/','-').replace(':','-')+"</tag>\n");
         out_file.write("\t</module>\n");
 
         # print connection between datadumper and port
