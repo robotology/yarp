@@ -341,8 +341,8 @@ macro(YARP_INSTALL _what)
   if("${_what}" STREQUAL "FILES" OR
      "${_what}" STREQUAL "DIRECTORY" OR
      "${_what}" STREQUAL "PROGRAMS")
-     
-    # TODO FIXME : this should be properly implemented by copying the files at build time using cmake generator expression 
+
+    # TODO FIXME : this should be properly implemented by copying the files at build time using cmake generator expression
     # In a multiple config generator while installing PROGRAMS we need to copy the specified program in multipled directories
     if("${_what}" STREQUAL "PROGRAMS" AND CMAKE_CONFIGURATION_TYPES)
       set(_YI_DESTINATION_LIST)
@@ -355,7 +355,7 @@ macro(YARP_INSTALL _what)
       set(_YI_DESTINATION_LIST)
       list(APPEND _YI_DESTINATION_LIST ${_YI_DESTINATION})
     endif()
-    
+
     foreach(_YI_DESTINATION_CURRENT ${_YI_DESTINATION_LIST})
       # Change DESTINATION argument 'dest' to "${CMAKE_BINARY_DIR}/${dest}"
       string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" _YI_DESTINATION_RELATIVE ${_YI_DESTINATION_CURRENT})
