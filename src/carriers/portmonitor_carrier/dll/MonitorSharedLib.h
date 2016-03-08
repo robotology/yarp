@@ -12,6 +12,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/SharedLibraryClass.h>
 #include <yarp/os/SharedLibrary.h>
+#include <yarp/os/YarpPlugin.h>
 
 #include <yarp/os/MonitorObject.h>
 #include "MonitorBinding.h"
@@ -51,7 +52,8 @@ public:
 
 private:
     std::string constraint;
-    yarp::os::SharedLibraryClassFactory<yarp::os::MonitorObject> monitorFactory;
+    yarp::os::YarpPluginSettings settings;
+    yarp::os::YarpPlugin<yarp::os::MonitorObject> plugin;
     yarp::os::SharedLibraryClass<yarp::os::MonitorObject> monitor;
 };
 

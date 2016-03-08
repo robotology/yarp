@@ -8,16 +8,12 @@
 #include <math.h>
 #include <algorithm>
 #include <yarp/sig/Image.h>
-//#include <yarp/sig/ImageDraw.h>
-#include <yarp/os/SharedLibraryClass.h>
 #include "AsciiImage.h"
 
 #define WINDOW_SIZE     6
 
 using namespace yarp::os;
 using namespace yarp::sig;
-
-YARP_DEFINE_SHARED_SUBCLASS(MonitorObject_there, AsciiImageMonitorObject, MonitorObject);
 
 
 static char available[] = {' ', '`', '.', '~', '+', 'I', 'X', 'O', '8', '%', 'W'};

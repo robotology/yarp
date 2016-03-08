@@ -14,7 +14,6 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 
-YARP_DEFINE_SHARED_SUBCLASS(MonitorObject_there, DepthImageConverter, MonitorObject);
 
 bool DepthImageConverter::create(const yarp::os::Property& options)
 {

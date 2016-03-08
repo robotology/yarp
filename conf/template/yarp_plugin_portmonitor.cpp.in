@@ -1,0 +1,27 @@
+/*
+ * Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+ *          Ali Paikan <ali.paikan@iit.it>
+ *          Alberto Cardellino <alberto.cardellino@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#include <yarp/os/api.h>
+#include <yarp/os/SharedLibraryClass.h>
+#include <@YARPPLUG_INCLUDE@>
+
+#ifdef YARP_STATIC_PLUGIN
+#  define YARP_PLUGIN_IMPORT
+#  define YARP_PLUGIN_EXPORT
+#else
+#  define YARP_PLUGIN_IMPORT YARP_HELPER_DLL_IMPORT
+#  define YARP_PLUGIN_EXPORT YARP_HELPER_DLL_EXPORT
+#endif
+
+#ifdef YARP_STATIC_PLUGIN
+YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
+    //FIXME Allow portmonitor as static plugin
+}
+#endif
+
+YARP_DEFINE_SHARED_SUBCLASS(@YARPPLUG_NAME@, @YARPPLUG_TYPE@, yarp::os::MonitorObject)

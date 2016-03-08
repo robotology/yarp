@@ -23,6 +23,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Things.h>
 #include <yarp/os/MonitorObject.h>
+#include <yarp/sig/Image.h>
 
 
 class DepthImageConverter : public yarp::os::MonitorObject
