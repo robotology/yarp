@@ -178,7 +178,12 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
   # the library source list.
   if(ENABLE_${X_MYNAME})
     # Go ahead and prepare some code to wrap this plugin.
-    set(_fname ${fdir}/${X_YARP_PLUGIN_MASTER}_add_${plugin_name}.cpp)
+    if(NOT "${X_YARP_PLUGIN_MASTER}" STREQUAL "")
+      set(_fname ${fdir}/${X_YARP_PLUGIN_MASTER}_add_${plugin_name}.cpp)
+    else()
+      set(_fname ${fdir}/${_YPP_CATEGORY}_add_${plugin_name}.cpp)
+    endif()
+
     # Variables used by the templates:
     set(YARPPLUG_NAME "${plugin_name}")
     set(YARPPLUG_TYPE "${_YPP_TYPE}")
