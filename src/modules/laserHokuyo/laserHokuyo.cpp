@@ -23,12 +23,11 @@ using namespace std;
 
 bool laserHokuyo::open(yarp::os::Searchable& config)
 {
-    bool correct=true;
     internal_status = HOKUYO_STATUS_NOT_READY;
     info = "Hokuyo Laser";
     device_status = DEVICE_OK_STANBY;
 
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
     yDebug("%s\n", config.toString().c_str());
 #endif
 
@@ -323,7 +322,7 @@ bool laserHokuyo::getMeasurementData(yarp::sig::Vector &out)
     if (internal_status != HOKUYO_STATUS_NOT_READY)
     {
         mutex.wait();
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
         //yDebug("data: %s\n", laser_data.toString().c_str());
 #endif
         out = laser_data;
@@ -347,7 +346,7 @@ bool laserHokuyo::getDeviceStatus(Device_status &status)
 
 bool laserHokuyo::threadInit()
 {
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
     yDebug("laserHokuyo:: thread initialising...\n");
     yDebug("... done!\n");
 #endif 
@@ -390,7 +389,7 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
         return  HOKUYO_STATUS_ERROR_NOTHING_RECEIVED;
     }
 
-    long int timestamp = 0 ;
+//     long int timestamp = 0 ;
 
     // termination complete check
     if (text_data_len == 1 &&
@@ -418,7 +417,7 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
         if ((laser_mode == MD_MODE && (text_data[0] != 'M' || text_data[1] != 'D')) ||
             (laser_mode == GD_MODE && (text_data[0] != 'G' || text_data[1] != 'D')))
             {
-                #if LASER_DEBUG
+                #ifdef LASER_DEBUG
                 yDebug("Invalid answer to a MD command: %s\n", text_data);
                 #endif
                 return HOKUYO_STATUS_ERROR_INVALID_COMMAND;
@@ -433,7 +432,7 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
         if ((laser_mode == MD_MODE && (text_data[0] != '9' || text_data[1] != '9' || text_data[2] != 'b' )) ||
             (laser_mode == GD_MODE && (text_data[0] != '0' || text_data[1] != '0' || text_data[2] != 'P' )))
             {
-                #if LASER_DEBUG
+                #ifdef LASER_DEBUG
                 yDebug("Invalid sensor status: %s\n", text_data);
                 #endif
                 return HOKUYO_STATUS_ERROR_BUSY;
@@ -448,7 +447,7 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
         char expected_checksum = text_data[text_data_len - 2];
         if (calculateCheckSum(text_data, text_data_len - 2, expected_checksum) < 0)
         {
-            #if LASER_DEBUG
+            #ifdef LASER_DEBUG
             yDebug("Cheksum error, line: %d: %s\n", current_line, text_data);
             #endif
             return HOKUYO_STATUS_ERROR_INVALID_CHECKSUM;
@@ -458,7 +457,7 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
     // read the sensor time stamp in the third line
     if (current_line == 2)
     {
-        timestamp = decodeDataValue(text_data, 4);
+//         timestamp = decodeDataValue(text_data, 4);
     }
 
     // read the data in the next lines
@@ -483,12 +482,11 @@ void laserHokuyo::run()
     const int buffer_size = 128;
     char command [buffer_size];
     char answer  [buffer_size];
+#ifdef LASER_DEBUG
     static double old;
+#endif
     yarp::sig::Vector data_vector;
-    int data_vector_size = 0; 
 
-    char last_char1 = 0;
-    char last_char2 =0;
     string data_text;
     double t1 = yarp::os::Time::now();
     double t2 = 0;
@@ -528,14 +526,13 @@ void laserHokuyo::run()
         yError("Communication Error!");
     }
 
-    #if LASER_DEBUG
+    #ifdef LASER_DEBUG
     yDebug ("time: %.3f %.3f\n",t2-t1, t2-old);
-    #endif
     old = t2;
+    #endif
 
     if (rx_completed)
     {
-        data_vector_size = data_vector.size();
         laser_data=data_vector;
     }
 
@@ -552,7 +549,7 @@ void laserHokuyo::run()
 
 void laserHokuyo::threadRelease()
 {
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
     yDebug("laserHokuyo Thread releasing...");
     yDebug("... done.");
 #endif
