@@ -13,12 +13,9 @@
 using namespace yarp::os;
 
 
-YARP_DEFINE_SHARED_SUBCLASS(MonitorObject_there, SimpleMonitorObject, MonitorObject);
-
-
 bool SimpleMonitorObject::create(const yarp::os::Property& options)
 {
-   printf("created!\n"); 
+   printf("created!\n");
    printf("I am attached to the %s\n",
           (options.find("sender_side").asBool()) ? "sender side" : "receiver side");
    return true;

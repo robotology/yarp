@@ -202,6 +202,7 @@ public:
     virtual bool readRaw(ConnectionReader& reader);
     virtual bool writeRaw(ConnectionWriter& writer);
     virtual Storable* createStorable() const { return new StoreInt(0); }
+    virtual bool asBool() const { return x; }
     virtual int asInt() const { return x; }
     virtual YARP_INT64 asInt64() const { return x; }
     virtual int asVocab() const { return x; }

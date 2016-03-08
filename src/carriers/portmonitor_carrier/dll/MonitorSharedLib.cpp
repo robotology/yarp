@@ -7,6 +7,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/YarpPlugin.h>
 
 #include "MonitorSharedLib.h"
 
@@ -15,11 +16,19 @@ using namespace yarp::os;
 using namespace std;
 
 
+
+class MonitorSelector : public YarpPluginSelector {
+    virtual bool select(Searchable& options) {
+        return options.check("type",Value("none")).asString() == "portmonitor";
+    }
+};
+
 /**
  * Class MonitorSharedLib
  */
 MonitorSharedLib::MonitorSharedLib(void)
 {
+    settings.setVerboseMode(true);
 }
 
 MonitorSharedLib::~MonitorSharedLib()
@@ -31,22 +40,28 @@ MonitorSharedLib::~MonitorSharedLib()
 
 bool MonitorSharedLib::load(const yarp::os::Property& options)
 {
-    string filename = options.find("filename").asString();
-    monitorFactory.open(filename.c_str(), "MonitorObject_there");
-    if(!monitorFactory.isValid()) {
-        string msg = string("Cannot load shared library ") + filename  + string(" (");
-        msg += Vocab::decode(monitorFactory.getStatus()) + string(")");
-        yError("%s", msg.c_str());
+    MonitorSelector selector;
+    selector.scan();
+
+    settings.setPluginName(options.find("filename").asString());
+    settings.setVerboseMode(true);
+    if (!settings.setSelector(selector)) {
         return false;
     }
 
-    monitorFactory.addRef();
-
-    monitor.open(monitorFactory);
-    if(!monitor.isValid()) {
-        yError("Cannot create an instance of MonitorObject");
+    if (!plugin.open(settings)) {
         return false;
     }
+
+    monitor.open(*plugin.getFactory());
+    if (!monitor.isValid()) {
+        return false;
+    }
+
+    settings.setLibraryMethodName(plugin.getFactory()->getName(),
+                                  settings.getMethodName());
+    settings.setClassInfo(plugin.getFactory()->getClassName(),
+                          plugin.getFactory()->getBaseClassName());
 
     return monitor->create(options);
 }
