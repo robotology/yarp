@@ -189,8 +189,6 @@ if(YARP_VALGRIND_TESTS)
       message(WARNING "Valgrind not found. Cannot enable ${_Tool} tests.")
       unset(VALGRIND_${_TOOL}_COMMAND)
     endif()
-
-    message("VALGRIND_${_TOOL}_COMMAND = ${VALGRIND_${_TOOL}_COMMAND}")
   endforeach()
 endif()
 
