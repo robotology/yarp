@@ -21,22 +21,22 @@ read on...
 \section dev2-howto-intro What is a device driver in YARP?
 
 A device driver should derive from the abstract class
-yarp::dev::DeviceDriver. This interface contains methods common to all
+\c yarp::dev::DeviceDriver. This interface contains methods common to all
 device drivers, such as open and close.
 
 Additionally a device driver should implement a selection of other
 interfaces that capture what it shares with other families of
-devices. For example a camera might implement yarp:dev::IFrameGrabber (a "raw"
-interface to the raw data) and/or yarp::dev::IFrameGrabberImage
+devices. For example a camera might implement \c yarp:dev::IFrameGrabber (a
+"raw" interface to the raw data) and/or \c yarp::dev::IFrameGrabberImage
 (a higher-level source of images). For example,
-the yarp::dev::DragonflyDeviceDriver class implements a few of
+the \c yarp::dev::DragonflyDeviceDriver class implements a few of
 these interfaces. Interfaces are abstract classes, the idea is that
 from outside the user can access a device by using a pointer to the
 interface he/she needs, if that interface is supported by the
 device. This is quite similar to the way COM works (in a simplified way).
 
 In practice to implement a new device you create a new class which
-derives from DeviceDriver and from the interfacees you want to support,
+derives from \c DeviceDriver and from the interfacees you want to support,
 and you implement them. The interfaces are documented in the code,
 using the doxygen standard. See \ref note_devices for an example.
 
@@ -44,59 +44,81 @@ using the doxygen standard. See \ref note_devices for an example.
 \section dev2-howto-steps Step by step instructions
 
 So you want to add a device to YARP?
-\li Place your device in a subdirectory of $YARP_ROOT/src/modules.  This isn't actually a requirement, but it is the easiest way to start.  Let us say you pick the directory foo.
+\li Place your device in a subdirectory of \c $YARP_ROOT/src/modules.  This
+    isn't actually a requirement, but it is the easiest way to start.
+    Let us say you pick the directory foo.
 \li Get an example that uses your device compiling with CMake in your directory.
-\li Split your example into a library part, with contains the device code, and an executable, which exercises the device.  The library part should include at least one class that inherits from yarp::dev::DeviceDriver.  Let's suppose that class is called FooDriver, and is defined in FooDriver.h
-\li Just to review, your foo/CMakeLists.txt file might look something like this:
-\verbatim
-  FIND_PACKAGE(YARP REQUIRED)
-  ... find and use other needed libraries ...
-  INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-  ADD_LIBRARY(foodev FooDriver.cpp FooDriver.h)
-  TARGET_LINK_LIBRARIES(foodev ${YARP_LIBRARIES})
-  ADD_EXECUTABLE(example FooExample.cpp)
-  TARGET_LINK_LIBRARIES(example foodev)
-\endverbatim
-\li Got all that working?  Good.  When your device gets bundled up with others, YARP will define the CMake "COMPILE_DEVICE_LIBRARY" variable.  So please modify your CMakeLists.txt so that if this variable is set, all it does is add your device library, and skips any testing you might do.
-\verbatim
-  FIND_PACKAGE(YARP REQUIRED)
-  ... find and use other needed libraries ...
-  INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-  ADD_LIBRARY(foodev FooDriver.cpp FooDriver.h)
-  TARGET_LINK_LIBRARIES(foodev ${YARP_LIBRARIES})
-  IF (NOT COMPILE_DEVICE_LIBRARY)
-    ADD_EXECUTABLE(example FooExample.cpp)
-    TARGET_LINK_LIBRARIES(example foodev)
-  ENDIF (NOT COMPILE_DEVICE_LIBRARY)
-\endverbatim
-\li One more thing: YARP needs to keep track of a global list of devices, their names, and other details.  To do this, add in some code like this at the very beginning of your CMakeLists.txt
-\verbatim
-  IF (COMPILE_DEVICE_LIBRARY)
-    YARP_PREPARE_DEVICE(foo TYPE FooDriver INCLUDE FooDriver.h)
-  ENDIF (COMPILE_DEVICE_LIBRARY)
-\endverbatim
-\li It is good to add this before searching for any libraries or files, so that you can suppress such searches if the device is not needed by the eventual user.  In that case, the SKIP_foo variable will be set, so you can do:
-\verbatim
-  IF (COMPILE_DEVICE_LIBRARY)
-    YARP_PREPARE_DEVICE(foo TYPE FooDriver INCLUDE FooDriver.h)
-  ENDIF (COMPILE_DEVICE_LIBRARY)
-  IF (NOT SKIP_foo)
-    FIND_PACKAGE(YARP REQUIRED)
-    INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-    ... find and use other needed libraries ...
-    ADD_LIBRARY(foodev FooDriver.cpp FooDriver.h)
-    TARGET_LINK_LIBRARIES(foodev ${YARP_LIBRARIES})
-    IF (NOT COMPILE_DEVICE_LIBRARY)
-      ADD_EXECUTABLE(example FooExample.cpp)
-      TARGET_LINK_LIBRARIES(example foodev)
-    ENDIF (NOT COMPILE_DEVICE_LIBRARY)
-  ENDIF (NOT SKIP_foo)
-\endverbatim
-\li To actually try compiling your device, edit $YARP_ROOT/src/modules/CMakeLists.txt and add in where all the similar lines are:
-\verbatim
-  ADD_SUBDIRECTORY(foo)
-\endverbatim
-\li (Alternatively, you can copy $YARP_ROOT/src/modules/CMakeLists.txt to some other directory, remove all the other ADD_SUBDIRECTORY lines and just leave your own)
-\li Now rebuild the YARP library.  You should now be able to configure it to link your device.
+\li Split your example into a library part, with contains the device code, and
+    an executable, which exercises the device.
+    The library part should include at least one class that inherits from
+    \c yarp::dev::DeviceDriver.
+    Let's suppose that class is called \c FooDriver, and is defined in
+    \c FooDriver.h
+\li Just to review, your \c foo/CMakeLists.txt file might look something like
+    this:
+\code{.cmake}
+  find_package(YARP REQUIRED)
+  # ... find and use other needed libraries ...
+  include_directories(${YARP_INCLUDE_DIRS})
+  add_library(foodev FooDriver.cpp FooDriver.h)
+  target_link_libraries(foodev ${YARP_LIBRARIES})
+  add_executable(example FooExample.cpp)
+  target_link_libraries(example foodev)
+\endcode
+\li Got all that working?  Good.
+    When your device gets bundled up with others, YARP will define the CMake
+    \c COMPILE_DEVICE_LIBRARY variable.
+    So please modify your \c CMakeLists.txt so that if this variable is set, all
+    it does is add your device library, and skips any testing you might do.
+\code{.cmake}
+  find_package(YARP REQUIRED)
+  # ... find and use other needed libraries ...
+  include_directories(${YARP_INCLUDE_DIRS})
+  add_library(foodev FooDriver.cpp FooDriver.h)
+  target_link_libraries(foodev ${YARP_LIBRARIES})
+  if(NOT COMPILE_DEVICE_LIBRARY)
+    add_executable(example FooExample.cpp)
+    target_link_libraries(example foodev)
+  endif()
+\endcode
+\li One more thing: YARP needs to keep track of a global list of devices, their
+    names, and other details.
+    To do this, add in some code like this at the very beginning of your
+    \c CMakeLists.txt
+\code{.cmake}
+  if(COMPILE_DEVICE_LIBRARY)
+    yarp_prepare_device(foo TYPE FooDriver INCLUDE FooDriver.h)
+  endif()
+\endcode
+\li It is good to add this before searching for any libraries or files, so that
+    you can suppress such searches if the device is not needed by the eventual
+    user.  In that case, the \c SKIP_foo variable will be set, so you can do:
+\code{.cmake}
+  if(COMPILE_DEVICE_LIBRARY)
+    yarp_prepare_device(foo TYPE FooDriver INCLUDE FooDriver.h)
+  endif()
+  if(NOT SKIP_foo)
+    find_package(YARP REQUIRED)
+    include_directories(${YARP_INCLUDE_DIRS})
+    # ... find and use other needed libraries ...
+    add_library(foodev FooDriver.cpp FooDriver.h)
+    target_link_libraries(foodev ${YARP_LIBRARIES})
+    if(NOT COMPILE_DEVICE_LIBRARY)
+      add_executable(example FooExample.cpp)
+      target_link_libraries(example foodev)
+    endif()
+  endif()
+\endcode
+\li To actually try compiling your device, edit
+    \c $YARP_ROOT/src/modules/CMakeLists.txt and add in where all the similar
+    lines are:
+\code{.cmake}
+  add_subdirectory(foo)
+\endcode
+\li (Alternatively, you can copy \c $YARP_ROOT/src/modules/CMakeLists.txt to
+    some other directory, remove all the other \c add_subdirectory lines and
+    just leave your own)
+\li Now rebuild the YARP library.
+    You should now be able to configure it to link your device.
 
 **/
