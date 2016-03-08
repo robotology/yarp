@@ -200,7 +200,7 @@ here.  Do the following:
  + Create a file called <tt>yarpros_tutorial/src/CMakeLists.txt</tt> and place the following in it:
 
 \code
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.9)
 project(yarp)
 find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs message_generation)
 add_message_files(FILES SharedData.msg)
