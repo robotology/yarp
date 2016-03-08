@@ -19,11 +19,10 @@ using namespace std;
 
 bool FakeLaser::open(yarp::os::Searchable& config)
 {
-    bool correct=true;
     info = "Fake Laser device for test/debugging";
     device_status = DEVICE_OK_STANBY;
 
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
     yDebug("%s\n", config.toString().c_str());
 #endif
 
@@ -149,7 +148,7 @@ bool FakeLaser::getDeviceStatus(Device_status &status)
 
 bool FakeLaser::threadInit()
 {
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
     yDebug("FakeLaser:: thread initialising...\n");
     yDebug("... done!\n");
 #endif 
@@ -174,7 +173,7 @@ void FakeLaser::run()
 
 void FakeLaser::threadRelease()
 {
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
     yDebug("FakeLaser Thread releasing...");
     yDebug("... done.");
 #endif
