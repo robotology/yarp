@@ -20,11 +20,10 @@ using namespace std;
 
 bool RpLidar::open(yarp::os::Searchable& config)
 {
-    bool correct=true;
     info = "Fake Laser device for test/debugging";
     device_status = DEVICE_OK_STANBY;
 
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
     yDebug("%s\n", config.toString().c_str());
 #endif
 
@@ -109,8 +108,8 @@ bool RpLidar::open(yarp::os::Searchable& config)
     }
     yInfo("Sensor ready");
 
-    string info;
-    bool b_info = HW_getInfo(info);
+//     string info;
+//     bool b_info = HW_getInfo(info);
 
     RateThread::start();
     return true;
@@ -212,7 +211,7 @@ bool RpLidar::getDeviceStatus(Device_status &status)
 
 bool RpLidar::threadInit()
 {
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
     yDebug("RpLidar:: thread initialising...\n");
     yDebug("... done!\n");
 #endif 
@@ -256,7 +255,7 @@ bool RpLidar::HW_getInfo(string& s_info)
         return false;
     }
     char info[512];
-    sprintf(info, "model %d fw_major %d fw_minor %d hardware %d serial number %c%c%c%c%c %c%c%c%c%c %c%c%c%c%c",
+    sprintf(info, "model %d fw_major %d fw_minor %d hardware %d serial number %c%c%c%c%c %c%c%c%c%c %c%c%c%c%c%c",
                    s[0],  s[1],  s[2],  s[3],
                    s[4],  s[5],  s[6],  s[7],  s[8],
                    s[9],  s[10], s[11], s[12], s[13],
@@ -398,7 +397,7 @@ void RpLidar::run()
     }
 
     bool new_scan = false;
-    int laser_data_size = 0;
+//     int laser_data_size = 0;
 
     for (size_t i = 0; i < r-(4+5); )
     {
@@ -453,13 +452,13 @@ void RpLidar::run()
         {
             //this is a new scan
             new_scan = true;
-            laser_data_size = laser_data.size(); //size should be zero
+//             laser_data_size = laser_data.size(); //size should be zero
         }
         else if (start == 1 && new_scan == true)
         {
             //end of data
             new_scan = false;
-            laser_data_size = laser_data.size(); //size should be 
+//             laser_data_size = laser_data.size(); //size should be
             break;
         }
 
@@ -517,7 +516,7 @@ void RpLidar::run()
 
 void RpLidar::threadRelease()
 {
-#if LASER_DEBUG
+#ifdef LASER_DEBUG
     yDebug("RpLidar Thread releasing...");
     yDebug("... done.");
 #endif
