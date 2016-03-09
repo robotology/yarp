@@ -8,7 +8,7 @@ YARP
 ====
 
 [![YARP Homepage](https://img.shields.io/badge/YARP-Yet_Another_Robot_Platform-orange.svg)](http://wiki.icub.org/yarpdoc/)
-[![Latest Release](https://img.shields.io/github/tag/robotology/yarp.svg?label=Latest Release)](https://github.com/robotology/yarp/tags)
+[![Latest Release](https://img.shields.io/github/release/robotology/yarp.svg?label=Latest Release)](https://github.com/robotology/yarp/releases)
 
 YARP is a library and toolkit for communication and device interfaces,
 used on everything from humanoids to embedded devices.
