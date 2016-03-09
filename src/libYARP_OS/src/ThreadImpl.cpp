@@ -85,9 +85,9 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
         thread->tid = (long) syscall(SYS_gettid);
 #endif
 
-        // c++11 std::thread, pthread and ace threads do not return the thread id, therefore
-        // it must be set before calling run(), to avoid a race condition in
-        // case the run() method checks it.
+        // c++11 std::thread, pthread and ace threads on some platforms do not
+        // return the thread id, therefore it must be set before calling run(),
+        // to avoid a race condition in case the run() method checks it.
         thread->id = PLATFORM_THREAD_SELF();
 
         thread->setPriority();
