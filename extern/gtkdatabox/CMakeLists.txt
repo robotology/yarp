@@ -76,7 +76,7 @@ set_property(TARGET YARP_priv_gtkdatabox PROPERTY FOLDER "External Libraries")
 if(UNIX)
     include(CheckCCompilerFlag)
     check_c_compiler_flag("-Wno-unused-but-set-variable" C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
-    check_c_compiler_flag("-Wnoliteral-conversion" C_SUPPORTS_WNO_LITERAL_CONVERSION)
+    check_c_compiler_flag("-Wliteral-conversion" C_SUPPORTS_WLITERAL_CONVERSION)
     if(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
         set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
                                     gtkdatabox/gtk/gtkdatabox_lines.c
@@ -88,10 +88,10 @@ if(UNIX)
                                     gtkdatabox/gtk/gtkdatabox_ruler.c
                                     PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
     endif()
-    if(C_SUPPORTS_WNO_LITERAL_CONVERSION)
+    if(C_SUPPORTS_WLITERAL_CONVERSION)
         set_property(SOURCE gtkdatabox/gtk/gtkdatabox_ruler.c
                      APPEND_STRING
-                     PROPERTY COMPILE_FLAGS " -Wnoliteral-conversion")
+                     PROPERTY COMPILE_FLAGS " -Wliteral-conversion")
     endif()
 endif(UNIX)
 
