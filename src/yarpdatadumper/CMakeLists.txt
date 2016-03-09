@@ -35,4 +35,10 @@ if(CREATE_YARPDATADUMPER)
   install(TARGETS yarpdatadumper
           COMPONENT utilities
           DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+   # install the yarpdatadumperAppGenerator.py helper script
+   yarp_install(PROGRAMS yarpdatadumperAppGenerator.py
+                COMPONENT utilities
+                DESTINATION ${CMAKE_INSTALL_BINDIR})
+
 endif()

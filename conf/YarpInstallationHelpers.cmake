@@ -342,22 +342,38 @@ macro(YARP_INSTALL _what)
      "${_what}" STREQUAL "DIRECTORY" OR
      "${_what}" STREQUAL "PROGRAMS")
 
-    # Change DESTINATION argument 'dest' to "${CMAKE_BINARY_DIR}/${dest}"
-    string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" _YI_DESTINATION_RELATIVE ${_YI_DESTINATION})
-    string(REGEX REPLACE ";DESTINATION;${_YI_DESTINATION}(;|$)" ";DESTINATION;${CMAKE_BINARY_DIR}/${_YI_DESTINATION_RELATIVE}\\1" _copyARGN "${ARGN}")
-
-    # Remove COMPONENT argument
-    string(REGEX REPLACE ";COMPONENT;${_YI_COMPONENT}" "" _copyARGN "${_copyARGN}")
-
-    # Fix PERMISSION argument
-    if ("${_what}" STREQUAL "PROGRAMS" AND NOT DEFINED _YI_PERMISSIONS)
-      list(APPEND _copyARGN "FILE_PERMISSIONS;OWNER_READ;OWNER_WRITE;OWNER_EXECUTE;GROUP_READ;GROUP_EXECUTE;WORLD_READ;WORLD_EXECUTE")
+    # TODO FIXME : this should be properly implemented by copying the files at build time using cmake generator expression
+    # In a multiple config generator while installing PROGRAMS we need to copy the specified program in multipled directories
+    if("${_what}" STREQUAL "PROGRAMS" AND CMAKE_CONFIGURATION_TYPES)
+      set(_YI_DESTINATION_LIST)
+      foreach(_config ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER ${_config} _CONFIG)
+        list(APPEND _YI_DESTINATION_LIST ${_YI_DESTINATION}/${_config})
+      endforeach()
     else()
-      string(REGEX REPLACE ";PERMISSIONS;" ";FILE_PERMISSIONS;" _copyARGN "${_copyARGN}")
+      # In all other cases we just need to copy the files in just one directories
+      set(_YI_DESTINATION_LIST)
+      list(APPEND _YI_DESTINATION_LIST ${_YI_DESTINATION})
     endif()
 
-    # Perform the copy
-    file(COPY ${_copyARGN})
+    foreach(_YI_DESTINATION_CURRENT ${_YI_DESTINATION_LIST})
+      # Change DESTINATION argument 'dest' to "${CMAKE_BINARY_DIR}/${dest}"
+      string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" _YI_DESTINATION_RELATIVE ${_YI_DESTINATION_CURRENT})
+      string(REGEX REPLACE ";DESTINATION;${_YI_DESTINATION}(;|$)" ";DESTINATION;${CMAKE_BINARY_DIR}/${_YI_DESTINATION_RELATIVE}\\1" _copyARGN "${ARGN}")
+
+      # Remove COMPONENT argument
+      string(REGEX REPLACE ";COMPONENT;${_YI_COMPONENT}" "" _copyARGN "${_copyARGN}")
+
+      # Fix PERMISSION argument
+      if ("${_what}" STREQUAL "PROGRAMS" AND NOT DEFINED _YI_PERMISSIONS)
+        list(APPEND _copyARGN "FILE_PERMISSIONS;OWNER_READ;OWNER_WRITE;OWNER_EXECUTE;GROUP_READ;GROUP_EXECUTE;WORLD_READ;WORLD_EXECUTE")
+      else()
+        string(REGEX REPLACE ";PERMISSIONS;" ";FILE_PERMISSIONS;" _copyARGN "${_copyARGN}")
+      endif()
+
+      # Perform the copy
+      file(COPY ${_copyARGN})
+    endforeach()
 
     # Perform the real installation
     install(${_what} ${_YI_${_what}} ${_installARGN})
