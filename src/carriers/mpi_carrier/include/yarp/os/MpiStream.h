@@ -42,10 +42,12 @@ protected:
 
     yarp::os::Contact local, remote;
 public:
-
-
     MpiStream(ConstString name, MpiComm* comm);
     virtual ~MpiStream();
+
+    using yarp::os::OutputStream::write;
+    using yarp::os::InputStream::read;
+
     virtual void close() = 0;
     virtual bool isOk();
     virtual void interrupt();

@@ -331,13 +331,13 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
     yarp::dev::ICalibrator *calibrator;
     if (!driver()->view(calibrator)) {
         yError() << name() << "is not a yarp::dev::ICalibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
-        return NULL;
+        return false;
     }
 
     yarp::dev::IControlCalibration2 *controlCalibrator;
     if (!target.driver()->view(controlCalibrator)) {
         yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
-        return NULL;
+        return false;
     }
 
     controlCalibrator->setCalibrator(calibrator);
@@ -437,13 +437,13 @@ bool RobotInterface::Device::park(const Device &target) const
 
     if (!driver()->view(calibrator)) {
         yError() << name() << "is not a yarp::dev::ICalibrator, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
-        return NULL;
+        return false;
     }
 
     yarp::dev::IControlCalibration2 *controlCalibrator;
     if (!target.driver()->view(controlCalibrator)) {
         yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
-        return NULL;
+        return false;
     }
 
     controlCalibrator->setCalibrator(calibrator); // TODO Check if this should be removed

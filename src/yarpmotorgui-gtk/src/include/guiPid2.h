@@ -142,6 +142,6 @@ namespace guiPid2
     void changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label, bool small = false);
     void displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label, bool small = false);
     void changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label, bool small = false);
-};
+}
 
 #endif // YARP_YARPMOTORGUI_GTK_GUIPID2_H

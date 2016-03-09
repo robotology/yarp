@@ -774,6 +774,7 @@ protected:
                 return true;
             }
         }
+        return false;
     }
 
     bool get1V1B(int v, bool &val) {
@@ -866,9 +867,10 @@ protected:
 
         if (CHECK_FAIL(ok, response)) {
             int i;
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
+            Bottle* lp = response.get(2).asList();
+            if (lp == 0)
                 return false;
+            Bottle& l = *lp;
 
             int njs = l.size();
             yAssert (nj == njs);

@@ -23,6 +23,10 @@ namespace yarp {
 class yarp::os::MpiP2PStream : public MpiStream {
 public:
     MpiP2PStream(ConstString name, MpiComm* comm) : MpiStream(name,comm) {};
+
+    using MpiStream::write;
+    using MpiStream::read;
+
     ssize_t read(const Bytes& b);
     void write(const Bytes& b);
     void close() {

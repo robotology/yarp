@@ -52,7 +52,7 @@ void MainWindow::updateMain()
         ret &= ibat->getBatteryCharge(charge);
         if (enable_ask_info)
         {
-            bool ret = ibat->getBatteryInfo(info);
+            ret &= ibat->getBatteryInfo(info);
             char buff[5000];
             sprintf(buff, "%s", info.c_str());
             yDebug("info: %s",buff);

@@ -33,6 +33,10 @@ public:
         printf("[MpiBcastStream @ %s] Destructor\n", name.c_str());
         #endif
     }
+
+    using MpiStream::write;
+    using MpiStream::read;
+
     ssize_t read(const Bytes& b);
     void write(const Bytes& b);
     void startJoin();

@@ -145,22 +145,27 @@ int WorkerClass::sendImages(int part, int frame)
         tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(0).asString().c_str();
         tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().toString().c_str();
     }
-    
+
+#ifndef HAS_OPENCV
     int code = 0;
+#endif
+
     if (tmp.size()>0)
     {
         tmp.erase (tmp.begin());
         tmp.erase (tmp.end()-1);
+#ifndef HAS_OPENCV
         code = Vocab::encode(tmp);
+#endif
     }
-    
+
     tmpPath = tmpPath + tmpName;
-    
+
 #ifdef HAS_OPENCV
     IplImage* img = NULL;
 #else
     Image* img;
-    
+
     if (code==VOCAB_PIXEL_RGB)
         img = new ImageOf<PixelRgb>;
     else if (code==VOCAB_PIXEL_BGR)
@@ -173,9 +178,9 @@ int WorkerClass::sendImages(int part, int frame)
         img = new ImageOf<PixelMono>;
     else
         img = new ImageOf<PixelRgb>; // use PixelRgb as default
-    
+
 #endif
-    
+
 #ifdef HAS_OPENCV
     img = cvLoadImage( tmpPath.c_str(), CV_LOAD_IMAGE_UNCHANGED );
 #endif
@@ -187,12 +192,12 @@ int WorkerClass::sendImages(int part, int frame)
         return 1;
     } else {
         Image &temp = utilities->partDetails[part].imagePort.prepare();
-        
+
         temp.wrapIplImage(img);
-        
+
 #else
     bool fileValid = true;
-    
+
     if (code==VOCAB_PIXEL_RGB)
     {
         img = new ImageOf<PixelRgb>;

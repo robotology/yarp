@@ -14,6 +14,12 @@ if (NOT SKIP_xmlrpc_carrier)
   include_directories(${YARP_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xmlrpc)
+
+  check_cxx_compiler_flag("-Wformat-nonliteral" CXX_HAS_WFORMAT_NONLITERAL)
+  if(CXX_HAS_WFORMAT_NONLITERAL)
+    set_source_files_properties(xmlrpc/XmlRpcValue.cpp PROPERTIES COMPILE_FLAGS "-Wno-format-nonliteral")
+  endif()
+
   yarp_add_plugin(yarp_xmlrpc
                   XmlRpcCarrier.h XmlRpcCarrier.cpp
                   XmlRpcStream.h XmlRpcStream.cpp

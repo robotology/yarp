@@ -216,13 +216,13 @@ bool RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &dev
 {
     if (!RobotInterface::hasParam(params, "target")) {
         yError() << "Action \"" << ActionTypeToString(ActionTypeCalibrate) << "\" requires \"target\" parameter";
-        return NULL;
+        return false;
     }
     std::string targetDeviceName = RobotInterface::findParam(params, "target");
 
     if (!hasDevice(targetDeviceName)) {
         yError() << "Target device" << targetDeviceName << "does not exist.";
-        return NULL;
+        return false;
     }
     Device &targetDevice = *findDevice(targetDeviceName);
 
@@ -314,13 +314,13 @@ bool RobotInterface::Robot::Private::park(const RobotInterface::Device &device, 
 {
     if (!RobotInterface::hasParam(params, "target")) {
         yError() << "Action \"" << ActionTypeToString(ActionTypePark) << "\" requires \"target\" parameter";
-        return NULL;
+        return false;
     }
     std::string targetDeviceName = RobotInterface::findParam(params, "target");
 
     if (!hasDevice(targetDeviceName)) {
         yError() << "Target device" << targetDeviceName << "does not exist.";
-        return NULL;
+        return false;
     }
     Device &targetDevice = *findDevice(targetDeviceName);
 

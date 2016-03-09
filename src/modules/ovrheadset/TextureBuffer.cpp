@@ -28,6 +28,7 @@ TextureBuffer::TextureBuffer(int w, int h, int eye) :
         imageHeight(0),
         eye(eye)
 {
+    YARP_UNUSED(eye);
     yTrace();
 
     createTextureAndBuffers();
