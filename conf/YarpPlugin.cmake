@@ -47,6 +47,7 @@ endif()
 include(GNUInstallDirs)
 include(YarpInstallationHelpers)
 include(CMakeParseArguments)
+include(CMakeDependentOption)
 
 
 #########################################################################
@@ -114,9 +115,14 @@ endmacro()
 # flags for controlling compilation of that device.
 #
 macro(YARP_PREPARE_PLUGIN plugin_name)
-  set(_options )
-  set(_oneValueArgs TYPE INCLUDE WRAPPER CATEGORY)
-  set(_multiValueArgs)
+  set(_options)
+  set(_oneValueArgs TYPE
+                    INCLUDE
+                    WRAPPER
+                    CATEGORY
+                    DEFAULT
+                    ADVANCED)
+  set(_multiValueArgs DEPENDS)
   cmake_parse_arguments(_YPP "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
   if(NOT _YPP_TYPE OR NOT _YPP_INCLUDE)
@@ -126,6 +132,12 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
     message(STATUS "  wrapper:  ${_YPP_WRAPPER}")
     message(STATUS "  category: ${_YPP_CATEGORY}")
     return()
+  endif()
+
+  if(NOT _YPP_DEFAULT)
+    set(_YPP_DEFAULT OFF)
+  else()
+    set(_YPP_DEFAULT ON)
   endif()
 
   # Append the current source directory to the set of include paths.
@@ -143,31 +155,40 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
 
   # Set up a flag to enable/disable compilation of this plugin.
   set(X_MYNAME "${X_YARP_PLUGIN_PREFIX}${plugin_name}")
-  if(NOT COMPILE_BY_DEFAULT)
-    set(COMPILE_BY_DEFAULT FALSE)
+
+  if(DEFINED _YPP_DEPENDS)
+    cmake_dependent_option(ENABLE_${X_MYNAME} "Enable/disable compilation of ${X_MYNAME}" ${_YPP_DEFAULT}
+                           "${_YPP_DEPENDS}" OFF)
+  else()
+    option(ENABLE_${X_MYNAME} "Enable/disable compilation of ${X_MYNAME}" ${_YPP_DEFAULT})
   endif()
-  set(ENABLE_${X_MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${X_MYNAME}")
+  if(_YPP_ADVANCED)
+    mark_as_advanced(ENABLE_${X_MYNAME})
+  endif()
 
   # Set some convenience variables based on whether the plugin
   # is enabled or disabled.
   set(ENABLE_${plugin_name} ${ENABLE_${X_MYNAME}})
   if(ENABLE_${plugin_name})
-    set(SKIP_${plugin_name} FALSE)
-    set(SKIP_${X_MYNAME} FALSE)
+    set(SKIP_${plugin_name} OFF)
+    set(SKIP_${X_MYNAME} OFF)
   else()
-    set(SKIP_${plugin_name} TRUE)
-    set(SKIP_${X_MYNAME} TRUE)
+    set(SKIP_${plugin_name} ON)
+    set(SKIP_${X_MYNAME} ON)
+  endif()
+
+  if(NOT "${X_YARP_PLUGIN_MASTER}" STREQUAL "")
+    set(_master ${X_YARP_PLUGIN_MASTER})
+  else()
+    set(_master ${_YPP_CATEGORY})
   endif()
 
   # If the plugin is enabled, add the appropriate source code into
   # the library source list.
   if(ENABLE_${X_MYNAME})
     # Go ahead and prepare some code to wrap this plugin.
-    if(NOT "${X_YARP_PLUGIN_MASTER}" STREQUAL "")
-      set(_fname ${fdir}/${X_YARP_PLUGIN_MASTER}_add_${plugin_name}.cpp)
-    else()
-      set(_fname ${fdir}/${_YPP_CATEGORY}_add_${plugin_name}.cpp)
-    endif()
+
+    set(_fname ${fdir}/${_master}_add_${plugin_name}.cpp)
 
     # Variables used by the templates:
     set(YARPPLUG_NAME "${plugin_name}")
