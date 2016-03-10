@@ -15,6 +15,8 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Vocab.h>
 
+#include <cstdio>
+
 using namespace yarp::os;
 
 #ifdef _MSC_VER

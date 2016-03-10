@@ -5,10 +5,12 @@
  *
  */
 
-#include <string.h>
 #include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/IplImage.h>
+
+#include <cstring>
+#include <cstdio>
 
 using namespace yarp::sig;
 

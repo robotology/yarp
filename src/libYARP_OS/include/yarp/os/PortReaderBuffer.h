@@ -14,7 +14,7 @@
 #include <yarp/os/LocalReader.h>
 #include <yarp/os/Bottle.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace yarp {
     namespace os {

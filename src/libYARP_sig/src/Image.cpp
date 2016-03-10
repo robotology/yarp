@@ -24,7 +24,8 @@
 
 #include <yarp/sig/impl/DeBayer.h>
 
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 using namespace yarp::sig;
 using namespace yarp::os;

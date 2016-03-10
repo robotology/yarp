@@ -5,10 +5,12 @@
 */
 
 
-#include <cstdio>
 
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/Log.h>
+
+#include <cstdio>
+#include <cstdlib>
 
 using namespace std;
 using namespace yarp::os;

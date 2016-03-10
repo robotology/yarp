@@ -16,6 +16,8 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Os.h>
 
+#include <cstdio>
+
 namespace std {
 template <typename T>
 std::ostream& operator<<(std::ostream &os, const std::vector<T> &t);

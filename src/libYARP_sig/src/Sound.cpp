@@ -12,7 +12,9 @@
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Value.h>
-#include <string.h>
+
+#include <cstring>
+#include <cstdio>
 
 using namespace yarp::sig;
 using namespace yarp::os;

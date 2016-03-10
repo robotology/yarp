@@ -6,12 +6,15 @@
  */
 
 #include "XmlRpcCarrier.h"
+
+#include "XmlRpc.h"
+
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Name.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Bottle.h>
 
-#include "XmlRpc.h"
+#include <cstdio>
 
 using namespace yarp::os;
 using namespace YarpXmlRpc;
