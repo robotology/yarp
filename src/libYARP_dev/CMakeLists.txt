@@ -89,7 +89,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
 set(YARP_dev_IMPL_HDRS )
 
 set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
-                  src/ClientControlBoard.cpp
                   src/ControlBoardPid.cpp
                   src/ControlCalibrationImpl.cpp
                   src/RemoteCalibratorImpl.cpp
@@ -117,12 +116,28 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/PopulateDrivers.cpp
                   src/RemoteFrameGrabber.cpp
                   src/RemoteFrameGrabberDC1394.cpp
-                  src/ServerControlBoard.cpp
                   src/ServerFrameGrabber.cpp
                   src/ServerSerial.cpp
                   src/TestFrameGrabber.cpp
                   src/TorqueControlImpl.cpp
                   src/IAxisInfoImpl.cpp)
+
+if(NOT YARP_NO_DEPRECATED)
+  set(YARP_dev_DEPRECATED_SRCS src/ClientControlBoard.cpp    # since YARP 2.3.65
+                               src/ServerControlBoard.cpp)   # since YARP 2.3.65
+  list(APPEND YARP_dev_SRCS ${YARP_dev_DEPRECATED_SRCS})
+  if(MSVC)
+    set_source_files_properties(${YARP_dev_DEPRECATED_SRCS}
+                                PROPERTIES COMPILE_FLAGS "/wd4996")
+  else()
+    check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+    if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+      set_source_files_properties(${YARP_dev_DEPRECATED_SRCS}
+                                  PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+    endif()
+  endif()
+endif()
+
 
 set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/AnalogSensorClient/AnalogSensorClient.cpp

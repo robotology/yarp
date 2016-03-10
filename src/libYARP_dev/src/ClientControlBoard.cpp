@@ -243,6 +243,7 @@ public:
 * The client side of the control board, connects to a ServerControlBoard.
 */
 class yarp::dev::ClientControlBoard :
+    public DeprecatedDeviceDriver,
     public IPidControl,
     public IPositionControl2,
     public IVelocityControl2,
@@ -258,7 +259,6 @@ class yarp::dev::ClientControlBoard :
 //    public IControlMode,
     public IControlMode2,
     public IOpenLoopControl,
-    public DeviceDriver,
     public IPositionDirect,
     public IInteractionMode
 {
@@ -938,6 +938,8 @@ public:
     }
 
     virtual bool open(Searchable& config) {
+        yWarning("clientcontrolboard device is deprecated. Use remote_controlboard instead.");
+
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
 
