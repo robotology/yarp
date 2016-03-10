@@ -26,6 +26,10 @@ public:
     std::string& name();
     unsigned int& build();
     std::string& portprefix();
+
+    void setVerbose(bool verbose);
+    void setAllowDeprecatedDevices(bool allowDeprecatedDevices);
+
     ParamList& params();
     DeviceList& devices();
     Device& device(const std::string &name);
