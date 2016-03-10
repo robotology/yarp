@@ -114,7 +114,7 @@ public:
                 s += wrapper.c_str();
                 s += "\"";
             } else {
-                s += "is a network wrapper.";
+                s += ", is a network wrapper";
             }
             s += ".\n";
         }
