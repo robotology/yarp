@@ -18,10 +18,41 @@ using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+
+class DeviceDriverTest : public DeviceDriver
+{
+};
+
+class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
+{
+};
+
 class PolyDriverTest : public UnitTest {
 public:
     virtual String getName() { return "PolyDriverTest"; }
 
+    void testDeprecated() {
+        report(0,"deprecated device test");
+        {
+            PolyDriver dd;
+            Property p;
+            p.put("device", "devicedrivertest");
+            bool result;
+            result = dd.open(p);
+            checkTrue(result,"open reported successful");
+        }
+        {
+            PolyDriver dd;
+            Property p;
+            p.put("device", "deprecateddevicedrivertest");
+            bool result;
+            result = dd.open(p);
+            checkFalse(result,"open failed as expected");
+            p.put("allow-deprecated-devices", "1");
+            result = dd.open(p);
+            checkTrue(result,"open reported successful");
+       }
+    }
     void testBasic() {
         report(0,"a very basic driver instantiation test");
         PolyDriver dd;
@@ -85,7 +116,7 @@ axes 10\n\
 device test_grabber\n\
 \n\
 [part broadcast]\n\
-device controlboard\n\
+device controlboardwrapper2\n\
 subdevice mymotor\n\
 name /mymotor\n\
 ");
@@ -125,6 +156,7 @@ name /mymotor\n\
         checkTrue(result,"close reported successful");
     }
 
+#ifndef YARP_NO_DEPRECATED
     void testControlBoard() {
         report(0,"test the controlboard wrapper");
         PolyDriver dd;
@@ -133,6 +165,7 @@ name /mymotor\n\
         p.put("subdevice","test_motor");
         p.put("name","/motor");
         p.put("axes",16);
+        p.put("allow-deprecated-devices", "1");
         bool result;
         result = dd.open(p);
         checkTrue(result,"server open reported successful");
@@ -144,6 +177,7 @@ name /mymotor\n\
         p2.put("local","/motor/client");
         p2.put("carrier","tcp");
         p2.put("ignoreProtocolCheck","true");
+        p2.put("allow-deprecated-devices", "1");
         result = dd2.open(p2);
         checkTrue(result,"client open reported successful");
 
@@ -158,6 +192,7 @@ name /mymotor\n\
         result = dd.close() && dd2.close();
         checkTrue(result,"close reported successful");
     }
+#endif // YARP_NO_DEPRECATED
 
     void testControlBoard2() {
         report(0,"\ntest the controlboard wrapper 2");
@@ -195,12 +230,21 @@ name /mymotor\n\
 
     virtual void runTests() {
         Network::setLocalMode(true);
+        Drivers::factory().add(new DriverCreatorOf<DeviceDriverTest>("devicedrivertest",
+                                                                     "devicedrivertest",
+                                                                     "DeviceDriverTest"));
+        Drivers::factory().add(new DriverCreatorOf<DeprecatedDeviceDriverTest>("deprecateddevicedrivertest",
+                                                                               "deprecateddevicedrivertest",
+                                                                               "DeprecatedDeviceDriverTest"));
+        testDeprecated();
         testBasic();
         testMonitor();
         testPropertyBug();
         testGroup();
         testGrabber();
+#ifndef YARP_NO_DEPRECATED
         testControlBoard();
+#endif // YARP_NO_DEPRECATED
         testControlBoard2();
         Network::setLocalMode(false);
     }
