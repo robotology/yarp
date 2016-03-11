@@ -336,7 +336,7 @@ macro(YARP_INSTALL _what)
   cmake_parse_arguments(_YI "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" "${_what};${_fixedARGN}")
 
   # Remove targets from arguments
-  string(REPLACE "${_YI_${_what}};" "" _installARGN "${_installARGN}")
+  string(REGEX REPLACE "^${_YI_${_what}};" "" _installARGN "${_installARGN}")
 
   if("${_what}" STREQUAL "FILES" OR
      "${_what}" STREQUAL "DIRECTORY" OR
