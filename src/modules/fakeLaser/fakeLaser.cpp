@@ -34,7 +34,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     }
 
     min_distance = 0.1; //m
-    max_distance = 2.5;  //m
+    max_distance = 3.5;  //m
     min_angle = 0;      //degrees
     max_angle = 359;    //degrees
     resolution = 1.0;   //degrees
@@ -160,13 +160,31 @@ void FakeLaser::run()
 {
     mutex.wait();
     laser_data.clear();
+    double t = yarp::os::Time::now();
+    double size = (t - int(t));
+    
+    static int test_count = 0;
+    static int test = 0;
+
     for (int i = 0; i < sensorsNum; i++)
     {
-        double value = i / 100.0;
+        double value = 0;
+        if (test == 0)
+            value = i / 100.0;
+        else if (test == 1)
+            value = size*2;
+
         if (value < min_distance) value = min_distance;
         if (value > max_distance) value = max_distance;
         laser_data.push_back(value);
     }
+
+    test_count++;
+    if (test_count == 40)
+    {
+        test_count = 0; test++; if (test > 1) test = 0;
+    }
+
     mutex.post();
     return;
 }
