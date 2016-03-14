@@ -402,7 +402,9 @@ bool RpLidar::HW_stop()
 
 void RpLidar::run()
 {
+#ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();
+#endif
     const int packet = 100;
     LockGuard guard(mutex);
     
@@ -604,7 +606,7 @@ void RpLidar::run()
              }
              }*/
         buffer->throw_away_elems(5);
-        int m_elem = (int)((max_angle - min_angle) / resolution);
+        //int m_elem = (int)((max_angle - min_angle) / resolution);
         int elem = (int)(angle / resolution);
         laser_data[elem] = distance;
     }

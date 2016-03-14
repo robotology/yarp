@@ -52,7 +52,7 @@ public:
         end = (end + 1) % maxsize;
         if (end == start)
         {
-            yError("rpLidar buffer ovverrun!");
+            yError("rpLidar buffer overrun!");
             start = (start + 1) % maxsize; // full, overwrite 
             return false;
         }
@@ -80,15 +80,16 @@ public:
         return i;
     }
 
-    inline byte read_elem()
+    inline bool read_elem(byte* elem)
     {
         if (end == start)
         {
             yError("rpLidar buffer underrun!");
+            return false;
         }
-        byte elem = elems[start];
+        *elem = elems[start];
         start = (start + 1) % maxsize;
-        return elem;
+        return true;
     }
 
     inline void throw_away_elem()
@@ -114,12 +115,13 @@ public:
         }
     }
 
-    inline byte read_elems(byte* elems, int size)
+    inline bool read_elems(byte* elems, int size)
     {
         for (int i = 0; i < size; i++)
         {
-            elems[i]=read_elem();
+            if (read_elem(&elems[i]) == false) return false;
         }
+        return true;
     }
 
     inline unsigned int getMaxSize()
