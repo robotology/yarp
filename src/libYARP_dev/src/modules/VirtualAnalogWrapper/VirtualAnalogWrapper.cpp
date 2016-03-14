@@ -361,22 +361,22 @@ void VirtualAnalogWrapper::run()
 
         if(first_check)
         {
-        if ((lastRecv+0.080 < timeNow) && (!sendLastValueBeforeTimeout))
-        {
-            /* If 80ms have passed since the last received message, reset values to zero (just once).
-             * Sending time will be 1ms due to the delay above (else case).
-             */
-            for (int d=0; d<mNSubdevs; ++d)
+            if ((lastRecv+0.080 < timeNow) && (!sendLastValueBeforeTimeout))
             {
-                mSubdevices[d].resetTorque();
-                mSubdevices[d].flushTorques();
+               /* If 80ms have passed since the last received message, reset values to zero (just once).
+                * Sending time will be 1ms due to the delay above (else case).
+                */
+                for (int d=0; d<mNSubdevs; ++d)
+                {
+                    mSubdevices[d].resetTorque();
+                    mSubdevices[d].flushTorques();
 
+                }
+    //          Virtual Sensor status is not handled now because server DO NOT implement IVirtual AnalogSensor Interface.
+    //          status=IAnalogSensor::AS_TIMEOUT;
+                yError() << "Virtual analog sensor timeout!! No new value received for more than " << timeNow - lastRecv  << " secs.";
+                sendLastValueBeforeTimeout = true;
             }
-//          Virtual Sensor status is not handled now because server DO NOT implement IVirtual AnalogSensor Interface.
-//          status=IAnalogSensor::AS_TIMEOUT;
-            yError() << "Virtual analog sensor timeout!! No new value received for more than " << timeNow - lastRecv  << " secs.";
-            sendLastValueBeforeTimeout = true;
-        }
         }
     }
 }
