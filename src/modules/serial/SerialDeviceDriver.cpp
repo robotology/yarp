@@ -204,6 +204,10 @@ int  SerialDeviceDriver::flush()
 
 int SerialDeviceDriver::receiveBytes(unsigned char* bytes, const int size)
 {
+#if 1
+    //this function call blocks
+    return _serial_dev.recv((void *)bytes, size);
+#else
     int i;
     for (i = 0; i < size ; ++i)
     {
@@ -216,6 +220,7 @@ int SerialDeviceDriver::receiveBytes(unsigned char* bytes, const int size)
         bytes[i] = recv_ch;
     }
     return i;
+#endif
 }
 
 int SerialDeviceDriver::receiveLine(char* buffer, const int MaxLineLength)
