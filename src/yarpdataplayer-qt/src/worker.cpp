@@ -192,9 +192,14 @@ int WorkerClass::sendImages(int part, int frame)
         return 1;
     } else {
         Image &temp = utilities->partDetails[part].imagePort.prepare();
+       
+        static IplImage *test = NULL;
+        if (test !=NULL)
+            cvReleaseImage(&test);
 
-        temp.wrapIplImage(img);
-
+        test = cvCloneImage(img);
+        temp.wrapIplImage(test);
+        
 #else
     bool fileValid = true;
 
