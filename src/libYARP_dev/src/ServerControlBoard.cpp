@@ -123,7 +123,7 @@ public:
 *
 */
 class yarp::dev::ServerControlBoard :
-    public DeviceDriver,
+    public DeprecatedDeviceDriver,
     public Thread,
     public IPidControl,
     public IPositionControl,
@@ -259,6 +259,8 @@ public:
     * and all parameters required by the wrapped device driver.
     */
     virtual bool open(Searchable& prop) {
+        yWarning("controlboard device is deprecated. Use controlboardwrapper2 instead.");
+
         rpc_p.setRpcServer();
         state_p.setWriteOnly();
         Vector v;

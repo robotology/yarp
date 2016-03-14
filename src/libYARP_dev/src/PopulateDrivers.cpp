@@ -29,10 +29,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-
 extern DriverCreator *createRemoteControlBoard();
-extern DriverCreator *createServerControlBoard();
-extern DriverCreator *createClientControlBoard();
 extern DriverCreator *createAnalogSensorClient();
 extern DriverCreator *createAnalogWrapper();
 extern DriverCreator *createControlBoardWrapper();
@@ -44,6 +41,11 @@ extern DriverCreator *createRangefinder2DWrapper();
 extern DriverCreator *createRangefinder2DClient();
 extern DriverCreator *createRGBDSensorWrapper();
 extern DriverCreator *createRGBDSensorClient();
+
+#ifndef YARP_NO_DEPRECATED
+extern DriverCreator *createServerControlBoard();
+extern DriverCreator *createClientControlBoard();
+#endif // YARP_NO_DEPRECATED
 
 void Drivers::init() {
 
@@ -78,9 +80,9 @@ void Drivers::init() {
                                                     "",
                                                     "yarp::dev::DeviceGroup"));
 
+    add(createRemoteControlBoard());
     add(createServerInertial());
     add(createControlBoardWrapper());
-    add(createRemoteControlBoard());
     add(createBatteryClient());
     add(createRangefinder2DClient());
     add(createAnalogSensorClient());
@@ -88,8 +90,11 @@ void Drivers::init() {
     add(createVirtualAnalogWrapper());
     add(createBatteryWrapper());
     add(createRangefinder2DWrapper());
-    add(createClientControlBoard());
-    add(createServerControlBoard());
     add(createRGBDSensorWrapper());
     add(createRGBDSensorClient());
+
+#ifndef YARP_NO_DEPRECATED
+    add(createClientControlBoard());
+    add(createServerControlBoard());
+#endif // YARP_NO_DEPRECATED
 }

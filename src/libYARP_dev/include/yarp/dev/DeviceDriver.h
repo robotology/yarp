@@ -22,6 +22,7 @@ namespace yarp {
      */
     namespace dev {
         class DeviceDriver;
+        class DeprecatedDeviceDriver;
         class DeviceResponder;
     }
 }
@@ -98,6 +99,22 @@ public:
     virtual DeviceDriver *getImplementation() {
         return this;
     }
+};
+
+/**
+ * \ingroup dev_class
+ *
+ * Interface implemented by deprecated device drivers.
+ *
+ * When a device is deprecated, replace yarp::dev::DeviceDriver with
+ * yarp::dev::DeprecatedDeviceDriver in the list of interfaces implemented by
+ * the class, in order to let YARP know that the class is deprecated.
+ *
+ * Deprecated device drivers cannot be opened as PolyDriver unless the
+ * "allow-deprecated-devices" option is passed in the configuration.
+ */
+class YARP_dev_API yarp::dev::DeprecatedDeviceDriver : public yarp::dev::DeviceDriver
+{
 };
 
 

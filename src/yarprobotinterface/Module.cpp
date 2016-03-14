@@ -72,6 +72,9 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     // argument
     setName(mPriv->robot.portprefix().c_str());
 
+    mPriv->robot.setVerbose(rf.check("verbose"));
+    mPriv->robot.setAllowDeprecatedDevices(rf.check("allow-deprecated-devices"));
+
     yarp::os::ConstString rpcPortName("/" + getName() + "/yarprobotinterface");
     mPriv->rpcPort.open(rpcPortName);
     attach(mPriv->rpcPort);

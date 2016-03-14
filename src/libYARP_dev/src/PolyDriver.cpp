@@ -270,6 +270,17 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
             //YARP_DEBUG(Logger::get(),String("Discarded ") + str);
             driver = NULL;
         } else {
+            yarp::dev::DeprecatedDeviceDriver *ddd = NULL;
+            driver->view(ddd);
+            if(ddd) {
+                if(config->check("allow-deprecated-devices")) {
+                    yWarning("Device \"%s\" is deprecated. Opening since the \"allow-deprecated-devices\" option was passed in the configuration.", str.c_str());
+                } else {
+                    yError("Device \"%s\" is deprecated. Pass the \"allow-deprecated-devices\" option in the configuration if you want to open it anyway.", str.c_str());
+                    driver->close();
+                    return false;
+                }
+            }
             if (creator!=NULL) {
                 ConstString name = creator->getName();
                 ConstString wrapper = creator->getWrapper();

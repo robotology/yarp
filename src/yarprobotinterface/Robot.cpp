@@ -405,6 +405,30 @@ std::string& RobotInterface::Robot::portprefix()
     return mPriv->portprefix;
 }
 
+void RobotInterface::Robot::setVerbose(bool verbose)
+{
+    for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
+        Device &device = *dit;
+        ParamList &params = device.params();
+        // Do not override "verbose" param if explicitly set in the xml
+        if(verbose && !RobotInterface::hasParam(params, "verbose")) {
+            device.params().push_back(Param("verbose", "1"));
+        }
+    }
+}
+
+void RobotInterface::Robot::setAllowDeprecatedDevices(bool allowDeprecatedDevices)
+{
+    for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
+        Device &device = *dit;
+        ParamList &params = device.params();
+        // Do not override "allow-deprecated-devices" param if explicitly set in the xml
+        if(allowDeprecatedDevices && !RobotInterface::hasParam(params, "allow-deprecated-devices")) {
+            device.params().push_back(Param("allow-deprecated-devices", "1"));
+        }
+    }
+}
+
 RobotInterface::ParamList& RobotInterface::Robot::params()
 {
     return mPriv->params;
