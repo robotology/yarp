@@ -109,6 +109,9 @@ struct lasermap_type
     lasermap_type() {x=y=0.0;}
 };
 
+#define ASPECT_LINE  0
+#define ASPECT_POINT 1
+
 void drawGrid(IplImage *img, double scale)
 {
     cvLine(img,cvPoint(0,0),cvPoint(img->width,img->height),color_black);
@@ -228,7 +231,7 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
-void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img, double angle_tot, int scans, double sens_position, double scale, bool absolute, bool verbose)
+void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img, double angle_tot, int scans, double sens_position, double scale, bool absolute, bool verbose, int aspect)
 {
     cvZero(img);
     cvRectangle(img,cvPoint(0,0),cvPoint(img->width,img->height),cvScalar(255,0,0),-1);
@@ -258,6 +261,8 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
     for (int i = 0; i<scans; i++)
     {
         lenght=(*las)[i];
+        if (lenght == INFINITY) continue;
+
         if      (lenght<0)     lenght = 0;
         else if (lenght>15)    lenght = 15; //15m maximum
         angle = (double)i / (double)scans *angle_tot - ((360 - angle_tot) - (360 - angle_tot) / 2);
@@ -275,7 +280,14 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
 
         int thickness = 2;
         //draw a line
-        cvLine(img,center,ray,color_white,thickness);
+        if (aspect == ASPECT_LINE)
+        {
+            cvLine(img, center, ray, color_white, thickness);
+        }
+        else if (aspect == ASPECT_POINT)
+        {
+            cvLine(img, ray, ray, color_white, 3);
+        }
 
         if (lmap)
         {
@@ -309,6 +321,7 @@ int main(int argc, char *argv[])
     bool absolute = finder->check("absolute", Value(false), "absolute [0/1]").asBool();
     bool compass = finder->check("compass", Value(true), "compass [0/1]").asBool();
     int period = finder->check("rate",Value(50),"period [ms]").asInt(); //ms
+    int aspect = finder->check("aspect", Value(0), "0 draw lines, 1 draw points").asInt(); //ms
     string laserport = finder->check("sens_port", Value("/ikart/laser:o"), "laser port name").asString();
 
     string laser_map_port_name;
@@ -323,7 +336,7 @@ int main(int argc, char *argv[])
 
     yarp::dev::PolyDriver* drv = new yarp::dev::PolyDriver;
     Property   lasOptions;
-    lasOptions.put("device", "laserRangefinder2DClient");
+    lasOptions.put("device", "Rangefinder2DClient");
     lasOptions.put("local", "/laserScannerGui/laser:i");
     lasOptions.put("remote", laserport);
     lasOptions.put("period", "10");
@@ -396,11 +409,11 @@ int main(int argc, char *argv[])
             {
                 if (laser_data_size != scans)
                 {
-                    drawLaser(&compass_data, &laser_data, lasermap_data, img, angle_tot, scans, sens_position, scale, absolute, verbose);
+                    drawLaser(&compass_data, &laser_data, lasermap_data, img, angle_tot, scans, sens_position, scale, absolute, verbose, aspect);
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose);
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose, aspect);
                 }
             }
             else
@@ -411,7 +424,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose);
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose,aspect);
                 }
 
             }
@@ -473,6 +486,11 @@ int main(int argc, char *argv[])
             if (compass) { yInfo( "compass is now ON"); }
             else         { yInfo( "compass is now OFF"); compass_data.zero(); }
         }
+        if (keypressed == 'b')
+        {
+            aspect = aspect + 1;
+            if (aspect > 1) aspect = 0;
+        }
         if(keypressed == 'h' || 
             keypressed == 'H')
         {
@@ -483,6 +501,7 @@ int main(int argc, char *argv[])
             yInfo("s ...... zoom out.");
             yInfo("v ...... set verbose mode on/off.");
             yInfo("r ...... set refresh rate.");
+            yInfo("b ...... change aspect");
         }
     }
 
