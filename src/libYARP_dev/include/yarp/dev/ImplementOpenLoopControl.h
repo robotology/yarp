@@ -33,7 +33,9 @@ public:
     bool getRefOutputs(double *v);
     bool getOutput(int j, double *v);
     bool getOutputs(double *v);
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     bool setOpenLoopMode();
+#endif // YARP_NO_DEPRECATED
 };
 
 #endif
