@@ -389,13 +389,6 @@ bool DynamixelAX12FtdiDriver::getAxes(int *ax) {
     return true;
 }
 
-/*
- * The only supported mode, position control mode
- */
-bool DynamixelAX12FtdiDriver::setPositionMode() {
-    return true;
-}
-
 bool DynamixelAX12FtdiDriver::positionMove(int j, double ref) {
     double speed;
     int blankReturnSize = -1;
@@ -556,16 +549,6 @@ int DynamixelAX12FtdiDriver::normaliseSpeed(double speed) {
         speed = 114;
     }
     return (int) (1024 * speed / 114 - 1);
-}
-
-/**
- * AX12 does not support torque mode. 
- * to implement this interface is only to inherit the getTorque to read the 
- * torque values
- */
-bool DynamixelAX12FtdiDriver::setTorqueMode() {
-    ACE_OS::fprintf(stderr, "Note: AX12 does not support torque control mode. This is only used to get torque feedback.\n");
-    return NOT_YET_IMPLEMENTED("setTorqueMode");
 }
 
 bool DynamixelAX12FtdiDriver::getRefTorques(double *t) {

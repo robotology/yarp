@@ -240,6 +240,14 @@ public:
     bool alloc(int njoints);
     bool init(void);
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    // Hide -Woverloaded-virtual warnings
+    using yarp::dev::IPositionControlRaw::setPositionModeRaw;
+    using yarp::dev::IVelocityControlRaw::setVelocityModeRaw;
+    using yarp::dev::ITorqueControlRaw::setTorqueModeRaw;
+    using yarp::dev::IOpenLoopControlRaw::setOpenLoopModeRaw;
+#endif
+
     /////////   PID INTERFACE   /////////
     virtual bool setPidRaw(int j, const Pid &pid);
     virtual bool setPidsRaw(const Pid *pids);
@@ -264,7 +272,6 @@ public:
 
     // POSITION CONTROL INTERFACE RAW
     virtual bool getAxes(int *ax);
-    virtual bool setPositionModeRaw();
     virtual bool positionMoveRaw(int j, double ref);
     virtual bool positionMoveRaw(const double *refs);
     virtual bool relativeMoveRaw(int j, double delta);
@@ -296,7 +303,6 @@ public:
     virtual bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs);
 
     //  Velocity control interface raw
-    virtual bool setVelocityModeRaw();
     virtual bool velocityMoveRaw(int j, double sp);
     virtual bool velocityMoveRaw(const double *sp);
 
@@ -406,7 +412,6 @@ public:
     virtual bool getVelLimitsRaw(int axis, double *min, double *max);
 
     // Torque control
-    virtual bool setTorqueModeRaw();
     virtual bool getTorqueRaw(int j, double *t);
     virtual bool getTorquesRaw(double *t);
     virtual bool getBemfParamRaw(int j, double *bemf);
@@ -456,7 +461,6 @@ public:
     virtual bool getCurrentImpedanceLimitRaw(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
 
     // PositionDirect Interface
-    virtual bool setPositionDirectModeRaw();
     virtual bool setPositionRaw(int j, double ref);
     virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs);
     virtual bool setPositionsRaw(const double *refs);
@@ -486,8 +490,6 @@ public:
     virtual bool getRefOutputsRaw(double *outs);
     virtual bool getOutputRaw(int j, double *out);
     virtual bool getOutputsRaw(double *outs);
-    virtual bool setOpenLoopModeRaw();
-
     void run();
 private:
     void cleanup(void);

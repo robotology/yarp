@@ -85,9 +85,6 @@ bool DimaxU2C::getAxes(int *ax) {
     *ax = numJoints;
     return true;
 }
-bool DimaxU2C::setPositionMode() {
-    return true;
-}
 
 bool DimaxU2C::positionMoveRaw(int j, double ref) {
     printf("DimaxU2C::positionMoveRaw(%d,%f)\n",j,ref);

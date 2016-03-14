@@ -93,10 +93,6 @@ public:
         return true;
     }
 
-    virtual bool setPositionMode() {
-        return true;
-    }
-
     virtual bool positionMove(int j, double ref) {
         if (j<njoints) {
             pos[j] = ref;
@@ -308,11 +304,6 @@ public:
         bool ret = getEncoder(j, enc);
         *time = yarp::os::Time::now();
         return ret;
-    }
-
-
-    virtual bool setVelocityMode() {
-        return true;
     }
 
     virtual bool velocityMove(int j, double sp) {

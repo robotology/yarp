@@ -1212,11 +1212,6 @@ bool FakeMotionControl::setOffsetRaw(int j, double v)
 //    Velocity control interface raw  //
 ////////////////////////////////////////
 
-bool FakeMotionControl::setVelocityModeRaw()
-{
-   return false;
-}
-
 bool FakeMotionControl::velocityMoveRaw(int j, double sp)
 {
     int mode=0;
@@ -1274,11 +1269,6 @@ bool FakeMotionControl::getAxes(int *ax)
     *ax=_njoints;
 
     return true;
-}
-
-bool FakeMotionControl::setPositionModeRaw()
-{
-    return DEPRECATED("setPositionModeRaw");
 }
 
 bool FakeMotionControl::positionMoveRaw(int j, double ref)
@@ -2112,12 +2102,6 @@ bool FakeMotionControl::getVelLimitsRaw(int axis, double *min, double *max)
 
 
 // Torque control
-bool FakeMotionControl::setTorqueModeRaw()
-{
-    bool ret = true;
-    return ret;
-}
-
 bool FakeMotionControl::getTorqueRaw(int j, double *t)
 {
     return true;
@@ -2326,11 +2310,6 @@ bool FakeMotionControl::getVelPidsRaw(Pid *pids)
 }
 
 // PositionDirect Interface
-bool FakeMotionControl::setPositionDirectModeRaw()
-{
-    return DEPRECATED("setPositionDirectModeRaw");
-}
-
 bool FakeMotionControl::setPositionRaw(int j, double ref)
 {
     _posDir_references[j] = ref;
@@ -2496,11 +2475,6 @@ bool FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 //
 // OPENLOOP interface
 //
-bool FakeMotionControl::setOpenLoopModeRaw()
-{
-    return DEPRECATED("setOpenLoopModeRaw");
-}
-
 bool FakeMotionControl::setRefOutputRaw(int j, double v)
 {
      return false;

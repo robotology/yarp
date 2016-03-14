@@ -52,7 +52,6 @@ public:
     double *speeds;
 
     bool getAxes(int *ax);
-    bool setPositionMode();
     bool positionMove(int j, double ref);
     bool positionMove(const double *refs);
     bool relativeMove(int j, double delta);
