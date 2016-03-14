@@ -14,6 +14,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <cmath>
+
 //#define LASER_DEBUG 1
 //#define FORCE_SCAN 1
 
