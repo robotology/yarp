@@ -17,10 +17,7 @@
 #include "MEIMotionControl.h"
 
 #include <yarp/dev/ControlBoardInterfaces.h>
-
-
-#include "X:\Mattia2\PumaControlInterface\ProvaNuovoDriver\Puma260ControlBoardInterfacesImpl.inl"
-
+#include <yarp/dev/ControlBoardInterfacesImpl.inl>
 
 // MEI
 #define MEI_WINNT
