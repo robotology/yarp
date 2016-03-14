@@ -336,6 +336,25 @@ namespace yarp {
   %include "compat.h"
 #endif
 
+// Define typemaps for Matrix before including it
+#ifdef SWIGPYTHON
+%include "typemaps.i"
+%typemap(in) (int matrix_i_row, int matrix_i_col) {
+    if (!PyTuple_Check($input)) {
+        PyErr_SetString(PyExc_ValueError, "Error: expecting a tuple (m[1,2] is equivalent to m[(1,2)])");
+        return NULL;
+    }
+
+    if (PyTuple_Size($input) != 2 ) {
+        PyErr_SetString(PyExc_ValueError, "Matrix elements are accessed by using two integers m[i_row,i_col]");
+        return NULL;
+    }
+
+    $1 = (int)PyInt_AsLong(PyTuple_GetItem($input,0));   /* int i */
+    $2 = (int)PyInt_AsLong(PyTuple_GetItem($input,1));   /* int j */
+};
+#endif
+
 %include <yarp/os/ConstString.h>
 %include <yarp/os/PortReport.h>
 %include <yarp/os/Contact.h>
@@ -398,6 +417,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/sig/Image.h>
 %include <yarp/sig/ImageFile.h>
 %include <yarp/sig/Sound.h>
+%include <yarp/sig/Matrix.h>
 %include <yarp/sig/Vector.h>
 %include <yarp/os/IConfig.h>
 %include <yarp/dev/DeviceDriver.h>
@@ -1023,6 +1043,30 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     double __len__() {
         return self->length();
+    }
+#endif
+}
+
+%extend yarp::sig::Matrix {
+
+    double get(int i, int j)
+    {
+        return self->operator ()(i, j);
+    }
+
+    void set(int i, int j, double v)
+    {
+        self->operator ()(i,j) = v;
+    }
+
+
+#ifdef SWIGPYTHON
+    void __setitem__(int matrix_i_row, int matrix_i_col, double value) {
+        self->operator ()(matrix_i_row,matrix_i_col) = value;
+    }
+
+    double __getitem__(int matrix_i_row, int matrix_i_col) {
+        return self->operator ()(matrix_i_row,matrix_i_col);
     }
 #endif
 }
