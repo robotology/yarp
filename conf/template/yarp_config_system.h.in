@@ -207,4 +207,60 @@
      _Pragma("pack()")
 #endif
 
+
+///@{
+
+/**
+ * \def YARP_WARNING_PUSH
+ *
+ * Starts a temporary alteration of the enabled warnings.
+ *
+ * \see YARP_WARNING_POP
+ */
+
+/**
+ * \def YARP_WARNING_POP
+ *
+ * Ends a temporary alteration of the enabled warnings.
+ *
+ * \see YARP_WARNING_PUSH
+ */
+
+/**
+ * \def YARP_DISABLE_DEPRECATED_WARNING
+ *
+ * Disable deprecated warnings in the following code.
+ *
+ * It should be used in this way:
+ * \code
+ *  YARP_WARNING_PUSH
+ *  YARP_DISABLE_DEPRECATED_WARNING
+ *   do_something_deprecated();
+ *  YARP_WARNING_POP
+ * \endcode
+ *
+ * \see YARP_WARNING_PUSH, YARP_WARNING_POP
+ */
+
+///@}
+
+
+#if defined(_MSC_VER)
+# define YARP_WARNING_PUSH               __pragma(warning(push))
+# define YARP_WARNING_POP                __pragma(warning(pop))
+# define YARP_DISABLE_DEPRECATED_WARNING __pragma(warning(disable:4996))
+#elif defined(__clang__)
+# define YARP_WARNING_PUSH               _Pragma("clang diagnostic push")
+# define YARP_WARNING_POP                _Pragma("clang diagnostic pop")
+# define YARP_DISABLE_DEPRECATED_WARNING _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+#elif (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+# define YARP_WARNING_PUSH               _Pragma("GCC diagnostic push")
+# define YARP_WARNING_POP                _Pragma("GCC diagnostic pop")
+# define YARP_DISABLE_DEPRECATED_WARNING _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+#else
+# define YARP_WARNING_PUSH
+# define YARP_WARNING_POP
+# define YARP_DISABLE_DEPRECATED_WARNING
+#endif
+
 #endif
