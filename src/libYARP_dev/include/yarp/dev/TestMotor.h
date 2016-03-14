@@ -84,10 +84,15 @@ public:
         return true;
     }
 
-    virtual bool setPositionMode() {
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+    YARP_DEPRECATED virtual bool setPositionMode() {
         posMode = true;
         return true;
     }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
     virtual bool positionMove(int j, double ref) {
         posMode = true;
@@ -304,11 +309,15 @@ public:
         return true;
     }
 
-    virtual bool setVelocityMode() {
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+    YARP_DEPRECATED virtual bool setVelocityMode() {
         posMode = false;
         return false;
     }
-
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
     virtual bool velocityMove(int j, double sp) {
         posMode = false;
