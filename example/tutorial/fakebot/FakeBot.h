@@ -87,10 +87,6 @@ public:
         return true;
     }
 
-    virtual bool setPositionMode() {
-        return true;
-    }
-
     virtual bool positionMove(int j, double ref) {
         if (j<njoints) {
             pos[j] = ref;
@@ -279,12 +275,6 @@ public:
         for (int i=0; i<njoints; i++) {
             accs[i] = 0;
         }
-        return true;
-    }
-
-
-
-    virtual bool setVelocityMode() {
         return true;
     }
 
