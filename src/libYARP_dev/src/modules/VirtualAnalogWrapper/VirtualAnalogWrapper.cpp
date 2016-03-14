@@ -359,6 +359,8 @@ void VirtualAnalogWrapper::run()
             yarp::os::Time::delay(0.001);
         }
 
+        if(first_check)
+        {
         if ((lastRecv+0.080 < timeNow) && (!sendLastValueBeforeTimeout))
         {
             /* If 80ms have passed since the last received message, reset values to zero (just once).
@@ -372,8 +374,9 @@ void VirtualAnalogWrapper::run()
             }
 //          Virtual Sensor status is not handled now because server DO NOT implement IVirtual AnalogSensor Interface.
 //          status=IAnalogSensor::AS_TIMEOUT;
-            yError() << "Virtual analog sensor timeout!! No new value received for more than " << timeNow  << " secs.";
+            yError() << "Virtual analog sensor timeout!! No new value received for more than " << timeNow - lastRecv  << " secs.";
             sendLastValueBeforeTimeout = true;
+        }
         }
     }
 }
