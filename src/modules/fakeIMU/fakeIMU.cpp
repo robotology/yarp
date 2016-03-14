@@ -17,6 +17,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
+using namespace yarp::math;
 
 /**
  * This device implements a fake analog sensor
@@ -27,6 +28,18 @@ fakeIMU::fakeIMU() : RateThread(DEFAULT_PERIOD)
 {
     nchannels = 12;
     dummy_value = 0;
+    rpy.resize(3);
+    dcm.resize(4,4);
+    gravity.resize(4);
+    accels.resize(4);
+    rpy.zero();
+    dcm.zero();
+    accels.zero();
+
+    gravity[0] = 0.0;
+    gravity[1] = 0;
+    gravity[2] = -9.81;
+    gravity[3] = 0;
 }
 
 fakeIMU::~fakeIMU()
@@ -60,9 +73,32 @@ bool fakeIMU::read(Vector &out)
     if(out.size() != nchannels)
         out.resize(nchannels);
 
+    out.zero();
 
-    for(unsigned int i=0; i<nchannels; i++)
+    // Euler angle
+    for(unsigned int i=0; i<3; i++)
+    {
         out[i] = dummy_value;
+    }
+
+    // accelerations
+    for(unsigned int i=0; i<3; i++)
+    {
+        out[3+i] = accels[i];
+    }
+
+    // gyro
+    for(unsigned int i=0; i<3; i++)
+    {
+        out[6+i] = dummy_value;
+    }
+
+    // magnetometer
+    for(unsigned int i=0; i<3; i++)
+    {
+        out[9+i] = dummy_value;
+    }
+
     return true;
 }
 
@@ -84,10 +120,24 @@ bool fakeIMU::threadInit()
     return true;
 }
 
+
 void fakeIMU::run()
 {
-    dummy_value++;
+    static double count=0;
+
+    rpy[0] = 0;
+    rpy[1] = count * 3.14/180;
+    rpy[2] = 0;
+
+    dcm = rpy2dcm(rpy);
+    accels = gravity * dcm;
+
     lastStamp.update();
+
+    dummy_value = count;
+    count++;
+    if(count >= 360)
+        count = 0;
 }
 
 yarp::os::Stamp fakeIMU::getLastInputStamp()

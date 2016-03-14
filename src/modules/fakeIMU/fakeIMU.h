@@ -16,12 +16,13 @@
  * Public License for more details
  */
 
+#include <string>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/PreciselyTimed.h>
-#include <string>
+#include <yarp/math/Math.h>
 
 namespace yarp{
     namespace dev{
@@ -52,11 +53,15 @@ public:
     // IPreciselyTimed interface
     virtual yarp::os::Stamp getLastInputStamp();
 
+    yarp::sig::Vector rpy, gravity;
+    yarp::sig::Matrix dcm;
+    yarp::sig::Vector accels;
+
 private:
 
     bool threadInit();
     void run();
     unsigned int nchannels;
-    int dummy_value;
+    double dummy_value;
     yarp::os::Stamp lastStamp;
 };
