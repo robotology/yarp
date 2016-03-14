@@ -21,15 +21,143 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+typedef unsigned char byte;
+
+class circularBuffer
+{
+    int         maxsize;
+    int         start;
+    int         end;
+    byte       *elems;
+
+public:
+    inline bool isFull()
+    {
+        return (end + 1) % maxsize == start;
+    }
+
+    inline const byte* getRawData()
+    {
+        return elems;
+    }
+
+    inline bool isEmpty()
+    {
+        return end == start;
+    }
+
+    inline bool write_elem(byte elem)
+    {
+        elems[end] = elem;
+        end = (end + 1) % maxsize;
+        if (end == start)
+        {
+            yError("rpLidar buffer ovverrun!");
+            start = (start + 1) % maxsize; // full, overwrite 
+            return false;
+        }
+        return true;
+    }
+
+    inline bool write_elems(byte* elems, int size)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            if (write_elem(elems[i]) == false) return false;
+        }
+        return true;
+    }
+
+    inline int size()
+    {
+        int i;
+        if (end>start)
+            i = end - start;
+        else if (end == start)
+            i = 0;
+        else
+            i = maxsize - start + end;
+        return i;
+    }
+
+    inline byte read_elem()
+    {
+        if (end == start)
+        {
+            yError("rpLidar buffer underrun!");
+        }
+        byte elem = elems[start];
+        start = (start + 1) % maxsize;
+        return elem;
+    }
+
+    inline void throw_away_elem()
+    {
+        start = (start + 1) % maxsize;
+    }
+
+    inline void throw_away_elems(int size)
+    {
+        start = (start + size) % maxsize;
+    }
+
+    inline byte select_elem(int offset)
+    {
+        return elems[(start+offset) % maxsize];
+    }
+
+    inline void select_elems(byte* elems, int size)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            elems[i] = select_elem(i);
+        }
+    }
+
+    inline byte read_elems(byte* elems, int size)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            elems[i]=read_elem();
+        }
+    }
+
+    inline unsigned int getMaxSize()
+    {
+        return maxsize;
+    }
+
+    inline void clear()
+    {
+        start = 0;
+        end = 0;
+    }
+
+    inline unsigned int get_start()
+    {
+        return start;
+    }
+
+    inline unsigned int get_end()
+    {
+        return end;
+    }
+
+    circularBuffer(int bufferSize);
+    ~circularBuffer();
+};
+
+//---------------------------------------------------------------------------------------------------------------
+
 class RpLidar : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     PolyDriver driver;
     ISerialDevice *pSerial;
 
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
+    circularBuffer * buffer;
 
-    int period;
     int sensorsNum;
 
     double min_angle;
@@ -37,6 +165,9 @@ protected:
     double min_distance;
     double max_distance;
     double resolution;
+    bool clip_max_enable;
+    bool clip_min_enable;
+    bool do_not_clip_infinity_enable;
 
     std::string info;
     Device_status device_status;
@@ -44,12 +175,19 @@ protected:
     yarp::sig::Vector laser_data;
 
 public:
-    RpLidar(int period = 20) : RateThread(period), mutex(1)
-    {}
+    RpLidar(int period = 10) : RateThread(period)
+    {
+        buffer = new circularBuffer(20000);
+    }
     
 
     ~RpLidar()
     {
+        if (buffer)
+        {
+            delete buffer;
+            buffer = 0;
+        }
     }
 
     virtual bool open(yarp::os::Searchable& config);

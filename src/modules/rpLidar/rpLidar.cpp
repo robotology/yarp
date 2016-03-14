@@ -9,14 +9,30 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/LockGuard.h>
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
 
 //#define LASER_DEBUG 1
-#define FORCE_SCAN 1
+//#define FORCE_SCAN 1
 
 using namespace std;
+
+circularBuffer::circularBuffer(int bufferSize)
+{
+    maxsize = bufferSize + 1;
+    start = 0;
+    end = 0;
+    elems = (byte *)calloc(maxsize, sizeof(byte));
+}
+
+circularBuffer::~circularBuffer()
+{
+    free(elems);
+}
+
+//-------------------------------------------------------------------------------------
 
 bool RpLidar::open(yarp::os::Searchable& config)
 {
@@ -31,7 +47,16 @@ bool RpLidar::open(yarp::os::Searchable& config)
     if (br != false)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt();
+        clip_max_enable = general_config.check("clip_max");
+        clip_min_enable = general_config.check("clip_min");
+        max_distance = general_config.find("clip_max").asDouble();
+        min_distance = general_config.find("clip_min").asDouble();
+        do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
+    }
+    else
+    {
+        yError() << "Missing GENERAL section";
+        return false;
     }
 
     min_distance = 0.1; //m
@@ -41,7 +66,7 @@ bool RpLidar::open(yarp::os::Searchable& config)
     resolution = 1.0;   //degrees
 
     sensorsNum = (int)((max_angle-min_angle)/resolution);
-    laser_data.resize(sensorsNum);
+    laser_data.resize(sensorsNum,0.0);
     
     yInfo("Starting debug mode");
     yInfo("max_dist %f, min_dist %f", max_distance, min_distance);
@@ -125,87 +150,77 @@ bool RpLidar::close()
 
 bool RpLidar::getDistanceRange(double& min, double& max)
 {
-    mutex.wait();
+    LockGuard guard(mutex);
     min = min_distance;
     max = max_distance;
-    mutex.post();
     return true;
 }
 
 bool RpLidar::setDistanceRange(double min, double max)
 {
-    mutex.wait();
+    LockGuard guard(mutex);
     min_distance = min;
     max_distance = max;
-    mutex.post();
     return true;
 }
 
 bool RpLidar::getScanLimits(double& min, double& max)
 {
-    mutex.wait();
+    LockGuard guard(mutex);
     min = min_angle;
     max = max_angle;
-    mutex.post();
     return true;
 }
 
 bool RpLidar::setScanLimits(double min, double max)
 {
-    mutex.wait();
+    LockGuard guard(mutex);
     min_angle = min;
     max_angle = max;
-    mutex.post();
     return true;
 }
 
 bool RpLidar::getHorizontalResolution(double& step)
 {
-    mutex.wait();
+    LockGuard guard(mutex);
     step = resolution;
-    mutex.post();
     return true;
 }
 
 bool RpLidar::setHorizontalResolution(double step)
 {
-    mutex.wait();
+    LockGuard guard(mutex);
     resolution = step;
-    mutex.post();
     return true;
 }
 
 bool RpLidar::getScanRate(double& rate)
 {
-    mutex.wait();
-    rate = 1.0 / (period * 1000);
-    mutex.post();
+    LockGuard guard(mutex);
+    yWarning("getScanRate not yet implemented");
     return true;
 }
 
 bool RpLidar::setScanRate(double rate)
 {
-    mutex.wait();
-    period = (int)((1.0 / rate) / 1000.0);
-    mutex.post();
+    LockGuard guard(mutex);
+    yWarning("setScanRate not yet implemented");
     return false;
 }
 
 
 bool RpLidar::getMeasurementData(yarp::sig::Vector &out)
 {
-    mutex.wait();
+    LockGuard guard(mutex);
     out = laser_data;
-    mutex.post();
     device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
 }
 
 bool RpLidar::getDeviceStatus(Device_status &status)
 {
-    mutex.wait();
+    LockGuard guard(mutex);
     status = device_status;
-    mutex.post();
     return true; 
 }
 
@@ -381,136 +396,223 @@ bool RpLidar::HW_stop()
     return true;
 }
 
+#define DEBUG_LOCKING 1
+
 void RpLidar::run()
 {
-    mutex.wait();
-    laser_data.clear();
-    unsigned char buff[1000];
-    memset(buff, 0, 1000);
-    unsigned int r = pSerial->receiveBytes(buff, 1000);
-    //yDebug() << "received " << r << " bytes";
-    if (r < 5)
+    double t1 = yarp::os::Time::now();
+    const int packet = 100;
+    LockGuard guard(mutex);
+    
+    unsigned char buff[packet*3];
+    memset(buff, 0, packet*3);
+    
+    unsigned int r = 0;
+    static unsigned int total_r = 0;
+    unsigned int count = 0;
+    do
     {
-        //yError() << "Wrong scan size: " << r;
-        mutex.post();
-        return;
-    }
+        r = pSerial->receiveBytes(buff, packet);
+#ifdef DEBUG_BYTES_READ_1
+        yDebug() << r;
+#endif
+        buffer->write_elems(buff, r);
+        count++;
+        total_r += r;
+#ifdef DEBUG_BYTES_READ_2
+        if (r < packet)
+        {
+            yDebug() << "R" << r;
+        }
+#endif
+    } 
+    while (buffer->size() < (packet*2) || r>0);
+    
+    unsigned char minibuff[15];
+    unsigned int ok_count = 0;
+    do
+    {
+        buffer->select_elems(minibuff,15);
+        bool new_scan = false;
 
-    bool new_scan = false;
-//     int laser_data_size = 0;
-
+    int start = (minibuff[0]) & 0x01;
+    int lock = (minibuff[0] >> 1) & 0x01;
+    int check = (minibuff[1] & 0x01);
     for (size_t i = 0; i < r-(4+5); )
-    {
-        int start = (buff[i+0]) & 0x01;
-        int lock  = (buff[i+0] >> 1) & 0x01;
-        int check = (buff[i+1] & 0x01);
+        int start_n1 = (minibuff[5]) & 0x01;
+        int lock_n1 = (minibuff[5] >> 1) & 0x01;
+        int start_n2 = (minibuff[10]) & 0x01;
+        int lock_n2 = (minibuff[10] >> 1) & 0x01;
+        int check_n1 = (minibuff[6] & 0x01);
+        int check_n2 = (minibuff[11] & 0x01);
 
-        int n_start = (buff[i + 5]) & 0x01;
-        int n_lock  = (buff[i + 5] >> 1) & 0x01;
-        int n_check = (buff[i + 6] & 0x01);
-
-        int quality = (buff[i + 0] >> 2);
-        int i_angle =     (  (buff[i+2] >> 1 ) << 8) | (buff[i+1]);
-        int i_distance =     (buff[i+4] << 8)        | (buff[i+3]); //this is ok!
+        int quality = (minibuff[0] >> 2);
+        int i_angle = ((minibuff[2] >> 1) << 8) | (minibuff[1]);
+        int i_distance = (minibuff[4] << 8) | (minibuff[3]); //this is ok!
 
         if (start == lock)
         {
-            yError() << "lock error 1 ";
-            i++ ;
-            new_scan = false;
-            continue;
+#ifdef DEBUG_LOCKING
+            yError() << "lock error 1 " << "previous ok" << ok_count << "total r" << total_r;
+#endif
+           buffer->throw_away_elem();
+           new_scan = false;
+           ok_count = 0;
+           continue;
         }
-        if (n_start == n_lock)
+
+        if (start_n1 == lock_n1)
         {
-            yError() << "lock error 2 ";
-            i++;
-            new_scan = false;
-            continue;
+#ifdef DEBUG_LOCKING
+            yError() << "lock error 2 " << "previous ok" << ok_count << "total r" << total_r;
+#endif
+           buffer->throw_away_elem();
+           new_scan = false;
+           ok_count = 0;
+           continue;
         }
-        if (start == 1 && n_start == 1)
+
+        if (start_n2 == lock_n2)
         {
-            yError() << "lock error 3 ";
-            i++;
+#ifdef DEBUG_LOCKING
+            yError() << "lock error 3 " << "previous ok" << ok_count << "total r" << total_r;
+#endif
+           buffer->throw_away_elem();
+           new_scan = false;
+           ok_count = 0;
+           continue;
+        }
+
+        if (start == 1 && start_n1 == 1)
+        {
+#ifdef DEBUG_LOCKING
+            yError() << "lock error 4 " << "previous ok" << ok_count << "total r" << total_r;
+#endif
+            buffer->throw_away_elem();
             new_scan = false;
+            ok_count = 0;
             continue;
         }
+
         if (check != 1)
         {
-            yError() << "checksum error 1";
-            i++;
-            new_scan = false;
-            continue;
+#ifdef DEBUG_LOCKING
+            yError() << "checksum error 1" << "previous ok" << ok_count << "total r" << total_r;
+#endif
+             buffer->throw_away_elem();
+             new_scan = false;
+             ok_count = 0;
+             continue;
         }
-        if (n_check != 1)
+
+        if (check_n1 != 1)
         {
-            yError() << "checksum error 2";
-            i++;
+#ifdef DEBUG_LOCKING
+            yError() << "checksum error 2" << "previous ok" << ok_count << "total r" << total_r;
+#endif
+            buffer->throw_away_elem();
             new_scan = false;
+            ok_count = 0;
             continue;
         }
+
+        if (check_n2 != 1)
+        {
+#ifdef DEBUG_LOCKING
+            yError() << "checksum error 3" << "previous ok" << ok_count << "total r" << total_r;
+#endif
+            buffer->throw_away_elem();
+            new_scan = false;
+            ok_count = 0;
+            continue;
+        }
+
+#ifdef DEBUG_LOCKING
+   //     yDebug() << "OK" << buffer->get_start() << buffer->get_end() << "total r" << total_r;
+            ok_count++;
+#endif
+
         if (start == 1 && new_scan == false)
         {
             //this is a new scan
             new_scan = true;
-//             laser_data_size = laser_data.size(); //size should be zero
         }
         else if (start == 1 && new_scan == true)
         {
             //end of data
             new_scan = false;
-//             laser_data_size = laser_data.size(); //size should be
-            break;
         }
 
-        double distance = i_distance / 4.0; //mm
+        double distance = i_distance / 4.0 / 1000; //m
         double angle = i_angle / 64.0; //deg
+        angle = (360 - angle) + 90;
+        if (angle >= 360) angle -= 360;
 
         if (i_distance == 0)
         {
-       //     yWarning() << "Invalid Measurement " << i/5;
+            //     yWarning() << "Invalid Measurement " << i/5;
         }
         if (quality == 0)
         {
-      //      yWarning() << "Quality Low" << i / 5;
+            //      yWarning() << "Quality Low" << i / 5;
+            distance = INFINITY;
         }
         if (angle > 360)
         {
-            yWarning() << "Invalid angle" << i / 5;
-            i++;
-            continue;
+            yWarning() << "Invalid angle";
         }
 
-        if (distance < min_distance) distance = min_distance;
-        if (distance > max_distance) distance = max_distance;
-        laser_data.push_back(distance);
-        i += 5;
+        if (clip_min_enable)
+        {
+            if (distance < min_distance)
+                distance = max_distance;
+        }
+        if (clip_max_enable)
+        {
+            if (distance > max_distance)
+            {
+                if (!do_not_clip_infinity_enable && distance <= INFINITY)
+                {
+                    distance = max_distance;
+                }
+            }
+        }
+        
+        /*--------------------------------------------------------------*/
+        /* {
+             yError() << "Wrong scan size: " << r;
+             bool b_health = HW_getHealth();
+             if (b_health == true)
+             {
+             if (!HW_reset())
+             {
+             yError("Unable to reset sensor!");
+             }
+             yWarning("Sensor reset after error");
+             if (!HW_start())
+             {
+             yError("Unable to put sensor in scan mode!");
+             }
+             mutex.post();
+             return;
+             }
+             else
+             {
+             yError() << "System in error state";
+             }
+             }*/
+        buffer->throw_away_elems(5);
+        int m_elem = (int)((max_angle - min_angle) / resolution);
+        int elem = (int)(angle / resolution);
+        laser_data[elem] = distance;
     }
+    while (buffer->size() > packet);
 
-    /*--------------------------------------------------------------*/
-   /* {
-        yError() << "Wrong scan size: " << r;
-        bool b_health = HW_getHealth();
-        if (b_health == true)
-        {
-            if (!HW_reset())
-            {
-                yError("Unable to reset sensor!");
-            }
-            yWarning("Sensor reset after error");
-            if (!HW_start())
-            {
-                yError("Unable to put sensor in scan mode!");
-            }
-            mutex.post();
-            return;
-        }
-        else
-        {
-            yError() << "System in error state";
-        }
-    }*/
+#ifdef DEBUG_TIMING
+    double t2 = yarp::os::Time::now();
+    yDebug( "Time %f",  (t2 - t1) * 1000.0);
+#endif
 
-    mutex.post();
     return;
 }
 
@@ -531,8 +633,7 @@ void RpLidar::threadRelease()
 
 bool RpLidar::getDeviceInfo(yarp::os::ConstString &device_info)
 {
-    this->mutex.wait();
+    LockGuard guard(mutex);
     device_info = info;
-    this->mutex.post();
     return true;
 }
