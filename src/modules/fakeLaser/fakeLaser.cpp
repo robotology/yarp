@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-//#define LASER_DEBUG 1
+//#define LASER_DEBUG
 
 using namespace std;
 

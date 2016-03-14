@@ -16,8 +16,8 @@
 
 #include <cmath>
 
-//#define LASER_DEBUG 1
-//#define FORCE_SCAN 1
+//#define LASER_DEBUG
+//#define FORCE_SCAN
 
 using namespace std;
 
@@ -357,7 +357,7 @@ bool RpLidar::HW_start()
 
     unsigned char cmd_arr[2];
     cmd_arr[0] = 0xA5;
-#if FORCE_SCAN
+#ifdef FORCE_SCAN
     cmd_arr[1] = 0x21;
 #else
     cmd_arr[1] = 0x20;
