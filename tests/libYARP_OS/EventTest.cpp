@@ -65,6 +65,7 @@ public:
         Event x;
         x.signal();
         x.wait();
+        x.reset();
     }
 
     void checkBlock() {
@@ -72,25 +73,37 @@ public:
         EventTestHelper helper;
         helper.start();
         helper.done.wait();
-        checkEqual(helper.state,1,"helper blocked");
+        checkEqual(helper.state, 1, "helper blocked");
         helper.x.signal();
         helper.done.wait();
-        checkEqual(helper.state,2,"helper unblocked");
+        checkEqual(helper.state, 2, "helper unblocked");
     }
 
     void checkSingleWakeup() {
         report(0, "check single wakeup...");
-        Event x;
+        Event x(true);
         EventTestHelper2 h1(x), h2(x);
         h1.start();
         h2.start();
+        Time::delay(0.2);
+        checkFalse(h1.done.check(), "first not woken too early");
+        checkFalse(h2.done.check(), "second not woken too early");
+
         x.signal();
-        Time::delay(0.5);
+        Time::delay(0.2);
+
         int ct = 0;
-        if (h1.done.check()) ct++;
-        if (h2.done.check()) ct++;
-        checkEqual(ct,1,"just one awoke");
+        if (h1.done.check()) { h1.done.post(); ct++; }
+        if (h2.done.check()) { h2.done.post(); ct++; }
+        checkEqual(ct, 1, "just one awoke");
+
         x.signal();
+        Time::delay(0.2);
+
+        ct = 0;
+        if (h1.done.check()) { h1.done.post(); ct++; }
+        if (h2.done.check()) { h1.done.post(); ct++; }
+        checkEqual(ct, 2, "both awoke");
     }
 
     void checkMultipleWakeup() {
@@ -99,27 +112,25 @@ public:
         EventTestHelper2 h1(x), h2(x);
         h1.start();
         h2.start();
-        Time::delay(0.5);
+        Time::delay(0.2);
+        checkFalse(h1.done.check(), "first not woken too early");
+        checkFalse(h2.done.check(), "second not woken too early");
 
-        // removing these checks since they could fail on loaded machine
-        checkFalse(h1.done.check(),"first not woken too early");
-        checkFalse(h2.done.check(),"second not woken too early");
         x.signal();
+        Time::delay(0.2);
+
         int ct = 0;
         h1.done.wait();
         ct++;
         h2.done.wait();
         ct++;
-        checkEqual(ct,2,"both awoke");
+        checkEqual(ct, 2, "both awoke");
     }
 
     virtual void runTests() {
         checkBasic();
         checkBlock();
-        // Removing this test since it is difficult to implement without
-        // delays/timeouts and this would cause test to depend on current
-        // load (bad on virtual machines)
-        // checkSingleWakeup() also seems to be redundant w.r.t checkMultipleWakeup()
+        checkSingleWakeup();
         checkMultipleWakeup();
     }
 };
