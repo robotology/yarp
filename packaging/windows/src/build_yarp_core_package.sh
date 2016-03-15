@@ -453,6 +453,7 @@ if [ ! -e $ACE_LIBNAME.dll ]; then
 	exit 1
 fi
 nsis_add ace_libraries $ACE_LIBNAME.$LIBEXT ${ACE_SUB}/lib/$ACE_LIBNAME.$LIBEXT
+nsis_add ace_libraries $ACE_LIBNAME.pdb ${ACE_SUB}/bin/$ACE_LIBNAME.pdb
 nsis_add ace_dlls $ACE_LIBNAME.dll ${ACE_SUB}/bin/$ACE_LIBNAME.dll
 cd $ACE_DIR/ace || exit 1
 rm -rf tmp/ace
@@ -489,6 +490,7 @@ if $add_debug; then
 	fi
 	nsis_add ace_libraries $ACE_LIBNAME_DBG.$LIBEXT ${ACE_SUB}/lib/$ACE_LIBNAME_DBG.$LIBEXT
 	nsis_add ace_dlls $ACE_LIBNAME_DBG.dll ${ACE_SUB}/bin/$ACE_LIBNAME_DBG.dll
+    nsis_add ace_libraries $ACE_LIBNAME_DBG.pdb ${ACE_SUB}/bin/$ACE_LIBNAME_DBG.pdb
 	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
 	cd $GSL_DIR_DBG_UNIX
 	rm -rf tmp_debug
