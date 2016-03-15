@@ -35,9 +35,10 @@ if (NOT SKIP_OpenNI2Device)
         add_definitions(-DOPENNI2_DRIVER_USES_NITE2)
     endif()
 
-    include_directories(${OPENNI2_INCLUDE_LOCAL} ${YARP_INCLUDE_DIRS})
+    include_directories(${YARP_INCLUDE_DIRS})
+    include_directories(SYSTEM ${OPENNI2_INCLUDE_LOCAL})
     if(NITE2_FOUND)
-        include_directories( ${NITE2_INCLUDE_LOCAL})
+        include_directories(SYSTEM ${NITE2_INCLUDE_LOCAL})
     endif()
 
     # Search for source code.
