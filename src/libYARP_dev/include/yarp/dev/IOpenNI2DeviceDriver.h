@@ -39,7 +39,7 @@ namespace yarp {
  */
 class yarp::dev::IOpenNI2DeviceDriver {
 public:
-//     virtual ~IOpenNI2DeviceDriver() {}
+    virtual ~IOpenNI2DeviceDriver() {}
 
     /**
      * Gets sensor's skeleton joints orientation quarternion
