@@ -22,21 +22,7 @@ using namespace yarp::os::impl;
 bool YarpPluginSettings::open(SharedLibraryFactory& factory,
                               const ConstString& dll_name,
                               const ConstString& fn_name) {
-    bool ok = subopen(factory,dll_name,fn_name);
-    if (!ok) {
-        if (factory.getStatus() ==
-            SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND) {
-            ok = subopen(factory,dll_name,fn_name + "_carrier");
-            if (!ok) {
-                ok = subopen(factory,dll_name,fn_name + "_device");
-            }
-            if (ok) {
-                // This is deprecated. Print a warning
-                yWarning("This plugin is using a broken .ini file");
-            }
-        }
-    }
-    return ok;
+    return subopen(factory,dll_name,fn_name);
 }
 
 bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
