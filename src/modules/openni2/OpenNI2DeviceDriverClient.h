@@ -49,6 +49,9 @@ public:
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
     // TypedReaderCallback
+    using TypedReaderCallback<ImageOf<PixelRgb> >::onRead;
+    using TypedReaderCallback<ImageOf<PixelMono16> >::onRead;
+    using TypedReaderCallback<Bottle>::onRead;
     virtual void onRead(Bottle& b);
     virtual void onRead(ImageOf<PixelRgb>& img);
     virtual void onRead(ImageOf<PixelMono16>& img);
