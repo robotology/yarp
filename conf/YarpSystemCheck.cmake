@@ -291,9 +291,9 @@ endif()
 # Generate compiler.h header
 
 # Read the file containing all the documentation for compiler.h
-# Change offset here in case yarp_config_compiler.dox.in comment changes
+# Change offset here in case yarp_conf_compiler.dox.in comment changes
 file(READ
-     "${YARP_MODULE_DIR}/template/yarp_config_compiler.dox.in"
+     "${YARP_MODULE_DIR}/template/yarp_conf_compiler.dox.in"
      _compiler_dox
      OFFSET 97)
 
@@ -306,7 +306,7 @@ if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.3)
 endif()
 if(${CMAKE_VERSION} VERSION_LESS 3.3)
   string(REPLACE "\\\;" ";" _compiler_dox ${_compiler_dox})
-  configure_file(${YARP_MODULE_DIR}/template/yarp_config_compiler.h.in
+  configure_file(${YARP_MODULE_DIR}/template/yarp_conf_compiler.h.in
                  ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/compiler.h
                  @ONLY)
 else()

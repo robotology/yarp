@@ -307,7 +307,7 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         set(YARP_CODE_POST "${YARP_CODE_POST}\n        add_owned_${dev}(\"${owner}\");")
       endforeach()
     endif()
-    configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_lib.cpp.in
+    configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_library.cpp.in
                    ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp @ONLY)
     get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
     include_directories(${YARP_INCLUDE_DIRS})
