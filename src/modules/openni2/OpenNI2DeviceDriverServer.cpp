@@ -10,6 +10,11 @@
 
 yarp::dev::OpenNI2DeviceDriverServer::OpenNI2DeviceDriverServer()
 {
+#ifdef OPENNI2_DRIVER_USES_NITE2
+    userTracking = true;
+#else
+    userTracking = false;
+#endif
 }
 
 yarp::dev::OpenNI2DeviceDriverServer::~OpenNI2DeviceDriverServer()
@@ -38,8 +43,11 @@ void yarp::dev::OpenNI2DeviceDriverServer::openPorts(string portPrefix, bool use
     }
 }
 
-void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData() {
+void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData()
+{
+#ifdef OPENNI2_DRIVER_USES_NITE2
     OpenNI2SkeletonTracker::UserSkeleton *userSkeleton = OpenNI2SkeletonTracker::getSensor()->userSkeleton;
+#endif
     double *joint;
     int index = 0;
 
@@ -61,6 +69,8 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData() {
     // sending skeleton data
 
     // if skeleton is tracked
+
+#ifdef OPENNI2_DRIVER_USES_NITE2
     if(userTracking)
         for(int i = 0; i < MAX_USERS; i++) {
             if(userSkeleton[i].skeletonState == nite::SKELETON_TRACKED && userSkeleton[i].stillTracking == true) {
@@ -108,6 +118,7 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData() {
               else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE) {
               }
         }
+#endif
 }
 
 
@@ -141,8 +152,6 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config) {
 
     if(config.check("noUserTracking", "Disable user tracking")) {
         userTracking = false;
-    } else {
-        userTracking = true;
     }
 
     if(config.check("printVideoModes", "Print supported video modes")) {
@@ -223,6 +232,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config) {
         close();
         return false;
     }
+    return true;
 }
 
 bool yarp::dev::OpenNI2DeviceDriverServer::close() {
@@ -279,8 +289,11 @@ bool yarp::dev::OpenNI2DeviceDriverServer::stopService() {
 // returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID) {
     updateInterface();
+
+#ifdef OPENNI2_DRIVER_USES_NITE2
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;
+#endif
     for(int i = 0; i < TOTAL_JOINTS; i++) {
         vectorArray[i].resize(4);
         vectorArray[i].zero();
@@ -293,8 +306,11 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vector
 // returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID) {
     updateInterface();
+
+#ifdef OPENNI2_DRIVER_USES_NITE2
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;
+#endif
     for(int i = 0; i < TOTAL_JOINTS; i++) {
         vectorArray[i].resize(3);
         vectorArray[i].zero();
@@ -304,9 +320,14 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArr
     return true;
 }
 
+
 nite::SkeletonState yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID) {
     updateInterface();
+#ifdef OPENNI2_DRIVER_USES_NITE2
     return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID-1].skeletonState;
+#else
+    return 0;
+#endif
 }
 
 ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverServer::getImageFrame() {

@@ -72,7 +72,10 @@ public:
     // IOpenNI2DeviceServer
     virtual bool getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID);
     virtual bool getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID);
+
+// #ifdef OPENNI2_DRIVER_USES_NITE2
     virtual nite::SkeletonState getSkeletonState(int userID);
+// #endif
     virtual ImageOf<PixelRgb> getImageFrame();
     virtual ImageOf<PixelMono16> getDepthFrame();
 private:
