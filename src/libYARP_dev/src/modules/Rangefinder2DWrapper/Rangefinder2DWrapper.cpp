@@ -40,7 +40,11 @@ Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
     partName = "Rangefinder2DWrapper";
     rosNode = NULL;
     rosMsgCounter = 0;
-    useROS = ROS_disabled;
+    useROS      = ROS_disabled;
+    minAngle    = DEFAULT_DUMMY_MIN_ANGLE_DEG;
+    maxAngle    = DEFAULT_DUMMY_MAX_ANGLE_DEG;
+    minDistance = DEFAULT_DUMMY_MIN_DISTANCE;
+    maxDistance = DEFAULT_DUMMY_MAX_DISTANCE;
 }
 
 Rangefinder2DWrapper::~Rangefinder2DWrapper()
@@ -97,7 +101,7 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
         }
         else
         {
-            yInfo() << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+            yInfo() << partName << "useROS parameter is set to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
             useROS = ROS_config_error;
             return false;
         }
@@ -208,6 +212,19 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
         return false;
     }
     attach(sens_p);
+
+    if(!sens_p->getDistanceRange(minDistance, maxDistance))
+    {
+        yWarning() << "Laser device does not provide min & max angle scan range. Using dummy values of " << DEFAULT_DUMMY_MIN_DISTANCE \
+        << " and " << DEFAULT_DUMMY_MAX_DISTANCE << " for ROS messages.";
+    }
+
+    if(!sens_p->getScanLimits(minAngle, maxAngle))
+    {
+        yWarning() << "Laser device does not provide min & max distance range. Using dummy values of " << DEFAULT_DUMMY_MIN_ANGLE_DEG \
+        << " and " << DEFAULT_DUMMY_MAX_ANGLE_DEG << " for ROS messages.";
+    }
+
     RateThread::setRate(_rate);
     RateThread::start();
 
@@ -524,24 +541,25 @@ void Rangefinder2DWrapper::run()
             if (useROS != ROS_disabled)
             {
                 sensor_msgs_LaserScan &rosData = rosPublisherPort.prepare();
-
                 rosData.header.seq = rosMsgCounter++;
                 rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
                 rosData.header.frame_id = frame_id;
 
-                rosData.angle_increment = 0;
-                rosData.time_increment = 0;
-                rosData.angle_max = 0;
-                rosData.angle_min = 0;
-                rosData.scan_time = 0;
-                rosData.range_max = 0;
-                rosData.range_min = 0;
+                rosData.angle_min = minAngle;
+                rosData.angle_max = maxAngle;
+                rosData.angle_increment = 1 * 3.14 / 180.0;
+                rosData.time_increment = 0;             // all points in a single scan are considered took at the very same time
+                rosData.scan_time = 1/getRate();        // time elapsed between two successive readings
+                rosData.range_min = minDistance;
+                rosData.range_max = maxDistance;
+                rosData.ranges.resize(ranges_size);
+                rosData.intensities.resize(ranges_size);
+
                 for (int i = 0; i < ranges_size; i++)
                 {
                     rosData.ranges[i] = ranges[i];
                     rosData.intensities[i] = 0.0;
                 }
-
                 rosPublisherPort.write();
             }
         }

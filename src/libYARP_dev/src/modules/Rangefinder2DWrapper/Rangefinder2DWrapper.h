@@ -38,6 +38,12 @@
 #include <yarp/os/Publisher.h>
 #include <sensor_msgs_LaserScan.h>
 
+#define DEFAULT_DUMMY_MIN_DISTANCE      0.0             // [m]
+#define DEFAULT_DUMMY_MAX_DISTANCE      100.0           // [m]
+
+#define DEFAULT_DUMMY_MIN_ANGLE_DEG     0.0             // angular min scan range in degrees
+#define DEFAULT_DUMMY_MAX_ANGLE_DEG     360.0           // angular max scan range in degrees
+
 namespace yarp{
     namespace dev{
         class Rangefinder2DWrapper;
@@ -86,6 +92,8 @@ private:
     yarp::os::Stamp lastStateStamp;
     int _rate;
     std::string sensorId;
+    double minAngle, maxAngle;
+    double minDistance, maxDistance;
 
     bool checkROSParams(yarp::os::Searchable &config);
     bool initialize_ROS();
