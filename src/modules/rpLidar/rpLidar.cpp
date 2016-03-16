@@ -430,7 +430,7 @@ void RpLidar::run()
         }
 #endif
     } 
-    while (buffer->size() < (packet*2) || r>0);
+    while (buffer->size() < (packet * 2) || r < packet);
     
     unsigned char minibuff[15];
     unsigned int ok_count = 0;
