@@ -15,6 +15,8 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+#define MAX_FLUSHED_BYTES 10000
+
 //inline SerialHandler& RES(void *res) { return *(SerialHandler *)res; }
 
 SerialDeviceDriver::SerialDeviceDriver() {
@@ -62,6 +64,9 @@ bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
     config2.SerialParams.baudrate = config.check("baudrate",Value(9600),"Specifies the baudrate at which the communication port operates.").asInt();
     config2.SerialParams.xonlim = config.check("xonlim",Value(0),"Specifies the minimum number of bytes in input buffer before XON char is sent. Negative value indicates that default value should be used (Win32)").asInt();
     config2.SerialParams.xofflim = config.check("xofflim",Value(0),"Specifies the maximum number of bytes in input buffer before XOFF char is sent. Negative value indicates that default value should be used (Win32). ").asInt();
+    //RANDAZ: as far as I undesrood, the exit condition for recv() function is NOT readmincharacters || readtimeoutmsec. It is readmincharacters && readtimeoutmsec.
+    //On Linux. if readmincharacters params is set !=0, recv() may still block even if readtimeoutmsec is expired.
+    //On Win32, for unknown reason, readmincharacters seems to be ignored, so recv () returns after readtimeoutmsec. Maybe readmincharacters is used if readtimeoutmsec is set to -1?
     config2.SerialParams.readmincharacters = config.check("readmincharacters",Value(1),"Specifies the minimum number of characters for non-canonical read (POSIX).").asInt();
     config2.SerialParams.readtimeoutmsec = config.check("readtimeoutmsec",Value(100),"Specifies the time to wait before returning from read. Negative value means infinite timeout.").asInt();
     // config2.SerialParams.parityenb = config.check("parityenb",Value(0),"Enable/disable parity checking.").asInt();
@@ -190,13 +195,14 @@ int SerialDeviceDriver::receiveChar(char& c)
 
 int  SerialDeviceDriver::flush()
 {
-    char chr;
+    char chr [100];
     int count=0;
     ssize_t bytes_read=0;
     do
     {
-        bytes_read = _serial_dev.recv ((void *) &chr, 1);
+        bytes_read = _serial_dev.recv((void *) &chr, 100);
         count+=bytes_read;
+        if (count > MAX_FLUSHED_BYTES) break; //to prevent endless loop
     }
     while (bytes_read>0);
     return count;
