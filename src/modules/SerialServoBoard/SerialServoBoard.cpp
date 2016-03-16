@@ -4,6 +4,8 @@
  *
  */
 
+#include "SerialServoBoard.h"
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
@@ -12,8 +14,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "SerialServoBoard.h"
 
 
 //TODO: check limits of operation (range of angles)?
