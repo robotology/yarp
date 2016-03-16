@@ -7,6 +7,9 @@ if(COMPILE_DEVICE_LIBRARY)
                       TYPE yarp::dev::MEIMotionControl
                       INCLUDE MEIMotionControl.h
                       WRAPPER controlboard)
+  yarp_install(FILES meimotioncontrol.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 if(NOT SKIP_meiMotionControl)

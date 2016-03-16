@@ -8,6 +8,9 @@ if(UNIX)
                         TYPE yarp::dev::UrbtcControl
                         INCLUDE UrbtcControl.h
                         WRAPPER controlboard)
+    yarp_install(FILES urbtc.ini
+                 COMPONENT runtime
+                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   endif()
 
   if(NOT SKIP_urbtc)

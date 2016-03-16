@@ -47,6 +47,9 @@ if(COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(mpibcast_carrier
                        TYPE yarp::os::MpiBcastCarrier
                        INCLUDE include/yarp/os/MpiBcastCarrier.h)
+  yarp_install(FILES mpibcast.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif(COMPILE_PLUGIN_LIBRARY)
 
 if(NOT SKIP_mpibcast_carrier)
