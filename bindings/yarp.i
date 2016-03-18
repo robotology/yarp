@@ -30,7 +30,7 @@
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #elif defined (SWIGLUA)
   %include "swiglib/lua/argcargv.i"
-  %apply (int ARGC, char *ARGV[]) { (int argc, char *argv[]) }
+  %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #endif
 
 

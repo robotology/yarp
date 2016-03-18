@@ -43,7 +43,7 @@ SWIGINTERN int SWIG_argv_size(lua_State* L, int index) {
 }
 %}
 
-%typemap(in) (int ARGC, char *ARGV[]) {
+%typemap(in) (int ARGC, char **ARGV) {
   if (lua_istable(L,$input)) {
     int i, size = SWIG_argv_size(L,$input);
     $1 = ($1_ltype) size;
@@ -63,11 +63,11 @@ SWIGINTERN int SWIG_argv_size(lua_State* L, int index) {
   }
 }
 
-%typemap(typecheck, precedence=SWIG_TYPECHECK_STRING_ARRAY) (int ARGC, char *ARGV[]) {
+%typemap(typecheck, precedence=SWIG_TYPECHECK_STRING_ARRAY) (int ARGC, char **ARGV) {
   $1 = lua_istable(L,$input);
 }
 
-%typemap(freearg) (int ARGC, char *ARGV[]) {
+%typemap(freearg) (int ARGC, char **ARGV) {
   free((char *) $2);
 }
 
