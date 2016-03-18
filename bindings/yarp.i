@@ -25,9 +25,12 @@
 %feature("director") yarp::os::Thread;
 %feature("autodoc", "1");
 
-#if defined (SWIGLUA)
-%include "swiglib/lua/argcargv.i"
-%apply (int ARGC, char *ARGV[]) { (int argc, char *argv[]) }
+#if defined (SWIGPYTHON) || defined (SWIGRUBY)
+  %include <argcargv.i>
+  %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
+#elif defined (SWIGLUA)
+  %include "swiglib/lua/argcargv.i"
+  %apply (int ARGC, char *ARGV[]) { (int argc, char *argv[]) }
 #endif
 
 
