@@ -29,7 +29,7 @@ if (NOT SKIP_OpenNI2Device)
     endif()
 
     if(NOT NITE2_FOUND)
-        message(WARNING "OpenNI2Device: NITE2 library was not found, skeleton extraction feature will be skipped by driver. "
+        message(STATUS "OpenNI2Device: NITE2 library was not found, skeleton extraction feature will be skipped by driver. "
          "If you need this feature please install NITE2 library.")
     else()
         add_definitions(-DOPENNI2_DRIVER_USES_NITE2)
