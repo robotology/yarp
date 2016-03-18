@@ -12,18 +12,9 @@ This page lists the main changes introduced in YARP at each release.
 
 \tableofcontents
 
-\section sec-2-3-4 YARP next release (2.3.4)
-
-- Added yarpmanager++ which merges the functionalities of the yarpmanager and yarpbuilder
-- Deprecated all guis based on Gtk.
-- The following YARP methods have been deprecated:
-  - iPositionControl::setPositionMode()
-  - iVelocityControl::setVelocityMode()
-  - iTorqueControl::setTorqueMode()
-  - iOpenLoopControl::setOpenLoopMode()
-- added yarpRobotInterface executable (moved from icub-main where it was called robotinterface)
-- ResourceFinder::configure(argc,argv,bool) accepts a third optional parameter to keep/skip the first command line argument
-
+\section rel-v2_3_65 YARP 2.3.65
+\li \subpage md_doc_release_v2_3_65_1
+\li \subpage md_doc_release_v2_3_65
 
  *
  */
