@@ -11,7 +11,7 @@
 
 \author Ali Paikan
 
-\section desc Description
+\section arbitration_tevent_desc Description
 This example demonstrates how to use port monitor to coordinate different modules by arbitrating their connections in the input port.  Each port monitor can be set with a selection rule (constraint). The rule is simply written in first order logic (boolean expression) based on some symbolic name. We call these symbols as events. Port monitors from peer connections (the connections to the same input port) can set (add) or unset (remove) events in a shared event record. If an event is set, it has a true value in the corresponding boolean expression; otherwise it is false. When data arrives to the port from a connection, the corresponding port monitor evaluate the boolean expression and if it is true (the constraint is satisfied), the data can be delivered to the port; otherwise it is discarded. 
 
 A port monitor can set the selection rule (for its own connection) using `PortMonitor.setConstraint()'. 
@@ -42,7 +42,7 @@ This simple example shows the arbitration of two different connections to the sa
 In this example we want to prioritize the connection "/Ball/grabber" over '/Line/grabber' so when it is activated, it can inhibits the connection '/Line/grabber'. A port monitor is attached to the "/Ball/grabber" which alternatively activates and deactivates it every 5 seconds. When "/Ball/grabber" is active, its data can be delivered to the "yarpview". To resolve conflicting with the image data coming from '/Line/grabber', it also continuously sets a time events (i.e., 'e_ball') which is used as the constraint for not selecting '/Line/grabber'. When "/Ball/grabber" is not active, the time events will be expired and '/Line/grabber' gets the chance to deliver its data to the "yarpview". As the result, "yarpview" switches between different images coming from "/Ball/grabber" and "/Line/grabber" periodically. 
 
 
-\section req Requirements
+\section arbitration_tevent_req Requirements
 \li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
 
 \li Compile Yarp with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
@@ -50,7 +50,7 @@ In this example we want to prioritize the connection "/Ball/grabber" over '/Line
 \li Set LUA_CPATH to include Yarp-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
 
 
-\section running Running the example
+\section arbitration_tevent_running Running the example
 
 \li Open a terminal and run yarpserver
 \verbatim
@@ -76,9 +76,9 @@ In this example we want to prioritize the connection "/Ball/grabber" over '/Line
     >> exit
 \endverbatim
 
-\section scripts Scripts
+\section arbitration_tevent_scripts Scripts
 
-\subsection ball_monitor ball_monitor.lua
+\subsection arbitration_tevent_ball_monitor ball_monitor.lua
 \htmlonly
 <pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
 <span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
@@ -125,7 +125,7 @@ PortMonitor.accept <span style="color:#0100b6;font-weight:700">=</span> <span st
 </pre>
 \endhtmlonly
 
-\subsection line_monitor line_monitor.lua
+\subsection arbitration_tevent_line_monitor line_monitor.lua
 \htmlonly
 <pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
 <span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)

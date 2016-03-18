@@ -35,42 +35,42 @@ public:
 
     double getPeriod()
     {
-        /* module periodicity (seconds), called implicitly by the module. */
+        // module periodicity (seconds), called implicitly by the module.
         return 1.0;
     }
 
-    /* This is our main function. Will be called periodically every getPeriod() seconds */
+    // This is our main function. Will be called periodically every getPeriod() seconds
     bool updateModule()
     {
         count++;
-        cout<<"["<<count<<"]"<< " updateModule... "<<endl;
+        cout << "[" << count << "]" << " updateModule..." << endl;
 
         return true;
     }
 
 
-    /* Message handler. Just echo all received messages. */
+    // Message handler. Just echo all received messages.
     bool respond(const Bottle& command, Bottle& reply)
     {
-        cout<<"Got something, echo is on"<<endl;
-        if (command.get(0).asString()=="quit")
+        cout << "Got something, echo is on" << endl;
+        if (command.get(0).asString() == "quit")
             return false;
         else
-            reply=command;
+            reply = command;
         return true;
     }
 
 
-    /* Configure function. Receive a previously initialized
-       resource finder object. Use it to configure your module.
-       If you are migrating from the old module, this is the function
-       equivalent to the "open" method. */
+    // Configure function. Receive a previously initialized
+    // resource finder object. Use it to configure your module.
+    // If you are migrating from the old module, this is the function
+    // equivalent to the "open" method.
     bool configure(yarp::os::ResourceFinder &rf)
     {
         count=0;
-        /* optional, attach a port to the module
-           so that messages received from the port are redirected
-           to the respond method */
+        // optional, attach a port to the module
+        // so that messages received from the port are redirected
+        // to the respond method
         handlerPort.open("/myModule");
         attach(handlerPort);
         return true;
@@ -79,17 +79,17 @@ public:
     // Interrupt function.
     bool interruptModule()
     {
-        cout<<"Interrupting your module, for port cleanup"<<endl;
+        cout << "Interrupting your module, for port cleanup" << endl;
         return true;
     }
 
-    /* Close function, to perform cleanup. */
+    // Close function, to perform cleanup.
     bool close()
     {
-        /* optional, close port explicitly */
-        cout<<"Calling close function\n";
+        // optional, close port explicitly
+        cout << "Calling close function\n";
         handlerPort.close();
-      return true;
+        return true;
     }
 };
 \endcode

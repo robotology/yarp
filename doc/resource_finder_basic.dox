@@ -7,7 +7,7 @@
 This tutorial shows how to use the yarp::os::ResourceFinder class to organize parameters passed to
 modules. The ResourceFinder is a helper class that allows to find and read configuration files from YARP's installation directories or from directories that are user specific (see \ref yarp_data_dirs).
 
-\section sec_intro Introduction
+\section rf_basic_intro Introduction
 
 Suppose we wish to write a module called 'random_motion' that performs random movements of a single joint.
 The module is generic in that it can control any of the available joints of one of the limbs of a robot, either a real or a simulated one.
@@ -179,7 +179,7 @@ rm -rf $HOME/.local/share/yarp/contexts/randomMotion
 rm -rf $HOME/.local/share/yarp/contexts/randomMotionSim
 \endcode
 
-\section sec_discussion Discussion
+\section rf_basic_discussion Discussion
 We have seen how the ResourceFinder facilitates passing parameters to a module from a file. The ResourceFinder follows particular
 rules to locate configuration files that allow, for example, to switch the "initialization context" from which a module will be configured.
 
@@ -189,7 +189,7 @@ Normally context directories are not copied manually to the home of the user, bu
 
 More insights on the ResourceFinder are given in a more advanced tutorial \ref yarp_resource_finder_advanced. See also the yarp::os::ResourceFinder class documentation.
 
-\section sec_code Code
+\section rf_basic_code Code
 
 See code in: example/resourceFinder/tutorial_rf_basic.cpp
 *

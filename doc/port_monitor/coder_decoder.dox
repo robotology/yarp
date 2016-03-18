@@ -10,7 +10,7 @@
 
 \author Ali Paikan
 
-\section desc Description
+\section coder_decoder_desc Description
 This example demonstrates how to use the port the portmonitor object at both side of a connection to encode and decode the data. The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using two portmonitors plugged into the sender and receiver side. Both portmonitors load the same Lua script (\c 'codec.lua') which can act as data coder or decoder depending on the which side of the connection it is attached.
 
 <br>
@@ -18,7 +18,7 @@ This example demonstrates how to use the port the portmonitor object at both sid
 \image html coder_decoder.png ""
 
 
-\section req Requirements
+\section coder_decoder_req Requirements
 \li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
 
 \li Compile Yarp with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
@@ -26,7 +26,7 @@ This example demonstrates how to use the port the portmonitor object at both sid
 \li Set LUA_CPATH to include Yarp-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
 
 
-\section running Running the example
+\section coder_decoder_running Running the example
 
 \li Open a terminal and run yarpserver
 \verbatim
@@ -78,9 +78,9 @@ Notice that codec.lua acts as coder or decoder depending to which side of the co
 
 \htmlonly
 
-\section scripts Scripts
+\section coder_decoder_scripts Scripts
 
-\subsection codec codec.lua
+\subsection coder_decoder_codec codec.lua
 
 <pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
 <span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)

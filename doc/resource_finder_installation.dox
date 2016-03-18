@@ -84,7 +84,7 @@ Keep in mind that the \c ${YARP_CONTEXTS_INSTALL_DIR} variable expands to a rela
 
 Remember that you can always inspect the state of contexts on your machine, and customize installed configuration files, using the \ref yarp_yarp-config utility.
 
-\section sec_code Code
+\section rf_code Code
 
 See code in: example/resourceFinder/CMakeLists.txt
 *

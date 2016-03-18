@@ -11,7 +11,7 @@
 
 \author Ali Paikan
 
-\section desc Description
+\section arbitration_desc Description
 This example demonstrates how to use port monitor to coordinate different modules by arbitrating their connections in the input port.  Each port monitor can be set with a selection rule (constraint). The rule is simply written in first order logic (boolean expression) based on some symbolic name. We call these symbols as events. Port monitors from peer connections (the connections to the same input port) can set (add) or unset (remove) events in a shared event record. If an event is set, it has a true value in the corresponding boolean expression; otherwise it is false. When data arrives to the port from a connection, the corresponding port monitor evaluate the boolean expression and if it is true (the constraint is satisfied), the data can be delivered to the port; otherwise it is discarded.
 
 
@@ -44,7 +44,7 @@ This simple example shows the arbitration of two different connections to the sa
 The connection from the third "test_grabber" module (/Selector/grabber) is used as an auxiliary connection to choose between "/Ball/grabber" and "/Line/grabber". To achieve this, its selection rule in the 'selector_monitor.lua' is simply set to 'false'. The  module runs in low frequency (every 3 seconds) and plays as a selector between two other modules by setting/removing some events which are used as constraint in 'ball_monitor.lua' and 'line_monitor.lua'. As the result, yarpview switches between different images coming from "/Ball/grabber" and "/Line/grabber" periodically. 
 
 
-\section req Requirements
+\section arbitration_req Requirements
 \li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
 
 \li Compile Yarp with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
@@ -52,7 +52,7 @@ The connection from the third "test_grabber" module (/Selector/grabber) is used 
 \li Set LUA_CPATH to include Yarp-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
 
 
-\section running Running the example
+\section arbitration_running Running the example
 
 \li Open a terminal and run yarpserver
 \verbatim
@@ -78,9 +78,9 @@ The connection from the third "test_grabber" module (/Selector/grabber) is used 
     >> exit
 \endverbatim
 
-\section scripts Scripts
+\section arbitration_scripts Scripts
 
-\subsection ball_monitor ball_monitor.lua
+\subsection arbitration_ball_monitor ball_monitor.lua
 \htmlonly
 <pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
 <span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
@@ -99,7 +99,7 @@ PortMonitor.create <span style="color:#0100b6;font-weight:700">=</span> <span st
 \endhtmlonly
 
 
-\subsection line_monitor line_monitor.lua
+\subsection arbitration_line_monitor line_monitor.lua
 \htmlonly
 <pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
 <span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
@@ -118,7 +118,7 @@ PortMonitor.create <span style="color:#0100b6;font-weight:700">=</span> <span st
 \endhtmlonly
 
 
-\subsection sel_monitor sel_monitor.lua
+\subsection arbitration_sel_monitor sel_monitor.lua
 \htmlonly
 <pre style="background:#fff;color:#000"><span style="color:#00b418">-- loading lua-yarp binding library</span>
 <span style="color:#3c4c72;font-weight:700">require</span>(<span style="color:#d80800">"yarp"</span>)
