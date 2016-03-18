@@ -11,6 +11,11 @@ require("yarp")
 -- initialize yarp network
 yarp.Network()
 
+local rf = yarp.ResourceFinder()
+rf:setVerbose(true)
+rf:setDefaultContext("myContext")
+rf:setDefaultConfigFile("default.ini")
+rf:configure(arg)
 
 -- call static member in this way
 -- t = yarp.Time_now()
@@ -27,6 +32,7 @@ for i=1,100 do
     wb:addInt(i)
     wb:addString("of")
     wb:addInt(100)
+    print(string.format("Sending: %s", wb:toString()))
     port:write()
     yarp.Time_delay(0.5)
 end
