@@ -54,14 +54,13 @@ public:
             fout = NULL;
 
             const char *argv[] = { "ignore",
-                                   "--policy", "_yarp_regression_test",
                                    "--_yarp_regression_test", ".",
                                    "--from", fname1,
                                    "--verbose", "0",
                                    NULL };
-            int argc = 9;
+            int argc = 7;
 
-            rf.configure("none",argc,(char **)argv);
+            rf.configure(argc,(char **)argv);
             ConstString alt = rf.findFile("alt");
             checkTrue(alt!="","found ini file");
 
@@ -107,29 +106,27 @@ public:
             fout = NULL;
 
             const char *argv[] = { "ignore",
-                                   "--policy", "_yarp_regression_test",
                                    "--_yarp_regression_test", ".",
                                    "--from", fname1,
                                    "--verbose", "0",
                                    NULL };
-            int argc = 9;
+            int argc = 7;
 
             ResourceFinder rf1;
-            rf1.configure("none",argc,(char **)argv);
+            rf1.configure(argc,(char **)argv);
             checkEqual(rf1.find("x").asInt(),14,"found x");
 
             const char *argv2[] = { "ignore",
-                                    "--policy", "_yarp_regression_test",
                                     "--_yarp_regression_test", ".",
                                     "--from", fname1,
                                     "--verbose", "0",
                                     "--x", "20",
                                     "--y", "30",
                                     NULL };
-            int argc2 = 13;
+            int argc2 = 11;
 
             ResourceFinder rf2;
-            rf2.configure("none",argc2,(char **)argv2);
+            rf2.configure(argc2,(char **)argv2);
             checkEqual(rf2.find("y").asInt(),30,"found y");
             checkEqual(rf2.find("x").asInt(),20,"override x");
         }
@@ -141,13 +138,12 @@ public:
         report(0,"test context setting");
         ResourceFinder rf;
         const char *argv[] = { "ignore",
-                               "--policy", "_yarp_regression_test",
                                "--_yarp_regression_test", ".",
                                "--context", "zig",
                                "--verbose", "0",
                                NULL };
-        int argc = 9;
-        rf.configure("none",argc,(char **)argv);
+        int argc = 7;
+        rf.configure(argc,(char **)argv);
         checkEqual(rf.getContext().c_str(),"zig","recovered context");
     }
 
@@ -182,13 +178,12 @@ public:
         }
         ResourceFinder rf;
         const char *argv[] = { "ignore",
-                               "--policy", "_yarp_regression_test",
                                "--_yarp_regression_test", ".",
                                "--from", fname0,
                                "--verbose", "0",
                                NULL };
-        int argc = 9;
-        rf.configure("none",argc,(char **)argv);
+        int argc = 7;
+        rf.configure(argc,(char **)argv);
         ResourceFinder rf1 = rf.findNestedResourceFinder("section1");
         //checkEqual(rf1.findFile("fname").c_str(),fname1,"section1 ok");
         checkFalse(rf1.isNull(),"section1 not null ok");
@@ -658,7 +653,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(NULL,0,NULL);
+            rf.configure(0,NULL);
             checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
         }
 
@@ -666,7 +661,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("shadow.ini");
-            rf.configure(NULL,0,NULL);
+            rf.configure(0,NULL);
             checkEqual(rf.find("magic_number").asInt(),5001,"shadow.ini found as correct location");
         }
 
@@ -674,7 +669,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
-            rf.configure(NULL,0,NULL);
+            rf.configure(0,NULL);
             checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
         }
 
@@ -682,7 +677,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
-            rf.configure(NULL,0,NULL);
+            rf.configure(0,NULL);
             checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
             Property p;
             ResourceFinderOptions opts;
@@ -718,7 +713,7 @@ public:
             const char *fname1 = "_yarp_regression_test_rf1.txt";
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile(fname1); // should be in pwd
-            rf.configure(NULL,0,NULL);
+            rf.configure(0,NULL);
 
             char buf[1000];
             char *result = getcwd(buf,sizeof(buf));
@@ -730,7 +725,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(NULL,0,NULL);
+            rf.configure(0,NULL);
 
             bool found;
             ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
@@ -764,7 +759,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
-            bool configures = rf.configure(NULL,0,NULL);
+            bool configures = rf.configure(0,NULL);
             checkTrue(configures,"ok with default file that exists");
         }
 
@@ -775,7 +770,7 @@ public:
                                    "--from", "my_app.ini",
                                    NULL };
             int argc = 3;
-            bool configures = rf.configure("none",argc,(char **)argv);
+            bool configures = rf.configure(argc,(char **)argv);
             checkTrue(configures,"ok with from file that exists");
         }
 
@@ -783,7 +778,7 @@ public:
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app_not_there.ini");
-            bool configures = rf.configure(NULL,0,NULL);
+            bool configures = rf.configure(0,NULL);
             checkTrue(configures,"ok with default file that does not exist");
         }
 
@@ -794,7 +789,7 @@ public:
                                    "--from", "my_app_not_there.ini",
                                    NULL };
             int argc = 3;
-            bool configures = rf.configure("none",argc,(char **)argv);
+            bool configures = rf.configure(argc,(char **)argv);
             checkFalse(configures,"fails with from file that is missing");
         }
     }

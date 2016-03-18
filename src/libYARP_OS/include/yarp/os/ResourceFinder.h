@@ -23,7 +23,7 @@ namespace yarp {
 /**
  *
  * Helper class for finding config files and other external resources.
- * 
+ *
  * More details on this class behaviour can be found in
  * \ref yarp_resource_finder_tutorials.
  *
@@ -66,6 +66,7 @@ public:
      */
     bool setQuiet(bool quiet = true);
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
      *
      * Sets up the finder.  The policyName is used to find
@@ -96,26 +97,29 @@ public:
      * be found, of if the user requests a configuration file to
      * be read (via --from for example) and that file cannot be
      * found. If a default configuration file has been set with
-     * ResourceFinder::setDefaultConfigFile, the presence or 
-     * absence of that file doesn't by itself contribute to 
+     * ResourceFinder::setDefaultConfigFile, the presence or
+     * absence of that file doesn't by itself contribute to
      * sucess/failure (since it is perfectly valid for it to be
      * absent).
      *
+     * @deprecated since YARP 2.3.65
      */
-    bool configure(const char *policyName, int argc, char *argv[],
+    YARP_DEPRECATED bool configure(const char *policyName, int argc, char *argv[],
                    bool skipFirstArgument = true);
+#endif // YARP_NO_DEPRECATED
 
     /**
+     * Sets up the ResourceFinder.
      *
-     * Variant of configure() that doesn't require a policy name
-     * to be specified.  In this case, policy will be read from
-     * an environment variable, YARP_POLICY.  The meaning of the
-     * return value is specified in the main version of configure()
-     *
+     * @return true if configuration succeeded. Configuration fails if the user
+     * requests a configuration file to be read (via --from for example) and
+     * that file cannot be found. If a default configuration file has been set
+     * with ResourceFinder::setDefaultConfigFile, the presence or absence of
+     * that file doesn't by itself contribute to  sucess/failure (since it is
+     * perfectly valid for it to be
+     * absent).
      */
-    bool configure(int argc, char *argv[]) {
-        return configure("",argc,argv,true);
-    }
+    bool configure(int argc, char *argv[]);
 
     bool setDefaultContext(const char *contextName) {
         clearContext();
@@ -167,7 +171,7 @@ public:
      * a file name - this is for backwards compatibility
      * and is behavior that will probably go away - don't
      * depend on it!
-     * 
+     *
      * The file is searched in a hierarchy of paths as defined in
      * \ref yarp_resource_finder_tutorials.
      *
@@ -205,7 +209,7 @@ public:
      * Expand a partial path to a list of paths.
      * Like findPath(key), but continues on to find all
      * instances of the path.
-     * 
+     *
      * so findPaths("app") would return ["/foo/app","/bar/app",...]
      * depending on the search path in effect.
      * The first path is the list comes from the highest-priority
@@ -233,12 +237,13 @@ public:
      */
     yarp::os::ConstString getContext();
 
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.60
     /**
      *
      * Return the path that the default context expands to, according to
      * the policy. If no policy was used, behave as getHomeContextPath
      *
+     * @deprecated since YARP 2.3.60
      */
     YARP_DEPRECATED yarp::os::ConstString getContextPath();
 #endif // YARP_NO_DEPRECATED
@@ -296,9 +301,9 @@ public:
      * If $YARP_DATA_HOME is set, that is returned.  We do not check
      * to see if that directory exists.
      * Otherwise:
-     *   (In all the following cases, we attempt to create the directory 
+     *   (In all the following cases, we attempt to create the directory
      *   returned if it does not already exist).
-     *   If $XDG_DATA_HOME is set, "yarp" is appended to it after the 
+     *   If $XDG_DATA_HOME is set, "yarp" is appended to it after the
      *   OS-appropriate directory separator, and the result returned.
      *   Otherwise:
      *     On Windows
@@ -328,7 +333,7 @@ public:
      * Location where user config files are stored.
      * If $YARP_CONFIG_HOME is set, that is returned.
      * Otherwise:
-     *   If $XDG_CONFIG_HOME is set, "yarp" is appended to it after the 
+     *   If $XDG_CONFIG_HOME is set, "yarp" is appended to it after the
      *   OS-appropriate directory separator, and the result returned.
      *   Otherwise:
      *     On Windows
@@ -339,7 +344,7 @@ public:
      *
      */
     static ConstString getConfigHome() {
-        return getConfigHomeWithPossibleCreation(true);        
+        return getConfigHomeWithPossibleCreation(true);
     }
 
     /**
@@ -349,7 +354,7 @@ public:
      *
      */
     static ConstString getConfigHomeNoCreate() {
-        return getConfigHomeWithPossibleCreation(false);        
+        return getConfigHomeWithPossibleCreation(false);
     }
 
     /**

@@ -28,7 +28,8 @@ using namespace yarp::os::impl;
 #define RTARGET stderr
 #define RESOURCE_FINDER_CACHE_TIME 10
 
-static ConstString expandUserFileName(const ConstString& fname) {
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_DEPRECATED static ConstString expandUserFileName(const ConstString& fname) {
     ConstString root = NetworkBase::getEnvironment("YARP_CONF");
     ConstString home = NetworkBase::getEnvironment("HOME");
     ConstString homepath = NetworkBase::getEnvironment("HOMEPATH");
@@ -46,6 +47,7 @@ static ConstString expandUserFileName(const ConstString& fname) {
     YARP_DEBUG(Logger::get(),(ConstString("Configuration file: ") + conf).c_str());
     return conf;
 }
+#endif // YARP_NO_DEPRECATED
 
 
 static ConstString getPwd() {
@@ -129,9 +131,13 @@ static void appendResourceType(Bottle& paths,
 class ResourceFinderHelper {
 private:
     yarp::os::Bottle apps;
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     yarp::os::ConstString root;
+#endif // YARP_NO_DEPRECATED
     yarp::os::ConstString configFilePath;
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     yarp::os::ConstString policyName;
+#endif // YARP_NO_DEPRECATED
     yarp::os::Property cache;
     bool verbose;
     bool quiet;
@@ -172,7 +178,8 @@ public:
         return "";
     }
 
-    bool configureFromPolicy(Property& config, const char *policyName) {
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED bool configureFromPolicy(Property& config, const char *policyName) {
         this->policyName = policyName;
         if (verbose) {
             fprintf(RTARGET,"||| policy set to %s\n", policyName);
@@ -205,10 +212,13 @@ public:
             }
         }
         String checked = "";
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
         String userConfig = expandUserFileName(ConstString(policyName) + ".ini").c_str();
+YARP_WARNING_POP
         String rootConfig = String(root.c_str()) + "/" + policyName + ".ini";
         String altConfig = String("/etc/yarp/policies/") + policyName + ".ini";
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.21
         String deprecatedConfig = String("/etc/") + policyName + ".ini"; // FIXME Deprecated
 #endif // YARP_NO_DEPRECATED
         bool ok = false;
@@ -239,7 +249,7 @@ public:
                 checked += " " + altConfig;
                 ok = config.fromConfigFile(altConfig.c_str(),false);
             }
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.21
             if (!ok) {
                 if (verbose) {
                     fprintf(RTARGET,"||| loading policy from %s\n",
@@ -293,8 +303,10 @@ public:
 
         return true;
     }
+#endif
 
-    bool configure(Property& config, const char *policyName, int argc,
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED bool configure(Property& config, const char *policyName, int argc,
                    char *argv[], bool skip) {
         if (argc>0) {
             if (argv[0]!=NULL) {
@@ -344,7 +356,10 @@ public:
         bool configured_normally = true;
         if (!skip_policy) {
             config.fromString(p.toString().c_str(),false);
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
             configured_normally = configureFromPolicy(config,name.c_str());
+YARP_WARNING_POP
         }
 
         if (p.check("context")) {
@@ -377,6 +392,63 @@ public:
                 configured_normally = false;
             }
             config.fromCommand(argc,argv,skip,false);
+        }
+        return configured_normally;
+    }
+#endif // YARP_NO_DEPRECATED
+
+    bool configure(Property& config, int argc, char *argv[]) {
+        if (argc>0) {
+            if (argv[0]!=NULL) {
+                yarp::os::setprogname(argv[0]);
+            }
+        }
+
+        Property p;
+        p.fromCommand(argc,argv,true);
+
+        bool user_specified_from = p.check("from");
+
+        if (p.check("verbose")) {
+            setVerbose(p.check("verbose",Value(1)).asInt());
+        }
+
+        if (isVerbose()) {
+            fprintf(RTARGET,"||| configuring\n");
+        }
+
+        bool configured_normally = true;
+
+        if (p.check("context")) {
+            clearAppNames();
+            ConstString c = p.check("context",Value("default")).asString();
+            addAppName(c.c_str());
+            if (verbose) {
+                fprintf(RTARGET,"||| added context %s\n",
+                        c.c_str());
+            }
+        }
+
+        config.fromCommand(argc,argv,true,false);
+        if (config.check("from")) {
+            ConstString from = config.check("from",
+                                            Value("config.ini")).toString();
+            if (verbose) {
+                fprintf(RTARGET,"||| default config file specified as %s\n",
+                        from.c_str());
+            }
+            mainActive = true;
+            ConstString corrected = findFile(config,from.c_str(),NULL);
+            mainActive = false;
+            if (corrected!="") {
+                from = corrected;
+            }
+            ConstString fromPath = extractPath(from.c_str());
+            configFilePath = fromPath;
+            if (!config.fromConfigFile(from,false) && user_specified_from) {
+                configured_normally = false;
+            }
+            config.fromCommand(argc,argv,true,false);
         }
         return configured_normally;
     }
@@ -648,6 +720,7 @@ public:
             }
         }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
         if ((locs & ResourceFinderOptions::ClassicContext) && 
             (!useNearMain) && 
             root != "") {
@@ -676,6 +749,7 @@ public:
                 }
             }
         }
+#endif // YARP_NO_DEPRECATED
 
         if ((locs & ResourceFinderOptions::Context) && !useNearMain) {
             for (int i=0; i<apps.size(); i++) {
@@ -900,7 +974,7 @@ public:
         return path;
     }
 
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.60
     ConstString context2path(Property& config, const ConstString& context ) {
         if(useNearMain)
             return configFilePath;
@@ -977,13 +1051,23 @@ const ResourceFinder& ResourceFinder::operator= (const ResourceFinder& alt) {
     return *this;
 }
 
-
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
 bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
                                bool skipFirstArgument) {
     isConfiguredFlag = true;
-    return HELPER(implementation).configure(config,policyName,argc,argv,
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+return HELPER(implementation).configure(config,policyName,argc,argv,
                                             skipFirstArgument);
+YARP_WARNING_POP
 }
+#endif // YARP_NO_DEPRECATED
+
+bool ResourceFinder::configure(int argc, char *argv[]) {
+    isConfiguredFlag = true;
+    return HELPER(implementation).configure(config,argc,argv);
+}
+
 
 bool ResourceFinder::addContext(const char *appName) {
     if (appName[0]=='\0') return true;
@@ -1116,7 +1200,7 @@ ConstString ResourceFinder::getContext() {
     return HELPER(implementation).getContext();
 }
 
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.60
 ConstString ResourceFinder::getContextPath() {
     return HELPER(implementation).context2path(config,
                                                HELPER(implementation).getContext());

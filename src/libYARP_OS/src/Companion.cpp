@@ -1569,14 +1569,13 @@ int Companion::cmdResource(int argc, char *argv[]) {
         printf("   yarp resource --icub icub.ini --find icub\n");
         printf("   yarp resource --from config.ini --find icub\n");
         printf("   yarp resource --find icub.ini --verbose 1\n");
-        printf("   yarp resource --ICUB_ROOT /path/to/icub --find icub.ini\n");
         printf("   yarp resource --find config.ini --all\n");
         printf("To show what a config file loads as, specify --show\n");
         return 0;
     }
     ResourceFinder rf;
     rf.setVerbose();
-    bool ok = rf.configure("",argc,argv,false);
+    bool ok = rf.configure(argc,argv);
     Bottle result;
     Property p;
     p.fromCommand(argc,argv,false);

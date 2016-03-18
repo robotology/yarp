@@ -1238,6 +1238,7 @@ public static short[] getRawImg(Image img) {
 #endif
 
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
 %extend yarp::os::ResourceFinder {
     bool configure(const std::string& policyName,
                    std::vector<std::string>& argv,
@@ -1249,6 +1250,7 @@ public static short[] getRawImg(Image img) {
                                (char**)&tmp[0]);
     }
 }
+#endif // YARP_NO_DEPRECATED
 
 
 /*
