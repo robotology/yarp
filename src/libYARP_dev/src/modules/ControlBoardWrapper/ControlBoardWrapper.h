@@ -311,7 +311,6 @@ private:
     yarp::os::Semaphore                             rpcDataMutex;                   // mutex to avoid concurrency between more clients using rppc port
     yarp::dev::impl::MultiJointData                 rpcData;                        // Structure used to re-arrange data from "multiple_joints" calls.
 
-    yarp::sig::Vector   CBW_encoders;
     std::string         partName;               // to open ports and print more detailed debug messages
 
     int               controlledJoints;
