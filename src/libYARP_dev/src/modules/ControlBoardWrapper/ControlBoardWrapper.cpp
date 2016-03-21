@@ -683,8 +683,6 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     if (!device.subdevices[0].attach(subDeviceOwned, subDevName))
         return false;
 
-    CBW_encoders.resize(device.lut.size());
-
     // initialization.
     RPC_parser.initialize();
     updateAxisName();
@@ -804,8 +802,6 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
         yError("ControlBoardWrapper: AttachAll failed, some subdevice was not found or its attach failed\n");
         return false;
     }
-
-    CBW_encoders.resize(device.lut.size());
 
     // initialization.
     RPC_parser.initialize();
