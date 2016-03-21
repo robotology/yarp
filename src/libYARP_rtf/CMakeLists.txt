@@ -34,7 +34,7 @@ else()
     add_library(RTF_yarp_utility SHARED ${folder_source} ${folder_header} )
 endif()
 
-target_link_libraries(RTF_yarp_utility ${YARP_LIBRARIES})
+target_link_libraries(RTF_yarp_utility ${RTF_LIBS} ${YARP_LIBRARIES})
 
 
 # We already added the header files within the parent CMakeLists
