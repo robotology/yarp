@@ -64,10 +64,13 @@ public:
      */
     virtual bool getOutputsRaw(double *v)=0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
      * Enable open loop mode.
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setOpenLoopModeRaw()=0;
+    YARP_DEPRECATED virtual bool setOpenLoopModeRaw() { return false; }
+#endif
 };
 
 
@@ -118,10 +121,14 @@ public:
      */
     virtual bool getOutputs(double *v)=0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
      * Enable open loop mode.
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setOpenLoopMode()=0;
+    YARP_DEPRECATED virtual bool setOpenLoopMode() { return false; }
+#endif
+
 };
 
 // all sets in streaming

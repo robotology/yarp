@@ -529,15 +529,18 @@ public:
     */
     virtual bool getAxes(int *ax);
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
     * Set position mode. This command
     * is required by control boards implementing different
     * control methods (e.g. velocity/torque), in some cases
     * it can be left empty.
-    * return true/false on success/failure
+    * @return true/false on success/failure
+    * @deprecated since YARP 2.3.65
     */
-    virtual bool setPositionMode();
-    virtual bool setOpenLoopMode();
+    YARP_DEPRECATED virtual bool setPositionMode();
+    YARP_DEPRECATED virtual bool setOpenLoopMode();
+#endif // YARP_NO_DEPRECATED
 
     /**
     * Set new reference point for a single axis.
@@ -765,12 +768,14 @@ public:
     */
     virtual bool velocityMove(const double *v);
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
     * Set the controller to velocity mode.
     * @return true/false on success/failure.
+    * @deprecated since YARP 2.3.65
     */
-    virtual bool setVelocityMode();
-
+    YARP_DEPRECATED virtual bool setVelocityMode();
+#endif // YARP_NO_DEPRECATED
     /* IEncoders */
 
     /**
@@ -1232,7 +1237,9 @@ public:
 
     virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type);
 
-    virtual bool setTorqueMode();
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setTorqueMode();
+#endif // YARP_NO_DEPRECATED
 
     virtual bool getRefTorques(double *refs);
 
@@ -1333,7 +1340,10 @@ public:
 
     virtual bool setRefOutputs(const double *outs);
 
-    virtual bool setPositionDirectMode();
+    // IPositionDirect
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionDirectMode();
+#endif // YARP_NO_DEPRECATED
 
     virtual bool setPosition(int j, double ref);
 

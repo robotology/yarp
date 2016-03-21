@@ -37,13 +37,16 @@ public:
      */
     virtual bool getAxes(int *ax) = 0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /** Set position mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
-     * return true/false on success failure
+     * @return true/false on success failure
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setPositionModeRaw()=0;
+    YARP_DEPRECATED virtual bool setPositionModeRaw() { return false; }
+#endif // YARP_NO_DEPRECATED
 
     /** Set new reference point for a single axis.
      * @param j joint number
@@ -179,13 +182,16 @@ public:
      */
     virtual bool getAxes(int *ax) = 0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /** Set position mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
-     * return true/false on success/failure
+     * @return true/false on success/failure
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setPositionMode()=0;
+    YARP_DEPRECATED virtual bool setPositionMode() { return false; }
+#endif // YARP_NO_DEPRECATED
 
     /** Set new reference point for a single axis.
      * @param j joint number

@@ -69,7 +69,9 @@ public:
      */
     virtual bool getAxes(int *axis);
 
-    virtual bool setPositionMode();
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionMode();
+#endif // YARP_NO_DEPRECATED
     virtual bool positionMove(int j, double ref);
     virtual bool positionMove(const int n_joint, const int *joints, const double *refs);
     virtual bool positionMove(const double *refs);
@@ -129,8 +131,10 @@ public:
     virtual bool getAxes(int *ax)
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
-    virtual bool setPositionModeRaw()
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionModeRaw()
     {return NOT_YET_IMPLEMENTED("setPositionModeRaw");}
+#endif // YARP_NO_DEPRECATED
 
     virtual bool positionMoveRaw(int j, double ref)
     {return NOT_YET_IMPLEMENTED("positionMoveRaw");}

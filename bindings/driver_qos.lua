@@ -42,11 +42,18 @@ if ipos == nil then
     os.exit()
 end
 
+icm = driver:viewIControlMode2()
+if icm == nil then
+    print("Cannot open the IControlMode2 interface");
+    driver:close()
+    os.exit()
+end
+
 -- send position command to motors
 for i=1,100 do
     position = math.random(-90, 10)
     print("setting position of joint 0 to "..position)
-    ipos:setPositionMode()
+    icm:setControlMode(0, VOCAB_CM_POSITION)
     ipos:setRefSpeed(0, 30)
     ipos:positionMove(0, position)
     yarp.Time_delay(0.5)

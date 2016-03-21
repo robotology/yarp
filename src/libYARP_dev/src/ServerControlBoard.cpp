@@ -670,9 +670,10 @@ public:
     * is required by control boards implementing different
     * control methods (e.g. velocity/torque), in some cases
     * it can be left empty.
-    * return true/false on success/failure
+    * @return true/false on success/failure
+    * @deprecated since YARP 2.3.65
     */
-    virtual bool setPositionMode() {
+    YARP_DEPRECATED virtual bool setPositionMode() {
         if (pos)
             return pos->setPositionMode();
         return false;
@@ -892,8 +893,9 @@ public:
     /**
     * Set the controller to velocity mode.
     * @return true/false on success/failure.
+    * @deprecated since YARP 2.3.65
     */
-    virtual bool setVelocityMode() {
+    YARP_DEPRECATED virtual bool setVelocityMode() {
         if (vel)
             return vel->setVelocityMode();
         return false;
@@ -1161,8 +1163,9 @@ public:
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
      * @return true/false on success failure
+    * @deprecated since YARP 2.3.65
      */
-    virtual bool setTorqueMode()
+    YARP_DEPRECATED virtual bool setTorqueMode()
     {
         if (trq)
             return trq->setTorqueMode();

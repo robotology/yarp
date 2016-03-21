@@ -2333,6 +2333,9 @@ public:
         return get1V1I(VOCAB_AXES, *ax);
     }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     /**
      * Set position mode. This command
      * is required by control boards implementing different
@@ -2340,10 +2343,11 @@ public:
      * it can be left empty.
      * return true/false on success/failure
      */
-    virtual bool setPositionMode() {
+    YARP_DEPRECATED virtual bool setPositionMode() {
         return set1V(VOCAB_POSITION_MODE);
     }
-
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
     /**
      * Set new reference point for a single axis.
      * @param j joint number
@@ -2671,13 +2675,18 @@ public:
         return true;
     }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     /**
      * Set the controller to velocity mode.
      * @return true/false on success/failure.
      */
-    virtual bool setVelocityMode() {
+    YARP_DEPRECATED virtual bool setVelocityMode() {
         return set1V(VOCAB_VELOCITY_MODE);
     }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
     /* IAmplifierControl */
 
@@ -2952,8 +2961,13 @@ public:
     bool virtual done(int j)
     { return send1V1I(VOCAB_CALIBRATE_DONE, j); }
 
-    bool setTorqueMode()
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+    YARP_DEPRECATED bool setTorqueMode()
     { return set1V(VOCAB_TORQUE_MODE); }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
     bool getRefTorque(int j, double *t)
     { return get2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, t); }

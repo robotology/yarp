@@ -61,7 +61,6 @@ public:
     // virtual methods implementing IPositionControlRaw Interface
     // POSITION CONTROL INTERFACE RAW
     virtual bool getAxes(int *ax);
-    virtual bool setPositionMode();
 
     /**
      * Raw position control. Calls the servo setPosition method which

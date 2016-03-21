@@ -42,10 +42,6 @@ bool SerialServoBoard::getAxes(int *ax) {
 }
 
 
-bool SerialServoBoard::setPositionMode() {
-    return true;
-}
-
 
 bool SerialServoBoard::positionMove(int j, double ref) {
     positions[j]=ref;

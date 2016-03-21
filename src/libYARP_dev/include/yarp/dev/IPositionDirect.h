@@ -39,14 +39,16 @@ public:
      */
     virtual bool getAxes(int *ax)=0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
      * Set position direct mode. This command
      * is required to switch control boards to low-level position
      * control method.
      * @return true/false on success failure
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setPositionDirectMode()=0;
-
+    YARP_DEPRECATED virtual bool setPositionDirectMode() { return false; }
+#endif // YARP_NO_DEPRECATED
 
     /** Set new position for a single axis.
      * @param j joint number
@@ -133,13 +135,16 @@ public:
      */
     virtual bool getAxes(int *axes) = 0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
      * Set position direct mode. This command
      * is required to switch control boards to low-level position
      * control method.
      * @return true/false on success failure
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setPositionDirectModeRaw()=0;
+    YARP_DEPRECATED virtual bool setPositionDirectModeRaw() { return false; }
+#endif // YARP_NO_DEPRECATED
 
     /** Set new position for a single axis.
      * @param j joint number

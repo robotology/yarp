@@ -618,7 +618,14 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                         delete [] modes;
                     }
                     else
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                         *ok = rpc_ITorque->setTorqueMode();
+YARP_WARNING_POP
+#else
+                        *ok = false;
+#endif // YARP_NO_DEPRECATED
                 }
                 break;
 
@@ -1663,35 +1670,52 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
                             case VOCAB_TORQUE_MODE:
                             {
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                                 ok = rpc_ITorque->setTorqueMode();
+YARP_WARNING_POP
                             }
                             break;
 
                             case VOCAB_VELOCITY_MODE:
                             {
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                                 ok = rpc_IVelCtrl->setVelocityMode();
+YARP_WARNING_POP
                             }
                             break;
 
                             case VOCAB_POSITION_MODE:
                             {
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                                 ok = rpc_IPosCtrl->setPositionMode();
+YARP_WARNING_POP
                             }
                             break;
 
                             case VOCAB_POSITION_DIRECT:
                             {
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                                 ok = rpc_IPosDirect->setPositionDirectMode();
+YARP_WARNING_POP
                             }
                             break;
 
                             case VOCAB_OPENLOOP_MODE:
                             {
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
                                 ok = rpc_IOpenLoop->setOpenLoopMode();
+YARP_WARNING_POP
                             }
                             break;
+#endif // YARP_NO_DEPRECATED
 
                             case VOCAB_POSITION_MOVE:
                             {

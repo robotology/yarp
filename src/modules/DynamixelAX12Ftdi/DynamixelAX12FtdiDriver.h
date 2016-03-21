@@ -214,10 +214,7 @@ public:
     virtual int readParameter(unsigned char id, unsigned char param);
 
     bool getAxes(int *ax);
-    /*
-     * The only supported mode, position control mode
-     */
-    bool setPositionMode();
+
     /**
      * @param refs should be in range [1 300]
      */
@@ -238,7 +235,6 @@ public:
     bool stop(int j);
     bool stop();
 
-    bool setTorqueMode();
     bool getRefTorques(double *t);
     bool getRefTorque(int j, double *t);
     bool setTorques(const double *t);

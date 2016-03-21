@@ -62,7 +62,9 @@ public:
     virtual ~ImplementPositionDirect();
 
     virtual bool getAxes(int *axes);
-    virtual bool setPositionDirectMode();
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionDirectMode();
+#endif // YARP_NO_DEPRECATED
     virtual bool setPosition(int j, double ref);
     virtual bool setPositions(const int n_joint, const int *joints, double *refs);
     virtual bool setPositions(const double *refs);
@@ -102,8 +104,10 @@ public:
     virtual bool getAxes(int *axis)
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
-    virtual bool setPositionDirectMode()
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionDirectMode()
     {return NOT_YET_IMPLEMENTED("setPositionDirectMode");}
+#endif // YARP_NO_DEPRECATED
 
     virtual bool setPosition(int j, double ref)
     {return NOT_YET_IMPLEMENTED("setPosition");}

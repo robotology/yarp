@@ -1799,9 +1799,10 @@ public:
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
-     * return true/false on success/failure
+     * @return true/false on success/failure
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setPositionMode() {
+    YARP_DEPRECATED virtual bool setPositionMode() {
         return set1V(VOCAB_POSITION_MODE);
     }
 
@@ -2093,8 +2094,9 @@ public:
     /**
      * Set the controller to velocity mode.
      * @return true/false on success/failure.
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setVelocityMode() {
+    YARP_DEPRECATED virtual bool setVelocityMode() {
         return set1V(VOCAB_VELOCITY_MODE);
     }
 
@@ -2291,7 +2293,7 @@ public:
         return send1V1I(VOCAB_CALIBRATE_DONE, j);
     }
 
-    bool setTorqueMode() {
+    YARP_DEPRECATED bool setTorqueMode() {
         return set1V(VOCAB_TORQUE_MODE);
     }
 
@@ -2659,7 +2661,7 @@ public:
 //        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_VEL, j);
     }
 
-    bool setOpenLoopMode()
+    YARP_DEPRECATED bool setOpenLoopMode()
     {
 //        return setControlModes(VOCAB_OPENLOOP_MODE);
         return set1V(VOCAB_OPENLOOP_MODE);
@@ -2801,7 +2803,7 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    bool setPositionDirectMode()
+    YARP_DEPRECATED bool setPositionDirectMode()
     {
         return set1V(VOCAB_POSITION_DIRECT);
     }

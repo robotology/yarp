@@ -59,7 +59,9 @@ public:
     virtual ~ImplementVelocityControl2();
 
     virtual bool getAxes(int *axes);
-    virtual bool setVelocityMode();
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setVelocityMode();
+#endif // YARP_NO_DEPRECATED
     virtual bool velocityMove(int j, double sp);
     virtual bool velocityMove(const double *sp);
     virtual bool setRefAcceleration(int j, double acc);
@@ -119,8 +121,10 @@ public:
     virtual bool getAxes(int *axes)
     {return NOT_YET_IMPLEMENTED("getAxesRaw");}
 
-    virtual bool setVelocityModeRaw()
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setVelocityModeRaw()
     {return NOT_YET_IMPLEMENTED("setVelocityModeRaw");}
+#endif // YARP_NO_DEPRECATED
 
     virtual bool velocityMoveRaw(int j, double sp)
     {return NOT_YET_IMPLEMENTED("velocityMoveRaw");}

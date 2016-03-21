@@ -36,14 +36,17 @@ public:
      */
     virtual bool getAxes(int *axis) = 0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
      * Set position mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
      * @return true/false on success failure
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setVelocityModeRaw()=0;
+    YARP_DEPRECATED virtual bool setVelocityModeRaw() { return false; }
+#endif
 
     /**
      * Start motion at a given speed, single joint.
@@ -123,14 +126,17 @@ public:
      */
     virtual bool getAxes(int *axes) = 0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
      * Set velocity mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
      * @return true/false on success failure
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setVelocityMode()=0;
+    YARP_DEPRECATED virtual bool setVelocityMode() { return false; }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Start motion at a given speed, single joint.

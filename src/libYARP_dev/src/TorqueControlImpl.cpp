@@ -64,10 +64,15 @@ bool ImplementTorqueControl::getAxes(int *axes)
     return iTorqueRaw->getAxes(axes);
 }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
 bool ImplementTorqueControl::setTorqueMode()
 {
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     return iTorqueRaw->setTorqueModeRaw();
+YARP_WARNING_POP
 }
+#endif // YARP_NO_DEPRECATED
 
 bool ImplementTorqueControl::getRefTorque(int j, double *r)
 {

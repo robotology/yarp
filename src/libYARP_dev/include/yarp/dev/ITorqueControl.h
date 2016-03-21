@@ -49,14 +49,17 @@ public:
      */
     virtual bool getAxes(int *ax) = 0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
      * Set torque control mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
      * @return true/false on success/failure
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setTorqueMode()=0;
+    YARP_DEPRECATED virtual bool setTorqueMode() { return false; }
+#endif // YARP_NO_DEPRECATED
 
    /** Get the reference value of the torque for all joints.
      * This is NOT the feedback (see getTorques instead).
@@ -278,14 +281,17 @@ public:
      */
     virtual bool getAxes(int *ax) = 0;
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     /**
      * Set torque control mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
      * @return true/false on success failure
+     * @deprecated since YARP 2.3.65
      */
-    virtual bool setTorqueModeRaw()=0;
+    YARP_DEPRECATED virtual bool setTorqueModeRaw() { return false; }
+#endif // YARP_NO_DEPRECATED
 
     /** Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).

@@ -57,7 +57,9 @@ public:
     virtual ~ImplementTorqueControl();
 
     virtual bool getAxes(int *ax);
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     virtual bool setTorqueMode();
+#endif // YARP_NO_DEPRECATED
     virtual bool getRefTorque(int j, double *);
     virtual bool getRefTorques(double *t);
     virtual bool setRefTorques(const double *t);

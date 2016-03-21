@@ -1379,12 +1379,16 @@ bool ControlBoardWrapper::getAxes(int *ax) {
     return true;
 }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 /**
 * Set position mode. This command
 * is required by control boards implementing different
 * control methods (e.g. velocity/torque), in some cases
 * it can be left empty.
-* return true/false on success/failure
+* @return true/false on success/failure
+* @deprecated since YARP 2.3.65
 */
 bool ControlBoardWrapper::setPositionMode() {
     bool ret=true;
@@ -1451,6 +1455,8 @@ bool ControlBoardWrapper::setOpenLoopMode() {
     }
     return ret;
 }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
 /**
 * Set new reference point for a single axis.
@@ -2569,6 +2575,9 @@ bool ControlBoardWrapper::velocityMove(const double *v)
     return ret;
 }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 bool ControlBoardWrapper::setVelocityMode()
 {
     bool ret=true;
@@ -2598,6 +2607,8 @@ bool ControlBoardWrapper::setVelocityMode()
     }
     return ret;
 }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
 /* IEncoders */
 
@@ -3804,6 +3815,9 @@ bool ControlBoardWrapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
     return false;
 }
 
+#ifndef YARP_NO_DEPRECATED // since 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 bool ControlBoardWrapper::setTorqueMode()
 {
     bool ret=true;
@@ -3831,6 +3845,8 @@ bool ControlBoardWrapper::setTorqueMode()
     }
     return ret;
 }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
 bool ControlBoardWrapper::getRefTorques(double *refs)
 {
@@ -4924,6 +4940,9 @@ bool ControlBoardWrapper::setPosition(int j, double ref)
     return false;
 }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 bool ControlBoardWrapper::setPositionDirectMode()
 {
     bool ret=true;
@@ -4944,6 +4963,8 @@ bool ControlBoardWrapper::setPositionDirectMode()
     }
     return ret;
 }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
 bool ControlBoardWrapper::setPositions(const int n_joints, const int *joints, double *dpos)
 {
