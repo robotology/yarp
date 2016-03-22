@@ -45,10 +45,15 @@ if(CREATE_YARPDATAPLAYER AND YARP_HAS_GTK2)
   endif()
   set(yarpdataplayer_gtk_THRIFT_FILES dataSetPlayer.thrift)
 
-  check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-  if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+  if(MSVC)
     set_source_files_properties(${yarpdataplayer_gtk_SRCS}
-                                PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+                                PROPERTIES COMPILE_FLAGS "/wd4996")
+  else()
+    check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+    if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+      set_source_files_properties(${yarpdataplayer_gtk_SRCS}
+                                  PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+    endif()
   endif()
 
   include(YarpIDL)
