@@ -19,6 +19,12 @@ namespace yarp{
 }
 
 
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+// A class implementing setPositionMode() causes a warning on MSVC
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif && !defined(YARP_NO_DEPRECATED)
+
 /**
  * Default implementation of the IPositionControl2 interface. This class can
  * be used to easily provide an implementation of IPositionControl2.
@@ -69,9 +75,6 @@ public:
      */
     virtual bool getAxes(int *axis);
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionMode();
-#endif // YARP_NO_DEPRECATED
     virtual bool positionMove(int j, double ref);
     virtual bool positionMove(const int n_joint, const int *joints, const double *refs);
     virtual bool positionMove(const double *refs);
@@ -99,8 +102,15 @@ public:
     virtual bool getTargetPosition(const int joint, double *ref);
     virtual bool getTargetPositions(double *refs);
     virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs);
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionMode();
+#endif // YARP_NO_DEPRECATED
 };
 
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+YARP_WARNING_POP
+#endif
 
 /**
  * Stub implementation of IPositionControl2Raw interface.
@@ -130,11 +140,6 @@ public:
 
     virtual bool getAxes(int *ax)
     {return NOT_YET_IMPLEMENTED("getAxes");}
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionModeRaw()
-    {return NOT_YET_IMPLEMENTED("setPositionModeRaw");}
-#endif // YARP_NO_DEPRECATED
 
     virtual bool positionMoveRaw(int j, double ref)
     {return NOT_YET_IMPLEMENTED("positionMoveRaw");}

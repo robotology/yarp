@@ -244,6 +244,12 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+// A class implementing setXxxxxMode() causes a warning on MSVC
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif && !defined(YARP_NO_DEPRECATED)
+
 /**
 * @ingroup dev_impl_wrapper
 *
@@ -2333,21 +2339,6 @@ public:
         return get1V1I(VOCAB_AXES, *ax);
     }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    /**
-     * Set position mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * return true/false on success/failure
-     */
-    YARP_DEPRECATED virtual bool setPositionMode() {
-        return set1V(VOCAB_POSITION_MODE);
-    }
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
     /**
      * Set new reference point for a single axis.
      * @param j joint number
@@ -2675,19 +2666,6 @@ YARP_WARNING_POP
         return true;
     }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    /**
-     * Set the controller to velocity mode.
-     * @return true/false on success/failure.
-     */
-    YARP_DEPRECATED virtual bool setVelocityMode() {
-        return set1V(VOCAB_VELOCITY_MODE);
-    }
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
-
     /* IAmplifierControl */
 
     /**
@@ -2960,14 +2938,6 @@ YARP_WARNING_POP
 
     bool virtual done(int j)
     { return send1V1I(VOCAB_CALIBRATE_DONE, j); }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    YARP_DEPRECATED bool setTorqueMode()
-    { return set1V(VOCAB_TORQUE_MODE); }
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
 
     bool getRefTorque(int j, double *t)
     { return get2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, t); }
@@ -3369,12 +3339,6 @@ YARP_WARNING_POP
 //        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_VEL, j);
     }
 
-    bool setOpenLoopMode()
-    {
-//        return setControlModes(VOCAB_OPENLOOP_MODE);
-        return set1V(VOCAB_OPENLOOP_MODE);
-    }
-
     bool setOpenLoopMode(int j)
     {
         return setControlMode(j,VOCAB_CM_OPENLOOP);
@@ -3566,11 +3530,6 @@ YARP_WARNING_POP
     //
     // IPositionDirect Interface
     //
-    bool setPositionDirectMode()
-    {
-        return set1V(VOCAB_POSITION_DIRECT);
-    }
-
     bool setPosition(int j, double ref)
     {
         if (!isLive()) return false;
@@ -4311,7 +4270,21 @@ YARP_WARNING_POP
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionMode() { return set1V(VOCAB_POSITION_MODE); }
+    YARP_DEPRECATED virtual bool setVelocityMode() { return set1V(VOCAB_VELOCITY_MODE); }
+    YARP_DEPRECATED virtual bool setTorqueMode() { return set1V(VOCAB_TORQUE_MODE); }
+    YARP_DEPRECATED virtual bool setOpenLoopMode() { return set1V(VOCAB_OPENLOOP_MODE); }
+    YARP_DEPRECATED virtual bool setPositionDirectMode() { return set1V(VOCAB_POSITION_DIRECT); }
+#endif // YARP_NO_DEPRECATED
+
 };
+
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+YARP_WARNING_POP
+#endif
+
 
 // implementation of CommandsHelper
 

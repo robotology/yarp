@@ -25,6 +25,12 @@ namespace yarp {
     }
 }
 
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+// A class implementing setPositionMode() or setVelocityMode() causes a warning on MSVC
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif && !defined(YARP_NO_DEPRECATED)
+
 /**
  * @ingroup dev_impl_motor
  *
@@ -84,15 +90,6 @@ public:
         return true;
     }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    YARP_DEPRECATED virtual bool setPositionMode() {
-        posMode = true;
-        return true;
-    }
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
 
     virtual bool positionMove(int j, double ref) {
         posMode = true;
@@ -309,16 +306,6 @@ YARP_WARNING_POP
         return true;
     }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    YARP_DEPRECATED virtual bool setVelocityMode() {
-        posMode = false;
-        return false;
-    }
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
-
     virtual bool velocityMove(int j, double sp) {
         posMode = false;
         if (j<njoints) {
@@ -334,8 +321,23 @@ YARP_WARNING_POP
         }
         return true;
     }
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionMode() {
+        posMode = true;
+        return true;
+    }
+
+    YARP_DEPRECATED virtual bool setVelocityMode() {
+        posMode = false;
+        return false;
+    }
+#endif // YARP_NO_DEPRECATED
 };
 
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+YARP_WARNING_POP
+#endif
 
 /**
  * @ingroup dev_runtime

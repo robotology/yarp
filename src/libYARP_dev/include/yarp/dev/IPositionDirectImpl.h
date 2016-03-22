@@ -19,6 +19,13 @@ namespace yarp{
 }
 
 
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+// A class implementing setPositionDirectMode() causes a warning on MSVC
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif && !defined(YARP_NO_DEPRECATED)
+
+
 /**
  * Default implementation of the IPositionDirect interface. This class can
  * be used to easily provide an implementation of IPositionDirect.
@@ -62,17 +69,21 @@ public:
     virtual ~ImplementPositionDirect();
 
     virtual bool getAxes(int *axes);
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionDirectMode();
-#endif // YARP_NO_DEPRECATED
     virtual bool setPosition(int j, double ref);
     virtual bool setPositions(const int n_joint, const int *joints, double *refs);
     virtual bool setPositions(const double *refs);
     virtual bool getRefPosition(const int joint, double *ref);
     virtual bool getRefPositions(double *refs);
     virtual bool getRefPositions(const int n_joint, const int *joints, double *refs);
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionDirectMode();
+#endif // YARP_NO_DEPRECATED
 };
 
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+YARP_WARNING_POP
+#endif
 
 
 /**
@@ -103,11 +114,6 @@ public:
 
     virtual bool getAxes(int *axis)
     {return NOT_YET_IMPLEMENTED("getAxes");}
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionDirectMode()
-    {return NOT_YET_IMPLEMENTED("setPositionDirectMode");}
-#endif // YARP_NO_DEPRECATED
 
     virtual bool setPosition(int j, double ref)
     {return NOT_YET_IMPLEMENTED("setPosition");}

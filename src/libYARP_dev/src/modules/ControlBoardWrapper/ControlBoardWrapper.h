@@ -149,6 +149,15 @@ public:
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
+
+
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+// A class implementing setXxxxxMode() causes a warning on MSVC
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif && !defined(YARP_NO_DEPRECATED)
+
+
 /**
  *  @ingroup dev_impl_wrapper
  *
@@ -529,19 +538,6 @@ public:
     */
     virtual bool getAxes(int *ax);
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    /**
-    * Set position mode. This command
-    * is required by control boards implementing different
-    * control methods (e.g. velocity/torque), in some cases
-    * it can be left empty.
-    * @return true/false on success/failure
-    * @deprecated since YARP 2.3.65
-    */
-    YARP_DEPRECATED virtual bool setPositionMode();
-    YARP_DEPRECATED virtual bool setOpenLoopMode();
-#endif // YARP_NO_DEPRECATED
-
     /**
     * Set new reference point for a single axis.
     * @param j joint number
@@ -768,14 +764,6 @@ public:
     */
     virtual bool velocityMove(const double *v);
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    /**
-    * Set the controller to velocity mode.
-    * @return true/false on success/failure.
-    * @deprecated since YARP 2.3.65
-    */
-    YARP_DEPRECATED virtual bool setVelocityMode();
-#endif // YARP_NO_DEPRECATED
     /* IEncoders */
 
     /**
@@ -1237,10 +1225,6 @@ public:
 
     virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type);
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setTorqueMode();
-#endif // YARP_NO_DEPRECATED
-
     virtual bool getRefTorques(double *refs);
 
     virtual bool getRefTorque(int j, double *t);
@@ -1341,9 +1325,6 @@ public:
     virtual bool setRefOutputs(const double *outs);
 
     // IPositionDirect
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionDirectMode();
-#endif // YARP_NO_DEPRECATED
 
     virtual bool setPosition(int j, double ref);
 
@@ -1430,6 +1411,19 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getRefOutputs(double *outs);
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionMode();
+    YARP_DEPRECATED virtual bool setOpenLoopMode();
+    YARP_DEPRECATED virtual bool setVelocityMode();
+    YARP_DEPRECATED virtual bool setTorqueMode();
+    YARP_DEPRECATED virtual bool setPositionDirectMode();
+#endif // YARP_NO_DEPRECATED
 };
+
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+YARP_WARNING_POP
+#endif
+
 
 #endif

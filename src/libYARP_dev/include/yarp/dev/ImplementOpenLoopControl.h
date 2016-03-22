@@ -10,12 +10,20 @@
 
 #include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/api.h>
+#include <yarp/conf/system.h>
 
 namespace yarp {
     namespace dev {
         class ImplementOpenLoopControl;
     }
 }
+
+
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+// A class implementing setOpenLoopMode() causes a warning on MSVC
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif && !defined(YARP_NO_DEPRECATED)
 
 class YARP_dev_API yarp::dev::ImplementOpenLoopControl: public IOpenLoopControl
 {
@@ -33,9 +41,15 @@ public:
     bool getRefOutputs(double *v);
     bool getOutput(int j, double *v);
     bool getOutputs(double *v);
+
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    bool setOpenLoopMode();
+    YARP_DEPRECATED bool setOpenLoopMode();
 #endif // YARP_NO_DEPRECATED
+
 };
+
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+YARP_WARNING_POP
+#endif
 
 #endif

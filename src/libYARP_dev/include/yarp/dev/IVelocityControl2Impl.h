@@ -19,6 +19,12 @@ namespace yarp {
     }
 }
 
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+// A class implementing setVelocityMode() causes a warning on MSVC
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif && !defined(YARP_NO_DEPRECATED)
+
 class YARP_dev_API yarp::dev::ImplementVelocityControl2 : public IVelocityControl2
 {
 protected:
@@ -59,9 +65,6 @@ public:
     virtual ~ImplementVelocityControl2();
 
     virtual bool getAxes(int *axes);
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setVelocityMode();
-#endif // YARP_NO_DEPRECATED
     virtual bool velocityMove(int j, double sp);
     virtual bool velocityMove(const double *sp);
     virtual bool setRefAcceleration(int j, double acc);
@@ -84,7 +87,15 @@ public:
     virtual bool setVelPids(const Pid *pids);
     virtual bool getVelPid(int j, Pid *pid);
     virtual bool getVelPids(Pid *pids);
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setVelocityMode();
+#endif // YARP_NO_DEPRECATED
 };
+
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+YARP_WARNING_POP
+#endif
 
 /**
  * Stub implementation of IPositionControl2Raw interface.
@@ -120,11 +131,6 @@ private:
 public:
     virtual bool getAxes(int *axes)
     {return NOT_YET_IMPLEMENTED("getAxesRaw");}
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setVelocityModeRaw()
-    {return NOT_YET_IMPLEMENTED("setVelocityModeRaw");}
-#endif // YARP_NO_DEPRECATED
 
     virtual bool velocityMoveRaw(int j, double sp)
     {return NOT_YET_IMPLEMENTED("velocityMoveRaw");}

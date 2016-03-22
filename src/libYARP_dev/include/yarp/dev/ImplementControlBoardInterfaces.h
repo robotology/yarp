@@ -27,6 +27,12 @@ namespace yarp{
     }
 }
 
+
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+// A class implementing setPositionMode() or setVelocityMode() causes a warning on MSVC
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif && !defined(YARP_NO_DEPRECATED)
 /**
  * Default implementation of the IPositionControl interface. This template class can
  * be used to easily provide an implementation of IPositionControl. It takes two
@@ -84,9 +90,6 @@ public:
      */
     virtual bool getAxes(int *axis);
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionMode();
-#endif // YARP_NO_DEPRECATED
     virtual bool positionMove(int j, double ref);
     virtual bool positionMove(const double *refs);
     virtual bool relativeMove(int j, double delta);
@@ -103,6 +106,10 @@ public:
     virtual bool getRefAccelerations(double *accs);
     virtual bool stop(int j);
     virtual bool stop();
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setPositionMode();
+#endif // YARP_NO_DEPRECATED
 };
 
 /**
@@ -152,10 +159,6 @@ public:
 
     virtual bool getAxes(int *axes);
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setVelocityMode();
-#endif // YARP_NO_DEPRECATED
-
     virtual bool velocityMove(int j, double v);
     virtual bool velocityMove(const double *v);
     virtual bool setRefAcceleration(int j, double acc);
@@ -164,7 +167,15 @@ public:
     virtual bool getRefAccelerations(double *accs);
     virtual bool stop(int j);
     virtual bool stop();
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+    YARP_DEPRECATED virtual bool setVelocityMode();
+#endif // YARP_NO_DEPRECATED
 };
+
+#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.65
+YARP_WARNING_POP
+#endif
 
 template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementPidControl : public IMPLEMENT
@@ -860,11 +871,6 @@ public:
 
     virtual bool getAxes(int *ax)
     {return NOT_YET_IMPLEMENTED("getAxes");}
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-    YARP_DEPRECATED virtual bool setPositionModeRaw()
-    {return NOT_YET_IMPLEMENTED("setPositionModeRaw");}
-#endif // YARP_NO_DEPRECATED
 
     virtual bool positionMoveRaw(int j, double ref)
     {return NOT_YET_IMPLEMENTED("positionMoveRaw");}
