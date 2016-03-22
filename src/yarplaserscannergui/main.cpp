@@ -58,15 +58,15 @@ Windows, Linux
 \author Marco Randazzo
 */ 
 
-#include<iostream>
-#include<iomanip>
-#include<sstream>
-#include<fstream>
-#include<string>
-#include<stdio.h>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <stdio.h>
 
 #define _USE_MATH_DEFINES
-#include<math.h>
+#include <cmath>
 
 #include<cv.h>
 #include<highgui.h>
