@@ -29,7 +29,7 @@ namespace yarp {
 // A class implementing setPositionMode() or setVelocityMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-#endif && !defined(YARP_NO_DEPRECATED)
+#endif
 
 /**
  * @ingroup dev_impl_motor

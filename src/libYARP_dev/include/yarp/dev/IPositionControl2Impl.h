@@ -23,7 +23,7 @@ namespace yarp{
 // A class implementing setPositionMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-#endif && !defined(YARP_NO_DEPRECATED)
+#endif
 
 /**
  * Default implementation of the IPositionControl2 interface. This class can

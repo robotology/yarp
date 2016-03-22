@@ -155,7 +155,7 @@ public:
 // A class implementing setXxxxxMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-#endif && !defined(YARP_NO_DEPRECATED)
+#endif
 
 
 /**

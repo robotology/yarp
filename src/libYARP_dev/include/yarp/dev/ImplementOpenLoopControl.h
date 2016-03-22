@@ -23,7 +23,7 @@ namespace yarp {
 // A class implementing setOpenLoopMode() causes a warning on MSVC
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-#endif && !defined(YARP_NO_DEPRECATED)
+#endif
 
 class YARP_dev_API yarp::dev::ImplementOpenLoopControl: public IOpenLoopControl
 {
