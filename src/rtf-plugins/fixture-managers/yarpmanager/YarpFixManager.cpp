@@ -62,11 +62,12 @@ bool YarpFixManager::setup(int argc, char** argv) {
         enableRestrictedMode();
 
         // load the fixture (application xml)
-        char szAppName[] = "fixture";
-        ret = addApplication(appfile.c_str(), szAppName);
+        char szAppName[255];
+        ret = addApplication(appfile.c_str(), szAppName, 254);
         RTF_ASSERT_ERROR_IF(ret,
                             "yarpmanager (addApplication) cannot setup the fixture because " +
                             std::string(getLogger()->getFormatedErrorString()));
+
         ret = loadApplication(szAppName);
         RTF_ASSERT_ERROR_IF(ret,
                             "yarpmanager (loadApplication) cannot setup the fixture because " +
