@@ -706,16 +706,16 @@ public:
 
     /*!
      * Block the eyes to look always straight ahead
-	 *   (the tilt can vary) with a specified vergence
-	 *   angle. [wait for reply]
+     *   (the tilt can vary) with a specified vergence
+     *   angle. [wait for reply]
      * \param ver the vergence angle (in degrees).
      * \return true/false on success/failure.
      */
     virtual bool blockEyes(const double ver) = 0;
 
     /*! Block the eyes to look always straight ahead
-	 *   (the tilt can vary) with the current vergence
-	 *   angle. [wait for reply]
+     *   (the tilt can vary) with the current vergence
+     *   angle. [wait for reply]
      * \return true/false on success/failure.
      */
     virtual bool blockEyes() = 0;
