@@ -1,0 +1,26 @@
+/*
+ * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+
+/**
+ * @page changelog YARP ChangeLog
+
+This page lists the main changes introduced in YARP at each release. 
+
+\tableofcontents
+
+\section sec-2-3-4 YARP next release (2.3.4)
+
+- The following YARP methods have been deprecated:
+  - iPositionControl::setPositionMode()
+  - iVelocityControl::setVelocityMode()
+  - iTorqueControl::setTorqueMode()
+  - iOpenLoopControl::setOpenLoopMode()
+- added yarpRobotInterface executable (moved from icub-main where it was called robotinterface)
+
+
+ *
+ */
