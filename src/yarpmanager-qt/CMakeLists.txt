@@ -43,6 +43,9 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
                           aboutdlg.h
                           genericinfodlg.h)
   set(yarpmanager_qt_QRC_FILES res.qrc)
+  if(WIN32)
+    set(yarpmanager_qt_RC_FILES yarpmanager.rc)
+  endif()
   set(yarpmanager_qt_UI_FILES moduleviewwidget.ui
                               stdoutwindow.ui
                               yscopewindow.ui
@@ -57,7 +60,8 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
 
   source_group("Source Files" FILES ${yarpmanager_qt_SRCS})
   source_group("Header Files" FILES ${yarpmanager_qt_HDRS})
-  source_group("Resources Files" FILES ${yarpmanager_qt_QRC_FILES})
+  source_group("Resources Files" FILES ${yarpmanager_qt_QRC_FILES}
+                                       ${yarpmanager_qt_RC_FILES})
   source_group("UI Files" FILES ${yarpmanager_qt_UI_FILES})
   source_group("Generated Files" FILES ${yarpmanager_qt_QRC_GEN_SRCS}
                                       ${yarpmanager_qt_UI_GEN_SRCS})
@@ -66,6 +70,7 @@ if(CREATE_YARPMANAGER AND YARP_HAS_QT5)
                                       ${yarpmanager_qt_HDRS}
                                       ${yarpmanager_qt_QRC_FILES}
                                       ${yarpmanager_qt_QRC_GEN_SRCS}
+                                      ${yarpmanager_qt_RC_FILES}
                                       ${yarpmanager_qt_UI_GEN_SRCS}
                                       ${yarpmanager_qt_UI_FILES})
 
