@@ -417,6 +417,9 @@ bool YarpBroker::connect(const char* from, const char* to,
             return false;
         }
 
+        if(NetworkBase::isConnected(from, to, style))
+            return true;
+
         NetworkBase::connect(from, to, style);
         if(!connected(from, to))
         {
