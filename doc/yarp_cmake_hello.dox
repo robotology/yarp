@@ -13,7 +13,8 @@ And here's a simple test program, call it "hello.cpp"
 
 \include example/cmake/hello/hello.cpp
 
-Now run CMake (see \ref using_cmake), and compile!
+Now make a "build" directory inside the "hello" folder, then from the build directory 
+run CMake (see \ref using_cmake), and compile!
 This example is available in the example/cmake/hello directory
 of the YARP source code.  See example/cmake/with_opencv for an
 example of compiling YARP with OpenCV.

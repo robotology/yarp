@@ -34,7 +34,7 @@ using namespace yarp::sig::draw;
  */
 
 
-class ImageProcessModule : public Module {
+class ImageProcessModule : public RFModule {
 private:
     // Make a port for reading and writing images
     BufferedPort<ImageOf<PixelRgb> > port;
@@ -76,9 +76,14 @@ public:
 int main(int argc, char *argv[]) {
     // Initialize the yarp network
     Network yarp;
+    
+    /* prepare and configure the resource finder */
+    ResourceFinder rf;
+    rf.configure(argc, argv);
+    rf.setVerbose(true);
 
     // Create and run our module
     ImageProcessModule module;
     module.setName("/worker");
-    return module.runModule(argc,argv);
+    return module.runModule(rf);
 }
