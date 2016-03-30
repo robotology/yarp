@@ -114,6 +114,13 @@ before_script:
   - cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ..
   - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --directory . --zerocounters; fi
   - cd ..
+  # build also the os examples 
+  - cd ./example/os
+  - mkdir build
+  - cd build
+  - cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ..
+  - cmake --build . --config ${TRAVIS_BUILD_TYPE}
+  - cd ../..
 
 script:
   - cd build
