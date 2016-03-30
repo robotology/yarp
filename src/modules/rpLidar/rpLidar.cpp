@@ -10,6 +10,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
+#include <yarp/os/ResourceFinder.h>
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
@@ -87,6 +88,10 @@ bool RpLidar::open(yarp::os::Searchable& config)
     yarp::os::ConstString serial_filename = general_config.find("Serial_Configuration").asString();
 
     Property prop;
+    ResourceFinder rf;
+    rf.setVerbose();
+    yarp::os::ConstString serial_completefilename = rf.findFileByName(serial_filename.c_str());
+
     prop.put("device", "serialport");
     ok = prop.fromConfigFile(serial_filename.c_str(), config, false);
     if (!ok)
