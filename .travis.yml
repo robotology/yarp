@@ -115,6 +115,7 @@ before_script:
   - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --directory . --zerocounters; fi
   - cd ..
   # build also the os examples 
+  - export YARP_DIR=/home/robotology/yarp/build
   - cd ./example/os
   - mkdir build
   - cd build
