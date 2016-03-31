@@ -46,14 +46,23 @@ bool RpLidar::open(yarp::os::Searchable& config)
     yDebug("%s\n", config.toString().c_str());
 #endif
 
+    min_distance = 0.1; //m
+    max_distance = 2.5;  //m
+
     bool br = config.check("GENERAL");
     if (br != false)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
         clip_max_enable = general_config.check("clip_max");
         clip_min_enable = general_config.check("clip_min");
-        max_distance = general_config.find("clip_max").asDouble();
-        min_distance = general_config.find("clip_min").asDouble();
+        if (clip_max_enable) { max_distance = general_config.find("clip_max").asDouble(); }
+        if (clip_min_enable) { min_distance = general_config.find("clip_min").asDouble(); }
+        if (general_config.check("max_angle") == false) { yError() << "Missing max_angle param"; return false; }
+        if (general_config.check("min_angle") == false) { yError() << "Missing min_angle param"; return false; }
+        if (general_config.check("resolution") == false) { yError() << "Missing resolution param"; return false; }
+        max_angle = general_config.find("max_angle").asDouble();
+        min_angle = general_config.find("min_angle").asDouble();
+        resolution = general_config.find("resolution").asDouble();
         do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
     }
     else
@@ -62,11 +71,40 @@ bool RpLidar::open(yarp::os::Searchable& config)
         return false;
     }
 
-    min_distance = 0.1; //m
-    max_distance = 2.5;  //m
-    min_angle = 0;      //degrees
-    max_angle = 359;    //degrees
-    resolution = 1.0;   //degrees
+    bool bs = config.check("SKIP");
+    if (bs != false)
+    {
+        yarp::os::Searchable& skip_config = config.findGroup("SKIP");
+        Bottle mins = skip_config.findGroup("min");
+        Bottle maxs = skip_config.findGroup("max");
+        size_t s_mins = mins.size();
+        size_t s_maxs = mins.size();
+        if (s_mins == s_maxs && s_maxs > 1 )
+        {
+            for (size_t s = 1; s < s_maxs; s++)
+            {
+                Range_t range;
+                range.max = maxs.get(s).asDouble();
+                range.min = mins.get(s).asDouble();
+                if (range.max >= 0 && range.max <= 360 &&
+                    range.min >= 0 && range.min <= 360 &&
+                    range.max > range.min)
+                {
+                    range_skip_vector.push_back(range);
+                }
+                else
+                {
+                    yError() << "Invalid range in SKIP section";
+                    return false;
+                }
+            }
+        }
+
+    }
+
+    if (min_angle < 0 || min_angle > 360 ) { yError() << "min_angle should be >= 0, <= 360"; return false; }
+    if (max_angle < 0 || max_angle > 360 ) { yError() << "max_angle should be >= 0, <= 360"; return false; }
+    if (max_angle <= min_angle)            { yError() << "max_angle should be > min_angle";  return false; }
 
     sensorsNum = (int)((max_angle-min_angle)/resolution);
     laser_data.resize(sensorsNum,0.0);
@@ -90,10 +128,10 @@ bool RpLidar::open(yarp::os::Searchable& config)
     Property prop;
     ResourceFinder rf;
     rf.setVerbose();
-    yarp::os::ConstString serial_completefilename = rf.findFileByName(serial_filename.c_str());
+    yarp::os::ConstString serial_completefilename= rf.findFileByName(serial_filename.c_str());
 
     prop.put("device", "serialport");
-    ok = prop.fromConfigFile(serial_filename.c_str(), config, false);
+    ok = prop.fromConfigFile(serial_completefilename.c_str(), config, false);
     if (!ok)
     {
         yError("Unable to read from serial port configuration file");
@@ -152,6 +190,7 @@ bool RpLidar::close()
     RateThread::stop();
 
     driver.close();
+    yInfo() << "rpLidar closed";
     return true;
 }
 
@@ -587,6 +626,14 @@ void RpLidar::run()
             }
         }
         
+        for (size_t i = 0; i < range_skip_vector.size(); i++)
+        {
+            if (angle>range_skip_vector[i].min && angle < range_skip_vector[i].max)
+            {
+                distance = INFINITY;
+            }
+        }
+
         /*--------------------------------------------------------------*/
         /* {
              yError() << "Wrong scan size: " << r;

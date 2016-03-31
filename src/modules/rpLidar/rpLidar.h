@@ -17,6 +17,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/SerialInterfaces.h>
+#include <vector>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -150,6 +151,13 @@ public:
 };
 
 //---------------------------------------------------------------------------------------------------------------
+struct Range_t
+{
+    double min;
+    double max;
+};
+
+//---------------------------------------------------------------------------------------------------------------
 
 class RpLidar : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
@@ -170,6 +178,7 @@ protected:
     bool clip_max_enable;
     bool clip_min_enable;
     bool do_not_clip_infinity_enable;
+    std::vector <Range_t> range_skip_vector;
 
     std::string info;
     Device_status device_status;
