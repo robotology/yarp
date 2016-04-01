@@ -19,7 +19,7 @@
 /** 
 \defgroup laserScannerGui laserScannerGui
  
-A simple GUI to display the distance mesaurements of iKart's laser scanner.
+A simple GUI to display the distance measurements of a 2D laser scanner.
  
 Copyright (C) 2010 RobotCub Consortium
  
@@ -28,7 +28,7 @@ Author: Marco Randazzo
 CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 \section intro_sec Description
-A simple GUI to display the distance mesaurements of iKart's laser scanner.
+A simple GUI to display the distance measurements of a 2D laser scanner.
  
 \section lib_sec Libraries 
 - YARP libraries. 
@@ -322,7 +322,7 @@ int main(int argc, char *argv[])
     bool compass = finder->check("compass", Value(true), "compass [0/1]").asBool();
     int period = finder->check("rate",Value(50),"period [ms]").asInt(); //ms
     int aspect = finder->check("aspect", Value(0), "0 draw lines, 1 draw points").asInt(); //ms
-    string laserport = finder->check("sens_port", Value("/ikart/laser:o"), "laser port name").asString();
+    string laserport = finder->check("sens_port", Value("/laser:o"), "laser port name").asString();
 
     string laser_map_port_name;
     laser_map_port_name = "/laserScannerGui/laser_map:i";
