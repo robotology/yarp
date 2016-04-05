@@ -1565,11 +1565,17 @@ int Companion::cmdResource(int argc, char *argv[]) {
         printf("Looks for, and prints the complete path to, resource files.\n");
         printf("Example usage:\n");
         printf("   yarp resource --context context-name --from file-name\n");
+        printf("   yarp resource --context context-name --find file-name\n");
         printf("To show what a config file loads as, specify --show\n");
         return 0;
     }
-    ResourceFinder rf;
+    ResourceFinder rf; 
     rf.setVerbose();
+    Property p;
+    p.fromCommand(argc,argv,false);
+    if (p.check("find")) {
+        rf.setDefaultConfigFile(p.find("find").asString().c_str());
+    }
     bool ok = rf.configure(argc,argv,false);
     if (ok && rf.check("show")) {
         printf(">>> %s\n", rf.toString().c_str());
