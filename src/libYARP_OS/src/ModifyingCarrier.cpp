@@ -44,3 +44,7 @@ void yarp::os::ModifyingCarrier::setCarrierParams(const yarp::os::Property &para
 
 void yarp::os::ModifyingCarrier::getCarrierParams(yarp::os::Property &params) {
 }
+
+bool yarp::os::ModifyingCarrier::configureFromProperty(yarp::os::Property& prop) {
+    return false;
+}

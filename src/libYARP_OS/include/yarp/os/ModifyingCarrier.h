@@ -35,7 +35,7 @@ public:
     virtual bool modifiesReply();
     virtual void setCarrierParams(const yarp::os::Property& params);
     virtual void getCarrierParams(yarp::os::Property& params);
-
+    virtual bool configureFromProperty(yarp::os::Property& prop);
     // only remains to implement modifyIncomingData()
 };
 

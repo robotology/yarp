@@ -461,6 +461,10 @@ public:
         return true;
     }
 
+    virtual bool configureFromProperty(yarp::os::Property& options) {
+        return true;
+    }
+
     /**
      * Configure carrier from port administrative commands.
      *

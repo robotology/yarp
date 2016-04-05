@@ -254,6 +254,8 @@ void PortCore::close() {
         delete prop;
         prop = NULL;
     }
+    modifier.releaseOutModifier();
+    modifier.releaseInModifier();
 }
 
 
@@ -1237,6 +1239,18 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 
 bool PortCore::send(PortWriter& writer, PortReader *reader,
                     PortWriter *callback) {
+    // check if there is any modifier
+    // we need to protect this part while the modifier
+    // plugin is loading or unloading!
+    modifier.outputMutex.lock();
+    if(modifier.outputModifier) {
+        if(!modifier.outputModifier->acceptOutgoingData(writer)) {
+            modifier.outputMutex.unlock();
+            return false;
+        }
+        modifier.outputModifier->modifyOutgoingData(writer);
+    }
+    modifier.outputMutex.unlock();
     if (!logNeeded) {
         return sendHelper(writer,PORTCORE_SEND_NORMAL,reader,callback);
     }
@@ -1550,6 +1564,12 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString("[prop] [set] $portname  # set Qos properies of a connection to/from a port");
         result.addString("[prop] [get] $cur_port  # get information about current process (e.g., scheduling priority, pid)");
         result.addString("[prop] [set] $cur_port  # set properties of the current process (e.g., scheduling priority, pid)");
+        result.addString("[atch] [out] $prop      # attach a portmonitor plug-in to the port's output");
+        result.addString("[atch] [in]  $prop      # attach a portmonitor plug-in to the port's input");
+        result.addString("[dtch] [out]            # detach portmonitor plug-in from the port's output");
+        result.addString("[dtch] [in]             # detach portmonitor plug-in from the port's input");
+        //result.addString("[atch] $portname $prop  # attach a portmonitor plug-in to the connection to/from $portname");
+        //result.addString("[dtch] $portname        # detach any portmonitor plug-in from the connection to/from $portname");
         break;
     case VOCAB3('v','e','r'):
         // Gives a version number for the administrative commands.
@@ -1572,6 +1592,70 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             int v = (r[0]=='A')?0:-1;
             result.addInt(v);
             result.addString(r.c_str());
+        }
+        break;
+    case VOCAB4('a','t','c', 'h'):
+        {
+            switch (cmd.get(1).asVocab()) {
+            case VOCAB3('o','u', 't'): {
+                String propString = cmd.get(2).asString().c_str();
+                Property prop(propString.c_str());
+                String errMsg;
+                if(!attachPortMonitor(prop, true, errMsg)) {
+                    result.clear();
+                    result.addVocab(Vocab::encode("fail"));
+                    result.addString(errMsg.c_str());
+                }
+                else {
+                    result.clear();
+                    result.addVocab(Vocab::encode("ok"));
+                }
+            }
+            break;
+            case VOCAB2('i','n'): {
+                String propString = cmd.get(2).asString().c_str();
+                Property prop(propString.c_str());
+                String errMsg;
+                if(!attachPortMonitor(prop, false, errMsg)) {
+                    result.clear();
+                    result.addVocab(Vocab::encode("fail"));
+                    result.addString(errMsg.c_str());
+                }
+                else {
+                    result.clear();
+                    result.addVocab(Vocab::encode("ok"));
+                }                
+            }
+            break;
+            default:
+                result.clear();
+                result.addVocab(Vocab::encode("fail"));
+                result.addString("attach command must be followd by [out] or [in]");
+            };
+        }
+        break;
+    case VOCAB4('d','t','c', 'h'):
+        {
+            switch (cmd.get(1).asVocab()) {
+            case VOCAB3('o','u', 't'): {                
+                if(dettachPortMonitor(true))
+                    result.addVocab(Vocab::encode("ok"));
+                else
+                    result.addVocab(Vocab::encode("fail"));
+            }
+            break;
+            case VOCAB2('i','n'): {
+                if(dettachPortMonitor(false))
+                    result.addVocab(Vocab::encode("ok"));
+                else
+                    result.addVocab(Vocab::encode("fail"));
+            }
+            break;
+            default:
+                result.clear();
+                result.addVocab(Vocab::encode("fail"));
+                result.addString("dettach command must be followd by [out] or [in]");
+            };
         }
         break;
     case VOCAB3('d','e','l'):
@@ -2259,6 +2343,67 @@ int PortCore::getTypeOfService(PortCoreUnit *unit) {
             return ip->getOutput().getOutputStream().getTypeOfService();
     }
     return -1;
+}
+
+// attach a portmonitor plugin to the port or to a specific connection
+bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, String &errMsg) {
+    // attach to the current port
+    Carrier *portmonitor = Carriers::chooseCarrier("portmonitor");
+    if(!portmonitor) {
+        errMsg = "Portmonitor carrier modifier cannot be find or it is not enabled in Yarp!";
+        return false;
+    }
+
+    if(isOutput) {
+        dettachPortMonitor(true);
+        prop.put("source", getName());
+        prop.put("destination", "");
+        prop.put("sender_side", 1);
+        prop.put("receiver_side", 0);
+        prop.put("carrier", "");
+        modifier.outputMutex.lock();
+        modifier.outputModifier = portmonitor;
+        if(!modifier.outputModifier->configureFromProperty(prop)) {
+            modifier.releaseOutModifier();
+            errMsg = "Failed to configure the portmonitor plug-in";
+            modifier.outputMutex.unlock();
+            return false;
+        }
+        modifier.outputMutex.unlock();
+    }
+    else {
+        dettachPortMonitor(false);
+        prop.put("source", "");
+        prop.put("destination", getName());
+        prop.put("sender_side", 0);
+        prop.put("receiver_side", 1);
+        prop.put("carrier", "");
+        modifier.inputMutex.lock();
+        modifier.inputModifier = portmonitor;
+        if(!modifier.inputModifier->configureFromProperty(prop)) {
+            modifier.releaseInModifier();
+            errMsg = "Failed to configure the portmonitor plug-in";
+            modifier.inputMutex.unlock();
+            return false;
+        }
+        modifier.inputMutex.unlock();
+    }
+    return true;
+}
+
+// detach the portmonitor from the port or specific connection
+bool PortCore::dettachPortMonitor(bool isOutput) {
+    if(isOutput) {
+        modifier.outputMutex.lock();
+        modifier.releaseOutModifier();
+        modifier.outputMutex.unlock();
+    }
+    else {
+        modifier.inputMutex.lock();
+        modifier.releaseInModifier();
+        modifier.inputMutex.unlock();
+    }
+    return true;
 }
 
 void PortCore::reportUnit(PortCoreUnit *unit, bool active) {

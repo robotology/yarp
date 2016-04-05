@@ -1306,6 +1306,9 @@ public:
     virtual bool configure(ConnectionState& proto) {
         return getContent().configure(proto);
     }
+    virtual bool configureFromProperty(yarp::os::Property& options) {
+        return getContent().configureFromProperty(options);
+    }
 };
 
 
