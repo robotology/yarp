@@ -6,13 +6,15 @@
  */
 
 #include <iostream>
+#include <sstream>
 #include <string.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
+#include <yarp/dev/Drivers.h>
 
-#include <fakeMotionControl.h>
+#include "fakeMotionControl.h"
 
 using namespace std;
 using namespace yarp::dev;
@@ -46,6 +48,24 @@ static inline bool DEPRECATED(const char *txt)
 }
 
 
+// replace with to_string as soon as C++11 is required by YARP
+/**
+ * @brief convert an arbitary type to string.
+ *
+ */
+template<typename T>
+std::string toString(const T& value)
+{
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
+}
+
+yarp::dev::DriverCreator *createFakeMotionControl()
+{
+    return new yarp::dev::DriverCreatorOf<yarp::dev::FakeMotionControl>
+            ("fakeMotionControl", "controlboardwrapper2", "yarp::dev::FakeMotionControl");
+}
 
 //generic function that check is key1 is present in input bottle and that the result has size elements
 // return true/false
@@ -53,15 +73,16 @@ bool FakeMotionControl::extractGroup(Bottle &input, Bottle &out, const std::stri
 {
     size++;
     Bottle &tmp=input.findGroup(key1.c_str(), txt.c_str());
+
     if (tmp.isNull())
     {
-        yError () << key1.c_str() << " parameter not found";
+        yWarning () << key1.c_str() << " parameter not found";
         return false;
     }
 
     if(tmp.size()!=size)
     {
-        yError () << key1.c_str() << " incorrect number of entries in board "<< '['  << ']';
+        yWarning () << key1.c_str() << " incorrect number of entries in board "<< '['  << ']';
         return false;
     }
 
@@ -106,7 +127,7 @@ bool FakeMotionControl::alloc(int nj)
 //     _impedance_params=allocAndCheck<ImpedanceParameters>(nj);
 //     _impedance_limits=allocAndCheck<ImpedanceLimits>(nj);
     _axisName = new string[nj];
-    _axisType = new string[nj];
+    _jointType = new JointTypeEnum[nj];
 
     _limitsMax=allocAndCheck<double>(nj);
     _limitsMin=allocAndCheck<double>(nj);
@@ -191,7 +212,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_rotorIndexOffset);
     checkAndDestroy(_motorPoles);
     checkAndDestroy(_axisName);
-    checkAndDestroy(_axisType);
+    checkAndDestroy(_jointType);
     checkAndDestroy(_rotorlimits_max);
     checkAndDestroy(_rotorlimits_min);
 
@@ -282,7 +303,7 @@ FakeMotionControl::FakeMotionControl() :
     _rotorlimits_min  = NULL;
 
     _axisName         = NULL;
-    _axisType         = NULL;
+    _jointType         = NULL;
     _limitsMin        = NULL;
     _limitsMax        = NULL;
 //     _currentLimits    = NULL;
@@ -550,31 +571,64 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     int i;
     Bottle general = config.findGroup("GENERAL");
 
-    // leggere i valori da file
+    // read AxisMap values from file
     if (extractGroup(general, xtmp, "AxisMap", "a list of reordered indices for the axes", _njoints))
     {
         for (i = 1; i < xtmp.size(); i++)
-            _axisMap[i-1] = xtmp.get(i).asInt();
+            _axisMap[i - 1] = xtmp.get(i).asInt();
     }
     else
     {
-        yInfo() << "Using default axisMap";
+        yInfo() << "FakeMotionControl: Using default AxisMap";
         for (i = 0; i < _njoints; i++)
             _axisMap[i] = i;
     }
-/*
-    if (!extractGroup(general, xtmp, "AxisName", "a list of strings representing the axes names", _njoints))
-        return false;
-    //beware: axis name has to be remapped here because they are not set using the toHw() helper function
-    for (i = 1; i < xtmp.size(); i++)
-        _axisName[_axisMap[i - 1]] = xtmp.get(i).asString();
 
-    if (!extractGroup(general, xtmp, "AxisType", "a list of strings representing the axes type (revolute/prismatic)", _njoints))
-        return false;
-    //beware: axis type has to be remapped here because they are not set using the toHw() helper function
-    for (i = 1; i < xtmp.size(); i++)
-        _axisType[_axisMap[i - 1]] = xtmp.get(i).asString();
-*/
+    if (extractGroup(general, xtmp, "AxisName", "a list of strings representing the axes names", _njoints))
+    {
+        //beware: axis name has to be remapped here because they are not set using the toHw() helper function
+        for (i = 1; i < xtmp.size(); i++)
+        {
+            _axisName[_axisMap[i - 1]] = xtmp.get(i).asString();
+        }
+    }
+    else
+    {
+        yInfo() << "FakeMotionControl: Using default AxisName";
+        for (i = 0; i < _njoints; i++)
+        {
+            _axisName[_axisMap[i]] = "joint" + toString(i);
+        }
+    }
+
+    if (extractGroup(general, xtmp, "AxisType", "a list of strings representing the axes type (revolute/prismatic)",
+                      _njoints))
+    {
+        //beware: axis type has to be remapped here because they are not set using the toHw() helper function
+        for (i = 1; i < xtmp.size(); i++)
+        {
+            string typeString = xtmp.get(i).asString();
+            if (typeString  == "revolute")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
+            else if (typeString == "prismatic")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_PRISMATIC;
+            else
+            {
+                yError("Unknown AxisType value %s!", typeString.c_str());
+                _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_UNKNOWN;
+                return false;
+            }
+        }
+    }
+    else
+    {
+        yInfo() << "FakeMotionControl: Using default AxisType (revolute)";
+        for (i = 0; i < _njoints; i++)
+        {
+            _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_REVOLUTE;
+        }
+    }
+
+
+
 
 //     double tmp_A2E;
     // Encoder scales
@@ -2079,12 +2133,29 @@ bool FakeMotionControl::getCurrentPidRaw(int j, Pid *pid)
 
 bool FakeMotionControl::getAxisNameRaw(int axis, yarp::os::ConstString& name)
 {
-    return false;
+    if (axis >= 0 && axis < _njoints)
+    {
+        name = _axisName[axis];
+        return true;
+    }
+    else
+    {
+        name = "ERROR";
+        return false;
+    }
 }
 
 bool FakeMotionControl::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type)
 {
-    return false;
+    if (axis >= 0 && axis < _njoints)
+    {
+        type = _jointType[axis];
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // IControlLimits2
