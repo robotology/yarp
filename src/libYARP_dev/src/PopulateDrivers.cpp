@@ -41,6 +41,7 @@ extern DriverCreator *createRangefinder2DWrapper();
 extern DriverCreator *createRangefinder2DClient();
 extern DriverCreator *createRGBDSensorWrapper();
 extern DriverCreator *createRGBDSensorClient();
+extern DriverCreator *createControlBoardRemapper();
 
 #ifndef YARP_NO_DEPRECATED
 extern DriverCreator *createServerControlBoard();
@@ -92,6 +93,7 @@ void Drivers::init() {
     add(createRangefinder2DWrapper());
     add(createRGBDSensorWrapper());
     add(createRGBDSensorClient());
+    add(createControlBoardRemapper());
 
 #ifndef YARP_NO_DEPRECATED
     add(createClientControlBoard());
