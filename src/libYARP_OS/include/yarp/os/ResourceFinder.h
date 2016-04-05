@@ -119,7 +119,7 @@ public:
      * perfectly valid for it to be
      * absent).
      */
-    bool configure(int argc, char *argv[]);
+    bool configure(int argc, char *argv[], bool skipFirstArgument = true);
 
     bool setDefaultContext(const char *contextName) {
         clearContext();
