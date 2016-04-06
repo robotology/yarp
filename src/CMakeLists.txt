@@ -51,6 +51,7 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarpmotorgui-qt)
     add_subdirectory(yarpbatterygui-qt)
     add_subdirectory(yarplaserscannergui)
+    add_subdirectory(yarpmanager++)
 
     # GTK2 GUIs
     add_subdirectory(yarpbuilder-gtk)
