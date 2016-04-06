@@ -226,7 +226,6 @@ bool V4L_camera::threadInit()
 
 void V4L_camera::run()
 {
-//     yTrace();
     if(full_FrameRead())
         frameCounter++;
     else
@@ -599,7 +598,7 @@ bool V4L_camera::enumerate_controls()
             if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
                 continue;
 
-            printf ("Control %s\n", queryctrl.name);
+            printf ("Control %s (id %d)\n", queryctrl.name, queryctrl.id);
 
             if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
                 enumerate_menu ();
@@ -1138,7 +1137,7 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
         }
         else
         {
-            printf ("Control <%s> is not supported (id %d)\n", queryctrl.name, queryctrl.id);
+            yError("Cannot set control <%s> (id %d) is not supported \n", queryctrl.name, queryctrl.id);
         }
         return false;
     }
@@ -1173,7 +1172,7 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
 
 bool V4L_camera::check_V4L2_control(uint32_t id)
 {
-    yTrace();
+//     yTrace();
     struct v4l2_queryctrl queryctrl;
     struct v4l2_control control;
 
@@ -1189,10 +1188,10 @@ bool V4L_camera::check_V4L2_control(uint32_t id)
         {
             perror ("VIDIOC_QUERYCTRL");
         }
-        else
-        {
-            printf ("Control %s is not supported\n", queryctrl.name);
-        }
+//         else
+//         {
+//             printf ("Control %s (id %d) is not supported\n", queryctrl.name, id);
+//         }
         return false;
     }
     return true;
@@ -1200,7 +1199,6 @@ bool V4L_camera::check_V4L2_control(uint32_t id)
 
 double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
 {
-    yTrace();
     struct v4l2_queryctrl queryctrl;
     struct v4l2_control control;
 
@@ -1216,10 +1214,10 @@ double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
         {
             perror ("VIDIOC_QUERYCTRL");
         }
-        else
-        {
-            printf ("Control %s is not supported\n", queryctrl.name);
-        }
+//         else
+//         {
+//             printf ("Control %s is not supported\n", queryctrl.name);
+//         }
         return -1.0;
     }
 
@@ -1243,65 +1241,55 @@ double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
 }
 
 
-    // GET CONTROLS!!
+// GET CONTROLS!!
 double V4L_camera::getBrightness()
 {
-    yTrace();
     return get_V4L2_control(V4L2_CID_BRIGHTNESS);
 }
 
 double V4L_camera::getExposure()
 {
-    yTrace();
     return get_V4L2_control(V4L2_CID_EXPOSURE);
 }
 
 double V4L_camera::getGain()
 {
-    yTrace();
     return get_V4L2_control(V4L2_CID_GAIN);
 }
 
 double V4L_camera::getGamma()
 {
-    yTrace();
     return get_V4L2_control(V4L2_CID_GAMMA);
 }
 
 double V4L_camera::getHue()
 {
-    yTrace();
     return get_V4L2_control(V4L2_CID_HUE);
 }
 
 double V4L_camera::getIris()
 {
-    yTrace();
     return get_V4L2_control(V4L2_CID_IRIS_ABSOLUTE);
 }
 
 double V4L_camera::getSaturation()
 {
-    yTrace();
     return get_V4L2_control(V4L2_CID_SATURATION);
 }
 
 double V4L_camera::getSharpness()
 {
-    yTrace();
     return get_V4L2_control(V4L2_CID_SHARPNESS);
 }
 
 double V4L_camera::getShutter()
 {
-    yTrace();
     printf("Don't know how to map it :-&\n");
     return false;
 }
 
 bool V4L_camera::getWhiteBalance(double &blue, double &red)
 {
-    yTrace();
     blue = get_V4L2_control(V4L2_CID_RED_BALANCE);
     red  = get_V4L2_control(V4L2_CID_BLUE_BALANCE);
     if( (red == -1) || (blue == -1) )
@@ -1314,63 +1302,53 @@ bool V4L_camera::getWhiteBalance(double &blue, double &red)
     // SET CONTROLS!!
 bool V4L_camera::setBrightness(double v)
 {
-    yTrace();
     return set_V4L2_control(V4L2_CID_BRIGHTNESS, v);
 }
 
 bool V4L_camera::setExposure(double v)
 {
-    yTrace();
     return set_V4L2_control(V4L2_CID_EXPOSURE, v);
 }
 
 bool V4L_camera::setGain(double v)
 {
-    yTrace();
     return set_V4L2_control(V4L2_CID_GAIN, v);
 }
 
 bool V4L_camera::setGamma(double v)
 {
-    yTrace();
     return set_V4L2_control(V4L2_CID_GAMMA, v);
 }
 
 bool V4L_camera::setHue(double v)
 {
-    yTrace();
     return set_V4L2_control(V4L2_CID_HUE, v);
 }
 
 bool V4L_camera::setIris(double v)
 {
-    yTrace();
     return set_V4L2_control(V4L2_CID_IRIS_ABSOLUTE, v);
 }
 
 bool V4L_camera::setSaturation(double v)
 {
-    yTrace();
     return set_V4L2_control(V4L2_CID_SATURATION, v);
 }
 
 bool V4L_camera::setSharpness(double v)
 {
-    yTrace();
     return set_V4L2_control(V4L2_CID_SHARPNESS, v);
 }
 
 bool V4L_camera::setShutter(double v)
 {
-    yTrace();
 //     return set_V4L2_control(V4L2_CID_BRIGHTNESS, v);
-    printf("Don't know how to map it :-&\n");
+    printf("No known function on V4L2 for shutter :-&\n");
     return false;
 }
 
 bool V4L_camera::setWhiteBalance(double blue, double red)
 {
-    yTrace();
     bool ret = true;
     ret &= set_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE, false);
     ret &= set_V4L2_control(V4L2_CID_AUTO_N_PRESET_WHITE_BALANCE, V4L2_WHITE_BALANCE_MANUAL);
@@ -1382,7 +1360,6 @@ bool V4L_camera::setWhiteBalance(double blue, double red)
 
 bool V4L_camera::getCameraDescription(CameraDescriptor* camera)
 {
-    yTrace();
     camera->busType = BUS_USB;
     camera->deviceDescription = "USB3 camera";
     return true;
@@ -1397,27 +1374,14 @@ bool V4L_camera::hasFeature(int feature, bool *_hasFeature)
         case YARP_FEATURE_WHITE_BALANCE:
         {
             tmpMan = check_V4L2_control(V4L2_CID_RED_BALANCE) && check_V4L2_control(V4L2_CID_BLUE_BALANCE);
-            if(!tmpMan)
-                yError() << "No manual white_balance!!";
-
             tmpOnce = check_V4L2_control(V4L2_CID_DO_WHITE_BALANCE);
-            if(!tmpOnce)
-                yInfo() << "No one shot white_balance!!";
-
             tmpAuto = check_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
-            if(!tmpAuto)
-                yInfo() << "No auto white_balance!!";
         } break;
 
         case YARP_FEATURE_EXPOSURE:
         {
             tmpMan = check_V4L2_control(V4L2_CID_EXPOSURE);
-            if(!tmpMan)
-                yError() << "No manual exposure!!";
-
             tmpAuto = check_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
-            if(!tmpAuto)
-                yInfo() << "No auto exposure!!";
         } break;
 
         default:
@@ -1553,8 +1517,6 @@ bool V4L_camera::setActive(int feature, bool onoff)
 bool V4L_camera::getActive(int feature, bool *_isActive)
 {
     // I can't find any meaning of setting a feature to off on V4l ... what it is supposed to do????
-    *_isActive = isActive_vector[feature];
-    return true;
 
     switch(feature)
     {
@@ -1595,31 +1557,26 @@ bool V4L_camera::hasAuto(int feature, bool* _hasAuto)
         case YARP_FEATURE_WHITE_BALANCE:
         {
             *_hasAuto = check_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
-            yWarning() << "_hasAuto for white balance is " << *_hasAuto;
         } break;
 
         case YARP_FEATURE_BRIGHTNESS:
         {
             *_hasAuto = check_V4L2_control(V4L2_CID_AUTOBRIGHTNESS);
-            yWarning() << "_hasAuto for brightness is " << *_hasAuto;
         } break;
 
         case YARP_FEATURE_GAIN:
         {
             *_hasAuto = check_V4L2_control(V4L2_CID_AUTOGAIN);
-            yWarning() << "_hasAuto for gain is " << *_hasAuto;
         } break;
 
         case YARP_FEATURE_EXPOSURE:
         {
             *_hasAuto = check_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
-            yWarning() << "_hasAuto for exposure is " << *_hasAuto;
         } break;
 
         case YARP_FEATURE_HUE:
         {
             *_hasAuto = check_V4L2_control(V4L2_CID_HUE_AUTO);
-            yWarning() << "_hasAuto for HUE is " << *_hasAuto;
         } break;
 
         default:
@@ -1649,13 +1606,11 @@ bool V4L_camera::hasManual(int feature, bool* _hasManual)
 bool V4L_camera::hasOnePush(int feature, bool *_hasOnePush)
 {
     // I'm not able to map a 'onePush' request on V4L api
-    yTrace();
     switch(feature)
     {
         case YARP_FEATURE_WHITE_BALANCE:
         {
             *_hasOnePush = check_V4L2_control(V4L2_CID_DO_WHITE_BALANCE);
-            yInfo() << "one push for white balance is " << *_hasOnePush;
             return true;
         } break;
 
