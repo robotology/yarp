@@ -119,7 +119,7 @@ public:
 
     /**
      * Get the current value for the requested feature.
-     * @param feature the identifier of the feaature to read
+     * @param feature the identifier of the feature to read
      * @param value  pointer to current value of the feature, from 0 to 1 expressed as a percentage
      * @return returns true on success, false on failure.
      */
@@ -162,7 +162,7 @@ public:
 
     /**
      * Get the current status of the feature, on or off
-     * @param feature the identifier of the feaature to check
+     * @param feature the identifier of the feature to check
      * @param isActive flag true if the feature is active, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
@@ -170,7 +170,7 @@ public:
 
     /**
      * Check if the requested feature has the 'auto' mode
-     * @param feature the identifier of the faature to check
+     * @param feature the identifier of the feature to check
      * @param hasAuto flag true if the feature is has 'auto' mode, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
@@ -178,7 +178,7 @@ public:
 
     /**
      * Check if the requested feature has the 'manual' mode
-     * @param feature the identifier of the faature to check
+     * @param feature the identifier of the feature to check
      * @param hasAuto flag true if the feature is has 'manual' mode, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
@@ -186,7 +186,7 @@ public:
 
     /**
      * Check if the requested feature has the 'onePush' mode
-     * @param feature the identifier of the faature to check
+     * @param feature the identifier of the feature to check
      * @param hasAuto flag true if the feature is has 'onePush' mode, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
