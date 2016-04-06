@@ -20,6 +20,7 @@ This page lists the main changes introduced in YARP at each release.
   - iTorqueControl::setTorqueMode()
   - iOpenLoopControl::setOpenLoopMode()
 - added yarpRobotInterface executable (moved from icub-main where it was called robotinterface)
+- ResourceFinder::configure(argc,argv,bool) accepts a third optional parameter to keep/skip the first command line argument
 
 
  *
