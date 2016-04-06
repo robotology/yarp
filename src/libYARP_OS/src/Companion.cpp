@@ -1567,9 +1567,13 @@ int Companion::cmdResource(int argc, char *argv[]) {
         printf("   yarp resource --context context-name --from file-name\n");
         printf("   yarp resource --context context-name --find file-name\n");
         printf("To show what a config file loads as, specify --show\n");
+        printf("\n");
+        printf("Note that the search through the available contexts complies\n");
+        printf("with the current policies, therefore the content of the environment\n");
+        printf("variable YARP_ROBOT_NAME might affect the final result\n");        
         return 0;
     }
-    ResourceFinder rf; 
+    ResourceFinder rf;
     rf.setVerbose();
     Property p;
     p.fromCommand(argc,argv,false);
