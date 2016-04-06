@@ -247,9 +247,9 @@ private:
     int convertYARP_to_V4L(int feature);
     void enumerate_menu();
     bool enumerate_controls();
-    bool set_V4L2_control(u_int32_t id, double value);
     bool check_V4L2_control(uint32_t id);
-    double get_V4L2_control(uint32_t id);
+    bool set_V4L2_control(u_int32_t id, double value, bool verbatim = false);
+    double get_V4L2_control(uint32_t id, bool verbatim=false);   // verbatim = do not convert value, for enum types
 };
 
 #endif // _V4L_CAMERA_HPP_

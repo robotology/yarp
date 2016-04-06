@@ -1121,7 +1121,7 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
     return true;
 }
 
-bool V4L_camera::set_V4L2_control(uint32_t id, double value)
+bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
 {
     yTrace();
     struct v4l2_queryctrl queryctrl;
@@ -1152,16 +1152,19 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value)
     {
         memset (&control, 0, sizeof (control));
         control.id = id;
-        control.value = (int32_t) (value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
+        if(verbatim)
+            control.value = value;
+        else
+            control.value = (int32_t) (value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
 
         if (-1 == ioctl(param.fd, VIDIOC_S_CTRL, &control))
         {
             perror ("VIDIOC_S_CTRL");
+            if(errno == ERANGE)
+            {
+                printf("Normalized input value %f ( equivalent to raw value of %d) was out of range for control %s: Min and Max are: %d - %d \n", value, control.value, queryctrl.name, queryctrl.minimum, queryctrl.maximum);
+            }
             return false;
-        }
-        if(errno == ERANGE)
-        {
-            printf("Normalized input value %f ( equivalent to raw value of %d) was out of range for control %s: Min and Max are: %d - %d \n", value, control.value, queryctrl.name, queryctrl.minimum, queryctrl.maximum);
         }
         printf("set control %s to %d done!\n", queryctrl.name, control.value);
     }
@@ -1195,7 +1198,7 @@ bool V4L_camera::check_V4L2_control(uint32_t id)
     return true;
 }
 
-double V4L_camera::get_V4L2_control(uint32_t id)
+double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
 {
     yTrace();
     struct v4l2_queryctrl queryctrl;
@@ -1233,6 +1236,9 @@ double V4L_camera::get_V4L2_control(uint32_t id)
         }
 //         printf("Control %s got value %d!\n", queryctrl.name, control.value);
     }
+    if(verbatim)
+        return control.value;
+
     return (double) (control.value - queryctrl.minimum) /  (queryctrl.maximum - queryctrl.minimum);
 }
 
