@@ -1469,7 +1469,9 @@ bool V4L_camera::hasOnOff(int feature, bool *_hasOnOff)
     // I can't find any meaning of setting a feature to off on V4l ... what it is supposed to do????
     switch(feature)
     {
+        // The following do have a way to set them auto/manual
         case YARP_FEATURE_WHITE_BALANCE:
+        case YARP_FEATURE_EXPOSURE:
         {
             if(hasAuto(feature, &_hasAuto) )
                 *_hasOnOff = true;
@@ -1477,11 +1479,7 @@ bool V4L_camera::hasOnOff(int feature, bool *_hasOnOff)
                 *_hasOnOff = false;
         } break;
 
-        case YARP_FEATURE_EXPOSURE:
-        {
-
-        } // break;
-
+        // try it out
         default:
         {
             hasAuto(feature, &_hasAuto);
@@ -1524,7 +1522,13 @@ bool V4L_camera::setActive(int feature, bool onoff)
             }
             else
             {
-                set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
+                bool man = set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
+                if(!man)
+                {
+                    man = set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_SHUTTER_PRIORITY, true);
+                    if(!man)
+                        yError() << "Cannot set manual exposure";
+                }
                 set_V4L2_control(V4L2_LOCK_EXPOSURE, true);
                 isActive_vector[feature] = onoff;
             }
@@ -1568,8 +1572,11 @@ bool V4L_camera::getActive(int feature, bool *_isActive)
 
         case YARP_FEATURE_EXPOSURE:
         {
-            *_isActive = get_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
-            yInfo() << "get active V4L2_CID_EXPOSURE_AUTO is " <<  get_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
+            bool _hasMan;
+            hasFeature(V4L2_CID_EXPOSURE, &_hasMan);                // check manual version
+            double _hasAuto =  get_V4L2_control(V4L2_CID_EXPOSURE_AUTO, true); // check auto version
+
+            *_isActive = (_hasAuto == V4L2_EXPOSURE_AUTO)|| _hasMan;
         } break;
 
         default:
@@ -1631,6 +1638,11 @@ bool V4L_camera::hasManual(int feature, bool* _hasManual)
         return true;
     }
 
+    if(feature == YARP_FEATURE_EXPOSURE)
+    {
+        *_hasManual = check_V4L2_control(V4L2_CID_EXPOSURE);
+        return true;
+    }
     return hasFeature(feature, _hasManual);
 }
 
@@ -1657,21 +1669,71 @@ bool V4L_camera::hasOnePush(int feature, bool *_hasOnePush)
 
 bool V4L_camera::setMode(int feature, FeatureMode mode)
 {
-    if(mode == MODE_MANUAL)
-        return true;
-    else
-        return false;
+    switch(feature)
+    {
+        case YARP_FEATURE_WHITE_BALANCE:
+        {
+            if(mode == MODE_AUTO)
+                set_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE, true);
+            else
+                set_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE, false);
+        } break;
+
+        case YARP_FEATURE_EXPOSURE:
+        {
+            if(mode == MODE_AUTO)
+                set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, true);
+            else
+                set_V4L2_control(V4L2_CID_EXPOSURE_AUTO, false);
+        } break;
+
+        case YARP_FEATURE_GAIN:
+        {
+            if(mode == MODE_AUTO)
+            {
+                yInfo() << "GAIN: set mode auto";
+                set_V4L2_control(V4L2_CID_AUTOGAIN, true);
+            }
+            else
+            {
+                yInfo() << "GAIN: set mode manual";
+                set_V4L2_control(V4L2_CID_AUTOGAIN, false);
+            }
+        } break;
+
+        case YARP_FEATURE_BRIGHTNESS:
+        {
+            if(mode == MODE_AUTO)
+                set_V4L2_control(V4L2_CID_AUTOBRIGHTNESS, true);
+            else
+                set_V4L2_control(V4L2_CID_AUTOBRIGHTNESS, false);
+        } break;
+
+        case YARP_FEATURE_HUE:
+        {
+            if(mode == MODE_AUTO)
+                set_V4L2_control(V4L2_CID_HUE_AUTO, true);
+            else
+                set_V4L2_control(V4L2_CID_HUE_AUTO, false);
+        } break;
+
+        default:
+        {
+            yError() << "Feature " << feature << " does not support auto mode";
+        } break;
+    }
+    return true;
 }
 
 bool V4L_camera::getMode(int feature, FeatureMode *mode)
 {
+    bool _tmpAuto;
     switch(feature)
     {
         case YARP_FEATURE_WHITE_BALANCE:
         {
             double ret  = get_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
             *mode = toFeatureMode(ret);
-            yInfo() << "auto mode for white balance is " << *mode;
         } break;
 
         case YARP_FEATURE_EXPOSURE:
@@ -1681,8 +1743,47 @@ bool V4L_camera::getMode(int feature, FeatureMode *mode)
                 *mode = MODE_MANUAL;
             else
                 *mode = MODE_AUTO;
+        } break;
 
-            yInfo() << "auto mode for exposure is " << *mode;
+        case YARP_FEATURE_BRIGHTNESS:
+        {
+            hasAuto(YARP_FEATURE_BRIGHTNESS, &_tmpAuto);
+            *mode = toFeatureMode(_tmpAuto);
+            if(!_tmpAuto)
+                *mode = MODE_MANUAL;
+            else
+            {
+                double ret  = get_V4L2_control(V4L2_CID_AUTOBRIGHTNESS);
+                *mode = toFeatureMode(ret);
+            }
+        } break;
+
+        case YARP_FEATURE_GAIN:
+        {
+            hasAuto(YARP_FEATURE_GAIN, &_tmpAuto);
+            *mode = toFeatureMode(_tmpAuto);
+            if(!_tmpAuto)
+            {
+                *mode = MODE_MANUAL;
+            }
+            else
+            {
+                double ret  = get_V4L2_control(V4L2_CID_AUTOGAIN);
+                *mode = toFeatureMode(ret);
+            }
+        } break;
+
+        case YARP_FEATURE_HUE:
+        {
+            hasAuto(YARP_FEATURE_HUE, &_tmpAuto);
+            *mode = toFeatureMode(_tmpAuto);
+            if(!_tmpAuto)
+                *mode = MODE_MANUAL;
+            else
+            {
+                double ret  = get_V4L2_control(V4L2_CID_HUE_AUTO);
+                *mode = toFeatureMode(ret);
+            }
         } break;
 
         default:
