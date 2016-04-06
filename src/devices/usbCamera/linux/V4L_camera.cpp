@@ -766,7 +766,7 @@ void* V4L_camera::frameRead()
 
 
                 mutex.wait();
-                memcpy(param.raw_image, param.buffers[buf.index].start, param.image_size);
+                memcpy(param.raw_image, param.buffers[buf.index].start, param.buffers[0].length); //param.image_size);
 //                 param.raw_image = param.buffers[buf.index].start;
 //                 imageProcess(param.raw_image);
                 mutex.post();
