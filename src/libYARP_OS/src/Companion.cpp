@@ -1581,8 +1581,11 @@ int Companion::cmdResource(int argc, char *argv[]) {
         rf.setDefaultConfigFile(p.find("find").asString().c_str());
     }
     bool ok = rf.configure(argc,argv,false);
-    if (ok && rf.check("show")) {
-        printf(">>> %s\n", rf.toString().c_str());
+    if (ok) {
+        if (rf.check("show")) {
+            printf(">>> %s\n", rf.toString().c_str());
+        }
+        printf("%s\n",rf.findFile("from").c_str());
     }
     return (ok?0:1);
 }
