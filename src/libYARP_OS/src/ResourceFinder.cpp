@@ -397,7 +397,7 @@ YARP_WARNING_POP
     }
 #endif // YARP_NO_DEPRECATED
 
-    bool configure(Property& config, int argc, char *argv[]) {
+    bool configure(Property& config, int argc, char *argv[], bool skip) {
         if (argc>0) {
             if (argv[0]!=NULL) {
                 yarp::os::setprogname(argv[0]);
@@ -405,7 +405,7 @@ YARP_WARNING_POP
         }
 
         Property p;
-        p.fromCommand(argc,argv,true);
+        p.fromCommand(argc,argv,skip);
 
         bool user_specified_from = p.check("from");
 
@@ -429,7 +429,7 @@ YARP_WARNING_POP
             }
         }
 
-        config.fromCommand(argc,argv,true,false);
+        config.fromCommand(argc,argv,skip,false);
         if (config.check("from")) {
             ConstString from = config.check("from",
                                             Value("config.ini")).toString();
@@ -448,7 +448,7 @@ YARP_WARNING_POP
             if (!config.fromConfigFile(from,false) && user_specified_from) {
                 configured_normally = false;
             }
-            config.fromCommand(argc,argv,true,false);
+            config.fromCommand(argc,argv,skip,false);
         }
         return configured_normally;
     }
@@ -1063,9 +1063,9 @@ YARP_WARNING_POP
 }
 #endif // YARP_NO_DEPRECATED
 
-bool ResourceFinder::configure(int argc, char *argv[]) {
+bool ResourceFinder::configure(int argc, char *argv[], bool skipFirstArgument) {
     isConfiguredFlag = true;
-    return HELPER(implementation).configure(config,argc,argv);
+    return HELPER(implementation).configure(config,argc,argv,skipFirstArgument);
 }
 
 

@@ -652,7 +652,7 @@ YARP executable "yarp" does not usually have any tests linked.
 @section yarp_resource yarp resource
 
 \verbatim
-  yarp resource --policy POLICY --find CONFIG.ini
+  yarp resource --context CONTEXT --from CONFIG.ini
 \endverbatim
 
 An experimental tool for finding configuration files and other resource

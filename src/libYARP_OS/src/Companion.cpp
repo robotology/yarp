@@ -1563,63 +1563,28 @@ int Companion::cmdClean(int argc, char *argv[]) {
 int Companion::cmdResource(int argc, char *argv[]) {
     if (argc==0) {
         printf("Looks for, and prints the complete path to, resource files.\n");
-        printf("Example usage (from RobotCub project):\n");
-        printf("   yarp resource --find icub.ini\n");
-        printf("   yarp resource --find config --dir\n");
-        printf("   yarp resource --icub icub.ini --find icub\n");
-        printf("   yarp resource --from config.ini --find icub\n");
-        printf("   yarp resource --find icub.ini --verbose 1\n");
-        printf("   yarp resource --find config.ini --all\n");
+        printf("Example usage:\n");
+        printf("   yarp resource --context context-name --from file-name\n");
+        printf("   yarp resource --context context-name --find file-name\n");
         printf("To show what a config file loads as, specify --show\n");
+        printf("\n");
+        printf("Note that the search through the available contexts complies\n");
+        printf("with the current policies, therefore the content of the environment\n");
+        printf("variable YARP_ROBOT_NAME might affect the final result\n");        
         return 0;
     }
     ResourceFinder rf;
     rf.setVerbose();
-    bool ok = rf.configure(argc,argv);
-    Bottle result;
     Property p;
     p.fromCommand(argc,argv,false);
-    bool dir = p.check("dir");
-    bool all = p.check("all");
-    if (!p.check("find")) {
-        fprintf(stderr,"Please specify a file to find, e.g. --find icub.ini\n");
-        return 1;
+    if (p.check("find")) {
+        rf.setDefaultConfigFile(p.find("find").asString().c_str());
     }
-    if (ok) {
-        ResourceFinderOptions opts;
-        if (all) {
-            opts.duplicateFilesPolicy = ResourceFinderOptions::All;
-        }
-        if (p.check("type")) {
-            opts.resourceType = p.find("type").asString();
-        }
-        if (all) {
-            result = rf.findPaths(p.check("find",Value("test.ini")).asString(),
-                                  opts);
-        } else {
-            if (dir) {
-                result.addString(rf.findPath(p.check("find",
-                                                     Value("config")).asString(),
-                                             opts));
-            } else {
-                result.addString(rf.findFile(p.check("find",Value("icub.ini")).asString(),
-                                             opts));
-            }
-        }
-    } else {
-        if (p.check("strict")) {
-            return 1;
-        }
-        fprintf(stderr,"No policy, continuing without search (specify --strict to avoid this)...\n");
-        result.addString(p.check("find",Value("config.ini")).asString());;
+    bool ok = rf.configure(argc,argv,false);
+    if (ok && rf.check("show")) {
+        printf(">>> %s\n", rf.toString().c_str());
     }
-    printf("%s\n",result.toString().c_str());
-    if (p.check("show")) {
-        Property p2;
-        p2.fromConfigFile(result.get(0).asString().c_str());
-        printf(">>> %s\n", p2.toString().c_str());
-    }
-    return (result.size()>0)?0:1;
+    return (ok?0:1);
 }
 
 
