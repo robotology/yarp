@@ -1585,7 +1585,7 @@ int Companion::cmdResource(int argc, char *argv[]) {
         if (rf.check("show")) {
             printf(">>> %s\n", rf.toString().c_str());
         }
-        printf("%s\n",rf.findFile("from").c_str());
+        printf("\"%s\"\n",rf.findFile("from").c_str());
     }
     return (ok?0:1);
 }
