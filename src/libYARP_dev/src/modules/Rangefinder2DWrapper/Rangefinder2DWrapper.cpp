@@ -545,8 +545,8 @@ void Rangefinder2DWrapper::run()
                 rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
                 rosData.header.frame_id = frame_id;
 
-                rosData.angle_min = minAngle;
-                rosData.angle_max = maxAngle;
+                rosData.angle_min = minAngle * 3.14 / 180.0;
+                rosData.angle_max = maxAngle * 3.14 / 180.0;
                 rosData.angle_increment = 1 * 3.14 / 180.0;
                 rosData.time_increment = 0;             // all points in a single scan are considered took at the very same time
                 rosData.scan_time = 1/getRate();        // time elapsed between two successive readings
