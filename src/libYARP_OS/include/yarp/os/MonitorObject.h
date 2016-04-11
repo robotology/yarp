@@ -7,33 +7,35 @@
 #ifndef YARP_OS_MONITOROBJECT_H
 #define YARP_OS_MONITOROBJECT_H
 
-#include <yarp/os/Property.h>
-#include <yarp/os/Things.h>
+
+#include <yarp/os/api.h>
 
 namespace yarp {
     namespace os {
         class MonitorObject;
+        class Property;
+        class Things;
     }
 }
 
 class YARP_OS_API yarp::os::MonitorObject
 {
 public:
-    virtual ~MonitorObject() {}
+    virtual ~MonitorObject();
 
     /**
      * This will be called when the dll is properly loaded by the portmonitor carrier
      *
      * @param options A set of useful information of the current connection which
      *        the monitor object is attached.
-     * @return Returning false will stop the portmonitor object to procced        
+     * @return Returning false will stop the portmonitor object to procced
      */
-    virtual bool create(const yarp::os::Property& options) { return true; }
+    virtual bool create(const yarp::os::Property& options);
 
     /**
      * This will be called when the portmonitor object destroyes
      */
-    virtual void destroy(void) { }
+    virtual void destroy();
 
     /**
      * This will be called when the portmonitor carrier parameters are set via Yarp admin port
@@ -41,7 +43,7 @@ public:
      * @param params The Property 
      * @return Returns true if paramters are correctly set
      */
-    virtual bool setparam(const yarp::os::Property& params) { return false; }
+    virtual bool setparam(const yarp::os::Property& params);
 
     /**
      * This will be called when the portmonitor carrier parameters are requested via Yarp admin port
@@ -49,13 +51,13 @@ public:
      * @param params The Property 
      * @return Returns true of any parameter is available
      */
-    virtual bool getparam(yarp::os::Property& params) { return false; }
+    virtual bool getparam(yarp::os::Property& params);
    
     /**
      * This will be called when one of the peer connections to the same import port receives data
      * @note this is available only if the portmonitor object attached to the input port
      */
-    virtual void trig(void) { }
+    virtual void trig();
 
     /**
      * This will be called when the data reach the portmonitor object
@@ -65,7 +67,7 @@ public:
      * @return returning false will avoid delivering data to an input 
      *         port or transmitting through the output port
      */
-    virtual bool accept(yarp::os::Things& thing) { return true; }
+    virtual bool accept(yarp::os::Things& thing);
 
 
     /**
@@ -76,7 +78,7 @@ public:
      *        to typecast the data to the correct type. 
      * @return An instance of modified data in form of Thing
      */
-    virtual yarp::os::Things& update(yarp::os::Things& thing) { return thing; }
+    virtual yarp::os::Things& update(yarp::os::Things& thing);
 
 
     /**
@@ -87,7 +89,7 @@ public:
      *        to typecast the data to the correct type.
      * @return An instance of modified data in form of Thing
      */
-    virtual yarp::os::Things& updateReply(yarp::os::Things& thing) { return thing; }
+    virtual yarp::os::Things& updateReply(yarp::os::Things& thing);
 };
 
 #endif // YARP_OS_MONITOROBJECT_H

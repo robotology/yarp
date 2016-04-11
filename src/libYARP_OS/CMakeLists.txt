@@ -256,6 +256,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NameServer.cpp
                  src/NameSpace.cpp
                  src/NameStore.cpp
+                 src/MonitorObject.cpp
                  src/NestedContact.cpp
                  src/NetFloat32.cpp
                  src/NetFloat64.cpp
