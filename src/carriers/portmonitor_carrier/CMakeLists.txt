@@ -17,7 +17,7 @@ if (NOT SKIP_portmonitor_carrier)
     include_directories(SYSTEM ${LUA_INCLUDE_DIR})
     set(portmonitor_LUA_SRCS lua/MonitorLua.cpp lua/MonitorLua.h)
     add_definitions(" -DENABLED_PORTMONITOR_LUA")
-  endif ()
+  endif()
 
   include_directories(${YARP_INCLUDE_DIRS}                      
                       ${CMAKE_CURRENT_SOURCE_DIR}/dll)  
@@ -31,7 +31,10 @@ if (NOT SKIP_portmonitor_carrier)
                   dll/MonitorSharedLib.cpp
                   ${portmonitor_LUA_SRCS})
 
-  target_link_libraries(yarp_portmonitor YARP_OS ${LUA_LIBRARY})
+  target_link_libraries(yarp_portmonitor YARP_OS)
+  if(LUA_FOUND)
+    target_link_libraries(yarp_portmonitor ${LUA_LIBRARY})
+  endif()
   target_link_libraries(yarp_portmonitor ${ACE_LIBRARIES})
   yarp_install(TARGETS yarp_portmonitor
                EXPORT YARP
@@ -39,5 +42,5 @@ if (NOT SKIP_portmonitor_carrier)
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-endif ()
+endif()
 
