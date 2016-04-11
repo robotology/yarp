@@ -14,8 +14,6 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
                       ./src-builder
                       ./src-manager)
 
-    include(YarpUseQt5)
-    include(YarpOSXUtilities)
     #find_package(Qt5Widgets)
     #find_package(Qt5Declarative)
     #list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
@@ -59,6 +57,9 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
         src-manager/yscopewindow.h)
 
     set(manager_QRC_FILES src-manager/res_manager.qrc)
+    if(WIN32)
+	   set(yarpmanager_qt_RC_FILES yarpmanager.rc)
+    endif()
 
     set(manager_UI_FILES 
         src-manager/aboutdlg.ui
@@ -143,4 +144,3 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
                                     INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()
-

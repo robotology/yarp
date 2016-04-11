@@ -26,8 +26,9 @@
 //namespace BuilderUi {
 //class BuilderWindow;
 //}
+// class YARPBUILDERLIBSHARED_EXPORT BuilderWindow : public QWidget
 
-class YARPBUILDERLIBSHARED_EXPORT BuilderWindow : public QWidget
+class BuilderWindow : public QWidget
 {
     Q_OBJECT
 
