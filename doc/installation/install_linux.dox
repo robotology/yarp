@@ -180,10 +180,10 @@ If you are using YARP without installing it or you have installed it in a custom
 location, or you have disabled RPATH, you have to tweak your environment (edit
 your \c .bashrc or similar) to:
 
- + Set environment variables \c YARP_DIR and \c YARP_DATA_DIRS to the location
+ + Set environment variables \c YARP_DIR to the location
    where you installed YARP (or CMake's build directory if you did not perform
    the installation step) to allow cmake to find YARP easily for your own
-   projects.
+   projects. Set \c YARP_DATA_DIRS to $YARP_DIR/share/yarp. 
  + Add \c YARP_DIR/bin to \c PATH to allow your shell to find YARP programs.
  + Add \c YARP_DIR/lib to \c LD_LIBRARY_PATH to allow YARP programs to find YARP
    libraries, if you enabled \c CMAKE_SKIP_INSTALL_RPATH and did not install in

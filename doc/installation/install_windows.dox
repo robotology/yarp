@@ -99,7 +99,7 @@ Now we are ready to compile. Go to the build directory (i.e. \c /home/usr/yarp/b
 
 \subsubsection set_up_your_environment_windows Setup your environment
 
- + Set the environment variable \c YARP_DIR so that it points to the installation directory you have chosen (e.g. \c C:/Program Files/YARP).
+ + Set the environment variable \c YARP_DIR so that it points to the installation directory you have chosen (e.g. \c C:/Program Files/YARP). Set \c YARP_DATA_DIRS to $YARP_DIR/share/yarp. 
  + Update your \c PATH environment variable so that it points to the directories bin and lib within the installation directory you have chose (i.e. \c C:/Program Files/YARP/bin and \c C:/Program Files/YARP/lib).
 
 You are now ready to check you installation, see \ref check_your_installation.
