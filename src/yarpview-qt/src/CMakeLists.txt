@@ -50,3 +50,8 @@ yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpview-qt
                                   APP_ICON icons/AppIcon.icns
                                   INSTALL_COMPONENT utilities
                                   INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+                                  
+                                  
+yarp_install(FILES yarpview.xml
+               DESTINATION ${YARP_MODULES_INSTALL_DIR})
+               

@@ -48,3 +48,6 @@ yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpscope-qt
                                   TARGET_DEST yarpscope-qt.app
                                   INSTALL_COMPONENT utilities
                                   INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+                                  
+yarp_install(FILES yarpscope.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
+                                  
