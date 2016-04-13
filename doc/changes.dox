@@ -14,6 +14,8 @@ This page lists the main changes introduced in YARP at each release.
 
 \section sec-2-3-4 YARP next release (2.3.4)
 
+- Added yarpmanager++ which merges the functionalities of the yarpmanager and yarpbuilder
+- Deprecated all guis based on Gtk.
 - The following YARP methods have been deprecated:
   - iPositionControl::setPositionMode()
   - iVelocityControl::setVelocityMode()
