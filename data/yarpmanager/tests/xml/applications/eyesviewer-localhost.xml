@@ -7,17 +7,17 @@
     </authors>
     <module>
         <name>yarpview</name>
-        <parameters>--x 100 </parameters>
+        <parameters>--x 100</parameters>
         <node>localhost</node>
         <prefix>/LeftView</prefix>
-        <geometry>(Pos (x 412) (y 103.9))</geometry>
+        <geometry>(Pos (x 600) (y 104))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters>--x 500</parameters>
         <node>localhost</node>
-        <prefix>/RightView</prefix>        
-        <geometry>(Pos (x 414) (y 222.9))</geometry>
+        <prefix>/RightView</prefix>
+        <geometry>(Pos (x 600) (y 232))</geometry>
     </module>
     <application>
         <name>FakeEyes</name>
@@ -30,8 +30,8 @@
         <geometry>(Pos (x 102.888) (y 177.888))</geometry>
     </application>
     <connection>
-        <from qos="level:high; priority:10; policy:1">/Left/grabber</from>
-        <to qos="dscp:AF42; priority:15; policy:1">/LeftView/yarpview/img:i</to>
+        <from>/Left/grabber</from>
+        <to>/LeftView/yarpview/img:i</to>
         <protocol>udp</protocol>
         <geometry>(Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))  )</geometry>
     </connection>

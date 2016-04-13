@@ -216,6 +216,7 @@ cmake_dependent_option(CREATE_YARPDATADUMPER "Do you want to compile yarpdatadum
 cmake_dependent_option(CREATE_GUIS "Do you want to compile GUIs" OFF YARP_COMPILE_EXECUTABLES OFF)
 cmake_dependent_option(CREATE_YARPVIEW "Do you want to compile yarpview?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPMANAGER "Do you want to compile yarpmanager?" ON CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPMANAGER_PP "Do you want to compile yarpmanager++?" OFF CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPLOGGER "Do you want to create yarplogger?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPSCOPE "Do you want to create yarpscope?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPBUILDER "Do you want to compile YARP Application Builder?" OFF CREATE_GUIS OFF)

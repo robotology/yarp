@@ -1,0 +1,46 @@
+<module>
+	<name>yarpview</name>
+	<description> Yarp image viewer</description>
+	<version>1.0</version>
+
+	<arguments>
+		<!-- <param default="/yarpview/img:i" required="no" desc="input port name">name</param> -->
+		<param default="" required="no" desc="x position of the window in the screen">x</param>
+		<param default="" required="no" desc="y position of the window in the screen">y</param>
+		<param default="" required="no" desc="weight of the window">w</param>
+		<param default="" required="no" desc="height of the window">h</param>
+		<param default="" required="no" desc="refresh time [ms]">p</param>
+		<param default="" required="no" desc="output port name (no default is given, if this option is not specified the port is not created)">out</param>
+		<param default="" required="no" desc="output network">neto</param>
+		<param default="" required="no" desc="input network">neti</param>
+		<switch default="" required="no" desc="synchronous display, every image received by the input port is displayed"> synch </switch>
+	</arguments>
+
+	<authors>
+
+                <author email="lorenzo.natale@iit.it"> Lorenzo Natale </author>
+                <author email="matteo.brunettini@iit.it"> Matteo Brunettini </author>
+                <author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
+	</authors>
+
+	<data>
+		<input>
+			<type>*</type>
+			<port carrier="udp">/yarpview/img:i</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description></description>
+		</input>
+	</data>
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+	<development>
+		<include></include>
+		<library>YARP</library>
+	</development>
+
+</module>

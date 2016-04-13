@@ -1,0 +1,48 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file alias="logo.svg">../../../data/icons/512x512/yarpmanager.svg</file>
+        <file alias="stop.svg">../../../data/icons/512x512/actions-media-stop_B.svg</file>
+        <file alias="play.svg">../../../data/icons/512x512/actions-media-play_B.svg</file>
+        <file alias="folder-new.svg">../../../data/icons/512x512/folder-new.svg</file>
+        <file alias="folder.svg">../../../data/icons/512x512/folder-sand.svg</file>
+        <file alias="folder-app.svg">../../../data/icons/512x512/folder-sand.svg</file>
+        <file alias="folder-mod.svg">../../../data/icons/512x512/folder-sand.svg</file>
+        <file alias="folder-res.svg">../../../data/icons/512x512/folder-sand.svg</file>
+        <file alias="file-new.svg">../../../data/icons/512x512/file-new.svg</file>
+        <file alias="file-save.svg">../../../data/icons/512x512/file-save.svg</file>
+        <file alias="file-xml.svg">../../../data/icons/512x512/file-xml.svg</file>
+        <file alias="close.svg">../../../data/icons/512x512/actions-close.svg</file>
+        <file alias="apply.svg">../../../data/icons/512x512/actions-apply.svg</file>
+        <file alias="clear.svg">../../../data/icons/512x512/actions-edit-clear.svg</file>
+        <file alias="kill.svg">../../../data/icons/512x512/actions-kill.svg</file>
+        <file alias="connect.svg">../../../data/icons/512x512/actions-connect.svg</file>
+        <file alias="refresh.svg">../../../data/icons/512x512/actions-refresh.svg</file>
+        <file alias="disconnect.svg">../../../data/icons/512x512/actions-disconnect.svg</file>
+        <file alias="select-all.svg">../../../data/icons/512x512/actions-select-all.svg</file>
+        <file alias="hardware.svg">../../../data/icons/512x512/audio-card.svg</file>
+        <file alias="cpuload.svg">../../../data/icons/512x512/system-monitor.svg</file>
+        <file alias="drive-harddisk.svg">../../../data/icons/512x512/drive-harddisk.svg</file>
+        <file alias="uml-app.svg">../../../data/icons/512x512/calligraflow.svg</file>
+        <file alias="help.svg">../../../data/icons/512x512/help.svg</file>
+        <file alias="info.svg">../../../data/icons/512x512/help-info.svg</file>
+        <file alias="close22.svg">../../../data/icons/22x22/window-close-symbolic_A.svg</file>
+        <file alias="close22-red.svg">../../../data/icons/22x22/window-close-symbolic_B.svg</file>
+        <file alias="stop22.svg">../../../data/icons/22x22/actions-media-stop_B.svg</file>
+        <file alias="play22.svg">../../../data/icons/22x22/actions-media-play_B.svg</file>
+        <file alias="disconnect22.svg">../../../data/icons/22x22/network-disconnected.svg</file>
+        <file alias="connect22.svg">../../../data/icons/22x22/actions-connect.svg</file>
+        <file alias="refresh22.svg">../../../data/icons/22x22/actions-refresh.svg</file>
+        <file alias="select-all22.svg">../../../data/icons/22x22/actions-select-all.svg</file>
+        <file alias="kill22.svg">../../../data/icons/22x22/actions-kill.svg</file>
+        <file alias="run22.svg">../../../data/icons/22x22/run_B.svg</file>
+        <file alias="file-xml22.svg">../../../data/icons/22x22/file-xml.svg</file>
+        <file alias="computer22.svg">../../../data/icons/22x22/computer_B.svg</file>
+        <file alias="computer-available22.svg">../../../data/icons/22x22/computer_available.svg</file>
+        <file alias="computer-unavailable22.svg">../../../data/icons/22x22/computer_unavailable.svg</file>
+        <file alias="module22.svg">../../../data/icons/22x22/module.svg</file>
+        <file alias="port22.svg">../../../data/icons/22x22/port.svg</file>
+        <file alias="port-available22.svg">../../../data/icons/22x22/port_available.svg</file>
+        <file alias="port-unavailable22.svg">../../../data/icons/22x22/port_unavailable.svg</file>
+    </qresource>
+</RCC>
