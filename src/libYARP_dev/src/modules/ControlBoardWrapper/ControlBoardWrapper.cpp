@@ -3475,7 +3475,7 @@ bool ControlBoardWrapper::getPWM(int m, double* val)
     int subIndex=device.lut[m].deviceEntry;
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
 
-    yDebug() << "CBW2::getPWMlimit j" << off+p->base << " p " << (p?"1":"0") << " amp " << (p->amp?"1":"0");
+    //yDebug() << "CBW2::getPWMlimit j" << off+p->base << " p " << (p?"1":"0") << " amp " << (p->amp?"1":"0");
     if(!p)
     {
         *val=0.0;
@@ -3495,7 +3495,7 @@ bool ControlBoardWrapper::getPWMLimit(int m, double* val)
     int subIndex=device.lut[m].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    yDebug() << "CBW2::getPWMlimit j" << off+p->base << " p " << (p?"1":"0") << " amp " << (p->amp?"1":"0");
+    //yDebug() << "CBW2::getPWMlimit j" << off+p->base << " p " << (p?"1":"0") << " amp " << (p->amp?"1":"0");
 
     if(!p)
     {

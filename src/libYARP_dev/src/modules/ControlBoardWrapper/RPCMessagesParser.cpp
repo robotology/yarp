@@ -2795,7 +2795,7 @@ YARP_WARNING_POP
                             {
                                 int m=cmd.get(2).asInt();
                                 ok = rcp_IAmp->getPWM(m, &dtmp);
-                                yDebug() << "RPC parser::getPWM: j" << m << " val " << dtmp;
+                                //yDebug() << "RPC parser::getPWM: j" << m << " val " << dtmp;
                                 response.addDouble(dtmp);
                             }
                             break;
