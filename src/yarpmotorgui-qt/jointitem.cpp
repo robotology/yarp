@@ -1170,6 +1170,17 @@ void JointItem::setRefTrajectorySpeed(double val)
     if (ui->stackedWidget->currentIndex() == POSITION){
         updateSliderTrajectoryVelocity(val);
         ref_trajectory_velocity = val;
+
+        if (val < 0.001)
+        {
+            ui->groupBox_12->setStyleSheet("background-color:orange;");
+            ui->groupBox_12->setTitle("Velocity is ZERO!");
+        }
+        else
+        {
+            ui->groupBox_12->setStyleSheet("background-color:transparent;");
+            ui->groupBox_12->setTitle("Velocity");
+        }
     }
 }
 
@@ -1444,7 +1455,8 @@ void JointItem::setJointState(JointState newState)
         ui->buttonRun->setEnabled(false);
         ui->comboMode->setEnabled(false);
         ui->comboInteraction->setEnabled(false);
-
+        ui->buttonIdle->setEnabled(true);
+        ui->buttonPid->setEnabled(true);
 
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
