@@ -1624,7 +1624,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                 else {
                     result.clear();
                     result.addVocab(Vocab::encode("ok"));
-                }                
+                }
             }
             break;
             default:
@@ -1637,7 +1637,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     case VOCAB4('d','t','c', 'h'):
         {
             switch (cmd.get(1).asVocab()) {
-            case VOCAB3('o','u', 't'): {                
+            case VOCAB3('o','u', 't'): {
                 if(dettachPortMonitor(true))
                     result.addVocab(Vocab::encode("ok"));
                 else
