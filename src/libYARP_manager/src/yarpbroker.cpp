@@ -421,7 +421,7 @@ bool YarpBroker::connect(const char* from, const char* to,
             return true;
 
         NetworkBase::connect(from, to, style);
-        if(!connected(from, to))
+        if(!connected(from, to, carrier))
         {
             strError = "cannot connect ";
             strError +=from;
@@ -434,7 +434,7 @@ bool YarpBroker::connect(const char* from, const char* to,
         string topic = string("topic:/") + string(from) + string(to);
         NetworkBase::connect(from, topic.c_str(), style);
         NetworkBase::connect(topic.c_str(), to, style);
-        if(!connected(from, to))
+        if(!connected(from, to, carrier))
         {
             strError = "a persistent connection from ";
             strError +=from;
@@ -448,7 +448,7 @@ bool YarpBroker::connect(const char* from, const char* to,
     return true;
 }
 
-bool YarpBroker::disconnect(const char* from, const char* to)
+bool YarpBroker::disconnect(const char* from, const char* to, const char* carrier)
 {
 
     if(!from)
@@ -479,12 +479,13 @@ bool YarpBroker::disconnect(const char* from, const char* to)
     }
     */
 
-    if(!connected(from, to))
+    if(!connected(from, to, carrier))
         return true;
 
     ContactStyle style;
     style.quiet = true;
     style.timeout = CONNECTION_TIMEOUT;
+    style.carrier = carrier;
     if(!NetworkBase::disconnect(from, to, style))
     {
         strError = "cannot disconnect ";
@@ -546,16 +547,16 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
     return response.toString().c_str();
 }
 
-bool YarpBroker::connected(const char* from, const char* to)
+bool YarpBroker::connected(const char* from, const char* to, const char* carrier)
 {
     if(!exists(from) || !exists(to))
         return false;
     ContactStyle style;
     style.quiet = true;
     style.timeout = CONNECTION_TIMEOUT;
+    style.carrier = carrier;
     return NetworkBase::isConnected(from, to, style);
 }
-
 
 bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
 {
