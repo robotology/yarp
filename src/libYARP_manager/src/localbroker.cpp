@@ -363,7 +363,7 @@ bool LocalBroker::connect(const char* from, const char* to,
     }
 
     NetworkBase::connect(from, to, carrier);
-    if(!connected(from, to))
+    if(!connected(from, to, carrier))
     {
         strError = "cannot connect ";
         strError +=from;
@@ -373,7 +373,7 @@ bool LocalBroker::connect(const char* from, const char* to,
     return true;
 }
 
-bool LocalBroker::disconnect(const char* from, const char* to)
+bool LocalBroker::disconnect(const char* from, const char* to, const char *carrier)
 {
 
     if(!from)
@@ -402,7 +402,7 @@ bool LocalBroker::disconnect(const char* from, const char* to)
         return true;
     }
 
-    if(!connected(from, to))
+    if(!connected(from, to, carrier))
         return true;
 
     if(!NetworkBase::disconnect(from, to))
@@ -464,7 +464,7 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
     return response.toString().c_str();
 }
 
-bool LocalBroker::connected(const char* from, const char* to)
+bool LocalBroker::connected(const char* from, const char* to, const char* carrier)
 {
     if(!exists(from) || !exists(to))
         return false;
