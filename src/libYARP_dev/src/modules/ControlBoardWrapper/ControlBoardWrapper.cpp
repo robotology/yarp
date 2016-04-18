@@ -841,7 +841,7 @@ void ControlBoardWrapper::run()
     if(useROS != ROS_only)
     {
         yarp::sig::Vector& v = outputPositionStatePort.prepare();
-        v.size(controlledJoints);
+        v.resize(controlledJoints);
 
         //getEncoders for all subdevices
         double *joint_encoders=v.data();

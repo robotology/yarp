@@ -49,13 +49,13 @@ public:
         njoints = 2;
         m_w = 128;
         m_h = 128;
-        pos.size(njoints);
-        dpos.size(njoints);
-        vel.size(njoints);
-        speed.size(njoints);
-        acc.size(njoints);
-        loc.size(njoints);
-        amp.size(njoints);
+        pos.resize(njoints);
+        dpos.resize(njoints);
+        vel.resize(njoints);
+        speed.resize(njoints);
+        acc.resize(njoints);
+        loc.resize(njoints);
+        amp.resize(njoints);
         xScale = 1;
         yScale = 1;
         for (int i=0; i<njoints; i++) {

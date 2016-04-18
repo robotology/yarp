@@ -75,10 +75,10 @@ public:
 
     virtual bool open(yarp::os::Searchable& config) {
         njoints = config.check("axes",yarp::os::Value(4),"number of axes to pretend to have").asInt();
-        pos.size(njoints);
-        speed.size(njoints);
-        acc.size(njoints);
-        vel.size(njoints);
+        pos.resize(njoints);
+        speed.resize(njoints);
+        acc.resize(njoints);
+        vel.resize(njoints);
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
             speed[i] = 0;

@@ -2644,7 +2644,7 @@ public:
         c.head.clear();
         c.head.addVocab(VOCAB_VELOCITY_MOVE);
         c.head.addInt(j);
-        c.body.size(1);
+        c.body.resize(1);
         memcpy(&(c.body[0]), &v, sizeof(double));
         command_buffer.write(writeStrict_singleJoint);
         return true;
@@ -2660,7 +2660,7 @@ public:
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_VELOCITY_MOVES);
-        c.body.size(nj);
+        c.body.resize(nj);
         memcpy(&(c.body[0]), v, sizeof(double)*nj);
         command_buffer.write(writeStrict_moreJoints);
         return true;
@@ -2993,7 +2993,7 @@ public:
         Bottle &jointList = c.head.addList();
         for (int i = 0; i < n_joint; i++)
             jointList.addInt(joints[i]);
-        c.body.size(n_joint);
+        c.body.resize(n_joint);
         memcpy(&(c.body[0]), t, sizeof(double)*n_joint);
         command_buffer.write(writeStrict_moreJoints);
         return true;
@@ -3537,7 +3537,7 @@ public:
         c.head.clear();
         c.head.addVocab(VOCAB_POSITION_DIRECT);
         c.head.addInt(j);
-        c.body.size(1);
+        c.body.resize(1);
         memcpy(&(c.body[0]), &ref, sizeof(double));
         command_buffer.write(writeStrict_singleJoint);
         return true;
@@ -3553,7 +3553,7 @@ public:
         Bottle &jointList = c.head.addList();
         for (int i = 0; i < n_joint; i++)
             jointList.addInt(joints[i]);
-        c.body.size(n_joint);
+        c.body.resize(n_joint);
         memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
         command_buffer.write(writeStrict_moreJoints);
         return true;
@@ -3565,7 +3565,7 @@ public:
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_POSITION_DIRECTS);
-        c.body.size(nj);
+        c.body.resize(nj);
         memcpy(&(c.body[0]), refs, sizeof(double)*nj);
         command_buffer.write(writeStrict_moreJoints);
         return true;
@@ -3963,7 +3963,7 @@ public:
         c.head.addInt(j);
 
         c.body.clear();
-        c.body.size(1);
+        c.body.resize(1);
         c.body[0] = v;
         command_buffer.write(writeStrict_singleJoint);
         return true;
@@ -3978,7 +3978,7 @@ public:
         c.head.addVocab(VOCAB_OPENLOOP_INTERFACE);
         c.head.addVocab(VOCAB_OPENLOOP_REF_OUTPUTS);
 
-        c.body.size(nj);
+        c.body.resize(nj);
 
         memcpy(&(c.body[0]), v, sizeof(double)*nj);
 
