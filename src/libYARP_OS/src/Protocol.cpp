@@ -162,7 +162,14 @@ bool Protocol::getRecvDelegate() {
         return false;
     }
     // Configure the receiver modifier.
-    return recv_delegate->configure(*this);
+    if (!recv_delegate->configure(*this)) {
+        fprintf(stderr,"Carrier \"%s\" could not configure the send delegate.\n",
+                tag.c_str());
+        recv_delegate_fail = true;
+        close();
+        return false;
+    }
+    return true;
 }
 
 bool Protocol::getSendDelegate() {
@@ -189,7 +196,14 @@ bool Protocol::getSendDelegate() {
         return false;
     }
     // Configure the sender modifier.
-    return send_delegate->configure(*this);
+    if (!send_delegate->configure(*this)) {
+        fprintf(stderr,"Carrier \"%s\" could not configure the send delegate.\n",
+                tag.c_str());
+        send_delegate_fail = true;
+        close();
+        return false;
+    }
+    return true;
 }
 
 void Protocol::interrupt() {
