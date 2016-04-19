@@ -28,6 +28,8 @@ Protocol::Protocol(TwoWayStream* stream) :
     send_delegate = NULL;
     need_recv_delegate = false;
     need_send_delegate = false;
+    recv_delegate_fail = false;
+    send_delegate_fail = false;
     messageLen = 0;
     pendingAck = false;
     writer = NULL;
@@ -140,6 +142,7 @@ bool Protocol::getRecvDelegate() {
     // If we've already checked for a receiver modifier, return.
     if (recv_delegate) return true;
     if (!need_recv_delegate) return true;
+    if (recv_delegate_fail) return false;
     Bottle b(getSenderSpecifier().c_str());
     // Check for a "recv" qualifier.
     ConstString tag = b.find("recv").asString();
@@ -147,12 +150,14 @@ bool Protocol::getRecvDelegate() {
     if (!recv_delegate) {
         fprintf(stderr,"Need carrier \"%s\", but cannot find it.\n",
                 tag.c_str());
+        recv_delegate_fail = true;
         close();
         return false;
     }
     if (!recv_delegate->modifiesIncomingData()) {
         fprintf(stderr,"Carrier \"%s\" does not modify incoming data as expected.\n",
                 tag.c_str());
+        recv_delegate_fail = true;
         close();
         return false;
     }
@@ -164,6 +169,7 @@ bool Protocol::getSendDelegate() {
     // If we've already checked for a sender modifier, return.
     if (send_delegate) return true;
     if (!need_send_delegate) return true;
+    if (send_delegate_fail) return false;
     Bottle b(getSenderSpecifier().c_str());
     // Check for a "send" qualifier.
     ConstString tag = b.find("send").asString();
@@ -171,12 +177,14 @@ bool Protocol::getSendDelegate() {
     if (!send_delegate) {
         fprintf(stderr,"Need carrier \"%s\", but cannot find it.\n",
                 tag.c_str());
+        send_delegate_fail = true;
         close();
         return false;
     }
     if (!send_delegate->modifiesOutgoingData()) {
         fprintf(stderr,"Carrier \"%s\" does not modify outgoing data as expected.\n",
                 tag.c_str());
+        send_delegate_fail = true;
         close();
         return false;
     }
