@@ -110,7 +110,10 @@ public:
 
     // Documented in yarp::os::OutputProtocol.
     virtual bool isOk() {
-        return checkStreams();
+        if (!checkStreams() || recv_delegate_fail || recv_delegate_fail) {
+            return false;
+        }
+        return true;
     }
 
     // Documented in yarp::os::OutputProtocol.
