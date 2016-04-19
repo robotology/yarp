@@ -88,7 +88,6 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     bReady =  binder->load(info);
     PortMonitor::unlock();
     return bReady;
-    return false;
 }
 
 void PortMonitor::setCarrierParams(const yarp::os::Property& params)
