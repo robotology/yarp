@@ -30,7 +30,7 @@ is to increase the longevity of robot software projects.
 YARP is <i>not</i> an operating system for your robot.  We figure you
 already have an operating system, or perhaps several.  Nor does it do
 package management (we like the package managers we have).  We're not
-out for world domination [2].  It is easy to interoperate with YARP-using
+out for world domination.  It is easy to interoperate with YARP-using
 programs without yourself necessarily having to use YARP codebase --
 see the
 \ref yarp_without_yarp "YARP without YARP" tutorial. YARP is written
