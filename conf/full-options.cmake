@@ -22,7 +22,7 @@ option(ENABLE_yarpcar_rossrv_carrier "rossrv carrier" TRUE)
 option(ENABLE_yarpcar_xmlrpc_carrier "xmlrpc carrier" TRUE)
 option(ENABLE_yarpcar_portmonitor_carrier "portmonitor carrier" TRUE)
 option(ENABLE_yarpcar_priority_carrier "priority carrier" TRUE)
-option(ENABLE_yarpcar_humand_carrier "priority carrier" TRUE)
+option(ENABLE_yarpcar_human_carrier "human carrier" TRUE)
 
 
 
