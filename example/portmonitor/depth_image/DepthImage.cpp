@@ -74,13 +74,16 @@ yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
         for(int w=0; w<img->width(); w++)
         {
             float inVal = inPixels[w + (h * img->width())];
-            int val = (int) (inVal * 255 / (max - min));
-            if(val >= 255)
-                val = 250;
-            if(val <= 1)
-                val = 1;
-            pixels[w + (h * (img->width() ))] = (char) val;
-            fflush(stdout);
+            if (inVal != inVal /* NaN */ || inVal < min || inVal > max) {
+                pixels[w + (h * (img->width() ))] = 0;
+            } else {
+                int val = (int) (255.0 - (inVal * 255.0 / (max - min)));
+                if(val >= 255)
+                    val = 255;
+                if(val <= 0)
+                    val = 0;
+                pixels[w + (h * (img->width() ))] = (char) val;
+            }
         }
     }
     th.setPortWriter(&outImg);
