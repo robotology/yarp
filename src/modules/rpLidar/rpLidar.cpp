@@ -106,9 +106,9 @@ bool RpLidar::open(yarp::os::Searchable& config)
     if (max_angle < 0 || max_angle > 360 ) { yError() << "max_angle should be >= 0, <= 360"; return false; }
     if (max_angle <= min_angle)            { yError() << "max_angle should be > min_angle";  return false; }
 
-    sensorsNum = (int)((max_angle-min_angle)/resolution);
+    sensorsNum = (int)((max_angle-min_angle)/resolution) +1;
     laser_data.resize(sensorsNum,0.0);
-    
+
     yInfo("Starting debug mode");
     yInfo("max_dist %f, min_dist %f", max_distance, min_distance);
     yInfo("max_angle %f, min_angle %f", max_angle, min_angle);
@@ -189,7 +189,15 @@ bool RpLidar::close()
 {
     RateThread::stop();
 
-    driver.close();
+    if (!HW_stop())
+    {
+        yError("Unable to stop sensor!");
+        HW_reset();
+    }
+
+    if(driver.isValid())
+        driver.close();
+
     yInfo() << "rpLidar closed";
     return true;
 }
@@ -660,15 +668,15 @@ void RpLidar::run()
         buffer->throw_away_elems(5);
         //int m_elem = (int)((max_angle - min_angle) / resolution);
         int elem = (int)(angle / resolution);
-        laser_data[elem] = distance;
-    }
-    while (buffer->size() > packet);
+        if(elem >= 0 && elem < (int) laser_data.size())
+            laser_data[elem] = distance;
+     }
+    while (buffer->size() > packet &&  isRunning() );
 
 #ifdef DEBUG_TIMING
     double t2 = yarp::os::Time::now();
     yDebug( "Time %f",  (t2 - t1) * 1000.0);
 #endif
-
     return;
 }
 
@@ -679,11 +687,6 @@ void RpLidar::threadRelease()
     yDebug("... done.");
 #endif
 
-    if (!HW_stop())
-    {
-        yError("Unable to stop sensor!");
-        HW_reset();
-    }
     return;
 }
 

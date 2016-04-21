@@ -49,7 +49,6 @@ Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
 
 Rangefinder2DWrapper::~Rangefinder2DWrapper()
 {
-    threadRelease();
     sens_p = NULL;
 }
 
@@ -233,6 +232,10 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
 
 bool Rangefinder2DWrapper::detachAll()
 {
+    if (RateThread::isRunning())
+    {
+        RateThread::stop();
+    }
     sens_p = NULL;
     return true;
 }
@@ -244,6 +247,10 @@ void Rangefinder2DWrapper::attach(yarp::dev::IRangefinder2D *s)
 
 void Rangefinder2DWrapper::detach()
 {
+    if (RateThread::isRunning())
+    {
+        RateThread::stop();
+    }
     sens_p = NULL;
 }
 
@@ -578,7 +585,6 @@ bool Rangefinder2DWrapper::close()
         RateThread::stop();
     }
 
-    RateThread::stop();
     detachAll();
     return true;
 }
