@@ -213,7 +213,8 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 
     if(item->data(0,Qt::UserRole).toInt()  == (int)yarp::manager::MODULE){
         yarp::manager::Module *mod = (yarp::manager::Module*)item->data(0,Qt::UserRole + 1).toLongLong();
-        viewModule(mod);
+        if(mod)
+            viewModule(mod);
     }
 
     if(item->data(0,Qt::UserRole).toInt()  == (int)yarp::manager::RESOURCE){
