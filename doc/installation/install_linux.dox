@@ -88,7 +88,7 @@ sudo apt-get install -t wheezy-backports qtbase5-dev \
 Qt5 is available from the main repository. See
 \ref dependencies_qt5_debian_jessie for instructions.
 
-\subsubsection install_qt5_ubuntu_trusty Q75 on Ubuntu (trusty)
+\subsubsection install_qt5_ubuntu_trusty Qt5 on Ubuntu (trusty)
 Qt5 packages are available from the main repository, but the package
 names are slightly different:
 
