@@ -225,7 +225,11 @@ public:
     XMLReader * const parent;
     std::string filename;
     std::string path;
+
+#if USE_DTD
     RobotInterfaceDTD dtd;
+#endif
+
     Robot robot;
 
     std::string curr_filename;
@@ -267,6 +271,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotFile(const s
         SYNTAX_ERROR(doc->Row()) << "No root element.";
     }
 
+#if USE_DTD
     for (TiXmlNode* childNode = doc->FirstChild(); childNode != 0; childNode = childNode->NextSibling()) {
         if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
             if(dtd.parse(childNode->ToUnknown(), curr_filename)) {
@@ -289,6 +294,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotFile(const s
     if(dtd.majorVersion != 1 || dtd.minorVersion != 0) {
         SYNTAX_WARNING(doc->Row()) << "Only yarprobotinterface DTD version 1.0 is supported";
     }
+#endif 
 
     readRobotTag(doc->RootElement());
     delete doc;
@@ -485,6 +491,7 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesFile(c
         SYNTAX_ERROR(doc->Row()) << "No root element.";
     }
 
+#if USE_DTD
     RobotInterfaceDTD devicesFileDTD;
     for (TiXmlNode* childNode = doc->FirstChild(); childNode != 0; childNode = childNode->NextSibling()) {
         if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
@@ -508,6 +515,7 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesFile(c
     if (devicesFileDTD.majorVersion != dtd.majorVersion) {
         SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different yarprobotinterface DTD version";
     }
+#endif
 
     RobotInterface::DeviceList devices = readDevicesTag(doc->RootElement());
     delete doc;
@@ -776,6 +784,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsFile(con
         SYNTAX_ERROR(doc->Row()) << "No root element.";
     }
 
+#if USE_DTD
     RobotInterfaceDTD paramsFileDTD;
     for (TiXmlNode* childNode = doc->FirstChild(); childNode != 0; childNode = childNode->NextSibling()) {
         if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
@@ -800,6 +809,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsFile(con
         SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different yarprobotinterface DTD version";
     }
 
+#endif
     RobotInterface::ParamList params = readParamsTag(doc->RootElement());
     delete doc;
     curr_filename = old_filename;
@@ -942,6 +952,7 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsFile(c
         SYNTAX_ERROR(doc->Row()) << "No root element.";
     }
 
+#if USE_DTD
     RobotInterfaceDTD actionsFileDTD;
     for (TiXmlNode* childNode = doc->FirstChild(); childNode != 0; childNode = childNode->NextSibling()) {
         if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
@@ -966,6 +977,7 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsFile(c
         SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different yarprobotinterface DTD version";
     }
 
+#endif
     RobotInterface::ActionList actions = readActionsTag(doc->RootElement());
     delete doc;
     curr_filename = old_filename;
