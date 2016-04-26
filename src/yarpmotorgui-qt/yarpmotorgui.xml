@@ -1,0 +1,29 @@
+<module>
+	<name>yarpmotorgui</name>
+	<description> Yarp motor GUI</description>
+	<version>1.0</version>
+
+	<authors>
+        <author email="marco.randazzo@iit.it"> Marco Randazzo </author>
+	</authors>
+
+	<arguments>
+		<param default="icub" required="no" desc="weight of the window">name</param>
+		<param default="(head torso left_arm right_arm left_leg right_leg)" required="no" desc="a list of the robot parts. e.g, (head torso)">parts</param>
+	</arguments>
+
+	<data>
+	</data>
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+	<development>
+		<include></include>
+		<library>YARP</library>
+	</development>
+
+</module>
+

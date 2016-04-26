@@ -1,0 +1,51 @@
+<module>
+    <name>portaudio</name>
+    <description> A frame grabber test device (start up a fake image source)</description>
+    <version>1.0</version>
+
+    <arguments>
+        <param  default="0"  required="no" desc="maximum rate in Hz to read from subdevice">framerate</param>
+        <param  default="0"  required="no" desc="audio sample rate (0=automatic)">rate</param>
+        <param  default="0"  required="no" desc="number of samples per network packet (0=automatic)">samples</param>
+        <param  default="0"  required="no" desc="number of audio channels (0=automatic, max is 2)">channels</param>
+        <param  default="-1" required="no" desc="which portaudio index to use (-1=automatic)">id</param>
+        <switch default=""   required="no" desc="if present, send audio read from microphone immediately back to speaker"> loopback</switch>
+        <switch default=""   required="no" desc="if present, use strict policy for sending data"> no_drop</switch>
+        <switch default=""   required="no" desc="if present, add timestamps to data"> stamp</switch>
+        <switch default=""   required="no" desc="portaudio.render_mode_append"> render_mode_append</switch>
+        <switch default=""   required="no" desc="portaudio.render_mode_immediate"> render_mode_immediate</switch>
+    </arguments>
+
+    <authors>
+        <author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
+    </authors>
+
+    <data>
+        <input port_type="service">
+            <type>Rpc</type>
+            <port>/portaudio/quit</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description> a port which receives rpc command such as 'quit'.</description>
+        </input>
+
+        <output port_type="stream">
+            <type>Sound</type>
+            <port carrier="udp">/grabber</port>
+            <description>output audio port</description>
+        </output>
+    </data>
+
+    <deployer>yarpdev</deployer>
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+    <development>
+        <include></include>
+        <library>YARP</library>
+    </development>
+
+</module>

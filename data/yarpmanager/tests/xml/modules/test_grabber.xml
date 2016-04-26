@@ -17,7 +17,7 @@
     </authors>
 
     <data>
-        <input>
+        <input port_type="service">
             <type>Rpc</type>
             <port>/test_grabber/quit</port>
             <required>no</required>

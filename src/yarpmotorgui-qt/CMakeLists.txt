@@ -82,5 +82,6 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_QT5)
                                     TARGET_DEST yarpmotorgui-qt.app
                                     INSTALL_COMPONENT utilities
                                     INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
-
+  yarp_install(FILES yarpmotorgui.xml
+               DESTINATION ${YARP_MODULES_INSTALL_DIR})
 endif()

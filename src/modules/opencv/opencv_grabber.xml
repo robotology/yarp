@@ -12,7 +12,15 @@
 	</authors>
 	
 	<data>     
-		<output>
+        <input port_type="service">
+            <type>Rpc</type>
+            <port>/opencv_grabber/quit</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description> a port which receives rpc command such as 'quit'.</description>
+        </input>
+
+		<output port_type="stream">
 			<type>ImageOfPixelRgb</type>
 			<port carrier="udp">/grabber</port>
 			<description>output image port</description>

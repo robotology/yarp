@@ -28,6 +28,9 @@ if(NOT SKIP_portaudio)
   else(PortAudio_FOUND)
     message(SEND_ERROR "portaudio not found")
   endif(PortAudio_FOUND)
+    
+  yarp_install(FILES portaudio.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
+
 endif(NOT SKIP_portaudio)
 
 

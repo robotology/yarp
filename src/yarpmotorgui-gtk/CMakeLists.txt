@@ -83,4 +83,7 @@ if(CREATE_YARPMOTORGUI AND YARP_HAS_GTK2)
     set_target_properties(yarpmotorgui-gtk PROPERTIES OUTPUT_NAME yarpmotorgui)
   endif()
 
+  yarp_install(FILES yarpmotorgui.xml
+               DESTINATION ${YARP_MODULES_INSTALL_DIR})
+
 endif()
