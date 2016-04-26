@@ -205,6 +205,16 @@ void EntitiesTreeWidget::onSelectItem(QString name)
 void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 {
     Q_UNUSED(column);
+    
+    if(item == applicationNode || item == resourcesNode || item == modulesNode || item == templatesNode){
+        if(!item->isExpanded()){
+            expandItem(item);
+        }else{
+            collapseItem(item);
+        }
+        return;
+    }
+
 
     if(item->data(0,Qt::UserRole).toInt()  == (int)yarp::manager::APPLICATION){
         yarp::manager::Application *app = (yarp::manager::Application*)item->data(0,Qt::UserRole + 1).toLongLong();
