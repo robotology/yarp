@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
 
-<devices robot="icub" build="1">
+<devices robot="grabber" build="2">
     <device name="grabber_left" type="grabber">
         <param name="subdevice">test_grabber</param>
         <param name="name">/left</param>

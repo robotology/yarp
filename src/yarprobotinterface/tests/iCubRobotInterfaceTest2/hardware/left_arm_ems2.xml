@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
-
-<devices robot="icubRobotInterfaceTest2" build="1">
-    <device name="left_arm_ems2" type="embObjMotionControl">
-        <params files="hardware/electronics/left_arm_ems2.xml" />
-        <params files="hardware/mechanicals/left_arm_ems2.xml" />
-    </device>
-</devices>
