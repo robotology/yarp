@@ -103,7 +103,7 @@ double RobotInterface::Module::getPeriod()
 
 bool RobotInterface::Module::updateModule()
 {
-    yDebug() << "robot-interface running happily";
+    yDebug() << "yarprobotinterface running happily";
     return true;
 }
 
