@@ -49,7 +49,7 @@ namespace yarp
         * Perform SVD decomposition on a matrix using the Jacobi method (defined in SVD.h). The Jacobi method
         * can compute singular values to higher relative accuracy than Golub-Reinsch algorithms.
         */
-        void SVDJacobi(const yarp::sig::Matrix &in, 
+        void YARP_math_API SVDJacobi(const yarp::sig::Matrix &in, 
             yarp::sig::Matrix &U,
             yarp::sig::Vector &S,
             yarp::sig::Matrix &V);
