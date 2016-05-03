@@ -632,6 +632,7 @@ BuilderItem *BuilderWindow::onAddNewConnection(void *startItem ,void *endItem, i
     arrow->getModel()->points.push_back(p1);
     connection.setModel(arrow->getModel());
     connection.setModelBase(*arrow->getModel());
+	connection.setPersistent(false);
     connection = manager->getKnowledgeBase()->addConnectionToApplication(mainApplication, connection);
 
     arrow->setConnection(connection);
