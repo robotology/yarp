@@ -597,6 +597,28 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             return false;
         }
 
+        // Check input values are in range
+        if( (wBase < 0) || (wBase >= controlledJoints) )
+        {
+            yError() << "ControlBoardWrapper input configuration for device " << partName << "has a wrong attach map.\n" << \
+                        "First index " << wBase << "must be inside range from 0 to 'joints' ("<< controlledJoints << ")";
+            return false;
+        }
+
+        if( (wTop < 0) || (wTop >= controlledJoints) )
+        {
+            yError() << "ControlBoardWrapper input configuration for device " << partName << "has a wrong attach map.\n" << \
+                        "Second index " << wTop << "must be inside range from 0 to 'joints' ("<< controlledJoints << ")";
+            return false;
+        }
+
+        if(wBase > wTop)
+        {
+            yError() << "ControlBoardWrapper input configuration for device " << partName << "has a wrong attach map.\n" << \
+                        "First index " << wBase << "must be lower than  second index " << wTop;
+            return false;
+        }
+
         for(int j=wBase;j<=wTop;j++)
         {
             device.lut[j].deviceEntry=k;
