@@ -29,7 +29,9 @@ public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();
         root.add(getPolyDriverTest());
+#ifdef YARP_CONTROLBOARDREMAPPER_TESTS
         root.add(getControlBoardRemapperTest());
+#endif
     }
 };
 
