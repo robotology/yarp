@@ -54,8 +54,9 @@ SubDevice::SubDevice()
     _subDevVerbose = false;
 }
 
-bool SubDevice::configure(int b, int t, int n, const std::string &key)
+bool SubDevice::configure(int b, int t, int n, const std::string &key, yarp::dev::ControlBoardWrapper *_parent)
 {
+    parent = _parent;
     configuredF=false;
 
     base=b;
@@ -121,6 +122,14 @@ void SubDevice::detach()
 
 bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 {
+    std::string parentName;
+    if(parent)
+    {
+        parentName = parent->getId();
+    }
+    else
+        parentName = "";
+
     if (id!=k)
         {
             yError()<<"controlBoardWrapper: Wrong device" << k.c_str();
@@ -209,7 +218,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         return false;
     }
 
-    if( ! (vel || vel2) ) // One of the 2 is enough, therefor if both are missing I raise an error
+    if( ! (vel || vel2) ) // One of the 2 is enough, therefore if both are missing I raise an error
     {
         yError("ControlBoarWrapper: neither IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting");
         return false;
@@ -258,6 +267,17 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     {
         yError("ControlBoarWrapper: check device configuration, number of joints of attached device '%d' less than the one specified during configuration '%d' for %s.", deviceJoints, axes, k.c_str());
         return false;
+    }
+
+    int subdevAxes;
+    if(!pos->getAxes(&subdevAxes))
+    {
+
+        yError() << "ControlBoardWrapper for device <" << parentName << "> attached to subdevice " << k.c_str() << " but it was not ready yet. \n" \
+                 << "Please check the device has been correctly created and all required initialization actions has been performed.";
+                 return false;
+        attachedF=false;
+
     }
     attachedF=true;
     return true;

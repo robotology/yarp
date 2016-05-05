@@ -591,7 +591,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         tmpDevice->setVerbose(_verb);
 
         int axes=top-base+1;
-        if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str()))
+        if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str(), this))
         {
             yError() <<"configure of subdevice ret false";
             return false;
@@ -689,7 +689,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     tmpDevice->setVerbose(_verb);
 
     std::string subDevName ((partName + "_" + prop.find("subdevice").asString().c_str()));
-    if (!tmpDevice->configure(base, top, controlledJoints, subDevName) )
+    if (!tmpDevice->configure(base, top, controlledJoints, subDevName, this) )
     {
         yError() <<"configure of subdevice ret false";
         return false;
