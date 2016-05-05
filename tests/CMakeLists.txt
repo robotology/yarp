@@ -67,6 +67,11 @@ if(YARP_COMPILE_TESTS)
         target_link_libraries(harness_os pthread)
     endif()
 
+    # Compile ControlBoardRemapperTest only if fakeMotionControl is enabled
+    if(ENABLE_yarpmod_fakeMotionControl)
+        add_definitions(-DYARP_CONTROLBOARDREMAPPER_TESTS)
+    endif()
+
     # Add in hardware specific tests, if requested
     option(CREATE_PLUGIN_TESTS "Compile plugin tests" FALSE)
     mark_as_advanced(CREATE_PLUGIN_TESTS)
