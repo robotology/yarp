@@ -1346,6 +1346,7 @@ bool FakeMotionControl::positionMoveRaw(int j, double ref)
         yError() << "positionMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
     _posCtrl_references[j] = ref;
+    pos[j] = _posCtrl_references[j];
     return true;
 }
 
@@ -1382,6 +1383,7 @@ bool FakeMotionControl::relativeMoveRaw(int j, double delta)
         yError() << "relativeMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
     _posCtrl_references[j] += delta;
+    pos[j] = _posCtrl_references[j];
     return false;
 }
 
@@ -1776,6 +1778,11 @@ bool FakeMotionControl::resetEncodersRaw()
 bool FakeMotionControl::getEncoderRaw(int j, double *value)
 {
     bool ret = true;
+
+    // To simulate a real controlboard, we assume that the joint
+    // encoders is exactly the last set by setPosition(s) or positionMove
+    *value = pos[j];
+
     return ret;
 }
 
@@ -1784,7 +1791,8 @@ bool FakeMotionControl::getEncodersRaw(double *encs)
     bool ret = true;
     for(int j=0; j< _njoints; j++)
     {
-        ret &= getEncoderRaw(j, &encs[j]);
+        bool ok = getEncoderRaw(j, &encs[j]);
+        ret = ret && ok;
 
     }
     return ret;
@@ -2384,6 +2392,7 @@ bool FakeMotionControl::getVelPidsRaw(Pid *pids)
 bool FakeMotionControl::setPositionRaw(int j, double ref)
 {
     _posDir_references[j] = ref;
+    pos[j] = _posDir_references[j];
     return true;
 }
 
@@ -2392,6 +2401,7 @@ bool FakeMotionControl::setPositionsRaw(const int n_joint, const int *joints, do
     for(int i=0; i< n_joint; i++)
     {
         _posDir_references[joints[i]] = refs[i];
+        pos[joints[i]] = _posDir_references[joints[i]];
     }
     return true;
 }
@@ -2401,6 +2411,7 @@ bool FakeMotionControl::setPositionsRaw(const double *refs)
     for(int i=0; i< _njoints; i++)
     {
         _posDir_references[i] = refs[i];
+        pos[i] = _posDir_references[i];
     }
     return true;
 }
@@ -2479,7 +2490,9 @@ bool FakeMotionControl::getRefPositionRaw(int axis, double *ref)
         yWarning() << "getTargetPosition: Joint " << axis << " is not in POSITION_DIRECT mode, therefore the value returned by \
         this call is for reference only and may not reflect the actual behaviour of the motor/firmware.";
     }
+
     *ref = _posDir_references[axis];
+
     return true;
 }
 
