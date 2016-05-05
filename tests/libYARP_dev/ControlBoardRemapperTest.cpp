@@ -99,8 +99,8 @@ public:
         axesList.addString("axisA2");
         size_t nrOfRemappedAxes = 6;
 
-        bool result = ddRemapper.open(pRemapper);
-        checkTrue(result,"controlboardremapper open reported successful");
+        bool ok = ddRemapper.open(pRemapper);
+        checkTrue(ok,"controlboardremapper open reported successful");
 
         // Attach the fake motion boards to the remapper
         yarp::dev::PolyDriverList fmcList;
@@ -111,43 +111,73 @@ public:
         }
 
         yarp::dev::IMultipleWrapper *imultwrap = 0;
-        result = ddRemapper.view(imultwrap);
-        checkTrue(result, "interface for multiple wrapper correctly opened");
+        ok = ddRemapper.view(imultwrap);
+        checkTrue(ok, "interface for multiple wrapper correctly opened");
 
-        result = imultwrap->attachAll(fmcList);
+        ok = imultwrap->attachAll(fmcList);
 
-        checkTrue(result, "attachAll successful");
+        checkTrue(ok, "attachAll successful");
 
-        IPositionControl *pos = NULL;
-        result = ddRemapper.view(pos);
-        checkTrue(result, "interface position correctly opened");
+        IPositionControl2 *pos = NULL;
+        ok = ddRemapper.view(pos);
+        checkTrue(ok, "interface position correctly opened");
         int axes = 0;
-        result = pos->getAxes(&axes);
-        checkTrue(result, "getAxes returned correctly");
+        ok = pos->getAxes(&axes);
+        checkTrue(ok, "getAxes returned correctly");
         checkEqual(axes, 6, "remapper seems functional");
 
         IPositionDirect *posdir = 0;
-        result = ddRemapper.view(posdir);
-        checkTrue(result, "direct position interface correctly opened");
+        ok = ddRemapper.view(posdir);
+        checkTrue(ok, "direct position interface correctly opened");
 
-        std::vector<double> setPosition(nrOfRemappedAxes), readedPosition(nrOfRemappedAxes);
+        IEncoders * encs = 0;
+        ok = ddRemapper.view(encs);
+        checkTrue(ok, "encoders interface correctly opened");
+
+        std::vector<double> setPosition(nrOfRemappedAxes,-10),
+                            setRefSpeeds(nrOfRemappedAxes,-15),
+                            readedPosition(nrOfRemappedAxes,-20),
+                            readedEncoders(nrOfRemappedAxes,-30);
 
         for(size_t i=0; i < nrOfRemappedAxes; i++)
         {
-            setPosition[i]  = i*100.0;
+            setPosition[i]  = i*100.0+50.0;
+            setRefSpeeds[i] = i*10.0+5;
+            readedPosition[i] = -100;
         }
 
         // Set position
-        posdir->setPositions(setPosition.data());
+        ok = posdir->setPositions(setPosition.data());
+        checkTrue(ok, "setPositions correctly called");
+
+        // Set also the speeds in the mean time, so we are sure that we don't get
+        // spurios successful set/get of position because of intermediate buffers
+        ok = pos->setRefSpeeds(setRefSpeeds.data());
+        checkTrue(ok, "setRefSpeeds correctly called");
 
         // Read position
-        posdir->getRefPositions(readedPosition.data());
+        ok = posdir->getRefPositions(readedPosition.data());
+        checkTrue(ok, "getRefPositions correctly called");
+
+
 
         // Check that the two vector match
         for(size_t i=0; i < nrOfRemappedAxes; i++)
         {
-            checkEqual(setPosition[i],readedPosition[i],"Setted position and readed position match");
+            checkEqual(setPosition[i],readedPosition[i],"Setted position and readed ref position match");
         }
+
+        // Do a similar test for the encoders
+        // in fakeMotionControl their value is the one setted with setPosition
+        ok = encs->getEncoders(readedEncoders.data());
+        checkTrue(ok, "getEncoders correctly called");
+
+        // Check that the two vector match
+        for(size_t i=0; i < nrOfRemappedAxes; i++)
+        {
+            checkEqual(setPosition[i],readedEncoders[i],"Setted position and readed encoders match");
+        }
+
 
         // Close devices
         imultwrap->detachAll();

@@ -1802,7 +1802,7 @@ bool ControlBoardRemapper::getEncoders(double *encs)
 
         if (p->iJntEnc)
         {
-            bool ok = p->iJntEnc->getEncoder(off, encs);
+            bool ok = p->iJntEnc->getEncoder(off, encs+l);
             ret = ret && ok;
         }
         else
