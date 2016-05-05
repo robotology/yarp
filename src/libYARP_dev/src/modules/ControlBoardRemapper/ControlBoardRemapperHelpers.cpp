@@ -225,6 +225,7 @@ bool ControlBoardSubControlBoardAxesDecomposition::configure(const RemappedContr
 
     for(size_t ctrlBrd=0; ctrlBrd < nrOfSubControlBoards; ctrlBrd++)
     {
+        m_nJointsInSubControlBoard[ctrlBrd] = 0;
         m_jointsInSubControlBoard[ctrlBrd].clear();
         m_bufferForSubControlBoard[ctrlBrd].clear();
         m_bufferForSubControlBoardControlModes[ctrlBrd].clear();
@@ -249,7 +250,6 @@ bool ControlBoardSubControlBoardAxesDecomposition::configure(const RemappedContr
         m_bufferForSubControlBoardInteractionModes[ctrlBrd].reserve(m_nJointsInSubControlBoard[ctrlBrd]);
 
         m_counterForControlBoard[ctrlBrd] = 0;
-        m_nJointsInSubControlBoard[ctrlBrd] = 0;
     }
 
     return true;
