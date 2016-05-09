@@ -210,19 +210,6 @@ endmacro()
 # be later able to link against them all as a group.
 #
 macro(YARP_ADD_PLUGIN _library_name)
-  # YARP_ADD_PLUGIN used to be a re-definition of the ADD_LIBRARY
-  # CMake command therefore IMPORTED libraries had to be skipped.
-  # It should be safe to remove this check now, but for now issue a
-  # fatal error to ensure that YARP_ADD_PLUGIN is not used instead
-  # of ADD_LIBRARY
-  # FIXME Remove this check as soon as we are sure that it is not used
-  # anywhere
-  foreach(arg ${ARGN})
-    if("${arg}" STREQUAL "IMPORTED")
-      message(FATAL_ERROR "YARP_ADD_PLUGIN does not support the IMPORTED argument.")
-    endif()
-  endforeach()
-
   if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
     set(_library_type "MODULE")
   else()
