@@ -108,19 +108,19 @@ endmacro()
 # This macro converts a plugin declaration to code, and to set up CMake
 # flags for controlling compilation of that device.
 #
-macro(YARP_PREPARE_PLUGIN plugin_name)
+macro(YARP_PREPARE_PLUGIN _plugin_name)
   set(_options)
   set(_oneValueArgs TYPE
                     INCLUDE
-                    WRAPPER
                     CATEGORY
                     DEFAULT
-                    ADVANCED)
+                    ADVANCED
+                    WRAPPER)
   set(_multiValueArgs DEPENDS)
   cmake_parse_arguments(_YPP "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
   if(NOT _YPP_TYPE OR NOT _YPP_INCLUDE)
-    message(STATUS "Not enough information to create ${plugin_name}")
+    message(STATUS "Not enough information to create ${_plugin_name}")
     message(STATUS "  type:     ${_YPP_TYPE}")
     message(STATUS "  include:  ${_YPP_INCLUDE}")
     message(STATUS "  wrapper:  ${_YPP_WRAPPER}")
@@ -140,27 +140,27 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
   # Set up a flag to enable/disable compilation of this plugin.
-  set(X_MYNAME "${X_YARP_PLUGIN_PREFIX}${plugin_name}")
+  set(_plugin_fullname "${X_YARP_PLUGIN_PREFIX}${_plugin_name}")
 
   if(DEFINED _YPP_DEPENDS)
-    cmake_dependent_option(ENABLE_${X_MYNAME} "Enable/disable compilation of ${X_MYNAME}" ${_YPP_DEFAULT}
+    cmake_dependent_option(ENABLE_${_plugin_fullname} "Enable/disable compilation of ${_plugin_fullname}" ${_YPP_DEFAULT}
                            "${_YPP_DEPENDS}" OFF)
   else()
-    option(ENABLE_${X_MYNAME} "Enable/disable compilation of ${X_MYNAME}" ${_YPP_DEFAULT})
+    option(ENABLE_${_plugin_fullname} "Enable/disable compilation of ${_plugin_fullname}" ${_YPP_DEFAULT})
   endif()
   if(_YPP_ADVANCED)
-    mark_as_advanced(ENABLE_${X_MYNAME})
+    mark_as_advanced(ENABLE_${_plugin_fullname})
   endif()
 
   # Set some convenience variables based on whether the plugin
   # is enabled or disabled.
-  set(ENABLE_${plugin_name} ${ENABLE_${X_MYNAME}})
-  if(ENABLE_${plugin_name})
-    set(SKIP_${plugin_name} OFF)
-    set(SKIP_${X_MYNAME} OFF)
+  set(ENABLE_${_plugin_name} ${ENABLE_${_plugin_fullname}})
+  if(ENABLE_${_plugin_name})
+    set(SKIP_${_plugin_name} OFF)
+    set(SKIP_${_plugin_fullname} OFF)
   else()
-    set(SKIP_${plugin_name} ON)
-    set(SKIP_${X_MYNAME} ON)
+    set(SKIP_${_plugin_name} ON)
+    set(SKIP_${_plugin_fullname} ON)
   endif()
 
   if(NOT "${X_YARP_PLUGIN_MASTER}" STREQUAL "")
@@ -171,13 +171,13 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
 
   # If the plugin is enabled, add the appropriate source code into
   # the library source list.
-  if(ENABLE_${X_MYNAME})
+  if(ENABLE_${_plugin_fullname})
     # Go ahead and prepare some code to wrap this plugin.
 
-    set(_fname ${CMAKE_CURRENT_BINARY_DIR}/${_master}_add_${plugin_name}.cpp)
+    set(_fname ${CMAKE_CURRENT_BINARY_DIR}/${_master}_add_${_plugin_name}.cpp)
 
     # Variables used by the templates:
-    set(YARPPLUG_NAME "${plugin_name}")
+    set(YARPPLUG_NAME "${_plugin_name}")
     set(YARPPLUG_TYPE "${_YPP_TYPE}")
     set(YARPPLUG_INCLUDE "${_YPP_INCLUDE}")
     set(YARPPLUG_WRAPPER "${_YPP_WRAPPER}")
@@ -185,7 +185,7 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
     configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_${_YPP_CATEGORY}.cpp.in
                    ${_fname} @ONLY)
 
-    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${_plugin_name})
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
     get_property(_link_libs GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
     if("${_YPP_CATEGORY}" STREQUAL "carrier")
@@ -197,9 +197,9 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
       list(REMOVE_DUPLICATES _link_libs)
     endif()
     set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES ${_link_libs})
-    message(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
+    message(STATUS " +++ plugin ${_plugin_name}, ENABLE_${_plugin_name} is set")
   else()
-    message(STATUS " --- plugin ${plugin_name}, SKIP_${plugin_name} is set")
+    message(STATUS " --- plugin ${_plugin_name}, SKIP_${_plugin_name} is set")
   endif()
 endmacro()
 
