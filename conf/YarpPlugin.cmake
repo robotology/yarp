@@ -220,28 +220,6 @@ endmacro()
 
 
 #########################################################################
-# YARP_PREPARE_DEVICE macro lets a developer declare a device plugin using a
-# statement like:
-#    YARP_PREPARE_PLUGIN(moto CATEGORY device TYPE Moto INCLUDE moto.h WRAPPER controlboard)
-#
-macro(YARP_PREPARE_DEVICE)
-  yarp_prepare_plugin(${ARGN} CATEGORY device)
-endmacro()
-
-
-
-#########################################################################
-# YARP_PREPARE_CARRIER macro lets a developer declare a carrier plugin using a
-# statement like:
-#    YARP_PREPARE_CARRIER(foo TYPE FooCarrier INCLUDE FooCarrier.h)
-#
-macro(YARP_PREPARE_CARRIER)
-  yarp_prepare_plugin(${ARGN} CATEGORY carrier)
-endmacro()
-
-
-
-#########################################################################
 # YARP_ADD_PLUGIN macro tracks plugin libraries.  We want to
 # be later able to link against them all as a group.
 #
@@ -386,49 +364,59 @@ if(NOT YARP_NO_DEPRECATED)
   endmacro()
 
   macro(ADD_PLUGIN_NORMALIZED)
-    yarp_deprecated_warning("ADD_PLUGIN_NORMALIZED is deprecated. Use YARP_ADD_PLUGIN_NORMALIZED instead.")
+    yarp_deprecated_warning("ADD_PLUGIN_NORMALIZED is deprecated.\nUse YARP_ADD_PLUGIN_NORMALIZED instead.")
     yarp_add_plugin_normalized(${ARGN})
   endmacro()
 
   macro(PREPARE_PLUGIN)
-    yarp_deprecated_warning("PREPARE_PLUGIN is deprecated. Use YARP_PREPARE_PLUGIN instead.")
+    yarp_deprecated_warning("PREPARE_PLUGIN is deprecated.\nUse YARP_PREPARE_PLUGIN instead.")
     yarp_prepare_plugin(${ARGN})
   endmacro()
 
   macro(PREPARE_DEVICE)
-    yarp_deprecated_warning("PREPARE_DEVICE is deprecated. Use YARP_PREPARE_DEVICE instead.")
-    yarp_prepare_device(${ARGN})
+    yarp_deprecated_warning("PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.")
+    yarp_prepare_plugin(${ARGN} CATEGORY device)
+  endmacro()
+
+  macro(YARP_PREPARE_DEVICE)
+    yarp_deprecated_warning("YARP_PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.")
+    yarp_prepare_plugin(${ARGN} CATEGORY device)
   endmacro()
 
   macro(PREPARE_CARRIER)
-    yarp_deprecated_warning("PREPARE_CARRIER is deprecated. Use YARP_PREPARE_CARRIER instead.")
-    yarp_prepare_carrier(${ARGN})
+    yarp_deprecated_warning("PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.")
+    yarp_prepare_plugin(${ARGN} CATEGORY carrier)
+  endmacro()
+
+  macro(YARP_PREPARE_CARRIER)
+    yarp_deprecated_warning("YARP_PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.")
+    yarp_prepare_plugin(${ARGN} CATEGORY carrier)
   endmacro()
 
   macro(END_PLUGIN_LIBRARY)
-    yarp_deprecated_warning("END_PLUGIN_LIBRARY is deprecated. Use YARP_END_PLUGIN_LIBRARY instead.")
+    yarp_deprecated_warning("END_PLUGIN_LIBRARY is deprecated.\nUse YARP_END_PLUGIN_LIBRARY instead.")
     yarp_end_plugin_library(${ARGN})
   endmacro()
 
   macro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
-    yarp_deprecated_warning("ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated. Use YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.")
+    yarp_deprecated_warning("ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated.\nUse YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.")
     yarp_add_plugin_yarpdev_executable(${ARGN})
   endmacro()
 
   macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
-    yarp_deprecated_warning("YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated. Use YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.")
+    yarp_deprecated_warning("YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated.\nUse YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.")
     yarp_add_plugin_yarpdev_executable(${ARGN})
   endmacro()
 
   macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
-    yarp_deprecated_warning("YARP_ADD_CARRIER_FINGERPRINT is deprecated. Use YARP_INSTALL instead.")
+    yarp_deprecated_warning("YARP_ADD_CARRIER_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.")
     yarp_install(FILES ${file_name}
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   endmacro()
 
   macro(YARP_ADD_DEVICE_FINGERPRINT file_name)
-    yarp_deprecated_warning("YARP_ADD_DEVICE_FINGERPRINT is deprecated. Use YARP_INSTALL instead.")
+    yarp_deprecated_warning("YARP_ADD_DEVICE_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.")
     yarp_install(FILES ${file_name}
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
