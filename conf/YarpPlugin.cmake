@@ -74,12 +74,6 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
     # Declare that we are starting to compile the given plugin library
     message(STATUS "starting plugin library: ${bundle_name}")
 
-    # Prepare a directory for automatically generated boilerplate code.
-    set(X_YARP_PLUGIN_GEN ${CMAKE_BINARY_DIR}/generated_code)
-    if(NOT EXISTS ${X_YARP_PLUGIN_GEN})
-        file(MAKE_DIRECTORY ${X_YARP_PLUGIN_GEN})
-    endif()
-
     # Choose a prefix for CMake options related to this library
     set(X_YARP_PLUGIN_PREFIX "${bundle_name}_")
 
@@ -145,14 +139,6 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
   # in their module directory.
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-  # Figure out a decent filename for the code we are about to
-  # generate.  If all else fails, the code will get dumped in
-  # the current binary directory.
-  set(fdir ${X_YARP_PLUGIN_GEN})
-  if(NOT fdir)
-    set(fdir ${CMAKE_CURRENT_BINARY_DIR})
-  endif()
-
   # Set up a flag to enable/disable compilation of this plugin.
   set(X_MYNAME "${X_YARP_PLUGIN_PREFIX}${plugin_name}")
 
@@ -188,7 +174,7 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
   if(ENABLE_${X_MYNAME})
     # Go ahead and prepare some code to wrap this plugin.
 
-    set(_fname ${fdir}/${_master}_add_${plugin_name}.cpp)
+    set(_fname ${CMAKE_CURRENT_BINARY_DIR}/${_master}_add_${plugin_name}.cpp)
 
     # Variables used by the templates:
     set(YARPPLUG_NAME "${plugin_name}")
@@ -307,12 +293,12 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
       endforeach()
     endif()
     configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_library.cpp.in
-                   ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp @ONLY)
+                   ${CMAKE_CURRENT_BINARY_DIR}/yarp_${X_YARP_PLUGIN_MASTER}_plugin_library.cpp @ONLY)
     get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
     include_directories(${YARP_INCLUDE_DIRS})
     get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
     # add the library initializer code
-    add_library(${X_YARP_PLUGIN_MASTER} ${code} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
+    add_library(${X_YARP_PLUGIN_MASTER} ${code} ${CMAKE_CURRENT_BINARY_DIR}/yarp_${X_YARP_PLUGIN_MASTER}_plugin_library.cpp)
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
       set_property(TARGET ${X_YARP_PLUGIN_MASTER} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
@@ -339,8 +325,8 @@ macro(YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE exename bundle_name)
     set(YARP_CODE_POST "    YARP_REGISTER_DEVICES(${bundle_name})")
   endif()
   configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_yarpdev_main.cpp.in
-                  ${X_YARP_PLUGIN_GEN}/${bundle_name}_yarpdev.cpp @ONLY)
-  add_executable(${exename} ${X_YARP_PLUGIN_GEN}/${bundle_name}_yarpdev.cpp)
+                 ${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp @ONLY)
+  add_executable(${exename} ${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp)
   target_link_libraries(${exename} ${bundle_name})
   if(TARGET YARP_OS)
     # Building YARP
