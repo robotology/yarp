@@ -1,5 +1,16 @@
+#.rst:
+# YarpPlugin
+# ----------
+#
+# A set of macros for building YARP plugins.
+#
+
 # Copyright: (C) 2009, 2010 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
+#            (C) 2013-2016 iCub Facility, Istituto Italiano di Tecnologia
+# Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+#          Giorgio Metta <giorgio.metta@iit.it>
+#          Lorenzo Natale <lorenzo.natale@iit.it>
+#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 ################################################################################
@@ -7,34 +18,43 @@
 ## This file provides a set of macros for building bundles of plugins.
 ## Sample use:
 ##
-##  YARP_BEGIN_PLUGIN_LIBRARY(libname)
-##    ADD_SUBDIRECTORY(plugin1)
-##    ADD_SUBDIRECTORY(plugin2)
+##  yarp_begin_plugin_library(libname)
+##    add_subdirectory(plugin1)
+##    add_subdirectory(plugin2)
 ##    ...
-##  YARP_END_PLUGIN_LIBRARY(libname)
-##  YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE(libnamedev libname)
+##  yarp_end_plugin_library(libname)
+##  yarp_add_plugin_yarpdev_executable(libnamedev libname)
 ##
-## This sample would create two CMake targets, "libname" (a library)
-## and libnamedev (an executable).  It also defines a list:
+## This sample would create two CMake targets, "libname" (a library) and
+## libnamedev (an executable).
+##
+## It also defines a list:
+##
 ##   ${libname_LIBRARIES}
-## which contains a list of all library targets created within
-## the plugin directories plugin1, plugin2, ...
 ##
-## The "libname" library links with every library in the subdirectories
-## (which can be made individually optional using CMake options),
-## and provides a method to initialize them all.
+## which contains a list of all plugins targets created within the plugin
+## directories plugin1, plugin2, ...
 ##
-## The executable is a test program that links and initializes
-## the "libname" library, making the plugins accessible.
+## The executable is a test program that links and initializes the "libname"
+## library, making the plugins accessible when yarp is built as static library.
 ##
-## Plugins come in two types, carriers and devices.
-## To let YARP know how to initialize them, add lines like
+## To let YARP know how to initialize plugins, add lines like
 ## this in the CMakeLists.txt files the plugin subdirectories:
 ##
-##   YARP_PREPARE_DEVICE(microphone TYPE MicrophoneDeviceDriver
-##                  INCLUDE MicrophoneDeviceDriver.h WRAPPER grabber)
-## (the WRAPPER is optional), or:
-##   YARP_PREPARE_CARRIER(new_carrier TYPE TheCarrier INCLUDE ...)
+##   yarp_prepare_plugin(<plugin name>
+##                       CATEGORY <category>
+##                       TYPE <class name>
+##                       INCLUDE <header>
+##                       [WRAPPER <wrapper>] # used by devices only
+##                       [DEFAULT <ON|OFF>]
+##                       [ADVANCED <ON|OFF>]
+##                       [DEPENDS <condition>]
+##
+## For devices and carriers, there are also specialized functions:
+##
+##   yarp_prepare_device(...)    # yarp_prepare_plugin(CATEGORY device ...)
+##   yarp_prepare_carrier(...)   # yarp_prepare_plugin(CATEGORY carrier ...)
+##
 ##
 ################################################################################
 
@@ -51,11 +71,18 @@ include(CMakeDependentOption)
 
 
 ################################################################################
-# YARP_BEGIN_PLUGIN_LIBRARY: this macro makes sure that all the hooks
-# needed for creating a plugin library are in place.  Between
-# this call, and a subsequent call to END_PLUGIN_LIBRARY, the
-# X_YARP_PLUGIN_MODE variable is set.  While this mode is set,
-# any library targets created are tracked in a global list.
+#.rst:
+# .. command:: yarp_begin_plugin_library
+#
+# Make sure that all the hooks needed for creating a plugin library are in
+# place::
+#
+#    yarp_begin_plugin_library(<bundle_name>)
+#
+# Between this call, and a subsequent call to
+# :command:`yarp_end_plugin_library`, any yarp plugin target created is tracked
+# and added to the master plugin library.
+#
 # Calls to this macro may be nested.
 #
 macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
@@ -98,15 +125,80 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
 endmacro()
 
 
-
 ################################################################################
-# YARP_PREPARE_PLUGIN macro lets a developer declare a plugin using a
-# statement like:
-#    YARP_PREPARE_PLUGIN(foo CATEGORY device TYPE FooDriver INCLUDE FooDriver.h)
-# or
-#    YARP_PREPARE_PLUGIN(moto CATEGORY device TYPE Moto INCLUDE moto.h WRAPPER controlboard)
-# This macro converts a plugin declaration to code, and to set up CMake
-# flags for controlling compilation of that device.
+#.rst:
+# .. command:: yarp_prepare_plugin
+#
+# Declare a plugin::
+#
+#   yarp_prepare_plugin(<plugin name>
+#                       CATEGORY <category>
+#                       [PARENT_TYPE <parent class name>]
+#                       TYPE <class name>
+#                       INCLUDE <header>
+#                       [DEFAULT <ON|OFF>]
+#                       [OPTION <name>]
+#                       [ADVANCED <ON|OFF>]
+#                       [DEPENDS <condition>]
+#                       [TEMPLATE <file_name|path_to_a_file>]
+#                       [TEMPLATE_DIR <dir>]
+#                       [EXTRA_CONFIG <config>]
+#                       [CODE <code>]        # Deprecated, used only by carriers
+#                       [WRAPPER <wrapper>]  # Deprecated, used only by devices
+#                       [PART <part>]        # Deprecated
+#
+# This macro converts a plugin declaration to code, and to set up a CMake option
+# for enabling or disabling the compilation of that plugin.
+#
+# The ``CATEGORY`` is the type of plugin implemented (for example ``carrier`` or
+# ``device``). ``PARENT_TYPE``, if set, is the type corresponding to the
+# ``CATEGORY`` type of plugins (for example ``yarp::os::Carrier`` or
+# ``yarp::dev::Device``), and it is used in the generation of the code to
+# register the plugin with YARP.
+# The ``TYPE`` argument is used to specify the class name (including the
+# eventual namespace) that implements the plugin.
+# ``INCLUDE`` is the header file that should be included and that contains the
+# definition of the class.
+#
+# For example, for a plugin implementing a ``carrier``, the header file
+# (``foo/Bar.h``) will contain something like this::
+#
+#.. code-block:: c++
+#
+#    namespace foo {
+#    class Bar : public yarp::os::Carrier
+#    {
+#      // Class implementation
+#    };
+#    }
+#
+# The corresponding CMake code will be something like::
+#
+#.. code-block:: cmake
+#
+#    yarp_prepare_plugin(CATEGORY carrier
+#                        TYPE foo::Bar
+#                        INCLUDE foo/Bar.h)
+#
+# If the ``OPTION`` argument is passed, it will be used to name the CMake
+# option, otherwise a default name ``ENABLE_<master>_<name>[_<category>]`` will
+# be used (``<category>`` is not added if the name already contains it).
+# The ``DEFAULT`` option, if set, will be used to set the default value for this
+# option, otherwise the plugin will be disabled by default.
+# The ``DOC`` option can be used to set a description for this option.
+# If the``ADVANCED`` option is enabled, this option is marked as advanced in
+# CMake.
+# If the ``INTERNAL`` option is enabled, this option is marked as internal in
+# CMake. # FIXME TODO
+#
+# The plugin can be conditionally disabled, depending on some conditions (for
+# example some option, only on some systems, or only if some library was found)
+# by using the ``DEPENDS`` argument. For example ``DEPENDS "FOO;NOT BAR"`` will
+# disable it only if at least one the conditions is false, therefore when
+# ``FOO`` is false or ``BAR`` is true.
+#
+# FIXME Add docs for TEMPLATE and TEMPLATE_DIR
+# FIXME Add docs for EXTRA_CONFIG, WRAPPER, CODE and PART
 #
 macro(YARP_PREPARE_PLUGIN _plugin_name)
   set(_options)
