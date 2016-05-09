@@ -13,7 +13,7 @@ if(CREATE_OPTIONAL_CARRIERS)
   add_subdirectory(wire_rep_utils)
 
   include(YarpPlugin)
-  YARP_BEGIN_PLUGIN_LIBRARY(yarpcar)
+  yarp_begin_plugin_library(yarpcar)
     add_subdirectory(human_carrier)
     add_subdirectory(mpi_carrier)
     add_subdirectory(xmlrpc_carrier)
@@ -25,7 +25,7 @@ if(CREATE_OPTIONAL_CARRIERS)
     if(NOT SKIP_portmonitor_carrier)
       add_subdirectory(depth_image_portmonitor)
     endif()
-  YARP_END_PLUGIN_LIBRARY(yarpcar)
+  yarp_end_plugin_library(yarpcar)
   install(TARGETS yarpcar
           EXPORT YARP
           COMPONENT runtime

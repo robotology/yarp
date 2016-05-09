@@ -12,7 +12,7 @@ if (CREATE_DEVICE_LIBRARY_MODULES)
   include_directories(${YARP_OS_INCLUDE_DIRS})
 
   # Prepare a plugin library called "yarpmod".
-  YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
+  yarp_begin_plugin_library(yarpmod)
     add_subdirectory(cuda)
     add_subdirectory(fakebot)
     add_subdirectory(fakeMotionControl)
@@ -79,7 +79,7 @@ if (CREATE_DEVICE_LIBRARY_MODULES)
     endif(EXISTS ${EXTFILE})
   endforeach(EXTFILE)
 
-  YARP_END_PLUGIN_LIBRARY(yarpmod)
+  yarp_end_plugin_library(yarpmod)
 
   install(TARGETS yarpmod
           EXPORT YARP

@@ -2,7 +2,7 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-#########################################################################
+################################################################################
 ##
 ## This file provides a set of macros for building bundles of plugins.
 ## Sample use:
@@ -36,7 +36,7 @@
 ## (the WRAPPER is optional), or:
 ##   YARP_PREPARE_CARRIER(new_carrier TYPE TheCarrier INCLUDE ...)
 ##
-#########################################################################
+################################################################################
 
 
 ## Skip this whole file if it has already been included
@@ -50,7 +50,7 @@ include(CMakeParseArguments)
 include(CMakeDependentOption)
 
 
-#########################################################################
+################################################################################
 # YARP_BEGIN_PLUGIN_LIBRARY: this macro makes sure that all the hooks
 # needed for creating a plugin library are in place.  Between
 # this call, and a subsequent call to END_PLUGIN_LIBRARY, the
@@ -105,7 +105,7 @@ endmacro()
 
 
 
-#########################################################################
+################################################################################
 # YARP_PREPARE_PLUGIN macro lets a developer declare a plugin using a
 # statement like:
 #    YARP_PREPARE_PLUGIN(foo CATEGORY device TYPE FooDriver INCLUDE FooDriver.h)
@@ -219,11 +219,11 @@ endmacro()
 
 
 
-#########################################################################
+################################################################################
 # YARP_ADD_PLUGIN macro tracks plugin libraries.  We want to
 # be later able to link against them all as a group.
 #
-macro(YARP_ADD_PLUGIN LIBNAME)
+macro(YARP_ADD_PLUGIN _library_name)
   # YARP_ADD_PLUGIN used to be a re-definition of the ADD_LIBRARY
   # CMake command therefore IMPORTED libraries had to be skipped.
   # It should be safe to remove this check now, but for now issue a
@@ -238,36 +238,36 @@ macro(YARP_ADD_PLUGIN LIBNAME)
   endforeach()
 
   if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
-    set(X_LIBTYPE "MODULE")
+    set(_library_type "MODULE")
   else()
-    set(X_LIBTYPE "STATIC")
+    set(_library_type "STATIC")
   endif()
 
   # The user is adding a bone-fide plugin library.  We add it,
   # while inserting any generated source code needed for initialization.
   get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
   foreach(s ${srcs})
-    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${_library_name})
   endforeach()
   get_property(_link_libs GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
   if(TARGET YARP_OS)
     # Building YARP: Targets don't have NAMESPACE
     string(REPLACE "YARP::" "" _link_libs "${_link_libs}")
   endif()
-  add_library(${LIBNAME} ${X_LIBTYPE} ${srcs} ${ARGN})
-  target_link_libraries(${LIBNAME} ${_link_libs})
+  add_library(${_library_name} ${_library_type} ${srcs} ${ARGN})
+  target_link_libraries(${_library_name} ${_link_libs})
   if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
     # Do not add the "lib" prefix to dynamic plugin libraries.
     # This simplifies search on different platforms and makes it easier
     # to distinguish them from linkable libraries.
-    set_property(TARGET ${LIBNAME} PROPERTY PREFIX "")
+    set_property(TARGET ${_library_name} PROPERTY PREFIX "")
   else()
     # Compile static plugins with -DYARP_STATIC_PLUGIN
-    set_property(TARGET ${LIBNAME} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
+    set_property(TARGET ${_library_name} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
   endif()
 
   # Add the library to the list of plugin libraries.
-  set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
+  set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${_library_name})
   # Reset the list of generated source code and link libraries to empty.
   set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
   set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
@@ -275,7 +275,7 @@ endmacro()
 
 
 
-#########################################################################
+################################################################################
 # YARP_END_PLUGIN_LIBRARY macro finalizes a plugin library if this is
 # the outermost plugin library block, otherwise it propagates
 # all collected information to the plugin library block that wraps
@@ -326,7 +326,7 @@ endmacro()
 
 
 
-#########################################################################
+################################################################################
 # YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE macro expands yarpdev executable
 # for a named plugin library.
 #
@@ -352,7 +352,7 @@ endmacro()
 
 
 
-#########################################################################
+################################################################################
 # Deprecated macros
 #
 if(NOT YARP_NO_DEPRECATED)
