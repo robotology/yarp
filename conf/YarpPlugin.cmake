@@ -119,12 +119,11 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   set(_multiValueArgs DEPENDS)
   cmake_parse_arguments(_YPP "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
-  if(NOT _YPP_TYPE OR NOT _YPP_INCLUDE)
-    message(STATUS "Not enough information to create ${_plugin_name}")
-    message(STATUS "  type:     ${_YPP_TYPE}")
-    message(STATUS "  include:  ${_YPP_INCLUDE}")
-    message(STATUS "  wrapper:  ${_YPP_WRAPPER}")
-    message(STATUS "  category: ${_YPP_CATEGORY}")
+  if(NOT DEFINED _YPP_TYPE OR NOT DEFINED _YPP_INCLUDE OR NOT DEFINED _YPP_CATEGORY)
+    message(SEND_ERROR "Not enough information to create ${_plugin_name}
+  type:     ${_YPP_TYPE}
+  include:  ${_YPP_INCLUDE}
+  message:  ${_YPP_CATEGORY}")
     return()
   endif()
 
