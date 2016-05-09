@@ -119,8 +119,10 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
                     ADVANCED
                     TEMPLATE
                     TEMPLATE_DIR
+                    CODE
                     WRAPPER)
-  set(_multiValueArgs DEPENDS)
+  set(_multiValueArgs DEPENDS
+                      EXTRA_CONFIG)
   cmake_parse_arguments(_YPP "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
   if(NOT DEFINED _YPP_TYPE OR NOT DEFINED _YPP_INCLUDE OR NOT DEFINED _YPP_CATEGORY)
@@ -250,18 +252,46 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
     set(YARPPLUG_NAME "${_plugin_name}")
     set(YARPPLUG_TYPE "${_YPP_TYPE}")
     set(YARPPLUG_INCLUDE "${_YPP_INCLUDE}")
-    set(YARPPLUG_WRAPPER "${_YPP_WRAPPER}")
     set(YARPPLUG_CATEGORY "${_YPP_CATEGORY}")
     set(YARPPLUG_PARENT_TYPE "${_YPP_PARENT_TYPE}")
+    unset(_extra_config_list)
+    foreach(_conf ${_YPP_EXTRA_CONFIG})
+      if(NOT "${_conf}" MATCHES "^(.+)=(.+)$")
+        message(FATAL_ERROR "\"${_conf}\" is not in the form \"KEY=VALUE\"")
+      else()
+        set(_Key "${CMAKE_MATCH_1}")
+        string(TOUPPER "${_Key}" _KEY)
+        string(TOLOWER "${_Key}" _key)
+        set(_value "${CMAKE_MATCH_2}")
+        set(YARPPLUG_${_KEY} "_value")
+        list(APPEND _extra_config_list YARPPLUG_${_KEY})
+      endif()
+    endforeach()
+    if(DEFINED _YPP_WRAPPER)
+      yarp_deprecated_warning("WRAPPER argument is deprecated. Use EXTRA_CONFIG WRAPPER=<...> instead.")
+      set(YARPPLUG_WRAPPER "${_YPP_WRAPPER}")
+    endif()
+    if(DEFINED _YPP_CODE)
+      yarp_deprecated_warning("CODE argument is deprecated. Use EXTRA_CONFIG CODE=<...> instead.")
+      set(YARPPLUG_CODE "${_YPP_CODE}")
+    endif()
+
     configure_file(${_YPP_TEMPLATE}
                    ${_fname}
                    @ONLY)
+
     # Unset all the variables used by the template
     unset(YARPPLUG_NAME)
     unset(YARPPLUG_TYPE)
     unset(YARPPLUG_INCLUDE)
     unset(YARPPLUG_CATEGORY)
     unset(YARPPLUG_PARENT_TYPE)
+    unset(YARPPLUG_WRAPPER)
+    unset(YARPPLUG_CODE)
+    foreach(_extra_config ${_extra_config_list})
+      unset(${_extra_config})
+    endforeach()
+    unset(_extra_config_list)
 
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${_plugin_name})
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
