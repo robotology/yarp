@@ -213,7 +213,7 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
     set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES ${_link_libs})
     message(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
   else()
-    message(STATUS " +++ plugin ${plugin_name}, SKIP_${plugin_name} is set")
+    message(STATUS " --- plugin ${plugin_name}, SKIP_${plugin_name} is set")
   endif()
 endmacro()
 

@@ -42,7 +42,7 @@ foreach(lang "Java"
     if(CREATE_${LANG})
       message(STATUS " +++ bindings ${lang} is enabled")
     else()
-      message(STATUS " +++ bindings ${lang} is not enabled")
+      message(STATUS " --- bindings ${lang} is not enabled")
     endif()
   endif()
 endforeach()
