@@ -131,14 +131,12 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     return()
   endif()
 
-  if(NOT _YPP_DEFAULT)
-    set(_YPP_DEFAULT OFF)
-  else()
-    set(_YPP_DEFAULT ON)
-  endif()
-
   if(NOT DEFINED _YPP_DOC)
     set(_YPP_DOC "Enable/disable compilation of ${_plugin_fullname}")
+  endif()
+
+  if(NOT DEFINED _YPP_DEFAULT)
+    set(_YPP_DEFAULT OFF)
   endif()
 
   # Append the current source directory to the set of include paths.
