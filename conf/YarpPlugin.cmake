@@ -142,7 +142,9 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   # Append the current source directory to the set of include paths.
   # Developers seem to expect #include "foo.h" to work if foo.h is
   # in their module directory.
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  if(NOT YARP_NO_DEPRECATED)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
 
   # Set up a flag to enable/disable compilation of this plugin.
   set(_plugin_fullname "${X_YARP_PLUGIN_PREFIX}${_plugin_name}")
