@@ -414,9 +414,7 @@ macro(YARP_ADD_PLUGIN _library_name)
   # The user is adding a bone-fide plugin library.  We add it,
   # while inserting any generated source code needed for initialization.
   get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
-  foreach(s ${srcs})
-    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${_library_name})
-  endforeach()
+  set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${_library_name})
   get_property(_link_libs GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
   if(TARGET YARP_OS)
     # Building YARP: Targets don't have NAMESPACE
