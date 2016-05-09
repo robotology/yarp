@@ -235,12 +235,6 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
     unset(_template)
   endif()
 
-  if(NOT "${X_YARP_PLUGIN_MASTER}" STREQUAL "")
-    set(_master ${X_YARP_PLUGIN_MASTER})
-  else()
-    set(_master ${_YPP_CATEGORY})
-  endif()
-
   # If the plugin is enabled, add the appropriate source code into
   # the library source list.
   if(ENABLE_${_plugin_fullname})
