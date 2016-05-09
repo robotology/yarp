@@ -276,8 +276,9 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
       set(YARPPLUG_CODE "${_YPP_CODE}")
     endif()
 
-    configure_file(${_YPP_TEMPLATE}
-                   ${_fname}
+    # Configure the file
+    configure_file("${_YPP_TEMPLATE}"
+                   "${_fname}"
                    @ONLY)
 
     # Unset all the variables used by the template
