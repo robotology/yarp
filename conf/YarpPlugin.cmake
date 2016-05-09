@@ -114,6 +114,7 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
                     INCLUDE
                     CATEGORY
                     DEFAULT
+                    DOC
                     ADVANCED
                     WRAPPER)
   set(_multiValueArgs DEPENDS)
@@ -133,6 +134,10 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     set(_YPP_DEFAULT ON)
   endif()
 
+  if(NOT DEFINED _YPP_DOC)
+    set(_YPP_DOC "Enable/disable compilation of ${_plugin_fullname}")
+  endif()
+
   # Append the current source directory to the set of include paths.
   # Developers seem to expect #include "foo.h" to work if foo.h is
   # in their module directory.
@@ -142,10 +147,10 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   set(_plugin_fullname "${X_YARP_PLUGIN_PREFIX}${_plugin_name}")
 
   if(DEFINED _YPP_DEPENDS)
-    cmake_dependent_option(ENABLE_${_plugin_fullname} "Enable/disable compilation of ${_plugin_fullname}" ${_YPP_DEFAULT}
+    cmake_dependent_option(ENABLE_${_plugin_fullname} "${_YPP_DOC}" ${_YPP_DEFAULT}
                            "${_YPP_DEPENDS}" OFF)
   else()
-    option(ENABLE_${_plugin_fullname} "Enable/disable compilation of ${_plugin_fullname}" ${_YPP_DEFAULT})
+    option(ENABLE_${_plugin_fullname} "${_YPP_DOC}" ${_YPP_DEFAULT})
   endif()
   if(_YPP_ADVANCED)
     mark_as_advanced(ENABLE_${_plugin_fullname})
