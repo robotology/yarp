@@ -254,6 +254,12 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
     configure_file(${_YPP_TEMPLATE}
                    ${_fname}
                    @ONLY)
+    # Unset all the variables used by the template
+    unset(YARPPLUG_NAME)
+    unset(YARPPLUG_TYPE)
+    unset(YARPPLUG_INCLUDE)
+    unset(YARPPLUG_CATEGORY)
+    unset(YARPPLUG_PARENT_TYPE)
 
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${_plugin_name})
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
