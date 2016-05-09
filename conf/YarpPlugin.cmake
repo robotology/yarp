@@ -244,7 +244,7 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
   if(ENABLE_${_plugin_fullname})
     # Go ahead and prepare some code to wrap this plugin.
 
-    set(_fname ${CMAKE_CURRENT_BINARY_DIR}/${_master}_add_${_plugin_name}.cpp)
+    set(_fname ${CMAKE_CURRENT_BINARY_DIR}/yarp_plugin_${_plugin_fullname}.cpp)
 
     # Variables used by the templates:
     set(YARPPLUG_NAME "${_plugin_name}")
