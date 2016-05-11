@@ -406,24 +406,11 @@ bool ControlBoardWrapper::open(Searchable& config)
         return false;
     }
 
-    bool found_period = false;
-
     // check FIRST for deprecated parameter
     if(prop.check("threadrate"))
     {
-        yWarning() << " *** ControlBoardWrapper2 is using DEPRECATED parameter 'threadrate', use 'period' instead ***";
-        if(!prop.find("threadrate").isInt())
-        {
-            yError() << " *** DEPRECATED 'threadrate' parameter is not an integer value, read value is " << period << " ***";
-            return false;
-        }
-        period = prop.find("threadrate").asInt();
-        if(period <= 0)
-        {
-            yError() << " *** DEPRECATED 'threadrate' parameter must be a positive value > 0 *** ";
-            return false;
-        }
-        found_period = true;
+        yError() << " *** ControlBoardWrapper2 is using DEPRECATED parameter 'threadrate', use 'period' instead ***";
+        return false;
     }
 
     // NOW, check for correct parameter, so if both are present we use the correct one
@@ -431,26 +418,20 @@ bool ControlBoardWrapper::open(Searchable& config)
     {
         if(!prop.find("period").isInt())
         {
-            yError() << " *** 'period' parameter is not an integer value *** ";
+            yError() << " *** ControlBoardWrapper2: 'period' parameter is not an integer value *** ";
             return false;
-        }
-        if(found_period)
-        {
-            yWarning() << "*** ControlBoardWrapper2: found both 'period' and DEPRECATED 'threadrate' parameters. Using 'period', please remove the deprecated 'threadrate' param ***";
         }
         period = prop.find("period").asInt();
         if(period <= 0)
         {
-            yError() << " *** 'period' parameter is not an integer value, read value is " << period << " ***";
+            yError() << " *** ControlBoardWrapper2: 'period' parameter is not an integer value, read value is " << period << " ***";
             return false;
         }
-        found_period = true;
     }
-
-    // if none are present, fallback in the default value of 20ms set in the constructor
-    if(!found_period)
+    else
     {
-        yInfo() << "Using default 'period' of " << period << "ms";
+        yError() << "*** ControlBoardWrapper2: configuration misses 'period' parameter, please add it ***";
+        return false;
     }
 
     // check if we need to create subdevice or if they are
