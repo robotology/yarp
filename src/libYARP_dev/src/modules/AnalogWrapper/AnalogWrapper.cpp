@@ -317,42 +317,6 @@ std::string AnalogWrapper::getId()
     return sensorId;
 }
 
-bool AnalogWrapper::checkForDeprecatedParams(yarp::os::Searchable &params)
-{
-//    check for deprecated params
-    if(!params.check("robotName", "name of the robot.") )
-    {
-        yError("AnalogWrapper: missing 'robotName' parameter, check your configuration file");
-        return false;
-    }
-
-    if(params.check("deviceId"))
-    {
-        string tmp(params.find("deviceId").asString());
-        setId(tmp);
-    }
-    else
-    {
-        yError() << " AnalogServer missing DEPRECATED parameter 'deviceId', check your configuration file!! Quitting\n";
-        return false;
-    }
-
-    yWarning() <<   " AnalogServer device:\n"
-                    "************************************************************************************************\n"
-                    "  AnalogServer is using deprecated parameters for port name! It should be:\n"
-                    "       name:         full name of the port, like /robotName/deviceId/sensorType:o\n"
-                    "       period:       refresh period of the broadcasted values in ms (optional, default 20ms)\n"
-                    "************************************************************************************************";
-
-    // Create the list of ports
-    std::string robotName = params.find("robotName").asString().c_str();
-    streamingPortName ="/";
-    streamingPortName += robotName;
-    streamingPortName += "/" + this->sensorId + "/analog:o";
-    return true;
-}
-
-
 bool AnalogWrapper::checkROSParams(Searchable &config)
 {
     // check for ROS parameter group
@@ -514,16 +478,23 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
         return false;
     }
     else
+    {
         _rate = config.find("period").asInt();
+    }
+
+    if (config.check("deviceId"))
+    {
+        yError() << "lAnalogWrapper: the parameter 'deviceId' has been deprecated, please use parameter 'name' instead. \n"
+            << "e.g. In the FT wrapper configuration files of your robot, replace '<param name=""deviceId""> left_arm </param>' \n"
+            << "with '/icub/left_arm/analog:o' ";
+        return false;
+    }
 
     if (!config.check("name"))
     {
-        if(!checkForDeprecatedParams(config))
-        {
-            yError() << "AnalogServer: missing 'name' parameter. Check you configuration file; it must be like:\n"
-                        "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
-            return false;
-        }
+        yError() << "AnalogServer: missing 'name' parameter. Check you configuration file; it must be like:\n"
+                    "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
+        return false;
     }
     else
     {

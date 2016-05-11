@@ -153,12 +153,7 @@ private:
     yarp::os::Stamp lastStateStamp;             // the last reading time stamp
     yarp::sig::Vector lastDataRead;             // the last vector of data read from the attached IAnalogSensor
     int _rate;
-
-    // deprecated params
-    std::string robotName;
     std::string sensorId;
-    std::string sensorType;
-    // END deprecated params
 
     // ROS state publisher
     ROSTopicUsageType                                        useROS;                     // decide if open ROS topic or not
