@@ -186,17 +186,20 @@ bool VirtualAnalogWrapper::open(Searchable& config)
         return false;
     }
 
-    std::string root_name;
-    std::string port_name = config.check("name",Value("controlboard"),"prefix for port names").asString().c_str();
+    if (config.check("deviceId"))
+    {
+        yError() << "VirtualAnalogWrapper: the parameter 'deviceId' has been deprecated, please use parameter 'name' instead. \n"
+                 << "e.g. In the VFT wrapper configuration files of your robot, replace '<param name=""deviceId""> left_arm </param>' \n"
+                 << "with '/icub/joint_vsens/left_arm:i' ";
+        return false;
+    }
+
+    std::string port_name = config.check("name",Value("controlboard"),"Virtual analog wrapper port name, e.g. /icub/joint_vsens/left_arm:i").asString().c_str();
     std::string robot_name = config.find("robotName").asString().c_str();
 
-    root_name+="/";
-    root_name+=robot_name;
-    root_name+= "/joint_vsens" + port_name + ":i";
-
-    if (!mPortInputTorques.open(root_name.c_str()))
+    if (!mPortInputTorques.open(port_name.c_str()))
     {
-        yError() << "VirtualAnalogWrapper: can't open port " << root_name.c_str();
+        yError() << "VirtualAnalogWrapper: can't open port " << port_name.c_str();
         return false;
     }
 
