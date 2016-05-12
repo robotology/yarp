@@ -4,12 +4,13 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <stdio.h>
-#include <math.h>
-#include <algorithm>
-#include <yarp/sig/Image.h>
-#include <yarp/os/SharedLibraryClass.h>
 #include "DepthImage.h"
+
+#include <algorithm>
+#include <cstdio>
+#include <cmath>
+
+#include <yarp/sig/Image.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -40,7 +41,7 @@ bool DepthImageConverter::getparam(yarp::os::Property& params)
 }
 
 bool DepthImageConverter::accept(yarp::os::Things& thing)
-{   
+{
     FlexImage* img = thing.cast_as< FlexImage >();
     if(img == NULL) {
         printf("DepthImageConverter: expected type FlexImage but got wrong data type!\n");
