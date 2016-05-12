@@ -20,11 +20,7 @@ int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
                                        (AVPixelFormat)src_pix_fmt,
                                        src_width, src_height,
                                        (AVPixelFormat)dst_pix_fmt,
-#ifdef SWS_BILINEAR
                                        SWS_BILINEAR,
-#else
-                                       0,
-#endif
                                        nullptr, nullptr, nullptr);
 
       //printf("Done looking for a context\n");
