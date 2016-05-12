@@ -430,8 +430,8 @@ bool ControlBoardWrapper::open(Searchable& config)
     }
     else
     {
-        yError() << "*** ControlBoardWrapper2: configuration misses 'period' parameter, please add it ***";
-        return false;
+        yDebug() << "ControlBoardWrapper2: 'period' parameter missing, using default thread period = 20ms";
+        period = 20;
     }
 
     // check if we need to create subdevice or if they are
