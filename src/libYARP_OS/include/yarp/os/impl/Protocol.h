@@ -110,7 +110,10 @@ public:
 
     // Documented in yarp::os::OutputProtocol.
     virtual bool isOk() {
-        return checkStreams();
+        if (!checkStreams() || recv_delegate_fail || recv_delegate_fail) {
+            return false;
+        }
+        return true;
     }
 
     // Documented in yarp::os::OutputProtocol.
@@ -380,6 +383,8 @@ private:
     Carrier *send_delegate;  ///< modifier for outgoing messages
     bool need_recv_delegate; ///< turns false once we've cached recv modifier
     bool need_send_delegate; ///< turns false once we've cached send modifier
+    bool recv_delegate_fail; ///< turns true if recv modifier could not be cached
+    bool send_delegate_fail; ///< turns true if send modifier could not be cached
     Route route;             ///< names of (sender,carrier,receiver) triplet
     SizedWriter *writer;     ///< writer for current message
     StreamConnectionReader reader;  ///< reader for incoming messages
