@@ -15,9 +15,9 @@ int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
   if (img_convert_ctx==NULL) {
       //printf("Looking for a context\n");
       img_convert_ctx = sws_getContext(src_width, src_height,
-                                       (PixelFormat)src_pix_fmt,
+                                       (AVPixelFormat)src_pix_fmt,
                                        src_width, src_height,
-                                       (PixelFormat)dst_pix_fmt,
+                                       (AVPixelFormat)dst_pix_fmt,
 #ifdef SWS_BILINEAR
                                        SWS_BILINEAR,
 #else

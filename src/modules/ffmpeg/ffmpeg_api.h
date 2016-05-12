@@ -28,11 +28,6 @@ extern "C" {
 #  error "ffmpeg version is too old, sorry - please download and compile newer version"
 #endif
 
-
-#if LIBAVUTIL_VERSION_INT < AV_VERSION_INT(54, 4, 100)
-#  define av_dict_set_int(x, k, v, f) { char buf[256]; sprintf(buf,"%d",v); av_dict_set(x, k ,buf, 0); }
-#endif
-
 #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(54, 0, 0)
 #  define USE_AVFORMAT_OPEN_INPUT
 #endif
@@ -41,6 +36,17 @@ extern "C" {
 #  define USE_AV_FRAME_ALLOC
 #  define USE_AUDIO4
 #endif
+
+#if LIBAVUTIL_VERSION_INT < AV_VERSION_INT(52, 0, 0)
+#  define AV_PIX_FMT_RGB24 PIX_FMT_RGB24
+#  define AV_PIX_FMT_YUV420P PIX_FMT_YUV420P
+#  define AVPixelFormat PixelFormat
+#endif
+
+#if LIBAVUTIL_VERSION_INT < AV_VERSION_INT(54, 4, 100)
+#  define av_dict_set_int(x, k, v, f) { char buf[256]; sprintf(buf,"%d",v); av_dict_set(x, k ,buf, 0); }
+#endif
+
 
 
 

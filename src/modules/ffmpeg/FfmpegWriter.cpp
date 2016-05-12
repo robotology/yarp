@@ -64,8 +64,8 @@ using namespace yarp::sig::file;
 //#include <ffmpeg/avcodec.h>
 
 #define STREAM_FRAME_RATE 25 /* 25 images/s */
-#define STREAM_PIX_FMT PIX_FMT_YUV420P /* default pix_fmt */
-#define STREAM_PIX_WORK PIX_FMT_RGB24
+#define STREAM_PIX_FMT AV_PIX_FMT_YUV420P /* default pix_fmt */
+#define STREAM_PIX_WORK AV_PIX_FMT_RGB24
 
 /**************************************************************/
 /* audio output */
@@ -418,14 +418,14 @@ static AVFrame *alloc_picture(int pix_fmt, int width, int height)
     picture = YARP_avcodec_alloc_frame();
     if (!picture)
         return NULL;
-    size = avpicture_get_size((PixelFormat)pix_fmt, width, height);
+    size = avpicture_get_size((AVPixelFormat)pix_fmt, width, height);
     picture_buf = (uint8_t*)av_malloc(size);
     if (!picture_buf) {
         av_free(picture);
         return NULL;
     }
     avpicture_fill((AVPicture *)picture, picture_buf,
-                   (PixelFormat)pix_fmt, width, height);
+                   (AVPixelFormat)pix_fmt, width, height);
     return picture;
 }
 
@@ -473,13 +473,13 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
        picture is needed too. It is then converted to the required
        output format */
     tmp_picture = NULL;
-    if (c->pix_fmt != PIX_FMT_RGB24) {
-        tmp_picture = alloc_picture(PIX_FMT_RGB24, c->width, c->height);
+    if (c->pix_fmt != AV_PIX_FMT_RGB24) {
+        tmp_picture = alloc_picture(AV_PIX_FMT_RGB24, c->width, c->height);
         if (!tmp_picture) {
             fprintf(stderr, "Could not allocate temporary picture\n");
             ::exit(1);
         } else {
-            DBG printf("Allocated PIX_FMT_RGB24 image of dimensions %dx%d\n",
+            DBG printf("Allocated AV_PIX_FMT_RGB24 image of dimensions %dx%d\n",
                        c->width, c->height);
         }
     }
@@ -513,14 +513,14 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
 
     c = st->codec;
 
-    if (c->pix_fmt != PIX_FMT_RGB24) {
-        DBG printf("Converting to PIX_FMT_RGB24\n");
+    if (c->pix_fmt != AV_PIX_FMT_RGB24) {
+        DBG printf("Converting to AV_PIX_FMT_RGB24\n");
         fill_rgb_image(tmp_picture, frame_count, c->width, c->height, img);
-        DBG printf("Converting to PIX_FMT_RGB24 (stable_img_convert)\n");
+        DBG printf("Converting to AV_PIX_FMT_RGB24 (stable_img_convert)\n");
         stable_img_convert((AVPicture *)picture, c->pix_fmt,
-                           (AVPicture *)tmp_picture, PIX_FMT_RGB24,
+                           (AVPicture *)tmp_picture, AV_PIX_FMT_RGB24,
                            c->width, c->height);
-        DBG printf("Converted to PIX_FMT_RGB24\n");
+        DBG printf("Converted to AV_PIX_FMT_RGB24\n");
     } else {
         fill_rgb_image(picture, frame_count, c->width, c->height, img);
     }
