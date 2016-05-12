@@ -175,12 +175,12 @@ public:
         }
 
         // Determine required buffer size and allocate buffer
-        int numBytes=avpicture_get_size(PIX_FMT_RGB24, pCodecCtx->width,
+        int numBytes=avpicture_get_size(AV_PIX_FMT_RGB24, pCodecCtx->width,
                                         pCodecCtx->height);
         buffer=new uint8_t[numBytes];
 
         // Assign appropriate parts of buffer to image planes in pFrameRGB
-        avpicture_fill((AVPicture *)pFrameRGB, buffer, PIX_FMT_RGB24,
+        avpicture_fill((AVPicture *)pFrameRGB, buffer, AV_PIX_FMT_RGB24,
                        pCodecCtx->width, pCodecCtx->height);
         return true;
     }
@@ -304,7 +304,7 @@ public:
             if (img_convert_ctx==NULL) {
                 img_convert_ctx = sws_getContext(w,h,
                                                  pCodecCtx->pix_fmt,
-                                                 w, h, PIX_FMT_RGB24,
+                                                 w, h, AV_PIX_FMT_RGB24,
                                                  //0,
                                                  //SWS_BILINEAR,
                                                  SWS_BICUBIC,
