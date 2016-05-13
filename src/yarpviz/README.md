@@ -7,8 +7,10 @@ Dependencies
 ------------
  - Qt5
  - GraphViz library 
-   Linux : `sudo apt-get install libgraphviz-dev`
-   Windows: download and install the library from (http://www.graphviz.org/Download_windows.php) and set `GRAPHVIZ_ROOT` to point the installed directory. 
+ 
+Linux : `sudo apt-get install libgraphviz-dev`
+
+Windows: download and install the library from (http://www.graphviz.org/Download_windows.php) and set `GRAPHVIZ_ROOT` to point the installed directory. 
 
 
 Installation
