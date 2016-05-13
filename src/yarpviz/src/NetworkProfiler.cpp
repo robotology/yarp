@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2015 iCub Facility
+ * Authors: Ali Paikan
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
 #include "NetworkProfiler.h"
 
 #include <yarp/os/Network.h>

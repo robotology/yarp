@@ -1,6 +1,10 @@
-/***************************************************************
-YGraph
-***************************************************************/
+/*
+ * Copyright (C) 2015 iCub Facility
+ * Authors: Ali Paikan
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
 #ifndef _YARP_GRAPH_
 #define _YARP_GRAPH_
 
