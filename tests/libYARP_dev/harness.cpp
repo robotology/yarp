@@ -19,6 +19,8 @@
 
 #include "TestList.h"
 
+#include "YarpBuildLocation.h"
+
 #include <stdio.h>
 
 using namespace yarp::os::impl;
@@ -57,9 +59,17 @@ int harness_main(int argc, char *argv[]) {
         if (verbosity>0) {
             Logger::get().setVerbosity(verbosity);
         }
-    
+
         if (String(argv[1])==String("regression")) {
             done = true;
+            // To make sure that the dev test are able to find all the devices
+            // compile by YARP, also the one compiled as dynamic plugins
+            // we add the build directory to the YARP_DATA_DIRS enviromental variable
+            // CMAKE_CURRENT_DIR is the define by the CMakeLists.txt tests file
+            Network::setEnvironment("YARP_DATA_DIRS",
+                                    Network::getEnvironment("YARP_DATA_DIRS")+":"+CMAKE_BINARY_DIR+"/share/yarp");
+
+            // Start the testing system
             UnitTest::startTestSystem();
             TestList::collectTests();  // just in case automation doesn't work
             if (argc>2) {
@@ -69,7 +79,7 @@ int harness_main(int argc, char *argv[]) {
             }
             UnitTest::stopTestSystem();
         }
-    } 
+    }
     if (!done) {
         Companion::main(argc,argv);
     }
@@ -189,7 +199,7 @@ int main(int argc, char *argv[]) {
 
     PolyDriver dd;
 	YARP_DEBUG(Logger::get(), "harness opening...");
-	
+
     bool ok = dd.open(p);
     YARP_DEBUG(Logger::get(), "harness opened.");
     result = ok?0:1;
@@ -197,7 +207,7 @@ int main(int argc, char *argv[]) {
     ConstString wrapperName = "";
     ConstString codeName = "";
 
-    DriverCreator *creator = 
+    DriverCreator *creator =
         Drivers::factory().find(deviceName.c_str());
     if (creator!=NULL) {
         wrapperName = creator->getWrapper();
