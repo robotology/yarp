@@ -1,0 +1,12 @@
+/*
+ * Copyright: (C) 2016 iCub Facility
+ * Author: Silvio Traversaro
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#ifndef YARP_BUILD_LOCATION_H
+#define YARP_BUILD_LOCATION_H
+
+#cmakedefine CMAKE_BINARY_DIR "@CMAKE_BINARY_DIR@"
+
+#endif
