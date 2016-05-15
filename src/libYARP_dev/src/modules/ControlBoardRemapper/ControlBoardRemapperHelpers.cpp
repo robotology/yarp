@@ -117,11 +117,6 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         return false;
     }
 
-    if ( (iMode2==0) && (_subDevVerbose ))
-    {
-        yWarning() << "ControlBoardRemapper:  Warning IControlMode2 not valid interface";
-    }
-
     if ((iTorque==0) && (_subDevVerbose))
     {
         yWarning() << "ControlBoardRemapper:  Warning iTorque not valid interface";
