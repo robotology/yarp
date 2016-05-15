@@ -4061,9 +4061,9 @@ bool ControlBoardRemapper::getControlModes(int *modes)
 
         if( p->iMode2 )
         {
-            ok = p->iInteract->getInteractionModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
-                                                   allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
-                                                   allJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd].data());
+            ok = p->iMode2->getControlModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+                                            allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
+                                            allJointsBuffers.m_bufferForSubControlBoardControlModes[ctrlBrd].data());
         }
         else
         {
