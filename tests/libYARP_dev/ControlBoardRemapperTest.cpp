@@ -10,6 +10,7 @@
 #include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IControlMode2.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 #include <yarp/dev/Wrapper.h>
@@ -134,6 +135,11 @@ public:
         ok = ddRemapper.view(encs);
         checkTrue(ok, "encoders interface correctly opened");
 
+        IControlMode2 *ctrlmode = NULL;
+        ok = ddRemapper.view(ctrlmode);
+        checkTrue(ok, "control mode interface correctly opened");
+
+        // Vector used for setting/getting data from the controlboard
         std::vector<double> setPosition(nrOfRemappedAxes,-10),
                             setRefSpeeds(nrOfRemappedAxes,-15),
                             readedPosition(nrOfRemappedAxes,-20),
@@ -145,6 +151,24 @@ public:
             setRefSpeeds[i] = i*10.0+5;
             readedPosition[i] = -100;
         }
+
+        // Set the control mode in position direct
+        std::vector<int>    settedControlMode(nrOfRemappedAxes,VOCAB_CM_POSITION_DIRECT);
+        std::vector<int>    readedControlMode(nrOfRemappedAxes,VOCAB_CM_POSITION);
+
+        ok = ctrlmode->setControlModes(settedControlMode.data());
+        checkTrue(ok, "setControlModes correctly called");
+
+        // Check that the readed control mode is actually position direct
+        ok = ctrlmode->getControlModes(readedControlMode.data());
+        checkTrue(ok, "getControlModes correctly called");
+
+        for(size_t i=0; i < nrOfRemappedAxes; i++)
+        {
+            checkEqual(settedControlMode[i],readedControlMode[i],"Setted control mode and readed control mode match");
+        }
+
+        // Test position direct methods
 
         // Set position
         ok = posdir->setPositions(setPosition.data());
@@ -158,7 +182,6 @@ public:
         // Read position
         ok = posdir->getRefPositions(readedPosition.data());
         checkTrue(ok, "getRefPositions correctly called");
-
 
 
         // Check that the two vector match

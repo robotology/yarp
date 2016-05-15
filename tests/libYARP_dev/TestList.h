@@ -21,8 +21,10 @@ namespace yarp {
 // need to made one function for each new test, and add to collectTests()
 // method
 extern yarp::os::impl::UnitTest& getPolyDriverTest();
-extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
 
+#ifdef YARP_CONTROLBOARDREMAPPER_TESTS
+extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
+#endif
 
 class yarp::os::impl::TestList {
 public:
