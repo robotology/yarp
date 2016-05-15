@@ -2485,9 +2485,10 @@ bool FakeMotionControl::getRefPositionRaw(int axis, double *ref)
     getControlModeRaw(axis, &mode);
     if( (mode != VOCAB_CM_POSITION) &&
         (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_POS))
+        (mode != VOCAB_CM_IMPEDANCE_POS) &&
+        (mode != VOCAB_CM_POSITION_DIRECT) )
     {
-        yWarning() << "getTargetPosition: Joint " << axis << " is not in POSITION_DIRECT mode, therefore the value returned by \
+        yWarning() << "getRefPosition: Joint " << axis << " is not in POSITION_DIRECT mode, therefore the value returned by \
         this call is for reference only and may not reflect the actual behaviour of the motor/firmware.";
     }
 
