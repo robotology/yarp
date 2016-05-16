@@ -19,9 +19,7 @@
 #include <yarp/dev/Drivers.h>
 
 #include <yarp/os/impl/PlatformVector.h>
-#include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/YarpPlugin.h>
@@ -154,8 +152,6 @@ public:
     }
 };
 
-
-#ifdef YARP_HAS_ACE
 class StubDriver : public DeviceDriver {
 private:
     YarpPluginSettings settings;
@@ -232,7 +228,6 @@ public:
         return settings.getBaseClassName();
     }
 };
-#endif
 
 #define HELPER(x) (*(((DriversHelper*)(x))))
 
@@ -276,7 +271,6 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
 }
 
 DriverCreator *DriversHelper::load(const char *name) {
-#ifdef YARP_HAS_ACE
     StubDriver *result = new StubDriver(name,false);
     if (!result->isValid()) {
         delete result;
@@ -291,9 +285,6 @@ DriverCreator *DriversHelper::load(const char *name) {
     add(creator);
     delete result;
     return creator;
-#else
-    return NULL;
-#endif
 }
 
 
@@ -558,7 +549,6 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 }
 
 DeviceDriver *StubDriverCreator::create() {
-#ifdef YARP_HAS_ACE
     //printf("Creating %s from %s\n", desc.c_str(), libname.c_str());
     StubDriver *result = new StubDriver(libname.c_str(),fnname.c_str(),false);
     if (result==NULL) return result;
@@ -569,10 +559,6 @@ DeviceDriver *StubDriverCreator::create() {
     }
     //printf("Created %s from %s\n", desc.c_str(), libname.c_str());
     return result;
-#else
-    fprintf(stderr,"Cannot fill stub drivers without ACE\n");
-    return NULL;
-#endif
 }
 
 
