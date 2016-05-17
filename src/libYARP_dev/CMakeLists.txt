@@ -146,7 +146,9 @@ set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
                         src/modules/Rangefinder2DClient/Rangefinder2DClient.cpp
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
+                        src/modules/ControlBoardRemapper/ControlBoardRemapper.cpp
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp)
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/AnalogSensorClient/AnalogSensorClient.h
@@ -155,7 +157,9 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/Rangefinder2DWrapper/Rangefinder2DWrapper.h
                         src/modules/Rangefinder2DClient/Rangefinder2DClient.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
+                        src/modules/ControlBoardRemapper/ControlBoardRemapper.h
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h)
 
 
 # handle the ros / yarp thrift messages

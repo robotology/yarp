@@ -167,7 +167,7 @@ private:
     Pid *_cpids;                                /** initial current gains */
 
     std::string *_axisName;                          /** axis name */
-    std::string *_axisType;                          /** axis type */
+    JointTypeEnum *_jointType;                          /** axis type */
 //     ImpedanceLimits     *_impedance_limits;     /** impedancel imits */
     double *_limitsMin;                         /** joint limits, max*/
     double *_limitsMax;                         /** joint limits, min*/
@@ -205,7 +205,6 @@ private:
     positionControlUnitsType _positionControlUnits;
 
     // internal stuff
-    double noiseLevel;
     int     *_controlModes;
     int     *_interactMode;
     bool    *_enabledAmp;           // Middle step toward a full enabled motor controller. Amp (pwm) plus Pid enable command must be sent in order to get the joint into an active state.
