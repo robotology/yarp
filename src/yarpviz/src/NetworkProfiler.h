@@ -115,11 +115,11 @@ public:
         }
     };
 
-    typedef typename std::vector<yarp::os::Bottle> ports_name_set;
-    typedef typename ports_name_set::iterator ports_name_iterator;
+    typedef  std::vector<yarp::os::Bottle> ports_name_set;
+    typedef  ports_name_set::iterator ports_name_iterator;
 
-    typedef typename std::vector<PortDetails> ports_detail_set;
-    typedef typename ports_detail_set::iterator ports_detail_iterator;
+    typedef  std::vector<PortDetails> ports_detail_set;
+    typedef  ports_detail_set::iterator ports_detail_iterator;
 
 public:
     /**

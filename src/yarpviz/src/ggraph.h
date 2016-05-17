@@ -24,13 +24,13 @@ namespace yarp {
 };
 
 
-typedef typename std::vector<yarp::graph::Edge> edge_set;
-typedef typename edge_set::iterator edge_iterator;
-typedef typename edge_set::const_iterator edge_const_iterator;
+typedef  std::vector<yarp::graph::Edge> edge_set;
+typedef  edge_set::iterator edge_iterator;
+typedef  edge_set::const_iterator edge_const_iterator;
 
-typedef typename std::vector<yarp::graph::Vertex*> pvertex_set;
-typedef typename pvertex_set::iterator pvertex_iterator;
-typedef typename pvertex_set::const_iterator pvertex_const_iterator;
+typedef  std::vector<yarp::graph::Vertex*> pvertex_set;
+typedef  pvertex_set::iterator pvertex_iterator;
+typedef  pvertex_set::const_iterator pvertex_const_iterator;
 
 
 /**

@@ -41,11 +41,11 @@ add_executable(${PROJECTNAME} WIN32 ${yarpviz_qt_SRCS}
 target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES} qgvcore)
 qtyarp_use_modules(${PROJECTNAME} Widgets Gui)
 
-qtyarp_deprecate_with_cmake_version(2.8.11)
-if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
+#qtyarp_deprecate_with_cmake_version(2.8.11)
+#if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
+if(WIN32)
     target_link_libraries(${PROJECTNAME} qgvcore Qt5::WinMain)
 endif()
-
 install(TARGETS ${PROJECTNAME} COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 #yarp_osx_duplicate_and_add_bundle(TARGET_ORIG ${PROJECTNAME}

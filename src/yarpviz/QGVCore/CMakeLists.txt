@@ -35,9 +35,8 @@ add_library(qgvcore SHARED
             ${qgvlib_qt_SRCS}
             ${qgvlib_qt_HDRS} )
 
-target_link_libraries(qgvcore
-                      ${QT_LIBRARIES}
+target_link_libraries(qgvcore                      
                  	  ${GRAPHVIZ_GVC_LIBRARY}
                       ${GRAPHVIZ_CGRAPH_LIBRARY}
                       ${GRAPHVIZ_CDT_LIBRARY})
-
+qtyarp_use_modules(qgvcore Widgets Gui)
