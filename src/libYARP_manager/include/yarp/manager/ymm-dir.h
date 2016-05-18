@@ -220,7 +220,7 @@
              return NULL;
           }
           if (FindNextFileA (dirp->search_handle, &dirp->find_data) == FALSE) {
-             /* the very last entry has been processed or an error occured */
+             /* the very last entry has been processed or an error occurred */
              FindClose (dirp->search_handle);
              dirp->search_handle = INVALID_HANDLE_VALUE;
              return NULL;

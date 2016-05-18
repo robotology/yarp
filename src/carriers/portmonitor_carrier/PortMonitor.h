@@ -50,7 +50,7 @@ public:
 
 /**
  * TODO: 
- *      - how to pass the filename with prefix via connection paramter? 
+ *      - how to pass the filename with prefix via connection parameter?
  *        e.g. ...+file.'my_lua_script_file.lua' 
  *      - using resource finder to find the script file  
  *

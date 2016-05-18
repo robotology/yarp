@@ -2078,8 +2078,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     proc.addString("process");
                                     Property& proc_prop = proc.addDict();
                                     proc_prop.put("pid", pid);
-                                    proc_prop.put("name", (info.pid !=-1) ? info.name : "unkown");
-                                    proc_prop.put("arguments", (info.pid !=-1) ? info.arguments : "unkown");
+                                    proc_prop.put("name", (info.pid !=-1) ? info.name : "unknown");
+                                    proc_prop.put("arguments", (info.pid !=-1) ? info.arguments : "unknown");
                                     proc_prop.put("priority", info.schedPriority);
                                     proc_prop.put("policy", info.schedPolicy);
 

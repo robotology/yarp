@@ -602,7 +602,7 @@ int MonitorLua::setTrigInterval(lua_State* L)
             return 0;
         }
     } else {
-        yError("The setTrigInterval() require the interval number as the paramter");
+        yError("The setTrigInterval() require the interval number as the parameter");
         return 0;
     }
 

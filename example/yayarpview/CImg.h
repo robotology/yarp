@@ -629,13 +629,13 @@ namespace cimg_library {
     } else std::fprintf(stderr,"# %s :\n%s\n\n",etype,message); \
   }
     
-  //! Class which is thrown when an error occured during a %CImg library function call.
+  //! Class which is thrown when an error occurred during a %CImg library function call.
   /** 
       
       \section ex1 Overview
   
       CImgException is the base class of %CImg exceptions.
-      Exceptions are thrown by the %CImg Library when an error occured in a %CImg library function call.
+      Exceptions are thrown by the %CImg Library when an error occurred in a %CImg library function call.
       CImgException is seldom thrown itself. Children classes that specify the kind of error encountered
       are generally used instead. These sub-classes are :
 
@@ -655,13 +655,13 @@ namespace cimg_library {
       img = NULL;                     // Try to fill pixels from the NULL pointer (invalid argument to operator=() ).
       \endcode
 
-      - \b CImgIOException : Thrown when an error occured when trying to load or save image files.
+      - \b CImgIOException : Thrown when an error occurred when trying to load or save image files.
       The example below will throw a \a CImgIOException.
       \code
       CImg<float> img("file_doesnt_exist.jpg");    // Try to load a file that doesn't exist.
       \endcode
       
-      - \b CImgDisplayException : Thrown when an error occured when trying to display an image in a window.
+      - \b CImgDisplayException : Thrown when an error occurred when trying to display an image in a window.
       This exception is thrown when image display request cannot be satisfied.
       
       The parent class CImgException may be thrown itself when errors that cannot be classified in one of

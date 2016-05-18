@@ -24,7 +24,7 @@ foreach(header_file ${folder_header})
   include_directories(${p})
 endforeach(header_file ${folder_header})
 
-# Inclue any directories needed for YARP
+# Include any directories needed for YARP
 include_directories(${YARP_INCLUDE_DIRS})
 
 # Set up our main executable.

@@ -204,10 +204,10 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     if (options.check("help")) {
         printf("Welcome to the YARP name server.\n");
         printf("  --config filename.conf   Load options from a file.\n");
-        printf("  --portdb ports.db        Store port infomation in named database.\n");
+        printf("  --portdb ports.db        Store port information in named database.\n");
         printf("                           Must not be on an NFS file system.\n");
         printf("                           Set to :memory: to store in memory (faster).\n");
-        printf("  --subdb subs.db          Store subscription infomation in named database.\n");
+        printf("  --subdb subs.db          Store subscription information in named database.\n");
         printf("                           Must not be on an NFS file system.\n");
         printf("                           Set to :memory: to store in memory (faster).\n");
         printf("  --ip IP.AD.DR.ESS        Set IP address of server.\n");
