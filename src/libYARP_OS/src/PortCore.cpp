@@ -1472,6 +1472,7 @@ bool PortCore::getEnvelope(PortReader& envelope) {
 
 // Shorthand to create a nested (tag, val) pair to add to a message.
 #define STANZA(name,tag,val) Bottle name; name.addString(tag); name.addString(val.c_str());
+#define STANZA_INT(name,tag,val) Bottle name; name.addString(tag); name.addInt(val);
 
 // Make an RPC connection to talk to a ROS API, send a message, get reply.
 // NOTE: ROS support can now be moved out of here, once all documentation
@@ -1702,6 +1703,15 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 result.addList() = bfrom;
                                 result.addList() = bto;
                                 result.addList() = bcarrier;
+                                Carrier *carrier = Carriers::chooseCarrier(route.getCarrierName());
+                                if (carrier->isConnectionless()) {
+                                    STANZA_INT(bconnectionless, "connectionless", 1);
+                                    result.addList() = bconnectionless;
+                                }
+                                if (!carrier->isPush()) {
+                                    STANZA_INT(breverse, "push", 0);
+                                    result.addList() = breverse;
+                                }
                             }
                         }
                     }
@@ -1730,6 +1740,15 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 result.addList() = bfrom;
                                 result.addList() = bto;
                                 result.addList() = bcarrier;
+                                Carrier *carrier = Carriers::chooseCarrier(route.getCarrierName());
+                                if (carrier->isConnectionless()) {
+                                    STANZA_INT(bconnectionless, "connectionless", 1);
+                                    result.addList() = bconnectionless;
+                                }
+                                if (!carrier->isPush()) {
+                                    STANZA_INT(breverse, "push", 0);
+                                    result.addList() = breverse;
+                                }
                             }
                         }
                     }
