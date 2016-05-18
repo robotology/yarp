@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 #
 
-if(CREATE_YARPLASERSCANNERGUI AND YARP_HAS_QT5 AND YARP_HAS_OPENCV)
+if(CREATE_YARPLASERSCANNERGUI)
 
   include(YarpUseQt5)
   include(YarpOSXUtilities)
@@ -36,29 +36,25 @@ if(CREATE_YARPLASERSCANNERGUI AND YARP_HAS_QT5 AND YARP_HAS_OPENCV)
   source_group("Generated Files" FILES ${yarpLaserScannergui_QRC_GEN_SRCS}
                                        ${yarplaserscannergui_UI_GEN_SRCS})
 
- add_executable(yarplaserscannergui WIN32  ${yarplaserscannergui_SRCS}
-                                        ${yarplaserscannergui_HDRS}
-                                        ${yarplaserscannergui_QRC_GEN_SRCS}
-                                        ${yarplaserscannergui_UI_GEN_SRCS})
+  add_executable(yarplaserscannergui WIN32 ${yarplaserscannergui_SRCS}
+                                           ${yarplaserscannergui_HDRS}
+                                           ${yarplaserscannergui_QRC_GEN_SRCS}
+                                           ${yarplaserscannergui_UI_GEN_SRCS})
 
   target_link_libraries(yarplaserscannergui YARP_OS
-                                        YARP_init
-                                        YARP_sig
-                                        YARP_dev)
+                                            YARP_init
+                                            YARP_sig
+                                            YARP_dev)
   qtyarp_use_modules(yarplaserscannergui Widgets
-                                     Gui)
+                                         Gui)
   qtyarp_deprecate_with_cmake_version(2.8.11)
   if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
     #target_link_libraries(yarplaserscannergui Qt5::WinMain))
   endif()
 
-   target_link_libraries(yarplaserscannergui ${OpenCV_LIBRARIES})
-	
-  install(TARGETS yarplaserscannergui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+  target_link_libraries(yarplaserscannergui ${OpenCV_LIBRARIES})
 
-  if(NOT YARP_DEFAULT_GTK)
-    set_target_properties(yarplaserscannergui PROPERTIES OUTPUT_NAME yarplaserscannergui)
-  endif()
+  install(TARGETS yarplaserscannergui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarplaserscannergui
                                     TARGET_DEST yarplaserscannergui.app

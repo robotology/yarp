@@ -30,11 +30,7 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      FindFFMPEG.cmake
                      FindFreenect.cmake
                      FindFTDI.cmake
-                     FindGooCanvas.cmake
-                     FindGooCanvasMM.cmake
                      FindGSL.cmake
-                     FindGtkDatabox.cmake
-                     FindGtkDataboxMM.cmake
                      FindLibdc1394.cmake
                      FindLibusb1.cmake
                      FindOpenCV.cmake
@@ -70,7 +66,6 @@ if(${CMAKE_VERSION} VERSION_LESS 3.1)
                              cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
                              cmake-3.1/Modules/CMakeParseArguments.cmake
                              cmake-3.1/Modules/FeatureSummary.cmake
-                             cmake-3.1/Modules/FindFreetype.cmake # 3.0
                              cmake-3.1/Modules/FindLua.cmake # 3.0
                              cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
                              cmake-3.1/Modules/FindPackageMessage.cmake
@@ -78,32 +73,4 @@ if(${CMAKE_VERSION} VERSION_LESS 3.1)
     install(FILES ${YARP_CMAKE_3_1_FILES}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/cmake-3.1/Modules)
-endif()
-
-# Files from CMake 3.5, available only if cmake is older
-if(${CMAKE_VERSION} VERSION_LESS 3.5)
-    set(YARP_CMAKE_3_5_FILES cmake-3.5/Modules/CMakeParseArguments.cmake
-                             cmake-3.5/Modules/FindFreetype.cmake
-                             cmake-3.5/Modules/FindGTK2.cmake
-                             cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake
-                             cmake-3.5/Modules/FindPackageMessage.cmake
-                             cmake-3.5/Modules/SelectLibraryConfigurations.cmake)
-    install(FILES ${YARP_CMAKE_3_5_FILES}
-            COMPONENT scripts
-            DESTINATION share/yarp/cmake/cmake-3.5/Modules)
-endif()
-
-# Deprecated modules installed for compatibility
-if(NOT YARP_NO_DEPRECATED)
-    set(YARP_DEPRECATED_CMAKE_FILES deprecated/FindGthread.cmake
-                                    deprecated/FindGtkMM.cmake
-                                    deprecated/FindGtkMMUnix.cmake
-                                    deprecated/FindGtkMMWin32.cmake
-                                    deprecated/FindGtkPlus.cmake
-                                    deprecated/FindGtkWin32.cmake
-                                    deprecated/MacroExtractVersion.cmake
-                                    deprecated/MacroStandardFindModule.cmake)
-    install(FILES ${YARP_DEPRECATED_CMAKE_FILES}
-            COMPONENT scripts
-            DESTINATION share/yarp/cmake/deprecated)
 endif()

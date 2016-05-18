@@ -1,5 +1,0 @@
-
-- External source port positions changes during save/open.
-- [DONE] Extract and set the corrct application path in application wizard
-
-- Name of external ports should be changed on the port model itself, not from connections (causes inconsistencies when there are multiple connections on the same port)
