@@ -23,7 +23,7 @@ License along with this library.
 #include <QDebug>
 #include <QPainter>
 
-QGVNode::QGVNode(QGVNodePrivate *node, QGVScene *scene): _node(node), _scene(scene)
+QGVNode::QGVNode(QGVNodePrivate *node, QGVScene *scene): _node(node), _scene(scene), vertex(NULL)
 {
     setFlag(QGraphicsItem::ItemIsSelectable, true);
 }
@@ -100,6 +100,14 @@ QString QGVNode::getAttribute(const QString &name) const
 void QGVNode::setIcon(const QImage &icon)
 {
     _icon = icon;
+}
+
+void QGVNode::setVertex(void* v) {
+    vertex = v;
+}
+
+void* QGVNode::getVertex() {
+    return vertex;
 }
 
 void QGVNode::updateLayout()

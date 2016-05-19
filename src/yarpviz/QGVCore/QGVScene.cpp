@@ -211,7 +211,7 @@ void QGVScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent
         else
             emit graphContextMenuEvent();
     }
-    QGraphicsScene::contextMenuEvent(contextMenuEvent);
+    //QGraphicsScene::contextMenuEvent(contextMenuEvent);
 }
 
 void QGVScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)

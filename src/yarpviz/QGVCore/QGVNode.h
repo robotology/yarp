@@ -44,6 +44,8 @@ public:
     QString getAttribute(const QString &name) const;
 
     void setIcon(const QImage &icon);
+    void setVertex(void* v);
+    void* getVertex();
 
     enum { Type = UserType + 2 };
     int type() const
@@ -55,7 +57,7 @@ private:
     friend class QGVScene;
     friend class QGVSubGraph;
     void updateLayout();
-		QGVNode(QGVNodePrivate* node, QGVScene *scene);
+    QGVNode(QGVNodePrivate* node, QGVScene *scene);
 
 		// Not implemented in QGVNode.cpp
 //		QPainterPath makeShape(Agnode_t* node) const;
@@ -67,7 +69,8 @@ private:
     QImage _icon;
 
     QGVScene *_scene;
-		QGVNodePrivate* _node;
+    QGVNodePrivate* _node;
+    void* vertex;
 };
 
 

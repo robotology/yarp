@@ -72,6 +72,9 @@ public:
 
 private:
     void initScene();
+    void onNodeContextMenuProccess(QGVNode *node, YarpvizVertex* vertex);
+    void onNodeContextMenuPort(QGVNode *node, YarpvizVertex* vertex);
+    void updateNodeWidgetItems();
 
 private slots:
     void nodeContextMenu(QGVNode* node);

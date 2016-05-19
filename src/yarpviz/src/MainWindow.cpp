@@ -18,6 +18,7 @@
 #include <yarp/os/LogStream.h>
 #include "NetworkProfiler.h"
 #include "ggraph.h"
+#include "informationdialog.h"
 
 using namespace std;
 using namespace yarp::os;
@@ -148,6 +149,7 @@ void MainWindow::drawGraph(Graph &graph)
             node->setIcon(QImage(":/icons/resources/Gnome-System-Run-64.png"));
             //nodeSet[*itr] = node;
             dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(node);
+            node->setVertex(*itr);
         }
     }
 
@@ -175,6 +177,7 @@ void MainWindow::drawGraph(Graph &graph)
                 node->setAttribute("color", "#edad56");
                 //nodeSet[*itr] = node;
                 dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(node);
+                node->setVertex(*itr);
             }
         }
     }
@@ -220,17 +223,58 @@ void MainWindow::drawGraph(Graph &graph)
 
 void MainWindow::nodeContextMenu(QGVNode *node)
 {
+    YarpvizVertex* v = (YarpvizVertex*) node->getVertex();
+    YARP_ASSERT(v != 0);
+    if(v->property.find("type").asString() == "process")
+        onNodeContextMenuProccess(node, v);
+    else if(v->property.find("type").asString() == "port")
+        onNodeContextMenuPort(node, v);
+    else
+        yWarning()<<"nodeContextMenu(): Unknown node!";
+}
+
+void MainWindow::onNodeContextMenuProccess(QGVNode *node, YarpvizVertex* vertex) {
     //Context menu exemple
     QMenu menu(node->label());
-
     menu.addSeparator();
-    menu.addAction(tr("Informations"));
-    menu.addAction(tr("Options"));
-
+    menu.addAction(tr("Information..."));
+    menu.addAction(tr("Hide"));
     QAction *action = menu.exec(QCursor::pos());
     if(action == 0)
         return;
+    if(action->text().toStdString() == "Information...") {
+        InformationDialog dialog;
+        dialog.setProcessVertexInfo((ProcessVertex*)vertex);
+        dialog.exec();
+    }
+    else if(action->text().toStdString() == "Hide") {
+        vertex->property.put("hidden", true);
+        updateNodeWidgetItems();
+        drawGraph(mainGraph);
+    }
 }
+
+void MainWindow::onNodeContextMenuPort(QGVNode *node, YarpvizVertex* vertex) {
+    //Context menu exemple
+    QMenu menu(node->label());
+    menu.addSeparator();
+    menu.addAction(tr("Information..."));
+    menu.addAction(tr("Hide"));
+    QAction *action = menu.exec(QCursor::pos());
+    if(action == 0)
+        return;
+    if(action->text().toStdString() == "Information...") {
+        InformationDialog dialog;
+        dialog.setPortVertexInfo((PortVertex*)vertex);
+        dialog.exec();
+    }
+    else if(action->text().toStdString() == "Hide") {
+        vertex->property.put("hidden", true);
+        updateNodeWidgetItems();
+        drawGraph(mainGraph);
+    }
+}
+
 
 void MainWindow::nodeDoubleClick(QGVNode *node)
 {
@@ -311,6 +355,20 @@ void MainWindow::onProfileYarpNetwork() {
     drawGraph(mainGraph);
 }
 
+void MainWindow::updateNodeWidgetItems() {
+
+    NodeWidgetItem* item= NULL;
+    for (int i= moduleParentItem->childCount()-1; i>-1; i--) {
+        item = (NodeWidgetItem*) moduleParentItem->child(i);
+        YARP_ASSERT(item != NULL);
+        item->check(!item->getVertex()->property.check("hidden"));
+    }
+    for (int i= portParentItem->childCount()-1; i>-1; i--) {
+        item = (NodeWidgetItem*) portParentItem->child(i);
+        YARP_ASSERT(item != NULL);
+        item->check(!item->getVertex()->property.check("hidden"));
+    }
+}
 
 void MainWindow::onLayoutOrthogonal() {
     ui->actionPolyline->setChecked(false);
