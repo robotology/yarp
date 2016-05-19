@@ -100,7 +100,7 @@ YARP_WARNING_POP
  * missed to implement useful functionalities.
  *
  */
-class yarp::dev::StubImplPositionDirectRaw: public IPositionDirect
+class YARP_dev_API yarp::dev::StubImplPositionDirectRaw: public IPositionDirect
 {
 private:
     /**
