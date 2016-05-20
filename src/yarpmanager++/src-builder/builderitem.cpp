@@ -24,7 +24,10 @@ void BuilderItem::updateConnections(){
     }
 }
 
-
+QList<Arrow *>* BuilderItem::getArrows()
+{
+    return &arrows;
+}
 
 void BuilderItem::removeArrow(Arrow *arrow){
     int index = arrows.indexOf(arrow);

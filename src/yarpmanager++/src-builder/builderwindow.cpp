@@ -959,11 +959,11 @@ void BuilderWindow::onModuleSelected(QGraphicsItem *it)
     Q_UNUSED(it);
     if(editingMode){
         if(scene->selectedItems().count() > 1){
-            propertiesTab->addModules(((ModuleItem*)it)->getInnerModule());
+            propertiesTab->addModules(((ModuleItem*)it));
             return;
         }
 
-        propertiesTab->showModuleTab(((ModuleItem*)it)->getInnerModule());
+        propertiesTab->showModuleTab(((ModuleItem*)it));
         return;
     }
 
