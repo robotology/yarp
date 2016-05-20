@@ -13,8 +13,10 @@
 #include "QGVEdge.h"
 #include "QGVSubGraph.h"
 #include <QMessageBox>
-#include <yarp/os/Time.h>
+#include <QFileDialog>
+#include <QtPrintSupport/QPrinter>
 
+#include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
 #include "NetworkProfiler.h"
 #include "ggraph.h"
@@ -47,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(onNodesTreeItemClicked(QTreeWidgetItem *, int)));
     connect(ui->actionMessageBox, SIGNAL(triggered()),this,SLOT(onWindowMessageBox()));
     connect(ui->actionItemswindow, SIGNAL(triggered()),this,SLOT(onWindowItem()));
+    connect(ui->actionExport_scene, SIGNAL(triggered()),this,SLOT(onExportScene()));
 
     progressDlg = new QProgressDialog("...", "Cancel", 0, 100, this);
 
@@ -432,4 +435,37 @@ void MainWindow::onWindowMessageBox() {
 
 void MainWindow::onWindowItem() {
     ui->nodesTreeWidget->setVisible(ui->actionItemswindow->isChecked());
+}
+
+void MainWindow::onExportScene() {
+    QString filters("Image files (*.png);;All files (*.*)");
+    QString defaultFilter("Image file (*.png)");
+    QString filename = QFileDialog::getSaveFileName(0, "Export scene",
+                                                    QDir::homePath(),
+                                                    filters, &defaultFilter);
+    if(filename.size() == 0)
+        return;
+
+    QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32);  // Create the image with the exact size of the shrunk scene
+    image.fill(QColor("#2e3e56"));
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    scene->render(&painter);
+    if(!image.save(filename))
+        yError()<<"Cannot save scene to"<<filename.toStdString();
+
+    /*
+    QPrinter printer( QPrinter::HighResolution );
+    //printer.setPageSize( QPrinter::A4 );
+    printer.setOrientation( QPrinter::Landscape );
+    printer.setOutputFormat( QPrinter::PdfFormat );
+    printer.setOutputFileName( filename ); // file will be created in your build directory (where debug/release directories are)
+    QPainter p;
+    if(!p.begin(&printer)){
+        yError() << "Error!";
+        return;
+    }
+    this->scene->render( &p );
+    p.end();
+    */
 }

@@ -88,6 +88,7 @@ private slots:
     void onNodesTreeItemClicked(QTreeWidgetItem *item, int column);
     void onWindowMessageBox();
     void onWindowItem();
+    void onExportScene();
 
 private:
     Ui::MainWindow *ui;

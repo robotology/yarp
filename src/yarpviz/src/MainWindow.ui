@@ -96,6 +96,8 @@
     <addaction name="action_Load_project"/>
     <addaction name="action_Save_project"/>
     <addaction name="separator"/>
+    <addaction name="actionExport_scene"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -235,6 +237,11 @@
    </property>
    <property name="text">
     <string>Items window</string>
+   </property>
+  </action>
+  <action name="actionExport_scene">
+   <property name="text">
+    <string>Export scene...</string>
    </property>
   </action>
  </widget>

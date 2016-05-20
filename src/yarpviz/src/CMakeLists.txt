@@ -38,8 +38,10 @@ add_executable(${PROJECTNAME} WIN32 ${yarpviz_qt_SRCS}
                                       ${yarpviz_qt_UI_FILES})
 
 
+#find_package(Qt5PrintSupport REQUIRED)
 target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES} qgvcore)
 qtyarp_use_modules(${PROJECTNAME} Widgets Gui)
+#qtyarp_use_modules(${PROJECTNAME} Widgets Gui PrintSupport)
 
 #qtyarp_deprecate_with_cmake_version(2.8.11)
 #if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
