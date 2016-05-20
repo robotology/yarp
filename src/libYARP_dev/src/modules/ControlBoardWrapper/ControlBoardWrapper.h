@@ -361,6 +361,9 @@ public:
     */
     bool verbose() const { return _verb; }
 
+    /* Return id of this device */
+    yarp::os::ConstString getId() { return partName; };
+
     /**
     * Default open() method.
     * @return always false since initialization requires parameters.
