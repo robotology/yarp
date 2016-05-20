@@ -45,6 +45,7 @@ public:
     void removeArrow(Arrow *arrow);
     void removeArrows();
     void addArrow(Arrow *arrow);
+    QList<Arrow *>* getArrows();
 
     bool arrowAlreadyPresent(BuilderItem *endItem);
     void updateConnections();

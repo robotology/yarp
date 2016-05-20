@@ -169,11 +169,16 @@ void Arrow::updateConnectionFrom(QString from)
     }
     Application* mainApplication = NULL;
     mainApplication = manager->getKnowledgeBase()->getApplication();
-    manager->getKnowledgeBase()->removeConnectionFromApplication(mainApplication, connection);
+    Connection updatedCon = connection;
+    updatedCon.setFrom(from.toLatin1().data());
 
-    connection.setFrom(from.toLatin1().data());
+    if(manager->getKnowledgeBase()->updateConnectionOfApplication(mainApplication, connection,updatedCon)){
+        connection = updatedCon;
+    }
 
-    connection = manager->getKnowledgeBase()->addConnectionToApplication(mainApplication, connection);
+//    connection.setFrom(from.toLatin1().data());
+
+//    connection = manager->getKnowledgeBase()->addConnectionToApplication(mainApplication, connection);
     sigHandler->modified();
 }
 
@@ -184,11 +189,15 @@ void Arrow::updateConnectionTo(QString to)
     }
     Application* mainApplication = NULL;
     mainApplication = manager->getKnowledgeBase()->getApplication();
-    manager->getKnowledgeBase()->removeConnectionFromApplication(mainApplication, connection);
+    Connection updatedCon = connection;
+    updatedCon.setTo(to.toLatin1().data());
 
-    connection.setTo(to.toLatin1().data());
+    if(manager->getKnowledgeBase()->updateConnectionOfApplication(mainApplication, connection,updatedCon)){
+        connection = updatedCon;
+    }
 
-    connection = manager->getKnowledgeBase()->addConnectionToApplication(mainApplication, connection);
+//    connection.setTo(to.toLatin1().data());
+//    connection = manager->getKnowledgeBase()->addConnectionToApplication(mainApplication, connection);
     sigHandler->modified();
 }
 
