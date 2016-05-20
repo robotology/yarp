@@ -9,6 +9,7 @@
 #include <yarp/manager/application.h>
 #include <yarp/manager/module.h>
 #include <yarp/manager/manager.h>
+#include "moduleitem.h"
 
 
 using namespace std;
@@ -21,13 +22,13 @@ class PropertiesTable : public QWidget
 public:
     explicit PropertiesTable(Manager *manager, QWidget *parent = 0);
     void showApplicationTab(Application *application);
-    void showModuleTab(Module *it);
-    void addModules(Module *);
+    void showModuleTab(ModuleItem *it);
+    void addModules(ModuleItem *);
 
 
 private:
     Application *currentApplication;
-    Module *currentModule;
+    ModuleItem *currentModule;
     QTabWidget *propertiesTab;
     QTreeWidget *appProperties;
     QTreeWidget *moduleProperties;
@@ -63,7 +64,7 @@ private:
 
     QString lastPrefix;
 
-    QList <Module *> modules;
+    QList <ModuleItem *> modules;
 
 
 signals:

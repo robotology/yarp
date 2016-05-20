@@ -75,7 +75,7 @@ void PropertiesTable::showApplicationTab(Application *application)
 }
 
 
-void PropertiesTable::showModuleTab(Module *mod)
+void PropertiesTable::showModuleTab(ModuleItem *mod)
 {
     modules.clear();
     disconnect(moduleProperties,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onModItemChanged(QTreeWidgetItem*,int)));
@@ -93,15 +93,15 @@ void PropertiesTable::showModuleTab(Module *mod)
     moduleProperties->show();
     moduleDescription->show();
 
-    modName = new QTreeWidgetItem(moduleProperties,QStringList() << "Name" << mod->getName());
+    modName = new QTreeWidgetItem(moduleProperties,QStringList() << "Name" << mod->getInnerModule()->getName());
     modNode = new QTreeWidgetItem(moduleProperties,QStringList() << "Node");
-    modStdio = new QTreeWidgetItem(moduleProperties,QStringList() << "Stdio" << mod->getStdio());
-    modWorkDir = new QTreeWidgetItem(moduleProperties,QStringList() << "Workdir" << mod->getWorkDir());
-    modPrefix = new QTreeWidgetItem(moduleProperties,QStringList() << "Prefix" << mod->getBasePrefix());
+    modStdio = new QTreeWidgetItem(moduleProperties,QStringList() << "Stdio" << mod->getInnerModule()->getStdio());
+    modWorkDir = new QTreeWidgetItem(moduleProperties,QStringList() << "Workdir" << mod->getInnerModule()->getWorkDir());
+    modPrefix = new QTreeWidgetItem(moduleProperties,QStringList() << "Prefix" << mod->getInnerModule()->getBasePrefix());
     modDeployer = new QTreeWidgetItem(moduleProperties,QStringList() << "Deployer");
-    modParams = new QTreeWidgetItem(moduleProperties,QStringList() << "Parameters" << mod->getParam());
+    modParams = new QTreeWidgetItem(moduleProperties,QStringList() << "Parameters" << mod->getInnerModule()->getParam());
 
-    lastPrefix = mod->getBasePrefix();
+    lastPrefix = mod->getInnerModule()->getBasePrefix();
 
     modStdio->setFlags(modStdio->flags() | Qt::ItemIsEditable);
     modWorkDir->setFlags(modWorkDir->flags() | Qt::ItemIsEditable);
@@ -130,27 +130,27 @@ void PropertiesTable::showModuleTab(Module *mod)
     deployerCombo->setEditable(true);
     nodeCombo->setEditable(true);
 
-    if(compareString(mod->getBroker(),"yarpdev")){
+    if(compareString(mod->getInnerModule()->getBroker(),"yarpdev")){
         deployerCombo->addItem("yarpdev");
-    }else if(compareString(mod->getBroker(),"icubmoddev")){
+    }else if(compareString(mod->getInnerModule()->getBroker(),"icubmoddev")){
         deployerCombo->addItem("icubmoddev");
     }else{
         deployerCombo->addItem("local");
         deployerCombo->addItem("yarprun");
     }
 
-    if(strlen(mod->getBroker())){
-        deployerCombo->setCurrentText(mod->getBroker());
-    }else if(compareString(mod->getHost(),"localhost")){
+    if(strlen(mod->getInnerModule()->getBroker())){
+        deployerCombo->setCurrentText(mod->getInnerModule()->getBroker());
+    }else if(compareString(mod->getInnerModule()->getHost(),"localhost")){
         deployerCombo->setCurrentText("local");
     }
-    if(mod->getNeedDeployer()){
+    if(mod->getInnerModule()->getNeedDeployer()){
         deployerCombo->setEditable(false);
     }
 
 
-    nodeCombo->addItem(mod->getHost());
-    if(QString(mod->getHost()) != "localhost"){
+    nodeCombo->addItem(mod->getInnerModule()->getHost());
+    if(QString(mod->getInnerModule()->getHost()) != "localhost"){
         nodeCombo->addItem("localhost");
     }
     ResourcePContainer resources = manager->getKnowledgeBase()->getResources();
@@ -173,8 +173,8 @@ void PropertiesTable::showModuleTab(Module *mod)
 
      /*****************************/
      // Populate paramters
-     for(int i=0;i<mod->argumentCount();i++){
-         Argument a = mod->getArgumentAt(i);
+     for(int i=0;i<mod->getInnerModule()->argumentCount();i++){
+         Argument a = mod->getInnerModule()->getArgumentAt(i);
          QTreeWidgetItem *it = new QTreeWidgetItem(modParams,QStringList() << a.getParam());
          QComboBox *paramCombo = new QComboBox();
          paramCombo->setEditable(true);
@@ -194,25 +194,25 @@ void PropertiesTable::showModuleTab(Module *mod)
     modParams->setExpanded(true);
 
 
-    QTreeWidgetItem *nameItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Name" << mod->getName());
-    QTreeWidgetItem *versionItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Version" << mod->getVersion());
-    QTreeWidgetItem *descriptionItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Description" << mod->getDescription());
+    QTreeWidgetItem *nameItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Name" << mod->getInnerModule()->getName());
+    QTreeWidgetItem *versionItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Version" << mod->getInnerModule()->getVersion());
+    QTreeWidgetItem *descriptionItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Description" << mod->getInnerModule()->getDescription());
     QTreeWidgetItem *parametersItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Parameters");
-    for(int i=0;i<mod->argumentCount();i++){
-        Argument a = mod->getArgumentAt(i);
+    for(int i=0;i<mod->getInnerModule()->argumentCount();i++){
+        Argument a = mod->getInnerModule()->getArgumentAt(i);
         QTreeWidgetItem *it = new QTreeWidgetItem(parametersItem,QStringList() << a.getParam() << a.getDescription());
 
     }
 
     QTreeWidgetItem *authorsItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Authors" );
-    for(int i=0;i<mod->authorCount();i++){
-        Author a = mod->getAuthorAt(i);
+    for(int i=0;i<mod->getInnerModule()->authorCount();i++){
+        Author a = mod->getInnerModule()->getAuthorAt(i);
         QTreeWidgetItem *it = new QTreeWidgetItem(authorsItem,QStringList() << a.getName() << a.getEmail());
     }
 
     QTreeWidgetItem *inputsItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Inputs" );
-    for(int i=0;i<mod->inputCount();i++){
-        InputData a = mod->getInputAt(i);
+    for(int i=0;i<mod->getInnerModule()->inputCount();i++){
+        InputData a = mod->getInnerModule()->getInputAt(i);
 
         QTreeWidgetItem *type = new QTreeWidgetItem(inputsItem,QStringList() << "Type" << a.getName());
         QTreeWidgetItem *port = new QTreeWidgetItem(type,QStringList() << "Port" << a.getPort());
@@ -224,8 +224,8 @@ void PropertiesTable::showModuleTab(Module *mod)
     }
 
     QTreeWidgetItem *outputsItem = new QTreeWidgetItem(moduleDescription,QStringList() << "Outputs" );
-    for(int i=0;i<mod->outputCount();i++){
-        OutputData a = mod->getOutputAt(i); //TODO controllare
+    for(int i=0;i<mod->getInnerModule()->outputCount();i++){
+        OutputData a = mod->getInnerModule()->getOutputAt(i); //TODO controllare
 
         QTreeWidgetItem *type = new QTreeWidgetItem(outputsItem,QStringList() << "Type" << a.getName());
         QTreeWidgetItem *port = new QTreeWidgetItem(type,QStringList() << "Port" << a.getPort());
@@ -286,17 +286,17 @@ void PropertiesTable::onModItemChanged(QTreeWidgetItem *it,int col)
 
 
     if(currentModule){
-        currentModule->setStdio(modStdio->text(1).toLatin1().data());
-        currentModule->setWorkDir(modWorkDir->text(1).toLatin1().data());
+        currentModule->getInnerModule()->setStdio(modStdio->text(1).toLatin1().data());
+        currentModule->getInnerModule()->setWorkDir(modWorkDir->text(1).toLatin1().data());
         if(lastPrefix != modPrefix->text(1)){
-            currentModule->setBasePrefix(modPrefix->text(1).toLatin1().data());
+            currentModule->getInnerModule()->setBasePrefix(modPrefix->text(1).toLatin1().data());
 
             string strPrefix;
             Application* application = manager->getKnowledgeBase()->getApplication();
             if(application){
                 strPrefix = string(application->getPrefix()) + string(modPrefix->text(1).toLatin1().data());
-                for(int j=0; j<currentModule->outputCount(); j++){
-                    OutputData *output = &currentModule->getOutputAt(j);
+                for(int j=0; j<currentModule->getInnerModule()->outputCount(); j++){
+                    OutputData *output = &currentModule->getInnerModule()->getOutputAt(j);
 
                     for(int i=0; i<application->connectionCount(); i++){
                         Connection con = application->getConnectionAt(i);
@@ -305,40 +305,64 @@ void PropertiesTable::onModItemChanged(QTreeWidgetItem *it,int col)
                         if(con.getCorOutputData()){
                             if(con.getCorOutputData() == output){
                                 string strFrom = strPrefix + string(output->getPort());
-                                updatedCon.setFrom(strFrom.c_str());
-                                manager->getKnowledgeBase()->updateConnectionOfApplication(application,
-                                                            con, updatedCon);
+//                                updatedCon.setFrom(strFrom.c_str());
+//                                manager->getKnowledgeBase()->updateConnectionOfApplication(application,
+//                                                            con, updatedCon);
+
+                                for(int k=0;k<currentModule->oPorts.count();k++){
+                                    for(int h=0; h<currentModule->oPorts.at(k)->getArrows()->count();h++){
+                                        Arrow *a = currentModule->oPorts.at(k)->getArrows()->at(h);
+                                        if( a->getTo() == updatedCon.to()){
+                                            a->updateConnectionFrom(QString(strFrom.c_str()));
+
+                                        }
+
+                                    }
+
+                                }
                             }
                         }
                     }
                 }
             }
 
-            for(int j=0; j<currentModule->inputCount(); j++){
-                InputData *input = &currentModule->getInputAt(j);
+            for(int j=0; j<currentModule->getInnerModule()->inputCount(); j++){
+                InputData *input = &currentModule->getInnerModule()->getInputAt(j);
                 for(int i=0; i<application->connectionCount(); i++){
                     Connection con = application->getConnectionAt(i);
                     Connection updatedCon = con;
                     if(con.getCorInputData()){
                         if(con.getCorInputData() == input){
                             string strTo = strPrefix + string(input->getPort());
-                            updatedCon.setTo(strTo.c_str());
-                            manager->getKnowledgeBase()->updateConnectionOfApplication(application,
-                                                        con, updatedCon);
+//                            updatedCon.setTo(strTo.c_str());
+//                            manager->getKnowledgeBase()->updateConnectionOfApplication(application,
+//                                                        con, updatedCon);
+
+                            for(int k=0;k<currentModule->iPorts.count();k++){
+                                for(int h=0; h<currentModule->iPorts.at(k)->getArrows()->count();h++){
+                                    Arrow *a = currentModule->iPorts.at(k)->getArrows()->at(h);
+                                    if(a->getFrom() == updatedCon.from() ){
+                                        a->updateConnectionTo(QString(strTo.c_str()));
+
+                                    }
+
+                                }
+
+                            }
                         }
                     }
                 }
             }
-            manager->getKnowledgeBase()->setModulePrefix(currentModule, strPrefix.c_str(), false);
+            manager->getKnowledgeBase()->setModulePrefix(currentModule->getInnerModule(), strPrefix.c_str(), false);
         }
 
     }
 
     for(int i=0;i<modules.count();i++){
-        Module *module = modules.at(i);
-        if(!strcmp(module->getName(),currentModule->getName())){
-             module->setStdio(currentModule->getStdio());
-             module->setWorkDir(currentModule->getWorkDir());
+        Module *module = modules.at(i)->getInnerModule();
+        if(!strcmp(module->getName(),currentModule->getInnerModule()->getName())){
+             module->setStdio(currentModule->getInnerModule()->getStdio());
+             module->setWorkDir(currentModule->getInnerModule()->getWorkDir());
         }
     }
     modified();
@@ -360,7 +384,7 @@ void PropertiesTable::onComboChanged(QWidget *combo)
 {
     if(combo == deployerCombo){
         if(currentModule){
-            currentModule->setBroker(((QComboBox*)combo)->currentText().toLatin1().data());
+            currentModule->getInnerModule()->setBroker(((QComboBox*)combo)->currentText().toLatin1().data());
         }
         modified();
         return;
@@ -368,7 +392,7 @@ void PropertiesTable::onComboChanged(QWidget *combo)
     if(combo == nodeCombo){
 
         if(currentModule){
-            currentModule->setHost(((QComboBox*)combo)->currentText().toLatin1().data());
+            currentModule->getInnerModule()->setHost(((QComboBox*)combo)->currentText().toLatin1().data());
         }
         modified();
         return;
@@ -385,21 +409,21 @@ void PropertiesTable::onComboChanged(QWidget *combo)
     }
     modParams->setText(1,params);
     if(currentModule){
-        currentModule->setParam(params.toLatin1().data());
+        currentModule->getInnerModule()->setParam(params.toLatin1().data());
     }
 
     for(int i=0;i<modules.count();i++){
-        Module *module = modules.at(i);
-        if(!strcmp(module->getName(),currentModule->getName())){
-             module->setParam(currentModule->getParam());
-             module->setHost(currentModule->getHost());
-             module->setBroker(currentModule->getBroker());
+        Module *module = modules.at(i)->getInnerModule();
+        if(!strcmp(module->getName(),currentModule->getInnerModule()->getName())){
+             module->setParam(currentModule->getInnerModule()->getParam());
+             module->setHost(currentModule->getInnerModule()->getHost());
+             module->setBroker(currentModule->getInnerModule()->getBroker());
         }
     }
     modified();
 }
 
-void PropertiesTable::addModules(Module *mod)
+void PropertiesTable::addModules(ModuleItem *mod)
 {
     modules.append(mod);
 }
