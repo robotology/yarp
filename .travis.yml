@@ -1,12 +1,12 @@
 sudo: required
 dist: trusty
+language: cpp
+cache: ccache
 
 os:
   - linux
   - osx
 
-language:
-  - cpp
 
 compiler:
   - gcc
