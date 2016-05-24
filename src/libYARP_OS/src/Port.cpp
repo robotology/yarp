@@ -1,14 +1,14 @@
 /*
  * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
+ * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
+#include <yarp/os/Port.h>
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Portable.h>
-#include <yarp/os/Port.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Contact.h>
@@ -16,6 +16,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/impl/PortCoreAdapter.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
@@ -24,366 +25,18 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
-class PortCoreAdapter : public PortCore {
-private:
-    SemaphoreImpl stateMutex;
-    PortReader *readDelegate;
-    PortReader *permanentReadDelegate;
-    PortReader *adminReadDelegate;
-    PortWriter *writeDelegate;
-    //PortReaderCreator *readCreatorDelegate;
-    bool readResult, readActive, readBackground, willReply, closed, opened;
-    bool replyDue;
-    bool dropDue;
-    SemaphoreImpl produce, consume, readBlock;
-    PortReaderCreator *recReadCreator;
-    int recWaitAfterSend;
-    Type typ;
-    bool checkedType;
-    bool usedForRead;
-    bool usedForWrite;
-    bool usedForRpc;
-
-public:
-    bool includeNode;
-    bool commitToRead;
-    bool commitToWrite;
-    bool commitToRpc;
-    bool active;
-    Mutex *recCallbackLock;
-    bool haveCallbackLock;
-
-    PortCoreAdapter(Port& owner) :
-        stateMutex(1),
-        readDelegate(NULL),
-        permanentReadDelegate(NULL),
-        adminReadDelegate(NULL),
-        writeDelegate(NULL),
-        readResult(false),
-        readActive(false),
-        readBackground(false),
-        willReply(false),
-        closed(false),
-        opened(false),
-        replyDue(false),
-        dropDue(false),
-        produce(0), consume(0), readBlock(1),
-        recReadCreator(NULL),
-        recWaitAfterSend(-1),
-        checkedType(false),
-        usedForRead(false),
-        usedForWrite(false),
-        usedForRpc(false),
-        includeNode(false),
-        commitToRead(false),
-        commitToWrite(false),
-        commitToRpc(false),
-        active(false),
-        recCallbackLock(NULL),
-        haveCallbackLock(false)
-    {
-        setContactable(&owner);
-    }
-
-    void openable() {
-        stateMutex.wait();
-        closed = false;
-        opened = true;
-        stateMutex.post();
-    }
-
-    void checkType(PortReader& reader) {
-        if (!checkedType) {
-            if (!typ.isValid()) {
-                typ = reader.getReadType();
-            }
-            checkedType = true;
-        }
-    }
-
-    void alertOnRead() {
-        usedForRead = true;
-    }
-
-    void alertOnWrite() {
-        usedForWrite = true;
-    }
-
-    void alertOnRpc() {
-        usedForRpc = true;
-    }
-
-    void setReadOnly() {
-        commitToRead = true;
-    }
-
-    void setWriteOnly() {
-        commitToWrite = true;
-    }
-
-    void setRpc() {
-        commitToRpc = true;
-    }
-
-    void finishReading() {
-        if (!readBackground) {
-            stateMutex.wait();
-            closed = true;
-            consume.post();
-            consume.post();
-            stateMutex.post();
-        }
-    }
-
-    void finishWriting() {
-        if (isWriting()) {
-            double start = Time::now();
-            double pause = 0.01;
-            do {
-                Time::delay(pause);
-                pause *= 2;
-            } while (isWriting() && (Time::now()-start<3));
-            if (isWriting()) {
-                YARP_ERROR(Logger::get(), "Closing port that was sending data (slowly)");
-            }
-        }
-    }
-
-
-    void resumeFull() {
-        while (produce.check()) {}
-        while (readBlock.check()) {}
-        resume();
-        readBlock.post();
-    }
-
-    virtual bool read(ConnectionReader& reader) {
-        if (permanentReadDelegate!=NULL) {
-            bool result = permanentReadDelegate->read(reader);
-            return result;
-        }
-
-        // called by comms code
-        readBlock.wait();
-
-        if (!reader.isValid()) {
-            // interrupt
-            stateMutex.wait();
-            if (readDelegate!=NULL) {
-                readResult = readDelegate->read(reader);
-            }
-            stateMutex.post();
-            produce.post();
-            readBlock.post();
-            return false;
-        }
-
-        if (closed) {
-            YARP_DEBUG(Logger::get(),"Port::read shutting down");
-            readBlock.post();
-            return false;
-        }
-
-        // wait for happy consumer - don't want to miss a packet
-        if (!readBackground) {
-            consume.wait();
-        }
-
-        stateMutex.wait();
-        readResult = false;
-        if (readDelegate!=NULL) {
-            readResult = readDelegate->read(reader);
-        } else {
-            // read and ignore
-            YARP_DEBUG(Logger::get(),"data received in Port, no reader for it");
-            Bottle b;
-            b.read(reader);
-        }
-        if (!readBackground) {
-            readDelegate = NULL;
-            writeDelegate = NULL;
-        }
-        bool result = readResult;
-        stateMutex.post();
-        if (!readBackground) {
-            produce.post();
-        }
-        if (result&&willReply) {
-            consume.wait();
-            if (closed) {
-                YARP_DEBUG(Logger::get(),"Port::read shutting down");
-                readBlock.post();
-                return false;
-            }
-            if (writeDelegate!=NULL) {
-                stateMutex.wait();
-                ConnectionWriter *writer = reader.getWriter();
-                if (writer!=NULL) {
-                    result = readResult = writeDelegate->write(*writer);
-                }
-                stateMutex.post();
-            }
-            if (dropDue) {
-                reader.requestDrop();
-            }
-            produce.post();
-        }
-        readBlock.post();
-        return result;
-    }
-
-    bool read(PortReader& reader, bool willReply = false) {
-        // called by user
-
-        // user claimed they would reply to last read, but then
-        // decided not to.
-        if (replyDue) {
-            Bottle emptyMessage;
-            reply(emptyMessage,false,false);
-            replyDue = false;
-            dropDue = false;
-        }
-        if (willReply) {
-            replyDue = true;
-        }
-
-        stateMutex.wait();
-        readActive = true;
-        readDelegate = &reader;
-        checkType(reader);
-        writeDelegate = NULL;
-        this->willReply = willReply;
-        consume.post(); // happy consumer
-        stateMutex.post();
-
-        produce.wait();
-        stateMutex.wait();
-        if (!readBackground) {
-            readDelegate = NULL;
-        }
-        bool result = readResult;
-        if (!result) replyDue = false;
-        stateMutex.post();
-        return result;
-    }
-
-    bool reply(PortWriter& writer, bool drop, bool /*interrupted*/) {
-        // send reply even if interrupt has happened in interim
-        if (!replyDue) return false;
-
-        replyDue = false;
-        dropDue = drop;
-        writeDelegate = &writer;
-        consume.post();
-        produce.wait();
-        bool result = readResult;
-        return result;
-    }
-
-    /*
-      Configuration of a port that should be remembered
-      between opens and closes
-    */
-
-    void configReader(PortReader& reader) {
-        stateMutex.wait();
-        readActive = true;
-        readBackground = true;
-        readDelegate = &reader;
-        permanentReadDelegate = &reader;
-        checkType(reader);
-        consume.post(); // just do this once
-        stateMutex.post();
-    }
-
-    void configAdminReader(PortReader& reader) {
-        stateMutex.wait();
-        adminReadDelegate = &reader;
-        setAdminReadHandler(reader);
-        stateMutex.post();
-    }
-
-    void configReadCreator(PortReaderCreator& creator) {
-        recReadCreator = &creator;
-        setReadCreator(creator);
-    }
-
-    void configWaitAfterSend(bool waitAfterSend) {
-        if (waitAfterSend&&isManual()) {
-            YARP_ERROR(Logger::get(),
-                       "Cannot use background-mode writes on a fake port");
-        }
-        recWaitAfterSend = waitAfterSend?1:0;
-        setWaitAfterSend(waitAfterSend);
-    }
-
-    bool configCallbackLock(Mutex *lock) {
-        recCallbackLock = lock;
-        haveCallbackLock = true;
-        return setCallbackLock(lock);
-    }
-
-    bool unconfigCallbackLock() {
-        recCallbackLock = NULL;
-        haveCallbackLock = false;
-        return removeCallbackLock();
-    }
-
-    PortReader *checkPortReader() {
-        return readDelegate;
-    }
-
-    PortReader *checkAdminPortReader() {
-        return adminReadDelegate;
-    }
-
-    PortReaderCreator *checkReadCreator() {
-        return recReadCreator;
-    }
-
-    int checkWaitAfterSend() {
-        return recWaitAfterSend;
-    }
-
-
-    bool isOpened() {
-        return opened;
-    }
-
-    void setOpen(bool opened) {
-        this->opened = opened;
-    }
-
-    Type getType() {
-        stateMutex.wait();
-        Type t = typ;
-        stateMutex.post();
-        return t;
-    }
-
-    void promiseType(const Type& typ) {
-        stateMutex.wait();
-        this->typ = typ;
-        stateMutex.post();
-    }
-
-    void includeNodeInName(bool flag) {
-        includeNode = flag;
-    }
-
-};
 
 void *Port::needImplementation() const {
     if (implementation) return implementation;
     Port *self = (Port *)this;
-    self->implementation = new PortCoreAdapter(*self);
+    self->implementation = new yarp::os::impl::PortCoreAdapter(*self);
     yAssert(self->implementation!=NULL);
     self->owned = true;
     return self->implementation;
 }
 
 // implementation is a PortCoreAdapter
-#define IMPL() (*((PortCoreAdapter*)(needImplementation())))
+#define IMPL() (*((yarp::os::impl::PortCoreAdapter*)(needImplementation())))
 
 Port::Port() {
     implementation = NULL;
