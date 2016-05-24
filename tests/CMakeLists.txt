@@ -8,6 +8,14 @@ if(YARP_COMPILE_TESTS)
         add_definitions(-DYARP_USE_PERSISTENT_NAMESERVER=1)
     endif()
 
+    # Add the CMAKE_BINARY_DIR as a macro so the testing infrastructure
+    # can find the device compiled as dynamic plugins
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/YarpBuildLocation.h.in"
+                   "${CMAKE_CURRENT_BINARY_DIR}/YarpBuildLocation.h"
+                   @ONLY)
+    include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+
     add_executable(testModule ${CMAKE_SOURCE_DIR}/tests/libYARP_OS/testModule/module.cpp)
     target_link_libraries(testModule YARP_init YARP_OS)
 
@@ -65,6 +73,11 @@ if(YARP_COMPILE_TESTS)
 
     if(UNIX)
         target_link_libraries(harness_os pthread)
+    endif()
+
+    # Compile ControlBoardRemapperTest only if fakeMotionControl is enabled
+    if(ENABLE_yarpmod_fakeMotionControl)
+        add_definitions(-DYARP_CONTROLBOARDREMAPPER_TESTS)
     endif()
 
     # Add in hardware specific tests, if requested
