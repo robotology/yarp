@@ -9,6 +9,7 @@
 #include<yarp/os/LogStream.h>
 #include <ggraph.h>
 #include <algorithm>
+#include <stack>
 
 //#include <sstream>
 //#include <iostream>
@@ -16,6 +17,7 @@ using namespace yarp::graph;
 using namespace yarp::os;
 
 #define myDebug yDebug
+
 
 /**
  * yarp::graph::Edge
@@ -181,4 +183,79 @@ void Graph::clear() {
     for(; itr!=mVertices.end(); itr++)
         delete *itr;
     mVertices.clear();
+}
+
+
+void strongConnect(Vertex* v,
+                   std::stack<Vertex*>&S, int& index) {
+    //yDebug()<<"Visiting"<<v->property.find("name").asString()<<index;
+    // Set the depth index for v to the smallest unused index
+    v->property.put("index", index);
+    v->property.put("lowlink", index);
+    index++;
+    S.push(v);
+    v->property.put("onStack", 1);
+    // Consider successors of v
+    const edge_set& outs = v->outEdges();
+    edge_const_iterator eitr;
+    for(eitr = outs.begin(); eitr!=outs.end(); eitr++) {
+        const Edge& e = (*eitr);
+        const Vertex& w = e.second();
+        //yDebug()<<"successors:"<<w.property.find("name").asString();
+        if(!w.property.check("index")) {
+            // Successor w has not yet been visited; recurse on it
+            strongConnect((Vertex*)(&w), S, index);
+            int lowlink = std::min(v->property.find("lowlink").asInt(),
+                                   w.property.find("lowlink").asInt());
+            v->property.put("lowlink", lowlink);
+
+        } else if (w.property.check("onStack")) {
+            // Successor w is in stack S and hence in the current SCC
+            int lowlink = std::min(v->property.find("lowlink").asInt(),
+                                   w.property.find("index").asInt());
+            v->property.put("lowlink", lowlink);
+        }
+    } // end successors
+
+    // If v is a root node, pop the stack and generate an SCC    
+    if(v->property.find("lowlink").asInt() == v->property.find("index").asInt()) {
+        // start a new strongly connected component
+        pvertex_set scc;
+        Vertex* w;
+        do {
+            w = S.top();
+            S.pop();
+            w->property.unput("onStack");
+            //add w to current strongly connected component            
+            scc.push_back(w);
+        } while(!S.empty() && w != v);
+        //output the current strongly connected component
+        if(scc.size() > 1) {
+            yInfo()<<"\nSCC:";
+            for(int i=0; i<scc.size(); i++)
+                yInfo()<<scc[i]->property.find("name").asString();
+        }
+    }
+}
+
+
+bool Algorithm::calcSCC(yarp::graph::Graph& graph, graph_subset &scc) {
+    // clear corresponding nodes propperties
+    pvertex_const_iterator vitr;
+    const pvertex_set& vertices = graph.vertices();
+    for(vitr = vertices.begin(); vitr!=vertices.end(); vitr++) {
+        Vertex* v = (*vitr);
+        v->property.unput("onStack");
+        v->property.unput("index");
+        v->property.unput("lowlink");
+    }
+
+    std::stack<Vertex*> S;
+    int index = 0;
+    for(vitr = vertices.begin(); vitr!=vertices.end(); vitr++) {
+        Vertex* v = (*vitr);
+        if(!v->property.check("index"))
+            strongConnect(v, S, index);
+    }
+    return true;
 }

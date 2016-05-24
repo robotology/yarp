@@ -244,3 +244,16 @@ bool NetworkProfiler::yarpClean(float timeout) {
     NetworkBase::write(serverName, cmd, reply);
     return true;
 }
+
+bool NetworkProfiler::creatSimpleGraph(yarp::graph::Graph& graph, yarp::graph::Graph& subgraph) {
+    subgraph.clear();
+    pvertex_const_iterator itr;
+    const pvertex_set& vertices = graph.vertices();
+    for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
+        const Property& prop = (*itr)->property;
+        if(!dynamic_cast<ProcessVertex*>(*itr))
+            continue;
+        subgraph.insert(**itr);
+    }
+    return true;
+}

@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initScene();
 
     connect(ui->actionProfile_YARP_network, SIGNAL(triggered()),this,SLOT(onProfileYarpNetwork()));
+    connect(ui->actionHighlight_Loops, SIGNAL(triggered()),this,SLOT(onHighlightLoops()));
     connect(ui->actionOrthogonal, SIGNAL(triggered()),this,SLOT(onLayoutOrthogonal()));
     connect(ui->actionCurved, SIGNAL(triggered()),this,SLOT(onLayoutCurved()));
     connect(ui->actionPolyline, SIGNAL(triggered()),this,SLOT(onLayoutPolyline()));
@@ -357,6 +358,12 @@ void MainWindow::onProfileYarpNetwork() {
     portParentItem->setExpanded(true);
     drawGraph(mainGraph);
 }
+
+void MainWindow::onHighlightLoops() {
+    graph_subset loops;
+    Algorithm::calcSCC(mainGraph, loops);
+}
+
 
 void MainWindow::updateNodeWidgetItems() {
 

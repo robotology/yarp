@@ -113,6 +113,7 @@
      <string>Profile</string>
     </property>
     <addaction name="actionProfile_YARP_network"/>
+    <addaction name="actionHighlight_Loops"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -242,6 +243,11 @@
   <action name="actionExport_scene">
    <property name="text">
     <string>Export scene...</string>
+   </property>
+  </action>
+  <action name="actionHighlight_Loops">
+   <property name="text">
+    <string>Highlight Loops</string>
    </property>
   </action>
  </widget>

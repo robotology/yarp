@@ -20,6 +20,7 @@ namespace yarp {
         class Vertex;
         class Edge;
         class Graph;
+        class Algorithm;
     }
 };
 
@@ -31,6 +32,10 @@ typedef  edge_set::const_iterator edge_const_iterator;
 typedef  std::vector<yarp::graph::Vertex*> pvertex_set;
 typedef  pvertex_set::iterator pvertex_iterator;
 typedef  pvertex_set::const_iterator pvertex_const_iterator;
+
+typedef  std::vector<pvertex_set> graph_subset;
+typedef  graph_subset::iterator graph_subset_iterator;
+typedef  graph_subset::const_iterator graph_subset_const_iterator;
 
 
 /**
@@ -124,6 +129,17 @@ public:
 
 private:
     pvertex_set mVertices;
+};
+
+
+class yarp::graph::Algorithm {
+public:
+    /**
+     * @brief calcSCC
+     * @param graph
+     * @return
+     */
+    static bool calcSCC(yarp::graph::Graph& graph, graph_subset &scc);
 };
 
 
