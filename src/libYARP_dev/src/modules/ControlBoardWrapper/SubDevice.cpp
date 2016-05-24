@@ -259,6 +259,17 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         yError("ControlBoarWrapper: check device configuration, number of joints of attached device '%d' less than the one specified during configuration '%d' for %s.", deviceJoints, axes, k.c_str());
         return false;
     }
+
+    int subdevAxes;
+    if(!pos->getAxes(&subdevAxes))
+    {
+
+        yError() << "ControlBoardWrapper trying to attach to subdevice " << k.c_str() << " but it was not ready yet. \n" \
+                    << "Please check the device has been correctly created and all required initialization actions has been performed.";
+        attachedF=false;
+        return false;
+    }
+
     attachedF=true;
     return true;
 }

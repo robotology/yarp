@@ -914,12 +914,21 @@ void ControlBoardWrapper::run()
         getEncoderSpeeds(ros_struct.velocity.data());
         getTorques(ros_struct.effort.data());
 
-        convertDegreesToRadians(ros_struct.position);
-        convertDegreesToRadians(ros_struct.velocity);
+        JointTypeEnum jType;
+        for(int i=0; i< controlledJoints; i++)
+        {
+            getJointType(i, jType);
+            if(jType == VOCAB_JOINTTYPE_REVOLUTE)
+            {
+                ros_struct.position[i] = convertDegreesToRadians(ros_struct.position[i]);
+                ros_struct.velocity[i] = convertDegreesToRadians(ros_struct.velocity[i]);
+            }
+        }
+
         ros_struct.name=jointNames;
 
         ros_struct.header.seq = rosMsgCounter++;
-        ros_struct.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+        ros_struct.header.stamp = normalizeSecNSec(time.getTime());
 
         rosPublisherPort.write(ros_struct);
     }
