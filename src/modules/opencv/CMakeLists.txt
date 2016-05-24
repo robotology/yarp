@@ -12,8 +12,6 @@ endif(COMPILE_DEVICE_LIBRARY)
 if(NOT SKIP_opencv_grabber)
 
     include_directories(${YARP_INCLUDE_DIRS})
-
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common)
     include_directories(${OpenCV_INCLUDE_DIRS})
     yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp OpenCVGrabber.h)
     target_link_libraries(yarp_opencv ${YARP_LIBRARIES})

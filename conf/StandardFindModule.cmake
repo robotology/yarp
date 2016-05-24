@@ -142,7 +142,14 @@ macro(STANDARD_FIND_MODULE _name _pkgconfig_name)
 
 
       if(_PC_${_NAME}_FOUND)
-        set(${_name}_INCLUDE_DIRS ${_PC_${_NAME}_INCLUDE_DIRS} CACHE PATH "${_name} include directory")
+        unset(_include_dirs)
+        foreach(_dir ${_PC_${_NAME}_INCLUDE_DIRS})
+          if(EXISTS "${_dir}")
+            list(APPEND _include_dirs "${_dir}")
+          endif()
+        endforeach()
+        set(${_name}_INCLUDE_DIRS ${_include_dirs} CACHE PATH "${_name} include directory")
+        unset(_include_dirs)
         set(${_name}_DEFINITIONS ${_PC_${_NAME}_CFLAGS_OTHER} CACHE STRING "Additional compiler flags for ${_name}")
 
         set(${_name}_LIBRARIES)
