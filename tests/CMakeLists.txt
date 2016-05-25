@@ -16,13 +16,13 @@ if(YARP_COMPILE_TESTS)
     include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 
-    add_executable(testModule ${CMAKE_SOURCE_DIR}/tests/libYARP_OS/testModule/module.cpp)
-    target_link_libraries(testModule YARP_init YARP_OS)
 
     #### temporary variable for debug
     set(ENABLE_YARPRUNTESTS FALSE CACHE BOOL "Enable yarprun tests")
     if(ENABLE_YARPRUNTESTS)
         add_definitions(-DYARPRUN_TEST)
+        add_executable(testModule ${CMAKE_SOURCE_DIR}/tests/libYARP_OS/testModule/module.cpp)
+        target_link_libraries(testModule YARP_init YARP_OS)
     endif()
     mark_as_advanced(ENABLE_YARPRUNTESTS)
 
