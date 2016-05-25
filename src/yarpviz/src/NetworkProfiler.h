@@ -26,7 +26,6 @@ public:
         void* getGraphicItem() { return graphicItem; }
 
 private:
-    yarp::graph::Vertex* owner;
     void* graphicItem;
 };
 
@@ -145,7 +144,7 @@ public:
      */
     static bool creatNetworkGraph(ports_detail_set details, yarp::graph::Graph& graph);
 
-    static bool creatSimpleGraph(yarp::graph::Graph& graph, yarp::graph::Graph& subgraph);
+    static bool creatSimpleModuleGraph(yarp::graph::Graph& graph, yarp::graph::Graph& subgraph);
 
     /**
      * @brief NetworkProfiler::yarpClean

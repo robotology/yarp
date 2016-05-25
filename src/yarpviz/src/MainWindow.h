@@ -86,6 +86,7 @@ private slots:
     void onLayoutLine();
     void onLayoutCurved();
     void onLayoutSubgraph();
+    void onHidePorts();
     void onNodesTreeItemClicked(QTreeWidgetItem *item, int column);
     void onWindowMessageBox();
     void onWindowItem();
@@ -98,6 +99,8 @@ private:
     QStringList messages;
     QStringListModel stringModel;
     yarp::graph::Graph mainGraph;
+    yarp::graph::Graph simpleGraph;
+    yarp::graph::Graph* currentGraph;
     std::string layoutStyle;
     bool layoutSubgraph;
     QTreeWidgetItem *moduleParentItem;

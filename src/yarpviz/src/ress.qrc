@@ -4,5 +4,7 @@
         <file>resources/module.svg</file>
         <file>resources/port.svg</file>
         <file>resources/Gnome-System-Run-64.png</file>
+        <file>resources/port_hide.svg</file>
+        <file>resources/chain.png</file>
     </qresource>
 </RCC>

@@ -16,6 +16,7 @@
 #include <QFileDialog>
 #include <QtPrintSupport/QPrinter>
 
+#include <yarp/os/Random.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
 #include "NetworkProfiler.h"
@@ -29,7 +30,7 @@ using namespace yarp::graph;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), scene(NULL)
+    ui(new Ui::MainWindow), scene(NULL), currentGraph(NULL)
 {
     ui->setupUi(this);
     stringModel.setStringList(messages);
@@ -46,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPolyline, SIGNAL(triggered()),this,SLOT(onLayoutPolyline()));
     connect(ui->actionLine, SIGNAL(triggered()),this,SLOT(onLayoutLine()));
     connect(ui->actionSubgraph, SIGNAL(triggered()),this,SLOT(onLayoutSubgraph()));
+    connect(ui->actionHidePorts, SIGNAL(triggered()),this,SLOT(onHidePorts()));
     connect(ui->nodesTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
             SLOT(onNodesTreeItemClicked(QTreeWidgetItem *, int)));
     connect(ui->actionMessageBox, SIGNAL(triggered()),this,SLOT(onWindowMessageBox()));
@@ -60,6 +62,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionSubgraph->setChecked(true);
     ui->actionMessageBox->setChecked(false);
     ui->actionItemswindow->setChecked(true);
+
+    ui->actionHighlight_Loops->setEnabled(false);
+    ui->actionHidePorts->setEnabled(false);
 
     ui->action_Save_project->setEnabled(false);
     ui->action_Load_project->setEnabled(false);
@@ -138,7 +143,9 @@ void MainWindow::drawGraph(Graph &graph)
                 //sgraph->setAttribute("label", prop.find("name").asString().c_str());
                 sgraph->setAttribute("color", "#2e3e56"); // hidden!
                 //sgraph->setAttribute("fillcolor", "#0180B5");
-                subgraphSet[prop.toString()] = sgraph;
+                std::stringstream key;
+                key<<prop.find("host").asString()<<prop.find("name").asString()<<prop.find("pid").asInt();
+                subgraphSet[key.str()] = sgraph;
                 node = sgraph->addNode(prop.find("name").asString().c_str());
             }else
                 node = scene->addNode(prop.find("name").asString().c_str());
@@ -148,8 +155,13 @@ void MainWindow::drawGraph(Graph &graph)
                   << " (" << prop.find("pid").asInt() << ")   ";
             node->setAttribute("shape", "box");
             node->setAttribute("label", label.str().c_str());
-            node->setAttribute("fillcolor", "#a5cf80");
-            node->setAttribute("color", "#a5cf80");
+            if(prop.check("color")) {
+                node->setAttribute("fillcolor", prop.find("color").asString().c_str());
+                node->setAttribute("color", prop.find("color").asString().c_str());
+            }else {
+                node->setAttribute("fillcolor", "#a5cf80");
+                node->setAttribute("color", "#a5cf80");
+            }
             node->setIcon(QImage(":/icons/resources/Gnome-System-Run-64.png"));
             //nodeSet[*itr] = node;
             dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(node);
@@ -160,6 +172,7 @@ void MainWindow::drawGraph(Graph &graph)
     // adding port nodes
     //pvertex_const_iterator itr;
     //const pvertex_set& vertices = graph.vertices();
+    int portCounts = 0;
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Property& prop = (*itr)->property;
         if(dynamic_cast<PortVertex*>(*itr) && !prop.check("hidden")) {
@@ -168,7 +181,9 @@ void MainWindow::drawGraph(Graph &graph)
                 if(layoutSubgraph) {
                     PortVertex* pv = dynamic_cast<PortVertex*>(*itr);
                     ProcessVertex* v = (ProcessVertex*) pv->getOwner();
-                    QGVSubGraph *sgraph = subgraphSet[v->property.toString()];
+                    std::stringstream key;
+                    key<<v->property.find("host").asString()<<v->property.find("name").asString()<<v->property.find("pid").asInt();
+                    QGVSubGraph *sgraph = subgraphSet[key.str()];
                     if(sgraph)
                         node =  sgraph->addNode(prop.find("name").asString().c_str());                    
                     else
@@ -177,13 +192,25 @@ void MainWindow::drawGraph(Graph &graph)
                 else
                     node =  scene->addNode(prop.find("name").asString().c_str());
                 node->setAttribute("shape", "ellipse");
-                node->setAttribute("fillcolor", "#edad56");
-                node->setAttribute("color", "#edad56");
+                if(prop.check("color")) {
+                    node->setAttribute("fillcolor", prop.find("color").asString().c_str());
+                    node->setAttribute("color", prop.find("color").asString().c_str());
+                } else {
+                    node->setAttribute("fillcolor", "#edad56");
+                    node->setAttribute("color", "#edad56");
+                }
                 //nodeSet[*itr] = node;
                 dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(node);
                 node->setVertex(*itr);
+                portCounts++;
             }
         }
+    }
+
+    // arrange the nodes deifferently if they are not port nodes
+    if(portCounts == 0) {
+        scene->setGraphAttribute("nodesep", "1.0");
+        scene->setGraphAttribute("ranksep", "1.0");
     }
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
@@ -191,6 +218,7 @@ void MainWindow::drawGraph(Graph &graph)
         for(int i=0; i<v1.outEdges().size(); i++) {
             const Edge& edge = v1.outEdges()[i];
             const Vertex &v2 = edge.second();
+            //yInfo()<<"Drawing:"<<v1.property.find("name").asString()<<" -> "<<v2.property.find("name").asString();
             // add ownership edges
             if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
                 if(edge.property.find("type").asString() == "ownership" &&
@@ -202,12 +230,18 @@ void MainWindow::drawGraph(Graph &graph)
                     gve->setAttribute("style", "dashed");
                 }
 
-                if(edge.property.find("type").asString() == "connection") {
+                if(edge.property.find("type").asString() == "connection") {                    
                     //QGVEdge* gve = scene->addEdge(nodeSet[&v1], nodeSet[&v2],
                     //                               edge.property.find("carrier").asString().c_str());
+                    string lable;
+                    //if(edge.property.check("lable"))
+                    //    lable = edge.property.find("lable").asString();
+                    //else
+                        lable = edge.property.find("carrier").asString();
+
                     QGVEdge* gve = scene->addEdge((QGVNode*)((YarpvizVertex*)&v1)->getGraphicItem(),
                                                   (QGVNode*)((YarpvizVertex*)&v2)->getGraphicItem(),
-                                                   edge.property.find("carrier").asString().c_str());
+                                                   lable.c_str());
                     gve->setAttribute("color", "white");
                 }
             }
@@ -249,12 +283,13 @@ void MainWindow::onNodeContextMenuProccess(QGVNode *node, YarpvizVertex* vertex)
     if(action->text().toStdString() == "Information...") {
         InformationDialog dialog;
         dialog.setProcessVertexInfo((ProcessVertex*)vertex);
+        dialog.setModal(true);
         dialog.exec();
     }
     else if(action->text().toStdString() == "Hide") {
         vertex->property.put("hidden", true);
         updateNodeWidgetItems();
-        drawGraph(mainGraph);
+        drawGraph(*currentGraph);
     }
 }
 
@@ -270,12 +305,13 @@ void MainWindow::onNodeContextMenuPort(QGVNode *node, YarpvizVertex* vertex) {
     if(action->text().toStdString() == "Information...") {
         InformationDialog dialog;
         dialog.setPortVertexInfo((PortVertex*)vertex);
+        dialog.setModal(true);
         dialog.exec();
     }
     else if(action->text().toStdString() == "Hide") {
         vertex->property.put("hidden", true);
         updateNodeWidgetItems();
-        drawGraph(mainGraph);
+        drawGraph(*currentGraph);
     }
 }
 
@@ -356,12 +392,34 @@ void MainWindow::onProfileYarpNetwork() {
 
     moduleParentItem->setExpanded(true);
     portParentItem->setExpanded(true);
-    drawGraph(mainGraph);
+    currentGraph = &mainGraph;
+    drawGraph(*currentGraph);
+    ui->actionHighlight_Loops->setEnabled(true);
+    ui->actionHidePorts->setEnabled(true);
 }
 
 void MainWindow::onHighlightLoops() {
-    graph_subset loops;
-    Algorithm::calcSCC(mainGraph, loops);
+    if(!currentGraph)
+        return;
+
+    if(ui->actionHighlight_Loops->isChecked()) {
+        graph_subset scc;
+        Algorithm::calcSCC(*currentGraph, scc);
+        for(int i=0; i<scc.size(); i++) {
+            pvertex_set &vset = scc[i];
+            QColor color(Random::uniform(0,255), Random::uniform(0,255), Random::uniform(0,255));
+            for(int j=0; j<vset.size(); j++)
+                vset[j]->property.put("color", color.name().toStdString().c_str());
+        }
+    }
+    else {
+        pvertex_const_iterator itr;
+        const pvertex_set& vertices = currentGraph->vertices();
+        for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
+            (*itr)->property.unput("color");
+        }
+    }
+    drawGraph(*currentGraph);
 }
 
 
@@ -385,7 +443,8 @@ void MainWindow::onLayoutOrthogonal() {
     ui->actionLine->setChecked(false);
     ui->actionCurved->setChecked(false);
     layoutStyle = "ortho";
-    drawGraph(mainGraph);
+    if(currentGraph)
+        drawGraph(*currentGraph);
 }
 
 void MainWindow::onLayoutPolyline() {
@@ -393,7 +452,8 @@ void MainWindow::onLayoutPolyline() {
     ui->actionLine->setChecked(false);
     ui->actionCurved->setChecked(false);
     layoutStyle = "polyline";
-    drawGraph(mainGraph);
+    if(currentGraph)
+        drawGraph(*currentGraph);
 }
 
 void MainWindow::onLayoutLine() {
@@ -401,7 +461,8 @@ void MainWindow::onLayoutLine() {
     ui->actionPolyline->setChecked(false);
     ui->actionCurved->setChecked(false);
     layoutStyle = "line";
-    drawGraph(mainGraph);
+    if(currentGraph)
+        drawGraph(*currentGraph);
 }
 
 void MainWindow::onLayoutCurved() {
@@ -409,12 +470,63 @@ void MainWindow::onLayoutCurved() {
     ui->actionPolyline->setChecked(false);
     ui->actionLine->setChecked(false);
     layoutStyle = "curved";
-    drawGraph(mainGraph);
+    drawGraph(*currentGraph);
 }
 
 void MainWindow::onLayoutSubgraph() {
     layoutSubgraph = ui->actionSubgraph->isChecked();
-    drawGraph(mainGraph);
+    if(currentGraph)
+        drawGraph(*currentGraph);
+}
+
+void MainWindow::onHidePorts() {
+
+    QTreeWidgetItem* item = NULL;
+    for (int i= moduleParentItem->childCount()-1; i>-1; i--) {
+        item = moduleParentItem->child(i);
+        delete item;
+    }
+    for (int i= portParentItem->childCount()-1; i>-1; i--) {
+        item = portParentItem->child(i);
+        delete item;
+    }
+
+    if(ui->actionHidePorts->isChecked()) {
+        NetworkProfiler::creatSimpleModuleGraph(mainGraph, simpleGraph);
+        // add process and port nodes to the tree
+        pvertex_const_iterator itr;
+        const pvertex_set& vertices = simpleGraph.vertices();
+        for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
+            if(dynamic_cast<ProcessVertex*>(*itr)) {
+                NodeWidgetItem *moduleItem =  new NodeWidgetItem(moduleParentItem, (*itr), MODULE);
+                moduleItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
+                moduleItem->check(true);
+            }
+        }
+        moduleParentItem->setExpanded(true);
+        portParentItem->setExpanded(true);
+        currentGraph = &simpleGraph;
+    }
+    else {
+        pvertex_const_iterator itr;
+        const pvertex_set& vertices = mainGraph.vertices();
+        for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
+            if(dynamic_cast<ProcessVertex*>(*itr)) {
+                NodeWidgetItem *moduleItem =  new NodeWidgetItem(moduleParentItem, (*itr), MODULE);
+                moduleItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
+                moduleItem->check(true);
+            }
+            else if(dynamic_cast<PortVertex*>(*itr) && !(*itr)->property.check("orphan")) {
+                NodeWidgetItem *portItem =  new NodeWidgetItem(portParentItem, (*itr), PORT);
+                portItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
+                portItem->check(true);
+            }
+        }
+        moduleParentItem->setExpanded(true);
+        portParentItem->setExpanded(true);
+        currentGraph = &mainGraph;
+    }
+    drawGraph(*currentGraph);
 }
 
 void MainWindow::onNodesTreeItemClicked(QTreeWidgetItem *item, int column){
@@ -425,7 +537,7 @@ void MainWindow::onNodesTreeItemClicked(QTreeWidgetItem *item, int column){
     bool needUpdate = state != ((NodeWidgetItem*)(item))->checked();
     ((NodeWidgetItem*)(item))->check(state);
     if(needUpdate)
-        drawGraph(mainGraph);
+        drawGraph(*currentGraph);
 
     QList<QGraphicsItem *> items = scene->selectedItems();
     foreach( QGraphicsItem *item, items )

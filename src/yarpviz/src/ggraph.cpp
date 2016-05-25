@@ -52,7 +52,8 @@ const Vertex& Edge::second() const {
 
 bool Edge::operator == (const yarp::graph::Edge &edge) const {
     return (firstVertex == edge.firstVertex &&
-            secondVertex == edge.secondVertex);
+            secondVertex == edge.secondVertex &&
+            property.toString() == edge.property.toString());
 }
 
 
@@ -187,6 +188,7 @@ void Graph::clear() {
 
 
 void strongConnect(Vertex* v,
+                   graph_subset& scc,
                    std::stack<Vertex*>&S, int& index) {
     //yDebug()<<"Visiting"<<v->property.find("name").asString()<<index;
     // Set the depth index for v to the smallest unused index
@@ -204,7 +206,7 @@ void strongConnect(Vertex* v,
         //yDebug()<<"successors:"<<w.property.find("name").asString();
         if(!w.property.check("index")) {
             // Successor w has not yet been visited; recurse on it
-            strongConnect((Vertex*)(&w), S, index);
+            strongConnect((Vertex*)(&w), scc, S, index);
             int lowlink = std::min(v->property.find("lowlink").asInt(),
                                    w.property.find("lowlink").asInt());
             v->property.put("lowlink", lowlink);
@@ -220,26 +222,29 @@ void strongConnect(Vertex* v,
     // If v is a root node, pop the stack and generate an SCC    
     if(v->property.find("lowlink").asInt() == v->property.find("index").asInt()) {
         // start a new strongly connected component
-        pvertex_set scc;
+        pvertex_set vset;
         Vertex* w;
         do {
             w = S.top();
             S.pop();
             w->property.unput("onStack");
             //add w to current strongly connected component            
-            scc.push_back(w);
+            vset.push_back(w);
         } while(!S.empty() && w != v);
         //output the current strongly connected component
-        if(scc.size() > 1) {
-            yInfo()<<"\nSCC:";
-            for(int i=0; i<scc.size(); i++)
-                yInfo()<<scc[i]->property.find("name").asString();
+        if(vset.size() > 1) {
+            scc.push_back(vset);
+            //yInfo()<<"\nSCC:";
+            //for(int i=0; i<vset.size(); i++)
+            //    yInfo()<<vset[i]->property.find("name").asString();
         }
     }
 }
 
 
 bool Algorithm::calcSCC(yarp::graph::Graph& graph, graph_subset &scc) {
+    scc.clear();
+
     // clear corresponding nodes propperties
     pvertex_const_iterator vitr;
     const pvertex_set& vertices = graph.vertices();
@@ -255,7 +260,7 @@ bool Algorithm::calcSCC(yarp::graph::Graph& graph, graph_subset &scc) {
     for(vitr = vertices.begin(); vitr!=vertices.end(); vitr++) {
         Vertex* v = (*vitr);
         if(!v->property.check("index"))
-            strongConnect(v, S, index);
+            strongConnect(v, scc, S, index);
     }
     return true;
 }

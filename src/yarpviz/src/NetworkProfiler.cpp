@@ -207,8 +207,8 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::graph::G
             NetworkProfiler::progCallback->onProgress((unsigned int) (++itr_count/((float)(details.size()*2)) * 100.0) );
         }
     }
-
-    NetworkProfiler::progCallback->onProgress(100); // is it really needed? :p
+    if(NetworkProfiler::progCallback)
+        NetworkProfiler::progCallback->onProgress(100); // is it really needed? :p
     return true;
 }
 
@@ -245,15 +245,41 @@ bool NetworkProfiler::yarpClean(float timeout) {
     return true;
 }
 
-bool NetworkProfiler::creatSimpleGraph(yarp::graph::Graph& graph, yarp::graph::Graph& subgraph) {
+bool NetworkProfiler::creatSimpleModuleGraph(yarp::graph::Graph& graph, yarp::graph::Graph& subgraph) {
     subgraph.clear();
     pvertex_const_iterator itr;
     const pvertex_set& vertices = graph.vertices();
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
-        const Property& prop = (*itr)->property;
         if(!dynamic_cast<ProcessVertex*>(*itr))
             continue;
-        subgraph.insert(**itr);
+        ProcessVertex* pv1 = dynamic_cast<ProcessVertex*>(*itr);
+        ProcessVertex* pv2 = new ProcessVertex(pv1->property.find("pid").asInt(),
+                                               pv1->property.find("hostname").asString());
+        pv2->property = pv1->property;
+        subgraph.insert(*pv2);
+    }
+    // insert edges
+    for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
+        if(!dynamic_cast<ProcessVertex*>(*itr))
+            continue;
+        Vertex* v1 = (*itr);
+        const edge_set& outs = v1->outEdges();
+        edge_const_iterator eitr;
+        for(eitr = outs.begin(); eitr!=outs.end(); eitr++) {
+            const Edge& e = (*eitr);
+            const Vertex& p1 = e.second();
+
+            const edge_set& pouts = p1.outEdges();
+            edge_const_iterator peitr;
+            for(peitr = pouts.begin(); peitr!=pouts.end(); peitr++) {
+                const Vertex& p2 = (*peitr).second();
+                Property prop((*peitr).property);
+                string lable = p1.property.find("name").asString();
+                lable = lable + " - " + p2.property.find("name").asString();
+                prop.put("lable", lable.c_str());
+                subgraph.insertEdge(*v1, p2.outEdges()[0].second(), prop);
+            }
+        }
     }
     return true;
 }

@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>yarpviz</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="ress.qrc">
+    <normaloff>:/icons/resources/profiling.png</normaloff>:/icons/resources/profiling.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -117,14 +121,23 @@
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>Layout</string>
+     <string>View</string>
     </property>
-    <addaction name="actionOrthogonal"/>
-    <addaction name="actionPolyline"/>
-    <addaction name="actionCurved"/>
-    <addaction name="actionLine"/>
+    <widget class="QMenu" name="menuLayout">
+     <property name="title">
+      <string>Layout</string>
+     </property>
+     <addaction name="actionOrthogonal"/>
+     <addaction name="actionPolyline"/>
+     <addaction name="actionCurved"/>
+     <addaction name="actionLine"/>
+     <addaction name="separator"/>
+     <addaction name="actionSubgraph"/>
+    </widget>
     <addaction name="separator"/>
-    <addaction name="actionSubgraph"/>
+    <addaction name="menuLayout"/>
+    <addaction name="separator"/>
+    <addaction name="actionHidePorts"/>
    </widget>
    <widget class="QMenu" name="menuView_2">
     <property name="title">
@@ -148,6 +161,8 @@
    </attribute>
    <addaction name="actionProfile_YARP_network"/>
    <addaction name="separator"/>
+   <addaction name="actionHidePorts"/>
+   <addaction name="actionHighlight_Loops"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Load_project">
@@ -208,14 +223,6 @@
     <string>Curved</string>
    </property>
   </action>
-  <action name="actionLine">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Line</string>
-   </property>
-  </action>
   <action name="actionSubgraph">
    <property name="checkable">
     <bool>true</bool>
@@ -246,8 +253,38 @@
    </property>
   </action>
   <action name="actionHighlight_Loops">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/chain.png</normaloff>:/icons/resources/chain.png</iconset>
+   </property>
    <property name="text">
-    <string>Highlight Loops</string>
+    <string>Highlight strongly connected Modules</string>
+   </property>
+   <property name="toolTip">
+    <string>Highlight Strongly connected modules</string>
+   </property>
+  </action>
+  <action name="actionLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Line</string>
+   </property>
+  </action>
+  <action name="actionHidePorts">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/port_hide.svg</normaloff>:/icons/resources/port_hide.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Hide Ports</string>
    </property>
   </action>
  </widget>
