@@ -93,18 +93,23 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
 
 	OPT_PLATFORM=""
 	OPT_VCNNN=""
+if [ "$OPT_COMPILER" == "v14" ] ; then
+		OPT_PLATFORM=v140
+		OPT_VCNNN="VC140"
+		OPT_HUMAN_PLATFORM_NAME="msvc14"
+	fi
 	if [ "$OPT_COMPILER" == "v12" ] ; then
 		OPT_PLATFORM=v120
 		OPT_VCNNN="VC120"
 		OPT_HUMAN_PLATFORM_NAME="msvc12"
 	fi
-	if [ "$OPT_COMPILER" = "v11" ] ; then
+	if [ "$OPT_COMPILER" == "v11" ] ; then
 		OPT_PLATFORM=v110
 		OPT_VCNNN="VC110"
 		OPT_HUMAN_PLATFORM_NAME="msvc11"
 	fi
 	
-	if [ "k$OPT_COMPILER" = "kv10" ] ; then
+	if [ "$OPT_COMPILER" == "v10" ] ; then
 		OPT_PLATFORM=v100
 		OPT_VCNNN="VC100"
 		OPT_HUMAN_PLATFORM_NAME="msvc10"

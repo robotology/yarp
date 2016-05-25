@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#set -x
 ##############################################################################
 #
 # Copyright: (C) 2011 RobotCub Consortium
@@ -90,7 +90,7 @@ fi
 if [ -f "qt_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh" ]; then
   source qt_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
 else
-	echo "NO QT build"
+    echo "NO QT build"
 fi
 
 # Go ahead and download YARP
@@ -101,18 +101,18 @@ source_url="https://github.com/robotology/${source_name}"
 if [ ! -e "$source_name" ]; then
   git clone $source_url || {
     echo "Cannot fetch ${source_name} from $source_url"
-	exit 1
+    exit 1
   }
 fi
 cd $source_name
-git  pull || {
-    echo "Cannot update $source_name from $source_url"
-	exit 1
-  }
 if [ "$BUNDLE_YARP_VERSION" == "" ] || [ "$BUNDLE_YARP_VERSION" == "trunk" ] || [ "$BUNDLE_YARP_VERSION" == "master" ]
 then
   git checkout master || {
     echo "Cannot fetch YARP trunk"
+    exit 1
+  }
+  git  pull || {
+    echo "Cannot update $source_name from $source_url"
     exit 1
   }
 else
