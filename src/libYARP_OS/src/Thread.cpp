@@ -21,6 +21,9 @@ public:
     ThreadCallbackAdapter(Thread& owner) : owner(owner) {
     }
 
+    virtual ~ThreadCallbackAdapter() {
+    }
+
     virtual void beforeStart() {
         owner.beforeStart();
     }
