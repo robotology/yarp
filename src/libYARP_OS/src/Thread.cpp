@@ -60,6 +60,7 @@ Thread::Thread() :
 
 
 Thread::~Thread() {
+    ((ThreadImpl*)implementation)->close();
     if (implementation!=NULL) {
         delete ((ThreadImpl*)implementation);
         implementation = NULL;
