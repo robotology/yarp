@@ -31,14 +31,14 @@
 
 # For simplicity, make sure this script is not called in-place
 if [ -e manage.sh ]; then
-	echo "Please call from a build directory"
-	exit 1
+  echo "Please call from a build directory"
+  exit 1
 fi
 
 # Check bash isn't too old to support associative arrays
 declare -A check_for_associative_arrays || (
-	echo "Update bash version"
-	exit 1
+  echo "Update bash version"
+  exit 1
 )
 
 # Set up build and source directory
@@ -53,28 +53,28 @@ cd $BUILD_DIR
 # enable tab completion.
 BUNDLES="`cd $SOURCE_DIR/conf; ls -1 bundle*.sh | sed "s/\.sh//"`"
 if [ "k$1" = "k" ]; then
-	echo "Please specify a bundle name.  One of these:"
-	# Support tab completion
-	for b in $BUNDLES; do
-	    echo -n " $b"
-	    echo "$0 $b" > $b
-	    chmod u+x $b
-	done
-	echo " "
-	exit 1
+  echo "Please specify a bundle name.  One of these:"
+  # Support tab completion
+  for b in $BUNDLES; do
+      echo -n " $b"
+      echo "$0 $b" > $b
+      chmod u+x $b
+  done
+  echo " "
+  exit 1
 else
-	# Remove tab completion
-	for b in $BUNDLES; do
-	    rm -f $b
-	done
+  # Remove tab completion
+  for b in $BUNDLES; do
+      rm -f $b
+  done
 fi
 
 # Load bundle settings
 BUNDLE_NAME="$1"
 BUNDLE_FILENAME="$SOURCE_DIR/conf/$1.sh"
 if [ ! -e "$BUNDLE_FILENAME" ]; then
-	echo "Cannot find $BUNDLE_FILENAME"
-	exit 1
+  echo "Cannot find $BUNDLE_FILENAME"
+  exit 1
 fi
 source $BUNDLE_FILENAME
 
@@ -82,9 +82,9 @@ source $BUNDLE_FILENAME
 # this script with the desired bundle.
 MAKEFILE=$BUILD_DIR/Makefile
 (
-	echo "# Default target is to simply rerun the command used to generate this Makefile"
-	echo "default:"
-	echo -e "\t$0 $1\n"
+  echo "# Default target is to simply rerun the command used to generate this Makefile"
+  echo "default:"
+  echo -e "\t$0 $1\n"
 ) > $MAKEFILE
 creation_list="Makefile"
 
@@ -93,15 +93,15 @@ source $SOURCE_DIR/conf/compilers.sh || exit 1
 
 # Override list of compilers with local configuration, if available
 if [ -e $SOURCE_DIR/conf/compilers_local.sh ]; then
-	source $SOURCE_DIR/conf/compilers_local.sh || exit 1
+  source $SOURCE_DIR/conf/compilers_local.sh || exit 1
 fi
 
 # Cache important variables in $BUILD_DIR/settings.sh
 (
-	echo "export nodosfilewarning=1 # inhibit cygwin warning about f:/foo/bar"
-	echo "export SETTINGS_SOURCE_DIR='$SOURCE_DIR'"
-	echo "export SETTINGS_BUNDLE_NAME='$BUNDLE_NAME'"
-	echo "export SETTINGS_BUNDLE_FILENAME='$BUNDLE_FILENAME'"
+  echo "export nodosfilewarning=1 # inhibit cygwin warning about f:/foo/bar"
+  echo "export SETTINGS_SOURCE_DIR='$SOURCE_DIR'"
+  echo "export SETTINGS_BUNDLE_NAME='$BUNDLE_NAME'"
+  echo "export SETTINGS_BUNDLE_FILENAME='$BUNDLE_FILENAME'"
 ) > $BUILD_DIR/settings.sh
 creation_list="$creation_list, settings.sh"
 
@@ -112,25 +112,25 @@ creation_list="$creation_list, settings.sh"
 #   $BUILD_DIR/compiler_config_${COMPILER_NAME}_${VARIANT_NAME}.sh
 echo "Scanning compilers..."
 for c in $compilers; do
-	variants=compiler_${c}_variants
-	loader_t=compiler_${c}_loader
-	family_t=compiler_${c}_family
-	loader="${!loader_t}"
-	family="${!family_t}"
-	for v in ${!variants}; do
-		echo "Adding compiler $c variant $v family $family"
-		if [ ! -e compiler_config_${c}_${v}.sh ]; then
-			$SOURCE_DIR/src/load_$family.sh "$loader" $v $c || {
-			    echo " "
-			    echo "Failed to scan compiler $c variant $v (family $family)"
-			    echo "Please check the settings in:"
-			    echo "  $SOURCE_DIR/conf/compilers.sh"
-			    echo "  $SOURCE_DIR/conf/compilers_local.sh"
-			    exit 1
-			}
-			creation_list="$creation_list, compiler_config_${c}_${v}.sh"
-		fi
-	done
+  variants=compiler_${c}_variants
+  loader_t=compiler_${c}_loader
+  family_t=compiler_${c}_family
+  loader="${!loader_t}"
+  family="${!family_t}"
+  for v in ${!variants}; do
+    echo "Adding compiler $c variant $v family $family"
+    if [ ! -e compiler_config_${c}_${v}.sh ]; then
+      $SOURCE_DIR/src/load_$family.sh "$loader" $v $c || {
+          echo " "
+          echo "Failed to scan compiler $c variant $v (family $family)"
+          echo "Please check the settings in:"
+          echo "  $SOURCE_DIR/conf/compilers.sh"
+          echo "  $SOURCE_DIR/conf/compilers_local.sh"
+          exit 1
+      }
+      creation_list="$creation_list, compiler_config_${c}_${v}.sh"
+    fi
+  done
 done
 
 
@@ -138,7 +138,7 @@ done
 # make targets for the various software packages
 
 # Here's the list of all available targets we care about
-full_target_list="cmake ace gsl gtkmm qt yarp nsis yarp_core_package transfer"
+full_target_list="cmake ace gsl gtkmm qt yarp nsis yarp_core_package"
 
 # For package $PACKAGE, depend_$PACKAGE contains a list of packages
 # it depends on
@@ -151,14 +151,12 @@ depend_yarp="cmake ace gsl gtkmm qt"
 depend_icub="cmake yarp ace gsl gtkmm"
 depend_nsis=
 depend_yarp_core_package="yarp nsis"
-depend_transfer="yarp_core_package"
 
 # We mark packages that don't have separate debug/release builds by
 # setting build_out_$PACKAGE to "any"
 build_out_cmake="any"
 build_out_nsis="any"
 build_out_yarp_core_package="any"
-build_out_transfer="any"
 
 # We mark packages that don't need a compiler by setting
 # compilers_out_$PACKAGE to "any"
@@ -173,14 +171,14 @@ compiler_any_variants="any"
 # For $build_out_$PACKAGE and $compilers_out_$PACKAGE variables 
 # that are not set, we provide defaults, to simplify scripting
 for t in $full_target_list; do
-	build_out_t=build_out_$t
-	build_out=${!build_out_t}
-	build_out=${build_out:-Release Debug}
-	export build_out_${t}="$build_out"
-	compilers_out_t=compilers_out_$t
-	compilers_out=${!compilers_out_t}
-	compilers_out=${compilers_out:-$compilers}
-	export compilers_out_${t}="$compilers_out"
+  build_out_t=build_out_$t
+  build_out=${!build_out_t}
+  build_out=${build_out:-Release Debug}
+  export build_out_${t}="$build_out"
+  compilers_out_t=compilers_out_$t
+  compilers_out=${!compilers_out_t}
+  compilers_out=${compilers_out:-$compilers}
+  export compilers_out_${t}="$compilers_out"
 done
 
 # Global list of targets
@@ -193,69 +191,69 @@ declare -A DEP_TARGETS
 #   dep_target_list $TARGET $COMPILER $VARIANT $BUILD
 # Result is given in keys of $DEP_TARGETS
 function dep_target_list {
-	local t=$1
-	local c=$2
-	local v=$3
-	local b=$4
-	local _build_out_t=build_out_$t
-	_build_out="${!_build_out_t}"
-	local _compilers_out_t=compilers_out_$t
-	_compilers_out="${!_compilers_out_t}"
-	if [ "k$_compilers_out" = "kany" ]; then
-		c=any
-		v=any
-	else
-		if [ "k$c" = "kany" ]; then
-			c="$_compilers_out"
-		fi
-	fi
-	if [ "k$_build_out" = "kany" ]; then
-		b=any
-	else
-		if [ "k$b" = "kany" ]; then
-			b="$_build_out"
-		fi
-	fi
-	for c1 in $c; do
-		for v1 in $v; do
-			for b1 in $b; do
-				target="build_${t}_${c1}_${v1}_${b1}.txt"
-				DEP_TARGETS[$target]=1
-			done
-		done
-	done
+  local t=$1
+  local c=$2
+  local v=$3
+  local b=$4
+  local _build_out_t=build_out_$t
+  _build_out="${!_build_out_t}"
+  local _compilers_out_t=compilers_out_$t
+  _compilers_out="${!_compilers_out_t}"
+  if [ "k$_compilers_out" = "kany" ]; then
+    c=any
+    v=any
+  else
+    if [ "k$c" = "kany" ]; then
+      c="$_compilers_out"
+    fi
+  fi
+  if [ "k$_build_out" = "kany" ]; then
+    b=any
+  else
+    if [ "k$b" = "kany" ]; then
+      b="$_build_out"
+    fi
+  fi
+  for c1 in $c; do
+    for v1 in $v; do
+      for b1 in $b; do
+        target="build_${t}_${c1}_${v1}_${b1}.txt"
+        DEP_TARGETS[$target]=1
+      done
+    done
+  done
 }
 
 # Scan through the set of targets, and generate appropriate make commands
 # to build them
 for t in $full_target_list; do
-	depend_t=depend_$t
-	deps=${!depend_t}
-	build_out_t=build_out_$t
-	build_out=${!build_out_t}
-	compilers_out_t=compilers_out_$t
-	compilers_out=${!compilers_out_t}
-	TARGETS=()
-	echo "" >> $MAKEFILE
-	echo "# $t, build variants are ($build_out), compilers are ($compilers_out)" >> $MAKEFILE
-	for c in $compilers_out; do
-		variants=compiler_${c}_variants
-		for v in ${!variants}; do
-			for b in $build_out; do
-				name="build_${t}_${c}_${v}_${b}.txt"
-				fast_name="fast_${t}_${c}_${v}_${b}"
-				TARGETS[$name]=1
-				DEP_TARGETS=()
-				for d in $deps; do
-					dep_target_list $d $c $v $b
-				done
-				echo "$name: ${!DEP_TARGETS[*]}" >> $MAKEFILE
-				echo -e "\t$SOURCE_DIR/src/build_${t}.sh $c $v $b && touch $name\n" >> $MAKEFILE
-			done
-		done
-	done
-	echo "$t.txt: ${!TARGETS[*]}" >> $MAKEFILE
-	echo -e "\ttouch $t.txt\n" >> $MAKEFILE
+  depend_t=depend_$t
+  deps=${!depend_t}
+  build_out_t=build_out_$t
+  build_out=${!build_out_t}
+  compilers_out_t=compilers_out_$t
+  compilers_out=${!compilers_out_t}
+  TARGETS=()
+  echo "" >> $MAKEFILE
+  echo "# $t, build variants are ($build_out), compilers are ($compilers_out)" >> $MAKEFILE
+  for c in $compilers_out; do
+    variants=compiler_${c}_variants
+    for v in ${!variants}; do
+      for b in $build_out; do
+        name="build_${t}_${c}_${v}_${b}.txt"
+        fast_name="fast_${t}_${c}_${v}_${b}"
+        TARGETS[$name]=1
+        DEP_TARGETS=()
+        for d in $deps; do
+          dep_target_list $d $c $v $b
+        done
+        echo "$name: ${!DEP_TARGETS[*]}" >> $MAKEFILE
+        echo -e "\t$SOURCE_DIR/src/build_${t}.sh $c $v $b && touch $name\n" >> $MAKEFILE
+      done
+    done
+  done
+  echo "$t.txt: ${!TARGETS[*]}" >> $MAKEFILE
+  echo -e "\ttouch $t.txt\n" >> $MAKEFILE
 done
 
 # Tell the user we're done, and the targets available.
