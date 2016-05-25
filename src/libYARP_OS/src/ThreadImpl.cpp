@@ -309,11 +309,20 @@ void ThreadImpl::synchroPost()
 
 void ThreadImpl::notify(bool s)
 {
+    threadMutex->wait();
     active=s;
+    threadMutex->post();
 }
 
 bool ThreadImpl::isClosing() {
     return closing;
+}
+
+bool ThreadImpl::isRunning() {
+    threadMutex->wait();
+    bool b = active;
+    threadMutex->post();
+    return b;
 }
 
 int ThreadImpl::getCount() {
