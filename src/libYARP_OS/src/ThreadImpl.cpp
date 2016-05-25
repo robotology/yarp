@@ -243,10 +243,15 @@ bool ThreadImpl::start() {
     if (s==0) {
         s = (size_t)defaultStackSize;
     }
+    // c++11 std::thread, pthread and ace threads on some platforms do not
+    // return the thread id, therefore we set it in theExecutiveBranch() for all
+    // platforms. We don't set id here and use a dummy instead, since setting it
+    // in both places could cause a race condition.
+    ACE_thread_t dummy_id;
     int result = ACE_Thread::spawn((ACE_THR_FUNC)theExecutiveBranch,
                                    (void *)this,
                                    THR_JOINABLE | THR_NEW_LWP,
-                                   &id,
+                                   &dummy_id,
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
                                    0,
