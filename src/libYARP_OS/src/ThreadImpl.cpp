@@ -79,16 +79,18 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
 
     if (success)
     {
-#if defined(__linux__)
-        // Use the POSIX syscalls to get
-        // the real thread ID (gettid) on Linux machine
-        thread->tid = (long) syscall(SYS_gettid);
-#endif
-
         // c++11 std::thread, pthread and ace threads on some platforms do not
         // return the thread id, therefore it must be set before calling run(),
         // to avoid a race condition in case the run() method checks it.
         thread->id = PLATFORM_THREAD_SELF();
+
+#if defined(__linux__)
+        // Use the POSIX syscalls to get
+        // the real thread ID (gettid) on Linux machine
+        thread->tid = (long) syscall(SYS_gettid);
+#else
+        thread->tid = (long int)thread->id;
+#endif
 
         thread->setPriority();
         thread->run();
@@ -243,10 +245,15 @@ bool ThreadImpl::start() {
     if (s==0) {
         s = (size_t)defaultStackSize;
     }
+    // c++11 std::thread, pthread and ace threads on some platforms do not
+    // return the thread id, therefore we set it in theExecutiveBranch() for all
+    // platforms. We don't set id here and use a dummy instead, since setting it
+    // in both places could cause a race condition.
+    ACE_thread_t dummy_id;
     int result = ACE_Thread::spawn((ACE_THR_FUNC)theExecutiveBranch,
                                    (void *)this,
                                    THR_JOINABLE | THR_NEW_LWP,
-                                   &id,
+                                   &dummy_id,
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
                                    0,
@@ -267,7 +274,6 @@ bool ThreadImpl::start() {
 #endif
     if (result==0)
     {
-        tid = (long int)id;
         // we must, at some point in the future, join the thread
         needJoin = true;
 
@@ -309,11 +315,20 @@ void ThreadImpl::synchroPost()
 
 void ThreadImpl::notify(bool s)
 {
+    threadMutex->wait();
     active=s;
+    threadMutex->post();
 }
 
 bool ThreadImpl::isClosing() {
     return closing;
+}
+
+bool ThreadImpl::isRunning() {
+    threadMutex->wait();
+    bool b = active;
+    threadMutex->post();
+    return b;
 }
 
 int ThreadImpl::getCount() {

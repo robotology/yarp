@@ -46,10 +46,7 @@ public:
     virtual bool start();
 
     bool isClosing();
-
-    bool isRunning() {
-        return active;
-    }
+    bool isRunning();
 
     virtual void beforeStart();
     virtual void afterStart(bool success);
@@ -96,7 +93,7 @@ private:
     int defaultPolicy;
     int stackSize;
     Platform_hthread_t hid;
-    bool active;
+    bool active; // FIXME should be atomic
     bool opened;
     bool closing;
     bool needJoin;
