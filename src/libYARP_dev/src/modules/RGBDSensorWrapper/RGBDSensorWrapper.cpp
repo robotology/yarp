@@ -8,11 +8,14 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include "RGBDSensorWrapper.h"
+#include <yarpRosHelper.h>
+#include "rosPixelCode.h"
 
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
+
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createRGBDSensorWrapper() {
@@ -22,13 +25,13 @@ yarp::dev::DriverCreator *createRGBDSensorWrapper() {
 RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
                                         rate(DEFAULT_THREAD_PERIOD)
 {
-    sensor_p = NULL;
-    use_YARP = true;
-    use_ROS  = false;
-    subDeviceOwned = NULL;
+    sensor_p         = NULL;
+    use_YARP         = true;
+    use_ROS          = false;
+    subDeviceOwned   = NULL;
     isSubdeviceOwned = false;
-    verbose  = 4;
-    sensorStatus = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    verbose          = 4;
+    sensorStatus     = IRGBDSensor::RGBD_SENSOR_NOT_READY;
 }
 
 RGBDSensorWrapper::~RGBDSensorWrapper()
@@ -90,9 +93,53 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
     }
     else
     {
-        if(verbose >= 2)
-            yWarning() << "RGBDSensorWrapper: ROS topic support is not yet implemented";
-        use_ROS = false;
+        //if(verbose >= 2)
+        //    yWarning() << "RGBDSensorWrapper: ROS topic support is not yet implemented";
+        Value* temp;
+        string confUseRos;
+        
+        rosGroup.check("use_ROS", temp);
+        confUseRos = temp->asString();
+
+        if (confUseRos == "true" || confUseRos == "only")
+        {
+            use_ROS  = true;
+            use_YARP = confUseRos == "true" ? true : false;
+        }
+        else
+        {
+            use_ROS = false;
+            if (verbose >= 3 || confUseRos == "false")
+            {
+                yInfo("'use_ROS' value not understood.. skipping ROS topic initialization");
+            }
+        }
+    }
+
+    if (use_ROS)
+    {
+        //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
+        unsigned int                    i;
+        std::vector<param<string> >     rosStringParam;
+        param<string>*                  prm;
+        
+        rosStringParam.push_back(param<string>(nodeName,       NODENAMEPARAM));
+        rosStringParam.push_back(param<string>(rosFrameId,     FRAMEIDPARAM));
+        rosStringParam.push_back(param<string>(colorTopicName, CLRTOPICNAMENAMEPARAM));
+        rosStringParam.push_back(param<string>(depthTopicName, DPHTOPICNAMENAMEPARAM));
+        rosStringParam.push_back(param<string>(cInfoTopicName, CLRINFOTOPICNAMEPARAM));
+        rosStringParam.push_back(param<string>(dInfoTopicName, DPHINFOTOPICNAMEPARAM));
+        
+        for (i = 0; i < rosStringParam.size(); i++)
+        {
+            prm = &rosStringParam[i];
+            if (verbose >= 3 || !rosGroup.check(prm->parname))
+            {
+                yError() << "missing" << prm->parname << "check your configuration file";
+                return false;
+            }
+            *(prm->var) = rosGroup.find(prm->parname).asString().c_str();
+        }
     }
 
     if(use_YARP)
@@ -105,8 +152,8 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            colorFrame_StreamingPort_Name  = config.find("imagePort").asString().c_str();
-            colorFrame_rpcPort_Name = colorFrame_StreamingPort_Name + "/rpc:i";
+            colorFrame_StreamingPort_Name = config.find("imagePort").asString().c_str();
+            colorFrame_rpcPort_Name       = colorFrame_StreamingPort_Name + "/rpc:i";
         }
 
         if (!config.check("depthPort", "full name of the port for streaming depth image"))
@@ -121,7 +168,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
             depthFrame_rpcPort_Name = depthFrame_StreamingPort_Name + "/rpc:i";
         }
     }
-
+    
     // check if we need to create subdevice or if they are
     // passed later on thorugh attachAll()
     if(config.check("subdevice"))
@@ -232,6 +279,28 @@ bool RGBDSensorWrapper::initialize_YARP(yarp::os::Searchable &params)
 bool RGBDSensorWrapper::initialize_ROS(yarp::os::Searchable &params)
 {
     // open topics here if needed
+    rosNode = new yarp::os::Node(nodeName);
+    nodeSeq = 0;
+    if (!rosPublisherPort_color.topic(colorTopicName))
+    {
+        yError() << " Unable to publish data on " << colorTopicName.c_str() << " topic, check your yarp-ROS network configuration\n";
+        return false;
+    }
+    if (!rosPublisherPort_depth.topic(depthTopicName))
+    {
+        yError() << " Unable to publish data on " << depthTopicName.c_str() << " topic, check your yarp-ROS network configuration\n";
+        return false;
+    }
+    if (!rosPublisherPort_colorCaminfo.topic(cInfoTopicName))
+    {
+        yError() << " Unable to publish data on " << cInfoTopicName.c_str() << " topic, check your yarp-ROS network configuration\n";
+        return false;
+    }
+    if (!rosPublisherPort_depthCaminfo.topic(dInfoTopicName))
+    {
+        yError() << " Unable to publish data on " << dInfoTopicName.c_str() << " topic, check your yarp-ROS network configuration\n";
+        return false;
+    }
     return true;
 }
 
@@ -367,39 +436,266 @@ void RGBDSensorWrapper::threadRelease()
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
+string RGBDSensorWrapper::yarp2RosPixelCode(int code)
+{
+    switch(code)
+    {
+        case VOCAB_PIXEL_BGR:
+            return BGR8;
+        case VOCAB_PIXEL_BGRA:
+            return BGRA8;
+        case VOCAB_PIXEL_ENCODING_BAYER_BGGR16:
+            return BAYER_BGGR16;
+        case VOCAB_PIXEL_ENCODING_BAYER_BGGR8:
+            return BAYER_BGGR8;
+        case VOCAB_PIXEL_ENCODING_BAYER_GBRG16:
+            return BAYER_GBRG16;
+        case VOCAB_PIXEL_ENCODING_BAYER_GBRG8:
+            return BAYER_GBRG8;
+        case VOCAB_PIXEL_ENCODING_BAYER_GRBG16:
+            return BAYER_GRBG16;
+        case VOCAB_PIXEL_ENCODING_BAYER_GRBG8:
+            return BAYER_GRBG8;
+        case VOCAB_PIXEL_ENCODING_BAYER_RGGB16:
+            return BAYER_RGGB16;
+        case VOCAB_PIXEL_ENCODING_BAYER_RGGB8:
+            return BAYER_RGGB8;
+        case VOCAB_PIXEL_MONO:
+            return MONO8;
+        case VOCAB_PIXEL_MONO16:
+            return MONO16;
+        case VOCAB_PIXEL_RGB:
+            return RGB8;
+        case VOCAB_PIXEL_RGBA:
+            return RGBA8;
+        case VOCAB_PIXEL_MONO_FLOAT:
+            return TYPE_32FC1;
+        default:
+            return RGB8;
+    }
+}
+
+void RGBDSensorWrapper::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest)
+{
+    dest.setPixelCode(src.getPixelCode());
+    dest.setPixelSize(src.getPixelSize());
+    dest.setQuantum(src.getQuantum());
+    dest.setExternal(src.getRawImage(), src.width(), src.height());
+}
+
+
+
+void RGBDSensorWrapper::deepCopyImages
+(
+    const yarp::sig::FlexImage& src, 
+    sensor_msgs_Image&          dest, 
+    const string&               frame_id, 
+    const TickTime&             timeStamp, 
+    const unsigned int          seq
+)
+{
+    dest.data.resize(src.getRawImageSize());
+    dest.width           = src.width();
+    dest.height          = src.height();
+    memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
+    dest.encoding        = yarp2RosPixelCode(src.getPixelCode());
+    dest.step            = src.getRowSize();
+    dest.header.frame_id = frame_id;
+    dest.header.stamp    = timeStamp;
+    dest.header.seq      = seq;
+}
+
+bool RGBDSensorWrapper::setCamInfo
+(
+    sensor_msgs_CameraInfo& cameraInfo, 
+    const string&           frame_id, 
+    const unsigned int&     seq, 
+    const TickTime&         timeStamp
+)
+{
+    double                      fx, fy, cx, cy, tx, ty, k1, k2, t1, t2, k3;
+    string                      distModel;
+    unsigned int                i;
+    Property                    camData;
+    vector<param<double> >      parVector;
+    param<double>*              par;
+    
+    sensor_p->getDeviceInfo(camData);
+    
+    if(!camData.check("distortionModel"))
+    {
+        return false;
+    }
+    
+    distModel = camData.find("distortionModel").asString();
+    if (distModel != "plumb_bob")
+    {
+        yError("distortion model not supported");
+        return false;
+    }
+    
+    if(!camData.check("retificationMatrix"))
+    {
+        return false;
+    }
+    Bottle& retificationMatrix = *camData.find("retificationMatrix").asList();
+    
+
+    //std::vector<param<string> >     rosStringParam;
+    //rosStringParam.push_back(param<string>(nodeName, "asd"));
+    
+    parVector.push_back(param<double>(fx,"fx"));
+    parVector.push_back(param<double>(fy,"fy"));
+    parVector.push_back(param<double>(cx,"cx"));
+    parVector.push_back(param<double>(cy,"cy"));
+    parVector.push_back(param<double>(tx,"tx"));
+    parVector.push_back(param<double>(ty,"ty"));
+    parVector.push_back(param<double>(k1,"k1"));
+    parVector.push_back(param<double>(k2,"k2"));
+    parVector.push_back(param<double>(t1,"t1"));
+    parVector.push_back(param<double>(t2,"t2"));
+    parVector.push_back(param<double>(k3,"k3"));
+    parVector.push_back(param<double>(tx,"tx"));
+    parVector.push_back(param<double>(ty,"ty"));
+
+    for(i = 0; i < parVector.size(); i++)
+    {
+        par = &parVector[i];
+        
+        if(!camData.check(par->parname))
+        {
+            return false;
+        }
+        *par->var = camData.find(par->parname).asDouble();
+    }
+    
+    cameraInfo.header.frame_id    = frame_id;
+    cameraInfo.header.seq         = seq;
+    cameraInfo.header.stamp       = timeStamp;
+    cameraInfo.width              = sensor_p->width();
+    cameraInfo.height             = sensor_p->height();
+    cameraInfo.distortion_model   = distModel;
+    
+    cameraInfo.D.resize(5);
+    cameraInfo.D[0] = k1;
+    cameraInfo.D[1] = k2;
+    cameraInfo.D[2] = t1;
+    cameraInfo.D[3] = t2;
+    cameraInfo.D[4] = k3;
+    
+    cameraInfo.K.resize(9);
+    cameraInfo.K[0]  = fx;       cameraInfo.K[1] = 0;        cameraInfo.K[2] = cx;
+    cameraInfo.K[3]  = 0;        cameraInfo.K[4] = fy;       cameraInfo.K[5] = cy;
+    cameraInfo.K[6]  = 0;        cameraInfo.K[7] = 0;        cameraInfo.K[8] = 1;
+    
+    //retification matrix
+    
+    if (retificationMatrix.size() == 9)// 3X3 matrix;
+    {
+        cameraInfo.R.resize(9);
+        for (i = 0; i < cameraInfo.R.size(); i++)
+        {
+            cameraInfo.R[i] = retificationMatrix.get(i).asDouble();
+        }
+    }
+    else
+    {
+        return false;
+    }
+    
+    
+    cameraInfo.P.resize(12);
+    cameraInfo.P[0]  = fx;      cameraInfo.P[1] = 0;    cameraInfo.P[2]  = cx;  cameraInfo.P[3]  = tx;
+    cameraInfo.P[4]  = 0;       cameraInfo.P[5] = fy;   cameraInfo.P[6]  = cy;  cameraInfo.P[7]  = ty;
+    cameraInfo.P[8]  = 0;       cameraInfo.P[9] = 0;    cameraInfo.P[10] = 1;   cameraInfo.P[11] = 0;
+}
+
+bool RGBDSensorWrapper::writeData()
+{
+    yarp::sig::FlexImage colorImage;
+    yarp::sig::FlexImage depthImage;
+    
+    //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
+    //             depthImage.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
+
+    //             colorImage.resize(hDim, vDim);  // Has this to be done each time? If size is the same what it does?
+    //             depthImage.resize(hDim, vDim);
+    if (!sensor_p->getRGBD_Frames(colorImage, depthImage, &colorStamp, &depthStamp))
+    {
+        return false;
+    }
+
+    if (use_YARP)
+    {
+        yarp::sig::FlexImage& yColorImage = colorFrame_StreamingPort.prepare();
+        yarp::sig::FlexImage& yDepthImage = depthFrame_StreamingPort.prepare();
+
+        shallowCopyImages(colorImage, yColorImage);
+        shallowCopyImages(depthImage, yDepthImage);
+        // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
+
+        colorFrame_StreamingPort.setEnvelope(colorStamp);
+        colorFrame_StreamingPort.write();
+
+        depthFrame_StreamingPort.setEnvelope(depthStamp);
+        depthFrame_StreamingPort.write();
+
+    }
+    if (use_ROS)
+    {
+        sensor_msgs_Image&      rColorImage     = rosPublisherPort_color.prepare();
+        sensor_msgs_Image&      rDepthImage     = rosPublisherPort_depth.prepare();
+        sensor_msgs_CameraInfo& camInfoC        = rosPublisherPort_colorCaminfo.prepare();
+        sensor_msgs_CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
+        TickTime                cRosStamp, dRosStamp;
+        
+        cRosStamp               = normalizeSecNSec(colorStamp.getTime());
+        dRosStamp               = normalizeSecNSec(depthStamp.getTime());
+        
+        deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
+        deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);
+        // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
+
+        rosPublisherPort_color.setEnvelope(colorStamp);
+        rosPublisherPort_color.write();
+
+        rosPublisherPort_depth.setEnvelope(depthStamp);
+        rosPublisherPort_depth.write();
+        
+        //code to delete
+        setCamInfo(camInfoC, rosFrameId, nodeSeq, cRosStamp);
+        
+        rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
+        rosPublisherPort_colorCaminfo.write();
+        
+        setCamInfo(camInfoD, rosFrameId, nodeSeq, dRosStamp);
+
+        rosPublisherPort_depthCaminfo.setEnvelope(colorStamp);
+        rosPublisherPort_depthCaminfo.write();
+        nodeSeq++;
+        
+    }
+    return true;
+}
+
 void RGBDSensorWrapper::run()
 {
     if (sensor_p!=0)
     {
         sensor_p->getRGBDSensor_Status(&sensorStatus);
-        // convert to switch case
-        if (sensorStatus == IRGBDSensor::RGBD_SENSOR_OK_IN_USE)
+        switch (sensorStatus)
         {
-            yarp::sig::FlexImage& colorImage = colorFrame_StreamingPort.prepare();
-            yarp::sig::FlexImage& depthImage = depthFrame_StreamingPort.prepare();
-
-//             colorImage.setPixelCode(VOCAB_PIXEL_RGB);
-//             depthImage.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
-
-//             colorImage.resize(hDim, vDim);  // Has this to be done each time? If size is the same what it does?
-//             depthImage.resize(hDim, vDim);
-
-            bool ret = sensor_p->getRGBD_Frames(colorImage, depthImage, &colorStamp, &depthStamp);
-
-            // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
-            if(ret)
+            case(IRGBDSensor::RGBD_SENSOR_OK_IN_USE) :
             {
-                colorFrame_StreamingPort.setEnvelope(colorStamp);
-                colorFrame_StreamingPort.write();
-
-                depthFrame_StreamingPort.setEnvelope(depthStamp);
-                depthFrame_StreamingPort.write();
+                if (!writeData())
+                    yError("Image not captured.. check hardware configuration");
+                break;
             }
-        }
-        else
-        {
-            if(verbose >= 1)   // better not to print it every cycle anyway, too noisy
-                yError("RGBDSensorWrapper: %s: Sensor returned error", sensorId.c_str());
+            default:
+            {
+                if (verbose >= 1)   // better not to print it every cycle anyway, too noisy
+                    yError("RGBDSensorWrapper: %s: Sensor returned error", sensorId.c_str());
+            }
         }
     }
     else
