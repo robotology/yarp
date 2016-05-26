@@ -32,9 +32,9 @@ matrix:
 
   include:
     # Coverage build
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Profile
+#    - os: linux
+#      compiler: gcc
+#      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Profile
     # OSX, Unix Makefiles, gcc build
     - os: osx
       compiler: gcc
