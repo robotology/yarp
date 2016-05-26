@@ -405,7 +405,7 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
                     value=sensor_properties.DMAX;
                 }
                 //units are m
-                 data.push_back(value/1000.0); break;
+                 data.push_back(value/1000.0); 
             }
             return HOKUYO_STATUS_ACQUISITION_COMPLETE;
         }
@@ -519,11 +519,11 @@ void laserHokuyo::run()
 
     if (timeout)
     {
-        yError ("Timeout!");
+        yError ("laserHokuyo Timeout!");
     }
     if (error)
     {
-        yError("Communication Error!");
+        yError("laserHokuyo Communication Error, internal status=%d",internal_status);
     }
 
     #ifdef LASER_DEBUG

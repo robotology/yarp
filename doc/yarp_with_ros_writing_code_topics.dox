@@ -1,0 +1,124 @@
+/*
+ * Copyright (C) 2011 and 2016 Istituto Italiano di Tecnologia, iCub Facility.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page yarp_with_ros_writing_code_topics Writing code to talk to ROS topics
+ 
+ While you can configure conventional YARP ports to talk to ROS topics (see \ref yarp_with_ros_existing_yarp_ports), YARP provides specialized classes that simplify this task:
+ 
+ \li <tt>yarp::os::Node: a class to create a ROS node.
+ \li <tt>yarp::os::Subscriber: a class to subscribe to a topic.
+ \li <tt>yarp::os::Publisher: a class to publish to a topic.
+ 
+ An important thing to keep in mind is that YARP needs to be aware of ROS types. If you are writing new code it is easy to generate ROS compatible YARP data types starting.
+ 
+ For example the following code shows how to write a program that listen to the /chatter topic. In this case we use the ROS type std_msgs/String.
+
+ The first thing to do is to generate a YARP compatible type for std_msgs/String:
+ 
+ \verbatim
+ $ yarpidl_rosmsg String
+ \endverbatim
+ 
+ This will produce the file String.h which can be used directly in our YARP program.
+ 
+ Type the following code in a file, e.g. listener.cpp:
+ 
+ \include example/ros/listener.cpp
+
+an example CMakeLists.txt file to compile this code would be:
+
+\code
+    cmake_minimum_required(VERSION 2.8.9)
+    find_package(YARP REQUIRED)
+    include_directories(${YARP_INCLUDE_DIRS})
+    add_executable(listener listener.cpp)
+    target_link_libraries(listener ${YARP_LIBRARIES})
+\endcode
+
+ You can now publish the string "Hello World" to the topic /chatter using ROS:
+ 
+ \verbatim
+ $ rostopic pub /chatter std_msgs/String "hello yarp" --r 10
+ \endverbatim
+ 
+ and listen to it using the YARP program above:
+ 
+ \code
+ $ ./listener
+ yarp: Port /yarp/listener active at tcp://192.168.152.130:10002
+ yarp: Port /chatter-@/yarp/listener active at tcp://192.168.152.130:10003
+ yarp: Receiving input from /rostopic_36275_1464212662655 to /chatter-@/yarp/listener using tcpros+role.pub+topic./chatter
+ Received:hello yarp 
+ Received:hello yarp 
+ Received:hello yarp 
+ ...
+ \endcode
+ 
+ You can verify the existance of a node called /yarp/listener by running:
+ 
+ \verbatim
+ $ rosnode list
+ /rosout
+ /yarp/listener
+ \endverbatim
+ 
+ We can now write our own publisher using YARP. The code is quite simple, type it in a file, e.g. talker.cpp:
+ 
+ \include example/ros/talker.cpp
+ 
+an example CMakeLists.txt file to compile this code would be:
+
+\code
+    cmake_minimum_required(VERSION 2.8.9)
+    find_package(YARP REQUIRED)
+    include_directories(${YARP_INCLUDE_DIRS})
+    add_executable(talker talker.cpp)
+    target_link_libraries(talker ${YARP_LIBRARIES})
+\endcode
+
+ We can run this code on a terminal:
+ \verbatim 
+ $ ./talker 
+ yarp: Port /yarp/talker active at tcp://192.168.152.130:10004
+ yarp: Port /chatter+@/yarp/talker active at tcp://192.168.152.130:10006
+ yarp: Sending output from /chatter+@/yarp/talker to /listener using tcpros
+ yarp: Removing output from /chatter+@/yarp/talker to /listener
+ \endverbatim
+
+ You can verify the existance of a node called /yarp/talker and topic /chatter by running:
+ 
+ \verbatim
+ $ rosnode list
+ /rosout
+ /yarp/talker
+ \endverbatim
+ 
+ \verbatim 
+ $ rostopic list
+ /chatter
+ /rosout
+ /rosout_agg
+ \endverbatim
+ 
+ And see the output using the listener from ros tutorials:
+
+ \code
+ $ rosrun roscpp_tutorials listener
+ [ INFO] [1464213813.965287858]: I heard: [Hello from YARP]
+ [ INFO] [1464213814.066799996]: I heard: [Hello from YARP]
+ [ INFO] [1464213814.169264100]: I heard: [Hello from YARP]
+ [ INFO] [1464213814.271588965]: I heard: [Hello from YARP]
+ [ INFO] [1464213814.373758392]: I heard: [Hello from YARP]
+ ...
+\endcode
+
+The following tutorials show how to write your own data type using ROS syntax:
+
+\li \subpage rostypes_tutorial_portable
+\li \subpage rostypes_tutorial_continued
+ 
+ */

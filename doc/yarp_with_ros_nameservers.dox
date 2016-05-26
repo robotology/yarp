@@ -1,0 +1,112 @@
+/*
+ * Copyright (C) 2011 and 2016 Istituto Italiano di Tecnologia, iCub Facility.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page yarp_with_ros_nameservers Decide on what name server to use
+ 
+ 
+Both YARP and ROS usually operate with a name server to help
+track what ports/topics/nodes are where (but see also \ref yarp_without_nameserver).
+
+We assume you have ROS's usual name server "roscore" running somewhere.  Now, with YARP,
+you have several options:
+\li You can configure YARP to use ROS's name server.  So "roscore" will run, but not "yarpserver".  This is the best option if the bulk of the network is ROS-based and you have just one or two YARP modules you want to hook in.
+\li You can configure YARP's name server to talk to ROS's name server.  So both "roscore" and "yarpserver" will run.  This is the best option for mixed networks, with many YARP modules and many ROS modules.
+\li You can configure YARP clients to talk to multiple name servers, in this case the YARP server and the ROS name server.  This solution works but can be confusing to understand.
+
+For the first option, using "roscore" only, see \ref yarp_with_ros_roscore_only.
+For the third option, using both name servers independently, see \ref yarp_with_ros_roscore_added.
+Here we are going to the middle option, where yarpserver is configured to be ROS-aware.  Setting this up is simple.  Once roscore is running,
+and ROS_MASTER_URI is correctly set to point to it, do:
+\verbatim
+yarpserver --ros
+\endverbatim
+You should see lines like these as the server starts up:
+\verbatim
+..
+Using ROS with ROS_MASTER_URI=http://127.0.0.1:11311
+...
+ * register "/ros" xmlrpc "127.0.0.1" 11311
+...
+\endverbatim
+
+To make sure that everything has worked, start a quick test program in one
+console:
+\verbatim
+yarp read /testtopic@/testnode
+\endverbatim
+Then in another do:
+\verbatim
+rostopic list  # /testtopic should be listed
+rosnode list   # /testnode should be listed
+rostopic pub /testtopic std_msgs/String "Hello YARP" # yarp read should echo this
+\endverbatim
+
+
+\section yarp_with_ros_roscore_only Using YARP with roscore only
+
+If instructed, YARP can use ROSCORE's name server (the "roscore" program)
+rather than its own native name server (the "yarpserver" program).
+Here's how.  First, make sure you have started roscore:
+\verbatim
+roscore
+\endverbatim
+Make sure that the ROS_MASTER_URI environment variable is set as roscore
+proposes.
+Now, place YARP in a new namespace, called for example "/ros"
+itself
+\verbatim
+yarp namespace /ros
+\endverbatim
+Then ask YARP to detect ROS a nameserver and save its address:
+\verbatim
+yarp detect --ros --write
+\endverbatim
+This should report something along the lines of:
+\verbatim
+Trying ROS_MASTER_URI=http://127.0.0.1:11311...
+Reachable.  Writing.
+Configuration stored.  Testing.
+Looking for name server on 127.0.0.1, port number 11311
+If there is a long delay, try:
+  yarp conf --clean
+ROS Name server /ros is available at ip 127.0.0.1 port 11311
+\endverbatim
+
+An alternative procedure is to manually configure YARP to use a ROS
+name server with a particular host name or ip address and port number:
+\verbatim
+yarp conf icubsrv 11311 ros
+\endverbatim
+
+YARP ports should be usable at the point.  To test this, you could run:
+\verbatim
+yarp check
+\endverbatim
+Or try some of the exercises in \ref note_ports.
+
+YARP ports should behave as normal.
+One caveat: the <i>multicast</i> protocol requires some support from the name server
+that ROSCORE does not currently provide.
+So don't use multicast if you want to work also
+with ROS (or use multiple name servers).
+
+
+\section yarp_with_ros_roscore_added Configuring YARP clients to use two nameservers independently
+
+YARP has a general ability to use multiple nameservers.  The trick is to set up two
+namespaces, for example /yarp and /ros:
+
+\verbatim
+yarp namespace /yarp        # Make a YARP namespace
+yarp detect --write         # detect and store contact info for yarpserver
+yarp namespace /ros         # Make a ROS namespace
+yarp detect --ros --write   # detect and store contact info for roscore
+yarp namespace /yarp /ros   # Now select *both* namespaces
+# queries / registrations now go to *both* YARP and ROS as needed
+\endverbatim
+
+*/
