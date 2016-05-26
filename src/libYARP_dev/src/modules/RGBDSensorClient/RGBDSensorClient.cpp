@@ -277,7 +277,7 @@ int RGBDSensorClient::width() const
 * @param device_info Searchable struct containing the device info
 * @return true if able to get information about the device.
 */
-bool RGBDSensorClient::getDeviceInfo(yarp::os::Searchable *device_info)
+bool RGBDSensorClient::getDeviceInfo(yarp::os::Property &device_info)
 {
     return false;
 }
@@ -454,6 +454,6 @@ bool RGBDSensorClient::getRGBDSensor_Status(RGBDSensor_status *status)
 bool RGBDSensorClient::getRGBD_Frames(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
 {
     streamingReader.synchRead(colorFrame, depthFrame);
-    return false;
+    return true;
 }
 

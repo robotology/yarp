@@ -202,7 +202,7 @@ public:
     * @param device_info Searchable struct containing the device info
     * @return true if able to get information about the device.
     */
-    virtual bool getDeviceInfo(yarp::os::Searchable *device_info);
+    virtual bool getDeviceInfo(yarp::os::Property &device_info);
 
     /**
     * Get the distance measurements as an image

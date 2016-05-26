@@ -40,6 +40,12 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 
+#include <yarp/os/Publisher.h>
+#include <yarp/os/Subscriber.h>
+#include <yarp/os/Node.h>
+#include <../msgs/ros/include/sensor_msgs_CameraInfo.h>
+#include <../msgs/ros/include/sensor_msgs_Image.h>
+
 #include "RGBDSensorWrapper_RPCMsgParser.h"
 
 namespace yarp{
@@ -47,6 +53,23 @@ namespace yarp{
         class RGBDSensorWrapper;
     }
 }
+#define FRAMEIDPARAM            "ROS_frame_Id"
+#define NODENAMEPARAM           "ROS_nodeName"
+#define CLRTOPICNAMENAMEPARAM   "ROS_colorTopicName"
+#define DPHTOPICNAMENAMEPARAM   "ROS_depthTopicName"
+#define CLRINFOTOPICNAMEPARAM   "ROS_colorInfoTopicName"
+#define DPHINFOTOPICNAMEPARAM   "ROS_depthinfoTopicName"
+#define DEFAULTFRAMEID          "/camera_link"
+#define DEFAULTNODENAME         "/RGDBSensorNode"
+#define DEFAULTCLRTOPICNAME     "/RGBDSensorColor"
+#define DEFAULTDPHTOPICNAME     "/RGBDSensorDepth"
+#define DEFAULTCLRINFOTOPICNAME "/RGBDColorCameraInfo"
+#define DEFAULTDPHINFOTOPICNAME "/RGBDColorDepthInfo"
+#define YOS                     yarp::os
+#define YSG                     yarp::sig
+#define CDAT0                   570.3422241210938
+#define CDAT1                   319.5
+#define CDAT2                   239.5
 
 #define DEFAULT_THREAD_PERIOD 30 //ms
 
@@ -89,6 +112,7 @@ namespace yarp{
  * \endcode
  */
 
+
 class yarp::dev::RGBDSensorWrapper: public yarp::dev::DeviceDriver,
                                     public yarp::dev::IWrapper,
                                     public yarp::dev::IMultipleWrapper,
@@ -96,47 +120,86 @@ class yarp::dev::RGBDSensorWrapper: public yarp::dev::DeviceDriver,
 {
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    yarp::os::ConstString colorFrame_StreamingPort_Name;
-    yarp::os::ConstString depthFrame_StreamingPort_Name;
-    yarp::os::BufferedPort<yarp::sig::FlexImage> colorFrame_StreamingPort;
-    yarp::os::BufferedPort<yarp::sig::FlexImage> depthFrame_StreamingPort;
 
-    yarp::os::Port colorFrame_rpcPort;
-    yarp::os::Port depthFrame_rpcPort;
-    yarp::os::ConstString colorFrame_rpcPort_Name;
-    yarp::os::ConstString depthFrame_rpcPort_Name;
-    // It should be possible to attach this guy to more than one port, try to see what
-    // will happen when receiving 2 calls at the same time (receive one calls while serving
-    // another one, it will result in concurrent thread most probably) and buffering issues.
-    sensor::depth::RGBDSensor_RPCMgsParser RPC_parser;
+    template <class T>
+    struct param
+    {
+        param(T& inVar, std::string inName)
+        {
+            var          = &inVar;
+            parname      = inName;
+        }
+        T*              var;
+        std::string     parname;
+    };
 
-    // Image data specs
-//     int hDim, vDim;
-    int rate;
-    std::string sensorId;
-    yarp::dev::IRGBDSensor *sensor_p;
-    IRGBDSensor::RGBDSensor_status sensorStatus;
-    int verbose;
-
-    bool use_YARP;
-    bool use_ROS;
-    bool initialize_YARP(yarp::os::Searchable &config);
-    bool initialize_ROS(yarp::os::Searchable &config);
-    bool read(yarp::os::ConnectionReader& connection);
-
-    // Open the wrapper only, the attach method needs to be called before using it
-    // Typical usage: yarprobotinterface
-    bool openDeferredAttach(yarp::os::Searchable& prop);
-
-    // If a subdevice parameter is given, the wrapper will open it and attach to immediatly.
-    // Typical usage: simulator or command line
-    bool isSubdeviceOwned;
-    yarp::dev::PolyDriver *subDeviceOwned;
-    bool openAndAttachSubDevice(yarp::os::Searchable& prop);
-
-    // Synch
-    yarp::os::Stamp colorStamp;
-    yarp::os::Stamp depthStamp;
+    YOS::ConstString                        colorFrame_StreamingPort_Name;
+    YOS::ConstString                        depthFrame_StreamingPort_Name;
+    YOS::BufferedPort<YSG::FlexImage>       colorFrame_StreamingPort;
+    YOS::BufferedPort<YSG::FlexImage>       depthFrame_StreamingPort;
+                                            
+    YOS::Port                               colorFrame_rpcPort;
+    YOS::Port                               depthFrame_rpcPort;
+    YOS::ConstString                        colorFrame_rpcPort_Name;
+    YOS::ConstString                        depthFrame_rpcPort_Name;
+                                            
+    YOS::Publisher<sensor_msgs_Image>       rosPublisherPort_color, rosPublisherPort_depth;
+    YOS::Publisher<sensor_msgs_CameraInfo>  rosPublisherPort_colorCaminfo, rosPublisherPort_depthCaminfo;
+    YOS::Node*                              rosNode;
+    std::string                             nodeName, depthTopicName, colorTopicName, dInfoTopicName, cInfoTopicName, rosFrameId;
+    unsigned int                            nodeSeq;
+                                            
+    // It should be possible to attach this  guy to more than one port, try to see what
+    // will happen when receiving 2 calls a t the same time (receive one calls while serving
+    // another one, it will result in concu rrent thread most probably) and buffering issues.
+    sensor::depth::RGBDSensor_RPCMgsParser  RPC_parser;
+                                            
+    // Image data specs                     
+//     int hDim, vDim;                      
+    int                                     rate;
+    std::string                             sensorId;
+    yarp::dev::IRGBDSensor                  *sensor_p;
+    IRGBDSensor::RGBDSensor_status          sensorStatus;
+    int                                     verbose;
+                                            
+    bool                                    use_YARP;
+    bool                                    use_ROS;
+    bool                                    initialize_YARP(YOS::Searchable &config);
+    bool                                    initialize_ROS(YOS::Searchable &config);
+    bool                                    read(YOS::ConnectionReader& connection);
+                                            
+    // Open the wrapper only, the attach me thod needs to be called before using it
+    // Typical usage: yarprobotinterface    
+    bool                                    openDeferredAttach(YOS::Searchable& prop);
+                                            
+    // If a subdevice parameter is given, t he wrapper will open it and attach to immediatly.
+    // Typical usage: simulator or command  line
+    bool                                    isSubdeviceOwned;
+    yarp::dev::PolyDriver                   *subDeviceOwned;
+    bool                                    openAndAttachSubDevice(yarp::os::Searchable& prop);
+                                            
+    // Synch                                
+    YOS::Stamp                              colorStamp;
+    YOS::Stamp                              depthStamp;
+                                            
+    void                                    shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
+    void                                    deepCopyImages
+                                            (
+                                                const yarp::sig::FlexImage& src, 
+                                                sensor_msgs_Image&          dest, 
+                                                const std::string&          frame_id, 
+                                                const TickTime&             timeStamp, 
+                                                const unsigned int          seq
+                                            );
+    std::string                             yarp2RosPixelCode(int code);
+    bool                                    setCamInfo
+                                            (
+                                                sensor_msgs_CameraInfo& cameraInfo,
+                                                const std::string&      frame_id,
+                                                const unsigned int&     seq,
+                                                const TickTime&         timeStamp
+                                            );
+    bool                                    writeData();
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 
@@ -144,26 +207,26 @@ public:
     RGBDSensorWrapper();
     ~RGBDSensorWrapper();
 
-    bool open(yarp::os::Searchable &params);
-    bool fromConfig(yarp::os::Searchable &params);
-    bool close();
+    bool        open(yarp::os::Searchable &params);
+    bool        fromConfig(yarp::os::Searchable &params);
+    bool        close();
 
-    void setId(const std::string &id);
+    void        setId(const std::string &id);
     std::string getId();
 
     /**
       * Specify which sensor this thread has to read from.
       */
-    bool attachAll(const PolyDriverList &p);
-    bool detachAll();
+    bool        attachAll(const PolyDriverList &p);
+    bool        detachAll();
 
-    bool attach(PolyDriver *poly);
-    bool attach(yarp::dev::IRGBDSensor *s);
-    bool detach();
+    bool        attach(PolyDriver *poly);
+    bool        attach(yarp::dev::IRGBDSensor *s);
+    bool        detach();
 
-    bool threadInit();
-    void threadRelease();
-    void run();
+    bool        threadInit();
+    void        threadRelease();
+    void        run();
 };
 
 #endif   // _DEPTH_SENSOR_WRAPPER_H_

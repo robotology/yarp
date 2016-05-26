@@ -72,5 +72,5 @@ bool RGBDSensor_StreamingMsgParser::synchRead(yarp::sig::FlexImage &data_1, yarp
 {
     data_1 = last_1;
     data_2 = last_2;
-    return true;
+    return false;
 }
