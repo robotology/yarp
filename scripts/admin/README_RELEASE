@@ -30,6 +30,8 @@
 
 * Update doc/download.dox
 
+* Update the Chagelog in doxygen
+
 * Commit :
   git commit -a -m "YARP 2.3.21"
 
