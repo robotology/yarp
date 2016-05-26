@@ -33,9 +33,9 @@ functionality.
 
 \li For Ubuntu and other deb-based systems, we suggest you install the
     \c libace-dev package (on rpm-based systems, try libace-devel).
-    \code{.sh}
+    \verbatim
     sudo apt-get install libace-dev
-    \endcode
+    \endverbatim
 \li For Windows and other systems we suggest the latest stable release
     (ACE-N.N.zip/ACE-N.N.tar.gz).  Download ACE
     <a href="http://download.dre.vanderbilt.edu/">here</a>.
@@ -64,47 +64,47 @@ can just install that and you are done. Otherwise you need to download
 
 \li Let's suppose you have placed \c ACE-5.5.tar.gz in the directory
     \c $HOME/work/. Then, in this directory, type:
-    \code{.sh}
+    \verbatim
     tar xzvf - < ACE-5.5.tar.gz
-    \endcode
+    \endverbatim
 \li You should now have a subdirectory called "ACE_wrappers". Type one
     (or if you're not sure which, type both) of:
-    \code{.sh}
+    \verbatim
     export ACE_ROOT=$PWD/ACE_wrappers
     setenv ACE_ROOT $PWD/ACE_wrappers
-    \endcode
+    \endverbatim
 \li One of these lines will succeed and the other will fail, depending
     on what shell you use. That's fine. as long as when you type:
     \<tt>echo $ACE_ROOT</tt> you get the \c ACE_wrappers directory.
 \li You now need to configure ACE to your platform, by creating one
     build file and one include file. If you are on Linux, type:
-    \code{.sh}
+    \verbatim
     cd $ACE_ROOT/include/makeinclude/
     ln -s platform_linux.GNU platform_macros.GNU
     cd $ACE_ROOT/ace
     ln -s config-linux.h config.h
-    \endcode
+    \endverbatim
 \li If you are not on Linux, or even if you are, you should take a look
     at the \c platform_*.GNU and \c config-*.h files and pick the one
     that matches you.
 \li Now, to compile, type:
-    \code{.sh}
+    \verbatim
     cd $ACE_ROOT/ace; make
-    \endcode
+    \endverbatim
 \li If all goes well, at the end you will have some files in
     \c ACE_wrappers/ace, for example:
-    \code{.sh}
+    \verbatim
     $ ls $ACE_ROOT/lib/
     libACE.so  libACE.so.5.4.7
-    \endcode
+    \endverbatim
     (the \c .so may be \c .dylib or other variants):
 \li One thing remains to be done; programs need to be able to find the
     ACE library at run time. You can set this up by runing one of the
     following:
-    \code{.sh}
+    \verbatim
     export LD_LIBRARY_PATH=$ACE_ROOT/lib:$LD_LIBRARY_PATH
     setenv LD_LIBRARY_PATH $ACE_ROOT/lib:$LD_LIBRARY_PATH
-    \endcode
+    \endverbatim
 \li (On OSX, the variable you need to set is \c DYLD_LIBRARY_PATH).
 \li An alternative is to copy the files in \c $ACE_ROOT/lib to a
     standard library directory, for example, \c /usr/lib.
@@ -189,21 +189,21 @@ As an alternative, on Debian and Debian-based systems, the BLAS and
 LAPACK implementation can be changed dynamically (without need to
 recompile). To enable ATLAS:
 
-\code{.sh}
+\verbatim
 sudo update-alternatives --set libblas.so /usr/lib/atlas-base/atlas/libblas.so
 sudo update-alternatives --set libblas.so.3 /usr/lib/atlas-base/atlas/libblas.so.3
 sudo update-alternatives --set liblapack.so /usr/lib/atlas-base/atlas/liblapack.so
 sudo update-alternatives --set liblapack.so.3 /usr/lib/atlas-base/atlas/liblapack.so.3
-\endcode
+\endverbatim
 
 To restore the default implementation:
 
-\code{.sh}
+\verbatim
 sudo update-alternatives --auto libblas.so
 sudo update-alternatives --auto libblas.so.3
 sudo update-alternatives --auto liblapack.so
 sudo update-alternatives --auto liblapack.so.3
-\endcode
+\endverbatim
 
 \todo TODO Installation
 
@@ -257,16 +257,16 @@ If you installed Qt5 from the Qt Project website, you will also need
 need to set up the environment variable \c Qt5_DIR pointing to the
 location where Qt5 cmake modules are, e.g. for Qt 5.3 on Linux 64 bit:
 
-\code{.sh}
+\verbatim
 export Qt5_DIR=/path/to/Qt/5.3/gcc_64/lib/cmake/Qt5/
-\endcode
+\endverbatim
 
 Alternatively you can add the install path to the CMAKE_PREFIX_PATH
 environment variable, for example:
 
-\code{.sh}
+\verbatim
 export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/path/to/Qt/5.3/gcc_64/
-\endcode
+\endverbatim
 
 \subsubsection dependencies_qt5_Linux Linux
 
@@ -284,12 +284,12 @@ On Debian testing you need to install the following packages:
 
 You can install them by running:
 
-\code{.sh}
+\verbatim
 sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qml-module-qtquick2 qml-module-qtquick-window2 \
   qml-module-qtmultimedia qml-module-qtquick-dialogs \
   qml-module-qtquick-controls libqt5svg5
-\endcode
+\endverbatim
 
 
 \paragraph dependencies_qt5_debian_wheezy Debian (wheezy)
@@ -306,13 +306,13 @@ to your \c /etc/apt/sources.list file, and then install the same
 packages required from Debian jessie from the backports repository:
 
 
-\code{.sh}
+\verbatim
 sudo apt-get update
 sudo apt-get install -t wheezy-backports qtbase5-dev \
   qtdeclarative5-dev qtmultimedia5-dev qml-module-qtquick2 \
   qml-module-qtquick-window2 qml-module-qtmultimedia \
   qml-module-qtquick-dialogs qml-module-qtquick-controls libqt5svg5
-\endcode
+\endverbatim
 
 
 
@@ -335,21 +335,21 @@ names are slightly different:
 
 You can install them by running:
 
-\code{.sh}
+\verbatim
 sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin \
   qtdeclarative5-qtmultimedia-plugin qtdeclarative5-controls-plugin \
   qtdeclarative5-dialogs-plugin libqt5svg5
-\endcode
+\endverbatim
 
 The appmenu-qt5 package on this release is bugged, see
 <a href="https://github.com/robotology/yarp/issues/521">#521</a>.
 In order to get the menus on qt5 tools, a workaround is to uninstall the
 appmenu-qt5 package:
 
-\code{.sh}
+\verbatim
 sudo apt-get remove --purge appmenu-qt5
-\endcode
+\endverbatim
 
 
 \paragraph dependencies_qt5_linux_others Others
