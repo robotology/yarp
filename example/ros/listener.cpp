@@ -17,26 +17,21 @@ using namespace std;
 int main(int argc, char *argv[]) {
     Network yarp;
     
-    /* creates a node called /yarp/talker */
-    Node node("/yarp/talker");
+    /* creates a node called /yarp/listener */
+    Node node("/yarp/listener");
     
     /* subscribe to topic chatter */
-    yarp::os::Publisher<String> publisher;
-    if (!publisher.topic("/chatter")) {
-        cerr<< "Failed to create publisher to /chatter\n";
+    yarp::os::Subscriber<String> subscriber;
+    if (!subscriber.topic("/chatter")) {
+        cerr<< "Failed to subscriber to /chatter\n";
         return -1;
     }
 
+    /* read data from the topic */
     while (true) {
-        /* prepare some data */
         String data;
-        data.data="Hello from YARP";
-
-        /* publish it to the topic */
-        publisher.write(data);
-
-        /* wait some time to avoid flooding with messages */
-        Time::delay(0.1);
+        subscriber.read(data);
+        cout << "Received:" << data.data << " " << endl;
     }
   
     return 0;

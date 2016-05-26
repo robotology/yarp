@@ -1,0 +1,279 @@
+/*
+ * Copyright (C) 2011 and 2016 Istituto Italiano di Tecnologia, iCub Facility.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page yarp_with_ros_existing_yarp_ports Use ROS with existing YARP programs
+ 
+\tableofcontents
+
+\section yarp_with_ros_name_types Decide what to do about types
+
+ROS has a type system that YARP knows nothing about.  You can tell YARP
+about ROS types either at compile-time or at run-time.  In either case,
+you'll need access to the .msg/.srv files stored in ROS packages.  You
+have at least three options:
+
+\li Install ROS.  This can be easier said than done, if you're not
+used to it.  Tip: don't try to work against the grain - install exactly
+the recommended version of Ubuntu, or use a virtual machine or chroot.
+\li Or: ask YARP to read type definitions from a website.  This is a bit
+of a hack, but can be good for getting up and running quickly.
+\li Or: track down the .msg/.srv files for the types you care about by
+any means available, and copy them.  This can be good for embedded scenarios.
+
+We'll focus on the first two options, but bear in mind that the third is
+possible if ever you need to strip your system down to the essentials.
+
+You can make ROS types available to YARP via reading from a website by
+running the following additional type server:
+
+\verbatim
+yarpidl_rosmsg --web true --name /typ@/yarpidl
+\endverbatim
+
+This server will lurk around waiting for YARP clients baffled by
+a ROS type, and will swoop in to their rescue.  For example if you
+were running the ROS "add two ints" tutorial:
+
+\verbatim
+rosrun rospy_tutorials add_two_ints_server
+\endverbatim
+
+You could now talk to it from a YARP program in the way you might
+to intuitively expect:
+
+\verbatim
+$ yarp rpc /add_two_ints
+22 20
+Response: 42
+\endverbatim
+
+
+This looks straightforward, but it relies critically on YARP being
+able to determine ROS types. If you were to shut down the
+yarpidl_rosmsg server, here is what you would see:
+
+\verbatim
+$ yarp rpc /add_two_ints
+Do not know anything about type 'rospy_tutorials/AddTwoInts'
+Could not connect to a type server to look up type 'rospy_tutorials/AddTwoInts'
+\endverbatim
+
+YARP is successfully connecting to the ROS integer-adding service,
+which lets it know the type of data it expects, but is baffled at
+how to supply it.  That's where the type server comes in.
+
+Having the type server do type lookups via the web is handy but
+subject to the random flakiness of the internet.  If you can,
+you'll be much better off running yarpidl_rosmsg on a machine
+with ROS installed.  Then you can leave off the --web option:
+
+\verbatim
+yarpidl_rosmsg --name /typ@/yarpidl
+\endverbatim
+
+That's the only YARP program you'll need on that machine.
+
+Here we've used yarpidl_rosmsg as a server, to pass around
+type information at run-time.  It can also be used to do
+the translation at compile-time, see \ref yarp_with_ros_roscore_ros_types.
+Translation at compile-time works for arbitrary ROS types,
+whereas run-time translation currently does not support
+ROS types with nesting via arrays (coming soon though!).
+
+\section yarp_with_ros_read_topic Reading ROS topics
+
+Let's start with a simple test reader:
+
+\verbatim
+yarp read /msg@/test_node
+\endverbatim
+
+For someone familiar with ROS, the "/msg@/test_node" syntax can be read as "use a topic name of /msg, and a node name of /test_node".  We can check that everything looks familiar with rosnode and rostopic:
+
+\verbatim
+$ rosnode list
+...
+/test_node
+...
+
+$ rostopic info /msg
+Type: unknown type
+Publishers: None
+Subscribers:
+* /test_node (... address ...)
+\endverbatim
+
+As invoked, we didn't assign any particular type to the port/topic - this can be picked up from the sender.  Try any of:
+
+\verbatim
+rostopic pub /msg std_msgs/String "hello yarp"
+rostopic pub /msg turtlesim/Pose 0 5 10 15 20
+\endverbatim
+
+And you should see the messages print out on the console of yarp read.
+
+\section yarp_with_ros_publish_topic Publishing to ROS topics
+
+Let's start a ROS program to print out strings:
+
+\verbatim
+$ rosrun roscpp_tutorials listener
+\endverbatim
+
+This program subscribes to a topic called "/chatter".  Let's publish something there from YARP:
+
+\verbatim
+$ yarp write /chatter@/yarp_writer
+yarp: Port /yarp_writer active at tcp://192.168.1.2:54473
+yarp: Port /chatter+@/yarp_writer active at tcp://192.168.1.2:50896
+yarp: Sending output from /chatter+@/yarp_writer to /listener using tcpros
+hello?
+\endverbatim
+
+Once we type a message (here "hello?") and hit return, we should see it echoed on the listener's console:
+
+\verbatim
+[ INFO] [1386605949.838711935]: I heard: [hello?]
+\endverbatim
+
+Under the hood, the yarp port has found the type of data expected (from the listener) and is matching what you enter with that type.  If you try to send a number, you'll get a message like this:
+
+\verbatim
+42
+yarp: Structure of message is unexpected (expected std_msgs/String)
+\endverbatim
+
+(If you actually want to send a string that looks like an integer, just put it in quotes).  In this case, the listener is expecting a message of type 'std_msgs/String'.
+
+
+Let's start a ROS service that adds two integers:
+
+\verbatim
+$ rosrun rospy_tutorials add_two_ints_server
+\endverbatim
+
+This creates a service named /add_two_ints that expects two integers and gives back an integer.  We can use it from 'yarp rpc', for example:
+
+\verbatim
+$ yarp rpc /add_two_ints
+22 20
+Response: 42
+1 -10
+Response: -9
+\endverbatim
+
+As explained before, this relies critically on YARP being able to determine ROS types.  If you were to shut down the yarpidl_rosmsg server, here is what you would see:
+
+\verbatim
+$ yarp rpc /add_two_ints
+Do not know anything about type 'rospy_tutorials/AddTwoInts'
+Could not connect to a type server to look up type 'rospy_tutorials/AddTwoInts'
+\endverbatim
+
+With the type server running, YARP can make the needed translations.  Let's try the opposite direction, setting up a ROS-style rpc server, for example this:
+
+\verbatim
+$ yarp rpcserver /add_two_ints@/my_int_server --type rospy_tutorials/AddTwoInts
+\endverbatim
+
+Notice that we specify a node name for the server here, and also we give the type of data it expects and returns (ROS-style clients expect us to know that).  Now from ROS we can do:
+
+\verbatim
+$ rosrun roscpp_tutorials add_two_ints_client 3 4
+\endverbatim
+
+On the "yarp rpcserver" terminal we will now see:
+
+\verbatim
+Waiting for a message...
+yarp: Receiving input from /add_two_ints_client to /add_two_ints-1@/my_int_server using tcpros
+Message: 3 4
+Reply:
+\endverbatim
+
+It is waiting for us to reply.  We can type in whatever number we like ("7" if we are feeling constructive), and it will be reported on the "roscpp_tutorials" terminal:
+
+\verbatim
+[ INFO] [1386793386.003997149]: Sum: 7
+\endverbatim
+
+\section yarp_with_ros_making_connections An important note on making connections
+
+In YARP we usually make connections using "yarp connect". This may lead to thinking that we can connect a YARP port to a 
+topic using the following sequence of commands:
+
+\verbatim
+$ yarpview --name /view 
+$ yarp connect /topic@/node /view
+\endverbatim
+
+ROS however requires to manage the connections through roscore. Therefore YARP ports need to be registered as topic 
+with "roscore" as described above. In our example this 
+means running yarpview as follows:
+
+\verbatim
+$ yarpview --name /topic@/viewer 
+\endverbatim
+
+and let ROS (roscore)establish the connection with /topic.
+
+\section yarp_with_ros_existing Reading existing YARP ports from ROS
+
+To read existing YARP ports from ROS, we need to define their
+type for ROS's benefit.  There is a tool to help with this.
+
+For testing purposes, let's start a fake motor control board:
+\verbatim
+yarpdev --device test_motor --name /motor
+\endverbatim
+
+One of the ports this creates is /motor/state:o.  ROS forbids
+port names with ":" in them, and YARP versions 2.3.15 and earlier
+didn't have a work-around for this, so make sure you are using
+YARP trunk or YARP version > 2.3.15 for this part.
+
+To see how to access /motor/state:o from ROS, do:
+\verbatim
+yarpros sniff out /motor/state:o
+\endverbatim
+This gives us the following rather arcane lines:
+\verbatim
+int32 v_tag # set to 266 (BOTTLE_TAG_LIST+code)
+float64[] v # suggested length: 4
+\endverbatim
+This is a valid .msg file, and can be used directly in ROS.
+
+See some more examples in the yarp source code, in the
+example/yarpros_examples directory.
+
+\section yarp_with_ros_configuring_ports How to configure Ports to talk to ROS
+
+In a previous example (\ref yarp_with_ros_services) we have seen how to use yarp::os::RpcClient to talk to a ROS service. In fact we could have used a normal port configured appropriately:
+
+\code
+Port client;
+client.setRpcClient();
+\endcode
+
+In \ref yarp_with_ros_writing_code_topics we have used special classes (yarp::os::Node, yarp::os::Publisher, yarp::os::Subscriber) to crate ROS nodes, publishers and subscribers. The same result can be achieved by configuring a yarp::os::Port. However if we try to use a regular port without telling YARP how we'll be using it (by calling one of setRpcClient(), setRpcServer(), setWriteOnly(), setReadOnly()), YARP will complain because it won't know how to describe it to ROS.  However, if you have a YARP-using program that you can't easily modify to add such a call, you can sneak the needed information into the port name using the special syntax described above.
+
+<table>
+<tr><th>ROS idea</th><th>Call needed to specialize a Port/BufferedPort</th><th>Or add this decoration before "@" in port name</th><th>Specialized class</th></tr>
+<tr><td>Topic Subscriber</td><td>port.setWriteOnly()</td><td>-</td><td>yarp::os::Subscriber</td></tr>
+<tr><td>Topic Publisher</td><td>port.setReadOnly()</td><td>+</td><td>yarp::os::Publisher</td></tr>
+<tr><td>Service</td><td>port.setRpcServer()</td><td>-1</td><td>yarp::os::RpcServer</td></tr>
+<tr><td>Client</td><td>port.setRpcClient()</td><td>+1</td><td>yarp::os::RpcClient</td></tr>
+</table>
+
+For new code, however, it may be convenient to create ROS-like nodes and topics explicitly rather than having names that bundles node and topic/service names together. 
+
+One thing to watch out for is that if you stop a program using ^C or
+if it crashes, YARP will not yet unregister your ports with ROS.  If
+this bothers you, either add a signal handler to close the
+Port, or run "rosnode cleanup" from time to time.  Will fix this soon.
+
+ */

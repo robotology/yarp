@@ -1,0 +1,39 @@
+/*
+ * Copyright (C) 2011 and 2016 Istituto Italiano di Tecnologia, iCub Facility.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page yarp_with_ros_services Use YARP to talk to ROS services
+
+Please see "example/ros" in the YARP source code for full examples.  For simple cases, we can just use YARP Bottles whose content matches ROS types structurally.  For example, to call a ROS service that adds two integers, we could do this:
+
+\include example/ros/add_int_client_v2.cpp
+
+An example CMakeLists.txt file to compile this and link with YARP would be:
+
+\verbatim
+cmake_minimum_required(VERSION 2.8.9)
+find_package(YARP REQUIRED)
+include_directories(${YARP_INCLUDE_DIRS})
+add_executable(add_int_client_v1 add_int_client_v1.cpp)
+target_link_libraries(add_int_client_v1 ${YARP_LIBRARIES})
+\endverbatim
+
+On the ROS side we'd do:
+
+\verbatim
+rosrun rospy_tutorials add_two_ints_server
+\endverbatim
+
+Then on the YARP side we can try it out (assume the above program is compiled as 'add_int_client_v1'):
+
+\verbatim
+$ ./add_int_client_v1 4 6
+yarp: Port /yarp_add_int_client active at tcp://192.168.1.2:35731
+yarp: Port /add_two_ints+1@/yarp_add_int_client active at tcp://192.168.1.2:35004
+Got 10
+\endverbatim
+
+*/
