@@ -87,6 +87,7 @@ private slots:
     void onLayoutCurved();
     void onLayoutSubgraph();
     void onHidePorts();
+    void onHideConnectionsLable();
     void onNodesTreeItemClicked(QTreeWidgetItem *item, int column);
     void onWindowMessageBox();
     void onWindowItem();

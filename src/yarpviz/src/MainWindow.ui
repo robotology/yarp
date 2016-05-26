@@ -138,6 +138,7 @@
     <addaction name="menuLayout"/>
     <addaction name="separator"/>
     <addaction name="actionHidePorts"/>
+    <addaction name="actionHideConnectionsLable"/>
    </widget>
    <widget class="QMenu" name="menuView_2">
     <property name="title">
@@ -285,6 +286,14 @@
    </property>
    <property name="text">
     <string>Hide Ports</string>
+   </property>
+  </action>
+  <action name="actionHideConnectionsLable">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Connections Lable</string>
    </property>
   </action>
  </widget>

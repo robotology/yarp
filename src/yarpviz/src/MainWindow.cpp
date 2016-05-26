@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionProfile_YARP_network, SIGNAL(triggered()),this,SLOT(onProfileYarpNetwork()));
     connect(ui->actionHighlight_Loops, SIGNAL(triggered()),this,SLOT(onHighlightLoops()));
+    connect(ui->actionHideConnectionsLable, SIGNAL(triggered()),this,SLOT(onHideConnectionsLable()));
     connect(ui->actionOrthogonal, SIGNAL(triggered()),this,SLOT(onLayoutOrthogonal()));
     connect(ui->actionCurved, SIGNAL(triggered()),this,SLOT(onLayoutCurved()));
     connect(ui->actionPolyline, SIGNAL(triggered()),this,SLOT(onLayoutPolyline()));
@@ -162,7 +163,15 @@ void MainWindow::drawGraph(Graph &graph)
                 node->setAttribute("fillcolor", "#a5cf80");
                 node->setAttribute("color", "#a5cf80");
             }
-            node->setIcon(QImage(":/icons/resources/Gnome-System-Run-64.png"));
+            string host = prop.find("os").asString();
+            if(host == "Linux")
+                node->setIcon(QImage(":/icons/resources/Linux-icon.png"));
+            else if(host == "Windows")
+                node->setIcon(QImage(":/icons/resources/Windows-icon.png"));
+            else if(host == "Mac")
+                node->setIcon(QImage(":/icons/resources/Mac-icon.png"));
+            else
+                node->setIcon(QImage(":/icons/resources/Gnome-System-Run-64.png"));
             //nodeSet[*itr] = node;
             dynamic_cast<YarpvizVertex*>(*itr)->setGraphicItem(node);
             node->setVertex(*itr);
@@ -209,8 +218,8 @@ void MainWindow::drawGraph(Graph &graph)
 
     // arrange the nodes deifferently if they are not port nodes
     if(portCounts == 0) {
-        scene->setGraphAttribute("nodesep", "1.0");
-        scene->setGraphAttribute("ranksep", "1.0");
+        scene->setGraphAttribute("nodesep", "0.5");
+        scene->setGraphAttribute("ranksep", "1.5");
     }
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
@@ -233,12 +242,9 @@ void MainWindow::drawGraph(Graph &graph)
                 if(edge.property.find("type").asString() == "connection") {                    
                     //QGVEdge* gve = scene->addEdge(nodeSet[&v1], nodeSet[&v2],
                     //                               edge.property.find("carrier").asString().c_str());
-                    string lable;
-                    //if(edge.property.check("lable"))
-                    //    lable = edge.property.find("lable").asString();
-                    //else
+                    string lable;                    
+                    if(!ui->actionHideConnectionsLable->isChecked())
                         lable = edge.property.find("carrier").asString();
-
                     QGVEdge* gve = scene->addEdge((QGVNode*)((YarpvizVertex*)&v1)->getGraphicItem(),
                                                   (QGVNode*)((YarpvizVertex*)&v2)->getGraphicItem(),
                                                    lable.c_str());
@@ -323,6 +329,14 @@ void MainWindow::nodeDoubleClick(QGVNode *node)
 
 void MainWindow::onProfileYarpNetwork() {
 
+    if(mainGraph.nodesCount()) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Profiling", "Running profiler will clear the current project.\n Are you sure?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::No)
+            return;
+    }
+
     mainGraph.clear();
 
     messages.append("Cleaning death ports...");
@@ -402,12 +416,13 @@ void MainWindow::onHighlightLoops() {
     if(!currentGraph)
         return;
 
-    if(ui->actionHighlight_Loops->isChecked()) {
+    if(ui->actionHighlight_Loops->isChecked()) {        
         graph_subset scc;
         Algorithm::calcSCC(*currentGraph, scc);
+
         for(int i=0; i<scc.size(); i++) {
             pvertex_set &vset = scc[i];
-            QColor color(Random::uniform(0,255), Random::uniform(0,255), Random::uniform(0,255));
+            QColor color(Random::uniform(128,255), Random::uniform(0,128), Random::uniform(128,255));
             for(int j=0; j<vset.size(); j++)
                 vset[j]->property.put("color", color.name().toStdString().c_str());
         }
@@ -526,6 +541,10 @@ void MainWindow::onHidePorts() {
         portParentItem->setExpanded(true);
         currentGraph = &mainGraph;
     }
+    drawGraph(*currentGraph);
+}
+
+void MainWindow::onHideConnectionsLable() {
     drawGraph(*currentGraph);
 }
 
