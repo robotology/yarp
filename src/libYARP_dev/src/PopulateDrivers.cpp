@@ -39,8 +39,6 @@ extern DriverCreator *createBatteryWrapper();
 extern DriverCreator *createBatteryClient();
 extern DriverCreator *createRangefinder2DWrapper();
 extern DriverCreator *createRangefinder2DClient();
-extern DriverCreator *createRGBDSensorWrapper();
-extern DriverCreator *createRGBDSensorClient();
 
 #ifndef YARP_NO_DEPRECATED
 extern DriverCreator *createServerControlBoard();
@@ -90,8 +88,6 @@ void Drivers::init() {
     add(createVirtualAnalogWrapper());
     add(createBatteryWrapper());
     add(createRangefinder2DWrapper());
-    add(createRGBDSensorWrapper());
-    add(createRGBDSensorClient());
 
 #ifndef YARP_NO_DEPRECATED
     add(createClientControlBoard());
