@@ -11,6 +11,9 @@ This page lists the main changes introduced in YARP at each release.
 
 \tableofcontents
 
+\section rel-v2_3_68 YARP 2.3.68 Series
+\li \subpage md_doc_release_v2_3_68
+
 \section rel-v2_3_65 YARP 2.3.65 Series
 \li \subpage md_doc_release_v2_3_65_1
 \li \subpage md_doc_release_v2_3_65
