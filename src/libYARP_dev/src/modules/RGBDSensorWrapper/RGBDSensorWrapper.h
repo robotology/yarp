@@ -181,6 +181,8 @@ private:
     // Synch                                
     YOS::Stamp                              colorStamp;
     YOS::Stamp                              depthStamp;
+    
+    YOS::Property                         m_conf;
                                             
     void                                    shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
     void                                    deepCopyImages

@@ -48,6 +48,7 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
 //     addUsage("[set] [bri] $fBrightness", "set brightness");
 //     addUsage("[set] [expo] $fExposure", "set exposure");
 //
+    m_conf.fromString(config.toString());
     if(verbose >= 5)
         yTrace() << "\nParameters are: \n" << config.toString();
 
@@ -133,9 +134,13 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         for (i = 0; i < rosStringParam.size(); i++)
         {
             prm = &rosStringParam[i];
-            if (verbose >= 3 || !rosGroup.check(prm->parname))
+            if (!rosGroup.check(prm->parname))
             {
-                yError() << "missing" << prm->parname << "check your configuration file";
+                if(verbose >= 3)
+                {
+                    yError() << "missing " << prm->parname << "check your configuration file, not using ROS";
+                }
+                use_ROS = false;
                 return false;
             }
             *(prm->var) = rosGroup.find(prm->parname).asString().c_str();
@@ -544,19 +549,17 @@ bool RGBDSensorWrapper::setCamInfo
     //std::vector<param<string> >     rosStringParam;
     //rosStringParam.push_back(param<string>(nodeName, "asd"));
     
-    parVector.push_back(param<double>(fx,"fx"));
-    parVector.push_back(param<double>(fy,"fy"));
-    parVector.push_back(param<double>(cx,"cx"));
-    parVector.push_back(param<double>(cy,"cy"));
-    parVector.push_back(param<double>(tx,"tx"));
-    parVector.push_back(param<double>(ty,"ty"));
+    parVector.push_back(param<double>(fx,"focalLengthX"));
+    parVector.push_back(param<double>(fy,"focalLengthY"));
+    parVector.push_back(param<double>(cx,"principalPointX"));
+    parVector.push_back(param<double>(cy,"principalPointY"));
     parVector.push_back(param<double>(k1,"k1"));
     parVector.push_back(param<double>(k2,"k2"));
     parVector.push_back(param<double>(t1,"t1"));
     parVector.push_back(param<double>(t2,"t2"));
     parVector.push_back(param<double>(k3,"k3"));
-    parVector.push_back(param<double>(tx,"tx"));
-    parVector.push_back(param<double>(ty,"ty"));
+    parVector.push_back(param<double>(tx,"tangentialPointX"));
+    parVector.push_back(param<double>(ty,"tangentialPointY"));
 
     for(i = 0; i < parVector.size(); i++)
     {
@@ -608,6 +611,10 @@ bool RGBDSensorWrapper::setCamInfo
     cameraInfo.P[0]  = fx;      cameraInfo.P[1] = 0;    cameraInfo.P[2]  = cx;  cameraInfo.P[3]  = tx;
     cameraInfo.P[4]  = 0;       cameraInfo.P[5] = fy;   cameraInfo.P[6]  = cy;  cameraInfo.P[7]  = ty;
     cameraInfo.P[8]  = 0;       cameraInfo.P[9] = 0;    cameraInfo.P[10] = 1;   cameraInfo.P[11] = 0;
+    
+    cameraInfo.binning_x = cameraInfo.binning_y = 0;
+    cameraInfo.roi.height = cameraInfo.roi.width = cameraInfo.roi.x_offset = cameraInfo.roi.y_offset = 0;
+    cameraInfo.roi.do_rectify = false;
 }
 
 bool RGBDSensorWrapper::writeData()
@@ -663,17 +670,20 @@ bool RGBDSensorWrapper::writeData()
         rosPublisherPort_depth.write();
         
         //code to delete
-        setCamInfo(camInfoC, rosFrameId, nodeSeq, cRosStamp);
-        
-        rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
-        rosPublisherPort_colorCaminfo.write();
-        
-        setCamInfo(camInfoD, rosFrameId, nodeSeq, dRosStamp);
+        if (setCamInfo(camInfoC, rosFrameId, nodeSeq, cRosStamp))
+        {
+            rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
+            rosPublisherPort_colorCaminfo.write();
+            setCamInfo(camInfoD, rosFrameId, nodeSeq, dRosStamp);
+            rosPublisherPort_depthCaminfo.setEnvelope(colorStamp);
+            rosPublisherPort_depthCaminfo.write();
+        }
+        else
+        {
+            yWarning("missing camera parameters... camera info messages will be not sended");
+        }
 
-        rosPublisherPort_depthCaminfo.setEnvelope(colorStamp);
-        rosPublisherPort_depthCaminfo.write();
         nodeSeq++;
-        
     }
     return true;
 }
