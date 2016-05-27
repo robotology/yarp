@@ -1,18 +1,17 @@
 /*
  * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
 /**
  * @page changelog YARP ChangeLog
 
-This page lists the main changes introduced in YARP at each release. 
+This page lists the main changes introduced in YARP at each release.
 
 \tableofcontents
 
-\section rel-v2_3_65 YARP 2.3.65
+\section rel-v2_3_65 YARP 2.3.65 Series
 \li \subpage md_doc_release_v2_3_65_1
 \li \subpage md_doc_release_v2_3_65
 
