@@ -294,7 +294,7 @@ check_include_files(execinfo.h YARP_HAS_EXECINFO)
 # Translate the names of some YARP options, for yarp_config_options.h.in
 # and YARPConfig.cmake.in
 set(YARP_HAS_MATH_LIB ${CREATE_LIB_MATH})
-set(YARP_HAS_NAME_LIB ${YARP_USE_PERSISTENT_NAMESERVER})
+set(YARP_HAS_NAME_LIB TRUE)
 
 #########################################################################
 # Tweak tests for MSVC, to add paths to DLLs

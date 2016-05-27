@@ -171,7 +171,7 @@ public:
     }
 };
 
-yarpserversql_API yarp::os::NameStore *yarpserver3_create(yarp::os::Searchable& options) {
+yarpserversql_API yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options) {
     NameServerContainer *nc = new NameServerContainer;
     if (!nc) return NULL;
     nc->setSilent(true);
@@ -183,7 +183,7 @@ yarpserversql_API yarp::os::NameStore *yarpserver3_create(yarp::os::Searchable& 
     return nc;
 }
 
-yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
+yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
     // check if YARP version is sufficiently up to date - there was
     // an important bug fix
     Bottle b("ip 10.0.0.10");
@@ -220,7 +220,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
         printf("Call with --help for information on available options\n");
     }
 
-    /* 
+    /*
     ConstString configFilename = options.check("config",
                                                Value("yarpserver.conf")).asString();
     if (!options.check("config")) {

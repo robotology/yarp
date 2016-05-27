@@ -13,25 +13,31 @@ include_directories(${YARP_OS_INCLUDE_DIRS}
 set(yarp_SRCS yarp.cpp)
 
 add_executable(yarp ${yarp_SRCS})
-target_link_libraries(yarp YARP_OS YARP_init)
+target_link_libraries(yarp YARP_OS
+                           YARP_init
+                           YARP_serversql)
 
-if(YARP_USE_PERSISTENT_NAMESERVER)
-  set(YARPSERVER_NAME yarpserver2)
-else()
-  set(YARPSERVER_NAME yarpserver)
-endif()
+install(TARGETS yarp
+        COMPONENT utilities
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-add_executable(${YARPSERVER_NAME} yarpserver.cpp)
-target_link_libraries(${YARPSERVER_NAME} YARP_OS YARP_init)
 
-if(YARP_USE_PERSISTENT_NAMESERVER)
-  set_property(SOURCE ${yarp_SRCS} APPEND PROPERTY COMPILE_DEFINITIONS YARP_USE_PERSISTENT_NAMESERVER=1)
-  target_link_libraries(yarp YARP_serversql)
-endif()
+set(yarp_config_SRCS yarpconfig.cpp
+                     yarpcontext.cpp
+                     yarprobot.cpp
+                     yarpcontextutils.cpp)
 
-install(TARGETS yarp ${YARPSERVER_NAME} COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+set(yarp_config_HDRS yarpcontext.h
+                     yarprobot.h
+                     yarpcontextutils.h)
 
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/extern/diff_match_patch)
-add_executable(yarp-config yarpconfig.cpp yarpcontext.cpp yarpcontext.h yarprobot.cpp yarprobot.h yarpcontextutils.cpp yarpcontextutils.h)
-target_link_libraries(yarp-config YARP_OS YARP_init ${ACE_LIBRARIES})
-install(TARGETS yarp-config COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+add_executable(yarp-config ${yarp_config_SRCS}
+                           ${yarp_config_HDRS})
+target_link_libraries(yarp-config YARP_OS
+                                  YARP_init
+                                  ${ACE_LIBRARIES})
+install(TARGETS yarp-config
+        COMPONENT utilities
+        DESTINATION ${CMAKE_INSTALL_BINDIR})

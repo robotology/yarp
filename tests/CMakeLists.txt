@@ -4,10 +4,6 @@
 
 if(YARP_COMPILE_TESTS)
 
-    if(YARP_USE_PERSISTENT_NAMESERVER)
-        add_definitions(-DYARP_USE_PERSISTENT_NAMESERVER=1)
-    endif()
-
     # Add the CMAKE_BINARY_DIR as a macro so the testing infrastructure
     # can find the device compiled as dynamic plugins
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/YarpBuildLocation.h.in"
@@ -37,20 +33,20 @@ if(YARP_COMPILE_TESTS)
         get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family}
                      PROPERTY INCLUDE_DIRS)
         get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
+        get_property(YARP_serversql_INCLUDE_DIRS TARGET YARP_serversql PROPERTY INCLUDE_DIRS)
         include_directories(${YARP_TREE_INCLUDE_DIRS})
+        include_directories(${YARP_serversql_INCLUDE_DIRS})
         if(YARP_HAS_ACE)
             include_directories(${ACE_INCLUDE_DIRS})
         endif()
         set(EXE harness_${test_family})
         string(TOLOWER ${EXE} EXE)
         add_executable(${EXE} ${harness_code})
-        if(YARP_USE_PERSISTENT_NAMESERVER)
-            get_property(YARP_serversql_INCLUDE_DIRS TARGET YARP_serversql PROPERTY INCLUDE_DIRS)
-            include_directories(${YARP_serversql_INCLUDE_DIRS})
-            target_link_libraries(${EXE} YARP_serversql)
-        endif()
         target_link_libraries(${EXE} ${YARP_LIBRARIES})
-        target_link_libraries(${EXE} ${ACE_LIBRARIES})
+        target_link_libraries(${EXE} YARP_serversql)
+        if(YARP_HAS_ACE)
+            target_link_libraries(${EXE} ${ACE_LIBRARIES})
+        endif()
         if(NOT YARP_HAS_ACE)
             # Without ACE, we don't currently have UDP
             list(REMOVE_ITEM harness_code ${CMAKE_SOURCE_DIR}/src/libYARP_${test_family}/harness/DgramTwoWayStreamTest.cpp)

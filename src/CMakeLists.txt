@@ -2,8 +2,9 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Alessandro Scalzo
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-option(YARP_USE_PERSISTENT_NAMESERVER "Do you want a nameserver that stores its database in sqlite?" TRUE)
 include(YarpInstallationHelpers)
+include(YarpDeprecatedOption)
+
 yarp_configure_external_installation(yarp WITH_PLUGINS)
 
 # public libraries
@@ -63,3 +64,5 @@ if(YARP_COMPILE_UNMAINTAINED)
         add_subdirectory(yarpfs)
     endif()
 endif()
+
+yarp_deprecated_option(YARP_USE_PERSISTENT_NAMESERVER)

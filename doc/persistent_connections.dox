@@ -16,10 +16,7 @@ lasts until it is explicitly disconnected by user action, or until one
 of the ports is closed.
 
 It is also possible to specify connections that should be made
-whenever possible.  These are called "persistent connections"
-and are supported by yarpserver version 3 and above.  Make sure you
-choose to compile yarpserver3 when building YARP if you wish to
-use this feature.
+whenever possible.  These are called "persistent connections".
 
 Normally, to connect two ports from the command line, you do:
 \verbatim
