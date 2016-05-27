@@ -40,7 +40,6 @@ namespace yarp {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#define DEFAULT_THREAD_PERIOD 20 //ms
 const int ANALOG_TIMEOUT=100; //ms
 
 
@@ -87,11 +86,13 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
-*  @ingroup dev_impl_wrapper
+* @ingroup dev_impl_wrapper
 *
 * \section AnalogSensorClient Description of input parameters
+* \brief Device that reads an AnalogSensor (using the IAnalogSensor interface) from the YARP network.
 *
-*  This device will connect to the proper analogServer and read the data broadcasted making them available to use for the user application. It also made available some function to check and control the state of the remote sensor.
+* This device will connect to a port opened by the AnalogWrapper device and read the data broadcasted
+* making them available to use for the user application. It also made available some function to check and control the state of the remote sensor.
 *
 * Parameters accepted in the config argument of the open method:
 * | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
@@ -99,7 +100,7 @@ public:
 * | local          | string |       |               | Yes       | full name if the port opened by the device  | must start with a '/' character |
 * | remote         | string |       |               | Yes       | full name of the port the device need to connect to | must start with a '/' character |
 * | carrier        | string |       | udp           | No        | type of carrier to use, like tcp, udp and so on ...  | - |
-* | period         | int    | ms    | 20            | No        | Publication period (in ms) of the sensor reading on the Can Bus | - |
+*
 *  The device will create a port with name <local> and will connect to a port colled <remote> at startup,
 * ex: <b> /myModule/left_arm/ForceTorque </b>, and will connect to a port called <b> /icub/left_arm/ForceTorque<b>.
 *
@@ -119,7 +120,6 @@ protected:
     std::string deviceId;
     std::string sensorType;
     std::string portPrefix;
-    int _rate;
 
     void  removeLeadingTrailingSlashesOnly(std::string &name);
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

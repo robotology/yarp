@@ -192,16 +192,6 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if (config.check("period"))
-    {
-        _rate = config.find("period").asInt();
-    }
-    else
-    {
-        _rate = DEFAULT_THREAD_PERIOD;
-        yWarning() <<"part "<< deviceId <<" using default period ("<<_rate<<")";
-    }
-
     ConstString local_rpc = local;
     local_rpc += "/rpc:o";
     ConstString remote_rpc = remote;

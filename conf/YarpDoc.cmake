@@ -54,7 +54,7 @@ if(DOXYGEN_FOUND)
        YARP_DOXYGEN_DOCBOOK)
 
       # Prepare configuration for normal documentation
-      set(DOX_PATTERNS "*.h *.dox *.cpp")
+      set(DOX_PATTERNS "*.h *.cpp *.dox *.md")
       set(DOX_GENERATE_HTML NO)
       set(DOX_GENERATE_DOCSET NO)
       set(DOX_GENERATE_HTMLHELP NO)
