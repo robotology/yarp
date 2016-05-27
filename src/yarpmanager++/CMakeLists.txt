@@ -10,9 +10,9 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
     get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
     get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
     include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_manager_INCLUDE_DIRS}
-                      ./src-builder
-                      ./src-manager)
+                        ${YARP_manager_INCLUDE_DIRS}
+                        ./src-builder
+                        ./src-manager)
 
     #find_package(Qt5Widgets)
     #find_package(Qt5Declarative)
@@ -22,7 +22,7 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
     set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
     #manager files
-    set(manager_SRCS 
+    set(manager_SRCS
         src-manager/aboutdlg.cpp
         src-manager/applicationviewwidget.cpp
         src-manager/customtreewidget.cpp
@@ -39,7 +39,7 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
         src-manager/stdoutwindow.cpp
         src-manager/yscopewindow.cpp)
 
-    set(manager_HDRS 
+    set(manager_HDRS
         src-manager/aboutdlg.h
         src-manager/applicationviewwidget.h
         src-manager/customtreewidget.h
@@ -61,7 +61,7 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
 	   set(yarpmanager_qt_RC_FILES yarpmanager.rc)
     endif()
 
-    set(manager_UI_FILES 
+    set(manager_UI_FILES
         src-manager/aboutdlg.ui
         src-manager/applicationviewwidget.ui
         src-manager/genericinfodlg.ui
@@ -117,15 +117,15 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
     add_executable(yarpmanager++ WIN32 ${manager_SRCS} ${builder_SRCS}
                                        ${manager_HDRS} ${builder_HDRS}
                                        ${manager_QRC_FILES} ${builder_QRC_FILES}
-                                       ${manager_UI_FILES} ${manager_UI_FILES}  
-                                       ${yarpmanager++_QRC_GEN_SRCS}    
-                                       ${yarpmanager++_UI_GEN_SRCS})              
+                                       ${manager_UI_FILES} ${manager_UI_FILES}
+                                       ${yarpmanager++_QRC_GEN_SRCS}
+                                       ${yarpmanager++_UI_GEN_SRCS})
 
     target_link_libraries(yarpmanager++ YARP_OS
-                                       YARP_init
-                                       YARP_manager)
+                                        YARP_init
+                                        YARP_manager)
     qtyarp_use_modules(yarpmanager++ Widgets
-                                    Gui)
+                                     Gui)
     qtyarp_deprecate_with_cmake_version(2.8.11)
     if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
     target_link_libraries(yarpmanager++ Qt5::WinMain)
@@ -138,9 +138,9 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
     endif()
 
     yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpmanager++
-                                    TARGET_DEST yarpmanager++.app
-                                    APP_ICON Resources/AppIcon.icns
-                                    INSTALL_COMPONENT utilities
-                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+                                      TARGET_DEST yarpmanager++.app
+                                      APP_ICON src-manager/Resources/AppIcon.icns
+                                      INSTALL_COMPONENT utilities
+                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()
