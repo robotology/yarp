@@ -508,17 +508,17 @@ void RGBDSensorWrapper::deepCopyImages
     dest.header.frame_id = frame_id;
     dest.header.stamp    = timeStamp;
     dest.header.seq      = seq;
+    dest.is_bigendian    = 0;
 }
 
 bool RGBDSensorWrapper::setCamInfo
 (
     sensor_msgs_CameraInfo& cameraInfo, 
     const string&           frame_id, 
-    const unsigned int&     seq, 
-    const TickTime&         timeStamp
+    const unsigned int&     seq
 )
 {
-    double                      fx, fy, cx, cy, tx, ty, k1, k2, t1, t2, k3;
+    double                      fx, fy, cx, cy, tx, ty, k1, k2, t1, t2, k3, stamp;
     string                      distModel;
     unsigned int                i;
     Property                    camData;
@@ -560,7 +560,7 @@ bool RGBDSensorWrapper::setCamInfo
     parVector.push_back(param<double>(k3,"k3"));
     parVector.push_back(param<double>(tx,"tangentialPointX"));
     parVector.push_back(param<double>(ty,"tangentialPointY"));
-
+    parVector.push_back(param<double>(stamp,"stamp"));
     for(i = 0; i < parVector.size(); i++)
     {
         par = &parVector[i];
@@ -574,7 +574,7 @@ bool RGBDSensorWrapper::setCamInfo
     
     cameraInfo.header.frame_id    = frame_id;
     cameraInfo.header.seq         = seq;
-    cameraInfo.header.stamp       = timeStamp;
+    cameraInfo.header.stamp       = normalizeSecNSec(stamp);
     cameraInfo.width              = sensor_p->width();
     cameraInfo.height             = sensor_p->height();
     cameraInfo.distortion_model   = distModel;
@@ -615,6 +615,7 @@ bool RGBDSensorWrapper::setCamInfo
     cameraInfo.binning_x = cameraInfo.binning_y = 0;
     cameraInfo.roi.height = cameraInfo.roi.width = cameraInfo.roi.x_offset = cameraInfo.roi.y_offset = 0;
     cameraInfo.roi.do_rectify = false;
+    return true;
 }
 
 bool RGBDSensorWrapper::writeData()
@@ -656,8 +657,8 @@ bool RGBDSensorWrapper::writeData()
         sensor_msgs_CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
         TickTime                cRosStamp, dRosStamp;
         
-        cRosStamp               = normalizeSecNSec(colorStamp.getTime());
-        dRosStamp               = normalizeSecNSec(depthStamp.getTime());
+        cRosStamp = normalizeSecNSec(colorStamp.getTime());
+        dRosStamp = normalizeSecNSec(depthStamp.getTime());
         
         deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
         deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);
@@ -668,19 +669,24 @@ bool RGBDSensorWrapper::writeData()
 
         rosPublisherPort_depth.setEnvelope(depthStamp);
         rosPublisherPort_depth.write();
-        
-        //code to delete
-        if (setCamInfo(camInfoC, rosFrameId, nodeSeq, cRosStamp))
+
+        if (setCamInfo(camInfoC, rosFrameId, nodeSeq))
         {
             rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
             rosPublisherPort_colorCaminfo.write();
-            setCamInfo(camInfoD, rosFrameId, nodeSeq, dRosStamp);
-            rosPublisherPort_depthCaminfo.setEnvelope(colorStamp);
+        }
+        else
+        {
+            yWarning("missing color camera parameters... camera info messages will be not sended");
+        }
+        if (setCamInfo(camInfoD, rosFrameId, nodeSeq))
+        {
+            rosPublisherPort_depthCaminfo.setEnvelope(depthStamp);
             rosPublisherPort_depthCaminfo.write();
         }
         else
         {
-            yWarning("missing camera parameters... camera info messages will be not sended");
+            yWarning("missing depth camera parameters... camera info messages will be not sended");
         }
 
         nodeSeq++;

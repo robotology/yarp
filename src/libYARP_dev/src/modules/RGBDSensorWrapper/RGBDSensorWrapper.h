@@ -198,8 +198,7 @@ private:
                                             (
                                                 sensor_msgs_CameraInfo& cameraInfo,
                                                 const std::string&      frame_id,
-                                                const unsigned int&     seq,
-                                                const TickTime&         timeStamp
+                                                const unsigned int&     seq
                                             );
     bool                                    writeData();
 
