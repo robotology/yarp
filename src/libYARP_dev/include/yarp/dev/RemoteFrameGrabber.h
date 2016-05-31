@@ -562,12 +562,6 @@ return response.get(0).asInt()!=0? true:false;
     }
 };
 
-#ifdef _MSC_VER
-/* This template is used to define a non private member variable of RemoteFrameGrabber (reader).
-As such it needs to be explicitly exported (warning C4251). The warnig could be suppressed altogether 
-by defining the member private thus ensuring that it is never used dirctly in user code.*/
-template class YARP_dev_API yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
-#endif
 
 /**
  * @ingroup dev_impl_wrapper
