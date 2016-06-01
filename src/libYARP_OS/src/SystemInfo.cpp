@@ -36,6 +36,7 @@ extern char **environ;
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <mach/mach.h>
+#include <sstream>
 #endif
 
 #if defined(WIN32)
@@ -818,7 +819,54 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
     EnumWbem->Release();
     WbemServices->Release();
     WbemLocator->Release();
-    CoUninitialize();    
+    CoUninitialize();
+#elif defined(__APPLE__)
+    kinfo_proc procInfo;
+    size_t length = sizeof(procInfo);
+
+    int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, pid};
+
+    if (!sysctl(mib, 4, &procInfo, &length, NULL, 0)) {
+        info.name = procInfo.kp_proc.p_comm;
+        info.pid = procInfo.kp_proc.p_pid;
+
+        //Some info here: https://gist.github.com/nonowarn/770696
+        mib[1] = KERN_PROCARGS;
+        mib[2] = pid;
+        char *proc_argv;
+        size_t argv_len;
+        //getting length of execute string
+        int result = sysctl(mib, 3, NULL, &argv_len, NULL, 0);
+
+        //now getting the string
+        proc_argv = (char*)malloc(sizeof(char) * argv_len);
+        result = sysctl(mib, 3, proc_argv, &argv_len, NULL, 0);
+        //looking for '\0', i.e. NULL char
+        //skip first string which is the executable
+        size_t index = 0;
+        while (index < argv_len && proc_argv[index] != '\0') {
+            index++;
+        }
+        index++;
+        //now we have to split the remaining string
+        //Note: this is not easy. We don't know the format
+        //See: http://lists.apple.com/archives/darwin-kernel/2012/Mar/msg00025.html
+        //for example, I get both arguments and environment variables
+
+        std::stringstream arguments;
+        while (index < argv_len) {
+            if (proc_argv[index] == '\0' && index != argv_len - 1) {
+                arguments << " ";
+            } else {
+                arguments << proc_argv[index];
+            }
+            index++;
+        }
+
+        free(proc_argv);
+        info.arguments = arguments.str();
+    }
+
 #endif
     return info;
 }
