@@ -32,6 +32,10 @@ using namespace yarp::os;
 
 extern char **environ;
 
+#elif defined(__APPLE__)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <mach/mach.h>
 #endif
 
 #if defined(WIN32)
@@ -262,7 +266,33 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
         }
         fclose(procmem);
     }
+#elif defined(__APPLE__)
+
+    int64_t pageSize = 0;
+    size_t length = sizeof(pageSize);
+
+    if (sysctlbyname("vm.pagesize", &pageSize, &length, NULL, 0) == -1) {
+        //error
+    }
+
+    mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
+    vm_statistics vmstat;
+    if (host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vmstat, &count) == KERN_SUCCESS) {
+        //These seem to return the # of pages
+        natural_t activePages = vmstat.active_count + vmstat.wire_count;
+        natural_t inactivePages = vmstat.inactive_count + vmstat.free_count;
+        natural_t totalPages = activePages + inactivePages;
+
+        int64_t total = totalPages * pageSize;
+        int64_t freeSpace = inactivePages * pageSize;
+
+        memory.totalSpace = total / 1024;
+        memory.freeSpace = freeSpace / 1024;
+        
+    }
 #endif
+
+
     return memory;
 }
 
@@ -466,6 +496,43 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     {
       processor.architecture = uts.machine;  
     }
+#elif defined(__APPLE__)
+//    yarp::os::ConstString architecture;
+
+    int mib [] = { CTL_HW, HW_CPU_FREQ };
+    int64_t value = 0;
+    size_t length = sizeof(value);
+
+    if (!sysctl(mib, 2, &value, &length, NULL, 0)) {
+        processor.frequency = value; //this is in Hz. What is the expected frequency?
+    }
+
+    if (!sysctlbyname("hw.logicalcpu", &value, &length, NULL, 0)) {
+        processor.cores = value; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+
+    char buff[513];
+    size_t buffLen = 512;
+    if (!sysctlbyname("machdep.cpu.vendor", buff, &buffLen, NULL, 0)) {
+        processor.vendor = buff; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+    buffLen = 512;
+    if (!sysctlbyname("machdep.cpu.brand_string", buff, &buffLen, NULL, 0)) {
+        processor.model = buff; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+    if (!sysctlbyname("machdep.cpu.family", &value, &length, NULL, 0)) {
+        processor.family = value; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+    if (!sysctlbyname("machdep.cpu.model", &value, &length, NULL, 0)) {
+        processor.modelNumber = value; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+
+
 #endif
     return processor;
 }
