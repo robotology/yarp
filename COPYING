@@ -3,15 +3,15 @@ Unless otherwise stated, files in YARP are:
   Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
 
 The list of authors for YARP (ordered by file count) is:
-  Istituto Italiano di Tecnologia (IIT)
   Paul Fitzpatrick
+  Istituto Italiano di Tecnologia
   Ali Paikan
   Lorenzo Natale
   Daniele E. Domenichelli
   Davide Perrone
   Marco Randazzo
   Giorgio Metta
-  Dr. Roland Bock
+  Roland Bock
   Alberto Cardellino
   Giacomo Spigler
   Anne van Rossum
@@ -47,6 +47,7 @@ The list of authors for YARP (ordered by file count) is:
   The goocanvasmm Development Team
   Stephen Hart
   Stephane Lallee
+  Robotics Brain
   Marco Randazo
   H. Nieuwenhuis
   Francesco Giovannini
@@ -87,10 +88,10 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Giulia Vezzani
   Alessio Rocchi
   Mirko Ferrati
+  Claudio Fantacci
   Francesco Giovannini
   Valentina Gaggero
   Bruno Nery
-  Claudio Fantacci
   Davide Pollarolo
   Fabien Benureau
   Francesco Orabona
@@ -101,112 +102,18 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Davide Tome
   Enrico Mingo
   Francesca Stramandinoli
+  Gabriele Nava
   Giovanni Saponaro
   Juan G Victores
   Matej Hoffmann
   Pedro Vicente
   Plinio Moreno
   Serena Ivaldi
-  Gabriele Nava
-
-The list of people thanked in the ChangeLog (ordered by mention count) is:
-  Lorenzo Natale
-  Ugo Pattacini
-  Stephane Lallee
-  Juan G Victores
-  Philipp Robbel
-  Anne van Rossum
-  Giorgio Metta
-  Gianluca Massera
-  Miguel Sarabia del Castillo
-  Jonas Ruesch
-  Arnaud Degroote
-  Elena Ceseracciu
-  Alessandro Scalzo
-  Arjan Gijsberts
-  Carlo Ciliberto
-  Daniele Domenichelli
-  Daniel Krieg
-  Ali Paikan
-  Martin Peniak
-  Vadim Tikhanoff
-  Alejandro R. Mosteo
-  Alexis Maldonado
-  Assif Mirza
-  David Vernon
-  Francesco Nori
-  Frank Forster
-  Giovanni Saponaro
-  Lars Schillingmann
-  Marco Randazzo
-  Severin Lemaignan
-  Stefan Freyr Stefansson
-  Ze Ji
-  Alexandre Bernardino
-  Andrea Del Prete
-  Andrew Stout
-  Baris Akgun
-  Breno Carneiro Pinheiro
-  Christian Wressnegger
-  Ilaria Gori
-  Leo Pape
-  Lorenz Mosenlechner
-  Marco Barbosa
-  Rui Silva
-  Tomassino Ferrauto
-  Traveler Hauptman
-  Zhenli Lu
-  Alberto Cardellino
-  Andreu Corominas Murtra
-  Andrew Dankers
-  Anthony Truchet
-  Barry Ridge
-  Boris Duran
-  Bruno Nery
-  Charles Lesire-Cabaniols
-  Christian Dondrup
-  Dimitri Ognibene
-  Domenic Laritz
-  Emanuel Sousa
-  Fabien Benureau
-  Florent D'Halluin
-  Francesco Rea
-  Freyr Magnusson
-  Gabriel Baud-Bovy
-  Gauss Lee
-  Giacomo Spigler
-  Gilberto Echeverria
-  Ingo Keller
-  Jan Woetzel
-  Jean-David Boucher
-  Juxi Leitner
-  Kail Frank
-  Kyron Du Casse
-  Kyuhwa Lee
-  Lorenzo DeMichieli
-  Marek Rucinski
-  Nelson Goncalves
-  Nikolas Hemion
-  Pablo Urcola
-  Paul Fitzpatrick
-  Plinio Moreno Lopez
-  Radu Bogdan Rusu
-  Renaud Detry
-  Sebastian Gieselmann
-  Sebastian Wrede
-  Sebastien Gay
-  Serena Ivaldi
-  Sergey Skachek
-  Valerio Sperati
-  Varun Kompella
-  Yianding
-  Zenon Mathews
 
 The list of copyright holders for YARP is:
-  Copyright 2001, 2002, 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016
-  RobotCub Consortium (749 files)
-  Istituto Italiano di Tecnologia (IIT) (611 files)
-  Dr. Roland Bock (35 files)
+  RobotCub Consortium (747 files)
+  Istituto Italiano di Tecnologia (604 files)
+  Roland Bock (35 files)
   Duarte Aragao (25 files)
   Giacomo Spigler (17 files)
   Daniel Krieg (16 files)
@@ -214,6 +121,7 @@ The list of copyright holders for YARP is:
   Anne van Rossum (13 files)
   Alexandre Bernardino (8 files)
   Arjan Gijsberts (7 files)
+  Robotics (6 files)
   Carlos Beltran-Gonzalez (5 files)
   Marco Randazzo (5 files)
   Renaud Detry (5 files)
@@ -319,37 +227,9 @@ src/yarplogger-console/CMakeLists.txt
   Authors: Marco Randazzo
   CopyPolicy: GPLv2
 
-src/libYARP_dev/src/modules/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.h
-  Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
-  Authors: Alberto Cardellino
-  CopyPolicy: GPLv2 or later
-
-src/libYARP_dev/src/modules/RGBDSensorClient/RGBDSensorClient.h
-  Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
-  Authors: Alberto Cardellino
-  CopyPolicy: GPLv2 or later
-
-src/libYARP_dev/src/modules/RGBDSensorClient/CMakeLists.txt
-  Copyright: unknown
-  CopyPolicy: unknown
-
 src/libYARP_dev/src/modules/ServerInertial/CMakeLists.txt
   Copyright: unknown
   CopyPolicy: unknown
-
-src/libYARP_dev/src/modules/RGBDSensorWrapper/RGBDSensorWrapper.h
-  Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
-  Authors: Alberto Cardellino
-  CopyPolicy: GPLv2 or later
-
-src/libYARP_dev/src/modules/RGBDSensorWrapper/CMakeLists.txt
-  Copyright: unknown
-  CopyPolicy: unknown
-
-src/libYARP_dev/src/modules/RGBDSensorWrapper/RGBDSensorWrapper_RPCMsgParser.h
-  Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
-  Authors: Alberto Cardellino
-  CopyPolicy: GPLv2 or later
 
 src/libYARP_dev/src/modules/AnalogSensorClient/AnalogSensorClient.h
   Copyright: (C) 2014 iCub Facility, Istituto Italiano di Tecnologia
@@ -476,16 +356,6 @@ src/libYARP_dev/src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
 
 src/libYARP_dev/include/yarp/dev/FrameGrabberControl2.h
   Copyright: (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
-  Authors: Alberto Cardellino
-  CopyPolicy: GPLv2 or later
-
-src/libYARP_dev/include/yarp/dev/IRGBDSensor.h
-  Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
-  Authors: Alberto Cardellino
-  CopyPolicy: GPLv2 or later
-
-src/libYARP_dev/include/yarp/dev/IDepthSensor.h
-  Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Alberto Cardellino
   CopyPolicy: GPLv2 or later
 

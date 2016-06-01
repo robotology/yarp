@@ -8,9 +8,10 @@
 * @page installation_downloads Downloads
 
 Latest releases:
- + 18/07/2014, latest release: __YARP-2.3.64__
+ + 01/06/2016, latest release: __YARP-2.3.66__
 
 Previous releases:
+ + 18/07/2014, latest release: __YARP-2.3.64__
  + 18/07/2014: YARP-2.3.63
  + 06/08/2013 : YARP-2.3.22
  + 10/07/2013 : YARP-2.3.21
@@ -26,13 +27,13 @@ Previous releases:
 
 __Installers__:
 
-  \li [MSVC10 x86] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v10_x86_1.exe),  [MSVC10 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v10_x86_amd64_1.exe)
- \li [MSVC11 x86] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v11_x86_1.exe), [MSVC11 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v11_x86_amd64_1.exe)
- \li [MSVC12 x86] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v12_x86_1.exe), [MSVC12 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.64/yarp_2.3.64_v12_x86_amd64_1.exe)
+  \li [MSVC10 x86] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.65_v10_x86_1.exe),  [MSVC10 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v10_x86_amd64_1.exe)
+ \li [MSVC11 x86] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v11_x86_1.exe), [MSVC11 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v11_x86_amd64_1.exe)
+ \li [MSVC12 x86] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v12_x86_1.exe), [MSVC12 amd64] (https://github.com/robotology/yarp/releases/download/v2.3.66/yarp_2.3.66_v12_x86_amd64_1.exe)
 
-__Sources for all versions__: https://github.com/robotology/yarp/archive/v2.3.64.zip
+__Sources for all versions__: https://github.com/robotology/yarp/archive/v2.3.66.zip
 
-__Previous versions__: previous versions are hosted on sourceforge https://sourceforge.net/projects/yarp0/files/yarp2/
+__Previous versions__: previous versions are hosted on sourceforge https://sourceforge.net/projects/yarp0/files/yarp2/ and Github https://github.com/robotology/yarp/releases
 
 \section download_linux Linux
 
@@ -42,6 +43,6 @@ In this page we provide individual packages for download, source packages and .d
 
 YARP: https://github.com/robotology/yarp/releases
 
-or get source packages: [yarp-2.3.64.tar.gz](https://github.com/robotology/yarp/archive/v2.3.64.tar.gz)
+or get source packages: [yarp-2.3.66.tar.gz](https://github.com/robotology/yarp/archive/v2.3.66.tar.gz)
 
 */
