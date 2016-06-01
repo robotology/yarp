@@ -65,8 +65,8 @@
 /** defines for AX12 general ids **************************************/
 #define AX12_BROADCAST_ID 0xFE
 
-/** defines for device paramters - EEPROM *****************************
-    100 added if paramter has length 2 */
+/** defines for device parameters - EEPROM *****************************
+    100 added if parameter has length 2 */
 
 #define CT_MODEL_NUMBER         00
 #define CT_FIRMWARE_VERSION      2
@@ -79,7 +79,7 @@
 #define CT_MAX_TORQUE           14
 #define CT_STATUS_RETURN_LEVEL  16
 
-/** defines for device paramters - RAM ********************************/
+/** defines for device parameters - RAM ********************************/
 
 #define CT_TORQUE_ENABLE	24
 #define CT_CW_COMP_MARGIN	26

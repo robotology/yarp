@@ -244,7 +244,7 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
     center.y = (int)(img->height/2 - (sens_position*scale)*cos(center_angle/180*3.14) );
 
     double angle =0;
-    double lenght=0;
+    double length=0;
     static double old_time=0;
 
     if (!las || !comp) 
@@ -260,17 +260,17 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
     old_time = curr_time;
     for (int i = 0; i<scans; i++)
     {
-        lenght=(*las)[i];
-        if (lenght == INFINITY) continue;
+        length=(*las)[i];
+        if (length == INFINITY) continue;
 
-        if      (lenght<0)     lenght = 0;
-        else if (lenght>15)    lenght = 15; //15m maximum
+        if      (length<0)     length = 0;
+        else if (length>15)    length = 15; //15m maximum
         angle = (double)i / (double)scans *angle_tot - ((360 - angle_tot) - (360 - angle_tot) / 2);
 
-        //lenght=i; //this line is for debug only
+        //length=i; //this line is for debug only
         angle-=center_angle;
-        double x = lenght*scale*cos(angle/180*3.14);
-        double y = -lenght*scale*sin(angle/180*3.14);
+        double x = length*scale*cos(angle/180*3.14);
+        double y = -length*scale*sin(angle/180*3.14);
 
         CvPoint ray;
         ray.x=int(x);

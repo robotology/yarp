@@ -884,7 +884,7 @@ bool ApplicationWindow::onRun(void)
     m_refTreeModSelection->selected_foreach_iter(
         sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
 
-    // changing icons and updating Executables with cell paramters
+    // changing icons and updating Executables with cell parameters
     for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
     {
         Gtk::TreeModel::Row row;

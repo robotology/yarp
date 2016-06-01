@@ -155,7 +155,7 @@ public:
     /**
      * @brief gets the operating system process information given by its PID.
      * If the information cannot be retrieved, ProcessInfo.pid is set to -1
-     * otherwise, it is equal to the given PID as paramter.
+     * otherwise, it is equal to the given PID as parameter.
      * @param pid the process (task) PID
      * @return ProcessInfo
      */

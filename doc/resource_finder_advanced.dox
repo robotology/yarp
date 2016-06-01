@@ -91,7 +91,7 @@ initialization context.
 
 From these tutorials you might have had the feeling it is better to create a new directory for each new
 configuration file for a module. This is not always the case. For simple modules (i.e. modules
-that require only a limited set of paramters to run) it will be much better to just use one context and
+that require only a limited set of parameters to run) it will be much better to just use one context and
 separate configuration files. The name of the configuration file used by the ResourceFinder is determined by the line:
 
 \code

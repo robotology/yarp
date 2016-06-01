@@ -191,7 +191,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         else
             label = LabelModel::create(parentWindow, this, strCarrier.c_str());
 
-        // if it is an auxilary connections
+        // if it is an auxiliary connections
         /*
         if((strLabel.find("virtual") != std::string::npos) ||
            (strLabel.find("auxiliary") != std::string::npos) )

@@ -25,7 +25,7 @@
 #else
 #include <unistd.h>
 #include <string.h>
-#define C_MAXARGS       128     // the max number of command paramters. rational?
+#define C_MAXARGS       128     // the max number of command parameters. rational?
 #endif
 
 #if !defined(WIN32)

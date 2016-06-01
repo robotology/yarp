@@ -41,7 +41,7 @@ public:
      * This will be called when the portmonitor carrier parameters are set via Yarp admin port
      *
      * @param params The Property 
-     * @return Returns true if paramters are correctly set
+     * @return Returns true if parameters are correctly set
      */
     virtual bool setparam(const yarp::os::Property& params);
 

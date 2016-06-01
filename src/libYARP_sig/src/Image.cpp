@@ -926,7 +926,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             return deBayer_GRBG8_TO_RGB(flex, *this, 4);
         else
         {
-            YARP_FIXME_NOTIMPLEMENTED("Convertion from bayer encoding not yet implemented\n"); 
+            YARP_FIXME_NOTIMPLEMENTED("Conversion from bayer encoding not yet implemented\n");
             return false;
         }
     }
@@ -935,7 +935,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     if (isBayer16(header.id))
     {
         // as bayer16 seems unlikely we defer implementation for later
-        YARP_FIXME_NOTIMPLEMENTED("Convertion from bayer encoding 16 bits not yet implemented\n");
+        YARP_FIXME_NOTIMPLEMENTED("Conversion from bayer encoding 16 bits not yet implemented\n");
         return false;
     }
 

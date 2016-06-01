@@ -232,7 +232,7 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config)
 
     if( err != paNoError )
     {
-        fprintf( stderr, "An error occured while using the portaudio stream\n" );
+        fprintf( stderr, "An error occurred while using the portaudio stream\n" );
         fprintf( stderr, "Error number: %d\n", err );
         fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) ); 
     }
@@ -249,7 +249,7 @@ void streamThread::handleError()
     Pa_Terminate();
     if( err != paNoError )
     {
-        fprintf( stderr, "An error occured while using the portaudio stream\n" );
+        fprintf( stderr, "An error occurred while using the portaudio stream\n" );
         fprintf( stderr, "Error number: %d\n", err );
         fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
     }
@@ -262,7 +262,7 @@ void PortAudioDeviceDriver::handleError()
 
     if( err != paNoError )
     {
-        fprintf( stderr, "An error occured while using the portaudio stream\n" );
+        fprintf( stderr, "An error occurred while using the portaudio stream\n" );
         fprintf( stderr, "Error number: %d\n", err );
         fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
     }
@@ -276,7 +276,7 @@ bool PortAudioDeviceDriver::close(void)
         err = Pa_CloseStream( stream );
         if( err != paNoError )
         {
-            fprintf( stderr, "An error occured while closing the portaudio stream\n" );
+            fprintf( stderr, "An error occurred while closing the portaudio stream\n" );
             fprintf( stderr, "Error number: %d\n", err );
             fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
         }
@@ -350,7 +350,7 @@ bool PortAudioDeviceDriver::abortSound(void)
     err = Pa_StopStream( stream );
     if( err != paNoError )
     {
-        fprintf( stderr, "abortSound: error occured while stopping the portaudio stream\n" );
+        fprintf( stderr, "abortSound: error occurred while stopping the portaudio stream\n" );
         fprintf( stderr, "Error number: %d\n", err );
         fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
     }

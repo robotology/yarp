@@ -172,7 +172,7 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
 
 
      /*****************************/
-     // Populate paramters
+     // Populate parameters
      for(int i=0;i<mod->getInnerModule()->argumentCount();i++){
          Argument a = mod->getInnerModule()->getArgumentAt(i);
          QTreeWidgetItem *it = new QTreeWidgetItem(modParams,QStringList() << a.getParam());

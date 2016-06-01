@@ -1423,7 +1423,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.addString("  include_directories(${p})");
     f.addString("endforeach(header_file ${folder_header})");
     f.addString("");
-    f.addString("# Inclue any directories needed for YARP");
+    f.addString("# Include any directories needed for YARP");
     f.addString("include_directories(${YARP_INCLUDE_DIRS})");
     f.addString("");
     f.addString("# Set up our main executable.");

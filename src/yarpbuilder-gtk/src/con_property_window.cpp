@@ -155,7 +155,7 @@ void ConnectionPropertyWindow::update(Glib::RefPtr<ArrowModel> &arrow)
 
         bool dbg = (carrier.find("debug") != std::string::npos);
         bool aux = (carrier.find("virtual") != std::string::npos) ||
-                   (carrier.find("auxilary") != std::string::npos);
+                   (carrier.find("auxiliary") != std::string::npos);
 
         double st = 1.0;
         int tc = 1;
@@ -222,7 +222,7 @@ void ConnectionPropertyWindow::update(Glib::RefPtr<ArrowModel> &arrow)
         childrow[m_Columns.m_col_editable] = true;
 
         childrow = *(m_refTreeModel->append(row.children()));
-        childrow[m_Columns.m_col_name] = "Auxilary";
+        childrow[m_Columns.m_col_name] = "Auxiliary";
         childrow[m_Columns.m_col_value] = (aux) ? "yes" : "no";
         childrow[m_Columns.m_col_editable] = true;
 
@@ -365,7 +365,7 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
                     sprintf(dummy, "%d", tc);
                     param += string("+tc.") + string(dummy);
                 }
-                else if((row[m_Columns.m_col_name] == "Auxilary")
+                else if((row[m_Columns.m_col_name] == "Auxiliary")
                         && compareString(Glib::ustring(row[m_Columns.m_col_value]).c_str(), "yes" ) )
                     param += "+virtual";
                 else if((row[m_Columns.m_col_name] == "Debug mode")

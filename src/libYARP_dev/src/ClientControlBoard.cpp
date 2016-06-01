@@ -2715,7 +2715,7 @@ public:
 
             if (n_joint != l.size())
             {
-                printf("getControlModes group received an answer of wrong lenght. expected %d, actual size is %d", n_joint, l.size());
+                printf("getControlModes group received an answer of wrong length. expected %d, actual size is %d", n_joint, l.size());
                 return false;
             }
 
