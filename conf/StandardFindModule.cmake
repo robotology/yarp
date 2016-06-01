@@ -189,7 +189,7 @@ macro(STANDARD_FIND_MODULE _name _pkgconfig_name)
               endif()
 
               if(${_name}_DEFINITIONS)
-                set_property(TARGET ${_OPT_${_NAME}_TARGET} PROPERTY INTERFACE_COMPILE_DEFINITIONS "${GTK2_DEFINITIONS}")
+                set_property(TARGET ${_OPT_${_NAME}_TARGET} PROPERTY INTERFACE_COMPILE_OPTIONS "${${_name}_DEFINITIONS}")
               endif()
             else()
               get_property(_configurations TARGET ${_OPT_${_NAME}_TARGET} PROPERTY IMPORTED_CONFIGURATIONS)
