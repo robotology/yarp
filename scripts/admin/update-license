@@ -68,7 +68,7 @@ echo $GPL_AUTHOR | perl -ne "print join(\"\\n\",split(/ *, */,\$_))" | grep "." 
 GPL_YEARS=`(sed "s/\-[^ ]*//g" | sed "s/[^0-9 ]/ /g" ) < license-gpl.txt`
 echo $GPL_YEARS | perl -ne "print join(\"\\n\",split(/ +/,\$_))" | sort | uniq | grep "20" | tee license-gpl-years.txt
 
-grep -i -o "\[thanks [^]]*\]" ChangeLog | sed "s/^.thanks //i" | sed "s/\]//" > license-thanked.txt
+#grep -i -o "\[thanks [^]]*\]" ChangeLog | sed "s/^.thanks //i" | sed "s/\]//" > license-thanked.txt
 
 # Construct license report
 (
@@ -89,10 +89,10 @@ EOF
 git shortlog -esn | awk 'BEGIN{FS="\t"}{print "  " $2}' | sed "s/ <.\+>//"
 cat<<EOF
 
-The list of people thanked in the ChangeLog (ordered by mention count) is:
-EOF
-( cat license-thanked.txt | sort | uniq -c | sort -k 1rn -k 2d | sed "s/.*[0-9] // " ) | sed "s/^/  /"
-cat<<EOF
+#The list of people thanked in the ChangeLog (ordered by mention count) is:
+#EOF
+#( cat license-thanked.txt | sort | uniq -c | sort -k 1rn -k 2d | sed "s/.*[0-9] // " ) | sed "s/^/  /"
+#cat<<EOF
 
 The list of copyright holders for YARP is:
 EOF
