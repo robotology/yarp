@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>QtYarprun Logger</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="res.qrc">
+    <normaloff>:/logo.svg</normaloff>:/logo.svg</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
