@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="res.qrc">
+    <normaloff>:/logo.svg</normaloff>:/logo.svg</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="80,10,10">
    <item>
     <widget class="QGroupBox" name="groupBox">
