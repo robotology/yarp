@@ -13,6 +13,7 @@
         <file alias="apply.svg">../../data/icons/512x512/actions-apply.svg</file>
         <file alias="warning.svg">../../data/icons/512x512/actions-warning.svg</file>
         <file alias="folder-new.svg">../../data/icons/512x512/folder-new.svg</file>
+        <file alias="logo.svg">../../data/icons/512x512/home.svg</file>
         <file>images/downArrow.png</file>
         <file>images/goAll.png</file>
         <file>images/calibrate.png</file>

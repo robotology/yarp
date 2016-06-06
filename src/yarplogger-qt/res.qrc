@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+    <file alias="logo.svg">images/logger_ico.svg</file>
     <file>images/run_ico.png</file>
     <file>images/stop_ico.png</file>
     <file>images/progress_ico.png</file>
