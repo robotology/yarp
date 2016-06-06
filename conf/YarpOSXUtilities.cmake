@@ -28,7 +28,7 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
     set(_target_orig ${_DADB_TARGET_ORIG})
 
     if(NOT DEFINED _DADB_TARGET_DEST)
-      set(_target_dest ${_target}.app)
+      set(_target_dest ${_target_orig}.app)
     else()
       set(_target_dest ${_DADB_TARGET_DEST})
     endif()
