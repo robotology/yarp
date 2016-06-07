@@ -27,7 +27,11 @@
 #else
 #  include <pthread.h>
 #  define Platform_hthread_t pthread_t
-#  define Platform_thread_t long int
+#  if !defined(__APPLE__)
+#    define Platform_thread_t long int
+#  else
+#    define Platform_thread_t pthread_t
+#  endif
 #  define PLATFORM_THREAD_SELF() pthread_self()
 #  define PLATFORM_THREAD_RETURN void *
 #  define PLATFORM_THREAD_JOIN(x) pthread_join(x,0/*NULL*/)
