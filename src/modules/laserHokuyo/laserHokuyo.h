@@ -38,6 +38,8 @@ protected:
     int sensorsNum;
     int start_position;
     int end_position;
+    double min_angle;
+    double max_angle;
     int error_codes;
     int internal_status;
     std::string info;
