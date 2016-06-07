@@ -41,10 +41,11 @@ Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
     rosNode = NULL;
     rosMsgCounter = 0;
     useROS      = ROS_disabled;
-    minAngle    = DEFAULT_DUMMY_MIN_ANGLE_DEG;
-    maxAngle    = DEFAULT_DUMMY_MAX_ANGLE_DEG;
-    minDistance = DEFAULT_DUMMY_MIN_DISTANCE;
-    maxDistance = DEFAULT_DUMMY_MAX_DISTANCE;
+    minAngle    = 0;
+    maxAngle    = 0;
+    minDistance = 0;
+    maxDistance = 0;
+    resolution = 0;
 }
 
 Rangefinder2DWrapper::~Rangefinder2DWrapper()
@@ -214,14 +215,20 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
 
     if(!sens_p->getDistanceRange(minDistance, maxDistance))
     {
-        yWarning() << "Laser device does not provide min & max angle scan range. Using dummy values of " << DEFAULT_DUMMY_MIN_DISTANCE \
-        << " and " << DEFAULT_DUMMY_MAX_DISTANCE << " for ROS messages.";
+        yError() << "Laser device does not provide min & max distance range.";
+        return false;
     }
 
     if(!sens_p->getScanLimits(minAngle, maxAngle))
     {
-        yWarning() << "Laser device does not provide min & max distance range. Using dummy values of " << DEFAULT_DUMMY_MIN_ANGLE_DEG \
-        << " and " << DEFAULT_DUMMY_MAX_ANGLE_DEG << " for ROS messages.";
+        yError() << "Laser device does not provide min & max angle scan range.";
+        return false;
+    }
+
+    if (!sens_p->getHorizontalResolution(resolution))
+    {
+        yError() << "Laser device does not provide horizontal resolution ";
+        return false;
     }
 
     RateThread::setRate(_rate);
@@ -554,7 +561,7 @@ void Rangefinder2DWrapper::run()
 
                 rosData.angle_min = minAngle * 3.14 / 180.0;
                 rosData.angle_max = maxAngle * 3.14 / 180.0;
-                rosData.angle_increment = 1 * 3.14 / 180.0;
+                rosData.angle_increment = resolution * 3.14 / 180.0;
                 rosData.time_increment = 0;             // all points in a single scan are considered took at the very same time
                 rosData.scan_time = 1/getRate();        // time elapsed between two successive readings
                 rosData.range_min = minDistance;
