@@ -2,57 +2,124 @@ sudo: required
 dist: trusty
 language: cpp
 cache: ccache
+osx_image: xcode7.3
 
 os:
   - linux
   - osx
-
 
 compiler:
   - gcc
   - clang
 
 env:
-  # Normal build
-  - TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
-  # Normal build with ninja
-  - TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Ninja" TRAVIS_BUILD_TYPE=Release
-  # C++11 build
-  - TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
-  # No ACE build
-  - TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
-  # C++11 - No ACE build
-  - TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
-  # Normal build with integration tests (likely to fail due to timeout)
-  - TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
+  global:
+    - TRAVIS_CMAKE_GENERATOR="Unix Makefiles"
+    - TRAVIS_BUILD_TYPE=Release
+    - TRAVIS_WITH_INTEGRATION_TESTS=false
+    - TRAVIS_STATIC=false
+    - TRAVIS_WITH_VALGRIND=false
+
+  matrix:
+    # Normal build
+    - TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false
+    # C++11 build
+    - TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true
+    # No ACE build
+    - TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
+    # C++11 - No ACE build
+    - TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
 
 matrix:
-  exclude:
-    - os: osx
-
   include:
-    # Coverage build
+    # Normal build with Ninja generator (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
+
+    # Normal build with Ninja generator (linux, clang)
+    - os: linux
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
+
+    # Normal build with integration tests (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+
+    # Normal build with integration tests (linux, clang)
+    - os: linux
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+
+    # Static build (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+
+    # Static build (linux, clang)
+    - os: linux
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+
+    # Static build, no ACE (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+
+    # Static build, no ACE (linux, clang)
+    - os: linux
+      compiler: clang
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+
+    # Normal build with valgrind (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
+
+    # C++11 build with valgrind (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
+
+    # No ACE build with valgrind (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
+
+    # C++11 build with valgrind (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
+
+    # Normal build with Coverage (linux, gcc)
 #    - os: linux
 #      compiler: gcc
-#      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Profile
-    # OSX, Unix Makefiles, gcc build
-    - os: osx
-      compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
-    # OSX, Unix Makefiles, clang build
+#      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_BUILD_TYPE=Profile
+
+    # Normal build with Xcode generator (osx, clang)
     - os: osx
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
-    # OSX, Xcode, clang build
-    - os: osx
-      compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Xcode" TRAVIS_BUILD_TYPE=Release
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
 
   allow_failures:
-    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true TRAVIS_CMAKE_GENERATOR="Unix Makefiles" TRAVIS_BUILD_TYPE=Release
-    - os: osx
-      compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=false TRAVIS_CMAKE_GENERATOR="Xcode" TRAVIS_BUILD_TYPE=Release
+    # Normal build with integration tests (sometimes integration::rpc test fails, sometimes reaches time limit)
+    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+
+    # Normal build with valgrind
+    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
+
+    # C++11 build with valgrind
+    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
+
+    # No ACE build with valgrind
+    - env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
+
+    # C++11 build with valgrind
+    - env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
+
+    # Normal build with Xcode generator (idl demo tests fail)
+    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
 
 branches:
   except:
@@ -67,21 +134,30 @@ notifications:
     use_notice: true
     skip_join: true
 
+
 before_install:
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_DESKTOP=`lsb_release -cs`; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_VERSION=indigo; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_PREFIX=ros-${ROS_CI_VERSION}-; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_HOSTNAME=localhost; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_MASTER_URI=http://localhost:11311; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROBOT=sim; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then echo "deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main" | sudo tee /etc/apt/sources.list.d/ros-latest.list; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget http://packages.ros.org/ros.key -O - | sudo apt-key add -; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -qq; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/x11; fi
+  # Prepare ros environment variables
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_DESKTOP=`lsb_release -cs`; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_VERSION=indigo; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_PREFIX=ros-${ROS_CI_VERSION}-; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_HOSTNAME=localhost; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_MASTER_URI=http://localhost:11311; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROBOT=sim; fi; fi
+
+  # Add additional repositories
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then echo "deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main" | sudo tee /etc/apt/sources.list.d/ros-latest.list; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then wget http://packages.ros.org/ros.key -O - | sudo apt-key add -; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/science; fi
+
+  # Update repositories
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -qq; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
+
+  # Install missing build tools
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_CMAKE_GENERATOR" == "Ninja" ]; then sudo apt-get install ninja-build; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then sudo apt-get -y install lcov; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then sudo gem install coveralls-lcov; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_VALGRIND; then sudo apt-get install -y valgrind; fi; fi
 
   # Install ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ccache; fi
@@ -93,61 +169,108 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLAGS="-Qunused-arguments"; fi; fi
 
+  # Print some more system information after installing all build tools
+  - echo "-------------------- BEGIN SYSTEM INFORMATION --------------------"
+  - uname -a
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then lsb_release -a; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then system_profiler SPSoftwareDataType; fi
+  - env
+  - which cmake
+  - cmake --version
+  - which $CC
+  - $CC --version
+  - which $CXX
+  - $CXX --version
+  - which ccache
+  - ccache --version
+  - ccache -s
+  - echo "--------------------  END SYSTEM INFORMATION  --------------------"
+
+
 install:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y cmake libgsl0-dev; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgtkmm-2.4-dev; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev; fi
+  # Install ACE
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_ACE; then sudo apt-get -y install libace-dev; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_CMAKE_GENERATOR" == "Ninja" ]; then sudo apt-get install ninja-build; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install yarp --only-dependencies; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gtkmm gtk+; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then if $TRAVIS_WITH_ACE; then brew install ace; fi; fi
+
+  # Install other core dependencies (sqlite, tinyxml)
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libsqlite3-dev libtinyxml-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install sqlite tinyxml; fi
+
+  # Install GTK2 GUIs dependencies
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgtkmm-2.4-dev libgtkdataboxmm-dev libgoocanvasmm-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gtkmm gtk+ gtkdatabox goocanvas; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link --force gettext; fi # Fix goocanvas build
+
+  # Install Qt5 GUIs dependencies
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install swig; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-mcs; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo rosdep init && rosdep update; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/${ROS_CI_VERSION}/setup.bash; fi
-  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then sudo apt-get -y install lcov; fi
-  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then gem install coveralls-lcov; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"; fi
+
+  # Install GPL dependencies (gsl, readline, qcustomplot)
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgsl0-dev libreadline-dev libqcustomplot-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gsl readline; fi
+
+  # Install other dependencies (opencv)
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libopencv-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv; fi
+
+  # Install swig stuff
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-mcs; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi; fi
+
+  # Install ros stuff
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install ${ROS_CI_PREFIX}desktop-full; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo rosdep init && rosdep update; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/${ROS_CI_VERSION}/setup.bash; fi; fi
+
 
 before_script:
-  - cmake --version
+  # Prepare build directory
   - mkdir -p build
-  - cd build
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then ln -s ../cache cache; fi
-  - . ../scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then ln -s ../cache build/cache; fi
+
+  # Prepare cmake options
+  - . scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
   - export YARP_CMAKE_OPTIONS=" $CMAKE_OPTIONS"
-  - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=TRUE -DYARP_TEST_HEAP=TRUE"; fi
-  - if $TRAVIS_WITH_CXX11; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_EXPERIMENTAL_CXX11=TRUE"; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=TRUE"; fi
-  - cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ..
-  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --directory . --zerocounters; fi
-  - cd ..
+  - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
+  - if $TRAVIS_WITH_CXX11; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_EXPERIMENTAL_CXX11=ON"; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
+  - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_SHARED_LIBRARY=ON"; fi
+  - if $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_VALGRIND_TESTS=ON -DYARP_VALGRIND_DRD_TESTS=OFF -DYARP_VALGRIND_HELGRIND_TESTS=OFF YARP_VALGRIND_MEMCHECK_TESTS=ON YARP_VALGRIND_SGCHECK_TESTS=OFF"; fi
+
+  # Run CMake
+  - (cd build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ..)
+
+  # Reset coverage information
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then (cd build; lcov --directory . --zerocounters); fi
+
 
 script:
-  - cd build
-  - cmake --build . --config ${TRAVIS_BUILD_TYPE}
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then bin/yarp conf 0 0 local; fi
-  - ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE}
-  - sudo cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install
-  - cd ..
-  # build also the os examples 
-  - cd ./example/os
-  - mkdir build
-  - cd build
-  - cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ..
-  - cmake --build . --config ${TRAVIS_BUILD_TYPE}
-  - cd ../..
+  # Build yarp
+  - (cd build; cmake --build . --config ${TRAVIS_BUILD_TYPE})
+
+  # Configure yarp
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then build/bin/yarp conf 0 0 local; fi
+
+  # Run unit tests
+  - (cd build; ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE})
+
+  # Test installation
+  - (cd build; sudo cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
+
+  # Build also the os examples
+  - mkdir example/os/build
+  - (cd example/os/build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ..)
+  - (cd example/os/build; cmake --build . --config ${TRAVIS_BUILD_TYPE})
+
 
 after_success:
-  - cd build
-  # capture coverage info
-  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --directory . --capture --output-file coverage.info; fi
-  # filter out system and test code
-  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'idls/*' '*/harness/*' 'yarp/build/*' 'src/libYARP_serversql/*' 'src/libYARP_name/*' --output-file coverage.info; fi
-  # debug before upload
-  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then lcov --list coverage.info; fi
-  # uploads to coveralls
-  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then coveralls-lcov --source-encoding=ISO-8859-1 coverage.info; fi
-  - cd ..
+  # Capture coverage info for Profile builds
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then (cd build; lcov --directory . --capture --output-file coverage.info); fi
+  # Filter out system and test code
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then (cd build; lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'idls/*' '*/harness/*' 'yarp/build/*' 'src/libYARP_serversql/*' 'src/libYARP_name/*' --output-file coverage.info); fi
+  # Debug before upload
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then (cd build; lcov --list coverage.info); fi
+  # Uploads to coveralls
+  - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then (cd build; coveralls-lcov --source-encoding=ISO-8859-1 coverage.info); fi
