@@ -42,8 +42,15 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     //list of mandatory options
     //TODO change comments
     period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt();
+
+    if (general_config.check("max_angle") == false) { yError() << "Missing max_angle param"; return false; }
+    if (general_config.check("min_angle") == false) { yError() << "Missing min_angle param"; return false; }
+    max_angle = general_config.find("max_angle").asDouble();
+    min_angle = general_config.find("min_angle").asDouble();
+
     start_position = general_config.check("Start_Position", Value(0), "Start position").asInt();
     end_position = general_config.check("End_Position", Value(1080), "End Position").asInt();
+
     error_codes = general_config.check("Convert_Error_Codes", Value(0), "Substitute error codes with legal measurments").asInt();
     yarp::os::ConstString s = general_config.check("Laser_Mode", Value("GD"), "Laser Mode (GD/MD").asString();
 
@@ -281,8 +288,8 @@ bool laserHokuyo::setDistanceRange(double min, double max)
 bool laserHokuyo::getScanLimits(double& min, double& max)
 {
     //degrees
-    min = 0;
-    max = 270;
+    min = min_angle;
+    max = max_angle;
     return true;
 }
 
