@@ -253,21 +253,26 @@ static void handler (int sig) {
    // }
 
 #if defined(WIN32)
-	//on windows we need to reset the handler after beeing called, otherwise it will not be called anymore.
-	//see http://www.geeksforgeeks.org/write-a-c-program-that-doesnt-terminate-when-ctrlc-is-pressed/
+    // on windows we need to reset the handler after beeing called, otherwise it
+    // will not be called anymore.
+    // see http://www.geeksforgeeks.org/write-a-c-program-that-doesnt-terminate-when-ctrlc-is-pressed/
 
-	//Additionally, from http://www.linuxprogrammingblog.com/all-about-linux-signals?page=show 
-	//The signal(2) function is the oldest and simplest way to install a signal handler but it's deprecated. 
-	// There are few reasons and most important is that the original Unix implementation would reset the signal handler to it's default value after signal is received.
-	ACE_OS::signal(SIGINT, (ACE_SignalHandler)handler);
+    // Additionally, from
+    // http://www.linuxprogrammingblog.com/all-about-linux-signals?page=show
+    // The signal(2) function is the oldest and simplest way to install a signal
+    // handler but it's deprecated.
+    // There are few reasons and most important is that the original Unix
+    // implementation would reset the signal handler to it's default value after
+    // signal is received.
+    ACE_OS::signal(SIGINT, (ACE_SignalHandler)handler);
 #endif
 }
 
-// Special case for windows. Do not return, wait for the the main thread to return.
-// In any case windows will shut down the application after a timeout of 5 seconds.
-// This wait is required otherwise windows shuts down the process after we return from
-// the signal handler. We could not find better way to handle clean remote shutdown of
-// processes in windows.
+// Special case for windows. Do not return, wait for the the main thread to
+// return.  In any case windows will shut down the application after a timeout
+// of 5 seconds.  This wait is required otherwise windows shuts down the process
+// after we return from the signal handler.  We could not find better way to
+// handle clean remote shutdown of processes in windows.
 #if defined(WIN32)
 static void handler_sigbreak(int sig) {
     raise(SIGINT);

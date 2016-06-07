@@ -34,8 +34,8 @@ namespace dev {
 
 
 class OVRHeadset : public yarp::dev::DeviceDriver,
-                  public yarp::os::RateThread,
-                  public yarp::dev::IService
+                   public yarp::os::RateThread,
+                   public yarp::dev::IService
 {
 public:
     explicit OVRHeadset();
