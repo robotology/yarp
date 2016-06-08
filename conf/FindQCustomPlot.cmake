@@ -1,19 +1,15 @@
-# Try to find the QCustomPlot librairies
-#  QCustomPlot_FOUND - system has QCustomPlot lib
-#  QCustomPlot_INCLUDE_DIRS - the GMP include directory
-#  QCustomPlot_LIBRARIES - Libraries needed to use QCustomPlot
+# Try to find the QCustomPlot library
+#  QCUSTOMPLOT_FOUND - system has QCustomPlot lib
+#  QCustomPlot_INCLUDE_DIRS - the include directories needed
+#  QCustomPlot_LIBRARIES - libraries needed
 
-# Copyright (c) 2013, Anton Gladky <gladk@debian.org>
-#
-# Redistribution and use is allowed according to the terms of the GPL-3 license.
+FIND_PATH(QCUSTOMPLOT_INCLUDE_DIR NAMES qcustomplot.h)
+FIND_LIBRARY(QCUSTOMPLOT_LIBRARY NAMES qcustomplot)
 
+SET(QCustomPlot_INCLUDE_DIRS ${QCUSTOMPLOT_INCLUDE_DIR})
+SET(QCustomPlot_LIBRARIES ${QCUSTOMPLOT_LIBRARY})
 
-IF (QCustomPlot_INCLUDE_DIRS AND QCustomPlot_LIBRARIES)
-  SET(QCustomPlot_FIND_QUIETLY TRUE)
-ENDIF (QCustomPlot_INCLUDE_DIRS AND QCustomPlot_LIBRARIES)
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(QCustomPlot DEFAULT_MSG QCUSTOMPLOT_LIBRARY QCUSTOMPLOT_INCLUDE_DIR)
 
-FIND_PATH(QCustomPlot_INCLUDE_DIRS NAMES qcustomplot.h )
-FIND_LIBRARY(QCustomPlot_LIBRARIES NAMES qcustomplot )
-
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(QCustomPlot DEFAULT_MSG QCustomPlot_INCLUDE_DIRS QCustomPlot_LIBRARIES)
+MARK_AS_ADVANCED(QCUSTOMPLOT_INCLUDE_DIR QCUSTOMPLOT_LIBRARY)
