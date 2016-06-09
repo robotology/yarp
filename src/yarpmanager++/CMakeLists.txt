@@ -2,7 +2,7 @@
 # Author: Ali Paikan <ali.paikan@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
+if(CREATE_YARPMANAGER_PP)
 
     include(YarpUseQt5)
     include(YarpOSXUtilities)
@@ -132,10 +132,6 @@ if(CREATE_YARPMANAGER_PP AND YARP_HAS_QT5)
     endif()
 
     install(TARGETS yarpmanager++ COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-    if(NOT YARP_DEFAULT_GTK)
-    set_target_properties(yarpmanager++ PROPERTIES OUTPUT_NAME yarpmanager++)
-    endif()
 
     yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpmanager++
                                       TARGET_DEST yarpmanager++.app

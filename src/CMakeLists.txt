@@ -43,25 +43,15 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarpdatadumper)
 
     # Qt5 GUIs
-    add_subdirectory(yarpview-qt)
-    add_subdirectory(yarpscope-qt)
-    add_subdirectory(yarpmanager-qt)
-    add_subdirectory(yarplogger-qt)
-    add_subdirectory(yarpdataplayer-qt)
-    add_subdirectory(yarpmotorgui-qt)
-    add_subdirectory(yarpbatterygui-qt)
+    add_subdirectory(yarpview)
+    add_subdirectory(yarpscope)
+    add_subdirectory(yarpmanager)
+    add_subdirectory(yarplogger)
+    add_subdirectory(yarpdataplayer)
+    add_subdirectory(yarpmotorgui)
+    add_subdirectory(yarpbatterygui)
     add_subdirectory(yarplaserscannergui)
     add_subdirectory(yarpmanager++)
-
-    # GTK2 GUIs
-    add_subdirectory(yarpbuilder-gtk)
-    if(NOT YARP_NO_DEPRECATED)
-        add_subdirectory(yarpview-gtk)
-        add_subdirectory(yarpscope-gtk)
-        add_subdirectory(yarpmanager-gtk)
-        add_subdirectory(yarpmotorgui-gtk)
-        add_subdirectory(yarpdataplayer-gtk)
-    endif()
 endif()
 
 

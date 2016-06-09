@@ -196,11 +196,6 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libsqlite3-dev libtinyxml-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install sqlite tinyxml; fi
 
-  # Install GTK2 GUIs dependencies
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgtkmm-2.4-dev libgtkdataboxmm-dev libgoocanvasmm-dev; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gtkmm gtk+ gtkdatabox goocanvas; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link --force gettext; fi # Fix goocanvas build
-
   # Install Qt5 GUIs dependencies
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
