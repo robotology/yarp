@@ -83,6 +83,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ServiceInterfaces.h
                   include/yarp/dev/TestFrameGrabber.h
                   include/yarp/dev/TestMotor.h
+                  include/yarp/dev/ITransform.h
                   include/yarp/dev/Wrapper.h
                   include/yarp/dev/ControlBoardInterfacesImpl.inl)
 
@@ -148,7 +149,9 @@ set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.cpp
-                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp)
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
+                        src/modules/TransformClient/TransformClient.cpp
+						src/modules/TransformServer/TransformServer.cpp)
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/AnalogSensorClient/AnalogSensorClient.h
@@ -159,7 +162,9 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.h
-                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h)
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h
+                        src/modules/TransformClient/TransformClient.h
+						src/modules/TransformServer/TransformServer.h)
 
 
 # handle the ros / yarp thrift messages
@@ -220,6 +225,7 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/AnalogSensorClient)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/BatteryClient)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/TransformClient)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
