@@ -21,8 +21,8 @@ Previous releases:
 
 \section download_windows Windows
 
- \remark Important: to develop code using precompiled binaries packages have to match the compiler you use, make sure you download and install the correct version (i.e. MSVC12 for Visual Studio 12, etc..).
- If in doubt about the version number of your copy of Visual Studio, find the internal version number shown for it in this [version history table](http://en.wikipedia.org/wiki/Microsoft_Visual_Studio#Version_history).
+ \remark Important: to develop code using precompiled binaries packages have to match the compiler you use, make sure you download and install the correct version (i.e. MSVC12 for Visual Studio 2013, etc..).
+ If in doubt about the version number of your copy of Visual Studio, find the internal version number shown for it in this [version history table](http://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History).
 
 
 __Installers__:
