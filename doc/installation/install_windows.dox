@@ -35,6 +35,14 @@ Alternatively you can compile all dependencies yourself following the procedure 
 
 \subsubsection windows_development_environment Setting up development environment
 
+To compile YARP from sources, you need a C++ compiler. 
+
+On Windows, you can compile Visual Studio 2013 Community Edition 
+from the [Microsoft website](https://www.visualstudio.com/en-en/downloads/download-visual-studio-vs.aspx#). 
+
+Please note that is reccomended to use Visual Studio 2013 because at the moment we do not provide precompiled
+binaries for YARP dependencies for Visual Studio 2015. 
+
 Besides the C++ compiler you also need the following tools.
 
 \paragraph CMake
@@ -100,7 +108,7 @@ Now we are ready to compile. Go to the build directory (i.e. \c /home/usr/yarp/b
 \subsubsection set_up_your_environment_windows Setup your environment
 
  + Set the environment variable \c YARP_DIR so that it points to the installation directory you have chosen (e.g. \c C:/Program Files/YARP). Set \c YARP_DATA_DIRS to %YARP_DIR%/share/yarp. 
- + Update your \c PATH environment variable so that it points to the directories bin and lib within the installation directory you have chose (i.e. \c C:/Program Files/YARP/bin and \c C:/Program Files/YARP/lib).
+ + Add to the \c PATH environment variable the paths of the directories bin and lib within the installation directory you have chose (i.e. \c C:/Program Files/YARP/bin and \c C:/Program Files/YARP/lib).
 
 You are now ready to check you installation, see \ref check_your_installation.
 
