@@ -163,7 +163,6 @@ public:
         finished = false;
         finishing = false;
         manual = false;
-        autoHandshake = true;
         waitBeforeSend = waitAfterSend = true;
         connectionListeners = 0;
         events = 0;
@@ -245,15 +244,6 @@ public:
      * Set a callback for creating callbacks for incoming data.
      */
     void setReadCreator(yarp::os::PortReaderCreator& creator);
-
-    /**
-     * Usually this class will handle "handshaking" - establishing
-     * what kind of carrier is in use on a given connection.
-     * This can optionally be suppressed.
-     */
-    void setAutoHandshake(bool autoHandshake) {
-        this->autoHandshake = autoHandshake;
-    }
 
     /**
      * Upon being asked to send a message, should we wait for
@@ -546,7 +536,6 @@ private:
     bool starting;  ///< is the port in its startup phase?
     bool closing;   ///< is the port in its closing phase?
     bool finished;  ///< is the port server thread finished running?
-    bool autoHandshake;  ///< should we automatically negotiate carriers for connections
     bool finishing; ///< is the port server thread trying to finish?
     bool waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
     bool waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?

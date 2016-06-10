@@ -669,7 +669,8 @@ void PortCore::addInput(InputProtocol *ip) {
     stateMutex.wait();
     PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                getNextIndex(),
-                                               ip,autoHandshake,false);
+                                               ip,
+                                               false);
     yAssert(unit!=NULL);
     unit->start();
     units.push_back(unit);
@@ -969,7 +970,6 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
             PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                        getNextIndex(),
                                                        ip,
-                                                       true,
                                                        true);
             yAssert(unit!=NULL);
             unit->start();
@@ -2016,7 +2016,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                                            getNextIndex(),
 
                                                                            ip,
-                                                                           true,
                                                                            true);
                                 yAssert(unit!=NULL);
                                 unit->setPupped(pub);
