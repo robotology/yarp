@@ -162,6 +162,13 @@ public:
         double rZ;
         double rW;
     } rotation;
+
+    std::string toString()
+    {
+        char buff [1024];
+        sprintf("%s -> %s \n tran: %f %f %f \n rot: %f %f %f %f \n\n", src_frame_id.c_str(), src_frame_id.c_str(), translation.tX, translation.tY, translation.tZ, rotation.rX, rotation.rY, rotation.rZ, rotation.rW);
+        return std::string(buff);
+    }
 };
 
 #define VOCAB_ITRANSFORM          VOCAB4('i','t','r','f')

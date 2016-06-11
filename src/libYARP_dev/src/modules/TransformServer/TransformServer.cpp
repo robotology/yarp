@@ -74,11 +74,18 @@ TransformServer::TransformServer() : RateThread(DEFAULT_THREAD_PERIOD)
     m_period = DEFAULT_THREAD_PERIOD;
     m_enable_publish_ros_tf = false;
     m_enable_subscribe_ros_tf = false;
+    m_transform_storage = 0;
+    m_rosNode = 0;
 }
 
 TransformServer::~TransformServer()
 {
     threadRelease();
+    if (m_transform_storage)
+    {
+        delete m_transform_storage;
+        m_transform_storage = 0;
+    }
 }
 
 bool TransformServer::read(yarp::os::ConnectionReader& connection)
@@ -106,13 +113,13 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
             t.rotation.rY = in.get(8).asDouble();
             t.rotation.rZ = in.get(9).asDouble();
             t.rotation.rW = in.get(10).asDouble();
-            ret = ret = m_transform_storage.set_transform(t);
+            ret = ret = m_transform_storage->set_transform(t);
         }
         else if (cmd == VOCAB_TRANSFORM_DELETE)
         {
             string frame1 = in.get(2).asString();
             string frame2 = in.get(3).asString();
-            ret = m_transform_storage.delete_transform(frame1, frame2);
+            ret = m_transform_storage->delete_transform(frame1, frame2);
         }
         else
         {
@@ -145,7 +152,11 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
 bool TransformServer::threadInit()
 {
     //open rpc port
-    m_rpcPort.open(m_rpcPortName.c_str());
+    if (!m_rpcPort.open(m_rpcPortName.c_str()))
+    {
+        yError("TransformServer: failed to open port %s", m_rpcPortName.c_str());
+        return false;
+    }
     m_rpcPort.setReader(*this);
 
     // open data port
@@ -183,6 +194,9 @@ bool TransformServer::threadInit()
         }
     }
 
+    m_transform_storage = new Transforms_server_storage();
+
+    yInfo() << "Transform server started";
     return true;
 }
 
@@ -195,24 +209,24 @@ bool TransformServer::open(yarp::os::Searchable &config)
 
     if (!config.check("period"))
     {
-        yError() << "TransformServer: missing 'period' parameter. Check you configuration file\n";
-        return false;
+        m_period = 10;
     }
     else
     {
         m_period = config.find("period").asInt();
     }
 
+    std::string name;
     if (!config.check("name"))
     {
-        yError() << "TransformServer: missing 'name' parameter.";
-        return false;
+        name = "transformServer";
     }
     else
     {
-        m_streamingPortName  = config.find("name").asString().c_str();
-        m_rpcPortName = m_streamingPortName + "/rpc:i";
+        name = config.find("name").asString().c_str();
     }
+    m_streamingPortName =  "/"+ name + "/transforms:o";
+    m_rpcPortName = "/" + name + "/rpc";
 
     //ROS configuration
     if (!config.check("ROS"))
@@ -232,6 +246,7 @@ bool TransformServer::open(yarp::os::Searchable &config)
         yInfo() << "Enabled ROS subscriber";
     }
 
+    this->start();
     return true;
 }
 
@@ -282,31 +297,31 @@ void TransformServer::run()
                     t.rotation.rW = tfs[i].transform.rotation.w;
                     t.src_frame_id = tfs[i].header.frame_id;
                     t.dst_frame_id = tfs[i].child_frame_id;
-                    m_transform_storage.set_transform(t);
+                    (*m_transform_storage).set_transform(t);
                 }
             }
         }
 
         //yarp streaming port
         m_lastStateStamp.update();
-        size_t    tfVecSize = m_transform_storage.size();
+        size_t    tfVecSize = m_transform_storage->size();
         yarp::os::Bottle& b = m_streamingPort.prepare();
         b.clear();
 
         for (size_t i = 0; i < tfVecSize; i++)
         {
             yarp::os::Bottle& transform = b.addList();
-            transform.addString(m_transform_storage[i].src_frame_id);
-            transform.addString(m_transform_storage[i].dst_frame_id);
+            transform.addString((*m_transform_storage)[i].src_frame_id);
+            transform.addString((*m_transform_storage)[i].dst_frame_id);
 
-            transform.addDouble(m_transform_storage[i].translation.tX);
-            transform.addDouble(m_transform_storage[i].translation.tY);
-            transform.addDouble(m_transform_storage[i].translation.tZ);
+            transform.addDouble((*m_transform_storage)[i].translation.tX);
+            transform.addDouble((*m_transform_storage)[i].translation.tY);
+            transform.addDouble((*m_transform_storage)[i].translation.tZ);
 
-            transform.addDouble(m_transform_storage[i].rotation.rX);
-            transform.addDouble(m_transform_storage[i].rotation.rY);
-            transform.addDouble(m_transform_storage[i].rotation.rZ);
-            transform.addDouble(m_transform_storage[i].rotation.rW);
+            transform.addDouble((*m_transform_storage)[i].rotation.rX);
+            transform.addDouble((*m_transform_storage)[i].rotation.rY);
+            transform.addDouble((*m_transform_storage)[i].rotation.rZ);
+            transform.addDouble((*m_transform_storage)[i].rotation.rW);
         }
         
         m_streamingPort.setEnvelope(m_lastStateStamp);
@@ -321,17 +336,17 @@ void TransformServer::run()
 
             for (size_t i = 0; i < tfVecSize; i++)
             {
-                transform.child_frame_id = m_transform_storage[i].dst_frame_id;
-                transform.header.frame_id = m_transform_storage[i].src_frame_id;
+                transform.child_frame_id = (*m_transform_storage)[i].dst_frame_id;
+                transform.header.frame_id = (*m_transform_storage)[i].src_frame_id;
                 transform.header.seq = rosMsgCounter;
                 transform.header.stamp = normalizeSecNSec(yarp::os::Time::now());
-                transform.transform.rotation.x = m_transform_storage[i].rotation.rX;
-                transform.transform.rotation.y = m_transform_storage[i].rotation.rY;
-                transform.transform.rotation.z = m_transform_storage[i].rotation.rZ;
-                transform.transform.rotation.w = m_transform_storage[i].rotation.rW;
-                transform.transform.translation.x = m_transform_storage[i].translation.tX;
-                transform.transform.translation.y = m_transform_storage[i].translation.tY;
-                transform.transform.translation.z = m_transform_storage[i].translation.tZ;
+                transform.transform.rotation.x = (*m_transform_storage)[i].rotation.rX;
+                transform.transform.rotation.y = (*m_transform_storage)[i].rotation.rY;
+                transform.transform.rotation.z = (*m_transform_storage)[i].rotation.rZ;
+                transform.transform.rotation.w = (*m_transform_storage)[i].rotation.rW;
+                transform.transform.translation.x = (*m_transform_storage)[i].translation.tX;
+                transform.transform.translation.y = (*m_transform_storage)[i].translation.tY;
+                transform.transform.translation.z = (*m_transform_storage)[i].translation.tZ;
 
                 rosOutData.transforms[i] = transform;
             }

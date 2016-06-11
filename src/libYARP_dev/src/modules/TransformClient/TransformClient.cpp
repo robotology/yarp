@@ -8,6 +8,7 @@
 #include <TransformClient.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/LockGuard.h>
 
 /*! \file TransformClient.cpp */
 
@@ -16,37 +17,24 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 
-inline void TransformInputPortProcessor::resetStat()
+inline void Transforms_client_storage::resetStat()
 {
-    mutex.wait();
-    count=0;
-    deltaT=0;
-    deltaTMax=0;
-    deltaTMin=1e22;
-    now=Time::now();
-    prev=now;
-    mutex.post();
+
 }
 
-TransformInputPortProcessor::TransformInputPortProcessor()
+void Transforms_client_storage::onRead(yarp::os::Bottle &b)
 {
-    //state=::TRANSFORM_GENERAL_ERROR;
-    resetStat();
-}
+    m_now = Time::now();
+    LockGuard guard(m_mutex);
 
-void TransformInputPortProcessor::onRead(yarp::os::Bottle &b)
-{
-    now=Time::now();
-    mutex.wait();
-
-    if (count>0)
+    if (m_count>0)
     {
-        double tmpDT=now-prev;
-        deltaT+=tmpDT;
-        if (tmpDT>deltaTMax)
-            deltaTMax=tmpDT;
-        if (tmpDT<deltaTMin)
-            deltaTMin=tmpDT;
+        double tmpDT = m_now - m_prev;
+        m_deltaT += tmpDT;
+        if (tmpDT>m_deltaTMax)
+            m_deltaTMax = tmpDT;
+        if (tmpDT<m_deltaTMin)
+            m_deltaTMin = tmpDT;
 
         //compare network time
         /*if (tmpDT*1000<TRANSFORM_TIMEOUT)
@@ -59,97 +47,126 @@ void TransformInputPortProcessor::onRead(yarp::os::Bottle &b)
         }*/
     }
 
-    prev=now;
-    count++;
+    m_prev = m_now;
+    m_count++;
 
-    lastBottle=b;
+    m_lastBottle = b;
     Stamp newStamp;
     getEnvelope(newStamp);
 
     //initialialization (first received data)
-    if (lastStamp.isValid()==false)
+    if (m_lastStamp.isValid() == false)
     {
-        lastStamp = newStamp;
+        m_lastStamp = newStamp;
     }
 
     //now compare timestamps
-    if ((1000*(newStamp.getTime()-lastStamp.getTime()))<TRANSFORM_TIMEOUT_MS)
+    if ((1000 * (newStamp.getTime() - m_lastStamp.getTime()))<TRANSFORM_TIMEOUT_MS)
     {
-        state = b.get(5).asInt();
+        m_state = ITransform::TRANSFORM_OK;
+
+        m_transforms.clear();
+        for (int i = 0; i < b.size(); i++)
+        {
+            Bottle* bt = b.get(i).asList();
+            if (bt != 0)
+            {
+                Transform_t t;
+                t.src_frame_id = bt->get(0).asString();
+                t.dst_frame_id = bt->get(1).asString();
+                t.translation.tX = bt->get(2).asDouble();
+                t.translation.tY = bt->get(3).asDouble();
+                t.translation.tZ = bt->get(4).asDouble();
+                t.rotation.rX = bt->get(5).asDouble();
+                t.rotation.rY = bt->get(6).asDouble();
+                t.rotation.rZ = bt->get(7).asDouble();
+                t.rotation.rW = bt->get(8).asDouble();
+                m_transforms.push_back(t);
+            }
+        }
     }
     else
     {
-        state = ITransform::TRANSFORM_TIMEOUT;
+        m_state = ITransform::TRANSFORM_TIMEOUT;
     }
-    lastStamp = newStamp;
-
-    mutex.post();
+    m_lastStamp = newStamp;
 }
 
-inline int TransformInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
+inline int Transforms_client_storage::getLast(yarp::os::Bottle &data, Stamp &stmp)
 {
-    mutex.wait();
-    int ret=state;
+    LockGuard guard(m_mutex);
+
+    int ret = m_state;
     if (ret != ITransform::TRANSFORM_GENERAL_ERROR)
     {
-        data=lastBottle;
-        stmp = lastStamp;
+        data = m_lastBottle;
+        stmp = m_lastStamp;
     }
-    mutex.post();
 
     return ret;
 }
 
-int    TransformInputPortProcessor::getStatus()
+inline int Transforms_client_storage::getIterations()
 {
-    mutex.wait();
-    int status = lastBottle.get(3).asInt();
-    mutex.post();
-    return status;
-}
-
-
-inline int TransformInputPortProcessor::getIterations()
-{
-    mutex.wait();
-    int ret=count;
-    mutex.post();
+    LockGuard guard(m_mutex);
+    int ret = m_count;
     return ret;
 }
 
 // time is in ms
-void TransformInputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
+void Transforms_client_storage::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
-    mutex.wait();
-    ite=count;
-    min=deltaTMin*1000;
-    max=deltaTMax*1000;
-    if (count<1)
+    LockGuard guard(m_mutex);
+    ite=m_count;
+    min=m_deltaTMin*1000;
+    max=m_deltaTMax*1000;
+    if (m_count<1)
     {
         av=0;
     }
     else
     {
-        av=deltaT/count;
+        av=m_deltaT/m_count;
     }
     av=av*1000;
-    mutex.post();
+}
+
+Transforms_client_storage::Transforms_client_storage(std::string local_streaming_name)
+{
+    m_count = 0;
+    m_deltaT = 0;
+    m_deltaTMax = 0;
+    m_deltaTMin = 1e22;
+    m_now = Time::now();
+    m_prev = m_now;
+
+    if (!this->open(local_streaming_name.c_str()))
+    {
+        yError("TransformClient::open() error could not open port %s, check network", local_streaming_name.c_str());
+    }
+    this->useCallback();
+}
+
+Transforms_client_storage::~Transforms_client_storage()
+{
+    this->interrupt();
+    this->close();
 }
 
 bool yarp::dev::TransformClient::open(yarp::os::Searchable &config)
 {
-    local.clear();
-    remote.clear();
+    m_local_name.clear();
+    m_remote_name.clear();
 
-    local  = config.find("local").asString().c_str();
-    remote = config.find("remote").asString().c_str();
+    m_local_name  = config.find("local").asString().c_str();
+    m_remote_name = config.find("remote").asString().c_str();
 
-    if (local=="")
+    if (m_local_name == "")
     {
         yError("TransformClient::open() error you have to provide valid local name");
         return false;
     }
-    if (remote=="")
+    if (m_remote_name == "")
     {
         yError("TransformClient::open() error you have to provide valid remote name");
         return false;
@@ -157,36 +174,34 @@ bool yarp::dev::TransformClient::open(yarp::os::Searchable &config)
 
     if (config.check("period"))
     {
-        _rate = config.find("period").asInt();
+        m_period = config.find("period").asInt();
     }
     else
     {
-        yError("BatteryClient::open() missing period parameter");
-        return false;
+        m_period = 10;
+        yWarning("TransformClient: using default period of %d ms" , m_period);
     }
 
-    ConstString local_rpc = local;
+    ConstString local_rpc = m_local_name;
     local_rpc += "/rpc:o";
-    ConstString remote_rpc = remote;
+    ConstString remote_rpc = m_remote_name;
     remote_rpc += "/rpc:i";
+    ConstString remote_streaming_name = m_remote_name;
+    remote_streaming_name += ":o";
+    ConstString local_streaming_name = m_local_name;
+    local_streaming_name += ":i";
 
-    if (!inputPort.open(local.c_str()))
-    {
-        yError("TransformClient::open() error could not open port %s, check network",local.c_str());
-        return false;
-    }
-    inputPort.useCallback();
-
-    if (!rpcPort.open(local_rpc.c_str()))
+    if (!m_rpcPort.open(local_rpc.c_str()))
     {
         yError("TransformClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
         return false;
     }
 
-    bool ok=Network::connect(remote.c_str(), local.c_str(), "udp");
+    m_transform_storage = new Transforms_client_storage(local_streaming_name);
+    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "udp");
     if (!ok)
     {
-        yError("TransformClient::open() error could not connect to %s", remote.c_str());
+        yError("TransformClient::open() error could not connect to %s", remote_streaming_name.c_str());
         return false;
     }
 
@@ -202,8 +217,12 @@ bool yarp::dev::TransformClient::open(yarp::os::Searchable &config)
 
 bool yarp::dev::TransformClient::close()
 {
-    rpcPort.close();
-    inputPort.close();
+    m_rpcPort.close();
+    if (m_transform_storage == 0)
+    {
+        delete m_transform_storage;
+        m_transform_storage = 0;
+    }
     return true;
 }
 
@@ -224,12 +243,37 @@ bool yarp::dev::TransformClient::clear()
 
 bool yarp::dev::TransformClient::frameExists(const std::string &frame_id)
 {
-    yError() << "Not yet implemented"; return false;
+    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    {
+        if (((*m_transform_storage)[i].src_frame_id) == frame_id) { return true; }
+        if (((*m_transform_storage)[i].dst_frame_id) == frame_id) { return true; }
+    }
+    return false;
 }
 
 bool yarp::dev::TransformClient::getAllFrameIds(std::vector< std::string > &ids)
 {
-    yError() << "Not yet implemented"; return false;
+    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    {
+        bool found = false;
+        for (size_t j = 0; j < ids.size(); j++)
+        {
+            if (((*m_transform_storage)[i].src_frame_id) == ids[j]) { found = true; break; }
+        }
+        if (found == false) ids.push_back((*m_transform_storage)[i].src_frame_id);
+    }
+
+    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    {
+        bool found = false;
+        for (size_t j = 0; j < ids.size(); j++)
+        {
+            if (((*m_transform_storage)[i].dst_frame_id) == ids[j]) { found = true; break; }
+        }
+        if (found == false) ids.push_back((*m_transform_storage)[i].dst_frame_id);
+    }
+
+    return true;
 }
 
 bool yarp::dev::TransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
@@ -272,32 +316,9 @@ bool yarp::dev::TransformClient::waitForTransform(const std::string &target_fram
     yError() << "Not yet implemented"; return false;
 }
 
-/*
-bool yarp::dev::TransformClient::getBatteryTemperature(double &temperature)
+/*Stamp yarp::dev::TransformClient::getLastInputStamp()
 {
-    temperature = inputPort.getStatus();
-    return true;
-}
-*/
-/*
-bool yarp::dev::TransformClient::getInfo(yarp::os::ConstString &info)
-{
-    Bottle cmd, response;
-    cmd.addVocab(VOCAB_IBATTERY);
-    cmd.addVocab(VOCAB_BATTERY_INFO);
-    bool ok = rpcPort.write(cmd, response);
-    if (CHECK_FAIL(ok, response)!=false)
-    {
-        battery_info = response.get(2).asString();
-        return true;
-    }
-    return false;
-}
-*/
-/*
-Stamp yarp::dev::TransformClient::getLastInputStamp()
-{
-    return lastTs;
+    return m_lastTs;
 }*/
 
 yarp::dev::DriverCreator *createTransformClient() {

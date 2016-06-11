@@ -57,13 +57,15 @@ namespace yarp
 class Transforms_server_storage
 {
 private:
-    std::vector <Transform_t> transforms;
+    std::vector <Transform_t> m_transforms;
 
 public:
+     Transforms_server_storage()      {}
+     ~Transforms_server_storage()     {}
      bool     set_transform           (Transform_t t);
      bool     delete_transform        (std::string t1, std::string t2);
-     inline size_t   size             ()                                { return transforms.size(); }
-     inline Transform_t& operator[]   (std::size_t idx)                 { return transforms[idx]; };
+     inline size_t   size()                                             { return m_transforms.size(); }
+     inline Transform_t& operator[]   (std::size_t idx)                 { return m_transforms[idx]; }
 };
 
 class yarp::dev::TransformServer : public yarp::os::RateThread,
@@ -91,7 +93,7 @@ private:
     yarp::os::Node*              m_rosNode;
     bool                         m_enable_publish_ros_tf;
     bool                         m_enable_subscribe_ros_tf;
-    Transforms_server_storage    m_transform_storage;
+    Transforms_server_storage*   m_transform_storage;
 
     yarp::os::Port                           m_rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> m_streamingPort;
