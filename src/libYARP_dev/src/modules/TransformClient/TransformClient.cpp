@@ -183,13 +183,13 @@ bool yarp::dev::TransformClient::open(yarp::os::Searchable &config)
     }
 
     ConstString local_rpc = m_local_name;
-    local_rpc += "/rpc:o";
+    local_rpc += "/rpc";
     ConstString remote_rpc = m_remote_name;
-    remote_rpc += "/rpc:i";
+    remote_rpc += "/rpc";
     ConstString remote_streaming_name = m_remote_name;
-    remote_streaming_name += ":o";
+    remote_streaming_name += "/transforms:o";
     ConstString local_streaming_name = m_local_name;
-    local_streaming_name += ":i";
+    local_streaming_name += "/transforms:i";
 
     if (!m_rpcPort.open(local_rpc.c_str()))
     {
@@ -226,7 +226,7 @@ bool yarp::dev::TransformClient::close()
     return true;
 }
 
-std::string yarp::dev::TransformClient::allFramesAsString()
+bool yarp::dev::TransformClient::allFramesAsString(std::string &all_frames)
 {
     yError() << "Not yet implemented"; return false;
 }
@@ -238,7 +238,8 @@ bool yarp::dev::TransformClient::canTransform(const std::string &target_frame, c
 
 bool yarp::dev::TransformClient::clear()
 {
-    yError() << "Not yet implemented"; return false;
+    m_transform_storage->clear();
+    return true;
 }
 
 bool yarp::dev::TransformClient::frameExists(const std::string &frame_id)
@@ -278,7 +279,15 @@ bool yarp::dev::TransformClient::getAllFrameIds(std::vector< std::string > &ids)
 
 bool yarp::dev::TransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
 {
-    yError() << "Not yet implemented"; return false;
+    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    {
+        if (((*m_transform_storage)[i].dst_frame_id == frame_id))
+        {
+            parent_frame_id = (*m_transform_storage)[i].src_frame_id;
+            return true;
+        }
+    }
+    return false;
 }
 
 bool yarp::dev::TransformClient::getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)

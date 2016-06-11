@@ -48,12 +48,15 @@ private:
     std::vector <Transform_t> m_transforms;
 
 public:
+    inline size_t   size()                                { return m_transforms.size(); }
+    inline Transform_t& operator[]   (std::size_t idx)    { return m_transforms[idx]; };
+    inline void clear()                                   { m_transforms.clear(); }
+
+public:
     Transforms_client_storage (std::string port_name);
     ~Transforms_client_storage ( );
     bool     set_transform(Transform_t t);
     bool     delete_transform(std::string t1, std::string t2);
-    inline size_t   size()                                { return m_transforms.size(); }
-    inline Transform_t& operator[]   (std::size_t idx)    { return m_transforms[idx]; };
 
     inline void resetStat();
     using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
@@ -99,7 +102,7 @@ public:
     */
     yarp::os::Stamp getLastInputStamp();
 
-     std::string allFramesAsString() ;
+     bool     allFramesAsString(std::string &all_frames);
      bool     canTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg = NULL) ;
      bool     clear() ;
      bool     frameExists(const std::string &frame_id) ;

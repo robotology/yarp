@@ -10,7 +10,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Matrix.h>
-#include <Vector>
+#include <vector>
 
 namespace yarp {
     namespace dev {
@@ -38,12 +38,14 @@ public:
     virtual ~ITransform() {}
 
     /**
-     A way to see what frames have been cached Useful for debugging. 
+    Creates a debug string containing the list of all registered frames.
+    * @param all_frames the returned string containing the frames
+    * @return true/false
     */
-    virtual std::string allFramesAsString ()  = 0;
+    virtual bool allFramesAsString(std::string &all_frames) = 0;
 
     /**
-     Test if a transform exists. 
+    Test if a transform exists. 
     * @return true/false
     */
     virtual bool     canTransform (const std::string &target_frame, const std::string &source_frame, std::string *error_msg=NULL)  = 0;

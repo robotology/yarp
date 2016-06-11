@@ -5,6 +5,7 @@
  */
 
 #include <sstream>
+#include <limits>
 #include "TransformServer.h"
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Log.h>
@@ -113,7 +114,7 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
             t.rotation.rY = in.get(8).asDouble();
             t.rotation.rZ = in.get(9).asDouble();
             t.rotation.rW = in.get(10).asDouble();
-            ret = ret = m_transform_storage->set_transform(t);
+            ret = m_transform_storage->set_transform(t);
         }
         else if (cmd == VOCAB_TRANSFORM_DELETE)
         {
@@ -285,7 +286,7 @@ void TransformServer::run()
             {
                 std::vector <geometry_msgs_TransformStamped> tfs = rosInData->transforms;
                 size_t tfs_size = tfs.size();
-                for (size_t i = 0; i < tfs_size; tfs_size)
+                for (size_t i = 0; i < tfs_size; i++)
                 {
                     Transform_t t;
                     t.translation.tX = tfs[i].transform.translation.x;
