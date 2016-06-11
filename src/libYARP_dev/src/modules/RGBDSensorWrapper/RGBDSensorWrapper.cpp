@@ -529,18 +529,20 @@ bool RGBDSensorWrapper::setCamInfo
     
     if(!camData.check("distortionModel"))
     {
+        yWarning() << "missing distortion model";
         return false;
     }
     
     distModel = camData.find("distortionModel").asString();
     if (distModel != "plumb_bob")
     {
-        yError("distortion model not supported");
+        yError() << "distortion model not supported";
         return false;
     }
     
     if(!camData.check("retificationMatrix"))
     {
+        yWarning() << "missing retification matrix";
         return false;
     }
     Bottle& retificationMatrix = *camData.find("retificationMatrix").asList();
@@ -567,6 +569,7 @@ bool RGBDSensorWrapper::setCamInfo
         
         if(!camData.check(par->parname))
         {
+            yWarning() << "missing "+par->parname;
             return false;
         }
         *par->var = camData.find(par->parname).asDouble();
