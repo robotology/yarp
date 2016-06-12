@@ -203,28 +203,28 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
 
     if (!inputPort.open(local.c_str()))
     {
-        yError("BatteryClient::open() error could not open port %s, check network\n",local.c_str());
+        yError("BatteryClient::open() error could not open port %s, check network",local.c_str());
         return false;
     }
     inputPort.useCallback();
 
     if (!rpcPort.open(local_rpc.c_str()))
     {
-        yError("BatteryClient::open() error could not open rpc port %s, check network\n", local_rpc.c_str());
+        yError("BatteryClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
         return false;
     }
 
     bool ok=Network::connect(remote.c_str(), local.c_str(), "udp");
     if (!ok)
     {
-        yError("BatteryClient::open() error could not connect to %s\n", remote.c_str());
+        yError("BatteryClient::open() error could not connect to %s", remote.c_str());
         return false;
     }
 
     ok=Network::connect(local_rpc.c_str(), remote_rpc.c_str());
     if (!ok)
     {
-        fprintf(stderr,"BatteryClient::open() error could not connect to %s\n", remote_rpc.c_str());
+       yError("BatteryClient::open() error could not connect to %s", remote_rpc.c_str());
        return false;
     }
 
@@ -264,7 +264,7 @@ bool yarp::dev::BatteryClient::getBatteryStatus(int &status)
 
 bool yarp::dev::BatteryClient::getBatteryTemperature(double &temperature)
 {
-    temperature = inputPort.getStatus();
+    temperature = inputPort.getTemperature();
     return true;
 }
 
