@@ -36,7 +36,11 @@ extern char **environ;
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <mach/mach.h>
+#include <unistd.h>
 #include <sstream>
+#include <pwd.h>
+#include <sys/param.h>
+#include <sys/mount.h>
 #endif
 
 #if defined(WIN32)
@@ -269,28 +273,29 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
     }
 #elif defined(__APPLE__)
 
-    int64_t pageSize = 0;
-    size_t length = sizeof(pageSize);
+    vm_size_t page_size;
+    mach_port_t mach_port;
+    mach_msg_type_number_t count;
+    vm_statistics64_data_t vm_stats;
 
-    if (sysctlbyname("vm.pagesize", &pageSize, &length, NULL, 0) == -1) {
-        //error
-    }
-
-    mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
-    vm_statistics vmstat;
-    if (host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vmstat, &count) == KERN_SUCCESS) {
+    mach_port = mach_host_self();
+    count = HOST_VM_INFO64_COUNT;
+    if (KERN_SUCCESS == host_page_size(mach_port, &page_size) &&
+        KERN_SUCCESS == host_statistics64(mach_port, HOST_VM_INFO,
+                                          (host_info64_t)&vm_stats, &count))
+    {
         //These seem to return the # of pages
-        natural_t activePages = vmstat.active_count + vmstat.wire_count;
-        natural_t inactivePages = vmstat.inactive_count + vmstat.free_count;
+        natural_t activePages = vm_stats.active_count + vm_stats.wire_count;
+        natural_t inactivePages = vm_stats.inactive_count + vm_stats.free_count;
         natural_t totalPages = activePages + inactivePages;
 
-        int64_t total = totalPages * pageSize;
-        int64_t freeSpace = inactivePages * pageSize;
+        int64_t total = totalPages * page_size;
+        int64_t freeSpace = inactivePages * page_size;
 
         memory.totalSpace = total / 1024;
         memory.freeSpace = freeSpace / 1024;
-        
     }
+
 #endif
 
 
@@ -332,6 +337,20 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
     }
 
 #endif
+
+#if defined(__APPLE__)
+    yarp::os::ConstString strHome = getUserInfo().homeDir;
+    if(!strHome.length())
+        strHome = "/";
+
+    struct statfs vfs;
+    if (statfs(strHome.c_str(), &vfs) == 0)
+    {
+        storage.totalSpace = (int)(vfs.f_blocks*vfs.f_bsize/(1048576)); // in MB
+        storage.freeSpace = (int)(vfs.f_bavail*vfs.f_bsize/(1048576));  // in MB
+    }
+#endif
+
     return storage;
 }
 
@@ -505,7 +524,7 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     size_t length = sizeof(value);
 
     if (!sysctl(mib, 2, &value, &length, NULL, 0)) {
-        processor.frequency = value; //this is in Hz. What is the expected frequency?
+        processor.frequency = value / 1e+6; //this is in Hz. What is the expected frequency?
     }
 
     if (!sysctlbyname("hw.logicalcpu", &value, &length, NULL, 0)) {
@@ -642,6 +661,20 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 
     }
 #endif
+
+#if defined(__APPLE__)
+
+    char buff[513];
+    size_t buffLen = 512;
+    if (!sysctlbyname("kern.ostype", buff, &buffLen, NULL, 0)) {
+        platform.name = buff;
+    }
+
+    if (!sysctlbyname("kern.osrelease", buff, &buffLen, NULL, 0)) {
+        platform.release = buff;
+    }
+
+#endif
         return platform;
 }
 
@@ -665,7 +698,7 @@ SystemInfo::UserInfo SystemInfo::getUserInfo()
     }
 #endif
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
     struct passwd* pwd = getpwuid(getuid());
     user.userID = getuid();
     if(pwd)
@@ -716,6 +749,24 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
                 load.cpuLoadInstant = (int)(strtol(buff, &tail, 0) - 1);
         }
         fclose(procload);
+    }
+#endif
+
+#if defined(__APPLE__)
+
+    mach_msg_type_number_t count = HOST_CPU_LOAD_INFO_COUNT;
+    host_cpu_load_info_data_t cpu_load;
+
+    if (KERN_SUCCESS == host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO,
+                                        (host_info64_t)&cpu_load, &count))
+    {
+        //How to map this information into yarp structure?
+        natural_t total = 0;
+        for (int i = 0; i < CPU_STATE_MAX; ++i) {
+            total += cpu_load.cpu_ticks[i];
+        }
+
+        load.cpuLoad1 = 100.0 * cpu_load.cpu_ticks[CPU_STATE_USER] / total;
     }
 #endif
     return load;
