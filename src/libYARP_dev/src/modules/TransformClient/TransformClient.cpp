@@ -15,6 +15,7 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
+using namespace yarp::math;
 
 
 inline void Transforms_client_storage::resetStat()
@@ -233,7 +234,28 @@ bool yarp::dev::TransformClient::allFramesAsString(std::string &all_frames)
 
 bool yarp::dev::TransformClient::canTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg)
 {
-    yError() << "Not yet implemented"; return false;
+    Transforms_client_storage& tfVec = *m_transform_storage;
+    size_t i;
+    for (i = 0; i < tfVec.size(); i++)
+    {
+        if (tfVec[i].dst_frame_id == target_frame)
+        {
+            if (tfVec[i].src_frame_id == source_frame)
+            {
+                return true;
+            }
+            else
+            {
+                return canTransform(tfVec[i].src_frame_id, source_frame, error_msg);
+            }
+        }
+    }
+
+    if (error_msg)
+    {
+        *error_msg = "tf connection not found";
+    }
+    return false;
 }
 
 bool yarp::dev::TransformClient::clear()
@@ -292,17 +314,105 @@ bool yarp::dev::TransformClient::getParent(const std::string &frame_id, std::str
 
 bool yarp::dev::TransformClient::getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
 {
-    yError() << "Not yet implemented"; return false;
+    if (!canTransform(target_frame_id, source_frame_id))
+    {
+        return false;
+    }
+
+    Transforms_client_storage& tfVec = *m_transform_storage;
+    size_t i;
+    for (i = 0; i < tfVec.size(); i++)
+    {
+        if (tfVec[i].dst_frame_id == target_frame_id)
+        {
+            if (tfVec[i].src_frame_id == source_frame_id)
+            {
+                transform = tfVec[i].toMatrix();
+                return true;
+            }
+            else
+            {
+                yarp::sig::Matrix m;
+                if (getTransform(tfVec[i].src_frame_id, source_frame_id, m))
+                {
+                    //to uncomment -- build yarp math
+                    //transform = tfVec[i].toMatrix() * m;
+                    return true;
+                };
+            }
+        }
+    }
 }
 
 bool yarp::dev::TransformClient::setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
 {
-    yError() << "Not yet implemented"; return false;
+    if (canTransform(target_frame_id, source_frame_id))
+    {
+        yError() << "such transform already exist (directly or by chaining transforms)!";
+        return false;
+    }
+
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+    Transform_t      tf;
+    
+    if (!tf.fromMatrix(transform))
+    {
+        yError() << "wrong matrix formatit has to be 4 by 4";
+        return false;
+    }
+
+    b.addVocab(VOCAB_ITRANSFORM);
+    b.addVocab(VOCAB_TRANSFORM_SET);
+    b.addString(source_frame_id);
+    b.addString(target_frame_id);
+    b.addDouble(tf.translation.tX);
+    b.addDouble(tf.translation.tY);
+    b.addDouble(tf.translation.tZ);
+    b.addDouble(tf.rotation.rX);
+    b.addDouble(tf.rotation.rY);
+    b.addDouble(tf.rotation.rZ);
+    b.addDouble(tf.rotation.rW);
+    bool ret = m_rpcPort.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "error";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "error";
+        return false;
+    }
+    return true;
 }
 
 bool yarp::dev::TransformClient::deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)
 {
-    yError() << "Not yet implemented"; return false;
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+    b.addVocab(VOCAB_ITRANSFORM);
+    b.addVocab(VOCAB_TRANSFORM_DELETE);
+    b.addString(target_frame_id);
+    b.addString(source_frame_id);
+    bool ret = m_rpcPort.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab()!=VOCAB_OK)
+        {
+            yError() << "error";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "error";
+        return false;
+    }
+    return true;
 }
 
 bool yarp::dev::TransformClient::transformPoint(const std::string &target_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
@@ -322,6 +432,7 @@ bool yarp::dev::TransformClient::transformQuaternion(const std::string &target_f
 
 bool yarp::dev::TransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
 {
+    //loop fintanto che ccantTRransform e' true o ppure scade timeout
     yError() << "Not yet implemented"; return false;
 }
 
@@ -330,8 +441,12 @@ bool yarp::dev::TransformClient::waitForTransform(const std::string &target_fram
     return m_lastTs;
 }*/
 
-yarp::dev::DriverCreator *createTransformClient() {
-    return new DriverCreatorOf<TransformClient>("transformClient",
-        "",
-        "transformClient");
+yarp::dev::DriverCreator *createTransformClient()
+{
+    return new DriverCreatorOf<TransformClient>
+               (
+                   "transformClient",
+                   "",
+                   "transformClient"
+               );
 }

@@ -37,13 +37,13 @@ private:
     yarp::os::Bottle m_lastBottle;
     yarp::os::Mutex  m_mutex;
     yarp::os::Stamp  m_lastStamp;
-    double m_deltaT;
-    double m_deltaTMax;
-    double m_deltaTMin;
-    double m_prev;
-    double m_now;
-    int m_state;
-    int m_count;
+    double           m_deltaT;
+    double           m_deltaTMax;
+    double           m_deltaTMin;
+    double           m_prev;
+    double           m_now;
+    int              m_state;
+    int              m_count;
 
     std::vector <Transform_t> m_transforms;
 

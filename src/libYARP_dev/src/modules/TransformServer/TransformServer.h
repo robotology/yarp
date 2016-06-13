@@ -93,7 +93,8 @@ private:
     yarp::os::Node*              m_rosNode;
     bool                         m_enable_publish_ros_tf;
     bool                         m_enable_subscribe_ros_tf;
-    Transforms_server_storage*   m_transform_storage;
+    Transforms_server_storage*   m_ros_transform_storage;
+    Transforms_server_storage*   m_yarp_transform_storage;
 
     yarp::os::Port                           m_rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> m_streamingPort;
