@@ -13,7 +13,7 @@ The RFModule helper class simplify writing a generic module. It provides support
 \li Parses messages from a port to monitor module activity and set/get parameters 
 \li Use the ResourceFinder class to handle parameters
 
-You do not need to understand the details of the ResourceFinder to proceed with this tutorial. However it may be useful: <a href="http://wiki.icub.org/yarpdoc/yarp_resource_finder_tutorials.html">Resource Finder Tutorials</a>.
+You do not need to understand the details of the ResourceFinder to proceed with this tutorial. However it may be useful: <a href="http://www.yarp.it/yarp_resource_finder_tutorials.html">Resource Finder Tutorials</a>.
 
 This is how a module will look like:
 

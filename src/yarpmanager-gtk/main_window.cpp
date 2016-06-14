@@ -1313,17 +1313,17 @@ void MainWindow::onMenuHelpOnlineHelp()
  #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
     GError *error = NULL;
     gtk_show_uri(gdk_screen_get_default(),
-                 "http://wiki.icub.org/yarpdoc/yarpmanager.html",
+                 "http://www.yarp.it/yarpmanager.html",
                  gtk_get_current_event_time(), &error);
     if(error)
     {
         Gtk::MessageDialog dialog("Cannot open online help!", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_CLOSE);
-        dialog.set_secondary_text("http://wiki.icub.org/yarpdoc/yarpmanager.html");
+        dialog.set_secondary_text("http://www.yarp.it/yarpmanager.html");
         dialog.run();
     }
 #else
     Gtk::MessageDialog dialog("Please visit the following link.", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_CLOSE);
-    dialog.set_secondary_text("http://wiki.icub.org/yarpdoc/yarpmanager.html");
+    dialog.set_secondary_text("http://www.yarp.it/yarpmanager.html");
     dialog.run();
 
 #endif

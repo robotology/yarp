@@ -71,7 +71,7 @@ static void showError(Logger& log) {
     YARP_ERROR(log,"If you do not want to use authentication, please");
     YARP_ERROR(log,"remove this file.");
     YARP_ERROR(log,"If you do want to set up authentication, check:");
-    YARP_ERROR(log,"  http://wiki.icub.org/yarpdoc/yarp_port_auth.html");
+    YARP_ERROR(log,"  http://www.yarp.it/yarp_port_auth.html");
 }
 
 /**
