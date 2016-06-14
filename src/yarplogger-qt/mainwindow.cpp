@@ -533,7 +533,7 @@ void MainWindow::on_actionShow_LocalTimestamps_toggled(bool arg1)
 
 void MainWindow::on_actionAbout_QtYarpLogger_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://wiki.icub.org/yarpdoc/qtyarplogger.html"));
+    QDesktopServices::openUrl(QUrl("http://www.yarp.it/qtyarplogger.html"));
 }
 
 void MainWindow::on_actionSave_Log_triggered(bool checked)

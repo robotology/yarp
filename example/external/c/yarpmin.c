@@ -460,7 +460,7 @@ yarpConnection yarp_prepare_to_read_binary(yarpAddressPtr address) {
     }
 
     // Following tcp protocol documented at: 
-    //   http://wiki.icub.org/yarpdoc/yarp_protocol.html
+    //   http://www.yarp.it/yarp_protocol.html
 
     // Send header to select connection type.
     // this header is for fast_tcp, so we don't have to deal with flow control

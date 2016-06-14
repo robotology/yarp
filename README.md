@@ -7,7 +7,7 @@
 YARP
 ====
 
-[![YARP Homepage](https://img.shields.io/badge/YARP-Yet_Another_Robot_Platform-orange.svg)](http://wiki.icub.org/yarpdoc/)
+[![YARP Homepage](https://img.shields.io/badge/YARP-Yet_Another_Robot_Platform-orange.svg)](http://www.yarp.it/)
 [![Latest Release](https://img.shields.io/github/release/robotology/yarp.svg?label=Latest Release)](https://github.com/robotology/yarp/releases)
 
 YARP is a library and toolkit for communication and device interfaces,
@@ -16,7 +16,7 @@ used on everything from humanoids to embedded devices.
 Installation
 ------------
 
-See full instructions at http://wiki.icub.org/yarpdoc/install.html
+See full instructions at http://www.yarp.it/install.html
 
 On OSX:
 
@@ -42,7 +42,7 @@ Tutorials
 
 There's a comprehensive list of tutorials here:
 
- * http://wiki.icub.org/yarpdoc/tutorials.html
+ * http://www.yarp.it/tutorials.html
 
 License
 -------

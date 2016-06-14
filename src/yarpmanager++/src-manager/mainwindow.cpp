@@ -1079,7 +1079,7 @@ void MainWindow::onAbout()
 
 void MainWindow::onHelp()
 {
-    QDesktopServices::openUrl(QUrl("http://wiki.icub.org/yarpdoc/yarpmanager.html"));
+    QDesktopServices::openUrl(QUrl("http://www.yarp.it/yarpmanager.html"));
 }
 
 void MainWindow::onRemoveApplication(QString appName)

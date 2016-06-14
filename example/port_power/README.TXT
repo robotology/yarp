@@ -12,6 +12,6 @@ Similarly for ports called:
 
 The examples follow the "Port Power" tutorial.  Do a web search for
 YARP port power, or go to the last known address of the tutorial:
-  http://yarp.it/port_expert.html
+  http://www.yarp.it/port_expert.html
 
 -paulfitz
