@@ -42,7 +42,6 @@ extern DriverCreator *createRGBDSensorWrapper();
 extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
 extern DriverCreator *createTransformServer();
-extern DriverCreator *createTransformClient();
 
 #ifndef YARP_NO_DEPRECATED
 extern DriverCreator *createServerControlBoard();
@@ -95,8 +94,7 @@ void Drivers::init() {
     add(createRGBDSensorWrapper());
     add(createRGBDSensorClient());
     add(createControlBoardRemapper());
-	add(createTransformServer());
-	add(createTransformClient());
+    add(createTransformServer());
 
 #ifndef YARP_NO_DEPRECATED
     add(createClientControlBoard());

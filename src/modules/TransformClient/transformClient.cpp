@@ -55,14 +55,15 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
     Stamp newStamp;
     getEnvelope(newStamp);
 
-    //initialialization (first received data)
+    //initialization (first received data)
     if (m_lastStamp.isValid() == false)
     {
         m_lastStamp = newStamp;
     }
 
     //now compare timestamps
-    if ((1000 * (newStamp.getTime() - m_lastStamp.getTime()))<TRANSFORM_TIMEOUT_MS)
+   // if ((1000 * (newStamp.getTime() - m_lastStamp.getTime()))<TRANSFORM_TIMEOUT_MS)
+    if (1)
     {
         m_state = ITransform::TRANSFORM_OK;
 
@@ -219,7 +220,7 @@ bool yarp::dev::TransformClient::open(yarp::os::Searchable &config)
 bool yarp::dev::TransformClient::close()
 {
     m_rpcPort.close();
-    if (m_transform_storage == 0)
+    if (m_transform_storage != 0)
     {
         delete m_transform_storage;
         m_transform_storage = 0;
@@ -229,10 +230,14 @@ bool yarp::dev::TransformClient::close()
 
 bool yarp::dev::TransformClient::allFramesAsString(std::string &all_frames)
 {
-    yError() << "Not yet implemented"; return false;
+    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    {
+        all_frames += (*m_transform_storage)[i].toString() + " ";
+    }
+    return true;
 }
 
-bool yarp::dev::TransformClient::canTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg)
+bool yarp::dev::TransformClient::canLinearTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg) const
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t i;
@@ -246,9 +251,39 @@ bool yarp::dev::TransformClient::canTransform(const std::string &target_frame, c
             }
             else
             {
-                return canTransform(tfVec[i].src_frame_id, source_frame, error_msg);
+                return canLinearTransform(tfVec[i].src_frame_id, source_frame, error_msg);
             }
         }
+    }
+    return false;
+}
+
+bool yarp::dev::TransformClient::canTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg)
+{
+    //Transforms_client_storage& tfVec = *m_transform_storage;
+    //size_t i;
+    //for (i = 0; i < tfVec.size(); i++)
+    //{
+    //    if (tfVec[i].dst_frame_id == target_frame)
+    //    {
+    //        if (tfVec[i].src_frame_id == source_frame)
+    //        {
+    //            return true;
+    //        }
+    //        else
+    //        {
+    //            return canTransform(tfVec[i].src_frame_id, source_frame, error_msg);
+    //            /*if (canTransform(tfVec[i].src_frame_id, source_frame, error_msg))
+    //            {
+    //                return true;
+    //            }*/
+    //        }
+    //    }
+    //}
+
+    if (canLinearTransform(target_frame, source_frame) || canLinearTransform(source_frame, target_frame))
+    {
+        return true;
     }
 
     if (error_msg)
@@ -303,8 +338,10 @@ bool yarp::dev::TransformClient::getParent(const std::string &frame_id, std::str
 {
     for (size_t i = 0; i < m_transform_storage->size(); i++)
     {
+        std::string par((*m_transform_storage)[i].dst_frame_id);
         if (((*m_transform_storage)[i].dst_frame_id == frame_id))
         {
+            
             parent_frame_id = (*m_transform_storage)[i].src_frame_id;
             return true;
         }
@@ -312,13 +349,8 @@ bool yarp::dev::TransformClient::getParent(const std::string &frame_id, std::str
     return false;
 }
 
-bool yarp::dev::TransformClient::getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
+bool yarp::dev::TransformClient::getLinearTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
 {
-    if (!canTransform(target_frame_id, source_frame_id))
-    {
-        return false;
-    }
-
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t i;
     for (i = 0; i < tfVec.size(); i++)
@@ -336,12 +368,33 @@ bool yarp::dev::TransformClient::getTransform(const std::string &target_frame_id
                 if (getTransform(tfVec[i].src_frame_id, source_frame_id, m))
                 {
                     //to uncomment -- build yarp math
-                    //transform = tfVec[i].toMatrix() * m;
+                    transform = m * tfVec[i].toMatrix();
                     return true;
-                };
+                }
             }
         }
     }
+    return false;
+}
+
+bool yarp::dev::TransformClient::getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
+{
+    
+
+    if (canLinearTransform(target_frame_id, source_frame_id))
+    {
+        return getLinearTransform(target_frame_id, source_frame_id, transform);
+    }
+    else if (canLinearTransform(source_frame_id, target_frame_id))
+    {
+        yarp::sig::Matrix m(4, 4);
+        getLinearTransform(source_frame_id, target_frame_id, m);
+        transform = yarp::math::SE3inv(m);
+        return true;
+    }
+
+    yError() << "frame not connected! call canTransform() first nextime, instead of wasting my time please..";
+    return false;
 }
 
 bool yarp::dev::TransformClient::setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
@@ -358,7 +411,7 @@ bool yarp::dev::TransformClient::setTransform(const std::string &target_frame_id
     
     if (!tf.fromMatrix(transform))
     {
-        yError() << "wrong matrix formatit has to be 4 by 4";
+        yError() << "wrong matrix format, it has to be 4 by 4";
         return false;
     }
 
@@ -378,13 +431,13 @@ bool yarp::dev::TransformClient::setTransform(const std::string &target_frame_id
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "error";
+            yError() << "recived error from server on creating frame between " + source_frame_id + " and " + target_frame_id;
             return false;
         }
     }
     else
     {
-        yError() << "error";
+        yError() << "setFrame() -> error on writing on rpc port";
         return false;
     }
     return true;
@@ -403,37 +456,99 @@ bool yarp::dev::TransformClient::deleteTransform(const std::string &target_frame
     {
         if (resp.get(0).asVocab()!=VOCAB_OK)
         {
-            yError() << "error";
+            yError() << "recived error from server on deleting frame between "+source_frame_id+" and "+target_frame_id;
             return false;
         }
     }
     else
     {
-        yError() << "error";
+        yError() << "deleteFrame()->error on writing on rpc port";
         return false;
     }
     return true;
 }
 
-bool yarp::dev::TransformClient::transformPoint(const std::string &target_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
+bool yarp::dev::TransformClient::transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
 {
-    yError() << "Not yet implemented"; return false;
+    if (input_point.size() != 3)
+    {
+        yError() << "sorry.. only 3 dimensional vector allowed my dear..";
+        return false;
+    }
+    yarp::sig::Matrix m(4, 4);
+    if (!getTransform(target_frame_id, source_frame_id, m))
+    {
+        yError() << "no transform found between source and target";
+        return false;
+    }
+    yarp::sig::Vector in = input_point;
+    in.push_back(1);
+    transformed_point = m * in;
+    transformed_point.pop_back();
+    return true;
 }
 
-bool yarp::dev::TransformClient::transformPose(const std::string &target_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose)
+bool yarp::dev::TransformClient::transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose)
 {
-    yError() << "Not yet implemented"; return false;
+    if (input_pose.size() != 6)
+    {
+        yError() << "sorry.. only 6 dimensional vector (3 axes + roll pith and yaw) allowed, dear friend of mine..";
+        return false;
+    }
+    yarp::sig::Matrix m(4, 4);
+    if (!getTransform(target_frame_id, source_frame_id, m))
+    {
+        yError() << "no transform found between source and target";
+        return false;
+    }
+    Transform_t t;
+    t.transFromVec(input_pose[0], input_pose[1], input_pose[2]);
+    t.rotFromRPY(input_pose[3], input_pose[4], input_pose[5]);
+    t.fromMatrix(m * t.toMatrix());
+    transformed_pose[0] = t.translation.tX;
+    transformed_pose[1] = t.translation.tY;
+    transformed_pose[2] = t.translation.tZ;
+    
+    yarp::sig::Vector rot;
+    rot = t.getRPYRot();
+    transformed_pose[3] = rot[0];
+    transformed_pose[4] = rot[1];
+    transformed_pose[5] = rot[2];
+    return true;
 }
 
-bool yarp::dev::TransformClient::transformQuaternion(const std::string &target_frame_id, const yarp::sig::Vector &input_quaternion, yarp::sig::Vector &transformed_quaternion)
+bool yarp::dev::TransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_quaternion, yarp::sig::Vector &transformed_quaternion)
 {
-    yError() << "Not yet implemented"; return false;
+    if (input_quaternion.size() != 4)
+    {
+        yError() << "we're very sorry.. only quaternion allowed man..";
+        return false;
+    }
+    yarp::sig::Matrix m(4, 4);
+    if (!getTransform(target_frame_id, source_frame_id, m))
+    {
+        yError() << "no transform found between source and target";
+        return false;
+    }
+    Transform_t t;
+    t.rotation.fromQuaternion(input_quaternion);
+    transformed_quaternion = yarp::math::dcm2quat(m * t.toMatrix());
+    return true;
 }
 
 bool yarp::dev::TransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
 {
     //loop fintanto che ccantTRransform e' true o ppure scade timeout
-    yError() << "Not yet implemented"; return false;
+    double start = yarp::os::Time::now();
+    while (canTransform(target_frame_id, source_frame_id))
+    {
+        if (yarp::os::Time::now() - start > timeout)
+        {
+            yError() << "timeout reached";
+            return false;
+        }
+    }
+    return true;
 }
 
 /*Stamp yarp::dev::TransformClient::getLastInputStamp()

@@ -37,6 +37,7 @@ YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(openni2)
   add_subdirectory(ovrheadset)
   add_subdirectory(PumaCalibrator)
+  add_subdirectory(TransformClient)
 
   # The dimax_u2c/blob is not exported in the tarball, therefore we
   # disable the build if the folder does not exist

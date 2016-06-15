@@ -12,6 +12,7 @@
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::sig;
+using namespace yarp::math;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
@@ -30,13 +31,20 @@ yarp::dev::DriverCreator *createTransformServer() {
 
 bool Transforms_server_storage::set_transform(Transform_t t)
 {
-    //@@@ complete here
+    m_transforms.push_back(t);
     return true;
 }
 
 bool Transforms_server_storage::delete_transform(string t1, string t2)
 {
-    //@@@ complete here
+    for (size_t i = 0; i < m_transforms.size(); i++)
+    {
+        if (m_transforms[i].dst_frame_id == t1 && m_transforms[i].src_frame_id == t2 ||
+            m_transforms[i].dst_frame_id == t2 && m_transforms[i].src_frame_id == t1)
+        {
+            m_transforms.erase(m_transforms.begin() + i);
+        }
+    }
     return true;
 }
 
@@ -111,29 +119,26 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
         if (cmd == VOCAB_TRANSFORM_SET)
         {
             Transform_t t;
-            t.src_frame_id = in.get(2).asString();
-            t.dst_frame_id = in.get(3).asString();
+            t.src_frame_id   = in.get(2).asString();
+            t.dst_frame_id   = in.get(3).asString();
             t.translation.tX = in.get(4).asDouble();
             t.translation.tY = in.get(5).asDouble();
             t.translation.tZ = in.get(6).asDouble();
-            t.rotation.rX = in.get(7).asDouble();
-            t.rotation.rY = in.get(8).asDouble();
-            t.rotation.rZ = in.get(9).asDouble();
-            t.rotation.rW = in.get(10).asDouble();
+            t.rotation.rX    = in.get(7).asDouble();
+            t.rotation.rY    = in.get(8).asDouble();
+            t.rotation.rZ    = in.get(9).asDouble();
+            t.rotation.rW    = in.get(10).asDouble();
             //asdd timestamp
             ret = m_yarp_transform_storage->set_transform(t);
             if (ret == true)
             {
-                Bottle b;
-                b.addVocab(VOCAB_OK);
-                m_rpcPort.reply(b);
-                
+                out.clear();
+                out.addVocab(VOCAB_OK);
             }
             else
             {
-                Bottle b;
-                b.addVocab(VOCAB_ERR);
-                m_rpcPort.reply(b);
+                out.clear();
+                out.addVocab(VOCAB_FAILED);
                 yError() << "something strange";
             }
         }
@@ -142,21 +147,24 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
             string frame1 = in.get(2).asString();
             string frame2 = in.get(3).asString();
             ret = m_yarp_transform_storage->delete_transform(frame1, frame2);
+            if (ret == true)
+            {
+                out.clear();
+                out.addVocab(VOCAB_OK);
+            }
         }
         else
         {
             yError("Invalid vocab received in TransformServer");
+            out.clear();
+            out.addVocab(VOCAB_ERR);
         }
     }
     else
     {
         yError("Invalid vocab received in TransformServer");
-    }
-
-    if (!ret)
-    {
         out.clear();
-        out.addVocab(VOCAB_FAILED);
+        out.addVocab(VOCAB_ERR);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();

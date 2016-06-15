@@ -22,7 +22,7 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Stamp.h>
-
+#include <yarp/os/RpcServer.h>
 #include <yarp/sig/Vector.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -37,6 +37,7 @@
 
 #include "include/geometry_msgs_TransformStamped.h"
 #include "include/tf_tfMessage.h"
+#include <yarp/math/Transform.h>
 
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
  * name conflicts
@@ -57,15 +58,15 @@ namespace yarp
 class Transforms_server_storage
 {
 private:
-    std::vector <Transform_t> m_transforms;
+    std::vector <yarp::math::Transform_t> m_transforms;
 
 public:
      Transforms_server_storage()      {}
      ~Transforms_server_storage()     {}
-     bool     set_transform           (Transform_t t);
+     bool     set_transform           (yarp::math::Transform_t t);
      bool     delete_transform        (std::string t1, std::string t2);
      inline size_t   size()                                             { return m_transforms.size(); }
-     inline Transform_t& operator[]   (std::size_t idx)                 { return m_transforms[idx]; }
+     inline yarp::math::Transform_t& operator[]   (std::size_t idx)     { return m_transforms[idx]; }
 };
 
 class yarp::dev::TransformServer : public yarp::os::RateThread,
@@ -96,7 +97,7 @@ private:
     Transforms_server_storage*   m_ros_transform_storage;
     Transforms_server_storage*   m_yarp_transform_storage;
 
-    yarp::os::Port                           m_rpcPort;
+    yarp::os::RpcServer                      m_rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> m_streamingPort;
     yarp::os::Publisher<tf_tfMessage>        m_rosPublisherPort_tf;
     yarp::os::Subscriber<tf_tfMessage>       m_rosSubscriberPort_tf;

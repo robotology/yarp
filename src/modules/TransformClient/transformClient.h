@@ -19,6 +19,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/math/Transform.h>
 
 namespace yarp {
     namespace dev {
@@ -45,17 +46,17 @@ private:
     int              m_state;
     int              m_count;
 
-    std::vector <Transform_t> m_transforms;
+    std::vector <yarp::math::Transform_t> m_transforms;
 
 public:
-    inline size_t   size()                                { return m_transforms.size(); }
-    inline Transform_t& operator[]   (std::size_t idx)    { return m_transforms[idx]; };
-    inline void clear()                                   { m_transforms.clear(); }
+    inline size_t   size()                                            { return m_transforms.size(); }
+    inline yarp::math::Transform_t& operator[]   (std::size_t idx)    { return m_transforms[idx]; };
+    inline void clear()                                               { m_transforms.clear(); }
 
 public:
     Transforms_client_storage (std::string port_name);
     ~Transforms_client_storage ( );
-    bool     set_transform(Transform_t t);
+    bool     set_transform(yarp::math::Transform_t t);
     bool     delete_transform(std::string t1, std::string t2);
 
     inline void resetStat();
@@ -90,6 +91,9 @@ protected:
 
 public:
 
+    bool canLinearTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg=NULL) const;
+    bool getLinearTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform);
+
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config);
     bool close();
@@ -103,7 +107,7 @@ public:
     yarp::os::Stamp getLastInputStamp();
 
      bool     allFramesAsString(std::string &all_frames);
-     bool     canTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg = NULL) ;
+     bool     canTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg = NULL);
      bool     clear() ;
      bool     frameExists(const std::string &frame_id) ;
      bool     getAllFrameIds(std::vector< std::string > &ids) ;
@@ -111,9 +115,9 @@ public:
      bool     getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) ;
      bool     setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) ;
      bool     deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)     ;
-     bool     transformPoint(const std::string &target_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point) ;
-     bool     transformPose(const std::string &target_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose) ;
-     bool     transformQuaternion(const std::string &target_frame_id, const yarp::sig::Vector &input_quaternion, yarp::sig::Vector &transformed_quaternion) ;
+     bool     transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point);
+     bool     transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose);
+     bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_quaternion, yarp::sig::Vector &transformed_quaternion);
      bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) ;
 };
 

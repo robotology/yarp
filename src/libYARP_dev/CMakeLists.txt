@@ -150,7 +150,6 @@ set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.cpp
                         src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
-                        src/modules/TransformClient/TransformClient.cpp
 						src/modules/TransformServer/TransformServer.cpp)
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
@@ -162,8 +161,7 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.h
-                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h
-                        src/modules/TransformClient/TransformClient.h
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h     
 						src/modules/TransformServer/TransformServer.h)
 
 
