@@ -140,14 +140,14 @@ protected:
     int                         fd_ser;
     yarp::os::ResourceFinder    rf;
 
-    char command[MAX_MSG_LENGTH];
-    char response[MAX_MSG_LENGTH];
+    unsigned char command[MAX_MSG_LENGTH];
+    unsigned char response[MAX_MSG_LENGTH];
 
-    bool checkWriteResponse(char *response);
-    bool checkReadResponse(char *response);
+    bool checkWriteResponse(unsigned char *response);
+    bool checkReadResponse(unsigned char *response);
 
-    void printBuffer(char *buffer, int length);
-    int  readBytes(char *buffer, int bytes);
+    void printBuffer(unsigned char *buffer, int length);
+    int  readBytes(unsigned char *buffer, int bytes);
     void dropGarbage();
 
     long int           totMessagesRead;
@@ -155,8 +155,8 @@ protected:
 
     void readSysError();
 
-    bool sendReadCommand( char register_add, int len, char* buf, std::string comment = "");
-    bool sendWriteCommand(char register_add, int len, char* cmd, std::string comment = "");
+    bool sendReadCommand(unsigned char register_add, int len, unsigned char* buf, std::string comment = "");
+    bool sendWriteCommand(unsigned char register_add, int len, unsigned char* cmd, std::string comment = "");
 
 public:
     BoschIMU();
