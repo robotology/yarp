@@ -49,9 +49,9 @@ private:
     std::vector <yarp::math::Transform_t> m_transforms;
 
 public:
-    inline size_t   size()                                            { return m_transforms.size(); }
-    inline yarp::math::Transform_t& operator[]   (std::size_t idx)    { return m_transforms[idx]; };
-    inline void clear()                                               { m_transforms.clear(); }
+    size_t   size();
+    yarp::math::Transform_t& operator[]   (std::size_t idx);
+    void clear();
 
 public:
     Transforms_client_storage (std::string port_name);

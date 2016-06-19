@@ -20,7 +20,7 @@ using namespace yarp::math;
 
 inline void Transforms_client_storage::resetStat()
 {
-
+    yarp::os::LockGuard l(m_mutex);
 }
 
 void Transforms_client_storage::onRead(yarp::os::Bottle &b)
@@ -68,7 +68,8 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
         m_state = ITransform::TRANSFORM_OK;
 
         m_transforms.clear();
-        for (int i = 0; i < b.size(); i++)
+        int bsize= b.size();
+        for (int i = 0; i < bsize; i++)
         {
             Bottle* bt = b.get(i).asList();
             if (bt != 0)
@@ -133,6 +134,12 @@ void Transforms_client_storage::getEstFrequency(int &ite, double &av, double &mi
     av=av*1000;
 }
 
+void Transforms_client_storage::clear()
+{
+    yarp::os::LockGuard l(m_mutex);
+    m_transforms.clear();
+}
+
 Transforms_client_storage::Transforms_client_storage(std::string local_streaming_name)
 {
     m_count = 0;
@@ -154,6 +161,20 @@ Transforms_client_storage::~Transforms_client_storage()
     this->interrupt();
     this->close();
 }
+
+size_t   Transforms_client_storage::size()
+{ 
+    yarp::os::LockGuard l(m_mutex);
+    return m_transforms.size();
+}
+
+yarp::math::Transform_t& Transforms_client_storage::operator[]   (std::size_t idx)
+{
+    yarp::os::LockGuard l(m_mutex);
+    return m_transforms[idx];
+};
+
+//------------------------------------------------------------------------------------------------------------------------------
 
 bool yarp::dev::TransformClient::open(yarp::os::Searchable &config)
 {
@@ -200,7 +221,7 @@ bool yarp::dev::TransformClient::open(yarp::os::Searchable &config)
     }
 
     m_transform_storage = new Transforms_client_storage(local_streaming_name);
-    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "udp");
+    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "tcp");
     if (!ok)
     {
         yError("TransformClient::open() error could not connect to %s", remote_streaming_name.c_str());
@@ -353,7 +374,8 @@ bool yarp::dev::TransformClient::getLinearTransform(const std::string &target_fr
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t i;
-    for (i = 0; i < tfVec.size(); i++)
+    size_t tfVec_size = tfVec.size();
+    for (i = 0; i < tfVec_size; i++)
     {
         if (tfVec[i].dst_frame_id == target_frame_id)
         {
@@ -494,6 +516,11 @@ bool yarp::dev::TransformClient::transformPose(const std::string &target_frame_i
     {
         yError() << "sorry.. only 6 dimensional vector (3 axes + roll pith and yaw) allowed, dear friend of mine..";
         return false;
+    }
+    if (transformed_pose.size() != 6)
+    {
+        yWarning("TransformClient::transformPose() performance warning: size transformed_pose should be 6, resizing");
+        transformed_pose.resize(6, 0.0);
     }
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
