@@ -133,8 +133,12 @@ git pull --rebase origin/devel
 
 ```
 git merge master
-
 ```
+##### Work in progress PR
+As final note, in case you need to start a PR but you deem it still **work-in-progress**
+and don't want anyone merge it by mistake, do the following:
+- Put `[WIP]` at the beginning of the PR title.
+- Mark the PR with the label `"Status: In Progress"`.
 
 ### Development branch: `devel`
 
