@@ -67,6 +67,7 @@ public:
      bool     delete_transform        (std::string t1, std::string t2);
      inline size_t   size()                                             { return m_transforms.size(); }
      inline yarp::math::Transform_t& operator[]   (std::size_t idx)     { return m_transforms[idx]; }
+     inline void clear()             {m_transforms.clear();}
 };
 
 class yarp::dev::TransformServer : public yarp::os::RateThread,

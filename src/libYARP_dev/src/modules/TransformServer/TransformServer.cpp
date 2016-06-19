@@ -31,6 +31,18 @@ yarp::dev::DriverCreator *createTransformServer() {
 
 bool Transforms_server_storage::set_transform(Transform_t t)
 {
+    for (size_t i = 0; i < m_transforms.size(); i++)
+    {
+       //@@@ this linear search requires optimization!
+       if (m_transforms[i].dst_frame_id == t.dst_frame_id && m_transforms[i].src_frame_id == t.src_frame_id)
+       {   
+          //transform already exists, update it
+          m_transforms[i]=t;
+          return true;
+       }
+    }
+
+    //add a new transform
     m_transforms.push_back(t);
     return true;
 }
@@ -39,8 +51,8 @@ bool Transforms_server_storage::delete_transform(string t1, string t2)
 {
     for (size_t i = 0; i < m_transforms.size(); i++)
     {
-        if (m_transforms[i].dst_frame_id == t1 && m_transforms[i].src_frame_id == t2 ||
-            m_transforms[i].dst_frame_id == t2 && m_transforms[i].src_frame_id == t1)
+        if ((m_transforms[i].dst_frame_id == t1 && m_transforms[i].src_frame_id == t2) ||
+            (m_transforms[i].dst_frame_id == t2 && m_transforms[i].src_frame_id == t1) )
         {
             m_transforms.erase(m_transforms.begin() + i);
         }
@@ -328,7 +340,9 @@ void TransformServer::run()
                     t.rotation.rW = tfs[i].transform.rotation.w;
                     t.src_frame_id = tfs[i].header.frame_id;
                     t.dst_frame_id = tfs[i].child_frame_id;
-                    //add timestamp
+                    //@@@ add timestamp
+                    //@@@ set_transform should take care of updating (and not adding!) an already existing transform.
+                    //@@ This requires a fast hash table, for now, we just clearing all the storage.
                     (*m_ros_transform_storage).set_transform(t);
                 }
             }
@@ -338,6 +352,9 @@ void TransformServer::run()
         m_lastStateStamp.update();
         size_t    tfVecSize_yarp = m_yarp_transform_storage->size();
         size_t    tfVecSize_ros  = m_ros_transform_storage->size();
+#if 0
+        yDebug() << "yarp size" << tfVecSize_yarp << "ros_size" << tfVecSize_ros;
+#endif 
         yarp::os::Bottle& b = m_streamingPort.prepare();
         b.clear();
 
