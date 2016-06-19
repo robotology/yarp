@@ -136,9 +136,13 @@ git merge master
 ```
 ##### Work in progress PR
 As final note, in case you need to start a PR but you deem it still **work-in-progress**
-and don't want anyone merge it by mistake, do the following:
+and don't want anyone to merge it by mistake, do the following:
 - Put `[WIP]` at the beginning of the PR title.
 - Mark the PR with the label `"Status: In Progress"`.
+
+Once you're happy about your work, just remove the `[WIP]` tag as well as the label,
+and drop a message within the PR to notify the community that reviews are welcome
+and merging is now possible.
 
 ### Development branch: `devel`
 
