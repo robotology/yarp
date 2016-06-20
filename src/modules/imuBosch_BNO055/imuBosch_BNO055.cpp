@@ -118,14 +118,14 @@ bool BoschIMU::close()
     return true;
 }
 
-bool BoschIMU::checkReadResponse(char* response)
+bool BoschIMU::checkReadResponse(unsigned char* response)
 {
-    if(response[0] == (char) REPLY_HEAD)
+    if(response[0] == (unsigned char) REPLY_HEAD)
     {
         return true;
     }
 
-    if(response[0] == (char) ERROR_HEAD)
+    if(response[0] == (unsigned char) ERROR_HEAD)
     {
         if(response[1] != REGISTER_NOT_READY)   // if error is 0x07, do not print error messages
             yError("Bosch BNO055 IMU - Received error response (0x%02X) - code 0x%02X", response[0], response[1]);
@@ -141,11 +141,11 @@ bool BoschIMU::checkReadResponse(char* response)
     return false;
 }
 
-bool BoschIMU::checkWriteResponse(char* response)
+bool BoschIMU::checkWriteResponse(unsigned char* response)
 {
-    if(response[0] == (char) ERROR_HEAD)
+    if(response[0] == (unsigned char) ERROR_HEAD)
     {
-        if(response[1] == (char) WRITE_SUCC)
+        if(response[1] == (unsigned char) WRITE_SUCC)
         {
             return true;
         }
@@ -162,7 +162,7 @@ bool BoschIMU::checkWriteResponse(char* response)
     return false;
 }
 
-bool BoschIMU::sendReadCommand(char register_add, int len, char* buf, std::string comment)
+bool BoschIMU::sendReadCommand(unsigned char register_add, int len, unsigned char* buf, std::string comment)
 {
     int command_len;
     int nbytes_w;
@@ -217,7 +217,7 @@ bool BoschIMU::sendReadCommand(char register_add, int len, char* buf, std::strin
     return success;
 }
 
-bool BoschIMU::sendWriteCommand(char register_add, int len, char* cmd, std::string comment)
+bool BoschIMU::sendWriteCommand(unsigned char register_add, int len, unsigned char* cmd, std::string comment)
 {
     int command_len = 4+len;
     int nbytes_w;
@@ -225,7 +225,7 @@ bool BoschIMU::sendWriteCommand(char register_add, int len, char* cmd, std::stri
     command[0]= START_BYTE;     // start byte
     command[1]= WRITE_CMD;      // read operation
     command[2]= register_add;   // operation mode register
-    command[3]= (char) len;     // length 1 byte
+    command[3]= (unsigned char) len;     // length 1 byte
     for(int i=0; i<len; i++)
         command[4+i] = cmd[i];  // data
 
@@ -257,7 +257,7 @@ bool BoschIMU::sendWriteCommand(char register_add, int len, char* cmd, std::stri
     return true;
 }
 
-int BoschIMU::readBytes(char* buffer, int bytes)
+int BoschIMU::readBytes(unsigned char* buffer, int bytes)
 {
     int r = 0;
     int bytesRead = 0;
@@ -284,7 +284,7 @@ void BoschIMU::dropGarbage()
     return;
 }
 
-void BoschIMU::printBuffer(char* buffer, int length)
+void BoschIMU::printBuffer(unsigned char* buffer, int length)
 {
     for(int i=0; i< length; i++)
         printf("\t0x%02X ", buffer[i]);
@@ -314,7 +314,7 @@ void BoschIMU::readSysError()
 
 bool BoschIMU::threadInit()
 {
-    char msg;
+    unsigned char msg;
 
     msg = 0x00;
     if(!sendWriteCommand(REG_PAGE_ID, 1, &msg, "PAGE_ID") )
@@ -499,7 +499,6 @@ void BoschIMU::run()
     data[3] = (double) raw_data[0]/100.0;
     data[4] = (double) raw_data[1]/100.0;
     data[5] = (double) raw_data[2]/100.0;
-//     yDebug() << "Accel x: " << data[3] << "y: " << data[4] << "z: " << data[5];
 
     ///////////////////////////////////////////
     //
@@ -558,7 +557,7 @@ void BoschIMU::run()
     raw_data[1] = response[5] << 8 | response[4];
     raw_data[2] = response[7] << 8 | response[6];
     raw_data[3] = response[9] << 8 | response[8];
-
+    
     quaternion[0] = ((double) raw_data[1])/(2<<13);
     quaternion[1] = ((double) raw_data[2])/(2<<13);
     quaternion[2] = ((double) raw_data[3])/(2<<13);
