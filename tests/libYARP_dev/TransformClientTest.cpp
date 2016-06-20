@@ -188,7 +188,7 @@ public:
             temp              = yarp::math::dcm2rpy(mat);
             verPose[3]        = temp[0]; verPose[4] = temp[1]; verPose[5] = temp[2];
 
-            verQuat           = yarp::math::dcm2quat((m1 * m2 * yarp::math::quat2dcm(quat1)));
+            verQuat           = yarp::math::dcm2quat(((m1 * m2 * SE3inv(yarp::math::quat2dcm(quat1)))));
 
             itf->transformPoint("frame3", "frame1", point1, tpoint1);
             itf->transformPose("frame3", "frame1", pose1, tpose1);

@@ -80,10 +80,10 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
                 t.translation.tX = bt->get(2).asDouble();
                 t.translation.tY = bt->get(3).asDouble();
                 t.translation.tZ = bt->get(4).asDouble();
-                t.rotation.rX = bt->get(5).asDouble();
-                t.rotation.rY = bt->get(6).asDouble();
-                t.rotation.rZ = bt->get(7).asDouble();
-                t.rotation.rW = bt->get(8).asDouble();
+                t.rotation.rW = bt->get(5).asDouble();
+                t.rotation.rX = bt->get(6).asDouble();
+                t.rotation.rY = bt->get(7).asDouble();
+                t.rotation.rZ = bt->get(8).asDouble();
                 m_transforms.push_back(t);
             }
         }
@@ -258,7 +258,7 @@ bool yarp::dev::TransformClient::allFramesAsString(std::string &all_frames)
     return true;
 }
 
-bool yarp::dev::TransformClient::canLinearTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg) const
+bool yarp::dev::TransformClient::canDirectTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg) const
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t i;
@@ -272,7 +272,7 @@ bool yarp::dev::TransformClient::canLinearTransform(const std::string &target_fr
             }
             else
             {
-                return canLinearTransform(tfVec[i].src_frame_id, source_frame, error_msg);
+                return canDirectTransform(tfVec[i].src_frame_id, source_frame, error_msg);
             }
         }
     }
@@ -302,7 +302,7 @@ bool yarp::dev::TransformClient::canTransform(const std::string &target_frame, c
     //    }
     //}
 
-    if (canLinearTransform(target_frame, source_frame) || canLinearTransform(source_frame, target_frame))
+    if (canDirectTransform(target_frame, source_frame) || canDirectTransform(source_frame, target_frame))
     {
         return true;
     }
@@ -370,7 +370,7 @@ bool yarp::dev::TransformClient::getParent(const std::string &frame_id, std::str
     return false;
 }
 
-bool yarp::dev::TransformClient::getLinearTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
+bool yarp::dev::TransformClient::getDirectTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform)
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t i;
@@ -387,9 +387,8 @@ bool yarp::dev::TransformClient::getLinearTransform(const std::string &target_fr
             else
             {
                 yarp::sig::Matrix m;
-                if (getTransform(tfVec[i].src_frame_id, source_frame_id, m))
+                if (getDirectTransform(tfVec[i].src_frame_id, source_frame_id, m))
                 {
-                    //to uncomment -- build yarp math
                     transform = m * tfVec[i].toMatrix();
                     return true;
                 }
@@ -403,14 +402,14 @@ bool yarp::dev::TransformClient::getTransform(const std::string &target_frame_id
 {
     
 
-    if (canLinearTransform(target_frame_id, source_frame_id))
+    if (canDirectTransform(target_frame_id, source_frame_id))
     {
-        return getLinearTransform(target_frame_id, source_frame_id, transform);
+        return getDirectTransform(target_frame_id, source_frame_id, transform);
     }
-    else if (canLinearTransform(source_frame_id, target_frame_id))
+    else if (canDirectTransform(source_frame_id, target_frame_id))
     {
         yarp::sig::Matrix m(4, 4);
-        getLinearTransform(source_frame_id, target_frame_id, m);
+        getDirectTransform(source_frame_id, target_frame_id, m);
         transform = yarp::math::SE3inv(m);
         return true;
     }
@@ -444,10 +443,10 @@ bool yarp::dev::TransformClient::setTransform(const std::string &target_frame_id
     b.addDouble(tf.translation.tX);
     b.addDouble(tf.translation.tY);
     b.addDouble(tf.translation.tZ);
+    b.addDouble(tf.rotation.rW);
     b.addDouble(tf.rotation.rX);
     b.addDouble(tf.rotation.rY);
     b.addDouble(tf.rotation.rZ);
-    b.addDouble(tf.rotation.rW);
     bool ret = m_rpcPort.write(b, resp);
     if (ret)
     {

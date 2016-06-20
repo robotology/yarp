@@ -91,8 +91,8 @@ protected:
 
 public:
 
-    bool canLinearTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg=NULL) const;
-    bool getLinearTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform);
+    bool canDirectTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg=NULL) const;
+    bool getDirectTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform);
 
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config);
