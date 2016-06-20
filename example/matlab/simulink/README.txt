@@ -8,7 +8,7 @@ The licence of Simulink® Real Time Execution is attached as "license.txt" in th
 
 These three YARP/Simulink examples have been developed by Juan G. Victores
 (http://roboticslab.uc3m.es/roboticslab/persona.php?id_pers=72), licenced as the rest of
-the YARP Repository (http://wiki.icub.org/yarpdoc/index.html) from where this
+the YARP Repository (http://www.yarp.it/index.html) from where this
 source can be downloaded.
 
 Install

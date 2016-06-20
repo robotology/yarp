@@ -53,7 +53,7 @@ Now, anything typed on the YARP write will be sent and printed on the read side.
 
 You can also use the yarpdataplayer to replay a recorded sequence. This will reproduce all the sensory information available on the real robot during a simple experiment. Follow the instructions here:
 
-http://wiki.icub.org/yarpdoc/group__yarpdataplayerExample.html
+http://www.yarp.it/group__yarpdataplayerExample.html
 
 \image html installation/check-your-installation-yarpdataplayer-example.jpg
 
