@@ -36,8 +36,6 @@ source_group("Resources Files" FILES ${QtYARPScopePlugin_QRC_FILES})
 source_group("QML Files" FILES ${QtYARPScopePlugin_QML_FILES})
 source_group("Generated Files" FILES ${QtYARPScopePlugin_QRC_GEN_SRCS})
 
-set(QtYARPScopePlugin_QMLDIR "robotology/yarp/scope")
-
 add_library(QtYARPScopePlugin MODULE ${QtYARPScopePlugin_SRCS}
                                      ${QtYARPScopePlugin_HDRS}
                                      ${QtYARPScopePlugin_QRC_GEN_SRCS})

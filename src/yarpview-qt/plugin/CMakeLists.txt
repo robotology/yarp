@@ -33,8 +33,6 @@ source_group("Resources Files" FILES ${QtYARPViewPlugin_QRC_FILES})
 source_group("QML Files" FILES ${QtYARPViewPlugin_QML_FILES})
 source_group("Generated Files" FILES ${QtYARPViewPlugin_QRC_GEN_SRCS})
 
-set(QtYARPViewPlugin_QMLDIR "robotology/yarp/view")
-
 add_library(QtYARPViewPlugin MODULE ${QtYARPViewPlugin_SRCS}
                                     ${QtYARPViewPlugin_HDRS}
                                     ${QtYARPViewPlugin_QRC_GEN_SRCS} )

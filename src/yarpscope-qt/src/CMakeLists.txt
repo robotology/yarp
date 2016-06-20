@@ -48,6 +48,14 @@ yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpscope-qt
                                   TARGET_DEST yarpscope-qt.app
                                   INSTALL_COMPONENT utilities
                                   INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
-                                  
+
+if(APPLE)
+  add_dependencies(yarpscope-qt.app QtYARPScopePlugin)
+  add_custom_command(TARGET yarpscope-qt.app POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:QtYARPScopePlugin>"
+                                                    "$<TARGET_FILE_DIR:yarpscope-qt.app>/../lib/qt5/qml/${QtYARPScopePlugin_QMLDIR}/$<TARGET_FILE_NAME:QtYARPScopePlugin>"
+                   COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE_DIR:QtYARPScopePlugin>/qmldir"
+                                                    "$<TARGET_FILE_DIR:yarpscope-qt.app>/../lib/qt5/qml/${QtYARPScopePlugin_QMLDIR}/qmldir")
+endif()
 yarp_install(FILES yarpscope.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
-                                  
+
