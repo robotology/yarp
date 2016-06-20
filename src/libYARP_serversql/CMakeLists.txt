@@ -19,7 +19,7 @@ set(YARP_serversql_SRCS src/TripleSourceCreator.cpp
                         src/AllocatorOnTriples.cpp
                         src/SubscriberOnSql.cpp
                         src/ParseName.cpp
-                        src/yarpserver3.cpp
+                        src/yarpserver.cpp
                         src/StyleNameService.cpp)
 set(YARP_serversql_HDRS src/TripleSourceCreator.h
                         src/Triple.h

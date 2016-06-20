@@ -2026,7 +2026,6 @@ int Companion::cmdTopic(int argc, char *argv[]) {
     if (!ok) {
         ACE_OS::fprintf(stderr, "Failed to %s topic %s:\n  %s\n",
                         act.c_str(), argv[0], reply.toString().c_str());
-        ACE_OS::fprintf(stderr, "  Topics are only supported by yarpserver3.\n");
         return 1;
     } else {
         ACE_OS::fprintf(stdout, "Topic %s %sd\n", argv[0], act.c_str());

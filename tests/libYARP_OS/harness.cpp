@@ -26,9 +26,7 @@ using namespace yarp::os;
 #include <mcheck.h>
 #endif
 
-#ifdef YARP_USE_PERSISTENT_NAMESERVER
-#  include <yarp/serversql/yarpserversql.h>
-#endif
+#include <yarp/serversql/yarpserversql.h>
 
 int main(int argc, char *argv[]) {
     //return yarp_test_main(argc,argv);
@@ -38,14 +36,12 @@ int main(int argc, char *argv[]) {
 
     Network yarp;
 
-#ifdef YARP_USE_PERSISTENT_NAMESERVER
     Property opts;
     opts.put("portdb",":memory:");
     opts.put("subdb",":memory:");
     opts.put("local",1);
-    NameStore *store = yarpserver3_create(opts);
+    NameStore *store = yarpserver_create(opts);
     yarp.queryBypass(store);
-#endif
 
     bool done = false;
     int result = 0;
@@ -77,10 +73,8 @@ int main(int argc, char *argv[]) {
         Network::main(argc,argv);
     }
 
-#ifdef YARP_USE_PERSISTENT_NAMESERVER
     yarp.queryBypass(NULL);
     if (store) delete store;
-#endif
 
     return result;
 }
