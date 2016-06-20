@@ -136,10 +136,10 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
             t.translation.tX = in.get(4).asDouble();
             t.translation.tY = in.get(5).asDouble();
             t.translation.tZ = in.get(6).asDouble();
-            t.rotation.rX    = in.get(7).asDouble();
-            t.rotation.rY    = in.get(8).asDouble();
-            t.rotation.rZ    = in.get(9).asDouble();
-            t.rotation.rW    = in.get(10).asDouble();
+            t.rotation.rW    = in.get(7).asDouble();
+            t.rotation.rX    = in.get(8).asDouble();
+            t.rotation.rY    = in.get(9).asDouble();
+            t.rotation.rZ    = in.get(10).asDouble();
             //asdd timestamp
             ret = m_yarp_transform_storage->set_transform(t);
             if (ret == true)
@@ -369,10 +369,10 @@ void TransformServer::run()
             transform.addDouble((*m_yarp_transform_storage)[i].translation.tY);
             transform.addDouble((*m_yarp_transform_storage)[i].translation.tZ);
 
+            transform.addDouble((*m_yarp_transform_storage)[i].rotation.rW);
             transform.addDouble((*m_yarp_transform_storage)[i].rotation.rX);
             transform.addDouble((*m_yarp_transform_storage)[i].rotation.rY);
             transform.addDouble((*m_yarp_transform_storage)[i].rotation.rZ);
-            transform.addDouble((*m_yarp_transform_storage)[i].rotation.rW);
         }
         for (size_t i = 0; i < tfVecSize_ros; i++)
         {
@@ -385,10 +385,10 @@ void TransformServer::run()
             transform.addDouble((*m_ros_transform_storage)[i].translation.tY);
             transform.addDouble((*m_ros_transform_storage)[i].translation.tZ);
 
+            transform.addDouble((*m_ros_transform_storage)[i].rotation.rW);
             transform.addDouble((*m_ros_transform_storage)[i].rotation.rX);
             transform.addDouble((*m_ros_transform_storage)[i].rotation.rY);
             transform.addDouble((*m_ros_transform_storage)[i].rotation.rZ);
-            transform.addDouble((*m_ros_transform_storage)[i].rotation.rW);
         }
 
         m_streamingPort.setEnvelope(m_lastStateStamp);
