@@ -45,16 +45,16 @@ namespace yarp
 
                 yarp::sig::Vector toQuaternion() const
                 {
-                    double q[4] = { rX, rY, rZ, rW };
+                    double q[4] = { rW, rX, rY, rZ };
                     return yarp::sig::Vector(4, q);
                 }
 
                 void fromQuaternion(const yarp::sig::Vector& q)
                 {
-                    rX = q[0];
-                    rY = q[1];
-                    rZ = q[2];
-                    rW = q[3];
+                    rW = q[0];
+                    rX = q[1];
+                    rY = q[2];
+                    rZ = q[3];
                 }
 
                 yarp::sig::Vector toRPY() const

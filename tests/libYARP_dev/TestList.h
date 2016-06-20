@@ -26,6 +26,7 @@ extern yarp::os::impl::UnitTest& getPolyDriverTest();
 extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
 #endif
 
+#define YARP_TRANSFORM_TESTS
 #ifdef YARP_TRANSFORM_TESTS
 extern yarp::os::impl::UnitTest& getTransformClientTest();
 #endif

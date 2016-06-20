@@ -16,7 +16,10 @@
 #include <yarp/dev/Wrapper.h>
 #include <yarp/os/Time.h>
 #include <yarp/math/Math.h>
+#include <yarp/math/Transform.h>
 #include <yarp/os/LogStream.h>
+#define M_PI 3.14159265358979323846
+#include<math.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -28,7 +31,7 @@ class TransformClientTest : public UnitTest
 {
 public:
 
-    bool isEqual(const yarp::sig::Vector v1, const yarp::sig::Vector v2, double precision)
+    bool isEqual(const yarp::sig::Vector& v1, const yarp::sig::Vector& v2, double precision)
     {
         if (v1.size() != v2.size())
         {
@@ -38,6 +41,23 @@ public:
         for (size_t i = 0; i < v1.size(); i++)
         {
             if (abs(v1[i] - v2[i]) > precision)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool isEqual(const yarp::sig::Matrix& m1, const yarp::sig::Matrix& m2, double precision)
+    {
+        if (m1.cols() != m2.cols() || m1.rows() != m2.rows())
+        {
+            return false;
+        }
+
+        for (size_t i = 0; i < m1.rows(); i++)
+        {
+            if (!isEqual(m1.getRow(i), m2.getRow(i), precision))
             {
                 return false;
             }
@@ -76,20 +96,21 @@ public:
         if (itf)
         {
             yarp::sig::Matrix m1(4, 4);
-            m1[0][0] = 1; m1[0][1] = 0; m1[0][2] = 0; m1[0][3] = 1;
-            m1[1][0] = 0; m1[1][1] = 1; m1[1][2] = 0; m1[1][3] = 2;
-            m1[2][0] = 0; m1[2][1] = 0; m1[2][2] = 1; m1[2][3] = 3;
-            m1[3][0] = 0; m1[3][1] = 0; m1[3][2] = 0; m1[3][3] = 1;
+            m1[0][0] = cos(M_PI / 4); m1[0][1] = -sin(M_PI / 4); m1[0][2] = 0; m1[0][3] = 3;
+            m1[1][0] = sin(M_PI / 4); m1[1][1] = cos(M_PI /4);   m1[1][2] = 0; m1[1][3] = 1;
+            m1[2][0] = 0;             m1[2][1] = 0;              m1[2][2] = 1; m1[2][3] = 2;
+            m1[3][0] = 0;             m1[3][1] = 0;              m1[3][2] = 0; m1[3][3] = 1;
 
             yarp::sig::Matrix m2(4, 4);
-            m2[0][0] = 1; m2[0][1] = 0; m2[0][2] = 0; m2[0][3] = 0.1;
-            m2[1][0] = 0; m2[1][1] = 1; m2[1][2] = 0; m2[1][3] = 0.2;
-            m2[2][0] = 0; m2[2][1] = 0; m2[2][2] = 1; m2[2][3] = 0.3;
-            m2[3][0] = 0; m2[3][1] = 0; m2[3][2] = 0; m2[3][3] = 1;
-
+            m2[0][0] = cos(M_PI / 4);  m2[0][1] = 0; m2[0][2] = sin(M_PI / 4);  m2[0][3] = 0.1;
+            m2[1][0] = 0;              m2[1][1] = 1; m2[1][2] = 0;              m2[1][3] = 0.2;
+            m2[2][0] = -sin(M_PI / 4); m2[2][1] = 0; m2[2][2] = cos(M_PI / 4);  m2[2][3] = 0.3;
+            m2[3][0] = 0;              m2[3][1] = 0; m2[3][2] = 0;              m2[3][3] = 1;
+            
             yarp::sig::Matrix m3(4, 4);
             m3 = m1*m2;
-
+            double precision;
+            precision = 0.00000001;
             itf->setTransform("frame2", "frame1", m1);
             itf->setTransform("frame3", "frame2", m2);
             itf->setTransform("frame4", "frame3", m3);
@@ -117,7 +138,8 @@ public:
             //test 2
             yarp::sig::Matrix mt(4, 4);
             itf->getTransform("frame3", "frame1", mt);
-            checkTrue(mt == m3, "getTransform ok");
+            checkTrue(isEqual(mt, m3, precision), "getTransform ok");
+            yInfo() << "precision error:\n" + (mt - m3).toString();
 
             //test3 
             bool b_exist1, b_exist2;
@@ -139,15 +161,18 @@ public:
             //test 5
             yarp::sig::Matrix mti(4, 4);
             itf->getTransform("frame1", "frame3b", mti);
-            checkTrue(mti == yarp::math::SE3inv(m3), "inverted getTransform ok");
+            checkTrue(isEqual(mti, yarp::math::SE3inv(m3), precision), "inverted getTransform ok");
+            yInfo() << "precision error:\n" + (mti - yarp::math::SE3inv(m3)).toString();
 
             //test 6
             yarp::sig::Vector point1(3), tpoint1(3), verPoint1(4);// verPoint1 will become 3dimensional..
             yarp::sig::Vector pose1(6), tpose1(6), verPose(6);
             yarp::sig::Vector quat1(4), tquat1(4), verQuat(4);
             
-            pose1[0] = 1; pose1[1] = 2; pose1[2] = 3;
-            pose1[3] = 30; pose1[4] = 60; pose1[5] = 90;
+            pose1[0]  = 1; pose1[1] = 2; pose1[2] = 3;
+            pose1[3]  = 30; pose1[4] = 60; pose1[5] = 90;
+            point1[0] = 10; point1[1] = 15; point1[2] = 5;
+            
             point1.push_back(1);
             verPoint1 = m1*m2*point1;
             verPoint1.pop_back();
@@ -158,7 +183,7 @@ public:
             double rot[3]     = { pose1[3], pose1[4], pose1[5] };
             mat               = yarp::math::rpy2dcm(yarp::sig::Vector(3, rot));
             mat[0][3]         = pose1[0]; mat[1][3] = pose1[1]; mat[2][3] = pose1[2];
-            mat               = m1 * m2 * mat;
+            mat               = m3 * mat;
             verPose[0]        = mat[0][3]; verPose[1] = mat[1][3]; verPose[2] = mat[2][3];
             temp              = yarp::math::dcm2rpy(mat);
             verPose[3]        = temp[0]; verPose[4] = temp[1]; verPose[5] = temp[2];
@@ -168,9 +193,15 @@ public:
             itf->transformPoint("frame3", "frame1", point1, tpoint1);
             itf->transformPose("frame3", "frame1", pose1, tpose1);
             itf->transformQuaternion("frame3", "frame1", quat1, tquat1);
-            checkTrue(isEqual(point1, tpoint1,0.00001), "transformPoint ok");
-            checkTrue(isEqual(tpose1, verPose, 0.00001), "transformPose ok");
-            checkTrue(isEqual(verQuat, tquat1, 0.00001), "transformQuaternion ok");
+            
+            checkTrue(isEqual(verPoint1, tpoint1, precision), "transformPoint ok");
+            yInfo() << "precision error:\n" + (verPoint1 - tpoint1).toString();
+            
+            checkTrue(isEqual(tpose1, verPose, precision), "transformPose ok");
+            yInfo() << "precision error:\n" + (verPose - tpose1).toString();
+            
+            checkTrue(isEqual(verQuat, tquat1, precision), "transformQuaternion ok");
+            yInfo() << "precision error:\n" + (verQuat - tquat1).toString();
 
             //test 7
             std::string all_frames;
