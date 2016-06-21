@@ -57,12 +57,12 @@ private:
     Subscriber *subscriber;
     std::string lastRegister;
     yarp::os::Contact serverContact;
-    yarp::os::Semaphore mutex;
+    yarp::os::Semaphore mutex, access;
     bool gonePublic;
     bool silent;
     yarp::os::NameSpace *delegate;
 public:
-    NameServiceOnTriples() : mutex(1) {
+    NameServiceOnTriples() : mutex(1), access(1) {
         db = 0 /*NULL*/;
         alloc = 0 /*NULL*/;
         lastRegister = "";

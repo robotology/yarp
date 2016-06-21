@@ -582,6 +582,7 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
     ConstString key = cmd.get(0).toString();
     ConstString prefix = " * ";
 
+    access.wait();
     if (key=="register") {
         lastRegister = cmd.get(1).asString().c_str();
     } else if (key=="set") {
@@ -596,6 +597,7 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
                prefix.c_str(),
                cmd.toString().c_str());
     }
+    access.post();
 
     TripleSource& mem = *db;
     //mem.begin();
