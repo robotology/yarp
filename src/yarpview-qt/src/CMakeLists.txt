@@ -56,7 +56,7 @@ if(APPLE)
   add_custom_command(TARGET yarpview-qt.app POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:QtYARPViewPlugin>"
                                                       "$<TARGET_FILE_DIR:yarpview-qt.app>/../lib/qt5/qml/${QtYARPViewPlugin_QMLDIR}/$<TARGET_FILE_NAME:QtYARPViewPlugin>"
-                     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE_DIR:QtYARPViewPlugin>/qmldir" 
+                     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE_DIR:QtYARPViewPlugin>/qmldir"
                                                       "$<TARGET_FILE_DIR:yarpview-qt.app>/../lib/qt5/qml/${QtYARPViewPlugin_QMLDIR}/qmldir")
 endif()
 
