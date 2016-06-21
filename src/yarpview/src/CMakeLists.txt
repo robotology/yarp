@@ -45,8 +45,15 @@ yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpview
                                   APP_ICON icons/AppIcon.icns
                                   INSTALL_COMPONENT utilities
                                   INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
-                                  
-                                  
+
+if(APPLE)
+  add_dependencies(yarpview.app QtYARPViewPlugin)
+  add_custom_command(TARGET yarpview.app POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:QtYARPViewPlugin>"
+                                                      "$<TARGET_FILE_DIR:yarpview.app>/../lib/qt5/qml/${QtYARPViewPlugin_QMLDIR}/$<TARGET_FILE_NAME:QtYARPViewPlugin>"
+                     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE_DIR:QtYARPViewPlugin>/qmldir"
+                                                      "$<TARGET_FILE_DIR:yarpview.app>/../lib/qt5/qml/${QtYARPViewPlugin_QMLDIR}/qmldir")
+endif()
+
 yarp_install(FILES yarpview.xml
-               DESTINATION ${YARP_MODULES_INSTALL_DIR})
-               
+             DESTINATION ${YARP_MODULES_INSTALL_DIR})
