@@ -6,6 +6,8 @@ if(CREATE_YARPVIEW AND YARP_HAS_QT5)
 
   include(YarpUseQt5)
 
+  set(QtYARPViewPlugin_QMLDIR "robotology/yarp/view")
+
   add_subdirectory(plugin)
   add_subdirectory(src)
 
