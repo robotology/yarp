@@ -153,38 +153,44 @@ public:
     /**
      * Constructor.
      */
-    PortCore() : stateMutex(1), packetMutex(1), connectionChange(1),
-        log("port",Logger::get()), envelopeWriter(true) {
-        // dormant phase
-        listening = false;
-        running = false;
-        starting = false;
-        closing = false;
-        finished = false;
-        finishing = false;
-        manual = false;
-        waitBeforeSend = waitAfterSend = true;
-        connectionListeners = 0;
-        events = 0;
-        face = NULL;
-        reader = NULL;
-        adminReader = NULL;
-        readableCreator = NULL;
-        outputCount = inputCount = 0;
-        dataOutputCount = 0;
-        controlRegistration = true;
-        interruptible = true;
-        interrupted = false;
-        eventReporter = NULL;
-        logNeeded = false;
-        flags = PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT;
-        timeout = -1;
-        verbosity = 1;
-        counter = 1;
-        prop = NULL;
-        contactable = NULL;
-        mutex = NULL;
-        mutexOwned = false;
+    PortCore() :
+            stateMutex(1),
+            packetMutex(1),
+            connectionChange(1),
+            log("port",Logger::get()),
+            face(NULL),
+            reader(NULL),
+            adminReader(NULL),
+            readableCreator(NULL),
+            eventReporter(NULL),
+            listening(false),
+            running(false),
+            starting(false),
+            closing(false),
+            finished(false),
+            finishing(false),
+            waitBeforeSend(true),
+            waitAfterSend(true),
+            controlRegistration(true),
+            interruptible(true),
+            interrupted(false),
+            manual(false),
+            events(0),
+            connectionListeners(0),
+            inputCount(0),
+            outputCount(0),
+            dataOutputCount(0),
+            flags(PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT),
+            verbosity(1),
+            logNeeded(false),
+            timeout(-1),
+            counter(1),
+            prop(NULL),
+            contactable(NULL),
+            mutex(NULL),
+            mutexOwned(false),
+            envelopeWriter(true)
+    {
     }
 
     /**

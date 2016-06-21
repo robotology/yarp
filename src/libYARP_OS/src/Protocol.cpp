@@ -14,30 +14,29 @@ using namespace yarp::os;
 
 
 Protocol::Protocol(TwoWayStream* stream) :
-    log(Logger::get()) {
-
+        messageLen(0),
+        pendingAck(false),
+        log(Logger::get()),
+        active(true),
+        delegate(NULL),
+        recv_delegate(NULL),
+        send_delegate(NULL),
+        need_recv_delegate(false),
+        need_send_delegate(false),
+        recv_delegate_fail(false),
+        send_delegate_fail(false),
+        route("null","null","tcp"),
+        writer(NULL),
+        ref(NULL),
+        envelope(""),
+        port(NULL),
+        pendingReply(false)
+{
     // We start off with the streams used to contact the port that
     // owns this connection.
     shift.takeStream(stream);
 
-    // Put everything in a startup state.
-    active = true;
-    route = Route("null","null","tcp");
-    delegate = NULL;
-    recv_delegate = NULL;
-    send_delegate = NULL;
-    need_recv_delegate = false;
-    need_send_delegate = false;
-    recv_delegate_fail = false;
-    send_delegate_fail = false;
-    messageLen = 0;
-    pendingAck = false;
-    writer = NULL;
-    ref = NULL;
     reader.setProtocol(this);
-    envelope = "";
-    port = NULL;
-    pendingReply = false;
 }
 
 bool Protocol::open(const ConstString& name) {

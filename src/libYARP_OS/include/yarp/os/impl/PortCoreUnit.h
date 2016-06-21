@@ -36,10 +36,12 @@ public:
      * @param index an id for this connection
      *
      */
-    PortCoreUnit(PortCore& owner, int index) : owner(owner), index(index) {
-        doomed = false;
-        hasMode = false;
-        pupped = false;
+    PortCoreUnit(PortCore& owner, int index) :
+            owner(owner),
+            doomed(false),
+            hasMode(false),
+            pupped(false),
+            index(index) {
     }
 
     /**
