@@ -524,7 +524,7 @@ std::string RosTypeSearch::readFile(const char *fname) {
 bool RosTypeSearch::fetchFromRos(const std::string& target_file,
                                  const std::string& type_name,
                                  bool find_service) {
-    std::string cmd = std::string(find_service?"rossrv":"rosmsg") + " show -r "+type_name+" > " + target_file + " || rm -f " + type_name;
+    std::string cmd = std::string(find_service?"rossrv":"rosmsg") + " show -r "+type_name+" | install -D /dev/stdin " + target_file + " || rm -f " + type_name;
     if (verbose) {
         fprintf(stderr,"[ros]  %s\n", cmd.c_str());
     }
