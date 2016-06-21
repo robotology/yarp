@@ -183,7 +183,7 @@ if(YARP_VALGRIND_TESTS)
       set(VALGRIND_${_TOOL}_OPTIONS "${VALGRIND_${_TOOL}_OPTIONS_DEFAULT}"
           CACHE STRING "Valgrind ${_Tool} tool options (--error-exitcode=1 will be appended)")
       separate_arguments(VALGRIND_${_TOOL}_OPTIONS UNIX_COMMAND "${VALGRIND_${_TOOL}_OPTIONS}")
-      set(VALGRIND_${_TOOL}_COMMAND "${VALGRIND_EXECUTABLE}" --tool=${_tool} ${VALGRIND_${_TOOL}_OPTIONS} --error-exitcode=1)
+      set(VALGRIND_${_TOOL}_COMMAND "${VALGRIND_EXECUTABLE}" --tool=${_tool} ${VALGRIND_${_TOOL}_OPTIONS} --error-exitcode=1 --fullpath-after=${CMAKE_SOURCE_DIR}/)
       mark_as_advanced(VALGRIND_${_TOOL}_OPTIONS)
     else()
       message(WARNING "Valgrind not found. Cannot enable ${_Tool} tests.")
