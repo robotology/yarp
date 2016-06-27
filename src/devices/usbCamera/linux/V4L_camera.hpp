@@ -43,6 +43,8 @@
 #include <jpeglib.h>
 #include <libv4l2.h>
 
+#include <cv.h>
+
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
@@ -88,9 +90,15 @@ typedef struct
     io_method       io;
     int             fps;
     unsigned int    image_size;
+    unsigned int    rgb_src_image_size;
     unsigned int    dst_image_size;
     unsigned char   *dst_image;
+    unsigned char   *tmp_image;
+    unsigned char   *tmp_image2;
     void            *raw_image;
+    cv::Mat         outMat;
+    cv::Mat         img;
+
     unsigned int    n_buffers;
     struct buffer   *buffers;
     struct v4l2_format src_fmt;
@@ -184,6 +192,8 @@ private:
 
     yarp::os::Semaphore mutex;
     Video_params param;
+    bool doCropping;
+    bool dual;
     bool isActive_vector[YARP_FEATURE_NUMEBR_OF];
     double timeStart, timeTot, timeNow, timeElapsed;
     int myCounter;

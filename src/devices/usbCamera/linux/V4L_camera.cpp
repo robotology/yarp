@@ -13,6 +13,10 @@
 #include <yarp/os/Value.h>
 #include "libv4lconvert.h"
 
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
 #define errno_exit printf
 
 //#include <Leopard_MT9M021C.h>
@@ -54,7 +58,7 @@ int V4L_camera::convertYARP_to_V4L(int feature)
     return NOT_PRESENT;
 }
 
-V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE)
+V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false), dual(false)
 {
     param.width  = DEFAULT_WIDTH;
     param.height = DEFAULT_HEIGHT;
@@ -177,6 +181,21 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     else
         param.camModel = (supported_cams) config.find("camModel").asInt();
 
+    if(config.check("crop") )
+    {
+        doCropping = true;
+        yWarning("CROPPING!!");
+    }
+    else
+        doCropping = false;
+
+    if(config.check("dual") )
+    {
+        dual = true;
+        yWarning("DUAL CAMERA!!");
+    }
+    else
+        dual = false;
 
     int type = 0;
     if(!config.check("pixelType") )
@@ -352,30 +371,40 @@ bool V4L_camera::deviceInit()
 
     if (v4lconvert_try_format(_v4lconvert_data, &(param.dst_fmt), &(param.src_fmt)) != 0)
     {
-        printf("ERROR: v4lconvert_try_format\n\n");
+        printf("ERROR: v4lconvert_try_format\n\nError is: %s", v4lconvert_get_error_message(_v4lconvert_data));
         return false;
     }
     else
-        printf("DONE: v4lconvert_try_format\n\n");
+    {
+        printf("DONE: v4lconvert_try_format\n\t");
+        printf("Message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
+    }
 
     printf("param.width = %d; src.width = %d\n", param.width, param.src_fmt.fmt.pix.width);
+
+    // dst is tmp, just to convert camera pixel type (YUYV) into user pixel type (RGB)
+    param.dst_fmt = param.src_fmt;
+    param.dst_fmt.fmt.pix.pixelformat = param.pixelType;
 
     if (-1 == xioctl(param.fd, VIDIOC_S_FMT, &param.src_fmt))
         std::cout << "xioctl error VIDIOC_S_FMT" << std::endl;
 
 
     /* Note VIDIOC_S_FMT may change width and height. */
-    if (param.width != param.src_fmt.fmt.pix.width)
-    {
-        param.width = param.src_fmt.fmt.pix.width;
-        std::cout << "Image width set to " << param.width << " by device " << param.deviceId << std::endl;
-    }
+//     if (param.width != param.src_fmt.fmt.pix.width)
+//     {
+//         param.width = param.src_fmt.fmt.pix.width;
+//         std::cout << "Image width set to " << param.width << " by device " << param.deviceId << std::endl;
+//     }
+//
+//     if (param.height != param.src_fmt.fmt.pix.height)
+//     {
+//         param.height = param.src_fmt.fmt.pix.height;
+//         std::cout << "Image height set to " << param.height << " by device " << param.deviceId << std::endl;
+//     }
 
-    if (param.height != param.src_fmt.fmt.pix.height)
-    {
-        param.height = param.src_fmt.fmt.pix.height;
-        std::cout << "Image height set to " << param.height << " by device " << param.deviceId << std::endl;
-    }
+//     if(param.width/param.height  != param.src_fmt.fmt.pix.width/param.src_fmt.fmt.pix.height)
+//         doCropping == true;
 
     /* If the user has set the fps to -1, don't try to set the frame interval */
     if (param.fps != -1)
@@ -405,6 +434,10 @@ bool V4L_camera::deviceInit()
     }
 
     param.image_size = param.src_fmt.fmt.pix.sizeimage;
+    param.rgb_src_image_size = param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3;
+    param.dst_image  = (unsigned char*) malloc(param.width * param.height * 3 *100);  // 3 for rgb without gamma  *100 is for debug
+    param.tmp_image  = new unsigned char[param.rgb_src_image_size];
+    param.tmp_image2 = new unsigned char[param.rgb_src_image_size];
 
     switch (param.io)
     {
@@ -420,7 +453,6 @@ bool V4L_camera::deviceInit()
             userptrInit(param.src_fmt.fmt.pix.sizeimage);
             break;
     }
-    param.dst_image = (unsigned char*) malloc(param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3);  // 3 for rgb without gamma
 
     query_current_image_fmt_v4l2(param.fd);
 
@@ -495,12 +527,20 @@ bool V4L_camera::close()
 }
 
 
-// IFrameGrabberRgb Interface
+// IFrameGrabberRgb Interface 777
 bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 {
     mutex.wait();
     imageProcess(param.raw_image);
-    memcpy(buffer, param.dst_image, param.dst_image_size);
+//     memcpy(buffer, param.dst_image, param.rgb_src_image_size*12/16);
+//     memcpy(buffer, param.tmp_image2, param.rgb_src_image_size*12/16);
+//     memcpy(buffer, param.outMat.data, param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3);
+
+//     memcpy(buffer, param.img.data, param.src_fmt.fmt.pix.width*12/16 * param.src_fmt.fmt.pix.height * 3);
+//     std::cout << "dst_image_size"<< param.dst_image_size << "; compute " << param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3 *12 /16  << std::endl;
+//     memcpy(buffer, param.outMat.data, param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3 *12 /16 );
+//     int __size = param.outMat.total();
+    memcpy(buffer, param.outMat.data, param.outMat.total()*3);
     mutex.post();
     return true;
 }
@@ -526,7 +566,10 @@ int V4L_camera::getRawBufferSize()
  */
 int V4L_camera::height() const
 {
-    yTrace();
+//     yTrace() << ": height is " << param.height;
+//     return param.src_fmt.fmt.pix.height /** 0.5*/;
+//     return param.src_fmt.fmt.pix.height *0.5;
+//     return param.outMat.rows;
     return param.height;
 }
 
@@ -536,7 +579,9 @@ int V4L_camera::height() const
  */
 int V4L_camera::width() const
 {
-    yTrace();
+//     yTrace() << ": width is " << param.width;
+//     return param.src_fmt.fmt.pix.width*12/16 *0.5;
+//     return param.outMat.cols;
     return param.width;
 }
 
@@ -837,6 +882,7 @@ void* V4L_camera::frameRead()
 void V4L_camera::imageProcess(void* p)
 {
     static bool initted = false;
+    static int err=0;
 
     timeStart = yarp::os::Time::now();
 
@@ -849,8 +895,75 @@ void V4L_camera::imageProcess(void* p)
 
         case SEE3CAMCU50:
         {
-            if( v4lconvert_convert((v4lconvert_data*) _v4lconvert_data, &param.src_fmt, &param.dst_fmt,  (unsigned char *)p, param.image_size,  (unsigned char *)param.dst_image, param.dst_image_size)  <0 )
-                printf("error converting \n");
+//             std::cout << "dst w " << param.dst_fmt.fmt.pix.width << "; src w " << param.src_fmt.fmt.pix.width << std::endl;
+//             std::cout << "dst h " << param.dst_fmt.fmt.pix.height << "; src h " << param.src_fmt.fmt.pix.height << std::endl;
+//             std::cout << "param w " << param.width << "; param h " << param.height << std::endl;
+//             std::cout << "dst size " << param.dst_image_size << "; src size " << param.image_size << std::endl;
+
+            if( v4lconvert_convert((v4lconvert_data*) _v4lconvert_data,  &param.src_fmt,   &param.dst_fmt,
+                                                      (unsigned char *)p, param.image_size, param.tmp_image, param.rgb_src_image_size)  <0 )
+            {
+                if((err %20) == 0)
+                {
+                    printf("error converting \n"); fflush(stdout);
+                    printf("Message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
+                    err=0;
+                }
+                err++;
+                return;
+            }
+
+            if(doCropping)
+            {
+                int tmp1_rowSize = param.dst_fmt.fmt.pix.width * 3;
+                int tmp2_rowSize = tmp1_rowSize *12/16;
+
+                std::cout << "dst_fmt.width: " << param.dst_fmt.fmt.pix.width << " tmp1_rowSize: " << tmp1_rowSize << " tmp2_rowSize: " << tmp2_rowSize << std::endl;
+
+                if(dual)
+                {
+                    for(int h=0; h<param.dst_fmt.fmt.pix.height; h++)
+                    {
+                        memcpy((void *) &param.tmp_image2[h*tmp2_rowSize],                 (void *)&param.tmp_image[h*tmp1_rowSize],                tmp2_rowSize/2);
+                        memcpy((void *) &param.tmp_image2[h*tmp2_rowSize+tmp2_rowSize/2],  (void *)&param.tmp_image[h*tmp1_rowSize+tmp1_rowSize/2], tmp2_rowSize/2);
+                    }
+// 666
+//                     cv::Mat img( param.src_fmt.fmt.pix.height, param.src_fmt.fmt.pix.width*12/16, CV_8UC3, param.tmp_image2);
+                    cv::Mat img(cv::Size(param.src_fmt.fmt.pix.width*12/16, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image2);
+                    param.img=img;
+//                     cv::resize(img, param.outMat, cvSize(param.src_fmt.fmt.pix.width*12/16, param.src_fmt.fmt.pix.height));
+//                     cv::resize(img, param.outMat, cvSize(0, 0), param.src_fmt.fmt.pix.width*12/16/param.width, param.src_fmt.fmt.pix.height/param.height, cv::INTER_CUBIC);
+                    cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
+
+//                     memcpy((unsigned char *)param.dst_image, (unsigned char *) param.outMat.data, param.width* param.height*3);
+
+
+//                     for(int h=0; h<param.src_fmt.fmt.pix.height; h++)
+//                     {
+//                         memcpy((void *) &param.tmp_image2[h*tmp_rowSize_out],                    (void *)&param.tmp_image[h*tmp_rowSize],               tmp_rowSize_out/2);
+//                         memcpy((void *) &param.tmp_image2[h*tmp_rowSize_out+tmp_rowSize_out/2],  (void *)&param.tmp_image[h*tmp_rowSize+tmp_rowSize/2], tmp_rowSize_out/2);
+//                     }
+                }
+                else
+                {
+                    for(int h=0; h<param.dst_fmt.fmt.pix.height; h++)
+                    {
+                        memcpy((void *) &param.tmp_image2[h*tmp2_rowSize], (void *)&param.tmp_image[h*tmp1_rowSize], tmp2_rowSize);
+                    }
+//                     for(int h=0; h<param.src_fmt.fmt.pix.height; h++)
+//                     {
+//                         memcpy((void *) &param.dst_image[h*rowSize/16*12], (void *)&param.tmp_image[h*rowSize], rowSize/16*12);
+//                     }
+                }
+            }
+            else
+            {
+                cv::Mat img(cv::Size(param.src_fmt.fmt.pix.width, param.src_fmt.fmt.pix.height), CV_8UC3, param.tmp_image);
+                param.img=img;
+                cv::resize(img, param.outMat, cvSize(param.width, param.height), 0, 0, cv::INTER_CUBIC);
+//                 memcpy((unsigned char *)param.dst_image, (unsigned char *)param.tmp_image, param.image_size);
+            }
+
             break;
         }
 

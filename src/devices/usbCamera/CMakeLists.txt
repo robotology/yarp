@@ -29,6 +29,11 @@ IF(ENABLE_icubmod_usbCamera)
             return()
         endif(NOT Libv4lconvert_FOUND )
 
+        if(NOT ICUB_USE_OpenCV)
+            MESSAGE(SEND_ERROR "USBcamera: opencv not found, please turn off device. You can install this dependency with 'sudo apt-get install libopencv-dev'")
+            return()
+        endif(NOT ICUB_USE_OpenCV )
+
     elseif(WIN32)
         MESSAGE(SEND_ERROR "USBcamera: device not available yet on Windows platform, please turn off the device")
         return()
@@ -42,6 +47,7 @@ IF(ENABLE_icubmod_usbCamera)
 
     if(UNIX)
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/linux ${Libv4l2_INCLUDE_DIRS} ${Libv4lconvert_INCLUDE_DIRS})
+
         set(OS_SOURCES linux/V4L_camera.hpp linux/V4L_camera.cpp linux/list.hpp linux/list.cpp)
         # Files from leopard sdk (not used right now)--> linux/Leopard_MT9M021C.cpp linux/raw2bmp.cpp
     else()
@@ -51,13 +57,15 @@ IF(ENABLE_icubmod_usbCamera)
     endif()
 
     # includes valid for all platforms
-    include_directories(${YARP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/common)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common
+                        ${YARP_INCLUDE_DIRS}
+                        ${OpenCV_INCLUDE_DIRS})
 
     yarp_add_plugin(usbCamera ${USBcamera_common_SRCS} ${USBcamera_common_HDRS} ${OS_SOURCES})
     target_link_libraries(usbCamera ${YARP_LIBRARIES})
 
     if(UNIX)
-        target_link_libraries(usbCamera ${Libv4l2_LIBRARIES} ${Libv4lconvert_LIBRARIES})
+        target_link_libraries(usbCamera ${Libv4l2_LIBRARIES} ${Libv4lconvert_LIBRARIES} ${OpenCV_LIBRARIES})
     elseif(WIN32)
 #       target_link_libraries(usbCamera ${SOME_WIN_LIBRARIES})
     else()
