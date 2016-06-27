@@ -421,8 +421,10 @@ bool YarpBroker::connect(const char* from, const char* to,
          * TODO: this check should be removed and
          *       the necessary modification should be done inside NetworkBase::isConnected!!!
          */
-
-        if(string(carrier) != "udp" && string(carrier) != "mcast") {
+        string strCarrier = carrier;
+        bool needDisconnect = strCarrier.find("udp") == (size_t)0;
+        needDisconnect |= strCarrier.find("mcast") == (size_t)0;
+        if(needDisconnect == false) {
             if(NetworkBase::isConnected(from, to, style))
                 return true;
         }
