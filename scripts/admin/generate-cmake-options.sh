@@ -59,7 +59,7 @@ case $3 in
       if [ "$OS_TYPE" == "linux" ]; then
         CMAKE_OPTIONS=" \
           $CMAKE_OPTIONS \
-          -DYARP_VALGRIND_TESTS=ON
+          #-DYARP_VALGRIND_TESTS=ON
         "
       fi
      ;;
