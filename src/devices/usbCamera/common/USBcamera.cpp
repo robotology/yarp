@@ -80,6 +80,7 @@ bool USBCameraDriver::open(yarp::os::Searchable& config)
     os_device->view(deviceRaw);
     os_device->view(deviceControls);
     os_device->view(deviceControls2);
+    os_device->view(deviceTimed);
 
     if(deviceRaw)
     {
@@ -139,8 +140,10 @@ bool USBCameraDriver::getRgbBuffer(unsigned char *buff)
 
 yarp::os::Stamp USBCameraDriver::getLastInputStamp()
 {
-    yarp::os::Stamp s;
-	return s;
+    if(deviceTimed)
+        return deviceTimed->getLastInputStamp();
+
+    return yarp::os::Stamp();
 }
 
 

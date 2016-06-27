@@ -17,6 +17,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include <time.h>
+
 #define errno_exit printf
 
 //#include <Leopard_MT9M021C.h>
@@ -25,6 +27,21 @@ struct v4lconvert_data *_v4lconvert_data;
 
 using namespace yarp::os;
 using namespace yarp::dev;
+
+
+static double getEpochTimeShift()
+{
+    struct timeval epochtime;
+    struct timespec  vsTime;
+
+    gettimeofday(&epochtime, NULL);
+    clock_gettime(CLOCK_MONOTONIC, &vsTime);
+
+    double uptime = vsTime.tv_sec + vsTime.tv_nsec/1000000000.0;
+    double epoch =  epochtime.tv_sec + epochtime.tv_usec/1000000.0;
+    return epoch - uptime;
+}
+
 
 #define NOT_PRESENT -1
 int V4L_camera::convertYARP_to_V4L(int feature)
@@ -58,7 +75,7 @@ int V4L_camera::convertYARP_to_V4L(int feature)
     return NOT_PRESENT;
 }
 
-V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false), dual(false)
+V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false), dual(false), toEpochOffset(getEpochTimeShift())
 {
     param.width  = DEFAULT_WIDTH;
     param.height = DEFAULT_HEIGHT;
@@ -75,6 +92,10 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false)
     timeTot = 0;
 }
 
+yarp::os::Stamp V4L_camera::getLastInputStamp()
+{
+    return timeStamp;
+}
 
 /**
  *    open device
@@ -184,7 +205,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     if(config.check("crop") )
     {
         doCropping = true;
-        yWarning("CROPPING!!");
+        yInfo("Cropping enabled.");
     }
     else
         doCropping = false;
@@ -192,7 +213,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     if(config.check("dual") )
     {
         dual = true;
-        yWarning("DUAL CAMERA!!");
+        yInfo("Using dual input camera.");
     }
     else
         dual = false;
@@ -777,6 +798,7 @@ void* V4L_camera::frameRead()
                         errno_exit("read");
                         return NULL;
                 }
+                timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
             }
 
 //             memcpy(param.raw_image, param.buffers[0].start, param.image_size);
@@ -813,6 +835,7 @@ void* V4L_camera::frameRead()
                 memcpy(param.raw_image, param.buffers[buf.index].start, param.buffers[0].length); //param.image_size);
 //                 param.raw_image = param.buffers[buf.index].start;
 //                 imageProcess(param.raw_image);
+                timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
                 mutex.post();
 
                 if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
@@ -860,6 +883,7 @@ void* V4L_camera::frameRead()
                 mutex.wait();
                 memcpy(param.raw_image, param.buffers[buf.index].start, param.image_size);
 //                 param.raw_image = (void*) buf.m.userptr;
+                timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
                 mutex.post();
 
 
@@ -917,8 +941,6 @@ void V4L_camera::imageProcess(void* p)
             {
                 int tmp1_rowSize = param.dst_fmt.fmt.pix.width * 3;
                 int tmp2_rowSize = tmp1_rowSize *12/16;
-
-                std::cout << "dst_fmt.width: " << param.dst_fmt.fmt.pix.width << " tmp1_rowSize: " << tmp1_rowSize << " tmp2_rowSize: " << tmp2_rowSize << std::endl;
 
                 if(dual)
                 {
@@ -1235,7 +1257,7 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
 
 bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
 {
-    yTrace();
+//     yTrace();
     struct v4l2_queryctrl queryctrl;
     struct v4l2_control control;
 

@@ -57,6 +57,7 @@ protected:
     USBCameraDriver(const USBCameraDriver&);
     void operator=(const USBCameraDriver&);
     IFrameGrabberRgb        *deviceRgb;
+    IPreciselyTimed         *deviceTimed;
     IFrameGrabber           *deviceRaw;
     DeviceDriver            *os_device;
     IFrameGrabberControls   *deviceControls;
