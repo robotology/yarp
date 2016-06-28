@@ -15,13 +15,6 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
-#ifdef _MSC_VER
-/* This template is used to define a non private member variable of RemoteFrameGrabber (reader).
-As such it needs to be explicitly exported (warning C4251). The warnig could be suppressed altogether 
-by defining the member private thus ensuring that it is never used dirctly in user code.*/
-template class YARP_dev_API yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
-#endif
-
 // should move more of implementation into this file
 
 // just to keep linkers from complaining about empty archive
