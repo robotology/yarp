@@ -763,5 +763,12 @@ bool AnalogWrapper::close()
     RateThread::stop();
     detachAll();
     removeHandlers();
+
+    if(rosNode!=NULL) {
+        rosNode->interrupt();
+        delete rosNode;
+        rosNode = NULL;
+    }
+
     return true;
 }
