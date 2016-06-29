@@ -597,9 +597,10 @@ bool Rangefinder2DWrapper::close()
     {
         RateThread::stop();
     }
-    if (rosNode != NULL) {
+    if(rosNode!=NULL) {
         rosNode->interrupt();
         delete rosNode;
+        rosNode = NULL;
     }
 
     detachAll();
