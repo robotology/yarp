@@ -199,6 +199,14 @@ AnalogWrapper::AnalogWrapper(): RateThread(DEFAULT_THREAD_PERIOD)
 {
     _rate = DEFAULT_THREAD_PERIOD;
     analogSensor_p = NULL;
+
+    // init ROS struct
+    useROS          = ROS_disabled;
+    frame_id        = "";
+    rosNodeName     = "";
+    rosTopicName    = "";
+    rosNode         = NULL;
+    rosMsgCounter   = 0;
 }
 
 AnalogWrapper::~AnalogWrapper()
@@ -761,12 +769,14 @@ bool AnalogWrapper::close()
     }
 
     RateThread::stop();
+
     detachAll();
     removeHandlers();
 
     if(rosNode!=NULL) {
         rosNode->interrupt();
         delete rosNode;
+
         rosNode = NULL;
     }
 
