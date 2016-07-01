@@ -768,7 +768,7 @@ bool AnalogWrapper::close()
         RateThread::stop();
     }
 
-    RateThread::stop();
+    //RateThread::stop();
 
     detachAll();
     removeHandlers();
