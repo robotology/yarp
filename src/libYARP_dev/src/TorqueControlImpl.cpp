@@ -54,6 +54,7 @@ bool ImplementTorqueControl::uninitialize ()
     }
     checkAndDestroy(temp);
     checkAndDestroy(temp2);
+    checkAndDestroy(temp_int);
     checkAndDestroy(tmpPids);
 
     return true;

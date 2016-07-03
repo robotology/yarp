@@ -98,6 +98,7 @@ bool SharedLibrary::close()
     if (implementation->dll != NULL) {
 #ifdef YARP_HAS_ACE
         result = implementation->dll->close();
+        delete implementation->dll;
 #else
         result = dlclose(implementation->dll);
 #endif
