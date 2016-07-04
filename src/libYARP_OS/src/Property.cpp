@@ -803,7 +803,6 @@ public:
         char** szarg = new char*[128 + 1];  // maximum 128 arguments
         char* szcmd = new char[strlen(command)+1];
         strcpy(szcmd, command);
-        szarg = new char*[128 + 1];
         int nargs = 0;
         parseArguments(szcmd, &nargs, szarg, 128);
         szarg[nargs]=0;
