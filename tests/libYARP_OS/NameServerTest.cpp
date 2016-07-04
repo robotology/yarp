@@ -22,7 +22,7 @@ public:
         return Network::getDefaultPortRange()+100;
     }
 
-    virtual String getName() { return "NameServerTest"; }
+    virtual ConstString getName() { return "NameServerTest"; }
 
     void checkRegister() {
         report(0,"checking register...");

@@ -13,7 +13,7 @@
 
 class LogTest : public yarp::os::impl::UnitTest {
 public:
-    virtual yarp::os::impl::String getName() { return "LogTest"; }
+    virtual yarp::os::ConstString getName() { return "LogTest"; }
 
     void checkLog() {
         int i = 13;

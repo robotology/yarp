@@ -22,9 +22,9 @@ class PortCoreTest : public UnitTest, public PortReader {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual String getName() { return "PortCoreTest"; }
+    virtual ConstString getName() { return "PortCoreTest"; }
 
-    String expectation;
+    ConstString expectation;
     int receives;
 
     bool read(ConnectionReader& reader) {
@@ -34,7 +34,7 @@ public:
         receives++;
         BottleImpl bot;
         bot.read(reader);
-        if (expectation==String("")) {
+        if (expectation==ConstString("")) {
             report(1,"got unexpected input");
             return false;
         }

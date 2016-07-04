@@ -5,7 +5,7 @@
  *
  */
 
-// added test for threadInit/threadRelease functions, synchronization and 
+// added test for threadInit/threadRelease functions, synchronization and
 // thread init success/failure notification -nat
 
 #include <yarp/os/RateThread.h>
@@ -50,155 +50,155 @@ public:
 
 class RateThreadTest : public UnitTest {
 private:
-	class RateThread1: public RateThread
-	{
-	public:
-		double t1;
-		double t2;
-		double average;
-		double period;
-		int n;
-		
-		RateThread1(int r): RateThread(r){}
-		
-		virtual bool threadInit()
-		{
-			ACE_OS::printf("-->Starting rate thread: %.2lf[ms]...", getRate());
-			n=0;
-			t1=0;
-			t2=0;
-			average=0;
-			
-			return true;
-		}
-		
-		virtual void run()
-		{
-			t2=Time::now();
-			
-			if (n>0)
+    class RateThread1: public RateThread
+    {
+    public:
+        double t1;
+        double t2;
+        double average;
+        double period;
+        int n;
+
+        RateThread1(int r): RateThread(r){}
+
+        virtual bool threadInit()
+        {
+            ACE_OS::printf("-->Starting rate thread: %.2lf[ms]...", getRate());
+            n=0;
+            t1=0;
+            t2=0;
+            average=0;
+
+            return true;
+        }
+
+        virtual void run()
+        {
+            t2=Time::now();
+
+            if (n>0)
             {
-                average+=(t2-t1);        
+                average+=(t2-t1);
             }
-			n++;
-			t1=t2;
-			
-			// ACE_OS::printf(".");
-		}
-		
-		virtual void threadRelease()
-		{
-			if (n>0)
-				period=1000*average/(n-1);
-			else 
-				period=0;
-			
-			ACE_OS::printf("thread quit\n");
-		}
-		
-	};
-	
-	class RateThread2: public RateThread
-	{
-	public:
-		bool fail;
-		int state;
-		
-		RateThread2(int r): RateThread(r),fail(false),state(-1){}
-		
-		void threadWillFail(bool f)
-		{fail=f;}
-		
-		virtual bool threadInit()
-		{
-			state=-1;
-			return !fail;
-		}
-		
-		virtual void afterStart(bool s)
-		{
-			if (s)
-				state=0;
-		}
-		
-		virtual void run()
-		{}
-		
-		virtual void threadRelease()
-		{ 
-			state++;
-		}
-	};
-	
-	class RateThread3: public RateThread
-	{
-	public:
-		bool fail;
-		int state;
-		
-		RateThread3(int r): RateThread(r),fail(false),state(-1){}
-		
-		void threadWillFail(bool f)
-		{
-			fail=f;
-			//reset internal state
-			state=-1;
-		}
-		
-		virtual bool threadInit()
-		{
-			Time::delay(0.5);
-			state++;
-			return !fail;
-		}
-		
-		virtual void afterStart(bool s)
-		{
-			if (s)
-				state++;
-			else
-				state=-2;
-		}
-		
-		virtual void run()
-		{}
-		
-		virtual void threadRelease()
-		{ 
-			Time::delay(0.5);
-			state++;
-		}
-	};
-    
+            n++;
+            t1=t2;
+
+            // ACE_OS::printf(".");
+        }
+
+        virtual void threadRelease()
+        {
+            if (n>0)
+                period=1000*average/(n-1);
+            else
+                period=0;
+
+            ACE_OS::printf("thread quit\n");
+        }
+
+    };
+
+    class RateThread2: public RateThread
+    {
+    public:
+        bool fail;
+        int state;
+
+        RateThread2(int r): RateThread(r),fail(false),state(-1){}
+
+        void threadWillFail(bool f)
+        {fail=f;}
+
+        virtual bool threadInit()
+        {
+            state=-1;
+            return !fail;
+        }
+
+        virtual void afterStart(bool s)
+        {
+            if (s)
+                state=0;
+        }
+
+        virtual void run()
+        {}
+
+        virtual void threadRelease()
+        {
+            state++;
+        }
+    };
+
+    class RateThread3: public RateThread
+    {
+    public:
+        bool fail;
+        int state;
+
+        RateThread3(int r): RateThread(r),fail(false),state(-1){}
+
+        void threadWillFail(bool f)
+        {
+            fail=f;
+            //reset internal state
+            state=-1;
+        }
+
+        virtual bool threadInit()
+        {
+            Time::delay(0.5);
+            state++;
+            return !fail;
+        }
+
+        virtual void afterStart(bool s)
+        {
+            if (s)
+                state++;
+            else
+                state=-2;
+        }
+
+        virtual void run()
+        {}
+
+        virtual void threadRelease()
+        {
+            Time::delay(0.5);
+            state++;
+        }
+    };
+
     class RateThread4: public RateThread
-	{
-	public:
+    {
+    public:
         int count;
 
-		RateThread4(int r): RateThread(r),count(10){}
+        RateThread4(int r): RateThread(r),count(10){}
 
-		virtual void run()
-		{
+        virtual void run()
+        {
                 count--;
-                
+
                //terminate when count is zero
                if (count==0)
                    RateThread::askToStop();
         }
-	
-	};
+
+    };
 
     class RateThread5: public RateThread
-	{
-	public:
+    {
+    public:
         int count;
 
-		RateThread5(int r): RateThread(r),count(0){}
+        RateThread5(int r): RateThread(r),count(0){}
 
-		virtual void run() {
+        virtual void run() {
             count++;
         }
-	};
+    };
 
     class UgoThread : public RateThread {
     public:
@@ -207,48 +207,48 @@ private:
         UgoThread() : RateThread(100) {
             done = false;
         }
-        
+
         void run() {
             if (done) askToStop();
         }
     };
 
     class Runnable1:public Runnable
-	{
-	public:
-		bool initCalled;
-		bool releaseCalled;
-		bool runExecuted;
-		bool initNotified;
+    {
+    public:
+        bool initCalled;
+        bool releaseCalled;
+        bool runExecuted;
+        bool initNotified;
 
-		Runnable1(): initCalled(false),
-						releaseCalled(false),
-						runExecuted(false),
-						initNotified(false){}
+        Runnable1(): initCalled(false),
+                        releaseCalled(false),
+                        runExecuted(false),
+                        initNotified(false){}
 
-		virtual bool threadInit()
-		{
-			initCalled=true;
-			return true;
-		}
+        virtual bool threadInit()
+        {
+            initCalled=true;
+            return true;
+        }
 
-		virtual void threadRelease()
-		{
-			releaseCalled=true;
-		}
+        virtual void threadRelease()
+        {
+            releaseCalled=true;
+        }
 
-		virtual void run()
-		{}
+        virtual void run()
+        {}
 
-		virtual void afterStart(bool s)
-		{
-			initNotified=true;
-		}
+        virtual void afterStart(bool s)
+        {
+            initNotified=true;
+        }
 
-	};
+    };
 
 public:
-    virtual String getName() { return "RateThreadTest"; }
+    virtual ConstString getName() { return "RateThreadTest"; }
 
     double test(int rate, double delay)
     {
@@ -260,57 +260,57 @@ public:
         thread1->stop();
 
         estPeriod=thread1->period;
-        
+
         delete thread1;
         return estPeriod;
     }
 
-	void testInitSuccessFailure()
-	{
-		report(0,"checking init failure/success notification");
+    void testInitSuccessFailure()
+    {
+        report(0,"checking init failure/success notification");
         RateThread2 t(200);
-		t.threadWillFail(false);
+        t.threadWillFail(false);
         t.start();
-		checkTrue(t.isRunning(), "thread is running");
-		t.stop();
-		checkTrue(!t.isRunning(), "thread was stopped");
+        checkTrue(t.isRunning(), "thread is running");
+        t.stop();
+        checkTrue(!t.isRunning(), "thread was stopped");
         checkEqual(1, t.state, "init success was properly notified");
 
-		t.threadWillFail(true);
-		t.start();
-		checkTrue(!t.isRunning(), "thread stopped");
-		checkEqual(-1,t.state, "init failure was properly notified");
+        t.threadWillFail(true);
+        t.start();
+        checkTrue(!t.isRunning(), "thread stopped");
+        checkEqual(-1,t.state, "init failure was properly notified");
 
-		report(0,"done");
-	}
+        report(0,"done");
+    }
 
-	void testInitReleaseSynchro()
-	{
-		report(0,"Checking init/release synchronization");
+    void testInitReleaseSynchro()
+    {
+        report(0,"Checking init/release synchronization");
         RateThread3 t(200);
-		t.threadWillFail(false);
-        // if start does not wait for threadRelease/threadInit, a race condition 
-		// will be detected
-		t.start();
-		checkEqual(1, t.state, "synchronization on init");
-        // if start does not wait for threadRelease/threadInit, a race condition 
-		// will be detected
+        t.threadWillFail(false);
+        // if start does not wait for threadRelease/threadInit, a race condition
+        // will be detected
+        t.start();
+        checkEqual(1, t.state, "synchronization on init");
+        // if start does not wait for threadRelease/threadInit, a race condition
+        // will be detected
         t.stop();
         checkEqual(2, t.state, "synchronization on release");
 
-		t.threadWillFail(true);
-		t.start();
-		checkEqual(-2, t.state, "synchronization on a failed init");
-		report(0,"done");
-	}
+        t.threadWillFail(true);
+        t.start();
+        checkEqual(-2, t.state, "synchronization on a failed init");
+        report(0,"done");
+    }
 
     void testRateThread() {
-		report(0,"testing rate thread precision");
+        report(0,"testing rate thread precision");
         report(0,"setting high res scheduler (this affects only windows)");
 
-		Time::turboBoost();
+        Time::turboBoost();
         char message[255];
-       
+
         //try plausible rates
         double p;
         ACE_OS::sprintf(message, "Thread1 requested period: %d[ms]", 15);
@@ -318,7 +318,7 @@ public:
         p=test(15, 1);
         ACE_OS::sprintf(message, "Thread1 estimated: %.2lf[ms]", p);
         report(0, message);
-        
+
         ACE_OS::sprintf(message, "Thread2 requested period: %d[ms]", 10);
         report(0, message);
         p=test(10, 1);
@@ -351,24 +351,24 @@ public:
         thread.stop();
     }
 
-	void testRunnable()
-	{
-		report(0, "Testing runnable");
+    void testRunnable()
+    {
+        report(0, "Testing runnable");
 
-		Runnable1 foo;
-		RateThreadWrapper t;
-		t.setRate(100); 
-		t.attach(foo);
-		t.start();
-		checkTrue(t.isRunning(), "thread is running");
-		t.close();
-		checkTrue(!t.isRunning(), "thread was stopped");
-		checkTrue(foo.initCalled, "init was called");
-		checkTrue(foo.initNotified, "afterStart() was called");
-		checkTrue(foo.releaseCalled, "release was called");
+        Runnable1 foo;
+        RateThreadWrapper t;
+        t.setRate(100);
+        t.attach(foo);
+        t.start();
+        checkTrue(t.isRunning(), "thread is running");
+        t.close();
+        checkTrue(!t.isRunning(), "thread was stopped");
+        checkTrue(foo.initCalled, "init was called");
+        checkTrue(foo.initNotified, "afterStart() was called");
+        checkTrue(foo.releaseCalled, "release was called");
 
-		report(0, "successful");
-	}
+        report(0, "successful");
+    }
 
 
     void testSimTime() {
@@ -391,7 +391,7 @@ public:
         checkEqual(thread.count,2,"stepping ok");
         clock.done = true;
         thread.stop();
-        Time::useSystemClock();    
+        Time::useSystemClock();
     }
 
     void testStartAskForStopStart() {
@@ -409,10 +409,10 @@ public:
     }
 
     virtual void runTests() {
-   		testInitSuccessFailure();
-		testInitReleaseSynchro();
-		testRunnable();
-		testRateThread();
+        testInitSuccessFailure();
+        testInitReleaseSynchro();
+        testRunnable();
+        testRateThread();
         testSimTime();
         testStartAskForStopStart();
     }

@@ -100,7 +100,7 @@ void PortCoreOutputUnit::runSingleThreaded() {
         setMode();
         getOwner().reportUnit(this,true);
 
-        String msg = String("Sending output from ") +
+        ConstString msg = ConstString("Sending output from ") +
             route.getFromName() + " to " + route.getToName() + " using " +
             route.getCarrierName();
         if (Name(route.getToName()).isRooted()) {
@@ -145,7 +145,7 @@ void PortCoreOutputUnit::closeBasic() {
             if (op->getConnection().canEscape()) {
                 BufferedConnectionWriter buf(op->getConnection().isTextMode(),
                                              op->getConnection().isBareMode());
-                PortCommand pc('\0',String("q"));
+                PortCommand pc('\0',ConstString("q"));
                 pc.write(buf);
                 //printf("Asked for %s to close...\n",
                 //     op->getRoute().toString().c_str());
@@ -153,7 +153,7 @@ void PortCoreOutputUnit::closeBasic() {
             }
         }
 
-        String msg = String("Removing output from ") +
+        ConstString msg = ConstString("Removing output from ") +
             route.getFromName() + " to " + route.getToName();
 
         if (Name(route.getToName()).isRooted()) {
@@ -275,7 +275,7 @@ bool PortCoreOutputUnit::sendHelper() {
                     if (cachedEnvelope!="") {
                         // this will be the new way to signal that replies
                         // are not expected
-                        //PortCommand pc('\0', String(suppressReply?"D ":"d ") +
+                        //PortCommand pc('\0', ConstString(suppressReply?"D ":"d ") +
                         //             cachedEnvelope);
                         //pc.writeBlock(buf);
 
@@ -285,7 +285,7 @@ bool PortCoreOutputUnit::sendHelper() {
                             PortCommand pc('a', "");
                             pc.write(buf);
                         } else {
-                            PortCommand pc('\0', String(suppressReply?"do ":"d ") +
+                            PortCommand pc('\0', ConstString(suppressReply?"do ":"d ") +
                                         cachedEnvelope);
                             pc.write(buf);
                         }
@@ -341,7 +341,7 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
                                yarp::os::PortReader *reader,
                                yarp::os::PortWriter *callback,
                                void *tracker,
-                               const String& envelopeString,
+                               const ConstString& envelopeString,
                                bool waitAfter,
                                bool waitBefore,
                                bool *gotReply) {

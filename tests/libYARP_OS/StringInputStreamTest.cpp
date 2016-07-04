@@ -15,7 +15,7 @@ using namespace yarp::os::impl;
 
 class StringInputStreamTest : public UnitTest {
 public:
-    virtual String getName() { return "StringInputStreamTest"; }
+    virtual ConstString getName() { return "StringInputStreamTest"; }
 
     void testRead() {
         report(0,"test reading...");

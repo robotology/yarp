@@ -7,8 +7,6 @@
 
 #include <math.h>
 
-#include <yarp/os/impl/String.h>
-
 #include <yarp/os/all.h>
 
 #include <yarp/os/impl/UnitTest.h>
@@ -34,7 +32,7 @@ public:
 
 class SemaphoreTest : public UnitTest {
 public:
-    virtual String getName() { return "SemaphoreTest"; }
+    virtual ConstString getName() { return "SemaphoreTest"; }
 
     void checkBasic() {
         report(0, "basic semaphore sanity check...");

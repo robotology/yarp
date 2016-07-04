@@ -15,12 +15,12 @@ using namespace yarp::os;
 
 class AddressTest : public UnitTest {
 public:
-    virtual String getName() { return "AddressTest"; }
+    virtual ConstString getName() { return "AddressTest"; }
 
     virtual void testString() {
         report(0,"checking string representation");
         Contact address = Contact::bySocket("tcp","127.0.0.1",10000);
-        String txt = address.toURI();
+        ConstString txt = address.toURI();
         checkEqual(txt,"tcp://127.0.0.1:10000","string rep example");
     }
 
@@ -29,7 +29,7 @@ public:
         Contact address = Contact::bySocket("tcp","127.0.0.1",10000);
         Contact address2;
         address2 = address;
-        String txt = address2.toURI();
+        ConstString txt = address2.toURI();
         checkEqual(txt,"tcp://127.0.0.1:10000","string rep example");
 
         Contact inv1;

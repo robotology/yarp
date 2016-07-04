@@ -54,7 +54,7 @@ Carrier *yarp::os::impl::McastCarrier::create() {
     return new McastCarrier();
 }
 
-String yarp::os::impl::McastCarrier::getName() {
+ConstString yarp::os::impl::McastCarrier::getName() {
     return "mcast";
 }
 
@@ -73,7 +73,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
     Contact addr;
 
     Contact alt = proto.getStreams().getLocalAddress();
-    String altKey =
+    ConstString altKey =
         proto.getRoute().getFromName() +
         "/net=" + alt.getHost();
     McastCarrier *elect = getCaster().getElect(altKey);
@@ -140,7 +140,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
     int port = -1;
 
     unsigned char *base = (unsigned char *)block.get();
-    String add;
+    ConstString add;
     for (int i=0; i<4; i++) {
         ip[i] = base[i];
         if (i!=0) { add += "."; }
@@ -150,7 +150,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
     }
     port = 256*base[4]+base[5];
     Contact addr = Contact::bySocket("mcast",add,port);
-    YARP_DEBUG(Logger::get(),String("got mcast header ") + addr.toURI());
+    YARP_DEBUG(Logger::get(),ConstString("got mcast header ") + addr.toURI());
     mcastAddress = addr;
 
     return true;
@@ -193,7 +193,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
             key += local.getHost();
         }
         YARP_DEBUG(Logger::get(),
-                    String("multicast key: ") + key);
+                    ConstString("multicast key: ") + key);
         addSender(key);
     }
 
@@ -224,11 +224,11 @@ bool yarp::os::impl::McastCarrier::expectReplyToHeader(ConnectionState& proto) {
     return becomeMcast(proto,true);
 }
 
-void yarp::os::impl::McastCarrier::addSender(const String& key) {
+void yarp::os::impl::McastCarrier::addSender(const ConstString& key) {
     getCaster().add(key,this);
 }
 
-void yarp::os::impl::McastCarrier::addRemove(const String& key) {
+void yarp::os::impl::McastCarrier::addRemove(const ConstString& key) {
     getCaster().remove(key,this);
 }
 

@@ -7,6 +7,7 @@
 
 #include <yarp/os/impl/BottleImpl.h>
 
+#include <yarp/os/ConstString.h>
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
@@ -20,7 +21,6 @@
 
 #include <clocale>
 
-using yarp::os::impl::String;
 using yarp::os::impl::StoreInt;
 using yarp::os::impl::StoreVocab;
 using yarp::os::impl::StoreDouble;
@@ -111,7 +111,7 @@ void BottleImpl::clear()
     dirty = true;
 }
 
-void BottleImpl::smartAdd(const String& str)
+void BottleImpl::smartAdd(const ConstString& str)
 {
     if (str.length() > 0) {
         char ch = str[0];
@@ -191,7 +191,7 @@ void BottleImpl::smartAdd(const String& str)
             s->fromStringNested(str);
             if (ss != NULL) {
                 if (str.length() == 0 || str[0] != '\"') {
-                    String val = ss->asStringFlex();
+                    ConstString val = ss->asStringFlex();
                     if (val == "true") {
                         delete s;
                         s = new StoreVocab(static_cast<int>('1'));
@@ -207,17 +207,17 @@ void BottleImpl::smartAdd(const String& str)
     }
 }
 
-void BottleImpl::fromString(const String& line)
+void BottleImpl::fromString(const ConstString& line)
 {
     clear();
     dirty = true;
-    String arg = "";
+    ConstString arg = "";
     bool quoted = false;
     bool back = false;
     bool begun = false;
     int nested = 0;
     int nestedAlt = 0;
-    String nline = line + " ";
+    ConstString nline = line + " ";
 
     for (unsigned int i = 0; i < nline.length(); i++) {
         char ch = nline[i];
@@ -280,7 +280,7 @@ bool BottleImpl::isComplete(const char* txt)
     bool begun = false;
     int nested = 0;
     int nestedAlt = 0;
-    String nline = txt;
+    ConstString nline = txt;
     nline += " ";
 
     for (unsigned int i = 0; i < nline.length(); i++) {
@@ -1348,7 +1348,7 @@ bool Storable::check(const ConstString& key) const
 
 bool Storable::operator==(const Value& alt) const
 {
-    return String(toString().c_str()) == alt.toString().c_str();
+    return ConstString(toString().c_str()) == alt.toString().c_str();
 }
 
 

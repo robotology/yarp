@@ -35,7 +35,7 @@ public:
 
 class NodeTest : public UnitTest {
 public:
-    virtual String getName() { return "NodeTest"; }
+    virtual ConstString getName() { return "NodeTest"; }
 
     void parseNameTest();
     void basicNodeTest();

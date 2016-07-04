@@ -6,11 +6,9 @@
  */
 
 
-#include <yarp/os/impl/String.h>
 #include <yarp/os/Vocab.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 NetInt32 Vocab::encode(const ConstString& str) {
     char a = '\0';

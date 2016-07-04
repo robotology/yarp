@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 
     if (argc>1) {
         int verbosity = 0;
-        while (String(argv[1])==String("verbose")) {
+        while (ConstString(argv[1])==ConstString("verbose")) {
             verbosity++;
             argc--;
             argv++;
@@ -50,8 +50,8 @@ int main(int argc, char *argv[]) {
         if (verbosity>0) {
             Logger::get().setVerbosity(verbosity);
         }
-    
-        if (String(argv[1])==String("regression")) {
+
+        if (ConstString(argv[1])==ConstString("regression")) {
             done = true;
             UnitTest::startTestSystem();
             TestList::collectTests();  // just in case automation doesn't work
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
             }
             UnitTest::stopTestSystem();
         }
-    } 
+    }
     if (!done) {
         Companion::main(argc,argv);
     }

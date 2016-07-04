@@ -13,7 +13,6 @@
  */
 
 #include <yarp/dev/Drivers.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/impl/PlatformStdio.h>

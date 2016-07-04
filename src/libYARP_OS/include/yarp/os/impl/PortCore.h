@@ -329,7 +329,7 @@ public:
         return address;
     }
 
-    void resetPortName(const String& str) {
+    void resetPortName(const ConstString& str) {
         address = address.addName(str);
     }
 
@@ -353,9 +353,9 @@ public:
     /**
      * Set some extra meta data to pass along with the message
      */
-    void setEnvelope(const String& envelope);
+    void setEnvelope(const ConstString& envelope);
 
-    String getEnvelope();
+    ConstString getEnvelope();
 
     /**
      * Get any meta data associated with the last message received
@@ -430,14 +430,14 @@ public:
 public:
 
     // documented in PortManager
-    virtual bool addOutput(const String& dest, void *id, OutputStream *os,
+    virtual bool addOutput(const ConstString& dest, void *id, OutputStream *os,
                            bool onlyIfNeeded);
 
     // documented in PortManager
-    virtual void removeOutput(const String& dest, void *id, OutputStream *os);
+    virtual void removeOutput(const ConstString& dest, void *id, OutputStream *os);
 
     // documented in PortManager
-    virtual void removeInput(const String& dest, void *id, OutputStream *os);
+    virtual void removeInput(const ConstString& dest, void *id, OutputStream *os);
 
     // documented in PortManager
     virtual void describe(void *id, OutputStream *os);
@@ -531,7 +531,7 @@ private:
     SemaphoreImpl connectionChange; ///< signal changes in connections
     Logger log;  ///< message logger
     Face *face;  ///< network server
-    String name; ///< name of port
+    ConstString name; ///< name of port
     yarp::os::Contact address;    ///< network address of port
     yarp::os::PortReader *reader; ///< where to send read events
     yarp::os::PortReader *adminReader; ///< where to send admin read events
@@ -558,7 +558,7 @@ private:
     int verbosity;  ///< threshold on what warnings or debug messages are shown
     bool logNeeded; ///< port needs to monitor message content
     PortCorePackets packets; ///< a pool for tracking messages currently being sent
-    String envelope;///< user-defined wrapping data
+    ConstString envelope;///< user-defined wrapping data
     float timeout;  ///< a timeout to apply to all network operations
     int counter;    ///< port-unique ids for connections
     yarp::os::Property *prop;  ///< optional unstructured properties associated with port
@@ -584,7 +584,7 @@ private:
     int  getPid();
 
     // attach a portmonitor plugin to the port or to a specific connection
-    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, String &errMsg);
+    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, ConstString &errMsg);
 
     // detach the portmonitor from the port or specific connection
     bool dettachPortMonitor(bool isOutput);

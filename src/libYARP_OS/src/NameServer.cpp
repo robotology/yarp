@@ -54,7 +54,7 @@ static ConstString STR_HELP(const char *txt) {
 ////////////////////////////////////////////////////////////////////////
 
 
-Contact NameServer::unregisterName(const String& name) {
+Contact NameServer::unregisterName(const ConstString& name) {
     Contact prev = queryName(name);
     if (prev.isValid()) {
         if (prev.getPort()!=-1) {
@@ -83,9 +83,9 @@ Contact NameServer::unregisterName(const String& name) {
 
 
 
-Contact NameServer::registerName(const String& name,
+Contact NameServer::registerName(const ConstString& name,
                                  const Contact& address,
-                                 const String& remote) {
+                                 const ConstString& remote) {
     bool reusablePort = false;
     bool reusableIp = false;
 
@@ -101,17 +101,17 @@ Contact NameServer::registerName(const String& name,
         suggestion = Contact::bySocket("...","...",0).addName(name);
     }
 
-    String portName = name;
+    ConstString portName = name;
     if (portName == "...") {
         portName = tmpNames.get();
     }
 
-    String carrier = suggestion.getCarrier();
+    ConstString carrier = suggestion.getCarrier();
     if (carrier == "...") {
         carrier = "tcp";
     }
 
-    String machine = suggestion.getHost();
+    ConstString machine = suggestion.getHost();
     int overridePort = 0;
     if (machine == "...") {
         if (carrier!="mcast") {
@@ -140,7 +140,7 @@ Contact NameServer::registerName(const String& name,
 
     suggestion = Contact::bySocket(carrier,machine,port).addName(portName);
 
-    YARP_DEBUG(Logger::get(),String("Registering ") +
+    YARP_DEBUG(Logger::get(),ConstString("Registering ") +
                suggestion.toURI() + " for " + suggestion.getRegName());
 
     NameRecord& nameRecord = getNameRecord(suggestion.getRegName());
@@ -155,16 +155,16 @@ Contact NameServer::registerName(const String& name,
 }
 
 
-Contact NameServer::queryName(const String& name) {
-    String base = name;
-    String pat = "";
+Contact NameServer::queryName(const ConstString& name) {
+    ConstString base = name;
+    ConstString pat = "";
     if (name.find("/net=") == 0) {
         size_t patStart = 5;
         size_t patEnd = name.find('/',patStart);
-        if (patEnd>=patStart && patEnd!=String::npos) {
+        if (patEnd>=patStart && patEnd!=ConstString::npos) {
             pat = name.substr(patStart,patEnd-patStart);
             base = name.substr(patEnd);
-            YARP_DEBUG(Logger::get(),String("Special query form ") +
+            YARP_DEBUG(Logger::get(),ConstString("Special query form ") +
                        name + " (" + pat + "/" + base + ")");
         }
     }
@@ -172,7 +172,7 @@ Contact NameServer::queryName(const String& name) {
     NameRecord *rec = getNameRecord(base,false);
     if (rec!=NULL) {
         if (pat!="") {
-            String ip = rec->matchProp("ips",pat);
+            ConstString ip = rec->matchProp("ips",pat);
             if (ip!="") {
                 SplitString sip(ip.c_str());
                 return (rec->getAddress()).addHost(sip.get(0));
@@ -184,9 +184,9 @@ Contact NameServer::queryName(const String& name) {
 }
 
 
-NameServer::NameRecord *NameServer::getNameRecord(const String& name,
+NameServer::NameRecord *NameServer::getNameRecord(const ConstString& name,
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(String,NameRecord,entry);
+    PLATFORM_MAP_ITERATOR(ConstString,NameRecord,entry);
     int result = PLATFORM_MAP_FIND(nameMap,name,entry);
     if (result==-1) {
         if (!create) {
@@ -201,9 +201,9 @@ NameServer::NameRecord *NameServer::getNameRecord(const String& name,
 }
 
 
-NameServer::HostRecord *NameServer::getHostRecord(const String& name,
+NameServer::HostRecord *NameServer::getHostRecord(const ConstString& name,
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(String,HostRecord,entry);
+    PLATFORM_MAP_ITERATOR(ConstString,HostRecord,entry);
     int result = PLATFORM_MAP_FIND(hostMap,name,entry);
     if (result==-1) {
         if (!create) {
@@ -262,19 +262,19 @@ void NameServer::setup() {
     ndispatcher.add("get", &NameServer::ncmdGet);
 }
 
-String NameServer::cmdRegister(int argc, char *argv[]) {
+ConstString NameServer::cmdRegister(int argc, char *argv[]) {
 
-    String remote = argv[0];
+    ConstString remote = argv[0];
     argc--;
     argv++;
 
     if (argc<1) {
         return "need at least one argument";
     }
-    String portName = STR(argv[0]);
+    ConstString portName = STR(argv[0]);
 
-    String machine = "...";
-    String carrier = "...";
+    ConstString machine = "...";
+    ConstString carrier = "...";
     int port = 0;
     if (argc>=2) {
         carrier = argv[1];
@@ -283,7 +283,7 @@ String NameServer::cmdRegister(int argc, char *argv[]) {
         machine = argv[2];
     }
     if (argc>=4) {
-        if (String("...") == argv[3]) {
+        if (ConstString("...") == argv[3]) {
             port = 0;
         } else {
             port = NetType::toInt(argv[3]);
@@ -295,14 +295,14 @@ String NameServer::cmdRegister(int argc, char *argv[]) {
                                    remote);
 
     //YARP_DEBUG(Logger::get(),
-    //String("name server register address -- ") +
+    //ConstString("name server register address -- ") +
     //address.toString());
 
     return terminate(textify(address));
 }
 
 
-String NameServer::cmdQuery(int argc, char *argv[]) {
+ConstString NameServer::cmdQuery(int argc, char *argv[]) {
     // ignore source
     argc--;
     argv++;
@@ -310,12 +310,12 @@ String NameServer::cmdQuery(int argc, char *argv[]) {
     if (argc<1) {
         return "need at least one argument";
     }
-    String portName = STR(argv[0]);
+    ConstString portName = STR(argv[0]);
     Contact address = queryName(portName);
     return terminate(textify(address));
 }
 
-String NameServer::cmdUnregister(int argc, char *argv[]) {
+ConstString NameServer::cmdUnregister(int argc, char *argv[]) {
     // ignore source
     argc--;
     argv++;
@@ -323,13 +323,13 @@ String NameServer::cmdUnregister(int argc, char *argv[]) {
     if (argc<1) {
         return "need at least one argument";
     }
-    String portName = STR(argv[0]);
+    ConstString portName = STR(argv[0]);
     Contact address = unregisterName(portName);
     return terminate(textify(address));
 }
 
 
-String NameServer::cmdAnnounce(int argc, char *argv[]) {
+ConstString NameServer::cmdAnnounce(int argc, char *argv[]) {
     // ignore source
     argc--;
     argv++;
@@ -337,7 +337,7 @@ String NameServer::cmdAnnounce(int argc, char *argv[]) {
     return terminate("ok\n");
 }
 
-String NameServer::cmdRoute(int argc, char *argv[]) {
+ConstString NameServer::cmdRoute(int argc, char *argv[]) {
     // ignore source
     argc--;
     argv++;
@@ -345,8 +345,8 @@ String NameServer::cmdRoute(int argc, char *argv[]) {
     if (argc<2) {
         return terminate("need at least two arguments: the source port and the target port\n(followed by an optional list of carriers in decreasing order of desirability)");
     }
-    String src = STR(argv[0]);
-    String dest = STR(argv[1]);
+    ConstString src = STR(argv[0]);
+    ConstString dest = STR(argv[1]);
 
     argc-=2;
     argv+=2;
@@ -364,10 +364,10 @@ String NameServer::cmdRoute(int argc, char *argv[]) {
 
     NameRecord& srcRec = getNameRecord(src);
     NameRecord& destRec = getNameRecord(dest);
-    String pref = "";
+    ConstString pref = "";
 
     for (int i=0; i<argc; i++) {
-        String carrier = argv[i];
+        ConstString carrier = argv[i];
         if (srcRec.checkProp("offers",carrier) &&
             destRec.checkProp("accepts",carrier)) {
             bool ok = true;
@@ -394,41 +394,41 @@ String NameServer::cmdRoute(int argc, char *argv[]) {
         pref = dest;
     }
 
-    String result = "port ";
+    ConstString result = "port ";
     result += src + " route " + dest + " = " + pref + "\n";
     return terminate(result);
 }
 
 
-String NameServer::cmdHelp(int argc, char *argv[]) {
+ConstString NameServer::cmdHelp(int argc, char *argv[]) {
     // ignore source
     argc--;
     argv++;
 
-    String result = "Here are some ways to use the name server:\n";
-    //ACE_Vector<String> names = dispatcher.getNames();
+    ConstString result = "Here are some ways to use the name server:\n";
+    //ACE_Vector<ConstString> names = dispatcher.getNames();
     //for (unsigned i=0; i<names.size(); i++) {
-    //const String& name = names[i];
-    //result += String("   ") + name + " ...\n";
+    //const ConstString& name = names[i];
+    //result += ConstString("   ") + name + " ...\n";
     //}
-    result += String("+ help\n");
-    result += String("+ list\n");
-    result += String("+ register $portname\n");
-    result += String("+ register $portname $carrier $ipAddress $portNumber\n");
-    result += String("  (if you want a field set automatically, write '...')\n");
-    result += String("+ unregister $portname\n");
-    result += String("+ query $portname\n");
-    result += String("+ set $portname $property $value\n");
-    result += String("+ get $portname $property\n");
-    result += String("+ check $portname $property\n");
-    result += String("+ match $portname $property $prefix\n");
-    result += String("+ route $port1 $port2\n");
-    result += String("+ gc\n");
+    result += ConstString("+ help\n");
+    result += ConstString("+ list\n");
+    result += ConstString("+ register $portname\n");
+    result += ConstString("+ register $portname $carrier $ipAddress $portNumber\n");
+    result += ConstString("  (if you want a field set automatically, write '...')\n");
+    result += ConstString("+ unregister $portname\n");
+    result += ConstString("+ query $portname\n");
+    result += ConstString("+ set $portname $property $value\n");
+    result += ConstString("+ get $portname $property\n");
+    result += ConstString("+ check $portname $property\n");
+    result += ConstString("+ match $portname $property $prefix\n");
+    result += ConstString("+ route $port1 $port2\n");
+    result += ConstString("+ gc\n");
     return terminate(result);
 }
 
 
-String NameServer::cmdSet(int argc, char *argv[]) {
+ConstString NameServer::cmdSet(int argc, char *argv[]) {
     // ignore source
     argc--;
     argv++;
@@ -436,18 +436,18 @@ String NameServer::cmdSet(int argc, char *argv[]) {
     if (argc<2) {
         return "need at least two arguments: the port name, and a key";
     }
-    String target = STR(argv[0]);
-    String key = argv[1];
+    ConstString target = STR(argv[0]);
+    ConstString key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
     nameRecord.clearProp(key);
     for (int i=2; i<argc; i++) {
         nameRecord.addProp(key,argv[i]);
     }
-    return terminate(String("port ") + target + " property " + key + " = " +
+    return terminate(ConstString("port ") + target + " property " + key + " = " +
                      nameRecord.getProp(key) + "\n");
 }
 
-String NameServer::cmdGet(int argc, char *argv[]) {
+ConstString NameServer::cmdGet(int argc, char *argv[]) {
     // ignore source
     argc--;
     argv++;
@@ -455,14 +455,14 @@ String NameServer::cmdGet(int argc, char *argv[]) {
     if (argc<2) {
         return "need exactly two arguments: the port name, and a key";
     }
-    String target = STR(argv[0]);
-    String key = argv[1];
+    ConstString target = STR(argv[0]);
+    ConstString key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
-    return terminate(String("port ") + target + " property " + key + " = " +
+    return terminate(ConstString("port ") + target + " property " + key + " = " +
                      nameRecord.getProp(key) + "\n");
 }
 
-String NameServer::cmdMatch(int argc, char *argv[]) {
+ConstString NameServer::cmdMatch(int argc, char *argv[]) {
     // ignore source
     argc--;
     argv++;
@@ -470,15 +470,15 @@ String NameServer::cmdMatch(int argc, char *argv[]) {
     if (argc<3) {
         return "need exactly three arguments: the port name, a key, and a prefix";
     }
-    String target = STR(argv[0]);
-    String key = argv[1];
-    String prefix = argv[2];
+    ConstString target = STR(argv[0]);
+    ConstString key = argv[1];
+    ConstString prefix = argv[2];
     NameRecord& nameRecord = getNameRecord(target);
-    return terminate(String("port ") + target + " property " + key + " = " +
+    return terminate(ConstString("port ") + target + " property " + key + " = " +
                      nameRecord.matchProp(key,prefix) + "\n");
 }
 
-String NameServer::cmdCheck(int argc, char *argv[]) {
+ConstString NameServer::cmdCheck(int argc, char *argv[]) {
     // ignore source
     argc--;
     argv++;
@@ -486,12 +486,12 @@ String NameServer::cmdCheck(int argc, char *argv[]) {
     if (argc<2) {
         return "need at least two arguments: the port name, and a key";
     }
-    String response = "";
-    String target = STR(argv[0]);
-    String key = argv[1];
+    ConstString response = "";
+    ConstString target = STR(argv[0]);
+    ConstString key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
     for (int i=2; i<argc; i++) {
-        String val = "false";
+        ConstString val = "false";
         if (nameRecord.checkProp(key,argv[i])) {
             val = "true";
         }
@@ -507,25 +507,25 @@ String NameServer::cmdCheck(int argc, char *argv[]) {
 }
 
 
-String NameServer::cmdList(int argc, char *argv[]) {
-    String response = "";
+ConstString NameServer::cmdList(int argc, char *argv[]) {
+    ConstString response = "";
 
-    PlatformMultiSet<String> lines;
-    for (PLATFORM_MAP(String,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+    PlatformMultiSet<ConstString> lines;
+    for (PLATFORM_MAP(ConstString,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
         lines.insert(textify(rec.getAddress()));
     }
 
     // return result in alphabetical order
 #ifndef YARP_USE_STL
-    PLATFORM_MULTISET_ITERATOR(String) iter(lines);
+    PLATFORM_MULTISET_ITERATOR(ConstString) iter(lines);
     iter.first();
     while (!iter.done()) {
         response += *iter;
         iter.advance();
     }
 #else
-    PLATFORM_MULTISET_ITERATOR(String) iter;
+    PLATFORM_MULTISET_ITERATOR(ConstString) iter;
     for (iter=lines.begin(); iter!=lines.end(); iter++) {
         response += *iter;
     }
@@ -535,12 +535,12 @@ String NameServer::cmdList(int argc, char *argv[]) {
 }
 
 
-String NameServer::cmdBot(int argc, char *argv[]) {
-    String txt = "";
+ConstString NameServer::cmdBot(int argc, char *argv[]) {
+    ConstString txt = "";
     argc--;
     argv++;
     if (argc>=1) {
-        String key = argv[0];
+        ConstString key = argv[0];
         argc--;
         argv++;
         Bottle result = ndispatcher.dispatch(this,key.c_str(),argc,argv);
@@ -553,16 +553,16 @@ String NameServer::cmdBot(int argc, char *argv[]) {
 Bottle NameServer::ncmdList(int argc, char *argv[]) {
     Bottle response;
 
-    String prefix = "";
+    ConstString prefix = "";
 
     if (argc==1) {
         prefix = STR(argv[0]);
     }
 
     response.addString("ports");
-    for (PLATFORM_MAP(String,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+    for (PLATFORM_MAP(ConstString,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
-        String iname = rec.getAddress().getRegName();
+        ConstString iname = rec.getAddress().getRegName();
         if (iname.find(prefix)==0) {
             if (iname==prefix || iname[prefix.length()]=='/' ||
                 prefix[prefix.length()-1]=='/') {
@@ -580,7 +580,7 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
 yarp::os::Bottle NameServer::ncmdQuery(int argc, char *argv[]) {
     Bottle response;
     if (argc==1) {
-        String portName = STR(argv[0]);
+        ConstString portName = STR(argv[0]);
         Contact address = queryName(portName);
         response = botify(address);
     }
@@ -600,8 +600,8 @@ yarp::os::Bottle NameServer::ncmdSet(int argc, char *argv[]) {
 
     Bottle response;
     if (argc >= 2) {
-        String target = STR(argv[0]);
-        String key = STR(argv[1]);
+        ConstString target = STR(argv[0]);
+        ConstString key = STR(argv[1]);
         NameRecord& nameRecord = getNameRecord(target);
         nameRecord.clearProp(key);
         for (int i=2; i<argc; i++) {
@@ -615,8 +615,8 @@ yarp::os::Bottle NameServer::ncmdSet(int argc, char *argv[]) {
 yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
     Bottle response;
     if (argc==2) {
-        String target = STR(argv[0]);
-        String key = argv[1];
+        ConstString target = STR(argv[0]);
+        ConstString key = argv[1];
         NameRecord& nameRecord = getNameRecord(target);
         return Bottle(nameRecord.getProp(key).c_str());
     }
@@ -625,8 +625,8 @@ yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
 
 
 
-String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
-    String response = "";
+ConstString NameServer::cmdGarbageCollect(int argc, char *argv[]) {
+    ConstString response = "";
 
     response = "No cleaning done.\n";
 
@@ -634,8 +634,8 @@ String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
 }
 
 
-String NameServer::textify(const Contact& address) {
-    String result = "";
+ConstString NameServer::textify(const Contact& address) {
+    ConstString result = "";
     if (address.isValid()) {
         if (address.getPort()>=0) {
             result = "registration name ";
@@ -688,23 +688,23 @@ Bottle NameServer::botify(const Contact& address) {
 }
 
 
-static String ns_terminate(const String& str) {
+static ConstString ns_terminate(const ConstString& str) {
     return str + "*** end of message";
 }
 
-String NameServer::terminate(const String& str) {
+ConstString NameServer::terminate(const ConstString& str) {
     return ns_terminate(str);
 }
 
 
-String NameServer::apply(const String& txt, const Contact& remote) {
-    String result = "no command given";
+ConstString NameServer::apply(const ConstString& txt, const Contact& remote) {
+    ConstString result = "no command given";
     mutex.wait();
 
     SplitString ss(txt.c_str());
     if (ss.size()>=2) {
-        String key = ss.get(1);
-        //YARP_DEBUG(Logger::get(),String("dispatching to ") + key);
+        ConstString key = ss.get(1);
+        //YARP_DEBUG(Logger::get(),ConstString("dispatching to ") + key);
         ss.set(1,remote.getHost().c_str());
         result = dispatcher.dispatch(this,key.c_str(),ss.size()-1,
                                      (char **)(ss.get()+1));
@@ -717,8 +717,8 @@ String NameServer::apply(const String& txt, const Contact& remote) {
                 result = terminate(result);
             }
         }
-        //YARP_DEBUG(Logger::get(), String("name server request -- ") + txt);
-        //YARP_DEBUG(Logger::get(), String("name server result  -- ") + result);
+        //YARP_DEBUG(Logger::get(), ConstString("name server request -- ") + txt);
+        //YARP_DEBUG(Logger::get(), ConstString("name server result  -- ") + result);
     }
     mutex.post();
     return result;
@@ -730,8 +730,8 @@ bool NameServer::apply(const Bottle& cmd, Bottle& result,
     Bottle rcmd;
     rcmd.addString("ignored_legacy");
     rcmd.append(cmd);
-    String in = rcmd.toString().c_str();
-    String out = apply(in,remote).c_str();
+    ConstString in = rcmd.toString().c_str();
+    ConstString out = apply(in,remote).c_str();
     result.fromString(out.c_str());
     return true;
 }
@@ -750,9 +750,9 @@ public:
 
     virtual bool read(ConnectionReader& reader) {
         YTRACE("NameServer::read start");
-        String ref = "NAME_SERVER ";
+        ConstString ref = "NAME_SERVER ";
         bool ok = true;
-        String msg = "?";
+        ConstString msg = "?";
         bool haveMessage = false;
         if (ok) {
             if (reader.isTextMode()) {
@@ -767,24 +767,24 @@ public:
             msg = ref + msg;
         }
         if (reader.isActive()&&haveMessage) {
-            YARP_DEBUG(Logger::get(),String("name server got message ") + msg);
+            YARP_DEBUG(Logger::get(),ConstString("name server got message ") + msg);
             size_t index = msg.find("NAME_SERVER");
             if (index==0) {
                 Contact remote = reader.getRemoteContact();
                 YARP_DEBUG(Logger::get(),
-                           String("name server receiving from ") +
+                           ConstString("name server receiving from ") +
                            remote.toURI());
                 YARP_DEBUG(Logger::get(),
-                           String("name server request is ") + msg);
-                String result = server->apply(msg,remote);
+                           ConstString("name server request is ") + msg);
+                ConstString result = server->apply(msg,remote);
                 ConnectionWriter *os = reader.getWriter();
                 if (os!=NULL) {
                     if (result=="") {
-                        result = ns_terminate(String("unknown command ") +
+                        result = ns_terminate(ConstString("unknown command ") +
                                               msg + "\n");
                     }
                     // This change is just to make Microsoft Telnet happy
-                    String tmp;
+                    ConstString tmp;
                     for (unsigned int i=0; i<result.length(); i++) {
                         if (result[i]=='\n') {
                             tmp += '\r';
@@ -795,17 +795,17 @@ public:
                     os->appendString(tmp.c_str(),'\n');
 
                     YARP_DEBUG(Logger::get(),
-                               String("name server reply is ") + result);
-                    String resultSparse = result;
+                               ConstString("name server reply is ") + result);
+                    ConstString resultSparse = result;
                     size_t end = resultSparse.find("\n*** end of message");
-                    if (end!=String::npos) {
+                    if (end!=ConstString::npos) {
                         resultSparse[end] = '\0';
                     }
                     YARP_INFO(Logger::get(),resultSparse);
                 }
             } else {
                 YARP_INFO(Logger::get(),
-                          String("Name server ignoring unknown command: ")+msg);
+                          ConstString("Name server ignoring unknown command: ")+msg);
                 ConnectionWriter *os = reader.getWriter();
                 if (os!=NULL) {
                     // this result is necessary for YARP1 support
@@ -887,7 +887,7 @@ int NameServer::main(int argc, char *argv[]) {
     }
     else if (bNoAuto)
     {
-        YARP_ERROR(Logger::get(), String("Could not find configuration file ") +
+        YARP_ERROR(Logger::get(), ConstString("Could not find configuration file ") +
         conf.getConfigFileName());
 
         return 1;
@@ -921,7 +921,7 @@ int NameServer::main(int argc, char *argv[]) {
     // and save
     conf.setAddress(suggest);
     if (!conf.toFile()) {
-        YARP_ERROR(Logger::get(), String("Could not save configuration file ") +
+        YARP_ERROR(Logger::get(), ConstString("Could not save configuration file ") +
                    conf.getConfigFileName());
     }
 
@@ -935,7 +935,7 @@ int NameServer::main(int argc, char *argv[]) {
     bool ok = server.open(suggest.addName(conf.getNamespace()),
                           false);
     if (ok) {
-        YARP_DEBUG(Logger::get(), String("Name server listening at ") +
+        YARP_DEBUG(Logger::get(), ConstString("Name server listening at ") +
                    suggest.toURI());
 
         YARP_SPRINTF2(Logger::get(),info,
@@ -948,7 +948,7 @@ int NameServer::main(int argc, char *argv[]) {
 
         // register fallback root for documentation purposes
         name.registerName("fallback",FallbackNameServer::getAddress());
-        YARP_INFO(Logger::get(), String("Bootstrap server listening at ") +
+        YARP_INFO(Logger::get(), ConstString("Bootstrap server listening at ") +
                   FallbackNameServer::getAddress().toURI());
 #endif
 
@@ -965,11 +965,11 @@ int NameServer::main(int argc, char *argv[]) {
 
     if (!ok) {
         YARP_ERROR(Logger::get(), "Name server failed to start");
-        //YARP_ERROR(Logger::get(), String("   reason for failure is \"") +
+        //YARP_ERROR(Logger::get(), ConstString("   reason for failure is \"") +
         //e.toString() + "\"");
         YARP_ERROR(Logger::get(), "Maybe it is already be running?");
         if (suggest.getPort()>0) {
-            YARP_ERROR(Logger::get(), String("Or perhaps another service may already be running on port ") + NetType::toString(suggest.getPort()) + "?");
+            YARP_ERROR(Logger::get(), ConstString("Or perhaps another service may already be running on port ") + NetType::toString(suggest.getPort()) + "?");
         }
         return 1;
     }

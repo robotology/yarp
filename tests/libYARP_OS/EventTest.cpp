@@ -58,7 +58,7 @@ public:
 
 class EventTest : public UnitTest {
 public:
-    virtual String getName() { return "EventTest"; }
+    virtual ConstString getName() { return "EventTest"; }
 
     void checkBasic() {
         report(0, "basic event sanity check...");

@@ -10,8 +10,6 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdlib.h>
-
-#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/Module.h>
@@ -116,9 +114,9 @@ private:
     Bottle order;
 public:
     virtual void report(const SearchReport& report, const char *context) {
-        String ctx = context;
-        String key = report.key.c_str();
-        String prefix = "";
+        ConstString ctx = context;
+        ConstString key = report.key.c_str();
+        ConstString prefix = "";
 
         prefix = ctx;
         prefix += ".";
@@ -150,7 +148,7 @@ public:
         if (comment.check(key.c_str())) {
             if (!reported.check(key.c_str())) {
                 if (report.isFound) {
-                    String hasValue = report.value.c_str();
+                    ConstString hasValue = report.value.c_str();
                     if (hasValue.length()>35) {
                         hasValue = hasValue.substr(0,30) + " ...";
                     }
@@ -161,11 +159,11 @@ public:
                 } else {
                     reported.put(key.c_str(),1);
                     bool hasDefault = fallback.check(key.c_str());
-                    String defString = "";
+                    ConstString defString = "";
                     if (hasDefault) {
                         defString += " ";
                         defString += "(default ";
-                        String theDefault =
+                        ConstString theDefault =
                             fallback.find(key.c_str()).toString().c_str();
                         if (theDefault=="") {
                             defString += "is blank";
@@ -426,7 +424,7 @@ ConstString Module::getName(const char *subName) {
     if (subName==NULL) {
         return name;
     }
-    String base = name.c_str();
+    ConstString base = name.c_str();
     if (subName[0]!='/') {
       base += "/";
     }

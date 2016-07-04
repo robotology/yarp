@@ -140,7 +140,7 @@ class VectorTest : public UnitTest {
     }
 
 public:
-    virtual String getName() { return "VectorTest"; }
+    virtual ConstString getName() { return "VectorTest"; }
 
     void checkGsl()
     {
@@ -172,7 +172,7 @@ public:
         }
         BufferedConnectionWriter writer;
         v.write(writer);
-        String s = writer.toString();
+        ConstString s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),(int)s.length());
         checkEqual((int)bot.size(),(int)v.size(),"size matches");

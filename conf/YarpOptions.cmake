@@ -286,7 +286,7 @@ endif(YARP_EXPERIMENTAL_CXX11)
 
 
 #########################################################################
-# Control whether yarp::os::impl::String should be std::string or opaque
+# Control whether yarp::os::ConstString should be std::string or opaque
 # Not an important option for end users yet.  In principle
 # yarp::os::ConstString could now be set to std::string, if YARP
 # ever decides to accept STL as a dependency.

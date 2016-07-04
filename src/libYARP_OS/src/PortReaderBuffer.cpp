@@ -36,7 +36,7 @@ public:
     // if non-null, contains a buffer that the packet owns
     PortReader *reader;
 
-    String envelope;
+    ConstString envelope;
 
     // if nun-null, refers to an external buffer
     // by convention, overrides reader
@@ -86,7 +86,7 @@ public:
     }
 
     void setEnvelope(const Bytes& bytes) {
-        envelope = String(bytes.get(),bytes.length());
+        envelope = ConstString(bytes.get(),bytes.length());
         //envelope.set(bytes.get(),bytes.length(),1);
     }
 

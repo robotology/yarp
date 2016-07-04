@@ -14,19 +14,19 @@ using namespace yarp::os::impl;
 
 class ElectionTest : public UnitTest {
 public:
-    virtual String getName() { return "ElectionTest"; }
+    virtual ConstString getName() { return "ElectionTest"; }
 
     void testBasics() {
         report(0,"testing the basics of elections");
-        String c1 = "Magnifico";
-        String c2 = "Grasso";
-        String c3 = "Bozo";
-        ElectionOf<PeerRecord<String> > elector;
+        ConstString c1 = "Magnifico";
+        ConstString c2 = "Grasso";
+        ConstString c3 = "Bozo";
+        ElectionOf<PeerRecord<ConstString> > elector;
         elector.add("italy",&c1);
         elector.add("italy",&c2);
         elector.add("france",&c3);
-        String *e1 = elector.getElect("italy");
-        String *e2 = elector.getElect("france");
+        ConstString *e1 = elector.getElect("italy");
+        ConstString *e2 = elector.getElect("france");
         checkTrue(e1!=NULL,"elected entity exists (1)");
         checkTrue(e2!=NULL,"elected entity exists (2)");
         if (e1!=NULL && e2!=NULL) {

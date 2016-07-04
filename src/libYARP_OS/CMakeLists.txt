@@ -201,7 +201,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/StreamConnectionReader.h
-                      include/yarp/os/impl/String.h
                       include/yarp/os/impl/TcpAcceptor.h
                       include/yarp/os/impl/TcpCarrier.h
                       include/yarp/os/impl/TcpConnector.h

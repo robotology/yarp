@@ -101,7 +101,7 @@ public:
                        yarp::os::PortReader *reader,
                        yarp::os::PortWriter *callback,
                        void *tracker,
-                       const String& envelopeString,
+                       const ConstString& envelopeString,
                        bool waitAfter,
                        bool waitBefore,
                        bool *gotReply);
@@ -142,7 +142,7 @@ private:
     yarp::os::PortWriter *cachedCallback; ///< where to sent commencement and
                                           ///< completion events
     void *cachedTracker;        ///< memory tracker for current message
-    String cachedEnvelope;      ///< some text to pass along with the message
+    ConstString cachedEnvelope;      ///< some text to pass along with the message
 
     /**
      *

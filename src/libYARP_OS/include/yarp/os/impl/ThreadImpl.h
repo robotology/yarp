@@ -14,7 +14,6 @@
 #include <yarp/os/impl/SemaphoreImpl.h>
 
 #include <yarp/os/impl/PlatformThread.h>
-#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {

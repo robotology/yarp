@@ -41,7 +41,7 @@ const char *fmcC_file_content   =  "device fakeMotionControl\n"
 class ControlBoardRemapperTest : public UnitTest
 {
 public:
-    virtual String getName() { return "ControlBoardRemapperTest"; }
+    virtual ConstString getName() { return "ControlBoardRemapperTest"; }
 
     void testControlBoardRemapper() {
         report(0,"\ntest the controlboard remapper");

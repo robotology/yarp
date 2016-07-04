@@ -14,7 +14,7 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/DummyConnector.h>
@@ -159,7 +159,7 @@ static int enactConnection(const Contact& src,
         return 1;
     }
     if (reply.check("carrier")) {
-        String carrier = reply.find("carrier").asString();
+        ConstString carrier = reply.find("carrier").asString();
         if (!style.quiet) {
             printf("Connection found between %s and %s using carrier %s\n",
                     src.getName().c_str(), dest.getName().c_str(), carrier.c_str());
@@ -353,7 +353,7 @@ static int metaConnect(const ConstString& src,
                 srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
             }
             if (srcCarrier!=NULL) {
-                String srcBootstrap = srcCarrier->getBootstrapCarrierName();
+                ConstString srcBootstrap = srcCarrier->getBootstrapCarrierName();
                 if (srcBootstrap!="") {
                     srcIsCompetent = true;
                 } else {
@@ -377,7 +377,7 @@ static int metaConnect(const ConstString& src,
                 destCarrier = Carriers::chooseCarrier(staticDest.getCarrier().c_str());
             }
             if (destCarrier!=NULL) {
-                String destBootstrap = destCarrier->getBootstrapCarrierName();
+                ConstString destBootstrap = destCarrier->getBootstrapCarrierName();
                 if (destBootstrap!="") {
                     destIsCompetent = true;
                 } else {
@@ -989,7 +989,7 @@ bool NetworkBase::isConnected(const ConstString& src, const ConstString& dest,
 
 ConstString NetworkBase::getNameServerName() {
     NameConfig nc;
-    String name = nc.getNamespace(false);
+    ConstString name = nc.getNamespace(false);
     return name.c_str();
 }
 
@@ -1002,7 +1002,7 @@ Contact NetworkBase::getNameServerContact() {
 
 bool NetworkBase::setNameServerName(const ConstString& name) {
     NameConfig nc;
-    String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
+    ConstString fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
     nc.writeConfig(fname,name + "\n");
     nc.getNamespace(true);
     getNameSpace().activate(true);
@@ -1236,7 +1236,7 @@ public:
         getContent().prepareDisconnect();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return getContent().getName();
     }
 
@@ -1303,7 +1303,7 @@ public:
         return getContent().expectAck(proto);
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return getContent().toString();
     }
 
@@ -1311,7 +1311,7 @@ public:
         return getContent().close();
     }
 
-    virtual String getBootstrapCarrierName() {
+    virtual ConstString getBootstrapCarrierName() {
         return getContent().getBootstrapCarrierName();
     }
 

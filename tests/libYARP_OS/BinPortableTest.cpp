@@ -42,7 +42,7 @@ YARP_END_PACK
 
 class BinPortableTest : public UnitTest {
 public:
-    virtual String getName() { return "BinPortableTest"; }
+    virtual ConstString getName() { return "BinPortableTest"; }
 
     void testInt() {
         report(0,"checking binary read/write of native int");
@@ -58,7 +58,7 @@ public:
             return;
         }
         //input.setReader(buf);
-		buf.attach(input);
+        buf.attach(input);
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
         report(0,"writing...");
         output.write(i);

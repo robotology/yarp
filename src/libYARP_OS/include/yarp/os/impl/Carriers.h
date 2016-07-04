@@ -8,8 +8,8 @@
 #ifndef YARP2_CARRIERS
 #define YARP2_CARRIERS
 
-#include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Face.h>
 #include <yarp/os/OutputProtocol.h>
@@ -42,12 +42,12 @@ public:
      * @param name the name of the desired carrier.
      * @return the desired carrier, or NULL if not found.
      */
-    static Carrier *chooseCarrier(const String& name);
+    static Carrier *chooseCarrier(const ConstString& name);
 
     /**
      * Get template for carrier.
      */
-    static Carrier *getCarrierTemplate(const String& name);
+    static Carrier *getCarrierTemplate(const ConstString& name);
 
     /**
      * Select a carrier by 8-byte header.
@@ -116,7 +116,7 @@ private:
 
     static Carriers *yarp_carriers_instance;
 
-    Carrier *chooseCarrier(const String * name, const Bytes * header,
+    Carrier *chooseCarrier(const ConstString * name, const Bytes * header,
                            bool load_if_needed = true,
                            bool return_template = false);
 };

@@ -286,11 +286,11 @@ bool Port::open(const Contact& contact, bool registerName,
         if (core.getVerbosity()>=1) {
             if (address.getRegName()=="") {
                 YARP_INFO(Logger::get(),
-                          String("Anonymous port active at ") +
+                          ConstString("Anonymous port active at ") +
                           address.toURI());
             } else {
                 YARP_INFO(Logger::get(),
-                          String("Port ") +
+                          ConstString("Port ") +
                           address.getRegName() +
                           " active at " +
                           address.toURI());
@@ -305,11 +305,11 @@ bool Port::open(const Contact& contact, bool registerName,
 
     if (!success) {
         YARP_ERROR(Logger::get(),
-                   String("Port ") +
+                   ConstString("Port ") +
                    (address.isValid()?(address.getRegName().c_str()):(contact2.getName().c_str())) +
                    " failed to activate" +
                    (address.isValid()?" at ":"") +
-                   (address.isValid()?address.toURI():String("")) +
+                   (address.isValid()?address.toURI():ConstString("")) +
                    " (" +
                    blame.c_str() +
                    ")");
