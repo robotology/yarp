@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
                 printf("Not sure what to do with [%s]\n", arg.c_str());
             }
         }
-        
+
     }
 
     db.close();

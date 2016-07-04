@@ -22,7 +22,10 @@ if(YARP_COMPILE_TESTS)
     endif()
     mark_as_advanced(ENABLE_YARPRUNTESTS)
 
-    set(targets OS sig dev)
+    set(targets OS
+                sig
+                dev
+                serversql)
     get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
     if(YARP_HAS_MATH_LIB)
         set(targets ${targets} math)
@@ -109,4 +112,19 @@ if(YARP_COMPILE_TESTS)
     if(YARP_TEST_INTEGRATION)
       add_subdirectory(integration)
     endif()
+endif()
+
+
+
+
+
+###############################################################
+## Some extra test programs
+
+if(YARP_ENABLE_TESTS)
+  add_executable(server_peek src/server_peek.cpp)
+  target_link_libraries(server_peek YARP_serversql)
+
+  add_executable(server_test src/server_test.cpp)
+  target_link_libraries(server_test YARP_OS YARP_init)
 endif()
