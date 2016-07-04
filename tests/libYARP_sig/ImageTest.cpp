@@ -31,7 +31,7 @@ using namespace yarp::os;
 
 class ImageTest : public UnitTest {
 public:
-    virtual String getName() { return "ImageTest"; }
+    virtual ConstString getName() { return "ImageTest"; }
 
     void passImage(ImageOf<PixelRgb> img) {
         report(0, "passed a blank image ok");
@@ -306,7 +306,7 @@ public:
         img.zero();
         BufferedConnectionWriter writer;
         img.write(writer);
-        String s = writer.toString();
+        ConstString s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
         checkEqual(bot.size(),4,"plausible bottle out");

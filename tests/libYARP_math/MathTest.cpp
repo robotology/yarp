@@ -27,6 +27,7 @@
 #include <math.h>
 #include <string>
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
@@ -36,7 +37,7 @@ const double TOL = 1e-8;
 
 class MathTest : public UnitTest {
 public:
-    virtual String getName() { return "MathTest"; }
+    virtual ConstString getName() { return "MathTest"; }
 
     // Assert that 2 vectors are equal
     void assertEqual(const Vector &a, const Vector &b, string testName, bool verbose=false){

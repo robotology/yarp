@@ -7,7 +7,6 @@
 
 #include <yarp/os/impl/HttpCarrier.h>
 #include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/DummyConnector.h>
@@ -16,8 +15,8 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-static yarp::os::impl::String quoteFree(const yarp::os::impl::String &src) {
-    yarp::os::impl::String result = "";
+static yarp::os::ConstString quoteFree(const yarp::os::ConstString &src) {
+    yarp::os::ConstString result = "";
     for (unsigned int i=0; i<src.length(); i++) {
         char ch = src[i];
         if (ch=='"') {
@@ -31,7 +30,7 @@ static yarp::os::impl::String quoteFree(const yarp::os::impl::String &src) {
 
 static bool asJson(yarp::os::ConstString  &accum,
                    yarp::os::Bottle *bot,
-                   yarp::os::impl::String *hint = NULL);
+                   yarp::os::ConstString *hint = NULL);
 
 static bool asJson(yarp::os::ConstString &accum,
                    yarp::os::Value &v) {
@@ -71,7 +70,7 @@ static bool asJson(yarp::os::ConstString &accum,
 
 static bool asJson(yarp::os::ConstString& accum,
                    yarp::os::Bottle *bot,
-                   yarp::os::impl::String *hint) {
+                   yarp::os::ConstString *hint) {
     if (bot==NULL) return false;
     bool struc = false;
     bool struc_set = false;
@@ -171,8 +170,8 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
     data = false;
     filterData = false;
     chunked = false;
-    String s(txt);
-    String sData = "";
+    ConstString s(txt);
+    ConstString sData = "";
     Property& p = prop;
     //p.fromQuery(txt);
     format = p.check("format",Value("html")).asString().c_str();
@@ -192,8 +191,8 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
             s = p.check("data",Value("")).asString();
         }
         s += " ";
-        String sFixed = "";
-        String var = "";
+        ConstString sFixed = "";
+        ConstString var = "";
         bool arg = false;
         for (unsigned int i=0; i<s.length(); i++) {
             char ch = s[i];
@@ -224,14 +223,14 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
 
         sData = sFixed;
         if (admin) {
-            s = String("a\n") + sFixed;
+            s = ConstString("a\n") + sFixed;
         } else {
-            s = String("d\n") + sFixed;
+            s = ConstString("d\n") + sFixed;
         }
     }
 
 
-    String from = prefix;
+    ConstString from = prefix;
     from += "<input type=text name=data value=\"";
     from += quoteFree(sData.c_str());
 
@@ -264,7 +263,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
     if (req) classic = false;
 
     if (classic) {
-        String header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n";
+        ConstString header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n";
         chunked = false;
         if (s[0]=='r') {
             header += "Transfer-Encoding: chunked\r\n";
@@ -272,7 +271,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         }
         header += "\r\n";
         int N = 2*1024;
-        String body = from;
+        ConstString body = from;
         if (chunked) {
             body += "Reading data from port...\n";
             header += NetType::toHexString(body.length()+N);
@@ -389,7 +388,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
         Contact addr = yarp::os::impl::NameClient::extractAddress(part);
         if (addr.isValid()) {
             if (addr.getCarrier()=="tcp"&&
-                (addr.getRegName().find("/quit")==String::npos)) {
+                (addr.getRegName().find("/quit")==ConstString::npos)) {
                 proc += "<a href=\"http://";
                 proc += addr.getHost();
                 proc += ":";
@@ -417,7 +416,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
             if ((part[0]=='\"'&&part[1]=='[')||(part[0]=='+')) {
                 // translate this to a form
                 if (part[0]=='+') { part[0] = ' '; }
-                String org = part;
+                ConstString org = part;
                 part = "<p><form method=post action='/form'>";
                 size_t i=0;
                 for (i=0; i<org.length(); i++) {
@@ -431,7 +430,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
                 part += org;
                 org += " ";
                 bool arg = false;
-                String var = "";
+                ConstString var = "";
                 for (i=0; i<org.length(); i++) {
                     char ch = org[i];
                     if (arg) {
@@ -502,7 +501,7 @@ bool yarp::os::impl::HttpTwoWayStream::useJson() {
     return format=="json";
 }
 
-yarp::os::impl::String *yarp::os::impl::HttpTwoWayStream::typeHint() {
+yarp::os::ConstString *yarp::os::impl::HttpTwoWayStream::typeHint() {
     return &outer;
 }
 
@@ -528,13 +527,13 @@ yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() {
     return new HttpCarrier();
 }
 
-yarp::os::impl::String yarp::os::impl::HttpCarrier::getName() {
+yarp::os::ConstString yarp::os::impl::HttpCarrier::getName() {
     return "http";
 }
 
 bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header, const char *prefix) {
     if (header.length()==8) {
-        String target = prefix;
+        ConstString target = prefix;
         for (unsigned int i=0; i<target.length(); i++) {
             if (!(target[i]==header.get()[i])) {
                 return false;
@@ -580,7 +579,7 @@ void yarp::os::impl::HttpCarrier::setParameters(const Bytes& header) {
 
 void yarp::os::impl::HttpCarrier::getHeader(const Bytes& header) {
     if (header.length()==8) {
-        String target = "GET / HT";
+        ConstString target = "GET / HT";
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }
@@ -601,7 +600,7 @@ bool yarp::os::impl::HttpCarrier::supportReply() {
 }
 
 bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
-    String target = "GET / HTTP/1.0\r\n";
+    ConstString target = "GET / HTTP/1.0\r\n";
     ConstString path = proto.getRoute().getToName();
     if (path.size()>=2) {
         target = "GET " + path + " HTTP/1.0\r\n";
@@ -621,7 +620,7 @@ bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
 
 bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) {
     proto.setRoute(proto.getRoute().addFromName("web"));
-    String remainder = proto.is().readLine();
+    ConstString remainder = proto.is().readLine();
     if (!urlDone) {
         for (unsigned int i=0; i<remainder.length(); i++) {
             if (remainder[i]!=' ') {
@@ -636,7 +635,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     expectPost = false;
     contentLength = 0;
     while (!done) {
-        String result = proto.is().readLine();
+        ConstString result = proto.is().readLine();
         if (result == "") {
             done = true;
         } else {
@@ -675,7 +674,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     Contact home = NetworkBase::getNameServerContact();
     Contact me = proto.getStreams().getLocalAddress();
 
-    String from = "<html><head><link href=\"http://";
+    ConstString from = "<html><head><link href=\"http://";
     from += home.getHost();
     from += ":";
     from += NetType::toString(home.getPort());
@@ -845,7 +844,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
     }
 
     if (b.check("stream")&&!using_json) {
-        String header("HTTP/1.1 200 OK\r\nContent-Type: ");
+        ConstString header("HTTP/1.1 200 OK\r\nContent-Type: ");
         header += mime;
         header += "\r\n";
         header += "Transfer-Encoding: chunked\r\n";
@@ -883,7 +882,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
 
     if (body.length()!=0 || using_json) {
         ConstString mime = b.check("mime",Value(using_json?"application/json":"text/html")).asString();
-        String header("HTTP/1.1 200 OK\nContent-Type: ");
+        ConstString header("HTTP/1.1 200 OK\nContent-Type: ");
         header += mime;
         header += "\n";
         header += "Access-Control-Allow-Origin: *\n";

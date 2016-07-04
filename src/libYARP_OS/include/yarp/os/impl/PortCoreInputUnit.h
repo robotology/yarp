@@ -96,7 +96,7 @@ public:
         return finished;
     }
 
-    const String& getName() {
+    const ConstString& getName() {
         return name;
     }
 
@@ -123,7 +123,7 @@ private:
     InputProtocol *ip;
     SemaphoreImpl phase, access;
     bool closing, finished, running;
-    String name;
+    ConstString name;
     yarp::os::PortReader *localReader;
     Route officialRoute;
     bool reversed;

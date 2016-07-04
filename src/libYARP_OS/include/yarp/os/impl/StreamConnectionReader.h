@@ -154,7 +154,7 @@ public:
         return x;
     }
 
-    virtual String expectString(int len) {
+    virtual ConstString expectString(int len) {
         if (!isGood()) { return ""; }
         char *buf = new char[len];
         yarp::os::Bytes b(buf,len);
@@ -166,16 +166,16 @@ public:
             return "";
         }
         messageLen -= b.length();
-        String s = buf;
+        ConstString s = buf;
         delete[] buf;
         return s;
     }
 
-    virtual String expectLine() {
+    virtual ConstString expectLine() {
         if (!isGood()) { return ""; }
         yAssert(in!=NULL);
         bool success = false;
-        String result = in->readLine('\n',&success);
+        ConstString result = in->readLine('\n',&success);
         if (!success) {
             err = true;
             return "";
@@ -245,7 +245,7 @@ public:
         if (!isGood()) { return ""; }
         yAssert(in!=NULL);
         bool lsuccess = false;
-        String result = in->readLine(terminatingChar,&lsuccess);
+        ConstString result = in->readLine(terminatingChar,&lsuccess);
         if (lsuccess) {
             messageLen -= result.length()+1;
         }

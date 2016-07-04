@@ -116,14 +116,14 @@ void Carriers::clear() {
     lst.clear();
 }
 
-Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
+Carrier *Carriers::chooseCarrier(const ConstString *name, const Bytes *header,
                                  bool load_if_needed,
                                  bool return_template) {
-    String s;
+    ConstString s;
     if (name!=NULL) {
         s = *name;
         size_t i = s.find("+");
-        if (i!=String::npos) {
+        if (i!=ConstString::npos) {
             s[i] = '\0';
             s = s.c_str();
             name = &s;
@@ -163,7 +163,7 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
         }
     }
     if (name==NULL) {
-        String txt;
+        ConstString txt;
         for (int i=0; i<(int)header->length(); i++) {
             txt += NetType::toString(header->get()[i]);
             txt += " ";
@@ -193,11 +193,11 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
 }
 
 
-Carrier *Carriers::chooseCarrier(const String& name) {
+Carrier *Carriers::chooseCarrier(const ConstString& name) {
     return getInstance().chooseCarrier(&name,NULL);
 }
 
-Carrier *Carriers::getCarrierTemplate(const String& name) {
+Carrier *Carriers::getCarrierTemplate(const ConstString& name) {
     return getInstance().chooseCarrier(&name,NULL,true,true);
 }
 

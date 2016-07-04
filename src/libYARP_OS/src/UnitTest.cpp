@@ -65,7 +65,7 @@ public:
         // no parent
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "root";
     }
 };
@@ -100,7 +100,7 @@ void UnitTest::clear() {
     subTests.clear();
 }
 
-void UnitTest::report(int severity, const String& problem) {
+void UnitTest::report(int severity, const ConstString& problem) {
     if (parent!=NULL) {
         parent->report(severity, getName() + ": " + problem);
     } else {
@@ -137,10 +137,10 @@ int UnitTest::run(int argc, char *argv[]) {
         runTests();
         ran = true;
     } else {
-        String name = getName();
+        ConstString name = getName();
         bool onList = false;
         for (int i=0; i<argc; i++) {
-            if (name == String(argv[i])) {
+            if (name == ConstString(argv[i])) {
                 onList = true;
                 break;
             }
@@ -197,9 +197,9 @@ bool UnitTest::checkEqualImpl(int x, int y,
     ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%d) == %s (%d)",
                     fname, fline, desc, txt1, x, txt2, y);
     if (x==y) {
-        report(0,String("  [") + desc + "] passed ok");
+        report(0,ConstString("  [") + desc + "] passed ok");
     } else {
-        report(1,String("  FAILURE ") + buf);
+        report(1,ConstString("  FAILURE ") + buf);
     }
     return x==y;
 }
@@ -215,15 +215,15 @@ bool UnitTest::checkEqualishImpl(double x, double y,
                     fname, fline, desc, txt1, x, txt2, y);
     bool ok = (fabs(x-y)<0.0001);
     if (ok) {
-        report(0,String("  [") + desc + "] passed ok");
+        report(0,ConstString("  [") + desc + "] passed ok");
     } else {
-        report(1,String("  FAILURE ") + buf);
+        report(1,ConstString("  FAILURE ") + buf);
     }
     return ok;
 }
 
 
-bool UnitTest::checkEqualImpl(const String& x, const String& y,
+bool UnitTest::checkEqualImpl(const ConstString& x, const ConstString& y,
                               const char *desc,
                               const char *txt1,
                               const char *txt2,
@@ -234,16 +234,16 @@ bool UnitTest::checkEqualImpl(const String& x, const String& y,
                     fname, fline, desc, txt1, humanize(x).c_str(), txt2, humanize(y).c_str());
     bool ok = (x==y);
     if (ok) {
-        report(0,String("  [") + desc + "] passed ok");
+        report(0,ConstString("  [") + desc + "] passed ok");
     } else {
-        report(1,String("  FAILURE ") + buf);
+        report(1,ConstString("  FAILURE ") + buf);
     }
     return ok;
 }
 
 
-String UnitTest::humanize(const String& txt) {
-    String result("");
+ConstString UnitTest::humanize(const ConstString& txt) {
+    ConstString result("");
     for (unsigned int i=0; i<txt.length(); i++) {
         char ch = txt[i];
         if (ch == '\n') {

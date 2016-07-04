@@ -82,7 +82,7 @@ public:
 
 class NetworkTest : public UnitTest {
 public:
-    virtual String getName() { return "NetworkTest"; }
+    virtual ConstString getName() { return "NetworkTest"; }
 
     void checkConnect() {
         report(0,"checking return value of connect method");

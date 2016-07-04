@@ -9,7 +9,6 @@
 #include <stdlib.h>
 
 #include <yarp/os/all.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Companion.h>
@@ -24,7 +23,7 @@ using namespace yarp::os::impl;
  */
 class ServerTest : public UnitTest {
 public:
-    virtual String getName() { return "ServerTest"; }
+    virtual ConstString getName() { return "ServerTest"; }
 
     void checkRegisterFree() {
         report(0,"checking free register command...");
@@ -93,19 +92,19 @@ public:
         NameClient& nic = NameClient::getNameClient();
         Contact addr1 = Contact::bySocket("tcp","192.168.1.100",9998);
         nic.registerName("/check/list",addr1);
-        String result = nic.send("NAME_SERVER list",true);
-        String target = "registration name /check/list ip 192.168.1.100 port 9998 type tcp";
-        checkTrue(result.find(target)!=String::npos,"listing found");
+        ConstString result = nic.send("NAME_SERVER list",true);
+        ConstString target = "registration name /check/list ip 192.168.1.100 port 9998 type tcp";
+        checkTrue(result.find(target)!=ConstString::npos,"listing found");
     }
 
     void checkSetGet() {
         report(0,"checking set/get...");
         NameClient& nic = NameClient::getNameClient();
         nic.registerName("/check/set");
-        String result = nic.send("NAME_SERVER set /check/set prop val",true);
+        ConstString result = nic.send("NAME_SERVER set /check/set prop val",true);
         result = nic.send("NAME_SERVER get /check/set prop",true);
-        String target = "port /check/set property prop = val";
-        checkTrue(result.find(target)!=String::npos,"answer found");
+        ConstString target = "port /check/set property prop = val";
+        checkTrue(result.find(target)!=ConstString::npos,"answer found");
     }
 
     virtual void runTests() {

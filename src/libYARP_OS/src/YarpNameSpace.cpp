@@ -154,7 +154,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
                                       PortReader& reply,
                                       const ContactStyle& style) {
     Contact srv = getNameServerContact();
-    String cmd0 = "NAME_SERVER";
+    ConstString cmd0 = "NAME_SERVER";
 
     DummyConnector con0;
     cmd.write(con0.getWriter());
@@ -165,7 +165,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
         cmd0 += in.get(i).toString().c_str();
     }
     NameClient& nic = HELPER(this);
-    String result = nic.send(cmd0);
+    ConstString result = nic.send(cmd0);
     Bottle reply2;
     reply2.addString(result.c_str());
     DummyConnector con;

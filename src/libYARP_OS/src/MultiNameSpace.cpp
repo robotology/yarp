@@ -123,7 +123,7 @@ public:
                         n.c_str());
                 continue;
             }
-            String mode = conf2.getMode();
+            ConstString mode = conf2.getMode();
             Contact address = conf2.getAddress().addName(n);
             if (mode=="yarp"||mode=="//") {
                 // add a yarp namespace

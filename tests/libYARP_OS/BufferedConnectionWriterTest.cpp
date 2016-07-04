@@ -23,7 +23,7 @@ typedef PortablePair<PortablePair<PortablePair<Bottle, ImageOf<PixelRgb> >,
 
 class BufferedConnectionWriterTest : public UnitTest {
 public:
-    virtual String getName() { return "BufferedConnectionWriterTest"; }
+    virtual ConstString getName() { return "BufferedConnectionWriterTest"; }
 
     void testWrite() {
         report(0,"testing writing...");
@@ -76,7 +76,7 @@ public:
             checkEqual(sos.toString(),"Space Monkeys\r\nAttack\r\n","alternate text");
 
             // And again, a bigger change this time
-            String test(2048,'x');
+            ConstString test(2048,'x');
             bbr.restart();
             sos.reset();
             bbr.appendLine(test);

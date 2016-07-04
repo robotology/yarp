@@ -6,7 +6,7 @@
  */
 
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Companion.h>
@@ -51,7 +51,7 @@ int harness_main(int argc, char *argv[]) {
 
     if (argc>1) {
         int verbosity = 0;
-        while (String(argv[1])==String("verbose")) {
+        while (ConstString(argv[1])==ConstString("verbose")) {
             verbosity++;
             argc--;
             argv++;
@@ -60,7 +60,7 @@ int harness_main(int argc, char *argv[]) {
             Logger::get().setVerbosity(verbosity);
         }
 
-        if (String(argv[1])==String("regression")) {
+        if (ConstString(argv[1])==ConstString("regression")) {
             done = true;
             // To make sure that the dev test are able to find all the devices
             // compile by YARP, also the one compiled as dynamic plugins
@@ -89,11 +89,11 @@ int harness_main(int argc, char *argv[]) {
 
 
 
-static String getFile(const char *fname) {
+static ConstString getFile(const char *fname) {
     char buf[25600];
     FILE *fin = fopen(fname,"r");
     if (fin==NULL) return "";
-    String result = "";
+    ConstString result = "";
     while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
         result += buf;
     }
@@ -103,7 +103,7 @@ static String getFile(const char *fname) {
 
     /*
     ifstream fin(fname);
-    String txt;
+    ConstString txt;
     if (fin.fail()) {
         return "";
     }
@@ -125,13 +125,13 @@ static void toDox(PolyDriver& dd, FILE *os) {
     fprintf(os, "<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>\n");
     Bottle order = dd.getOptions();
     for (int i=0; i<order.size(); i++) {
-        String name = order.get(i).toString().c_str();
+        ConstString name = order.get(i).toString().c_str();
         if (name=="wrapped"||name.substr(0,10)=="subdevice.") {
             continue;
         }
         ConstString desc = dd.getComment(name.c_str());
         ConstString def = dd.getDefaultValue(name.c_str()).toString();
-        String out = "";
+        ConstString out = "";
         out += "<tr><td>";
         out += name.c_str();
         out += "</td><td>";
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
     Network::init();
     Network::setLocalMode(true);
 
-    String seek = fileName.c_str();
+    ConstString seek = fileName.c_str();
     ConstString exampleName = "";
     int pos = seek.rfind('/');
     if (pos==-1) {
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
 
 
     if (dest!="") {
-        String dest2 = dest.c_str();
+        ConstString dest2 = dest.c_str();
         if (result!=0) {
             dest2 += ".fail";
         }

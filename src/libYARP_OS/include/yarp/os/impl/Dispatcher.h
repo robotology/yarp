@@ -8,7 +8,7 @@
 #ifndef YARP2_DISPATCHER
 #define YARP2_DISPATCHER
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 #include <yarp/os/impl/PlatformMap.h>
 #include <yarp/os/impl/PlatformVector.h>
@@ -32,7 +32,7 @@ class yarp::os::impl::Dispatcher {
 private:
     class Entry {
     public:
-        String name;
+        ConstString name;
         RET (T::*fn)(int argc, char *argv[]);
 
         Entry(const char *name, RET (T::*fn)(int argc, char *argv[])) :
@@ -44,19 +44,19 @@ private:
         }
     };
 
-    PLATFORM_MAP(String,Entry) action;
-    PlatformVector<String> names;
+    PLATFORM_MAP(ConstString,Entry) action;
+    PlatformVector<ConstString> names;
 
 public:
     void add(const char *name, RET (T::*fn)(int argc, char *argv[])) {
         Entry e(name,fn);
-        PLATFORM_MAP_SET(action,String(name),e);
+        PLATFORM_MAP_SET(action,ConstString(name),e);
         // maintain a record of order of keys
-        names.push_back(String(name));
+        names.push_back(ConstString(name));
     }
 
     RET dispatch(T *owner, const char *name, int argc, char *argv[]) {
-        String sname(name);
+        ConstString sname(name);
         Entry e;
         int result = PLATFORM_MAP_FIND_RAW(action,sname,e);
         if (result!=-1) {
@@ -67,7 +67,7 @@ public:
         return RET();
     }
 
-    PlatformVector<String> getNames() {
+    PlatformVector<ConstString> getNames() {
         return names;
     }
 };

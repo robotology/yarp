@@ -7,8 +7,6 @@
 
 #include <math.h>
 
-#include <yarp/os/impl/String.h>
-
 #include <yarp/os/Stamp.h>
 #include <yarp/os/all.h>
 
@@ -23,7 +21,7 @@ using namespace yarp::os;
 
 class StampTest : public UnitTest {
 public:
-    virtual String getName() { return "StampTest"; }
+    virtual ConstString getName() { return "StampTest"; }
 
     void checkFormat() {
         report(0, "checking Stamp can serialize ok...");
@@ -45,11 +43,11 @@ public:
             bot.read(con.getReader());
             checkEqual(bot.get(0).asInt(),55,"sequence number write");
             checkTrue(fabs(bot.get(1).asDouble()-1)<0.0001,"time stamp write");
-      
+
             stamp.write(con.getCleanWriter());
             Stamp outStamp;
             outStamp.read(con.getReader());
-      
+
             checkEqual(outStamp.getCount(),55,"sequence number read");
             checkTrue(fabs(outStamp.getTime()-1)<0.0001,"time stamp read");
         }
@@ -100,7 +98,7 @@ public:
             Stamp env(42,3.0);
             BufferedConnectionWriter buf(true);
             env.write(buf);
-            String str = buf.toString();
+            ConstString str = buf.toString();
             Bottle bot(str.c_str());
             checkEqual(bot.get(0).asInt(),42,"sequence ok");
             checkEqualish(bot.get(1).asDouble(),3,"time ok");

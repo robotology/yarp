@@ -10,7 +10,7 @@
 
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Name.h>
 
 namespace yarp {
@@ -138,7 +138,7 @@ public:
                        yarp::os::PortReader *reader,
                        yarp::os::PortWriter *callback,
                        void *tracker,
-                       const String& envelope,
+                       const ConstString& envelope,
                        bool waitAfter = true,
                        bool waitBefore = true,
                        bool *gotReply = NULL) {
@@ -191,7 +191,7 @@ public:
      *
      */
     void setMode() {
-        Name name(getRoute().getCarrierName() + String("://test"));
+        Name name(getRoute().getCarrierName() + ConstString("://test"));
         mode = name.getCarrierModifier("log",&hasMode);
     }
 
@@ -214,7 +214,7 @@ public:
      * @return the connection mode, or the empty string if there is none
      *
      */
-    String getMode(bool *hasMode = NULL) {
+    ConstString getMode(bool *hasMode = NULL) {
         if (hasMode!=NULL) {
             *hasMode = this->hasMode;
         }
@@ -290,7 +290,7 @@ protected:
 private:
     PortCore& owner; ///< the port to which this connection belongs
     bool doomed;     ///< whether the connection should shut down ASAP
-    String mode;     ///< the logging mode of the connection
+    ConstString mode;     ///< the logging mode of the connection
     bool hasMode;    ///< whether the logging mode has been set
     bool pupped;     ///< whether the connection was made by `publisherUpdate`
     int index;       ///< an ID assigned to the connection

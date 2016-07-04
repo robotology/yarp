@@ -29,7 +29,7 @@ void Logger::fini() {
 }
 
 
-void Logger::show(int level, const String& txt) {
+void Logger::show(int level, const ConstString& txt) {
     int inLevel = level;
     //ACE_OS::fprintf(stderr,"level %d txt %s\n", level, txt.c_str());
     if (verbose>0) {
@@ -57,7 +57,7 @@ void Logger::show(int level, const String& txt) {
             ACE_OS::fflush(stream);
         }
     } else {
-        String more(prefix);
+        ConstString more(prefix);
         more += ": ";
         more += txt;
         parent->show(inLevel,more);

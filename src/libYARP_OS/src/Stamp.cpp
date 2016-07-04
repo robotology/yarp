@@ -6,8 +6,6 @@
  */
 
 
-#include <yarp/os/impl/String.h>
-
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>

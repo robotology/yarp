@@ -286,7 +286,7 @@ public:
         gotCount = 0;
     }
 
-    virtual String getName() { return "ThreadTest"; }
+    virtual ConstString getName() { return "ThreadTest"; }
 
     void testIsRunning()
     {
