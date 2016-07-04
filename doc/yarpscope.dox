@@ -54,8 +54,8 @@ The syntax is
  --index [...]          Index(es) of the vector to plot.
                         It can be an [uint] or an array of [uint]s
  --plot_title [string]  Plot title (default = remote)
- --min [float]          Minimum value for the X axis (default -100)
- --max [float]          Maximum value for the X axis (default 100)
+ --min [float]          Minimum value for the Y axis (default -100)
+ --max [float]          Maximum value for the Y axis (default 100)
  --size [uint]          Plot size (Number of samples to plot) (default 201)
  --bgcolor [string]     Background color.
  --color [...]          Graph color(s).
