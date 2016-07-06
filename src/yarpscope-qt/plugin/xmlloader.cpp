@@ -85,10 +85,10 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                     plot_vspan = plotAttributes.value("vspan").toInt();
                 }
                 if(plotAttributes.hasAttribute("minval")) {
-                    plot_minval = plotAttributes.value("minval").toInt();
+                    plot_minval = plotAttributes.value("minval").toFloat();
                 }
                 if(plotAttributes.hasAttribute("maxval")) {
-                    plot_maxval = plotAttributes.value("maxval").toInt();
+                    plot_maxval = plotAttributes.value("maxval").toFloat();
                 }
                 if(plotAttributes.hasAttribute("size")) {
                     plot_size = plotAttributes.value("size").toInt();
