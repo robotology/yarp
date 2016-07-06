@@ -544,6 +544,25 @@ bool V4L_camera::close()
         return false;
     }
     param.fd = -1;
+    if(param.dst_image != NULL)
+    {
+        delete[] param.dst_image;
+    }
+
+    if(param.tmp_image != NULL)
+    {
+        delete[] param.tmp_image;
+    }
+
+    if(param.tmp_image2 != NULL)
+    {
+        delete[] param.tmp_image2;
+    }
+
+    if(param.raw_image != NULL)
+    {
+        free (param.raw_image);
+    }
     return true;
 }
 
