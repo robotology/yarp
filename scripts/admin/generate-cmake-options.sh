@@ -29,6 +29,7 @@ OS_TYPE=""
 echo "$2" | grep -iq "Debian\|Ubuntu"
 if [ "$?" == "0" ]; then
   OS_TYPE="linux"
+  RELEASE_CODENAME=$(lsb_release -c | awk '{print $2}')
 fi
 
 echo "$2" | grep -iq "Windows"
@@ -57,10 +58,13 @@ case $3 in
         $CMAKE_OPTIONS \
       "
       if [ "$OS_TYPE" == "linux" ]; then
-        CMAKE_OPTIONS=" \
-          $CMAKE_OPTIONS \
-          -DYARP_VALGRIND_TESTS=ON
-        "
+        # On Debian 8 there are some issues with valgrind tests
+        if [ "$RELEASE_CODENAME" != "jessie" ]; then
+          CMAKE_OPTIONS=" \
+            $CMAKE_OPTIONS \
+            -DYARP_VALGRIND_TESTS=ON
+          "
+        fi
       fi
      ;;
 esac
