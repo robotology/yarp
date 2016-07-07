@@ -2068,7 +2068,11 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
+PREDEFINED             = __cplusplus:=201103L \
+                         __GNUC__:=5 \
+                         __GNUC_MINOR__:=3 \
+                         __GNUC_PATCHLEVEL__:=1 \
+                         DOXYGEN_SHOULD_SKIP_THIS \
                          YARP_EXPORT= \
                          YARP_IMPORT= \
                          YARP_OS_API= \
