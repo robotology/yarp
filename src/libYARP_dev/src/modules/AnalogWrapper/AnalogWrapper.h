@@ -38,6 +38,7 @@
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <geometry_msgs_WrenchStamped.h>  // Defines ROS jointState msg; it already includes TickTime and Header
+#include <sensor_msgs_JointState.h>
 
 
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
@@ -158,13 +159,20 @@ private:
     // ROS state publisher
     ROSTopicUsageType                                        useROS;                     // decide if open ROS topic or not
     std::string                                              frame_id;                   // name of the reference frame the measures are referred to
+    yarp::os::Bottle                                         *ros_joint_names;
+    std::string                                              rosMsgType;                 // ros message type
     std::string                                              rosNodeName;                // name of the rosNode
     std::string                                              rosTopicName;               // name of the rosTopic
     yarp::os::Node                                           *rosNode;                   // add a ROS node
     yarp::os::NetUint32                                      rosMsgCounter;              // incremental counter in the ROS message
+
     // TODO: in the future, in order to support multiple ROS msgs this should be a pointer allocated dynamically depending on the msg maybe (??)
-    yarp::os::PortWriterBuffer<geometry_msgs_WrenchStamped>  rosOutputState_buffer;      // Buffer associated to the ROS topic
-    yarp::os::Publisher<geometry_msgs_WrenchStamped>         rosPublisherPort;           // Dedicated ROS topic publisher
+    //  yarp::os::PortWriterBuffer<geometry_msgs_WrenchStamped>  rosOutputWrench_buffer;      // Buffer associated to the ROS topic
+    yarp::os::Publisher<geometry_msgs_WrenchStamped>         rosPublisherWrenchPort;      // Dedicated ROS topic publisher
+
+    //yarp::os::PortWriterBuffer<sensor_msgs_JointState>       rosOutputJoint_buffer;       // Buffer associated to the ROS topic
+    yarp::os::Publisher<sensor_msgs_JointState>              rosPublisherJointPort;       // Dedicated ROS topic publisher
+
 
     bool checkROSParams(yarp::os::Searchable &config);
     bool initialize_ROS();
