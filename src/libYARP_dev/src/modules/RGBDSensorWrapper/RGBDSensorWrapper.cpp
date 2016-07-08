@@ -258,6 +258,12 @@ bool RGBDSensorWrapper::close()
         depthFrame_StreamingPort.close();
     }
 
+    if(rosNode!=NULL) {
+        rosNode->interrupt();
+        delete rosNode;
+        rosNode = NULL;
+    }
+
     // Closing ROS topic
     if(use_ROS)
     {
