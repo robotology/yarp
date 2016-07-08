@@ -420,7 +420,12 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
             useROS = ROS_config_error;
             return false;
         }
-        ros_joint_names = rosGroup.find("joint_names").asList();
+        yarp::os::Bottle& jnam =rosGroup.findGroup("joint_names");
+        int joint_names_size = jnam.size()-1;
+        for (size_t i=0; i<joint_names_size; i++)
+        {
+			ros_joint_names.push_back(jnam.get(i+1).asString());
+		}
     }
     else
     {
@@ -698,31 +703,28 @@ void AnalogWrapper::run()
                     rosData.name.resize(data_size);
                     rosData.position.resize(data_size);
                     rosData.velocity.resize(data_size);
-                    rosData.effort.resize(data_size);
-
-                    JointTypeEnum jType;
-                    for (int i = 0; i< data_size; i++)
+                    rosData.effort.resize(data_size);                  
+                    
+                    if (data_size != ros_joint_names.size())
                     {
-                        // if (jType == VOCAB_JOINTTYPE_REVOLUTE)
-                        {  
-                            if (ros_joint_names->size() != ros_joint_names->size())
-                            {
-                                yDebug() << "Invalid ros_joint_names size";
-                            }
-                            else
-                            {
-                                rosData.name[i] = ros_joint_names->get(i).asString();
-                                rosData.position[i] = convertDegreesToRadians(lastDataRead[i]);
-                                rosData.velocity[i] = 0;
-                                rosData.effort[i] = 0;
-                            }
-                        }
-                    }
-
-                    //rosData.name = jointNamesVecotr;
+						yDebug() << "Invalid ros_joint_names size:" << data_size << "!=" << ros_joint_names.size();
+					}
+					else
+					{
+						for (size_t i = 0; i< data_size; i++)
+						{
+							//JointTypeEnum jType;
+							// if (jType == VOCAB_JOINTTYPE_REVOLUTE)
+							{  
+								rosData.name[i] = ros_joint_names[i];
+								rosData.position[i] = convertDegreesToRadians(lastDataRead[i]);
+								rosData.velocity[i] = 0;
+					    		rosData.effort[i] = 0;
+							}
+						}
+					}
                     rosData.header.seq = rosMsgCounter++;
                     rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
-
                     rosPublisherJointPort.write(rosData);
                 }
             }

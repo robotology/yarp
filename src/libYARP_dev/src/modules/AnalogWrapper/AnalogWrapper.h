@@ -159,7 +159,7 @@ private:
     // ROS state publisher
     ROSTopicUsageType                                        useROS;                     // decide if open ROS topic or not
     std::string                                              frame_id;                   // name of the reference frame the measures are referred to
-    yarp::os::Bottle                                         *ros_joint_names;
+    std::vector<std::string>                                 ros_joint_names;
     std::string                                              rosMsgType;                 // ros message type
     std::string                                              rosNodeName;                // name of the rosNode
     std::string                                              rosTopicName;               // name of the rosTopic
