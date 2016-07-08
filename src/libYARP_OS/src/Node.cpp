@@ -175,22 +175,16 @@ public:
 
     void clear()
     {
-        bool more = true;
         if (!mutex.tryLock()) {
             return;
         }
-        while (more) {
-            more = false;
-            if (name_cache.begin()!=name_cache.end()) {
-                Contactable *c = name_cache.begin()->first;
-                if (c) {
-                    mutex.unlock();
-                    c->interrupt();
-                    c->close();
-                    mutex.lock();
-                    more = true;
-                    break;
-                }
+        while (name_cache.begin() != name_cache.end()) {
+            Contactable *c = name_cache.begin()->first;
+            if (c) {
+                mutex.unlock();
+                c->interrupt();
+                c->close();
+                mutex.lock();
             }
         }
         mutex.unlock();
