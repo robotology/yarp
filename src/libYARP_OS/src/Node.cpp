@@ -6,6 +6,7 @@
  */
 
 
+#include <yarp/conf/compiler.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Mutex.h>
 #include <yarp/os/impl/Logger.h>
@@ -22,22 +23,28 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-static ConstString toRosName(const ConstString& str) {
+static ConstString toRosName(const ConstString& str)
+{
     return RosNameSpace::toRosName(str);
 }
 
-static ConstString fromRosName(const ConstString& str) {
+static ConstString fromRosName(const ConstString& str)
+{
     return RosNameSpace::fromRosName(str);
 }
 
-class NodeItem {
+class NodeItem
+{
 public:
     NestedContact nc;
     Contactable *contactable;
 
-    void update() {
+    void update()
+    {
         if (nc.getTypeName()=="") {
-            if (!contactable) return;
+            if (!contactable) {
+                return;
+            }
             Type typ = contactable->getType();
             if (typ.isValid()) {
                 nc.setTypeName(typ.getName());
@@ -45,38 +52,45 @@ public:
         }
     }
 
-    bool isSubscriber() {
+    bool isSubscriber()
+    {
         ConstString cat = nc.getCategory();
         return (cat=="" || cat=="-");
     }
 
-    bool isPublisher() {
+    bool isPublisher()
+    {
         ConstString cat = nc.getCategory();
         return (cat=="" || cat=="+");
     }
 
-    bool isTopic() {
+    bool isTopic()
+    {
         ConstString cat = nc.getCategory();
         return (cat=="" || cat=="+" || cat=="-");
     }
 
-    bool isServiceServer() {
+    bool isServiceServer()
+    {
         ConstString cat = nc.getCategory();
         return (cat=="" || cat=="-1");
     }
 
-    bool isServiceClient() {
+    bool isServiceClient()
+    {
         ConstString cat = nc.getCategory();
         return (cat=="" || cat=="+1");
     }
 
-    bool isService() {
+    bool isService()
+    {
         ConstString cat = nc.getCategory();
         return (cat=="" || cat=="+1" || cat=="-1");
     }
 };
 
-class NodeArgs {
+class NodeArgs
+{
 public:
     Bottle request;
     Bottle args;
@@ -84,44 +98,54 @@ public:
     int code;
     ConstString msg;
     bool should_drop;
-    
-    NodeArgs() {
+
+    NodeArgs()
+    {
         code = -1;
         should_drop = true;
     }
 
-    void error(const char *txt) {
+    void error(const char *txt)
+    {
         msg = txt;
         code = -1;
     }
 
-    void fail(const char *txt) {
+    void fail(const char *txt)
+    {
         msg = txt;
         code = 0;
     }
 
-    void success() {
+    void success()
+    {
         msg = "";
         code = 1;
     }
-    
-    void drop() {
+
+    void drop()
+    {
         should_drop = true;
     }
 
-    void persist() {
+    void persist()
+    {
         should_drop = false;
     }
 
-    void fromExternal(const Bottle& alt) {
+    void fromExternal(const Bottle& alt)
+    {
         code = alt.get(0).asInt();
         msg = alt.get(1).asString();
         Bottle *nest = alt.get(2).asList();
-        if (nest) reply = *nest;
+        if (nest) {
+            reply = *nest;
+        }
     }
 };
 
-class NodeHelper : public PortReader {
+class yarp::os::Node::Helper : public PortReader
+{
 public:
     std::map<ConstString,NodeItem> by_part_name;
     std::multimap<ConstString,NodeItem> by_category;
@@ -134,20 +158,23 @@ public:
     ConstString prev_name;
     bool has_prev_name;
 
-    NodeHelper() {
-        owner = NULL;
+    Helper() :
+            owner(YARP_NULLPTR),
+            prev_name(""),
+            has_prev_name(false)
+    {
         clear();
-        prev_name = "";
-        has_prev_name = false;
         port.includeNodeInName(false);
     }
 
-    ~NodeHelper() {
+    ~Helper()
+    {
         clear();
         port.close();
     }
 
-    void clear() {
+    void clear()
+    {
         bool more = true;
         if (!mutex.tryLock()) {
             return;
@@ -177,15 +204,17 @@ public:
 
     void prepare(const ConstString& name);
 
-    void interrupt() {
+    void interrupt()
+    {
         port.interrupt();
     }
 
     virtual bool read(ConnectionReader& reader);
 
-    Contact lookup(const ConstString& topic) {
+    Contact lookup(const ConstString& topic)
+    {
         mutex.lock();
-        std::map<ConstString,NodeItem>::const_iterator i = 
+        std::map<ConstString,NodeItem>::const_iterator i =
             by_part_name.find(topic);
         if (i == by_part_name.end()) {
             mutex.unlock();
@@ -196,34 +225,42 @@ public:
         return c;
     }
 
-    void getBusStats(NodeArgs& na) {
+    void getBusStats(NodeArgs& na)
+    {
         na.reply.addList();
         na.success();
     }
 
-    void getBusInfo(NodeArgs& na) {
+    void getBusInfo(NodeArgs& na)
+    {
         na.reply.addList();
         na.success();
     }
 
-    void getMasterUri(NodeArgs& na) {
+    void getMasterUri(NodeArgs& na)
+    {
         na.reply.fromString("hmm");
     }
 
-    void shutdown(NodeArgs& na) {
+    void shutdown(NodeArgs& na)
+    {
         na.reply.fromString("hmm");
     }
 
-    void getPid(NodeArgs& na) {
+    void getPid(NodeArgs& na)
+    {
         na.reply.addInt(ACE_OS::getpid());
         na.success();
     }
 
-    void getSubscriptions(NodeArgs& na) {
+    void getSubscriptions(NodeArgs& na)
+    {
         mutex.lock();
         for (std::map<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
             NodeItem& item = it->second;
-            if (!item.isSubscriber()) continue;
+            if (!item.isSubscriber()) {
+                continue;
+            }
             item.update();
             Bottle& lst = na.reply.addList();
             lst.addString(toRosName(item.nc.getNestedName()));
@@ -233,11 +270,14 @@ public:
         na.success();
     }
 
-    void getPublications(NodeArgs& na) {
+    void getPublications(NodeArgs& na)
+    {
         mutex.lock();
         for (std::map<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
             NodeItem& item = it->second;
-            if (!item.isPublisher()) continue;
+            if (!item.isPublisher()) {
+                continue;
+            }
             item.update();
             Bottle& lst = na.reply.addList();
             lst.addString(toRosName(item.nc.getNestedName()));
@@ -247,11 +287,13 @@ public:
         na.success();
     }
 
-    void paramUpdate(NodeArgs& na) {
+    void paramUpdate(NodeArgs& na)
+    {
         na.reply.fromString("hmm");
     }
 
-    void publisherUpdate(NodeArgs& na) {
+    void publisherUpdate(NodeArgs& na)
+    {
         ConstString topic = fromRosName(na.args.get(0).asString());
         Contact c = lookup(topic);
         if (!c.isValid()) {
@@ -272,7 +314,8 @@ public:
         //printf("DONE with passing on publisherUpdate\n");
     }
 
-    void requestTopic(NodeArgs& na) {
+    void requestTopic(NodeArgs& na)
+    {
         ConstString topic = na.args.get(0).asString();
         topic = fromRosName(topic);
         Contact c = lookup(topic);
@@ -287,7 +330,8 @@ public:
     }
 };
 
-void NodeHelper::prepare(const ConstString& name) {
+void yarp::os::Node::Helper::prepare(const ConstString& name)
+{
     if (port.getName()=="") {
         port.setReader(*this);
         Property *prop = port.acquireProperties(false);
@@ -300,7 +344,8 @@ void NodeHelper::prepare(const ConstString& name) {
     }
 }
 
-void NodeHelper::add(Contactable& contactable) {
+void yarp::os::Node::Helper::add(Contactable& contactable)
+{
     NodeItem item;
     item.nc.fromString(contactable.getName());
     if (name=="") name = item.nc.getNodeName();
@@ -316,18 +361,21 @@ void NodeHelper::add(Contactable& contactable) {
     by_category.insert(std::pair<ConstString,NodeItem>(item.nc.getCategory(),item));
 }
 
-void NodeHelper::update(Contactable& contactable) {
+void yarp::os::Node::Helper::update(Contactable& contactable)
+{
     NodeItem item = name_cache[&contactable];
 }
 
-void NodeHelper::remove(Contactable& contactable) {
+void yarp::os::Node::Helper::remove(Contactable& contactable)
+{
     NodeItem item = name_cache[&contactable];
     name_cache.erase(&contactable);
     by_part_name.erase(item.nc.getNestedName());
     by_category.erase(item.nc.getCategory());
 }
 
-Contact NodeHelper::query(const ConstString& name, const ConstString& category) {
+Contact yarp::os::Node::Helper::query(const ConstString& name, const ConstString& category)
+{
     Contact result = Contact::invalid();
     std::map<ConstString,NodeItem>::const_iterator i = by_part_name.find(name);
     if (i != by_part_name.end()) {
@@ -336,11 +384,14 @@ Contact NodeHelper::query(const ConstString& name, const ConstString& category) 
     return result;
 }
 
-bool NodeHelper::read(ConnectionReader& reader) {
-    if (!reader.isValid()) return false;
+bool yarp::os::Node::Helper::read(ConnectionReader& reader)
+{
+    if (!reader.isValid()) {
+        return false;
+    }
     NodeArgs na;
     na.request.read(reader);
-    //printf("NODE API for %s received %s\n", 
+    //printf("NODE API for %s received %s\n",
     //name.c_str(),
     //na.request.toString().c_str());
     ConstString key = na.request.get(0).asString();
@@ -376,7 +427,7 @@ bool NodeHelper::read(ConnectionReader& reader) {
         full.addInt(na.code);
         full.addString(na.msg);
         full.addList() = na.reply;
-        //printf("NODE %s <<< %s\n", 
+        //printf("NODE %s <<< %s\n",
         //name.c_str(),
         //full.toString().c_str());
         full.write(*reader.getWriter());
@@ -386,76 +437,81 @@ bool NodeHelper::read(ConnectionReader& reader) {
 
 
 
-#define HELPER(x) (*((NodeHelper*)((x)->system_resource)))
-
-Node::Node() {
-    system_resource = new NodeHelper;
-    yAssert(system_resource!=NULL);
-    HELPER(this).owner = this;
+Node::Node() :
+        mPriv(new Helper)
+{
+    yAssert(mPriv != YARP_NULLPTR);
+    mPriv->owner = this;
 }
 
-Node::Node(const ConstString& name) {
-    system_resource = new NodeHelper;
-    yAssert(system_resource!=NULL);
-    HELPER(this).owner = this;
+Node::Node(const ConstString& name) :
+        mPriv(new Helper)
+{
+    yAssert(mPriv != YARP_NULLPTR);
+    mPriv->owner = this;
     Nodes& nodes = NameClient::getNameClient().getNodes();
-    HELPER(this).prev_name = nodes.getActiveName();
-    HELPER(this).has_prev_name = true;
-    HELPER(this).name = name;
+    mPriv->prev_name = nodes.getActiveName();
+    mPriv->has_prev_name = true;
+    mPriv->name = name;
     prepare(name);
-    ConstString rname = HELPER(this).port.getName();
+    ConstString rname = mPriv->port.getName();
     nodes.addExternalNode(rname,*this);
     nodes.setActiveName(rname);
 }
 
-Node::~Node() {
-    if (system_resource==NULL) return;
-    if (HELPER(this).has_prev_name) {
+Node::~Node()
+{
+    if (mPriv->has_prev_name) {
         Nodes& nodes = NameClient::getNameClient().getNodes();
-        nodes.setActiveName(HELPER(this).prev_name);
-        nodes.removeExternalNode(HELPER(this).name);
+        nodes.setActiveName(mPriv->prev_name);
+        nodes.removeExternalNode(mPriv->name);
     }
-    delete &HELPER(this);
-    system_resource = NULL;
+    delete mPriv;
 }
 
-void Node::add(Contactable& contactable) {
-    HELPER(this).mutex.lock();
-    HELPER(this).add(contactable);
-    HELPER(this).mutex.unlock();
+void Node::add(Contactable& contactable)
+{
+    mPriv->mutex.lock();
+    mPriv->add(contactable);
+    mPriv->mutex.unlock();
 }
 
-void Node::update(Contactable& contactable) {
-    HELPER(this).mutex.lock();
-    HELPER(this).update(contactable);
-    HELPER(this).mutex.unlock();
+void Node::update(Contactable& contactable)
+{
+    mPriv->mutex.lock();
+    mPriv->update(contactable);
+    mPriv->mutex.unlock();
 }
 
-void Node::remove(Contactable& contactable) {
-    HELPER(this).mutex.lock();
-    HELPER(this).remove(contactable);
-    HELPER(this).mutex.unlock();
+void Node::remove(Contactable& contactable)
+{
+    mPriv->mutex.lock();
+    mPriv->remove(contactable);
+    mPriv->mutex.unlock();
 }
 
-Contact Node::query(const ConstString& name,
-                    const ConstString& category) {
-    HELPER(this).mutex.lock();
-    Contact result = HELPER(this).query(name,category);
-    HELPER(this).mutex.unlock();
+Contact Node::query(const ConstString& name, const ConstString& category)
+{
+    mPriv->mutex.lock();
+    Contact result = mPriv->query(name,category);
+    mPriv->mutex.unlock();
     return result;
 }
 
 
-void Node::interrupt() {
-    HELPER(this).interrupt();
+void Node::interrupt()
+{
+    mPriv->interrupt();
 }
 
-Contact Node::where() {
-    return HELPER(this).port.where();
+Contact Node::where()
+{
+    return mPriv->port.where();
 }
 
-void Node::prepare(const ConstString& name) {
-    HELPER(this).mutex.lock();
-    HELPER(this).prepare(name);
-    HELPER(this).mutex.unlock();
+void Node::prepare(const ConstString& name)
+{
+    mPriv->mutex.lock();
+    mPriv->prepare(name);
+    mPriv->mutex.unlock();
 }
