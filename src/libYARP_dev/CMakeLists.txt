@@ -149,8 +149,11 @@ set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.cpp
-                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
-						src/modules/TransformServer/TransformServer.cpp)
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp)
+if (CREATE_LIB_MATH)
+list(APPEND YARP_devices_SRCS src/modules/TransformServer/TransformServer.cpp
+                              src/modules/TransformClient/TransformClient.cpp)
+endif()
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/AnalogSensorClient/AnalogSensorClient.h
@@ -161,9 +164,11 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.h
-                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h     
-						src/modules/TransformServer/TransformServer.h)
-
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h)
+if (CREATE_LIB_MATH)
+list(APPEND YARP_devices_SRCS src/modules/TransformServer/TransformServer.h
+                              src/modules/TransformClient/TransformClient.h)
+endif()
 
 # handle the ros / yarp thrift messages
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
@@ -221,6 +226,10 @@ source_group("Devices Files" FILES ${YARP_devices_SRCS}
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
+if (CREATE_LIB_MATH)
+add_definitions(-DWITH_YARPMATH)
+endif()
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/AnalogSensorClient)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/BatteryClient)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/TransformClient)
@@ -234,6 +243,10 @@ add_library(YARP_dev ${YARP_dev_SRCS}
 
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
+
+if (CREATE_LIB_MATH)
+target_link_libraries(YARP_dev LINK_PRIVATE YARP_math)
+endif()
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})

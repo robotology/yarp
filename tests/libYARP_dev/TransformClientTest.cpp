@@ -65,7 +65,7 @@ public:
         return true;
     }
 
-    virtual String getName()
+    virtual ConstString getName()
     {
         return "TransformClientTest";
     }

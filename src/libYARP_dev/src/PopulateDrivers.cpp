@@ -41,7 +41,11 @@ extern DriverCreator *createRangefinder2DClient();
 extern DriverCreator *createRGBDSensorWrapper();
 extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
+
+#ifdef WITH_YARPMATH
 extern DriverCreator *createTransformServer();
+extern DriverCreator *createTransformClient();
+#endif
 
 #ifndef YARP_NO_DEPRECATED
 extern DriverCreator *createServerControlBoard();
@@ -94,7 +98,11 @@ void Drivers::init() {
     add(createRGBDSensorWrapper());
     add(createRGBDSensorClient());
     add(createControlBoardRemapper());
+
+#ifdef WITH_YARPMATH
     add(createTransformServer());
+    add(createTransformClient());
+#endif
 
 #ifndef YARP_NO_DEPRECATED
     add(createClientControlBoard());

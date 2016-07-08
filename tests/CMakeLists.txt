@@ -33,6 +33,15 @@ if(YARP_COMPILE_TESTS)
 
     foreach(test_family ${targets})
         file(GLOB harness_code ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.cpp ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.h)
+		if("${test_family}" STREQUAL "OS" AND NOT YARP_HAS_ACE)
+            # Without ACE, we don't currently have UDP
+            list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_OS/DgramTwoWayStreamTest.cpp)
+        endif()
+		if("${test_family}" STREQUAL "dev" AND NOT YARP_HAS_MATH_LIB)
+            # Without MATH lib, we don't compile TransformClient 
+            list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_dev/TransformClientTest.cpp)
+        endif()
+		
         get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family}
                      PROPERTY INCLUDE_DIRS)
         get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
@@ -50,10 +59,7 @@ if(YARP_COMPILE_TESTS)
         if(YARP_HAS_ACE)
             target_link_libraries(${EXE} ${ACE_LIBRARIES})
         endif()
-        if(NOT YARP_HAS_ACE)
-            # Without ACE, we don't currently have UDP
-            list(REMOVE_ITEM harness_code ${CMAKE_SOURCE_DIR}/src/libYARP_${test_family}/harness/DgramTwoWayStreamTest.cpp)
-        endif()
+
         foreach(test ${harness_code})
             get_filename_component(XN ${test} NAME_WE)
             set(_cmd $<TARGET_FILE:${EXE}> verbose regression ${XN})
@@ -74,6 +80,11 @@ if(YARP_COMPILE_TESTS)
         target_link_libraries(harness_os pthread)
     endif()
 
+	# Compile TransformClientTest  only if yarp math is built
+	if (YARP_HAS_MATH_LIB)
+	    add_definitions(-DWITH_YARPMATH)
+	endif()
+	
     # Compile ControlBoardRemapperTest only if fakeMotionControl is enabled
     if(ENABLE_yarpmod_fakeMotionControl)
         add_definitions(-DYARP_CONTROLBOARDREMAPPER_TESTS)

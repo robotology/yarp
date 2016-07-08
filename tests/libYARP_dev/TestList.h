@@ -27,7 +27,7 @@ extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
 #endif
 
 
-#ifdef YARP_TRANSFORM_TESTS
+#ifdef WITH_YARPMATH
 extern yarp::os::impl::UnitTest& getTransformClientTest();
 #endif
 
@@ -40,7 +40,7 @@ public:
         root.add(getControlBoardRemapperTest());
 #endif
 
-#ifdef YARP_TRANSFORM_TESTS
+#ifdef WITH_YARPMATH
         root.add(getTransformClientTest());
 #endif	
     }

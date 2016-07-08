@@ -63,7 +63,6 @@ namespace yarp
                     yarp::sig::Matrix rotM;
                     double rot[4] = { rW, rX, rY, rZ };
                     rotQ = yarp::sig::Vector(4, rot);
-                    //to uncomment -- build yarp math
                     rotM = quat2dcm(rotQ);
                     rotV = dcm2rpy(SE3inv(rotM));
                     return rotV;
@@ -85,7 +84,6 @@ namespace yarp
                     yarp::sig::Matrix    rotM;
                     i = 3;
                     rotV = yarp::sig::Vector(i, rot);
-                    //to uncomment -- build yarp math
                     rotM = rpy2dcm(rotV);
                     rotQ = dcm2quat( SE3inv(rotM));
                     rW = rotQ[0];
