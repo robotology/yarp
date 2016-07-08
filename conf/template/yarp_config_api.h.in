@@ -94,7 +94,18 @@ recommended usage of this header within YARP is:
 #endif
 
 
+// YARP_NODISCARD: print a warning if the result unused
+#if (YARP_COMPILER_IS_GNU  && (__GNUC__ >= 4)) || YARP_COMPILER_IS_Clang
+#  define YARP_NODISCARD __attribute__ ((warn_unused_result))
+#elif YARP_COMPILER_IS_MSVC && (_MSC_VER >= 1700)
+#  define YARP_NODISCARD _Check_return_
+#else
+#  define YARP_NODISCARD
+#endif
+
+
 // YARP_UNUSED: Suppress unused variable warnings
 #define YARP_UNUSED(var) (void)var
+
 
 #endif // YARP_CONF_API_H
