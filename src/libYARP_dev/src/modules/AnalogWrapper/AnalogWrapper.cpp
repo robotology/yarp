@@ -430,7 +430,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
         }
         yarp::os::Bottle& jnam =rosGroup.findGroup("joint_names");
         int joint_names_size = jnam.size()-1;
-        for (size_t i=0; i<joint_names_size; i++)
+        for (int i = 0; i < joint_names_size; i++)
         {
 			ros_joint_names.push_back(jnam.get(i+1).asString());
 		}
