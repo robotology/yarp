@@ -432,8 +432,8 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
         int joint_names_size = jnam.size()-1;
         for (int i = 0; i < joint_names_size; i++)
         {
-			ros_joint_names.push_back(jnam.get(i+1).asString());
-		}
+            ros_joint_names.push_back(jnam.get(i+1).asString());
+        }
     }
     else
     {
@@ -467,7 +467,7 @@ bool AnalogWrapper::initialize_ROS()
                 success = false;
                 break;
             }
-            
+
             if (rosMsgType == "sensor_msgs/JointState" && !rosPublisherJointPort.topic(rosTopicName))
             {
                 yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
@@ -711,26 +711,26 @@ void AnalogWrapper::run()
                     rosData.name.resize(data_size);
                     rosData.position.resize(data_size);
                     rosData.velocity.resize(data_size);
-                    rosData.effort.resize(data_size);                  
-                    
+                    rosData.effort.resize(data_size);
+
                     if (data_size != ros_joint_names.size())
                     {
-						yDebug() << "Invalid ros_joint_names size:" << data_size << "!=" << ros_joint_names.size();
-					}
-					else
-					{
-						for (size_t i = 0; i< data_size; i++)
-						{
-							//JointTypeEnum jType;
-							// if (jType == VOCAB_JOINTTYPE_REVOLUTE)
-							{  
-								rosData.name[i] = ros_joint_names[i];
-								rosData.position[i] = convertDegreesToRadians(lastDataRead[i]);
-								rosData.velocity[i] = 0;
-					    		rosData.effort[i] = 0;
-							}
-						}
-					}
+                        yDebug() << "Invalid ros_joint_names size:" << data_size << "!=" << ros_joint_names.size();
+                    }
+                    else
+                    {
+                        for (size_t i = 0; i< data_size; i++)
+                        {
+                            //JointTypeEnum jType;
+                            // if (jType == VOCAB_JOINTTYPE_REVOLUTE)
+                            {
+                                rosData.name[i] = ros_joint_names[i];
+                                rosData.position[i] = convertDegreesToRadians(lastDataRead[i]);
+                                rosData.velocity[i] = 0;
+                                rosData.effort[i] = 0;
+                            }
+                        }
+                    }
                     rosData.header.seq = rosMsgCounter++;
                     rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
                     rosPublisherJointPort.write(rosData);
