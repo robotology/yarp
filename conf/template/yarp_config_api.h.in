@@ -89,10 +89,12 @@ recommended usage of this header within YARP is:
 #if defined YARP_NO_DEPRECATED_WARNINGS
 #  undef YARP_DEPRECATED
 #  undef YARP_DEPRECATED_MSG
+#endif
+// If YARP_DEPRECATED and YARP_DEPRECATED_MSG are undefined, define them empty
+#ifndef YARP_DEPRECATED
 #  define YARP_DEPRECATED
 #  define YARP_DEPRECATED_MSG(X)
 #endif
-
 
 // YARP_NODISCARD: print a warning if the result unused
 #if (YARP_COMPILER_IS_GNU  && (__GNUC__ >= 4)) || YARP_COMPILER_IS_Clang
