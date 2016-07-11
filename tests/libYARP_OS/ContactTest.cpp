@@ -13,9 +13,9 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-class AddressTest : public UnitTest {
+class ContactTest : public UnitTest {
 public:
-    virtual ConstString getName() { return "AddressTest"; }
+    virtual ConstString getName() { return "ContactTest"; }
 
     virtual void testString() {
         report(0,"checking string representation");
@@ -85,9 +85,9 @@ public:
     }
 };
 
-static AddressTest theAddressTest;
+static ContactTest theContactTest;
 
-UnitTest& getAddressTest() {
-    return theAddressTest;
+UnitTest& getContactTest() {
+    return theContactTest;
 }
 
