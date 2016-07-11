@@ -66,6 +66,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IPositionDirect.h
                   include/yarp/dev/IPositionDirectImpl.h
                   include/yarp/dev/ITorqueControl.h
+                  include/yarp/dev/ITransform.h
                   include/yarp/dev/IVelocityControl2.h
                   include/yarp/dev/IVelocityControl2Impl.h
                   include/yarp/dev/IVelocityControl.h
@@ -83,7 +84,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ServiceInterfaces.h
                   include/yarp/dev/TestFrameGrabber.h
                   include/yarp/dev/TestMotor.h
-                  include/yarp/dev/ITransform.h
                   include/yarp/dev/Wrapper.h
                   include/yarp/dev/ControlBoardInterfacesImpl.inl)
 
@@ -151,8 +151,8 @@ set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.cpp
                         src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp)
 if (CREATE_LIB_MATH)
-list(APPEND YARP_devices_SRCS src/modules/TransformServer/TransformServer.cpp
-                              src/modules/TransformClient/TransformClient.cpp)
+  list(APPEND YARP_devices_SRCS src/modules/TransformClient/TransformClient.cpp
+                                src/modules/TransformServer/TransformServer.cpp)
 endif()
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
@@ -166,8 +166,8 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.h
                         src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h)
 if (CREATE_LIB_MATH)
-list(APPEND YARP_devices_SRCS src/modules/TransformServer/TransformServer.h
-                              src/modules/TransformClient/TransformClient.h)
+  list(APPEND YARP_devices_SRCS src/modules/TransformClient/TransformClient.h
+                                src/modules/TransformServer/TransformServer.h)
 endif()
 
 # handle the ros / yarp thrift messages
@@ -227,7 +227,7 @@ set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 if (CREATE_LIB_MATH)
-add_definitions(-DWITH_YARPMATH)
+  add_definitions(-DWITH_YARPMATH)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/AnalogSensorClient)
@@ -252,7 +252,7 @@ set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})
 
 if(YARP_HAS_ACE)
-    target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
+  target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
 endif(YARP_HAS_ACE)
 
 install(TARGETS YARP_dev

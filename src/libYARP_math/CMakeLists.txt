@@ -20,7 +20,7 @@ if (YARP_HAS_MATH_LIB)
                        include/yarp/math/RandScalar.h
                        include/yarp/math/RandVector.h
                        include/yarp/math/SVD.h
-					   include/yarp/math/Transform.h)
+                       include/yarp/math/Transform.h)
 
     set(YARP_math_IMPL_HDRS )
 
@@ -32,7 +32,7 @@ if (YARP_HAS_MATH_LIB)
                        src/RandScalar.cpp
                        src/RandVector.cpp
                        src/SVD.cpp
-					   src/Transform.cpp)
+                       src/Transform.cpp)
 
     source_group("Source Files" FILES ${YARP_math_SRCS})
     source_group("Header Files" FILES ${YARP_math_HDRS})
