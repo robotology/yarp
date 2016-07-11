@@ -532,7 +532,7 @@ void ControlBoardArbitraryAxesDecomposition::resizeSubControlBoardBuffers(const 
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
-        assert(m_nJointsInSubControlBoard[ctrlBrd] == m_jointsInSubControlBoard[ctrlBrd].size());
+        assert((unsigned)m_nJointsInSubControlBoard[ctrlBrd] == m_jointsInSubControlBoard[ctrlBrd].size());
         m_bufferForSubControlBoard.resize(m_nJointsInSubControlBoard[ctrlBrd]);
     }
 }
