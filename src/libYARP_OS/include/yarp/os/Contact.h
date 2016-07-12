@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2006, 2008 RobotCub Consortium
- * Authors: Paul Fitzpatrick
+ * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+ *          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
