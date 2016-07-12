@@ -12,6 +12,7 @@
 #include "ui_sequencewindow.h"
 #include <QMenu>
 #include <QDebug>
+#include <QClipboard>
 
 
 SequenceWindow::SequenceWindow(QString partName, int count,QWidget *parent) :
@@ -89,9 +90,6 @@ SequenceWindow::SequenceWindow(QString partName, int count,QWidget *parent) :
 
     QTreeWidgetItem *itemSpeed = new QTreeWidgetItem(ss1);
     ui->treeSpeed->addTopLevelItem(itemSpeed);
-
-
-
 }
 
 SequenceWindow::~SequenceWindow()
@@ -571,6 +569,7 @@ void SequenceTreeWidget::onContextMenuRequested(QPoint point)
     QAction *copyAction = menu.addAction("Copy row");
     QAction *pasteAction = menu.addAction("Paste row");
     QAction *deleteAction = menu.addAction("Delete Row");
+    QAction *clipboardAction = menu.addAction("Copy to clipboard");
 
     if(copyValues.isEmpty()){
         pasteAction->setEnabled(false);
@@ -578,6 +577,20 @@ void SequenceTreeWidget::onContextMenuRequested(QPoint point)
 
     p.setY(point.y() + header()->height());
     QAction *ret = menu.exec(mapToGlobal(p));
+
+    if (ret == clipboardAction)
+    {
+        QClipboard  *clipboard = QApplication::clipboard();
+       
+        QString selected_test;
+
+        for (int i = 2; i<columnCount(); i++)
+        {
+            selected_test = selected_test + item->text(i);
+            selected_test = selected_test + QString("\t");
+        }
+        clipboard->setText(selected_test);
+    }
 
     if(ret == copyAction)
     {
