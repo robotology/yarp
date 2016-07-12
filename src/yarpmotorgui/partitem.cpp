@@ -44,6 +44,17 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
     positionDirectEnabled = false;
     openloopEnabled = false;
 
+    controlModes = 0;
+    refTrajectorySpeeds = 0;
+    refTrajectoryPositions = 0;
+    refTorques = 0;
+    refVelocitySpeeds = 0;
+    torques = 0;
+    positions = 0;
+    speeds = 0;
+    done = 0;
+    interactionModes = 0;
+
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
     QString robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
@@ -145,31 +156,40 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
         //     TIMING[j] = -0.1;
         // }
 
-        double positions[MAX_NUMBER_OF_JOINTS];
+        yarp::os::ConstString jointname;
+        //char buffer[40] = {'i', 'n', 'i', 't'};
 
-        bool ret=false;
+        int number_of_joints;
+        iPos->getAxes(&number_of_joints);
+
+        controlModes = new int[number_of_joints];
+        refTrajectorySpeeds = new double[number_of_joints];
+        refTrajectoryPositions = new double[number_of_joints];
+        refTorques = new double[number_of_joints];
+        refVelocitySpeeds = new double[number_of_joints];
+        torques = new double[number_of_joints];
+        positions = new double[number_of_joints];
+        speeds = new double[number_of_joints];
+        done = new bool[number_of_joints];
+        interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
+
+        bool ret = false;
         Time::delay(0.050);
         do {
-            ret=iencs->getEncoders(positions);
+            ret = iencs->getEncoders(positions);
             if (!ret) {
                 yError("%s iencs->getEncoders() failed, retrying...\n", partName.toLatin1().data());
                 Time::delay(0.050);
             }
-        }
-        while (!ret);
+        } while (!ret);
 
         yInfo("%s iencs->getEncoders() ok!\n", partName.toLatin1().data());
+
         double min_pos = 0;
         double max_pos = 100;
         double min_vel = 0;
         double max_vel = 100;
-        yarp::os::ConstString jointname;
-        //char buffer[40] = {'i', 'n', 'i', 't'};
-
-        int NUMBER_OF_JOINTS;
-        iPos->getAxes(&NUMBER_OF_JOINTS);
-
-        for (int k = 0; k<NUMBER_OF_JOINTS; k++)
+        for (int k = 0; k<number_of_joints; k++)
         {
             // //init stored
             // for(j = 0; j < NUMBER_OF_STORED; j++){
@@ -302,6 +322,16 @@ PartItem::~PartItem()
     if(partsdd){
         partsdd->close();
     }
+
+    if (controlModes) { delete[] controlModes; controlModes = 0; }
+    if (refTrajectorySpeeds) { delete[] refTrajectorySpeeds; refTrajectorySpeeds = 0; }
+    if (refTrajectoryPositions) { delete[] refTrajectoryPositions; refTrajectoryPositions = 0; }
+    if (refTorques) { delete[] refTorques; refTorques = 0; }
+    if (refVelocitySpeeds) { delete[] refVelocitySpeeds; refVelocitySpeeds = 0; }
+    if (torques) { delete[] torques; torques = 0; }
+    if (positions) { delete[] positions; positions = 0; }
+    if (speeds) { delete[] speeds; speeds = 0; }
+    if (done) { delete[] done; done = 0; }
 }
 
 bool PartItem::openPolyDrivers()
@@ -1983,17 +2013,6 @@ void PartItem::updateControlMode()
 
 bool PartItem::updatePart()
 {
-    static double refTrajectorySpeeds[MAX_NUMBER_OF_JOINTS];
-    static double refTrajectoryPositions[MAX_NUMBER_OF_JOINTS];
-    static double refTorques[MAX_NUMBER_OF_JOINTS];
-    static double refVelocitySpeeds[MAX_NUMBER_OF_JOINTS];
-    static double torques[MAX_NUMBER_OF_JOINTS];
-    static double positions[MAX_NUMBER_OF_JOINTS];
-    static double speeds[MAX_NUMBER_OF_JOINTS];
-    static bool   done[MAX_NUMBER_OF_JOINTS];
-    //static int controlModes[MAX_NUMBER_OF_JOINTS];
-    static yarp::dev::InteractionModeEnum interactionModes[MAX_NUMBER_OF_JOINTS];
-
     bool ret = false;
     int number_of_joints=0;
     iPos->getAxes(&number_of_joints);
