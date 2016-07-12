@@ -8,256 +8,476 @@
 #define YARP_OS_CONTACT_H
 
 #include <yarp/os/ConstString.h>
-#include <yarp/os/Searchable.h>
 #include <yarp/os/NestedContact.h>
+
 
 namespace yarp {
     namespace os {
         class Contact;
+        class Searchable;
     }
 }
 
 /**
- * Represents how to reach a part of a YARP network.
+ * @ingroup comm_class
+ * @brief Represents how to reach a part of a YARP network.
+ *
  * May contain complete or partial information about network parameters.
- * Use the factory  methods (Contact::byName, Contact::bySocket etc.)
- * to create Contact objects.
+ * Use the constructors or the factory methods (Contact::fromString,
+ * Contact::fromConfig) to create Contact objects.
  */
 class YARP_OS_API yarp::os::Contact {
 public:
 
-    Contact(const ConstString& hostName, int port);
+/** @{ */
 
     /**
-     * Constructor.  Returns a new, blank, unnamed contact.
-     * @return a blank contact
-     */
-    static Contact empty();
-
-    /**
-     * Constructor.  Returns a new, invalid contact.
-     * @return an invalid contact
-     */
-    static Contact invalid();
-
-    /**
-     * Constructor.  Returns a named contact, with no information about
-     * how to reach that contact.
-     * @param name the name for the contact
-     * @return a named contact
-     */
-    static Contact byName(const ConstString& name);
-
-    /**
-     * Constructor.  Returns an unnamed contact, with information about
-     * which carrier/protocol to use to reach that contact.
-     * @param carrier the carrier to add ("tcp", "udp", ...)
-     * @return the new contact
-     */
-    static Contact byCarrier(const ConstString& carrier);
-
-
-    /**
-     * Constructor.  Returns a contact configured from the information
-     * in config.
-     * @param config a Property, Bottle, or other Searchable containing the
-     * contact configuration.  Key names include "name", "ip", "port_number",
-     * "carrier"
-     * @return the new contact
-     */
-    static Contact byConfig(Searchable& config);
-
-
-    /**
-     * Add the specified carrier to this Contact, and return the result.
-     * @param carrier the carrier to add
-     * @return the new contact
-     */
-    Contact addCarrier(const ConstString& carrier) const;
-
-    Contact addHost(const ConstString& hostname) const;
-
-    /**
-     * Returns a new Contact with the previous information plus the updated
-     * port number
-     * @param portnumber port number
-     * @return a new contact the the port number updated
-     */
-    Contact addPort(int portnumber) const;
-
-    /**
-     * Constructor for a socket contact.
-     * Creates an unnamed contact, with information about
-     * how to reach it using socket communication.
-     * @param carrier the carrier (network protocol) to use
-     * @param hostname the name of the host machine (usually expressed as an
-     *                 IP address)
-     * @param portNumber the number of the socket port to use
-     * @return an unnamed contact with socket communication parameters
-     */
-    static Contact bySocket(const ConstString& carrier,
-                            const ConstString& hostname,
-                            int portNumber);
-
-
-    /**
-     * Add information to a contact about
-     * how to reach it using socket communication.
-     * @param carrier the carrier (network protocol) to use
-     * @param hostname the name of the host machine (usually expressed as an
-     *                 IP address)
-     * @param portNumber the number of the socket port to use
-     * @return the new contact with socket communication parameters
-     */
-    Contact addSocket(const ConstString& carrier,
-                      const ConstString& hostname,
-                      int portNumber) const;
-
-    Contact addNested(const NestedContact& nc) const;
-
-    /**
+     * @brief Constructor.
      *
-     * Add the name of a contact.
+     * @param name the name
+     * @param carrier the carrier
+     * @param hostname the hostname
+     * @param port the port number
+     */
+    Contact(const ConstString& name = ConstString(),
+            const ConstString& carrier = ConstString(),
+            const ConstString& hostname = ConstString(),
+            int port = -1);
+
+    /**
+     * @brief Constructor by hostname and port.
      *
+     * @param hostname the hostname
+     * @param port the port number
      */
-    Contact addName(const ConstString& name) const;
-
+    Contact(const ConstString& hostname,
+            int port);
 
     /**
+     * @brief Constructor by socket.
      *
-     * If the host is a machine name, convert it to a plausible IP address.
+     * @param carrier the carrier
+     * @param hostname the hostname
+     * @param port the port number
+     */
+    Contact(const ConstString& carrier,
+            const ConstString& hostname,
+            int port);
+
+    /**
+     * @brief Copy constructor.
      *
+     * @param rhs the Contact to copy
      */
-    static ConstString convertHostToIp(const char *name);
+    Contact(const Contact& rhs);
+
+#if YARP_COMPILER_CXX_RVALUE_REFERENCES
+    /**
+     * @brief Move constructor.
+     *
+     * @param rhs the Contact to be moved
+     */
+    Contact(Contact&& rhs);
+#endif // YARP_COMPILER_CXX_RVALUE_REFERENCES
 
     /**
-     * Copy constructor.
-     * @param alt the contact to copy
-     */
-    Contact(const Contact& alt);
-
-    /**
-     * Assignment.
-     * @param alt the contact to copy
-     * @return this object
-     */
-    const Contact& operator = (const Contact& alt);
-
-    /**
-     * Destructor.
+     * @brief Destructor.
      */
     virtual ~Contact();
 
     /**
-     * Get the name associated with this contact.
-     * @return The name associated with this contact, or the empty string
-     *         if no name is set
+     * Copy assignment operator.
+     *
+     * @param rhs the Contact to copy
+     * @return this object
+     */
+    Contact& operator=(const Contact& rhs);
+
+#if YARP_COMPILER_CXX_RVALUE_REFERENCES
+    /**
+     * @brief Move assignment operator.
+     *
+     * @param rhs the Contact to be moved
+     * @return this object
+     */
+    Contact& operator=(Contact&& rhs);
+#endif // YARP_COMPILER_CXX_RVALUE_REFERENCES
+
+/** @} */
+/** @{ */
+
+    /**
+     * @brief Factory method.
+     *
+     * Returns a Contact configured from the information in config.
+     *
+     * @param config a Property, Bottle, or other Searchable containing the
+     *               Contact configuration.
+     *               Key names include "name", "ip", "port_number", "carrier"
+     * @return the new Contact
+     */
+    static Contact fromConfig(const Searchable& config);
+
+    /**
+     * @brief Factory method.
+     *
+     * Parse a textual representation of a Contact.
+     *
+     * @param txt the text to parse
+     * @return the new Contact
+     */
+    static Contact fromString(const ConstString& txt);
+
+/** @} */
+/** @{ */
+
+    /**
+     * @brief Get the name associated with this Contact.
+     *
+     * If the name is not set, it is generated from hostname and port.
+     *
+     * @return The name associated with this Contact, or the empty string
+     *         if no name is set.
      */
     ConstString getName() const;
 
     /**
-     * Get the host name associated with this contact for socket communication.
-     * @return The host name associated with this contact, or the empty string
+     * @brief Set the name associated with this Contact.
+     *
+     * @param name the new name
+     */
+    void setName(const ConstString& name);
+
+    /**
+     * @brief Get the name associated with this Contact.
+     *
+     * The regName is not generated and is set only using setName, or one of the
+     * factory methods (byName, byConfig, and fromString).
+     *
+     * @return The regName associated with this Contact
+     */
+    ConstString getRegName() const;
+
+/** @} */
+/** @{ */
+
+    /**
+     * @brief Get the host name associated with this Contact for socket
+     * communication.
+     *
+     * @return The host name associated with this Contact, or the empty string
      *         if no host name is set
      */
     ConstString getHost() const;
 
     /**
-     * Get the carrier associated with this contact for socket communication.
-     * @return The carrier associated with this contact, or the empty string
-     *         if no carrier is set
+     * @brief Set the host name to be the input parameter.
+     *
+     * @param hostname the new host name
      */
-    ConstString getCarrier() const;
+    void setHost(const ConstString& hostname);
 
-
-    const NestedContact& getNested() const;
-
+/** @} */
+/** @{ */
 
     /**
-     * Get the port number associated with this contact for socket communication.
-     * @return The port number associated with this contact, or <= 0
+     * @brief Get the port number associated with this Contact for socket
+     * communication.
+     *
+     * @return The port number associated with this Contact, or <= 0
      *         if no port number is set
      */
     int getPort() const;
 
+
     /**
-     * Get a textual representation of the contact
-     * @return a textual representation of the contact.
+     * @brief Set the port number to be the input parameter.
+     *
+     * @param port the new port number
      */
-    ConstString toString() const;
+    void setPort(int port);
+
+/** @} */
+/** @{ */
 
     /**
-     * Get a representation of the contact as a URI
-     * @return a URI representation of the contact.
+     * @brief Get the carrier associated with this Contact for socket
+     * communication.
+     *
+     * @return The carrier associated with this Contact, or the empty string
+     *         if no carrier is set
      */
-    ConstString toURI() const;
+    ConstString getCarrier() const;
 
     /**
-     * Parse a textual representation of a contact.
-     * @param txt the text to parse
-     * @return the contact
+     * @brief Set the carrier to use for this Contact.
+     *
+     * @param carrier the new carrier
      */
-    static Contact fromString(const ConstString& txt);
+    void setCarrier(const ConstString& carrier);
+
+/** @} */
+/** @{ */
 
     /**
-     * Checks if a contact is tagged as valid.
-     * @return true iff contact is tagged as valid.  All contact objects
-     * are valid except the one created by Contact::invalid.
+     * @brief Get the NestedContact containing extra information for this
+     * Contact.
+     *
+     * @return the nested contact
      */
-    bool isValid() const;
+    const NestedContact& getNested() const;
 
     /**
-     * Constructor.  Makes an empty contact.
+     * @brief Sets the NestedContact containing extra information for this
+     * Contact.
+     *
+     * @param nestedContact the nested Contact
      */
-    Contact();
+    void setNestedContact(const yarp::os::NestedContact& nestedContact);
 
+/** @} */
+/** @{ */
 
     /**
-     * Check if this Contact has a timeout.
+     * @brief Check if this Contact has a timeout.
      *
      * @return true iff this Contact has a timeout.
      */
     bool hasTimeout() const;
 
     /**
-     * Set timeout for this Contact.
-     *
-     * @param timeout The timeout to set.
-     */
-    void setTimeout(float timeout);
-
-    void setNested(const yarp::os::NestedContact& flavor);
-
-    /**
-     * Get timeout for this Address.
+     * @brief Get timeout for this Address.
      *
      * @return The timeout for this Address
      */
     float getTimeout() const;
 
-    ConstString getRegName() const;
+    /**
+     * @brief Set timeout for this Contact.
+     *
+     * @param timeout The timeout to set.
+     */
+    void setTimeout(float timeout);
+
+/** @} */
+/** @{ */
 
     /**
-     * Set the host to be the input parameter
-     * @param host the new host
+     * @brief Set information to a Contact about how to reach it using socket
+     * communication.
+     *
+     * @param carrier the carrier (network protocol) to use
+     * @param hostname the name of the host machine (usually expressed as an
+     *                 IP address)
+     * @param port the number of the socket port to use
      */
-    void setHost(const ConstString& host);
+    void setSocket(const ConstString& carrier,
+                   const ConstString& hostname,
+                   int port);
+
+/** @} */
+/** @{ */
 
     /**
-     * Set the port to be the input parameter
-     * @param port the new port
+     * @brief Checks if a Contact is tagged as valid.
+     *
+     * @return true iff Contact is tagged as valid.
+     *         All Contact objects are valid except the one created by
+     *         Contact::invalid.
      */
-    void setPort(int port);
+    bool isValid() const;
 
+    /**
+     * @brief Get a textual representation of the Contact.
+     *
+     * @return a textual representation of the Contact
+     */
+    ConstString toString() const;
 
+    /**
+     * @brief Get a representation of the Contact as a URI.
+     *
+     * @param includeCarrier if false do not include the carrier in the URI
+     * @return a URI representation of the Contact
+     */
+    ConstString toURI(bool includeCarrier = true) const;
+
+/** @} */
+/** @{ */
+
+    /**
+     * @brief If the host is a machine name, convert it to a plausible IP
+     * address.
+     *
+     * @param name the name to convert
+     */
+    static ConstString convertHostToIp(const char *name);
+
+/** @} */
+
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
+
+/** @{ */
+
+    /**
+     * @brief Copies a Contact and sets the name for the new one.
+     *
+     * @param name the name
+     * @return the new Contact
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use setName instead")
+    Contact addName(const ConstString& name) const;
+
+    /**
+     * @brief Copies a Contact and sets the carrier for the new one.
+     *
+     * @param carrier the carrier
+     * @return the new Contact
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use setCarrier instead")
+    Contact addCarrier(const ConstString& carrier) const;
+
+    /**
+     * @brief Copies a Contact and sets the hostname for the new one.
+     *
+     * @param hostname the hostname
+     * @return the new Contact
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use setHost instead")
+    Contact addHost(const ConstString& hostname) const;
+
+    /**
+     * @brief Returns a new Contact with the previous information plus the
+     * updated port number
+     *
+     * @param port port number
+     * @return a new Contact the the port number updated
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use setPort instead")
+    Contact addPort(int port) const;
+
+    /**
+     * @brief Copies a Contact and sets the NestedContact for the new one.
+     *
+     * @param nestedContact the nested Contact
+     * @return the new Contact
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use setNestedContact instead")
+    Contact addNested(const NestedContact& nestedContact) const;
+
+    /**
+     * @brief Add information to a Contact about how to reach it using socket
+     * communication.
+     *
+     * @param carrier the carrier (network protocol) to use
+     * @param hostname the name of the host machine (usually expressed as an
+     *                 IP address)
+     * @param port the number of the socket port to use
+     * @return the new Contact with socket communication parameters
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use setSocket instead")
+    Contact addSocket(const ConstString& carrier,
+                      const ConstString& hostname,
+                      int port) const;
+
+/** @} */
+/** @{ */
+
+    /**
+     * @brief Factory method.
+     *
+     * Returns a new, blank, unnamed, invalid Contact.
+     *
+     * @return a blank Contact
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use the default constructor instead")
+    static Contact empty();
+
+    /**
+     * @brief Factory method.
+     *
+     * Returns a new, invalid Contact.
+     *
+     * @return an invalid Contact
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use the default constructor instead")
+    static Contact invalid();
+
+    /**
+     * @brief Factory method.
+     *
+     * Returns a named Contact, with no information about how to reach that
+     * Contact.
+     *
+     * @param name the name for the Contact
+     * @return a named Contact
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use constructor by name instead")
+    static Contact byName(const ConstString& name);
+
+    /**
+     * @brief Factory method.
+     *
+     * Returns an unnamed Contact, with information about which carrier/protocol
+     * to use to reach that Contact.
+     *
+     * @param carrier the carrier to add ("tcp", "udp", ...)
+     * @return the new Contact
+     */
+    YARP_DEPRECATED_MSG("Use constructor by name and carrier instead")
+    static Contact byCarrier(const ConstString& carrier);
+
+    /**
+     * @brief Factory method.
+     *
+     * Creates an unnamed Contact, with information about how to reach it using
+     * socket communication.
+     *
+     * @param carrier the carrier (network protocol) to use
+     * @param hostname the name of the host machine (usually expressed as an
+     *                 IP address)
+     * @param port the number of the socket port to use
+     * @return the new Contact
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use constructor by socket instead")
+    static Contact bySocket(const ConstString& carrier,
+                            const ConstString& hostname,
+                            int port);
+
+    /**
+     * @brief Factory method.
+     *
+     * Returns a Contact configured from the information in config.
+     *
+     * @param config a Property, Bottle, or other Searchable containing the
+     *               Contact configuration.
+     *               Key names include "name", "ip", "port_number", "carrier"
+     * @return the new Contact
+     * @deprecated since YARP 2.3.68
+     */
+    YARP_DEPRECATED_MSG("Use fromConfig instead")
+    static Contact byConfig(Searchable& config);
+
+/** @} */
+
+#endif // YARP_NO_DEPRECATED
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    ConstString regName;
-    ConstString hostName;
-    ConstString carrier;
-    NestedContact flavor;
+    class Private;
+    Private * mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    int port;
-    float timeout;
 };
 
 #endif // YARP_OS_CONTACT_H
