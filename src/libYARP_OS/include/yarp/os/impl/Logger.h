@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <yarp/conf/api.h>
 #include <yarp/conf/system.h>
+#include <yarp/os/ConstString.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/Log_Msg.h>
