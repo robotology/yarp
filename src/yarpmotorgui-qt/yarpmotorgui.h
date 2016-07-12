@@ -14,9 +14,8 @@
 
 #include <yarp/os/ResourceFinder.h>
 
-const int   MAX_NUMBER_ACTIVATED = 16;
-const int   MAX_NUMBER_OF_JOINTS = 16;
-const int   	NUMBER_OF_STORED = 30;
+const int       MAX_NUMBER_OF_PARTS = 16;
+const int       NUMBER_OF_STORED = 30;
 
 //extern GtkWidget *robotNameBox;
 extern int PART;

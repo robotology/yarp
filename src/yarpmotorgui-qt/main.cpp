@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     }
 
     NUMBER_OF_AVAILABLE_PARTS=pParts->size();
-    if (NUMBER_OF_AVAILABLE_PARTS > MAX_NUMBER_ACTIVATED){
+    if (NUMBER_OF_AVAILABLE_PARTS > MAX_NUMBER_OF_PARTS){
         LOG_ERROR("The number of parts exceeds the maximum! \n");
         return 1;
     }
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    for(int n=0; n < MAX_NUMBER_ACTIVATED; n++){
+    for(int n=0; n < MAX_NUMBER_OF_PARTS; n++){
         //ENA = 0: part available
         //ENA = -1: part unavailable
         //ENA = 1: part used
