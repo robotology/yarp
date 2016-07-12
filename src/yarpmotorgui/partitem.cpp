@@ -1759,10 +1759,6 @@ void PartItem::onGo(SequenceItem sequenceItem)
         return;
     }
 
-    if(sequenceItem.getTiming() < 0){
-        return;
-    }
-
     int NUMBER_OF_JOINTS;
     iPos->getAxes(&NUMBER_OF_JOINTS);
 
