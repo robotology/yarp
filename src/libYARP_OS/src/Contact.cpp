@@ -210,7 +210,7 @@ Contact Contact::fromString(const ConstString& txt) {
         }
     }
     if (base!=ConstString::npos) {
-        c = Contact::byCarrier(str.substr(0,base));
+        c.carrier = str.substr(0,base);
         start = base+offset;
         // check if we have a direct machine:NNN syntax
         ConstString::size_type colon = ConstString::npos;
@@ -244,17 +244,17 @@ Contact Contact::fromString(const ConstString& txt) {
         }
         if (mode==1 && nums>=1) {
             // yes, machine:nnn
-            ConstString machine = str.substr(start+1,colon-start-1);
-            ConstString portnum = str.substr(colon+1, nums);
-            c = c.addSocket(c.getCarrier()==""?"tcp":c.getCarrier().c_str(),
-                            machine,
-                            atoi(portnum.c_str()));
+            if (c.carrier.empty()) {
+                c.carrier = "tcp";
+            }
+            c.hostName = str.substr(start+1,colon-start-1);
+            c.port = atoi(str.substr(colon+1, nums).c_str());
             start = i;
         }
     }
     ConstString rname = str.substr(start);
     if (rname!="/") {
-        c = c.addName(rname.c_str());
+        c.regName = rname.c_str();
     }
     return c;
 }
