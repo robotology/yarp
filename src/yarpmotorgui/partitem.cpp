@@ -1802,7 +1802,7 @@ void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
     QList<double>speeds;
     for(int i=0;i<layout->count();i++){
         JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
-        values.append(joint->getTrajectoryPositionValue());
+        values.append(this->positions[i]);
         speeds.append(joint->getTrajectoryVelocityValue());
     }
 
