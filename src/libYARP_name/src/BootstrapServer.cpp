@@ -224,7 +224,7 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
 Contact BootstrapServer::where() {
 #ifdef YARP_HAS_ACE
     Contact addr = FallbackNameServer::getAddress();
-    addr.addName("fallback");
+    addr = addr.addName("fallback");
     return addr;
 #else
     return Contact();
