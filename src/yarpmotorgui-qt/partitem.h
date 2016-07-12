@@ -108,7 +108,16 @@ private:
     QList<SequenceItem> runTimeValues;
     QList<SequenceItem> cycleValues;
     QList<SequenceItem> cycleTimeValues;
-    int controlModes[MAX_NUMBER_OF_JOINTS];
+    int*    controlModes;
+    double* refTrajectorySpeeds;
+    double* refTrajectoryPositions;
+    double* refTorques;
+    double* refVelocitySpeeds;
+    double* torques;
+    double* positions;
+    double* speeds;
+    bool*   done;
+    yarp::dev::InteractionModeEnum* interactionModes;
 
     ResourceFinder *finder;
 
