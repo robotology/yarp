@@ -68,7 +68,7 @@ bool NameConfig::fromString(const ConstString& txt) {
             mode = "yarp";
         }
         if (mode=="ros") {
-            address = address.addCarrier("xmlrpc");
+            address.setCarrier("xmlrpc");
         }
         return true;
     }

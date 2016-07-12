@@ -94,7 +94,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
     if (this->address.getPort()<=0) {
         this->address = face->getLocalAddress();
         if (this->address.getRegName()=="...") {
-            this->address = this->address.addName(ConstString("/") + this->address.getHost() + "_" + NetType::toString(this->address.getPort()));
+            this->address.setName(ConstString("/") + this->address.getHost() + "_" + NetType::toString(this->address.getPort()));
             setName(this->address.getRegName());
         }
 
@@ -874,7 +874,9 @@ bool PortCore::addOutput(const ConstString& dest, void *id, OutputStream *os,
 
     // Set up a named route for this connection.
     ConstString aname = address.getRegName();
-    if (aname=="") aname = address.addCarrier("").toURI();
+    if (aname=="") {
+        aname = address.toURI(false);
+    }
     Route r = Route(getName(),aname,
                     (parts.getCarrier()!="")?parts.getCarrier():
                     address.getCarrier());

@@ -18,8 +18,10 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 Contact FallbackNameServer::getAddress() {
-    Contact mcastLastResort = Contact::bySocket("mcast","224.2.1.1",NetworkBase::getDefaultPortRange()).addName("fallback");
-    return mcastLastResort;
+    return Contact("fallback",
+                   "mcast",
+                   "224.2.1.1",
+                   NetworkBase::getDefaultPortRange());
 }
 
 

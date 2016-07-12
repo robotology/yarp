@@ -198,7 +198,7 @@ static int enactConnection(const Contact& src,
     cmd.addVocab(act);
     Contact c = dest;
     if (style.carrier!="") {
-        c = c.addCarrier(style.carrier);
+        c.setCarrier(style.carrier);
     }
     if (mode!=YARP_ENACT_DISCONNECT) {
         cmd.addString(c.toString());
@@ -309,10 +309,10 @@ static int metaConnect(const ConstString& src,
         staticSrc = dynamicSrc;
     }
     if (staticSrc.getCarrier()=="") {
-        staticSrc = staticSrc.addCarrier("tcp");
+        staticSrc.setCarrier("tcp");
     }
     if (staticDest.getCarrier()=="") {
-        staticDest = staticDest.addCarrier("tcp");
+        staticDest.setCarrier("tcp");
     }
 
     if (needsLookup(dynamicDest)&&(topicalNeedsLookup||!topical)) {
@@ -337,8 +337,8 @@ static int metaConnect(const ConstString& src,
         mode==YARP_ENACT_CONNECT) {
         // Unconnectable in general
         // Let's assume the first part is a YARP port, and use "tcp" instead
-        staticSrc = staticSrc.addCarrier("tcp");
-        staticDest = staticDest.addCarrier("tcp");
+        staticSrc.setCarrier("tcp");
+        staticDest.setCarrier("tcp");
     }
 
     ConstString carrierConstraint = "";
@@ -564,7 +564,7 @@ bool NetworkBase::exists(const ConstString& port, const ContactStyle& style) {
         ContactStyle style2 = style;
         style2.admin = true;
         Bottle cmd("[ver]"), resp;
-        bool ok = NetworkBase::write(Contact::byName(port),cmd,resp,style2);
+        bool ok = NetworkBase::write(Contact(port), cmd, resp, style2);
         if (!ok) result = 1;
         if (resp.get(0).toString()!="ver"&&resp.get(0).toString()!="dict") {
             // YARP nameserver responds with a version
@@ -885,7 +885,7 @@ bool NetworkBase::write(const Contact& contact,
         port.openFake("network_write");
         Contact ec = contact;
         if (style.carrier!="") {
-            ec = ec.addCarrier(style.carrier);
+            ec.setCarrier(style.carrier);
         }
         if (!port.addOutput(ec)) {
             if (!style.quiet) {
@@ -969,9 +969,9 @@ bool NetworkBase::write(const Contact& contact,
 }
 
 bool NetworkBase::write(const ConstString& port_name,
-                               PortWriter& cmd,
-                               PortReader& reply) {
-    return write(Contact::byName(port_name),cmd,reply);
+                              PortWriter& cmd,
+                              PortReader& reply) {
+    return write(Contact(port_name), cmd, reply);
 }
 
 bool NetworkBase::isConnected(const ConstString& src, const ConstString& dest,

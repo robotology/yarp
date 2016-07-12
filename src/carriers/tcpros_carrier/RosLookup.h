@@ -33,7 +33,7 @@ public:
     }
 
     yarp::os::Contact toContact(const char *carrier) {
-        return yarp::os::Contact::bySocket(carrier,hostname.c_str(), portnum);
+        return yarp::os::Contact(carrier,hostname.c_str(), portnum);
     }
 
     static yarp::os::Contact getRosCoreAddressFromEnv();

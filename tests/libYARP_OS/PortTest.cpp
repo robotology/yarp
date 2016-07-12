@@ -245,7 +245,7 @@ public:
         Port out, in;
 
         in.open("/in");
-        out.open(Contact::bySocket("tcp","",safePort()));
+        out.open(Contact("tcp", "", safePort()));
 
         checkTrue(in.isOpen(), "/in port is open");
         checkTrue(out.isOpen(), "/out port is open");
@@ -256,7 +256,7 @@ public:
         checkTrue(conIn.isValid(),"valid address for /in");
         checkTrue(conOut.isValid(),"valid address for /out");
 
-        out.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        out.addOutput(Contact("/in", "tcp"));
         //Time::delay(0.2);
 
         checkEqual(conIn.getName().c_str(),"/in","name is recorded");
@@ -306,7 +306,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("udp"));
+        output.addOutput(Contact("/in", "udp"));
         //Time::delay(0.2);
 
         report(0,"writing...");
@@ -350,7 +350,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("udp"));
+        output.addOutput(Contact("/in", "udp"));
         //Time::delay(0.2);
 
         report(0,"writing/reading three times...");
@@ -394,7 +394,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("udp"));
+        output.addOutput(Contact("/in", "udp"));
         //Time::delay(0.2);
 
 
@@ -435,7 +435,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
         //Time::delay(0.2);
 
 
@@ -469,7 +469,7 @@ public:
 
         input.setReader(provider);
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
         Time::delay(0.1);
         ServiceTester tester(*this);
         output.write(tester);
@@ -1118,7 +1118,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
 
         PortablePair<Bottle,Bottle> bot1;
         bot1.head.fromString("1 2 3");
@@ -1150,7 +1150,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
 
         Bottle bot1;
         bot1.fromString("1 2 3");
@@ -1200,7 +1200,7 @@ public:
         output.enableBackgroundWrite(true);
         output.open("/out");
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
 
         Bottle bot1, bot2;
         bot1.fromString("1 2 3");

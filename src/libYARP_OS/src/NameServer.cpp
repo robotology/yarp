@@ -98,7 +98,7 @@ Contact NameServer::registerName(const ConstString& name,
     Contact suggestion = address;
 
     if (!suggestion.isValid()) {
-        suggestion = Contact::bySocket("...","...",0).addName(name);
+        suggestion = Contact(name, "...", "...", 0);
     }
 
     ConstString portName = name;
@@ -138,7 +138,7 @@ Contact NameServer::registerName(const ConstString& name,
         }
     }
 
-    suggestion = Contact::bySocket(carrier,machine,port).addName(portName);
+    suggestion = Contact(portName, carrier, machine, port);
 
     YARP_DEBUG(Logger::get(),ConstString("Registering ") +
                suggestion.toURI() + " for " + suggestion.getRegName());
@@ -175,7 +175,9 @@ Contact NameServer::queryName(const ConstString& name) {
             ConstString ip = rec->matchProp("ips",pat);
             if (ip!="") {
                 SplitString sip(ip.c_str());
-                return (rec->getAddress()).addHost(sip.get(0));
+                Contact c = rec->getAddress();
+                c.setHost(sip.get(0));
+                return c;
             }
         }
         return rec->getAddress();
@@ -290,9 +292,7 @@ ConstString NameServer::cmdRegister(int argc, char *argv[]) {
         }
     }
 
-    Contact address = registerName(portName,
-                                   Contact::bySocket(carrier,machine,port).addName(portName),
-                                   remote);
+    Contact address = registerName(portName, Contact(portName, carrier, machine, port), remote);
 
     //YARP_DEBUG(Logger::get(),
     //ConstString("name server register address -- ") +
@@ -932,8 +932,8 @@ int NameServer::main(int argc, char *argv[]) {
     Port server;
     name.setPort(server);
     server.setReaderCreator(name);
-    bool ok = server.open(suggest.addName(conf.getNamespace()),
-                          false);
+    suggest.setName(conf.getNamespace());
+    bool ok = server.open(suggest, false);
     if (ok) {
         YARP_DEBUG(Logger::get(), ConstString("Name server listening at ") +
                    suggest.toURI());

@@ -130,8 +130,7 @@ public:
             subscriber.setVerbose(true);
         }
 
-        contact =
-            Contact::byName("...").addSocket("tcp",ip.c_str(),sock);
+        contact = Contact("...", "tcp", ip, sock);
 
         if (!options.check("local")) {
             if (!BootstrapServer::configFileBootstrap(contact,
@@ -146,7 +145,8 @@ public:
             ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
             Contact c = Contact::fromString(addr.c_str());
             if (c.isValid()) {
-                c = c.addCarrier("xmlrpc").addName("/ros");
+                c.setCarrier("xmlrpc");
+                c.setName("/ros");
                 space = new RosNameSpace(c);
                 subscriber.setDelegate(space);
                 ns.setDelegate(space);

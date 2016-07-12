@@ -84,7 +84,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
     } else {
 
         // fetch an mcast address
-        Contact target = Contact::bySocket("mcast","...",0).addName("...");
+        Contact target("...", "mcast", "...", 0);
         addr = NetworkBase::registerContact(target);
         mcastName = addr.getRegName();
         if (addr.isValid()) {
@@ -113,7 +113,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
     if (!addr.isValid()) {
         YARP_ERROR(Logger::get(), "Name server not responding helpfully, setting mcast name arbitrarily.");
         YARP_ERROR(Logger::get(), "Only a single mcast address supported in this mode.");
-        addr = Contact::bySocket("mcast","224.3.1.1",11000).addName("/tmp/mcast");
+        addr = Contact("/tmp/mcast", "mcast", "224.3.1.1", 11000);
     }
 
     ManagedBytes block(6);
@@ -149,7 +149,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
         add += buf;
     }
     port = 256*base[4]+base[5];
-    Contact addr = Contact::bySocket("mcast",add,port);
+    Contact addr("mcast", add, port);
     YARP_DEBUG(Logger::get(),ConstString("got mcast header ") + addr.toURI());
     mcastAddress = addr;
 

@@ -222,17 +222,20 @@ public:
     virtual yarp::os::Contact getRemoteContact() {
         if (str!=NULL) {
             Contact remote = str->getRemoteAddress();
-            return remote.addName(route.getFromName());
+            remote.setName(route.getFromName());
+            return remote;
         }
-        return yarp::os::Contact::byCarrier(route.getCarrierName()).addName(route.getFromName());
+        Contact remote = yarp::os::Contact(route.getFromName(), route.getCarrierName());
+        return remote;
     }
 
     virtual yarp::os::Contact getLocalContact() {
         if (str!=NULL) {
             Contact local = str->getLocalAddress();
-            return local.addName(route.getToName());
+            local.setName(route.getToName());
+            return local;
         }
-        return yarp::os::Contact::invalid();
+        return yarp::os::Contact();
     }
 
 

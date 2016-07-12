@@ -52,7 +52,7 @@ public:
         report(0,"checking forced register command...");
 
         NameClient& nic = NameClient::getNameClient();
-        Contact addr1 = Contact::bySocket("tcp","localhost",9999);
+        Contact addr1("tcp", "localhost", 9999);
         nic.registerName("/check/register/forced",addr1);
         Contact addr2 = nic.queryName("/check/register/forced");
         checkTrue(addr1.isValid(),"got an address");
@@ -90,7 +90,7 @@ public:
     void checkList() {
         report(0,"checking list...");
         NameClient& nic = NameClient::getNameClient();
-        Contact addr1 = Contact::bySocket("tcp","192.168.1.100",9998);
+        Contact addr1("tcp", "192.168.1.100", 9998);
         nic.registerName("/check/list",addr1);
         ConstString result = nic.send("NAME_SERVER list",true);
         ConstString target = "registration name /check/list ip 192.168.1.100 port 9998 type tcp";

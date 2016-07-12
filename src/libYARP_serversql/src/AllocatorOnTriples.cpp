@@ -33,7 +33,7 @@ Contact AllocatorOnTriples::completePortName(const Contact& c) {
             list<Triple> lst = db->query(t,NULL);
             if (lst.size()>0) {
                 tmpid = atoi(lst.begin()->value.c_str());
-            } 
+            }
             if (tmpid==-1) {
                 tmpid = 0;
             }
@@ -51,10 +51,11 @@ Contact AllocatorOnTriples::completePortName(const Contact& c) {
 
     t.setNsNameValue("alloc",name.c_str(),"in_use");
     db->update(t,&context);
-    
-    return Contact::byName(name.c_str()).addSocket(c.getCarrier().c_str(),
-                                                   c.getHost().c_str(),
-                                                   c.getPort());
+
+    return Contact(name.c_str(),
+                   c.getCarrier(),
+                   c.getHost(),
+                   c.getPort());
 }
 
 
@@ -104,7 +105,7 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
             list<Triple> lst = db->query(t,NULL);
             if (lst.size()>0) {
                 regid = atoi(lst.begin()->value.c_str());
-            } 
+            }
             if (regid==-1) {
                 regid = config.minPortNumber-1;
             }
@@ -141,10 +142,10 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
     db->update(t,&context);
     t.setNsNameValue("prefer",nstring.c_str(),c.getName().c_str());
     db->update(t,&context);
-     
-    return c.addSocket(c.getCarrier().c_str(),
-                       c.getHost().c_str(),
-                       number);
+
+    Contact contact = c;
+    contact.setPort(number);
+    return contact;
 }
 
 
@@ -177,7 +178,7 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
             list<Triple> lst = db->query(t,NULL);
             if (lst.size()>0) {
                 mcastCursor = atoi(lst.begin()->value.c_str());
-            } 
+            }
             if (mcastCursor==-1) {
                 mcastCursor = 1;
             }
@@ -199,13 +200,13 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
         sprintf(buf,"224.1.%d.%d", v2+1,v1+1);
         name = buf;
     }
-    
+
     t.setNsNameValue("alloc",name.c_str(),"in_use");
     db->update(t,&context);
-    
-    return c.addSocket(c.getCarrier().c_str(),
-                       name.c_str(),
-                       c.getPort());
+
+    Contact contact = c;
+    contact.setHost(name.c_str());
+    return contact;
 }
 
 

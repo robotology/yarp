@@ -199,9 +199,7 @@ int main(int argc, char *argv[]) {
   Property config;
   config.fromCommand(argc,argv);
 
-  Contact contact = Contact::bySocket("tcp","localhost",
-                                      DEFAULT_NAME_PORT_NUMBER);
-  contact = contact.addName("/root");
+  Contact contact = Contact("/root", "tcp", "localhost", DEFAULT_NAME_PORT_NUMBER);
 
   WideNameService wide;
   NameServerManager manager(wide);

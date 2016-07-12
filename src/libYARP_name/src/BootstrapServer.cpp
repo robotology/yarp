@@ -131,57 +131,41 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
 
     // merge
     if (prev.isValid()) {
-        if (suggest.getHost()=="...") {
-            suggest = Contact::bySocket(suggest.getCarrier(),
-                                        prev.getHost(),suggest.getPort())
-                .addName(suggest.getRegName());
+        if (suggest.getHost() == "...") {
+            suggest.setHost(prev.getHost());
         }
-        if (suggest.getCarrier()=="...") {
-            suggest = Contact::bySocket(prev.getCarrier(),
-                                        suggest.getHost(),suggest.getPort())
-                .addName(suggest.getRegName());
+        if (suggest.getCarrier() == "...") {
+            suggest.setCarrier(prev.getCarrier());
         }
-        if (suggest.getPort()==0) {
-            suggest = Contact::bySocket(suggest.getCarrier(),
-                                        suggest.getHost(),prev.getPort())
-                .addName(suggest.getRegName());
+        if (suggest.getPort() == 0) {
+            suggest.setPort(prev.getPort());
         }
     }
 
-    if (suggest.getRegName()=="...") {
-        suggest = Contact::bySocket(suggest.getCarrier(),
-                                    suggest.getHost(),suggest.getPort())
-            .addName(conf.getNamespace());
+    if (suggest.getRegName() == "...") {
+        suggest.setName(conf.getNamespace());
     }
 
     // still something not set?
-    if (suggest.getPort()==0) {
-        suggest = Contact::bySocket(suggest.getCarrier(),
-                                    suggest.getHost(),10000)
-            .addName(suggest.getRegName());
+    if (suggest.getPort() == 0) {
+        suggest.setPort(10000);
     }
-    if (suggest.getHost()=="...") {
+    if (suggest.getHost() == "...") {
         // should get my IP
-        suggest = Contact::bySocket(suggest.getCarrier(),
-                                    conf.getHostName(),suggest.getPort())
-            .addName(suggest.getRegName());
+        suggest.setHost(conf.getHostName());
     }
 
     if (!configFileRequired)  {
         // finally, should make sure IP is local, and if not, correct it
         if (!conf.isLocalName(suggest.getHost())) {
             fprintf(stderr,"Overriding non-local address for name server\n");
-            suggest = Contact::bySocket(suggest.getCarrier(),
-                                        conf.getHostName(),suggest.getPort())
-                .addName(suggest.getRegName());
+            suggest.setHost(conf.getHostName());
         } else {
             // Let's just check we're not a loopback
             ConstString betterHost = conf.getHostName(false,suggest.getHost());
             if (betterHost!=suggest.getHost()) {
                 fprintf(stderr,"Overriding loopback address for name server\n");
-                suggest = Contact::bySocket(suggest.getCarrier(),
-                                            betterHost,suggest.getPort())
-                    .addName(suggest.getRegName());
+                suggest.setHost(betterHost);
             }
         }
     }
@@ -224,7 +208,7 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
 Contact BootstrapServer::where() {
 #ifdef YARP_HAS_ACE
     Contact addr = FallbackNameServer::getAddress();
-    addr = addr.addName("fallback");
+    addr.setName("fallback");
     return addr;
 #else
     return Contact();

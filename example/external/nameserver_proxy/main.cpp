@@ -94,9 +94,10 @@ int main(int argc, char *argv[]) {
   int socket = config.find("socket").asInt();
 
   Network yarp;
-  Contact contact = Contact::bySocket("tcp","localhost",socket);
-  contact = contact.addName(config.check("name",
-                                         Value("/name/proxy")).asString());
+  Contact contact(config.check("name", Value("/name/proxy")).asString(),
+                  "tcp",
+                  "localhost",
+                  socket);
 
   ProxyNameService proxy;
   NameServerManager manager(proxy);

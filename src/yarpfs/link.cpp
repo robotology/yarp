@@ -56,7 +56,7 @@ int yarp_symlink(const char *to, const char *from) {
     //Create the new Contact
     //Contact src = Network::queryName(from);
     //printf("source [%s] is %s\n", from, src.toString().c_str());
-    //Contact dest = Contact::byName(to).addSocket(src.getCarrier(),src.getHost(),src.getPort());
+    //Contact dest(to, src.getCarrier(), src.getHost(), src.getPort());
     //printf("dest [%s] should be %s\n", to, src.toString().c_str());
     //Network::registerContact(dest);
 
@@ -64,9 +64,7 @@ int yarp_symlink(const char *to, const char *from) {
 
     // special symlink entry
     //Contact src = Network::queryName(to);
-    Contact dest = Contact::byName(from).addSocket("symlink",
-                                                   "none",
-                                                   1);
+    Contact dest(from, "symlink", "none", 1);
     printf("Planning to register %s / %d / %d\n", 
            dest.toString().c_str(),
            dest.isValid(),
@@ -88,7 +86,7 @@ int yarp_link(const char *from, const char *to) {
 
     printf("source [%s] is %s\n", from, src.toString().c_str());
 
-    Contact dest = Contact::byName(to).addSocket(src.getCarrier(),src.getHost(),src.getPort());
+    Contact dest(to, src.getCarrier(), src.getHost(), src.getPort());
 
     printf("dest [%s] should be %s\n", to, src.toString().c_str());
 

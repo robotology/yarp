@@ -123,7 +123,7 @@ name /mymotor\n\
         p.put("verbose",1);
         PolyDriver dd(p);
         Bottle cmd("get axes"), reply;
-        Network::write(Contact::byName("/mymotor/rpc:i"),cmd,reply);
+        Network::write(Contact("/mymotor/rpc:i"), cmd, reply);
         checkEqual(reply.get(2).asInt(),10,"axis count is correct");
     }
 
