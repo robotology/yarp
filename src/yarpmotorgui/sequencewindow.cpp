@@ -579,7 +579,9 @@ void SequenceTreeWidget::onContextMenuRequested(QPoint point)
     p.setY(point.y() + header()->height());
     QAction *ret = menu.exec(mapToGlobal(p));
 
-    if(ret == copyAction){
+    if(ret == copyAction)
+    {
+        copyValues.clear();
         for(int i=1; i<columnCount(); i++){
             copyValues.append(item->text(i));
         }
