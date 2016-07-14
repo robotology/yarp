@@ -1762,10 +1762,6 @@ void PartItem::onGo(SequenceItem sequenceItem)
         return;
     }
 
-    if(sequenceItem.getTiming() < 0){
-        return;
-    }
-
     int NUMBER_OF_JOINTS;
     iPos->getAxes(&NUMBER_OF_JOINTS);
 
@@ -1805,7 +1801,7 @@ void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
     QList<double>speeds;
     for(int i=0;i<layout->count();i++){
         JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
-        values.append(joint->getTrajectoryPositionValue());
+        values.append(this->positions[i]);
         speeds.append(joint->getTrajectoryVelocityValue());
     }
 
