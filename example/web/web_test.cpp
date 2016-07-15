@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     Port server;
     Responder responder;
     server.setReader(responder);
-    
+
     Contact contact = Contact::byName(name);
     if (port_number!=0) {
         contact = contact.addSocket("","",port_number);
@@ -105,4 +105,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
