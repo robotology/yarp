@@ -14,14 +14,14 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-ElectionOf<PeerRecord<McastCarrier> > *McastCarrier::caster = NULL;
+ElectionOf<PeerRecord<McastCarrier> > *McastCarrier::caster = YARP_NULLPTR;
 
 ElectionOf<PeerRecord<McastCarrier> >& McastCarrier::getCaster() {
     NetworkBase::lock();
-    if (caster==NULL) {
+    if (caster==YARP_NULLPTR) {
         caster = new ElectionOf<PeerRecord<McastCarrier> >;
         NetworkBase::unlock();
-        if (caster==NULL) {
+        if (caster==YARP_NULLPTR) {
             YARP_ERROR(Logger::get(), "No memory for McastCarrier::caster");
             exit(1);
         }
@@ -42,7 +42,7 @@ yarp::os::impl::McastCarrier::~McastCarrier() {
         addRemove(key);
         if (elect) {
             McastCarrier *peer = getCaster().getElect(key);
-            if (peer==NULL) {
+            if (peer==YARP_NULLPTR) {
                 // time to remove registration
                 NetworkBase::unregisterName(mcastName.c_str());
             }
@@ -77,7 +77,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
         proto.getRoute().getFromName() +
         "/net=" + alt.getHost();
     McastCarrier *elect = getCaster().getElect(altKey);
-    if (elect!=NULL) {
+    if (elect!=YARP_NULLPTR) {
         YARP_DEBUG(Logger::get(),"picking up peer mcast name");
         addr = elect->mcastAddress;
         mcastName = elect->mcastName;
@@ -163,7 +163,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
 #else
     YARP_UNUSED(sender);
     DgramTwoWayStream *stream = new DgramTwoWayStream();
-    yAssert(stream!=NULL);
+    yAssert(stream!=YARP_NULLPTR);
     Contact remote = proto.getStreams().getRemoteAddress();
     Contact local;
     local = proto.getStreams().getLocalAddress();
@@ -176,7 +176,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
         printf("  Remote: %s\n", remote.toString().c_str());
     }
     */
-    proto.takeStreams(NULL); // free up port from tcp
+    proto.takeStreams(YARP_NULLPTR); // free up port from tcp
 
     if (sender) {
         /*
@@ -235,7 +235,7 @@ void yarp::os::impl::McastCarrier::addRemove(const ConstString& key) {
 bool yarp::os::impl::McastCarrier::isElect() {
     void *elect = getCaster().getElect(key);
     //void *elect = caster.getElect(mcastAddress.toString());
-    return elect==this || elect==NULL;
+    return elect==this || elect==YARP_NULLPTR;
 }
 
 

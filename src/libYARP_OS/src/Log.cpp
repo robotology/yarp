@@ -216,7 +216,7 @@ yarp::os::Log::Log(const char *file,
 }
 
 yarp::os::Log::Log() :
-        mPriv(new yarp::os::impl::LogImpl(NULL, 0, NULL))
+        mPriv(new yarp::os::impl::LogImpl(YARP_NULLPTR, 0, YARP_NULLPTR))
 {
 }
 

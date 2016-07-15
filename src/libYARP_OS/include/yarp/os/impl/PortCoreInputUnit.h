@@ -45,14 +45,14 @@ public:
         access(1),
         reversed(reversed) {
 
-        yAssert(ip!=NULL);
+        yAssert(ip!=YARP_NULLPTR);
         closing = false;
         finished = false;
         running = false;
         name = owner.getName();
         yarp::os::PortReaderCreator *creator = owner.getReadCreator();
-        localReader = NULL;
-        if (creator!=NULL) {
+        localReader = YARP_NULLPTR;
+        if (creator!=YARP_NULLPTR) {
             localReader = creator->create();
         }
     }
@@ -62,9 +62,9 @@ public:
      */
     virtual ~PortCoreInputUnit() {
         closeMain();
-        if (localReader!=NULL) {
+        if (localReader!=YARP_NULLPTR) {
             delete localReader;
-            localReader = NULL;
+            localReader = YARP_NULLPTR;
         }
     }
 

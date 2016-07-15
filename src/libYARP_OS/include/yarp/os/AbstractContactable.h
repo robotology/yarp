@@ -22,7 +22,7 @@ namespace yarp {
  * for ports is misshapen because we want to keep it SWIG compatible,
  * and SWIG can't yet produce good translations of code that in C++
  * looks like multiple inheritance but is in fact just implementing
- * multiple interfaces.  There's work in SWIG on supporting 
+ * multiple interfaces.  There's work in SWIG on supporting
  * interfaces, so this can be simplified a lot at that point.
  *
  */
@@ -153,13 +153,13 @@ public:
         asPort().releaseProperties(prop);
     }
 
-    virtual bool write(PortWriter& writer, 
-                       PortWriter *callback = 0 /*NULL*/) const {
+    virtual bool write(PortWriter& writer,
+                       PortWriter *callback = YARP_NULLPTR) const {
         return asPort().write(writer,callback);
     }
 
     virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = 0 /*NULL*/) const {
+                       PortWriter *callback = YARP_NULLPTR) const {
         return asPort().write(writer,reader,callback);
     }
 
@@ -179,7 +179,7 @@ public:
         return asPort().includeNodeInName(flag);
     }
 
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex = NULL) {
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) {
         return asPort().setCallbackLock(mutex);
     }
 

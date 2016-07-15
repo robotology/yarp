@@ -88,7 +88,7 @@ Contact RosNameSpace::registerName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerContact(const Contact& contact) {
-    return registerAdvanced(contact,NULL);
+    return registerAdvanced(contact,YARP_NULLPTR);
 }
 
 Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store) {
@@ -240,7 +240,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
 }
 
 Contact RosNameSpace::unregisterName(const ConstString& name) {
-    return unregisterAdvanced(name,NULL);
+    return unregisterAdvanced(name,YARP_NULLPTR);
 }
 
 Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *store) {
@@ -352,7 +352,7 @@ bool RosNameSpace::setProperty(const ConstString& name,
 
 Value *RosNameSpace::getProperty(const ConstString& name,
                                  const ConstString& key) {
-        return NULL;
+        return YARP_NULLPTR;
 }
 
 bool RosNameSpace::connectPortToTopic(const Contact& src,
@@ -448,7 +448,7 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
         if (activeRegistration) {
             Bottle *lst = reply.get(2).asList();
             Bottle cmd2;
-            if (lst!=NULL) {
+            if (lst!=YARP_NULLPTR) {
                 cmd2.addString("publisherUpdate");
                 cmd2.addString("/yarp");
                 cmd2.addString(dynamicSrc.getName());

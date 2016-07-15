@@ -30,7 +30,7 @@ void *Port::needImplementation() const {
     if (implementation) return implementation;
     Port *self = (Port *)this;
     self->implementation = new yarp::os::impl::PortCoreAdapter(*self);
-    yAssert(self->implementation!=NULL);
+    yAssert(self->implementation!=YARP_NULLPTR);
     self->owned = true;
     return self->implementation;
 }
@@ -39,7 +39,7 @@ void *Port::needImplementation() const {
 #define IMPL() (*((yarp::os::impl::PortCoreAdapter*)(needImplementation())))
 
 Port::Port() {
-    implementation = NULL;
+    implementation = YARP_NULLPTR;
     owned = false;
 }
 
@@ -52,7 +52,7 @@ bool Port::open(const ConstString& name) {
 }
 
 bool Port::open(const Contact& contact, bool registerName) {
-    return open(contact,registerName,NULL);
+    return open(contact,registerName,YARP_NULLPTR);
 }
 
 bool Port::open(const Contact& contact, bool registerName,
@@ -94,10 +94,10 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     PortCoreAdapter *currentCore = &(IMPL());
-    if (currentCore!=NULL) {
+    if (currentCore!=YARP_NULLPTR) {
         currentCore->active = false;
         if (n!="" && (n[0]!='/'||currentCore->includeNode) && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
-            if (fakeName==NULL) {
+            if (fakeName==YARP_NULLPTR) {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
                 ConstString node_name = nodes.getActiveName();
                 if (node_name!="") {
@@ -107,7 +107,7 @@ bool Port::open(const Contact& contact, bool registerName,
         }
     }
     if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
-        if (fakeName==NULL) {
+        if (fakeName==YARP_NULLPTR) {
             YARP_SPRINTF1(Logger::get(),error,
                           "Port name '%s' needs to start with a '/' character",
                           n.c_str());
@@ -115,7 +115,7 @@ bool Port::open(const Contact& contact, bool registerName,
         }
     }
     if (n!="" && n!="..." && n[0]!='=' && n.substr(0,3)!="...") {
-        if (fakeName==NULL) {
+        if (fakeName==YARP_NULLPTR) {
             ConstString prefix = NetworkBase::getEnvironment("YARP_PORT_PREFIX");
             if (prefix!="") {
                 n = prefix + n;
@@ -123,7 +123,7 @@ bool Port::open(const Contact& contact, bool registerName,
             }
         }
     }
-    if (currentCore!=NULL) {
+    if (currentCore!=YARP_NULLPTR) {
         NestedContact nc;
         nc.fromString(n);
         if (nc.getNestedName()!="") {
@@ -169,15 +169,15 @@ bool Port::open(const Contact& contact, bool registerName,
     // Allow for open() to be called safely many times on the same Port
     if (currentCore->isOpened()) {
         PortCoreAdapter *newCore = new PortCoreAdapter(*this);
-        yAssert(newCore!=NULL);
+        yAssert(newCore!=YARP_NULLPTR);
         // copy state that should survive in a new open()
-        if (currentCore->checkPortReader()!=NULL) {
+        if (currentCore->checkPortReader()!=YARP_NULLPTR) {
             newCore->configReader(*(currentCore->checkPortReader()));
         }
-        if (currentCore->checkAdminPortReader()!=NULL) {
+        if (currentCore->checkAdminPortReader()!=YARP_NULLPTR) {
             newCore->configAdminReader(*(currentCore->checkAdminPortReader()));
         }
-        if (currentCore->checkReadCreator()!=NULL) {
+        if (currentCore->checkReadCreator()!=YARP_NULLPTR) {
             newCore->configReadCreator(*(currentCore->checkReadCreator()));
         }
         if (currentCore->checkWaitAfterSend()>=0) {
@@ -239,7 +239,7 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     core.setControlRegistration(registerName);
-    success = (address.isValid()||local)&&(fakeName==NULL);
+    success = (address.isValid()||local)&&(fakeName==YARP_NULLPTR);
 
     if (success) {
         // create a node if needed
@@ -297,7 +297,7 @@ bool Port::open(const Contact& contact, bool registerName,
         }
     }
 
-    if (fakeName!=NULL) {
+    if (fakeName!=YARP_NULLPTR) {
         success = core.manualStart(fakeName);
         blame = "unmanaged port failed to start";
     }
@@ -320,7 +320,7 @@ bool Port::open(const Contact& contact, bool registerName,
         nodes.add(*this);
     }
 
-    if (success && currentCore!=NULL) currentCore->active = true;
+    if (success && currentCore!=YARP_NULLPTR) currentCore->active = true;
     return success;
 }
 
@@ -368,10 +368,10 @@ void Port::resume() {
 
 
 Port::~Port() {
-    if (implementation!=NULL) {
+    if (implementation!=YARP_NULLPTR) {
         close();
         if (owned) delete ((PortCoreAdapter*)implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
         owned = false;
     }
 }
@@ -395,7 +395,7 @@ bool Port::addOutput(const Contact& contact) {
         name = contact.toURI();
     }
     if (!core.isListening()) {
-        return core.addOutput(name.c_str(),NULL,NULL,true);
+        return core.addOutput(name.c_str(), YARP_NULLPTR, YARP_NULLPTR, true);
     }
     Contact me = where();
     return NetworkBase::connect(me.getName().c_str(),
@@ -412,11 +412,11 @@ bool Port::write(PortWriter& writer, PortWriter *callback) const {
     core.alertOnWrite();
     bool result = false;
     //WritableAdapter adapter(writer);
-    result = core.send(writer,NULL,callback);
+    result = core.send(writer,YARP_NULLPTR,callback);
     //writer.onCompletion();
     if (!result) {
         //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
-        if (callback!=NULL) {
+        if (callback!=YARP_NULLPTR) {
             callback->onCompletion();
         } else {
             writer.onCompletion();
@@ -439,7 +439,7 @@ bool Port::write(PortWriter& writer, PortReader& reader,
     result = core.send(writer,&reader,callback);
     if (!result) {
         //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
-        if (callback!=NULL) {
+        if (callback!=YARP_NULLPTR) {
             callback->onCompletion();
         } else {
             writer.onCompletion();

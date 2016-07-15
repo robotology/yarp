@@ -8,19 +8,23 @@
 
 
 yarp::os::Bytes::Bytes() :
-        data(NULL),
-        len(0) {
+        data(YARP_NULLPTR),
+        len(0)
+{
 }
 
 yarp::os::Bytes::Bytes(char *data, size_t len) :
         data(data),
-        len(len) {
+        len(len)
+{
 }
 
-size_t yarp::os::Bytes::length() const {
+size_t yarp::os::Bytes::length() const
+{
     return len;
 }
 
-char *yarp::os::Bytes::get() const {
+char *yarp::os::Bytes::get() const
+{
     return data;
 }

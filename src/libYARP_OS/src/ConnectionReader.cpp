@@ -11,27 +11,32 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-ConnectionReader::~ConnectionReader() {
+ConnectionReader::~ConnectionReader()
+{
 }
 
-Bytes ConnectionReader::readEnvelope() {
+Bytes ConnectionReader::readEnvelope()
+{
     return Bytes(0,0);
 }
 
-void ConnectionReader::setParentConnectionReader(ConnectionReader* parentConnectionReader) {
+void ConnectionReader::setParentConnectionReader(ConnectionReader* parentConnectionReader)
+{
     YARP_UNUSED(parentConnectionReader);
 }
 
-ConnectionReader *ConnectionReader::createConnectionReader(InputStream& is) {
+ConnectionReader *ConnectionReader::createConnectionReader(InputStream& is)
+{
     StreamConnectionReader *reader = new StreamConnectionReader();
     Route r;
-    reader->reset(is,NULL,r,0,false);
+    reader->reset(is, YARP_NULLPTR, r, 0, false);
     return reader;
 }
 
-bool ConnectionReader::readFromStream(PortReader& portable, InputStream& is) {
+bool ConnectionReader::readFromStream(PortReader& portable, InputStream& is)
+{
     StreamConnectionReader reader;
     Route r;
-    reader.reset(is,NULL,r,0,false);
+    reader.reset(is, YARP_NULLPTR, r, 0, false);
     return portable.read(reader);
 }

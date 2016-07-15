@@ -27,8 +27,8 @@ public:
     /**
      * Constructor.
      */
-    ShiftStream() {
-        stream = NULL;
+    ShiftStream() : stream(YARP_NULLPTR)
+    {
     }
 
     /**
@@ -46,31 +46,37 @@ public:
 
     virtual InputStream& getInputStream() {
         check();
-        if (stream==NULL) return nullStream;
+        if (stream == YARP_NULLPTR) {
+            return nullStream;
+        }
         return stream->getInputStream();
     }
 
     virtual OutputStream& getOutputStream() {
         check();
-        if (stream==NULL) return nullStream;
+        if (stream == YARP_NULLPTR) {
+            return nullStream;
+        }
         return stream->getOutputStream();
     }
 
     virtual const Contact& getLocalAddress() {
         check();
-        return (stream==NULL)?nullStream.getLocalAddress():(stream->getLocalAddress());
+        return (stream == YARP_NULLPTR) ? nullStream.getLocalAddress()
+                                        : (stream->getLocalAddress());
     }
 
     virtual const Contact& getRemoteAddress() {
         check();
-        return (stream==NULL)?nullStream.getRemoteAddress():(stream->getRemoteAddress());
+        return (stream == YARP_NULLPTR) ? nullStream.getRemoteAddress()
+                                        : (stream->getRemoteAddress());
     }
 
     virtual void close() {
-        if (stream!=NULL) {
+        if (stream != YARP_NULLPTR) {
             stream->close();
             delete stream;
-            stream = NULL;
+            stream = YARP_NULLPTR;
         }
     }
 
@@ -92,7 +98,7 @@ public:
      */
     virtual TwoWayStream *giveStream() {
         TwoWayStream *result = stream;
-        stream = NULL;
+        stream = YARP_NULLPTR;
         return result;
     }
 
@@ -108,30 +114,30 @@ public:
      * @return true if there is no wrapped stream.
      */
     virtual bool isEmpty() {
-        return stream==NULL;
+        return stream == YARP_NULLPTR;
     }
 
     virtual bool isOk() {
-        if (stream!=NULL) {
+        if (stream != YARP_NULLPTR) {
             return stream->isOk();
         }
         return false;
     }
 
     virtual void reset() {
-        if (stream!=NULL) {
+        if (stream != YARP_NULLPTR) {
             stream->reset();
         }
     }
 
     virtual void beginPacket() {
-        if (stream!=NULL) {
+        if (stream != YARP_NULLPTR) {
             stream->beginPacket();
         }
     }
 
     virtual void endPacket() {
-        if (stream!=NULL) {
+        if (stream != YARP_NULLPTR) {
             stream->endPacket();
         }
     }

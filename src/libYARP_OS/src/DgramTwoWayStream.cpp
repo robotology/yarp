@@ -45,7 +45,7 @@ using namespace yarp::os;
 
 
 static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct,
-                     int *store_altPct = NULL) {
+                     int *store_altPct = YARP_NULLPTR) {
     NetInt32 alt =
         (NetInt32)NetType::getCrc(buf+crcLength,(length>crcLength)?(length-crcLength):0);
     Bytes b(buf,4);
@@ -61,7 +61,7 @@ static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int
             YARP_DEBUG(Logger::get(), "packet code broken");
         }
     }
-    if (store_altPct!=NULL) {
+    if (store_altPct != YARP_NULLPTR) {
         *store_altPct = altPct;
     }
 
@@ -101,14 +101,14 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
         remoteHandle.set(remoteAddress.getPort(),remoteAddress.getHost().c_str());
     }
     dgram = new ACE_SOCK_Dgram;
-    yAssert(dgram!=NULL);
+    yAssert(dgram != YARP_NULLPTR);
 
     int result = dgram->open(localHandle,
                              ACE_PROTOCOL_FAMILY_INET,
                              0,
                              1);
 #else
-    dgram = NULL;
+    dgram = YARP_NULLPTR;
     dgram_sockfd = -1;
 
     int s = -1;
@@ -497,17 +497,17 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
     dgram = dmcast;
     mgram = dmcast;
-    yAssert(dgram!=NULL);
+    yAssert(dgram != YARP_NULLPTR);
 
     int result = -1;
     ACE_INET_Addr addr(group.getPort(),group.getHost().c_str());
     if (ipLocal.isValid()) {
-        result = dmcast->open(addr,NULL,1);
+        result = dmcast->open(addr, YARP_NULLPTR, 1);
         if (result==0) {
             result = restrictMcast(dmcast,group,ipLocal,false);
         }
     } else {
-        result = dmcast->open(addr,NULL,1);
+        result = dmcast->open(addr, YARP_NULLPTR, 1);
     }
 
     if (result!=0) {
@@ -559,7 +559,7 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
 
     dgram = dmcast;
     mgram = dmcast;
-    yAssert(dgram!=NULL);
+    yAssert(dgram != YARP_NULLPTR);
 
     ACE_INET_Addr addr(group.getPort(),group.getHost().c_str());
 
@@ -665,7 +665,7 @@ void DgramTwoWayStream::interrupt() {
 }
 
 void DgramTwoWayStream::closeMain() {
-    if (dgram!=NULL) {
+    if (dgram != YARP_NULLPTR) {
         //printf("Dgram closing, interrupt state %d\n", interrupting);
         interrupt();
         mutex.wait();
@@ -678,7 +678,7 @@ void DgramTwoWayStream::closeMain() {
             yarp::os::Time::delay(0.1);
         }
         mutex.wait();
-        if (dgram!=NULL) {
+        if (dgram != YARP_NULLPTR) {
 #ifdef YARP_HAS_ACE
             dgram->close();
             delete dgram;
@@ -688,8 +688,8 @@ void DgramTwoWayStream::closeMain() {
             }
             dgram_sockfd = -1;
 #endif
-            dgram = NULL;
-            mgram = NULL;
+            dgram = YARP_NULLPTR;
+            mgram = YARP_NULLPTR;
         }
         happy = false;
         mutex.post();
@@ -713,7 +713,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             readAt = 0;
 
 
-            //yAssert(dgram!=NULL);
+            //yAssert(dgram != YARP_NULLPTR);
             //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
             YARP_SSIZE_T result = -1;
 #ifdef YARP_HAS_ACE
@@ -736,8 +736,8 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
 
             } else
 #endif
-                if (dgram!=NULL) {
-                yAssert(dgram!=NULL);
+                if (dgram != YARP_NULLPTR) {
+                yAssert(dgram != YARP_NULLPTR);
 #ifdef YARP_HAS_ACE
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
                 //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
@@ -844,7 +844,7 @@ void DgramTwoWayStream::write(const Bytes& b) {
     if (reader) {
         return;
     }
-    if (writeBuffer.get()==NULL) {
+    if (writeBuffer.get() == YARP_NULLPTR) {
         return;
     }
 
@@ -869,7 +869,7 @@ void DgramTwoWayStream::write(const Bytes& b) {
 
 
 void DgramTwoWayStream::flush() {
-    if (writeBuffer.get()==NULL) {
+    if (writeBuffer.get() == YARP_NULLPTR) {
         return;
     }
 
@@ -882,11 +882,11 @@ void DgramTwoWayStream::flush() {
 
     while (writeAvail>0) {
         YARP_SSIZE_T writeAt = 0;
-        //yAssert(dgram!=NULL);
+        //yAssert(dgram != YARP_NULLPTR);
         YARP_SSIZE_T len = 0;
 
 #ifdef YARP_HAS_ACE
-        if (mgram!=NULL) {
+        if (mgram != YARP_NULLPTR) {
             len = mgram->send(writeBuffer.get()+writeAt,writeAvail-writeAt);
             YARP_DEBUG(Logger::get(),
                        ConstString("MCAST - wrote ") +
@@ -894,7 +894,7 @@ void DgramTwoWayStream::flush() {
                        );
         } else
 #endif
-            if (dgram!=NULL) {
+            if (dgram != YARP_NULLPTR) {
 #ifdef YARP_HAS_ACE
             len = dgram->send(writeBuffer.get()+writeAt,writeAvail-writeAt,
                               remoteHandle);

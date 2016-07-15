@@ -2,9 +2,9 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2010 RobotCub Consortium
  *              Italian Institute of Technology (IIT)
- *              Via Morego 30, 16163, 
+ *              Via Morego 30, 16163,
  *              Genova, Italy
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
@@ -22,7 +22,7 @@ using namespace yarp::os;
 #include <sys/utsname.h>
 #include <sys/types.h>
 #include <ifaddrs.h>
-#include <netinet/in.h> 
+#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -57,7 +57,7 @@ extern char **environ;
 #pragma comment(lib, "pdh.lib")
 #pragma comment(lib, "psapi.lib")      // for get proocess name for pid
 # pragma comment(lib, "wbemuuid.lib")  // for get process arguments from pid
-#endif 
+#endif
 
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
@@ -75,16 +75,16 @@ SystemInfo::capacity_t getMemEntry(const char *tag, const char *bufptr)
     char *tail;
     SystemInfo::capacity_t retval;
     size_t len = strlen(tag);
-    while (bufptr) 
+    while (bufptr)
     {
         if (*bufptr == '\n') bufptr++;
-        if (!strncmp(tag, bufptr, len)) 
+        if (!strncmp(tag, bufptr, len))
         {
             retval = strtol(bufptr + len, &tail, 10);
             if (tail == bufptr + len)
                 return -1;
             else
-                return retval;      
+                return retval;
         }
         bufptr = strchr( bufptr, '\n' );
     }
@@ -96,7 +96,7 @@ bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value
 {
     if(strlen(buff) <= strlen(tag))
         return false;
-        
+
     if(strncmp(buff, tag, strlen(tag)) != 0)
         return false;
 
@@ -116,10 +116,10 @@ bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value
 
 
 #if defined(WIN32)
-class CpuLoadCollector: public yarp::os::RateThread 
+class CpuLoadCollector: public yarp::os::RateThread
 {
 public:
-    CpuLoadCollector():RateThread(5000) 
+    CpuLoadCollector():RateThread(5000)
     {
        firstRun = true;
        load.cpuLoad1 = 0.0;
@@ -127,12 +127,12 @@ public:
        load.cpuLoad15 = 0.0;
        load.cpuLoadInstant = (int)0;
     }
-    
-    ~CpuLoadCollector() 
+
+    ~CpuLoadCollector()
     {
     }
 
-    void run() 
+    void run()
     {
         sem.wait();
         load.cpuLoadInstant = (int) phdCpuLoad();
@@ -148,49 +148,49 @@ public:
             sum += (*rti);
             n++;
             // every 1min
-            if(n<12) 
+            if(n<12)
                 load.cpuLoad1 = (double)(sum/n)/100.0;
             // every 5min
-            if(n<60) 
+            if(n<60)
                 load.cpuLoad5 = (double)(sum/n)/100.0;
             // every 15min
-            load.cpuLoad15 = (double)(sum/n)/100.0;          
-        } 
+            load.cpuLoad15 = (double)(sum/n)/100.0;
+        }
         sem.post();
-        
+
     }
 
-    SystemInfo::LoadInfo getCpuLoad(void) 
+    SystemInfo::LoadInfo getCpuLoad(void)
     {
         sem.wait();
 		SystemInfo::LoadInfo ld = load;
         sem.post();
-        return ld; 
+        return ld;
     }
 
     //bool threadInit()
     //void threadRelease()
-private: 
-#if (defined(WINVER)) && (WINVER>=0x0502)    
+private:
+#if (defined(WINVER)) && (WINVER>=0x0502)
     double phdCpuLoad()
-    {        
+    {
         DWORD ret;
         if(firstRun)
         {
-            phdStatus = PdhOpenQuery(NULL, 0, &hPhdQuery);
+            phdStatus = PdhOpenQuery(YARP_NULLPTR, 0, &hPhdQuery);
             if(phdStatus != ERROR_SUCCESS)
                 return 0;
 
-            PdhAddCounter(hPhdQuery, TEXT("\\Processor(_Total)\\% Processor Time"),0,&phdCounter);             
+            PdhAddCounter(hPhdQuery, TEXT("\\Processor(_Total)\\% Processor Time"),0,&phdCounter);
             PdhCollectQueryData(hPhdQuery);
             firstRun = false;
             return 0;
         }
 
         phdStatus = PdhCollectQueryData(hPhdQuery);
-        if(phdStatus != ERROR_SUCCESS)        
+        if(phdStatus != ERROR_SUCCESS)
             return 0;
-        phdStatus = PdhGetFormattedCounterValue(phdCounter, 
+        phdStatus = PdhGetFormattedCounterValue(phdCounter,
                                                 PDH_FMT_DOUBLE|PDH_FMT_NOCAP100,
                                                 &ret, &phdFmtValue);
         if(phdStatus != ERROR_SUCCESS)
@@ -202,23 +202,23 @@ private:
 #endif
 
 private:
-#if (defined(WINVER)) && (WINVER>=0x0502)    
-    PDH_STATUS            phdStatus;    
+#if (defined(WINVER)) && (WINVER>=0x0502)
+    PDH_STATUS            phdStatus;
     HQUERY                hPhdQuery;
     PDH_FMT_COUNTERVALUE  phdFmtValue;
     HCOUNTER              phdCounter;
 #endif
     bool firstRun;
     SystemInfo::LoadInfo load;
-    std::vector<int> samples; 
+    std::vector<int> samples;
     yarp::os::Semaphore sem;
 };
 
-static CpuLoadCollector* globalLoadCollector = NULL;
+static CpuLoadCollector* globalLoadCollector = YARP_NULLPTR;
 
 void enableCpuLoadCollector(void)
 {
-    if(globalLoadCollector == NULL)
+    if(globalLoadCollector == YARP_NULLPTR)
     {
         globalLoadCollector = new CpuLoadCollector();
         globalLoadCollector->start();
@@ -228,10 +228,10 @@ void enableCpuLoadCollector(void)
 void disableCpuLoadCollector(void)
 {
     if(globalLoadCollector)
-    {        
+    {
         globalLoadCollector->stop();
         delete globalLoadCollector;
-        globalLoadCollector = NULL;
+        globalLoadCollector = YARP_NULLPTR;
     }
 }
 
@@ -263,9 +263,9 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
         while(fgets(buffer, 128, procmem))
         {
             capacity_t ret;
-            if((ret=getMemEntry("MemTotal:", buffer)) > 0)   
+            if((ret=getMemEntry("MemTotal:", buffer)) > 0)
                 memory.totalSpace = ret/1024;
-            
+
             if((ret=getMemEntry("MemFree:", buffer)) > 0)
                 memory.freeSpace = ret/1024;
         }
@@ -310,22 +310,22 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
     storage.freeSpace = 0;
 
 #if defined(WIN32)
-        
+
         DWORD dwSectorsPerCluster=0, dwBytesPerSector=0;
         DWORD dwFreeClusters=0, dwTotalClusters=0;
-        yarp::os::ConstString strHome = getUserInfo().homeDir; 
+        yarp::os::ConstString strHome = getUserInfo().homeDir;
         if(!strHome.length())
             strHome = "C:\\";
-        if(GetDiskFreeSpaceA(strHome.c_str(), &dwSectorsPerCluster, 
-            &dwBytesPerSector, &dwFreeClusters, &dwTotalClusters)) 
+        if(GetDiskFreeSpaceA(strHome.c_str(), &dwSectorsPerCluster,
+            &dwBytesPerSector, &dwFreeClusters, &dwTotalClusters))
         {
             storage.freeSpace = (capacity_t)((dwFreeClusters/1048576.0)* dwSectorsPerCluster * dwBytesPerSector);
-            storage.totalSpace = (capacity_t)((dwTotalClusters)/1048576.0 * dwSectorsPerCluster * dwBytesPerSector); 
-        } 
+            storage.totalSpace = (capacity_t)((dwTotalClusters)/1048576.0 * dwSectorsPerCluster * dwBytesPerSector);
+        }
 #endif
 
 #if defined(__linux__)
-    yarp::os::ConstString strHome = getUserInfo().homeDir; 
+    yarp::os::ConstString strHome = getUserInfo().homeDir;
     if(!strHome.length())
         strHome = "/home";
 
@@ -361,23 +361,23 @@ SystemInfo::NetworkInfo SystemInfo::getNetworkInfo()
 
 #if defined(__linux__)
 
-    struct ifaddrs * ifAddrStruct=NULL;
-    struct ifaddrs * ifa=NULL;
-    void * tmpAddrPtr=NULL;
+    struct ifaddrs * ifAddrStruct=YARP_NULLPTR;
+    struct ifaddrs * ifa=YARP_NULLPTR;
+    void * tmpAddrPtr=YARP_NULLPTR;
 
     getifaddrs(&ifAddrStruct);
-    for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) 
+    for (ifa = ifAddrStruct; ifa != YARP_NULLPTR; ifa = ifa->ifa_next)
     {
-        if (ifa ->ifa_addr->sa_family == AF_INET) 
-        { 
+        if (ifa ->ifa_addr->sa_family == AF_INET)
+        {
             // is a valid IP4 Address
             tmpAddrPtr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
             char addressBuffer[INET_ADDRSTRLEN];
             const char* ret = inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
             if(ret && (strcmp(ifa->ifa_name, "eth0") == 0))
                 network.ip4 = addressBuffer;
-        } 
-        else if (ifa->ifa_addr->sa_family == AF_INET6) 
+        }
+        else if (ifa->ifa_addr->sa_family == AF_INET6)
         {
             // is a valid IP6 Address
             tmpAddrPtr=&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr;
@@ -385,10 +385,10 @@ SystemInfo::NetworkInfo SystemInfo::getNetworkInfo()
             const char* ret = inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
             if(ret && (strcmp(ifa->ifa_name, "eth0") == 0))
                 network.ip6 = addressBuffer;
-        } 
+        }
     }
 
-    if(ifAddrStruct) 
+    if(ifAddrStruct)
         freeifaddrs(ifAddrStruct);
 
     // getting mac addrress
@@ -406,14 +406,14 @@ SystemInfo::NetworkInfo SystemInfo::getNetworkInfo()
     ifc.ifc_buf = buf;
     ioctl(s, SIOCGIFCONF, &ifc);
     IFR = ifc.ifc_req;
-    for (int i = ifc.ifc_len/sizeof(struct ifreq); --i >= 0; IFR++) 
+    for (int i = ifc.ifc_len/sizeof(struct ifreq); --i >= 0; IFR++)
     {
         strcpy(ifr.ifr_name, IFR->ifr_name);
-        if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0) 
+        if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0)
         {
-            if (!(ifr.ifr_flags & IFF_LOOPBACK)) 
+            if (!(ifr.ifr_flags & IFF_LOOPBACK))
             {
-                if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0) 
+                if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0)
                 {
                     found = true;
                     break;
@@ -425,12 +425,12 @@ SystemInfo::NetworkInfo SystemInfo::getNetworkInfo()
 
     if(found)
     {
-        unsigned char addr[6]; 
+        unsigned char addr[6];
         char mac[32];
         bcopy(ifr.ifr_hwaddr.sa_data, addr, 6);
-        sprintf(mac, "%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x", 
+        sprintf(mac, "%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x",
             addr[0],addr[1],addr[2],addr[3],addr[4],addr[5]);
-        network.mac = mac; 
+        network.mac = mac;
     }
 
 #endif
@@ -445,7 +445,7 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     processor.cores = 0;
     processor.frequency = 0.0;
     processor.family = 0;
-    processor.modelNumber = 0; 
+    processor.modelNumber = 0;
     processor.siblings = 0;
 
 #if defined(WIN32)
@@ -466,15 +466,15 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
         case PROCESSOR_INTEL_IA64: { processor.model = "PROCESSOR_INTEL_IA64"; break; }
         case PROCESSOR_AMD_X8664: { processor.model = "PROCESSOR_AMD_X8664"; break; }
     };
-    
+
     DWORD dwMHz;
     DWORD BufSize = sizeof(DWORD);
     HKEY hKey;
     if(RegOpenKeyEx(HKEY_LOCAL_MACHINE,
                         "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
                         0, KEY_READ, &hKey) == ERROR_SUCCESS)
-    { 
-        RegQueryValueEx(hKey, "~MHz", NULL, NULL, (LPBYTE) &dwMHz, &BufSize);
+    {
+        RegQueryValueEx(hKey, "~MHz", YARP_NULLPTR, YARP_NULLPTR, (LPBYTE) &dwMHz, &BufSize);
         processor.frequency = (double) dwMHz;
         RegCloseKey(hKey);
     }
@@ -492,15 +492,15 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
         while(fgets(buffer, 128, proccpu))
         {
             yarp::os::ConstString value;
-            if(getCpuEntry("model", buffer, value) && 
+            if(getCpuEntry("model", buffer, value) &&
                !getCpuEntry("model name", buffer, value))
                 processor.modelNumber = atoi(value.c_str());
             if(getCpuEntry("model name", buffer, value))
-                processor.model = value;            
+                processor.model = value;
             if(getCpuEntry("vendor_id", buffer, value))
-                processor.vendor = value;            
+                processor.vendor = value;
             if(getCpuEntry("cpu family", buffer, value))
-                processor.family = atoi(value.c_str());            
+                processor.family = atoi(value.c_str());
             if(getCpuEntry("cpu cores", buffer, value))
                 processor.cores = atoi(value.c_str());
             if(getCpuEntry("siblings", buffer, value))
@@ -514,7 +514,7 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     struct utsname uts;
     if(uname(&uts) == 0)
     {
-      processor.architecture = uts.machine;  
+      processor.architecture = uts.machine;
     }
 #elif defined(__APPLE__)
 //    yarp::os::ConstString architecture;
@@ -523,31 +523,31 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     int64_t value = 0;
     size_t length = sizeof(value);
 
-    if (!sysctl(mib, 2, &value, &length, NULL, 0)) {
+    if (!sysctl(mib, 2, &value, &length, YARP_NULLPTR, 0)) {
         processor.frequency = value / 1e+6; //this is in Hz. What is the expected frequency?
     }
 
-    if (!sysctlbyname("hw.logicalcpu", &value, &length, NULL, 0)) {
+    if (!sysctlbyname("hw.logicalcpu", &value, &length, YARP_NULLPTR, 0)) {
         processor.cores = value; //this is the number of cores
         //or cpus: hw.physicalcpu
     }
 
     char buff[513];
     size_t buffLen = 512;
-    if (!sysctlbyname("machdep.cpu.vendor", buff, &buffLen, NULL, 0)) {
+    if (!sysctlbyname("machdep.cpu.vendor", buff, &buffLen, YARP_NULLPTR, 0)) {
         processor.vendor = buff; //this is the number of cores
         //or cpus: hw.physicalcpu
     }
     buffLen = 512;
-    if (!sysctlbyname("machdep.cpu.brand_string", buff, &buffLen, NULL, 0)) {
+    if (!sysctlbyname("machdep.cpu.brand_string", buff, &buffLen, YARP_NULLPTR, 0)) {
         processor.model = buff; //this is the number of cores
         //or cpus: hw.physicalcpu
     }
-    if (!sysctlbyname("machdep.cpu.family", &value, &length, NULL, 0)) {
+    if (!sysctlbyname("machdep.cpu.family", &value, &length, YARP_NULLPTR, 0)) {
         processor.family = value; //this is the number of cores
         //or cpus: hw.physicalcpu
     }
-    if (!sysctlbyname("machdep.cpu.model", &value, &length, NULL, 0)) {
+    if (!sysctlbyname("machdep.cpu.model", &value, &length, YARP_NULLPTR, 0)) {
         processor.modelNumber = value; //this is the number of cores
         //or cpus: hw.physicalcpu
     }
@@ -574,30 +574,30 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
         platform.codename = buff;
         if((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
             (osver.wProductType == VER_NT_WORKSTATION))
-           platform.distribution = "7"; 
+           platform.distribution = "7";
         else if((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
             (osver.wProductType != VER_NT_WORKSTATION))
-           platform.distribution = "Server 2008 R2"; 
+           platform.distribution = "Server 2008 R2";
         else if((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
             (osver.wProductType == VER_NT_WORKSTATION))
-           platform.distribution = "Vista"; 
+           platform.distribution = "Vista";
         else if((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
             (osver.wProductType != VER_NT_WORKSTATION))
-           platform.distribution = "Server 2008"; 
+           platform.distribution = "Server 2008";
         else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
-           platform.distribution = "Server 2003"; 
+           platform.distribution = "Server 2003";
     //    else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
     //        (osver.wSuiteMask & VER_SUITE_WH_SERVER))
-    //       platform.distribution = "Home Server";         
+    //       platform.distribution = "Home Server";
     //    else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
     //            (GetSystemMetrics(SM_SERVERR2) != 0))
-    //       platform.distribution = "Server 2003 R2"; 
+    //       platform.distribution = "Server 2003 R2";
         else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
                 (osver.wProductType == VER_NT_WORKSTATION))
                 /* &&(osver.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)*/
            platform.distribution = "XP Professional x64 Edition";
         else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1))
-           platform.distribution = "XP";         
+           platform.distribution = "XP";
         else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
             platform.distribution = "2000";
     }
@@ -619,7 +619,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     }
 }
 
-#endif 
+#endif
 
 #if defined(__linux__)
     struct utsname uts;
@@ -633,7 +633,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 
     char buffer[128];
     FILE* release = popen("lsb_release -ric", "r");
-    if (release) 
+    if (release)
     {
         while(fgets(buffer, 128, release))
         {
@@ -646,7 +646,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
                 platform.codename = value;
         }
         pclose(release);
-    }            
+    }
 
     char *varChar = *environ;
 
@@ -666,11 +666,11 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 
     char buff[513];
     size_t buffLen = 512;
-    if (!sysctlbyname("kern.ostype", buff, &buffLen, NULL, 0)) {
+    if (!sysctlbyname("kern.ostype", buff, &buffLen, YARP_NULLPTR, 0)) {
         platform.name = buff;
     }
 
-    if (!sysctlbyname("kern.osrelease", buff, &buffLen, NULL, 0)) {
+    if (!sysctlbyname("kern.osrelease", buff, &buffLen, YARP_NULLPTR, 0)) {
         platform.release = buff;
     }
 
@@ -684,9 +684,9 @@ SystemInfo::UserInfo SystemInfo::getUserInfo()
     UserInfo user;
     user.userID = 0;
 
-#if defined(WIN32)    
+#if defined(WIN32)
     char path[MAX_PATH+1];
-    if(SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, path ) == S_OK)
+    if(SHGetFolderPathA(YARP_NULLPTR, CSIDL_PROFILE, YARP_NULLPTR, 0, path ) == S_OK)
         user.homeDir = path;
 
     char username[UNLEN+1];
@@ -724,7 +724,7 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
     if(globalLoadCollector)
     {
         load = globalLoadCollector->getCpuLoad();
-        int siblings = getProcessorInfo().siblings;        
+        int siblings = getProcessorInfo().siblings;
         if( siblings > 1)
         {
             load.cpuLoad1 *= siblings;
@@ -739,8 +739,8 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
     if(procload)
     {
         char buff[128];
-        int ret = fscanf(procload, "%lf %lf %lf %s", 
-                         &(load.cpuLoad1), &(load.cpuLoad5), 
+        int ret = fscanf(procload, "%lf %lf %lf %s",
+                         &(load.cpuLoad1), &(load.cpuLoad5),
                          &(load.cpuLoad15), buff);
         if(ret>0)
         {
@@ -787,7 +787,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
     if (file) {
         char *p = fgets(cmdline, sizeof(cmdline) / sizeof(*cmdline), file);
         fclose(file);
-        if (p != NULL) {
+        if (p != YARP_NULLPTR) {
             while (*p) {
                 p += strlen(p);
                 if (*(p + 1))
@@ -812,7 +812,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
         info.schedPriority = param.__sched_priority;
     info.schedPolicy = sched_getscheduler(pid);
 
-#elif defined(WIN32)  
+#elif defined(WIN32)
     HANDLE hnd = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
     if(hnd) {
         TCHAR filename[MAX_PATH];
@@ -822,24 +822,24 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
         }
         CloseHandle(hnd);
     }
-    // reterieving arguments 
+    // reterieving arguments
     HRESULT hr = 0;
-    IWbemLocator *WbemLocator  = NULL;
-    IWbemServices *WbemServices = NULL;
-    IEnumWbemClassObject *EnumWbem  = NULL;
+    IWbemLocator *WbemLocator  = YARP_NULLPTR;
+    IWbemServices *WbemServices = YARP_NULLPTR;
+    IEnumWbemClassObject *EnumWbem  = YARP_NULLPTR;
 
     //initializate the Windows security
     hr = CoInitializeEx(0, COINIT_MULTITHREADED);
-    hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
+    hr = CoInitializeSecurity(YARP_NULLPTR, -1, YARP_NULLPTR, YARP_NULLPTR, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, YARP_NULLPTR, EOAC_NONE, YARP_NULLPTR);
     hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *) &WbemLocator);
     //connect to the WMI
-    hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", NULL, NULL, 0, NULL, 0, 0, &WbemServices);   
+    hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", YARP_NULLPTR, YARP_NULLPTR, 0, YARP_NULLPTR, 0, 0, &WbemServices);
     //Run the WQL Query
-    hr = WbemServices->ExecQuery(L"WQL", L"SELECT ProcessId,CommandLine FROM Win32_Process", WBEM_FLAG_FORWARD_ONLY, NULL, &EnumWbem);
+    hr = WbemServices->ExecQuery(L"WQL", L"SELECT ProcessId,CommandLine FROM Win32_Process", WBEM_FLAG_FORWARD_ONLY, YARP_NULLPTR, &EnumWbem);
 
     // Iterate over the enumerator
-    if (EnumWbem != NULL) {
-        IWbemClassObject *result = NULL;
+    if (EnumWbem != YARP_NULLPTR) {
+        IWbemClassObject *result = YARP_NULLPTR;
         ULONG returnedCount = 0;
 
         while((hr = EnumWbem->Next(WBEM_INFINITE, 1, &result, &returnedCount)) == S_OK) {
@@ -848,22 +848,22 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
 
             // access the properties
             hr = result->Get(L"ProcessId", 0, &ProcessId, 0, 0);
-            hr = result->Get(L"CommandLine", 0, &CommandLine, 0, 0);            
+            hr = result->Get(L"CommandLine", 0, &CommandLine, 0, 0);
             if (!(CommandLine.vt==VT_NULL) && ProcessId.uintVal == (unsigned int) pid) {
-                // covert BSTR to std::string 
-                int res = WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, NULL, 0, NULL, NULL);
+                // covert BSTR to std::string
+                int res = WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, YARP_NULLPTR, 0, YARP_NULLPTR, YARP_NULLPTR);
                 info.arguments.resize(res);
-                WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, &info.arguments[0], res, NULL, NULL);
+                WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, &info.arguments[0], res, YARP_NULLPTR, YARP_NULLPTR);
                 size_t idx = info.arguments.find(' ');
                 if(idx == info.arguments.npos)
                     info.arguments.clear();
                 else
-                    info.arguments = info.arguments.substr(idx+2); // it seems windows adds two spaces after the program name 
+                    info.arguments = info.arguments.substr(idx+2); // it seems windows adds two spaces after the program name
                 info.pid = pid;
                 VariantClear(&ProcessId);
                 VariantClear(&CommandLine);
                 break;
-            }            
+            }
             result->Release();
         }
     }
@@ -878,7 +878,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
 
     int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, pid};
 
-    if (!sysctl(mib, 4, &procInfo, &length, NULL, 0)) {
+    if (!sysctl(mib, 4, &procInfo, &length, YARP_NULLPTR, 0)) {
         info.name = procInfo.kp_proc.p_comm;
         info.pid = procInfo.kp_proc.p_pid;
 
@@ -888,11 +888,11 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
         char *proc_argv;
         size_t argv_len;
         //getting length of execute string
-        int result = sysctl(mib, 3, NULL, &argv_len, NULL, 0);
+        int result = sysctl(mib, 3, YARP_NULLPTR, &argv_len, YARP_NULLPTR, 0);
 
         //now getting the string
         proc_argv = (char*)malloc(sizeof(char) * argv_len);
-        result = sysctl(mib, 3, proc_argv, &argv_len, NULL, 0);
+        result = sysctl(mib, 3, proc_argv, &argv_len, YARP_NULLPTR, 0);
         //looking for '\0', i.e. NULL char
         //skip first string which is the executable
         size_t index = 0;

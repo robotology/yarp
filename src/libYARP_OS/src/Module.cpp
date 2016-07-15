@@ -208,7 +208,7 @@ bool ModuleHelper::read(ConnectionReader& connection) {
     bool result = owner.safeRespond(cmd,response);
     if (response.size()>=1) {
         ConnectionWriter *writer = connection.getWriter();
-        if (writer!=NULL) {
+        if (writer!=YARP_NULLPTR) {
             if (response.get(0).toString()=="many") {
                 for (int i=1; i<response.size(); i++) {
                     Value& v = response.get(i);
@@ -237,14 +237,14 @@ bool ModuleHelper::read(ConnectionReader& connection) {
 Module::Module() {
     stopFlag = false;
     implementation = new ModuleHelper(*this);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 Module::~Module() {
-    if (implementation!=NULL) {
+    if (implementation!=YARP_NULLPTR) {
         HELPER(implementation).stop();
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 
@@ -310,7 +310,7 @@ bool Module::safeRespond(const Bottle& command, Bottle& reply) {
 }
 
 
-static Module *module = NULL;
+static Module *module = YARP_NULLPTR;
 static bool terminated = false;
 static void handler (int) {
     static int ct = 0;
@@ -322,7 +322,7 @@ static void handler (int) {
     ACE_OS::printf("[try %d of 3] Trying to shut down\n",
                    ct);
     terminated = true;
-    if (module!=NULL) {
+    if (module!=YARP_NULLPTR) {
         Bottle cmd, reply;
         cmd.fromString("quit");
         module->safeRespond(cmd,reply);
@@ -333,7 +333,7 @@ static void handler (int) {
 
 
 bool Module::runModule() {
-    if (module==NULL) {
+    if (module==YARP_NULLPTR) {
         module = this;
         //module = &HELPER(implementation);
     } else {
@@ -406,7 +406,7 @@ bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
     }
 
     // probably folloing options will be removed, so don't advertise them
-    options.setMonitor(NULL);
+    options.setMonitor(YARP_NULLPTR);
     // check if we want to use nested options (less ambiguous)
     if (options.check("nested",val)||options.check("lispy",val)) {
         ConstString lispy = val->toString();
@@ -421,7 +421,7 @@ bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
 
 
 ConstString Module::getName(const char *subName) {
-    if (subName==NULL) {
+    if (subName==YARP_NULLPTR) {
         return name;
     }
     ConstString base = name.c_str();

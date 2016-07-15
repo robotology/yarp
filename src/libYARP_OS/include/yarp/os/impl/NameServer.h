@@ -363,7 +363,7 @@ private:
                 yAssert(result!=-1);
             }
             if (result==-1) {
-                return NULL;
+                return YARP_NULLPTR;
             }
             return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
         }
@@ -378,7 +378,7 @@ private:
 
         ConstString getProp(const ConstString& key) {
             PropertyRecord *rec = getPR(key,false);
-            if (rec!=NULL) {
+            if (rec!=YARP_NULLPTR) {
                 return rec->toString();
             }
             return "";
@@ -386,7 +386,7 @@ private:
 
         bool checkProp(const ConstString& key, const ConstString& val) {
             PropertyRecord *rec = getPR(key,false);
-            if (rec!=NULL) {
+            if (rec!=YARP_NULLPTR) {
                 return rec->check(val);
             }
             return false;
@@ -394,7 +394,7 @@ private:
 
         ConstString matchProp(const ConstString& key, const ConstString& val) {
             PropertyRecord *rec = getPR(key,false);
-            if (rec!=NULL) {
+            if (rec!=YARP_NULLPTR) {
                 return rec->match(val);
             }
             return "";
@@ -438,7 +438,7 @@ private:
 
     NameRecord &getNameRecord(const ConstString& name) {
         NameRecord *result = getNameRecord(name,true);
-        yAssert(result!=NULL);
+        yAssert(result!=YARP_NULLPTR);
         return *result;
     }
 
@@ -446,7 +446,7 @@ private:
 
     HostRecord &getHostRecord(const ConstString& name) {
         HostRecord *result = getHostRecord(name,true);
-        yAssert(result!=NULL);
+        yAssert(result!=YARP_NULLPTR);
         return *result;
     }
 

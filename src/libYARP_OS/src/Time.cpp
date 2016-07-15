@@ -21,9 +21,9 @@
 
 using namespace yarp::os;
 
-static Clock *pclock = NULL;
+static Clock *pclock = YARP_NULLPTR;
 static bool clock_owned = false;
-static ConstString *network_clock_name = NULL;
+static ConstString *network_clock_name = YARP_NULLPTR;
 static bool network_clock_pending = false;
 
 static void lock() {
@@ -42,11 +42,11 @@ static void removeClock()
     // make the current clock invalid before destroying it so new request will already
     // be redirected to the system clock.
     // Here we are already inside ::lock()
-    pclock = NULL;
+    pclock = YARP_NULLPTR;
     clock_owned = false;
 
     if (network_clock_name) delete network_clock_name;
-    network_clock_name = NULL;
+    network_clock_name = YARP_NULLPTR;
     network_clock_pending = false;
 
     if (old_pclock) {
@@ -54,14 +54,14 @@ static void removeClock()
             delete old_pclock;          // This will wake up all sleeping threads
             old_clock_owned = false;
         }
-        old_pclock = NULL;
+        old_pclock = YARP_NULLPTR;
     }
 }
 
 static Clock *getClock() {
     if (network_clock_pending) {
         ConstString name;
-        NetworkClock *nc = NULL;
+        NetworkClock *nc = YARP_NULLPTR;
         lock();
         if (network_clock_pending) {
             name = "";
@@ -137,7 +137,7 @@ void Time::useCustomClock(Clock *clock) {
 }
 
 bool Time::isSystemClock() {
-    return (pclock==NULL);
+    return (pclock==YARP_NULLPTR);
 }
 
 bool Time::isValid() {

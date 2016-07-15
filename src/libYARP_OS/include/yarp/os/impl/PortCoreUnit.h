@@ -124,10 +124,10 @@ public:
      * before the method returns
      * @param waitBefore true if we should wait for any in-progress send
      * to complete before stating this one
-     * @parm gotReply if non-NULL, this variable will be set to true if
+     * @parm gotReply if non-YARP_NULLPTR, this variable will be set to true if
      * a reply was received
      *
-     * @return NULL, or a tracker for a previous send operation that
+     * @return YARP_NULLPTR, or a tracker for a previous send operation that
      * is no longer in progress. The tracker is an opaque pointer passed
      * in via a previous call to send().  Once it is returned, it is
      * the caller's responsibility to manage any memory associated
@@ -141,7 +141,7 @@ public:
                        const ConstString& envelope,
                        bool waitAfter = true,
                        bool waitBefore = true,
-                       bool *gotReply = NULL) {
+                       bool *gotReply = YARP_NULLPTR) {
         // do nothing
         return tracker;
     }
@@ -153,12 +153,12 @@ public:
      * can be safely accessed.
      *
      * @return the opaque tracker pointer passed to a previous call to
-     * send(), or NULL if there is no such tracker.  Once the tracker
-     * has been returned, calling this method again will return NULL.
+     * send(), or YARP_NULLPTR if there is no such tracker.  Once the tracker
+     * has been returned, calling this method again will return YARP_NULLPTR.
      *
      */
     virtual void *takeTracker() {
-        return NULL;
+        return YARP_NULLPTR;
     }
 
     /**
@@ -214,8 +214,8 @@ public:
      * @return the connection mode, or the empty string if there is none
      *
      */
-    ConstString getMode(bool *hasMode = NULL) {
-        if (hasMode!=NULL) {
+    ConstString getMode(bool *hasMode = YARP_NULLPTR) {
+        if (hasMode!=YARP_NULLPTR) {
             *hasMode = this->hasMode;
         }
         return (this->hasMode)?mode:"";

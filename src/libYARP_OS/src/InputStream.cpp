@@ -16,11 +16,15 @@ ConstString InputStream::readLine(int terminal, bool *success) {
     ConstString buf("");
     bool done = false;
     int esc = 0;
-    if (success!=NULL) *success = true;
+    if (success != YARP_NULLPTR) {
+        *success = true;
+    }
     while (!done) {
         int v = read();
         if (v<0) {
-            if (success!=NULL) *success = false;
+            if (success != YARP_NULLPTR) {
+                *success = false;
+            }
             return "";
         }
         char ch = (char)v;
@@ -45,13 +49,15 @@ ConstString InputStream::readLine(int terminal, bool *success) {
                 esc = 0;
             }
         }
-        if (v<0) { 
-            if (success!=NULL) *success = false;
+        if (v<0) {
+            if (success != YARP_NULLPTR) {
+                *success = false;
+            }
             return "";
         }
     }
     return buf;
-}    
+}
 
 YARP_SSIZE_T InputStream::readFull(const Bytes& b) {
     YARP_SSIZE_T off = 0;

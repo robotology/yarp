@@ -11,11 +11,12 @@
 
 using namespace yarp::os::idl;
 
-WireState::WireState() {
-    len = -1;
-    code = -1;
-    need_ok = false;
-    parent = 0 /*NULL*/;
+WireState::WireState() :
+        len(-1),
+        code(-1),
+        need_ok(false),
+        parent(YARP_NULLPTR)
+{
 }
 
 bool WireState::isValid() const {

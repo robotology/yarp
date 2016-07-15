@@ -15,13 +15,13 @@ using namespace yarp::os;
 
 Semaphore::Semaphore(unsigned int initialCount) {
     implementation = new SemaphoreImpl(initialCount);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 Semaphore::~Semaphore() {
-    if (implementation!=NULL) {
+    if (implementation!=YARP_NULLPTR) {
         delete ((SemaphoreImpl*)implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 

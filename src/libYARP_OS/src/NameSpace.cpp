@@ -23,13 +23,13 @@ bool NameSpace::checkNetwork() {
     if (!c.isValid()) return false;
 
     OutputProtocol *out = Carriers::connect(c);
-    if (out==NULL) {
+    if (out==YARP_NULLPTR) {
         return false;
     }
 
     out->close();
     delete out;
-    out = NULL;
+    out = YARP_NULLPTR;
 
     return true;
 }
@@ -40,13 +40,13 @@ bool NameSpace::checkNetwork(double timeout) {
 
     c.setTimeout((float)timeout);
     OutputProtocol *out = Carriers::connect(c);
-    if (out==NULL) {
+    if (out==YARP_NULLPTR) {
         return false;
     }
 
     out->close();
     delete out;
-    out = NULL;
+    out = YARP_NULLPTR;
 
     return true;
 }

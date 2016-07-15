@@ -44,7 +44,7 @@ public:
      */
     static NameClient& getNameClient() {
         mutex.lock();
-        if (instance==NULL) {
+        if (instance == YARP_NULLPTR) {
             instance = new NameClient();
         }
         mutex.unlock();
@@ -57,9 +57,9 @@ public:
      */
     static void removeNameClient() {
         mutex.lock();
-        if (instance!=NULL) {
+        if (instance != YARP_NULLPTR) {
             delete instance;
-            instance = NULL;
+            instance = YARP_NULLPTR;
             instanceClosed = true;
         }
         mutex.unlock();

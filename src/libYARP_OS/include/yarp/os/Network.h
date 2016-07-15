@@ -73,11 +73,11 @@ public:
                         const ConstString& carrier = "",
                         bool quiet = true);
 
-    // Catch old uses of NULL for carrier
+    // Catch old uses of YARP_NULLPTR for carrier
     static bool connect(const char *src, const char *dest,
                         const char *carrier,
                         bool quiet = true) {
-        return connect(ConstString(src),ConstString(dest),ConstString((carrier==NULL)?"":carrier),quiet);
+        return connect(ConstString(src),ConstString(dest),ConstString((carrier==YARP_NULLPTR)?"":carrier),quiet);
     }
 
     /**
@@ -316,7 +316,7 @@ public:
      * @return A string from standard input, without newline or
      * linefeed characters.
      */
-    static ConstString readString(bool *eof=0/*NULL*/);
+    static ConstString readString(bool *eof = YARP_NULLPTR);
 
 
     /**
@@ -448,7 +448,7 @@ public:
      *
      */
     static ConstString getEnvironment(const char *key,
-                                      bool *found = 0/*NULL*/);
+                                      bool *found = YARP_NULLPTR);
 
     /**
      *

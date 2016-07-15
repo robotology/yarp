@@ -18,18 +18,18 @@ Protocol::Protocol(TwoWayStream* stream) :
         pendingAck(false),
         log(Logger::get()),
         active(true),
-        delegate(NULL),
-        recv_delegate(NULL),
-        send_delegate(NULL),
+        delegate(YARP_NULLPTR),
+        recv_delegate(YARP_NULLPTR),
+        send_delegate(YARP_NULLPTR),
         need_recv_delegate(false),
         need_send_delegate(false),
         recv_delegate_fail(false),
         send_delegate_fail(false),
         route("null","null","tcp"),
-        writer(NULL),
-        ref(NULL),
+        writer(YARP_NULLPTR),
+        ref(YARP_NULLPTR),
         envelope(""),
-        port(NULL),
+        port(YARP_NULLPTR),
         pendingReply(false)
 {
     // We start off with the streams used to contact the port that
@@ -53,7 +53,7 @@ bool Protocol::open(const ConstString& name) {
 bool Protocol::open(const Route& route) {
     setRoute(route);
     setCarrier(route.getCarrierName());
-    if (delegate==NULL) return false;
+    if (delegate==YARP_NULLPTR) return false;
     // We are the initiator of the connection, so we
     // send a header (carrier-dependent).
     bool ok = sendHeader();
@@ -77,7 +77,7 @@ void Protocol::setRoute(const Route& route) {
             for (int i=1; i<b.size(); i++) {
                 Value& v = b.get(i);
                 Bottle *lst = v.asList();
-                if (lst!=NULL) {
+                if (lst!=YARP_NULLPTR) {
                     carrier = carrier + "+" + lst->get(0).toString().c_str() +
                         "." + lst->get(1).toString().c_str();
                 } else {
@@ -217,7 +217,7 @@ void Protocol::interrupt() {
 }
 
 bool Protocol::respondToHeader() {
-    yAssert(delegate!=NULL);
+    yAssert(delegate!=YARP_NULLPTR);
     bool ok = delegate->respondToHeader(*this);
     if (!ok) return false;
     os().flush();
@@ -225,7 +225,7 @@ bool Protocol::respondToHeader() {
 }
 
 bool Protocol::expectAck() {
-    yAssert(delegate!=NULL);
+    yAssert(delegate!=YARP_NULLPTR);
     if (delegate->requireAck()) {
         return delegate->expectAck(*this);
     }
@@ -238,27 +238,27 @@ void Protocol::closeHelper() {
         sendAck();
     }
     shift.close();
-    if (delegate!=NULL) {
+    if (delegate!=YARP_NULLPTR) {
         delegate->close();
         delete delegate;
-        delegate = NULL;
+        delegate = YARP_NULLPTR;
     }
-    if (recv_delegate!=NULL) {
+    if (recv_delegate!=YARP_NULLPTR) {
         recv_delegate->close();
         delete recv_delegate;
-        recv_delegate = NULL;
+        recv_delegate = YARP_NULLPTR;
     }
-    if (send_delegate!=NULL) {
+    if (send_delegate!=YARP_NULLPTR) {
         send_delegate->close();
         delete send_delegate;
-        send_delegate = NULL;
+        send_delegate = YARP_NULLPTR;
     }
 }
 
 bool Protocol::sendAck() {
     bool ok = true;
     pendingAck = false;
-    if (delegate==NULL) return false;
+    if (delegate==YARP_NULLPTR) return false;
     if (delegate->requireAck()) {
         ok = delegate->sendAck(*this);
     }
@@ -276,9 +276,9 @@ bool Protocol::expectIndex() {
     // udp), we should skip to the beginning of the next
     // message, as marked by this call.
     getStreams().beginPacket();
-    ref = NULL;
+    ref = YARP_NULLPTR;
     bool ok = false;
-    if (delegate!=NULL) {
+    if (delegate!=YARP_NULLPTR) {
         // What we actually do here is carrier-specific.
         // Perhaps we do nothing at all.
         ok = delegate->expectIndex(*this);
@@ -290,7 +290,7 @@ bool Protocol::expectIndex() {
                      delegate->isBareMode());
         // Pass on a reference to the object being
         // send, if we know it, for local connections.
-        if (ref!=NULL) {
+        if (ref!=YARP_NULLPTR) {
             reader.setReference(ref);
         }
     } else {
@@ -305,9 +305,9 @@ void Protocol::setCarrier(const ConstString& carrierNameBase) {
     ConstString carrierName = carrierNameBase;
     if (carrierNameBase=="") carrierName = "tcp";
     setRoute(getRoute().addCarrierName(carrierName));
-    if (delegate==NULL) {
+    if (delegate==YARP_NULLPTR) {
         delegate = Carriers::chooseCarrier(carrierName);
-        if (delegate!=NULL) {
+        if (delegate!=YARP_NULLPTR) {
             if (delegate->modifiesIncomingData()) {
                 if (active) {
                     fprintf(stderr,"Carrier \"%s\" cannot be used this way, try \"tcp+recv.%s\" instead.\n",carrierName.c_str(),carrierName.c_str());
@@ -339,7 +339,7 @@ bool Protocol::expectHeader() {
     if (!ok) return false;
     ok = expectSenderSpecifier();
     if (!ok) return false;
-    yAssert(delegate!=NULL);
+    yAssert(delegate!=YARP_NULLPTR);
     ok = delegate->expectExtraHeader(*this);
     return ok;
 }
@@ -361,14 +361,14 @@ bool Protocol::expectProtocolSpecifier() {
         return false;
     }
     bool already = false;
-    if (delegate!=NULL) {
+    if (delegate!=YARP_NULLPTR) {
         if (delegate->checkHeader(header)) {
             already = true;
         }
     }
     if (!already) {
         delegate = Carriers::chooseCarrier(header);
-        if (delegate==NULL) {
+        if (delegate==YARP_NULLPTR) {
             // Carrier not found; send a human-readable message.
             ConstString msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are critical for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
             yarp::os::Bytes b((char*)msg.c_str(),msg.length());
@@ -376,7 +376,7 @@ bool Protocol::expectProtocolSpecifier() {
             os().flush();
         }
     }
-    if (delegate==NULL) {
+    if (delegate==YARP_NULLPTR) {
         YARP_DEBUG(log,"unrecognized protocol");
         return false;
     }
@@ -390,7 +390,7 @@ ConnectionReader& Protocol::beginRead() {
     // (carrier-specific preamble), then leave it
     // up to caller to read the actual message payload.
     getRecvDelegate();
-    if (delegate!=NULL) {
+    if (delegate!=YARP_NULLPTR) {
         bool ok = false;
         while (!ok) {
             ok = expectIndex();
@@ -415,12 +415,12 @@ bool Protocol::write(SizedWriter& writer) {
     if (!getConnection().isActive()) return false;
     this->writer = &writer;
     bool replied = false;
-    yAssert(delegate!=NULL);
+    yAssert(delegate!=YARP_NULLPTR);
     getStreams().beginPacket(); // Message begins.
     bool ok = delegate->write(*this,writer);
     getStreams().endPacket();   // Message ends.
     PortReader *reply = writer.getReplyHandler();
-    if (reply!=NULL) {
+    if (reply!=YARP_NULLPTR) {
         if (!delegate->supportReply()) {
             // We are expected to get a reply, but cannot.
             YARP_INFO(log,ConstString("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
@@ -434,7 +434,7 @@ bool Protocol::write(SizedWriter& writer) {
         }
     }
     expectAck(); // Expect acknowledgement (carrier-specific).
-    this->writer = NULL;
+    this->writer = YARP_NULLPTR;
     return replied;
 }
 

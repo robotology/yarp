@@ -38,12 +38,12 @@ public:
     virtual ~RpcServer();
 
     // documented in UnbufferedContactable
-    virtual bool write(PortWriter& writer, 
-                       PortWriter *callback = 0 /*NULL*/) const;
+    virtual bool write(PortWriter& writer,
+                       PortWriter *callback = YARP_NULLPTR) const;
 
     // documented in UnbufferedContactable
     virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = 0 /*NULL*/) const;
+                       PortWriter *callback = YARP_NULLPTR) const;
 
     // documented in UnbufferedContactable
     virtual bool read(PortReader& reader, bool willReply = true);
@@ -55,7 +55,7 @@ public:
     virtual Port& asPort() {
         return port;
     }
-    
+
     virtual const Port& asPort() const {
         return port;
     }

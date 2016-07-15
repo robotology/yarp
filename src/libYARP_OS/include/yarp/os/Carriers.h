@@ -37,7 +37,7 @@ public:
      * Select a carrier by name.
      *
      * @param name the name of the desired carrier.
-     * @return the desired carrier, or NULL if not found.
+     * @return the desired carrier, or YARP_NULLPTR if not found.
      */
     static Carrier *chooseCarrier(const ConstString& name);
 
@@ -50,7 +50,7 @@ public:
      * Select a carrier by 8-byte header.
      *
      * @param bytes the 8-byte header describing the desired carrier.
-     * @return the desired carrier, or NULL if not found.
+     * @return the desired carrier, or YARP_NULLPTR if not found.
      */
     static Carrier *chooseCarrier(const Bytes& bytes);
 

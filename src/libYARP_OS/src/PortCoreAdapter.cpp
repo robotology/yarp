@@ -12,10 +12,10 @@
 
 yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         stateMutex(1),
-        readDelegate(NULL),
-        permanentReadDelegate(NULL),
-        adminReadDelegate(NULL),
-        writeDelegate(NULL),
+        readDelegate(YARP_NULLPTR),
+        permanentReadDelegate(YARP_NULLPTR),
+        adminReadDelegate(YARP_NULLPTR),
+        writeDelegate(YARP_NULLPTR),
         readResult(false),
         readActive(false),
         readBackground(false),
@@ -25,7 +25,7 @@ yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         replyDue(false),
         dropDue(false),
         produce(0), consume(0), readBlock(1),
-        recReadCreator(NULL),
+        recReadCreator(YARP_NULLPTR),
         recWaitAfterSend(-1),
         checkedType(false),
         usedForRead(false),
@@ -36,7 +36,7 @@ yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         commitToWrite(false),
         commitToRpc(false),
         active(false),
-        recCallbackLock(NULL),
+        recCallbackLock(YARP_NULLPTR),
         haveCallbackLock(false)
 {
     setContactable(&owner);
@@ -127,7 +127,7 @@ void yarp::os::impl::PortCoreAdapter::resumeFull()
 
 bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
 {
-    if (permanentReadDelegate!=NULL) {
+    if (permanentReadDelegate!=YARP_NULLPTR) {
         bool result = permanentReadDelegate->read(reader);
         return result;
     }
@@ -138,7 +138,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
     if (!reader.isValid()) {
         // interrupt
         stateMutex.wait();
-        if (readDelegate!=NULL) {
+        if (readDelegate!=YARP_NULLPTR) {
             readResult = readDelegate->read(reader);
         }
         stateMutex.post();
@@ -160,7 +160,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
 
     stateMutex.wait();
     readResult = false;
-    if (readDelegate!=NULL) {
+    if (readDelegate!=YARP_NULLPTR) {
         readResult = readDelegate->read(reader);
     } else {
         // read and ignore
@@ -169,8 +169,8 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
         b.read(reader);
     }
     if (!readBackground) {
-        readDelegate = NULL;
-        writeDelegate = NULL;
+        readDelegate = YARP_NULLPTR;
+        writeDelegate = YARP_NULLPTR;
     }
     bool result = readResult;
     stateMutex.post();
@@ -184,10 +184,10 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
             readBlock.post();
             return false;
         }
-        if (writeDelegate!=NULL) {
+        if (writeDelegate!=YARP_NULLPTR) {
             stateMutex.wait();
             ConnectionWriter *writer = reader.getWriter();
-            if (writer!=NULL) {
+            if (writer!=YARP_NULLPTR) {
                 result = readResult = writeDelegate->write(*writer);
             }
             stateMutex.post();
@@ -221,7 +221,7 @@ bool yarp::os::impl::PortCoreAdapter::read(PortReader& reader, bool willReply)
     readActive = true;
     readDelegate = &reader;
     checkType(reader);
-    writeDelegate = NULL;
+    writeDelegate = YARP_NULLPTR;
     this->willReply = willReply;
     consume.post(); // happy consumer
     stateMutex.post();
@@ -229,7 +229,7 @@ bool yarp::os::impl::PortCoreAdapter::read(PortReader& reader, bool willReply)
     produce.wait();
     stateMutex.wait();
     if (!readBackground) {
-        readDelegate = NULL;
+        readDelegate = YARP_NULLPTR;
     }
     bool result = readResult;
     if (!result) replyDue = false;
@@ -301,7 +301,7 @@ bool yarp::os::impl::PortCoreAdapter::configCallbackLock(Mutex *lock)
 
 bool yarp::os::impl::PortCoreAdapter::unconfigCallbackLock()
 {
-    recCallbackLock = NULL;
+    recCallbackLock = YARP_NULLPTR;
     haveCallbackLock = false;
     return removeCallbackLock();
 }

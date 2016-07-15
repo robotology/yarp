@@ -15,8 +15,10 @@ yarp::os::impl::LocalCarrierManager yarp::os::impl::LocalCarrier::manager;
 yarp::os::impl::LocalCarrierManager::LocalCarrierManager() :
         senderMutex(1),
         receiverMutex(1),
-        received(0) {
-    sender = receiver = NULL;
+        received(0),
+        sender(YARP_NULLPTR),
+        receiver(YARP_NULLPTR)
+{
 }
 
 void yarp::os::impl::LocalCarrierManager::setSender(LocalCarrier *sender) {
@@ -27,7 +29,7 @@ void yarp::os::impl::LocalCarrierManager::setSender(LocalCarrier *sender) {
 yarp::os::impl::LocalCarrier *yarp::os::impl::LocalCarrierManager::getReceiver() {
     received.wait();
     LocalCarrier *result = receiver;
-    sender = NULL;
+    sender = YARP_NULLPTR;
     senderMutex.post();
     return result;
 }
@@ -60,9 +62,9 @@ void yarp::os::impl::LocalCarrierStream::interrupt() {
 
 void yarp::os::impl::LocalCarrierStream::close() {
     SocketTwoWayStream::close();
-    if (owner!=NULL) {
+    if (owner != YARP_NULLPTR) {
         LocalCarrier *owned = owner;
-        owner = NULL;
+        owner = YARP_NULLPTR;
         owned->shutdown();
     }
     done = true;
@@ -74,8 +76,8 @@ bool yarp::os::impl::LocalCarrierStream::isOk() {
 
 
 yarp::os::impl::LocalCarrier::LocalCarrier() : peerMutex(1), sent(0), received(0) {
-    ref = NULL;
-    peer = NULL;
+    ref = YARP_NULLPTR;
+    peer = YARP_NULLPTR;
     doomed = false;
 }
 
@@ -90,7 +92,7 @@ yarp::os::Carrier *yarp::os::impl::LocalCarrier::create() {
 void yarp::os::impl::LocalCarrier::removePeer() {
     if (!doomed) {
         peerMutex.wait();
-        peer = NULL;
+        peer = YARP_NULLPTR;
         peerMutex.post();
     }
 }
@@ -99,10 +101,10 @@ void yarp::os::impl::LocalCarrier::shutdown() {
     if (!doomed) {
         doomed = true;
         peerMutex.wait();
-        if (peer!=NULL) {
-            peer->accept(NULL);
+        if (peer != YARP_NULLPTR) {
+            peer->accept(YARP_NULLPTR);
             LocalCarrier *wasPeer = peer;
-            peer = NULL;
+            peer = YARP_NULLPTR;
             wasPeer->removePeer();
         }
         peerMutex.post();
@@ -190,7 +192,7 @@ bool yarp::os::impl::LocalCarrier::expectExtraHeader(ConnectionState& proto) {
 
 bool yarp::os::impl::LocalCarrier::becomeLocal(ConnectionState& proto, bool sender) {
     LocalCarrierStream *stream = new LocalCarrierStream();
-    if (stream!=NULL) {
+    if (stream != YARP_NULLPTR) {
         stream->attach(this,sender);
     }
     proto.takeStreams(stream);
@@ -202,9 +204,9 @@ bool yarp::os::impl::LocalCarrier::becomeLocal(ConnectionState& proto, bool send
 bool yarp::os::impl::LocalCarrier::write(ConnectionState& proto, SizedWriter& writer) {
 
     yarp::os::Portable *ref = writer.getReference();
-    if (ref!=NULL) {
+    if (ref != YARP_NULLPTR) {
         peerMutex.wait();
-        if (peer!=NULL) {
+        if (peer != YARP_NULLPTR) {
             peer->accept(ref);
         } else {
             YARP_ERROR(Logger::get(),
@@ -239,7 +241,7 @@ bool yarp::os::impl::LocalCarrier::expectIndex(ConnectionState& proto) {
     YARP_DEBUG(Logger::get(),"local recv: got send");
     proto.setReference(ref);
     received.post();
-    if (ref!=NULL) {
+    if (ref != YARP_NULLPTR) {
         YARP_DEBUG(Logger::get(),"local recv: received");
     } else {
         YARP_DEBUG(Logger::get(),"local recv: shutdown");
@@ -254,7 +256,7 @@ void yarp::os::impl::LocalCarrier::accept(yarp::os::Portable *ref) {
     this->ref = ref;
     YARP_DEBUG(Logger::get(),"local send: send ref");
     sent.post();
-    if (ref!=NULL&&!doomed) {
+    if (ref != YARP_NULLPTR && !doomed) {
         YARP_DEBUG(Logger::get(),"local send: wait receipt");
         received.wait();
         YARP_DEBUG(Logger::get(),"local send: received");

@@ -42,9 +42,9 @@ public:
      *
      */
     PortCorePacket() {
-        prev_ = next_ = NULL;
-        content = NULL;
-        callback = NULL;
+        prev_ = next_ = YARP_NULLPTR;
+        content = YARP_NULLPTR;
+        callback = YARP_NULLPTR;
         owned = false;
         ownedCallback = false;
         reset();
@@ -102,7 +102,7 @@ public:
      *
      */
     yarp::os::PortWriter *getCallback() {
-        return (callback!=0/*NULL*/)?callback:content;
+        return (callback != YARP_NULLPTR) ? callback : content;
     }
 
     /**
@@ -116,7 +116,7 @@ public:
      *
      */
     void setContent(yarp::os::PortWriter *writable, bool owned = false,
-                    yarp::os::PortWriter *callback = NULL,
+                    yarp::os::PortWriter *callback = YARP_NULLPTR,
                     bool ownedCallback = false) {
         content = writable;
         this->callback = callback;
@@ -138,8 +138,8 @@ public:
         if (ownedCallback) {
             delete callback;
         }
-        content = NULL;
-        callback = NULL;
+        content = YARP_NULLPTR;
+        callback = YARP_NULLPTR;
         ct = 0;
         owned = false;
         ownedCallback = false;
@@ -154,7 +154,7 @@ public:
      */
     void complete() {
         if (!completed) {
-            if (getContent()!=NULL) {
+            if (getContent()!=YARP_NULLPTR) {
                 getCallback()->onCompletion();
                 completed = true;
             }

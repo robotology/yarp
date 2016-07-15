@@ -119,8 +119,8 @@ ConstString NameConfig::getSafeString(const ConstString& txt) {
 }
 
 ConstString NameConfig::getConfigFileName(const char *stem, const char *ns) {
-    ConstString fname = (stem!=NULL)?stem:CONF_FILENAME;
-    if (stem==NULL) {
+    ConstString fname = (stem!=YARP_NULLPTR)?stem:CONF_FILENAME;
+    if (stem==YARP_NULLPTR) {
         ConstString space;
         if (ns) {
             space = ns;
@@ -168,19 +168,19 @@ bool NameConfig::createPath(const ConstString& fileName, int ignoreLevel) {
 ConstString NameConfig::readConfig(const ConstString& fileName) {
     char buf[25600];
     FILE *fin = fopen(fileName.c_str(),"r");
-    if (fin==NULL) return "";
+    if (fin==YARP_NULLPTR) return "";
     ConstString result = "";
-    while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
+    while(fgets(buf, sizeof(buf)-1, fin) != YARP_NULLPTR) {
         result += buf;
     }
     fclose(fin);
-    fin = NULL;
+    fin = YARP_NULLPTR;
     return result;
 }
 
 
 bool NameConfig::fromFile(const char *ns) {
-    ConstString fname = getConfigFileName(NULL,ns);
+    ConstString fname = getConfigFileName(YARP_NULLPTR,ns);
     if (fname!="") {
         ConstString txt = readConfig(fname);
         if (txt!="") {
@@ -215,10 +215,10 @@ bool NameConfig::writeConfig(const ConstString& fileName, const ConstString& tex
         return false;
     }
     FILE *fout = fopen(fileName.c_str(),"w");
-    if (fout==NULL) return false;
+    if (fout==YARP_NULLPTR) return false;
     fprintf(fout,"%s",text.c_str());
     fclose(fout);
-    fout = NULL;
+    fout = YARP_NULLPTR;
     return true;
 }
 
@@ -235,7 +235,7 @@ ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
     // Prefer non-local addresses, then seed, then shorter addresses.
     // Avoid IPv6.
 #ifdef YARP_HAS_ACE
-    ACE_INET_Addr *ips = NULL;
+    ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
     char hostAddress[256];
     if (ACE::get_ip_interfaces(count,ips)>=0) {
@@ -250,14 +250,14 @@ ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
         perror("getifaddrs in getIps");
         exit(EXIT_FAILURE);
     }
-    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-        if (ifa->ifa_addr == NULL) continue;
+    for (ifa = ifaddr; ifa != YARP_NULLPTR; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == YARP_NULLPTR) continue;
         family = ifa->ifa_addr->sa_family;
         if (family == AF_INET || family == AF_INET6) {
             s = getnameinfo(ifa->ifa_addr,
                     (family == AF_INET) ? sizeof(struct sockaddr_in) :
                             sizeof(struct sockaddr_in6),
-                            hostname, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+                            hostname, NI_MAXHOST, YARP_NULLPTR, 0, NI_NUMERICHOST);
             if (s != 0) {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 exit(EXIT_FAILURE);
@@ -332,7 +332,7 @@ bool NameConfig::isLocalName(const ConstString& name) {
     bool result = false;
 
 #ifdef YARP_HAS_ACE
-    ACE_INET_Addr *ips = NULL;
+    ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
     if (ACE::get_ip_interfaces(count,ips)>=0) {
         for (size_t i=0; i<count; i++) {
@@ -373,7 +373,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
     yarp::os::Bottle result;
 
 #ifdef YARP_HAS_ACE
-    ACE_INET_Addr *ips = NULL;
+    ACE_INET_Addr *ips = YARP_NULLPTR;
     size_t count = 0;
     if (ACE::get_ip_interfaces(count,ips)>=0) {
         for (size_t i=0; i<count; i++) {
@@ -390,14 +390,14 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
         perror("getifaddrs in getIpsAsBottle");
         exit(EXIT_FAILURE);
     }
-    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-        if (ifa->ifa_addr == NULL) continue;
+    for (ifa = ifaddr; ifa != YARP_NULLPTR; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == YARP_NULLPTR) continue;
         family = ifa->ifa_addr->sa_family;
         if (family == AF_INET || family == AF_INET6) {
             s = getnameinfo(ifa->ifa_addr,
                     (family == AF_INET) ? sizeof(struct sockaddr_in) :
                             sizeof(struct sockaddr_in6),
-                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+                            host, NI_MAXHOST, YARP_NULLPTR, 0, NI_NUMERICHOST);
             if (s != 0) {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 exit(EXIT_FAILURE);
