@@ -237,7 +237,30 @@ public:
     }
 
     void getBusInfo(NodeArgs& na) {
-        na.reply.addList();
+        mutex.lock();
+        unsigned int opaque_id = 1;
+        for (std::map<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+            NodeItem& item = it->second;
+            if (!(item.isSubscriber() || item.isPublisher())) continue;
+            item.update();
+            Bottle& lst = na.reply.addList();
+            item.contactable->getReport(*report_items.at(it->first));
+            if(item.isSubscriber()) {
+                if(report_items.at(it->first)->sourceURI=="") continue;
+                lst.addInt(opaque_id); // connectionId
+                lst.addString(report_items.at(it->first)->sourceURI);
+                lst.addString("i");
+            } else if(item.isPublisher()) {
+                if(report_items.at(it->first)->targetURI=="") continue;
+                lst.addInt(opaque_id); // connectionId
+                lst.addString(report_items.at(it->first)->targetURI);
+                lst.addString("o");
+            }
+            lst.addString("TCPROS");
+            lst.addString(toRosName(item.nc.getNestedName()));
+            opaque_id++;
+        }
+        mutex.unlock();
         na.success();
     }
 
