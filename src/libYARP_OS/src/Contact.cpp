@@ -461,7 +461,7 @@ Contact Contact::addName(const ConstString& name) const
 Contact Contact::addNested(const NestedContact& nestedContact) const
 {
     Contact result(*this);
-    result.setNested(nestedContact);
+    result.setNestedContact(nestedContact);
     return result;
 }
 
