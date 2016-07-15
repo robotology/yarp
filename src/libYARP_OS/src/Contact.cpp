@@ -1,17 +1,20 @@
 /*
  * Copyright (C) 2006, 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia, Anne van Rossum
- * Authors: Paul Fitzpatrick, Anne van Rossum
+ * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+ *          Anne van Rossum <anne@almende.com>
+ *          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
 #include <yarp/os/Contact.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformStdlib.h>
+
 
 #ifdef YARP_HAS_ACE
 #  include <ace/INET_Addr.h>
@@ -20,180 +23,116 @@
 #  include <sys/socket.h>
 #  include <netdb.h>
 #  include <arpa/inet.h>
+#  include <cstdio>
 #endif
 
-using namespace yarp::os::impl;
-using namespace yarp::os;
+
+using yarp::os::Contact;
+using yarp::os::ConstString;
+using yarp::os::NetType;
+using yarp::os::NestedContact;
+using yarp::os::Searchable;
+using yarp::os::Value;
+using yarp::os::impl::NameConfig;
 
 
-Contact::Contact() {
-    port = -1;
-    timeout = -1;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+class Contact::Private
+{
+public:
+    Private(const ConstString& regName,
+            const ConstString& carrier,
+            const ConstString& hostname,
+            int port) :
+        regName(regName),
+        carrier(carrier),
+        hostname(hostname),
+        port(port),
+        timeout(-1)
+    {
+    }
+
+    ConstString regName;
+    ConstString carrier;
+    ConstString hostname;
+    NestedContact nestedContact;
+
+    int port;
+    float timeout;
+};
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
+
+Contact::Contact(const ConstString& hostname,
+                 int port) :
+        mPriv(new Private(ConstString(), ConstString(), hostname, port))
+{
 }
 
-Contact::Contact(const ConstString& hostName, int port) {
-    this->hostName = hostName;
-    this->port = port;
-    timeout = -1;
+Contact::Contact(const ConstString& carrier,
+                 const ConstString& hostname,
+                 int port) :
+        mPriv(new Private(ConstString(), carrier, hostname, port))
+{
 }
 
-Contact::~Contact() {
+Contact::Contact(const ConstString& name,
+                 const ConstString& carrier,
+                 const ConstString& hostname,
+                 int port) :
+        mPriv(new Private(name, carrier, hostname, port))
+{
 }
 
-
-Contact::Contact(const Contact& alt) {
-    regName = alt.regName;
-    hostName = alt.hostName;
-    carrier = alt.carrier;
-    flavor = alt.flavor;
-    port = alt.port;
-    timeout = alt.timeout;
+Contact::Contact(const Contact& rhs) :
+        mPriv(new Private(*(rhs.mPriv)))
+{
 }
 
+#if YARP_COMPILER_CXX_RVALUE_REFERENCES
+Contact::Contact(Contact&& rhs) :
+        mPriv(new Private(std::move(*(rhs.mPriv))))
+{
+}
+#endif // YARP_COMPILER_CXX_RVALUE_REFERENCES
 
-const Contact& Contact::operator = (const Contact& alt) {
-    regName = alt.regName;
-    hostName = alt.hostName;
-    carrier = alt.carrier;
-    flavor = alt.flavor;
-    port = alt.port;
-    timeout = alt.timeout;
+Contact::~Contact()
+{
+}
+
+Contact& Contact::operator=(const Contact& rhs)
+{
+    if(&rhs != this) {
+        mPriv = rhs.mPriv;
+    }
     return *this;
 }
 
-
-Contact Contact::empty() {
-    return Contact();
+#if YARP_COMPILER_CXX_RVALUE_REFERENCES
+Contact& Contact::operator=(Contact&& rhs)
+{
+    if(&rhs != this) {
+        mPriv = std::move(rhs.mPriv);
+    }
+    return *this;
 }
+#endif // YARP_COMPILER_CXX_RVALUE_REFERENCES
 
 
-Contact Contact::invalid() {
-    return Contact::bySocket("","",-1);
-}
-
-
-Contact Contact::byName(const ConstString& name) {
+Contact Contact::fromConfig(const Searchable& config)
+{
     Contact result;
-    result.regName = name;
+    result.mPriv->port = config.check("port_number",Value(-1)).asInt();
+    result.mPriv->hostname = config.check("ip",Value("")).asString().c_str();
+    result.mPriv->regName = config.check("name",Value("")).asString().c_str();
+    result.mPriv->carrier = config.check("carrier",Value("tcp")).asString().c_str();
     return result;
 }
 
-
-Contact Contact::byCarrier(const ConstString& carrier) {
-    Contact result;
-    result.carrier = carrier;
-    return result;
-}
-
-Contact Contact::addCarrier(const ConstString& carrier) const {
-    Contact result(*this);
-    result.carrier = carrier;
-    return result;
-}
-
-
-Contact Contact::addHost(const ConstString& hostname) const {
-    Contact result(*this);
-    result.hostName = hostname;
-    return result;
-}
-
-Contact Contact::addPort(int portnumber) const {
-    Contact result(*this);
-    result.port = portnumber;
-    return result;
-}
-
-Contact Contact::bySocket(const ConstString& carrier,
-                          const ConstString& hostname,
-                          int portNumber) {
-    Contact result;
-    result.carrier = carrier;
-    result.hostName = hostname;
-    result.port = portNumber;
-    return result;
-}
-
-
-Contact Contact::addSocket(const ConstString& carrier, 
-                           const ConstString& hostname,
-                           int portNumber) const {
-    Contact result(*this);
-    result.carrier = carrier;
-    result.hostName = hostname;
-    result.port = portNumber;
-    return result;
-}
-
-Contact Contact::addName(const ConstString& name) const {
-    Contact result(*this);
-    result.regName = name;
-    return result;
-}
-
-Contact Contact::addNested(const NestedContact& nc) const {
-    Contact result(*this);
-    result.setNested(nc);
-    return result;
-}
-
-ConstString Contact::getName() const {
-    ConstString name = regName;
-    if (regName == "") {
-        if (hostName!="" && port>=0) {
-            name = ConstString("/") + hostName + ":" + 
-                NetType::toString(port);
-        }
-    }
-    return name;
-}
-
-
-ConstString Contact::getHost() const {
-    return hostName;
-}
-
-
-ConstString Contact::getCarrier() const {
-    return carrier;
-}
-
-
-int Contact::getPort() const {
-    return port;
-}
-
-const NestedContact& Contact::getNested() const {
-    return flavor;
-}
-
-
-ConstString Contact::toString() const {
-    ConstString name = getName();
-    if (carrier!="") {
-        return carrier + ":/" + name;
-    }
-    return name;
-}
-
-
-ConstString Contact::toURI() const {
-    ConstString result = "";
-    if (carrier!="") {
-        result += carrier;
-        result += ":/";
-    }
-    if (hostName!="" && port>=0) {
-        result += "/";
-        result += hostName;
-        result += ":";
-        result += NetType::toString(port);
-    }
-    return result;
-}
-
-
-Contact Contact::fromString(const ConstString& txt) {
+Contact Contact::fromString(const ConstString& txt)
+{
     ConstString str(txt);
     Contact c;
     ConstString::size_type start = 0;
@@ -210,7 +149,7 @@ Contact Contact::fromString(const ConstString& txt) {
         }
     }
     if (base!=ConstString::npos) {
-        c = Contact::byCarrier(str.substr(0,base));
+        c.mPriv->carrier = str.substr(0,base);
         start = base+offset;
         // check if we have a direct machine:NNN syntax
         ConstString::size_type colon = ConstString::npos;
@@ -244,58 +183,177 @@ Contact Contact::fromString(const ConstString& txt) {
         }
         if (mode==1 && nums>=1) {
             // yes, machine:nnn
-            ConstString machine = str.substr(start+1,colon-start-1);
-            ConstString portnum = str.substr(colon+1, nums);
-            c = c.addSocket(c.getCarrier()==""?"tcp":c.getCarrier().c_str(),
-                            machine,
-                            atoi(portnum.c_str()));
+            if (c.mPriv->carrier.empty()) {
+                c.mPriv->carrier = "tcp";
+            }
+            c.mPriv->hostname = str.substr(start+1,colon-start-1);
+            c.mPriv->port = atoi(str.substr(colon+1, nums).c_str());
             start = i;
         }
     }
     ConstString rname = str.substr(start);
     if (rname!="/") {
-        c = c.addName(rname.c_str());
+        c.mPriv->regName = rname.c_str();
     }
     return c;
 }
 
 
 
-bool Contact::isValid() const {
-    return port>=0;
+ConstString Contact::getName() const
+{
+    if (!mPriv->regName.empty()) {
+        return mPriv->regName;
+    }
+    if (mPriv->hostname!="" && mPriv->port>=0) {
+        ConstString name = ConstString("/") + mPriv->hostname + ":" +
+            NetType::toString(mPriv->port);
+        return name;
+    }
+    return ConstString();
+}
+
+ConstString Contact::getRegName() const
+{
+    return mPriv->regName;
+}
+
+void Contact::setName(const ConstString& name)
+{
+    mPriv->regName = name;
 }
 
 
-Contact Contact::byConfig(Searchable& config) {
-    Contact result;
-    result.port = config.check("port_number",Value(-1)).asInt();
-    result.hostName = config.check("ip",Value("")).asString().c_str();
-    result.regName = config.check("name",Value("")).asString().c_str();
-    result.carrier = config.check("carrier",Value("tcp")).asString().c_str();
+
+ConstString Contact::getHost() const
+{
+    return mPriv->hostname;
+}
+
+void Contact::setHost(const ConstString& hostname)
+{
+    this->mPriv->hostname = hostname;
+}
+
+
+
+int Contact::getPort() const
+{
+    return mPriv->port;
+}
+
+void Contact::setPort(int port)
+{
+    this->mPriv->port = port;
+}
+
+
+
+ConstString Contact::getCarrier() const
+{
+    return mPriv->carrier;
+}
+
+void Contact::setCarrier(const ConstString& carrier)
+{
+    mPriv->carrier = carrier;
+}
+
+
+
+const NestedContact& Contact::getNested() const
+{
+    return mPriv->nestedContact;
+}
+
+void Contact::setNestedContact(const yarp::os::NestedContact& nestedContact)
+{
+    this->mPriv->nestedContact = nestedContact;
+}
+
+
+
+bool Contact::hasTimeout() const
+{
+    return mPriv->timeout >= 0;
+}
+
+float Contact::getTimeout() const
+{
+    return mPriv->timeout;
+}
+
+void Contact::setTimeout(float timeout)
+{
+    this->mPriv->timeout = timeout;
+}
+
+
+
+void Contact::setSocket(const ConstString& carrier,
+                        const ConstString& hostname,
+                        int port)
+{
+    mPriv->carrier = carrier;
+    mPriv->hostname = hostname;
+    mPriv->port = port;
+}
+
+
+
+bool Contact::isValid() const
+{
+    return mPriv->port>=0;
+}
+
+ConstString Contact::toString() const
+{
+    ConstString name = getName();
+    if (mPriv->carrier!="") {
+        return mPriv->carrier + ":/" + name;
+    }
+    return name;
+}
+
+
+ConstString Contact::toURI(bool includeCarrier) const
+{
+    ConstString result = "";
+    if (includeCarrier && mPriv->carrier!="") {
+        result += mPriv->carrier;
+        result += ":/";
+    }
+    if (mPriv->hostname!="" && mPriv->port>=0) {
+        result += "/";
+        result += mPriv->hostname;
+        result += ":";
+        result += NetType::toString(mPriv->port);
+    }
     return result;
 }
 
 
-ConstString Contact::convertHostToIp(const char *name) {
+ConstString Contact::convertHostToIp(const char *name)
+{
 #ifdef YARP_HAS_ACE
     ACE_INET_Addr addr((u_short)0,name);
     char ipstr[256];
     addr.get_host_addr(ipstr,sizeof(ipstr));
 
 #else
-	char ipstr[INET6_ADDRSTRLEN];
-	int status;
-	struct addrinfo hints, *res, *p;
+    char ipstr[INET6_ADDRSTRLEN];
+    int status;
+    struct addrinfo hints, *res, *p;
 
-	memset(&hints, 0, sizeof hints); // make sure the struct is empty
-	hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
-	hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
-	hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+    memset(&hints, 0, sizeof hints); // make sure the struct is empty
+    hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
+    hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
+    hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
 
-	if ((status = getaddrinfo(name, "http", &hints, &res)) != 0) {
-	    fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
-	    exit(1);
-	}
+    if ((status = getaddrinfo(name, "http", &hints, &res)) != 0) {
+        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+        exit(1);
+    }
 
     for(p = res;p != NULL; p = p->ai_next) {
         void *addr;
@@ -320,31 +378,91 @@ ConstString Contact::convertHostToIp(const char *name) {
 }
 
 
-bool Contact::hasTimeout() const {
-    return timeout >= 0;
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
+
+Contact Contact::empty() {
+    return Contact();
 }
 
-void Contact::setTimeout(float timeout) {
-    this->timeout = timeout;
+Contact Contact::invalid() {
+    return Contact("","",-1);
 }
 
-void Contact::setNested(const yarp::os::NestedContact& flavor) {
-    this->flavor = flavor;
+Contact Contact::byName(const ConstString& name)
+{
+    Contact result;
+    result.mPriv->regName = name;
+    return result;
 }
 
-void Contact::setHost(const ConstString& host) {
-    this->hostName = host;
+Contact Contact::byCarrier(const ConstString& carrier)
+{
+    Contact result;
+    result.mPriv->carrier = carrier;
+    return result;
 }
 
-void Contact::setPort(int port) {
-    this->port = port;
+Contact Contact::bySocket(const ConstString& carrier,
+                          const ConstString& hostname,
+                          int port)
+{
+    Contact result;
+    result.mPriv->carrier = carrier;
+    result.mPriv->hostname = hostname;
+    result.mPriv->port = port;
+    return result;
+}
+
+Contact Contact::byConfig(Searchable& config) {
+    return fromConfig(config);
+}
+
+Contact Contact::addCarrier(const ConstString& carrier) const
+{
+    Contact result(*this);
+    result.mPriv->carrier = carrier;
+    return result;
 }
 
 
-float Contact::getTimeout() const {
-    return timeout;
+Contact Contact::addHost(const ConstString& hostname) const
+{
+    Contact result(*this);
+    result.mPriv->hostname = hostname;
+    return result;
 }
 
-ConstString Contact::getRegName() const {
-    return regName;
+
+Contact Contact::addPort(int port) const
+{
+    Contact result(*this);
+    result.mPriv->port = port;
+    return result;
 }
+
+Contact Contact::addSocket(const ConstString& carrier,
+                           const ConstString& hostname,
+                           int port) const
+{
+    Contact result(*this);
+    result.mPriv->carrier = carrier;
+    result.mPriv->hostname = hostname;
+    result.mPriv->port = port;
+    return result;
+}
+
+Contact Contact::addName(const ConstString& name) const
+{
+    Contact result(*this);
+    result.mPriv->regName = name;
+    return result;
+}
+
+Contact Contact::addNested(const NestedContact& nestedContact) const
+{
+    Contact result(*this);
+    result.setNested(nestedContact);
+    return result;
+}
+
+#endif // YARP_NO_DEPRECATED

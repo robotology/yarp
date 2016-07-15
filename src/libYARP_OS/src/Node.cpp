@@ -294,7 +294,7 @@ public:
             na.fail("Cannot find topic");
             return;
         }
-        c = c.addName("");
+        c.setName("");
         // just pass the message along, YARP ports know what to do with it
         ContactStyle style;
         style.admin = true;
@@ -370,7 +370,7 @@ void yarp::os::Node::Helper::remove(Contactable& contactable)
 
 Contact yarp::os::Node::Helper::query(const ConstString& name, const ConstString& category)
 {
-    Contact result = Contact::invalid();
+    Contact result;
     std::map<ConstString,NodeItem>::const_iterator i = by_part_name.find(name);
     if (i != by_part_name.end()) {
         result = i->second.contactable->where();

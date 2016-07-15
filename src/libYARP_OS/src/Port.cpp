@@ -44,11 +44,11 @@ Port::Port() {
 }
 
 bool Port::openFake(const ConstString& name) {
-    return open(Contact::byName(name),false,name.c_str());
+    return open(Contact(name), false, name.c_str());
 }
 
 bool Port::open(const ConstString& name) {
-    return open(Contact::fromString(name));
+    return open(Contact(name));
 }
 
 bool Port::open(const Contact& contact, bool registerName) {
@@ -71,7 +71,7 @@ bool Port::open(const Contact& contact, bool registerName,
     ConstString rename = NetworkBase::getEnvironment(nenv.c_str());
     if (rename!="") {
         n = rename;
-        contact2 = contact2.addName(n);
+        contact2.setName(n);
     }
 
     bool local = false;
@@ -119,7 +119,7 @@ bool Port::open(const Contact& contact, bool registerName,
             ConstString prefix = NetworkBase::getEnvironment("YARP_PORT_PREFIX");
             if (prefix!="") {
                 n = prefix + n;
-                contact2 = contact2.addName(n);
+                contact2.setName(n);
             }
         }
     }
@@ -139,10 +139,10 @@ bool Port::open(const Contact& contact, bool registerName,
                     if (currentCore->commitToRpc) {
                         cat += "1";
                     }
-                    contact2 = contact2.addName(nc.getNestedName() +
-                                                cat +
-                                                "@" +
-                                                nc.getNodeName());
+                    contact2.setName(nc.getNestedName() +
+                                     cat +
+                                     "@" +
+                                     nc.getNodeName());
                 } else {
                     YARP_SPRINTF1(Logger::get(),error,
                                   "Error: Port '%s' is not committed to being either an input or output port.",
@@ -204,12 +204,11 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     bool success = true;
-    Contact caddress = Contact::bySocket(contact2.getCarrier(),
-                                         contact2.getHost(),
-                                         contact2.getPort())
-        .addName(contact2.getName());
-    caddress.setNested(contact2.getNested());
-    Contact address = caddress;
+    Contact address(contact2.getName(),
+                    contact2.getCarrier(),
+                    contact2.getHost(),
+                    contact2.getPort());
+    address.setNestedContact(contact2.getNested());
 
     core.setReadHandler(core);
     if (contact2.getPort()>0 && contact2.getHost()!="") {
@@ -229,7 +228,7 @@ bool Port::open(const Contact& contact, bool registerName,
         NestedContact nc;
         nc.fromString(contact2.getName());
         nc.setTypeName(ntyp);
-        contact2.setNested(nc);
+        contact2.setNestedContact(nc);
         if (getType().getNameOnWire()!=ntyp) {
             core.promiseType(Type::byNameOnWire(ntyp.c_str()));
         }
@@ -271,15 +270,15 @@ bool Port::open(const Contact& contact, bool registerName,
     if (success) {
         address = core.getAddress();
         if (registerName&&local) {
-            contact2 = contact2.addSocket(address.getCarrier(),
-                                          address.getHost(),
-                                          address.getPort());
-            contact2 = contact2.addName(address.getRegName().c_str());
+            contact2.setSocket(address.getCarrier(),
+                               address.getHost(),
+                               address.getPort());
+            contact2.setName(address.getRegName().c_str());
             Contact newName = NetworkBase::registerContact(contact2);
             core.resetPortName(newName.getName());
             address = core.getAddress();
         } else if (core.getAddress().getRegName()=="" && !registerName) {
-            core.resetPortName(core.getAddress().addCarrier("").toURI());
+            core.resetPortName(core.getAddress().toURI(false));
             core.setName(core.getAddress().getRegName());
         }
 
@@ -326,11 +325,11 @@ bool Port::open(const Contact& contact, bool registerName,
 }
 
 bool Port::addOutput(const ConstString& name) {
-    return addOutput(Contact::byName(name));
+    return addOutput(Contact(name));
 }
 
 bool Port::addOutput(const ConstString& name, const ConstString& carrier) {
-    return addOutput(Contact::byName(name).addCarrier(carrier));
+    return addOutput(Contact(name, carrier));
 }
 
 void Port::close() {

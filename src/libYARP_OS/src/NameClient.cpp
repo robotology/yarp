@@ -103,7 +103,6 @@ public:
 
 
 Contact NameClient::extractAddress(const ConstString& txt) {
-    Contact result;
     Params p(txt.c_str());
     if (p.size()>=9) {
         // registration name /bozo ip 5.255.112.225 port 10002 type tcp
@@ -112,23 +111,22 @@ Contact NameClient::extractAddress(const ConstString& txt) {
             const char *ip = p.get(4);
             int port = atoi(p.get(6));
             const char *carrier = p.get(8);
-            result = Contact::bySocket(carrier,ip,port).addName(regName);
+            return Contact(regName, carrier, ip, port);
         }
     }
-    return result;
+    return Contact();
 }
 
 Contact NameClient::extractAddress(const Bottle& bot) {
-    Contact result;
     if (bot.size()>=9) {
         if (bot.get(0).asString()=="registration") {
-            result = Contact::bySocket(bot.get(8).asString().c_str(), // carrier
-                                       bot.get(4).asString().c_str(), // ip
-                                       bot.get(6).asInt()) // port number
-                .addName(bot.get(2).asString().c_str());   // regname
+            return Contact(bot.get(2).asString().c_str(), // regname
+                           bot.get(8).asString().c_str(), // carrier
+                           bot.get(4).asString().c_str(), // ip
+                           bot.get(6).asInt()); // port number
         }
     }
-    return result;
+    return Contact();
 }
 
 
@@ -162,7 +160,7 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
 
         if (isFakeMode()) {
             //YARP_DEBUG(Logger::get(),"fake mode nameserver");
-            return getServer().apply(cmd,Contact::bySocket("tcp","127.0.0.1",NetworkBase::getDefaultPortRange())) + "\n";
+            return getServer().apply(cmd, Contact("tcp", "127.0.0.1", NetworkBase::getDefaultPortRange())) + "\n";
         }
 
         TcpFace face;
@@ -250,8 +248,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
     }
     if (isFakeMode()) {
         YARP_DEBUG(Logger::get(),"fake mode nameserver");
-        return getServer().apply(cmd,reply,
-                                 Contact::bySocket("tcp","127.0.0.1",NetworkBase::getDefaultPortRange()));
+        return getServer().apply(cmd, reply, Contact("tcp", "127.0.0.1", NetworkBase::getDefaultPortRange()));
     } else {
         Contact server = getAddress();
         ContactStyle style;

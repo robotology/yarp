@@ -701,9 +701,7 @@ int Companion::cmdName(int argc, char *argv[]) {
         }
         Contact result;
         if (spec) {
-            Contact c =
-                Contact::bySocket(carrier,machine,port).addName(portName);
-            result = NetworkBase::registerContact(c);
+            result = NetworkBase::registerContact(Contact(portName, carrier, machine, port));
         } else {
             result = NetworkBase::registerName(portName);
         }
@@ -1522,7 +1520,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
         if (entry!=NULL) {
             ConstString port = entry->check("name",Value("")).asString();
             if (port!="" && port!="fallback" && port!=name.c_str()) {
-                Contact c = Contact::byConfig(*entry);
+                Contact c = Contact::fromConfig(*entry);
                 if (c.getCarrier()=="mcast") {
                     printf("Skipping mcast port %s...\n", port.c_str());
                 } else {
@@ -1616,7 +1614,8 @@ int Companion::cmdDetectRos(bool write) {
         fprintf(stderr,"ROS_MASTER_URI environment variable not set.\n");
         uri = "http://127.0.0.1:11311/";
     }
-    Contact root = Contact::fromString(uri).addCarrier("xmlrpc");
+    Contact root = Contact::fromString(uri);
+    root.setCarrier("xmlrpc");
     fprintf(stderr,"Trying ROS_MASTER_URI=%s...\n", uri.c_str());
     OutputProtocol *out = Carriers::connect(root);
     bool ok = (out!=NULL);

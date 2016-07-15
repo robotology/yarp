@@ -228,7 +228,7 @@ public:
         input.open("/in");
         output.open("/out");
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
         Time::delay(0.2);
 
         report(0,"writing...");

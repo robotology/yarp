@@ -330,7 +330,7 @@ public:
     }
 
     void resetPortName(const ConstString& str) {
-        address = address.addName(str);
+        address.setName(str);
     }
 
     /**

@@ -157,7 +157,7 @@ public:
         ContactStyle style;
         style.timeout = 2.0;
         double start = Time::now();
-        Network::write(Contact::byName("/slow"),cmd,reply,style);
+        Network::write(Contact("/slow"), cmd, reply, style);
         double duration = Time::now()-start;
         bool goodTime = duration<9;
         checkEqual(reply.get(0).asString().c_str(),"","check timeout happened");

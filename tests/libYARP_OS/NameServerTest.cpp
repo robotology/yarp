@@ -26,7 +26,7 @@ public:
 
     void checkRegister() {
         report(0,"checking register...");
-        Contact address = Contact::bySocket("tcp","127.0.0.1",safePort());
+        Contact address("tcp", "127.0.0.1", safePort());
         NameServer ns;
         ns.registerName("/foo",address);
         Contact a1 = ns.queryName("/foo");
@@ -39,8 +39,7 @@ public:
     void checkClientInterface() {
         report(0,"checking client intrface...");
         NetworkBase::setLocalMode(true);
-        Contact address = Contact::bySocket("tcp","127.0.0.1",safePort());
-        address = address.addName("/foo2");
+        Contact address("/foo2", "tcp", "127.0.0.1", safePort());
         NetworkBase::registerContact(address);
         Contact a1 = NetworkBase::queryName("/foo2");
         checkEqual(a1.isValid(),true,"recover address");
@@ -53,8 +52,7 @@ public:
     void checkCompanion(bool fake) {
         report(0,"checking dud connections don't affect memory...");
         NetworkBase::setLocalMode(fake);
-        Contact address = Contact::bySocket("tcp","127.0.0.1",safePort());
-        address = address.addName("/foo2");
+        Contact address("/foo2", "tcp", "127.0.0.1", safePort());
         NetworkBase::registerContact(address);
         NetworkBase::connect("/junk","/junk2",NULL,true);
         NetworkBase::connect("/foo2","/junk2",NULL,true);

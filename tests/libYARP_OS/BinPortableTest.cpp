@@ -59,7 +59,7 @@ public:
         }
         //input.setReader(buf);
         buf.attach(input);
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
         report(0,"writing...");
         output.write(i);
         report(0,"reading...");
