@@ -265,7 +265,8 @@ public:
     }
 
     void getMasterUri(NodeArgs& na) {
-        na.reply.fromString("hmm");
+        na.reply.addString(NetworkBase::getEnvironment("ROS_MASTER_URI"));
+        na.success();
     }
 
     void shutdown(NodeArgs& na) {
