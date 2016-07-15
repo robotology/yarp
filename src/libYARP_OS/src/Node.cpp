@@ -8,9 +8,12 @@
 
 #include <yarp/os/Node.h>
 #include <yarp/os/Mutex.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/PortReport.h>
+#include <yarp/os/PortInfo.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/impl/PlatformStdlib.h>
@@ -21,6 +24,37 @@
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+
+class ROSReport : public PortReport {
+public:
+    std::string sourceURI;
+    std::string targetURI;
+
+    ROSReport() {
+    }
+
+    virtual void report(const PortInfo& info) {
+        NameClient& nic = NameClient::getNameClient();
+
+        std::string sourceTmp = nic.queryName(info.sourceName).toURI();
+        if(sourceTmp!="") {
+            sourceURI = sourceTmp + "/";
+            std::string toreplace = "xmlrpc://";
+            size_t source_pos = sourceURI.find(toreplace);
+            if(source_pos!=std::string::npos)
+                sourceURI.replace(source_pos, toreplace.length(), "http://");
+        }
+
+        std::string targetTmp = nic.queryName(info.targetName).toURI();
+        if(targetTmp!="") {
+            targetURI = targetTmp + "/";
+            std::string toreplace = "xmlrpc://";
+            size_t target_pos = targetURI.find(toreplace);
+            if(target_pos!=std::string::npos)
+                targetURI.replace(target_pos, toreplace.length(), "http://");
+        }
+    }
+};
 
 static ConstString toRosName(const ConstString& str) {
     return RosNameSpace::toRosName(str);
