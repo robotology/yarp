@@ -98,7 +98,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
             Bottle cmd, reply;
             cmd.clear();
             cmd.addString("registerService");
-            cmd.addString(toRosNodeName(nc.getNodeName()));
+            cmd.addString(toRosNodeName(nc.toString()));
             cmd.addString(toRosName(nc.getNestedName()));
             Contact rosrpc = contact.addCarrier("rosrpc");
             cmd.addString(rosrpc.toURI());
@@ -117,7 +117,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
             Bottle cmd, reply;
             cmd.clear();
             cmd.addString((cat=="+")?"registerPublisher":"registerSubscriber");
-            cmd.addString(toRosNodeName(nc.getNodeName()));
+            cmd.addString(toRosNodeName(nc.toString()));
             cmd.addString(toRosName(nc.getNestedName()));
             ConstString typ = nc.getTypeNameStar();
             if (typ!="*"&&typ!="") {
@@ -243,7 +243,7 @@ Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *sto
             Bottle cmd, reply;
             cmd.clear();
             cmd.addString("unregisterService");
-            cmd.addString(toRosNodeName(nc.getNodeName()));
+            cmd.addString(toRosNodeName(nc.toString()));
             cmd.addString(nc.getNestedName());
             cmd.addString(c.toURI());
             bool ok = NetworkBase::write(getNameServerContact(),
@@ -253,7 +253,7 @@ Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *sto
             Bottle cmd, reply;
             cmd.clear();
             cmd.addString((cat=="+")?"unregisterPublisher":"unregisterSubscriber");
-            cmd.addString(toRosNodeName(nc.getNodeName()));
+            cmd.addString(toRosNodeName(nc.toString()));
             cmd.addString(nc.getNestedName());
             Contact c;
             if (store) {
