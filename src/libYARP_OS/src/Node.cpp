@@ -158,6 +158,7 @@ public:
 class NodeHelper : public PortReader {
 public:
     std::map<ConstString,NodeItem> by_part_name;
+    std::map<ConstString,ROSReport*> report_items;
     std::multimap<ConstString,NodeItem> by_category;
     std::map<Contactable*,NodeItem> name_cache;
     Port port;
@@ -345,6 +346,10 @@ void NodeHelper::add(Contactable& contactable) {
     }
     prepare(name);
     item.contactable = &contactable;
+    ROSReport* rep = new ROSReport();
+    item.contactable->setReporter(*rep);
+
+    report_items[item.nc.getNestedName()] = rep;
     name_cache[&contactable] = item;
     by_part_name[item.nc.getNestedName()] = item;
     by_category.insert(std::pair<ConstString,NodeItem>(item.nc.getCategory(),item));
@@ -357,6 +362,7 @@ void NodeHelper::update(Contactable& contactable) {
 void NodeHelper::remove(Contactable& contactable) {
     NodeItem item = name_cache[&contactable];
     name_cache.erase(&contactable);
+    report_items.erase(item.nc.getNestedName());
     by_part_name.erase(item.nc.getNestedName());
     by_category.erase(item.nc.getCategory());
 }
