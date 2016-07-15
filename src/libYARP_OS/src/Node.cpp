@@ -267,7 +267,8 @@ public:
         na.success();
     }
 
-    void getBusInfo(NodeArgs& na) {
+    void getBusInfo(NodeArgs& na)
+    {
         mutex.lock();
         unsigned int opaque_id = 1;
         for (std::map<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
@@ -297,7 +298,8 @@ public:
 
     void getMasterUri(NodeArgs& na)
     {
-        na.reply.fromString("hmm");
+        na.reply.addString(NetworkBase::getEnvironment("ROS_MASTER_URI"));
+        na.success();
     }
 
     void shutdown(NodeArgs& na)
