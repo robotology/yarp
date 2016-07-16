@@ -9,7 +9,6 @@
 #include <yarp/conf/compiler.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Mutex.h>
-#include <yarp/os/LogStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Port.h>
