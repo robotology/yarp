@@ -28,7 +28,7 @@ namespace yarp {
  * you first creates the two objects separately then you can attach one
  * to the other.
  */
-class yarp::dev::IWrapper
+class YARP_dev_API yarp::dev::IWrapper
 {
 public:
     /**
@@ -60,7 +60,7 @@ public:
  * to the other. This class is similar to IWrapper, but allows attaching
  * to more than one object by subsequent calls to attach.
  */
-class yarp::dev::IMultipleWrapper
+class YARP_dev_API yarp::dev::IMultipleWrapper
 {
 public:
     /**

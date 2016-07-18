@@ -10,6 +10,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/Wrapper.h>
 
 #include "TestList.h"
 
@@ -205,6 +206,12 @@ name /mymotor\n\
         bool result;
         result = dd.open(p);
         checkTrue(result,"controlboardwrapper open reported successful");
+
+        // Check if IMultipleWrapper interface is correctly found
+        yarp::dev::IMultipleWrapper * i_mwrapper=0;
+        result = dd.view(i_mwrapper);
+        checkTrue(result,"IMultipleWrapper view reported successful");
+        checkTrue(i_mwrapper!=0,"IMultipleWrapper pointer not null");
 
         PolyDriver dd2;
         Property p2;
