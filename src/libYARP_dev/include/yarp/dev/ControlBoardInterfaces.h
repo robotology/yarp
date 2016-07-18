@@ -220,7 +220,7 @@ public:
  * Interface for a generic control board device implementing a PID controller,
  * with scaled arguments.
  */
-class yarp::dev::IPidControl
+class YARP_dev_API yarp::dev::IPidControl
 {
 public:
     /**
@@ -360,7 +360,7 @@ public:
  *
  * Interface for control devices, amplifier commands.
  */
-class yarp::dev::IAmplifierControl
+class YARP_dev_API yarp::dev::IAmplifierControl
 {
 public:
     /**
