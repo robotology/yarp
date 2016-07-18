@@ -28,7 +28,7 @@ extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
 
 
 #ifdef WITH_YARPMATH
-extern yarp::os::impl::UnitTest& getTransformClientTest();
+extern yarp::os::impl::UnitTest& getFrameTransformClientTest();
 #endif
 
 class yarp::os::impl::TestList {
@@ -41,7 +41,7 @@ public:
 #endif
 
 #ifdef WITH_YARPMATH
-        root.add(getTransformClientTest());
+        root.add(getFrameTransformClientTest());
 #endif	
     }
 };

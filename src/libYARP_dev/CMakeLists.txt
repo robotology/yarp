@@ -66,7 +66,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IPositionDirect.h
                   include/yarp/dev/IPositionDirectImpl.h
                   include/yarp/dev/ITorqueControl.h
-                  include/yarp/dev/ITransform.h
+                  include/yarp/dev/IFrameTransform.h
                   include/yarp/dev/IVelocityControl2.h
                   include/yarp/dev/IVelocityControl2Impl.h
                   include/yarp/dev/IVelocityControl.h
@@ -151,8 +151,8 @@ set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.cpp
                         src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp)
 if (CREATE_LIB_MATH)
-  list(APPEND YARP_devices_SRCS src/modules/TransformClient/TransformClient.cpp
-                                src/modules/TransformServer/TransformServer.cpp)
+  list(APPEND YARP_devices_SRCS src/modules/FrameTransformClient/FrameTransformClient.cpp
+                                src/modules/FrameTransformServer/FrameTransformServer.cpp)
 endif()
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
@@ -166,8 +166,8 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.h
                         src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h)
 if (CREATE_LIB_MATH)
-  list(APPEND YARP_devices_SRCS src/modules/TransformClient/TransformClient.h
-                                src/modules/TransformServer/TransformServer.h)
+  list(APPEND YARP_devices_SRCS src/modules/FrameTransformClient/FrameTransformClient.h
+                                src/modules/FrameTransformServer/FrameTransformServer.h)
 endif()
 
 # handle the ros / yarp thrift messages
@@ -232,7 +232,7 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/AnalogSensorClient)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/BatteryClient)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/TransformClient)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/FrameTransformClient)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})

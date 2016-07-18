@@ -10,12 +10,13 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/api.h>
+#include <yarp/math/Math.h>
 
 namespace yarp
 {
     namespace math 
     {
-        class Transform_t
+        class FrameTransform
         {
             public:           
             std::string src_frame_id;
@@ -95,14 +96,14 @@ namespace yarp
 
             } rotation;
 
-            Transform_t()
+            FrameTransform()
             {
                 timestamp = 0;
                 translation.set(0, 0, 0);
                 rotation.set(0, 0, 0, 0);
             }
 
-            Transform_t
+            FrameTransform
                 (
                 const std::string& parent,
                 const std::string& child,
@@ -121,7 +122,7 @@ namespace yarp
                 rotation.set(inRX, inRY, inRZ, inRW);
             }
 
-            ~Transform_t(){};
+            ~FrameTransform(){};
 
             void transFromVec(double X, double Y, double Z)
             {

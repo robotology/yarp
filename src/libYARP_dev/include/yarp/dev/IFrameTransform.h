@@ -11,11 +11,10 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Matrix.h>
 #include <vector>
-#include <yarp/math/Math.h>
 
 namespace yarp {
     namespace dev {
-        class ITransform;
+        class IFrameTransform;
       }
 }
 
@@ -24,7 +23,7 @@ namespace yarp {
  *
  * Transform Interface.
  */
-class YARP_dev_API yarp::dev::ITransform
+class YARP_dev_API yarp::dev::IFrameTransform
 {
 public:
     enum
@@ -36,7 +35,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~ITransform() {}
+    virtual ~IFrameTransform() {}
 
     /**
     Creates a debug string containing the list of all registered frames.
@@ -46,10 +45,12 @@ public:
     virtual bool allFramesAsString(std::string &all_frames) = 0;
 
     /**
-    Test if a transform exists. 
+    Test if a transform exists.
+    * @param target_frame_id the name of target reference frame
+    * @param source_frame_id the name of source reference frame
     * @return true/false
     */
-    virtual bool     canTransform (const std::string &target_frame, const std::string &source_frame, std::string *error_msg=NULL)  = 0;
+    virtual bool     canTransform (const std::string &target_frame, const std::string &source_frame)  = 0;
 
     /**
      Removes all the registered transforms. 
@@ -100,6 +101,15 @@ public:
     virtual bool     setTransform (const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) = 0;
 
     /**
+    Register a static transform between two frames.
+    * @param target_frame_id the name of target reference frame
+    * @param source_frame_id the name of source reference frame
+    * @param transform the transformation matrix from source_frame_id to target_frame_id
+    * @return true/false
+    */
+    virtual bool     setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) = 0;
+
+    /**
      Deletes a transform between two frames.
      * @param target_frame_id the name of target reference frame
     * @param source_frame_id the name of source reference frame
@@ -148,8 +158,9 @@ public:
     virtual bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) = 0;
 };
 
-#define VOCAB_ITRANSFORM          VOCAB4('i','t','r','f')
-#define VOCAB_TRANSFORM_SET       VOCAB4('t','f','s','t')
-#define VOCAB_TRANSFORM_DELETE    VOCAB4('t','f','d','l')
+#define VOCAB_ITRANSFORM              VOCAB4('i','t','r','f')
+#define VOCAB_TRANSFORM_SET           VOCAB4('t','f','s','t')
+#define VOCAB_TRANSFORM_DELETE        VOCAB4('t','f','d','l')
+#define VOCAB_TRANSFORM_DELETE_ALL    VOCAB4('t','f','d','a')
 
 #endif

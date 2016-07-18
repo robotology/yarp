@@ -6,6 +6,6 @@
 
 #include <yarp/os/Log.h>
 #include <yarp/math/Math.h>
-#include <yarp/math/Transform.h>
+#include <yarp/math/FrameTransform.h>
 
 

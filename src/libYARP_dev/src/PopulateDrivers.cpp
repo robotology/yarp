@@ -43,8 +43,8 @@ extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
 
 #ifdef WITH_YARPMATH
-extern DriverCreator *createTransformServer();
-extern DriverCreator *createTransformClient();
+extern DriverCreator *createFrameTransformServer();
+extern DriverCreator *createFrameTransformClient();
 #endif
 
 #ifndef YARP_NO_DEPRECATED
@@ -100,8 +100,8 @@ void Drivers::init() {
     add(createControlBoardRemapper());
 
 #ifdef WITH_YARPMATH
-    add(createTransformServer());
-    add(createTransformClient());
+    add(createFrameTransformServer());
+    add(createFrameTransformClient());
 #endif
 
 #ifndef YARP_NO_DEPRECATED

@@ -12,23 +12,23 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PreciselyTimed.h>
-#include <yarp/dev/ITransform.h>
+#include <yarp/dev/IFrameTransform.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/math/Transform.h>
+#include <yarp/math/FrameTransform.h>
 
 namespace yarp {
     namespace dev {
-        class TransformClient;
+        class FrameTransformClient;
     }
 }
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
-const int TRANSFORM_TIMEOUT_MS=100; //ms
+const int TRANSFORM_TIMEOUT_MS = 100; //ms
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -46,17 +46,17 @@ private:
     int              m_state;
     int              m_count;
 
-    std::vector <yarp::math::Transform_t> m_transforms;
+    std::vector <yarp::math::FrameTransform> m_transforms;
 
 public:
     size_t   size();
-    yarp::math::Transform_t& operator[]   (std::size_t idx);
+    yarp::math::FrameTransform& operator[]   (std::size_t idx);
     void clear();
 
 public:
     Transforms_client_storage (std::string port_name);
     ~Transforms_client_storage ( );
-    bool     set_transform(yarp::math::Transform_t t);
+    bool     set_transform(yarp::math::FrameTransform t);
     bool     delete_transform(std::string t1, std::string t2);
 
     inline void resetStat();
@@ -75,8 +75,8 @@ public:
 * The client side of any IBattery capable device.
 * Still single thread! concurrent access is unsafe.
 */
-class yarp::dev::TransformClient: public DeviceDriver,
-                                  public ITransform
+class yarp::dev::FrameTransformClient: public DeviceDriver,
+                                  public IFrameTransform
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
@@ -107,13 +107,14 @@ public:
     yarp::os::Stamp getLastInputStamp();
 
      bool     allFramesAsString(std::string &all_frames);
-     bool     canTransform(const std::string &target_frame, const std::string &source_frame, std::string *error_msg = NULL);
+     bool     canTransform(const std::string &target_frame, const std::string &source_frame);
      bool     clear() ;
      bool     frameExists(const std::string &frame_id) ;
      bool     getAllFrameIds(std::vector< std::string > &ids) ;
      bool     getParent(const std::string &frame_id, std::string &parent_frame_id) ;
      bool     getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) ;
      bool     setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) ;
+     bool     setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform);
      bool     deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)     ;
      bool     transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point);
      bool     transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose);
