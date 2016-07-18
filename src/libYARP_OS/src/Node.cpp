@@ -228,6 +228,11 @@ public:
                 }
             }
         }
+        for (std::map<ConstString,ROSReport*>::iterator it = report_items.begin(); it != report_items.end(); it++) {
+            delete it->second;
+        }
+        report_items.clear();
+
         mutex.unlock();
         port.interrupt();
     }
