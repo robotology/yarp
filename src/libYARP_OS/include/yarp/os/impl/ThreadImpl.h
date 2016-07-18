@@ -87,6 +87,8 @@ public:
     long tid;
     Platform_thread_t  id;
 
+    static void yield();
+
 private:
     int defaultPriority;
     int defaultPolicy;
