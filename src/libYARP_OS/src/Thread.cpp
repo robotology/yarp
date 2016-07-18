@@ -139,4 +139,6 @@ void Thread::setDefaultStackSize(int stackSize) {
     ThreadImpl::setDefaultStackSize(stackSize);
 }
 
-
+void Thread::yield() {
+    ThreadImpl::yield();
+}
