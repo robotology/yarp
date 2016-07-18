@@ -577,7 +577,7 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %template(BufferedPortImageInt) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
 
 %template(TypedReaderSound) yarp::os::TypedReader<yarp::sig::Sound >;
-%template(TypedReaderCallbackImageMono) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
+%template(TypedReaderCallbackSound) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
 
 // Add getPixel and setPixel methods to access float values
