@@ -237,9 +237,10 @@ ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
 #ifdef YARP_HAS_ACE
     ACE_INET_Addr *ips = NULL;
     size_t count = 0;
+    char hostAddress[256];
     if (ACE::get_ip_interfaces(count,ips)>=0) {
         for (size_t i=0; i<count; i++) {
-            ConstString ip = ips[i].get_host_addr();
+            ConstString ip = ips[i].get_host_addr(hostAddress, 256);
 #else
     int family, s;
     char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
