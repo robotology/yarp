@@ -26,6 +26,11 @@ extern yarp::os::impl::UnitTest& getPolyDriverTest();
 extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
 #endif
 
+
+#ifdef WITH_YARPMATH
+extern yarp::os::impl::UnitTest& getFrameTransformClientTest();
+#endif
+
 class yarp::os::impl::TestList {
 public:
     static void collectTests() {
@@ -34,6 +39,10 @@ public:
 #ifdef YARP_CONTROLBOARDREMAPPER_TESTS
         root.add(getControlBoardRemapperTest());
 #endif
+
+#ifdef WITH_YARPMATH
+        root.add(getFrameTransformClientTest());
+#endif	
     }
 };
 
