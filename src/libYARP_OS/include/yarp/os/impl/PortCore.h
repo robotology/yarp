@@ -392,6 +392,11 @@ public:
     void setReportCallback(yarp::os::PortReport *reporter);
 
     /**
+     * Reset the callback to be notified of changes in port status.
+     */
+    void resetReportCallback();
+
+    /**
      * Process an administrative message.
      */
     bool adminBlock(yarp::os::ConnectionReader& reader, void *id,

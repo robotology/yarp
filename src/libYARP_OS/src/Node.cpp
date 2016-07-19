@@ -460,6 +460,8 @@ void yarp::os::Node::Helper::remove(Contactable& contactable)
 {
     NodeItem item = name_cache[&contactable];
     name_cache.erase(&contactable);
+    contactable.resetReporter();
+    delete report_items[item.nc.getNestedName()];
     report_items.erase(item.nc.getNestedName());
     by_part_name.erase(item.nc.getNestedName());
     by_category.erase(item.nc.getCategory());

@@ -190,6 +190,9 @@ public:
     // documented in Contactable
     virtual void setReporter(PortReport& reporter);
 
+    // documented in Contactable
+    virtual void resetReporter();
+
     /**
      *
      * Turn on/off "admin" mode.  With admin mode on, messages

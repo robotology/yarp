@@ -1175,6 +1175,11 @@ void PortCore::setReportCallback(yarp::os::PortReport *reporter) {
    stateMutex.post();
 }
 
+void PortCore::resetReportCallback() {
+    stateMutex.wait();
+    eventReporter = NULL;
+    stateMutex.post();
+}
 
 void PortCore::report(const PortInfo& info) {
     // We are in the context of one of the input or output threads,
