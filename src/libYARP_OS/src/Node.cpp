@@ -19,6 +19,7 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/NameClient.h>
 
+#include <algorithm>
 #include <vector>
 #include <list>
 #include <map>
