@@ -79,8 +79,12 @@ void SocketTwoWayStream::updateAddresses() {
     ACE_INET_Addr local, remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
-    localAddress = Contact(local.get_host_addr(),local.get_port_number());
-    remoteAddress = Contact(remote.get_host_addr(),remote.get_port_number());
+    char localHostAddress[256];
+    char remoteHostAddress[256];
+    local.get_host_addr(localHostAddress, 256);
+    remote.get_host_addr(remoteHostAddress, 256);
+    localAddress = Contact(localHostAddress,local.get_port_number());
+    remoteAddress = Contact(remoteHostAddress,remote.get_port_number());
 #else
     stream.set_option (IPPROTO_TCP, TCP_NODELAY, &one,
                        sizeof(int));
@@ -95,7 +99,7 @@ void SocketTwoWayStream::updateAddresses() {
     } else {
         YARP_ERROR(Logger::get(),"ipv6 address type not propagated without ACE");
     }
-#endif    
+#endif
 }
 
 bool SocketTwoWayStream::setTypeOfService(int tos) {
