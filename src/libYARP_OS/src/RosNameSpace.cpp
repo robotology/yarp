@@ -111,7 +111,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
                 Nodes& nodes = NameClient::getNameClient().getNodes();
                 c = rosify(nodes.getParent(contact.getName()));
             }
-            cmd.addString(c.toString());
+            cmd.addString(c.toString() + "/");
             bool ok = NetworkBase::write(getNameServerContact(),
                                          cmd, reply);
             if (!ok) return Contact();
@@ -140,7 +140,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
                 c = rosify(nodes.getParent(contact.getName()));
             }
             //Contact c = rosify(contact);
-            cmd.addString(c.toString());
+            cmd.addString(c.toString() + "/");
             bool ok = NetworkBase::write(getNameServerContact(),
                                          cmd, reply);
             if (!ok) {

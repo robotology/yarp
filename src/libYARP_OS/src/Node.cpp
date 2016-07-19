@@ -19,6 +19,7 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/NameClient.h>
 
+#include <vector>
 #include <list>
 #include <map>
 
@@ -27,8 +28,8 @@ using namespace yarp::os::impl;
 
 class ROSReport : public PortReport {
 public:
-    std::string sourceURI;
-    std::string targetURI;
+    std::vector<std::string> sourceURIs;
+    std::vector<std::string> targetURIs;
 
     ROSReport() {
     }
@@ -38,20 +39,36 @@ public:
 
         std::string sourceTmp = nic.queryName(info.sourceName).toURI();
         if(sourceTmp!="") {
-            sourceURI = sourceTmp + "/";
+            sourceTmp = sourceTmp + "/";
             std::string toreplace = "xmlrpc://";
-            size_t source_pos = sourceURI.find(toreplace);
+            size_t source_pos = sourceTmp.find(toreplace);
             if(source_pos!=std::string::npos)
-                sourceURI.replace(source_pos, toreplace.length(), "http://");
+                sourceTmp.replace(source_pos, toreplace.length(), "http://");
+
+            if(info.created) {
+                if(std::find(sourceURIs.begin(), sourceURIs.end(), sourceTmp)==sourceURIs.end()) {
+                    sourceURIs.push_back(sourceTmp);
+                }
+            } else {
+                sourceURIs.erase(std::remove(sourceURIs.begin(), sourceURIs.end(), sourceTmp), sourceURIs.end());
+            }
         }
 
         std::string targetTmp = nic.queryName(info.targetName).toURI();
         if(targetTmp!="") {
-            targetURI = targetTmp + "/";
+            targetTmp = targetTmp + "/";
             std::string toreplace = "xmlrpc://";
-            size_t target_pos = targetURI.find(toreplace);
+            size_t target_pos = targetTmp.find(toreplace);
             if(target_pos!=std::string::npos)
-                targetURI.replace(target_pos, toreplace.length(), "http://");
+                targetTmp.replace(target_pos, toreplace.length(), "http://");
+
+            if(info.created) {
+                if(std::find(targetURIs.begin(), targetURIs.end(), targetTmp)==targetURIs.end()) {
+                    targetURIs.push_back(targetTmp);
+                }
+            } else {
+                targetURIs.erase(std::remove(targetURIs.begin(), targetURIs.end(), targetTmp), targetURIs.end());
+            }
         }
     }
 };
@@ -279,22 +296,27 @@ public:
             NodeItem& item = it->second;
             if (!(item.isSubscriber() || item.isPublisher())) continue;
             item.update();
-            Bottle& lst = na.reply.addList();
-            item.contactable->getReport(*report_items.at(it->first));
             if(item.isSubscriber()) {
-                if(report_items.at(it->first)->sourceURI=="") continue;
-                lst.addInt(opaque_id); // connectionId
-                lst.addString(report_items.at(it->first)->sourceURI);
-                lst.addString("i");
+                for(size_t i=0; i<report_items.at(it->first)->sourceURIs.size(); i++) {
+                    Bottle& lst = na.reply.addList();
+                    lst.addInt(opaque_id); // connectionId
+                    lst.addString(report_items.at(it->first)->sourceURIs[i]);
+                    lst.addString("i");
+                    lst.addString("TCPROS");
+                    lst.addString(toRosName(item.nc.getNestedName()));
+                    opaque_id++;
+                }
             } else if(item.isPublisher()) {
-                if(report_items.at(it->first)->targetURI=="") continue;
-                lst.addInt(opaque_id); // connectionId
-                lst.addString(report_items.at(it->first)->targetURI);
-                lst.addString("o");
+                for(size_t i=0; i<report_items.at(it->first)->targetURIs.size(); i++) {
+                    Bottle& lst = na.reply.addList();
+                    lst.addInt(opaque_id); // connectionId
+                    lst.addString(report_items.at(it->first)->targetURIs[i]);
+                    lst.addString("o");
+                    lst.addString("TCPROS");
+                    lst.addString(toRosName(item.nc.getNestedName()));
+                    opaque_id++;
+                }
             }
-            lst.addString("TCPROS");
-            lst.addString(toRosName(item.nc.getNestedName()));
-            opaque_id++;
         }
         mutex.unlock();
         na.success();
