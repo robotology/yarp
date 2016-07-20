@@ -233,6 +233,7 @@ public:
             Contactable *c = name_cache.begin()->first;
             if (c) {
                 mutex.unlock();
+                c->resetReporter();
                 c->interrupt();
                 c->close();
                 mutex.lock();
