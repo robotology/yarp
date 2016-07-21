@@ -10,7 +10,8 @@
 
 #include <stdio.h>
 using namespace yarp::dev;
-
+#define JOINTIDCHECK if (m >= castToMapper(helper)->axes()){yError("motor id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 ////////////////////////
 // Encoder Interface Timed Implementation
 ImplementMotorEncoders::ImplementMotorEncoders(IMotorEncodersRaw *y)
@@ -66,6 +67,7 @@ bool ImplementMotorEncoders::getNumberOfMotorEncoders(int *num)
 
 bool ImplementMotorEncoders::resetMotorEncoder(int m)
 {
+    JOINTIDCHECK
     int k;
     k=castToMapper(helper)->toHw(m);
 
@@ -79,6 +81,7 @@ bool ImplementMotorEncoders::resetMotorEncoders()
 
 bool ImplementMotorEncoders::setMotorEncoder(int m, const double val)
 {
+    JOINTIDCHECK
     int k;
     double enc;
 
@@ -89,6 +92,7 @@ bool ImplementMotorEncoders::setMotorEncoder(int m, const double val)
 
 bool ImplementMotorEncoders::getMotorEncoderCountsPerRevolution(int m, double* cpr)
 {
+    JOINTIDCHECK
     bool ret;
     int k=castToMapper(helper)->toHw(m);
 
@@ -99,6 +103,7 @@ bool ImplementMotorEncoders::getMotorEncoderCountsPerRevolution(int m, double* c
 
 bool ImplementMotorEncoders::setMotorEncoderCountsPerRevolution(int m, double cpr)
 {
+    JOINTIDCHECK
     int k;
 
     k=castToMapper(helper)->toHw(m);
@@ -115,6 +120,7 @@ bool ImplementMotorEncoders::setMotorEncoders(const double *val)
 
 bool ImplementMotorEncoders::getMotorEncoder(int m, double *v)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     bool ret;
@@ -142,6 +148,7 @@ bool ImplementMotorEncoders::getMotorEncoders(double *v)
 
 bool ImplementMotorEncoders::getMotorEncoderSpeed(int m, double *v)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     bool ret;
@@ -167,6 +174,7 @@ bool ImplementMotorEncoders::getMotorEncoderSpeeds(double *v)
 
 bool ImplementMotorEncoders::getMotorEncoderAcceleration(int m, double *v)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     bool ret;
@@ -192,6 +200,7 @@ bool ImplementMotorEncoders::getMotorEncoderAccelerations(double *v)
 
 bool ImplementMotorEncoders::getMotorEncoderTimed(int m, double *v, double *t)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     bool ret;

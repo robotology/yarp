@@ -11,6 +11,9 @@
 #include <yarp/dev/ControlBoardHelper.h>
 
 using namespace yarp::dev;
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementVelocityControl2::ImplementVelocityControl2(IVelocityControl2Raw *y) :
     iVelocity2(y),
@@ -77,6 +80,7 @@ YARP_WARNING_POP
 
 bool ImplementVelocityControl2::velocityMove(int j, double sp)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     castToMapper(helper)->velA2E(sp, j, enc, k);
@@ -87,6 +91,7 @@ bool ImplementVelocityControl2::velocityMove(const int n_joint, const int *joint
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         castToMapper(helper)->velA2E(spds[idx], joints[idx], temp_double[idx], temp_int[idx]);
     }
     return iVelocity2->velocityMoveRaw(n_joint, temp_int, temp_double);
@@ -100,6 +105,7 @@ bool ImplementVelocityControl2::velocityMove(const double *sp)
 
 bool ImplementVelocityControl2::getRefVelocity(const int j, double* vel)
 {
+    JOINTIDCHECK
     int k;
     double tmp;
     k=castToMapper(helper)->toHw(j);
@@ -119,6 +125,7 @@ bool ImplementVelocityControl2::getRefVelocities(const int n_joint, const int *j
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 
@@ -133,6 +140,7 @@ bool ImplementVelocityControl2::getRefVelocities(const int n_joint, const int *j
 
 bool ImplementVelocityControl2::setRefAcceleration(int j, double acc)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     castToMapper(helper)->accA2E_abs(acc, j, enc, k);
@@ -143,6 +151,7 @@ bool ImplementVelocityControl2::setRefAccelerations(const int n_joint, const int
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         castToMapper(helper)->accA2E_abs(accs[idx], joints[idx], temp_double[idx], temp_int[idx]);
     }
     return iVelocity2->setRefAccelerationsRaw(n_joint, temp_int, temp_double);
@@ -156,6 +165,7 @@ bool ImplementVelocityControl2::setRefAccelerations(const double *accs)
 
 bool ImplementVelocityControl2::getRefAcceleration(int j, double *acc)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     k=castToMapper(helper)->toHw(j);
@@ -168,6 +178,7 @@ bool ImplementVelocityControl2::getRefAccelerations(const int n_joint, const int
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 
@@ -191,6 +202,7 @@ bool ImplementVelocityControl2::getRefAccelerations(double *accs)
 
 bool ImplementVelocityControl2::stop(int j)
 {
+    JOINTIDCHECK
     int k;
     k=castToMapper(helper)->toHw(j);
     return iVelocity2->stopRaw(k);
@@ -201,6 +213,7 @@ bool ImplementVelocityControl2::stop(const int n_joint, const int *joints)
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
     return iVelocity2->stopRaw(n_joint, temp_int);
@@ -215,6 +228,7 @@ bool ImplementVelocityControl2::stop()
 
 bool ImplementVelocityControl2::setVelPid(int j, const Pid &pid)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return iVelocity2->setVelPidRaw(k,pid);
 }
@@ -237,6 +251,7 @@ bool ImplementVelocityControl2::setVelPids(const Pid *pids)
 
 bool ImplementVelocityControl2::getVelPid(int j, Pid *pid)
 {
+    JOINTIDCHECK
     int k;
     k=castToMapper(helper)->toHw(j);
 

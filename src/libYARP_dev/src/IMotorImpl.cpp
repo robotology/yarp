@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 using namespace yarp::dev;
+#define JOINTIDCHECK if (m >= castToMapper(helper)->axes()){yError("motor id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ////////////////////////
 // Encoder Interface Timed Implementation
@@ -66,6 +68,7 @@ bool ImplementMotor::getNumberOfMotors(int *num)
 
 bool ImplementMotor::getTemperature(int m, double* value)
 {
+    JOINTIDCHECK
     bool ret;
     int k=castToMapper(helper)->toHw(m);
 
@@ -76,6 +79,7 @@ bool ImplementMotor::getTemperature(int m, double* value)
 
 bool ImplementMotor::getTemperatureLimit(int m, double* value)
 {
+    JOINTIDCHECK
     bool ret;
     int k=castToMapper(helper)->toHw(m);
 
@@ -86,6 +90,7 @@ bool ImplementMotor::getTemperatureLimit(int m, double* value)
 
 bool ImplementMotor::setTemperatureLimit(int m, const double value)
 {
+    JOINTIDCHECK
     bool ret;
     int k=castToMapper(helper)->toHw(m);
 
@@ -96,6 +101,7 @@ bool ImplementMotor::setTemperatureLimit(int m, const double value)
 
 bool ImplementMotor::getGearboxRatio(int m, double* value)
 {
+    JOINTIDCHECK
     bool ret;
     int k = castToMapper(helper)->toHw(m);
 
@@ -106,6 +112,7 @@ bool ImplementMotor::getGearboxRatio(int m, double* value)
 
 bool ImplementMotor::setGearboxRatio(int m, const double value)
 {
+    JOINTIDCHECK
     bool ret;
     int k = castToMapper(helper)->toHw(m);
 

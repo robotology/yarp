@@ -12,7 +12,8 @@
 #include <yarp/dev/IInteractionModeImpl.h>
 
 using namespace yarp::dev;
-
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementInteractionMode::ImplementInteractionMode(yarp::dev::IInteractionModeRaw *class_p) :
     iInteraction(class_p),
@@ -81,9 +82,11 @@ bool ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::Interacti
 
 bool ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    for(int i=0; i<n_joints; i++)
-        temp_int[i] = castToMapper(helper)->toHw(joints[i]);
-
+    for (int i = 0; i < n_joints; i++)
+    {
+         MJOINTIDCHECK(i)
+         temp_int[i] = castToMapper(helper)->toHw(joints[i]);
+    }
     return iInteraction->getInteractionModesRaw(n_joints, temp_int, modes);
 }
 
@@ -110,6 +113,7 @@ bool ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, ya
 {
     for(int idx=0; idx<n_joints; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
     return iInteraction->setInteractionModesRaw(n_joints, temp_int, modes);

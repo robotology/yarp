@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 using namespace yarp::dev;
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ////////////////////////
 // Encoder Interface Timed Implementation
@@ -66,6 +68,7 @@ bool ImplementEncodersTimed::getAxes(int *ax)
 
 bool ImplementEncodersTimed::resetEncoder(int j)
 {
+    JOINTIDCHECK
     int k;
     k=castToMapper(helper)->toHw(j);
 
@@ -79,6 +82,7 @@ bool ImplementEncodersTimed::resetEncoders()
 
 bool ImplementEncodersTimed::setEncoder(int j, double val)
 {
+    JOINTIDCHECK
     int k;
     double enc;
 
@@ -96,6 +100,7 @@ bool ImplementEncodersTimed::setEncoders(const double *val)
 
 bool ImplementEncodersTimed::getEncoder(int j, double *v)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     bool ret;
@@ -123,6 +128,7 @@ bool ImplementEncodersTimed::getEncoders(double *v)
 
 bool ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     bool ret;
@@ -148,6 +154,7 @@ bool ImplementEncodersTimed::getEncoderSpeeds(double *v)
 
 bool ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     bool ret;
@@ -173,6 +180,7 @@ bool ImplementEncodersTimed::getEncoderAccelerations(double *v)
 
 bool ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     bool ret;
