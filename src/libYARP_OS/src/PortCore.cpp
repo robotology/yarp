@@ -1714,6 +1714,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     STANZA_INT(breverse, "push", 0);
                                     result.addList() = breverse;
                                 }
+                                delete carrier;
                             }
                         }
                     }
@@ -1751,6 +1752,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     STANZA_INT(breverse, "push", 0);
                                     result.addList() = breverse;
                                 }
+                                delete carrier;
                             }
                         }
                     }
