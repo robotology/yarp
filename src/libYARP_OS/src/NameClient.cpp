@@ -27,7 +27,7 @@ using namespace yarp::os;
 
 NameClient *NameClient::instance = NULL;
 bool NameClient::instanceClosed = false;
-
+yarp::os::Mutex NameClient::mutex;
 
 
 /*
@@ -423,6 +423,7 @@ NameClient::NameClient() :
 }
 
 void NameClient::setup() {
+    mutex.lock();
     if ((!fake)&&(!isSetup)) {
         if (!updateAddress()) {
             YARP_ERROR(Logger::get(),"Cannot find name server");
@@ -432,4 +433,5 @@ void NameClient::setup() {
                    address.toURI());
         isSetup = true;
     }
+    mutex.unlock();
 }
