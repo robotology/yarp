@@ -477,7 +477,7 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     class Private;
-    Private * mPriv;
+    Private * const mPriv;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 };

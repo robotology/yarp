@@ -105,7 +105,7 @@ Contact::~Contact()
 Contact& Contact::operator=(const Contact& rhs)
 {
     if(&rhs != this) {
-        mPriv = rhs.mPriv;
+        *mPriv = *(rhs.mPriv);
     }
     return *this;
 }
