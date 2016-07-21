@@ -188,7 +188,7 @@ public:
         }
         checkFalse(mismatch,"multiple messages ok");
 
-        
+
         ////////////////////////////////////////////////////////////////////
         // Send three messages, corrupt in different ways
 
@@ -266,4 +266,3 @@ static DgramTwoWayStreamTest theDgramTwoWayStreamTest;
 UnitTest& getDgramTwoWayStreamTest() {
     return theDgramTwoWayStreamTest;
 }
-
