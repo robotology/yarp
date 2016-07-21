@@ -33,10 +33,6 @@ if(YARP_COMPILE_TESTS)
 
     foreach(test_family ${targets})
         file(GLOB harness_code ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.cpp ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.h)
-        if("${test_family}" STREQUAL "OS" AND NOT YARP_HAS_ACE)
-            # Without ACE, we don't currently have UDP
-            list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_OS/DgramTwoWayStreamTest.cpp)
-        endif()
         if("${test_family}" STREQUAL "dev" AND NOT YARP_HAS_MATH_LIB)
             # Without MATH lib, we don't compile FrameTransformClient 
             list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_dev/FrameTransformClientTest.cpp)

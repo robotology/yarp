@@ -7,6 +7,7 @@
 
 
 #include <yarp/os/Log.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Time.h>
@@ -349,7 +350,7 @@ static void handler (int) {
     ct++;
     if (ct>3) {
         yInfo("Aborting...");
-        ACE_OS::exit(1);
+        yarp::os::exit(1);
     }
     if (terminatorKey!="") {
         yInfo("[try %d of 3] Trying to shut down %s", ct, terminatorKey.c_str());
@@ -357,7 +358,7 @@ static void handler (int) {
         Terminator::terminateByName(terminatorKey.c_str());
     } else {
         yInfo("Aborting...");
-        ACE_OS::exit(1);
+        yarp::os::exit(1);
     }
 }
 

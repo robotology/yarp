@@ -10,6 +10,7 @@
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Os.h>
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
@@ -357,7 +358,7 @@ void PortReaderBufferBase::release(PortReader *completed) {
     //HELPER(implementation).configure(completed,true,false);
     //HELPER(implementation).stateSema.post();
     printf("release not implemented anymore; not needed\n");
-    exit(1);
+    yarp::os::exit(1);
 }
 
 int PortReaderBufferBase::check() {

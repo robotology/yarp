@@ -6,6 +6,7 @@
  */
 
 #include <yarp/os/RosNameSpace.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameClient.h>
@@ -75,7 +76,7 @@ Contact RosNameSpace::queryName(const ConstString& name) {
 Contact RosNameSpace::registerName(const ConstString& name) {
     fprintf(stderr,"ROS name server does not do 'raw' registrations.\n");
     fprintf(stderr,"Use [Buffered]Port::open to get complete registrations.\n");
-    exit(1);
+    yarp::os::exit(1);
 
     return Contact();
 }

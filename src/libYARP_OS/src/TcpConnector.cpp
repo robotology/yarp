@@ -31,6 +31,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <iostream>
+#include <cstdio>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
