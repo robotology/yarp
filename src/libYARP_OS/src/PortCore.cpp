@@ -1955,6 +1955,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         }
                     }
                 }
+                stateMutex.post();
                 for (int i=0; i<pubs->size(); i++) {
                     ConstString pub = pubs->get(i).asString();
                     if (!present.check(pub)) {
@@ -2016,6 +2017,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 }
                                 op->rename(Route().addFromName(op->getRoute().getToName()).addToName(op->getRoute().getFromName()).addCarrierName(op->getRoute().getCarrierName()));
                                 InputProtocol *ip =  &(op->getInput());
+                                stateMutex.wait();
                                 PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                                            getNextIndex(),
 
@@ -2025,11 +2027,11 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 unit->setPupped(pub);
                                 unit->start();
                                 units.push_back(unit);
+                                stateMutex.post();
                             }
                         }
                     }
                 }
-                stateMutex.post();
             }
             result.addInt(1);
             result.addString("ok");

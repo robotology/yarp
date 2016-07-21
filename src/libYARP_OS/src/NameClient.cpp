@@ -27,7 +27,7 @@ using namespace yarp::os;
 
 NameClient *NameClient::instance = NULL;
 bool NameClient::instanceClosed = false;
-
+yarp::os::Mutex NameClient::mutex;
 
 
 /*
@@ -410,18 +410,20 @@ bool NameClient::setContact(const yarp::os::Contact& contact) {
 
 
 
-NameClient::NameClient() {
-    allowScan = false;
-    allowSaveScan = false;
-    reportScan = false;
-    reportSaveScan = false;
-    isSetup = false;
-    fake = false;
-    fakeServer = NULL;
-    altStore = NULL;
+NameClient::NameClient() :
+        fake(false),
+        fakeServer(NULL),
+        allowScan(false),
+        allowSaveScan(false),
+        reportScan(false),
+        reportSaveScan(false),
+        isSetup(false),
+        altStore(NULL)
+{
 }
 
 void NameClient::setup() {
+    mutex.lock();
     if ((!fake)&&(!isSetup)) {
         if (!updateAddress()) {
             YARP_ERROR(Logger::get(),"Cannot find name server");
@@ -431,4 +433,5 @@ void NameClient::setup() {
                    address.toURI());
         isSetup = true;
     }
+    mutex.unlock();
 }

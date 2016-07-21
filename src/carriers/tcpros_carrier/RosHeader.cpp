@@ -32,7 +32,7 @@ string RosHeader::showMessage(string s) {
     for (unsigned int i=0; i<s.length(); i++) {
         char buf[256];
         char ch = s[i];
-        sprintf(buf, "%c (%d) ", (ch>=' ')?ch:'.', ch);
+        sprintf(buf, "%c (%#x) ", (ch>=' ')?ch:'.', *reinterpret_cast<unsigned char*>(&ch));
         result += buf;
     }
     return result;
