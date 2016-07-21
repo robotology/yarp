@@ -410,15 +410,16 @@ bool NameClient::setContact(const yarp::os::Contact& contact) {
 
 
 
-NameClient::NameClient() {
-    allowScan = false;
-    allowSaveScan = false;
-    reportScan = false;
-    reportSaveScan = false;
-    isSetup = false;
-    fake = false;
-    fakeServer = NULL;
-    altStore = NULL;
+NameClient::NameClient() :
+        fake(false),
+        fakeServer(NULL),
+        allowScan(false),
+        allowSaveScan(false),
+        reportScan(false),
+        reportSaveScan(false),
+        isSetup(false),
+        altStore(NULL)
+{
 }
 
 void NameClient::setup() {
