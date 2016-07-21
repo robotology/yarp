@@ -143,7 +143,9 @@ Carrier *Carriers::chooseCarrier(const ConstString *name, const Bytes *header,
             }
         }
         if (match) {
-            if (!return_template) return c.create();
+            if (!return_template) {
+                return c.create();
+            }
             return &c;
         }
     }
