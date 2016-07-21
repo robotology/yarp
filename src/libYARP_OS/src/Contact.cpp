@@ -100,6 +100,7 @@ Contact::Contact(Contact&& rhs) :
 
 Contact::~Contact()
 {
+    delete mPriv;
 }
 
 Contact& Contact::operator=(const Contact& rhs)
