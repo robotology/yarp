@@ -185,6 +185,14 @@ public:
                 c->interrupt();
                 c->close();
                 mutex.lock();
+                // Close will remove the Contactable from the map only the first
+                // time that a node is found (for example if "/foo+@/node" and
+                // "/foo-@node" are registered, only the first time that "/node"
+                // is found it is removed automatically. The second time it must
+                // be removed manually.
+                if (name_cache.begin()->first == c) {
+                    name_cache.erase(name_cache.begin());
+                }
             }
         }
         mutex.unlock();
