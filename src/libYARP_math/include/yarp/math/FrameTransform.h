@@ -17,7 +17,7 @@ namespace yarp
 {
     namespace math
     {
-        class FrameTransform
+        class YARP_math_API FrameTransform
         {
             public:
             std::string src_frame_id;
