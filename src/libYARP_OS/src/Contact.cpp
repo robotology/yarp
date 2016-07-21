@@ -115,7 +115,7 @@ Contact& Contact::operator=(const Contact& rhs)
 Contact& Contact::operator=(Contact&& rhs)
 {
     if(&rhs != this) {
-        mPriv = std::move(rhs.mPriv);
+        std::swap(mPriv, rhs.mPriv);
     }
     return *this;
 }
