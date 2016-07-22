@@ -194,6 +194,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_axisType);
     checkAndDestroy(_rotorlimits_max);
     checkAndDestroy(_rotorlimits_min);
+    checkAndDestroy(_last_position_move_time);
 
     return true;
 }
