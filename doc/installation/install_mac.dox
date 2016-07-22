@@ -5,7 +5,7 @@
  */
 
 /**
- * @page install_yarp_mac Installing YARP on MacOS X
+ * @page install_yarp_mac Installing YARP on macOS
 
 \tableofcontents
 
@@ -14,10 +14,10 @@ This installation has been confirmed to work on OSX Mavericks and Yosemite with 
 
 \subsection install_mac_Xcode Installing Xcode
 
-To compile anything on OS X (including YARP), you'll need to have <a href="http://developer.apple.com/xcode/"><b>Xcode</b></a> installed. This can be done through the <b>App Store</b>. 
+To compile anything on macOS (including YARP), you'll need to have <a href="http://developer.apple.com/xcode/"><b>Xcode</b></a> installed. This can be done through the <b>App Store</b>. 
 
 Once installed, you need to install the <b>Command Line Tools</b>.
-To do this, open XCode, go to XCode->Preferences->Downloads and install Command Line Tools.
+To do this, open Xcode, go to Xcode->Preferences->Downloads and install Command Line Tools.
 
 If you do not see the option install Command Line Tools, run the following on a terminal
 
@@ -142,12 +142,11 @@ cd ~
 open -a TextEdit .bash_profile
 \endcode
 
-and copy the following lines (obviously changing the path with your version):
+and copy the following line
 
 \code
-export Qt5_DIR=/usr/local/Cellar/qt5/5.4.2/lib/cmake
+export Qt5_DIR=/usr/local/opt/qt5/lib/cmake
 \endcode
-Substitute version
 
 
 \subsubsection install_mac_YARP_optional_GDK Optional: Installing YARP Dependencies: GDK PIXBUF 
@@ -214,6 +213,12 @@ ccmake .. -G Xcode
 This will generate a <b>YARP.xcodeproj</b> file which can be opened with Xcode.
 Build it by clicking <b>Product -> Build</b> or <b>cmd+B</b> shortcut.
 One can also compile the Release binaries by clicking <b>Product -> Archive</b>.
+
+Alternatively, it is possible to directly compile the project on the command line by 
+\code{.sh}
+xcodebuild [-configuration Debug|Release|Other Configs] [-target ALL_BUILD|install|Other Targets]
+\endcode
+If no options are specified the ALL_BUILD target in Debug mode is compiled.
 
 \subsubsection install_mac_YARP_Environment Setting YARP environmental Variables:
 
