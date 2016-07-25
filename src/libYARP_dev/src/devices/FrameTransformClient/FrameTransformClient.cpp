@@ -621,11 +621,6 @@ bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target
     return true;
 }
 
-/*Stamp yarp::dev::FrameTransformClient::getLastInputStamp()
-{
-    return m_lastTs;
-}*/
-
 yarp::dev::DriverCreator *createFrameTransformClient()
 {
     return new DriverCreatorOf<FrameTransformClient>

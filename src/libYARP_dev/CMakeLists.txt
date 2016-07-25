@@ -70,6 +70,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IVelocityControl2.h
                   include/yarp/dev/IVelocityControl2Impl.h
                   include/yarp/dev/IVelocityControl.h
+                  include/yarp/dev/INavigation2D.h
                   include/yarp/dev/IVirtualAnalogSensor.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
@@ -147,6 +148,7 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
                         src/devices/Rangefinder2DClient/Rangefinder2DClient.cpp
                         src/devices/ControlBoardWrapper/ControlBoardWrapper.cpp
+                        src/devices/Navigation2DClient/Navigation2DClient.cpp
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
@@ -163,6 +165,7 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.h
                         src/devices/Rangefinder2DClient/Rangefinder2DClient.h
                         src/devices/ControlBoardWrapper/ControlBoardWrapper.h
+                        src/devices/Navigation2DClient/Navigation2DClient.h
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
