@@ -6,7 +6,7 @@ if(CREATE_YARPVIEW)
 
   include(YarpUseQt5)
 
-  set(QtYARPScopePlugin_QMLDIR "robotology/yarp/scope")
+  set(QtYARPViewPlugin_QMLDIR "robotology/yarp/view")
 
   add_subdirectory(plugin)
   add_subdirectory(src)
