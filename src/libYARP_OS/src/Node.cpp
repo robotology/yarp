@@ -434,21 +434,28 @@ void yarp::os::Node::Helper::add(Contactable& contactable)
     }
     prepare(name);
     item.contactable = &contactable;
+
+    mutex.lock();
     name_cache[&contactable] = item;
     by_category.insert(std::pair<ConstString,NodeItem>(item.nc.getCategory(),item));
+    mutex.unlock();
 }
 
 void yarp::os::Node::Helper::update(Contactable& contactable)
 {
+    mutex.lock();
     NodeItem item = name_cache[&contactable];
+    mutex.unlock();
 }
 
 void yarp::os::Node::Helper::remove(Contactable& contactable)
 {
+    mutex.lock();
     NodeItem item = name_cache[&contactable];
     name_cache.erase(&contactable);
     by_part_name.erase(item.nc.getNestedName());
     by_category.erase(item.nc.getCategory());
+    mutex.unlock();
 }
 
 std::vector<Contact> yarp::os::Node::Helper::query(const ConstString& name, const ConstString& category)
@@ -464,7 +471,6 @@ std::vector<Contact> yarp::os::Node::Helper::query(const ConstString& name, cons
 #endif
         }
     }
-
     mutex.unlock();
 
     return contacts;
@@ -557,36 +563,27 @@ Node::~Node()
 
 void Node::add(Contactable& contactable)
 {
-    mPriv->mutex.lock();
     mPriv->add(contactable);
-    mPriv->mutex.unlock();
 }
 
 void Node::update(Contactable& contactable)
 {
-    mPriv->mutex.lock();
     mPriv->update(contactable);
-    mPriv->mutex.unlock();
 }
 
 void Node::remove(Contactable& contactable)
 {
-    mPriv->mutex.lock();
     mPriv->remove(contactable);
-    mPriv->mutex.unlock();
 }
 
 Contact Node::query(const ConstString& name, const ConstString& category)
 {
-    mPriv->mutex.lock();
     std::vector<Contact> contacts = mPriv->query(name,category);
-    mPriv->mutex.unlock();
     if (contacts.size() >= 1) {
         return contacts.at(0);
     }
     return Contact();
 }
-
 
 void Node::interrupt()
 {
