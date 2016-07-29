@@ -27,7 +27,7 @@ public:
         report(0, "checking string representation");
         Contact address("tcp", "127.0.0.1", 10000);
         ConstString txt = address.toURI();
-        checkEqual(txt, "tcp://127.0.0.1:10000", "string rep example");
+        checkEqual(txt, "tcp://127.0.0.1:10000/", "string rep example");
     }
 
     virtual void testCopy()
@@ -37,7 +37,7 @@ public:
         Contact address2;
         address2 = address;
         ConstString txt = address2.toURI();
-        checkEqual(txt, "tcp://127.0.0.1:10000", "string rep example");
+        checkEqual(txt, "tcp://127.0.0.1:10000/", "string rep example");
 
         Contact inv1;
         address2 = inv1;
