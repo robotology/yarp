@@ -29,6 +29,7 @@ static void sighandler (int signal)
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("2"));
     QApplication a(argc, argv);
 
     yarp::os::Network yarp;

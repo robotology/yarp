@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
    HWND hide = FindWindowA("ConsoleWindowClass",NULL);
    ShowWindow(hide, 0);
 #endif
+    qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("2"));
     QApplication a(argc, argv);
 
     // Setup resource finder

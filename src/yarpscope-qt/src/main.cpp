@@ -26,6 +26,7 @@
  */
 int main(int argc, char *argv[])
 {
+    qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("2"));
     QApplication app(argc, argv);
     QVariant retVal;
 

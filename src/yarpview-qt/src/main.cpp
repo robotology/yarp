@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
             keepabove=true;
         }
     }
-
+    qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("2"));
     QApplication app(argc, argv);
     QVariant retVal;
 
