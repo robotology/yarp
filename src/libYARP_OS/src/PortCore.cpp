@@ -2026,7 +2026,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 stateMutex.wait();
                                 PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                                            getNextIndex(),
-
                                                                            ip,
                                                                            true);
                                 yAssert(unit!=NULL);
