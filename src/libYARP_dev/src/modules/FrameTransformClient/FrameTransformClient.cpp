@@ -314,8 +314,6 @@ bool yarp::dev::FrameTransformClient::canTransform(const std::string &target_fra
 
 bool yarp::dev::FrameTransformClient::clear()
 {
-    m_transform_storage->clear();
-
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
     b.addVocab(VOCAB_ITRANSFORM);
@@ -334,6 +332,8 @@ bool yarp::dev::FrameTransformClient::clear()
         yError() << "FrameTransformClient::clear() error on writing on rpc port";
         return false;
     }
+
+    m_transform_storage->clear();
     return true;
 }
 
