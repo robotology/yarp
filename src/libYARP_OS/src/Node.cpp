@@ -29,46 +29,27 @@ using namespace yarp::os::impl;
 
 class ROSReport : public PortReport {
 public:
-    std::vector<std::string> sourceURIs;
-    std::vector<std::string> targetURIs;
+    std::multimap<std::string, std::string> outgoingURIs;
+    std::multimap<std::string, std::string> incomingURIs;
 
     ROSReport() {
     }
 
     virtual void report(const PortInfo& info) {
-        NameClient& nic = NameClient::getNameClient();
+        if (info.tag == PortInfo::PORTINFO_CONNECTION) {
+            NameClient& nic = NameClient::getNameClient();
+            Contact c;
+            if (info.incoming) {
+                c = RosNameSpace::rosify(nic.queryName(info.sourceName));
 
-        std::string sourceTmp = nic.queryName(info.sourceName).toURI();
-        if(sourceTmp!="") {
-            sourceTmp = sourceTmp + "/";
-            std::string toreplace = "xmlrpc://";
-            size_t source_pos = sourceTmp.find(toreplace);
-            if(source_pos!=std::string::npos)
-                sourceTmp.replace(source_pos, toreplace.length(), "http://");
-
-            if(info.created) {
-                if(std::find(sourceURIs.begin(), sourceURIs.end(), sourceTmp)==sourceURIs.end()) {
-                    sourceURIs.push_back(sourceTmp);
-                }
             } else {
-                sourceURIs.erase(std::remove(sourceURIs.begin(), sourceURIs.end(), sourceTmp), sourceURIs.end());
+                c = RosNameSpace::rosify(nic.queryName(info.targetName));
             }
-        }
 
-        std::string targetTmp = nic.queryName(info.targetName).toURI();
-        if(targetTmp!="") {
-            targetTmp = targetTmp + "/";
-            std::string toreplace = "xmlrpc://";
-            size_t target_pos = targetTmp.find(toreplace);
-            if(target_pos!=std::string::npos)
-                targetTmp.replace(target_pos, toreplace.length(), "http://");
-
-            if(info.created) {
-                if(std::find(targetURIs.begin(), targetURIs.end(), targetTmp)==targetURIs.end()) {
-                    targetURIs.push_back(targetTmp);
-                }
+            if (info.incoming) {
+                incomingURIs.insert(std::make_pair(info.portName, c.toURI()));
             } else {
-                targetURIs.erase(std::remove(targetURIs.begin(), targetURIs.end(), targetTmp), targetURIs.end());
+                outgoingURIs.insert(std::make_pair(info.portName, c.toURI()));
             }
         }
     }
@@ -144,7 +125,7 @@ class NodeArgs
 public:
     Bottle request;
     Bottle args;
-    Bottle reply;
+    Value reply;
     int code;
     ConstString msg;
     bool should_drop;
@@ -187,18 +168,14 @@ public:
     {
         code = alt.get(0).asInt();
         msg = alt.get(1).asString();
-        Bottle *nest = alt.get(2).asList();
-        if (nest) {
-            reply = *nest;
-        }
+        reply = alt.get(2);
     }
 };
 
 class yarp::os::Node::Helper : public PortReader
 {
 public:
-    std::map<ConstString,NodeItem> by_part_name;
-    std::map<ConstString,ROSReport*> report_items;
+    std::multimap<ConstString,NodeItem> by_part_name;
     std::multimap<ConstString,NodeItem> by_category;
     std::map<Contactable*,NodeItem> name_cache;
     Port port;
@@ -233,7 +210,6 @@ public:
             Contactable *c = name_cache.begin()->first;
             if (c) {
                 mutex.unlock();
-                c->resetReporter();
                 c->interrupt();
                 c->close();
                 mutex.lock();
@@ -247,11 +223,6 @@ public:
                 }
             }
         }
-        for (std::map<ConstString,ROSReport*>::iterator it = report_items.begin(); it != report_items.end(); it++) {
-            delete it->second;
-        }
-        report_items.clear();
-
         mutex.unlock();
         port.interrupt();
     }
@@ -259,7 +230,7 @@ public:
     void add(Contactable& contactable);
     void update(Contactable& contactable);
     void remove(Contactable& contactable);
-    Contact query(const ConstString& name, const ConstString& category);
+    std::vector<Contact> query(const ConstString& name, const ConstString& category = ConstString());
 
     void prepare(const ConstString& name);
 
@@ -270,151 +241,170 @@ public:
 
     virtual bool read(ConnectionReader& reader);
 
-    Contact lookup(const ConstString& topic)
-    {
-        mutex.lock();
-        std::map<ConstString,NodeItem>::const_iterator i =
-            by_part_name.find(topic);
-        if (i == by_part_name.end()) {
-            mutex.unlock();
-            return Contact();
-        }
-        Contact c = i->second.contactable->where();
-        mutex.unlock();
-        return c;
-    }
-
     void getBusStats(NodeArgs& na)
     {
-        na.reply.addList();
+        na.reply = Value();
         na.success();
     }
 
     void getBusInfo(NodeArgs& na)
     {
-        mutex.lock();
         unsigned int opaque_id = 1;
-        for (std::map<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+        ROSReport report;
+        Value v;
+        Bottle* connections = v.asList();
+
+        mutex.lock();
+        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
             NodeItem& item = it->second;
-            if (!(item.isSubscriber() || item.isPublisher())) continue;
-            item.update();
-            if(item.isSubscriber()) {
-                for(size_t i=0; i<report_items.at(it->first)->sourceURIs.size(); i++) {
-                    Bottle& lst = na.reply.addList();
-                    lst.addInt(opaque_id); // connectionId
-                    lst.addString(report_items.at(it->first)->sourceURIs[i]);
-                    lst.addString("i");
-                    lst.addString("TCPROS");
-                    lst.addString(toRosName(item.nc.getNestedName()));
-                    opaque_id++;
-                }
-            } else if(item.isPublisher()) {
-                for(size_t i=0; i<report_items.at(it->first)->targetURIs.size(); i++) {
-                    Bottle& lst = na.reply.addList();
-                    lst.addInt(opaque_id); // connectionId
-                    lst.addString(report_items.at(it->first)->targetURIs[i]);
-                    lst.addString("o");
-                    lst.addString("TCPROS");
-                    lst.addString(toRosName(item.nc.getNestedName()));
-                    opaque_id++;
-                }
+            if (!(item.isSubscriber() || item.isPublisher())) {
+                continue;
             }
+            item.update();
+            item.contactable->getReport(report);
         }
         mutex.unlock();
+
+        for (std::multimap<std::string, std::string>::const_iterator it = report.outgoingURIs.begin(); it != report.outgoingURIs.end(); ++it) {
+            Bottle& lst = connections->addList();
+            lst.addInt(opaque_id); // connectionId
+            lst.addString(it->second);
+            lst.addString("o");
+            lst.addString((it->second != "/yarp/node" ? "TCPROS" : "YARP"));
+            NestedContact nc(it->first);
+            lst.addString(toRosName(nc.getNestedName()));
+            opaque_id++;
+        }
+
+        for (std::multimap<std::string, std::string>::const_iterator it = report.incomingURIs.begin(); it != report.incomingURIs.end(); ++it) {
+            Bottle& lst = connections->addList();
+            lst.addInt(opaque_id); // connectionId
+            lst.addString(it->second);
+            lst.addString("i");
+            lst.addString((it->second != "/yarp/node" ? "TCPROS" : "YARP"));
+            NestedContact nc(it->first);
+            lst.addString(toRosName(nc.getNestedName()));
+            opaque_id++;
+        }
+
+        na.reply = v;
         na.success();
     }
 
     void getMasterUri(NodeArgs& na)
     {
-        na.reply.addString(NetworkBase::getEnvironment("ROS_MASTER_URI"));
+        na.reply = Value(NetworkBase::getEnvironment("ROS_MASTER_URI"));
         na.success();
     }
 
     void shutdown(NodeArgs& na)
     {
-        na.reply.fromString("hmm");
+        na.reply = Value(ConstString("hmm"));
     }
 
     void getPid(NodeArgs& na)
     {
-        na.reply.addInt(ACE_OS::getpid());
+        na.reply = Value(static_cast<int>(ACE_OS::getpid()));
         na.success();
     }
 
     void getSubscriptions(NodeArgs& na)
     {
+        Value v;
+        Bottle* subscriptions = v.asList();
         mutex.lock();
-        for (std::map<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
             NodeItem& item = it->second;
             if (!item.isSubscriber()) {
                 continue;
             }
             item.update();
-            Bottle& lst = na.reply.addList();
+            Bottle& lst = subscriptions->addList();
             lst.addString(toRosName(item.nc.getNestedName()));
             lst.addString(item.nc.getTypeName());
         }
         mutex.unlock();
+        na.reply = v;
         na.success();
     }
 
     void getPublications(NodeArgs& na)
     {
+        Value v;
+        Bottle* publications = v.asList();
         mutex.lock();
-        for (std::map<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
             NodeItem& item = it->second;
             if (!item.isPublisher()) {
                 continue;
             }
             item.update();
-            Bottle& lst = na.reply.addList();
+            Bottle& lst = publications->addList();
             lst.addString(toRosName(item.nc.getNestedName()));
             lst.addString(item.nc.getTypeName());
         }
         mutex.unlock();
+        na.reply = v;
         na.success();
     }
 
     void paramUpdate(NodeArgs& na)
     {
-        na.reply.fromString("hmm");
+        na.reply = Value(ConstString("hmm"));
     }
 
     void publisherUpdate(NodeArgs& na)
     {
         ConstString topic = fromRosName(na.args.get(0).asString());
-        Contact c = lookup(topic);
-        if (!c.isValid()) {
+        std::vector<Contact> contacts = query(topic, "-");
+        if (contacts.size() < 1) {
             na.fail("Cannot find topic");
             return;
         }
-        c.setName("");
-        // just pass the message along, YARP ports know what to do with it
-        ContactStyle style;
-        style.admin = true;
-        style.carrier = "tcp";
-        Bottle reply;
-        if (!NetworkBase::write(c,na.request,reply,style)) {
-            na.fail("Cannot communicate with local port");
-            return;
+
+        for (std::vector<Contact>::iterator it = contacts.begin(); it != contacts.end(); ++it) {
+            Contact &c = *it;
+            if (!c.isValid()) {
+                continue;
+            }
+            c.setName("");
+            // just pass the message along, YARP ports know what to do with it
+            ContactStyle style;
+            style.admin = true;
+            style.carrier = "tcp";
+            Bottle reply;
+            if (!NetworkBase::write(c,na.request,reply,style)) {
+                continue;
+            }
+            na.fromExternal(reply);
         }
-        na.fromExternal(reply);
-        //printf("DONE with passing on publisherUpdate\n");
     }
 
     void requestTopic(NodeArgs& na)
     {
         ConstString topic = na.args.get(0).asString();
         topic = fromRosName(topic);
-        Contact c = lookup(topic);
-        if (!c.isValid()) {
+        std::vector<Contact> contacts = query(topic, "+");
+        if (contacts.size() < 1) {
             na.fail("Cannot find topic");
             return;
         }
-        na.reply.addString("TCPROS");
-        na.reply.addString(c.getHost());
-        na.reply.addInt(c.getPort());
-        na.success();
+        for (std::vector<Contact>::iterator it = contacts.begin(); it != contacts.end(); ++it) {
+            Contact &c = *it;
+
+            if (!c.isValid()) {
+                continue;
+            }
+            Value v;
+            Bottle* lst = v.asList();
+            lst->addString("TCPROS");
+            lst->addString(c.getHost());
+            lst->addInt(c.getPort());
+            na.reply = v;
+            na.success();
+            return;
+        }
+        na.fail("Cannot find topic");
     }
 };
 
@@ -444,12 +434,7 @@ void yarp::os::Node::Helper::add(Contactable& contactable)
     }
     prepare(name);
     item.contactable = &contactable;
-    ROSReport* rep = new ROSReport();
-    item.contactable->setReporter(*rep);
-
-    report_items[item.nc.getNestedName()] = rep;
     name_cache[&contactable] = item;
-    by_part_name[item.nc.getNestedName()] = item;
     by_category.insert(std::pair<ConstString,NodeItem>(item.nc.getCategory(),item));
 }
 
@@ -462,21 +447,27 @@ void yarp::os::Node::Helper::remove(Contactable& contactable)
 {
     NodeItem item = name_cache[&contactable];
     name_cache.erase(&contactable);
-    contactable.resetReporter();
-    delete report_items[item.nc.getNestedName()];
-    report_items.erase(item.nc.getNestedName());
     by_part_name.erase(item.nc.getNestedName());
     by_category.erase(item.nc.getCategory());
 }
 
-Contact yarp::os::Node::Helper::query(const ConstString& name, const ConstString& category)
+std::vector<Contact> yarp::os::Node::Helper::query(const ConstString& name, const ConstString& category)
 {
-    Contact result;
-    std::map<ConstString,NodeItem>::const_iterator i = by_part_name.find(name);
-    if (i != by_part_name.end()) {
-        result = i->second.contactable->where();
+    std::vector<Contact> contacts;
+    mutex.lock();
+    for (std::multimap<ConstString,NodeItem>::const_iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
+        if (it->first == name && (category.empty() || category == it->second.nc.getCategory())) {
+#if defined(YARP_HAS_CXX11)
+                contacts.emplace_back(it->second.contactable->where());
+#else
+                contacts.push_back(it->second.contactable->where());
+#endif
+        }
     }
-    return result;
+
+    mutex.unlock();
+
+    return contacts;
 }
 
 bool yarp::os::Node::Helper::read(ConnectionReader& reader)
@@ -521,7 +512,7 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
         Bottle full;
         full.addInt(na.code);
         full.addString(na.msg);
-        full.addList() = na.reply;
+        full.add(na.reply);
         //printf("NODE %s <<< %s\n",
         //name.c_str(),
         //full.toString().c_str());
@@ -588,9 +579,12 @@ void Node::remove(Contactable& contactable)
 Contact Node::query(const ConstString& name, const ConstString& category)
 {
     mPriv->mutex.lock();
-    Contact result = mPriv->query(name,category);
+    std::vector<Contact> contacts = mPriv->query(name,category);
     mPriv->mutex.unlock();
-    return result;
+    if (contacts.size() >= 1) {
+        return contacts.at(0);
+    }
+    return Contact();
 }
 
 
