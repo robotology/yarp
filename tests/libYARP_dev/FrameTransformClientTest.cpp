@@ -79,6 +79,7 @@ public:
         Property pTransformserver_cfg;
         pTransformserver_cfg.put("device", "transformServer");
         pTransformserver_cfg.put("ROS", "");
+        pTransformserver_cfg.put("transforms_lifetime", 0.500);
         bool ok_server = ddtransformserver.open(pTransformserver_cfg);
         checkTrue(ok_server, "ddtransformserver open reported successful");
 
@@ -251,9 +252,9 @@ public:
             bool b_can;
             b_can = itf->canTransform("frame2", "frame1");
             checkTrue(b_can, "itf->setTransform ok");
-            yarp::os::Time::delay(0.3);
+            yarp::os::Time::delay(0.6);
             b_can = itf->canTransform("frame2", "frame1");
-            checkFalse(b_can, "itf->setTransform successfully expired after 0.3s");
+            checkFalse(b_can, "itf->setTransform successfully expired after 0.6s");
         }
         
         // Close devices

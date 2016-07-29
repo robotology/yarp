@@ -351,6 +351,13 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
     else
     {
         m_period = config.find("period").asInt();
+        yInfo() << "FrameTransformServer: thread period set to:" << m_period;
+    }
+
+    if (config.check("transforms_lifetime"))
+    {
+        m_FrameTransformTimeout = config.find("transforms_lifetime").asDouble();
+        yInfo() << "FrameTransformServer: transforms_lifetime set to:" << m_FrameTransformTimeout;
     }
 
     std::string name;
