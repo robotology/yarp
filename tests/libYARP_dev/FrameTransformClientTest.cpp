@@ -55,7 +55,7 @@ public:
             return false;
         }
 
-        for (size_t i = 0; i < m1.rows(); i++)
+        for (int i = 0; i < m1.rows(); i++)
         {
             if (!isEqual(m1.getRow(i), m2.getRow(i), precision))
             {
