@@ -110,7 +110,7 @@ public:
             m2[1][0] = 0;              m2[1][1] = 1; m2[1][2] = 0;              m2[1][3] = 0.2;
             m2[2][0] = -sin(M_PI / 4); m2[2][1] = 0; m2[2][2] = cos(M_PI / 4);  m2[2][3] = 0.3;
             m2[3][0] = 0;              m2[3][1] = 0; m2[3][2] = 0;              m2[3][3] = 1;
-            
+
             yarp::sig::Matrix m3(4, 4);
             m3 = m1*m2;
             double precision;
@@ -152,7 +152,7 @@ public:
             checkTrue(b_gt, "getTransform ok");
             if (precision_verbose || b_gt==false) { yInfo() << "precision error:\n" + (mt - m3).toString(); }
 
-            //test3 
+            //test3
             bool b_exist1, b_exist2;
             b_exist1 = itf->frameExists("frame3");
             b_exist2 = itf->frameExists("frame3_err");
@@ -182,12 +182,12 @@ public:
             yarp::sig::Vector in_quat1(4), out_quat1(4), verQuat(4);
 
             in_quat1 = yarp::math::dcm2quat(m4);
-            
+
             in_pose1[0] = 1; in_pose1[1] = 2; in_pose1[2] = 3;
             in_pose1[3] = 30; in_pose1[4] = 60; in_pose1[5] = 90;
-            
+
             in_point1[0] = 10; in_point1[1] = 15; in_point1[2] = 5;
-            
+
             in_point1.push_back(1);
             verPoint1 = m1*m2*in_point1;
             verPoint1.pop_back();
@@ -208,15 +208,15 @@ public:
             itf->transformPoint("frame3", "frame1", in_point1, out_point1);
             itf->transformPose("frame3", "frame1", in_pose1, out_pose1);
             itf->transformQuaternion("frame3", "frame1", in_quat1, out_quat1);
-            
+
             bool b_tpoint = isEqual(verPoint1, out_point1, precision);
             checkTrue(b_tpoint, "transformPoint ok");
             if (precision_verbose || b_tpoint == false) { yInfo() << "precision error:\n" + (verPoint1 - out_point1).toString(); }
-            
+
             bool b_tpose = isEqual(verPose, out_pose1, precision);
             checkTrue(b_tpose, "transformPose ok");
             if (precision_verbose || b_tpose == false) { yInfo() << "precision error:\n" + (verPose - out_pose1).toString(); }
-            
+
             bool b_tquat = isEqual(verQuat, out_quat1, precision);
             checkTrue(b_tquat, "transformQuaternion ok");
             if (precision_verbose || b_tquat == false) { yInfo() << "precision error:\n" + (verQuat - out_quat1).toString(); }
@@ -250,7 +250,7 @@ public:
 
             //test 10
             itf->setTransform("frame2", "frame1", m1);
-            yarp::os::Time::delay(0.050); 
+            yarp::os::Time::delay(0.050);
             bool b_can;
             b_can = itf->canTransform("frame2", "frame1");
             checkTrue(b_can, "itf->setTransform ok");
@@ -258,7 +258,7 @@ public:
             b_can = itf->canTransform("frame2", "frame1");
             checkFalse(b_can, "itf->setTransform successfully expired after 0.6s");
         }
-        
+
         // Close devices
         bool cl1 = ddtransformclient.close();
         bool cl2 = ddtransformserver.close();
