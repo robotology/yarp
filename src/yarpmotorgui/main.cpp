@@ -53,6 +53,7 @@ static void sighandler(int sig) {
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("auto"));
     QApplication a(argc, argv);
 
     //YARP_REGISTER_DEVICES(icubmod)
