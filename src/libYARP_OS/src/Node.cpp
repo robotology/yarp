@@ -41,14 +41,9 @@ public:
             Contact c;
             if (info.incoming) {
                 c = RosNameSpace::rosify(nic.queryName(info.sourceName));
-
-            } else {
-                c = RosNameSpace::rosify(nic.queryName(info.targetName));
-            }
-
-            if (info.incoming) {
                 incomingURIs.insert(std::make_pair(info.portName, c.toURI()));
             } else {
+                c = RosNameSpace::rosify(nic.queryName(info.targetName));
                 outgoingURIs.insert(std::make_pair(info.portName, c.toURI()));
             }
         }
