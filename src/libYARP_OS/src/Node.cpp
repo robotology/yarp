@@ -405,6 +405,7 @@ public:
 
 void yarp::os::Node::Helper::prepare(const ConstString& name)
 {
+    mutex.lock();
     if (port.getName()=="") {
         port.setReader(*this);
         Property *prop = port.acquireProperties(false);
@@ -415,6 +416,7 @@ void yarp::os::Node::Helper::prepare(const ConstString& name)
         port.open(name);
         this->name = port.getName();
     }
+    mutex.unlock();
 }
 
 void yarp::os::Node::Helper::add(Contactable& contactable)
@@ -605,7 +607,5 @@ Contact Node::where()
 
 void Node::prepare(const ConstString& name)
 {
-    mPriv->mutex.lock();
     mPriv->prepare(name);
-    mPriv->mutex.unlock();
 }
