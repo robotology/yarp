@@ -379,10 +379,20 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
         return false;
     }
     Bottle ROS_config = config.findGroup("ROS");
+    if (ROS_config.check("enable_ros_publisher")==false)
+    {
+        yError() << "FrameTransformServer: Missing 'enable_ros_publisher' in ROS group";
+        return false;
+    }
     if (ROS_config.find("enable_ros_publisher").asInt() == 1)
     {
         m_enable_publish_ros_tf = true;
         yInfo() << "FrameTransformServer: Enabled ROS publisher";
+    }
+    if (ROS_config.check("enable_ros_subscriber")==false)
+    {
+        yError() << "FrameTransformServer: Missing 'enable_ros_subscriber' in ROS group";
+        return false;
     }
     if (ROS_config.find("enable_ros_subscriber").asInt() == 1)
     {

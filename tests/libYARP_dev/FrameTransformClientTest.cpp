@@ -78,7 +78,9 @@ public:
         PolyDriver ddtransformserver;
         Property pTransformserver_cfg;
         pTransformserver_cfg.put("device", "transformServer");
-        pTransformserver_cfg.put("ROS", "");
+        Property& ros_prop = pTransformserver_cfg.addGroup("ROS");
+        ros_prop.put("enable_ros_publisher", "0");
+        ros_prop.put("enable_ros_subscriber", "0");
         pTransformserver_cfg.put("transforms_lifetime", 0.500);
         bool ok_server = ddtransformserver.open(pTransformserver_cfg);
         checkTrue(ok_server, "ddtransformserver open reported successful");
