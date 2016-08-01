@@ -454,8 +454,20 @@ void yarp::os::Node::Helper::remove(Contactable& contactable)
     mutex.lock();
     NodeItem item = name_cache[&contactable];
     name_cache.erase(&contactable);
-    by_part_name.erase(item.nc.getNestedName());
-    by_category.erase(item.nc.getCategory());
+    ConstString nestedName = item.nc.getNestedName();
+    for (std::multimap<ConstString, NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
+        if (it->first == nestedName && it->second.contactable->where().toString() == contactable.where().toString()) {
+            by_part_name.erase(it);
+            break;
+        }
+    }
+    ConstString category = item.nc.getCategory();
+    for (std::multimap<ConstString, NodeItem>::iterator it = by_category.begin(); it != by_category.end(); ++it) {
+        if (it->first == category && it->second.contactable->where().toString() == contactable.where().toString()) {
+            by_category.erase(it);
+            break;
+        }
+    }
     mutex.unlock();
 }
 
