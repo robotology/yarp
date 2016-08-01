@@ -437,6 +437,7 @@ void yarp::os::Node::Helper::add(Contactable& contactable)
 
     mutex.lock();
     name_cache[&contactable] = item;
+    by_part_name.insert(std::pair<ConstString,NodeItem>(item.nc.getNestedName(),item));
     by_category.insert(std::pair<ConstString,NodeItem>(item.nc.getCategory(),item));
     mutex.unlock();
 }
