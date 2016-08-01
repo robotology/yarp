@@ -270,7 +270,7 @@ public:
             lst.addInt(opaque_id); // connectionId
             lst.addString(it->second);
             lst.addString("o");
-            lst.addString((it->second != "/yarp/node" ? "TCPROS" : "YARP"));
+            lst.addString("TCPROS");
             NestedContact nc(it->first);
             lst.addString(toRosName(nc.getNestedName()));
             opaque_id++;
@@ -281,7 +281,7 @@ public:
             lst.addInt(opaque_id); // connectionId
             lst.addString(it->second);
             lst.addString("i");
-            lst.addString((it->second != "/yarp/node" ? "TCPROS" : "YARP"));
+            lst.addString("TCPROS");
             NestedContact nc(it->first);
             lst.addString(toRosName(nc.getNestedName()));
             opaque_id++;
