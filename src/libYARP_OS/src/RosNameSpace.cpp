@@ -645,7 +645,7 @@ Contact RosNameSpace::rosify(const Contact& contact) {
         yarp::os::gethostname(hn, sizeof(hostname));
         hostname = hn;
     }
-    return Contact("http", contact.getHost().c_str(), contact.getPort());
+    return Contact(carrier, hostname, contact.getPort());
 }
 
 
