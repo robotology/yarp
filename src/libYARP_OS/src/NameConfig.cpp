@@ -319,6 +319,8 @@ ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
         }
 #ifdef YARP_HAS_ACE
         delete[] ips;
+#else
+        freeifaddrs(ifaddr);
 #endif
     }
 
