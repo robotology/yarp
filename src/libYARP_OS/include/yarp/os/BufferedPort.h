@@ -328,6 +328,11 @@ public:
         port.setReporter(reporter);
     }
 
+    // documented in Contactable
+    virtual void resetReporter() {
+        port.resetReporter();
+    }
+
     // documented in TypedReader
     virtual void *acquire() {
         return reader.acquire();

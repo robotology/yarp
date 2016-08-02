@@ -1175,6 +1175,11 @@ void PortCore::setReportCallback(yarp::os::PortReport *reporter) {
    stateMutex.post();
 }
 
+void PortCore::resetReportCallback() {
+    stateMutex.wait();
+    eventReporter = NULL;
+    stateMutex.post();
+}
 
 void PortCore::report(const PortInfo& info) {
     // We are in the context of one of the input or output threads,
@@ -1962,7 +1967,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         YARP_SPRINTF1(log,debug,"ROS ADD %s", pub.c_str());
                         Bottle req, reply;
                         req.addString("requestTopic");
-                        req.addString("dummy_id");
+                        NestedContact nc(getName());
+                        req.addString(nc.getNodeName().c_str());
                         req.addString(topic);
                         Bottle& lst = req.addList();
                         Bottle& sublst = lst.addList();
@@ -2020,7 +2026,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 stateMutex.wait();
                                 PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                                            getNextIndex(),
-
                                                                            ip,
                                                                            true);
                                 yAssert(unit!=NULL);
@@ -2044,7 +2049,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             YARP_SPRINTF1(log,debug,"requestTopic! --> %s",
                           cmd.toString().c_str());
             result.addInt(1);
-            result.addString("dummy_id");
+            NestedContact nc(getName());
+            result.addString(nc.getNodeName().c_str());
             Bottle& lst = result.addList();
             Contact addr = getAddress();
             lst.addString("TCPROS");

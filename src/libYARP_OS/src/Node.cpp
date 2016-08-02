@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 iCub Facility
- * Authors: Paul Fitzpatrick
+ * Authors: Paul Fitzpatrick, Tobias Fischer
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -12,19 +12,45 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/PortReport.h>
+#include <yarp/os/PortInfo.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/NameClient.h>
 
+#include <algorithm>
+#include <vector>
 #include <list>
 #include <map>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-static ConstString toRosName(const ConstString& str)
-{
+class ROSReport : public PortReport {
+public:
+    std::multimap<std::string, std::string> outgoingURIs;
+    std::multimap<std::string, std::string> incomingURIs;
+
+    ROSReport() {
+    }
+
+    virtual void report(const PortInfo& info) {
+        if (info.tag == PortInfo::PORTINFO_CONNECTION) {
+            NameClient& nic = NameClient::getNameClient();
+            Contact c;
+            if (info.incoming) {
+                c = RosNameSpace::rosify(nic.queryName(info.sourceName));
+                incomingURIs.insert(std::make_pair(info.portName, c.toURI()));
+            } else {
+                c = RosNameSpace::rosify(nic.queryName(info.targetName));
+                outgoingURIs.insert(std::make_pair(info.portName, c.toURI()));
+            }
+        }
+    }
+};
+
+static ConstString toRosName(const ConstString& str) {
     return RosNameSpace::toRosName(str);
 }
 
@@ -94,7 +120,7 @@ class NodeArgs
 public:
     Bottle request;
     Bottle args;
-    Bottle reply;
+    Value reply;
     int code;
     ConstString msg;
     bool should_drop;
@@ -137,17 +163,14 @@ public:
     {
         code = alt.get(0).asInt();
         msg = alt.get(1).asString();
-        Bottle *nest = alt.get(2).asList();
-        if (nest) {
-            reply = *nest;
-        }
+        reply = alt.get(2);
     }
 };
 
 class yarp::os::Node::Helper : public PortReader
 {
 public:
-    std::map<ConstString,NodeItem> by_part_name;
+    std::multimap<ConstString,NodeItem> by_part_name;
     std::multimap<ConstString,NodeItem> by_category;
     std::map<Contactable*,NodeItem> name_cache;
     Port port;
@@ -202,7 +225,7 @@ public:
     void add(Contactable& contactable);
     void update(Contactable& contactable);
     void remove(Contactable& contactable);
-    Contact query(const ConstString& name, const ConstString& category);
+    std::vector<Contact> query(const ConstString& name, const ConstString& category = ConstString());
 
     void prepare(const ConstString& name);
 
@@ -213,127 +236,176 @@ public:
 
     virtual bool read(ConnectionReader& reader);
 
-    Contact lookup(const ConstString& topic)
-    {
-        mutex.lock();
-        std::map<ConstString,NodeItem>::const_iterator i =
-            by_part_name.find(topic);
-        if (i == by_part_name.end()) {
-            mutex.unlock();
-            return Contact();
-        }
-        Contact c = i->second.contactable->where();
-        mutex.unlock();
-        return c;
-    }
-
     void getBusStats(NodeArgs& na)
     {
-        na.reply.addList();
+        na.reply = Value();
         na.success();
     }
 
     void getBusInfo(NodeArgs& na)
     {
-        na.reply.addList();
+        unsigned int opaque_id = 1;
+        ROSReport report;
+        Value v;
+        Bottle* connections = v.asList();
+
+        mutex.lock();
+        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+            NodeItem& item = it->second;
+            if (!(item.isSubscriber() || item.isPublisher())) {
+                continue;
+            }
+            item.update();
+            item.contactable->getReport(report);
+        }
+        mutex.unlock();
+
+        for (std::multimap<std::string, std::string>::const_iterator it = report.outgoingURIs.begin(); it != report.outgoingURIs.end(); ++it) {
+            Bottle& lst = connections->addList();
+            lst.addInt(opaque_id); // connectionId
+            lst.addString(it->second);
+            lst.addString("o");
+            lst.addString("TCPROS");
+            NestedContact nc(it->first);
+            lst.addString(toRosName(nc.getNestedName()));
+            opaque_id++;
+        }
+
+        for (std::multimap<std::string, std::string>::const_iterator it = report.incomingURIs.begin(); it != report.incomingURIs.end(); ++it) {
+            Bottle& lst = connections->addList();
+            lst.addInt(opaque_id); // connectionId
+            lst.addString(it->second);
+            lst.addString("i");
+            lst.addString("TCPROS");
+            NestedContact nc(it->first);
+            lst.addString(toRosName(nc.getNestedName()));
+            opaque_id++;
+        }
+
+        na.reply = v;
         na.success();
     }
 
     void getMasterUri(NodeArgs& na)
     {
-        na.reply.fromString("hmm");
+        na.reply = Value(NetworkBase::getEnvironment("ROS_MASTER_URI"));
+        na.success();
     }
 
     void shutdown(NodeArgs& na)
     {
-        na.reply.fromString("hmm");
+        na.reply = Value(ConstString("hmm"));
     }
 
     void getPid(NodeArgs& na)
     {
-        na.reply.addInt(ACE_OS::getpid());
+        na.reply = Value(static_cast<int>(ACE_OS::getpid()));
         na.success();
     }
 
     void getSubscriptions(NodeArgs& na)
     {
+        Value v;
+        Bottle* subscriptions = v.asList();
         mutex.lock();
-        for (std::map<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
             NodeItem& item = it->second;
             if (!item.isSubscriber()) {
                 continue;
             }
             item.update();
-            Bottle& lst = na.reply.addList();
+            Bottle& lst = subscriptions->addList();
             lst.addString(toRosName(item.nc.getNestedName()));
             lst.addString(item.nc.getTypeName());
         }
         mutex.unlock();
+        na.reply = v;
         na.success();
     }
 
     void getPublications(NodeArgs& na)
     {
+        Value v;
+        Bottle* publications = v.asList();
         mutex.lock();
-        for (std::map<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
+        for (std::multimap<ConstString,NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); it++) {
             NodeItem& item = it->second;
             if (!item.isPublisher()) {
                 continue;
             }
             item.update();
-            Bottle& lst = na.reply.addList();
+            Bottle& lst = publications->addList();
             lst.addString(toRosName(item.nc.getNestedName()));
             lst.addString(item.nc.getTypeName());
         }
         mutex.unlock();
+        na.reply = v;
         na.success();
     }
 
     void paramUpdate(NodeArgs& na)
     {
-        na.reply.fromString("hmm");
+        na.reply = Value(ConstString("hmm"));
     }
 
     void publisherUpdate(NodeArgs& na)
     {
         ConstString topic = fromRosName(na.args.get(0).asString());
-        Contact c = lookup(topic);
-        if (!c.isValid()) {
+        std::vector<Contact> contacts = query(topic, "-");
+        if (contacts.size() < 1) {
             na.fail("Cannot find topic");
             return;
         }
-        c.setName("");
-        // just pass the message along, YARP ports know what to do with it
-        ContactStyle style;
-        style.admin = true;
-        style.carrier = "tcp";
-        Bottle reply;
-        if (!NetworkBase::write(c,na.request,reply,style)) {
-            na.fail("Cannot communicate with local port");
-            return;
+
+        for (std::vector<Contact>::iterator it = contacts.begin(); it != contacts.end(); ++it) {
+            Contact &c = *it;
+            if (!c.isValid()) {
+                continue;
+            }
+            c.setName("");
+            // just pass the message along, YARP ports know what to do with it
+            ContactStyle style;
+            style.admin = true;
+            style.carrier = "tcp";
+            Bottle reply;
+            if (!NetworkBase::write(c,na.request,reply,style)) {
+                continue;
+            }
+            na.fromExternal(reply);
         }
-        na.fromExternal(reply);
-        //printf("DONE with passing on publisherUpdate\n");
     }
 
     void requestTopic(NodeArgs& na)
     {
         ConstString topic = na.args.get(0).asString();
         topic = fromRosName(topic);
-        Contact c = lookup(topic);
-        if (!c.isValid()) {
+        std::vector<Contact> contacts = query(topic, "+");
+        if (contacts.size() < 1) {
             na.fail("Cannot find topic");
             return;
         }
-        na.reply.addString("TCPROS");
-        na.reply.addString(c.getHost());
-        na.reply.addInt(c.getPort());
-        na.success();
+        for (std::vector<Contact>::iterator it = contacts.begin(); it != contacts.end(); ++it) {
+            Contact &c = *it;
+
+            if (!c.isValid()) {
+                continue;
+            }
+            Value v;
+            Bottle* lst = v.asList();
+            lst->addString("TCPROS");
+            lst->addString(c.getHost());
+            lst->addInt(c.getPort());
+            na.reply = v;
+            na.success();
+            return;
+        }
+        na.fail("Cannot find topic");
     }
 };
 
 void yarp::os::Node::Helper::prepare(const ConstString& name)
 {
+    mutex.lock();
     if (port.getName()=="") {
         port.setReader(*this);
         Property *prop = port.acquireProperties(false);
@@ -344,6 +416,7 @@ void yarp::os::Node::Helper::prepare(const ConstString& name)
         port.open(name);
         this->name = port.getName();
     }
+    mutex.unlock();
 }
 
 void yarp::os::Node::Helper::add(Contactable& contactable)
@@ -358,32 +431,59 @@ void yarp::os::Node::Helper::add(Contactable& contactable)
     }
     prepare(name);
     item.contactable = &contactable;
+
+    mutex.lock();
     name_cache[&contactable] = item;
-    by_part_name[item.nc.getNestedName()] = item;
+    by_part_name.insert(std::pair<ConstString,NodeItem>(item.nc.getNestedName(),item));
     by_category.insert(std::pair<ConstString,NodeItem>(item.nc.getCategory(),item));
+    mutex.unlock();
 }
 
 void yarp::os::Node::Helper::update(Contactable& contactable)
 {
+    mutex.lock();
     NodeItem item = name_cache[&contactable];
+    mutex.unlock();
 }
 
 void yarp::os::Node::Helper::remove(Contactable& contactable)
 {
+    mutex.lock();
     NodeItem item = name_cache[&contactable];
     name_cache.erase(&contactable);
-    by_part_name.erase(item.nc.getNestedName());
-    by_category.erase(item.nc.getCategory());
+    ConstString nestedName = item.nc.getNestedName();
+    for (std::multimap<ConstString, NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
+        if (it->first == nestedName && it->second.contactable->where().toString() == contactable.where().toString()) {
+            by_part_name.erase(it);
+            break;
+        }
+    }
+    ConstString category = item.nc.getCategory();
+    for (std::multimap<ConstString, NodeItem>::iterator it = by_category.begin(); it != by_category.end(); ++it) {
+        if (it->first == category && it->second.contactable->where().toString() == contactable.where().toString()) {
+            by_category.erase(it);
+            break;
+        }
+    }
+    mutex.unlock();
 }
 
-Contact yarp::os::Node::Helper::query(const ConstString& name, const ConstString& category)
+std::vector<Contact> yarp::os::Node::Helper::query(const ConstString& name, const ConstString& category)
 {
-    Contact result;
-    std::map<ConstString,NodeItem>::const_iterator i = by_part_name.find(name);
-    if (i != by_part_name.end()) {
-        result = i->second.contactable->where();
+    std::vector<Contact> contacts;
+    mutex.lock();
+    for (std::multimap<ConstString,NodeItem>::const_iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
+        if (it->first == name && (category.empty() || category == it->second.nc.getCategory())) {
+#if defined(YARP_HAS_CXX11)
+                contacts.emplace_back(it->second.contactable->where());
+#else
+                contacts.push_back(it->second.contactable->where());
+#endif
+        }
     }
-    return result;
+    mutex.unlock();
+
+    return contacts;
 }
 
 bool yarp::os::Node::Helper::read(ConnectionReader& reader)
@@ -428,7 +528,7 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
         Bottle full;
         full.addInt(na.code);
         full.addString(na.msg);
-        full.addList() = na.reply;
+        full.add(na.reply);
         //printf("NODE %s <<< %s\n",
         //name.c_str(),
         //full.toString().c_str());
@@ -473,33 +573,27 @@ Node::~Node()
 
 void Node::add(Contactable& contactable)
 {
-    mPriv->mutex.lock();
     mPriv->add(contactable);
-    mPriv->mutex.unlock();
 }
 
 void Node::update(Contactable& contactable)
 {
-    mPriv->mutex.lock();
     mPriv->update(contactable);
-    mPriv->mutex.unlock();
 }
 
 void Node::remove(Contactable& contactable)
 {
-    mPriv->mutex.lock();
     mPriv->remove(contactable);
-    mPriv->mutex.unlock();
 }
 
 Contact Node::query(const ConstString& name, const ConstString& category)
 {
-    mPriv->mutex.lock();
-    Contact result = mPriv->query(name,category);
-    mPriv->mutex.unlock();
-    return result;
+    std::vector<Contact> contacts = mPriv->query(name,category);
+    if (contacts.size() >= 1) {
+        return contacts.at(0);
+    }
+    return Contact();
 }
-
 
 void Node::interrupt()
 {
@@ -513,7 +607,5 @@ Contact Node::where()
 
 void Node::prepare(const ConstString& name)
 {
-    mPriv->mutex.lock();
     mPriv->prepare(name);
-    mPriv->mutex.unlock();
 }

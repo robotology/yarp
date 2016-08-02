@@ -329,6 +329,7 @@ ConstString Contact::toURI(bool includeCarrier) const
         result += mPriv->hostname;
         result += ":";
         result += NetType::toString(mPriv->port);
+        result += "/";
     }
     return result;
 }

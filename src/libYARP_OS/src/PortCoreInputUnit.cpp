@@ -100,7 +100,7 @@ void PortCoreInputUnit::run() {
         setMode();
         getOwner().reportUnit(this,true);
 
-            ConstString msg = ConstString("Receiving input from ") +
+        ConstString msg = ConstString("Receiving input from ") +
             route.getFromName() + " to " + route.getToName() +
             " using " +
             route.getCarrierName();
@@ -117,7 +117,7 @@ void PortCoreInputUnit::run() {
 
         // Report the new connection
         PortInfo info;
-        info.message = msg.c_str();
+        info.message = msg;
         info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
         info.incoming = true;
         info.created = true;

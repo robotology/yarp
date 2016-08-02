@@ -547,6 +547,12 @@ void Port::setReporter(PortReport& reporter) {
 }
 
 
+void Port::resetReporter() {
+    PortCoreAdapter& core = IMPL();
+    core.resetReportCallback();
+}
+
+
 void Port::setAdminMode(bool adminMode) {
     if (adminMode) {
         Bottle b("__ADMIN");

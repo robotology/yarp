@@ -130,7 +130,8 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     if (message_definition!="") {
         header.data["message_definition"] = message_definition;
     }
-    header.data["callerid"] = proto.getRoute().getFromName().c_str();
+    NestedContact nc(proto.getRoute().getFromName());
+    header.data["callerid"] = nc.getNodeName();
     header.data["persistent"] = "1";
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
@@ -268,7 +269,8 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     // Let's just ignore everything that is sane and holy, and
     // send the same header right back.
     // **UPDATE** Oh, ok, let's modify the callerid.  Begrudgingly.
-    header.data["callerid"] = proto.getRoute().getToName().c_str();
+    NestedContact nc(proto.getRoute().getToName());
+    header.data["callerid"] = nc.getNodeName().c_str();
 
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
