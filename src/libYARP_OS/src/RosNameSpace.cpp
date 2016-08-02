@@ -14,6 +14,12 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Vocab.h>
 
+#ifdef YARP_HAS_ACE
+#  include <ace/os_include/os_netdb.h>
+#else
+#  include <netdb.h>
+#endif
+
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
@@ -631,8 +637,13 @@ ConstString RosNameSpace::fromRosNodeName(const ConstString& name) {
 }
 
 Contact RosNameSpace::rosify(const Contact& contact) {
-    if (contact.getCarrier()=="rosrpc") {
-        return contact;
+    ConstString carrier = ((contact.getCarrier() == "rosrpc")  ? "rosrpc" : "http");
+    ConstString hostname = contact.getHost();
+    if (yarp::os::impl::NameConfig::isLocalName(hostname)) {
+        char hn[NI_MAXHOST];
+        hostname[NI_MAXHOST-1] = '\0';
+        yarp::os::gethostname(hn, sizeof(hostname));
+        hostname = hn;
     }
     return Contact("http", contact.getHost().c_str(), contact.getPort());
 }
