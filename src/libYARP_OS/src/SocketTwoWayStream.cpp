@@ -88,7 +88,10 @@ void SocketTwoWayStream::updateAddresses() {
 #else
     stream.set_option (IPPROTO_TCP, TCP_NODELAY, &one,
                        sizeof(int));
-    struct sockaddr local, remote;
+    struct sockaddr local;
+    struct sockaddr remote;
+    memset(&local, 0, sizeof(local));
+    memset(&remote, 0, sizeof(remote));
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
     if (local.sa_family == AF_INET) {
