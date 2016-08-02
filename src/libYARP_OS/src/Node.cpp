@@ -190,7 +190,7 @@ public:
                 // "/foo-@node" are registered, only the first time that "/node"
                 // is found it is removed automatically. The second time it must
                 // be removed manually.
-                if (name_cache.begin()->first == c) {
+                if (!name_cache.empty() && name_cache.begin()->first == c) {
                     name_cache.erase(name_cache.begin());
                 }
             }
