@@ -355,7 +355,7 @@ bool yarp::dev::Navigation2DClient::getRelativeLocationOfCurrentTarget(double& x
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::storeCurrentPosition(yarp::os::ConstString& location_name)
+bool yarp::dev::Navigation2DClient::storeCurrentPosition(yarp::os::ConstString location_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -381,7 +381,7 @@ bool yarp::dev::Navigation2DClient::storeCurrentPosition(yarp::os::ConstString& 
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::storeLocation(yarp::os::ConstString& location_name, Map2DLocation loc)
+bool yarp::dev::Navigation2DClient::storeLocation(yarp::os::ConstString location_name, Map2DLocation loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -454,7 +454,40 @@ bool   yarp::dev::Navigation2DClient::getLocationsList(std::vector<yarp::os::Con
     return true;
 }
 
-bool   yarp::dev::Navigation2DClient::deleteLocation(yarp::os::ConstString& location_name)
+bool   yarp::dev::Navigation2DClient::getLocation(yarp::os::ConstString location_name, Map2DLocation& loc)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GET_LOCATION);
+    b.addString(location_name);
+
+    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::getLocation() recived error from server";
+            return false;
+        }
+        else
+        {
+            loc.map_id = b.get(1).asString();
+            loc.x = b.get(1).asDouble();
+            loc.y = b.get(1).asDouble();
+            loc.theta = b.get(1).asDouble();
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::getLocation() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
+bool   yarp::dev::Navigation2DClient::deleteLocation(yarp::os::ConstString location_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;

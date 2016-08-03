@@ -103,7 +103,7 @@ public:
     * @param location_name the name of the location
     * @return true/false
     */
-    virtual bool storeCurrentPosition(yarp::os::ConstString& location_name) = 0;
+    virtual bool storeCurrentPosition(yarp::os::ConstString location_name) = 0;
 
     /**
     * Store a location specified by the user in the world reference frame
@@ -111,7 +111,15 @@ public:
     * @param loc the location of the robot
     * @return true/false
     */
-    virtual bool storeLocation(yarp::os::ConstString& location_name, Map2DLocation loc) = 0;
+    virtual bool storeLocation(yarp::os::ConstString location_name, Map2DLocation loc) = 0;
+
+    /**
+    * Retrieves a location specified by the user in the world reference frame
+    * @param location_name the name of the location
+    * @param loc the location of the robot
+    * @return true/false
+    */
+    virtual bool getLocation(yarp::os::ConstString location_name, Map2DLocation& loc) = 0;
 
     /**
     * Get a list of all stored locations
@@ -125,7 +133,7 @@ public:
     * @param location_name the name of the location
     * @return true/false
     */
-    virtual bool deleteLocation(yarp::os::ConstString& location_name) = 0;
+    virtual bool deleteLocation(yarp::os::ConstString location_name) = 0;
 
     /**
     * Delete all stored locations
@@ -164,6 +172,7 @@ public:
 #define VOCAB_NAV_GOTOABS           VOCAB4('s','a','b','s')
 #define VOCAB_NAV_GOTOREL           VOCAB4('s','r','e','l')
 
+#define VOCAB_NAV_GET_LOCATION      VOCAB4('g','l','o','c')
 #define VOCAB_NAV_GET_LOCATION_LIST VOCAB4('l','i','s','t')
 #define VOCAB_NAV_GET_ABS_TARGET    VOCAB4('g','a','b','s')
 #define VOCAB_NAV_GET_REL_TARGET    VOCAB4('g','r','e','l')

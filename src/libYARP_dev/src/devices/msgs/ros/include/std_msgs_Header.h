@@ -1,10 +1,11 @@
 // This is an automatically generated file.
 // Generated from this std_msgs_Header.msg definition:
+//   [std_msgs/Header]:
 //   # Standard metadata for higher-level stamped data types.
-//   # This is generally used to communicate timestamped data 
+//   # This is generally used to communicate timestamped data
 //   # in a particular coordinate frame.
-//   # 
-//   # sequence ID: consecutively increasing ID 
+//   #
+//   # sequence ID: consecutively increasing ID
 //   uint32 seq
 //   #Two-integer timestamp that is expressed as:
 //   # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')
@@ -15,7 +16,6 @@
 //   # 0: no frame
 //   # 1: global frame
 //   string frame_id
-//   
 // Instances of this class can be read and written with YARP ports,
 // using a ROS-compatible format.
 
@@ -118,11 +118,12 @@ public:
 
   // Give source text for class, ROS will need this
   yarp::os::ConstString getTypeText() {
-    return "# Standard metadata for higher-level stamped data types.\n\
-# This is generally used to communicate timestamped data \n\
+    return "[std_msgs/Header]:\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data\n\
 # in a particular coordinate frame.\n\
-# \n\
-# sequence ID: consecutively increasing ID \n\
+#\n\
+# sequence ID: consecutively increasing ID\n\
 uint32 seq\n\
 #Two-integer timestamp that is expressed as:\n\
 # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
@@ -132,8 +133,7 @@ time stamp\n\
 #Frame this data is associated with\n\
 # 0: no frame\n\
 # 1: global frame\n\
-string frame_id\n\
-";
+string frame_id";
   }
 
   // Name the class, ROS will need this

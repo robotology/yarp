@@ -64,10 +64,11 @@ public:
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta);
 
     bool   getCurrentPosition(Map2DLocation loc);
-    bool   storeCurrentPosition(yarp::os::ConstString& location_name);
+    bool   storeCurrentPosition(yarp::os::ConstString location_name);
 
-    bool   storeLocation(yarp::os::ConstString& location_name, Map2DLocation loc);
-    bool   deleteLocation(yarp::os::ConstString& location_name);
+    bool   storeLocation(yarp::os::ConstString location_name, Map2DLocation loc);
+    bool   getLocation(yarp::os::ConstString location_name, Map2DLocation& loc);
+    bool   deleteLocation(yarp::os::ConstString location_name);
     bool   getLocationsList(std::vector<yarp::os::ConstString>& locations);
     bool   getNavigationStatus(NavigationStatusEnum& status);
     bool   clearAllLocations();
