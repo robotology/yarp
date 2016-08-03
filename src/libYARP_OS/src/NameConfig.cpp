@@ -317,11 +317,10 @@ String NameConfig::getHostName(bool prefer_loopback, String seed) {
                 continue;
             }
         }
-#ifdef YARP_HAS_ACE
-        delete[] ips;
-#endif
     }
-#ifndef YARP_HAS_ACE
+#ifdef YARP_HAS_ACE
+    delete[] ips;
+#else
     freeifaddrs(ifaddr);
 #endif
 
