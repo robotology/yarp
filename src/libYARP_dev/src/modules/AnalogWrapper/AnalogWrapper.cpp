@@ -199,6 +199,14 @@ AnalogWrapper::AnalogWrapper(): RateThread(DEFAULT_THREAD_PERIOD)
 {
     _rate = DEFAULT_THREAD_PERIOD;
     analogSensor_p = NULL;
+
+    // init ROS struct
+    useROS          = ROS_disabled;
+    frame_id        = "";
+    rosNodeName     = "";
+    rosTopicName    = "";
+    rosNode         = NULL;
+    rosMsgCounter   = 0;
 }
 
 AnalogWrapper::~AnalogWrapper()
@@ -389,33 +397,50 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     rosTopicName = rosGroup.find("ROS_topicName").asString();
     yInfo() << sensorId << "ROS_topicName is " << rosTopicName;
 
-    // check for frame_id parameter
-    if(!rosGroup.check("frame_id"))
-    {
-        yError() << sensorId << " cannot find frame_id parameter, mandatory when using ROS message";
-        useROS = ROS_config_error;
-        return false;
-    }
-    frame_id = rosGroup.find("frame_id").asString();
-    yInfo() << sensorId << "frame_id is " << frame_id;
-
     // check for ROS_msgType parameter
-    if(!rosGroup.check("ROS_msgType"))
+    if (!rosGroup.check("ROS_msgType"))
     {
         yError() << sensorId << " cannot find ROS_msgType parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
-    std::string rosMsgType = rosGroup.find("ROS_msgType").asString();
-    if(rosMsgType == "geometry_msgs/WrenchedStamped")
+    rosMsgType = rosGroup.find("ROS_msgType").asString();
+
+    // check for frame_id parameter
+    if (rosMsgType == "geometry_msgs/WrenchedStamped")
     {
-        yInfo() << sensorId << "ROS_msgType is " << rosTopicName;
+        yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
+        if (!rosGroup.check("frame_id"))
+        {
+            yError() << sensorId << " cannot find frame_id parameter, mandatory when using ROS message";
+            useROS = ROS_config_error;
+            return false;
+        }
+        frame_id = rosGroup.find("frame_id").asString();
+        yInfo() << sensorId << "frame_id is " << frame_id;
+    }
+    else if (rosMsgType == "sensor_msgs/JointState")
+    {
+        yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
+        if (!rosGroup.check("joint_names"))
+        {
+            yError() << sensorId << " cannot find some ros parameters";
+            useROS = ROS_config_error;
+            return false;
+        }
+        yarp::os::Bottle& jnam =rosGroup.findGroup("joint_names");
+        int joint_names_size = jnam.size()-1;
+        for (int i = 0; i < joint_names_size; i++)
+        {
+            ros_joint_names.push_back(jnam.get(i+1).asString());
+        }
     }
     else
     {
         yError() << sensorId << "ROS_msgType '" << rosMsgType << "' not supported ";
         return false;
     }
+
     return true;
 }
 
@@ -436,12 +461,20 @@ bool AnalogWrapper::initialize_ROS()
                 break;
             }
 
-            if (!rosPublisherPort.topic(rosTopicName) )
+            if (rosMsgType == " geometry_msgs/WrenchedStamped" && !rosPublisherWrenchPort.topic(rosTopicName))
             {
                 yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
                 success = false;
                 break;
             }
+
+            if (rosMsgType == "sensor_msgs/JointState" && !rosPublisherJointPort.topic(rosTopicName))
+            {
+                yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
+                success = false;
+                break;
+            }
+
             success = true;
         } break;
 
@@ -654,7 +687,7 @@ void AnalogWrapper::run()
                     }
                 }
 
-                if(useROS != ROS_disabled)
+                if (useROS != ROS_disabled && rosMsgType == "geometry_msgs/WrenchedStamped")
                 {
                     geometry_msgs_WrenchStamped rosData;
                     rosData.header.seq = rosMsgCounter++;
@@ -669,7 +702,38 @@ void AnalogWrapper::run()
                     rosData.wrench.torque.y = lastDataRead[4];
                     rosData.wrench.torque.z = lastDataRead[5];
 
-                    rosPublisherPort.write(rosData);
+                    rosPublisherWrenchPort.write(rosData);
+                }
+                else if (useROS != ROS_disabled && rosMsgType == "sensor_msgs/JointState")
+                {
+                    sensor_msgs_JointState rosData;
+                    size_t data_size = lastDataRead.size();
+                    rosData.name.resize(data_size);
+                    rosData.position.resize(data_size);
+                    rosData.velocity.resize(data_size);
+                    rosData.effort.resize(data_size);
+
+                    if (data_size != ros_joint_names.size())
+                    {
+                        yDebug() << "Invalid ros_joint_names size:" << data_size << "!=" << ros_joint_names.size();
+                    }
+                    else
+                    {
+                        for (size_t i = 0; i< data_size; i++)
+                        {
+                            //JointTypeEnum jType;
+                            // if (jType == VOCAB_JOINTTYPE_REVOLUTE)
+                            {
+                                rosData.name[i] = ros_joint_names[i];
+                                rosData.position[i] = convertDegreesToRadians(lastDataRead[i]);
+                                rosData.velocity[i] = 0;
+                                rosData.effort[i] = 0;
+                            }
+                        }
+                    }
+                    rosData.header.seq = rosMsgCounter++;
+                    rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                    rosPublisherJointPort.write(rosData);
                 }
             }
             else
@@ -704,8 +768,17 @@ bool AnalogWrapper::close()
         RateThread::stop();
     }
 
-    RateThread::stop();
+    //RateThread::stop();
+
     detachAll();
     removeHandlers();
+
+    if(rosNode!=NULL) {
+        rosNode->interrupt();
+        delete rosNode;
+
+        rosNode = NULL;
+    }
+
     return true;
 }

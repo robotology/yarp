@@ -91,7 +91,7 @@ set(YARP_QML2_IMPORT_DIR_FULL "@PACKAGE_YARP_QML2_IMPORT_DIR@")
 
 # Pass along some compilation options that may be useful for clients
 # to check.
-set(YARP_HAS_MATH_LIB @YARP_HAS_MATH_LIB@)
+set(YARP_HAS_MATH_LIB TRUE)
 set(YARP_HAS_NAME_LIB @YARP_HAS_NAME_LIB@)
 
 set(YARP_USE_ATLAS @YARP_USE_ATLAS@) # This is a math library option

@@ -66,7 +66,7 @@ bool StreamConnectionReader::convertTextMode() {
             bot.read(*this);
             BufferedConnectionWriter writer;
             bot.write(writer);
-            String s = writer.toString();
+            ConstString s = writer.toString();
             altStream.reset(s);
             in = &altStream;
             convertedTextMode = true;
@@ -81,7 +81,7 @@ Bytes StreamConnectionReader::readEnvelope() {
     if (protocol==NULL) {
         return Bytes(0,0);
     }
-    const String& env = protocol->getEnvelope();
+    const ConstString& env = protocol->getEnvelope();
     return Bytes((char*)env.c_str(),env.length());
 }
 

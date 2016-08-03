@@ -209,39 +209,6 @@ sudo update-alternatives --auto liblapack.so.3
 
 \section dependencies_gui GUI Dependencies
 
-YARP GUIs are being migrated from
-<a href="http://www.gtk.org/"><b>GTK+2</b></a> +
-<a href="http://www.gtkmm.org/"><b>GtkMM</b></a>
-to
-<a href="http://qt-project.org/"><b>Qt5</b></a>.
-For compatibility with older distributions, GTK2 GUIs can still be
-built, but no new features are added, and the new GUIs (i.e.
-\a yarplogger) are not available.
-
-This is a list of the GUIs with the toolkit required.
-
-\li \b yarpview: Qt5 or GTK2
-\li \b yarpscope: Qt5 or GTK2
-\li \b yarpmanager: Qt5 or GTK2
-\li \b yarpbuilder: GTK2 (Qt5 porting in progress)
-\li \b yarplogger: Qt5
-
-For the GUIs that can be built with both toolkits:
-
-\li If only Qt5 is available, the Qt5 version will be built.
-\li If only GTK2 is available, the GTK2 version will be built.
-\li If both Qt5 and GTK2 are available, both will be built and the
-    \c -gtk suffix will be appended to the GTK2 executable.
-\li If both Qt5 and GTK2 are available, and the \c YARP_DEFAULT_GTK
-    CMake variable is set, both will be built and the
-    \c -qt suffix will be appended to the Qt5 executable.
-
-\note
-Usage of the \c YARP_DEFAULT_GTK is discouraged, and therefore it
-cannot be set using CMake GUIs. If it is really necessary, it can be set
-by passing \c -DYARP_DEFAULT_GTK:BOOL=TRUE to CMake command line, or by
-using the "Add Entry" button in CMake GUI.
-
 \subsection dependencies_qt5 Qt5 (Recommended)
 
 Qt 5.2 or later is required. YARP GUIs use the QtQuick Controls module
@@ -368,11 +335,5 @@ Qt5 binary package for Windows is available from the
 
 Qt5 binary package for Mac is available from the
 <a href="http://qt-project.org/downloads">Qt Project website</a>
-
-
-\subsection dependencies_gtk GTK2 (Legacy)
-
-\section dependencies_optional Optional Dependencies
-\todo TODO
 
  */

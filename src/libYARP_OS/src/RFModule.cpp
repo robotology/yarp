@@ -8,7 +8,7 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Vocab.h>
@@ -438,7 +438,7 @@ ConstString RFModule::getName(const ConstString& subName) {
         return name;
     }
 
-    String base = name.c_str();
+    ConstString base = name.c_str();
 
     // Support legacy behavior, check if a "/" needs to be
     // appended before subName.

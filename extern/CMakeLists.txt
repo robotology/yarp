@@ -23,42 +23,10 @@ if(YARP_BUILD_SQLITE)
   set(SQLite_DEFINITIONS ${SQLite_DEFINITIONS} PARENT_SCOPE)
 endif()
 
-# GtkDatabox
-if(YARP_BUILD_GTKDATABOX)
-  add_subdirectory(gtkdatabox)
-  set(GtkDatabox_INCLUDE_DIRS ${GtkDatabox_INCLUDE_DIRS} PARENT_SCOPE)
-  set(GtkDatabox_LIBRARIES ${GtkDatabox_LIBRARIES} PARENT_SCOPE)
-  set(GtkDatabox_DEFINITIONS ${GtkDatabox_DEFINITIONS} PARENT_SCOPE)
-endif()
-
-# GtkDataboxMM
-if(YARP_BUILD_GTKDATABOXMM)
-  add_subdirectory(gtkdataboxmm)
-  set(GtkDataboxMM_INCLUDE_DIRS ${GtkDataboxMM_INCLUDE_DIRS} PARENT_SCOPE)
-  set(GtkDataboxMM_LIBRARIES ${GtkDataboxMM_LIBRARIES} PARENT_SCOPE)
-  set(GtkDataboxMM_DEFINITIONS ${GtkDataboxMM_DEFINITIONS} PARENT_SCOPE)
-endif()
-
 # QCustomPlot
 if(YARP_BUILD_QCUSTOMPLOT)
   add_subdirectory(qcustomplot)
   set(QCustomPlot_INCLUDE_DIRS ${QCustomPlot_INCLUDE_DIRS} PARENT_SCOPE)
   set(QCustomPlot_LIBRARIES ${QCustomPlot_LIBRARIES} PARENT_SCOPE)
   set(QCustomPlot_DEFINITIONS ${QCustomPlot_DEFINITIONS} PARENT_SCOPE)
-endif()
-
-# GooCanvas
-if(YARP_BUILD_GOOCANVAS)
-  add_subdirectory(goocanvas)
-  set(GooCanvas_INCLUDE_DIRS ${GooCanvas_INCLUDE_DIRS} PARENT_SCOPE)
-  set(GooCanvas_LIBRARIES ${GooCanvas_LIBRARIES} PARENT_SCOPE)
-  set(GooCanvas_DEFINITIONS ${GooCanvas_DEFINITIONS} PARENT_SCOPE)
-endif()
-
-# GooCanvasMM
-if(YARP_BUILD_GOOCANVASMM)
-  add_subdirectory(goocanvasmm)
-  set(GooCanvasMM_INCLUDE_DIRS ${GooCanvasMM_INCLUDE_DIRS} PARENT_SCOPE)
-  set(GooCanvasMM_LIBRARIES ${GooCanvasMM_LIBRARIES} PARENT_SCOPE)
-  set(GooCanvasMM_DEFINITIONS ${GooCanvasMM_DEFINITIONS} PARENT_SCOPE)
 endif()

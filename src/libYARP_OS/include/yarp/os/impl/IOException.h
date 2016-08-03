@@ -8,7 +8,7 @@
 #ifndef YARP2_IOEXCEPTION
 #define YARP2_IOEXCEPTION
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 namespace yarp {
     namespace os {
@@ -29,11 +29,11 @@ public:
         }
     }
 
-    String toString() const {
+    ConstString toString() const {
         return desc;
     }
 private:
-    String desc;
+    ConstString desc;
 };
 
 #endif

@@ -91,9 +91,9 @@ public:
         cmd.addString(dir.c_str());
         if (style.carrier!="") {
             if (!destIsTopic) {
-                dynamicDest = dynamicDest.addCarrier(style.carrier);
+                dynamicDest.setCarrier(style.carrier);
             } else {
-                dynamicSrc = dynamicSrc.addCarrier(style.carrier);
+                dynamicSrc.setCarrier(style.carrier);
             }
         }
         cmd.addString(dynamicSrc.toString().c_str());
@@ -168,7 +168,7 @@ public:
     }
 
     virtual Contact getNameServerContact() const {
-        return Contact::byName("/root");
+        return Contact("/root");
     }
  };
 

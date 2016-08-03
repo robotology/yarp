@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <yarp/conf/api.h>
 #include <yarp/conf/system.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/Log_Msg.h>
@@ -85,29 +85,29 @@ public:
     }
 #endif
 
-    void println(const String& txt) {
+    void println(const ConstString& txt) {
         internal_debug(txt);
     }
 
 
 
-    void internal_debug(const String& txt) {
+    void internal_debug(const ConstString& txt) {
         show(LM_DEBUG,txt);
     }
 
-    void internal_info(const String& txt) {
+    void internal_info(const ConstString& txt) {
         show(LM_INFO,txt);
     }
 
-    void internal_warning(const String& txt) {
+    void internal_warning(const ConstString& txt) {
         show(LM_WARNING,txt);
     }
 
-    void internal_error(const String& txt) {
+    void internal_error(const ConstString& txt) {
         show(LM_ERROR,txt);
     }
 
-    void internal_fail(const String& txt) {
+    void internal_fail(const ConstString& txt) {
         show(LM_ERROR,txt);
         exit(1);
     }
@@ -115,27 +115,27 @@ public:
 
 
     void internal_debug(const char *txt) {
-        String stxt(txt);
+        ConstString stxt(txt);
         show(LM_DEBUG,stxt);
     }
 
     void internal_info(const char *txt) {
-        String stxt(txt);
+        ConstString stxt(txt);
         show(LM_INFO,stxt);
     }
 
     void internal_warning(const char *txt) {
-        String stxt(txt);
+        ConstString stxt(txt);
         show(LM_WARNING,stxt);
     }
 
     void internal_error(const char *txt) {
-        String stxt(txt);
+        ConstString stxt(txt);
         show(LM_ERROR,stxt);
     }
 
     void internal_fail(const char *txt) {
-        String stxt(txt);
+        ConstString stxt(txt);
         show(LM_ERROR,stxt);
         exit(1);
     }
@@ -174,11 +174,11 @@ public:
     }
 
 private:
-    void show(int level, const String& txt);
+    void show(int level, const ConstString& txt);
     void exit(int level);
 
     static Logger *root;
-    String prefix;
+    ConstString prefix;
     Logger *parent;
     int verbose;
     int low;

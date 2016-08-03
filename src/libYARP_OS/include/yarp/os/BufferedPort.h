@@ -32,7 +32,8 @@ namespace yarp {
  */
 template <class T>
 class yarp::os::BufferedPort : public Contactable,
-                        public TypedReader<T>, public TypedReaderCallback<T>
+                               public TypedReader<T>,
+                               public TypedReaderCallback<T>
 {
 public:
     using Contactable::open;
@@ -325,6 +326,11 @@ public:
     // documented in Contactable
     virtual void setReporter(PortReport& reporter) {
         port.setReporter(reporter);
+    }
+
+    // documented in Contactable
+    virtual void resetReporter() {
+        port.resetReporter();
     }
 
     // documented in TypedReader

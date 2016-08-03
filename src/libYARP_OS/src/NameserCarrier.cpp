@@ -5,7 +5,7 @@
  */
 
 #include <yarp/os/impl/NameserCarrier.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -95,11 +95,11 @@ yarp::os::impl::NameserCarrier::NameserCarrier() {
     firstSend = true;
 }
 
-yarp::os::impl::String yarp::os::impl::NameserCarrier::getName() {
+yarp::os::ConstString yarp::os::impl::NameserCarrier::getName() {
     return "name_ser";
 }
 
-yarp::os::impl::String yarp::os::impl::NameserCarrier::getSpecifierName() {
+yarp::os::ConstString yarp::os::impl::NameserCarrier::getSpecifierName() {
     return "NAME_SER";
 }
 
@@ -109,7 +109,7 @@ yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() {
 
 bool yarp::os::impl::NameserCarrier::checkHeader(const yarp::os::Bytes& header) {
     if (header.length()==8) {
-        String target = getSpecifierName();
+        ConstString target = getSpecifierName();
         for (int i=0; i<8; i++) {
             if (!(target[i]==header.get()[i])) {
                 return false;
@@ -122,7 +122,7 @@ bool yarp::os::impl::NameserCarrier::checkHeader(const yarp::os::Bytes& header) 
 
 void yarp::os::impl::NameserCarrier::getHeader(const Bytes& header) {
     if (header.length()==8) {
-        String target = getSpecifierName();
+        ConstString target = getSpecifierName();
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }
@@ -147,7 +147,7 @@ bool yarp::os::impl::NameserCarrier::canEscape() {
 }
 
 bool yarp::os::impl::NameserCarrier::sendHeader(ConnectionState& proto) {
-    yarp::os::impl::String target = getSpecifierName();
+    yarp::os::ConstString target = getSpecifierName();
     yarp::os::Bytes b((char*)target.c_str(),8);
     proto.os().write(b);
     proto.os().flush();
@@ -185,10 +185,10 @@ bool yarp::os::impl::NameserCarrier::expectReplyToHeader(ConnectionState& proto)
 }
 
 bool yarp::os::impl::NameserCarrier::write(ConnectionState& proto, SizedWriter& writer) {
-    String target = firstSend?"VER ":"NAME_SERVER ";
+    ConstString target = firstSend?"VER ":"NAME_SERVER ";
     Bytes b((char*)target.c_str(),target.length());
     proto.os().write(b);
-    String txt;
+    ConstString txt;
     // ancient nameserver can't deal with quotes
     for (size_t i=0; i<writer.length(); i++) {
         for (size_t j=0; j<writer.length(i); j++) {

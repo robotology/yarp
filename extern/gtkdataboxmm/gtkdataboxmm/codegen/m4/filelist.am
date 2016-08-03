@@ -1,5 +1,0 @@
-## This file is part of gtkdataboxmm.
-
-files_codegen_m4 = \
-	convert.m4 \
-	convert_gtkdatabox.m4

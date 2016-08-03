@@ -107,9 +107,13 @@ set_source_files_properties(yarp.i PROPERTIES CPLUSPLUS ON)
 ## deprecated methods
 
 if(NOT YARP_NO_DEPRECATED)
-  check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-  if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-    add_definitions(-Wno-deprecated-declarations)
+  if(MSVC)
+    add_definitions(/wd4996)
+  else()
+    check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+    if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+      add_definitions(-Wno-deprecated-declarations)
+    endif()
   endif()
 endif()
 

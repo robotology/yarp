@@ -14,6 +14,7 @@
 #include <yarp/os/NameStore.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Nodes.h>
 #include <yarp/os/Network.h>
 
@@ -42,9 +43,11 @@ public:
      * return the name client
      */
     static NameClient& getNameClient() {
+        mutex.lock();
         if (instance==NULL) {
             instance = new NameClient();
         }
+        mutex.unlock();
         return *instance;
     }
 
@@ -53,11 +56,13 @@ public:
      *
      */
     static void removeNameClient() {
+        mutex.lock();
         if (instance!=NULL) {
             delete instance;
             instance = NULL;
             instanceClosed = true;
         }
+        mutex.unlock();
     }
 
     static bool isClosed() {
@@ -286,6 +291,7 @@ private:
     yarp::os::Property pluginState;
     yarp::os::Nodes nodes;
 
+    static yarp::os::Mutex mutex;
     static NameClient *instance;
     static bool instanceClosed;
 

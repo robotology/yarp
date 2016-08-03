@@ -8,7 +8,7 @@
 #ifndef YARP2_COMPANION
 #define YARP2_COMPANION
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Contactable.h>
@@ -36,7 +36,7 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::Companion {
 public:
 
-    static String version();
+    static ConstString version();
 
     /**
      * The standard main method for the YARP companion utility.
@@ -103,29 +103,29 @@ public:
 
     static int forward(const char *localName, const char *targetName);
 
-    static String slashify(const String& src) {
+    static ConstString slashify(const ConstString& src) {
         if (src.length()>0) {
             if (src[0] == '/') {
                 return src;
             }
         }
-        return String("/") + src;
+        return ConstString("/") + src;
     }
 
     /**
      * Read a line of arbitrary length from standard input.
      */
-    static String readString(bool *eof=NULL);
+    static ConstString readString(bool *eof=NULL);
 
 
-    static int sendMessage(const String& port, yarp::os::PortWriter& writable, 
+    static int sendMessage(const ConstString& port, yarp::os::PortWriter& writable,
                            bool silent = false) {
-        String output;
+        ConstString output;
         return sendMessage(port,writable,output,silent);
     }
 
-    static int sendMessage(const String& port, yarp::os::PortWriter& writable, 
-                           String& output,
+    static int sendMessage(const ConstString& port, yarp::os::PortWriter& writable,
+                           ConstString& output,
                            bool quiet);
 
 
@@ -216,7 +216,7 @@ private:
 
     class Entry {
     public:
-        String name;
+        ConstString name;
         int (Companion::*fn)(int argc, char *argv[]);
 
         Entry(const char *name, int (Companion::*fn)(int argc, char *argv[])) :
@@ -228,9 +228,9 @@ private:
         }
     };
 
-    PLATFORM_MAP(String,Entry) action;
-    PlatformVector<String> names;
-    PlatformVector<String> tips;
+    PLATFORM_MAP(ConstString,Entry) action;
+    PlatformVector<ConstString> names;
+    PlatformVector<ConstString> tips;
     bool adminMode;
     yarp::os::ConstString argType;
     bool waitConnect;
@@ -238,13 +238,13 @@ private:
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = NULL) {
         Entry e(name,fn);
-        PLATFORM_MAP_SET(action,String(name),e);
+        PLATFORM_MAP_SET(action,ConstString(name),e);
         // maintain a record of order of keys
-        names.push_back(String(name));
+        names.push_back(ConstString(name));
         if (tip!=NULL) {
-            tips.push_back(String(tip));
+            tips.push_back(ConstString(tip));
         } else {
-            tips.push_back(String(""));
+            tips.push_back(ConstString(""));
         }
     }
 };

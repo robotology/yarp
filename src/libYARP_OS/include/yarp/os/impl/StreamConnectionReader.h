@@ -154,7 +154,7 @@ public:
         return x;
     }
 
-    virtual String expectString(int len) {
+    virtual ConstString expectString(int len) {
         if (!isGood()) { return ""; }
         char *buf = new char[len];
         yarp::os::Bytes b(buf,len);
@@ -166,16 +166,16 @@ public:
             return "";
         }
         messageLen -= b.length();
-        String s = buf;
+        ConstString s = buf;
         delete[] buf;
         return s;
     }
 
-    virtual String expectLine() {
+    virtual ConstString expectLine() {
         if (!isGood()) { return ""; }
         yAssert(in!=NULL);
         bool success = false;
-        String result = in->readLine('\n',&success);
+        ConstString result = in->readLine('\n',&success);
         if (!success) {
             err = true;
             return "";
@@ -222,17 +222,20 @@ public:
     virtual yarp::os::Contact getRemoteContact() {
         if (str!=NULL) {
             Contact remote = str->getRemoteAddress();
-            return remote.addName(route.getFromName());
+            remote.setName(route.getFromName());
+            return remote;
         }
-        return yarp::os::Contact::byCarrier(route.getCarrierName()).addName(route.getFromName());
+        Contact remote = yarp::os::Contact(route.getFromName(), route.getCarrierName());
+        return remote;
     }
 
     virtual yarp::os::Contact getLocalContact() {
         if (str!=NULL) {
             Contact local = str->getLocalAddress();
-            return local.addName(route.getToName());
+            local.setName(route.getToName());
+            return local;
         }
-        return yarp::os::Contact::invalid();
+        return yarp::os::Contact();
     }
 
 
@@ -245,7 +248,7 @@ public:
         if (!isGood()) { return ""; }
         yAssert(in!=NULL);
         bool lsuccess = false;
-        String result = in->readLine(terminatingChar,&lsuccess);
+        ConstString result = in->readLine(terminatingChar,&lsuccess);
         if (lsuccess) {
             messageLen -= result.length()+1;
         }

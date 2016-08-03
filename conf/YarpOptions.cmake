@@ -183,7 +183,7 @@ if(YARP_VALGRIND_TESTS)
       set(VALGRIND_${_TOOL}_OPTIONS "${VALGRIND_${_TOOL}_OPTIONS_DEFAULT}"
           CACHE STRING "Valgrind ${_Tool} tool options (--error-exitcode=1 will be appended)")
       separate_arguments(VALGRIND_${_TOOL}_OPTIONS UNIX_COMMAND "${VALGRIND_${_TOOL}_OPTIONS}")
-      set(VALGRIND_${_TOOL}_COMMAND "${VALGRIND_EXECUTABLE}" --tool=${_tool} ${VALGRIND_${_TOOL}_OPTIONS} --error-exitcode=1)
+      set(VALGRIND_${_TOOL}_COMMAND "${VALGRIND_EXECUTABLE}" --tool=${_tool} ${VALGRIND_${_TOOL}_OPTIONS} --error-exitcode=1 --fullpath-after=${CMAKE_SOURCE_DIR}/)
       mark_as_advanced(VALGRIND_${_TOOL}_OPTIONS)
     else()
       message(WARNING "Valgrind not found. Cannot enable ${_Tool} tests.")
@@ -286,7 +286,7 @@ endif(YARP_EXPERIMENTAL_CXX11)
 
 
 #########################################################################
-# Control whether yarp::os::impl::String should be std::string or opaque
+# Control whether yarp::os::ConstString should be std::string or opaque
 # Not an important option for end users yet.  In principle
 # yarp::os::ConstString could now be set to std::string, if YARP
 # ever decides to accept STL as a dependency.

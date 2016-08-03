@@ -8,7 +8,6 @@
 #ifndef YARP2_NAMECONFIG
 #define YARP2_NAMECONFIG
 
-#include <yarp/os/impl/String.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>
 
@@ -30,18 +29,18 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::NameConfig {
 public:
 
-    static String expandFilename(const char *fname);
+    static ConstString expandFilename(const char *fname);
 
-    String getSafeString(const String& txt);
+    ConstString getSafeString(const ConstString& txt);
 
-    String getConfigFileName(const char *stem = NULL,
+    ConstString getConfigFileName(const char *stem = NULL,
                              const char *ns = NULL);
 
-    static bool createPath(const String& fileName, int ignoreLevel = 1);
+    static bool createPath(const ConstString& fileName, int ignoreLevel = 1);
 
-    String readConfig(const String& fileName);
+    ConstString readConfig(const ConstString& fileName);
 
-    bool writeConfig(const String& fileName, const String& text);
+    bool writeConfig(const ConstString& fileName, const ConstString& text);
 
     bool fromFile(const char *ns = 0 /*NULL*/);
 
@@ -49,38 +48,38 @@ public:
 
     void setAddress(const Contact& address);
 
-    static String getHostName(bool prefer_loopback = false,
-                              String seed = "");
+    static ConstString getHostName(bool prefer_loopback = false,
+                              ConstString seed = "");
 
-    static String getIps();
+    static ConstString getIps();
 
     static yarp::os::Bottle getIpsAsBottle();
 
-    static bool isLocalName(const String& name);
+    static bool isLocalName(const ConstString& name);
 
     Contact getAddress();
 
-    String getMode() {
+    ConstString getMode() {
         return mode;
     }
 
-    void setMode(const String& mode) {
+    void setMode(const ConstString& mode) {
         this->mode = mode;
     }
 
-    String getNamespace(bool refresh = false);
+    ConstString getNamespace(bool refresh = false);
 
     yarp::os::Bottle getNamespaces(bool refresh = false);
 
-    void setNamespace(const String& ns);
+    void setNamespace(const ConstString& ns);
 
 private:
     Contact address;
-    String space;
+    ConstString space;
     yarp::os::Bottle spaces;
-    String mode;
+    ConstString mode;
 
-    bool fromString(const String& txt);
+    bool fromString(const ConstString& txt);
 };
 
 #endif

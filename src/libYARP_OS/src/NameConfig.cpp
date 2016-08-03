@@ -39,7 +39,7 @@ using namespace yarp::os;
 
 #define CONF_FILENAME YARP_CONFIG_FILENAME
 
-bool NameConfig::fromString(const String& txt) {
+bool NameConfig::fromString(const ConstString& txt) {
     address = Contact();
     SplitString ss(txt.c_str());
     if (ss.size()>=1) {
@@ -68,14 +68,14 @@ bool NameConfig::fromString(const String& txt) {
             mode = "yarp";
         }
         if (mode=="ros") {
-            address = address.addCarrier("xmlrpc");
+            address.setCarrier("xmlrpc");
         }
         return true;
     }
     return false;
 }
 
-String NameConfig::expandFilename(const char *fname) {
+ConstString NameConfig::expandFilename(const char *fname) {
     ConstString root = NetworkBase::getEnvironment("YARP_CONF");
 
     // yarp 2.4 modifications begin
@@ -103,12 +103,12 @@ String NameConfig::expandFilename(const char *fname) {
         YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
         ACE_OS::exit(1);
     }
-    YARP_DEBUG(Logger::get(),String("Configuration file: ") + conf.c_str());
+    YARP_DEBUG(Logger::get(),ConstString("Configuration file: ") + conf.c_str());
     return conf.c_str();
 }
 
-String NameConfig::getSafeString(const String& txt) {
-    String result = txt;
+ConstString NameConfig::getSafeString(const ConstString& txt) {
+    ConstString result = txt;
     for (unsigned int i=0; i<result.length(); i++) {
         char ch = result[i];
         if (!((ch>='0'&&ch<='9')||(ch>='A'&&ch<='Z')||(ch>='a'&&ch<='z'))) {
@@ -118,10 +118,10 @@ String NameConfig::getSafeString(const String& txt) {
     return result;
 }
 
-String NameConfig::getConfigFileName(const char *stem, const char *ns) {
-    String fname = (stem!=NULL)?stem:CONF_FILENAME;
+ConstString NameConfig::getConfigFileName(const char *stem, const char *ns) {
+    ConstString fname = (stem!=NULL)?stem:CONF_FILENAME;
     if (stem==NULL) {
-        String space;
+        ConstString space;
         if (ns) {
             space = ns;
         } else {
@@ -129,7 +129,7 @@ String NameConfig::getConfigFileName(const char *stem, const char *ns) {
         }
         if (space!="/root") {
             // for non-default namespace, need a separate cache file
-            String base = getSafeString(space);
+            ConstString base = getSafeString(space);
             base += ".conf";
             fname = base;
         }
@@ -138,15 +138,15 @@ String NameConfig::getConfigFileName(const char *stem, const char *ns) {
 }
 
 
-bool NameConfig::createPath(const String& fileName, int ignoreLevel) {
+bool NameConfig::createPath(const ConstString& fileName, int ignoreLevel) {
     size_t index = fileName.rfind('/');
-    if (index==String::npos) {
+    if (index==ConstString::npos) {
         index = fileName.rfind('\\');
-        if (index==String::npos) {
+        if (index==ConstString::npos) {
             return false;
         }
     }
-    String base = fileName.substr(0,index);
+    ConstString base = fileName.substr(0,index);
     ACE_stat sb;
     if (ACE_OS::stat((char*)base.c_str(),&sb)<0) {
         bool result = createPath(base,ignoreLevel-1);
@@ -165,11 +165,11 @@ bool NameConfig::createPath(const String& fileName, int ignoreLevel) {
     return true;
 }
 
-String NameConfig::readConfig(const String& fileName) {
+ConstString NameConfig::readConfig(const ConstString& fileName) {
     char buf[25600];
     FILE *fin = fopen(fileName.c_str(),"r");
     if (fin==NULL) return "";
-    String result = "";
+    ConstString result = "";
     while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
         result += buf;
     }
@@ -180,9 +180,9 @@ String NameConfig::readConfig(const String& fileName) {
 
 
 bool NameConfig::fromFile(const char *ns) {
-    String fname = getConfigFileName(NULL,ns);
+    ConstString fname = getConfigFileName(NULL,ns);
     if (fname!="") {
-        String txt = readConfig(fname);
+        ConstString txt = readConfig(fname);
         if (txt!="") {
             return fromString(txt);
         }
@@ -192,11 +192,11 @@ bool NameConfig::fromFile(const char *ns) {
 
 
 bool NameConfig::toFile(bool clean) {
-    String fname = getConfigFileName();
+    ConstString fname = getConfigFileName();
     if (fname!="") {
-        String txt = "";
+        ConstString txt = "";
         if (!clean) {
-            String m = (mode!="")?mode:"yarp";
+            ConstString m = (mode!="")?mode:"yarp";
             txt += address.getHost() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
         }
         return writeConfig(fname,txt);
@@ -210,7 +210,7 @@ Contact NameConfig::getAddress() {
 }
 
 
-bool NameConfig::writeConfig(const String& fileName, const String& text) {
+bool NameConfig::writeConfig(const ConstString& fileName, const ConstString& text) {
     if (!createPath(fileName)) {
         return false;
     }
@@ -224,7 +224,7 @@ bool NameConfig::writeConfig(const String& fileName, const String& text) {
 
 
 
-String NameConfig::getHostName(bool prefer_loopback, String seed) {
+ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
     // try to pick a good host identifier
 
     ConstString result = "127.0.0.1";
@@ -265,7 +265,7 @@ String NameConfig::getHostName(bool prefer_loopback, String seed) {
             ip = ConstString(hostname);
 #endif
 
-            YARP_DEBUG(Logger::get(), String("scanning network interface ") +
+            YARP_DEBUG(Logger::get(), ConstString("scanning network interface ") +
                        ip.c_str());
 
             if (ip.find(":")!=ConstString::npos) continue;
@@ -319,16 +319,16 @@ String NameConfig::getHostName(bool prefer_loopback, String seed) {
         }
 #ifdef YARP_HAS_ACE
         delete[] ips;
-#else
-        freeifaddrs(ifaddr);
-#endif
     }
+#ifndef YARP_HAS_ACE
+    freeifaddrs(ifaddr);
+#endif
 
     return result.c_str();
 }
 
 
-bool NameConfig::isLocalName(const String& name) {
+bool NameConfig::isLocalName(const ConstString& name) {
     bool result = false;
 
 #ifdef YARP_HAS_ACE
@@ -336,7 +336,7 @@ bool NameConfig::isLocalName(const String& name) {
     size_t count = 0;
     if (ACE::get_ip_interfaces(count,ips)>=0) {
         for (size_t i=0; i<count; i++) {
-            String ip = ips[i].get_host_addr();
+            ConstString ip = ips[i].get_host_addr();
             if (ip==name) {
                 result = true;
                 break;
@@ -377,7 +377,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
     size_t count = 0;
     if (ACE::get_ip_interfaces(count,ips)>=0) {
         for (size_t i=0; i<count; i++) {
-            String ip = ips[i].get_host_addr();
+            ConstString ip = ips[i].get_host_addr();
             result.addString(ip.c_str());
         }
         delete[] ips;
@@ -412,7 +412,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
 }
 
 
-String NameConfig::getIps() {
+ConstString NameConfig::getIps() {
     yarp::os::Bottle bot = getIpsAsBottle();
     ConstString result = "";
     for (int i=0; i<bot.size(); i++) {
@@ -432,17 +432,17 @@ void NameConfig::setAddress(const Contact& address) {
 }
 
 
-void NameConfig::setNamespace(const String& ns) {
+void NameConfig::setNamespace(const ConstString& ns) {
     space = ns;
 }
 
-String NameConfig::getNamespace(bool refresh) {
+ConstString NameConfig::getNamespace(bool refresh) {
     if (space==""||refresh) {
         ConstString senv = NetworkBase::getEnvironment("YARP_NAMESPACE");
         if (senv!="") {
             spaces.fromString(senv.c_str());
         } else {
-            String fname = getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
+            ConstString fname = getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
             spaces.fromString(readConfig(fname).c_str());
         }
         space = spaces.get(0).asString().c_str();

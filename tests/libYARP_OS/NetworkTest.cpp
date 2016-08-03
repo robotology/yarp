@@ -82,7 +82,7 @@ public:
 
 class NetworkTest : public UnitTest {
 public:
-    virtual String getName() { return "NetworkTest"; }
+    virtual ConstString getName() { return "NetworkTest"; }
 
     void checkConnect() {
         report(0,"checking return value of connect method");
@@ -157,7 +157,7 @@ public:
         ContactStyle style;
         style.timeout = 2.0;
         double start = Time::now();
-        Network::write(Contact::byName("/slow"),cmd,reply,style);
+        Network::write(Contact("/slow"), cmd, reply, style);
         double duration = Time::now()-start;
         bool goodTime = duration<9;
         checkEqual(reply.get(0).asString().c_str(),"","check timeout happened");

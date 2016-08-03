@@ -204,6 +204,7 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
     if (Idevice2attach->isValid())
     {
         Idevice2attach->view(sens_p);
+        Idevice2attach->view(iTimed);
     }
 
     if (NULL == sens_p)
@@ -540,9 +541,13 @@ void Rangefinder2DWrapper::run()
 
         if (ret)
         {
+            if(iTimed)
+                lastStateStamp = iTimed->getLastInputStamp();
+            else
+                lastStateStamp.update(yarp::os::Time::now());
+
             int ranges_size = ranges.size();
 
-            lastStateStamp.update();
             yarp::os::Bottle& b = streamingPort.prepare();
             b.clear();
             Bottle& bl = b.addList();
@@ -556,7 +561,7 @@ void Rangefinder2DWrapper::run()
             {
                 sensor_msgs_LaserScan &rosData = rosPublisherPort.prepare();
                 rosData.header.seq = rosMsgCounter++;
-                rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                rosData.header.stamp = normalizeSecNSec(lastStateStamp.getTime());
                 rosData.header.frame_id = frame_id;
 
                 rosData.angle_min = minAngle * 3.14 / 180.0;
@@ -574,6 +579,7 @@ void Rangefinder2DWrapper::run()
                     rosData.ranges[i] = ranges[i];
                     rosData.intensities[i] = 0.0;
                 }
+
                 rosPublisherPort.write();
             }
         }
@@ -590,6 +596,11 @@ bool Rangefinder2DWrapper::close()
     if (RateThread::isRunning())
     {
         RateThread::stop();
+    }
+    if(rosNode!=NULL) {
+        rosNode->interrupt();
+        delete rosNode;
+        rosNode = NULL;
     }
 
     detachAll();

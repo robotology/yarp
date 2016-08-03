@@ -16,14 +16,15 @@ namespace yarp {
     }
 }
 
-class YARP_OS_API yarp::os::Nodes : public Contactables {
+class YARP_OS_API yarp::os::Nodes : public Contactables
+{
 public:
     Nodes();
     virtual ~Nodes();
 
     virtual void add(Contactable& contactable);
     virtual void remove(Contactable& contactable);
-    
+
     virtual Contact query(const ConstString& name,
                           const ConstString& category = "");
 
@@ -36,7 +37,7 @@ public:
     virtual void update(Contactable& contactable);
 
     void interrupt();
-    
+
     bool enable(bool flag);
     void clear();
     void setActiveName(const ConstString& name);
@@ -45,7 +46,8 @@ public:
     ConstString getActiveName();
     bool requireActiveName();
 private:
-    void *system_resource;
+    class Helper;
+    Helper * const mPriv;
 };
 
 #endif // YARP_OS_NODES_H

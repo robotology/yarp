@@ -16,7 +16,7 @@ using namespace yarp::os;
 
 class TerminatorTest : public UnitTest {
 public:
-    virtual String getName() { return "TerminatorTest"; }
+    virtual ConstString getName() { return "TerminatorTest"; }
 
     virtual void testTerminationPair() {
         report(0,"checking terminator connection");

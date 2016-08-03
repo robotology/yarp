@@ -7,7 +7,7 @@
 
 #include <yarp/conf/system.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/NetType.h>
 #include <stdio.h>
@@ -114,7 +114,7 @@ public:
 
 class DgramTwoWayStreamTest : public UnitTest {
 public:
-    virtual String getName() { return "DgramTwoWayStreamTest"; }
+    virtual ConstString getName() { return "DgramTwoWayStreamTest"; }
 
     void checkNormal() {
         report(0, "checking that dgrams are output sensibly");
@@ -188,7 +188,7 @@ public:
         }
         checkFalse(mismatch,"multiple messages ok");
 
-        
+
         ////////////////////////////////////////////////////////////////////
         // Send three messages, corrupt in different ways
 
@@ -266,4 +266,3 @@ static DgramTwoWayStreamTest theDgramTwoWayStreamTest;
 UnitTest& getDgramTwoWayStreamTest() {
     return theDgramTwoWayStreamTest;
 }
-
