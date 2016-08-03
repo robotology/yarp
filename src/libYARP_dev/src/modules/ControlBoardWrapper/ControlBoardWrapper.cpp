@@ -939,7 +939,7 @@ void ControlBoardWrapper::run()
 //
 bool ControlBoardWrapper::setPid(int j, const Pid &p)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
@@ -978,7 +978,7 @@ bool ControlBoardWrapper::setPids(const Pid *ps)
 
 bool ControlBoardWrapper::setReference(int j, double ref)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1017,7 +1017,7 @@ bool ControlBoardWrapper::setReferences(const double *refs)
 
 bool ControlBoardWrapper::setErrorLimit(int j, double limit)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1065,7 +1065,7 @@ bool ControlBoardWrapper::setErrorLimits(const double *limits)
 */
 bool ControlBoardWrapper::getError(int j, double *err)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1114,7 +1114,7 @@ bool ControlBoardWrapper::getErrors(double *errs)
 */
 bool ControlBoardWrapper::getOutput(int j, double *out)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1157,7 +1157,7 @@ bool ControlBoardWrapper::getOutputs(double *outs)
 
 bool ControlBoardWrapper::setOffset(int j, double v)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1179,7 +1179,7 @@ bool ControlBoardWrapper::setOffset(int j, double v)
 bool ControlBoardWrapper::getPid(int j, Pid *p)
 {
 //#warning "check for max number of joints!?!?!"
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
@@ -1226,7 +1226,7 @@ bool ControlBoardWrapper::getPids(Pid *pids)
 * @return reference value
 */
 bool ControlBoardWrapper::getReference(int j, double *ref) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1270,7 +1270,7 @@ bool ControlBoardWrapper::getReferences(double *refs) {
 * @return success/failure
 */
 bool ControlBoardWrapper::getErrorLimit(int j, double *limit) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1317,7 +1317,7 @@ bool ControlBoardWrapper::getErrorLimits(double *limits) {
 * @return true on success, false on failure.
 */
 bool ControlBoardWrapper::resetPid(int j) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1337,7 +1337,7 @@ bool ControlBoardWrapper::resetPid(int j) {
 * @return true if successful, false on failure
 **/
 bool ControlBoardWrapper::disablePid(int j) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1361,7 +1361,7 @@ bool ControlBoardWrapper::disablePid(int j) {
 * @return true/false on success/failure
 */
 bool ControlBoardWrapper::enablePid(int j) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1477,7 +1477,7 @@ YARP_WARNING_POP
 * @return true/false on success/failure
 */
 bool ControlBoardWrapper::positionMove(int j, double ref) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1602,7 +1602,7 @@ bool ControlBoardWrapper::positionMove(const int n_joints, const int *joints, co
 
 bool ControlBoardWrapper::getTargetPosition(const int j, double* ref)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1708,7 +1708,7 @@ bool ControlBoardWrapper::getTargetPositions(const int n_joints, const int *join
 * @return true/false on success/failure
 */
 bool ControlBoardWrapper::relativeMove(int j, double delta) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1807,7 +1807,7 @@ bool ControlBoardWrapper::relativeMove(const int n_joints, const int *joints, co
 * @return false on failure
 */
 bool ControlBoardWrapper::checkMotionDone(int j, bool *flag) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -1915,7 +1915,7 @@ bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints,
 * @return true/false upon success/failure
 */
 bool ControlBoardWrapper::setRefSpeed(int j, double sp) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2045,7 +2045,7 @@ bool ControlBoardWrapper::setRefSpeeds(const int n_joints, const int *joints, co
 * @return true/false upon success/failure
 */
 bool ControlBoardWrapper::setRefAcceleration(int j, double acc) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2177,7 +2177,7 @@ bool ControlBoardWrapper::setRefAccelerations(const int n_joints, const int *joi
  * @return true/false on success or failure
  */
 bool ControlBoardWrapper::getRefSpeed(int j, double *ref) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2303,7 +2303,7 @@ bool ControlBoardWrapper::getRefSpeeds(const int n_joints, const int *joints, do
 * @return true/false on success/failure
 */
 bool ControlBoardWrapper::getRefAcceleration(int j, double *acc) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2427,7 +2427,7 @@ bool ControlBoardWrapper::getRefAccelerations(const int n_joints, const int *joi
 * @return true/false on success/failure
 */
 bool ControlBoardWrapper::stop(int j) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2522,7 +2522,7 @@ bool ControlBoardWrapper::stop(const int n_joints, const int *joints)
 /* IVelocityControl */
 
 bool ControlBoardWrapper::velocityMove(int j, double v) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2625,7 +2625,7 @@ YARP_WARNING_POP
 /* IEncoders */
 
 bool ControlBoardWrapper::resetEncoder(int j) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2662,7 +2662,7 @@ bool ControlBoardWrapper::resetEncoders() {
 }
 
 bool ControlBoardWrapper::setEncoder(int j, double val) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2699,7 +2699,7 @@ bool ControlBoardWrapper::setEncoders(const double *vals) {
 }
 
 bool ControlBoardWrapper::getEncoder(int j, double *v) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2759,7 +2759,7 @@ bool ControlBoardWrapper::getEncodersTimed(double *encs, double *t) {
 }
 
 bool ControlBoardWrapper::getEncoderTimed(int j, double *v, double *t) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2775,7 +2775,7 @@ bool ControlBoardWrapper::getEncoderTimed(int j, double *v, double *t) {
 }
 
 bool ControlBoardWrapper::getEncoderSpeed(int j, double *sp) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -2813,7 +2813,7 @@ bool ControlBoardWrapper::getEncoderSpeeds(double *spds) {
 }
 
 bool ControlBoardWrapper::getEncoderAcceleration(int j, double *acc) {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3277,7 +3277,7 @@ bool ControlBoardWrapper::getNumberOfMotorEncoders(int *num) {
 
 bool ControlBoardWrapper::enableAmp(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3293,7 +3293,7 @@ bool ControlBoardWrapper::enableAmp(int j)
 
 bool ControlBoardWrapper::disableAmp(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3337,7 +3337,7 @@ bool ControlBoardWrapper::getAmpStatus(int *st)
 
 bool ControlBoardWrapper::getAmpStatus(int j, int *v)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3374,7 +3374,7 @@ bool ControlBoardWrapper::getCurrents(double *vals)
 
 bool ControlBoardWrapper::getCurrent(int j, double *val)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3391,7 +3391,7 @@ bool ControlBoardWrapper::getCurrent(int j, double *val)
 
 bool ControlBoardWrapper::setMaxCurrent(int j, double v)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3407,7 +3407,7 @@ bool ControlBoardWrapper::setMaxCurrent(int j, double v)
 
 bool ControlBoardWrapper::getMaxCurrent(int j, double* v)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3563,7 +3563,7 @@ bool ControlBoardWrapper::getPowerSupplyVoltage(int m, double* val)
 
 bool ControlBoardWrapper::setLimits(int j, double min, double max)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3579,7 +3579,7 @@ bool ControlBoardWrapper::setLimits(int j, double min, double max)
 
 bool ControlBoardWrapper::getLimits(int j, double *min, double *max)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3601,7 +3601,7 @@ bool ControlBoardWrapper::getLimits(int j, double *min, double *max)
 
 bool ControlBoardWrapper::setVelLimits(int j, double min, double max)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3617,7 +3617,7 @@ bool ControlBoardWrapper::setVelLimits(int j, double min, double max)
 
 bool ControlBoardWrapper::getVelLimits(int j, double *min, double *max)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     *min=0.0;
@@ -3725,7 +3725,7 @@ bool ControlBoardWrapper::quitPark()
 
 bool ControlBoardWrapper::calibrate(int j, double p)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
@@ -3741,7 +3741,7 @@ bool ControlBoardWrapper::calibrate(int j, double p)
 
 bool ControlBoardWrapper::calibrate2(int j, unsigned int ui, double v1, double v2, double v3)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
@@ -3767,7 +3767,7 @@ bool ControlBoardWrapper::setCalibrationParameters(int j, const CalibrationParam
 
 bool ControlBoardWrapper::done(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3797,7 +3797,7 @@ bool ControlBoardWrapper::abortCalibration()
 
 bool ControlBoardWrapper::getAxisName(int j, yarp::os::ConstString& name)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3886,7 +3886,7 @@ bool ControlBoardWrapper::getRefTorques(double *refs)
 bool ControlBoardWrapper::getRefTorque(int j, double *t)
 {
 
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3925,7 +3925,7 @@ bool ControlBoardWrapper::setRefTorques(const double *t)
 
 bool ControlBoardWrapper::setRefTorque(int j, double t)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3989,7 +3989,7 @@ bool ControlBoardWrapper::setRefTorques(const int n_joints, const int *joints, c
 bool ControlBoardWrapper::getBemfParam(int j, double *t)
 {
 
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4005,7 +4005,7 @@ bool ControlBoardWrapper::getBemfParam(int j, double *t)
 
 bool ControlBoardWrapper::setBemfParam(int j, double t)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4021,7 +4021,7 @@ bool ControlBoardWrapper::setBemfParam(int j, double t)
 
 bool ControlBoardWrapper::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4037,7 +4037,7 @@ bool ControlBoardWrapper::getMotorTorqueParams(int j,  yarp::dev::MotorTorquePar
 
 bool ControlBoardWrapper::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4053,7 +4053,7 @@ bool ControlBoardWrapper::setMotorTorqueParams(int j,  const yarp::dev::MotorTor
 
 bool ControlBoardWrapper::setTorquePid(int j, const Pid &pid)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4070,7 +4070,7 @@ bool ControlBoardWrapper::setTorquePid(int j, const Pid &pid)
 
 bool ControlBoardWrapper::setImpedance(int j, double stiff, double damp)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4087,7 +4087,7 @@ bool ControlBoardWrapper::setImpedance(int j, double stiff, double damp)
 
 bool ControlBoardWrapper::setImpedanceOffset(int j, double offset)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4104,7 +4104,7 @@ bool ControlBoardWrapper::setImpedanceOffset(int j, double offset)
 
 bool ControlBoardWrapper::getTorque(int j, double *t)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4144,7 +4144,7 @@ bool ControlBoardWrapper::getTorques(double *t)
 
 bool ControlBoardWrapper::getTorqueRange(int j, double *min, double *max)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4206,7 +4206,7 @@ bool ControlBoardWrapper::setTorquePids(const Pid *pids)
 
 bool ControlBoardWrapper::setTorqueErrorLimit(int j, double limit)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4246,7 +4246,7 @@ bool ControlBoardWrapper::setTorqueErrorLimits(const double *limits)
 
 bool ControlBoardWrapper::getTorqueError(int j, double *err)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4286,7 +4286,7 @@ bool ControlBoardWrapper::getTorqueErrors(double *errs)
 
 bool ControlBoardWrapper::getTorquePidOutput(int j, double *out)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4326,7 +4326,7 @@ bool ControlBoardWrapper::getTorquePidOutputs(double *outs)
 
 bool ControlBoardWrapper::getTorquePid(int j, Pid *pid)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4343,7 +4343,7 @@ bool ControlBoardWrapper::getTorquePid(int j, Pid *pid)
 
 bool ControlBoardWrapper::getImpedance(int j, double* stiff, double* damp)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4360,7 +4360,7 @@ bool ControlBoardWrapper::getImpedance(int j, double* stiff, double* damp)
 
 bool ControlBoardWrapper::getImpedanceOffset(int j, double* offset)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4377,7 +4377,7 @@ bool ControlBoardWrapper::getImpedanceOffset(int j, double* offset)
 
 bool ControlBoardWrapper::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4417,7 +4417,7 @@ bool ControlBoardWrapper::getTorquePids(Pid *pids)
 
 bool ControlBoardWrapper::getTorqueErrorLimit(int j, double *limit)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4457,7 +4457,7 @@ bool ControlBoardWrapper::getTorqueErrorLimits(double *limits)
 
 bool ControlBoardWrapper::resetTorquePid(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4474,7 +4474,7 @@ bool ControlBoardWrapper::resetTorquePid(int j)
 
 bool ControlBoardWrapper::disableTorquePid(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4491,7 +4491,7 @@ bool ControlBoardWrapper::disableTorquePid(int j)
 
 bool ControlBoardWrapper::enableTorquePid(int j)
 {
-     int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4508,7 +4508,7 @@ bool ControlBoardWrapper::enableTorquePid(int j)
 
 bool ControlBoardWrapper::setTorqueOffset(int j, double v)
 {
-     int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4525,7 +4525,7 @@ bool ControlBoardWrapper::setTorqueOffset(int j, double v)
 
 bool ControlBoardWrapper::setPositionMode(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4547,7 +4547,7 @@ bool ControlBoardWrapper::setPositionMode(int j)
 
 bool ControlBoardWrapper::setTorqueMode(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4569,7 +4569,7 @@ bool ControlBoardWrapper::setTorqueMode(int j)
 
 bool ControlBoardWrapper::setImpedancePositionMode(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4587,7 +4587,7 @@ bool ControlBoardWrapper::setImpedancePositionMode(int j)
 
 bool ControlBoardWrapper::setImpedanceVelocityMode(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4604,7 +4604,7 @@ bool ControlBoardWrapper::setImpedanceVelocityMode(int j)
 
 bool ControlBoardWrapper::setVelocityMode(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4626,7 +4626,7 @@ bool ControlBoardWrapper::setVelocityMode(int j)
 
 bool ControlBoardWrapper::setOpenLoopMode(int j)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4648,7 +4648,7 @@ bool ControlBoardWrapper::setOpenLoopMode(int j)
 
 bool ControlBoardWrapper::getControlMode(int j, int *mode)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4712,7 +4712,7 @@ bool ControlBoardWrapper::getControlModes(const int n_joint, const int *joints, 
 bool ControlBoardWrapper::legacySetControlMode(const int j, const int mode)
 {
     bool ret = true;
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4784,7 +4784,7 @@ bool ControlBoardWrapper::legacySetControlMode(const int j, const int mode)
 bool ControlBoardWrapper::setControlMode(const int j, const int mode)
 {
     bool ret = true;
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4899,7 +4899,7 @@ bool ControlBoardWrapper::setControlModes(int *modes)
 
 bool ControlBoardWrapper::setRefOutput(int j, double v)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4937,7 +4937,7 @@ bool ControlBoardWrapper::setRefOutputs(const double *outs) {
 
 bool ControlBoardWrapper::setPosition(int j, double ref)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -5047,7 +5047,7 @@ yarp::os::Stamp ControlBoardWrapper::getLastInputStamp() {
 
 bool ControlBoardWrapper::getRefPosition(const int j, double* ref)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -5195,7 +5195,7 @@ bool ControlBoardWrapper::getRefVelocity(const int j, double* vel)
     if(verbose())
         yTrace();
 
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -5298,7 +5298,7 @@ bool ControlBoardWrapper::getRefVelocities(const int n_joints, const int* joints
 
 bool ControlBoardWrapper::setVelPid(int j, const Pid &pid)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
@@ -5338,7 +5338,7 @@ bool ControlBoardWrapper::setVelPids(const Pid *pids)
 bool ControlBoardWrapper::getVelPid(int j, Pid *pid)
 {
     //#warning "check for max number of joints!?!?!"
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
@@ -5377,7 +5377,7 @@ bool ControlBoardWrapper::getVelPids(Pid *pids)
 
 bool ControlBoardWrapper::getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
@@ -5453,7 +5453,7 @@ bool ControlBoardWrapper::getInteractionModes(yarp::dev::InteractionModeEnum* mo
 
     for(int j=0; j<controlledJoints; j++)
     {
-        int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+        int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
         int subIndex=device.lut[j].deviceEntry;
 
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -5472,7 +5472,7 @@ bool ControlBoardWrapper::getInteractionModes(yarp::dev::InteractionModeEnum* mo
 
 bool ControlBoardWrapper::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
@@ -5527,7 +5527,7 @@ bool ControlBoardWrapper::setInteractionModes(yarp::dev::InteractionModeEnum* mo
 
     for(int j=0; j<controlledJoints; j++)
     {
-        int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+        int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
         int subIndex=device.lut[j].deviceEntry;
 
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -5546,7 +5546,7 @@ bool ControlBoardWrapper::setInteractionModes(yarp::dev::InteractionModeEnum* mo
 
 bool ControlBoardWrapper::getRefOutput(int j, double *out)
 {
-    int off; try{off = device.lut.at(j).offset;} catch(out_of_range e){yError() << "joint number out of bound"; return false; }
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
