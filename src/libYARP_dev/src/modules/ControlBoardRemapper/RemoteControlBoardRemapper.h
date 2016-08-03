@@ -29,9 +29,9 @@ namespace dev {
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
  * | axesNames      |      -         | vector of strings  | -   |   -           | Yes          | Ordered list of the axes that are part of the remapped device.    |       |
- * | remoteControlBoards |     -      | vector of strings  | -   |   -           | Yes          | List of remote prefix used by the remote controlboards.           | The element of this list are then passed as "remote" parameter to the RemoteControlBoard device. |
+ * | remoteControlBoards |     -     | vector of strings  | -   |   -           | Yes          | List of remote prefix used by the remote controlboards.           | The element of this list are then passed as "remote" parameter to the RemoteControlBoard device. |
  * | localPortPrefix |     -         | string             | -   |   -           | Yes          | All ports opened by this device will start with this prefix       |       |
- *
+ * | REMOTE_CONTROLBOARD_OPTIONS | - | group              | -   |   -           | No           | Options that will be passed directly to the remote_controlboard devices | |
  * All the passed remote controlboards are opened, and then the axesNames and the opened device are
  * passed to the ControlBoardRemapper device. If different axes
  * in two attached controlboard have the same name, the behaviour of this device is undefined.
@@ -43,6 +43,10 @@ namespace dev {
  *  device remotecontrolboardremapper
  *  axesNames (torso_pitch torso_roll torso_yaw neck_pitch neck_roll neck_yaw)
  *  remoteControlBoards (/icub/torso /icub/head)
+ *
+ *  [REMOTE_CONTROLBOARD_OPTIONS]
+ *  writeStrict on
+ *  
  *
  * ...
  * \endcode
