@@ -76,10 +76,10 @@ AuthHMAC::AuthHMAC() :
         return;
     }
 
-    int key_len = key.length();
+    size_t key_len = key.length();
     unsigned char * tmp = new unsigned char[key_len];
     strcpy((char*) tmp, key.c_str());
-    HMAC_INIT(&context, tmp, key_len);
+    HMAC_INIT(&context, tmp, (unsigned int)key_len);
     srand((unsigned)time(NULL));
 
     if(!authentication_enabled) {
@@ -269,5 +269,5 @@ bool AuthHMAC::check_hmac(unsigned char * mac, unsigned char * mac_check)
 
 void AuthHMAC::fill_nonce(unsigned char* nonce) {
     for (unsigned int i=0; i < NONCE_LEN; i++)
-        nonce[i] = int(rand())%256;
+        nonce[i] = static_cast<unsigned char>(rand()%256);
 }
