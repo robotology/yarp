@@ -56,6 +56,7 @@ if (YARP_HAS_MATH_LIB)
                           ${YARP_math_IMPL_HDRS})
     target_link_libraries(YARP_math LINK_PRIVATE YARP_OS)
     target_link_libraries(YARP_math LINK_PRIVATE YARP_sig)
+    target_link_libraries(YARP_math LINK_PRIVATE YARP_gsl)
     target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
 
     set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})

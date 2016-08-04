@@ -13,6 +13,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/PortablePair.h>
 
+#include <yarp/gsl/Gsl.h>
 #include <yarp/gsl_compatibility.h>
 
 #include <math.h>
@@ -117,7 +118,7 @@ class MatrixTest : public UnitTest {
     bool checkConsistency(Matrix &a)
     {
         gsl_matrix *tmp;
-        tmp=(gsl_matrix *)(a.getGslMatrix());
+        tmp=(gsl_matrix *)(yarp::gsl::GslMatrix(a).getGslMatrix());
         bool ret=true;
         if ((int)tmp->size1!=a.rows())
             ret=false;
@@ -139,23 +140,6 @@ class MatrixTest : public UnitTest {
 
 public:
     virtual ConstString getName() { return "MatrixTest"; }
-
-    void checkGsl()
-    {
-        Matrix a(5,5);
-        Matrix b;
-        b=a;
-        checkTrue(checkConsistency(a), "gsldata consistent after creation");
-        checkTrue(checkConsistency(b), "gsldata consistent after copy");
-        b.resize(100,100);
-        checkTrue(checkConsistency(b), "gsldata consistent after resize");
-
-        Matrix s=a.submatrix(1,1,2,2);
-        checkConsistency(s);
-        checkTrue(checkConsistency(s), "gsldata consistent for submatrix");
-        Matrix c=a;
-        checkTrue(checkConsistency(c), "gsldata consistent after init");
-    }
 
     void checkOperators()
     {
@@ -327,6 +311,23 @@ public:
             kk+=C;
         }
         checkTrue(ok,"elements match");
+    }
+
+    void checkGsl()
+    {
+        Matrix a(5, 5);
+        Matrix b;
+        b = a;
+        checkTrue(checkConsistency(a), "gsldata consistent after creation");
+        checkTrue(checkConsistency(b), "gsldata consistent after copy");
+        b.resize(100, 100);
+        checkTrue(checkConsistency(b), "gsldata consistent after resize");
+
+        Matrix s = a.submatrix(1, 1, 2, 2);
+        checkConsistency(s);
+        checkTrue(checkConsistency(s), "gsldata consistent for submatrix");
+        Matrix c = a;
+        checkTrue(checkConsistency(c), "gsldata consistent after init");
     }
 
     void checkResize()
