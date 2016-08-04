@@ -8,7 +8,6 @@
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformStdlib.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>

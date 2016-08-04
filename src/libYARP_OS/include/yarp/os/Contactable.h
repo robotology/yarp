@@ -206,6 +206,11 @@ public:
      */
     virtual void setReporter(PortReport& reporter) = 0;
 
+    /**
+     * Remove the callback which is called upon any future connections and
+     * disconnections to/from the port.
+     */
+    virtual void resetReporter() = 0;
 
     /**
      * Report whether the port is currently writing data.

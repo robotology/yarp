@@ -10,6 +10,7 @@
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Os.h>
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
@@ -36,7 +37,7 @@ public:
     // if non-null, contains a buffer that the packet owns
     PortReader *reader;
 
-    String envelope;
+    ConstString envelope;
 
     // if nun-null, refers to an external buffer
     // by convention, overrides reader
@@ -86,7 +87,7 @@ public:
     }
 
     void setEnvelope(const Bytes& bytes) {
-        envelope = String(bytes.get(),bytes.length());
+        envelope = ConstString(bytes.get(),bytes.length());
         //envelope.set(bytes.get(),bytes.length(),1);
     }
 
@@ -357,7 +358,7 @@ void PortReaderBufferBase::release(PortReader *completed) {
     //HELPER(implementation).configure(completed,true,false);
     //HELPER(implementation).stateSema.post();
     printf("release not implemented anymore; not needed\n");
-    exit(1);
+    yarp::os::exit(1);
 }
 
 int PortReaderBufferBase::check() {

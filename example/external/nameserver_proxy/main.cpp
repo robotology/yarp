@@ -25,14 +25,14 @@ public:
     info.addString("port");
     info.addInt(c.getPort());
     info.addString("type");
-    info.addString(c.getCarrier().c_str());    
+    info.addString(c.getCarrier().c_str());
   }
 
-  virtual bool cmdQuery(yarp::os::Bottle& cmd, 
-			yarp::os::Bottle& reply,
-			yarp::os::Contact& remote) {
+  virtual bool cmdQuery(yarp::os::Bottle& cmd,
+                        yarp::os::Bottle& reply,
+                        yarp::os::Contact& remote) {
     reply.addString("old");
-    ConstString name = cmd.get(1).asString();    
+    ConstString name = cmd.get(1).asString();
     Contact c = Network::queryName(name);
     if (c.isValid()) {
       appendEntry(reply,c);
@@ -40,28 +40,28 @@ public:
     return true;
   }
 
-  virtual bool cmdList(yarp::os::Bottle& cmd, 
-		       yarp::os::Bottle& reply,
-		       yarp::os::Contact& remote) {
+  virtual bool cmdList(yarp::os::Bottle& cmd,
+                       yarp::os::Bottle& reply,
+                       yarp::os::Contact& remote) {
     return false;
   }
 
-  virtual bool cmdUnregister(yarp::os::Bottle& cmd, 
-			     yarp::os::Bottle& reply,
-			     yarp::os::Contact& remote) {
+  virtual bool cmdUnregister(yarp::os::Bottle& cmd,
+                             yarp::os::Bottle& reply,
+                             yarp::os::Contact& remote) {
     return false;
   }
 
-  virtual bool cmdRegister(yarp::os::Bottle& cmd, 
-			   yarp::os::Bottle& reply,
-			   yarp::os::Contact& remote) {
+  virtual bool cmdRegister(yarp::os::Bottle& cmd,
+                           yarp::os::Bottle& reply,
+                           yarp::os::Contact& remote) {
     return false;
   }
 
-  virtual bool apply(yarp::os::Bottle& cmd, 
-		     yarp::os::Bottle& reply, 
-		     yarp::os::Bottle& event,
-		     yarp::os::Contact& remote) {
+  virtual bool apply(yarp::os::Bottle& cmd,
+                     yarp::os::Bottle& reply,
+                     yarp::os::Bottle& event,
+                     yarp::os::Contact& remote) {
     bool ok = false;
     printf(" + %s\n", cmd.toString().c_str());
     ConstString tag = cmd.get(0).asString();
@@ -94,9 +94,10 @@ int main(int argc, char *argv[]) {
   int socket = config.find("socket").asInt();
 
   Network yarp;
-  Contact contact = Contact::bySocket("tcp","localhost",socket);
-  contact = contact.addName(config.check("name",
-					 Value("/name/proxy")).asString());
+  Contact contact(config.check("name", Value("/name/proxy")).asString(),
+                  "tcp",
+                  "localhost",
+                  socket);
 
   ProxyNameService proxy;
   NameServerManager manager(proxy);
@@ -112,7 +113,6 @@ int main(int argc, char *argv[]) {
     Time::delay(600);
     printf("Name server running happily\n");
   }
- 
+
   return 0;
 }
-

@@ -67,7 +67,7 @@ public:
 
 class PropertyHelper {
 public:
-    PLATFORM_MAP(String,PropertyItem) data;
+    PLATFORM_MAP(ConstString,PropertyItem) data;
     Property& owner;
 
     PropertyHelper(Property& owner, int hash_size) :
@@ -77,9 +77,9 @@ public:
         owner(owner) {}
 
     PropertyItem *getPropNoCreate(const ConstString& key) const {
-        String n(key);
-        PLATFORM_MAP_ITERATOR(String,PropertyItem,entry);
-        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(String,PropertyItem) *)&data)),n,entry);
+        ConstString n(key);
+        PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
+        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(ConstString,PropertyItem) *)&data)),n,entry);
         if (result==-1) {
             return NULL;
         }
@@ -89,8 +89,8 @@ public:
     }
 
     PropertyItem *getProp(const ConstString& key, bool create = true) {
-        String n(key);
-        PLATFORM_MAP_ITERATOR(String,PropertyItem,entry);
+        ConstString n(key);
+        PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
         int result = PLATFORM_MAP_FIND(data,n,entry);
         if (result==-1) {
             if (!create) {
@@ -149,7 +149,7 @@ public:
     }
 
     void unput(const ConstString& key) {
-        PLATFORM_MAP_UNSET(data,String(key));
+        PLATFORM_MAP_UNSET(data,ConstString(key));
     }
 
     bool check(const ConstString& key) const {
@@ -164,7 +164,7 @@ public:
     }
 
     Value& get(const ConstString& key) const {
-        String out;
+        ConstString out;
         PropertyItem *p = getPropNoCreate(key);
         if (p!=NULL) {
             p->flush();
@@ -234,18 +234,18 @@ public:
     }
 
     void fromCommand(int argc, char *argv[],bool wipe=true) {
-        String tag = "";
+        ConstString tag = "";
         Bottle accum;
         Bottle total;
         bool qualified = false;
         for (int i=0; i<argc; i++) {
-            String work = argv[i];
+            ConstString work = argv[i];
             bool isTag = false;
             if (work.length()>=2) {
                 if (work[0]=='-'&&work[1]=='-') {
                     work = work.substr(2,work.length()-2);
                     isTag = true;
-                    if (work.find("::")!=String::npos) {
+                    if (work.find("::")!=ConstString::npos) {
                         qualified = true;
                     }
                 }
@@ -257,11 +257,11 @@ public:
                 tag = work;
                 accum.clear();
             } else {
-                if (work.find("\\")!=String::npos) {
+                if (work.find("\\")!=ConstString::npos) {
                     // Specifically when reading from the command
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
-                    String buf = "";
+                    ConstString buf = "";
                     for (unsigned int i=0; i<work.length(); i++) {
                         buf += work[i];
                         if (work[i]=='\\') {
@@ -318,10 +318,10 @@ public:
         }
     }
 
-    bool readDir(const ConstString& dirname, ACE_DIR *&dir, String& result, const ConstString& section=ConstString()) {
+    bool readDir(const ConstString& dirname, ACE_DIR *&dir, ConstString& result, const ConstString& section=ConstString()) {
         bool ok = true;
         YARP_DEBUG(Logger::get(),
-                   String("reading directory ") + dirname);
+                   ConstString("reading directory ") + dirname);
 
         struct YARP_DIRENT **namelist;
         YARP_closedir(dir);
@@ -349,13 +349,13 @@ public:
         return ok;
     }
 
-    bool readFile(const ConstString& fname, String& result, bool allowDir) {
+    bool readFile(const ConstString& fname, ConstString& result, bool allowDir) {
         if (allowDir) {
             ACE_DIR *dir = ACE_OS::opendir(fname.c_str());
             if (dir) return readDir(fname,dir,result);
         }
         YARP_DEBUG(Logger::get(),
-                   String("reading file ") + fname);
+                   ConstString("reading file ") + fname);
         FILE *fin = fopen(fname.c_str(),"r");
         if (fin==NULL) return false;
         char buf[25600];
@@ -368,29 +368,29 @@ public:
     }
 
     bool fromConfigFile(const ConstString& fname, Searchable& env, bool wipe=true) {
-        String searchPath =
+        ConstString searchPath =
             env.check("CONFIG_PATH",
                       Value(""),
                       "path to search for config files").toString().c_str();
 
         YARP_DEBUG(Logger::get(),
-                   String("looking for ") + fname.c_str() + ", search path: " +
+                   ConstString("looking for ") + fname.c_str() + ", search path: " +
                    searchPath);
 
-        String pathPrefix("");
-        String txt;
+        ConstString pathPrefix("");
+        ConstString txt;
 
         bool ok = true;
         if (!readFile(fname,txt,true)) {
             ok = false;
             SplitString ss(searchPath.c_str(),';');
             for (int i=0; i<ss.size(); i++) {
-                String trial = ss.get(i);
+                ConstString trial = ss.get(i);
                 trial += '/';
                 trial += fname;
 
                 YARP_DEBUG(Logger::get(),
-                           String("looking for ") + fname + " as " +
+                           ConstString("looking for ") + fname + " as " +
                            trial.c_str());
 
                 txt = "";
@@ -403,18 +403,18 @@ public:
             }
         }
 
-        String path("");
-        String sfname = fname;
+        ConstString path("");
+        ConstString sfname = fname;
         size_t index = sfname.rfind('/');
-        if (index==String::npos) {
+        if (index==ConstString::npos) {
             index = sfname.rfind('\\');
         }
-        if (index!=String::npos) {
+        if (index!=ConstString::npos) {
             path = sfname.substr(0,index);
         }
 
         if (!ok) {
-            YARP_ERROR(Logger::get(),String("cannot read from ") +
+            YARP_ERROR(Logger::get(),ConstString("cannot read from ") +
                        fname);
             return false;
         }
@@ -440,17 +440,17 @@ public:
             return fromConfigFile(dirname, p, wipe);
         }
 
-        YARP_DEBUG(Logger::get(), String("looking for ") + dirname.c_str());
+        YARP_DEBUG(Logger::get(), ConstString("looking for ") + dirname.c_str());
 
         ACE_DIR *dir = ACE_OS::opendir(dirname.c_str());
         if (!dir) {
-            YARP_ERROR(Logger::get(), String("cannot read from ") + dirname);
+            YARP_ERROR(Logger::get(), ConstString("cannot read from ") + dirname);
             return false;
         }
 
-        String txt;
+        ConstString txt;
         if (!readDir(dirname, dir, txt, section)) {
-            YARP_ERROR(Logger::get(), String("cannot read from ") + dirname);
+            YARP_ERROR(Logger::get(), ConstString("cannot read from ") + dirname);
             return false;
         }
 
@@ -465,13 +465,13 @@ public:
         if (wipe) {
             clear();
         }
-        String tag = "";
+        ConstString tag = "";
         Bottle accum;
         bool done = false;
         do {
             bool isTag = false;
             bool including = false;
-            String buf;
+            ConstString buf;
             bool good = true;
             buf = sis.readLine('\n',&good);
             while (good && !BottleImpl::isComplete(buf.c_str())) {
@@ -483,7 +483,7 @@ public:
             if (!done) {
                 including = false;
 
-                if (buf.find("//")!=String::npos||buf.find("#")!=String::npos) {
+                if (buf.find("//")!=ConstString::npos||buf.find("#")!=ConstString::npos) {
                     bool quoted = false;
                     bool prespace = true;
                     int comment = 0;
@@ -521,10 +521,10 @@ public:
 
                 if (buf.length()>0 && buf[0]=='[') {
                     size_t stop = buf.find("]");
-                    if (stop!=String::npos) {
+                    if (stop!=ConstString::npos) {
                         buf = buf.substr(1,stop-1);
                         size_t space = buf.find(" ");
-                        if (space!=String::npos) {
+                        if (space!=ConstString::npos) {
                             Bottle bot(buf.c_str());
                             // BEGIN Handle include option
                             if (bot.size()>1) {
@@ -567,7 +567,7 @@ public:
                                             }
                                         } else {
                                             YARP_ERROR(Logger::get(),
-                                                       String("bad include"));
+                                                       ConstString("bad include"));
                                             return;
                                         }
 
@@ -611,7 +611,7 @@ public:
                             // BEGIN handle group
                             if (bot.size()==2 && !including) {
                                 buf = bot.get(1).toString().c_str();
-                                String key = bot.get(0).toString().c_str();
+                                ConstString key = bot.get(0).toString().c_str();
                                 Bottle *target = getBottle(key.c_str());
                                 if (target==NULL) {
                                     Bottle init;
@@ -687,7 +687,7 @@ public:
 
     ConstString toString() {
         Bottle bot;
-        for (PLATFORM_MAP(String,PropertyItem)::iterator
+        for (PLATFORM_MAP(ConstString,PropertyItem)::iterator
                  it = data.begin(); it!=data.end(); it++) {
             PropertyItem& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
             Bottle& sub = bot.addList();
@@ -700,14 +700,14 @@ public:
     // expand any environment variables found
     ConstString expand(const char *txt, Searchable& env, Searchable& env2) {
         //printf("expanding %s\n", txt);
-        String input = txt;
-        if (input.find("$")==String::npos) {
+        ConstString input = txt;
+        if (input.find("$")==ConstString::npos) {
             // no variables present for sure
             return txt;
         }
         // check if variables present
-        String output = "";
-        String var = "";
+        ConstString output = "";
+        ConstString var = "";
         bool inVar = false;
         bool varHasParen = false;
         bool quoted = false;
@@ -750,7 +750,7 @@ public:
                     }
                     inVar = false;
                     //printf("VARIABLE %s\n", var.c_str());
-                    String add = NetworkBase::getEnvironment(var.c_str()).c_str();
+                    ConstString add = NetworkBase::getEnvironment(var.c_str()).c_str();
                     if (add=="") {
                         add = env.find(var.c_str()).toString().c_str();
                     }
@@ -762,11 +762,11 @@ public:
                             add = "1";
                         }
                     }
-                    if (add.find("\\")!=String::npos) {
+                    if (add.find("\\")!=ConstString::npos) {
                         // Specifically when reading from the command
                         // line, we will allow windows-style paths.
                         // Hence we have to break the "\" character
-                        String buf = "";
+                        ConstString buf = "";
                         for (unsigned int i=0; i<add.length(); i++) {
                             buf += add[i];
                             if (add[i]=='\\') {
@@ -1075,7 +1075,7 @@ Bottle& Property::findGroup(const ConstString& key) const {
         }
         reportToMonitor(report);
         if (result!=0/*NULL*/) {
-            String context = getMonitorContext();
+            ConstString context = getMonitorContext();
             context += ".";
             context += key;
             result->setMonitor(getMonitor(),
@@ -1093,11 +1093,11 @@ void Property::fromQuery(const char *url, bool wipe) {
     if (wipe) {
         clear();
     }
-    String str = url;
+    ConstString str = url;
     str += "&";
-    String buf = "";
-    String key = "";
-    String val = "";
+    ConstString buf = "";
+    ConstString key = "";
+    ConstString val = "";
     int code = 0;
     int coding = 0;
 

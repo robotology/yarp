@@ -113,8 +113,8 @@ public:
      * @return a message, or NULL
      *
      */
-    T *read(bool wait = true) {
-        return buffer().read(wait);
+    T *read(bool shouldWait = true) {
+        return buffer().read(shouldWait);
     }
 
     virtual Port& asPort() {

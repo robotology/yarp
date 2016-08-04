@@ -368,7 +368,7 @@ Value *Value::makeVocab(const ConstString& str)
 
 Value *Value::makeBlob(void *data, int length)
 {
-    String s((char*)data,length);
+    ConstString s((char*)data,length);
     return new StoreBlob(s);
 }
 

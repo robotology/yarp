@@ -19,6 +19,7 @@
 #include <math.h>
 #include <string>
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
@@ -28,7 +29,7 @@ const double TOL = 1e-8;
 
 class SVDTest : public UnitTest {
 public:
-    virtual String getName() { return "SVDTest"; }
+    virtual ConstString getName() { return "SVDTest"; }
 
     // Assert that 2 matrices are equal
     void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)

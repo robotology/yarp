@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef YARP2_wire_rep_utils_api_API
-#define YARP2_wire_rep_utils_api_API
+#ifndef YARP_WIRE_REP_UTILS_WIRE_REP_UTILS_API_H
+#define YARP_WIRE_REP_UTILS_WIRE_REP_UTILS_API_H
 
 #include <yarp/conf/api.h>
 
@@ -23,9 +23,11 @@
 #  endif
 #  ifdef YARP_NO_DEPRECATED
 #    define YARP_wire_rep_utils_DEPRECATED_API YARP_DEPRECATED
+#    define YARP_wire_rep_utils_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X)
 #  else
 #    define YARP_wire_rep_utils_DEPRECATED_API YARP_DEPRECATED YARP_wire_rep_utils_API
+#    define YARP_wire_rep_utils_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X) YARP_wire_rep_utils_API
 #  endif
 #endif
 
-#endif
+#endif // YARP_WIRE_REP_UTILS_API_WIRE_REP_UTILS_H

@@ -8,7 +8,7 @@
 #ifndef YARP2_NAMESERVER
 #define YARP2_NAMESERVER
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Dispatcher.h>
@@ -43,7 +43,7 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::NameServerStub {
 public:
     virtual ~NameServerStub() {}
-    virtual String apply(const String& txt, const Contact& remote) = 0;
+    virtual ConstString apply(const ConstString& txt, const Contact& remote) = 0;
 };
 
 /**
@@ -64,38 +64,38 @@ public:
 
     // address may be partial - partial information gets filled in
     // (not YARP2 compliant yet, won't do fill-in)
-    Contact registerName(const String& name,
+    Contact registerName(const ConstString& name,
                          const Contact& address) {
         return registerName(name,address,"...");
     }
 
-    Contact registerName(const String& name,
+    Contact registerName(const ConstString& name,
                          const Contact& address,
-                         const String& remote);
+                         const ConstString& remote);
 
-    Contact registerName(const String& name) {
+    Contact registerName(const ConstString& name) {
         return registerName(name,Contact());
     }
 
-    Contact queryName(const String& name);
+    Contact queryName(const ConstString& name);
 
-    Contact unregisterName(const String& name);
+    Contact unregisterName(const ConstString& name);
 
     static int main(int argc, char *argv[]);
 
-    virtual String apply(const String& txt, const Contact& remote);
+    virtual ConstString apply(const ConstString& txt, const Contact& remote);
 
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
                const Contact& remote);
 
-    String apply(const String& txt) {
+    ConstString apply(const ConstString& txt) {
         return apply(txt,Contact());
     }
 
     virtual void onEvent(yarp::os::Bottle& event) {
     }
 
-    static String textify(const Contact& address);
+    static ConstString textify(const Contact& address);
     static yarp::os::Bottle botify(const Contact& address);
 
     void setBasePort(int basePort) {
@@ -135,14 +135,14 @@ private:
     class DisposableNameRecord : public ReusableRecord<int> {
     private:
         int base;
-        String prefix;
+        ConstString prefix;
     public:
         DisposableNameRecord() {
             base = 1;
             prefix = "/tmp/port/";
         }
 
-        String get() {
+        ConstString get() {
             return prefix + NetType::toString(getFree());
         }
 
@@ -152,9 +152,9 @@ private:
             return result;
         }
 
-        bool release(const String& name) {
+        bool release(const ConstString& name) {
             if (name.find(prefix)==0) {
-                String num = name.substr(prefix.length());
+                ConstString num = name.substr(prefix.length());
                 int x = NetType::toInt(num.c_str());
                 ReusableRecord<int>::release(x);
                 return true;
@@ -182,7 +182,7 @@ private:
 
         int get() {
             int result = ReusableRecord<int>::getFree();
-            //YARP_DEBUG(Logger::get(), String("host record says ") +
+            //YARP_DEBUG(Logger::get(), ConstString("host record says ") +
             //NetType::toString(result) + " is free");
             return result;
         }
@@ -219,13 +219,13 @@ private:
             return result;
         }
 
-        String get() {
+        ConstString get() {
             int x = getFree();
             last = x;
             int v1 = x%255;
             int v2 = x/255;
             yAssert(v2<255);
-            return String("224.1.") + NetType::toString(v2+1) + "." +
+            return ConstString("224.1.") + NetType::toString(v2+1) + "." +
                 NetType::toString(v1+1);
         }
 
@@ -251,7 +251,7 @@ private:
 
     class PropertyRecord {
     private:
-        PlatformVector<String> prop;
+        PlatformVector<ConstString> prop;
     public:
         PropertyRecord() {
         }
@@ -260,11 +260,11 @@ private:
             prop.clear();
         }
 
-        void add(const String& p) {
+        void add(const ConstString& p) {
             prop.push_back(p);
         }
 
-        bool check(const String& p) {
+        bool check(const ConstString& p) {
             for (unsigned int i=0; i<prop.size(); i++) {
                 if (prop[i]==p) {
                     return true;
@@ -273,8 +273,8 @@ private:
             return false;
         }
 
-        String match(const String& str) {
-            String base = "";
+        ConstString match(const ConstString& str) {
+            ConstString base = "";
             bool needSpace = false;
             for (unsigned int i=0; i<prop.size(); i++) {
                 if (prop[i].find(str)==0) {
@@ -286,8 +286,8 @@ private:
             return base;
         }
 
-        String toString() {
-            String base = "";
+        ConstString toString() {
+            ConstString base = "";
             for (unsigned int i=0; i<prop.size(); i++) {
                 if (i>0) {
                     base += " ";
@@ -302,7 +302,7 @@ private:
     private:
         bool reusablePort;
         bool reusableIp;
-        PLATFORM_MAP(String,PropertyRecord) propMap;
+        PLATFORM_MAP(ConstString,PropertyRecord) propMap;
         Contact address;
     public:
         NameRecord() :
@@ -353,8 +353,8 @@ private:
         }
 
 
-        PropertyRecord *getPR(const String& key, bool create = true) {
-            PLATFORM_MAP_ITERATOR(String,PropertyRecord,entry);
+        PropertyRecord *getPR(const ConstString& key, bool create = true) {
+            PLATFORM_MAP_ITERATOR(ConstString,PropertyRecord,entry);
             int result = PLATFORM_MAP_FIND(propMap,key,entry);
             if (result==-1 && create) {
                 PropertyRecord blank;
@@ -368,15 +368,15 @@ private:
             return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
         }
 
-        void clearProp(const String& key) {
+        void clearProp(const ConstString& key) {
             getPR(key)->clear();
         }
 
-        void addProp(const String& key, const String& val) {
+        void addProp(const ConstString& key, const ConstString& val) {
             getPR(key)->add(val);
         }
 
-        String getProp(const String& key) {
+        ConstString getProp(const ConstString& key) {
             PropertyRecord *rec = getPR(key,false);
             if (rec!=NULL) {
                 return rec->toString();
@@ -384,7 +384,7 @@ private:
             return "";
         }
 
-        bool checkProp(const String& key, const String& val) {
+        bool checkProp(const ConstString& key, const ConstString& val) {
             PropertyRecord *rec = getPR(key,false);
             if (rec!=NULL) {
                 return rec->check(val);
@@ -392,7 +392,7 @@ private:
             return false;
         }
 
-        String matchProp(const String& key, const String& val) {
+        ConstString matchProp(const ConstString& key, const ConstString& val) {
             PropertyRecord *rec = getPR(key,false);
             if (rec!=NULL) {
                 return rec->match(val);
@@ -407,19 +407,19 @@ private:
 
 
 
-    String cmdRegister(int argc, char *argv[]);
-    String cmdQuery(int argc, char *argv[]);
-    String cmdUnregister(int argc, char *argv[]);
-    String cmdAnnounce(int argc, char *argv[]);
-    String cmdHelp(int argc, char *argv[]);
-    String cmdSet(int argc, char *argv[]);
-    String cmdGet(int argc, char *argv[]);
-    String cmdCheck(int argc, char *argv[]);
-    String cmdMatch(int argc, char *argv[]);
-    String cmdList(int argc, char *argv[]);
-    String cmdRoute(int argc, char *argv[]);
-    String cmdGarbageCollect(int argc, char *argv[]);
-    String cmdBot(int argc, char *argv[]);
+    ConstString cmdRegister(int argc, char *argv[]);
+    ConstString cmdQuery(int argc, char *argv[]);
+    ConstString cmdUnregister(int argc, char *argv[]);
+    ConstString cmdAnnounce(int argc, char *argv[]);
+    ConstString cmdHelp(int argc, char *argv[]);
+    ConstString cmdSet(int argc, char *argv[]);
+    ConstString cmdGet(int argc, char *argv[]);
+    ConstString cmdCheck(int argc, char *argv[]);
+    ConstString cmdMatch(int argc, char *argv[]);
+    ConstString cmdList(int argc, char *argv[]);
+    ConstString cmdRoute(int argc, char *argv[]);
+    ConstString cmdGarbageCollect(int argc, char *argv[]);
+    ConstString cmdBot(int argc, char *argv[]);
 
     // making a more easy to parse interface
     yarp::os::Bottle ncmdList(int argc, char *argv[]);
@@ -428,34 +428,34 @@ private:
     yarp::os::Bottle ncmdSet(int argc, char *argv[]);
     yarp::os::Bottle ncmdGet(int argc, char *argv[]);
 
-    PLATFORM_MAP(String,NameRecord) nameMap;
-    PLATFORM_MAP(String,HostRecord) hostMap;
+    PLATFORM_MAP(ConstString,NameRecord) nameMap;
+    PLATFORM_MAP(ConstString,HostRecord) hostMap;
 
     McastRecord mcastRecord;
     DisposableNameRecord tmpNames;
 
-    NameRecord *getNameRecord(const String& name, bool create);
+    NameRecord *getNameRecord(const ConstString& name, bool create);
 
-    NameRecord &getNameRecord(const String& name) {
+    NameRecord &getNameRecord(const ConstString& name) {
         NameRecord *result = getNameRecord(name,true);
         yAssert(result!=NULL);
         return *result;
     }
 
-    HostRecord *getHostRecord(const String& name, bool create);
+    HostRecord *getHostRecord(const ConstString& name, bool create);
 
-    HostRecord &getHostRecord(const String& name) {
+    HostRecord &getHostRecord(const ConstString& name) {
         HostRecord *result = getHostRecord(name,true);
         yAssert(result!=NULL);
         return *result;
     }
 
-    Dispatcher<NameServer,String> dispatcher;
+    Dispatcher<NameServer,ConstString> dispatcher;
     Dispatcher<NameServer,yarp::os::Bottle> ndispatcher;
 
 protected:
 
-    String terminate(const String& str);
+    ConstString terminate(const ConstString& str);
 
     int basePort;
 

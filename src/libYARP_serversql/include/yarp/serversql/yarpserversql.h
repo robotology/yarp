@@ -31,8 +31,8 @@
 #  endif
 #endif
 
-yarpserversql_API int yarpserver3_main(int argc, char *argv[]);
+yarpserversql_API int yarpserver_main(int argc, char *argv[]);
 
-yarpserversql_API yarp::os::NameStore *yarpserver3_create(yarp::os::Searchable& options);
+yarpserversql_API yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options);
 
 #endif

@@ -13,6 +13,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/PortablePair.h>
 
+#include <yarp/gsl/Gsl.h>
 #include <yarp/gsl_compatibility.h>
 
 #include <math.h>
@@ -113,11 +114,11 @@ public:
 };
 
 class MatrixTest : public UnitTest {
-    
+
     bool checkConsistency(Matrix &a)
     {
         gsl_matrix *tmp;
-        tmp=(gsl_matrix *)(a.getGslMatrix());
+        tmp=(gsl_matrix *)(yarp::gsl::GslMatrix(a).getGslMatrix());
         bool ret=true;
         if ((int)tmp->size1!=a.rows())
             ret=false;
@@ -138,24 +139,7 @@ class MatrixTest : public UnitTest {
     }
 
 public:
-    virtual String getName() { return "MatrixTest"; }
-
-    void checkGsl()
-    {
-        Matrix a(5,5);
-        Matrix b;
-        b=a;
-        checkTrue(checkConsistency(a), "gsldata consistent after creation");
-        checkTrue(checkConsistency(b), "gsldata consistent after copy");
-        b.resize(100,100);
-        checkTrue(checkConsistency(b), "gsldata consistent after resize");
-
-        Matrix s=a.submatrix(1,1,2,2);
-        checkConsistency(s);
-        checkTrue(checkConsistency(s), "gsldata consistent for submatrix");
-        Matrix c=a;
-        checkTrue(checkConsistency(c), "gsldata consistent after init");
-    }
+    virtual ConstString getName() { return "MatrixTest"; }
 
     void checkOperators()
     {
@@ -255,7 +239,7 @@ public:
         for(r=0; r<10; r++)
             for (c=0; c<40; c++)
                 ok=ok && (m[r][c]==m2[r][c]);
-        checkTrue(ok,"elements match");   
+        checkTrue(ok,"elements match");
     }
 
     void checkBottle() {
@@ -293,7 +277,7 @@ public:
 
         checkEqual(r2-r1+1,m2.rows(),"rows matches");
         checkEqual(c2-c1+1,m2.cols(),"cols matches");
-        
+
         kk=r1*C+c1;
         bool ok=true;
         for(r=0; r<m2.rows(); r++)
@@ -329,6 +313,23 @@ public:
         checkTrue(ok,"elements match");
     }
 
+    void checkGsl()
+    {
+        Matrix a(5, 5);
+        Matrix b;
+        b = a;
+        checkTrue(checkConsistency(a), "gsldata consistent after creation");
+        checkTrue(checkConsistency(b), "gsldata consistent after copy");
+        b.resize(100, 100);
+        checkTrue(checkConsistency(b), "gsldata consistent after resize");
+
+        Matrix s = a.submatrix(1, 1, 2, 2);
+        checkConsistency(s);
+        checkTrue(checkConsistency(s), "gsldata consistent for submatrix");
+        Matrix c = a;
+        checkTrue(checkConsistency(c), "gsldata consistent after init");
+    }
+
     void checkResize()
     {
         Matrix ones;
@@ -349,7 +350,7 @@ public:
 
         eye.resize(5, 5);
         eye=0.0;
-        
+
         for (unsigned int r=0; r<5; r++)
         {
             eye(r,r)=1.0;
@@ -406,7 +407,7 @@ public:
 
         BufferedConnectionWriter writer;
         m.write(writer);
-        String s = writer.toString();
+        ConstString s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),(int)s.length());
         checkEqual(bot.get(0).asInt(),rr,"row count matches");
@@ -419,7 +420,7 @@ public:
         bool ok = true;
         for (int i=0; i<(int)(rr*cc); i++) {
             double v = lst->get(i).asDouble();
-            if (fabs(v-i)>0.01) { 
+            if (fabs(v-i)>0.01) {
                 ok = false;
                 checkEqualish(v,i,"cell matches");
                 break;
@@ -489,7 +490,7 @@ public:
             checkResize();
             checkSubmatrix();
             checkGsl();
-        
+
             checkBottle();
             checkSendReceive();
 

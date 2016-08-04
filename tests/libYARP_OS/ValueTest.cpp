@@ -15,7 +15,7 @@ using namespace yarp::os;
 
 class ValueTest : public UnitTest {
 public:
-    virtual String getName() { return "ValueTest"; }
+    virtual ConstString getName() { return "ValueTest"; }
 
     void checkCopy() {
         report(0,"check value copying");

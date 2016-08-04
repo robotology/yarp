@@ -236,7 +236,7 @@ public:
         push(b,true);
     }
 
-    virtual void appendStringBase(const String& data) {
+    virtual void appendStringBase(const ConstString& data) {
         yarp::os::Bytes b((char*)(data.c_str()),data.length()+1);
         push(b,true);
     }
@@ -250,7 +250,7 @@ public:
      * @param data string to write, not including carriage-return-line-feed.
      *
      */
-    virtual void appendLine(const String& data) {
+    virtual void appendLine(const ConstString& data) {
         yarp::os::Bytes b((char*)(data.c_str()),data.length());
         push(b,true);
         const char *eol = "\r\n"; // for windows compatibility
@@ -350,7 +350,7 @@ public:
      * @return the message serialized as a string
      *
      */
-    String toString();
+    ConstString toString();
 
     // defined by yarp::os::ConnectionWriter
     virtual void appendBlock(const char *data, size_t len) {
@@ -364,7 +364,7 @@ public:
         } else if (terminate==0) {
             appendStringBase(str);
         } else {
-            String s = str;
+            ConstString s = str;
             str += terminate;
             appendBlockCopy(yarp::os::Bytes((char*)(s.c_str()),s.length()));
         }

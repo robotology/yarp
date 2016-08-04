@@ -319,7 +319,9 @@ private:
     inline const char& at(size_t pos) const { return s.at(pos); }
 
     inline const ConstString& operator=(const ConstString& str) {
-        s = str.s;
+        if(&str != this) {
+            s = str.s;
+        }
         return *this;
     }
 

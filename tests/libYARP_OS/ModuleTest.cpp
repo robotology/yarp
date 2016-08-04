@@ -6,7 +6,7 @@
  */
 
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/all.h>
 #include <yarp/os/RFModule.h>
 
@@ -34,7 +34,7 @@ public:
 
 class RFModuleTest : public UnitTest {
 public:
-    virtual String getName() { return "RFModuleTest"; }
+    virtual ConstString getName() { return "RFModuleTest"; }
 
 
     void testPort() {

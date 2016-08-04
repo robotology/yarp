@@ -177,6 +177,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformVector.h
                       include/yarp/os/impl/PortCommand.h
                       include/yarp/os/impl/PortCore.h
+                      include/yarp/os/impl/PortCoreAdapter.h
                       include/yarp/os/impl/PortCoreInputUnit.h
                       include/yarp/os/impl/PortCoreOutputUnit.h
                       include/yarp/os/impl/PortCorePacket.h
@@ -200,7 +201,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/StreamConnectionReader.h
-                      include/yarp/os/impl/String.h
                       include/yarp/os/impl/TcpAcceptor.h
                       include/yarp/os/impl/TcpCarrier.h
                       include/yarp/os/impl/TcpConnector.h
@@ -279,6 +279,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/PortablePair.cpp
                  src/PortCommand.cpp
                  src/PortCore.cpp
+                 src/PortCoreAdapter.cpp
                  src/PortCoreInputUnit.cpp
                  src/PortCoreOutputUnit.cpp
                  src/Port.cpp

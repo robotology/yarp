@@ -31,7 +31,7 @@ int ShmemHybridStream::open(const Contact& yarp_address,bool sender)
 
         if (result<0)
         {
-            YARP_ERROR(Logger::get(),String("ShmemHybridStream open result")+NetType::toString(result));
+            YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream open result")+NetType::toString(result));
             return result;
         }
 
@@ -54,7 +54,7 @@ int ShmemHybridStream::accept()
 
     if (result<0)
     {
-        YARP_ERROR(Logger::get(),String("ShmemHybridStream server returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream server returned ")+NetType::toString((int)result));
         close();
         return -1;
     }
@@ -69,21 +69,21 @@ int ShmemHybridStream::accept()
     result=m_SockStream.recv_n(&recv_conn_data,sizeof recv_conn_data);
     if (result<=0)
     {
-        YARP_ERROR(Logger::get(),String("Socket returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(),ConstString("Socket returned ")+NetType::toString((int)result));
         close();
         return -1;
     }
 
     if (!in.open(m_RemoteAddress.getPort(),&m_SockStream))
     {
-        YARP_ERROR(Logger::get(),String("ShmemHybridStream can't create shared memory"));
+        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream can't create shared memory"));
         close();
         return -1;
     }
 
     if (!out.open(m_LocalAddress.getPort()))
     {
-        YARP_ERROR(Logger::get(),String("ShmemHybridStream can't create shared memory"));
+        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream can't create shared memory"));
         close();
         return -1;
     }
@@ -92,7 +92,7 @@ int ShmemHybridStream::accept()
     send_conn_data.command=ACKNOWLEDGE;
     if (m_SockStream.send_n(&send_conn_data,sizeof send_conn_data)<=0)
     {
-        YARP_ERROR(Logger::get(),String("ShmemHybridStream socket writing error"));
+        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream socket writing error"));
         close();
         return -1;
     }
@@ -112,7 +112,7 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
     YARP_SSIZE_T result=connector.connect(m_SockStream,ace_address);
     if (result<0)
     {
-        YARP_ERROR(Logger::get(),String("ShmemHybridStream client returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(),ConstString("ShmemHybridStream client returned ")+NetType::toString((int)result));
         close();
         return -1;
     }
@@ -131,7 +131,7 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
     result=m_SockStream.send_n(&send_conn_data,sizeof send_conn_data);
     if (result<=0)
     {
-        YARP_ERROR(Logger::get(),String("Socket returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(),ConstString("Socket returned ")+NetType::toString((int)result));
         close();
         return -1;
     }
@@ -140,7 +140,7 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
     result=m_SockStream.recv_n(&recv_conn_data,sizeof recv_conn_data);
     if (result<=0)
     {
-        YARP_ERROR(Logger::get(),String("Socket returned ")+NetType::toString((int)result));
+        YARP_ERROR(Logger::get(),ConstString("Socket returned ")+NetType::toString((int)result));
         close();
         return -1;
     }

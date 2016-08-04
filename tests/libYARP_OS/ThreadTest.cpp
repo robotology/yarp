@@ -42,17 +42,24 @@ private:
         double delay;
         bool hold;
         bool active;
+        Semaphore mutex;
 
-        ThreadDelay(double delay = 0.5, bool hold = false) {
-            this->delay = delay;
-            this->hold = hold;
-            active = true;
+        ThreadDelay(double delay = 0.5, bool hold = false) :
+                delay(delay),
+                hold(hold),
+                active(true),
+                mutex(1)
+        {
         }
 
         virtual void run() {
+            bool h;
             do {
                 Time::delay(delay);
-            } while (hold);
+                mutex.wait();
+                h = hold;
+                mutex.post();
+            } while (h);
             active = false;
         }
     };
@@ -184,27 +191,34 @@ private:
 
     class Thread5: public Thread {
     public:
-        Thread5():state(0),fail(false){}
+        Thread5() : state(0), fail(false), mutex(1) {}
         int state;
         bool fail;
+        Semaphore mutex;
 
         void threadWillFail(bool f)
         {
+            mutex.wait();
             state=0;
             fail=f;
+            mutex.post();
         }
 
         virtual bool threadInit()
         {
             Time::delay(0.5);
+            mutex.wait();
             state=1;
+            mutex.post();
             return !fail;
         }
 
         virtual void afterStart(bool s)
         {
+            mutex.wait();
             if(!s)
                 state++;
+            mutex.post();
         }
 
         virtual void run()
@@ -213,7 +227,9 @@ private:
         virtual void threadRelease()
         {
             Time::delay(0.5);
+            mutex.wait();
             state++;
+            mutex.post();
         }
     };
 
@@ -270,7 +286,7 @@ public:
         gotCount = 0;
     }
 
-    virtual String getName() { return "ThreadTest"; }
+    virtual ConstString getName() { return "ThreadTest"; }
 
     void testIsRunning()
     {
@@ -353,15 +369,21 @@ public:
         report(0,"Checking init/release synchronization");
         report(0,"Starting thread... thread will wait 0.5 second");
         t.start();
+        t.mutex.wait();
         checkEqual(1, t.state, "Start synchronized on init");
+        t.mutex.post();
 
         report(0,"Stopping thread... thread will wait 0.5 second");
         t.stop();
+        t.mutex.wait();
         checkEqual(2, t.state, "Stop synchronized on release");
+        t.mutex.post();
 
         t.threadWillFail(true);
         t.start();
+        t.mutex.wait();
         checkEqual(2, t.state, "Start synchronized on failed init");
+        t.mutex.post();
 
         report(0, "done");
     }
@@ -438,7 +460,9 @@ public:
         t.start();
         t.join(1);
         checkTrue(t.active,"timeout join returns before thread stops");
+        t.mutex.wait();
         t.hold = false;
+        t.mutex.post();
         t.stop();
         checkFalse(t.active,"flag behaves correctly");
         t.hold = false;

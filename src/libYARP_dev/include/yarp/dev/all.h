@@ -24,15 +24,15 @@
 #include <yarp/dev/GazeControl.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
 #include <yarp/dev/GPUInterface.h>
+#include <yarp/dev/IDepthSensor.h>
 #include <yarp/dev/IKinectDeviceDriver.h>
 #include <yarp/dev/IRangefinder2D.h>
+#include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/ServerSoundGrabber.h>
 #include <yarp/dev/ServiceInterfaces.h>
-#include <yarp/dev/TestFrameGrabber.h>
-#include <yarp/dev/TestMotor.h>
 #include <yarp/dev/Wrapper.h>
 
 #endif

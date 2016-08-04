@@ -21,7 +21,7 @@ using namespace yarp::os;
 
 class PropertyTest : public UnitTest {
 public:
-    virtual String getName() { return "PropertyTest"; }
+    virtual ConstString getName() { return "PropertyTest"; }
 
     void checkPutGet() {
         report(0,"checking puts and gets");

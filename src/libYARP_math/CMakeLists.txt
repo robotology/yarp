@@ -19,7 +19,8 @@ if (YARP_HAS_MATH_LIB)
                        include/yarp/math/RandnVector.h
                        include/yarp/math/RandScalar.h
                        include/yarp/math/RandVector.h
-                       include/yarp/math/SVD.h)
+                       include/yarp/math/SVD.h
+                       include/yarp/math/FrameTransform.h)
 
     set(YARP_math_IMPL_HDRS )
 
@@ -30,7 +31,8 @@ if (YARP_HAS_MATH_LIB)
                        src/RandnVector.cpp
                        src/RandScalar.cpp
                        src/RandVector.cpp
-                       src/SVD.cpp)
+                       src/SVD.cpp
+                       src/FrameTransform.cpp)
 
     source_group("Source Files" FILES ${YARP_math_SRCS})
     source_group("Header Files" FILES ${YARP_math_HDRS})
@@ -54,6 +56,7 @@ if (YARP_HAS_MATH_LIB)
                           ${YARP_math_IMPL_HDRS})
     target_link_libraries(YARP_math LINK_PRIVATE YARP_OS)
     target_link_libraries(YARP_math LINK_PRIVATE YARP_sig)
+    target_link_libraries(YARP_math LINK_PRIVATE YARP_gsl)
     target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
 
     set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})

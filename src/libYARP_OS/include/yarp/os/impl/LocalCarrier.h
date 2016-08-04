@@ -69,13 +69,13 @@ public:
 
     virtual Carrier *create();
 
-    virtual String getName();
+    virtual ConstString getName();
 
     virtual bool requireAck();
     virtual bool isConnectionless();
     virtual bool canEscape();
     virtual bool isLocal();
-    virtual String getSpecifierName();
+    virtual ConstString getSpecifierName();
     virtual bool checkHeader(const Bytes& header);
     virtual void getHeader(const Bytes& header);
     virtual void setParameters(const Bytes& header);
@@ -97,7 +97,7 @@ protected:
     LocalCarrier *peer;
     yarp::os::Semaphore peerMutex;
     yarp::os::Semaphore sent, received;
-    String portName;
+    ConstString portName;
 
     static LocalCarrierManager manager;
 };

@@ -1,26 +1,25 @@
 /*
  * Copyright (C) 2014 iCub Facility
- * Authors: Paul Fitzpatrick
+ * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+ *          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-
 #include <yarp/os/SystemClock.h>
-#include <yarp/os/impl/PlatformTime.h>
+#include <yarp/conf/system.h>
 
-#ifdef ACE_WIN32
-// for WIN32 MM functions
-#include <mmsystem.h>
+#if defined YARP_HAS_CXX11
+#  include <chrono>
+#  include <thread>
+#else
+#  include <yarp/os/impl/PlatformTime.h>
 #endif
 
-using namespace yarp::os;
-
-/// WARNING: actual precision under WIN32 depends on setting scheduler
-/// by means of MM functions.
-///
-void SystemClock::delaySystem(double seconds) {
-#ifdef YARP_HAS_ACE
+void yarp::os::SystemClock::delaySystem(double seconds)
+{
+#if defined YARP_HAS_CXX11
+    std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
+#elif defined YARP_HAS_ACE
     ACE_Time_Value tv;
     tv.sec (long(seconds));
     tv.usec (long((seconds-long(seconds)) * 1.0e6));
@@ -30,26 +29,16 @@ void SystemClock::delaySystem(double seconds) {
 #endif
 }
 
-double SystemClock::nowSystem() {
-#ifdef ACE_WIN32
-    // only uses high res on Microsoft Windows
-    // This caused problems; maybe only with new ACE versions or Windows 7, can't tell.
-    // Lorenzo
-    // ACE_Time_Value timev = ACE_High_Res_Timer::gettimeofday_hr();
-    ACE_Time_Value timev=ACE_OS::gettimeofday ();
-    //ACE_Time_Value timev = ACE_OS::gettimeofday ();
+double yarp::os::SystemClock::nowSystem()
+{
+#if defined YARP_HAS_CXX11
+    return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+#elif defined YARP_HAS_ACE
+    ACE_Time_Value timev = ACE_OS::gettimeofday();
     return double(timev.sec()) + timev.usec() * 1e-6;
 #else
-    // on other operating systems, high res seems dysfunctional
-    // which is weird since ACE manual claims it maps naturally
-    // on gettimoday...
-#  ifdef YARP_HAS_ACE
-    ACE_Time_Value timev = ACE_OS::gettimeofday ();
-    return double(timev.sec()) + timev.usec() * 1e-6;
-#  else
-    struct  timeval currentTime;
+    struct timeval currentTime;
     gettimeofday(&currentTime, NULL);
     return (double)(currentTime.tv_sec + currentTime.tv_usec * 1e-6);
-#  endif
 #endif
 }

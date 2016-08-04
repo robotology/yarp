@@ -79,16 +79,18 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
 
     if (success)
     {
-#if defined(__linux__)
-        // Use the POSIX syscalls to get
-        // the real thread ID (gettid) on Linux machine
-        thread->tid = (long) syscall(SYS_gettid);
-#endif
-
         // c++11 std::thread, pthread and ace threads on some platforms do not
         // return the thread id, therefore it must be set before calling run(),
         // to avoid a race condition in case the run() method checks it.
         thread->id = PLATFORM_THREAD_SELF();
+
+#if defined(__linux__)
+        // Use the POSIX syscalls to get
+        // the real thread ID (gettid) on Linux machine
+        thread->tid = (long) syscall(SYS_gettid);
+#else
+        thread->tid = (long int)thread->id;
+#endif
 
         thread->setPriority();
         thread->run();
@@ -96,7 +98,7 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
     }
 
 
-    //YARP_ERROR(Logger::get(),String("uncaught exception in thread: ") +
+    //YARP_ERROR(Logger::get(),ConstString("uncaught exception in thread: ") +
     //             e.toString());
 
     ThreadImpl::changeCount(-1);
@@ -165,7 +167,7 @@ int ThreadImpl::join(double seconds) {
         if (seconds>0) {
             if (!initWasSuccessful) {
                 // join called before start completed
-                YARP_ERROR(Logger::get(),String("Tried to join a thread before starting it"));
+                YARP_ERROR(Logger::get(),ConstString("Tried to join a thread before starting it"));
                 return -1;
             }
             synchro.waitWithTimeout(seconds);
@@ -243,10 +245,15 @@ bool ThreadImpl::start() {
     if (s==0) {
         s = (size_t)defaultStackSize;
     }
+    // c++11 std::thread, pthread and ace threads on some platforms do not
+    // return the thread id, therefore we set it in theExecutiveBranch() for all
+    // platforms. We don't set id here and use a dummy instead, since setting it
+    // in both places could cause a race condition.
+    ACE_thread_t dummy_id;
     int result = ACE_Thread::spawn((ACE_THR_FUNC)theExecutiveBranch,
                                    (void *)this,
                                    THR_JOINABLE | THR_NEW_LWP,
-                                   &id,
+                                   &dummy_id,
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
                                    0,
@@ -267,12 +274,11 @@ bool ThreadImpl::start() {
 #endif
     if (result==0)
     {
-        tid = (long int)id;
         // we must, at some point in the future, join the thread
         needJoin = true;
 
         // the thread started correctly, wait for the initialization
-        YARP_DEBUG(Logger::get(), String("Child thread initializing"));
+        YARP_DEBUG(Logger::get(), ConstString("Child thread initializing"));
         synchroWait();
         initWasSuccessful = true;
         if (opened)
@@ -292,7 +298,7 @@ bool ThreadImpl::start() {
     //the thread did not start, call afterStart() to warn the user
     char tmp[80];
     sprintf(tmp, "%d", result);
-    YARP_ERROR(Logger::get(),String("A thread failed to start with error code: ")+String(tmp));
+    YARP_ERROR(Logger::get(),ConstString("A thread failed to start with error code: ")+ConstString(tmp));
     afterStart(false);
     return false;
 }
@@ -309,11 +315,20 @@ void ThreadImpl::synchroPost()
 
 void ThreadImpl::notify(bool s)
 {
+    threadMutex->wait();
     active=s;
+    threadMutex->post();
 }
 
 bool ThreadImpl::isClosing() {
     return closing;
+}
+
+bool ThreadImpl::isRunning() {
+    threadMutex->wait();
+    bool b = active;
+    threadMutex->post();
+    return b;
 }
 
 int ThreadImpl::getCount() {
@@ -406,4 +421,16 @@ long ThreadImpl::getTid() {
 
 void ThreadImpl::setDefaultStackSize(int stackSize) {
     defaultStackSize = stackSize;
+}
+
+void ThreadImpl::yield() {
+#if defined(YARP_HAS_CXX11)
+    std::this_thread::yield();
+#elif defined(YARP_HAS_ACE) // Use ACE API
+    ACE_Thread::yield();
+#elif defined(UNIX) // Use the POSIX syscalls
+    pthread_yield();
+#else
+    YARP_ERROR(Logger::get(),"Cannot yield thread without ACE");
+#endif
 }

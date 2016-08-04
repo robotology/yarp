@@ -66,7 +66,7 @@ public:
         checkBasic();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "MessageStackTest";
     }
 };

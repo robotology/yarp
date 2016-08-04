@@ -230,7 +230,7 @@ int yarp_rename(const char *from, const char *to) {
     Contact src = Network::queryName(from);
     Network::unregisterContact(src);
 
-    Contact dest = Contact::byName(to).addSocket(src.getCarrier(),src.getHost(),src.getPort());
+    Contact dest(to, src.getCarrier(), src.getHost(), src.getPort());
 
     Network::registerContact(dest);
 

@@ -7,6 +7,8 @@
 #ifndef YARP_CONF_API_H
 #define YARP_CONF_API_H
 
+#include <yarp/conf/compiler.h>
+
 /*
 
 The purpose of this header file is to correctly define:
@@ -29,8 +31,10 @@ recommended usage of this header within YARP is:
 #  endif
 #  ifdef YARP_NO_DEPRECATED
 #    define YARP_OS_DEPRECATED_API YARP_DEPRECATED
+#    define YARP_OS_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X)
 #  else
 #    define YARP_OS_DEPRECATED_API YARP_DEPRECATED YARP_OS_API
+#    define YARP_OS_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X) YARP_OS_API
 #  endif
 #endif
 
@@ -50,9 +54,6 @@ recommended usage of this header within YARP is:
 #  define YARP_HELPER_DLL_LOCAL
 #  define YARP_HELPER_DLL_IMPORT_EXTERN extern
 #  define YARP_HELPER_DLL_EXPORT_EXTERN
-#  ifndef YARP_NO_DEPRECATED_WARNINGS
-#    define YARP_DEPRECATED __declspec(deprecated)
-#  endif
 #else
 #  if __GNUC__ >= 4
 #    define YARP_HELPER_DLL_IMPORT __attribute__ ((visibility("default")))
@@ -67,18 +68,6 @@ recommended usage of this header within YARP is:
 #     define YARP_HELPER_DLL_IMPORT_EXTERN
 #     define YARP_HELPER_DLL_EXPORT_EXTERN
 #  endif
-#  if defined(__clang__)
-#    ifndef YARP_NO_DEPRECATED_WARNINGS
-#      define YARP_DEPRECATED __attribute__((deprecated()))
-#    endif
-#  elif (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
-#    ifndef YARP_NO_DEPRECATED_WARNINGS
-#      define YARP_DEPRECATED __attribute__ ((__deprecated__))
-#    endif
-#  endif
-#endif
-#ifndef YARP_DEPRECATED
-#  define YARP_DEPRECATED
 #endif
 
 #if defined YARP_DLL && defined YARP_FILTER_API
@@ -95,7 +84,30 @@ recommended usage of this header within YARP is:
 #  define YARP_EXPORT_EXTERN
 #endif
 
+// YARP_DEPRECATED and YARP_DEPRECATED_MSG are defined in compiler.h, but we
+// want warnings disabled if YARP_NO_DEPRECATED_WARNINGS is enabled
+#if defined YARP_NO_DEPRECATED_WARNINGS
+#  undef YARP_DEPRECATED
+#  undef YARP_DEPRECATED_MSG
+#endif
+// If YARP_DEPRECATED and YARP_DEPRECATED_MSG are undefined, define them empty
+#ifndef YARP_DEPRECATED
+#  define YARP_DEPRECATED
+#  define YARP_DEPRECATED_MSG(X)
+#endif
+
+// YARP_NODISCARD: print a warning if the result unused
+#if (YARP_COMPILER_IS_GNU  && (__GNUC__ >= 4)) || YARP_COMPILER_IS_Clang
+#  define YARP_NODISCARD __attribute__ ((warn_unused_result))
+#elif YARP_COMPILER_IS_MSVC && (_MSC_VER >= 1700)
+#  define YARP_NODISCARD _Check_return_
+#else
+#  define YARP_NODISCARD
+#endif
+
+
 // YARP_UNUSED: Suppress unused variable warnings
 #define YARP_UNUSED(var) (void)var
+
 
 #endif // YARP_CONF_API_H

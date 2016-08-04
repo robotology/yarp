@@ -109,6 +109,10 @@ public:
         return asPort().setReporter(reporter);
     }
 
+    virtual void resetReporter() {
+        return asPort().resetReporter();
+    }
+
     virtual bool isWriting() {
         return asPort().isWriting();
     }

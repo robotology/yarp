@@ -11,7 +11,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
@@ -166,12 +166,12 @@ public:
     }
 
     static ConstString extractPath(const char *fname) {
-        String s = fname;
+        ConstString s = fname;
         size_t n = s.rfind('/');
-        if (n == String::npos) {
+        if (n == ConstString::npos) {
             n = s.rfind('\\');
         }
-        if (n != String::npos) {
+        if (n != ConstString::npos) {
             s[n] = '\0';
             return ConstString(s.c_str());
         }
@@ -184,7 +184,7 @@ public:
         if (verbose) {
             fprintf(RTARGET,"||| policy set to %s\n", policyName);
         }
-        String rootVar = policyName;
+        ConstString rootVar = policyName;
         const char *result =
             yarp::os::getenv(rootVar.c_str());
         bool needEnv = false;
@@ -211,15 +211,15 @@ public:
                         rootVar.c_str(),root.c_str());
             }
         }
-        String checked = "";
+        ConstString checked = "";
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-        String userConfig = expandUserFileName(ConstString(policyName) + ".ini").c_str();
+        ConstString userConfig = expandUserFileName(ConstString(policyName) + ".ini").c_str();
 YARP_WARNING_POP
-        String rootConfig = String(root.c_str()) + "/" + policyName + ".ini";
-        String altConfig = String("/etc/yarp/policies/") + policyName + ".ini";
+        ConstString rootConfig = ConstString(root.c_str()) + "/" + policyName + ".ini";
+        ConstString altConfig = ConstString("/etc/yarp/policies/") + policyName + ".ini";
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.21
-        String deprecatedConfig = String("/etc/") + policyName + ".ini"; // FIXME Deprecated
+        ConstString deprecatedConfig = ConstString("/etc/") + policyName + ".ini"; // FIXME Deprecated
 #endif // YARP_NO_DEPRECATED
         bool ok = false;
         if (!ok) {
@@ -264,7 +264,7 @@ YARP_WARNING_POP
             }
 #endif // YARP_NO_DEPRECATED
             if (!ok) {
-                altConfig = String("/usr/local/etc/") + policyName + ".ini";
+                altConfig = ConstString("/usr/local/etc/") + policyName + ".ini";
                 if (verbose) {
                     fprintf(RTARGET,"||| loading policy from %s\n",
                             altConfig.c_str());

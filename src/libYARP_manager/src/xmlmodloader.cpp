@@ -401,7 +401,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                     }
                 }
                 else
-                    input.setName("*");
+                    input.setName("rpc");
 
                 if((element = (TiXmlElement*) data->FirstChild("port")))
                 {
@@ -431,6 +431,50 @@ Module* XmlModLoader::parsXml(const char* szFile)
             } // end of input data
 
         }
+
+    if(root->FirstChild("services")) {
+        for(TiXmlElement* services = root->FirstChild("services")->FirstChildElement();
+            services; services = services->NextSiblingElement())
+        {
+            /* server */
+            if(compareString(services->Value(), "server"))
+            {
+                InputData input;
+                input.setPortType(SERVICE_PORT);
+                TiXmlElement* element;
+                if((element = (TiXmlElement*) services->FirstChild("port"))) {
+                    input.setPort(element->GetText());
+                    input.setCarrier("tcp");
+                }
+                if((element = (TiXmlElement*) services->FirstChild("description")))
+                    input.setDescription(element->GetText());
+                if((element = (TiXmlElement*) services->FirstChild("type")))
+                    input.setName(element->GetText());
+                else
+                    input.setName("rpc");
+                module.addInput(input);
+            }
+            /* client */
+            if(compareString(services->Value(), "client"))
+            {
+                OutputData output;
+                output.setPortType(SERVICE_PORT);
+                TiXmlElement* element;
+                if((element = (TiXmlElement*) services->FirstChild("port"))) {
+                    output.setPort(element->GetText());
+                    output.setCarrier("tcp");
+                }
+                if((element = (TiXmlElement*) services->FirstChild("description")))
+                    output.setDescription(element->GetText());
+                if((element = (TiXmlElement*) services->FirstChild("type")))
+                    output.setName(element->GetText());
+                else
+                    output.setName("rpc");
+                module.addOutput(output);
+            }
+        }
+
+    }
 
     /* retrieving broker*/
     TiXmlElement* element;

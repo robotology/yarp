@@ -6,22 +6,23 @@
  */
 
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 class StringTest : public UnitTest {
 public:
-    virtual String getName() {
+    virtual ConstString getName() {
         return "StringTest";
     }
   
     void testNulls() {
         report(0,"testing null insertion");
-        String s;
+        ConstString s;
         s += 'h';
         s += '\0';
         s += 'd';
@@ -31,17 +32,17 @@ public:
     }
 
 
-    String mirrorString(const String& txt) {
+    ConstString mirrorString(const ConstString& txt) {
         return txt;
     }
 
     void testBasics() {
         report(0,"testing basics");
-        String s = "hello";
+        ConstString s = "hello";
         s += " there";
         checkEqual(s.c_str(),"hello there","+= operator");
         checkEqual((s + " you").c_str(),"hello there you","+ operator");
-        String s2(s.c_str());
+        ConstString s2(s.c_str());
         checkEqual(s2.c_str(),"hello there","via copy");
         checkEqual(mirrorString(s).c_str(),"hello there","via copy 2");
         checkEqual((s + ":" + s).c_str(),"hello there:hello there","concat");

@@ -14,30 +14,29 @@ using namespace yarp::os;
 
 
 Protocol::Protocol(TwoWayStream* stream) :
-    log(Logger::get()) {
-
+        messageLen(0),
+        pendingAck(false),
+        log(Logger::get()),
+        active(true),
+        delegate(NULL),
+        recv_delegate(NULL),
+        send_delegate(NULL),
+        need_recv_delegate(false),
+        need_send_delegate(false),
+        recv_delegate_fail(false),
+        send_delegate_fail(false),
+        route("null","null","tcp"),
+        writer(NULL),
+        ref(NULL),
+        envelope(""),
+        port(NULL),
+        pendingReply(false)
+{
     // We start off with the streams used to contact the port that
     // owns this connection.
     shift.takeStream(stream);
 
-    // Put everything in a startup state.
-    active = true;
-    route = Route("null","null","tcp");
-    delegate = NULL;
-    recv_delegate = NULL;
-    send_delegate = NULL;
-    need_recv_delegate = false;
-    need_send_delegate = false;
-    recv_delegate_fail = false;
-    send_delegate_fail = false;
-    messageLen = 0;
-    pendingAck = false;
-    writer = NULL;
-    ref = NULL;
     reader.setProtocol(this);
-    envelope = "";
-    port = NULL;
-    pendingReply = false;
 }
 
 bool Protocol::open(const ConstString& name) {
@@ -69,9 +68,9 @@ void Protocol::setRoute(const Route& route) {
     // We reorganize the route to reduce variation in naming.
     // If there are qualifiers in the source port name, propagate
     // those qualifiers to the carrier.
-    String from = r.getFromName();
-    String carrier = r.getCarrierName();
-    if (from.find(" ")!=String::npos) {
+    ConstString from = r.getFromName();
+    ConstString carrier = r.getCarrierName();
+    if (from.find(" ")!=ConstString::npos) {
         Bottle b(from.c_str());
         if (b.size()>1) {
             r = r.addFromName(b.get(0).toString().c_str());
@@ -120,7 +119,7 @@ ConstString Protocol::getSenderSpecifier() {
     // backwards compatibility.
     ConstString carrier = r.getCarrierName();
     size_t start = carrier.find("+");
-    if (start!=String::npos) {
+    if (start!=ConstString::npos) {
         from += " (";
         for (size_t i=start+1; i<(size_t)carrier.length(); i++) {
             char ch = carrier[i];
@@ -146,7 +145,7 @@ bool Protocol::getRecvDelegate() {
     Bottle b(getSenderSpecifier().c_str());
     // Check for a "recv" qualifier.
     ConstString tag = b.find("recv").asString();
-    recv_delegate = Carriers::chooseCarrier(String(tag.c_str()));
+    recv_delegate = Carriers::chooseCarrier(ConstString(tag.c_str()));
     if (!recv_delegate) {
         fprintf(stderr,"Need carrier \"%s\", but cannot find it.\n",
                 tag.c_str());
@@ -180,7 +179,7 @@ bool Protocol::getSendDelegate() {
     Bottle b(getSenderSpecifier().c_str());
     // Check for a "send" qualifier.
     ConstString tag = b.find("send").asString();
-    send_delegate = Carriers::chooseCarrier(String(tag.c_str()));
+    send_delegate = Carriers::chooseCarrier(ConstString(tag.c_str()));
     if (!send_delegate) {
         fprintf(stderr,"Need carrier \"%s\", but cannot find it.\n",
                 tag.c_str());
@@ -300,10 +299,10 @@ bool Protocol::expectIndex() {
     return ok;
 }
 
-void Protocol::setCarrier(const String& carrierNameBase) {
+void Protocol::setCarrier(const ConstString& carrierNameBase) {
     // Set up the carrier for this connection.  The carrier
     // has all the protocol-specific behavior.
-    String carrierName = carrierNameBase;
+    ConstString carrierName = carrierNameBase;
     if (carrierNameBase=="") carrierName = "tcp";
     setRoute(getRoute().addCarrierName(carrierName));
     if (delegate==NULL) {
@@ -364,7 +363,7 @@ bool Protocol::expectProtocolSpecifier() {
         delegate = Carriers::chooseCarrier(header);
         if (delegate==NULL) {
             // Carrier not found; send a human-readable message.
-            String msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are critical for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
+            ConstString msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are critical for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
             yarp::os::Bytes b((char*)msg.c_str(),msg.length());
             os().write(b);
             os().flush();
@@ -417,7 +416,7 @@ bool Protocol::write(SizedWriter& writer) {
     if (reply!=NULL) {
         if (!delegate->supportReply()) {
             // We are expected to get a reply, but cannot.
-            YARP_INFO(log,String("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
+            YARP_INFO(log,ConstString("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
         }
         if (ok) {
             // Read reply.

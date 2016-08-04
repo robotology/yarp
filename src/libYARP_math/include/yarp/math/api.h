@@ -19,8 +19,10 @@
 #  endif
 #  ifdef YARP_NO_DEPRECATED
 #    define YARP_math_DEPRECATED_API YARP_DEPRECATED
+#    define YARP_math_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X)
 #  else
 #    define YARP_math_DEPRECATED_API YARP_DEPRECATED YARP_math_API
+#    define YARP_math_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X) YARP_math_API
 #  endif
 #endif
 

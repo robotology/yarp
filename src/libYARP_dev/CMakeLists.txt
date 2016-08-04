@@ -30,6 +30,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
                   include/yarp/dev/IRangefinder2D.h
+                  include/yarp/dev/IDepthSensor.h
+                  include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode.h
@@ -40,6 +42,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IMotor.h
                   include/yarp/dev/IRemoteVariables.h
                   include/yarp/dev/IImpedanceControl.h
+                  include/yarp/dev/IDepthSensor.h
+                  include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IKinectDeviceDriver.h
                   include/yarp/dev/ImplementControlBoardInterfaces.h
                   include/yarp/dev/ImplementControlMode.h
@@ -62,6 +66,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IPositionDirect.h
                   include/yarp/dev/IPositionDirectImpl.h
                   include/yarp/dev/ITorqueControl.h
+                  include/yarp/dev/IFrameTransform.h
                   include/yarp/dev/IVelocityControl2.h
                   include/yarp/dev/IVelocityControl2Impl.h
                   include/yarp/dev/IVelocityControl.h
@@ -142,7 +147,13 @@ set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
                         src/modules/Rangefinder2DClient/Rangefinder2DClient.cpp
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
+                        src/modules/ControlBoardRemapper/ControlBoardRemapper.cpp
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp)
+if (CREATE_LIB_MATH)
+  list(APPEND YARP_devices_SRCS src/modules/FrameTransformClient/FrameTransformClient.cpp
+                                src/modules/FrameTransformServer/FrameTransformServer.cpp)
+endif()
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/AnalogSensorClient/AnalogSensorClient.h
@@ -151,8 +162,13 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/Rangefinder2DWrapper/Rangefinder2DWrapper.h
                         src/modules/Rangefinder2DClient/Rangefinder2DClient.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
-
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
+                        src/modules/ControlBoardRemapper/ControlBoardRemapper.h
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h)
+if (CREATE_LIB_MATH)
+  list(APPEND YARP_devices_SRCS src/modules/FrameTransformClient/FrameTransformClient.h
+                                src/modules/FrameTransformServer/FrameTransformServer.h)
+endif()
 
 # handle the ros / yarp thrift messages
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
@@ -185,6 +201,21 @@ list(APPEND YARP_devices_HDRS ${serverInertial_hdrs}
                               ${inertial_msgs_hdrs})
 include_directories(${serverInertial_incl_dirs})
 
+# add DepthSensorClient device
+add_subdirectory(src/modules/RGBDSensorClient)
+list(APPEND YARP_devices_SRCS ${RGBDClient_srcs}
+                              ${RGBDSensor_msgs_srcs})
+list(APPEND YARP_devices_HDRS ${RGBDClient_hrds}
+                              ${RGBDSensor_msgs_hdrs})
+include_directories(${RGBDClient_incl_dirs})
+
+# add DepthSensorWrapper device
+add_subdirectory(src/modules/RGBDSensorWrapper)
+list(APPEND YARP_devices_SRCS ${RGBDWrap_srcs}
+                              ${RGBDSensor_msgs_srcs})
+list(APPEND YARP_devices_HDRS ${RGBDWrap_hdrs}
+                              ${RGBDSensor_msgs_hdrs})
+include_directories(${RGBDWrap_incl_dirs})
 
 source_group("Source Files" FILES ${YARP_dev_SRCS})
 source_group("Header Files" FILES ${YARP_dev_HDRS})
@@ -195,8 +226,13 @@ source_group("Devices Files" FILES ${YARP_devices_SRCS}
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
+if (CREATE_LIB_MATH)
+  add_definitions(-DWITH_YARPMATH)
+endif()
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/AnalogSensorClient)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/BatteryClient)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/FrameTransformClient)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
@@ -208,11 +244,15 @@ add_library(YARP_dev ${YARP_dev_SRCS}
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
 
+if (CREATE_LIB_MATH)
+target_link_libraries(YARP_dev LINK_PRIVATE YARP_math)
+endif()
+
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})
 
 if(YARP_HAS_ACE)
-    target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
+  target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
 endif(YARP_HAS_ACE)
 
 install(TARGETS YARP_dev
