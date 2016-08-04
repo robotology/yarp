@@ -174,14 +174,14 @@ public:
     }
 
 private:
-    void show(int level, const String& txt);
+    void show(ACE_UINT32 level, const String& txt);
     void exit(int level);
 
     static Logger *root;
     String prefix;
     Logger *parent;
     int verbose;
-    int low;
+    ACE_UINT32 low;
     long int pid;
     FILE *stream;
 };
