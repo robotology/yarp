@@ -272,21 +272,12 @@ class YARP_sig_API yarp::sig::Vector : public yarp::os::Portable
     void *gslData;
     VectorOf<double> storage;
 
-    void allocGslData();
-    void freeGslData();
-    void updateGslData();
-
 public:
     Vector()
-    {
-        allocGslData();
-    }
+    {}
 
     explicit Vector(size_t s):storage(s)
-    {
-        allocGslData();
-        updateGslData();
-    }
+    {}
 
     /**
     * Build a vector and initialize it with def.
@@ -296,14 +287,10 @@ public:
     explicit Vector(size_t s, const double &def)
     {
         storage.resize(s,def);
-        allocGslData();
-        updateGslData();
     }
 
     ~Vector()
-    {
-        freeGslData();
-    }
+    {}
 
     /**
     * Builds a vector and initialize it with
@@ -315,10 +302,7 @@ public:
     * Copy constructor.
     */
     Vector(const Vector &r): yarp::os::Portable(), storage(r.storage)
-    {
-        allocGslData();
-        updateGslData();
-    }
+    {}
 
     /**
     * Copy operator;
@@ -335,7 +319,6 @@ public:
     YARP_DEPRECATED void size(size_t s)
     {
         Vector::resize(s);
-        updateGslData();
     }
 #endif
 
@@ -346,8 +329,6 @@ public:
     void resize(size_t s)
     {
         storage.resize(s);
-        //allocGslData();
-        updateGslData();
     }
 
     /**
@@ -358,8 +339,6 @@ public:
     void resize(size_t size, const double &def)
     {
         storage.resize(size, def);
-        //allocGslData();
-        updateGslData();
     }
 
     inline size_t size() const
@@ -439,7 +418,6 @@ public:
     inline void push_back (const double &elem)
     {
         storage.push_back(elem);
-        updateGslData();
     }
 
     /**
@@ -448,22 +426,9 @@ public:
     inline void pop_back (void)
     {
         storage.pop_back();
-        updateGslData();
     }
 
     /**
-    * Return a void pointer to a gsl compatible structure.
-    * This pointer can be safely cast to a gsl_vector*.
-    */
-    void *getGslVector();
-
-    /**
-    * Return a void pointer to a gsl compatible structure.
-    * This pointer can be safely cast to a gsl_vector*.
-    */
-    const void *getGslVector() const;
-
-        /**
     * Single element access, no range check.
     * @param i the index of the element to access.
     * @return a reference to the requested element.

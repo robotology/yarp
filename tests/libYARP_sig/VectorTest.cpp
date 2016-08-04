@@ -14,6 +14,7 @@
 
 //#include <vector>
 
+#include <yarp/gsl/Gsl.h>
 #include <yarp/gsl_compatibility.h>
 
 #include "TestList.h"
@@ -125,7 +126,7 @@ class VectorTest : public UnitTest {
     bool checkConsistency(Vector &a)
     {
         gsl_vector *tmp;
-        tmp=(gsl_vector *)(a.getGslVector());
+        tmp = (gsl_vector *)(yarp::gsl::GslVector(a).getGslVector());
         bool ret=true;
         if ((int)tmp->size!=(int)a.size())
             ret=false;

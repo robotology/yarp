@@ -10,6 +10,7 @@ yarp_configure_external_installation(yarp WITH_PLUGINS)
 # public libraries
 add_subdirectory(libYARP_OS)
 add_subdirectory(libYARP_sig)
+add_subdirectory(libYARP_gsl)
 add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_dev)
 

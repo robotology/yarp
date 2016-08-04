@@ -57,20 +57,13 @@ private:
     */
     void updatePointers();
 
-    // gsl related functions
-    void allocGslData();
-    void freeGslData();
-    void updateGslData();
-
 public:
     Matrix():
       storage(0),
           matrix(0),
           nrows(0),
           ncols(0)
-      {
-          allocGslData();
-      }
+      {}
 
       Matrix(int r, int c);
 
@@ -322,20 +315,6 @@ public:
       * True iff all elements of a match all element of b.
       */
       bool operator==(const yarp::sig::Matrix &r) const;
-
-      /**
-      * Return a void pointer to a gsl compatible structure
-      * which can be safely cast to gsl_matrix *.
-      */
-      void *getGslMatrix()
-      { return gslData; }
-
-      /**
-      * Return a void pointer to a gsl compatible structure
-      * which can be safely cast to gsl_matrix *.
-      */
-      const void *getGslMatrix() const
-      { return gslData; }
 
       ///////// Serialization methods
       /*
