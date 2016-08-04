@@ -19,6 +19,7 @@
 #include <QString>
 #include <string>
 #include <cstdio>
+#include <ctime>
 #include "yarprunPortSorting.h"
 
 YarprunPortsSortFilterProxyModel::YarprunPortsSortFilterProxyModel( QObject *parent ) : QSortFilterProxyModel( parent )
@@ -44,16 +45,19 @@ bool YarprunPortsSortFilterProxyModel::lessThan( const QModelIndex &left, const 
       int rval = (r1 * 16777216) + (r2 * 65536) + (r3 * 256) + (r4);
       return lval < rval;
   }
-  /*else if (left.column()==2)
+  else if (left.column()==2)
   {
       QString leftStr     = this->sourceModel()->data( left ).toString();
       QString rightStr    = this->sourceModel()->data( right ).toString();
-      if (leftStr.at(0) < '0'  || leftStr.at(0) > '9')  
-          return false;
-      if (rightStr.at(0) < '0' || rightStr.at(0) > '9')
-          return true;
-      return QSortFilterProxyModel::lessThan(left,right);
-  }*/
+      struct tm left_time = { 0 };
+      struct tm right_time = { 0 };
+      sscanf(leftStr.toStdString().c_str(), "%d:%d:%d %d/%d/%d", &left_time.tm_hour, &left_time.tm_min, &left_time.tm_sec, &left_time.tm_mday, &left_time.tm_mon, &left_time.tm_year);
+      sscanf(rightStr.toStdString().c_str(), "%d:%d:%d %d/%d/%d", &right_time.tm_hour, &right_time.tm_min, &right_time.tm_sec, &right_time.tm_mday, &right_time.tm_mon, &right_time.tm_year);
+      left_time.tm_year-=1900;
+      right_time.tm_year-=1900;
+      double diff = difftime(mktime(&left_time), mktime(&right_time));
+      return diff > 0;
+  }
   else if (left.column()==3 || left.column()==4 || left.column()==5)
   {
       //sorting by log size
