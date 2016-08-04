@@ -317,12 +317,12 @@ ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
                 continue;
             }
         }
-#ifdef YARP_HAS_ACE
-        delete[] ips;
-#else
-        freeifaddrs(ifaddr);
-#endif
     }
+#ifdef YARP_HAS_ACE
+    delete[] ips;
+#else
+    freeifaddrs(ifaddr);
+#endif
 
     return result.c_str();
 }

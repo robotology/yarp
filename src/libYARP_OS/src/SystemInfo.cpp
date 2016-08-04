@@ -32,6 +32,15 @@ using namespace yarp::os;
 
 extern char **environ;
 
+#elif defined(__APPLE__)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <mach/mach.h>
+#include <unistd.h>
+#include <sstream>
+#include <pwd.h>
+#include <sys/param.h>
+#include <sys/mount.h>
 #endif
 
 #if defined(WIN32)
@@ -262,7 +271,34 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
         }
         fclose(procmem);
     }
+#elif defined(__APPLE__)
+
+    vm_size_t page_size;
+    mach_port_t mach_port;
+    mach_msg_type_number_t count;
+    vm_statistics64_data_t vm_stats;
+
+    mach_port = mach_host_self();
+    count = HOST_VM_INFO64_COUNT;
+    if (KERN_SUCCESS == host_page_size(mach_port, &page_size) &&
+        KERN_SUCCESS == host_statistics64(mach_port, HOST_VM_INFO,
+                                          (host_info64_t)&vm_stats, &count))
+    {
+        //These seem to return the # of pages
+        natural_t activePages = vm_stats.active_count + vm_stats.wire_count;
+        natural_t inactivePages = vm_stats.inactive_count + vm_stats.free_count;
+        natural_t totalPages = activePages + inactivePages;
+
+        int64_t total = totalPages * page_size;
+        int64_t freeSpace = inactivePages * page_size;
+
+        memory.totalSpace = total / 1024;
+        memory.freeSpace = freeSpace / 1024;
+    }
+
 #endif
+
+
     return memory;
 }
 
@@ -301,6 +337,20 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
     }
 
 #endif
+
+#if defined(__APPLE__)
+    yarp::os::ConstString strHome = getUserInfo().homeDir;
+    if(!strHome.length())
+        strHome = "/";
+
+    struct statfs vfs;
+    if (statfs(strHome.c_str(), &vfs) == 0)
+    {
+        storage.totalSpace = (int)(vfs.f_blocks*vfs.f_bsize/(1048576)); // in MB
+        storage.freeSpace = (int)(vfs.f_bavail*vfs.f_bsize/(1048576));  // in MB
+    }
+#endif
+
     return storage;
 }
 
@@ -466,6 +516,43 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     {
       processor.architecture = uts.machine;  
     }
+#elif defined(__APPLE__)
+//    yarp::os::ConstString architecture;
+
+    int mib [] = { CTL_HW, HW_CPU_FREQ };
+    int64_t value = 0;
+    size_t length = sizeof(value);
+
+    if (!sysctl(mib, 2, &value, &length, NULL, 0)) {
+        processor.frequency = value / 1e+6; //this is in Hz. What is the expected frequency?
+    }
+
+    if (!sysctlbyname("hw.logicalcpu", &value, &length, NULL, 0)) {
+        processor.cores = value; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+
+    char buff[513];
+    size_t buffLen = 512;
+    if (!sysctlbyname("machdep.cpu.vendor", buff, &buffLen, NULL, 0)) {
+        processor.vendor = buff; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+    buffLen = 512;
+    if (!sysctlbyname("machdep.cpu.brand_string", buff, &buffLen, NULL, 0)) {
+        processor.model = buff; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+    if (!sysctlbyname("machdep.cpu.family", &value, &length, NULL, 0)) {
+        processor.family = value; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+    if (!sysctlbyname("machdep.cpu.model", &value, &length, NULL, 0)) {
+        processor.modelNumber = value; //this is the number of cores
+        //or cpus: hw.physicalcpu
+    }
+
+
 #endif
     return processor;
 }
@@ -574,6 +661,20 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 
     }
 #endif
+
+#if defined(__APPLE__)
+
+    char buff[513];
+    size_t buffLen = 512;
+    if (!sysctlbyname("kern.ostype", buff, &buffLen, NULL, 0)) {
+        platform.name = buff;
+    }
+
+    if (!sysctlbyname("kern.osrelease", buff, &buffLen, NULL, 0)) {
+        platform.release = buff;
+    }
+
+#endif
         return platform;
 }
 
@@ -597,7 +698,7 @@ SystemInfo::UserInfo SystemInfo::getUserInfo()
     }
 #endif
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
     struct passwd* pwd = getpwuid(getuid());
     user.userID = getuid();
     if(pwd)
@@ -648,6 +749,24 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
                 load.cpuLoadInstant = (int)(strtol(buff, &tail, 0) - 1);
         }
         fclose(procload);
+    }
+#endif
+
+#if defined(__APPLE__)
+
+    mach_msg_type_number_t count = HOST_CPU_LOAD_INFO_COUNT;
+    host_cpu_load_info_data_t cpu_load;
+
+    if (KERN_SUCCESS == host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO,
+                                        (host_info64_t)&cpu_load, &count))
+    {
+        //How to map this information into yarp structure?
+        natural_t total = 0;
+        for (int i = 0; i < CPU_STATE_MAX; ++i) {
+            total += cpu_load.cpu_ticks[i];
+        }
+
+        load.cpuLoad1 = 100.0 * cpu_load.cpu_ticks[CPU_STATE_USER] / total;
     }
 #endif
     return load;
@@ -751,7 +870,54 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
     EnumWbem->Release();
     WbemServices->Release();
     WbemLocator->Release();
-    CoUninitialize();    
+    CoUninitialize();
+#elif defined(__APPLE__)
+    kinfo_proc procInfo;
+    size_t length = sizeof(procInfo);
+
+    int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, pid};
+
+    if (!sysctl(mib, 4, &procInfo, &length, NULL, 0)) {
+        info.name = procInfo.kp_proc.p_comm;
+        info.pid = procInfo.kp_proc.p_pid;
+
+        //Some info here: https://gist.github.com/nonowarn/770696
+        mib[1] = KERN_PROCARGS;
+        mib[2] = pid;
+        char *proc_argv;
+        size_t argv_len;
+        //getting length of execute string
+        int result = sysctl(mib, 3, NULL, &argv_len, NULL, 0);
+
+        //now getting the string
+        proc_argv = (char*)malloc(sizeof(char) * argv_len);
+        result = sysctl(mib, 3, proc_argv, &argv_len, NULL, 0);
+        //looking for '\0', i.e. NULL char
+        //skip first string which is the executable
+        size_t index = 0;
+        while (index < argv_len && proc_argv[index] != '\0') {
+            index++;
+        }
+        index++;
+        //now we have to split the remaining string
+        //Note: this is not easy. We don't know the format
+        //See: http://lists.apple.com/archives/darwin-kernel/2012/Mar/msg00025.html
+        //for example, I get both arguments and environment variables
+
+        std::stringstream arguments;
+        while (index < argv_len) {
+            if (proc_argv[index] == '\0' && index != argv_len - 1) {
+                arguments << " ";
+            } else {
+                arguments << proc_argv[index];
+            }
+            index++;
+        }
+
+        free(proc_argv);
+        info.arguments = arguments.str();
+    }
+
 #endif
     return info;
 }

@@ -192,11 +192,12 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]) {
         ::exit(1);
     }
 
-    printf("__   __ _    ____  ____  \n\
-\\ \\ / // \\  |  _ \\|  _ \\ \n\
- \\ V // _ \\ | |_) | |_) |\n\
-  | |/ ___ \\|  _ <|  __/ \n\
-  |_/_/   \\_\\_| \\_\\_|    \n\n");
+    printf("    __  __ ___  ____   ____\n\
+    \\ \\/ //   ||  _ \\ |  _ \\\n\
+     \\  // /| || |/ / | |/ /\n\
+     / // ___ ||  _ \\ |  _/\n\
+    /_//_/  |_||_| \\_\\|_|\n\
+    ========================\n\n");
 
     Property options;
     options.fromCommand(argc,argv);

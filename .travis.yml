@@ -117,12 +117,6 @@ matrix:
     # Normal build with integration tests (sometimes integration::rpc test fails, sometimes reaches time limit)
     - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
 
-    # No ACE build with valgrind
-    - env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
-
-    # C++11 build with valgrind
-    - env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
-
     # Normal build with Xcode generator (idl demo tests fail)
     - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
 
