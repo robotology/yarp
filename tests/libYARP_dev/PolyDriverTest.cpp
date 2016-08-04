@@ -5,7 +5,7 @@
  *
  */
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
@@ -30,7 +30,7 @@ class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
 
 class PolyDriverTest : public UnitTest {
 public:
-    virtual String getName() { return "PolyDriverTest"; }
+    virtual ConstString getName() { return "PolyDriverTest"; }
 
     void testDeprecated() {
         report(0,"deprecated device test");
@@ -124,7 +124,7 @@ name /mymotor\n\
         p.put("verbose",1);
         PolyDriver dd(p);
         Bottle cmd("get axes"), reply;
-        Network::write(Contact::byName("/mymotor/rpc:i"),cmd,reply);
+        Network::write(Contact("/mymotor/rpc:i"), cmd, reply);
         checkEqual(reply.get(2).asInt(),10,"axis count is correct");
     }
 

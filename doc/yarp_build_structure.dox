@@ -236,7 +236,7 @@ Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
 \li \ref yarp_build_structure_carriers "carriers" - optional plugin network protocols.
 \li \ref yarp_build_structure_yarpinit "libYARP_init" - a tiny wrapper that initializes all optional modules
 and carriers.
-\li \ref yarp_build_structure_yarpname "libYARP_name" - a library to help in construction of name servers. It is compiled if CREATE_YARPSERVER3 is set.
+\li \ref yarp_build_structure_yarpname "libYARP_name" - a library to help in construction of name servers.
 \li libyarpc - an experimental C API to YARP.
 \li libyarpcxx - an experimental C++ interface to YARP that is a simple
 wrapper around libyarpc.  These two experimental libraries together make
@@ -244,7 +244,7 @@ it easier to build very portable binary libraries for YARP.
 
 And then executables:
 \li \ref yarp_build_structure_yarp "yarp" - the main command line interface to YARP.
-\li \ref yarp_build_structure_yarpserver "yarpserver" - home of the experimental yarpserver3 program, a YARP
+\li \ref yarp_build_structure_yarpserver "yarpserver" - the yarpserver program, a YARP
 name server based on Sqlite.
 \li yarprun - a tool for starting/stopping programs across the network.
 \li yarpview - a viewer for YARP image streams.
@@ -390,8 +390,7 @@ yarp::os::Network - NetworkBase is Network without init and fini.
 @section yarp_build_structure_yarpname src/libYARP_name/CMakeLists.txt
 
 We follow the pattern of \ref yarp_build_structure_yarpsig
-to create the YARP_name library (at the time of writing, compilation
-is conditional on the CREATE_YARPSERVER3 flag).
+to create the YARP_name library.
 
 @section yarp_build_structure_modules src/modules/CMakeLists.txt
 
@@ -662,8 +661,7 @@ YARP.  Its source code is in yarpserver.cpp.
 
 @section yarp_build_structure_yarpserver src/yarpserver/CMakeLists.txt
 
-This is the home of yarpserver3, the next generation YARP name server.
-This is compiled optionally, if the CREATE_YARPSERVER3 flag is set.
+This is the home of yarpserver, the YARP name server.
 It uses an sqlite amalgamation.
 
 *

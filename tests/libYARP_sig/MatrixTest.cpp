@@ -113,7 +113,7 @@ public:
 };
 
 class MatrixTest : public UnitTest {
-    
+
     bool checkConsistency(Matrix &a)
     {
         gsl_matrix *tmp;
@@ -138,7 +138,7 @@ class MatrixTest : public UnitTest {
     }
 
 public:
-    virtual String getName() { return "MatrixTest"; }
+    virtual ConstString getName() { return "MatrixTest"; }
 
     void checkGsl()
     {
@@ -255,7 +255,7 @@ public:
         for(r=0; r<10; r++)
             for (c=0; c<40; c++)
                 ok=ok && (m[r][c]==m2[r][c]);
-        checkTrue(ok,"elements match");   
+        checkTrue(ok,"elements match");
     }
 
     void checkBottle() {
@@ -293,7 +293,7 @@ public:
 
         checkEqual(r2-r1+1,m2.rows(),"rows matches");
         checkEqual(c2-c1+1,m2.cols(),"cols matches");
-        
+
         kk=r1*C+c1;
         bool ok=true;
         for(r=0; r<m2.rows(); r++)
@@ -349,7 +349,7 @@ public:
 
         eye.resize(5, 5);
         eye=0.0;
-        
+
         for (unsigned int r=0; r<5; r++)
         {
             eye(r,r)=1.0;
@@ -406,7 +406,7 @@ public:
 
         BufferedConnectionWriter writer;
         m.write(writer);
-        String s = writer.toString();
+        ConstString s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),(int)s.length());
         checkEqual(bot.get(0).asInt(),rr,"row count matches");
@@ -419,7 +419,7 @@ public:
         bool ok = true;
         for (int i=0; i<(int)(rr*cc); i++) {
             double v = lst->get(i).asDouble();
-            if (fabs(v-i)>0.01) { 
+            if (fabs(v-i)>0.01) {
                 ok = false;
                 checkEqualish(v,i,"cell matches");
                 break;
@@ -489,7 +489,7 @@ public:
             checkResize();
             checkSubmatrix();
             checkGsl();
-        
+
             checkBottle();
             checkSendReceive();
 

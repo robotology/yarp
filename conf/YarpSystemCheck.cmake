@@ -287,14 +287,58 @@ else()
 endif()
 
 
+#########################################################################
+# Generate compiler.h header
+
+# Read the file containing all the documentation for compiler.h
+# Change offset here in case yarp_config_compiler.dox.in comment changes
+file(READ
+     "${YARP_MODULE_DIR}/template/yarp_config_compiler.dox.in"
+     _compiler_dox
+     OFFSET 97)
+
+
+# WriteCompilerDetectionHeader is supported since CMake 3.1, but until 3.3 there
+# is a bug in the non-c++11 compatible nullptr implementation, therefore we use
+# a pre-generated version of the file
+if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.3)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(${CMAKE_VERSION} VERSION_LESS 3.3)
+  string(REPLACE "\\\;" ";" _compiler_dox ${_compiler_dox})
+  configure_file(${YARP_MODULE_DIR}/template/yarp_config_compiler.h.in
+                 ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/compiler.h
+                 @ONLY)
+else()
+  include(WriteCompilerDetectionHeader)
+
+  get_property(_cxx_known_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
+
+  write_compiler_detection_header(
+    FILE "${CMAKE_BINARY_DIR}/generated_include/yarp/conf/compiler.h"
+    PREFIX YARP
+    COMPILERS
+      GNU
+      Clang
+      AppleClang
+      MSVC
+    FEATURES ${_cxx_known_features}
+    VERSION 3.1.0
+    PROLOG ${_compiler_dox})
+endif()
+
+
+#########################################################################
 # Try to locate execinfo.h
 check_include_files(execinfo.h YARP_HAS_EXECINFO)
 
 
+#########################################################################
 # Translate the names of some YARP options, for yarp_config_options.h.in
 # and YARPConfig.cmake.in
 set(YARP_HAS_MATH_LIB ${CREATE_LIB_MATH})
-set(YARP_HAS_NAME_LIB ${YARP_USE_PERSISTENT_NAMESERVER})
+set(YARP_HAS_NAME_LIB TRUE)
+
 
 #########################################################################
 # Tweak tests for MSVC, to add paths to DLLs

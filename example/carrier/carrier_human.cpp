@@ -9,7 +9,6 @@
 
 #include <yarp/os/impl/Carrier.h>
 #include <yarp/os/impl/Carriers.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/NetType.h>

@@ -27,7 +27,7 @@ int SocketTwoWayStream::open(const Contact& address) {
     if (address.getPort()==-1) {
         return -1;
     }
-    String host = address.getHost();
+    ConstString host = address.getHost();
 #ifdef YARP_HAS_ACE
     ACE_SOCK_Connector connector;
     if (address.getHost() == "localhost") {

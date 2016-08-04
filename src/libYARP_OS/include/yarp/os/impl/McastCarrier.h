@@ -33,8 +33,8 @@ namespace yarp {
 class yarp::os::impl::McastCarrier : public UdpCarrier {
 protected:
     Contact mcastAddress;
-    String mcastName;
-    String key;
+    ConstString mcastName;
+    ConstString key;
 
     static ElectionOf<PeerRecord<McastCarrier> > *caster;
 
@@ -47,7 +47,7 @@ public:
     virtual ~McastCarrier();
 
     virtual Carrier *create();
-    virtual String getName();
+    virtual ConstString getName();
 
     virtual int getSpecifierCode();
     virtual bool sendHeader(ConnectionState& proto);
@@ -56,8 +56,8 @@ public:
     virtual bool respondToHeader(ConnectionState& proto);
     virtual bool expectReplyToHeader(ConnectionState& proto);
 
-    void addSender(const String& key);
-    void addRemove(const String& key);
+    void addSender(const ConstString& key);
+    void addRemove(const ConstString& key);
     bool isElect();
 
     virtual bool isActive();

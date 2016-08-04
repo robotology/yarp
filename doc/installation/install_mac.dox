@@ -129,12 +129,6 @@ For compiling the required bindings (LUA, JAVA, PYTHON etc) you need <b>swig</b>
 \code
 brew install swig
 \endcode
- 
-and the following for yarpbuilder:
-
-\code
-brew install goocanvas gtkmm libglademm gtk+
-\endcode
 
 For compiling the Qt5 GUIS:
 \code

@@ -13,7 +13,6 @@
  */
 
 #include <yarp/dev/Drivers.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/impl/PlatformStdio.h>
@@ -39,6 +38,14 @@ extern DriverCreator *createBatteryWrapper();
 extern DriverCreator *createBatteryClient();
 extern DriverCreator *createRangefinder2DWrapper();
 extern DriverCreator *createRangefinder2DClient();
+extern DriverCreator *createRGBDSensorWrapper();
+extern DriverCreator *createRGBDSensorClient();
+extern DriverCreator *createControlBoardRemapper();
+
+#ifdef WITH_YARPMATH
+extern DriverCreator *createFrameTransformServer();
+extern DriverCreator *createFrameTransformClient();
+#endif
 
 #ifndef YARP_NO_DEPRECATED
 extern DriverCreator *createServerControlBoard();
@@ -88,6 +95,14 @@ void Drivers::init() {
     add(createVirtualAnalogWrapper());
     add(createBatteryWrapper());
     add(createRangefinder2DWrapper());
+    add(createRGBDSensorWrapper());
+    add(createRGBDSensorClient());
+    add(createControlBoardRemapper());
+
+#ifdef WITH_YARPMATH
+    add(createFrameTransformServer());
+    add(createFrameTransformClient());
+#endif
 
 #ifndef YARP_NO_DEPRECATED
     add(createClientControlBoard());

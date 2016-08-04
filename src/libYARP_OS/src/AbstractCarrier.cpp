@@ -48,7 +48,7 @@ bool AbstractCarrier::isLocal() {
     return false;
 }
 
-String AbstractCarrier::toString() {
+ConstString AbstractCarrier::toString() {
     return getName();
 }
 
@@ -98,7 +98,7 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto) {
     }
     // add null termination for YARP1
     b.get()[len] = '\0';
-    String s = b.get();
+    ConstString s = b.get();
     proto.setRoute(proto.getRoute().addFromName(s));
     return true;
 }
@@ -162,8 +162,8 @@ bool AbstractCarrier::sendConnectionStateSpecifier(ConnectionState& proto) {
 bool AbstractCarrier::sendSenderSpecifier(ConnectionState& proto) {
     NetInt32 numberSrc;
     Bytes number((char*)&numberSrc,sizeof(NetInt32));
-    const String senderName = proto.getSenderSpecifier();
-    //const String& senderName = getRoute().getFromName();
+    const ConstString senderName = proto.getSenderSpecifier();
+    //const ConstString& senderName = getRoute().getFromName();
     NetType::netInt((int)senderName.length()+1,number);
     OutputStream& os = proto.os();
     os.write(number);

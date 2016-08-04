@@ -14,7 +14,7 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/DummyConnector.h>
@@ -147,25 +147,44 @@ static int enactConnection(const Contact& src,
         return 0;
     }
 
+    Bottle cmd, reply;
+    cmd.addVocab(Vocab::encode("list"));
+    cmd.addVocab(Vocab::encode(reversed?"in":"out"));
+    cmd.addString(dest.getName().c_str());
+    YARP_SPRINTF2(Logger::get(),debug,"asking %s: %s",
+                    src.toString().c_str(), cmd.toString().c_str());
+    bool ok = NetworkBase::write(src,cmd,reply,rpc);
+    if (!ok) {
+        noteDud(src);
+        return 1;
+    }
+    if (reply.check("carrier")) {
+        ConstString carrier = reply.find("carrier").asString();
+        if (!style.quiet) {
+            printf("Connection found between %s and %s using carrier %s\n",
+                    src.getName().c_str(), dest.getName().c_str(), carrier.c_str());
+        }
+        if (mode==YARP_ENACT_EXISTS) {
+            return (carrier == style.carrier) ? 0 : 1;
+        }
+
+        // This is either a connect or a disconnect command, but the current
+        // connection is connectionless, the other side will not know that we
+        // are closing the connection and therefore will continue sending data.
+        // Therefore we send an explicit disconnect here.
+        bool currentIsConnectionLess = false;
+        bool currentIsPush = true;
+        if (reply.check("push")) {
+            currentIsPush = reply.find("push").asBool();
+        }
+        if (reply.check("connectionless")) {
+            currentIsConnectionLess = reply.find("connectionless").asBool();
+        }
+        if (currentIsConnectionLess && ((reversed && currentIsPush) || (!reversed && !currentIsPush))) {
+            enactConnection(dest, src, style, YARP_ENACT_DISCONNECT, !reversed);
+        }
+    }
     if (mode==YARP_ENACT_EXISTS) {
-        Bottle cmd, reply;
-        cmd.addVocab(Vocab::encode("list"));
-        cmd.addVocab(Vocab::encode(reversed?"in":"out"));
-        cmd.addString(dest.getName().c_str());
-        YARP_SPRINTF2(Logger::get(),debug,"asking %s: %s",
-                      src.toString().c_str(), cmd.toString().c_str());
-        bool ok = NetworkBase::write(src,cmd,reply,rpc);
-        if (!ok) {
-            noteDud(src);
-            return 1;
-        }
-        if (reply.check("carrier")) {
-            if (!style.quiet) {
-                printf("Connection found between %s and %s\n",
-                       src.getName().c_str(), dest.getName().c_str());
-            }
-            return 0;
-        }
         return 1;
     }
 
@@ -174,11 +193,12 @@ static int enactConnection(const Contact& src,
     // Let's ask the destination to connect/disconnect to the source.
     // We assume the YARP carrier will reverse the connection if
     // appropriate when connecting.
-    Bottle cmd, reply;
+    cmd.clear();
+    reply.clear();
     cmd.addVocab(act);
     Contact c = dest;
     if (style.carrier!="") {
-        c = c.addCarrier(style.carrier);
+        c.setCarrier(style.carrier);
     }
     if (mode!=YARP_ENACT_DISCONNECT) {
         cmd.addString(c.toString());
@@ -198,7 +218,7 @@ static int enactConnection(const Contact& src,
 
     YARP_SPRINTF2(Logger::get(),debug,"** asking %s: %s",
                   src.toString().c_str(), cmd.toString().c_str());
-    bool ok = NetworkBase::write(c2,cmd,reply,rpc);
+    ok = NetworkBase::write(c2,cmd,reply,rpc);
     if (!ok) {
         noteDud(src);
         return 1;
@@ -226,7 +246,7 @@ static int enactConnection(const Contact& src,
                     msg.c_str());
         }
     }
-    return ok?0:1;
+    return ok ? 0 : 1;
 }
 
 /*
@@ -289,10 +309,10 @@ static int metaConnect(const ConstString& src,
         staticSrc = dynamicSrc;
     }
     if (staticSrc.getCarrier()=="") {
-        staticSrc = staticSrc.addCarrier("tcp");
+        staticSrc.setCarrier("tcp");
     }
     if (staticDest.getCarrier()=="") {
-        staticDest = staticDest.addCarrier("tcp");
+        staticDest.setCarrier("tcp");
     }
 
     if (needsLookup(dynamicDest)&&(topicalNeedsLookup||!topical)) {
@@ -317,8 +337,8 @@ static int metaConnect(const ConstString& src,
         mode==YARP_ENACT_CONNECT) {
         // Unconnectable in general
         // Let's assume the first part is a YARP port, and use "tcp" instead
-        staticSrc = staticSrc.addCarrier("tcp");
-        staticDest = staticDest.addCarrier("tcp");
+        staticSrc.setCarrier("tcp");
+        staticDest.setCarrier("tcp");
     }
 
     ConstString carrierConstraint = "";
@@ -333,7 +353,7 @@ static int metaConnect(const ConstString& src,
                 srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
             }
             if (srcCarrier!=NULL) {
-                String srcBootstrap = srcCarrier->getBootstrapCarrierName();
+                ConstString srcBootstrap = srcCarrier->getBootstrapCarrierName();
                 if (srcBootstrap!="") {
                     srcIsCompetent = true;
                 } else {
@@ -357,7 +377,7 @@ static int metaConnect(const ConstString& src,
                 destCarrier = Carriers::chooseCarrier(staticDest.getCarrier().c_str());
             }
             if (destCarrier!=NULL) {
-                String destBootstrap = destCarrier->getBootstrapCarrierName();
+                ConstString destBootstrap = destCarrier->getBootstrapCarrierName();
                 if (destBootstrap!="") {
                     destIsCompetent = true;
                 } else {
@@ -544,7 +564,7 @@ bool NetworkBase::exists(const ConstString& port, const ContactStyle& style) {
         ContactStyle style2 = style;
         style2.admin = true;
         Bottle cmd("[ver]"), resp;
-        bool ok = NetworkBase::write(Contact::byName(port),cmd,resp,style2);
+        bool ok = NetworkBase::write(Contact(port), cmd, resp, style2);
         if (!ok) result = 1;
         if (resp.get(0).toString()!="ver"&&resp.get(0).toString()!="dict") {
             // YARP nameserver responds with a version
@@ -865,7 +885,7 @@ bool NetworkBase::write(const Contact& contact,
         port.openFake("network_write");
         Contact ec = contact;
         if (style.carrier!="") {
-            ec = ec.addCarrier(style.carrier);
+            ec.setCarrier(style.carrier);
         }
         if (!port.addOutput(ec)) {
             if (!style.quiet) {
@@ -949,9 +969,9 @@ bool NetworkBase::write(const Contact& contact,
 }
 
 bool NetworkBase::write(const ConstString& port_name,
-                               PortWriter& cmd,
-                               PortReader& reply) {
-    return write(Contact::byName(port_name),cmd,reply);
+                              PortWriter& cmd,
+                              PortReader& reply) {
+    return write(Contact(port_name), cmd, reply);
 }
 
 bool NetworkBase::isConnected(const ConstString& src, const ConstString& dest,
@@ -969,7 +989,7 @@ bool NetworkBase::isConnected(const ConstString& src, const ConstString& dest,
 
 ConstString NetworkBase::getNameServerName() {
     NameConfig nc;
-    String name = nc.getNamespace(false);
+    ConstString name = nc.getNamespace(false);
     return name.c_str();
 }
 
@@ -982,7 +1002,7 @@ Contact NetworkBase::getNameServerContact() {
 
 bool NetworkBase::setNameServerName(const ConstString& name) {
     NameConfig nc;
-    String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
+    ConstString fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
     nc.writeConfig(fname,name + "\n");
     nc.getNamespace(true);
     getNameSpace().activate(true);
@@ -1216,7 +1236,7 @@ public:
         getContent().prepareDisconnect();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return getContent().getName();
     }
 
@@ -1283,7 +1303,7 @@ public:
         return getContent().expectAck(proto);
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return getContent().toString();
     }
 
@@ -1291,7 +1311,7 @@ public:
         return getContent().close();
     }
 
-    virtual String getBootstrapCarrierName() {
+    virtual ConstString getBootstrapCarrierName() {
         return getContent().getBootstrapCarrierName();
     }
 

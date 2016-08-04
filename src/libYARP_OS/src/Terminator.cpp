@@ -24,9 +24,9 @@ bool Terminator::terminateByName(const char *name) {
     if (name == NULL)
         return false;
 
-    String s(name);
+    ConstString s(name);
 
-    if (s.find("/quit")==String::npos) {
+    if (s.find("/quit")==ConstString::npos) {
         // name doesn't include /quit
         // old mechanism won't work, let's try new
         PortCommand pc('\0',"i");
@@ -66,13 +66,13 @@ Terminee::Terminee(const char *name) {
         return;
     }
 
-    String s(name);
+    ConstString s(name);
     if (name[0] != '/') {
         s.clear();
         s += "/";
         s += name;
     }
-    
+
     implementation = new TermineeHelper();
     yAssert(implementation!=NULL);
     TermineeHelper& helper = HELPER(implementation);
@@ -99,7 +99,7 @@ Terminee::~Terminee() {
         Terminator::terminateByName(helper.getName().c_str());
     }
 
-    stop(); 
+    stop();
 
     if (implementation!=NULL) {
         delete &HELPER(implementation);

@@ -10,7 +10,7 @@
 
 #include <yarp/os/Carrier.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
@@ -297,7 +297,7 @@ private:
      * kind of network.
      *
      */
-    void setCarrier(const String& carrierNameBase);
+    void setCarrier(const ConstString& carrierNameBase);
 
     /**
      *
@@ -390,7 +390,7 @@ private:
     StreamConnectionReader reader;  ///< reader for incoming messages
     yarp::os::Portable *ref; ///< source for current message, so we can
                              ///< bypass serialization on local connections
-    String envelope;         ///< envelope for current message
+    ConstString envelope;         ///< envelope for current message
     NullConnection nullConnection; ///< dummy connection
     yarp::os::Contactable *port;   ///< port associated with this connection
     bool pendingReply;  ///< will we be making a reply

@@ -38,7 +38,7 @@ Contact YarpNameSpace::queryName(const ConstString& name) {
 
 
 Contact YarpNameSpace::registerName(const ConstString& name) {
-    return registerContact(Contact::byName(name));
+    return registerContact(Contact(name));
 }
 
 Contact YarpNameSpace::registerContact(const Contact& contact) {
@@ -54,8 +54,8 @@ Contact YarpNameSpace::registerContact(const Contact& contact) {
             bool publish = (cat.find("+") != ConstString::npos);
             bool subscribe = (cat.find("-") != ConstString::npos);
             ContactStyle style;
-            Contact c1 = Contact::byName(nc.getFullName());
-            Contact c2 = Contact::byName(ConstString("topic:/") + nc.getNestedName());
+            Contact c1(nc.getFullName());
+            Contact c2(ConstString("topic:/") + nc.getNestedName());
             if (subscribe) {
                 style.persistenceType = ContactStyle::END_WITH_TO_PORT;
                 connectPortToTopic(c2,c1,style);
@@ -78,8 +78,8 @@ Contact YarpNameSpace::unregisterName(const ConstString& name) {
         bool publish = (cat.find("+") != ConstString::npos);
         bool subscribe = (cat.find("-") != ConstString::npos);
         ContactStyle style;
-        Contact c1 = Contact::byName(nc.getFullName());
-        Contact c2 = Contact::byName(ConstString("topic:/") + nc.getNestedName());
+        Contact c1(nc.getFullName());
+        Contact c2(ConstString("topic:/") + nc.getNestedName());
         if (subscribe) {
             disconnectPortFromTopic(c2,c1,style);
         }
@@ -139,13 +139,13 @@ Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
     serverUsed = nic.didSave();
 
     Contact c = nic.getAddress();
-    c = c.addName(nc.getNamespace().c_str());
+    c.setName(nc.getNamespace().c_str());
     //Contact c = nic.getAddress().toContact();
     //    if (scanNeeded) {
     //        Address addr = nic.getAddress();
-    //        c = c.addSocket("tcp",addr.getName().c_str(),addr.getPort());
+    //        c.setSocket("tcp",addr.getName().c_str(),addr.getPort());
     ////}
-    //c = c.addName(nc.getNamespace().c_str());
+    //c.setName(nc.getNamespace().c_str());
     return c;
 }
 
@@ -154,7 +154,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
                                       PortReader& reply,
                                       const ContactStyle& style) {
     Contact srv = getNameServerContact();
-    String cmd0 = "NAME_SERVER";
+    ConstString cmd0 = "NAME_SERVER";
 
     DummyConnector con0;
     cmd.write(con0.getWriter());
@@ -165,7 +165,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
         cmd0 += in.get(i).toString().c_str();
     }
     NameClient& nic = HELPER(this);
-    String result = nic.send(cmd0);
+    ConstString result = nic.send(cmd0);
     Bottle reply2;
     reply2.addString(result.c_str());
     DummyConnector con;

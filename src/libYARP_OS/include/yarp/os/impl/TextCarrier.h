@@ -28,9 +28,9 @@ public:
 
     virtual Carrier *create();
 
-    virtual String getName();
+    virtual ConstString getName();
 
-    virtual String getSpecifierName();
+    virtual ConstString getSpecifierName();
 
     virtual bool checkHeader(const Bytes& header);
     virtual void getHeader(const Bytes& header);

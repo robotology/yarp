@@ -19,6 +19,7 @@ env:
     - TRAVIS_WITH_INTEGRATION_TESTS=false
     - TRAVIS_STATIC=false
     - TRAVIS_WITH_VALGRIND=false
+    - TRAVIS_NO_DEPRECATED=false
 
   matrix:
     # Normal build
@@ -51,6 +52,16 @@ matrix:
     - os: linux
       compiler: clang
       env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+
+    # Normal build no deprecated (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
+
+    # Normal build no deprecated (linux, clang)
+    - os: linux
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
 
     # Static build (linux, gcc)
     - os: linux
@@ -184,11 +195,6 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libsqlite3-dev libtinyxml-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install sqlite tinyxml; fi
 
-  # Install GTK2 GUIs dependencies
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgtkmm-2.4-dev libgtkdataboxmm-dev libgoocanvasmm-dev; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gtkmm gtk+ gtkdatabox goocanvas; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link --force gettext; fi # Fix goocanvas build
-
   # Install Qt5 GUIs dependencies
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
@@ -226,6 +232,7 @@ before_script:
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_SHARED_LIBRARY=ON"; fi
   - if $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_VALGRIND_TESTS=ON -DYARP_VALGRIND_DRD_TESTS=OFF -DYARP_VALGRIND_HELGRIND_TESTS=OFF YARP_VALGRIND_MEMCHECK_TESTS=ON YARP_VALGRIND_SGCHECK_TESTS=OFF"; fi
+  - if $TRAVIS_NO_DEPRECATED; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_NO_DEPRECATED=ON"; fi
 
   # Run CMake
   - (cd build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ..)

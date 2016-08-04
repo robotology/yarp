@@ -201,6 +201,11 @@ public:
      */
     bool join(double seconds = -1);
 
+    /**
+     * Reschedule the execution of current thread, allowing other threads to run.
+     */
+    static void yield();
+
 private:
     void *implementation;
     bool stopping;

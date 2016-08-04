@@ -347,6 +347,12 @@ bool yarp::dev::ServerInertial::close()
     yInfo("Closing Server Inertial...\n");
     stop();
 
+    if(rosNode!=NULL) {
+        rosNode->interrupt();
+        delete rosNode;
+        rosNode = NULL;
+    }
+
     if( (ownDevices) && (IMU_polydriver != NULL) )
     {
         IMU_polydriver->close();

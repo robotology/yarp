@@ -6,7 +6,7 @@
 
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/ShmemCarrier.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 // removing old shmem version
 // #include <yarp/os/impl/ShmemTwoWayStream.h>
 
@@ -26,7 +26,7 @@ yarp::os::Carrier *yarp::os::impl::ShmemCarrier::create() {
     return new ShmemCarrier(version);
 }
 
-yarp::os::impl::String yarp::os::impl::ShmemCarrier::getName() {
+yarp::os::ConstString yarp::os::impl::ShmemCarrier::getName() {
     return (version==2)?"shmem":"shmem1";
 }
 
@@ -79,7 +79,7 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionStat
         }
     } else {
         int altPort = readYarpInt(proto);
-        String myName = proto.getStreams().getLocalAddress().getHost();
+        ConstString myName = proto.getStreams().getLocalAddress().getHost();
         proto.takeStreams(NULL);
         base = Contact(myName,altPort);
         ok = stream->open(base,sender)==0;
