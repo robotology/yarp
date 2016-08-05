@@ -126,7 +126,9 @@ class VectorTest : public UnitTest {
     bool checkConsistency(Vector &a)
     {
         gsl_vector *tmp;
-        tmp = (gsl_vector *)(yarp::gsl::GslVector(a).getGslVector());
+        yarp::gsl::GslVector tmpGSL(a);
+        tmp = (gsl_vector *)(tmpGSL.getGslVector());
+
         bool ret=true;
         if ((int)tmp->size!=(int)a.size())
             ret=false;

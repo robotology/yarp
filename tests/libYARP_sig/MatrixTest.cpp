@@ -118,7 +118,10 @@ class MatrixTest : public UnitTest {
     bool checkConsistency(Matrix &a)
     {
         gsl_matrix *tmp;
-        tmp=(gsl_matrix *)(yarp::gsl::GslMatrix(a).getGslMatrix());
+
+        yarp::gsl::GslMatrix tmpGSL(a);
+        tmp=(gsl_matrix *)(tmpGSL.getGslMatrix());
+
         bool ret=true;
         if ((int)tmp->size1!=a.rows())
             ret=false;
