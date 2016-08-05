@@ -12,6 +12,9 @@
 #include <yarp/os/Log.h>
 
 using namespace yarp::dev;
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementPositionControl2::ImplementPositionControl2(IPositionControl2Raw *y) :
     iPosition2(y),
@@ -80,6 +83,7 @@ YARP_WARNING_POP
 
 bool ImplementPositionControl2::positionMove(int j, double ang)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     castToMapper(helper)->posA2E(ang, j, enc, k);
@@ -90,6 +94,7 @@ bool ImplementPositionControl2::positionMove(const int n_joint, const int *joint
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         castToMapper(helper)->posA2E(refs[idx], joints[idx], temp_double[idx], temp_int[idx]);
     }
     return iPosition2->positionMoveRaw(n_joint, temp_int, temp_double);
@@ -104,6 +109,7 @@ bool ImplementPositionControl2::positionMove(const double *refs)
 
 bool ImplementPositionControl2::relativeMove(int j, double delta)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     castToMapper(helper)->velA2E(delta, j, enc, k);
@@ -115,6 +121,7 @@ bool ImplementPositionControl2::relativeMove(const int n_joint, const int *joint
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         castToMapper(helper)->velA2E(deltas[idx], joints[idx], temp_double[idx], temp_int[idx]);
     }
     return iPosition2->relativeMoveRaw(n_joint, temp_int, temp_double);
@@ -128,6 +135,7 @@ bool ImplementPositionControl2::relativeMove(const double *deltas)
 
 bool ImplementPositionControl2::checkMotionDone(int j, bool *flag)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
 
     return iPosition2->checkMotionDoneRaw(k,flag);
@@ -137,6 +145,7 @@ bool ImplementPositionControl2::checkMotionDone(const int n_joint, const int *jo
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
@@ -150,6 +159,7 @@ bool ImplementPositionControl2::checkMotionDone(bool *flag)
 
 bool ImplementPositionControl2::setRefSpeed(int j, double sp)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     castToMapper(helper)->velA2E_abs(sp, j, enc, k);
@@ -160,6 +170,7 @@ bool ImplementPositionControl2::setRefSpeeds(const int n_joint, const int *joint
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         castToMapper(helper)->velA2E_abs(spds[idx], joints[idx], temp_double[idx], temp_int[idx]);
     }
 
@@ -175,6 +186,7 @@ bool ImplementPositionControl2::setRefSpeeds(const double *spds)
 
 bool ImplementPositionControl2::setRefAcceleration(int j, double acc)
 {
+    JOINTIDCHECK
     int k;
     double enc;
 
@@ -186,6 +198,7 @@ bool ImplementPositionControl2::setRefAccelerations(const int n_joint, const int
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         castToMapper(helper)->accA2E_abs(accs[idx], joints[idx], temp_double[idx], temp_int[idx]);
     }
 
@@ -201,6 +214,7 @@ bool ImplementPositionControl2::setRefAccelerations(const double *accs)
 
 bool ImplementPositionControl2::getRefSpeed(int j, double *ref)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     k=castToMapper(helper)->toHw(j);
@@ -216,6 +230,7 @@ bool ImplementPositionControl2::getRefSpeeds(const int n_joint, const int *joint
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 
@@ -246,6 +261,7 @@ bool ImplementPositionControl2::getRefAccelerations(const int n_joint, const int
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 
@@ -260,6 +276,7 @@ bool ImplementPositionControl2::getRefAccelerations(const int n_joint, const int
 
 bool ImplementPositionControl2::getRefAcceleration(int j, double *acc)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     k=castToMapper(helper)->toHw(j);
@@ -272,6 +289,7 @@ bool ImplementPositionControl2::getRefAcceleration(int j, double *acc)
 
 bool ImplementPositionControl2::stop(int j)
 {
+    JOINTIDCHECK
     int k;
     k=castToMapper(helper)->toHw(j);
 
@@ -282,6 +300,7 @@ bool ImplementPositionControl2::stop(const int n_joint, const int *joints)
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
@@ -303,6 +322,7 @@ bool ImplementPositionControl2::getAxes(int *axis)
 
 bool ImplementPositionControl2::getTargetPosition(const int joint, double* ref)
 {
+    PJOINTIDCHECK(joint)
     int k;
     double enc;
     k=castToMapper(helper)->toHw(joint);
@@ -324,6 +344,7 @@ bool ImplementPositionControl2::getTargetPositions(const int n_joint, const int*
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 

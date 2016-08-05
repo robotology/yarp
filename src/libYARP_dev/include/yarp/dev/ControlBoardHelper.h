@@ -146,6 +146,15 @@ public:
         return true;
     }
 
+    inline bool checkAxisId(int id)
+    {
+        if (id >= nj)
+        {
+            return false;
+        }
+        return true;
+    }
+
     inline int toHw(int axis)
     { return axisMap[axis]; }
 
