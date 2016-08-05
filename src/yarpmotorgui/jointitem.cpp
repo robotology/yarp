@@ -1099,6 +1099,9 @@ void JointItem::setOpenLoop(double openLoopValue)
     }
     if(ui->stackedWidget->currentIndex() == OPENLOOP){
         updateSliderOpenloop(openLoopValue);
+        QString sVal;
+        sVal = QString("%L1").arg(openLoopValue, 0, 'f', 3);
+        ui->editOpenLoopOutput->setText(sVal);
     }
 }
 
