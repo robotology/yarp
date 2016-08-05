@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 using namespace yarp::dev;
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementControlMode::ImplementControlMode(IControlModeRaw *r)
 {
@@ -51,42 +53,49 @@ bool ImplementControlMode::uninitialize ()
 
 bool ImplementControlMode::setPositionMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setPositionModeRaw(k);
 }
 
 bool ImplementControlMode::setVelocityMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setVelocityModeRaw(k);
 }
 
 bool ImplementControlMode::setTorqueMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setTorqueModeRaw(k);
 }
 
 bool ImplementControlMode::setOpenLoopMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setOpenLoopModeRaw(k);
 }
 
 bool ImplementControlMode::setImpedancePositionMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setImpedancePositionModeRaw(k);
 }
 
 bool ImplementControlMode::setImpedanceVelocityMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setImpedanceVelocityModeRaw(k);
 }
 
 bool ImplementControlMode::getControlMode(int j, int *f)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->getControlModeRaw(k, f);
 }

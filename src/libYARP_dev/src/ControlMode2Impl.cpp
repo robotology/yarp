@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 using namespace yarp::dev;
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementControlMode2::ImplementControlMode2(IControlMode2Raw *r):
 temp_int(NULL),
@@ -62,42 +64,49 @@ bool ImplementControlMode2::uninitialize ()
 
 bool ImplementControlMode2::setPositionMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setPositionModeRaw(k);
 }
 
 bool ImplementControlMode2::setVelocityMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setVelocityModeRaw(k);
 }
 
 bool ImplementControlMode2::setTorqueMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setTorqueModeRaw(k);
 }
 
 bool ImplementControlMode2::setOpenLoopMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setOpenLoopModeRaw(k);
 }
 
 bool ImplementControlMode2::setImpedancePositionMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setImpedancePositionModeRaw(k);
 }
 
 bool ImplementControlMode2::setImpedanceVelocityMode(int j)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setImpedanceVelocityModeRaw(k);
 }
 
 bool ImplementControlMode2::getControlMode(int j, int *f)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->getControlModeRaw(k, f);
 }
@@ -116,6 +125,7 @@ bool ImplementControlMode2::getControlModes(const int n_joint, const int *joints
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK
         temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
@@ -126,6 +136,7 @@ bool ImplementControlMode2::getControlModes(const int n_joint, const int *joints
 
 bool ImplementControlMode2::setControlMode(const int j, const int mode)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
     return raw->setControlModeRaw(k, mode);
 }
@@ -134,6 +145,7 @@ bool ImplementControlMode2::setControlModes(const int n_joint, const int *joints
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK
         temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
     return raw->setControlModesRaw(n_joint, temp_int, modes);

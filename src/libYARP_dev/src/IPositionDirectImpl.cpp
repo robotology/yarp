@@ -12,6 +12,9 @@
 #include <yarp/os/Log.h>
 
 using namespace yarp::dev;
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y) :
     iPDirect(y),
@@ -74,6 +77,7 @@ YARP_WARNING_POP
 
 bool ImplementPositionDirect::setPosition(int j, double ref)
 {
+    JOINTIDCHECK
     int k;
     double enc;
     castToMapper(helper)->posA2E(ref, j, enc, k);
@@ -84,7 +88,8 @@ bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints,
 {
     for(int idx=0; idx<n_joint; idx++)
     {
-      castToMapper(helper)->posA2E(refs[idx], joints[idx], temp_double[idx], temp_int[idx]);
+        MJOINTIDCHECK(idx)
+        castToMapper(helper)->posA2E(refs[idx], joints[idx], temp_double[idx], temp_int[idx]);
     }
     return iPDirect->setPositionsRaw(n_joint, temp_int, temp_double);
 }
@@ -98,6 +103,7 @@ bool ImplementPositionDirect::setPositions(const double *refs)
 
 bool ImplementPositionDirect::getRefPosition(const int j, double* ref)
 {
+    JOINTIDCHECK
     int k;
     double tmp;
     k=castToMapper(helper)->toHw(j);
@@ -112,6 +118,7 @@ bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* join
 {
     for(int idx=0; idx<n_joint; idx++)
     {
+        MJOINTIDCHECK(idx)
         temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 

@@ -10,6 +10,9 @@
 #include <iostream>
 
 using namespace yarp::dev;
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 /////////////// implement ImplementOpenLoopControl
 ImplementOpenLoopControl::ImplementOpenLoopControl(IOpenLoopControlRaw *r)
@@ -52,6 +55,7 @@ bool ImplementOpenLoopControl::uninitialize ()
 
 bool ImplementOpenLoopControl::setRefOutput(int j, double v)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
 
     return raw->setRefOutputRaw(k, v);
@@ -66,6 +70,7 @@ bool ImplementOpenLoopControl::setRefOutputs(const double *v)
 
 bool ImplementOpenLoopControl::getRefOutput(int j, double *v)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
 
     bool ret = raw->getRefOutputRaw(k, v);
@@ -82,6 +87,7 @@ bool ImplementOpenLoopControl::getRefOutputs(double *v)
 
 bool ImplementOpenLoopControl::getOutput(int j, double *v)
 {
+    JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
 
     bool ret = raw->getOutputRaw(k, v);

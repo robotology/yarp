@@ -11,6 +11,8 @@
 #include <yarp/dev/ControlBoardHelper.h>
 
 using namespace yarp::dev;
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 /////////////// implement ImplementImpedanceControl
 ImplementImpedanceControl::ImplementImpedanceControl(IImpedanceControlRaw *r)
@@ -53,6 +55,7 @@ bool ImplementImpedanceControl::getAxes(int *axes)
 
 bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double damping)
 {
+    JOINTIDCHECK
     int k;
     double stiff;
     double damp;
@@ -63,6 +66,7 @@ bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double dam
 
 bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *damping)
 {
+    JOINTIDCHECK
     int k;
     k=castToMapper(helper)->toHw(j);
     bool ret=iImpedanceRaw->getImpedanceRaw(k, stiffness, damping);
@@ -76,6 +80,7 @@ bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *d
 
 bool ImplementImpedanceControl::setImpedanceOffset(int j, double offset)
 {
+    JOINTIDCHECK
     int k;
     double off;
     castToMapper(helper)->trqN2S(offset,j,off,k);
@@ -84,6 +89,7 @@ bool ImplementImpedanceControl::setImpedanceOffset(int j, double offset)
 
 bool ImplementImpedanceControl::getImpedanceOffset(int j, double *offset)
 {
+    JOINTIDCHECK
     int k;
     k=castToMapper(helper)->toHw(j);
     bool ret = iImpedanceRaw->getImpedanceOffsetRaw(k, offset);
@@ -93,6 +99,7 @@ bool ImplementImpedanceControl::getImpedanceOffset(int j, double *offset)
 
 bool ImplementImpedanceControl::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
+    JOINTIDCHECK
     int k;
     k=castToMapper(helper)->toHw(j);
     return iImpedanceRaw->getCurrentImpedanceLimitRaw(k, min_stiff, max_stiff, min_damp, max_damp);
