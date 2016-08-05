@@ -9,12 +9,12 @@
 
 \tableofcontents
 
-\section install_mac_installation_prerequisites Installation prerequisites
-This installation has been confirmed to work on OSX Mavericks and Yosemite with Homebrew.
+\section install_mac_installation_prerequisites Prerequisites installation
+This installation has been confirmed to work on macOS from 10.9 on with Homebrew.
 
 \subsection install_mac_Xcode Installing Xcode
 
-To compile anything on macOS (including YARP), you'll need to have <a href="http://developer.apple.com/xcode/"><b>Xcode</b></a> installed. This can be done through the <b>App Store</b>. 
+To compile anything on macOS (including YARP), you'll need to have <a href="http://developer.apple.com/xcode/"><b>Xcode</b></a> installed. This can be done through the <b>App Store</b>.
 
 Once installed, you need to install the <b>Command Line Tools</b>.
 To do this, open Xcode, go to Xcode->Preferences->Downloads and install Command Line Tools.
@@ -25,13 +25,13 @@ If you do not see the option install Command Line Tools, run the following on a 
 xcode-select --install
 \endcode
 
-Once this is done, you can now continue with the installation steps:
+Once this is done, you can now continue with the next installation steps.
 
 \subsection install_mac_homebrew Installing Homebrew
 
-Please install homebrew using the following commands or visit and follow the official <a href="http://brew.sh"><b>installation steps</b></a>
+Please install Homebrew using the following commands or visit and follow the official <a href="http://brew.sh"><b>installation steps</b></a>
 
-\code 
+\code
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 \endcode
 
@@ -41,23 +41,37 @@ After the installation, you can run the following command to check if your setup
 brew doctor
 \endcode
 
-If you had Homebrew already installed on your system, update and upgrade:
+\section install_yarp Installing YARP
 
-\code
-brew update
-brew upgrade
-\endcode
+Once you have installed the prerequisites, you can now proceed to install YARP choosing between two options:
 
-Also, you will need to add the homebrew-x11 and homebrew-science taps:
+1. \subpage install_mac_Homebrew_YARP : if you are not explicitly interested  in the source code, this is the easiest way to install YARP but it implies that you will rely on the official stable releases.
 
-\code
-brew tap homebrew/x11
-brew tap homebrew/science
-\endcode
+2. \subpage install_mac_from_source : being manual, this is a bit longer way for the installation but it allows you the full access to the source code and to be always updated with the latest features.
 
-\section install_mac_Homebrew_YARP Installing YARP from Homebrew
-The easiest way to install YARP is through Homebrew. 
- 
+In any case, you have to update and upgrade your Homebrew version.
+
+
+\subsection update_brew Updating and upgrading pre-existent Homebrew versions
+
+ If you had Homebrew already installed on your system, update and upgrade:
+
+ \code
+ brew update
+ brew upgrade
+ \endcode
+
+ Also, you will need to add the homebrew-x11 and homebrew-science taps:
+
+ \code
+ brew tap homebrew/x11
+ brew tap homebrew/science
+ \endcode
+
+
+\subsection  install_mac_Homebrew_YARP Install YARP from Homebrew
+Run on your terminal:
+
 \code
  brew install yarp
 \endcode
@@ -80,212 +94,260 @@ The following options are also available:
 --HEAD
  	Install HEAD version
 \endcode
- 
-After the installation, you will need to add the $YARP_DATA_DIRS environmental variable (in order to follow the KISS principle we are using the native mac editor Textedit. Please feel free to use whichever tool/editor you prefer):
- 
-\code
-cd ~
-open -a TextEdit .bash_profile
-\endcode
- 
-If the following command result in an error: The file .... does not exist, do the following first:
 
-\code
-cd ~
-touch .bash_profile
-\endcode
- 
-and add the line:
-
-\code
-export YARP_DATA_DIRS=/usr/local/share/yarp
-\endcode
- 
-To refresh and load these environment settings type:
-
-\code
-source ~/.bash_profile 
-\endcode
- 
-Now you can proceed with the following link: \subpage check_your_installation.
-
-\subsection install_mac_bash_completion_brew Bash completion
-Installing YARP using Homebrew, the bash completion is automatically installed and enabled.
-
-\section install_mac_from_source Install YARP from source
-If the options above are not enough and you want to install YARP with additional options or in a difference location, you can compile it from source, directly from the repository.
- 
-\subsection install_mac_YARP_Dependencies Installing YARP Dependencies
-Here we provide information for installing the <b>YARP dependencies</b> via <b>Homebrew</b>
-In order to install the YARP dependencies enter the following command in a terminal:
-
-\code
-brew install yarp --only-dependencies
-\endcode
- 
-
-For compiling the required bindings (LUA, JAVA, PYTHON etc) you need <b>swig</b>
-
-\code
-brew install swig
-\endcode
-
-For compiling the Qt5 GUIS:
-\code
-brew install qt5
-\endcode
-
-Now, add the <b>environmental variable</b> for Qt5
-
-\code
-cd ~
-open -a TextEdit .bash_profile
-\endcode
-
-and copy the following line
-
-\code
-export Qt5_DIR=/usr/local/opt/qt5/lib/cmake
-\endcode
+After the installation, you will need to set your \subpage environment_configuration.
 
 
-\subsubsection install_mac_YARP_optional_GDK Optional: Installing YARP Dependencies: GDK PIXBUF 
+\subsection install_mac_from_source Install YARP from source
+If the options above are not enough and you want to install YARP with additional options or in a difference location, you can compile it from source, directly from the repository. First install the dependencies, download the code from the repository and then proceed with the installation.
 
-Programs that require this <b>GDK PIXBUF</b> need to set the environment variable correctly. Just to be on the safe side add this to the .bash_profile
+ \subsubsection install_mac_YARP_Dependencies Installing YARP Dependencies
+ Here we provide information for installing the <b>YARP dependencies</b> via Homebrew.
+ In order to install the YARP dependencies enter the following command in a terminal:
 
-\code
-cd ~
-open -a TextEdit .bash_profile
-\endcode
-
-\code
-export GDK_PIXBUF_MODULEDIR="/usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders"
-\endcode
-
-To refresh and load these environment settings type:
-
-\code
-source ~/.bash_profile 
-\endcode
+ \code
+ brew install yarp --only-dependencies
+ \endcode
 
 
-\subsection install_mac_YARP Installing YARP
+ For compiling the required bindings (LUA, JAVA, PYTHON etc) you need <b>swig</b>
 
-In the directory where you would like to store your code, e.g. /Users/your_user_name/Dev/ run the following git command to clone YARP on your system
+ \code
+ brew install swig
+ \endcode
 
-\code
-git clone https://github.com/robotology/yarp.git
-\endcode
+ and the following for yarpbuilder:
 
-\subsubsection install_mac_YARP_terminal Compile YARP using terminal:
+ \code
+ brew install goocanvas gtkmm libglademm gtk+
+ \endcode
 
-\code
-cd yarp
-mkdir build
-cd build
-ccmake ..
-\endcode
+ For compiling the Qt5 GUIS:
+ \code
+ brew install qt5
+ \endcode
 
-configure it correctly by enabling the following flags (simple solution):
+ Now, add the <b>environmental variable</b> for Qt5
 
-\code
-CREATE_GUIS
-CREATE_LIB_MATH  
-\endcode
+ \code
+ cd ~
+ open -a TextEdit .bash_profile
+ \endcode
 
-configure & generate, then:
+ and copy the following line
 
-\code
-make
-\endcode
+ \code
+ export Qt5_DIR=/usr/local/opt/qt5/lib/cmake
+ \endcode
 
-\subsubsection install_mac_YARP_Xcode Compile YARP using Xcode:
 
-In order to generate and Xcode project do the following:
+ \subsubsection install_mac_YARP_optional_GDK [Optional]: Installing GDK PIXBUF Dependencies
 
-\code
-cd yarp
-mkdir build
-cd build
-ccmake .. -G Xcode
-\endcode
+ Programs that require this <b>GDK PIXBUF</b> need to set the environment variable correctly. Just to be on the safe side add this to the .bash_profile
 
-This will generate a <b>YARP.xcodeproj</b> file which can be opened with Xcode.
-Build it by clicking <b>Product -> Build</b> or <b>cmd+B</b> shortcut.
-One can also compile the Release binaries by clicking <b>Product -> Archive</b>.
+ \code
+ cd ~
+ open -a TextEdit .bash_profile
+ \endcode
 
-Alternatively, it is possible to directly compile the project on the command line by 
-\code{.sh}
-xcodebuild [-configuration Debug|Release|Other Configs] [-target ALL_BUILD|install|Other Targets]
-\endcode
-If no options are specified the ALL_BUILD target in Debug mode is compiled.
+ \code
+ export GDK_PIXBUF_MODULEDIR="/usr/local/lib/gdk-pixbuf-2.0/2.10.0/loaders"
+ \endcode
 
-\subsubsection install_mac_YARP_Environment Setting YARP environmental Variables:
+ To refresh and load these environment settings type:
 
-Once YARP has been compiled, you need to set its environmental variables:
+ \code
+ source ~/.bash_profile
+ \endcode
 
-\code
-cd ~
-open -a TextEdit .bash_profile
-\endcode
 
-and copy the following lines:
+ \subsubsection install_mac_YARP Download and install
 
-\code
-export code=/Users/your_user_name/Dev
-export YARP_ROOT=/Users/your_user_name/Dev/yarp
-export YARP_DIR=/Users/your_user_name/Dev/yarp/build
-export PATH=$YARP_DIR/bin/Release:$PATH 
-\endcode
+ In the directory where you would like to store your code, e.g. /Users/your_user_name/Dev/ run the following git command to clone YARP on your system
 
-Notice that if you used the terminal version without Xcode the last line becomes:
+ \code
+ git clone https://github.com/robotology/yarp.git
+ \endcode
 
-\code
-export PATH=$YARP_DIR/bin:$PATH
-\endcode
+ Now move into the source folder and create the build directory
 
-Now setup YARP_DATA_DIRS by adding this to the .bash_profile:
+ \code
+ cd yarp
+ mkdir build
+ cd build
+ \endcode
 
-\code
-export YARP_DATA_DIRS=/Users/your_user_name/Dev/yarp/build/share/yarp
-\endcode
+ You can now compile and install YARP with (at least) two different methods: GNU Makefile and Xcode.
+ The former is simpler, while the latter creates an Xcode project which can come in handy if you wish to contribute to the YARP development.
 
-To refresh and load these environment settings type:
+ If not stated differently (e.g. we are compiling YARP on a robot environment which can have different policies), we strongly suggest to install YARP after the compilation.
+ Note that, by default, YARP is installed in /usr/local. We strongly suggest to change this folder to a non-system one.
 
-\code
-source ~/.bash_profile 
-\endcode
+ \subsubsection install_mac_YARP_terminal Compile YARP using GNU Makefiles
 
-Now to quickly test the system run this in a terminal:
+ In this case, you simply have to issue the cmake command
+ \code
+ ccmake ..
+ \endcode
 
-\code
-yarp
-\endcode
+ configure it correctly by enabling the following flags (simple solution):
 
-and you should get something like:
+ \code
+ CREATE_GUIS
+ CREATE_LIB_MATH
+ \endcode
 
-\code
-This is the YARP network companion.
-Call with the argument "help" to see a list of ways to use this program.
-\endcode
+ and, if you want to install YARP, by changing the path pointed by the CMake variable
 
-\section install_mac_bash_completion_source Bash completion
-To enable bash completion when building YARP from source, do the following:
+ \code
+ CMAKE_INSTALL_PREFIX
+ \endcode
 
-\code
-brew install bash-completion
-\endcode
+ configure (press 'c' until all the * disappers) & generate ('g'), then:
 
-Then add the following lines to your .bash_profile:
+ \code
+ make
+ \endcode
 
-\code
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-      . `brew --prefix`/etc/bash_completion
-fi
-source $YARP_ROOT/scripts/yarp_completion
-\endcode
+ If you want to install issue also a
+ \code
+ make install
+ \endcode
+ (Note: if the install directory is a system directory you may need administrator privileges, e.g. you have to use sudo).
 
+After the installation, you will need to set your \subpage environment_configuration and the \subpage bash_completion.
+
+ \subsubsection install_mac_YARP_Xcode Compile YARP using Xcode
+
+ In order to generate and Xcode project do the following:
+
+ \code
+ ccmake .. -G Xcode
+ \endcode
+
+ As before, configure the project and the install directory:
+ \code
+ CREATE_GUIS=ON
+ CREATE_LIB_MATH=ON
+ CMAKE_INSTALL_PREFIX=/path/to/install/dir
+ \endcode
+
+ This will generate a <b>YARP.xcodeproj</b> file which can be opened with Xcode.
+ Build it by clicking <b>Product -> Build</b> or <b>cmd+B</b> shortcut.
+ One can also compile the Release binaries by clicking <b>Product -> Archive</b>.
+
+ Alternatively, it is possible to directly compile the project on the command line by
+ \code
+ xcodebuild [-configuration Debug|Release|Other Configs] [-target ALL_BUILD|install|Other Targets]
+ \endcode
+ If no options are specified the ALL_BUILD target is compiled in Debug configuration.
+ In general the following command will build and install YARP in release mode:
+ \code
+ xcodebuild -configuration Release -target install
+ \endcode
+
+
+ After the installation, you will need to set your \subpage environment_configuration and the \subpage bash_completion.
+
+
+
+\subsection environment_configuration Environment variables configuration
+
+In order to follow the KISS principle we are using the native mac editor Textedit. Please feel free to use whichever tool/editor you prefer.
+
+Add the YARP environment variable in
+
+ \code
+ cd ~
+ open -a TextEdit .bash_profile
+ \endcode
+
+ If the following command result in an error: The file .... does not exist, do the following first:
+
+ \code
+ cd ~
+ touch .bash_profile
+ \endcode
+
+
+<b>If you installed from Homebrew</b>:
+
+ \code
+ export YARP_DATA_DIRS=/usr/local/share/yarp
+ \endcode
+
+ To refresh and load these environment settings type:
+
+ \code
+ source ~/.bash_profile
+ \endcode
+
+ Now you can check if YARP has been properly installed by running a \subpage quick_test_yarp.
+
+ <b>If you installed from source</b>:
+
+ In the following we assume that YARP has been installed.
+ In case you are using the build version, instead, the YARP_DIR path should point to the build directory.
+ \code
+ # YARP_ROOT points to the repository
+ export YARP_ROOT=/Users/your_user_name/Dev/yarp
+ export YARP_DIR=/path/to/install/dir
+ export PATH=$PATH:$YARP_DIR/bin
+ \endcode
+
+ Notice that if you did not install AND you used the Xcode version the last line becomes
+
+ \code
+  export PATH=$PATH:$YARP_DIR/bin/Release
+ \endcode
+
+ Now setup YARP_DATA_DIRS by adding this to the .bash_profile:
+
+ \code
+ export YARP_DATA_DIRS=${YARP_DIR}/share/yarp
+ \endcode
+
+ To refresh and load these environment settings type:
+
+ \code
+ source ~/.bash_profile
+ \endcode
+
+
+ Check if YARP has been properly installed by running a \subpage quick_test_yarp.
+
+\subsection bash_completion Bash completion
+
+ \code
+ brew install bash-completion
+ \endcode
+
+ Then add the following lines to your .bash_profile:
+
+ \code
+ if [ -f `brew --prefix`/etc/bash_completion ]; then
+       . `brew --prefix`/etc/bash_completion
+ fi
+ source $YARP_ROOT/scripts/yarp_completion
+ \endcode
+
+
+ \section quick_test_yarp Quick YARP run test
+
+ Now to quickly test the system run this in a terminal:
+
+ \code
+ yarp
+ \endcode
+
+ and you should get something like:
+
+ \code
+ This is the YARP network companion.
+ Call with the argument "help" to see a list of ways to use this program.
+ \endcode
+
+ If this test run properly, you can proceed with the following link: \subpage check_your_installation.
 
 */
-
 

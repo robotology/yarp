@@ -37,12 +37,6 @@
 void MainWindow::updateMain()
 {
     //model_yarprunports->clear();
-    model_yarprunports->setHorizontalHeaderItem(0,new QStandardItem("ip"));
-    model_yarprunports->setHorizontalHeaderItem(1,new QStandardItem("process"));
-    model_yarprunports->setHorizontalHeaderItem(2,new QStandardItem("last heard"));
-    model_yarprunports->setHorizontalHeaderItem(3,new QStandardItem("log size"));
-    model_yarprunports->setHorizontalHeaderItem(4,new QStandardItem("errors"));
-    model_yarprunports->setHorizontalHeaderItem(5,new QStandardItem("warnings"));
     std::list<yarp::yarpLogger::LogEntryInfo> infos;
     this->theLogger->get_infos (infos);
     std::list<yarp::yarpLogger::LogEntryInfo>::iterator it;
@@ -55,7 +49,7 @@ void MainWindow::updateMain()
         if (it->last_update!=-1)
         {
             std::tm* tm = localtime(&it->last_update);
-            sprintf ( time_text,"%02d:%02d:%02d",tm->tm_hour,tm->tm_min, tm->tm_sec);
+            sprintf(time_text, "%02d:%02d:%02d %02d/%02d/%02d", tm->tm_hour, tm->tm_min, tm->tm_sec, tm->tm_mday, tm->tm_mon, tm->tm_year+1900);
         }
         else
            sprintf ( time_text, "no data received yet");
@@ -172,12 +166,6 @@ void MainWindow::updateMain()
         }*/
 #endif
     }
-    ui->yarprunTreeView->setColumnWidth(0,80);
-    ui->yarprunTreeView->setColumnWidth(1,230);
-    ui->yarprunTreeView->setColumnWidth(2,80);
-    ui->yarprunTreeView->setColumnWidth(3,50);
-    ui->yarprunTreeView->setColumnWidth(4,60);
-    ui->yarprunTreeView->setColumnWidth(5,60);
 }
 
 void MainWindow::on_enableLogTab(int model_row)
@@ -324,6 +312,13 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     system_message->addMessage("Application Started");
 
     model_yarprunports = new QStandardItemModel(this);
+    model_yarprunports->setHorizontalHeaderItem(0, new QStandardItem("ip"));
+    model_yarprunports->setHorizontalHeaderItem(1, new QStandardItem("process"));
+    model_yarprunports->setHorizontalHeaderItem(2, new QStandardItem("last heard"));
+    model_yarprunports->setHorizontalHeaderItem(3, new QStandardItem("log size"));
+    model_yarprunports->setHorizontalHeaderItem(4, new QStandardItem("errors"));
+    model_yarprunports->setHorizontalHeaderItem(5, new QStandardItem("warnings"));
+
     proxyModel = new YarprunPortsSortFilterProxyModel(this);
     proxyModel->setSourceModel(model_yarprunports);
 
@@ -360,6 +355,14 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
         system_message->addMessage("start option found");
         on_actionStart_Logger_triggered();
     }
+
+    //default colum size
+    ui->yarprunTreeView->setColumnWidth(0, 100);
+    ui->yarprunTreeView->setColumnWidth(1, 200);
+    ui->yarprunTreeView->setColumnWidth(2, 150);
+    ui->yarprunTreeView->setColumnWidth(3, 80);
+    ui->yarprunTreeView->setColumnWidth(4, 60);
+    ui->yarprunTreeView->setColumnWidth(5, 60);
 }
 
 MainWindow::~MainWindow()
