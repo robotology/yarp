@@ -29,14 +29,14 @@ void Logger::fini() {
 }
 
 
-void Logger::show(int level, const ConstString& txt) {
-    int inLevel = level;
+void Logger::show(ACE_UINT32 level, const ConstString& txt) {
+    ACE_UINT32 inLevel = level;
     //ACE_OS::fprintf(stderr,"level %d txt %s\n", level, txt.c_str());
     if (verbose>0) {
         level = 10000;
     }
     if (verbose<0) {
-        level = -10000;
+        level = 0;
     }
     if (stream == NULL) {
         stream = stderr;
