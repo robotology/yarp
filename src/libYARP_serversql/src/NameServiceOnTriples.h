@@ -20,7 +20,8 @@
  * State information for a single name server operation on a database.
  *
  */
-class NameTripleState {
+class NameTripleState
+{
 public:
     yarp::os::Bottle& cmd;
     yarp::os::Bottle& reply;
@@ -30,18 +31,19 @@ public:
     bool bottleMode;
     bool nestedMode;
 
-    NameTripleState(yarp::os::Bottle& cmd, 
-                    yarp::os::Bottle& reply, 
-                    yarp::os::Bottle& event, 
+    NameTripleState(yarp::os::Bottle& cmd,
+                    yarp::os::Bottle& reply,
+                    yarp::os::Bottle& event,
                     const yarp::os::Contact& remote,
-                    TripleSource& mem) : cmd(cmd), 
-                                         reply(reply), 
-                                         event(event), 
-                                         remote(remote),
-                                         mem(mem)
+                    TripleSource& mem) :
+            cmd(cmd),
+            reply(reply),
+            event(event),
+            remote(remote),
+            mem(mem),
+            bottleMode(false),
+            nestedMode(false)
     {
-        bottleMode = false;
-        nestedMode = false;
     }
 };
 
@@ -50,7 +52,8 @@ public:
  * An implementation of name service operators on a triple store.
  *
  */
-class NameServiceOnTriples : public yarp::name::NameService {
+class NameServiceOnTriples : public yarp::name::NameService
+{
 private:
     TripleSource *db;
     Allocator *alloc;
@@ -58,37 +61,44 @@ private:
     std::string lastRegister;
     yarp::os::Contact serverContact;
     yarp::os::Semaphore mutex;
+    yarp::os::Semaphore access;
     bool gonePublic;
     bool silent;
     yarp::os::NameSpace *delegate;
 public:
-    NameServiceOnTriples() : mutex(1) {
-        db = 0 /*NULL*/;
-        alloc = 0 /*NULL*/;
-        lastRegister = "";
-        subscriber = NULL;
-        gonePublic = false;
-        silent = false;
-        delegate = 0 /*NULL*/;
+    NameServiceOnTriples() :
+            db(NULL),
+            alloc(NULL),
+            subscriber(NULL),
+            lastRegister(""),
+            mutex(1),
+            access(1),
+            gonePublic(false),
+            silent(false),
+            delegate(NULL)
+    {
     }
 
     void open(TripleSource *db,
               Allocator *alloc,
-              const yarp::os::Contact& serverContact) {
+              const yarp::os::Contact& serverContact)
+    {
         this->db = db;
         this->alloc = alloc;
         this->serverContact = serverContact;
     }
 
-    void setSubscriber(Subscriber *subscriber) {
+    void setSubscriber(Subscriber *subscriber)
+    {
         this->subscriber = subscriber;
     }
 
-    void setSilent(bool flag) {
+    void setSilent(bool flag)
+    {
         this->silent = flag;
     }
 
-    yarp::os::Contact query(const yarp::os::ConstString& portName, 
+    yarp::os::Contact query(const yarp::os::ConstString& portName,
                             NameTripleState& act,
                             const yarp::os::ConstString& prefix,
                             bool nested = false);
@@ -117,12 +127,13 @@ public:
 
     bool cmdHelp(NameTripleState& act);
 
-    virtual bool apply(yarp::os::Bottle& cmd, 
-                       yarp::os::Bottle& reply, 
+    virtual bool apply(yarp::os::Bottle& cmd,
+                       yarp::os::Bottle& reply,
                        yarp::os::Bottle& event,
                        const yarp::os::Contact& remote);
 
-    virtual void goPublic() {
+    virtual void goPublic()
+    {
         gonePublic = true;
     }
 
@@ -130,11 +141,13 @@ public:
 
     void unlock();
 
-    void setDelegate(yarp::os::NameSpace *delegate) {
+    void setDelegate(yarp::os::NameSpace *delegate)
+    {
         this->delegate = delegate;
     }
 
-    yarp::os::NameSpace *getDelegate() {
+    yarp::os::NameSpace *getDelegate()
+    {
         return delegate;
     }
 };
