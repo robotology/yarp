@@ -46,7 +46,7 @@ namespace dev {
  *
  *  [REMOTE_CONTROLBOARD_OPTIONS]
  *  writeStrict on
- *  
+ *
  *
  * ...
  * \endcode
@@ -72,6 +72,9 @@ namespace dev {
  *   options.put("remoteControlBoards",remoteControlBoards.get(0));
  *
  *   options.put("localPortPrefix",/test");
+ *
+ *   Property & remoteControlBoardsOpts = options.addGroup("REMOTE_CONTROLBOARD_OPTIONS");
+ *   remoteControlBoardsOpts.put("writeStrict","on");
  *
  *   // Actually open the device
  *   PolyDriver robotDevice(options);

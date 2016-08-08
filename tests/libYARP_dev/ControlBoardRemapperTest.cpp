@@ -295,6 +295,8 @@ public:
 
         pRemoteRemapper.put("localPortPrefix","/test/remoteControlBoardRemapper");
 
+        Property & opts = pRemoteRemapper.addGroup("REMOTE_CONTROLBOARD_OPTIONS");
+        opts.put("writeStrict","on");
 
         ok = ddRemoteRemapper.open(pRemoteRemapper);
         checkTrue(ok,"remotecontrolboardremapper open reported successful, testing it");

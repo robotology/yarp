@@ -83,15 +83,15 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
     }
     else
     {
-       yError() <<"RemoteControlBoardRemapper: Error parsing parameters: \"localPortPrefix\" should be a string\n";
-       return false;
+        yError() <<"RemoteControlBoardRemapper: Error parsing parameters: \"localPortPrefix\" should be a string.";
+        return false;
     }
 
     Bottle *remoteControlBoards=prop.find("remoteControlBoards").asList();
     if(remoteControlBoards==0)
     {
-       yError() <<"RemoteControlBoardRemapper: Error parsing parameters: \"remoteControlBoards\" should be followed by a list\n";
-       return false;
+        yError() <<"RemoteControlBoardRemapper: Error parsing parameters: \"remoteControlBoards\" should be followed by a list.";
+        return false;
     }
 
     remoteControlBoardsPorts.resize(remoteControlBoards->size());
@@ -100,7 +100,17 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
         remoteControlBoardsPorts[ax] = remoteControlBoards->get(ax).asString().c_str();
     }
 
+    // Load the REMOTE_CONTROLBOARD_OPTIONS, containg any additional option to pass to the remote control boards
+    Property remoteControlBoardsOptions;
+
+    Bottle & optionsGroupBot = prop.findGroup("REMOTE_CONTROLBOARD_OPTIONS");
+    if( !(optionsGroupBot.isNull()) )
+    {
+        remoteControlBoardsOptions.fromString(optionsGroupBot.toString());
+    }
+
     // Parameters loaded, open all the remote controlboards
+
     m_remoteControlBoardDevices.resize(remoteControlBoardsPorts.size(),0);
 
     PolyDriverList remoteControlBoardsList;
@@ -111,7 +121,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
         // Note: as local parameter we use localPortPrefix+remoteOfTheReportControlBoard
         std::string local = localPortPrefix+remote;
 
-        Property options;
+        Property options = remoteControlBoardsOptions;
         options.put("device", "remote_controlboard");
         options.put("local", local);
         options.put("remote", remote);
@@ -119,7 +129,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
         m_remoteControlBoardDevices[ctrlBrd] = new PolyDriver();
 
         bool ok = m_remoteControlBoardDevices[ctrlBrd]->open(options);
-        
+
         if( !ok || !(m_remoteControlBoardDevices[ctrlBrd]->isValid()) )
         {
             yError() << "RemoteControlBoardRemapper: error opening remote_controlboard with remote \"" << remote << "\", opening the device failed.";
