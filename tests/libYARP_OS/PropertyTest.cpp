@@ -607,6 +607,11 @@ check $x $y\n\
         psub.put("y",2);
         checkEqual(p.find("x").asInt(),1,"basic int");
         checkEqual(p.findGroup("psub").find("y").asInt(),2,"nested int");
+        Property pCopy = p;
+        checkEqual(pCopy.toString(),p.toString(),"test if addGroup works fine with Property copy assigment");
+        Property pCopy2;
+        pCopy2 = p;
+        checkEqual(pCopy.toString(),p.toString(),"test if addGroup works fine with Property copy operator");
     }
 
     virtual void runTests() {
