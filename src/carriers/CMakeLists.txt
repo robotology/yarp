@@ -13,10 +13,12 @@ if(CREATE_OPTIONAL_CARRIERS)
     add_subdirectory(xmlrpc_carrier)
     add_subdirectory(tcpros_carrier)
     add_subdirectory(mjpeg_carrier)
-    add_subdirectory(depth_image_carrier)
     add_subdirectory(bayer_carrier)
     add_subdirectory(priority_carrier)
     add_subdirectory(portmonitor_carrier)
+    if(NOT SKIP_portmonitor_carrier)
+      add_subdirectory(depth_image_portmonitor)
+    endif()
   YARP_END_PLUGIN_LIBRARY(yarpcar)
   install(TARGETS yarpcar
           EXPORT YARP
