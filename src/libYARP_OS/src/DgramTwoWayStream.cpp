@@ -489,7 +489,12 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),
                                 (ACE_UINT32)INADDR_ANY);
 
-    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast;
+    ACE_SOCK_Dgram_Mcast::options mcastOptions = ACE_SOCK_Dgram_Mcast::DEFOPTS;
+#ifdef __APPLE__
+    mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
+#endif
+
+    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
     dgram = dmcast;
     mgram = dmcast;
     yAssert(dgram!=NULL);
@@ -544,9 +549,13 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
         //return;
     }
 
-    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast;
 
-    //possible flags: ((ACE_SOCK_Dgram_Mcast::options)(ACE_SOCK_Dgram_Mcast::OPT_NULLIFACE_ALL | ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_YES));
+    ACE_SOCK_Dgram_Mcast::options mcastOptions = ACE_SOCK_Dgram_Mcast::DEFOPTS;
+#ifdef __APPLE__
+    mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
+#endif
+
+    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
 
     dgram = dmcast;
     mgram = dmcast;
