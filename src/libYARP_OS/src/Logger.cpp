@@ -29,8 +29,8 @@ void Logger::fini() {
 }
 
 
-void Logger::show(ACE_UINT32 level, const ConstString& txt) {
-    ACE_UINT32 inLevel = level;
+void Logger::show(unsigned YARP_INT32 level, const ConstString& txt) {
+    unsigned YARP_INT32 inLevel = level;
     //ACE_OS::fprintf(stderr,"level %d txt %s\n", level, txt.c_str());
     if (verbose>0) {
         level = 10000;
