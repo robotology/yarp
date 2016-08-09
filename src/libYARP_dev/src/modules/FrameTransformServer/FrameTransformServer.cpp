@@ -467,7 +467,7 @@ void FrameTransformServer::run()
         if (m_enable_subscribe_ros_tf)
         {
             tf_tfMessage*   rosInData_timed = m_rosSubscriberPort_tf_timed.read(false);
-            tf_tfMessage*   rosInData_static = m_rosSubscriberPort_tf_timed.read(false);
+            tf_tfMessage*   rosInData_static = m_rosSubscriberPort_tf_static.read(false);
 
             if (rosInData_timed != 0)
             {

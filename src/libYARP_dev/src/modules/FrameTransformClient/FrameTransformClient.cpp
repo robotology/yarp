@@ -283,26 +283,6 @@ bool yarp::dev::FrameTransformClient::canDirectTransform(const std::string &targ
 
 bool yarp::dev::FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame)
 {
-    //Transforms_client_storage& tfVec = *m_transform_storage;
-    //size_t i;
-    //for (i = 0; i < tfVec.size(); i++)
-    //{
-    //    if (tfVec[i].dst_frame_id == target_frame)
-    //    {
-    //        if (tfVec[i].src_frame_id == source_frame)
-    //        {
-    //            return true;
-    //        }
-    //        else
-    //        {
-    //            return canTransform(tfVec[i].src_frame_id, source_frame, error_msg);
-    //            /*if (canTransform(tfVec[i].src_frame_id, source_frame, error_msg))
-    //            {
-    //                return true;
-    //            }*/
-    //        }
-    //    }
-    //}
 
     if (canDirectTransform(target_frame, source_frame) || canDirectTransform(source_frame, target_frame))
     {
@@ -392,6 +372,7 @@ bool yarp::dev::FrameTransformClient::getDirectTransform(const std::string &targ
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t i;
     size_t tfVec_size = tfVec.size();
+    LockGuard l(tfVec.m_mutex);
     for (i = 0; i < tfVec_size; i++)
     {
         if (tfVec[i].dst_frame_id == target_frame_id)

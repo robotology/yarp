@@ -20,6 +20,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/math/FrameTransform.h>
+#include <yarp/os/RecursiveMutex.h>
 
 namespace yarp {
     namespace dev {
@@ -35,8 +36,9 @@ const int TRANSFORM_TIMEOUT_MS = 100; //ms
 class Transforms_client_storage : public yarp::os::BufferedPort<yarp::os::Bottle>
 {
 private:
+
+
     yarp::os::Bottle m_lastBottle;
-    yarp::os::Mutex  m_mutex;
     yarp::os::Stamp  m_lastStamp;
     double           m_deltaT;
     double           m_deltaTMax;
@@ -49,6 +51,7 @@ private:
     std::vector <yarp::math::FrameTransform> m_transforms;
 
 public:
+    yarp::os::RecursiveMutex  m_mutex;
     size_t   size();
     yarp::math::FrameTransform& operator[]   (std::size_t idx);
     void clear();
