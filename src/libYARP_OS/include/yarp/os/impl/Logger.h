@@ -174,14 +174,14 @@ public:
     }
 
 private:
-    void show(ACE_UINT32 level, const String& txt);
+    void show(unsigned YARP_INT32 level, const String& txt);
     void exit(int level);
 
     static Logger *root;
     String prefix;
     Logger *parent;
     int verbose;
-    ACE_UINT32 low;
+    unsigned YARP_INT32 low;
     long int pid;
     FILE *stream;
 };
