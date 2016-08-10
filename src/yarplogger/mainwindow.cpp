@@ -235,7 +235,7 @@ void MainWindow::on_clearLogTab_action()
 void MainWindow::on_resetCountersLogTab(int model_row)
 {
     std::string logname = model_yarprunports->item(model_row,1)->text().toStdString();
-    system_message->addMessage(QString("Counters resetted for log ") + QString(logname.c_str()));
+    system_message->addMessage(QString("Counters reset for log ") + QString(logname.c_str()));
 }
 
 void MainWindow::on_saveLogTab(int model_row)
