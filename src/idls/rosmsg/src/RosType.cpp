@@ -135,7 +135,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         indent += "  ";
     }
     if (nesting>0) env.lookForService(false); // no srv nesting allowed in ros
-    //printf("Checking %s\n", tname);
+    printf("[type]%s Checking %s\n", indent.c_str(), tname);
     clear();
 
     std::string base = tname;
@@ -318,7 +318,10 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         }
     }
 
-    cursor->isValid = ok;
+    isValid = ok;
+    if (!isValid) {
+        fprintf(stderr, "[type]%s Check failed: %s\n", indent.c_str(), tname);
+    }
     return isValid;
 }
 
@@ -714,7 +717,10 @@ std::string RosTypeSearch::findFile(const char *tname) {
 
     // File not found. abort if needed
     if (abort_on_error) {
+        fprintf(stderr, "[type] %s not found. Aborting\n", tname);
         exit(1);
+    } else {
+        fprintf(stderr, "[type] %s not found. Continuing\n", tname);
     }
 
     return std::string();
