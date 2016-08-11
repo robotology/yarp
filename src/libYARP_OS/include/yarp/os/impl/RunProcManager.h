@@ -28,15 +28,11 @@
 
 
 #if defined(WIN32)
-
 typedef DWORD PID;
 typedef HANDLE FDESC;
-
 #else
-
 #include <yarp/os/Thread.h>
-
-typedef int PID;
+typedef pid_t PID;
 typedef int FDESC;
 typedef void* HANDLE;
 
@@ -51,30 +47,41 @@ public:
         int warn_suppress = pipe(pipe_sync);
         YARP_UNUSED(warn_suppress);
     }
-   ~ZombieHunterThread(){}
+    virtual ~ZombieHunterThread(){}
 
-    void onStop()
+    virtual void onStop()
     {
         close(pipe_sync[0]);
         close(pipe_sync[1]);
     }
 
-    void run()
+    virtual void run()
     {
         char dummy[8];
 
         while (!isStopping())
         {
-            if (read(pipe_sync[0],dummy,1)<=0) break;
+
+            if (read(pipe_sync[0], dummy, sizeof(char) * 8) <= 0) {
+                //If EOF or error
+                break;
+            }
+            //else if I'm here it means a child has terminated
+            //If I call wait I can find the exit status of the child process
 
             while (true)
             {
-                PID zombie=wait(NULL);
+                //check exit status of the child
+                PID zombie = wait(NULL);
+                //PID can be:
+                // - Child stopped or terminated => PID of child
+                // - Error => -1
 
                 //PID zombie=waitpid(-1,NULL,WNOHANG);
 
-                if (zombie>0)
+                if (zombie > 0)
                 {
+                    //Remove child information from the process info table
                     yarp::os::Run::CleanZombie(zombie);
                 }
                 else
@@ -87,7 +94,7 @@ public:
 
     void sigchldHandler()
     {
-        ssize_t warn_suppress = write(pipe_sync[1],"zombie",1);
+        ssize_t warn_suppress = write(pipe_sync[1], "zombie", sizeof(char) * (strlen("zombie") + 1));
         YARP_UNUSED(warn_suppress);
     }
 

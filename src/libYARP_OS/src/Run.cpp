@@ -1192,11 +1192,9 @@ int yarp::os::Run::server()
 
         if (mBraveZombieHunter)
         {
-            //ZombieHunterThread *p=mBraveZombieHunter;
-            //mBraveZombieHunter=NULL;
-            //p->stop();
-            //delete p;
             mBraveZombieHunter->stop();
+            delete mBraveZombieHunter;
+            mBraveZombieHunter = 0;
         }
 
         delete mProcessVector;
@@ -2500,7 +2498,10 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
         CLOSE(pipe_cmd_to_stdout[WRITE_TO_PIPE]);
         CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
 
-        cleanBeforeExec();
+        //Why removing vectors and stop threads?
+        //exec* never returns and memory is claimed by the system
+        //furthermore after fork() only the thread which called fork() is forked!
+        //            cleanBeforeExec();
 
         //signal(SIGPIPE,SIG_DFL);
 
@@ -2574,7 +2575,10 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
             CLOSE(pipe_cmd_to_stdout[WRITE_TO_PIPE]);
             CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
 
-            cleanBeforeExec();
+            //Why removing vectors and stop threads?
+            //exec* never returns and memory is claimed by the system
+            //furthermore after fork() only the thread which called fork() is forked!
+            //            cleanBeforeExec();
 
             //signal(SIGPIPE,SIG_DFL);
 
@@ -2718,7 +2722,10 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
                     strcat(cwd_arg_str[0],"/");
                     strcat(cwd_arg_str[0],arg_str[0]);
 
-                    cleanBeforeExec();
+                    //Why removing vectors and stop threads?
+                    //exec* never returns and memory is claimed by the system
+                    //furthermore after fork() only the thread which called fork() is forked!
+                    //            cleanBeforeExec();
 
                     ret=execvp(cwd_arg_str[0],cwd_arg_str);
 
@@ -2728,7 +2735,10 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
                 if (ret==YARPRUN_ERROR)
                 {
-                    cleanBeforeExec();
+                    //Why removing vectors and stop threads?
+                    //exec* never returns and memory is claimed by the system
+                    //furthermore after fork() only the thread which called fork() is forked!
+                    //            cleanBeforeExec();
 
                     ret=execvp(arg_str[0],arg_str);
                 }
@@ -2919,7 +2929,10 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
         CLOSE(pipe_cmd_to_stdout[WRITE_TO_PIPE]);
         CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
 
-        cleanBeforeExec();
+        //Why removing vectors and stop threads?
+        //exec* never returns and memory is claimed by the system
+        //furthermore after fork() only the thread which called fork() is forked!
+        //            cleanBeforeExec();
 
         //signal(SIGPIPE,SIG_DFL);
 
@@ -3061,7 +3074,10 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
                     strcat(cwd_arg_str[0],"/");
                     strcat(cwd_arg_str[0],arg_str[0]);
 
-                    cleanBeforeExec();
+                    //Why removing vectors and stop threads?
+                    //exec* never returns and memory is claimed by the system
+                    //furthermore after fork() only the thread which called fork() is forked!
+                    //            cleanBeforeExec();
 
                     ret=execvp(cwd_arg_str[0],cwd_arg_str);
 
@@ -3071,7 +3087,10 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
                 if (ret==YARPRUN_ERROR)
                 {
-                    cleanBeforeExec();
+                    //Why removing vectors and stop threads?
+                    //exec* never returns and memory is claimed by the system
+                    //furthermore after fork() only the thread which called fork() is forked!
+                    //            cleanBeforeExec();
 
                     ret=execvp(arg_str[0],arg_str);
                 }
@@ -3272,7 +3291,10 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
         REDIRECT_TO(STDERR_FILENO,pipe_child_to_parent[WRITE_TO_PIPE]);
 
-        cleanBeforeExec();
+        //Why removing vectors and stop threads?
+        //exec* never returns and memory is claimed by the system
+        //furthermore after fork() only the thread which called fork() is forked!
+        //            cleanBeforeExec();
 
         //signal(SIGHUP,rwSighupHandler);
 
@@ -3435,8 +3457,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
         {
             char* szenv = new char[msg.find("env").asString().length()+1];
             strcpy(szenv,msg.find("env").asString().c_str());
-            putenv(szenv); // putenv doesn't make copy of the string
-            //delete [] szenv;
+            putenv(szenv); // putenv becomes owner of the string. DO NOT RELEASE it
         }
 
         if (msg.check("workdir"))
@@ -3480,7 +3501,10 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
             strcat(cwd_arg_str[0],"/");
             strcat(cwd_arg_str[0],arg_str[0]);
 
-            cleanBeforeExec();
+            //Why removing vectors and stop threads?
+            //exec* never returns and memory is claimed by the system
+            //furthermore after fork() only the thread which called fork() is forked!
+//            cleanBeforeExec();
 
             ret=execvp(cwd_arg_str[0],cwd_arg_str);
 
@@ -3490,8 +3514,10 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
         if (ret==YARPRUN_ERROR)
         {
-            cleanBeforeExec();
-
+            //Why removing vectors and stop threads?
+            //exec* never returns and memory is claimed by the system
+            //furthermore after fork() only the thread which called fork() is forked!
+            //            cleanBeforeExec();
             ret=execvp(arg_str[0],arg_str);
         }
 
