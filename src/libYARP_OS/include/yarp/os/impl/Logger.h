@@ -18,10 +18,10 @@
 #  include <ace/Log_Record.h>
 #  include <ace/Log_Msg_Callback.h>
 #else
-#  define LM_DEBUG -1
-#  define LM_WARNING 1
-#  define LM_INFO 2
-#  define LM_ERROR 3
+#  define LM_DEBUG      04
+#  define LM_INFO      010
+#  define LM_WARNING   040
+#  define LM_ERROR    0200
 #endif
 #include <yarp/os/impl/PlatformStdio.h>
 
