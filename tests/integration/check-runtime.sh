@@ -18,6 +18,8 @@ if [ ! -e CMakeCache.txt ] ; then
     exit 1
 fi
 
+[ -n "$TRAVIS" ] && while true; do echo "..."; sleep 60; done & # print something to avoid timeout in travis
+
 src=`grep YARP_SOURCE_DIR CMakeCache.txt | sed "s/.*=//"`
 
 base="$PWD/runtime_tests"
@@ -125,4 +127,5 @@ header "Check installed static fakebot is startable"
 $base/root_static/bin/yarpdev --device fakebot --lifetime 1 || fail "Could not start fakebot"
 
 header "Done, no problems found"
+[ -n "$TRAVIS" ] && kill %1 # kill the echo process related to travis
 
