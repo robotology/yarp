@@ -322,15 +322,16 @@ bool PortCoreOutputUnit::sendHelper() {
         if (buf.dropRequested()) {
             done = true;
         }
-    }
-    if (done) {
-        closeBasic();
-        finished = true;
-        closing = true;
-        setDoomed();
+        if (done) {
+            closeBasic();
+            closing = true;
+            finished = true;
+            setDoomed();
+        }
     }
 
-    if(replied && op->getSender().modifiesReply()) {
+    // Another check for op!=NULL is required as closeBasic() might set op=NULL
+    if(op!=NULL && replied && op->getSender().modifiesReply()) {
             cachedReader = &op->getSender().modifyReply(*cachedReader);
     }
 
