@@ -26,7 +26,7 @@ yarp::dev::UrbtcControl::UrbtcControl() : ImplementPositionControl<UrbtcControl,
 	// *** default values ***
 	// without any gear
 	// 965 tics per radian
-	// 200'000 is _approximatly_ 180 degrees with a gear of 1:66
+    // 200'000 is _approximately_ 180 degrees with a gear of 1:66
     _dblFactDeg2Raw = 200000.0/180.0;
 	_intLimitDefault = 32000;
 
