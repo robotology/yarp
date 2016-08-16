@@ -242,7 +242,7 @@ script:
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then build/bin/yarp conf 0 0 local; fi
 
   # Run unit tests
-  - (cd build; ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE})
+  - (cd build; travis_wait 30 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE})
 
   # Test installation
   - (cd build; sudo cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
