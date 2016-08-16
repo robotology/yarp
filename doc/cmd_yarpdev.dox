@@ -5,7 +5,9 @@
  */
 
 /**
- * @page yarpdev The standard YARP device utility
+\page yarpdev yarpdev: the standard YARP device utility
+
+\ingroup yarp_tools
 
 The command-line utility "yarpdev" can create devices and wrap
 them for network visibility.  This is useful in cases where you
@@ -88,7 +90,7 @@ No framerate specified, polling the device
 yarpdev: created wrapper <grabber>.  See C++ class ServerFrameGrabber for documentation.
 yarpdev: device active...
 yarpdev: device active...
-...
+[...]
 \endverbatim
 
 Here we've asked to create the "test_grabber" device, which acts

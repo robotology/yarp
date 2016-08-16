@@ -82,7 +82,7 @@ but <em>GLOBBING is EVIL</em>, so we do not recommend it.
 \section rf_install_finalnotes Notes
 Keep in mind that the \c ${YARP_CONTEXTS_INSTALL_DIR} variable expands to a relative path that will be appended to the installation prefix chosen by the user; the user should be warned to use the same installation directory as YARP, or to configure their system as explained \ref datafiles_3rdparty here.
 
-Remember that you can always inspect the state of contexts on your machine, and customize installed configuration files, using the \ref yarp_yarp-config utility.
+Remember that you can always inspect the state of contexts on your machine, and customize installed configuration files, using the \ref yarp-config utility.
 
 \section rf_code Code
 

@@ -1,0 +1,40 @@
+/**
+\page yarpserver yarpserver: the YARP name server
+
+\ingroup yarp_tools
+
+\verbatim
+  yarpserver [OPTIONS]
+
+  --config filename.conf   Load options from a file.
+  --portdb ports.db        Store port information in named database.
+                           Must not be on an NFS file system.
+                           Set to :memory: to store in memory (faster).
+  --subdb subs.db          Store subscription information in named database.
+                           Must not be on an NFS file system.
+                           Set to :memory: to store in memory (faster).
+  --ip IP.AD.DR.ESS        Set IP address of server.
+  --socket NNNNN           Set port number of server.
+  --web dir                Serve web resources from given directory.
+  --no-web-cache           Reload pages from file for each request.
+  --ros                    Delegate pub/sub to ROS name server.
+\endverbatim
+
+This starts a name server running on the current machine, optionally
+specifying the socket-port to listen to (default whatever was used in
+the previous invocation, as recorded in a configuration file, or 10000
+if this is the first time to run).
+Also, the IP by which the name server should be identified can
+optionally be specified (default is a fairly random choice of
+the IPs associated with the current machine).
+
+The address of the name server can be determined using
+\ref yarp_where.  The address is cached in a configuration
+file - see \ref yarp_conf.
+
+If possible, a fallback multi-cast server will be started with IP
+224.2.1.1 and port number 10001.  The purpose of this server is
+to allow yarp processes to find the yarp name server in the absence
+of correct configuration.
+
+*/

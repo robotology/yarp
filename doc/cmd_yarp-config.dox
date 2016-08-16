@@ -6,7 +6,9 @@
  */
 
 /**
- * @page yarp_yarp-config yarp-config
+\page yarp-config yarp-config: the yarp-config tool
+
+\ingroup yarp_tools
 
 \author Elena Ceseracciu and Lorenzo Natale
 

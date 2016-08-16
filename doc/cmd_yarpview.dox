@@ -5,7 +5,10 @@
  */
 
 /**
- * @page yarpview The YARP image viewer: yarpview
+\page yarpview yarpview: visualize YARP images
+
+\ingroup yarp_guis
+\ingroup yarp_tools
 
 \tableofcontents
 
@@ -68,7 +71,7 @@ At its bottom yarpview shows statistics related to the frequency at which it rec
  
  As an example the images above show two instances of yarpview. In this case the port receives data with the framerate of 30Hz while the display runs at 10Hz. Images are from two instances of "test_grabber".
  
-Notice that the values in Port and Display should be approximatly equal when the option "Synch display" is selected.
+Notice that the values in Port and Display should be approximately equal when the option "Synch display" is selected.
  
 \section sec-yarpview-getting-clicks Getting image coordinates
 

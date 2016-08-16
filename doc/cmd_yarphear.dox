@@ -5,7 +5,9 @@
  */
 
 /**
- * @page yarphear Listen to YARP audio streams
+\page yarphear yarphear: listen to YARP audio streams
+
+\ingroup yarp_tools
 
 The command-line utility "yarphear" opens a port and connects it to the
 speakers.  If data is sent to the port, it is rendered to the speakers.

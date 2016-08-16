@@ -134,14 +134,16 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_MASTER_URI=http://localhost:11311; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROBOT=sim; fi; fi
 
+  # Update repositories (macOS)
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
+
   # Add additional repositories
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then echo "deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main" | sudo tee /etc/apt/sources.list.d/ros-latest.list; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then wget http://packages.ros.org/ros.key -O - | sudo apt-key add -; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/science; fi
 
-  # Update repositories
+  # Update repositories (Linux)
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -qq; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
 
   # Install missing build tools
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_CMAKE_GENERATOR" == "Ninja" ]; then sudo apt-get install ninja-build; fi; fi
