@@ -234,8 +234,8 @@ Route PortCoreOutputUnit::getRoute() {
 
 bool PortCoreOutputUnit::sendHelper() {
     bool replied = false;
-    bool done = false;
     if (op!=NULL) {
+        bool done = false;
         BufferedConnectionWriter buf(op->getConnection().isTextMode(),
                                      op->getConnection().isBareMode());
         if (cachedReader!=NULL) {
