@@ -113,10 +113,10 @@ public:
             // Connect local port to remote port
             if (!yarp::os::Network::connect(remotePortName.c_str(), realLocalPortName.c_str(), style)) {
                 warning() << "Connection from port" << realLocalPortName <<  "to port" << remotePortName
-                          << "was NOT successfull. Waiting from explicit connection from user.";
+                          << "was NOT successful. Waiting from explicit connection from user.";
             } else {
                 debug() << "Listening to port" << remotePortName << "from port" << realLocalPortName;
-                // Connection was successfull. Save the ContactStyle in order to reuse it for disconnecting;
+                // Connection was successful. Save the ContactStyle in order to reuse it for disconnecting;
                 this->style = style;
             }
 

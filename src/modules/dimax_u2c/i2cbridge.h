@@ -76,7 +76,7 @@ typedef void *HANDLE;
 
 typedef enum
 {
-	U2C_SUCCESS = 0,                            /*!< API Function was successfull */  
+	U2C_SUCCESS = 0,                            /*!< API Function was successful */
 	U2C_BAD_PARAMETER = 1,                      /*!< API Function got bad input parameter */
 	U2C_HARDWARE_NOT_FOUND = 2,                 /*!< U2C Device not found */
 	U2C_SLAVE_DEVICE_NOT_FOUND = 3,             /*!< I2C Slave device not found */

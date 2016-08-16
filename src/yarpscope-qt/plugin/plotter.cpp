@@ -421,10 +421,10 @@ void Connection::connect(const yarp::os::ContactStyle &style) {
     // Connect local port to remote port
     if (!yarp::os::Network::connect(remotePortName.toLatin1().data(), realLocalPortName.toLatin1().data(), style)) {
         qWarning() << "Connection from port" << realLocalPortName.toLatin1().data() <<  "to port" << remotePortName.toLatin1().data()
-                   << "was NOT successfull. Waiting from explicit connection from user.";
+                   << "was NOT successful. Waiting from explicit connection from user.";
     } else {
         qDebug("Listening to port %s from port %s",remotePortName.toLatin1().data(),realLocalPortName.toLatin1().data());
-        // Connection was successfull. Save the ContactStyle in order to reuse it for disconnecting;
+        // Connection was successful. Save the ContactStyle in order to reuse it for disconnecting;
         this->style = style;
     }
 
