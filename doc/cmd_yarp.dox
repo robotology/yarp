@@ -917,7 +917,7 @@ Try:
 \verbatim
 [in terminal E] yarpdev --device test_grabber --period 2 --width 8 --height 8 --name /grabber
 \endverbatim
-This creates a test "device" with a port called "/grabber", outputing a
+This creates a test "device" with a port called "/grabber", outputting a
 very small test image every 2 seconds.  You won't see much happen yet.
 Try:
 \verbatim
