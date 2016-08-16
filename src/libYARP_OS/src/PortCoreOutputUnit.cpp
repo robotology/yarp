@@ -273,38 +273,16 @@ bool PortCoreOutputUnit::sendHelper() {
                     buf.addToHeader();
 
                     if (cachedEnvelope!="") {
-                        // this will be the new way to signal that replies
-                        // are not expected
-                        //PortCommand pc('\0', ConstString(suppressReply?"D ":"d ") +
-                        //             cachedEnvelope);
-                        //pc.writeBlock(buf);
-
-                        // This is the backwards-compatible method.
-                        // To be used until YARP 2.1.2 is a "long time ago".
                         if (cachedEnvelope=="__ADMIN") {
                             PortCommand pc('a', "");
                             pc.write(buf);
                         } else {
-                            PortCommand pc('\0', ConstString(suppressReply?"do ":"d ") +
-                                        cachedEnvelope);
+                            PortCommand pc('\0', ConstString(suppressReply ? "D " : "d ") + cachedEnvelope);
                             pc.write(buf);
                         }
-
                     } else {
-                        // this will be the new way to signal that replies
-                        // are not expected
-                        //PortCommand pc(suppressReply?'D':'d',"");
-                        //pc.writeBlock(buf);
-
-                        // This is the backwards-compatible method.
-                        // To be used until YARP 2.1.2 is a "long time ago".
-                        if (suppressReply) {
-                            PortCommand pc('\0', "do");
-                            pc.write(buf);
-                        } else {
-                            PortCommand pc('d', "");
-                            pc.write(buf);
-                        }
+                        PortCommand pc(suppressReply ? 'D' : 'd', "");
+                        pc.write(buf);
                     }
                 }
             }
@@ -414,6 +392,3 @@ void *PortCoreOutputUnit::takeTracker() {
 bool PortCoreOutputUnit::isBusy() {
     return sending;
 }
-
-
-
