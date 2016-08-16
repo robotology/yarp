@@ -171,7 +171,6 @@ STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/generated_include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/include/ \
                          @CMAKE_SOURCE_DIR@/src/modules \
                          @CMAKE_SOURCE_DIR@/src/carriers \
-                         @CMAKE_SOURCE_DIR@/doc/spec \
                          @CMAKE_SOURCE_DIR@/doc \
                          @CMAKE_SOURCE_DIR@/.github
 
@@ -799,7 +798,6 @@ INPUT                  = @CMAKE_BINARY_DIR@/generated_include \
                          @CMAKE_SOURCE_DIR@/src/modules \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/doc \
-                         @CMAKE_SOURCE_DIR@/doc/spec \
                          @CMAKE_SOURCE_DIR@/doc/release \
                          @CMAKE_SOURCE_DIR@/.github
 

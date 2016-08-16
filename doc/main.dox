@@ -44,31 +44,45 @@ YARP is free and open, under the LGPL (*).
 Getting set up:
 \li \subpage install
 \li \subpage yarp_cluster
-\li \subpage yarp
 
 The basics of using YARP:
-\li \ref yarp_cmake_hello
+\li \subpage yarp_cmake_hello
 \li \subpage tutorials
-\li \ref note_ports
-\li \ref note_devices
-\li \ref yarp_data_dirs
+\li \subpage note_ports
+\li \subpage note_devices
+\li \subpage yarp_data_dirs
 
-Some helpful programs:
+Command line tools:
+\li \subpage yarp
+\li \subpage yarpserver
 \li \subpage yarpdev
+\li \subpage yarprobotinterface
 \li \subpage yarprun
-\li \subpage yarpmanager
-\li \subpage yarpscope
+\li \subpage yarp-config
 \li \subpage yarpdatadumper
+\li \subpage yarphear
+\li \subpage yarplogger-console
+\li \subpage yarpmanager-console
+\li \subpage yarpidl_rosmsg
+\li \subpage yarpidl_thrift
+\li \subpage yarpros
+
+GUIs:
+\li \subpage yarplogger
+\li \subpage yarpview
+\li \subpage yarpscope
+\li \subpage yarpmanager
+\li \subpage yarpmanagerpp
 \li \subpage yarpdataplayer
 \li \subpage yarpmotorgui
-\li \subpage yarpview
-\li \subpage yarp-config
+\li \subpage yarpbatterygui
+\li \subpage yarplaserscannergui
 
 Interoperability:
-\li \ref yarp_without_yarp
-\li \ref yarp_with_ros
-\li \ref yarp_swig
-\li \ref portmonitor
+\li \subpage yarp_without_yarp
+\li \subpage yarp_with_ros
+\li \subpage yarp_swig
+\li \subpage portmonitor
 
 More information:
 \li \subpage what_is_yarp
@@ -76,7 +90,8 @@ More information:
 \li \subpage changelog
 
 YARP resources:
-\li \ref download
+\li <a href="http://github.com/robotology/yarp">YARP project on GitHub</a>
+\li <a href="http://github.com/robotology/yarp/issues">YARP issue tracker</a>
 \li <a href="http://wiki.icub.org/wiki/YARP">Wiki</a>
 \li <a href="http://wiki.icub.org/wiki/Robotcub-hackers">Mailing&nbsp;list</a>
 

@@ -5,7 +5,9 @@
  */
 
 /**
- * @page yarprun yarprun: a way of running programs on a set of machines
+\page yarprun yarprun: run programs on a set of machines
+
+\ingroup yarp_tools
 
 
 The command-line utility "yarprun" provides a client-server environment that is able to run, kill and monitor applications commands on a remote machine, with the same syntax and behaviour in Windows and Linux.

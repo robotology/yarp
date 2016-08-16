@@ -5,7 +5,9 @@
  */
 
 /**
- * @page yarp The main YARP command-line interface
+\page yarp yarp: the main YARP command-line interface
+
+\ingroup yarp_tools
 
 The command-line utility "yarp" performs a set of useful operations
 for a YARP network.  It can give status information, make and break
@@ -737,31 +739,9 @@ type of connection to use).
 
 @section yarp_server yarp server
 
-\verbatim
-  yarp server
-  yarp server SOCKETPORT
-  yarp server IP SOCKETPORT
-\endverbatim
-
-This starts a name server running on the current machine, optionally
-specifying the socket-port to listen to (default whatever was used in
-the previous invocation, as recorded in a configuration file, or 10000
-if this is the first time to run).
-Also, the IP by which the name server should be identified can
-optionally be specified (default is a fairly random choice of
-the IPs associated with the current machine).
-
-The address of the name server can be determined using
-\ref yarp_where.  The address is cached in a configuration
-file - see \ref yarp_conf.
-
-If possible, a fallback multi-cast server will be started with IP
-224.2.1.1 and port number 10001.  The purpose of this server is
-to allow yarp processes to find the yarp name server in the absence
-of correct configuration.
-
-
-
+This starts a name server running on the current machine.
+See \ref yarpserver "yarpserver" documentation for the options accepted by this
+command.
 
 @section yarp_terminate yarp terminate
 

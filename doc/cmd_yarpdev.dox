@@ -5,7 +5,9 @@
  */
 
 /**
- * @page yarpdev The standard YARP device utility
+\page yarpdev yarpdev: the standard YARP device utility
+
+\ingroup yarp_tools
 
 The command-line utility "yarpdev" can create devices and wrap
 them for network visibility.  This is useful in cases where you
