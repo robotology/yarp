@@ -79,7 +79,7 @@ by the \ref yarpdatadumper.
 
 - Linux: ffmpeg must be properly installed and recognized by
   OpenCV. The command "sudo apt-get ffmpeg" seemed not to work.
-  This is a possible alterative procedure:
+  This is a possible alternative procedure:
 
   -# sudo apt-get install libjpeg62-dev libtiff4-dev
      libjasper-dev libopenexr-dev libeigen2-dev yasm libfaac-dev
@@ -107,7 +107,7 @@ by the \ref yarpdatadumper.
 
 --dir \e dirname
 - The parameter \e dirname serves to specify the storage
-  directory explicitely (relative to the location where the
+  directory explicitly (relative to the location where the
   module has been launched from).
 
 --overwrite

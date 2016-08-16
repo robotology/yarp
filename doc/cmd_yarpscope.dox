@@ -15,8 +15,9 @@
 \author The original Qt version of portScope was written by Francesco Nori.
 
 \section intro_sec Description
-This simple graphical user interface allows to visualize on a plot the content
-of a YARP port. The input port is assumed to contain a vector of numbers.
+This simple graphical user interface allows one to visualize on a plot the
+content of a YARP port. The input port is assumed to contain a vector of
+numbers.
 
  - The main window can contain one or more plots.
  - Each plot can contain one or more graphs.

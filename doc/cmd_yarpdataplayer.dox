@@ -11,7 +11,7 @@ A module that reproduces in a synchronized way, previously acquired data
 
 This module uses gtkmm to provide the user a simple but informative
 user-interface in order to manipulate the previously acquired data.
-When playing it uses the timestamps provided from the time of aquisition
+When playing it uses the timestamps provided from the time of acquisition
 to synchronize the sending of the data as if the robot was present.
 
 \image html datasetplayer.jpg
@@ -78,7 +78,7 @@ yarpdatadumper info.log file example:
 
 \section in_files_sec Input Data Files
 The player will look, in a recursive way, into directories in order to
-create the parts needed and retreive the data.
+create the parts needed and retrieve the data.
 
 The data name is the default \ref yarpdatadumper names: data.log and
 info.log.
