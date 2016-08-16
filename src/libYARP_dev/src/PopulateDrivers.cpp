@@ -41,6 +41,7 @@ extern DriverCreator *createRangefinder2DClient();
 extern DriverCreator *createRGBDSensorWrapper();
 extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
+extern DriverCreator *createRemoteControlBoardRemapper();
 
 #ifdef WITH_YARPMATH
 extern DriverCreator *createFrameTransformServer();
@@ -98,6 +99,7 @@ void Drivers::init() {
     add(createRGBDSensorWrapper());
     add(createRGBDSensorClient());
     add(createControlBoardRemapper());
+    add(createRemoteControlBoardRemapper());
 
 #ifdef WITH_YARPMATH
     add(createFrameTransformServer());

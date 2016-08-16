@@ -90,6 +90,41 @@ bool FakeMotionControl::extractGroup(Bottle &input, Bottle &out, const std::stri
     return true;
 }
 
+void FakeMotionControl::resizeBuffers()
+{
+    pos.resize(_njoints);
+    dpos.resize(_njoints);
+    vel.resize(_njoints);
+    speed.resize(_njoints);
+    acc.resize(_njoints);
+    loc.resize(_njoints);
+    amp.resize(_njoints);
+
+    current.resize(_njoints);
+    nominalCurrent.resize(_njoints);
+    maxCurrent.resize(_njoints);
+    peakCurrent.resize(_njoints);
+    pwm.resize(_njoints);
+    pwmLimit.resize(_njoints);
+    supplyVoltage.resize(_njoints);
+
+    pos.zero();
+    dpos.zero();
+    vel.zero();
+    speed.zero();
+    acc.zero();
+    loc.zero();
+    amp.zero();
+
+    current.zero();
+    nominalCurrent.zero();
+    maxCurrent.zero();
+    peakCurrent.zero();
+
+    pwm.zero();
+    pwmLimit.zero();
+    supplyVoltage.zero();
+}
 
 bool FakeMotionControl::alloc(int nj)
 {
@@ -155,7 +190,7 @@ bool FakeMotionControl::alloc(int nj)
     _calibrated = allocAndCheck<bool>(nj);
 //     _cacheImpedance = allocAndCheck<eOmc_impedance_t>(nj);
 
-    //debug purpose
+    resizeBuffers();
 
     return true;
 }
@@ -244,36 +279,8 @@ FakeMotionControl::FakeMotionControl() :
     verbose = VERY_VERBOSE;
     _njoints = 2;
     opened = false;
-    pos.resize(_njoints);
-    dpos.resize(_njoints);
-    vel.resize(_njoints);
-    speed.resize(_njoints);
-    acc.resize(_njoints);
-    loc.resize(_njoints);
-    amp.resize(_njoints);
 
-    current.resize(_njoints);
-    nominalCurrent.resize(_njoints);
-    maxCurrent.resize(_njoints);
-    peakCurrent.resize(_njoints);
-    pwm.resize(_njoints);
-    pwmLimit.resize(_njoints);
-    supplyVoltage.resize(_njoints);
-
-    pos.zero();
-    dpos.zero();
-    vel.zero();
-    speed.zero();
-    acc.zero();
-    loc.zero();
-    amp.zero();
-
-    current.zero();
-    maxCurrent.zero();
-    peakCurrent.zero();
-    pwm.zero();
-    pwmLimit.zero();
-    supplyVoltage.zero();
+    resizeBuffers();
 
     _controlModes = NULL;
     _interactMode = NULL;
@@ -1801,6 +1808,8 @@ bool FakeMotionControl::getEncodersRaw(double *encs)
 
 bool FakeMotionControl::getEncoderSpeedRaw(int j, double *sp)
 {
+    // To avoid returning uninitialized memory, we set the encoder speed to 0
+    *sp = 0.0;
     return true;
 }
 
@@ -1816,6 +1825,9 @@ bool FakeMotionControl::getEncoderSpeedsRaw(double *spds)
 
 bool FakeMotionControl::getEncoderAccelerationRaw(int j, double *acc)
 {
+    // To avoid returning uninitialized memory, we set the encoder acc to 0
+    *acc = 0.0;
+
     return true;
 }
 
@@ -1891,8 +1903,8 @@ bool FakeMotionControl::resetMotorEncodersRaw()
 
 bool FakeMotionControl::getMotorEncoderRaw(int m, double *value)
 {
-    bool ret = false;
-    return ret;
+    *value = 0.0;
+    return true;
 }
 
 bool FakeMotionControl::getMotorEncodersRaw(double *encs)
@@ -1908,6 +1920,7 @@ bool FakeMotionControl::getMotorEncodersRaw(double *encs)
 
 bool FakeMotionControl::getMotorEncoderSpeedRaw(int m, double *sp)
 {
+    *sp = 0.0;
     return true;
 }
 
@@ -1923,6 +1936,7 @@ bool FakeMotionControl::getMotorEncoderSpeedsRaw(double *spds)
 
 bool FakeMotionControl::getMotorEncoderAccelerationRaw(int m, double *acc)
 {
+    *acc = 0.0;
     return true;
 }
 

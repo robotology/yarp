@@ -236,7 +236,16 @@ public:
 
     virtual bool initialised();
 
+    /**
+     * Allocated buffers.
+     */
     bool alloc(int njoints);
+
+    /**
+     * Resize previously allocated buffers.
+     */
+    void resizeBuffers();
+
     bool init(void);
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.65

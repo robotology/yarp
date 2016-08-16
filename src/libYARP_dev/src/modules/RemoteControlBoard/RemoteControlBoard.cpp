@@ -253,7 +253,19 @@ YARP_DISABLE_DEPRECATED_WARNING
 /**
 * @ingroup dev_impl_wrapper
 *
-* The client side of the control board, connects to a ServerControlBoard.
+* The client side of the control board, connects to a remote controlboard using the YARP network.
+*
+* This device communicates using the YARP ports opened the yarp::dev::ControlBoardWrapper device
+* to use a device exposing controlboard method even from a different process (or even computer)
+* from the one that opened the controlboard device.
+*
+*  Parameters required by this device are:
+* | Parameter name | SubParameter   | Type    | Units | Default Value | Required     | Description                       | Notes |
+* |:--------------:|:--------------:|:-------:|:-----:|:-------------:|:-----------: |:---------------------------------:|:-----:|
+* | remote         |       -        | string  | -     |   -           | Yes          | Prefix of the port to which to connect.  |       |
+* | local          |       -        | string  | -     |   -           | Yes          | Port prefix of the port openend by this device.  |       |
+* | writeStrict    |       -        | string  | -     | See note      | No           |                                   |       |
+*
 */
 class yarp::dev::RemoteControlBoard :
     public IPidControl,

@@ -149,7 +149,8 @@ set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.cpp
-                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp)
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
+                        src/modules/ControlBoardRemapper/RemoteControlBoardRemapper.cpp)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/modules/FrameTransformClient/FrameTransformClient.cpp
                                 src/modules/FrameTransformServer/FrameTransformServer.cpp)
@@ -164,7 +165,8 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         src/modules/ControlBoardRemapper/ControlBoardRemapper.h
-                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h)
+                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h
+                        src/modules/ControlBoardRemapper/RemoteControlBoardRemapper.h)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/modules/FrameTransformClient/FrameTransformClient.h
                                 src/modules/FrameTransformServer/FrameTransformServer.h)
