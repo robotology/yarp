@@ -62,7 +62,7 @@ Some helpful programs:
 \li \subpage yarpdataplayer
 \li \subpage yarpmotorgui
 \li \subpage yarpview
-\li \subpage yarp_yarp-config
+\li \subpage yarp-config
 
 Interoperability:
 \li \ref yarp_without_yarp
