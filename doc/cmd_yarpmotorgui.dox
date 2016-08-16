@@ -1,7 +1,8 @@
 /**
-\defgroup yarpmotorgui yarpmotorgui
-@ingroup yarp_guis
-@ingroup yarp_tools
+\page yarpmotorgui yarpmotorgui: move the joints of a robot
+
+\ingroup yarp_guis
+\ingroup yarp_tools
 
 A simple graphical interface for moving all the joints of a robot with
 sliders.

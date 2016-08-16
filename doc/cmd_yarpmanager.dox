@@ -6,7 +6,10 @@
  */
 
 /**
-\page yarpmanager yarpmanager: a way of running and managing multiple programs on a set of machines
+\page yarpmanager yarpmanager: run and manage multiple programs on a set of machines
+
+\ingroup yarp_guis
+\ingroup yarp_tools
 
 \author Ali Paikan
 

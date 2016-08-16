@@ -16,47 +16,6 @@
  * Public License for more details
 */
 
-/** 
-\defgroup laserScannerGui laserScannerGui
- 
-A simple GUI to display the distance measurements of a 2D laser scanner.
- 
-Copyright (C) 2010 RobotCub Consortium
- 
-Author: Marco Randazzo
-
-CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-\section intro_sec Description
-A simple GUI to display the distance measurements of a 2D laser scanner.
- 
-\section lib_sec Libraries 
-- YARP libraries. 
-- OpenCV libraries.
-
-\section parameters_sec Parameters
-None.
-
-\section portsa_sec Ports Accessed
-None. 
- 
-\section portsc_sec Ports Created 
-The module creates the port /laserScannerGui:i used to receive the laser data.
-
-\section in_files_sec Input Data Files
-None.
-
-\section out_data_sec Output Data Files 
-None. 
- 
-\section conf_file_sec Configuration Files
-None.
- 
-\section tested_os_sec Tested OS
-Windows, Linux
-
-\author Marco Randazzo
-*/ 
 
 #include <iostream>
 #include <iomanip>

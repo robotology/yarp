@@ -5,7 +5,10 @@
  */
 
 /**
- * @page yarpview The YARP image viewer: yarpview
+\page yarpview yarpview: visualize YARP images
+
+\ingroup yarp_guis
+\ingroup yarp_tools
 
 \tableofcontents
 

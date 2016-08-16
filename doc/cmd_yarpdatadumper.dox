@@ -1,7 +1,7 @@
 /**
-@ingroup yarp_tools
+\page yarpdatadumper yarpdatadumper: the YARP data recorder
 
-\defgroup yarpdatadumper yarpdatadumper
+\ingroup yarp_tools
 
 Acquires and stores Bottles or Images and Videos from a YARP
 port.

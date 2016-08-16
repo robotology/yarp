@@ -26,7 +26,7 @@ The key points to keep in mind are:
 \li    External packages can install files so that YARP can find them (see \ref datafiles_3rdparty "here");
 \li    Type of files are divided in families that are placed in specific sub-directories. Current allowed sub-directories are listed \ref datafiles_datadirs "here".
 
-File customization can happen by copying files or contexts from the shared installation directories to the ones private to the user. The \ref yarp_yarp-config utility simplifies this process.
+File customization can happen by copying files or contexts from the shared installation directories to the ones private to the user. The \ref yarp-config utility simplifies this process.
 
 \section datafiles_datadirs Data directories contents
 Files are normally organized in the following directories:
@@ -117,7 +117,7 @@ Templates are XML files with a .template extension. Typical templates are applic
 
 \section managing_data_files Managing data files: the yarp-config utility
 
-Managing configuration and data files requires nothing special, you can copy, edit and remove them using the shell. However YARP provides an utility that simplifies this, see \ref yarp_yarp-config.
+Managing configuration and data files requires nothing special, you can copy, edit and remove them using the shell. However YARP provides an utility that simplifies this, see \ref yarp-config.
 
 
 \section datafiles_3rdparty 3rd party packages (for developers)

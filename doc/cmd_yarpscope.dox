@@ -6,7 +6,10 @@
  */
 
 /**
-\page yarpscope yarpscope: A simple graphical user interface for visualizing the numerical content of a a port.
+\page yarpscope yarpscope: visualize the numerical content of a port
+
+\ingroup yarp_guis
+\ingroup yarp_tools
 
 \author Daniele E. Domenichelli
 \author The original Qt version of portScope was written by Francesco Nori.

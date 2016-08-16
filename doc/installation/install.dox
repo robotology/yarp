@@ -5,7 +5,7 @@
  */
 
 /**
- * @page install Installing YARP
+ * @page install Downloading and Installing YARP
 
 Source for YARP are available from https://github.com/robotology/yarp. Installing YARP is easy it can be done from sources or directly from binary packages. We provide in the links below detailed installation instructions for all systems.
 
@@ -18,4 +18,3 @@ Installing the software is easy but if you are really in a rush you can download
 After your are done installing YARP you can proceed with the following link: \subpage check_your_installation.
 
 */
-

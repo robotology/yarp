@@ -1,7 +1,8 @@
 /**
-\defgroup yarpdataplayer yarpdataplayer
-@ingroup yarp_guis
-@ingroup yarp_tools
+\page yarpdataplayer yarpdataplayer: replay recorded data
+
+\ingroup yarp_guis
+\ingroup yarp_tools
 
 A module that reproduces in a synchronized way, previously acquired data
 (using \ref yarpdatadumper) from a source of input.
