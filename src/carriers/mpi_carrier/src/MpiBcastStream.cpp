@@ -5,8 +5,6 @@
  *
  */
 
-#ifdef CREATE_MPI_CARRIER
-
 #include <yarp/os/MpiBcastStream.h>
 
 using namespace yarp::os;
@@ -122,6 +120,3 @@ void MpiBcastStream::write(const Bytes& b) {
     printf("[MpiBcastStream @ %s] done writing\n", name.c_str());
     #endif
 }
-
-
-#endif

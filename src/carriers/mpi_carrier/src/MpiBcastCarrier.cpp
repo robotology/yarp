@@ -5,8 +5,6 @@
  *
  */
 
-#ifdef CREATE_MPI_CARRIER
-
 #include <yarp/os/MpiBcastCarrier.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Log.h>
@@ -107,5 +105,3 @@ bool MpiBcastCarrier::isActive() {
 /*
  * ----------------------------
  */
-
-#endif

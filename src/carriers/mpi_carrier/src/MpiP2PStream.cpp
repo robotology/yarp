@@ -5,8 +5,6 @@
  *
  */
 
-#ifdef CREATE_MPI_CARRIER
-
 #include <yarp/os/MpiP2PStream.h>
 
 using namespace yarp::os;
@@ -94,6 +92,3 @@ void MpiP2PStream::write(const Bytes& b) {
         Time::yield();
     }
 }
-
-
-#endif
