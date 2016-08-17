@@ -414,6 +414,10 @@ if(ENABLE_yarpmod_nvidia)
   checkandset_dependency(NVIDIACg)
 endif()
 
+if(ENABLE_yarpmod_primesensecamera OR ENABLE_yarpmod_kinect)
+  find_package(Libusb1)
+  checkandset_dependency(Libusb1)
+endif()
 
 # PRINT DEPENDENCIES STATUS:
 
@@ -447,6 +451,7 @@ print_dependency(wxWidgets)
 print_dependency(SDL)
 print_dependency(PortAudio)
 print_dependency(NVIDIACg)
+print_dependency(Libusb1)
 
 
 # CHECK DEPENDENCIES:
@@ -477,6 +482,8 @@ check_optional_dependency(ENABLE_yarpmod_wxsdl wxWidgets)
 check_optional_dependency(ENABLE_yarpmod_wxsdl SDL)
 check_optional_dependency(ENABLE_yarpmod_portaudio PortAudio)
 check_optional_dependency(ENABLE_yarpmod_nvidia NVIDIACg)
+check_optional_dependency(ENABLE_yarpmod_primesensecamera Libusb1)
+check_optional_dependency(ENABLE_yarpmod_kinect Libusb1)
 
 
 #########################################################################
