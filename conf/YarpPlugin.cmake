@@ -442,6 +442,7 @@ macro(FIND_PACKAGE LIBNAME)
   if(NOT X_YARP_PLUGIN_MODE)
     # pass on call without looking at it
     _FIND_PACKAGE(${LIBNAME} ${ARGN})
+    return()
   endif()
   if(NOT "${LIBNAME}" STREQUAL "YARP")
     # Skipping requests for YARP, we already have it
