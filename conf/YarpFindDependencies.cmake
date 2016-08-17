@@ -369,6 +369,11 @@ if(ENABLE_yarpcar_mjpeg_carrier)
     checkandset_dependency(JPEG)
 endif()
 
+if(ENABLE_yarpcar_mpi_carrier OR ENABLE_yarpcar_mpibcast_carrier)
+    find_package(MPI)
+    checkandset_dependency(MPI)
+endif()
+
 if(ENABLE_yarpmod_ovrheadset)
     find_package(LibOVR)
     find_package(GLFW3)
@@ -402,6 +407,7 @@ print_dependency(GLFW3)
 print_dependency(GLEW)
 print_dependency(Libdc1394)
 print_dependency(JPEG)
+print_dependency(MPI)
 
 
 # CHECK DEPENDENCIES:
@@ -421,6 +427,8 @@ check_optional_dependency(ENABLE_yarpmod_opencv_grabber OpenCV)
 check_optional_dependency(ENABLE_yarpmod_ovrheadset LibOVR)
 check_optional_dependency(ENABLE_yarpmod_ovrheadset GLFW3)
 check_optional_dependency(ENABLE_yarpmod_ovrheadset GLEW)
+check_optional_dependency(ENABLE_yarpcar_mpi_carrier MPI)
+check_optional_dependency(ENABLE_yarpcar_mpibcast_carrier MPI)
 
 
 
