@@ -209,7 +209,7 @@ public:
       
         @param id The id of the device to be contacted
         @param param encodes address in control table and size of parameter (2 Bytes => address + 100, 1 byte => address)
-        @return value if read successfull or -1
+        @return value if read successful or -1
      */
     virtual int readParameter(unsigned char id, unsigned char param);
 

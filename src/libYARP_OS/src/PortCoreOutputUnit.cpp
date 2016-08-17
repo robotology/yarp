@@ -234,8 +234,8 @@ Route PortCoreOutputUnit::getRoute() {
 
 bool PortCoreOutputUnit::sendHelper() {
     bool replied = false;
-    bool done = false;
     if (op!=NULL) {
+        bool done = false;
         BufferedConnectionWriter buf(op->getConnection().isTextMode(),
                                      op->getConnection().isBareMode());
         if (cachedReader!=NULL) {
@@ -313,6 +313,9 @@ bool PortCoreOutputUnit::sendHelper() {
         if (!done) {
             if (op->getConnection().isActive()) {
                 replied = op->write(buf);
+                if(replied && op->getSender().modifiesReply()) {
+                    cachedReader = &op->getSender().modifyReply(*cachedReader);
+                }
             }
             if (!op->isOk()) {
                 done = true;
@@ -330,10 +333,6 @@ bool PortCoreOutputUnit::sendHelper() {
         }
     }
 
-    // Another check for op!=NULL is required as closeBasic() might set op=NULL
-    if(op!=NULL && replied && op->getSender().modifiesReply()) {
-            cachedReader = &op->getSender().modifyReply(*cachedReader);
-    }
 
     return replied;
 }
