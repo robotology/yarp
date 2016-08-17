@@ -419,6 +419,12 @@ if(ENABLE_yarpmod_primesensecamera OR ENABLE_yarpmod_kinect)
   checkandset_dependency(Libusb1)
 endif()
 
+if(ENABLE_yarpmod_stage)
+  find_package(Stage)
+  checkandset_dependency(Stage)
+endif()
+
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -452,6 +458,7 @@ print_dependency(SDL)
 print_dependency(PortAudio)
 print_dependency(NVIDIACg)
 print_dependency(Libusb1)
+print_dependency(Stage)
 
 
 # CHECK DEPENDENCIES:
@@ -484,6 +491,7 @@ check_optional_dependency(ENABLE_yarpmod_portaudio PortAudio)
 check_optional_dependency(ENABLE_yarpmod_nvidia NVIDIACg)
 check_optional_dependency(ENABLE_yarpmod_primesensecamera Libusb1)
 check_optional_dependency(ENABLE_yarpmod_kinect Libusb1)
+check_optional_dependency(ENABLE_yarpmod_stage Stage)
 
 
 #########################################################################
