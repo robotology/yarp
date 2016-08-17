@@ -364,6 +364,11 @@ if(ENABLE_yarpcar_bayer_carrier)
     checkandset_dependency(Libdc1394)
 endif()
 
+if(ENABLE_yarpcar_mjpeg_carrier)
+    find_package(JPEG)
+    checkandset_dependency(JPEG)
+endif()
+
 if(ENABLE_yarpmod_ovrheadset)
     find_package(LibOVR)
     find_package(GLFW3)
@@ -396,6 +401,7 @@ print_dependency(LibOVR)
 print_dependency(GLFW3)
 print_dependency(GLEW)
 print_dependency(Libdc1394)
+print_dependency(JPEG)
 
 
 # CHECK DEPENDENCIES:
@@ -410,6 +416,7 @@ check_alternative_dependency(CREATE_GUIS GTK2 Qt5)
 check_alternative_dependency(CREATE_YARPSCOPE GtkDataboxMM QCustomPlot)
 check_optional_dependency(CREATE_YARPBUILDER GooCanvasMM)
 check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
+check_optional_dependency(ENABLE_yarpcar_mjpeg_carrier JPEG)
 check_optional_dependency(ENABLE_yarpmod_opencv_grabber OpenCV)
 check_optional_dependency(ENABLE_yarpmod_ovrheadset LibOVR)
 check_optional_dependency(ENABLE_yarpmod_ovrheadset GLFW3)
