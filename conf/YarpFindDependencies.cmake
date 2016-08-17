@@ -387,6 +387,11 @@ if(ENABLE_yarpmod_dynamixelAX12Ftdi)
   checkandset_dependency(FTDI)
 endif()
 
+if(ENABLE_yarpmod_cuda)
+  find_package(CUDA)
+  checkandset_dependency(CUDA)
+endif()
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -413,6 +418,7 @@ print_dependency(Libdc1394)
 print_dependency(JPEG)
 print_dependency(MPI)
 print_dependency(FTDI)
+print_dependency(CUDA)
 
 
 # CHECK DEPENDENCIES:
@@ -435,6 +441,7 @@ check_optional_dependency(ENABLE_yarpmod_ovrheadset GLEW)
 check_optional_dependency(ENABLE_yarpcar_mpi_carrier MPI)
 check_optional_dependency(ENABLE_yarpcar_mpibcast_carrier MPI)
 check_optional_dependency(ENABLE_yarpmod_dynamixelAX12Ftdi FTDI)
+check_optional_dependency(ENABLE_yarpmod_cuda CUDA)
 
 
 #########################################################################
