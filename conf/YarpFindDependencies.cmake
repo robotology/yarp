@@ -382,6 +382,11 @@ if(ENABLE_yarpmod_ovrheadset)
   checkandset_dependency(GLEW)
 endif()
 
+if(ENABLE_yarpmod_dynamixelAX12Ftdi)
+  find_package(FTDI)
+  checkandset_dependency(FTDI)
+endif()
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -407,6 +412,7 @@ print_dependency(GLEW)
 print_dependency(Libdc1394)
 print_dependency(JPEG)
 print_dependency(MPI)
+print_dependency(FTDI)
 
 
 # CHECK DEPENDENCIES:
@@ -428,7 +434,7 @@ check_optional_dependency(ENABLE_yarpmod_ovrheadset GLFW3)
 check_optional_dependency(ENABLE_yarpmod_ovrheadset GLEW)
 check_optional_dependency(ENABLE_yarpcar_mpi_carrier MPI)
 check_optional_dependency(ENABLE_yarpcar_mpibcast_carrier MPI)
-
+check_optional_dependency(ENABLE_yarpmod_dynamixelAX12Ftdi FTDI)
 
 
 #########################################################################
