@@ -404,6 +404,10 @@ if(ENABLE_yarpmod_wxsdl)
   checkandset_dependency(SDL)
 endif()
 
+if(ENABLE_yarpmod_portaudio)
+  find_package(PortAudio)
+  checkandset_dependency(PortAudio)
+endif()
 
 # PRINT DEPENDENCIES STATUS:
 
@@ -435,6 +439,7 @@ print_dependency(CUDA)
 print_dependency(FFMPEG)
 print_dependency(wxWidgets)
 print_dependency(SDL)
+print_dependency(PortAudio)
 
 
 # CHECK DEPENDENCIES:
@@ -463,6 +468,7 @@ check_optional_dependency(ENABLE_yarpmod_ffmpeg_writer FFMPEG)
 check_optional_dependency(ENABLE_yarpmod_serial ACE)
 check_optional_dependency(ENABLE_yarpmod_wxsdl wxWidgets)
 check_optional_dependency(ENABLE_yarpmod_wxsdl SDL)
+check_optional_dependency(ENABLE_yarpmod_portaudio PortAudio)
 
 
 #########################################################################
