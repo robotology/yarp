@@ -1,41 +1,42 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- 
-IF (COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(microphone TYPE yarp::dev::MicrophoneDeviceDriver INCLUDE MicrophoneDeviceDriver.h WRAPPER grabber)
-  yarp_install(FILES microphone.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-ENDIF (COMPILE_DEVICE_LIBRARY)
 
-IF (NOT SKIP_microphone)
+if(UNIX OR WIN32)
+  if(COMPILE_DEVICE_LIBRARY)
+    yarp_prepare_device(microphone
+                        TYPE yarp::dev::MicrophoneDeviceDriver
+                        INCLUDE MicrophoneDeviceDriver.h
+                        WRAPPER grabber)
+    yarp_install(FILES microphone.ini
+                 COMPONENT runtime
+                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+  endif()
 
-FIND_PACKAGE(YARP REQUIRED)
+  if(NOT SKIP_microphone)
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+    get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+    get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+    get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
+    include_directories(${YARP_OS_INCLUDE_DIRS}
+                        ${YARP_sig_INCLUDE_DIRS}
+                        ${YARP_dev_INCLUDE_DIRS})
 
-IF (UNIX OR WIN32)
+    if(WIN32)
+      set(_SYS Windows)
+    else()
+      set(_SYS Linux)
+    endif()
 
-  IF (WIN32)
-    SET(SYS Windows)
-  ELSE (WIN32)
-    SET(SYS Linux)
-  ENDIF (WIN32)
-
-  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-  INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-  LINK_LIBRARIES(${YARP_LIBRARIES})
-
-  YARP_ADD_PLUGIN(yarp_microphone ${SYS}MicrophoneDeviceDriver.cpp MicrophoneDeviceDriver.h)
-  yarp_install(TARGETS yarp_microphone
-               EXPORT YARP
-               COMPONENT runtime
-               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-
-ELSE (UNIX OR WIN32)
-
-  MESSAGE(SEND_ERROR "not a system we know how to build a microphone driver on")
-
-ENDIF (UNIX OR WIN32)
-
-ENDIF (NOT SKIP_microphone)
+    yarp_add_plugin(yarp_microphone ${_SYS}MicrophoneDeviceDriver.cpp
+                                    MicrophoneDeviceDriver.h)
+    target_link_libraries(yarp_microphone YARP_OS
+                                          YARP_sig
+                                          YARP_dev)
+    yarp_install(TARGETS yarp_microphone
+                 EXPORT YARP
+                 COMPONENT runtime
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  endif()
+endif()
