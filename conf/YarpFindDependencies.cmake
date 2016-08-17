@@ -397,6 +397,13 @@ if(ENABLE_yarpmod_ffmpeg_grabber OR ENABLE_yarpmod_ffmpeg_writer)
   checkandset_dependency(FFMPEG)
 endif()
 
+if(ENABLE_yarpmod_wxsdl)
+  find_package(wxWidgets)
+  find_package(SDL)
+  checkandset_dependency(wxWidgets)
+  checkandset_dependency(SDL)
+endif()
+
 
 # PRINT DEPENDENCIES STATUS:
 
@@ -426,6 +433,8 @@ print_dependency(MPI)
 print_dependency(FTDI)
 print_dependency(CUDA)
 print_dependency(FFMPEG)
+print_dependency(wxWidgets)
+print_dependency(SDL)
 
 
 # CHECK DEPENDENCIES:
@@ -452,6 +461,8 @@ check_optional_dependency(ENABLE_yarpmod_cuda CUDA)
 check_optional_dependency(ENABLE_yarpmod_ffmpeg_grabber FFMPEG)
 check_optional_dependency(ENABLE_yarpmod_ffmpeg_writer FFMPEG)
 check_optional_dependency(ENABLE_yarpmod_serial ACE)
+check_optional_dependency(ENABLE_yarpmod_wxsdl wxWidgets)
+check_optional_dependency(ENABLE_yarpmod_wxsdl SDL)
 
 
 #########################################################################
