@@ -409,6 +409,12 @@ if(ENABLE_yarpmod_portaudio)
   checkandset_dependency(PortAudio)
 endif()
 
+if(ENABLE_yarpmod_nvidia)
+  find_package(NVIDIACg)
+  checkandset_dependency(NVIDIACg)
+endif()
+
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -440,6 +446,7 @@ print_dependency(FFMPEG)
 print_dependency(wxWidgets)
 print_dependency(SDL)
 print_dependency(PortAudio)
+print_dependency(NVIDIACg)
 
 
 # CHECK DEPENDENCIES:
@@ -469,6 +476,7 @@ check_optional_dependency(ENABLE_yarpmod_serial ACE)
 check_optional_dependency(ENABLE_yarpmod_wxsdl wxWidgets)
 check_optional_dependency(ENABLE_yarpmod_wxsdl SDL)
 check_optional_dependency(ENABLE_yarpmod_portaudio PortAudio)
+check_optional_dependency(ENABLE_yarpmod_nvidia NVIDIACg)
 
 
 #########################################################################
