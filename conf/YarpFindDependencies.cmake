@@ -392,6 +392,12 @@ if(ENABLE_yarpmod_cuda)
   checkandset_dependency(CUDA)
 endif()
 
+if(ENABLE_yarpmod_ffmpeg_grabber OR ENABLE_yarpmod_ffmpeg_writer)
+  find_package(FFMPEG)
+  checkandset_dependency(FFMPEG)
+endif()
+
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -419,6 +425,7 @@ print_dependency(JPEG)
 print_dependency(MPI)
 print_dependency(FTDI)
 print_dependency(CUDA)
+print_dependency(FFMPEG)
 
 
 # CHECK DEPENDENCIES:
@@ -442,6 +449,8 @@ check_optional_dependency(ENABLE_yarpcar_mpi_carrier MPI)
 check_optional_dependency(ENABLE_yarpcar_mpibcast_carrier MPI)
 check_optional_dependency(ENABLE_yarpmod_dynamixelAX12Ftdi FTDI)
 check_optional_dependency(ENABLE_yarpmod_cuda CUDA)
+check_optional_dependency(ENABLE_yarpmod_ffmpeg_grabber FFMPEG)
+check_optional_dependency(ENABLE_yarpmod_ffmpeg_writer FFMPEG)
 
 
 #########################################################################
