@@ -451,6 +451,7 @@ check_optional_dependency(ENABLE_yarpmod_dynamixelAX12Ftdi FTDI)
 check_optional_dependency(ENABLE_yarpmod_cuda CUDA)
 check_optional_dependency(ENABLE_yarpmod_ffmpeg_grabber FFMPEG)
 check_optional_dependency(ENABLE_yarpmod_ffmpeg_writer FFMPEG)
+check_optional_dependency(ENABLE_yarpmod_serial ACE)
 
 
 #########################################################################
