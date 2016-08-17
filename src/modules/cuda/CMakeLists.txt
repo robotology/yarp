@@ -3,38 +3,39 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(cuda TYPE CUDAGPU INCLUDE "CUDADeviceDriver.h")
+  yarp_prepare_device(cuda
+                      TYPE CUDAGPU
+                      INCLUDE "CUDADeviceDriver.h")
   yarp_install(FILES cuda.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif(COMPILE_DEVICE_LIBRARY)
+endif()
 
 if(NOT SKIP_cuda)
-#  set(CUDA_NUMTHREADS "64" CACHE STRING "lemieux" FORCE)
   set(CUDA_NUMTHREADS 64 CACHE STRING "")
   set(CUDA_NUMTHREADBLOCKS 256 CACHE STRING "")
 
-  find_package(YARP REQUIRED)
+  add_definitions(-DCUDA_NUMTHREADS=${CUDA_NUMTHREADS}
+                  -DCUDA_NUMTHREADBLOCKS=${CUDA_NUMTHREADBLOCKS})
 
-  find_library(lib_cudart cudart)
-  find_library(lib_cuda cuda)
-  find_library(lib_cutil cutil)
-  find_library(lib_GL GL)
+  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
+  include_directories(${YARP_OS_INCLUDE_DIRS}
+                      ${YARP_sig_INCLUDE_DIRS}
+                      ${YARP_dev_INCLUDE_DIRS})
 
-  if(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
-
-    add_definitions(-DCUDA_NUMTHREADS=${CUDA_NUMTHREADS} -DCUDA_NUMTHREADBLOCKS=${CUDA_NUMTHREADBLOCKS})
-    yarp_add_plugin(ycuda CUDADeviceDriver.cpp CUDADeviceDriver.h FunctionClass.h)
-    target_link_libraries(ycuda ${lib_cudart} ${lib_cuda} ${lib_GL} ${lib_cutil})
-    yarp_install(TARGETS ycuda
-                 EXPORT YARP
-                 COMPONENT runtime
-                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-
-  else()
-    message(FATAL_ERROR "could not find all libraries needed by cuda driver")
-  endif()
-
+  yarp_add_plugin(yarp_cuda CUDADeviceDriver.cpp
+                            CUDADeviceDriver.h
+                            FunctionClass.h)
+  target_link_libraries(yarp_cuda YARP_OS
+                                  YARP_sig
+                                  YARP_dev
+                                  ${CUDA_LIBRARIES})
+  yarp_install(TARGETS yarp_cuda
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 endif()
 
