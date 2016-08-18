@@ -49,8 +49,10 @@ bool YarprunPortsSortFilterProxyModel::lessThan( const QModelIndex &left, const 
   {
       QString leftStr     = this->sourceModel()->data( left ).toString();
       QString rightStr    = this->sourceModel()->data( right ).toString();
-      struct tm left_time = {0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0};
-      struct tm right_time = {0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0};
+      struct tm left_time;
+      struct tm right_time;
+      memset(&left_time, 0, sizeof(struct tm));
+      memset(&right_time, 0, sizeof(struct tm));
       sscanf(leftStr.toStdString().c_str(), "%d:%d:%d %d/%d/%d", &left_time.tm_hour, &left_time.tm_min, &left_time.tm_sec, &left_time.tm_mday, &left_time.tm_mon, &left_time.tm_year);
       sscanf(rightStr.toStdString().c_str(), "%d:%d:%d %d/%d/%d", &right_time.tm_hour, &right_time.tm_min, &right_time.tm_sec, &right_time.tm_mday, &right_time.tm_mon, &right_time.tm_year);
       left_time.tm_year-=1900;
