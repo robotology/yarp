@@ -2312,7 +2312,6 @@ String Companion::version() {
 }
 
 
-#ifdef YARP_HAS_ACE
 static void plugin_signal_handler(int) {
    // prevent infinite recursion if say_hi() causes another segfault
     std::signal(SIGSEGV, SIG_DFL);
@@ -2384,10 +2383,8 @@ static void plugin_usage()
     printf("     yarp plugin --help\n");
     printf("\n");
 }
-#endif
 
 int Companion::cmdPlugin(int argc, char *argv[]) {
-#ifdef YARP_HAS_ACE
     if (argc<1) {
         plugin_usage();
         return 1;
@@ -2478,9 +2475,6 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         }
         return plugin_test(settings) ? 0 : 1;
     }
-#endif
-    fprintf(stderr,"Command not available without ACE\n");
-    return 1;
 }
 
 

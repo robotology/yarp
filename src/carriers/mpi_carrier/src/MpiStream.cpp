@@ -5,8 +5,6 @@
  *
  */
 
-#ifdef CREATE_MPI_CARRIER
-
 #include <yarp/os/MpiStream.h>
 #include <yarp/os/Log.h>
 
@@ -70,13 +68,3 @@ void MpiStream::beginPacket() {
 void MpiStream::endPacket() {
      // nothing to do
 }
-
-
-
-#else
-
-extern "C" int MpiStreamStatus() {
-    return 0;
-}
-
-#endif

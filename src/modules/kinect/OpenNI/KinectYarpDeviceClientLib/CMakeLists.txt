@@ -2,8 +2,12 @@
 # Author: Duarte Aragao
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-find_package(YARP REQUIRED)
-include_directories(${YARP_INCLUDE_DIRS})
+get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
+include_directories(${YARP_OS_INCLUDE_DIRS}
+                    ${YARP_sig_INCLUDE_DIRS}
+                    ${YARP_dev_INCLUDE_DIRS})
 
 # Search for source code.
 file(GLOB folder_source *.cpp *.cc *.c)
@@ -17,7 +21,9 @@ foreach(header_file ${folder_header})
 endforeach(header_file ${folder_header})
 
 yarp_add_plugin(KinectYarpDeviceClientLib ${folder_source} ${folder_header})
-target_link_libraries(KinectYarpDeviceClientLib ${YARP_LIBRARIES})
+target_link_libraries(KinectYarpDeviceClientLib YARP_OS
+                                                YARP_sig
+                                                YARP_dev)
 install(TARGETS KinectYarpDeviceClientLib
         COMPONENT runtime
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
