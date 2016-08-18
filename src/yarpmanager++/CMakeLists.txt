@@ -14,11 +14,6 @@ if(CREATE_YARPMANAGER_PP)
                         ./src-builder
                         ./src-manager)
 
-    #find_package(Qt5Widgets)
-    #find_package(Qt5Declarative)
-    #list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-    #include(YarpUseQt5)
-
     set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
     #manager files
@@ -58,7 +53,7 @@ if(CREATE_YARPMANAGER_PP)
 
     set(manager_QRC_FILES src-manager/res_manager.qrc)
     if(WIN32)
-	   set(yarpmanager_qt_RC_FILES yarpmanager.rc)
+      set(yarpmanager_qt_RC_FILES yarpmanager.rc)
     endif()
 
     set(manager_UI_FILES

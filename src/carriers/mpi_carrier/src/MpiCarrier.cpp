@@ -5,8 +5,6 @@
  *
  */
 
-#ifdef CREATE_MPI_CARRIER
-
 #include <yarp/os/MpiCarrier.h>
 #include <yarp/os/Route.h>
 #include <sys/types.h>
@@ -36,7 +34,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     }
 }
 
- bool MpiCarrier::checkHeader(const Bytes& header) {
+bool MpiCarrier::checkHeader(const Bytes& header) {
     if (header.length()!=8) {
         return false;
     }
@@ -48,7 +46,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     return true;
 }
 
- bool MpiCarrier::sendHeader(ConnectionState& proto) {
+bool MpiCarrier::sendHeader(ConnectionState& proto) {
     // Send the "magic number" for this carrier
     ManagedBytes header(8);
     getHeader(header.bytes());
@@ -102,7 +100,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
 
 
 
- bool MpiCarrier::expectSenderSpecifier(ConnectionState& proto) {
+bool MpiCarrier::expectSenderSpecifier(ConnectionState& proto) {
     // interpret everything that sendHeader wrote
     name = proto.getRoute().getToName();
 
@@ -132,7 +130,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     return notLocal && proto.is().isOk();
 }
 
- bool MpiCarrier::respondToHeader(ConnectionState& proto) {
+bool MpiCarrier::respondToHeader(ConnectionState& proto) {
     // SWITCH TO NEW STREAM TYPE
     #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] trying to connect to MpiPort '%s'\n", route.c_str(), port.c_str());
@@ -151,7 +149,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     return proto.is().isOk();
 }
 
- bool MpiCarrier::expectReplyToHeader(ConnectionState& proto) {
+bool MpiCarrier::expectReplyToHeader(ConnectionState& proto) {
     // SWITCH TO NEW STREAM TYPE
     if (!comm->accept()) {
         delete stream;
@@ -165,13 +163,3 @@ void  MpiCarrier::getHeader(const Bytes& header) {
 
     return proto.os().isOk();
 }
-
-
-#else
-
-extern "C" int MpiCarrierStatus() {
-    return 0;
-}
-
-
-#endif

@@ -3,34 +3,34 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(portaudio TYPE yarp::dev::PortAudioDeviceDriver INCLUDE PortAudioDeviceDriver.h WRAPPER grabber)
+  yarp_prepare_device(portaudio
+                      TYPE yarp::dev::PortAudioDeviceDriver
+                      INCLUDE PortAudioDeviceDriver.h
+                      WRAPPER grabber)
   yarp_install(FILES portaudio.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif(COMPILE_DEVICE_LIBRARY)
+endif()
 
 if(NOT SKIP_portaudio)
-  find_package(YARP REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS})
-  link_libraries(${YARP_LIBRARIES})
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
+  include_directories(${YARP_OS_INCLUDE_DIRS}
+                      ${YARP_sig_INCLUDE_DIRS}
+                      ${YARP_dev_INCLUDE_DIRS})
+  include_directories(SYSTEM ${PortAudio_INCLUDE_DIR})
 
-  find_package(PortAudio)
-
-  if(PortAudio_FOUND)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${PortAudio_INCLUDE_DIR})
-    link_libraries(${PortAudio_LIBRARIES})
-    yarp_add_plugin(yarp_portaudio PortAudioBuffer.cpp PortAudioBuffer.h PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
-    yarp_install(TARGETS yarp_portaudio
-                 EXPORT YARP
-                 COMPONENT runtime
-                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  else(PortAudio_FOUND)
-    message(SEND_ERROR "portaudio not found")
-  endif(PortAudio_FOUND)
-    
+  yarp_add_plugin(yarp_portaudio PortAudioBuffer.cpp PortAudioBuffer.h PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
+  target_link_libraries(yarp_portaudio YARP_OS
+                                       YARP_sig
+                                       YARP_dev
+                                       ${PortAudio_LIBRARIES})
+  yarp_install(TARGETS yarp_portaudio
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES portaudio.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
-
-endif(NOT SKIP_portaudio)
-
-
+endif()
