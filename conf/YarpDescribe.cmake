@@ -22,11 +22,10 @@ message(STATUS "In-tree includes: ${YARP_INCLUDE_DIRS}")
 message(STATUS "YARP libraries: ${YARP_LIBS}")
 
 set(YARP_HAS_IDL TRUE)
-set(YARP_IDL_BINARY_HINT ${CMAKE_BINARY_DIR}/bin)
-if (MSVC)
-    set(YARP_IDL_BINARY_HINT "${YARP_IDL_BINARY_HINT};${YARP_IDL_BINARY_HINT}/Debug;${YARP_IDL_BINARY_HINT}/Release")
-endif(MSVC)
-
+set(YARP_IDL_BINARY_HINT ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+foreach(_config ${CMAKE_CONFIGURATION_TYPES})
+  set(YARP_IDL_BINARY_HINT "${YARP_IDL_BINARY_HINT};${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/${_config}")
+endforeach()
 set(YARP_BINDINGS ${CMAKE_SOURCE_DIR}/bindings)
 
 # Filter out from YARP_LIBRARIES all the plugins, yarpmod, yarpcar
