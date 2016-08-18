@@ -99,21 +99,6 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
     set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
     set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES) # list of additional libraries that will be linked by the master
 
-    # One glitch is that if plugins are used within YARP, rather
-    # than in an external library, then "find_package(YARP)" will
-    # not work correctly yet.  We simulate the operation of
-    # find_package(YARP) here if needed, using properties
-    # maintained during the YARP build.
-    get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-    if(YARP_TREE_INCLUDE_DIRS)
-      # Simulate the operation of find_package(YARP)
-      set(YARP_FOUND TRUE)
-      get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-      get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
-      get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
-    else()
-      find_package(YARP REQUIRED)
-    endif()
   endif()
 endmacro()
 
@@ -428,24 +413,3 @@ if(NOT YARP_NO_DEPRECATED)
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   endmacro()
 endif()
-
-
-
-#########################################################################
-# Lightly redefine FIND_PACKAGE to skip calls to FIND_PACKAGE(YARP).
-# YARP dependencies are guaranteed to have already been satisfied.
-# And if we are compiling YARP, the use of FIND_PACKAGE(YARP) will lead
-# to problems.
-# FIXME This macro must disappear.
-#
-macro(FIND_PACKAGE LIBNAME)
-  if(NOT X_YARP_PLUGIN_MODE)
-    # pass on call without looking at it
-    _FIND_PACKAGE(${LIBNAME} ${ARGN})
-    return()
-  endif()
-  if(NOT "${LIBNAME}" STREQUAL "YARP")
-    # Skipping requests for YARP, we already have it
-    _FIND_PACKAGE(${LIBNAME} ${ARGN})
-  endif()
-endmacro()
