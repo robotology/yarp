@@ -219,7 +219,7 @@ bool Utilities::checkLogValidity(const char *filename)
 {
     bool check = false;
     fstream str;
-    str.open (filename);//, ios::binary);
+    str.open (filename, ios_base::in);//, ios::binary);
 
     if (str.is_open()){
         string line;
@@ -248,7 +248,7 @@ bool Utilities::setupDataFromParts(partsData &part)
     // info part
     LOG("opening file %s\n", part.infoFile.c_str() );
 
-    str.open (part.infoFile.c_str());//, ios::binary);
+    str.open (part.infoFile.c_str(), ios_base::in);//, ios::binary);
     if (str.is_open()){
         string line;
         int itr = 0;
@@ -271,7 +271,7 @@ bool Utilities::setupDataFromParts(partsData &part)
 
     // data part
     LOG("opening file %s\n", part.logFile.c_str() );
-    str.open (part.logFile.c_str());//, ios::binary);
+    str.open (part.logFile.c_str(), ios_base::in);//, ios::binary);
 
     //read throughout
     if (str.is_open()){
