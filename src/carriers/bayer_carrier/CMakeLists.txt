@@ -7,7 +7,9 @@ include(YarpDeprecatedOption)
 yarp_deprecated_option(USE_LIBDC1394)
 
 if (COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(bayer_carrier TYPE yarp::os::BayerCarrier INCLUDE BayerCarrier.h)
+  yarp_prepare_carrier(bayer_carrier
+                       TYPE yarp::os::BayerCarrier
+                       INCLUDE BayerCarrier.h)
   yarp_install(FILES bayer.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
@@ -39,7 +41,6 @@ if (NOT SKIP_bayer_carrier)
 
   target_link_libraries(yarp_bayer YARP_OS
                                    YARP_sig
-                                   ${ACE_LIBRARIES}
                                    ${Libdc1394_LIBRARIES})
 
   yarp_install(TARGETS yarp_bayer

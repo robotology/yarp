@@ -3,7 +3,9 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if (COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(portmonitor_carrier TYPE yarp::os::PortMonitor INCLUDE PortMonitor.h)
+  yarp_prepare_carrier(portmonitor_carrier
+                       TYPE yarp::os::PortMonitor
+                       INCLUDE PortMonitor.h)
   yarp_install(FILES portmonitor.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
@@ -19,8 +21,8 @@ if (NOT SKIP_portmonitor_carrier)
     add_definitions(" -DENABLED_PORTMONITOR_LUA")
   endif()
 
-  include_directories(${YARP_INCLUDE_DIRS}                      
-                      ${CMAKE_CURRENT_SOURCE_DIR}/dll)  
+  include_directories(${YARP_INCLUDE_DIRS}
+                      ${CMAKE_CURRENT_SOURCE_DIR}/dll)
   yarp_add_plugin(yarp_portmonitor
                   PortMonitor.h
                   MonitorBinding.h

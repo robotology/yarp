@@ -10,6 +10,9 @@ if(CREATE_OPTIONAL_CARRIERS)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS})
 
+  # This is required until Carriers is in the impl namespace, see also #402
+  include_directories(${ACE_INCLUDE_DIRS})
+
   add_subdirectory(wire_rep_utils)
 
   include(YarpPlugin)

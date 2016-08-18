@@ -1,5 +1,7 @@
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(ovrheadset TYPE yarp::dev::OVRHeadset INCLUDE OVRHeadset.h)
+  yarp_prepare_device(ovrheadset
+                      TYPE yarp::dev::OVRHeadset
+                      INCLUDE OVRHeadset.h)
   yarp_install(FILES ovrheadset.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})

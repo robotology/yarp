@@ -3,7 +3,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(opencv_grabber TYPE yarp::dev::OpenCVGrabber INCLUDE OpenCVGrabber.h WRAPPER grabber)
+    yarp_prepare_device(opencv_grabber
+                        TYPE yarp::dev::OpenCVGrabber
+                        INCLUDE OpenCVGrabber.h
+                        WRAPPER grabber)
   yarp_install(FILES opencv.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
@@ -13,7 +16,8 @@ if(NOT SKIP_opencv_grabber)
 
     include_directories(${YARP_INCLUDE_DIRS})
     include_directories(${OpenCV_INCLUDE_DIRS})
-    yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp OpenCVGrabber.h)
+    yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp
+                                OpenCVGrabber.h)
     target_link_libraries(yarp_opencv ${YARP_LIBRARIES})
     target_link_libraries(yarp_opencv ${OpenCV_LIBRARIES})
     yarp_install(TARGETS yarp_opencv
