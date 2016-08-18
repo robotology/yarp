@@ -16,13 +16,10 @@
 #include <yarp/os/Carrier.h>
 #include <yarp/os/Bottle.h>
 
-#include <yarp/os/impl/PlatformVector.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class Carriers;
-        }
+        class Carriers;
     }
 }
 
@@ -32,7 +29,7 @@ namespace yarp {
  * This is the starting point for creating connections
  * between ports.
  */
-class YARP_OS_impl_API yarp::os::impl::Carriers
+class YARP_OS_API yarp::os::Carriers
 {
 public:
 
@@ -110,15 +107,10 @@ public:
     static Bottle listCarriers();
 
 private:
-    PlatformVector<Carrier *> delegates;
-
     Carriers();
 
-    static Carriers *yarp_carriers_instance;
-
-    Carrier *chooseCarrier(const ConstString * name, const Bytes * header,
-                           bool load_if_needed = true,
-                           bool return_template = false);
+    class Private;
+    Private * const mPriv;
 };
 
 

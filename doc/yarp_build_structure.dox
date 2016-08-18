@@ -595,7 +595,7 @@ the following variables are defined:
 @section yarp_build_structure_template_carrier conf/template/yarp_plugin_carrier.cpp.in
 
 A snippet of code to add a carrier plugin.  We make an instance of the carrier
-class, and pass it to a global yarp::os::impl::Carriers object.  The
+class, and pass it to a global yarp::os::Carriers object.  The
 code is contained in a function called add_FOO() where FOO is the name
 of the carrier.
 

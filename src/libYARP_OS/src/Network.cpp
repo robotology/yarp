@@ -23,7 +23,7 @@
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputProtocol.h>
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/Route.h>
