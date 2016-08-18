@@ -785,23 +785,24 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
     sprintf(filename, "/proc/%d/cmdline", pid);
     file = fopen(filename, "r");
     if (file) {
-        fgets(cmdline, sizeof(cmdline) / sizeof(*cmdline), file);
+        char *p = fgets(cmdline, sizeof(cmdline) / sizeof(*cmdline), file);
         fclose(file);
-        char *p = cmdline;
-        while (*p) {
-            p += strlen(p);
-            if (*(p + 1))
-                *p = ' ';
-            p++;
-        }
-        info.pid = pid;
-        // split the cmdline to find the arguments
-        info.name = cmdline;
-        size_t index = info.name.find(" ");
-        if(index != info.name.npos) {
-            info.name = info.name.substr(0, index);
-            info.arguments = cmdline;
-            info.arguments = info.arguments.substr(index+1);
+        if (p != NULL) {
+            while (*p) {
+                p += strlen(p);
+                if (*(p + 1))
+                    *p = ' ';
+                p++;
+            }
+            info.pid = pid;
+            // split the cmdline to find the arguments
+            info.name = cmdline;
+            size_t index = info.name.find(" ");
+            if(index != info.name.npos) {
+                info.name = info.name.substr(0, index);
+                info.arguments = cmdline;
+                info.arguments = info.arguments.substr(index+1);
+            }
         }
     }
 
