@@ -13,7 +13,7 @@ macro(add_config_test name dir)
   set(bin_dir ${CMAKE_CURRENT_BINARY_DIR}/make/${dir})
   file(MAKE_DIRECTORY ${bin_dir})
   add_test(NAME ${name} WORKING_DIRECTORY ${bin_dir}
-    COMMAND ${CMAKE_COMMAND} -DALLOW_IDL_GENERATION=TRUE -DYARP_DIR=${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${dir} )
+    COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DALLOW_IDL_GENERATION=TRUE -DYARP_DIR=${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${dir} )
 endmacro()
 
 macro(add_make_test name dir)

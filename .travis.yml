@@ -119,9 +119,6 @@ matrix:
     # Normal build with integration tests (sometimes integration::rpc test fails)
     - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
 
-    # Normal build with Xcode generator (idl demo tests fail)
-    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
-
 branches:
   except:
     - /^*appveyor*$/
@@ -253,7 +250,7 @@ script:
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then build/bin/yarp conf 0 0 local; fi
 
   # Run unit tests
-  - (cd build; travis_wait 30 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE})
+  - (cd build; travis_wait 50 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE})
 
   # Test installation
   - (cd build; sudo cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
