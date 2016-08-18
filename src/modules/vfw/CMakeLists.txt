@@ -4,7 +4,10 @@
 
 if(WIN32)
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(vfw_grabber TYPE yarp::dev::VfwGrabber INCLUDE VfwGrabber.h WRAPPER grabber)
+    yarp_prepare_device(vfw_grabber
+                        TYPE yarp::dev::VfwGrabber
+                        INCLUDE VfwGrabber.h
+                        WRAPPER grabber)
     yarp_install(FILES vfw.ini
                 COMPONENT runtime
                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})

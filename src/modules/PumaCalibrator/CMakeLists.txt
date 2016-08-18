@@ -3,7 +3,9 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(pumacalibrator TYPE yarp::dev::PumaCalibrator INCLUDE PumaCalibrator.h )
+  yarp_prepare_device(pumacalibrator
+                      TYPE yarp::dev::PumaCalibrator
+                      INCLUDE PumaCalibrator.h)
 endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_pumacalibrator)
@@ -13,7 +15,8 @@ if(NOT SKIP_pumacalibrator)
   include_directories(${YARP_OS_INCLUDE_DIRS}
                       ${YARP_dev_INCLUDE_DIRS})
 
-  yarp_add_plugin(pumacalibrator PumaCalibrator.cpp  PumaCalibrator.h )
+  yarp_add_plugin(pumacalibrator PumaCalibrator.cpp
+                                 PumaCalibrator.h)
   yarp_install(TARGETS pumacalibrator
                EXPORT YARP
                COMPONENT runtime
