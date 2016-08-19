@@ -13,6 +13,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/BufferedPort.h
                  include/yarp/os/Bytes.h
                  include/yarp/os/Carrier.h
+                 include/yarp/os/Carriers.h
                  include/yarp/os/Clock.h
                  include/yarp/os/Connection.h
                  include/yarp/os/ConnectionReader.h
@@ -141,7 +142,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/BottleImpl.h
                       include/yarp/os/impl/BufferedConnectionWriter.h
-                      include/yarp/os/impl/Carriers.h
                       include/yarp/os/impl/Companion.h
                       include/yarp/os/impl/CXX11LockImpl.h
                       include/yarp/os/impl/CXX11SemaphoreImpl.h

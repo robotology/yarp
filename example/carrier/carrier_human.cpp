@@ -8,7 +8,7 @@
 #include <yarp/os/all.h>
 
 #include <yarp/os/impl/Carrier.h>
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/NetType.h>

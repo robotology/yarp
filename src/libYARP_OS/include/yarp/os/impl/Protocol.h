@@ -12,7 +12,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/ShiftStream.h>

@@ -5,7 +5,7 @@
  */
 
 #include <yarp/os/api.h>
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/os/SharedLibraryClass.h>
 #include <@YARPPLUG_INCLUDE@>
 
@@ -17,12 +17,10 @@
 #  define YARP_PLUGIN_EXPORT YARP_HELPER_DLL_EXPORT
 #endif
 
-using namespace yarp::os;
-using namespace yarp::os::impl;
 
 #ifdef YARP_STATIC_PLUGIN
 YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
-    yarp::os::impl::Carriers::addCarrierPrototype(new @YARPPLUG_TYPE@);
+    yarp::os::Carriers::addCarrierPrototype(new @YARPPLUG_TYPE@);
 }
 #endif
 
