@@ -32,7 +32,7 @@ using namespace yarp::os;
 
 
 
-class Carriers::Private
+class Carriers::Private : public YarpPluginSelector
 {
 public:
     static Carriers* yarp_carriers_instance;
@@ -47,6 +47,8 @@ public:
     static bool matchCarrier(const Bytes *header, Bottle& code);
     static bool checkForCarrier(const Bytes *header, Searchable& group);
     static bool scanForCarrier(const Bytes *header);
+
+    virtual bool select(Searchable& options);
 };
 
 Carriers* Carriers::Private::yarp_carriers_instance = NULL;
@@ -192,6 +194,12 @@ bool Carriers::Private::scanForCarrier(const Bytes *header)
     return false;
 }
 
+bool Carriers::Private::select(Searchable& options)
+{
+    return options.check("type",Value("none")).asString() == "carrier";
+}
+
+
 Carriers::Carriers() :
         mPriv(new Private)
 {
@@ -306,10 +314,36 @@ void Carriers::removeInstance()
 Bottle Carriers::listCarriers()
 {
     Bottle lst;
+    Property done;
+
     PlatformVector<Carrier*>& delegates = getInstance().mPriv->delegates;
     for (size_t i = 0; i < delegates.size(); i++) {
         Carrier& c = *delegates[i];
         lst.addString(c.getName());
+        done.put(c.getName(), 1);
     }
+
+    getInstance().mPriv->scan();
+    Bottle plugins = getInstance().mPriv->getSelectedPlugins();
+    for (int i = 0; i < plugins.size(); i++) {
+        Value& options = plugins.get(i);
+        ConstString name = options.check("name",Value("untitled")).asString();
+        if (done.check(name)) {
+            continue;
+        }
+
+        SharedLibraryFactory lib;
+        YarpPluginSettings settings;
+        settings.setSelector(*getInstance().mPriv);
+        settings.readFromSearchable(options,name);
+        settings.open(lib);
+        ConstString location = lib.getName().c_str();
+        if (location=="") {
+            continue;
+        }
+        lst.addString(name);
+        done.put(name, 1);
+    }
+
     return lst;
 }
