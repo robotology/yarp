@@ -1569,7 +1569,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString("[prop] [get] $prop      # get a user-defined port property (prop, val)");
         result.addString("[prop] [set] $prop $val # set a user-defined port property (prop, val)");
         result.addString("[prop] [get] $portname  # get Qos properties of a connection to/from a port");
-        result.addString("[prop] [set] $portname  # set Qos properies of a connection to/from a port");
+        result.addString("[prop] [set] $portname  # set Qos properties of a connection to/from a port");
         result.addString("[prop] [get] $cur_port  # get information about current process (e.g., scheduling priority, pid)");
         result.addString("[prop] [set] $cur_port  # set properties of the current process (e.g., scheduling priority, pid)");
         result.addString("[atch] [out] $prop      # attach a portmonitor plug-in to the port's output");
