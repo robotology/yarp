@@ -39,6 +39,7 @@ endforeach()
 # Add a "runtime" test for using plugins against yarp with static/shared linking
 add_test("integration::runtime" ${CMAKE_CURRENT_SOURCE_DIR}/check-runtime.sh)
 set_property(TEST "integration::runtime" PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
+set_property(TEST "integration::runtime" PROPERTY TIMEOUT 2000)
 
 set(SIMPLE_TESTS
   http  # Sanity check for YARP http support against curl
