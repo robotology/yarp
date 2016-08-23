@@ -59,6 +59,8 @@ namespace yarp{
 /**
  *  @ingroup dev_impl_wrapper
  *
+ * \brief Device that expose an AnalogSensor (using the IAnalogSensor interface) on the YARP or ROS network.
+ * 
  * \section analogWrapper_parameter Description of input parameters
  *
  *  It reads the data from an analog sensor and sends them on one or more ports.
