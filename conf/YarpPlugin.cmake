@@ -211,6 +211,7 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
                     ADVANCED
                     TEMPLATE
                     TEMPLATE_DIR
+                    OPTION
                     CODE
                     WRAPPER)
   set(_multiValueArgs DEPENDS
@@ -243,19 +244,24 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   # Set up a flag to enable/disable compilation of this plugin.
   set(_plugin_fullname "${X_YARP_PLUGIN_PREFIX}${_plugin_name}")
 
+  if(NOT DEFINED _YPP_OPTION)
+    set(_YPP_OPTION ENABLE_${_plugin_fullname})
+  endif()
+
   if(DEFINED _YPP_DEPENDS)
-    cmake_dependent_option(ENABLE_${_plugin_fullname} "${_YPP_DOC}" ${_YPP_DEFAULT}
+    cmake_dependent_option(${_YPP_OPTION} "${_YPP_DOC}" ${_YPP_DEFAULT}
                            "${_YPP_DEPENDS}" OFF)
   else()
-    option(ENABLE_${_plugin_fullname} "${_YPP_DOC}" ${_YPP_DEFAULT})
+    option(${_YPP_OPTION} "${_YPP_DOC}" ${_YPP_DEFAULT})
   endif()
   if(_YPP_ADVANCED)
-    mark_as_advanced(ENABLE_${_plugin_fullname})
+    mark_as_advanced(${_YPP_OPTION})
   endif()
 
   # Set some convenience variables based on whether the plugin
   # is enabled or disabled.
-  set(ENABLE_${_plugin_name} ${ENABLE_${_plugin_fullname}})
+  set(ENABLE_${_plugin_fullname} ${${_YPP_OPTION}})
+  set(ENABLE_${_plugin_name} ${${_YPP_OPTION}})
   if(ENABLE_${_plugin_name})
     set(SKIP_${_plugin_name} OFF)
     set(SKIP_${_plugin_fullname} OFF)
@@ -329,7 +335,7 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
 
   # If the plugin is enabled, add the appropriate source code into
   # the library source list.
-  if(ENABLE_${_plugin_fullname})
+  if(${_YPP_OPTION})
     # Go ahead and prepare some code to wrap this plugin.
 
     set(_fname ${CMAKE_CURRENT_BINARY_DIR}/yarp_plugin_${_plugin_fullname}.cpp)
