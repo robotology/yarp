@@ -4,9 +4,10 @@
 
 cmake_minimum_required(VERSION 2.8.9)
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(foobot TYPE foobot INCLUDE "foobot.h")
-endif(COMPILE_DEVICE_LIBRARY)
+yarp_prepare_plugin(foobot
+                    TYPE foobot
+                    INCLUDE "foobot.h"
+                    CATEGORY device)
 
 if(NOT SKIP_foobot)
   find_package(YARP REQUIRED)

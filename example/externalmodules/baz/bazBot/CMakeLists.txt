@@ -4,9 +4,10 @@
 
 cmake_minimum_required(VERSION 2.8.9)
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(bazbot TYPE bazbot INCLUDE "bazbot.h")
-endif(COMPILE_DEVICE_LIBRARY)
+yarp_prepare_plugin(bazbot
+                    CATEGORY device
+                    TYPE bazbot
+                    INCLUDE "bazbot.h")
 
 if(NOT SKIP_bazbot)
   find_package(YARP REQUIRED)
