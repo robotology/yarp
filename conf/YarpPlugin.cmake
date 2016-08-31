@@ -226,10 +226,6 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     return()
   endif()
 
-  if(NOT DEFINED _YPP_DOC)
-    set(_YPP_DOC "Enable/disable compilation of ${_plugin_fullname}")
-  endif()
-
   if(NOT DEFINED _YPP_DEFAULT)
     set(_YPP_DEFAULT OFF)
   endif()
@@ -243,6 +239,10 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
 
   # Set up a flag to enable/disable compilation of this plugin.
   set(_plugin_fullname "${X_YARP_PLUGIN_PREFIX}${_plugin_name}")
+
+  if(NOT DEFINED _YPP_DOC)
+    set(_YPP_DOC "Enable/disable compilation of ${_plugin_fullname}")
+  endif()
 
   if(NOT DEFINED _YPP_OPTION)
     set(_YPP_OPTION ENABLE_${_plugin_fullname})
