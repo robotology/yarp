@@ -3,12 +3,14 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(tcpros_carrier
-                       TYPE yarp::os::TcpRosCarrier
-                       INCLUDE TcpRosCarrier.h)
-  yarp_prepare_carrier(rossrv_carrier
-                       TYPE yarp::os::RosSrvCarrier
-                       INCLUDE TcpRosCarrier.h)
+  yarp_prepare_plugin(tcpros_carrier
+                      CATEGORY carrier
+                      TYPE yarp::os::TcpRosCarrier
+                      INCLUDE TcpRosCarrier.h)
+  yarp_prepare_plugin(rossrv_carrier
+                      CATEGORY carrier
+                      TYPE yarp::os::RosSrvCarrier
+                      INCLUDE TcpRosCarrier.h)
   yarp_install(FILES ros.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})

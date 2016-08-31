@@ -7,9 +7,10 @@ include(YarpDeprecatedOption)
 yarp_deprecated_option(USE_LIBDC1394)
 
 if (COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(bayer_carrier
-                       TYPE yarp::os::BayerCarrier
-                       INCLUDE BayerCarrier.h)
+  yarp_prepare_plugin(bayer_carrier
+                      CATEGORY carrier
+                      TYPE yarp::os::BayerCarrier
+                      INCLUDE BayerCarrier.h)
   yarp_install(FILES bayer.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})

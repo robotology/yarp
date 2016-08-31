@@ -3,9 +3,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(human_carrier
-                       TYPE HumanCarrier
-                       INCLUDE HumanCarrier.h)
+  yarp_prepare_plugin(human_carrier
+                      CATEGORY carrier
+                      TYPE HumanCarrier
+                      INCLUDE HumanCarrier.h)
   yarp_install(FILES human.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})

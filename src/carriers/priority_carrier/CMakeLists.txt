@@ -3,9 +3,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(priority_carrier
-                       TYPE yarp::os::PriorityCarrier
-                       INCLUDE PriorityCarrier.h)
+  yarp_prepare_plugin(priority_carrier
+                      CATEGORY carrier
+                      TYPE yarp::os::PriorityCarrier
+                      INCLUDE PriorityCarrier.h)
   yarp_install(FILES priority.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})

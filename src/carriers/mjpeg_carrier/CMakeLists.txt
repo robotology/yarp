@@ -3,9 +3,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(mjpeg_carrier
-                       TYPE yarp::os::MjpegCarrier
-                       INCLUDE MjpegCarrier.h)
+  yarp_prepare_plugin(mjpeg_carrier
+                      CATEGORY carrier
+                      TYPE yarp::os::MjpegCarrier
+                      INCLUDE MjpegCarrier.h)
   yarp_install(FILES mjpeg.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})

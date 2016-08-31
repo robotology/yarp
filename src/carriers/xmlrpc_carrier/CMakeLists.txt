@@ -3,9 +3,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(xmlrpc_carrier
-                       TYPE yarp::os::XmlRpcCarrier
-                       INCLUDE XmlRpcCarrier.h)
+  yarp_prepare_plugin(xmlrpc_carrier
+                      CATEGORY carrier
+                      TYPE yarp::os::XmlRpcCarrier
+                      INCLUDE XmlRpcCarrier.h)
   yarp_install(FILES xmlrpc.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
