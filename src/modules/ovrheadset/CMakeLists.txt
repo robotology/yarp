@@ -1,5 +1,6 @@
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(ovrheadset
+  yarp_prepare_plugin(ovrheadset
+                      CATEGORY device
                       TYPE yarp::dev::OVRHeadset
                       INCLUDE OVRHeadset.h)
   yarp_install(FILES ovrheadset.ini

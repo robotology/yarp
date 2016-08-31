@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(stage
+  yarp_prepare_plugin(stage
+                      CATEGORY device
                       TYPE yarp::dev::StageControl
                       INCLUDE StageControl.h)
   yarp_install(FILES stage.ini

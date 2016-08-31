@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(meiMotionControl
+  yarp_prepare_plugin(meiMotionControl
+                      CATEGORY device
                       TYPE yarp::dev::MEIMotionControl
                       INCLUDE MEIMotionControl.h
                       WRAPPER controlboard)

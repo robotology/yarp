@@ -3,11 +3,13 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(serial
+  yarp_prepare_plugin(serial
+                      CATEGORY device
                       TYPE yarp::dev::ServerSerial
                       INCLUDE yarp/dev/ServerSerial.h
                       WRAPPER serial)
-  yarp_prepare_device(serialport
+  yarp_prepare_plugin(serialport
+                      CATEGORY device
                       TYPE yarp::dev::SerialDeviceDriver
                       INCLUDE SerialDeviceDriver.h
                       WRAPPER serial)

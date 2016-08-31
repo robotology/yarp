@@ -4,7 +4,8 @@
 
 if(NOT WIN32 AND CREATE_LIB_MATH)
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(imuBosch_BNO055
+    yarp_prepare_plugin(imuBosch_BNO055
+                        CATEGORY device
                         TYPE yarp::dev::BoschIMU
                         INCLUDE imuBosch_BNO055.h)
     yarp_install(FILES imuBosch_BNO055.ini

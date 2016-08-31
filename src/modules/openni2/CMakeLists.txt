@@ -3,15 +3,17 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if (COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(OpenNI2DeviceServer
-                        TYPE yarp::dev::OpenNI2DeviceDriverServer
-                        INCLUDE OpenNI2DeviceDriverServer.h)
-    yarp_prepare_device(OpenNI2DeviceClient
-                        TYPE yarp::dev::OpenNI2DeviceDriverClient
-                        INCLUDE OpenNI2DeviceDriverClient.h)
-    yarp_install(FILES openni2.ini
-                 COMPONENT runtime
-                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+  yarp_prepare_plugin(OpenNI2DeviceServer
+                      CATEGORY device
+                      TYPE yarp::dev::OpenNI2DeviceDriverServer
+                      INCLUDE OpenNI2DeviceDriverServer.h)
+  yarp_prepare_plugin(OpenNI2DeviceClient
+                      CATEGORY device
+                      TYPE yarp::dev::OpenNI2DeviceDriverClient
+                      INCLUDE OpenNI2DeviceDriverClient.h)
+  yarp_install(FILES openni2.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)

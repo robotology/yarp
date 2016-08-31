@@ -4,7 +4,8 @@
 
 if(UNIX)
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(urbtc
+    yarp_prepare_plugin(urbtc
+                        CATEGORY device
                         TYPE yarp::dev::UrbtcControl
                         INCLUDE UrbtcControl.h
                         WRAPPER controlboard)

@@ -5,7 +5,8 @@
 
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(fakeIMU
+  yarp_prepare_plugin(fakeIMU
+                      CATEGORY device
                       TYPE yarp::dev::fakeIMU
                       INCLUDE fakeIMU.h
                       WRAPPER inertial)

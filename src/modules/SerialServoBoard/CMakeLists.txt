@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(SerialServoBoard
+  yarp_prepare_plugin(SerialServoBoard
+                      CATEGORY device
                       TYPE SerialServoBoard
                       INCLUDE "SerialServoBoard.h")
   yarp_install(FILES SerialServoBoard.ini

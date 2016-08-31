@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(pumacalibrator
+  yarp_prepare_plugin(pumacalibrator
+                      CATEGORY device
                       TYPE yarp::dev::PumaCalibrator
                       INCLUDE PumaCalibrator.h)
 endif(COMPILE_DEVICE_LIBRARY)

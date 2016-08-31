@@ -4,7 +4,8 @@
 
 if(WIN32)
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(jrkerr
+    yarp_prepare_plugin(jrkerr
+                        CATEGORY device
                         TYPE yarp::dev::JrkerrMotionControl
                         INCLUDE JrkerrMotionControl.h
                         WRAPPER controlboard)

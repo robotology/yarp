@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(wxsdl
+  yarp_prepare_plugin(wxsdl
+                      CATEGORY device
                       TYPE yarp::dev::WxsdlWriter
                       INCLUDE WxsdlWriter.h)
   yarp_install(FILES wxsdl.ini

@@ -2,11 +2,13 @@
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(primesensecamera
+  yarp_prepare_plugin(primesensecamera
+                      CATEGORY device
                       TYPE yarp::dev::ServerKinect
                       INCLUDE "ServerKinect.h"
                       WRAPPER primesensecamera)
-  yarp_prepare_device(kinect
+  yarp_prepare_plugin(kinect
+                      CATEGORY device
                       TYPE yarp::dev::KinectDeviceDriver
                       INCLUDE "KinectDeviceDriver.h"
                       WRAPPER primesensecamera)

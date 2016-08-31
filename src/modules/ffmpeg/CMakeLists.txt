@@ -3,11 +3,13 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(ffmpeg_grabber
+  yarp_prepare_plugin(ffmpeg_grabber
+                      CATEGORY device
                       TYPE yarp::dev::FfmpegGrabber
                       INCLUDE FfmpegGrabber.h
                       WRAPPER grabber)
-  yarp_prepare_device(ffmpeg_writer
+  yarp_prepare_plugin(ffmpeg_writer
+                      CATEGORY device
                       TYPE yarp::dev::FfmpegWriter
                       INCLUDE FfmpegWriter.h)
   yarp_install(FILES ffmpeg.ini

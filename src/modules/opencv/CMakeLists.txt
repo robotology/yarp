@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(opencv_grabber
+  yarp_prepare_plugin(opencv_grabber
+                      CATEGORY device
                       TYPE yarp::dev::OpenCVGrabber
                       INCLUDE OpenCVGrabber.h
                       WRAPPER grabber)

@@ -4,7 +4,8 @@
 
 if(WIN32)
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(vfw_grabber
+    yarp_prepare_plugin(vfw_grabber
+                        CATEGORY device
                         TYPE yarp::dev::VfwGrabber
                         INCLUDE VfwGrabber.h
                         WRAPPER grabber)

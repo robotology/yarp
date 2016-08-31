@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(fakeMotionControl
+  yarp_prepare_plugin(fakeMotionControl
+                      CATEGORY device
                       TYPE yarp::dev::FakeMotionControl
                       INCLUDE fakeMotionControl.h)
   yarp_install(FILES fakeMotionControl.ini

@@ -5,7 +5,8 @@
 if(WIN32)
 
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(dimax_u2c
+    yarp_prepare_plugin(dimax_u2c
+                        CATEGORY device
                         TYPE yarp::dev::DimaxU2C
                         INCLUDE DimaxU2C.h
                         WRAPPER controlboard)

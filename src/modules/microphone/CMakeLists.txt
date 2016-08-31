@@ -4,7 +4,8 @@
 
 if(UNIX OR WIN32)
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(microphone
+    yarp_prepare_plugin(microphone
+                        CATEGORY device
                         TYPE yarp::dev::MicrophoneDeviceDriver
                         INCLUDE MicrophoneDeviceDriver.h
                         WRAPPER grabber)

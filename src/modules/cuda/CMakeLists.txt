@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(cuda
+  yarp_prepare_plugin(cuda
+                      CATEGORY device
                       TYPE CUDAGPU
                       INCLUDE "CUDADeviceDriver.h")
   yarp_install(FILES cuda.ini

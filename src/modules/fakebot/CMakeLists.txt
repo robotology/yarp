@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(fakebot
+  yarp_prepare_plugin(fakebot
+                      CATEGORY device
                       TYPE yarp::dev::FakeBot
                       INCLUDE FakeBot.h)
   yarp_install(FILES fakebot.ini

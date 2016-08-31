@@ -2,7 +2,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(laserHokuyo
+  yarp_prepare_plugin(laserHokuyo
+                      CATEGORY device
                       TYPE laserHokuyo
                       INCLUDE laserHokuyo.h)
   yarp_install(FILES laserHokuyo.ini
