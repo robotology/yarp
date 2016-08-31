@@ -2,15 +2,11 @@
 # Author: Alberto Cardellino
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_plugin(fakeMotionControl
-                      CATEGORY device
-                      TYPE yarp::dev::FakeMotionControl
-                      INCLUDE fakeMotionControl.h)
-  yarp_install(FILES fakeMotionControl.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(fakeMotionControl
+                    CATEGORY device
+                    TYPE yarp::dev::FakeMotionControl
+                    INCLUDE fakeMotionControl.h
+                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
 
 if(NOT SKIP_fakeMotionControl)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -30,5 +26,8 @@ if(NOT SKIP_fakeMotionControl)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES fakeMotionControl.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 

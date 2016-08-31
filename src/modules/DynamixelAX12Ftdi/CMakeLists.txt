@@ -1,16 +1,12 @@
 # Copyright (C) 2010 Ze Ji
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_plugin(dynamixelAX12Ftdi
-                      CATEGORY device
-                      TYPE yarp::dev::DynamixelAX12FtdiDriver
-                      INCLUDE "DynamixelAX12FtdiDriver.h"
-                      WRAPPER controlboard)
-  yarp_install(FILES dynamixelAX12Ftdi.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(dynamixelAX12Ftdi
+                    CATEGORY device
+                    TYPE yarp::dev::DynamixelAX12FtdiDriver
+                    INCLUDE "DynamixelAX12FtdiDriver.h"
+                    EXTRA_CONFIG WRAPPER=controlboard
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_FTDI")
 
 if(NOT SKIP_dynamixelAX12Ftdi)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -29,6 +25,9 @@ if(NOT SKIP_dynamixelAX12Ftdi)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES dynamixelAX12Ftdi.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 

@@ -2,21 +2,19 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+yarp_prepare_plugin(bayer
+                    CATEGORY carrier
+                    TYPE yarp::os::BayerCarrier
+                    INCLUDE BayerCarrier.h
+                    EXTRA_CONFIG SUBTYPE=recv
+                                 CODE="not applicable"
+                    DEPENDS CREATE_OPTIONAL_CARRIERS
+                    DEFAULT ON
+                    ADVANCED ON)
 
-include(YarpDeprecatedOption)
-yarp_deprecated_option(USE_LIBDC1394)
+if(NOT SKIP_bayer)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if (COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_plugin(bayer_carrier
-                      CATEGORY carrier
-                      TYPE yarp::os::BayerCarrier
-                      INCLUDE BayerCarrier.h)
-  yarp_install(FILES bayer.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif (COMPILE_PLUGIN_LIBRARY)
-
-if (NOT SKIP_bayer_carrier)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS}
@@ -38,7 +36,9 @@ if (NOT SKIP_bayer_carrier)
     add_definitions(-DUSE_LIBDC1394)
   endif()
 
-  yarp_add_plugin(yarp_bayer BayerCarrier.h BayerCarrier.cpp ${DC1394_SRC})
+  yarp_add_plugin(yarp_bayer BayerCarrier.h
+                             BayerCarrier.cpp
+                             ${DC1394_SRC})
 
   target_link_libraries(yarp_bayer YARP_OS
                                    YARP_sig
@@ -49,4 +49,7 @@ if (NOT SKIP_bayer_carrier)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-endif ()
+  yarp_install(FILES bayer.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+endif()

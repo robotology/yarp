@@ -2,18 +2,15 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_plugin(opencv_grabber
-                      CATEGORY device
-                      TYPE yarp::dev::OpenCVGrabber
-                      INCLUDE OpenCVGrabber.h
-                      WRAPPER grabber)
-  yarp_install(FILES opencv.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif(COMPILE_DEVICE_LIBRARY)
+yarp_prepare_plugin(opencv_grabber
+                    CATEGORY device
+                    TYPE yarp::dev::OpenCVGrabber
+                    INCLUDE OpenCVGrabber.h
+                    EXTRA_CONFIG WRAPPER=grabber
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_OPENCV")
 
 if(NOT SKIP_opencv_grabber)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
@@ -30,12 +27,15 @@ if(NOT SKIP_opencv_grabber)
                                     YARP_sig
                                     YARP_dev
                                     ${OpenCV_LIBRARIES})
-    yarp_install(TARGETS yarp_opencv
-                 EXPORT YARP
-                 COMPONENT runtime
-                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(TARGETS yarp_opencv
+               EXPORT YARP
+               COMPONENT runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES opencv.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+  yarp_install(FILES opencv_grabber.xml
+               DESTINATION ${YARP_MODULES_INSTALL_DIR})
 
-    yarp_install(FILES opencv_grabber.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
-
-endif(NOT SKIP_opencv_grabber)
+endif()

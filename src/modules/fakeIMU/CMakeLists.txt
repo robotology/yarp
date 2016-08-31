@@ -4,16 +4,12 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_plugin(fakeIMU
-                      CATEGORY device
-                      TYPE yarp::dev::fakeIMU
-                      INCLUDE fakeIMU.h
-                      WRAPPER inertial)
-  yarp_install(FILES fakeIMU.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(fakeIMU
+                    CATEGORY device
+                    TYPE yarp::dev::fakeIMU
+                    INCLUDE fakeIMU.h
+                    EXTRA_CONFIG WRAPPER=inertial
+                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
 
 if(NOT SKIP_fakeIMU)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -33,5 +29,8 @@ if(NOT SKIP_fakeIMU)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES fakeIMU.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 

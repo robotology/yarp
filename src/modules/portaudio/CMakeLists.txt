@@ -2,16 +2,12 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_plugin(portaudio
-                      CATEGORY device
-                      TYPE yarp::dev::PortAudioDeviceDriver
-                      INCLUDE PortAudioDeviceDriver.h
-                      WRAPPER grabber)
-  yarp_install(FILES portaudio.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(portaudio
+                    CATEGORY device
+                    TYPE yarp::dev::PortAudioDeviceDriver
+                    INCLUDE PortAudioDeviceDriver.h
+                    EXTRA_CONFIG WRAPPER=grabber
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_PORTAUDIO")
 
 if(NOT SKIP_portaudio)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -23,7 +19,10 @@ if(NOT SKIP_portaudio)
                       ${YARP_dev_INCLUDE_DIRS})
   include_directories(SYSTEM ${PortAudio_INCLUDE_DIR})
 
-  yarp_add_plugin(yarp_portaudio PortAudioBuffer.cpp PortAudioBuffer.h PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
+  yarp_add_plugin(yarp_portaudio PortAudioBuffer.cpp
+                                 PortAudioBuffer.h
+                                 PortAudioDeviceDriver.cpp
+                                 PortAudioDeviceDriver.h)
   target_link_libraries(yarp_portaudio YARP_OS
                                        YARP_sig
                                        YARP_dev
@@ -33,5 +32,9 @@ if(NOT SKIP_portaudio)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES portaudio.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
+  yarp_install(FILES portaudio.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+  yarp_install(FILES portaudio.xml
+               DESTINATION ${YARP_MODULES_INSTALL_DIR})
 endif()

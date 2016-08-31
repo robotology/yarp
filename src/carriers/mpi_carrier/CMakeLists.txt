@@ -2,23 +2,23 @@
 # Authors: Paul Fitzpatrick, Daniel Krieg
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_plugin(mpi_carrier
-                      CATEGORY carrier
-                      TYPE yarp::os::MpiP2PCarrier
-                      INCLUDE include/yarp/os/MpiP2PCarrier.h)
-  yarp_install(FILES mpi.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
 
+include(CMakeDependentOption)
 cmake_dependent_option(MPI_DEBUG_MSG "Turn on status messages for MPI Carrier" OFF
                        "NOT SKIP_mpi_carrier OR NOT SKIP_mpibcast_carrier" OFF)
 if(MPI_DEBUG_MSG)
   add_definitions(-DMPI_DEBUG)
 endif(MPI_DEBUG_MSG)
 
-if(NOT SKIP_mpi_carrier)
+
+yarp_prepare_plugin(mpi
+                    CATEGORY carrier
+                    TYPE yarp::os::MpiP2PCarrier
+                    INCLUDE yarp/os/MpiP2PCarrier.h
+                    EXTRA_CONFIG CODE="MPI_____"
+                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
+
+if(NOT SKIP_mpi)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -41,20 +41,20 @@ if(NOT SKIP_mpi_carrier)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES mpi.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
 
-if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_plugin(mpibcast_carrier
-                      CATEGORY carrier
-                      TYPE yarp::os::MpiBcastCarrier
-                      INCLUDE include/yarp/os/MpiBcastCarrier.h)
-  yarp_install(FILES mpibcast.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif(COMPILE_PLUGIN_LIBRARY)
+yarp_prepare_plugin(mpibcast
+                    CATEGORY carrier
+                    TYPE yarp::os::MpiBcastCarrier
+                    INCLUDE yarp/os/MpiBcastCarrier.h
+                    EXTRA_CONFIG CODE="MPIBCAST"
+                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
 
-if(NOT SKIP_mpibcast_carrier)
+if(NOT SKIP_mpibcast)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -78,4 +78,7 @@ if(NOT SKIP_mpibcast_carrier)
                EXPORT YARP
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES mpibcast.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

@@ -2,17 +2,14 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_plugin(human_carrier
-                      CATEGORY carrier
-                      TYPE HumanCarrier
-                      INCLUDE HumanCarrier.h)
-  yarp_install(FILES human.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(human
+                    CATEGORY carrier
+                    TYPE HumanCarrier
+                    INCLUDE HumanCarrier.h
+                    EXTRA_CONFIG CODE="HUMANITY"
+                    DEPENDS CREATE_OPTIONAL_CARRIERS)
 
-if(NOT SKIP_human_carrier)
+if(NOT SKIP_human)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS})
@@ -26,4 +23,7 @@ if(NOT SKIP_human_carrier)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES human.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

@@ -2,17 +2,14 @@
 # Authors: Giacomo Spigler, Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_plugin(SerialServoBoard
-                      CATEGORY device
-                      TYPE SerialServoBoard
-                      INCLUDE "SerialServoBoard.h")
-  yarp_install(FILES SerialServoBoard.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(SerialServoBoard
+                    CATEGORY device
+                    TYPE SerialServoBoard
+                    INCLUDE "SerialServoBoard.h"
+                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
 
 if(NOT SKIP_SerialServoBoard)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS}
@@ -26,5 +23,8 @@ if(NOT SKIP_SerialServoBoard)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES SerialServoBoard.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
 
