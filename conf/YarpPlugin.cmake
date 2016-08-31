@@ -104,13 +104,6 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
     # Choose a prefix for CMake options related to this library
     set(X_YARP_PLUGIN_PREFIX "${bundle_name}_")
 
-    # Set a flag to let individual modules know that they are being
-    # compiled as part of a bundle, and not standalone.  Developers
-    # use this flag to inhibit compilation of test programs and
-    # the like.
-    set(COMPILE_PLUGIN_LIBRARY TRUE)
-    set(COMPILE_DEVICE_LIBRARY TRUE) # an old name for the flag
-
     # Record the name of the plugin library name
     set(X_YARP_PLUGIN_MASTER ${bundle_name})
 
@@ -119,7 +112,6 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
     set_property(GLOBAL PROPERTY YARP_BUNDLE_OWNERS)  # owner library
     set_property(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
     set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
-    set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES) # list of additional libraries that will be linked by the master
 
   endif()
 endmacro()
@@ -228,13 +220,6 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
 
   if(NOT DEFINED _YPP_DEFAULT)
     set(_YPP_DEFAULT OFF)
-  endif()
-
-  # Append the current source directory to the set of include paths.
-  # Developers seem to expect #include "foo.h" to work if foo.h is
-  # in their module directory.
-  if(NOT YARP_NO_DEPRECATED)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 
   # Set up a flag to enable/disable compilation of this plugin.
@@ -388,16 +373,6 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
 
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${_plugin_name})
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
-    get_property(_link_libs GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
-    if("${_YPP_CATEGORY}" STREQUAL "carrier")
-      list(APPEND _link_libs YARP::YARP_OS)
-    elseif("${_YPP_CATEGORY}" STREQUAL "device")
-      list(APPEND _link_libs YARP::YARP_OS YARP::YARP_dev)
-    endif()
-    if(NOT "${_link_libs}" STREQUAL "")
-      list(REMOVE_DUPLICATES _link_libs)
-    endif()
-    set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES ${_link_libs})
     message(STATUS " +++ plugin ${_plugin_fullname}: enabled")
   else()
     unset(_missing_deps)
@@ -433,13 +408,7 @@ macro(YARP_ADD_PLUGIN _library_name)
   # while inserting any generated source code needed for initialization.
   get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
   set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${_library_name})
-  get_property(_link_libs GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
-  if(TARGET YARP_OS)
-    # Building YARP: Targets don't have NAMESPACE
-    string(REPLACE "YARP::" "" _link_libs "${_link_libs}")
-  endif()
   add_library(${_library_name} ${_library_type} ${srcs} ${ARGN})
-  target_link_libraries(${_library_name} ${_link_libs})
   if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
     # Do not add the "lib" prefix to dynamic plugin libraries.
     # This simplifies search on different platforms and makes it easier
@@ -454,7 +423,6 @@ macro(YARP_ADD_PLUGIN _library_name)
   set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${_library_name})
   # Reset the list of generated source code and link libraries to empty.
   set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
-  set_property(GLOBAL PROPERTY YARP_BUNDLE_LINK_LIBRARIES)
 endmacro()
 
 
@@ -493,7 +461,6 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
     configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_library.cpp.in
                    ${CMAKE_CURRENT_BINARY_DIR}/yarp_${X_YARP_PLUGIN_MASTER}_plugin_library.cpp @ONLY)
     get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
-    include_directories(${YARP_INCLUDE_DIRS})
     get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
     # add the library initializer code
     add_library(${X_YARP_PLUGIN_MASTER} ${code} ${CMAKE_CURRENT_BINARY_DIR}/yarp_${X_YARP_PLUGIN_MASTER}_plugin_library.cpp)
