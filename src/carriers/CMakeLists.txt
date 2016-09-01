@@ -41,6 +41,5 @@ yarp_renamed_option(ENABLE_yarpcar_mpibcast_carrier ENABLE_yarpcar_mpibcast) # s
 yarp_renamed_option(ENABLE_yarpcar_portmonitor_carrier ENABLE_yarpcar_portmonitor) # since YARP 2.3.68
 yarp_renamed_option(ENABLE_yarpcar_priority_carrier ENABLE_yarpcar_priority) # since YARP 2.3.68
 yarp_renamed_option(ENABLE_yarpcar_tcpros_carrier ENABLE_yarpcar_tcpros) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_rossrv_carrier ENABLE_rossrv_tcpros) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_xmlrpc_carrier ENABLE_xmlrpc_tcpros) # since YARP 2.3.68
-
+yarp_renamed_option(ENABLE_yarpcar_rossrv_carrier ENABLE_yarpcar_rossrv) # since YARP 2.3.68
+yarp_renamed_option(ENABLE_yarpcar_xmlrpc_carrier ENABLE_yarpcar_xmlrpc) # since YARP 2.3.68
