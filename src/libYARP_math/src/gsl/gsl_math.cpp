@@ -38,7 +38,6 @@ gsl_vector_view getView(Vector &v)
     return ret;
 }
 
-
 Vector yarp::math::operator*(const Vector &a, const Matrix &m)
 {
     yAssert(a.size()==(size_t)m.rows());
@@ -219,6 +218,40 @@ double yarp::math::dot(const Vector &a, const Vector &b)
 double yarp::math::norm(const Vector &v)
 {
     return gsl_blas_dnrm2((const gsl_vector*) GslVector(v).getGslVector());
+}
+
+double yarp::math::det(const Matrix& in)
+{
+    int m = in.rows();
+    double ret;
+    int sign = 0;
+
+    Matrix LU(in);
+
+    gsl_permutation* permidx = gsl_permutation_calloc(m);
+    gsl_linalg_LU_decomp((gsl_matrix *) GslMatrix(LU).getGslMatrix(), permidx, &sign);
+    ret = gsl_linalg_LU_det((gsl_matrix *) GslMatrix(LU).getGslMatrix(), sign);
+    gsl_permutation_free(permidx);
+
+    return ret;
+}
+
+Matrix yarp::math::luinv(const Matrix& in)
+{
+    int m = in.rows();
+    int n = in.cols();
+    int sign = 0;
+    // assert m == n?
+
+    Matrix LU(in);
+    Matrix ret(m, n);
+    gsl_permutation* permidx = gsl_permutation_calloc(m);
+
+    gsl_linalg_LU_decomp((gsl_matrix *) GslMatrix(LU).getGslMatrix(), permidx, &sign);
+    gsl_linalg_LU_invert((gsl_matrix *) GslMatrix(LU).getGslMatrix(), permidx,
+        (gsl_matrix *) GslMatrix(ret).getGslMatrix());
+    gsl_permutation_free(permidx);
+    return ret;
 }
 
 bool yarp::math::eigenValues(const Matrix& in, Vector &real, Vector &img)

@@ -31,12 +31,12 @@ RandScalar::~RandScalar()
 
 double RandScalar::get()
 {
-    return 0.0;
+    return 1.0;
 }
 
 double RandScalar::get(double min, double max)
 {
-    return 0.0;
+    return 1.0;
 }
 
 // initialize with a call to "time"
