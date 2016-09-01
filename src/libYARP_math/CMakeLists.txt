@@ -32,10 +32,17 @@ if (YARP_HAS_MATH_LIB)
                        src/SVD.cpp
                        src/FrameTransform.cpp)
 
-    list(APPEND YARP_math_SRCS src/gsl/gsl_math.cpp)
-    list(APPEND YARP_math_SRCS src/gsl/gsl_SVD.cpp)
-    list(APPEND YARP_math_SRCS src/gsl/RandScalar.cpp)
-    list(APPEND YARP_math_SRCS src/gsl/RandnScalar.cpp)
+    if( NOT CREATE_LIB_MATH_USING_GSL )
+        list(APPEND YARP_math_SRCS src/eigen/eigen_math.cpp)
+        list(APPEND YARP_math_SRCS src/eigen/eigen_SVD.cpp)
+        list(APPEND YARP_math_SRCS src/eigen/RandScalar.cpp)
+        list(APPEND YARP_math_SRCS src/eigen/RandnScalar.cpp)
+    else()
+        list(APPEND YARP_math_SRCS src/gsl/gsl_math.cpp)
+        list(APPEND YARP_math_SRCS src/gsl/gsl_SVD.cpp)
+        list(APPEND YARP_math_SRCS src/gsl/RandScalar.cpp)
+        list(APPEND YARP_math_SRCS src/gsl/RandnScalar.cpp)
+    endif()
 
     source_group("Source Files" FILES ${YARP_math_SRCS})
     source_group("Header Files" FILES ${YARP_math_HDRS})
@@ -46,21 +53,30 @@ if (YARP_HAS_MATH_LIB)
 
     include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-    if(YARP_USE_ATLAS)
-        set(MATH_LIB_EXTRAS ${GSL_LIBRARY} ${ATLAS_CBLAS_LIBRARY} ${ATLAS_ATLAS_LIBRARY})
+    if( NOT CREATE_LIB_MATH_USING_GSL )
+        include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
     else()
-        set(MATH_LIB_EXTRAS ${GSL_LIBRARIES})
+        if(YARP_USE_ATLAS)
+            set(MATH_LIB_EXTRAS ${GSL_LIBRARY} ${ATLAS_CBLAS_LIBRARY} ${ATLAS_ATLAS_LIBRARY})
+        else()
+            set(MATH_LIB_EXTRAS ${GSL_LIBRARIES})
+        endif()
+        include_directories(SYSTEM ${GSL_INCLUDE_DIRS})
     endif()
-
-    include_directories(SYSTEM ${GSL_INCLUDE_DIRS})
 
     add_library(YARP_math ${YARP_math_SRCS}
                           ${YARP_math_HDRS}
                           ${YARP_math_IMPL_HDRS})
     target_link_libraries(YARP_math LINK_PRIVATE YARP_OS)
     target_link_libraries(YARP_math LINK_PRIVATE YARP_sig)
-    target_link_libraries(YARP_math LINK_PRIVATE YARP_gsl)
-    target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
+
+    if( NOT CREATE_LIB_MATH_USING_GSL )
+        # We compile only libYARP_math as C++11 to use the C++11 random number generators
+        add_definitions(${CXX11_FLAGS})
+    else()
+        target_link_libraries(YARP_math LINK_PRIVATE YARP_gsl)
+        target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
+    endif()
 
     set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
     set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})
