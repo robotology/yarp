@@ -52,6 +52,7 @@ void yarp::os::impl::getTime(ACE_Time_Value& now) {
     }
 }
 
+
 void yarp::os::impl::sleepThread(ACE_Time_Value& sleep_period) {
     if (Time::isSystemClock()) {
 #ifdef YARP_HAS_ACE
@@ -70,6 +71,7 @@ void yarp::os::impl::sleepThread(ACE_Time_Value& sleep_period) {
     }
 }
 
+
 void yarp::os::impl::addTime(ACE_Time_Value& val, const ACE_Time_Value & add) {
 #ifdef YARP_HAS_ACE
     val += add;
@@ -83,6 +85,7 @@ void yarp::os::impl::addTime(ACE_Time_Value& val, const ACE_Time_Value & add) {
     val.tv_sec += add.tv_sec;
 #endif
 }
+
 
 void yarp::os::impl::subtractTime(ACE_Time_Value & val, const ACE_Time_Value & subtract) {
 #ifdef YARP_HAS_ACE
@@ -100,6 +103,7 @@ void yarp::os::impl::subtractTime(ACE_Time_Value & val, const ACE_Time_Value & s
 #endif
 }
 
+
 double yarp::os::impl::toDouble(const ACE_Time_Value &v) {
 #ifdef YARP_HAS_ACE
     return double(v.sec()) + v.usec() * 1e-6;
@@ -107,6 +111,7 @@ double yarp::os::impl::toDouble(const ACE_Time_Value &v) {
     return double(v.tv_sec) + v.tv_usec * 1e-6;
 #endif
 }
+
 
 void yarp::os::impl::fromDouble(ACE_Time_Value &v, double x,int unit) {
 #ifdef YARP_HAS_ACE
@@ -123,6 +128,7 @@ private:
     RFModule& owner;
     bool attachedToPort;
     bool attachedTerminal;
+
 public:
      /**
      * Handler for reading messages from the network, and passing
@@ -139,7 +145,7 @@ public:
     virtual void run() {
         yInfo("Listening to terminal (type \"quit\" to stop module).");
         bool isEof = false;
-        while (!(isEof||isStopping()||owner.isStopping())) {
+        while (!(isEof || isStopping() || owner.isStopping())) {
             ConstString str = NetworkBase::readString(&isEof);
             if (!isEof) {
                 Bottle cmd(str.c_str());
@@ -164,17 +170,20 @@ public:
         //owner.interruptModule();
     }
 
+
     bool attach(yarp::os::Port& source) {
         attachedToPort=true;
         source.setReader(*this);
         return true;
     }
 
+
     bool attach(yarp::os::RpcServer& source) {
         attachedToPort=true;
         source.setReader(*this);
         return true;
     }
+
 
     bool attachTerminal() {
         attachedTerminal=true;
@@ -204,10 +213,10 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection) {
     printf("command received: %s\n", cmd.toString().c_str());
 
     bool result = owner.safeRespond(cmd,response);
-    if (response.size()>=1) {
+    if (response.size() >= 1) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=0) {
-            if (response.get(0).toString()=="many" && writer->isTextMode()) {
+            if (response.get(0).toString() == "many" && writer->isTextMode()) {
                 for (int i=1; i<response.size(); i++) {
                     Value& v = response.get(i);
                     if (v.isList()) {
@@ -221,7 +230,6 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection) {
             } else {
                 response.write(*writer);
             }
-
             //printf("response sent: %s\n", response.toString().c_str());
         }
     }
@@ -291,6 +299,7 @@ public:
 
 static RFModule *module = 0;
 
+
 static void handler (int sig) {
     static int ct = 0;
     ct++;
@@ -300,18 +309,17 @@ static void handler (int sig) {
     }
     yInfo("[try %d of 3] Trying to shut down.", ct);
 
-    if (module!=0)
-    {
+    if (module != 0) {
         module->stopModule(false);
     }
 
-  //  if (module!=NULL) {
-  //      Bottle cmd, reply;
-  //      cmd.fromString("quit");
-   //     module->safeRespond(cmd,reply);
-        //printf("sent %s, got %s\n", cmd.toString().c_str(),
-        //     reply.toString().c_str());
-   // }
+//    if (module!=YARP_NULLPTR) {
+//        Bottle cmd, reply;
+//        cmd.fromString("quit");
+//        module->safeRespond(cmd,reply);
+//        printf("sent %s, got %s\n", cmd.toString().c_str(),
+//             reply.toString().c_str());
+//    }
 
 #if defined(WIN32)
     // on windows we need to reset the handler after beeing called, otherwise it
@@ -340,9 +348,10 @@ static void handler_sigbreak(int sig) {
 }
 #endif
 
+
 RFModule::RFModule() {
     implementation = new RFModuleHelper(*this);
-    stopFlag=false;
+    stopFlag = false;
 
     //set up signal handlers for catching ctrl-c
     if (module == YARP_NULLPTR) {
@@ -360,17 +369,20 @@ RFModule::RFModule() {
     ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
 }
 
+
 RFModule::~RFModule() {
-    if (implementation!=0) {
+    if (implementation != 0) {
         //HELPER(implementation).stop();
         delete &HELPER(implementation);
         implementation = 0;
     }
 }
 
+
 double RFModule::getPeriod() {
     return 1.0;
 }
+
 
 int RFModule::runModule() {
     if (HELPER(implementation).getSingletonRunModule()) return 1;
@@ -480,11 +492,13 @@ bool RFModule::configure(yarp::os::ResourceFinder &rf) {
     return true;
 }
 
+
 bool RFModule::respond(const Bottle& command, Bottle& reply) {
     return basicRespond(command,reply);
 }
 
- /**
+
+/**
 * Attach this object to a source of messages.
 * @param source a BufferedPort or PortReaderBuffer that
 * receives data.
@@ -494,15 +508,18 @@ bool RFModule::attach(yarp::os::Port &source) {
     return true;
 }
 
+
 bool RFModule::attach(yarp::os::RpcServer &source) {
     RESPOND_HANDLER(implementation).attach(source);
     return true;
 }
 
+
 bool RFModule::attachTerminal() {
     RESPOND_HANDLER(implementation).attachTerminal();
     return true;
 }
+
 
 bool RFModule::detachTerminal()
 {
@@ -510,21 +527,28 @@ bool RFModule::detachTerminal()
     return true;
 }
 
+
 bool RFModule::interruptModule() {
     return true;
 }
+
+
 bool RFModule::close() {
     return true;
 }
 
+
 void RFModule::stopModule(bool wait) {
-    stopFlag=true;
+    stopFlag = true;
+
     if (!interruptModule()) {
         yError("interruptModule() returned an error there could be problems shutting down the module.");
     }
 
     if (wait) joinModule();
 }
+
+
 bool RFModule::isStopping() {
     return stopFlag;
 }
@@ -547,7 +571,7 @@ bool RFModule::joinModule(double seconds) {
 
 
 ConstString RFModule::getName(const ConstString& subName) {
-    if (subName=="") {
+    if (subName == "") {
         return name;
     }
 
@@ -566,9 +590,11 @@ ConstString RFModule::getName(const ConstString& subName) {
     return base.c_str();
 }
 
+
 void RFModule::setName(const char *name) {
     this->name = name;
 }
+
 
 bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
     bool ok = respond(command, reply);
@@ -578,6 +604,7 @@ bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
     }
     return ok;
 }
+
 
 bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
     switch (command.get(0).asVocab()) {
