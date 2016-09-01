@@ -192,17 +192,17 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_ACE; then sudo apt-get -y install libace-dev; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then if $TRAVIS_WITH_ACE; then brew install ace; fi; fi
 
-  # Install other core dependencies (sqlite, tinyxml)
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libsqlite3-dev libtinyxml-dev; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install sqlite tinyxml; fi
+  # Install other core dependencies (sqlite, tinyxml, libedit)
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libsqlite3-dev libtinyxml-dev libedit-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install sqlite tinyxml homebrew/dupes/libedit; fi
 
   # Install Qt5 GUIs dependencies
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"; fi
 
-  # Install GPL dependencies (gsl, readline, qcustomplot)
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgsl0-dev libreadline-dev libqcustomplot-dev; fi
+  # Install GPL dependencies (gsl, qcustomplot)
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgsl0-dev libqcustomplot-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gsl readline; fi
 
   # Install other dependencies (opencv)

@@ -53,9 +53,9 @@ using namespace yarp::manager;
 
 
 #define CMD_COUNTS          24
-#ifdef WITH_READLINE
-    #include <readline/readline.h>
-    #include <readline/history.h>
+#ifdef WITH_LIBEDIT
+    #include <editline/readline.h>
+    #include <editline/history.h>
     const char* commands[CMD_COUNTS] = {"help", "exit","list mod", "list app", "list res", "add mod",
                   "add app", "add res", "load app", "run", "stop", "kill",
                   "connect", "disconnect", "which", "check state",
@@ -282,7 +282,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
     reportErrors();
 
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
     updateAppNames(&appnames);
 #endif
 
@@ -322,7 +322,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
                 if(!getKnowledgeBase()->getApplication(application->getName()))
                     getKnowledgeBase()->addApplication(application);
 
-                #ifdef WITH_READLINE
+                #ifdef WITH_LIBEDIT
                 updateAppNames(&appnames);
                 #endif
 
@@ -409,7 +409,7 @@ void YConsoleManager::myMain(void)
 {
 
 
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
     rl_attempted_completion_function = my_completion;
 #endif
 
@@ -417,7 +417,7 @@ void YConsoleManager::myMain(void)
     {
         string temp;
 
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
         static char* szLine = (char*)NULL;
         if(szLine)
         {
@@ -518,7 +518,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
          if(addApplication(cmdList[2].c_str()))
             cout<<INFO<<cmdList[2]<<" is successfully added."<<ENDC<<endl;
          reportErrors();
-        #ifdef WITH_READLINE
+        #ifdef WITH_LIBEDIT
         updateAppNames(&appnames);
         #endif
          return true;
@@ -1234,7 +1234,7 @@ void YConsoleManager::setColorTheme(ColorTheme theme)
 
 
 
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
 
 char* dupstr(char* s)
 {

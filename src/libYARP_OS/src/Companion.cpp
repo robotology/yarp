@@ -47,9 +47,9 @@
 #include <yarp/conf/system.h>
 #include <yarp/conf/version.h>
 
-#ifdef WITH_READLINE
-    #include <readline/readline.h>
-    #include <readline/history.h>
+#ifdef WITH_LIBEDIT
+    #include <editline/readline.h>
+    #include <editline/history.h>
     #include <vector>
     static std::vector<yarp::os::ConstString> commands;
     static yarp::os::Port* rpcHelpPort=NULL;
@@ -205,13 +205,13 @@ static void companion_install_handler() {
     #endif
 }
 
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
 static char* szLine = (char*)NULL;
 static bool readlineEOF=false;
 #endif
 static bool EOFreached()
 {
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
     if (ACE_OS::isatty(ACE_OS::fileno(stdin))) {
         return readlineEOF;
     }
@@ -222,7 +222,7 @@ static bool EOFreached()
 static ConstString getStdin() {
     ConstString txt = "";
 
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
     if (ACE_OS::isatty(ACE_OS::fileno(stdin))) {
         if(szLine) {
             free(szLine);
@@ -2058,7 +2058,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
     applyArgs(port);
     port.setWriteOnly();
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
     std::string hist_file;
     bool disable_file_history=false;
     if (ACE_OS::isatty(ACE_OS::fileno(stdin))) //if interactive mode
@@ -2136,7 +2136,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                 }
             }
             port.write(bot);
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
             if (!disable_file_history)
                 write_history(hist_file.c_str());
 #endif
@@ -2192,7 +2192,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     int resendCount = 0;
 
     bool firstTimeRound = true;
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
     rl_attempted_completion_function = my_completion;
 #endif
 
@@ -2220,7 +2220,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
             }
         }
 
-#ifdef WITH_READLINE
+#ifdef WITH_LIBEDIT
     rpcHelpPort = &port;
 #endif
         while (port.getOutputCount()==1&&!EOFreached()) {

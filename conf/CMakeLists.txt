@@ -39,11 +39,11 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      FindFTDI.cmake
                      FindGSL.cmake
                      FindLibdc1394.cmake
+                     FindLibedit.cmake
                      FindLibusb1.cmake
                      FindOpenCV.cmake
                      FindOpenNI.cmake
                      FindPortAudio.cmake
-                     FindReadline.cmake
                      FindSQLite.cmake
                      FindStage.cmake
                      FindTinyXML.cmake
