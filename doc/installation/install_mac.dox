@@ -64,7 +64,7 @@ In any case, you have to update and upgrade your Homebrew version.
  Also, you will need to add the homebrew-x11 and homebrew-science taps:
 
  \code
- brew tap homebrew/x11
+ brew tap robotology/cask
  brew tap homebrew/science
  \endcode
 
@@ -79,20 +79,18 @@ Run on your terminal:
 The following options are also available:
 
 \code
---with-lua
- 	Build with Lua bindings
---with-python
-  Build with Python bindings
+--with-bindings
+    Build with binding (LUA, Python) support
 --with-opencv
- 	Build the opencv_grabber device
---with-qt5
- 	Build the Qt5 GUI applications
+    Build with opencv support
 --with-serial
- 	Build the serial/serialport devices
+    Build the serial/serialport devices
 --with-yarprun-log
- 	Build with yarprun_log support
+    Build with LOG support for YARPRUN processes
+--without-qt5
+    Build without GUI applications
 --HEAD
- 	Install HEAD version
+    Install HEAD version
 \endcode
 
 After the installation, you will need to set your \subpage environment_configuration.
