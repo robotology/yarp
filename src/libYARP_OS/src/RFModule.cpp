@@ -117,8 +117,7 @@ void yarp::os::impl::fromDouble(ACE_Time_Value &v, double x,int unit) {
 }
 
 
-class RFModuleHelper : public yarp::os::PortReader, public Thread
-{
+class RFModuleRespondHandler : public yarp::os::PortReader, public Thread {
 private:
     RFModule& owner;
     bool attachedToPort;
@@ -132,7 +131,9 @@ public:
      */
     virtual bool read(yarp::os::ConnectionReader& connection);
 
-    RFModuleHelper(RFModule& owner) : owner(owner), attachedToPort(false), attachedTerminal(false) {}
+
+    RFModuleRespondHandler(RFModule& owner) : owner(owner), attachedToPort(false), attachedTerminal(false) {}
+
 
     virtual void run() {
         printf("Listening to terminal (type \"quit\" to stop module)\n");
@@ -194,7 +195,8 @@ public:
     }
 };
 
-bool RFModuleHelper::read(ConnectionReader& connection) {
+
+bool RFModuleRespondHandler::read(ConnectionReader& connection) {
     Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
     printf("command received: %s\n", cmd.toString().c_str());
@@ -225,7 +227,65 @@ bool RFModuleHelper::read(ConnectionReader& connection) {
 }
 
 
-#define HELPER(x) (*((RFModuleHelper*)(x)))
+class RFModuleThreadedHandler : public Thread {
+private:
+    RFModule& owner;
+
+public:
+    RFModuleThreadedHandler(RFModule& owner) : owner(owner) {};
+
+    void run() { owner.runModule(); }
+};
+
+
+class RFModuleHelper {
+private:
+    RFModule& owner;
+    bool      singleton_run_module;
+
+public:
+    RFModuleRespondHandler  *respond_handler;
+    RFModuleThreadedHandler *threaded_handler;
+
+
+    RFModuleHelper(RFModule& owner) : owner(owner), singleton_run_module(false), respond_handler(YARP_NULLPTR), threaded_handler(YARP_NULLPTR) {
+        respond_handler  = new (std::nothrow) RFModuleRespondHandler(owner);
+    }
+
+    ~RFModuleHelper() {
+        if (respond_handler != YARP_NULLPTR) {
+            delete respond_handler;
+            respond_handler = YARP_NULLPTR;
+        }
+        if (threaded_handler != YARP_NULLPTR) {
+            delete threaded_handler;
+            threaded_handler = YARP_NULLPTR;
+        }
+    }
+
+
+    bool newThreadHandler() {
+        threaded_handler = new (std::nothrow) RFModuleThreadedHandler(owner);
+
+        if (threaded_handler != YARP_NULLPTR) return true;
+        else                                  return false;
+    }
+
+    void deleteThreadHandler() {
+        delete threaded_handler;
+        threaded_handler = YARP_NULLPTR;
+    }
+
+
+    bool getSingletonRunModule() { return singleton_run_module; }
+    void setSingletonRunModule() { singleton_run_module = true; }
+};
+
+
+#define HELPER(x)           (*((RFModuleHelper*)(x)))
+#define RESPOND_HANDLER(x)  (*(HELPER(x).respond_handler))
+#define THREADED_HANDLER(x) (*(HELPER(x).threaded_handler))
+
 
 static RFModule *module = 0;
 
@@ -312,7 +372,10 @@ double RFModule::getPeriod() {
 }
 
 int RFModule::runModule() {
-    //setting up main loop
+    if (HELPER(implementation).getSingletonRunModule()) return 1;
+    HELPER(implementation).setSingletonRunModule();
+
+    // Setting up main loop
 
     ACE_Time_Value currentRunTV;
     ACE_Time_Value elapsedTV;
@@ -347,7 +410,7 @@ int RFModule::runModule() {
     }
 
     ACE_OS::printf("RFModule closing\n");
-    if (HELPER(implementation).isTerminalAttached())
+    if (RESPOND_HANDLER(implementation).isTerminalAttached())
     {
         ACE_OS::fprintf(stderr, "WARNING: module attached to terminal calling exit() to quit.\n");
         ACE_OS::fprintf(stderr, "You should be aware that this is not a good way to stop a module. Effects will be:\n");
@@ -375,12 +438,44 @@ int RFModule::runModule() {
 
 
 int RFModule::runModule(yarp::os::ResourceFinder &rf) {
+    if (HELPER(implementation).getSingletonRunModule()) return 1;
+
     if (!configure(rf)) {
         ACE_OS::printf("RFModule failed to open\n");
         return 1;
     }
     return runModule();
 }
+
+
+int RFModule::runModuleThreaded() {
+    if (HELPER(implementation).getSingletonRunModule()) return 1;
+
+    if (!HELPER(implementation).newThreadHandler()) {
+        ACE_OS::printf("RFModule handling thread failed to allocate\n");
+        return 1;
+    }
+
+    if (!THREADED_HANDLER(implementation).start()) {
+        ACE_OS::printf("RFModule handling thread failed to start\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+
+int RFModule::runModuleThreaded(ResourceFinder &rf) {
+    if (HELPER(implementation).getSingletonRunModule()) return 1;
+
+    if (!configure(rf)) {
+        ACE_OS::printf("RFModule failed to open\n");
+        return 1;
+    }
+
+    return runModuleThreaded();
+}
+
 
 bool RFModule::configure(yarp::os::ResourceFinder &rf) {
     return true;
@@ -396,23 +491,23 @@ bool RFModule::respond(const Bottle& command, Bottle& reply) {
 * receives data.
 */
 bool RFModule::attach(yarp::os::Port &source) {
-    HELPER(implementation).attach(source);
+    RESPOND_HANDLER(implementation).attach(source);
     return true;
 }
 
 bool RFModule::attach(yarp::os::RpcServer &source) {
-    HELPER(implementation).attach(source);
+    RESPOND_HANDLER(implementation).attach(source);
     return true;
 }
 
 bool RFModule::attachTerminal() {
-    HELPER(implementation).attachTerminal();
+    RESPOND_HANDLER(implementation).attachTerminal();
     return true;
 }
 
 bool RFModule::detachTerminal()
 {
-    HELPER(implementation).detachTerminal();
+    RESPOND_HANDLER(implementation).detachTerminal();
     return true;
 }
 
@@ -428,10 +523,29 @@ void RFModule::stopModule(bool wait) {
     if (!interruptModule()) {
         fprintf(stderr, "interruptModule() returned an error there could be problems shutting down the module\n");
     }
+
+    if (wait) joinModule();
 }
 bool RFModule::isStopping() {
     return stopFlag;
 }
+
+
+bool RFModule::joinModule(double seconds) {
+    if (&THREADED_HANDLER(implementation) != YARP_NULLPTR) {
+        if (THREADED_HANDLER(implementation).join(seconds)) {
+            HELPER(implementation).deleteThreadHandler();
+            return true;
+        } else {
+            ACE_OS::printf("RFModule joinModule() timed out\n");
+            return false;
+        }
+    } else {
+        ACE_OS::fprintf(stderr, "Cannot call join: RFModule runModule() is not currently threaded\n");
+        return true;
+    }
+}
+
 
 ConstString RFModule::getName(const ConstString& subName) {
     if (subName=="") {

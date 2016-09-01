@@ -90,6 +90,40 @@ public:
     virtual int runModule(yarp::os::ResourceFinder &rf);
 
     /**
+     * Calls updateModule() on a separate thread until that returns false.
+     *
+     * Make sure you first configure your module by calling the configure()
+     * function. updateModule() is then called every getPeriod()
+     * seconds.  During execution of updateModule() the following methods may be
+     * executed asynchronously:
+     *  - respond(): this is called if there is input from the standard input or
+     *               a message from an input port connected to the module via
+     *               attach().
+     *  - interruptModule(): this method is called by the handlers of  the
+     *               following signals: SIGINT, SIGTERM and SIGBREAK (WIN32).
+     *               Interrupt is a good place to execute code that unblocks
+     *               pending reads (i.e. blocking reads on port).
+     *
+     * After the last iteration of updateModule() the function close() is
+     * executed.
+     *
+     * @return 0 on success
+     *
+     * \note attachTerminal() is no longer called automatically.
+     */
+    virtual int runModuleThreaded();
+
+    /**
+     * Simple helper method to call configure() and then runModule()
+     * on a separate thread.
+     * See documentation of configure() and runModule() for more details.
+     *
+     * @param rf a previously initialized ResourceFinder
+     * @return 0 upon success, non-zero upon failure
+     */
+    virtual int runModuleThreaded(yarp::os::ResourceFinder &rf);
+
+    /**
      * Configure the module, pass a ResourceFinder object to the module.
      * This function can perform initialization including object creation and
      * memory allocation; returns false to notify that initialization was not
@@ -182,8 +216,8 @@ public:
      * attached). It raises an internal flag that notifies the module to stop
      * executing updateModule() and then calls interruptModule().
      *
-     * @param wait specifies if stop should block and wait termination. This is
-     * not implemented yet.
+     * @param wait if RFModule is run threaded, specifies if stop should
+     * call join and wait for thread termination.
      */
     void stopModule(bool wait = false);
 
@@ -193,6 +227,21 @@ public:
      * @return true/false if the module should stop or not.
      */
     bool isStopping();
+
+    /**
+     * The function returns when the thread execution has completed.
+     *
+     * Stops the execution of the thread that calls this function until either
+     * the thread to join has finished execution (when it returns from run())
+     * or after \a seconds seconds.
+     *
+     * If RFModule has not been thredified, the function returns true immediately.
+     *
+     * @param seconds the maximum number of seconds to block the thread.
+     * @return true if the thread execution is finished, false on time out or when
+     * RFModule has not been thredified.
+     */
+    bool joinModule(double seconds = -1);
 
     /**
      * Return name of module, as set with setName().
