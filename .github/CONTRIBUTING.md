@@ -124,9 +124,9 @@ git checkout -b <branch_name> origin/master
 
 ```
 git checkout master
-git pull --rebase origin/master
+git pull --rebase origin master
 git checkout devel
-git pull --rebase origin/devel
+git pull --rebase origin devel
 ```
 
   * Merge master into devel and eventually fix the conflicts.
