@@ -193,9 +193,10 @@ public:
     static void setDefaultStackSize(int stackSize);
 
     /**
-     * Stops the execution of the current thread until either this thread
-     * has finished execution (when it returns from run()) or after \a seconds
-     * seconds.
+     * The function returns when the thread execution has completed.
+     * Stops the execution of the thread that calls this function until either
+     * the thread to join has finished execution (when it returns from run())
+     * or after \a seconds seconds.
      * @param seconds the maximum number of seconds to block the thread.
      * @return true if the thread execution is finished, false on time out.
      */
