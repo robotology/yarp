@@ -27,12 +27,15 @@ if (YARP_HAS_MATH_LIB)
     set(YARP_math_SRCS src/math.cpp
                        src/NormRand.cpp
                        src/Rand.cpp
-                       src/RandnScalar.cpp
                        src/RandnVector.cpp
-                       src/RandScalar.cpp
                        src/RandVector.cpp
                        src/SVD.cpp
                        src/FrameTransform.cpp)
+
+    list(APPEND YARP_math_SRCS src/gsl/gsl_math.cpp)
+    list(APPEND YARP_math_SRCS src/gsl/gsl_SVD.cpp)
+    list(APPEND YARP_math_SRCS src/gsl/RandScalar.cpp)
+    list(APPEND YARP_math_SRCS src/gsl/RandnScalar.cpp)
 
     source_group("Source Files" FILES ${YARP_math_SRCS})
     source_group("Header Files" FILES ${YARP_math_HDRS})
