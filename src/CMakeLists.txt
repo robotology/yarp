@@ -66,10 +66,8 @@ endif()
 
 
 # unmaintained stuff
-if(YARP_COMPILE_UNMAINTAINED)
-    add_subdirectory(libyarpc)
-    add_subdirectory(libyarpcxx)
-    if(YARP_COMPILE_EXECUTABLES)
-        add_subdirectory(yarpfs)
-    endif()
+add_subdirectory(libyarpc)
+add_subdirectory(libyarpcxx)
+if(YARP_COMPILE_EXECUTABLES)
+  add_subdirectory(yarpfs)
 endif()

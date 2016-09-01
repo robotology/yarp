@@ -2,17 +2,25 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-option(CREATE_YARPC "Compile experimental stable C library" FALSE)
+
+include(CMakeDependentOption)
+cmake_dependent_option(CREATE_YARPC "Compile experimental stable C library" FALSE
+                       YARP_COMPILE_UNMAINTAINED FALSE)
 mark_as_advanced(CREATE_YARPC)
 
-if(CREATE_YARPC)
-  option(CREATE_YARPC_STANDALONE "Make yarpc be fully standalone" TRUE)
+cmake_dependent_option(CREATE_YARPC_STANDALONE "Make yarpc library fully standalone" TRUE
+                       CREATE_YARPC FALSE)
+mark_as_advanced(CREATE_YARPC_STANDALONE)
 
-  project(yarpc)
+if(CREATE_YARPC)
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-  set(YARP_COPY_SRC)
+  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+  include_directories(${YARP_OS_INCLUDE_DIRS})
+
+  unset(YARP_COPY_SRC)
   if(CREATE_YARPC_STANDALONE)
+    include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
     # in some cases, want to be fully stand-alone to not depend on C++ ABI.
     foreach(_comp OS sig dev init)
       get_property(${_comp}_src TARGET YARP_${_comp} PROPERTY SOURCES)
@@ -24,10 +32,6 @@ if(CREATE_YARPC)
       include_directories(${YARP_${_comp}_INCLUDE_DIRS})
     endforeach()
   endif(CREATE_YARPC_STANDALONE)
-
-  if(CREATE_YARPC_STANDALONE)
-      include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-  endif()
 
   set(yarpc_HDRS yarp.h
                  yarpimpl.h)
@@ -53,9 +57,11 @@ if(CREATE_YARPC)
                     ${yarpc_SRCS}
                     ${YARP_COPY_SRC})
 
-  target_link_libraries(yarpc ${ACE_LIBRARIES})
+  target_link_libraries(yarpc LINK_PRIVATE ${ACE_LIBRARIES})
 
   if(NOT CREATE_YARPC_STANDALONE)
+    target_link_libraries(yarpc LINK_PRIVATE YARP_OS
+                                             YARP_init)
     if(YARP_LINK_PLUGINS)
       if(CREATE_OPTIONAL_CARRIERS)
         set_property(SOURCE ${init_src}
@@ -74,11 +80,11 @@ if(CREATE_YARPC)
 
   else()
     if(LINUX)
-      target_link_libraries(yarpc pthread m dl rt)
+      target_link_libraries(yarpc LINK_PRIVATE pthread m dl rt)
     endif()
     if(MINGW)
-      target_link_libraries(yarpc stdc++)
-      target_link_libraries(yarpc m ws2_32 mswsock netapi32 winmm)
+      target_link_libraries(yarpc LINK_PRIVATE stdc++)
+      target_link_libraries(yarpc LINK_PRIVATE m ws2_32 mswsock netapi32 winmm)
       set_target_properties(yarpc PROPERTIES LINK_FLAGS "-Wl,--output-def,${LIBRARY_OUTPUT_PATH}/libyarpc.def")
     endif()
   endif(NOT CREATE_YARPC_STANDALONE)

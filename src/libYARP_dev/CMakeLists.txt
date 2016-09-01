@@ -157,6 +157,17 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
 # handle the ros / yarp thrift messages
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
 add_subdirectory(src/modules/msgs)
+# relative paths should be relative to current directory
+foreach(_var cbw2_msgs_srcs cbw2_msgs_hrds)
+  foreach(_f ${${_var}})
+    file(RELATIVE_PATH _f "${CMAKE_CURRENT_SOURCE_DIR}" "${_f}")
+    list(APPEND _tmp "${_f}")
+  endforeach()
+  set(${_var} ${_tmp})
+endforeach()
+
+
+
 list(APPEND YARP_devices_SRCS ${cbw2_msgs_srcs})
 list(APPEND YARP_devices_HDRS ${cbw2_msgs_hrds})
 include_directories(${cbw2_msgs_incl_dirs})
