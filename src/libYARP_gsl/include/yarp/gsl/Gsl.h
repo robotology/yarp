@@ -17,6 +17,9 @@ forces this library to be GPL.
 #include <yarp/gsl/api.h>
 
 namespace yarp {
+    /**
+    * A library for interoperability with the GSL library. 
+    */
     namespace gsl {
         class GslMatrix;
         class GslVector;
