@@ -5,12 +5,13 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#include <yarp/os/RFModule.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Time.h>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/RFModule.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 
 //#include <ace/OS.h>
@@ -136,7 +137,7 @@ public:
 
 
     virtual void run() {
-        printf("Listening to terminal (type \"quit\" to stop module)\n");
+        yInfo("Listening to terminal (type \"quit\" to stop module).");
         bool isEof = false;
         while (!(isEof||isStopping()||owner.isStopping())) {
             ConstString str = NetworkBase::readString(&isEof);
@@ -147,16 +148,15 @@ public:
                 if (ok) {
                     //printf("ALL: %s\n", reply.toString().c_str());
                     //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
-                    if (reply.get(0).toString()=="help") {
-                        for (int i=0; i<reply.size(); i++) {
-                            ACE_OS::printf("%s\n",
-                                           reply.get(i).toString().c_str());
+                    if (reply.get(0).toString() == "help") {
+                        for (int i = 0; i < reply.size(); i++) {
+                            yInfo("%s.", reply.get(i).toString().c_str());
                         }
                     } else {
-                        ACE_OS::printf("%s\n", reply.toString().c_str());
+                        yInfo("%s.", reply.toString().c_str());
                     }
                 } else {
-                    ACE_OS::printf("Command not understood -- %s\n", str.c_str());
+                    yInfo("Command not understood -- %s.", str.c_str());
                 }
             }
         }
@@ -183,14 +183,16 @@ public:
         return true;
     }
 
+
     bool isTerminalAttached() {
         return attachedTerminal;
     }
 
+
     bool detachTerminal() {
-        fprintf(stderr, "Critial: stopping thread, this might hang\n");
+        yWarning("Critial: stopping thread, this might hang.");
         Thread::stop();
-        fprintf(stderr, "done!\n");
+        yWarning("done!");
         return true;
     }
 };
@@ -292,12 +294,11 @@ static RFModule *module = 0;
 static void handler (int sig) {
     static int ct = 0;
     ct++;
-    if (ct>3) {
-        ACE_OS::printf("Aborting (calling abort())...\n");
+    if (ct > 3) {
+        yInfo("Aborting (calling abort())...");
         yarp::os::abort();
     }
-    ACE_OS::printf("[try %d of 3] Trying to shut down\n",
-                   ct);
+    yInfo("[try %d of 3] Trying to shut down.", ct);
 
     if (module!=0)
     {
@@ -348,7 +349,7 @@ RFModule::RFModule() {
         module = this;
     }
     else {
-        ACE_OS::printf("RFModule::RFModule() signal handling currently only good for one module\n");
+        yInfo("RFModule::RFModule() signal handling currently only good for one module.");
     }
 
 #if defined(WIN32)
@@ -409,22 +410,20 @@ int RFModule::runModule() {
         } while (!isStopping());
     }
 
-    ACE_OS::printf("RFModule closing\n");
+    yInfo("RFModule closing.");
     if (RESPOND_HANDLER(implementation).isTerminalAttached())
     {
-        ACE_OS::fprintf(stderr, "WARNING: module attached to terminal calling exit() to quit.\n");
-        ACE_OS::fprintf(stderr, "You should be aware that this is not a good way to stop a module. Effects will be:\n");
-       // ACE_OS::fprintf(stderr, "- the module close() function will NOT be called\n");
-        ACE_OS::fprintf(stderr, "- class destructors will NOT be called\n");
-        ACE_OS::fprintf(stderr, "- code in the main after runModule() will NOT be executed\n");
-        ACE_OS::fprintf(stderr, "This happens because in your module you called attachTerminal() and we don't have a portable way to quit");
-        ACE_OS::fprintf(stderr, " a module that is listening to the terminal.\n");
-        ACE_OS::fprintf(stderr, "At the moment the only way to have the module quit correctly is to avoid listening to terminal");
-        ACE_OS::fprintf(stderr, "(i.e. do not call attachTerminal()).\n");
-        ACE_OS::fprintf(stderr, "This will also make this annoying message go away.\n");
+        yWarning("Module attached to terminal calling exit() to quit.");
+        yWarning("You should be aware that this is not a good way to stop a module. Effects will be:");
+//        yWarning("- the module close() function will NOT be called");
+        yWarning("- class destructors will NOT be called");
+        yWarning("- code in the main after runModule() will NOT be executed");
+        yWarning("This happens because in your module you called attachTerminal() and we don't have a portable way to quit a module that is listening to the terminal.");
+        yWarning("At the moment the only way to have the module quit correctly is to avoid listening to terminal (i.e. do not call attachTerminal()).");
+        yWarning("This will also make this annoying message go away.");
 
-        //one day this will hopefully go away, now only way to stop
-        //remove both:
+        // One day this will hopefully go away, now only way to stop
+        // remove both:
         close();
         ACE_OS::exit(1);
         /////////////////////////////////////////////////////////////
@@ -432,7 +431,7 @@ int RFModule::runModule() {
     }
 
     close();
-    ACE_OS::printf("RFModule finished\n");
+    yInfo("RFModule finished.");
     return 0;
 }
 
@@ -441,7 +440,7 @@ int RFModule::runModule(yarp::os::ResourceFinder &rf) {
     if (HELPER(implementation).getSingletonRunModule()) return 1;
 
     if (!configure(rf)) {
-        ACE_OS::printf("RFModule failed to open\n");
+        yInfo("RFModule failed to open.");
         return 1;
     }
     return runModule();
@@ -452,12 +451,12 @@ int RFModule::runModuleThreaded() {
     if (HELPER(implementation).getSingletonRunModule()) return 1;
 
     if (!HELPER(implementation).newThreadHandler()) {
-        ACE_OS::printf("RFModule handling thread failed to allocate\n");
+        yError("RFModule handling thread failed to allocate.");
         return 1;
     }
 
     if (!THREADED_HANDLER(implementation).start()) {
-        ACE_OS::printf("RFModule handling thread failed to start\n");
+        yError("RFModule handling thread failed to start.");
         return 1;
     }
 
@@ -469,7 +468,7 @@ int RFModule::runModuleThreaded(ResourceFinder &rf) {
     if (HELPER(implementation).getSingletonRunModule()) return 1;
 
     if (!configure(rf)) {
-        ACE_OS::printf("RFModule failed to open\n");
+        yError("RFModule failed to open.");
         return 1;
     }
 
@@ -521,7 +520,7 @@ bool RFModule::close() {
 void RFModule::stopModule(bool wait) {
     stopFlag=true;
     if (!interruptModule()) {
-        fprintf(stderr, "interruptModule() returned an error there could be problems shutting down the module\n");
+        yError("interruptModule() returned an error there could be problems shutting down the module.");
     }
 
     if (wait) joinModule();
@@ -537,11 +536,11 @@ bool RFModule::joinModule(double seconds) {
             HELPER(implementation).deleteThreadHandler();
             return true;
         } else {
-            ACE_OS::printf("RFModule joinModule() timed out\n");
+            yWarning("RFModule joinModule() timed out.");
             return false;
         }
     } else {
-        ACE_OS::fprintf(stderr, "Cannot call join: RFModule runModule() is not currently threaded\n");
+        yWarning("Cannot call join: RFModule runModule() is not currently threaded.");
         return true;
     }
 }
@@ -556,9 +555,9 @@ ConstString RFModule::getName(const ConstString& subName) {
 
     // Support legacy behavior, check if a "/" needs to be
     // appended before subName.
-    if (subName[0]!='/') {
-        ACE_OS::printf("WARNING: subName in getName() does not begin with \"/\" this suggest you expect getName() to follow a deprecated behavior.\n");
-        ACE_OS::printf("I am now adding \"/\" between %s and %s but you should not rely on this.\n", name.c_str(), subName.c_str());
+    if (subName[0] != '/') {
+        yWarning("SubName in getName() does not begin with \"/\" this suggest you expect getName() to follow a deprecated behavior.");
+        yWarning("I am now adding \"/\" between %s and %s but you should not rely on this.", name.c_str(), subName.c_str());
 
         base += "/";
     }
