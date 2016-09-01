@@ -37,7 +37,7 @@ void yarp::os::impl::getTime(ACE_Time_Value& now) {
         now = ACE_OS::gettimeofday ();
 #  endif
 #else
-        struct timezone *tz = NULL;
+        struct timezone *tz = YARP_NULLPTR;
         gettimeofday(&now, tz);
 #endif
     } else {
@@ -344,7 +344,7 @@ RFModule::RFModule() {
     stopFlag=false;
 
     //set up signal handlers for catching ctrl-c
-    if (module==NULL) {
+    if (module == YARP_NULLPTR) {
         module = this;
     }
     else {
