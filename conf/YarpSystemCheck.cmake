@@ -215,8 +215,6 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunknown-pragmas")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunused-result")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wc++11-compat")
-    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wc++98-compat")
-    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wc++98-compat-pedantic")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wheader-guard")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wignored-attributes")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wnewline-eof")
@@ -240,6 +238,8 @@ else()
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wold-style-cast")
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Winline")
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wfloat-equal")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wc++98-compat")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wc++98-compat-pedantic")
 
 
     ## Visibility hidden flags ##
