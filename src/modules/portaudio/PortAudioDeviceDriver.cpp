@@ -144,7 +144,7 @@ PortAudioDeviceDriver::~PortAudioDeviceDriver()
 bool PortAudioDeviceDriver::open(yarp::os::Searchable& config)
 {
     driverConfig.rate = config.check("rate",Value(0),"audio sample rate (0=automatic)").asInt();
-    driverConfig.samples = config.check("samples",Value(0),"number of samples per network packet (0=automatic)").asInt();
+    driverConfig.samples = config.check("samples",Value(0),"number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt();
     driverConfig.channels = config.check("channels",Value(0),"number of audio channels (0=automatic, max is 2)").asInt();
     driverConfig.wantRead = (bool)config.check("read","if present, just deal with reading audio (microphone)");
     driverConfig.wantWrite = (bool)config.check("write","if present, just deal with writing audio (speaker)");
@@ -181,15 +181,19 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config)
     bool wantRead = config.wantRead;
     bool wantWrite = config.wantWrite;
     int deviceNumber = config.deviceNumber;
-    if (samples==0) samples = 30 * DEFAULT_SAMPLE_RATE * DEFAULT_NUM_CHANNELS; //30seconds
-    numSamples = samples;
+
     if (channels==0) channels = DEFAULT_NUM_CHANNELS;
     numChannels = channels;
     if (rate==0) rate = DEFAULT_SAMPLE_RATE;
     frequency = rate;
 
+    if (samples==0)
+        numSamples = frequency; //  by default let's stream chunks of 1 second
+    else
+        numSamples = samples;
+
     //buffer.allocate(num_samples*num_channels*sizeof(SAMPLE));
-    numBytes = numSamples * sizeof(SAMPLE);
+    numBytes = numSamples * sizeof(SAMPLE) * numChannels;
     int twiceTheBuffer = numBytes * 2;
     dataBuffers.numChannels=numChannels;
     if (dataBuffers.playData==0)
