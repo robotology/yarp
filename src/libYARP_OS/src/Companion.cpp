@@ -49,7 +49,6 @@
 
 #ifdef WITH_LIBEDIT
     #include <editline/readline.h>
-    #include <editline/history.h>
     #include <vector>
     static std::vector<yarp::os::ConstString> commands;
     static yarp::os::Port* rpcHelpPort=NULL;

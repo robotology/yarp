@@ -55,7 +55,6 @@ using namespace yarp::manager;
 #define CMD_COUNTS          24
 #ifdef WITH_LIBEDIT
     #include <editline/readline.h>
-    #include <editline/history.h>
     const char* commands[CMD_COUNTS] = {"help", "exit","list mod", "list app", "list res", "add mod",
                   "add app", "add res", "load app", "run", "stop", "kill",
                   "connect", "disconnect", "which", "check state",
