@@ -26,8 +26,17 @@ class YARP_math_API yarp::math::RandnScalar
     void *impl;
     long seed;
 
+    double y[2];            // required by the boxmuller transform
+    bool executeBoxMuller;  // boxMuller transform generates two mubers at the time, this flag determines when to re-use previous.
+
 private:
     RandnScalar(const RandnScalar &l);
+
+    /**
+    * Box muller transform, uses uniformly sampled random number to generate
+    * gaussian distribution.
+    */
+    inline void boxMuller();
 public:
     /**
     * Constructor.

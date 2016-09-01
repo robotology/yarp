@@ -22,7 +22,9 @@ if (YARP_HAS_MATH_LIB)
                        include/yarp/math/SVD.h
                        include/yarp/math/FrameTransform.h)
 
-    set(YARP_math_IMPL_HDRS )
+    if( NOT CREATE_LIB_MATH_USING_GSL )
+        set(YARP_math_IMPL_HDRS include/yarp/impl/mt.h)
+    endif()
 
     set(YARP_math_SRCS src/math.cpp
                        src/NormRand.cpp
@@ -37,6 +39,7 @@ if (YARP_HAS_MATH_LIB)
         list(APPEND YARP_math_SRCS src/eigen/eigen_SVD.cpp)
         list(APPEND YARP_math_SRCS src/eigen/RandScalar.cpp)
         list(APPEND YARP_math_SRCS src/eigen/RandnScalar.cpp)
+        list(APPEND YARP_MATH_SRCS src/mt.cc)
     else()
         list(APPEND YARP_math_SRCS src/gsl/gsl_math.cpp)
         list(APPEND YARP_math_SRCS src/gsl/gsl_SVD.cpp)
