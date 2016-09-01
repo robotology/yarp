@@ -205,9 +205,9 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgsl0-dev libqcustomplot-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gsl readline; fi
 
-  # Install other dependencies (opencv)
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libopencv-dev; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv; fi
+  # Install other dependencies (opencv, eigen)
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libopencv-dev libeigen3-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen; fi
 
   # Install swig stuff
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then sudo apt-get -y install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-mcs; fi; fi
@@ -234,6 +234,7 @@ before_script:
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_SHARED_LIBRARY=OFF"; fi
   - if $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_VALGRIND_TESTS=ON -DYARP_VALGRIND_DRD_TESTS=OFF -DYARP_VALGRIND_HELGRIND_TESTS=OFF YARP_VALGRIND_MEMCHECK_TESTS=ON YARP_VALGRIND_SGCHECK_TESTS=OFF"; fi
   - if $TRAVIS_NO_DEPRECATED; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_NO_DEPRECATED=ON"; fi
+  - export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_LIB_MATH_USING_GSL=OFF"
 
   # Run CMake
   - (cd build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ..)
