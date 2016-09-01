@@ -176,6 +176,15 @@ private:
     yarp::os::Publisher<sensor_msgs_JointState>              rosPublisherJointPort;       // Dedicated ROS topic publisher
 
 
+    bool ownDevices;
+    // Open the wrapper only, the attach method needs to be called before using it
+    bool openDeferredAttach(yarp::os::Searchable &prop);
+
+    // For the simulator, if a subdevice parameter is given to the wrapper, it will
+    // open it and and attach to it immediatly.
+    yarp::dev::PolyDriver *subDeviceOwned;
+    bool openAndAttachSubDevice(yarp::os::Searchable &prop);
+
     bool checkROSParams(yarp::os::Searchable &config);
     bool initialize_ROS();
     bool initialize_YARP(yarp::os::Searchable &config);

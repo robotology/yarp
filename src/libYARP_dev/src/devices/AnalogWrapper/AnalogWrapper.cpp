@@ -108,7 +108,7 @@ bool AnalogServerHandler::read(yarp::os::ConnectionReader& connection)
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender!=NULL) {
+    if (returnToSender!=YARP_NULLPTR) {
         out.write(*returnToSender);
     }
     return true;
@@ -153,9 +153,11 @@ AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
     frame_id        = "";
     rosNodeName     = "";
     rosTopicName    = "";
-    rosNode         = NULL;
+    rosNode         = YARP_NULLPTR;
     rosMsgCounter   = 0;
 
+    ownDevices      = false;
+    subDeviceOwned  = YARP_NULLPTR;
     sensorId = "AnalogServer";
     createPort(name, rate);
 }
@@ -180,7 +182,7 @@ AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, i
     frame_id        = "";
     rosNodeName     = "";
     rosTopicName    = "";
-    rosNode         = NULL;
+    rosNode         = YARP_NULLPTR;
     rosMsgCounter   = 0;
 
     sensorId = "AnalogServer";
@@ -198,14 +200,14 @@ bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts
 AnalogWrapper::AnalogWrapper(): RateThread(DEFAULT_THREAD_PERIOD)
 {
     _rate = DEFAULT_THREAD_PERIOD;
-    analogSensor_p = NULL;
+    analogSensor_p = YARP_NULLPTR;
 
     // init ROS struct
     useROS          = ROS_disabled;
     frame_id        = "";
     rosNodeName     = "";
     rosTopicName    = "";
-    rosNode         = NULL;
+    rosNode         = YARP_NULLPTR;
     rosMsgCounter   = 0;
 }
 
@@ -213,7 +215,7 @@ AnalogWrapper::~AnalogWrapper()
 {
     threadRelease();
     _rate = DEFAULT_THREAD_PERIOD;
-    analogSensor_p = NULL;
+    analogSensor_p = YARP_NULLPTR;
 }
 
 void AnalogWrapper::setHandlers()
@@ -231,10 +233,61 @@ void AnalogWrapper::removeHandlers()
 {
     for(unsigned int i=0; i<handlers.size(); i++)
     {
-        if (handlers[i]!=NULL)
+        if (handlers[i]!=YARP_NULLPTR)
             delete handlers[i];
     }
     handlers.clear();
+}
+
+bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
+{
+    Property p;
+    subDeviceOwned = new PolyDriver;
+    p.fromString(prop.toString().c_str());
+
+//     p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
+    p.unput("device");
+    p.put("device", prop.find("subdevice").asString());  // subdevice was already checked before
+
+    // if error occour during open, quit here.
+    yDebug("opening analogServer subdevice...");
+    subDeviceOwned->open(p);
+
+    if (!subDeviceOwned->isValid())
+    {
+        yError("opening analogServer subdevice... FAILED\n");
+        return false;
+    }
+
+    subDeviceOwned->view(analogSensor_p);
+
+    if (analogSensor_p == 0)
+    {
+        yError("Opening IAnalogSensor interface of analogServer subdevice... FAILED\n");
+        return false;
+    }
+
+    int chNum = analogSensor_p->getChannels();
+
+    if (chNum <= 0)
+    {
+        yError("Calling analog sensor has invalid channels number %d.\n", chNum);
+        return false;
+    }
+
+    attach(analogSensor_p);
+    RateThread::setRate(_rate);
+    RateThread::start();
+    return true;
+}
+
+
+bool AnalogWrapper::openDeferredAttach(yarp::os::Searchable &prop)
+{
+    // nothing to do here?
+    if( (subDeviceOwned != YARP_NULLPTR) || (ownDevices = true) )
+        yError() << "AnalogServer: something wrong with the initialization.";
+    return true;
 }
 
 
@@ -244,6 +297,10 @@ void AnalogWrapper::removeHandlers()
 
 bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
 {
+    //check if we already instantiated a subdevice previously
+    if (ownDevices)
+        return false;
+
     if (analog2attach.size() != 1)
     {
         yError("AnalogWrapper: cannot attach more than one device");
@@ -257,7 +314,7 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
         Idevice2attach->view(analogSensor_p);
     }
 
-    if(NULL == analogSensor_p)
+    if(YARP_NULLPTR == analogSensor_p)
     {
         yError("AnalogWrapper: subdevice passed to attach method is invalid");
         return false;
@@ -271,7 +328,11 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
 
 bool AnalogWrapper::detachAll()
 {
-    analogSensor_p = NULL;
+    //check if we already instantiated a subdevice previously
+    if (ownDevices)
+        return false;
+
+    analogSensor_p = YARP_NULLPTR;
     for(unsigned int i=0; i<analogPorts.size(); i++)
     {
         handlers[i]->setInterface(analogSensor_p);
@@ -294,7 +355,7 @@ void AnalogWrapper::attach(yarp::dev::IAnalogSensor *s)
 void AnalogWrapper::detach()
 {
     // Set interface to NULL
-    analogSensor_p = NULL;
+    analogSensor_p = YARP_NULLPTR;
     for(unsigned int i=0; i<analogPorts.size(); i++)
     {
         handlers[i]->setInterface(analogSensor_p);
@@ -454,7 +515,7 @@ bool AnalogWrapper::initialize_ROS()
         {
             rosNode = new yarp::os::Node(rosNodeName);   // add a ROS node
 
-            if(rosNode == NULL)
+            if(rosNode == YARP_NULLPTR)
             {
                 yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
                 success = false;
@@ -541,17 +602,36 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
         return false;
     }
 
+    if(!initialize_YARP(config) )
+    {
+        yError() << sensorId << "Error initializing YARP ports";
+        return false;
+    }
+
     if(!initialize_ROS() )
     {
         yError() << sensorId << "Error initializing ROS topics";
         return false;
     }
 
-    if(!initialize_YARP(config) )
+    // check if we need to create subdevice or if they are
+    // passed later on thorugh attachAll()
+    if(config.check("subdevice"))
     {
-        yError() << sensorId << "Error initializing YARP ports";
-        return false;
+        ownDevices=true;
+        if(! openAndAttachSubDevice(config))
+        {
+            yError("AnalogServer: error while opening subdevice\n");
+            return false;
+        }
     }
+    else
+    {
+        ownDevices=false;
+        if(!openDeferredAttach(config))
+            return false;
+    }
+
     return true;
 }
 
@@ -773,11 +853,11 @@ bool AnalogWrapper::close()
     detachAll();
     removeHandlers();
 
-    if(rosNode!=NULL) {
+    if(rosNode!=YARP_NULLPTR) {
         rosNode->interrupt();
         delete rosNode;
 
-        rosNode = NULL;
+        rosNode = YARP_NULLPTR;
     }
 
     return true;
