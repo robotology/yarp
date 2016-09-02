@@ -66,6 +66,9 @@ if (YARP_HAS_MATH_LIB)
         endif()
         include_directories(SYSTEM ${GSL_INCLUDE_DIRS})
     endif()
+    
+    # import math symbols from standard cmath
+    add_definitions(-D_USE_MATH_DEFINES)
 
     add_library(YARP_math ${YARP_math_SRCS}
                           ${YARP_math_HDRS}
