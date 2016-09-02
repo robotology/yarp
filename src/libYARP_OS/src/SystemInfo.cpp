@@ -833,7 +833,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
     hr = CoInitializeSecurity(YARP_NULLPTR, -1, YARP_NULLPTR, YARP_NULLPTR, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, YARP_NULLPTR, EOAC_NONE, YARP_NULLPTR);
     hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *) &WbemLocator);
     //connect to the WMI
-    hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", YARP_NULLPTR, YARP_NULLPTR, 0, YARP_NULLPTR, 0, 0, &WbemServices);
+    hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", YARP_NULLPTR, YARP_NULLPTR, 0, 0, 0, 0, &WbemServices);
     //Run the WQL Query
     hr = WbemServices->ExecQuery(L"WQL", L"SELECT ProcessId,CommandLine FROM Win32_Process", WBEM_FLAG_FORWARD_ONLY, YARP_NULLPTR, &EnumWbem);
 
