@@ -19,6 +19,7 @@ ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
     iTorqueRaw = tq;
     helper=0;
     temp=0;
+//     fake =0;
     temp2=0;
     temp_int=0;
     tmpPids=0;
