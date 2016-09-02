@@ -20,6 +20,9 @@
 #include <gsl/gsl_version.h>
 #include <gsl/gsl_eigen.h>
 
+#include <yarp/gsl/Gsl.h>
+
+using namespace yarp::gsl;
 using namespace yarp::sig;
 
 gsl_vector_view getView(const Vector &v)
@@ -224,9 +227,9 @@ Vector yarp::math::operator*(const Vector &a, const Matrix &m)
     yAssert(a.size()==(size_t)m.rows());
     Vector ret((size_t)m.cols());
 
-    gsl_blas_dgemv(CblasTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
-        (const gsl_vector *) a.getGslVector(), 0.0, 
-        (gsl_vector *) ret.getGslVector());
+    gsl_blas_dgemv(CblasTrans, 1.0, (const gsl_matrix *) GslMatrix(m).getGslMatrix(), 
+        (const gsl_vector *) GslVector(a).getGslVector(), 0.0, 
+        (gsl_vector *)GslVector(ret).getGslVector());
     return ret;
 }
 
@@ -235,9 +238,9 @@ Vector& yarp::math::operator*=(Vector &a, const Matrix &m)
     yAssert(a.size()==(size_t)m.rows());
     Vector a2(a);
     a.resize(m.cols());
-    gsl_blas_dgemv(CblasTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
-        (const gsl_vector *) a2.getGslVector(), 0.0, 
-        (gsl_vector *) a.getGslVector());
+    gsl_blas_dgemv(CblasTrans, 1.0, (const gsl_matrix *)GslMatrix(m).getGslMatrix(),
+        (const gsl_vector *) GslVector(a2).getGslVector(), 0.0,
+        (gsl_vector *)GslVector(a).getGslVector());
     return a;
 }
 
@@ -247,9 +250,9 @@ Vector yarp::math::operator*(const Matrix &m, const Vector &a)
     Vector ret((size_t)m.rows());
     ret=0.0;
 
-    gsl_blas_dgemv(CblasNoTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
-        (const gsl_vector *) a.getGslVector(), 0.0, 
-        (gsl_vector *) ret.getGslVector());
+    gsl_blas_dgemv(CblasNoTrans, 1.0, (const gsl_matrix *)GslMatrix(m).getGslMatrix(),
+        (const gsl_vector *)GslVector(a).getGslVector(), 0.0,
+        (gsl_vector *)GslVector(ret).getGslVector());
 
     return ret;
 }
@@ -541,7 +544,7 @@ bool yarp::math::crossProductMatrix(const Vector &v, Matrix &res)
 
 double yarp::math::norm(const Vector &v)
 {
-    return gsl_blas_dnrm2((const gsl_vector*) v.getGslVector());
+    return gsl_blas_dnrm2((const gsl_vector*) GslVector(v).getGslVector());
 }
 
 double yarp::math::norm2(const Vector &v)
@@ -579,8 +582,8 @@ double yarp::math::det(const Matrix& in) {
     Matrix LU(in);
 
     gsl_permutation* permidx = gsl_permutation_calloc(m);
-    gsl_linalg_LU_decomp((gsl_matrix *) LU.getGslMatrix(), permidx, &sign);
-    ret = gsl_linalg_LU_det((gsl_matrix *) LU.getGslMatrix(), sign); 
+    gsl_linalg_LU_decomp((gsl_matrix *) GslMatrix(LU).getGslMatrix(), permidx, &sign);
+    ret = gsl_linalg_LU_det((gsl_matrix *) GslMatrix(LU).getGslMatrix(), sign); 
     gsl_permutation_free(permidx);
 
     return ret;
@@ -596,9 +599,9 @@ Matrix yarp::math::luinv(const Matrix& in) {
     Matrix ret(m, n);
     gsl_permutation* permidx = gsl_permutation_calloc(m);
 
-    gsl_linalg_LU_decomp((gsl_matrix *) LU.getGslMatrix(), permidx, &sign);
-    gsl_linalg_LU_invert((gsl_matrix *) LU.getGslMatrix(), permidx, 
-        (gsl_matrix *) ret.getGslMatrix());
+    gsl_linalg_LU_decomp((gsl_matrix *) GslMatrix(LU).getGslMatrix(), permidx, &sign);
+    gsl_linalg_LU_invert((gsl_matrix *) GslMatrix(LU).getGslMatrix(), permidx, 
+        (gsl_matrix *) GslMatrix(ret).getGslMatrix());
     gsl_permutation_free(permidx);
     return ret;
 }
@@ -617,7 +620,7 @@ bool yarp::math::eigenValues(const Matrix& in, Vector &real, Vector &img)
     gsl_vector_complex *eval = gsl_vector_complex_alloc(n);
     gsl_matrix_complex *evec = gsl_matrix_complex_alloc(n, n);
     gsl_eigen_nonsymmv_workspace * w = gsl_eigen_nonsymmv_alloc(n);    
-    gsl_eigen_nonsymmv ((gsl_matrix *)in.getGslMatrix(), eval, evec, w);
+    gsl_eigen_nonsymmv ((gsl_matrix *) GslMatrix(in).getGslMatrix(), eval, evec, w);
     for(size_t i=0; i<n; i++)
     {
         gsl_complex eval_i = gsl_vector_complex_get(eval, i);
@@ -645,8 +648,8 @@ Matrix yarp::math::chinv(const Matrix& in)
 {
     Matrix ret(in);
 
-    gsl_linalg_cholesky_decomp((gsl_matrix *) ret.getGslMatrix());
-    gsl_linalg_cholesky_invert((gsl_matrix *) ret.getGslMatrix());
+    gsl_linalg_cholesky_decomp((gsl_matrix *) GslMartix(ret).getGslMatrix());
+    gsl_linalg_cholesky_invert((gsl_matrix *) GslMartix(ret).getGslMatrix());
 
     return ret;
 }
