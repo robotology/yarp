@@ -102,8 +102,14 @@ namespace yarp {
 #define TRIG_RESET_SYSTEM   0x20    // reset system
 #define TRIG_SELF_TEST      0x01    // Start self test
 
+#define RESP_HEADER_SIZE                 2
 // Time to wait while switching to and from config_mode & any operation_mode
-#define SWITCHING_TIME   0.020  //   20ms
+#define SWITCHING_TIME                   0.020  //   20ms
+#define TIME_REPORT_INTERVAL             30
+//number of attempts of sending config command
+#define ATTEMPTS_NUM_OF_SEND_CONFIG_CMD  3
+
+
 
 /**
 *  @ingroup dev_impl_wrapper
@@ -134,6 +140,7 @@ protected:
     yarp::sig::Vector           quaternion;
     yarp::sig::Vector           RPY_angle;
     double                      timeStamp;
+    double                      timeLastReport;
 
     bool                        checkError;
 
@@ -152,11 +159,23 @@ protected:
 
     long int           totMessagesRead;
     yarp::sig::Vector  errorCounter;
+    yarp::sig::Vector  errorReading;
 
     void readSysError();
 
     bool sendReadCommand(unsigned char register_add, int len, unsigned char* buf, std::string comment = "");
     bool sendWriteCommand(unsigned char register_add, int len, unsigned char* cmd, std::string comment = "");
+    bool sendAndVerifyCommand(unsigned char register_add, int len, unsigned char* cmd, std::string comment);
+
+    struct errCounter
+    {
+        int acceError;
+        int gyroError;
+        int magnError;
+        int quatError;
+    };
+
+    errCounter errs;
 
 public:
     BoschIMU();
