@@ -9,7 +9,6 @@
 #include <yarp/math/SVD.h>
 
 #include <cmath>
-#include <gsl/gsl_math.h>
 
 using namespace yarp::sig;
 
