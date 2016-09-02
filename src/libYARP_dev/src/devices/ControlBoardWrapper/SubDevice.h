@@ -78,6 +78,8 @@ public:
 
     bool configuredF;
 
+    yarp::dev::ControlBoardWrapper   *parent;
+
     yarp::dev::PolyDriver            *subdevice;
     yarp::dev::IPidControl           *pid;
     yarp::dev::IPositionControl      *pos;
@@ -113,7 +115,7 @@ public:
     void detach();
     inline void setVerbose(bool _verbose) {_subDevVerbose = _verbose; }
 
-    bool configure(int base, int top, int axes, const std::string &id);
+    bool configure(int base, int top, int axes, const std::string &id, yarp::dev::ControlBoardWrapper *_parent);
 
     inline void refreshJointEncoders()
     {
