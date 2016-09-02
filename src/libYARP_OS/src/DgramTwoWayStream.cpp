@@ -178,7 +178,7 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
 #ifdef __APPLE__
     //These are only as another default. We should modify the method to return bool
     //and fail if we cannot read the socket size.
-    
+
     int _read_size = READ_SIZE+CRC_SIZE;
     int _write_size = WRITE_SIZE+CRC_SIZE;
 
@@ -734,7 +734,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                            ConstString("MCAST Got ") + NetType::toString((int)result) +
                            " bytes");
 
-            } else 
+            } else
 #endif
                 if (dgram!=NULL) {
                 yAssert(dgram!=NULL);
@@ -892,7 +892,7 @@ void DgramTwoWayStream::flush() {
                        ConstString("MCAST - wrote ") +
                        NetType::toString((int)len) + " bytes"
                        );
-        } else 
+        } else
 #endif
             if (dgram!=NULL) {
 #ifdef YARP_HAS_ACE
