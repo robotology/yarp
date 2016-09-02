@@ -29,13 +29,17 @@ install:
   - cmd: 7z x c:\ace.zip -oc:\ -y > nul
   - cmd: set ACE_ROOT=c:\ACE_wrappers
   - cmd: set PATH=%PATH%;c:\ACE_wrappers\bin;c:\projects\yarp\build\bin\%CONFIGURATION%;c:\projects\yarp\build\lib\%CONFIGURATION%
+  # Get Eigen:
+  - ps: wget http://bitbucket.org/eigen/eigen/get/3.3-beta2.zip -OutFile eigen.zip
+  - cmd: 7z x eigen.zip -o"c:\projects" -y > nul
+  - cmd: set EIGEN3_ROOT=c:\projects\eigen-eigen-69d418c06999
   - cmd: set CTEST_OUTPUT_ON_FAILURE=1
 
 before_build:
   - cmd: md C:\projects\yarp\build
   - cmd: cd C:\projects\yarp\build
-  - cmd: if "%platform%"=="Win32" cmake -G"Visual Studio 11" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -DYARP_COMPILE_TESTS:BOOL=ON ..
-  - cmd: if "%platform%"=="x64" cmake -G"Visual Studio 11 Win64" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -DYARP_COMPILE_TESTS:BOOL=ON ..
+  - cmd: if "%platform%"=="Win32" cmake -G"Visual Studio 11" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -DYARP_COMPILE_TESTS:BOOL=ON -DCREATE_LIB_MATH:BOOL=ON -DCREATE_LIB_MATH_USING_GSL:BOOL=OFF ..
+  - cmd: if "%platform%"=="x64" cmake -G"Visual Studio 11 Win64" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -DYARP_COMPILE_TESTS:BOOL=ON -DCREATE_LIB_MATH:BOOL=ON -DCREATE_LIB_MATH_USING_GSL:BOOL=OFF ..
 
 build:
   project: C:\projects\yarp\build\yarp.sln
