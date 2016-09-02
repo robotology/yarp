@@ -33,6 +33,8 @@
 #endif
 
 #include <yarp/os/Time.h>
+#include <cerrno>
+#include <cstring>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -173,6 +175,95 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
 }
 
 void DgramTwoWayStream::allocate(int readSize, int writeSize) {
+#ifdef __APPLE__
+    //These are only as another default. We should modify the method to return bool
+    //and fail if we cannot read the socket size.
+    
+    int _read_size = READ_SIZE+CRC_SIZE;
+    int _write_size = WRITE_SIZE+CRC_SIZE;
+
+    int socketSendBufferSize = -1;
+    int socketRecvBufferSize = -1;
+
+#ifdef YARP_HAS_ACE
+    //Defaults to socket size
+    if (dgram) {
+        int len = sizeof(_read_size);
+        int result = dgram->get_option(SOL_SOCKET, SO_SNDBUF, &_write_size, &len);
+        if (result < 0) {
+            YARP_ERROR(Logger::get(), String("Failed to read buffer size from SNDBUF socket with error: ") +
+                       String(strerror(errno)));
+        }
+        socketSendBufferSize = _write_size;
+
+        result = dgram->get_option(SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
+        if (result < 0) {
+            YARP_ERROR(Logger::get(), String("Failed to read buffer size from RCVBUF socket with error: ") +
+                       String(strerror(errno)));
+        }
+        socketRecvBufferSize = _read_size;
+    }
+#else
+    socklen_t len = sizeof(_read_size);
+    int result = getsockopt(dgram_sockfd, SOL_SOCKET, SO_SNDBUF, &_write_size, &len);
+    if (result < 0) {
+        YARP_ERROR(Logger::get(), String("Failed to read buffer size from SNDBUF socket with error: ") +
+                   String(strerror(errno)));
+    }
+    socketSendBufferSize = _write_size;
+
+    result = getsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
+    if (result < 0) {
+        YARP_ERROR(Logger::get(), String("Failed to read buffer size from RCVBUF socket with error: ") +
+                   String(strerror(errno)));
+    }
+    socketRecvBufferSize = _read_size;
+#endif
+
+    ConstString _env_dgram = NetworkBase::getEnvironment("YARP_DGRAM_SIZE");
+    ConstString _env_mode = "";
+    if (multiMode) {
+        _env_mode = NetworkBase::getEnvironment("YARP_MCAST_SIZE");
+    } else {
+        _env_mode = NetworkBase::getEnvironment("YARP_UDP_SIZE");
+    }
+    if ( _env_mode!="") {
+        _env_dgram = _env_mode;
+    }
+    if (_env_dgram!="") {
+        int sz = NetType::toInt(_env_dgram);
+        if (sz!=0) {
+            _read_size = _write_size = sz;
+        }
+        YARP_INFO(Logger::get(),String("Datagram packet size set to ") +
+                  NetType::toString(_read_size));
+    }
+    if (readSize!=0) {
+        _read_size = readSize;
+        YARP_INFO(Logger::get(),String("Datagram read size reset to ") +
+                  NetType::toString(_read_size));
+    }
+    if (writeSize!=0) {
+        _write_size = writeSize;
+        YARP_INFO(Logger::get(),String("Datagram write size reset to ") +
+                  NetType::toString(_write_size));
+    }
+    readBuffer.allocate(_read_size);
+    writeBuffer.allocate(_write_size);
+    readAt = 0;
+    readAvail = 0;
+    writeAvail = CRC_SIZE;
+    //happy = true;
+    pct = 0;
+
+    if (_read_size < socketRecvBufferSize && socketRecvBufferSize != -1) {
+        YARP_WARN(Logger::get(), "RECV buffer size smaller than socket RECV size. Errors can occur during reading");
+    }
+    if (_write_size > socketSendBufferSize && socketSendBufferSize != -1) {
+        YARP_WARN(Logger::get(), "SND buffer size bigger than socket SND size. Errors can occur during writing");
+    }
+
+#else
     int _read_size = READ_SIZE+CRC_SIZE;
     int _write_size = WRITE_SIZE+CRC_SIZE;
 
@@ -211,10 +302,83 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
     writeAvail = CRC_SIZE;
     //happy = true;
     pct = 0;
+#endif
 }
 
 
 void DgramTwoWayStream::configureSystemBuffers() {
+#ifdef __APPLE__
+    //By default use system buffer size.
+    //These can be overwritten by environment variables
+    //Generic variable
+    ConstString socketBufferSize = NetworkBase::getEnvironment("YARP_DGRAM_BUFFER_SIZE");
+    //Specific read
+    ConstString socketReadBufferSize = NetworkBase::getEnvironment("YARP_DGRAM_RECV_BUFFER_SIZE");
+    //Specific write
+    ConstString socketSendBufferSize = NetworkBase::getEnvironment("YARP_DGRAM_SND_BUFFER_SIZE");
+
+    int readBufferSize = -1;
+    if (socketReadBufferSize != "") {
+        readBufferSize = NetType::toInt(socketReadBufferSize);
+    } else if (socketBufferSize != "") {
+        readBufferSize = NetType::toInt(socketBufferSize);
+    }
+
+    int writeBufferSize = -1;
+    if (socketSendBufferSize != "") {
+        writeBufferSize = NetType::toInt(socketSendBufferSize);
+    } else if (socketBufferSize != "") {
+        writeBufferSize = NetType::toInt(socketBufferSize);
+    }
+
+    if (readBufferSize > 0) {
+        int actualReadSize = -1;
+
+#ifdef YARP_HAS_ACE
+        int intSize = sizeof(readBufferSize);
+        int setResult = dgram->set_option(SOL_SOCKET, SO_RCVBUF,
+                                          (void*)&readBufferSize, intSize);
+
+        int getResult = dgram->get_option(SOL_SOCKET, SO_RCVBUF,
+                                          (void*)&actualReadSize, &intSize);
+#else
+        socklen_t intSize = sizeof(readBufferSize);
+        int setResult = setsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF,
+                                   (void*)&readBufferSize, intSize);
+        int getResult = getsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF,
+                                   (void *) &actualReadSize, &intSize);
+#endif
+        if (setResult < 0 || getResult < 0 || readBufferSize != actualReadSize) {
+            bufferAlertNeeded = true;
+            bufferAlerted = false;
+            YARP_WARN(Logger::get(), "Failed to set RECV socket buffer to desired size. Actual: " + NetType::toString(actualReadSize) + ", Desired: " + NetType::toString(readBufferSize));
+        }
+    }
+    if (writeBufferSize > 0) {
+        int actualWriteSize = -1;
+#ifdef YARP_HAS_ACE
+        int intSize = sizeof(writeBufferSize);
+        int setResult = dgram->set_option(SOL_SOCKET, SO_SNDBUF,
+                                          (void*)&writeBufferSize, intSize);
+        int getResult = dgram->get_option(SOL_SOCKET, SO_SNDBUF,
+                                          (void*)&actualWriteSize, &intSize);
+#else
+        socklen_t intSize = sizeof(readBufferSize);
+        int setResult = setsockopt(dgram_sockfd, SOL_SOCKET, SO_SNDBUF,
+                                   (void*)&writeBufferSize, intSize);
+        int getResult = getsockopt(dgram_sockfd, SOL_SOCKET, SO_SNDBUF,
+                                   (void *) &actualWriteSize, &intSize);
+#endif
+        if (setResult < 0 || getResult < 0 || writeBufferSize != actualWriteSize) {
+            bufferAlertNeeded = true;
+            bufferAlerted = false;
+            YARP_WARN(Logger::get(), "Failed to set SND socket buffer to desired size. Actual: " + NetType::toString(actualWriteSize) + ", Desired: " + NetType::toString(writeBufferSize));
+        }
+    }
+
+
+
+#else
     // ask for more buffer space for udp/mcast
 
     ConstString _dgram_buffer_size = NetworkBase::getEnvironment("YARP_DGRAM_BUFFER_SIZE");
@@ -227,6 +391,8 @@ void DgramTwoWayStream::configureSystemBuffers() {
     int window_size = window_size_desired;
 #ifdef YARP_HAS_ACE
     int result = dgram->set_option(SOL_SOCKET, SO_RCVBUF,
+                                   (char *) &window_size, sizeof(window_size));
+    dgram->set_option(SOL_SOCKET, SO_SNDBUF,
                                    (char *) &window_size, sizeof(window_size));
 #else
     int result = setsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF,
@@ -250,6 +416,7 @@ void DgramTwoWayStream::configureSystemBuffers() {
     }
     YARP_DEBUG(Logger::get(),
                String("Warning: buffer size set to ")+ NetType::toString(window_size) + String(", you requested ") + NetType::toString(window_size_desired));
+#endif
 }
 
 
@@ -322,7 +489,12 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),
                                 (ACE_UINT32)INADDR_ANY);
 
-    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast;
+    ACE_SOCK_Dgram_Mcast::options mcastOptions = ACE_SOCK_Dgram_Mcast::DEFOPTS;
+#ifdef __APPLE__
+    mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
+#endif
+
+    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
     dgram = dmcast;
     mgram = dmcast;
     yAssert(dgram!=NULL);
@@ -377,9 +549,13 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
         //return;
     }
 
-    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast;
 
-    //possible flags: ((ACE_SOCK_Dgram_Mcast::options)(ACE_SOCK_Dgram_Mcast::OPT_NULLIFACE_ALL | ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_YES));
+    ACE_SOCK_Dgram_Mcast::options mcastOptions = ACE_SOCK_Dgram_Mcast::DEFOPTS;
+#ifdef __APPLE__
+    mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
+#endif
+
+    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
 
     dgram = dmcast;
     mgram = dmcast;
@@ -762,9 +938,9 @@ void DgramTwoWayStream::flush() {
             } while (now-first<0.001);
         }
 
-        if (len<0) {
+        if (len < 0) {
             happy = false;
-            YARP_DEBUG(Logger::get(),"DGRAM failed to write");
+            YARP_DEBUG(Logger::get(), "DGRAM failed to send message with error: " + String(strerror(errno)));
             return;
         }
         writeAt += len;
