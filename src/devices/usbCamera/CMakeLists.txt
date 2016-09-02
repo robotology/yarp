@@ -11,6 +11,7 @@ set(ENABLE_icubmod_usbCameraRaw ${ENABLE_icubmod_usbCamera} CACHE INTERNAL "Enab
 yarp_prepare_device(usbCameraRaw TYPE yarp::dev::USBCameraDriverRaw INCLUDE USBcamera.hpp WRAPPER grabber)
 
 IF(ENABLE_icubmod_usbCamera)
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
     if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         MESSAGE(SEND_ERROR "USBcamera: device not available yet on OS X platform, please turn off the device")
