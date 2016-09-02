@@ -191,15 +191,15 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
         int len = sizeof(_read_size);
         int result = dgram->get_option(SOL_SOCKET, SO_SNDBUF, &_write_size, &len);
         if (result < 0) {
-            YARP_ERROR(Logger::get(), String("Failed to read buffer size from SNDBUF socket with error: ") +
-                       String(strerror(errno)));
+            YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from SNDBUF socket with error: ") +
+                       ConstString(strerror(errno)));
         }
         socketSendBufferSize = _write_size;
 
         result = dgram->get_option(SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
         if (result < 0) {
-            YARP_ERROR(Logger::get(), String("Failed to read buffer size from RCVBUF socket with error: ") +
-                       String(strerror(errno)));
+            YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
+                       ConstString(strerror(errno)));
         }
         socketRecvBufferSize = _read_size;
     }
@@ -207,15 +207,15 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
     socklen_t len = sizeof(_read_size);
     int result = getsockopt(dgram_sockfd, SOL_SOCKET, SO_SNDBUF, &_write_size, &len);
     if (result < 0) {
-        YARP_ERROR(Logger::get(), String("Failed to read buffer size from SNDBUF socket with error: ") +
-                   String(strerror(errno)));
+        YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from SNDBUF socket with error: ") +
+                   ConstString(strerror(errno)));
     }
     socketSendBufferSize = _write_size;
 
     result = getsockopt(dgram_sockfd, SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
     if (result < 0) {
-        YARP_ERROR(Logger::get(), String("Failed to read buffer size from RCVBUF socket with error: ") +
-                   String(strerror(errno)));
+        YARP_ERROR(Logger::get(), ConstString("Failed to read buffer size from RCVBUF socket with error: ") +
+                   ConstString(strerror(errno)));
     }
     socketRecvBufferSize = _read_size;
 #endif
@@ -940,7 +940,7 @@ void DgramTwoWayStream::flush() {
 
         if (len < 0) {
             happy = false;
-            YARP_DEBUG(Logger::get(), "DGRAM failed to send message with error: " + String(strerror(errno)));
+            YARP_DEBUG(Logger::get(), "DGRAM failed to send message with error: " + ConstString(strerror(errno)));
             return;
         }
         writeAt += len;
