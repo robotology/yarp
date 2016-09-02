@@ -87,7 +87,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     NameConfig nc;
 
-    String name = nc.getNamespace();
+    ConstString name = nc.getNamespace();
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");
@@ -97,7 +97,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     printf("Got %s\n", reply.toString().c_str());
 
-    ACE_Ordered_MultiSet<String> lines;
+    ACE_Ordered_MultiSet<ConstString> lines;
 
 
     for (int i=1; i<reply.size(); i++) {
@@ -113,7 +113,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                            name.c_str()) {
                     printf(">>> %s is in path %s\n", name.c_str(),
                            rpath.c_str());
-                    String part(name.c_str()+rpath.length());
+                    ConstString part(name.c_str()+rpath.length());
                     if (part[0]=='/') {
                         part = part.substr(1,part.length()-1);
                     }
@@ -123,7 +123,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     if (brk!=NULL) {
                         *brk = '\0';
                     }
-                    String item(part.c_str());
+                    ConstString item(part.c_str());
                     printf("    %s is the item\n", item.c_str());
                     if (item!="") {
                         lines.remove(item);
@@ -135,7 +135,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     }
 
     // return result in alphabetical order
-    ACE_Ordered_MultiSet_Iterator<String> iter(lines);
+    ACE_Ordered_MultiSet_Iterator<ConstString> iter(lines);
     iter.first();
     while (!iter.done()) {
         printf("adding item %s\n", (*iter).c_str());
