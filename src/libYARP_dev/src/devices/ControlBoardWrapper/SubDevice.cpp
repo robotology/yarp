@@ -131,21 +131,21 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         parentName = "";
 
     if (id!=k)
-        {
-            yError()<<"controlBoardWrapper: Wrong device" << k.c_str();
-            return false;
-        }
+    {
+        yError("ControlBoardWrapper for part <%s>: Wrong or unknow device %s. Cannot attach to it.", parentName.c_str(), k.c_str());
+        return false;
+    }
 
     //configure first
     if (!configuredF)
         {
-            yError()<<"controlBoardWrapper: You need to call configure before you can attach any device";
+            yError("ControlBoardWrapper for part <%s>: You need to call configure before you can attach any device", parentName.c_str());
             return false;
         }
 
     if (d==0)
         {
-            yError()<<"controlBoardWrapper: Invalid device (null pointer)";
+            yError("ControlBoardWrapper for part <%s>: Invalid device (null pointer)", parentName.c_str());
             return false;
         }
 
@@ -178,36 +178,36 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         }
     else
         {
-            yError()<<"controlBoardWrapper: Invalid device " << k << " (isValid() returned false)";
+            yError("ControlBoardWrapper for part <%s>: Invalid device %s (isValid() returned false).", parentName.c_str(), k.c_str());
             return false;
         }
 
     if ( ((iMode==0) || (iMode2==0)) && (_subDevVerbose ))
-        yWarning() << "controlBoardWrapper:  Warning iMode not valid interface";
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iMode not valid interface.", parentName.c_str());
 
     if ((iTorque==0) && (_subDevVerbose))
-        yWarning() << "controlBoardWrapper:  Warning iTorque not valid interface";
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iTorque not valid interface.", parentName.c_str());
 
     if ((iImpedance==0) && (_subDevVerbose))
-        yWarning() << "controlBoardWrapper:  Warning iImpedance not valid interface";
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iImpedance not valid interface.", parentName.c_str());
 
     if ((iOpenLoop==0) && (_subDevVerbose))
-        yWarning() << "controlBoardWrapper:  Warning iOpenLoop not valid interface";
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iOpenLoop not valid interface.", parentName.c_str());
 
     if ((iInteract==0) && (_subDevVerbose))
-        yWarning() << "controlBoardWrapper:  Warning iInteractionMode not valid interface";
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iInteractionMode not valid interface.", parentName.c_str());
 
     if ((iMotEnc==0) && (_subDevVerbose))
-        yWarning() << "controlBoardWrapper:  Warning iMotorEncoder not valid interface";
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iMotorEncoder not valid interface.", parentName.c_str());
 
     if ((imotor==0) && (_subDevVerbose))
-        yWarning() << "controlBoardWrapper:  Warning iMotor not valid interface";
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iMotor not valid interface.", parentName.c_str());
 
     if ((iVar == 0) && (_subDevVerbose))
-        yWarning() << "controlBoardWrapper:  Warning iVar not valid interface";
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iRemoteVariable not valid interface.", parentName.c_str());
 
     if ((info == 0) && (_subDevVerbose))
-        yWarning() << "controlBoardWrapper:  Warning info not valid interface";
+        yWarning("ControlBoardWrapper for part <%s>:  Warning iAxisInfo not valid interface.", parentName.c_str());
 
     int deviceJoints=0;
 
@@ -232,7 +232,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if(!iJntEnc)
     {
-        yError("ControlBoarWrapper: IEncoderTimed interface was not found in subdevice");
+        yError("ControlBoardWrapper for part <%s>: IEncoderTimed interface was not found in subdevice.", parentName.c_str());
         return false;
     }
 
@@ -245,7 +245,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         }
         if(deviceJoints <= 0)
         {
-            yError("ControlBoarWrapper: attached device has an invalid number of joints (%d)", deviceJoints);
+            yError("ControlBoardWrapper for part <%s>: attached device has an invalid number of joints (%d)", parentName.c_str(), deviceJoints);
             return false;
         }
     }
@@ -253,19 +253,20 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     {
         if (!pos2->getAxes(&deviceJoints))
         {
-            yError() << "ControlBoarWrapper: failed to get axes number for subdevice " << k.c_str();
+            yError("ControlBoardWrapper for part <%s>: failed to get axes number for subdevice %s.", parentName.c_str(), k.c_str());
             return false;
         }
         if(deviceJoints <=0)
         {
-            yError("ControlBoarWrapper: attached device has an invalid number of joints (%d)", deviceJoints);
+            yError("ControlBoarWrapper for part <%s>: attached device has an invalid number of joints (%d)", parentName.c_str(), deviceJoints);
             return false;
         }
     }
 
     if (deviceJoints<axes)
     {
-        yError("ControlBoarWrapper: check device configuration, number of joints of attached device '%d' less than the one specified during configuration '%d' for %s.", deviceJoints, axes, k.c_str());
+        yError("ControlBoarWrapper for part <%s>: check device configuration, number of joints of attached device '%d' less \
+                than the one specified during configuration '%d' for %s.", parentName.c_str(), deviceJoints, axes, k.c_str());
         return false;
     }
 
