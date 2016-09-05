@@ -783,8 +783,6 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     }
 
 
-
-
 //     double tmp_A2E;
     // Encoder scales
     if (extractGroup(general, xtmp, "Encoder", "a list of scales for the encoders", _njoints))
@@ -793,7 +791,6 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         {
             _angleToEncoder[i-1] = xtmp.get(i).asDouble();
         }
-        return false;
     }
     else
     {
