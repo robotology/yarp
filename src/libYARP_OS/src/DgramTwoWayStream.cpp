@@ -235,17 +235,17 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
         if (sz!=0) {
             _read_size = _write_size = sz;
         }
-        YARP_INFO(Logger::get(),String("Datagram packet size set to ") +
+        YARP_INFO(Logger::get(), ConstString("Datagram packet size set to ") +
                   NetType::toString(_read_size));
     }
     if (readSize!=0) {
         _read_size = readSize;
-        YARP_INFO(Logger::get(),String("Datagram read size reset to ") +
+        YARP_INFO(Logger::get(), ConstString("Datagram read size reset to ") +
                   NetType::toString(_read_size));
     }
     if (writeSize!=0) {
         _write_size = writeSize;
-        YARP_INFO(Logger::get(),String("Datagram write size reset to ") +
+        YARP_INFO(Logger::get(), ConstString("Datagram write size reset to ") +
                   NetType::toString(_write_size));
     }
     readBuffer.allocate(_read_size);
