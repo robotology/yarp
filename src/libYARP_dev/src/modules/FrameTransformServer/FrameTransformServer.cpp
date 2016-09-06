@@ -11,6 +11,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
+#include <stdlib.h>
 
 using namespace yarp::sig;
 using namespace yarp::math;
@@ -149,6 +150,39 @@ FrameTransformServer::~FrameTransformServer()
     }
 }
 
+void FrameTransformServer::list_response(yarp::os::Bottle& out)
+{
+    std::vector<Transforms_server_storage*> storages;
+    std::vector<string>                     storageDescription;
+    storages.push_back(m_ros_timed_transform_storage);
+    storageDescription.push_back("ros timed transforms");
+
+    storages.push_back(m_ros_static_transform_storage);
+    storageDescription.push_back("ros static transforms");
+
+    storages.push_back(m_yarp_timed_transform_storage);
+    storageDescription.push_back("yarp timed transforms");
+
+    storages.push_back(m_yarp_static_transform_storage);
+    storageDescription.push_back("yarp static transforms");
+
+    for(size_t s = 0; s < storages.size(); s++ )
+    {
+        if(!storages[s])
+        {
+            continue;
+        }
+        yDebug() << storages[s]->size();
+        out.addString(storageDescription[s] + ": ");
+
+        for(size_t i = 0; i < storages[s]->size(); i++)
+        {
+            out.addString((*storages[s])[i].toString());
+        }
+
+    }
+}
+
 bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
 {
     LockGuard lock(m_mutex);
@@ -156,6 +190,8 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle out;
     bool ok = in.read(connection);
     if (!ok) return false;
+
+    string request = in.get(0).asString();
 
     // parse in, prepare out
     int code = in.get(0).asVocab();
@@ -252,6 +288,14 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
             out.clear();
             out.addVocab(VOCAB_ERR);
         }
+    }
+    else if(request == "help")
+    {
+        out.addString("'list': get all transforms stored");
+    }
+    else if(request == "list")
+    {
+        list_response(out);
     }
     else
     {
@@ -379,22 +423,22 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
         return false;
     }
     Bottle ROS_config = config.findGroup("ROS");
-    if (ROS_config.check("enable_ros_publisher")==false)
+    if (ROS_config.check("enable_ros_publisher") == false)
     {
         yError() << "FrameTransformServer: Missing 'enable_ros_publisher' in ROS group";
         return false;
     }
-    if (ROS_config.find("enable_ros_publisher").asInt() == 1)
+    if (ROS_config.find("enable_ros_publisher").asInt() == 1 || ROS_config.find("enable_ros_publisher").asString() == "true")
     {
         m_enable_publish_ros_tf = true;
         yInfo() << "FrameTransformServer: Enabled ROS publisher";
     }
-    if (ROS_config.check("enable_ros_subscriber")==false)
+    if (ROS_config.check("enable_ros_subscriber") == false)
     {
         yError() << "FrameTransformServer: Missing 'enable_ros_subscriber' in ROS group";
         return false;
     }
-    if (ROS_config.find("enable_ros_subscriber").asInt() == 1)
+    if (ROS_config.find("enable_ros_subscriber").asInt() == 1 || ROS_config.find("enable_ros_subscriber").asString() == "true")
     {
         m_enable_subscribe_ros_tf = true;
         yInfo() << "FrameTransformServer: Enabled ROS subscriber";

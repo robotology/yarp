@@ -113,6 +113,7 @@ private:
     yarp::os::Subscriber<tf_tfMessage>       m_rosSubscriberPort_tf_static;
 
     virtual bool read(yarp::os::ConnectionReader& connection);
+    inline  void list_response(yarp::os::Bottle& out);
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };
