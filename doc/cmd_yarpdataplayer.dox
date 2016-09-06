@@ -9,7 +9,7 @@ A module that reproduces in a synchronized way, previously acquired data
 
 \section intro_sec Description
 
-This module uses Qt5 to provide the user a simple but informative
+This module provides the user a simple but informative
 user-interface in order to manipulate the previously acquired data.
 When playing it uses the timestamps provided from the time of acquisition
 to synchronize the sending of the data as if the robot was present.
@@ -19,7 +19,7 @@ to synchronize the sending of the data as if the robot was present.
 
 \section lib_sec Libraries
 - OpenCV libraries.
-- Qt5 libraries.
+- GTKMM or Qt5 libraries.
 
 \section running_sec Running
 yarpdataplayer can run with or without the GUI (for server use and
