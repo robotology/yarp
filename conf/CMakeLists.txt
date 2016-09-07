@@ -32,6 +32,8 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpCMakeWorkarounds.cmake
                      YarpRenamedOption.cmake
                      YarpBackupVariable.cmake
+                     YarpUseQt5.cmake
+                     YarpOSXUtilities.cmake
                      FindACE.cmake
                      FindAtlas.cmake
                      FindFFMPEG.cmake
