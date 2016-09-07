@@ -484,7 +484,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
     if (config.check("deviceId"))
     {
-        yError() << "lAnalogWrapper: the parameter 'deviceId' has been deprecated, please use parameter 'name' instead. \n"
+        yError() << "AnalogServer: the parameter 'deviceId' has been removed, please use parameter 'name' instead. \n"
             << "e.g. In the FT wrapper configuration files of your robot, replace '<param name=""deviceId""> left_arm </param>' \n"
             << "with '/icub/left_arm/analog:o' ";
         return false;

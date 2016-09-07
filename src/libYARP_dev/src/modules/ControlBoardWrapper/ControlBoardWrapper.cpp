@@ -409,7 +409,7 @@ bool ControlBoardWrapper::open(Searchable& config)
     // check FIRST for deprecated parameter
     if(prop.check("threadrate"))
     {
-        yError() << " *** ControlBoardWrapper2 is using DEPRECATED parameter 'threadrate', use 'period' instead ***";
+        yError() << " *** ControlBoardWrapper2 is using removed parameter 'threadrate', use 'period' instead ***";
         return false;
     }
 
