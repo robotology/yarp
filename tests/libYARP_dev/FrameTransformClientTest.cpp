@@ -40,7 +40,8 @@ public:
 
         for (size_t i = 0; i < v1.size(); i++)
         {
-            if (abs(v1[i] - v2[i]) > precision)
+            double check = fabs(v1[i] - v2[i]);
+            if (check > precision)
             {
                 return false;
             }
@@ -122,10 +123,10 @@ public:
             itf->setTransformStatic("frame3b", "frame2", m2);
 
             yarp::sig::Matrix m4(4, 4);
-            m4[0][0] = +0.9585267399;  m4[0][1] = -0.2305627908;  m4[0][2] = +0.1675329472;   m4[0][3] = 0.1;
+            m4[0][0] = +0.9585267399;  m4[0][1] = -0.2305627908;  m4[0][2] = +0.1675329472;  m4[0][3] = 0.1;
             m4[1][0] = +0.2433237939;  m4[1][1] = +0.9680974922;  m4[1][2] = -0.0598395928;  m4[1][3] = 0.2;
             m4[2][0] = -0.1483914426;  m4[2][1] = +0.0981226021;  m4[2][2] = +0.9840487461;  m4[2][3] = 0.3;
-            m4[3][0] = 0;              m4[3][1] = 0;              m4[3][2] = 0;          m4[3][3] = 1;
+            m4[3][0] = 0;              m4[3][1] = 0;              m4[3][2] = 0;              m4[3][3] = 1;
 
             yarp::os::Time::delay(1);
             //test 0
@@ -178,12 +179,14 @@ public:
 
             //test 6
             yarp::sig::Vector in_point1(3), out_point1(3), verPoint1(4);
-            yarp::sig::Vector in_pose1(6), out_pose1(6), verPose(6);
-            yarp::sig::Vector in_quat1(4), out_quat1(4), verQuat(4);
+            yarp::sig::Vector in_pose1(6),  out_pose1(6),  verPose(6);
+            yarp::sig::Vector in_quat1(4),  out_quat1(4),  verQuat(4);
 
-            in_quat1 = yarp::math::dcm2quat(m4);
+            //andrea.ruzzenenti@iit.it 09/09/16:
+            //added matrix inversion to simulate the effect of the missing method rot2quat()
+            in_quat1 = yarp::math::dcm2quat(SE3inv(m4));
 
-            in_pose1[0] = 1; in_pose1[1] = 2; in_pose1[2] = 3;
+            in_pose1[0] = 1;  in_pose1[1] = 2;  in_pose1[2] = 3;
             in_pose1[3] = 30; in_pose1[4] = 60; in_pose1[5] = 90;
 
             in_point1[0] = 10; in_point1[1] = 15; in_point1[2] = 5;
@@ -195,13 +198,18 @@ public:
 
             yarp::sig::Matrix mat(4, 4);
             yarp::sig::Vector temp(3);
-            double rot[3] = { in_pose1[3], in_pose1[4], in_pose1[5] };
+
+            double rot[3]     = { in_pose1[3], in_pose1[4], in_pose1[5] };
             mat               = yarp::math::rpy2dcm(yarp::sig::Vector(3, rot));
             mat[0][3]         = in_pose1[0]; mat[1][3] = in_pose1[1]; mat[2][3] = in_pose1[2];
             mat               = m3 * mat;
             verPose[0]        = mat[0][3]; verPose[1] = mat[1][3]; verPose[2] = mat[2][3];
             temp              = yarp::math::dcm2rpy(mat);
             verPose[3]        = temp[0]; verPose[4] = temp[1]; verPose[5] = temp[2];
+
+            //andrea.ruzzenenti@iit.it 09/09/16:
+            //the first one was correct. now the matrix is inverted at the initialization. check the comment there
+
             //verQuat = yarp::math::dcm2quat(m1 * m2 * SE3inv(m4)); //@@@@ TO BE CHECKED
             verQuat = yarp::math::dcm2quat(m1 * m2 * m4);           //@@@@ TO BE CHECKED
 
