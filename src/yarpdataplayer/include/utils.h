@@ -66,7 +66,6 @@ protected:
     std::string                     moduleName;     //string containing module name
     bool                            add_prefix;     //true if /<moduleName> must be added to every port opened
     yarp::sig::Vector               allTimeStamps;  //save all timestamps
-    double                          maxTimeStamp;   //get the max Time stamp
 
 public:
     Utilities(std::string name, bool _add_prefix=false, QObject *parent = NULL);
@@ -83,10 +82,13 @@ public:
     int                 recursiveIterations;
 
     MasterThread        *masterThread;
-    QMainWindow          *wnd;
+    QMainWindow         *wnd;
 
     bool                withExtraColumn;
     int                 column;
+    double              maxTimeStamp;   //get the max Time stamp
+    double              minTimeStamp;
+
 
     /**
     * function that returns the current path string
@@ -129,6 +131,10 @@ public:
     * function that gets the maximum timestamp of all parts
     */
     void getMaxTimeStamp();
+    /**
+     * function that gets the minimun timestamp of all parts
+     */
+    void getMinTimeStamp();
     /**
     * function that amends the first frame of all parts
     */

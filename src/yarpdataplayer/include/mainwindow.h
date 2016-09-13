@@ -63,6 +63,10 @@ public:
      */
     bool setFrameRate(const char* szName, int frameRate);
     /**
+     * function that sets the time taken
+     */
+    bool setTimeTaken(const char* szName, double time);
+    /**
      * function that sets the play progress bar
      */
     void setPlayProgress(int percentage);

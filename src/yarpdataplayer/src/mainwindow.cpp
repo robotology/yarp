@@ -24,7 +24,9 @@
 #define FRAMES      3
 #define SAMPLERATE  4
 #define PORT        5
-#define PERCENT     6
+#define TIMETAKEN   6
+#define PERCENT     7
+
 
 #ifndef APP_NAME
  #define APP_NAME "yarpdataplayer"
@@ -808,6 +810,7 @@ void MainWindow::onMenuPlayBackStop()
         for (int i=0; i < subDirCnt; i++){
             setFrameRate(utilities->partDetails[i].name.c_str(), 0);
             setPartProgress( utilities->partDetails[i].name.c_str(), 0 );
+            setFrameRate(utilities->partDetails[i].name.c_str(), 0);
         }
         setPlayProgress(0);
     }
@@ -927,6 +930,19 @@ bool MainWindow::setFrameRate(const char* szName, int frameRate)
 }
 
 /**********************************************************/
+bool MainWindow::setTimeTaken(const char* szName, double time)
+{
+    QTreeWidgetItem *row = NULL;
+    row = getRowByPart(QString("%1").arg(szName));
+    if(row){
+        row->setText(TIMETAKEN,QString("%1 s").arg(time, 0, 'f', 3));
+        return true;
+    }
+    
+    return false;
+}
+
+/**********************************************************/
 void MainWindow::setPlayProgress(int percentage)
 {
     if(pressed){
@@ -949,6 +965,13 @@ void MainWindow::onUpdateGuiRateThread()
                 if (utilities->partDetails[i].currFrame <= utilities->partDetails[i].maxFrame){
                     int rate = (int)utilities->partDetails[i].worker->getFrameRate();
                     setFrameRate(utilities->partDetails[i].name.c_str(),rate);
+                    
+                    double time = utilities->partDetails[i].worker->getTimeTaken();
+
+                    if (time > 700000){ //value of a time stamp...
+                        setTimeTaken(utilities->partDetails[i].name.c_str(),0.0);
+                    }else
+                        setTimeTaken(utilities->partDetails[i].name.c_str(),time);
                 }
             }
             //percentage = 0;
@@ -1025,10 +1048,26 @@ void InitThread::run()
     if (subDirCnt > 0){
         utilities->getMaxTimeStamp();
     }
+    
+    if (subDirCnt > 0){
+        utilities->getMinTimeStamp();
+    }
 
     //set initial frames for all parts depending on first timestamps
     for (int x=0; x < subDirCnt; x++){
-        utilities->initialFrame.push_back( utilities->partDetails[x].currFrame) ;
+        utilities->initialFrame.push_back( utilities->partDetails[x].currFrame);
+        
+        double totalTime = 0.0;
+        double final = utilities->partDetails[x].timestamp[utilities->partDetails[x].timestamp.length()-1];
+        double initial = utilities->partDetails[x].timestamp[utilities->partDetails[x].currFrame];
+        
+        //LOG("initial timestamp is = %lf\n", initial);
+        //LOG("final timestamp is  = %lf\n", final);
+        
+        totalTime = final - initial;
+        
+        LOG("The part %s, should last for: %lf with %d frames\n", utilities->partDetails[x].name.c_str(), totalTime, utilities->partDetails[x].maxFrame);
+        
     }
 
     utilities->masterThread = new MasterThread(utilities, subDirCnt, mainWindow);
