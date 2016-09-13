@@ -43,6 +43,7 @@ WorkerClass::WorkerClass(int part, int numThreads)
     initTime = 0.0;
     frameRate = 0.0;
     isActive = true;
+    startTime = 0.0;
 }
 
 /**********************************************************/
@@ -90,11 +91,15 @@ void WorkerClass::run()
     int frame = currFrame;
     if (initTime == 0 ){
         initTime = Time::now();
+        startTime = yarp::os::Time::now();
     } else {
         double t = Time::now();
         frameRate = t-initTime;
+        
+        //LOG("initTime %lf t= %lf frameRate %lf\n", initTime, t, frameRate);
         initTime = t;
     }
+    
     if (isActive)
     {
         Bottle tmp;
@@ -129,8 +134,16 @@ void WorkerClass::run()
 /**********************************************************/
 double WorkerClass::getFrameRate()
 {
+    //LOG("FRAME RATE %lf\n", frameRate );
     frameRate = frameRate*1000;
     return frameRate;
+}
+
+
+/**********************************************************/
+double WorkerClass::getTimeTaken()
+{
+    return yarp::os::Time::now()-startTime;
 }
 
 /**********************************************************/
@@ -299,8 +312,9 @@ bool MasterThread::threadInit()
         utilities->partDetails[i].currFrame = 0;
     }
 
-    virtualTime = utilities->partDetails[0].timestamp[ utilities->partDetails[0].currFrame ];
-
+    //virtualTime = utilities->partDetails[0].timestamp[ utilities->partDetails[0].currFrame ];
+    virtualTime = utilities->minTimeStamp;
+    
     return true;
 }
 
@@ -338,6 +352,7 @@ void MasterThread::stepFromCmd()
 /**********************************************************/
 void MasterThread::runNormally()
 {
+    int static tmp = 0;
     for (int i=0; i < numPart; i++){
         bool isActive  = ((MainWindow*)wnd)->getPartActivation(utilities->partDetails[i].name.c_str());
         if ( utilities->partDetails[i].currFrame <= utilities->partDetails[i].maxFrame ){
@@ -376,11 +391,17 @@ void MasterThread::runNormally()
             }
         }
     }
-    this->setRate( (int) (2 / utilities->speed) );
     
-    virtualTime += 0.002; // increase by two millisecond
-
+    this->setRate( (int) (2 / utilities->speed) );
+    for (int i=0; i < numPart; i++){
+       // virtualTime += utilities->partDetails[i].worker->getFrameRate()/4.16;//0.0024;
+    }
+    
+    virtualTime += 0.0024;//utilities->partDetails[i].worker->getFrameRate()/4.16;//0.0024;
+    
     initTime++;
+    
+    tmp++;
 }
 
 /**********************************************************/
@@ -416,7 +437,7 @@ void MasterThread::forward(int steps)
                 virtualTime = utilities->partDetails[i].timestamp[utilities->partDetails[i].currFrame];
             }
         } else {
-            LOG( "cannot go any forward, out of range..\n");
+            LOG( "cannot go any forward, out of range\n");
         }
     }
 }

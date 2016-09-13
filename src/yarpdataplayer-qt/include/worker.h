@@ -52,6 +52,7 @@ protected:
     bool isActive;
     double frameRate, initTime, virtualTime;
     yarp::os::Semaphore semIndex;
+    double startTime;
 
 public:
     /**
@@ -70,6 +71,10 @@ public:
     * Function that returns the frame rate
     */
     double getFrameRate();
+    /**
+     * Function that returns the time taken
+     */
+    double getTimeTaken();
     /**
     * Function that pepares and "steps" the sending of the data
     */
