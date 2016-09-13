@@ -65,11 +65,17 @@
         <string>Port Name</string>
        </property>
       </column>
+       <column>
+       <property name="text">
+       <string>Time Taken</string>
+       </property>
+       </column>
       <column>
        <property name="text">
-        <string>Status</string>
+       <string>Status</string>
        </property>
       </column>
+
      </widget>
     </item>
     <item>

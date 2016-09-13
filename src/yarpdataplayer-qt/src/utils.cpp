@@ -312,6 +312,22 @@ void Utilities::getMaxTimeStamp()
     }
     LOG("the biggest timestamp is: index %d with value %lf\n",index, allTimeStamps[index] );
 }
+
+/**********************************************************/
+void Utilities::getMinTimeStamp()
+{
+    minTimeStamp = allTimeStamps[0];
+    int index = 0;
+    for (int i=0; i< (int)allTimeStamps.size(); i++ ){
+        LOG("%lf\n",allTimeStamps[i]);
+        if ( minTimeStamp > allTimeStamps[i] ){
+            minTimeStamp = allTimeStamps[i];
+            index = i;
+        }
+    }
+    LOG("the smallest timestamp is: index %d with value %lf\n",index, allTimeStamps[index] );
+}
+
 /**********************************************************/
 int Utilities::amendPartFrames(partsData &part)
 {
@@ -394,7 +410,7 @@ void Utilities::stopAtEnd()
     for (int i=0; i < totalThreads; i++){
         partDetails[i].currFrame = (int)initialFrame[i];
     }
-
+    
     //TODO SIGNAL
     //masterThread->wnd->resetButtonOnStop();
     pause();
