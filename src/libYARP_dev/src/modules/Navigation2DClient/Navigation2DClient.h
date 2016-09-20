@@ -43,6 +43,7 @@ protected:
 
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port_navigation_server;
+    yarp::os::Port                m_rpc_port_locations_server;
     yarp::os::ConstString         m_local_name;
     yarp::os::ConstString         m_remote_name;
     int                           m_period;

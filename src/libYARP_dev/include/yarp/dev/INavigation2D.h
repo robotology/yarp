@@ -166,9 +166,8 @@ public:
     virtual bool resumeNavigation() = 0;
 };
 
-#define VOCAB_INAVIGATION          VOCAB4('i','n','a','v')
+#define VOCAB_INAVIGATION           VOCAB4('i','n','a','v')
 
-#define VOCAB_NAV_GOTOLOC           VOCAB4('s','l','o','c')
 #define VOCAB_NAV_GOTOABS           VOCAB4('s','a','b','s')
 #define VOCAB_NAV_GOTOREL           VOCAB4('s','r','e','l')
 
@@ -181,7 +180,6 @@ public:
 #define VOCAB_NAV_GET_STATUS        VOCAB4('g','s','t','s')
 #define VOCAB_NAV_CLEAR             VOCAB4('c','l','r','l')
 #define VOCAB_NAV_DELETE            VOCAB4('d','e','l','l')
-#define VOCAB_NAV_STORE_CURRENT     VOCAB4('s','t','o','c')
 #define VOCAB_NAV_STORE_ABS         VOCAB4('s','t','o','a')
 
 #define VOCAB_NAV_STOP              VOCAB4('s','t','o','p')
