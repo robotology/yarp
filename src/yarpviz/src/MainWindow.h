@@ -78,6 +78,7 @@ private:
 
 private slots:
     void nodeContextMenu(QGVNode* node);
+    void edgeContextMenu(QGVEdge* edge);
     void nodeDoubleClick(QGVNode* node);
     void onProfileYarpNetwork();
     void onHighlightLoops();

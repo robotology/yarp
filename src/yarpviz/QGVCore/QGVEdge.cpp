@@ -23,7 +23,7 @@ License along with this library.
 #include <QDebug>
 #include <QPainter>
 
-QGVEdge::QGVEdge(QGVEdgePrivate *edge, QGVScene *scene) :  _edge(edge), _scene(scene)
+QGVEdge::QGVEdge(QGVEdgePrivate *edge, QGVScene *scene) :  _edge(edge), _scene(scene), edge(NULL)
 {
     setFlag(QGraphicsItem::ItemIsSelectable, true);
 }
@@ -161,4 +161,12 @@ QPolygonF QGVEdge::toArrow(const QLineF &line) const
     polygon.append(line.p1() - o);
 
     return polygon;
+}
+
+void QGVEdge::setEdge(const void* e) {
+    edge = e;
+}
+
+const void* QGVEdge::getEdge(void) {
+    return edge;
 }

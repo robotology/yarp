@@ -48,6 +48,9 @@ public:
 
     void updateLayout();
 
+    void setEdge(const void *e);
+    const void *getEdge(void);
+
     enum { Type = UserType + 3 };
     int type() const
     {
@@ -72,6 +75,7 @@ private:
 
     QString _label;
     QRectF _label_rect;
+    const void* edge;
 };
 
 #endif // QGVEDGE_H

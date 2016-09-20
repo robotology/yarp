@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <NetworkProfiler.h>
+#include <ggraph.h>
 
 namespace Ui {
 class InformationDialog;
@@ -19,6 +20,7 @@ public:
 
     void setProcessVertexInfo(ProcessVertex* vertex);
     void setPortVertexInfo(PortVertex* vertex);
+    void setEdgeInfo(const yarp::graph::Edge* edge);
 
 private:
     Ui::InformationDialog *ui;

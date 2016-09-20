@@ -93,7 +93,7 @@ void MainWindow::initScene() {
     ui->graphicsView->setScene(scene);
     connect(scene, SIGNAL(nodeContextMenu(QGVNode*)), SLOT(nodeContextMenu(QGVNode*)));
     connect(scene, SIGNAL(nodeDoubleClick(QGVNode*)), SLOT(nodeDoubleClick(QGVNode*)));
-
+    connect(scene, SIGNAL(edgeContextMenu(QGVEdge*)), SLOT(edgeContextMenu(QGVEdge*)));
 }
 
 void MainWindow::onProgress(unsigned int percentage) {
@@ -249,6 +249,8 @@ void MainWindow::drawGraph(Graph &graph)
                                                   (QGVNode*)((YarpvizVertex*)&v2)->getGraphicItem(),
                                                    lable.c_str());
                     gve->setAttribute("color", "white");
+                    gve->setToolTip("hello!");
+                    gve->setEdge(&edge);
                 }
             }
         }
@@ -263,6 +265,28 @@ void MainWindow::drawGraph(Graph &graph)
     //QGVSubGraph *ssgraph = sgraph->addSubGraph("SUB2");
     //ssgraph->setAttribute("label", "DESK");
     //scene->addEdge(snode1, ssgraph->addNode("PC0155"), "S10");
+}
+
+void MainWindow::edgeContextMenu(QGVEdge* edge) {
+    const Edge* e  = (const Edge*)edge->getEdge();
+    if(e == NULL)
+        return;
+
+    //yInfo()<<"edge clicked!";
+    //Context menu exemple
+    QMenu menu(edge->label());
+    menu.addSeparator();
+    menu.addAction(tr("Information..."));
+    //menu.addAction(tr("Hide"));
+    QAction *action = menu.exec(QCursor::pos());
+    if(action == 0)
+        return;
+    if(action->text().toStdString() == "Information...") {
+        InformationDialog dialog;
+        dialog.setEdgeInfo(e);
+        dialog.setModal(true);
+        dialog.exec();
+    }
 }
 
 void MainWindow::nodeContextMenu(QGVNode *node)
