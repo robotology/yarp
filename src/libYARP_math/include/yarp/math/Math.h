@@ -567,25 +567,84 @@ namespace yarp
         */
         YARP_math_API yarp::sig::Matrix rpy2dcm(const yarp::sig::Vector &rpy);
 
-        /**
-        * Converts a dcm (direction cosine matrix) rotation matrix to a 
-        * quaternion (defined in Math.h).
-        * @param R the input rotation matrix.
-        * @return 4 by 1 vector for the quaternion representation in the 
-        *         form \f[ \mathbf{q}=q_0 + i \cdot q_1 + j \cdot q_2 +
-        *         k \cdot q_3 \f]
-        */
-        YARP_math_API yarp::sig::Vector dcm2quat(const yarp::sig::Matrix &R);
+
 
         /**
-        * Converts a quaternion in a dcm (direction cosine matrix) 
-        * rotation matrix (defined in Math.h). 
-        * @param q the 4 by 1 input quaternion in the form \f[ 
+         * Construct a rotation matrix from the given unit quaternion representation
+         *
+
+         *
+         * @param quaternion a quaternion representing a rotation
+         *
+         * @return The rotation matrix
+         */
+
+        /**
+        * Converts a rotation matrix to a quaternion.
+        *
+        * The returned quaternion is ordered in the following way:
+        * - s = q_0 \in \mathbb{R} the real part of the quaterion
+        * - r = \begin{bmatrix} q_1 \\ q_2 \\ q_3 \end{bmatrix} \in \mathbb{R}^3 the imaginary part of the quaternion
+        *
+        * The input rotation matrix and the output quaternion are related by the following formula:
+        * \f[
+        *   R(s,r) = I_{3\times3} + 2s r^{\wedge} + 2{r^\wedge}^2,
+        * \f]
+        * where \f$ r^{\wedge} \f$ is the skew-symmetric matrix such that:
+        * \f[
+        *   r \times v = r^\wedge v
+        * \f]
+        *
+        * \note This method is compatible with the rotation-quaternion convention used in the ROS tf2 library.
+        *
+        * @param R the input rotation matrix.
+        * @return 4 by 1 vector for the quaternion representation in the
+        *         form \f[ \mathbf{q}=q_0 + i \cdot q_1 + j \cdot q_2 +
+        *         k \cdot q_3 \f]
+        *
+        */
+        YARP_math_API yarp::sig::Vector rotationmatrix2quaternion(const yarp::sig::Matrix &R);
+
+        /**
+        * Converts a quaternion to a rotation matrix.
+        *
+        * The quaternion is expected to be ordered in the following way:
+        * - s = q_0 \in \mathbb{R} the real part of the quaterion
+        * - r = \begin{bmatrix} q_1 \\ q_2 \\ q_3 \end{bmatrix} \in \mathbb{R}^3 the imaginary part of the quaternion
+        *
+        * The returned rotation matrix is given by the following formula:
+        * \f[
+        *   R(s,r) = I_{3\times3} + 2s r^{\wedge} + 2{r^\wedge}^2,
+        * \f]
+        * where \f$ r^{\wedge} \f$ is the skew-symmetric matrix such that:
+        * \f[
+        *   r \times v = r^\wedge v
+        * \f]
+        *
+        * \note This method is compatible with the rotation-quaternion convention used in the ROS tf2 library.
+        *
+        * @param q the 4 by 1 input quaternion in the form \f[
         *         \mathbf{q}=q_0 + i \cdot q_1 + j \cdot q_2 + k \cdot
         *                q_3 \f]
         * @return 4 by 4 homogeneous matrix representing with the
         *         rotation components in the top left 3 by 3 submatrix.
+        *
         */
+        YARP_math_API yarp::sig::Matrix quaternion2rotationmatrix(const yarp::sig::Vector &q);
+
+
+        /**
+         * Deprecated function, please use rotationmatrix2quaternion instead.
+         *
+         * \note Please see https://github.com/robotology/yarp/issues/786 to understsand why this function was deprecated.
+         */
+        YARP_math_API yarp::sig::Vector dcm2quat(const yarp::sig::Matrix &R);
+
+        /**
+         * Deprecated function, please use quaternion2rotationmatrix instead.
+         *
+         * \note Please see https://github.com/robotology/yarp/issues/786 to understsand why this function was deprecated.
+         */
         YARP_math_API yarp::sig::Matrix quat2dcm(const yarp::sig::Vector &q);
 
         /**
