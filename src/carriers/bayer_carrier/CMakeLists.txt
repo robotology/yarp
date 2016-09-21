@@ -9,8 +9,7 @@ yarp_prepare_plugin(bayer
                     EXTRA_CONFIG SUBTYPE=recv
                                  CODE="not applicable"
                     DEPENDS CREATE_OPTIONAL_CARRIERS
-                    DEFAULT ON
-                    ADVANCED ON)
+                    DEFAULT ON)
 
 if(NOT SKIP_bayer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
