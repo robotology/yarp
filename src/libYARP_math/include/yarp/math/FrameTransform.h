@@ -65,8 +65,8 @@ namespace yarp
                     yarp::sig::Matrix rotM;
                     double rot[4] = { rW, rX, rY, rZ };
                     rotQ = yarp::sig::Vector(4, rot);
-                    rotM = quat2dcm(rotQ);
-                    rotV = dcm2rpy(SE3inv(rotM));
+                    rotM = quaternion2rotationmatrix(rotQ);
+                    rotV = dcm2rpy(rotM);
                     return rotV;
                 }
 
@@ -87,7 +87,7 @@ namespace yarp
                     i = 3;
                     rotV = yarp::sig::Vector(i, rot);
                     rotM = rpy2dcm(rotV);
-                    rotQ = dcm2quat( SE3inv(rotM));
+                    rotQ = rotationmatrix2quaternion(rotM);
                     rW = rotQ[0];
                     rX = rotQ[1];
                     rY = rotQ[2];
@@ -145,7 +145,7 @@ namespace yarp
                 yarp::sig::Vector rotV;
                 yarp::sig::Matrix mat;
 
-                mat = SE3inv(quat2dcm(rotation.toQuaternion())); //for ros
+                mat = quaternion2rotationmatrix(rotation.toQuaternion()); //for ros
                 //mat = quat2dcm(rotation.toQuaternion());
                 mat[0][3] = translation.tX;
                 mat[1][3] = translation.tY;
@@ -165,7 +165,7 @@ namespace yarp
                 translation.tX = mat[0][3];
                 translation.tY = mat[1][3];
                 translation.tZ = mat[2][3];
-                q              = dcm2quat(SE3inv(mat));
+                q              = rotationmatrix2quaternion(mat);
 
                 rotation.fromQuaternion(q);
                 return true;
