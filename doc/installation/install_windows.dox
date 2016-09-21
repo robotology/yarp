@@ -6,14 +6,14 @@
 
 /**
  * @page install_yarp_windows Installing YARP on Windows
- 
+
 \section install_on_windows Installation on Windows
 
 \tableofcontents
- 
+
 \subsection install_windows_from_binaries Install from binaries
 
-We provide precompiled binaries for Visual Studio compilers. Download and execute the installer from this page \ref installation_downloads. 
+We provide precompiled binaries for Visual Studio compilers. Download and execute the installer from this page \ref installation_downloads.
 
 You are now ready to check you installation, see \ref check_your_installation.
 
@@ -25,29 +25,29 @@ Instructions in this page allows you to build YARP from sources. This allows get
 
 We recommend you follow the procedure described below, which will install precompiled binaries for all the required dependencies. Download the YARP installer according to the compiler you use from this page (\ref installation_downloads). Execute the YARP installer. Disable the YARP tick and proceed with the installation.
 
-\image html installation/install-binaries-no-yarp.png
+\image html install-binaries-no-yarp.png
 
 Pick installation directory, all dependencies will be installed in separate folders in this directory:
 
-\image html installation/install-binaries-no-yarp2.png
+\image html install-binaries-no-yarp2.png
 
 Alternatively you can compile all dependencies yourself following the procedure here: \ref dependencies (notice however that this can be tedious, time consuming and error prone).
 
 \subsubsection windows_development_environment Setting up development environment
 
-To compile YARP from sources, you need a C++ compiler. 
+To compile YARP from sources, you need a C++ compiler.
 
-On Windows, you can compile Visual Studio 2013 Community Edition 
-from the [Microsoft website](https://www.visualstudio.com/en-en/downloads/download-visual-studio-vs.aspx#). 
+On Windows, you can compile Visual Studio 2013 Community Edition
+from the [Microsoft website](https://www.visualstudio.com/en-en/downloads/download-visual-studio-vs.aspx#).
 
 Please note that is reccomended to use Visual Studio 2013 because at the moment we do not provide precompiled
-binaries for YARP dependencies for Visual Studio 2015. 
+binaries for YARP dependencies for Visual Studio 2015.
 
 Besides the C++ compiler you also need the following tools.
 
 \paragraph CMake
 
-Get the latest release from: http://cmake.org/cmake/resources/software.html. 
+Get the latest release from: http://cmake.org/cmake/resources/software.html.
 Execute the installer and follow the instructions, no special actions are required.
 
 \paragraph GIT
@@ -57,7 +57,7 @@ There are some competing git solutions for Windows. Among them we recommend
 \li msysgit (http://msysgit.github.io/)
 \li GitHub for Windows (https://windows.github.com/)
 
-\remark Learning git: to get sources you don't need to understand git in detail (just follow our instructions). If you are willing to learn more there are many useful guides available on the internet. Checkout this page to learn more (http://wiki.icub.org/wiki/Learning_more_about_git). 
+\remark Learning git: to get sources you don't need to understand git in detail (just follow our instructions). If you are willing to learn more there are many useful guides available on the internet. Checkout this page to learn more (http://wiki.icub.org/wiki/Learning_more_about_git).
 
 \subsubsection getting_the_sources_windows Getting the sources
 
@@ -73,7 +73,7 @@ For example:
   cd /home/user
   git clone https://github.com/robotology/yarp.git
 \endcode
- 
+
 \subsubsection create_project_files_windows Create YARP project files
 
 \li Run the CMake GUI.
@@ -83,7 +83,7 @@ For example:
 
 Choose the following options:
 
-\code  
+\code
  CREATE_GUIS, set to ON
  CREATE_LIB_MATH, set to ON
 \endcode
@@ -107,7 +107,7 @@ Now we are ready to compile. Go to the build directory (i.e. \c /home/usr/yarp/b
 
 \subsubsection set_up_your_environment_windows Setup your environment
 
- + Set the environment variable \c YARP_DIR so that it points to the installation directory you have chosen (e.g. \c C:/Program Files/YARP). Set \c YARP_DATA_DIRS to %YARP_DIR%/share/yarp. 
+ + Set the environment variable \c YARP_DIR so that it points to the installation directory you have chosen (e.g. \c C:/Program Files/YARP). Set \c YARP_DATA_DIRS to %YARP_DIR%/share/yarp.
  + Add to the \c PATH environment variable the paths of the directories bin and lib within the installation directory you have chose (i.e. \c C:/Program Files/YARP/bin and \c C:/Program Files/YARP/lib).
 
 You are now ready to check you installation, see \ref check_your_installation.

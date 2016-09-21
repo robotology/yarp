@@ -8,7 +8,7 @@
  * @page check_your_installation Check your installation
 
 \section check_basic_functionalities Check basic YARP functionalities
- 
+
 The first step is to have the \c yarpserver running.
 
 At a terminal type:
@@ -18,7 +18,7 @@ At a terminal type:
 
 Depending on your system the console will look something like this:
 
-\image html installation/check-your-installation-yarpserver.png
+\image html check-your-installation-yarpserver.png
 
 If you type on a web browser http://127.0.0.1:10000 you get information about the name server (registered ports, info, etc.).
 
@@ -55,10 +55,9 @@ You can also use the yarpdataplayer to replay a recorded sequence. This will rep
 
 http://www.yarp.it/group__yarpdataplayerExample.html
 
-\image html installation/check-your-installation-yarpdataplayer-example.jpg
+\image html check-your-installation-yarpdataplayer-example.jpg
 
 You are now ready to learn more, proceed to the \ref tutorials.
 
  */
- 
  
