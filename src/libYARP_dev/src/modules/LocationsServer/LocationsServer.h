@@ -50,6 +50,7 @@ protected:
     yarp::os::ConstString         m_local_name;
     int                           m_period;
     yarp::os::Node*               m_rosNode;
+    bool                          m_ros_enabled;
     yarp::os::Publisher<visualization_msgs_MarkerArray>   m_rosPublisherPort;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
@@ -63,6 +64,8 @@ public:
     bool open(yarp::os::Searchable& config);
     bool close();
     virtual bool read(yarp::os::ConnectionReader& connection);
+    bool updateVizMarkers();
+    bool load_locations(yarp::os::ConstString locations_file);
 };
 
 #endif // LOCATIONS_SERVER_H

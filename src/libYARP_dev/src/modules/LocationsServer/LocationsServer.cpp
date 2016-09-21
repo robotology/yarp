@@ -19,6 +19,53 @@ using namespace yarp::sig;
 
 
 //------------------------------------------------------------------------------------------------------------------------------
+bool yarp::dev::LocationsServer::updateVizMarkers()
+{
+    if (m_ros_enabled == false) return false;
+
+    visualization_msgs_MarkerArray markers = m_rosPublisherPort.prepare();
+
+    std::map<std::string, Map2DLocation>::iterator it;
+    for (it = m_locations.begin(); it != m_locations.end(); it++)
+    {
+        visualization_msgs_Marker marker;
+        marker.header.frame_id = "map";
+        TickTime tt; tt.sec = 0; tt.nsec = 0;
+        marker.header.stamp = tt;
+        marker.ns = "my_namespace";
+        marker.id = 0;
+        marker.type = visualization_msgs_Marker::ARROW;
+        marker.action = visualization_msgs_Marker::ADD;
+        marker.pose.position.x = it->second.x;
+        marker.pose.position.y = it->second.y;
+        marker.pose.position.z = 0;
+        
+        it->second.theta; //to quat
+
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        marker.scale.x = 1;
+        marker.scale.y = 0.1;
+        marker.scale.z = 0.1;
+        marker.color.a = 1.0;
+        marker.color.r = 0.0;
+        marker.color.g = 1.0;
+        marker.color.b = 0.0;
+    
+        markers.markers.push_back(marker);
+    }
+
+    m_rosPublisherPort.write();
+    return true;
+}
+
+bool yarp::dev::LocationsServer::load_locations(yarp::os::ConstString locations_file)
+{
+    return true;
+}
+
 bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::Bottle in;
@@ -29,20 +76,22 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
     // parse in, prepare out
     int code = in.get(0).asVocab();
     bool ret = false;
+
     if (code == VOCAB_INAVIGATION)
     {
         int cmd = in.get(1).asVocab();
         if (cmd == VOCAB_NAV_GET_LOCATION_LIST)
         {
-            if (1)
+            yarp::os::ConstString info;
+               
+            out.addVocab(VOCAB_OK);
+            Bottle l = out.addList();
+            std::map<std::string, Map2DLocation>::iterator it;
+            for (it = m_locations.begin(); it != m_locations.end(); it++)
             {
-                yarp::os::ConstString info;
-                
-                out.addVocab(VOCAB_IS);
-                out.addVocab(cmd);
-                out.addString(info);
-                ret = true;
+                l.addString(it->first);
             }
+            ret = true;
         }
         else if (cmd == VOCAB_NAV_CLEAR)
         {
@@ -52,29 +101,63 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
         }
         else if (cmd == VOCAB_NAV_DELETE)
         {
+            std::string name = in.get(2).asString();
+            std::map<std::string, Map2DLocation>::iterator it;
+            it = m_locations.find(name);
+            if (it != m_locations.end())
+            {
+                m_locations.erase(it);
+                out.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yError("User requested an invalid location name");
+                out.addVocab(VOCAB_ERR);
+            }
+            ret = true;
         }
         else if (cmd == VOCAB_NAV_GET_LOCATION)
         {
             std::string name = in.get(2).asString();
-            Map2DLocation loc = m_locations[name];
-            out.addString(loc.map_id);
-            out.addDouble(loc.x);
-            out.addDouble(loc.y);
-            out.addDouble(loc.theta);
+
+            std::map<std::string, Map2DLocation>::iterator it;
+            it = m_locations.find(name);
+            if (it != m_locations.end())
+            {
+                Map2DLocation loc = it->second;
+                out.addString(loc.map_id);
+                out.addDouble(loc.x);
+                out.addDouble(loc.y);
+                out.addDouble(loc.theta);
+            }
+            else
+            {
+                out.addVocab(VOCAB_ERR);
+                yError("User requested an invalid location name");
+            }
             ret = true;
         }
         else if (cmd == VOCAB_NAV_STORE_ABS)
         {
+            Map2DLocation location;
+            yarp::os::ConstString name = in.get(2).asString();
+            location.map_id = in.get(3).asString();
+            location.x = in.get(4).asDouble();
+            location.y = in.get(5).asDouble();
+            location.theta = in.get(6).asDouble();
+            m_locations.insert(std::pair<std::string, Map2DLocation>(name, location));
 
+            out.addVocab(VOCAB_OK);
+            ret = true;
         }
         else
         {
-            yError("Invalid vocab received in BatteryWrapper");
+            yError("Invalid vocab received in LocationsServer");
         }
     }
     else
     {
-        yError("Invalid vocab received in BatteryWrapper");
+        yError("Invalid vocab received in LocationsServer");
     }
 
     if (!ret)
@@ -88,6 +171,7 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
     {
         out.write(*returnToSender);
     }
+    updateVizMarkers();
     return true;
 }
 
@@ -95,13 +179,29 @@ bool yarp::dev::LocationsServer::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
     m_local_name  = config.find("local").asString().c_str();
-    
+    m_ros_enabled = false;
+
     if (m_local_name == "")
     {
         yError("LocationsServer::open() error you have to provide valid local name");
         return false;
     }
     
+    if (config.check("ROS_enabled"))
+    {
+        m_ros_enabled = true;
+        m_rosNode = new yarp::os::Node("LocationServer");
+        m_rosPublisherPort.topic("LocationServerMarkers");
+    }
+
+    if (config.check("locations_file"))
+    {
+        std::string location_file = config.find("locations_file").asString();
+        bool ret = load_locations(location_file);
+        if (ret) { yInfo() << "Location file" << location_file << "succesfully loaded."; }
+        else { yError() << "Problems opening file" << location_file; }
+    }
+
     if (config.check("period"))
     {
         m_period = config.find("period").asInt();
@@ -129,6 +229,12 @@ bool yarp::dev::LocationsServer::close()
 {
     m_rpc_port.interrupt();
     m_rpc_port.close();
+
+    if (m_ros_enabled==true)
+    {
+        m_rosPublisherPort.interrupt();
+        m_rosPublisherPort.close();
+    }
     return true;
 }
 
