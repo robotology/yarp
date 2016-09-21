@@ -1,14 +1,11 @@
 # Copyright (C) 2010 Marco Randazzo
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(laserHokuyo
-                      TYPE laserHokuyo
-                      INCLUDE laserHokuyo.h)
-  yarp_install(FILES laserHokuyo.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(laserHokuyo
+                    CATEGORY device
+                    TYPE laserHokuyo
+                    INCLUDE laserHokuyo.h
+                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
 
 if(NOT SKIP_laserHokuyo)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -29,4 +26,7 @@ if(NOT SKIP_laserHokuyo)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES laserHokuyo.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

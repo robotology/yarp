@@ -11,7 +11,7 @@ install(FILES ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/compiler.h
 
 foreach(conf version system options api numeric)
     set(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
-    configure_file(${YARP_MODULE_DIR}/template/yarp_config_${conf}.h.in
+    configure_file(${YARP_MODULE_DIR}/template/yarp_conf_${conf}.h.in
                    ${outconf})
     message(STATUS "generated ${outconf}")
     install(FILES ${outconf}
@@ -58,7 +58,7 @@ install(FILES ${YARP_CMAKE_FILES}
 set(YARP_TEMPLATE_FILES template/yarp_plugin_carrier.cpp.in
                         template/yarp_plugin_device.cpp.in
                         template/yarp_plugin_portmonitor.cpp.in
-                        template/yarp_plugin_lib.cpp.in
+                        template/yarp_plugin_library.cpp.in
                         template/yarp_plugin_yarpdev_main.cpp.in
                         template/YarpTweakIDL.cmake.in
                         template/placeGeneratedYarpIdlFiles.cmake.in)

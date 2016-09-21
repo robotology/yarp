@@ -2,14 +2,13 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(xmlrpc_carrier
-                       TYPE yarp::os::XmlRpcCarrier
-                       INCLUDE XmlRpcCarrier.h)
-  yarp_install(FILES xmlrpc.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(xmlrpc
+                    CATEGORY carrier
+                    TYPE yarp::os::XmlRpcCarrier
+                    INCLUDE XmlRpcCarrier.h
+                    EXTRA_CONFIG CODE="POST /"
+                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_ACE"
+                    DEFAULT ON)
 
 if(NOT SKIP_xmlrpc_carrier)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -40,4 +39,7 @@ if(NOT SKIP_xmlrpc_carrier)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES xmlrpc.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

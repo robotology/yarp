@@ -4,9 +4,10 @@
 
 cmake_minimum_required(VERSION 2.8.9)
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(bazdevice TYPE bazdevice INCLUDE "bazdevice.h")
-endif(COMPILE_DEVICE_LIBRARY)
+yarp_prepare_plugin(bazdevice
+                    CATEGORY device
+                    TYPE bazdevice
+                    INCLUDE "bazdevice.h")
 
 if(NOT SKIP_bazdevice)
   find_package(YARP REQUIRED)

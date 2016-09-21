@@ -2,14 +2,11 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(nvidia
-                      TYPE NVIDIAGPU
-                      INCLUDE "NVIDIADeviceDriver.h")
-  yarp_install(FILES nvidia.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(nvidia
+                    CATEGORY device
+                    TYPE NVIDIAGPU
+                    INCLUDE "NVIDIADeviceDriver.h"
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_NVIDIACG")
 
 if(NOT SKIP_nvidia)
   add_definitions(-DGL_GLEXT_PROTOTYPES
@@ -38,4 +35,7 @@ if(NOT SKIP_nvidia)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES nvidia.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

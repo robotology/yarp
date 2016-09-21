@@ -207,7 +207,6 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wreorder")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wsizeof-pointer-memaccess")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Woverloaded-virtual")
-    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wc++11-compat")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wtautological-undefined-compare")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmismatched-new-delete")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wparentheses-equality")
@@ -215,8 +214,14 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wredundant-decls")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunknown-pragmas")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunused-result")
-
-
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wc++11-compat")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wheader-guard")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wignored-attributes")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wnewline-eof")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wdangling-else")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wgcc-compat")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmicrosoft-exists")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wstatic-inline-explicit-instantiation")
 
     ## Unwanted warning flags ##
     unset(UNWANTED_WARNING_FLAGS)
@@ -233,6 +238,8 @@ else()
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wold-style-cast")
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Winline")
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wfloat-equal")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wc++98-compat")
+    yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wc++98-compat-pedantic")
 
 
     ## Visibility hidden flags ##
@@ -291,9 +298,9 @@ endif()
 # Generate compiler.h header
 
 # Read the file containing all the documentation for compiler.h
-# Change offset here in case yarp_config_compiler.dox.in comment changes
+# Change offset here in case yarp_conf_compiler.dox.in comment changes
 file(READ
-     "${YARP_MODULE_DIR}/template/yarp_config_compiler.dox.in"
+     "${YARP_MODULE_DIR}/template/yarp_conf_compiler.dox.in"
      _compiler_dox
      OFFSET 97)
 
@@ -306,7 +313,7 @@ if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.3)
 endif()
 if(${CMAKE_VERSION} VERSION_LESS 3.3)
   string(REPLACE "\\\;" ";" _compiler_dox ${_compiler_dox})
-  configure_file(${YARP_MODULE_DIR}/template/yarp_config_compiler.h.in
+  configure_file(${YARP_MODULE_DIR}/template/yarp_conf_compiler.h.in
                  ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/compiler.h
                  @ONLY)
 else()

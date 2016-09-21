@@ -2,19 +2,18 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(serial
-                      TYPE yarp::dev::ServerSerial
-                      INCLUDE yarp/dev/ServerSerial.h
-                      WRAPPER serial)
-  yarp_prepare_device(serialport
-                      TYPE yarp::dev::SerialDeviceDriver
-                      INCLUDE SerialDeviceDriver.h
-                      WRAPPER serial)
-  yarp_install(FILES serial.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(serial
+                    CATEGORY device
+                    TYPE yarp::dev::ServerSerial
+                    INCLUDE yarp/dev/ServerSerial.h
+                    EXTRA_CONFIG WRAPPER=serial
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_ACE")
+yarp_prepare_plugin(serialport
+                    CATEGORY device
+                    TYPE yarp::dev::SerialDeviceDriver
+                    INCLUDE SerialDeviceDriver.h
+                    EXTRA_CONFIG WRAPPER=serial
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_ACE")
 
 
 if(NOT SKIP_serial OR NOT SKIP_serialport)
@@ -35,4 +34,7 @@ if(NOT SKIP_serial OR NOT SKIP_serialport)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES serial.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

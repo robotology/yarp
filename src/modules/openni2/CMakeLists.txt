@@ -2,17 +2,34 @@
 # Author: Konstantinos Theofilis
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if (COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(OpenNI2DeviceServer
-                        TYPE yarp::dev::OpenNI2DeviceDriverServer
-                        INCLUDE OpenNI2DeviceDriverServer.h)
-    yarp_prepare_device(OpenNI2DeviceClient
-                        TYPE yarp::dev::OpenNI2DeviceDriverClient
-                        INCLUDE OpenNI2DeviceDriverClient.h)
-    yarp_install(FILES openni2.ini
-                 COMPONENT runtime
-                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+find_path(OPENNI2_INCLUDE_LOCAL NAMES OpenNI.h HINTS $ENV{OPENNI2_INCLUDE} /usr/include/openni2)
+find_library(OPENNI2_LIBRARY NAMES OpenNI2 libOpenNI2.dylib libOpenNI2 HINTS $ENV{OPENNI2_REDIST})
+if(OPENNI2_INCLUDE_LOCAL AND OPENNI2_LIBRARY)
+  set(OPENNI2_FOUND TRUE)
+else()
+  set(OPENNI2_FOUND FALSE)
 endif()
+
+find_path(NITE2_INCLUDE_LOCAL NAMES NiTE.h HINTS $ENV{NITE2_INCLUDE})
+find_library(NITE2_LIBRARY NAMES NiTE2 HINTS $ENV{NITE2_REDIST64})
+if(NITE2_INCLUDE_LOCAL)
+  set(NITE2_FOUND TRUE)
+else()
+  set(NITE2_FOUND FALSE)
+endif()
+
+
+yarp_prepare_plugin(OpenNI2DeviceServer
+                    CATEGORY device
+                    TYPE yarp::dev::OpenNI2DeviceDriverServer
+                    INCLUDE OpenNI2DeviceDriverServer.h
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;OPENNI2_FOUND")
+yarp_prepare_plugin(OpenNI2DeviceClient
+                    CATEGORY device
+                    TYPE yarp::dev::OpenNI2DeviceDriverClient
+                    INCLUDE OpenNI2DeviceDriverClient.h
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;OPENNI2_FOUND")
 
 if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -22,16 +39,6 @@ if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
   include_directories(${YARP_OS_INCLUDE_DIRS}
                       ${YARP_sig_INCLUDE_DIRS}
                       ${YARP_dev_INCLUDE_DIRS})
-
-  find_path(OPENNI2_INCLUDE_LOCAL NAMES OpenNI.h HINTS $ENV{OPENNI2_INCLUDE} /usr/include/openni2)
-  find_library(OPENNI2_LIBRARY NAMES OpenNI2 libOpenNI2.dylib libOpenNI2 HINTS $ENV{OPENNI2_REDIST})
-  find_path(NITE2_INCLUDE_LOCAL NAMES NiTE.h HINTS $ENV{NITE2_INCLUDE})
-  find_library(NITE2_LIBRARY NAMES NiTE2 HINTS $ENV{NITE2_REDIST64})
-  if(NITE2_INCLUDE_LOCAL)
-    set(NITE2_FOUND TRUE)
-  else()
-    set(NITE2_FOUND FALSE)
-  endif()
 
   if(NOT NITE2_FOUND)
     message(STATUS "OpenNI2Device: NITE2 library was not found, skeleton extraction feature will be skipped by driver. "
@@ -67,4 +74,7 @@ if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES openni2.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

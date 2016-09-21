@@ -2,18 +2,17 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(ffmpeg_grabber
-                      TYPE yarp::dev::FfmpegGrabber
-                      INCLUDE FfmpegGrabber.h
-                      WRAPPER grabber)
-  yarp_prepare_device(ffmpeg_writer
-                      TYPE yarp::dev::FfmpegWriter
-                      INCLUDE FfmpegWriter.h)
-  yarp_install(FILES ffmpeg.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(ffmpeg_grabber
+                    CATEGORY device
+                    TYPE yarp::dev::FfmpegGrabber
+                    INCLUDE FfmpegGrabber.h
+                    EXTRA_CONFIG WRAPPER=grabber
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_FFMPEG")
+yarp_prepare_plugin(ffmpeg_writer
+                    CATEGORY device
+                    TYPE yarp::dev::FfmpegWriter
+                    INCLUDE FfmpegWriter.h
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_FFMPEG")
 
 if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -42,4 +41,7 @@ if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES ffmpeg.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

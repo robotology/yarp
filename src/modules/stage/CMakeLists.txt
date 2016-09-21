@@ -2,14 +2,11 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(stage
-                      TYPE yarp::dev::StageControl
-                      INCLUDE StageControl.h)
-  yarp_install(FILES stage.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(stage
+                    CATEGORY device
+                    TYPE yarp::dev::StageControl
+                    INCLUDE StageControl.h
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_STAGE;YARP_COMPILE_UNMAINTAINED")
 
 if(NOT SKIP_stage)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
@@ -28,4 +25,7 @@ if(NOT SKIP_stage)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES stage.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

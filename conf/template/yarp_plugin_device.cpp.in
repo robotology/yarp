@@ -17,9 +17,6 @@
 #  define YARP_PLUGIN_EXPORT YARP_HELPER_DLL_EXPORT
 #endif
 
-using namespace yarp::os;
-using namespace yarp::dev;
-
 #ifdef YARP_STATIC_PLUGIN
 YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
     yarp::dev::DriverCreator *factory =

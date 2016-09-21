@@ -1,14 +1,11 @@
 # Copyright (C) 2015 Marco Randazzo
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(rpLidar
-                      TYPE RpLidar
-                      INCLUDE rpLidar.h)
-  yarp_install(FILES rpLidar.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(rpLidar
+                    CATEGORY device
+                    TYPE RpLidar
+                    INCLUDE rpLidar.h
+                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
 
 if(NOT SKIP_rpLidar)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -29,4 +26,7 @@ if(NOT SKIP_rpLidar)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES rpLidar.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

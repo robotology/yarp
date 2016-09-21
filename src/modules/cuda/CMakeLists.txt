@@ -2,14 +2,11 @@
 # Authors: Giacomo Spigler, Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(cuda
-                      TYPE CUDAGPU
-                      INCLUDE "CUDADeviceDriver.h")
-  yarp_install(FILES cuda.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(cuda
+                    CATEGORY device
+                    TYPE CUDAGPU
+                    INCLUDE "CUDADeviceDriver.h"
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_CUDA")
 
 if(NOT SKIP_cuda)
   set(CUDA_NUMTHREADS 64 CACHE STRING "")
@@ -37,5 +34,7 @@ if(NOT SKIP_cuda)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES cuda.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()
-

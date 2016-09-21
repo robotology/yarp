@@ -2,19 +2,23 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(tcpros_carrier
-                       TYPE yarp::os::TcpRosCarrier
-                       INCLUDE TcpRosCarrier.h)
-  yarp_prepare_carrier(rossrv_carrier
-                       TYPE yarp::os::RosSrvCarrier
-                       INCLUDE TcpRosCarrier.h)
-  yarp_install(FILES ros.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(tcpros
+                    CATEGORY carrier
+                    TYPE yarp::os::TcpRosCarrier
+                    INCLUDE TcpRosCarrier.h
+                    EXTRA_CONFIG CODE=\(any\)\ \(any\)\ \"\\\\0\\\\0\"\ \(any\)\ \(any\)\ \"\\\\0\\\\0\"
+                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_ACE"
+                    DEFAULT ON)
 
-if(NOT SKIP_tcpros_carrier)
+yarp_prepare_plugin(rossrv
+                    CATEGORY carrier
+                    TYPE yarp::os::RosSrvCarrier
+                    INCLUDE TcpRosCarrier.h
+                    EXTRA_CONFIG CODE=\(any\)\ \(any\)\ \"\\\\0\\\\0\"\ \(any\)\ \(any\)\ \"\\\\0\\\\0\"
+                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_ACE"
+                    DEFAULT ON)
+
+if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
@@ -40,6 +44,9 @@ if(NOT SKIP_tcpros_carrier)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES ros.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   add_executable(yarpros yarpros.cpp
                          TcpRosStream.cpp

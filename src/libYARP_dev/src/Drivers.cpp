@@ -386,6 +386,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     // check if we're being asked to read the options from file
     Value *val;
     if (options.check("file",val)) {
+        // FIXME use argv[0]
         fprintf(stderr,"*** yarpdev --file is deprecated, please use --from\n");
         fprintf(stderr,"*** yarpdev --file will be removed in a future version of YARP\n");
 

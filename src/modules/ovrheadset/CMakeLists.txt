@@ -1,12 +1,12 @@
-if(COMPILE_DEVICE_LIBRARY)
-  yarp_prepare_device(ovrheadset
-                      TYPE yarp::dev::OVRHeadset
-                      INCLUDE OVRHeadset.h)
-  yarp_install(FILES ovrheadset.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+# Copyright (C) 2015  iCub Facility, Istituto Italiano di Tecnologia
+# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+yarp_prepare_plugin(ovrheadset
+                    CATEGORY device
+                    TYPE yarp::dev::OVRHeadset
+                    INCLUDE OVRHeadset.h
+                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_LIBOVR;YARP_HAS_GLFW3;YARP_HAS_GLEW")
 
 if(NOT SKIP_yarpmod_ovrheadset)
 
@@ -31,10 +31,10 @@ if(NOT SKIP_yarpmod_ovrheadset)
   yarp_add_plugin(yarp_ovrheadset ${yarp_ovrheadset_SRCS}
                                   ${yarp_ovrheadset_HDRS})
 
-  target_link_libraries(yarp_ovrheadset LibOVR::OVR
-                                        YARP_OS
+  target_link_libraries(yarp_ovrheadset YARP_OS
                                         YARP_sig
                                         YARP_dev
+                                        LibOVR::OVR
                                         GLEW::GLEW
                                         GLFW3::GLFW3)
 
@@ -42,5 +42,8 @@ if(NOT SKIP_yarpmod_ovrheadset)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES ovrheadset.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 endif()

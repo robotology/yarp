@@ -87,7 +87,10 @@ So you want to add a device to YARP?
     \c CMakeLists.txt
 \code{.cmake}
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(foo TYPE FooDriver INCLUDE FooDriver.h)
+    yarp_prepare_plugin(foo
+                        TYPE FooDriver
+                        INCLUDE FooDriver.h
+                        CATEGORY device)
   endif()
 \endcode
 \li It is good to add this before searching for any libraries or files, so that
@@ -95,7 +98,10 @@ So you want to add a device to YARP?
     user.  In that case, the \c SKIP_foo variable will be set, so you can do:
 \code{.cmake}
   if(COMPILE_DEVICE_LIBRARY)
-    yarp_prepare_device(foo TYPE FooDriver INCLUDE FooDriver.h)
+    yarp_prepare_plugin(foo
+                        TYPE FooDriver
+                        INCLUDE FooDriver.h
+                        CATEGORY device)
   endif()
   if(NOT SKIP_foo)
     find_package(YARP REQUIRED)
