@@ -462,6 +462,16 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
                    ${CMAKE_CURRENT_BINARY_DIR}/yarp_${X_YARP_PLUGIN_MASTER}_plugin_library.cpp @ONLY)
     get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
     get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
+
+    # ensure that yarp/conf/api.h is found in include paths.
+    if(TARGET YARP_OS)
+      # Building YARP
+      get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+      include_directories(${YARP_OS_INCLUDE_DIRS})
+    else()
+      include_directories(${YARP_INCLUDE_DIRS})
+    endif()
+
     # add the library initializer code
     add_library(${X_YARP_PLUGIN_MASTER} ${code} ${CMAKE_CURRENT_BINARY_DIR}/yarp_${X_YARP_PLUGIN_MASTER}_plugin_library.cpp)
 
