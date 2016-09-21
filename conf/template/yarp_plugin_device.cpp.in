@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/api.h>
+#include <yarp/conf/api.h>
 #include <yarp/os/SharedLibraryClass.h>
 #include <yarp/dev/Drivers.h>
 #include <@YARPPLUG_INCLUDE@>

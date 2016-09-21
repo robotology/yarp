@@ -287,7 +287,7 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
  *          in the source directory if you want to customize it.
  */
 
-#include <yarp/os/api.h>
+#include <yarp/conf/api.h>
 #include <yarp/os/SharedLibraryClass.h>
 #include <\@YARPPLUG_INCLUDE\@>
 
