@@ -39,19 +39,21 @@ namespace yarp {
 *
 */
 
+typedef yarp::os::Publisher<visualization_msgs_MarkerArray> MarkerArrayPublisher;
+
 class yarp::dev::LocationsServer : public DeviceDriver , public yarp::os::PortReader
 
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
 
-    yarp::os::Mutex               m_mutex;
-    yarp::os::Port                m_rpc_port;
-    yarp::os::ConstString         m_local_name;
-    int                           m_period;
-    yarp::os::Node*               m_rosNode;
-    bool                          m_ros_enabled;
-    yarp::os::Publisher<visualization_msgs_MarkerArray>   m_rosPublisherPort;
+    yarp::os::Mutex       m_mutex;
+    yarp::os::Port        m_rpc_port;
+    yarp::os::ConstString m_local_name;
+    int                   m_period;
+    yarp::os::Node*       m_rosNode;
+    bool                  m_ros_enabled;
+    MarkerArrayPublisher  m_rosPublisherPort;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
@@ -59,13 +61,12 @@ private:
     std::map<std::string, Map2DLocation> m_locations;
 
 public:
-
     /* DeviceDriver methods */
-    bool open(yarp::os::Searchable& config);
-    bool close();
+    bool         open(yarp::os::Searchable& config);
+    bool         close();
     virtual bool read(yarp::os::ConnectionReader& connection);
-    bool updateVizMarkers();
-    bool load_locations(yarp::os::ConstString locations_file);
+    bool         updateVizMarkers();
+    bool         load_locations(yarp::os::ConstString locations_file);
 };
 
 #endif // LOCATIONS_SERVER_H
