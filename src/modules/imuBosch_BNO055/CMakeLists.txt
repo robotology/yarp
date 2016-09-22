@@ -27,7 +27,8 @@ if(ENABLE_imuBosch_BNO055)
                                         YARP_math)
   yarp_install(TARGETS imuBosch_BNO055
                COMPONENT Runtime
-               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR})
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES imuBosch_BNO055.ini
                COMPONENT runtime
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
