@@ -30,7 +30,8 @@ if(NOT WIN32 AND CREATE_LIB_MATH)
                                           YARP_math)
     yarp_install(TARGETS imuBosch_BNO055
                  COMPONENT Runtime
-                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR})
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   endif()
 endif()
 
