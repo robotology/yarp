@@ -21,7 +21,9 @@
 #include <yarp/os/LogStream.h>
 #include "NetworkProfiler.h"
 #include "ggraph.h"
+
 #include "informationdialog.h"
+#include "qosconfigdialog.h"
 
 using namespace std;
 using namespace yarp::os;
@@ -297,6 +299,7 @@ void MainWindow::edgeContextMenu(QGVEdge* edge) {
     QMenu menu(edge->label());
     menu.addSeparator();
     menu.addAction(tr("Information..."));
+    menu.addAction(tr("Configure Qos..."));
     //menu.addAction(tr("Hide"));
     QAction *action = menu.exec(QCursor::pos());
     if(action == 0)
@@ -304,6 +307,11 @@ void MainWindow::edgeContextMenu(QGVEdge* edge) {
     if(action->text().toStdString() == "Information...") {
         InformationDialog dialog;
         dialog.setEdgeInfo((Edge*)e);
+        dialog.setModal(true);
+        dialog.exec();
+    }
+    else if(action->text().toStdString() == "Configure Qos...") {
+        QosConfigDialog dialog((Edge*)e);
         dialog.setModal(true);
         dialog.exec();
     }

@@ -29,7 +29,7 @@
       <bool>false</bool>
      </property>
      <attribute name="headerDefaultSectionSize">
-      <number>150</number>
+      <number>240</number>
      </attribute>
      <column>
       <property name="text">

@@ -70,6 +70,15 @@
        </widget>
       </widget>
       <widget class="QTreeWidget" name="nodesTreeWidget">
+       <property name="uniformRowHeights">
+        <bool>true</bool>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
        <property name="columnCount">
         <number>1</number>
        </property>

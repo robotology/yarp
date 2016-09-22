@@ -10,13 +10,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(../QGVCore
                     ${YARP_INCLUDE_DIRS})
 
-set(yarpviz_qt_SRCS ggraph.cpp main.cpp MainWindow.cpp QGraphicsViewEc.cpp NetworkProfiler.cpp informationdialog.cpp)
+set(yarpviz_qt_SRCS ggraph.cpp main.cpp MainWindow.cpp QGraphicsViewEc.cpp NetworkProfiler.cpp informationdialog.cpp qosconfigdialog.cpp)
 
-set(yarpviz_qt_HDRS ggraph.h MainWindow.h QGraphicsViewEc.h QGraphicsViewEc.h NetworkProfiler.h informationdialog.h)
+set(yarpviz_qt_HDRS ggraph.h MainWindow.h QGraphicsViewEc.h QGraphicsViewEc.h NetworkProfiler.h informationdialog.h qosconfigdialog.h)
 
 set(yarpviz_qt_QRC_FILES ress.qrc)
 
-set(yarpviz_qt_UI_FILES MainWindow.ui informationdialog.ui)
+set(yarpviz_qt_UI_FILES MainWindow.ui informationdialog.ui qosconfigdialog.ui)
 
 
 qt5_add_resources(yarpviz_qt_QRC_GEN_SRCS ${yarpviz_qt_QRC_FILES})

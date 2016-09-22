@@ -161,6 +161,7 @@ public:
     static bool updateConnectionQosStatus(yarp::graph::Graph& graph);
 
     static std::string packetPrioToString(yarp::os::QosStyle::PacketPriorityLevel level);
+    static yarp::os::QosStyle::PacketPriorityLevel packetStringToPrio(std::string level);
 
 private:
         static ProgressCallback* progCallback;

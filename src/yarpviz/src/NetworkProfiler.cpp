@@ -300,7 +300,7 @@ std::string NetworkProfiler::packetPrioToString(yarp::os::QosStyle::PacketPriori
         break;
     }
     case yarp::os::QosStyle::PacketPriorityCritical : {
-        name = "CRITICAL";
+        name = "CRITIC";
         break;
     }
     case yarp::os::QosStyle::PacketPriorityInvalid : {
@@ -312,6 +312,15 @@ std::string NetworkProfiler::packetPrioToString(yarp::os::QosStyle::PacketPriori
     }
     };
     return name;
+}
+
+yarp::os::QosStyle::PacketPriorityLevel NetworkProfiler::packetStringToPrio(std::string level) {
+    if(level=="NORMAL") return yarp::os::QosStyle::PacketPriorityNormal;
+    if(level=="LOW") return yarp::os::QosStyle::PacketPriorityLow;
+    if(level=="HIGH") return yarp::os::QosStyle::PacketPriorityHigh;
+    if(level=="CRITIC") return yarp::os::QosStyle::PacketPriorityCritical;
+    if(level=="INVALID") return yarp::os::QosStyle::PacketPriorityInvalid;
+    return yarp::os::QosStyle::PacketPriorityInvalid;
 }
 
 bool NetworkProfiler::updateConnectionQosStatus(yarp::graph::Graph& graph) {
