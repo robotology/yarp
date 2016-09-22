@@ -283,3 +283,66 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::graph::Graph& graph, yarp::gr
     }
     return true;
 }
+
+std::string NetworkProfiler::packetPrioToString(yarp::os::QosStyle::PacketPriorityLevel level) {
+    std::string name;
+    switch(level) {
+    case yarp::os::QosStyle::PacketPriorityNormal : {
+        name = "NORMAL";
+        break;
+    }
+    case yarp::os::QosStyle::PacketPriorityLow : {
+        name = "LOW";
+        break;
+    }
+    case yarp::os::QosStyle::PacketPriorityHigh : {
+        name = "HIGH";
+        break;
+    }
+    case yarp::os::QosStyle::PacketPriorityCritical : {
+        name = "CRITICAL";
+        break;
+    }
+    case yarp::os::QosStyle::PacketPriorityInvalid : {
+        name = "INVALID";
+        break;
+    }
+    default: {
+        name = "UNDEFINED";
+    }
+    };
+    return name;
+}
+
+bool NetworkProfiler::updateConnectionQosStatus(yarp::graph::Graph& graph) {
+    // adding all process nodes and subgraphs
+    pvertex_const_iterator itr;
+    const pvertex_set& vertices = graph.vertices();
+
+    for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
+        const Vertex &v1 = (**itr);
+        for(int i=0; i<v1.outEdges().size(); i++) {
+            Edge& edge = (Edge&) v1.outEdges()[i];
+            const Vertex &v2 = edge.second();
+            if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
+                if(edge.property.find("type").asString() == "connection") {
+                    //yInfo()<<v1.property.find("name").asString()<<"->"<<v2.property.find("name").asString()<<lable;
+                    yarp::os::QosStyle fromStyle, toStyle;
+                    if(yarp::os::NetworkBase::getConnectionQos(v1.property.find("name").asString(),
+                                                               v2.property.find("name").asString(), fromStyle, toStyle)) {
+                        // source
+                        edge.property.put("FromThreadPriority", fromStyle.getThreadPriority());
+                        edge.property.put("FromThreadPolicy", fromStyle.getThreadPolicy());
+                        edge.property.put("FromPacketPriority", fromStyle.getPacketPriorityAsLevel());
+                        edge.property.put("ToThreadPriority", toStyle.getThreadPriority());
+                        edge.property.put("ToThreadPolicy", toStyle.getThreadPolicy());
+                        edge.property.put("ToPacketPriority", toStyle.getPacketPriorityAsLevel());
+                    }
+                    else
+                        yWarning()<<"Cannot retrive Qos property of"<<v1.property.find("name").asString()<<"->"<<v2.property.find("name").asString();
+                }
+            }
+        }
+    }
+    return true;
+}

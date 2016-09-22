@@ -20,7 +20,7 @@ public:
 
     void setProcessVertexInfo(ProcessVertex* vertex);
     void setPortVertexInfo(PortVertex* vertex);
-    void setEdgeInfo(const yarp::graph::Edge* edge);
+    void setEdgeInfo(yarp::graph::Edge *edge);
 
 private:
     Ui::InformationDialog *ui;

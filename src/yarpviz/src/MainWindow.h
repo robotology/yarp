@@ -93,6 +93,7 @@ private slots:
     void onWindowMessageBox();
     void onWindowItem();
     void onExportScene();
+    void onUpdateQosStatus();
 
 private:
     Ui::MainWindow *ui;

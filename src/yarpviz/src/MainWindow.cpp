@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionMessageBox, SIGNAL(triggered()),this,SLOT(onWindowMessageBox()));
     connect(ui->actionItemswindow, SIGNAL(triggered()),this,SLOT(onWindowItem()));
     connect(ui->actionExport_scene, SIGNAL(triggered()),this,SLOT(onExportScene()));
+    connect(ui->actionUpdateConnectionQosStatus, SIGNAL(triggered()),this,SLOT(onUpdateQosStatus()));
 
     progressDlg = new QProgressDialog("...", "Cancel", 0, 100, this);
 
@@ -66,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->actionHighlight_Loops->setEnabled(false);
     ui->actionHidePorts->setEnabled(false);
+    ui->actionUpdateConnectionQosStatus->setEnabled(false);
 
     ui->action_Save_project->setEnabled(false);
     ui->action_Load_project->setEnabled(false);
@@ -248,8 +250,26 @@ void MainWindow::drawGraph(Graph &graph)
                     QGVEdge* gve = scene->addEdge((QGVNode*)((YarpvizVertex*)&v1)->getGraphicItem(),
                                                   (QGVNode*)((YarpvizVertex*)&v2)->getGraphicItem(),
                                                    lable.c_str());
-                    gve->setAttribute("color", "white");
-                    gve->setToolTip("hello!");
+                    QosStyle::PacketPriorityLevel level=
+                            (QosStyle::PacketPriorityLevel)edge.property.find("FromPacketPriority").asInt();
+                    switch (level) {
+                    case QosStyle::PacketPriorityNormal:
+                        gve->setAttribute("color", "white");
+                        break;
+                    case QosStyle::PacketPriorityHigh:
+                        gve->setAttribute("color", "orange");
+                        break;
+                    case QosStyle::PacketPriorityCritical:
+                        gve->setAttribute("color", "red");
+                        break;
+                    case QosStyle::PacketPriorityLow:
+                        gve->setAttribute("color", "yellow");
+                        break;
+                    default:
+                        gve->setAttribute("color", "white");
+                        break;
+                    }
+                    //gve->setToolTip("hello!");
                     gve->setEdge(&edge);
                 }
             }
@@ -283,7 +303,7 @@ void MainWindow::edgeContextMenu(QGVEdge* edge) {
         return;
     if(action->text().toStdString() == "Information...") {
         InformationDialog dialog;
-        dialog.setEdgeInfo(e);
+        dialog.setEdgeInfo((Edge*)e);
         dialog.setModal(true);
         dialog.exec();
     }
@@ -292,7 +312,7 @@ void MainWindow::edgeContextMenu(QGVEdge* edge) {
 void MainWindow::nodeContextMenu(QGVNode *node)
 {
     YarpvizVertex* v = (YarpvizVertex*) node->getVertex();
-    YARP_ASSERT(v != 0);
+    yAssert(v != 0);
     if(v->property.find("type").asString() == "process")
         onNodeContextMenuProccess(node, v);
     else if(v->property.find("type").asString() == "port")
@@ -428,12 +448,15 @@ void MainWindow::onProfileYarpNetwork() {
         }
     }
 
+    // update QoS
+    NetworkProfiler::updateConnectionQosStatus(mainGraph);
     moduleParentItem->setExpanded(true);
     portParentItem->setExpanded(true);
     currentGraph = &mainGraph;
     drawGraph(*currentGraph);
     ui->actionHighlight_Loops->setEnabled(true);
     ui->actionHidePorts->setEnabled(true);
+    ui->actionUpdateConnectionQosStatus->setEnabled(true);
 }
 
 void MainWindow::onHighlightLoops() {
@@ -467,12 +490,12 @@ void MainWindow::updateNodeWidgetItems() {
     NodeWidgetItem* item= NULL;
     for (int i= moduleParentItem->childCount()-1; i>-1; i--) {
         item = (NodeWidgetItem*) moduleParentItem->child(i);
-        YARP_ASSERT(item != NULL);
+        yAssert(item != NULL);
         item->check(!item->getVertex()->property.check("hidden"));
     }
     for (int i= portParentItem->childCount()-1; i>-1; i--) {
         item = (NodeWidgetItem*) portParentItem->child(i);
-        YARP_ASSERT(item != NULL);
+        yAssert(item != NULL);
         item->check(!item->getVertex()->property.check("hidden"));
     }
 }
@@ -597,6 +620,11 @@ void MainWindow::onWindowMessageBox() {
 
 void MainWindow::onWindowItem() {
     ui->nodesTreeWidget->setVisible(ui->actionItemswindow->isChecked());
+}
+
+void MainWindow::onUpdateQosStatus() {
+    NetworkProfiler::updateConnectionQosStatus(*currentGraph);
+    drawGraph(*currentGraph);
 }
 
 void MainWindow::onExportScene() {

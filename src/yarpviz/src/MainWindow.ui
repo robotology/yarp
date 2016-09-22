@@ -118,6 +118,7 @@
     </property>
     <addaction name="actionProfile_YARP_network"/>
     <addaction name="actionHighlight_Loops"/>
+    <addaction name="actionUpdateConnectionQosStatus"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -294,6 +295,15 @@
    </property>
    <property name="text">
     <string>Hide Connections Lable</string>
+   </property>
+  </action>
+  <action name="actionUpdateConnectionQosStatus">
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/qos.png</normaloff>:/icons/resources/qos.png</iconset>
+   </property>
+   <property name="text">
+    <string>Update connection &amp;Qos status...</string>
    </property>
   </action>
  </widget>

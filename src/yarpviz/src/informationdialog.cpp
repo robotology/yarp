@@ -1,7 +1,6 @@
 #include "informationdialog.h"
 #include "ui_informationdialog.h"
-
-#include <yarp/os/Network.h>
+#include <NetworkProfiler.h>
 
 InformationDialog::InformationDialog(QWidget *parent) :
     QDialog(parent),
@@ -75,37 +74,7 @@ void InformationDialog::setPortVertexInfo(PortVertex* vertex) {
      item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 }
 
-std::string packetPrioToString(yarp::os::QosStyle::PacketPriorityLevel level) {
-    std::string name;
-    switch(level) {
-    case yarp::os::QosStyle::PacketPriorityNormal : {
-        name = "NORMAL";
-        break;
-    }
-    case yarp::os::QosStyle::PacketPriorityLow : {
-        name = "LOW";
-        break;
-    }
-    case yarp::os::QosStyle::PacketPriorityHigh : {
-        name = "HIGH";
-        break;
-    }
-    case yarp::os::QosStyle::PacketPriorityCritical : {
-        name = "CRITICAL";
-        break;
-    }
-    case yarp::os::QosStyle::PacketPriorityInvalid : {
-        name = "INVALID";
-        break;
-    }
-    default: {
-        name = "UNDEFINED";
-    }
-    };
-    return name;
-}
-
-void InformationDialog::setEdgeInfo(const yarp::graph::Edge* edge) {
+void InformationDialog::setEdgeInfo(yarp::graph::Edge* edge) {
     QTreeWidgetItem* item;
     std::string from  = edge->first().property.find("name").asString();
     std::string to  = edge->second().property.find("name").asString();
@@ -126,40 +95,38 @@ void InformationDialog::setEdgeInfo(const yarp::graph::Edge* edge) {
     prop.append(edge->property.find("carrier").asString().c_str());
     item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
-    yarp::os::QosStyle fromStyle, toStyle;
-    if(yarp::os::NetworkBase::getConnectionQos(from, to, fromStyle, toStyle)) {
+    if(edge->property.check("FromPacketPriority")) {
         // source
+        yarp::os::QosStyle::PacketPriorityLevel level=
+                (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("FromPacketPriority").asInt();
+        prop.clear();
+        prop.append("Source packet priority");
+        prop.append(NetworkProfiler::packetPrioToString(level).c_str());
+        item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
         prop.clear();
         prop.append("Source thread priority");
-        prop.append(QString::number(fromStyle.getThreadPriority()));
+        prop.append(QString::number(edge->property.find("FromThreadPriority").asInt()));
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
         prop.clear();
         prop.append("Source thread policy");
-        prop.append(QString::number(fromStyle.getThreadPolicy()));
-        item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
-
-        yarp::os::QosStyle::PacketPriorityLevel level = fromStyle.getPacketPriorityAsLevel();
-        prop.clear();
-        prop.append("Source packet priority");
-        prop.append(packetPrioToString(level).c_str());
+        prop.append(QString::number(edge->property.find("FromThreadPolicy").asInt()));
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
         // destination
+        level = (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("ToPacketPriority").asInt();
+        prop.clear();
+        prop.append("Destination packet priority");
+        prop.append(NetworkProfiler::packetPrioToString(level).c_str());
+        item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
         prop.clear();
         prop.append("Destination thread priority");
-        prop.append(QString::number(toStyle.getThreadPriority()));
+        prop.append(QString::number(edge->property.find("ToThreadPriority").asInt()));
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
         prop.clear();
         prop.append("Destination thread policy");
-        prop.append(QString::number(toStyle.getThreadPolicy()));
-        item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
-
-        level = toStyle.getPacketPriorityAsLevel();
-        prop.clear();
-        prop.append("Destination packet priority");
-        prop.append(packetPrioToString(level).c_str());
+        prop.append(QString::number(edge->property.find("FromThreadPolicy").asInt()));
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
     }
 }

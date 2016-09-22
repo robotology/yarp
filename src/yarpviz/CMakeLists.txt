@@ -24,7 +24,7 @@ include(YarpUseQt5)
 
 find_package(Graphviz)
 find_package(Qt5Widgets)
-find_package(Qt5Declarative)
+#find_package(Qt5Declarative)
 
 #########################################################################
 # Control where libraries and executables are placed during the build

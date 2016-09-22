@@ -9,5 +9,6 @@
         <file>resources/Linux-icon.png</file>
         <file>resources/Mac-icon.png</file>
         <file>resources/Windows-icon.png</file>
+        <file>resources/qos.png</file>
     </qresource>
 </RCC>

@@ -13,6 +13,7 @@
 #include <vector>
 
 #include<ggraph.h>
+#include <yarp/os/Network.h>
 #include<yarp/os/LogStream.h>
 #include<yarp/os/Bottle.h>
 
@@ -157,6 +158,9 @@ public:
         progCallback = callback;
     }
 
+    static bool updateConnectionQosStatus(yarp::graph::Graph& graph);
+
+    static std::string packetPrioToString(yarp::os::QosStyle::PacketPriorityLevel level);
 
 private:
         static ProgressCallback* progCallback;
