@@ -25,17 +25,25 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
     m_local_name.clear();
     m_remote_name.clear();
 
-    m_local_name  = config.find("local").asString().c_str();
-    m_remote_name = config.find("remote").asString().c_str();
+    m_local_name           = config.find("local").asString().c_str();
+    m_remote_name          = config.find("remote").asString().c_str();
+    m_remote_location_name = config.find("locationRemote").asString().c_str();
 
     if (m_local_name == "")
     {
         yError("Navigation2DClient::open() error you have to provide valid local name");
         return false;
     }
+
     if (m_remote_name == "")
     {
         yError("Navigation2DClient::open() error you have to provide valid remote name");
+        return false;
+    }
+
+    if (m_remote_location_name == "")
+    {
+        yError("Navigation2DClient::open() error you have to provide valid locationRemote name");
         return false;
     }
 
@@ -49,18 +57,20 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
         yWarning("Navigation2DClient: using default period of %d ms" , m_period);
     }
 
-    ConstString local_rpc_1 = m_local_name;
-    local_rpc_1 += "/navigation/rpc";
-    ConstString local_rpc_2 = m_local_name;
-    local_rpc_2 += "/locations/rpc";
-    ConstString remote_rpc_1 = m_remote_name;
-    remote_rpc_1 += "/rpc";
-    ConstString remote_rpc_2 = m_remote_name;
-    remote_rpc_2 += "/rpc";
-    ConstString remote_streaming_name = m_remote_name;
-    remote_streaming_name += "/stream:o";
-    ConstString local_streaming_name = m_local_name;
-    local_streaming_name += "/stream:i";
+    ConstString
+            local_rpc_1,
+            local_rpc_2,
+            remote_rpc_1,
+            remote_rpc_2,
+            remote_streaming_name,
+            local_streaming_name;
+
+    local_rpc_1           = m_local_name           + "/navigation/rpc";
+    local_rpc_2           = m_local_name           + "/locations/rpc";
+    remote_rpc_1          = m_remote_name          + "/rpc";
+    remote_rpc_2          = m_remote_location_name + "/rpc";
+    remote_streaming_name = m_remote_name          + "/stream:o";
+    local_streaming_name  = m_local_name           + "/stream:i";
 
     if (!m_rpc_port_navigation_server.open(local_rpc_1.c_str()))
     {
@@ -73,6 +83,7 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
         yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_2.c_str());
         return false;
     }
+
     /*
     //currently unused
     bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "tcp");
@@ -83,12 +94,14 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
     }*/
 
     bool ok = true;
+
     ok = Network::connect(local_rpc_1.c_str(), remote_rpc_1.c_str());
     if (!ok)
     {
         yError("Navigation2DClient::open() error could not connect to %s", remote_rpc_1.c_str());
         return false;
     }
+
     ok = Network::connect(local_rpc_2.c_str(), remote_rpc_2.c_str());
     if (!ok)
     {

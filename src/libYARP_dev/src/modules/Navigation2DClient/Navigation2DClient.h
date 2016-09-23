@@ -46,6 +46,7 @@ protected:
     yarp::os::Port                m_rpc_port_locations_server;
     yarp::os::ConstString         m_local_name;
     yarp::os::ConstString         m_remote_name;
+    yarp::os::ConstString         m_remote_location_name;
     int                           m_period;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
