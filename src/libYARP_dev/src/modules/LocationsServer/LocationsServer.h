@@ -41,6 +41,15 @@ namespace yarp {
 
 typedef yarp::os::Publisher<visualization_msgs_MarkerArray> MarkerArrayPublisher;
 
+#define V3_X 0
+#define V3_Y 1
+#define V3_Z 2
+
+#define V4_W 0
+#define V4_X 1
+#define V4_Y 2
+#define V4_Z 3
+
 class yarp::dev::LocationsServer : public DeviceDriver , public yarp::os::PortReader
 
 {
@@ -58,7 +67,7 @@ protected:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 private:
-    std::map<std::string, Map2DLocation> m_locations;
+    std::map<std::string, yarp::dev::Map2DLocation> m_locations;
 
 public:
     /* DeviceDriver methods */

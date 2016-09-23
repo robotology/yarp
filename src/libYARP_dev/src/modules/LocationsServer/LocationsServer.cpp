@@ -10,12 +10,16 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
+#include <yarp/math/Math.h>
+#include <iostream>
+#include <fstream>
 
 /*! \file LocationsServer.cpp */
 
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
+using namespace yarp::math;
 
 
 //------------------------------------------------------------------------------------------------------------------------------
@@ -23,14 +27,19 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
 {
     if (m_ros_enabled == false) return false;
 
+    visualization_msgs_Marker marker;
+    TickTime                  tt;
+    yarp::sig::Vector         rpy(3), q(4);
+
     visualization_msgs_MarkerArray markers = m_rosPublisherPort.prepare();
 
     std::map<std::string, Map2DLocation>::iterator it;
     for (it = m_locations.begin(); it != m_locations.end(); it++)
     {
-        visualization_msgs_Marker marker;
-        TickTime                  tt;
-
+        rpy[V3_X] = 0;
+        rpy[V3_Y] = 0;
+        rpy[V3_Z] = it->second.theta;
+        q         = dcm2quat(SE3inv(rpy2dcm(rpy)));
 
         marker.header.frame_id    = "map";
         tt.sec                    = 0;
@@ -43,13 +52,10 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
         marker.pose.position.x    = it->second.x;
         marker.pose.position.y    = it->second.y;
         marker.pose.position.z    = 0;
-
-        it->second.theta; //to quat
-
-        marker.pose.orientation.x = 0.0;
-        marker.pose.orientation.y = 0.0;
-        marker.pose.orientation.z = 0.0;
-        marker.pose.orientation.w = 1.0;
+        marker.pose.orientation.x = q[V4_X];
+        marker.pose.orientation.y = q[V4_Y];
+        marker.pose.orientation.z = q[V4_Z];
+        marker.pose.orientation.w = q[V4_W];
         marker.scale.x            = 1;
         marker.scale.y            = 0.1;
         marker.scale.z            = 0.1;
@@ -67,6 +73,32 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
 
 bool yarp::dev::LocationsServer::load_locations(yarp::os::ConstString locations_file)
 {
+    std::ifstream file;
+    file.open (locations_file.c_str());
+
+    if(!file.is_open())
+    {
+        yError() << "sorry unable to open" << locations_file << "locations file";
+    }
+
+    std::string     buffer, key, xpos, ypos, theta;
+    Map2DLocation   location;
+
+    while(!file.eof())
+    {
+        std::getline(file, buffer);
+        std::istringstream iss(buffer);
+
+        iss >> key >> xpos >> ypos >> theta;
+
+        location.map_id  = key;
+        location.x       = std::atof(xpos.c_str());
+        location.y       = std::atof(ypos.c_str());
+        location.theta   = std::atof(theta.c_str());
+        m_locations[key] = location;
+    }
+
+    file.close();
     return true;
 }
 
@@ -205,8 +237,9 @@ bool yarp::dev::LocationsServer::open(yarp::os::Searchable &config)
     if (config.check("ROS_enabled"))
     {
         m_ros_enabled = true;
-        m_rosNode     = new yarp::os::Node("LocationServer");
-        m_rosPublisherPort.topic("LocationServerMarkers");
+        m_rosNode     = new yarp::os::Node("/LocationServer");
+
+        m_rosPublisherPort.topic("/LocationServerMarkers");
     }
 
     if (config.check("locations_file"))
@@ -259,7 +292,7 @@ yarp::dev::DriverCreator *createLocationsServer()
     return new DriverCreatorOf<LocationsServer>
                (
                    "locationsServer",
-                   "",
-                   "locationsServer"
+                   "locationsServer",
+                   "yarp::dev::LocationsServer"
                );
 }
