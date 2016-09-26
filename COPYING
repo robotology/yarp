@@ -1284,213 +1284,213 @@ example/matlab/simulink/sfun_time.c
   Copyright: 2009 The MathWorks, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/FindLibusb1.cmake
+cmake/FindLibusb1.cmake
   Copyright: 2012-2014 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindOpenCV.cmake
+cmake/FindOpenCV.cmake
   Copyright: 2009 Benoit Rat
   CopyPolicy: LGPLv2.1
 
-conf/FindReadline.cmake
+cmake/FindReadline.cmake
   Copyright: 2014 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Elena Ceseracciu 
   CopyPolicy: 3-clause BSD
 
-conf/FindGooCanvasMM.cmake
+cmake/FindGooCanvasMM.cmake
   Copyright: 2012-2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindQCustomPlot.cmake
+cmake/FindQCustomPlot.cmake
   Copyright: (c) 2013, Anton Gladky <gladk@debian.org>
   CopyPolicy: unknown
 
-conf/FindStage.cmake
+cmake/FindStage.cmake
   Copyright: 2009 RobotCub Consortium
   Authors: Paul Fitzpatrick 
   CopyPolicy: 3-clause BSD
 
-conf/FindSQLite.cmake
+cmake/FindSQLite.cmake
   Copyright: 2012-2013  iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindAtlas.cmake
+cmake/FindAtlas.cmake
   Copyright: 2010 RobotCub Consortium
   Authors: Arjan Gijsberts 
   CopyPolicy: 3-clause BSD
 
-conf/FindGtkDatabox.cmake
+cmake/FindGtkDatabox.cmake
   Copyright: 2012-2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindFTDI.cmake
+cmake/FindFTDI.cmake
   Copyright: 2010 Ze Ji
   CopyPolicy: 3-clause BSD
 
-conf/FindFreenect.cmake
+cmake/FindFreenect.cmake
   Copyright: 2012-2014  iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindOctave.cmake
+cmake/FindOctave.cmake
   Copyright: 2013, Julien Schueller
   CopyPolicy: unknown
 
-conf/FindPortAudio.cmake
+cmake/FindPortAudio.cmake
   Copyright: 2008 RobotCub Consortium
   Authors: Paul Fitzpatrick 
   CopyPolicy: 3-clause BSD
 
-conf/FindGLEW.cmake
+cmake/FindGLEW.cmake
   Copyright: 2012 Benjamin Eikel
   CopyPolicy: 3-clause BSD
 
-conf/full-options.cmake
+cmake/full-options.cmake
   Copyright: unknown
   CopyPolicy: unknown
 
-conf/FindACE.cmake
+cmake/FindACE.cmake
   Copyright: 2009 RobotCub Consortium
   Authors: Alexandre Bernardino 
   CopyPolicy: 3-clause BSD
 
-conf/StandardFindModule.cmake
+cmake/StandardFindModule.cmake
   Copyright: 2012-2013 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindGtkDataboxMM.cmake
+cmake/FindGtkDataboxMM.cmake
   Copyright: 2012-2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.1/Modules/FeatureSummary.cmake
+cmake/cmake-3.1/Modules/FeatureSummary.cmake
   Copyright: 2007-2009 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.1/Modules/FindFreetype.cmake
+cmake/cmake-3.1/Modules/FindFreetype.cmake
   Copyright: 2007-2009 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
+cmake/cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
   Copyright: 2012 Alexander Neundorf <neundorf@kde.org>
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.1/Modules/CMakeParseArguments.cmake
+cmake/cmake-3.1/Modules/CMakeParseArguments.cmake
   Copyright: 2010 Alexander Neundorf <neundorf@kde.org>
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.1/Modules/FindPackageMessage.cmake
+cmake/cmake-3.1/Modules/FindPackageMessage.cmake
   Copyright: 2008-2009 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.1/Modules/CMakeFindDependencyMacro.cmake
+cmake/cmake-3.1/Modules/CMakeFindDependencyMacro.cmake
   Copyright: 2013 Stephen Kelly <steveire@gmail.com>
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.1/Modules/GNUInstallDirs.cmake
+cmake/cmake-3.1/Modules/GNUInstallDirs.cmake
   Copyright: 2011 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.1/Modules/FindLua.cmake
+cmake/cmake-3.1/Modules/FindLua.cmake
   Copyright: 2007-2009 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
+cmake/cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
   Copyright: 2007-2009 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/FindLibdc1394.cmake
+cmake/FindLibdc1394.cmake
   Copyright: 2012-2015  iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindTinyXML.cmake
+cmake/FindTinyXML.cmake
   Copyright: 2012-2013  iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindOpenNI.cmake
+cmake/FindOpenNI.cmake
   Copyright: 2012-2014 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindFFMPEG.cmake
+cmake/FindFFMPEG.cmake
   Copyright: 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen
   CopyPolicy: 3-clause BSD
 
-conf/ReplaceImportedTargets.cmake
+cmake/ReplaceImportedTargets.cmake
   Copyright: 2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/AddInstallRPATHSupport.cmake
+cmake/AddInstallRPATHSupport.cmake
   Copyright: 2014 RBCS, Istituto Italiano di Tecnologia
   CopyPolicy: 3-clause BSD
 
-conf/deprecated/MacroStandardFindModule.cmake
+cmake/deprecated/MacroStandardFindModule.cmake
   Copyright: 2013-2014 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/deprecated/MacroExtractVersion.cmake
+cmake/deprecated/MacroExtractVersion.cmake
   Copyright: 2013-2014 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.5/Modules/SelectLibraryConfigurations.cmake
+cmake/cmake-3.5/Modules/SelectLibraryConfigurations.cmake
   Copyright: 2009 Will Dicharry <wdicharry@stellarscience.com>
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.5/Modules/FindFreetype.cmake
+cmake/cmake-3.5/Modules/FindFreetype.cmake
   Copyright: 2007-2009 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.5/Modules/CMakeParseArguments.cmake
+cmake/cmake-3.5/Modules/CMakeParseArguments.cmake
   Copyright: 2010 Alexander Neundorf <neundorf@kde.org>
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.5/Modules/FindPackageMessage.cmake
+cmake/cmake-3.5/Modules/FindPackageMessage.cmake
   Copyright: 2008-2009 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake
+cmake/cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake
   Copyright: 2007-2009 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/cmake-3.5/Modules/FindGTK2.cmake
+cmake/cmake-3.5/Modules/FindGTK2.cmake
   Copyright: 2009 Kitware, Inc.
   CopyPolicy: 3-clause BSD
 
-conf/ExtractVersion.cmake
+cmake/ExtractVersion.cmake
   Copyright: 2013 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindGSL.cmake
+cmake/FindGSL.cmake
   Copyright: 2010 Jan Woetzel
   CopyPolicy: 3-clause BSD
 
-conf/FindLibOVR.cmake
+cmake/FindLibOVR.cmake
   Copyright: 2015  iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindGooCanvas.cmake
+cmake/FindGooCanvas.cmake
   Copyright: 2012-2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindGLFW3.cmake
+cmake/FindGLFW3.cmake
   Copyright: 2015  iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-conf/FindFuse.cmake
+cmake/FindFuse.cmake
   Copyright: 2014 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD

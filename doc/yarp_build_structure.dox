@@ -25,7 +25,7 @@ general area you are interested in (e.g. modules/carriers).
 <ul>
 <li> \ref yarp_build_structure_big
 <li> \ref yarp_build_structure_main
-<li> conf
+<li> cmake
   <ul>
   <li> \ref yarp_build_structure_conf
   <li> \ref yarp_build_structure_options
@@ -35,7 +35,7 @@ general area you are interested in (e.g. modules/carriers).
   <li> \ref yarp_build_structure_package
   <li> \ref yarp_build_structure_doc
   <li> \ref yarp_build_structure_plugin
-  <li> conf/templates
+  <li> cmake/templates
     <ul>
     <li> \ref yarp_build_structure_template_options
     <li> \ref yarp_build_structure_template_version
@@ -121,22 +121,22 @@ closely match the name before .html you see in your browsers.
 @section yarp_build_structure_main Where it all starts, the top-level CMakeLists.txt
 
 The main CMakeLists.txt file for YARP is simple. It does the following:
- \li Sets the CMAKE_MODULE_PATH to pick up scripts in the "conf" directory.
+ \li Sets the CMAKE_MODULE_PATH to pick up scripts in the "cmake" directory.
  \li Initializes some empty lists: YARP_TREE_INCLUDE_DIRS, YARP_LIBS, YARP_DEFS. These will be used to keep track of paths to header files, names of library targets, and extra compiler definitions needed.
- \li Includes the \ref yarp_build_structure_options "conf/YarpOptions.cmake" file, to define general configuration options.
- \li Includes the \ref yarp_build_structure_version "conf/YarpVersion.cmake" file, to define the current YARP version.
- \li Includes the \ref yarp_build_structure_system_check "conf/YarpSystemCheck.cmake" file, to get properties of the system YARP is being compiled on.
+ \li Includes the \ref yarp_build_structure_options "cmake/YarpOptions.cmake" file, to define general configuration options.
+ \li Includes the \ref yarp_build_structure_version "cmake/YarpVersion.cmake" file, to define the current YARP version.
+ \li Includes the \ref yarp_build_structure_system_check "cmake/YarpSystemCheck.cmake" file, to get properties of the system YARP is being compiled on.
  \li Enables the CMake "test" target.
- \li Enters the \ref yarp_build_structure_conf "conf" directory for some preliminary code generation.
+ \li Enters the \ref yarp_build_structure_conf "cmake" directory for some preliminary code generation.
  \li Enters the \ref yarp_build_structure_src "src" directory to set up compilation targets.
- \li Includes the \ref yarp_build_structure_describe "conf/YarpDescribe.cmake" file, to store information about how YARP is configured.  This is important to make YARP easier to use from external projects.
- \li Includes the \ref yarp_build_structure_package "conf/YarpPackage.cmake" file, which sets up targets for packaging YARP as a tarball, zip, etc.
- \li Includes the \ref yarp_build_structure_doc "conf/YarpDoc.cmake" file, which sets up a target for generating YARP's documentation.
+ \li Includes the \ref yarp_build_structure_describe "cmake/YarpDescribe.cmake" file, to store information about how YARP is configured.  This is important to make YARP easier to use from external projects.
+ \li Includes the \ref yarp_build_structure_package "cmake/YarpPackage.cmake" file, which sets up targets for packaging YARP as a tarball, zip, etc.
+ \li Includes the \ref yarp_build_structure_doc "cmake/YarpDoc.cmake" file, which sets up a target for generating YARP's documentation.
 
 And we're done!
 
 
-@section yarp_build_structure_options conf/YarpOptions.cmake
+@section yarp_build_structure_options cmake/YarpOptions.cmake
 
 First we set up:
  \li The CMake LIBRARY_OUTPUT_PATH variable (set to the "lib" directory).
@@ -163,7 +163,7 @@ as "advanced" options.
 \li The ENABLE_DASHBOARD_SUBMIT flag - if enabled, builds and tests can
  be submitted to the YARP online dashboard.
 
-@section yarp_build_structure_version conf/YarpVersion.cmake
+@section yarp_build_structure_version cmake/YarpVersion.cmake
 
 This is a very simple file, defining a version number for YARP.
 YARP versioning is as follows:
@@ -176,7 +176,7 @@ YARP versioning is as follows:
 \li YARP_VERSION_STRING - A readable version (i.e. 2.4.0 beta1) (= YARP_VERSION
                           if not set explicitly))
 
-@section yarp_build_structure_system_check conf/YarpSystemCheck.cmake
+@section yarp_build_structure_system_check cmake/YarpSystemCheck.cmake
 
 Here we probe for some system properties needed to compile YARP correctly.
 We set up compiler flags reflecting those properties.
@@ -201,7 +201,7 @@ generally have this flag set if possible.
 \li If on Windows, compiling natively, we make sure WIN32 and _WINDOWS are set (ACE relies on them).
 \li If on Windows, compiling under Cygwin, we define CYGWIN (ACE needs this).
 \li If using MINGW and/or MSYS, we set appropriate flags.
-\li We attempt to locate the ACE library using the conf/FindACE.cmake script.
+\li We attempt to locate the ACE library using the cmake/FindACE.cmake script.
 \li We check whether the type ACE_String_Base_Const::size_type exists. Older
 ACE versions didn't have this type, newer versions do.  If it is present,
 it must be used, but there's no obvious way to check for it in code,
@@ -211,7 +211,7 @@ are for deprecated functions that ACE provides wrappers for.
 \li Under MSVC, we set CMAKE_DEBUG_POSTFIX to "d", to add "d" to library
 names in debug mode.  This is just a convention.
 
-@section yarp_build_structure_conf conf/CMakeLists.txt
+@section yarp_build_structure_conf cmake/CMakeLists.txt
 
 Here we generate some header files to hold configuration options.
 \li A subdirectory "generated_include" of the build directory is created.
@@ -220,7 +220,7 @@ become a list of the paths to all header files needed by YARP.
 \li We instantate \ref yarp_build_structure_template_options to hold general compile options.
 \li We instantate \ref yarp_build_structure_template_version.  This holds a representation of the YARP version number.
 \li We instantate \ref yarp_build_structure_template_system.  This holds some facts about the system upon which YARP is being built.
-\li We copy many macros from the "conf" directory in the source to a "conf" directory in the build, since they may be useful for users (library find scripts etc).
+\li We copy many macros from the "cmake" directory in the source to a "cmake" directory in the build, since they may be useful for users (library find scripts etc).
 
 @section yarp_build_structure_src src/CMakeLists.txt
 
@@ -255,7 +255,7 @@ And finally tests:
 \li tests - this directory pulls in regression tests from throughout the
 build.
 
-@section yarp_build_structure_describe conf/YarpDescribe.cmake
+@section yarp_build_structure_describe cmake/YarpDescribe.cmake
 
 Our job here is to capture everything a project that uses YARP will
 need to know, and export that.  We need to deal with two important
@@ -294,7 +294,7 @@ YARPDependencies.cmake would also be generated upon an installation, in
 Again, these are locations that
 "FIND_PACKAGE(YARP)" can pick up automatically.
 
-@section yarp_build_structure_package conf/YarpPackage.cmake
+@section yarp_build_structure_package cmake/YarpPackage.cmake
 
 CMake comes with a companion utility CPack for generating tarballs,
 zip files, Windows installers, etc.  This file sets some simple
@@ -304,7 +304,7 @@ package_source.  They are ludicrously easy to use, just "make package"
 or "make package_source".  It is a good idea to work from a clean
 build based on a clean export from svn before doing this.
 
-@section yarp_build_structure_doc conf/YarpDoc.cmake
+@section yarp_build_structure_doc cmake/YarpDoc.cmake
 
 Here we check if the "doxygen" program is available, and if so we
 set up a documentation-generating target called "dox".  This is
@@ -357,11 +357,11 @@ to create the YARP_math library,
 for mathematical operations.  There are a few wrinkles:
 \li YARP_math is optional.  We create an option CREATE_LIB_MATH
 which defaults to FALSE.  If FALSE, this target is skipped.
-\li YARP_math depends on GSL.  We use the conf/FindGSL.cmake script to
+\li YARP_math depends on GSL.  We use the cmake/FindGSL.cmake script to
 track this dependency down.
 \li YARP_math optionally can use Atlas with GSL to improve performance
 further.  We create an option YARP_USE_ATLAS that default to FALSE.
-\li If YARP_USE_ATLAS is set to TRUE, we use the conf/FindAtlas.cmake
+\li If YARP_USE_ATLAS is set to TRUE, we use the cmake/FindAtlas.cmake
 script to track this dependency down.
 \li Depending on the options, we store the names of the extra libraries
 needed in MATH_LIB_EXTRAS.
@@ -401,7 +401,7 @@ This directory is devoted to
 devices, while the carriers directory is devoted to network protocols.
 Plugins in YARP are
 handled using a set of macros defined in
-\ref yarp_build_structure_plugin "conf/YarpPlugin.cmake".  Thes macros
+\ref yarp_build_structure_plugin "cmake/YarpPlugin.cmake".  Thes macros
 allow us to create a library (in this case "yarpmod")
 containing a lot of optional components using code like this:
 \verbatim
@@ -454,7 +454,7 @@ an image stream.  So it is good to have YARP_sig available.
 implement new protocols.  This hasn't happened yet, but YARP is
 ready!
 
-@section yarp_build_structure_plugin conf/YarpPlugin.cmake
+@section yarp_build_structure_plugin cmake/YarpPlugin.cmake
 
 Here we define macros for creating a "plugin" library that links
 to many optional components.
@@ -528,34 +528,34 @@ See \ref yarp_build_structure_template_libh.  Note that the name
 of the library initialization function may change in future versions
 of YARP, so it is best to use these macros.
 
-@section yarp_build_structure_template_options conf/template/yarp_config_options.h.in
+@section yarp_build_structure_template_options cmake/template/yarp_config_options.h.in
 
 This is the template for a generated header file built during
 configuration.
-It is placed in generated_include/yarp/conf/yarp_config_options.h,
-and should be accessed as "#include <yarp/conf/yarp_config_options.h>".
+It is placed in generated_include/yarp/conf/options.h,
+and should be accessed as "#include <yarp/conf/options.h>".
 It is intended to store options about what parts of YARP have been compiled.
 Right now, it just optionally defines YARP_HAS_MATH_LIB and YARP_USE_ATLAS,
 since that is all anyone has needed so far.
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_options
 
-@section yarp_build_structure_template_version conf/template/yarp_config_version.h.in
+@section yarp_build_structure_template_version cmake/template/yarp_config_version.h.in
 
 This is the template for a generated header file built during
 configuration.
-It is placed in generated_include/yarp/conf/yarp_config_version.h,
-and should be accessed as "#include <yarp/conf/yarp_config_version.h>".
+It is placed in generated_include/yarp/conf/version.h,
+and should be accessed as "#include <yarp/conf/version.h>".
 It is intended to store the version number of YARP.
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_version
 
-@section yarp_build_structure_template_system conf/template/yarp_config_system.h.in
+@section yarp_build_structure_template_system cmake/template/yarp_config_system.h.in
 
 This is the template for a generated header file built during
 configuration.
-It is placed in generated_include/yarp/conf/yarp_config_system.h,
-and should be accessed as "#include <yarp/conf/yarp_config_system.h>".
+It is placed in generated_include/yarp/conf/system.h,
+and should be accessed as "#include <yarp/conf/system.h>".
 It is intended to store some facts about the system upon which YARP
 is built: the types YARP_INT32, YARP_INT16, YARP_FLOAT64,
 whether the system is big- or little-endian, and whether to use ACE strings
@@ -563,7 +563,7 @@ or STL strings
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_system_check
 
-@section yarp_build_structure_template_api conf/template/yarp_config_api.h.in
+@section yarp_build_structure_template_api cmake/template/yarp_config_api.h.in
 
 This is the template for a generated header file built during
 configuration.
@@ -575,7 +575,7 @@ flag has been turned on.
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_options
 
-@section yarp_build_structure_template_yarpconfig conf/template/YARPConfig.cmake.in
+@section yarp_build_structure_template_yarpconfig cmake/template/YARPConfig.cmake.in
 
 This is a template for YARPConfig.cmake, an important file for
 users of YARP.  It lets CMake
@@ -592,7 +592,7 @@ the following variables are defined:
 \sa \ref yarp_build_structure_describe
 
 
-@section yarp_build_structure_template_carrier conf/template/yarp_plugin_carrier.cpp.in
+@section yarp_build_structure_template_carrier cmake/template/yarp_plugin_carrier.cpp.in
 
 A snippet of code to add a carrier plugin.  We make an instance of the carrier
 class, and pass it to a global yarp::os::Carriers object.  The
@@ -606,7 +606,7 @@ instantiate carriers freely for administrative purposes.
 \sa \ref yarp_build_structure_template_device
 \sa \ref yarp_build_structure_plugin
 
-@section yarp_build_structure_template_device conf/template/yarp_plugin_device.cpp.in
+@section yarp_build_structure_template_device cmake/template/yarp_plugin_device.cpp.in
 
 A snippet of code to add a device plugin.  We create a "factory object"
 for the the device and hand it to yarp::dev::Drivers::factory().  The
@@ -616,7 +616,12 @@ of the device.
 \sa \ref yarp_build_structure_template_carrier
 \sa \ref yarp_build_structure_plugin
 
-@section yarp_build_structure_template_libcpp conf/template/yarpdev_lib.cpp.in
+@section yarp_build_structure_template_portmonitor cmake/template/yarp_plugin_portmonitor.cpp.in
+
+A snippet of code to add a portmonitor plugin.
+
+
+@section yarp_build_structure_template_libcpp cmake/template/yarp_plugin_yarpdev_main.cpp.in
 
 A snippet of code to define the main entry point for a plugin library
 (the "yarpdev" in the name is an anachronism).  It defines
@@ -629,20 +634,7 @@ plugins (devices or carriers).
 \sa \ref yarp_build_structure_template_carrier
 \sa \ref yarp_build_structure_plugin
 
-@section yarp_build_structure_template_libh conf/template/yarpdev_lib.h.in
-
-A snippet of code to declare the main entry point for a plugin library
-(the "yarpdev" in the name is an anachronism).  The main entry point
-for a plugin library called FOO is declared as:
-\verbatim
-  void add_FOO_devices();
-\endverbatim
-Again, the "devices" in the function name is an anachronism.
-
-\sa \ref yarp_build_structure_template_libcpp
-\sa \ref yarp_build_structure_plugin
-
-@section yarp_build_structure_template_exec conf/template/yarpdev_lib_main.cpp.in
+@section yarp_build_structure_template_exec cmake/template/yarpdev_lib_main.cpp.in
 
 This is a template for a small test program which wraps a plugin library
 with the equivalent of the "yarpdev" utility.  It is used by

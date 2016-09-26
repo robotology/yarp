@@ -1,7 +1,7 @@
 ### A set of desirable yarp options.
 ## Assuming your build directory is in yarp/build, use as:
 ## cd build
-## cmake -C ../conf/full-options.cmake ../ 
+## cmake -C ../cmake/full-options.cmake ../
 
 #libYARP_math
 option(CREATE_LIB_MATH "Math library" TRUE)
