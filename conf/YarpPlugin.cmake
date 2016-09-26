@@ -193,7 +193,8 @@ endmacro()
 # FIXME Add docs for EXTRA_CONFIG, WRAPPER, CODE and PART
 #
 macro(YARP_PREPARE_PLUGIN _plugin_name)
-  set(_options ADVANCED)
+  set(_options ADVANCED
+               INTERNAL)
   set(_oneValueArgs TYPE
                     INCLUDE
                     CATEGORY
@@ -218,7 +219,11 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   endif()
 
   if(NOT DEFINED _YPP_DEFAULT)
-    set(_YPP_DEFAULT OFF)
+    if(_YPP_INTERNAL)
+      set(_YPP_DEFAULT ON)
+    else()
+      set(_YPP_DEFAULT OFF)
+    endif()
   endif()
 
   # Set up a flag to enable/disable compilation of this plugin.
@@ -242,6 +247,11 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     mark_as_advanced(FORCE ${_YPP_OPTION})
   else()
     mark_as_advanced(CLEAR ${_YPP_OPTION})
+  endif()
+  if(_YPP_INTERNAL)
+    set_property(CACHE ${_YPP_OPTION} PROPERTY TYPE INTERNAL)
+  else()
+    set_property(CACHE ${_YPP_OPTION} PROPERTY TYPE BOOL)
   endif()
 
   # Set some convenience variables based on whether the plugin
