@@ -381,7 +381,7 @@ public:
      * @return reader for modified version of incoming data.
      *
      * @note If the ConnectionReader returned is not the same as the one in
-     *       input, the setParentConnectionReader(reader) should be called for
+     *       input, the setParentConnectionReader(&reader) should be called for
      *       the new one, or the envelope will not be handled correctly.
      */
     virtual ConnectionReader& modifyIncomingData(ConnectionReader& reader) {

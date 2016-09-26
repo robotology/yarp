@@ -116,7 +116,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     // The reader passed to this function is infact empty.
     // first check if we need to call the update callback
     if(!binder->hasUpdate()) {
-        localReader->setParentConnectionReader(reader);
+        localReader->setParentConnectionReader(&reader);
         return *localReader;
     }
 
@@ -127,7 +127,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     PortMonitor::unlock();
     con.reset();
     if(result.write(con.getWriter())) {
-        con.getReader()->setParentConnectionReader(reader);
+        con.getReader().setParentConnectionReader(&reader);
         return con.getReader();
     }
     return *localReader;

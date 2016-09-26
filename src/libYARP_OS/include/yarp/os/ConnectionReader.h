@@ -30,9 +30,6 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::ConnectionReader {
 public:
-
-    ConnectionReader();
-
     /**
      * Destructor.
      */
