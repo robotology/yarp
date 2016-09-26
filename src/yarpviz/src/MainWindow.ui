@@ -128,6 +128,7 @@
     <addaction name="actionProfile_YARP_network"/>
     <addaction name="actionHighlight_Loops"/>
     <addaction name="actionUpdateConnectionQosStatus"/>
+    <addaction name="actionProfilePortsRate"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -313,6 +314,15 @@
    </property>
    <property name="text">
     <string>Update connection &amp;Qos status...</string>
+   </property>
+  </action>
+  <action name="actionProfilePortsRate">
+   <property name="icon">
+    <iconset resource="ress.qrc">
+     <normaloff>:/icons/resources/profile_rate.png</normaloff>:/icons/resources/profile_rate.png</iconset>
+   </property>
+   <property name="text">
+    <string>Profile ports rate...</string>
    </property>
   </action>
  </widget>

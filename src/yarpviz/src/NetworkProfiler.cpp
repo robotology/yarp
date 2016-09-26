@@ -355,3 +355,46 @@ bool NetworkProfiler::updateConnectionQosStatus(yarp::graph::Graph& graph) {
     }
     return true;
 }
+
+bool NetworkProfiler::attachPortmonitorPlugin(std::string portName, yarp::os::Property pluginProp) {
+
+    //e.g.,  atch in "(context yarpviz) (file portrate)"
+    yarp::os::Bottle cmd, reply;
+    cmd.addString("atch");
+    cmd.addString("in");    
+    cmd.addString(pluginProp.toString());
+    //Property& prop = cmd.addDict();
+    //prop.fromString(pluginProp.toString());
+    //yInfo()<<cmd.toString();
+    Contact srcCon = Contact::fromString(portName);
+    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, reply, true, true, 2.0);
+    if(!ret) {
+        yError()<<"Cannot write to"<<portName;
+        return false;
+    }
+    if(reply.get(0).asString() != "ok") {
+             yError()<<reply.toString();
+        return false;
+    }
+
+    return true;
+
+}
+
+bool NetworkProfiler::detachPortmonitorPlugin(std::string portName) {
+    //e.g.,  dtch in
+    yarp::os::Bottle cmd, reply;
+    cmd.addString("dtch");
+    cmd.addString("in");
+    Contact srcCon = Contact::fromString(portName);
+    bool ret = yarp::os::NetworkBase::write(srcCon, cmd, reply, true, true, 2.0);
+    if(!ret) {
+        yError()<<"Cannot write to"<<portName;
+        return false;
+    }
+    if(reply.get(0).asString() != "ok") {
+             yError()<<reply.toString();
+        return false;
+    }
+    return true;
+}

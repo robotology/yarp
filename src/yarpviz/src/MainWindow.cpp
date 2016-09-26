@@ -24,6 +24,7 @@
 
 #include "informationdialog.h"
 #include "qosconfigdialog.h"
+#include "portloggerdialog.h"
 
 using namespace std;
 using namespace yarp::os;
@@ -57,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionItemswindow, SIGNAL(triggered()),this,SLOT(onWindowItem()));
     connect(ui->actionExport_scene, SIGNAL(triggered()),this,SLOT(onExportScene()));
     connect(ui->actionUpdateConnectionQosStatus, SIGNAL(triggered()),this,SLOT(onUpdateQosStatus()));
+    connect(ui->actionProfilePortsRate, SIGNAL(triggered()),this,SLOT(onProfilePortsRate()));
 
     progressDlg = new QProgressDialog("...", "Cancel", 0, 100, this);
 
@@ -74,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_Save_project->setEnabled(false);
     ui->action_Load_project->setEnabled(false);
     ui->actionDocumentaion->setEnabled(false);
+    ui->actionProfilePortsRate->setEnabled(false);
     moduleParentItem = new QTreeWidgetItem( ui->nodesTreeWidget,  QStringList("Modules"));
     portParentItem = new QTreeWidgetItem( ui->nodesTreeWidget,  QStringList("Ports"));
     moduleParentItem->setIcon(0, QIcon(":icons/resources/module.svg"));
@@ -465,6 +468,7 @@ void MainWindow::onProfileYarpNetwork() {
     ui->actionHighlight_Loops->setEnabled(true);
     ui->actionHidePorts->setEnabled(true);
     ui->actionUpdateConnectionQosStatus->setEnabled(true);
+    ui->actionProfilePortsRate->setEnabled(true);
 }
 
 void MainWindow::onHighlightLoops() {
@@ -633,6 +637,13 @@ void MainWindow::onWindowItem() {
 void MainWindow::onUpdateQosStatus() {
     NetworkProfiler::updateConnectionQosStatus(*currentGraph);
     drawGraph(*currentGraph);
+}
+
+void MainWindow::onProfilePortsRate() {
+    yAssert(currentGraph!=NULL);
+    PortLoggerDialog dialog(currentGraph);
+    dialog.setModal(false);
+    dialog.exec();
 }
 
 void MainWindow::onExportScene() {

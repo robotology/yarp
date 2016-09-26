@@ -94,6 +94,7 @@ private slots:
     void onWindowItem();
     void onExportScene();
     void onUpdateQosStatus();
+    void onProfilePortsRate();
 
 private:
     Ui::MainWindow *ui;

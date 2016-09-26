@@ -10,5 +10,8 @@
         <file>resources/Mac-icon.png</file>
         <file>resources/Windows-icon.png</file>
         <file>resources/qos.png</file>
+        <file>resources/arrow_down.png</file>
+        <file>resources/arrow_up.png</file>
+        <file>resources/profile_rate.png</file>
     </qresource>
 </RCC>

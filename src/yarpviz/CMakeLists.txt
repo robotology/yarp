@@ -34,4 +34,5 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 
 add_subdirectory(QGVCore)
 add_subdirectory(src)
+add_subdirectory(app)
 

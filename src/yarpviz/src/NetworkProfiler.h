@@ -163,6 +163,9 @@ public:
     static std::string packetPrioToString(yarp::os::QosStyle::PacketPriorityLevel level);
     static yarp::os::QosStyle::PacketPriorityLevel packetStringToPrio(std::string level);
 
+    static bool attachPortmonitorPlugin(std::string portName, yarp::os::Property pluginProp);
+    static bool detachPortmonitorPlugin(std::string portName);
+
 private:
         static ProgressCallback* progCallback;
 
