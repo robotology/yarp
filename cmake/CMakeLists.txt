@@ -10,49 +10,23 @@ install(FILES ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/compiler.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/conf)
 
 foreach(conf version system options api numeric)
-    set(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
-    configure_file(${YARP_MODULE_DIR}/template/yarp_conf_${conf}.h.in
-                   ${outconf})
-    message(STATUS "generated ${outconf}")
-    install(FILES ${outconf}
-            COMPONENT development
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/conf)
+  set(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
+  configure_file(${YARP_MODULE_DIR}/template/yarp_conf_${conf}.h.in
+                  ${outconf})
+  message(STATUS "generated ${outconf}")
+  install(FILES ${outconf}
+          COMPONENT development
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/conf)
 endforeach(conf)
 
-# There are several cmake modules we traditionally make available to
-# users of YARP.
+# YARP CMake Modules
 set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpIDL.cmake
-                     ExtractVersion.cmake
-                     ReplaceImportedTargets.cmake
-                     StandardFindModule.cmake
-                     YarpDeprecatedWarning.cmake
-                     YarpDeprecatedOption.cmake
                      YarpInstallationHelpers.cmake
-                     YarpCMakeWorkarounds.cmake
-                     YarpRenamedOption.cmake
-                     YarpBackupVariable.cmake
-                     FindACE.cmake
-                     FindAtlas.cmake
-                     FindFFMPEG.cmake
-                     FindFreenect.cmake
-                     FindFTDI.cmake
-                     FindGSL.cmake
-                     FindLibdc1394.cmake
-                     FindLibedit.cmake
-                     FindLibusb1.cmake
-                     FindOpenCV.cmake
-                     FindOpenNI.cmake
-                     FindPortAudio.cmake
-                     FindSQLite.cmake
-                     FindStage.cmake
-                     FindTinyXML.cmake
-                     AddInstallRPATHSupport.cmake)
-
+                     FindLibedit.cmake)
 install(FILES ${YARP_CMAKE_FILES}
-       COMPONENT scripts
-       DESTINATION share/yarp/cmake)
-
+        COMPONENT scripts
+        DESTINATION share/yarp/cmake)
 
 # Templates used by modules
 set(YARP_TEMPLATE_FILES template/yarp_plugin_carrier.cpp.in
@@ -67,8 +41,48 @@ install(FILES ${YARP_TEMPLATE_FILES}
         COMPONENT scripts
         DESTINATION share/yarp/cmake/template)
 
-# Files from CMake 3.1, available only if cmake is older
-if(${CMAKE_VERSION} VERSION_LESS 3.1)
+if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
+  set(YARP_PRIVATE_CMAKE_FILES YarpDeprecatedWarning.cmake
+                               YarpDeprecatedOption.cmake
+                               YarpCMakeWorkarounds.cmake
+                               YarpRenamedOption.cmake
+                               YarpBackupVariable.cmake)
+  install(FILES ${YARP_PRIVATE_CMAKE_FILES}
+          COMPONENT scripts
+          DESTINATION share/yarp/cmake/deprecated)
+
+  if(NOT YCM_FOUND)
+    set(YCM_CMAKE_find_modules_FILES ycm-0.2/find-modules/FindACE.cmake
+                                     ycm-0.2/find-modules/FindAtlas.cmake
+                                     ycm-0.2/find-modules/FindFFMPEG.cmake
+                                     ycm-0.2/find-modules/FindFreenect.cmake
+                                     ycm-0.2/find-modules/FindFTDI.cmake
+                                     ycm-0.2/find-modules/FindGLFW3.cmake
+                                     ycm-0.2/find-modules/FindGSL.cmake
+                                     ycm-0.2/find-modules/FindLibOVR.cmake
+                                     ycm-0.2/find-modules/FindLibdc1394.cmake
+                                     ycm-0.2/find-modules/FindLibusb1.cmake
+                                     ycm-0.2/find-modules/FindOpenCV.cmake
+                                     ycm-0.2/find-modules/FindOpenNI.cmake
+                                     ycm-0.2/find-modules/FindPortAudio.cmake
+                                     ycm-0.2/find-modules/FindSQLite.cmake
+                                     ycm-0.2/find-modules/FindStage.cmake
+                                     ycm-0.2/find-modules/FindTinyXML.cmake)
+    set(YCM_CMAKE_modules_FILES ycm-0.2/modules/AddInstallRPATHSupport.cmake
+                                ycm-0.2/modules/ExtractVersion.cmake
+                                ycm-0.2/modules/GetAllCMakeProperties.cmake
+                                ycm-0.2/modules/ReplaceImportedTargets.cmake
+                                ycm-0.2/modules/StandardFindModule.cmake)
+    install(FILES ${YCM_CMAKE_find_modules_FILES}
+            COMPONENT scripts
+            DESTINATION share/yarp/cmake/ycm-0.2/find-modules)
+    install(FILES ${YCM_CMAKE_modules_FILES}
+            COMPONENT scripts
+            DESTINATION share/yarp/cmake/ycm-0.2/modules)
+  endif()
+
+  # Files from CMake 3.1, available only if cmake is older
+  if(${CMAKE_VERSION} VERSION_LESS 3.1)
     set(YARP_CMAKE_3_1_FILES cmake-3.1/Modules/CMakeFindDependencyMacro.cmake # 3.0
                              cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
                              cmake-3.1/Modules/CMakeParseArguments.cmake
@@ -80,4 +94,43 @@ if(${CMAKE_VERSION} VERSION_LESS 3.1)
     install(FILES ${YARP_CMAKE_3_1_FILES}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/cmake-3.1/Modules)
+  endif()
 endif()
+
+# Remove renamed files from installation (since YARP 2.3.68)
+foreach(_f FindACE.cmake
+           FindAtlas.cmake
+           FindFFMPEG.cmake
+           FindFreenect.cmake
+           FindFTDI.cmake
+           FindGLFW3.cmake
+           FindGSL.cmake
+           FindLibOVR.cmake
+           FindLibdc1394.cmake
+           FindLibusb1.cmake
+           FindOpenCV.cmake
+           FindOpenNI.cmake
+           FindPortAudio.cmake
+           FindSQLite.cmake
+           FindStage.cmake
+           FindTinyXML.cmake
+           AddInstallRPATHSupport.cmake
+           ExtractVersion.cmake
+           GetAllCMakeProperties.cmake
+           ReplaceImportedTargets.cmake
+           StandardFindModule.cmake
+           YarpDeprecatedWarning.cmake
+           YarpDeprecatedOption.cmake
+           YarpCMakeWorkarounds.cmake
+           YarpRenamedOption.cmake
+           YarpBackupVariable.cmake
+           ${YARP_CMAKE_3_1_FILES})
+  if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}")
+    install(CODE
+ "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")
+    message(STATUS \"Deleted: \\\"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\\\"\")
+    file(REMOVE \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")
+  endif()"
+           COMPONENT scripts)
+  endif()
+endforeach()

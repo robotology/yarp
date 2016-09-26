@@ -24,7 +24,7 @@ set_and_check(YARP_BINDINGS "@PACKAGE_YARP_BINDINGS@")
 # Check if deprecated methods are built
 set(YARP_NO_DEPRECATED @YARP_NO_DEPRECATED@)
 if(YARP_NO_DEPRECATED)
-    add_definitions("-DYARP_NO_DEPRECATED")
+  add_definitions("-DYARP_NO_DEPRECATED")
 endif(YARP_NO_DEPRECATED)
 
 # Disable deprecated warnings, but add an option to enable it
@@ -32,28 +32,30 @@ include(CMakeDependentOption)
 # FIXME 2.4 Workaround to reset this value to its default, remove it
 #           at some point.
 if(NOT YARP_NO_DEPRECATED_WARNINGS_DEFAULT_UPDATED)
-    unset(YARP_NO_DEPRECATED_WARNINGS CACHE)
-    set(YARP_NO_DEPRECATED_WARNINGS_DEFAULT_UPDATED TRUE CACHE BOOL "Workaround to reset this value to its default" INTERNAL)
+  unset(YARP_NO_DEPRECATED_WARNINGS CACHE)
+  set(YARP_NO_DEPRECATED_WARNINGS_DEFAULT_UPDATED TRUE CACHE BOOL "Workaround to reset this value to its default" INTERNAL)
 endif()
 cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
                        "Do not warn when using YARP deprecated declarations" FALSE
                        "NOT YARP_NO_DEPRECATED" FALSE)
 mark_as_advanced(YARP_NO_DEPRECATED_WARNINGS)
 if(YARP_NO_DEPRECATED_WARNINGS)
-    add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
+  add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
 endif()
 
 # CMake modules directories
 set_and_check(YARP_MODULE_DIR "@PACKAGE_YARP_MODULE_DIR@")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
-if(${CMAKE_VERSION} VERSION_LESS 3.5)
-    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/cmake-3.5/Modules")
-endif()
-if(${CMAKE_VERSION} VERSION_LESS 3.1)
-    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/cmake-3.1/Modules")
-endif()
 if(NOT YARP_NO_DEPRECATED)
-    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/deprecated")
+  list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/deprecated")
+  find_package(YCM 0.2 QUIET)
+  if(NOT YCM_FOUND)
+    list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/ycm-0.2/find-modules"
+                                 "${CMAKE_SOURCE_DIR}/cmake/ycm-0.2/modules")
+  endif()
+  if(${CMAKE_VERSION} VERSION_LESS 3.1)
+    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/cmake-3.1/Modules")
+  endif()
 endif()
 
 # Install prefix
@@ -102,18 +104,18 @@ set(YARP_HAS_IDL @YARP_HAS_IDL@)
 set(YARP_IDL_BINARY_HINT "@PACKAGE_YARP_IDL_BINARY_HINT@")
 
 if(NOT TARGET YARP::YARP_OS)
-    include(${CMAKE_CURRENT_LIST_DIR}/YARPTargets.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/YARPTargets.cmake)
 endif()
 
 # Export variables for available targets
 set(YARP_OS_LIBRARY YARP::YARP_OS)
 set(YARP_SIG_LIBRARY YARP::YARP_sig)
 if(TARGET YARP::YARP_math)
-    set(YARP_MATH_LIBRARY YARP::YARP_math)
+  set(YARP_MATH_LIBRARY YARP::YARP_math)
 endif()
 set(YARP_DEV_LIBRARY YARP::YARP_dev)
 if(TARGET YARP::YARP_name)
-    set(YARP_NAME_LIBRARY YARP::YARP_name)
+  set(YARP_NAME_LIBRARY YARP::YARP_name)
 endif()
 set(YARP_INIT_LIBRARY YARP::YARP_init)
 

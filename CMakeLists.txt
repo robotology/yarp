@@ -17,13 +17,20 @@ endif()
 project(YARP)
 
 # Pick up our CMake scripts - they are all in the cmake subdirectory.
-set(YARP_MODULE_DIR ${PROJECT_SOURCE_DIR}/cmake)
-set(YARP_MODULE_PATH ${YARP_MODULE_DIR})
+set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
+set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
+
+find_package(YCM 0.2 QUIET)
+if(NOT YCM_FOUND)
+  list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/ycm-0.2/find-modules"
+                               "${CMAKE_SOURCE_DIR}/cmake/ycm-0.2/modules")
+endif()
+
 if(${CMAKE_VERSION} VERSION_LESS 3.5)
-  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/cmake-3.5/Modules)
+  list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/cmake-3.5/Modules")
 endif()
 if(${CMAKE_VERSION} VERSION_LESS 3.1)
-  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/cmake-3.1/Modules)
+  list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/cmake-3.1/Modules")
 endif()
 set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
