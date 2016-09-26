@@ -53,7 +53,8 @@ public:
         writePending(false),
         ref(NULL),
         convertedTextMode(false),
-        pushedIntFlag(false) {
+        pushedIntFlag(false),
+        parentConnectionReader(NULL) {
     }
 
     virtual ~StreamConnectionReader();
@@ -295,6 +296,10 @@ public:
 
     virtual yarp::os::Searchable& getConnectionModifiers();
 
+    virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader) {
+        this->parentConnectionReader = parentConnectionReader;
+    }
+
 private:
 
     bool isGood() {
@@ -319,6 +324,7 @@ private:
     bool convertedTextMode;
     bool pushedIntFlag;
     int pushedInt;
+    ConnectionReader *parentConnectionReader;
 };
 
 #endif

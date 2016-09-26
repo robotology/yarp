@@ -18,6 +18,10 @@ Bytes ConnectionReader::readEnvelope() {
     return Bytes(0,0);
 }
 
+void ConnectionReader::setParentConnectionReader(ConnectionReader* parentConnectionReader) {
+    YARP_UNUSED(parentConnectionReader);
+}
+
 ConnectionReader *ConnectionReader::createConnectionReader(InputStream& is) {
     StreamConnectionReader *reader = new StreamConnectionReader();
     Route r;
