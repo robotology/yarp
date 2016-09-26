@@ -275,7 +275,6 @@ public:
         Route route;
         sbr.reset(sis,NULL,route,0,true);
         return envelope.read(sbr);
-        return true;
     }
 
     PortReaderPacket *dropContent() {
