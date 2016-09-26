@@ -13,7 +13,7 @@
 namespace yarp {
     namespace dev {
       class foodevice;
-    } 
+    }
 }
 
 class yarp::dev::foodevice : public DeviceDriver
