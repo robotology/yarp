@@ -195,11 +195,11 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
                     INCLUDE
                     CATEGORY
                     PARENT_TYPE
-                    DEFAULT
+                    OPTION
                     DOC
+                    DEFAULT
                     TEMPLATE
                     TEMPLATE_DIR
-                    OPTION
                     CODE
                     WRAPPER)
   set(_multiValueArgs DEPENDS
