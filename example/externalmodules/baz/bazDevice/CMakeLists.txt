@@ -6,10 +6,12 @@ cmake_minimum_required(VERSION 2.8.9)
 
 yarp_prepare_plugin(bazdevice
                     CATEGORY device
-                    TYPE bazdevice
-                    INCLUDE "bazdevice.h")
+                    TYPE yarp::dev::bazdevice
+                    INCLUDE "bazdevice.h"
+                    DEFAULT ON)
 
 if(NOT SKIP_bazdevice)
+  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})
   yarp_add_plugin(bazdevice bazdevice.cpp bazdevice.h)

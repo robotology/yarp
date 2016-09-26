@@ -8,7 +8,7 @@ yarp_prepare_plugin(meiMotionControl
                     INCLUDE MEIMotionControl.h
                     EXTRA_CONFIG WRAPPER=controlboard
                     DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_COMPILE_UNMAINTAINED"
-                    ADVANCED ON)
+                    ADVANCED)
 
 if(NOT SKIP_meiMotionControl)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

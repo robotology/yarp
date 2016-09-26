@@ -38,23 +38,8 @@
 ## The executable is a test program that links and initializes the "libname"
 ## library, making the plugins accessible when yarp is built as static library.
 ##
-## To let YARP know how to initialize plugins, add lines like
-## this in the CMakeLists.txt files the plugin subdirectories:
-##
-##   yarp_prepare_plugin(<plugin name>
-##                       CATEGORY <category>
-##                       TYPE <class name>
-##                       INCLUDE <header>
-##                       [WRAPPER <wrapper>] # used by devices only
-##                       [DEFAULT <ON|OFF>]
-##                       [ADVANCED <ON|OFF>]
-##                       [DEPENDS <condition>]
-##
-## For devices and carriers, there are also specialized functions:
-##
-##   yarp_prepare_device(...)    # yarp_prepare_plugin(CATEGORY device ...)
-##   yarp_prepare_carrier(...)   # yarp_prepare_plugin(CATEGORY carrier ...)
-##
+## To let YARP know how to initialize plugins, a call to `yarp_prepare_plugin`
+## should be added to the `CMakeLists.txt` file.
 ##
 ################################################################################
 
@@ -137,7 +122,6 @@ endmacro()
 #                       [EXTRA_CONFIG <config>]
 #                       [CODE <code>]        # Deprecated, used only by carriers
 #                       [WRAPPER <wrapper>]  # Deprecated, used only by devices
-#                       [PART <part>]        # Deprecated
 #
 # This macro converts a plugin declaration to code, and to set up a CMake option
 # for enabling or disabling the compilation of that plugin.
@@ -175,13 +159,14 @@ endmacro()
 # If the ``OPTION`` argument is passed, it will be used to name the CMake
 # option, otherwise a default name ``ENABLE_<master>_<name>[_<category>]`` will
 # be used (``<category>`` is not added if the name already contains it).
-# The ``DEFAULT`` option, if set, will be used to set the default value for this
-# option, otherwise the plugin will be disabled by default.
-# The ``DOC`` option can be used to set a description for this option.
+# The ``DEFAULT`` argument, if set, will be used to set the default value for
+# this option, otherwise the plugin will be disabled by default.
+# The ``DOC`` argument can be used to set a description for this option.
 # If the``ADVANCED`` option is enabled, this option is marked as advanced in
 # CMake.
 # If the ``INTERNAL`` option is enabled, this option is marked as internal in
-# CMake. # FIXME TODO
+# CMake, and therefore not displayed in CMake gui. This also implies
+# `DEFAULT=ON` unless explicitly specified.
 #
 # The plugin can be conditionally disabled, depending on some conditions (for
 # example some option, only on some systems, or only if some library was found)
@@ -189,21 +174,32 @@ endmacro()
 # disable it only if at least one the conditions is false, therefore when
 # ``FOO`` is false or ``BAR`` is true.
 #
-# FIXME Add docs for TEMPLATE and TEMPLATE_DIR
-# FIXME Add docs for EXTRA_CONFIG, WRAPPER, CODE and PART
+# The `TEMPLATE` and `TEMPLATE_DIR` can be used to specify a file name and a
+# directory for the template that will be configured and added to the plugin.
+# If a template is not specified, a file `yarp_plugin_<CATEGORY>.cpp.in` is
+# searched in current directory, in CMake module path, and in YARP cmake modules
+# directory. If still it cannot be found, but the `PARENT_TYPE` argument,
+# containing the name of the parent class for the plugin, was specified, then a
+# default template is generated in current binary directory. Static plugins will
+# not work with the default template.
 #
+# Each variable in the form `KEY=VALUE` passed to the `EXTRA_CONFIG` argument is
+# changed to `YARPPLUG_<KEY>` and used when the template is configured. For
+# example `EXTRA_CONFIG WRAPPER=foo` generates the `YARPPLUG_WRAPPER` variable
+# that is then replaced in the `yarp_plugin_device.cpp.in`.
+
 macro(YARP_PREPARE_PLUGIN _plugin_name)
-  set(_options)
+  set(_options ADVANCED
+               INTERNAL)
   set(_oneValueArgs TYPE
                     INCLUDE
                     CATEGORY
                     PARENT_TYPE
-                    DEFAULT
+                    OPTION
                     DOC
-                    ADVANCED
+                    DEFAULT
                     TEMPLATE
                     TEMPLATE_DIR
-                    OPTION
                     CODE
                     WRAPPER)
   set(_multiValueArgs DEPENDS
@@ -219,7 +215,11 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   endif()
 
   if(NOT DEFINED _YPP_DEFAULT)
-    set(_YPP_DEFAULT OFF)
+    if(_YPP_INTERNAL)
+      set(_YPP_DEFAULT ON)
+    else()
+      set(_YPP_DEFAULT OFF)
+    endif()
   endif()
 
   # Set up a flag to enable/disable compilation of this plugin.
@@ -240,7 +240,14 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     option(${_YPP_OPTION} "${_YPP_DOC}" ${_YPP_DEFAULT})
   endif()
   if(_YPP_ADVANCED)
-    mark_as_advanced(${_YPP_OPTION})
+    mark_as_advanced(FORCE ${_YPP_OPTION})
+  else()
+    mark_as_advanced(CLEAR ${_YPP_OPTION})
+  endif()
+  if(_YPP_INTERNAL)
+    set_property(CACHE ${_YPP_OPTION} PROPERTY TYPE INTERNAL)
+  else()
+    set_property(CACHE ${_YPP_OPTION} PROPERTY TYPE BOOL)
   endif()
 
   # Set some convenience variables based on whether the plugin

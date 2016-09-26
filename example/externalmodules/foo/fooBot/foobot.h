@@ -12,7 +12,7 @@
 namespace yarp {
     namespace dev {
       class foobot;
-    } 
+    }
 }
 
 class yarp::dev::foobot : public DeviceDriver
