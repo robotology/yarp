@@ -7,7 +7,7 @@ yarp_prepare_plugin(KinectDeviceLocal
                     TYPE yarp::dev::KinectDeviceDriverServer
                     INCLUDE KinectYarpDeviceServerLib/KinectDeviceDriverServer.h
                     DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_COMPILE_UNMAINTAINED"
-                    ADVANCED ON)
+                    ADVANCED)
 
 if(ENABLE_KinectDeviceLocal)
   add_subdirectory(KinectYarpDeviceServerLib)
@@ -18,7 +18,7 @@ yarp_prepare_plugin(KinectDeviceClient
                     TYPE yarp::dev::KinectDeviceDriverClient
                     INCLUDE KinectYarpDeviceClientLib/KinectDeviceDriverClient.h
                     DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_COMPILE_UNMAINTAINED"
-                    ADVANCED ON)
+                    ADVANCED)
 
 if(ENABLE_KinectDeviceClient)
   add_subdirectory(KinectYarpDeviceClientLib)

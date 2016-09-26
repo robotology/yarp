@@ -193,14 +193,13 @@ endmacro()
 # FIXME Add docs for EXTRA_CONFIG, WRAPPER, CODE and PART
 #
 macro(YARP_PREPARE_PLUGIN _plugin_name)
-  set(_options)
+  set(_options ADVANCED)
   set(_oneValueArgs TYPE
                     INCLUDE
                     CATEGORY
                     PARENT_TYPE
                     DEFAULT
                     DOC
-                    ADVANCED
                     TEMPLATE
                     TEMPLATE_DIR
                     OPTION
@@ -240,7 +239,9 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     option(${_YPP_OPTION} "${_YPP_DOC}" ${_YPP_DEFAULT})
   endif()
   if(_YPP_ADVANCED)
-    mark_as_advanced(${_YPP_OPTION})
+    mark_as_advanced(FORCE ${_YPP_OPTION})
+  else()
+    mark_as_advanced(CLEAR ${_YPP_OPTION})
   endif()
 
   # Set some convenience variables based on whether the plugin

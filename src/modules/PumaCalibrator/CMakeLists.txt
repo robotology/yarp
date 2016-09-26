@@ -7,7 +7,7 @@ yarp_prepare_plugin(pumacalibrator
                     TYPE yarp::dev::PumaCalibrator
                     INCLUDE PumaCalibrator.h
                     DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_COMPILE_UNMAINTAINED"
-                    ADVANCED ON)
+                    ADVANCED)
 
 if(NOT SKIP_pumacalibrator)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
