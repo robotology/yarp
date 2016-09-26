@@ -78,11 +78,14 @@ bool StreamConnectionReader::convertTextMode() {
 
 
 Bytes StreamConnectionReader::readEnvelope() {
-    if (protocol==NULL) {
-        return Bytes(0,0);
+    if (protocol != NULL) {
+        const ConstString& env = protocol->getEnvelope();
+        return Bytes((char*)env.c_str(),env.length());
     }
-    const ConstString& env = protocol->getEnvelope();
-    return Bytes((char*)env.c_str(),env.length());
+    if (parentConnectionReader != NULL) {
+        return parentConnectionReader->readEnvelope();
+    }
+    return Bytes(0,0);
 }
 
 

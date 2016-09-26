@@ -31,6 +31,8 @@ namespace yarp {
 class YARP_OS_API yarp::os::ConnectionReader {
 public:
 
+    ConnectionReader();
+
     /**
      * Destructor.
      */
@@ -193,6 +195,13 @@ public:
     static ConnectionReader *createConnectionReader(InputStream& is);
 
     static bool readFromStream(PortReader& portable, InputStream& is);
+
+    /**
+     * Set ConnectionReader to be used for reading the envelope.
+     *
+     * Used by PortCoreInputUnit
+     */
+    virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader);
 };
 
 #endif // YARP_OS_CONNECTIONREADER_H
