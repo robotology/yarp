@@ -453,7 +453,6 @@ public:
 
     /**
      * Give carrier a shot at looking at how the connection is set up.
-     * Currently only called for recv carriers.
      *
      * @return true if the carrier was correctly configured.
      */

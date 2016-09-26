@@ -315,6 +315,13 @@ void Protocol::setCarrier(const ConstString& carrierNameBase) {
                 close();
                 return;
             }
+            // Configure the carrier.
+            if (!delegate->configure(*this)) {
+                fprintf(stderr,"Carrier \"%s\" could not be configured.\n",
+                        carrierName.c_str());
+                close();
+                return;
+            }
             delegate->prepareSend(*this);
         }
     }
