@@ -949,7 +949,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     if (ok)
         copy(flex);
 
-    return ok;    
+    return ok;
 }
 
 

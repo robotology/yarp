@@ -75,6 +75,8 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     return con.getReader();
     */
 
+    local->setParentConnectionReader(reader);
+
     // libdc1394 seems to need this.
     // note that this can slow things down if input has padding.
     in.setQuantum(1);

@@ -119,7 +119,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
         return *localReader;
 
     PortMonitor::lock();
-    yarp::os::Things thing;    
+    yarp::os::Things thing;
     thing.setConnectionReader(*localReader);
     yarp::os::Things& result = binder->updateData(thing);
     PortMonitor::unlock();

@@ -272,15 +272,15 @@ void PortCoreInputUnit::run() {
                         yarp::os::impl::PortDataModifier& modifier = getOwner().getPortModifier();
                         modifier.inputMutex.lock();
                         if(modifier.inputModifier) {
-                           if(modifier.inputModifier->acceptIncomingData(*cr)) {
-                               cr = &(modifier.inputModifier->modifyIncomingData(*cr));
-                               modifier.inputMutex.unlock();
-                               man.readBlock(*cr,id,os);
-                           }
-                           else {
-                               modifier.inputMutex.unlock();
-                               skipIncomingData(*cr);
-                           }
+                            if(modifier.inputModifier->acceptIncomingData(*cr)) {
+                                cr = &(modifier.inputModifier->modifyIncomingData(*cr));
+                                modifier.inputMutex.unlock();
+                                man.readBlock(*cr,id,os);
+                            }
+                            else {
+                                modifier.inputMutex.unlock();
+                                skipIncomingData(*cr);
+                            }
                         }
                         else {
                             modifier.inputMutex.unlock();

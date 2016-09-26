@@ -43,7 +43,7 @@ private:
 
     yarp::os::ConnectionReader *local;
     yarp::os::ConnectionReader *parent;
-    
+
     bool need_reset;
     bool have_result;
     bool happy;
@@ -102,20 +102,6 @@ public:
     ////////////////////////////////////////////////////////////////////////
     // ConnectionReader methods
 
-    void setParent(yarp::os::ConnectionReader& reader) {
-        parent = &reader;
-    }
-
-    virtual bool debayerFull(yarp::sig::ImageOf<yarp::sig::PixelMono>& src,
-                             yarp::sig::ImageOf<yarp::sig::PixelRgb>& dest);
-
-    virtual bool debayerHalf(yarp::sig::ImageOf<yarp::sig::PixelMono>& src,
-                             yarp::sig::ImageOf<yarp::sig::PixelRgb>& dest);
-
-    virtual bool processBuffered();
-
-    virtual bool processDirect(const yarp::os::Bytes& bytes);
-
     virtual bool expectBlock(const char *data, size_t len) {
         return local->expectBlock(data,len);
     }
@@ -153,7 +139,9 @@ public:
     }
 
     virtual size_t getSize() {
-        if (image_data_len) processBuffered();
+        if (image_data_len) {
+            processBuffered();
+        }
         return sizeof(header)+image_data_len;
     }
 
@@ -213,6 +201,24 @@ public:
     virtual bool isOk() {
         return happy;
     }
+
+    ////////////////////////////////////////////////////////////////////////
+    // BayerCarrier methods
+
+    void setParent(yarp::os::ConnectionReader& reader) {
+        parent = &reader;
+    }
+
+    virtual bool debayerFull(yarp::sig::ImageOf<yarp::sig::PixelMono>& src,
+                             yarp::sig::ImageOf<yarp::sig::PixelRgb>& dest);
+
+    virtual bool debayerHalf(yarp::sig::ImageOf<yarp::sig::PixelMono>& src,
+                             yarp::sig::ImageOf<yarp::sig::PixelRgb>& dest);
+
+    virtual bool processBuffered();
+
+    virtual bool processDirect(const yarp::os::Bytes& bytes);
+
 };
 
 
