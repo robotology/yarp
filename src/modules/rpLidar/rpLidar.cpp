@@ -22,7 +22,7 @@
 
 using namespace std;
 
-circularBuffer::circularBuffer(int bufferSize)
+rpLidarCircularBuffer::rpLidarCircularBuffer(int bufferSize)
 {
     maxsize = bufferSize + 1;
     start = 0;
@@ -30,7 +30,7 @@ circularBuffer::circularBuffer(int bufferSize)
     elems = (byte *)calloc(maxsize, sizeof(byte));
 }
 
-circularBuffer::~circularBuffer()
+rpLidarCircularBuffer::~rpLidarCircularBuffer()
 {
     free(elems);
 }

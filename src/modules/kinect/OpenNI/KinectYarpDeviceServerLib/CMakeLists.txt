@@ -47,8 +47,8 @@ target_link_libraries(KinectYarpDeviceServerLib YARP_OS
                                                 YARP_dev
                                                 ${OPEN_NI_LIBRARY}
                                                 ${XN_NITE_LIBRARY})
-install(TARGETS KinectYarpDeviceServerLib
-        COMPONENT runtime
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+yarp_install(TARGETS KinectYarpDeviceServerLib
+             EXPORT YARP
+             COMPONENT runtime
+             LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+             ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})

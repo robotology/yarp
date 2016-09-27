@@ -39,6 +39,7 @@ if(NOT SKIP_yarpmod_ovrheadset)
                                         GLFW3::GLFW3)
 
   yarp_install(TARGETS yarp_ovrheadset
+               EXPORT YARP
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})

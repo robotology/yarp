@@ -26,6 +26,7 @@ if(ENABLE_imuBosch_BNO055)
                                         YARP_dev
                                         YARP_math)
   yarp_install(TARGETS imuBosch_BNO055
+               EXPORT YARP
                COMPONENT Runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})

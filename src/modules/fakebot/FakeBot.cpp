@@ -19,7 +19,9 @@ using namespace yarp::sig::file;
 using namespace yarp::dev;
 
 #define MAXRND 50000
+namespace {
 int rnds[MAXRND];
+}
 
 void FakeBot::init() {
     int m_w = 640;

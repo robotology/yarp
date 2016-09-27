@@ -24,9 +24,6 @@ using namespace yarp::os::impl;
 
 // macros
 #define NEW_JSTATUS_STRUCT 1
-#define MAXRND 50000
-int rnds[MAXRND];
-
 
 void FakeMotionControl::run() {
     if (lifetime>=0) {

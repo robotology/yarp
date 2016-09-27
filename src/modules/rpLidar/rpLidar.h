@@ -24,7 +24,7 @@ using namespace yarp::dev;
 
 typedef unsigned char byte;
 
-class circularBuffer
+class rpLidarCircularBuffer
 {
     int         maxsize;
     int         start;
@@ -146,8 +146,8 @@ public:
         return end;
     }
 
-    circularBuffer(int bufferSize);
-    ~circularBuffer();
+    rpLidarCircularBuffer(int bufferSize);
+    ~rpLidarCircularBuffer();
 };
 
 //---------------------------------------------------------------------------------------------------------------
@@ -166,7 +166,7 @@ protected:
     ISerialDevice *pSerial;
 
     yarp::os::Mutex mutex;
-    circularBuffer * buffer;
+    rpLidarCircularBuffer * buffer;
 
     int sensorsNum;
 
@@ -188,9 +188,9 @@ protected:
 public:
     RpLidar(int period = 10) : RateThread(period)
     {
-        buffer = new circularBuffer(20000);
+        buffer = new rpLidarCircularBuffer(20000);
     }
-    
+
 
     ~RpLidar()
     {
