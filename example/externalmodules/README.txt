@@ -19,8 +19,8 @@ you should see all the devices in yarpdev plus the new ones you have
 just added.
 
 If you want these devices to show up in yarpdev itself,
-you can create the file in $YARP_ROOT/conf/ExternalModules.cmake
-following the template in  $YARP_ROOT/conf/ExternalModules.cmake.template,
+you can create the file in $YARP_ROOT/cmake/ExternalModules.cmake
+following the template in  $YARP_ROOT/cmake/templates/ExternalModules.cmake.template,
 or else add subdirectories in $YARP_ROOT/src/modules (edit the
 CMakeLists.txt to enumerate those subdirectories).
 
