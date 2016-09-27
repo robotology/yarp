@@ -80,10 +80,6 @@ add_subdirectory(tests)
 # Platform independent data
 add_subdirectory(data)
 
-# add rule for uninstalling YARP
-# see cmake/YARPUninstall.cmake
-include(YARPUninstall)
-
 # Output configuration files describing how YARP was built, and how
 # its libraries may be linked against and used.  This uses
 # information accumulated in the global property variables set up earlier.
@@ -101,3 +97,6 @@ include(YarpDoc)
 # Make sure yarp.i and related source files get installed, to allow
 # bindings for other languages to be compiled from the build material.
 include(YarpBindingsSource)
+
+# add rule for uninstalling YARP
+include(AddUninstallTarget)
