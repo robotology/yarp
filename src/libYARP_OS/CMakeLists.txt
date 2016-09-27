@@ -407,7 +407,7 @@ endif()
 if(YARP_HAS_LIBEDIT)
     add_definitions(-DWITH_LIBEDIT)
     include_directories(${Libedit_INCLUDE_DIRS})
-    target_link_libraries(YARP_OS LINK_PRIVATE Libedit::libedit)
+    target_link_libraries(YARP_OS LINK_PRIVATE ${Libedit_LIBRARIES})
 endif()
 
 option(YARP_TEST_HEAP "Replace new/delete operators with test harness (may be incompatible with ACE)" FALSE)
