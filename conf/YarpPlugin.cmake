@@ -115,7 +115,8 @@ endmacro()
 #                       INCLUDE <header>
 #                       [DEFAULT <ON|OFF>]
 #                       [OPTION <name>]
-#                       [ADVANCED <ON|OFF>]
+#                       [ADVANCED]
+#                       [INTERNAL]
 #                       [DEPENDS <condition>]
 #                       [TEMPLATE <file_name|path_to_a_file>]
 #                       [TEMPLATE_DIR <dir>]
