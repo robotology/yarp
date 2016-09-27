@@ -167,6 +167,7 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
             it = m_locations.find(name);            
             if (it != m_locations.end())
             {
+                out.addVocab(VOCAB_OK);
                 Map2DLocation loc = it->second;
                 out.addString(loc.map_id);
                 out.addDouble(loc.x);
