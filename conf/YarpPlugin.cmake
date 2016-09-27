@@ -352,11 +352,11 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
       endif()
     endforeach()
     if(DEFINED _YPP_WRAPPER)
-      yarp_deprecated_warning("WRAPPER argument is deprecated. Use EXTRA_CONFIG WRAPPER=<...> instead.")
+      yarp_deprecated_warning("WRAPPER argument is deprecated. Use EXTRA_CONFIG WRAPPER=<...> instead.") # since YARP 2.3.68
       set(YARPPLUG_WRAPPER "${_YPP_WRAPPER}")
     endif()
     if(DEFINED _YPP_CODE)
-      yarp_deprecated_warning("CODE argument is deprecated. Use EXTRA_CONFIG CODE=<...> instead.")
+      yarp_deprecated_warning("CODE argument is deprecated. Use EXTRA_CONFIG CODE=<...> instead.") # since YARP 2.3.68
       set(YARPPLUG_CODE "${_YPP_CODE}")
     endif()
 
@@ -411,10 +411,21 @@ macro(YARP_ADD_PLUGIN _library_name)
     set(_library_type "STATIC")
   endif()
 
+  # Each library can contain more than one plugin, if this is the case, then the
+  # library must be added once per each plugin to the YARP_BUNDLE_OWNERS
+  # variable in order to be able to match plugin and owner library later.
+  get_property(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
+  get_property(owners GLOBAL PROPERTY YARP_BUNDLE_OWNERS)
+  list(LENGTH devs devs_len)
+  list(LENGTH owners owners_len)
+  math(EXPR owned_devs "${devs_len} - ${owners_len}")
+  foreach(_unused RANGE 1 ${owned_devs})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${_library_name})
+  endforeach()
+
   # The user is adding a bone-fide plugin library.  We add it,
   # while inserting any generated source code needed for initialization.
   get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
-  set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${_library_name})
   add_library(${_library_name} ${_library_type} ${srcs} ${ARGN})
   if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
     # Do not add the "lib" prefix to dynamic plugin libraries.
@@ -452,12 +463,14 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
     set(YARP_LIB_NAME ${X_YARP_PLUGIN_MASTER})
     get_property(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
     get_property(owners GLOBAL PROPERTY YARP_BUNDLE_OWNERS)
+
     set(YARP_CODE_PRE)
     set(YARP_CODE_POST)
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
       foreach(dev ${devs})
-        if(NOT owners)
+        if("${owners}" STREQUAL "")
           message(SEND_ERROR "No owner for device ${dev}, this is likely due to a previous error, check the output of CMake above.")
+          return()
         endif()
         list(GET owners 0 owner)
         list(REMOVE_AT owners 0)
