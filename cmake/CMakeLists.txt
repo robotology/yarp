@@ -73,12 +73,18 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                 ycm-0.2/modules/GetAllCMakeProperties.cmake
                                 ycm-0.2/modules/ReplaceImportedTargets.cmake
                                 ycm-0.2/modules/StandardFindModule.cmake)
+    set(YCM_CMAKE_3rdparty_FILES ycm-0.2/3rdparty/FindEigen3.cmake
+                                 ycm-0.2/3rdparty/FindOctave.cmake
+                                 ycm-0.2/3rdparty/FindQCustomPlot.cmake)
     install(FILES ${YCM_CMAKE_find_modules_FILES}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/ycm-0.2/find-modules)
     install(FILES ${YCM_CMAKE_modules_FILES}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/ycm-0.2/modules)
+    install(FILES ${YCM_CMAKE_3rdparty_FILES}
+            COMPONENT scripts
+            DESTINATION share/yarp/cmake/ycm-0.2/3rdparty)
   endif()
 
   # Files from CMake 3.1, available only if cmake is older
@@ -108,9 +114,12 @@ foreach(_f FindACE.cmake
            FindLibOVR.cmake
            FindLibdc1394.cmake
            FindLibusb1.cmake
+           FindOctave.cmake
            FindOpenCV.cmake
            FindOpenNI.cmake
            FindPortAudio.cmake
+           FindQCustomPlot.cmake
+           FindReadLine.cmake
            FindSQLite.cmake
            FindStage.cmake
            FindTinyXML.cmake
