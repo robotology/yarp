@@ -18,7 +18,7 @@ set (YARP_LINK_PLUGINS TRUE)
 if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
   set (YARP_LINK_PLUGINS FALSE)
 endif()
-add_subdirectory(modules)
+add_subdirectory(devices)
 add_subdirectory(carriers)
 add_subdirectory(libYARP_init)
 

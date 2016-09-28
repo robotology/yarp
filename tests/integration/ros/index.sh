@@ -559,7 +559,7 @@ if is_test empty_list; then
     root="/test/empty_list/pid$$"
     rm -f ${BASE}check_empty_list.txt
 
-    cp $YARP_SRC/src/libYARP_dev/src/modules/msgs/jointState.msg sensor_msgs_JointState
+    cp $YARP_SRC/src/libYARP_dev/src/devices/msgs/jointState.msg sensor_msgs_JointState
 
     ${YARP_BIN}/yarpidl_rosmsg --name /typ@/yarpros --web false &
     add_helper $!

@@ -97,7 +97,7 @@ are available in the YARP source package, under the directory
 
 \section add_a_plugin_in_yarp Adding a plugin into YARP
 
- In directory ${YARP_ROOT}/src/modules/CMakeLists.txt, there
+In directory ${YARP_ROOT}/src/devices/CMakeLists.txt, there
 is a list of device directories.  We could just add another line to
 insert fake_grabber.  There is no requirement that the fake_grabber
 subdirectory be in any particular location.  Similarly, carriers

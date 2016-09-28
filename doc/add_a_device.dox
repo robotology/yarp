@@ -44,7 +44,7 @@ using the doxygen standard. See \ref note_devices for an example.
 \section dev2-howto-steps Step by step instructions
 
 So you want to add a device to YARP?
-\li Place your device in a subdirectory of \c $YARP_ROOT/src/modules.  This
+\li Place your device in a subdirectory of \c $YARP_ROOT/src/devices.  This
     isn't actually a requirement, but it is the easiest way to start.
     Let us say you pick the directory foo.
 \li Get an example that uses your device compiling with CMake in your directory.
@@ -116,12 +116,12 @@ So you want to add a device to YARP?
   endif()
 \endcode
 \li To actually try compiling your device, edit
-    \c $YARP_ROOT/src/modules/CMakeLists.txt and add in where all the similar
+    \c $YARP_ROOT/src/devices/CMakeLists.txt and add in where all the similar
     lines are:
 \code{.cmake}
   add_subdirectory(foo)
 \endcode
-\li (Alternatively, you can copy \c $YARP_ROOT/src/modules/CMakeLists.txt to
+\li (Alternatively, you can copy \c $YARP_ROOT/src/devices/CMakeLists.txt to
     some other directory, remove all the other \c add_subdirectory lines and
     just leave your own)
 \li Now rebuild the YARP library.
