@@ -16,14 +16,21 @@ endif()
 
 project(YARP)
 
-# Pick up our CMake scripts - they are all in the conf subdirectory.
-set(YARP_MODULE_DIR ${PROJECT_SOURCE_DIR}/conf)
-set(YARP_MODULE_PATH ${YARP_MODULE_DIR})
+# Pick up our CMake scripts - they are all in the cmake subdirectory.
+set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
+set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
+
+find_package(YCM 0.2 QUIET)
+if(NOT YCM_FOUND)
+  list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/ycm-0.2/find-modules"
+                               "${CMAKE_SOURCE_DIR}/cmake/ycm-0.2/modules")
+endif()
+
 if(${CMAKE_VERSION} VERSION_LESS 3.5)
-  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf/cmake-3.5/Modules)
+  list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/cmake-3.5/Modules")
 endif()
 if(${CMAKE_VERSION} VERSION_LESS 3.1)
-  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf/cmake-3.1/Modules)
+  list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/cmake-3.1/Modules")
 endif()
 set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
@@ -36,27 +43,27 @@ set_property(GLOBAL PROPERTY YARP_LIBS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
 
 # Get the current YARP version.
-# See conf/YarpVersion.cmake.
+# See cmake/YarpVersion.cmake.
 include(YarpVersion)
 
 # Check system configuration.
-# See conf/YarpSystemCheck.cmake.
+# See cmake/YarpSystemCheck.cmake.
 include(YarpSystemCheck)
 
 # Set up some compilation options.
-# See conf/YarpOptions.cmake.
+# See cmake/YarpOptions.cmake.
 include(YarpOptions)
 
 # Include some workarounds for older cmake versions
-# See conf/YarpCMakeWorkarounds.cmake
+# See cmake/YarpCMakeWorkarounds.cmake
 include(YarpCMakeWorkarounds)
 
 # Check YARP dependencies, find necessary libraries.
-# See conf/YarpFindDependencies.cmake.
+# See cmake/YarpFindDependencies.cmake.
 include(YarpFindDependencies)
 
 # Make some custom header files containing compile settings.
-add_subdirectory(conf)
+add_subdirectory(cmake)
 
 # Build required 3rd party libraries
 add_subdirectory(extern)
@@ -73,24 +80,23 @@ add_subdirectory(tests)
 # Platform independent data
 add_subdirectory(data)
 
-# add rule for uninstalling YARP
-# see conf/YARPUninstall.cmake
-include(YARPUninstall)
-
 # Output configuration files describing how YARP was built, and how
 # its libraries may be linked against and used.  This uses
 # information accumulated in the global property variables set up earlier.
-# See conf/YarpDescribe.cmake
+# See cmake/YarpDescribe.cmake
 include(YarpDescribe)
 
 # Set up some packaging properties (for generating tarballs etc).
-# See conf/YarpPackage.cmake
+# See cmake/YarpPackage.cmake
 include(YarpPackage)
 
 # Make documentation target, documentation goes in doc subdirectory
-# of build.  See conf/YarpDoc.cmake
+# of build.  See cmake/YarpDoc.cmake
 include(YarpDoc)
 
 # Make sure yarp.i and related source files get installed, to allow
 # bindings for other languages to be compiled from the build material.
 include(YarpBindingsSource)
+
+# add rule for uninstalling YARP
+include(AddUninstallTarget)

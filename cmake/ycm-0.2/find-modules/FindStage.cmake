@@ -14,7 +14,7 @@
 #  Stage_MINOR_VERSION - Stage minor version
 #
 # Environment variables used to locate the Stage library:
-# Stage_DIR - Stage root directory
+# READLINE_DIR - Stage root directory
 #
 # Cached variables used to locate the Stage library:
 # Stage_INCLUDE_DIR - the Stage include directory
