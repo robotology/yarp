@@ -3,12 +3,12 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-yarp_prepare_device(usbCamera TYPE yarp::dev::USBCameraDriverRgb INCLUDE USBcamera.hpp WRAPPER grabber)
+yarp_prepare_plugin(usbCamera CATEGORY device TYPE yarp::dev::USBCameraDriverRgb INCLUDE USBcamera.hpp EXTRA_CONFIG WRAPPER=grabber)
 
 # usbCameraRaw is always enabled when USBcamera is enabled
 # This is a workaround to enable the creation of the additional source files and to hide the entry in ccmake
 set(ENABLE_icubmod_usbCameraRaw ${ENABLE_icubmod_usbCamera} CACHE INTERNAL "Enable/disable compilation of icubmod_USBcameraRaw")
-yarp_prepare_device(usbCameraRaw TYPE yarp::dev::USBCameraDriverRaw INCLUDE USBcamera.hpp WRAPPER grabber)
+yarp_prepare_plugin(usbCameraRaw CATEGORY device TYPE yarp::dev::USBCameraDriverRaw INCLUDE USBcamera.hpp EXTRA_CONFIG WRAPPER=ggrabber)
 
 IF(ENABLE_icubmod_usbCamera)
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
