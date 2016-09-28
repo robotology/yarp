@@ -384,7 +384,7 @@ int ThreadImpl::getPolicy() {
     if (active) {
 #if defined(YARP_HAS_CXX11)
         // FIXME Use std::thread::native_handle()
-        YARP_ERROR(Logger::get(),"Cannot get scheduiling policy with C++11");
+        YARP_ERROR(Logger::get(),"Cannot get scheduling policy with C++11");
 #elif defined(YARP_HAS_ACE) // Use ACE API
         int prio;
         ACE_Thread::getprio(hid, prio, policy);
