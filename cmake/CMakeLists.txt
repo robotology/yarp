@@ -23,8 +23,7 @@ endforeach(conf)
 set(YARP_CMAKE_FILES YarpDeprecatedWarning.cmake
                      YarpPlugin.cmake
                      YarpIDL.cmake
-                     YarpInstallationHelpers.cmake
-                     FindLibedit.cmake)
+                     YarpInstallationHelpers.cmake)
 install(FILES ${YARP_CMAKE_FILES}
         COMPONENT scripts
         DESTINATION share/yarp/cmake)
@@ -59,9 +58,11 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                      ycm-0.2/find-modules/FindFTDI.cmake
                                      ycm-0.2/find-modules/FindGLFW3.cmake
                                      ycm-0.2/find-modules/FindGSL.cmake
+                                     ycm-0.2/find-modules/FindLibedit.cmake
                                      ycm-0.2/find-modules/FindLibOVR.cmake
                                      ycm-0.2/find-modules/FindLibdc1394.cmake
                                      ycm-0.2/find-modules/FindLibusb1.cmake
+                                     ycm-0.2/find-modules/FindNVIDIACg.cmake
                                      ycm-0.2/find-modules/FindOpenCV.cmake
                                      ycm-0.2/find-modules/FindOpenNI.cmake
                                      ycm-0.2/find-modules/FindPortAudio.cmake
@@ -116,9 +117,11 @@ foreach(_f FindACE.cmake
            FindGLEW.cmake
            FindGLFW3.cmake
            FindGSL.cmake
+           FindLibedit.cmake
            FindLibOVR.cmake
            FindLibdc1394.cmake
            FindLibusb1.cmake
+           FindNVIDIACg.cmake
            FindOctave.cmake
            FindOpenCV.cmake
            FindOpenNI.cmake
