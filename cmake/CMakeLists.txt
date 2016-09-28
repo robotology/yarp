@@ -20,7 +20,8 @@ foreach(conf version system options api numeric)
 endforeach(conf)
 
 # YARP CMake Modules
-set(YARP_CMAKE_FILES YarpPlugin.cmake
+set(YARP_CMAKE_FILES YarpDeprecatedWarning.cmake
+                     YarpPlugin.cmake
                      YarpIDL.cmake
                      YarpInstallationHelpers.cmake
                      FindLibedit.cmake)
@@ -42,8 +43,7 @@ install(FILES ${YARP_TEMPLATE_FILES}
         DESTINATION share/yarp/cmake/template)
 
 if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
-  set(YARP_PRIVATE_CMAKE_FILES YarpDeprecatedWarning.cmake
-                               YarpDeprecatedOption.cmake
+  set(YARP_PRIVATE_CMAKE_FILES YarpDeprecatedOption.cmake
                                YarpCMakeWorkarounds.cmake
                                YarpRenamedOption.cmake
                                YarpBackupVariable.cmake)
@@ -128,7 +128,6 @@ foreach(_f FindACE.cmake
            GetAllCMakeProperties.cmake
            ReplaceImportedTargets.cmake
            StandardFindModule.cmake
-           YarpDeprecatedWarning.cmake
            YarpDeprecatedOption.cmake
            YarpCMakeWorkarounds.cmake
            YarpRenamedOption.cmake
