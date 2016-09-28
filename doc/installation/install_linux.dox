@@ -47,7 +47,7 @@ Install the following packages to prepare your development environment and get
 basic dependencies:
 
 \code
-  sudo apt-get install git cmake cmake-curses-gui libgsl0-dev libace-dev libreadline-dev
+  sudo apt-get install git cmake cmake-curses-gui libeigen3-dev libace-dev libedit-dev
 \endcode
 
 For Qt5 different packages are needed for different systems.

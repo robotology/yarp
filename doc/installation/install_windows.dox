@@ -23,7 +23,12 @@ Instructions in this page allows you to build YARP from sources. This allows get
 
 \subsubsection getting_dependencies_windows Getting dependencies
 
-We recommend you follow the procedure described below, which will install precompiled binaries for all the required dependencies. Download the YARP installer according to the compiler you use from this page (\ref installation_downloads). Execute the YARP installer. Disable the YARP tick and proceed with the installation.
+We recommend you follow the procedure described below, which will install precompiled binaries for almost all the required dependencies. Download the YARP installer according to the compiler you use from this page (\ref installation_downloads). Execute the YARP installer. Disable the YARP tick and proceed with the installation.
+At the moment the YARP installer is not including the <a href="http://eigen.tuxfamily.org">Eigen</a> matrix header-only library, required by YARP since version 2.3.67.3 .
+To install Eigen, as Eigen is an header only library, you can just unzip the archive in a directory,
+and point the `EIGEN3_ROOT` environment variable to the directory in which
+you uncompressed the archive. In particular `EIGEN3_ROOT` should point to the
+directory containing the `signature_of_eigen3_matrix_library` file.
 
 \image html install-binaries-no-yarp.png
 
