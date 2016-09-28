@@ -20,7 +20,7 @@ namespace yarp {
     }
 }
 
-template <class T> 
+template <class T>
 class yarp::os::PeerRecord {
 public:
     typedef T peer_type;
@@ -28,26 +28,26 @@ public:
     map_type peerSet;
     typedef typename map_type::iterator iterator;
     typedef typename map_type::const_iterator const_iterator;
- 
+
     PeerRecord() {
     }
-    
+
     PeerRecord(const PeerRecord& alt) {
     }
-    
+
     void add(T *entity) {
         peerSet[entity] = true;
     }
-    
+
     void remove(T *entity) {
         peerSet.erase(entity);
     }
-    
+
     T *getFirst() {
         if (peerSet.begin()!=peerSet.end()) {
             return peerSet.begin()->first;
         }
-        return 0 /*NULL */;
+        return YARP_NULLPTR;
     }
 };
 
@@ -59,7 +59,7 @@ public:
  *
  * PR should be a subclass of PeerRecord.
  */
-template <class PR> 
+template <class PR>
 class yarp::os::ElectionOf {
 private:
     typedef void *voidPtr;
@@ -77,7 +77,7 @@ private:
             entry = nameMap.find(key);
         }
         if (entry == nameMap.end()) {
-            return 0 /*NULL*/;
+            return YARP_NULLPTR;
         }
         return &(entry->second);
     }
@@ -102,7 +102,7 @@ private:
         PR *rec = getRecordRaw(key,false);
         yAssert(rec);
         rec->remove(entity);
-        mutex.post();    
+        mutex.post();
     }
 
     typename PR::peer_type *getElect(const yarp::os::ConstString& key) {
@@ -112,7 +112,7 @@ private:
         if (rec) {
             return rec->getFirst();
         }
-        return NULL;
+        return YARP_NULLPTR;
     }
 
     PR *getRecord(const yarp::os::ConstString& key) {

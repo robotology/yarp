@@ -77,7 +77,7 @@ public:
     // Documented in yarp::os::ConnectionState.
     void takeStreams(TwoWayStream *streams) {
         shift.takeStream(streams);
-        if (streams!=NULL) {
+        if (streams!=YARP_NULLPTR) {
             active = true;
         }
     }
@@ -197,7 +197,7 @@ public:
 
     // Documented in yarp::os::ConnectionState.
     Connection& getConnection() {
-        if (delegate==NULL) {
+        if (delegate==YARP_NULLPTR) {
             return nullConnection;
         }
         return *delegate;
@@ -205,7 +205,7 @@ public:
 
     // Documented in yarp::os::InputProtocol.
     Connection& getReceiver() {
-        if (recv_delegate==NULL) {
+        if (recv_delegate==YARP_NULLPTR) {
             return nullConnection;
         }
         return *recv_delegate;
@@ -213,7 +213,7 @@ public:
 
     // Documented in yarp::os::OutputProtocol.
     Connection& getSender() {
-        if (send_delegate==NULL) {
+        if (send_delegate==YARP_NULLPTR) {
             return nullConnection;
         }
         return *send_delegate;
@@ -277,7 +277,7 @@ private:
      *
      */
     bool expectSenderSpecifier() {
-        yAssert(delegate!=NULL);
+        yAssert(delegate!=YARP_NULLPTR);
         return delegate->expectSenderSpecifier(*this);
     }
 
@@ -305,7 +305,7 @@ private:
      *
      */
     bool sendHeader() {
-        yAssert(delegate!=NULL);
+        yAssert(delegate!=YARP_NULLPTR);
         return delegate->sendHeader(*this);
     }
 
@@ -316,7 +316,7 @@ private:
      *
      */
     bool expectReplyToHeader() {
-        yAssert(delegate!=NULL);
+        yAssert(delegate!=YARP_NULLPTR);
         return delegate->expectReplyToHeader(*this);
     }
 

@@ -73,11 +73,11 @@ public:
         }
         return asList();
     }
-    virtual yarp::os::Bottle* asList() const { return NULL; }
-    virtual yarp::os::Property* asDict() const { return NULL; }
+    virtual yarp::os::Bottle* asList() const { return YARP_NULLPTR; }
+    virtual yarp::os::Property* asDict() const { return YARP_NULLPTR; }
     virtual const char* asBlob() const
     {
-        return static_cast<const char*>(NULL);
+        return static_cast<const char*>(YARP_NULLPTR);
     }
     virtual size_t asBlobLength() const { return 0; }
     virtual bool read(ConnectionReader& connection);
@@ -147,7 +147,7 @@ public:
     virtual Storable* cloneStorable() const
     {
         Storable* item = createStorable();
-        yAssert(item != NULL);
+        yAssert(item != YARP_NULLPTR);
         item->copy(*this);
         return item;
     }
@@ -560,7 +560,7 @@ public:
     {
         if (storeNull) {
             delete storeNull;
-            storeNull = NULL;
+            storeNull = YARP_NULLPTR;
         }
     }
 

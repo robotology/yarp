@@ -205,28 +205,28 @@ public:
     /**
      * Get list value.
      * @return pointer to list if value is indeed a list.
-     * Otherwise returns NULL
+     * Otherwise returns YARP_NULLPTR
      */
     virtual Bottle *asList() const;
 
     /**
      * Get dictionary (hash table) value.
      * @return pointer to dictionary if value is indeed of the right type.
-     * Otherwise returns NULL
+     * Otherwise returns YARP_NULLPTR
      */
     virtual Property *asDict() const;
 
     /**
      * Get dictionary or list value
      * @return pointer to dictionary or list value if present.
-     * Otherwise returns NULL
+     * Otherwise returns YARP_NULLPTR
      */
     virtual Searchable *asSearchable() const;
 
     /**
      * Get binary data value.
      * @return pointer to binary data if value is indeed binary data.
-     * Otherwise returns NULL
+     * Otherwise returns YARP_NULLPTR
      */
     virtual const char *asBlob() const;
 

@@ -13,11 +13,11 @@
 using namespace yarp::os;
 
 Type::Type() {
-    prop = NULL;
+    prop = YARP_NULLPTR;
 }
 
 Type::Type(const Type& alt) {
-    prop = NULL;
+    prop = YARP_NULLPTR;
     name = alt.name;
     name_on_wire = alt.name_on_wire;
     if (alt.prop) {
@@ -29,7 +29,7 @@ Type::Type(const Type& alt) {
 Type::~Type() {
     if (prop) {
         delete prop;
-        prop = NULL;
+        prop = YARP_NULLPTR;
     }
 }
 
@@ -41,7 +41,7 @@ const Type& Type::operator =(const Type& alt) {
         *prop = *(alt.prop);
     } else if (prop) {
         delete prop;
-        prop = NULL;
+        prop = YARP_NULLPTR;
     }
     return *this;
 }

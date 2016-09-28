@@ -72,9 +72,9 @@ void PortCoreOutputUnit::run() {
                     sendHelper();
                     YARP_DEBUG(log, "wrote something in background");
                     trackerMutex.wait();
-                    if (cachedTracker!=NULL) {
+                    if (cachedTracker != YARP_NULLPTR) {
                         void *t = cachedTracker;
-                        cachedTracker = NULL;
+                        cachedTracker = YARP_NULLPTR;
                         sending = false;
                         getOwner().notifyCompletion(t);
                     } else {
@@ -95,7 +95,7 @@ void PortCoreOutputUnit::run() {
 
 void PortCoreOutputUnit::runSingleThreaded() {
 
-    if (op!=NULL) {
+    if (op != YARP_NULLPTR) {
         Route route = op->getRoute();
         setMode();
         getOwner().reportUnit(this,true);
@@ -130,7 +130,7 @@ void PortCoreOutputUnit::runSingleThreaded() {
 
 void PortCoreOutputUnit::closeBasic() {
     bool waitForOther = false;
-    if (op!=NULL) {
+    if (op != YARP_NULLPTR) {
         op->getConnection().prepareDisconnect();
         Route route = op->getRoute();
         if (op->getConnection().isConnectionless()||
@@ -178,7 +178,7 @@ void PortCoreOutputUnit::closeBasic() {
     }
 
 
-    if (op!=NULL) {
+    if (op != YARP_NULLPTR) {
         if (waitForOther) {
             // quit is only acknowledged in certain conditions
             if (op->getConnection().isTextMode()&&
@@ -190,7 +190,7 @@ void PortCoreOutputUnit::closeBasic() {
         }
         op->close();
         delete op;
-        op = NULL;
+        op = YARP_NULLPTR;
     }
 }
 
@@ -202,7 +202,7 @@ void PortCoreOutputUnit::closeMain() {
     if (running) {
         // give a kick (unfortunately unavoidable)
 
-        if (op!=NULL) {
+        if (op != YARP_NULLPTR) {
             op->interrupt();
         }
 
@@ -224,7 +224,7 @@ void PortCoreOutputUnit::closeMain() {
 
 
 Route PortCoreOutputUnit::getRoute() {
-    if (op!=NULL) {
+    if (op != YARP_NULLPTR) {
         Route r = op->getRoute();
         op->beginWrite();
         return r;
@@ -234,11 +234,11 @@ Route PortCoreOutputUnit::getRoute() {
 
 bool PortCoreOutputUnit::sendHelper() {
     bool replied = false;
-    if (op!=NULL) {
+    if (op != YARP_NULLPTR) {
         bool done = false;
         BufferedConnectionWriter buf(op->getConnection().isTextMode(),
                                      op->getConnection().isBareMode());
-        if (cachedReader!=NULL) {
+        if (cachedReader != YARP_NULLPTR) {
             buf.setReplyHandler(*cachedReader);
         }
 
@@ -256,13 +256,13 @@ bool PortCoreOutputUnit::sendHelper() {
         } else {
 
 
-            yAssert(cachedWriter!=NULL);
+            yAssert(cachedWriter != YARP_NULLPTR);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
                 done = true;
             }
 
-            bool suppressReply = (buf.getReplyHandler()==NULL);
+            bool suppressReply = (buf.getReplyHandler() == YARP_NULLPTR);
 
             if (!done) {
                 if (!op->getConnection().canEscape()) {
@@ -347,9 +347,9 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
                                bool *gotReply) {
     bool replied = false;
 
-    if (op!=NULL) {
+    if (op != YARP_NULLPTR) {
         if (!op->getConnection().isActive()) {
-            return NULL;
+            return YARP_NULLPTR;
         }
     }
 
@@ -390,7 +390,7 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
     }
 
     if (waitAfter) {
-        if (gotReply!=NULL) {
+        if (gotReply != YARP_NULLPTR) {
             *gotReply = replied;
         }
     }
@@ -401,11 +401,11 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
 
 
 void *PortCoreOutputUnit::takeTracker() {
-    void *tracker = NULL;
+    void *tracker = YARP_NULLPTR;
     trackerMutex.wait();
     if (!sending) {
         tracker = cachedTracker;
-        cachedTracker = NULL;
+        cachedTracker = YARP_NULLPTR;
     }
     trackerMutex.post();
     return tracker;

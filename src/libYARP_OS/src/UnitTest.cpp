@@ -20,14 +20,14 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-UnitTest *UnitTest::theRoot = NULL;
+UnitTest *UnitTest::theRoot = YARP_NULLPTR;
 
 #ifdef YARP_TEST_HEAP
 
 static bool heap_count_active = false;
 static int heap_count_ops = 0;
 static bool heap_expect_ops = false;
-static yarp::os::Mutex *heap_count_mutex = NULL;
+static yarp::os::Mutex *heap_count_mutex = YARP_NULLPTR;
 
 void addHeapOperation(const char *act) {
     if (heap_count_active) {
@@ -81,7 +81,7 @@ UnitTest::UnitTest() {
 
 UnitTest::UnitTest(UnitTest *parent) {
     this->parent = parent;
-    if (parent!=NULL) {
+    if (parent!=YARP_NULLPTR) {
         parent->add(*this);
     }
     hasProblem = false;
@@ -101,7 +101,7 @@ void UnitTest::clear() {
 }
 
 void UnitTest::report(int severity, const ConstString& problem) {
-    if (parent!=NULL) {
+    if (parent!=YARP_NULLPTR) {
         parent->report(severity, getName() + ": " + problem);
     } else {
         YARP_SPRINTF2(Logger::get(),info,
@@ -126,7 +126,7 @@ void UnitTest::runSubTests(int argc, char *argv[]) {
 
 
 int UnitTest::run() {
-    run(0,NULL);
+    run(0,YARP_NULLPTR);
     return hasProblem;
 }
 
@@ -165,8 +165,8 @@ int UnitTest::run(int argc, char *argv[]) {
 
 
 void UnitTest::startTestSystem() {
-    if (theRoot==NULL) {
-        theRoot = new RootUnitTest(NULL);
+    if (theRoot==YARP_NULLPTR) {
+        theRoot = new RootUnitTest(YARP_NULLPTR);
     }
 }
 
@@ -174,15 +174,15 @@ void UnitTest::startTestSystem() {
 // is to avoid link order dependency problems
 UnitTest& UnitTest::getRoot() {
     startTestSystem();
-    yAssert(theRoot!=NULL);
+    yAssert(theRoot!=YARP_NULLPTR);
     return *theRoot;
 }
 
 // this is the important one to call
 void UnitTest::stopTestSystem() {
-    if (theRoot!=NULL) {
+    if (theRoot!=YARP_NULLPTR) {
         delete theRoot;
-        theRoot = NULL;
+        theRoot = YARP_NULLPTR;
     }
 }
 
@@ -272,7 +272,7 @@ void UnitTest::saveEnvironment(const char *key) {
 void UnitTest::restoreEnvironment() {
     for (int i=0; i<env.size(); i++) {
         Bottle *lst = env.get(i).asList();
-        if (lst==NULL) continue;
+        if (lst==YARP_NULLPTR) continue;
         ConstString key = lst->get(0).asString();
         ConstString val = lst->get(1).asString();
         bool found = lst->get(2).asInt()?true:false;
@@ -331,7 +331,7 @@ int UnitTest::heapMonitorEnd() {
         checkEqual(0,diff,"heap operator final count");
     }
     delete heap_count_mutex;
-    heap_count_mutex = NULL;
+    heap_count_mutex = YARP_NULLPTR;
     return diff;
 #else
     return -1;

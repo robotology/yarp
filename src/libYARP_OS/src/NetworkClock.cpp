@@ -21,7 +21,7 @@ typedef std::list<std::pair<double, Semaphore*> > Waiters;
 NetworkClock::NetworkClock()
 : pwaiters(0), sec(0), nsec(0), t(0), closing(false){
     pwaiters = new Waiters();
-    yAssert(pwaiters!=NULL);
+    yAssert(pwaiters!=YARP_NULLPTR);
 }
 
 NetworkClock::~NetworkClock() {
@@ -43,7 +43,7 @@ NetworkClock::~NetworkClock() {
         listMutex.unlock();
 
         delete waiters;
-        pwaiters = NULL;
+        pwaiters = YARP_NULLPTR;
     }
     else {
         listMutex.unlock();

@@ -11,14 +11,14 @@
 using namespace yarp::os;
 
 Things::Things() { 
-    conReader = NULL;
-    writer = NULL;
-    reader = NULL;
-    portable = NULL;
+    conReader = YARP_NULLPTR;
+    writer = YARP_NULLPTR;
+    reader = YARP_NULLPTR;
+    portable = YARP_NULLPTR;
     beenRead = false;
 }
 
 Things::~Things() {
     if (portable) delete portable;
-    portable = NULL;
+    portable = YARP_NULLPTR;
 }

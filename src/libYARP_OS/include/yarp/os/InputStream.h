@@ -140,7 +140,7 @@ public:
      * Read a block of text terminated with a specific marker (or EOF).
      *
      */
-    ConstString readLine(int terminal = '\n', bool *success = NULL);
+    ConstString readLine(int terminal = '\n', bool *success = YARP_NULLPTR);
 
     /**
      *

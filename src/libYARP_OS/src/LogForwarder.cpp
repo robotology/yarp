@@ -11,9 +11,9 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 
-yarp::os::LogForwarder* yarp::os::LogForwarder::instance = NULL;
+yarp::os::LogForwarder* yarp::os::LogForwarder::instance = YARP_NULLPTR;
 yarp::os::LogForwarderDestroyer yarp::os::LogForwarder::destroyer;
-yarp::os::Semaphore *yarp::os::LogForwarder::sem = NULL;
+yarp::os::Semaphore *yarp::os::LogForwarder::sem = YARP_NULLPTR;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
 {
@@ -78,7 +78,7 @@ yarp::os::LogForwarder::~LogForwarder()
     }
     sem->post();
     delete sem;
-    sem = NULL;
+    sem = YARP_NULLPTR;
     yarp::os::NetworkBase::finiMinimum();
 };
 

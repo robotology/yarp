@@ -23,8 +23,8 @@ namespace yarp {
  */
 class yarp::os::impl::IOException {
 public:
-    IOException(const char *txt = NULL) {
-        if (txt!=NULL) {
+    IOException(const char *txt = YARP_NULLPTR) {
+        if (txt!=YARP_NULLPTR) {
             desc = txt;
         }
     }

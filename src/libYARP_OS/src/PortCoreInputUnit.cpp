@@ -33,7 +33,7 @@ bool PortCoreInputUnit::start() {
                getOwner().getName()+ " starting");
 
     /*
-    if (ip!=NULL) {
+    if (ip!=YARP_NULLPTR) {
         Route route = ip->getRoute();
         YARP_DEBUG(Logger::get(),ConstString("starting output for ") +
                    route.toString());
@@ -69,7 +69,7 @@ void PortCoreInputUnit::run() {
 
     bool done = false;
 
-    yAssert(ip!=NULL);
+    yAssert(ip!=YARP_NULLPTR);
 
     PortCommand cmd;
 
@@ -141,7 +141,7 @@ void PortCoreInputUnit::run() {
             op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
 
             getOwner().addOutput(op);
-            ip = NULL;
+            ip = YARP_NULLPTR;
             done = true;
         }
     }
@@ -152,7 +152,7 @@ void PortCoreInputUnit::run() {
 
     void *id = (void *)this;
 
-    if (ip!=NULL && !ip->getConnection().canEscape()) {
+    if (ip!=YARP_NULLPTR && !ip->getConnection().canEscape()) {
         InputStream *is = &ip->getInputStream();
         is->setReadEnvelopeCallback(envelopeReadCallback, this);
     }
@@ -160,20 +160,20 @@ void PortCoreInputUnit::run() {
     while (!done) {
         ConnectionReader& br = ip->beginRead();
 
-        if (br.getReference()!=NULL) {
+        if (br.getReference()!=YARP_NULLPTR) {
             //printf("HAVE A REFERENCE\n");
-            if (localReader!=NULL) {
+            if (localReader!=YARP_NULLPTR) {
                 bool ok = localReader->read(br);
                 if (!br.isActive()) { done = true; break; }
                 if (!ok) continue;
             } else {
                 PortManager& man = getOwner();
-                bool ok = man.readBlock(br,id,NULL);
+                bool ok = man.readBlock(br,id,YARP_NULLPTR);
                 if (!br.isActive()) { done = true; break; }
                 if (!ok) continue;
             }
             //printf("DONE WITH A REFERENCE\n");
-            if (ip!=NULL) {
+            if (ip!=YARP_NULLPTR) {
                 ip->endRead();
             }
             continue;
@@ -197,7 +197,7 @@ void PortCoreInputUnit::run() {
         //         (key>=32)?key:'?', key, cmd.getText().c_str());
 
         PortManager& man = getOwner();
-        OutputStream *os = NULL;
+        OutputStream *os = YARP_NULLPTR;
         if (br.isTextMode()) {
             os = &(ip->getOutputStream());
         }
@@ -314,7 +314,7 @@ void PortCoreInputUnit::run() {
                 op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
 
                 getOwner().addOutput(op);
-                ip = NULL;
+                ip = YARP_NULLPTR;
                 done = true;
             }
             break;
@@ -329,7 +329,7 @@ void PortCoreInputUnit::run() {
             break;
         case '?':
         case 'h':
-            if (os!=NULL) {
+            if (os!=YARP_NULLPTR) {
                 BufferedConnectionWriter bw(true);
                 bw.appendLine("This is a YARP port.  Here are the commands it responds to:");
                 bw.appendLine("*       Gives a description of this port");
@@ -347,7 +347,7 @@ void PortCoreInputUnit::run() {
             }
             break;
         default:
-            if (os!=NULL) {
+            if (os!=YARP_NULLPTR) {
                 BufferedConnectionWriter bw(true);
                 bw.appendLine("Port command not understood.");
                 bw.appendLine("Type d to send data to the port's owner.");
@@ -356,10 +356,10 @@ void PortCoreInputUnit::run() {
             }
             break;
         }
-        if (ip!=NULL) {
+        if (ip!=YARP_NULLPTR) {
             ip->endRead();
         }
-        if (ip==NULL) {
+        if (ip==YARP_NULLPTR) {
             done = true;
             break;
         }
@@ -373,7 +373,7 @@ void PortCoreInputUnit::run() {
 
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closing ip");
     access.wait();
-    if (ip!=NULL) {
+    if (ip!=YARP_NULLPTR) {
         ip->close();
     }
     access.post();
@@ -409,9 +409,9 @@ void PortCoreInputUnit::run() {
         }
     }
 
-    if (localReader!=NULL) {
+    if (localReader!=YARP_NULLPTR) {
         delete localReader;
-        localReader = NULL;
+        localReader = YARP_NULLPTR;
     }
 
     running = false;
@@ -427,7 +427,7 @@ bool PortCoreInputUnit::interrupt() {
     // give a kick (unfortunately unavoidable)
     access.wait();
     if (!closing) {
-        if (ip!=NULL) {
+        if (ip!=YARP_NULLPTR) {
             ip->interrupt();
         }
         closing = true;
@@ -452,10 +452,10 @@ void PortCoreInputUnit::closeMain() {
         YARP_DEBUG(log,"PortCoreInputUnit joined");
     }
 
-    if (ip!=NULL) {
+    if (ip!=YARP_NULLPTR) {
         ip->close();
         delete ip;
-        ip = NULL;
+        ip = YARP_NULLPTR;
     }
     running = false;
     closing = false;
@@ -485,7 +485,7 @@ bool PortCoreInputUnit::skipIncomingData(yarp::os::ConnectionReader& reader) {
 bool PortCoreInputUnit::isBusy() {
     bool busy = false;
     access.wait();
-    if (ip!=NULL) {
+    if (ip!=YARP_NULLPTR) {
         busy = ip->isReplying();
     }
     access.post();

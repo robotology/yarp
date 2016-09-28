@@ -96,8 +96,8 @@ public:
     /**
      * Read an available object from the port.
      * @param shouldWait true if the method should wait until an object is available
-     * @return A pointer to an object read from the port, or NULL if none
-     * is available and waiting was not requested.  This object is owned
+     * @return A pointer to an object read from the port, or YARP_NULLPTR if
+     * none is available and waiting was not requested.  This object is owned
      * by the communication system and should not be deleted by the user.
      * The object is available to the user until the next call to
      * one of the read methods, after which it should not be accessed again.
@@ -112,7 +112,8 @@ public:
 
     /**
      * Get the last data returned by read()
-     * @return pointer to last data returned by read(), or NULL on failure.
+     * @return pointer to last data returned by read(), or YARP_NULLPTR on
+     * failure.
      */
     virtual T *lastRead() = 0;
 
@@ -295,7 +296,7 @@ public:
     TypedReader<T> *reader;
     TypedReaderCallback<T> *callback;
 
-    TypedReaderThread() { reader = 0 /*NULL*/;  callback = 0 /*NULL*/; }
+    TypedReaderThread() : reader(YARP_NULLPTR), callback(YARP_NULLPTR) {}
 
     TypedReaderThread(TypedReader<T>& reader,
                       TypedReaderCallback<T>& callback) {
@@ -305,7 +306,7 @@ public:
     }
 
     virtual void run() {
-        if (reader!=0/*NULL*/&&callback!=0/*NULL*/) {
+        if (reader != YARP_NULLPTR && callback != YARP_NULLPTR) {
             while (!isStopping()&&!reader->isClosed()) {
                 if (reader->read()) {
                     callback->onRead(*(reader->lastRead()),
@@ -316,7 +317,7 @@ public:
     }
 
     virtual void onStop() {
-        if (reader!=0/*NULL*/) {
+        if (reader != YARP_NULLPTR) {
             reader->interrupt();
         }
     }
@@ -347,10 +348,10 @@ public:
     PortReaderBuffer(unsigned int maxBuffer = 0) :
         implementation(maxBuffer) {
         implementation.setCreator(this);
-        last = 0; /*NULL*/
+        last = YARP_NULLPTR;
         setStrict(false);
-        reader = 0 /*NULL*/;
-        default_value = 0 /*NULL*/;
+        reader = YARP_NULLPTR;
+        default_value = YARP_NULLPTR;
     }
 
     /**
@@ -363,16 +364,16 @@ public:
     void detach() {
         // it would also help to close the port, so
         // that incoming inputs are interrupted
-        if (reader!=0/*NULL*/) {
+        if (reader != YARP_NULLPTR) {
             reader->stop();
             delete reader;
-            reader = 0/*NULL*/;
+            reader = YARP_NULLPTR;
         }
-        if (default_value!=0/*NULL*/) {
+        if (default_value != YARP_NULLPTR) {
             delete default_value;
-            default_value = 0/*NULL*/;
+            default_value = YARP_NULLPTR;
         }
-        last = 0/*NULL*/;
+        last = YARP_NULLPTR;
         implementation.clear();
     }
 
@@ -401,14 +402,14 @@ public:
     T *read(bool shouldWait=true) {
         if (!shouldWait) {
             if (!check()) {
-                last = 0; /*NULL*/
+                last = YARP_NULLPTR;
                 return last;
             }
         }
         bool missed = false;
         T *prev = last;
         last = (T *)implementation.readBase(missed,false);
-        if (last!=0/*NULL*/) {
+        if (last != YARP_NULLPTR) {
             if (autoDiscard) {
                 // go up to date
                 while (check()) {
@@ -421,8 +422,8 @@ public:
         if (missed) {
             // we've been asked to enforce a period
             last = prev;
-            if (last==0/*NULL*/) {
-                if (default_value==0/*NULL*/) {
+            if (last == YARP_NULLPTR) {
+                if (default_value == YARP_NULLPTR) {
                     default_value = new T;
                 }
                 last = default_value;
@@ -452,19 +453,19 @@ public:
     }
 
     void useCallback(TypedReaderCallback<T>& callback) {
-        if (reader!=0/*NULL*/) {
+        if (reader != YARP_NULLPTR) {
             reader->stop();
             delete reader;
-            reader = 0/*NULL*/;
+            reader = YARP_NULLPTR;
         }
         reader = new TypedReaderThread<T>(*this,callback);
     }
 
     void disableCallback() {
-        if (reader!=0/*NULL*/) {
+        if (reader != YARP_NULLPTR) {
             reader->stop();
             delete reader;
-            reader = 0/*NULL*/;
+            reader = YARP_NULLPTR;
         }
     }
 

@@ -38,15 +38,15 @@ public:
     PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :
         PortCoreUnit(owner,index), op(op), phase(1), activate(0), trackerMutex(1) {
 
-        yAssert(op!=NULL);
+        yAssert(op!=YARP_NULLPTR);
         closing = false;
         finished = false;
         running = false;
         threaded = false;
         sending = false;
-        cachedWriter = NULL;
-        cachedReader = NULL;
-        cachedTracker = NULL;
+        cachedWriter = YARP_NULLPTR;
+        cachedReader = YARP_NULLPTR;
+        cachedTracker = YARP_NULLPTR;
     }
 
     /**

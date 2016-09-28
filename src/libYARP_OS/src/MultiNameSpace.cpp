@@ -44,7 +44,7 @@ public:
             NameSpace *ns = spaces[i];
             if (ns) {
                 delete ns;
-                ns = NULL;
+                ns = YARP_NULLPTR;
             }
         }
         spaces.clear();
@@ -182,7 +182,7 @@ public:
     NameSpace *getOne() {
         activate();
         if (spaces.size()==0) {
-            return NULL;
+            return YARP_NULLPTR;
         }
         return spaces[0];
     }
@@ -197,15 +197,15 @@ public:
 #define HELPER(x) (*((MultiNameSpaceHelper*)((x)->system_resource)))
 
 MultiNameSpace::MultiNameSpace() {
-    altStore = NULL;
+    altStore = YARP_NULLPTR;
     system_resource = new MultiNameSpaceHelper;
-    yAssert(system_resource!=NULL);
+    yAssert(system_resource!=YARP_NULLPTR);
 }
 
 MultiNameSpace::~MultiNameSpace() {
-    if (system_resource!=NULL) {
+    if (system_resource!=YARP_NULLPTR) {
         delete &HELPER(this);
-        system_resource = NULL;
+        system_resource = YARP_NULLPTR;
     }
 }
 
@@ -364,7 +364,7 @@ bool MultiNameSpace::setProperty(const ConstString& name, const ConstString& key
 
 Value *MultiNameSpace::getProperty(const ConstString& name, const ConstString& key) {
     NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return NULL;
+    if (!ns) return YARP_NULLPTR;
     return ns->getProperty(name,key);
 }
 

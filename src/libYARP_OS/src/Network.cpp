@@ -49,7 +49,7 @@ using namespace yarp::os;
 static int __yarp_is_initialized = 0;
 static bool __yarp_auto_init_active = false; // was yarp auto-initialized?
 
-static MultiNameSpace *__multi_name_space = NULL;
+static MultiNameSpace *__multi_name_space = YARP_NULLPTR;
 
 /**
  *
@@ -80,17 +80,17 @@ public:
 static YarpAutoInit yarp_auto_init; ///< destructor is called on shutdown.
 
 static MultiNameSpace& getNameSpace() {
-    if (__multi_name_space == NULL) {
+    if (__multi_name_space == YARP_NULLPTR) {
         __multi_name_space = new MultiNameSpace;
-        yAssert(__multi_name_space!=NULL);
+        yAssert(__multi_name_space!=YARP_NULLPTR);
     }
     return *__multi_name_space;
 }
 
 static void removeNameSpace() {
-    if (__multi_name_space!=NULL) {
+    if (__multi_name_space!=YARP_NULLPTR) {
         delete __multi_name_space;
-        __multi_name_space = NULL;
+        __multi_name_space = YARP_NULLPTR;
     }
 }
 
@@ -102,7 +102,7 @@ static bool needsLookup(const Contact& contact) {
 
 static int noteDud(const Contact& src) {
     NameStore *store = getNameSpace().getQueryBypass();
-    if (store!=NULL) {
+    if (store!=YARP_NULLPTR) {
         return store->announce(src.getName().c_str(),0);
     }
     Bottle cmd, reply;
@@ -348,11 +348,11 @@ static int metaConnect(const ConstString& src,
     bool srcIsTopic = false;
     if (staticSrc.getCarrier()!="topic") {
         if (!topical) {
-            Carrier *srcCarrier = NULL;
+            Carrier *srcCarrier = YARP_NULLPTR;
             if (staticSrc.getCarrier()!="") {
                 srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
             }
-            if (srcCarrier!=NULL) {
+            if (srcCarrier!=YARP_NULLPTR) {
                 ConstString srcBootstrap = srcCarrier->getBootstrapCarrierName();
                 if (srcBootstrap!="") {
                     srcIsCompetent = true;
@@ -360,7 +360,7 @@ static int metaConnect(const ConstString& src,
                     carrierConstraint = staticSrc.getCarrier();
                 }
                 delete srcCarrier;
-                srcCarrier = NULL;
+                srcCarrier = YARP_NULLPTR;
             }
         }
     } else {
@@ -372,11 +372,11 @@ static int metaConnect(const ConstString& src,
     bool destIsTopic = false;
     if (staticDest.getCarrier()!="topic") {
         if (!topical) {
-            Carrier *destCarrier = NULL;
+            Carrier *destCarrier = YARP_NULLPTR;
             if (staticDest.getCarrier()!="") {
                 destCarrier = Carriers::chooseCarrier(staticDest.getCarrier().c_str());
             }
-            if (destCarrier!=NULL) {
+            if (destCarrier!=YARP_NULLPTR) {
                 ConstString destBootstrap = destCarrier->getBootstrapCarrierName();
                 if (destBootstrap!="") {
                     destIsCompetent = true;
@@ -384,7 +384,7 @@ static int metaConnect(const ConstString& src,
                     carrierConstraint = staticDest.getCarrier();
                 }
                 delete destCarrier;
-                destCarrier = NULL;
+                destCarrier = YARP_NULLPTR;
             }
         }
     } else {
@@ -455,10 +455,10 @@ static int metaConnect(const ConstString& src,
 
     bool connectionIsPush = false;
     bool connectionIsPull = false;
-    Carrier *connectionCarrier = NULL;
+    Carrier *connectionCarrier = YARP_NULLPTR;
     if (style.carrier!="topic") {
         connectionCarrier = Carriers::chooseCarrier(style.carrier.c_str());
-        if (connectionCarrier!=NULL) {
+        if (connectionCarrier!=YARP_NULLPTR) {
             connectionIsPush = connectionCarrier->isPush();
             connectionIsPull = !connectionIsPush;
         }
@@ -468,16 +468,16 @@ static int metaConnect(const ConstString& src,
     if ((srcIsCompetent&&connectionIsPush)||topical) {
         // Classic case.
         Contact c = Contact::fromString(dest);
-        if (connectionCarrier!=NULL) delete connectionCarrier;
+        if (connectionCarrier!=YARP_NULLPTR) delete connectionCarrier;
         return enactConnection(staticSrc,c,style,mode,false);
     }
     if (destIsCompetent&&connectionIsPull) {
         Contact c = Contact::fromString(src);
-        if (connectionCarrier!=NULL) delete connectionCarrier;
+        if (connectionCarrier!=YARP_NULLPTR) delete connectionCarrier;
         return enactConnection(staticDest,c,style,mode,true);
     }
 
-    if (connectionCarrier!=NULL) {
+    if (connectionCarrier!=YARP_NULLPTR) {
         if (!connectionIsPull) {
             Contact c = Contact::fromString(dest);
             result = connectionCarrier->connect(staticSrc,c,style,mode,false);
@@ -486,9 +486,9 @@ static int metaConnect(const ConstString& src,
             result = connectionCarrier->connect(staticDest,c,style,mode,true);
         }
     }
-    if (connectionCarrier!=NULL) {
+    if (connectionCarrier!=YARP_NULLPTR) {
         delete connectionCarrier;
-        connectionCarrier = NULL;
+        connectionCarrier = YARP_NULLPTR;
     }
     if (result!=-1) {
         if (!style.quiet) {
@@ -919,7 +919,7 @@ bool NetworkBase::write(const Contact& contact,
         address.setTimeout((float)style.timeout);
     }
     OutputProtocol *out = Carriers::connect(address);
-    if (out==NULL) {
+    if (out==YARP_NULLPTR) {
         if (!style.quiet) {
             YARP_SPRINTF1(Logger::get(),error,
                           "Cannot connect to port %s",
@@ -946,7 +946,7 @@ bool NetworkBase::write(const Contact& contact,
         if (!style.quiet) {
             YARP_ERROR(Logger::get(),"could not write to connection");
         }
-        if (out!=NULL) delete out;
+        if (out!=YARP_NULLPTR) delete out;
         return false;
     }
     ok = cmd.write(bw);
@@ -954,16 +954,16 @@ bool NetworkBase::write(const Contact& contact,
         if (!style.quiet) {
             YARP_ERROR(Logger::get(),"could not write to connection");
         }
-        if (out!=NULL) delete out;
+        if (out!=YARP_NULLPTR) delete out;
         return false;
     }
     if (style.expectReply) {
         bw.setReplyHandler(reply);
     }
     out->write(bw);
-    if (out!=NULL) {
+    if (out!=YARP_NULLPTR) {
         delete out;
-        out = NULL;
+        out = YARP_NULLPTR;
     }
     return true;
 }
@@ -1042,10 +1042,10 @@ NameStore *NetworkBase::getQueryBypass() {
 ConstString NetworkBase::getEnvironment(const char *key,
                                         bool *found) {
     const char *result = ACE_OS::getenv(key);
-    if (found != NULL) {
-        *found = (result!=NULL);
+    if (found != YARP_NULLPTR) {
+        *found = (result!=YARP_NULLPTR);
     }
-    if (result == NULL) {
+    if (result == YARP_NULLPTR) {
         return "";
     }
     return result;
@@ -1105,8 +1105,8 @@ public:
     Carrier *owner;
 
     ForwardingCarrier() {
-        owner = NULL;
-        factory = NULL;
+        owner = YARP_NULLPTR;
+        factory = YARP_NULLPTR;
     }
 
     ForwardingCarrier(SharedLibraryClassFactory<Carrier> *factory,
@@ -1125,7 +1125,7 @@ public:
         if (factory->getReferenceCount()<=0) {
             delete factory;
         }
-        factory = NULL;
+        factory = YARP_NULLPTR;
     }
 
 
@@ -1364,13 +1364,13 @@ public:
 
     virtual Carrier *create() {
         ForwardingCarrier *ncar = new ForwardingCarrier(plugin.getFactory(),this);
-        if (ncar==NULL) {
-            return NULL;
+        if (ncar==YARP_NULLPTR) {
+            return YARP_NULLPTR;
         }
         if (!ncar->isValid()) {
             delete ncar;
-            ncar = NULL;
-            return NULL;
+            ncar = YARP_NULLPTR;
+            return YARP_NULLPTR;
         }
         return ncar;
     }
@@ -1386,25 +1386,25 @@ public:
 
 
 bool NetworkBase::registerCarrier(const char *name,const char *dll) {
-    StubCarrier *factory = NULL;
-    if (dll==NULL) {
+    StubCarrier *factory = YARP_NULLPTR;
+    if (dll==YARP_NULLPTR) {
         factory = new StubCarrier(name);
         if (!factory) return false;
     } else {
         factory = new StubCarrier(dll,name);
     }
-    if (factory==NULL) {
+    if (factory==YARP_NULLPTR) {
         YARP_ERROR(Logger::get(),"Failed to register carrier");
         return false;
     }
     if (!factory->isValid()) {
-        if (dll!=NULL) {
+        if (dll!=YARP_NULLPTR) {
             YARP_SPRINTF2(Logger::get(),error,"Failed to find library %s with carrier %s", dll, name);
         } else {
             YARP_SPRINTF1(Logger::get(),error,"Failed to find library support for carrier %s", name);
         }
         delete factory;
-        factory = NULL;
+        factory = YARP_NULLPTR;
         return false;
     }
     Carriers::addCarrierPrototype(factory);

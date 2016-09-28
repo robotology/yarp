@@ -52,12 +52,12 @@ public:
         DEFAULT_WARN=LM_INFO
     };
 
-    Logger(const char *prefix, Logger *parent = NULL) {
+    Logger(const char *prefix, Logger *parent = YARP_NULLPTR) {
         this->prefix = prefix;
         this->parent = parent;
         verbose = 0;
         low = DEFAULT_WARN;
-        stream = NULL;
+        stream = YARP_NULLPTR;
 #ifdef YARP_HAS_ACE
         if (this==root) {
             ACE_Log_Msg *acer = ACE_Log_Msg::instance();
@@ -72,7 +72,7 @@ public:
         this->prefix = prefix;
         this->parent = &parent;
         verbose = 0;
-        stream = NULL;
+        stream = YARP_NULLPTR;
         low = DEFAULT_WARN;
     }
 

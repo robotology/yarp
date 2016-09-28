@@ -170,7 +170,7 @@ Contact NameServer::queryName(const ConstString& name) {
     }
 
     NameRecord *rec = getNameRecord(base,false);
-    if (rec!=NULL) {
+    if (rec!=YARP_NULLPTR) {
         if (pat!="") {
             ConstString ip = rec->matchProp("ips",pat);
             if (ip!="") {
@@ -192,13 +192,13 @@ NameServer::NameRecord *NameServer::getNameRecord(const ConstString& name,
     int result = PLATFORM_MAP_FIND(nameMap,name,entry);
     if (result==-1) {
         if (!create) {
-            return NULL;
+            return YARP_NULLPTR;
         }
         PLATFORM_MAP_SET(nameMap,name,NameRecord());
         result = PLATFORM_MAP_FIND(nameMap,name,entry);
     }
     yAssert(result!=-1);
-    //yAssert(entry!=NULL);
+    //yAssert(entry!=YARP_NULLPTR);
     return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
 }
 
@@ -209,15 +209,15 @@ NameServer::HostRecord *NameServer::getHostRecord(const ConstString& name,
     int result = PLATFORM_MAP_FIND(hostMap,name,entry);
     if (result==-1) {
         if (!create) {
-            return NULL;
+            return YARP_NULLPTR;
         }
         PLATFORM_MAP_SET(hostMap,name,HostRecord());
         result = PLATFORM_MAP_FIND(hostMap,name,entry);
-        //yAssert(entry!=NULL);
+        //yAssert(entry!=YARP_NULLPTR);
         PLATFORM_MAP_ITERATOR_SECOND(entry).setBase(basePort);
     }
     yAssert(result!=-1);
-    //yAssert(entry!=NULL);
+    //yAssert(entry!=YARP_NULLPTR);
     return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
 }
 
@@ -778,7 +778,7 @@ public:
                            ConstString("name server request is ") + msg);
                 ConstString result = server->apply(msg,remote);
                 ConnectionWriter *os = reader.getWriter();
-                if (os!=NULL) {
+                if (os!=YARP_NULLPTR) {
                     if (result=="") {
                         result = ns_terminate(ConstString("unknown command ") +
                                               msg + "\n");
@@ -807,7 +807,7 @@ public:
                 YARP_INFO(Logger::get(),
                           ConstString("Name server ignoring unknown command: ")+msg);
                 ConnectionWriter *os = reader.getWriter();
-                if (os!=NULL) {
+                if (os!=YARP_NULLPTR) {
                     // this result is necessary for YARP1 support
                     os->appendString("???????????????????????????????????????",'\n');
                     //os->flush();
@@ -825,7 +825,7 @@ class MainNameServer : public NameServer, public PortReaderCreator {
 private:
     Port *port;
 public:
-    MainNameServer(int basePort, Port *port = NULL) : port(port) {
+    MainNameServer(int basePort, Port *port = YARP_NULLPTR) : port(port) {
         setBasePort(basePort);
     }
 
@@ -834,7 +834,7 @@ public:
     }
 
     virtual void onEvent(Bottle& event) {
-        if (port!=NULL) {
+        if (port!=YARP_NULLPTR) {
             port->write(event);
         }
     }

@@ -40,10 +40,10 @@ class YARP_OS_impl_API yarp::os::impl::StreamConnectionReader : public Connectio
 public:
     StreamConnectionReader() :
         ConnectionReader(),
-        writer(NULL),
-        in(NULL),
-        str(NULL),
-        protocol(NULL),
+        writer(YARP_NULLPTR),
+        in(YARP_NULLPTR),
+        str(YARP_NULLPTR),
+        protocol(YARP_NULLPTR),
         messageLen(0),
         textMode(false),
         bareMode(false),
@@ -51,7 +51,7 @@ public:
         err(false),
         shouldDrop(false),
         writePending(false),
-        ref(NULL),
+        ref(YARP_NULLPTR),
         convertedTextMode(false),
         pushedIntFlag(false),
         parentConnectionReader(NULL) {
@@ -68,7 +68,7 @@ public:
         this->textMode = textMode;
         this->bareMode = bareMode;
         this->valid = true;
-        ref = NULL;
+        ref = YARP_NULLPTR;
         err = false;
         convertedTextMode = false;
         pushedIntFlag = false;
@@ -87,7 +87,7 @@ public:
         if (!isGood()) {
             return false;
         }
-        yAssert(in!=NULL);
+        yAssert(in!=YARP_NULLPTR);
         size_t len = b.length();
         if (len==0) return true;
         //if (len<0) len = messageLen;
@@ -117,7 +117,7 @@ public:
         if (!isGood()) { return 0; }
         NetInt32 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
-        yAssert(in!=NULL);
+        yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -131,7 +131,7 @@ public:
         if (!isGood()) { return 0; }
         NetInt64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
-        yAssert(in!=NULL);
+        yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -145,7 +145,7 @@ public:
         if (!isGood()) { return 0; }
         NetFloat64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
-        yAssert(in!=NULL);
+        yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -159,7 +159,7 @@ public:
         if (!isGood()) { return ""; }
         char *buf = new char[len];
         yarp::os::Bytes b(buf,len);
-        yAssert(in!=NULL);
+        yAssert(in!=YARP_NULLPTR);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -174,7 +174,7 @@ public:
 
     virtual ConstString expectLine() {
         if (!isGood()) { return ""; }
-        yAssert(in!=NULL);
+        yAssert(in!=YARP_NULLPTR);
         bool success = false;
         ConstString result = in->readLine('\n',&success);
         if (!success) {
@@ -201,8 +201,8 @@ public:
 
     /*
       virtual OutputStream *getReplyStream() {
-      if (str==NULL) {
-      return NULL;
+      if (str==YARP_NULLPTR) {
+      return YARP_NULLPTR;
       }
       return &(str->getOutputStream());
       }
@@ -211,7 +211,7 @@ public:
     virtual yarp::os::ConnectionWriter *getWriter();
 
     void suppressReply() {
-        str = NULL;
+        str = YARP_NULLPTR;
     }
 
     virtual void flushWriter();
@@ -221,7 +221,7 @@ public:
     //}
 
     virtual yarp::os::Contact getRemoteContact() {
-        if (str!=NULL) {
+        if (str!=YARP_NULLPTR) {
             Contact remote = str->getRemoteAddress();
             remote.setName(route.getFromName());
             return remote;
@@ -231,7 +231,7 @@ public:
     }
 
     virtual yarp::os::Contact getLocalContact() {
-        if (str!=NULL) {
+        if (str!=YARP_NULLPTR) {
             Contact local = str->getLocalAddress();
             local.setName(route.getToName());
             return local;
@@ -247,7 +247,7 @@ public:
 
     virtual ::yarp::os::ConstString expectText(int terminatingChar) {
         if (!isGood()) { return ""; }
-        yAssert(in!=NULL);
+        yAssert(in!=YARP_NULLPTR);
         bool lsuccess = false;
         ConstString result = in->readLine(terminatingChar,&lsuccess);
         if (lsuccess) {
@@ -268,7 +268,7 @@ public:
     virtual bool isActive() {
         if (shouldDrop) return false;
         if (!isValid()) return false;
-        if (in!=NULL) {
+        if (in!=YARP_NULLPTR) {
             if (in->isOk()) {
                 return true;
             }

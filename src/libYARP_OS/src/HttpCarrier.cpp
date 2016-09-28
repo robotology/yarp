@@ -30,7 +30,7 @@ static yarp::os::ConstString quoteFree(const yarp::os::ConstString &src) {
 
 static bool asJson(yarp::os::ConstString  &accum,
                    yarp::os::Bottle *bot,
-                   yarp::os::ConstString *hint = NULL);
+                   yarp::os::ConstString *hint = YARP_NULLPTR);
 
 static bool asJson(yarp::os::ConstString &accum,
                    yarp::os::Value &v) {
@@ -71,7 +71,7 @@ static bool asJson(yarp::os::ConstString &accum,
 static bool asJson(yarp::os::ConstString& accum,
                    yarp::os::Bottle *bot,
                    yarp::os::ConstString *hint) {
-    if (bot==NULL) return false;
+    if (bot == YARP_NULLPTR) return false;
     bool struc = false;
     bool struc_set = false;
     int offset = 0;
@@ -127,7 +127,7 @@ static bool asJson(yarp::os::ConstString& accum,
         }
         for (int i=offset; i<bot->size(); i++) {
             yarp::os::Bottle *boti = bot->get(i).asList();
-            if (boti==NULL) continue;
+            if (boti == YARP_NULLPTR) continue;
             if (need_comma) {
                 accum += ", ";
             }
@@ -341,9 +341,9 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
 }
 
 yarp::os::impl::HttpTwoWayStream::~HttpTwoWayStream() {
-    if (delegate!=NULL) {
+    if (delegate != YARP_NULLPTR) {
         delete delegate;
-        delegate = NULL;
+        delegate = YARP_NULLPTR;
     }
 }
 
@@ -520,7 +520,7 @@ yarp::os::impl::HttpCarrier::HttpCarrier() :
         urlDone(false),
         expectPost(false),
         contentLength(0),
-        stream(0) /*NULL*/ {
+        stream(YARP_NULLPTR) {
 }
 
 yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() {
@@ -831,7 +831,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
     ConstString body;
 
     bool using_json = false;
-    if (stream!=NULL) {
+    if (stream != YARP_NULLPTR) {
         if (stream->useJson()) {
             mime = "text/json";
             asJson(body,&b,stream->typeHint());
@@ -868,13 +868,13 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
         proto.os().write('\n');
 
 
-        if (stream!=NULL) {
+        if (stream != YARP_NULLPTR) {
             stream->flip();
         }
         return true;
     }
 
-    if (stream!=NULL) {
+    if (stream != YARP_NULLPTR) {
         stream->finish();
     }
 

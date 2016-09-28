@@ -116,8 +116,8 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::PortDataModifier {
 public:
     PortDataModifier() {
-        outputModifier = NULL;
-        inputModifier = NULL;
+        outputModifier = YARP_NULLPTR;
+        inputModifier = YARP_NULLPTR;
     }
     virtual ~PortDataModifier() {
         releaseOutModifier();
@@ -125,18 +125,18 @@ public:
     }
 
     void releaseOutModifier() {
-        if(outputModifier != NULL) {
+        if(outputModifier != YARP_NULLPTR) {
             outputModifier->close();
             delete outputModifier;
-            outputModifier = NULL;
+            outputModifier = YARP_NULLPTR;
         }
     }
 
     void releaseInModifier() {
-        if(inputModifier != NULL) {
+        if(inputModifier != YARP_NULLPTR) {
             inputModifier->close();
             delete inputModifier;
-            inputModifier = NULL;
+            inputModifier = YARP_NULLPTR;
         }
     }
 
@@ -158,11 +158,11 @@ public:
             packetMutex(1),
             connectionChange(1),
             log("port",Logger::get()),
-            face(NULL),
-            reader(NULL),
-            adminReader(NULL),
-            readableCreator(NULL),
-            eventReporter(NULL),
+            face(YARP_NULLPTR),
+            reader(YARP_NULLPTR),
+            adminReader(YARP_NULLPTR),
+            readableCreator(YARP_NULLPTR),
+            eventReporter(YARP_NULLPTR),
             listening(false),
             running(false),
             starting(false),
@@ -185,9 +185,9 @@ public:
             logNeeded(false),
             timeout(-1),
             counter(1),
-            prop(NULL),
-            contactable(NULL),
-            mutex(NULL),
+            prop(YARP_NULLPTR),
+            contactable(YARP_NULLPTR),
+            mutex(YARP_NULLPTR),
             mutexOwned(false),
             envelopeWriter(true)
     {
@@ -293,8 +293,8 @@ public:
      * @param callback who to call onCompletion() on when message sent.
      */
     bool send(yarp::os::PortWriter& writer,
-              yarp::os::PortReader *reader = NULL,
-              yarp::os::PortWriter *callback = NULL);
+              yarp::os::PortReader *reader = YARP_NULLPTR,
+              yarp::os::PortWriter *callback = YARP_NULLPTR);
 
     /**
      * Send a message with a specific mode (normal or log).
@@ -304,8 +304,8 @@ public:
      */
     bool sendHelper(yarp::os::PortWriter& writer,
                     int mode,
-                    yarp::os::PortReader *reader = NULL,
-                    yarp::os::PortWriter *callback = NULL);
+                    yarp::os::PortReader *reader = YARP_NULLPTR,
+                    yarp::os::PortWriter *callback = YARP_NULLPTR);
 
     /**
      * Shut down port.
@@ -483,7 +483,7 @@ public:
     Property *acquireProperties(bool readOnly);
     void releaseProperties(Property *prop);
 
-    bool setCallbackLock(yarp::os::Mutex *mutex = NULL) {
+    bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) {
         removeCallbackLock();
         if (mutex) {
             this->mutex = mutex;
@@ -499,7 +499,7 @@ public:
         if (mutexOwned&&mutex) {
             delete mutex;
         }
-        mutex = NULL;
+        mutex = YARP_NULLPTR;
         mutexOwned = false;
         return true;
     }
@@ -611,7 +611,7 @@ private:
     void addInput(InputProtocol *ip);
 
     bool removeUnit(const Route& route, bool synch = false,
-                    bool *except = NULL);
+                    bool *except = YARP_NULLPTR);
 
     int getNextIndex() {
         int result = counter;

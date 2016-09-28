@@ -80,7 +80,7 @@ AuthHMAC::AuthHMAC() :
     unsigned char * tmp = new unsigned char[key_len];
     strcpy((char*) tmp, key.c_str());
     HMAC_INIT(&context, tmp, (unsigned int)key_len);
-    srand((unsigned)time(NULL));
+    srand((unsigned)time(YARP_NULLPTR));
 
     if(!authentication_enabled) {
         yInfo("Authentication enabled.\n");

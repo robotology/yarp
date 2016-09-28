@@ -37,7 +37,7 @@ int SocketTwoWayStream::open(const Contact& address) {
     }
     ACE_INET_Addr addr(address.getPort(),host.c_str());
     ACE_Time_Value openTimeout;
-    ACE_Time_Value *timeout = NULL;
+    ACE_Time_Value *timeout = YARP_NULLPTR;
     if (address.hasTimeout()) {
         openTimeout.set(address.getTimeout());
         timeout = &openTimeout;

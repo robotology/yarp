@@ -45,10 +45,10 @@ public:
     PortWriter *writer; // if a callback is needed
 
     PortReaderPacket() {
-        prev_ = next_ = NULL;
-        reader = NULL;
-        external = NULL;
-        writer = NULL;
+        prev_ = next_ = YARP_NULLPTR;
+        reader = YARP_NULLPTR;
+        external = YARP_NULLPTR;
+        writer = YARP_NULLPTR;
         reset();
     }
 
@@ -58,11 +58,11 @@ public:
     }
 
     void reset() {
-        if (reader!=NULL) {
+        if (reader!=YARP_NULLPTR) {
             delete reader;
-            reader = NULL;
+            reader = YARP_NULLPTR;
         }
-        writer = NULL;
+        writer = YARP_NULLPTR;
         envelope = "";
     }
 
@@ -92,11 +92,11 @@ public:
     }
 
     void resetExternal() {
-        if (writer!=NULL) {
+        if (writer!=YARP_NULLPTR) {
             writer->onCompletion();
-            writer = NULL;
+            writer = YARP_NULLPTR;
         }
-        external = NULL;
+        external = YARP_NULLPTR;
     }
 };
 
@@ -117,7 +117,7 @@ public:
 
     PortReaderPacket *getInactivePacket() {
         if (PLATFORM_LIST_EMPTY(inactive)) {
-            PortReaderPacket *obj = NULL;
+            PortReaderPacket *obj = YARP_NULLPTR;
 #if defined(YARP_HAS_ACE) && !defined(YARP_HAS_CXX11)
             size_t obj_size = sizeof (PortReaderPacket);
             ACE_NEW_MALLOC_RETURN (obj,
@@ -129,34 +129,34 @@ public:
 #endif
             PLATFORM_LIST_PUSH_BACK(inactive,obj);
         }
-        PortReaderPacket *next = NULL;
+        PortReaderPacket *next = YARP_NULLPTR;
         PLATFORM_LIST_GET(inactive,next);
-        yAssert(next!=NULL);
+        yAssert(next!=YARP_NULLPTR);
         inactive.remove(next);
         //active.insert_tail(next);
         return next;
     }
 
     PortReaderPacket *getActivePacket() {
-        PortReaderPacket *next = NULL;
+        PortReaderPacket *next = YARP_NULLPTR;
         if (getCount()>=1) {
             PLATFORM_LIST_GET(active,next);
             //active.get(next);
-            yAssert(next!=NULL);
+            yAssert(next!=YARP_NULLPTR);
             active.remove(next);
         }
         return next;
     }
 
     void addActivePacket(PortReaderPacket *packet) {
-        if (packet!=NULL) {
+        if (packet!=YARP_NULLPTR) {
             PLATFORM_LIST_PUSH_BACK(active,packet);
             //active.insert_tail(packet);
         }
     }
 
     void addInactivePacket(PortReaderPacket *packet) {
-        if (packet!=NULL) {
+        if (packet!=YARP_NULLPTR) {
             PLATFORM_LIST_PUSH_BACK(inactive,packet);
             //inactive.insert_tail(packet);
         }
@@ -190,19 +190,19 @@ public:
 
     PortReaderBufferBaseHelper(PortReaderBufferBase& owner) :
         owner(owner), contentSema(0), consumeSema(0), stateSema(1) {
-        prev = NULL;
-        port = NULL;
+        prev = YARP_NULLPTR;
+        port = YARP_NULLPTR;
         ct = 0;
     }
 
     virtual ~PortReaderBufferBaseHelper() {
-        Port *closePort = NULL;
+        Port *closePort = YARP_NULLPTR;
         stateSema.wait();
-        if (port!=NULL) {
+        if (port!=YARP_NULLPTR) {
             closePort = port;
         }
         stateSema.post();
-        if (closePort!=NULL) {
+        if (closePort!=YARP_NULLPTR) {
             closePort->close();
         }
         stateSema.wait();
@@ -211,9 +211,9 @@ public:
     }
 
     void clear() {
-        if (prev!=NULL) {
+        if (prev!=YARP_NULLPTR) {
             pool.addInactivePacket(prev);
-            prev = NULL;
+            prev = YARP_NULLPTR;
         }
         pool.reset();
         ct = 0;
@@ -221,14 +221,14 @@ public:
 
 
     ConstString getName() {
-        if (port!=NULL) {
+        if (port!=YARP_NULLPTR) {
             return port->getName();
         }
         return "";
     }
 
     PortReaderPacket *get() {
-        PortReaderPacket *result = NULL;
+        PortReaderPacket *result = YARP_NULLPTR;
         bool grab = true;
         if (pool.getFree()==0) {
             grab = false;
@@ -252,9 +252,9 @@ public:
     }
 
     PortReaderPacket *getContent() {
-        if (prev!=NULL) {
+        if (prev!=YARP_NULLPTR) {
             pool.addInactivePacket(prev);
-            prev = NULL;
+            prev = YARP_NULLPTR;
         }
         if (pool.getCount()>=1) {
             prev = pool.getActivePacket();
@@ -265,7 +265,7 @@ public:
 
 
     bool getEnvelope(PortReader& envelope) {
-        if (prev==NULL) {
+        if (prev==YARP_NULLPTR) {
             return false;
         }
         StringInputStream sis;
@@ -273,17 +273,17 @@ public:
         sis.add("\r\n");
         StreamConnectionReader sbr;
         Route route;
-        sbr.reset(sis,NULL,route,0,true);
+        sbr.reset(sis,YARP_NULLPTR,route,0,true);
         return envelope.read(sbr);
     }
 
     PortReaderPacket *dropContent() {
         // don't affect "prev"
-        PortReaderPacket *drop = NULL;
+        PortReaderPacket *drop = YARP_NULLPTR;
 
         if (pool.getCount()>=1) {
             drop = pool.getActivePacket();
-            if (drop!=NULL) {
+            if (drop!=YARP_NULLPTR) {
                 pool.addInactivePacket(drop);
             }
             ct--;
@@ -297,16 +297,16 @@ public:
     }
 
     void *acquire() {
-        if (prev!=NULL) {
+        if (prev!=YARP_NULLPTR) {
             void *result = prev;
-            prev = NULL;
+            prev = YARP_NULLPTR;
             return result;
         }
-        return NULL;
+        return YARP_NULLPTR;
     }
 
     void release(void *key) {
-        if (key!=NULL) {
+        if (key!=YARP_NULLPTR) {
             pool.addInactivePacket((PortReaderPacket*)key);
         }
     }
@@ -322,34 +322,34 @@ PortReaderBufferBaseCreator::~PortReaderBufferBaseCreator()
 #define HELPER(x) (*((PortReaderBufferBaseHelper*)(x)))
 
 PortReaderBufferBase::PortReaderBufferBase(unsigned int maxBuffer) :
-        creator(NULL),
+        creator(YARP_NULLPTR),
         maxBuffer(maxBuffer),
         prune(false),
         allowReuse(true),
-        implementation(NULL),
-        replier(NULL),
+        implementation(YARP_NULLPTR),
+        replier(YARP_NULLPTR),
         period(-1),
         last_recv(-1) {
     init();
 }
 
 PortReaderBufferBase::~PortReaderBufferBase() {
-    if (implementation!=NULL) {
+    if (implementation!=YARP_NULLPTR) {
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 
 void PortReaderBufferBase::init() {
     implementation = new PortReaderBufferBaseHelper(*this);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 yarp::os::PortReader *PortReaderBufferBase::create() {
-    if (creator!=NULL) {
+    if (creator!=YARP_NULLPTR) {
         return creator->create();
     }
-    return NULL;
+    return YARP_NULLPTR;
 }
 
 void PortReaderBufferBase::release(PortReader *completed) {
@@ -396,7 +396,7 @@ PortReader *PortReaderBufferBase::readBase(bool& missed,bool cleanup) {
             if (last_recv>0) {
                 last_recv += period;
             }
-            return NULL;
+            return YARP_NULLPTR;
         }
         now = Time::now();
         if (last_recv<0) {
@@ -411,17 +411,17 @@ PortReader *PortReaderBufferBase::readBase(bool& missed,bool cleanup) {
     }
     HELPER(implementation).stateSema.wait();
     PortReaderPacket *readerPacket = HELPER(implementation).getContent();
-    PortReader *reader = NULL;
-    if (readerPacket!=NULL) {
+    PortReader *reader = YARP_NULLPTR;
+    if (readerPacket!=YARP_NULLPTR) {
         PortReader *external = readerPacket->getExternal();
-        if (external==NULL) {
+        if (external==YARP_NULLPTR) {
             reader = readerPacket->getReader();
         } else {
             reader = external;
         }
     }
     HELPER(implementation).stateSema.post();
-    if (reader!=NULL) {
+    if (reader!=YARP_NULLPTR) {
         HELPER(implementation).consumeSema.post();
     }
     return reader;
@@ -429,40 +429,40 @@ PortReader *PortReaderBufferBase::readBase(bool& missed,bool cleanup) {
 
 
 bool PortReaderBufferBase::read(ConnectionReader& connection) {
-    if (connection.getReference()!=NULL) {
+    if (connection.getReference()!=YARP_NULLPTR) {
         //printf("REF %ld %d\n", (long int)connection.getReference(),
         //     connection.isValid());
-        return acceptObjectBase(connection.getReference(),NULL);
+        return acceptObjectBase(connection.getReference(),YARP_NULLPTR);
     }
 
-    if (replier!=0/*NULL*/) {
+    if (replier != YARP_NULLPTR) {
         if (connection.getWriter()) {
             return replier->read(connection);
         }
     }
-    PortReaderPacket *reader = NULL;
-    while (reader==NULL) {
+    PortReaderPacket *reader = YARP_NULLPTR;
+    while (reader==YARP_NULLPTR) {
         HELPER(implementation).stateSema.wait();
         reader = HELPER(implementation).get();
-        if (reader->getReader()==NULL) {
+        if (reader->getReader()==YARP_NULLPTR) {
             PortReader *next = create();
-            yAssert(next!=NULL);
+            yAssert(next!=YARP_NULLPTR);
             reader->setReader(next);
         }
         HELPER(implementation).stateSema.post();
-        if (reader==NULL) {
+        if (reader==YARP_NULLPTR) {
             HELPER(implementation).consumeSema.wait();
         }
     }
     bool ok = false;
     if (connection.isValid()) {
-        yAssert(reader->getReader()!=NULL);
+        yAssert(reader->getReader()!=YARP_NULLPTR);
         ok = reader->getReader()->read(connection);
         reader->setEnvelope(connection.readEnvelope());
     } else {
         // this is a disconnection
         // don't talk to this port ever again
-        HELPER(implementation).port = NULL;
+        HELPER(implementation).port = YARP_NULLPTR;
     }
     if (ok) {
         HELPER(implementation).stateSema.wait();
@@ -470,7 +470,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         if (HELPER(implementation).ct>0&&prune) {
             PortReaderPacket *readerPacket =
                 HELPER(implementation).dropContent();
-            pruned = (readerPacket!=NULL);
+            pruned = (readerPacket!=YARP_NULLPTR);
         }
         //HELPER(implementation).configure(reader,false,true);
         HELPER(implementation).pool.addActivePacket(reader);
@@ -524,7 +524,7 @@ unsigned int PortReaderBufferBase::getMaxBuffer() {
 }
 
 bool PortReaderBufferBase::isClosed() {
-    return HELPER(implementation).port==NULL;
+    return HELPER(implementation).port==YARP_NULLPTR;
 }
 
 void PortReaderBufferBase::attachBase(Port& port) {
@@ -554,12 +554,12 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
     // receiving from a Port -- except no need to create/read
     // the object
 
-    PortReaderPacket *reader = NULL;
-    while (reader==NULL) {
+    PortReaderPacket *reader = YARP_NULLPTR;
+    while (reader==YARP_NULLPTR) {
         HELPER(implementation).stateSema.wait();
         reader = HELPER(implementation).get();
         HELPER(implementation).stateSema.post();
-        if (reader==NULL) {
+        if (reader==YARP_NULLPTR) {
             HELPER(implementation).consumeSema.wait();
         }
     }
@@ -572,10 +572,10 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
         if (HELPER(implementation).ct>0&&prune) {
             PortReaderPacket *readerPacket =
                 HELPER(implementation).dropContent();
-            //PortReader *reader = NULL;
-            pruned = (readerPacket!=NULL);
+            //PortReader *reader = YARP_NULLPTR;
+            pruned = (readerPacket!=YARP_NULLPTR);
             //reader = readerPacket->getReader();
-            //pruned = (reader!=NULL);
+            //pruned = (reader!=YARP_NULLPTR);
         }
         //HELPER(implementation).configure(reader,false,true);
         HELPER(implementation).pool.addActivePacket(reader);

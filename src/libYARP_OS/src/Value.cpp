@@ -18,13 +18,13 @@ using namespace yarp::os::impl;
 Value::Value() :
         Portable(),
         Searchable(),
-        proxy(NULL) {
+        proxy(YARP_NULLPTR) {
 }
 
 Value::Value(int x, bool isVocab) :
         Portable(),
         Searchable(),
-        proxy(NULL)
+        proxy(YARP_NULLPTR)
 {
     if (!isVocab) {
         setProxy(static_cast<Storable*>(makeInt(x)));
@@ -36,7 +36,7 @@ Value::Value(int x, bool isVocab) :
 Value::Value(double x) :
         Portable(),
         Searchable(),
-        proxy(NULL)
+        proxy(YARP_NULLPTR)
 {
     setProxy(static_cast<Storable*>(makeDouble(x)));
 }
@@ -44,7 +44,7 @@ Value::Value(double x) :
 Value::Value(const ConstString& str, bool isVocab) :
         Portable(),
         Searchable(),
-        proxy(NULL)
+        proxy(YARP_NULLPTR)
 {
     if (!isVocab) {
         setProxy(static_cast<Storable*>(makeString(str)));
@@ -56,7 +56,7 @@ Value::Value(const ConstString& str, bool isVocab) :
 Value::Value(void *data, int length) :
         Portable(),
         Searchable(),
-        proxy(NULL)
+        proxy(YARP_NULLPTR)
 {
     setProxy(static_cast<Storable*>(makeBlob(data, length)));
 }
@@ -64,7 +64,7 @@ Value::Value(void *data, int length) :
 Value::Value(const Value& alt) :
         Portable(),
         Searchable(),
-        proxy(NULL)
+        proxy(YARP_NULLPTR)
 {
     setProxy(static_cast<Storable*>(alt.clone()));
 }
@@ -91,7 +91,7 @@ const Value& Value::operator=(const Value& alt)
             } else {
                 if (proxy) {
                     delete proxy;
-                    proxy = NULL;
+                    proxy = YARP_NULLPTR;
                 }
                 if (alt.isLeaf()) {
                     setProxy(static_cast<Storable*>(alt.clone()));
@@ -104,9 +104,9 @@ const Value& Value::operator=(const Value& alt)
 
 Value::~Value()
 {
-    if (proxy != NULL) {
+    if (proxy != YARP_NULLPTR) {
         delete proxy;
-        proxy = NULL;
+        proxy = YARP_NULLPTR;
     }
 }
 
@@ -382,7 +382,7 @@ Value *Value::makeList()
 Value *Value::makeList(const char *txt)
 {
     Value *v = makeList();
-    if (v!=NULL) {
+    if (v!=YARP_NULLPTR) {
         v->asList()->fromString(txt);
     }
     return v;
@@ -407,9 +407,9 @@ Value& Value::getNullValue()
 
 void Value::setProxy(Storable *proxy)
 {
-    if (this->proxy!=NULL) {
+    if (this->proxy!=YARP_NULLPTR) {
         delete this->proxy;
-        this->proxy = NULL;
+        this->proxy = YARP_NULLPTR;
     }
     this->proxy = proxy;
 }
@@ -418,7 +418,7 @@ void Value::setProxy(Storable *proxy)
 void Value::ok() const
 {
     const Value *op = this;
-    if (proxy==NULL) {
+    if (proxy==YARP_NULLPTR) {
         ((Value*)op)->setProxy(static_cast<Storable*>(makeList()));
     }
 }

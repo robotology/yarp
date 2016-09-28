@@ -78,10 +78,10 @@ public:
     BufferedConnectionWriter(bool textMode = false,
                              bool bareMode = false) : textMode(textMode), bareMode(bareMode)
         {
-        reader = NULL;
+        reader = YARP_NULLPTR;
         target = &lst;
         target_used = &lst_used;
-        ref = NULL;
+        ref = YARP_NULLPTR;
         initialPoolSize = BUFFERED_CONNECTION_INITIAL_POOL_SIZE;
         stopPool();
         shouldDrop = false;
@@ -109,8 +109,8 @@ public:
     void reset(bool textMode) {
         this->textMode = textMode;
         clear();
-        reader = NULL;
-        ref = NULL;
+        reader = YARP_NULLPTR;
+        ref = YARP_NULLPTR;
         convertTextModePending = false;
     }
 
@@ -170,7 +170,7 @@ public:
      *
      */
     void stopPool() {
-        pool = NULL;
+        pool = YARP_NULLPTR;
         poolIndex = 0;
         poolLength = initialPoolSize;
         poolCount = 0;
@@ -526,7 +526,7 @@ private:
     yarp::os::Bottle blank;
 public:
     ConnectionRecorder() {
-        reader = NULL;
+        reader = YARP_NULLPTR;
         writing = false;
         wrote = false;
         skipNextInt = false;
@@ -730,7 +730,7 @@ public:
     BufferedConnectionWriter& getMessage() { return readerStore; }
     BufferedConnectionWriter& getReply() { return writerStore; }
     bool hasReply() { return wrote; }
-    virtual SizedWriter *getBuffer() { return 0 /*NULL*/; }
+    virtual SizedWriter *getBuffer() { return YARP_NULLPTR; }
 
     virtual bool setSize(size_t len) {
         return reader->setSize(len);

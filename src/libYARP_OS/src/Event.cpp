@@ -25,7 +25,7 @@ yarp::os::Event::Event(bool autoResetAfterWait) {
     } else {
         implementation = new ACE_Manual_Event;
     }
-    yAssert(implementation!=NULL);
+    yAssert(implementation != YARP_NULLPTR);
 }
 
 
@@ -84,16 +84,16 @@ public:
 
 yarp::os::Event::Event(bool autoResetAfterWait) {
     implementation = new YarpEventImpl(autoResetAfterWait);
-    yAssert(implementation!=NULL);
+    yAssert(implementation != YARP_NULLPTR);
 }
 
 
 #endif
 
 yarp::os::Event::~Event() {
-    if (implementation!=NULL) {
+    if (implementation != YARP_NULLPTR) {
         delete EVENT_IMPL(implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 

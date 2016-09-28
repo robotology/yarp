@@ -25,7 +25,7 @@ using namespace yarp::os;
  */
 
 
-NameClient *NameClient::instance = NULL;
+NameClient *NameClient::instance = YARP_NULLPTR;
 bool NameClient::instanceClosed = false;
 yarp::os::Mutex NameClient::mutex;
 
@@ -165,13 +165,13 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
 
         TcpFace face;
         YARP_DEBUG(Logger::get(),ConstString("connecting to ") + getAddress().toURI());
-        OutputProtocol *ip = NULL;
+        OutputProtocol *ip = YARP_NULLPTR;
         if (!retry) {
             ip = face.write(server);
         } else {
             retried = true;
         }
-        if (ip==NULL) {
+        if (ip==YARP_NULLPTR) {
             YARP_INFO(Logger::get(),"No connection to nameserver");
             if (!allowScan) {
                 YARP_INFO(Logger::get(),"*** try running: yarp detect ***");
@@ -199,7 +199,7 @@ ConstString NameClient::send(const ConstString& cmd, bool multi) {
                 server = getAddress();
                 server.setTimeout(timeout);
                 ip = face.write(server);
-                if (ip==NULL) {
+                if (ip==YARP_NULLPTR) {
                     YARP_ERROR(Logger::get(),
                                "no connection to nameserver, scanning mcast");
                     return "";
@@ -269,7 +269,7 @@ Contact NameClient::queryName(const ConstString& name) {
         }
     }
 
-    if (altStore!=NULL) {
+    if (altStore!=YARP_NULLPTR) {
         Contact c = altStore->query(np.c_str());
         return c;
     }
@@ -371,17 +371,17 @@ Contact NameClient::unregisterName(const ConstString& name) {
 
 
 NameClient::~NameClient() {
-    if (fakeServer!=NULL) {
+    if (fakeServer!=YARP_NULLPTR) {
         delete fakeServer;
-        fakeServer = NULL;
+        fakeServer = YARP_NULLPTR;
     }
 }
 
 NameServer& NameClient::getServer() {
-    if (fakeServer==NULL) {
+    if (fakeServer==YARP_NULLPTR) {
         fakeServer = new NameServer;
     }
-    yAssert(fakeServer!=NULL);
+    yAssert(fakeServer!=YARP_NULLPTR);
     return *fakeServer;
 }
 
@@ -412,13 +412,13 @@ bool NameClient::setContact(const yarp::os::Contact& contact) {
 
 NameClient::NameClient() :
         fake(false),
-        fakeServer(NULL),
+        fakeServer(YARP_NULLPTR),
         allowScan(false),
         allowSaveScan(false),
         reportScan(false),
         reportSaveScan(false),
         isSetup(false),
-        altStore(NULL)
+        altStore(YARP_NULLPTR)
 {
 }
 

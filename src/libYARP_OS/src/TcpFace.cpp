@@ -77,36 +77,36 @@ static void showError(Logger& log) {
 }
 
 /**
- * return NULL on failure.  No exceptions thrown.
+ * return YARP_NULLPTR on failure.  No exceptions thrown.
  */
 InputProtocol *TcpFace::read() {
 
     SocketTwoWayStream *stream  = new SocketTwoWayStream();
-    yAssert(stream!=NULL);
+    yAssert(stream!=YARP_NULLPTR);
 
     int result = stream->open(peerAcceptor);
     if (result<0) {
         //ACE_OS::printf("exception on tcp stream read: %s\n", e.toString().c_str());
         stream->close();
         delete stream;
-        stream = NULL;
+        stream = YARP_NULLPTR;
     }
 
-    if (stream!=NULL) {
+    if (stream!=YARP_NULLPTR) {
         stream->setReadTimeout(2.0);
         stream->setWriteTimeout(2.0);
 
         bool success = auth.authSource(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
             showError(Logger::get());
-            return NULL;
+            return YARP_NULLPTR;
         }
         stream->setReadTimeout(0.);
         stream->setWriteTimeout(0.);
 
         return new Protocol(stream);
     }
-    return NULL;
+    return YARP_NULLPTR;
 
 
 }
@@ -117,24 +117,24 @@ OutputProtocol *TcpFace::write(const Contact& address) {
     if (result<0) {
         stream->close();
         delete stream;
-        return NULL;
+        return YARP_NULLPTR;
     }
 
-    if (stream!=NULL) {
+    if (stream!=YARP_NULLPTR) {
         stream->setReadTimeout(2.0);
         stream->setWriteTimeout(2.0);
 
         bool success = auth.authDest(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
             showError(Logger::get());
-            return NULL;
+            return YARP_NULLPTR;
         }
         stream->setReadTimeout(0.);
         stream->setWriteTimeout(0.);
 
         return new Protocol(stream);
     }
-    return NULL;
+    return YARP_NULLPTR;
 
 }
 

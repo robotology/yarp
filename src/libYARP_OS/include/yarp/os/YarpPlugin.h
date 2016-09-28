@@ -35,7 +35,7 @@ public:
      *
      */
     YarpPlugin() {
-        factory = 0/*NULL*/;
+        factory = YARP_NULLPTR;
     }
 
     /**
@@ -78,11 +78,13 @@ public:
      *
      */
     bool close() {
-        if (!factory) return true;
+        if (!factory) {
+            return true;
+        }
         factory->removeRef();
         if (factory->getReferenceCount()<=0) {
             delete factory;
-            factory = 0/*NULL*/;
+            factory = YARP_NULLPTR;
         }
         return true;
     }
@@ -93,18 +95,21 @@ public:
      *
      */
     bool isValid() const {
-        return (factory!=0/*NULL*/);
+        return (factory != YARP_NULLPTR);
     }
 
     /**
      *
      * Create an object using the plugin.
      *
-     * @return an object of the type the plugin creates (NULL on failure)
+     * @return an object of the type the plugin creates (YARP_NULLPTR on
+     *         failure)
      *
      */
     T *create() {
-        if (!factory) return 0/*NULL*/;
+        if (!factory) {
+            return YARP_NULLPTR;
+        }
         return factory->create();
     }
 
@@ -116,7 +121,9 @@ public:
      *
      */
     void destroy(T *obj) {
-        if (!factory) return;
+        if (!factory) {
+            return;
+        }
         factory->destroy(obj);
     }
 
@@ -126,7 +133,9 @@ public:
      *
      */
     ConstString getName() {
-        if (!factory) return ConstString();
+        if (!factory) {
+            return ConstString();
+        }
         return factory->getName();
     }
 
@@ -136,7 +145,9 @@ public:
      *
      */
     ConstString getClassName() {
-        if (!factory) return ConstString();
+        if (!factory) {
+            return ConstString();
+        }
         return factory->getClassName();
     }
 
@@ -146,7 +157,9 @@ public:
      *
      */
     ConstString getBaseClassName() {
-        if (!factory) return ConstString();
+        if (!factory) {
+            return ConstString();
+        }
         return factory->getBaseClassName();
     }
 

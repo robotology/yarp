@@ -219,18 +219,18 @@ public:
     /**
      *
      * Read a message from the port.  Waits by default.
-     * May return NULL if the port status has changed.
+     * May return YARP_NULLPTR if the port status has changed.
      *
      * @param shouldWait false if the call should return immediately if no message is available
-     * @return a message, or NULL
+     * @return a message, or YARP_NULLPTR
      *
      */
     virtual T *read(bool shouldWait=true) {
-        if(!port.isOpen()) return 0 /* NULL */;
-        if (interrupted) return 0 /* NULL */;
+        if(!port.isOpen()) return YARP_NULLPTR;
+        if (interrupted) return YARP_NULLPTR;
         T *result = reader.read(shouldWait);
         // in some circs PortReaderBuffer::read(true) may return false
-        while (result==0 /*NULL*/ && shouldWait && !reader.isClosed() &&
+        while (result==YARP_NULLPTR && shouldWait && !reader.isClosed() &&
                !interrupted) {
             result = reader.read(shouldWait);
         }

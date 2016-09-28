@@ -68,12 +68,12 @@ ConstString BufferedConnectionWriter::toString() {
 
 
 bool BufferedConnectionWriter::addPool(const yarp::os::Bytes& data) {
-    if (pool!=NULL) {
+    if (pool != YARP_NULLPTR) {
         if (data.length()+poolIndex>pool->length()) {
-            pool = NULL;
+            pool = YARP_NULLPTR;
         }
     }
-    if (pool==NULL && data.length()<poolLength) {
+    if (pool == YARP_NULLPTR && data.length() < poolLength) {
         bool add = false;
         if (*target_used < target->size()) {
             yarp::os::ManagedBytes*&bytes = (*target)[*target_used];
@@ -82,10 +82,14 @@ bool BufferedConnectionWriter::addPool(const yarp::os::Bytes& data) {
                 bytes = new yarp::os::ManagedBytes(poolLength);
             }
             pool = bytes;
-            if (pool==NULL) { return false; }
+            if (pool == YARP_NULLPTR) {
+                return false;
+            }
         } else {
             pool = new yarp::os::ManagedBytes(poolLength);
-            if (pool==NULL) { return false; }
+            if (pool == YARP_NULLPTR) {
+                return false;
+            }
             add = true;
         }
         (*target_used)++;
@@ -97,7 +101,7 @@ bool BufferedConnectionWriter::addPool(const yarp::os::Bytes& data) {
         pool->setUsed(0);
         if (add) target->push_back(pool);
     }
-    if (pool!=NULL) {
+    if (pool != YARP_NULLPTR) {
         ACE_OS::memcpy(pool->get()+poolIndex,data.get(),data.length());
         poolIndex += data.length();
         pool->setUsed(poolIndex);
@@ -111,7 +115,7 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy) {
     if (copy) {
         if (addPool(data)) return;
     }
-    yarp::os::ManagedBytes *buf = NULL;
+    yarp::os::ManagedBytes *buf = YARP_NULLPTR;
     if (*target_used < target->size()) {
         yarp::os::ManagedBytes*&bytes = (*target)[*target_used];
         if (bytes->isOwner()!=copy||bytes->length()<data.length()) {
@@ -124,7 +128,7 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy) {
         buf = bytes;
         bytes->setUsed(data.length());
     } 
-    if (buf == NULL) {
+    if (buf == YARP_NULLPTR) {
         buf = new yarp::os::ManagedBytes(data,false);
         if (copy) buf->copy();
         target->push_back(buf);
@@ -142,8 +146,8 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy) {
 void BufferedConnectionWriter::restart() {
     lst_used = 0;
     header_used = 0;
-    reader = NULL;
-    ref = NULL;
+    reader = YARP_NULLPTR;
+    ref = YARP_NULLPTR;
     convertTextModePending = false;
     target = &lst;
     target_used = &lst_used;

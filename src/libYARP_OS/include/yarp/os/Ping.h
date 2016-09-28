@@ -119,8 +119,8 @@ public:
  */
 class yarp::os::Ping {
 public:
-    Ping(const char *target = 0/*NULL*/) {
-        if (target!=0/*NULL*/) {
+    Ping(const char *target = YARP_NULLPTR) {
+        if (target != YARP_NULLPTR) {
             setTarget(target);
         }
     }

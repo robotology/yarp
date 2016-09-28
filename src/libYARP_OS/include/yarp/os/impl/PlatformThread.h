@@ -34,7 +34,7 @@
 #  endif
 #  define PLATFORM_THREAD_SELF() pthread_self()
 #  define PLATFORM_THREAD_RETURN void *
-#  define PLATFORM_THREAD_JOIN(x) pthread_join(x,0/*NULL*/)
+#  define PLATFORM_THREAD_JOIN(x) pthread_join(x, YARP_NULLPTR)
 #endif
 
 #endif

@@ -56,7 +56,7 @@ public:
              it != threads.end(); it++) {
             (*it)->stop();
             delete (*it);
-            *it = NULL;
+            *it = YARP_NULLPTR;
         }
         threads.clear();
         msgs.clear();
@@ -119,21 +119,21 @@ void MessageStackThread::run() {
 
 MessageStack::MessageStack(int max_threads) {
     this->max_threads = max_threads;
-    implementation = NULL;
+    implementation = YARP_NULLPTR;
 }
 
 MessageStack::~MessageStack() {
     if (!implementation) return;
     HELPER(implementation).clear();
     delete &HELPER(implementation);
-    implementation = NULL;
+    implementation = YARP_NULLPTR;
 }
 
 void MessageStack::attach(PortReader& owner) {
     if (implementation) {
         if (HELPER(implementation).isOwner(owner)) return;
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
     implementation = new MessageStackHelper(max_threads,owner);
     yAssert(implementation);

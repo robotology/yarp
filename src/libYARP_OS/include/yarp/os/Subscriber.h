@@ -38,7 +38,7 @@ public:
      *
      */
     Subscriber(const ConstString& name = "") {
-        buffered_port = 0 /*NULL*/;
+        buffered_port = YARP_NULLPTR;
         T example;
         port.promiseType(example.getType());
         port.setInputMode(true);
@@ -107,10 +107,10 @@ public:
     /**
      *
      * Read a message from the port.  Waits by default.
-     * May return NULL if the port status has changed.
+     * May return YARP_NULLPTR if the port status has changed.
      *
      * @param shouldWait false if the call should return immediately if no message is available
-     * @return a message, or NULL
+     * @return a message, or YARP_NULLPTR
      *
      */
     T *read(bool shouldWait = true) {
@@ -145,7 +145,7 @@ private:
     void clear() {
         if (!buffered_port) return;
         delete buffered_port;
-        buffered_port = 0 /*NULL*/;
+        buffered_port = YARP_NULLPTR;
     }
 };
 

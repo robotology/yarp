@@ -29,12 +29,12 @@ public:
     static NullBottle* bottleNull;
 };
 
-NullBottle* NullBottle::bottleNull = NULL;
+NullBottle* NullBottle::bottleNull = YARP_NULLPTR;
 
 Bottle::Bottle()
         : Portable(), Searchable(), implementation(new BottleImpl(this))
 {
-    yAssert(implementation != NULL);
+    yAssert(implementation != YARP_NULLPTR);
     implementation->invalid = false;
     implementation->ro = false;
 }
@@ -42,7 +42,7 @@ Bottle::Bottle()
 Bottle::Bottle(const ConstString& text)
         : Portable(), Searchable(), implementation(new BottleImpl(this))
 {
-    yAssert(implementation != NULL);
+    yAssert(implementation != YARP_NULLPTR);
     implementation->invalid = false;
     implementation->ro = false;
     fromString(text);
@@ -51,7 +51,7 @@ Bottle::Bottle(const ConstString& text)
 Bottle::Bottle(const Bottle& bottle)
         : Portable(), Searchable(), implementation(new BottleImpl(this))
 {
-    yAssert(implementation != NULL);
+    yAssert(implementation != YARP_NULLPTR);
     implementation->invalid = false;
     implementation->ro = false;
     copy(bottle);
@@ -156,7 +156,7 @@ void Bottle::fromBinary(const char* buf, int len)
 
 const char* Bottle::toBinary(size_t* size)
 {
-    if (size != NULL) {
+    if (size != YARP_NULLPTR) {
         *size = implementation->byteCount();
     }
     return implementation->getBytes();
@@ -223,7 +223,7 @@ Value& Bottle::find(const ConstString& key) const
 {
     Value& val = implementation->findBit(key);
 
-    if (getMonitor() != NULL) {
+    if (getMonitor() != YARP_NULLPTR) {
         SearchReport report;
         report.key = key;
         report.isFound = !val.isNull();
@@ -238,7 +238,7 @@ Bottle& Bottle::findGroup(const ConstString& key) const
 {
     Value& bb = implementation->findGroupBit(key);
 
-    if (getMonitor() != NULL) {
+    if (getMonitor() != YARP_NULLPTR) {
         SearchReport report;
         report.key = key;
         report.isGroup = true;
@@ -276,7 +276,7 @@ void Bottle::add(const Value& value)
 
 Bottle& Bottle::getNullBottle()
 {
-    if (NullBottle::bottleNull == NULL) {
+    if (NullBottle::bottleNull == YARP_NULLPTR) {
         NullBottle::bottleNull = new NullBottle();
     }
     return *NullBottle::bottleNull;
@@ -284,9 +284,9 @@ Bottle& Bottle::getNullBottle()
 
 void Bottle::fini()
 {
-    if (NullBottle::bottleNull != NULL) {
+    if (NullBottle::bottleNull != YARP_NULLPTR) {
         delete NullBottle::bottleNull;
-        NullBottle::bottleNull = NULL;
+        NullBottle::bottleNull = YARP_NULLPTR;
     }
 }
 

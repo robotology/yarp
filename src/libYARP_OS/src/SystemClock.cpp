@@ -38,7 +38,7 @@ double yarp::os::SystemClock::nowSystem()
     return double(timev.sec()) + timev.usec() * 1e-6;
 #else
     struct timeval currentTime;
-    gettimeofday(&currentTime, NULL);
+    gettimeofday(&currentTime, YARP_NULLPTR);
     return (double)(currentTime.tv_sec + currentTime.tv_usec * 1e-6);
 #endif
 }

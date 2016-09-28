@@ -46,8 +46,8 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
         error = lib.error();
         return false;
     }
-    void *fn = lib.getSymbol((fn_name != NULL) ? fn_name : YARP_DEFAULT_FACTORY_NAME);
-    if (fn == NULL) {
+    void *fn = lib.getSymbol((fn_name != YARP_NULLPTR) ? fn_name : YARP_DEFAULT_FACTORY_NAME);
+    if (fn == YARP_NULLPTR) {
         status = STATUS_FACTORY_NOT_FOUND;
         error = lib.error();
         lib.close();
@@ -141,7 +141,7 @@ yarp::os::ConstString yarp::os::SharedLibraryFactory::getBaseClassName() const
 bool yarp::os::SharedLibraryFactory::useFactoryFunction(void *factory)
 {
     api.startCheck = 0;
-    if (factory == NULL) {
+    if (factory == YARP_NULLPTR) {
         return false;
     }
     returnValue =

@@ -42,7 +42,7 @@ public:
     RunTerminator(RunStdio* pStdio)
     {
         mStdio=pStdio;
-        CreatePipe(&hReadPipe,&hWritePipe,NULL,0);
+        CreatePipe(&hReadPipe,&hWritePipe,YARP_NULLPTR,0);
     }
 
     ~RunTerminator()
@@ -55,7 +55,7 @@ public:
     {
         DWORD nr;
         char dummy[24];
-        ReadFile(hReadPipe,dummy,1,&nr,NULL);
+        ReadFile(hReadPipe,dummy,1,&nr,YARP_NULLPTR);
         RUNLOG("mStdio->exit()")
         mStdio->exit();
     }
@@ -63,7 +63,7 @@ public:
     void exit()
     {
         DWORD nw;
-        WriteFile(hWritePipe,"*",1,&nw,NULL);
+        WriteFile(hWritePipe,"*",1,&nw,YARP_NULLPTR);
     }
 
 protected:

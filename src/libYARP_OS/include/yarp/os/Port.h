@@ -100,7 +100,7 @@ public:
      * is done (otherwise writer.onCompletion() is called)
      * @return true iff the object is successfully written
      */
-    bool write(PortWriter& writer, PortWriter *callback = 0 /*NULL*/) const;
+    bool write(PortWriter& writer, PortWriter *callback = YARP_NULLPTR) const;
 
     /**
      * Write an object to the port, then expect one back.
@@ -113,7 +113,7 @@ public:
      * @return true iff an object is successfully written and read
      */
     bool write(PortWriter& writer, PortReader& reader,
-               PortWriter *callback = 0 /*NULL*/) const;
+               PortWriter *callback = YARP_NULLPTR) const;
 
     /**
      * Read an object from the port.
@@ -281,7 +281,7 @@ public:
      */
     bool isOpen() const;
 
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex = NULL);
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR);
 
     virtual bool removeCallbackLock();
 

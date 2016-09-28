@@ -897,7 +897,7 @@ int main()
     unsigned char digest[SHA512_DIGEST_SIZE];
 
     message3 = malloc(message3_len);
-    if (message3 == NULL) {
+    if (message3 == YARP_NULLPTR) {
         fprintf(stderr, "Can't allocate memory\n");
         return -1;
     }

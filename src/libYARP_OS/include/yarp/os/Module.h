@@ -195,7 +195,7 @@ public:
      * @param subName get nested name with this at the end
      * @return the name of the module
      */
-    ConstString getName(const char *subName = NULL);
+    ConstString getName(const char *subName = YARP_NULLPTR);
 
     /**
      * Set the name of the module.
