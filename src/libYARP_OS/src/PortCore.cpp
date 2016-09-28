@@ -2119,6 +2119,18 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     Property& platform_prop = platform.addDict();
                                     platform_prop.put("os", pinfo.name);
                                     platform_prop.put("hostname", address.getHost());
+
+                                    int f = getFlags();
+                                    bool is_input = (f & PORTCORE_IS_INPUT);
+                                    bool is_output = (f & PORTCORE_IS_OUTPUT);
+                                    bool is_rpc = (f & PORTCORE_IS_RPC);
+                                    Bottle& port = result.addList();
+                                    port.addString("port");
+                                    Property& port_prop = port.addDict();
+                                    port_prop.put("is_input", is_input);
+                                    port_prop.put("is_output", is_output);
+                                    port_prop.put("is_rpc", is_rpc);
+                                    port_prop.put("type", getType().getName());
                                 }
                                 else {
                                     for (unsigned int i=0; i<units.size(); i++) {
