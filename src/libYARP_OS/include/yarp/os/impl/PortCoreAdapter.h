@@ -43,8 +43,6 @@ private:
     SemaphoreImpl readBlock;
     PortReaderCreator *recReadCreator;
     int recWaitAfterSend;
-    Type typ;
-    bool checkedType;
     bool usedForRead;
     bool usedForWrite;
     bool usedForRpc;
@@ -60,7 +58,6 @@ public:
 
     PortCoreAdapter(Port& owner);
     void openable();
-    void checkType(PortReader& reader);
     void alertOnRead();
     void alertOnWrite();
     void alertOnRpc();
@@ -85,8 +82,6 @@ public:
     int checkWaitAfterSend();
     bool isOpened();
     void setOpen(bool opened);
-    Type getType();
-    void promiseType(const Type& typ);
     void includeNodeInName(bool flag);
 };
 
