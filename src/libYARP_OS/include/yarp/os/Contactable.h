@@ -129,38 +129,39 @@ public:
 
 
     /**
-     * Every message sent by a port can have some information added
-     * to it called an envelope (this could be a timestamp, for example).
-     * You can set that envelope with this method.
+     * Set an envelope (e.g., a timestamp) to the next message which will be
+     * sent.
+     *
+     * You must be sure to match the type of your envelope for setEnvelope with
+     * whatever will be read using getEnvelope. The Stamp class is a typical
+     * choice for timestamps. The Bottle class also works as an envelope, but it
+     * is not specialized to be efficient.
      *
      * Currently, for proper operation, the envelope must serialize
      * correctly in text-mode (even if you do not explicitly use
-     * text-mode connections).  The Bottle or Stamp class are good
-     * choices.
+     * text-mode connections). Bottle or Stamp are good choices.
      *
-     * @param envelope some information to add to the next message sent
+     * @param envelope information to add to the next message which will be sent
      *
-     * @return true iff write was successful
+     * @return true iff setting the envelope was successful
      *
      */
     virtual bool setEnvelope(PortWriter& envelope) = 0;
 
 
     /**
-     * Every message sent by a port can have some information added to
-     * it called an envelope (this could be a timestamp, for example).
-     * If a port has received a message with such information, you can
-     * extract that envelope with this method.
+     * Get the envelope information (e.g., a timestamp) from the last message
+     * received on the port.
      *
-     * You must be sure to match the type of your envelope for
-     * getEnvelope with whatever is being sent using setEnvelope.
-     * The Bottle class can read any kind of envelope (but is
-     * not specialized to be efficient).
+     * You must be sure to match the type of your envelope for getEnvelope with
+     * whatever is being sent using setEnvelope. The Stamp class is a typical
+     * choice for timestamps. The Bottle class also works as an envelope, but it
+     * is not specialized to be efficient.
      *
      * @param envelope recipient for envelope information for last
      * message received by port.
      *
-     * @return true iff read was successful
+     * @return true iff reading the envelope was successful
      *
      */
     virtual bool getEnvelope(PortReader& envelope) = 0;
