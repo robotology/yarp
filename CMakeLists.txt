@@ -32,7 +32,7 @@ endif()
 if(${CMAKE_VERSION} VERSION_LESS 3.1)
   list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/cmake-3.1/Modules")
 endif()
-set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # The YARP build is fairly flexible, so we need to accumulate some
 # information about what libraries are being built (and their dependencies),
