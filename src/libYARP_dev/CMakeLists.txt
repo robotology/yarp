@@ -140,41 +140,41 @@ if(NOT YARP_NO_DEPRECATED)
 endif()
 
 
-set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
-                        src/modules/AnalogSensorClient/AnalogSensorClient.cpp
-                        src/modules/BatteryWrapper/BatteryWrapper.cpp
-                        src/modules/BatteryClient/BatteryClient.cpp
-                        src/modules/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
-                        src/modules/Rangefinder2DClient/Rangefinder2DClient.cpp
-                        src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
-                        src/modules/ControlBoardRemapper/ControlBoardRemapper.cpp
-                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
-                        src/modules/ControlBoardRemapper/RemoteControlBoardRemapper.cpp)
+set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
+                        src/devices/AnalogSensorClient/AnalogSensorClient.cpp
+                        src/devices/BatteryWrapper/BatteryWrapper.cpp
+                        src/devices/BatteryClient/BatteryClient.cpp
+                        src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.cpp
+                        src/devices/Rangefinder2DClient/Rangefinder2DClient.cpp
+                        src/devices/ControlBoardWrapper/ControlBoardWrapper.cpp
+                        src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
+                        src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
+                        src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
+                        src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp)
 if (CREATE_LIB_MATH)
-  list(APPEND YARP_devices_SRCS src/modules/FrameTransformClient/FrameTransformClient.cpp
-                                src/modules/FrameTransformServer/FrameTransformServer.cpp)
+  list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
+                                src/devices/FrameTransformServer/FrameTransformServer.cpp)
 endif()
 
-set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
-                        src/modules/AnalogSensorClient/AnalogSensorClient.h
-                        src/modules/BatteryWrapper/BatteryWrapper.h
-                        src/modules/BatteryClient/BatteryClient.h
-                        src/modules/Rangefinder2DWrapper/Rangefinder2DWrapper.h
-                        src/modules/Rangefinder2DClient/Rangefinder2DClient.h
-                        src/modules/ControlBoardWrapper/ControlBoardWrapper.h
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
-                        src/modules/ControlBoardRemapper/ControlBoardRemapper.h
-                        src/modules/ControlBoardRemapper/ControlBoardRemapperHelpers.h
-                        src/modules/ControlBoardRemapper/RemoteControlBoardRemapper.h)
+set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
+                        src/devices/AnalogSensorClient/AnalogSensorClient.h
+                        src/devices/BatteryWrapper/BatteryWrapper.h
+                        src/devices/BatteryClient/BatteryClient.h
+                        src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.h
+                        src/devices/Rangefinder2DClient/Rangefinder2DClient.h
+                        src/devices/ControlBoardWrapper/ControlBoardWrapper.h
+                        src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h
+                        src/devices/ControlBoardRemapper/ControlBoardRemapper.h
+                        src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
+                        src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h)
 if (CREATE_LIB_MATH)
-  list(APPEND YARP_devices_SRCS src/modules/FrameTransformClient/FrameTransformClient.h
-                                src/modules/FrameTransformServer/FrameTransformServer.h)
+  list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.h
+                                src/devices/FrameTransformServer/FrameTransformServer.h)
 endif()
 
 # handle the ros / yarp thrift messages
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
-add_subdirectory(src/modules/msgs)
+add_subdirectory(src/devices/msgs)
 # relative paths should be relative to current directory
 unset(_tmp)
 foreach(_var cbw2_msgs_srcs cbw2_msgs_hrds)
@@ -194,7 +194,7 @@ include_directories(${cbw2_msgs_incl_dirs})
 
 # handle the source file for the controlboardwrapper2 device
 # the variable cbw2_core_srcs, cbw2_core_hrds, cbw2_core_incl_dirs will be set inside
-add_subdirectory(src/modules/ControlBoardWrapper)
+add_subdirectory(src/devices/ControlBoardWrapper)
 list(APPEND YARP_devices_SRCS ${cbw2_core_srcs})
 list(APPEND YARP_devices_HDRS ${cbw2_core_hrds})
 include_directories(${cbw2_core_incl_dirs})
@@ -202,13 +202,13 @@ include_directories(${cbw2_core_incl_dirs})
 
 # handle the source file for the RemoteControlBoard device
 # the variables rmc_core_srcs and rmc_core_hrds and rmc_core_incl_dirs will be set inside
-add_subdirectory(src/modules/RemoteControlBoard)
+add_subdirectory(src/devices/RemoteControlBoard)
 list(APPEND YARP_devices_SRCS ${rmc_core_srcs})
 list(APPEND YARP_devices_HDRS ${rmc_core_hrds})
 include_directories(${rmc_core_incl_dirs})
 
 # add ServerInertial device
-add_subdirectory(src/modules/ServerInertial)
+add_subdirectory(src/devices/ServerInertial)
 list(APPEND YARP_devices_SRCS ${serverInertial_srcs}
                               ${inertial_msgs_srcs})
 list(APPEND YARP_devices_HDRS ${serverInertial_hdrs}
@@ -216,7 +216,7 @@ list(APPEND YARP_devices_HDRS ${serverInertial_hdrs}
 include_directories(${serverInertial_incl_dirs})
 
 # add DepthSensorClient device
-add_subdirectory(src/modules/RGBDSensorClient)
+add_subdirectory(src/devices/RGBDSensorClient)
 list(APPEND YARP_devices_SRCS ${RGBDClient_srcs}
                               ${RGBDSensor_msgs_srcs})
 list(APPEND YARP_devices_HDRS ${RGBDClient_hrds}
@@ -224,7 +224,7 @@ list(APPEND YARP_devices_HDRS ${RGBDClient_hrds}
 include_directories(${RGBDClient_incl_dirs})
 
 # add DepthSensorWrapper device
-add_subdirectory(src/modules/RGBDSensorWrapper)
+add_subdirectory(src/devices/RGBDSensorWrapper)
 list(APPEND YARP_devices_SRCS ${RGBDWrap_srcs}
                               ${RGBDSensor_msgs_srcs})
 list(APPEND YARP_devices_HDRS ${RGBDWrap_hdrs}
@@ -244,9 +244,9 @@ if (CREATE_LIB_MATH)
   add_definitions(-DWITH_YARPMATH)
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/AnalogSensorClient)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/BatteryClient)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/FrameTransformClient)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/BatteryClient)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/FrameTransformClient)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})

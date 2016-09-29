@@ -227,129 +227,129 @@ src/yarplogger-console/CMakeLists.txt
   Authors: Marco Randazzo
   CopyPolicy: GPLv2
 
-src/libYARP_dev/src/modules/ServerInertial/CMakeLists.txt
+src/libYARP_dev/src/devices/ServerInertial/CMakeLists.txt
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/AnalogSensorClient/AnalogSensorClient.h
+src/libYARP_dev/src/devices/AnalogSensorClient/AnalogSensorClient.h
   Copyright: (C) 2014 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Alberto Cardellino
   CopyPolicy: GPLv2 or later
 
-src/libYARP_dev/src/modules/msgs/ros/include/sensor_msgs/JointState.h
+src/libYARP_dev/src/devices/msgs/ros/include/sensor_msgs/JointState.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/sensor_msgs/LaserScan.h
+src/libYARP_dev/src/devices/msgs/ros/include/sensor_msgs/LaserScan.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/sensor_msgs/Imu.h
+src/libYARP_dev/src/devices/msgs/ros/include/sensor_msgs/Imu.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/geometry_msgs/Vector3.h
+src/libYARP_dev/src/devices/msgs/ros/include/geometry_msgs/Vector3.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/geometry_msgs/Quaternion.h
+src/libYARP_dev/src/devices/msgs/ros/include/geometry_msgs/Quaternion.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/geometry_msgs/Wrench.h
+src/libYARP_dev/src/devices/msgs/ros/include/geometry_msgs/Wrench.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/geometry_msgs/WrenchStamped.h
+src/libYARP_dev/src/devices/msgs/ros/include/geometry_msgs/WrenchStamped.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/sensor_msgs_JointState.h
+src/libYARP_dev/src/devices/msgs/ros/include/sensor_msgs_JointState.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/sensor_msgs_Imu.h
+src/libYARP_dev/src/devices/msgs/ros/include/sensor_msgs_Imu.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/geometry_msgs_WrenchStamped.h
+src/libYARP_dev/src/devices/msgs/ros/include/geometry_msgs_WrenchStamped.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/geometry_msgs_Quaternion.h
+src/libYARP_dev/src/devices/msgs/ros/include/geometry_msgs_Quaternion.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/std_msgs/Header.h
+src/libYARP_dev/src/devices/msgs/ros/include/std_msgs/Header.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/TickTime.h
+src/libYARP_dev/src/devices/msgs/ros/include/TickTime.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/geometry_msgs_Wrench.h
+src/libYARP_dev/src/devices/msgs/ros/include/geometry_msgs_Wrench.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/std_msgs_Header.h
+src/libYARP_dev/src/devices/msgs/ros/include/std_msgs_Header.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/sensor_msgs_LaserScan.h
+src/libYARP_dev/src/devices/msgs/ros/include/sensor_msgs_LaserScan.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/ros/include/geometry_msgs_Vector3.h
+src/libYARP_dev/src/devices/msgs/ros/include/geometry_msgs_Vector3.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/msgs/CMakeLists.txt
+src/libYARP_dev/src/devices/msgs/CMakeLists.txt
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/RemoteControlBoard/CMakeLists.txt
+src/libYARP_dev/src/devices/RemoteControlBoard/CMakeLists.txt
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/RemoteControlBoard/stateExtendedReader.cpp
+src/libYARP_dev/src/devices/RemoteControlBoard/stateExtendedReader.cpp
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/RemoteControlBoard/RemoteControlBoard.h
+src/libYARP_dev/src/devices/RemoteControlBoard/RemoteControlBoard.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/ControlBoardWrapper/SubDevice.cpp
+src/libYARP_dev/src/devices/ControlBoardWrapper/SubDevice.cpp
   Copyright: (C) 2009 RobotCub Consortium
   Authors: Lorenzo Natale
   CopyPolicy: GPLv2
 
-src/libYARP_dev/src/modules/ControlBoardWrapper/RPCMessagesParser.cpp
+src/libYARP_dev/src/devices/ControlBoardWrapper/RPCMessagesParser.cpp
   Copyright: (C) 2009 RobotCub Consortium
   Authors: Lorenzo Natale
   CopyPolicy: GPLv2
 
-src/libYARP_dev/src/modules/ControlBoardWrapper/StreamingMessagesParser.cpp
+src/libYARP_dev/src/devices/ControlBoardWrapper/StreamingMessagesParser.cpp
   Copyright: (C) 2009 RobotCub Consortium
   Authors: Lorenzo Natale
   CopyPolicy: GPLv2
 
-src/libYARP_dev/src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
+src/libYARP_dev/src/devices/ControlBoardWrapper/ControlBoardWrapper.cpp
   Copyright: (C) 2009 RobotCub Consortium
   Authors: Lorenzo Natale
   CopyPolicy: GPLv2
 
-src/libYARP_dev/src/modules/ControlBoardWrapper/CMakeLists.txt
+src/libYARP_dev/src/devices/ControlBoardWrapper/CMakeLists.txt
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
+src/libYARP_dev/src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h
   Copyright: (C) 2013 RobotCub Consortium
   Authors: Alberto Cardellino
   CopyPolicy: GPLv2
 
-src/libYARP_dev/src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
+src/libYARP_dev/src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
   Copyright: (C) 2013 RobotCub Consortium
   Authors: Alberto Cardellino
   CopyPolicy: GPLv2
@@ -717,135 +717,135 @@ src/yarpscope-qt/plugin/portreader.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/modules/dimax_u2c/I2c.h
+src/devices/dimax_u2c/I2c.h
   Copyright: (C)2004 Dimax ( http://www.xdimax.com )
   CopyPolicy: GPL
 
-src/modules/dimax_u2c/i2cbridge.h
+src/devices/dimax_u2c/i2cbridge.h
   Copyright: (C)2004 Dimax ( http://www.xdimax.com )
   CopyPolicy: GPL
 
-src/modules/dimax_u2c/u2c_common_func.h
+src/devices/dimax_u2c/u2c_common_func.h
   Copyright: (C)2004 Dimax ( http://www.xdimax.com )
   CopyPolicy: GPL
 
-src/modules/dimax_u2c/I2c.cpp
+src/devices/dimax_u2c/I2c.cpp
   Copyright: (C)2004 Dimax ( http://www.xdimax.com )
   CopyPolicy: GPL
 
-src/modules/fakeMotionControl/fakeMotionControl.h
+src/devices/fakeMotionControl/fakeMotionControl.h
   Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Alberto Cardellino
   CopyPolicy: GPLv2 or later
 
-src/modules/ovrheadset/CMakeLists.txt
+src/devices/ovrheadset/CMakeLists.txt
   Copyright: unknown
   CopyPolicy: unknown
 
-src/modules/ffmpeg/avpreamble.h
+src/devices/ffmpeg/avpreamble.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/modules/fakeIMU/fakeIMU.h
+src/devices/fakeIMU/fakeIMU.h
   Copyright: (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Alberto Cardellino
   CopyPolicy: GPLv2 or later
 
-src/modules/vfw/vfw_extra_from_wine.h
+src/devices/vfw/vfw_extra_from_wine.h
   Copyright: (C) 2007 the Wine project
   CopyPolicy: Released under the terms of the GNU LGPL v2.1. or later
 
-src/modules/vfw/vfw_extra_from_australia.h
+src/devices/vfw/vfw_extra_from_australia.h
   Copyright: (C) 2006 The University of Queensland, Australia <www.uq.edu.au>
   CopyPolicy: GPL2 or later, or 4-clause BSD at your choice
 
-src/modules/rpLidar/rpLidar.h
+src/devices/rpLidar/rpLidar.h
   Copyright: (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Marco Randazzo 
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
-src/modules/rpLidar/rpLidar.cpp
+src/devices/rpLidar/rpLidar.cpp
   Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Marco Randazzo 
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
-src/modules/urbtc/kernel_module/urobotc.h
+src/devices/urbtc/kernel_module/urobotc.h
   Copyright: (C) 2007 iXs Research Corp
   CopyPolicy: GPLv2
 
-src/modules/urbtc/kernel_module/urbtc.c
+src/devices/urbtc/kernel_module/urbtc.c
   Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
   CopyPolicy: GPLv2
 
-src/modules/urbtc/kernel_module/urbtc.h
+src/devices/urbtc/kernel_module/urbtc.h
   Copyright: (C) 2007 iXs Research Corp
   CopyPolicy: GPLv2
 
-src/modules/fakeLaser/fakeLaser.cpp
+src/devices/fakeLaser/fakeLaser.cpp
   Copyright: (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Marco Randazzo 
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
-src/modules/fakeLaser/fakeLaser.h
+src/devices/fakeLaser/fakeLaser.h
   Copyright: (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Marco Randazzo 
   CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 
-src/modules/jrkerr/sio_util.cpp
+src/devices/jrkerr/sio_util.cpp
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
-src/modules/jrkerr/picservo.cpp
+src/devices/jrkerr/picservo.cpp
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
-src/modules/jrkerr/sio_util.h
+src/devices/jrkerr/sio_util.h
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
-src/modules/jrkerr/nmccom.h
+src/devices/jrkerr/nmccom.h
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
-src/modules/jrkerr/nmccom.cpp
+src/devices/jrkerr/nmccom.cpp
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
-src/modules/jrkerr/picservo.h
+src/devices/jrkerr/picservo.h
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
-src/modules/kinect/freenect/KinectDeviceDriver.h
+src/devices/kinect/freenect/KinectDeviceDriver.h
   Copyright: (C) 2010 Philipp Robbel
   CopyPolicy: GPLv2
 
-src/modules/kinect/freenect/ServerKinect.h
+src/devices/kinect/freenect/ServerKinect.h
   Copyright: (C) 2010 Philipp Robbel
   CopyPolicy: GPLv2
 
-src/modules/kinect/freenect/CMakeLists.txt
+src/devices/kinect/freenect/CMakeLists.txt
   Copyright: (C) 2010 Philipp Robbel
   CopyPolicy: GPLv2
 
-src/modules/kinect/freenect/KinectDeviceDriver.cpp
+src/devices/kinect/freenect/KinectDeviceDriver.cpp
   Copyright: (C) 2010 Philipp Robbel
   CopyPolicy: GPLv2
 
-src/modules/kinect/freenect/KinectExample.cpp
+src/devices/kinect/freenect/KinectExample.cpp
   Copyright: (C) 2010 Philipp Robbel
   CopyPolicy: GPLv2
 
-src/modules/imuBosch_BNO055/imuBosch_BNO055.h
+src/devices/imuBosch_BNO055/imuBosch_BNO055.h
   Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Alberto Cardellino 
   CopyPolicy: GPLv2
 
-src/modules/imuBosch_BNO055/CMakeLists.txt
+src/devices/imuBosch_BNO055/CMakeLists.txt
   Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Alberto Cardellino
   CopyPolicy: GPLv2
 
-src/modules/imuBosch_BNO055/imuBosch_BNO055.cpp
+src/devices/imuBosch_BNO055/imuBosch_BNO055.cpp
   Copyright: (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Alberto Cardellino 
   CopyPolicy: GPLv2

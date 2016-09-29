@@ -17,7 +17,7 @@ for finally giving us a sane way to build a cross-platform library.
 
 Suggested ways to use this document:
   \li Look at \ref yarp_build_structure_src to pick out the
-general area you are interested in (e.g. modules/carriers).
+general area you are interested in (e.g. devices/carriers).
   \li Or find a specific file or directory of interest using
  the \ref yarp_build_structure_index "index".
 
@@ -61,9 +61,9 @@ general area you are interested in (e.g. modules/carriers).
     <li> \ref yarp_build_structure_yarpinit
     <li> \ref yarp_build_structure_yarpname
     </ul>
-  <li> src/modules
+  <li> src/devices
     <ul>
-    <li> \ref yarp_build_structure_modules
+    <li> \ref yarp_build_structure_devices
     </ul>
   <li> src/carriers
     <ul>
@@ -232,9 +232,9 @@ threads, etc.
 Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
 \li \ref yarp_build_structure_yarpmath "libYARP_math" - an optional wrapper around the GNU Scientific Library.  (license note: the GSL is under the GPL, not the LGPL, so enabling this option places YARP under the GPL).
 \li \ref yarp_build_structure_yarpdev "libYARP_dev" - device management.
-\li \ref yarp_build_structure_modules "modules" - optional plugin devices (some under non-LGPL licenses).
+\li \ref yarp_build_structure_devices "devices" - optional plugin devices (some under non-LGPL licenses).
 \li \ref yarp_build_structure_carriers "carriers" - optional plugin network protocols.
-\li \ref yarp_build_structure_yarpinit "libYARP_init" - a tiny wrapper that initializes all optional modules
+\li \ref yarp_build_structure_yarpinit "libYARP_init" - a tiny wrapper that initializes all optional devices
 and carriers.
 \li \ref yarp_build_structure_yarpname "libYARP_name" - a library to help in construction of name servers.
 \li libyarpc - an experimental C API to YARP.
@@ -392,7 +392,7 @@ yarp::os::Network - NetworkBase is Network without init and fini.
 We follow the pattern of \ref yarp_build_structure_yarpsig
 to create the YARP_name library.
 
-@section yarp_build_structure_modules src/modules/CMakeLists.txt
+@section yarp_build_structure_devices src/devices/CMakeLists.txt
 
 This is one of a pair of directories in YARP that contain optional
 plugins (the other is
@@ -438,7 +438,7 @@ which there is not much need any more.
 @section yarp_build_structure_carriers src/carriers/CMakeLists.txt
 
 This directory is for network protocol plugins.  It works just
-like the \ref yarp_build_structure_modules "src/modules" directory,
+like the \ref yarp_build_structure_devices "src/devices" directory,
 except that it makes the "yarpcar" library target rather than
 the "yarpmod" library target.
 
@@ -498,7 +498,7 @@ Here is a list of small code templates used by YarpPlugin.cmake:
 \li \ref yarp_build_structure_template_libh - declaration for a plugin library instantiation function.
 \li \ref yarp_build_structure_template_exec - template for a plugin library test program.
 
-Within YARP, the \ref yarp_build_structure_modules "modules"
+Within YARP, the \ref yarp_build_structure_devices "devices"
 and \ref yarp_build_structure_carriers "carriers" libraries
 are initialized by \ref yarp_build_structure_yarpinit "libYARP_init".
 
