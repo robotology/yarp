@@ -124,7 +124,7 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
             yarp::os::ConstString info;
                
             out.addVocab(VOCAB_OK);
-            Bottle l = out.addList();
+            Bottle& l = out.addList();
 
             std::map<std::string, Map2DLocation>::iterator it;
             for (it = m_locations.begin(); it != m_locations.end(); it++)
@@ -169,6 +169,7 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
             {
                 out.addVocab(VOCAB_OK);
                 Map2DLocation loc = it->second;
+                out.addVocab(VOCAB_OK);
                 out.addString(loc.map_id);
                 out.addDouble(loc.x);
                 out.addDouble(loc.y);
