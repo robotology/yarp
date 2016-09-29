@@ -22,17 +22,16 @@ set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
 
 find_package(YCM 0.2 QUIET)
 if(NOT YCM_FOUND)
-  list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/ycm-0.2/find-modules"
-                               "${CMAKE_SOURCE_DIR}/cmake/ycm-0.2/modules")
+  list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/find-modules"
+                               "${YARP_MODULE_DIR}/ycm-0.2/modules"
+                               "${YARP_MODULE_DIR}/ycm-0.2/3rdparty"
+                               "${YARP_MODULE_DIR}/ycm-0.2/cmake-next")
+  if(${CMAKE_VERSION} VERSION_LESS 3.1)
+    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/cmake-3.1")
+  endif()
 endif()
 
-if(${CMAKE_VERSION} VERSION_LESS 3.5)
-  list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/cmake-3.5/Modules")
-endif()
-if(${CMAKE_VERSION} VERSION_LESS 3.1)
-  list(APPEND YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/cmake-3.1/Modules")
-endif()
-set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # The YARP build is fairly flexible, so we need to accumulate some
 # information about what libraries are being built (and their dependencies),
