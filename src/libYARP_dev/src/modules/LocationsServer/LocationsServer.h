@@ -76,6 +76,7 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection);
     bool         updateVizMarkers();
     bool         load_locations(yarp::os::ConstString locations_file);
+    bool         save_locations(yarp::os::ConstString locations_file);
 };
 
 #endif // LOCATIONS_SERVER_H

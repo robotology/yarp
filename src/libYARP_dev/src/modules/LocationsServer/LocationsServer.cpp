@@ -31,7 +31,7 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
     TickTime                  tt;
     yarp::sig::Vector         rpy(3), q(4);
 
-    visualization_msgs_MarkerArray markers = m_rosPublisherPort.prepare();
+    visualization_msgs_MarkerArray& markers = m_rosPublisherPort.prepare();
 
     std::map<std::string, Map2DLocation>::iterator it;
     for (it = m_locations.begin(); it != m_locations.end(); it++)
@@ -79,9 +79,10 @@ bool yarp::dev::LocationsServer::load_locations(yarp::os::ConstString locations_
     if(!file.is_open())
     {
         yError() << "sorry unable to open" << locations_file << "locations file";
+        return false;
     }
 
-    std::string     buffer, key, xpos, ypos, theta;
+    std::string     buffer, name, mapId, xpos, ypos, theta;
     Map2DLocation   location;
 
     while(!file.eof())
@@ -89,13 +90,40 @@ bool yarp::dev::LocationsServer::load_locations(yarp::os::ConstString locations_
         std::getline(file, buffer);
         std::istringstream iss(buffer);
 
-        iss >> key >> xpos >> ypos >> theta;
+        iss >> name >> mapId >> xpos >> ypos >> theta;
 
-        location.map_id  = key;
+        location.map_id  = mapId;
         location.x       = std::atof(xpos.c_str());
         location.y       = std::atof(ypos.c_str());
         location.theta   = std::atof(theta.c_str());
-        m_locations[key] = location;
+        m_locations[name] = location;
+    }
+
+    yDebug() << m_locations.size();
+    file.close();
+    return true;
+}
+
+bool yarp::dev::LocationsServer::save_locations(yarp::os::ConstString locations_file)
+{
+    std::ofstream file;
+    file.open (locations_file.c_str());
+
+    if(!file.is_open())
+    {
+        yError() << "sorry unable to open" << locations_file << "locations file";
+        return false;
+    }
+
+    std::string     s;
+    Map2DLocation   l;
+    s = " ";
+
+    std::map<std::string, Map2DLocation>::iterator it;
+    for (it = m_locations.begin(); it != m_locations.end(); it++)
+    {
+        l = it->second;
+        file << it->first + s + l.map_id + s << l.x << s << l.y << s << l.theta << "\n";
     }
 
     file.close();
@@ -113,6 +141,51 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
     if (!ok) return false;
 
     // parse in, prepare out
+    if(in.get(0).isString())
+    {
+        if (in.get(0).asString() == "save" && in.get(1).isString())
+        {
+            if(save_locations(in.get(1).asString()))
+            {
+                out.addString(in.get(1).asString() + " succesfully saved");
+            }
+        }
+        else if (in.get(0).asString() == "load" && in.get(1).isString())
+        {
+            if(load_locations(in.get(1).asString()))
+            {
+                out.addString(in.get(1).asString() + " succesfully loaded");
+            }
+        }
+        else if(in.get(0).asString() == "list")
+        {
+            std::map<std::string, Map2DLocation>::iterator it;
+            for (it = m_locations.begin(); it != m_locations.end(); it++)
+            {
+                out.addString(it->first);
+            }
+        }
+        else if(in.get(0).asString() == "help")
+        {
+            out.addString("'save <full path filename>' to save locations on a file");
+            out.addString("'load <full path filename>' to load locations from a file");
+            out.addString("'list' to view locations stored");
+        }
+        else
+        {
+            out.addString("request not undestood, call 'help' to see a list of avaiable commands");
+        }
+
+        yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
+
+        if (returnToSender != NULL)
+        {
+            out.write(*returnToSender);
+        }
+
+        updateVizMarkers();
+        return true;
+    }
     code = in.get(0).asVocab();
     ret  = false;
 
@@ -241,7 +314,7 @@ bool yarp::dev::LocationsServer::open(yarp::os::Searchable &config)
         m_ros_enabled = true;
         m_rosNode     = new yarp::os::Node("/LocationServer");
 
-        m_rosPublisherPort.topic("/LocationServerMarkers");
+        m_rosPublisherPort.topic("/locationServerMarkers");
     }
 
     if (config.check("locations_file"))
