@@ -27,7 +27,6 @@ yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         produce(0), consume(0), readBlock(1),
         recReadCreator(YARP_NULLPTR),
         recWaitAfterSend(-1),
-        checkedType(false),
         usedForRead(false),
         usedForWrite(false),
         usedForRpc(false),
@@ -48,16 +47,6 @@ void yarp::os::impl::PortCoreAdapter::openable()
     closed = false;
     opened = true;
     stateMutex.post();
-}
-
-void yarp::os::impl::PortCoreAdapter::checkType(PortReader& reader)
-{
-    if (!checkedType) {
-        if (!typ.isValid()) {
-            typ = reader.getReadType();
-        }
-        checkedType = true;
-    }
 }
 
 void yarp::os::impl::PortCoreAdapter::alertOnRead()
@@ -335,21 +324,6 @@ bool yarp::os::impl::PortCoreAdapter::isOpened()
 void yarp::os::impl::PortCoreAdapter::setOpen(bool opened)
 {
     this->opened = opened;
-}
-
-yarp::os::Type yarp::os::impl::PortCoreAdapter::getType()
-{
-    stateMutex.wait();
-    Type t = typ;
-    stateMutex.post();
-    return t;
-}
-
-void yarp::os::impl::PortCoreAdapter::promiseType(const Type& typ)
-{
-    stateMutex.wait();
-    this->typ = typ;
-    stateMutex.post();
 }
 
 void yarp::os::impl::PortCoreAdapter::includeNodeInName(bool flag)

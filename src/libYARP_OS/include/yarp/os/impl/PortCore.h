@@ -189,7 +189,8 @@ public:
             contactable(YARP_NULLPTR),
             mutex(YARP_NULLPTR),
             mutexOwned(false),
-            envelopeWriter(true)
+            envelopeWriter(true),
+            checkedType(false)
     {
     }
 
@@ -527,6 +528,31 @@ public:
         return modifier;
     }
 
+    void checkType(PortReader& reader)
+    {
+        if (!checkedType) {
+            if (!typ.isValid()) {
+                typ = reader.getReadType();
+            }
+            checkedType = true;
+        }
+    }
+
+    yarp::os::Type getType()
+    {
+        stateMutex.wait();
+        Type t = typ;
+        stateMutex.post();
+        return t;
+    }
+
+    void promiseType(const Type& typ)
+    {
+        stateMutex.wait();
+        this->typ = typ;
+        stateMutex.post();
+    }
+
 private:
 
     // main internal PortCore state and operations
@@ -571,6 +597,9 @@ private:
     yarp::os::Mutex *mutex; ///< callback optional access control lock
     bool mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
+
+    bool checkedType;
+    Type typ;
 
     // port data modifier
     yarp::os::impl::PortDataModifier modifier;
