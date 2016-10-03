@@ -392,7 +392,7 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
         endif()
       endforeach()
     endif()
-    if(DEFINED _missing_deps)
+    if(YarpPlugin_VERBOSE AND DEFINED _missing_deps)
       message(STATUS " --- plugin ${_plugin_fullname}: dependencies unsatisfied: \"${_missing_deps}\"")
     else()
       message(STATUS " --- plugin ${_plugin_fullname}: disabled")
