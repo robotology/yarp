@@ -24,6 +24,7 @@ CMAKE_OPTIONS="\
 -DCREATE_DEVICE_LIBRARY_MODULES:BOOL=TRUE \
 -DENABLE_yarpmod_fakebot:BOOL=TRUE \
 -DENABLE_yarpmod_fakeMotionControl=TRUE \
+-DENABLE_yarpmod_fakeAnalogSensor=TRUE \
 -DENABLE_yarpmod_fakeIMU=TRUE \
 -DENABLE_yarpmod_SerialServoBoard=TRUE \
 -DENABLE_yarpmod_serial=TRUE \
