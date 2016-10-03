@@ -22,17 +22,30 @@ if (YARP_HAS_MATH_LIB)
                        include/yarp/math/SVD.h
                        include/yarp/math/FrameTransform.h)
 
-    set(YARP_math_IMPL_HDRS )
+    if( NOT CREATE_LIB_MATH_USING_GSL )
+        set(YARP_math_IMPL_HDRS include/yarp/impl/mt.h)
+    endif()
 
     set(YARP_math_SRCS src/math.cpp
                        src/NormRand.cpp
                        src/Rand.cpp
-                       src/RandnScalar.cpp
                        src/RandnVector.cpp
-                       src/RandScalar.cpp
                        src/RandVector.cpp
                        src/SVD.cpp
                        src/FrameTransform.cpp)
+
+    if( NOT CREATE_LIB_MATH_USING_GSL )
+        list(APPEND YARP_math_SRCS src/eigen/eigen_math.cpp)
+        list(APPEND YARP_math_SRCS src/eigen/eigen_SVD.cpp)
+        list(APPEND YARP_math_SRCS src/eigen/RandScalar.cpp)
+        list(APPEND YARP_math_SRCS src/eigen/RandnScalar.cpp)
+        list(APPEND YARP_math_SRCS src/mt.cc)
+    else()
+        list(APPEND YARP_math_SRCS src/gsl/gsl_math.cpp)
+        list(APPEND YARP_math_SRCS src/gsl/gsl_SVD.cpp)
+        list(APPEND YARP_math_SRCS src/gsl/RandScalar.cpp)
+        list(APPEND YARP_math_SRCS src/gsl/RandnScalar.cpp)
+    endif()
 
     source_group("Source Files" FILES ${YARP_math_SRCS})
     source_group("Header Files" FILES ${YARP_math_HDRS})
@@ -43,20 +56,30 @@ if (YARP_HAS_MATH_LIB)
 
     include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-    if(YARP_USE_ATLAS)
-        set(MATH_LIB_EXTRAS ${GSL_LIBRARY} ${ATLAS_CBLAS_LIBRARY} ${ATLAS_ATLAS_LIBRARY})
+    if( NOT CREATE_LIB_MATH_USING_GSL )
+        include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
     else()
-        set(MATH_LIB_EXTRAS ${GSL_LIBRARIES})
+        if(YARP_USE_ATLAS)
+            set(MATH_LIB_EXTRAS ${GSL_LIBRARY} ${ATLAS_CBLAS_LIBRARY} ${ATLAS_ATLAS_LIBRARY})
+        else()
+            set(MATH_LIB_EXTRAS ${GSL_LIBRARIES})
+        endif()
+        include_directories(SYSTEM ${GSL_INCLUDE_DIRS})
     endif()
-
-    include_directories(SYSTEM ${GSL_INCLUDE_DIRS})
+    
+    # import math symbols from standard cmath
+    add_definitions(-D_USE_MATH_DEFINES)
 
     add_library(YARP_math ${YARP_math_SRCS}
                           ${YARP_math_HDRS}
                           ${YARP_math_IMPL_HDRS})
     target_link_libraries(YARP_math LINK_PRIVATE YARP_OS)
     target_link_libraries(YARP_math LINK_PRIVATE YARP_sig)
-    target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
+
+    if( CREATE_LIB_MATH_USING_GSL )
+        target_link_libraries(YARP_math LINK_PRIVATE YARP_gsl)
+        target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
+    endif()
 
     set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
     set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})

@@ -4,8 +4,6 @@
 
 project(YARP_sig)
 
-# TODO  src/libYARP_sig/include/yarp/gsl_compatibility.h
-
 set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/api.h
                   include/yarp/sig/ImageDraw.h
@@ -18,8 +16,7 @@ set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/Sound.h
                   include/yarp/sig/Vector.h)
 
-set(YARP_sig_IMPL_HDRS include/yarp/sig/impl/DeBayer.h
-                       include/yarp/gsl_compatibility.h)
+set(YARP_sig_IMPL_HDRS include/yarp/sig/impl/DeBayer.h)
 
 set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Image.cpp

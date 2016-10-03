@@ -9,6 +9,8 @@
 * files within yarp.
 */
 
+#include <stddef.h>
+
 #ifndef gsl_block
 typedef struct
 {

@@ -169,6 +169,7 @@ STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/generated_include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/devices/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_gsl/include/ \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/doc \
@@ -795,6 +796,8 @@ INPUT                  = @CMAKE_BINARY_DIR@/generated_include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_gsl/include \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_gsl/src \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/doc \
@@ -2080,6 +2083,7 @@ PREDEFINED             = __cplusplus:=201103L \
                          YARP_name_API= \
                          YARP_sig_API= \
                          YARP_init_API= \
+                         YARP_gsl_API= \
                          YARP_WRAP_STL_STRING \
                          Q_SLOTS=slots \
                          Q_SIGNALS=signals
