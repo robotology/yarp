@@ -140,6 +140,14 @@ foreach(_f FindACE.cmake
            YarpCMakeWorkarounds.cmake
            YarpRenamedOption.cmake
            YarpBackupVariable.cmake
+           deprecated/FindGthread.cmake
+           deprecated/FindGtkMM.cmake
+           deprecated/FindGtkMMUnix.cmake
+           deprecated/FindGtkMMWin32.cmake
+           deprecated/FindGtkPlus.cmake
+           deprecated/FindGtkWin32.cmake
+           deprecated/MacroExtractVersion.cmake
+           deprecated/MacroStandardFindModule.cmake
            cmake-3.1/Modules/CMakeFindDependencyMacro.cmake
            cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
            cmake-3.1/Modules/CMakeParseArguments.cmake
@@ -148,12 +156,32 @@ foreach(_f FindACE.cmake
            cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
            cmake-3.1/Modules/FindPackageMessage.cmake
            cmake-3.1/Modules/GNUInstallDirs.cmake
+           cmake-3.5/Modules/CMakeParseArguments.cmake
+           cmake-3.5/Modules/FindFreetype.cmake
+           cmake-3.5/Modules/FindGTK2.cmake
+           cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake
+           cmake-3.5/Modules/FindPackageMessage.cmake
+           cmake-3.5/Modules/SelectLibraryConfigurations.cmake
            ycm-0.2/cmake-next/Modules/FindGLEW.cmake)
   if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}")
     install(CODE
  "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")
     message(STATUS \"Deleted: \\\"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\\\"\")
     file(REMOVE \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")
+  endif()"
+           COMPONENT scripts)
+  endif()
+endforeach()
+
+# Remove no longer used directory from installation (since YARP 2.3.68)
+foreach(_d cmake-3.1/
+           cmake-3.5/
+           ycm-0.2/cmake-next/)
+  if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}")
+    install(CODE
+ "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
+    message(STATUS \"Deleted: \\\"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\\\"\")
+    file(REMOVE_RECURSE \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
   endif()"
            COMPONENT scripts)
   endif()
