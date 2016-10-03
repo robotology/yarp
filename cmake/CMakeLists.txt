@@ -85,7 +85,7 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                   ycm-0.2/cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
                                   ycm-0.2/cmake-3.1/Modules/FindPackageMessage.cmake
                                   ycm-0.2/cmake-3.1/Modules/GNUInstallDirs.cmake)
-    set(YCM_CMAKE_cmake_next_FILES ycm-0.2/cmake-next/Modules/FindGLEW.cmake)
+    set(YCM_CMAKE_cmake_next_FILES ycm-0.2/cmake-proposed/Modules/FindGLEW.cmake)
 
     install(FILES ${YCM_CMAKE_find_modules_FILES}
             COMPONENT scripts
@@ -98,7 +98,7 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
             DESTINATION share/yarp/cmake/ycm-0.2/3rdparty)
     install(FILES ${YCM_CMAKE_cmake_next_FILES}
             COMPONENT scripts
-            DESTINATION share/yarp/cmake/ycm-0.2/cmake-next/Modules)
+            DESTINATION share/yarp/cmake/ycm-0.2/cmake-proposed/Modules)
     if(${CMAKE_VERSION} VERSION_LESS 3.1)
       # Files from CMake 3.1, available only if cmake is older
       install(FILES ${YCM_CMAKE_cmake_3_1_FILES}
@@ -147,7 +147,8 @@ foreach(_f FindACE.cmake
            cmake-3.1/Modules/FindLua.cmake
            cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
            cmake-3.1/Modules/FindPackageMessage.cmake
-           cmake-3.1/Modules/GNUInstallDirs.cmake)
+           cmake-3.1/Modules/GNUInstallDirs.cmake
+           ycm-0.2/cmake-next/Modules/FindGLEW.cmake)
   if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}")
     install(CODE
  "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")
