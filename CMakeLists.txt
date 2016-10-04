@@ -27,7 +27,7 @@ if(NOT YCM_FOUND)
                                "${YARP_MODULE_DIR}/ycm-0.2/3rdparty"
                                "${YARP_MODULE_DIR}/ycm-0.2/cmake-next")
   if(${CMAKE_VERSION} VERSION_LESS 3.1)
-    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/cmake-3.1")
+    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/cmake-3.1/Modules")
   endif()
 endif()
 
