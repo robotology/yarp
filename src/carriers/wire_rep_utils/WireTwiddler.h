@@ -231,7 +231,7 @@ public:
     WireTwiddlerWriter(yarp::os::SizedWriter& parent,
                        WireTwiddler& twiddler) : parent(&parent),
                                                  twiddler(&twiddler) {
-                                                     //update();
+        update();
     }
 
     WireTwiddlerWriter() {
@@ -245,7 +245,7 @@ public:
                 WireTwiddler& twiddler) {
         this->parent = &parent;
         this->twiddler = &twiddler;
-        //update();
+        update();
     }
 
     bool update();
