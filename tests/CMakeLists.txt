@@ -30,6 +30,9 @@ if(YARP_COMPILE_TESTS)
   if(YARP_HAS_MATH_LIB)
     list(APPEND targets math)
   endif()
+  if(TARGET YARP_wire_rep_utils)
+    list(APPEND targets wire_rep_utils)
+  endif()
 
   foreach(test_family ${targets})
     file(GLOB harness_code ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.cpp
@@ -137,19 +140,4 @@ if(YARP_COMPILE_TESTS)
   if(YARP_TEST_INTEGRATION)
     add_subdirectory(integration)
   endif()
-endif()
-
-
-
-
-
-###############################################################
-## Some extra test programs
-
-if(YARP_ENABLE_TESTS)
-  add_executable(server_peek src/server_peek.cpp)
-  target_link_libraries(server_peek YARP_serversql)
-
-  add_executable(server_test src/server_test.cpp)
-  target_link_libraries(server_test YARP_OS YARP_init)
 endif()

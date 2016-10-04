@@ -56,14 +56,14 @@ public:
     virtual void runSubTests(int argc, char *argv[]);
 
 
-    bool checkEqualImpl(int x, int y, 
+    bool checkEqualImpl(int x, int y,
                         const char *desc,
                         const char *txt1,
                         const char *txt2,
                         const char *fname,
                         int fline);
 
-    bool checkEqualishImpl(double x, double y, 
+    bool checkEqualishImpl(double x, double y,
                            const char *desc,
                            const char *txt1,
                            const char *txt2,
@@ -141,7 +141,7 @@ private:
     void count(int severity);
 };
 
-// add info 
+// add info
 
 #define checkEqual(x,y,desc) checkEqualImpl(x,y,desc,#x,#y,__FILE__,__LINE__)
 #define checkEqualish(x,y,desc) checkEqualishImpl(x,y,desc,#x,#y,__FILE__,__LINE__)

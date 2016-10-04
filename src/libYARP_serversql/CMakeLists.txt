@@ -21,22 +21,26 @@ set(YARP_serversql_SRCS src/TripleSourceCreator.cpp
                         src/ParseName.cpp
                         src/yarpserver.cpp
                         src/StyleNameService.cpp)
-set(YARP_serversql_HDRS src/TripleSourceCreator.h
-                        src/Triple.h
-                        src/TripleSource.h
-                        src/SqliteTripleSource.h
-                        src/NameServiceOnTriples.h
-                        src/Allocator.h
-                        src/AllocatorOnTriples.h
-                        src/Subscriber.h
-                        src/SubscriberOnSql.h
-                        src/ComposedNameService.h
-                        src/ConnectThread.h
-                        src/ParseName.h
-                        src/StyleNameService.h)
+
+set(YARP_serversql_HDRS include/yarp/serversql/yarpserversql.h)
+
+set(YARP_serversql_IMPL_HDRS include/yarp/serversql/impl/TripleSourceCreator.h
+                             include/yarp/serversql/impl/Triple.h
+                             include/yarp/serversql/impl/TripleSource.h
+                             include/yarp/serversql/impl/SqliteTripleSource.h
+                             include/yarp/serversql/impl/NameServiceOnTriples.h
+                             include/yarp/serversql/impl/Allocator.h
+                             include/yarp/serversql/impl/AllocatorOnTriples.h
+                             include/yarp/serversql/impl/Subscriber.h
+                             include/yarp/serversql/impl/SubscriberOnSql.h
+                             include/yarp/serversql/impl/ComposedNameService.h
+                             include/yarp/serversql/impl/ConnectThread.h
+                             include/yarp/serversql/impl/ParseName.h
+                             include/yarp/serversql/impl/StyleNameService.h)
 
 add_library(YARP_serversql STATIC ${YARP_serversql_SRCS}
-                                  ${YARP_serversql_HDRS})
+                                  ${YARP_serversql_HDRS}
+                                  ${YARP_serversql_IMPL_HDRS})
 
 target_link_libraries(YARP_serversql LINK_PRIVATE YARP_OS
                                                   YARP_init
@@ -60,16 +64,5 @@ install(TARGETS YARP_serversql
         PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql/impl")
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_serversql)
-set_property(TARGET YARP_serversql PROPERTY INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include
-                                                          ${YARP_OS_INCLUDE_DIRS})
-
-###############################################################
-## Some extra test programs
-
-if(YARP_ENABLE_TESTS)
-  add_executable(server_peek src/server_peek.cpp)
-  target_link_libraries(server_peek YARP_serversql)
-
-  add_executable(server_test src/server_test.cpp)
-  target_link_libraries(server_test YARP_OS YARP_init)
-endif()
+set_property(TARGET YARP_serversql PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
+                                                         ${YARP_OS_INCLUDE_DIRS})

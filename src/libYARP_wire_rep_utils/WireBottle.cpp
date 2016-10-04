@@ -28,7 +28,7 @@ static char *checkBottle(char *cursor, int& remaining, int ct, int list_tag) {
             tag = list_tag;
         } else {
             if (remaining<4) {
-                return NULL;
+                return YARP_NULLPTR;
             }
             tag = getInt(cursor);
             cursor += 4;
@@ -38,12 +38,12 @@ static char *checkBottle(char *cursor, int& remaining, int ct, int list_tag) {
         switch (tag) {
         case BOTTLE_TAG_INT:
         case BOTTLE_TAG_VOCAB:
-            if (remaining<4) { return NULL; }
+            if (remaining<4) { return YARP_NULLPTR; }
             cursor += 4;
             remaining -= 4;
             break;
         case BOTTLE_TAG_DOUBLE:
-            if (remaining<8) { return NULL; }
+            if (remaining<8) { return YARP_NULLPTR; }
             cursor += 8;
             remaining -= 8;
             break;
@@ -51,13 +51,13 @@ static char *checkBottle(char *cursor, int& remaining, int ct, int list_tag) {
         case BOTTLE_TAG_BLOB:
             {
                 if (remaining<4) {
-                    return NULL;
+                    return YARP_NULLPTR;
                 }
                 NetInt32 len = getInt(cursor);
                 cursor += 4;
                 remaining -= 4;
                 if (len<0||len>remaining) {
-                    return NULL;
+                    return YARP_NULLPTR;
                 }
                 cursor += len;
                 remaining -= len;
@@ -66,27 +66,29 @@ static char *checkBottle(char *cursor, int& remaining, int ct, int list_tag) {
         default:
             if (tag&BOTTLE_TAG_LIST) {
                 if (remaining<4) {
-                    return NULL;
+                    return YARP_NULLPTR;
                 }
                 NetInt32 len = getInt(cursor);
                 cursor += 4;
                 remaining -= 4;
                 cursor = checkBottle(cursor,remaining,len,tag&0xff);
-                if (cursor==NULL) return NULL;
+                if (cursor == YARP_NULLPTR) {
+                    return YARP_NULLPTR;
+                }
             } else {
-                return NULL;
+                return YARP_NULLPTR;
             }
             break;
         }
     }
-    if (remaining!=0) { return NULL; }
-    if (ct!=0) { return NULL; }
+    if (remaining!=0) { return YARP_NULLPTR; }
+    if (ct!=0) { return YARP_NULLPTR; }
     return cursor;
 }
 
 bool WireBottle::checkBottle(void *cursor, int len) {
     int rem = len;
-    return ::checkBottle((char *)cursor,rem,1,0)!=NULL;
+    return ::checkBottle((char *)cursor,rem,1,0) != YARP_NULLPTR;
 }
 
 bool WireBottle::extractBlobFromBottle(yarp::os::SizedWriter& src,

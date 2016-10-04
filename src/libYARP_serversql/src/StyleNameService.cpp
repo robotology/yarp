@@ -7,16 +7,17 @@
 
 #include <stdio.h>
 
-#include "StyleNameService.h"
+#include <yarp/serversql/impl/StyleNameService.h>
 
 #include <yarp/os/Value.h>
 
 using namespace yarp::os;
+using namespace yarp::serversql::impl;
 
-bool yarp::name::StyleNameService::apply(yarp::os::Bottle& cmd, 
-                                         yarp::os::Bottle& reply, 
-                                         yarp::os::Bottle& event,
-                                         const yarp::os::Contact& remote) {
+bool StyleNameService::apply(yarp::os::Bottle& cmd,
+                             yarp::os::Bottle& reply,
+                             yarp::os::Bottle& event,
+                             const yarp::os::Contact& remote) {
     if (cmd.get(0).asString()!="web") return false;
 
     if (!content.check("main.css")) {
@@ -80,7 +81,7 @@ a:hover{\n\
             fileName = options.find("web").asString() + "/" + fileName;
             char buf[25600];
             FILE *fin = fopen(fileName.c_str(),"rb");
-            if (fin!=NULL) {
+            if (fin != YARP_NULLPTR) {
                 size_t len = 0;
                 do {
                     len = fread(buf,1,sizeof(buf),fin);
@@ -89,17 +90,17 @@ a:hover{\n\
                     }
                 } while (len>=1);
                 fclose(fin);
-                fin = NULL;
+                fin = YARP_NULLPTR;
             }
             content.put(uri,accum);
             if (uri.find(".css")!=ConstString::npos) {
                 mime.put(uri,"text/css");
             } else if (uri.find(".png")!=ConstString::npos) {
-                mime.put(uri,"image/png");                
+                mime.put(uri,"image/png");
             } else if (uri.find(".jpg")!=ConstString::npos) {
-                mime.put(uri,"image/jpeg");                
+                mime.put(uri,"image/jpeg");
             } else if (uri.find(".js")!=ConstString::npos) {
-                mime.put(uri,"text/javascript");                
+                mime.put(uri,"text/javascript");
             } else {
                 mime.put(uri,"text/html");
             }
@@ -109,7 +110,7 @@ a:hover{\n\
     if (content.check(uri)) {
         ConstString txt = content.find(uri).asString();
         ConstString txtMime = mime.find(uri).asString();
-        printf(" * %s %s %d bytes, %s\n", 
+        printf(" * %s %s %d bytes, %s\n",
                cmd.toString().c_str(),
                (fileName!=uri)?fileName.c_str():"",
                (int)txt.length(),

@@ -44,7 +44,7 @@ public:
         buffer_length = 0;
         length = 0;
         unit_length = 0;
-        byte_start = 0/*NULL*/;
+        byte_start = YARP_NULLPTR;
         byte_length = 0;
         ignore_external = false;
         wire_unit_length = -1;
@@ -67,12 +67,12 @@ class YARP_wire_rep_utils_API WireTwiddler {
 public:
     WireTwiddler() {
         buffer_start = 0;
-        writer = 0 /*NULL*/;
+        writer = YARP_NULLPTR;
     }
 
     virtual ~WireTwiddler() {
         if (writer) delete writer;
-        writer = 0 /*NULL*/;
+        writer = YARP_NULLPTR;
     }
 
     bool configure(const char *txt, const char *prompt);
@@ -161,7 +161,7 @@ public:
         index = -1;
         sent = 0;
         consumed = 0;
-        cursor = 0 /*NULL*/;
+        cursor = YARP_NULLPTR;
         pending_length = 0;
         pending_strings = 0;
         pending_string_length = 0;
@@ -234,9 +234,9 @@ public:
         update();
     }
 
-    WireTwiddlerWriter() {
-        parent = NULL;
-        twiddler = NULL;
+    WireTwiddlerWriter() :
+        parent(YARP_NULLPTR),
+        twiddler(YARP_NULLPTR) {
     }
 
     virtual ~WireTwiddlerWriter();
@@ -283,7 +283,7 @@ public:
 
     bool pad(size_t len);
 
-    bool readLengthAndPass(int unitLength, const WireTwiddlerGap *gap = 0/*NULL*/);
+    bool readLengthAndPass(int unitLength, const WireTwiddlerGap *gap = YARP_NULLPTR);
 
     bool advance(int length, bool shouldEmit, bool shouldAccum=false,
                  bool shouldCheck=false);

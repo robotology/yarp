@@ -37,7 +37,7 @@ public:
         Contact addr2 = nic.queryName("/check/register2");
         checkTrue(addr2.isValid(),"got a second address");
         checkTrue(addr1.getPort()!=addr2.getPort(),"different port number");
-        checkTrue(addr1.getName()==addr2.getName(),"same machine");
+        checkTrue(addr1.getHost()==addr2.getHost(),"same machine");
 
         Contact addr3 = nic.queryName("/check/register1");
         checkTrue(addr3.isValid(),"first address still there");
@@ -50,13 +50,12 @@ public:
 
     void checkRegisterForced() {
         report(0,"checking forced register command...");
-
         NameClient& nic = NameClient::getNameClient();
         Contact addr1("tcp", "localhost", 9999);
         nic.registerName("/check/register/forced",addr1);
         Contact addr2 = nic.queryName("/check/register/forced");
         checkTrue(addr1.isValid(),"got an address");
-        checkEqual(addr1.getName(),addr2.getName(),"same machine");
+        checkEqual(addr1.getHost(),addr2.getHost(),"same machine");
         checkEqual(addr1.getPort(),addr2.getPort(),"same port number");
         //Contact a2 = nic.queryName("/bar2");
         //checkEqual(a2.isValid(),false,"non-existent address");
@@ -108,24 +107,23 @@ public:
     }
 
     virtual void runTests() {
+        NetworkBase::setLocalMode(true);
+
         checkRegisterFree();
         checkRegisterForced();
         checkUnregister();
         checkPortRegister();
         checkList();
         checkSetGet();
+
+        NetworkBase::setLocalMode(false);
+
     }
 };
 
-int main(int argc, char *argv[]) {
-    Network yarp;
 
-    printf("Tests for a functioning name server\n");
+static ServerTest theServerTest;
 
-    UnitTest::startTestSystem();
-    ServerTest test;
-    test.runTests();
-    UnitTest::stopTestSystem();
-
-    return 0;
+UnitTest& getServerTest() {
+    return theServerTest;
 }

@@ -5,10 +5,16 @@
  *
  */
 
-#ifndef YARPDB_TRIPLE_INC
-#define YARPDB_TRIPLE_INC
+#ifndef YARP_SERVERSQL_IMPL_TRIPLE_H
+#define YARP_SERVERSQL_IMPL_TRIPLE_H
 
 #include <string>
+#include <yarp/conf/compiler.h>
+
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 /**
  *
@@ -68,17 +74,23 @@ public:
     }
 
     const char *getNs() {
-        if (!hasNs) return NULL;
+        if (!hasNs) {
+            return YARP_NULLPTR;
+        }
         return ns.c_str();
     }
 
     const char *getName() {
-        if (!hasName) return NULL;
+        if (!hasName) {
+            return YARP_NULLPTR;
+        }
         return name.c_str();
     }
 
     const char *getValue() {
-        if (!hasValue) return NULL;
+        if (!hasValue) {
+            return YARP_NULLPTR;
+        }
         return value.c_str();
     }
 
@@ -102,7 +114,7 @@ public:
         hasNs = true;
         this->ns = ns;
     }
-    
+
     void setNameValue(const char *name, const char *value) {
         reset();
         hasName = true;
@@ -112,5 +124,9 @@ public:
     }
 };
 
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
 
-#endif
+
+#endif // YARP_SERVERSQL_IMPL_TRIPLE_H

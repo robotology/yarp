@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
+ * Copyright (C) 2009 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
  */
-
 
 #include <yarp/os/impl/UnitTest.h>
 
@@ -11,32 +11,25 @@
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
+#include <yarp/serversql/yarpserversql.h>
 
 #include "TestList.h"
 
+
 using namespace yarp::os;
 using namespace yarp::os::impl;
-using namespace yarp::sig::impl;
-
-
-#ifdef YARP2_LINUX
-#define CHECK_FOR_LEAKS
-#endif
-
-#ifdef CHECK_FOR_LEAKS
-// this is just for memory leak checking, and only works in linux
-#warning "memory leak detection on"
-#include <mcheck.h>
-#endif
+using namespace yarp::serversql::impl;
 
 
 int main(int argc, char *argv[]) {
-    //return yarp_test_main(argc,argv);
-#ifdef CHECK_FOR_LEAKS
-    mtrace();
-#endif
-
     Network yarp;
+
+    Property opts;
+    opts.put("portdb",":memory:");
+    opts.put("subdb",":memory:");
+    opts.put("local",1);
+    NameStore *store = yarpserver_create(opts);
+    yarp.queryBypass(store);
 
     bool done = false;
     int result = 0;
@@ -68,6 +61,6 @@ int main(int argc, char *argv[]) {
         Companion::main(argc,argv);
     }
 
+    delete store;
     return result;
 }
-

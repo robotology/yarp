@@ -5,11 +5,15 @@
  *
  */
 
-#ifndef YARPDB_ALLOCATORONTRIPLES_INC
-#define YARPDB_ALLOCATORONTRIPLES_INC
+#ifndef YARP_SERVERSQL_IMPL_ALLOCATORONTRIPLES_H
+#define YARP_SERVERSQL_IMPL_ALLOCATORONTRIPLES_H
 
-#include "Allocator.h"
-#include "TripleSource.h"
+#include <yarp/serversql/impl/Allocator.h>
+#include <yarp/serversql/impl/TripleSource.h>
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 /**
  *
@@ -22,7 +26,7 @@ public:
         regid = -1;
         tmpid = -1;
         mcastCursor = -1;
-        db = 0 /*NULL*/;
+        db = YARP_NULLPTR;
     }
 
     void open(TripleSource *db, const AllocatorConfig& config) {
@@ -52,5 +56,9 @@ private:
     AllocatorConfig config;
 };
 
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
 
-#endif
+
+#endif // YARP_SERVERSQL_IMPL_ALLOCATORONTRIPLES_H

@@ -5,21 +5,27 @@
  *
  */
 
-#ifndef YARPDB_SQLITELIVETRIPLE_INC
-#define YARPDB_SQLITELIVETRIPLE_INC
+#ifndef YARP_SERVERSQL_IMPL_SQLITETRIPLESOURCE_H
+#define YARP_SERVERSQL_IMPL_SQLITETRIPLESOURCE_H
 
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "sqlite3.h"
-#include "Triple.h"
-#include "TripleSource.h"
+#include <sqlite3.h>
+
+#include <yarp/serversql/impl/Triple.h>
+#include <yarp/serversql/impl/TripleSource.h>
 
 #ifdef _MSC_VER
 #define safe_printf sprintf_s
 #else
 #define safe_printf snprintf
-#endif 
+#endif
+
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 /**
  *
@@ -36,7 +42,7 @@ public:
     }
 
     std::string condition(Triple& t, TripleContext *context) {
-        int rid = (context!=NULL)?context->rid:-1;
+        int rid = (context != YARP_NULLPTR) ? context->rid : -1;
         std::string cond = "";
         if (rid==-1) {
             cond = "rid IS NULL";
@@ -45,7 +51,7 @@ public:
         }
         if (t.hasNs) {
             if (t.ns!="*") {
-                char *query = NULL;
+                char *query = YARP_NULLPTR;
                 query = sqlite3_mprintf(" AND ns = %Q",t.getNs());
                 cond = cond + query;
                 sqlite3_free(query);
@@ -55,7 +61,7 @@ public:
         }
         if (t.hasName) {
             if (t.name!="*") {
-                char *query = NULL;
+                char *query = YARP_NULLPTR;
                 query = sqlite3_mprintf(" AND name = %Q",t.getName());
                 cond = cond + query;
                 sqlite3_free(query);
@@ -65,7 +71,7 @@ public:
         }
         if (t.hasValue) {
             if (t.value!="*") {
-                char *query = NULL;
+                char *query = YARP_NULLPTR;
                 query = sqlite3_mprintf(" AND value = %Q",t.getValue());
                 cond = cond + query;
                 sqlite3_free(query);
@@ -78,14 +84,14 @@ public:
 
     int find(Triple& t, TripleContext *context) {
         int out = -1;
-        sqlite3_stmt *statement = NULL;
-        char *query = NULL;
+        sqlite3_stmt *statement = YARP_NULLPTR;
+        char *query = YARP_NULLPTR;
         query = sqlite3_mprintf("SELECT id FROM tags WHERE %s",
                                 condition(t,context).c_str());
         if (verbose) {
             printf("Query: %s\n", query);
         }
-        int result = sqlite3_prepare_v2(db,query,-1,&statement,NULL);
+        int result = sqlite3_prepare_v2(db, query, -1, &statement, YARP_NULLPTR);
         if (result!=SQLITE_OK) {
             printf("Error in query\n");
         }
@@ -105,12 +111,12 @@ public:
     }
 
     void remove_query(Triple& ti, TripleContext *context) {
-        char *query = NULL;
+        char *query = YARP_NULLPTR;
         query = sqlite3_mprintf("DELETE FROM tags WHERE %s",condition(ti,context).c_str());
         if (verbose) {
             printf("Query: %s\n", query);
         }
-        int result = sqlite3_exec(db, query, NULL, NULL, NULL);
+        int result = sqlite3_exec(db, query, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
         if (result!=SQLITE_OK) {
             printf("Error in query\n");
         }
@@ -118,12 +124,12 @@ public:
     }
 
     void prune(TripleContext *context) {
-        char *query = NULL;
+        char *query = YARP_NULLPTR;
         query = sqlite3_mprintf("DELETE FROM tags WHERE rid IS NOT NULL AND rid  NOT IN (SELECT id FROM tags)");
         if (verbose) {
             printf("Query: %s\n", query);
         }
-        int result = sqlite3_exec(db, query, NULL, NULL, NULL);
+        int result = sqlite3_exec(db, query, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
         if (result!=SQLITE_OK) {
             printf("Error in query\n");
         }
@@ -132,13 +138,13 @@ public:
 
     std::list<Triple> query(Triple& ti, TripleContext *context) {
         std::list<Triple> q;
-        sqlite3_stmt *statement = NULL;
-        char *query = NULL;
+        sqlite3_stmt *statement = YARP_NULLPTR;
+        char *query = YARP_NULLPTR;
         query = sqlite3_mprintf("SELECT id, ns, name, value FROM tags WHERE %s",condition(ti,context).c_str());
         if (verbose) {
             printf("Query: %s\n", query);
         }
-        int result = sqlite3_prepare_v2(db,query,-1,&statement,NULL);
+        int result = sqlite3_prepare_v2(db, query, -1, &statement, YARP_NULLPTR);
         if (result!=SQLITE_OK) {
             printf("Error in query\n");
         }
@@ -148,15 +154,15 @@ public:
             char *name = (char *)sqlite3_column_text(statement,2);
             char *value = (char *)sqlite3_column_text(statement,3);
             Triple t;
-            if (ns!=NULL) {
+            if (ns != YARP_NULLPTR) {
                 t.ns = ns;
                 t.hasNs = true;
             }
-            if (name!=NULL) {
+            if (name != YARP_NULLPTR) {
                 t.name = name;
                 t.hasName = true;
             }
-            if (value!=NULL) {
+            if (value != YARP_NULLPTR) {
                 t.value = value;
                 t.hasValue = true;
             }
@@ -168,7 +174,7 @@ public:
     }
 
     std::string expressContext(TripleContext *context) {
-        int rid = (context!=NULL)?context->rid:-1;
+        int rid = (context != YARP_NULLPTR)?context->rid:-1;
         char buf[100] = "NULL";
         if (rid!=-1) {
             safe_printf(buf,100,"%d",rid);
@@ -177,16 +183,16 @@ public:
     }
 
     void insert(Triple& t, TripleContext *context) {
-        char *msg = NULL;
-        char *query = sqlite3_mprintf("INSERT INTO tags (rid,ns,name,value) VALUES(%s,%Q,%Q,%Q)", 
+        char *msg = YARP_NULLPTR;
+        char *query = sqlite3_mprintf("INSERT INTO tags (rid,ns,name,value) VALUES(%s,%Q,%Q,%Q)",
                                       expressContext(context).c_str(),
                                       t.getNs(),t.getName(),t.getValue());
         if (verbose) {
             printf("Query: %s\n", query);
         }
-        int result = sqlite3_exec(db, query, NULL, NULL, &msg);
+        int result = sqlite3_exec(db, query, YARP_NULLPTR, YARP_NULLPTR, &msg);
         if (result!=SQLITE_OK) {
-            if (msg!=NULL) {
+            if (msg != YARP_NULLPTR) {
                 fprintf(stderr,"Error: %s\n", msg);
                 fprintf(stderr,"(Query was): %s\n", query);
                 fprintf(stderr,"(Location): %s:%d\n", __FILE__, __LINE__);
@@ -200,25 +206,25 @@ public:
     }
 
     void update(Triple& t, TripleContext *context) {
-        char *msg = NULL;
-        char *query = NULL;
+        char *msg = YARP_NULLPTR;
+        char *query = YARP_NULLPTR;
         if (t.hasName||t.hasNs) {
             Triple t2(t);
             t2.value = "*";
-            query = sqlite3_mprintf("UPDATE tags SET value = %Q WHERE %s", 
+            query = sqlite3_mprintf("UPDATE tags SET value = %Q WHERE %s",
                                     t.getValue(),
                                     condition(t2,context).c_str());
         } else {
-            query = sqlite3_mprintf("UPDATE tags SET value = %Q WHERE id = %Q", 
+            query = sqlite3_mprintf("UPDATE tags SET value = %Q WHERE id = %Q",
                                     t.getValue(),
                                     expressContext(context).c_str());
         }
         if (verbose) {
             printf("Query: %s\n", query);
         }
-        int result = sqlite3_exec(db, query, NULL, NULL, &msg);
+        int result = sqlite3_exec(db, query, YARP_NULLPTR, YARP_NULLPTR, &msg);
         if (result!=SQLITE_OK) {
-            if (msg!=NULL) {
+            if (msg != YARP_NULLPTR) {
                 fprintf(stderr,"Error: %s\n", msg);
                 sqlite3_free(msg);
             }
@@ -232,7 +238,7 @@ public:
 
 
     virtual void begin(TripleContext *context) {
-        int result = sqlite3_exec(db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
+        int result = sqlite3_exec(db, "BEGIN TRANSACTION;", YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
         if (verbose) {
             printf("Query: BEGIN TRANSACTION;\n");
         }
@@ -242,7 +248,7 @@ public:
     }
 
     virtual void end(TripleContext *context) {
-        int result = sqlite3_exec(db, "END TRANSACTION;", NULL, NULL, NULL);
+        int result = sqlite3_exec(db, "END TRANSACTION;", YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
         if (verbose) {
             printf("Query: END TRANSACTION;\n");
         }
@@ -253,4 +259,9 @@ public:
 
 };
 
-#endif
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
+
+
+#endif // YARP_SERVERSQL_IMPL_SQLITETRIPLESOURCE_H

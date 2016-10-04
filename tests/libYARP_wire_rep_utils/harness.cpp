@@ -16,7 +16,7 @@
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
-using namespace yarp::sig::impl;
+using namespace yarp::wire_rep_utils::impl;
 
 
 #ifdef YARP2_LINUX

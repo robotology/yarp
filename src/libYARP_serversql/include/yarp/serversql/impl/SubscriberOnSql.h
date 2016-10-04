@@ -5,12 +5,17 @@
  *
  */
 
-#ifndef YARPDB_SUBSCRIBERONSQL_INC
-#define YARPDB_SUBSCRIBERONSQL_INC
+#ifndef YARP_SERVERSQL_IMPL_SUBSCRIBERONSQL_H
+#define YARP_SERVERSQL_IMPL_SUBSCRIBERONSQL_H
 
-#include "Subscriber.h"
+#include <yarp/serversql/impl/Subscriber.h>
 
 #include <yarp/os/Semaphore.h>
+
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 /**
  *
@@ -20,12 +25,12 @@
 class SubscriberOnSql : public Subscriber {
 public:
     SubscriberOnSql() : mutex(1) {
-        implementation = 0/*NULL*/;
+        implementation = YARP_NULLPTR;
         verbose = false;
     }
 
     virtual ~SubscriberOnSql() {
-        if (implementation!=0/*NULL*/) {
+        if (implementation != YARP_NULLPTR) {
             close();
         }
     }
@@ -50,27 +55,27 @@ public:
 
     bool breakdown(const yarp::os::ConstString& port);
 
-    virtual bool setTopic(const yarp::os::ConstString& port, 
+    virtual bool setTopic(const yarp::os::ConstString& port,
                           const yarp::os::ConstString& structure, bool active);
 
     virtual bool listTopics(yarp::os::Bottle& topics);
 
     bool transitiveWelcome(const yarp::os::ConstString& topic,
-                           const yarp::os::ConstString& src, 
+                           const yarp::os::ConstString& src,
                            const yarp::os::ConstString& dest,
-                           const yarp::os::ConstString& srcFull, 
+                           const yarp::os::ConstString& srcFull,
                            const yarp::os::ConstString& destFull);
 
-    bool checkSubscription(const yarp::os::ConstString& src, 
+    bool checkSubscription(const yarp::os::ConstString& src,
                            const yarp::os::ConstString& dest,
-                           const yarp::os::ConstString& srcFull, 
+                           const yarp::os::ConstString& srcFull,
                            const yarp::os::ConstString& destFull,
                            const yarp::os::ConstString& mode);
 
     bool breakSubscription(const yarp::os::ConstString& dropper,
-                           const yarp::os::ConstString& src, 
+                           const yarp::os::ConstString& src,
                            const yarp::os::ConstString& dest,
-                           const yarp::os::ConstString& srcFull, 
+                           const yarp::os::ConstString& srcFull,
                            const yarp::os::ConstString& destFull,
                            const yarp::os::ConstString& mode);
 
@@ -92,5 +97,9 @@ private:
     yarp::os::Semaphore mutex;
 };
 
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
 
-#endif
+
+#endif // YARP_SERVERSQL_IMPL_SUBSCRIBERONSQL_H
