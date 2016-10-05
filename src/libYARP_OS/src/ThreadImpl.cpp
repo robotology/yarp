@@ -362,10 +362,10 @@ int ThreadImpl::setPriority(int priority, int policy) {
         YARP_ERROR(Logger::get(),"Cannot set priority with C++11");
 #elif defined(YARP_HAS_ACE) // Use ACE API
         return ACE_Thread::setprio(hid, priority, policy);
-#elif defined(UNIX) // Use the POSIX syscalls
+#elif defined(__unix__) // Use the POSIX syscalls
         struct sched_param thread_param;
         thread_param.sched_priority = priority;
-        int ret pthread_setschedparam(hid, policy, &thread_param);
+        int ret = pthread_setschedparam(hid, policy, &thread_param);
         return (ret != 0) ? -1 : 0;
 #else
         YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
@@ -382,11 +382,12 @@ int ThreadImpl::getPriority() {
         YARP_ERROR(Logger::get(),"Cannot get priority with C++11");
 #elif defined(YARP_HAS_ACE) // Use ACE API
         ACE_Thread::getprio(hid, prio);
-#elif defined(UNIX) // Use the POSIX syscalls
+#elif defined(__unix__) // Use the POSIX syscalls
         struct sched_param thread_param;
         int policy;
-        if(pthread_getschedparam(hid, &policy, &thread_param) == 0)
-            prio = thread_param.priority;
+        if(pthread_getschedparam(hid, &policy, &thread_param) == 0) {
+            prio = thread_param.sched_priority;
+        }
 #else
         YARP_ERROR(Logger::get(),"Cannot read priority without ACE");
 #endif
@@ -403,10 +404,11 @@ int ThreadImpl::getPolicy() {
 #elif defined(YARP_HAS_ACE) // Use ACE API
         int prio;
         ACE_Thread::getprio(hid, prio, policy);
-#elif defined(UNIX) // Use the POSIX syscalls
+#elif defined(__unix__) // Use the POSIX syscalls
         struct sched_param thread_param;
-        if(pthread_getschedparam(hid, &policy, &thread_param) != 0)
+        if(pthread_getschedparam(hid, &policy, &thread_param) != 0) {
             policy = defaultPolicy;
+        }
 #else
         YARP_ERROR(Logger::get(),"Cannot read scheduling policy without ACE");
 #endif
@@ -428,7 +430,7 @@ void ThreadImpl::yield() {
     std::this_thread::yield();
 #elif defined(YARP_HAS_ACE) // Use ACE API
     ACE_Thread::yield();
-#elif defined(UNIX) // Use the POSIX syscalls
+#elif defined(__unix__) // Use the POSIX syscalls
     pthread_yield();
 #else
     YARP_ERROR(Logger::get(),"Cannot yield thread without ACE");
