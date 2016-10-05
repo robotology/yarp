@@ -1317,11 +1317,6 @@ cmake/FindSQLite.cmake
   Authors: Daniele E. Domenichelli 
   CopyPolicy: 3-clause BSD
 
-cmake/FindAtlas.cmake
-  Copyright: 2010 RobotCub Consortium
-  Authors: Arjan Gijsberts 
-  CopyPolicy: 3-clause BSD
-
 cmake/FindGtkDatabox.cmake
   Copyright: 2012-2015 iCub Facility, Istituto Italiano di Tecnologia
   Authors: Daniele E. Domenichelli 
