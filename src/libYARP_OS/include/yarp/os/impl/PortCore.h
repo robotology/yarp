@@ -190,6 +190,7 @@ public:
             mutex(YARP_NULLPTR),
             mutexOwned(false),
             envelopeWriter(true),
+            typeMutex(1),
             checkedType(false)
     {
     }
@@ -530,27 +531,29 @@ public:
 
     void checkType(PortReader& reader)
     {
+        typeMutex.wait();
         if (!checkedType) {
             if (!typ.isValid()) {
                 typ = reader.getReadType();
             }
             checkedType = true;
         }
+        typeMutex.post();
     }
 
     yarp::os::Type getType()
     {
-        stateMutex.wait();
+        typeMutex.wait();
         Type t = typ;
-        stateMutex.post();
+        typeMutex.post();
         return t;
     }
 
     void promiseType(const Type& typ)
     {
-        stateMutex.wait();
+        typeMutex.wait();
         this->typ = typ;
-        stateMutex.post();
+        typeMutex.post();
     }
 
 private:
@@ -598,6 +601,7 @@ private:
     bool mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
 
+    SemaphoreImpl typeMutex;        ///< control access to type
     bool checkedType;
     Type typ;
 
