@@ -17,6 +17,12 @@
 
 #include <stdlib.h>
 
+#if defined(YARP_HAS_CXX11)
+#  if defined(YARP_HAS_ACE)
+#    include <ace/Thread.h> // For using ACE_hthread_t as native_handle
+#  endif
+#endif
+
 #if defined(__linux__) // Use the POSIX syscalls for the gettid()
     #include <sys/syscall.h>
     #include <unistd.h>
@@ -358,8 +364,24 @@ int ThreadImpl::setPriority(int priority, int policy) {
     if (active && priority!=-1) {
 
 #if defined(YARP_HAS_CXX11)
-        // FIXME Use std::thread::native_handle()
-        YARP_ERROR(Logger::get(),"Cannot set priority with C++11");
+#  if defined(YARP_HAS_ACE)
+        if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
+            return ACE_Thread::setprio(hid.native_handle(), priority, policy);
+        } else {
+            YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
+        }
+#  elif defined(__unix__)
+        if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
+            struct sched_param thread_param;
+            thread_param.sched_priority = priority;
+            int ret = pthread_setschedparam(hid.native_handle(), policy, &thread_param);
+            return (ret != 0) ? -1 : 0;
+        } else {
+            YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
+        }
+#  else
+        YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
+#  endif
 #elif defined(YARP_HAS_ACE) // Use ACE API
         return ACE_Thread::setprio(hid, priority, policy);
 #elif defined(__unix__) // Use the POSIX syscalls
@@ -378,8 +400,25 @@ int ThreadImpl::getPriority() {
     int prio = defaultPriority;
     if (active) {
 #if defined(YARP_HAS_CXX11)
-        // FIXME Use std::thread::native_handle()
-        YARP_ERROR(Logger::get(),"Cannot get priority with C++11");
+#  if defined(YARP_HAS_ACE)
+        if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
+            ACE_Thread::getprio(hid.native_handle(), prio);
+        } else {
+            YARP_ERROR(Logger::get(),"Cannot get priority without ACE");
+        }
+#  elif defined(__unix__)
+        if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
+            struct sched_param thread_param;
+            int policy;
+            if(pthread_getschedparam(hid.native_handle(), &policy, &thread_param) == 0) {
+                prio = thread_param.sched_priority;
+            }
+        } else {
+            YARP_ERROR(Logger::get(),"Cannot get priority without ACE");
+        }
+#  else
+        YARP_ERROR(Logger::get(),"Cannot get priority without ACE");
+#  endif
 #elif defined(YARP_HAS_ACE) // Use ACE API
         ACE_Thread::getprio(hid, prio);
 #elif defined(__unix__) // Use the POSIX syscalls
@@ -399,8 +438,25 @@ int ThreadImpl::getPolicy() {
     int policy = defaultPolicy;
     if (active) {
 #if defined(YARP_HAS_CXX11)
-        // FIXME Use std::thread::native_handle()
-        YARP_ERROR(Logger::get(),"Cannot get scheduling policy with C++11");
+#  if defined(YARP_HAS_ACE)
+        if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
+            int prio;
+            ACE_Thread::getprio(hid.native_handle(), prio, policy);
+        } else {
+            YARP_ERROR(Logger::get(),"Cannot get scheduling policy without ACE");
+        }
+#  elif defined(__unix__)
+        if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
+            struct sched_param thread_param;
+            if(pthread_getschedparam(hid.native_handle(), &policy, &thread_param) != 0) {
+                policy = defaultPolicy;
+            }
+        } else {
+            YARP_ERROR(Logger::get(),"Cannot get scheduling policy without ACE");
+        }
+#  else
+        YARP_ERROR(Logger::get(),"Cannot get scheduling policy without ACE");
+#  endif
 #elif defined(YARP_HAS_ACE) // Use ACE API
         int prio;
         ACE_Thread::getprio(hid, prio, policy);
