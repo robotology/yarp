@@ -17,9 +17,12 @@
 #include <cstdio>
 
 using namespace yarp::os;
-using namespace YarpXmlRpc;
+using YarpXmlRpc::XmlRpcValue;
+using YarpXmlRpc::XmlRpcClient;
+using YarpXmlRpc::XmlRpcServerConnection;
 
-void toXmlRpcValue(Value& vin, XmlRpcValue& vout) {
+void toXmlRpcValue(Value& vin, XmlRpcValue& vout)
+{
     if (vin.isInt()) {
         vout = vin.asInt();
     } else if (vin.isDouble()) {
@@ -70,12 +73,14 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout) {
     }
 }
 
-bool XmlRpcCarrier::expectSenderSpecifier(ConnectionState& proto) {
+bool XmlRpcCarrier::expectSenderSpecifier(ConnectionState& proto)
+{
     proto.setRoute(proto.getRoute().addFromName("rpc"));
     return true;
 }
 
-bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer) {
+bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer)
+{
     StringOutputStream sos;
     StringInputStream sis;
     writer.write(sos);
@@ -111,7 +116,7 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         c.generateRequest(methodName.c_str(),args);
         req = c.getRequest();
     } else {
-        XmlRpcServerConnection c(0,NULL);
+        XmlRpcServerConnection c(0, YARP_NULLPTR);
         c.generateResponse(args.toXml());
         req = c.getResponse();
     }
@@ -141,12 +146,14 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer) {
 }
 
 
-bool XmlRpcCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
+bool XmlRpcCarrier::reply(ConnectionState& proto, SizedWriter& writer)
+{
     return write(proto,writer);
 }
 
 
-bool XmlRpcCarrier::shouldInterpretRosMessages(ConnectionState& proto) {
+bool XmlRpcCarrier::shouldInterpretRosMessages(ConnectionState& proto)
+{
     // We need to set the interpretRos flag, which controls
     // whether ROS-style admin messages are treated as
     // admin messages or data messages in YARP.
@@ -180,7 +187,8 @@ bool XmlRpcCarrier::shouldInterpretRosMessages(ConnectionState& proto) {
     return interpretRos;
 }
 
-bool XmlRpcCarrier::sendHeader(ConnectionState& proto) {
+bool XmlRpcCarrier::sendHeader(ConnectionState& proto)
+{
     shouldInterpretRosMessages(proto);
     ConstString target = "POST /RPC2";
     Name n(proto.getRoute().getCarrierName() + "://test");
@@ -199,13 +207,16 @@ bool XmlRpcCarrier::sendHeader(ConnectionState& proto) {
 }
 
 
-bool XmlRpcCarrier::respondToHeader(ConnectionState& proto) {
+bool XmlRpcCarrier::respondToHeader(ConnectionState& proto)
+{
     shouldInterpretRosMessages(proto);
     sender = false;
     XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),
                                             sender,
                                             interpretRos);
-    if (stream==NULL) { return false; }
+    if (stream == YARP_NULLPTR) {
+        return false;
+    }
     proto.takeStreams(stream);
     return true;
 }

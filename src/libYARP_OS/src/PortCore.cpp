@@ -2201,10 +2201,12 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     if(process_prop != YARP_NULLPTR) {
                                         int prio = -1;
                                         int policy = -1;
-                                        if(process_prop->check("priority"))
+                                        if(process_prop->check("priority")) {
                                             prio = process_prop->find("priority").asInt();
-                                        if(process_prop->check("policy"))
+                                        }
+                                        if(process_prop->check("policy")) {
                                             policy = process_prop->find("policy").asInt();
+                                        }
                                         bOk = setProcessSchedulingParam(prio, policy);
                                     }
                                 }
@@ -2226,19 +2228,22 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     if (unit && !unit->isFinished()) {
                                         Route route = unit->getRoute();
                                         ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
+
                                         if (portName == cmd.get(2).asString()) {
                                             Bottle* sched_prop = sched.find("sched").asList();
                                             if(sched_prop != YARP_NULLPTR) {
                                                 int prio = -1;
                                                 int policy = -1;
-                                                if(sched_prop->check("priority"))
+                                                if(sched_prop->check("priority")) {
                                                     prio = sched_prop->find("priority").asInt();
-                                                if(sched_prop->check("policy"))
+                                                }
+                                                if(sched_prop->check("policy")) {
                                                     policy = sched_prop->find("policy").asInt();
+                                                }
                                                 bOk = (unit->setPriority(prio, policy) != -1);
-                                            }
-                                            else
+                                            } else {
                                                 bOk = false;
+                                            }
                                             break;
                                         }
                                     }
@@ -2275,8 +2280,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                         case VOCAB4('C','R','I','T'): dscp = 44; break;
                                                         default: dscp = -1;
                                                     };
-                                                    if(dscp >= 0)
+                                                    if(dscp >= 0) {
                                                         bOk = setTypeOfService(unit, dscp<<2);
+                                                    }
                                                 }
                                                 else if(qos_prop->check("dscp")) {
                                                     QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab());
@@ -2286,8 +2292,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                     } else {
                                                         dscp = (int)dscp_class;
                                                     }
-                                                    if((dscp>=0) && (dscp<64))
+                                                    if((dscp>=0) && (dscp<64)) {
                                                         bOk = setTypeOfService(unit, dscp<<2);
+                                                    }
                                                 }
                                                 else if(qos_prop->check("tos")) {
                                                     int tos = qos_prop->find("tos").asInt();
@@ -2295,8 +2302,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                     bOk = setTypeOfService(unit, tos);
                                                 }
                                             }
-                                            else
+                                            else {
                                                 bOk = false;
+                                            }
                                             break;
                                         }
                                     }
@@ -2472,16 +2480,18 @@ bool PortCore::setProcessSchedulingParam(int priority, int policy) {
     sprintf(path, "/proc/%d/task/", getPid());
 
     dir = opendir(path);
-    if(dir==YARP_NULLPTR)
+    if(dir==YARP_NULLPTR) {
         return false;
+    }
 
     struct dirent *d;
     char *end;
     int tid = 0;
     bool ret = true;
     while((d = readdir(dir)) != YARP_NULLPTR) {
-        if (!isdigit((unsigned char) *d->d_name))
+        if (!isdigit((unsigned char) *d->d_name)) {
             continue;
+        }
 
         tid = (pid_t) strtol(d->d_name, &end, 10);
         if (d->d_name == end || (end && *end)) {
