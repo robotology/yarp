@@ -21,7 +21,8 @@
 
 LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
-    ui(new Ui::LogTab)
+    ui(new Ui::LogTab),
+    toggleLineExpansion(false)
 {
     system_message = _system_message;
     theLogger= _theLogger;
@@ -66,14 +67,27 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _syst
     
     clipboard=QApplication::clipboard();
     connect(ui->listView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
+    connect(ui->listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(expandLines()));
 
     updateLog(true);
+}
+
+
+void LogTab::expandLines() {
+    toggleLineExpansion = !toggleLineExpansion;
+    if ( toggleLineExpansion )
+        ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    else {
+        ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+        ui->listView->verticalHeader()->setDefaultSectionSize(20);
+    }
 }
 
 void LogTab::ctxMenu(const QPoint &pos)
 {
     QMenu *menu = new QMenu;
     menu->addAction(tr("Copy to clipboard"), this, SLOT(on_copy_to_clipboard_action()));
+    menu->addAction(tr("Toggle line expansion"), this, SLOT(expandLines()));
     menu->exec(ui->listView->mapToGlobal(pos));
 }
 
