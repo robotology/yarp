@@ -285,7 +285,7 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
 bool AnalogWrapper::openDeferredAttach(yarp::os::Searchable &prop)
 {
     // nothing to do here?
-    if( (subDeviceOwned != YARP_NULLPTR) || (ownDevices = true) )
+    if( (subDeviceOwned != YARP_NULLPTR) || (ownDevices == true) )
         yError() << "AnalogServer: something wrong with the initialization.";
     return true;
 }
