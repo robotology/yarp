@@ -80,7 +80,7 @@ void LogTab::ctxMenu(const QPoint &pos)
 void LogTab::on_copy_to_clipboard_action()
 {
     QString selected_test;
-    QString separator("\t\t");
+    QString separator("\t");
     foreach(const QModelIndex &index, ui->listView->selectionModel()->selectedRows())
     {
         QStringList list;
@@ -101,6 +101,7 @@ void LogTab::on_copy_to_clipboard_action()
         if (displayErrorLevel_enabled)       list.append(model_logs->item(prox_index.row(),2)->text());
         list.append(model_logs->item(prox_index.row(),3)->text());
         selected_test += list.join(separator);
+        selected_test += '\n';
     }
     clipboard->setText(selected_test);
 }
