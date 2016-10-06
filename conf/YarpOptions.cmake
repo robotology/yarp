@@ -192,6 +192,26 @@ if(YARP_VALGRIND_TESTS)
   endforeach()
 endif()
 
+#########################################################################
+# Run tests under gdb
+
+cmake_dependent_option(YARP_GDB_TESTS
+                       "Run YARP tests under gdb" OFF
+                       "YARP_COMPILE_TESTS" OFF)
+mark_as_advanced(YARP_GDB_TESTS)
+
+if(YARP_GDB_TESTS)
+  find_program(GDB_EXECUTABLE NAMES gdb)
+  mark_as_advanced(GDB_EXECUTABLE)
+  set(GDB_OPTIONS_DEFAULT "")
+  if(GDB_EXECUTABLE)
+    set(GDB_OPTIONS "${GDB_OPTIONS_DEFAULT}"
+        CACHE STRING "gdb options (--return-child-result will be appended)")
+    separate_arguments(GDB_OPTIONS UNIX_COMMAND "${GDB_OPTIONS}")
+    set(GDB_COMMAND "${GDB_EXECUTABLE}" -batch ${GDB_OPTIONS} -ex "run" -ex "bt" --return-child-result --args)
+  endif()
+endif()
+
 
 #########################################################################
 # Enable these messages for debugging flags
