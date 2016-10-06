@@ -66,20 +66,21 @@ if(YARP_COMPILE_TESTS)
 
     foreach(test ${harness_code})
       get_filename_component(XN ${test} NAME_WE)
-      set(_cmd $<TARGET_FILE:${EXE}> verbose regression ${XN})
-      #message(STATUS ${XN})
-      add_test(NAME "${test_family}::${XN}"
-               COMMAND ${_cmd})
-      foreach(_Tool ${YARP_VALGRIND_TOOLS})
-        string(TOUPPER "${_Tool}" _TOOL)
-        if(YARP_VALGRIND_${_TOOL}_TESTS)
-          add_test(NAME "${test_family}::${XN}::Valgrind::${_Tool}"
-                   COMMAND ${VALGRIND_${_TOOL}_COMMAND} ${_cmd})
+      if(NOT "${XN}" MATCHES "^(harness|TestList)$")
+        set(_cmd $<TARGET_FILE:${EXE}> verbose regression ${XN})
+        add_test(NAME "${test_family}::${XN}"
+                 COMMAND ${_cmd})
+        foreach(_Tool ${YARP_VALGRIND_TOOLS})
+          string(TOUPPER "${_Tool}" _TOOL)
+          if(YARP_VALGRIND_${_TOOL}_TESTS)
+            add_test(NAME "${test_family}::${XN}::Valgrind::${_Tool}"
+                     COMMAND ${VALGRIND_${_TOOL}_COMMAND} ${_cmd})
+          endif()
+        endforeach()
+        if(YARP_GDB_TESTS)
+          add_test(NAME "${test_family}::${XN}::gdb"
+                   COMMAND ${GDB_COMMAND} ${_cmd})
         endif()
-      endforeach()
-      if(YARP_GDB_TESTS)
-        add_test(NAME "${test_family}::${XN}::gdb"
-                 COMMAND ${GDB_COMMAND} ${_cmd})
       endif()
     endforeach()
   endforeach()
