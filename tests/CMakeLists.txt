@@ -61,10 +61,9 @@ if(YARP_COMPILE_TESTS)
                 endif()
             endforeach()
         endforeach()
-
         if(YARP_GDB_TESTS)
-          add_test(NAME "${test_family}::${XN}::gdb"
-                   COMMAND ${GDB_COMMAND} ${_cmd})
+            add_test(NAME "${test_family}::${XN}::gdb"
+                     COMMAND ${GDB_COMMAND} ${_cmd})
         endif()
       endif()
     endforeach()
@@ -97,6 +96,11 @@ if(YARP_COMPILE_TESTS)
                              WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness)
                 endif()
             endforeach()
+            if(YARP_GDB_TESTS)
+                add_test(NAME "device::${XN}::gdb"
+                         COMMAND ${GDB_COMMAND} ${_cmd}
+                         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness)
+            endif()
         endforeach(X ${inis})
     endif()
 
