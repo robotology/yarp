@@ -66,7 +66,7 @@ public:
         p.open(name);
     }
 
-    void run() {
+    virtual void run() {
         Bottle b1,b2;
         while (!isStopping()) {
             p.read(b1,true);

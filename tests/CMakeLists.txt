@@ -81,7 +81,6 @@ if(YARP_COMPILE_TESTS)
           add_test(NAME "${test_family}::${XN}::gdb"
                    COMMAND ${GDB_COMMAND} ${_cmd})
         endif()
-      endif()
     endforeach()
   endforeach()
 

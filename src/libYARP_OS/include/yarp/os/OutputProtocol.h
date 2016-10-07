@@ -41,7 +41,7 @@ public:
 
     /**
      * Relabel the route after the fact (e.g. if the direction
-     * of initiative switches and the route essentially 
+     * of initiative switches and the route essentially
      * reverses)
      */
     virtual void rename(const Route& route) = 0;
@@ -103,7 +103,7 @@ public:
 
     virtual void interrupt() = 0;
 
-    
+
     /**
      *
      * Get an interface for doing read operations on the connection.
@@ -140,7 +140,7 @@ public:
      *
      */
     virtual void attachPort(Contactable *port) = 0;
-    
+
     /**
      *
      * Notify connection that we intend to write to it.

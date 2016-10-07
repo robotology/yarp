@@ -84,8 +84,6 @@ public:
             stream.close();
             YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket fully");
         }
-        //stream.close_writer();
-        //stream.close();
     }
 
     virtual void close() {
