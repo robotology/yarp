@@ -78,6 +78,11 @@ public:
             p.reply(b2);
         }
     }
+
+    virtual void onStop() {
+        p.interrupt();
+        p.close();
+    }
 };
 
 class NetworkTest : public UnitTest {
