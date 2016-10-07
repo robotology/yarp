@@ -1524,6 +1524,10 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     // it.  So let's read the message and see what we're supposed to do.
     cmd.read(reader);
 
+    YARP_SPRINTF2(log, debug,
+                  "Port %s received command %s", getName().c_str(),
+                                                 cmd.toString().c_str());
+
     StringOutputStream cache;
 
     int vocab = cmd.get(0).asVocab();
