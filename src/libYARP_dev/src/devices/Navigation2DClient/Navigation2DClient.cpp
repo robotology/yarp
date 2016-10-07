@@ -263,7 +263,7 @@ bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, doubl
     return true;
 }
 
-bool  yarp::dev::Navigation2DClient::getCurrentPosition(Map2DLocation loc)
+bool  yarp::dev::Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -321,7 +321,7 @@ bool yarp::dev::Navigation2DClient::suspendNavigation()
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLocation loc)
+bool yarp::dev::Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLocation &loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;

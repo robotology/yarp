@@ -79,7 +79,7 @@ public:
     * @param loc the location of the robot
     * @return true/false
     */
-    virtual bool   getCurrentPosition(yarp::dev::Map2DLocation loc) = 0;
+    virtual bool   getCurrentPosition(yarp::dev::Map2DLocation& loc) = 0;
 
     /**
     * Gets the last navigation target in the world reference frame
@@ -87,7 +87,7 @@ public:
     * @param loc the location of the robot
     * @return true/false
     */
-    virtual bool getAbsoluteLocationOfCurrentTarget(Map2DLocation loc) = 0;
+    virtual bool getAbsoluteLocationOfCurrentTarget(Map2DLocation& loc) = 0;
 
     /**
     * Gets the last navigation target in the robot reference frame

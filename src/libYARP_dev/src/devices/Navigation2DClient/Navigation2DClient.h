@@ -61,11 +61,11 @@ public:
     bool   gotoTargetByLocationName(yarp::os::ConstString location_name);
     bool   gotoTargetByRelativeLocation(double x, double y, double theta);
 
-    bool   getAbsoluteLocationOfCurrentTarget(Map2DLocation loc);
+    bool   getAbsoluteLocationOfCurrentTarget(Map2DLocation& loc);
     bool   getNameOfCurrentTarget(yarp::os::ConstString& location_name);
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta);
 
-    bool   getCurrentPosition(Map2DLocation loc);
+    bool   getCurrentPosition(Map2DLocation &loc);
     bool   storeCurrentPosition(yarp::os::ConstString location_name);
 
     bool   storeLocation(yarp::os::ConstString location_name, Map2DLocation loc);
