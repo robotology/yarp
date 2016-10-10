@@ -29,6 +29,50 @@ namespace yarp {
 
         struct Map2DLocation
         {
+            Map2DLocation(const yarp::os::ConstString& frame, const double& inX, const double& inY, const double& inT )
+            {
+                map_id = frame;
+                x      = inX;
+                y      = inY;
+                theta  = inT;
+            }
+
+            Map2DLocation()
+            {
+                map_id = "";
+                x      = 0;
+                y      = 0;
+                theta  = 0;
+            }
+
+            const inline bool operator!=(const Map2DLocation& r)
+            {
+                if(
+                  map_id != r.map_id ||
+                  x      != r.x      ||
+                  y      != r.y      ||
+                  theta  != r.theta
+                  )
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            const inline bool operator==(const Map2DLocation& r)
+            {
+                if(
+                  map_id == r.map_id &&
+                  x      == r.x      &&
+                  y      == r.y      &&
+                  theta  == r.theta
+                  )
+                {
+                    return true;
+                }
+                return false;
+            }
+
             yarp::os::ConstString map_id;
             double x;
             double y;
