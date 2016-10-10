@@ -200,6 +200,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gsl readline; fi
 
   # Install other dependencies (opencv)
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip uninstall numpy; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libopencv-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv; fi
 
