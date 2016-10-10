@@ -53,8 +53,7 @@ namespace yarp {
  * How the synch policy is implemented depends on the client device.
  */
 
-class YARP_dev_API yarp::dev::IRGBDSensor:  public IFrameGrabberImage,
-                                            public IFrameGrabberImageRaw
+class YARP_dev_API yarp::dev::IRGBDSensor
 {
 public:
 
@@ -73,13 +72,6 @@ public:
     virtual ~IRGBDSensor(){}
 
 
-    /** IFrameGrabberImage interface */
-    virtual int height() const = 0;
-    virtual int width() const = 0;
-//     using IFrameGrabberImage::getImage;
-//     using IFrameGrabberImageRaw::getImage;
-//     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)  = 0;
-//     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) = 0;
 
     /** IRGBDSensor specific interface methods*/
     virtual bool getRGBDSensor_Status(RGBDSensor_status *status) = 0;

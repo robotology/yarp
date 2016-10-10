@@ -582,8 +582,8 @@ bool RGBDSensorWrapper::setCamInfo
     cameraInfo.header.frame_id    = frame_id;
     cameraInfo.header.seq         = seq;
     cameraInfo.header.stamp       = normalizeSecNSec(stamp);
-    cameraInfo.width              = sensor_p->width();
-    cameraInfo.height             = sensor_p->height();
+//     cameraInfo.width              = sensor_p->width();
+//     cameraInfo.height             = sensor_p->height();
     cameraInfo.distortion_model   = distModel;
     
     cameraInfo.D.resize(5);
