@@ -5,10 +5,15 @@
  *
  */
 
-#ifndef YARPDB_PARSENAME_INC
-#define YARPDB_PARSENAME_INC
+#ifndef YARP_SERVERSQL_IMPL_PARSENAME_H
+#define YARP_SERVERSQL_IMPL_PARSENAME_H
 
 #include <yarp/os/ConstString.h>
+
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 class ParseName {
 private:
@@ -35,4 +40,9 @@ public:
     }
 };
 
-#endif
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
+
+
+#endif // YARP_SERVERSQL_IMPL_PARSENAME_H

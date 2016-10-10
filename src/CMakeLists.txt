@@ -15,6 +15,13 @@ add_subdirectory(libYARP_gsl)
 add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_dev)
 
+# private libraries
+add_subdirectory(libYARP_name)
+add_subdirectory(libYARP_serversql)
+add_subdirectory(libYARP_manager)
+add_subdirectory(libYARP_logger)
+add_subdirectory(libYARP_wire_rep_utils)
+
 # plugins
 set (YARP_LINK_PLUGINS TRUE)
 if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
@@ -23,12 +30,6 @@ endif()
 add_subdirectory(devices)
 add_subdirectory(carriers)
 add_subdirectory(libYARP_init)
-
-# private libraries
-add_subdirectory(libYARP_name)
-add_subdirectory(libYARP_serversql)
-add_subdirectory(libYARP_manager)
-add_subdirectory(libYARP_logger)
 
 if(YARP_COMPILE_EXECUTABLES)
     # idl compilers (thrift and ros)

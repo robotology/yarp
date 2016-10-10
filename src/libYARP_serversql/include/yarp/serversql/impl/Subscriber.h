@@ -5,16 +5,21 @@
  *
  */
 
-#ifndef YARPDB_SUBSCRIBER_INC
-#define YARPDB_SUBSCRIBER_INC
+#ifndef YARP_SERVERSQL_IMPL_SUBSCRIBER_H
+#define YARP_SERVERSQL_IMPL_SUBSCRIBER_H
 
 #include <yarp/name/NameService.h>
-#include "ConnectThread.h"
+#include <yarp/serversql/impl/ConnectThread.h>
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NameStore.h>
 #include <yarp/os/NameSpace.h>
+
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 /**
  *
@@ -28,7 +33,11 @@ private:
     bool silent;
     yarp::os::NameSpace *delegate;
 public:
-    Subscriber() : store(0/*NULL*/), silent(false), delegate(0/*NULL*/) {}
+    Subscriber() :
+            store(YARP_NULLPTR),
+            silent(false),
+            delegate(YARP_NULLPTR) {
+    }
 
     void setStore(yarp::os::NameStore& store) { this->store = &store; }
     yarp::os::NameStore *getStore() { return store; }
@@ -186,5 +195,9 @@ public:
     }
 };
 
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
 
-#endif
+
+#endif // YARP_SERVERSQL_IMPL_SUBSCRIBER_H

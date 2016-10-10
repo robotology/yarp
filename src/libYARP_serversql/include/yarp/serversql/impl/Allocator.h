@@ -5,11 +5,15 @@
  *
  */
 
-#ifndef YARPDB_ALLOCATOR_INC
-#define YARPDB_ALLOCATOR_INC
+#ifndef YARP_SERVERSQL_IMPL_ALLOCATOR_H
+#define YARP_SERVERSQL_IMPL_ALLOCATOR_H
 
 #include <yarp/os/Contact.h>
 
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 /**
  *
@@ -43,5 +47,8 @@ public:
     virtual bool freePortResources(const yarp::os::Contact& c)=0;
 };
 
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
 
-#endif
+#endif // YARP_SERVERSQL_IMPL_ALLOCATOR_H

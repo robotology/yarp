@@ -18,16 +18,17 @@
 
 #include <yarp/serversql/yarpserversql.h>
 
-#include "TripleSourceCreator.h"
-#include "NameServiceOnTriples.h"
-#include "AllocatorOnTriples.h"
-#include "SubscriberOnSql.h"
-#include "StyleNameService.h"
-#include "ComposedNameService.h"
-#include "ParseName.h"
+#include <yarp/serversql/impl/TripleSourceCreator.h>
+#include <yarp/serversql/impl/NameServiceOnTriples.h>
+#include <yarp/serversql/impl/AllocatorOnTriples.h>
+#include <yarp/serversql/impl/SubscriberOnSql.h>
+#include <yarp/serversql/impl/StyleNameService.h>
+#include <yarp/serversql/impl/ComposedNameService.h>
+#include <yarp/serversql/impl/ParseName.h>
 
 using namespace yarp::os;
 using namespace yarp::name;
+using namespace yarp::serversql::impl;
 using namespace std;
 
 class NameServerContainer : public ComposedNameService {
@@ -47,13 +48,13 @@ public:
 
     NameServerContainer() {
         silent = false;
-        space = NULL;
+        space = YARP_NULLPTR;
     }
 
     virtual ~NameServerContainer() {
         subscriber.clear();
         if (space) delete space;
-        space = NULL;
+        space = YARP_NULLPTR;
     }
 
     void setSilent(bool silent) {
@@ -114,7 +115,7 @@ public:
         }
 
         TripleSource *pmem = db.open(dbFilename.c_str(),cautious,reset);
-        if (pmem == NULL) {
+        if (pmem == YARP_NULLPTR) {
             fprintf(stderr,"Aborting, ports database failed to open.\n");
             return false;
         }
@@ -173,11 +174,11 @@ public:
 
 yarpserversql_API yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options) {
     NameServerContainer *nc = new NameServerContainer;
-    if (!nc) return NULL;
+    if (!nc) return YARP_NULLPTR;
     nc->setSilent(true);
     if (!nc->open(options)) {
         delete nc;
-        return NULL;
+        return YARP_NULLPTR;
     }
     nc->goPublic();
     return nc;

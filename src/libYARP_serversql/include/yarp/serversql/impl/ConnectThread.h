@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef YARPDB_CONNECTTHREAD_INC
-#define YARPDB_CONNECTTHREAD_INC
+#ifndef YARP_SERVERSQL_IMPL_CONNECTTHREAD_H
+#define YARP_SERVERSQL_IMPL_CONNECTTHREAD_H
 
 #include <yarp/os/Thread.h>
 #include <yarp/os/Contact.h>
@@ -16,6 +16,11 @@
 #include <yarp/os/Semaphore.h>
 
 #include <list>
+
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 class ConnectThread : public yarp::os::Thread {
 public:
@@ -51,14 +56,14 @@ public:
             if (!needed) { break; }
             if (positive) {
                 if (!yarp::os::NetworkBase::isConnected(src,dest)) {
-                    //printf("   (((Trying to connect %s and %s)))\n", 
+                    //printf("   (((Trying to connect %s and %s)))\n",
                     //     src.c_str(),
                     //     dest.c_str());
                     yarp::os::NetworkBase::connect(src,dest);
                 }
             } else {
                 if (yarp::os::NetworkBase::isConnected(src,dest)) {
-                    //printf("   (((Trying to disconnect %s and %s)))\n", 
+                    //printf("   (((Trying to disconnect %s and %s)))\n",
                     //       src.c_str(),
                     //       dest.c_str());
                     yarp::os::NetworkBase::disconnect(src,dest);
@@ -85,7 +90,7 @@ public:
     void clear() {
         for (std::list<ConnectThread *>::iterator it = con.begin();
              it != con.end(); it++) {
-            if ((*it)!=0/*NULL*/) {
+            if ((*it) != YARP_NULLPTR) {
                 delete (*it);
             }
         }
@@ -102,14 +107,14 @@ public:
                  const yarp::os::ConstString& dest,
                  bool positive = true) {
         //printf("  ??? %s %s\n", src, dest);
-        ConnectThread *t = 0/*NULL*/;
+        ConnectThread *t = YARP_NULLPTR;
         //printf("***** %d threads\n", con.size());
         std::list<ConnectThread *>::iterator it = con.begin();
         bool already = false;
         while (it != con.end()) {
-            if ((*it)!=0/*NULL*/) {
+            if ((*it) != YARP_NULLPTR) {
                 if (!(*it)->needed) {
-                    if (t==NULL) {
+                    if (t == YARP_NULLPTR) {
                         //printf("***** reusing a thread\n");
                         t = (*it);
                         t->stop();
@@ -139,7 +144,7 @@ public:
             it++;
         }
         if (!already) {
-            if (t==NULL) {
+            if (t == YARP_NULLPTR) {
                 t = new ConnectThread(mutex);
                 con.push_back(t);
             }
@@ -153,5 +158,9 @@ public:
     }
 };
 
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
 
-#endif
+
+#endif // YARP_SERVERSQL_IMPL_CONNECTTHREAD_H

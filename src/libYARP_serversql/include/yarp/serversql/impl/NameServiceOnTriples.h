@@ -5,15 +5,20 @@
  *
  */
 
-#ifndef YARPDB_DBNAMESERVICE_INC
-#define YARPDB_DBNAMESERVICE_INC
+#ifndef YARP_SERVERSQL_IMPL_NAMESERVICEONTRIPLES_H
+#define YARP_SERVERSQL_IMPL_NAMESERVICEONTRIPLES_H
 
 #include <yarp/name/NameService.h>
-#include "TripleSource.h"
-#include "Allocator.h"
-#include "Subscriber.h"
+#include <yarp/serversql/impl/TripleSource.h>
+#include <yarp/serversql/impl/Allocator.h>
+#include <yarp/serversql/impl/Subscriber.h>
 #include <yarp/os/NameStore.h>
 #include <yarp/os/Semaphore.h>
+
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 /**
  *
@@ -67,15 +72,15 @@ private:
     yarp::os::NameSpace *delegate;
 public:
     NameServiceOnTriples() :
-            db(NULL),
-            alloc(NULL),
-            subscriber(NULL),
+            db(YARP_NULLPTR),
+            alloc(YARP_NULLPTR),
+            subscriber(YARP_NULLPTR),
             lastRegister(""),
             mutex(1),
             access(1),
             gonePublic(false),
             silent(false),
-            delegate(NULL)
+            delegate(YARP_NULLPTR)
     {
     }
 
@@ -152,5 +157,9 @@ public:
     }
 };
 
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
 
-#endif
+
+#endif // YARP_SERVERSQL_IMPL_NAMESERVICEONTRIPLES_H

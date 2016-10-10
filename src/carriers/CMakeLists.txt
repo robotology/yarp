@@ -7,8 +7,6 @@ option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" FALSE)
 get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 include_directories(${YARP_OS_INCLUDE_DIRS})
 
-add_subdirectory(wire_rep_utils)
-
 include(YarpPlugin)
 yarp_begin_plugin_library(yarpcar)
   add_subdirectory(human_carrier)

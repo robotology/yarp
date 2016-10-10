@@ -2,11 +2,9 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# compile if needed - used by tcpros_carrier, mjpeg_carrier
+# used by tcpros_carrier, mjpeg_carrier
 
-if(ENABLE_yarpcar_mjpeg OR
-   ENABLE_yarpcar_tcpros OR
-   ENABLE_yarpcar_rossrv)
+if(CREATE_OPTIONAL_CARRIERS)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
   get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -29,12 +27,4 @@ if(ENABLE_yarpcar_mjpeg OR
           RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
           LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-
-  if(YARP_COMPILE_TESTS)
-      add_executable(wire_rep_test test.cpp)
-      target_link_libraries(wire_rep_test YARP_wire_rep_utils)
-      target_link_libraries(wire_rep_test YARP_OS YARP_sig YARP_init)
-      target_link_libraries(wire_rep_test ${ACE_LIBRARIES})
-  endif()
-
 endif()

@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef YARP_INC_YARPSERVERSQL
-#define YARP_INC_YARPSERVERSQL
+#ifndef YARP_SERVERSQL_YARPSERVERSQL_H
+#define YARP_SERVERSQL_YARPSERVERSQL_H
 
 #include <yarp/conf/api.h>
 
@@ -35,4 +35,4 @@ yarpserversql_API int yarpserver_main(int argc, char *argv[]);
 
 yarpserversql_API yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options);
 
-#endif
+#endif // YARP_SERVERSQL_YARPSERVERSQL_H

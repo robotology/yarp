@@ -8,8 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "TripleSourceCreator.h"
+#include <yarp/serversql/impl/TripleSourceCreator.h>
 
+using namespace yarp::serversql::impl;
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -71,4 +72,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-

@@ -5,13 +5,18 @@
  *
  */
 
-#ifndef YARPDB_LIVETRIPLE_INC
-#define YARPDB_LIVETRIPLE_INC
+#ifndef YARP_SERVERSQL_IMPL_TRIPLESOURCE_H
+#define YARP_SERVERSQL_IMPL_TRIPLESOURCE_H
 
-#include "Triple.h"
+#include <yarp/serversql/impl/Triple.h>
 
 #include <string>
 #include <list>
+
+
+namespace yarp {
+namespace serversql {
+namespace impl {
 
 /**
  *
@@ -20,7 +25,7 @@
  */
 class TripleContext {
 public:
-    int rid;    
+    int rid;
 
     TripleContext() {
         rid = -1;
@@ -60,7 +65,7 @@ public:
 
     virtual void prune(TripleContext *context) = 0;
 
-    virtual std::list<Triple> query(Triple& ti, 
+    virtual std::list<Triple> query(Triple& ti,
                                     TripleContext *context) = 0;
 
     virtual void remove_query(Triple& ti,
@@ -76,5 +81,9 @@ protected:
     int verbose;
 };
 
+} // namespace impl
+} // namespace serversql
+} // namespace yarp
 
-#endif
+
+#endif // YARP_SERVERSQL_IMPL_TRIPLESOURCE_H

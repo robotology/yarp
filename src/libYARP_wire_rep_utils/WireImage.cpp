@@ -16,7 +16,7 @@ FlexImage *WireImage::checkForImage(SizedWriter& writer) {
     ImageNetworkHeader hdr;
     char *header_buf = (char*)(&hdr);
     size_t header_len = sizeof(hdr);
-    const char *img_buf = NULL;
+    const char *img_buf = YARP_NULLPTR;
     int img_len = 0;
     hdr.imgSize = -1;
     for (size_t i=0; i<writer.length(); i++) {
@@ -37,10 +37,10 @@ FlexImage *WireImage::checkForImage(SizedWriter& writer) {
         }
     }
     if (hdr.imgSize==-1) {
-        return NULL;
+        return YARP_NULLPTR;
     }
     if (hdr.imgSize!=img_len) {
-        return NULL;
+        return YARP_NULLPTR;
     }
     //printf("Passing on a %dx%d image\n", hdr.width, hdr.height);
     int w = hdr.width;
