@@ -207,6 +207,7 @@ install:
 
   # Install other dependencies (opencv, eigen)
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libopencv-dev libeigen3-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip uninstall numpy; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen; fi
 
   # Install swig stuff
