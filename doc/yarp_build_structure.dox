@@ -359,15 +359,6 @@ for mathematical operations.  There are a few wrinkles:
 which defaults to FALSE.  If FALSE, this target is skipped.
 \li YARP_math depends on GSL.  We use the cmake/FindGSL.cmake script to
 track this dependency down.
-\li YARP_math optionally can use Atlas with GSL to improve performance
-further.  We create an option YARP_USE_ATLAS that default to FALSE.
-\li If YARP_USE_ATLAS is set to TRUE, we use the cmake/FindAtlas.cmake
-script to track this dependency down.
-\li Depending on the options, we store the names of the extra libraries
-needed in MATH_LIB_EXTRAS.
-
-The YARP_math target is linked against YARP_sig and YARP_OS, and against
-MATH_LIB_EXTRAS.
 
 @section yarp_build_structure_yarpdev src/libYARP_dev/CMakeLists.txt
 
@@ -535,7 +526,7 @@ configuration.
 It is placed in generated_include/yarp/conf/options.h,
 and should be accessed as "#include <yarp/conf/options.h>".
 It is intended to store options about what parts of YARP have been compiled.
-Right now, it just optionally defines YARP_HAS_MATH_LIB and YARP_USE_ATLAS,
+Right now, it just optionally defines YARP_HAS_MATH_LIB,
 since that is all anyone has needed so far.
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_options

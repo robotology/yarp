@@ -22,7 +22,7 @@ if (YARP_HAS_MATH_LIB)
                        include/yarp/math/SVD.h
                        include/yarp/math/FrameTransform.h)
 
-    if( NOT CREATE_LIB_MATH_USING_GSL )
+    if(NOT CREATE_LIB_MATH_USING_GSL)
         set(YARP_math_IMPL_HDRS include/yarp/impl/mt.h)
     endif()
 
@@ -56,17 +56,12 @@ if (YARP_HAS_MATH_LIB)
 
     include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-    if( NOT CREATE_LIB_MATH_USING_GSL )
+    if(NOT CREATE_LIB_MATH_USING_GSL)
         include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
     else()
-        if(YARP_USE_ATLAS)
-            set(MATH_LIB_EXTRAS ${GSL_LIBRARY} ${ATLAS_CBLAS_LIBRARY} ${ATLAS_ATLAS_LIBRARY})
-        else()
-            set(MATH_LIB_EXTRAS ${GSL_LIBRARIES})
-        endif()
         include_directories(SYSTEM ${GSL_INCLUDE_DIRS})
     endif()
-    
+
     # import math symbols from standard cmath
     add_definitions(-D_USE_MATH_DEFINES)
 
@@ -76,9 +71,9 @@ if (YARP_HAS_MATH_LIB)
     target_link_libraries(YARP_math LINK_PRIVATE YARP_OS)
     target_link_libraries(YARP_math LINK_PRIVATE YARP_sig)
 
-    if( CREATE_LIB_MATH_USING_GSL )
+    if(CREATE_LIB_MATH_USING_GSL)
         target_link_libraries(YARP_math LINK_PRIVATE YARP_gsl)
-        target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
+        target_link_libraries(YARP_math LINK_PRIVATE ${GSL_LIBRARIES})
     endif()
 
     set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})

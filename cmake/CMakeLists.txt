@@ -52,7 +52,6 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
 
   if(NOT YCM_FOUND)
     set(YCM_CMAKE_find_modules_FILES ycm-0.2/find-modules/FindACE.cmake
-                                     ycm-0.2/find-modules/FindAtlas.cmake
                                      ycm-0.2/find-modules/FindFFMPEG.cmake
                                      ycm-0.2/find-modules/FindFreenect.cmake
                                      ycm-0.2/find-modules/FindFTDI.cmake
