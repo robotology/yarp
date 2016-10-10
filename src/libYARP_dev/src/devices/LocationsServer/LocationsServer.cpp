@@ -13,6 +13,7 @@
 #include <yarp/math/Math.h>
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 /*! \file LocationsServer.cpp */
 
@@ -27,26 +28,43 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
 {
     if (m_ros_enabled == false) return false;
 
+    TickDuration dur; dur.sec = 10e9;
+    double yarpTimeStamp = yarp::os::Time::now();
+    uint64_t time;
+    uint64_t nsec_part;
+    uint64_t sec_part;
+    TickTime ret;
+    time = (uint64_t)(yarpTimeStamp * 1000000000UL);
+    nsec_part = (time % 1000000000UL);
+    sec_part = (time / 1000000000UL);
+    if (sec_part > std::numeric_limits<unsigned int>::max())
+    {
+        yWarning() << "Timestamp exceeded the 64 bit representation, resetting it to 0";
+        sec_part = 0;
+    }
+
     visualization_msgs_Marker marker;
     TickTime                  tt;
     yarp::sig::Vector         rpy(3), q(4);
 
     visualization_msgs_MarkerArray& markers = m_rosPublisherPort.prepare();
+    markers.markers.clear();
 
     std::map<std::string, Map2DLocation>::iterator it;
-    for (it = m_locations.begin(); it != m_locations.end(); it++)
+    int count = 1;
+    for (it = m_locations.begin(); it != m_locations.end(); it++, count++)
     {
         rpy[V3_X] = 0;
         rpy[V3_Y] = 0;
-        rpy[V3_Z] = it->second.theta;
+        rpy[V3_Z] = it->second.theta / 180 * 3.14159265359;
         q         = dcm2quat(SE3inv(rpy2dcm(rpy)));
 
         marker.header.frame_id    = "map";
-        tt.sec                    = 0;
-        tt.nsec                   = 0;
+        tt.sec                    = (yarp::os::NetUint32) sec_part;;
+        tt.nsec                   = (yarp::os::NetUint32) nsec_part;;
         marker.header.stamp       = tt;
         marker.ns                 = "my_namespace";
-        marker.id                 = 0;
+        marker.id                 = count;
         marker.type               = visualization_msgs_Marker::ARROW;
         marker.action             = visualization_msgs_Marker::ADD;
         marker.pose.position.x    = it->second.x;
@@ -63,7 +81,8 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
         marker.color.r            = 0.0;
         marker.color.g            = 1.0;
         marker.color.b            = 0.0;
-
+        marker.lifetime           = dur;
+        marker.text               = it->first;
         markers.markers.push_back(marker);
     }
 
@@ -99,7 +118,7 @@ bool yarp::dev::LocationsServer::load_locations(yarp::os::ConstString locations_
         m_locations[name] = location;
     }
 
-    yDebug() << m_locations.size();
+    yDebug() << "there are now" << m_locations.size() << "locations";
     file.close();
     return true;
 }
