@@ -170,8 +170,10 @@ void LogTab::updateLog(bool from_beginning)
         else if (it->level==yarp::yarpLogger::LOGLEVEL_FATAL)     { rowbgcolor = QColor(Qt::black);  rowfgcolor = QColor(Qt::white);  error_level=FATAL_STRING;}
         else                                                      { rowbgcolor = QColor(Qt::white);  error_level="";     }
 
+        std::string textWithoutNewLines = it->text;
+        textWithoutNewLines.erase(textWithoutNewLines.find_last_not_of(" \n\r\t")+1);
         //using numbers seems not to work. Hence I'm using strings.
-        rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());
+        rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(textWithoutNewLines.c_str());
 
         if (displayColors_enabled)
         {
