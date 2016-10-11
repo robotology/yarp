@@ -94,7 +94,7 @@ void EntitiesTreeWidget::addApplication(yarp::manager::Application *app)
     string fname;
     string fpath = app->getXmlFile();
     size_t pos = fpath.rfind(PATH_SEPERATOR);
-    if(pos!=string::npos){
+    if (pos!=string::npos) {
         fname = fpath.substr(pos+1);
     } else {
         fname = fpath;
@@ -120,7 +120,7 @@ void EntitiesTreeWidget::addComputer(yarp::manager::Computer* comp)
     string fname;
     string fpath = comp->getXmlFile();
     size_t pos = fpath.rfind(PATH_SEPERATOR);
-    if(pos!=string::npos){
+    if (pos!=string::npos) {
         fname = fpath.substr(pos+1);
     } else {
         fname = fpath;
@@ -145,7 +145,7 @@ void EntitiesTreeWidget::addModule(yarp::manager::Module* mod)
     string fname;
     string fpath = mod->getXmlFile();
     size_t pos = fpath.rfind(PATH_SEPERATOR);
-    if(pos!=string::npos){
+    if (pos!=string::npos) {
         fname = fpath.substr(pos+1);
     } else {
         fname = fpath;
@@ -183,22 +183,22 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 {
     Q_UNUSED(column);
 
-    if(item->data(0,Qt::UserRole)  == yarp::manager::APPLICATION){
+    if (item->data(0,Qt::UserRole)  == yarp::manager::APPLICATION) {
         yarp::manager::Application *app = (yarp::manager::Application*)item->data(0,Qt::UserRole + 1).toLongLong();
         viewApplication(app);
     }
 
-    if(item->data(0,Qt::UserRole)  == yarp::manager::MODULE){
+    if (item->data(0,Qt::UserRole)  == yarp::manager::MODULE) {
         yarp::manager::Module *mod = (yarp::manager::Module*)item->data(0,Qt::UserRole + 1).toLongLong();
         viewModule(mod);
     }
 
-    if(item->data(0,Qt::UserRole)  == yarp::manager::RESOURCE){
+    if (item->data(0,Qt::UserRole)  == yarp::manager::RESOURCE) {
         yarp::manager::Computer *res = (yarp::manager::Computer*)item->data(0,Qt::UserRole + 1).toLongLong();
         viewResource(res);
     }
 
-    if(item->data(0,Qt::UserRole)  == yarp::manager::NODE_APPTEMPLATE){
+    if (item->data(0,Qt::UserRole)  == yarp::manager::NODE_APPTEMPLATE) {
         QString name = item->data(0,Qt::UserRole + 1).toString();
         QString tmpFileName = item->data(0,Qt::UserRole + 2).toString();
         qDebug("%s",name.toLatin1().data());
@@ -209,7 +209,7 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 
     }
 
-    if(item->data(0,Qt::UserRole)  == yarp::manager::NODE_FILENAME){
+    if (item->data(0,Qt::UserRole)  == yarp::manager::NODE_FILENAME) {
         QString fileName = item->data(0,Qt::UserRole + 1).toString();
         qDebug("%s",fileName.toLatin1().data());
 
@@ -224,10 +224,10 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 */
 void EntitiesTreeWidget::clearApplication()
 {
-    if(!applicationNode){
+    if (!applicationNode) {
         return;
     }
-    while(applicationNode->childCount() > 0){
+    while(applicationNode->childCount() > 0) {
         applicationNode->removeChild(applicationNode->child(0));
     }
 }
@@ -236,10 +236,10 @@ void EntitiesTreeWidget::clearApplication()
 */
 void EntitiesTreeWidget::clearModules()
 {
-    if(!modulesNode){
+    if (!modulesNode) {
         return;
     }
-    while(modulesNode->childCount() > 0){
+    while(modulesNode->childCount() > 0) {
         modulesNode->removeChild(modulesNode->child(0));
     }
 }
@@ -248,10 +248,10 @@ void EntitiesTreeWidget::clearModules()
 */
 void EntitiesTreeWidget::clearResources()
 {
-    if(!resourcesNode){
+    if (!resourcesNode) {
         return;
     }
-    while(resourcesNode->childCount() > 0){
+    while(resourcesNode->childCount() > 0) {
         resourcesNode->removeChild(resourcesNode->child(0));
     }
 }
@@ -260,10 +260,10 @@ void EntitiesTreeWidget::clearResources()
 */
 void EntitiesTreeWidget::clearTemplates()
 {
-    if(!templatesNode){
+    if (!templatesNode) {
         return;
     }
-    while(templatesNode->childCount() > 0){
+    while(templatesNode->childCount() > 0) {
         templatesNode->removeChild(templatesNode->child(0));
     }
 }
@@ -275,25 +275,23 @@ void EntitiesTreeWidget::onContext(QPoint p)
 {
     QTreeWidgetItem *it = itemAt(p);
 
-    if(!it){
+    if (!it) {
         return;
     }
     QPoint pp = QPoint(p.x(),p.y() + header()->height());
-    if(it == applicationNode || it ==resourcesNode || it == modulesNode || it == templatesNode){
+    if (it == applicationNode || it ==resourcesNode || it == modulesNode || it == templatesNode) {
         topLevelMenu.exec(mapToGlobal(pp));
-    }else{
-        if(it->parent() == applicationNode){
+    } else {
+        if (it->parent() == applicationNode) {
             loadFiles->setText("Load Application");
             secondLevelMenu.exec(mapToGlobal(pp));
-        }else
-        if(it->parent() == resourcesNode){
+        } else if (it->parent() == resourcesNode) {
             loadFiles->setText("Load Resource");
             secondLevelMenu.exec(mapToGlobal(pp));
-        }else
-        if(it->parent() == modulesNode){
+        } else if (it->parent() == modulesNode) {
             loadFiles->setText("Load Module");
             secondLevelMenu.exec(mapToGlobal(pp));
-        }else{
+        } else {
             leafLevelMenu.exec(mapToGlobal(pp));
         }
     }
@@ -307,24 +305,22 @@ void EntitiesTreeWidget::onLoadFile()
 {
     QTreeWidgetItem *it = currentItem();
 
-    if(!it){
+    if (!it) {
         return;
     }
 
-    if(it->parent() == applicationNode){
-        if(it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION){
+    if (it->parent() == applicationNode) {
+        if (it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION) {
             yarp::manager::Application *app = (yarp::manager::Application*)it->data(0,Qt::UserRole + 1).toLongLong();
             viewApplication(app);
         }
-    }else
-    if(it->parent() == resourcesNode){
-        if(it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE){
+    } else if (it->parent() == resourcesNode) {
+        if (it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE) {
             yarp::manager::Computer *res = (yarp::manager::Computer*)it->data(0,Qt::UserRole + 1).toLongLong();
             viewResource(res);
         }
-    }else
-    if(it->parent() == modulesNode){
-        if(it->data(0,Qt::UserRole)  == yarp::manager::MODULE){
+    } else if (it->parent() == modulesNode) {
+        if (it->data(0,Qt::UserRole)  == yarp::manager::MODULE) {
             yarp::manager::Module *mod = (yarp::manager::Module*)it->data(0,Qt::UserRole + 1).toLongLong();
             viewModule(mod);
         }
@@ -340,16 +336,16 @@ void EntitiesTreeWidget::onEdit()
 {
     QTreeWidgetItem *item = currentItem();
 
-    if(!item){
+    if (!item) {
         return;
     }
-    if(item->data(0,Qt::UserRole)  == yarp::manager::NODE_FILENAME){
+    if (item->data(0,Qt::UserRole)  == yarp::manager::NODE_FILENAME) {
         QString fileName = item->data(0,Qt::UserRole + 1).toString();
 
         QProcess *notepad;
         notepad = new QProcess(this);
         notepad->start(ext_editor,QStringList()<<fileName);
-    }else if(item->data(0,Qt::UserRole)  == yarp::manager::NODE_APPTEMPLATE){
+    } else if (item->data(0,Qt::UserRole)  == yarp::manager::NODE_APPTEMPLATE) {
             QString name = item->data(0,Qt::UserRole + 1).toString();
             QString tmpFileName = item->data(0,Qt::UserRole + 2).toString();
             qDebug("%s",name.toLatin1().data());
@@ -357,9 +353,7 @@ void EntitiesTreeWidget::onEdit()
             QProcess *notepad;
             notepad = new QProcess(this);
             notepad->start(ext_editor,QStringList()<<tmpFileName);
-
     }
-
 }
 
 /*! \brief Reload the selected entity node
@@ -370,14 +364,14 @@ void EntitiesTreeWidget::onReopen()
     QTreeWidgetItem *parent = it -> parent();
     int index = it -> parent() -> indexOfChild(it);
 
-    if(!it){
+    if (!it) {
         return;
     }
 
-    if(it->parent() == applicationNode){
-        if(it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION){
+    if (it->parent() == applicationNode) {
+        if (it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION) {
             yarp::manager::Application *app = (yarp::manager::Application*)it->data(0,Qt::UserRole + 1).toLongLong();
-            if(app){
+            if (app) {
                 QString fileName = QString("%1").arg(app->getXmlFile());
                 QString appName = it->text(0);
 
@@ -385,22 +379,20 @@ void EntitiesTreeWidget::onReopen()
             }
 
         }
-    }else
-    if(it->parent() == resourcesNode){
-        if(it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE){
+    } else if (it->parent() == resourcesNode) {
+        if (it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE) {
             yarp::manager::Computer *res = (yarp::manager::Computer*)it->data(0,Qt::UserRole + 1).toLongLong();
-            if(res){
+            if (res) {
                 QString fileName = QString("%1").arg(res->getXmlFile());
                 QString resName = it->text(0);
 
                 reopenResource(resName,fileName);
             }
         }
-    }else
-    if(it->parent() == modulesNode){
-        if(it->data(0,Qt::UserRole)  == yarp::manager::MODULE){
+    } else if (it->parent() == modulesNode) {
+        if (it->data(0,Qt::UserRole)  == yarp::manager::MODULE) {
             yarp::manager::Module *mod = (yarp::manager::Module*)it->data(0,Qt::UserRole + 1).toLongLong();
-            if(mod){
+            if (mod) {
                 QString fileName = QString("%1").arg(mod->getXmlFile());
                 QString modName = it->text(0);
 
@@ -420,53 +412,48 @@ void EntitiesTreeWidget::onRemove()
     QTreeWidgetItem *item = currentItem();
 
 
-    if(!item){
+    if (!item) {
         return;
     }
 
 
 
-    if(QMessageBox::question(this,"Removing","Are you sure to remove this item?") == QMessageBox::Yes){
+    if (QMessageBox::question(this,"Removing","Are you sure to remove this item?") == QMessageBox::Yes) {
 
-        if(item->parent() == applicationNode){
-            if(item->data(0,Qt::UserRole)  == yarp::manager::APPLICATION){
+        if (item->parent() == applicationNode) {
+            if (item->data(0,Qt::UserRole)  == yarp::manager::APPLICATION) {
                 yarp::manager::Application *app = (yarp::manager::Application*)item->data(0,Qt::UserRole + 1).toLongLong();
-                if(app){
+                if (app) {
                     QString appName = item->text(0);
-
                     removeApplication(appName);
                 }
 
             }
-        }else
-            if(item->parent() == resourcesNode){
-                if(item->data(0,Qt::UserRole)  == yarp::manager::RESOURCE){
-                    yarp::manager::Computer *res = (yarp::manager::Computer*)item->data(0,Qt::UserRole + 1).toLongLong();
-                    if(res){
-                        QString resName = item->text(0);
-
-                        removeResource(resName);
+        } else if (item->parent() == resourcesNode) {
+            if (item->data(0,Qt::UserRole)  == yarp::manager::RESOURCE) {
+                yarp::manager::Computer *res = (yarp::manager::Computer*)item->data(0,Qt::UserRole + 1).toLongLong();
+                if (res) {
+                    QString resName = item->text(0);
+                    removeResource(resName);
                     }
                 }
-            }else
-            if(item->parent() == modulesNode){
-                if(item->data(0,Qt::UserRole)  == yarp::manager::MODULE){
-                    yarp::manager::Module *mod = (yarp::manager::Module*)item->data(0,Qt::UserRole + 1).toLongLong();
-                    if(mod){
-                        QString modName = item->text(0);
-
-                        removeModule(modName);
-                    }
+        } else if (item->parent() == modulesNode) {
+            if (item->data(0,Qt::UserRole)  == yarp::manager::MODULE) {
+                yarp::manager::Module *mod = (yarp::manager::Module*)item->data(0,Qt::UserRole + 1).toLongLong();
+                if (mod) {
+                    QString modName = item->text(0);
+                    removeModule(modName);
                 }
             }
+        }
 
-            while(item->childCount()>0){
-                delete item->takeChild(0);
-            }
+        while(item->childCount()>0) {
+            delete item->takeChild(0);
+        }
 
-            if(item->parent()){
-                int index = item->parent()->indexOfChild(item);
-                delete item->parent()->takeChild(index);
-            }
+        if (item->parent()) {
+            int index = item->parent()->indexOfChild(item);
+            delete item->parent()->takeChild(index);
+        }
     }
 }
