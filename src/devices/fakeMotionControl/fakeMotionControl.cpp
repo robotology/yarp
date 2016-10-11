@@ -474,8 +474,21 @@ bool FakeMotionControl::parseImpedanceGroup_NewFormat(Bottle& pidsGroup, Impedan
 {
     int j=0;
     Bottle xtmp;
-    if (!extractGroup(pidsGroup, xtmp, "stiffness", "stiffness parameter", _njoints))  return false; for (j=0; j<_njoints; j++) vals[j].stiffness = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "damping", "damping parameter", _njoints))      return false; for (j=0; j<_njoints; j++) vals[j].damping = xtmp.get(j+1).asDouble();
+
+    if (!extractGroup(pidsGroup, xtmp, "stiffness", "stiffness parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        vals[j].stiffness = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "damping", "damping parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        vals[j].damping = xtmp.get(j+1).asDouble();
+    }
+
     return true;
 }
 
@@ -483,16 +496,76 @@ bool FakeMotionControl::parsePositionPidsGroup(Bottle& pidsGroup, Pid myPid[])
 {
     int j=0;
     Bottle xtmp;
-    if (!extractGroup(pidsGroup, xtmp, "kp", "Pid kp parameter", _njoints))           return false; for (j=0; j<_njoints; j++) myPid[j].kp = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints))           return false; for (j=0; j<_njoints; j++) myPid[j].kd = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints))           return false; for (j=0; j<_njoints; j++) myPid[j].ki = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints))   return false; for (j=0; j<_njoints; j++) myPid[j].max_int = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints))   return false; for (j=0; j<_njoints; j++) myPid[j].max_output = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints))     return false; for (j=0; j<_njoints; j++) myPid[j].scale = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints))           return false; for (j=0; j<_njoints; j++) myPid[j].offset = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints))     return false; for (j=0; j<_njoints; j++) myPid[j].stiction_up_val = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints))   return false; for (j=0; j<_njoints; j++) myPid[j].stiction_down_val = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "kff", "Pid kff parameter", _njoints))         return false; for (j=0; j<_njoints; j++) myPid[j].kff = xtmp.get(j+1).asDouble();
+
+    if (!extractGroup(pidsGroup, xtmp, "kp", "Pid kp parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kp = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kd = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].ki = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].max_int = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].max_output = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].scale = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].offset = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].stiction_up_val = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].stiction_down_val = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kff", "Pid kff parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kff = xtmp.get(j+1).asDouble();
+    }
 
     //conversion from metric to machine units (if applicable)
     if (_positionControlUnits==P_METRIC_UNITS)
@@ -530,19 +603,96 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
 {
     int j=0;
     Bottle xtmp;
-    if (!extractGroup(pidsGroup, xtmp, "kp", "Pid kp parameter", _njoints))           return false; for (j=0; j<_njoints; j++) myPid[j].kp = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints))           return false; for (j=0; j<_njoints; j++) myPid[j].kd = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints))           return false; for (j=0; j<_njoints; j++) myPid[j].ki = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints))   return false; for (j=0; j<_njoints; j++) myPid[j].max_int = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints))   return false; for (j=0; j<_njoints; j++) myPid[j].max_output = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints))     return false; for (j=0; j<_njoints; j++) myPid[j].scale = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints))           return false; for (j=0; j<_njoints; j++) myPid[j].offset = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints))     return false; for (j=0; j<_njoints; j++) myPid[j].stiction_up_val = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints))   return false; for (j=0; j<_njoints; j++) myPid[j].stiction_down_val = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "kff",   "Pid kff parameter", _njoints))       return false; for (j=0; j<_njoints; j++) myPid[j].kff  = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "kbemf", "kbemf parameter", _njoints))         return false; for (j=0; j<_njoints; j++) kbemf[j]      = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "ktau", "ktau parameter", _njoints))           return false; for (j=0; j<_njoints; j++) ktau[j]       = xtmp.get(j+1).asDouble();
-    if (!extractGroup(pidsGroup, xtmp, "filterType", "filterType param", _njoints))   return false; for (j=0; j<_njoints; j++) filterType[j] = xtmp.get(j+1).asInt();
+    if (!extractGroup(pidsGroup, xtmp, "kp", "Pid kp parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kp = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kd = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].ki = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].max_int = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].max_output = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].scale = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].offset = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].stiction_up_val = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].stiction_down_val = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kff",   "Pid kff parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kff = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kbemf", "kbemf parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        kbemf[j] = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ktau", "ktau parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        ktau[j] = xtmp.get(j+1).asDouble();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "filterType", "filterType param", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        filterType[j] = xtmp.get(j+1).asInt();
+    }
 
     //conversion from metric to machine units (if applicable)
 //     for (j=0; j<_njoints; j++)
@@ -613,7 +763,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         for (i = 1; i < xtmp.size(); i++)
         {
             string typeString = xtmp.get(i).asString();
-            if (typeString  == "revolute")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
+            if (typeString == "revolute")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
             else if (typeString == "prismatic")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_PRISMATIC;
             else
             {
@@ -641,7 +791,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         for (i = 1; i < xtmp.size(); i++)
         {
-            _angleToEncoder[i-1]  = xtmp.get(i).asDouble();
+            _angleToEncoder[i-1] = xtmp.get(i).asDouble();
         }
         return false;
     }

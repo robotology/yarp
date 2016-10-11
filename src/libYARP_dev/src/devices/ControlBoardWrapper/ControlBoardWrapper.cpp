@@ -3301,14 +3301,13 @@ bool ControlBoardWrapper::disableAmp(int j)
         return false;
 
     // Use the newer interface if available, otherwise fallback on the old one.
-    if(p->iMode2)
+    if(p->iMode2) {
         return p->iMode2->setControlMode(off+p->base, VOCAB_CM_IDLE);
-    else
-        if (p->pos)
-        {
-            return p->amp->disableAmp(off+p->base);
-        }
-        return false;
+    }
+    if (p->pos) {
+        return p->amp->disableAmp(off+p->base);
+    }
+    return false;
 }
 
 bool ControlBoardWrapper::getAmpStatus(int *st)
