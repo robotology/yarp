@@ -39,7 +39,7 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
 
     QGridLayout *l;
 
-    if(!editingMode){
+    if (!editingMode) {
         prepareManagerFrom(lazy);
 
         ui->moduleList->resizeColumnToContents(0);
@@ -89,7 +89,7 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
         ui->builderContainer->setLayout(l);
 
 
-    }else{
+    } else {
         layout()->removeWidget(ui->mainSplietter);
         delete ui->mainSplietter;
         l = (QGridLayout*)layout();
@@ -112,7 +112,7 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
     builderWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
     connect(builderWidget,SIGNAL(topLevelChanged(bool)),this,SLOT(onBuilderFloatChanged(bool)));
 
-    if(!editingMode){
+    if (!editingMode) {
         //builder->addAction(modRunAction);
         //builder->addAction(modStopAction);
         //builder->addAction(modkillAction);
@@ -154,7 +154,7 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
         connect(builder,SIGNAL(setModuleSelected(QList<int>)),this,SLOT(onModuleSelected(QList<int>)));
         connect(builder,SIGNAL(setConnectionSelected(QList<int>)),this,SLOT(onConnectionSelected(QList<int>)));
 
-    }else{
+    } else {
         connect(builder,SIGNAL(modified(bool)),this,SLOT(onModified(bool)));
     }
 
@@ -167,7 +167,7 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
 bool ApplicationViewWidget::save()
 {
     bool ret = true;
-    if(builder){
+    if (builder) {
         ret = builder->save();
     }
     return ret;
@@ -175,7 +175,7 @@ bool ApplicationViewWidget::save()
 
 QString ApplicationViewWidget::getFileName()
 {
-    if(builder){
+    if (builder) {
         return builder->getFileName();
     }
     return "";
@@ -183,7 +183,7 @@ QString ApplicationViewWidget::getFileName()
 
 QString ApplicationViewWidget::getAppName()
 {
-    if(builder){
+    if (builder) {
         return builder->getAppName();
     }
     return "";
@@ -212,11 +212,11 @@ bool ApplicationViewWidget::isBuilderFloating()
 void ApplicationViewWidget::onBuilderFloatChanged(bool floating)
 {
 
-    if(floating){
+    if (floating) {
         builderWindowFloating(floating);
         builder->addToolBar();
         builderToolBar = NULL;
-    }else{
+    } else {
         builder->removeToolBar();
         builderToolBar = builder->getToolBar();
         builderWindowFloating(floating);
@@ -339,22 +339,22 @@ void ApplicationViewWidget::createResourcesViewContextMenu()
 /*! \brief Called when an item of the connections tree has been selected. */
 void ApplicationViewWidget::onConnectionItemSelectionChanged()
 {
-    if(ui->connectionList->selectedItems().isEmpty()){
+    if (ui->connectionList->selectedItems().isEmpty()) {
         connConnectAction->setEnabled(false);
         connDisconnectAction->setEnabled(false);
         connSeparatorAction->setEnabled(false);
         connRefreshAction->setEnabled(false);
-    }else{
+    } else {
         connConnectAction->setEnabled(true);
         connDisconnectAction->setEnabled(true);
         connSeparatorAction->setEnabled(true);
         connRefreshAction->setEnabled(true);
     }
 
-    if(ui->connectionList->hasFocus()){
+    if (ui->connectionList->hasFocus()) {
         QList<int>selectedIds;
         QList<QTreeWidgetItem*> selectedItems = ui->connectionList->selectedItems();
-        foreach(QTreeWidgetItem *it,selectedItems){
+        foreach(QTreeWidgetItem *it,selectedItems) {
             QString id = it->text(1);
             selectedIds.append(id.toInt());
         }
@@ -367,27 +367,27 @@ void ApplicationViewWidget::onConnectionItemSelectionChanged()
 void ApplicationViewWidget::onModuleItemSelectionChanged()
 {
 
-    if(ui->moduleList->selectedItems().isEmpty()){
+    if (ui->moduleList->selectedItems().isEmpty()) {
         modRunAction->setEnabled(false);
         modStopAction->setEnabled(false);
         modkillAction->setEnabled(false);
         modAttachAction->setEnabled(false);
         modAssignAction->setEnabled(false);
         modRefreshAction->setEnabled(false);
-    }else{
+    } else {
         modRunAction->setEnabled(true);
         modStopAction->setEnabled(true);
         modkillAction->setEnabled(true);
 
         bool all = true;
         foreach (QTreeWidgetItem *it, ui->moduleList->selectedItems()) {
-            if(it->text(3) != "localhost"){
+            if (it->text(3) != "localhost") {
                  modAttachAction->setEnabled(false);
                  all = false;
                  break;
             }
         }
-        if(all){
+        if (all) {
             modAttachAction->setEnabled(true);
         }
 //        if (ui->moduleList->currentItem()->text(3) == "localhost")
@@ -403,13 +403,13 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
 
 
 
-        if(ui->moduleList->hasFocus()){
+        if (ui->moduleList->hasFocus()) {
 
             QList<int>selectedIds;
             QList<QTreeWidgetItem*> selectedItems = ui->moduleList->selectedItems();
-            foreach(QTreeWidgetItem *it,selectedItems){
-                if(it->data(0,Qt::UserRole).toInt() == APPLICATION){
-                    for(int j=0;j<it->childCount();j++){
+            foreach(QTreeWidgetItem *it,selectedItems) {
+                if (it->data(0,Qt::UserRole).toInt() == APPLICATION) {
+                    for(int j=0;j<it->childCount();j++) {
                         QTreeWidgetItem *child = it->child(j);
                         child->setSelected(true);
                     }
@@ -418,8 +418,8 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
 
             }
             selectedItems = ui->moduleList->selectedItems();
-            foreach(QTreeWidgetItem *it,selectedItems){
-                if(it->data(0,Qt::UserRole).toInt() == APPLICATION){
+            foreach(QTreeWidgetItem *it,selectedItems) {
+                if (it->data(0,Qt::UserRole).toInt() == APPLICATION) {
                     continue;
                 }
                 QString id = it->text(1);
@@ -436,9 +436,9 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
 /*! \brief Called when an item of the resources tree has been selected. */
 void ApplicationViewWidget::onResourceItemSelectionChanged()
 {
-    if(ui->resourcesList->currentItem() == NULL){
+    if (ui->resourcesList->currentItem() == NULL) {
         resRefreshAction->setEnabled(false);
-    }else{
+    } else {
         resRefreshAction->setEnabled(true);
     }
 }
@@ -449,7 +449,7 @@ void ApplicationViewWidget::prepareManagerFrom(yarp::manager::Manager* lazy)
     safeManager.prepare(lazy, m_pConfig,dynamic_cast<ApplicationEvent*>(this));
 
     // loading application
-    if(safeManager.loadApplication(app->getName())){
+    if (safeManager.loadApplication(app->getName())) {
        updateApplicationWindow();
     }
 
@@ -462,7 +462,7 @@ void ApplicationViewWidget::onRefreshApplication()
 
     // loading application
 
-    if(safeManager.loadApplication(app->getName())){
+    if (safeManager.loadApplication(app->getName())) {
         updateApplicationWindow();
     }
 
@@ -474,12 +474,12 @@ void ApplicationViewWidget::onRefreshApplication()
 void ApplicationViewWidget::onConnectionSelected(QList<int> id)
 {
     disconnect(ui->connectionList,SIGNAL(itemSelectionChanged()),this,SLOT(onConnectionItemSelectionChanged()));
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         ui->connectionList->topLevelItem(i)->setSelected(false);
     }
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
-        for(int j=0;j<id.count();j++){
-            if(ui->connectionList->topLevelItem(i)->text(1).toInt() == id.at(j)){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
+        for(int j=0;j<id.count();j++) {
+            if (ui->connectionList->topLevelItem(i)->text(1).toInt() == id.at(j)) {
                 ui->connectionList->topLevelItem(i)->setSelected(true);
             }
         }
@@ -492,20 +492,20 @@ void ApplicationViewWidget::onConnectionSelected(QList<int> id)
 void ApplicationViewWidget::onModuleSelected(QList<int> id)
 {
     disconnect(ui->moduleList,SIGNAL(itemSelectionChanged()),this,SLOT(onModuleItemSelectionChanged()));
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         ui->moduleList->topLevelItem(i)->setSelected(false);
-        if(ui->moduleList->topLevelItem(i)->data(0,Qt::UserRole) == APPLICATION ){
-            for(int k=0;k<ui->moduleList->topLevelItem(i)->childCount();k++){
+        if (ui->moduleList->topLevelItem(i)->data(0,Qt::UserRole) == APPLICATION ) {
+            for(int k=0;k<ui->moduleList->topLevelItem(i)->childCount();k++) {
                 ui->moduleList->topLevelItem(i)->child(k)->setSelected(false);
             }
         }
     }
 
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
-        if(ui->moduleList->topLevelItem(i)->data(0,Qt::UserRole) == APPLICATION ){
-            for(int k=0;k<ui->moduleList->topLevelItem(i)->childCount();k++){
-                for(int j=0;j<id.count();j++){
-                    if(ui->moduleList->topLevelItem(i)->child(k)->text(1).toInt() == id.at(j)){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
+        if (ui->moduleList->topLevelItem(i)->data(0,Qt::UserRole) == APPLICATION ) {
+            for(int k=0;k<ui->moduleList->topLevelItem(i)->childCount();k++) {
+                for(int j=0;j<id.count();j++) {
+                    if (ui->moduleList->topLevelItem(i)->child(k)->text(1).toInt() == id.at(j)) {
                         ui->moduleList->topLevelItem(i)->child(k)->setSelected(true);
                     }
                 }
@@ -513,9 +513,9 @@ void ApplicationViewWidget::onModuleSelected(QList<int> id)
 
             }
 
-        }else{
-            for(int j=0;j<id.count();j++){
-                if(ui->moduleList->topLevelItem(i)->text(1).toInt() == id.at(j)){
+        } else {
+            for(int j=0;j<id.count();j++) {
+                if (ui->moduleList->topLevelItem(i)->text(1).toInt() == id.at(j)) {
                     ui->moduleList->topLevelItem(i)->setSelected(true);
                 }
             }
@@ -549,15 +549,15 @@ void ApplicationViewWidget::updateApplicationWindow()
         CustomTreeWidgetItem *appNode = NULL;
         QString modLabel = mod->owner()->getLabel();
         QString appLabel = app->getLabel();
-        if(modLabel != appLabel){
+        if (modLabel != appLabel) {
 
             for(int i=0; i < ui->moduleList->topLevelItemCount();i++) {
-                if(ui->moduleList->topLevelItem(i)->data(0,Qt::UserRole + 1).toString() == modLabel){
+                if (ui->moduleList->topLevelItem(i)->data(0,Qt::UserRole + 1).toString() == modLabel) {
                     appNode = (CustomTreeWidgetItem*) ui->moduleList->topLevelItem(i);
                     break;
                 }
             }
-            if(!appNode){
+            if (!appNode) {
                 QStringList l;
                 l << ((Application*)mod->owner())->getName();
 
@@ -580,7 +580,7 @@ void ApplicationViewWidget::updateApplicationWindow()
         l << command << id << "stopped" << host << param << stdio << workDir << env;
 
         CustomTreeWidgetItem *it;
-        if(!appNode)
+        if (!appNode)
             it = new CustomTreeWidgetItem(ui->moduleList,l);
         else
             it = new CustomTreeWidgetItem(appNode,l);
@@ -601,11 +601,11 @@ void ApplicationViewWidget::updateApplicationWindow()
     for(cnnitr=connections.begin(); cnnitr<connections.end(); cnnitr++)
     {
         QString type;
-        if((*cnnitr).isPersistent())
+        if ((*cnnitr).isPersistent())
             type = "Persistent";
         else
         {
-            if((*cnnitr).isExternalFrom() || (*cnnitr).isExternalTo())
+            if ((*cnnitr).isExternalFrom() || (*cnnitr).isExternalTo())
                 type = "External";
             else
                 type = "Internal";
@@ -634,11 +634,11 @@ void ApplicationViewWidget::updateApplicationWindow()
         //m_resRow = *(m_refTreeResModel->append());
         QString sId = QString("%1").arg(id);
         QString type;
-        if(dynamic_cast<yarp::manager::Computer*>(*itrS))
+        if (dynamic_cast<yarp::manager::Computer*>(*itrS))
         {
             type = "computer";
         }
-        else if(dynamic_cast<yarp::manager::ResYarpPort*>(*itrS))
+        else if (dynamic_cast<yarp::manager::ResYarpPort*>(*itrS))
         {
             type = "port";
         }
@@ -651,10 +651,10 @@ void ApplicationViewWidget::updateApplicationWindow()
         CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->resourcesList,l);
         ui->moduleList->addTopLevelItem(it);
         it->setData(0,Qt::UserRole,yarp::manager::RESOURCE);
-        if(type == "computer"){
+        if (type == "computer") {
             it->setIcon(0,QIcon(":/computer-unavailable22.svg"));
             it->setTextColor(3,QColor("#BF0303"));
-        }else{
+        } else {
             it->setIcon(0,QIcon(":/port-unavailable22.svg"));
             it->setTextColor(3,QColor("#BF0303"));
         }
@@ -693,21 +693,21 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
 
     switch (type) {
     case yarp::manager::MODULE:{
-           if(col == 4 || col == 5 || col == 6 || col == 7){
-               if(it->text(2) == "stopped"){
+           if (col == 4 || col == 5 || col == 6 || col == 7) {
+               if (it->text(2) == "stopped") {
                     return true;
                }
            }
-           if(col == 3){
-                if(it->text(3) != "localhost" && it->text(2) == "stopped"){
+           if (col == 3) {
+                if (it->text(3) != "localhost" && it->text(2) == "stopped") {
                     return true;
                 }
            }
         break;
     }
     case yarp::manager::INOUTD:{
-           if(col == 3 || col == 4 || col == 5 ){
-               if(it->text(2) == "disconnected"){
+           if (col == 3 || col == 4 || col == 5 ) {
+               if (it->text(2) == "disconnected") {
                     return true;
                }
            }
@@ -726,14 +726,14 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
 
 void ApplicationViewWidget::onCloseStdOut(int id)
 {
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
-        if(it->data(0,Qt::UserRole) == APPLICATION){
+        if (it->data(0,Qt::UserRole) == APPLICATION) {
             closeNestedApplicationStdOut(it,id);
-        }else{
-            if(it->text(1).toInt() == id){
+        } else {
+            if (it->text(1).toInt() == id) {
                 StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
-                if(stdouWin && stdouWin->getId() == id){
+                if (stdouWin && stdouWin->getId() == id) {
                     delete stdouWin;
                     it->setData(0,Qt::UserRole,QVariant::fromValue(NULL));
                     return;
@@ -745,14 +745,14 @@ void ApplicationViewWidget::onCloseStdOut(int id)
 
 void ApplicationViewWidget::closeNestedApplicationStdOut(QTreeWidgetItem *it, int id)
 {
-    for(int j=0; j<it->childCount();j++){
+    for(int j=0; j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
-        if(ch->data(0,Qt::UserRole) == APPLICATION){
+        if (ch->data(0,Qt::UserRole) == APPLICATION) {
             closeNestedApplicationStdOut(it,id);
-        }else{
-            if(ch->text(1).toInt() == id){
+        } else {
+            if (ch->text(1).toInt() == id) {
                 StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(ch->data(0,Qt::UserRole));
-                if(stdouWin && stdouWin->getId() == id){
+                if (stdouWin && stdouWin->getId() == id) {
                     delete stdouWin;
                     ch->setData(0,Qt::UserRole,QVariant::fromValue(NULL));
                     return;
@@ -765,23 +765,23 @@ void ApplicationViewWidget::closeNestedApplicationStdOut(QTreeWidgetItem *it, in
 bool ApplicationViewWidget::areAllShutdown()
 {
     bool ret = true;
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
-        if(it->data(0,Qt::UserRole) == APPLICATION){
+        if (it->data(0,Qt::UserRole) == APPLICATION) {
             ret = areAllNestedApplicationShutdown(it);
-            if(!ret){
+            if (!ret) {
                 return false;
             }
-        }else{
-            if(it->text(2) != "stopped"){
+        } else {
+            if (it->text(2) != "stopped") {
                 return false;
             }
         }
     }
 
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if(it->text(2) != "disconnected"){
+        if (it->text(2) != "disconnected") {
             return false;
         }
     }
@@ -792,15 +792,15 @@ bool ApplicationViewWidget::areAllShutdown()
 bool ApplicationViewWidget::areAllNestedApplicationShutdown(QTreeWidgetItem *it)
 {
     bool ret = true;
-    for(int j=0; j<it->childCount();j++){
+    for(int j=0; j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
-        if(ch->data(0,Qt::UserRole) == APPLICATION){
+        if (ch->data(0,Qt::UserRole) == APPLICATION) {
             ret = areAllNestedApplicationShutdown(ch);
-            if(!ret){
+            if (!ret) {
                 return false;
             }
-        }else{
-            if(ch->text(2) != "stopped"){
+        } else {
+            if (ch->text(2) != "stopped") {
                 return false;
             }
         }
@@ -816,13 +816,13 @@ void ApplicationViewWidget::onSelfSafeLoadBalance()
 
 void ApplicationViewWidget::onAssignHost()
 {
-    if(areAllShutdown() && !safeManager.busy()){
-        for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    if (areAllShutdown() && !safeManager.busy()) {
+        for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
             QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
-            if(it->data(0,Qt::UserRole) == APPLICATION){
+            if (it->data(0,Qt::UserRole) == APPLICATION) {
                 assignHostNestedApplication(it);
-            }else{
-                if(it->isSelected()){
+            } else {
+                if (it->isSelected()) {
                     //QString waitHost = QString("%1").arg("?");
                     it->setText(2,"waiting");
                     it->setText(3,"?");
@@ -835,7 +835,7 @@ void ApplicationViewWidget::onAssignHost()
         yarp::os::Time::delay(0.1);
 
 
-    }else{
+    } else {
         yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
         logger->addError("Running modules should be stopped before assigning hosts.");
         reportErrors();
@@ -844,12 +844,12 @@ void ApplicationViewWidget::onAssignHost()
 
 void ApplicationViewWidget::assignHostNestedApplication(QTreeWidgetItem *it)
 {
-    for(int j=0; j<it->childCount();j++){
+    for(int j=0; j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
-        if(ch->data(0,Qt::UserRole) == APPLICATION){
+        if (ch->data(0,Qt::UserRole) == APPLICATION) {
             assignHostNestedApplication(ch);
-        }else{
-            if(ch->isSelected()){
+        } else {
+            if (ch->isSelected()) {
                 //QString waitHost = QString("%1").arg("?");
                 ch->setText(2,"waiting");
                 ch->setText(3,"?");
@@ -860,21 +860,21 @@ void ApplicationViewWidget::assignHostNestedApplication(QTreeWidgetItem *it)
 
 void ApplicationViewWidget::onAttachStdout()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return;
     }
 
     std::vector<int> MIDs;
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
-        if(it->data(0,Qt::UserRole) == APPLICATION){
+        if (it->data(0,Qt::UserRole) == APPLICATION) {
             attachStdOutNestedApplication(it,&MIDs);
-        }else{
-            if(it->isSelected()){
+        } else {
+            if (it->isSelected()) {
                 int id = it->text(1).toInt();
 
                 StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
-                if(stdouWin && stdouWin->getId() == id){
+                if (stdouWin && stdouWin->getId() == id) {
                     // found
                     continue;
                 }
@@ -901,16 +901,16 @@ void ApplicationViewWidget::onAttachStdout()
 
 void ApplicationViewWidget::attachStdOutNestedApplication(QTreeWidgetItem *it,std::vector<int> *MIDs)
 {
-    for(int j=0; j<it->childCount();j++){
+    for(int j=0; j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
-        if(ch->data(0,Qt::UserRole) == APPLICATION){
+        if (ch->data(0,Qt::UserRole) == APPLICATION) {
             attachStdOutNestedApplication(ch,MIDs);
-        }else{
-            if(ch->isSelected()){
+        } else {
+            if (ch->isSelected()) {
                 int id = ch->text(1).toInt();
 
                 StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(ch->data(0,Qt::UserRole));
-                if(stdouWin && stdouWin->getId() == id){
+                if (stdouWin && stdouWin->getId() == id) {
                     // found
                     continue;
                 }
@@ -934,19 +934,19 @@ void ApplicationViewWidget::attachStdOutNestedApplication(QTreeWidgetItem *it,st
 /*! \brief Called when the Run button has been pressed */
 bool ApplicationViewWidget::onRun()
 {
-    if(safeManager.busy() ){
+    if (safeManager.busy() ) {
         return false;
     }
 
     std::vector<int> MIDs;
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
 
-        if(it->data(0,Qt::UserRole) == APPLICATION){
+        if (it->data(0,Qt::UserRole) == APPLICATION) {
             runNestedApplication(it,&MIDs);
 
-        }else{
-            if(it->isSelected()){
+        } else {
+            if (it->isSelected()) {
                 MIDs.push_back(it->text(1).toInt());
                 safeManager.updateExecutable(it->text(1).toInt(),
                                          it->text(4).toLatin1().data(),
@@ -974,13 +974,13 @@ bool ApplicationViewWidget::onRun()
 
 void ApplicationViewWidget::runNestedApplication(QTreeWidgetItem *it,std::vector<int> *MIDs)
 {
-    for(int j=0; j<it->childCount();j++){
+    for(int j=0; j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
 
-            if(ch->data(0,Qt::UserRole) == APPLICATION){
+            if (ch->data(0,Qt::UserRole) == APPLICATION) {
                 runNestedApplication(ch,MIDs);
-            }else{
-                if(ch->isSelected()){
+            } else {
+                if (ch->isSelected()) {
                     MIDs->push_back(ch->text(1).toInt());
                     safeManager.updateExecutable(ch->text(1).toInt(),
                                              ch->text(4).toLatin1().data(),
@@ -1003,18 +1003,18 @@ void ApplicationViewWidget::runNestedApplication(QTreeWidgetItem *it,std::vector
 /*! \brief Called when the Stop button has been pressed */
 bool ApplicationViewWidget::onStop()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return false;
     }
 
     std::vector<int> MIDs;
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
-        if(it->data(0,Qt::UserRole) == APPLICATION){
+        if (it->data(0,Qt::UserRole) == APPLICATION) {
             stopNestedApplication(it,&MIDs);
 
-        }else{
-            if(it->isSelected()){
+        } else {
+            if (it->isSelected()) {
                 //moduluesIDs.append(it->text(1).toInt());
                 MIDs.push_back(it->text(1).toInt());
                 safeManager.updateExecutable(it->text(1).toInt(),
@@ -1042,12 +1042,12 @@ bool ApplicationViewWidget::onStop()
 
 void ApplicationViewWidget::stopNestedApplication(QTreeWidgetItem *it,std::vector<int> *MIDs)
 {
-    for(int j=0; j<it->childCount();j++){
+    for(int j=0; j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
-            if(ch->data(0,Qt::UserRole) == APPLICATION){
+            if (ch->data(0,Qt::UserRole) == APPLICATION) {
                 stopNestedApplication(ch,MIDs);
-            }else{
-                if(ch->isSelected()){
+            } else {
+                if (ch->isSelected()) {
                     MIDs->push_back(ch->text(1).toInt());
                     safeManager.updateExecutable(ch->text(1).toInt(),
                                              ch->text(4).toLatin1().data(),
@@ -1070,21 +1070,21 @@ void ApplicationViewWidget::stopNestedApplication(QTreeWidgetItem *it,std::vecto
 /*! \brief Called when the Kill button has been pressed */
 bool ApplicationViewWidget::onKill()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return false;
     }
 
-    if(QMessageBox::question(this,"Killing modules!","Are you sure?") != QMessageBox::Yes){
+    if (QMessageBox::question(this,"Killing modules!","Are you sure?") != QMessageBox::Yes) {
         return true;
     }
 
     std::vector<int> MIDs;
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
-        if(it->data(0,Qt::UserRole) == APPLICATION){
+        if (it->data(0,Qt::UserRole) == APPLICATION) {
             killNestedApplication(it,&MIDs);
-        }else{
-            if(it->isSelected()){
+        } else {
+            if (it->isSelected()) {
                 //moduluesIDs.append(it->text(1).toInt());
                 MIDs.push_back(it->text(1).toInt());
                 safeManager.updateExecutable(it->text(1).toInt(),
@@ -1112,12 +1112,12 @@ bool ApplicationViewWidget::onKill()
 
 void ApplicationViewWidget::killNestedApplication(QTreeWidgetItem *it,std::vector<int> *MIDs)
 {
-    for(int j=0; j<it->childCount();j++){
+    for(int j=0; j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
-            if(ch->data(0,Qt::UserRole) == APPLICATION){
+            if (ch->data(0,Qt::UserRole) == APPLICATION) {
                 killNestedApplication(ch,MIDs);
-            }else{
-                if(ch->isSelected()){
+            } else {
+                if (ch->isSelected()) {
                     MIDs->push_back(ch->text(1).toInt());
                     safeManager.updateExecutable(ch->text(1).toInt(),
                                              ch->text(4).toLatin1().data(),
@@ -1140,15 +1140,15 @@ void ApplicationViewWidget::killNestedApplication(QTreeWidgetItem *it,std::vecto
 /*! \brief Called when the Conenct button has been pressed */
 bool ApplicationViewWidget::onConnect()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return false;
     }
 
 
     std::vector<int> MIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if(it->isSelected()){
+        if (it->isSelected()) {
             MIDs.push_back(it->text(1).toInt());
             safeManager.updateConnection(it->text(1).toInt(),
                                      it->text(3).toLatin1().data(),
@@ -1171,15 +1171,15 @@ bool ApplicationViewWidget::onConnect()
 /*! \brief Called when the Disconnect button has been pressed */
 bool ApplicationViewWidget::onDisconnect()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return false;
     }
 
 
     std::vector<int> MIDs;
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if(it->isSelected()){
+        if (it->isSelected()) {
             MIDs.push_back(it->text(1).toInt());
             safeManager.updateConnection(it->text(1).toInt(),
                                      it->text(3).toLatin1().data(),
@@ -1204,7 +1204,7 @@ bool ApplicationViewWidget::onDisconnect()
 /*! \brief Called when the Refresh button has been pressed */
 bool ApplicationViewWidget::onRefresh()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return false;
     }
 
@@ -1212,12 +1212,12 @@ bool ApplicationViewWidget::onRefresh()
     std::vector<int> connectionsIDs;
     std::vector<int> resourcesIDs;
 
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
-        if(it->data(0,Qt::UserRole) == APPLICATION){
+        if (it->data(0,Qt::UserRole) == APPLICATION) {
             refreshNestedApplication(it,&modulesIDs);
-        }else{
-            if(it->isSelected()){
+        } else {
+            if (it->isSelected()) {
                 modulesIDs.push_back(it->text(1).toInt());
                 it->setText(2,"waiting");
                 it->setIcon(0,QIcon(":/refresh22.svg"));
@@ -1227,9 +1227,9 @@ bool ApplicationViewWidget::onRefresh()
 
     }
 
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if(it->isSelected()){
+        if (it->isSelected()) {
             connectionsIDs.push_back(it->text(1).toInt());
             it->setText(2,"waiting");
             it->setIcon(0,QIcon(":/refresh22.svg"));
@@ -1237,9 +1237,9 @@ bool ApplicationViewWidget::onRefresh()
         }
     }
 
-    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++){
+    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
-        if(it->isSelected()){
+        if (it->isSelected()) {
             resourcesIDs.push_back(it->text(1).toInt());
             it->setText(3,"waiting");
             it->setIcon(0,QIcon(":/refresh22.svg"));
@@ -1259,13 +1259,13 @@ bool ApplicationViewWidget::onRefresh()
 }
 void ApplicationViewWidget::refreshNestedApplication(QTreeWidgetItem *it,std::vector<int> *MIDs)
 {
-    for(int j=0; j<it->childCount();j++){
+    for(int j=0; j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
 
-        if(ch->data(0,Qt::UserRole) == APPLICATION){
+        if (ch->data(0,Qt::UserRole) == APPLICATION) {
             refreshNestedApplication(ch,MIDs);
-        }else{
-            if(ch->isSelected()){
+        } else {
+            if (ch->isSelected()) {
                 MIDs->push_back(ch->text(1).toInt());
                 ch->setText(2,"waiting");
                 ch->setIcon(0,QIcon(":/refresh22.svg"));
@@ -1300,35 +1300,35 @@ void ApplicationViewWidget::selectAllResources()
 void ApplicationViewWidget::selectAllModule(bool check)
 {
     disconnect(ui->moduleList,SIGNAL(itemSelectionChanged()),this,SLOT(onModuleItemSelectionChanged()));
-    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
-        if(it->data(0,Qt::UserRole) == APPLICATION){
+        if (it->data(0,Qt::UserRole) == APPLICATION) {
                selectAllNestedApplicationModule(it,check);
-        }else{
+        } else {
             it->setSelected(check);
         }
     }
-    if(ui->moduleList->selectedItems().isEmpty()){
+    if (ui->moduleList->selectedItems().isEmpty()) {
         modRunAction->setEnabled(false);
         modStopAction->setEnabled(false);
         modkillAction->setEnabled(false);
         modAttachAction->setEnabled(false);
         modAssignAction->setEnabled(false);
         modRefreshAction->setEnabled(false);
-    }else{
+    } else {
         modRunAction->setEnabled(true);
         modStopAction->setEnabled(true);
         modkillAction->setEnabled(true);
 
         bool all = true;
         foreach (QTreeWidgetItem *it, ui->moduleList->selectedItems()) {
-            if(it->text(3) != "localhost"){
+            if (it->text(3) != "localhost") {
                  modAttachAction->setEnabled(false);
                  all = false;
                  break;
             }
         }
-        if(all){
+        if (all) {
             modAttachAction->setEnabled(true);
         }
 //        if (ui->moduleList->currentItem()->text(3) == "localhost")
@@ -1347,9 +1347,9 @@ void ApplicationViewWidget::selectAllModule(bool check)
 
         QList<int>selectedIds;
         QList<QTreeWidgetItem*> selectedItems = ui->moduleList->selectedItems();
-        foreach(QTreeWidgetItem *it,selectedItems){
-            if(it->data(0,Qt::UserRole).toInt() == APPLICATION){
-                for(int j=0;j<it->childCount();j++){
+        foreach(QTreeWidgetItem *it,selectedItems) {
+            if (it->data(0,Qt::UserRole).toInt() == APPLICATION) {
+                for(int j=0;j<it->childCount();j++) {
                     QTreeWidgetItem *child = it->child(j);
                     child->setSelected(true);
                 }
@@ -1358,8 +1358,8 @@ void ApplicationViewWidget::selectAllModule(bool check)
 
         }
         selectedItems = ui->moduleList->selectedItems();
-        foreach(QTreeWidgetItem *it,selectedItems){
-            if(it->data(0,Qt::UserRole).toInt() == APPLICATION){
+        foreach(QTreeWidgetItem *it,selectedItems) {
+            if (it->data(0,Qt::UserRole).toInt() == APPLICATION) {
                 continue;
             }
             QString id = it->text(1);
@@ -1375,11 +1375,11 @@ void ApplicationViewWidget::selectAllModule(bool check)
 
 void ApplicationViewWidget::selectAllNestedApplicationModule(QTreeWidgetItem *it,bool check)
 {
-    for(int j=0;j<it->childCount();j++){
+    for(int j=0;j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
-        if(ch->data(0,Qt::UserRole) == APPLICATION){
+        if (ch->data(0,Qt::UserRole) == APPLICATION) {
             selectAllNestedApplicationModule(ch, check);
-        }else{
+        } else {
             ch->setSelected(check);
         }
     }
@@ -1391,17 +1391,17 @@ void ApplicationViewWidget::selectAllNestedApplicationModule(QTreeWidgetItem *it
 void ApplicationViewWidget::selectAllConnections(bool check)
 {
     disconnect(ui->connectionList,SIGNAL(itemSelectionChanged()),this,SLOT(onConnectionItemSelectionChanged()));
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
         it->setSelected(check);
     }
 
-    if(ui->connectionList->selectedItems().isEmpty()){
+    if (ui->connectionList->selectedItems().isEmpty()) {
         connConnectAction->setEnabled(false);
         connDisconnectAction->setEnabled(false);
         connSeparatorAction->setEnabled(false);
         connRefreshAction->setEnabled(false);
-    }else{
+    } else {
         connConnectAction->setEnabled(true);
         connDisconnectAction->setEnabled(true);
         connSeparatorAction->setEnabled(true);
@@ -1410,7 +1410,7 @@ void ApplicationViewWidget::selectAllConnections(bool check)
 
     QList<int>selectedIds;
     QList<QTreeWidgetItem*> selectedItems = ui->connectionList->selectedItems();
-    foreach(QTreeWidgetItem *it,selectedItems){
+    foreach(QTreeWidgetItem *it,selectedItems) {
         QString id = it->text(1);
         selectedIds.append(id.toInt());
     }
@@ -1425,7 +1425,7 @@ void ApplicationViewWidget::selectAllConnections(bool check)
 */
 void ApplicationViewWidget::selectAllResources(bool check)
 {
-    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++){
+    for(int i=0;i<ui->resourcesList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->resourcesList->topLevelItem(i);
         it->setSelected(check);
     }
@@ -1489,7 +1489,7 @@ void ApplicationViewWidget::refresh()
 void ApplicationViewWidget::reportErrors()
 {
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
-    if(logger->errorCount() || logger->warningCount())
+    if (logger->errorCount() || logger->warningCount())
     {
         const char* err;
         while((err=logger->getLastError()))
@@ -1512,8 +1512,8 @@ void ApplicationViewWidget::exportGraph()
 {
     QString fileName = QFileDialog::getSaveFileName(this,"Export Graph",QApplication::applicationDirPath(),"GraphViz format (*.dot)");
 
-    if(!fileName.isEmpty()){
-        if(!safeManager.exportDependencyGraph(fileName.toLatin1().data()))
+    if (!fileName.isEmpty()) {
+        if (!safeManager.exportDependencyGraph(fileName.toLatin1().data()))
         {
             yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
             logger->addError("Cannot export graph");
@@ -1527,23 +1527,23 @@ void ApplicationViewWidget::exportGraph()
 /*! \brief Launch YARPView Inspection modality*/
 void ApplicationViewWidget::onYARPView()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return;
     }
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if(it->isSelected()){
+        if (it->isSelected()) {
             QString from = it->text(3);
             QString to = QString("/inspect").arg(from);
             QString env = QString("YARP_PORT_PREFIX=%1").arg(to);
             to += "/yarpview/img:i";
 
             yarp::manager::LocalBroker launcher;
-            if(launcher.init("yarpview", NULL, NULL, NULL, NULL, env.toLatin1().data()))
+            if (launcher.init("yarpview", NULL, NULL, NULL, NULL, env.toLatin1().data()))
             {
-                if(!launcher.start() && strlen(launcher.error()))
+                if (!launcher.start() && strlen(launcher.error()))
                 {
                     QString msg;
                     msg = QString("Error while launching yarpview. %1").arg(launcher.error());
@@ -1554,12 +1554,12 @@ void ApplicationViewWidget::onYARPView()
                 {
                     // waiting for the port to get open
                     double base = yarp::os::Time::now();
-                    while(!timeout(base, 3.0)){
-                        if(launcher.exists(to.toLatin1().data())){
+                    while(!timeout(base, 3.0)) {
+                        if (launcher.exists(to.toLatin1().data())) {
                             break;
                         }
                     }
-                    if(!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")){
+                    if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
                         QString msg;
                         msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
                         logger->addError(msg.toLatin1().data());
@@ -1578,14 +1578,14 @@ void ApplicationViewWidget::onYARPView()
 /*! \brief Launch YARPHear Inspection modality*/
 void ApplicationViewWidget::onYARPHear()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return;
     }
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
-    
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if(it->isSelected()){
+        if (it->isSelected()) {
             QString from = it->text(3);
             QString to = QString("/inspect/hear%1").arg(from);
 
@@ -1602,9 +1602,9 @@ void ApplicationViewWidget::onYARPHear()
 
             yarp::manager::LocalBroker launcher;
             launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
-            if(launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
+            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
             {
-                if(!launcher.start() && strlen(launcher.error()))
+                if (!launcher.start() && strlen(launcher.error()))
                 {
                     QString  msg;
                     msg = QString("Error while launching yarpread. %1").arg(launcher.error());
@@ -1615,18 +1615,18 @@ void ApplicationViewWidget::onYARPHear()
                 {
                     // waiting for the port to get open
                     double base = yarp::os::Time::now();
-                    while(!timeout(base, 3.0)){
-                        if(launcher.exists(to.toLatin1().data())){
+                    while(!timeout(base, 3.0)) {
+                        if (launcher.exists(to.toLatin1().data())) {
                             break;
                         }
                     }
-                    if(!launcher.exists(to.toLatin1().data())){
+                    if (!launcher.exists(to.toLatin1().data())) {
                         QString msg;
                         msg = QString("Cannot inspect '%1' : %2. Did you build yarp with 'portaudio' module?").arg(from).arg(launcher.error());
                         logger->addError(msg.toLatin1().data());
                         launcher.stop();
                         reportErrors();
-                    }else if(!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")){
+                    }else if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
                         QString msg;
                         msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
                         logger->addError(msg.toLatin1().data());
@@ -1647,14 +1647,14 @@ void ApplicationViewWidget::onYARPHear()
 /*! \brief Launch YARPRead Inspection modality*/
 void ApplicationViewWidget::onYARPRead()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return;
     }
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if(it->isSelected()){
+        if (it->isSelected()) {
             QString from = it->text(3);
             QString to = QString("/inspect/read%1").arg(from);
 
@@ -1671,9 +1671,9 @@ void ApplicationViewWidget::onYARPRead()
 
             yarp::manager::LocalBroker launcher;
             launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
-            if(launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
+            if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
             {
-                if(!launcher.start() && strlen(launcher.error()))
+                if (!launcher.start() && strlen(launcher.error()))
                 {
                     QString msg;
                     msg = QString("Error while launching yarpread. %1").arg(launcher.error());
@@ -1684,12 +1684,12 @@ void ApplicationViewWidget::onYARPRead()
                 {
                     // waiting for the port to get open
                     double base = yarp::os::Time::now();
-                    while(!timeout(base, 3.0)){
-                        if(launcher.exists(to.toLatin1().data())){
+                    while(!timeout(base, 3.0)) {
+                        if (launcher.exists(to.toLatin1().data())) {
                             break;
                         }
                     }
-                    if(!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")){
+                    if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
                         QString msg;
                         msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
                         logger->addError(msg.toLatin1().data());
@@ -1709,14 +1709,14 @@ void ApplicationViewWidget::onYARPRead()
 /*! \brief Launch YARPScope Inspection modality*/
 void ApplicationViewWidget::onYARPScope()
 {
-    if(safeManager.busy()){
+    if (safeManager.busy()) {
         return;
     }
     yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
     YscopeWindow dlg;
     dlg.setModal(true);
-    if(dlg.exec() != QDialog::Accepted){
+    if (dlg.exec() != QDialog::Accepted) {
         return;
     }
     int strIndex = dlg.getIndex();
@@ -1724,9 +1724,9 @@ void ApplicationViewWidget::onYARPScope()
 
 
 
-    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-        if(it->isSelected()){
+        if (it->isSelected()) {
             QString from = it->text(3);
             QString to = QString("/inspect").arg(from);
             QString env = QString("YARP_PORT_PREFIX=%1").arg(to);
@@ -1737,8 +1737,8 @@ void ApplicationViewWidget::onYARPScope()
 
 
             yarp::manager::LocalBroker launcher;
-            if(launcher.init("yarpscope", param.toLatin1().data(), NULL, NULL, NULL, env.toLatin1().data())){
-                if(!launcher.start() && strlen(launcher.error())){
+            if (launcher.init("yarpscope", param.toLatin1().data(), NULL, NULL, NULL, env.toLatin1().data())) {
+                if (!launcher.start() && strlen(launcher.error())) {
                     QString msg;
                     msg = QString("Error while launching yarpscope. %1").arg(launcher.error());
                     logger->addError(msg.toLatin1().data());
@@ -1748,8 +1748,8 @@ void ApplicationViewWidget::onYARPScope()
                     // waiting for the port to get open
                     double base = yarp::os::Time::now();
                     while(!timeout(base, 3.0))
-                        if(launcher.exists(to.toLatin1().data())) break;
-                    if(!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")){
+                        if (launcher.exists(to.toLatin1().data())) break;
+                    if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
                         QString msg;
                         msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
                         logger->addError(msg.toLatin1().data());
@@ -1769,7 +1769,7 @@ void ApplicationViewWidget::onYARPScope()
 bool ApplicationViewWidget::timeout(double base, double timeout)
 {
     yarp::os::Time::delay(1.0);
-    if((yarp::os::Time::now()-base) > timeout)
+    if ((yarp::os::Time::now()-base) > timeout)
         return true;
     return false;
 }
@@ -1780,11 +1780,11 @@ bool ApplicationViewWidget::timeout(double base, double timeout)
 /*! \brief Tells if a modules is in running state*/
 bool ApplicationViewWidget::isRunning()
 {
-    if(editingMode){
+    if (editingMode) {
         return false;
     }
-    for(int i=0; i< ui->moduleList->topLevelItemCount();i++){
-        if(ui->moduleList->topLevelItem(i)->text(2) == "running"){
+    for(int i=0; i< ui->moduleList->topLevelItemCount();i++) {
+        if (ui->moduleList->topLevelItem(i)->text(2) == "running") {
             return true;
         }
     }
@@ -1799,7 +1799,7 @@ bool ApplicationViewWidget::isEditingMode()
 void ApplicationViewWidget::onSelfConnect(int which)
 {
     QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
-    if(it){
+    if (it) {
         it->setText(2,"connected");
         it->setIcon(0,QIcon(":/connect22.svg"));
         it->setTextColor(2,QColor("#008C00"));
@@ -1820,7 +1820,7 @@ void ApplicationViewWidget::onSelfConnect(int which)
 void ApplicationViewWidget::onSelfDisconnect(int which)
 {
     QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
-    if(it){
+    if (it) {
         it->setText(2,"disconnected");
         it->setIcon(0,QIcon(":/disconnect22.svg"));
         it->setTextColor(2,QColor("#BF0303"));
@@ -1835,16 +1835,16 @@ void ApplicationViewWidget::onSelfDisconnect(int which)
 void ApplicationViewWidget::onSelfResAvailable(int which)
 {
     QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
-    if(it){
+    if (it) {
         it->setText(3,"available");
-        if(it->text(2) == "computer"){
+        if (it->text(2) == "computer") {
             it->setIcon(0,QIcon(":/computer-available22.svg"));
             it->setTextColor(3,QColor("#008C00"));
-        }else{
+        } else {
             it->setIcon(0,QIcon(":/port-available22.svg"));
             it->setTextColor(3,QColor("#008C00"));
         }
-        /*if(row[m_resColumns.m_col_type] == Glib::ustring("computer"))
+        /*if (row[m_resColumns.m_col_type] == Glib::ustring("computer"))
             row.set_value(0, m_refPixAvailable);
         else
             row.set_value(0, m_refPixPortAvaibable);*/
@@ -1857,12 +1857,12 @@ void ApplicationViewWidget::onSelfResAvailable(int which)
 void ApplicationViewWidget::onSelfResUnavailable(int which)
 {
     QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
-    if(it){
+    if (it) {
         it->setText(3,"unavailable");
-        if(it->text(2) == "computer"){
+        if (it->text(2) == "computer") {
             it->setIcon(0,QIcon(":/computer-unavailable22.svg"));
             it->setTextColor(3,QColor("#BF0303"));
-        }else{
+        } else {
             it->setIcon(0,QIcon(":/port-unavailable22.svg"));
             it->setTextColor(3,QColor("#BF0303"));
         }
@@ -1873,7 +1873,7 @@ void ApplicationViewWidget::onSelfResUnavailable(int which)
 void ApplicationViewWidget::onSelfStart(int which)
 {
     QTreeWidgetItem *it = getModRowByID(which);
-    if(it){
+    if (it) {
         it->setText(2,"running");
         it->setIcon(0,QIcon(":/apply.svg"));
         it->setTextColor(2,QColor("#008C00"));
@@ -1890,7 +1890,7 @@ void ApplicationViewWidget::onSelfStart(int which)
 void ApplicationViewWidget::onSelfStop(int which)
 {
     QTreeWidgetItem *it = getModRowByID(which);
-    if(it){
+    if (it) {
         it->setText(2,"stopped");
         it->setIcon(0,QIcon(":/close.svg"));
         it->setTextColor(2,QColor("#BF0303"));
@@ -1922,13 +1922,13 @@ void ApplicationViewWidget::onModStop(int which)
 void ApplicationViewWidget::onModStdout(int which, const char* msg)
 {
     QString s = QString("%1").arg(msg);
-    for(int j=0;j<ui->moduleList->topLevelItemCount();j++){
+    for(int j=0;j<ui->moduleList->topLevelItemCount();j++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(j);
-        if(it->data(0,Qt::UserRole) == APPLICATION){
+        if (it->data(0,Qt::UserRole) == APPLICATION) {
             modStdOutNestedApplication(it,which,s);
-        }else{
+        } else {
             StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
-            if(stdouWin && stdouWin->getId() == which){
+            if (stdouWin && stdouWin->getId() == which) {
                 stdouWin->addMessage(s);
                 break;
             }
@@ -1939,13 +1939,13 @@ void ApplicationViewWidget::onModStdout(int which, const char* msg)
 
 void ApplicationViewWidget::modStdOutNestedApplication(QTreeWidgetItem *it, int id,QString s)
 {
-    for(int j=0; j<it->childCount();j++){
+    for(int j=0; j<it->childCount();j++) {
         QTreeWidgetItem *ch = it->child(j);
-        if(ch->data(0,Qt::UserRole) == APPLICATION){
+        if (ch->data(0,Qt::UserRole) == APPLICATION) {
             modStdOutNestedApplication(ch,id,s);
-        }else{
+        } else {
             StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(ch->data(0,Qt::UserRole));
-            if(stdouWin && stdouWin->getId() == id){
+            if (stdouWin && stdouWin->getId() == id) {
                 stdouWin->addMessage(s);
                 break;
             }
@@ -1992,18 +1992,20 @@ void ApplicationViewWidget::onResUnAvailable(int which)
 */
 void ApplicationViewWidget::onConAvailable(int from, int to)
 {
-    if(from >= 0){
+    if (from >= 0) {
         int row;
-        if(getConRowByID(from, &row))
+        if (getConRowByID(from, &row)) {
             ui->connectionList->topLevelItem(row)->setTextColor(3,QColor("#008C00"));
             builder->setOutputPortAvailable(ui->connectionList->topLevelItem(row)->text(3),true);
+        }
     }
 
-    if(to >= 0){
+    if (to >= 0) {
         int row;
-        if(getConRowByID(to, &row))
+        if (getConRowByID(to, &row)) {
             ui->connectionList->topLevelItem(row)->setTextColor(4,QColor("#008C00"));
             builder->setInputPortAvailable(ui->connectionList->topLevelItem(row)->text(4),true);
+        }
     }
     reportErrors();
 }
@@ -2013,17 +2015,17 @@ void ApplicationViewWidget::onConAvailable(int from, int to)
 */
 void ApplicationViewWidget::onConUnAvailable(int from, int to)
 {
-    if(from >= 0){
+    if (from >= 0) {
         int row;
-        if(getConRowByID(from, &row)){
+        if (getConRowByID(from, &row)) {
             ui->connectionList->topLevelItem(row)->setTextColor(3,QColor("#BF0303"));
             builder->setOutputPortAvailable(ui->connectionList->topLevelItem(row)->text(3),false);
         }
     }
 
-    if(to >= 0){
+    if (to >= 0) {
         int row;
-        if(getConRowByID(to, &row)){
+        if (getConRowByID(to, &row)) {
             ui->connectionList->topLevelItem(row)->setTextColor(4,QColor("#BF0303"));
             builder->setInputPortAvailable(ui->connectionList->topLevelItem(row)->text(4),false);
         }
@@ -2059,10 +2061,10 @@ void ApplicationViewWidget::onDetachStdout(void)
 */
 bool ApplicationViewWidget::getConRowByID(int id, int *row)
 {
-    for(int i=0;i< ui->connectionList->topLevelItemCount();i++){
+    for(int i=0;i< ui->connectionList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
 
-        if(it->text(1).toInt() == id){
+        if (it->text(1).toInt() == id) {
             *row = i;
             return true;
         }
@@ -2076,31 +2078,31 @@ bool ApplicationViewWidget::getConRowByID(int id, int *row)
 QTreeWidgetItem* ApplicationViewWidget::getModRowByID(int id, QTreeWidgetItem *parent)
 {
     QTreeWidgetItem *ret = NULL;
-    if(!parent){
-        for(int i=0;i< ui->moduleList->topLevelItemCount();i++){
+    if (!parent) {
+        for(int i=0;i< ui->moduleList->topLevelItemCount();i++) {
             QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
-            if(it->data(0,Qt::UserRole) == APPLICATION){
+            if (it->data(0,Qt::UserRole) == APPLICATION) {
                 ret = getModRowByID(id,it);
-                if(ret){
+                if (ret) {
                     break;
                 }
             }
 
-            if(it->text(1).toInt() == id){
+            if (it->text(1).toInt() == id) {
                 return it;
             }
         }
-    }else{
-        for(int i=0;i< parent->childCount();i++){
+    } else {
+        for(int i=0;i< parent->childCount();i++) {
             QTreeWidgetItem *it = parent->child(i);
-            if(it->data(0,Qt::UserRole) == APPLICATION){
+            if (it->data(0,Qt::UserRole) == APPLICATION) {
                 ret = getModRowByID(id,it);
-                if(ret){
+                if (ret) {
                     break;
                 }
             }
 
-            if(it->text(1).toInt() == id){
+            if (it->text(1).toInt() == id) {
                 return it;
             }
         }
