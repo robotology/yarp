@@ -3,7 +3,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
- 
+
 // ********************************************************
 // *** THIS FILE IS CURRENTLY UNDER DEVELOPMENT / DEBUG ***
 // ********************************************************
@@ -110,7 +110,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     }
 
     driver.view(pSerial);
-    
+
     if (!pSerial)
     {
         yError("Error opening serial driver. Device not available");
@@ -174,7 +174,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     pSerial->send(b);
     yarp::os::Time::delay(0.040);
     pSerial->receive(b_ans);
-    /* 
+    /*
     syntax of the answer:
     MODL ... Model information of the sensor.
     DMIN ... Minimum measurable distance [mm]
@@ -183,7 +183,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     AMIN ... First Step of the Measurement Range
     AMAX ... Last Step of the Measurement Range
     AFRT ... Step number on the sensor's front axis
-    SCAN ... Standard angular velocity 
+    SCAN ... Standard angular velocity
     */
     ans = b_ans.get(0).asString();
     yDebug( "%s\n", ans.c_str());
@@ -337,10 +337,9 @@ bool laserHokuyo::getMeasurementData(yarp::sig::Vector &out)
         device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
         return true;
     }
-    else
-        device_status = yarp::dev::IRangefinder2D::DEVICE_GENERAL_ERROR;
-        return false;
 
+    device_status = yarp::dev::IRangefinder2D::DEVICE_GENERAL_ERROR;
+    return false;
 }
 
 bool laserHokuyo::getDeviceStatus(Device_status &status)
@@ -348,7 +347,7 @@ bool laserHokuyo::getDeviceStatus(Device_status &status)
     mutex.wait();
     status = device_status;
     mutex.post();
-    return true; 
+    return true;
 }
 
 bool laserHokuyo::threadInit()
@@ -356,7 +355,7 @@ bool laserHokuyo::threadInit()
 #ifdef LASER_DEBUG
     yDebug("laserHokuyo:: thread initialising...\n");
     yDebug("... done!\n");
-#endif 
+#endif
 
     return true;
 }
@@ -388,7 +387,7 @@ inline long laserHokuyo::decodeDataValue(const char* data, int data_byte)
 }
 
 int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_data, const int text_data_len, int current_line, yarp::sig::Vector& data)
-{ 
+{
     static char data_block [4000];
 
     if (text_data_len==0)
@@ -412,15 +411,15 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
                     value=sensor_properties.DMAX;
                 }
                 //units are m
-                 data.push_back(value/1000.0); 
+                 data.push_back(value/1000.0);
             }
             return HOKUYO_STATUS_ACQUISITION_COMPLETE;
         }
 
     // check in the first line if it is a valid answer to GD command
-    if (current_line == 0) 
+    if (current_line == 0)
     {
-        data_block[0]='\0'; //resets the datablock; 
+        data_block[0]='\0'; //resets the datablock;
         if ((laser_mode == MD_MODE && (text_data[0] != 'M' || text_data[1] != 'D')) ||
             (laser_mode == GD_MODE && (text_data[0] != 'G' || text_data[1] != 'D')))
             {
@@ -502,7 +501,7 @@ void laserHokuyo::run()
     bool error = false;
     int current_line =0;
     double maxtime=1;
-    do 
+    do
     {
         //yDebug ("1status: %d!\n",internal_status);
         int answer_len = pSerial->receiveLine(answer, buffer_size);
