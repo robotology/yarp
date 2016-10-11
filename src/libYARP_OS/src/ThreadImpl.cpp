@@ -1,11 +1,8 @@
 /*
-* Author: Lorenzo Natale, Paul Fitzpatrick, Anne van Rossum
-* Copyright (C) 2006 The Robotcub consortium
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
-
-// added threadRelease/threadInit methods, synchronization and
-// init failure notification -nat
+ * Author: Lorenzo Natale, Paul Fitzpatrick, Anne van Rossum
+ * Copyright (C) 2006 The Robotcub consortium
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
@@ -35,12 +32,18 @@ int ThreadImpl::defaultStackSize = 0;
 SemaphoreImpl *ThreadImpl::threadMutex = YARP_NULLPTR;
 SemaphoreImpl *ThreadImpl::timeMutex = YARP_NULLPTR;
 
-void ThreadImpl::init() {
-    if (!threadMutex) threadMutex = new SemaphoreImpl(1);
-    if (!timeMutex) timeMutex = new SemaphoreImpl(1);
+void ThreadImpl::init()
+{
+    if (!threadMutex) {
+        threadMutex = new SemaphoreImpl(1);
+    }
+    if (!timeMutex) {
+        timeMutex = new SemaphoreImpl(1);
+    }
 }
 
-void ThreadImpl::fini() {
+void ThreadImpl::fini()
+{
     if (threadMutex) {
         delete threadMutex;
         threadMutex = YARP_NULLPTR;
@@ -83,8 +86,7 @@ PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
     thread->notifyOpened(success);
     thread->synchroPost();
 
-    if (success)
-    {
+    if (success) {
         // c++11 std::thread, pthread and ace threads on some platforms do not
         // return the thread id, therefore it must be set before calling run(),
         // to avoid a race condition in case the run() method checks it.
@@ -147,27 +149,34 @@ ThreadImpl::ThreadImpl(Runnable *target) :
 }
 
 
-ThreadImpl::~ThreadImpl() {
+ThreadImpl::~ThreadImpl()
+{
     YARP_DEBUG(Logger::get(),"Thread being deleted");
     join();
 }
 
 
-long int ThreadImpl::getKey() {
+long int ThreadImpl::getKey()
+{
     // if id doesn't fit in long int, should do local translation
     return (long int)id;
 }
 
-long int ThreadImpl::getKeyOfCaller() {
+
+long int ThreadImpl::getKeyOfCaller()
+{
     return (long int)PLATFORM_THREAD_SELF();
 }
 
 
-void ThreadImpl::setOptions(int stackSize) {
+void ThreadImpl::setOptions(int stackSize)
+{
     this->stackSize = stackSize;
 }
 
-int ThreadImpl::join(double seconds) {
+
+int ThreadImpl::join(double seconds)
+{
     closing = true;
     if (needJoin) {
         if (seconds>0) {
@@ -177,7 +186,9 @@ int ThreadImpl::join(double seconds) {
                 return -1;
             }
             synchro.waitWithTimeout(seconds);
-            if (active) return -1;
+            if (active) {
+                return -1;
+            }
         }
         int result = PLATFORM_THREAD_JOIN(hid);
         needJoin = false;
@@ -188,13 +199,15 @@ int ThreadImpl::join(double seconds) {
     return 0;
 }
 
-void ThreadImpl::run() {
+void ThreadImpl::run()
+{
     if (delegate!=YARP_NULLPTR) {
         delegate->run();
     }
 }
 
-void ThreadImpl::close() {
+void ThreadImpl::close()
+{
     closing = true;
     if (delegate!=YARP_NULLPTR) {
         delegate->close();
@@ -203,20 +216,23 @@ void ThreadImpl::close() {
 }
 
 // similar to close(), but does not join (does not block)
-void ThreadImpl::askToClose() {
+void ThreadImpl::askToClose()
+{
     closing = true;
     if (delegate!=YARP_NULLPTR) {
         delegate->close();
     }
 }
 
-void ThreadImpl::beforeStart() {
+void ThreadImpl::beforeStart()
+{
     if (delegate!=YARP_NULLPTR) {
         delegate->beforeStart();
     }
 }
 
-void ThreadImpl::afterStart(bool success) {
+void ThreadImpl::afterStart(bool success)
+{
     if (delegate!=YARP_NULLPTR) {
         delegate->afterStart(success);
     }
@@ -224,7 +240,7 @@ void ThreadImpl::afterStart(bool success) {
 
 bool ThreadImpl::threadInit()
 {
-    if (delegate!=YARP_NULLPTR){
+    if (delegate!=YARP_NULLPTR) {
         return delegate->threadInit();
     }
     else
@@ -238,7 +254,8 @@ void ThreadImpl::threadRelease()
     }
 }
 
-bool ThreadImpl::start() {
+bool ThreadImpl::start()
+{
     join();
     closing = false;
     initWasSuccessful = false;
@@ -267,8 +284,9 @@ bool ThreadImpl::start() {
 #else
     pthread_attr_t attr;
     int s = pthread_attr_init(&attr);
-    if (s != 0)
+    if (s != 0) {
         perror("pthread_attr_init");
+    }
 
     if (stackSize > 0) {
         s = pthread_attr_setstacksize(&attr, stackSize);
@@ -278,8 +296,7 @@ bool ThreadImpl::start() {
 
     int result = pthread_create(&hid, &attr, theExecutiveBranch, (void*)this);
 #endif
-    if (result==0)
-    {
+    if (result==0) {
         // we must, at some point in the future, join the thread
         needJoin = true;
 
@@ -287,15 +304,12 @@ bool ThreadImpl::start() {
         YARP_DEBUG(Logger::get(), ConstString("Child thread initializing"));
         synchroWait();
         initWasSuccessful = true;
-        if (opened)
-        {
+        if (opened) {
             ThreadImpl::changeCount(1);
             YARP_DEBUG(Logger::get(),"Child thread initialized ok");
             afterStart(true);
             return true;
-        }
-        else
-        {
+        } else {
             YARP_DEBUG(Logger::get(),"Child thread did not initialize ok");
             //wait for the thread to really exit
             ThreadImpl::join(-1);
@@ -326,18 +340,21 @@ void ThreadImpl::notify(bool s)
     threadMutex->post();
 }
 
-bool ThreadImpl::isClosing() {
+bool ThreadImpl::isClosing()
+{
     return closing;
 }
 
-bool ThreadImpl::isRunning() {
+bool ThreadImpl::isRunning()
+{
     threadMutex->wait();
     bool b = active;
     threadMutex->post();
     return b;
 }
 
-int ThreadImpl::getCount() {
+int ThreadImpl::getCount()
+{
     init();
     threadMutex->wait();
     int ct = threadCount;
@@ -346,14 +363,16 @@ int ThreadImpl::getCount() {
 }
 
 
-void ThreadImpl::changeCount(int delta) {
+void ThreadImpl::changeCount(int delta)
+{
     init();
     threadMutex->wait();
     threadCount+=delta;
     threadMutex->post();
 }
 
-int ThreadImpl::setPriority(int priority, int policy) {
+int ThreadImpl::setPriority(int priority, int policy)
+{
     if (priority==-1) {
         priority = defaultPriority;
         policy = defaultPolicy;
@@ -396,7 +415,8 @@ int ThreadImpl::setPriority(int priority, int policy) {
     return 0;
 }
 
-int ThreadImpl::getPriority() {
+int ThreadImpl::getPriority()
+{
     int prio = defaultPriority;
     if (active) {
 #if defined(YARP_HAS_CXX11)
@@ -434,7 +454,8 @@ int ThreadImpl::getPriority() {
     return prio;
 }
 
-int ThreadImpl::getPolicy() {
+int ThreadImpl::getPolicy()
+{
     int policy = defaultPolicy;
     if (active) {
 #if defined(YARP_HAS_CXX11)
@@ -472,16 +493,19 @@ int ThreadImpl::getPolicy() {
     return policy;
 }
 
-long ThreadImpl::getTid() {
+long ThreadImpl::getTid()
+{
     return tid;
 }
 
 
-void ThreadImpl::setDefaultStackSize(int stackSize) {
+void ThreadImpl::setDefaultStackSize(int stackSize)
+{
     defaultStackSize = stackSize;
 }
 
-void ThreadImpl::yield() {
+void ThreadImpl::yield()
+{
 #if defined(YARP_HAS_CXX11)
     std::this_thread::yield();
 #elif defined(YARP_HAS_ACE) // Use ACE API
