@@ -48,7 +48,13 @@ set_and_check(YARP_MODULE_DIR "@PACKAGE_YARP_MODULE_DIR@")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
 if(NOT YARP_NO_DEPRECATED)
   list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/deprecated")
+
+  # find_package(YCM) will overwrite the PACKAGE_PREFIX_DIR variable
+  # set by PACKAGE_INIT therefore we save and restore it later
+  set(_PACKAGE_PREFIX_DIR ${PACKAGE_PREFIX_DIR})
   find_package(YCM 0.2 QUIET)
+  set(PACKAGE_PREFIX_DIR ${_PACKAGE_PREFIX_DIR})
+  unset(_PACKAGE_PREFIX_DIR)
   if(NOT YCM_FOUND)
     list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/find-modules"
                                  "${YARP_MODULE_DIR}/ycm-0.2/modules"
