@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+# Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
+# Authors: Silvio Traversaro <silvio.traversaro@iit.it>
+# CopyPolicy: LGPLv2 or later
+
 import argparse
 
 def printPortTags(out_file, ports, port_type, host, additional_flags):
