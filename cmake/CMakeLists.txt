@@ -176,12 +176,10 @@ endforeach()
 foreach(_d cmake-3.1/
            cmake-3.5/
            ycm-0.2/cmake-next/)
-  if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}")
-    install(CODE
- "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
-    message(STATUS \"Deleted: \\\"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\\\"\")
-    file(REMOVE_RECURSE \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
+  install(CODE
+ "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
+    message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\\\"\")
+    file(REMOVE_RECURSE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
   endif()"
            COMPONENT scripts)
-  endif()
 endforeach()
