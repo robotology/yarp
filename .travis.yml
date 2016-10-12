@@ -119,6 +119,13 @@ matrix:
     # Normal build with integration tests (sometimes integration::rpc test fails)
     - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
 
+    # OS::NodeTest randomly crashes on macOS with SKIP_ACE enabled
+    - os: osx
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
+
+    - os: osx
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
+
 branches:
   except:
     - /^*appveyor*$/
