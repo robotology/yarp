@@ -223,7 +223,7 @@ Now declare a plot:
 \endcode
 
 - \a gridx and \a gridy are the position in the main table of the portscope.
-\a gridx corresponds to the column (the first colums
+\a gridx corresponds to the column (the first columns
 index is 0), and \a gridy is corresponds to the row. Columns and rows are
 indexed from zero, therefore (0,0) is the top-left plot [mandatory].
 - \a hspan and \a vspan are the number of cells in the main table that the plot will

@@ -571,7 +571,7 @@ bool Manager::checkDependency(void)
 {
     /**
      * checking for port resources availability
-     * TODO:later it should change to use proper broker for resource cheking.
+     * TODO:later it should change to use proper broker for resource checking.
      *      up to now, we use only yraprun for checking port resources
      */
     bool ret = true;

@@ -619,7 +619,7 @@ Here is an example of module description file in XML format:
 \endlatexonly
 
 \section create Create new XML description file
-yarpmanager allows for creating new application, module and resource description file using predifined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then
+yarpmanager allows for creating new application, module and resource description file using predefined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then
 - From "File>New" menu chose "New Application". ("New Module" for module and "New Resource" for resource)
 - Chose your application folder and enter proper name (e.g "my-test-app.xml") to save it. The template file will be open using 'external_editor'.
 - Modify and save it.

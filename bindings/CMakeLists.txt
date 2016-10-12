@@ -344,7 +344,7 @@ if(CREATE_ALLEGRO)
           DESTINATION ${ALLEGRO_INSTALL_DIR}/yarp/lib)
 
   if(UNIX)
-    install(CODE "execute_process(COMMAND \"mkdir\" \"-p\" \"${ALLEGRO_ASDF_SYSTEMS}\"
+    install(CODE "execute_process(COMMAND \"\${CMAKE_COMMAND}\" \"-E\" \"make_directory\" \"${ALLEGRO_ASDF_SYSTEMS}\"
                                   COMMAND \"ln\" \"-s\" \"${CMAKE_INSTALL_PREFIX}/${ALLEGRO_INSTALL_DIR}/yarp/yarp.asd\" \"${CMAKE_INSTALL_PREFIX}/${ALLEGRO_ASDF_SYSTEMS}\")")
   endif()
 endif()

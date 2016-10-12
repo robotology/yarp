@@ -277,22 +277,16 @@ type \"@_type@\"
         message(STATUS "Deleted: \"${CMAKE_BINARY_DIR}/${_destination}/${_f}\"")
         file(REMOVE "${CMAKE_BINARY_DIR}/${_destination}/${_f}")
       endif()
-      if(EXISTS "${CMAKE_INSTALL_PREFIX}/${_f}")
-        message(STATUS "The file \"${CMAKE_INSTALL_PREFIX}/${_f}\" will cause issues when looking for plugins. It will be automatically deleted when installing")
-        install(CODE
- "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/${_f}\")
-    message(STATUS \"Deleted: \\\"${CMAKE_INSTALL_PREFIX}/${_f}\\\"\")
-    file(REMOVE \"${CMAKE_INSTALL_PREFIX}/${_f}\")
+      install(CODE
+ "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_f}\")
+    message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_f}\\\"\")
+    file(REMOVE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_f}\")
   endif()")
-      endif()
-      if(EXISTS "${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}")
-        message(STATUS "The file \"${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\" will cause issues when looking for plugins. It will be automatically deleted when installing")
-        install(CODE
- "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\")
-    message(STATUS \"Deleted: \\\"${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\\\"\")
-    file(REMOVE \"${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\")
+      install(CODE
+ "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\")
+    message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\\\"\")
+    file(REMOVE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\")
   endif()")
-      endif()
     endforeach()
 
   endif()

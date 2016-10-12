@@ -34,11 +34,37 @@ if(CREATE_YARPDATADUMPER)
 
   install(TARGETS yarpdatadumper
           COMPONENT utilities
-          DESTINATION ${CMAKE_INSTALL_BINDIR})
+          DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
-   # install the yarpdatadumperAppGenerator.py helper script
-   yarp_install(PROGRAMS yarpdatadumperAppGenerator.py
-                COMPONENT utilities
-                DESTINATION ${CMAKE_INSTALL_BINDIR})
+  if(WIN32)
+    # install the yarpdatadumperAppGenerator.py helper script
+    yarp_install(PROGRAMS yarpdatadumperAppGenerator.py
+                 COMPONENT utilities
+                 DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  else()
+    yarp_install(PROGRAMS yarpdatadumperAppGenerator.py
+                 COMPONENT utilities
+                 DESTINATION "${YARP_DATA_INSTALL_DIR}/scripts/")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${YARP_DATA_INSTALL_DIR}/scripts/yarpdatadumperAppGenerator.py"
+                                                               "${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator")
+    install(CODE
+ "message(STATUS \"Symbolic link: \$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator\")
+  if(NOT EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/scripts/yarpdatadumperAppGenerator.py\")
+    execute_process(COMMAND \${CMAKE_COMMAND} -E create_symlink \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${YARP_DATA_INSTALL_DIR}/scripts/yarpdatadumperAppGenerator.py\"
+                                                               \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator\")
+  endif()"
+            COMPONENT utilities)
 
+    # Remove deprecated files (since YARP 2.3.66.1)
+    if(EXISTS "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator.py")
+      message(STATUS "Deleted: \"${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator.py\"")
+      file(REMOVE "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator.py")
+    endif()
+    install(CODE
+ "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py\")
+    message(STATUS \"Deleted: \$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py\")
+    file(REMOVE \"\$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py\")
+  endif()")
+
+  endif()
 endif()
