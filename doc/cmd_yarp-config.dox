@@ -41,7 +41,7 @@ To import contexts to the home directory:
   yarp-config context --import-all
 \endverbatim
 
-The first two commands affects individual contexts, and allow to import a whole context (first command) or only some specific files (second one); the third command affects all contexts (not recommended).
+The first two commands affects individual contexts, and allow one to import a whole context (first command) or only some specific files (second one); the third command affects all contexts (not recommended).
 After you finish importing a context, you can go to your local private directory (in Linux usually: $HOME/.local/share/yarp/contexts/) and edit it.
 To remove any local changes and restore the default files, one can do:
 

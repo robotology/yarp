@@ -147,7 +147,7 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
         if(((*itr) == ' ') || ((*itr) == '/') )
             (*itr) = ':';
 
-   __trace_message = "(init) cheking yarp network";
+   __trace_message = "(init) checking yarp network";
     if(!NetworkBase::checkNetwork(5.0))
     {
         strError = "Yarp network server is not up.";

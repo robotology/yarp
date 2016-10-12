@@ -2223,7 +2223,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                             if(qos_prop != NULL) {
                                                 if(qos_prop->check("priority")) {
                                                     NetInt32 priority = qos_prop->find("priority").asVocab();
-                                                    // set the packet DSCP value based on some predifined priority levels
+                                                    // set the packet DSCP value based on some predefined priority levels
                                                     // the expected levels are: LOW, NORM, HIGH, CRIT
                                                     int dscp;
                                                     switch(priority) {
