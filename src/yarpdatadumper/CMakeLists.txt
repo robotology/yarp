@@ -45,14 +45,18 @@ if(CREATE_YARPDATADUMPER)
     yarp_install(PROGRAMS yarpdatadumperAppGenerator.py
                  COMPONENT utilities
                  DESTINATION "${YARP_DATA_INSTALL_DIR}/scripts/")
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${YARP_DATA_INSTALL_DIR}/scripts/yarpdatadumperAppGenerator.py"
-                                                               "${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator")
+    file(RELATIVE_PATH _relpath "/${CMAKE_INSTALL_BINDIR}" "/${YARP_DATA_INSTALL_DIR}/scripts/yarpdatadumperAppGenerator.py")
+    if (NOT EXISTS "${CMAKE_INSTALL_BINDIR}")
+      execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_INSTALL_BINDIR}")
+    endif()
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${_relpath}" "${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator")
     install(CODE
- "message(STATUS \"Symbolic link: \$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator\")
-  if(NOT EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/scripts/yarpdatadumperAppGenerator.py\")
-    execute_process(COMMAND \${CMAKE_COMMAND} -E create_symlink \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${YARP_DATA_INSTALL_DIR}/scripts/yarpdatadumperAppGenerator.py\"
-                                                               \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator\")
-  endif()"
+ "message(STATUS \"Symbolic link: \$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator to ${_relpath}\")
+  if (NOT EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/\")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/\")
+  endif()
+  execute_process(COMMAND \${CMAKE_COMMAND} -E create_symlink \"${_relpath}\"
+                                                               \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator\")"
             COMPONENT utilities)
 
     # Remove deprecated files (since YARP 2.3.66.1)
