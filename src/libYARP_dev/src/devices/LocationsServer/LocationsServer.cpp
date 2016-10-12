@@ -14,6 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <cstdlib>
 
 /*! \file LocationsServer.cpp */
 
