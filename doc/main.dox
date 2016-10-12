@@ -60,6 +60,7 @@ Command line tools:
 \li \subpage yarprun
 \li \subpage yarp-config
 \li \subpage yarpdatadumper
+\li \subpage yarpdatadumperAppGenerator
 \li \subpage yarphear
 \li \subpage yarplogger-console
 \li \subpage yarpmanager-console

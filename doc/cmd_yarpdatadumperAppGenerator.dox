@@ -1,0 +1,88 @@
+/**
+\page yarpdatadumperAppGenerator yarpdatadumperAppGenerator: Generate yarpmanager applications for yarpdatadumper
+
+\ingroup yarp_tools
+
+\section intro_sec Description
+
+To dump data from several yarp ports, it may be convenient
+to launch several yarpdatadumper instances using the yarpmanager.
+
+If you have Python installed on your machine, you can use the
+yarpdatadumperAppGenerator utility script to generate a yarpmanager
+application that will launch and connect as many yarpdatadumper as you need.
+
+If for example you need to read the ports /icub/left_leg/stateExt:o and
+/icub/left_leg/analog:o on the host icub15, you can run the generator
+with the following option:
+
+\code
+yarpdatadumperAppGenerator  --ports /icub/left_leg/analog:o /icub/left_leg/stateExt:o  --host icub15 --name leftLegDumper
+\endcode
+
+This will generate the following yarpmanager application in the leftLegDumper.xml file:
+
+\code
+<application>
+    <name>leftLegDumper</name>
+    <dependencies>
+        <port>/icub/left_leg/analog:o</port>
+        <port>/icub/left_leg/stateExt:o</port>
+    </dependencies>
+    <module>
+        <name>yarpdatadumper</name>
+        <parameters>--name /dumper/icub/left_leg/analog:o --type bottle </parameters>
+        <node>icub15</node>
+        <tag>data-dumper-icub-left_leg-analog-o</tag>
+    </module>
+    <connection>
+        <from>/icub/left_leg/analog:o</from>
+        <to>/dumper/icub/left_leg/analog:o</to>
+        <protocol>udp</protocol>
+    </connection>
+    <module>
+        <name>yarpdatadumper</name>
+        <parameters>--name /dumper/icub/left_leg/stateExt:o --type bottle </parameters>
+        <node>icub15</node>
+        <tag>data-dumper-icub-left_leg-stateExt-o</tag>
+    </module>
+    <connection>
+        <from>/icub/left_leg/stateExt:o</from>
+        <to>/dumper/icub/left_leg/stateExt:o</to>
+        <protocol>udp</protocol>
+    </connection>
+</application>
+\endcode
+
+
+\section usage Usage
+
+
+```
+usage: yarpdatadumperAppGenerator [-h] --ports PORTS [PORTS ...]
+                                  [--imagePorts IMAGEPORTS [IMAGEPORTS ...]]
+                                  --host HOST --name NAME [--rxTime]
+                                  [--txTime] [--addVideo]
+
+Tool for generating a YarpManager XML application for dumping a list of YARP
+ports using the yarpdatadumper.
+
+optional arguments:
+
+  -h, --help            show this help message and exit
+  --ports PORTS [PORTS ...]
+                        list of ports (serializable to bottles) to dump
+  --imagePorts IMAGEPORTS [IMAGEPORTS ...]
+                        list of ports (of to dump
+  --host HOST           host where to launch the dataDumpers
+  --name NAME           name of the application, the file will be saved as
+                        name.xml
+  --rxTime              pass --rxTime flag to the yarpdatadumpers
+  --txTime              pass --txTime flag to the yarpdatadumpers
+  --addVideo            pass --addVideo flag to the yarpdatadumpers
+```
+
+\sa \ref yarpdataplayer
+\sa \ref yarpmanager
+
+*/
