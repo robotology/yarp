@@ -19,6 +19,8 @@
 #include "logtab.h"
 #include "ui_logtab.h"
 
+#include <QFontDatabase>
+
 LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
     ui(new Ui::LogTab),
@@ -64,6 +66,9 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _syst
     ui->listView->horizontalHeader()->setSectionResizeMode(3,QHeaderView::Stretch);
     ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     ui->listView->verticalHeader()->setDefaultSectionSize(20);
+
+    const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    ui->listView->setFont(fixedFont);
     
     clipboard=QApplication::clipboard();
     connect(ui->listView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
