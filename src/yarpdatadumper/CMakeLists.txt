@@ -60,13 +60,11 @@ if(CREATE_YARPDATADUMPER)
       message(STATUS "Deleted: \"${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator.py\"")
       file(REMOVE "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator.py")
     endif()
-    if(EXISTS "${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py")
-      install(CODE
+    install(CODE
  "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py\")
     message(STATUS \"Deleted: \$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py\")
     file(REMOVE \"\$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py\")
   endif()")
-    endif()
 
   endif()
 endif()
