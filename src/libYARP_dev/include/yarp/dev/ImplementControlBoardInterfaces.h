@@ -769,7 +769,7 @@ public:
  * missed to implement useful functionalities.
  *
  */
-class yarp::dev::StubImplPidControlRaw: public IPidControlRaw
+class YARP_dev_API yarp::dev::StubImplPidControlRaw: public IPidControlRaw
 {
 private:
     /**
@@ -857,7 +857,7 @@ public:
  * missed to implement useful functionalities.
  *
  */
-class yarp::dev::StubImplPositionControlRaw: public IPositionControlRaw
+class YARP_dev_API yarp::dev::StubImplPositionControlRaw: public IPositionControlRaw
 {
 private:
     /**
@@ -935,7 +935,7 @@ public:
  * missed to implement useful functionalities.
  *
  */
-class yarp::dev::StubImplEncodersRaw: public IEncodersRaw
+class YARP_dev_API yarp::dev::StubImplEncodersRaw: public IEncodersRaw
 {
 private:
     /**
