@@ -61,7 +61,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 
     if (error_codes==1)
     {
-        yInfo("'error_codes' option enabled. Invalid samples will be substituded with out-of-range measurements.");
+        yInfo("'error_codes' option enabled. Invalid samples will be substituted with out-of-range measurements.");
     }
     if (s=="GD")
     {
