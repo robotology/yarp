@@ -437,7 +437,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     {
         if(verbosewhenok)
         {
-            yDebug() << "FakeMotionControl::init() has succesfully initted board ";
+            yDebug() << "FakeMotionControl::init() has successfully initted board ";
         }
     }
 
