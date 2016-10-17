@@ -167,14 +167,14 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
         {
             if(save_locations(in.get(1).asString()))
             {
-                out.addString(in.get(1).asString() + " succesfully saved");
+                out.addString(in.get(1).asString() + " successfully saved");
             }
         }
         else if (in.get(0).asString() == "load" && in.get(1).isString())
         {
             if(load_locations(in.get(1).asString()))
             {
-                out.addString(in.get(1).asString() + " succesfully loaded");
+                out.addString(in.get(1).asString() + " successfully loaded");
             }
         }
         else if(in.get(0).asString() == "list")
@@ -341,7 +341,7 @@ bool yarp::dev::LocationsServer::open(yarp::os::Searchable &config)
         std::string location_file = config.find("locations_file").asString();
         bool ret                  = load_locations(location_file);
 
-        if (ret) { yInfo() << "Location file" << location_file << "succesfully loaded."; }
+        if (ret) { yInfo() << "Location file" << location_file << "successfully loaded."; }
         else { yError() << "Problems opening file" << location_file; }
     }
 

@@ -270,8 +270,8 @@ public:
         // Close devices
         bool cl1 = ddtransformclient.close();
         bool cl2 = ddtransformserver.close();
-        checkTrue(cl1, "ddtransformclient succesfully closed");
-        checkTrue(cl2, "ddtransformserver succesfully closed");
+        checkTrue(cl1, "ddtransformclient successfully closed");
+        checkTrue(cl2, "ddtransformserver successfully closed");
     }
 
     virtual void runTests()
