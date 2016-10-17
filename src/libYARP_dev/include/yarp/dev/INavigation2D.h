@@ -45,7 +45,7 @@ namespace yarp {
                 theta  = 0;
             }
 
-            const inline bool operator!=(const Map2DLocation& r)
+            inline bool operator!=(const Map2DLocation& r) const
             {
                 if(
                   map_id != r.map_id ||
@@ -59,7 +59,7 @@ namespace yarp {
                 return false;
             }
 
-            const inline bool operator==(const Map2DLocation& r)
+            inline bool operator==(const Map2DLocation& r) const
             {
                 if(
                   map_id == r.map_id &&
