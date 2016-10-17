@@ -55,7 +55,7 @@ public:
     * Set the current control mode.
     * @param j: joint number
     * @param mode: a vocab of the desired control mode for joint j.
-    * @return true if the new controlMode was succesfully set, false if the message was not received or
+    * @return true if the new controlMode was successfully set, false if the message was not received or
     *         the joint was unable to switch to the desired controlMode
     *         (e.g. the joint is on a fault condition or the desired mode is not implemented).    */
     virtual bool setControlMode(const int j, const int mode)=0;
@@ -70,7 +70,7 @@ public:
     *          n_joint  3
     *          joints   0  2  4
     *          modes    VOCAB_CM_POSITION VOCAB_CM_VELOCITY VOCAB_CM_POSITION
-    * @return true if the new controlMode was succesfully set, false if the message was not received or
+    * @return true if the new controlMode was successfully set, false if the message was not received or
     *         the joint was unable to switch to the desired controlMode
     *         (e.g. the joint is on a fault condition or the desired mode is not implemented).
     */
@@ -79,7 +79,7 @@ public:
     /**
     * Set the current control mode (multiple joints).
     * @param modes: a vector containing vocabs for the desired control modes of the joints.
-    * @return true if the new controlMode was succesfully set, false if the message was not received or
+    * @return true if the new controlMode was successfully set, false if the message was not received or
     *         the joint was unable to switch to the desired controlMode
     *         (e.g. the joint is on a fault condition or the desired mode is not implemented).
     */
@@ -126,7 +126,7 @@ public:
 // Read only (imposed by the board on special events)
 #define VOCAB_CM_HW_FAULT           VOCAB4('h','w','f','a')
 #define VOCAB_CM_CALIBRATING        VOCAB3('c','a','l')     // the joint is calibrating
-#define VOCAB_CM_CALIB_DONE         VOCAB4('c','a','l','d') // calibration succesfully completed
+#define VOCAB_CM_CALIB_DONE         VOCAB4('c','a','l','d') // calibration successfully completed
 #define VOCAB_CM_NOT_CONFIGURED     VOCAB4('c','f','g','n') // missing initial configuration (default value at start-up)
 #define VOCAB_CM_CONFIGURED         VOCAB4('c','f','g','y') // initial configuration completed, if any
 
