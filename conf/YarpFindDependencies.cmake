@@ -53,7 +53,7 @@ macro(checkandset_dependency package)
     set(YARP_HAS_${PKG} FALSE)
   endif()
 
-endmacro (checkandset_dependency)
+endmacro ()
 
 
 # Check if a package is installed or if is going to be built and set some cmake variables
@@ -100,7 +100,7 @@ macro(checkbuildandset_dependency package)
     endif()
   endif()
 
-endmacro(checkbuildandset_dependency)
+endmacro()
 
 
 # Check if a required package is installed.
@@ -114,7 +114,7 @@ macro(check_required_dependency package)
 #      message(STATUS "${PKG} -> OK")
   endif()
 
-endmacro(check_required_dependency)
+endmacro()
 
 
 # Check if a dependency required to enable an option is installed.
@@ -132,7 +132,7 @@ macro(check_optional_dependency optionname package)
 #     message(STATUS "${PKG} ${optionname} -> NOT REQUIRED")
   endif()
 
-endmacro(check_optional_dependency)
+endmacro()
 
 
 # Check if at least one of the dependency required to enable an option is installed.
@@ -190,7 +190,7 @@ macro(print_dependency package)
   endif()
   unset(_version)
 
-endmacro(print_dependency)
+endmacro()
 
 
 # OPTIONS:
