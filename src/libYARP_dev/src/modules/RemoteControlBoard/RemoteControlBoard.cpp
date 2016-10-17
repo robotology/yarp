@@ -4272,11 +4272,18 @@ public:
     }
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
+#if !defined(_MSC_VER)
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#endif
     YARP_DEPRECATED virtual bool setPositionMode() { return set1V(VOCAB_POSITION_MODE); }
     YARP_DEPRECATED virtual bool setVelocityMode() { return set1V(VOCAB_VELOCITY_MODE); }
     YARP_DEPRECATED virtual bool setTorqueMode() { return set1V(VOCAB_TORQUE_MODE); }
     YARP_DEPRECATED virtual bool setOpenLoopMode() { return set1V(VOCAB_OPENLOOP_MODE); }
     YARP_DEPRECATED virtual bool setPositionDirectMode() { return set1V(VOCAB_POSITION_DIRECT); }
+#if !defined(_MSC_VER)
+YARP_WARNING_PUSH
+#endif
 #endif // YARP_NO_DEPRECATED
 
 };
