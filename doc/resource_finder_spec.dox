@@ -85,10 +85,10 @@ Default values for Yarp are therefore:
 <b>\%YARP\_CONFIG\_DIRS%</b>:
 > `%%ALLUSERSPROFILE%\yarp\`  
 
-Mac OSX
--------
+macOS
+-----
 
-On OSX, the following environment variable is used:
+On maxOS, the following environment variable is used:
 
 <b>$HOME</b>: 
 > `/Users/<username>`  

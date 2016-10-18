@@ -1,10 +1,7 @@
 sudo: required
 dist: trusty
 language: cpp
-cache:
-  ccache: true
-  timeout: 1000
-osx_image: xcode7.3
+cache: ccache
 
 os:
   - linux
@@ -25,16 +22,36 @@ env:
 
   matrix:
     # Normal build
-    - TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false
+    - TRAVIS_WITH_CXX11=false
     # C++11 build
-    - TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true
-    # No ACE build
-    - TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
-    # C++11 - No ACE build
-    - TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
+    - TRAVIS_WITH_CXX11=true
 
 matrix:
+  exclude:
+  - os: osx
+    compiler: gcc
+
   include:
+    # No ACE build  (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
+
+    # No ACE build  (linux, clang)
+    - os: linux
+      compiler: clang
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
+
+    # C++11, no ACE build  (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
+
+    # C++11, no ACE build  (linux, clang)
+    - os: linux
+      compiler: clang
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
+
     # Normal build with Ninja generator (linux, gcc)
     - os: linux
       compiler: gcc
@@ -110,21 +127,33 @@ matrix:
 #      compiler: gcc
 #      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_BUILD_TYPE=Profile
 
-    # Normal build with Xcode generator (osx, clang)
+    # Normal build with Xcode 7.3 (osx, clang)
     - os: osx
+      osx_image: xcode7.3
       compiler: clang
       env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
+
+    # C++11 build with Xcode 7.3 (osx, clang)
+    - os: osx
+      osx_image: xcode7.3
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
+
+    # Normal build with Xcode 8 (osx, clang)
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
+
+    # C++11 build with Xcode 8 (osx, clang)
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
+      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
 
   allow_failures:
     # Normal build with integration tests (sometimes integration::rpc test fails)
     - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
-
-    # OS::NodeTest randomly crashes on macOS with SKIP_ACE enabled
-    - os: osx
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
-
-    - os: osx
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
 
 branches:
   except:

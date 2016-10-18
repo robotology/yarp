@@ -23,7 +23,7 @@ in this battle is the "iperf" program.
 
 - Download from http://iperf.sourceforge.net/
 - Linux: apt-get install iperf (or similar command)
-- OSX: brew install iperf (if you use homebrew)
+- macOS: brew install iperf (if you use homebrew)
 
 Please make sure you have iperf available on all your machines
 before going any further.
