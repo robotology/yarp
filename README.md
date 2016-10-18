@@ -21,7 +21,7 @@ Installation
 
 See full instructions at http://www.yarp.it/install.html
 
-On OSX:
+On macOS:
 
     brew install yarp
 
@@ -35,7 +35,7 @@ On Linux:
 On Windows:
  * Binaries at https://github.com/robotology/yarp/releases
 
-Regular YARP builds use the ACE library.  On Linux and OSX,
+Regular YARP builds use the ACE library.  On Linux and macOS,
 YARP can be compiled without ACE by adding "-DSKIP_ACE=TRUE" 
 when running cmake.
 
@@ -62,7 +62,7 @@ requirements than the LGPL:
 Status
 ------
 
-[![Build Status (Linux/OSX)](https://img.shields.io/travis/robotology/yarp/master.svg?label=Build Status (Linux/OSX))](https://travis-ci.org/robotology/yarp)
+[![Build Status (Linux/macOS)](https://img.shields.io/travis/robotology/yarp/master.svg?label=Build Status (Linux/macOS))](https://travis-ci.org/robotology/yarp)
 [![Build status (Windows)](https://img.shields.io/appveyor/ci/robotology/yarp/master.svg?label=Build Status (Windows))](https://ci.appveyor.com/project/robotology/yarp)
 and [more](http://dashboard.icub.org/index.php?project=YARP)
 

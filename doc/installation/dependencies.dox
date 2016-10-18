@@ -50,7 +50,7 @@ compilers. Just look carefully for your combination.
     <a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#msvc">here (FIXME broken)</a>.
 \li UNIX/gcc instructions are
     <a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional">here (FIXME broken)</a>.
-\li OSX/gcc users, follow the UNIX instructions.
+\li macOS/gcc users, follow the UNIX instructions.
 
 ACE will take a while to compile, but if you can do it you'll be able to
 deal with anything we throw at you.
@@ -105,7 +105,7 @@ can just install that and you are done. Otherwise you need to download
     export LD_LIBRARY_PATH=$ACE_ROOT/lib:$LD_LIBRARY_PATH
     setenv LD_LIBRARY_PATH $ACE_ROOT/lib:$LD_LIBRARY_PATH
     \endverbatim
-\li (On OSX, the variable you need to set is \c DYLD_LIBRARY_PATH).
+\li (On macOS, the variable you need to set is \c DYLD_LIBRARY_PATH).
 \li An alternative is to copy the files in \c $ACE_ROOT/lib to a
     standard library directory, for example, \c /usr/lib.
 \li We've given a simple procedure that works for most people. But if
@@ -364,7 +364,7 @@ download the source code, and build it yourself.
 Qt5 binary package for Windows is available from the
 <a href="http://qt-project.org/downloads">Qt Project website</a>
 
-\subsubsection dependencies_qt5_macosx Mac OSX
+\subsubsection dependencies_qt5_macos macOS
 
 Qt5 binary package for Mac is available from the
 <a href="http://qt-project.org/downloads">Qt Project website</a>

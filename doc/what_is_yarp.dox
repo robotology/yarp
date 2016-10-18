@@ -58,7 +58,7 @@ The components of YARP can be broken down into:
 \li \link yarp_os libYARP_OS \endlink - interfacing with the operating system(s) to support
 easy streaming of data across many threads across many
 machines. YARP is written to be OS neutral, and has been used
-on Linux, Microsoft Windows, Mac OSX and Solaris.
+on Linux, Microsoft Windows, Apple macOS and iOS, Solaris, and Android.
 YARP uses the open-source ACE (ADAPTIVE
 Communication Environment) library, which is portable across a very
 broad range of environments, and YARP inherits that
