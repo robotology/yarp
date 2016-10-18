@@ -42,12 +42,12 @@ extern DriverCreator *createRGBDSensorWrapper();
 extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
 extern DriverCreator *createRemoteControlBoardRemapper();
-extern DriverCreator *createLocationsServer();
 extern DriverCreator *createNavigation2DClient();
 
 #ifdef WITH_YARPMATH
 extern DriverCreator *createFrameTransformServer();
 extern DriverCreator *createFrameTransformClient();
+extern DriverCreator *createLocationsServer();
 #endif
 
 #ifndef YARP_NO_DEPRECATED
@@ -102,12 +102,12 @@ void Drivers::init() {
     add(createRGBDSensorClient());
     add(createControlBoardRemapper());
     add(createRemoteControlBoardRemapper());
-    add(createLocationsServer());
     add(createNavigation2DClient());
 
 #ifdef WITH_YARPMATH
     add(createFrameTransformServer());
     add(createFrameTransformClient());
+    add(createLocationsServer());
 #endif
 
 #ifndef YARP_NO_DEPRECATED

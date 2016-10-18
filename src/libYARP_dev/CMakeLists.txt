@@ -149,21 +149,20 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/Rangefinder2DClient/Rangefinder2DClient.cpp
                         src/devices/ControlBoardWrapper/ControlBoardWrapper.cpp
                         src/devices/Navigation2DClient/Navigation2DClient.cpp
-                        src/devices/LocationsServer/LocationsServer.cpp
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
                         src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
-                                src/devices/FrameTransformServer/FrameTransformServer.cpp)
+                                src/devices/FrameTransformServer/FrameTransformServer.cpp
+                                src/devices/LocationsServer/LocationsServer.cpp)
 endif()
 
 set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/AnalogSensorClient/AnalogSensorClient.h
                         src/devices/BatteryWrapper/BatteryWrapper.h
                         src/devices/BatteryClient/BatteryClient.h
-                        src/devices/LocationsServer/LocationsServer.h
                         src/devices/Rangefinder2DWrapper/Rangefinder2DWrapper.h
                         src/devices/Rangefinder2DClient/Rangefinder2DClient.h
                         src/devices/ControlBoardWrapper/ControlBoardWrapper.h
@@ -174,7 +173,8 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.h
-                                src/devices/FrameTransformServer/FrameTransformServer.h)
+                                src/devices/FrameTransformServer/FrameTransformServer.h
+                                src/devices/LocationsServer/LocationsServer.h)
 endif()
 
 # handle the ros / yarp thrift messages
