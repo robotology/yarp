@@ -213,7 +213,7 @@ cmake_dependent_option(CREATE_YARPSCOPE "Do you want to create yarpscope?" ON CR
 cmake_dependent_option(CREATE_YARPDATAPLAYER "Do you want to compile yarpdataplayer?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPMOTORGUI "Do you want to compile yarpmotorgui?" ON CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPLASERSCANNERGUI  "Do you want to compile yarplaserscannergui?" OFF CREATE_GUIS OFF)
-cmake_dependent_option(CREATE_YARPBATTERYGUI "Do you want to compile yarpbatterygui?" ON CREATE_GUIS OFF)
+cmake_dependent_option(CREATE_YARPBATTERYGUI "Do you want to compile yarpbatterygui?" OFF CREATE_GUIS OFF)
 
 yarp_renamed_option(CREATE_YMANAGER CREATE_YARPMANAGER_CONSOLE)
 yarp_renamed_option(CREATE_GYARPMANAGER CREATE_YARPMANAGER)
