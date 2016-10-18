@@ -339,7 +339,7 @@ bool BoschIMU::threadInit()
     msg = 0x00;
     if(!sendAndVerifyCommand(REG_PAGE_ID, 1, &msg, "PAGE_ID") )
     {
-        yError()  << "BoshIMU: set page id 0 failed";
+        yError()  << "BoschIMU: set page id 0 failed";
         return(false);
     }
 
@@ -354,7 +354,7 @@ bool BoschIMU::threadInit()
 //     msg = 0x00;
 //     if(!sendAndVerifyCommand(REG_POWER_MODE, 1, &msg, "Set power mode") )
 //     {
-//          yError()  << "BoshIMU: set power mode failed";
+//          yError()  << "BoschIMU: set power mode failed";
 //          return(false);
 //     }
 //
@@ -370,7 +370,7 @@ bool BoschIMU::threadInit()
     msg = CONFIG_MODE;
     if(!sendAndVerifyCommand(REG_OP_MODE, 1, &msg, "Set config mode") )
     {
-        yError()  << "BoshIMU: set config mode failed";
+        yError()  << "BoschIMU: set config mode failed";
         return(false);
     }
 
@@ -386,7 +386,7 @@ bool BoschIMU::threadInit()
     msg = TRIG_EXT_CLK_SEL;
     if(!sendAndVerifyCommand(REG_SYS_TRIGGER, 1, &msg, "Set external clock") )
     {
-        yError()  << "BoshIMU: set external clock failed";
+        yError()  << "BoschIMU: set external clock failed";
         return(false);
     }
     yarp::os::Time::delay(SWITCHING_TIME);
@@ -410,7 +410,7 @@ bool BoschIMU::threadInit()
     msg = NDOF_MODE;
     if(!sendAndVerifyCommand(REG_OP_MODE, 1, &msg, "Set config NDOF_MODE") )
     {
-        yError()  << "BoshIMU: set config NDOF_MODE failed";
+        yError()  << "BoschIMU: set config NDOF_MODE failed";
     }
 
     yarp::os::Time::delay(SWITCHING_TIME);
