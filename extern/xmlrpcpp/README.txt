@@ -6,8 +6,10 @@ make it easy to incorporate XmlRpc client+server support into C++
 applications and requires no other libraries.
 
 This version contains several modification (including a change of
-namespace from XmlRpc to YarpXmlRpc and the removal of a few classes)
-and a few bug fixes for YARP.
+namespace from XmlRpc to YarpXmlRpc and the removal of a few classes and
+the replacement of the original base64.h which license is unknown with a
+different implementation by René Nyffenegger released as BSD) and a few
+bug fixes for YARP.
 
 Homepage: http://xmlrpcpp.sourceforge.net/
           https://sourceforge.net/projects/xmlrpcpp/
@@ -17,6 +19,37 @@ Copyright: Copyright (c) 2002-2003 Chris Morley
 License: LGPL2.1 or later
 
 Version: 0.7
+
+
+
+base64.cpp and base64.h
+
+Encoding and decoding base64 with C++
+
+Homepage: http://www.adp-gmbh.ch/cpp/common/base64.html
+
+Copyright (C) 2004-2008 René Nyffenegger
+
+License: zlib
+ This source code is provided 'as-is', without any express or implied
+ warranty. In no event will the author be held liable for any damages
+ arising from the use of this software.
+
+ Permission is granted to anyone to use this software for any purpose,
+ including commercial applications, and to alter it and redistribute it
+ freely, subject to the following restrictions:
+
+ 1. The origin of this source code must not be misrepresented; you must not
+    claim that you wrote the original source code. If you use this source code
+    in a product, an acknowledgment in the product documentation would be
+    appreciated but is not required.
+
+ 2. Altered source versions must be plainly marked as such, and must not be
+    misrepresented as being the original source code.
+
+ 3. This notice may not be removed or altered from any source distribution.
+
+
 
 Patches:
  * 0001-Fix-EOL-and-permissions.patch: Fix EOL and permissions
