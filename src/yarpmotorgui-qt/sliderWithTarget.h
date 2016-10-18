@@ -39,7 +39,7 @@ protected:
     double sliderStep;
     bool hasTargetOption;
     void paintEvent(QPaintEvent *ev) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent * event);
+    void mousePressEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
 };
 
 
