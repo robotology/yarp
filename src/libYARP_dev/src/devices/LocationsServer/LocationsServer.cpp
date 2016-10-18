@@ -29,7 +29,7 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
 {
     if (m_ros_enabled == false) return false;
 
-    TickDuration dur; dur.sec = 10e9;
+    TickDuration dur; dur.sec = 0xFFFFFFFF;
     double yarpTimeStamp = yarp::os::Time::now();
     uint64_t time;
     uint64_t nsec_part;
