@@ -38,15 +38,18 @@ static inline bool is_base64(unsigned char c) {
   return (isalnum(c) || (c == '+') || (c == '/'));
 }
 
-std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) {
+
+namespace YarpXmlRpc {
+
+std::string base64_encode(const std::vector<char>& bytes_to_encode) {
   std::string ret;
   int i = 0;
   int j = 0;
   unsigned char char_array_3[3];
   unsigned char char_array_4[4];
 
-  while (in_len--) {
-    char_array_3[i++] = *(bytes_to_encode++);
+  for(std::vector<char>::const_iterator it = bytes_to_encode.begin(); it != bytes_to_encode.end(); ++it) {
+    char_array_3[i++] = *it;
     if (i == 3) {
       char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
       char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
@@ -81,13 +84,13 @@ std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_
 
 }
 
-std::string base64_decode(std::string const& encoded_string) {
+std::vector<char> base64_decode(const std::string& encoded_string) {
   int in_len = encoded_string.size();
   int i = 0;
   int j = 0;
   int in_ = 0;
   unsigned char char_array_4[4], char_array_3[3];
-  std::string ret;
+  std::vector<char> ret;
 
   while (in_len-- && ( encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
     char_array_4[i++] = encoded_string[in_]; in_++;
@@ -100,7 +103,7 @@ std::string base64_decode(std::string const& encoded_string) {
       char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
       for (i = 0; (i < 3); i++)
-        ret += char_array_3[i];
+        ret.push_back(char_array_3[i]);
       i = 0;
     }
   }
@@ -116,8 +119,10 @@ std::string base64_decode(std::string const& encoded_string) {
     char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
     char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
-    for (j = 0; (j < i - 1); j++) ret += char_array_3[j];
+    for (j = 0; (j < i - 1); j++) ret.push_back(char_array_3[j]);
   }
 
   return ret;
+}
+
 }

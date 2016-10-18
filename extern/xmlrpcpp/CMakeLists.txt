@@ -6,7 +6,8 @@
 # XmlRpc++
 project(YARP_priv_xmlrpcpp)
 
-set(xmlrpcpp_SRCS xmlrpcpp/src/XmlRpcClient.cpp
+set(xmlrpcpp_SRCS xmlrpcpp/src/base64.cpp
+                  xmlrpcpp/src/XmlRpcClient.cpp
                   xmlrpcpp/src/XmlRpcServerConnection.cpp
                   xmlrpcpp/src/XmlRpcServer.cpp
                   xmlrpcpp/src/XmlRpcServerMethod.cpp
@@ -14,7 +15,8 @@ set(xmlrpcpp_SRCS xmlrpcpp/src/XmlRpcClient.cpp
                   xmlrpcpp/src/XmlRpcUtil.cpp
                   xmlrpcpp/src/XmlRpcValue.cpp)
 
-set(xmlrpcpp_HDRS xmlrpcpp/src/XmlRpcClient.h
+set(xmlrpcpp_HDRS xmlrpcpp/src/base64.h
+                  xmlrpcpp/src/XmlRpcClient.h
                   xmlrpcpp/src/XmlRpcException.h
                   xmlrpcpp/src/XmlRpc.h
                   xmlrpcpp/src/XmlRpcServerConnection.h
