@@ -99,6 +99,12 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
     # Enable bundle creation
     set_target_properties(${_target_dest} PROPERTIES MACOSX_BUNDLE ON)
 
+    # Force OUTPUT_NAME to be the same as original (.app is appended automatically)
+    get_property(_output_name_set TARGET ${_target_orig} PROPERTY OUTPUT_NAME SET)
+    if(NOT _output_name_set)
+      set_target_properties(${_target_dest} PROPERTIES OUTPUT_NAME ${_target_orig})
+    endif()
+
     # Set icon for the bundle
     if (DEFINED _DADB_APP_ICON)
       get_filename_component(_filename "${_DADB_APP_ICON}" NAME)
