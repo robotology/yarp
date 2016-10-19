@@ -373,7 +373,6 @@ void PortCore::closeMain() {
             if (unit!=NULL) {
                 if (unit->isInput()) {
                     if (!unit->isDoomed()) {
-                        unit->interrupt();
                         Route r = unit->getRoute();
                         String s = r.getFromName();
                         if (s.length()>=1) {
