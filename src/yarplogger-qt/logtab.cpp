@@ -19,9 +19,12 @@
 #include "logtab.h"
 #include "ui_logtab.h"
 
+#include <QFontDatabase>
+
 LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
-    ui(new Ui::LogTab)
+    ui(new Ui::LogTab),
+    toggleLineExpansion(false)
 {
     system_message = _system_message;
     theLogger= _theLogger;
@@ -63,24 +66,40 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _syst
     ui->listView->horizontalHeader()->setSectionResizeMode(3,QHeaderView::Stretch);
     ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     ui->listView->verticalHeader()->setDefaultSectionSize(20);
+
+    const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    ui->listView->setFont(fixedFont);
     
     clipboard=QApplication::clipboard();
     connect(ui->listView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
+    connect(ui->listView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(expandLines()));
 
     updateLog(true);
+}
+
+
+void LogTab::expandLines() {
+    toggleLineExpansion = !toggleLineExpansion;
+    if ( toggleLineExpansion )
+        ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    else {
+        ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+        ui->listView->verticalHeader()->setDefaultSectionSize(20);
+    }
 }
 
 void LogTab::ctxMenu(const QPoint &pos)
 {
     QMenu *menu = new QMenu;
     menu->addAction(tr("Copy to clipboard"), this, SLOT(on_copy_to_clipboard_action()));
+    menu->addAction(tr("Toggle line expansion"), this, SLOT(expandLines()));
     menu->exec(ui->listView->mapToGlobal(pos));
 }
 
 void LogTab::on_copy_to_clipboard_action()
 {
     QString selected_test;
-    QString separator("\t\t");
+    QString separator("\t");
     foreach(const QModelIndex &index, ui->listView->selectionModel()->selectedRows())
     {
         QStringList list;
@@ -101,6 +120,7 @@ void LogTab::on_copy_to_clipboard_action()
         if (displayErrorLevel_enabled)       list.append(model_logs->item(prox_index.row(),2)->text());
         list.append(model_logs->item(prox_index.row(),3)->text());
         selected_test += list.join(separator);
+        selected_test += '\n';
     }
     clipboard->setText(selected_test);
 }
@@ -155,8 +175,10 @@ void LogTab::updateLog(bool from_beginning)
         else if (it->level==yarp::yarpLogger::LOGLEVEL_FATAL)     { rowbgcolor = QColor(Qt::black);  rowfgcolor = QColor(Qt::white);  error_level=FATAL_STRING;}
         else                                                      { rowbgcolor = QColor(Qt::white);  error_level="";     }
 
+        std::string textWithoutNewLines = it->text;
+        textWithoutNewLines.erase(textWithoutNewLines.find_last_not_of(" \n\r\t")+1);
         //using numbers seems not to work. Hence I'm using strings.
-        rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());
+        rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(textWithoutNewLines.c_str());
 
         if (displayColors_enabled)
         {
