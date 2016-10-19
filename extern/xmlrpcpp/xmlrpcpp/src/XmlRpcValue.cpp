@@ -5,11 +5,7 @@
 #include "XmlRpcValue.h"
 #include "XmlRpcException.h"
 #include "XmlRpcUtil.h"
-
-// base64.h removed - not clear that it is "really" under LGPL license.
-// origin seems to be this:
-//   http://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4095/
-//#include "base64.h"
+#include "base64.h"
 
 #ifndef MAKEDEPEND
 # include <iostream>
@@ -423,10 +419,6 @@ namespace YarpXmlRpc {
   // Base64
   bool XmlRpcValue::binaryFromXml(std::string const& valueXml, int* offset)
   {
-    printf("binaryFromXml disabled until license of base64.h determined\n");
-    exit(1);
-    return false;
-    /*
     size_t valueEnd = valueXml.find('<', *offset);
     if (valueEnd == std::string::npos)
       return false;     // No end tag;
@@ -437,29 +429,18 @@ namespace YarpXmlRpc {
     // check whether base64 encodings can contain chars xml encodes...
 
     // convert from base64 to binary
-    int iostatus = 0;
-	  base64<char> decoder;
+    std::vector<char> v = base64_decode(asString);
     std::back_insert_iterator<BinaryData> ins = std::back_inserter(*(_value.asBinary));
-		decoder.get(asString.begin(), asString.end(), ins, iostatus);
-
+    std::copy(asString.begin(), asString.end(), ins);
     *offset += int(asString.length());
     return true;
-    */
   }
 
 
   std::string XmlRpcValue::binaryToXml() const
   {
-    printf("binaryToXml disabled until license of base64.h determined\n");
-    exit(1);
-    return "";
-    /*
     // convert to base64
-    std::vector<char> base64data;
-    int iostatus = 0;
-	  base64<char> encoder;
-    std::back_insert_iterator<std::vector<char> > ins = std::back_inserter(base64data);
-		encoder.put(_value.asBinary->begin(), _value.asBinary->end(), ins, iostatus, base64<>::crlf());
+    std::string base64data = base64_encode(*(_value.asBinary));
 
     // Wrap with xml
     std::string xml = VALUE_TAG;
@@ -468,7 +449,6 @@ namespace YarpXmlRpc {
     xml += BASE64_ETAG;
     xml += VALUE_ETAG;
     return xml;
-    */
   }
 
 
@@ -577,15 +557,7 @@ namespace YarpXmlRpc {
         }
       case TypeBase64:
         {
-          //int iostatus = 0;
-          std::ostreambuf_iterator<char> out(os);
-	  /*
-          base64<char> encoder;
-          encoder.put(_value.asBinary->begin(), _value.asBinary->end(), out, iostatus, base64<>::crlf());
-	  */
-	  printf("base64 disabled until license of base64.h determined\n");
-	  exit(1);
-          break;
+          os << base64_encode(*(_value.asBinary)); break;
         }
       case TypeArray:
         {

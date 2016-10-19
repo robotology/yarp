@@ -12,9 +12,9 @@ yarp_prepare_plugin(xmlrpc
 
 if(NOT SKIP_xmlrpc_carrier)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xmlrpc)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS})
+  include_directories(${xmlrpcpp_INCLUDE_DIRS})
 
   check_cxx_compiler_flag("-Wformat-nonliteral" CXX_HAS_WFORMAT_NONLITERAL)
   if(CXX_HAS_WFORMAT_NONLITERAL)
@@ -25,15 +25,9 @@ if(NOT SKIP_xmlrpc_carrier)
                   XmlRpcCarrier.h
                   XmlRpcCarrier.cpp
                   XmlRpcStream.h
-                  XmlRpcStream.cpp
-                  xmlrpc/XmlRpcClient.cpp
-                  xmlrpc/XmlRpcServer.cpp
-                  xmlrpc/XmlRpcServerConnection.cpp
-                  xmlrpc/XmlRpcServerMethod.cpp
-                  xmlrpc/XmlRpcSource.cpp
-                  xmlrpc/XmlRpcUtil.cpp
-                  xmlrpc/XmlRpcValue.cpp)
-  target_link_libraries(yarp_xmlrpc YARP_OS)
+                  XmlRpcStream.cpp)
+  target_link_libraries(yarp_xmlrpc YARP_OS
+                                    ${xmlrpcpp_LIBRARIES})
   yarp_install(TARGETS yarp_xmlrpc
                EXPORT YARP
                COMPONENT runtime

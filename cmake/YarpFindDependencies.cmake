@@ -102,6 +102,40 @@ macro(checkbuildandset_dependency package)
 
 endmacro()
 
+# Always build some package and set some cmake variables
+macro(buildandset_dependency package)
+
+  string(TOUPPER ${package} PKG)
+
+  set(YARP_HAS_SYSTEM_${PKG} FALSE)
+
+  # YARP_USE_${PKG}
+  option(YARP_USE_${PKG} "Use package ${package}" TRUE)
+  mark_as_advanced(YARP_USE_${PKG})
+
+  # YARP_HAS_${PKG}
+  set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
+
+  # YARP_BUILD_${PKG}
+  set(YARP_BUILD_${PKG} TRUE)
+
+  if(YARP_USE_${PKG})
+    if(${ARGC} GREATER 1)
+      foreach(_dep ${ARGN})
+        string(TOUPPER ${_dep} _DEP)
+        if(NOT YARP_HAS_${_DEP})
+          message(WARNING "${_dep} (required to build ${package}) not found.")
+          set(YARP_HAS_${PKG} FALSE)
+          set(YARP_BUILD_${PKG} FALSE)
+        endif()
+      endforeach()
+    endif()
+  endif()
+
+endmacro()
+
+
+
 
 # Check if a required package is installed.
 macro(check_required_dependency package)
@@ -287,6 +321,8 @@ if(CREATE_YARPROBOTINTERFACE OR CREATE_YARPSCOPE OR CREATE_LIB_MANAGER)
   checkbuildandset_dependency(TinyXML)
 endif()
 
+buildandset_dependency(xmlrpcpp)
+
 if(CREATE_GUIS)
   find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport QUIET)
   checkandset_dependency(Qt5)
@@ -365,6 +401,7 @@ print_dependency(SQLite)
 print_dependency(Eigen3)
 print_dependency(GSL)
 print_dependency(TinyXML)
+print_dependency(xmlrpcpp)
 print_dependency(Qt5)
 print_dependency(QCustomPlot)
 print_dependency(Libedit)
