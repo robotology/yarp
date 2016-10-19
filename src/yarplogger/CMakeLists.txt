@@ -46,7 +46,6 @@ if(CREATE_YARPLOGGER)
           DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarplogger
-                                    TARGET_DEST yarplogger.app
                                     INSTALL_COMPONENT utilities
                                     INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 

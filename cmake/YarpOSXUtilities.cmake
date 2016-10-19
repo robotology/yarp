@@ -11,7 +11,6 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
  if(APPLE)
     set(_options )
     set(_oneValueArgs TARGET_ORIG
-                      TARGET_DEST
                       APP_ICON
                       INSTALL_DESTINATION
                       INSTALL_COMPONENT)
@@ -26,12 +25,7 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
       message(FATAL_ERROR "TARGET_ORIG is required")
     endif()
     set(_target_orig ${_DADB_TARGET_ORIG})
-
-    if(NOT DEFINED _DADB_TARGET_DEST)
-      set(_target_dest ${_target_orig}.app)
-    else()
-      set(_target_dest ${_DADB_TARGET_DEST})
-    endif()
+    set(_target_dest ${_target_orig}.app)
 
     if(DEFINED _DADB_INSTALL_COMPONENT AND NOT DEFINED _DADB_INSTALL_DESTINATION)
       message(FATAL_ERROR "INSTALL_COMPONENT cannot be used without INSTALL_DESTINATION")
