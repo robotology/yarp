@@ -13,15 +13,24 @@
 namespace yarp {
     namespace os {
         class Time;
+
+        typedef enum {
+            UNDEFINED_CLOCK,
+            SYSTEM_CLOCK,
+            NETWORK_CLOCK,
+            CUSTOM_CLOCK
+        } yarpClockType;
     }
 }
+
 
 /**
  * \ingroup key_class
  *
  * Services related to time -- delay, current time.
  */
-class YARP_OS_API yarp::os::Time {
+class YARP_OS_API yarp::os::Time
+{
 public:
     /**
      * Wait for a certain number of seconds.  This may be fractional.
@@ -85,6 +94,27 @@ public:
      *
      */
     static bool isSystemClock();
+
+    /**
+     *
+     * Check if YARP is providing network time.
+     *
+     */
+    static bool isNetworkClock();
+    
+    /**
+     *
+     * Check if YARP is using a user-defined custom time.
+     *
+     */
+    static bool isCustomClock();
+    
+    /**
+     *
+     * Converts clock type enum into string.
+     * @type Convert specified enum into string. If missing uses the current clock
+     */
+     static yarp::os::ConstString getClockType(yarpClockType type = (yarpClockType)-1);
 
     /**
      *
