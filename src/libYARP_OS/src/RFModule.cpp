@@ -210,7 +210,7 @@ public:
 bool RFModuleRespondHandler::read(ConnectionReader& connection) {
     Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
-    printf("command received: %s\n", cmd.toString().c_str());
+    //printf("command received: %s\n", cmd.toString().c_str());
 
     bool result = owner.safeRespond(cmd,response);
     if (response.size() >= 1) {
