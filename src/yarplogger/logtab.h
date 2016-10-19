@@ -59,10 +59,12 @@ private:
     bool                                   displayErrorLevel_enabled;
     bool                                   displayColors_enabled;
     bool                                   displayGrid_enabled;
+    bool                                   toggleLineExpansion;
 
 private slots:
     void updateLog(bool from_beginning=false);
     void ctxMenu(const QPoint &pos);
+    void expandLines();
     void on_copy_to_clipboard_action();
 
 public:
