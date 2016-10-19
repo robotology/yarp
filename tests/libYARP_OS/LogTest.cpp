@@ -32,6 +32,15 @@ public:
 
         yError("This is an error");
         yError("This is %s (%d)", "an error", i);
+
+        yInfo("This is a very long long sentence. The purpose is to check if the logger is able to handle and display nicely very long messages, eventually displaying them on multiple lines or using other mechanisms (e.g. pop-up, user hints etc)");
+
+        yInfo("This is a sentence that spawn on multiple lines:\n.This is line 2.\nThis is line 3.\nThis is the last line.");
+
+        yInfo("\nThis is text contains an end of line at the beginning of the sentence");
+
+        yInfo("This is text contains an end of line at the end of the sentence\n");
+
     }
 
     virtual void runTests() {
