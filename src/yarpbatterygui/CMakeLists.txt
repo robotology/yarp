@@ -53,7 +53,7 @@ if(CREATE_YARPBATTERYGUI)
 
   install(TARGETS yarpbatterygui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-  yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpbatterygui
+  yarp_osx_duplicate_and_add_bundle(TARGET yarpbatterygui
                                     INSTALL_COMPONENT utilities
                                     INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 

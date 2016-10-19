@@ -128,7 +128,7 @@ if(CREATE_YARPMANAGER_PP)
 
     install(TARGETS yarpmanager++ COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-    yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpmanager++
+    yarp_osx_duplicate_and_add_bundle(TARGET yarpmanager++
                                       APP_ICON src-manager/Resources/AppIcon.icns
                                       INSTALL_COMPONENT utilities
                                       INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")

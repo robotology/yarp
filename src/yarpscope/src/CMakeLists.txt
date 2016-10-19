@@ -40,7 +40,7 @@ install(TARGETS yarpscope
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpscope
+yarp_osx_duplicate_and_add_bundle(TARGET yarpscope
                                   INSTALL_COMPONENT utilities
                                   INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 

@@ -74,7 +74,7 @@ if(CREATE_YARPMOTORGUI)
 
   install(TARGETS yarpmotorgui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-  yarp_osx_duplicate_and_add_bundle(TARGET_ORIG yarpmotorgui
+  yarp_osx_duplicate_and_add_bundle(TARGET yarpmotorgui
                                     INSTALL_COMPONENT utilities
                                     INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
   yarp_install(FILES yarpmotorgui.xml

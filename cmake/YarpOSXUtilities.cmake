@@ -10,7 +10,7 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
 
  if(APPLE)
     set(_options )
-    set(_oneValueArgs TARGET_ORIG
+    set(_oneValueArgs TARGET
                       APP_ICON
                       INSTALL_DESTINATION
                       INSTALL_COMPONENT)
@@ -21,10 +21,10 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
                                 "${_multiValueArgs}"
                                 "${ARGN}")
 
-    if(NOT DEFINED _DADB_TARGET_ORIG)
-      message(FATAL_ERROR "TARGET_ORIG is required")
+    if(NOT DEFINED _DADB_TARGET)
+      message(FATAL_ERROR "TARGET is required")
     endif()
-    set(_target_orig ${_DADB_TARGET_ORIG})
+    set(_target_orig ${_DADB_TARGET})
     set(_target_dest ${_target_orig}.app)
 
     if(DEFINED _DADB_INSTALL_COMPONENT AND NOT DEFINED _DADB_INSTALL_DESTINATION)
