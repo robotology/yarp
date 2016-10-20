@@ -16,6 +16,10 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/impl/UnitTest.h>
 
+#if defined(_MSC_VER)
+# define snprintf _snprintf
+#endif
+
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
