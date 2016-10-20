@@ -62,12 +62,28 @@ int harness_main(int argc, char *argv[]) {
 
         if (ConstString(argv[1])==ConstString("regression")) {
             done = true;
+
             // To make sure that the dev test are able to find all the devices
             // compile by YARP, also the one compiled as dynamic plugins
             // we add the build directory to the YARP_DATA_DIRS enviromental variable
             // CMAKE_CURRENT_DIR is the define by the CMakeLists.txt tests file
-            Network::setEnvironment("YARP_DATA_DIRS",
-                                    Network::getEnvironment("YARP_DATA_DIRS")+":"+CMAKE_BINARY_DIR+"/share/yarp");
+            ConstString dirs = CMAKE_BINARY_DIR;
+#ifdef WIN32
+            dirs += "\\share\\yarp";
+#else
+            dirs += "/share/yarp";
+#endif
+            Network::getEnvironment("YARP_DATA_DIRS");
+            if (!Network::getEnvironment("YARP_DATA_DIRS").empty()) {
+#ifdef WIN32
+                dirs += ";";
+#else
+                dirs += ":";
+#endif
+                dirs += Network::getEnvironment("YARP_DATA_DIRS");
+            }
+            Network::setEnvironment("YARP_DATA_DIRS", dirs);
+            printf("YARP_DATA_DIRS=\"%s\"\n", Network::getEnvironment("YARP_DATA_DIRS").c_str());
 
             // Start the testing system
             UnitTest::startTestSystem();

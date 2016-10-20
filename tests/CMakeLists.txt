@@ -6,6 +6,10 @@ if(YARP_COMPILE_TESTS)
 
   # Add the CMAKE_BINARY_DIR as a macro so the testing infrastructure
   # can find the device compiled as dynamic plugins
+  if(WIN32)
+    file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}" CMAKE_NATIVE_BINARY_DIR)
+    string(REPLACE "\\" "\\\\" CMAKE_NATIVE_BINARY_DIR "${CMAKE_NATIVE_BINARY_DIR}")
+  endif()
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/YarpBuildLocation.h.in"
                  "${CMAKE_CURRENT_BINARY_DIR}/YarpBuildLocation.h"
                  @ONLY)
