@@ -2,11 +2,10 @@ version: appveyor.{build}
 
 init:
   - cmd: git config --global core.autocrlf true
-  - cmd: dir C:\projects
   - cmd: cmake --version
   - cmd: msbuild /version
 
-clone_folder: c:\projects\yarp
+clone_folder: C:\projects\yarp
 
 platform:
   - Win32
@@ -21,25 +20,35 @@ branches:
     - travis
 
 install:
-  - ps:  $dwntool=New-Object System.Net.WebClient
+  - cmd: md C:\downloads
+
+  # Get 7zip
   - cmd: cinst 7zip.commandline -x86
-  - cmd: dir c:\projects
-  - ps:  if ($env:platform -Match "Win32") {$dwntool.DownloadFile('http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip','c:\ace.zip')}
-#  - ps:  if ($env:platform -Match "x64") {$dwntool.DownloadFile('http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip','c:\ace.zip')}
-  - cmd: 7z x c:\ace.zip -oc:\ -y > nul
-  - cmd: set ACE_ROOT=c:\ACE_wrappers
-  - cmd: set PATH=%PATH%;c:\ACE_wrappers\bin;c:\projects\yarp\build\bin\%CONFIGURATION%;c:\projects\yarp\build\lib\%CONFIGURATION%
+
+
+  # Get ACE:
+  - cmd: if "%platform%"=="Win32" appveyor DownloadFile "http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip" -FileName "C:\downloads\ace.zip"
+  - cmd: 7z x C:\downloads\ace.zip -oC:\tools\ACE -y > nul
+  - cmd: set ACE_ROOT=C:\tools\ACE\ACE_wrappers
+  - cmd: set PATH=%PATH%;C:\tools\ACE\ACE_wrappers\bin;C:\projects\yarp\build\bin\%CONFIGURATION%;C:\projects\yarp\build\lib\%CONFIGURATION%
+
   # Get Eigen:
-  - ps: wget http://bitbucket.org/eigen/eigen/get/3.3-beta2.zip -OutFile eigen.zip
-  - cmd: 7z x eigen.zip -o"c:\projects" -y > nul
-  - cmd: set EIGEN3_ROOT=c:\projects\eigen-eigen-69d418c06999
-  - cmd: set CTEST_OUTPUT_ON_FAILURE=1
+  - cmd: appveyor DownloadFile "http://bitbucket.org/eigen/eigen/get/3.3-beta2.zip" -FileName "C:\downloads\eigen.zip"
+  - cmd: 7z x C:\downloads\eigen.zip -o"C:\tools\eigen" -y > nul
+  - cmd: set EIGEN3_ROOT=C:\tools\eigen\eigen-eigen-69d418c06999
+
+  # Get Qt5:
+  - cmd: appveyor DownloadFile "https://raw.githubusercontent.com/robotology-dependencies/robotology-dep-scripts/master/qt5/qt-installer-noninteractive.qs" -FileName "C:\downloads\qt-installer-noninteractive.qs"
+  - cmd: if "%platform%"=="Win32" appveyor DownloadFile "https://download.qt.io/official_releases/qt/5.5/5.5.1/qt-opensource-windows-x86-msvc2012-5.5.1.exe" -FileName "C:\downloads\qt5.exe"
+  - cmd: if "%platform%"=="Win32" C:\downloads\qt5.exe --script C:\downloads\qt-installer-noninteractive.qs
+  - cmd: if "%platform%"=="Win32" set QTDIR=C:\Qt\Qt5.5.1\5.5\msvc2012
+  - cmd: set Qt5_DIR=%QTDIR%\lib\cmake\Qt5
 
 before_build:
   - cmd: md C:\projects\yarp\build
   - cmd: cd C:\projects\yarp\build
-  - cmd: if "%platform%"=="Win32" cmake -G"Visual Studio 11" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -DYARP_COMPILE_TESTS:BOOL=ON -DCREATE_LIB_MATH:BOOL=ON -DCREATE_LIB_MATH_USING_GSL:BOOL=OFF ..
-  - cmd: if "%platform%"=="x64" cmake -G"Visual Studio 11 Win64" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -DYARP_COMPILE_TESTS:BOOL=ON -DCREATE_LIB_MATH:BOOL=ON -DCREATE_LIB_MATH_USING_GSL:BOOL=OFF ..
+  - cmd: if "%platform%"=="Win32" cmake -G"Visual Studio 11" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -C ..\scripts\admin\initial-cache.cmake ..
+  - cmd: if "%platform%"=="x64" cmake -G"Visual Studio 11 Win64" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -C ..\scripts\admin\initial-cache.cmake ..
 
 build:
   project: C:\projects\yarp\build\yarp.sln
@@ -48,4 +57,6 @@ after_build:
   - cmd: cmake --build C:\projects\yarp\build --target INSTALL --config %CONFIGURATION%
 
 test_script:
+  - cmd: set YARP_VERBOSE=1
+  - cmd: set YARP_DATA_DIRS=C:\projects\yarp\build\share\yarp
   - cmd: ctest --output-on-failure --build . -C %CONFIGURATION%
