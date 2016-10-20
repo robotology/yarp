@@ -3,7 +3,7 @@
 * Author: Marco Randazzo <marco.randazzo@iit.it>
 * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
 */
- 
+
 #include <rpLidar.h>
 
 #include <yarp/os/Time.h>
@@ -275,7 +275,7 @@ bool RpLidar::getDeviceStatus(Device_status &status)
 {
     LockGuard guard(mutex);
     status = device_status;
-    return true; 
+    return true;
 }
 
 bool RpLidar::threadInit()
@@ -283,7 +283,7 @@ bool RpLidar::threadInit()
 #ifdef LASER_DEBUG
     yDebug("RpLidar:: thread initialising...\n");
     yDebug("... done!\n");
-#endif 
+#endif
 
     if (!HW_start())
     {
@@ -344,7 +344,7 @@ bool RpLidar::HW_getHealth()
     pSerial->send((char *)cmd_arr, 2);
 
     yarp::os::Time::delay(0.010);
-    
+
     unsigned char s[255];
     memset(s, 0, 255);
     r = pSerial->receiveBytes(s,7);
@@ -459,10 +459,10 @@ void RpLidar::run()
 #endif
     const int packet = 100;
     LockGuard guard(mutex);
-    
+
     unsigned char buff[packet*3];
     memset(buff, 0, packet*3);
-    
+
     unsigned int r = 0;
     static unsigned int total_r = 0;
     unsigned int count = 0;
@@ -481,9 +481,9 @@ void RpLidar::run()
             yDebug() << "R" << r;
         }
 #endif
-    } 
+    }
     while (buffer->size() < (packet * 2) || r < packet);
-    
+
     unsigned char minibuff[15];
     unsigned int ok_count = 0;
     do
@@ -633,7 +633,7 @@ void RpLidar::run()
                 }
             }
         }
-        
+
         for (size_t i = 0; i < range_skip_vector.size(); i++)
         {
             if (angle>range_skip_vector[i].min && angle < range_skip_vector[i].max)

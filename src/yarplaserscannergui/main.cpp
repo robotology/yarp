@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -86,9 +86,9 @@ void drawGrid(IplImage *img, double scale)
 */
     char buff [10];
     int  rad_step=0;
-    if   (scale>60) 
+    if   (scale>60)
         rad_step=1;
-    else             
+    else
         rad_step=2;
     for (int rad=0; rad<20; rad+=rad_step)
     {
@@ -206,7 +206,7 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
     double length=0;
     static double old_time=0;
 
-    if (!las || !comp) 
+    if (!las || !comp)
     {
         return;
     }
@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
     finder->setDefaultConfigFile("yarplaserscannergui.ini");
     finder->configure(argc, argv);
 
-    double scale = finder->check("scale", Value(100), "global scale factor").asDouble(); 
+    double scale = finder->check("scale", Value(100), "global scale factor").asDouble();
     double robot_radius = finder->check("robot_radius", Value(0.001), "robot radius [m]").asDouble();
     double sens_position = finder->check("sens_position", Value(0), "sens_position [m]").asDouble();
     bool verbose = finder->check("verbose", Value(false), "verbose [0/1]").asBool();
@@ -377,7 +377,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                if (laser_data_size != scans) 
+                if (laser_data_size != scans)
                 {
                     yWarning() << "Problem detected in size of laser measurement vector";
                 }
@@ -413,13 +413,13 @@ int main(int argc, char *argv[])
             scale*=1.02;
             yInfo("scale factor is now:%.3f",scale);
         }
-        if(keypressed == 's' && scale >15) 
+        if(keypressed == 's' && scale >15)
         {
            //scale-=0.001;
            scale/=1.02;
            yInfo("scale factor is now:%.3f", scale);
         }
-        if(keypressed == 'v' ) 
+        if(keypressed == 'v' )
         {
            verbose= (!verbose);
            if (verbose) yInfo("verbose mode is now ON");
@@ -450,7 +450,7 @@ int main(int argc, char *argv[])
             aspect = aspect + 1;
             if (aspect > 1) aspect = 0;
         }
-        if(keypressed == 'h' || 
+        if(keypressed == 'h' ||
             keypressed == 'H')
         {
             yInfo("available commands:");
