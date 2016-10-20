@@ -10,8 +10,7 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
 
  if(APPLE)
     set(_options )
-    set(_oneValueArgs TARGET_ORIG
-                      TARGET_DEST
+    set(_oneValueArgs TARGET
                       APP_ICON
                       INSTALL_DESTINATION
                       INSTALL_COMPONENT)
@@ -22,16 +21,11 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
                                 "${_multiValueArgs}"
                                 "${ARGN}")
 
-    if(NOT DEFINED _DADB_TARGET_ORIG)
-      message(FATAL_ERROR "TARGET_ORIG is required")
+    if(NOT DEFINED _DADB_TARGET)
+      message(FATAL_ERROR "TARGET is required")
     endif()
-    set(_target_orig ${_DADB_TARGET_ORIG})
-
-    if(NOT DEFINED _DADB_TARGET_DEST)
-      set(_target_dest ${_target_orig}.app)
-    else()
-      set(_target_dest ${_DADB_TARGET_DEST})
-    endif()
+    set(_target_orig ${_DADB_TARGET})
+    set(_target_dest ${_target_orig}.app)
 
     if(DEFINED _DADB_INSTALL_COMPONENT AND NOT DEFINED _DADB_INSTALL_DESTINATION)
       message(FATAL_ERROR "INSTALL_COMPONENT cannot be used without INSTALL_DESTINATION")
@@ -98,6 +92,12 @@ function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
 
     # Enable bundle creation
     set_target_properties(${_target_dest} PROPERTIES MACOSX_BUNDLE ON)
+
+    # Force OUTPUT_NAME to be the same as original (.app is appended automatically)
+    get_property(_output_name_set TARGET ${_target_orig} PROPERTY OUTPUT_NAME SET)
+    if(NOT _output_name_set)
+      set_target_properties(${_target_dest} PROPERTIES OUTPUT_NAME ${_target_orig})
+    endif()
 
     # Set icon for the bundle
     if (DEFINED _DADB_APP_ICON)
