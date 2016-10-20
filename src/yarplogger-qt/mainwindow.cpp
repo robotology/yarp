@@ -33,6 +33,7 @@
 #include <QSignalMapper>
 #include <QFileDialog>
 #include <QDateTime>
+#include <QMimeData>
 
 void MainWindow::updateMain()
 {
@@ -363,6 +364,8 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     ui->yarprunTreeView->setColumnWidth(3, 80);
     ui->yarprunTreeView->setColumnWidth(4, 60);
     ui->yarprunTreeView->setColumnWidth(5, 60);
+
+    setAcceptDrops(true);
 }
 
 MainWindow::~MainWindow()
@@ -726,4 +729,26 @@ void MainWindow::on_actionReset_current_log_error_warning_counters_triggered()
         return;
     }
     on_resetCountersLogTab(model_row);
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *e)
+{
+    if (e->mimeData()->hasUrls()) {
+        e->acceptProposedAction();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *e)
+{
+    const QUrl url = e->mimeData()->urls().first();
+
+    QString fileName = url.toLocalFile();
+
+    on_actionStop_Logger_triggered();
+    on_actionClear_triggered();
+
+    if (theLogger->load_all_logs_from_file(fileName.toStdString()))
+        system_message->addMessage(QString("Log loaded from file: ") + fileName);
+    else
+        system_message->addMessage(QString("Unable to load file: ") + fileName,MESSAGE_LEVEL_ERROR);
 }

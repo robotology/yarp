@@ -109,6 +109,10 @@ private slots:
 
     void on_actionReset_current_log_error_warning_counters_triggered();
 
+    void dragEnterEvent(QDragEnterEvent *e);
+
+    void dropEvent(QDropEvent *e);
+
 private:
     yarp::yarpLogger::LoggerEngine* theLogger;
 
