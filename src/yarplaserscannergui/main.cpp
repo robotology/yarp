@@ -23,6 +23,7 @@
 #include <fstream>
 #include <string>
 #include <stdio.h>
+#include <limits>
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -220,7 +221,7 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
     for (int i = 0; i<scans; i++)
     {
         length=(*las)[i];
-        if (length == INFINITY) continue;
+        if (length == std::numeric_limits<double>::infinity()) continue;
 
         if      (length<0)     length = 0;
         else if (length>15)    length = 15; //15m maximum

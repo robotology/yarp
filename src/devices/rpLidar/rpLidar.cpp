@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
+#include <limits>
 
 #include <cmath>
 
@@ -611,7 +612,7 @@ void RpLidar::run()
         if (quality == 0)
         {
             //      yWarning() << "Quality Low" << i / 5;
-            distance = INFINITY;
+            distance = std::numeric_limits<double>::infinity();
         }
         if (angle > 360)
         {
@@ -627,7 +628,7 @@ void RpLidar::run()
         {
             if (distance > max_distance)
             {
-                if (!do_not_clip_infinity_enable && distance <= INFINITY)
+                if (!do_not_clip_infinity_enable && distance <= std::numeric_limits<double>::infinity())
                 {
                     distance = max_distance;
                 }
@@ -638,7 +639,7 @@ void RpLidar::run()
         {
             if (angle>range_skip_vector[i].min && angle < range_skip_vector[i].max)
             {
-                distance = INFINITY;
+                distance = std::numeric_limits<double>::infinity();
             }
         }
 
