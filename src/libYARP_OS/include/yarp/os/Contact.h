@@ -9,6 +9,8 @@
 #ifndef YARP_OS_CONTACT_H
 #define YARP_OS_CONTACT_H
 
+#include <yarp/conf/system.h>
+#include <yarp/conf/compiler.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/NestedContact.h>
 
@@ -73,14 +75,14 @@ public:
      */
     Contact(const Contact& rhs);
 
-#if YARP_COMPILER_CXX_RVALUE_REFERENCES
+#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
     /**
      * @brief Move constructor.
      *
      * @param rhs the Contact to be moved
      */
     Contact(Contact&& rhs);
-#endif // YARP_COMPILER_CXX_RVALUE_REFERENCES
+#endif
 
     /**
      * @brief Destructor.
@@ -95,7 +97,7 @@ public:
      */
     Contact& operator=(const Contact& rhs);
 
-#if YARP_COMPILER_CXX_RVALUE_REFERENCES
+#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
     /**
      * @brief Move assignment operator.
      *
@@ -103,7 +105,7 @@ public:
      * @return this object
      */
     Contact& operator=(Contact&& rhs);
-#endif // YARP_COMPILER_CXX_RVALUE_REFERENCES
+#endif
 
 /** @} */
 /** @{ */
