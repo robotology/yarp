@@ -234,12 +234,12 @@ YARP_WARNING_POP;
             report(0, "checking move constructor");
             Contact c1("www.robotology.yarp", 8080);
 
-#if YARP_COMPILER_CXX_RVALUE_REFERENCES
+#if defined(YARP_HAS_CXX11) && YARP_COMPILER_CXX_RVALUE_REFERENCES
             Contact c2 = std::move(c1);
 #else
             // On most compilers uses RVO => move constructor is not called
             Contact c2 = Contact("www.robotology.yarp", 8080);
-#endif // YARP_COMPILER_CXX_RVALUE_REFERENCES
+#endif
             checkTrue(c2.isValid(), "valid Contact");
             checkEqual(c2.getHost().c_str(), "www.robotology.yarp", "hostname set");
             checkEqual(c2.getPort(), 8080, "port number set");
