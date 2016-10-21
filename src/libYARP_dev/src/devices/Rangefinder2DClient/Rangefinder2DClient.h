@@ -86,6 +86,15 @@ protected:
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
     int _rate;
+
+    double scan_angle_min;
+    double scan_angle_max;
+    double device_position_x;
+    double device_position_y;
+    double device_position_theta;
+    std::string laser_frame_name;
+    std::string robot_frame_name;
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
@@ -103,11 +112,25 @@ public:
     yarp::os::Stamp getLastInputStamp();
 
     /**
-    * Get the distance measurements
-    * @param ranges the vector containing the distance measurement
+    * Get the device measurements
+    * @param data a vector containing the measurement data, expressed as 2D points
+    * @return true/false..
+    */
+    virtual bool getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data);
+
+    /**
+    * Get the device measurements
+    * @param ranges the vector containing the measurement data, expressed in polar coordinates
     * @return true/false.
     */
-    bool getMeasurementData(yarp::sig::Vector & ranges);
+    virtual bool getPolarMeasurementData(std::vector<PolarMeasurementData> &data);
+
+    /**
+    * Get the device measurements
+    * @param ranges the vector containing the raw measurement data, as acquired by the device.
+    * @return true/false.
+    */
+    virtual bool getRawMeasurementData(yarp::sig::Vector &data);
 
     /**
     * get the device status

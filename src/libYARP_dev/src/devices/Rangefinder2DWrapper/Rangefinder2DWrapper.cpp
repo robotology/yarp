@@ -9,6 +9,8 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -532,11 +534,10 @@ void Rangefinder2DWrapper::run()
 {
     if (sens_p!=0)
     {
-        yarp::sig::Vector ranges;
-
         bool ret = true;
         IRangefinder2D::Device_status status;
-        ret &= sens_p->getMeasurementData(ranges);
+        yarp::sig::Vector ranges;
+        ret &= sens_p->getRawMeasurementData(ranges);
         ret &= sens_p->getDeviceStatus(status);
 
         if (ret)
@@ -551,6 +552,7 @@ void Rangefinder2DWrapper::run()
             yarp::os::Bottle& b = streamingPort.prepare();
             b.clear();
             Bottle& bl = b.addList();
+
             bl.read(ranges);
             b.addInt(status);
             streamingPort.setEnvelope(lastStateStamp);
@@ -564,9 +566,9 @@ void Rangefinder2DWrapper::run()
                 rosData.header.stamp = normalizeSecNSec(lastStateStamp.getTime());
                 rosData.header.frame_id = frame_id;
 
-                rosData.angle_min = minAngle * 3.14 / 180.0;
-                rosData.angle_max = maxAngle * 3.14 / 180.0;
-                rosData.angle_increment = resolution * 3.14 / 180.0;
+                rosData.angle_min = minAngle * M_PI / 180.0;
+                rosData.angle_max = maxAngle * M_PI / 180.0;
+                rosData.angle_increment = resolution * M_PI / 180.0;
                 rosData.time_increment = 0;             // all points in a single scan are considered took at the very same time
                 rosData.scan_time = 1/getRate();        // time elapsed between two successive readings
                 rosData.range_min = minDistance;
