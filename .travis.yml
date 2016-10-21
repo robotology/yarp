@@ -234,9 +234,7 @@ install:
 
   # Install Qt5 GUIs dependencies
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev; fi
-# Qt5 5.7 requires C++11 enabled and therefore is currently not compatible with YARP devel with C++11 disabled
-#   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then if ! $TRAVIS_WITH_CXX11; then brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/106d0878ee812cb8f5c403f717bdebe836445aee/Formula/qt5.rb; else brew install qt5; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"; fi
 
   # Install GPL dependencies (gsl, qcustomplot)
