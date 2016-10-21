@@ -58,7 +58,9 @@ public:
 
 public:
     //IRangefinder2D interface
-    virtual bool getMeasurementData  (yarp::sig::Vector &out);
+    virtual bool getRawMeasurementData(yarp::sig::Vector &out);
+    virtual bool getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data);
+    virtual bool getPolarMeasurementData(std::vector<PolarMeasurementData> &data);
     virtual bool getDeviceStatus     (Device_status &status);
     virtual bool getDeviceInfo       (yarp::os::ConstString &device_info);
     virtual bool getDistanceRange    (double& min, double& max);

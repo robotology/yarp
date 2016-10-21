@@ -28,8 +28,9 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include<cv.h>
-#include<highgui.h>
+#include <cv.h>
+#include <highgui.h>
+#include <vector>
 
 #include <yarp/dev/Drivers.h>
 #include <yarp/os/Network.h>
@@ -61,13 +62,6 @@ const CvScalar color_red    = cvScalar(0,0,255);
 const CvScalar color_yellow = cvScalar(0,255,255);
 const CvScalar color_black  = cvScalar(0,0,0);
 const CvScalar color_gray   = cvScalar(100,100,100);
-
-struct lasermap_type
-{
-    double x;
-    double y;
-    lasermap_type() {x=y=0.0;}
-};
 
 #define ASPECT_LINE  0
 #define ASPECT_POINT 1
@@ -114,7 +108,7 @@ void drawRobot (IplImage *img, double robot_radius, double scale)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(v3),color_black);
 }
 
-void drawCompass(const Vector *comp, IplImage *img, bool absolute)
+void drawCompass(const yarp::sig::Vector *comp, IplImage *img, bool absolute)
 {
     int sx = 0;
     int sy = 0;
@@ -129,12 +123,12 @@ void drawCompass(const Vector *comp, IplImage *img, bool absolute)
         double ang;
         if  (absolute) ang = i+180;
         else           ang = i+(*comp)[0]+180;
-        sx = int(-250*sin(ang/180.0*3.14)+img->width/2);
-        sy = int(250*cos(ang/180.0*3.14)+img->height/2);
-        ex = int(-260*sin(ang/180.0*3.14)+img->width/2);
-        ey = int(260*cos(ang/180.0*3.14)+img->height/2);
-        tx = int(-275*sin(ang/180.0*3.14)+img->width/2);
-        ty = int(275*cos(ang/180.0*3.14)+img->height/2);
+        sx = int(-250*sin(ang/180.0*M_PI)+img->width/2);
+        sy = int(250*cos(ang/180.0*M_PI)+img->height/2);
+        ex = int(-260*sin(ang/180.0*M_PI)+img->width/2);
+        ey = int(260*cos(ang/180.0*M_PI)+img->height/2);
+        tx = int(-275*sin(ang/180.0*M_PI)+img->width/2);
+        ty = int(275*cos(ang/180.0*M_PI)+img->height/2);
         cvLine(img,cvPoint(sx,sy),cvPoint(ex,ey),color_black);
         CvSize tempSize;
         int lw;
@@ -191,7 +185,75 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
-void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img, double angle_tot, int scans, double sens_position, double scale, bool absolute, bool verbose, int aspect)
+void drawLaser(const Vector *comp, const vector<yarp::dev::IRangefinder2D::CartesianMeasurementData> *las, const vector<yarp::dev::IRangefinder2D::CartesianMeasurementData> *lmap, IplImage *img, double angle_tot, int scans, double sens_position, double scale, bool absolute, bool verbose, int aspect)
+{
+    cvZero(img);
+    cvRectangle(img, cvPoint(0, 0), cvPoint(img->width, img->height), cvScalar(255, 0, 0), -1);
+    CvPoint center;
+
+    double center_angle;
+    if (!absolute) center_angle = 0;
+    else center_angle = -180 - (*comp)[0];
+    center.x = (int)(img->width / 2 + (sens_position*scale)*sin(center_angle / 180 * M_PI));
+    center.y = (int)(img->height / 2 - (sens_position*scale)*cos(center_angle / 180 * M_PI));
+
+    double angle = 0;
+    double length = 0;
+    static double old_time = 0;
+
+    if (!las || !comp)
+    {
+        return;
+    }
+
+    double curr_time = yarp::os::Time::now();
+    if (verbose) yError("received vector size:%d ", int(las->size()));
+    static int timeout_count = 0;
+    if (curr_time - old_time > 0.40) timeout_count++;
+    if (verbose) yWarning("time:%f timeout:%d\n", curr_time - old_time, timeout_count);
+    old_time = curr_time;
+    for (int i = 0; i<scans; i++)
+    {
+        if ((*las)[i].x == std::numeric_limits<double>::infinity() ||
+            (*las)[i].y == std::numeric_limits<double>::infinity()) continue;
+
+        //if (length<0)     length = 0;
+        //else if (length>15)    length = 15; //15m maximum
+
+        angle -= center_angle;
+        double y = -(*las)[i].x*scale;
+        double x = -(*las)[i].y*scale;
+
+        CvPoint ray;
+        ray.x = int(x);
+        ray.y = int(y);
+        ray.x += center.x;
+        ray.y += center.y;
+
+        int thickness = 2;
+        //draw a line
+        if (aspect == ASPECT_LINE)
+        {
+            cvLine(img, center, ray, color_white, thickness);
+        }
+        else if (aspect == ASPECT_POINT)
+        {
+            cvLine(img, ray, ray, color_white, 3);
+        }
+
+        if (lmap)
+        {
+            CvPoint ray2;
+            ray2.x = -int((*lmap)[i].x*scale);
+            ray2.y = -int((*lmap)[i].y*scale);
+            ray2.x += (center.x - int((sens_position*scale)*sin(center_angle / 180 * M_PI)));
+            ray2.y += (center.y + int((sens_position*scale)*cos(center_angle / 180 * M_PI)));
+            cvLine(img, center, ray2, color_bwhite, thickness);
+        }
+    }
+}
+
+void drawLaser(const Vector *comp, const vector<yarp::dev::IRangefinder2D::PolarMeasurementData> *las, const vector<yarp::dev::IRangefinder2D::CartesianMeasurementData> *lmap, IplImage *img, double angle_tot, int scans, double sens_position, double scale, bool absolute, bool verbose, int aspect)
 {
     cvZero(img);
     cvRectangle(img,cvPoint(0,0),cvPoint(img->width,img->height),cvScalar(255,0,0),-1);
@@ -200,8 +262,8 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
     double center_angle;
     if (!absolute) center_angle=0;
     else center_angle = -180-(*comp)[0];
-    center.x = (int)(img->width/2  + (sens_position*scale)*sin(center_angle/180*3.14) );
-    center.y = (int)(img->height/2 - (sens_position*scale)*cos(center_angle/180*3.14) );
+    center.x = (int)(img->width/2  + (sens_position*scale)*sin(center_angle/180*M_PI) );
+    center.y = (int)(img->height/2 - (sens_position*scale)*cos(center_angle/180*M_PI) );
 
     double angle =0;
     double length=0;
@@ -220,17 +282,21 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
     old_time = curr_time;
     for (int i = 0; i<scans; i++)
     {
-        length=(*las)[i];
+        length=(*las)[i].distance;
         if (length == std::numeric_limits<double>::infinity()) continue;
 
         if      (length<0)     length = 0;
         else if (length>15)    length = 15; //15m maximum
-        angle = (double)i / (double)scans *angle_tot - ((360 - angle_tot) - (360 - angle_tot) / 2);
+        angle = (*las)[i].angle;
 
         //length=i; //this line is for debug only
-        angle-=center_angle;
-        double x = length*scale*cos(angle/180*3.14);
-        double y = -length*scale*sin(angle/180*3.14);
+        /*angle-=center_angle;
+        double x = length*scale*cos(angle);
+        double y = -length*scale*sin(angle);
+        */
+        angle -= center_angle;
+        double x = -length*scale*sin(angle);
+        double y = -length*scale*cos(angle);
 
         CvPoint ray;
         ray.x=int(x);
@@ -252,8 +318,8 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
         if (lmap)
         {
             CvPoint ray2;
-            ray2.x=int(lmap[i].x*scale);
-            ray2.y= -int(lmap[i].y*scale);
+            ray2.x= -int((*lmap)[i].x*scale);
+            ray2.y= -int((*lmap)[i].y*scale);
             ray2.x += (center.x - int((sens_position*scale)*sin(center_angle/180*M_PI)));
             ray2.y += (center.y + int((sens_position*scale)*cos(center_angle/180*M_PI)));
             cvLine(img,center,ray2,color_bwhite,thickness);
@@ -321,7 +387,8 @@ int main(int argc, char *argv[])
     double angle_tot = (angle_max - angle_min);
     iLas->getHorizontalResolution(angle_step);
     int scans = (int)(angle_tot / angle_step);
-    yarp::sig::Vector laser_data;
+    std::vector<yarp::dev::IRangefinder2D::PolarMeasurementData> polar_laser_data;
+    std::vector<yarp::dev::IRangefinder2D::CartesianMeasurementData> cartesian_laser_data;
 
     BufferedPort<yarp::os::Bottle> laserMapInPort;
     laserMapInPort.open(laser_map_port_name.c_str());
@@ -339,7 +406,6 @@ int main(int argc, char *argv[])
     bool exit = false;
     yarp::sig::Vector compass_data;
     compass_data.resize(3, 0.0);
-    lasermap_type     lasermap_data [1080];
 
     while(!exit)
     {
@@ -349,10 +415,15 @@ int main(int argc, char *argv[])
             if (cmp) compass_data = *cmp;
         }
 
-        iLas->getMeasurementData(laser_data);
-        int laser_data_size = laser_data.size();
+#ifndef TEST_CARTESIAN
+        iLas->getPolarMeasurementData(polar_laser_data);
+        int laser_data_size = polar_laser_data.size();
+#else
+        iLas->getCartesianMeasurementData(cartesian_laser_data);
+        int laser_data_size = cartesian_laser_data.size();
+#endif
 
-        yarp::os::Bottle *las_map = laserMapInPort.read(false);
+        /*yarp::os::Bottle *las_map = laserMapInPort.read(false);
         if (las_map)
         {
             for (unsigned int i=0; i<1080; i++)
@@ -361,11 +432,11 @@ int main(int argc, char *argv[])
                 lasermap_data[i].x = b->get(0).asDouble();
                 lasermap_data[i].y = b->get(1).asDouble();
             }
-        }
+        }*/
 
         //The drawing functions.
         {
-            if (las_map)
+            /*if (las_map)
             {
                 if (laser_data_size != scans)
                 {
@@ -376,7 +447,7 @@ int main(int argc, char *argv[])
                     drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose, aspect);
                 }
             }
-            else
+            else*/
             {
                 if (laser_data_size != scans)
                 {
@@ -384,7 +455,11 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose,aspect);
+#ifndef TEST_CARTESIAN
+                    drawLaser(&compass_data, &polar_laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose,aspect);
+#else
+                    drawLaser(&compass_data, &cartesian_laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose, aspect);
+#endif
                 }
 
             }

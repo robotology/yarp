@@ -10,6 +10,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
+#include <vector>
 
 #define VOCAB_ILASER2D     VOCAB4('i','l','a','s')
 #define VOCAB_DEVICE_INFO  VOCAB4('l','s','n','f')
@@ -40,14 +41,40 @@ public:
         DEVICE_TIMEOUT          = 3
     };
 
+    struct CartesianMeasurementData
+    {
+        double x;
+        double y;
+    };
+
+    struct PolarMeasurementData
+    {
+        double angle;
+        double distance;
+    };
+
     virtual ~IRangefinder2D(){}
 
     /**
-    * Get the distance measurements
-    * @param ranges the vector containing the distance measurement
+    * Get the device measurements
+    * @param data a vector containing the measurement data, expressed as 2D points
+    * @return true/false..
+    */
+    virtual bool getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data) = 0;
+
+    /**
+    * Get the device measurements
+    * @param ranges the vector containing the measurement data, expressed in polar coordinates
     * @return true/false.
     */
-    virtual bool getMeasurementData(yarp::sig::Vector &data) = 0;
+    virtual bool getPolarMeasurementData(std::vector<PolarMeasurementData> &data) = 0;
+
+    /**
+    * Get the device measurements
+    * @param ranges the vector containing the raw measurement data, as acquired by the device.
+    * @return true/false.
+    */
+    virtual bool getRawMeasurementData(yarp::sig::Vector &data) = 0;
 
     /**
     * get the device status

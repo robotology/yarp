@@ -8,6 +8,13 @@
 #include "Rangefinder2DClient.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/IFrameTransform.h>
+#include <yarp/math/Math.h>
+#include <yarp/math/FrameTransform.h>
+
+#include <limits>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 /*! \file Rangefinder2DClient.cpp */
 
@@ -15,6 +22,9 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
+#ifndef DEG2RAD
+#define DEG2RAD M_PI/180.0
+#endif
 
 inline void  Rangefinder2DInputPortProcessor::resetStat()
 {
@@ -208,6 +218,72 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
        return false;
     }
 
+    //getScanLimits is used here to update the cached values of scan_angle_min, scan_angle_max
+    double tmp_min;
+    double tmp_max;
+    this->getScanLimits(tmp_min, tmp_max);
+
+    //get the position of the device, if it is available
+    device_position_x = 0;
+    device_position_y = 0;
+    device_position_theta = 0;
+    yarp::dev::PolyDriver* drv = new yarp::dev::PolyDriver;
+    Property   TransformClientOptions;
+    TransformClientOptions.put("device", "transformClient");
+    TransformClientOptions.put("local", "/rangefinder2DTransformClient");
+    TransformClientOptions.put("remote", "/transformServer");
+    TransformClientOptions.put("period", "10");
+
+    bool b_canOpenTransformClient = false;
+    if (config.check("laser_frame_name") &&
+        config.check("robot_frame_name"))
+    {
+        laser_frame_name = config.find("laser_frame_name").toString();
+        robot_frame_name = config.find("robot_frame_name").toString();
+        bool b_canOpenTransformClient = drv->open(TransformClientOptions);
+    }
+
+    if (b_canOpenTransformClient)
+    {
+        yarp::dev::IFrameTransform* iTrf = 0;
+        drv->view(iTrf);
+        if (iTrf != 0)
+        {
+            yError() << "A Problem occurred while trying to view the IFrameTransform interface";
+            return false;
+        }
+
+        yarp::sig::Matrix mat;
+        iTrf->getTransform(laser_frame_name, robot_frame_name, mat);
+        yarp::sig::Vector v = yarp::math::dcm2rpy(mat);
+        device_position_x = mat[0][3];
+        device_position_y = mat[1][3];
+        device_position_theta = v[2];
+        if (fabs(v[0]) < 1e-6 && fabs(v[1]) < 1e-6)
+        {
+            yError() << "Laser device is not planar";
+        }
+        yInfo() << "Position information obtained fromtransform server";
+        drv->close();
+    }
+    else
+    {
+        if (config.check("device_position_x") &&
+            config.check("device_position_y") &&
+            config.check("device_position_theta"))
+        {
+            yInfo() << "Position information obtained from configuration parameters";
+            device_position_x = config.find("device_position_x").asDouble();
+            device_position_y = config.find("device_position_y").asDouble();
+            device_position_theta = config.find("device_position_theta").asDouble();
+        }
+        else
+        {
+            yDebug() << "No position information provided for this device";
+        }
+    }
+
+
     return true;
 }
 
@@ -218,9 +294,41 @@ bool yarp::dev::Rangefinder2DClient::close()
     return true;
 }
 
-bool yarp::dev::Rangefinder2DClient::getMeasurementData(yarp::sig::Vector &out)
+bool yarp::dev::Rangefinder2DClient::getRawMeasurementData(yarp::sig::Vector &data)
 {
-    inputPort.getData(out);
+    inputPort.getData(data);
+    return true;
+}
+
+bool yarp::dev::Rangefinder2DClient::getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data)
+{
+    yarp::sig::Vector ranges;
+    inputPort.getData(ranges);
+    size_t size = ranges.size();
+    data.resize(size);
+    double laser_angle_of_view = fabs(scan_angle_min) + fabs(scan_angle_max);
+    for (size_t i = 0; i < size; i++)
+    {
+        double angle = (i / double(size)*laser_angle_of_view + device_position_theta + scan_angle_min)* DEG2RAD;
+        data[i].x = ranges[i] * cos(angle) + device_position_x;
+        data[i].y = ranges[i] * sin(angle) + device_position_y;
+    }
+    return true;
+}
+
+bool yarp::dev::Rangefinder2DClient::getPolarMeasurementData(std::vector<PolarMeasurementData> &data)
+{
+    yarp::sig::Vector ranges;
+    inputPort.getData(ranges);
+    size_t size = ranges.size();
+    data.resize(size);
+    double laser_angle_of_view = fabs(scan_angle_min) + fabs(scan_angle_max);
+    for (size_t i = 0; i < size; i++)
+    {
+        double angle = (i / double(size)*laser_angle_of_view + scan_angle_min)* DEG2RAD;
+        data[i].angle = angle;
+        data[i].distance = ranges[i];
+    }
     return true;
 }
 
@@ -249,6 +357,11 @@ bool yarp::dev::Rangefinder2DClient::setDistanceRange(double min, double max)
     cmd.addDouble(min);
     cmd.addDouble(max);
     bool ok = rpcPort.write(cmd, response);
+    if (ok)
+    {
+        scan_angle_min = min;
+        scan_angle_max = max;
+    }
     return (CHECK_FAIL(ok, response));
 }
 
@@ -261,8 +374,8 @@ bool yarp::dev::Rangefinder2DClient::getScanLimits(double& min, double& max)
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response) != false)
     {
-        min = response.get(2).asDouble();
-        max = response.get(3).asDouble();
+        min = scan_angle_min = response.get(2).asDouble();
+        max = scan_angle_max = response.get(3).asDouble();
         return true;
     }
     return false;
