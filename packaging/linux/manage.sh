@@ -159,8 +159,10 @@ for platform in $PLATFORMS; do
 	    echo -e "\t$SOURCE_DIR/src/build_chroot.sh $variant chroot_$variant && touch chroot_$variant.txt\n"
 	    echo "yarp_$variant.txt: chroot_$variant.txt"
 	    echo -e "\t$SOURCE_DIR/src/build_yarp.sh $variant yarp_$variant && touch yarp_$variant.txt\n"
-	    echo "test_$variant.txt: yarp_$variant.txt"
-	    echo -e "\t$SOURCE_DIR/src/test_yarp.sh $variant && touch test_$variant.txt\n"
+	    if [ "$TEST_PACKAGES" == "true" ]; then
+              echo "test_$variant.txt: yarp_$variant.txt"
+	      echo -e "\t$SOURCE_DIR/src/test_yarp.sh $variant && touch test_$variant.txt\n"
+            fi
 	    targets=""
 	) >> $BUILD_DIR/Makefile
     done

@@ -90,52 +90,52 @@ if [ "${!DEPENDENCIES_DISTRIB}" != "" ]; then
   run_in_chroot build_chroot "yes | apt-get install ${!DEPENDENCIES_DISTRIB}" || exit 1
 fi
 
-if [ "$YARP_REVISION" != "" ]; then
-  YARP_VERSION=$YARP_REVISION
-  echo "yarp test revision $YARP_VERSION"
-  run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co -r $YARP_REVISION https://github.com/robotology/yarp/trunk yarp-$YARP_VERSION" || exit 1
-else
-  echo "yarp tag $YARP_VERSION"
-fi
-
-# Fetch yarp from SVN
-if [ ! -e build_chroot/tmp/yarp-$YARP_VERSION.done ]; then 
-  echo "fetching yarp version $YARP_VERSION from SVN"
-  if [ "$YARP_VERSION" == "trunk" ]; then
-    run_in_chroot build_chroot "cd /tmp; test -e yarp-${YARP_VERSION} || svn co https://github.com/robotology/yarp/trunk yarp-${YARP_VERSION}" || exit 1
-  else
-    run_in_chroot build_chroot "cd /tmp; test -e yarp-${YARP_VERSION} || svn co https://github.com/robotology/yarp/tags/v${YARP_VERSION} yarp-${YARP_VERSION}" || exit 1
+if [ "$YARP_SOURCES_VERSION" != "" ]; then
+  if [ "$YARP_PACKAGE_VERSION" == "" ]; then
+    echo "YARP_PACKAGE_VERSION not defined"
+    exit 1
   fi
-  run_in_chroot build_chroot "touch /tmp/yarp-$YARP_VERSION.done"
+  echo "yarp test revision $YARP_PACKAGE_VERSION"
+  if [ "$YARP_SOURCES_VERSION" == "trunk" ]; then
+    CHROOT_SRC="/tmp/yarp-trunk"
+    CHROOT_BUILD="/tmp/yarp-trunk/build"
+    run_in_chroot build_chroot "svn co https://github.com/robotology/yarp/trunk $CHROOT_SRC" || exit 1
+  else
+    CHROOT_SRC="/tmp/yarp-${YARP_SOURCES_VERSION}"
+    CHROOT_BUILD="/tmp/yarp-${YARP_SOURCES_VERSION}/build"
+    run_in_chroot build_chroot "svn co -r $YARP_SOURCES_VERSION https://github.com/robotology/yarp/trunk ${CHROOT_SRC}" || exit 1
+  fi
 else
-	echo "yarp already got!!"
+  echo "yarp tag $YARP_PACKAGE_VERSION"
+  CHROOT_SRC="/tmp/yarp-$YARP_PACKAGE_VERSION"
+  CHROOT_BUILD="/tmp/yarp-$YARP_PACKAGE_VERSION/build"
+  run_in_chroot build_chroot "svn co https://github.com/robotology/yarp/tags/v${YARP_PACKAGE_VERSION} ${CHROOT_SRC}" || exit 1
 fi
 
-CHROOT_SRC=/tmp/yarp-$YARP_VERSION 
 run_in_chroot build_chroot "cd $CHROOT_SRC && svn up" || exit 1
-if [ "$YARP_REVISION" == "" ]; then
+if [ "$YARP_SOURCES_VERSION" == "" ]; then
   run_in_chroot build_chroot "cd $CHROOT_SRC && svn up"
   run_in_chroot build_chroot "svn info ${CHROOT_SRC} > /tmp/yarp_svn.revision"
-  YARP_REVISION=$( grep '^Revision:' build_chroot/tmp/yarp_svn.revision | sed -e 's/^Revision: //' )
+  YARP_SOURCES_VERSION=$( grep '^Revision:' build_chroot/tmp/yarp_svn.revision | sed -e 's/^Revision: //' )
 fi
 
 # Prepare to build YARP.
-CHROOT_BUILD=/tmp/yarp-$YARP_VERSION/build
+run_in_chroot build_chroot "rm -rf $CHROOT_BUILD" || exit 1
 run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD" || exit 1
 CMAKE=cmake
 
-# Fetch cmake if version in repository is too old
-if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
-    CMAKE=`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
-else
-    run_in_chroot build_chroot "cd $CHROOT_BUILD && cmake --version | grep ' 2\.[46]' && ( wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1-Linux-i386.tar.gz && tar xzvf cmake-2.8.12.1-Linux-i386.tar.gz && touch local_cmake )"
-fi
-
-# If we downloaded cmake, we need to make sure we have 32-bit libraries
-if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
-    run_in_chroot build_chroot "yes | apt-get install ia32-libs"
-    CMAKE=$CHROOT_BUILD/`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
-fi
+## Fetch cmake if version in repository is too old
+#if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
+#    CMAKE=`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
+#else
+#    run_in_chroot build_chroot "cd $CHROOT_BUILD && cmake --version | grep ' 2\.[46]' && ( wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1-Linux-i386.tar.gz && tar xzvf cmake-2.8.12.1-Linux-i386.tar.gz && touch local_cmake )"
+#fi
+#
+## If we downloaded cmake, we need to make sure we have 32-bit libraries
+#if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
+#    run_in_chroot build_chroot "yes | apt-get install ia32-libs"
+#    CMAKE=$CHROOT_BUILD/`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
+#fi
 
 # Go ahead and configure
 run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE $YARP_CMAKE_OPTIONS $CHROOT_SRC" || exit 1
@@ -146,10 +146,10 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && make" || exit 1
 # Go ahead and generate .deb
 #PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
 PACKAGE_DEPENDENCIES=$( echo "$DEPENDENCIES_COMMON ${!DEPENDENCIES_DISTRIB}" | sed -e "s/ /,/g" | sed -e "s/,$//g") 
-if [ "$YARP_VERSION" == "trunk" ]; then
-  DEBIAN_PACKAGE_VERSION="${YARP_REVISION}-trunk-${YARP_DEB_REVISION}~${PLATFORM_KEY}"
+if [ "$YARP_PACKAGE_VERSION" == "trunk" ]; then
+  DEBIAN_PACKAGE_VERSION="${YARP_SOURCES_VERSION}-trunk-${YARP_DEB_REVISION}~${PLATFORM_KEY}"
 else
-  DEBIAN_PACKAGE_VERSION="${YARP_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}"  
+  DEBIAN_PACKAGE_VERSION="${YARP_PACKAGE_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}"  
 fi
 
 run_in_chroot build_chroot "cd $CHROOT_BUILD && $CMAKE -DCPACK_GENERATOR='DEB' -DCPACK_DEBIAN_PACKAGE_VERSION=${DEBIAN_PACKAGE_VERSION} -DCPACK_PACKAGE_CONTACT='info@icub.org' -DCPACK_DEBIAN_PACKAGE_MAINTAINER='matteo.brunettini@iit.it' -DCPACK_DEBIAN_PACKAGE_DEPENDS:STRING='$PACKAGE_DEPENDENCIES' ." || exit 1
@@ -158,9 +158,9 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -f *.deb && make package" || 
 # Rebuild .deb, because cmake 2.8.2 is broken, sigh
 #   http://public.kitware.com/Bug/view.php?id=11020
 run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -rf deb *.deb" || exit 1
-#PACK="deb/yarp-${YARP_VERSION}-${PLATFORM_KEY}-${PLATFORM_HARDWARE}"
-YARP_PACKAGE_NAME="yarp-${YARP_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}_${PLATFORM_HARDWARE}.deb"
-PACK="deb/yarp-${YARP_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}+${PLATFORM_HARDWARE}"
+#PACK="deb/yarp-${YARP_PACKAGE_VERSION}-${PLATFORM_KEY}-${PLATFORM_HARDWARE}"
+YARP_PACKAGE_NAME="yarp-${YARP_PACKAGE_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}_${PLATFORM_HARDWARE}.deb"
+PACK="deb/yarp-${YARP_PACKAGE_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}+${PLATFORM_HARDWARE}"
 run_in_chroot build_chroot "cd $CHROOT_BUILD && mkdir -p $PACK/DEBIAN" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && cp _CPack_Packages/Linux/DEB/yarp-*-Linux/control $PACK/DEBIAN" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && cp _CPack_Packages/Linux/DEB/yarp-*-Linux/md5sums $PACK/DEBIAN" || exit 1
