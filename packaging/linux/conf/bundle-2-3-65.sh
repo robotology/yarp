@@ -5,19 +5,15 @@ DEPENDENCIES_COMMON="qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev libqt5svg5
 DEPENDENCIES_wheezy="qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia qml-module-qtquick-dialogs qml-module-qtquick-controls libgoocanvasmm-dev"
 DEPENDENCIES_jessie="qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia qml-module-qtquick-dialogs qml-module-qtquick-controls libgtkdataboxmm-dev libgoocanvasmm-dev"
 DEPENDENCIES_trusty="qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin qtdeclarative5-qtmultimedia-plugin qtdeclarative5-controls-plugin qtdeclarative5-dialogs-plugin libgtkdataboxmm-dev libgoocanvasmm-dev"
-DEPENDENCIES_utopic="qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia qml-module-qtquick-dialogs qml-module-qtquick-controls libgtkdataboxmm-dev libgoocanvasmm-dev"
-DEPENDENCIES_vivid="qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia qml-module-qtquick-dialogs qml-module-qtquick-controls libgtkdataboxmm-dev libgoocanvasmm-dev"
 DEPENDENCIES_wily="qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia qml-module-qtquick-dialogs qml-module-qtquick-controls libgtkdataboxmm-dev libgoocanvasmm-2.0-dev"
 DEPENDENCIES_xenial="qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia qml-module-qtquick-dialogs qml-module-qtquick-controls libgtkdataboxmm-dev"
 
 BACKPORTS_URL_wheezy="http://http.debian.net/debian"
-#export YARP_VERSION=2.3.65
 export YARP_PACKAGE_VERSION=2.3.65
 #use YARP source code revision to fetch a different version tag or trunk
-#export YARP_REVISION=trunk
-export YARP_SOURCES_VERSION="trunk"
+#export YARP_SOURCES_VERSION="trunk"
 # always use a revision number >=1
-export YARP_DEB_REVISION=0r1
+export YARP_DEB_REVISION=1
 
 YARP_CMAKE_OPTIONS="\
  -DCREATE_GUIS=TRUE \
