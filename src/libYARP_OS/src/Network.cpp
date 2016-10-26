@@ -661,6 +661,7 @@ void NetworkBase::finiMinimum() {
         Time::useSystemClock();
         Carriers::removeInstance();
         NameClient::removeNameClient();
+        yarp::os::Time::removeClock();
         removeNameSpace();
         Logger::fini();
         Bottle::fini();

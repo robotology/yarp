@@ -41,7 +41,8 @@ static void unlock()
 static Clock *createsystemClock()
 {
     yarp_clock_type = SYSTEM_CLOCK;
-    return new SystemClock();
+    pclock = new SystemClock();
+    return pclock;
 }
 
 /* Creation of network clock may fail for different causes:
@@ -122,31 +123,34 @@ static Clock *createNetworkClock()
 
 // To be called ONLY INSIDE a function which sets a new clock.
 // Never leave the clock pointer set to NULL
-// static void removeClock()
-// {
-//     // make the current clock invalid before destroying it so new request will already
-//     // be redirected to the system clock.
-//     // Here we are already inside ::lock()
-//     Clock *old_pclock = pclock;
-//     bool old_clock_owned = clock_owned;
-//     pclock = NULL;
-//     clock_owned = false;
-//
-//     if (network_clock_name) delete network_clock_name;
-//
-//     network_clock_name = NULL;
-//
-//     if (old_pclock)
-//     {
+void Time::removeClock()
+{
+    // make the current clock invalid before destroying it so new request will already
+    // be redirected to the system clock.
+    // Here we are already inside ::lock()
+
+    lock();
+    Clock *old_pclock = pclock;
+    bool old_clock_owned = clock_owned;
+    pclock = NULL;
+    clock_owned = false;
+
+    if (network_clock_name) delete network_clock_name;
+
+    network_clock_name = NULL;
+
+    if( (old_pclock) && (yarp_clock_type != CUSTOM_CLOCK) )
+    {
 //         if (old_clock_owned)
 //         {
-//             delete old_pclock;          // This will wake up all sleeping threads
-//             old_clock_owned = false;
+            delete old_pclock;          // This will wake up all sleeping threads
+            old_clock_owned = false;
 //         }
-//
-//         old_pclock = NULL;
-//     }
-// }
+
+        old_pclock = NULL;
+    }
+    unlock();
+}
 
 static Clock *getClock()
 {
@@ -202,22 +206,23 @@ void Time::yield()
 
 void Time::useSystemClock()
 {
-    lock();
     if(!isSystemClock())
     {
-//         removeClock();
+        removeClock();
+        lock();
         pclock = createsystemClock();
+        unlock();
     }
-    unlock();
 }
 
 void Time::useNetworkClock(const ConstString &clock)
 {
-    lock();
     // re-create the clock also in case we already use a network clock, because
     // the clock port may be different or the clock producer may be changed
     // so we need to reconnect. (Using persistant connection this may not be required).
     network_clock_name = new ConstString(clock);
+    removeClock();
+    lock();
     pclock = createNetworkClock();
     unlock();
     isValid();
@@ -230,11 +235,11 @@ void Time::useCustomClock(Clock *clock)
     yAssert(clock);
     
     if(!clock->isValid())
-        yError("useCustomClock called with NULL clock, cannot proceed.");
+        yError("useCustomClock called with invalid clock, cannot proceed.");
     yAssert(clock);
             
+    removeClock();
     lock();
-//     removeClock();
     pclock = clock;
     yarp_clock_type = CUSTOM_CLOCK;
     unlock();

@@ -124,6 +124,8 @@ public:
      *
      */
     static bool isValid();
+
+    static void removeClock();
 };
 
 #endif // YARP_OS_TIME_H
