@@ -191,7 +191,7 @@ void BottleImpl::smartAdd(const String& str)
             s->fromStringNested(str);
             if (ss != NULL) {
                 if (str.length() == 0 || str[0] != '\"') {
-                    String val = ss->asStringFlex();
+                    String val = ss->asString();
                     if (val == "true") {
                         delete s;
                         s = new StoreVocab(static_cast<int>('1'));
@@ -681,7 +681,7 @@ void BottleImpl::setNested(bool nested)
 ////////////////////////////////////////////////////////////////////////////
 // StoreInt
 
-ConstString StoreInt::toStringFlex() const
+ConstString StoreInt::toString() const
 {
     char buf[256];
     ACE_OS::sprintf(buf, "%d", x);
@@ -710,7 +710,7 @@ bool StoreInt::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreInt64
 
-ConstString StoreInt64::toStringFlex() const
+ConstString StoreInt64::toString() const
 {
     char buf[256];
     ACE_OS::sprintf(buf, "%" YARP_INT64_FMT, x);
@@ -738,7 +738,7 @@ bool StoreInt64::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreVocab
 
-ConstString StoreVocab::toStringFlex() const
+ConstString StoreVocab::toString() const
 {
     if (x == 0) {
         return "false";
@@ -762,7 +762,7 @@ ConstString StoreVocab::toStringNested() const
     if (x == '1') {
         return "true";
     }
-    return ConstString("[") + toStringFlex() + "]";
+    return ConstString("[") + toString() + "]";
 }
 
 void StoreVocab::fromStringNested(const ConstString& src)
@@ -797,7 +797,7 @@ bool StoreVocab::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreDouble
 
-ConstString StoreDouble::toStringFlex() const
+ConstString StoreDouble::toString() const
 {
     char buf[512];
     ACE_OS::sprintf(buf, "%f", x);
@@ -863,7 +863,7 @@ bool StoreDouble::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreString
 
-ConstString StoreString::toStringFlex() const
+ConstString StoreString::toString() const
 {
     return x;
 }
@@ -999,7 +999,7 @@ bool StoreString::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreBlob
 
-ConstString StoreBlob::toStringFlex() const
+ConstString StoreBlob::toString() const
 {
     ConstString result = "";
     for (unsigned int i = 0; i < x.length(); i++) {
@@ -1015,7 +1015,7 @@ ConstString StoreBlob::toStringFlex() const
 
 ConstString StoreBlob::toStringNested() const
 {
-    return ConstString("{") + toStringFlex() + "}";
+    return ConstString("{") + toString() + "}";
 }
 
 void StoreBlob::fromString(const ConstString& src)
@@ -1060,7 +1060,7 @@ bool StoreBlob::writeRaw(ConnectionWriter& writer)
 ////////////////////////////////////////////////////////////////////////////
 // StoreList
 
-ConstString StoreList::toStringFlex() const
+ConstString StoreList::toString() const
 {
     return ConstString(content.toString().c_str());
 }
@@ -1133,7 +1133,7 @@ int StoreList::subCode() const
 ////////////////////////////////////////////////////////////////////////////
 // StoreDict
 
-ConstString StoreDict::toStringFlex() const
+ConstString StoreDict::toString() const
 {
     return ConstString(content.toString().c_str());
 }
