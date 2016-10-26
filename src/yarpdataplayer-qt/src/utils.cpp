@@ -226,7 +226,7 @@ bool Utilities::checkLogValidity(const char *filename)
         int itr = 0;
         while( getline( str, line ) && itr < 3){
             Bottle b( line.c_str() );
-            if (itr >= 1){
+            if (itr >= 0){ 
                 if ( b.size() < 1){
                     check = false;
                 } else {
