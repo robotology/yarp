@@ -384,7 +384,8 @@ void MasterThread::runNormally()
 
                     if (stopAll == numPart){
                         LOG("All parts have Finished!\n");
-                        utilities->updateGuiThread();
+                        if (utilities->partDetails[i].currFrame > 1)
+                            utilities->updateGuiThread();
                         utilities->stopAtEnd();
                     }
                 }
