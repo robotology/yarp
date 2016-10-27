@@ -134,7 +134,7 @@ bool FakeLaser::setScanRate(double rate)
 }
 
 
-bool FakeLaser::getRawMeasurementData(yarp::sig::Vector &out)
+bool FakeLaser::getRawData(yarp::sig::Vector &out)
 {
     mutex.wait();
     out = laser_data;
@@ -142,8 +142,7 @@ bool FakeLaser::getRawMeasurementData(yarp::sig::Vector &out)
     device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
 }
-
-bool FakeLaser::getPolarMeasurementData(std::vector<PolarMeasurementData> &data)
+bool FakeLaser::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
     mutex.wait();
 #ifdef LASER_DEBUG
@@ -155,28 +154,7 @@ bool FakeLaser::getPolarMeasurementData(std::vector<PolarMeasurementData> &data)
     for (size_t i = 0; i < size; i++)
     {
         double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
-        data[i].distance = laser_data[i];
-        data[i].angle = angle;
-    }
-    mutex.post();
-    device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
-    return true;
-}
-
-bool FakeLaser::getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data)
-{
-    mutex.wait();
-#ifdef LASER_DEBUG
-    //yDebug("data: %s\n", laser_data.toString().c_str());
-#endif
-    size_t size = laser_data.size();
-    data.resize(size);
-    double laser_angle_of_view = fabs(min_angle) + fabs(max_angle);
-    for (size_t i = 0; i < size; i++)
-    {
-        double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
-        data[i].x = laser_data[i] * cos(angle);
-        data[i].y = laser_data[i] * sin(angle);
+        data[i].set_polar(laser_data[i], angle);
     }
     mutex.post();
     device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;

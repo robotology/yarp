@@ -41,10 +41,18 @@ public:
         DEVICE_TIMEOUT          = 3
     };
 
-    struct CartesianMeasurementData
+    class LaserMeasurementData
     {
-        double x;
-        double y;
+        double stored_x;
+        double stored_y;
+        double stored_angle;
+        double stored_distance;
+        public:
+        LaserMeasurementData()    { stored_x = stored_y = stored_angle = stored_distance = 0; }
+        inline void set_cartesian(const double x, const double y)       { stored_x = x; stored_y = y; stored_angle = 0; stored_distance = 0; stored_distance = std::sqrt(x*x + y*y); stored_angle = std::atan2(y, x); }
+        inline void set_polar(const double rho, const double theta)     { stored_angle = theta; stored_distance = rho; stored_y = rho*std::sin(theta); stored_x = rho*std::cos(theta); }
+        inline void get_cartesian (double& x, double& y)       { x = stored_x; y = stored_y; }
+        inline void get_polar     (double& rho, double& theta) { rho = stored_angle; theta = stored_distance; }
     };
 
     struct PolarMeasurementData
@@ -57,24 +65,17 @@ public:
 
     /**
     * Get the device measurements
-    * @param data a vector containing the measurement data, expressed as 2D points
+    * @param data a vector containing the measurement data, expressed in cartesian/polar format
     * @return true/false..
     */
-    virtual bool getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data) = 0;
-
-    /**
-    * Get the device measurements
-    * @param ranges the vector containing the measurement data, expressed in polar coordinates
-    * @return true/false.
-    */
-    virtual bool getPolarMeasurementData(std::vector<PolarMeasurementData> &data) = 0;
+    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) = 0;
 
     /**
     * Get the device measurements
     * @param ranges the vector containing the raw measurement data, as acquired by the device.
     * @return true/false.
     */
-    virtual bool getRawMeasurementData(yarp::sig::Vector &data) = 0;
+    virtual bool getRawData(yarp::sig::Vector &data) = 0;
 
     /**
     * get the device status

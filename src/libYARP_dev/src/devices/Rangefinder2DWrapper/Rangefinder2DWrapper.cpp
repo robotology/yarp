@@ -537,7 +537,7 @@ void Rangefinder2DWrapper::run()
         bool ret = true;
         IRangefinder2D::Device_status status;
         yarp::sig::Vector ranges;
-        ret &= sens_p->getRawMeasurementData(ranges);
+        ret &= sens_p->getRawData(ranges);
         ret &= sens_p->getDeviceStatus(status);
 
         if (ret)
