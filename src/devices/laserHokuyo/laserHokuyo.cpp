@@ -330,7 +330,7 @@ bool laserHokuyo::setScanRate(double rate)
     return false;
 }
 
-bool laserHokuyo::getRawMeasurementData(yarp::sig::Vector &out)
+bool laserHokuyo::getRawData(yarp::sig::Vector &out)
 {
     if (internal_status != HOKUYO_STATUS_NOT_READY)
     {
@@ -348,7 +348,7 @@ bool laserHokuyo::getRawMeasurementData(yarp::sig::Vector &out)
     return false;
 }
 
-bool laserHokuyo::getPolarMeasurementData(std::vector<PolarMeasurementData> &data)
+bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
     if (internal_status != HOKUYO_STATUS_NOT_READY)
     {
@@ -362,8 +362,7 @@ bool laserHokuyo::getPolarMeasurementData(std::vector<PolarMeasurementData> &dat
         for (size_t i = 0; i < size; i++)
         {
             double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
-            data[i].distance = laser_data[i];
-            data[i].angle = angle;
+            data[i].set_polar(laser_data[i], angle);
         }
         mutex.post();
         device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
@@ -373,33 +372,6 @@ bool laserHokuyo::getPolarMeasurementData(std::vector<PolarMeasurementData> &dat
     device_status = yarp::dev::IRangefinder2D::DEVICE_GENERAL_ERROR;
     return false;
 }
-
-bool laserHokuyo::getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data)
-{
-    if (internal_status != HOKUYO_STATUS_NOT_READY)
-    {
-        mutex.wait();
-#ifdef LASER_DEBUG
-        //yDebug("data: %s\n", laser_data.toString().c_str());
-#endif
-        size_t size = laser_data.size();
-        data.resize(size);
-        double laser_angle_of_view = fabs(min_angle) + fabs(max_angle);
-        for (size_t i = 0; i < size; i++)
-        {
-            double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
-            data[i].x = laser_data[i] * cos(angle);
-            data[i].y = laser_data[i] * sin(angle);
-        }
-        mutex.post();
-        device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
-        return true;
-    }
-
-    device_status = yarp::dev::IRangefinder2D::DEVICE_GENERAL_ERROR;
-    return false;
-}
-
 bool laserHokuyo::getDeviceStatus(Device_status &status)
 {
     mutex.wait();

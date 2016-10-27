@@ -294,13 +294,13 @@ bool yarp::dev::Rangefinder2DClient::close()
     return true;
 }
 
-bool yarp::dev::Rangefinder2DClient::getRawMeasurementData(yarp::sig::Vector &data)
+bool yarp::dev::Rangefinder2DClient::getRawData(yarp::sig::Vector &data)
 {
     inputPort.getData(data);
     return true;
 }
 
-bool yarp::dev::Rangefinder2DClient::getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data)
+bool yarp::dev::Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
     yarp::sig::Vector ranges;
     inputPort.getData(ranges);
@@ -310,24 +310,8 @@ bool yarp::dev::Rangefinder2DClient::getCartesianMeasurementData(std::vector<Car
     for (size_t i = 0; i < size; i++)
     {
         double angle = (i / double(size)*laser_angle_of_view + device_position_theta + scan_angle_min)* DEG2RAD;
-        data[i].x = ranges[i] * cos(angle) + device_position_x;
-        data[i].y = ranges[i] * sin(angle) + device_position_y;
-    }
-    return true;
-}
-
-bool yarp::dev::Rangefinder2DClient::getPolarMeasurementData(std::vector<PolarMeasurementData> &data)
-{
-    yarp::sig::Vector ranges;
-    inputPort.getData(ranges);
-    size_t size = ranges.size();
-    data.resize(size);
-    double laser_angle_of_view = fabs(scan_angle_min) + fabs(scan_angle_max);
-    for (size_t i = 0; i < size; i++)
-    {
-        double angle = (i / double(size)*laser_angle_of_view + scan_angle_min)* DEG2RAD;
-        data[i].angle = angle;
-        data[i].distance = ranges[i];
+        double value = ranges[i];
+        data[i].set_cartesian(value * cos(angle) + device_position_x, value * sin(angle) + device_position_y);
     }
     return true;
 }

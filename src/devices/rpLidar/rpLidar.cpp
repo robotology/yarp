@@ -269,7 +269,7 @@ bool RpLidar::setScanRate(double rate)
 }
 
 
-bool RpLidar::getRawMeasurementData(yarp::sig::Vector &out)
+bool RpLidar::getRawData(yarp::sig::Vector &out)
 {
     LockGuard guard(mutex);
     out = laser_data;
@@ -277,7 +277,7 @@ bool RpLidar::getRawMeasurementData(yarp::sig::Vector &out)
     return true;
 }
 
-bool RpLidar::getPolarMeasurementData(std::vector<PolarMeasurementData> &data)
+bool RpLidar::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
     LockGuard guard(mutex);
 #ifdef LASER_DEBUG
@@ -289,32 +289,11 @@ bool RpLidar::getPolarMeasurementData(std::vector<PolarMeasurementData> &data)
     for (size_t i = 0; i < size; i++)
     {
         double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
-        data[i].distance = laser_data[i];
-        data[i].angle = angle;
+        data[i].set_polar(laser_data[i], angle);
     }
     device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
 }
-
-bool RpLidar::getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data)
-{
-    LockGuard guard(mutex);
-#ifdef LASER_DEBUG
-        //yDebug("data: %s\n", laser_data.toString().c_str());
-#endif
-    size_t size = laser_data.size();
-    data.resize(size);
-    double laser_angle_of_view = fabs(min_angle) + fabs(max_angle);
-    for (size_t i = 0; i < size; i++)
-    {
-        double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
-        data[i].x = laser_data[i] * cos(angle);
-        data[i].y = laser_data[i] * sin(angle);
-    }
-    device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
-    return true;
-}
-
 bool RpLidar::getDeviceStatus(Device_status &status)
 {
     LockGuard guard(mutex);

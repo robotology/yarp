@@ -113,24 +113,17 @@ public:
 
     /**
     * Get the device measurements
-    * @param data a vector containing the measurement data, expressed as 2D points
+    * @param data a vector containing the measurement data, expressed in cartesian/polar format
     * @return true/false..
     */
-    virtual bool getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data);
-
-    /**
-    * Get the device measurements
-    * @param ranges the vector containing the measurement data, expressed in polar coordinates
-    * @return true/false.
-    */
-    virtual bool getPolarMeasurementData(std::vector<PolarMeasurementData> &data);
+    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data);
 
     /**
     * Get the device measurements
     * @param ranges the vector containing the raw measurement data, as acquired by the device.
     * @return true/false.
     */
-    virtual bool getRawMeasurementData(yarp::sig::Vector &data);
+    virtual bool getRawData(yarp::sig::Vector &data);
 
     /**
     * get the device status

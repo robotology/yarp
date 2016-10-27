@@ -90,9 +90,8 @@ public:
 
 public:
     //IRangefinder2D interface
-    virtual bool getRawMeasurementData(yarp::sig::Vector &data);
-    virtual bool getCartesianMeasurementData(std::vector<CartesianMeasurementData> &data);
-    virtual bool getPolarMeasurementData(std::vector<PolarMeasurementData> &data);
+    virtual bool getRawData(yarp::sig::Vector &data);
+    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data);
     virtual bool getDeviceStatus     (Device_status &status);
     virtual bool getDeviceInfo       (yarp::os::ConstString &device_info);
     virtual bool getDistanceRange    (double& min, double& max);
