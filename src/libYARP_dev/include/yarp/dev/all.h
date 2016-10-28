@@ -25,7 +25,7 @@
 #include <yarp/dev/GenericSensorInterfaces.h>
 #include <yarp/dev/GPUInterface.h>
 #include <yarp/dev/IAnalogSensor.h>
-#include <yarp/dev/IDepthSensor.h>
+#include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IKinectDeviceDriver.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/IRGBDSensor.h>

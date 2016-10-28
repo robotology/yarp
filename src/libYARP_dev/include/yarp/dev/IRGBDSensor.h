@@ -24,15 +24,21 @@
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Image.h>
 #include <yarp/os/Stamp.h>
-
 #include <yarp/dev/FrameGrabberInterfaces.h>
-#include <yarp/dev/IDepthSensor.h>
+
 
 namespace yarp {
     namespace dev {
         class IRGBDSensor;
     }
 }
+
+
+#define VOCAB_SET       VOCAB3('s','e','t')
+#define VOCAB_GET       VOCAB3('g','e','t')
+#define VOCAB_IS        VOCAB2('i','s')
+#define VOCAB_OK        VOCAB2('o','k')
+#define VOCAB_FAILED    VOCAB4('f','a','i','l')
 
 /**
  * @ingroup dev_iface_other
@@ -48,8 +54,7 @@ namespace yarp {
  */
 
 class YARP_dev_API yarp::dev::IRGBDSensor:  public IFrameGrabberImage,
-                                            public IFrameGrabberImageRaw,
-                                            public IDepthSensor
+                                            public IFrameGrabberImageRaw
 {
 public:
 
@@ -67,22 +72,6 @@ public:
 
     virtual ~IRGBDSensor(){}
 
-    /** IDepthSensor Interface */
-    using IDepthSensor::getDeviceInfo;
-    using IDepthSensor::getMeasurementData;
-    using IDepthSensor::getDeviceStatus;
-    using IDepthSensor::getDistanceRange;
-    using IDepthSensor::setDistanceRange;
-    using IDepthSensor::getHorizontalScanLimits;
-    using IDepthSensor::setHorizontalScanLimits;
-    using IDepthSensor::getVerticalScanLimits;
-    using IDepthSensor::setVerticalScanLimits;
-    using IDepthSensor::getDataSize;
-    using IDepthSensor::setDataSize;
-    using IDepthSensor::getResolution;
-    using IDepthSensor::setResolution;
-    using IDepthSensor::getScanRate;
-    using IDepthSensor::setScanRate;
 
     /** IFrameGrabberImage interface */
     virtual int height() const = 0;

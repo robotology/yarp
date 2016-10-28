@@ -530,9 +530,7 @@ bool RGBDSensorWrapper::setCamInfo
     Property                    camData;
     vector<param<double> >      parVector;
     param<double>*              par;
-    
-    sensor_p->getDeviceInfo(camData);
-    
+
     if(!camData.check("distortionModel"))
     {
         yWarning() << "missing distortion model";
