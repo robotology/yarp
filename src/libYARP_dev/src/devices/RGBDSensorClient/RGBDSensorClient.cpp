@@ -217,78 +217,123 @@ bool RGBDSensorClient::initialize_ROS(yarp::os::Searchable &config)
     return true;
 }
 
-    /**
-     * Close the DeviceDriver.
-     * @return true/false on success/failure.
-     */
 bool RGBDSensorClient::close()
 {
     return true;
 }
 
-// IFrameGrabber Interfaces
-/**
-    * Get an rgb image from the frame grabber, if required
-    * demosaicking/color reconstruction is applied
-    *
-    * @param image the image to be filled
-    * @return true/false upon success/failure
-    */
-bool RGBDSensorClient::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> &image)
+
+int  RGBDSensorClient::getRgbHeight()
 {
     return false;
 }
 
-/**
-    * Get a raw image from the frame grabber
-    *
-    * @param image the image to be filled
-    * @return true/false upon success/failure
-    */
-bool RGBDSensorClient::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &image)
+int  RGBDSensorClient::getRgbWidth()
 {
     return false;
 }
 
-/**
-    * Return the height of each frame.
-    * @return image height
-    */
-int RGBDSensorClient::height() const
+bool RGBDSensorClient::getRgbFOV(int &horizontalFov, int &verticalFov)
 {
-    return 0;
+    return false;
 }
 
-/**
-    * Return the width of each frame.
-    * @return image width
-    */
-int RGBDSensorClient::width() const
+bool RGBDSensorClient::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
 {
-    return 0;
+    return false;
+}
+
+bool RGBDSensorClient::getRgbSensorInfo(yarp::os::Property &info)
+{
+    return false;
+}
+
+
+    /*
+    * IDepthVisualParams interface. Look at IVisualParams.h for documentation
+    */
+int    RGBDSensorClient::getDepthHeight()
+{
+    return false;
+}
+
+int    RGBDSensorClient::getDepthWidth()
+{
+    return false;
+}
+
+bool   RGBDSensorClient::getDepthFOV(int &horizontalFov, int &verticalFov)
+{
+    return false;
+}
+
+bool   RGBDSensorClient::getDepthIntrinsicParam(yarp::os::Property &intrinsic)
+{
+    return false;
+}
+
+bool   RGBDSensorClient::getDepthSensorInfo(yarp::os::Property info)
+{
+    return false;
+}
+
+double RGBDSensorClient::getDepthAccuracy()
+{
+    return false;
+}
+
+bool   RGBDSensorClient::getDepthClipPlanes(int &near, int &far)
+{
+    return false;
+}
+
+bool RGBDSensorClient::setDepthClipPlanes(int near, int far)
+{
+    return false;
 }
 
 
 /** IRGBDSensor specific interface methods*/
-bool RGBDSensorClient::getRGBDSensor_Status(RGBDSensor_status *status)
+
+bool RGBDSensorClient::getExtrinsicParam(yarp::os::Property &extrinsic)
 {
     return false;
 }
 
-/**
-* Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
-* is achieved accordingly to synch policy set by the user.
-* TimeStamps are referred to acquisition time of the corresponding piece of information.
-* If the device is not providing TimeStamps, then 'timeStamp' field should be set to '-1'.
-* @param colorFrame pointer to FlexImage data to hold the color frame from the sensor
-* @param depthFrame pointer to FlexImage data to hold the depth frame from the sensor
-* @param colorStamp pointer to memory to hold the Stamp of the color frame
-* @param depthStamp pointer to memory to hold the Stamp of the depth frame
-* @return true if able to get both data.
-*/
-bool RGBDSensorClient::getRGBD_Frames(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
+
+IRGBDSensor::RGBDSensor_status RGBDSensorClient::getSensorStatus()
 {
-    streamingReader.synchRead(colorFrame, depthFrame);
-    return true;
+    return RGBD_SENSOR_NOT_READY;
 }
+
+
+yarp::os::ConstString RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeStamp)
+{
+    return "false";
+}
+
+
+bool RGBDSensorClient::getRgbImage(yarp::sig::FlexImage   &rgbImage,   yarp::os::Stamp *timeStamp)
+{
+    return false;
+}
+
+
+bool RGBDSensorClient::getDepthImage(yarp::sig::FlexImage &depthImage, yarp::os::Stamp *timeStamp)
+{
+    return false;
+}
+
+
+bool RGBDSensorClient::getSynchPolicy(SynchPolicy policy, yarp::os::Property params)
+{
+    return false;
+}
+
+
+bool RGBDSensorClient::getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
+{
+    return false;
+}
+
 

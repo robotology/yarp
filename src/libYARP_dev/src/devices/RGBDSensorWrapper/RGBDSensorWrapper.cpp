@@ -1,10 +1,13 @@
 /*
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
  * Authors: Alberto Cardellino <Alberto.Cardellino@iit.it>
+ *          Andrea Ruzzenenti   <Andrea.Ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #include <sstream>
+#include <stdio.h>
+#include <string.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include "RGBDSensorWrapper.h"
@@ -635,7 +638,7 @@ bool RGBDSensorWrapper::writeData()
 
     //             colorImage.resize(hDim, vDim);  // Has this to be done each time? If size is the same what it does?
     //             depthImage.resize(hDim, vDim);
-    if (!sensor_p->getRGBD_Frames(colorImage, depthImage, &colorStamp, &depthStamp))
+    if (!sensor_p->getImages(colorImage, depthImage, &colorStamp, &depthStamp))
     {
         return false;
     }
@@ -705,7 +708,7 @@ void RGBDSensorWrapper::run()
 {
     if (sensor_p!=0)
     {
-        sensor_p->getRGBDSensor_Status(&sensorStatus);
+        sensorStatus = sensor_p->getSensorStatus();
         switch (sensorStatus)
         {
             case(IRGBDSensor::RGBD_SENSOR_OK_IN_USE) :

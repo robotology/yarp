@@ -16,8 +16,8 @@
  * Public License for more details
  */
 
-#ifndef _DEPTH_SENSOR_WRAPPER_H_
-#define _DEPTH_SENSOR_WRAPPER_H_
+#ifndef YARP_DEV_RGBD_SENSOR_WRAPPER_H_
+#define YARP_DEV_RGBD_SENSOR_WRAPPER_H_
 
 #include <vector>
 #include <iostream>
@@ -230,4 +230,4 @@ public:
     void        run();
 };
 
-#endif   // _DEPTH_SENSOR_WRAPPER_H_
+#endif   // YARP_DEV_RGBD_SENSOR_WRAPPER_H_
