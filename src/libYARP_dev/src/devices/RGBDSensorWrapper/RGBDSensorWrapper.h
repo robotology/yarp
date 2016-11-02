@@ -147,6 +147,8 @@ private:
     YOS::Publisher<sensor_msgs_CameraInfo>  rosPublisherPort_colorCaminfo, rosPublisherPort_depthCaminfo;
     YOS::Node*                              rosNode;
     std::string                             nodeName, depthTopicName, colorTopicName, dInfoTopicName, cInfoTopicName, rosFrameId;
+    yarp::sig::FlexImage                    colorImage;
+    yarp::sig::FlexImage                    depthImage;
     unsigned int                            nodeSeq;
                                             
     // It should be possible to attach this  guy to more than one port, try to see what

@@ -630,8 +630,6 @@ bool RGBDSensorWrapper::setCamInfo
 
 bool RGBDSensorWrapper::writeData()
 {
-    yarp::sig::FlexImage colorImage;
-    yarp::sig::FlexImage depthImage;
     
     //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
     //             depthImage.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
