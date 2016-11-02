@@ -13,6 +13,7 @@ include_directories(${YARP_OS_INCLUDE_DIRS})
 # Prepare a plugin library called "yarpmod".
 yarp_begin_plugin_library(yarpmod)
   add_subdirectory(cuda)
+  add_subdirectory(depthCamera)
   add_subdirectory(fakebot)
   add_subdirectory(fakeMotionControl)
   add_subdirectory(fakeAnalogSensor)
