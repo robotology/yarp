@@ -644,10 +644,18 @@ QTreeWidgetItem * MainWindow::getRowByPart(QString szName )
 /**********************************************************/
 void MainWindow::onMenuFileOpen()
 {
-    if(ui->actionRepeat->isChecked()){
+    if(ui->actionRepeat->isChecked())
+    {
         LOG("repeat mode is activated, setting it to false\n");
         utilities->repeat = false;
         ui->actionRepeat->setChecked(false);
+    }
+    
+    if (ui->actionStrict->isChecked())
+    {
+        LOG("send strict mode is activated, setting it to false\n");
+        utilities->sendStrict = false;
+        ui->actionStrict->setChecked(false);
     }
     QString dir = QFileDialog::getExistingDirectory(this, tr("Please choose a folder"),
                                                     QDir::homePath(),
