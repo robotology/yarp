@@ -72,6 +72,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IVelocityControl.h
                   include/yarp/dev/INavigation2D.h
                   include/yarp/dev/IVirtualAnalogSensor.h
+                  include/yarp/dev/LaserMeasurementData.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
@@ -101,6 +102,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/DevicePipe.cpp
                   src/Drivers.cpp
                   src/Dummy.cpp
+                  src/LaserMeasurementData.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
                   src/IMotorEncodersImpl.cpp
