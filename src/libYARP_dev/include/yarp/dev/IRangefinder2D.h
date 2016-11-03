@@ -10,6 +10,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/LaserMeasurementData.h>
 #include <vector>
 
 #define VOCAB_ILASER2D     VOCAB4('i','l','a','s')
@@ -39,26 +40,6 @@ public:
         DEVICE_OK_IN_USE        = 1,
         DEVICE_GENERAL_ERROR    = 2,
         DEVICE_TIMEOUT          = 3
-    };
-
-    class LaserMeasurementData
-    {
-        double stored_x;
-        double stored_y;
-        double stored_angle;
-        double stored_distance;
-        public:
-        LaserMeasurementData()    { stored_x = stored_y = stored_angle = stored_distance = 0; }
-        inline void set_cartesian(const double x, const double y)       { stored_x = x; stored_y = y; stored_angle = 0; stored_distance = 0; stored_distance = std::sqrt(x*x + y*y); stored_angle = std::atan2(y, x); }
-        inline void set_polar(const double rho, const double theta)     { stored_angle = theta; stored_distance = rho; stored_y = rho*std::sin(theta); stored_x = rho*std::cos(theta); }
-        inline void get_cartesian (double& x, double& y)       { x = stored_x; y = stored_y; }
-        inline void get_polar     (double& rho, double& theta) { rho = stored_angle; theta = stored_distance; }
-    };
-
-    struct PolarMeasurementData
-    {
-        double angle;
-        double distance;
     };
 
     virtual ~IRangefinder2D(){}
