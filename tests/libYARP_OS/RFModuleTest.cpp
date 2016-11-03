@@ -9,6 +9,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/all.h>
 #include <yarp/os/RFModule.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
@@ -26,9 +27,24 @@ public:
         return RFModule::respond(command,reply);
     }
 
-    virtual bool updateModule() {
+    virtual bool configure(yarp::os::ResourceFinder &rf)
+    {
+        a_local_bool_ = true;
+        return a_local_bool_;
+    }
+
+    virtual double getPeriod()
+    {
+        return 0.0;
+    }
+
+    virtual bool updateModule()
+    {
         return true;
     }
+
+private:
+    bool a_local_bool_ = false;
 
 };
 
@@ -38,14 +54,14 @@ public:
 
 
     void testPort() {
-        report(0,"checking Port network responses...");
+        report(0, "[Test] Checking Port network responses...");
 
         MyModule mm;
         Port p1, p2;
         mm.attach(p2);
         bool ok1 = p1.open("/p1");
         bool ok2 = p2.open("/p2");
-        checkTrue(ok1&&ok2,"ports opened ok");
+        checkTrue(ok1 && ok2, "[Test] Ports opened ok");
         if (!(ok1&&ok2)) {
             return;
         }
@@ -55,7 +71,16 @@ public:
         Bottle out, in;
         out.addInt(42);
         p1.write(out,in);
-        checkEqual(in.get(0).asInt(),out.get(0).asInt(),"Port response");
+        checkEqual(in.get(0).asInt(), out.get(0).asInt(), "[Test] Port response");
+
+        ResourceFinder rf;
+        checkEqual(mm.configure(rf), true, "[Test] Configure completed");
+
+        checkEqual(mm.runModuleThreaded(), 0, "[Test] Module threaded");
+
+        mm.stopModule();
+
+        checkEqual(mm.joinModule(), true, "[Test] Module threaded finished");
     }
 
     virtual void runTests() {
