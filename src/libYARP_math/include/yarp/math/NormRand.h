@@ -27,7 +27,7 @@ namespace yarp
 
 
 /**
-* A static class grouping function for uniform random number 
+* A static class grouping function for normal random number 
 * generator. Thread safe.
 *
 * Methods inside this class provides access to a global instance 
