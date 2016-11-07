@@ -543,7 +543,7 @@ bool yarp::dev::FrameTransformClient::transformPoint(const std::string &target_f
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
     {
-        yError() << "no transform found between source and target";
+        yError() << "no transform found between source '" << target_frame_id << "' and target '" << source_frame_id << "'";
         return false;
     }
     yarp::sig::Vector in = input_point;
@@ -568,7 +568,7 @@ bool yarp::dev::FrameTransformClient::transformPose(const std::string &target_fr
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
     {
-        yError() << "no transform found between source and target";
+        yError() << "no transform found between source '" << target_frame_id << "' and target '" << source_frame_id << "'";
         return false;
     }
     FrameTransform t;
@@ -597,7 +597,7 @@ bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &tar
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
     {
-        yError() << "no transform found between source and target";
+        yError() << "no transform found between source '" << target_frame_id << "' and target '" << source_frame_id <<"'";
         return false;
     }
     FrameTransform t;
