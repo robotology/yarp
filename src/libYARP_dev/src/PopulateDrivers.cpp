@@ -37,7 +37,6 @@ extern DriverCreator *createServerInertial();
 extern DriverCreator *createBatteryWrapper();
 extern DriverCreator *createBatteryClient();
 extern DriverCreator *createRangefinder2DWrapper();
-extern DriverCreator *createRangefinder2DClient();
 extern DriverCreator *createRGBDSensorWrapper();
 extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
@@ -48,6 +47,7 @@ extern DriverCreator *createNavigation2DClient();
 extern DriverCreator *createFrameTransformServer();
 extern DriverCreator *createFrameTransformClient();
 extern DriverCreator *createLocationsServer();
+extern DriverCreator *createRangefinder2DClient();
 #endif
 
 #ifndef YARP_NO_DEPRECATED
@@ -92,7 +92,6 @@ void Drivers::init() {
     add(createServerInertial());
     add(createControlBoardWrapper());
     add(createBatteryClient());
-    add(createRangefinder2DClient());
     add(createAnalogSensorClient());
     add(createAnalogWrapper());
     add(createVirtualAnalogWrapper());
@@ -108,6 +107,7 @@ void Drivers::init() {
     add(createFrameTransformServer());
     add(createFrameTransformClient());
     add(createLocationsServer());
+    add(createRangefinder2DClient());
 #endif
 
 #ifndef YARP_NO_DEPRECATED
