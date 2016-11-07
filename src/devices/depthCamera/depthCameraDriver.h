@@ -29,15 +29,12 @@ class streamFrameListener : public openni::VideoStream::NewFrameListener
 {
 public:
 
+    yarp::sig::FlexImage    image;
     openni::VideoFrameRef   frameRef;
     openni::PixelFormat     pixF;
 
 private:
-    virtual void onNewFrame(openni::VideoStream& stream)
-    {
-        stream.readFrame(&frameRef);
-        pixF = stream.getVideoMode().getPixelFormat();
-    }
+    virtual void onNewFrame(openni::VideoStream& stream);
 };
 
 class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
@@ -72,25 +69,20 @@ public:
 
     virtual RGBDSensor_status     getSensorStatus();
     virtual yarp::os::ConstString getLastErrorMsg(yarp::os::Stamp* timeStamp = NULL);
+    static int                    pixFormatToCode(openni::PixelFormat p);
 
 private:
     //method
     inline bool initializeOpeNIDevice();
-    int         pixFormatToCode(openni::PixelFormat p);
+
     bool        getImage(yarp::sig::FlexImage& Frame, yarp::os::Stamp* Stamp, streamFrameListener& sourceFrame);
 
     //properties
+    void*                     depthBuffer;
     openni::Device            m_device;
-    openni::Device*           m_pDevice;
-    openni::Recorder          m_recorder;
-    openni::PlaybackControl*  m_playbackControl;
     openni::VideoStream       m_depthStream;
     openni::VideoStream       m_imageStream;
-    openni::VideoMode         m_depthMode;
-    openni::VideoMode         m_imageMode;
     streamFrameListener       m_depthFrame;
     streamFrameListener       m_imageFrame;
-    const openni::SensorInfo* m_depthInfo;
-    const openni::SensorInfo* m_colorInfo;
 };
 #endif

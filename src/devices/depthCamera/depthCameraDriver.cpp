@@ -3,6 +3,61 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace openni;
 
+void streamFrameListener::onNewFrame(openni::VideoStream& stream)
+{
+    if (!frameRef.isValid() || !frameRef.getData())
+    {
+        yInfo() << "frame lost";
+        return;
+    }
+
+    int   pixF;
+    void* data;
+    int   w, h, i;
+
+    stream.readFrame(&frameRef);
+    pixF = stream.getVideoMode().getPixelFormat();
+    data = 0;
+    pixC = yarp::dev::depthCameraDriver::pixFormatToCode(pixF);
+    w    = frameRef.getWidth();
+    h    = frameRef.getHeight();
+
+    if(pixC == VOCAB_PIXEL_INVALID)
+    {
+        yError() << "depthCameraDriver: Pixel Format not recognized";
+        return;
+    }
+
+    Frame.setPixelCode(pixC);
+
+    if(pixC == VOCAB_PIXEL_MONO_FLOAT && pixF == PIXEL_FORMAT_DEPTH_1_MM   ||
+       pixC == VOCAB_PIXEL_MONO_FLOAT && pixF == PIXEL_FORMAT_DEPTH_100_UM)
+    {
+
+        float  factor;
+        float* rawImage;
+        short* srcRawImage;
+
+        srcRawImage = (short*)(frameRef.getData());
+        factor      = pixF == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
+
+
+        image.resize(w, h);
+        rawImage    = (float*)(image.getRawImage());
+
+        //TODO: optimize short-to-float cast and multiplication using SSE/SIMD instruction
+        for(i = 0; i < w * h; i++)
+        {
+            rawImage[i] = srcRawImage[i] * factor;
+        }
+    }
+
+    if(Stamp)
+    {
+        Stamp->update();
+    }
+}
+
 
 depthCameraDriver::depthCameraDriver()
 {
@@ -170,13 +225,41 @@ bool depthCameraDriver::getDepthImage(yarp::sig::FlexImage& depthImage, yarp::os
 
 int depthCameraDriver::pixFormatToCode(PixelFormat p)
 {
+    //pixel size interpretation based on  openni2_camera/src/openni2_frame_listener.cpp:
+    /*switch (video_mode.getPixelFormat())
+        {
+          case openni::PIXEL_FORMAT_DEPTH_1_MM:
+            image->encoding = sensor_msgs::image_encodings::TYPE_16UC1;
+            image->step = sizeof(unsigned char) * 2 * image->width;
+            break;
+          case openni::PIXEL_FORMAT_DEPTH_100_UM:
+            image->encoding = sensor_msgs::image_encodings::TYPE_16UC1;
+            image->step = sizeof(unsigned char) * 2 * image->width;
+            break;
+          case openni::PIXEL_FORMAT_SHIFT_9_2:
+            image->encoding = sensor_msgs::image_encodings::TYPE_16UC1;
+            image->step = sizeof(unsigned char) * 2 * image->width;
+            break;
+          case openni::PIXEL_FORMAT_SHIFT_9_3:
+            image->encoding = sensor_msgs::image_encodings::TYPE_16UC1;
+            image->step = sizeof(unsigned char) * 2 * image->width;
+            break;*/
     switch(p)
     {
     case (PIXEL_FORMAT_RGB888):
         return VOCAB_PIXEL_RGB;
 
     case (PIXEL_FORMAT_DEPTH_1_MM):
-        return VOCAB_PIXEL_MONO16;
+        return VOCAB_PIXEL_MONO_FLOAT;
+
+    case (PIXEL_FORMAT_DEPTH_100_UM):
+        return VOCAB_PIXEL_MONO_FLOAT;
+
+    case (PIXEL_FORMAT_SHIFT_9_2):
+        return VOCAB_PIXEL_INVALID;
+
+    case (PIXEL_FORMAT_SHIFT_9_3):
+        return VOCAB_PIXEL_INVALID;
 
     case (PIXEL_FORMAT_GRAY8):
         return VOCAB_PIXEL_MONO;
@@ -192,9 +275,18 @@ int depthCameraDriver::pixFormatToCode(PixelFormat p)
 
 bool depthCameraDriver::getImage(yarp::sig::FlexImage& Frame, yarp::os::Stamp* Stamp, streamFrameListener& sourceFrame)
 {
-    int pixF;
-    void* data = 0;
+    if (!sourceFrame.frameRef.isValid() || !sourceFrame.frameRef.getData())
+    {
+        yInfo() << "frame lost";
+        return false;
+    }
+
+    int   pixF;
+    void* data;
+
+    data = 0;
     pixF = pixFormatToCode(sourceFrame.pixF);
+
     if(pixF == VOCAB_PIXEL_INVALID)
     {
         yError() << "depthCameraDriver: Pixel Format not recognized";
@@ -202,13 +294,38 @@ bool depthCameraDriver::getImage(yarp::sig::FlexImage& Frame, yarp::os::Stamp* S
     }
 
     Frame.setPixelCode(pixF);
-    data = (void*)sourceFrame.frameRef.getData();
-    if (!data)
+
+    if(pixF == VOCAB_PIXEL_MONO_FLOAT && sourceFrame.pixF == PIXEL_FORMAT_DEPTH_1_MM   ||
+       pixF == VOCAB_PIXEL_MONO_FLOAT && sourceFrame.pixF == PIXEL_FORMAT_DEPTH_100_UM)
     {
-        yInfo() << "frame lost";
-        return false;
+        int            w, h, i, j;
+        float          factor;
+        float*         rawImage;
+        short*         srcRawImage;
+
+        srcRawImage = (short*)(sourceFrame.frameRef.getData());
+        factor      = sourceFrame.pixF == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
+        w           = sourceFrame.frameRef.getWidth();
+        h           = sourceFrame.frameRef.getHeight();
+
+        Frame.resize(w, h);
+        rawImage    = (float*)(Frame.getRawImage());
+
+        //TODO: optimize short-to-float cast and multiplication using SSE/SIMD instruction
+        for(i = 0; i < w * h; i++)
+        {
+            rawImage[i] = srcRawImage[i] * factor;
+        }
     }
-    Frame.setExternal(data, sourceFrame.frameRef.getWidth(), sourceFrame.frameRef.getHeight());
+    else
+    {
+        if((void*)sourceFrame.frameRef.getData() == 0)
+        {
+            yDebug() << "AAAARGH";
+        }
+        data = (void*)sourceFrame.frameRef.getData();
+        Frame.setExternal(data, sourceFrame.frameRef.getWidth(), sourceFrame.frameRef.getHeight());
+    }
 
     if(Stamp)
     {
