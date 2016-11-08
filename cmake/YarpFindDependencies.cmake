@@ -234,7 +234,7 @@ mark_as_advanced(SKIP_ACE)
 
 
 option(CREATE_LIB_MATH "Create math library libYARP_math?" OFF)
-cmake_dependent_option(CREATE_LIB_MATH_USING_GSL "Create math library libYARP_math using GSL?" ON CREATE_LIB_MATH ON)
+cmake_dependent_option(CREATE_LIB_MATH_USING_GSL "Create math library libYARP_math using GSL?" OFF CREATE_LIB_MATH ON)
 cmake_dependent_option(CREATE_YARPROBOTINTERFACE "Do you want to compile yarprobotinterface?" ON YARP_COMPILE_EXECUTABLES OFF)
 cmake_dependent_option(CREATE_YARPMANAGER_CONSOLE "Do you want to compile YARP Module Manager (console)?" ON YARP_COMPILE_EXECUTABLES OFF)
 cmake_dependent_option(CREATE_YARPDATADUMPER "Do you want to compile yarpdatadumper?" ON YARP_COMPILE_EXECUTABLES OFF)
