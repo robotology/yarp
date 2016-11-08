@@ -29,6 +29,8 @@ class streamFrameListener : public openni::VideoStream::NewFrameListener
 {
 public:
 
+    yarp::os::Mutex         mutex;
+    yarp::os::Stamp         stamp;
     yarp::sig::FlexImage    image;
     openni::VideoFrameRef   frameRef;
     openni::PixelFormat     pixF;

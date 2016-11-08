@@ -5,19 +5,20 @@ using namespace openni;
 
 void streamFrameListener::onNewFrame(openni::VideoStream& stream)
 {
+
+    mutex.lock();
     if (!frameRef.isValid() || !frameRef.getData())
     {
         yInfo() << "frame lost";
         return;
     }
 
-    int   pixF;
-    void* data;
-    int   w, h, i;
+    PixelFormat pixF;
+    int         pixC;
+    int         w, h, i;
 
     stream.readFrame(&frameRef);
     pixF = stream.getVideoMode().getPixelFormat();
-    data = 0;
     pixC = yarp::dev::depthCameraDriver::pixFormatToCode(pixF);
     w    = frameRef.getWidth();
     h    = frameRef.getHeight();
@@ -28,11 +29,16 @@ void streamFrameListener::onNewFrame(openni::VideoStream& stream)
         return;
     }
 
-    Frame.setPixelCode(pixC);
 
-    if(pixC == VOCAB_PIXEL_MONO_FLOAT && pixF == PIXEL_FORMAT_DEPTH_1_MM   ||
-       pixC == VOCAB_PIXEL_MONO_FLOAT && pixF == PIXEL_FORMAT_DEPTH_100_UM)
+    image.setPixelCode(pixC);
+
+    if((pixC == VOCAB_PIXEL_MONO_FLOAT && pixF == PIXEL_FORMAT_DEPTH_1_MM)   ||
+       (pixC == VOCAB_PIXEL_MONO_FLOAT && pixF == PIXEL_FORMAT_DEPTH_100_UM))
     {
+        if(frameRef.getDataSize() != frameRef.getHeight() * frameRef.getWidth() * sizeof(short))
+        {
+            yError() << "image format error";
+        }
 
         float  factor;
         float* rawImage;
@@ -43,7 +49,7 @@ void streamFrameListener::onNewFrame(openni::VideoStream& stream)
 
 
         image.resize(w, h);
-        rawImage    = (float*)(image.getRawImage());
+        rawImage = (float*)(image.getRawImage());
 
         //TODO: optimize short-to-float cast and multiplication using SSE/SIMD instruction
         for(i = 0; i < w * h; i++)
@@ -51,11 +57,19 @@ void streamFrameListener::onNewFrame(openni::VideoStream& stream)
             rawImage[i] = srcRawImage[i] * factor;
         }
     }
-
-    if(Stamp)
+    else if(pixC == VOCAB_PIXEL_RGB)
     {
-        Stamp->update();
+        image.resize(w, h);
+        if(frameRef.getDataSize() != image.getRawImageSize())
+        {
+            yError() << "image format error";
+        }
+        memcpy((void*)image.getRawImage(), (void*)frameRef.getData(), frameRef.getDataSize());
+
     }
+
+    stamp.update();
+    mutex.unlock();
 }
 
 
@@ -275,64 +289,10 @@ int depthCameraDriver::pixFormatToCode(PixelFormat p)
 
 bool depthCameraDriver::getImage(yarp::sig::FlexImage& Frame, yarp::os::Stamp* Stamp, streamFrameListener& sourceFrame)
 {
-    if (!sourceFrame.frameRef.isValid() || !sourceFrame.frameRef.getData())
-    {
-        yInfo() << "frame lost";
-        return false;
-    }
-
-    int   pixF;
-    void* data;
-
-    data = 0;
-    pixF = pixFormatToCode(sourceFrame.pixF);
-
-    if(pixF == VOCAB_PIXEL_INVALID)
-    {
-        yError() << "depthCameraDriver: Pixel Format not recognized";
-        return false;
-    }
-
-    Frame.setPixelCode(pixF);
-
-    if(pixF == VOCAB_PIXEL_MONO_FLOAT && sourceFrame.pixF == PIXEL_FORMAT_DEPTH_1_MM   ||
-       pixF == VOCAB_PIXEL_MONO_FLOAT && sourceFrame.pixF == PIXEL_FORMAT_DEPTH_100_UM)
-    {
-        int            w, h, i, j;
-        float          factor;
-        float*         rawImage;
-        short*         srcRawImage;
-
-        srcRawImage = (short*)(sourceFrame.frameRef.getData());
-        factor      = sourceFrame.pixF == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
-        w           = sourceFrame.frameRef.getWidth();
-        h           = sourceFrame.frameRef.getHeight();
-
-        Frame.resize(w, h);
-        rawImage    = (float*)(Frame.getRawImage());
-
-        //TODO: optimize short-to-float cast and multiplication using SSE/SIMD instruction
-        for(i = 0; i < w * h; i++)
-        {
-            rawImage[i] = srcRawImage[i] * factor;
-        }
-    }
-    else
-    {
-        if((void*)sourceFrame.frameRef.getData() == 0)
-        {
-            yDebug() << "AAAARGH";
-        }
-        data = (void*)sourceFrame.frameRef.getData();
-        Frame.setExternal(data, sourceFrame.frameRef.getWidth(), sourceFrame.frameRef.getHeight());
-    }
-
-    if(Stamp)
-    {
-        Stamp->update();
-    }
-
-    return true;
+    sourceFrame.mutex.lock();
+    bool ret = Frame.copy(sourceFrame.image);
+    sourceFrame.mutex.unlock();
+    return ret;
 }
 
 bool depthCameraDriver::getImages(yarp::sig::FlexImage& colorFrame, yarp::sig::FlexImage& depthFrame, yarp::os::Stamp* colorStamp, yarp::os::Stamp* depthStamp)
