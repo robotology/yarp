@@ -5,6 +5,8 @@
  *
  */
 
+#include <fstream>
+
 #include "MainWindow.h"
 #include "moc_MainWindow.cpp"
 #include "ui_MainWindow.h"
@@ -57,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionMessageBox, SIGNAL(triggered()),this,SLOT(onWindowMessageBox()));
     connect(ui->actionItemswindow, SIGNAL(triggered()),this,SLOT(onWindowItem()));
     connect(ui->actionExport_scene, SIGNAL(triggered()),this,SLOT(onExportScene()));
+    connect(ui->actionExport_connections_list, SIGNAL(triggered()),this,SLOT(onExportConList()));
     connect(ui->actionUpdateConnectionQosStatus, SIGNAL(triggered()),this,SLOT(onUpdateQosStatus()));
     connect(ui->actionProfilePortsRate, SIGNAL(triggered()),this,SLOT(onProfilePortsRate()));
 
@@ -646,6 +649,46 @@ void MainWindow::onProfilePortsRate() {
     dialog.exec();
 }
 
+void MainWindow::onExportConList() {
+    QString filters("Text files (*.txt);;All files (*.*)");
+    QString defaultFilter("Image file (*.txt)");
+    QString filename = QFileDialog::getSaveFileName(0, "Export connections list",
+                                                    QDir::homePath(),
+                                                    filters, &defaultFilter);
+    if(filename.size() == 0)
+        return;
+
+    ofstream file;
+    file.open(filename.toStdString().c_str());
+    if(!file.is_open()) {
+        QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr("Cannot open the file for saving"));
+        return;
+    }
+
+    // adding all process nodes and subgraphs
+    pvertex_const_iterator itr;
+    const pvertex_set& vertices = currentGraph->vertices();
+    for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
+        const Vertex &v1 = (**itr);
+        for(int i=0; i<v1.outEdges().size(); i++) {
+            Edge& edge = (Edge&) v1.outEdges()[i];
+            const Vertex &v2 = edge.second();
+            if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
+                if(edge.property.find("type").asString() == "connection") {
+                    Bottle bt;
+                    bt.addString(v1.property.find("name").asString());
+                    bt.addString(v2.property.find("name").asString());
+                    bt.addString(edge.property.find("carrier").asString());
+                    file<<bt.toString().c_str()<<endl;
+                    //yInfo()<<v1.property.find("name").asString()<<"->"<<v2.property.find("name").asString();
+                }
+            }
+        }
+    }
+    file.close();
+
+}
+
 void MainWindow::onExportScene() {
     QString filters("Image files (*.png);;All files (*.*)");
     QString defaultFilter("Image file (*.png)");
@@ -678,3 +721,27 @@ void MainWindow::onExportScene() {
     p.end();
     */
 }
+
+
+/** LOADING...
+    fstream file;
+    file.open(filename.c_str());
+    if (!file.is_open()) {
+        yWarning()<<"Cannot open action file"<<filename;
+        return false;
+    }
+
+    data.clear();
+    string line;
+    unsigned int count = 0;
+    while(getline(file, line)) {
+        count++;
+        Bottle sample(line.c_str());
+        if(sample.size() == axes+2)
+            data.addList() = sample;
+        else
+            yWarning()<<"Wrong action data at line"<<count;
+    }
+    file.close();
+    return (data.size()>0);
+**/

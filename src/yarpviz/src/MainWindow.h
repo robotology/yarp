@@ -93,6 +93,7 @@ private slots:
     void onWindowMessageBox();
     void onWindowItem();
     void onExportScene();
+    void onExportConList();
     void onUpdateQosStatus();
     void onProfilePortsRate();
 

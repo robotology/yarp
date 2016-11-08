@@ -110,6 +110,7 @@
     <addaction name="action_Save_project"/>
     <addaction name="separator"/>
     <addaction name="actionExport_scene"/>
+    <addaction name="actionExport_connections_list"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -158,11 +159,17 @@
     <addaction name="actionMessageBox"/>
     <addaction name="actionItemswindow"/>
    </widget>
+   <widget class="QMenu" name="menu_Tools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuProfiling"/>
    <addaction name="menuView"/>
+   <addaction name="menuProfiling"/>
    <addaction name="menuView_2"/>
    <addaction name="menuHelp"/>
+   <addaction name="menu_Tools"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -323,6 +330,11 @@
    </property>
    <property name="text">
     <string>Profile ports rate...</string>
+   </property>
+  </action>
+  <action name="actionExport_connections_list">
+   <property name="text">
+    <string>Export &amp;connections list...</string>
    </property>
   </action>
  </widget>
