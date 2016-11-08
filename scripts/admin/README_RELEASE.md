@@ -138,4 +138,10 @@ git commit -m "Prepare for next feature release (2.3.70)"
 
 * Create and upload the binary packages.
 
-* Publish the release.
+* Publish the release by posting an announcement in [`robotology/QA`](https://github.com/robotology/QA) and in the [`rc-hackers`](http://wiki.icub.org/wiki/Robotcub-hackers) mailing list.
+
+Actions after a YARP release
+=============================
+* Update the latest release version in [YARP's Wikipedia page](https://en.wikipedia.org/wiki/YARP).
+
+* Update YARP's homebrew formula at https://github.com/robotology/homebrew-cask/blob/master/yarp.rb .
