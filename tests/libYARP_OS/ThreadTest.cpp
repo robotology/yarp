@@ -300,39 +300,43 @@ public:
     }
 
     void testSync() {
-        report(0,"testing cross-thread synchronization...");
+        report(0, "testing cross-thread synchronization...");
+
         int tct = ThreadImpl::getCount();
-        Thread1 bozo(*this);
-        Thread1 bozo2(*this);
-        Thread2 burper(*this);
+        Thread1    bozo(*this);
+        Thread1    bozo2(*this);
+        Thread2    burper(*this);
         ThreadImpl t1(&bozo);
         ThreadImpl t2(&bozo2);
-        report(0,"starting threads ...");
+        report(0, "starting threads ...");
         burper.start();
         t1.start();
         Time::delay(0.05);
         t2.start();
-        checkEqual(ThreadImpl::getCount(),tct+3,"thread count");
-        t1.join();
-        t2.join();
+        checkEqual(ThreadImpl::getCount(), tct+3, "thread count");
+        checkEqual(t1.join(), 0, "thread t1 joined succesfully");
+        checkEqual(t2.join(), 0, "thread t1 joined succesfully");
         burper.close();
-        burper.join();
-        report(0,"... done threads");
-        checkEqual(expectCount,gotCount,"thread event counts");
-        checkEqual(true,expectCount==11,"thread event counts");
+        checkEqual(burper.join(), 0, "thread burper joined succesfully");
+        report(0, "... done threads");
+        checkEqual(expectCount, gotCount, "thread event counts");
+        checkEqual(true, expectCount==11, "thread event counts");
+
+        report(0, "done");
     }
 
     void testStartVersusStop() {
-        report(0,"testing start/stop");
-        Thread3 t;
-        checkTrue(!t.isRunning(),"not active");
-        t.start();
-        checkTrue(t.isRunning(),"active");
-        t.stop();
-        checkTrue(!t.isRunning(),"not active");
+        report(0, "testing start/stop");
 
+        Thread3 t;
+        checkTrue(!t.isRunning(), "not active");
+        checkTrue(t.start(),      "t started succefully");
+        checkTrue(t.isRunning(),  "t is active");
+        checkTrue(t.stop(),       "t stopped succefully");
+        checkTrue(!t.isRunning(), "not active");
         checkTrue(t.onStopCalled, "onStop was called");
-        report(0,"done");
+
+        report(0, "done");
     }
 
     void testInitAndRelease()
@@ -458,7 +462,7 @@ public:
         ThreadDelay t(0.1,true);
         checkTrue(t.active,"flag starts out ok");
         t.start();
-        t.join(1);
+        checkEqual(t.join(1), 0, "thread t joined succesfully before 1 second timeout");
         checkTrue(t.active,"timeout join returns before thread stops");
         t.mutex.wait();
         t.hold = false;

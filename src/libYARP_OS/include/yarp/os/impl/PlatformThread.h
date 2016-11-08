@@ -15,7 +15,7 @@
 #  define Platform_thread_t size_t
 #  define PLATFORM_THREAD_SELF() std::hash<std::thread::id>()(std::this_thread::get_id())
 #  define PLATFORM_THREAD_RETURN unsigned
-#  define PLATFORM_THREAD_JOIN(x) ([](std::thread& y) { if (!y.joinable()) return false; y.join(); return true; }(x))
+#  define PLATFORM_THREAD_JOIN(x) ([](std::thread& y) { if (!y.joinable()) return -1; y.join(); return 0; }(x))
 #elif defined(YARP_HAS_ACE)
 #  include <ace/Thread.h>
 #  include <ace/Sched_Params.h>
