@@ -79,7 +79,7 @@ struct YARP_dev_API yarp::dev::CalibrationParameters
  *
  * Interface for a generic control board device implementing a PID controller.
  */
-class yarp::dev::IPidControlRaw
+class YARP_dev_API yarp::dev::IPidControlRaw
 {
 public:
     /**
@@ -496,7 +496,7 @@ public:
  *
  * Interface for control devices, amplifier commands.
  */
-class yarp::dev::IAmplifierControlRaw
+class YARP_dev_API yarp::dev::IAmplifierControlRaw
 {
 public:
     /**
@@ -632,7 +632,7 @@ public:
  *
  * Interface for control devices, calibration commands.
  */
-class yarp::dev::IControlCalibrationRaw
+class YARP_dev_API yarp::dev::IControlCalibrationRaw
 {
 public:
     IControlCalibrationRaw(){};
@@ -660,7 +660,7 @@ public:
  *
  * New interface for control devices, calibration commands.
  */
-class yarp::dev::IControlCalibration2Raw
+class YARP_dev_API yarp::dev::IControlCalibration2Raw
 {
 public:
     IControlCalibration2Raw(){};
@@ -797,7 +797,7 @@ public:
  *
  * Interface for control devices, debug commands.
  */
-class yarp::dev::IControlDebug
+class YARP_dev_API yarp::dev::IControlDebug
 {
 public:
     /**
@@ -859,7 +859,7 @@ public:
 /**
  * Interface for control devices. Limits commands.
  */
-class yarp::dev::IControlLimitsRaw
+class YARP_dev_API yarp::dev::IControlLimitsRaw
 {
 public:
     /**
@@ -914,7 +914,7 @@ public:
 /**
 * Interface for getting information about specific axes, if available.
 */
-class yarp::dev::IAxisInfoRaw
+class YARP_dev_API yarp::dev::IAxisInfoRaw
 {
 public:
     /**
