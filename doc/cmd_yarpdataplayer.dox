@@ -56,16 +56,22 @@ yarpdatadumper info.log file example:
 
 \section parameters_sec Parameters
 
+\verbatim
 --hidden
+\endverbatim
 - run with or without gui
 
+
+\verbatim
 --withExtraTimeCol index
+\endverbatim
 - loads the log files created by the datadumper with both rx and tx time.
   The user must select which timestamp to use (txTime index = 1 or
   rxTime index = 2)
 
-
---name \e modName
+\verbatim
+--name modName
+\endverbatim
 - The parameter \e modName identifies the stem-name of the open
   ports.
 
