@@ -26,7 +26,7 @@ function save_log()
     -- save all the loged data 
     if param_log_raw == true then 
         for i=1,#log_data do      
-            file:write(log_data[i],"\n") 
+            file:write(log_data[i].time,"\t",log_data[i].value,"\n") 
         end
     else
         local avg = sum / count
@@ -101,7 +101,7 @@ PortMonitor.accept = function(thing)
         if max < t then max = t end
         if min == 0 or min > t then min = t end
         if param_log_raw == true then
-            log_data[#log_data+1] =  t
+            log_data[#log_data+1] =  {time=yarp.Time_now(), value=t}
         end
     end 
     prev_time = yarp.Time_now()
