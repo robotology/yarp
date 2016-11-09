@@ -49,7 +49,7 @@ qtyarp_use_modules(${PROJECTNAME} Widgets Gui)
 if(WIN32)
     target_link_libraries(${PROJECTNAME} qgvcore Qt5::WinMain)
 endif()
-install(TARGETS ${PROJECTNAME} COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+#install(TARGETS ${PROJECTNAME} COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 #yarp_osx_duplicate_and_add_bundle(TARGET_ORIG ${PROJECTNAME}
 #                                TARGET_DEST ${PROJECTNAME}.app
