@@ -163,6 +163,7 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <addaction name="actionConfigure_connections_QOS"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -335,6 +336,11 @@
   <action name="actionExport_connections_list">
    <property name="text">
     <string>Export &amp;connections list...</string>
+   </property>
+  </action>
+  <action name="actionConfigure_connections_QOS">
+   <property name="text">
+    <string>&amp;Configure connections QOS...</string>
    </property>
   </action>
  </widget>

@@ -16,8 +16,9 @@ class QosConfigDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit QosConfigDialog(yarp::graph::Edge *edge, QWidget *parent = 0);
+    explicit QosConfigDialog(yarp::graph::Edge *edge, QWidget *parent = 0);    
     ~QosConfigDialog();
+    bool getUserQosStyles(yarp::os::QosStyle& srcStyle, yarp::os::QosStyle& dstStyle);
 
 private slots:
     void apply();

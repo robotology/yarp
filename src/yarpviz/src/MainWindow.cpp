@@ -27,6 +27,7 @@
 #include "informationdialog.h"
 #include "qosconfigdialog.h"
 #include "portloggerdialog.h"
+#include "batchqosconfdialog.h"
 
 using namespace std;
 using namespace yarp::os;
@@ -60,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionItemswindow, SIGNAL(triggered()),this,SLOT(onWindowItem()));
     connect(ui->actionExport_scene, SIGNAL(triggered()),this,SLOT(onExportScene()));
     connect(ui->actionExport_connections_list, SIGNAL(triggered()),this,SLOT(onExportConList()));
+    connect(ui->actionConfigure_connections_QOS, SIGNAL(triggered()),this,SLOT(onConfigureConsQos()));
     connect(ui->actionUpdateConnectionQosStatus, SIGNAL(triggered()),this,SLOT(onUpdateQosStatus()));
     connect(ui->actionProfilePortsRate, SIGNAL(triggered()),this,SLOT(onProfilePortsRate()));
 
@@ -649,6 +651,12 @@ void MainWindow::onProfilePortsRate() {
     dialog.exec();
 }
 
+void MainWindow::onConfigureConsQos() {
+    BatchQosConfDialog dialog;
+    dialog.setModal(false);
+    dialog.exec();
+}
+
 void MainWindow::onExportConList() {
     QString filters("Text files (*.txt);;All files (*.*)");
     QString defaultFilter("Image file (*.txt)");
@@ -721,27 +729,3 @@ void MainWindow::onExportScene() {
     p.end();
     */
 }
-
-
-/** LOADING...
-    fstream file;
-    file.open(filename.c_str());
-    if (!file.is_open()) {
-        yWarning()<<"Cannot open action file"<<filename;
-        return false;
-    }
-
-    data.clear();
-    string line;
-    unsigned int count = 0;
-    while(getline(file, line)) {
-        count++;
-        Bottle sample(line.c_str());
-        if(sample.size() == axes+2)
-            data.addList() = sample;
-        else
-            yWarning()<<"Wrong action data at line"<<count;
-    }
-    file.close();
-    return (data.size()>0);
-**/

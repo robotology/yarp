@@ -26,8 +26,9 @@ void QosConfigDialog::createGui() {
     // source packet priority
     srcPacketProCombo = new QComboBox(this);
     srcPacketProCombo->addItems(QStringList() << "LOW" << "NORMAL" << "HIGH" << "CRITIC");
-    yarp::os::QosStyle::PacketPriorityLevel level=
-            (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("FromPacketPriority").asInt();
+    yarp::os::QosStyle::PacketPriorityLevel level = yarp::os::QosStyle::PacketPriorityNormal;
+    if(edge)
+        level = (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("FromPacketPriority").asInt();
     switch(level) {
     case yarp::os::QosStyle::PacketPriorityNormal :
         srcPacketProCombo->setCurrentIndex(1);
@@ -49,19 +50,29 @@ void QosConfigDialog::createGui() {
     // source thread priority and policy
     srcThreadPro = new QLineEdit;
     srcThreadPro->setValidator( new QIntValidator(-100, 100, this) );
-    srcThreadPro->setText(QString::number(edge->property.find("FromThreadPriority").asInt()));
+    if(edge)
+        srcThreadPro->setText(QString::number(edge->property.find("FromThreadPriority").asInt()));
+    else
+        srcThreadPro->setText(QString::number(0));
     ui->treeWidgetProperty->setItemWidget(*it++, 1, srcThreadPro);
 
     srcThreadPolicy = new QLineEdit;
     srcThreadPolicy->setValidator( new QIntValidator(-100, 100, this) );
-    srcThreadPolicy->setText(QString::number(edge->property.find("FromThreadPolicy").asInt()));
+    if(edge)
+        srcThreadPolicy->setText(QString::number(edge->property.find("FromThreadPolicy").asInt()));
+    else
+        srcThreadPolicy->setText(QString::number(0));
     ui->treeWidgetProperty->setItemWidget(*it++, 1, srcThreadPolicy);
 
 
     // destination packet priority
     dstPacketProCombo = new QComboBox(this);
     dstPacketProCombo->addItems(QStringList() << "LOW" << "NORMAL" << "HIGH" << "CRITIC");
-    level = (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("ToPacketPriority").asInt();
+    if(edge)
+        level = (yarp::os::QosStyle::PacketPriorityLevel)edge->property.find("ToPacketPriority").asInt();
+    else
+        level = yarp::os::QosStyle::PacketPriorityNormal;
+
     switch(level) {
     case yarp::os::QosStyle::PacketPriorityNormal :
         dstPacketProCombo->setCurrentIndex(1);
@@ -83,12 +94,18 @@ void QosConfigDialog::createGui() {
     // destination thread priority and policy
     dstThreadPro = new QLineEdit;
     dstThreadPro->setValidator( new QIntValidator(-100, 100, this) );
-    dstThreadPro->setText(QString::number(edge->property.find("ToThreadPriority").asInt()));
+    if(edge)
+        dstThreadPro->setText(QString::number(edge->property.find("ToThreadPriority").asInt()));
+    else
+        dstThreadPro->setText(QString::number(0));
     ui->treeWidgetProperty->setItemWidget(*it++, 1, dstThreadPro);
 
     dstThreadPolicy = new QLineEdit;
     dstThreadPolicy->setValidator( new QIntValidator(-100, 100, this) );
-    dstThreadPolicy->setText(QString::number(edge->property.find("ToThreadPolicy").asInt()));
+    if(edge)
+        dstThreadPolicy->setText(QString::number(edge->property.find("ToThreadPolicy").asInt()));
+    else
+        dstThreadPolicy->setText(QString::number(0));
     ui->treeWidgetProperty->setItemWidget(*it++, 1, dstThreadPolicy);
 }
 
@@ -101,12 +118,7 @@ void QosConfigDialog::reset() {
     dstThreadPolicy->setText("0");
 }
 
-void QosConfigDialog::apply() {
-    if(!edge) {
-        close();
-        return;
-    }
-    yarp::os::QosStyle srcStyle, dstStyle;
+bool QosConfigDialog::getUserQosStyles(yarp::os::QosStyle& srcStyle, yarp::os::QosStyle& dstStyle) {
     yarp::os::QosStyle::PacketPriorityLevel level;
     int itemLevel = srcPacketProCombo->currentIndex();
     switch(itemLevel) {
@@ -127,7 +139,7 @@ void QosConfigDialog::apply() {
     }
     srcStyle.setPacketPriorityByLevel(level);
     srcStyle.setThreadPriority(srcThreadPro->text().toInt());
-    srcStyle.setThreadPolicy(srcThreadPolicy->text().toInt());   
+    srcStyle.setThreadPolicy(srcThreadPolicy->text().toInt());
 
     itemLevel = dstPacketProCombo->currentIndex();
     switch(itemLevel) {
@@ -149,6 +161,17 @@ void QosConfigDialog::apply() {
     dstStyle.setPacketPriorityByLevel(level);
     dstStyle.setThreadPriority(dstThreadPro->text().toInt());
     dstStyle.setThreadPolicy(dstThreadPolicy->text().toInt());
+    return true;
+}
+
+void QosConfigDialog::apply() {
+    if(!edge) {        
+        close();
+        setResult(QDialog::Accepted);
+        return;
+    }
+    yarp::os::QosStyle srcStyle, dstStyle;
+    getUserQosStyles(srcStyle, dstStyle);
 
     std::string from  = edge->first().property.find("name").asString();
     std::string to  = edge->second().property.find("name").asString();
@@ -161,5 +184,5 @@ void QosConfigDialog::apply() {
     // something went wrong
     QMessageBox messageBox;
     messageBox.critical(0,"Error","An error has occured while applying the QoS configuration! \n Please check the QoS paramters carefully.");
-    messageBox.setFixedSize(500,200);
+    messageBox.setFixedSize(500,200);    
 }

@@ -95,6 +95,7 @@ private slots:
     void onExportScene();
     void onExportConList();
     void onUpdateQosStatus();
+    void onConfigureConsQos();
     void onProfilePortsRate();
 
 private:
