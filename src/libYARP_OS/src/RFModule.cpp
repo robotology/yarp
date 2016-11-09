@@ -259,7 +259,7 @@ public:
 
 
     RFModuleHelper(RFModule& owner) : owner(owner), singleton_run_module(false), respond_handler(YARP_NULLPTR), threaded_handler(YARP_NULLPTR) {
-        respond_handler  = new (std::nothrow) RFModuleRespondHandler(owner);
+        respond_handler  = new RFModuleRespondHandler(owner);
     }
 
     ~RFModuleHelper() {
@@ -275,7 +275,7 @@ public:
 
 
     bool newThreadHandler() {
-        threaded_handler = new (std::nothrow) RFModuleThreadedHandler(owner);
+        threaded_handler = new RFModuleThreadedHandler(owner);
 
         if (threaded_handler != YARP_NULLPTR) return true;
         else                                  return false;

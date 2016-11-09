@@ -238,8 +238,8 @@ public:
      * If RFModule has not been thredified, the function returns true immediately.
      *
      * @param seconds the maximum number of seconds to block the thread.
-     * @return true if the thread execution is finished, false on time out or when
-     * RFModule has not been thredified.
+     * @return true if the thread execution is finished or when
+     * RFModule has not been thredified, false on time out.
      */
     bool joinModule(double seconds = -1);
 
