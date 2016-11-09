@@ -233,7 +233,7 @@ int  RGBDSensorClient::getRgbWidth()
     return false;
 }
 
-bool RGBDSensorClient::getRgbFOV(int &horizontalFov, int &verticalFov)
+bool RGBDSensorClient::getRgbFOV(double &horizontalFov, double &verticalFov)
 {
     return false;
 }
@@ -262,7 +262,7 @@ int    RGBDSensorClient::getDepthWidth()
     return false;
 }
 
-bool   RGBDSensorClient::getDepthFOV(int &horizontalFov, int &verticalFov)
+bool   RGBDSensorClient::getDepthFOV(double &horizontalFov, double &verticalFov)
 {
     return false;
 }
@@ -282,12 +282,12 @@ double RGBDSensorClient::getDepthAccuracy()
     return false;
 }
 
-bool   RGBDSensorClient::getDepthClipPlanes(int &near, int &far)
+bool   RGBDSensorClient::getDepthClipPlanes(double &near, double &far)
 {
     return false;
 }
 
-bool RGBDSensorClient::setDepthClipPlanes(int near, int far)
+bool RGBDSensorClient::setDepthClipPlanes(double near, double far)
 {
     return false;
 }
@@ -319,7 +319,7 @@ bool RGBDSensorClient::getRgbImage(yarp::sig::FlexImage   &rgbImage,   yarp::os:
 }
 
 
-bool RGBDSensorClient::getDepthImage(yarp::sig::FlexImage &depthImage, yarp::os::Stamp *timeStamp)
+bool RGBDSensorClient::getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp)
 {
     return false;
 }
@@ -331,9 +331,91 @@ bool RGBDSensorClient::getSynchPolicy(SynchPolicy policy, yarp::os::Property par
 }
 
 
-bool RGBDSensorClient::getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
+bool RGBDSensorClient::getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
 {
     return false;
 }
 
+bool RGBDSensorClient::getCameraDescription(CameraDescriptor *camera)
+{
+    return false;
+}
 
+bool RGBDSensorClient::hasFeature(int feature, bool *hasFeature)
+{
+    return false;
+}
+bool RGBDSensorClient::setFeature(int feature, double value)
+{
+    return false;
+}
+bool RGBDSensorClient::getFeature(int feature, double *value)
+{
+    return false;
+}
+bool RGBDSensorClient::setFeature(int feature, double value1, double value2)
+{
+    return false;
+}
+bool RGBDSensorClient::getFeature(int feature, double *value1, double *value2)
+{
+    return false;
+}
+bool RGBDSensorClient::hasOnOff(  int feature, bool *HasOnOff)
+{
+    return false;
+}
+bool RGBDSensorClient::setActive( int feature, bool onoff)
+{
+    return false;
+}
+bool RGBDSensorClient::getActive( int feature, bool *isActive)
+{
+    return false;
+}
+bool RGBDSensorClient::hasAuto(   int feature, bool *hasAuto)
+{
+    return false;
+}
+bool RGBDSensorClient::hasManual( int feature, bool *hasManual)
+{
+    return false;
+}
+bool RGBDSensorClient::hasOnePush(int feature, bool *hasOnePush)
+{
+    return false;
+}
+bool RGBDSensorClient::setMode(   int feature, FeatureMode mode)
+{
+    return false;
+}
+bool RGBDSensorClient::getMode(   int feature, FeatureMode *mode)
+{
+    return false;
+}
+bool RGBDSensorClient::setOnePush(int feature)
+{
+    return false;
+}
+
+bool RGBDSensorClient::setRgbResolution(int width, int height)
+{
+    return false;
+}
+
+bool RGBDSensorClient::setRgbFOV(double horizontalFov, double verticalFov)
+{
+    return false;
+}
+bool RGBDSensorClient::setDepthResolution(int width, int height)
+{
+    return false;
+}
+bool RGBDSensorClient::setDepthFOV(double horizontalFov, double verticalFov)
+{
+    return false;
+}
+bool RGBDSensorClient::setDepthAccuracy(double accuracy)
+{
+    return false;
+}

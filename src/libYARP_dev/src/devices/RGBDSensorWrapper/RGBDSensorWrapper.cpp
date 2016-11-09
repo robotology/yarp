@@ -497,6 +497,12 @@ void RGBDSensorWrapper::shallowCopyImages(const yarp::sig::FlexImage& src, yarp:
     dest.setExternal(src.getRawImage(), src.width(), src.height());
 }
 
+void RGBDSensorWrapper::shallowCopyImages(const ImageOf<PixelFloat>& src, ImageOf<PixelFloat>& dest)
+{
+    dest.setQuantum(src.getQuantum());
+    dest.setExternal(src.getRawImage(), src.width(), src.height());
+}
+
 
 
 void RGBDSensorWrapper::deepCopyImages
@@ -506,6 +512,27 @@ void RGBDSensorWrapper::deepCopyImages
     const string&               frame_id, 
     const TickTime&             timeStamp, 
     const unsigned int          seq
+)
+{
+    dest.data.resize(src.getRawImageSize());
+    dest.width           = src.width();
+    dest.height          = src.height();
+    memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
+    dest.encoding        = yarp2RosPixelCode(src.getPixelCode());
+    dest.step            = src.getRowSize();
+    dest.header.frame_id = frame_id;
+    dest.header.stamp    = timeStamp;
+    dest.header.seq      = seq;
+    dest.is_bigendian    = 0;
+}
+
+void RGBDSensorWrapper::deepCopyImages
+(
+    const DepthImage&  src,
+    sensor_msgs_Image& dest,
+    const string&      frame_id,
+    const TickTime&    timeStamp,
+    const unsigned int seq
 )
 {
     dest.data.resize(src.getRawImageSize());
@@ -643,8 +670,8 @@ bool RGBDSensorWrapper::writeData()
 
     if (use_YARP)
     {
-        yarp::sig::FlexImage& yColorImage = colorFrame_StreamingPort.prepare();
-        yarp::sig::FlexImage& yDepthImage = depthFrame_StreamingPort.prepare();
+        FlexImage& yColorImage           = colorFrame_StreamingPort.prepare();
+        ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
 
         shallowCopyImages(colorImage, yColorImage);
         shallowCopyImages(depthImage, yDepthImage);
@@ -728,3 +755,4 @@ void RGBDSensorWrapper::run()
             yError("RGBDSensorWrapper: %s: Sensor interface is not valid", sensorId.c_str());
     }
 }
+

@@ -51,6 +51,7 @@ public:
      * @return rgb image width
      */
     virtual int getRgbWidth() = 0;
+    virtual bool setRgbResolution(int width, int height) = 0;
 
     /**
      * Get the field of view (FOV) of the rgb camera.
@@ -59,7 +60,8 @@ public:
      * @param  verticalFov   will return the value of the vertical fov
      * @return true if success
      */
-    virtual bool getRgbFOV(int &horizontalFov, int &verticalFov) = 0;
+    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) = 0;
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov) = 0;
 
     /**
      * Get the intrinsic parameters of the rgb camera
@@ -93,6 +95,7 @@ public:
      * @return depth image height
      */
     virtual int getDepthWidth() = 0;
+    virtual bool setDepthResolution(int width, int height) = 0;
 
     /**
      * Get the field of view (FOV) of the depth camera.
@@ -101,7 +104,8 @@ public:
      * @param  verticalFov   will return the value of the vertical fov
      * @return true if success
      */
-    virtual bool getDepthFOV(int &horizontalFov, int &verticalFov) = 0;
+    virtual bool getDepthFOV(double &horizontalFov, double &verticalFov) = 0;
+    virtual bool setDepthFOV(double horizontalFov, double verticalFov) = 0;
 
     /**
      * Get the intrinsic parameters of the depth camera
@@ -116,6 +120,7 @@ public:
      * @return the accuracy of the sensor in meters.
      */
     virtual double getDepthAccuracy() = 0;
+    virtual bool   setDepthAccuracy(double accuracy) = 0;
 
     /**
      * Get the clipping planes of the sensor
@@ -126,7 +131,7 @@ public:
      *  Object farther than this distance will not be detected.
      * @return true if success
      */
-    virtual bool getDepthClipPlanes(int &near, int &far) = 0;
+    virtual bool getDepthClipPlanes(double &near, double &far) = 0;
 
     /**
      * Set the clipping planes of the sensor
@@ -137,7 +142,7 @@ public:
      *  Object farther than this distance will not be detected.
      * @return true if success
      */
-    virtual bool setDepthClipPlanes(int near, int far) = 0;
+    virtual bool setDepthClipPlanes(double near, double far) = 0;
 
 };
 

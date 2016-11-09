@@ -112,6 +112,9 @@ namespace yarp{
  * \endcode
  */
 
+typedef yarp::sig::ImageOf<yarp::sig::PixelFloat>    DepthImage;
+typedef yarp::os::BufferedPort<DepthImage>           DepthPortType;
+typedef yarp::os::BufferedPort<yarp::sig::FlexImage> ImagePortType;
 
 class yarp::dev::RGBDSensorWrapper: public yarp::dev::DeviceDriver,
                                     public yarp::dev::IWrapper,
@@ -135,8 +138,8 @@ private:
 
     YOS::ConstString                        colorFrame_StreamingPort_Name;
     YOS::ConstString                        depthFrame_StreamingPort_Name;
-    YOS::BufferedPort<YSG::FlexImage>       colorFrame_StreamingPort;
-    YOS::BufferedPort<YSG::FlexImage>       depthFrame_StreamingPort;
+    ImagePortType                           colorFrame_StreamingPort;
+    DepthPortType                           depthFrame_StreamingPort;
                                             
     YOS::Port                               colorFrame_rpcPort;
     YOS::Port                               depthFrame_rpcPort;
@@ -148,7 +151,7 @@ private:
     YOS::Node*                              rosNode;
     std::string                             nodeName, depthTopicName, colorTopicName, dInfoTopicName, cInfoTopicName, rosFrameId;
     yarp::sig::FlexImage                    colorImage;
-    yarp::sig::FlexImage                    depthImage;
+    DepthImage                              depthImage;
     unsigned int                            nodeSeq;
                                             
     // It should be possible to attach this  guy to more than one port, try to see what
@@ -183,26 +186,26 @@ private:
     // Synch                                
     YOS::Stamp                              colorStamp;
     YOS::Stamp                              depthStamp;
-    
-    YOS::Property                         m_conf;
+    YOS::Property                           m_conf;
                                             
-    void                                    shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
-    void                                    deepCopyImages
-                                            (
-                                                const yarp::sig::FlexImage& src, 
-                                                sensor_msgs_Image&          dest, 
-                                                const std::string&          frame_id, 
-                                                const TickTime&             timeStamp, 
-                                                const unsigned int          seq
-                                            );
-    std::string                             yarp2RosPixelCode(int code);
-    bool                                    setCamInfo
-                                            (
-                                                sensor_msgs_CameraInfo& cameraInfo,
-                                                const std::string&      frame_id,
-                                                const unsigned int&     seq
-                                            );
-    bool                                    writeData();
+    void shallowCopyImages(const YSG::FlexImage& src, YSG::FlexImage& dest);
+    void shallowCopyImages(const DepthImage& src, DepthImage& dest);
+
+    void deepCopyImages(const yarp::sig::FlexImage& src,
+                               sensor_msgs_Image&          dest,
+                               const std::string&          frame_id,
+                               const TickTime&             timeStamp,
+                               const unsigned int          seq);
+    void deepCopyImages(const DepthImage&  src,
+                        sensor_msgs_Image& dest,
+                        const std::string& frame_id,
+                        const TickTime&    timeStamp,
+                        const unsigned int seq);
+    static std::string yarp2RosPixelCode(int code);
+    bool setCamInfo(sensor_msgs_CameraInfo& cameraInfo,
+                                  const std::string&      frame_id,
+                                  const unsigned int&     seq);
+    bool writeData();
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 

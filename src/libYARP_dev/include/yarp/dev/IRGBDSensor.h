@@ -80,21 +80,24 @@ public:
      */
     virtual int  getRgbHeight() = 0;
     virtual int  getRgbWidth() = 0;
-    virtual bool getRgbFOV(int &horizontalFov, int &verticalFov) = 0;
+    virtual bool setRgbResolution(int width, int height) = 0;
+    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) = 0;
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov) = 0;
     virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) = 0;
-    virtual bool getRgbSensorInfo(yarp::os::Property &info) = 0;
 
     /*
      * IDepthVisualParams interface. Look at IVisualParams.h for documentation
      */
     virtual int    getDepthHeight() = 0;
     virtual int    getDepthWidth() = 0;
-    virtual bool   getDepthFOV(int &horizontalFov, int &verticalFov) = 0;
-    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) = 0;
-    virtual bool   getDepthSensorInfo(yarp::os::Property info) = 0;
+    virtual bool   setDepthResolution(int width, int height) = 0;
+    virtual bool   getDepthFOV(double &horizontalFov, double &verticalFov) = 0;
+    virtual bool   setDepthFOV(double horizontalFov, double verticalFov) = 0;
     virtual double getDepthAccuracy() = 0;
-    virtual bool   getDepthClipPlanes(int &near, int &far) = 0;
-    virtual bool   setDepthClipPlanes(int near, int far) = 0;
+    virtual bool   setDepthAccuracy(double accuracy) = 0;
+    virtual bool   getDepthClipPlanes(double &near, double &far) = 0;
+    virtual bool   setDepthClipPlanes(double near, double far) = 0;
+    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) = 0;
 
     /*
      * IRGBDSensor specific interface methods
@@ -141,7 +144,7 @@ public:
      * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
      * @return True on success
      */
-    virtual bool getDepthImage(yarp::sig::FlexImage &depthImage, yarp::os::Stamp *timeStamp = NULL) = 0;
+    virtual bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = NULL) = 0;
 
     /**
     * Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
@@ -154,7 +157,7 @@ public:
     * @param depthStamp pointer to memory to hold the Stamp of the depth frame
     * @return true if able to get both data.
     */
-    virtual bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL) = 0;
+    virtual bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL) = 0;
 
     /**
      * Get the surrent status of the sensor, using enum type

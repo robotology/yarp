@@ -28,6 +28,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/FrameGrabberControl2.h>
 
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
@@ -96,7 +97,8 @@ namespace yarp {
  */
 
 class yarp::dev::RGBDSensorClient:  public DeviceDriver,
-                                    public IRGBDSensor
+                                    public IRGBDSensor,
+                                    public IFrameGrabberControls2
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
@@ -170,7 +172,9 @@ public:
      */
     int  getRgbHeight();
     int  getRgbWidth();
-    bool getRgbFOV(int &horizontalFov, int &verticalFov);
+    bool setRgbResolution(int width, int height);
+    bool getRgbFOV(double &horizontalFov, double &verticalFov);
+    bool setRgbFOV(double horizontalFov, double verticalFov);
     bool getRgbIntrinsicParam(yarp::os::Property &intrinsic);
     bool getRgbSensorInfo(yarp::os::Property &info);
 
@@ -179,12 +183,15 @@ public:
      */
     int    getDepthHeight();
     int    getDepthWidth();
-    bool   getDepthFOV(int &horizontalFov, int &verticalFov);
+    bool   setDepthResolution(int width, int height);
+    bool   getDepthFOV(double &horizontalFov, double &verticalFov);
+    bool   setDepthFOV(double horizontalFov, double verticalFov);
     bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic);
     bool   getDepthSensorInfo(yarp::os::Property info);
     double getDepthAccuracy();
-    bool   getDepthClipPlanes(int &near, int &far);
-    bool   setDepthClipPlanes(int near, int far);
+    bool   setDepthAccuracy(double accuracy);
+    bool   getDepthClipPlanes(double &near, double &far);
+    bool   setDepthClipPlanes(double near, double far);
 
     /*
      * IRGBDSensor specific interface methods
@@ -225,7 +232,7 @@ public:
      * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
      * @return True on success
      */
-    bool getRgbImage(yarp::sig::FlexImage   &rgbImage,   yarp::os::Stamp *timeStamp = NULL);
+    bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = NULL);
 
     /**
      * Get the depth frame from the device.
@@ -239,7 +246,7 @@ public:
      * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
      * @return True on success
      */
-    bool getDepthImage(yarp::sig::FlexImage &depthImage, yarp::os::Stamp *timeStamp = NULL);
+    bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = NULL);
 
     bool getSynchPolicy(SynchPolicy policy, yarp::os::Property params);
 
@@ -254,7 +261,23 @@ public:
     * @param depthStamp pointer to memory to hold the Stamp of the depth frame
     * @return true if able to get both data.
     */
-    bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL);
+    bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL);
+
+    virtual bool getCameraDescription(CameraDescriptor *camera);
+    virtual bool hasFeature(int feature, bool *hasFeature);
+    virtual bool setFeature(int feature, double value);
+    virtual bool getFeature(int feature, double *value);
+    virtual bool setFeature(int feature, double value1, double value2);
+    virtual bool getFeature(int feature, double *value1, double *value2);
+    virtual bool hasOnOff(int feature, bool *HasOnOff);
+    virtual bool setActive(int feature, bool onoff);
+    virtual bool getActive(int feature, bool *isActive);
+    virtual bool hasAuto(int feature, bool *hasAuto);
+    virtual bool hasManual(int feature, bool *hasManual);
+    virtual bool hasOnePush(int feature, bool *hasOnePush);
+    virtual bool setMode(int feature, FeatureMode mode);
+    virtual bool getMode(int feature, FeatureMode *mode);
+    virtual bool setOnePush(int feature);
 };
 
 #endif // YARP_DEV__RGBD_SENSOR_CLIENT_
