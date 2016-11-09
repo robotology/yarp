@@ -257,13 +257,13 @@ public:
             checkTrue(cids.size() == 0, "clear ok");
 
             //test 10
-            itf->setTransform("frame2", "frame1", m1);
+            itf->setTransform("frame2", "frame10", m1);
             yarp::os::Time::delay(0.050);
             bool b_can;
-            b_can = itf->canTransform("frame2", "frame1");
+            b_can = itf->canTransform("frame2", "frame10");
             checkTrue(b_can, "itf->setTransform ok");
             yarp::os::Time::delay(0.6);
-            b_can = itf->canTransform("frame2", "frame1");
+            b_can = itf->canTransform("frame2", "frame10");
             checkFalse(b_can, "itf->setTransform successfully expired after 0.6s");
         }
 

@@ -264,6 +264,7 @@ bool yarp::dev::FrameTransformClient::canDirectTransform(const std::string &targ
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t i;
+    RecursiveLockGuard l(tfVec.m_mutex);
     for (i = 0; i < tfVec.size(); i++)
     {
         if (tfVec[i].dst_frame_id == target_frame)
@@ -371,8 +372,8 @@ bool yarp::dev::FrameTransformClient::getDirectTransform(const std::string &targ
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t i;
-    size_t tfVec_size = tfVec.size();
     RecursiveLockGuard l(tfVec.m_mutex);
+    size_t tfVec_size = tfVec.size();
     for (i = 0; i < tfVec_size; i++)
     {
         if (tfVec[i].dst_frame_id == target_frame_id)
@@ -424,7 +425,7 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string &target_fra
 
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
-    FrameTransform      tf;
+    FrameTransform   tf;
     
     if (!tf.fromMatrix(transform))
     {
