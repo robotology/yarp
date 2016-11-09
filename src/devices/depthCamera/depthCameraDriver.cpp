@@ -2,6 +2,7 @@
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace openni;
+using namespace std;
 
 void streamFrameListener::onNewFrame(openni::VideoStream& stream)
 {
@@ -152,21 +153,34 @@ bool depthCameraDriver::open(yarp::os::Searchable& config)
 
 bool depthCameraDriver::close()
 {
+    m_imageStream.destroy();
+    m_depthStream.destroy();
+    m_device.close();
+    OpenNI::shutdown();
+    return true;
 
 }
 
 int depthCameraDriver::getRgbHeight()
 {
-
+    m_imageFrame.mutex.lock();
+    int ret = m_imageFrame.image.height();
+    m_imageFrame.mutex.unlock();
+    return ret;
 }
 
 int depthCameraDriver::getRgbWidth()
 {
-
+    m_imageFrame.mutex.lock();
+    int ret = m_imageFrame.image.width();
+    m_imageFrame.mutex.unlock();
+    return ret;
 }
 
 bool depthCameraDriver::getRgbFOV(int& horizontalFov, int& verticalFov)
 {
+    horizontalFov = m_imageStream.getHorizontalFieldOfView() * RAD2DEG;
+    verticalFov   = m_imageStream.getVerticalFieldOfView()   * RAD2DEG;
 
 }
 
@@ -182,16 +196,24 @@ bool depthCameraDriver::getRgbSensorInfo(yarp::os::Property& info)
 
 int  depthCameraDriver::getDepthHeight()
 {
-
+    m_depthFrame.mutex.lock();
+    int ret = m_depthFrame.image.height();
+    m_depthFrame.mutex.unlock();
+    return ret;
 }
 
 int  depthCameraDriver::getDepthWidth()
 {
-
+    m_depthFrame.mutex.lock();
+    int ret = m_depthFrame.image.width();
+    m_depthFrame.mutex.unlock();
+    return ret;
 }
 
 bool depthCameraDriver::getDepthFOV(int& horizontalFov, int& verticalFov)
 {
+    horizontalFov = m_depthStream.getHorizontalFieldOfView() * RAD2DEG;
+    verticalFov   = m_depthStream.getVerticalFieldOfView()   * RAD2DEG;
 
 }
 
@@ -202,23 +224,38 @@ bool depthCameraDriver::getDepthIntrinsicParam(yarp::os::Property& intrinsic)
 
 bool depthCameraDriver::getDepthSensorInfo(yarp::os::Property info)
 {
+    string sensorType;
+    switch(m_depthStream.getSensorInfo().getSensorType())
+    {
+    case SENSOR_COLOR:
+        sensorType = "SENSOR_COLOR";
+    case SENSOR_DEPTH:
+        sensorType = "SENSOR_DEPTH";
+    case SENSOR_IR:
+        sensorType = "SENSOR_IR";
+    }
 
+    info.put("SensorType", sensorType);
+    return true;
 }
 
 double depthCameraDriver::getDepthAccuracy()
 {
-
+    double factor;
+    factor = m_depthFrame.pixF == PIXEL_FORMAT_DEPTH_1_MM ? 1000.0 : 10000.0;
+    return (m_depthStream.getMaxPixelValue() - m_depthStream.getMinPixelValue()) / factor;
 }
 
 bool depthCameraDriver::getDepthClipPlanes(int& near, int& far)
 {
-    near = 400;
-    far  = 5000;
+    near = m_depthStream.getMinPixelValue();
+    far  = m_depthStream.getMaxPixelValue();
 
 }
 
 bool depthCameraDriver::setDepthClipPlanes(int near, int far)
 {
+    yError() << "impossible to set clip planes for OpenNI2 devices";
 
 }
 
@@ -229,11 +266,12 @@ bool depthCameraDriver::getExtrinsicParam(yarp::os::Property& extrinsic)
 
 bool depthCameraDriver::getRgbImage(yarp::sig::FlexImage& rgbImage, yarp::os::Stamp* timeStamp)
 {
-
+    return getImage(rgbImage, timeStamp, m_imageFrame);
 }
 
 bool depthCameraDriver::getDepthImage(yarp::sig::FlexImage& depthImage, yarp::os::Stamp* timeStamp)
 {
+    return getImage(depthImage, timeStamp, m_depthFrame);
 
 }
 
@@ -291,6 +329,7 @@ bool depthCameraDriver::getImage(yarp::sig::FlexImage& Frame, yarp::os::Stamp* S
 {
     sourceFrame.mutex.lock();
     bool ret = Frame.copy(sourceFrame.image);
+    *Stamp = sourceFrame.stamp;
     sourceFrame.mutex.unlock();
     return ret;
 }

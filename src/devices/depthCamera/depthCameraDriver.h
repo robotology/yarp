@@ -17,6 +17,10 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <OpenNI.h>
 
+#ifndef RAD2DEG
+#define RAD2DEG (180/3.14159265359)
+#endif
+
 namespace yarp
 {
     namespace dev
@@ -80,7 +84,6 @@ private:
     bool        getImage(yarp::sig::FlexImage& Frame, yarp::os::Stamp* Stamp, streamFrameListener& sourceFrame);
 
     //properties
-    void*                     depthBuffer;
     openni::Device            m_device;
     openni::VideoStream       m_depthStream;
     openni::VideoStream       m_imageStream;
