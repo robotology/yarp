@@ -54,6 +54,7 @@ void BatchQosConfDialog::openCons()
         return;
     }
 
+   ui->treeWidgetCons->clear();
     string line;
     unsigned int count = 0;
     while(getline(file, line)) {
@@ -76,10 +77,9 @@ void BatchQosConfDialog::openCons()
     }
     file.close();
 
-    if(ui->treeWidgetCons->topLevelItemCount() > 0) {
+    if(ui->treeWidgetCons->topLevelItemCount() > 0) {	
         ui->pushButtonBatchQosUpdate->setEnabled(true);
         ui->pushButtonBatchQosConfigure->setEnabled(true);
-        updateQos();
         updateQos();
     }
     else {
@@ -98,7 +98,6 @@ void BatchQosConfDialog::updateQos()
         if(yarp::os::NetworkBase::getConnectionQos(item->text(1).toUtf8().constData(),
                                                    item->text(2).toUtf8().constData(), fromStyle, toStyle)) {
             QString qosStr = NetworkProfiler::packetPrioToString(fromStyle.getPacketPriorityAsLevel()).c_str();
-
             QBrush b;
             switch(fromStyle.getPacketPriorityAsLevel()) {
                 case yarp::os::QosStyle::PacketPriorityNormal : {
@@ -137,6 +136,7 @@ void BatchQosConfDialog::updateQos()
         else
             yWarning()<<"Cannot retrive Qos property of"<<item->text(0).toUtf8().constData()<<"->"<<item->text(0).toUtf8().constData();
     }
+    ui->treeWidgetCons->update();
 }
 
 void BatchQosConfDialog::configureQos() {
@@ -154,6 +154,5 @@ void BatchQosConfDialog::configureQos() {
             yWarning()<<"Cannot set Qos property of connection"<<from<<"->"<<to;
         }
     }
-    updateQos();
     updateQos();
 }
