@@ -12,7 +12,6 @@
 #include <yarp/os/Log.h>
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::instance = NULL;
-yarp::os::LogForwarderDestroyer yarp::os::LogForwarder::destroyer;
 yarp::os::Semaphore *yarp::os::LogForwarder::sem = NULL;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
@@ -20,9 +19,16 @@ yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
     if (!instance)
     {
         instance = new LogForwarder;
-        destroyer.SetSingleton(instance);
     }
     return instance;
+};
+
+void yarp::os::LogForwarder::clearInstance()
+{
+    if (instance)
+    {
+        delete instance;
+    };
 };
 
 void yarp::os::LogForwarder::forward (std::string message)
@@ -43,7 +49,10 @@ void yarp::os::LogForwarder::forward (std::string message)
 
 yarp::os::LogForwarder::LogForwarder()
 {
-    yarp::os::NetworkBase::initMinimum();
+    // I believe this guy, which is called by a yDebug() or similar, should be always called after
+    // yarp::os::Network has already been initialized, therefore calling initMinimum here is not required.
+    // It should not harm, but I prefer to avoid it if possible
+//     yarp::os::NetworkBase::initMinimum();
     sem = new yarp::os::Semaphore(1);
     yAssert(sem);
     outputPort =0;
@@ -79,24 +88,6 @@ yarp::os::LogForwarder::~LogForwarder()
     sem->post();
     delete sem;
     sem = NULL;
-    yarp::os::NetworkBase::finiMinimum();
+//     yarp::os::NetworkBase::finiMinimum();
 };
-
-yarp::os::LogForwarderDestroyer::LogForwarderDestroyer(LogForwarder *s)
-{
-    singleton = s;
-}
-
-yarp::os::LogForwarderDestroyer::~LogForwarderDestroyer()
-{
-    if (singleton)
-    {
-        delete singleton;
-    }
-}
-
-void yarp::os::LogForwarderDestroyer::SetSingleton(LogForwarder *s)
-{
-    singleton = s;
-}
 
