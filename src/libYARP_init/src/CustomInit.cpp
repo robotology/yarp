@@ -29,9 +29,13 @@ extern "C" void yarpCustomInit() {
 #endif
 }
 
+#include <yarp/os/impl/LogForwarder.h>
+
 extern "C" int __yarp_is_initialized;
 
-extern "C" void yarpCustomFini() {
+extern "C" void yarpCustomFini()
+{
+    yarp::os::LogForwarder::clearInstance();
 }
 
 yarp::os::Network::Network() {
