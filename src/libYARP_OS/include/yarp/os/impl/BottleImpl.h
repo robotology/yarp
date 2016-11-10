@@ -61,11 +61,7 @@ public:
     virtual YARP_INT64 asInt64() const { return 0; }
     virtual int asVocab() const { return 0; }
     virtual double asDouble() const { return 0; }
-    virtual yarp::os::ConstString asString() const
-    {
-        ConstString str = asStringFlex();
-        return yarp::os::ConstString(str.c_str(), str.length());
-    }
+    virtual yarp::os::ConstString asString() const { return ""; }
     virtual Searchable* asSearchable() const
     {
         if (isDict()) {
@@ -116,31 +112,20 @@ public:
     virtual void fromStringNested(const ConstString& src) { fromString(src); }
     virtual yarp::os::ConstString toString() const
     {
-        ConstString str = toStringFlex();
+        ConstString str = toString();
         return yarp::os::ConstString(str.c_str(), str.length());
     }
-
-    /**
-     * Synonym for toString(), but with the internal String class
-     * rather than ConstString.
-     */
-    virtual ConstString toStringFlex() const = 0;
 
     /**
      * Create string representation, including any syntax that should
      * wrap it such as braces or parentheses.
      */
-    virtual ConstString toStringNested() const { return toStringFlex(); }
+    virtual ConstString toStringNested() const { return toString(); }
     /**
      * Factory method.
      */
     virtual Storable* createStorable() const = 0;
 
-    /**
-     * Synonym for asString(), but with the internal String class
-     * rather than ConstString.
-     */
-    virtual ConstString asStringFlex() const { return ""; }
     /**
      * Typed synonym for clone()
      */
@@ -173,8 +158,7 @@ class YARP_OS_impl_API yarp::os::impl::StoreNull : public Storable
 {
 public:
     StoreNull() {}
-    virtual yarp::os::ConstString toString() const { return ""; }
-    virtual ConstString toStringFlex() const { return ""; }
+    virtual ConstString toString() const { return ""; }
     virtual void fromString(const ConstString& src) {}
     virtual int getCode() const { return -1; }
     virtual bool readRaw(ConnectionReader& connection) { return false; }
@@ -196,7 +180,7 @@ private:
 public:
     StoreInt() { x = 0; }
     StoreInt(int x) { this->x = x; }
-    virtual ConstString toStringFlex() const;
+    virtual ConstString toString() const;
     virtual void fromString(const ConstString& src);
     virtual int getCode() const { return code; }
     virtual bool readRaw(ConnectionReader& reader);
@@ -224,7 +208,7 @@ private:
 public:
     StoreInt64() { x = 0; }
     StoreInt64(const YARP_INT64& x) { this->x = x; }
-    virtual ConstString toStringFlex() const;
+    virtual ConstString toString() const;
     virtual void fromString(const ConstString& src);
     virtual int getCode() const { return code; }
     virtual bool readRaw(ConnectionReader& reader);
@@ -251,7 +235,7 @@ private:
 public:
     StoreVocab() { x = 0; }
     StoreVocab(int x) { this->x = x; }
-    virtual ConstString toStringFlex() const;
+    virtual ConstString toString() const;
     virtual void fromString(const ConstString& src);
     virtual ConstString toStringNested() const;
     virtual void fromStringNested(const ConstString& src);
@@ -268,7 +252,7 @@ public:
     virtual bool isBool() const { return (x == 0 || x == '1'); }
     static const int code;
     virtual void copy(const Storable& alt) { x = alt.asVocab(); }
-    virtual ConstString asStringFlex() const { return toStringFlex(); }
+    virtual ConstString asString() const { return toString(); }
 };
 
 /**
@@ -282,7 +266,7 @@ private:
 public:
     StoreString() { x = ""; }
     StoreString(const ConstString& x) { this->x = x; }
-    virtual ConstString toStringFlex() const;
+    virtual ConstString toString() const;
     virtual void fromString(const ConstString& src);
     virtual ConstString toStringNested() const;
     virtual void fromStringNested(const ConstString& src);
@@ -293,7 +277,7 @@ public:
     {
         return new StoreString(ConstString(""));
     }
-    virtual ConstString asStringFlex() const { return x; }
+    virtual ConstString asString() const { return x; }
     virtual int asVocab() const { return yarp::os::Vocab::encode(x.c_str()); }
     virtual bool isString() const { return true; }
     static const int code;
@@ -317,7 +301,7 @@ private:
 public:
     StoreBlob() { x = ""; }
     StoreBlob(const ConstString& x) { this->x = x; }
-    virtual ConstString toStringFlex() const;
+    virtual ConstString toString() const;
     virtual void fromString(const ConstString& src);
     virtual ConstString toStringNested() const;
     virtual void fromStringNested(const ConstString& src);
@@ -354,7 +338,7 @@ private:
 public:
     StoreDouble() { x = 0; }
     StoreDouble(double x) { this->x = x; }
-    virtual ConstString toStringFlex() const;
+    virtual ConstString toString() const;
     virtual void fromString(const ConstString& src);
     virtual int getCode() const { return code; }
     virtual bool readRaw(ConnectionReader& reader);
@@ -380,7 +364,7 @@ private:
 public:
     StoreList() {}
     yarp::os::Bottle& internal() { return content; }
-    virtual ConstString toStringFlex() const;
+    virtual ConstString toString() const;
     virtual void fromString(const ConstString& src);
     virtual ConstString toStringNested() const;
     virtual void fromStringNested(const ConstString& src);
@@ -420,7 +404,7 @@ private:
 public:
     StoreDict() {}
     yarp::os::Property& internal() { return content; }
-    virtual ConstString toStringFlex() const;
+    virtual ConstString toString() const;
     virtual void fromString(const ConstString& src);
     virtual ConstString toStringNested() const;
     virtual void fromStringNested(const ConstString& src);
