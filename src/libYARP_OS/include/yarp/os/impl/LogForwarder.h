@@ -20,16 +20,15 @@ namespace os {
 
 #define MAX_STRING_SIZE 255
 
-class YARP_OS_API LogForwarderDestroyer;
 class YARP_OS_API LogForwarder
 {
     public:
         static LogForwarder* getInstance();
+        static void clearInstance();
         void forward (std::string message);
     protected:
         LogForwarder();
         ~LogForwarder();
-        friend class LogForwarderDestroyer;
     private:
         static yarp::os::Semaphore *sem;
         char logPortName[MAX_STRING_SIZE];
@@ -38,17 +37,6 @@ class YARP_OS_API LogForwarder
         LogForwarder(LogForwarder const&){};
         LogForwarder& operator=(LogForwarder const&){return *this;}; //@@@checkme
         static LogForwarder* instance;
-        static LogForwarderDestroyer destroyer;
-};
-
-class  YARP_OS_API LogForwarderDestroyer
-{
-    public:
-        LogForwarderDestroyer(LogForwarder * = 0);
-        ~LogForwarderDestroyer();
-        void SetSingleton(LogForwarder *s);
-    private:
-        LogForwarder* singleton;
 };
 
 }
