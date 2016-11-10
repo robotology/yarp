@@ -166,6 +166,15 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
     storages.push_back(m_yarp_static_transform_storage);
     storageDescription.push_back("yarp static transforms");
 
+    if (storages[0]->size() == 0 &&
+        storages[1]->size() == 0 &&
+        storages[2]->size() == 0 &&
+        storages[3]->size() == 0)
+    {
+        out.addString("no transforms found");
+        return;
+    }
+
     for(size_t s = 0; s < storages.size(); s++ )
     {
         if(!storages[s])
@@ -291,10 +300,45 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     }
     else if(request == "help")
     {
+        out.addVocab(Vocab::encode("many"));
         out.addString("'list': get all transforms stored");
+        out.addString("'delete_all': delete all transforms");
+        out.addString("'set_static_transform <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform");
     }
-    else if(request == "list")
+    else if (request == "set_static_transform")
     {
+        FrameTransform t;
+        t.src_frame_id = in.get(1).asString();
+        t.dst_frame_id = in.get(2).asString();
+        t.translation.tX = in.get(3).asDouble();
+        t.translation.tY = in.get(4).asDouble();
+        t.translation.tZ = in.get(5).asDouble();
+        t.rotFromRPY(in.get(6).asDouble(), in.get(7).asDouble(), in.get(8).asDouble());
+        t.timestamp = yarp::os::Time::now();
+        bool static_transform = true;
+        ret = m_yarp_static_transform_storage->set_transform(t);
+        if (ret == true)
+        {
+            yInfo() << "set_static_transform done";
+            out.addString("set_static_transform done");
+        }
+        else
+        {
+            yError() << "FrameTransformServer::read() something strange happened";
+        }
+    }
+    else if(request == "delete_all")
+    {
+        m_yarp_timed_transform_storage->clear();
+        m_yarp_static_transform_storage->clear();
+        m_ros_timed_transform_storage->clear();
+        m_ros_static_transform_storage->clear();
+        yInfo() << "delete_all done";
+        out.addString("delete_all done");
+    }
+    else if (request == "list")
+    {
+        out.addVocab(Vocab::encode("many"));
         list_response(out);
     }
     else
