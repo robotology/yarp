@@ -1781,21 +1781,37 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     result.addInt(-1);
                     result.addString("target port is not specified.\r\n");
                 }
-                else {
-                    for (unsigned int i=0; i<units.size(); i++) {
-                        PortCoreUnit *unit = units[i];
-                        if (unit && unit->isInput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getFromName() == target.c_str()) {
-                                yarp::os::Property property;
-                                property.fromString(cmd.toString());
-                                unit->setCarrierParams(property);
-                                result.addInt(0);
-                                ConstString msg = "Configured connection from ";
-                                msg += route.getFromName().c_str();
-                                msg += "\r\n";
-                                result.addString(msg.c_str());
-                                break;
+                else {                    
+                    if(target == getName()) {
+                        yarp::os::Property property;
+                        property.fromString(cmd.toString());
+                        ConstString errMsg;
+                        if(!setParamPortMonitor(property, false, errMsg)) {
+                            result.clear();
+                            result.addVocab(Vocab::encode("fail"));
+                            result.addString(errMsg.c_str());
+                        }
+                        else {
+                            result.clear();
+                            result.addVocab(Vocab::encode("ok"));
+                        }
+                    }
+                    else {
+                        for (unsigned int i=0; i<units.size(); i++) {
+                            PortCoreUnit *unit = units[i];
+                            if (unit && unit->isInput() && !unit->isFinished()) {
+                                Route route = unit->getRoute();
+                                if (route.getFromName() == target.c_str()) {
+                                    yarp::os::Property property;
+                                    property.fromString(cmd.toString());
+                                    unit->setCarrierParams(property);
+                                    result.addInt(0);
+                                    ConstString msg = "Configured connection from ";
+                                    msg += route.getFromName().c_str();
+                                    msg += "\r\n";
+                                    result.addString(msg.c_str());
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1822,20 +1838,36 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
-                    for (unsigned int i=0; i<units.size(); i++) {
-                        PortCoreUnit *unit = units[i];
-                        if (unit && unit->isOutput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getToName() == target.c_str()) {
-                                yarp::os::Property property;
-                                property.fromString(cmd.toString());
-                                unit->setCarrierParams(property);
-                                result.addInt(0);
-                                ConstString msg = "Configured connection to ";
-                                msg += route.getFromName().c_str();
-                                msg += "\r\n";
-                                result.addString(msg.c_str());
-                                break;
+                    if(target == getName()) {
+                        yarp::os::Property property;
+                        property.fromString(cmd.toString());
+                        ConstString errMsg;
+                        if(!setParamPortMonitor(property, true, errMsg)) {
+                            result.clear();
+                            result.addVocab(Vocab::encode("fail"));
+                            result.addString(errMsg.c_str());
+                        }
+                        else {
+                            result.clear();
+                            result.addVocab(Vocab::encode("ok"));
+                        }
+                    }
+                    else {
+                        for (unsigned int i=0; i<units.size(); i++) {
+                            PortCoreUnit *unit = units[i];
+                            if (unit && unit->isOutput() && !unit->isFinished()) {
+                                Route route = unit->getRoute();
+                                if (route.getToName() == target.c_str()) {
+                                    yarp::os::Property property;
+                                    property.fromString(cmd.toString());
+                                    unit->setCarrierParams(property);
+                                    result.addInt(0);
+                                    ConstString msg = "Configured connection to ";
+                                    msg += route.getFromName().c_str();
+                                    msg += "\r\n";
+                                    result.addString(msg.c_str());
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1866,25 +1898,40 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
-                    for (unsigned int i=0; i<units.size(); i++) {
-                        PortCoreUnit *unit = units[i];
-                        if (unit && unit->isInput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getFromName() == target.c_str()) {
-                                yarp::os::Property property;
-                                unit->getCarrierParams(property);
-                                result.addDict() = property;
-                                break;
-                            }
+                    if(target == getName()) {
+                        yarp::os::Property property;
+                        ConstString errMsg;
+                        if(!getParamPortMonitor(property, false, errMsg)) {
+                            result.clear();
+                            result.addVocab(Vocab::encode("fail"));
+                            result.addString(errMsg.c_str());
+                        }
+                        else {
+                            result.clear();
+                            result.addDict() = property;
                         }
                     }
-                    if(!result.size())
-                    {
-                        result.addInt(-1);
-                        ConstString msg = "Could not find an incoming connection from ";
-                        msg += target.c_str();
-                        msg += "\r\n";
-                        result.addString(msg.c_str());
+                    else {
+                        for (unsigned int i=0; i<units.size(); i++) {
+                            PortCoreUnit *unit = units[i];
+                            if (unit && unit->isInput() && !unit->isFinished()) {
+                                Route route = unit->getRoute();
+                                if (route.getFromName() == target.c_str()) {
+                                    yarp::os::Property property;
+                                    unit->getCarrierParams(property);
+                                    result.addDict() = property;
+                                    break;
+                                }
+                            }
+                        }
+                        if(!result.size())
+                        {
+                            result.addInt(-1);
+                            ConstString msg = "Could not find an incoming connection from ";
+                            msg += target.c_str();
+                            msg += "\r\n";
+                            result.addString(msg.c_str());
+                        }
                     }
                 }
                 stateMutex.post();
@@ -1901,26 +1948,41 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
-                    for (unsigned int i=0; i<units.size(); i++) {
-                        PortCoreUnit *unit = units[i];
-                        if (unit && unit->isOutput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getToName() == target.c_str()) {
-                                yarp::os::Property property;
-                                property.fromString(cmd.toString());
-                                unit->getCarrierParams(property);
-                                result.addDict() = property;
-                                break;
-                            }
+                    if(target == getName()) {
+                        yarp::os::Property property;
+                        ConstString errMsg;
+                        if(!getParamPortMonitor(property, true, errMsg)) {
+                            result.clear();
+                            result.addVocab(Vocab::encode("fail"));
+                            result.addString(errMsg.c_str());
+                        }
+                        else {
+                            result.clear();
+                            result.addDict() = property;
                         }
                     }
-                    if(!result.size())
-                    {
-                        result.addInt(-1);
-                        ConstString msg = "Could not find an incoming connection to ";
-                        msg += target.c_str();
-                        msg += "\r\n";
-                        result.addString(msg.c_str());
+                    else {
+                        for (unsigned int i=0; i<units.size(); i++) {
+                            PortCoreUnit *unit = units[i];
+                            if (unit && unit->isOutput() && !unit->isFinished()) {
+                                Route route = unit->getRoute();
+                                if (route.getToName() == target.c_str()) {
+                                    yarp::os::Property property;
+                                    property.fromString(cmd.toString());
+                                    unit->getCarrierParams(property);
+                                    result.addDict() = property;
+                                    break;
+                                }
+                            }
+                        }
+                        if(!result.size())
+                        {
+                            result.addInt(-1);
+                            ConstString msg = "Could not find an incoming connection to ";
+                            msg += target.c_str();
+                            msg += "\r\n";
+                            result.addString(msg.c_str());
+                        }
                     }
                 }
                 stateMutex.post();
@@ -2454,6 +2516,56 @@ bool PortCore::dettachPortMonitor(bool isOutput) {
     else {
         modifier.inputMutex.lock();
         modifier.releaseInModifier();
+        modifier.inputMutex.unlock();
+    }
+    return true;
+}
+
+bool PortCore::setParamPortMonitor(yarp::os::Property& param,
+                                   bool isOutput, yarp::os::ConstString &errMsg) {
+    if(isOutput) {
+        modifier.outputMutex.lock();
+        if(modifier.outputModifier == NULL) {
+            errMsg = "No port modifer is attached to the output";
+            modifier.outputMutex.unlock();
+            return false;
+        }
+        modifier.outputModifier->setCarrierParams(param);
+        modifier.outputMutex.unlock();
+    }
+    else {
+        modifier.inputMutex.lock();
+        if(modifier.inputModifier == NULL) {
+            errMsg = "No port modifer is attached to the input";
+            modifier.inputMutex.unlock();
+            return false;
+        }
+        modifier.inputModifier->setCarrierParams(param);
+        modifier.inputMutex.unlock();
+    }
+    return true;
+}
+
+bool PortCore::getParamPortMonitor(yarp::os::Property& param,
+                                   bool isOutput, yarp::os::ConstString &errMsg) {
+    if(isOutput) {
+        modifier.outputMutex.lock();
+        if(modifier.outputModifier == NULL) {
+            errMsg = "No port modifer is attached to the output";
+            modifier.outputMutex.unlock();
+            return false;
+        }
+        modifier.outputModifier->getCarrierParams(param);
+        modifier.outputMutex.unlock();
+    }
+    else {
+        modifier.inputMutex.lock();
+        if(modifier.inputModifier == NULL) {
+            errMsg = "No port modifer is attached to the input";
+            modifier.inputMutex.unlock();
+            return false;
+        }
+        modifier.inputModifier->getCarrierParams(param);
         modifier.inputMutex.unlock();
     }
     return true;
