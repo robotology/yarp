@@ -16,7 +16,7 @@ LaserMeasurementData::LaserMeasurementData()
 
 void LaserMeasurementData::set_cartesian(const double x, const double y)
 {
-    stored_x = x; stored_y = y; stored_angle = 0; stored_distance = 0; stored_distance = sqrt(x*x + y*y); stored_angle = atan2(y, x);
+    stored_x = x; stored_y = y; stored_distance = sqrt(x*x + y*y); stored_angle = atan2(y, x);
 }
 
 void LaserMeasurementData::set_polar(const double rho, const double theta)
@@ -31,5 +31,5 @@ void LaserMeasurementData::get_cartesian(double& x, double& y)
 
 void LaserMeasurementData::get_polar(double& rho, double& theta)
 {
-    rho = stored_angle; theta = stored_distance;
+    rho = stored_distance; theta = stored_angle;
 }
