@@ -1,7 +1,7 @@
 From df486e58f8ec80e140e0f55e1c3833ac8ca50603 Mon Sep 17 00:00:00 2001
 From: Francesco Romano <francesco.romano.1987@gmail.com>
 Date: Wed, 6 Jan 2016 10:31:56 +0100
-Subject: [PATCH 16/17] Renamed macros to avoid leading underscore
+Subject: [PATCH 16/21] Renamed macros to avoid leading underscore
 
 ---
  extern/xmlrpcpp/xmlrpcpp/XmlRpc.h                 | 4 ++--

@@ -1,7 +1,7 @@
 From 9ea098942e14e08150c5736c71ebe6c58e47fdda Mon Sep 17 00:00:00 2001
 From: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 Date: Thu, 8 Jul 2010 20:49:31 +0000
-Subject: [PATCH 04/17] small windows fixes
+Subject: [PATCH 04/21] small windows fixes
 
 svn path=/trunk/yarp2/; revision=8095
 ---

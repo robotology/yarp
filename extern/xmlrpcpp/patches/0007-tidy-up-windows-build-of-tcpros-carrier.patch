@@ -1,7 +1,7 @@
 From 447f0b0d141f162b8481d05bfbbb317878761388 Mon Sep 17 00:00:00 2001
 From: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 Date: Mon, 29 Aug 2011 22:19:07 +0000
-Subject: [PATCH 07/17] tidy up windows build of tcpros carrier
+Subject: [PATCH 07/21] tidy up windows build of tcpros carrier
 
 svn path=/trunk/yarp2/; revision=8803
 ---

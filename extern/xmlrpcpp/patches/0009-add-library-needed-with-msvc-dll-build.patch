@@ -1,7 +1,7 @@
 From dfa12005a8b39bc8abe76cdbdea1f19d086cc836 Mon Sep 17 00:00:00 2001
 From: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 Date: Wed, 16 May 2012 00:55:46 +0000
-Subject: [PATCH 09/17] add library needed with msvc dll build
+Subject: [PATCH 09/21] add library needed with msvc dll build
 
 svn path=/trunk/yarp2/; revision=9153
 ---

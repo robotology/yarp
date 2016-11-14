@@ -1,7 +1,7 @@
 From 8ecaff0464bec2b6deb1538b3cb6b6d322cc0ac4 Mon Sep 17 00:00:00 2001
 From: Paul Fitzpatrick <paulfitz@alum.mit.edu>
 Date: Fri, 11 Apr 2014 17:02:57 +0200
-Subject: [PATCH 13/17] [ros] change XmlRpc namespace to avoid conflict
+Subject: [PATCH 13/21] [ros] change XmlRpc namespace to avoid conflict
 
 YARP and ROS both use the XmlRpc++ library.  When YARP is
 compiled statically, these libraries can conflict if the

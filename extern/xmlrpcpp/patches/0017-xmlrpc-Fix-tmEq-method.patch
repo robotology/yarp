@@ -1,7 +1,7 @@
 From 95238ffbcd164594ace75baff278ac936a14484b Mon Sep 17 00:00:00 2001
 From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
 Date: Tue, 11 Oct 2016 17:48:10 +0200
-Subject: [PATCH 17/17] xmlrpc++: Fix tmEq() method
+Subject: [PATCH 17/21] xmlrpc++: Fix tmEq() method
 
 ---
  extern/xmlrpcpp/xmlrpcpp/XmlRpcValue.cpp | 2 +-
