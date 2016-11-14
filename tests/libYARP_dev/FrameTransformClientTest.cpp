@@ -182,9 +182,7 @@ public:
             yarp::sig::Vector in_pose1(6),  out_pose1(6),  verPose(6);
             yarp::sig::Vector in_quat1(4),  out_quat1(4),  verQuat(4);
 
-            //andrea.ruzzenenti@iit.it 09/09/16:
-            //added matrix inversion to simulate the effect of the missing method rot2quat()
-            in_quat1 = yarp::math::dcm2quat(SE3inv(m4));
+            in_quat1 = yarp::math::rotationmatrix2quaternion(m4);
 
             in_pose1[0] = 1;  in_pose1[1] = 2;  in_pose1[2] = 3;
             in_pose1[3] = 30; in_pose1[4] = 60; in_pose1[5] = 90;
@@ -207,11 +205,7 @@ public:
             temp              = yarp::math::dcm2rpy(mat);
             verPose[3]        = temp[0]; verPose[4] = temp[1]; verPose[5] = temp[2];
 
-            //andrea.ruzzenenti@iit.it 09/09/16:
-            //the first one was correct. now the matrix is inverted at the initialization. check the comment there
-
-            //verQuat = yarp::math::dcm2quat(m1 * m2 * SE3inv(m4)); //@@@@ TO BE CHECKED
-            verQuat = yarp::math::dcm2quat(m1 * m2 * m4);           //@@@@ TO BE CHECKED
+            verQuat = yarp::math::rotationmatrix2quaternion(m1 * m2 * m4);
 
             itf->transformPoint("frame3", "frame1", in_point1, out_point1);
             itf->transformPose("frame3", "frame1", in_pose1, out_pose1);
