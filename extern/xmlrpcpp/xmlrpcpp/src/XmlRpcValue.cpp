@@ -6,6 +6,7 @@
 #include "XmlRpcException.h"
 #include "XmlRpcUtil.h"
 #include "base64.h"
+#include <iterator>
 
 #ifndef MAKEDEPEND
 # include <iostream>
