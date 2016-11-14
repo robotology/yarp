@@ -8,7 +8,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/sig/Vector.h>
 
@@ -83,52 +83,183 @@ void StateExtendedInputPort::onRead(jointData &v)
     mutex.post();
 }
 
-bool StateExtendedInputPort::getLast(int j, jointData &data, Stamp &stamp, double &localArrivalTime)
+bool StateExtendedInputPort::getLastSingle(int j, int field, double *data, Stamp &stamp, double &localArrivalTime)
 {
     mutex.wait();
     bool ret=valid;
     if (ret)
     {
-        data.jointPosition[0]           = last.jointPosition[j];
-        data.jointPosition_isValid      = last.jointPosition_isValid;
-        data.jointVelocity[0]           = last.jointVelocity[j];
-        data.jointVelocity_isValid      = last.jointVelocity_isValid;
-        data.jointAcceleration[0]       = last.jointAcceleration[j];
-        data.jointAcceleration_isValid  = last.jointAcceleration_isValid;
-        data.motorPosition[0]           = last.motorPosition[j];
-        data.motorPosition_isValid      = last.motorPosition_isValid;
-        data.motorVelocity[0]           = last.motorVelocity[j];
-        data.motorVelocity_isValid      = last.motorVelocity_isValid;
-        data.motorAcceleration[0]       = last.motorAcceleration[j];
-        data.motorAcceleration_isValid  = last.motorAcceleration_isValid;
-        data.torque[0]                  = last.torque[j];
-        data.torque_isValid             = last.torque_isValid;
-        data.pidOutput[0]               = last.pidOutput[j];
-        data.pidOutput_isValid          = last.pidOutput_isValid;
-        data.controlMode[0]             = last.controlMode[j];
-        data.controlMode_isValid        = last.controlMode_isValid;
-        data.interactionMode[0]         = last.interactionMode[j];
-        data.interactionMode_isValid    = last.interactionMode_isValid;
+        switch(field)
+        {
+            case VOCAB_ENCODER:
+                *data = last.jointPosition[j];
+                ret  = last.jointPosition_isValid;
+            break;
 
-        stamp=lastStamp;
+            case VOCAB_ENCODER_SPEED:
+                ret = last.jointVelocity_isValid;
+                *data = last.jointVelocity[j];
+                break;
+
+            case VOCAB_ENCODER_ACCELERATION:
+                ret = last.jointAcceleration_isValid;
+                *data = last.jointAcceleration[j];
+            break;
+
+            case VOCAB_MOTOR_ENCODER:
+                ret = last.motorPosition_isValid;
+                *data = last.motorPosition[j];
+            break;
+
+            case VOCAB_MOTOR_ENCODER_SPEED:
+                ret = last.motorVelocity_isValid;
+                *data = last.motorVelocity[j];
+            break;
+
+            case VOCAB_MOTOR_ENCODER_ACCELERATION:
+                ret = last.motorAcceleration_isValid;
+                *data = last.motorAcceleration[j];
+            break;
+
+            case VOCAB_TRQ:
+                ret = last.torque_isValid;
+                *data = last.torque[j];
+            break;
+
+            case VOCAB_OUTPUT:
+                ret = last.pidOutput_isValid;
+                *data = last.pidOutput[j];
+            break;
+
+            default:
+                yError() << "RemoteControlBoard internal error whil reading data. Cannot get 'single' data of type " << yarp::os::Vocab::decode(field);
+            break;
+        }
+
         localArrivalTime=now;
+        stamp = lastStamp;
     }
     mutex.post();
+
     return ret;
 }
 
-bool StateExtendedInputPort::getLast(jointData &lastData, Stamp &stmp, double &localArrivalTime)
+bool StateExtendedInputPort::getLastSingle(int j, int field, int *data, Stamp &stamp, double &localArrivalTime)
 {
     mutex.wait();
     bool ret = valid;
     if (ret)
     {
-        lastData = last;
-        stmp = lastStamp;
+        switch(field)
+        {
+            case VOCAB_CM_CONTROL_MODE:
+                ret = last.controlMode_isValid;
+                *data = last.controlMode[j];
+            break;
+
+            case VOCAB_INTERACTION_MODE:
+                ret = last.interactionMode_isValid;
+                *data = last.interactionMode[j];
+            break;
+
+            default:
+                yError() << "RemoteControlBoard internal error whil reading data. Cannot get 'single' data of type " << yarp::os::Vocab::decode(field);
+            break;
+        }
         localArrivalTime=now;
+        stamp = lastStamp;
+    }
+    mutex.post();
+    return ret;
+}
+
+bool StateExtendedInputPort::getLastVector(int field, double* data, Stamp& stamp, double& localArrivalTime)
+{
+    mutex.wait();
+    bool ret = valid;
+    if (ret)
+    {
+        switch(field)
+        {
+            case VOCAB_ENCODERS:
+                ret = last.jointPosition_isValid;
+                std::copy(last.jointPosition.begin(), last.jointPosition.end(), data);
+            break;
+
+            case VOCAB_ENCODER_SPEEDS:
+                ret = last.jointVelocity_isValid;
+                std::copy(last.jointVelocity.begin(), last.jointVelocity.end(), data);
+            break;
+
+            case VOCAB_ENCODER_ACCELERATIONS:
+                ret = last.jointAcceleration_isValid;
+                std::copy(last.jointAcceleration.begin(), last.jointAcceleration.end(), data);
+            break;
+
+            case VOCAB_MOTOR_ENCODERS:
+                ret = last.motorPosition_isValid;
+                std::copy(last.motorPosition.begin(), last.motorPosition.end(), data);
+            break;
+
+            case VOCAB_MOTOR_ENCODER_SPEEDS:
+                ret = last.motorVelocity_isValid;
+                std::copy(last.motorVelocity.begin(), last.motorVelocity.end(), data);
+            break;
+
+            case VOCAB_MOTOR_ENCODER_ACCELERATIONS:
+                ret = last.motorAcceleration_isValid;
+                std::copy(last.motorAcceleration.begin(), last.motorAcceleration.end(), data);
+            break;
+
+            case VOCAB_TRQS:
+                ret = last.torque_isValid;
+                std::copy(last.torque.begin(), last.torque.end(), data);
+            break;
+
+            case VOCAB_OUTPUTS:
+                ret = last.pidOutput_isValid;
+                std::copy(last.pidOutput.begin(), last.pidOutput.end(), data);
+            break;
+
+            default:
+                yError() << "RemoteControlBoard internal error whil reading data. Cannot get 'vector' data of type " << yarp::os::Vocab::decode(field);
+            break;
+        }
+
+        localArrivalTime=now;
+        stamp = lastStamp;
     }
     mutex.post();
 
+    return ret;
+}
+
+bool StateExtendedInputPort::getLastVector(int field, int* data, Stamp& stamp, double& localArrivalTime)
+{
+    mutex.wait();
+    bool ret = valid;
+    if (ret)
+    {
+        switch(field)
+        {
+            case VOCAB_CM_CONTROL_MODES:
+                ret = last.controlMode_isValid;
+                std::copy(last.controlMode.begin(), last.controlMode.end(), data);
+            break;
+
+            case VOCAB_INTERACTION_MODES:
+                ret = last.interactionMode_isValid;
+                std::copy(last.interactionMode.begin(), last.interactionMode.end(), data);
+            break;
+
+            default:
+                yError() << "RemoteControlBoard internal error whil reading data. Cannot get 'vector' data of type " << yarp::os::Vocab::decode(field);
+            break;
+        }
+        localArrivalTime=now;
+        stamp = lastStamp;
+    }
+    mutex.post();
     return ret;
 }
 
