@@ -44,8 +44,6 @@ class YARP_sig_API yarp::sig::Matrix: public yarp::os::Portable
 {
 private:
     double *storage;
-    void *gslData;
-    //double *first;
     double **matrix; //double pointer access to elements
 
     int nrows;
