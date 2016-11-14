@@ -125,6 +125,7 @@ public:
         {
             jointNumbers[i] =  jointNumbers[i-1] + _maxJointsNumForDevice;   // set pointer to correct location
             values      [i] = values[i-1] + _maxJointsNumForDevice;      // set pointer to correct location
+            modes       [i] = modes[i-1]  + _maxJointsNumForDevice;      // set pointer to correct location
             subdevices_p[i] = _device->getSubdevice(i);
         }
     }
