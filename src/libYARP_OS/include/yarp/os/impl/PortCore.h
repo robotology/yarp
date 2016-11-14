@@ -627,6 +627,12 @@ private:
     // detach the portmonitor from the port or specific connection
     bool dettachPortMonitor(bool isOutput);
 
+    // set the parameter for the portmonitor of the port (if any)
+    bool setParamPortMonitor(yarp::os::Property& param, bool isOutput, yarp::os::ConstString &errMsg);
+
+    // get the parameters from the portmonitor of the port (if any)
+    bool getParamPortMonitor(yarp::os::Property& param, bool isOutput, yarp::os::ConstString &errMsg);
+
     void closeMain();
 
     bool isUnit(const Route& route, int index);
