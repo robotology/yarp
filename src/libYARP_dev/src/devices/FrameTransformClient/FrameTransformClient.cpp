@@ -603,7 +603,7 @@ bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &tar
     }
     FrameTransform t;
     t.rotation.fromQuaternion(input_quaternion);
-    transformed_quaternion = yarp::math::dcm2quat(m * t.toMatrix());
+    transformed_quaternion = yarp::math::rotationmatrix2quaternion(m * t.toMatrix());
     return true;
 }
 
