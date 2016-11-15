@@ -25,6 +25,16 @@ inline Eigen::Map<Eigen::VectorXd> toEigen(yarp::sig::Vector & yarpVector)
 }
 
 /**
+* Convert a yarp::sig::Vector to a Eigen::Map<Eigen::VectorXd> object
+* @param yarpVector yarp::sig::Vector input
+* @return a Eigen::Map vector that points to the data contained in the yarp vector
+*/
+inline Eigen::Map<Eigen::VectorXd> toEigen(yarp::math::Quaternion & yarpQuaternion)
+{
+    return Eigen::Map<Eigen::VectorXd>(yarpQuaternion.data(), 4);
+}
+
+/**
  * Convert a yarp::sig::Matrix to a Eigen::Map< Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > object
  * @param yarpVector yarp::sig::Matrix input
  * @return a Eigen::Map vector that points to the data contained in the yarp matrix
@@ -42,6 +52,16 @@ inline Eigen::Map< Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::Row
 inline Eigen::Map<const Eigen::VectorXd> toEigen(const yarp::sig::Vector & yarpVector)
 {
     return Eigen::Map<const Eigen::VectorXd>(yarpVector.data(),yarpVector.size());
+}
+
+/**
+* Convert a const yarp::math::Quaternion to a Eigen::Map<const Eigen::VectorXd> object
+* @param yarpVector yarp::math::Quaternion input
+* @return a Eigen::Map vector that points to the data contained in the yarp Quaternion
+*/
+inline Eigen::Map<const Eigen::VectorXd> toEigen(const yarp::math::Quaternion & yarpQuaternion)
+{
+    return Eigen::Map<const Eigen::VectorXd>(yarpQuaternion.data(), 4);
 }
 
 /**

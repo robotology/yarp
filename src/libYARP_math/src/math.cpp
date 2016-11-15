@@ -7,6 +7,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/math/Math.h>
 #include <yarp/math/SVD.h>
+#include <yarp/math/Quaternion.h>
 
 #include <cmath>
 
@@ -37,12 +38,27 @@ Vector yarp::math::operator+(const Vector &a, const Vector &b)
     return ret+=b;
 }
 
+yarp::math::Quaternion yarp::math::operator+(const Quaternion &a, const Quaternion &b)
+{
+    Quaternion ret(a);
+    return ret += b;
+}
+
 Vector& yarp::math::operator+=(Vector &a, const Vector &b)
 {
     size_t s=a.size();
     yAssert(s==b.size());
     for (size_t k=0; k<s;k++)
         a[k]+=b[k];
+    return a;
+}
+
+yarp::math::Quaternion& yarp::math::operator+=(Quaternion &a, const Quaternion &b)
+{
+    a.x() += b.x();
+    a.y() += b.y();
+    a.z() += b.z();
+    a.w() += b.w();
     return a;
 }
 

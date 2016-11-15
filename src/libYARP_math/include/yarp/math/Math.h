@@ -11,6 +11,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/api.h>
+#include <yarp/math/Quaternion.h>
 
 namespace yarp
 {
@@ -43,9 +44,19 @@ namespace yarp
         YARP_math_API yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
 
         /**
+        * Addition operator between vectors, returns a+b (defined in Math.h).
+        */
+        YARP_math_API yarp::math::Quaternion operator+(const yarp::math::Quaternion &a, const yarp::math::Quaternion &b);
+
+        /**
          * Addition operator between vectors, returns a+b (defined in Math.h).
          */
         YARP_math_API yarp::sig::Vector& operator+=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+        /**
+        * Addition operator between Quaternion, returns a+b (defined in Math.h).
+        */
+        YARP_math_API yarp::math::Quaternion& operator+=(yarp::math::Quaternion &a, const yarp::math::Quaternion &b);
 
         /**
         * Addition operator between matrices, returns a+b (defined in Math.h).
