@@ -41,6 +41,16 @@ public:
     double& w() ;
 
     /**
+    * Computes the modulus of the quaternion.
+    */
+    double abs();
+
+    /**
+    * Computes the argument or phase of the quaternion in radians.
+    */
+    double arg();
+
+    /**
     * Converts a rotation matrix to a quaternion.
     *
     * The returned quaternion is ordered in the following way:

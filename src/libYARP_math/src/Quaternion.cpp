@@ -223,4 +223,18 @@ yarp::sig::Matrix Quaternion::toRotationMatrix()
     return R;
 }
 
+double Quaternion::abs()
+{
+    return sqrt(internal_data[0] * internal_data[0] +
+                internal_data[1] * internal_data[1] +
+                internal_data[2] * internal_data[2] +
+                internal_data[3] * internal_data[3]);
+}
 
+double Quaternion::arg()
+{
+    return atan2(sqrt(internal_data[1] * internal_data[1] +
+                      internal_data[2] * internal_data[2] +
+                      internal_data[3] * internal_data[3]),
+                 internal_data[0]);
+}

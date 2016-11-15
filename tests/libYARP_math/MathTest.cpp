@@ -548,6 +548,7 @@ public:
         eigenTest();
         elementTest();
         catAndPileTest();
+        quaternionTest();
     }
 
     void eulerTests()
@@ -637,6 +638,74 @@ public:
         a[2]=4.7;
         assertEqual(findMax(a), 4.7, " findMax(vector)=max-elem ");
         assertEqual(findMin(a), 2.5, " findMin(vector)=min-elem ");
+    }
+
+    void quaternionTest()
+    {
+        report(0, "checking Quaternion class");
+        Quaternion q1;
+        Quaternion q2;
+        Matrix m;
+        Matrix m_check;
+        Vector v_check;
+
+        Vector vx(4);
+        Vector vy(4);
+        Vector vz(4);
+        vx[0] = 1; vx[1] = 0; vx[2] = 0; vx[3] = M_PI / 3;
+        vy[0] = 0; vy[1] = 1; vy[2] = 0; vy[3] = M_PI / 4;
+        vz[0] = 0; vz[1] = 0; vz[2] = 1; vz[3] = M_PI / 5;
+        Matrix mx = axis2dcm(vx);
+        Matrix my = axis2dcm(vy);
+        Matrix mz = axis2dcm(vz);
+        m = (mx.transposed()*my.transposed())*mz.transposed();
+        //mx =
+        // 1.00000   0.00000   0.00000
+        // 0.00000   0.50000   0.86603
+        // 0.00000 - 0.86603   0.50000
+
+        // my=
+        // 0.70711   0.00000 - 0.70711
+        // 0.00000   1.00000   0.00000
+        // 0.70711   0.00000   0.70711
+
+        // mz =
+        // 0.80902   0.58779   0.00000
+        // -0.58779  0.80902   0.00000
+        // 0.00000   0.00000   1.00000
+        
+        // m =
+        //0.57206   0.41563  -0.70711
+        //0.20153   0.76445   0.61237
+        //0.79507  -0.49282   0.35355
+        q1.fromRotationMatrix(m);
+        
+        // q1
+        //0.8201 -0.3369i -0.4579j -0.06527k
+        v_check.resize(4, 0.0);
+        v_check[0] = 0.82007115197567471;
+        v_check[1] = -0.33691839828975201;
+        v_check[2] = -0.45794027732580056;
+        v_check[3] = -0.065268683102439926;
+
+        assertEqual(q1.w(), v_check[0], "check w value method fromRotationMatrix");
+        assertEqual(q1.x(), v_check[1], "check x value method fromRotationMatrix");
+        assertEqual(q1.y(), v_check[2], "check y value method fromRotationMatrix");
+        assertEqual(q1.z(), v_check[3], "check z value method fromRotationMatrix");
+
+        m_check.resize(4, 4);
+        m_check[0][0] = 0.572061402817684;    m_check[0][1] = 0.415626937777453;     m_check[0][2] = -0.707106781186547;    m_check[0][3] = 0;
+        m_check[1][0] = 0.201527081218441;    m_check[1][1] = 0.764451983799883;     m_check[1][2] = 0.612372435695795;     m_check[1][3] = 0;
+        m_check[2][0] = 0.795067661863969;    m_check[2][1] = -0.492815800333310;    m_check[2][2] = 0.353553390593274;     m_check[2][3] = 0;
+        m_check[3][0] = 0;                    m_check[3][1] = 0;                     m_check[3][2] = 0;                     m_check[3][3] = 1.0;
+
+        q2 = q1;
+
+        m = q2.toRotationMatrix();
+        assertEqual(m, m_check, "check method toRotationMatrix");
+
+        Vector v = q2.toVector();
+        assertEqual(v, v_check, "check method toVector");
     }
 
     void catAndPileTest()

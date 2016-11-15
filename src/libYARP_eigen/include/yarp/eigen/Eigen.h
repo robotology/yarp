@@ -25,9 +25,9 @@ inline Eigen::Map<Eigen::VectorXd> toEigen(yarp::sig::Vector & yarpVector)
 }
 
 /**
-* Convert a yarp::sig::Vector to a Eigen::Map<Eigen::VectorXd> object
-* @param yarpVector yarp::sig::Vector input
-* @return a Eigen::Map vector that points to the data contained in the yarp vector
+* Convert a yarp::math::Quaternion to a Eigen::Map<Eigen::VectorXd> object
+* @param yarpQuaternion yarp::math::Quaternion input
+* @return a Eigen::Map vector that points to the data contained in the yarp quaternion
 */
 inline Eigen::Map<Eigen::VectorXd> toEigen(yarp::math::Quaternion & yarpQuaternion)
 {

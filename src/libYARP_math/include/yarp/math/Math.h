@@ -44,7 +44,7 @@ namespace yarp
         YARP_math_API yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
 
         /**
-        * Addition operator between vectors, returns a+b (defined in Math.h).
+        * Addition operator between Quaternions, returns a+b (defined in Math.h).
         */
         YARP_math_API yarp::math::Quaternion operator+(const yarp::math::Quaternion &a, const yarp::math::Quaternion &b);
 
