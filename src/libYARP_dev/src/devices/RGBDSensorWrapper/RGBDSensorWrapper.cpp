@@ -14,6 +14,7 @@
 #include <yarpRosHelper.h>
 #include "rosPixelCode.h"
 
+using namespace yarp::dev::RGBDImpl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -127,12 +128,12 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         std::vector<param<string> >     rosStringParam;
         param<string>*                  prm;
         
-        rosStringParam.push_back(param<string>(nodeName,       NODENAMEPARAM));
-        rosStringParam.push_back(param<string>(rosFrameId,     FRAMEIDPARAM));
-        rosStringParam.push_back(param<string>(colorTopicName, CLRTOPICNAMENAMEPARAM));
-        rosStringParam.push_back(param<string>(depthTopicName, DPHTOPICNAMENAMEPARAM));
-        rosStringParam.push_back(param<string>(cInfoTopicName, CLRINFOTOPICNAMEPARAM));
-        rosStringParam.push_back(param<string>(dInfoTopicName, DPHINFOTOPICNAMEPARAM));
+        rosStringParam.push_back(param<string>(nodeName,       nodeName_param          ));
+        rosStringParam.push_back(param<string>(rosFrameId,     frameId_param           ));
+        rosStringParam.push_back(param<string>(colorTopicName, colorTopicName_param    ));
+        rosStringParam.push_back(param<string>(depthTopicName, depthTopicName_param    ));
+        rosStringParam.push_back(param<string>(cInfoTopicName, depthInfoTopicName_param));
+        rosStringParam.push_back(param<string>(dInfoTopicName, colorInfoTopicName_param));
         
         for (i = 0; i < rosStringParam.size(); i++)
         {
