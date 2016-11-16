@@ -32,7 +32,6 @@ BoschIMU::BoschIMU():   RateThread(20), mutex(1),
     errorCounter.resize(11);
     errorCounter.zero();
     totMessagesRead = 0;
-    quaternion.resize(4);
     nChannels = 12;
     errs.acceError = 0;
     errs.gyroError = 0;
@@ -516,20 +515,19 @@ void BoschIMU::run()
 
     if(sendReadCommand(REG_QUATERN_DATA, 8, response, "Read quaternion") )
     {
-        quaternion.zero();
         // Manually compose the data to safely handling endianess
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];
         raw_data[3] = response[9] << 8 | response[8];
 
-        quaternion[0] = ((double) raw_data[1])/(2<<13);
-        quaternion[1] = ((double) raw_data[2])/(2<<13);
-        quaternion[2] = ((double) raw_data[3])/(2<<13);
-        quaternion[3] = ((double) raw_data[0])/(2<<13);
+        quaternion.w() = ((double) raw_data[0])/(2<<13);
+        quaternion.x() = ((double) raw_data[1])/(2<<13);
+        quaternion.y() = ((double) raw_data[2])/(2<<13);
+        quaternion.z() = ((double) raw_data[3])/(2<<13);
 
         RPY_angle.resize(3);
-        RPY_angle = yarp::math::dcm2rpy(yarp::math::quat2dcm(quaternion));
+        RPY_angle = yarp::math::dcm2rpy(quaternion.toRotationMatrix());
         data[0] = RPY_angle[0] * 180/M_PI;
         data[1] = RPY_angle[1] * 180/M_PI;
         data[2] = RPY_angle[2] * 180/M_PI;
@@ -573,10 +571,10 @@ bool BoschIMU::read(yarp::sig::Vector &out)
     out = data;
     if(nChannels == 16)
     {
-        out[12] = quaternion[0];
-        out[13] = quaternion[1];
-        out[14] = quaternion[2];
-        out[15] = quaternion[3];
+        out[12] = quaternion.w();
+        out[13] = quaternion.x();
+        out[14] = quaternion.y();
+        out[15] = quaternion.z();
     }
 
     mutex.post();

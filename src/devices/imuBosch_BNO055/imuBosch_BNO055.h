@@ -12,7 +12,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/SerialInterfaces.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
-
+#include <yarp/math/Quaternion.h>
 
 namespace yarp {
     namespace dev {
@@ -137,7 +137,7 @@ protected:
     short                       status;
     int                         nChannels;
     yarp::sig::Vector           data;
-    yarp::sig::Vector           quaternion;
+    yarp::math::Quaternion      quaternion;
     yarp::sig::Vector           RPY_angle;
     double                      timeStamp;
     double                      timeLastReport;
