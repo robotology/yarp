@@ -106,10 +106,10 @@ public:
     *         rotation components in the top left 3 by 3 submatrix.
     *
     */
-    yarp::sig::Matrix toRotationMatrix();
+    yarp::sig::Matrix toRotationMatrix() const;
 
 
-    yarp::sig::Vector toVector();
+    yarp::sig::Vector toVector() const;
 
     ///////// Serialization methods
     /*

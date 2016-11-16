@@ -45,11 +45,6 @@ typedef yarp::os::Publisher<visualization_msgs_MarkerArray> MarkerArrayPublisher
 #define V3_Y 1
 #define V3_Z 2
 
-#define V4_W 0
-#define V4_X 1
-#define V4_Y 2
-#define V4_Z 3
-
 class yarp::dev::LocationsServer : public DeviceDriver , public yarp::os::PortReader
 
 {

@@ -11,7 +11,7 @@
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/api.h>
 #include <yarp/math/Math.h>
-
+#include <yarp/math/Quaternion.h>
 
 namespace yarp
 {
@@ -38,70 +38,12 @@ namespace yarp
                 }
             } translation;
 
-            struct Rotation_t
-            {
-                double rX;
-                double rY;
-                double rZ;
-                double rW;
-
-                yarp::sig::Vector toQuaternion() const
-                {
-                    double q[4] = { rW, rX, rY, rZ };
-                    return yarp::sig::Vector(4, q);
-                }
-
-                void fromQuaternion(const yarp::sig::Vector& q)
-                {
-                    rW = q[0];
-                    rX = q[1];
-                    rY = q[2];
-                    rZ = q[3];
-                }
-
-                yarp::sig::Vector toRPY() const
-                {
-                    yarp::sig::Vector rotQ, rotV;
-                    yarp::sig::Matrix rotM;
-                    double rot[4] = { rW, rX, rY, rZ };
-                    rotQ = yarp::sig::Vector(4, rot);
-                    rotM = quat2dcm(rotQ);
-                    rotV = dcm2rpy(SE3inv(rotM));
-                    return rotV;
-                }
-
-                void set(double x, double y, double z, double w)
-                {
-                    rX = x;
-                    rY = y;
-                    rZ = z;
-                    rW = w;
-                }
-
-                void set(double roll, double pitch, double yaw)
-                {
-                    double               rot[3] = { roll, pitch, yaw };
-                    size_t               i;
-                    yarp::sig::Vector    rotV, rotQ;
-                    yarp::sig::Matrix    rotM;
-                    i = 3;
-                    rotV = yarp::sig::Vector(i, rot);
-                    rotM = rpy2dcm(rotV);
-                    rotQ = dcm2quat( SE3inv(rotM));
-                    rW = rotQ[0];
-                    rX = rotQ[1];
-                    rY = rotQ[2];
-                    rZ = rotQ[3];
-                    return;
-                }
-
-            } rotation;
+            Quaternion rotation;
 
             FrameTransform()
             {
                 timestamp = 0;
                 translation.set(0, 0, 0);
-                rotation.set(0, 0, 0, 0);
             }
 
             FrameTransform
@@ -120,7 +62,10 @@ namespace yarp
                 src_frame_id = parent;
                 dst_frame_id = child;
                 translation.set(inTX, inTY, inTZ);
-                rotation.set(inRX, inRY, inRZ, inRW);
+                rotation.w() = inRW;
+                rotation.x() = inRX;
+                rotation.y() = inRY;
+                rotation.z() = inRZ;
             }
 
             ~FrameTransform(){};
@@ -132,31 +77,41 @@ namespace yarp
 
             void rotFromRPY(double R, double P, double Y)
             {
-                rotation.set(R, P, Y);
+                double               rot[3] = { R, P, Y };
+                size_t               i = 3;
+                yarp::sig::Vector    rotV;
+                yarp::sig::Matrix    rotM;
+                rotV = yarp::sig::Vector(i, rot);
+                rotM = rpy2dcm(rotV);
+                rotation.fromRotationMatrix(rotM);
             }
 
             yarp::sig::Vector getRPYRot() const
             {
-                return rotation.toRPY();
+                yarp::sig::Vector rotV;
+                yarp::sig::Matrix rotM;
+                rotM = rotation.toRotationMatrix();
+                rotV = dcm2rpy(rotM);
+                return rotV;
             }
 
             yarp::sig::Matrix toMatrix() const
             {
                 yarp::sig::Vector rotV;
-                yarp::sig::Matrix mat;
-
-                mat = SE3inv(quat2dcm(rotation.toQuaternion())); //for ros
-                //mat = quat2dcm(rotation.toQuaternion());
-                mat[0][3] = translation.tX;
-                mat[1][3] = translation.tY;
-                mat[2][3] = translation.tZ;
-                return mat;
+                yarp::sig::Matrix t_mat(4,4);
+                t_mat = rotation.toRotationMatrix();
+                t_mat[0][3] = translation.tX;
+                t_mat[1][3] = translation.tY;
+                t_mat[2][3] = translation.tZ;
+                return t_mat;
             }
 
             bool fromMatrix(const yarp::sig::Matrix& mat)
             {
                 if (mat.cols() != 4 || mat.rows() != 4)
                 {
+                    yError("FrameTransform::fromMatrix() failed, matrix should be = 4x4");
+                    yAssert(mat.cols() == 4 && mat.rows() == 4);
                     return false;
                 }
 
@@ -165,9 +120,7 @@ namespace yarp
                 translation.tX = mat[0][3];
                 translation.tY = mat[1][3];
                 translation.tZ = mat[2][3];
-                q              = dcm2quat(SE3inv(mat));
-
-                rotation.fromQuaternion(q);
+                rotation.fromRotationMatrix(mat);
                 return true;
             }
 

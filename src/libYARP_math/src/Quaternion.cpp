@@ -53,7 +53,7 @@ double* Quaternion::data()
     return internal_data;
 }
 
-yarp::sig::Vector Quaternion::toVector()
+yarp::sig::Vector Quaternion::toVector()  const
 {
     yarp::sig::Vector v(4);
     v[0] = internal_data[0];
@@ -149,11 +149,10 @@ bool Quaternion::write(yarp::os::ConnectionWriter& connection)
 
 void Quaternion::fromRotationMatrix(const yarp::sig::Matrix &R)
 {
-
     if ((R.rows()<3) || (R.cols()<3))
     {
-        yError("fromRotationMatrix() failed, matrix is not 3x3");
-        yAssert(R.rows() == 3 && R.cols() == 3);
+        yError("fromRotationMatrix() failed, matrix should be >= 3x3");
+        yAssert(R.rows() >= 3 && R.cols() >= 3);
     }
 
     double tr = R(0, 0) + R(1, 1) + R(2, 2);
@@ -205,7 +204,7 @@ void Quaternion::fromRotationMatrix(const yarp::sig::Matrix &R)
     }
 }
 
-yarp::sig::Matrix Quaternion::toRotationMatrix()
+yarp::sig::Matrix Quaternion::toRotationMatrix() const
 {
     yarp::sig::Vector q = this->toVector();
     yarp::sig::Vector qin = (1.0 / yarp::math::norm(q))*q;

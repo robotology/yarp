@@ -121,7 +121,7 @@ public:
      bool     deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)     ;
      bool     transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point);
      bool     transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose);
-     bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_quaternion, yarp::sig::Vector &transformed_quaternion);
+     bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion);
      bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) ;
 };
 

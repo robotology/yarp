@@ -517,19 +517,6 @@ public:
         assertEqual(cross(an, bn), -1.0*cross(bn, an), testName);
     }
     
-    void quaternionConversion()
-    {
-        Matrix R=zeros(4,4);
-        R(0,1)=R(1,2)=R(2,0)=R(3,3)=1.0;
-        Vector q(4,0.5);
-        
-        report(0,"checking dcm2quat()...");
-        assertEqual(dcm2quat(R),q,"dcm2quat([0 1 0; 0 0 1; 1 0 0]) = [1; 1; 1; 1]/2)");
-
-        report(0,"checking quat2dcm()...");
-        assertEqual(quat2dcm(q),R,"quat2dcm([1; 1; 1; 1]/2) = [0 1 0; 0 0 1; 1 0 0]");
-    }
-
     virtual void runTests() 
     {
         checkMiscOperations();
@@ -542,7 +529,6 @@ public:
         productOperator();
         divisionOperator();
         crossProduct();
-        quaternionConversion();
         eulerTests();
         signTest();
         eigenTest();
@@ -583,7 +569,11 @@ public:
         axis[0]=axis[2]=0;
         axis[1]=1;
         axis[3]=M_PI;
-        assertEqual(dcm2axis(R),axis, " dcm2axis([-1.0 0 0 0; 0 1 0 0; 0 0 -1 0; 0 0 O 1]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1] ");
+        yarp::sig::Vector v = dcm2axis(R);
+        assertEqual(v,axis, " dcm2axis([-1.0 0 0 0; 0 1 0 0; 0 0 -1 0; 0 0 O 1]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1] ");
+
+        yarp::sig::Matrix m = axis2dcm(v);
+        assertEqual(m, R, " axis2dcm");
     }
 
     void signTest()
