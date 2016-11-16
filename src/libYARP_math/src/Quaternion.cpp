@@ -6,6 +6,7 @@
 
 #include <yarp/math/Quaternion.h>
 #include <yarp/math/Math.h>
+#include <math.h>
 
 using namespace yarp::math;
 
@@ -221,6 +222,46 @@ yarp::sig::Matrix Quaternion::toRotationMatrix()
     R(2, 2) = qin[0] * qin[0] - qin[1] * qin[1] - qin[2] * qin[2] + qin[3] * qin[3];
 
     return R;
+}
+
+std::string Quaternion::toString(int precision, int width)
+{
+    std::string ret = "";
+    char tmp[350];
+    if (width<0)
+    {
+        sprintf(tmp, "w=% .*lf\t", precision, internal_data[0]);   ret += tmp;
+        sprintf(tmp, "x=% .*lf\t", precision, internal_data[1]);   ret += tmp;
+        sprintf(tmp, "y=% .*lf\t", precision, internal_data[2]);   ret += tmp;
+        sprintf(tmp, "z=% .*lf\t", precision, internal_data[3]);   ret += tmp;
+    }
+    else
+    {
+        sprintf(tmp, "w=% *.*lf ", width, precision, internal_data[0]);    ret += tmp;
+        sprintf(tmp, "x=% *.*lf ", width, precision, internal_data[1]);    ret += tmp;
+        sprintf(tmp, "y=% *.*lf ", width, precision, internal_data[2]);    ret += tmp;
+        sprintf(tmp, "z=% *.*lf ", width, precision, internal_data[3]);    ret += tmp;
+    }
+
+    return ret.substr(0, ret.length() - 1);
+}
+
+void Quaternion::fromAxisAngle(const yarp::sig::Vector &v)
+{
+    yarp::sig::Matrix m = axis2dcm(v);
+    Quaternion q;
+    q.fromRotationMatrix(m);
+    this->internal_data[0] = q.internal_data[0];
+    this->internal_data[1] = q.internal_data[1];
+    this->internal_data[2] = q.internal_data[2];
+    this->internal_data[3] = q.internal_data[3];
+}
+
+yarp::sig::Vector Quaternion::toAxisAngle()
+{
+    yarp::sig::Matrix m=this->toRotationMatrix();
+    yarp::sig::Vector v = dcm2axis(m);
+    return v;
 }
 
 double Quaternion::abs()

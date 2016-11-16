@@ -23,7 +23,7 @@ namespace yarp {
 
 class YARP_math_API yarp::math::Quaternion : public yarp::os::Portable
 {
-    double internal_data[4];
+    double internal_data[4]; // stored as [w x y z]
 
 public:
     Quaternion();
@@ -40,6 +40,8 @@ public:
     double& z() ;
     double& w() ;
 
+    std::string toString(int precision = -1, int width = -1);
+
     /**
     * Computes the modulus of the quaternion.
     */
@@ -49,6 +51,9 @@ public:
     * Computes the argument or phase of the quaternion in radians.
     */
     double arg();
+
+    void fromAxisAngle(const yarp::sig::Vector &v);
+    yarp::sig::Vector toAxisAngle();
 
     /**
     * Converts a rotation matrix to a quaternion.

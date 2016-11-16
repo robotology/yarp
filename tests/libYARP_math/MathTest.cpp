@@ -658,46 +658,42 @@ public:
         Matrix mx = axis2dcm(vx);
         Matrix my = axis2dcm(vy);
         Matrix mz = axis2dcm(vz);
-        m = (mx.transposed()*my.transposed())*mz.transposed();
         //mx =
-        // 1.00000   0.00000   0.00000
-        // 0.00000   0.50000   0.86603
-        // 0.00000 - 0.86603   0.50000
+        //  1.00000   0.00000   0.00000
+        //  0.00000   0.50000  -0.86603
+        //  0.00000   0.86603   0.50000
 
         // my=
-        // 0.70711   0.00000 - 0.70711
-        // 0.00000   1.00000   0.00000
-        // 0.70711   0.00000   0.70711
+        //  0.70711   0.00000   0.70711
+        //  0.00000   1.00000   0.00000
+        // -0.70711   0.00000   0.70711
 
         // mz =
-        // 0.80902   0.58779   0.00000
-        // -0.58779  0.80902   0.00000
-        // 0.00000   0.00000   1.00000
+        // 0.80902   -0.58779   0.00000
+        // 0.58779    0.80902   0.00000
+        // 0.00000    0.00000   1.00000
         
-        // m =
-        //0.57206   0.41563  -0.70711
-        //0.20153   0.76445   0.61237
-        //0.79507  -0.49282   0.35355
-        q1.fromRotationMatrix(m);
+        m = mx*my*mz;
+        m_check.resize(4, 4);
+        m_check[0][0] = 0.5720614028176844;    m_check[0][1] = -0.4156269377774535;   m_check[0][2] = 0.7071067811865475;   m_check[0][3] = 0;
+        m_check[1][0] = 0.7893123335109140;    m_check[1][1] = 0.0445650105750650;    m_check[1][2] = -0.6123724356957946;  m_check[1][3] = 0;
+        m_check[2][0] = 0.2230062590462850;    m_check[2][1] = 0.9084427381107635;    m_check[2][2] = 0.3535533905932738;   m_check[2][3] = 0;
+        m_check[3][0] = 0;                     m_check[3][1] = 0;                     m_check[3][2] = 0;                    m_check[3][3] = 1.0;
+        assertEqual(m, m_check, "check m computation");
         
         // q1
         //0.8201 -0.3369i -0.4579j -0.06527k
         v_check.resize(4, 0.0);
-        v_check[0] = 0.82007115197567471;
-        v_check[1] = -0.33691839828975201;
-        v_check[2] = -0.45794027732580056;
-        v_check[3] = -0.065268683102439926;
+        v_check[0] = 0.70181546790912619;
+        v_check[1] = 0.54174325137682744;
+        v_check[2] = 0.17244580102463122;
+        v_check[3] = 0.42922225513145423;
 
+        q1.fromRotationMatrix(m);
         assertEqual(q1.w(), v_check[0], "check w value method fromRotationMatrix");
         assertEqual(q1.x(), v_check[1], "check x value method fromRotationMatrix");
         assertEqual(q1.y(), v_check[2], "check y value method fromRotationMatrix");
         assertEqual(q1.z(), v_check[3], "check z value method fromRotationMatrix");
-
-        m_check.resize(4, 4);
-        m_check[0][0] = 0.572061402817684;    m_check[0][1] = 0.415626937777453;     m_check[0][2] = -0.707106781186547;    m_check[0][3] = 0;
-        m_check[1][0] = 0.201527081218441;    m_check[1][1] = 0.764451983799883;     m_check[1][2] = 0.612372435695795;     m_check[1][3] = 0;
-        m_check[2][0] = 0.795067661863969;    m_check[2][1] = -0.492815800333310;    m_check[2][2] = 0.353553390593274;     m_check[2][3] = 0;
-        m_check[3][0] = 0;                    m_check[3][1] = 0;                     m_check[3][2] = 0;                     m_check[3][3] = 1.0;
 
         q2 = q1;
 
@@ -706,11 +702,27 @@ public:
 
         Vector v = q2.toVector();
         assertEqual(v, v_check, "check method toVector");
+
+        double quat_mod = q2.abs();
+        assertEqual(quat_mod, 1.0, "check quaternion modulus");
+
+        Quaternion q3;
+        q3.fromAxisAngle(vz);
+        Vector vz_out = q3.toAxisAngle();
+
+        assertEqual(q3.w(), 0.951056516295154,  "check w value method fromAxisAngle");
+        assertEqual(q3.x(), 0,                  "check x value method fromAxisAngle");
+        assertEqual(q3.y(), 0,                  "check y value method fromAxisAngle");
+        assertEqual(q3.z(), 0.309016994374947,  "check z value method fromAxisAngle");
+
+        assertEqual(vz_out, vz,                 "check toAxisAngle");
+
+        report(0, string("check toString() method: ") + q1.toString());
     }
 
     void catAndPileTest()
     {
-        report(0, "checking Matrix concatenations..");        
+        report(0, "checking Matrix concatenations..");
         Matrix a, b, c;
         b.resize(2,1);
         c.resize(3,1);
