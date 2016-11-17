@@ -223,7 +223,7 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
     }
 
     m_transform_storage = new Transforms_client_storage(local_streaming_name);
-    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "tcp");
+    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "udp");
     if (!ok)
     {
         yError("FrameTransformClient::open() error could not connect to %s", remote_streaming_name.c_str());
