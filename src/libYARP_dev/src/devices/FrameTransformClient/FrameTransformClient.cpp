@@ -82,10 +82,10 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
                 t.translation.tX = bt->get(3).asDouble();
                 t.translation.tY = bt->get(4).asDouble();
                 t.translation.tZ = bt->get(5).asDouble();
-                t.rotation.rW = bt->get(6).asDouble();
-                t.rotation.rX = bt->get(7).asDouble();
-                t.rotation.rY = bt->get(8).asDouble();
-                t.rotation.rZ = bt->get(9).asDouble();
+                t.rotation.w() = bt->get(6).asDouble();
+                t.rotation.x() = bt->get(7).asDouble();
+                t.rotation.y() = bt->get(8).asDouble();
+                t.rotation.z() = bt->get(9).asDouble();
                 m_transforms.push_back(t);
             }
         }
@@ -441,10 +441,10 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string &target_fra
     b.addDouble(tf.translation.tX);
     b.addDouble(tf.translation.tY);
     b.addDouble(tf.translation.tZ);
-    b.addDouble(tf.rotation.rW);
-    b.addDouble(tf.rotation.rX);
-    b.addDouble(tf.rotation.rY);
-    b.addDouble(tf.rotation.rZ);
+    b.addDouble(tf.rotation.w());
+    b.addDouble(tf.rotation.x());
+    b.addDouble(tf.rotation.y());
+    b.addDouble(tf.rotation.z());
     bool ret = m_rpcPort.write(b, resp);
     if (ret)
     {
@@ -488,10 +488,10 @@ bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &targ
     b.addDouble(tf.translation.tX);
     b.addDouble(tf.translation.tY);
     b.addDouble(tf.translation.tZ);
-    b.addDouble(tf.rotation.rW);
-    b.addDouble(tf.rotation.rX);
-    b.addDouble(tf.rotation.rY);
-    b.addDouble(tf.rotation.rZ);
+    b.addDouble(tf.rotation.w());
+    b.addDouble(tf.rotation.x());
+    b.addDouble(tf.rotation.y());
+    b.addDouble(tf.rotation.z());
     bool ret = m_rpcPort.write(b, resp);
     if (ret)
     {
@@ -588,13 +588,8 @@ bool yarp::dev::FrameTransformClient::transformPose(const std::string &target_fr
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_quaternion, yarp::sig::Vector &transformed_quaternion)
+bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion)
 {
-    if (input_quaternion.size() != 4)
-    {
-        yError() << "we're very sorry.. only quaternion allowed man..";
-        return false;
-    }
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
     {
@@ -602,8 +597,8 @@ bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &tar
         return false;
     }
     FrameTransform t;
-    t.rotation.fromQuaternion(input_quaternion);
-    transformed_quaternion = yarp::math::dcm2quat(m * t.toMatrix());
+    t.rotation=input_quaternion;
+    transformed_quaternion.fromRotationMatrix(m * t.toMatrix());
     return true;
 }
 

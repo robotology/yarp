@@ -20,6 +20,7 @@ if (YARP_HAS_MATH_LIB)
                        include/yarp/math/RandScalar.h
                        include/yarp/math/RandVector.h
                        include/yarp/math/SVD.h
+                       include/yarp/math/Quaternion.h
                        include/yarp/math/FrameTransform.h)
 
     if(NOT CREATE_LIB_MATH_USING_GSL)
@@ -32,6 +33,7 @@ if (YARP_HAS_MATH_LIB)
                        src/RandnVector.cpp
                        src/RandVector.cpp
                        src/SVD.cpp
+                       src/Quaternion.cpp
                        src/FrameTransform.cpp)
 
     if( NOT CREATE_LIB_MATH_USING_GSL )

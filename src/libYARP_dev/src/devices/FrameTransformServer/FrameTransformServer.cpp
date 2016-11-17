@@ -225,10 +225,10 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
                 t.translation.tX = in.get(5).asDouble();
                 t.translation.tY = in.get(6).asDouble();
                 t.translation.tZ = in.get(7).asDouble();
-                t.rotation.rW = in.get(8).asDouble();
-                t.rotation.rX = in.get(9).asDouble();
-                t.rotation.rY = in.get(10).asDouble();
-                t.rotation.rZ = in.get(11).asDouble();
+                t.rotation.w() = in.get(8).asDouble();
+                t.rotation.x() = in.get(9).asDouble();
+                t.rotation.y() = in.get(10).asDouble();
+                t.rotation.z() = in.get(11).asDouble();
                 t.timestamp = yarp::os::Time::now();
                 bool static_transform;
                 if (duration > 0)
@@ -567,10 +567,10 @@ void FrameTransformServer::run()
                     t.translation.tX = tfs[i].transform.translation.x;
                     t.translation.tY = tfs[i].transform.translation.y;
                     t.translation.tZ = tfs[i].transform.translation.z;
-                    t.rotation.rX = tfs[i].transform.rotation.x;
-                    t.rotation.rY = tfs[i].transform.rotation.y;
-                    t.rotation.rZ = tfs[i].transform.rotation.z;
-                    t.rotation.rW = tfs[i].transform.rotation.w;
+                    t.rotation.x() = tfs[i].transform.rotation.x;
+                    t.rotation.y() = tfs[i].transform.rotation.y;
+                    t.rotation.z() = tfs[i].transform.rotation.z;
+                    t.rotation.w() = tfs[i].transform.rotation.w;
                     t.src_frame_id = tfs[i].header.frame_id;
                     t.dst_frame_id = tfs[i].child_frame_id;
                     //@@@ add timestamp
@@ -590,10 +590,10 @@ void FrameTransformServer::run()
                     t.translation.tX = tfs[i].transform.translation.x;
                     t.translation.tY = tfs[i].transform.translation.y;
                     t.translation.tZ = tfs[i].transform.translation.z;
-                    t.rotation.rX = tfs[i].transform.rotation.x;
-                    t.rotation.rY = tfs[i].transform.rotation.y;
-                    t.rotation.rZ = tfs[i].transform.rotation.z;
-                    t.rotation.rW = tfs[i].transform.rotation.w;
+                    t.rotation.x() = tfs[i].transform.rotation.x;
+                    t.rotation.y() = tfs[i].transform.rotation.y;
+                    t.rotation.z() = tfs[i].transform.rotation.z;
+                    t.rotation.w() = tfs[i].transform.rotation.w;
                     t.src_frame_id = tfs[i].header.frame_id;
                     t.dst_frame_id = tfs[i].child_frame_id;
                     //@@@ add timestamp
@@ -627,10 +627,10 @@ void FrameTransformServer::run()
             transform.addDouble((*m_yarp_static_transform_storage)[i].translation.tY);
             transform.addDouble((*m_yarp_static_transform_storage)[i].translation.tZ);
 
-            transform.addDouble((*m_yarp_static_transform_storage)[i].rotation.rW);
-            transform.addDouble((*m_yarp_static_transform_storage)[i].rotation.rX);
-            transform.addDouble((*m_yarp_static_transform_storage)[i].rotation.rY);
-            transform.addDouble((*m_yarp_static_transform_storage)[i].rotation.rZ);
+            transform.addDouble((*m_yarp_static_transform_storage)[i].rotation.w());
+            transform.addDouble((*m_yarp_static_transform_storage)[i].rotation.x());
+            transform.addDouble((*m_yarp_static_transform_storage)[i].rotation.y());
+            transform.addDouble((*m_yarp_static_transform_storage)[i].rotation.z());
         }
         for (size_t i = 0; i < tfVecSize_timed_yarp; i++)
         {
@@ -643,10 +643,10 @@ void FrameTransformServer::run()
             transform.addDouble((*m_yarp_timed_transform_storage)[i].translation.tY);
             transform.addDouble((*m_yarp_timed_transform_storage)[i].translation.tZ);
 
-            transform.addDouble((*m_yarp_timed_transform_storage)[i].rotation.rW);
-            transform.addDouble((*m_yarp_timed_transform_storage)[i].rotation.rX);
-            transform.addDouble((*m_yarp_timed_transform_storage)[i].rotation.rY);
-            transform.addDouble((*m_yarp_timed_transform_storage)[i].rotation.rZ);
+            transform.addDouble((*m_yarp_timed_transform_storage)[i].rotation.w());
+            transform.addDouble((*m_yarp_timed_transform_storage)[i].rotation.x());
+            transform.addDouble((*m_yarp_timed_transform_storage)[i].rotation.y());
+            transform.addDouble((*m_yarp_timed_transform_storage)[i].rotation.z());
         }
         for (size_t i = 0; i < tfVecSize_timed_ros; i++)
         {
@@ -659,10 +659,10 @@ void FrameTransformServer::run()
             transform.addDouble((*m_ros_timed_transform_storage)[i].translation.tY);
             transform.addDouble((*m_ros_timed_transform_storage)[i].translation.tZ);
 
-            transform.addDouble((*m_ros_timed_transform_storage)[i].rotation.rW);
-            transform.addDouble((*m_ros_timed_transform_storage)[i].rotation.rX);
-            transform.addDouble((*m_ros_timed_transform_storage)[i].rotation.rY);
-            transform.addDouble((*m_ros_timed_transform_storage)[i].rotation.rZ);
+            transform.addDouble((*m_ros_timed_transform_storage)[i].rotation.w());
+            transform.addDouble((*m_ros_timed_transform_storage)[i].rotation.x());
+            transform.addDouble((*m_ros_timed_transform_storage)[i].rotation.y());
+            transform.addDouble((*m_ros_timed_transform_storage)[i].rotation.z());
         }
         for (size_t i = 0; i < tfVecSize_static_ros; i++)
         {
@@ -675,10 +675,10 @@ void FrameTransformServer::run()
             transform.addDouble((*m_ros_static_transform_storage)[i].translation.tY);
             transform.addDouble((*m_ros_static_transform_storage)[i].translation.tZ);
 
-            transform.addDouble((*m_ros_static_transform_storage)[i].rotation.rW);
-            transform.addDouble((*m_ros_static_transform_storage)[i].rotation.rX);
-            transform.addDouble((*m_ros_static_transform_storage)[i].rotation.rY);
-            transform.addDouble((*m_ros_static_transform_storage)[i].rotation.rZ);
+            transform.addDouble((*m_ros_static_transform_storage)[i].rotation.w());
+            transform.addDouble((*m_ros_static_transform_storage)[i].rotation.x());
+            transform.addDouble((*m_ros_static_transform_storage)[i].rotation.y());
+            transform.addDouble((*m_ros_static_transform_storage)[i].rotation.z());
         }
 
         m_streamingPort.setEnvelope(m_lastStateStamp);
@@ -697,10 +697,10 @@ void FrameTransformServer::run()
                 FrameTransformimed.header.frame_id = (*m_yarp_timed_transform_storage)[i].src_frame_id;
                 FrameTransformimed.header.seq = rosMsgCounter;
                 FrameTransformimed.header.stamp = normalizeSecNSec((*m_yarp_timed_transform_storage)[i].timestamp);
-                FrameTransformimed.transform.rotation.x = (*m_yarp_timed_transform_storage)[i].rotation.rX;
-                FrameTransformimed.transform.rotation.y = (*m_yarp_timed_transform_storage)[i].rotation.rY;
-                FrameTransformimed.transform.rotation.z = (*m_yarp_timed_transform_storage)[i].rotation.rZ;
-                FrameTransformimed.transform.rotation.w = (*m_yarp_timed_transform_storage)[i].rotation.rW;
+                FrameTransformimed.transform.rotation.x = (*m_yarp_timed_transform_storage)[i].rotation.x();
+                FrameTransformimed.transform.rotation.y = (*m_yarp_timed_transform_storage)[i].rotation.y();
+                FrameTransformimed.transform.rotation.z = (*m_yarp_timed_transform_storage)[i].rotation.z();
+                FrameTransformimed.transform.rotation.w = (*m_yarp_timed_transform_storage)[i].rotation.w();
                 FrameTransformimed.transform.translation.x = (*m_yarp_timed_transform_storage)[i].translation.tX;
                 FrameTransformimed.transform.translation.y = (*m_yarp_timed_transform_storage)[i].translation.tY;
                 FrameTransformimed.transform.translation.z = (*m_yarp_timed_transform_storage)[i].translation.tZ;
@@ -717,10 +717,10 @@ void FrameTransformServer::run()
                 transform_static.header.frame_id = (*m_yarp_static_transform_storage)[i].src_frame_id;
                 transform_static.header.seq = rosMsgCounter;
                 transform_static.header.stamp = normalizeSecNSec(yarp::os::Time::now()); //@@@check timestamp of static transform?
-                transform_static.transform.rotation.x = (*m_yarp_static_transform_storage)[i].rotation.rX;
-                transform_static.transform.rotation.y = (*m_yarp_static_transform_storage)[i].rotation.rY;
-                transform_static.transform.rotation.z = (*m_yarp_static_transform_storage)[i].rotation.rZ;
-                transform_static.transform.rotation.w = (*m_yarp_static_transform_storage)[i].rotation.rW;
+                transform_static.transform.rotation.x = (*m_yarp_static_transform_storage)[i].rotation.x();
+                transform_static.transform.rotation.y = (*m_yarp_static_transform_storage)[i].rotation.y();
+                transform_static.transform.rotation.z = (*m_yarp_static_transform_storage)[i].rotation.z();
+                transform_static.transform.rotation.w = (*m_yarp_static_transform_storage)[i].rotation.w();
                 transform_static.transform.translation.x = (*m_yarp_static_transform_storage)[i].translation.tX;
                 transform_static.transform.translation.y = (*m_yarp_static_transform_storage)[i].translation.tY;
                 transform_static.transform.translation.z = (*m_yarp_static_transform_storage)[i].translation.tZ;

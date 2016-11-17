@@ -49,6 +49,22 @@ public:
         return true;
     }
 
+    bool isEqual(const yarp::math::Quaternion& q1, const yarp::math::Quaternion& q2, double precision)
+    {
+        yarp::sig::Vector v1 = q1.toVector();
+        yarp::sig::Vector v2 = q2.toVector();
+
+        for (size_t i = 0; i < v1.size(); i++)
+        {
+            double check = fabs(v1[i] - v2[i]);
+            if (check > precision)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     bool isEqual(const yarp::sig::Matrix& m1, const yarp::sig::Matrix& m2, double precision)
     {
         if (m1.cols() != m2.cols() || m1.rows() != m2.rows())
@@ -180,11 +196,9 @@ public:
             //test 6
             yarp::sig::Vector in_point1(3), out_point1(3), verPoint1(4);
             yarp::sig::Vector in_pose1(6),  out_pose1(6),  verPose(6);
-            yarp::sig::Vector in_quat1(4),  out_quat1(4),  verQuat(4);
+            yarp::math::Quaternion in_quat1,  out_quat1,   verQuat;
 
-            //andrea.ruzzenenti@iit.it 09/09/16:
-            //added matrix inversion to simulate the effect of the missing method rot2quat()
-            in_quat1 = yarp::math::dcm2quat(SE3inv(m4));
+            in_quat1.fromRotationMatrix(m4);
 
             in_pose1[0] = 1;  in_pose1[1] = 2;  in_pose1[2] = 3;
             in_pose1[3] = 30; in_pose1[4] = 60; in_pose1[5] = 90;
@@ -207,11 +221,7 @@ public:
             temp              = yarp::math::dcm2rpy(mat);
             verPose[3]        = temp[0]; verPose[4] = temp[1]; verPose[5] = temp[2];
 
-            //andrea.ruzzenenti@iit.it 09/09/16:
-            //the first one was correct. now the matrix is inverted at the initialization. check the comment there
-
-            //verQuat = yarp::math::dcm2quat(m1 * m2 * SE3inv(m4)); //@@@@ TO BE CHECKED
-            verQuat = yarp::math::dcm2quat(m1 * m2 * m4);           //@@@@ TO BE CHECKED
+            verQuat.fromRotationMatrix(m1 * m2 * m4);
 
             itf->transformPoint("frame3", "frame1", in_point1, out_point1);
             itf->transformPose("frame3", "frame1", in_pose1, out_pose1);
@@ -227,7 +237,7 @@ public:
 
             bool b_tquat = isEqual(verQuat, out_quat1, precision);
             checkTrue(b_tquat, "transformQuaternion ok");
-            if (precision_verbose || b_tquat == false) { yInfo() << "precision error:\n" + (verQuat - out_quat1).toString(); }
+            if (precision_verbose || b_tquat == false) { yInfo() << "precision error:\n" + (verQuat.toVector() - out_quat1.toVector()).toString(); }
 
             //test 7
             std::string all_frames;

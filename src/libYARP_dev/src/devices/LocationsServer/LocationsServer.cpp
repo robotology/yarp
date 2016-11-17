@@ -46,7 +46,8 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
 
     visualization_msgs_Marker marker;
     TickTime                  tt;
-    yarp::sig::Vector         rpy(3), q(4);
+    yarp::sig::Vector         rpy(3);
+    yarp::math::Quaternion    q;
 
     visualization_msgs_MarkerArray& markers = m_rosPublisherPort.prepare();
     markers.markers.clear();
@@ -58,7 +59,8 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
         rpy[V3_X] = 0;
         rpy[V3_Y] = 0;
         rpy[V3_Z] = it->second.theta / 180 * 3.14159265359;
-        q         = dcm2quat(SE3inv(rpy2dcm(rpy)));
+        yarp::sig::Matrix m = rpy2dcm(rpy);
+        q.fromRotationMatrix(m);
 
         marker.header.frame_id    = "map";
         tt.sec                    = (yarp::os::NetUint32) sec_part;;
@@ -71,10 +73,10 @@ bool yarp::dev::LocationsServer::updateVizMarkers()
         marker.pose.position.x    = it->second.x;
         marker.pose.position.y    = it->second.y;
         marker.pose.position.z    = 0;
-        marker.pose.orientation.x = q[V4_X];
-        marker.pose.orientation.y = q[V4_Y];
-        marker.pose.orientation.z = q[V4_Z];
-        marker.pose.orientation.w = q[V4_W];
+        marker.pose.orientation.x = q.x();
+        marker.pose.orientation.y = q.y();
+        marker.pose.orientation.z = q.z();
+        marker.pose.orientation.w = q.w();
         marker.scale.x            = 1;
         marker.scale.y            = 0.1;
         marker.scale.z            = 0.1;
