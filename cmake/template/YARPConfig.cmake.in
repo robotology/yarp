@@ -55,6 +55,15 @@ if(NOT YARP_NO_DEPRECATED)
   find_package(YCM 0.2 QUIET)
   set(PACKAGE_PREFIX_DIR ${_PACKAGE_PREFIX_DIR})
   unset(_PACKAGE_PREFIX_DIR)
+
+  # Workaround to check YCM version until a better versioning system is in use
+  if(YCM_FOUND  AND
+     YCM_VERSION_API VERSION_EQUAL 0.2  AND
+     YCM_VERSION_SOURCE VERSION_LESS 20161114.8)
+    set(YCM_FOUND FALSE)
+    set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
+  endif()
+
   if(NOT YCM_FOUND)
     list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/find-modules"
                                  "${YARP_MODULE_DIR}/ycm-0.2/modules"
@@ -62,6 +71,9 @@ if(NOT YARP_NO_DEPRECATED)
                                  "${YARP_MODULE_DIR}/ycm-0.2/cmake-proposed")
     if(${CMAKE_VERSION} VERSION_LESS 3.1)
       list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/cmake-3.1/Modules")
+    endif()
+    if(${CMAKE_VERSION} VERSION_LESS 3.8)
+      list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/cmake-next/Modules")
     endif()
   endif()
 endif()

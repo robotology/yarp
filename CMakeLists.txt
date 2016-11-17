@@ -21,6 +21,12 @@ set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
 
 find_package(YCM 0.2 QUIET)
+# Workaround to check for older versions of YCM 0.2.0
+if(YCM_FOUND  AND  YCM_VERSION VERSION_EQUAL 0.2.0  AND  DEFINED YCM_VERSION_SOURCE)
+  set(YCM_FOUND FALSE)
+  set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
+endif()
+
 if(NOT YCM_FOUND)
   list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/find-modules"
                                "${YARP_MODULE_DIR}/ycm-0.2/modules"
