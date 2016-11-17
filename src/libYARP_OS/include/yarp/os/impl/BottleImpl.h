@@ -110,12 +110,7 @@ public:
      * parentheses.
      */
     virtual void fromStringNested(const ConstString& src) { fromString(src); }
-    virtual yarp::os::ConstString toString() const
-    {
-        ConstString str = toString();
-        return yarp::os::ConstString(str.c_str(), str.length());
-    }
-
+    virtual yarp::os::ConstString toString() const = 0;
     /**
      * Create string representation, including any syntax that should
      * wrap it such as braces or parentheses.
