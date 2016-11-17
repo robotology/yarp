@@ -1,25 +1,43 @@
 #include "depthCameraDriver.h"
+#include <algorithm>
 using namespace yarp::dev;
 using namespace yarp::sig;
+using namespace yarp::os;
 using namespace openni;
 using namespace std;
 
+streamFrameListener::streamFrameListener()
+{
+    image.setPixelCode(VOCAB_PIXEL_RGB);
+    w        = 0;
+    h        = 0;
+    dataSize = 0;
+    isReady    = false;
+}
+
 void streamFrameListener::onNewFrame(openni::VideoStream& stream)
 {
+    LockGuard guard(mutex);
+    stream.readFrame(&frameRef);
 
-    mutex.lock();
     if (!frameRef.isValid() || !frameRef.getData())
     {
         yInfo() << "frame lost";
         return;
     }
-    int         pixC;
 
-    stream.readFrame(&frameRef);
-    pixF = stream.getVideoMode().getPixelFormat();
-    pixC = yarp::dev::depthCameraDriver::pixFormatToCode(pixF);
-    w    = frameRef.getWidth();
-    h    = frameRef.getHeight();
+    int pixC;
+
+    pixF     = stream.getVideoMode().getPixelFormat();
+    pixC     = depthCameraDriver::pixFormatToCode(pixF);
+    w        = frameRef.getWidth();
+    h        = frameRef.getHeight();
+    dataSize = frameRef.getDataSize();
+
+    if (isReady == false)
+    {
+        isReady = true;
+    }
 
     if(pixC == VOCAB_PIXEL_INVALID)
     {
@@ -28,20 +46,30 @@ void streamFrameListener::onNewFrame(openni::VideoStream& stream)
     }
 
     image.setPixelCode(pixC);
-    image.setExternal((void*)frameRef.getData(), w, h);
+    image.resize(w, h);
+    if(image.getRawImageSize() != frameRef.getDataSize())
+    {
+        yError() << "depthCameraDriver:device and local copy data size doesn't match";
+        return;
+    }
+    memcpy((void*)image.getRawImage(), (void*)frameRef.getData(), frameRef.getDataSize());
     stamp.update();
-    mutex.unlock();
+    return;
 }
 
 
 depthCameraDriver::depthCameraDriver()
 {
-
+    supportedFeatures.push_back(YARP_FEATURE_EXPOSURE);
+    supportedFeatures.push_back(YARP_FEATURE_WHITE_BALANCE);
+    supportedFeatures.push_back(YARP_FEATURE_GAIN);
+    supportedFeatures.push_back(YARP_FEATURE_FRAME_RATE);
+    return;
 }
 
 depthCameraDriver::~depthCameraDriver()
 {
-
+    return;
 }
 
 bool depthCameraDriver::initializeOpeNIDevice()
@@ -51,14 +79,14 @@ bool depthCameraDriver::initializeOpeNIDevice()
     rc = OpenNI::initialize();
     if (rc != STATUS_OK)
     {
-        yError() << "Initialize failed\n%s\n" << OpenNI::getExtendedError();
+        yError() << "depthCameraDriver: Initialize failed," << OpenNI::getExtendedError();
         return false;
     }
 
     rc = m_device.open(ANY_DEVICE);
     if (rc != STATUS_OK)
     {
-        yError() << "Couldn't open device\n%s\n" << OpenNI::getExtendedError();
+        yError() << "depthCameraDriver: Couldn't open device," << OpenNI::getExtendedError();
         return false;
     }
 
@@ -67,7 +95,7 @@ bool depthCameraDriver::initializeOpeNIDevice()
         rc = m_imageStream.create(m_device, SENSOR_COLOR);
         if (rc != STATUS_OK)
         {
-            yError() << "Couldn't create color stream\n%s\n" << OpenNI::getExtendedError();
+            yError() << "depthCameraDriver: Couldn't create color stream," << OpenNI::getExtendedError();
             return false;
         }
     }
@@ -75,7 +103,7 @@ bool depthCameraDriver::initializeOpeNIDevice()
     rc = m_imageStream.start();
     if (rc != STATUS_OK)
     {
-        yError() << "Couldn't start the color stream\n%s\n" << OpenNI::getExtendedError();
+        yError() << "depthCameraDriver: Couldn't start the color stream," << OpenNI::getExtendedError();
         return false;
     }
 
@@ -84,7 +112,7 @@ bool depthCameraDriver::initializeOpeNIDevice()
         rc = m_depthStream.create(m_device, SENSOR_DEPTH);
         if (rc != STATUS_OK)
         {
-            yError() << "Couldn't create depth stream\n%s\n" << OpenNI::getExtendedError();
+            yError() << "depthCameraDriver: Couldn't create depth stream," << OpenNI::getExtendedError();
             return false;
         }
     }
@@ -92,7 +120,7 @@ bool depthCameraDriver::initializeOpeNIDevice()
     rc = m_depthStream.start();
     if (rc != STATUS_OK)
     {
-        yError() << "Couldn't start the depth stream\n%s\n" << OpenNI::getExtendedError();
+        yError() << "depthCameraDriver: Couldn't start the depth stream," << OpenNI::getExtendedError();
         return false;
     }
 
@@ -102,7 +130,7 @@ bool depthCameraDriver::initializeOpeNIDevice()
     return true;
 }
 
-bool depthCameraDriver::open(yarp::os::Searchable& config)
+bool depthCameraDriver::open(Searchable& config)
 {
     if(!initializeOpeNIDevice())
     {
@@ -137,21 +165,41 @@ int depthCameraDriver::getRgbWidth()
     return ret;
 }
 
+bool depthCameraDriver::setDepthResolution(int width, int height)
+{
+    return false;
+}
+
+bool depthCameraDriver::setRgbResolution(int width, int height)
+{
+    return false;
+}
+
+bool depthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
+{
+    return false;
+}
+
+bool depthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
+{
+    return false;
+}
+
+bool depthCameraDriver::setDepthAccuracy(double accuracy)
+{
+    return false;
+}
+
 bool depthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
 {
     horizontalFov = m_imageStream.getHorizontalFieldOfView() * RAD2DEG;
     verticalFov   = m_imageStream.getVerticalFieldOfView()   * RAD2DEG;
-
+    return true;
 }
 
-bool depthCameraDriver::getRgbIntrinsicParam(yarp::os::Property& intrinsic)
+bool depthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
 {
-
-}
-
-bool depthCameraDriver::getRgbSensorInfo(yarp::os::Property& info)
-{
-
+    return false;
 }
 
 int  depthCameraDriver::getDepthHeight()
@@ -174,36 +222,17 @@ bool depthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
 {
     horizontalFov = m_depthStream.getHorizontalFieldOfView() * RAD2DEG;
     verticalFov   = m_depthStream.getVerticalFieldOfView()   * RAD2DEG;
-
-}
-
-bool depthCameraDriver::getDepthIntrinsicParam(yarp::os::Property& intrinsic)
-{
-
-}
-
-bool depthCameraDriver::getDepthSensorInfo(yarp::os::Property info)
-{
-    string sensorType;
-    switch(m_depthStream.getSensorInfo().getSensorType())
-    {
-    case SENSOR_COLOR:
-        sensorType = "SENSOR_COLOR";
-    case SENSOR_DEPTH:
-        sensorType = "SENSOR_DEPTH";
-    case SENSOR_IR:
-        sensorType = "SENSOR_IR";
-    }
-
-    info.put("SensorType", sensorType);
     return true;
+}
+
+bool depthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
+{
+    return false;
 }
 
 double depthCameraDriver::getDepthAccuracy()
 {
-    double precision;
-    precision = m_depthFrame.pixF == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
-    return precision;
+    return m_depthFrame.pixF == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
 }
 
 bool depthCameraDriver::getDepthClipPlanes(double& near, double& far)
@@ -220,20 +249,19 @@ bool depthCameraDriver::setDepthClipPlanes(double near, double far)
     return false;
 }
 
-bool depthCameraDriver::getExtrinsicParam(yarp::os::Property& extrinsic)
+bool depthCameraDriver::getExtrinsicParam(Property& extrinsic)
 {
-
+    return false;
 }
 
-bool depthCameraDriver::getRgbImage(yarp::sig::FlexImage& rgbImage, yarp::os::Stamp* timeStamp)
+bool depthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
     return getImage(rgbImage, timeStamp, m_imageFrame);
 }
 
-bool depthCameraDriver::getDepthImage(yarp::sig::ImageOf<PixelFloat>& depthImage, yarp::os::Stamp* timeStamp)
+bool depthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
     return getImage(depthImage, timeStamp, m_depthFrame);
-
 }
 
 int depthCameraDriver::pixFormatToCode(PixelFormat p)
@@ -256,7 +284,8 @@ int depthCameraDriver::pixFormatToCode(PixelFormat p)
           case openni::PIXEL_FORMAT_SHIFT_9_3:
             image->encoding = sensor_msgs::image_encodings::TYPE_16UC1;
             image->step = sizeof(unsigned char) * 2 * image->width;
-            break;*/
+            break;
+    */
     switch(p)
     {
     case (PIXEL_FORMAT_RGB888):
@@ -286,33 +315,39 @@ int depthCameraDriver::pixFormatToCode(PixelFormat p)
     return VOCAB_PIXEL_INVALID;
 }
 
-bool depthCameraDriver::getImage(yarp::sig::FlexImage& Frame, yarp::os::Stamp* Stamp, streamFrameListener& sourceFrame)
+bool depthCameraDriver::getImage(FlexImage& Frame, Stamp* Stamp, streamFrameListener& sourceFrame)
 {
-    sourceFrame.mutex.lock();
+    LockGuard guard(sourceFrame.mutex);
+
     bool ret = Frame.copy(sourceFrame.image);
-    *Stamp = sourceFrame.stamp;
-    sourceFrame.mutex.unlock();
+    *Stamp   = sourceFrame.stamp;
     return ret;
 }
 
-bool depthCameraDriver::getImage(yarp::sig::ImageOf<PixelFloat>& Frame, yarp::os::Stamp* Stamp, streamFrameListener& sourceFrame)
+bool depthCameraDriver::getImage(ImageOf<PixelFloat>& Frame, Stamp* Stamp, streamFrameListener& sourceFrame)
 {
-    sourceFrame.mutex.lock();
-
-
-    if(sourceFrame.frameRef.getDataSize() != sourceFrame.frameRef.getHeight() * sourceFrame.frameRef.getWidth() * sizeof(short))
+    LockGuard guard(sourceFrame.mutex);
+    if(!sourceFrame.isReady)
     {
-        yError() << "image format error";
+        yError() << "device not ready";
+        return false;
     }
-    int         w, h, i;
-    w    = sourceFrame.w;
-    h    = sourceFrame.h;
+    int w, h, i;
+    w = sourceFrame.w;
+    h = sourceFrame.h;
+
+    if(sourceFrame.dataSize != h * w * (unsigned short)sizeof(short) ||
+       (sourceFrame.pixF != PIXEL_FORMAT_DEPTH_100_UM && sourceFrame.pixF != PIXEL_FORMAT_DEPTH_1_MM))
+    {
+        yError() << "depthCameraDriver::getImage: image format error";
+        return false;
+    }
 
     float  factor;
     float* rawImage;
     short* srcRawImage;
 
-    srcRawImage = (short*)(sourceFrame.frameRef.getData());
+    srcRawImage = (short*)(sourceFrame.image.getRawImage());
     factor      = sourceFrame.pixF == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
 
     Frame.resize(w, h);
@@ -324,18 +359,26 @@ bool depthCameraDriver::getImage(yarp::sig::ImageOf<PixelFloat>& Frame, yarp::os
         rawImage[i] = srcRawImage[i] * factor;
     }
     *Stamp   = sourceFrame.stamp;
-    sourceFrame.mutex.unlock();
     return true;
 }
 
-bool depthCameraDriver::getImages(yarp::sig::FlexImage& colorFrame, yarp::sig::ImageOf<PixelFloat>& depthFrame, yarp::os::Stamp* colorStamp, yarp::os::Stamp* depthStamp)
+bool depthCameraDriver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
 {
     return getImage(colorFrame, colorStamp, m_imageFrame) & getImage(depthFrame, depthStamp, m_depthFrame);
 }
 
 IRGBDSensor::RGBDSensor_status depthCameraDriver::getSensorStatus()
 {
-    openni::DeviceState status = DEVICE_STATE_OK;
+    openni::DeviceState status;
+    status = DEVICE_STATE_NOT_READY;
+    if(m_device.isValid()      &&
+       m_imageStream.isValid() &&
+       m_depthStream.isValid() &&
+       m_imageFrame.isValid()  &&
+       m_depthFrame.isValid())
+    {
+        status = DEVICE_STATE_OK;
+    }
     switch(status)
     {
     case DEVICE_STATE_OK:
@@ -354,68 +397,162 @@ IRGBDSensor::RGBDSensor_status depthCameraDriver::getSensorStatus()
     return RGBD_SENSOR_GENERIC_ERROR;
 }
 
-yarp::os::ConstString depthCameraDriver::getLastErrorMsg(yarp::os::Stamp* timeStamp)
+ConstString depthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
 {
-
+    yError() << "sorry.. Unfortunately there are no error msg handling avaiable using OpenNI2";
+    return "";
 }
 
-bool depthCameraDriver::getCameraDescription(CameraDescriptor *camera)
+bool depthCameraDriver::getCameraDescription(CameraDescriptor* camera)
 {
-    return false;
+    camera->deviceDescription = m_device.getDeviceInfo().getName();
+    camera->busType = BUS_USB;
+    return true;
 }
 
 bool depthCameraDriver::hasFeature(int feature, bool *hasFeature)
 {
-    return false;
+    cameraFeature_id_t f;
+    f = static_cast<cameraFeature_id_t>(feature);
+    if (f < YARP_FEATURE_BRIGHTNESS || f > YARP_FEATURE_NUMEBR_OF-1)
+    {
+        return false;
+    }
+
+    if(std::find(supportedFeatures.begin(), supportedFeatures.end(), f) != supportedFeatures.end())
+    {
+        *hasFeature = true;
+    }
+    else
+    {
+        *hasFeature = false;
+    }
+
+    return true;
 }
+
 bool depthCameraDriver::setFeature(int feature, double value)
 {
-    return false;
+    /*bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }*/
+
+    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    switch(f)
+    {
+    case YARP_FEATURE_EXPOSURE:
+        m_imageStream.getCameraSettings()->setExposure(int(value * 100)+1);
+        break;
+    case YARP_FEATURE_GAIN:
+        m_imageStream.getCameraSettings()->setGain(int(value * 100)+1);
+        break;
+    case YARP_FEATURE_FRAME_RATE:
+        openni::VideoMode vm;
+        vm = m_imageStream.getVideoMode();
+        vm.setFps(int(value));
+        m_imageStream.setVideoMode(vm);
+        break;
+    /*case YARP_FEATURE_WHITE_BALANCE:
+        if (value < 0)
+        {
+            yError() << "invalid value! value should be 0(false) or superior(true)";
+            return false;
+        }
+        m_imageStream.getCameraSettings()->setAutoWhiteBalanceEnabled(value > 0.0001);*/
+    /*default:
+        yError() << "feature not supported!";
+        return false;*/
+    }
+    return true;
 }
+
 bool depthCameraDriver::getFeature(int feature, double *value)
 {
+    /*bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    switch(f)
+    {
+    case YARP_FEATURE_EXPOSURE:
+        int exp = m_imageStream.getCameraSettings()->getExposure();
+        break;
+    case YARP_FEATURE_GAIN:
+        m_imageStream.getCameraSettings()->setGain(int(value * 100)+1);
+        break;
+    case YARP_FEATURE_FRAME_RATE:
+        openni::VideoMode vm;
+        vm = m_imageStream.getVideoMode();
+        vm.setFps(int(value));
+        m_imageStream.setVideoMode(vm);
+    case YARP_FEATURE_WHITE_BALANCE:
+        if (value < 0)
+        {
+            yError() << "invalid value! value should be 0(false) or superior(true)";
+            return false;
+        }
+        m_imageStream.getCameraSettings()->setAutoWhiteBalanceEnabled(value > 0.0001);
+    }*/
     return false;
 }
+
 bool depthCameraDriver::setFeature(int feature, double value1, double value2)
 {
     return false;
 }
+
 bool depthCameraDriver::getFeature(int feature, double *value1, double *value2)
 {
     return false;
 }
+
 bool depthCameraDriver::hasOnOff(  int feature, bool *HasOnOff)
 {
     return false;
 }
+
 bool depthCameraDriver::setActive( int feature, bool onoff)
 {
     return false;
 }
+
 bool depthCameraDriver::getActive( int feature, bool *isActive)
 {
     return false;
 }
-bool depthCameraDriver::hasAuto(   int feature, bool *hasAuto)
+
+bool depthCameraDriver::hasAuto(int feature, bool *hasAuto)
 {
     return false;
 }
+
 bool depthCameraDriver::hasManual( int feature, bool *hasManual)
 {
     return false;
 }
+
 bool depthCameraDriver::hasOnePush(int feature, bool *hasOnePush)
 {
     return false;
 }
-bool depthCameraDriver::setMode(   int feature, FeatureMode mode)
+
+bool depthCameraDriver::setMode(int feature, FeatureMode mode)
 {
     return false;
 }
-bool depthCameraDriver::getMode(   int feature, FeatureMode *mode)
+
+bool depthCameraDriver::getMode(int feature, FeatureMode *mode)
 {
     return false;
 }
+
 bool depthCameraDriver::setOnePush(int feature)
 {
     return false;

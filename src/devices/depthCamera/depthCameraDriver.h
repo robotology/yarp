@@ -34,15 +34,23 @@ class streamFrameListener : public openni::VideoStream::NewFrameListener
 {
 public:
 
+    //Properties
     yarp::os::Mutex         mutex;
     yarp::os::Stamp         stamp;
     yarp::sig::FlexImage    image;
-    openni::VideoFrameRef   frameRef;
     openni::PixelFormat     pixF;
     int                     w, h;
+    size_t                  dataSize;
+    bool                    isReady;
+
+    //Method
+    streamFrameListener();
+    bool isValid(){return frameRef.isValid() & isReady;}
+    void destroy(){frameRef.release();}
 
 private:
     virtual void onNewFrame(openni::VideoStream& stream);
+    openni::VideoFrameRef   frameRef;
 };
 
 class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
@@ -57,6 +65,7 @@ public:
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
 
+
     // IRGBDSensor
     virtual int    getRgbHeight();
     virtual int    getRgbWidth();
@@ -64,14 +73,12 @@ public:
     virtual bool   getRgbFOV(double& horizontalFov, double& verticalFov);
     virtual bool   setRgbFOV(double horizontalFov, double verticalFov);
     virtual bool   getRgbIntrinsicParam(yarp::os::Property& intrinsic);
-    virtual bool   getRgbSensorInfo(yarp::os::Property& info);
     virtual int    getDepthHeight();
     virtual int    getDepthWidth();
     virtual bool   setDepthResolution(int width, int height);
     virtual bool   getDepthFOV(double& horizontalFov, double& verticalFov);
     virtual bool   setDepthFOV(double horizontalFov, double verticalFov);
     virtual bool   getDepthIntrinsicParam(yarp::os::Property& intrinsic);
-    virtual bool   getDepthSensorInfo(yarp::os::Property info);
     virtual double getDepthAccuracy();
     virtual bool   setDepthAccuracy(double accuracy);
     virtual bool   getDepthClipPlanes(double& near, double& far);
@@ -114,5 +121,7 @@ private:
     openni::VideoStream       m_imageStream;
     streamFrameListener       m_depthFrame;
     streamFrameListener       m_imageFrame;
+
+    std::vector<cameraFeature_id_t> supportedFeatures;
 };
 #endif
