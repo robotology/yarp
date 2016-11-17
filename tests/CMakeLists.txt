@@ -1,6 +1,12 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+include(CMakeDependentOption)
+cmake_dependent_option(YARP_ENABLE_BROKEN_TESTS OFF "Enable broken tests" YARP_COMPILE_TESTS OFF )
+mark_as_advanced(YARP_ENABLE_BROKEN_TESTS)
+if(YARP_ENABLE_BROKEN_TESTS)
+  add_definitions(-DBROKEN_TEST)
+endif()
 
 if(YARP_COMPILE_TESTS)
 

@@ -9,6 +9,7 @@
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortReaderBuffer.h>
@@ -34,6 +35,52 @@ using namespace yarp::os::impl;
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+class TcpTestServer : public RateThread
+{
+public:
+    TcpTestServer() : RateThread(20)
+    {
+
+    }
+private:
+    BufferedPort<Bottle> tcpPort;
+    bool threadInit()
+    {
+        tcpPort.open("/TcpTestServer");
+    }
+
+    void threadRelease()
+    {
+        tcpPort.interrupt();
+        tcpPort.close();
+    }
+
+    void run()
+    {
+        Bottle& b = tcpPort.prepare();
+        b.clear();
+        b.addString("tcpTest");
+        tcpPort.write();
+    }
+};
+
+class TcpTestClient
+{
+    BufferedPort<Bottle> tcpPort;
+public:
+    TcpTestClient()
+    {
+        tcpPort.open("/TcpTestClien");
+        yarp::os::Network::connect("/TcpTestServer", "/TcpTestClien","tcp");
+    }
+
+    ~TcpTestClient()
+    {
+        tcpPort.interrupt();
+        tcpPort.close();
+    }
+};
 
 class ServiceProvider : public PortReader {
 public:
@@ -1408,9 +1455,28 @@ public:
         pout.close();
     }
 
+    void testTcp()
+    {
+        for(int i = 0; i < 50; i++)
+        {
+            TcpTestServer server;
+            server.start();
+
+            TcpTestClient* client = new TcpTestClient();
+
+            delete client;
+
+            server.stop();
+        }
+    }
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
+        //Progression test:
+#ifdef BROKEN_TEST
+        testTcp();
+#endif
         testOpen();
         //bbb testReadBuffer();
         testPair();
@@ -1464,6 +1530,10 @@ public:
         testAdminReader();
 
         testCallbackLock();
+
+
+
+
 
         NetworkBase::setLocalMode(false);
     }
