@@ -98,6 +98,11 @@ if(DOXYGEN_FOUND)
         set(DOX_GENERATE_TAGFILE "${CMAKE_BINARY_DIR}/dox/YARP.tag")
       endif()
 
+      set(DOX_GENERATE_TODOLIST YES)
+      set(DOX_GENERATE_TESTLIST YES)
+      set(DOX_GENERATE_BUGLIST YES)
+      set(DOX_GENERATE_DEPRECATEDLIST YES)
+
       configure_file("${YARP_MODULE_DIR}/template/${DOX_FILE}.in"
                      "${CMAKE_BINARY_DIR}/dox/${DOX_FILE}")
       add_custom_command(TARGET dox
@@ -120,6 +125,11 @@ if(DOXYGEN_FOUND)
       set(DOX_GENERATE_DOCBOOK NO)
       set(DOX_GENERATE_TAGFILE "")
       set(DOX_GENERATE_MAN YES)
+      set(DOX_GENERATE_TODOLIST NO)
+      set(DOX_GENERATE_TESTLIST NO)
+      set(DOX_GENERATE_BUGLIST NO)
+      set(DOX_GENERATE_DEPRECATEDLIST NO)
+
       configure_file(${YARP_MODULE_DIR}/template/${DOX_FILE}.in
                      ${CMAKE_BINARY_DIR}/dox/${DOX_FILE}.man)
       add_custom_command(TARGET dox
