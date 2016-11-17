@@ -402,12 +402,7 @@ Vector yarp::math::sign(const Vector &v)
 
 Vector yarp::math::dcm2axis(const Matrix &R)
 {
-    if ((R.rows()<3) || (R.cols()<3))
-    {
-        yError("yarp::math::dcm2axis() failed");
-        yAssert(R.rows() >= 3 && R.cols() >= 3);
-        return Vector(0);
-    }
+    yAssert((R.rows()>=3) && (R.cols()>=3));
 
     Vector v(4);
     v[0]=R(2,1)-R(1,2);
@@ -449,12 +444,7 @@ Vector yarp::math::dcm2axis(const Matrix &R)
 
 Matrix yarp::math::axis2dcm(const Vector &v)
 {
-    if (v.length()<4)
-    {
-        yError("yarp::math::axis2dcm() failed");
-        yAssert(v.length()>=4);
-        return Matrix(0,0);
-    }
+    yAssert(v.length()>=4);
 
     Matrix R=eye(4,4);
 
@@ -491,11 +481,7 @@ Matrix yarp::math::axis2dcm(const Vector &v)
 
 Vector yarp::math::dcm2euler(const Matrix &R)
 {
-    if ((R.rows()<3) || (R.cols()<3))
-    {
-        yError("dcm2euler() failed");
-        return Vector(0);
-    }
+    yAssert((R.rows()>=3) && (R.cols()>=3));
 
     Vector v(3);
     bool singularity=false;
@@ -533,11 +519,7 @@ Vector yarp::math::dcm2euler(const Matrix &R)
 
 Matrix yarp::math::euler2dcm(const Vector &v)
 {
-    if (v.length()<3)
-    {
-        yError("euler2dcm() failed");
-        return Matrix(0,0);
-    }
+    yAssert(v.length()>=3);
 
     Matrix Rza=eye(4,4); Matrix Ryb=eye(4,4);  Matrix Rzg=eye(4,4);
     double alpha=v[0];   double ca=cos(alpha); double sa=sin(alpha);
@@ -553,11 +535,7 @@ Matrix yarp::math::euler2dcm(const Vector &v)
 
 Vector yarp::math::dcm2rpy(const Matrix &R)
 {
-    if ((R.rows()<3) || (R.cols()<3))
-    {
-        yError("dcm2rpy() failed");
-        return Vector(0);
-    }
+    yAssert((R.rows()>=3) && (R.cols()>=3));
 
     Vector v(3);
     bool singularity=false;
@@ -593,11 +571,7 @@ Vector yarp::math::dcm2rpy(const Matrix &R)
 
 Matrix yarp::math::rpy2dcm(const Vector &v)
 {
-    if (v.length()<3)
-    {
-        yError("rpy2dcm() failed");
-        return Matrix(0,0);
-    }
+    yAssert(v.length()>=3);
 
     Matrix Rz=eye(4,4); Matrix Ry=eye(4,4);   Matrix Rx=eye(4,4);
     double roll=v[0];   double cr=cos(roll);  double sr=sin(roll);
@@ -612,12 +586,8 @@ Matrix yarp::math::rpy2dcm(const Vector &v)
 }
 
 Matrix yarp::math::SE3inv(const Matrix &H)
-{    
-    if ((H.rows()!=4) || (H.cols()!=4))
-    {
-        yError("SE3inv() failed");
-        return Matrix(0,0);
-    }
+{
+    yAssert((H.rows()==4) && (H.cols()==4));
 
     Vector p(4);
     p[0]=H(0,3);
@@ -638,12 +608,7 @@ Matrix yarp::math::SE3inv(const Matrix &H)
 
 Matrix yarp::math::adjoint(const Matrix &H)
 {
-    if ((H.rows()!=4) || (H.cols()!=4))
-    {
-        yError("adjoint() failed: roto-translational matrix sized %dx%d instead of 4x4",
-               H.rows(),H.cols());
-        return Matrix(0,0);
-    }
+    yAssert((H.rows()==4) && (H.cols()==4));
 
     // the skew matrix coming from the translational part of H: S(r)
     Matrix S(3,3);
@@ -669,13 +634,8 @@ Matrix yarp::math::adjoint(const Matrix &H)
 
 Matrix yarp::math::adjointInv(const Matrix &H)
 {
-    if ((H.rows()!=4) || (H.cols()!=4))
-    {
-        yError("adjointInv() failed: roto-translational matrix sized %dx%d instead of 4x4",
-               H.rows(),H.cols());
-        return Matrix(0,0);
-    }
-    
+    yAssert((H.rows()==4) && (H.cols()==4));
+
     // R^T
     Matrix Rt = H.submatrix(0,2,0,2).transposed();
     // R^T * r
