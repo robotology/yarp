@@ -9,6 +9,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/RunProcManager.h>
+#include <yarp/os/impl/SplitString.h>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
 
@@ -1775,8 +1776,11 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg,Bottle& result)
     yarp::os::ConstString cstrEnvName;
     if(msg.check("env"))
     {
-        lstrcpy(lpNew, (LPTCH) msg.find("env").asString().c_str());
-        lpNew += lstrlen(lpNew) + 1;
+        yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
+        for(int i=0; i<ss.size(); i++) {
+            lstrcpy(lpNew, (LPTCH) ss.get(i));
+            lpNew += lstrlen(lpNew) + 1;
+        }
     }
 
     // closing env block
@@ -2676,9 +2680,12 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
 
                 if(msg.check("env"))
                 {
-                    char* szenv = new char[msg.find("env").asString().length()+1];
-                    strcpy(szenv,msg.find("env").asString().c_str());
-                    putenv(szenv); // putenv doesn't make copy of the string
+                    yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
+                    for(int i=0; i<ss.size(); i++) {
+                        char* szenv = new char[strlen(ss.get(i))+1];
+                        strcpy(szenv, ss.get(i));
+                        putenv(szenv); // putenv doesn't make copy of the string
+                    }
                     //delete [] szenv;
                 }
 
@@ -3028,9 +3035,12 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
                 if(msg.check("env"))
                 {
-                    char* szenv = new char[msg.find("env").asString().length()+1];
-                    strcpy(szenv,msg.find("env").asString().c_str());
-                    putenv(szenv); // putenv doesn't make copy of the string
+                    yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
+                    for(int i=0; i<ss.size(); i++) {
+                        char* szenv = new char[strlen(ss.get(i))+1];
+                        strcpy(szenv, ss.get(i));
+                        putenv(szenv); // putenv doesn't make copy of the string
+                    }
                     //delete [] szenv;
                 }
 
@@ -3457,9 +3467,12 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
 
         if (msg.check("env"))
         {
-            char* szenv = new char[msg.find("env").asString().length()+1];
-            strcpy(szenv,msg.find("env").asString().c_str());
-            putenv(szenv); // putenv becomes owner of the string. DO NOT RELEASE it
+            yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
+            for(int i=0; i<ss.size(); i++) {
+                char* szenv = new char[strlen(ss.get(i))+1];
+                strcpy(szenv, ss.get(i));
+                putenv(szenv); // putenv doesn't make copy of the string
+            }
         }
 
         if (msg.check("workdir"))
