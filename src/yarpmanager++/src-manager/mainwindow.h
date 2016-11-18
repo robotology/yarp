@@ -85,6 +85,7 @@ private slots:
     void onAbout();
     void onBuilderWindowFloating(bool);
     void onWizardError(QString);
+    void onViewBuilderWindows();
 
     void onModified(bool);
 

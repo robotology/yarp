@@ -14,6 +14,7 @@
 #include <QMenu>
 #include <QFileDialog>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/manager/localbroker.h>
 #include "yscopewindow.h"
 #include <QTreeWidgetItem>
@@ -108,9 +109,11 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
     builderWindowContainer->addDockWidget(Qt::TopDockWidgetArea,builderWidget);
     builder = YarpBuilderLib::getBuilder(this->app,lazyManager,&safeManager,editingMode);
     builderWidget->setWidget(builder);
-
-    builderWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+    //builderWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+    builderWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
     connect(builderWidget,SIGNAL(topLevelChanged(bool)),this,SLOT(onBuilderFloatChanged(bool)));
+
+    //builderWidget->pos()
 
     if (!editingMode) {
         //builder->addAction(modRunAction);
@@ -147,7 +150,8 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
         builder->addConnectionsAction(conn1SeparatorAction);
 
         ui->splitter->setStretchFactor(0,50);
-        ui->splitter->setStretchFactor(1,10);
+        ui->splitter->setStretchFactor(1,10);       
+        showBuilderWindows(*m_pConfig);
 
         connect(builder,SIGNAL(refreshApplication()),
                 this,SLOT(onRefreshApplication()),Qt::DirectConnection);
@@ -161,7 +165,6 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
 
     builder->load();
     builderToolBar = builder->getToolBar();
-
 }
 
 bool ApplicationViewWidget::save()
@@ -211,7 +214,7 @@ bool ApplicationViewWidget::isBuilderFloating()
 
 void ApplicationViewWidget::onBuilderFloatChanged(bool floating)
 {
-
+    /*
     if (floating) {
         builderWindowFloating(floating);
         builder->addToolBar();
@@ -221,7 +224,7 @@ void ApplicationViewWidget::onBuilderFloatChanged(bool floating)
         builderToolBar = builder->getToolBar();
         builderWindowFloating(floating);
     }
-
+    */
 }
 
 /*! \brief Create the context menu for the modules tree. */
@@ -2114,4 +2117,24 @@ QTreeWidgetItem* ApplicationViewWidget::getModRowByID(int id, QTreeWidgetItem *p
 
 void ApplicationViewWidget::closeManager() {
     safeManager.close();
+}
+
+
+void ApplicationViewWidget::showBuilderWindows(yarp::os::Property& proprty) {
+    if(editingMode)
+        return;
+    int w1 = width()/2.0;
+    int w2 = width()/2.0;
+    if(!proprty.check("showBuilder") && proprty.check("showManager")) {
+        w1 = width();
+        w2 = 0;
+    }
+    else if(proprty.check("showBuilder") && !proprty.check("showManager")) {
+        w1 = 0;
+        w2 = width();
+    }
+    QList<int> ss;
+    ss.push_back(w1);
+    ss.push_back(w2);
+    ui->splitter->setSizes(ss);
 }
