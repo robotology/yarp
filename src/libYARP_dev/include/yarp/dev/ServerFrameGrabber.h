@@ -339,32 +339,6 @@ public:
     }
 
     virtual bool updateService();
-
-    // IFrameGrabberControl2 interface //
-
-    virtual bool getCameraDescription(CameraDescriptor *camera);
-    virtual bool hasFeature(int feature, bool *hasFeature);
-    virtual bool setFeature(int feature, double  values);
-    virtual bool getFeature(int feature, double *values);
-    virtual bool setFeature(int feature, double  value1, double  value2);
-    virtual bool getFeature(int feature, double *value1, double *value2);
-    virtual bool hasOnOff(int feature, bool *HasOnOff);
-    virtual bool setActive(int feature, bool onoff);
-    virtual bool getActive(int feature, bool *isActive);
-    virtual bool hasAuto(int feature, bool *hasAuto);
-    virtual bool hasManual(int feature, bool *hasManual);
-    virtual bool hasOnePush(int feature, bool *hasOnePush);
-    virtual bool setMode(int feature, FeatureMode mode);
-    virtual bool getMode(int feature, FeatureMode *mode);
-
-    /**
-     * Set the requested feature to a value (saturation, brightness ... )
-     * @param feature the identifier of the feature to change
-     * @param value new value of the feature, from 0 to 1 as a percentage of param range
-     * @return returns true on success, false on failure.
-     */
-    virtual bool setOnePush(int feature);
-
 private:
     bool respondToFrameGrabberControl2(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
 };
