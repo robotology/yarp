@@ -48,7 +48,6 @@
 #include <../msgs/ros/include/sensor_msgs_CameraInfo.h>
 #include <../msgs/ros/include/sensor_msgs_Image.h>
 
-#include "RGBDSensorWrapper_RPCMsgParser.h"
 
 namespace yarp{
     namespace dev{
