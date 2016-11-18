@@ -26,6 +26,113 @@ yarp::dev::DriverCreator *createRGBDSensorWrapper() {
     return new DriverCreatorOf<yarp::dev::RGBDSensorWrapper>("RGBDSensorWrapper", "RGBDSensorWrapper", "yarp::dev::RGBDSensorWrapper");
 }
 
+RGBDSensorParser::RGBDSensorParser() : iRGBDSensor(YARP_NULLPTR) {};
+
+bool RGBDSensorParser::configure(IRGBDSensor *interface)
+{
+    bool ret;
+    iRGBDSensor = interface;
+    ret  = rgbParser.configure(interface);
+    ret &= depthParser.configure(interface);
+    return ret;
+}
+
+bool RGBDSensorParser::configure(IRgbVisualParams *rgbInterface, IDepthVisualParams* depthInterface)
+{
+    bool ret = rgbParser.configure(rgbInterface);
+    ret &= depthParser.configure(depthInterface);
+    return ret;
+}
+
+bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
+{
+    bool ret = false;
+    int interfaceType = cmd.get(0).asVocab();
+
+    response.clear();
+    switch(interfaceType)
+    {
+        case VOCAB_RGB_VISUAL_PARAMS:
+        {
+            // forwarding to the proper parser.
+            ret = rgbParser.respond(cmd, response);
+        }
+        break;
+
+        case VOCAB_DEPTH_VISUAL_PARAMS:
+        {
+            // forwarding to the proper parser.
+            ret = depthParser.respond(cmd, response);
+        }
+        break;
+
+        case VOCAB_RGBD_SENSOR:
+        {
+            switch (cmd.get(1).asVocab())
+            {
+                case VOCAB_GET:
+                {
+                    switch(cmd.get(2).asVocab())
+                    {
+                        case VOCAB_EXTRINSIC_PARAM:
+                        {
+                            yarp::os::Property params;
+                            ret = iRGBDSensor->getExtrinsicParam(params);
+                            if(ret)
+                            {
+                                yarp::os::Bottle params_b;
+                                response.addVocab(VOCAB_RGBD_SENSOR);
+                                response.addVocab(VOCAB_EXTRINSIC_PARAM);
+                                response.addVocab(VOCAB_IS);
+                                ret &= Property::copyPortable(params, params_b);  // will it really work??
+                                response.append(params_b);
+                            }
+                            else
+                                response.addVocab(VOCAB_FAILED);
+                        }
+                        break;
+
+                        case VOCAB_ERROR_MSG:
+                        {
+                            response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+                            response.addVocab(VOCAB_ERROR_MSG);
+                            response.addVocab(VOCAB_IS);
+                            response.addString(iRGBDSensor->getLastErrorMsg());
+                            ret = true;
+                        }
+                        break;
+
+                        default:
+                        {
+                            yError() << "RGBDSensor interface parser received an unknown GET command. Command is " << cmd.toString();
+                            response.addVocab(VOCAB_FAILED);
+                        }
+                        break;
+                    }
+                }
+                break;
+
+                case VOCAB_SET:
+                {
+                    yError() << "RGBDSensor interface parser received an unknown SET command. Command is " << cmd.toString();
+                    response.addVocab(VOCAB_FAILED);
+                }
+                break;
+            }
+        }
+        break;
+
+        default:
+        {
+            yError() << "RGBD sensor wrapper received a command for a wrong interface " << yarp::os::Vocab::decode(interfaceType);
+            ret = false;
+        }
+        break;
+    }
+    return ret;
+}
+
+
 RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
                                         rate(DEFAULT_THREAD_PERIOD)
 {
@@ -227,6 +334,29 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
     isSubdeviceOwned = true;
     if(!attach(subDeviceOwned))
         return false;
+
+    // Configuring parsers
+    IRgbVisualParams * rgbVis_p;
+    IDepthVisualParams * depthVis_p;
+
+    subDeviceOwned->view(rgbVis_p);
+    subDeviceOwned->view(depthVis_p);
+
+    if(!parser.configure(sensor_p) )
+    {
+        yError() << "RGBD wrapper: error configuring interfaces for parsers";
+        return false;
+    }
+    /*
+    bool conf = rgbParser.configure(rgbVis_p);
+    conf &= depthParser.configure(depthVis_p);
+
+    if(!conf)
+    {
+        yError() << "RGBD wrapper: error configuring interfaces for parsers";
+        return false;
+    }
+    */
 
     RateThread::setRate(rate);
     RateThread::start();

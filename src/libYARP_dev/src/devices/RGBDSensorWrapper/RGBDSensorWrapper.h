@@ -39,6 +39,7 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IVisualParamsImpl.h>
 
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
@@ -59,6 +60,7 @@ namespace yarp{
             const std::string depthTopicName_param     = "ROS_depthTopicName";
             const std::string depthInfoTopicName_param = "ROS_colorInfoTopicName";
             const std::string colorInfoTopicName_param = "ROS_depthinfoTopicName";
+            class RGBDSensorParser;
         }
     }
 }
@@ -70,6 +72,24 @@ namespace yarp{
 #define VOCAB_PROTOCOL_VERSION VOCAB('p', 'r', 'o', 't')
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MINOR 0
+
+
+
+class yarp::dev::RGBDImpl::RGBDSensorParser:    public DeviceResponder
+{
+private:
+    yarp::dev::IRGBDSensor  *iRGBDSensor;
+    yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
+    yarp::dev::Implement_DepthVisualParams_Parser depthParser;
+
+public:
+    RGBDSensorParser();
+    virtual ~RGBDSensorParser() {};
+    bool configure(IRGBDSensor *interface);
+    bool configure(IRgbVisualParams *rgbInterface, IDepthVisualParams *depthInterface);
+    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
+};
+
 
 /**
  *  @ingroup dev_impl_wrapper
@@ -160,6 +180,9 @@ private:
     sensor::depth::RGBDSensor_RPCMgsParser  RPC_parser;
                                             
     // Image data specs                     
+    //Helper class for RPCs
+    yarp::dev::RGBDImpl::RGBDSensorParser        parser;
+
     // int hDim, vDim;
     int                            rate;
     std::string                    sensorId;
