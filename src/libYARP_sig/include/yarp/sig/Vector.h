@@ -269,7 +269,6 @@ public:
 */
 class YARP_sig_API yarp::sig::Vector : public yarp::os::Portable
 {
-    void *gslData;
     VectorOf<double> storage;
 
 public:
