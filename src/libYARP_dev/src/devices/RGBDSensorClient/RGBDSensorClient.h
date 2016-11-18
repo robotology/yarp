@@ -61,14 +61,14 @@ namespace yarp {
  * This device is paired with its client called RGBDSensorWrapper to receive the data streams and perfor remote operations.
  *
  *   Parameters required by this device are:
- * | Parameter name  | SubParameter   | Type    | Units          | Default Value | Required                       | Description                                                                    | Notes |
- * |:---------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:------------------------------------------------------------------------------:|:-----:|
- * | localImagePort  |      -         | string  | -              |   -           | Yes, unless useROS='only'      | Full name of the local port to open, e.g. /myApp/image_camera                  | '/rpc' port will be added for remote operations      |
- * | localDepthPort  |      -         | string  | -              |   -           | Yes, unless useROS='only'      | Full name of the local port to open, e.g. /myApp/depth_camera                  | '/rpc' port will be added for remote operations      |
- * | remoteImagePort |      -         | string  | -              |   -           | Yes, unless useROS='only'      | Full name of the port to read color images from, e.g. /robotName/image_camera  | '/rpc' port will be added for remote operations      |
- * | remoteDepthPort |      -         | string  | -              |   -           | Yes, unless useROS='only'      | Full name of the port to read depth images from, e.g. /robotName/depth_camera  | '/rpc' port will be added for remote operations      |
- * | synchPolicy     |      -         | string  |  -             |  latest       | No                             | Choose the policy to use to synch color and depth frame together               | Values are 'latest', 'seqNum', 'time' (this may require an addictional parameter)|
- * | watchdog        |      -         | double  |  ms            |   -           | Yes                            | Verify refresh of data on ports whitin this time, otherwise throws an error    |  - |
+ * | Parameter name  | SubParameter   | Type    | Units          | Default Value | Required      | Description                                                                           | Notes |
+ * |:---------------:|:--------------:|:-------:|:--------------:|:-------------:|:------------: |:-------------------------------------------------------------------------------------:|:-----:|
+ * | localImagePort  |      -         | string  | -              |   -           |               | Full name of the local port to open, e.g. /myApp/RGBD/rgb_camera:i                    |       |
+ * | localDepthPort  |      -         | string  | -              |   -           |               | Full name of the local port to open, e.g. /myApp/RGBD/depth_camera:i                  |       |
+ * | localRpcPort    |      -         | string  | -              |   -           |               | Full name of the local RPC port to open, e.g. /myApp/RGBD/rpc                         |       |
+ * | remoteImagePort |      -         | string  | -              |   -           |               | Full name of the port to read color images from, e.g. /robotName/RGBD/image_camera:o  |       |
+ * | remoteDepthPort |      -         | string  | -              |   -           |               | Full name of the port to read depth images from, e.g. /robotName/RGBD/depth_camera:o  |       |
+ * | remoteRpcPort   |      -         | string  | -              |   -           |               | Full name of the remote RPC port, e.g. /robotName/RGBD/rpc                            |       |
  *
  * Configuration file using .ini format, using subdevice keyword.
  *
@@ -102,23 +102,36 @@ class yarp::dev::RGBDSensorClient:  public DeviceDriver,
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
-    yarp::os::ConstString local_colorFrame_StreamingPort_Name;
-    yarp::os::ConstString local_depthFrame_StreamingPort_Name;
-    yarp::os::ConstString remote_colorFrame_StreamingPort_Name;
-    yarp::os::ConstString remote_depthFrame_StreamingPort_Name;
+    yarp::os::ConstString local_colorFrame_StreamingPort_name;
+    yarp::os::ConstString local_depthFrame_StreamingPort_name;
+    yarp::os::ConstString remote_colorFrame_StreamingPort_name;
+    yarp::os::ConstString remote_depthFrame_StreamingPort_name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> colorFrame_StreamingPort;
-    yarp::os::BufferedPort<yarp::sig::FlexImage> depthFrame_StreamingPort;
+    yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat> > depthFrame_StreamingPort;
 
-    yarp::os::ConstString local_colorFrame_rpcPort_Name;
-    yarp::os::ConstString local_depthFrame_rpcPort_Name;
-    yarp::os::ConstString remote_colorFrame_rpcPort_Name;
-    yarp::os::ConstString remote_depthFrame_rpcPort_Name;
-    yarp::os::Port colorFrame_rpcPort;
-    yarp::os::Port depthFrame_rpcPort;
+    // Use a single RPC port for now
+    yarp::os::ConstString local_rpcPort_name;
+    yarp::os::ConstString remote_rpcPort_name;
+    yarp::os::Port        rpcPort;
 
-    // It should be possible to attach this guy to more than one port, try to see what
-    // will happen when receiving 2 calls at the same time (receive one calls while serving
-    // another one, it will result in concurrent thread most probably) and buffering issues.
+
+    /*
+     * In case the client has to connect to 2 different wrappers/server because the rgb
+     * and depth comes from two different sources.
+     *
+     * It should be possible to attach this guy to more than one port, try to see what
+     * will happen when receiving 2 calls at the same time (receive one calls while serving
+     * another one, it will result in concurrent thread most probably) and buffering issues.
+     *
+
+        yarp::os::ConstString local_colorFrame_rpcPort_Name;
+        yarp::os::ConstString local_depthFrame_rpcPort_Name;
+        yarp::os::ConstString remote_colorFrame_rpcPort_Name;
+        yarp::os::ConstString remote_depthFrame_rpcPort_Name;
+
+        yarp::os::Port colorFrame_rpcPort;
+        yarp::os::Port depthFrame_rpcPort;
+    */
 
     // Image data specs
     std::string sensorId;
@@ -130,10 +143,11 @@ protected:
     bool initialize_YARP(yarp::os::Searchable &config);
     bool initialize_ROS(yarp::os::Searchable &config);
 
-    // Synch
-    double watchdog;
     yarp::os::Stamp colorStamp;
     yarp::os::Stamp depthStamp;
+
+
+    // This is gonna be superseded by the synchronized when it'll be ready
     RGBDSensor_StreamingMsgParser streamingReader;
     bool fromConfig(yarp::os::Searchable &config);
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
@@ -247,8 +261,6 @@ public:
      * @return True on success
      */
     bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = NULL);
-
-    bool getSynchPolicy(SynchPolicy policy, yarp::os::Property params);
 
     /**
     * Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
