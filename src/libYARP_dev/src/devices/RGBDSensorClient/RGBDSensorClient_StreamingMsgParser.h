@@ -20,61 +20,60 @@
 #define YARP_DEV_RGBDSENSORCLIENT_STREAMINGMSGPARSER_H
 
 #include <list>
+#include <yarp/os/Stamp.h>
 #include <yarp/sig/Image.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/LogStream.h>
 
-typedef enum
-{
-    latest,
-    sequenceNumber,
-    timed
-} SynchPolicy;
-
-typedef enum
-{
-    DEPTH_IMAGE,
-    RGB_IMAGE,
-    UNKNOWN
-} RGBD_ImageType;
-
-class YARP_dev_API IFlexImageReader
-{
-public:
-    virtual bool updateImage(RGBD_ImageType, yarp::sig::FlexImage) = 0;
-    virtual ~IFlexImageReader() {};
-};
-
-class YARP_dev_API FlexImageReader_Impl:  public yarp::os::TypedReaderCallback<yarp::sig::FlexImage>
-{
-    RGBD_ImageType id;
-    IFlexImageReader *p;
-
-public:
-    FlexImageReader_Impl();
-    ~FlexImageReader_Impl();
-    void configure(IFlexImageReader *_p, RGBD_ImageType i);
-    void onRead(yarp::sig::FlexImage& datum);
-    using yarp::os::TypedReaderCallback<yarp::sig::FlexImage>::onRead;
-};
-
-class RGBDSensor_StreamingMsgParser:    public IFlexImageReader
+class YARP_dev_API RgbImageReader_Impl:  public yarp::os::TypedReaderCallback<yarp::sig::FlexImage>
 {
 private:
-    FlexImageReader_Impl read_1;
-    FlexImageReader_Impl read_2;
+    yarp::sig::FlexImage  last_rgb;
 
-    yarp::sig::FlexImage last_1;
-    yarp::sig::FlexImage last_2;
+public:
+    RgbImageReader_Impl();
+    ~RgbImageReader_Impl();
 
-    SynchPolicy policy;
+    void onRead(yarp::sig::FlexImage& datum);
+    yarp::sig::FlexImage getImage();
+};
+
+
+class YARP_dev_API FloatImageReader_Impl:  public yarp::os::TypedReaderCallback<yarp::sig::ImageOf< yarp::sig::PixelFloat> >
+{
+private:
+    yarp::sig::ImageOf< yarp::sig::PixelFloat>  last_depth;
+
+public:
+    FloatImageReader_Impl();
+    ~FloatImageReader_Impl();
+
+    void onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum);
+    yarp::sig::ImageOf<yarp::sig::PixelFloat> getImage();
+};
+
+
+class RGBDSensor_StreamingMsgParser
+{
+private:
+    RgbImageReader_Impl   read_rgb;
+    FloatImageReader_Impl read_depth;
+
+    yarp::os::BufferedPort<yarp::sig::FlexImage> *port_rgb;
+    yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat> > *port_depth;
 
 public:
     RGBDSensor_StreamingMsgParser();
-    bool updateImage(RGBD_ImageType id, yarp::sig::FlexImage data);
-    bool synchRead(yarp::sig::FlexImage &data_1, yarp::sig::FlexImage &data_2);
-    void attach(yarp::os::BufferedPort<yarp::sig::FlexImage> *port_1, yarp::os::BufferedPort<yarp::sig::FlexImage> *port_2);
+
+    bool readRgb(yarp::sig::FlexImage &data, yarp::os::Stamp *timeStamp = NULL);
+
+    bool readDepth(yarp::sig::ImageOf< yarp::sig::PixelFloat > &data, yarp::os::Stamp *timeStamp = NULL);
+
+    bool read(yarp::sig::FlexImage &rgbImage, yarp::sig::ImageOf< yarp::sig::PixelFloat > &depthImage, yarp::os::Stamp *rgbStamp = NULL, yarp::os::Stamp *depthStamp = NULL);
+
+    void attach(yarp::os::BufferedPort<yarp::sig::FlexImage> *_port_rgb,
+                yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat> > *_port_depth);
 };
 
 #endif  // YARP_DEV_RGBDSENSORCLIENT_STREAMINGMSGPARSER_H
