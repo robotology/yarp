@@ -13,6 +13,7 @@
 
 #include <yarp/dev/DataSource.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/FrameGrabberControl2Impl.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/ServiceInterfaces.h>
@@ -82,7 +83,6 @@ class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public IAudioGrabberSound,
             public IAudioVisualGrabber,
             public IFrameGrabberControls,
-            public IFrameGrabberControls2,
             public IService,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelMono> >,
@@ -107,6 +107,8 @@ private:
     bool addStamp;
     bool active;
     bool singleThreaded;
+
+    FrameGrabberControls2_Parser ifgCtrl2_Parser;
 
 public:
     /**
@@ -339,8 +341,6 @@ public:
     }
 
     virtual bool updateService();
-private:
-    bool respondToFrameGrabberControl2(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
 };
 
 #endif
