@@ -24,26 +24,27 @@
 #include <string>
 #include <sstream>
 
-#include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/BufferedPort.h>
-#include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Property.h>
-
-#include <yarp/os/RateThread.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/RateThread.h>
+#include <yarp/os/BufferedPort.h>
+
 
 #include <yarp/sig/Vector.h>
 
-#include <yarp/dev/IRGBDSensor.h>
-#include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IVisualParamsImpl.h>
 
+// ROS stuff
+#include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
-#include <yarp/os/Node.h>
 #include <../msgs/ros/include/sensor_msgs_CameraInfo.h>
 #include <../msgs/ros/include/sensor_msgs_Image.h>
 
@@ -173,14 +174,14 @@ private:
     unsigned int          nodeSeq;
                                             
     // It should be possible to attach this  guy to more than one port, try to see what
-    // will happen when receiving 2 calls a t the same time (receive one calls while serving
-    // another one, it will result in concu rrent thread most probably) and buffering issues.
-    sensor::depth::RGBDSensor_RPCMgsParser  RPC_parser;
-                                            
-    // Image data specs                     
+    // will happen when receiving 2 calls at the same time (receive one calls while serving
+    // another one, it will result in concurrent thread most probably) and buffering issues.
+//     sensor::depth::RGBDSensor_RPCMgsParser  RPC_parser;
+
     //Helper class for RPCs
     yarp::dev::RGBDImpl::RGBDSensorParser        parser;
 
+    // Image data specs
     // int hDim, vDim;
     int                            rate;
     std::string                    sensorId;
