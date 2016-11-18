@@ -20,7 +20,9 @@
 #ifndef YARP_VISUAL_PARAMS_INTERFACE
 #define YARP_VISUAL_PARAMS_INTERFACE
 
+#include <yarp/os/Vocab.h>
 #include <yarp/os/Property.h>
+
 
 namespace yarp {
     namespace dev {
@@ -28,6 +30,33 @@ namespace yarp {
         class IDepthVisualParams;
     }
 }
+
+// Interface name
+#define VOCAB_RGB_VISUAL_PARAMS       VOCAB4('v','i','s','r')
+#define VOCAB_DEPTH_VISUAL_PARAMS     VOCAB4('v','i','s','d')
+
+// Common
+#define VOCAB_SET               VOCAB3('s','e','t')
+#define VOCAB_GET               VOCAB3('g','e','t')
+#define VOCAB_IS                VOCAB2('i','s')
+#define VOCAB_OK                VOCAB2('o','k')
+#define VOCAB_FAILED            VOCAB4('f','a','i','l')
+
+// Rgb or depth
+#define VOCAB_RGB               VOCAB3('r','g','b')
+#define VOCAB_DEPTH             VOCAB4('d','e','p','t')
+
+// Methods
+#define VOCAB_WIDTH             VOCAB1('w')
+#define VOCAB_HEIGHT            VOCAB1('h')
+#define VOCAB_RESOLUTION        VOCAB3('r','e','s')
+#define VOCAB_FOV               VOCAB3('f','o','v')
+#define VOCAB_INTRINSIC_PARAM   VOCAB4('i','n','t','p')
+
+// Depth only
+#define VOCAB_ACCURACY          VOCAB4('a','c','r','c')
+#define VOCAB_CLIP_PLANES       VOCAB4('c','l','i','p')
+
 
 /**
  * @ingroup dev_iface_other
@@ -51,6 +80,13 @@ public:
      * @return rgb image width
      */
     virtual int getRgbWidth() = 0;
+
+    /**
+     * Set the resolution of the rgb image from the camera
+     * @param width  image width
+     * @param height image height
+     * @return true on success
+     */
     virtual bool setRgbResolution(int width, int height) = 0;
 
     /**
@@ -58,9 +94,17 @@ public:
      *
      * @param  horizontalFov will return the value of the horizontal fov
      * @param  verticalFov   will return the value of the vertical fov
-     * @return true if success
+     * @return true on success
      */
     virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) = 0;
+
+    /**
+     * Set the field of view (FOV) of the rgb camera.
+     *
+     * @param  horizontalFov will set the value of the horizontal fov
+     * @param  verticalFov   will set the value of the vertical fov
+     * @return true on success
+     */
     virtual bool setRgbFOV(double horizontalFov, double verticalFov) = 0;
 
     /**
@@ -95,6 +139,13 @@ public:
      * @return depth image height
      */
     virtual int getDepthWidth() = 0;
+
+    /**
+     * Set the resolution of the depth image from the camera
+     * @param width  image width
+     * @param height image height
+     * @return true on success
+     */
     virtual bool setDepthResolution(int width, int height) = 0;
 
     /**
@@ -105,6 +156,14 @@ public:
      * @return true if success
      */
     virtual bool getDepthFOV(double &horizontalFov, double &verticalFov) = 0;
+
+    /**
+     * Set the field of view (FOV) of the depth camera.
+     *
+     * @param  horizontalFov will set the value of the horizontal fov
+     * @param  verticalFov   will set the value of the vertical fov
+     * @return true on success
+     */
     virtual bool setDepthFOV(double horizontalFov, double verticalFov) = 0;
 
     /**
@@ -120,7 +179,13 @@ public:
      * @return the accuracy of the sensor in meters.
      */
     virtual double getDepthAccuracy() = 0;
-    virtual bool   setDepthAccuracy(double accuracy) = 0;
+
+    /**
+     * Set the accuracy of the depth measure in [meter] when possible
+     * @param the accuracy of the sensor in meters.
+     * @return true on success
+     */
+    virtual bool setDepthAccuracy(double accuracy) = 0;
 
     /**
      * Get the clipping planes of the sensor

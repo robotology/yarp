@@ -32,11 +32,17 @@ namespace yarp {
 }
 
 
-#define VOCAB_SET       VOCAB3('s','e','t')
-#define VOCAB_GET       VOCAB3('g','e','t')
-#define VOCAB_IS        VOCAB2('i','s')
-#define VOCAB_OK        VOCAB2('o','k')
-#define VOCAB_FAILED    VOCAB4('f','a','i','l')
+// Interface name
+#define VOCAB_RGBD_SENSOR       VOCAB4('r','g','d','b')
+
+// Methods
+#define VOCAB_EXTRINSIC_PARAM   VOCAB3('e','x','t')
+#define VOCAB_ERROR_MSG         VOCAB4('m','e','s','s')
+#define VOCAB_RGB_IMAGE         VOCAB4('i','m','g','r')
+#define VOCAB_DEPTH_IMAGE       VOCAB4('i','m','g'.'d')
+#define VOCAB_IMAGES            VOCAB4('i','m','m','s')
+#define VOCAB_STATUS            VOCAB4('s','t','a','t')
+
 
 /**
  * @ingroup dev_iface_other

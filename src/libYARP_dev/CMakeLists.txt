@@ -30,7 +30,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
                   include/yarp/dev/IRangefinder2D.h
-                  include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode.h
@@ -70,7 +69,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IVelocityControl.h
                   include/yarp/dev/INavigation2D.h
                   include/yarp/dev/IVirtualAnalogSensor.h
-                  include/yarp/dev/LaserMeasurementData.h
+                  include/yarp/dev/IVisualParams.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
@@ -100,7 +99,6 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/DevicePipe.cpp
                   src/Drivers.cpp
                   src/Dummy.cpp
-                  src/LaserMeasurementData.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
                   src/IMotorEncodersImpl.cpp
@@ -220,7 +218,7 @@ list(APPEND YARP_devices_HDRS ${serverInertial_hdrs}
                               ${inertial_msgs_hdrs})
 include_directories(${serverInertial_incl_dirs})
 
-# add DepthSensorClient device
+# add RGBDSensorClient device
 add_subdirectory(src/devices/RGBDSensorClient)
 list(APPEND YARP_devices_SRCS ${RGBDClient_srcs}
                               ${RGBDSensor_msgs_srcs})
