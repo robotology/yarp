@@ -12,6 +12,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/FrameGrabberControl2Impl.h>
 
 /* This pragma is required only to compile yarp::dev::RemoteFrameGrabber*/
 #ifdef _MSC_VER
@@ -580,7 +581,7 @@ return response.get(0).asInt()!=0? true:false;
  *
  */
 class YARP_dev_API yarp::dev::RemoteFrameGrabber :  public IFrameGrabberImage,
-                                                    public IFrameGrabberControls2,
+                                                    public FrameGrabberControls2_Sender,
                                                     public ImplementDC1394,
                                                     public DeviceDriver
 {
@@ -588,7 +589,7 @@ public:
     /**
      * Constructor.
      */
-    RemoteFrameGrabber() : mutex(1) {
+    RemoteFrameGrabber() : FrameGrabberControls2_Sender(port), mutex(1) {
         lastHeight = 0;
         lastWidth = 0;
     }
@@ -731,7 +732,7 @@ public:
         return getCommand(VOCAB_IRIS);
     }
 
-    /* Implementation of IFrameGrabberControls2 interface */
+    /* Implementation of IFrameGrabberControls2 interface
     virtual bool getCameraDescription(CameraDescriptor *camera);
     virtual bool hasFeature(int feature, bool *hasFeature);
     virtual bool setFeature(int feature, double value);
@@ -746,7 +747,7 @@ public:
     virtual bool hasOnePush(int feature, bool *hasOnePush);
     virtual bool setMode(int feature, FeatureMode mode);
     virtual bool getMode(int feature, FeatureMode *mode);
-    virtual bool setOnePush(int feature);
+    virtual bool setOnePush(int feature);*/
 
 private:
     yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > reader;
