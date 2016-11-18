@@ -28,6 +28,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/FrameGrabberControl2.h>
 
 #define DEFAULT_THREAD_PERIOD       20    //ms
@@ -97,8 +98,9 @@ namespace yarp {
  */
 
 class yarp::dev::RGBDSensorClient:  public DeviceDriver,
-                                    public IRGBDSensor,
-                                    public IFrameGrabberControls2
+                                    public IFrameGrabberControls2,
+                                    public Implement_RgbVisualParams_Sender,
+                                    public Implement_DepthVisualParams_Sender
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
@@ -150,6 +152,7 @@ protected:
     // This is gonna be superseded by the synchronized when it'll be ready
     RGBDSensor_StreamingMsgParser streamingReader;
     bool fromConfig(yarp::os::Searchable &config);
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
@@ -184,28 +187,28 @@ public:
     /*
      *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
      */
-    int  getRgbHeight();
-    int  getRgbWidth();
-    bool setRgbResolution(int width, int height);
-    bool getRgbFOV(double &horizontalFov, double &verticalFov);
-    bool setRgbFOV(double horizontalFov, double verticalFov);
-    bool getRgbIntrinsicParam(yarp::os::Property &intrinsic);
-    bool getRgbSensorInfo(yarp::os::Property &info);
+//      using Implement_RgbVisualParams_Sender;
+
+    using Implement_RgbVisualParams_Sender::getRgbWidth;
+    using Implement_RgbVisualParams_Sender::setRgbResolution;
+    using Implement_RgbVisualParams_Sender::getRgbFOV;
+    using Implement_RgbVisualParams_Sender::setRgbFOV;
+    using Implement_RgbVisualParams_Sender::getRgbIntrinsicParam;
+
 
     /*
      * IDepthVisualParams interface. Look at IVisualParams.h for documentation
      */
-    int    getDepthHeight();
-    int    getDepthWidth();
-    bool   setDepthResolution(int width, int height);
-    bool   getDepthFOV(double &horizontalFov, double &verticalFov);
-    bool   setDepthFOV(double horizontalFov, double verticalFov);
-    bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic);
-    bool   getDepthSensorInfo(yarp::os::Property info);
-    double getDepthAccuracy();
-    bool   setDepthAccuracy(double accuracy);
-    bool   getDepthClipPlanes(double &near, double &far);
-    bool   setDepthClipPlanes(double near, double far);
+    using Implement_DepthVisualParams_Sender::getDepthHeight;
+    using Implement_DepthVisualParams_Sender::getDepthWidth;
+    using Implement_DepthVisualParams_Sender::setDepthResolution;
+    using Implement_DepthVisualParams_Sender::getDepthFOV;
+    using Implement_DepthVisualParams_Sender::setDepthFOV;
+    using Implement_DepthVisualParams_Sender::getDepthIntrinsicParam;
+    using Implement_DepthVisualParams_Sender::getDepthAccuracy;
+    using Implement_DepthVisualParams_Sender::setDepthAccuracy;
+    using Implement_DepthVisualParams_Sender::getDepthClipPlanes;
+    using Implement_DepthVisualParams_Sender::setDepthClipPlanes;
 
     /*
      * IRGBDSensor specific interface methods
@@ -225,7 +228,7 @@ public:
      * @return an enum representing the status of the robot or an error code
      * if any error is present
      */
-    RGBDSensor_status getSensorStatus();
+    IRGBDSensor::RGBDSensor_status getSensorStatus();
 
     /**
      * Return an error message in case of error. For debugging purpose and user notification.

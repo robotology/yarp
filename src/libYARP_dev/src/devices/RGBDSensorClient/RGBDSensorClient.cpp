@@ -5,9 +5,9 @@
  *
  */
 
-#include "RGBDSensorClient.h"
-#include <yarp/os/Log.h>
+#include <yarp/os/Portable.h>
 #include <yarp/os/LogStream.h>
+#include "RGBDSensorClient.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -15,13 +15,15 @@ using namespace yarp::sig;
 
 
 // needed for the driver factory.
-yarp::dev::DriverCreator *createRGBDSensorClient() {
+yarp::dev::DriverCreator *createRGBDSensorClient()
+{
     return new DriverCreatorOf<yarp::dev::RGBDSensorClient>("RGBDSensorClient",
         "RGBDSensorClient",
         "yarp::dev::RGBDSensorClient");
 }
 
-RGBDSensorClient::RGBDSensorClient()
+RGBDSensorClient::RGBDSensorClient() :  Implement_RgbVisualParams_Sender(rpcPort),
+                                        Implement_DepthVisualParams_Sender(rpcPort)
 {
     sensor_p = NULL;
     use_ROS  = false;
@@ -45,7 +47,7 @@ bool RGBDSensorClient::open(yarp::os::Searchable& config)
         return false;
     }
 
-    sensorId= "RGBDSensorClient for " + local_depthFrame_StreamingPort_Name;
+    sensorId= "RGBDSensorClient for " + local_depthFrame_StreamingPort_name;
 
     if(!initialize_YARP(config) )
     {
@@ -270,120 +272,82 @@ bool RGBDSensorClient::close()
     return true;
 }
 
+/*
+ * IDepthVisualParams interface. Look at IVisualParams.h for documentation
+ *
+ * Implemented by Implement_DepthVisualParams_Sender
+ */
 
-int  RGBDSensorClient::getRgbHeight()
-{
-    return false;
-}
-
-int  RGBDSensorClient::getRgbWidth()
-{
-    return false;
-}
-
-bool RGBDSensorClient::getRgbFOV(double &horizontalFov, double &verticalFov)
-{
-    return false;
-}
-
-bool RGBDSensorClient::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
-{
-    return false;
-}
-
-bool RGBDSensorClient::getRgbSensorInfo(yarp::os::Property &info)
-{
-    return false;
-}
+/*
+ * IDepthVisualParams interface. Look at IVisualParams.h for documentation
+ *
+ * Implemented by Implement_DepthVisualParams_Sender
+ */
 
 
-    /*
-    * IDepthVisualParams interface. Look at IVisualParams.h for documentation
-    */
-int    RGBDSensorClient::getDepthHeight()
-{
-    return false;
-}
-
-int    RGBDSensorClient::getDepthWidth()
-{
-    return false;
-}
-
-bool   RGBDSensorClient::getDepthFOV(double &horizontalFov, double &verticalFov)
-{
-    return false;
-}
-
-bool   RGBDSensorClient::getDepthIntrinsicParam(yarp::os::Property &intrinsic)
-{
-    return false;
-}
-
-bool   RGBDSensorClient::getDepthSensorInfo(yarp::os::Property info)
-{
-    return false;
-}
-
-double RGBDSensorClient::getDepthAccuracy()
-{
-    return false;
-}
-
-bool   RGBDSensorClient::getDepthClipPlanes(double &near, double &far)
-{
-    return false;
-}
-
-bool RGBDSensorClient::setDepthClipPlanes(double near, double far)
-{
-    return false;
-}
-
-
-/** IRGBDSensor specific interface methods*/
+/*
+ * IRGBDSensor specific interface methods
+ */
 
 bool RGBDSensorClient::getExtrinsicParam(yarp::os::Property &extrinsic)
 {
-    return false;
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGBD_SENSOR);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_EXTRINSIC_PARAM);
+    rpcPort.write(cmd, response);
+
+    // Minimal check on response, we suppose the response is always correctly formatted
+    if((response.get(0).asVocab()) == VOCAB_FAILED)
+    {
+        extrinsic.clear();
+        return false;
+    }
+
+    return Property::copyPortable(response.get(3), extrinsic);  // will it really work??
 }
 
 
 IRGBDSensor::RGBDSensor_status RGBDSensorClient::getSensorStatus()
 {
-    return RGBD_SENSOR_NOT_READY;
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGBD_SENSOR);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_STATUS);
+    rpcPort.write(cmd, response);
+    return (IRGBDSensor::RGBDSensor_status) response.get(3).asInt();
 }
 
 
 yarp::os::ConstString RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeStamp)
 {
-    return "false";
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGBD_SENSOR);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_ERROR_MSG);
+    rpcPort.write(cmd, response);
+    return response.get(3).asString();
 }
 
-
-bool RGBDSensorClient::getRgbImage(yarp::sig::FlexImage   &rgbImage,   yarp::os::Stamp *timeStamp)
+bool RGBDSensorClient::getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp)
 {
+    streamingReader.readRgb(rgbImage);
+    if(timeStamp)
+        timeStamp->update(yarp::os::Time::now());
     return false;
 }
-
 
 bool RGBDSensorClient::getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp)
 {
     return false;
 }
 
-
-bool RGBDSensorClient::getSynchPolicy(SynchPolicy policy, yarp::os::Property params)
-{
-    return false;
-}
-
-
 bool RGBDSensorClient::getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
 {
     return false;
 }
 
+// IFrame Grabber Control 2
 bool RGBDSensorClient::getCameraDescription(CameraDescriptor *camera)
 {
     return false;
@@ -393,77 +357,68 @@ bool RGBDSensorClient::hasFeature(int feature, bool *hasFeature)
 {
     return false;
 }
+
 bool RGBDSensorClient::setFeature(int feature, double value)
 {
     return false;
 }
+
 bool RGBDSensorClient::getFeature(int feature, double *value)
 {
     return false;
 }
+
 bool RGBDSensorClient::setFeature(int feature, double value1, double value2)
 {
     return false;
 }
+
 bool RGBDSensorClient::getFeature(int feature, double *value1, double *value2)
 {
     return false;
 }
+
 bool RGBDSensorClient::hasOnOff(  int feature, bool *HasOnOff)
 {
     return false;
 }
+
 bool RGBDSensorClient::setActive( int feature, bool onoff)
 {
     return false;
 }
+
 bool RGBDSensorClient::getActive( int feature, bool *isActive)
 {
     return false;
 }
+
 bool RGBDSensorClient::hasAuto(   int feature, bool *hasAuto)
 {
     return false;
 }
+
 bool RGBDSensorClient::hasManual( int feature, bool *hasManual)
 {
     return false;
 }
+
 bool RGBDSensorClient::hasOnePush(int feature, bool *hasOnePush)
 {
     return false;
 }
+
 bool RGBDSensorClient::setMode(   int feature, FeatureMode mode)
 {
     return false;
 }
+
 bool RGBDSensorClient::getMode(   int feature, FeatureMode *mode)
 {
     return false;
 }
+
 bool RGBDSensorClient::setOnePush(int feature)
-{
-    return false;
-}
-
-bool RGBDSensorClient::setRgbResolution(int width, int height)
-{
-    return false;
-}
-
-bool RGBDSensorClient::setRgbFOV(double horizontalFov, double verticalFov)
-{
-    return false;
-}
-bool RGBDSensorClient::setDepthResolution(int width, int height)
-{
-    return false;
-}
-bool RGBDSensorClient::setDepthFOV(double horizontalFov, double verticalFov)
-{
-    return false;
-}
-bool RGBDSensorClient::setDepthAccuracy(double accuracy)
 {
     return false;
 }
