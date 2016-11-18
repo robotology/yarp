@@ -260,28 +260,21 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
 
     if(use_YARP)
     {
-        if (!config.check("imagePort", "full name of the port for streaming color image"))
-        {
-            yError() << "RGBDSensorWrapper: missing 'imagePort' parameter. Check you configuration file; it must be like:";
-            yError() << "   imagePort:         full name of the port, e.g. /robotName/image_camera/";
-            return false;
-        }
-        else
-        {
-            colorFrame_StreamingPort_Name = config.find("imagePort").asString().c_str();
-            colorFrame_rpcPort_Name       = colorFrame_StreamingPort_Name + "/rpc:i";
-        }
+        yarp::os::ConstString rootName;
+        rootName = config.check("name",Value("/"), "starting '/' if needed.").asString().c_str();
 
-        if (!config.check("depthPort", "full name of the port for streaming depth image"))
+        if (!config.check("name", "Prefix name of the ports opened by the RGBD wrapper."))
         {
-            yError() << "RGBDSensorWrapper: missing 'depthPort' parameter. Check you configuration file; it must be like:";
-            yError() << "   depthPort:         full name of the port, e.g. /robotName/depth_camera/";
+            yError() << "RGBDSensorWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
+            yError() << "   name:         Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD";
             return false;
         }
         else
         {
-            depthFrame_StreamingPort_Name  = config.find("depthPort").asString().c_str();
-            depthFrame_rpcPort_Name = depthFrame_StreamingPort_Name + "/rpc:i";
+            rootName = config.find("name").asString().c_str();
+            rpcPort_Name  = rootName + "/rpc:i";
+            colorFrame_StreamingPort_Name = rootName + "/rgbImage:o";
+            depthFrame_StreamingPort_Name = rootName + "/depthImage:o";
         }
     }
     
@@ -381,13 +374,11 @@ bool RGBDSensorWrapper::close()
     // Closing port
     if(use_YARP)
     {
-        colorFrame_rpcPort.interrupt();
-        depthFrame_rpcPort.interrupt();
+        rpcPort.interrupt();
         colorFrame_StreamingPort.interrupt();
         depthFrame_StreamingPort.interrupt();
 
-        colorFrame_rpcPort.close();
-        depthFrame_rpcPort.close();
+        rpcPort.close();
         colorFrame_StreamingPort.close();
         depthFrame_StreamingPort.close();
     }
@@ -411,13 +402,10 @@ bool RGBDSensorWrapper::close()
 
 bool RGBDSensorWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
+    // Open ports
+    rpcPort.open(rpcPort_Name.c_str() );
     colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name.c_str());
-    colorFrame_rpcPort.open(colorFrame_rpcPort_Name.c_str() );
-    colorFrame_rpcPort.setReader(RPC_parser);
-
     depthFrame_StreamingPort.open(depthFrame_StreamingPort_Name.c_str());
-    depthFrame_rpcPort.open(depthFrame_rpcPort_Name.c_str() );
-    depthFrame_rpcPort.setReader(RPC_parser);
     return true;
 }
 
@@ -552,9 +540,6 @@ bool RGBDSensorWrapper::read(yarp::os::ConnectionReader& connection)
     bool ok = in.read(connection);
     if (!ok) return false;
 
-    // parse in, prepare out
-//     int action = in.get(0).asVocab();
-//     int inter  = in.get(1).asVocab();
     bool ret = false;
 
     if (!ret)

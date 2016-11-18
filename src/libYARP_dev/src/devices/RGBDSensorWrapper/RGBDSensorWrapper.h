@@ -106,8 +106,7 @@ public:
  * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                                                         | Notes |
  * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
  * | period         |      -                  | int     | ms             |   20          | No                             | refresh period of the broadcasted values in ms                                                      | default 20ms |
- * | imagePort      |      -                  | string  | -              |   -           | Yes, unless useROS='only'      | full name of the port for streaming color image, e.g. /robotName/image_camera                       | '/rpc' port will be added for remote operations      |
- * | depthPort      |      -                  | string  | -              |   -           | Yes, unless useROS='only'      | full name of the port for streaming depth image, e.g. /robotName/depth_camera                       | '/rpc' port will be added for remote operations      |
+ * | name           |      -                  | string  | -              |   -           | Yes, unless useROS='only'      | Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD                      | Required suffix like '/rpc' will be added by the device      |
  * | subdevice      |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | ROS            |      -                  | group   |  -             |   -           | No                             | Group containing parameter for ROS topic initialization                                             | if missing, it is assumed to not use ROS topics |
  * |   -            |  useROS                 | string  | true/false/only|   -           |  if ROS group is present       | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
@@ -127,8 +126,7 @@ public:
  * device RGBDSensorWrapper
  * subdevice RGBDsensor
  * period 30
- * imagePort /<robotName>/colorCamera
- * depthPort /<robotName>/depthCamera
+ * name /<robotName>/RGBDSensor
  * \endcode
  */
 
@@ -162,10 +160,10 @@ private:
     yarp::os::ConstString depthFrame_StreamingPort_Name;
     ImagePortType         colorFrame_StreamingPort;
     DepthPortType         depthFrame_StreamingPort;
-    yarp::os::Port        colorFrame_rpcPort;
-    yarp::os::Port        depthFrame_rpcPort;
-    yarp::os::ConstString colorFrame_rpcPort_Name;
-    yarp::os::ConstString depthFrame_rpcPort_Name;
+
+    // One RPC port should be enough for the wrapper in all cases
+    yarp::os::Port        rpcPort;
+    yarp::os::ConstString rpcPort_Name;
     ImageTopicType        rosPublisherPort_color, rosPublisherPort_depth;
     DepthTopicType        rosPublisherPort_colorCaminfo, rosPublisherPort_depthCaminfo;
     yarp::os::Node*       rosNode;
