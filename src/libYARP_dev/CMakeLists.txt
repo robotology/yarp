@@ -101,6 +101,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/DevicePipe.cpp
                   src/Drivers.cpp
                   src/Dummy.cpp
+                  src/LaserMeasurementData.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
                   src/IMotorEncodersImpl.cpp
