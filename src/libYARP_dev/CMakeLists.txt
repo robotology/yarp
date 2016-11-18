@@ -70,6 +70,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/INavigation2D.h
                   include/yarp/dev/IVirtualAnalogSensor.h
                   include/yarp/dev/IVisualParams.h
+                  include/yarp/dev/IVisualParamsImpl.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
@@ -106,6 +107,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IRemoteVariablesImpl.cpp
                   src/ImpedanceControlImpl.cpp
                   src/IInteractionModeImpl.cpp
+                  src/IVisualParamsImpl.cpp
                   src/IPositionControl2Impl.cpp
                   src/IPositionDirectImpl.cpp
                   src/IVelocityControl2Impl.cpp
