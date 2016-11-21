@@ -195,13 +195,13 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
         depthFrame_StreamingPort.close();
     }
 
-    if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_name, colorFrame_StreamingPort.getName()) )
+    if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_name, colorFrame_StreamingPort.getName()), "udp")
     {
         yError() << sensorId << " cannot connect to remote port " << remote_colorFrame_StreamingPort_name;
         return false;
     }
 
-    if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_name, depthFrame_StreamingPort.getName()) )
+    if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_name, depthFrame_StreamingPort.getName()), "udp")
     {
         yError() << sensorId << " cannot connect to remote port " << remote_depthFrame_StreamingPort_name;
         return false;

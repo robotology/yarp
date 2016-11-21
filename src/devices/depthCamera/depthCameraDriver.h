@@ -18,6 +18,7 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <OpenNI.h>
 
+
 #ifndef RAD2DEG
 #define RAD2DEG (180/3.14159265359)
 #endif
@@ -57,14 +58,18 @@ class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
                                      public yarp::dev::IRGBDSensor,
                                      public yarp::dev::IFrameGrabberControls2
 {
+    typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
+    typedef yarp::os::Stamp                           Stamp;
+    typedef yarp::os::Property                        Property;
+    typedef yarp::sig::FlexImage                      FlexImage;
 public:
     depthCameraDriver();
     ~depthCameraDriver();
+    static int pixFormatToCode(openni::PixelFormat p);
 
     // DeviceDriver
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
-
 
     // IRGBDSensor
     virtual int    getRgbHeight();
@@ -72,48 +77,50 @@ public:
     virtual bool   setRgbResolution(int width, int height);
     virtual bool   getRgbFOV(double& horizontalFov, double& verticalFov);
     virtual bool   setRgbFOV(double horizontalFov, double verticalFov);
-    virtual bool   getRgbIntrinsicParam(yarp::os::Property& intrinsic);
+    virtual bool   getRgbIntrinsicParam(Property& intrinsic);
     virtual int    getDepthHeight();
     virtual int    getDepthWidth();
     virtual bool   setDepthResolution(int width, int height);
     virtual bool   getDepthFOV(double& horizontalFov, double& verticalFov);
     virtual bool   setDepthFOV(double horizontalFov, double verticalFov);
-    virtual bool   getDepthIntrinsicParam(yarp::os::Property& intrinsic);
+    virtual bool   getDepthIntrinsicParam(Property& intrinsic);
     virtual double getDepthAccuracy();
     virtual bool   setDepthAccuracy(double accuracy);
     virtual bool   getDepthClipPlanes(double& near, double& far);
     virtual bool   setDepthClipPlanes(double near, double far);
-    virtual bool   getExtrinsicParam(yarp::os::Property& extrinsic);
-    virtual bool   getRgbImage(yarp::sig::FlexImage& rgbImage, yarp::os::Stamp* timeStamp = NULL);
-    virtual bool   getDepthImage(yarp::sig::ImageOf<sig::PixelFloat> &depthImage, yarp::os::Stamp* timeStamp = NULL);
-    virtual bool   getImages(yarp::sig::FlexImage& colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp* colorStamp=NULL, yarp::os::Stamp* depthStamp=NULL);
+    virtual bool   getExtrinsicParam(Property& extrinsic);
+    virtual bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL);
+    virtual bool   getDepthImage(depthImage &depthImage, Stamp* timeStamp = NULL);
+    virtual bool   getImages(FlexImage& colorFrame, depthImage &depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL);
+
+    virtual RGBDSensor_status     getSensorStatus();
+    virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL);
+
+    //IFrameGrabberControls2
     virtual bool   getCameraDescription(CameraDescriptor *camera);
-    virtual bool   hasFeature(int feature, bool *hasFeature);
-    virtual bool   setFeature(int feature, double value);
-    virtual bool   getFeature(int feature, double *value);
-    virtual bool   setFeature(int feature, double value1, double value2);
-    virtual bool   getFeature(int feature, double *value1, double *value2);
-    virtual bool   hasOnOff(  int feature, bool *HasOnOff);
-    virtual bool   setActive( int feature, bool onoff);
-    virtual bool   getActive( int feature, bool *isActive);
-    virtual bool   hasAuto(   int feature, bool *hasAuto);
-    virtual bool   hasManual( int feature, bool *hasManual);
-    virtual bool   hasOnePush(int feature, bool *hasOnePush);
+    virtual bool   hasFeature(int feature, bool*   hasFeature);
+    virtual bool   setFeature(int feature, double  value);
+    virtual bool   getFeature(int feature, double* value);
+    virtual bool   setFeature(int feature, double  value1,  double  value2);
+    virtual bool   getFeature(int feature, double* value1,  double* value2);
+    virtual bool   hasOnOff(  int feature, bool*   HasOnOff);
+    virtual bool   setActive( int feature, bool    onoff);
+    virtual bool   getActive( int feature, bool*   isActive);
+    virtual bool   hasAuto(   int feature, bool*   hasAuto);
+    virtual bool   hasManual( int feature, bool*   hasManual);
+    virtual bool   hasOnePush(int feature, bool*   hasOnePush);
     virtual bool   setMode(   int feature, FeatureMode mode);
     virtual bool   getMode(   int feature, FeatureMode *mode);
     virtual bool   setOnePush(int feature);
 
 
-    virtual RGBDSensor_status     getSensorStatus();
-    virtual yarp::os::ConstString getLastErrorMsg(yarp::os::Stamp* timeStamp = NULL);
-    static int                    pixFormatToCode(openni::PixelFormat p);
 
 private:
     //method
     inline bool initializeOpeNIDevice();
-
-    bool        getImage(yarp::sig::FlexImage& Frame, yarp::os::Stamp* Stamp, streamFrameListener& sourceFrame);
-    bool        getImage(yarp::sig::ImageOf<yarp::sig::PixelFloat>& Frame, yarp::os::Stamp* Stamp, streamFrameListener& sourceFrame);
+    bool        getImage(FlexImage& Frame, Stamp* Stamp, streamFrameListener& sourceFrame);
+    bool        getImage(depthImage& Frame, Stamp* Stamp, streamFrameListener& sourceFrame);
+    bool        setResolution(int w, int h, openni::VideoStream &stream);
 
     //properties
     openni::Device            m_device;

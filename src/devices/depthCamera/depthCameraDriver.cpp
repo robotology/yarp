@@ -1,10 +1,13 @@
 #include "depthCameraDriver.h"
 #include <algorithm>
+
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace openni;
 using namespace std;
+
+#define RETURN_FALSE_STATUS_NOT_OK(s) if(s != STATUS_OK){yError() << OpenNI::getExtendedError(); return false;}
 
 streamFrameListener::streamFrameListener()
 {
@@ -167,12 +170,31 @@ int depthCameraDriver::getRgbWidth()
 
 bool depthCameraDriver::setDepthResolution(int width, int height)
 {
-    return false;
+    return setResolution(width, height, m_depthStream);
+}
+
+bool depthCameraDriver::setResolution(int width, int height, VideoStream& stream)
+{
+    VideoMode vm;
+    bool      bRet;
+
+    vm = stream.getVideoMode();
+    vm.setResolution(width, height);
+    stream.stop();
+    bRet = stream.setVideoMode(vm) == STATUS_OK;
+    RETURN_FALSE_STATUS_NOT_OK(stream.start());
+
+    if(!bRet)
+    {
+        yError() << OpenNI::getExtendedError();
+    }
+
+    return bRet;
 }
 
 bool depthCameraDriver::setRgbResolution(int width, int height)
 {
-    return false;
+    return setResolution(width, height, m_imageStream);
 }
 
 bool depthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
@@ -187,7 +209,11 @@ bool depthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
 
 bool depthCameraDriver::setDepthAccuracy(double accuracy)
 {
-    return false;
+    VideoMode vm;
+    vm = m_imageStream.getVideoMode();
+    vm.setPixelFormat(PIXEL_FORMAT_DEPTH_1_MM);
+    RETURN_FALSE_STATUS_NOT_OK(m_imageStream.setVideoMode(vm));
+    return true;
 }
 
 bool depthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
@@ -205,7 +231,9 @@ bool depthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
 int  depthCameraDriver::getDepthHeight()
 {
     m_depthFrame.mutex.lock();
+
     int ret = m_depthFrame.image.height();
+
     m_depthFrame.mutex.unlock();
     return ret;
 }
@@ -213,7 +241,9 @@ int  depthCameraDriver::getDepthHeight()
 int  depthCameraDriver::getDepthWidth()
 {
     m_depthFrame.mutex.lock();
+
     int ret = m_depthFrame.image.width();
+
     m_depthFrame.mutex.unlock();
     return ret;
 }
@@ -336,7 +366,7 @@ bool depthCameraDriver::getImage(ImageOf<PixelFloat>& Frame, Stamp* Stamp, strea
     w = sourceFrame.w;
     h = sourceFrame.h;
 
-    if(sourceFrame.dataSize != h * w * (unsigned short)sizeof(short) ||
+    if(sourceFrame.dataSize != size_t(h * w * sizeof(short)) ||
        (sourceFrame.pixF != PIXEL_FORMAT_DEPTH_100_UM && sourceFrame.pixF != PIXEL_FORMAT_DEPTH_1_MM))
     {
         yError() << "depthCameraDriver::getImage: image format error";
@@ -414,7 +444,7 @@ bool depthCameraDriver::hasFeature(int feature, bool *hasFeature)
 {
     cameraFeature_id_t f;
     f = static_cast<cameraFeature_id_t>(feature);
-    if (f < YARP_FEATURE_BRIGHTNESS || f > YARP_FEATURE_NUMEBR_OF-1)
+    if (f < YARP_FEATURE_BRIGHTNESS || f > YARP_FEATURE_NUMBER_OF-1)
     {
         return false;
     }
@@ -433,45 +463,48 @@ bool depthCameraDriver::hasFeature(int feature, bool *hasFeature)
 
 bool depthCameraDriver::setFeature(int feature, double value)
 {
-    /*bool b;
+    bool b;
     if(!hasFeature(feature, &b) || !b)
     {
         yError() << "feature not supported!";
         return false;
-    }*/
+    }
 
     cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
-        m_imageStream.getCameraSettings()->setExposure(int(value * 100)+1);
+        RETURN_FALSE_STATUS_NOT_OK(m_imageStream.getCameraSettings()->setExposure(int(value * 100)+1));
         break;
     case YARP_FEATURE_GAIN:
-        m_imageStream.getCameraSettings()->setGain(int(value * 100)+1);
+        RETURN_FALSE_STATUS_NOT_OK(m_imageStream.getCameraSettings()->setGain(int(value * 100)+1));
         break;
     case YARP_FEATURE_FRAME_RATE:
-        openni::VideoMode vm;
+    {
+        VideoMode vm;
+
         vm = m_imageStream.getVideoMode();
         vm.setFps(int(value));
-        m_imageStream.setVideoMode(vm);
+        RETURN_FALSE_STATUS_NOT_OK(m_imageStream.setVideoMode(vm));
+
+        m_depthStream.getVideoMode();
+        vm.setFps(int(value));
+        RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setVideoMode(vm));
         break;
-    /*case YARP_FEATURE_WHITE_BALANCE:
-        if (value < 0)
-        {
-            yError() << "invalid value! value should be 0(false) or superior(true)";
-            return false;
-        }
-        m_imageStream.getCameraSettings()->setAutoWhiteBalanceEnabled(value > 0.0001);*/
-    /*default:
+    }
+    case YARP_FEATURE_WHITE_BALANCE:
+        yError() << "no manual mode for white_balance. call hasManual() to know if a specific feature support Manual mode instead of wasting my time";
+        return false;
+    default:
         yError() << "feature not supported!";
-        return false;*/
+        return false;
     }
     return true;
 }
 
 bool depthCameraDriver::getFeature(int feature, double *value)
 {
-    /*bool b;
+    bool b;
     if(!hasFeature(feature, &b) || !b)
     {
         yError() << "feature not supported!";
@@ -482,78 +515,212 @@ bool depthCameraDriver::getFeature(int feature, double *value)
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
-        int exp = m_imageStream.getCameraSettings()->getExposure();
+        *value = m_imageStream.getCameraSettings()->getExposure();
         break;
     case YARP_FEATURE_GAIN:
-        m_imageStream.getCameraSettings()->setGain(int(value * 100)+1);
+        *value = m_imageStream.getCameraSettings()->getGain();
         break;
     case YARP_FEATURE_FRAME_RATE:
-        openni::VideoMode vm;
-        vm = m_imageStream.getVideoMode();
-        vm.setFps(int(value));
-        m_imageStream.setVideoMode(vm);
+        *value = (m_imageStream.getVideoMode().getFps());
+        break;
     case YARP_FEATURE_WHITE_BALANCE:
-        if (value < 0)
-        {
-            yError() << "invalid value! value should be 0(false) or superior(true)";
-            return false;
-        }
-        m_imageStream.getCameraSettings()->setAutoWhiteBalanceEnabled(value > 0.0001);
-    }*/
-    return false;
+        yError() << "no manual mode for white_balance. call hasManual() to know if a specific feature support Manual mode";
+        return false;
+    default:
+        return false;
+    }
+    return true;
 }
 
 bool depthCameraDriver::setFeature(int feature, double value1, double value2)
 {
+    yError() << "no 2-valued feature are supported";
     return false;
 }
 
 bool depthCameraDriver::getFeature(int feature, double *value1, double *value2)
 {
+    yError() << "no 2-valued feature are supported";
     return false;
 }
 
 bool depthCameraDriver::hasOnOff(  int feature, bool *HasOnOff)
 {
-    return false;
+    bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    if(f == YARP_FEATURE_WHITE_BALANCE)
+    {
+        *HasOnOff = true;
+        return true;
+    }
+    *HasOnOff = false;
+    return true;
 }
 
 bool depthCameraDriver::setActive( int feature, bool onoff)
 {
-    return false;
+    bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    if(!hasOnOff(feature, &b) || !b)
+    {
+        yError() << "feature does not have OnOff.. call hasOnOff() to know if a specific feature support OnOff mode";
+        return false;
+    }
+
+    RETURN_FALSE_STATUS_NOT_OK(m_imageStream.getCameraSettings()->setAutoWhiteBalanceEnabled(onoff));
+
+    return true;
 }
 
 bool depthCameraDriver::getActive( int feature, bool *isActive)
 {
-    return false;
+    bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    if(!hasOnOff(feature, &b) || !b)
+    {
+        yError() << "feature does not have OnOff.. call hasOnOff() to know if a specific feature support OnOff mode";
+        return false;
+    }
+
+    *isActive = m_imageStream.getCameraSettings()->getAutoWhiteBalanceEnabled();
+    return true;
 }
 
 bool depthCameraDriver::hasAuto(int feature, bool *hasAuto)
 {
-    return false;
+    bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    if(f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_WHITE_BALANCE)
+    {
+        *hasAuto = true;
+        return true;
+    }
+    *hasAuto = false;
+    return true;
 }
 
-bool depthCameraDriver::hasManual( int feature, bool *hasManual)
+bool depthCameraDriver::hasManual( int feature, bool* hasManual)
 {
-    return false;
+    bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    if(f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_FRAME_RATE || f == YARP_FEATURE_GAIN)
+    {
+        *hasManual = true;
+        return true;
+    }
+    *hasManual = false;
+    return true;
 }
 
-bool depthCameraDriver::hasOnePush(int feature, bool *hasOnePush)
+bool depthCameraDriver::hasOnePush(int feature, bool* hasOnePush)
 {
-    return false;
+    bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    return hasAuto(feature, hasOnePush);
 }
 
 bool depthCameraDriver::setMode(int feature, FeatureMode mode)
 {
+    bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    if(f == YARP_FEATURE_EXPOSURE)
+    {
+        switch(mode)
+        {
+        case MODE_AUTO:
+            RETURN_FALSE_STATUS_NOT_OK(m_imageStream.getCameraSettings()->setAutoExposureEnabled(true));
+            break;
+        case MODE_MANUAL:
+            RETURN_FALSE_STATUS_NOT_OK(m_imageStream.getCameraSettings()->setAutoExposureEnabled(false));
+            break;
+        case MODE_UNKNOWN:
+            return false;
+        default:
+            return false;
+        }
+        return true;
+    }
+
+    yError() << "feature does not have both auto and manual mode";
     return false;
 }
 
 bool depthCameraDriver::getMode(int feature, FeatureMode *mode)
 {
+    bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    if(f == YARP_FEATURE_EXPOSURE)
+    {
+        m_imageStream.getCameraSettings()->getAutoExposureEnabled() ? MODE_AUTO : MODE_MANUAL;
+        return true;
+    }
+
+    yError() << "feature does not have both auto and manual mode";
     return false;
 }
 
 bool depthCameraDriver::setOnePush(int feature)
 {
-    return false;
+    bool b;
+    if(!hasFeature(feature, &b) || !b)
+    {
+        yError() << "feature not supported!";
+        return false;
+    }
+
+    if(!hasOnePush(feature, &b) || !b)
+    {
+        yError() << "feature doesn't have OnePush";
+        return false;
+    }
+
+    setMode(feature, MODE_AUTO);
+    setMode(feature, MODE_MANUAL);
+
+    return true;
 }

@@ -383,7 +383,8 @@ bool RGBDSensorWrapper::close()
         depthFrame_StreamingPort.close();
     }
 
-    if(rosNode!=NULL) {
+    if(rosNode!=NULL)
+    {
         rosNode->interrupt();
         delete rosNode;
         rosNode = NULL;
@@ -403,10 +404,27 @@ bool RGBDSensorWrapper::close()
 bool RGBDSensorWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
     // Open ports
-    rpcPort.open(rpcPort_Name.c_str() );
-    colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name.c_str());
-    depthFrame_StreamingPort.open(depthFrame_StreamingPort_Name.c_str());
-    return true;
+    bool bRet;
+    bRet = true;
+    if(!rpcPort.open(rpcPort_Name.c_str()))
+    {
+        yError() << "RGBDSensorWrapper: unable to open rpc Port" << rpcPort_Name.c_str();
+        bRet = false;
+    }
+    rpcPort.setReader(parser);
+
+    if(!colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name.c_str()))
+    {
+        yError() << "RGBDSensorWrapper: unable to open color streaming Port" << colorFrame_StreamingPort_Name.c_str();
+        bRet = false;
+    }
+    if(!depthFrame_StreamingPort.open(depthFrame_StreamingPort_Name.c_str()))
+    {
+        yError() << "RGBDSensorWrapper: unable to open depth streaming Port" << depthFrame_StreamingPort_Name.c_str();
+        bRet = false;
+    }
+
+    return bRet;
 }
 
 bool RGBDSensorWrapper::initialize_ROS(yarp::os::Searchable &params)
@@ -532,28 +550,6 @@ bool RGBDSensorWrapper::detach()
 }
 
 /* IRateThread interface */
-
-bool RGBDSensorWrapper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::Bottle in;
-    yarp::os::Bottle out;
-    bool ok = in.read(connection);
-    if (!ok) return false;
-
-    bool ret = false;
-
-    if (!ret)
-    {
-        out.clear();
-        out.addVocab(VOCAB_FAILED);
-    }
-
-    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != NULL) {
-        out.write(*returnToSender);
-    }
-    return true;
-}
 
 bool RGBDSensorWrapper::threadInit()
 {
@@ -849,6 +845,7 @@ void RGBDSensorWrapper::run()
 {
     if (sensor_p!=0)
     {
+        static int i = 0;
         sensorStatus = sensor_p->getSensorStatus();
         switch (sensorStatus)
         {
@@ -856,8 +853,23 @@ void RGBDSensorWrapper::run()
             {
                 if (!writeData())
                     yError("Image not captured.. check hardware configuration");
-                break;
+                i = 0;
             }
+            break;
+            case(IRGBDSensor::RGBD_SENSOR_NOT_READY):
+            {
+                if(i < 1000)
+                {
+                    if((i % 30) == 0)
+                        yInfo() << "device not ready, waiting...";
+                }
+                else
+                {
+                    yWarning() << "device is taking too long to start..";
+                }
+                i++;
+            }
+            break;
             default:
             {
                 if (verbose >= 1)   // better not to print it every cycle anyway, too noisy

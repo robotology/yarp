@@ -487,7 +487,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_ACCURACY);
                     response.addVocab(VOCAB_IS);
-                    response.addInt(iDepthVisual->getDepthAccuracy());
+                    response.addDouble(iDepthVisual->getDepthAccuracy());
                 break;
 
                 default:
