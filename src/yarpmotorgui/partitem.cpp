@@ -1197,10 +1197,18 @@ void PartItem::loadSequence()
     onOpenSequence();
 }
 
-void PartItem::saveSequence()
+void PartItem::saveSequence(QString global_filename)
 {
     openSequenceWindow();
-    sequenceWindow->save();
+    sequenceWindow->save(global_filename);
+}
+
+void PartItem::closeSequenceWindow()
+{
+    if (sequenceWindow)
+    {
+        sequenceWindow->close();
+    }
 }
 
 void PartItem::openSequenceWindow()
@@ -1212,7 +1220,7 @@ void PartItem::openSequenceWindow()
         connect(sequenceWindow,SIGNAL(goToPosition(SequenceItem)),this,SLOT(onGo(SequenceItem)));
         connect(sequenceWindow,SIGNAL(runTime(QList<SequenceItem>)),this,SLOT(onSequenceRunTime(QList<SequenceItem>)),Qt::QueuedConnection);
         connect(sequenceWindow,SIGNAL(run(QList<SequenceItem>)),this,SLOT(onSequenceRun(QList<SequenceItem>)),Qt::QueuedConnection);
-        connect(sequenceWindow,SIGNAL(saveSequence(QList<SequenceItem>)),this,SLOT(onSaveSequence(QList<SequenceItem>)),Qt::QueuedConnection);
+        connect(sequenceWindow,SIGNAL(saveSequence(QList<SequenceItem>, QString)), this, SLOT(onSaveSequence(QList<SequenceItem>, QString)), Qt::QueuedConnection);
         connect(sequenceWindow,SIGNAL(openSequence()),this,SLOT(onOpenSequence()));
         connect(sequenceWindow,SIGNAL(cycle(QList<SequenceItem>)),this,SLOT(onSequenceCycle(QList<SequenceItem>)),Qt::QueuedConnection);
         connect(sequenceWindow,SIGNAL(cycleTime(QList<SequenceItem>)),this,SLOT(onSequenceCycleTime(QList<SequenceItem>)),Qt::QueuedConnection);
@@ -1377,9 +1385,12 @@ void PartItem::onOpenSequence()
 
 }
 
-void PartItem::onSaveSequence(QList<SequenceItem> values)
+void PartItem::onSaveSequence(QList<SequenceItem> values, QString fileName)
 {
-    QString fileName = QFileDialog::getSaveFileName(this,QString("Save Sequence for part %1 As").arg(partName),QDir::homePath());
+    if (fileName=="")
+    {
+        fileName = QFileDialog::getSaveFileName(this, QString("Save Sequence for part %1 As").arg(partName), QDir::homePath());
+    }
 
     if(fileName.isEmpty()){
         return;
@@ -1431,7 +1442,7 @@ void PartItem::onSaveSequence(QList<SequenceItem> values)
     writer.writeEndElement();
     writer.writeEndDocument();
     file.close();
-    LOG_ERROR("File saved and closed\n");
+    LOG_INFO("File saved and closed\n");
 
 
 //    if(file.open(QIODevice::WriteOnly)){

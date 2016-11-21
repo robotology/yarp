@@ -363,15 +363,15 @@ void SequenceWindow::onOpen()
     openSequence();
 }
 
-void SequenceWindow::save()
+void SequenceWindow::save(QString global_filename)
 {
-    saveSequence(getValuesFromList());
+    saveSequence(getValuesFromList(),global_filename);
 }
 
 
 void SequenceWindow::onSave()
 {
-    save();
+    save("");
 }
 
 void SequenceWindow::loadSequence(QList<SequenceItem> sequence)

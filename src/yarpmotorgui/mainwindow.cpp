@@ -23,6 +23,7 @@
 #include <QFontMetrics>
 #include <QMessageBox>
 #include <QSettings>
+#include <QFileDialog>
 
 #define TREEMODE_OK     1
 #define TREEMODE_WARN   2
@@ -689,16 +690,18 @@ void MainWindow::onSaveAllSeq()
         return;
     }
 
+    QString fileName = QFileDialog::getSaveFileName(this, QString("Save Sequence for all parts as:"), QDir::homePath());
 
-    for(int i=0; i<tabPanel->count();i++){
+    for(int i=0; i<tabPanel->count();i++)
+    {
         QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
-        if(!part){
+        if(!part)
+        {
             continue;
         }
-
-        part->saveSequence();
-
+        part->saveSequence(fileName);
+        part->closeSequenceWindow();
     }
 }
 

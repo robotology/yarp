@@ -23,4 +23,10 @@
 #define LOG_ERROR(...) yError(__VA_ARGS__)
 #endif
 
+#ifdef QT_DEBUG
+#define LOG_INFO(...) qDebug(__VA_ARGS__)
+#else
+#define LOG_INFO(...) yInfo(__VA_ARGS__)
+#endif
+
 #endif // LOG_H

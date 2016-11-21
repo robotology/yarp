@@ -61,6 +61,7 @@ public:
     bool openInterfaces();
     bool getInterfaceError();
     void openSequenceWindow();
+    void closeSequenceWindow();
     bool cycleAllSeq();
     bool checkAndRunAllSeq();
     bool checkAndRunTimeAllSeq();
@@ -75,7 +76,7 @@ public:
     void stopSequence();
     void setTreeWidgetModeNode(QTreeWidgetItem *node);
     void loadSequence();
-    void saveSequence();
+    void saveSequence(QString global_filename);
     QTreeWidgetItem *getTreeWidgetModeNode();
     QString getPartName();
     QList<int> getPartMode();
@@ -201,7 +202,7 @@ private slots:
     void onRunTimeout();
     void onGo(SequenceItem);
     void onOpenSequence();
-    void onSaveSequence(QList<SequenceItem> values);
+    void onSaveSequence(QList<SequenceItem> values, QString fileName);
     void onSequenceRunTime(QList<SequenceItem>);
     void onSequenceRun(QList<SequenceItem> values);
     void onSequenceCycle(QList<SequenceItem>);

@@ -38,7 +38,7 @@ public:
     bool checkAndRunTime();
     bool checkAndCycleSeq();
     bool checkAndCycleTimeSeq();
-    void save();
+    void save(QString global_filename);
     void loadSequence(QList<SequenceItem>);
 
 protected:
@@ -68,7 +68,7 @@ signals:
     void run(QList <SequenceItem>);
     void cycle(QList <SequenceItem>);
     void cycleTime(QList <SequenceItem>);
-    void saveSequence(QList <SequenceItem>);
+    void saveSequence(QList <SequenceItem>, QString);
     void openSequence();
     void stopSequence();
 
