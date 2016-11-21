@@ -84,7 +84,9 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                   ycm-0.2/cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
                                   ycm-0.2/cmake-3.1/Modules/FindPackageMessage.cmake
                                   ycm-0.2/cmake-3.1/Modules/GNUInstallDirs.cmake)
-    set(YCM_CMAKE_cmake_next_FILES ycm-0.2/cmake-proposed/Modules/FindGLEW.cmake)
+    set(YCM_CMAKE_cmake_next_FILES ycm-0.2/cmake-next/Modules/FindSWIG.cmake
+                                   ycm-0.2/cmake-next/Modules/UseSWIG.cmake)
+    set(YCM_CMAKE_cmake_proposed_FILES ycm-0.2/cmake-proposed/Modules/FindGLEW.cmake)
 
     install(FILES ${YCM_CMAKE_find_modules_FILES}
             COMPONENT scripts
@@ -95,14 +97,20 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
     install(FILES ${YCM_CMAKE_3rdparty_FILES}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/ycm-0.2/3rdparty)
-    install(FILES ${YCM_CMAKE_cmake_next_FILES}
+    install(FILES ${YCM_CMAKE_cmake_proposed_FILES}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/ycm-0.2/cmake-proposed/Modules)
     if(${CMAKE_VERSION} VERSION_LESS 3.1)
-      # Files from CMake 3.1, available only if cmake is older
+      # Files from CMake 3.1, available only if cmake is newer
       install(FILES ${YCM_CMAKE_cmake_3_1_FILES}
               COMPONENT scripts
               DESTINATION share/yarp/cmake/ycm-0.2/cmake-3.1/Modules)
+    endif()
+    if(${CMAKE_VERSION} VERSION_LESS 3.8)
+      # Files from CMake next (3.8), available only if cmake is newer
+      install(FILES ${YCM_CMAKE_cmake_next_FILES}
+              COMPONENT scripts
+              DESTINATION share/yarp/cmake/ycm-0.2/cmake-next/Modules)
     endif()
   endif()
 endif()
@@ -174,8 +182,7 @@ endforeach()
 
 # Remove no longer used directory from installation (since YARP 2.3.68)
 foreach(_d cmake-3.1/
-           cmake-3.5/
-           ycm-0.2/cmake-next/)
+           cmake-3.5/)
   install(CODE
  "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
     message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\\\"\")
