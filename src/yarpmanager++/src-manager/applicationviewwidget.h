@@ -74,6 +74,7 @@ public:
 
     bool isEditingMode();
 
+    void showBuilderWindows(yarp::os::Property& proprty);
 
 private:
     bool getConRowByID(int id, int *row);

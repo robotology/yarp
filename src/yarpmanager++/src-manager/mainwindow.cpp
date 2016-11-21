@@ -117,12 +117,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave,SIGNAL(triggered()),this,SLOT(onSave()));
     connect(ui->actionHelp,SIGNAL(triggered()),this,SLOT(onHelp()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(onAbout()));
-
+    connect(ui->action_Builder_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
+    connect(ui->action_Manager_Window, SIGNAL(triggered()),this, SLOT(onViewBuilderWindows()));
 
     connect(this,SIGNAL(selectItem(QString)),ui->entitiesTree,SLOT(onSelectItem(QString)));
 
     onTabChangeItem(-1);
 
+    ui->action_Manager_Window->setChecked(true);
 
 }
 
@@ -481,6 +483,16 @@ void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMod
         }
     }
 
+    if(ui->action_Builder_Window->isChecked())
+        config.put("showBuilder", true);
+    else
+        config.unput("showBuilder");
+
+    if(ui->action_Manager_Window->isChecked())
+        config.put("showManager", true);
+    else
+        config.unput("showManager");
+
     ApplicationViewWidget *w = new ApplicationViewWidget(app,&lazyManager,&config,editingMode,ui->mainTabs);
     connect(w,SIGNAL(logError(QString)),this,SLOT(onLogError(QString)));
     connect(w,SIGNAL(logWarning(QString)),this,SLOT(onLogWarning(QString)));
@@ -715,11 +727,11 @@ void MainWindow::onLogMessage(QString msg)
 
 void MainWindow::onBuilderWindowFloating(bool floating)
 {
+    /*
     if(builderToolBar){
         removeToolBar(builderToolBar);
         builderToolBar = NULL;
     }
-
     if(!floating){
         GenericViewWidget *w = (GenericViewWidget*)ui->mainTabs->widget(ui->mainTabs->currentIndex());
         if(w && w->getType() == yarp::manager::APPLICATION){
@@ -731,6 +743,7 @@ void MainWindow::onBuilderWindowFloating(bool floating)
             }
         }
     }
+    */
 }
 
 /*! \brief Called when a tab has been pressed
@@ -771,6 +784,7 @@ void MainWindow::onTabChangeItem(int index)
             ui->actionSave_As->setEnabled(false);
         }
 
+        /*
         if(builderToolBar){
             removeToolBar(builderToolBar);
             builderToolBar = NULL;
@@ -784,7 +798,7 @@ void MainWindow::onTabChangeItem(int index)
         if(aw->isBuilderFloating()){
             aw->showBuilder(true);
         }
-
+    */
         if(prevWidget && prevWidget != w){
             if(prevWidget->getType() == yarp::manager::APPLICATION){
                 ApplicationViewWidget *aw = (ApplicationViewWidget*)prevWidget;
@@ -810,10 +824,12 @@ void MainWindow::onTabChangeItem(int index)
         ui->actionStop->setEnabled(false);
         ui->actionKill->setEnabled(false);
 
+        /*
         if(builderToolBar){
             removeToolBar(builderToolBar);
             builderToolBar = NULL;
         }
+        */
 
 //        if(w){
 //            BuilderWindow *b = (BuilderWindow*)ui->mainTabs->widget(index);
@@ -1121,3 +1137,27 @@ void MainWindow::onReopenResource(QString resName,QString fileName)
     lazyManager.addResource(fileName.toLatin1().data());
     syncApplicationList();
 }
+
+void MainWindow::onViewBuilderWindows() {
+    if(ui->action_Builder_Window->isChecked())
+        config.put("showBuilder", true);
+    else
+        config.unput("showBuilder");
+
+    if(ui->action_Manager_Window->isChecked())
+        config.put("showManager", true);
+    else
+        config.unput("showManager");
+
+    for(int i=0;i<ui->mainTabs->count();i++){
+        GenericViewWidget *w = (GenericViewWidget*)ui->mainTabs->widget(i);
+        yAssert(w);
+        if(w->getType() == yarp::manager::APPLICATION){
+            ApplicationViewWidget *aw = ((ApplicationViewWidget*)w);
+            yAssert(aw);
+            aw->showBuilderWindows(config);
+        }
+    }
+}
+
+
