@@ -70,11 +70,12 @@ namespace yarp {
  *
  * \code{.unparsed}
  * device RGBDSensorClient
- * localImagePort     /localImagePort
- * localDepthPort     /localDepthPort
- * remoteImagePort    /iCub/colorCamera
- * remoteDepthPort    /iCub/depthCamera
- * watchdog 200
+ * localImagePort     /clientRgbPort:i
+ * localDepthPort     /clientDepthPort:i
+ * localRpcPort       /clientRpcPort
+ * remoteImagePort    /RGBD/rgbCamera:o
+ * remoteDepthPort    /RGBD/depthCamera:o
+ * remoteRpcPort      /RGBD/rpc
  * \endcode
  *
  * XML format, using 'networks' keywork. This file is meant to be used in junction with yarprobotinterface executable,
@@ -83,11 +84,12 @@ namespace yarp {
  * \code{.xml}
  *  <!-- Following parameters are meaningful ONLY for yarprobotinterface -->
  *
- * <param name="localImagePort">    /<robotName>/localImagePort    </param>
- * <param name="localDepthPort">    /<robotName>/localDepthPort    </param>
- * <param name="remoteImagePort">   /<robotName>/colorCamera       </param>
- * <param name="remoteDepthPort">   /<robotName>/depthCamera       </param>
- * <param name="watchdog">          200                            </param>
+ * <param name="localImagePort">    /clientRgbPort:i        </param>
+ * <param name="localDepthPort">    /clientDepthPort:i      </param>
+ * <param name="localRpcPort">      /clientRpcPort          </param>
+ * <param name="remoteImagePort">   /RGBD/rgbCamera:o       </param>
+ * <param name="localDepthPort">    /RGBD/depthCamera:o     </param>
+ * <param name="remoteRpcPort">     /RGBD/rpc               </param>
  * \endcode
  *
  */
@@ -153,7 +155,6 @@ protected:
 public:
 
     RGBDSensorClient();
-
     ~RGBDSensorClient();
 
 
@@ -182,14 +183,11 @@ public:
     /*
      *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
      */
-//      using Implement_RgbVisualParams_Sender;
-
     using Implement_RgbVisualParams_Sender::getRgbWidth;
     using Implement_RgbVisualParams_Sender::setRgbResolution;
     using Implement_RgbVisualParams_Sender::getRgbFOV;
     using Implement_RgbVisualParams_Sender::setRgbFOV;
     using Implement_RgbVisualParams_Sender::getRgbIntrinsicParam;
-
 
     /*
      * IDepthVisualParams interface. Look at IVisualParams.h for documentation
