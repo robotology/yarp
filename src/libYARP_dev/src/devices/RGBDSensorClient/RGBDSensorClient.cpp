@@ -23,7 +23,8 @@ yarp::dev::DriverCreator *createRGBDSensorClient()
 }
 
 RGBDSensorClient::RGBDSensorClient() :  Implement_RgbVisualParams_Sender(rpcPort),
-                                        Implement_DepthVisualParams_Sender(rpcPort)
+                                        Implement_DepthVisualParams_Sender(rpcPort),
+                                        FrameGrabberControls2_Sender(rpcPort)
 {
     sensor_p = NULL;
     use_ROS  = false;
@@ -348,77 +349,6 @@ bool RGBDSensorClient::getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::Im
 }
 
 // IFrame Grabber Control 2
-bool RGBDSensorClient::getCameraDescription(CameraDescriptor *camera)
-{
-    return false;
-}
-
-bool RGBDSensorClient::hasFeature(int feature, bool *hasFeature)
-{
-    return false;
-}
-
-bool RGBDSensorClient::setFeature(int feature, double value)
-{
-    return false;
-}
-
-bool RGBDSensorClient::getFeature(int feature, double *value)
-{
-    return false;
-}
-
-bool RGBDSensorClient::setFeature(int feature, double value1, double value2)
-{
-    return false;
-}
-
-bool RGBDSensorClient::getFeature(int feature, double *value1, double *value2)
-{
-    return false;
-}
-
-bool RGBDSensorClient::hasOnOff(  int feature, bool *HasOnOff)
-{
-    return false;
-}
-
-bool RGBDSensorClient::setActive( int feature, bool onoff)
-{
-    return false;
-}
-
-bool RGBDSensorClient::getActive( int feature, bool *isActive)
-{
-    return false;
-}
-
-bool RGBDSensorClient::hasAuto(   int feature, bool *hasAuto)
-{
-    return false;
-}
-
-bool RGBDSensorClient::hasManual( int feature, bool *hasManual)
-{
-    return false;
-}
-
-bool RGBDSensorClient::hasOnePush(int feature, bool *hasOnePush)
-{
-    return false;
-}
-
-bool RGBDSensorClient::setMode(   int feature, FeatureMode mode)
-{
-    return false;
-}
-
-bool RGBDSensorClient::getMode(   int feature, FeatureMode *mode)
-{
-    return false;
-}
-
-bool RGBDSensorClient::setOnePush(int feature)
-{
-    return false;
-}
+//
+// Implemented by FrameGrabberControls2_Sender
+//

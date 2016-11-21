@@ -30,6 +30,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/FrameGrabberControl2.h>
+#include <yarp/dev/FrameGrabberControl2Impl.h>
 
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
@@ -98,9 +99,9 @@ namespace yarp {
  */
 
 class yarp::dev::RGBDSensorClient:  public DeviceDriver,
-                                    public IFrameGrabberControls2,
                                     public Implement_RgbVisualParams_Sender,
-                                    public Implement_DepthVisualParams_Sender
+                                    public Implement_DepthVisualParams_Sender,
+                                    public FrameGrabberControls2_Sender
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
@@ -278,21 +279,26 @@ public:
     */
     bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL);
 
-    virtual bool getCameraDescription(CameraDescriptor *camera);
-    virtual bool hasFeature(int feature, bool *hasFeature);
-    virtual bool setFeature(int feature, double value);
-    virtual bool getFeature(int feature, double *value);
-    virtual bool setFeature(int feature, double value1, double value2);
-    virtual bool getFeature(int feature, double *value1, double *value2);
-    virtual bool hasOnOff(int feature, bool *HasOnOff);
-    virtual bool setActive(int feature, bool onoff);
-    virtual bool getActive(int feature, bool *isActive);
-    virtual bool hasAuto(int feature, bool *hasAuto);
-    virtual bool hasManual(int feature, bool *hasManual);
-    virtual bool hasOnePush(int feature, bool *hasOnePush);
-    virtual bool setMode(int feature, FeatureMode mode);
-    virtual bool getMode(int feature, FeatureMode *mode);
-    virtual bool setOnePush(int feature);
+
+    // IFrame Grabber Control 2
+    //
+    // Implemented by FrameGrabberControls2_Sender
+    //
+    using FrameGrabberControls2_Sender::getCameraDescription;
+    using FrameGrabberControls2_Sender::hasFeature;
+    using FrameGrabberControls2_Sender::setFeature;
+    using FrameGrabberControls2_Sender::getFeature;
+    using FrameGrabberControls2_Sender::setFeature;
+    using FrameGrabberControls2_Sender::getFeature;
+    using FrameGrabberControls2_Sender::hasOnOff;
+    using FrameGrabberControls2_Sender::setActive;
+    using FrameGrabberControls2_Sender::getActive;
+    using FrameGrabberControls2_Sender::hasAuto;
+    using FrameGrabberControls2_Sender::hasManual;
+    using FrameGrabberControls2_Sender::hasOnePush;
+    using FrameGrabberControls2_Sender::setMode;
+    using FrameGrabberControls2_Sender::getMode;
+    using FrameGrabberControls2_Sender::setOnePush;
 };
 
 #endif // YARP_DEV__RGBD_SENSOR_CLIENT_
