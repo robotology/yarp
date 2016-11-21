@@ -315,6 +315,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ShmemOutputStream.cpp
                  src/ShmemTwoWayStream.cpp
                  src/SocketTwoWayStream.cpp
+                 src/SplitString.cpp
                  src/Stamp.cpp
                  src/StreamConnectionReader.cpp
                  src/SystemClock.cpp

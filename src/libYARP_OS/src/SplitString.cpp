@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2006 RobotCub Consortium
+ * Authors: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#include <yarp/os/impl/SplitString.h>
+
+#include <yarp/os/impl/PlatformStdlib.h>
+
+
+using yarp::os::impl::SplitString;
+
+SplitString::SplitString() :
+        argc(0)
+{
+}
+
+SplitString::SplitString(const char *command, const char splitter)
+{
+    apply(command,splitter);
+}
+
+int SplitString::size()
+{
+    return argc;
+}
+
+void SplitString::set(int index, const char *txt)
+{
+    if (index>=0&&index<size()) {
+        ACE_OS::strncpy(buf[index],(char*)txt,MAX_ARG_LEN);
+    }
+}
+
+const char *SplitString::get(int idx)
+{
+    return buf[idx];
+}
+
+const char **SplitString::get()
+{
+    return (const char **)argv;
+}
+
+void SplitString::apply(const char *command, char splitter)
+{
+    int at = 0;
+    int sub_at = 0;
+    unsigned int i;
+    for (i=0; i<strlen(command)+1; i++) {
+        if (at<MAX_ARG_CT) {
+            // yarpserver can deal with quoting.
+            char ch = command[i];
+            if (ch=='\"') {
+                ch = ' ';
+            }
+            if (ch>=32||ch=='\0'||ch=='\n') {
+                if (ch==splitter||ch=='\n') {
+                    ch = '\0';
+                }
+                if (sub_at<MAX_ARG_LEN) {
+                    buf[at][sub_at] = ch;
+                    sub_at++;
+                }
+            }
+            if (ch == '\0') {
+                if (sub_at>1) {
+                    at++;
+                }
+                sub_at = 0;
+            } 
+        }
+    }
+    for (i=0; i<MAX_ARG_CT; i++) {
+        argv[i] = buf[i];
+        buf[i][MAX_ARG_LEN-1] = '\0';
+    }
+
+    argc = at;
+}

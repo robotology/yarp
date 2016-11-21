@@ -15,6 +15,7 @@
 #include <yarp/os/impl/SplitString.h>
 
 #include <yarp/os/impl/PlatformMap.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/OS_NS_ctype.h>
