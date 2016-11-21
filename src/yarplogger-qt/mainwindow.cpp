@@ -313,12 +313,6 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     system_message->addMessage("Application Started");
 
     model_yarprunports = new QStandardItemModel(this);
-    model_yarprunports->setHorizontalHeaderItem(0, new QStandardItem("ip"));
-    model_yarprunports->setHorizontalHeaderItem(1, new QStandardItem("process"));
-    model_yarprunports->setHorizontalHeaderItem(2, new QStandardItem("last heard"));
-    model_yarprunports->setHorizontalHeaderItem(3, new QStandardItem("log size"));
-    model_yarprunports->setHorizontalHeaderItem(4, new QStandardItem("errors"));
-    model_yarprunports->setHorizontalHeaderItem(5, new QStandardItem("warnings"));
 
     proxyModel = new YarprunPortsSortFilterProxyModel(this);
     proxyModel->setSourceModel(model_yarprunports);
@@ -357,13 +351,8 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
         on_actionStart_Logger_triggered();
     }
 
-    //default colum size
-    ui->yarprunTreeView->setColumnWidth(0, 100);
-    ui->yarprunTreeView->setColumnWidth(1, 200);
-    ui->yarprunTreeView->setColumnWidth(2, 150);
-    ui->yarprunTreeView->setColumnWidth(3, 80);
-    ui->yarprunTreeView->setColumnWidth(4, 60);
-    ui->yarprunTreeView->setColumnWidth(5, 60);
+    //set headers
+    resetMainWindowHeaders();
 
     setAcceptDrops(true);
 }
@@ -544,9 +533,9 @@ void MainWindow::on_actionAbout_QtYarpLogger_triggered()
 
 void MainWindow::on_actionSave_Log_triggered(bool checked)
 {
-    QString dateformat = "yarprunlog_dd_MM_yyyy_hh_mm_ss";
+    QString dateformat = "dd_MM_yyyy_hh_mm_ss";
     QDateTime currDate = QDateTime::currentDateTime();
-    QString preferred_filename = currDate.toString ( dateformat )+".log";
+    QString preferred_filename = "yarprunlog_" + currDate.toString(dateformat) + ".log";
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save to log file"),preferred_filename, tr("Log Files (*.log)"));
     if (fileName.size()!=0)
     {
@@ -669,12 +658,33 @@ void MainWindow::on_actionRefresh_triggered()
     statusBarLabel->setText("Running");
 }
 
+void MainWindow::resetMainWindowHeaders()
+{
+    model_yarprunports->setHorizontalHeaderItem(0, new QStandardItem("ip"));
+    model_yarprunports->setHorizontalHeaderItem(1, new QStandardItem("process"));
+    model_yarprunports->setHorizontalHeaderItem(2, new QStandardItem("last heard"));
+    model_yarprunports->setHorizontalHeaderItem(3, new QStandardItem("log size"));
+    model_yarprunports->setHorizontalHeaderItem(4, new QStandardItem("errors"));
+    model_yarprunports->setHorizontalHeaderItem(5, new QStandardItem("warnings"));
+    ui->yarprunTreeView->setColumnWidth(0, 100);
+    ui->yarprunTreeView->setColumnWidth(1, 200);
+    ui->yarprunTreeView->setColumnWidth(2, 150);
+    ui->yarprunTreeView->setColumnWidth(3, 80);
+    ui->yarprunTreeView->setColumnWidth(4, 60);
+    ui->yarprunTreeView->setColumnWidth(5, 60);
+}
+
 void MainWindow::on_actionClear_triggered()
 {
     if (theLogger->clear())
     {
-        if (model_yarprunports) model_yarprunports->clear();
+        if (model_yarprunports)
+        {
+            model_yarprunports->clear();
+            resetMainWindowHeaders();
+        }
         if (ui->logtabs) ui->logtabs->clear();
+
         system_message->addMessage("Log cleared");
     }
 }

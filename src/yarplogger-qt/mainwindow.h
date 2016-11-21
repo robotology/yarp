@@ -113,6 +113,8 @@ private slots:
 
     void dropEvent(QDropEvent *e);
 
+    void resetMainWindowHeaders();
+
 private:
     yarp::yarpLogger::LoggerEngine* theLogger;
 
