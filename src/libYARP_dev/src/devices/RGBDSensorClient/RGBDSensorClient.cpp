@@ -14,6 +14,9 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 
+#define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
+#define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
+
 // needed for the driver factory.
 yarp::dev::DriverCreator *createRGBDSensorClient()
 {
@@ -227,6 +230,27 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
         depthFrame_StreamingPort.close();
         rpcPort.close();
         return false;
+    }
+
+    // Check protocol version
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGBD_SENSOR);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
+    rpcPort.write(cmd, response);
+    int major = response.get(2).asInt();
+    int minor = response.get(3).asInt();
+
+    if(major != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
+    {
+        yError() << "Major protocol number does not match, please verify client and server are updated.";
+        return false;
+    }
+
+
+    if(minor != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
+    {
+        yWarning() << "Minor protocol number does not match, please verify client and server are updated.";
     }
 
    /*

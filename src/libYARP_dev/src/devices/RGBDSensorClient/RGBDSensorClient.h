@@ -35,12 +35,6 @@
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
 
-// Following three definitions would fit better in a header file
-// shared between client and server ... where to place it?
-#define VOCAB_PROTOCOL_VERSION VOCAB('p', 'r', 'o', 't')
-#define RGBD_WRAPPER_PROTOCOL_VERSION_MAJOR 1
-#define RGBD_WRAPPER_PROTOCOL_VERSION_MINOR 0
-
 #include "RGBDSensorClient_StreamingMsgParser.h"
 
 namespace yarp {

@@ -33,7 +33,8 @@ namespace yarp {
 
 
 // Interface name
-#define VOCAB_RGBD_SENSOR       VOCAB4('r','g','d','b')
+#define VOCAB_RGBD_SENSOR            VOCAB4('r','g','d','b')
+#define VOCAB_RGBD_PROTOCOL_VERSION  VOCAB4('p','r','o','t')
 
 // Methods
 #define VOCAB_EXTRINSIC_PARAM   VOCAB3('e','x','t')

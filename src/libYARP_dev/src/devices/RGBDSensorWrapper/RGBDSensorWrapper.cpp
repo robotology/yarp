@@ -21,6 +21,9 @@ using namespace yarp::os;
 using namespace std;
 
 
+#define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
+#define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
+
 // needed for the driver factory.
 yarp::dev::DriverCreator *createRGBDSensorWrapper() {
     return new DriverCreatorOf<yarp::dev::RGBDSensorWrapper>("RGBDSensorWrapper", "RGBDSensorWrapper", "yarp::dev::RGBDSensorWrapper");
@@ -94,11 +97,21 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
                         case VOCAB_ERROR_MSG:
                         {
-                            response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+                            response.addVocab(VOCAB_RGBD_SENSOR);
                             response.addVocab(VOCAB_ERROR_MSG);
                             response.addVocab(VOCAB_IS);
                             response.addString(iRGBDSensor->getLastErrorMsg());
                             ret = true;
+                        }
+                        break;
+
+                        case VOCAB_RGBD_PROTOCOL_VERSION:
+                        {
+                            response.addVocab(VOCAB_RGBD_SENSOR);
+                            response.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
+                            response.addVocab(VOCAB_IS);
+                            response.addInt(RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR);
+                            response.addInt(RGBD_INTERFACE_PROTOCOL_VERSION_MINOR);
                         }
                         break;
 
