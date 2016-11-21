@@ -294,6 +294,9 @@ bool RGBDSensorClient::initialize_ROS(yarp::os::Searchable &config)
 
 bool RGBDSensorClient::close()
 {
+    colorFrame_StreamingPort.close();
+    depthFrame_StreamingPort.close();
+    rpcPort.close();
     return true;
 }
 
