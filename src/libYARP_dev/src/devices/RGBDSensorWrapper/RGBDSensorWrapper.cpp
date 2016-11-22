@@ -115,6 +115,15 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
                         }
                         break;
 
+                        case VOCAB_STATUS:
+                        {
+                            response.addVocab(VOCAB_RGBD_SENSOR);
+                            response.addVocab(VOCAB_STATUS);
+                            response.addVocab(VOCAB_IS);
+                            response.addInt(iRGBDSensor->getSensorStatus());
+                        }
+                        break;
+
                         default:
                         {
                             yError() << "RGBDSensor interface parser received an unknown GET command. Command is " << cmd.toString();
