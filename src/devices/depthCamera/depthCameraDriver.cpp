@@ -209,9 +209,19 @@ bool depthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
 
 bool depthCameraDriver::setDepthAccuracy(double accuracy)
 {
-    VideoMode vm;
+    if(!(fabs(accuracy - 0.001) < 0.00001) || !(fabs(accuracy - 0.0001) < 0.00001) )
+    {
+        yError() << "depthCameraDriver: supporting accuracy of 1mm (0.001) or 100um (0.0001) only at the moment";
+        return false;
+    }
+
+    PixelFormat pf;
+    VideoMode   vm;
+
     vm = m_imageStream.getVideoMode();
-    vm.setPixelFormat(PIXEL_FORMAT_DEPTH_1_MM);
+    pf = fabs(accuracy - 0.001) < 0.00001 ? PIXEL_FORMAT_DEPTH_1_MM : PIXEL_FORMAT_DEPTH_100_UM;
+
+    vm.setPixelFormat(pf);
     RETURN_FALSE_STATUS_NOT_OK(m_imageStream.setVideoMode(vm));
     return true;
 }
@@ -429,8 +439,7 @@ IRGBDSensor::RGBDSensor_status depthCameraDriver::getSensorStatus()
 
 ConstString depthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
 {
-    yError() << "sorry.. Unfortunately there are no error msg handling avaiable using OpenNI2";
-    return "";
+    return OpenNI::getExtendedError();
 }
 
 bool depthCameraDriver::getCameraDescription(CameraDescriptor* camera)
@@ -684,7 +693,7 @@ bool depthCameraDriver::setMode(int feature, FeatureMode mode)
     return false;
 }
 
-bool depthCameraDriver::getMode(int feature, FeatureMode *mode)
+bool depthCameraDriver::getMode(int feature, FeatureMode* mode)
 {
     bool b;
     if(!hasFeature(feature, &b) || !b)
@@ -696,7 +705,7 @@ bool depthCameraDriver::getMode(int feature, FeatureMode *mode)
     cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
     if(f == YARP_FEATURE_EXPOSURE)
     {
-        m_imageStream.getCameraSettings()->getAutoExposureEnabled() ? MODE_AUTO : MODE_MANUAL;
+        *mode = m_imageStream.getCameraSettings()->getAutoExposureEnabled() ? MODE_AUTO : MODE_MANUAL;
         return true;
     }
 
