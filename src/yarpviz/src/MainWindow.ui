@@ -98,7 +98,7 @@
      <x>0</x>
      <y>0</y>
      <width>817</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -169,8 +169,8 @@
    <addaction name="menuView"/>
    <addaction name="menuProfiling"/>
    <addaction name="menuView_2"/>
-   <addaction name="menuHelp"/>
    <addaction name="menu_Tools"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

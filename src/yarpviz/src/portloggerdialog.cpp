@@ -2,6 +2,7 @@
 #include "portloggerdialog.h"
 #include "ui_portloggerdialog.h"
 #include "NetworkProfiler.h"
+#include <QMessageBox>
 #include <QDir>
 
 using namespace yarp::os;
@@ -27,7 +28,7 @@ PortLoggerDialog::PortLoggerDialog(yarp::graph::Graph *graph, QWidget *parent) :
     const pvertex_set& vertices = graph->vertices();
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Vertex &v1 = (**itr);
-        for(int i=0; i<v1.outEdges().size(); i++) {
+        for(unsigned int i=0; i<v1.outEdges().size(); i++) {
             Edge& edge = (Edge&) v1.outEdges()[i];
             const Vertex &v2 = edge.second();
             if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
@@ -102,7 +103,7 @@ void PortLoggerDialog::startStopLoggers() {
         isStarted = true;
         for( int i=0; i < ui->treeWidgetSelectedCons->topLevelItemCount(); ++i ){
             QTreeWidgetItem *item = ui->treeWidgetSelectedCons->topLevelItem(i);
-            yInfo()<<item->text(1).toUtf8().constData();
+            //yInfo()<<item->text(1).toUtf8().constData();
             isStarted = isStarted && NetworkProfiler::attachPortmonitorPlugin(item->text(1).toUtf8().constData(), prop);
         }
 
@@ -114,6 +115,13 @@ void PortLoggerDialog::startStopLoggers() {
             logTime.restart();
             timer->start(1000);
             ui->pushButtonStart->setText("Sto&p");
+        }
+        else
+        {
+            // something went wrong
+            QMessageBox messageBox;
+            messageBox.critical(0,"Error","An error has occured while starting the portrate plugin for some ports ! \n Please check if the LUA portmonitor carrier is enabled in YARP and portrate plugin can be found by the portmonitor.");
+            messageBox.setFixedSize(500,200);
         }
     }
     else { // stop it
