@@ -24,7 +24,6 @@ yarp_begin_plugin_library(yarpmod)
   add_subdirectory(SerialServoBoard)
   add_subdirectory(ffmpeg)
   add_subdirectory(opencv)
-  add_subdirectory(microphone)
   add_subdirectory(serial)
   add_subdirectory(portaudio)
   add_subdirectory(imuBosch_BNO055)
@@ -39,6 +38,10 @@ yarp_begin_plugin_library(yarpmod)
   add_subdirectory(ovrheadset)
   add_subdirectory(PumaCalibrator)
   add_subdirectory(meiMotionControl)
+
+  if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
+    add_subdirectory(microphone)
+  endif()
 
   # The dimax_u2c/blob is not exported in the tarball, therefore we
   # disable the build if the folder does not exist
@@ -75,7 +78,7 @@ yarp_begin_plugin_library(yarpmod)
           message(FATAL_ERROR "${EXTDIR}_DIR=${${EXTDIR}_DIR} from ${EXTFILE} does not contain a CMakeLists.txt")
         endif()
       add_subdirectory(${safe_path}
-                        ${CMAKE_CURRENT_BINARY_DIR}/externals/${EXTDIR})
+                       ${CMAKE_CURRENT_BINARY_DIR}/externals/${EXTDIR})
     endforeach(EXTDIR ${EXTERNAL_MODULES})
   endif(EXISTS ${EXTFILE})
 endforeach(EXTFILE)

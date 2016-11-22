@@ -26,7 +26,7 @@ namespace yarp {
  *
  */
 class yarp::dev::MicrophoneDeviceDriver :
-    public IAudioGrabberSound, public DeviceDriver
+    public IAudioGrabberSound, public DeprecatedDeviceDriver
 {
 private:
     MicrophoneDeviceDriver(const MicrophoneDeviceDriver&);
