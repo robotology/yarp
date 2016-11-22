@@ -7,6 +7,8 @@
 #ifndef YARP2_SPLITSTRING
 #define YARP2_SPLITSTRING
 
+#include <yarp/os/api.h>
+
 #define MAX_ARG_CT (20)
 #define MAX_ARG_LEN (256)
 
@@ -24,7 +26,7 @@ namespace yarp {
  * This class is a bit crufty, and should be replaced with a simple Bottle
  * (now that Bottle exists).
  */
-class yarp::os::impl::SplitString {
+class YARP_OS_impl_API yarp::os::impl::SplitString {
 public:
     SplitString();
 
