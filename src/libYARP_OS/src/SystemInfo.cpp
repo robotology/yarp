@@ -163,7 +163,7 @@ public:
     SystemInfo::LoadInfo getCpuLoad(void)
     {
         sem.wait();
-		SystemInfo::LoadInfo ld = load;
+        SystemInfo::LoadInfo ld = load;
         sem.post();
         return ld;
     }
@@ -832,50 +832,51 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
     hr = CoInitializeEx(0, COINIT_MULTITHREADED);
     hr = CoInitializeSecurity(YARP_NULLPTR, -1, YARP_NULLPTR, YARP_NULLPTR, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, YARP_NULLPTR, EOAC_NONE, YARP_NULLPTR);
     hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *) &WbemLocator);
-	if(WbemLocator != YARP_NULLPTR) {
-		//connect to the WMI
-		hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", YARP_NULLPTR, YARP_NULLPTR, 0, 0, 0, 0, &WbemServices);
-		if(WbemServices != YARP_NULLPTR) {
-			//Run the WQL Query
-			hr = WbemServices->ExecQuery(L"WQL", L"SELECT ProcessId,CommandLine FROM Win32_Process", WBEM_FLAG_FORWARD_ONLY, YARP_NULLPTR, &EnumWbem);
-			// Iterate over the enumerator
-			if (EnumWbem != YARP_NULLPTR) {
-				IWbemClassObject *result = YARP_NULLPTR;
-				ULONG returnedCount = 0;
+    if(WbemLocator != YARP_NULLPTR) {
+        //connect to the WMI
+        hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", YARP_NULLPTR, YARP_NULLPTR, 0, 0, 0, 0, &WbemServices);
+        if(WbemServices != YARP_NULLPTR) {
+            //Run the WQL Query
+            hr = WbemServices->ExecQuery(L"WQL", L"SELECT ProcessId,CommandLine FROM Win32_Process", WBEM_FLAG_FORWARD_ONLY, YARP_NULLPTR, &EnumWbem);
+            // Iterate over the enumerator
+            if (EnumWbem != YARP_NULLPTR) {
+                IWbemClassObject *result = YARP_NULLPTR;
+                ULONG returnedCount = 0;
 
-				while((hr = EnumWbem->Next(WBEM_INFINITE, 1, &result, &returnedCount)) == S_OK) {
-					VARIANT ProcessId;
-					VARIANT CommandLine;
+                while((hr = EnumWbem->Next(WBEM_INFINITE, 1, &result, &returnedCount)) == S_OK) {
+                    VARIANT ProcessId;
+                    VARIANT CommandLine;
 
-					// access the properties
-					hr = result->Get(L"ProcessId", 0, &ProcessId, 0, 0);
-					hr = result->Get(L"CommandLine", 0, &CommandLine, 0, 0);
-					if (!(CommandLine.vt==VT_NULL) && ProcessId.uintVal == (unsigned int) pid) {
-						// covert BSTR to std::string
-						int res = WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, YARP_NULLPTR, 0, YARP_NULLPTR, YARP_NULLPTR);
-						info.arguments.resize(res);
-						WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, &info.arguments[0], res, YARP_NULLPTR, YARP_NULLPTR);
-						size_t idx = info.arguments.find(' ');
-						if(idx == info.arguments.npos)
-							info.arguments.clear();
-						else
-							info.arguments = info.arguments.substr(idx+2); // it seems windows adds two spaces after the program name
-						info.pid = pid;
-						VariantClear(&ProcessId);
-						VariantClear(&CommandLine);
-						break;
-					}
-					result->Release();
-				} // end while
+                    // access the properties
+                    hr = result->Get(L"ProcessId", 0, &ProcessId, 0, 0);
+                    hr = result->Get(L"CommandLine", 0, &CommandLine, 0, 0);
+                    if (!(CommandLine.vt==VT_NULL) && ProcessId.uintVal == (unsigned int) pid) {
+                        // covert BSTR to std::string
+                        int res = WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, YARP_NULLPTR, 0, YARP_NULLPTR, YARP_NULLPTR);
+                        info.arguments.resize(res);
+                        WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, &info.arguments[0], res, YARP_NULLPTR, YARP_NULLPTR);
+                        size_t idx = info.arguments.find(' ');
+                        if(idx == info.arguments.npos) {
+                            info.arguments.clear();
+                        } else {
+                            info.arguments = info.arguments.substr(idx+2); // it seems windows adds two spaces after the program name
+                        }
+                        info.pid = pid;
+                        VariantClear(&ProcessId);
+                        VariantClear(&CommandLine);
+                        break;
+                    }
+                    result->Release();
+                } // end while
 
-				EnumWbem->Release();
-			} // end if EnumWbem
+                EnumWbem->Release();
+            } // end if EnumWbem
 
-			WbemServices->Release();
-		} // end if WbemServices
+            WbemServices->Release();
+        } // end if WbemServices
 
-		WbemLocator->Release();
-	} // end if WbemLocator
+        WbemLocator->Release();
+    } // end if WbemLocator
 
     CoUninitialize();
 #elif defined(__APPLE__)
