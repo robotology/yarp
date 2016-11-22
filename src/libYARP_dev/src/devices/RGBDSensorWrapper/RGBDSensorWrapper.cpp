@@ -79,7 +79,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
                     {
                         case VOCAB_EXTRINSIC_PARAM:
                         {
-                            yarp::os::Property params;
+                            yarp::sig::Matrix params;
                             ret = iRGBDSensor->getExtrinsicParam(params);
                             if(ret)
                             {

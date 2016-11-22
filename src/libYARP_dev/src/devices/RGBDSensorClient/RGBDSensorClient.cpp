@@ -319,7 +319,7 @@ bool RGBDSensorClient::close()
  * IRGBDSensor specific interface methods
  */
 
-bool RGBDSensorClient::getExtrinsicParam(yarp::os::Property &extrinsic)
+bool RGBDSensorClient::getExtrinsicParam(yarp::sig::Matrix &extrinsic)
 {
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_RGBD_SENSOR);
@@ -330,7 +330,7 @@ bool RGBDSensorClient::getExtrinsicParam(yarp::os::Property &extrinsic)
     // Minimal check on response, we suppose the response is always correctly formatted
     if((response.get(0).asVocab()) == VOCAB_FAILED)
     {
-        extrinsic.clear();
+        extrinsic.zero();
         return false;
     }
 

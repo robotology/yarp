@@ -211,12 +211,12 @@ public:
      */
 
     /**
-     * Get the extrinsic parameters of the rgb camera
-     * @param  extrinsic  return a Property containing extrinsic parameters
-     *       of the optical model of the camera.
+     * Get the extrinsic parameters ofrom the device
+     * @param  extrinsic  return a rototranslation matrix describing the position
+     *         of the depth optical frame with respect to the rgb frame
      * @return true if success
      */
-    bool getExtrinsicParam(yarp::os::Property &extrinsic);
+    bool getExtrinsicParam(yarp::sig::Matrix &extrinsic);
 
     /**
      * Get the surrent status of the sensor, using enum type
