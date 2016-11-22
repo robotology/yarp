@@ -25,14 +25,14 @@ yarp::dev::DriverCreator *createRGBDSensorClient()
         "yarp::dev::RGBDSensorClient");
 }
 
-RGBDSensorClient::RGBDSensorClient() :  Implement_RgbVisualParams_Sender(rpcPort),
-                                        Implement_DepthVisualParams_Sender(rpcPort),
-                                        FrameGrabberControls2_Sender(rpcPort)
+RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls2_Sender(rpcPort)
 {
-    sensor_p = NULL;
-    use_ROS  = false;
-    verbose  = 2;
-    sensorStatus = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    sensor_p       = NULL;
+    use_ROS        = false;
+    verbose        = 2;
+    sensorStatus   = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    RgbMsgSender   = new Implement_RgbVisualParams_Sender(rpcPort);
+    DepthMsgSender = new Implement_DepthVisualParams_Sender(rpcPort);
 }
 
 RGBDSensorClient::~RGBDSensorClient()
@@ -199,15 +199,15 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
         depthFrame_StreamingPort.close();
     }
 
-    if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_name, colorFrame_StreamingPort.getName()), "udp")
+    if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_name, colorFrame_StreamingPort.getName(), "udp") )
     {
-        yError() << sensorId << " cannot connect to remote port " << remote_colorFrame_StreamingPort_name;
+        yError() << colorFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_colorFrame_StreamingPort_name;
         return false;
     }
 
-    if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_name, depthFrame_StreamingPort.getName()), "udp")
+    if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_name, depthFrame_StreamingPort.getName(), "udp") )
     {
-        yError() << sensorId << " cannot connect to remote port " << remote_depthFrame_StreamingPort_name;
+        yError() << depthFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_depthFrame_StreamingPort_name;
         return false;
     }
 
@@ -238,19 +238,21 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
     rpcPort.write(cmd, response);
-    int major = response.get(2).asInt();
-    int minor = response.get(3).asInt();
+    int major = response.get(3).asInt();
+    int minor = response.get(4).asInt();
 
     if(major != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
     {
-        yError() << "Major protocol number does not match, please verify client and server are updated.";
+        yError() << "Major protocol number does not match, please verify client and server are updated. \
+                    Expected: " << RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR << " received: " << major;
         return false;
     }
 
 
-    if(minor != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
+    if(minor != RGBD_INTERFACE_PROTOCOL_VERSION_MINOR)
     {
-        yWarning() << "Minor protocol number does not match, please verify client and server are updated.";
+        yWarning() << "Minor protocol number does not match, please verify client and server are updated.\
+                      Expected: " << RGBD_INTERFACE_PROTOCOL_VERSION_MINOR << " received: " << minor;
     }
 
    /*
@@ -379,3 +381,71 @@ bool RGBDSensorClient::getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::Im
 //
 // Implemented by FrameGrabberControls2_Sender
 //
+
+int RGBDSensorClient::getRgbHeight()
+{
+    return RgbMsgSender->getRgbHeight();
+}
+
+int RGBDSensorClient::getRgbWidth()
+{
+    return RgbMsgSender->getRgbWidth();
+}
+
+bool RGBDSensorClient::setRgbResolution(int width, int height)
+{
+    return RgbMsgSender->setRgbResolution(width, height);
+}
+bool RGBDSensorClient::getRgbFOV(double &horizontalFov, double &verticalFov)
+{
+    return RgbMsgSender->getRgbFOV(horizontalFov, verticalFov);
+}
+bool RGBDSensorClient::setRgbFOV(double horizontalFov, double verticalFov)
+{
+    return RgbMsgSender->getRgbFOV(horizontalFov, verticalFov);
+}
+bool RGBDSensorClient::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
+{
+    return RgbMsgSender->getRgbIntrinsicParam(intrinsic);
+}
+int RGBDSensorClient::getDepthHeight()
+{
+    return DepthMsgSender->getDepthHeight();
+}
+int RGBDSensorClient::getDepthWidth()
+{
+    return DepthMsgSender->getDepthWidth();
+}
+bool RGBDSensorClient::setDepthResolution(int width, int height)
+{
+    return DepthMsgSender->setDepthResolution(width, height);
+}
+bool RGBDSensorClient::getDepthFOV(double &horizontalFov, double &verticalFov)
+{
+    return DepthMsgSender->getDepthFOV(horizontalFov, verticalFov);
+}
+bool RGBDSensorClient::setDepthFOV(double horizontalFov, double verticalFov)
+{
+    return DepthMsgSender->setDepthFOV(horizontalFov, verticalFov);
+}
+double RGBDSensorClient::getDepthAccuracy()
+{
+    return DepthMsgSender->getDepthAccuracy();
+}
+bool RGBDSensorClient::setDepthAccuracy(double accuracy)
+{
+    return DepthMsgSender->setDepthAccuracy(accuracy);
+}
+bool RGBDSensorClient::getDepthClipPlanes(double &near, double &far)
+{
+    return DepthMsgSender->getDepthClipPlanes(near, far);
+}
+bool RGBDSensorClient::setDepthClipPlanes(double near, double far)
+{
+    return DepthMsgSender->setDepthClipPlanes(near, far);
+}
+
+bool RGBDSensorClient::getDepthIntrinsicParam(yarp::os::Property &intrinsic)
+{
+    return DepthMsgSender->getDepthIntrinsicParam(intrinsic);
+}

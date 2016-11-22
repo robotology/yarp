@@ -95,11 +95,13 @@ namespace yarp {
  */
 
 class yarp::dev::RGBDSensorClient:  public DeviceDriver,
-                                    public Implement_RgbVisualParams_Sender,
-                                    public Implement_DepthVisualParams_Sender,
-                                    public FrameGrabberControls2_Sender
+                                    public FrameGrabberControls2_Sender,
+                                    public IRGBDSensor
 {
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+    yarp::dev::Implement_RgbVisualParams_Sender*   RgbMsgSender;
+    yarp::dev::Implement_DepthVisualParams_Sender* DepthMsgSender;
 protected:
     yarp::os::ConstString local_colorFrame_StreamingPort_name;
     yarp::os::ConstString local_depthFrame_StreamingPort_name;
@@ -158,6 +160,26 @@ public:
     ~RGBDSensorClient();
 
 
+    virtual int  getRgbHeight();
+    virtual int  getRgbWidth();
+    virtual bool setRgbResolution(int width, int height);
+    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov);
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov);
+    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic);
+
+    /*
+     * IDepthVisualParams interface. Look at IVisualParams.h for documentation
+     */
+    virtual int    getDepthHeight();
+    virtual int    getDepthWidth();
+    virtual bool   setDepthResolution(int width, int height);
+    virtual bool   getDepthFOV(double &horizontalFov, double &verticalFov);
+    virtual bool   setDepthFOV(double horizontalFov, double verticalFov);
+    virtual double getDepthAccuracy();
+    virtual bool   setDepthAccuracy(double accuracy);
+    virtual bool   getDepthClipPlanes(double &near, double &far);
+    virtual bool   setDepthClipPlanes(double near, double far);
+    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic);
     // Device Driver interface //
     /**
      * Create and configure a device, by name.  The config
@@ -183,25 +205,6 @@ public:
     /*
      *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
      */
-    using Implement_RgbVisualParams_Sender::getRgbWidth;
-    using Implement_RgbVisualParams_Sender::setRgbResolution;
-    using Implement_RgbVisualParams_Sender::getRgbFOV;
-    using Implement_RgbVisualParams_Sender::setRgbFOV;
-    using Implement_RgbVisualParams_Sender::getRgbIntrinsicParam;
-
-    /*
-     * IDepthVisualParams interface. Look at IVisualParams.h for documentation
-     */
-    using Implement_DepthVisualParams_Sender::getDepthHeight;
-    using Implement_DepthVisualParams_Sender::getDepthWidth;
-    using Implement_DepthVisualParams_Sender::setDepthResolution;
-    using Implement_DepthVisualParams_Sender::getDepthFOV;
-    using Implement_DepthVisualParams_Sender::setDepthFOV;
-    using Implement_DepthVisualParams_Sender::getDepthIntrinsicParam;
-    using Implement_DepthVisualParams_Sender::getDepthAccuracy;
-    using Implement_DepthVisualParams_Sender::setDepthAccuracy;
-    using Implement_DepthVisualParams_Sender::getDepthClipPlanes;
-    using Implement_DepthVisualParams_Sender::setDepthClipPlanes;
 
     /*
      * IRGBDSensor specific interface methods
