@@ -249,7 +249,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
 
 // Sender
 
-Implement_DepthVisualParams_Sender::Implement_DepthVisualParams_Sender(yarp::os::Port port) : _port(port) {};
+Implement_DepthVisualParams_Sender::Implement_DepthVisualParams_Sender(yarp::os::Port &port) : _port(port) {};
 
 // Implement_DepthVisualParams_Sender::~Implement_DepthVisualParams_Sender() { };
 
@@ -324,7 +324,7 @@ double Implement_DepthVisualParams_Sender::getDepthAccuracy()
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_ACCURACY);
     _port.write(cmd, response);
-    return response.get(3).asInt();
+    return response.get(3).asDouble();
 }
 
 bool Implement_DepthVisualParams_Sender::setDepthAccuracy(double accuracy)
@@ -490,9 +490,19 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     response.addDouble(iDepthVisual->getDepthAccuracy());
                 break;
 
+                case VOCAB_CLIP_PLANES:
+                    double near, far;
+                    iDepthVisual->getDepthClipPlanes(near, far);
+                    response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
+                    response.addVocab(VOCAB_CLIP_PLANES);
+                    response.addVocab(VOCAB_IS);
+                    response.addDouble(near);
+                    response.addDouble(far);
+                break;
+
                 default:
                 {
-                    yError() << "Rgb Visual Parameter interface parser received am unknown GET command. Command is " << cmd.toString();
+                    yError() << "Depth Visual Parameter interface parser received am unknown GET command. Command is " << cmd.toString();
                     response.addVocab(VOCAB_FAILED);
                 }
                 break;

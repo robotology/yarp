@@ -69,7 +69,7 @@ private:
     yarp::os::Port & _port;
 
 public:
-    Implement_DepthVisualParams_Sender(yarp::os::Port port);
+    Implement_DepthVisualParams_Sender(os::Port &port);
     virtual ~Implement_DepthVisualParams_Sender() {};
 
     virtual int    getDepthHeight();
