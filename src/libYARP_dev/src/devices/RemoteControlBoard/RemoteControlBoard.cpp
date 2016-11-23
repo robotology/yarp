@@ -1616,8 +1616,8 @@ public:
      * @param v pointer to storage for the return value
      * @return true/false, upon success/failure (you knew it, uh?)
      */
-    virtual bool getEncoder(int j, double *v) {
-        // return get1V1I1D(VOCAB_ENCODER, j, v);
+    virtual bool getEncoder(int j, double *v)
+    {
         double localArrivalTime = 0.0;
         bool ret;
 
@@ -1643,8 +1643,8 @@ public:
      * @param v pointer to storage for the return value
      * @return true/false, upon success/failure (you knew it, uh?)
      */
-    virtual bool getEncoderTimed(int j, double *v, double *t) {
-        // return get1V1I1D(VOCAB_ENCODER, j, v);
+    virtual bool getEncoderTimed(int j, double *v, double *t)
+    {
         double localArrivalTime = 0.0;
         bool ret = false;
         if(controlBoardWrapper1_compatibility)
@@ -1752,7 +1752,7 @@ public:
         }
 
         ////////////////////////// HANDLE TIMEOUT
-        if (Time::now()-localArrivalTime>TIMEOUT)
+        if ( (Time::now()-localArrivalTime) > TIMEOUT)
             ret=false;
 
         return ret;
@@ -2043,12 +2043,12 @@ public:
      * @return true/false on success/failure. Failure means encoders have not been received
      * from the server or that they are not being streamed with the expected rate.
      */
-    virtual bool getMotorEncoders(double *encs) {
+    virtual bool getMotorEncoders(double *encs)
+    {
         if (!isLive()) return false;
         // particular case, does not use RPC
         bool ret = false;
         double localArrivalTime=0.0;
-
 
         if(controlBoardWrapper1_compatibility)
         {
@@ -2087,7 +2087,8 @@ public:
      * @param ts pointer to the array that will contain timestamps
      * @return true/false on success/failure
      */
-    virtual bool getMotorEncodersTimed(double *encs, double *ts) {
+    virtual bool getMotorEncodersTimed(double *encs, double *ts)
+    {
         if (!isLive()) return false;
         // particular case, does not use RPC
         double localArrivalTime=0.0;
@@ -3203,43 +3204,36 @@ public:
     bool setPositionMode(int j)
     {
         return setControlMode(j,VOCAB_CM_POSITION);
-//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_POSITION, j);
     }
 
     bool setPositionDirectMode(int j)
     {
         return setControlMode(j,VOCAB_CM_POSITION_DIRECT);
-//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_POSITION_DIRECT, j);
     }
 
     bool setVelocityMode(int j)
     {
         return setControlMode(j,VOCAB_CM_VELOCITY);
-//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_VELOCITY, j);
     }
 
     bool setTorqueMode(int j)
     {
         return setControlMode(j,VOCAB_CM_TORQUE);
-//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_TORQUE, j);
     }
 
     bool setImpedancePositionMode(int j)
     {
         return setControlMode(j,VOCAB_CM_IMPEDANCE_POS);
-//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_POS, j);
     }
 
     bool setImpedanceVelocityMode(int j)
     {
         return setControlMode(j,VOCAB_CM_IMPEDANCE_VEL);
-//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_VEL, j);
     }
 
     bool setOpenLoopMode(int j)
     {
         return setControlMode(j,VOCAB_CM_OPENLOOP);
-//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_OPENLOOP, j);
     }
 
     bool getControlMode(int j, int *mode)
@@ -3327,7 +3321,7 @@ public:
     // IControlMode
     bool getControlModes(int *modes)
     {
-        bool ok = false;
+        bool ret = false;
         if(controlBoardWrapper1_compatibility)
         {
             if (!isLive()) return false;

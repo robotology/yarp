@@ -86,7 +86,7 @@ void StateExtendedInputPort::onRead(jointData &v)
 bool StateExtendedInputPort::getLastSingle(int j, int field, double *data, Stamp &stamp, double &localArrivalTime)
 {
     mutex.wait();
-    bool ret=valid;
+    bool ret = valid;
     if (ret)
     {
         switch(field)
