@@ -1863,7 +1863,8 @@ bool ControlBoardWrapper::checkMotionDone(bool *flag) {
 bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints, bool *flags)
 {
     bool ret = true;
-    bool   XFlags = true;
+    bool tmp = true;
+    bool XFlags = true;
 
    rpcDataMutex.wait();
    //Reset subdev_jointsVectorLen vector
@@ -1885,7 +1886,7 @@ bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints,
            ret= ret && rpcData.subdevices_p[subIndex]->pos2->checkMotionDone(rpcData.subdev_jointsVectorLen[subIndex],
                                                                              rpcData.jointNumbers[subIndex],
                                                                              &XFlags);
-           *flags = flags && XFlags;
+           tmp = tmp && XFlags;
        }
        else   // Classic Position Control
        {
@@ -1895,7 +1896,7 @@ bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints,
                {
                    ret=ret && rpcData.subdevices_p[subIndex]->pos->checkMotionDone(rpcData.jointNumbers[subIndex][i],
                                                                                    &XFlags);
-                   *flags = flags && XFlags;
+                   tmp = tmp && XFlags;
                }
            }
            else
@@ -1904,6 +1905,10 @@ bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints,
            }
        }
    }
+    if(ret)
+        *flags = tmp;
+    else
+        *flags = false;
     rpcDataMutex.post();
     return ret;
 }
