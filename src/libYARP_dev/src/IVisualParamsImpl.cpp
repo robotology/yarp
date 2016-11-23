@@ -332,8 +332,8 @@ bool Implement_DepthVisualParams_Sender::setDepthAccuracy(double accuracy)
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_RESOLUTION);
-    cmd.addInt(accuracy);
+    cmd.addVocab(VOCAB_ACCURACY);
+    cmd.addDouble(accuracy);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -435,17 +435,21 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
             switch(cmd.get(2).asVocab())
             {
                 case VOCAB_HEIGHT:
+                {
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_HEIGHT);
                     response.addVocab(VOCAB_IS);
                     response.addInt(iDepthVisual->getDepthHeight());
+                }
                 break;
 
                 case VOCAB_WIDTH:
+                {
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_WIDTH);
                     response.addVocab(VOCAB_IS);
                     response.addInt(iDepthVisual->getDepthWidth());
+                }
                 break;
 
                 case VOCAB_FOV:
@@ -479,18 +483,23 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                         response.append(params_b);
                     }
                     else
+                    {
                         response.addVocab(VOCAB_FAILED);
+                    }
                 }
                 break;
 
                 case VOCAB_ACCURACY:
+                {
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_ACCURACY);
                     response.addVocab(VOCAB_IS);
                     response.addDouble(iDepthVisual->getDepthAccuracy());
+                }
                 break;
 
                 case VOCAB_CLIP_PLANES:
+                {
                     double near, far;
                     iDepthVisual->getDepthClipPlanes(near, far);
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
@@ -498,6 +507,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     response.addVocab(VOCAB_IS);
                     response.addDouble(near);
                     response.addDouble(far);
+                }
                 break;
 
                 default:
@@ -515,31 +525,39 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
             switch(cmd.get(2).asVocab())
             {
                 case VOCAB_RESOLUTION:
+                {
                     ret = iDepthVisual->setDepthResolution(cmd.get(3).asInt(), cmd.get(4).asInt());
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
                     response.addInt(ret);
+                }
                 break;
 
                 case VOCAB_FOV:
+                {
                     ret = iDepthVisual->setDepthFOV(cmd.get(3).asDouble(), cmd.get(4).asDouble());
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
                     response.addInt(ret);
+                }
                 break;
 
                 case VOCAB_ACCURACY:
+                {
                     ret = iDepthVisual->setDepthAccuracy(cmd.get(3).asDouble());
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
                     response.addInt(ret);
+                }
                 break;
 
                 case VOCAB_CLIP_PLANES:
+                {
                     ret = iDepthVisual->setDepthClipPlanes(cmd.get(3).asDouble(), cmd.get(4).asDouble());
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
                     response.addInt(ret);
+                }
                 break;
 
                 case VOCAB_INTRINSIC_PARAM:
