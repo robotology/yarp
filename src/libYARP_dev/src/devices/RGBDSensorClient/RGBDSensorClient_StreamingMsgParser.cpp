@@ -8,38 +8,37 @@
 #include "RGBDSensorClient_StreamingMsgParser.h"
 
 // Callback reader for rgb
-RgbImageReader_Impl::RgbImageReader_Impl() { };
-RgbImageReader_Impl::~RgbImageReader_Impl() { };
+RgbImageReader_Impl::RgbImageReader_Impl() { }
+RgbImageReader_Impl::~RgbImageReader_Impl() { }
 
 void RgbImageReader_Impl::onRead(yarp::sig::FlexImage& datum)
 {
     last_rgb = datum;
-};
+}
 
 yarp::sig::FlexImage RgbImageReader_Impl::getImage()
 {
     return last_rgb;
-};
+}
 
 
 // callback reader for depthImage
-FloatImageReader_Impl::FloatImageReader_Impl() { };
-FloatImageReader_Impl::~FloatImageReader_Impl() { };
+FloatImageReader_Impl::FloatImageReader_Impl() { }
+FloatImageReader_Impl::~FloatImageReader_Impl() { }
 
 void FloatImageReader_Impl::onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum)
 {
-    yTrace();
     last_depth = datum;
-};
+}
 
 yarp::sig::ImageOf<yarp::sig::PixelFloat> FloatImageReader_Impl::getImage()
 {
     return last_depth;
-};
+}
 
 
 // Streaming handler
-RGBDSensor_StreamingMsgParser::RGBDSensor_StreamingMsgParser() { };
+RGBDSensor_StreamingMsgParser::RGBDSensor_StreamingMsgParser() { }
 
 bool RGBDSensor_StreamingMsgParser::readRgb(yarp::sig::FlexImage &data, yarp::os::Stamp *timeStamp)
 {
@@ -47,7 +46,7 @@ bool RGBDSensor_StreamingMsgParser::readRgb(yarp::sig::FlexImage &data, yarp::os
     if(timeStamp)
         port_rgb->getEnvelope(*timeStamp);
     return true;
-};
+}
 
 bool RGBDSensor_StreamingMsgParser::readDepth(yarp::sig::ImageOf< yarp::sig::PixelFloat > &data, yarp::os::Stamp *timeStamp)
 {
@@ -55,7 +54,7 @@ bool RGBDSensor_StreamingMsgParser::readDepth(yarp::sig::ImageOf< yarp::sig::Pix
     if(timeStamp)
         port_depth->getEnvelope(*timeStamp);
     return true;
-};
+}
 
 bool RGBDSensor_StreamingMsgParser::read(yarp::sig::FlexImage &rgbImage, yarp::sig::ImageOf< yarp::sig::PixelFloat > &depthImage, yarp::os::Stamp *rgbStamp, yarp::os::Stamp *depthStamp)
 {
@@ -68,7 +67,7 @@ bool RGBDSensor_StreamingMsgParser::read(yarp::sig::FlexImage &rgbImage, yarp::s
     if(depthStamp)
         port_depth->getEnvelope(*depthStamp);
     return true;
-};
+}
 
 void RGBDSensor_StreamingMsgParser::attach(yarp::os::BufferedPort<yarp::sig::FlexImage> *_port_rgb,
             yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat> > *_port_depth)
@@ -77,5 +76,5 @@ void RGBDSensor_StreamingMsgParser::attach(yarp::os::BufferedPort<yarp::sig::Fle
     port_depth = _port_depth;
     port_rgb->useCallback(read_rgb);
     port_depth->useCallback(read_depth);
-};
+}
 
