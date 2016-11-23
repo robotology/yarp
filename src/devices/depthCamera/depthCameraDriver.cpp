@@ -1,5 +1,7 @@
 #include "depthCameraDriver.h"
 #include <algorithm>
+#include <math.h>
+#include <yarp/os/Value.h>
 
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -67,6 +69,18 @@ depthCameraDriver::depthCameraDriver()
     supportedFeatures.push_back(YARP_FEATURE_WHITE_BALANCE);
     supportedFeatures.push_back(YARP_FEATURE_GAIN);
     supportedFeatures.push_back(YARP_FEATURE_FRAME_RATE);
+    m_description.accuracy.first = false;
+    m_description.nearClip.first = false;
+    m_description.farClip.first  = false;
+    m_description.c_H.first      = false;
+    m_description.c_W.first      = false;
+    m_description.c_hFov.first   = false;
+    m_description.c_vFov.first   = false;
+    m_description.d_H.first      = false;
+    m_description.d_W.first      = false;
+    m_description.d_hFov.first   = false;
+    m_description.d_vFov.first   = false;
+
     return;
 }
 
@@ -133,12 +147,106 @@ bool depthCameraDriver::initializeOpeNIDevice()
     return true;
 }
 
+bool paramSetter(const Bottle& settings,const Bottle& description, const string& name, bool& isDescription, Value& v)
+{
+    if(settings.check(name))
+    {
+        isDescription = false;
+        v = settings.find(name);
+        return true;
+    }
+    else if(description.check(name))
+    {
+        isDescription  = true;
+        v = description.find("accuracy");
+        return true;
+    }
+    v = Value();
+    isDescription = false;
+    return false;
+}
+
 bool depthCameraDriver::open(Searchable& config)
 {
     if(!initializeOpeNIDevice())
     {
         return false;
     }
+
+    bool   ret;
+    Bottle settings;
+    Bottle description;
+    string error, success;
+    Value  v1, v2;
+
+    error   = "unable to set";
+    success = "succesfully setted";
+    ret     = true;
+    //"accuracy";
+    //"d_Resolution";
+    //"c_Resolution";
+    //"nearPlane";
+    //"farPlane";
+    //"d_hFov";
+    //"d_vFov";
+    //"c_hFov";
+    //"c_vFov";
+
+    if(!config.check("SETTINGS"))
+    {
+        yError() << "depthCameraDriver: missing SETTINGS section on the configuration file";
+        return false;
+    }
+    settings = config.findGroup("SETTINGS");
+
+    if(!config.check("HW_DESCRIPTION"))
+    {
+        yError() << "depthCameraDriver: missing SETTINGS section on the configuration file";
+        return false;
+    }
+    description = config.findGroup("HW_DESCRIPTION");
+
+
+    if(paramSetter(settings, description, "accuracy", m_description.accuracy.first, v1))
+    {
+        if(m_description.accuracy.first)
+        {
+            if(setDepthAccuracy(v1.asDouble()))
+            {
+                yInfo() << "accuracy" << success;
+            }
+            else
+            {
+                yError() << error << "accuracy";
+            }
+        }
+        else
+        {
+            m_description.accuracy.second = v1.asDouble();
+        }
+    }
+
+    if(paramSetter(settings, description,"rgb_height", m_description.c_H.first, v1)
+    && paramSetter(settings, description, "rgb_width", m_description.c_W.first, v2))
+    {
+        if(m_description.c_H.first && m_description.c_W.first)
+        {
+            if(setRgbResolution(v1.asInt(), v2.asInt()))
+            {
+                yInfo() << "RGB resolution" << success;
+            }
+            else
+            {
+                yError() << error << "RGB resolution";
+            }
+        }
+        else
+        {
+            m_description.c_H.second = v1.asInt();
+            m_description.c_W.second = v2.asInt();
+        }
+    }
+
     return true;
 }
 
@@ -149,27 +257,35 @@ bool depthCameraDriver::close()
     m_device.close();
     OpenNI::shutdown();
     return true;
-
 }
 
 int depthCameraDriver::getRgbHeight()
 {
-    m_imageFrame.mutex.lock();
-    int ret = m_imageFrame.image.height();
-    m_imageFrame.mutex.unlock();
-    return ret;
+    if(m_description.c_H.first)
+    {
+        return m_description.c_H.second;
+    }
+
+    return m_imageStream.getVideoMode().getResolutionY();
 }
 
 int depthCameraDriver::getRgbWidth()
-{
-    m_imageFrame.mutex.lock();
-    int ret = m_imageFrame.image.width();
-    m_imageFrame.mutex.unlock();
-    return ret;
+{    
+    if(m_description.c_W.first)
+    {
+        return m_description.c_W.second;
+    }
+
+    return m_imageStream.getVideoMode().getResolutionX();
 }
 
 bool depthCameraDriver::setDepthResolution(int width, int height)
 {
+    if(m_description.d_W.first)
+    {
+        return false;
+    }
+
     return setResolution(width, height, m_depthStream);
 }
 
@@ -197,19 +313,29 @@ bool depthCameraDriver::setRgbResolution(int width, int height)
     return setResolution(width, height, m_imageStream);
 }
 
+bool depthCameraDriver::setFOV(double horizontalFov, double verticalFov, VideoStream& stream)
+{
+    RETURN_FALSE_STATUS_NOT_OK(stream.setProperty(STREAM_PROPERTY_VERTICAL_FOV, verticalFov * DEG2RAD));
+    RETURN_FALSE_STATUS_NOT_OK(stream.setProperty(STREAM_PROPERTY_HORIZONTAL_FOV, horizontalFov * DEG2RAD));
+    return true;
+}
+
 bool depthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
 {
-    return false;
+    return setFOV(horizontalFov, verticalFov, m_depthStream);
 }
 
 bool depthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
 {
-    return false;
+    return setFOV(horizontalFov, verticalFov, m_depthStream);
 }
 
 bool depthCameraDriver::setDepthAccuracy(double accuracy)
 {
-    if(!(fabs(accuracy - 0.001) < 0.00001) || !(fabs(accuracy - 0.0001) < 0.00001) )
+    bool a1, a2;
+    a1 = fabs(accuracy - 0.001)  < 0.00001;
+    a2 = fabs(accuracy - 0.0001) < 0.00001;
+    if(!a1 && !a2)
     {
         yError() << "depthCameraDriver: supporting accuracy of 1mm (0.001) or 100um (0.0001) only at the moment";
         return false;
@@ -217,13 +343,21 @@ bool depthCameraDriver::setDepthAccuracy(double accuracy)
 
     PixelFormat pf;
     VideoMode   vm;
+    bool        ret;
 
     vm = m_imageStream.getVideoMode();
     pf = fabs(accuracy - 0.001) < 0.00001 ? PIXEL_FORMAT_DEPTH_1_MM : PIXEL_FORMAT_DEPTH_100_UM;
 
     vm.setPixelFormat(pf);
-    RETURN_FALSE_STATUS_NOT_OK(m_imageStream.setVideoMode(vm));
-    return true;
+    m_depthStream.stop();
+    ret = m_depthStream.setVideoMode(vm) == STATUS_OK;
+    RETURN_FALSE_STATUS_NOT_OK(m_depthStream.start());
+
+    if(!ret)
+    {
+        yError() << OpenNI::getExtendedError();
+    }
+    return ret;
 }
 
 bool depthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
@@ -240,22 +374,12 @@ bool depthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
 
 int  depthCameraDriver::getDepthHeight()
 {
-    m_depthFrame.mutex.lock();
-
-    int ret = m_depthFrame.image.height();
-
-    m_depthFrame.mutex.unlock();
-    return ret;
+    return m_depthStream.getVideoMode().getResolutionY();
 }
 
 int  depthCameraDriver::getDepthWidth()
 {
-    m_depthFrame.mutex.lock();
-
-    int ret = m_depthFrame.image.width();
-
-    m_depthFrame.mutex.unlock();
-    return ret;
+    return m_depthStream.getVideoMode().getResolutionX();
 }
 
 bool depthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
@@ -272,21 +396,26 @@ bool depthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
 
 double depthCameraDriver::getDepthAccuracy()
 {
-    return m_depthFrame.pixF == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
+    return m_depthStream.getVideoMode().getPixelFormat() == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
 }
 
 bool depthCameraDriver::getDepthClipPlanes(double& near, double& far)
 {
-    near = m_depthStream.getMinPixelValue();
-    far  = m_depthStream.getMaxPixelValue();
+    double factor;
+    factor = getDepthAccuracy();
+    near   = m_depthStream.getMinPixelValue() * factor;
+    far    = m_depthStream.getMaxPixelValue() * factor;
     return true;
 
 }
 
 bool depthCameraDriver::setDepthClipPlanes(double near, double far)
 {
-    yError() << "impossible to set clip planes for OpenNI2 devices";
-    return false;
+    double factor;
+    factor = getDepthAccuracy();
+    RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MAX_VALUE, int(far  / factor)));
+    RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MIN_VALUE, int(near / factor)));
+    return true;
 }
 
 bool depthCameraDriver::getExtrinsicParam(Property& extrinsic)

@@ -23,6 +23,10 @@
 #define RAD2DEG (180/3.14159265359)
 #endif
 
+#ifndef DEG2RAD
+#define DEG2RAD (3.14159265359/180.0)
+#endif
+
 namespace yarp
 {
     namespace dev
@@ -30,6 +34,43 @@ namespace yarp
         class depthCameraDriver;
     }
 }
+
+struct plum_bob
+{
+    double k1;
+    double k2;
+    double t1;
+    double t2;
+    double k3;
+};
+
+struct intrinsicParams
+{
+    yarp::sig::Matrix retificationMatrix;
+    double            principalPointX;
+    double            principalPointY;
+    double            focalLenghtX;
+    double            focalLenghtY;
+    plum_bob          distortionModel;
+};
+
+struct cameraHwDescription
+{
+    std::pair<bool, double> nearClip;
+    std::pair<bool, double> farClip;
+    std::pair<bool, double> accuracy;
+    std::pair<bool, int>    d_H;
+    std::pair<bool, int>    d_W;
+    std::pair<bool, double> d_hFov;
+    std::pair<bool, double> d_vFov;
+    intrinsicParams         depthIntrinsic;
+
+    std::pair<bool, int>    c_H;
+    std::pair<bool, int>    c_W;
+    std::pair<bool, double> c_hFov;
+    std::pair<bool, double> c_vFov;
+    intrinsicParams         colorIntrinsic;
+};
 
 class streamFrameListener : public openni::VideoStream::NewFrameListener
 {
@@ -121,6 +162,7 @@ private:
     bool        getImage(FlexImage& Frame, Stamp* Stamp, streamFrameListener& sourceFrame);
     bool        getImage(depthImage& Frame, Stamp* Stamp, streamFrameListener& sourceFrame);
     bool        setResolution(int w, int h, openni::VideoStream &stream);
+    bool        setFOV(double horizontalFov, double verticalFov, openni::VideoStream &stream);
 
     //properties
     openni::Device            m_device;
@@ -128,6 +170,8 @@ private:
     openni::VideoStream       m_imageStream;
     streamFrameListener       m_depthFrame;
     streamFrameListener       m_imageFrame;
+    yarp::os::ConstString     m_lastError;
+    cameraHwDescription       m_description;
 
     std::vector<cameraFeature_id_t> supportedFeatures;
 };
