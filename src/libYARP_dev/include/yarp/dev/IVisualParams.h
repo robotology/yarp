@@ -92,8 +92,8 @@ public:
     /**
      * Get the field of view (FOV) of the rgb camera.
      *
-     * @param  horizontalFov will return the value of the horizontal fov
-     * @param  verticalFov   will return the value of the vertical fov
+     * @param  horizontalFov will return the value of the horizontal fov in degrees
+     * @param  verticalFov   will return the value of the vertical fov in degrees
      * @return true on success
      */
     virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) = 0;
@@ -101,8 +101,8 @@ public:
     /**
      * Set the field of view (FOV) of the rgb camera.
      *
-     * @param  horizontalFov will set the value of the horizontal fov
-     * @param  verticalFov   will set the value of the vertical fov
+     * @param  horizontalFov will set the value of the horizontal fov in degrees
+     * @param  verticalFov   will set the value of the vertical fov in degrees
      * @return true on success
      */
     virtual bool setRgbFOV(double horizontalFov, double verticalFov) = 0;
@@ -151,8 +151,8 @@ public:
     /**
      * Get the field of view (FOV) of the depth camera.
      *
-     * @param  horizontalFov will return the value of the horizontal fov
-     * @param  verticalFov   will return the value of the vertical fov
+     * @param  horizontalFov will return the value of the horizontal fov in degrees
+     * @param  verticalFov   will return the value of the vertical fov in degrees
      * @return true if success
      */
     virtual bool getDepthFOV(double &horizontalFov, double &verticalFov) = 0;
@@ -160,8 +160,8 @@ public:
     /**
      * Set the field of view (FOV) of the depth camera.
      *
-     * @param  horizontalFov will set the value of the horizontal fov
-     * @param  verticalFov   will set the value of the vertical fov
+     * @param  horizontalFov will set the value of the horizontal fov in degrees
+     * @param  verticalFov   will set the value of the vertical fov in degrees
      * @return true on success
      */
     virtual bool setDepthFOV(double horizontalFov, double verticalFov) = 0;
