@@ -54,6 +54,31 @@ struct intrinsicParams
     plum_bob          distortionModel;
 };
 
+struct RGBDParam
+{
+    RGBDParam() : name("unknown"), isSetting(false), isDescription(false), size(1) { val.resize(size); };
+    std::string  name;
+    bool isSetting;
+    bool isDescription;
+    int size;
+    std::vector<yarp::os::Value> val;
+};
+
+struct CameraParameters
+{
+    RGBDParam               clipPlanes;
+    RGBDParam               accuracy;
+    RGBDParam               depthRes;
+    RGBDParam               depth_hFov;
+    RGBDParam               depth_vFov;
+    intrinsicParams         depthIntrinsic;
+
+    RGBDParam               rgbRes;
+    RGBDParam               rgb_hFov;
+    RGBDParam               rgb_vFov;
+    intrinsicParams         rgbIntrinsic;
+};
+
 struct cameraHwDescription
 {
     std::pair<bool, double> nearClip;
@@ -99,10 +124,17 @@ class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
                                      public yarp::dev::IRGBDSensor,
                                      public yarp::dev::IFrameGrabberControls2
 {
+private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
     typedef yarp::os::Stamp                           Stamp;
     typedef yarp::os::Property                        Property;
     typedef yarp::sig::FlexImage                      FlexImage;
+
+    CameraParameters        cameraDescription;
+    bool checkParam(const yarp::os::Bottle& settings, const yarp::os::Bottle& description, RGBDParam &param);
+    bool checkParam(const yarp::os::Bottle& input, RGBDParam &param);
+    void settingErrorMsg(RGBDParam &param, bool &ret);
+
 public:
     depthCameraDriver();
     ~depthCameraDriver();
