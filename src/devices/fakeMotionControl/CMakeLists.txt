@@ -6,7 +6,7 @@ yarp_prepare_plugin(fakeMotionControl
                     CATEGORY device
                     TYPE yarp::dev::FakeMotionControl
                     INCLUDE fakeMotionControl.h
-                    EXTRA_CONFIG WRAPPER=controlboard
+                    EXTRA_CONFIG WRAPPER=controlboardwrapper2
                     DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
 
 if(NOT SKIP_fakeMotionControl)
