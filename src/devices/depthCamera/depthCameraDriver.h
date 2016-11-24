@@ -56,11 +56,16 @@ struct intrinsicParams
 
 struct RGBDParam
 {
-    RGBDParam() : name("unknown"), isSetting(false), isDescription(false), size(1) { val.resize(size); };
+    RGBDParam() : name("unknown"), isSetting(false), isDescription(false), size(1)
+    {
+        val.resize(size);
+    }
+
     std::string  name;
-    bool isSetting;
-    bool isDescription;
-    int size;
+    bool         isSetting;
+    bool         isDescription;
+    int          size;
+
     std::vector<yarp::os::Value> val;
 };
 
@@ -69,32 +74,14 @@ struct CameraParameters
     RGBDParam               clipPlanes;
     RGBDParam               accuracy;
     RGBDParam               depthRes;
-    RGBDParam               depth_hFov;
-    RGBDParam               depth_vFov;
+    RGBDParam               depth_Fov;
     intrinsicParams         depthIntrinsic;
 
     RGBDParam               rgbRes;
-    RGBDParam               rgb_hFov;
-    RGBDParam               rgb_vFov;
+    RGBDParam               rgb_Fov;
+    RGBDParam               mirroring;
     intrinsicParams         rgbIntrinsic;
-};
-
-struct cameraHwDescription
-{
-    std::pair<bool, double> nearClip;
-    std::pair<bool, double> farClip;
-    std::pair<bool, double> accuracy;
-    std::pair<bool, int>    d_H;
-    std::pair<bool, int>    d_W;
-    std::pair<bool, double> d_hFov;
-    std::pair<bool, double> d_vFov;
-    intrinsicParams         depthIntrinsic;
-
-    std::pair<bool, int>    c_H;
-    std::pair<bool, int>    c_W;
-    std::pair<bool, double> c_hFov;
-    std::pair<bool, double> c_vFov;
-    intrinsicParams         colorIntrinsic;
+    yarp::sig::Matrix       transformationMatrix;
 };
 
 class streamFrameListener : public openni::VideoStream::NewFrameListener
@@ -124,16 +111,10 @@ class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
                                      public yarp::dev::IRGBDSensor,
                                      public yarp::dev::IFrameGrabberControls2
 {
-private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
     typedef yarp::os::Stamp                           Stamp;
     typedef yarp::os::Property                        Property;
     typedef yarp::sig::FlexImage                      FlexImage;
-
-    CameraParameters        cameraDescription;
-    bool checkParam(const yarp::os::Bottle& settings, const yarp::os::Bottle& description, RGBDParam &param);
-    bool checkParam(const yarp::os::Bottle& input, RGBDParam &param);
-    void settingErrorMsg(RGBDParam &param, bool &ret);
 
 public:
     depthCameraDriver();
@@ -161,10 +142,10 @@ public:
     virtual bool   setDepthAccuracy(double accuracy);
     virtual bool   getDepthClipPlanes(double& near, double& far);
     virtual bool   setDepthClipPlanes(double near, double far);
-    virtual bool   getExtrinsicParam(Property& extrinsic);
+    virtual bool   getExtrinsicParam(sig::Matrix &extrinsic);
     virtual bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL);
-    virtual bool   getDepthImage(depthImage &depthImage, Stamp* timeStamp = NULL);
-    virtual bool   getImages(FlexImage& colorFrame, depthImage &depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL);
+    virtual bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL);
+    virtual bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL);
 
     virtual RGBDSensor_status     getSensorStatus();
     virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL);
@@ -191,10 +172,16 @@ public:
 private:
     //method
     inline bool initializeOpeNIDevice();
+    inline bool setParams(const os::Bottle& settings, const os::Bottle& description);
+    inline bool parseIntrinsic(const yarp::os::Searchable& config, const std::string& groupName, intrinsicParams &params);
     bool        getImage(FlexImage& Frame, Stamp* Stamp, streamFrameListener& sourceFrame);
     bool        getImage(depthImage& Frame, Stamp* Stamp, streamFrameListener& sourceFrame);
     bool        setResolution(int w, int h, openni::VideoStream &stream);
     bool        setFOV(double horizontalFov, double verticalFov, openni::VideoStream &stream);
+    bool        setIntrinsic(yarp::os::Property& intrinsic, const intrinsicParams& values);
+    bool        checkParam(const os::Bottle& settings, const os::Bottle& description, RGBDParam& param);
+    bool        checkParam(const yarp::os::Bottle& input, RGBDParam &param, bool& found);
+    void        settingErrorMsg(const std::string& error, bool& ret);
 
     //properties
     openni::Device            m_device;
@@ -203,8 +190,8 @@ private:
     streamFrameListener       m_depthFrame;
     streamFrameListener       m_imageFrame;
     yarp::os::ConstString     m_lastError;
-    cameraHwDescription       m_description;
+    CameraParameters          m_cameraDescription;
 
-    std::vector<cameraFeature_id_t> supportedFeatures;
+    std::vector<cameraFeature_id_t> m_supportedFeatures;
 };
 #endif
