@@ -7,6 +7,7 @@
  */
 
 
+#include <yarp/os/impl/SplitString.h>
 #include <yarp/manager/localbroker.h>
 
 #include <csignal>
@@ -658,8 +659,11 @@ int LocalBroker::ExecuteCmd(void)
     yarp::os::ConstString cstrEnvName;
     if(strEnv.size())
     {
-        lstrcpy(lpNew, (LPTCH) strEnv.c_str());
-        lpNew += lstrlen(lpNew) + 1;
+        yarp::os::impl::SplitString ss(strEnv.c_str(), ';');
+        for(int i=0; i<ss.size(); i++) {
+            lstrcpy(lpNew, (LPTCH) ss.get(i));
+            lpNew += lstrlen(lpNew) + 1;
+        }
     }
 
     // closing env block
@@ -892,12 +896,15 @@ int LocalBroker::ExecuteCmd(void)
         int nargs = 0;
         char **szarg = new char*[C_MAXARGS + 1];
         parseArguments(szcmd, &nargs, szarg);
-        szarg[nargs]=0;
+        szarg[nargs]=0;                
         if(strEnv.size())
         {
-            char* szenv = new char[strEnv.size()+1];
-            strcpy(szenv,strEnv.c_str());
-            putenv(szenv);
+            yarp::os::impl::SplitString ss(strEnv.c_str(), ';');
+            for(int i=0; i<ss.size(); i++) {
+                char* szenv = new char[strlen(ss.get(i))+1];
+                strcpy(szenv,ss.get(i));
+                putenv(szenv);
+            }
             //delete szenv;
         }
 
@@ -914,7 +921,7 @@ int LocalBroker::ExecuteCmd(void)
                 close(pipe_child_to_parent[WRITE_TO_PIPE]);
                 delete [] szcmd;
                 delete [] szarg;
-                exit(ret);
+                ::exit(ret);
             }
         }
 
@@ -953,7 +960,7 @@ int LocalBroker::ExecuteCmd(void)
         close(pipe_child_to_parent[WRITE_TO_PIPE]);
         delete [] szcmd;
         delete [] szarg;
-        exit(ret);
+        ::exit(ret);
     }
 
     if (IS_PARENT_OF(pid_cmd))

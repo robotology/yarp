@@ -6,7 +6,6 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
 #include <yarp/manager/manager.h>
 #include <yarp/manager/yarpbroker.h>
 #include <yarp/manager/localbroker.h>
@@ -290,6 +289,7 @@ bool Manager::prepare(bool silent)
         exe->setPostExecWait((*itr)->getPostExecWait());
         string env = string("YARP_PORT_PREFIX=") +
                         string((*itr)->getPrefix());
+        env = env + ";" + (*itr)->getEnvironment();
         exe->setEnv(env.c_str());
 
         /**

@@ -26,6 +26,7 @@ ModuleInterface::ModuleInterface(Module* module)
     strStdio = module->strStdio;
     strBroker = module->strBroker;
     strPrefix = module->strPrefix;
+    strEnvironemnt = module->strEnvironemnt;
     iRank = module->iRank;
     strTag = module->getLabel();
     strDisplay = module->getDisplay();
