@@ -64,8 +64,14 @@ public:
     using yarp::os::BufferedPort<jointData>::onRead;
     virtual void onRead(jointData &v);
 
-    bool getLast(int j, jointData &data, Stamp &stamp, double &localArrivalTime);
-    bool getLast(jointData &data2, Stamp &stmp, double &localArrivalTime);
+    // use vocab to identify the data to be read
+    // get a value for a single joint
+    bool getLastSingle(int j, int field, double *data, Stamp &stamp, double &localArrivalTime);
+    bool getLastSingle(int j, int field, int    *data, Stamp &stamp, double &localArrivalTime);
+
+    // get a value for all joints
+    bool getLastVector(int field, double *data, Stamp &stamp, double &localArrivalTime);
+    bool getLastVector(int field, int    *data, Stamp &stamp, double &localArrivalTime);
     int  getIterations();
 
     // time is in ms
