@@ -2975,20 +2975,35 @@ bool ControlBoardWrapper::getRemoteVariable(yarp::os::ConstString key, yarp::os:
     return b;
 }
 
-bool ControlBoardWrapper::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) {
-    //int off = device.lut[0].offset;
-    int subIndex = device.lut[0].deviceEntry;
-    yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
-
-    if (!p)
-    return false;
-
-    if (p->iVar)
+bool ControlBoardWrapper::setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val)
+{
+    size_t bottle_size = val.size();
+    size_t device_size = device.subdevices.size();
+    if (bottle_size != device_size)
     {
-    return p->iVar->setRemoteVariable(key, val);
+        yError("ControlBoardWrapper::setRemoteVariable bottle_size != device_size failure");
+        return false;
     }
 
-    return false;
+    bool b = true;
+    for (unsigned int i = 0; i < device_size; i++)
+    {
+        yarp::dev::impl::SubDevice *p = device.getSubdevice(i);
+        if (!p)  { yError("ControlBoardWrapper::setRemoteVariable !p failure"); return false; }
+        if (!p->iVar) { yError("ControlBoardWrapper::setRemoteVariable !p->iVar failure"); return false; }
+        Bottle* partial_val = val.get(i).asList();
+        if (partial_val)
+        {
+            b &= p->iVar->setRemoteVariable(key, *partial_val);
+        }
+        else
+        {
+            yError("ControlBoardWrapper::setRemoteVariable general failure");
+            return false;
+        }
+    }
+    
+    return b;
 }
 
 bool ControlBoardWrapper::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)

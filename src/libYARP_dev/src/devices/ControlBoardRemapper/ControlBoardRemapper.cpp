@@ -2132,20 +2132,33 @@ bool ControlBoardRemapper::setRemoteVariable(yarp::os::ConstString key, const ya
 {
     yWarning("ControlBoardRemapper: setRemoteVariable is not properly implemented, use at your own risk.");
 
-    size_t subIndex = remappedControlBoards.lut[0].subControlBoardIndex;
-    yarp::dev::RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(subIndex);
-
-    if (!p)
+    size_t bottle_size = val.size();
+    size_t device_size = remappedControlBoards.getNrOfSubControlBoards();
+    if (bottle_size != device_size)
     {
+        yError("ControlBoardRemapper::setRemoteVariable bottle_size != device_size failure");
         return false;
     }
 
-    if (p->iVar)
+    bool b = true;
+    for (unsigned int i = 0; i < device_size; i++)
     {
-        return p->iVar->setRemoteVariable(key, val);
+        yarp::dev::RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(i);
+        if (!p)  { yError("ControlBoardRemapper::setRemoteVariable !p failure"); return false; }
+        if (!p->iVar) { yError("ControlBoardRemapper::setRemoteVariable !p->iVar failure"); return false; }
+        Bottle* partial_val = val.get(i).asList();
+        if (partial_val)
+        {
+            b &= p->iVar->setRemoteVariable(key, *partial_val);
+        }
+        else
+        {
+            yError("ControlBoardRemapper::setRemoteVariable general failure");
+            return false;
+        }
     }
 
-    return false;
+    return b;
 }
 
 bool ControlBoardRemapper::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
