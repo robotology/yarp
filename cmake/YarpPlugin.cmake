@@ -349,7 +349,7 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
         string(TOUPPER "${_Key}" _KEY)
         string(TOLOWER "${_Key}" _key)
         set(_value "${CMAKE_MATCH_2}")
-        set(YARPPLUG_${_KEY} "_value")
+        set(YARPPLUG_${_KEY} "${_value}")
         list(APPEND _extra_config_list YARPPLUG_${_KEY})
       endif()
     endforeach()
