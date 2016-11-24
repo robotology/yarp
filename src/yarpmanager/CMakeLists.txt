@@ -1,5 +1,6 @@
 # Copyright (C) 2014  iCub Facility, Istituto Italiano di Tecnologia
-# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+#          Ali Paikan <ali.paikan@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if(CREATE_YARPMANAGER)
@@ -10,56 +11,110 @@ if(CREATE_YARPMANAGER)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_manager_INCLUDE_DIRS})
+                      ${YARP_manager_INCLUDE_DIRS}
+                      ./src-builder
+                      ./src-manager)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-  set(yarpmanager_SRCS main.cpp
-                       yscopewindow.cpp
-                       entitiestreewidget.cpp
-                       stdoutwindow.cpp
-                       moduleviewwidget.cpp
-                       genericviewwidget.cpp
-                       safe_manager.cpp
-                       customtreewidget.cpp
-                       resourceviewwidget.cpp
-                       applicationviewwidget.cpp
-                       logwidget.cpp
-                       mainwindow.cpp
-                       aboutdlg.cpp
-                       genericinfodlg.cpp)
-  set(yarpmanager_HDRS safe_manager.h
-                       mainwindow.h
-                       entitiestreewidget.h
-                       template_res.h
-                       applicationviewwidget.h
-                       logwidget.h
-                       resourceviewwidget.h
-                       customtreewidget.h
-                       moduleviewwidget.h
-                       genericviewwidget.h
-                       yscopewindow.h
-                       stdoutwindow.h
-                       aboutdlg.h
-                          genericinfodlg.h)
+  # Manager files
+  set(yarpmanager_manager_SRCS src-manager/aboutdlg.cpp
+                               src-manager/applicationviewwidget.cpp
+                               src-manager/customtreewidget.cpp
+                               src-manager/entitiestreewidget.cpp
+                               src-manager/genericinfodlg.cpp
+                               src-manager/genericviewwidget.cpp
+                               src-manager/logwidget.cpp
+                               src-manager/main.cpp
+                               src-manager/mainwindow.cpp
+                               src-manager/moduleviewwidget.cpp
+                               src-manager/newapplicationwizard.cpp
+                               src-manager/resourceviewwidget.cpp
+                               src-manager/safe_manager.cpp
+                               src-manager/stdoutwindow.cpp
+                               src-manager/yscopewindow.cpp)
+
+  set(yarpmanager_manager_HDRS src-manager/aboutdlg.h
+                               src-manager/applicationviewwidget.h
+                               src-manager/customtreewidget.h
+                               src-manager/entitiestreewidget.h
+                               src-manager/genericinfodlg.h
+                               src-manager/genericviewwidget.h
+                               src-manager/logwidget.h
+                               src-manager/mainwindow.h
+                               src-manager/moduleviewwidget.h
+                               src-manager/newapplicationwizard.h
+                               src-manager/resourceviewwidget.h
+                               src-manager/safe_manager.h
+                               src-manager/stdoutwindow.h
+                               src-manager/template_res.h
+                               src-manager/yscopewindow.h)
+
+  set(yarpmanager_manager_UI_FILES src-manager/aboutdlg.ui
+                                   src-manager/applicationviewwidget.ui
+                                   src-manager/genericinfodlg.ui
+                                   src-manager/mainwindow.ui
+                                   src-manager/moduleviewwidget.ui
+                                   src-manager/resourceviewwidget.ui
+                                   src-manager/stdoutwindow.ui
+                                   src-manager/yscopewindow.ui)
+
+
+  # Builder files
+  set(yarpmanager_builder_HDRS src-builder/applicationitem.h
+                               src-builder/arrow.h
+                               src-builder/builderitem.h
+                               src-builder/builderscene.h
+                               src-builder/builderwindow.h
+                               src-builder/commons.h
+                               src-builder/customtree.h
+                               src-builder/destinationportitem.h
+                               src-builder/itemsignalhandler.h
+                               src-builder/moduleitem.h
+                               src-builder/propertiestable.h
+                               src-builder/sourceportitem.h
+                               src-builder/yarpbuilderlib_global.h
+                               src-builder/yarpbuilderlib.h)
+
+  set(yarpmanager_builder_SRCS src-builder/applicationitem.cpp
+                               src-builder/arrow.cpp
+                               src-builder/builderitem.cpp
+                               src-builder/builderscene.cpp
+                               src-builder/builderwindow.cpp
+                               src-builder/customtree.cpp
+                               src-builder/destinationportitem.cpp
+                               src-builder/itemsignalhandler.cpp
+                               src-builder/moduleitem.cpp
+                               src-builder/propertiestable.cpp
+                               src-builder/sourceportitem.cpp
+                               src-builder/yarpbuilderlib.cpp)
+
+
+  # All files
+  set(yarpmanager_HDRS ${yarpmanager_manager_HDRS}
+                       ${yarpmanager_builder_HDRS})
+
+  set(yarpmanager_SRCS ${yarpmanager_manager_SRCS}
+                       ${yarpmanager_builder_SRCS})
+
+  set(yarpmanager_UI_FILES ${yarpmanager_manager_UI_FILES})
+
+
+  # Resource files
   set(yarpmanager_QRC_FILES res.qrc)
   if(WIN32)
     set(yarpmanager_RC_FILES yarpmanager.rc)
   endif()
-  set(yarpmanager_UI_FILES moduleviewwidget.ui
-                           stdoutwindow.ui
-                           yscopewindow.ui
-                           mainwindow.ui
-                           resourceviewwidget.ui
-                           applicationviewwidget.ui
-                           aboutdlg.ui
-                           genericinfodlg.ui)
 
+
+  # Generated files
   qt5_add_resources(yarpmanager_QRC_GEN_SRCS ${yarpmanager_QRC_FILES})
   qt5_wrap_ui(yarpmanager_UI_GEN_SRCS ${yarpmanager_UI_FILES})
 
-  source_group("Source Files" FILES ${yarpmanager_SRCS})
-  source_group("Header Files" FILES ${yarpmanager_HDRS})
+  source_group("Header Files\\manager" FILES ${yarpmanager_manager_HDRS})
+  source_group("Header Files\\builder" FILES ${yarpmanager_builder_HDRS})
+  source_group("Source Files\\manager" FILES ${yarpmanager_manager_SRCS})
+  source_group("Source Files\\builder" FILES ${yarpmanager_builder_SRCS})
   source_group("Resources Files" FILES ${yarpmanager_QRC_FILES}
                                        ${yarpmanager_RC_FILES})
   source_group("UI Files" FILES ${yarpmanager_UI_FILES})

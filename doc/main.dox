@@ -73,7 +73,6 @@ GUIs:
 \li \subpage yarpview
 \li \subpage yarpscope
 \li \subpage yarpmanager
-\li \subpage yarpmanagerpp
 \li \subpage yarpdataplayer
 \li \subpage yarpmotorgui
 \li \subpage yarpbatterygui

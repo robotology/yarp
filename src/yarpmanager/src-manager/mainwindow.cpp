@@ -1159,5 +1159,3 @@ void MainWindow::onViewBuilderWindows() {
         }
     }
 }
-
-
