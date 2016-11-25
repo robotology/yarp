@@ -54,7 +54,7 @@ namespace yarp {
  * for depth image following Framegrabber and IDepthSensor interfaces specification respectively.
  * See they documentation for more details about each interface.
  *
- * This device is paired with its client called RGBDSensorWrapper to receive the data streams and perfor remote operations.
+ * This device is paired with its server called RGBDSensorWrapper to receive the data streams and perform remote operations.
  *
  *   Parameters required by this device are:
  * | Parameter name  | SubParameter   | Type    | Units          | Default Value | Required      | Description                                                                           | Notes |
