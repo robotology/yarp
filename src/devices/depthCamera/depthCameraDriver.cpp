@@ -657,6 +657,18 @@ bool depthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
     return true;
 }
 
+bool depthCameraDriver::getRgbMirroring(bool& mirror)
+{
+    mirror = m_imageStream.getMirroringEnabled();
+    return true;
+}
+
+bool depthCameraDriver::setRgbMirroring(bool mirror)
+{
+    RETURN_FALSE_STATUS_NOT_OK(m_imageStream.setMirroringEnabled(mirror));
+    return true;
+}
+
 bool depthCameraDriver::setIntrinsic(Property& intrinsic, const intrinsicParams& values)
 {
     intrinsic.put("focalLenghtX",       values.focalLenghtX);
@@ -715,7 +727,6 @@ bool depthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
     nearPlane   = m_depthStream.getMinPixelValue() * factor;
     farPlane    = m_depthStream.getMaxPixelValue() * factor;
     return true;
-
 }
 
 bool depthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
@@ -724,6 +735,18 @@ bool depthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
     factor = getDepthAccuracy();
     RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MAX_VALUE, int(farPlane  / factor)));
     RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MIN_VALUE, int(nearPlane / factor)));
+    return true;
+}
+
+bool depthCameraDriver::getDepthMirroring(bool& mirror)
+{
+    mirror = m_depthStream.getMirroringEnabled();
+    return true;
+}
+
+bool depthCameraDriver::setDepthMirroring(bool mirror)
+{
+    RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setMirroringEnabled(mirror));
     return true;
 }
 

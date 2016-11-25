@@ -131,6 +131,9 @@ public:
     virtual bool   setRgbResolution(int width, int height);
     virtual bool   getRgbFOV(double& horizontalFov, double& verticalFov);
     virtual bool   setRgbFOV(double horizontalFov, double verticalFov);
+    virtual bool   getRgbMirroring(bool& mirror);
+    virtual bool   setRgbMirroring(bool mirror);
+
     virtual bool   getRgbIntrinsicParam(Property& intrinsic);
     virtual int    getDepthHeight();
     virtual int    getDepthWidth();
@@ -142,6 +145,10 @@ public:
     virtual bool   setDepthAccuracy(double accuracy);
     virtual bool   getDepthClipPlanes(double& nearPlane, double& farPlane);
     virtual bool   setDepthClipPlanes(double nearPlane, double farPlane);
+    virtual bool   getDepthMirroring(bool& mirror);
+    virtual bool   setDepthMirroring(bool mirror);
+
+
     virtual bool   getExtrinsicParam(sig::Matrix &extrinsic);
     virtual bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL);
     virtual bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL);
