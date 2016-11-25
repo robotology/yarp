@@ -35,6 +35,9 @@ namespace yarp
     }
 }
 
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 struct plum_bob
 {
     double k1;
@@ -107,7 +110,7 @@ private:
     virtual void onNewFrame(openni::VideoStream& stream);
     openni::VideoFrameRef   frameRef;
 };
-
+#endif
 
 
 /**

@@ -74,18 +74,17 @@ depthCameraDriver::depthCameraDriver()
     m_supportedFeatures.push_back(YARP_FEATURE_MIRROR);
 
     // initialize struct for params
-    m_cameraDescription.accuracy.name   = "accuracy";
-    m_cameraDescription.clipPlanes.name = "clipPlanes";
-    m_cameraDescription.clipPlanes.size = 2;
-    m_cameraDescription.depth_Fov.name  = "depthFov";
-    m_cameraDescription.depth_Fov.size  = 2;
-    m_cameraDescription.depthRes.name   = "depthResolution";
-    m_cameraDescription.depthRes.size   = 2;
-    m_cameraDescription.rgb_Fov.name    = "rgbFov";
-    m_cameraDescription.rgb_Fov.size    = 2;
-    m_cameraDescription.rgbRes.name     = "rgbResolution";
-    m_cameraDescription.rgbRes.size     = 2;
     m_cameraDescription.accuracy.name        = "accuracy";
+    m_cameraDescription.clipPlanes.name      = "clipPlanes";
+    m_cameraDescription.clipPlanes.size      = 2;
+    m_cameraDescription.depth_Fov.name       = "depthFov";
+    m_cameraDescription.depth_Fov.size       = 2;
+    m_cameraDescription.depthRes.name        = "depthResolution";
+    m_cameraDescription.depthRes.size        = 2;
+    m_cameraDescription.rgb_Fov.name         = "rgbFov";
+    m_cameraDescription.rgb_Fov.size         = 2;
+    m_cameraDescription.rgbRes.name          = "rgbResolution";
+    m_cameraDescription.rgbRes.size          = 2;
     m_cameraDescription.rgbMirroring.name    = "rgbMirroring";
     m_cameraDescription.depthMirroring.name  = "depthMirroring";
     m_cameraDescription.transformationMatrix.resize(4, 4);
@@ -248,13 +247,12 @@ bool depthCameraDriver::setParams(const Bottle& settings, const Bottle& descript
     bool ret;
     ret = true;
 
-    if(!checkParam(settings, description, m_cameraDescription.accuracy)   ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.clipPlanes) ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.depth_Fov)  ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.depthRes)   ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.rgb_Fov)    ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.rgbRes)     ) ret = false;
     if(!checkParam(settings, description, m_cameraDescription.accuracy)        ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.clipPlanes)      ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.depth_Fov)       ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.depthRes)        ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.rgb_Fov)         ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.rgbRes)          ) ret = false;
     if(!checkParam(settings, description, m_cameraDescription.rgbMirroring)    ) ret = false;
     if(!checkParam(settings, description, m_cameraDescription.depthMirroring)  ) ret = false;
 
