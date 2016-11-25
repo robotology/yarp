@@ -197,7 +197,6 @@ bool depthCameraDriver::checkParam(const Bottle& input, RGBDParam& param, bool& 
         }
         if(v.isList() )
         {
-            yDebug() << param.name << "is list";
             // check single or more params
             if(param.size == 1)
             {
@@ -217,15 +216,12 @@ bool depthCameraDriver::checkParam(const Bottle& input, RGBDParam& param, bool& 
             param.val.resize(param.size);
             for(int i=0; i<param.size; i++)
             {
-                yDebug() << b->get(i).toString();
                 param.val[i] = b->get(i); // maybe i=1? check...
             }
             return true;
         }
         else  // got a single value from file
         {
-            yDebug() << param.name << "is not list";
-
             ret          = true;
             param.val[0] = v;
             found        = true;
