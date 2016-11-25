@@ -43,6 +43,8 @@ public:
     virtual bool getRgbFOV(double &horizontalFov, double &verticalFov);
     virtual bool setRgbFOV(double horizontalFov, double verticalFov);
     virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic);
+    virtual bool getRgbMirroring(bool &mirror);
+    virtual bool setRgbMirroring(bool mirror);
 };
 
 
@@ -82,6 +84,8 @@ public:
     virtual bool   getDepthClipPlanes(double &nearPlane, double &farPlane);
     virtual bool   setDepthClipPlanes(double nearPlane, double farPlane);
     virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic);
+    virtual bool   getDepthMirroring(bool &mirror);
+    virtual bool   setDepthMirroring(bool mirror);
 };
 
 

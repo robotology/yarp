@@ -96,8 +96,28 @@ bool Implement_RgbVisualParams_Sender::getRgbIntrinsicParam(yarp::os::Property &
         intrinsic.clear();
         return false;
     }
-
     return Property::copyPortable(response.get(3), intrinsic);  // will it really work??
+}
+
+bool Implement_RgbVisualParams_Sender::getRgbMirroring(bool& mirror)
+{
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_MIRROR);
+    _port.write(cmd, response);
+    return response.get(3).asBool();
+}
+
+bool Implement_RgbVisualParams_Sender::setRgbMirroring(bool mirror)
+{
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+    cmd.addVocab(VOCAB_SET);
+    cmd.addVocab(VOCAB_MIRROR);
+    cmd.addInt(mirror);
+    _port.write(cmd, response);
+    return response.get(2).asBool();
 }
 
 // RGB Parser
@@ -195,6 +215,22 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                 }
                 break;
 
+                case VOCAB_MIRROR:
+                {
+                    bool mirror;
+                    ret = iRgbVisual->getRgbMirroring(mirror);
+                    if(ret)
+                    {
+                        response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+                        response.addVocab(VOCAB_MIRROR);
+                        response.addVocab(VOCAB_IS);
+                        response.addInt(mirror);
+                    }
+                    else
+                        response.addVocab(VOCAB_FAILED);
+                }
+                break;
+
                 default:
                 {
                     yError() << "Rgb Visual Parameter interface parser received am unknown GET command. Command is " << cmd.toString();
@@ -224,6 +260,15 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                     response.addInt(ret);
                 break;
 
+                case VOCAB_MIRROR:
+                {
+                    ret = iRgbVisual->setRgbMirroring(cmd.get(3).asBool());
+                    response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
+                    response.addVocab(VOCAB_SET);
+                    response.addInt(ret);
+                }
+                break;
+
                 default:
                 {
                     yError() << "Rgb Visual Parameter interface parser received am unknown SET command. Command is " << cmd.toString();
@@ -232,7 +277,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                 }
                 break;
             }
-        }
+        }  // end VOCAB
         break;
 
         default:
@@ -392,6 +437,26 @@ bool Implement_DepthVisualParams_Sender::getDepthIntrinsicParam(yarp::os::Proper
     return true;
 }
 
+bool Implement_DepthVisualParams_Sender::getDepthMirroring(bool& mirror)
+{
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_MIRROR);
+    _port.write(cmd, response);
+    return response.get(3).asBool();
+}
+
+bool Implement_DepthVisualParams_Sender::setDepthMirroring(bool mirror)
+{
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab(VOCAB_SET);
+    cmd.addVocab(VOCAB_MIRROR);
+    cmd.addInt(mirror);
+    _port.write(cmd, response);
+    return response.get(2).asBool();
+}
 
 Implement_DepthVisualParams_Parser::Implement_DepthVisualParams_Parser() : iDepthVisual(YARP_NULLPTR) { }
 // Implement_DepthVisualParams_Parser::~Implement_DepthVisualParams_Parser() { }
@@ -513,6 +578,22 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                 }
                 break;
 
+                case VOCAB_MIRROR:
+                {
+                    bool mirror;
+                    ret = iDepthVisual->getDepthMirroring(mirror);
+                    if(ret)
+                    {
+                        response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
+                        response.addVocab(VOCAB_MIRROR);
+                        response.addVocab(VOCAB_IS);
+                        response.addInt(mirror);
+                    }
+                    else
+                        response.addVocab(VOCAB_FAILED);
+                }
+                break;
+
                 default:
                 {
                     yError() << "Depth Visual Parameter interface parser received am unknown GET command. Command is " << cmd.toString();
@@ -579,6 +660,15 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     }
                     else
                         response.addVocab(VOCAB_FAILED);
+                }
+                break;
+
+                case VOCAB_MIRROR:
+                {
+                    ret = iDepthVisual->setDepthMirroring(cmd.get(3).asBool());
+                    response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
+                    response.addVocab(VOCAB_SET);
+                    response.addInt(ret);
                 }
                 break;
 

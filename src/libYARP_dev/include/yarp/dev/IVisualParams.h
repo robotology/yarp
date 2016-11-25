@@ -42,9 +42,10 @@ namespace yarp {
 #define VOCAB_OK                VOCAB2('o','k')
 #define VOCAB_FAILED            VOCAB4('f','a','i','l')
 
-// Rgb or depth
+// Rgb and depth
 #define VOCAB_RGB               VOCAB3('r','g','b')
 #define VOCAB_DEPTH             VOCAB4('d','e','p','t')
+#define VOCAB_MIRROR            VOCAB4('m','i','r','r')
 
 // Methods
 #define VOCAB_WIDTH             VOCAB1('w')
@@ -114,6 +115,22 @@ public:
      * @return true if success
      */
     virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) = 0;
+
+    /**
+     * Get the mirroring setting of the sensor
+     *
+     * @param mirror: true if image is mirrored, false otherwise
+     * @return true if success
+     */
+    virtual bool getRgbMirroring(bool &mirror) = 0;
+
+    /**
+     * Set the mirroring setting of the sensor
+     *
+     * @param mirror: true if image should be mirrored, false otherwise
+     * @return true if success
+     */
+    virtual bool setRgbMirroring(bool mirror) = 0;
 };
 
 
@@ -208,6 +225,23 @@ public:
      * @return true if success
      */
     virtual bool setDepthClipPlanes(double nearPlane, double farPlane) = 0;
+
+    /**
+     * Get the mirroring setting of the sensor
+     *
+     * @param mirror: true if image is mirrored, false otherwise
+     * @return true if success
+     */
+    virtual bool getDepthMirroring(bool &mirror) = 0;
+
+    /**
+     * Set the mirroring setting of the sensor
+     *
+     * @param mirror: true if image should be mirrored, false otherwise
+     * @return true if success
+     */
+    virtual bool setDepthMirroring(bool mirror) = 0;
+
 
 };
 
