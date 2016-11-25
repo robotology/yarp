@@ -52,8 +52,11 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
     torques = 0;
     positions = 0;
     speeds = 0;
+    motorPositions = 0;
     done = 0;
     interactionModes = 0;
+    part_motorPositionVisible = false;
+    part_speedVisible = false;
 
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
@@ -170,6 +173,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
         torques = new double[number_of_joints];
         positions = new double[number_of_joints];
         speeds = new double[number_of_joints];
+        motorPositions = new double[number_of_joints];
         done = new bool[number_of_joints];
         interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
 
@@ -331,6 +335,7 @@ PartItem::~PartItem()
     if (torques) { delete[] torques; torques = 0; }
     if (positions) { delete[] positions; positions = 0; }
     if (speeds) { delete[] speeds; speeds = 0; }
+    if (motorPositions) { delete[] motorPositions; motorPositions = 0; }
     if (done) { delete[] done; done = 0; }
 }
 
@@ -434,10 +439,16 @@ bool PartItem::openInterfaces()
         if(!ok){
             yError("...iinteract was not ok...");
         }
+
         //optional interfaces
         if (!partsdd->view(iVar))
         {
             yError("...iVar was not ok...");
+        }
+
+        if (!partsdd->view(iMot))
+        {
+            yError("...iMot was not ok...");
         }
 
         if (!partsdd->view(remCalib))
@@ -1765,7 +1776,8 @@ void PartItem::fixedTimeMove(SequenceItem sequence)
 
 void PartItem::onGo(SequenceItem sequenceItem)
 {
-    if(sequenceItem.getPositions().isEmpty() || sequenceItem.getSpeeds().isEmpty()){
+    if(sequenceItem.getPositions().isEmpty() || sequenceItem.getSpeeds().isEmpty())
+    {
         QMessageBox::critical(this,"Error", "Select an entry in the table before performing a movement");
         return;
     }
@@ -1773,7 +1785,8 @@ void PartItem::onGo(SequenceItem sequenceItem)
     int NUMBER_OF_JOINTS;
     iPos->getAxes(&NUMBER_OF_JOINTS);
 
-    for(int i=0;i<NUMBER_OF_JOINTS;i++){
+    for(int i=0;i<NUMBER_OF_JOINTS;i++)
+    {
         iPos->setRefSpeed(i,sequenceItem.getSpeeds().at(i));
         iPos->positionMove(i,sequenceItem.getPositions().at(i));
     }
@@ -1781,7 +1794,8 @@ void PartItem::onGo(SequenceItem sequenceItem)
 
 void PartItem::onSequenceActivated()
 {
-    for(int i=0;i<layout->count();i++){
+    for(int i=0;i<layout->count();i++)
+    {
         JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
         if(joint){
             joint->sequenceActivated();
@@ -1794,7 +1808,8 @@ void PartItem::onSequenceActivated()
 
 void PartItem::onSequenceStopped()
 {
-    for(int i=0;i<layout->count();i++){
+    for(int i=0;i<layout->count();i++)
+    {
         JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
         if(joint){
             joint->sequenceStopped();
@@ -1807,7 +1822,8 @@ void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
 {
     QList<double>values;
     QList<double>speeds;
-    for(int i=0;i<layout->count();i++){
+    for(int i=0;i<layout->count();i++)
+    {
         JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
         values.append(this->positions[i]);
         speeds.append(joint->getTrajectoryVelocityValue());
@@ -1818,7 +1834,8 @@ void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
 
 void PartItem::onEnableControlVelocity(bool control)
 {
-    for(int i=0;i<layout->count();i++){
+    for(int i=0;i<layout->count();i++)
+    {
         JointItem *joint  = (JointItem*)layout->itemAt(i)->widget();
         joint->enableControlVelocity(control);
     }
@@ -1826,7 +1843,8 @@ void PartItem::onEnableControlVelocity(bool control)
 
 void PartItem::onEnableControlMixed(bool control)
 {
-    for (int i = 0; i<layout->count(); i++){
+    for (int i = 0; i<layout->count(); i++)
+    {
         JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
         joint->enableControlMixed(control);
     }
@@ -1834,7 +1852,8 @@ void PartItem::onEnableControlMixed(bool control)
 
 void PartItem::onEnableControlPositionDirect(bool control)
 {
-    for (int i = 0; i<layout->count(); i++){
+    for (int i = 0; i<layout->count(); i++)
+    {
         JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
         joint->enableControlPositionDirect(control);
     }
@@ -1842,7 +1861,8 @@ void PartItem::onEnableControlPositionDirect(bool control)
 
 void PartItem::onEnableControlOpenloop(bool control)
 {
-    for (int i = 0; i<layout->count(); i++){
+    for (int i = 0; i<layout->count(); i++)
+    {
         JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
         joint->enableControlOpenloop(control);
     }
@@ -1850,9 +1870,21 @@ void PartItem::onEnableControlOpenloop(bool control)
 
 void PartItem::onViewSpeedValues(bool view)
 {
-    for(int i=0;i<layout->count();i++){
+    part_speedVisible = view;
+    for(int i=0;i<layout->count();i++)
+    {
         JointItem *joint  = (JointItem*)layout->itemAt(i)->widget();
         joint->setSpeedVisible(view);
+    }
+}
+
+void PartItem::onViewMotorPositions(bool view)
+{
+    part_motorPositionVisible = view;
+    for (int i = 0; i<layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)layout->itemAt(i)->widget();
+        joint->setMotorPositionVisible(view);
     }
 }
 
@@ -2041,7 +2073,8 @@ bool PartItem::updatePart()
     // *** update measured encoders, velocity, torques ***
     if (!iencs->getEncoders(positions))   { yWarning("Unable to update encoders"); return false; }
     if (!iTrq->getTorques(torques))       { yWarning("Unable to update torques"); }
-    if (!iencs->getEncoderSpeeds(speeds)) { yWarning("Unable to update speeds"); }
+    if (this->part_speedVisible && !iencs->getEncoderSpeeds(speeds)) { yWarning("Unable to update speeds"); }
+    if (this->part_motorPositionVisible && !iMot->getMotorEncoders(motorPositions)) { yWarning("Unable to update motorPositions"); }
     
     // *** update checkMotionDone, refTorque, refTrajectorySpeed, refSpeed ***
     // (only one at a time in order to save badwidth)
@@ -2081,6 +2114,8 @@ bool PartItem::updatePart()
         if (1) { joint->setTorque(torques[jk]); }
         else {}
         if (1) { joint->setSpeed(speeds[jk]); }
+        else {}
+        if (1) { joint->setMotorPosition(motorPositions[jk]); }
         else {}
     }
     

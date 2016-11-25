@@ -256,7 +256,7 @@ QSlider::groove:horizontal:disabled {
  }</string>
         </property>
         <property name="currentIndex">
-         <number>6</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="pageIdle">
          <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -323,7 +323,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_posUnits">
+                 <widget class="QLabel" name="labelIdleposUnits">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -345,7 +345,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_trqTitle">
+              <widget class="QLabel" name="labelIdleTorque">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -368,14 +368,14 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_trqUnits">
+              <widget class="QLabel" name="labelIdletrqUnits">
                <property name="text">
                 <string>Nm</string>
                </property>
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="labelSpeed">
+              <widget class="QLabel" name="labelIdleSpeed">
                <property name="text">
                 <string>Speed:</string>
                </property>
@@ -398,9 +398,30 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="label_velUnits">
+              <widget class="QLabel" name="labelIdlevelUnits">
                <property name="text">
                 <string>deg/s</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelIdleMotorPosition">
+               <property name="text">
+                <string>MotorPos:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="editIdleMotorPosition">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QLabel" name="labelIdleMotorPositionUnits">
+               <property name="text">
+                <string>deg</string>
                </property>
               </widget>
              </item>
@@ -520,7 +541,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_posUnits_2">
+                 <widget class="QLabel" name="labelPositionposUnits">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -604,10 +625,10 @@ QSlider::groove:horizontal:disabled {
              <property name="horizontalSpacing">
               <number>6</number>
              </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_trqTitle_2">
+             <item row="0" column="2">
+              <widget class="QLabel" name="labelPositiontrqUnits">
                <property name="text">
-                <string>Torque:</string>
+                <string>Nm</string>
                </property>
               </widget>
              </item>
@@ -627,21 +648,28 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="label_trqUnits_2">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelPositionTorque">
                <property name="text">
-                <string>Nm</string>
+                <string>Torque:</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelSpeed2">
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelPositionSpeed">
                <property name="text">
                 <string>Speed:</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="2" column="2">
+              <widget class="QLabel" name="labelPositionvelUnits">
+               <property name="text">
+                <string>deg/s</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
               <widget class="QLineEdit" name="editPositionSpeed">
                <property name="maximumSize">
                 <size>
@@ -657,10 +685,24 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="label_velUnits_2">
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelPositionMotorPosition">
                <property name="text">
-                <string>deg/s</string>
+                <string>MotorPos:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="editPositionMotorPosition">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="labelPositionMotorPositionUnits">
+               <property name="text">
+                <string>deg</string>
                </property>
               </widget>
              </item>
@@ -767,7 +809,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_posUnits_3">
+                 <widget class="QLabel" name="labelPositionDirposUnits">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -789,7 +831,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_trqTitle_3">
+              <widget class="QLabel" name="labelPositionDirTorque">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -812,14 +854,14 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_trqUnits_3">
+              <widget class="QLabel" name="labelPositionDirtrqUnits">
                <property name="text">
                 <string>Nm</string>
                </property>
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="labelSpeed4">
+              <widget class="QLabel" name="labelPositionDirSpeed">
                <property name="text">
                 <string>Speed:</string>
                </property>
@@ -842,7 +884,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="label_velUnits_3">
+              <widget class="QLabel" name="labelPositionDirvelUnits">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -963,7 +1005,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_posUnits_4">
+                 <widget class="QLabel" name="labelMixedposUnits">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -1047,10 +1089,40 @@ QSlider::groove:horizontal:disabled {
              <property name="horizontalSpacing">
               <number>6</number>
              </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_trqTitle_4">
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="editMixedSpeed">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelMixedSpeed">
                <property name="text">
-                <string>Torque:</string>
+                <string>Speed:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="labelMixedvelUnits">
+               <property name="text">
+                <string>deg/s</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="labelMixedtrqUnits">
+               <property name="text">
+                <string>Nm</string>
                </property>
               </widget>
              </item>
@@ -1070,40 +1142,10 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="label_trqUnits_4">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelMixedTorque">
                <property name="text">
-                <string>Nm</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelSpeed6">
-               <property name="text">
-                <string>Speed:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="editMixedSpeed">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="label_velUnits_4">
-               <property name="text">
-                <string>deg/s</string>
+                <string>Torque:</string>
                </property>
               </widget>
              </item>
@@ -1237,7 +1279,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_posUnits_5">
+                 <widget class="QLabel" name="labelVelocityposUnits">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -1259,7 +1301,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_trqTitle_5">
+              <widget class="QLabel" name="labelVelocityTorque">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1282,14 +1324,14 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_trqUnits_5">
+              <widget class="QLabel" name="labelVelocitytrqUnits">
                <property name="text">
                 <string>Nm</string>
                </property>
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="labelSpeed10_2">
+              <widget class="QLabel" name="labelVelocitySpeed">
                <property name="text">
                 <string>Speed:</string>
                </property>
@@ -1312,7 +1354,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="label_velUnits_5">
+              <widget class="QLabel" name="labelVelocityvelUnits">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -1445,7 +1487,7 @@ QSlider::groove:horizontal:disabled {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_posUnits_6">
+                 <widget class="QLabel" name="labelTorqueposUnits">
                   <property name="text">
                    <string>deg</string>
                   </property>
@@ -1467,7 +1509,10 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_trqTitle_6">
+              <widget class="QLabel" name="labelTorqueTorque">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1490,14 +1535,14 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="label_trqUnits_6">
+              <widget class="QLabel" name="labelTorquetrqUnits">
                <property name="text">
                 <string>Nm</string>
                </property>
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="labelSpeed8">
+              <widget class="QLabel" name="labelTorqueSpeed">
                <property name="text">
                 <string>Speed:</string>
                </property>
@@ -1520,7 +1565,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="label_velUnits_6">
+              <widget class="QLabel" name="labelTorquevelUnits">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -1615,7 +1660,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="3" column="2">
-              <widget class="QLabel" name="label_velUnits_7">
+              <widget class="QLabel" name="labelOpenLoopvelUnits">
                <property name="text">
                 <string>deg/s</string>
                </property>
@@ -1638,7 +1683,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="label_trqTitle_7">
+              <widget class="QLabel" name="labelOpenLoopTorque">
                <property name="text">
                 <string>Torque:</string>
                </property>
@@ -1661,14 +1706,14 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="2" column="2">
-              <widget class="QLabel" name="label_trqUnits_7">
+              <widget class="QLabel" name="labelOpenLooptrqUnits">
                <property name="text">
                 <string>Nm</string>
                </property>
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="labelSpeed10">
+              <widget class="QLabel" name="labelOpenLoopSpeed">
                <property name="text">
                 <string>Speed:</string>
                </property>
@@ -1692,7 +1737,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="label_posUnits_7">
+              <widget class="QLabel" name="labelOpenLoopposUnits">
                <property name="text">
                 <string>deg</string>
                </property>

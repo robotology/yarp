@@ -117,7 +117,10 @@ private:
     double* torques;
     double* positions;
     double* speeds;
+    double* motorPositions;
     bool*   done;
+    bool part_speedVisible;
+    bool part_motorPositionVisible;
     yarp::dev::InteractionModeEnum* interactionModes;
 
     ResourceFinder *finder;
@@ -134,6 +137,7 @@ private:
     IVelocityControl2  *iVel;
     IRemoteVariables   *iVar;
     IEncoders          *iencs;
+    IMotorEncoders     *iMot;
     IAmplifierControl  *iAmp;
     IPidControl        *iPid;
     IOpenLoopControl   *iOpl;
@@ -183,6 +187,7 @@ public slots:
     void updateControlMode();
     bool updatePart();
     void onViewSpeedValues(bool);
+    void onViewMotorPositions(bool);
     void onSetPosSliderOptionPI(int mode, double step);
     void onSetVelSliderOptionPI(int mode, double step);
     void onSetTrqSliderOptionPI(int mode, double step);

@@ -142,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *viewGlobalToolbar = windows->addAction("Global Commands Toolbar");
     QAction *viewPartToolbar = windows->addAction("Part Commands Toolbar");
     QAction *viewSpeedValues = windows->addAction("View Speed Values");
+    QAction *viewMotorPosition = windows->addAction("View Motor Position");
     QAction *viewPositionTarget = windows->addAction("View Position Target");
     QAction *enableControlVelocity = windows->addAction("Enable Velocity Control");
     QAction *enableControlMixed = windows->addAction("Enable Mixed Control");
@@ -152,6 +153,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewGlobalToolbar->setCheckable(true);
     viewPartToolbar->setCheckable(true);
     viewSpeedValues->setCheckable(true);
+    viewMotorPosition->setCheckable(true);
     enableControlVelocity->setCheckable(true);
     enableControlMixed->setCheckable(true);
     enableControlPositionDirect->setCheckable(true);
@@ -163,10 +165,12 @@ MainWindow::MainWindow(QWidget *parent) :
     bool bViewPartToolbar = settings.value("PartToolVisible",true).toBool();
     bool bSpeedValues = settings.value("SpeedValuesVisible",false).toBool();
     bool bViewPositionTarget = settings.value("ViewPositionTarget", true).toBool();
+    bool bviewMotorPosition = settings.value("MotorPositionVisible", false).toBool();
 
     viewGlobalToolbar->setChecked(bViewGlobalToolbar);
     viewPartToolbar->setChecked(bViewPartToolbar);
     viewSpeedValues->setChecked(bSpeedValues);
+    viewMotorPosition->setChecked(bviewMotorPosition);
     viewPositionTarget->setChecked(bViewPositionTarget);
     enableControlVelocity->setChecked(false);
     enableControlMixed->setChecked(false);
@@ -179,6 +183,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewGlobalToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewGlobalToolbar(bool)));
     connect(viewPartToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewPartToolbar(bool)));
     connect(viewSpeedValues,SIGNAL(triggered(bool)),this,SLOT(onViewSpeeds(bool)));
+    connect(viewMotorPosition, SIGNAL(triggered(bool)), this, SLOT(onViewMotorPositions(bool)));
     connect(viewPositionTarget, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTarget(bool)));
     connect(enableControlVelocity, SIGNAL(triggered(bool)), this, SLOT(onEnableControlVelocity(bool)));
     connect(enableControlMixed, SIGNAL(triggered(bool)), this, SLOT(onEnableControlMixed(bool)));
@@ -321,6 +326,14 @@ void MainWindow::onViewSpeeds(bool val)
     sig_viewSpeedValues(val);
 }
 
+void MainWindow::onViewMotorPositions(bool val)
+{
+    QSettings settings("YARP", "yarpmotorgui");
+    settings.setValue("MotorPositionVisible", val);
+
+    sig_viewMotorPositions(val);
+}
+
 void MainWindow::onViewPositionTarget(bool val)
 {
     QSettings settings("YARP", "yarpmotorgui");
@@ -413,6 +426,7 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
             connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
             connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
             connect(this,SIGNAL(sig_viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
+            connect(this, SIGNAL(sig_viewMotorPositions(bool)), part, SLOT(onViewMotorPositions(bool)));
             connect(this, SIGNAL(sig_setPosSliderOptionMW(int, double)), part, SLOT(onSetPosSliderOptionPI(int, double)));
             connect(this, SIGNAL(sig_setVelSliderOptionMW(int, double)), part, SLOT(onSetVelSliderOptionPI(int, double)));
             connect(this, SIGNAL(sig_setTrqSliderOptionMW(int, double)), part, SLOT(onSetTrqSliderOptionPI(int, double)));
@@ -462,8 +476,10 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
 
     QSettings settings("YARP","yarpmotorgui");
     bool speedVisible = settings.value("SpeedValuesVisible",false).toBool();
+    bool motorPosVisible = settings.value("MotorPositionVisible", false).toBool();
 
     onViewSpeeds(speedVisible);
+    onViewMotorPositions(motorPosVisible);
     return true;
 }
 

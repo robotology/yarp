@@ -48,6 +48,7 @@ class JointItem : public QWidget
     void setRefTrajectorySpeed(double val);
     void setRefTrajectoryPosition(double val);
     void setSpeed(double val);
+    void setMotorPosition(double val);
     void setOpenLoop(double val);
     void updateMotionDone(bool done);
     void setJointName(QString name);
@@ -64,6 +65,7 @@ class JointItem : public QWidget
                            bool enable_calib_all);
 
     void setSpeedVisible(bool);
+    void setMotorPositionVisible(bool);
     void setUnits(yarp::dev::JointTypeEnum t);
     void viewPositionTarget(bool);
     void enableControlVelocity(bool control);
@@ -122,7 +124,8 @@ private:
     bool motionDone;
     QString movingSliderStyle;
     bool enableCalib;
-    bool speedVisible;
+    bool joint_speedVisible;
+    bool joint_motorPositionVisible;
     QTimer velocityTimer;
     double lastVelocity;
     bool velocityModeEnabled;

@@ -64,7 +64,8 @@ JointItem::JointItem(int index,QWidget *parent) :
     sliderOpenloopPressed = false;
     sliderVelocityPressed = false;
     enableCalib = true;
-    speedVisible = false;
+    joint_speedVisible = false;
+    joint_motorPositionVisible = false;
     lastVelocity = 0;
     velocityModeEnabled = false;
     motionDone = true;
@@ -407,71 +408,71 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
 
     if (t == yarp::dev::VOCAB_JOINTTYPE_REVOLUTE)
     {
-        ui->label_velUnits->setText(vel_metric_revolute);
-        ui->label_velUnits_2->setText(vel_metric_revolute);
-        ui->label_velUnits_3->setText(vel_metric_revolute);
-        ui->label_velUnits_4->setText(vel_metric_revolute);
-        ui->label_velUnits_5->setText(vel_metric_revolute);
-        ui->label_velUnits_6->setText(vel_metric_revolute);
-        ui->label_velUnits_7->setText(vel_metric_revolute);
+        ui->labelIdlevelUnits->setText(vel_metric_revolute);
+        ui->labelPositionvelUnits->setText(vel_metric_revolute);
+        ui->labelPositionDirvelUnits->setText(vel_metric_revolute);
+        ui->labelMixedvelUnits->setText(vel_metric_revolute);
+        ui->labelTorquevelUnits->setText(vel_metric_revolute);
+        ui->labelOpenLoopvelUnits->setText(vel_metric_revolute);
+        ui->labelVelocityvelUnits->setText(vel_metric_revolute);
 
-        ui->label_trqTitle->setText(trq_metric_revolute_title);
-        ui->label_trqTitle_2->setText(trq_metric_revolute_title);
-        ui->label_trqTitle_3->setText(trq_metric_revolute_title);
-        ui->label_trqTitle_4->setText(trq_metric_revolute_title);
-        ui->label_trqTitle_5->setText(trq_metric_revolute_title);
-        ui->label_trqTitle_6->setText(trq_metric_revolute_title);
-        ui->label_trqTitle_7->setText(trq_metric_revolute_title);
+        ui->labelIdleTorque->setText(trq_metric_revolute_title);
+        ui->labelPositionTorque->setText(trq_metric_revolute_title);
+        ui->labelPositionDirTorque->setText(trq_metric_revolute_title);
+        ui->labelMixedTorque->setText(trq_metric_revolute_title);
+        ui->labelTorqueTorque->setText(trq_metric_revolute_title);
+        ui->labelOpenLoopTorque->setText(trq_metric_revolute_title);
+        ui->labelVelocityTorque->setText(trq_metric_revolute_title);
 
-        ui->label_posUnits->setText(pos_metric_revolute);
-        ui->label_posUnits_2->setText(pos_metric_revolute);
-        ui->label_posUnits_3->setText(pos_metric_revolute);
-        ui->label_posUnits_4->setText(pos_metric_revolute);
-        ui->label_posUnits_5->setText(pos_metric_revolute);
-        ui->label_posUnits_6->setText(pos_metric_revolute);
-        ui->label_posUnits_7->setText(pos_metric_revolute);
+        ui->labelIdleposUnits->setText(pos_metric_revolute);
+        ui->labelPositionposUnits->setText(pos_metric_revolute);
+        ui->labelPositionDirposUnits->setText(pos_metric_revolute);
+        ui->labelMixedposUnits->setText(pos_metric_revolute);
+        ui->labelTorqueposUnits->setText(pos_metric_revolute);
+        ui->labelOpenLoopposUnits->setText(pos_metric_revolute);
+        ui->labelVelocityposUnits->setText(pos_metric_revolute);
 
-        ui->label_trqUnits->setText(trq_metric_revolute);
-        ui->label_trqUnits_2->setText(trq_metric_revolute);
-        ui->label_trqUnits_3->setText(trq_metric_revolute);
-        ui->label_trqUnits_4->setText(trq_metric_revolute);
-        ui->label_trqUnits_5->setText(trq_metric_revolute);
-        ui->label_trqUnits_6->setText(trq_metric_revolute);
-        ui->label_velUnits_7->setText(trq_metric_revolute);
+        ui->labelIdletrqUnits->setText(trq_metric_revolute);
+        ui->labelPositiontrqUnits->setText(trq_metric_revolute);
+        ui->labelPositionDirtrqUnits->setText(trq_metric_revolute);
+        ui->labelMixedtrqUnits->setText(trq_metric_revolute);
+        ui->labelTorquetrqUnits->setText(trq_metric_revolute);
+        ui->labelOpenLooptrqUnits->setText(trq_metric_revolute);
+        ui->labelVelocitytrqUnits->setText(trq_metric_revolute);
     }
     else if (t == yarp::dev::VOCAB_JOINTTYPE_PRISMATIC)
     {
-        ui->label_velUnits->setText(vel_metric_prism);
-        ui->label_velUnits_2->setText(vel_metric_prism);
-        ui->label_velUnits_3->setText(vel_metric_prism);
-        ui->label_velUnits_4->setText(vel_metric_prism);
-        ui->label_velUnits_5->setText(vel_metric_prism);
-        ui->label_velUnits_6->setText(vel_metric_prism);
-        ui->label_velUnits_7->setText(vel_metric_prism);
+        ui->labelIdlevelUnits->setText(vel_metric_prism);
+        ui->labelPositionvelUnits->setText(vel_metric_prism);
+        ui->labelPositionDirvelUnits->setText(vel_metric_prism);
+        ui->labelMixedvelUnits->setText(vel_metric_prism);
+        ui->labelTorquevelUnits->setText(vel_metric_prism);
+        ui->labelOpenLoopvelUnits->setText(vel_metric_prism);
+        ui->labelVelocityvelUnits->setText(vel_metric_prism);
 
-        ui->label_trqTitle->setText(trq_metric_prism_title);
-        ui->label_trqTitle_2->setText(trq_metric_prism_title);
-        ui->label_trqTitle_3->setText(trq_metric_prism_title);
-        ui->label_trqTitle_4->setText(trq_metric_prism_title);
-        ui->label_trqTitle_5->setText(trq_metric_prism_title);
-        ui->label_trqTitle_6->setText(trq_metric_prism_title);
-        ui->label_trqTitle_7->setText(trq_metric_prism_title);
+        ui->labelIdleTorque->setText(trq_metric_prism_title);
+        ui->labelPositionTorque->setText(trq_metric_prism_title);
+        ui->labelPositionDirTorque->setText(trq_metric_prism_title);
+        ui->labelMixedTorque->setText(trq_metric_prism_title);
+        ui->labelTorqueTorque->setText(trq_metric_prism_title);
+        ui->labelOpenLoopTorque->setText(trq_metric_prism_title);
+        ui->labelVelocityTorque->setText(trq_metric_prism_title);
 
-        ui->label_posUnits->setText(pos_metric_prism);
-        ui->label_posUnits_2->setText(pos_metric_prism);
-        ui->label_posUnits_3->setText(pos_metric_prism);
-        ui->label_posUnits_4->setText(pos_metric_prism);
-        ui->label_posUnits_5->setText(pos_metric_prism);
-        ui->label_posUnits_6->setText(pos_metric_prism);
-        ui->label_posUnits_7->setText(pos_metric_prism);
+        ui->labelIdleposUnits->setText(pos_metric_prism);
+        ui->labelPositionposUnits->setText(pos_metric_prism);
+        ui->labelPositionDirposUnits->setText(pos_metric_prism);
+        ui->labelMixedposUnits->setText(pos_metric_prism);
+        ui->labelTorqueposUnits->setText(pos_metric_prism);
+        ui->labelOpenLoopposUnits->setText(pos_metric_prism);
+        ui->labelVelocityposUnits->setText(pos_metric_prism);
 
-        ui->label_trqUnits->setText(trq_metric_prism);
-        ui->label_trqUnits_2->setText(trq_metric_prism);
-        ui->label_trqUnits_3->setText(trq_metric_prism);
-        ui->label_trqUnits_4->setText(trq_metric_prism);
-        ui->label_trqUnits_5->setText(trq_metric_prism);
-        ui->label_trqUnits_6->setText(trq_metric_prism);
-        ui->label_velUnits_7->setText(trq_metric_prism);
+        ui->labelIdletrqUnits->setText(trq_metric_prism);
+        ui->labelPositiontrqUnits->setText(trq_metric_prism);
+        ui->labelPositionDirtrqUnits->setText(trq_metric_prism);
+        ui->labelMixedtrqUnits->setText(trq_metric_prism);
+        ui->labelTorquetrqUnits->setText(trq_metric_prism);
+        ui->labelOpenLooptrqUnits->setText(trq_metric_prism);
+        ui->labelVelocitytrqUnits->setText(trq_metric_prism);
     }
     else
     {
@@ -479,9 +480,17 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
     }
 }
 
+void JointItem::setMotorPositionVisible(bool visible)
+{
+    joint_motorPositionVisible = visible;
+    ui->editPositionMotorPosition->setVisible(visible);
+    ui->labelPositionMotorPosition->setVisible(visible);
+    ui->labelPositionMotorPositionUnits->setVisible(visible);
+}
+
 void JointItem::setSpeedVisible(bool visible)
 {
-    speedVisible = visible;
+    joint_speedVisible = visible;
     ui->editIdleSpeed->setVisible(visible);
     ui->editPositionSpeed->setVisible(visible);
     ui->editPositionDirSpeed->setVisible(visible);
@@ -490,20 +499,20 @@ void JointItem::setSpeedVisible(bool visible)
     ui->editOpenLoopSpeed->setVisible(visible);
     ui->editVelocitySpeed->setVisible(visible);
 
-    ui->labelSpeed->setVisible(visible);
-    ui->label_velUnits->setVisible(visible);
-    ui->labelSpeed2->setVisible(visible);
-    ui->label_velUnits_2->setVisible(visible);
-    ui->labelSpeed4->setVisible(visible);
-    ui->label_velUnits_3->setVisible(visible);
-    ui->labelSpeed6->setVisible(visible);
-    ui->label_velUnits_4->setVisible(visible);
-    ui->labelSpeed8->setVisible(visible);
-    ui->label_velUnits_5->setVisible(visible);
-    ui->labelSpeed10->setVisible(visible);
-    ui->label_velUnits_6->setVisible(visible);
-    ui->labelSpeed10_2->setVisible(visible);
-    ui->label_velUnits_7->setVisible(visible);
+    ui->labelIdleSpeed->setVisible(visible);
+    ui->labelIdlevelUnits->setVisible(visible);
+    ui->labelPositionSpeed->setVisible(visible);
+    ui->labelPositionvelUnits->setVisible(visible);
+    ui->labelPositionDirSpeed->setVisible(visible);
+    ui->labelPositionDirvelUnits->setVisible(visible);
+    ui->labelMixedSpeed->setVisible(visible);
+    ui->labelMixedvelUnits->setVisible(visible);
+    ui->labelTorqueSpeed->setVisible(visible);
+    ui->labelTorquevelUnits->setVisible(visible);
+    ui->labelOpenLoopSpeed->setVisible(visible);
+    ui->labelOpenLoopvelUnits->setVisible(visible);
+    ui->labelVelocitySpeed->setVisible(visible);
+    ui->labelVelocityvelUnits->setVisible(visible);
 
 
     if(!visible){
@@ -515,21 +524,20 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editOpenLoopSpeed->setMinimumHeight(0);
         ui->editVelocitySpeed->setMinimumHeight(0);
 
-        ui->labelSpeed->setMinimumHeight(0);
-        ui->label_velUnits->setMinimumHeight(0);
-        ui->labelSpeed2->setMinimumHeight(0);
-        ui->label_velUnits_2->setMinimumHeight(0);
-        ui->labelSpeed4->setMinimumHeight(0);
-        ui->label_velUnits_3->setMinimumHeight(0);
-        ui->labelSpeed6->setMinimumHeight(0);
-        ui->label_velUnits_4->setMinimumHeight(0);
-        ui->labelSpeed8->setMinimumHeight(0);
-        ui->label_velUnits_5->setMinimumHeight(0);
-        ui->labelSpeed10->setMinimumHeight(0);
-        ui->label_velUnits_6->setMinimumHeight(0);
-        ui->labelSpeed10_2->setMinimumHeight(0);
-        ui->label_velUnits_7->setMinimumHeight(0);
-
+        ui->labelPositionSpeed->setMinimumHeight(0);
+        ui->labelPositionvelUnits->setMinimumHeight(0);
+        ui->labelPositionDirSpeed->setMinimumHeight(0);
+        ui->labelPositionDirvelUnits->setMinimumHeight(0);
+        ui->labelMixedSpeed->setMinimumHeight(0);
+        ui->labelMixedvelUnits->setMinimumHeight(0);
+        ui->labelTorqueSpeed->setMinimumHeight(0); 
+        ui->labelTorquevelUnits->setMinimumHeight(0);
+        ui->labelOpenLoopSpeed->setMinimumHeight(0);
+        ui->labelOpenLoopvelUnits->setMinimumHeight(0);
+        ui->labelVelocitySpeed->setMinimumHeight(0);
+        ui->labelVelocityvelUnits->setMinimumHeight(0);
+        ui->labelIdleSpeed->setMinimumHeight(0);
+        ui->labelIdlevelUnits->setMinimumHeight(0);
     }else{
         ui->editIdleSpeed->setMinimumHeight(20);
         ui->editPositionSpeed->setMinimumHeight(20);
@@ -539,20 +547,20 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editOpenLoopSpeed->setMinimumHeight(20);
         ui->editVelocitySpeed->setMinimumHeight(20);
 
-        ui->labelSpeed->setMinimumHeight(20);
-        ui->label_velUnits->setMinimumHeight(20);
-        ui->labelSpeed2->setMinimumHeight(20);
-        ui->label_velUnits_2->setMinimumHeight(20);
-        ui->labelSpeed4->setMinimumHeight(20);
-        ui->label_velUnits_3->setMinimumHeight(20);
-        ui->labelSpeed6->setMinimumHeight(20);
-        ui->label_velUnits_4->setMinimumHeight(20);
-        ui->labelSpeed8->setMinimumHeight(20);
-        ui->label_velUnits_5->setMinimumHeight(20);
-        ui->labelSpeed10->setMinimumHeight(20);
-        ui->label_velUnits_6->setMinimumHeight(20);
-        ui->labelSpeed10_2->setMinimumHeight(20);
-        ui->label_velUnits_7->setMinimumHeight(20);
+        ui->labelPositionSpeed->setMinimumHeight(20);
+        ui->labelPositionvelUnits->setMinimumHeight(20);
+        ui->labelPositionDirSpeed->setMinimumHeight(20);
+        ui->labelPositionDirvelUnits->setMinimumHeight(20);
+        ui->labelMixedSpeed->setMinimumHeight(20);
+        ui->labelMixedvelUnits->setMinimumHeight(20);
+        ui->labelTorqueSpeed->setMinimumHeight(20);
+        ui->labelTorquevelUnits->setMinimumHeight(20);
+        ui->labelOpenLoopSpeed->setMinimumHeight(20);
+        ui->labelOpenLoopvelUnits->setMinimumHeight(20);
+        ui->labelVelocitySpeed->setMinimumHeight(20);
+        ui->labelVelocityvelUnits->setMinimumHeight(20);
+        ui->labelIdleSpeed->setMinimumHeight(20);
+        ui->labelIdlevelUnits->setMinimumHeight(20);
     }
 }
 
@@ -1225,9 +1233,27 @@ void JointItem::setTorque(double val)
     }
 }
 
+void JointItem::setMotorPosition(double val)
+{
+    if (!joint_motorPositionVisible){
+        return;
+    }
+
+    double mot = val;
+    QString sVal = QString("%1").arg(mot, 0, 'f', 1);
+
+    if (ui->stackedWidget->currentIndex() == IDLE){
+        ui->editIdleMotorPosition->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == POSITION){
+        ui->editPositionMotorPosition->setText(sVal);
+    }
+}
+
 void JointItem::setSpeed(double val)
 {
-    if(!speedVisible){
+    if (!joint_speedVisible){
         return;
     }
     //TODO

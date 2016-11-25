@@ -101,6 +101,7 @@ private slots:
     void onViewGlobalToolbar(bool);
     void onViewPartToolbar(bool);
     void onViewSpeeds(bool);
+    void onViewMotorPositions(bool);
     void onViewPositionTarget(bool);
     void onEnableControlVelocity(bool val);
     void onEnableControlMixed(bool val);
@@ -117,6 +118,7 @@ signals:
     void sig_enableControlPositionDirect(bool);
     void sig_enableControlOpenloop(bool);
     void sig_viewSpeedValues(bool);
+    void sig_viewMotorPositions(bool);
     void sig_setPosSliderOptionMW(int, double);
     void sig_setVelSliderOptionMW(int, double);
     void sig_setTrqSliderOptionMW(int, double);
