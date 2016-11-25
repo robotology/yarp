@@ -247,21 +247,6 @@ bool depthCameraDriver::setParams(const Bottle& settings, const Bottle& descript
     bool ret;
     ret = true;
 
-    if(!checkParam(settings, description, m_cameraDescription.accuracy)        ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.clipPlanes)      ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.depth_Fov)       ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.depthRes)        ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.rgb_Fov)         ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.rgbRes)          ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.rgbMirroring)    ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.depthMirroring)  ) ret = false;
-
-    if(!ret)
-    {
-        yError() << "depthCamera driver input file not correct, please fix it!";
-        return false;
-    }
-
     // Do all required settings
 
     //ACCURACY
@@ -346,21 +331,49 @@ bool depthCameraDriver::setParams(const Bottle& settings, const Bottle& descript
     // rgb MIRRORING
     if(m_cameraDescription.rgbMirroring.isSetting)
     {
+        //the device usually fail to set the mirror properties at the start.
+        //so we will try to set it for 5 times with a little delay before returning false
+        bool mirrorOk;
         Value& v = m_cameraDescription.rgbMirroring.val[0];
-        if(!v.isBool() )
+        mirrorOk = false;
+
+        if (!v.isBool())
             settingErrorMsg("Param " + m_cameraDescription.rgbMirroring.name + " is not a bool as it should be.", ret);
 
-        if(! setRgbMirroring(v.asBool()))
+        for (int t = 0; t < 5; t++)
+        {
+            yarp::os::Time::delay(0.5);
+            if (setRgbMirroring(v.asBool()))
+            {
+                mirrorOk = true;
+                break;
+            }
+        }
+        if (!mirrorOk)
             settingErrorMsg("Setting param " + m_cameraDescription.rgbMirroring.name + " failed... quitting.", ret);
     }
     // depth MIRRORING
     if(m_cameraDescription.depthMirroring.isSetting)
     {
+        //the device usually fail to set the mirror properties at the start.
+        //so we will try to set it for 5 times with a little delay before returning false
+        bool mirrorOk;
         Value& v = m_cameraDescription.depthMirroring.val[0];
+        mirrorOk = false;
+        
         if(!v.isBool() )
             settingErrorMsg("Param " + m_cameraDescription.depthMirroring.name + " is not a bool as it should be.", ret);
-
-        if(! setDepthMirroring(v.asBool()))
+        
+        for (int t = 0; t < 5; t++)
+        {
+            yarp::os::Time::delay(0.5);
+            if (setDepthMirroring(v.asBool()))
+            {
+                mirrorOk = true;
+                break;
+            }
+        }
+        if(!mirrorOk)
             settingErrorMsg("Setting param " + m_cameraDescription.depthMirroring.name + " failed... quitting.", ret);
     }
     return ret;
@@ -466,11 +479,8 @@ bool depthCameraDriver::parseIntrinsic(const Searchable& config, const string& g
 
 bool depthCameraDriver::open(Searchable& config)
 {
-    if(!initializeOpeNIDevice())
-    {
-        return false;
-    }
-
+    bool ret = true;
+    
     if(!config.check("SETTINGS"))
     {
         yError() << "depthCameraDriver: missing SETTINGS section on the configuration file";
@@ -491,6 +501,25 @@ bool depthCameraDriver::open(Searchable& config)
         return false;
     }
     Bottle& depth_intrinsic = config.findGroup("DEPTH_INTRINSIC_PARAMETERS");
+
+    if(!checkParam(settings, description, m_cameraDescription.accuracy)        ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.clipPlanes)      ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.depth_Fov)       ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.depthRes)        ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.rgb_Fov)         ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.rgbRes)          ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.rgbMirroring)    ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.depthMirroring)  ) ret = false;
+
+    if(!ret)
+    {
+        yError() << "depthCamera driver input file not correct, please fix it!";
+        return false;
+    }
+    if (!initializeOpeNIDevice())
+    {
+        return false;
+    }
 
     // setting Parameters
     if(!setParams(settings, description))
@@ -559,7 +588,7 @@ int depthCameraDriver::getRgbHeight()
 {
     if(m_cameraDescription.rgbRes.isDescription)
     {
-        return m_cameraDescription.rgbRes.val.at(0).asInt();
+        return m_cameraDescription.rgbRes.val.at(1).asInt();
     }
 
     return m_imageStream.getVideoMode().getResolutionY();
@@ -569,7 +598,7 @@ int depthCameraDriver::getRgbWidth()
 {    
     if(m_cameraDescription.rgbRes.isDescription)
     {
-        return m_cameraDescription.rgbRes.val.at(1).asInt();
+        return m_cameraDescription.rgbRes.val.at(0).asInt();
     }
 
     return m_imageStream.getVideoMode().getResolutionX();
@@ -607,6 +636,10 @@ bool depthCameraDriver::setResolution(int width, int height, VideoStream& stream
 
 bool depthCameraDriver::setRgbResolution(int width, int height)
 {
+    if (m_cameraDescription.rgbRes.isDescription)
+    {
+        return false;
+    }
     return setResolution(width, height, m_imageStream);
 }
 
@@ -619,16 +652,28 @@ bool depthCameraDriver::setFOV(double horizontalFov, double verticalFov, VideoSt
 
 bool depthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
 {
+    if (m_cameraDescription.rgb_Fov.isDescription)
+    {
+        return false;
+    }
     return setFOV(horizontalFov, verticalFov, m_depthStream);
 }
 
 bool depthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
 {
+    if (m_cameraDescription.depth_Fov.isDescription)
+    {
+        return false;
+    }
     return setFOV(horizontalFov, verticalFov, m_depthStream);
 }
 
 bool depthCameraDriver::setDepthAccuracy(double accuracy)
 {
+    if (m_cameraDescription.accuracy.isDescription)
+    {
+        return false;
+    }
     bool a1, a2;
     a1 = fabs(accuracy - 0.001)  < 0.00001;
     a2 = fabs(accuracy - 0.0001) < 0.00001;
@@ -659,6 +704,12 @@ bool depthCameraDriver::setDepthAccuracy(double accuracy)
 
 bool depthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
 {
+    if (m_cameraDescription.rgb_Fov.isDescription)
+    {
+        horizontalFov = m_cameraDescription.rgb_Fov.val[0].asDouble();
+        verticalFov   = m_cameraDescription.rgb_Fov.val[1].asDouble();
+        return true;
+    }
     horizontalFov = m_imageStream.getHorizontalFieldOfView() * RAD2DEG;
     verticalFov   = m_imageStream.getVerticalFieldOfView()   * RAD2DEG;
     return true;
@@ -666,14 +717,25 @@ bool depthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
 
 bool depthCameraDriver::getRgbMirroring(bool& mirror)
 {
+    if (m_cameraDescription.rgbMirroring.isDescription)
+    {
+        mirror = m_cameraDescription.rgbMirroring.val[0].asBool();
+        return true;
+    }
     mirror = m_imageStream.getMirroringEnabled();
     return true;
 }
 
 bool depthCameraDriver::setRgbMirroring(bool mirror)
 {
+    if (m_cameraDescription.rgbMirroring.isDescription)
+    {
+        return false;
+    }
     RETURN_FALSE_STATUS_NOT_OK(m_imageStream.setMirroringEnabled(mirror));
-    return true;
+    bool ret;
+    getRgbMirroring(ret);
+    return (ret == mirror);
 }
 
 bool depthCameraDriver::setIntrinsic(Property& intrinsic, const intrinsicParams& values)
@@ -702,16 +764,30 @@ bool depthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
 
 int  depthCameraDriver::getDepthHeight()
 {
+    if (m_cameraDescription.depthRes.isDescription)
+    {
+        return m_cameraDescription.depthRes.val[1].asDouble();
+    }
     return m_depthStream.getVideoMode().getResolutionY();
 }
 
 int  depthCameraDriver::getDepthWidth()
 {
+    if (m_cameraDescription.depthRes.isDescription)
+    {
+        return m_cameraDescription.depthRes.val[0].asDouble();
+    }
     return m_depthStream.getVideoMode().getResolutionX();
 }
 
 bool depthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
 {
+    if (m_cameraDescription.depth_Fov.isDescription)
+    {
+        horizontalFov = m_cameraDescription.depth_Fov.val[0].asDouble();
+        verticalFov   = m_cameraDescription.depth_Fov.val[1].asDouble();
+        return true;
+    }
     horizontalFov = m_depthStream.getHorizontalFieldOfView() * RAD2DEG;
     verticalFov   = m_depthStream.getVerticalFieldOfView()   * RAD2DEG;
     return true;
@@ -724,11 +800,21 @@ bool depthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
 
 double depthCameraDriver::getDepthAccuracy()
 {
+    if (m_cameraDescription.accuracy.isDescription)
+    {
+        return m_cameraDescription.accuracy.val[0].asDouble();
+    }
     return m_depthStream.getVideoMode().getPixelFormat() == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
 }
 
 bool depthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
 {
+    if (m_cameraDescription.clipPlanes.isDescription)
+    {
+        nearPlane = m_cameraDescription.clipPlanes.val[0].asDouble();
+        farPlane  = m_cameraDescription.clipPlanes.val[1].asDouble();
+        return true;
+    }
     double factor;
     factor = getDepthAccuracy();
     nearPlane   = m_depthStream.getMinPixelValue() * factor;
@@ -738,6 +824,10 @@ bool depthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
 
 bool depthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
 {
+    if (m_cameraDescription.clipPlanes.isDescription)
+    {
+        return false;
+    }
     double factor;
     factor = getDepthAccuracy();
     RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MAX_VALUE, int(farPlane  / factor)));
@@ -747,12 +837,20 @@ bool depthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
 
 bool depthCameraDriver::getDepthMirroring(bool& mirror)
 {
+    if (m_cameraDescription.depthMirroring.isDescription)
+    {
+        return m_cameraDescription.depthMirroring.val[0].asBool();
+    }
     mirror = m_depthStream.getMirroringEnabled();
     return true;
 }
 
 bool depthCameraDriver::setDepthMirroring(bool mirror)
 {
+    if (m_cameraDescription.depthMirroring.isDescription)
+    {
+        return false;
+    }
     RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setMirroringEnabled(mirror));
     return true;
 }
@@ -918,7 +1016,7 @@ bool depthCameraDriver::getCameraDescription(CameraDescriptor* camera)
     return true;
 }
 
-bool depthCameraDriver::hasFeature(int feature, bool *hasFeature)
+bool depthCameraDriver::hasFeature(int feature, bool* hasFeature)
 {
     cameraFeature_id_t f;
     f = static_cast<cameraFeature_id_t>(feature);
