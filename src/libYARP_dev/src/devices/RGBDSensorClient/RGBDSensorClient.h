@@ -283,8 +283,6 @@ public:
     using FrameGrabberControls2_Sender::hasFeature;
     using FrameGrabberControls2_Sender::setFeature;
     using FrameGrabberControls2_Sender::getFeature;
-    using FrameGrabberControls2_Sender::setFeature;
-    using FrameGrabberControls2_Sender::getFeature;
     using FrameGrabberControls2_Sender::hasOnOff;
     using FrameGrabberControls2_Sender::setActive;
     using FrameGrabberControls2_Sender::getActive;

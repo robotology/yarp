@@ -123,7 +123,7 @@ bool Implement_RgbVisualParams_Parser::configure(IRgbVisualParams *interface)
 
 bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response)
 {
-    bool ret;
+    bool ret = false;
     response.clear();
     if(!iRgbVisual)
     {
@@ -199,6 +199,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                 {
                     yError() << "Rgb Visual Parameter interface parser received am unknown GET command. Command is " << cmd.toString();
                     response.addVocab(VOCAB_FAILED);
+                    ret = false;
                 }
                 break;
             }
@@ -227,6 +228,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                 {
                     yError() << "Rgb Visual Parameter interface parser received am unknown SET command. Command is " << cmd.toString();
                     response.addVocab(VOCAB_FAILED);
+                    ret = false;
                 }
                 break;
             }
@@ -237,6 +239,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
         {
             yError() << "Rgb Visual parameter interface Parser received a malformed request. Command should either be 'set' or 'get', received " << cmd.toString();
             response.addVocab(VOCAB_FAILED);
+            ret = false;
         }
         break;
     }
@@ -411,7 +414,7 @@ bool Implement_DepthVisualParams_Parser::configure(IDepthVisualParams *interface
 
 bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response)
 {
-    bool ret;
+    bool ret = false;
     response.clear();
     if(!iDepthVisual)
     {
@@ -514,6 +517,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                 {
                     yError() << "Depth Visual Parameter interface parser received am unknown GET command. Command is " << cmd.toString();
                     response.addVocab(VOCAB_FAILED);
+                    ret = false;
                 }
                 break;
             }
@@ -582,6 +586,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                 {
                     yError() << "Rgb Visual Parameter interface parser received am unknown SET command. Command is " << cmd.toString();
                     response.addVocab(VOCAB_FAILED);
+                    ret = false;
                 }
                 break;
             }
@@ -592,6 +597,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
         {
             yError() << "Rgb Visual parameter interface Parser received a malformed request. Command should either be 'set' or 'get', received " << cmd.toString();
             response.addVocab(VOCAB_FAILED);
+            ret = false;
         }
         break;
     }
