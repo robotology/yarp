@@ -70,6 +70,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IVelocityControl.h
                   include/yarp/dev/INavigation2D.h
                   include/yarp/dev/IVirtualAnalogSensor.h
+                  include/yarp/dev/LaserMeasurementData.h
                   include/yarp/dev/IVisualParams.h
                   include/yarp/dev/IVisualParamsImpl.h
                   include/yarp/dev/PolyDriverDescriptor.h

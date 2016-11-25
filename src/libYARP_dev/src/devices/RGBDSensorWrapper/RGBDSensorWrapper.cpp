@@ -695,6 +695,9 @@ bool RGBDSensorWrapper::setCamInfo
     vector<param<double> >      parVector;
     param<double>*              par;
 
+    yError() << "RGBDSeneosrWrapper: setCamInfo() for ros interoperation not yet implemented";
+    return false;
+
     if(!camData.check("distortionModel"))
     {
         yWarning() << "missing distortion model";
