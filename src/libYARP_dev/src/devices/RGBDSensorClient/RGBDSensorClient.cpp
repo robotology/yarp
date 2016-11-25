@@ -377,11 +377,13 @@ bool RGBDSensorClient::getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::Im
     return false;
 }
 
-// IFrame Grabber Control 2
 //
-// Implemented by FrameGrabberControls2_Sender
+// IFrame Grabber Control 2 inteface is implemented by FrameGrabberControls2_Sender
 //
 
+//
+// Rgb
+//
 int RGBDSensorClient::getRgbHeight()
 {
     return RgbMsgSender->getRgbHeight();
@@ -408,6 +410,20 @@ bool RGBDSensorClient::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
 {
     return RgbMsgSender->getRgbIntrinsicParam(intrinsic);
 }
+
+bool RGBDSensorClient::getRgbMirroring(bool& mirror)
+{
+    return RgbMsgSender->getRgbMirroring(mirror);
+}
+
+bool RGBDSensorClient::setRgbMirroring(bool mirror)
+{
+    return RgbMsgSender->setRgbMirroring(mirror);
+}
+
+//
+// Depth
+//
 int RGBDSensorClient::getDepthHeight()
 {
     return DepthMsgSender->getDepthHeight();
@@ -444,8 +460,17 @@ bool RGBDSensorClient::setDepthClipPlanes(double nearPlane, double farPlane)
 {
     return DepthMsgSender->setDepthClipPlanes(nearPlane, farPlane);
 }
-
 bool RGBDSensorClient::getDepthIntrinsicParam(yarp::os::Property &intrinsic)
 {
     return DepthMsgSender->getDepthIntrinsicParam(intrinsic);
+}
+
+bool RGBDSensorClient::getDepthMirroring(bool& mirror)
+{
+    return DepthMsgSender->getDepthMirroring(mirror);
+}
+
+bool RGBDSensorClient::setDepthMirroring(bool mirror)
+{
+    return DepthMsgSender->setDepthMirroring(mirror);
 }

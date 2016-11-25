@@ -166,6 +166,8 @@ public:
     virtual bool getRgbFOV(double &horizontalFov, double &verticalFov);
     virtual bool setRgbFOV(double horizontalFov, double verticalFov);
     virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic);
+    virtual bool getRgbMirroring(bool& mirror);
+    virtual bool setRgbMirroring(bool mirror);
 
     /*
      * IDepthVisualParams interface. Look at IVisualParams.h for documentation
@@ -180,6 +182,9 @@ public:
     virtual bool   getDepthClipPlanes(double &near, double &far);
     virtual bool   setDepthClipPlanes(double near, double far);
     virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic);
+    virtual bool   getDepthMirroring(bool& mirror);
+    virtual bool   setDepthMirroring(bool mirror);
+
     // Device Driver interface //
     /**
      * Create and configure a device, by name.  The config
