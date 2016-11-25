@@ -55,7 +55,6 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarpmotorgui)
     add_subdirectory(yarpbatterygui)
     add_subdirectory(yarplaserscannergui)
-    add_subdirectory(yarpmanager++)
 endif()
 
 

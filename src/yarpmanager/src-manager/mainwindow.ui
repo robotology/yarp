@@ -14,7 +14,7 @@
    <string>YARP module manager</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../yarplogger/res.qrc">
+   <iconset resource="../res.qrc">
     <normaloff>:/logo.svg</normaloff>:/logo.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -317,7 +317,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew_Application">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/run22.svg</normaloff>:/run22.svg</iconset>
    </property>
    <property name="text">
@@ -326,7 +326,7 @@
   </action>
   <action name="actionNew_Module">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/module22.svg</normaloff>:/module22.svg</iconset>
    </property>
    <property name="text">
@@ -335,7 +335,7 @@
   </action>
   <action name="actionNew_Resource">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/computer22.svg</normaloff>:/computer22.svg</iconset>
    </property>
    <property name="text">
@@ -344,7 +344,7 @@
   </action>
   <action name="actionOpen_File">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/file-new.svg</normaloff>:/file-new.svg</iconset>
    </property>
    <property name="text">
@@ -353,7 +353,7 @@
   </action>
   <action name="actionClose">
    <property name="icon">
-    <iconset resource="../../yarpdataplayer/src/RC/res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/close.svg</normaloff>:/close.svg</iconset>
    </property>
    <property name="text">
@@ -365,7 +365,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
    </property>
    <property name="text">
@@ -377,7 +377,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/file-save.svg</normaloff>:/file-save.svg</iconset>
    </property>
    <property name="text">
@@ -386,7 +386,7 @@
   </action>
   <action name="actionImport_Files">
    <property name="icon">
-    <iconset resource="../../yarpdataplayer/src/RC/res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/folder-new.svg</normaloff>:/folder-new.svg</iconset>
    </property>
    <property name="text">
@@ -395,7 +395,7 @@
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset resource="../../yarpdataplayer/src/RC/res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/close.svg</normaloff>:/close.svg</iconset>
    </property>
    <property name="text">
@@ -404,7 +404,7 @@
   </action>
   <action name="actionSelect_All">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/select-all.svg</normaloff>:/select-all.svg</iconset>
    </property>
    <property name="text">
@@ -413,7 +413,7 @@
   </action>
   <action name="actionExport_Graph">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/uml-app.svg</normaloff>:/uml-app.svg</iconset>
    </property>
    <property name="text">
@@ -422,7 +422,7 @@
   </action>
   <action name="actionRun">
    <property name="icon">
-    <iconset resource="../../yarpdataplayer/src/RC/res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/play.svg</normaloff>:/play.svg</iconset>
    </property>
    <property name="text">
@@ -431,7 +431,7 @@
   </action>
   <action name="actionStop">
    <property name="icon">
-    <iconset resource="../../yarpdataplayer/src/RC/res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/stop.svg</normaloff>:/stop.svg</iconset>
    </property>
    <property name="text">
@@ -440,7 +440,7 @@
   </action>
   <action name="actionKill">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/kill.svg</normaloff>:/kill.svg</iconset>
    </property>
    <property name="text">
@@ -449,7 +449,7 @@
   </action>
   <action name="actionConnect">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/connect.svg</normaloff>:/connect.svg</iconset>
    </property>
    <property name="text">
@@ -458,7 +458,7 @@
   </action>
   <action name="actionDisconnect">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/disconnect.svg</normaloff>:/disconnect.svg</iconset>
    </property>
    <property name="text">
@@ -467,7 +467,7 @@
   </action>
   <action name="actionRefresh_Status">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/refresh.svg</normaloff>:/refresh.svg</iconset>
    </property>
    <property name="text">
@@ -476,7 +476,7 @@
   </action>
   <action name="actionHelp">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/help.svg</normaloff>:/help.svg</iconset>
    </property>
    <property name="text">
@@ -485,7 +485,7 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="res_manager.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/info.svg</normaloff>:/info.svg</iconset>
    </property>
    <property name="text">
@@ -523,9 +523,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../yarpdataplayer/src/RC/res.qrc"/>
-  <include location="../../yarplogger/res.qrc"/>
-  <include location="res_manager.qrc"/>
+  <include location="../res.qrc"/>
  </resources>
  <connections/>
 </ui>

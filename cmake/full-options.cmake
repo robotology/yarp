@@ -9,7 +9,6 @@ option(CREATE_LIB_MATH "Math library" TRUE)
 
 # GUIS
 option(CREATE_GUIS "Do you want to compile GUIs" ON)
-option(CREATE_YARPMANAGER_PP "Do you want to create the new yarpmanager" ON)
 
 # robot interface
 option(CREATE_YARPROBOTINTERFACE "Do you want to compile yarprobotinterface?" ON)

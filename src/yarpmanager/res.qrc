@@ -44,5 +44,8 @@
         <file alias="port22.svg">../../data/icons/22x22/port.svg</file>
         <file alias="port-available22.svg">../../data/icons/22x22/port_available.svg</file>
         <file alias="port-unavailable22.svg">../../data/icons/22x22/port_unavailable.svg</file>
+        <file alias="background1.png">images/background1.png</file>
+        <file alias="background2.png">images/background2.png</file>
+        <file alias="background3.png">images/background3.png</file>
     </qresource>
 </RCC>

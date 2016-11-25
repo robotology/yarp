@@ -205,7 +205,7 @@ void EntitiesTreeWidget::onSelectItem(QString name)
 void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 {
     Q_UNUSED(column);
-    
+
     if (item == applicationNode || item == resourcesNode || item == modulesNode || item == templatesNode) {
         if (!item->isExpanded()) {
             expandItem(item);
@@ -223,8 +223,9 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 
     if (item->data(0,Qt::UserRole).toInt()  == (int)yarp::manager::MODULE) {
         yarp::manager::Module *mod = (yarp::manager::Module*)item->data(0,Qt::UserRole + 1).toLongLong();
-        if (mod)
+        if (mod) {
             viewModule(mod);
+        }
     }
 
     if (item->data(0,Qt::UserRole).toInt()  == (int)yarp::manager::RESOURCE) {
@@ -419,12 +420,10 @@ void EntitiesTreeWidget::onContext(QPoint p)
         if (it->parent() == applicationNode) {
             loadFiles->setText("Load Application");
             secondLevelMenu.exec(mapToGlobal(pp));
-        }else
-        if (it->parent() == resourcesNode) {
+        } else if (it->parent() == resourcesNode) {
             loadFiles->setText("Load Resource");
             secondLevelMenu.exec(mapToGlobal(pp));
-        }else
-        if (it->parent() == modulesNode) {
+        } else if (it->parent() == modulesNode) {
             loadFiles->setText("Load Module");
             secondLevelMenu.exec(mapToGlobal(pp));
         } else {
@@ -467,14 +466,12 @@ void EntitiesTreeWidget::onLoadFile()
             yarp::manager::Application *app = (yarp::manager::Application*)it->data(0,Qt::UserRole + 1).toLongLong();
             viewApplication(app);
         }
-    }else
-    if (it->parent() == resourcesNode) {
+    } else if (it->parent() == resourcesNode) {
         if (it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE) {
             yarp::manager::Computer *res = (yarp::manager::Computer*)it->data(0,Qt::UserRole + 1).toLongLong();
             viewResource(res);
         }
-    }else
-    if (it->parent() == modulesNode) {
+    } else if (it->parent() == modulesNode) {
         if (it->data(0,Qt::UserRole)  == yarp::manager::MODULE) {
             yarp::manager::Module *mod = (yarp::manager::Module*)it->data(0,Qt::UserRole + 1).toLongLong();
             viewModule(mod);
@@ -500,7 +497,7 @@ void EntitiesTreeWidget::onEdit()
         QProcess *notepad;
         notepad = new QProcess(this);
         notepad->start(ext_editor,QStringList()<<fileName);
-    }else if (item->data(0,Qt::UserRole)  == yarp::manager::NODE_APPTEMPLATE) {
+    } else if (item->data(0,Qt::UserRole)  == yarp::manager::NODE_APPTEMPLATE) {
             QString name = item->data(0,Qt::UserRole + 1).toString();
             QString tmpFileName = item->data(0,Qt::UserRole + 2).toString();
             qDebug("%s",name.toLatin1().data());
@@ -536,8 +533,7 @@ void EntitiesTreeWidget::onReopen()
             }
 
         }
-    }else
-    if (it->parent() == resourcesNode) {
+    } else if (it->parent() == resourcesNode) {
         if (it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE) {
             yarp::manager::Computer *res = (yarp::manager::Computer*)it->data(0,Qt::UserRole + 1).toLongLong();
             if (res) {
@@ -547,8 +543,7 @@ void EntitiesTreeWidget::onReopen()
                 reopenResource(resName,fileName);
             }
         }
-    }else
-    if (it->parent() == modulesNode) {
+    } else if (it->parent() == modulesNode) {
         if (it->data(0,Qt::UserRole)  == yarp::manager::MODULE) {
             yarp::manager::Module *mod = (yarp::manager::Module*)it->data(0,Qt::UserRole + 1).toLongLong();
             if (mod) {
