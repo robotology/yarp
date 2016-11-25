@@ -190,24 +190,24 @@ public:
     /**
      * Get the clipping planes of the sensor
      *
-     * @param near: minimum distance at which the sensor start measuring.
+     * @param nearPlane: minimum distance at which the sensor start measuring.
      *  Object closer than this distance will not be detected.
-     * @param far: maximum distance beyond which the sensor stop measuring.
+     * @param farPlane: maximum distance beyond which the sensor stop measuring.
      *  Object farther than this distance will not be detected.
      * @return true if success
      */
-    virtual bool getDepthClipPlanes(double &near, double &far) = 0;
+    virtual bool getDepthClipPlanes(double &nearPlane, double &farPlane) = 0;
 
     /**
      * Set the clipping planes of the sensor
      *
-     * @param near: minimum distance at which the sensor start measuring.
+     * @param nearPlane: minimum distance at which the sensor start measuring.
      *  Object closer than this distance will not be detected.
-     * @param far: maximum distance beyond which the sensor stop measuring.
+     * @param farPlane: maximum distance beyond which the sensor stop measuring.
      *  Object farther than this distance will not be detected.
      * @return true if success
      */
-    virtual bool setDepthClipPlanes(double near, double far) = 0;
+    virtual bool setDepthClipPlanes(double nearPlane, double farPlane) = 0;
 
 };
 

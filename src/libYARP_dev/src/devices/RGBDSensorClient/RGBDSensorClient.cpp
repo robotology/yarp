@@ -436,13 +436,13 @@ bool RGBDSensorClient::setDepthAccuracy(double accuracy)
 {
     return DepthMsgSender->setDepthAccuracy(accuracy);
 }
-bool RGBDSensorClient::getDepthClipPlanes(double &near, double &far)
+bool RGBDSensorClient::getDepthClipPlanes(double &nearPlane, double &farPlane)
 {
-    return DepthMsgSender->getDepthClipPlanes(near, far);
+    return DepthMsgSender->getDepthClipPlanes(nearPlane, farPlane);
 }
-bool RGBDSensorClient::setDepthClipPlanes(double near, double far)
+bool RGBDSensorClient::setDepthClipPlanes(double nearPlane, double farPlane)
 {
-    return DepthMsgSender->setDepthClipPlanes(near, far);
+    return DepthMsgSender->setDepthClipPlanes(nearPlane, farPlane);
 }
 
 bool RGBDSensorClient::getDepthIntrinsicParam(yarp::os::Property &intrinsic)

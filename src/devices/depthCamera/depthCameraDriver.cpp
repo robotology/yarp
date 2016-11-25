@@ -708,22 +708,22 @@ double depthCameraDriver::getDepthAccuracy()
     return m_depthStream.getVideoMode().getPixelFormat() == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
 }
 
-bool depthCameraDriver::getDepthClipPlanes(double& near, double& far)
+bool depthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
 {
     double factor;
     factor = getDepthAccuracy();
-    near   = m_depthStream.getMinPixelValue() * factor;
-    far    = m_depthStream.getMaxPixelValue() * factor;
+    nearPlane   = m_depthStream.getMinPixelValue() * factor;
+    farPlane    = m_depthStream.getMaxPixelValue() * factor;
     return true;
 
 }
 
-bool depthCameraDriver::setDepthClipPlanes(double near, double far)
+bool depthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
 {
     double factor;
     factor = getDepthAccuracy();
-    RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MAX_VALUE, int(far  / factor)));
-    RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MIN_VALUE, int(near / factor)));
+    RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MAX_VALUE, int(farPlane  / factor)));
+    RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MIN_VALUE, int(nearPlane / factor)));
     return true;
 }
 

@@ -341,7 +341,7 @@ bool Implement_DepthVisualParams_Sender::setDepthAccuracy(double accuracy)
     return response.get(2).asBool();
 }
 
-bool Implement_DepthVisualParams_Sender::getDepthClipPlanes(double &near, double &far)
+bool Implement_DepthVisualParams_Sender::getDepthClipPlanes(double &nearPlane, double &farPlane)
 {
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
@@ -352,23 +352,23 @@ bool Implement_DepthVisualParams_Sender::getDepthClipPlanes(double &near, double
     // Minimal check on response, we suppose the response is always correctly formatted
     if((response.get(0).asVocab()) == VOCAB_FAILED)
     {
-        near = 0;
-        far  = 0;
+        nearPlane = 0;
+        farPlane  = 0;
         return false;
     }
-    near = response.get(3).asDouble();
-    far  = response.get(4).asDouble();
+    nearPlane = response.get(3).asDouble();
+    farPlane  = response.get(4).asDouble();
     return true;
 }
 
-bool Implement_DepthVisualParams_Sender::setDepthClipPlanes(double near, double far)
+bool Implement_DepthVisualParams_Sender::setDepthClipPlanes(double nearPlane, double farPlane)
 {
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_CLIP_PLANES);
-    cmd.addInt(near);
-    cmd.addInt(far);
+    cmd.addDouble(nearPlane);
+    cmd.addDouble(farPlane);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -503,13 +503,13 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
 
                 case VOCAB_CLIP_PLANES:
                 {
-                    double near, far;
-                    iDepthVisual->getDepthClipPlanes(near, far);
+                    double nearPlane, farPlane;
+                    iDepthVisual->getDepthClipPlanes(nearPlane, farPlane);
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_CLIP_PLANES);
                     response.addVocab(VOCAB_IS);
-                    response.addDouble(near);
-                    response.addDouble(far);
+                    response.addDouble(nearPlane);
+                    response.addDouble(farPlane);
                 }
                 break;
 

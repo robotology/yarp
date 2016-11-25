@@ -140,8 +140,8 @@ public:
     virtual bool   getDepthIntrinsicParam(Property& intrinsic);
     virtual double getDepthAccuracy();
     virtual bool   setDepthAccuracy(double accuracy);
-    virtual bool   getDepthClipPlanes(double& near, double& far);
-    virtual bool   setDepthClipPlanes(double near, double far);
+    virtual bool   getDepthClipPlanes(double& nearPlane, double& farPlane);
+    virtual bool   setDepthClipPlanes(double nearPlane, double farPlane);
     virtual bool   getExtrinsicParam(sig::Matrix &extrinsic);
     virtual bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL);
     virtual bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL);

@@ -103,8 +103,8 @@ public:
     virtual bool   setDepthFOV(double horizontalFov, double verticalFov) = 0;
     virtual double getDepthAccuracy() = 0;
     virtual bool   setDepthAccuracy(double accuracy) = 0;
-    virtual bool   getDepthClipPlanes(double &near, double &far) = 0;
-    virtual bool   setDepthClipPlanes(double near, double far) = 0;
+    virtual bool   getDepthClipPlanes(double &nearPlane, double &farPlane) = 0;
+    virtual bool   setDepthClipPlanes(double nearPlane, double farPlane) = 0;
     virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) = 0;
 
     /*
