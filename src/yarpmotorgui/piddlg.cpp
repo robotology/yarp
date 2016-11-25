@@ -92,6 +92,18 @@ PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
 
 PidDlg::~PidDlg()
 {
+    if (buttons.size() != 0)
+    {
+        for (int cc = 0; cc < buttons.size(); cc++)
+        {
+            if (buttons[cc] != 0)
+            {
+                delete buttons[cc];
+                buttons[cc] = 0;
+            }
+        }
+    }
+    buttons.clear();
     delete ui;
 }
 
@@ -200,6 +212,26 @@ void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
     ui->tableTorque->item(TORQUE_MAXINT,1)->setText(QString("%1").arg((int)myPid.max_int));
 }
 
+void PidDlg::onSendRemoteVariable()
+{
+    int i = -1;
+    for (int elem = 0; elem < buttons.size(); elem++)
+    {
+        if (sender() == buttons[elem])
+        {
+            i = elem;
+            break;
+        }
+    }
+    if (i == -1) return;
+
+    std::string key = ui->tableVariables->item(i, 0)->text().toStdString();
+    std::string val = ui->tableVariables->item(i, 1)->text().toStdString();
+    yarp::os::Bottle valb(val);
+    sendSingleRemoteVariable(key, valb);
+    updateAllRemoteVariables();
+}
+
 void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
 {
     // Remote Variables
@@ -211,15 +243,36 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
         ui->tableVariables->setColumnCount(0);
         ui->tableVariables->insertColumn(0);
         ui->tableVariables->insertColumn(0);
+        ui->tableVariables->insertColumn(0);
+        ui->tableVariables->setMinimumWidth(500);
         ui->tableVariables->setHorizontalHeaderItem(0, new QTableWidgetItem(QString("Key")));
         ui->tableVariables->setHorizontalHeaderItem(1, new QTableWidgetItem(QString("Values")));
+        ui->tableVariables->setHorizontalHeaderItem(2, new QTableWidgetItem(QString("")));
 
         yarp::os::Bottle keys;
         if (iVar->getRemoteVariablesList(&keys))
         {
             std::string s = keys.toString();
-            for (int i = 0; i < keys.size(); i++)
+            int keys_size = keys.size();
+            if (buttons.size() != 0)
             {
+                for (int cc = 0; cc < buttons.size(); cc++)
+                {
+                    if (buttons[cc] != 0)
+                    {
+                        delete buttons[cc];
+                        buttons[cc] = 0;
+                    }
+                }
+            }
+            buttons.clear();
+            buttons.resize(keys_size);
+
+            for (int i = 0; i < keys_size; i++)
+            {
+                buttons[i] = new QPushButton("Send");
+                connect(buttons[i], SIGNAL(clicked()), this, SLOT(onSendRemoteVariable()));
+
                 std::string v;
                 if (keys.get(i).isString())
                 {
@@ -232,6 +285,7 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
                     ui->tableVariables->setItem(i, 1, new QTableWidgetItem(QString(val.toString().c_str())));
                     ui->tableVariables->item(i, 1)->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled );
                     ui->tableVariables->setColumnWidth(1, 500);
+                    ui->tableVariables->setCellWidget(i, 2, (QWidget*)buttons[i]);
 
                     /*yarp::os::Bottle val;
                     v = keys.get(i).asString();

@@ -16,6 +16,7 @@
 #include <QItemDelegate>
 #include <QModelIndex>
 #include <QLineEdit>
+#include <vector>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
@@ -60,11 +61,13 @@ signals:
 private:
     Ui::PidDlg *ui;
     int jointIndex;
+    std::vector <QPushButton*> buttons;
 
 private slots:
     void onRefresh();
     void onSend();
     void onCancel();
+    void onSendRemoteVariable();
 
 };
 
