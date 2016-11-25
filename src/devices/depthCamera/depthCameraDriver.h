@@ -79,7 +79,8 @@ struct CameraParameters
 
     RGBDParam               rgbRes;
     RGBDParam               rgb_Fov;
-    RGBDParam               mirroring;
+    RGBDParam               rgbMirroring;
+    RGBDParam               depthMirroring;
     intrinsicParams         rgbIntrinsic;
     yarp::sig::Matrix       transformationMatrix;
 };
@@ -207,6 +208,8 @@ name         /depthCamera
 accuracy     0.001
 depthResolution (320 240)    #Note the parentesys
 rgbResolution   (320 240)
+rgbMirror       false
+depthMirror     false
 
 [HW_DESCRIPTION]
 clipPlanes (0.4 4.5)
@@ -226,7 +229,6 @@ k2                      2.0
 t1                      3.0
 t2                      4.0
 k3                      5.0
-
 
 [DEPTH_INTRINSIC_PARAMETERS]
 retificationMatrix      (0.99824 0.0182436 -0.0564274 -0.0654844 -0.0165694 0.999413 0.0299975 2.80857e-05 0.0569415 -0.0290098 0.997956 0.00113543 0.0 0.0 0.0 1.0)

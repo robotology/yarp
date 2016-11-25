@@ -85,7 +85,9 @@ depthCameraDriver::depthCameraDriver()
     m_cameraDescription.rgb_Fov.size    = 2;
     m_cameraDescription.rgbRes.name     = "rgbResolution";
     m_cameraDescription.rgbRes.size     = 2;
-    m_cameraDescription.mirroring.name  = "mirroring";
+    m_cameraDescription.accuracy.name        = "accuracy";
+    m_cameraDescription.rgbMirroring.name    = "rgbMirroring";
+    m_cameraDescription.depthMirroring.name  = "depthMirroring";
     m_cameraDescription.transformationMatrix.resize(4, 4);
     m_cameraDescription.depthIntrinsic.retificationMatrix.resize(4, 4);
     m_cameraDescription.rgbIntrinsic.retificationMatrix.resize(4, 4);
@@ -252,7 +254,9 @@ bool depthCameraDriver::setParams(const Bottle& settings, const Bottle& descript
     if(!checkParam(settings, description, m_cameraDescription.depthRes)   ) ret = false;
     if(!checkParam(settings, description, m_cameraDescription.rgb_Fov)    ) ret = false;
     if(!checkParam(settings, description, m_cameraDescription.rgbRes)     ) ret = false;
-    if(!checkParam(settings, description, m_cameraDescription.mirroring)  ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.accuracy)        ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.rgbMirroring)    ) ret = false;
+    if(!checkParam(settings, description, m_cameraDescription.depthMirroring)  ) ret = false;
 
     if(!ret)
     {
@@ -341,17 +345,26 @@ bool depthCameraDriver::setParams(const Bottle& settings, const Bottle& descript
             settingErrorMsg("Setting param " + m_cameraDescription.rgbRes.name + " failed... quitting.", ret);
     }
 
-    //MIRRORING
-    if(m_cameraDescription.mirroring.isSetting)
+    // rgb MIRRORING
+    if(m_cameraDescription.rgbMirroring.isSetting)
     {
-        Value& v = m_cameraDescription.mirroring.val[0];
+        Value& v = m_cameraDescription.rgbMirroring.val[0];
         if(!v.isBool() )
-            settingErrorMsg("Param " + m_cameraDescription.mirroring.name + " is not a double as it should be.", ret);
+            settingErrorMsg("Param " + m_cameraDescription.rgbMirroring.name + " is not a bool as it should be.", ret);
 
-        if(!this->setActive(YARP_FEATURE_MIRROR, v.asBool()))
-            settingErrorMsg("Setting param " + m_cameraDescription.mirroring.name + " failed... quitting.", ret);
+        if(! setRgbMirroring(v.asBool()))
+            settingErrorMsg("Setting param " + m_cameraDescription.rgbMirroring.name + " failed... quitting.", ret);
     }
+    // depth MIRRORING
+    if(m_cameraDescription.depthMirroring.isSetting)
+    {
+        Value& v = m_cameraDescription.depthMirroring.val[0];
+        if(!v.isBool() )
+            settingErrorMsg("Param " + m_cameraDescription.depthMirroring.name + " is not a bool as it should be.", ret);
 
+        if(! setDepthMirroring(v.asBool()))
+            settingErrorMsg("Setting param " + m_cameraDescription.depthMirroring.name + " failed... quitting.", ret);
+    }
     return ret;
 }
 
