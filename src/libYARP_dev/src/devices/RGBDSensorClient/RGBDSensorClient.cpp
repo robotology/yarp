@@ -361,20 +361,30 @@ yarp::os::ConstString RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeSta
 
 bool RGBDSensorClient::getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp)
 {
-    streamingReader.readRgb(rgbImage);
     if(timeStamp)
         timeStamp->update(yarp::os::Time::now());
-    return false;
+    return streamingReader.readRgb(rgbImage);
 }
 
 bool RGBDSensorClient::getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp)
 {
-    return false;
+    if(timeStamp)
+        timeStamp->update(yarp::os::Time::now());
+    return streamingReader.readDepth(depthImage);
 }
 
-bool RGBDSensorClient::getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
+bool RGBDSensorClient::getImages(FlexImage &rgbImage, ImageOf<PixelFloat> &depthImage, Stamp *rgbStamp, Stamp *depthStamp)
 {
-    return false;
+    bool ret = true;
+    ret &= streamingReader.readRgb(rgbImage);
+    ret &= streamingReader.readDepth(depthImage);
+
+    if(rgbStamp)
+        rgbStamp->update(yarp::os::Time::now());
+
+    if(depthStamp)
+        depthStamp->update(yarp::os::Time::now());
+    return ret;
 }
 
 //
