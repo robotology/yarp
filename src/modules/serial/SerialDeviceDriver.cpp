@@ -30,7 +30,7 @@ SerialDeviceDriver::~SerialDeviceDriver() {
     close();
 }
 
-bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config) 
+bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
 {
     //if(RES(system_resources).initialize(config.CommChannel, config.SerialParams) < 0)
     //    return false;
@@ -40,10 +40,10 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
 
     // Initialize serial port
     if(_serialConnector.connect(_serial_dev, ACE_DEV_Addr(config.CommChannel)) == -1)
-    { 
-        yError("Invalid communications port in %s \n", config.CommChannel);
+    {
+        yError("Invalid communications port in %s: %s\n", config.CommChannel, strerror(errno));
         return false;
-    } 
+    }
 
 
     // Set TTY_IO parameter into the ACE_TTY_IO device(_serial_dev)
@@ -119,7 +119,7 @@ bool SerialDeviceDriver::send(const Bottle& msg)
             {
                 yDebug("Sending string: %s", msg.get(0).asString().c_str());
             }
-    
+
             // Write message to the serial device
             ssize_t bytes_written = _serial_dev.send_n((void *) msg.get(0).asString().c_str(), message_size);
 
@@ -142,7 +142,7 @@ bool SerialDeviceDriver::send(const Bottle& msg)
     }
 
     return true;
-} 
+}
 
 bool SerialDeviceDriver::send(char *msg, size_t size)
 {
@@ -152,7 +152,7 @@ bool SerialDeviceDriver::send(char *msg, size_t size)
         {
             yDebug("Sending string: %s", msg);
         }
-    
+
         // Write message in the serial device
         ssize_t bytes_written = _serial_dev.send_n((void *)msg, size);
 
@@ -174,7 +174,7 @@ bool SerialDeviceDriver::send(char *msg, size_t size)
 int SerialDeviceDriver::receiveChar(char& c)
 {
     char chr;
-    
+
     //this function call blocks
     ssize_t bytes_read = _serial_dev.recv ((void *) &chr, 1);
 
@@ -273,7 +273,7 @@ bool SerialDeviceDriver::receive(Bottle& msg)
 
     if (bytes_read == 0)  //nothing there
         return true;
-        
+
     message[bytes_read] = 0;
 
     if (verbose)
