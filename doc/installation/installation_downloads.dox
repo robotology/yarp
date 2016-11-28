@@ -8,7 +8,7 @@
 * @page installation_downloads Downloads
 
 Latest source release:
- + 2016/10/20: YARP 2.3.66.2
+ + 2016/11/28: YARP 2.3.68
 
 Latest binary release:
  + 2016/06/01: YARP 2.3.66
@@ -28,7 +28,7 @@ Previous releases:
 
 \section download_windows Source Code
 
-__Sources for all versions__: https://github.com/robotology/yarp/archive/v2.3.66.2.zip
+__Sources for all versions__: https://github.com/robotology/yarp/archive/v2.3.68.zip
 
 \section download_windows Windows
 
