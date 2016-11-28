@@ -21,7 +21,7 @@ namespace yarp {
  * Interface for a generic control board device implementing position control in encoder
  * coordinates.
  */
-class yarp::dev::IPositionControlRaw
+class YARP_dev_API yarp::dev::IPositionControlRaw
 {
 public:
     /**
