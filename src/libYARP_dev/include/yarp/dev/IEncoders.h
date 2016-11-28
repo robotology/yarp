@@ -22,7 +22,7 @@ namespace yarp {
  *
  * Control board, encoder interface.
  */
-class yarp::dev::IEncodersRaw
+class YARP_dev_API yarp::dev::IEncodersRaw
 {
 public:
     /**
