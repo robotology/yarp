@@ -92,16 +92,10 @@ PidDlg::PidDlg(QString partname, int jointIndex,QWidget *parent) :
 
 PidDlg::~PidDlg()
 {
-    if (buttons.size() != 0)
+    for (size_t cc = 0; cc < buttons.size(); cc++)
     {
-        for (int cc = 0; cc < buttons.size(); cc++)
-        {
-            if (buttons[cc] != 0)
-            {
-                delete buttons[cc];
-                buttons[cc] = 0;
-            }
-        }
+        delete buttons[cc];
+        buttons[cc] = 0;
     }
     buttons.clear();
     delete ui;
@@ -215,7 +209,7 @@ void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
 void PidDlg::onSendRemoteVariable()
 {
     int i = -1;
-    for (int elem = 0; elem < buttons.size(); elem++)
+    for (size_t elem = 0; elem < buttons.size(); elem++)
     {
         if (sender() == buttons[elem])
         {
@@ -254,16 +248,10 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
         {
             std::string s = keys.toString();
             int keys_size = keys.size();
-            if (buttons.size() != 0)
+            for (size_t cc = 0; cc < buttons.size(); cc++)
             {
-                for (int cc = 0; cc < buttons.size(); cc++)
-                {
-                    if (buttons[cc] != 0)
-                    {
-                        delete buttons[cc];
-                        buttons[cc] = 0;
-                    }
-                }
+                delete buttons[cc];
+                buttons[cc] = 0;
             }
             buttons.clear();
             buttons.resize(keys_size);
