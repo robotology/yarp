@@ -43,6 +43,7 @@ namespace yarp{
 #define VOCAB_SHUTTER VOCAB4('s','h','u','t')
 #define VOCAB_GAIN VOCAB4('g','a','i','n')
 #define VOCAB_IRIS VOCAB4('i','r','i','s')
+
 //#define VOCAB_TEMPERATURE VOCAB4('t','e','m','p')
 //#define VOCAB_WHITE_SHADING VOCAB4('s','h','a','d')
 //#define VOCAB_OPTICAL_FILTER VOCAB4('f','i','l','t')
@@ -78,7 +79,8 @@ typedef enum {
     YARP_FEATURE_OPTICAL_FILTER,
     YARP_FEATURE_CAPTURE_SIZE,
     YARP_FEATURE_CAPTURE_QUALITY,
-    YARP_FEATURE_NUMEBR_OF          // this has to be the last one
+    YARP_FEATURE_MIRROR,
+    YARP_FEATURE_NUMBER_OF          // this has to be the last one
 } cameraFeature_id_t;
 
 /*

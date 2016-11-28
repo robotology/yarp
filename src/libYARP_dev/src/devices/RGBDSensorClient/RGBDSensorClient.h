@@ -16,8 +16,8 @@
  * Public License for more details
  */
 
-#ifndef _RGBD_SENSOR_CLIENT_
-#define _RGBD_SENSOR_CLIENT_
+#ifndef YARP_DEV_RGBD_SENSOR_CLIENT_
+#define YARP_DEV_RGBD_SENSOR_CLIENT_
 
 
 #include <yarp/os/Time.h>
@@ -28,15 +28,12 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IVisualParamsImpl.h>
+#include <yarp/dev/FrameGrabberControl2.h>
+#include <yarp/dev/FrameGrabberControl2Impl.h>
 
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
-
-// Following three definitions would fit better in a header file
-// shared between client and server ... where to place it?
-#define VOCAB_PROTOCOL_VERSION VOCAB('p', 'r', 'o', 't')
-#define RGBD_WRAPPER_PROTOCOL_VERSION_MAJOR 1
-#define RGBD_WRAPPER_PROTOCOL_VERSION_MINOR 0
 
 #include "RGBDSensorClient_StreamingMsgParser.h"
 
@@ -49,7 +46,7 @@ namespace yarp {
 
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_client
  *
  * \section RGBDSensorClient Description of input parameters
  * A Network client to receive data from kinect-like devices.
@@ -57,27 +54,28 @@ namespace yarp {
  * for depth image following Framegrabber and IDepthSensor interfaces specification respectively.
  * See they documentation for more details about each interface.
  *
- * This device is paired with its client called RGBDSensorWrapper to receive the data streams and perfor remote operations.
+ * This device is paired with its server called RGBDSensorWrapper to receive the data streams and perform remote operations.
  *
  *   Parameters required by this device are:
- * | Parameter name  | SubParameter   | Type    | Units          | Default Value | Required                       | Description                                                                    | Notes |
- * |:---------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:------------------------------------------------------------------------------:|:-----:|
- * | localImagePort  |      -         | string  | -              |   -           | Yes, unless useROS='true'      | Full name of the local port to open, e.g. /myApp/image_camera                  | '/rpc' port will be added for remote operations      |
- * | localDepthPort  |      -         | string  | -              |   -           | Yes, unless useROS='true'      | Full name of the local port to open, e.g. /myApp/depth_camera                  | '/rpc' port will be added for remote operations      |
- * | remoteImagePort |      -         | string  | -              |   -           | Yes, unless useROS='true'      | Full name of the port to read color images from, e.g. /robotName/image_camera  | '/rpc' port will be added for remote operations      |
- * | remoteDepthPort |      -         | string  | -              |   -           | Yes, unless useROS='true'      | Full name of the port to read depth images from, e.g. /robotName/depth_camera  | '/rpc' port will be added for remote operations      |
- * | synchPolicy     |      -         | string  |  -             |  latest       | No                             | Choose the policy to use to synch color and depth frame together               | Values are 'latest', 'seqNum', 'time' (this may require an addictional parameter)|
- * | watchdog        |      -         | double  |  ms            |   -           | Yes                            | Verify refresh of data on ports whitin this time, otherwise throws an error    |  - |
+ * | Parameter name  | SubParameter   | Type    | Units          | Default Value | Required      | Description                                                                           | Notes |
+ * |:---------------:|:--------------:|:-------:|:--------------:|:-------------:|:------------: |:-------------------------------------------------------------------------------------:|:-----:|
+ * | localImagePort  |      -         | string  | -              |   -           |               | Full name of the local port to open, e.g. /myApp/RGBD/rgb_camera:i                    |       |
+ * | localDepthPort  |      -         | string  | -              |   -           |               | Full name of the local port to open, e.g. /myApp/RGBD/depth_camera:i                  |       |
+ * | localRpcPort    |      -         | string  | -              |   -           |               | Full name of the local RPC port to open, e.g. /myApp/RGBD/rpc                         |       |
+ * | remoteImagePort |      -         | string  | -              |   -           |               | Full name of the port to read color images from, e.g. /robotName/RGBD/image_camera:o  |       |
+ * | remoteDepthPort |      -         | string  | -              |   -           |               | Full name of the port to read depth images from, e.g. /robotName/RGBD/depth_camera:o  |       |
+ * | remoteRpcPort   |      -         | string  | -              |   -           |               | Full name of the remote RPC port, e.g. /robotName/RGBD/rpc                            |       |
  *
  * Configuration file using .ini format, using subdevice keyword.
  *
  * \code{.unparsed}
  * device RGBDSensorClient
- * localImagePort     /localImagePort
- * localDepthPort     /localDepthPort
- * remoteImagePort    /iCub/colorCamera
- * remoteDepthPort    /iCub/depthCamera
- * watchdog 200
+ * localImagePort     /clientRgbPort:i
+ * localDepthPort     /clientDepthPort:i
+ * localRpcPort       /clientRpcPort
+ * remoteImagePort    /RGBD/rgbCamera:o
+ * remoteDepthPort    /RGBD/depthCamera:o
+ * remoteRpcPort      /RGBD/rpc
  * \endcode
  *
  * XML format, using 'networks' keywork. This file is meant to be used in junction with yarprobotinterface executable,
@@ -86,37 +84,55 @@ namespace yarp {
  * \code{.xml}
  *  <!-- Following parameters are meaningful ONLY for yarprobotinterface -->
  *
- * <param name="localImagePort">    /<robotName>/localImagePort    </param>
- * <param name="localDepthPort">    /<robotName>/localDepthPort    </param>
- * <param name="remoteImagePort">   /<robotName>/colorCamera       </param>
- * <param name="remoteDepthPort">   /<robotName>/depthCamera       </param>
- * <param name="watchdog">          200                            </param>
+ * <param name="localImagePort">    /clientRgbPort:i        </param>
+ * <param name="localDepthPort">    /clientDepthPort:i      </param>
+ * <param name="localRpcPort">      /clientRpcPort          </param>
+ * <param name="remoteImagePort">   /RGBD/rgbCamera:o       </param>
+ * <param name="localDepthPort">    /RGBD/depthCamera:o     </param>
+ * <param name="remoteRpcPort">     /RGBD/rpc               </param>
  * \endcode
  *
  */
 
 class yarp::dev::RGBDSensorClient:  public DeviceDriver,
+                                    public FrameGrabberControls2_Sender,
                                     public IRGBDSensor
 {
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+    yarp::dev::Implement_RgbVisualParams_Sender*   RgbMsgSender;
+    yarp::dev::Implement_DepthVisualParams_Sender* DepthMsgSender;
 protected:
-    yarp::os::ConstString local_colorFrame_StreamingPort_Name;
-    yarp::os::ConstString local_depthFrame_StreamingPort_Name;
-    yarp::os::ConstString remote_colorFrame_StreamingPort_Name;
-    yarp::os::ConstString remote_depthFrame_StreamingPort_Name;
+    yarp::os::ConstString local_colorFrame_StreamingPort_name;
+    yarp::os::ConstString local_depthFrame_StreamingPort_name;
+    yarp::os::ConstString remote_colorFrame_StreamingPort_name;
+    yarp::os::ConstString remote_depthFrame_StreamingPort_name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> colorFrame_StreamingPort;
-    yarp::os::BufferedPort<yarp::sig::FlexImage> depthFrame_StreamingPort;
+    yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat> > depthFrame_StreamingPort;
 
-    yarp::os::ConstString local_colorFrame_rpcPort_Name;
-    yarp::os::ConstString local_depthFrame_rpcPort_Name;
-    yarp::os::ConstString remote_colorFrame_rpcPort_Name;
-    yarp::os::ConstString remote_depthFrame_rpcPort_Name;
-    yarp::os::Port colorFrame_rpcPort;
-    yarp::os::Port depthFrame_rpcPort;
+    // Use a single RPC port for now
+    yarp::os::ConstString local_rpcPort_name;
+    yarp::os::ConstString remote_rpcPort_name;
+    yarp::os::Port        rpcPort;
 
-    // It should be possible to attach this guy to more than one port, try to see what
-    // will happen when receiving 2 calls at the same time (receive one calls while serving
-    // another one, it will result in concurrent thread most probably) and buffering issues.
+
+    /*
+     * In case the client has to connect to 2 different wrappers/server because the rgb
+     * and depth comes from two different sources.
+     *
+     * It should be possible to attach this guy to more than one port, try to see what
+     * will happen when receiving 2 calls at the same time (receive one calls while serving
+     * another one, it will result in concurrent thread most probably) and buffering issues.
+     *
+
+        yarp::os::ConstString local_colorFrame_rpcPort_Name;
+        yarp::os::ConstString local_depthFrame_rpcPort_Name;
+        yarp::os::ConstString remote_colorFrame_rpcPort_Name;
+        yarp::os::ConstString remote_depthFrame_rpcPort_Name;
+
+        yarp::os::Port colorFrame_rpcPort;
+        yarp::os::Port depthFrame_rpcPort;
+    */
 
     // Image data specs
     std::string sensorId;
@@ -128,18 +144,46 @@ protected:
     bool initialize_YARP(yarp::os::Searchable &config);
     bool initialize_ROS(yarp::os::Searchable &config);
 
-    // Synch
-    double watchdog;
     yarp::os::Stamp colorStamp;
     yarp::os::Stamp depthStamp;
+
+
+    // This is gonna be superseded by the synchronized when it'll be ready
     RGBDSensor_StreamingMsgParser streamingReader;
     bool fromConfig(yarp::os::Searchable &config);
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
 
     RGBDSensorClient();
     ~RGBDSensorClient();
+
+
+    virtual int  getRgbHeight();
+    virtual int  getRgbWidth();
+    virtual bool setRgbResolution(int width, int height);
+    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov);
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov);
+    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic);
+    virtual bool getRgbMirroring(bool& mirror);
+    virtual bool setRgbMirroring(bool mirror);
+
+    /*
+     * IDepthVisualParams interface. Look at IVisualParams.h for documentation
+     */
+    virtual int    getDepthHeight();
+    virtual int    getDepthWidth();
+    virtual bool   setDepthResolution(int width, int height);
+    virtual bool   getDepthFOV(double &horizontalFov, double &verticalFov);
+    virtual bool   setDepthFOV(double horizontalFov, double verticalFov);
+    virtual double getDepthAccuracy();
+    virtual bool   setDepthAccuracy(double accuracy);
+    virtual bool   getDepthClipPlanes(double &near, double &far);
+    virtual bool   setDepthClipPlanes(double near, double far);
+    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic);
+    virtual bool   getDepthMirroring(bool& mirror);
+    virtual bool   setDepthMirroring(bool mirror);
 
     // Device Driver interface //
     /**
@@ -155,180 +199,72 @@ public:
      * otherwise NULL. The user is responsible for deallocating the
      * device.
      */
-    virtual bool open(yarp::os::Searchable& config);
+    bool open(yarp::os::Searchable& config);
 
     /**
      * Close the DeviceDriver.
      * @return true/false on success/failure.
      */
-    virtual bool close();
+    bool close();
 
-    // IFrameGrabber Interfaces
+    /*
+     *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
+     */
+
+    /*
+     * IRGBDSensor specific interface methods
+     */
+
     /**
-     * Get an rgb image from the frame grabber, if required
-     * demosaicking/color reconstruction is applied
+     * Get the extrinsic parameters ofrom the device
+     * @param  extrinsic  return a rototranslation matrix describing the position
+     *         of the depth optical frame with respect to the rgb frame
+     * @return true if success
+     */
+    bool getExtrinsicParam(yarp::sig::Matrix &extrinsic);
+
+    /**
+     * Get the surrent status of the sensor, using enum type
      *
-     * @param image the image to be filled
-     * @return true/false upon success/failure
+     * @return an enum representing the status of the robot or an error code
+     * if any error is present
      */
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> &image);
+    IRGBDSensor::RGBDSensor_status getSensorStatus();
 
     /**
-     * Get a raw image from the frame grabber
+     * Return an error message in case of error. For debugging purpose and user notification.
+     * Error message will be reset after any succesful command
+     * @return A string explaining the last error occurred.
+     */
+    yarp::os::ConstString getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL);
+
+    /**
+     * Get the rgb frame from the device.
+     * The pixel type of the source image will usually be set as a VOCAB_PIXEL_RGB,
+     * but the user can call the function with the pixel type of his/her choise. The convertion
+     * if possible, will be done automatically on client side (TO BO VERIFIED).
+     * Note: this will consume CPU power because it will not use GPU optimization.
+     * Use VOCAB_PIXEL_RGB for best performances.
      *
-     * @param image the image to be filled
-     * @return true/false upon success/failure
+     * @param rgbImage the image to be filled.
+     * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
+     * @return True on success
      */
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &image);
+    bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = NULL);
 
     /**
-     * Return the height of each frame.
-     * @return image height
+     * Get the depth frame from the device.
+     * The pixel type of the source image will usually be set as a VOCAB_PIXEL_RGB,
+     * but the user can call the function with the pixel type of his/her choise. The convertion
+     * if possible, will be done automatically on client side (TO BO VERIFIED).
+     * Note: this will consume CPU power because it will not use GPU optimization.
+     * Use VOCAB_PIXEL_RGB for best performances.
+     *
+     * @param rgbImage the image to be filled.
+     * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
+     * @return True on success
      */
-    virtual int height() const;
-
-    /**
-     * Return the width of each frame.
-     * @return image width
-     */
-    virtual int width() const;
-
-
-    //
-    //  IDepth Interface
-    //
-    /**
-    * get the device hardware charactestics
-    * @param device_info Searchable struct containing the device info
-    * @return true if able to get information about the device.
-    */
-    virtual bool getDeviceInfo(yarp::os::Property &device_info);
-
-    /**
-    * Get the distance measurements as an image
-    * @param ranges the vector containing the distance measurement
-    * @return true if able to get measurement data.
-    */
-    virtual bool getMeasurementData(yarp::sig::FlexImage &image, yarp::os::Stamp *stamp=NULL);
-
-    /**
-    * get the device status
-    * @param status the device status
-    * @return true/false.
-    */
-    virtual bool getDeviceStatus(DepthSensor_status *status);
-
-    /**
-    * get the device detection range
-    * @param min the minimum detection distance from the sensor [meter]
-    * @param max the maximum detection distance from the sensor [meter]
-    * @return true if able to get required info.
-    */
-    virtual bool getDistanceRange(double *min, double *max);
-
-    /**
-    * set the device detection range. Invalid setting will be discarded.
-    * @param min the minimum detection distance from the sensor [meter]
-    * @param max the maximum detection distance from the sensor [meter]
-    * @return true if message was correctly delivered to the HW device.
-    */
-    virtual bool setDistanceRange(double min, double max);
-
-    /**
-    * get the horizontal scan limits / field of view with respect to the
-    * front line of sight of the sensor. Angles are measured around the
-    * positive Z axis (counterclockwise, if Z is up) with zero angle being
-    * forward along the x axis
-    * @param min start angle of the scan  [degrees]
-    * @param max end angle of the scan    [degrees]
-    * @return true if able to get required info.
-    */
-    virtual bool getHorizontalScanLimits(double *min, double *max);
-
-    /**
-    * set the horizontal scan limits / field of view with respect to the
-    * front line of sight of the sensor. Angles are measured around the
-    * positive Z axis (counterclockwise, if Z is up) with zero angle being
-    * forward along the x axis
-    * @param min start angle of the scan  [degrees]
-    * @param max end angle of the scan    [degrees]
-    * @return true if message was correctly delivered to the HW device.
-    */
-    virtual bool setHorizontalScanLimits(double min, double max);
-
-    /**
-    * get the vertical scan limits / field of view with respect to the
-    * front line of sight of the sensor   [degrees]
-    * @param min start angle of the scan  [degrees]
-    * @param max end angle of the scan    [degrees]
-    * @return true if able to get required info.
-    */
-    virtual bool getVerticalScanLimits(double *min, double *max);
-
-    /**
-    * set the vertical scan limits / field of view with respect to the
-    * front line of sight of the sensor   [degrees]
-    * @param min start angle of the scan  [degrees]
-    * @param max end angle of the scan    [degrees]
-    * @return true if message was correctly delivered to the HW device.
-    */
-    virtual bool setVerticalScanLimits(double min, double max);
-
-    /**
-    * get the size of measured data from the device.
-    * It can be WxH for camera-like devices, or the number of points for other devices.
-    * @param horizontal width of image,  number of points in the horizontal scan [num]
-    * @param vertical   height of image, number of points in the vertical scan [num]
-    * @return true if able to get required info.
-    */
-    virtual bool getDataSize(double *horizontal, double *vertical);
-
-    /**
-    * set the size of measured data from the device.
-    * It can be WxH for camera-like devices, or the number of points for other devices.
-    * @param horizontal width of image,  number of points in the horizontal scan [num]
-    * @param vertical   height of image, number of points in the vertical scan [num]
-    * @return true if message was correctly delivered to the HW device.
-    */
-    virtual bool setDataSize(double horizontal, double vertical);
-
-    /**
-    * get the device resolution, using the current settings of scan limits
-    * and data size. Will return the resolution of device at 1 meter distance.
-    * @param hRes horizontal resolution [meter]
-    * @param vRes vertical resolution [meter]
-    * @return true if able to get required info.
-    */
-    virtual bool getResolution(double *hRes, double *vRes);
-
-    /**
-    * set the device resolution.
-    * This call can change the current settings of scan limits, data size or scan rate
-    * to match the requested resolution.
-    * Verify those settings is suggested after this call.
-    * Will set the resolution of device at 1meter distance, if possible.
-    * @param hRes horizontal resolution [meter]
-    * @param vRes vertical resolution [meter]
-    * @return true if message was correctly delivered to the HW device.
-    */
-    virtual bool setResolution(double hRes, double vRes);
-
-    /**
-    * get the scan rate (scans per seconds)
-    * @param rate the scan rate
-    * @return true if able to get required info.
-    */
-    virtual bool getScanRate(double *rate);
-
-    /**
-    * set the scan rate (scans per seconds)
-    * @param rate the scan rate
-    * @return true if message was correctly delivered to the HW device.
-    */
-    virtual bool setScanRate(double rate);
-
- /** IRGBDSensor specific interface methods*/
-    virtual bool getRGBDSensor_Status(RGBDSensor_status *status);
+    bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = NULL);
 
     /**
     * Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
@@ -341,8 +277,27 @@ public:
     * @param depthStamp pointer to memory to hold the Stamp of the depth frame
     * @return true if able to get both data.
     */
-    virtual bool getRGBD_Frames(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL);
+    bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL);
+
+
+    // IFrame Grabber Control 2
+    //
+    // Implemented by FrameGrabberControls2_Sender
+    //
+    using FrameGrabberControls2_Sender::getCameraDescription;
+    using FrameGrabberControls2_Sender::hasFeature;
+    using FrameGrabberControls2_Sender::setFeature;
+    using FrameGrabberControls2_Sender::getFeature;
+    using FrameGrabberControls2_Sender::hasOnOff;
+    using FrameGrabberControls2_Sender::setActive;
+    using FrameGrabberControls2_Sender::getActive;
+    using FrameGrabberControls2_Sender::hasAuto;
+    using FrameGrabberControls2_Sender::hasManual;
+    using FrameGrabberControls2_Sender::hasOnePush;
+    using FrameGrabberControls2_Sender::setMode;
+    using FrameGrabberControls2_Sender::getMode;
+    using FrameGrabberControls2_Sender::setOnePush;
 };
 
-#endif // _RGBD_SENSOR_CLIENT_
+#endif // YARP_DEV__RGBD_SENSOR_CLIENT_
 

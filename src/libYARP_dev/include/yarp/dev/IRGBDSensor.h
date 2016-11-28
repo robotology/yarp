@@ -17,16 +17,14 @@
  */
 
 
-#ifndef YARP_RGBD_SENSOR_INTERFACE
-#define YARP_RGBD_SENSOR_INTERFACE
+#ifndef YARP_DEV_RGBD_SENSOR_INTERFACE
+#define YARP_DEV_RGBD_SENSOR_INTERFACE
 
-#include <yarp/dev/DeviceDriver.h>
-#include <yarp/sig/Matrix.h>
-#include <yarp/sig/Image.h>
 #include <yarp/os/Stamp.h>
-
-#include <yarp/dev/FrameGrabberInterfaces.h>
-#include <yarp/dev/IDepthSensor.h>
+#include <yarp/sig/Image.h>
+#include <yarp/sig/Matrix.h>
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/IVisualParams.h>
 
 namespace yarp {
     namespace dev {
@@ -34,22 +32,38 @@ namespace yarp {
     }
 }
 
+
+// Interface name
+#define VOCAB_RGBD_SENSOR            VOCAB4('r','g','d','b')
+#define VOCAB_RGBD_PROTOCOL_VERSION  VOCAB4('p','r','o','t')
+
+// Methods
+#define VOCAB_EXTRINSIC_PARAM   VOCAB3('e','x','t')
+#define VOCAB_ERROR_MSG         VOCAB4('m','e','s','s')
+#define VOCAB_RGB_IMAGE         VOCAB4('i','m','g','r')
+#define VOCAB_DEPTH_IMAGE       VOCAB4('i','m','g'.'d')
+#define VOCAB_IMAGES            VOCAB4('i','m','m','s')
+#define VOCAB_STATUS            VOCAB4('s','t','a','t')
+
+
 /**
  * @ingroup dev_iface_other
  *
  * A generic interface for cameras that have both color camera as well
  * as depth camera sensor, like kinect device.
  *
- * This interface extends the existing FrameGrabber and IDepthSensor
- * interfaces by adding a method to get both images at the same time
- * in sych and allowing the client to set a synch policy.
- *
- * How the synch policy is implemented depends on the client device.
+ * This interface uses the existing IRgbVisualParams and IDepthVisualParams
+ * interfaces to retrieve the information about the cameras.
+ * This device extends the functionality by adding methods for getting
+ * extrinsic parameters and to actually retrieve the images.
+ * The images can be synchronized on client side by using the PortSynchronizer
+ * object.
+ * How the synch policy is implemented depends on the client device, custom policy
+ * can be used.
  */
 
-class YARP_dev_API yarp::dev::IRGBDSensor:  public IFrameGrabberImage,
-                                            public IFrameGrabberImageRaw,
-                                            public IDepthSensor
+class YARP_dev_API yarp::dev::IRGBDSensor : public IRgbVisualParams,
+                                            public IDepthVisualParams
 {
 public:
 
@@ -61,39 +75,84 @@ public:
         RGBD_SENSOR_NOT_READY        = 0,
         RGBD_SENSOR_OK_STANBY        = 1,
         RGBD_SENSOR_OK_IN_USE        = 2,
-        RGBD_SENSOR_GENERAL_ERROR    = 3,
-        RGBD_SENSOR_TIMEOUT          = 4
+        RGB_SENSOR_ERROR             = 3,
+        DEPTH_SENSOR_ERROR           = 4,
+        RGBD_SENSOR_GENERIC_ERROR    = 5,
+        RGBD_SENSOR_TIMEOUT          = 6
     };
 
     virtual ~IRGBDSensor(){}
 
-    /** IDepthSensor Interface */
-    using IDepthSensor::getDeviceInfo;
-    using IDepthSensor::getMeasurementData;
-    using IDepthSensor::getDeviceStatus;
-    using IDepthSensor::getDistanceRange;
-    using IDepthSensor::setDistanceRange;
-    using IDepthSensor::getHorizontalScanLimits;
-    using IDepthSensor::setHorizontalScanLimits;
-    using IDepthSensor::getVerticalScanLimits;
-    using IDepthSensor::setVerticalScanLimits;
-    using IDepthSensor::getDataSize;
-    using IDepthSensor::setDataSize;
-    using IDepthSensor::getResolution;
-    using IDepthSensor::setResolution;
-    using IDepthSensor::getScanRate;
-    using IDepthSensor::setScanRate;
+    /*
+     *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
+     */
+    virtual int  getRgbHeight() = 0;
+    virtual int  getRgbWidth() = 0;
+    virtual bool setRgbResolution(int width, int height) = 0;
+    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) = 0;
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov) = 0;
+    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) = 0;
 
-    /** IFrameGrabberImage interface */
-    virtual int height() const = 0;
-    virtual int width() const = 0;
-//     using IFrameGrabberImage::getImage;
-//     using IFrameGrabberImageRaw::getImage;
-//     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)  = 0;
-//     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) = 0;
+    /*
+     * IDepthVisualParams interface. Look at IVisualParams.h for documentation
+     */
+    virtual int    getDepthHeight() = 0;
+    virtual int    getDepthWidth() = 0;
+    virtual bool   setDepthResolution(int width, int height) = 0;
+    virtual bool   getDepthFOV(double &horizontalFov, double &verticalFov) = 0;
+    virtual bool   setDepthFOV(double horizontalFov, double verticalFov) = 0;
+    virtual double getDepthAccuracy() = 0;
+    virtual bool   setDepthAccuracy(double accuracy) = 0;
+    virtual bool   getDepthClipPlanes(double &nearPlane, double &farPlane) = 0;
+    virtual bool   setDepthClipPlanes(double nearPlane, double farPlane) = 0;
+    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) = 0;
 
-    /** IRGBDSensor specific interface methods*/
-    virtual bool getRGBDSensor_Status(RGBDSensor_status *status) = 0;
+    /*
+     * IRGBDSensor specific interface methods
+     */
+
+    /**
+     * Get the extrinsic parameters ofrom the device
+     * @param  extrinsic  return a rototranslation matrix describing the position
+     *         of the depth optical frame with respect to the rgb frame
+     * @return true if success
+     */
+    virtual bool getExtrinsicParam(yarp::sig::Matrix &extrinsic) = 0;
+
+    /**
+     * Return an error message in case of error. For debugging purpose and user notification.
+     * Error message will be reset after any succesful command
+     * @return A string explaining the last error occurred.
+     */
+    virtual yarp::os::ConstString getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) = 0;
+
+    /**
+     * Get the rgb frame from the device.
+     * The pixel type of the source image will usually be set as a VOCAB_PIXEL_RGB,
+     * but the user can call the function with the pixel type of his/her choise. The convertion
+     * if possible, will be done automatically on client side (TO BO VERIFIED).
+     * Note: this will consume CPU power because it will not use GPU optimization.
+     * Use VOCAB_PIXEL_RGB for best performances.
+     *
+     * @param rgbImage the image to be filled.
+     * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
+     * @return True on success
+     */
+    virtual bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = NULL) = 0;
+
+    /**
+     * Get the depth frame from the device.
+     * The pixel type of the source image will usually be set as a VOCAB_PIXEL_RGB,
+     * but the user can call the function with the pixel type of his/her choise. The convertion
+     * if possible, will be done automatically on client side.
+     * Note: this will consume CPU power because it will not use GPU optimization.
+     * Use VOCAB_PIXEL_RGB for best performances.
+     *
+     * @param rgbImage the image to be filled.
+     * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
+     * @return True on success
+     */
+    virtual bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = NULL) = 0;
 
     /**
     * Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
@@ -106,7 +165,15 @@ public:
     * @param depthStamp pointer to memory to hold the Stamp of the depth frame
     * @return true if able to get both data.
     */
-    virtual bool getRGBD_Frames(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL) = 0;
+    virtual bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL) = 0;
+
+    /**
+     * Get the surrent status of the sensor, using enum type
+     *
+     * @return an enum representing the status of the robot or an error code
+     * if any error is present
+     */
+    virtual RGBDSensor_status getSensorStatus() = 0;
 };
 
-#endif   // __YARP_RGBD_INTERFACE__
+#endif   // YARP_DEV_RGBD_INTERFACE__

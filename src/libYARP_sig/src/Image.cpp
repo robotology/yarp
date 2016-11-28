@@ -88,7 +88,7 @@ protected:
     // made to point appropriately. This is compatible with IPL and
     // SOMEONE says it's more efficient on NT.
     void _alloc (void);
-    void _alloc_extern (void *buf);
+    void _alloc_extern (const void *buf);
     void _alloc_data (void);
     void _free (void);
     void _free_data (void);
@@ -129,7 +129,7 @@ public:
     void resize(int x, int y, int pixel_type,
                 int pixel_size, int quantum, bool topIsLow);
 
-    void _alloc_complete_extern(void *buf, int x, int y, int pixel_type,
+    void _alloc_complete_extern(const void *buf, int x, int y, int pixel_type,
                                 int quantum, bool topIsLow);
 
 };
@@ -173,7 +173,7 @@ void ImageStorage::_alloc (void) {
 }
 
 // installs an external buffer as the image data
-void ImageStorage::_alloc_extern (void *buf)
+void ImageStorage::_alloc_extern (const void *buf)
 {
     yAssert(pImage != NULL);
     yAssert(Data==NULL);
@@ -581,7 +581,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
     this->topIsLow = topIsLow;
 }
 
-void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_type, int quantum, bool topIsLow)
+void ImageStorage::_alloc_complete_extern(const void *buf, int x, int y, int pixel_type, int quantum, bool topIsLow)
 {
     if (quantum==0) {
         quantum = 1;
@@ -1038,7 +1038,7 @@ bool Image::copy(const Image& alt) {
 }
 
 
-void Image::setExternal(void *data, int imgWidth, int imgHeight) {
+void Image::setExternal(const void *data, int imgWidth, int imgHeight) {
     if (imgQuantum==0) {
         imgQuantum = 1;
     }

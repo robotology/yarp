@@ -42,7 +42,7 @@ bool DepthImageConverter::getparam(yarp::os::Property& params)
 
 bool DepthImageConverter::accept(yarp::os::Things& thing)
 {
-    FlexImage* img = thing.cast_as< FlexImage >();
+    Image* img = thing.cast_as< Image >();
     if(img == NULL) {
         printf("DepthImageConverter: expected type FlexImage but got wrong data type!\n");
         return false;
@@ -59,7 +59,7 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
 
 yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
 {
-    FlexImage* img = thing.cast_as< FlexImage >();
+    Image* img = thing.cast_as< Image >();
     inMatrix = (float **) img->getRawImage();
 
     outImg.setPixelCode(VOCAB_PIXEL_MONO);

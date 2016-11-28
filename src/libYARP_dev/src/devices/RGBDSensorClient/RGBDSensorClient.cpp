@@ -5,29 +5,34 @@
  *
  */
 
-#include "RGBDSensorClient.h"
-#include <yarp/os/Log.h>
+#include <yarp/os/Portable.h>
 #include <yarp/os/LogStream.h>
+#include "RGBDSensorClient.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
 
+#define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
+#define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
+
 // needed for the driver factory.
-yarp::dev::DriverCreator *createRGBDSensorClient() {
+yarp::dev::DriverCreator *createRGBDSensorClient()
+{
     return new DriverCreatorOf<yarp::dev::RGBDSensorClient>("RGBDSensorClient",
         "RGBDSensorClient",
         "yarp::dev::RGBDSensorClient");
 }
 
-RGBDSensorClient::RGBDSensorClient()
+RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls2_Sender(rpcPort)
 {
-    watchdog = -1;
-    sensor_p = NULL;
-    use_ROS  = false;
-    verbose  = 2;
-    sensorStatus = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    sensor_p       = NULL;
+    use_ROS        = false;
+    verbose        = 2;
+    sensorStatus   = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    RgbMsgSender   = new Implement_RgbVisualParams_Sender(rpcPort);
+    DepthMsgSender = new Implement_DepthVisualParams_Sender(rpcPort);
 }
 
 RGBDSensorClient::~RGBDSensorClient()
@@ -46,7 +51,7 @@ bool RGBDSensorClient::open(yarp::os::Searchable& config)
         return false;
     }
 
-    sensorId= "RGBDSensorClient for " + local_depthFrame_StreamingPort_Name;
+    sensorId= "RGBDSensorClient for " + local_depthFrame_StreamingPort_name;
 
     if(!initialize_YARP(config) )
     {
@@ -91,8 +96,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            local_colorFrame_StreamingPort_Name  = config.find("localImagePort").asString().c_str();
-            local_colorFrame_rpcPort_Name = local_colorFrame_StreamingPort_Name + "/rpc:i";
+            local_colorFrame_StreamingPort_name  = config.find("localImagePort").asString().c_str();
         }
 
         if (!config.check("localDepthPort", "full name of the port for streaming depth image"))
@@ -103,8 +107,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            local_depthFrame_StreamingPort_Name  = config.find("localDepthPort").asString().c_str();
-            local_depthFrame_rpcPort_Name = local_depthFrame_StreamingPort_Name + "/rpc:i";
+            local_depthFrame_StreamingPort_name  = config.find("localDepthPort").asString().c_str();
         }
 
         // Parse REMOTE port names
@@ -116,8 +119,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            remote_colorFrame_StreamingPort_Name  = config.find("remoteImagePort").asString().c_str();
-            remote_colorFrame_rpcPort_Name = remote_colorFrame_StreamingPort_Name + "/rpc:i";
+            remote_colorFrame_StreamingPort_name  = config.find("remoteImagePort").asString().c_str();
         }
 
         if (!config.check("remoteDepthPort", "full name of the port for streaming depth image"))
@@ -128,9 +130,42 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            remote_depthFrame_StreamingPort_Name  = config.find("remoteDepthPort").asString().c_str();
-            remote_depthFrame_rpcPort_Name = remote_depthFrame_StreamingPort_Name + "/rpc:i";
+            remote_depthFrame_StreamingPort_name  = config.find("remoteDepthPort").asString().c_str();
         }
+
+        // Single RPC port
+        if (!config.check("localRpcPort", "full name of the port for streaming depth image"))
+        {
+            yError() << "RGBDSensorClient: missing 'localRpcPort' parameter. Check you configuration file; it must be like:";
+            yError() << "   localRpcPort:            Full name of the local RPC port to open, e.g. /myApp/RGBD/rpc";
+            return false;
+        }
+        else
+        {
+            local_rpcPort_name  = config.find("localRpcPort").asString().c_str();
+        }
+
+        if (!config.check("remoteRpcPort", "full name of the port for streaming depth image"))
+        {
+            yError() << "RGBDSensorClient: missing 'remoteRpcPort' parameter. Check you configuration file; it must be like:";
+            yError() << "   remoteRpcPort:         Full name of the remote RPC port, e.g. /robotName/RGBD/rpc";
+            return false;
+        }
+        else
+        {
+            remote_rpcPort_name  = config.find("remoteRpcPort").asString().c_str();
+        }
+
+
+        /*
+            * When using multiple RPC ports
+            *
+             local_colorFrame_rpcPort_Name =  local_colorFrame_StreamingPort_Name + "/rpc:i";
+            remote_colorFrame_rpcPort_Name = remote_colorFrame_StreamingPort_Name + "/rpc:i";
+             local_depthFrame_rpcPort_Name =  local_depthFrame_StreamingPort_Name + "/rpc:i";
+            remote_depthFrame_rpcPort_Name = remote_depthFrame_StreamingPort_Name + "/rpc:i";
+
+        */
     }
 
     yarp::os::Bottle &ROS_parameters = config.findGroup("ROS");
@@ -146,38 +181,90 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
             yInfo() << "RGBDSensorClient: 'ROS' group was NOT found in config file, skipping ROS specific parameters.";
     }
 
-    if (!config.check("watchdog", "Verify refresh of data on ports whitin this time, otherwise throws an error"))
-    {
-        yError() << sensorId << "Missing 'watchdog' parameter. Check you configuration file; it must be like:";
-        yError() << "   watchdog:    [ms]     Verify refresh of data on ports whitin this time, otherwise throws an error.";
-        return false;
-    }
-    else
-    {
-        yWarning() << "Watchdog feature not yet implemented!!";
-        watchdog = config.find("watchdog").asDouble();
-    }
-
-
     return true;
 }
 
 bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
 {
     bool ret;
-    // opening ports
-    ret = colorFrame_StreamingPort.open(local_colorFrame_StreamingPort_Name.c_str());
-    colorFrame_rpcPort.open(local_colorFrame_rpcPort_Name.c_str() );
-//     colorFrame_rpcPort.setReader(RPC_parser);
 
-    ret &=depthFrame_StreamingPort.open(local_depthFrame_StreamingPort_Name.c_str());
-    depthFrame_rpcPort.open(local_depthFrame_rpcPort_Name.c_str() );
-//     depthFrame_rpcPort.setReader(RPC_parser);
+    // Opening Streaming ports
+    ret  = colorFrame_StreamingPort.open(local_colorFrame_StreamingPort_name.c_str());
+    ret &= depthFrame_StreamingPort.open(local_depthFrame_StreamingPort_name.c_str());
+
+    if(!ret)
+    {
+        yError() << sensorId << " cannot open local streaming ports.";
+        colorFrame_StreamingPort.close();
+        depthFrame_StreamingPort.close();
+    }
+
+    if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_name, colorFrame_StreamingPort.getName(), "udp") )
+    {
+        yError() << colorFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_colorFrame_StreamingPort_name;
+        return false;
+    }
+
+    if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_name, depthFrame_StreamingPort.getName(), "udp") )
+    {
+        yError() << depthFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_depthFrame_StreamingPort_name;
+        return false;
+    }
+
+
+    // Single RPC port
+    ret = rpcPort.open(local_rpcPort_name);
+
+    if(!ret)
+    {
+        yError() << sensorId << " cannot open local RPC port " << local_rpcPort_name;
+        colorFrame_StreamingPort.close();
+        depthFrame_StreamingPort.close();
+        rpcPort.close();
+    }
+
+    if(! rpcPort.addOutput(remote_rpcPort_name.c_str()) )
+    {
+        yError() << sensorId << " cannot connect to port " << remote_rpcPort_name;
+        colorFrame_StreamingPort.close();
+        depthFrame_StreamingPort.close();
+        rpcPort.close();
+        return false;
+    }
+
+    // Check protocol version
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGBD_SENSOR);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
+    rpcPort.write(cmd, response);
+    int major = response.get(3).asInt();
+    int minor = response.get(4).asInt();
+
+    if(major != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
+    {
+        yError() << "Major protocol number does not match, please verify client and server are updated. \
+                    Expected: " << RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR << " received: " << major;
+        return false;
+    }
+
+
+    if(minor != RGBD_INTERFACE_PROTOCOL_VERSION_MINOR)
+    {
+        yWarning() << "Minor protocol number does not match, please verify client and server are updated.\
+                      Expected: " << RGBD_INTERFACE_PROTOCOL_VERSION_MINOR << " received: " << minor;
+    }
+
+   /*
+    * Multiple RPC ports
+    *
+    ret &= colorFrame_rpcPort.open(local_colorFrame_rpcPort_Name.c_str() );
+    ret &= depthFrame_rpcPort.open(local_depthFrame_rpcPort_Name.c_str() );
 
     if(!ret)
         yError() << "sensorId cannot open ports";
 
-    // doing connections: How to correctly handle UARP_PORT_PREFIX for remote port names??
+    // doing connections: How to correctly handle YARP_PORT_PREFIX for remote port names??
     if(! colorFrame_rpcPort.addOutput(remote_colorFrame_rpcPort_Name.c_str()) )  // This will handle local port names only
     {
         yError() << sensorId << " cannot add output " << remote_colorFrame_rpcPort_Name;
@@ -189,18 +276,8 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
         yError() << sensorId << " cannot add output " << remote_depthFrame_rpcPort_Name;
         return false;
     }
+    */
 
-    if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_Name, colorFrame_StreamingPort.getName()) )
-    {
-        yError() << sensorId << " cannot connect to remote port " << remote_colorFrame_StreamingPort_Name;
-        return false;
-    }
-
-    if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_Name, depthFrame_StreamingPort.getName()) )
-    {
-        yError() << sensorId << " cannot connect to remote port " << remote_depthFrame_StreamingPort_Name;
-        return false;
-    }
 
     streamingReader.attach(&colorFrame_StreamingPort, &depthFrame_StreamingPort);
 
@@ -217,243 +294,193 @@ bool RGBDSensorClient::initialize_ROS(yarp::os::Searchable &config)
     return true;
 }
 
-    /**
-     * Close the DeviceDriver.
-     * @return true/false on success/failure.
-     */
 bool RGBDSensorClient::close()
 {
+    colorFrame_StreamingPort.close();
+    depthFrame_StreamingPort.close();
+    rpcPort.close();
     return true;
 }
 
-// IFrameGrabber Interfaces
-/**
-    * Get an rgb image from the frame grabber, if required
-    * demosaicking/color reconstruction is applied
-    *
-    * @param image the image to be filled
-    * @return true/false upon success/failure
-    */
-bool RGBDSensorClient::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> &image)
+/*
+ * IDepthVisualParams interface. Look at IVisualParams.h for documentation
+ *
+ * Implemented by Implement_DepthVisualParams_Sender
+ */
+
+/*
+ * IDepthVisualParams interface. Look at IVisualParams.h for documentation
+ *
+ * Implemented by Implement_DepthVisualParams_Sender
+ */
+
+
+/*
+ * IRGBDSensor specific interface methods
+ */
+
+bool RGBDSensorClient::getExtrinsicParam(yarp::sig::Matrix &extrinsic)
 {
-    return false;
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGBD_SENSOR);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_EXTRINSIC_PARAM);
+    rpcPort.write(cmd, response);
+
+    // Minimal check on response, we suppose the response is always correctly formatted
+    if((response.get(0).asVocab()) == VOCAB_FAILED)
+    {
+        extrinsic.zero();
+        return false;
+    }
+
+    return Property::copyPortable(response.get(3), extrinsic);  // will it really work??
 }
 
-/**
-    * Get a raw image from the frame grabber
-    *
-    * @param image the image to be filled
-    * @return true/false upon success/failure
-    */
-bool RGBDSensorClient::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono> &image)
+
+IRGBDSensor::RGBDSensor_status RGBDSensorClient::getSensorStatus()
 {
-    return false;
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGBD_SENSOR);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_STATUS);
+    rpcPort.write(cmd, response);
+    return (IRGBDSensor::RGBDSensor_status) response.get(3).asInt();
 }
 
-/**
-    * Return the height of each frame.
-    * @return image height
-    */
-int RGBDSensorClient::height() const
+
+yarp::os::ConstString RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeStamp)
 {
-    return 0;
+    yarp::os::Bottle cmd, response;
+    cmd.addVocab(VOCAB_RGBD_SENSOR);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(VOCAB_ERROR_MSG);
+    rpcPort.write(cmd, response);
+    return response.get(3).asString();
 }
 
-/**
-    * Return the width of each frame.
-    * @return image width
-    */
-int RGBDSensorClient::width() const
+bool RGBDSensorClient::getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp)
 {
-    return 0;
+    if(timeStamp)
+        timeStamp->update(yarp::os::Time::now());
+    return streamingReader.readRgb(rgbImage);
 }
 
+bool RGBDSensorClient::getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp)
+{
+    if(timeStamp)
+        timeStamp->update(yarp::os::Time::now());
+    return streamingReader.readDepth(depthImage);
+}
+
+bool RGBDSensorClient::getImages(FlexImage &rgbImage, ImageOf<PixelFloat> &depthImage, Stamp *rgbStamp, Stamp *depthStamp)
+{
+    bool ret = true;
+    ret &= streamingReader.readRgb(rgbImage);
+    ret &= streamingReader.readDepth(depthImage);
+
+    if(rgbStamp)
+        rgbStamp->update(yarp::os::Time::now());
+
+    if(depthStamp)
+        depthStamp->update(yarp::os::Time::now());
+    return ret;
+}
 
 //
-//  IDepth Interface
+// IFrame Grabber Control 2 inteface is implemented by FrameGrabberControls2_Sender
 //
-/**
-* get the device hardware charactestics
-* @param device_info Searchable struct containing the device info
-* @return true if able to get information about the device.
-*/
-bool RGBDSensorClient::getDeviceInfo(yarp::os::Property &device_info)
+
+//
+// Rgb
+//
+int RGBDSensorClient::getRgbHeight()
 {
-    return false;
+    return RgbMsgSender->getRgbHeight();
 }
 
-/**
-* Get the distance measurements as an image
-* @param ranges the vector containing the distance measurement
-* @return true if able to get measurement data.
-*/
-bool RGBDSensorClient::getMeasurementData(yarp::sig::FlexImage &image, yarp::os::Stamp *stamp)
+int RGBDSensorClient::getRgbWidth()
 {
-    return false;
-}
-/**
-* get the device status
-* @param status the device status
-* @return true/false.
-*/
-bool RGBDSensorClient::getDeviceStatus(DepthSensor_status *status)
-{
-    return false;
-}
-/**
-* get the device detection range
-* @param min the minimum detection distance from the sensor [meter]
-* @param max the maximum detection distance from the sensor [meter]
-* @return true if able to get required info.
-*/
-bool RGBDSensorClient::getDistanceRange(double *min, double *max)
-{
-    return false;
-}
-/**
-* set the device detection range. Invalid setting will be discarded.
-* @param min the minimum detection distance from the sensor [meter]
-* @param max the maximum detection distance from the sensor [meter]
-* @return true if message was correctly delivered to the HW device.
-*/
-bool RGBDSensorClient::setDistanceRange(double min, double max)
-{
-    return false;
-}
-/**
-* get the horizontal scan limits / field of view with respect to the
-* front line of sight of the sensor. Angles are measured around the
-* positive Z axis (counterclockwise, if Z is up) with zero angle being
-* forward along the x axis
-* @param min start angle of the scan  [degrees]
-* @param max end angle of the scan    [degrees]
-* @return true if able to get required info.
-*/
-bool RGBDSensorClient::getHorizontalScanLimits(double *min, double *max)
-{
-    return false;
-}
-/**
-* set the horizontal scan limits / field of view with respect to the
-* front line of sight of the sensor. Angles are measured around the
-* positive Z axis (counterclockwise, if Z is up) with zero angle being
-* forward along the x axis
-* @param min start angle of the scan  [degrees]
-* @param max end angle of the scan    [degrees]
-* @return true if message was correctly delivered to the HW device.
-*/
-bool RGBDSensorClient::setHorizontalScanLimits(double min, double max)
-{
-    return false;
-}
-/**
-* get the vertical scan limits / field of view with respect to the
-* front line of sight of the sensor   [degrees]
-* @param min start angle of the scan  [degrees]
-* @param max end angle of the scan    [degrees]
-* @return true if able to get required info.
-*/
-bool RGBDSensorClient::getVerticalScanLimits(double *min, double *max)
-{
-    return false;
-}
-/**
-* set the vertical scan limits / field of view with respect to the
-* front line of sight of the sensor   [degrees]
-* @param min start angle of the scan  [degrees]
-* @param max end angle of the scan    [degrees]
-* @return true if message was correctly delivered to the HW device.
-*/
-bool RGBDSensorClient::setVerticalScanLimits(double min, double max)
-{
-    return false;
-}
-/**
-* get the size of measured data from the device.
-* It can be WxH for camera-like devices, or the number of points for other devices.
-* @param horizontal width of image,  number of points in the horizontal scan [num]
-* @param vertical   height of image, number of points in the vertical scan [num]
-* @return true if able to get required info.
-*/
-bool RGBDSensorClient::getDataSize(double *horizontal, double *vertical)
-{
-    return false;
-}
-/**
-* set the size of measured data from the device.
-* It can be WxH for camera-like devices, or the number of points for other devices.
-* @param horizontal width of image,  number of points in the horizontal scan [num]
-* @param vertical   height of image, number of points in the vertical scan [num]
-* @return true if message was correctly delivered to the HW device.
-*/
-bool RGBDSensorClient::setDataSize(double horizontal, double vertical)
-{
-    return false;
-}
-/**
-* get the device resolution, using the current settings of scan limits
-* and data size. Will return the resolution of device at 1 meter distance.
-* @param hRes horizontal resolution [meter]
-* @param vRes vertical resolution [meter]
-* @return true if able to get required info.
-*/
-bool RGBDSensorClient::getResolution(double *hRes, double *vRes)
-{
-    return false;
-}
-/**
-* set the device resolution.
-* This call can change the current settings of scan limits, data size or scan rate
-* to match the requested resolution.
-* Verify those settings is suggested after this call.
-* Will set the resolution of device at 1meter distance, if possible.
-* @param hRes horizontal resolution [meter]
-* @param vRes vertical resolution [meter]
-* @return true if message was correctly delivered to the HW device.
-*/
-bool RGBDSensorClient::setResolution(double hRes, double vRes)
-{
-    return false;
-}
-/**
-* get the scan rate (scans per seconds)
-* @param rate the scan rate
-* @return true if able to get required info.
-*/
-bool RGBDSensorClient::getScanRate(double *rate)
-{
-    return false;
-}
-/**
-* set the scan rate (scans per seconds)
-* @param rate the scan rate
-* @return true if message was correctly delivered to the HW device.
-*/
-bool RGBDSensorClient::setScanRate(double rate)
-{
-    return false;
+    return RgbMsgSender->getRgbWidth();
 }
 
-/** IRGBDSensor specific interface methods*/
-bool RGBDSensorClient::getRGBDSensor_Status(RGBDSensor_status *status)
+bool RGBDSensorClient::setRgbResolution(int width, int height)
 {
-    return false;
+    return RgbMsgSender->setRgbResolution(width, height);
+}
+bool RGBDSensorClient::getRgbFOV(double &horizontalFov, double &verticalFov)
+{
+    return RgbMsgSender->getRgbFOV(horizontalFov, verticalFov);
+}
+bool RGBDSensorClient::setRgbFOV(double horizontalFov, double verticalFov)
+{
+    return RgbMsgSender->getRgbFOV(horizontalFov, verticalFov);
+}
+bool RGBDSensorClient::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
+{
+    return RgbMsgSender->getRgbIntrinsicParam(intrinsic);
 }
 
-/**
-* Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
-* is achieved accordingly to synch policy set by the user.
-* TimeStamps are referred to acquisition time of the corresponding piece of information.
-* If the device is not providing TimeStamps, then 'timeStamp' field should be set to '-1'.
-* @param colorFrame pointer to FlexImage data to hold the color frame from the sensor
-* @param depthFrame pointer to FlexImage data to hold the depth frame from the sensor
-* @param colorStamp pointer to memory to hold the Stamp of the color frame
-* @param depthStamp pointer to memory to hold the Stamp of the depth frame
-* @return true if able to get both data.
-*/
-bool RGBDSensorClient::getRGBD_Frames(yarp::sig::FlexImage &colorFrame, yarp::sig::FlexImage &depthFrame, yarp::os::Stamp *colorStamp, yarp::os::Stamp *depthStamp)
+bool RGBDSensorClient::getRgbMirroring(bool& mirror)
 {
-    streamingReader.synchRead(colorFrame, depthFrame);
-    return true;
+    return RgbMsgSender->getRgbMirroring(mirror);
 }
 
+bool RGBDSensorClient::setRgbMirroring(bool mirror)
+{
+    return RgbMsgSender->setRgbMirroring(mirror);
+}
+
+//
+// Depth
+//
+int RGBDSensorClient::getDepthHeight()
+{
+    return DepthMsgSender->getDepthHeight();
+}
+int RGBDSensorClient::getDepthWidth()
+{
+    return DepthMsgSender->getDepthWidth();
+}
+bool RGBDSensorClient::setDepthResolution(int width, int height)
+{
+    return DepthMsgSender->setDepthResolution(width, height);
+}
+bool RGBDSensorClient::getDepthFOV(double &horizontalFov, double &verticalFov)
+{
+    return DepthMsgSender->getDepthFOV(horizontalFov, verticalFov);
+}
+bool RGBDSensorClient::setDepthFOV(double horizontalFov, double verticalFov)
+{
+    return DepthMsgSender->setDepthFOV(horizontalFov, verticalFov);
+}
+double RGBDSensorClient::getDepthAccuracy()
+{
+    return DepthMsgSender->getDepthAccuracy();
+}
+bool RGBDSensorClient::setDepthAccuracy(double accuracy)
+{
+    return DepthMsgSender->setDepthAccuracy(accuracy);
+}
+bool RGBDSensorClient::getDepthClipPlanes(double &nearPlane, double &farPlane)
+{
+    return DepthMsgSender->getDepthClipPlanes(nearPlane, farPlane);
+}
+bool RGBDSensorClient::setDepthClipPlanes(double nearPlane, double farPlane)
+{
+    return DepthMsgSender->setDepthClipPlanes(nearPlane, farPlane);
+}
+bool RGBDSensorClient::getDepthIntrinsicParam(yarp::os::Property &intrinsic)
+{
+    return DepthMsgSender->getDepthIntrinsicParam(intrinsic);
+}
+
+bool RGBDSensorClient::getDepthMirroring(bool& mirror)
+{
+    return DepthMsgSender->getDepthMirroring(mirror);
+}
+
+bool RGBDSensorClient::setDepthMirroring(bool mirror)
+{
+    return DepthMsgSender->setDepthMirroring(mirror);
+}

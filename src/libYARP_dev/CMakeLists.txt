@@ -23,6 +23,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/DriverLinkCreator.h
                   include/yarp/dev/Drivers.h
                   include/yarp/dev/FrameGrabberControl2.h
+                  include/yarp/dev/FrameGrabberControl2Impl.h
                   include/yarp/dev/FrameGrabberInterfaces.h
                   include/yarp/dev/GazeControl.h
                   include/yarp/dev/GenericSensorInterfaces.h
@@ -30,8 +31,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
                   include/yarp/dev/IRangefinder2D.h
-                  include/yarp/dev/IDepthSensor.h
-                  include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode.h
@@ -42,7 +41,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IMotor.h
                   include/yarp/dev/IRemoteVariables.h
                   include/yarp/dev/IImpedanceControl.h
-                  include/yarp/dev/IDepthSensor.h
                   include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IKinectDeviceDriver.h
                   include/yarp/dev/ImplementControlBoardInterfaces.h
@@ -73,6 +71,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/INavigation2D.h
                   include/yarp/dev/IVirtualAnalogSensor.h
                   include/yarp/dev/LaserMeasurementData.h
+                  include/yarp/dev/IVisualParams.h
+                  include/yarp/dev/IVisualParamsImpl.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
@@ -110,6 +110,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IRemoteVariablesImpl.cpp
                   src/ImpedanceControlImpl.cpp
                   src/IInteractionModeImpl.cpp
+                  src/IVisualParamsImpl.cpp
                   src/IPositionControl2Impl.cpp
                   src/IPositionDirectImpl.cpp
                   src/IVelocityControl2Impl.cpp
@@ -118,6 +119,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/PolyDriverDescriptor.cpp
                   src/PolyDriverList.cpp
                   src/PopulateDrivers.cpp
+                  src/FrameGrabberControl2Impl.cpp
                   src/RemoteFrameGrabber.cpp
                   src/RemoteFrameGrabberDC1394.cpp
                   src/ServerFrameGrabber.cpp
@@ -222,7 +224,7 @@ list(APPEND YARP_devices_HDRS ${serverInertial_hdrs}
                               ${inertial_msgs_hdrs})
 include_directories(${serverInertial_incl_dirs})
 
-# add DepthSensorClient device
+# add RGBDSensorClient device
 add_subdirectory(src/devices/RGBDSensorClient)
 list(APPEND YARP_devices_SRCS ${RGBDClient_srcs}
                               ${RGBDSensor_msgs_srcs})

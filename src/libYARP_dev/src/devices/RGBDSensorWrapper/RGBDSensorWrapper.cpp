@@ -1,26 +1,159 @@
 /*
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
  * Authors: Alberto Cardellino <Alberto.Cardellino@iit.it>
+ *          Andrea Ruzzenenti   <Andrea.Ruzzenenti@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #include <sstream>
+#include <stdio.h>
+#include <string.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include "RGBDSensorWrapper.h"
 #include <yarpRosHelper.h>
 #include "rosPixelCode.h"
 
+using namespace yarp::dev::RGBDImpl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
 
+#define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
+#define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
+
 // needed for the driver factory.
 yarp::dev::DriverCreator *createRGBDSensorWrapper() {
     return new DriverCreatorOf<yarp::dev::RGBDSensorWrapper>("RGBDSensorWrapper", "RGBDSensorWrapper", "yarp::dev::RGBDSensorWrapper");
 }
+
+RGBDSensorParser::RGBDSensorParser() : iRGBDSensor(YARP_NULLPTR) {};
+
+bool RGBDSensorParser::configure(IRGBDSensor *interface)
+{
+    bool ret;
+    iRGBDSensor = interface;
+    ret  = rgbParser.configure(interface);
+    ret &= depthParser.configure(interface);
+    return ret;
+}
+
+bool RGBDSensorParser::configure(IRgbVisualParams *rgbInterface, IDepthVisualParams* depthInterface)
+{
+    bool ret = rgbParser.configure(rgbInterface);
+    ret &= depthParser.configure(depthInterface);
+    return ret;
+}
+
+bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
+{
+    bool ret = false;
+    int interfaceType = cmd.get(0).asVocab();
+
+    response.clear();
+    switch(interfaceType)
+    {
+        case VOCAB_RGB_VISUAL_PARAMS:
+        {
+            // forwarding to the proper parser.
+            ret = rgbParser.respond(cmd, response);
+        }
+        break;
+
+        case VOCAB_DEPTH_VISUAL_PARAMS:
+        {
+            // forwarding to the proper parser.
+            ret = depthParser.respond(cmd, response);
+        }
+        break;
+
+        case VOCAB_RGBD_SENSOR:
+        {
+            switch (cmd.get(1).asVocab())
+            {
+                case VOCAB_GET:
+                {
+                    switch(cmd.get(2).asVocab())
+                    {
+                        case VOCAB_EXTRINSIC_PARAM:
+                        {
+                            yarp::sig::Matrix params;
+                            ret = iRGBDSensor->getExtrinsicParam(params);
+                            if(ret)
+                            {
+                                yarp::os::Bottle params_b;
+                                response.addVocab(VOCAB_RGBD_SENSOR);
+                                response.addVocab(VOCAB_EXTRINSIC_PARAM);
+                                response.addVocab(VOCAB_IS);
+                                ret &= Property::copyPortable(params, params_b);  // will it really work??
+                                response.append(params_b);
+                            }
+                            else
+                                response.addVocab(VOCAB_FAILED);
+                        }
+                        break;
+
+                        case VOCAB_ERROR_MSG:
+                        {
+                            response.addVocab(VOCAB_RGBD_SENSOR);
+                            response.addVocab(VOCAB_ERROR_MSG);
+                            response.addVocab(VOCAB_IS);
+                            response.addString(iRGBDSensor->getLastErrorMsg());
+                            ret = true;
+                        }
+                        break;
+
+                        case VOCAB_RGBD_PROTOCOL_VERSION:
+                        {
+                            response.addVocab(VOCAB_RGBD_SENSOR);
+                            response.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
+                            response.addVocab(VOCAB_IS);
+                            response.addInt(RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR);
+                            response.addInt(RGBD_INTERFACE_PROTOCOL_VERSION_MINOR);
+                        }
+                        break;
+
+                        case VOCAB_STATUS:
+                        {
+                            response.addVocab(VOCAB_RGBD_SENSOR);
+                            response.addVocab(VOCAB_STATUS);
+                            response.addVocab(VOCAB_IS);
+                            response.addInt(iRGBDSensor->getSensorStatus());
+                        }
+                        break;
+
+                        default:
+                        {
+                            yError() << "RGBDSensor interface parser received an unknown GET command. Command is " << cmd.toString();
+                            response.addVocab(VOCAB_FAILED);
+                        }
+                        break;
+                    }
+                }
+                break;
+
+                case VOCAB_SET:
+                {
+                    yError() << "RGBDSensor interface parser received an unknown SET command. Command is " << cmd.toString();
+                    response.addVocab(VOCAB_FAILED);
+                }
+                break;
+            }
+        }
+        break;
+
+        default:
+        {
+            yError() << "RGBD sensor wrapper received a command for a wrong interface " << yarp::os::Vocab::decode(interfaceType);
+            ret = false;
+        }
+        break;
+    }
+    return ret;
+}
+
 
 RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
                                         rate(DEFAULT_THREAD_PERIOD)
@@ -124,12 +257,12 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         std::vector<param<string> >     rosStringParam;
         param<string>*                  prm;
         
-        rosStringParam.push_back(param<string>(nodeName,       NODENAMEPARAM));
-        rosStringParam.push_back(param<string>(rosFrameId,     FRAMEIDPARAM));
-        rosStringParam.push_back(param<string>(colorTopicName, CLRTOPICNAMENAMEPARAM));
-        rosStringParam.push_back(param<string>(depthTopicName, DPHTOPICNAMENAMEPARAM));
-        rosStringParam.push_back(param<string>(cInfoTopicName, CLRINFOTOPICNAMEPARAM));
-        rosStringParam.push_back(param<string>(dInfoTopicName, DPHINFOTOPICNAMEPARAM));
+        rosStringParam.push_back(param<string>(nodeName,       nodeName_param          ));
+        rosStringParam.push_back(param<string>(rosFrameId,     frameId_param           ));
+        rosStringParam.push_back(param<string>(colorTopicName, colorTopicName_param    ));
+        rosStringParam.push_back(param<string>(depthTopicName, depthTopicName_param    ));
+        rosStringParam.push_back(param<string>(cInfoTopicName, depthInfoTopicName_param));
+        rosStringParam.push_back(param<string>(dInfoTopicName, colorInfoTopicName_param));
         
         for (i = 0; i < rosStringParam.size(); i++)
         {
@@ -149,28 +282,21 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
 
     if(use_YARP)
     {
-        if (!config.check("imagePort", "full name of the port for streaming color image"))
-        {
-            yError() << "RGBDSensorWrapper: missing 'imagePort' parameter. Check you configuration file; it must be like:";
-            yError() << "   imagePort:         full name of the port, e.g. /robotName/image_camera/";
-            return false;
-        }
-        else
-        {
-            colorFrame_StreamingPort_Name = config.find("imagePort").asString().c_str();
-            colorFrame_rpcPort_Name       = colorFrame_StreamingPort_Name + "/rpc:i";
-        }
+        yarp::os::ConstString rootName;
+        rootName = config.check("name",Value("/"), "starting '/' if needed.").asString().c_str();
 
-        if (!config.check("depthPort", "full name of the port for streaming depth image"))
+        if (!config.check("name", "Prefix name of the ports opened by the RGBD wrapper."))
         {
-            yError() << "RGBDSensorWrapper: missing 'depthPort' parameter. Check you configuration file; it must be like:";
-            yError() << "   depthPort:         full name of the port, e.g. /robotName/depth_camera/";
+            yError() << "RGBDSensorWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
+            yError() << "   name:         Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD";
             return false;
         }
         else
         {
-            depthFrame_StreamingPort_Name  = config.find("depthPort").asString().c_str();
-            depthFrame_rpcPort_Name = depthFrame_StreamingPort_Name + "/rpc:i";
+            rootName = config.find("name").asString().c_str();
+            rpcPort_Name  = rootName + "/rpc:i";
+            colorFrame_StreamingPort_Name = rootName + "/rgbImage:o";
+            depthFrame_StreamingPort_Name = rootName + "/depthImage:o";
         }
     }
     
@@ -224,6 +350,29 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
     if(!attach(subDeviceOwned))
         return false;
 
+    // Configuring parsers
+    IRgbVisualParams * rgbVis_p;
+    IDepthVisualParams * depthVis_p;
+
+    subDeviceOwned->view(rgbVis_p);
+    subDeviceOwned->view(depthVis_p);
+
+    if(!parser.configure(sensor_p) )
+    {
+        yError() << "RGBD wrapper: error configuring interfaces for parsers";
+        return false;
+    }
+    /*
+    bool conf = rgbParser.configure(rgbVis_p);
+    conf &= depthParser.configure(depthVis_p);
+
+    if(!conf)
+    {
+        yError() << "RGBD wrapper: error configuring interfaces for parsers";
+        return false;
+    }
+    */
+
     RateThread::setRate(rate);
     RateThread::start();
     return true;
@@ -247,18 +396,17 @@ bool RGBDSensorWrapper::close()
     // Closing port
     if(use_YARP)
     {
-        colorFrame_rpcPort.interrupt();
-        depthFrame_rpcPort.interrupt();
+        rpcPort.interrupt();
         colorFrame_StreamingPort.interrupt();
         depthFrame_StreamingPort.interrupt();
 
-        colorFrame_rpcPort.close();
-        depthFrame_rpcPort.close();
+        rpcPort.close();
         colorFrame_StreamingPort.close();
         depthFrame_StreamingPort.close();
     }
 
-    if(rosNode!=NULL) {
+    if(rosNode!=NULL)
+    {
         rosNode->interrupt();
         delete rosNode;
         rosNode = NULL;
@@ -277,14 +425,28 @@ bool RGBDSensorWrapper::close()
 
 bool RGBDSensorWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
-    colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name.c_str());
-    colorFrame_rpcPort.open(colorFrame_rpcPort_Name.c_str() );
-    colorFrame_rpcPort.setReader(RPC_parser);
+    // Open ports
+    bool bRet;
+    bRet = true;
+    if(!rpcPort.open(rpcPort_Name.c_str()))
+    {
+        yError() << "RGBDSensorWrapper: unable to open rpc Port" << rpcPort_Name.c_str();
+        bRet = false;
+    }
+    rpcPort.setReader(parser);
 
-    depthFrame_StreamingPort.open(depthFrame_StreamingPort_Name.c_str());
-    depthFrame_rpcPort.open(depthFrame_rpcPort_Name.c_str() );
-    depthFrame_rpcPort.setReader(RPC_parser);
-    return true;
+    if(!colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name.c_str()))
+    {
+        yError() << "RGBDSensorWrapper: unable to open color streaming Port" << colorFrame_StreamingPort_Name.c_str();
+        bRet = false;
+    }
+    if(!depthFrame_StreamingPort.open(depthFrame_StreamingPort_Name.c_str()))
+    {
+        yError() << "RGBDSensorWrapper: unable to open depth streaming Port" << depthFrame_StreamingPort_Name.c_str();
+        bRet = false;
+    }
+
+    return bRet;
 }
 
 bool RGBDSensorWrapper::initialize_ROS(yarp::os::Searchable &params)
@@ -411,31 +573,6 @@ bool RGBDSensorWrapper::detach()
 
 /* IRateThread interface */
 
-bool RGBDSensorWrapper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::Bottle in;
-    yarp::os::Bottle out;
-    bool ok = in.read(connection);
-    if (!ok) return false;
-
-    // parse in, prepare out
-//     int action = in.get(0).asVocab();
-//     int inter  = in.get(1).asVocab();
-    bool ret = false;
-
-    if (!ret)
-    {
-        out.clear();
-        out.addVocab(VOCAB_FAILED);
-    }
-
-    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != NULL) {
-        out.write(*returnToSender);
-    }
-    return true;
-}
-
 bool RGBDSensorWrapper::threadInit()
 {
     // Get interface from attached device if any.
@@ -494,6 +631,12 @@ void RGBDSensorWrapper::shallowCopyImages(const yarp::sig::FlexImage& src, yarp:
     dest.setExternal(src.getRawImage(), src.width(), src.height());
 }
 
+void RGBDSensorWrapper::shallowCopyImages(const ImageOf<PixelFloat>& src, ImageOf<PixelFloat>& dest)
+{
+    dest.setQuantum(src.getQuantum());
+    dest.setExternal(src.getRawImage(), src.width(), src.height());
+}
+
 
 
 void RGBDSensorWrapper::deepCopyImages
@@ -503,6 +646,27 @@ void RGBDSensorWrapper::deepCopyImages
     const string&               frame_id, 
     const TickTime&             timeStamp, 
     const unsigned int          seq
+)
+{
+    dest.data.resize(src.getRawImageSize());
+    dest.width           = src.width();
+    dest.height          = src.height();
+    memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
+    dest.encoding        = yarp2RosPixelCode(src.getPixelCode());
+    dest.step            = src.getRowSize();
+    dest.header.frame_id = frame_id;
+    dest.header.stamp    = timeStamp;
+    dest.header.seq      = seq;
+    dest.is_bigendian    = 0;
+}
+
+void RGBDSensorWrapper::deepCopyImages
+(
+    const DepthImage&  src,
+    sensor_msgs_Image& dest,
+    const string&      frame_id,
+    const TickTime&    timeStamp,
+    const unsigned int seq
 )
 {
     dest.data.resize(src.getRawImageSize());
@@ -530,9 +694,10 @@ bool RGBDSensorWrapper::setCamInfo
     Property                    camData;
     vector<param<double> >      parVector;
     param<double>*              par;
-    
-    sensor_p->getDeviceInfo(camData);
-    
+
+    yError() << "RGBDSeneosrWrapper: setCamInfo() for ros interoperation not yet implemented";
+    return false;
+
     if(!camData.check("distortionModel"))
     {
         yWarning() << "missing distortion model";
@@ -584,8 +749,8 @@ bool RGBDSensorWrapper::setCamInfo
     cameraInfo.header.frame_id    = frame_id;
     cameraInfo.header.seq         = seq;
     cameraInfo.header.stamp       = normalizeSecNSec(stamp);
-    cameraInfo.width              = sensor_p->width();
-    cameraInfo.height             = sensor_p->height();
+//     cameraInfo.width              = sensor_p->width();
+//     cameraInfo.height             = sensor_p->height();
     cameraInfo.distortion_model   = distModel;
     
     cameraInfo.D.resize(5);
@@ -629,23 +794,21 @@ bool RGBDSensorWrapper::setCamInfo
 
 bool RGBDSensorWrapper::writeData()
 {
-    yarp::sig::FlexImage colorImage;
-    yarp::sig::FlexImage depthImage;
     
     //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
     //             depthImage.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
 
     //             colorImage.resize(hDim, vDim);  // Has this to be done each time? If size is the same what it does?
     //             depthImage.resize(hDim, vDim);
-    if (!sensor_p->getRGBD_Frames(colorImage, depthImage, &colorStamp, &depthStamp))
+    if (!sensor_p->getImages(colorImage, depthImage, &colorStamp, &depthStamp))
     {
         return false;
     }
 
     if (use_YARP)
     {
-        yarp::sig::FlexImage& yColorImage = colorFrame_StreamingPort.prepare();
-        yarp::sig::FlexImage& yDepthImage = depthFrame_StreamingPort.prepare();
+        FlexImage& yColorImage           = colorFrame_StreamingPort.prepare();
+        ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
 
         shallowCopyImages(colorImage, yColorImage);
         shallowCopyImages(depthImage, yDepthImage);
@@ -707,15 +870,31 @@ void RGBDSensorWrapper::run()
 {
     if (sensor_p!=0)
     {
-        sensor_p->getRGBDSensor_Status(&sensorStatus);
+        static int i = 0;
+        sensorStatus = sensor_p->getSensorStatus();
         switch (sensorStatus)
         {
             case(IRGBDSensor::RGBD_SENSOR_OK_IN_USE) :
             {
                 if (!writeData())
                     yError("Image not captured.. check hardware configuration");
-                break;
+                i = 0;
             }
+            break;
+            case(IRGBDSensor::RGBD_SENSOR_NOT_READY):
+            {
+                if(i < 1000)
+                {
+                    if((i % 30) == 0)
+                        yInfo() << "device not ready, waiting...";
+                }
+                else
+                {
+                    yWarning() << "device is taking too long to start..";
+                }
+                i++;
+            }
+            break;
             default:
             {
                 if (verbose >= 1)   // better not to print it every cycle anyway, too noisy
@@ -729,3 +908,4 @@ void RGBDSensorWrapper::run()
             yError("RGBDSensorWrapper: %s: Sensor interface is not valid", sensorId.c_str());
     }
 }
+
