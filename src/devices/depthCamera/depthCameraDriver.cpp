@@ -1,8 +1,9 @@
-#include "depthCameraDriver.h"
-#include <algorithm>
 #include <math.h>
+#include <algorithm>
 #include <yarp/os/Value.h>
 
+#include "depthCameraDriver.h"
+#include "depthCameraImpl.hpp"
 
 using namespace yarp::dev::impl;
 using namespace yarp::dev;
@@ -10,58 +11,6 @@ using namespace yarp::sig;
 using namespace yarp::os;
 using namespace openni;
 using namespace std;
-
-#define RETURN_FALSE_STATUS_NOT_OK(s) if(s != STATUS_OK){yError() << OpenNI::getExtendedError(); return false;}
-
-struct yarp::dev::impl::plum_bob
-{
-    double k1;
-    double k2;
-    double t1;
-    double t2;
-    double k3;
-};
-
-struct yarp::dev::impl::IntrinsicParams
-{
-    yarp::sig::Matrix retificationMatrix;
-    double            principalPointX;
-    double            principalPointY;
-    double            focalLenghtX;
-    double            focalLenghtY;
-    plum_bob          distortionModel;
-};
-
-struct yarp::dev::impl::RGBDParam
-{
-    RGBDParam() : name("unknown"), isSetting(false), isDescription(false), size(1)
-    {
-        val.resize(size);
-    }
-
-    std::string  name;
-    bool         isSetting;
-    bool         isDescription;
-    int          size;
-
-    std::vector<yarp::os::Value> val;
-};
-
-struct yarp::dev::impl::CameraParameters
-{
-    RGBDParam               clipPlanes;
-    RGBDParam               accuracy;
-    RGBDParam               depthRes;
-    RGBDParam               depth_Fov;
-    IntrinsicParams         depthIntrinsic;
-
-    RGBDParam               rgbRes;
-    RGBDParam               rgb_Fov;
-    RGBDParam               rgbMirroring;
-    RGBDParam               depthMirroring;
-    IntrinsicParams         rgbIntrinsic;
-    yarp::sig::Matrix       transformationMatrix;
-};
 
 class yarp::dev::impl::streamFrameListener : public openni::VideoStream::NewFrameListener
 {
