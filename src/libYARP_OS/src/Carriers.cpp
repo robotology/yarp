@@ -6,7 +6,7 @@
  */
 
 
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/TcpFace.h>
 #include <yarp/os/impl/FakeFace.h>
@@ -25,13 +25,119 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Protocol.h>
 #include <yarp/os/YarpPlugin.h>
+#include <yarp/os/impl/PlatformVector.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-Carriers *Carriers::yarp_carriers_instance = NULL;
 
-static bool matchCarrier(const Bytes *header, Bottle& code) {
+
+class Carriers::Private : public YarpPluginSelector
+{
+public:
+    static Carriers* yarp_carriers_instance;
+
+    PlatformVector<Carrier*> delegates;
+
+    Carrier* chooseCarrier(const ConstString* name,
+                           const Bytes* header,
+                           bool load_if_needed = true,
+                           bool return_template = false);
+
+    static bool matchCarrier(const Bytes *header, Bottle& code);
+    static bool checkForCarrier(const Bytes *header, Searchable& group);
+    static bool scanForCarrier(const Bytes *header);
+
+    virtual bool select(Searchable& options);
+};
+
+Carriers* Carriers::Private::yarp_carriers_instance = YARP_NULLPTR;
+
+
+Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
+                                          const Bytes *header,
+                                          bool load_if_needed,
+                                          bool return_template)
+{
+    ConstString s;
+    if (name != YARP_NULLPTR) {
+        s = *name;
+        size_t i = s.find("+");
+        if (i!=ConstString::npos) {
+            s[i] = '\0';
+            s = s.c_str();
+            name = &s;
+        }
+    }
+    for (size_t i = 0; i < delegates.size(); i++) {
+        Carrier& c = *delegates[i];
+        bool match = false;
+        if (name != YARP_NULLPTR) {
+            if ((*name) == c.getName()) {
+                match = true;
+            }
+        }
+        if (header != YARP_NULLPTR) {
+            if (c.checkHeader(*header)) {
+                match = true;
+            }
+        }
+        if (match) {
+            if (!return_template) {
+                return c.create();
+            }
+            return &c;
+        }
+    }
+    if (load_if_needed) {
+        if (name != YARP_NULLPTR) {
+            // ok, we didn't find a carrier, but we have a name.
+            // let's try to register it, and see if a dll is found.
+            if (NetworkBase::registerCarrier(name->c_str(), YARP_NULLPTR)) {
+                // We made progress, let's try again...
+                return Carriers::Private::chooseCarrier(name,header,false);
+            }
+        } else {
+            if (scanForCarrier(header)) {
+                // We made progress, let's try again...
+                return Carriers::Private::chooseCarrier(name,header,true);
+            }
+        }
+    }
+    if (name == YARP_NULLPTR) {
+        ConstString txt;
+        for (int i=0; i<(int)header->length(); i++) {
+            txt += NetType::toString(header->get()[i]);
+            txt += " ";
+        }
+        txt += "[";
+        for (int i=0; i<(int)header->length(); i++) {
+            char ch = header->get()[i];
+            if (ch>=32) {
+                txt += ch;
+            } else {
+                txt += '.';
+            }
+        }
+        txt += "]";
+
+        YARP_SPRINTF1(Logger::get(),
+                      error,
+                      "Could not find carrier for a connection starting with: %s",
+                      txt.c_str());
+    } else {
+        YARP_SPRINTF1(Logger::get(),
+                      error,
+                      "Could not find carrier \"%s\"",
+                      (name != YARP_NULLPTR) ? name->c_str() : "[bytes]");;
+    }
+    return YARP_NULLPTR;
+}
+
+
+
+bool Carriers::Private::matchCarrier(const Bytes *header, Bottle& code)
+{
     int at = 0;
     bool success = true;
     bool done = false;
@@ -59,19 +165,21 @@ static bool matchCarrier(const Bytes *header, Bottle& code) {
     return success;
 }
 
-static bool checkForCarrier(const Bytes *header, Searchable& group) {
+bool Carriers::Private::checkForCarrier(const Bytes *header, Searchable& group)
+{
     Bottle code = group.findGroup("code").tail();
     if (code.size()==0) return false;
     if (matchCarrier(header,code)) {
         ConstString name = group.find("name").asString();
-        if (NetworkBase::registerCarrier(name.c_str(),NULL)) {
+        if (NetworkBase::registerCarrier(name.c_str(), YARP_NULLPTR)) {
             return true;
         }
     }
     return false;
 }
 
-static bool scanForCarrier(const Bytes *header) {
+bool Carriers::Private::scanForCarrier(const Bytes *header)
+{
     YARP_SPRINTF0(Logger::get(),
                   debug,
                   "Scanning for a carrier by header.");
@@ -86,186 +194,156 @@ static bool scanForCarrier(const Bytes *header) {
     return false;
 }
 
-Carriers::Carriers() {
-    delegates.push_back(new HttpCarrier());
-    delegates.push_back(new NameserCarrier());
-    delegates.push_back(new LocalCarrier());
-#ifdef YARP_HAS_ACE
-    //delegates.push_back(new ShmemCarrier(1));
-    delegates.push_back(new ShmemCarrier(2)); // new Alessandro version
-#endif
-    delegates.push_back(new TcpCarrier());
-    delegates.push_back(new TcpCarrier(false));
-#ifdef YARP_HAS_ACE
-    delegates.push_back(new McastCarrier());
-#endif
-    delegates.push_back(new UdpCarrier());
-    delegates.push_back(new TextCarrier());
-    delegates.push_back(new TextCarrier(true));
+bool Carriers::Private::select(Searchable& options)
+{
+    return options.check("type",Value("none")).asString() == "carrier";
 }
 
-Carriers::~Carriers() {
+
+Carriers::Carriers() :
+        mPriv(new Private)
+{
+    mPriv->delegates.push_back(new HttpCarrier());
+    mPriv->delegates.push_back(new NameserCarrier());
+    mPriv->delegates.push_back(new LocalCarrier());
+#ifdef YARP_HAS_ACE
+    //mPriv->delegates.push_back(new ShmemCarrier(1));
+    mPriv->delegates.push_back(new ShmemCarrier(2)); // new Alessandro version
+#endif
+    mPriv->delegates.push_back(new TcpCarrier());
+    mPriv->delegates.push_back(new TcpCarrier(false));
+#ifdef YARP_HAS_ACE
+    mPriv->delegates.push_back(new McastCarrier());
+#endif
+    mPriv->delegates.push_back(new UdpCarrier());
+    mPriv->delegates.push_back(new TextCarrier());
+    mPriv->delegates.push_back(new TextCarrier(true));
+}
+
+Carriers::~Carriers()
+{
     clear();
+    delete mPriv;
 }
 
-void Carriers::clear() {
-    PlatformVector<Carrier *>& lst = delegates;
+void Carriers::clear()
+{
+    PlatformVector<Carrier*>& lst = mPriv->delegates;
     for (unsigned int i=0; i<lst.size(); i++) {
         delete lst[i];
     }
     lst.clear();
 }
 
-Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
-                                 bool load_if_needed,
-                                 bool return_template) {
-    String s;
-    if (name!=NULL) {
-        s = *name;
-        size_t i = s.find("+");
-        if (i!=String::npos) {
-            s[i] = '\0';
-            s = s.c_str();
-            name = &s;
-        }
-    }
-    for (size_t i=0; i<(size_t)delegates.size(); i++) {
-        Carrier& c = *delegates[i];
-        bool match = false;
-        if (name!=NULL) {
-            if ((*name) == c.getName()) {
-                match = true;
-            }
-        }
-        if (header!=NULL) {
-            if (c.checkHeader(*header)) {
-                match = true;
-            }
-        }
-        if (match) {
-            if (!return_template) return c.create();
-            return &c;
-        }
-    }
-    if (load_if_needed) {
-        if (name!=NULL) {
-            // ok, we didn't find a carrier, but we have a name.
-            // let's try to register it, and see if a dll is found.
-            if (NetworkBase::registerCarrier(name->c_str(),NULL)) {
-                // We made progress, let's try again...
-                return Carriers::chooseCarrier(name,header,false);
-            }
-        } else {
-            if (scanForCarrier(header)) {
-                // We made progress, let's try again...
-                return Carriers::chooseCarrier(name,header,true);
-            }
-        }
-    }
-    if (name==NULL) {
-        String txt;
-        for (int i=0; i<(int)header->length(); i++) {
-            txt += NetType::toString(header->get()[i]);
-            txt += " ";
-        }
-        txt += "[";
-        for (int i=0; i<(int)header->length(); i++) {
-            char ch = header->get()[i];
-            if (ch>=32) {
-                txt += ch;
-            } else {
-                txt += '.';
-            }
-        }
-        txt += "]";
+Carrier *Carriers::chooseCarrier(const ConstString& name)
+{
+    return getInstance().mPriv->chooseCarrier(&name, YARP_NULLPTR);
+}
 
-        YARP_SPRINTF1(Logger::get(),
-                      error,
-                      "Could not find carrier for a connection starting with: %s",
-                      txt.c_str());
-    } else {
-        YARP_SPRINTF1(Logger::get(),
-                      error,
-                      "Could not find carrier \"%s\"",
-                      (name!=NULL)?name->c_str():"[bytes]");;
-    }
-    return NULL;
+Carrier *Carriers::getCarrierTemplate(const ConstString& name)
+{
+    return getInstance().mPriv->chooseCarrier(&name, YARP_NULLPTR, true, true);
 }
 
 
-Carrier *Carriers::chooseCarrier(const String& name) {
-    return getInstance().chooseCarrier(&name,NULL);
-}
-
-Carrier *Carriers::getCarrierTemplate(const String& name) {
-    return getInstance().chooseCarrier(&name,NULL,true,true);
+Carrier *Carriers::chooseCarrier(const Bytes& bytes)
+{
+    return getInstance().mPriv->chooseCarrier(YARP_NULLPTR, &bytes);
 }
 
 
-Carrier *Carriers::chooseCarrier(const Bytes& bytes) {
-    return getInstance().chooseCarrier(NULL,&bytes);
-}
-
-
-Face *Carriers::listen(const Contact& address) {
+Face *Carriers::listen(const Contact& address)
+{
     // for now, only TcpFace exists - otherwise would need to manage
     // multiple possibilities
-    Face *face = NULL;
+    Face *face = YARP_NULLPTR;
     if (address.getCarrier() == "fake") {
         face = new FakeFace();
     }
-    if (face == NULL) {
+    if (face == YARP_NULLPTR) {
         face = new TcpFace();
     }
     bool ok = face->open(address);
     if (!ok) {
         delete face;
-        face = NULL;
+        face = YARP_NULLPTR;
     }
     return face;
 }
 
 
-OutputProtocol *Carriers::connect(const Contact& address) {
+OutputProtocol *Carriers::connect(const Contact& address)
+{
     TcpFace tcpFace;
     return tcpFace.write(address);
 }
 
 
-bool Carriers::addCarrierPrototype(Carrier *carrier) {
-    getInstance().delegates.push_back(carrier);
+bool Carriers::addCarrierPrototype(Carrier *carrier)
+{
+    getInstance().mPriv->delegates.push_back(carrier);
     return true;
 }
 
 
-bool Carrier::reply(ConnectionState& proto, SizedWriter& writer) {
+bool Carrier::reply(ConnectionState& proto, SizedWriter& writer)
+{
     writer.write(proto.os());
     return proto.os().isOk();
 }
 
-Carriers& Carriers::getInstance() {
-    if (yarp_carriers_instance == NULL) {
-        yarp_carriers_instance = new Carriers();
-        yAssert(yarp_carriers_instance!=NULL);
+Carriers& Carriers::getInstance()
+{
+    if (Private::yarp_carriers_instance == YARP_NULLPTR) {
+        Private::yarp_carriers_instance = new Carriers();
+        yAssert(Private::yarp_carriers_instance != YARP_NULLPTR);
     }
-    return *yarp_carriers_instance;
+    return *Private::yarp_carriers_instance;
 }
 
 
-void Carriers::removeInstance() {
-    if (yarp_carriers_instance != NULL) {
-        delete yarp_carriers_instance;
-        yarp_carriers_instance = NULL;
+void Carriers::removeInstance()
+{
+    if (Private::yarp_carriers_instance != YARP_NULLPTR) {
+        delete Private::yarp_carriers_instance;
+        Private::yarp_carriers_instance = YARP_NULLPTR;
     }
 }
 
 
-Bottle Carriers::listCarriers() {
+Bottle Carriers::listCarriers()
+{
     Bottle lst;
-    PlatformVector<Carrier *>& delegates = getInstance().delegates;
-    for (size_t i=0; i<(size_t)delegates.size(); i++) {
+    Property done;
+
+    PlatformVector<Carrier*>& delegates = getInstance().mPriv->delegates;
+    for (size_t i = 0; i < delegates.size(); i++) {
         Carrier& c = *delegates[i];
         lst.addString(c.getName());
+        done.put(c.getName(), 1);
     }
+
+    getInstance().mPriv->scan();
+    Bottle plugins = getInstance().mPriv->getSelectedPlugins();
+    for (int i = 0; i < plugins.size(); i++) {
+        Value& options = plugins.get(i);
+        ConstString name = options.check("name",Value("untitled")).asString();
+        if (done.check(name)) {
+            continue;
+        }
+
+        SharedLibraryFactory lib;
+        YarpPluginSettings settings;
+        settings.setSelector(*getInstance().mPriv);
+        settings.readFromSearchable(options,name);
+        settings.open(lib);
+        ConstString location = lib.getName().c_str();
+        if (location=="") {
+            continue;
+        }
+        lst.addString(name);
+        done.put(name, 1);
+    }
+
     return lst;
 }

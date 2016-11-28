@@ -12,11 +12,11 @@
 #include <yarp/os/Value.h>
 
 using namespace yarp::os;
-using namespace YarpXmlRpc;
 using namespace std;
+using YarpXmlRpc::XmlRpcValue;
 
-
-Value toValue(XmlRpcValue& v, bool outer) {
+Value toValue(XmlRpcValue& v, bool outer)
+{
     int t = v.getType();
     switch (t) {
     case XmlRpcValue::TypeInt:
@@ -86,7 +86,8 @@ Value toValue(XmlRpcValue& v, bool outer) {
     return Value("(type not supported yet out of laziness)");
 }
 
-YARP_SSIZE_T XmlRpcStream::read(const Bytes& b) {
+YARP_SSIZE_T XmlRpcStream::read(const Bytes& b)
+{
     //printf("XMLRPC READ\n");
     YARP_SSIZE_T result = sis.read(b);
     if (result>0) {
@@ -170,6 +171,7 @@ YARP_SSIZE_T XmlRpcStream::read(const Bytes& b) {
 }
 
 
-void XmlRpcStream::write(const Bytes& b) {
+void XmlRpcStream::write(const Bytes& b)
+{
     delegate->getOutputStream().write(b);
 }

@@ -13,7 +13,6 @@
  */
 
 #include <yarp/dev/Drivers.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/impl/PlatformStdio.h>
@@ -38,7 +37,18 @@ extern DriverCreator *createServerInertial();
 extern DriverCreator *createBatteryWrapper();
 extern DriverCreator *createBatteryClient();
 extern DriverCreator *createRangefinder2DWrapper();
+extern DriverCreator *createRGBDSensorWrapper();
+extern DriverCreator *createRGBDSensorClient();
+extern DriverCreator *createControlBoardRemapper();
+extern DriverCreator *createRemoteControlBoardRemapper();
+extern DriverCreator *createNavigation2DClient();
+
+#ifdef WITH_YARPMATH
+extern DriverCreator *createFrameTransformServer();
+extern DriverCreator *createFrameTransformClient();
+extern DriverCreator *createLocationsServer();
 extern DriverCreator *createRangefinder2DClient();
+#endif
 
 #ifndef YARP_NO_DEPRECATED
 extern DriverCreator *createServerControlBoard();
@@ -82,12 +92,23 @@ void Drivers::init() {
     add(createServerInertial());
     add(createControlBoardWrapper());
     add(createBatteryClient());
-    add(createRangefinder2DClient());
     add(createAnalogSensorClient());
     add(createAnalogWrapper());
     add(createVirtualAnalogWrapper());
     add(createBatteryWrapper());
     add(createRangefinder2DWrapper());
+    add(createRGBDSensorWrapper());
+    add(createRGBDSensorClient());
+    add(createControlBoardRemapper());
+    add(createRemoteControlBoardRemapper());
+    add(createNavigation2DClient());
+
+#ifdef WITH_YARPMATH
+    add(createFrameTransformServer());
+    add(createFrameTransformClient());
+    add(createLocationsServer());
+    add(createRangefinder2DClient());
+#endif
 
 #ifndef YARP_NO_DEPRECATED
     add(createClientControlBoard());

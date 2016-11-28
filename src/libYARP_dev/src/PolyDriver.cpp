@@ -251,6 +251,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
             driver = creator->create();
         }
     } else {
+        // FIXME do not use yarpdev here
         printf("yarpdev: ***ERROR*** could not find device <%s>\n", str.c_str());
     }
 

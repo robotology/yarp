@@ -19,13 +19,14 @@
 
 #include <math.h>
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
 
 class RandTest : public UnitTest {
 public:
-    virtual String getName() { return "RandTest"; }
+    virtual ConstString getName() { return "RandTest"; }
 
     void normalRnd()
     {

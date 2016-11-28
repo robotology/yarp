@@ -7,6 +7,7 @@
 
 #include <yarp/os/impl/BottleImpl.h>
 
+#include <yarp/os/ConstString.h>
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
@@ -20,7 +21,6 @@
 
 #include <clocale>
 
-using yarp::os::impl::String;
 using yarp::os::impl::StoreInt;
 using yarp::os::impl::StoreVocab;
 using yarp::os::impl::StoreDouble;
@@ -72,9 +72,9 @@ const int StoreInt64::code = BOTTLE_TAG_INT64;
 #define GROUP_MASK (BOTTLE_TAG_LIST | BOTTLE_TAG_DICT)
 
 
-yarp::os::impl::StoreNull* BottleImpl::storeNull = NULL;
+yarp::os::impl::StoreNull* BottleImpl::storeNull = YARP_NULLPTR;
 
-BottleImpl::BottleImpl() : parent(NULL)
+BottleImpl::BottleImpl() : parent(YARP_NULLPTR)
 {
     dirty = true;
     nested = false;
@@ -111,12 +111,12 @@ void BottleImpl::clear()
     dirty = true;
 }
 
-void BottleImpl::smartAdd(const String& str)
+void BottleImpl::smartAdd(const ConstString& str)
 {
     if (str.length() > 0) {
         char ch = str[0];
-        Storable* s = NULL;
-        StoreString* ss = NULL;
+        Storable* s = YARP_NULLPTR;
+        StoreString* ss = YARP_NULLPTR;
         bool numberLike = true;
         bool preamble = true;
         bool hexActive = false;
@@ -187,11 +187,11 @@ void BottleImpl::smartAdd(const String& str)
         } else {
             s = ss = new StoreString("");
         }
-        if (s != NULL) {
+        if (s != YARP_NULLPTR) {
             s->fromStringNested(str);
-            if (ss != NULL) {
+            if (ss != YARP_NULLPTR) {
                 if (str.length() == 0 || str[0] != '\"') {
-                    String val = ss->asString();
+                    ConstString val = ss->asString();
                     if (val == "true") {
                         delete s;
                         s = new StoreVocab(static_cast<int>('1'));
@@ -203,21 +203,21 @@ void BottleImpl::smartAdd(const String& str)
             }
             add(s);
         }
-        ss = NULL;
+        ss = YARP_NULLPTR;
     }
 }
 
-void BottleImpl::fromString(const String& line)
+void BottleImpl::fromString(const ConstString& line)
 {
     clear();
     dirty = true;
-    String arg = "";
+    ConstString arg = "";
     bool quoted = false;
     bool back = false;
     bool begun = false;
     int nested = 0;
     int nestedAlt = 0;
-    String nline = line + " ";
+    ConstString nline = line + " ";
 
     for (unsigned int i = 0; i < nline.length(); i++) {
         char ch = nline[i];
@@ -280,7 +280,7 @@ bool BottleImpl::isComplete(const char* txt)
     bool begun = false;
     int nested = 0;
     int nestedAlt = 0;
-    String nline = txt;
+    ConstString nline = txt;
     nline += " ";
 
     for (unsigned int i = 0; i < nline.length(); i++) {
@@ -355,7 +355,7 @@ Storable::~Storable()
 
 Storable* Storable::createByCode(int id)
 {
-    Storable* storable = NULL;
+    Storable* storable = YARP_NULLPTR;
     int subCode = 0;
     switch (id) {
     case StoreInt::code:
@@ -375,7 +375,7 @@ Storable* Storable::createByCode(int id)
         break;
     case StoreList::code:
         storable = new StoreList();
-        yAssert(storable != NULL);
+        yAssert(storable != YARP_NULLPTR);
         storable->asList()->implementation->setNested(true);
         break;
     case StoreInt64::code:
@@ -387,10 +387,10 @@ Storable* Storable::createByCode(int id)
             subCode = (id & UNIT_MASK);
             if (id & BOTTLE_TAG_DICT) {
                 storable = new StoreDict();
-                yAssert(storable != NULL);
+                yAssert(storable != YARP_NULLPTR);
             } else {
                 storable = new StoreList();
-                yAssert(storable != NULL);
+                yAssert(storable != YARP_NULLPTR);
                 storable->asList()->implementation->specialize(subCode);
                 storable->asList()->implementation->setNested(true);
             }
@@ -415,7 +415,7 @@ bool BottleImpl::fromBytes(ConnectionReader& reader)
         YMSG(("READ skipped subcode %d\n", speciality));
     }
     Storable* storable = Storable::createByCode(id);
-    if (storable == NULL) {
+    if (storable == YARP_NULLPTR) {
         YARP_SPRINTF1(Logger::get(), error,
                       "BottleImpl reader failed, unrecognized object code %d",
                       id);
@@ -434,7 +434,7 @@ void BottleImpl::fromBinary(const char* text, int len)
     sis.add(wrapper);
     StreamConnectionReader reader;
     Route route;
-    reader.reset(sis, NULL, route, len, false);
+    reader.reset(sis, YARP_NULLPTR, route, len, false);
     read(reader);
 }
 
@@ -446,7 +446,7 @@ bool BottleImpl::fromBytes(const Bytes& data)
     sis.add(wrapper);
     StreamConnectionReader reader;
     Route route;
-    reader.reset(sis, NULL, route, data.length(), false);
+    reader.reset(sis, YARP_NULLPTR, route, data.length(), false);
 
     clear();
     dirty = true; // for clarity
@@ -691,7 +691,7 @@ ConstString StoreInt::toString() const
 void StoreInt::fromString(const ConstString& src)
 {
     // x = ACE_OS::atoi(src.c_str());
-    x = ACE_OS::strtol(src.c_str(), static_cast<char**>(NULL), 0);
+    x = ACE_OS::strtol(src.c_str(), static_cast<char**>(YARP_NULLPTR), 0);
 }
 
 bool StoreInt::readRaw(ConnectionReader& reader)
@@ -719,7 +719,7 @@ ConstString StoreInt64::toString() const
 
 void StoreInt64::fromString(const ConstString& src)
 {
-    x = ACE_OS::strtoll(src.c_str(), static_cast<char**>(NULL), 0);
+    x = ACE_OS::strtoll(src.c_str(), static_cast<char**>(YARP_NULLPTR), 0);
 }
 
 bool StoreInt64::readRaw(ConnectionReader& reader)
@@ -840,7 +840,7 @@ void StoreDouble::fromString(const ConstString& src)
         struct lconv* lc = localeconv();
         tmp[offset] = lc->decimal_point[0];
     }
-    x = ACE_OS::strtod(tmp.c_str(), NULL);
+    x = ACE_OS::strtod(tmp.c_str(), YARP_NULLPTR);
 }
 
 bool StoreDouble::readRaw(ConnectionReader& reader)
@@ -1218,7 +1218,7 @@ bool BottleImpl::isList(int index)
 
 Storable* BottleImpl::pop()
 {
-    Storable* stb = NULL;
+    Storable* stb = YARP_NULLPTR;
     if (size() == 0) {
         stb = new StoreNull();
     } else {
@@ -1226,7 +1226,7 @@ Storable* BottleImpl::pop()
         content.pop_back();
         dirty = true;
     }
-    yAssert(stb != NULL);
+    yAssert(stb != YARP_NULLPTR);
     return stb;
 }
 
@@ -1265,7 +1265,7 @@ double BottleImpl::getDouble(int index)
 yarp::os::Bottle* BottleImpl::getList(int index)
 {
     if (!isList(index)) {
-        return NULL;
+        return YARP_NULLPTR;
     }
     return &((dynamic_cast<StoreList*>(content[index]))->internal());
 }
@@ -1292,7 +1292,7 @@ void BottleImpl::copyRange(const BottleImpl* alt, int first, int len)
     }
 
     const BottleImpl* src = alt;
-    BottleImpl tmp(NULL);
+    BottleImpl tmp(YARP_NULLPTR);
     if (alt == this) {
         tmp.fromString(toString());
         src = &tmp;
@@ -1348,7 +1348,7 @@ bool Storable::check(const ConstString& key) const
 
 bool Storable::operator==(const Value& alt) const
 {
-    return String(toString().c_str()) == alt.toString().c_str();
+    return ConstString(toString().c_str()) == alt.toString().c_str();
 }
 
 
@@ -1408,7 +1408,7 @@ Value& BottleImpl::findBit(const ConstString& key) const
             if (nested) {
                 return org->asList()->get(1);
             }
-            if (parent && parent->getMonitor() != NULL) {
+            if (parent && parent->getMonitor() != YARP_NULLPTR) {
                 SearchReport report;
                 report.key = key;
                 report.isFound = true;
@@ -1423,7 +1423,7 @@ Value& BottleImpl::findBit(const ConstString& key) const
         }
     }
     // return invalid object
-    if (parent && parent->getMonitor() != NULL) {
+    if (parent && parent->getMonitor() != YARP_NULLPTR) {
         SearchReport report;
         report.key = key;
         parent->reportToMonitor(report);

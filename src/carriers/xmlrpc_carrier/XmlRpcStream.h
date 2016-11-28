@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef XMLRPCSTREAM_INC
-#define XMLRPCSTREAM_INC
+#ifndef YARP_XMLRPC_CARRIER_XMLRPCSTREAM_H
+#define YARP_XMLRPC_CARRIER_XMLRPCSTREAM_H
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
@@ -38,52 +38,68 @@ private:
     bool interpretRos;
 public:
     XmlRpcStream(TwoWayStream *delegate, bool sender, bool interpretRos) :
-        client("notset",0),
-        server(0,0/*NULL*/),
-        sender(sender),
-        interpretRos(interpretRos) {
+            client("notset", 0),
+            server(0, YARP_NULLPTR),
+            sender(sender),
+            interpretRos(interpretRos)
+    {
         this->delegate = delegate;
         client.reset();
         server.reset();
         firstRound = true;
     }
 
-    virtual ~XmlRpcStream() {
-        if (delegate!=NULL) {
+    virtual ~XmlRpcStream()
+    {
+        if (delegate != YARP_NULLPTR) {
             delete delegate;
-            delegate = NULL;
+            delegate = YARP_NULLPTR;
         }
     }
 
-    virtual yarp::os::InputStream& getInputStream() { return *this; }
-    virtual yarp::os::OutputStream& getOutputStream() { return *this; }
+    virtual yarp::os::InputStream& getInputStream()
+    {
+        return *this;
+    }
+
+    virtual yarp::os::OutputStream& getOutputStream()
+    {
+        return *this;
+    }
 
 
-    virtual const yarp::os::Contact& getLocalAddress() {
+    virtual const yarp::os::Contact& getLocalAddress()
+    {
         return delegate->getLocalAddress();
     }
 
-    virtual const yarp::os::Contact& getRemoteAddress() {
+    virtual const yarp::os::Contact& getRemoteAddress()
+    {
         return delegate->getRemoteAddress();
     }
 
-    virtual bool isOk() {
+    virtual bool isOk()
+    {
         return delegate->isOk();
     }
 
-    virtual void reset() {
+    virtual void reset()
+    {
         delegate->reset();
     }
 
-    virtual void close() {
+    virtual void close()
+    {
         delegate->close();
     }
 
-    virtual void beginPacket() {
+    virtual void beginPacket()
+    {
         delegate->beginPacket();
     }
 
-    virtual void endPacket() {
+    virtual void endPacket()
+    {
         delegate->endPacket();
     }
 
@@ -93,10 +109,11 @@ public:
     using yarp::os::InputStream::read;
     virtual YARP_SSIZE_T read(const Bytes& b);
 
-    virtual void interrupt() {
+    virtual void interrupt()
+    {
         delegate->getInputStream().interrupt();
     }
 
 };
 
-#endif
+#endif // YARP_XMLRPC_CARRIER_XMLRPCSTREAM_H

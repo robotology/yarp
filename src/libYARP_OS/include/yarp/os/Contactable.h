@@ -207,6 +207,11 @@ public:
      */
     virtual void setReporter(PortReport& reporter) = 0;
 
+    /**
+     * Remove the callback which is called upon any future connections and
+     * disconnections to/from the port.
+     */
+    virtual void resetReporter() = 0;
 
     /**
      * Report whether the port is currently writing data.
@@ -282,7 +287,8 @@ public:
      *
      * @param readOnly set this if you won't be modifying the properties.
      *
-     * @return the port properties (or NULL if readOnly and none have been set)
+     * @return the port properties (or YARP_NULLPTR if readOnly and none have
+     *         been set)
      *
      */
     virtual Property *acquireProperties(bool readOnly) = 0;
@@ -357,11 +363,11 @@ public:
      * callback.  This applies at least to callbacks set by setReader and
      * setAdminReader, and in future may apply to other callbacks.
      *
-     * @param mutex the lock to use. If NULL, a mutex will be allocated
+     * @param mutex the lock to use. If YARP_NULLPTR, a mutex will be allocated
      * internally by the port, and destroyed with the port.
      *
      */
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex = NULL) = 0;
+    virtual bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) = 0;
 
     /**
      *

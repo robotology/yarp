@@ -1,5 +1,0 @@
-# Copyright: (C) 2010 RobotCub Consortium
-# Author: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-svn copy https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2  https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/yarp-2.2.7 -m "yarp release 2.2.7"

@@ -9,6 +9,7 @@
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortReaderBuffer.h>
@@ -34,6 +35,52 @@ using namespace yarp::os::impl;
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+class TcpTestServer : public RateThread
+{
+public:
+    TcpTestServer() : RateThread(20)
+    {
+
+    }
+private:
+    BufferedPort<Bottle> tcpPort;
+    bool threadInit()
+    {
+        tcpPort.open("/TcpTestServer");
+    }
+
+    void threadRelease()
+    {
+        tcpPort.interrupt();
+        tcpPort.close();
+    }
+
+    void run()
+    {
+        Bottle& b = tcpPort.prepare();
+        b.clear();
+        b.addString("tcpTest");
+        tcpPort.write();
+    }
+};
+
+class TcpTestClient
+{
+    BufferedPort<Bottle> tcpPort;
+public:
+    TcpTestClient()
+    {
+        tcpPort.open("/TcpTestClien");
+        yarp::os::Network::connect("/TcpTestServer", "/TcpTestClien","tcp");
+    }
+
+    ~TcpTestClient()
+    {
+        tcpPort.interrupt();
+        tcpPort.close();
+    }
+};
 
 class ServiceProvider : public PortReader {
 public:
@@ -238,14 +285,14 @@ class PortTest : public UnitTest {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual String getName() { return "PortTest"; }
+    virtual ConstString getName() { return "PortTest"; }
 
     void testOpen() {
         report(0,"checking opening and closing ports");
         Port out, in;
 
         in.open("/in");
-        out.open(Contact::bySocket("tcp","",safePort()));
+        out.open(Contact("tcp", "", safePort()));
 
         checkTrue(in.isOpen(), "/in port is open");
         checkTrue(out.isOpen(), "/out port is open");
@@ -256,7 +303,7 @@ public:
         checkTrue(conIn.isValid(),"valid address for /in");
         checkTrue(conOut.isValid(),"valid address for /out");
 
-        out.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        out.addOutput(Contact("/in", "tcp"));
         //Time::delay(0.2);
 
         checkEqual(conIn.getName().c_str(),"/in","name is recorded");
@@ -306,7 +353,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("udp"));
+        output.addOutput(Contact("/in", "udp"));
         //Time::delay(0.2);
 
         report(0,"writing...");
@@ -323,7 +370,7 @@ public:
             checkTrue(result!=NULL,"got something check");
             if (result!=NULL) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),String("size is in fact ") +
+                YARP_INFO(Logger::get(),ConstString("size is in fact ") +
                           NetType::toString(result->size()));
             }
         }
@@ -350,7 +397,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("udp"));
+        output.addOutput(Contact("/in", "udp"));
         //Time::delay(0.2);
 
         report(0,"writing/reading three times...");
@@ -363,7 +410,7 @@ public:
             checkTrue(result!=NULL,"got something check");
             if (result!=NULL) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),String("size is in fact ") +
+                YARP_INFO(Logger::get(),ConstString("size is in fact ") +
                           NetType::toString(result->size()));
             }
         }
@@ -394,7 +441,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("udp"));
+        output.addOutput(Contact("/in", "udp"));
         //Time::delay(0.2);
 
 
@@ -411,7 +458,7 @@ public:
             checkTrue(result!=NULL,"got something check");
             if (result!=NULL) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),String("size is in fact ") +
+                YARP_INFO(Logger::get(),ConstString("size is in fact ") +
                           NetType::toString(result->size()));
             }
         }
@@ -435,7 +482,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
         //Time::delay(0.2);
 
 
@@ -469,7 +516,7 @@ public:
 
         input.setReader(provider);
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
         Time::delay(0.1);
         ServiceTester tester(*this);
         output.write(tester);
@@ -1118,7 +1165,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
 
         PortablePair<Bottle,Bottle> bot1;
         bot1.head.fromString("1 2 3");
@@ -1150,7 +1197,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
 
         Bottle bot1;
         bot1.fromString("1 2 3");
@@ -1200,7 +1247,7 @@ public:
         output.enableBackgroundWrite(true);
         output.open("/out");
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact("/in", "tcp"));
 
         Bottle bot1, bot2;
         bot1.fromString("1 2 3");
@@ -1408,9 +1455,28 @@ public:
         pout.close();
     }
 
+    void testTcp()
+    {
+        for(int i = 0; i < 50; i++)
+        {
+            TcpTestServer server;
+            server.start();
+
+            TcpTestClient* client = new TcpTestClient();
+
+            delete client;
+
+            server.stop();
+        }
+    }
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
+        //Progression test:
+#ifdef BROKEN_TEST
+        testTcp();
+#endif
         testOpen();
         //bbb testReadBuffer();
         testPair();
@@ -1464,6 +1530,10 @@ public:
         testAdminReader();
 
         testCallbackLock();
+
+
+
+
 
         NetworkBase::setLocalMode(false);
     }

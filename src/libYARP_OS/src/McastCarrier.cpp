@@ -14,14 +14,14 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-ElectionOf<PeerRecord<McastCarrier> > *McastCarrier::caster = NULL;
+ElectionOf<PeerRecord<McastCarrier> > *McastCarrier::caster = YARP_NULLPTR;
 
 ElectionOf<PeerRecord<McastCarrier> >& McastCarrier::getCaster() {
     NetworkBase::lock();
-    if (caster==NULL) {
+    if (caster==YARP_NULLPTR) {
         caster = new ElectionOf<PeerRecord<McastCarrier> >;
         NetworkBase::unlock();
-        if (caster==NULL) {
+        if (caster==YARP_NULLPTR) {
             YARP_ERROR(Logger::get(), "No memory for McastCarrier::caster");
             exit(1);
         }
@@ -42,7 +42,7 @@ yarp::os::impl::McastCarrier::~McastCarrier() {
         addRemove(key);
         if (elect) {
             McastCarrier *peer = getCaster().getElect(key);
-            if (peer==NULL) {
+            if (peer==YARP_NULLPTR) {
                 // time to remove registration
                 NetworkBase::unregisterName(mcastName.c_str());
             }
@@ -54,7 +54,7 @@ Carrier *yarp::os::impl::McastCarrier::create() {
     return new McastCarrier();
 }
 
-String yarp::os::impl::McastCarrier::getName() {
+ConstString yarp::os::impl::McastCarrier::getName() {
     return "mcast";
 }
 
@@ -73,18 +73,18 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
     Contact addr;
 
     Contact alt = proto.getStreams().getLocalAddress();
-    String altKey =
+    ConstString altKey =
         proto.getRoute().getFromName() +
         "/net=" + alt.getHost();
     McastCarrier *elect = getCaster().getElect(altKey);
-    if (elect!=NULL) {
+    if (elect!=YARP_NULLPTR) {
         YARP_DEBUG(Logger::get(),"picking up peer mcast name");
         addr = elect->mcastAddress;
         mcastName = elect->mcastName;
     } else {
 
         // fetch an mcast address
-        Contact target = Contact::bySocket("mcast","...",0).addName("...");
+        Contact target("...", "mcast", "...", 0);
         addr = NetworkBase::registerContact(target);
         mcastName = addr.getRegName();
         if (addr.isValid()) {
@@ -113,7 +113,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
     if (!addr.isValid()) {
         YARP_ERROR(Logger::get(), "Name server not responding helpfully, setting mcast name arbitrarily.");
         YARP_ERROR(Logger::get(), "Only a single mcast address supported in this mode.");
-        addr = Contact::bySocket("mcast","224.3.1.1",11000).addName("/tmp/mcast");
+        addr = Contact("/tmp/mcast", "mcast", "224.3.1.1", 11000);
     }
 
     ManagedBytes block(6);
@@ -140,7 +140,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
     int port = -1;
 
     unsigned char *base = (unsigned char *)block.get();
-    String add;
+    ConstString add;
     for (int i=0; i<4; i++) {
         ip[i] = base[i];
         if (i!=0) { add += "."; }
@@ -149,8 +149,8 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
         add += buf;
     }
     port = 256*base[4]+base[5];
-    Contact addr = Contact::bySocket("mcast",add,port);
-    YARP_DEBUG(Logger::get(),String("got mcast header ") + addr.toURI());
+    Contact addr("mcast", add, port);
+    YARP_DEBUG(Logger::get(),ConstString("got mcast header ") + addr.toURI());
     mcastAddress = addr;
 
     return true;
@@ -163,7 +163,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
 #else
     YARP_UNUSED(sender);
     DgramTwoWayStream *stream = new DgramTwoWayStream();
-    yAssert(stream!=NULL);
+    yAssert(stream!=YARP_NULLPTR);
     Contact remote = proto.getStreams().getRemoteAddress();
     Contact local;
     local = proto.getStreams().getLocalAddress();
@@ -176,7 +176,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
         printf("  Remote: %s\n", remote.toString().c_str());
     }
     */
-    proto.takeStreams(NULL); // free up port from tcp
+    proto.takeStreams(YARP_NULLPTR); // free up port from tcp
 
     if (sender) {
         /*
@@ -193,7 +193,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
             key += local.getHost();
         }
         YARP_DEBUG(Logger::get(),
-                    String("multicast key: ") + key);
+                    ConstString("multicast key: ") + key);
         addSender(key);
     }
 
@@ -224,18 +224,18 @@ bool yarp::os::impl::McastCarrier::expectReplyToHeader(ConnectionState& proto) {
     return becomeMcast(proto,true);
 }
 
-void yarp::os::impl::McastCarrier::addSender(const String& key) {
+void yarp::os::impl::McastCarrier::addSender(const ConstString& key) {
     getCaster().add(key,this);
 }
 
-void yarp::os::impl::McastCarrier::addRemove(const String& key) {
+void yarp::os::impl::McastCarrier::addRemove(const ConstString& key) {
     getCaster().remove(key,this);
 }
 
 bool yarp::os::impl::McastCarrier::isElect() {
     void *elect = getCaster().getElect(key);
     //void *elect = caster.getElect(mcastAddress.toString());
-    return elect==this || elect==NULL;
+    return elect==this || elect==YARP_NULLPTR;
 }
 
 

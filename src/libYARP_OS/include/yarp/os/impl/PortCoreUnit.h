@@ -10,7 +10,7 @@
 
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Name.h>
 
 namespace yarp {
@@ -36,10 +36,12 @@ public:
      * @param index an id for this connection
      *
      */
-    PortCoreUnit(PortCore& owner, int index) : owner(owner), index(index) {
-        doomed = false;
-        hasMode = false;
-        pupped = false;
+    PortCoreUnit(PortCore& owner, int index) :
+            owner(owner),
+            doomed(false),
+            hasMode(false),
+            pupped(false),
+            index(index) {
     }
 
     /**
@@ -122,10 +124,10 @@ public:
      * before the method returns
      * @param waitBefore true if we should wait for any in-progress send
      * to complete before stating this one
-     * @parm gotReply if non-NULL, this variable will be set to true if
+     * @parm gotReply if non-YARP_NULLPTR, this variable will be set to true if
      * a reply was received
      *
-     * @return NULL, or a tracker for a previous send operation that
+     * @return YARP_NULLPTR, or a tracker for a previous send operation that
      * is no longer in progress. The tracker is an opaque pointer passed
      * in via a previous call to send().  Once it is returned, it is
      * the caller's responsibility to manage any memory associated
@@ -136,10 +138,10 @@ public:
                        yarp::os::PortReader *reader,
                        yarp::os::PortWriter *callback,
                        void *tracker,
-                       const String& envelope,
+                       const ConstString& envelope,
                        bool waitAfter = true,
                        bool waitBefore = true,
-                       bool *gotReply = NULL) {
+                       bool *gotReply = YARP_NULLPTR) {
         // do nothing
         return tracker;
     }
@@ -151,12 +153,12 @@ public:
      * can be safely accessed.
      *
      * @return the opaque tracker pointer passed to a previous call to
-     * send(), or NULL if there is no such tracker.  Once the tracker
-     * has been returned, calling this method again will return NULL.
+     * send(), or YARP_NULLPTR if there is no such tracker.  Once the tracker
+     * has been returned, calling this method again will return YARP_NULLPTR.
      *
      */
     virtual void *takeTracker() {
-        return NULL;
+        return YARP_NULLPTR;
     }
 
     /**
@@ -189,7 +191,7 @@ public:
      *
      */
     void setMode() {
-        Name name(getRoute().getCarrierName() + String("://test"));
+        Name name(getRoute().getCarrierName() + ConstString("://test"));
         mode = name.getCarrierModifier("log",&hasMode);
     }
 
@@ -212,8 +214,8 @@ public:
      * @return the connection mode, or the empty string if there is none
      *
      */
-    String getMode(bool *hasMode = NULL) {
-        if (hasMode!=NULL) {
+    ConstString getMode(bool *hasMode = YARP_NULLPTR) {
+        if (hasMode!=YARP_NULLPTR) {
             *hasMode = this->hasMode;
         }
         return (this->hasMode)?mode:"";
@@ -288,7 +290,7 @@ protected:
 private:
     PortCore& owner; ///< the port to which this connection belongs
     bool doomed;     ///< whether the connection should shut down ASAP
-    String mode;     ///< the logging mode of the connection
+    ConstString mode;     ///< the logging mode of the connection
     bool hasMode;    ///< whether the logging mode has been set
     bool pupped;     ///< whether the connection was made by `publisherUpdate`
     int index;       ///< an ID assigned to the connection

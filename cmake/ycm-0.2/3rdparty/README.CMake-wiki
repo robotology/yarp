@@ -1,0 +1,6 @@
+Some of the files in this folder and its subfolder come from the CMake wiki:
+
+  FindOctave.cmake: https://cmake.org/Wiki/CMakeUserFindOctave
+
+Redistribution and use is allowed according to the terms of the 2-clause
+BSD license. See accompanying file COPYING.CMake-wiki for details.

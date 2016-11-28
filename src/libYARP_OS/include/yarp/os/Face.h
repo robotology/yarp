@@ -55,7 +55,8 @@ public:
      *
      * Block and wait for someone to talk to us.
      *
-     * @return a protocol object for talking to someone, or NULL on failure.
+     * @return a protocol object for talking to someone, or YARP_NULLPTR on
+     *         failure.
      *
      */
     virtual InputProtocol *read() = 0;
@@ -67,7 +68,7 @@ public:
      * @param address parameters describing destination.  For example, for
      * TCP this would contain a machine name/IP address, and a socket number.
      *
-     * @return a protocol object to talk with, or NULL on failure.
+     * @return a protocol object to talk with, or YARP_NULLPTR on failure.
      *
      */
     virtual OutputProtocol *write(const Contact& address) = 0;

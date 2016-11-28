@@ -12,7 +12,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 namespace yarp {
     namespace os {
@@ -33,7 +33,7 @@ public:
         str = "";
     }
 
-    PortCommand(char ch, const String& str) : header(8) {
+    PortCommand(char ch, const ConstString& str) : header(8) {
         this->ch = ch;
         this->str = str;
     }
@@ -45,13 +45,13 @@ public:
         return ch;
     }
 
-    String getText() {
+    ConstString getText() {
         return str;
     }
 
 public:
     char ch;
-    String str;
+    ConstString str;
     yarp::os::ManagedBytes header;
 };
 

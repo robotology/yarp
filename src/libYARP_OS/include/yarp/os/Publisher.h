@@ -38,7 +38,7 @@ public:
      *
      */
     Publisher(const ConstString& name = "") {
-        buffered_port = 0 /*NULL*/;
+        buffered_port = YARP_NULLPTR;
         T example;
         port.promiseType(example.getType());
         port.setInputMode(false);
@@ -148,6 +148,12 @@ public:
         buffer().waitForWrite();
     }
 
+    virtual int getPendingReads() {
+        if (buffered_port)
+            return buffered_port->getPendingReads();
+        return 0;
+    }
+
     virtual Port& asPort() {
         return port;
     }
@@ -176,7 +182,7 @@ private:
     void clear() {
         if (!buffered_port) return;
         delete buffered_port;
-        buffered_port = 0 /*NULL*/;
+        buffered_port = YARP_NULLPTR;
     }
 };
 

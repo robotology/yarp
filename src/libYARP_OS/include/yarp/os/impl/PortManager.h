@@ -8,7 +8,7 @@
 #ifndef YARP2_PORTMANAGER
 #define YARP2_PORTMANAGER
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/PortReport.h>
@@ -38,7 +38,7 @@ public:
      *
      */
     PortManager() {
-        os = NULL;
+        os = YARP_NULLPTR;
         name = "null";
     }
 
@@ -57,7 +57,7 @@ public:
      * @param name the name of this port
      *
      */
-    void setName(const String& name) {
+    void setName(const ConstString& name) {
         this->name = name;
     }
 
@@ -72,7 +72,7 @@ public:
      * @return true on success
      *
      */
-    virtual bool addOutput(const String& dest, void *id, 
+    virtual bool addOutput(const ConstString& dest, void *id,
                            yarp::os::OutputStream *os,
                            bool onlyIfNeeded = false) {
         YARP_SPRINTF2(Logger::get(),
@@ -92,7 +92,7 @@ public:
      * @param os the output stream for messages about this operation
      *
      */
-    virtual void removeInput(const String& src, void *id, 
+    virtual void removeInput(const ConstString& src, void *id,
                              yarp::os::OutputStream *os) {
         YARP_SPRINTF2(Logger::get(),
                       error,
@@ -109,7 +109,7 @@ public:
      * @param os the output stream for messages about this operation
      *
      */
-    virtual void removeOutput(const String& dest, void *id, 
+    virtual void removeOutput(const ConstString& dest, void *id,
                               yarp::os::OutputStream *os) {
         YARP_SPRINTF2(Logger::get(),
                       error,
@@ -183,8 +183,8 @@ public:
      * @return the name of this port
      *
      */
-    virtual String getName() {
-        return String(name);
+    virtual ConstString getName() {
+        return ConstString(name);
     }
 
     /**
@@ -194,7 +194,7 @@ public:
      * @param envelope the extra message to send
      *
      */
-    virtual void setEnvelope(const String& envelope) = 0;
+    virtual void setEnvelope(const ConstString& envelope) = 0;
 
     /**
      *
@@ -217,17 +217,17 @@ public:
 
 protected:
     bool hasOutput() {
-        return os!=NULL;
+        return os!=YARP_NULLPTR;
     }
 
     yarp::os::OutputStream& getOutputStream() {
-        yAssert(os!=NULL);
+        yAssert(os!=YARP_NULLPTR);
         return *os;
     }
 
 private:
     yarp::os::OutputStream *os;
-    String name;
+    ConstString name;
 };
 
 #endif

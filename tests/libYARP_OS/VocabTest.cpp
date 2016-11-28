@@ -6,7 +6,7 @@
  */
 
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Vocab.h>
 
 #include <yarp/os/impl/UnitTest.h>
@@ -17,7 +17,7 @@ using namespace yarp::os::impl;
 
 class VocabTest : public UnitTest {
 public:
-    virtual String getName() { return "VocabTest"; }
+    virtual ConstString getName() { return "VocabTest"; }
 
     void checkConvert() {
         report(0,"checking vocabulary conversions");

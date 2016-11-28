@@ -19,11 +19,9 @@ if(CREATE_YARPMANAGER_CONSOLE)
   include_directories(${YARP_manager_INCLUDE_DIRS})
   include_directories(${ACE_INCLUDE_DIRS})
 
-  if (YARP_USE_READLINE)
-    add_definitions( -DWITH_READLINE )
-    include_directories(${Readline_INCLUDE_DIR})
-  else()
-    message(STATUS "yarpmanager will use basic shell mode instead of GNU readline.")
+  if (YARP_HAS_LIBEDIT)
+    add_definitions( -DWITH_LIBEDIT )
+    include_directories(${Libedit_INCLUDE_DIR})
   endif()
 
   add_executable(yarpmanager-console ${folder_source} ${folder_header} )
@@ -33,8 +31,8 @@ if(CREATE_YARPMANAGER_CONSOLE)
                                             YARP_manager
                                             ${ACE_LIBRARIES})
 
-  if(YARP_USE_READLINE)
-    target_link_libraries(yarpmanager-console ${Readline_LIBRARY})
+  if(YARP_HAS_LIBEDIT)
+    target_link_libraries(yarpmanager-console Libedit::libedit)
   endif()
 
   install(TARGETS yarpmanager-console

@@ -6,6 +6,7 @@
  */
 
 
+#include <yarp/conf/compiler.h>
 #include <yarp/os/Nodes.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/NestedContact.h>
@@ -18,7 +19,8 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-class NodesHelper {
+class yarp::os::Nodes::Helper
+{
 public:
     Mutex mutex;
     std::map<ConstString,Node *> by_name;
@@ -27,16 +29,18 @@ public:
     ConstString active_name;
     Node *dummy;
 
-    NodesHelper() {
-        dummy = NULL;
+    Helper() : dummy(YARP_NULLPTR)
+    {
         clear();
     }
 
-    ~NodesHelper() {
+    ~Helper()
+    {
         clear();
     }
 
-    void clear() {
+    void clear()
+    {
         std::map<ConstString,Node *> by_name_cp = by_name;
         std::map<ConstString,int> is_external_cp = is_external;
         for (std::map<ConstString,Node *>::const_iterator it = by_name_cp.begin();
@@ -53,9 +57,9 @@ public:
         is_external.clear();
         active = true;
         active_name = "";
-        if (dummy!=NULL) {
+        if (dummy != YARP_NULLPTR) {
             delete dummy;
-            dummy = NULL;
+            dummy = YARP_NULLPTR;
         }
     }
 
@@ -68,13 +72,17 @@ public:
     Contact query(const ConstString& name,const ConstString& category);
     void interrupt();
 
-    bool enable(bool flag) {
-        if (!flag) clear();
+    bool enable(bool flag)
+    {
+        if (!flag) {
+            clear();
+        }
         active = flag;
         return active;
     }
 
-    Contact getParent(const ConstString& name) {
+    Contact getParent(const ConstString& name)
+    {
         Contact result;
         mutex.lock();
         NestedContact nc;
@@ -87,7 +95,8 @@ public:
         return result;
     }
 
-    Contact getURI(const ConstString& name) {
+    Contact getURI(const ConstString& name)
+    {
         Contact result;
         mutex.lock();
         NestedContact nc;
@@ -100,43 +109,51 @@ public:
         return result;
     }
 
-    void setActiveName(const ConstString& name) {
+    void setActiveName(const ConstString& name)
+    {
         is_external[name] = 1;
         active_name = name;
     }
 
-    ConstString getActiveName() {
+    ConstString getActiveName()
+    {
         return active_name;
     }
 
-    bool requireActiveName() {
+    bool requireActiveName()
+    {
         if (active_name=="") {
             dummy = new Node("...");
         }
         return true;
     }
 
-    void addExternalNode(const ConstString& name, Node& node) {
+    void addExternalNode(const ConstString& name, Node& node)
+    {
         yAssert(by_name.find(name)==by_name.end());
         is_external[name] = 1;
         by_name[name] = &node;
     }
-    
-    void removeExternalNode(const ConstString& name) {
+
+    void removeExternalNode(const ConstString& name)
+    {
         is_external.erase(name);
         by_name.erase(name);
     }
 };
 
-Node *NodesHelper::getNode(const ConstString& name, bool create) {
+Node *yarp::os::Nodes::Helper::getNode(const ConstString& name, bool create)
+{
     NestedContact nc(name);
-    if (!nc.isNested()) return NULL;
+    if (!nc.isNested()) {
+        return YARP_NULLPTR;
+    }
     std::map<ConstString,Node *>::const_iterator it = by_name.find(nc.getNodeName());
-    Node *node = NULL;
+    Node *node = YARP_NULLPTR;
     if (it == by_name.end()) {
         if (create) {
             node = new Node();
-            yAssert(node!=NULL);
+            yAssert(node != YARP_NULLPTR);
             by_name[nc.getNodeName()] = node;
             node->prepare(nc.getNodeName());
         }
@@ -146,42 +163,62 @@ Node *NodesHelper::getNode(const ConstString& name, bool create) {
     return node;
 }
 
-void NodesHelper::add(Contactable& contactable) {
-    if (!active) return;
+void yarp::os::Nodes::Helper::add(Contactable& contactable)
+{
+    if (!active) {
+        return;
+    }
     Node *node = getNode(contactable.getName(),true);
     if (node) node->add(contactable);
 }
 
-void NodesHelper::update(Contactable& contactable) {
-    if (!active) return;
+void yarp::os::Nodes::Helper::update(Contactable& contactable)
+{
+    if (!active) {
+        return;
+    }
     Node *node = getNode(contactable.getName(),true);
     if (node) node->update(contactable);
 }
 
-void NodesHelper::prepare(const ConstString& name) {
-    if (!active) return;
+void yarp::os::Nodes::Helper::prepare(const ConstString& name)
+{
+    if (!active) {
+        return;
+    }
     getNode(name,true);
 }
 
-void NodesHelper::remove(Contactable& contactable) {
-    if (!active) return;
+void yarp::os::Nodes::Helper::remove(Contactable& contactable)
+{
+    if (!active) {
+        return;
+    }
     Node *node = getNode(contactable.getName(),false);
     if (node) node->remove(contactable);
 }
 
-Contact NodesHelper::query(const ConstString& name,const ConstString& category) {
+Contact yarp::os::Nodes::Helper::query(const ConstString& name,const ConstString& category)
+{
     Contact result;
-    if (!active) return result;
+    if (!active) {
+        return result;
+    }
     for (std::map<ConstString,Node *>::const_iterator it = by_name.begin();
          it != by_name.end(); it++) {
         result = it->second->query(name,category);
-        if (result.isValid()) return result;
+        if (result.isValid()) {
+            return result;
+        }
     }
     return result;
 }
 
-void NodesHelper::interrupt() {
-    if (!active) return;
+void yarp::os::Nodes::Helper::interrupt()
+{
+    if (!active) {
+        return;
+    }
     for (std::map<ConstString,Node *>::const_iterator it = by_name.begin();
          it != by_name.end(); it++) {
         it->second->interrupt();
@@ -189,107 +226,124 @@ void NodesHelper::interrupt() {
 }
 
 
-#define HELPER(x) (*((NodesHelper*)((x)->system_resource)))
 
 
-Nodes::Nodes() {
-    system_resource = new NodesHelper;
-    yAssert(system_resource!=NULL);
+Nodes::Nodes() :
+        mPriv(new yarp::os::Nodes::Helper)
+{
+    yAssert(mPriv != YARP_NULLPTR);
 }
 
 
 Nodes::~Nodes() {
-    if (system_resource!=NULL) {
-        delete &HELPER(this);
-        system_resource = NULL;
+        delete mPriv;
+}
+
+
+void Nodes::add(Contactable& contactable)
+{
+    NestedContact nc(contactable.getName());
+    if (!nc.isNested()) {
+        return;
     }
+    mPriv->mutex.unlock();
+    mPriv->add(contactable);
+    mPriv->mutex.lock();
 }
 
 
-void Nodes::add(Contactable& contactable) {
-    NestedContact nc(contactable.getName());
-    if (!nc.isNested()) return;
-    HELPER(this).mutex.unlock();
-    HELPER(this).add(contactable);
-    HELPER(this).mutex.lock();
+void Nodes::remove(Contactable& contactable)
+{
+    mPriv->mutex.lock();
+    mPriv->remove(contactable);
+    mPriv->mutex.unlock();
 }
 
 
-void Nodes::remove(Contactable& contactable) {
-    HELPER(this).mutex.lock();
-    HELPER(this).remove(contactable);
-    HELPER(this).mutex.unlock();
-}
-
-
-Contact Nodes::query(const ConstString& name,const ConstString& category) {
-    HELPER(this).mutex.lock();
-    Contact result = HELPER(this).query(name,category);
-    HELPER(this).mutex.unlock();
+Contact Nodes::query(const ConstString& name,const ConstString& category)
+{
+    mPriv->mutex.lock();
+    Contact result = mPriv->query(name,category);
+    mPriv->mutex.unlock();
     return result;
 }
 
-void Nodes::interrupt() {
-    HELPER(this).interrupt();
+void Nodes::interrupt()
+{
+    mPriv->interrupt();
 }
 
-bool Nodes::enable(bool flag) {
-    HELPER(this).mutex.lock();
-    bool result = HELPER(this).enable(flag);
-    HELPER(this).mutex.unlock();
+bool Nodes::enable(bool flag)
+{
+    mPriv->mutex.lock();
+    bool result = mPriv->enable(flag);
+    mPriv->mutex.unlock();
     return result;
 }
 
-void Nodes::clear() {
-    HELPER(this).clear();
+void Nodes::clear()
+{
+    mPriv->clear();
 }
 
-Contact Nodes::getParent(const ConstString& name) {
-    return HELPER(this).getParent(name);
+Contact Nodes::getParent(const ConstString& name)
+{
+    return mPriv->getParent(name);
 }
 
-Contact Nodes::getURI(const ConstString& name) {
-    return HELPER(this).getURI(name);
+Contact Nodes::getURI(const ConstString& name)
+{
+    return mPriv->getURI(name);
 }
 
-void Nodes::prepare(const ConstString& name) {
+void Nodes::prepare(const ConstString& name)
+{
     NestedContact nc(name);
-    if (!nc.isNested()) return;
-    HELPER(this).mutex.unlock();
-    HELPER(this).prepare(name);
-    HELPER(this).mutex.lock();
+    if (!nc.isNested()) {
+        return;
+    }
+    mPriv->mutex.unlock();
+    mPriv->prepare(name);
+    mPriv->mutex.lock();
 }
 
-void Nodes::update(Contactable& contactable) {
+void Nodes::update(Contactable& contactable)
+{
     NestedContact nc(contactable.getName());
-    if (!nc.isNested()) return;
-    HELPER(this).mutex.unlock();
-    HELPER(this).update(contactable);
-    HELPER(this).mutex.lock();
+    if (!nc.isNested()) {
+        return;
+    }
+    mPriv->mutex.unlock();
+    mPriv->update(contactable);
+    mPriv->mutex.lock();
 }
 
 
-void Nodes::setActiveName(const ConstString& name) {
-    HELPER(this).setActiveName(name);
+void Nodes::setActiveName(const ConstString& name)
+{
+    mPriv->setActiveName(name);
 }
 
-ConstString Nodes::getActiveName() {
-    return HELPER(this).getActiveName();
+ConstString Nodes::getActiveName()
+{
+    return mPriv->getActiveName();
 }
 
-bool Nodes::requireActiveName() {
-    return HELPER(this).requireActiveName();
+bool Nodes::requireActiveName()
+{
+    return mPriv->requireActiveName();
 }
 
-void Nodes::addExternalNode(const ConstString& name, Node& node) {
-    HELPER(this).mutex.lock();
-    HELPER(this).addExternalNode(name,node);
-    HELPER(this).mutex.unlock();
+void Nodes::addExternalNode(const ConstString& name, Node& node)
+{
+    mPriv->mutex.lock();
+    mPriv->addExternalNode(name,node);
+    mPriv->mutex.unlock();
 }
 
-void Nodes::removeExternalNode(const ConstString& name) {
-    HELPER(this).mutex.lock();
-    HELPER(this).removeExternalNode(name);
-    HELPER(this).mutex.unlock();
+void Nodes::removeExternalNode(const ConstString& name)
+{
+    mPriv->mutex.lock();
+    mPriv->removeExternalNode(name);
+    mPriv->mutex.unlock();
 }
-

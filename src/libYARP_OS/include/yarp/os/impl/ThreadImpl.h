@@ -14,7 +14,6 @@
 #include <yarp/os/impl/SemaphoreImpl.h>
 
 #include <yarp/os/impl/PlatformThread.h>
-#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {
@@ -46,10 +45,7 @@ public:
     virtual bool start();
 
     bool isClosing();
-
-    bool isRunning() {
-        return active;
-    }
+    bool isRunning();
 
     virtual void beforeStart();
     virtual void afterStart(bool success);
@@ -91,12 +87,14 @@ public:
     long tid;
     Platform_thread_t  id;
 
+    static void yield();
+
 private:
     int defaultPriority;
     int defaultPolicy;
     int stackSize;
     Platform_hthread_t hid;
-    bool active;
+    bool active; // FIXME should be atomic
     bool opened;
     bool closing;
     bool needJoin;

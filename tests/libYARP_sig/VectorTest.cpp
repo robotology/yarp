@@ -14,6 +14,7 @@
 
 //#include <vector>
 
+#include <yarp/gsl/Gsl.h>
 #include <yarp/gsl_compatibility.h>
 
 #include "TestList.h"
@@ -125,7 +126,9 @@ class VectorTest : public UnitTest {
     bool checkConsistency(Vector &a)
     {
         gsl_vector *tmp;
-        tmp=(gsl_vector *)(a.getGslVector());
+        yarp::gsl::GslVector tmpGSL(a);
+        tmp = (gsl_vector *)(tmpGSL.getGslVector());
+
         bool ret=true;
         if ((int)tmp->size!=(int)a.size())
             ret=false;
@@ -140,7 +143,7 @@ class VectorTest : public UnitTest {
     }
 
 public:
-    virtual String getName() { return "VectorTest"; }
+    virtual ConstString getName() { return "VectorTest"; }
 
     void checkGsl()
     {
@@ -172,7 +175,7 @@ public:
         }
         BufferedConnectionWriter writer;
         v.write(writer);
-        String s = writer.toString();
+        ConstString s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),(int)s.length());
         checkEqual((int)bot.size(),(int)v.size(),"size matches");

@@ -110,7 +110,7 @@ yarp::os::Contact RosLookup::getRosCoreAddressFromEnv() {
     ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
     Contact c = Contact::fromString(addr.c_str());
     if (c.isValid()) {
-        c = c.addCarrier("xmlrpc");
+        c.setCarrier("xmlrpc");
     }
     return c;
 }

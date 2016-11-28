@@ -6,11 +6,12 @@
  */
 
 
-#include "ParseName.h"
+#include <yarp/serversql/impl/ParseName.h>
 
 #include <string>
 
 using namespace yarp::os;
+using namespace yarp::serversql::impl;
 using namespace std;
 
 void ParseName::apply(const ConstString& s) {

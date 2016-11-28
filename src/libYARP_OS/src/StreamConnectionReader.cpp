@@ -18,16 +18,16 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {
-    if (str==NULL) {
-        return NULL;
+    if (str==YARP_NULLPTR) {
+        return YARP_NULLPTR;
     }
-    if (writer==NULL) {
+    if (writer==YARP_NULLPTR) {
         writer = new BufferedConnectionWriter(isTextMode(),isBareMode());
-        yAssert(writer!=NULL);
+        yAssert(writer!=YARP_NULLPTR);
     }
     writer->clear();
     writePending = true;
-    if (protocol!=NULL) {
+    if (protocol!=YARP_NULLPTR) {
         protocol->willReply();
     }
     return writer;
@@ -35,10 +35,10 @@ yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {
 
 
 void StreamConnectionReader::flushWriter() {
-    if (writer!=NULL) {
+    if (writer!=YARP_NULLPTR) {
         if (writePending) {
-            if (str!=NULL) {
-                if (protocol!=NULL) {
+            if (str!=YARP_NULLPTR) {
+                if (protocol!=YARP_NULLPTR) {
                     protocol->reply(*writer);
                 } else {
                     writer->write(str->getOutputStream());
@@ -52,9 +52,9 @@ void StreamConnectionReader::flushWriter() {
 
 
 StreamConnectionReader::~StreamConnectionReader() {
-    if (writer!=NULL) {
+    if (writer!=YARP_NULLPTR) {
         delete writer;
-        writer = NULL;
+        writer = YARP_NULLPTR;
     }
 }
 
@@ -66,7 +66,7 @@ bool StreamConnectionReader::convertTextMode() {
             bot.read(*this);
             BufferedConnectionWriter writer;
             bot.write(writer);
-            String s = writer.toString();
+            ConstString s = writer.toString();
             altStream.reset(s);
             in = &altStream;
             convertedTextMode = true;
@@ -78,11 +78,14 @@ bool StreamConnectionReader::convertTextMode() {
 
 
 Bytes StreamConnectionReader::readEnvelope() {
-    if (protocol==NULL) {
-        return Bytes(0,0);
+    if (protocol != YARP_NULLPTR) {
+        const ConstString& env = protocol->getEnvelope();
+        return Bytes((char*)env.c_str(),env.length());
     }
-    const String& env = protocol->getEnvelope();
-    return Bytes((char*)env.c_str(),env.length());
+    if (parentConnectionReader != YARP_NULLPTR) {
+        return parentConnectionReader->readEnvelope();
+    }
+    return Bytes(0,0);
 }
 
 

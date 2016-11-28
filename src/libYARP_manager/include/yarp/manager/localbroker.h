@@ -58,11 +58,13 @@ public:
     bool kill();
     bool connect(const char* from, const char* to,
                  const char* carrier, bool persist=false);
-    bool disconnect(const char* from, const char* to);
+    bool disconnect(const char* from, const char* to,
+                    const char *carrier);
     int running(void);
     bool exists(const char* port);
     const char* requestRpc(const char* szport, const char* request, double timeout);
-    bool connected(const char* from, const char* to);
+    bool connected(const char* from, const char* to,
+                   const char* carrier);
     const char* error(void);
     bool initialized(void) { return bInitialized;}
     bool attachStdout(void);

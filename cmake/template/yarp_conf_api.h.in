@@ -1,0 +1,113 @@
+/*
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Author: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#ifndef YARP_CONF_API_H
+#define YARP_CONF_API_H
+
+#include <yarp/conf/compiler.h>
+
+/*
+
+The purpose of this header file is to correctly define:
+  YARP_EXPORT
+  YARP_IMPORT
+Since YARP is composed of several libraries, we may be compiling one
+library (and exporting its symbols) while using another (and importing
+its symbols).  The set of YARP libraries is rather open-ended so,
+it is better not to try enumerating them here.  Given that, the
+recommended usage of this header within YARP is:
+//
+#include <yarp/conf/api.h>
+#ifndef YARP_OS_API
+#  ifdef YARP_OS_EXPORTS
+#    define YARP_OS_API YARP_EXPORT
+#    define YARP_OS_EXTERN YARP_EXPORT_EXTERN
+#  else
+#    define YARP_OS_API YARP_IMPORT
+#    define YARP_OS_EXTERN YARP_IMPORT_EXTERN
+#  endif
+#  ifdef YARP_NO_DEPRECATED
+#    define YARP_OS_DEPRECATED_API YARP_DEPRECATED
+#    define YARP_OS_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X)
+#  else
+#    define YARP_OS_DEPRECATED_API YARP_DEPRECATED YARP_OS_API
+#    define YARP_OS_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X) YARP_OS_API
+#  endif
+#endif
+
+(replace YARP_OS with CMake target name for library)
+
+*/
+
+// YARP_DLL: defined if YARP is compiled as DLLs
+#cmakedefine YARP_DLL
+
+// YARP_FILTER_API: define if YARP is configured to apply API declarations.
+#cmakedefine YARP_FILTER_API
+
+#if defined _WIN32 || defined __CYGWIN__
+#  define YARP_HELPER_DLL_IMPORT __declspec(dllimport)
+#  define YARP_HELPER_DLL_EXPORT __declspec(dllexport)
+#  define YARP_HELPER_DLL_LOCAL
+#  define YARP_HELPER_DLL_IMPORT_EXTERN extern
+#  define YARP_HELPER_DLL_EXPORT_EXTERN
+#else
+#  if __GNUC__ >= 4
+#    define YARP_HELPER_DLL_IMPORT __attribute__ ((visibility("default")))
+#    define YARP_HELPER_DLL_EXPORT __attribute__ ((visibility("default")))
+#    define YARP_HELPER_DLL_LOCAL  __attribute__ ((visibility("hidden")))
+#    define YARP_HELPER_DLL_IMPORT_EXTERN
+#    define YARP_HELPER_DLL_EXPORT_EXTERN
+#  else
+#     define YARP_HELPER_DLL_IMPORT
+#     define YARP_HELPER_DLL_EXPORT
+#     define YARP_HELPER_DLL_LOCAL
+#     define YARP_HELPER_DLL_IMPORT_EXTERN
+#     define YARP_HELPER_DLL_EXPORT_EXTERN
+#  endif
+#endif
+
+#if defined YARP_DLL && defined YARP_FILTER_API
+#  define YARP_IMPORT YARP_HELPER_DLL_IMPORT
+#  define YARP_EXPORT YARP_HELPER_DLL_EXPORT
+#  define YARP_LOCAL YARP_HELPER_DLL_LOCAL
+#  define YARP_IMPORT_EXTERN YARP_HELPER_DLL_IMPORT_EXTERN
+#  define YARP_EXPORT_EXTERN YARP_HELPER_DLL_EXPORT_EXTERN
+#else
+#  define YARP_IMPORT
+#  define YARP_EXPORT
+#  define YARP_LOCAL
+#  define YARP_IMPORT_EXTERN
+#  define YARP_EXPORT_EXTERN
+#endif
+
+// YARP_DEPRECATED and YARP_DEPRECATED_MSG are defined in compiler.h, but we
+// want warnings disabled if YARP_NO_DEPRECATED_WARNINGS is enabled
+#if defined YARP_NO_DEPRECATED_WARNINGS
+#  undef YARP_DEPRECATED
+#  undef YARP_DEPRECATED_MSG
+#endif
+// If YARP_DEPRECATED and YARP_DEPRECATED_MSG are undefined, define them empty
+#ifndef YARP_DEPRECATED
+#  define YARP_DEPRECATED
+#  define YARP_DEPRECATED_MSG(X)
+#endif
+
+// YARP_NODISCARD: print a warning if the result unused
+#if (YARP_COMPILER_IS_GNU  && (__GNUC__ >= 4)) || YARP_COMPILER_IS_Clang
+#  define YARP_NODISCARD __attribute__ ((warn_unused_result))
+#elif YARP_COMPILER_IS_MSVC && (_MSC_VER >= 1700)
+#  define YARP_NODISCARD _Check_return_
+#else
+#  define YARP_NODISCARD
+#endif
+
+
+// YARP_UNUSED: Suppress unused variable warnings
+#define YARP_UNUSED(var) (void)var
+
+
+#endif // YARP_CONF_API_H

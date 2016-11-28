@@ -33,7 +33,7 @@ public:
      */
     YarpPluginSettings() : wrapper_name("unknown") {
         verbose = false;
-        selector = 0 /*NULL*/;
+        selector = YARP_NULLPTR;
     }
 
     /**

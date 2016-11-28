@@ -16,9 +16,9 @@ using namespace yarp::os::impl;
 
 class ProtocolTest : public UnitTest {
 public:
-    virtual String getName() { return "ProtocolTest"; }
+    virtual ConstString getName() { return "ProtocolTest"; }
 
-    String simplify(String x) {
+    ConstString simplify(ConstString x) {
         return humanize(x);
     }
 
@@ -40,38 +40,38 @@ public:
         FakeTwoWayStream *fake2 = new FakeTwoWayStream();
         fake1->setTarget(fake2->getStringInputStream());
         fake2->setTarget(fake1->getStringInputStream());
-        
+
         // hand streams over to protocol managers
         Protocol p1(fake1);
         Protocol p2(fake2);
-        
+
         p1.open(Route("/out","/in","text"));
-        
+
         checkEqual(fake1->getOutputText(),"CONNECT /out\r\n",
                    "text carrier header");
-        
+
         p2.open("/in");
-        
+
         checkEqual(fake2->getOutputText(),"Welcome /out\r\n",
                    "text carrier response");
-        
+
         BufferedConnectionWriter writer;
         writer.appendLine("d");
         writer.appendLine("0 \"Hello\"");
         p1.write(writer);
-        
+
         const char *expect = "CONNECT /out\r\nd\r\n0 \"Hello\"\r\n";
         checkEqual(fake1->getOutputText(),expect,
                    "added a bottle");
-        
+
         ConnectionReader& reader = p2.beginRead();
-        String str1 = reader.expectText().c_str();
-        String str2 = reader.expectText().c_str();
+        ConstString str1 = reader.expectText().c_str();
+        ConstString str2 = reader.expectText().c_str();
         p2.endRead();
-        
-        checkEqual(str1,String("d"),"data tag");
+
+        checkEqual(str1,ConstString("d"),"data tag");
         const char *expect2 = "0 \"Hello\"";
-        checkEqual(str2,String(expect2),"bottle representation");
+        checkEqual(str2,ConstString(expect2),"bottle representation");
     }
 
     virtual void runTests() {

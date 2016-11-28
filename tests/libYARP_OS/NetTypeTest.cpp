@@ -19,7 +19,7 @@ using namespace yarp::os;
 
 class NetTypeTest : public UnitTest {
 public:
-    virtual String getName() { return "NetTypeTest"; }
+    virtual ConstString getName() { return "NetTypeTest"; }
 
     void checkCrc() {
         report(0,"checking cyclic redundancy check is plausible");

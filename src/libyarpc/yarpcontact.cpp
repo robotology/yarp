@@ -52,7 +52,7 @@ YARP_DEFINE(int) yarpContactSetName(yarpContactPtr contact,
                                     const char *name) {
     YARP_OK(contact);
     // contact class is very awkward
-    YARP_CONTACT(contact) = Contact::byName(name);
+    YARP_CONTACT(contact) = Contact(name);
     return 0;
 }
 

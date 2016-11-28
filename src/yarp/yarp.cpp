@@ -7,21 +7,19 @@
 
 
 #include <yarp/os/Network.h>
+#include <yarp/serversql/yarpserversql.h>
+
+
 using namespace yarp::os;
 
-#if YARP_USE_PERSISTENT_NAMESERVER
-#  include <yarp/serversql/yarpserversql.h>
-#endif
 
 int main(int argc, char *argv[]) {
-#if YARP_USE_PERSISTENT_NAMESERVER
     // intercept "yarp server" if needed
     if (argc>=2) {
         if (ConstString(argv[1])=="server") {
-            return yarpserver3_main(argc,argv);
+            return yarpserver_main(argc,argv);
         }
     }
-#endif
 
     // call the yarp standard companion
     Network yarp;

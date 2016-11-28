@@ -68,7 +68,7 @@ system match those used to compile YARP.
 You should skim the documentation of the following classes:
 
  \li yarp::os::Carrier
- \li yarp::os::impl::Carriers
+ \li yarp::os::Carriers
  \li yarp::os::InputStream
  \li yarp::os::OutputStream
  \li yarp::os::TwoWayStream
@@ -78,7 +78,7 @@ You'll be able to include them in your code as follows:
 
 \code
 #include <yarp/os/Carrier.h>
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
@@ -137,7 +137,7 @@ The key steps are:
  our class by overriding yarp::os::Carrier::getName.
 
  \li At the start of our program, we register an instance of that class
- in a call to yarp::os::impl::Carriers::addCarrierPrototype.
+ in a call to yarp::os::Carriers::addCarrierPrototype.
 
 Having taken those steps, we can make connections using our new carrier
 (called "test" in the example code):
@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
 So there isn't much to it to just insert a call to
 Carriers::addCarrierPrototype in there.  Otherwise, to put
 the new carrier in the YARP library proper, do a little pattern-matching
-in the constructor for the yarp::os::impl::Carriers class
+in the constructor for the yarp::os::Carriers class
 at src/libYARP_OS/src/Carriers.cpp.
 
 

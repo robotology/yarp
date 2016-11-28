@@ -8,7 +8,7 @@
 #include <yarp/os/all.h>
 
 #include <yarp/os/Carrier.h>
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 
 #include <yarp/os/impl/TextCarrier.h>
 
@@ -36,7 +36,7 @@ public:
 
 int main(int argc, char *argv[]) {
     yarp::os::Network yarp;
-    yarp::os::impl::Carriers::addCarrierPrototype(new TestCarrier);
+    yarp::os::Carriers::addCarrierPrototype(new TestCarrier);
 
     yarp::os::BufferedPort<yarp::os::Bottle> out, in;
     out.open("/test/out");

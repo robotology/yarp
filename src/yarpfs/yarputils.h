@@ -56,7 +56,7 @@ private:
             bool leafLike = (tail=="rw");
 
             NameConfig nc;
-            String name = nc.getNamespace();
+            ConstString name = nc.getNamespace();
             Bottle msg, reply;
             msg.addString("bot");
             msg.addString("list");

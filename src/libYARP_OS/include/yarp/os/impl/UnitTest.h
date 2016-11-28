@@ -8,7 +8,7 @@
 #ifndef YARP2_UNITTEST
 #define YARP2_UNITTEST
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Bottle.h>
 
 #include <yarp/os/impl/PlatformVector.h>
@@ -35,9 +35,9 @@ public:
         clear();
     }
 
-    void report(int severity, const String& problem);
+    void report(int severity, const ConstString& problem);
 
-    virtual String getName() { return "isolated test"; }
+    virtual ConstString getName() { return "isolated test"; }
 
     static void startTestSystem();
     static UnitTest& getRoot();
@@ -56,28 +56,28 @@ public:
     virtual void runSubTests(int argc, char *argv[]);
 
 
-    bool checkEqualImpl(int x, int y, 
+    bool checkEqualImpl(int x, int y,
                         const char *desc,
                         const char *txt1,
                         const char *txt2,
                         const char *fname,
                         int fline);
 
-    bool checkEqualishImpl(double x, double y, 
+    bool checkEqualishImpl(double x, double y,
                            const char *desc,
                            const char *txt1,
                            const char *txt2,
                            const char *fname,
                            int fline);
 
-    bool checkEqualImpl(const String& x, const String& y,
+    bool checkEqualImpl(const ConstString& x, const ConstString& y,
                         const char *desc,
                         const char *txt1,
                         const char *txt2,
                         const char *fname,
                         int fline);
 
-    String humanize(const String& txt);
+    ConstString humanize(const ConstString& txt);
 
     void saveEnvironment(const char *key);
     void restoreEnvironment();
@@ -141,7 +141,7 @@ private:
     void count(int severity);
 };
 
-// add info 
+// add info
 
 #define checkEqual(x,y,desc) checkEqualImpl(x,y,desc,#x,#y,__FILE__,__LINE__)
 #define checkEqualish(x,y,desc) checkEqualishImpl(x,y,desc,#x,#y,__FILE__,__LINE__)

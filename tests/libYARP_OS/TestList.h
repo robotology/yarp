@@ -22,7 +22,7 @@ namespace yarp {
 // method
 extern yarp::os::impl::UnitTest& getBottleTest();
 extern yarp::os::impl::UnitTest& getStringTest();
-extern yarp::os::impl::UnitTest& getAddressTest();
+extern yarp::os::impl::UnitTest& getContactTest();
 extern yarp::os::impl::UnitTest& getStringInputStreamTest();
 extern yarp::os::impl::UnitTest& getTimeTest();
 extern yarp::os::impl::UnitTest& getThreadTest();
@@ -68,7 +68,7 @@ public:
         UnitTest& root = UnitTest::getRoot();
         root.add(getBottleTest());
         root.add(getStringTest());
-        root.add(getAddressTest());
+        root.add(getContactTest());
         root.add(getStringInputStreamTest());
         root.add(getTimeTest());
         root.add(getPortCommandTest());

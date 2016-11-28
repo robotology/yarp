@@ -6,7 +6,6 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
 #include <yarp/manager/manager.h>
 #include <yarp/manager/yarpbroker.h>
 #include <yarp/manager/localbroker.h>
@@ -290,6 +289,7 @@ bool Manager::prepare(bool silent)
         exe->setPostExecWait((*itr)->getPostExecWait());
         string env = string("YARP_PORT_PREFIX=") +
                         string((*itr)->getPrefix());
+        env = env + ";" + (*itr)->getEnvironment();
         exe->setEnv(env.c_str());
 
         /**
@@ -923,7 +923,8 @@ bool Manager::disconnect(unsigned int id)
     //connector.init();
 
     if( !connector.disconnect(connections[id].from(),
-                            connections[id].to()) )
+                              connections[id].to(),
+                              connections[id].carrier()) )
     {
         logger->addError(connector.error());
         //cout<<connector.error()<<endl;
@@ -939,7 +940,7 @@ bool Manager::disconnect(void)
     //connector.init();
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-        if( !connector.disconnect((*cnn).from(), (*cnn).to()) )
+        if( !connector.disconnect((*cnn).from(), (*cnn).to(), (*cnn).carrier()) )
             {
                 logger->addError(connector.error());
                 //cout<<connector.error()<<endl;
@@ -992,7 +993,8 @@ bool Manager::connected(unsigned int id)
     //YarpBroker connector;
     //connector.init();
     return connector.connected(connections[id].from(),
-                            connections[id].to());
+                               connections[id].to(),
+                               connections[id].carrier());
 }
 
 
@@ -1003,7 +1005,7 @@ bool Manager::connected(void)
     CnnIterator cnn;
     bool bConnected = true;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-        if( !connector.connected((*cnn).from(), (*cnn).to()) )
+        if( !connector.connected((*cnn).from(), (*cnn).to(), (*cnn).carrier()) )
             bConnected = false;
     return bConnected;
 }

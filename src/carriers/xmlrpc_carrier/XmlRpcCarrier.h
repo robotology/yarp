@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef XMLRPCCARRIER_INC
-#define XMLRPCCARRIER_INC
+#ifndef YARP_XMLRPC_CARRIER_XMLRPCCARRIER_H
+#define YARP_XMLRPC_CARRIER_XMLRPCCARRIER_H
 
 #include <yarp/os/Carrier.h>
 #include "XmlRpcStream.h"
@@ -39,7 +39,8 @@ namespace yarp {
  * will produce the output "30" if the server still exists.
  *
  */
-class yarp::os::XmlRpcCarrier : public Carrier {
+class yarp::os::XmlRpcCarrier : public Carrier
+{
 private:
     bool firstRound;
     bool sender;
@@ -47,64 +48,78 @@ private:
     ConstString http;
     bool interpretRos;
 public:
-    XmlRpcCarrier() {
-        firstRound = true;
-        sender = false;
-        interpretRos = false;
+    XmlRpcCarrier() :
+            firstRound(true),
+            sender(false),
+            interpretRos(false)
+    {
     }
 
-    virtual Carrier *create() {
+    virtual Carrier *create()
+    {
         return new XmlRpcCarrier();
     }
 
-    virtual ConstString getName() {
+    virtual ConstString getName()
+    {
         return "xmlrpc";
     }
 
-    virtual bool isConnectionless() {
+    virtual bool isConnectionless()
+    {
         return false;
     }
 
-    virtual bool canAccept() {
+    virtual bool canAccept()
+    {
         return true;
     }
 
-    virtual bool canOffer() {
+    virtual bool canOffer()
+    {
         return true;
     }
 
-    virtual bool isTextMode() {
+    virtual bool isTextMode()
+    {
         return true;
     }
 
-    virtual bool canEscape() {
+    virtual bool canEscape()
+    {
         return true;
     }
 
-    virtual bool requireAck() {
+    virtual bool requireAck()
+    {
         return false;
     }
 
-    virtual bool supportReply() {
+    virtual bool supportReply()
+    {
         return true;
     }
 
-    virtual bool isLocal() {
+    virtual bool isLocal()
+    {
         return false;
     }
 
-    virtual ConstString toString() {
+    virtual ConstString toString()
+    {
         return "xmlrpc_carrier";
     }
 
-    virtual void getHeader(const Bytes& header) {
+    virtual void getHeader(const Bytes& header)
+    {
         const char *target = "POST /RP";
         for (size_t i=0; i<8 && i<header.length(); i++) {
             header.get()[i] = target[i];
         }
     }
 
-    virtual bool checkHeader(const Bytes& header) {
+    virtual bool checkHeader(const Bytes& header)
+    {
         if (header.length()!=8) {
             return false;
         }
@@ -117,14 +132,16 @@ public:
         return true;
     }
 
-    virtual void setParameters(const Bytes& header) {
+    virtual void setParameters(const Bytes& header)
+    {
         // no parameters - no carrier variants
     }
 
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(ConnectionState& proto) {
+    virtual bool prepareSend(ConnectionState& proto)
+    {
         // nothing special to do
         return true;
     }
@@ -133,23 +150,28 @@ public:
 
     virtual bool expectSenderSpecifier(ConnectionState& proto);
 
-    virtual bool expectExtraHeader(ConnectionState& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto)
+    {
         // interpret any extra header information sent - optional
         return true;
     }
 
     bool respondToHeader(ConnectionState& proto);
 
-    virtual bool expectReplyToHeader(ConnectionState& proto) {
+    virtual bool expectReplyToHeader(ConnectionState& proto)
+    {
         sender = true;
         XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender,
                                                 interpretRos);
-        if (stream==NULL) { return false; }
+        if (stream == YARP_NULLPTR) {
+            return false;
+        }
         proto.takeStreams(stream);
         return true;
     }
 
-    virtual bool isActive() {
+    virtual bool isActive()
+    {
         return true;
     }
 
@@ -160,26 +182,33 @@ public:
 
     virtual bool reply(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer)
+    {
         return true;
     }
 
-    virtual bool expectIndex(ConnectionState& proto) {
+    virtual bool expectIndex(ConnectionState& proto)
+    {
         return true;
     }
 
-    virtual bool sendAck(ConnectionState& proto) {
+    virtual bool sendAck(ConnectionState& proto)
+    {
         return true;
     }
 
-    virtual bool expectAck(ConnectionState& proto) {
+    virtual bool expectAck(ConnectionState& proto)
+    {
         return true;
     }
 
-    virtual ConstString getBootstrapCarrierName() { return ""; }
+    virtual ConstString getBootstrapCarrierName()
+    {
+        return "";
+    }
 
 private:
     bool shouldInterpretRosMessages(ConnectionState& proto);
 };
 
-#endif
+#endif // YARP_XMLRPC_CARRIER_XMLRPCCARRIER_H

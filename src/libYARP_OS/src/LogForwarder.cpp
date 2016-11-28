@@ -11,8 +11,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 
-yarp::os::LogForwarder* yarp::os::LogForwarder::instance = NULL;
-yarp::os::Semaphore *yarp::os::LogForwarder::sem = NULL;
+yarp::os::LogForwarder* yarp::os::LogForwarder::instance = YARP_NULLPTR;
+yarp::os::Semaphore *yarp::os::LogForwarder::sem = YARP_NULLPTR;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
 {
@@ -63,8 +63,14 @@ yarp::os::LogForwarder::LogForwarder()
     yarp::os::getprogname(prog_name,MAX_STRING_SIZE);
     int pid = yarp::os::getpid();
     sprintf(logPortName, "/log/%s/%s/%d",host_name,prog_name,pid);  //unsafe, better to use snprintf when available
-    outputPort->open(logPortName);
-    yarp::os::Network::connect(logPortName, "/yarplogger");
+    if (outputPort->open(logPortName) == false)
+    {
+        printf("LogForwarder error while opening port %s\n", logPortName);
+    }
+    if (yarp::os::Network::connect(logPortName, "/yarplogger") == false)
+    {
+        printf("LogForwarder error while connecting port %s\n", logPortName);
+    }
     //yarp::os::Network::connect(logPortName, "/test");
 };
 
@@ -87,7 +93,7 @@ yarp::os::LogForwarder::~LogForwarder()
     }
     sem->post();
     delete sem;
-    sem = NULL;
+    sem = YARP_NULLPTR;
 //     yarp::os::NetworkBase::finiMinimum();
 };
 

@@ -41,17 +41,17 @@ private:
   int lastNumber;
   int firstNumber;
 
-  // Very conservative algorithm, to avoid having to 
+  // Very conservative algorithm, to avoid having to
   // recognize the local machine by (possibly one of many,
   // and changing over time) IP address.
   // Note: be careful if changing this to think about
   // race conditions.
   int allocatePortNumber() {
     for (int i=0; i<DEFAULT_NAME_PORT_RANGE; i++) {
-      int num = firstNumber + 
-	(lastNumber+i+1-firstNumber)%DEFAULT_NAME_PORT_RANGE;
+      int num = firstNumber +
+        (lastNumber+i+1-firstNumber)%DEFAULT_NAME_PORT_RANGE;
       if (numbers.find(num)==numbers.end()) {
-	return num;
+        return num;
       }
     }
     return 0;
@@ -72,14 +72,14 @@ public:
     info.addString("port");
     info.addInt(e.portNumber);
     info.addString("type");
-    info.addString(e.carrier.c_str());    
+    info.addString(e.carrier.c_str());
   }
 
-  virtual bool cmdQuery(yarp::os::Bottle& cmd, 
-			yarp::os::Bottle& reply,
-			yarp::os::Contact& remote) {
+  virtual bool cmdQuery(yarp::os::Bottle& cmd,
+                        yarp::os::Bottle& reply,
+                        yarp::os::Contact& remote) {
     reply.addString("old");
-    string name = cmd.get(1).asString().c_str();    
+    string name = cmd.get(1).asString().c_str();
     map<string,Entry>::iterator it = names.find(name);
     if (it==names.end()) {
       return true;
@@ -89,40 +89,40 @@ public:
     return true;
   }
 
-  virtual bool cmdList(yarp::os::Bottle& cmd, 
-		       yarp::os::Bottle& reply,
-		       yarp::os::Contact& remote) {
+  virtual bool cmdList(yarp::os::Bottle& cmd,
+                       yarp::os::Bottle& reply,
+                       yarp::os::Contact& remote) {
     reply.addString("old");
-    for (map<string,Entry>::iterator it = names.begin(); 
-	 it!=names.end();
-	 it++) {
+    for (map<string,Entry>::iterator it = names.begin();
+         it!=names.end();
+         it++) {
       appendEntry(reply,it->second);
     }
     return true;
   }
 
-  virtual bool cmdUnregister(yarp::os::Bottle& cmd, 
-			     yarp::os::Bottle& reply,
-			     yarp::os::Contact& remote) {
+  virtual bool cmdUnregister(yarp::os::Bottle& cmd,
+                             yarp::os::Bottle& reply,
+                             yarp::os::Contact& remote) {
     ConstString name = cmd.get(1).asString();
     map<string,Entry>::iterator it = names.find(name.c_str());
     if (it!=names.end()) {
       Entry& entry = it->second;
       int number = entry.portNumber;
       if (numbers.find(number)!=numbers.end()) {
-	numbers[number]--;
-	if (numbers[number]==0) {
-	  numbers.erase(number);
-	}
+        numbers[number]--;
+        if (numbers[number]==0) {
+          numbers.erase(number);
+        }
       }
       names.erase(it);
     }
     return cmdQuery(cmd,reply,remote);
   }
 
-  virtual bool cmdRegister(yarp::os::Bottle& cmd, 
-			   yarp::os::Bottle& reply,
-			   yarp::os::Contact& remote) {
+  virtual bool cmdRegister(yarp::os::Bottle& cmd,
+                           yarp::os::Bottle& reply,
+                           yarp::os::Contact& remote) {
     ConstString name = cmd.get(1).asString();
     ConstString carrier = cmd.get(2).asString();
     ConstString machine = cmd.get(3).asString();
@@ -130,8 +130,8 @@ public:
     if (name=="...") {
       name = "/tmp/";
       for (int i=0; i<20; i++) {
-	double x = Rand::scalar('a','z'+1);
-	name = name + (char)x;
+        double x = Rand::scalar('a','z'+1);
+        name = name + (char)x;
       }
     }
     if (carrier==""||carrier=="...") {
@@ -143,9 +143,9 @@ public:
     if (number==0) {
       number = allocatePortNumber();
       if (number==0) {
-	printf("Out of port numbers!\n");
+        printf("Out of port numbers!\n");
       } else {
-	lastNumber = number;
+        lastNumber = number;
       }
     }
     if (numbers.find(number)==numbers.end()) {
@@ -165,10 +165,10 @@ public:
     return cmdQuery(cmd2,reply,remote);
   }
 
-  virtual bool apply(yarp::os::Bottle& cmd, 
-		     yarp::os::Bottle& reply, 
-		     yarp::os::Bottle& event,
-		     yarp::os::Contact& remote) {
+  virtual bool apply(yarp::os::Bottle& cmd,
+                     yarp::os::Bottle& reply,
+                     yarp::os::Bottle& event,
+                     yarp::os::Contact& remote) {
     bool ok = false;
     mutex.wait();
     printf(" + %s\n", cmd.toString().c_str());
@@ -199,9 +199,7 @@ int main(int argc, char *argv[]) {
   Property config;
   config.fromCommand(argc,argv);
 
-  Contact contact = Contact::bySocket("tcp","localhost",
-				      DEFAULT_NAME_PORT_NUMBER);
-  contact = contact.addName("/root");
+  Contact contact = Contact("/root", "tcp", "localhost", DEFAULT_NAME_PORT_NUMBER);
 
   WideNameService wide;
   NameServerManager manager(wide);
@@ -217,7 +215,6 @@ int main(int argc, char *argv[]) {
     Time::delay(600);
     printf("Name server running happily\n");
   }
- 
+
   return 0;
 }
-

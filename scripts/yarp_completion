@@ -402,5 +402,5 @@ _yarpconfig() {
 complete -F _yarpconfig yarp-config
 complete -F _yarp yarp
 complete -F _yarprun yarprun
-complete -F _yarpserver yarpserver yarpserver3
+complete -F _yarpserver yarpserver
 

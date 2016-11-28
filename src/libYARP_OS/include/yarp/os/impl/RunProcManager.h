@@ -72,12 +72,12 @@ public:
             while (true)
             {
                 //check exit status of the child
-                PID zombie = wait(NULL);
+                PID zombie = wait(YARP_NULLPTR);
                 //PID can be:
                 // - Child stopped or terminated => PID of child
                 // - Error => -1
 
-                //PID zombie=waitpid(-1,NULL,WNOHANG);
+                //PID zombie=waitpid(-1, YARP_NULLPTR, WNOHANG);
 
                 if (zombie > 0)
                 {
@@ -126,7 +126,7 @@ public:
             return true;
         }
 
-        pRef=NULL;
+        pRef = YARP_NULLPTR;
         return false;
     }
 #endif
@@ -231,7 +231,7 @@ public:
 #ifndef WIN32
     virtual bool Clean(PID pid,YarpRunProcInfo* &pRef)
     {
-        pRef=NULL;
+        pRef = YARP_NULLPTR;
 
         if (mPidCmd==pid)
         {

@@ -9,10 +9,6 @@ cmake_minimum_required(VERSION 2.8.9)
 
 FIND_PACKAGE(YARP REQUIRED)
 
-IF (NOT YARP_HAS_NAME_LIB)
-  MESSAGE(FATAL_ERROR "Please compile YARP with YARP_USE_PERSISTENT_NAMESERVER turned on")
-ENDIF()
-
 IF (NOT YARP_HAS_MATH_LIB)
   MESSAGE(FATAL_ERROR "Please compile YARP with math library turned on")
 ENDIF()

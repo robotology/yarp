@@ -2,16 +2,18 @@
 # Authors: Ali Paikan and Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(COMPILE_PLUGIN_LIBRARY)
-  yarp_prepare_carrier(priority_carrier
-                       TYPE yarp::os::PriorityCarrier
-                       INCLUDE PriorityCarrier.h)
-  yarp_install(FILES priority.ini
-               COMPONENT runtime
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-endif()
+yarp_prepare_plugin(priority
+                    CATEGORY carrier
+                    TYPE yarp::os::PriorityCarrier
+                    INCLUDE PriorityCarrier.h
+                    EXTRA_CONFIG SUBTYPE=recv
+                                 CODE="not applicable"
+                    DEPENDS "CREATE_OPTIONAL_CARRIERS"
+                    DEFAULT ON)
 
-if(NOT SKIP_priority_carrier)
+if(NOT SKIP_priority)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS}
@@ -35,4 +37,7 @@ if(NOT SKIP_priority_carrier)
                COMPONENT runtime
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES priority.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 endif()

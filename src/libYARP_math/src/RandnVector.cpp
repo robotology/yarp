@@ -54,3 +54,8 @@ const Vector &RandnVector::get(const Vector &u, const Vector &sigma)
     return data;
 }
 
+
+inline void RandnScalar::boxMuller()
+{
+ //empty this is just for temporary compatibility with the eigen implementation 
+}

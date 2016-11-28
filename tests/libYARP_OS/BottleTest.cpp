@@ -51,11 +51,11 @@ public:
 
     void testString() {
         report(0,"testing string representation...");
-        String target = "hello \"my\" \\friend";
+        ConstString target = "hello \"my\" \\friend";
         BottleImpl bot;
         bot.addInt(5);
         bot.addString("hello \"my\" \\friend");
-        String txt = bot.toString();
+        ConstString txt = bot.toString();
         const char *expect = "5 \"hello \\\"my\\\" \\\\friend\"";
         checkEqual(txt,expect,"string rep");
         BottleImpl bot2;
@@ -120,16 +120,16 @@ public:
 
         BufferedConnectionWriter bbw(true);
         bot.write(bbw);
-      
-        String s;
+
+        ConstString s;
         StringInputStream sis;
         StreamConnectionReader sbr;
-      
+
         s = bbw.toString();
         sis.add(s);
         Route route;
         sbr.reset(sis,NULL,route,s.length(),true);
-      
+
         BottleImpl bot2;
         bot2.read(sbr);
         checkEqual(bot2.toString(),bot.toString(),"to/from stream");
@@ -152,7 +152,7 @@ public:
 
         for (int i=0; i<3; i++) {
             BottleImpl& b = bot[i];
-            report(0,String("check for bottle number ") +
+            report(0,ConstString("check for bottle number ") +
                    NetType::toString(i));
             checkTrue(b.isInt(0)&&b.isInt(3),"ints");
             checkTrue(b.isDouble(1)&&b.isDouble(4),"doubles");
@@ -190,7 +190,7 @@ public:
         bot.toBytes(store.bytes());
         bot3.fromBytes(store.bytes());
         checkEqual((int)bot3.size(),2,"list test 3");
-        report(0,String("bot3 is ") + bot3.toString());
+        report(0,ConstString("bot3 is ") + bot3.toString());
 
         Bottle bot10;
         {
@@ -224,14 +224,14 @@ public:
             checkTrue(bot.get(2).asList()->get(0).isInt(),"type check");
             checkTrue(bot.get(2).asList()->get(1).isString(),"type check");
         }
-        checkTrue(bot.get(50).isNull(),"null type check");        
+        checkTrue(bot.get(50).isNull(),"null type check");
     }
 
     void testEquality() {
         report(0,"testing equality...");
         Bottle bot1("1 2 3");
         Bottle bot2("1 2");
-        Bottle bot3("1 2 3"); 
+        Bottle bot3("1 2 3");
         checkTrue(bot1 != bot2, "A!=B");
         checkTrue(bot2 != bot3, "B!=C");
         checkTrue(bot1 == bot3, "A==C");
@@ -309,7 +309,7 @@ public:
         //bot.specialize(bot.get(0).getCode());
         BufferedConnectionWriter writer;
         bot.write(writer);
-        String s = writer.toString();
+        ConstString s = writer.toString();
         checkEqual((int)s.length(),sizeof(NetInt32)*(1+1+(int)bot.size()),
                    "exact number of integers, plus type/count");
 
@@ -363,7 +363,7 @@ public:
             checkEqual(bot.toString().c_str(),bot2.toString().c_str(),
                        "content check");
         }
-        
+
     }
 
 
@@ -376,7 +376,7 @@ public:
         checkEqual(bot.get(1).asInt(),10,"post-tab ok");
 
         report(0, "checking pasa problem with lists missing last element...");
-        String s2 = "[set] [poss] (10.0 20.0 30.0 40.0 5.1)\n";
+        ConstString s2 = "[set] [poss] (10.0 20.0 30.0 40.0 5.1)\n";
         Bottle p;
         p.fromString(s2.c_str());
         checkEqual(p.get(2).asList()->size(),5,"newline test checks out");
@@ -488,7 +488,7 @@ public:
         checkFalse(b2.isNull(),"have a non-null bottle");
         checkEqual(b2.size(),0,"have an empty bottle");
         b3 = b2;
-        
+
         checkFalse(b3.isNull(),"copied a non-null bottle");
 
         checkEqual(b3.size(),0,"copied an empty bottle");
@@ -677,7 +677,7 @@ public:
         testCopyPortable();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "BottleTest";
     }
 };

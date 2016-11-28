@@ -436,7 +436,7 @@ void Dying::disconnectAllPorts(void)
         for(itr=executable->getConnections().begin();
             itr!=executable->getConnections().end(); itr++)
         {
-            if( !executable->getBroker()->disconnect((*itr).from(), (*itr).to()) )
+            if( !executable->getBroker()->disconnect((*itr).from(), (*itr).to(), (*itr).carrier()) )
             {
                 OSTRINGSTREAM msg;
                 msg<<"cannot disconnect "<<(*itr).from() <<" to "<<(*itr).to();

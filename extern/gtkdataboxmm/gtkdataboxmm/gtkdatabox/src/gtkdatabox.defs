@@ -1,4 +1,0 @@
-;; Include generated API definition files
-(include gtkdatabox_enum.defs)
-(include gtkdatabox_method.defs)
-(include gtkdatabox_extra.defs)

@@ -368,7 +368,7 @@ int RateThread::getPolicy()
 
 
 RateThreadWrapper::RateThreadWrapper(): RateThread(0) {
-    helper = NULL;
+    helper = YARP_NULLPTR;
     owned = false;
 }
 
@@ -389,11 +389,11 @@ RateThreadWrapper::~RateThreadWrapper() {
 
 void RateThreadWrapper::detach() {
     if (owned) {
-        if (helper!=NULL) {
+        if (helper!=YARP_NULLPTR) {
             delete helper;
         }
     }
-    helper = NULL;
+    helper = YARP_NULLPTR;
     owned = false;
 }
 
@@ -439,7 +439,7 @@ void RateThreadWrapper::stop() {
 }
 
 void RateThreadWrapper::run() {
-    if (helper!=NULL) {
+    if (helper!=YARP_NULLPTR) {
         helper->run();
     }
 }

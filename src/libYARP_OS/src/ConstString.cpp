@@ -31,12 +31,12 @@ const size_t ConstString::npos = std::string::npos;
 
 ConstString::ConstString() {
     implementation = new std::string();
-    yAssert(implementation!=NULL);
+    yAssert(implementation != YARP_NULLPTR);
 }
 
 ConstString::ConstString(const ConstString& str) {
     implementation = new std::string(HELPER(str.implementation));
-    yAssert(implementation!=NULL);
+    yAssert(implementation != YARP_NULLPTR);
 }
 
 ConstString::ConstString(const ConstString& str, size_t pos, size_t len) {
@@ -45,28 +45,28 @@ ConstString::ConstString(const ConstString& str, size_t pos, size_t len) {
 
 ConstString::ConstString(const char *str) {
     implementation = new std::string(str);
-    yAssert(implementation!=NULL);
+    yAssert(implementation != YARP_NULLPTR);
 }
 
 ConstString::ConstString(const char *str, size_t len) {
     implementation = new std::string(str, len);
-    yAssert(implementation!=NULL);
+    yAssert(implementation != YARP_NULLPTR);
 }
 
 void ConstString::init(const char *str, size_t len) {
     implementation = new std::string(str, len);
-    yAssert(implementation!=NULL);
+    yAssert(implementation != YARP_NULLPTR);
 }
 
 ConstString::ConstString(size_t len, char c) {
     implementation = new std::string(len, c);
-    yAssert(implementation!=NULL);
+    yAssert(implementation != YARP_NULLPTR);
 }
 
 ConstString::~ConstString() {
-    if (implementation!=NULL) {
+    if (implementation != YARP_NULLPTR) {
         delete (std::string*)implementation;
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 

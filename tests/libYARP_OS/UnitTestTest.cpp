@@ -12,7 +12,7 @@ using namespace yarp::os::impl;
 
 class UnitTestTest : public UnitTest {
 public:
-    virtual String getName() { return "UnitTestTest"; }
+    virtual ConstString getName() { return "UnitTestTest"; }
 
     void checkHeapMonitor() {
         if (!heapMonitorSupported()) {

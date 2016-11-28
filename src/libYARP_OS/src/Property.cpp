@@ -15,6 +15,7 @@
 #include <yarp/os/impl/SplitString.h>
 
 #include <yarp/os/impl/PlatformMap.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/OS_NS_ctype.h>
@@ -37,7 +38,7 @@ public:
 
     PropertyItem() {
         singleton = false;
-        backing = NULL;
+        backing = YARP_NULLPTR;
     }
 
     ~PropertyItem() {
@@ -47,7 +48,7 @@ public:
     void clear() {
         if (backing) {
             delete backing;
-            backing = NULL;
+            backing = YARP_NULLPTR;
         }
     }
 
@@ -67,7 +68,7 @@ public:
 
 class PropertyHelper {
 public:
-    PLATFORM_MAP(String,PropertyItem) data;
+    PLATFORM_MAP(ConstString,PropertyItem) data;
     Property& owner;
 
     PropertyHelper(Property& owner, int hash_size) :
@@ -77,30 +78,30 @@ public:
         owner(owner) {}
 
     PropertyItem *getPropNoCreate(const ConstString& key) const {
-        String n(key);
-        PLATFORM_MAP_ITERATOR(String,PropertyItem,entry);
-        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(String,PropertyItem) *)&data)),n,entry);
+        ConstString n(key);
+        PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
+        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(ConstString,PropertyItem) *)&data)),n,entry);
         if (result==-1) {
-            return NULL;
+            return YARP_NULLPTR;
         }
         yAssert(result!=-1);
-        //yAssert(entry!=NULL);
+        //yAssert(entry!=YARP_NULLPTR);
         return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
 
     PropertyItem *getProp(const ConstString& key, bool create = true) {
-        String n(key);
-        PLATFORM_MAP_ITERATOR(String,PropertyItem,entry);
+        ConstString n(key);
+        PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
         int result = PLATFORM_MAP_FIND(data,n,entry);
         if (result==-1) {
             if (!create) {
-                return NULL;
+                return YARP_NULLPTR;
             }
             PLATFORM_MAP_SET(data,n,PropertyItem());
             result = PLATFORM_MAP_FIND(data,n,entry);
         }
         yAssert(result!=-1);
-        //yAssert(entry!=NULL);
+        //yAssert(entry!=YARP_NULLPTR);
         return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
 
@@ -145,30 +146,30 @@ public:
     bool check(const ConstString& key, Value *&output) const {
         PropertyItem *p = getPropNoCreate(key);
 
-        return p!=NULL;
+        return p!=YARP_NULLPTR;
     }
 
     void unput(const ConstString& key) {
-        PLATFORM_MAP_UNSET(data,String(key));
+        PLATFORM_MAP_UNSET(data,ConstString(key));
     }
 
     bool check(const ConstString& key) const {
         PropertyItem *p = getPropNoCreate(key);
-        if (owner.getMonitor()!=NULL) {
+        if (owner.getMonitor()!=YARP_NULLPTR) {
             SearchReport report;
             report.key = key;
-            report.isFound = (p!=NULL);
+            report.isFound = (p!=YARP_NULLPTR);
             owner.reportToMonitor(report);
         }
-        return p!=NULL;
+        return p!=YARP_NULLPTR;
     }
 
     Value& get(const ConstString& key) const {
-        String out;
+        ConstString out;
         PropertyItem *p = getPropNoCreate(key);
-        if (p!=NULL) {
+        if (p!=YARP_NULLPTR) {
             p->flush();
-            if (owner.getMonitor()!=NULL) {
+            if (owner.getMonitor()!=YARP_NULLPTR) {
                 SearchReport report;
                 report.key = key;
                 report.isFound = true;
@@ -177,7 +178,7 @@ public:
             }
             return p->bot.get(1);
         }
-        if (owner.getMonitor()!=NULL) {
+        if (owner.getMonitor()!=YARP_NULLPTR) {
             SearchReport report;
             report.key = key;
             owner.reportToMonitor(report);
@@ -216,11 +217,11 @@ public:
 
     Bottle *getBottle(const ConstString& key) const {
         PropertyItem *p = getPropNoCreate(key);
-        if (p!=NULL) {
+        if (p!=YARP_NULLPTR) {
             p->flush();
             return &(p->bot);
         }
-        return NULL;
+        return YARP_NULLPTR;
     }
 
     void clear() {
@@ -234,18 +235,18 @@ public:
     }
 
     void fromCommand(int argc, char *argv[],bool wipe=true) {
-        String tag = "";
+        ConstString tag = "";
         Bottle accum;
         Bottle total;
         bool qualified = false;
         for (int i=0; i<argc; i++) {
-            String work = argv[i];
+            ConstString work = argv[i];
             bool isTag = false;
             if (work.length()>=2) {
                 if (work[0]=='-'&&work[1]=='-') {
                     work = work.substr(2,work.length()-2);
                     isTag = true;
-                    if (work.find("::")!=String::npos) {
+                    if (work.find("::")!=ConstString::npos) {
                         qualified = true;
                     }
                 }
@@ -257,11 +258,11 @@ public:
                 tag = work;
                 accum.clear();
             } else {
-                if (work.find("\\")!=String::npos) {
+                if (work.find("\\")!=ConstString::npos) {
                     // Specifically when reading from the command
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
-                    String buf = "";
+                    ConstString buf = "";
                     for (unsigned int i=0; i<work.length(); i++) {
                         buf += work[i];
                         if (work[i]=='\\') {
@@ -283,9 +284,9 @@ public:
         if (wipe) {
             clear();
         }
-        Bottle *cursor = NULL;
+        Bottle *cursor = YARP_NULLPTR;
         for (int i=0; i<total.size(); i++) {
-            cursor = NULL;
+            cursor = YARP_NULLPTR;
             Bottle *term = total.get(i).asList();
             if (!term) continue;
             ConstString key = term->get(0).asString();
@@ -299,7 +300,7 @@ public:
                 } else {
                     key = "";
                 }
-                Bottle& result = (cursor!=NULL)? (cursor->findGroup(base.c_str())) : owner.findGroup(base.c_str());
+                Bottle& result = (cursor!=YARP_NULLPTR)? (cursor->findGroup(base.c_str())) : owner.findGroup(base.c_str());
                 if (result.isNull()) {
                     if (!cursor) {
                         cursor = &putBottle((base).c_str());
@@ -318,15 +319,15 @@ public:
         }
     }
 
-    bool readDir(const ConstString& dirname, ACE_DIR *&dir, String& result, const ConstString& section=ConstString()) {
+    bool readDir(const ConstString& dirname, ACE_DIR *&dir, ConstString& result, const ConstString& section=ConstString()) {
         bool ok = true;
         YARP_DEBUG(Logger::get(),
-                   String("reading directory ") + dirname);
+                   ConstString("reading directory ") + dirname);
 
         struct YARP_DIRENT **namelist;
         YARP_closedir(dir);
-        dir = NULL;
-        int n = YARP_scandir(dirname.c_str(),&namelist,NULL,YARP_alphasort);
+        dir = YARP_NULLPTR;
+        int n = YARP_scandir(dirname.c_str(),&namelist,YARP_NULLPTR,YARP_alphasort);
         if (n<0) {
             return false;
         }
@@ -349,48 +350,48 @@ public:
         return ok;
     }
 
-    bool readFile(const ConstString& fname, String& result, bool allowDir) {
+    bool readFile(const ConstString& fname, ConstString& result, bool allowDir) {
         if (allowDir) {
             ACE_DIR *dir = ACE_OS::opendir(fname.c_str());
             if (dir) return readDir(fname,dir,result);
         }
         YARP_DEBUG(Logger::get(),
-                   String("reading file ") + fname);
+                   ConstString("reading file ") + fname);
         FILE *fin = fopen(fname.c_str(),"r");
-        if (fin==NULL) return false;
+        if (fin==YARP_NULLPTR) return false;
         char buf[25600];
-        while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
+        while(fgets(buf, sizeof(buf)-1, fin) != YARP_NULLPTR) {
             result += buf;
         }
         fclose(fin);
-        fin = NULL;
+        fin = YARP_NULLPTR;
         return true;
     }
 
     bool fromConfigFile(const ConstString& fname, Searchable& env, bool wipe=true) {
-        String searchPath =
+        ConstString searchPath =
             env.check("CONFIG_PATH",
                       Value(""),
                       "path to search for config files").toString().c_str();
 
         YARP_DEBUG(Logger::get(),
-                   String("looking for ") + fname.c_str() + ", search path: " +
+                   ConstString("looking for ") + fname.c_str() + ", search path: " +
                    searchPath);
 
-        String pathPrefix("");
-        String txt;
+        ConstString pathPrefix("");
+        ConstString txt;
 
         bool ok = true;
         if (!readFile(fname,txt,true)) {
             ok = false;
             SplitString ss(searchPath.c_str(),';');
             for (int i=0; i<ss.size(); i++) {
-                String trial = ss.get(i);
+                ConstString trial = ss.get(i);
                 trial += '/';
                 trial += fname;
 
                 YARP_DEBUG(Logger::get(),
-                           String("looking for ") + fname + " as " +
+                           ConstString("looking for ") + fname + " as " +
                            trial.c_str());
 
                 txt = "";
@@ -403,18 +404,18 @@ public:
             }
         }
 
-        String path("");
-        String sfname = fname;
+        ConstString path("");
+        ConstString sfname = fname;
         size_t index = sfname.rfind('/');
-        if (index==String::npos) {
+        if (index==ConstString::npos) {
             index = sfname.rfind('\\');
         }
-        if (index!=String::npos) {
+        if (index!=ConstString::npos) {
             path = sfname.substr(0,index);
         }
 
         if (!ok) {
-            YARP_ERROR(Logger::get(),String("cannot read from ") +
+            YARP_ERROR(Logger::get(),ConstString("cannot read from ") +
                        fname);
             return false;
         }
@@ -440,17 +441,17 @@ public:
             return fromConfigFile(dirname, p, wipe);
         }
 
-        YARP_DEBUG(Logger::get(), String("looking for ") + dirname.c_str());
+        YARP_DEBUG(Logger::get(), ConstString("looking for ") + dirname.c_str());
 
         ACE_DIR *dir = ACE_OS::opendir(dirname.c_str());
         if (!dir) {
-            YARP_ERROR(Logger::get(), String("cannot read from ") + dirname);
+            YARP_ERROR(Logger::get(), ConstString("cannot read from ") + dirname);
             return false;
         }
 
-        String txt;
+        ConstString txt;
         if (!readDir(dirname, dir, txt, section)) {
-            YARP_ERROR(Logger::get(), String("cannot read from ") + dirname);
+            YARP_ERROR(Logger::get(), ConstString("cannot read from ") + dirname);
             return false;
         }
 
@@ -465,13 +466,13 @@ public:
         if (wipe) {
             clear();
         }
-        String tag = "";
+        ConstString tag = "";
         Bottle accum;
         bool done = false;
         do {
             bool isTag = false;
             bool including = false;
-            String buf;
+            ConstString buf;
             bool good = true;
             buf = sis.readLine('\n',&good);
             while (good && !BottleImpl::isComplete(buf.c_str())) {
@@ -483,7 +484,7 @@ public:
             if (!done) {
                 including = false;
 
-                if (buf.find("//")!=String::npos||buf.find("#")!=String::npos) {
+                if (buf.find("//")!=ConstString::npos||buf.find("#")!=ConstString::npos) {
                     bool quoted = false;
                     bool prespace = true;
                     int comment = 0;
@@ -521,10 +522,10 @@ public:
 
                 if (buf.length()>0 && buf[0]=='[') {
                     size_t stop = buf.find("]");
-                    if (stop!=String::npos) {
+                    if (stop!=ConstString::npos) {
                         buf = buf.substr(1,stop-1);
                         size_t space = buf.find(" ");
-                        if (space!=String::npos) {
+                        if (space!=ConstString::npos) {
                             Bottle bot(buf.c_str());
                             // BEGIN Handle include option
                             if (bot.size()>1) {
@@ -556,7 +557,7 @@ public:
                                             fname = bot.get(3).toString();
                                             Bottle *target =
                                                 getBottle(key.c_str());
-                                            if (target==NULL) {
+                                            if (target==YARP_NULLPTR) {
                                                 Bottle init;
                                                 init.addString(key.c_str());
                                                 init.addString(subName.c_str());
@@ -567,13 +568,13 @@ public:
                                             }
                                         } else {
                                             YARP_ERROR(Logger::get(),
-                                                       String("bad include"));
+                                                       ConstString("bad include"));
                                             return;
                                         }
 
 
                                         Property p;
-                                        if (getBottle(subName)!=NULL) {
+                                        if (getBottle(subName)!=YARP_NULLPTR) {
                                             p.fromString(getBottle(subName)->tail().toString());
                                             //printf(">>> prior p %s\n",
                                             //     p.toString().c_str());
@@ -611,9 +612,9 @@ public:
                             // BEGIN handle group
                             if (bot.size()==2 && !including) {
                                 buf = bot.get(1).toString().c_str();
-                                String key = bot.get(0).toString().c_str();
+                                ConstString key = bot.get(0).toString().c_str();
                                 Bottle *target = getBottle(key.c_str());
-                                if (target==NULL) {
+                                if (target==YARP_NULLPTR) {
                                     Bottle init;
                                     init.addString(key.c_str());
                                     init.addString(buf.c_str());
@@ -661,7 +662,7 @@ public:
                 accum.clear();
                 accum.addString(tag.c_str());
                 if (tag!="") {
-                    if (getBottle(tag.c_str())!=NULL) {
+                    if (getBottle(tag.c_str())!=YARP_NULLPTR) {
                         // merge data
                         accum.append(getBottle(tag.c_str())->tail());
                         //printf("MERGE %s, got %s\n", tag.c_str(),
@@ -687,7 +688,7 @@ public:
 
     ConstString toString() {
         Bottle bot;
-        for (PLATFORM_MAP(String,PropertyItem)::iterator
+        for (PLATFORM_MAP(ConstString,PropertyItem)::iterator
                  it = data.begin(); it!=data.end(); it++) {
             PropertyItem& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
             Bottle& sub = bot.addList();
@@ -700,14 +701,14 @@ public:
     // expand any environment variables found
     ConstString expand(const char *txt, Searchable& env, Searchable& env2) {
         //printf("expanding %s\n", txt);
-        String input = txt;
-        if (input.find("$")==String::npos) {
+        ConstString input = txt;
+        if (input.find("$")==ConstString::npos) {
             // no variables present for sure
             return txt;
         }
         // check if variables present
-        String output = "";
-        String var = "";
+        ConstString output = "";
+        ConstString var = "";
         bool inVar = false;
         bool varHasParen = false;
         bool quoted = false;
@@ -750,7 +751,7 @@ public:
                     }
                     inVar = false;
                     //printf("VARIABLE %s\n", var.c_str());
-                    String add = NetworkBase::getEnvironment(var.c_str()).c_str();
+                    ConstString add = NetworkBase::getEnvironment(var.c_str()).c_str();
                     if (add=="") {
                         add = env.find(var.c_str()).toString().c_str();
                     }
@@ -762,11 +763,11 @@ public:
                             add = "1";
                         }
                     }
-                    if (add.find("\\")!=String::npos) {
+                    if (add.find("\\")!=ConstString::npos) {
                         // Specifically when reading from the command
                         // line, we will allow windows-style paths.
                         // Hence we have to break the "\" character
-                        String buf = "";
+                        ConstString buf = "";
                         for (unsigned int i=0; i<add.length(); i++) {
                             buf += add[i];
                             if (add[i]=='\\') {
@@ -810,11 +811,11 @@ public:
         // clear allocated memory for arguments
         if(szcmd) {
             delete [] szcmd;
-            szcmd = NULL;
+            szcmd = YARP_NULLPTR;
         }
         if(szarg) {
             delete [] szarg;
-            szarg = NULL;
+            szarg = YARP_NULLPTR;
         }
     }
 
@@ -843,11 +844,11 @@ public:
         *argc = 1;
         argv[0] = azParam ;
 
-        while ((NULL != pNext) && (*argc < max_arg)) {
+        while ((YARP_NULLPTR != pNext) && (*argc < max_arg)) {
             splitArguments(pNext, &(argv[*argc]));
             pNext = argv[*argc];
 
-            if (NULL != argv[*argc]) {
+            if (YARP_NULLPTR != argv[*argc]) {
                 *argc += 1;
             }
         }
@@ -871,7 +872,7 @@ public:
                pTmp++;
            }
            if (*pTmp == '\0') {
-               pTmp = NULL;
+               pTmp = YARP_NULLPTR;
            }
         }
         *args = pTmp;
@@ -887,14 +888,14 @@ public:
 
 Property::Property(int hash_size) {
     this->hash_size = hash_size;
-    implementation = NULL;
+    implementation = YARP_NULLPTR;
 }
 
 
 Property::Property(const char *str) {
     hash_size = 0;
     implementation = new PropertyHelper(*this,0);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
     fromString(str);
 }
 
@@ -902,7 +903,7 @@ Property::Property(const char *str) {
 Property::Property(const Property& prop) : Searchable(), Portable() {
     hash_size = 0;
     implementation = new PropertyHelper(*this,0);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
     fromString(prop.toString());
 }
 
@@ -910,19 +911,19 @@ Property::Property(const Property& prop) : Searchable(), Portable() {
 void Property::summon() {
     if (check()) return;
     implementation = new PropertyHelper(*this,hash_size);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 
 bool Property::check() const {
-    return implementation!=NULL;
+    return implementation!=YARP_NULLPTR;
 }
 
 
 Property::~Property() {
-    if (implementation!=NULL) {
+    if (implementation!=YARP_NULLPTR) {
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 
@@ -1065,17 +1066,17 @@ bool Property::write(ConnectionWriter& writer) {
 Bottle& Property::findGroup(const ConstString& key) const {
     if (!check()) return Bottle::getNullBottle();
     Bottle *result = HELPER(implementation).getBottle(key);
-    if (getMonitor()!=NULL) {
+    if (getMonitor()!=YARP_NULLPTR) {
         SearchReport report;
         report.key = key;
         report.isGroup = true;
-        if (result!=0/*NULL*/) {
+        if (result != YARP_NULLPTR) {
             report.isFound = true;
             report.value = result->toString();
         }
         reportToMonitor(report);
-        if (result!=0/*NULL*/) {
-            String context = getMonitorContext();
+        if (result != YARP_NULLPTR) {
+            ConstString context = getMonitorContext();
             context += ".";
             context += key;
             result->setMonitor(getMonitor(),
@@ -1093,11 +1094,11 @@ void Property::fromQuery(const char *url, bool wipe) {
     if (wipe) {
         clear();
     }
-    String str = url;
+    ConstString str = url;
     str += "&";
-    String buf = "";
-    String key = "";
-    String val = "";
+    ConstString buf = "";
+    ConstString key = "";
+    ConstString val = "";
     int code = 0;
     int coding = 0;
 

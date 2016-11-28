@@ -4,6 +4,9 @@
  * author Alessandro Scalzo alessandro.scalzo@iit.it
  */
 
+#include <yarp/os/impl/RunCheckpoints.h>
+#include <yarp/conf/compiler.h>
+
 #if defined(WIN32)
 #include <time.h>
 #include <windows.h>
@@ -12,19 +15,19 @@
 #include <sys/time.h>
 #endif
 #include <stdio.h>
-#include <yarp/os/impl/RunCheckpoints.h>
+
 
 YarprunCheckpoints::YarprunCheckpoints()
 {
     char path[256];
 
 #if defined(WIN32)
-    time_t now=time(NULL);
+    time_t now=time(YARP_NULLPTR);
     srand((unsigned)now);
     sprintf(path,"C:/Users/user/Documents/yarprun_log/yarprun_log_%d_%s_%u.txt",GetCurrentProcessId(),ctime(&now),(unsigned)rand());
 #else
     timeval now;
-    gettimeofday(&now,NULL);
+    gettimeofday(&now,YARP_NULLPTR);
     sprintf(path,"/tmp/yarprun_log_%d_%s_%06d.txt",getpid(),ctime(&(now.tv_sec)),(int)now.tv_usec);
 #endif
 

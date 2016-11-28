@@ -59,7 +59,7 @@ public:
         conReader = &reader;
         if(portable)
             delete portable;
-        portable = NULL;
+        portable = YARP_NULLPTR;
         return true;
     }
 
@@ -77,10 +77,10 @@ public:
     void reset() {
         if(portable)
             delete portable;
-        conReader = NULL;
-        writer = NULL;
-        reader = NULL;
-        portable = NULL;
+        conReader = YARP_NULLPTR;
+        writer = YARP_NULLPTR;
+        reader = YARP_NULLPTR;
+        portable = YARP_NULLPTR;
         beenRead = false;
     }
 
@@ -96,13 +96,13 @@ public:
         if(!this->portable)
         {
             if(!this->conReader)
-                return NULL;
+                return YARP_NULLPTR;
             this->portable = new T();
             if(!this->portable->read(*this->conReader))
             {
                 delete this->portable;
-                this->portable = NULL;
-                return NULL;
+                this->portable = YARP_NULLPTR;
+                return YARP_NULLPTR;
             }
             beenRead = true;
         }

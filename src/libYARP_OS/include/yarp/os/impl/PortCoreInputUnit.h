@@ -33,25 +33,26 @@ public:
      * @param owner the port we call home
      * @param index an id for this connection
      * @param ip the protocol object used to read/write to connection
-     * @param autoHandshake if true, do YARP protocol negotiation -
-     * if false, don't touch the connection, leave that to user
      * @param reversed true if this input connection was originally 
      * an output which was then reversed
      *
      */
     PortCoreInputUnit(PortCore& owner, int index, InputProtocol *ip,
-                      bool autoHandshake, bool reversed) :
-        PortCoreUnit(owner,index), ip(ip), phase(1), access(1),
-        autoHandshake(autoHandshake), reversed(reversed) {
+                      bool reversed) :
+        PortCoreUnit(owner,index),
+        ip(ip),
+        phase(1),
+        access(1),
+        reversed(reversed) {
 
-        yAssert(ip!=NULL);
+        yAssert(ip!=YARP_NULLPTR);
         closing = false;
         finished = false;
         running = false;
         name = owner.getName();
         yarp::os::PortReaderCreator *creator = owner.getReadCreator();
-        localReader = NULL;
-        if (creator!=NULL) {
+        localReader = YARP_NULLPTR;
+        if (creator!=YARP_NULLPTR) {
             localReader = creator->create();
         }
     }
@@ -61,9 +62,9 @@ public:
      */
     virtual ~PortCoreInputUnit() {
         closeMain();
-        if (localReader!=NULL) {
+        if (localReader!=YARP_NULLPTR) {
             delete localReader;
-            localReader = NULL;
+            localReader = YARP_NULLPTR;
         }
     }
 
@@ -95,7 +96,7 @@ public:
         return finished;
     }
 
-    const String& getName() {
+    const ConstString& getName() {
         return name;
     }
 
@@ -121,9 +122,8 @@ public:
 private:
     InputProtocol *ip;
     SemaphoreImpl phase, access;
-    bool autoHandshake;
     bool closing, finished, running;
-    String name;
+    ConstString name;
     yarp::os::PortReader *localReader;
     Route officialRoute;
     bool reversed;

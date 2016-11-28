@@ -22,9 +22,9 @@ class PortWriterBufferBaseHelper : public PortWriterBufferManager {
 public:
     PortWriterBufferBaseHelper(PortWriterBufferBase& owner) :
         owner(owner), stateSema(1), completionSema(0) {
-        current = NULL;
-        callback = NULL;
-        port = NULL;
+        current = YARP_NULLPTR;
+        callback = YARP_NULLPTR;
+        port = YARP_NULLPTR;
         finishing = false;
         outCt = 0;
     }
@@ -63,7 +63,7 @@ public:
     }
 
     void *get() {
-        if (callback!=NULL) {
+        if (callback!=YARP_NULLPTR) {
             // (Safe to check outside mutex)
             // oops, there is already a prepared and unwritten
             // object.  best remove it.
@@ -72,8 +72,8 @@ public:
         }
         stateSema.wait();
         PortCorePacket *packet = packets.getFreePacket();
-        yAssert(packet!=NULL);
-        if (packet->getContent()==NULL) {
+        yAssert(packet!=YARP_NULLPTR);
+        if (packet->getContent()==YARP_NULLPTR) {
             YARP_DEBUG(Logger::get(), "creating a writer buffer");
             //packet->setContent(owner.create(*this,packet),true);
             yarp::os::PortWriterWrapper *wrapper =
@@ -92,16 +92,16 @@ public:
     bool release() {
         stateSema.wait();
         PortWriter *cback = callback;
-        current = NULL;
-        callback = NULL;
+        current = YARP_NULLPTR;
+        callback = YARP_NULLPTR;
         stateSema.post();
-        if (cback!=NULL) {
+        if (cback!=YARP_NULLPTR) {
             stateSema.wait();
             outCt++;
             stateSema.post();
             cback->onCompletion();
         }
-        return cback!=NULL;
+        return cback!=YARP_NULLPTR;
     }
 
     virtual void onCompletion(void *tracker) {
@@ -136,10 +136,10 @@ public:
         stateSema.wait();
         PortWriter *active = current;
         PortWriter *cback = callback;
-        current = NULL;
-        callback = NULL;
+        current = YARP_NULLPTR;
+        callback = YARP_NULLPTR;
         stateSema.post();
-        if (active!=NULL && port!=NULL) {
+        if (active!=YARP_NULLPTR && port!=YARP_NULLPTR) {
             stateSema.wait();
             outCt++;
             stateSema.post();
@@ -168,21 +168,21 @@ PortWriterBufferManager::~PortWriterBufferManager() {
 
 
 PortWriterBufferBase::PortWriterBufferBase() {
-    implementation = NULL;
+    implementation = YARP_NULLPTR;
     init();
 }
 
 void PortWriterBufferBase::init() {
-    yAssert(implementation==NULL);
+    yAssert(implementation==YARP_NULLPTR);
     implementation = new PortWriterBufferBaseHelper(*this);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 
 PortWriterBufferBase::~PortWriterBufferBase() {
-    if (implementation!=NULL) {
+    if (implementation!=YARP_NULLPTR) {
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 

@@ -120,7 +120,7 @@ part fakebot         # function name: match yarp_prepare_device(THIS_NAME ...)
 It is fine for a fingerprint file to contain more than one plugin
 section.  The name of the fingerprint is arbitrary, but the extension
 should be <tt>.ini</tt>.  Examples can be found in the YARP source
-code, in subdirectories of the <tt>src/modules</tt> and
+code, in subdirectories of the <tt>src/devices</tt> and
 <tt>src/carriers</tt> directories.
 
 YARP is configured to aggregate <tt>plugin.ini</tt> files in a directory

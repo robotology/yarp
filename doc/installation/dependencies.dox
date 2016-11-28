@@ -159,88 +159,37 @@ then start the compilation.  We recommend you compile twice,
 once in debug mode and release mode, so you have both versions of
 the library available later.
 
-\subsection dependencies_gsl The GNU Scientific Library (GSL)
+\subsection dependencies_eigen Eigen
 
-The
-<a href="https://www.gnu.org/software/gsl/"><b>GNU Scientific Library (GSL)</b></a>
-is a numerical library for C and C++ programmers.
+<a href="http://eigen.tuxfamily.org"><b>Eigen</b></a> is a C++ template header only
+library for linear algebra: matrices, vectors, numerical solvers, and related algorithms.
 
-If not installed, you will not be able to enable the \c YARP_math
-library.
+If not installed, you will not be able to enable the \c YARP_math library.
 
-\warning
-GSL is released under the GPL, and therefore if the \c YARP_math library
-is enabled, it requires the use of YARP under the GPL, rather than the
-LGPL.
+\subsubsection dependencies_eigen_linux Linux
+The most convenient way of installing Eigen in recent Linux distribution is using the
+system package manager.
+For example in Debian/Ubuntu you can install the `libeigen3-dev` package by typing on a terminal:
+~~~
+sudo apt-get install libeigen3-dev
+~~~
 
-\todo TODO Installation
+\subsubsection dependencies_eigen_macos macOS
+The most convenient way of installing Eigen in macOS is using <a href="http://brew.sh">homebrew</a>.
+If you have installed homebrew on your computer, you can instal eigen by typing on a terminal:
+~~~
+brew install eigen
+~~~
 
-\subsubsection dependencies_gsl_atlas Automatically Tuned Linear Algebra Software (ATLAS)
-
-<a href="http://math-atlas.sourceforge.net/"><b>Automatically Tuned Linear Algebra Software (ATLAS)</b></a>
-is an efficient alternative to the
-<a href="http://www.netlib.org/blas/">BLAS</a> and
-<a href="http://www.netlib.org/lapack/">LAPACK</a> libraries.
-
-YARP can be linked to the ATLAS library by enabling the
-\c YARP_USE_ATLAS CMake option.
-
-As an alternative, on Debian and Debian-based systems, the BLAS and
-LAPACK implementation can be changed dynamically (without need to
-recompile). To enable ATLAS:
-
-\verbatim
-sudo update-alternatives --set libblas.so /usr/lib/atlas-base/atlas/libblas.so
-sudo update-alternatives --set libblas.so.3 /usr/lib/atlas-base/atlas/libblas.so.3
-sudo update-alternatives --set liblapack.so /usr/lib/atlas-base/atlas/liblapack.so
-sudo update-alternatives --set liblapack.so.3 /usr/lib/atlas-base/atlas/liblapack.so.3
-\endverbatim
-
-To restore the default implementation:
-
-\verbatim
-sudo update-alternatives --auto libblas.so
-sudo update-alternatives --auto libblas.so.3
-sudo update-alternatives --auto liblapack.so
-sudo update-alternatives --auto liblapack.so.3
-\endverbatim
-
-\todo TODO Installation
+\subsubsection dependencies_eigen_windows Windows
+The most convenient way of installing Eigen on Windows is by downloading the compressed archive of the
+latest version of Eigen from the <a href="http://eigen.tuxfamily.org">Eigen website</a>.
+As Eigen is an header only library, you can just unzip the archive in a directory,
+and point the `EIGEN3_ROOT` environment variable to the directory in which
+you uncompressed the archive. In particular `EIGEN3_ROOT` should point to the
+directory containing the `signature_of_eigen3_matrix_library` file.
 
 \section dependencies_gui GUI Dependencies
-
-YARP GUIs are being migrated from
-<a href="http://www.gtk.org/"><b>GTK+2</b></a> +
-<a href="http://www.gtkmm.org/"><b>GtkMM</b></a>
-to
-<a href="http://qt-project.org/"><b>Qt5</b></a>.
-For compatibility with older distributions, GTK2 GUIs can still be
-built, but no new features are added, and the new GUIs (i.e.
-\a yarplogger) are not available.
-
-This is a list of the GUIs with the toolkit required.
-
-\li \b yarpview: Qt5 or GTK2
-\li \b yarpscope: Qt5 or GTK2
-\li \b yarpmanager: Qt5 or GTK2
-\li \b yarpbuilder: GTK2 (Qt5 porting in progress)
-\li \b yarplogger: Qt5
-
-For the GUIs that can be built with both toolkits:
-
-\li If only Qt5 is available, the Qt5 version will be built.
-\li If only GTK2 is available, the GTK2 version will be built.
-\li If both Qt5 and GTK2 are available, both will be built and the
-    \c -gtk suffix will be appended to the GTK2 executable.
-\li If both Qt5 and GTK2 are available, and the \c YARP_DEFAULT_GTK
-    CMake variable is set, both will be built and the
-    \c -qt suffix will be appended to the Qt5 executable.
-
-\note
-Usage of the \c YARP_DEFAULT_GTK is discouraged, and therefore it
-cannot be set using CMake GUIs. If it is really necessary, it can be set
-by passing \c -DYARP_DEFAULT_GTK:BOOL=TRUE to CMake command line, or by
-using the "Add Entry" button in CMake GUI.
 
 \subsection dependencies_qt5 Qt5 (Recommended)
 
@@ -368,11 +317,5 @@ Qt5 binary package for Windows is available from the
 
 Qt5 binary package for Mac is available from the
 <a href="http://qt-project.org/downloads">Qt Project website</a>
-
-
-\subsection dependencies_gtk GTK2 (Legacy)
-
-\section dependencies_optional Optional Dependencies
-\todo TODO
 
  */

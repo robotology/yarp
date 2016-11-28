@@ -10,6 +10,8 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/LaserMeasurementData.h>
+#include <vector>
 
 #define VOCAB_ILASER2D     VOCAB4('i','l','a','s')
 #define VOCAB_DEVICE_INFO  VOCAB4('l','s','n','f')
@@ -43,11 +45,18 @@ public:
     virtual ~IRangefinder2D(){}
 
     /**
-    * Get the distance measurements
-    * @param ranges the vector containing the distance measurement
+    * Get the device measurements
+    * @param data a vector containing the measurement data, expressed in cartesian/polar format
+    * @return true/false..
+    */
+    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) = 0;
+
+    /**
+    * Get the device measurements
+    * @param ranges the vector containing the raw measurement data, as acquired by the device.
     * @return true/false.
     */
-    virtual bool getMeasurementData(yarp::sig::Vector &data) = 0;
+    virtual bool getRawData(yarp::sig::Vector &data) = 0;
 
     /**
     * get the device status

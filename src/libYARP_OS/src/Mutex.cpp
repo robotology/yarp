@@ -17,13 +17,13 @@ Mutex::Mutex() {
     // should optimize implementation when better building blocks are
     // available, but for now stick with semaphores
     implementation = new SemaphoreImpl(1);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 Mutex::~Mutex() {
-    if (implementation!=NULL) {
+    if (implementation!=YARP_NULLPTR) {
         delete ((SemaphoreImpl*)implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 

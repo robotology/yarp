@@ -17,7 +17,7 @@ using namespace yarp::os::impl;
 
 class PortCommandTest : public UnitTest {
 public:
-    virtual String getName() { return "PortCommandTest"; }
+    virtual ConstString getName() { return "PortCommandTest"; }
 
     void testTextWriting() {
         report(0,"testing text-mode writing...");
@@ -26,7 +26,7 @@ public:
         BufferedConnectionWriter bw(true);
         cmd1.write(bw);
         checkEqual(humanize(bw.toString()),"d\\r\\n","basic data command");
-    
+
         PortCommand cmd2('\0',"/bozo");;
         BufferedConnectionWriter bw2(true);
         cmd2.write(bw2);
@@ -57,4 +57,3 @@ static PortCommandTest thePortCommandTest;
 UnitTest& getPortCommandTest() {
     return thePortCommandTest;
 }
-

@@ -34,9 +34,9 @@ Contact Name::toAddress() const {
                 first = first.substr(1);
             }
         }
-        return Contact::bySocket(first,"",-1).addName(second);
+        return Contact(second, first, "", -1);
     }
-    return Contact::bySocket("","",-1).addName(txt);
+    return Contact(txt, "", "", -1);
 }
 
 
@@ -57,7 +57,7 @@ ConstString Name::getCarrierModifier(const char *mod, bool *hasModifier) {
             ok = true;
         }
     }
-    if (hasModifier!=NULL) {
+    if (hasModifier!=YARP_NULLPTR) {
         *hasModifier = ok;
     }
     return ok?work:"";

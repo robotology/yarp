@@ -21,6 +21,9 @@ public:
     ThreadCallbackAdapter(Thread& owner) : owner(owner) {
     }
 
+    virtual ~ThreadCallbackAdapter() {
+    }
+
     virtual void beforeStart() {
         owner.beforeStart();
     }
@@ -52,14 +55,15 @@ Thread::Thread() :
         implementation(new ThreadCallbackAdapter(*this)),
         stopping(false)
 {
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 
 Thread::~Thread() {
-    if (implementation!=NULL) {
+    ((ThreadImpl*)implementation)->close();
+    if (implementation!=YARP_NULLPTR) {
         delete ((ThreadImpl*)implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 
@@ -135,4 +139,6 @@ void Thread::setDefaultStackSize(int stackSize) {
     ThreadImpl::setDefaultStackSize(stackSize);
 }
 
-
+void Thread::yield() {
+    ThreadImpl::yield();
+}

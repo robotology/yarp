@@ -30,7 +30,6 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::ConnectionReader {
 public:
-
     /**
      * Destructor.
      */
@@ -104,7 +103,8 @@ public:
 
     /**
      * Gets a way to reply to the message, if possible.
-     * @return An object that permits replies, or NULL if this cannot be done.
+     * @return An object that permits replies, or YARP_NULLPTR if this cannot be
+     *         done.
      */
     virtual ConnectionWriter *getWriter() = 0;
 
@@ -119,8 +119,8 @@ public:
      * Get a direct pointer to the object being sent, if possible.
      * This only makes sense in local operation, when sender and
      * receiver are in the same process; in all other situations
-     * this returns NULL
-     * @return The message object, or NULL if not available
+     * this returns YARP_NULLPTR.
+     * @return The message object, or YARP_NULLPTR if not available
      */
     virtual Portable *getReference() = 0;
 
@@ -193,6 +193,13 @@ public:
     static ConnectionReader *createConnectionReader(InputStream& is);
 
     static bool readFromStream(PortReader& portable, InputStream& is);
+
+    /**
+     * Set ConnectionReader to be used for reading the envelope.
+     *
+     * Used by PortCoreInputUnit
+     */
+    virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader);
 };
 
 #endif // YARP_OS_CONNECTIONREADER_H

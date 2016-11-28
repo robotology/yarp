@@ -10,8 +10,6 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdlib.h>
-
-#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/Module.h>
@@ -116,9 +114,9 @@ private:
     Bottle order;
 public:
     virtual void report(const SearchReport& report, const char *context) {
-        String ctx = context;
-        String key = report.key.c_str();
-        String prefix = "";
+        ConstString ctx = context;
+        ConstString key = report.key.c_str();
+        ConstString prefix = "";
 
         prefix = ctx;
         prefix += ".";
@@ -150,7 +148,7 @@ public:
         if (comment.check(key.c_str())) {
             if (!reported.check(key.c_str())) {
                 if (report.isFound) {
-                    String hasValue = report.value.c_str();
+                    ConstString hasValue = report.value.c_str();
                     if (hasValue.length()>35) {
                         hasValue = hasValue.substr(0,30) + " ...";
                     }
@@ -161,11 +159,11 @@ public:
                 } else {
                     reported.put(key.c_str(),1);
                     bool hasDefault = fallback.check(key.c_str());
-                    String defString = "";
+                    ConstString defString = "";
                     if (hasDefault) {
                         defString += " ";
                         defString += "(default ";
-                        String theDefault =
+                        ConstString theDefault =
                             fallback.find(key.c_str()).toString().c_str();
                         if (theDefault=="") {
                             defString += "is blank";
@@ -210,7 +208,7 @@ bool ModuleHelper::read(ConnectionReader& connection) {
     bool result = owner.safeRespond(cmd,response);
     if (response.size()>=1) {
         ConnectionWriter *writer = connection.getWriter();
-        if (writer!=NULL) {
+        if (writer!=YARP_NULLPTR) {
             if (response.get(0).toString()=="many") {
                 for (int i=1; i<response.size(); i++) {
                     Value& v = response.get(i);
@@ -239,14 +237,14 @@ bool ModuleHelper::read(ConnectionReader& connection) {
 Module::Module() {
     stopFlag = false;
     implementation = new ModuleHelper(*this);
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 Module::~Module() {
-    if (implementation!=NULL) {
+    if (implementation!=YARP_NULLPTR) {
         HELPER(implementation).stop();
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 
@@ -312,7 +310,7 @@ bool Module::safeRespond(const Bottle& command, Bottle& reply) {
 }
 
 
-static Module *module = NULL;
+static Module *module = YARP_NULLPTR;
 static bool terminated = false;
 static void handler (int) {
     static int ct = 0;
@@ -324,7 +322,7 @@ static void handler (int) {
     ACE_OS::printf("[try %d of 3] Trying to shut down\n",
                    ct);
     terminated = true;
-    if (module!=NULL) {
+    if (module!=YARP_NULLPTR) {
         Bottle cmd, reply;
         cmd.fromString("quit");
         module->safeRespond(cmd,reply);
@@ -335,7 +333,7 @@ static void handler (int) {
 
 
 bool Module::runModule() {
-    if (module==NULL) {
+    if (module==YARP_NULLPTR) {
         module = this;
         //module = &HELPER(implementation);
     } else {
@@ -408,7 +406,7 @@ bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
     }
 
     // probably folloing options will be removed, so don't advertise them
-    options.setMonitor(NULL);
+    options.setMonitor(YARP_NULLPTR);
     // check if we want to use nested options (less ambiguous)
     if (options.check("nested",val)||options.check("lispy",val)) {
         ConstString lispy = val->toString();
@@ -423,10 +421,10 @@ bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
 
 
 ConstString Module::getName(const char *subName) {
-    if (subName==NULL) {
+    if (subName==YARP_NULLPTR) {
         return name;
     }
-    String base = name.c_str();
+    ConstString base = name.c_str();
     if (subName[0]!='/') {
       base += "/";
     }

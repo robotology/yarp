@@ -14,8 +14,6 @@
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/NetInt32.h>
 
-#include <yarp/gsl_compatibility.h>
-
 #include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/Logger.h>
@@ -209,7 +207,6 @@ void Matrix::updatePointers()
     {
         matrix[r]=matrix[r-1]+ncols;
     }
-    updateGslData();
 }
 
 const Matrix &Matrix::operator=(const Matrix &r)
@@ -254,8 +251,6 @@ Matrix::~Matrix()
 
     if (storage!=0)
         delete [] storage;
-
-    freeGslData();
 }
 
 void Matrix::resize(int new_r, int new_c)
@@ -483,45 +478,6 @@ bool Matrix::operator==(const yarp::sig::Matrix &r) const
     return true;
 }
 
-
-void Matrix::allocGslData()
-{
-    gsl_matrix *mat=new gsl_matrix;
-    gsl_block *bl=new gsl_block;
-
-    mat->block=bl;
-
-    //this is constant (at least for now)
-    mat->owner=1;
-
-    gslData=mat;
-}
-
-void Matrix::freeGslData()
-{
-    gsl_matrix *tmp=(gsl_matrix *) (gslData);
-
-    if (tmp!=0)
-    {
-        delete tmp->block;
-        delete tmp;
-    }
-
-    gslData=0;
-}
-
-void Matrix::updateGslData()
-{
-    gsl_matrix *tmp=static_cast<gsl_matrix *>(gslData);
-    tmp->block->data=Matrix::data();
-    tmp->data=tmp->block->data;
-    tmp->block->size=rows()*cols();
-    tmp->owner=1;
-    tmp->tda=cols();
-    tmp->size1=rows();
-    tmp->size2=cols();
-}
-
 bool Matrix::setRow(int row, const Vector &r)
 {
     if((row<0) || (row>=nrows) || (r.length() != (size_t)ncols))
@@ -585,7 +541,6 @@ Matrix::Matrix(int r, int c):
 {
     storage=new double [r*c];
     memset(storage, 0, r*c*sizeof(double));
-    allocGslData();
     updatePointers();
 }
 
@@ -595,8 +550,6 @@ Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
 {
     nrows=m.nrows;
     ncols=m.ncols;
-
-    allocGslData();
 
     if (m.storage!=0) 
     {

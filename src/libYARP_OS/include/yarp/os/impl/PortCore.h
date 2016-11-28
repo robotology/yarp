@@ -10,7 +10,7 @@
 
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/PortManager.h>
@@ -116,8 +116,8 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::PortDataModifier {
 public:
     PortDataModifier() {
-        outputModifier = NULL;
-        inputModifier = NULL;
+        outputModifier = YARP_NULLPTR;
+        inputModifier = YARP_NULLPTR;
     }
     virtual ~PortDataModifier() {
         releaseOutModifier();
@@ -125,18 +125,18 @@ public:
     }
 
     void releaseOutModifier() {
-        if(outputModifier != NULL) {
+        if(outputModifier != YARP_NULLPTR) {
             outputModifier->close();
             delete outputModifier;
-            outputModifier = NULL;
+            outputModifier = YARP_NULLPTR;
         }
     }
 
     void releaseInModifier() {
-        if(inputModifier != NULL) {
+        if(inputModifier != YARP_NULLPTR) {
             inputModifier->close();
             delete inputModifier;
-            inputModifier = NULL;
+            inputModifier = YARP_NULLPTR;
         }
     }
 
@@ -153,39 +153,46 @@ public:
     /**
      * Constructor.
      */
-    PortCore() : stateMutex(1), packetMutex(1), connectionChange(1),
-        log("port",Logger::get()), envelopeWriter(true) {
-        // dormant phase
-        listening = false;
-        running = false;
-        starting = false;
-        closing = false;
-        finished = false;
-        finishing = false;
-        manual = false;
-        autoHandshake = true;
-        waitBeforeSend = waitAfterSend = true;
-        connectionListeners = 0;
-        events = 0;
-        face = NULL;
-        reader = NULL;
-        adminReader = NULL;
-        readableCreator = NULL;
-        outputCount = inputCount = 0;
-        dataOutputCount = 0;
-        controlRegistration = true;
-        interruptible = true;
-        interrupted = false;
-        eventReporter = NULL;
-        logNeeded = false;
-        flags = PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT;
-        timeout = -1;
-        verbosity = 1;
-        counter = 1;
-        prop = NULL;
-        contactable = NULL;
-        mutex = NULL;
-        mutexOwned = false;
+    PortCore() :
+            stateMutex(1),
+            packetMutex(1),
+            connectionChange(1),
+            log("port",Logger::get()),
+            face(YARP_NULLPTR),
+            reader(YARP_NULLPTR),
+            adminReader(YARP_NULLPTR),
+            readableCreator(YARP_NULLPTR),
+            eventReporter(YARP_NULLPTR),
+            listening(false),
+            running(false),
+            starting(false),
+            closing(false),
+            finished(false),
+            finishing(false),
+            waitBeforeSend(true),
+            waitAfterSend(true),
+            controlRegistration(true),
+            interruptible(true),
+            interrupted(false),
+            manual(false),
+            events(0),
+            connectionListeners(0),
+            inputCount(0),
+            outputCount(0),
+            dataOutputCount(0),
+            flags(PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT),
+            verbosity(1),
+            logNeeded(false),
+            timeout(-1),
+            counter(1),
+            prop(YARP_NULLPTR),
+            contactable(YARP_NULLPTR),
+            mutex(YARP_NULLPTR),
+            mutexOwned(false),
+            envelopeWriter(true),
+            typeMutex(1),
+            checkedType(false)
+    {
     }
 
     /**
@@ -247,15 +254,6 @@ public:
     void setReadCreator(yarp::os::PortReaderCreator& creator);
 
     /**
-     * Usually this class will handle "handshaking" - establishing
-     * what kind of carrier is in use on a given connection.
-     * This can optionally be suppressed.
-     */
-    void setAutoHandshake(bool autoHandshake) {
-        this->autoHandshake = autoHandshake;
-    }
-
-    /**
      * Upon being asked to send a message, should we wait for
      * any existing message to be sent to all destinations?
      */
@@ -297,8 +295,8 @@ public:
      * @param callback who to call onCompletion() on when message sent.
      */
     bool send(yarp::os::PortWriter& writer,
-              yarp::os::PortReader *reader = NULL,
-              yarp::os::PortWriter *callback = NULL);
+              yarp::os::PortReader *reader = YARP_NULLPTR,
+              yarp::os::PortWriter *callback = YARP_NULLPTR);
 
     /**
      * Send a message with a specific mode (normal or log).
@@ -308,8 +306,8 @@ public:
      */
     bool sendHelper(yarp::os::PortWriter& writer,
                     int mode,
-                    yarp::os::PortReader *reader = NULL,
-                    yarp::os::PortWriter *callback = NULL);
+                    yarp::os::PortReader *reader = YARP_NULLPTR,
+                    yarp::os::PortWriter *callback = YARP_NULLPTR);
 
     /**
      * Shut down port.
@@ -333,8 +331,8 @@ public:
         return address;
     }
 
-    void resetPortName(const String& str) {
-        address = address.addName(str);
+    void resetPortName(const ConstString& str) {
+        address.setName(str);
     }
 
     /**
@@ -357,9 +355,9 @@ public:
     /**
      * Set some extra meta data to pass along with the message
      */
-    void setEnvelope(const String& envelope);
+    void setEnvelope(const ConstString& envelope);
 
-    String getEnvelope();
+    ConstString getEnvelope();
 
     /**
      * Get any meta data associated with the last message received
@@ -394,6 +392,11 @@ public:
      * Set a callback to be notified of changes in port status.
      */
     void setReportCallback(yarp::os::PortReport *reporter);
+
+    /**
+     * Reset the callback to be notified of changes in port status.
+     */
+    void resetReportCallback();
 
     /**
      * Process an administrative message.
@@ -434,14 +437,14 @@ public:
 public:
 
     // documented in PortManager
-    virtual bool addOutput(const String& dest, void *id, OutputStream *os,
+    virtual bool addOutput(const ConstString& dest, void *id, OutputStream *os,
                            bool onlyIfNeeded);
 
     // documented in PortManager
-    virtual void removeOutput(const String& dest, void *id, OutputStream *os);
+    virtual void removeOutput(const ConstString& dest, void *id, OutputStream *os);
 
     // documented in PortManager
-    virtual void removeInput(const String& dest, void *id, OutputStream *os);
+    virtual void removeInput(const ConstString& dest, void *id, OutputStream *os);
 
     // documented in PortManager
     virtual void describe(void *id, OutputStream *os);
@@ -482,7 +485,7 @@ public:
     Property *acquireProperties(bool readOnly);
     void releaseProperties(Property *prop);
 
-    bool setCallbackLock(yarp::os::Mutex *mutex = NULL) {
+    bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) {
         removeCallbackLock();
         if (mutex) {
             this->mutex = mutex;
@@ -498,7 +501,7 @@ public:
         if (mutexOwned&&mutex) {
             delete mutex;
         }
-        mutex = NULL;
+        mutex = YARP_NULLPTR;
         mutexOwned = false;
         return true;
     }
@@ -526,6 +529,33 @@ public:
         return modifier;
     }
 
+    void checkType(PortReader& reader)
+    {
+        typeMutex.wait();
+        if (!checkedType) {
+            if (!typ.isValid()) {
+                typ = reader.getReadType();
+            }
+            checkedType = true;
+        }
+        typeMutex.post();
+    }
+
+    yarp::os::Type getType()
+    {
+        typeMutex.wait();
+        Type t = typ;
+        typeMutex.post();
+        return t;
+    }
+
+    void promiseType(const Type& typ)
+    {
+        typeMutex.wait();
+        this->typ = typ;
+        typeMutex.post();
+    }
+
 private:
 
     // main internal PortCore state and operations
@@ -535,7 +565,7 @@ private:
     SemaphoreImpl connectionChange; ///< signal changes in connections
     Logger log;  ///< message logger
     Face *face;  ///< network server
-    String name; ///< name of port
+    ConstString name; ///< name of port
     yarp::os::Contact address;    ///< network address of port
     yarp::os::PortReader *reader; ///< where to send read events
     yarp::os::PortReader *adminReader; ///< where to send admin read events
@@ -546,7 +576,6 @@ private:
     bool starting;  ///< is the port in its startup phase?
     bool closing;   ///< is the port in its closing phase?
     bool finished;  ///< is the port server thread finished running?
-    bool autoHandshake;  ///< should we automatically negotiate carriers for connections
     bool finishing; ///< is the port server thread trying to finish?
     bool waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
     bool waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
@@ -563,7 +592,7 @@ private:
     int verbosity;  ///< threshold on what warnings or debug messages are shown
     bool logNeeded; ///< port needs to monitor message content
     PortCorePackets packets; ///< a pool for tracking messages currently being sent
-    String envelope;///< user-defined wrapping data
+    ConstString envelope;///< user-defined wrapping data
     float timeout;  ///< a timeout to apply to all network operations
     int counter;    ///< port-unique ids for connections
     yarp::os::Property *prop;  ///< optional unstructured properties associated with port
@@ -571,6 +600,10 @@ private:
     yarp::os::Mutex *mutex; ///< callback optional access control lock
     bool mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
+
+    SemaphoreImpl typeMutex;        ///< control access to type
+    bool checkedType;
+    Type typ;
 
     // port data modifier
     yarp::os::impl::PortDataModifier modifier;
@@ -589,10 +622,16 @@ private:
     int  getPid();
 
     // attach a portmonitor plugin to the port or to a specific connection
-    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, String &errMsg);
+    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, ConstString &errMsg);
 
     // detach the portmonitor from the port or specific connection
     bool dettachPortMonitor(bool isOutput);
+
+    // set the parameter for the portmonitor of the port (if any)
+    bool setParamPortMonitor(yarp::os::Property& param, bool isOutput, yarp::os::ConstString &errMsg);
+
+    // get the parameters from the portmonitor of the port (if any)
+    bool getParamPortMonitor(yarp::os::Property& param, bool isOutput, yarp::os::ConstString &errMsg);
 
     void closeMain();
 
@@ -611,7 +650,7 @@ private:
     void addInput(InputProtocol *ip);
 
     bool removeUnit(const Route& route, bool synch = false,
-                    bool *except = NULL);
+                    bool *except = YARP_NULLPTR);
 
     int getNextIndex() {
         int result = counter;

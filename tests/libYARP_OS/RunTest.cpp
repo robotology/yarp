@@ -70,7 +70,7 @@ public:
 
 class RunTest : public UnitTest {
 public:
-    virtual String getName() { return "RunTest"; }
+    virtual ConstString getName() { return "RunTest"; }
 
     virtual void testRun() {
         //this could be local or using an external nameserver, to be decided

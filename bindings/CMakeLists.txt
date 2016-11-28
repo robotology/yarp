@@ -42,7 +42,7 @@ foreach(lang "Java"
     if(CREATE_${LANG})
       message(STATUS " +++ bindings ${lang} is enabled")
     else()
-      message(STATUS " +++ bindings ${lang} is not enabled")
+      message(STATUS " --- bindings ${lang} is not enabled")
     endif()
   endif()
 endforeach()
@@ -109,9 +109,13 @@ set_source_files_properties(yarp.i PROPERTIES CPLUSPLUS ON)
 ## deprecated methods
 
 if(NOT YARP_NO_DEPRECATED)
-  check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-  if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-    add_definitions(-Wno-deprecated-declarations)
+  if(MSVC)
+    add_definitions(/wd4996)
+  else()
+    check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+    if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
+      add_definitions(-Wno-deprecated-declarations)
+    endif()
   endif()
 endif()
 
@@ -138,7 +142,9 @@ if(CREATE_JAVA)
                 Example1.java)
   include_directories(SYSTEM ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
   set(target_name jyarp)
-  swig_add_module(${target_name} java yarp.i)
+  swig_add_library(${target_name}
+                   LANGUAGE java
+                   SOURCES yarp.i)
   if(PREPARE_CLASS_FILES)
     set(CLASS_FILES)
     foreach(java_file ${JAVA_SRCS})
@@ -209,7 +215,9 @@ if(CREATE_PYTHON)
     set(CMAKE_SWIG_OUTDIR_SAVE ${CMAKE_SWIG_OUTDIR})
     set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/lib/python")
   endif()
-  swig_add_module(${target_name} python yarp.i)
+  swig_add_library(${target_name}
+                   LANGUAGE python
+                   SOURCES yarp.i)
   target_link_libraries(_${target_name} ${PYTHON_LIBRARY})
   # uncomment if we want a debug version of the library
   #add_definitions(-DPy_DEBUG)
@@ -272,7 +280,9 @@ if(CREATE_PERL)
     set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PERLDIR}")
   endif()
 
-  swig_add_module(${target_name} perl5 yarp.i)
+  swig_add_library(${target_name}
+                   LANGUAGE perl5
+                   SOURCES yarp.i)
   set_target_properties(${target_name} PROPERTIES PREFIX "")
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
   if(YARP_COLLISION_AVOIDANCE)
@@ -311,7 +321,9 @@ endif(CREATE_PERL)
 
 if(CREATE_CHICKEN)
   set(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp;${SWIG_COMMON_FLAGS}")
-  swig_add_module(libcyarp chicken yarp.i)
+  swig_add_library(libcyarp
+                   LANGUAGE chicken
+                   SOURCES yarp.i)
   set(YARP_COLLISION_AVOIDANCE TRUE)
 endif(CREATE_CHICKEN)
 
@@ -330,7 +342,9 @@ if(CREATE_ALLEGRO)
   set(allegro_LIBS yarp-allegro.so)
 
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-identifier-converter;lispify;${SWIG_COMMON_FLAGS}")
-  swig_add_module(yarp-allegro allegrocl yarp.i)
+  swig_add_library(yarp-allegro
+                   LANGUAGE allegrocl
+                   SOURCES yarp.i)
 
   string(REGEX REPLACE "\\.cl" ".lisp" allegro_DEST_FILE ${allegro_SRC_FILE})
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${allegro_PROJ_FILE}
@@ -352,7 +366,9 @@ if(CREATE_TCL)
   find_package(TCL REQUIRED)
   include_directories(SYSTEM ${TCL_INCLUDE_PATH})
   link_libraries(${TCL_LIBRARY})
-  swig_add_module(libtclyarp tcl yarp.i)
+  swig_add_library(libtclyarp
+                   LANGUAGE tcl
+                   SOURCES yarp.i)
   set(YARP_COLLISION_AVOIDANCE TRUE)
 endif(CREATE_TCL)
 
@@ -381,7 +397,9 @@ if(CREATE_CSHARP)
 
   if(WIN32 AND NOT CYGWIN)
     option(PREPARE_CLASS_FILES "Prepare NET library" ON)
-    swig_add_module(${target_name} csharp yarp.i)
+    swig_add_library(${target_name}
+                     LANGUAGE csharp
+                     SOURCES yarp.i)
     if(PREPARE_CLASS_FILES)
       add_custom_command(TARGET ${target_name}
                          POST_BUILD
@@ -394,7 +412,9 @@ if(CREATE_CSHARP)
                          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     endif()
   else(WIN32 AND NOT CYGWIN)
-    swig_add_module(${target_name} csharp yarp.i)
+    swig_add_library(${target_name}
+                     LANGUAGE csharp
+                     SOURCES yarp.i)
   endif(WIN32 AND NOT CYGWIN)
   set(YARP_COLLISION_AVOIDANCE TRUE)
 endif(CREATE_CSHARP)
@@ -412,7 +432,9 @@ if(CREATE_RUBY)
   if(YARP_COLLISION_AVOIDANCE)
     set(target_name yarp_ruby)
   endif()
-  swig_add_module(${target_name} ruby yarp.i)
+  swig_add_library(${target_name}
+                   LANGUAGE ruby
+                   SOURCES yarp.i)
   swig_link_libraries(${target_name} ${RUBY_LIBRARY})
   set_target_properties(${target_name} PROPERTIES PREFIX "")
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
@@ -430,7 +452,9 @@ if(CREATE_LUA)
   find_package(Lua REQUIRED)
   set(target_name yarp_lua)
   include_directories(SYSTEM ${LUA_INCLUDE_DIR})
-  swig_add_module(${target_name} lua yarp.i)
+  swig_add_library(${target_name}
+                   LANGUAGE lua
+                   SOURCES yarp.i)
   swig_link_libraries(${target_name} ${LUA_LIBRARY})
   set_target_properties(${target_name} PROPERTIES PREFIX "")
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
@@ -474,7 +498,9 @@ if(CREATE_OCTAVE)
   set(target_name yarp_octave)
   get_filename_component(OCTAVE_INCLUDE_TOP ${OCTAVE_INCLUDE_DIR} DIRECTORY)
   include_directories(SYSTEM ${OCTAVE_INCLUDE_DIRS} ${OCTAVE_INCLUDE_TOP})
-  swig_add_module(${target_name} octave yarp.i)
+  swig_add_library(${target_name}
+                   LANGUAGE octave
+                   SOURCES yarp.i)
   swig_link_libraries(${target_name} ${OCTAVE_LIBRARIES})
   set_target_properties(${target_name} PROPERTIES PREFIX "")
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")

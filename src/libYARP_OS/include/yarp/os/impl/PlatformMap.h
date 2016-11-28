@@ -57,7 +57,7 @@ public:
 };
 #  endif
 #  define PLATFORM_MAP(x,y) ACE_Hash_Map_Manager<x,y,ACE_Null_Mutex>
-#  define PLATFORM_MAP_ITERATOR(x,y,z) ACE_Hash_Map_Entry<x,y> *z = 0/*NULL*/
+#  define PLATFORM_MAP_ITERATOR(x,y,z) ACE_Hash_Map_Entry<x,y> *z = YARP_NULLPTR
 #  define PLATFORM_MAP_ITERATOR_IN_TEMPLATE(x,y,z) PLATFORM_MAP_ITERATOR(x,y,z)
 #  define PLATFORM_MAP_ITERATOR_FIRST(y) ((*y).ext_id_)
 #  define PLATFORM_MAP_ITERATOR_SECOND(y) ((*y).int_id_)

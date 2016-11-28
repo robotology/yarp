@@ -34,7 +34,7 @@ public:
 
 class PortReaderBufferTest : public UnitTest {
 public:
-    virtual String getName() { return "PortReaderBufferTest"; }
+    virtual ConstString getName() { return "PortReaderBufferTest"; }
 
 
     void checkAccept() {

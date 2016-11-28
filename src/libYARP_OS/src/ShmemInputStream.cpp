@@ -115,7 +115,7 @@ bool ShmemInputStreamImpl::Resize()
 
     if (!pNewMap)
     {
-        YARP_ERROR(Logger::get(),String("ShmemOutputStream can't create shared memory"));
+        YARP_ERROR(Logger::get(),ConstString("ShmemOutputStream can't create shared memory"));
         return false;
     }
 

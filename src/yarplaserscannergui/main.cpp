@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
  * Author: Marco Randazzo
  * email:  marco.randazzo@iit.it
@@ -23,12 +23,14 @@
 #include <fstream>
 #include <string>
 #include <stdio.h>
+#include <limits>
 
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include<cv.h>
-#include<highgui.h>
+#include <cv.h>
+#include <highgui.h>
+#include <vector>
 
 #include <yarp/dev/Drivers.h>
 #include <yarp/os/Network.h>
@@ -61,13 +63,6 @@ const CvScalar color_yellow = cvScalar(0,255,255);
 const CvScalar color_black  = cvScalar(0,0,0);
 const CvScalar color_gray   = cvScalar(100,100,100);
 
-struct lasermap_type
-{
-    double x;
-    double y;
-    lasermap_type() {x=y=0.0;}
-};
-
 #define ASPECT_LINE  0
 #define ASPECT_POINT 1
 
@@ -86,9 +81,9 @@ void drawGrid(IplImage *img, double scale)
 */
     char buff [10];
     int  rad_step=0;
-    if   (scale>60) 
+    if   (scale>60)
         rad_step=1;
-    else             
+    else
         rad_step=2;
     for (int rad=0; rad<20; rad+=rad_step)
     {
@@ -113,7 +108,7 @@ void drawRobot (IplImage *img, double robot_radius, double scale)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(v3),color_black);
 }
 
-void drawCompass(const Vector *comp, IplImage *img, bool absolute)
+void drawCompass(const yarp::sig::Vector *comp, IplImage *img, bool absolute)
 {
     int sx = 0;
     int sy = 0;
@@ -128,12 +123,12 @@ void drawCompass(const Vector *comp, IplImage *img, bool absolute)
         double ang;
         if  (absolute) ang = i+180;
         else           ang = i+(*comp)[0]+180;
-        sx = int(-250*sin(ang/180.0*3.14)+img->width/2);
-        sy = int(250*cos(ang/180.0*3.14)+img->height/2);
-        ex = int(-260*sin(ang/180.0*3.14)+img->width/2);
-        ey = int(260*cos(ang/180.0*3.14)+img->height/2);
-        tx = int(-275*sin(ang/180.0*3.14)+img->width/2);
-        ty = int(275*cos(ang/180.0*3.14)+img->height/2);
+        sx = int(-250*sin(ang/180.0*M_PI)+img->width/2);
+        sy = int(250*cos(ang/180.0*M_PI)+img->height/2);
+        ex = int(-260*sin(ang/180.0*M_PI)+img->width/2);
+        ey = int(260*cos(ang/180.0*M_PI)+img->height/2);
+        tx = int(-275*sin(ang/180.0*M_PI)+img->width/2);
+        ty = int(275*cos(ang/180.0*M_PI)+img->height/2);
         cvLine(img,cvPoint(sx,sy),cvPoint(ex,ey),color_black);
         CvSize tempSize;
         int lw;
@@ -190,50 +185,48 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
-void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap, IplImage *img, double angle_tot, int scans, double sens_position, double scale, bool absolute, bool verbose, int aspect)
+void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las, vector<yarp::dev::LaserMeasurementData> *lmap, IplImage *img, double angle_tot, int scans, double sens_position, double scale, bool absolute, bool verbose, int aspect)
 {
     cvZero(img);
-    cvRectangle(img,cvPoint(0,0),cvPoint(img->width,img->height),cvScalar(255,0,0),-1);
+    cvRectangle(img, cvPoint(0, 0), cvPoint(img->width, img->height), cvScalar(255, 0, 0), -1);
     CvPoint center;
 
     double center_angle;
-    if (!absolute) center_angle=0;
-    else center_angle = -180-(*comp)[0];
-    center.x = (int)(img->width/2  + (sens_position*scale)*sin(center_angle/180*3.14) );
-    center.y = (int)(img->height/2 - (sens_position*scale)*cos(center_angle/180*3.14) );
+    if (!absolute) center_angle = 0;
+    else center_angle = -180 - (*comp)[0];
+    center.x = (int)(img->width / 2 + (sens_position*scale)*sin(center_angle / 180 * M_PI));
+    center.y = (int)(img->height / 2 - (sens_position*scale)*cos(center_angle / 180 * M_PI));
 
-    double angle =0;
-    double length=0;
-    static double old_time=0;
+    double angle = 0;
+    double length = 0;
+    static double old_time = 0;
 
-    if (!las || !comp) 
+    if (las==NULL || comp==NULL)
     {
         return;
     }
 
-    double curr_time=yarp::os::Time::now();
-    if (verbose) yError("received vector size:%d ",int(las->size()));
-    static int timeout_count=0;
-    if (curr_time-old_time > 0.40) timeout_count++;
+    double curr_time = yarp::os::Time::now();
+    if (verbose) yError("received vector size:%d ", int(las->size()));
+    static int timeout_count = 0;
+    if (curr_time - old_time > 0.40) timeout_count++;
     if (verbose) yWarning("time:%f timeout:%d\n", curr_time - old_time, timeout_count);
     old_time = curr_time;
     for (int i = 0; i<scans; i++)
     {
-        length=(*las)[i];
-        if (length == INFINITY) continue;
+        double x = 0;
+        double y = 0;
+        (*las)[i].get_cartesian(x, y);
+        if (x == std::numeric_limits<double>::infinity() ||
+            y == std::numeric_limits<double>::infinity()) continue;
 
-        if      (length<0)     length = 0;
-        else if (length>15)    length = 15; //15m maximum
-        angle = (double)i / (double)scans *angle_tot - ((360 - angle_tot) - (360 - angle_tot) / 2);
+        //if (length<0)     length = 0;
+        //else if (length>15)    length = 15; //15m maximum
 
-        //length=i; //this line is for debug only
-        angle-=center_angle;
-        double x = length*scale*cos(angle/180*3.14);
-        double y = -length*scale*sin(angle/180*3.14);
-
+        angle -= center_angle;
         CvPoint ray;
-        ray.x=int(x);
-        ray.y=int(y);
+        ray.x = int(-x*scale);
+        ray.y = int(-y*scale);
         ray.x += center.x;
         ray.y += center.y;
 
@@ -250,16 +243,18 @@ void drawLaser(const Vector *comp, const Vector *las, const lasermap_type *lmap,
 
         if (lmap)
         {
+            double x = 0;
+            double y = 0;
+            (*lmap)[i].get_cartesian(x, y);
             CvPoint ray2;
-            ray2.x=int(lmap[i].x*scale);
-            ray2.y= -int(lmap[i].y*scale);
-            ray2.x += (center.x - int((sens_position*scale)*sin(center_angle/180*M_PI)));
-            ray2.y += (center.y + int((sens_position*scale)*cos(center_angle/180*M_PI)));
-            cvLine(img,center,ray2,color_bwhite,thickness);
+            ray2.x = -int(x*scale);
+            ray2.y = -int(y*scale);
+            ray2.x += (center.x - int((sens_position*scale)*sin(center_angle / 180 * M_PI)));
+            ray2.y += (center.y + int((sens_position*scale)*cos(center_angle / 180 * M_PI)));
+            cvLine(img, center, ray2, color_bwhite, thickness);
         }
     }
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -273,7 +268,7 @@ int main(int argc, char *argv[])
     finder->setDefaultConfigFile("yarplaserscannergui.ini");
     finder->configure(argc, argv);
 
-    double scale = finder->check("scale", Value(100), "global scale factor").asDouble(); 
+    double scale = finder->check("scale", Value(100), "global scale factor").asDouble();
     double robot_radius = finder->check("robot_radius", Value(0.001), "robot radius [m]").asDouble();
     double sens_position = finder->check("sens_position", Value(0), "sens_position [m]").asDouble();
     bool verbose = finder->check("verbose", Value(false), "verbose [0/1]").asBool();
@@ -320,7 +315,7 @@ int main(int argc, char *argv[])
     double angle_tot = (angle_max - angle_min);
     iLas->getHorizontalResolution(angle_step);
     int scans = (int)(angle_tot / angle_step);
-    yarp::sig::Vector laser_data;
+    std::vector<yarp::dev::LaserMeasurementData> laser_data;
 
     BufferedPort<yarp::os::Bottle> laserMapInPort;
     laserMapInPort.open(laser_map_port_name.c_str());
@@ -338,7 +333,6 @@ int main(int argc, char *argv[])
     bool exit = false;
     yarp::sig::Vector compass_data;
     compass_data.resize(3, 0.0);
-    lasermap_type     lasermap_data [1080];
 
     while(!exit)
     {
@@ -348,10 +342,10 @@ int main(int argc, char *argv[])
             if (cmp) compass_data = *cmp;
         }
 
-        iLas->getMeasurementData(laser_data);
+        iLas->getLaserMeasurement(laser_data);
         int laser_data_size = laser_data.size();
 
-        yarp::os::Bottle *las_map = laserMapInPort.read(false);
+        /*yarp::os::Bottle *las_map = laserMapInPort.read(false);
         if (las_map)
         {
             for (unsigned int i=0; i<1080; i++)
@@ -360,11 +354,11 @@ int main(int argc, char *argv[])
                 lasermap_data[i].x = b->get(0).asDouble();
                 lasermap_data[i].y = b->get(1).asDouble();
             }
-        }
+        }*/
 
         //The drawing functions.
         {
-            if (las_map)
+            /*if (las_map)
             {
                 if (laser_data_size != scans)
                 {
@@ -375,15 +369,15 @@ int main(int argc, char *argv[])
                     drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose, aspect);
                 }
             }
-            else
+            else*/
             {
-                if (laser_data_size != scans) 
+                if (laser_data_size != scans)
                 {
                     yWarning() << "Problem detected in size of laser measurement vector";
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose,aspect);
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose, aspect);
                 }
 
             }
@@ -413,13 +407,13 @@ int main(int argc, char *argv[])
             scale*=1.02;
             yInfo("scale factor is now:%.3f",scale);
         }
-        if(keypressed == 's' && scale >15) 
+        if(keypressed == 's' && scale >15)
         {
            //scale-=0.001;
            scale/=1.02;
            yInfo("scale factor is now:%.3f", scale);
         }
-        if(keypressed == 'v' ) 
+        if(keypressed == 'v' )
         {
            verbose= (!verbose);
            if (verbose) yInfo("verbose mode is now ON");
@@ -450,7 +444,7 @@ int main(int argc, char *argv[])
             aspect = aspect + 1;
             if (aspect > 1) aspect = 0;
         }
-        if(keypressed == 'h' || 
+        if(keypressed == 'h' ||
             keypressed == 'H')
         {
             yInfo("available commands:");

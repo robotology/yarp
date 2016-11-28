@@ -217,7 +217,7 @@ public:
      * Make sure to that pixel type and padding quantum are
      * synchronized (you can set these in the FlexImage class).
      */
-    void setExternal(void *data, int imgWidth, int imgHeight);
+    void setExternal(const void *data, int imgWidth, int imgHeight);
 
     /**
     * Access to the internal image buffer.

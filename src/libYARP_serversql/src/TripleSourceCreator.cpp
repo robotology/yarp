@@ -5,8 +5,10 @@
  *
  */
 
-#include "TripleSourceCreator.h"
-#include "SqliteTripleSource.h"
+#include <yarp/serversql/impl/TripleSourceCreator.h>
+
+#include <yarp/conf/compiler.h>
+#include <yarp/serversql/impl/SqliteTripleSource.h>
 
 #ifndef WIN32
 #include <unistd.h>
@@ -20,15 +22,16 @@
 #endif
 
 #include <string>
+using namespace yarp::serversql::impl;
 using namespace std;
 
 
 static bool sql_enact(sqlite3 *db, const char *cmd) {
     //printf("ISSUE %s\n", cmd);
-    int result = sqlite3_exec(db, cmd, NULL, NULL, NULL);
+    int result = sqlite3_exec(db, cmd, YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(db);
-        if (msg!=NULL) {
+        if (msg != YARP_NULLPTR) {
             fprintf(stderr,"Database error: %s\n", msg);
         }
         sqlite3_close(db);
@@ -39,44 +42,43 @@ static bool sql_enact(sqlite3 *db, const char *cmd) {
 }
 
 
-TripleSource *TripleSourceCreator::open(const char *filename, 
+TripleSource *TripleSourceCreator::open(const char *filename,
                                         bool cautious,
                                         bool fresh) {
-    sqlite3 *db = NULL;
+    sqlite3 *db = YARP_NULLPTR;
     if (fresh) {
         int result = access(filename,F_OK);
         if (result==0) {
             fprintf(stderr,"Database needs to be recreated.\n");
             fprintf(stderr,"Please move %s out of the way.\n", filename);
-            return NULL;
+            return YARP_NULLPTR;
         }
 
     }
     int result = sqlite3_open_v2(filename,
                                  &db,
-                                 SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|
-                                 SQLITE_OPEN_NOMUTEX,
-                                 NULL);
+                                 SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_NOMUTEX,
+                                 YARP_NULLPTR);
     if (result!=SQLITE_OK) {
         fprintf(stderr,"Failed to open database %s\n", filename);
-        if (db!=NULL) {
+        if (db != YARP_NULLPTR) {
             sqlite3_close(db);
         }
-        return NULL;
+        return YARP_NULLPTR;
     }
 
 
     string create_main_table = "CREATE TABLE IF NOT EXISTS tags (\n\
-	id INTEGER PRIMARY KEY,\n\
-	rid INTEGER,\n\
-	ns TEXT,\n\
-	name TEXT,\n\
-	value TEXT);";
+    id INTEGER PRIMARY KEY,\n\
+    rid INTEGER,\n\
+    ns TEXT,\n\
+    name TEXT,\n\
+    value TEXT);";
 
-    result = sqlite3_exec(db, create_main_table.c_str(), NULL, NULL, NULL);
+    result = sqlite3_exec(db, create_main_table.c_str(), YARP_NULLPTR, YARP_NULLPTR, YARP_NULLPTR);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(db);
-        if (msg!=NULL) {
+        if (msg != YARP_NULLPTR) {
             fprintf(stderr,"Error in %s: %s\n", filename, msg);
         }
         sqlite3_close(db);
@@ -96,14 +98,14 @@ TripleSource *TripleSourceCreator::open(const char *filename,
 
 
 bool TripleSourceCreator::close() {
-    if (accessor!=NULL) {
+    if (accessor != YARP_NULLPTR) {
         delete accessor;
-        accessor = NULL;
+        accessor = YARP_NULLPTR;
     }
-    if (implementation!=NULL) {
+    if (implementation != YARP_NULLPTR) {
         sqlite3 *db = (sqlite3 *)implementation;
         sqlite3_close(db);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
     return true;
 }

@@ -159,7 +159,7 @@ public:
             {
                 if (v.get(k).asInt() != 42)
                 {
-                    
+
                     ok = false;
                 }
             }
@@ -173,7 +173,7 @@ public:
             {
                 if (v.get(k).asInt() != k)
                 {
-                    
+
                     ok = false;
                 }
             }
@@ -188,16 +188,16 @@ public:
 };
 
 class VectorOfTest : public UnitTest {
-    
+
 public:
-    virtual String getName() { return "VectorOfTest"; }
+    virtual ConstString getName() { return "VectorOfTest"; }
     void checkSendReceiveInt()
     {
         report(0, "check VectorO<int> send receive");
 
         Port portIn;
         Port portOut;
-                       
+
         portOut.open("/harness_sig/vtest/o");
         portIn.open("/harness_sig/vtest/i");
 
@@ -205,14 +205,14 @@ public:
 
         portOut.enableBackgroundWrite(true);
 
-      
+
         VectorOf<int> vector;
         vector.resize(10);
         for (unsigned int k = 0; k < vector.size(); k++)
         {
-            vector[k] = k; 
+            vector[k] = k;
         }
-        
+
         portOut.write(vector);
 
         VectorOf<int> tmp;
@@ -234,7 +234,7 @@ public:
         }
 
         checkTrue(success, "VectorOf<int> was sent and received correctly");
-        
+
         report(0, "check VectorO<int> bottle compatibility");
         //write the same vector again and receive it as a bottle
         portOut.write(vector);
@@ -259,7 +259,7 @@ public:
         checkTrue(success, "VectorOf<int> was received correctly in a Bottle");
     }
 
-  
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkSendReceiveInt();

@@ -265,9 +265,32 @@ void LoggerEngine::logger_thread::run()
             }
 
             std::string bottlestring = b->toString();
-            std::string header = b->get(0).asString();
+            std::string header;
+
+            if (b->get(0).isString())
+            {
+                header = b->get(0).asString();
+            }
+            else
+            {
+                fprintf(stderr, "ERROR: unknown log format!\n");
+                unknown_format_received++;
+                continue;
+            }
+            
             MessageEntry body;
-            std::string s = b->get(1).asString();
+            std::string s;
+
+            if (b->get(1).isString())
+            {
+                s = b->get(1).asString();
+            }
+            else
+            {
+                fprintf(stderr, "ERROR: unknown log format!\n");
+                unknown_format_received++;
+                continue;
+            }
 
             body.text = s;
             char ttstr [20];

@@ -17,7 +17,7 @@ using namespace yarp::os;
 
 class SoundTest : public UnitTest {
 public:
-    virtual String getName() { return "SoundTest"; }
+    virtual ConstString getName() { return "SoundTest"; }
 
     void checkSetGet() {
         report(0,"check set/get sample...");

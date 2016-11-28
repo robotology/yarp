@@ -7,33 +7,11 @@
 #include <yarp/os/Log.h>
 #include <yarp/math/Math.h>
 #include <yarp/math/SVD.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_matrix_double.h>
+#include <yarp/math/Quaternion.h>
 
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_vector_double.h>
-#include <gsl/gsl_blas.h>
-
-#include <gsl/gsl_linalg.h>
-
-#include <gsl/gsl_version.h>
-#include <gsl/gsl_eigen.h>
+#include <cmath>
 
 using namespace yarp::sig;
-
-gsl_vector_view getView(const Vector &v)
-{
-    gsl_vector_view ret=gsl_vector_view_array(const_cast<double *>(v.data()), v.size());
-    return ret;
-}
-
-gsl_vector_view getView(Vector &v)
-{
-    gsl_vector_view ret=gsl_vector_view_array(v.data(),
-        v.size());
-    return ret;
-}
 
 Vector yarp::math::operator+(const Vector &a, const double &s)
 {
@@ -161,30 +139,6 @@ Vector yarp::math::operator*(double k, const Vector &b)
     return operator*(b,k);
 }
 
-Matrix yarp::math::operator*(const Matrix &a, const Matrix &b)
-{
-    yAssert(a.cols()==b.rows());
-    Matrix c(a.rows(), b.cols());
-    cblas_dgemm (CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-        c.rows(), c.cols(), a.cols(),
-        1.0, a.data(), a.cols(), b.data(), b.cols(), 0.0,
-        c.data(), c.cols());
-
-    return c;
-}
-
-Matrix& yarp::math::operator*=(Matrix &a, const Matrix &b)
-{
-    yAssert(a.cols()==b.rows());
-    Matrix a2(a);   // a copy of a
-    a.resize(a.rows(), b.cols());
-    cblas_dgemm (CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-        a2.rows(), b.cols(), a2.cols(),
-        1.0, a2.data(), a2.cols(), b.data(), b.cols(), 0.0,
-        a.data(), a.cols());
-    return a;
-}
-
 Matrix yarp::math::operator*(const double k, const Matrix &M)
 {
     Matrix res(M);
@@ -217,41 +171,6 @@ Vector& yarp::math::operator*=(Vector &a, const Vector &b)
     for (size_t i=0; i<n; i++)
         a[i]*=b[i];
     return a;
-}
-
-Vector yarp::math::operator*(const Vector &a, const Matrix &m)
-{
-    yAssert(a.size()==(size_t)m.rows());
-    Vector ret((size_t)m.cols());
-
-    gsl_blas_dgemv(CblasTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
-        (const gsl_vector *) a.getGslVector(), 0.0, 
-        (gsl_vector *) ret.getGslVector());
-    return ret;
-}
-
-Vector& yarp::math::operator*=(Vector &a, const Matrix &m)
-{
-    yAssert(a.size()==(size_t)m.rows());
-    Vector a2(a);
-    a.resize(m.cols());
-    gsl_blas_dgemv(CblasTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
-        (const gsl_vector *) a2.getGslVector(), 0.0, 
-        (gsl_vector *) a.getGslVector());
-    return a;
-}
-
-Vector yarp::math::operator*(const Matrix &m, const Vector &a)
-{
-    yAssert((size_t)m.cols()==a.size());
-    Vector ret((size_t)m.rows());
-    ret=0.0;
-
-    gsl_blas_dgemv(CblasNoTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
-        (const gsl_vector *) a.getGslVector(), 0.0, 
-        (gsl_vector *) ret.getGslVector());
-
-    return ret;
 }
 
 Vector yarp::math::operator/(const Vector &a, const Vector &b)
@@ -332,118 +251,6 @@ Vector yarp::math::ones(int s)
     return Vector(s, 1.0);
 }
 
-Matrix yarp::math::pile(const Matrix &m1, const Matrix &m2)
-{
-    int c = m1.cols();
-    yAssert(c==m2.cols());
-    int r1 = m1.rows();
-    int r2 = m2.rows();
-    Matrix res(r1+r2, c);
-    cblas_dcopy(r1*c, m1.data(), 1, res.data(), 1); // copy first r1 rows
-    cblas_dcopy(r2*c, m2.data(), 1, res[r1], 1);    // copy last r2 rows
-    return res;
-}
-
-Matrix yarp::math::pile(const Matrix &m, const Vector &v)
-{
-    int c = m.cols();
-    yAssert((size_t)c==v.size());
-    int r = m.rows();
-    Matrix res(r+1, c);
-    cblas_dcopy(r*c, m.data(), 1, res.data(), 1);  // copy first r rows
-    cblas_dcopy(c, v.data(), 1, res[r], 1);         // copy last row
-    return res;
-}
-
-Matrix yarp::math::pile(const Vector &v, const Matrix &m)
-{
-    int c = m.cols();
-    yAssert((size_t)c==v.size());
-    int r = m.rows();
-    Matrix res(r+1, c);
-    cblas_dcopy(c, v.data(), 1, res.data(), 1);         // copy first row
-    cblas_dcopy(r*c, m.data(), 1, res[1], 1);           // copy last r rows    
-    return res;
-}
-
-Matrix yarp::math::pile(const Vector &v1, const Vector &v2)
-{
-    size_t n = v1.size();
-    yAssert(n==v2.size());
-    Matrix res(2, (int)n);
-    cblas_dcopy(n, v1.data(), 1, res.data(), 1);         // copy first row
-    cblas_dcopy(n, v2.data(), 1, res[1], 1);           // copy last r rows    
-    return res;
-}
-
-Matrix yarp::math::cat(const Matrix &m1, const Matrix &m2)
-{
-    int r = m1.rows();
-    yAssert(r==m2.rows());
-    int c1 = m1.cols();
-    int c2 = m2.cols();
-    Matrix res(r, c1+c2);
-    for(int i=0;i<r;i++){
-        cblas_dcopy(c1, m1[i], 1, res[i], 1);       // copy first c1 cols of i-th row
-        cblas_dcopy(c2, m2[i], 1, res[i]+c1, 1);    // copy last c2 cols of i-th row
-    }
-    return res;
-}
-
-Matrix yarp::math::cat(const Matrix &m, const Vector &v)
-{
-    int r = m.rows();
-    yAssert((size_t)r==v.size());
-    int c = m.cols();
-    Matrix res(r, c+1);
-    for(int i=0;i<r;i++){
-        cblas_dcopy(c, m[i], 1, res[i], 1);     // copy first c cols of i-th row
-        res(i,c) = v(i);                        // copy last element of i-th row
-    }
-    return res;
-}
-
-Matrix yarp::math::cat(const Vector &v, const Matrix &m)
-{
-    int r = m.rows();
-    yAssert((size_t)r==v.size());
-    int c = m.cols();
-    Matrix res(r, c+1);
-    for(int i=0;i<r;i++){
-        res(i,0) = v(i);                        // copy first element of i-th row
-        cblas_dcopy(c, m[i], 1, res[i]+1, 1);   // copy last c cols of i-th row
-    }
-    return res;
-}
-
-Vector yarp::math::cat(const Vector &v1, const Vector &v2)
-{
-    int n1 = v1.size();
-    int n2 = v2.size();
-    Vector res(n1+n2);
-    cblas_dcopy(n1, v1.data(), 1, res.data(), 1);       // copy first n1 elements
-    cblas_dcopy(n2, v2.data(), 1, res.data()+n1, 1);    // copy last n2 elements
-    return res;
-}
-
-Vector yarp::math::cat(const Vector &v, double s)
-{
-    int n = v.size();
-    Vector res(n+1);
-    cblas_dcopy(n, v.data(), 1, res.data(), 1);     // copy first n elements
-    res(n) = s;                                       // copy last element
-    return res;
-}
-
-Vector yarp::math::cat(double s, const Vector &v)
-{
-    int n = v.size();
-    Vector res(n+1);    
-    res(0) = s;                                       // copy last element
-    cblas_dcopy(n, v.data(), 1, res.data()+1, 1);     // copy first n elements
-    return res;
-}
-
 Vector yarp::math::cat(double s1, double s2)
 {
     Vector res(2);
@@ -480,12 +287,6 @@ Vector yarp::math::cat(double s1, double s2, double s3, double s4, double s5)
     res(3) = s4;
     res(4) = s5;
     return res;
-}
-
-double yarp::math::dot(const Vector &a, const Vector &b)
-{
-    yAssert(a.size()==b.size());
-    return cblas_ddot(a.size(), a.data(),1, b.data(),1);
 }
 
 Matrix yarp::math::outerProduct(const Vector &a, const Vector &b)
@@ -539,11 +340,6 @@ bool yarp::math::crossProductMatrix(const Vector &v, Matrix &res)
     return true;
 }
 
-double yarp::math::norm(const Vector &v)
-{
-    return gsl_blas_dnrm2((const gsl_vector*) v.getGslVector());
-}
-
 double yarp::math::norm2(const Vector &v)
 {
     return dot(v,v);
@@ -571,69 +367,6 @@ double yarp::math::findMin(const Vector &v)
     return ret;
 }
 
-double yarp::math::det(const Matrix& in) {
-    int m = in.rows();
-    double ret;
-    int sign = 0;
-
-    Matrix LU(in);
-
-    gsl_permutation* permidx = gsl_permutation_calloc(m);
-    gsl_linalg_LU_decomp((gsl_matrix *) LU.getGslMatrix(), permidx, &sign);
-    ret = gsl_linalg_LU_det((gsl_matrix *) LU.getGslMatrix(), sign); 
-    gsl_permutation_free(permidx);
-
-    return ret;
-}
-
-Matrix yarp::math::luinv(const Matrix& in) {
-    int m = in.rows();
-    int n = in.cols();
-    int sign = 0;
-    // assert m == n?
-
-    Matrix LU(in);
-    Matrix ret(m, n);
-    gsl_permutation* permidx = gsl_permutation_calloc(m);
-
-    gsl_linalg_LU_decomp((gsl_matrix *) LU.getGslMatrix(), permidx, &sign);
-    gsl_linalg_LU_invert((gsl_matrix *) LU.getGslMatrix(), permidx, 
-        (gsl_matrix *) ret.getGslMatrix());
-    gsl_permutation_free(permidx);
-    return ret;
-}
-
-bool yarp::math::eigenValues(const Matrix& in, Vector &real, Vector &img)
-{
-    // return error for non-square matrix
-    if(in.cols() != in.rows())
-        return false;
-
-    real.clear();
-    img.clear();
-
-#if (GSL_MAJOR_VERSION >= 2 || (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14))
-    size_t n = in.rows();
-    gsl_vector_complex *eval = gsl_vector_complex_alloc(n);
-    gsl_matrix_complex *evec = gsl_matrix_complex_alloc(n, n);
-    gsl_eigen_nonsymmv_workspace * w = gsl_eigen_nonsymmv_alloc(n);    
-    gsl_eigen_nonsymmv ((gsl_matrix *)in.getGslMatrix(), eval, evec, w);
-    for(size_t i=0; i<n; i++)
-    {
-        gsl_complex eval_i = gsl_vector_complex_get(eval, i);
-        real.push_back(GSL_REAL(eval_i));
-        img.push_back(GSL_IMAG(eval_i));
-    }
-    gsl_eigen_nonsymmv_free(w);
-    gsl_vector_complex_free(eval);
-    gsl_matrix_complex_free(evec);
-    return true;
-
-#else
-    return false;
-#endif
-}
-
 #ifndef YARP_NO_DEPRECATED
 bool yarp::math::eingenValues(const Matrix& in, Vector &real, Vector &img) {
     return eigenValues(in, real, img);
@@ -645,8 +378,8 @@ Matrix yarp::math::chinv(const Matrix& in)
 {
     Matrix ret(in);
 
-    gsl_linalg_cholesky_decomp((gsl_matrix *) ret.getGslMatrix());
-    gsl_linalg_cholesky_invert((gsl_matrix *) ret.getGslMatrix());
+    gsl_linalg_cholesky_decomp((gsl_matrix *) GslMartix(ret).getGslMatrix());
+    gsl_linalg_cholesky_invert((gsl_matrix *) GslMartix(ret).getGslMatrix());
 
     return ret;
 }
@@ -669,11 +402,7 @@ Vector yarp::math::sign(const Vector &v)
 
 Vector yarp::math::dcm2axis(const Matrix &R)
 {
-    if ((R.rows()<3) || (R.cols()<3))
-    {
-        yError("dcm2axis() failed");
-        return Vector(0);
-    }
+    yAssert((R.rows()>=3) && (R.cols()>=3));
 
     Vector v(4);
     v[0]=R(2,1)-R(1,2);
@@ -715,11 +444,7 @@ Vector yarp::math::dcm2axis(const Matrix &R)
 
 Matrix yarp::math::axis2dcm(const Vector &v)
 {
-    if (v.length()<4)
-    {
-        yError("axis2dcm() failed");
-        return Matrix(0,0);
-    }
+    yAssert(v.length()>=4);
 
     Matrix R=eye(4,4);
 
@@ -756,11 +481,7 @@ Matrix yarp::math::axis2dcm(const Vector &v)
 
 Vector yarp::math::dcm2euler(const Matrix &R)
 {
-    if ((R.rows()<3) || (R.cols()<3))
-    {
-        yError("dcm2euler() failed");
-        return Vector(0);
-    }
+    yAssert((R.rows()>=3) && (R.cols()>=3));
 
     Vector v(3);
     bool singularity=false;
@@ -798,11 +519,7 @@ Vector yarp::math::dcm2euler(const Matrix &R)
 
 Matrix yarp::math::euler2dcm(const Vector &v)
 {
-    if (v.length()<3)
-    {
-        yError("euler2dcm() failed");
-        return Matrix(0,0);
-    }
+    yAssert(v.length()>=3);
 
     Matrix Rza=eye(4,4); Matrix Ryb=eye(4,4);  Matrix Rzg=eye(4,4);
     double alpha=v[0];   double ca=cos(alpha); double sa=sin(alpha);
@@ -818,11 +535,7 @@ Matrix yarp::math::euler2dcm(const Vector &v)
 
 Vector yarp::math::dcm2rpy(const Matrix &R)
 {
-    if ((R.rows()<3) || (R.cols()<3))
-    {
-        yError("dcm2rpy() failed");
-        return Vector(0);
-    }
+    yAssert((R.rows()>=3) && (R.cols()>=3));
 
     Vector v(3);
     bool singularity=false;
@@ -858,11 +571,7 @@ Vector yarp::math::dcm2rpy(const Matrix &R)
 
 Matrix yarp::math::rpy2dcm(const Vector &v)
 {
-    if (v.length()<3)
-    {
-        yError("rpy2dcm() failed");
-        return Matrix(0,0);
-    }
+    yAssert(v.length()>=3);
 
     Matrix Rz=eye(4,4); Matrix Ry=eye(4,4);   Matrix Rx=eye(4,4);
     double roll=v[0];   double cr=cos(roll);  double sr=sin(roll);
@@ -876,97 +585,9 @@ Matrix yarp::math::rpy2dcm(const Vector &v)
     return Rz*Ry*Rx;
 }
 
-Vector yarp::math::dcm2quat(const Matrix &R)
-{
-    if ((R.rows()<3) || (R.cols()<3))
-    {
-        yError("dcm2quat() failed");
-        return Vector(0);
-    }
-    
-    Vector q(4,0.0);
-    double tr=R(0,0)+R(1,1)+R(2,2);
-
-    if (tr>0.0)
-    {
-        double sqtrp1=sqrt(tr+1.0);
-        double sqtrp12=2.0*sqtrp1;
-        q[0]=0.5*sqtrp1;
-        q[1]=(R(1,2)-R(2,1))/sqtrp12;
-        q[2]=(R(2,0)-R(0,2))/sqtrp12;
-        q[3]=(R(0,1)-R(1,0))/sqtrp12;
-    }
-    else if ((R(1,1)>R(0,0)) && (R(1,1)>R(2,2)))
-    {
-        double sqdip1=sqrt(R(1,1)-R(0,0)-R(2,2)+1.0);            
-        q[2]=0.5*sqdip1; 
-        
-        if (sqdip1>0.0)
-            sqdip1=0.5/sqdip1;
-        
-        q[0]=(R(2,0)-R(0,2))*sqdip1; 
-        q[1]=(R(0,1)+R(1,0))*sqdip1; 
-        q[3]=(R(1,2)+R(2,1))*sqdip1; 
-    }
-    else if (R(2,2)>R(0,0))
-    {
-        double sqdip1=sqrt(R(2,2)-R(0,0)-R(1,1)+1.0);            
-        q[3]=0.5*sqdip1; 
-        
-        if (sqdip1>0.0)
-            sqdip1=0.5/sqdip1;
-        
-        q[0]=(R(0,1)-R(1,0))*sqdip1;
-        q[1]=(R(2,0)+R(0,2))*sqdip1; 
-        q[2]=(R(1,2)+R(2,1))*sqdip1; 
-    }
-    else
-    {
-        double sqdip1=sqrt(R(0,0)-R(1,1)-R(2,2)+1.0);            
-        q[1]=0.5*sqdip1;
-        
-        if (sqdip1>0.0)
-            sqdip1=0.5/sqdip1;
-        
-        q[0]=(R(1,2)-R(2,1))*sqdip1; 
-        q[2]=(R(0,1)+R(1,0))*sqdip1; 
-        q[3]=(R(2,0)+R(0,2))*sqdip1; 
-    }
-
-    return q;
-}
-
-Matrix yarp::math::quat2dcm(const Vector &q)
-{
-    if (q.length()<4)
-    {
-        yError("quat2dcm() failed");
-        return Matrix(0,0);
-    }
-
-    Vector qin=(1.0/norm(q))*q;
-
-    Matrix R=eye(4,4);
-    R(0,0)=qin[0]*qin[0]+qin[1]*qin[1]-qin[2]*qin[2]-qin[3]*qin[3];
-    R(0,1)=2.0*(qin[1]*qin[2]+qin[0]*qin[3]);
-    R(0,2)=2.0*(qin[1]*qin[3]-qin[0]*qin[2]);
-    R(1,0)=2.0*(qin[1]*qin[2]-qin[0]*qin[3]);
-    R(1,1)=qin[0]*qin[0]-qin[1]*qin[1]+qin[2]*qin[2]-qin[3]*qin[3];
-    R(1,2)=2.0*(qin[2]*qin[3]+qin[0]*qin[1]);
-    R(2,0)=2.0*(qin[1]*qin[3]+qin[0]*qin[2]);
-    R(2,1)=2.0*(qin[2]*qin[3]-qin[0]*qin[1]);
-    R(2,2)=qin[0]*qin[0]-qin[1]*qin[1]-qin[2]*qin[2]+qin[3]*qin[3];
-
-    return R;
-}
-
 Matrix yarp::math::SE3inv(const Matrix &H)
-{    
-    if ((H.rows()!=4) || (H.cols()!=4))
-    {
-        yError("SE3inv() failed");
-        return Matrix(0,0);
-    }
+{
+    yAssert((H.rows()==4) && (H.cols()==4));
 
     Vector p(4);
     p[0]=H(0,3);
@@ -987,12 +608,7 @@ Matrix yarp::math::SE3inv(const Matrix &H)
 
 Matrix yarp::math::adjoint(const Matrix &H)
 {
-    if ((H.rows()!=4) || (H.cols()!=4))
-    {
-        yError("adjoint() failed: roto-translational matrix sized %dx%d instead of 4x4",
-               H.rows(),H.cols());
-        return Matrix(0,0);
-    }
+    yAssert((H.rows()==4) && (H.cols()==4));
 
     // the skew matrix coming from the translational part of H: S(r)
     Matrix S(3,3);
@@ -1018,13 +634,8 @@ Matrix yarp::math::adjoint(const Matrix &H)
 
 Matrix yarp::math::adjointInv(const Matrix &H)
 {
-    if ((H.rows()!=4) || (H.cols()!=4))
-    {
-        yError("adjointInv() failed: roto-translational matrix sized %dx%d instead of 4x4",
-               H.rows(),H.cols());
-        return Matrix(0,0);
-    }
-    
+    yAssert((H.rows()==4) && (H.cols()==4));
+
     // R^T
     Matrix Rt = H.submatrix(0,2,0,2).transposed();
     // R^T * r

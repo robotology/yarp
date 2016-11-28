@@ -23,8 +23,10 @@
 #  endif
 #  ifdef YARP_NO_DEPRECATED
 #    define YARP_tcpros_carrier_DEPRECATED_API YARP_DEPRECATED
+#    define YARP_tcpros_carrier_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X)
 #  else
 #    define YARP_tcpros_carrier_DEPRECATED_API YARP_DEPRECATED YARP_wire_rep_utils_API
+#    define YARP_tcpros_carrier_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X) YARP_wire_rep_utils_API
 #  endif
 #endif
 

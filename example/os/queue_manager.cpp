@@ -81,8 +81,7 @@ private:
 public:
     QueueManager() : mutex(1) {
         attach(port);
-        Contact c = Contact::byName("/help");
-        c = c.addSocket("tcp","localhost",80);
+        Contact c("/help", "tcp", "localhost", 80);
         port.open(c);
     }
 

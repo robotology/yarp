@@ -61,6 +61,7 @@ void Module::swap(const Module &mod)
     strBroker = mod.strBroker;
     bNeedDeployer = mod.bNeedDeployer;
     strPrefix = mod.strPrefix;
+    strEnvironemnt = mod.strEnvironemnt;
     strBasePrefix = mod.strBasePrefix;
     strDisplay = mod.strDisplay;
     modOwner = mod.modOwner;    
@@ -228,6 +229,7 @@ void Module::clear(void)
     strStdio.clear();
     strBroker.clear();
     strPrefix.clear();
+    strEnvironemnt.clear();
     strBasePrefix.clear();
     strDisplay.clear();
     for(ResourcePIterator itr = resources.begin();

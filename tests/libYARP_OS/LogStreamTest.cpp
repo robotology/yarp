@@ -14,7 +14,7 @@
 
 class LogStreamTest : public yarp::os::impl::UnitTest {
 public:
-    virtual yarp::os::impl::String getName() { return "LogStreamTest"; }
+    virtual yarp::os::ConstString getName() { return "LogStreamTest"; }
 
     void checkLogStream() {
         int i = 13;

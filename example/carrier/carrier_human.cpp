@@ -8,7 +8,7 @@
 #include <yarp/os/all.h>
 
 #include <yarp/os/Carrier.h>
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
@@ -323,7 +323,7 @@ public:
 
 int main(int argc, char *argv[]) {
     yarp::os::Network yarp;
-    yarp::os::impl::Carriers::addCarrierPrototype(new HumanCarrier);
+    yarp::os::Carriers::addCarrierPrototype(new HumanCarrier);
 
     if (argc<2) {
         yInfo() << "Please run in two terminals as:\n";

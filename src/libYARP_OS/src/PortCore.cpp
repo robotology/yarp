@@ -72,7 +72,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
     yAssert(running==false);
     yAssert(closing==false);
     yAssert(finished==false);
-    yAssert(face==NULL);
+    yAssert(face==YARP_NULLPTR);
 
     // Try to put the port on the network, using the user-supplied
     // address (which may be incomplete).  You can think of
@@ -85,7 +85,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
     face = Carriers::listen(this->address);
 
     // We failed, abort.
-    if (face==NULL) {
+    if (face==YARP_NULLPTR) {
         stateMutex.post();
         return false;
     }
@@ -94,7 +94,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
     if (this->address.getPort()<=0) {
         this->address = face->getLocalAddress();
         if (this->address.getRegName()=="...") {
-            this->address = this->address.addName(String("/") + this->address.getHost() + "_" + NetType::toString(this->address.getPort()));
+            this->address.setName(ConstString("/") + this->address.getHost() + "_" + NetType::toString(this->address.getPort()));
             setName(this->address.getRegName());
         }
 
@@ -107,7 +107,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
 
     // Now that we are on the network, we can let the name server know this.
     if (shouldAnnounce) {
-        if (!(NetworkBase::getLocalMode()&&NetworkBase::getQueryBypass()==NULL)) {
+        if (!(NetworkBase::getLocalMode()&&NetworkBase::getQueryBypass()==YARP_NULLPTR)) {
             ConstString portName = address.getRegName().c_str();
             Bottle cmd, reply;
             cmd.addString("announce");
@@ -125,21 +125,21 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
 void PortCore::setReadHandler(PortReader& reader) {
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(running==false);
-    yAssert(this->reader==NULL);
+    yAssert(this->reader==YARP_NULLPTR);
     this->reader = &reader;
 }
 
 void PortCore::setAdminReadHandler(PortReader& reader) {
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(running==false);
-    yAssert(this->adminReader==NULL);
+    yAssert(this->adminReader==YARP_NULLPTR);
     this->adminReader = &reader;
 }
 
 void PortCore::setReadCreator(PortReaderCreator& creator) {
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(running==false);
-    yAssert(this->readableCreator==NULL);
+    yAssert(this->readableCreator==YARP_NULLPTR);
     this->readableCreator = &creator;
 }
 
@@ -180,13 +180,13 @@ void PortCore::run() {
     while (!shouldStop) {
 
         // Block and wait for a connection
-        InputProtocol *ip = NULL;
+        InputProtocol *ip = YARP_NULLPTR;
         ip = face->read();
 
         stateMutex.wait();
 
         // Attach the connection to this port and update its timeout setting
-        if (ip!=NULL) {
+        if (ip!=YARP_NULLPTR) {
             ip->attachPort(contactable);
             YARP_DEBUG(log,"PortCore received something");
             if (timeout>0) {
@@ -206,18 +206,18 @@ void PortCore::run() {
         // It starts life as an input connection (although it
         // may later morph into an output).
         if (!shouldStop) {
-            if (ip!=NULL) {
+            if (ip!=YARP_NULLPTR) {
                 addInput(ip);
             }
             YARP_DEBUG(log,"PortCore spun off a connection");
-            ip = NULL;
+            ip = YARP_NULLPTR;
         }
 
         // If the connection wasn't spun off, just shut it down.
-        if (ip!=NULL) {
+        if (ip!=YARP_NULLPTR) {
             ip->close();
             delete ip;
-            ip = NULL;
+            ip = YARP_NULLPTR;
         }
 
         // Remove any defunct connections.
@@ -252,7 +252,7 @@ void PortCore::close() {
 
     if (prop) {
         delete prop;
-        prop = NULL;
+        prop = YARP_NULLPTR;
     }
     modifier.releaseOutModifier();
     modifier.releaseInModifier();
@@ -326,7 +326,7 @@ void PortCore::interrupt() {
     // which is reserved for giving blocking readers a chance to
     // update their state.
     stateMutex.wait();
-    if (reader!=NULL) {
+    if (reader!=YARP_NULLPTR) {
         YARP_DEBUG(log,"sending update-state message to listener");
         StreamConnectionReader sbr;
         lockCallback();
@@ -363,18 +363,18 @@ void PortCore::closeMain() {
     // This is because other ports may need to talk to the server
     // to organize details of how a connection should be broken down.
     bool done = false;
-    String prevName = "";
+    ConstString prevName = "";
     while (!done) {
         done = true;
-        String removeName = "";
+        ConstString removeName = "";
         stateMutex.wait();
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
-            if (unit!=NULL) {
+            if (unit!=YARP_NULLPTR) {
                 if (unit->isInput()) {
                     if (!unit->isDoomed()) {
                         Route r = unit->getRoute();
-                        String s = r.getFromName();
+                        ConstString s = r.getFromName();
                         if (s.length()>=1) {
                             if (s[0]=='/') {
                                 if (s!=getName()) {
@@ -392,7 +392,7 @@ void PortCore::closeMain() {
         }
         stateMutex.post();
         if (!done) {
-            YARP_DEBUG(log,String("requesting removal of connection from ")+
+            YARP_DEBUG(log,ConstString("requesting removal of connection from ")+
                        removeName);
             int result = Companion::disconnect(removeName.c_str(),
                                                getName().c_str(),
@@ -415,7 +415,7 @@ void PortCore::closeMain() {
         stateMutex.wait();
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
-            if (unit!=NULL) {
+            if (unit!=YARP_NULLPTR) {
                 if (unit->isOutput()&&!unit->isFinished()) {
                     removeRoute = unit->getRoute();
                     if (removeRoute.getFromName()==getName()) {
@@ -446,7 +446,7 @@ void PortCore::closeMain() {
         // a message to it.  Then join it, it is done.
         if (!manual) {
             OutputProtocol *op = face->write(address);
-            if (op!=NULL) {
+            if (op!=YARP_NULLPTR) {
                 op->close();
                 delete op;
             }
@@ -473,27 +473,27 @@ void PortCore::closeMain() {
     // There should be no other threads at this point and we
     // can stop listening on the network.
     if (listening) {
-        yAssert(face!=NULL);
+        yAssert(face!=YARP_NULLPTR);
         face->close();
         delete face;
-        face = NULL;
+        face = YARP_NULLPTR;
         listening = false;
     }
 
     // Check if the client is waiting for input.  If so, wake them up
     // with the bad news.  An empty message signifies a request to
     // check the port state.
-    if (reader!=NULL) {
+    if (reader!=YARP_NULLPTR) {
         YARP_DEBUG(log,"sending end-of-port message to listener");
         StreamConnectionReader sbr;
         reader->read(sbr);
-        reader = NULL;
+        reader = YARP_NULLPTR;
     }
 
     // We may need to unregister the port with the name server.
     if (stopRunning) {
-        String name = getName();
-        if (name!=String("")) {
+        ConstString name = getName();
+        if (name!=ConstString("")) {
             if (controlRegistration) {
                 NetworkBase::unregisterName(name.c_str());
             }
@@ -510,7 +510,7 @@ void PortCore::closeMain() {
     yAssert(closing==false);
     yAssert(finished==false);
     yAssert(finishing==false);
-    yAssert(face==NULL);
+    yAssert(face==YARP_NULLPTR);
 }
 
 
@@ -534,14 +534,14 @@ void PortCore::closeUnits() {
     // so we can go ahead and shut them down and delete them.
     for (unsigned int i=0; i<units.size(); i++) {
         PortCoreUnit *unit = units[i];
-        if (unit!=NULL) {
+        if (unit!=YARP_NULLPTR) {
             YARP_DEBUG(log,"closing a unit");
             unit->close();
             YARP_DEBUG(log,"joining a unit");
             unit->join();
             delete unit;
             YARP_DEBUG(log,"deleting a unit");
-            units[i] = NULL;
+            units[i] = YARP_NULLPTR;
         }
     }
 
@@ -556,16 +556,16 @@ void PortCore::reapUnits() {
     if (!finished) {
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
-            if (unit!=NULL) {
+            if (unit!=YARP_NULLPTR) {
                 if (unit->isDoomed()&&!unit->isFinished()) {
-                    String s = unit->getRoute().toString();
-                    YARP_DEBUG(log,String("Informing connection ") +
+                    ConstString s = unit->getRoute().toString();
+                    YARP_DEBUG(log,ConstString("Informing connection ") +
                                s + " that it is doomed");
                     unit->close();
-                    YARP_DEBUG(log,String("Closed connection ") +
+                    YARP_DEBUG(log,ConstString("Closed connection ") +
                                s);
                     unit->join();
-                    YARP_DEBUG(log,String("Joined thread of connection ") +
+                    YARP_DEBUG(log,ConstString("Joined thread of connection ") +
                                s);
                 }
             }
@@ -598,16 +598,16 @@ void PortCore::cleanUnits(bool blocking) {
         // First, we delete and null out any defunct entries in the list.
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
-            if (unit!=NULL) {
-                YARP_DEBUG(log,String("| checking connection ") + unit->getRoute().toString() + " " + unit->getMode());
+            if (unit!=YARP_NULLPTR) {
+                YARP_DEBUG(log,ConstString("| checking connection ") + unit->getRoute().toString() + " " + unit->getMode());
                 if (unit->isFinished()) {
-                    String con = unit->getRoute().toString();
-                    YARP_DEBUG(log,String("|   removing connection ") + con);
+                    ConstString con = unit->getRoute().toString();
+                    YARP_DEBUG(log,ConstString("|   removing connection ") + con);
                     unit->close();
                     unit->join();
                     delete unit;
-                    units[i] = NULL;
-                    YARP_DEBUG(log,String("|   removed connection ") + con);
+                    units[i] = YARP_NULLPTR;
+                    YARP_DEBUG(log,ConstString("|   removed connection ") + con);
                 } else {
                     // No work to do except updating connection counts.
                     if (!unit->isDoomed()) {
@@ -632,10 +632,10 @@ void PortCore::cleanUnits(bool blocking) {
         // the end of the list ...
         unsigned int rem = 0;
         for (unsigned int i2=0; i2<units.size(); i2++) {
-            if (units[i2]!=NULL) {
+            if (units[i2]!=YARP_NULLPTR) {
                 if (rem<i2) {
                     units[rem] = units[i2];
-                    units[i2] = NULL;
+                    units[i2] = YARP_NULLPTR;
                 }
                 rem++;
             }
@@ -664,12 +664,13 @@ void PortCore::addInput(InputProtocol *ip) {
     // PortCore#units.  The unit will have its own thread associated
     // with it.
 
-    yAssert(ip!=NULL);
+    yAssert(ip!=YARP_NULLPTR);
     stateMutex.wait();
     PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                getNextIndex(),
-                                               ip,autoHandshake,false);
-    yAssert(unit!=NULL);
+                                               ip,
+                                               false);
+    yAssert(unit!=YARP_NULLPTR);
     unit->start();
     units.push_back(unit);
     YMSG(("there are now %d units\n", (int)units.size()));
@@ -685,11 +686,11 @@ void PortCore::addOutput(OutputProtocol *op) {
     // associated with it, but that thread will be very short-lived
     // if the port is not configured to do background writes.
 
-    yAssert(op!=NULL);
+    yAssert(op!=YARP_NULLPTR);
     stateMutex.wait();
     if (!finished) {
         PortCoreUnit *unit = new PortCoreOutputUnit(*this,getNextIndex(),op);
-        yAssert(unit!=NULL);
+        yAssert(unit!=YARP_NULLPTR);
         unit->start();
         units.push_back(unit);
     }
@@ -703,9 +704,9 @@ bool PortCore::isUnit(const Route& route, int index) {
     if (!finished) {
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
-            if (unit!=NULL) {
+            if (unit!=YARP_NULLPTR) {
                 Route alt = unit->getRoute();
-                String wild = "*";
+                ConstString wild = "*";
                 bool ok = true;
                 if (index>=0) {
                     ok = ok && (unit->getIndex()==index);
@@ -736,11 +737,11 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
     // This is a request to remove a connection.  It could arise from any
     // input thread.
 
-    if (except!=NULL) {
-        YARP_DEBUG(log,String("asked to remove connection in the way of ") + route.toString());
+    if (except!=YARP_NULLPTR) {
+        YARP_DEBUG(log,ConstString("asked to remove connection in the way of ") + route.toString());
         *except = false;
     } else {
-        YARP_DEBUG(log,String("asked to remove connection ") + route.toString());
+        YARP_DEBUG(log,ConstString("asked to remove connection ") + route.toString());
     }
 
     // Scan for units that match the given route, and collect their IDs.
@@ -751,9 +752,9 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
     if (!finished) {
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
-            if (unit!=NULL) {
+            if (unit!=YARP_NULLPTR) {
                 Route alt = unit->getRoute();
-                String wild = "*";
+                ConstString wild = "*";
                 bool ok = true;
                 if (route.getFromName()!=wild) {
                     ok = ok && (route.getFromName()==alt.getFromName());
@@ -762,7 +763,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
                     ok = ok && (route.getToName()==alt.getToName());
                 }
                 if (route.getCarrierName()!=wild) {
-                    if (except==NULL) {
+                    if (except==YARP_NULLPTR) {
                         ok = ok && (route.getCarrierName()==alt.getCarrierName());
                     } else {
                         if (route.getCarrierName()==alt.getCarrierName()) {
@@ -774,7 +775,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
 
                 if (ok) {
                     YARP_DEBUG(log,
-                               String("removing connection ") + alt.toString());
+                               ConstString("removing connection ") + alt.toString());
                     removals.push_back(unit->getIndex());
                     unit->setDoomed();
                     needReap = true;
@@ -797,7 +798,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
         } else {
             // Send a blank message to make up server thread.
             OutputProtocol *op = face->write(address);
-            if (op!=NULL) {
+            if (op!=YARP_NULLPTR) {
                 op->close();
                 delete op;
             }
@@ -828,9 +829,9 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
 }
 
 
-bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
+bool PortCore::addOutput(const ConstString& dest, void *id, OutputStream *os,
                          bool onlyIfNeeded) {
-    YARP_DEBUG(log,String("asked to add output to ")+dest);
+    YARP_DEBUG(log,ConstString("asked to add output to ")+dest);
 
     // Buffer to store text describing outcome (successful connection,
     // or a failure).
@@ -843,8 +844,8 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
 
     // If we can't find it, say so and abort.
     if (!address.isValid()) {
-        bw.appendLine(String("Do not know how to connect to ") + dest);
-        if(os!=NULL) bw.write(*os);
+        bw.appendLine(ConstString("Do not know how to connect to ") + dest);
+        if(os!=YARP_NULLPTR) bw.write(*os);
         return false;
     }
 
@@ -859,10 +860,10 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                          address.getCarrier()),true,&except);
         if (except) {
             // Connection already present.
-            YARP_DEBUG(log,String("output already present to ")+
+            YARP_DEBUG(log,ConstString("output already present to ")+
                        dest);
-            bw.appendLine(String("Desired connection already present from ") + getName() + " to " + dest);
-            if(os!=NULL) bw.write(*os);
+            bw.appendLine(ConstString("Desired connection already present from ") + getName() + " to " + dest);
+            if(os!=YARP_NULLPTR) bw.write(*os);
             return true;
         }
     } else {
@@ -872,7 +873,9 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
 
     // Set up a named route for this connection.
     ConstString aname = address.getRegName();
-    if (aname=="") aname = address.addCarrier("").toURI();
+    if (aname=="") {
+        aname = address.toURI(false);
+    }
     Route r = Route(getName(),aname,
                     (parts.getCarrier()!="")?parts.getCarrier():
                     address.getCarrier());
@@ -881,13 +884,13 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
     // Check for any restrictions on the port.  Perhaps it can only
     // read, or write.
     bool allowed = true;
-    String err = "";
-    String append = "";
+    ConstString err = "";
+    ConstString append = "";
     int f = getFlags();
     bool allow_output = (f&PORTCORE_IS_OUTPUT);
     bool rpc = (f&PORTCORE_IS_RPC);
-    Name name(r.getCarrierName() + String("://test"));
-    String mode = name.getCarrierModifier("log");
+    Name name(r.getCarrierName() + ConstString("://test"));
+    ConstString mode = name.getCarrierModifier("log");
     bool is_log = (mode!="");
     if (is_log) {
         if (mode!="in") {
@@ -919,17 +922,17 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
     // If we found a relevant restriction, abort.
     if (!allowed) {
         bw.appendLine(err);
-        if (os!=NULL) bw.write(*os);
+        if (os!=YARP_NULLPTR) bw.write(*os);
         return false;
     }
 
     // Ok! We can go ahead and make a connection.
-    OutputProtocol *op = NULL;
+    OutputProtocol *op = YARP_NULLPTR;
     if (timeout>0) {
         address.setTimeout(timeout);
     }
     op = Carriers::connect(address);
-    if (op!=NULL) {
+    if (op!=YARP_NULLPTR) {
         op->attachPort(contactable);
         if (timeout>0) {
             op->setTimeout(timeout);
@@ -939,14 +942,14 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
         if (!ok) {
             YARP_DEBUG(log,"open route error");
             delete op;
-            op = NULL;
+            op = YARP_NULLPTR;
         }
     }
 
     // No connection, abort.
-    if (op==NULL) {
-        bw.appendLine(String("Cannot connect to ") + dest);
-        if (os!=NULL) bw.write(*os);
+    if (op==YARP_NULLPTR) {
+        bw.appendLine(ConstString("Cannot connect to ") + dest);
+        if (os!=YARP_NULLPTR) bw.write(*os);
         return false;
     }
 
@@ -968,9 +971,8 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
             PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                        getNextIndex(),
                                                        ip,
-                                                       true,
                                                        true);
-            yAssert(unit!=NULL);
+            yAssert(unit!=YARP_NULLPTR);
             unit->start();
             units.push_back(unit);
         }
@@ -978,40 +980,40 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
     }
 
     // Communicated the good news.
-    bw.appendLine(String("Added connection from ") + getName() + " to " + dest + append);
-    if (os!=NULL) bw.write(*os);
+    bw.appendLine(ConstString("Added connection from ") + getName() + " to " + dest + append);
+    if (os!=YARP_NULLPTR) bw.write(*os);
     cleanUnits();
     return true;
 }
 
 
-void PortCore::removeOutput(const String& dest, void *id, OutputStream *os) {
+void PortCore::removeOutput(const ConstString& dest, void *id, OutputStream *os) {
     // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
     if (removeUnit(Route("*",dest,"*"),true)) {
-        bw.appendLine(String("Removed connection from ") + getName() +
+        bw.appendLine(ConstString("Removed connection from ") + getName() +
                       " to " + dest);
     } else {
-        bw.appendLine(String("Could not find an outgoing connection to ") +
+        bw.appendLine(ConstString("Could not find an outgoing connection to ") +
                       dest);
     }
-    if(os!=NULL) {
+    if(os!=YARP_NULLPTR) {
         bw.write(*os);
     }
     cleanUnits();
 }
 
-void PortCore::removeInput(const String& dest, void *id, OutputStream *os) {
+void PortCore::removeInput(const ConstString& dest, void *id, OutputStream *os) {
     // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
     if (removeUnit(Route(dest,"*","*"),true)) {
-        bw.appendLine(String("Removing connection from ") + dest + " to " +
+        bw.appendLine(ConstString("Removing connection from ") + dest + " to " +
                       getName());
     } else {
-        bw.appendLine(String("Could not find an incoming connection from ") +
+        bw.appendLine(ConstString("Could not find an incoming connection from ") +
                       dest);
     }
-    if(os!=NULL) {
+    if(os!=YARP_NULLPTR) {
         bw.write(*os);
     }
     cleanUnits();
@@ -1027,17 +1029,17 @@ void PortCore::describe(void *id, OutputStream *os) {
     stateMutex.wait();
 
     // Report name and address.
-    bw.appendLine(String("This is ") + address.getRegName() + " at " +
+    bw.appendLine(ConstString("This is ") + address.getRegName() + " at " +
                   address.toURI());
 
     // Report outgoing connections.
     int oct = 0;
     for (unsigned int i=0; i<units.size(); i++) {
         PortCoreUnit *unit = units[i];
-        if (unit!=NULL) {
+        if (unit!=YARP_NULLPTR) {
             if (unit->isOutput()&&!unit->isFinished()) {
                 Route route = unit->getRoute();
-                String msg = "There is an output connection from " +
+                ConstString msg = "There is an output connection from " +
                     route.getFromName() +
                     " to " + route.getToName() + " using " +
                     route.getCarrierName();
@@ -1054,11 +1056,11 @@ void PortCore::describe(void *id, OutputStream *os) {
     int ict = 0;
     for (unsigned int i2=0; i2<units.size(); i2++) {
         PortCoreUnit *unit = units[i2];
-        if (unit!=NULL) {
+        if (unit!=YARP_NULLPTR) {
             if (unit->isInput()&&!unit->isFinished()) {
                 Route route = unit->getRoute();
                 if (route.getCarrierName()!="") {
-                    String msg = "There is an input connection from " +
+                    ConstString msg = "There is an input connection from " +
                         route.getFromName() +
                         " to " + route.getToName() + " using " +
                         route.getCarrierName();
@@ -1075,7 +1077,7 @@ void PortCore::describe(void *id, OutputStream *os) {
     stateMutex.post();
 
     // Send description across network, or print it.
-    if (os!=NULL) {
+    if (os!=YARP_NULLPTR) {
         bw.write(*os);
     } else {
         StringOutputStream sos;
@@ -1094,7 +1096,7 @@ void PortCore::describe(PortReport& reporter) {
     PortInfo baseInfo;
     baseInfo.tag = yarp::os::PortInfo::PORTINFO_MISC;
     ConstString portName = address.getRegName().c_str();
-    baseInfo.message = (String("This is ") + portName.c_str() + " at " +
+    baseInfo.message = (ConstString("This is ") + portName.c_str() + " at " +
                         address.toURI()).c_str();
     reporter.report(baseInfo);
 
@@ -1102,10 +1104,10 @@ void PortCore::describe(PortReport& reporter) {
     int oct = 0;
     for (unsigned int i=0; i<units.size(); i++) {
         PortCoreUnit *unit = units[i];
-        if (unit!=NULL) {
+        if (unit!=YARP_NULLPTR) {
             if (unit->isOutput()&&!unit->isFinished()) {
                 Route route = unit->getRoute();
-                String msg = "There is an output connection from " +
+                ConstString msg = "There is an output connection from " +
                     route.getFromName() +
                     " to " + route.getToName() + " using " +
                     route.getCarrierName();
@@ -1133,10 +1135,10 @@ void PortCore::describe(PortReport& reporter) {
     int ict = 0;
     for (unsigned int i2=0; i2<units.size(); i2++) {
         PortCoreUnit *unit = units[i2];
-        if (unit!=NULL) {
+        if (unit!=YARP_NULLPTR) {
             if (unit->isInput()&&!unit->isFinished()) {
                 Route route = unit->getRoute();
-                String msg = "There is an input connection from " +
+                ConstString msg = "There is an input connection from " +
                     route.getFromName() +
                     " to " + route.getToName() + " using " +
                     route.getCarrierName();
@@ -1166,12 +1168,17 @@ void PortCore::describe(PortReport& reporter) {
 
 void PortCore::setReportCallback(yarp::os::PortReport *reporter) {
    stateMutex.wait();
-   if (reporter!=NULL) {
+   if (reporter!=YARP_NULLPTR) {
        eventReporter = reporter;
    }
    stateMutex.post();
 }
 
+void PortCore::resetReportCallback() {
+    stateMutex.wait();
+    eventReporter = YARP_NULLPTR;
+    stateMutex.post();
+}
 
 void PortCore::report(const PortInfo& info) {
     // We are in the context of one of the input or output threads,
@@ -1180,7 +1187,7 @@ void PortCore::report(const PortInfo& info) {
     // It is safe to pick up the address of the reporter if this is
     // kept constant over the lifetime of the input/output threads.
 
-    if (eventReporter!=NULL) {
+    if (eventReporter!=YARP_NULLPTR) {
         eventReporter->report(info);
     }
 }
@@ -1197,7 +1204,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
     // It is safe to pick up the address of the reader since this is
     // constant over the lifetime of the input threads.
 
-    if (this->reader!=NULL && !interrupted) {
+    if (this->reader!=YARP_NULLPTR && !interrupted) {
         interruptible = false; // No mutexing; user of interrupt() has to be
                                // careful.
 
@@ -1265,7 +1272,7 @@ bool PortCore::sendHelper(PortWriter& writer,
     bool all_ok = true;
     bool gotReply = false;
     int logCount = 0;
-    String envelopeString = envelope;
+    ConstString envelopeString = envelope;
 
     // Pass a message to all output units for sending on.  We could
     // be doing more here to cache the serialization of the message
@@ -1300,14 +1307,14 @@ bool PortCore::sendHelper(PortWriter& writer,
     // may travel by multiple outputs.
     packetMutex.wait();
     PortCorePacket *packet = packets.getFreePacket();
-    yAssert(packet!=NULL);
+    yAssert(packet!=YARP_NULLPTR);
     packet->setContent(&writer,false,callback);
     packetMutex.post();
 
     // Scan connections, placing message everyhere we can.
     for (unsigned int i=0; i<units.size(); i++) {
         PortCoreUnit *unit = units[i];
-        if (unit==NULL) continue;
+        if (unit==YARP_NULLPTR) continue;
         if (unit->isOutput() && !unit->isFinished()) {
             bool log = (unit->getMode()!="");
             if (log) {
@@ -1325,14 +1332,14 @@ bool PortCore::sendHelper(PortWriter& writer,
             bool gotReplyOne = false;
             // Send the message off on this connection.
             void *out = unit->send(writer,reader,
-                                   (callback!=NULL)?callback:(&writer),
+                                   (callback!=YARP_NULLPTR)?callback:(&writer),
                                    (void *)packet,
                                    envelopeString,
                                    waiter,waitBeforeSend,
                                    &gotReplyOne);
             gotReply = gotReply||gotReplyOne;
             YMSG(("------- -- send\n"));
-            if (out!=NULL) {
+            if (out!=YARP_NULLPTR) {
                 // We got back a report of a message already sent.
                 packetMutex.wait();
                 ((PortCorePacket *)out)->dec();  // Message on one
@@ -1386,7 +1393,7 @@ bool PortCore::isWriting() {
     if (!finished) {
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
-            if (unit!=NULL) {
+            if (unit!=YARP_NULLPTR) {
                 if (!unit->isFinished()) {
                     if (unit->isBusy()) {
                         writing = true;
@@ -1423,7 +1430,7 @@ int PortCore::getOutputCount() {
 void PortCore::notifyCompletion(void *tracker) {
     YMSG(("starting notifyCompletion\n"));
     packetMutex.wait();
-    if (tracker!=NULL) {
+    if (tracker!=YARP_NULLPTR) {
         ((PortCorePacket *)tracker)->dec();
         packets.checkPacket((PortCorePacket *)tracker);
     }
@@ -1442,7 +1449,7 @@ bool PortCore::setEnvelope(PortWriter& envelope) {
 }
 
 
-void PortCore::setEnvelope(const String& envelope) {
+void PortCore::setEnvelope(const ConstString& envelope) {
     this->envelope = envelope;
     for (unsigned int i=0; i<this->envelope.length(); i++) {
         // It looks like envelopes are constrained to be printable ASCII?
@@ -1452,10 +1459,10 @@ void PortCore::setEnvelope(const String& envelope) {
             break;
         }
     }
-    YARP_DEBUG(log,String("set envelope to ") + this->envelope);
+    YARP_DEBUG(log,ConstString("set envelope to ") + this->envelope);
 }
 
-String PortCore::getEnvelope() {
+ConstString PortCore::getEnvelope() {
     return envelope;
 }
 
@@ -1465,12 +1472,13 @@ bool PortCore::getEnvelope(PortReader& envelope) {
     sis.add("\r\n");
     StreamConnectionReader sbr;
     Route route;
-    sbr.reset(sis,NULL,route,0,true);
+    sbr.reset(sis,YARP_NULLPTR,route,0,true);
     return envelope.read(sbr);
 }
 
 // Shorthand to create a nested (tag, val) pair to add to a message.
 #define STANZA(name,tag,val) Bottle name; name.addString(tag); name.addString(val.c_str());
+#define STANZA_INT(name,tag,val) Bottle name; name.addString(tag); name.addInt(val);
 
 // Make an RPC connection to talk to a ROS API, send a message, get reply.
 // NOTE: ROS support can now be moved out of here, once all documentation
@@ -1546,7 +1554,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         vocab = VOCAB3('b','u','s');
     }
 
-    String infoMsg;
+    ConstString infoMsg;
     switch (vocab) {
     case VOCAB4('h','e','l','p'):
         // We give a list of the most useful administrative commands.
@@ -1585,13 +1593,13 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     case VOCAB3('a','d','d'):
         {
             // Add an output to the port.
-            String output = cmd.get(1).asString().c_str();
-            String carrier = cmd.get(2).asString().c_str();
+            ConstString output = cmd.get(1).asString().c_str();
+            ConstString carrier = cmd.get(2).asString().c_str();
             if (carrier!="") {
                 output = carrier + ":/" + output;
             }
             addOutput(output,id,&cache,false);
-            String r = cache.toString();
+            ConstString r = cache.toString();
             int v = (r[0]=='A')?0:-1;
             result.addInt(v);
             result.addString(r.c_str());
@@ -1601,9 +1609,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         {
             switch (cmd.get(1).asVocab()) {
             case VOCAB3('o','u', 't'): {
-                String propString = cmd.get(2).asString().c_str();
+                ConstString propString = cmd.get(2).asString().c_str();
                 Property prop(propString.c_str());
-                String errMsg;
+                ConstString errMsg;
                 if(!attachPortMonitor(prop, true, errMsg)) {
                     result.clear();
                     result.addVocab(Vocab::encode("fail"));
@@ -1616,9 +1624,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             }
             break;
             case VOCAB2('i','n'): {
-                String propString = cmd.get(2).asString().c_str();
+                ConstString propString = cmd.get(2).asString().c_str();
                 Property prop(propString.c_str());
-                String errMsg;
+                ConstString errMsg;
                 if(!attachPortMonitor(prop, false, errMsg)) {
                     result.clear();
                     result.addVocab(Vocab::encode("fail"));
@@ -1664,11 +1672,11 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     case VOCAB3('d','e','l'):
         {
             // Delete any inputs or outputs involving the named port.
-            removeOutput(String(cmd.get(1).asString().c_str()),id,&cache);
-            String r1 = cache.toString();
+            removeOutput(ConstString(cmd.get(1).asString().c_str()),id,&cache);
+            ConstString r1 = cache.toString();
             cache.reset();
-            removeInput(String(cmd.get(1).asString().c_str()),id,&cache);
-            String r2 = cache.toString();
+            removeInput(ConstString(cmd.get(1).asString().c_str()),id,&cache);
+            ConstString r2 = cache.toString();
             int v = (r1[0]=='R'||r2[0]=='R')?0:-1;
             result.addInt(v);
             if (r1[0]=='R' && r2[0]!='R') {
@@ -1689,11 +1697,11 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                 stateMutex.wait();
                 for (unsigned int i2=0; i2<units.size(); i2++) {
                     PortCoreUnit *unit = units[i2];
-                    if (unit!=NULL) {
+                    if (unit!=YARP_NULLPTR) {
                         if (unit->isInput()&&!unit->isFinished()) {
                             Route route = unit->getRoute();
                             if (target=="") {
-                                String name = route.getFromName();
+                                ConstString name = route.getFromName();
                                 if (name!="") {
                                     result.addString(name.c_str());
                                 }
@@ -1705,6 +1713,16 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 result.addList() = bfrom;
                                 result.addList() = bto;
                                 result.addList() = bcarrier;
+                                Carrier *carrier = Carriers::chooseCarrier(route.getCarrierName());
+                                if (carrier->isConnectionless()) {
+                                    STANZA_INT(bconnectionless, "connectionless", 1);
+                                    result.addList() = bconnectionless;
+                                }
+                                if (!carrier->isPush()) {
+                                    STANZA_INT(breverse, "push", 0);
+                                    result.addList() = breverse;
+                                }
+                                delete carrier;
                             }
                         }
                     }
@@ -1720,7 +1738,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                 stateMutex.wait();
                 for (unsigned int i=0; i<units.size(); i++) {
                     PortCoreUnit *unit = units[i];
-                    if (unit!=NULL) {
+                    if (unit!=YARP_NULLPTR) {
                         if (unit->isOutput()&&!unit->isFinished()) {
                             Route route = unit->getRoute();
                             if (target=="") {
@@ -1733,6 +1751,16 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 result.addList() = bfrom;
                                 result.addList() = bto;
                                 result.addList() = bcarrier;
+                                Carrier *carrier = Carriers::chooseCarrier(route.getCarrierName());
+                                if (carrier->isConnectionless()) {
+                                    STANZA_INT(bconnectionless, "connectionless", 1);
+                                    result.addList() = bconnectionless;
+                                }
+                                if (!carrier->isPush()) {
+                                    STANZA_INT(breverse, "push", 0);
+                                    result.addList() = breverse;
+                                }
+                                delete carrier;
                             }
                         }
                     }
@@ -1753,21 +1781,37 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     result.addInt(-1);
                     result.addString("target port is not specified.\r\n");
                 }
-                else {
-                    for (unsigned int i=0; i<units.size(); i++) {
-                        PortCoreUnit *unit = units[i];
-                        if (unit && unit->isInput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getFromName() == target.c_str()) {
-                                yarp::os::Property property;
-                                property.fromString(cmd.toString());
-                                unit->setCarrierParams(property);
-                                result.addInt(0);
-                                ConstString msg = "Configured connection from ";
-                                msg += route.getFromName().c_str();
-                                msg += "\r\n";
-                                result.addString(msg.c_str());
-                                break;
+                else {                    
+                    if(target == getName()) {
+                        yarp::os::Property property;
+                        property.fromString(cmd.toString());
+                        ConstString errMsg;
+                        if(!setParamPortMonitor(property, false, errMsg)) {
+                            result.clear();
+                            result.addVocab(Vocab::encode("fail"));
+                            result.addString(errMsg.c_str());
+                        }
+                        else {
+                            result.clear();
+                            result.addVocab(Vocab::encode("ok"));
+                        }
+                    }
+                    else {
+                        for (unsigned int i=0; i<units.size(); i++) {
+                            PortCoreUnit *unit = units[i];
+                            if (unit && unit->isInput() && !unit->isFinished()) {
+                                Route route = unit->getRoute();
+                                if (route.getFromName() == target.c_str()) {
+                                    yarp::os::Property property;
+                                    property.fromString(cmd.toString());
+                                    unit->setCarrierParams(property);
+                                    result.addInt(0);
+                                    ConstString msg = "Configured connection from ";
+                                    msg += route.getFromName().c_str();
+                                    msg += "\r\n";
+                                    result.addString(msg.c_str());
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1794,20 +1838,36 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
-                    for (unsigned int i=0; i<units.size(); i++) {
-                        PortCoreUnit *unit = units[i];
-                        if (unit && unit->isOutput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getToName() == target.c_str()) {
-                                yarp::os::Property property;
-                                property.fromString(cmd.toString());
-                                unit->setCarrierParams(property);
-                                result.addInt(0);
-                                ConstString msg = "Configured connection to ";
-                                msg += route.getFromName().c_str();
-                                msg += "\r\n";
-                                result.addString(msg.c_str());
-                                break;
+                    if(target == getName()) {
+                        yarp::os::Property property;
+                        property.fromString(cmd.toString());
+                        ConstString errMsg;
+                        if(!setParamPortMonitor(property, true, errMsg)) {
+                            result.clear();
+                            result.addVocab(Vocab::encode("fail"));
+                            result.addString(errMsg.c_str());
+                        }
+                        else {
+                            result.clear();
+                            result.addVocab(Vocab::encode("ok"));
+                        }
+                    }
+                    else {
+                        for (unsigned int i=0; i<units.size(); i++) {
+                            PortCoreUnit *unit = units[i];
+                            if (unit && unit->isOutput() && !unit->isFinished()) {
+                                Route route = unit->getRoute();
+                                if (route.getToName() == target.c_str()) {
+                                    yarp::os::Property property;
+                                    property.fromString(cmd.toString());
+                                    unit->setCarrierParams(property);
+                                    result.addInt(0);
+                                    ConstString msg = "Configured connection to ";
+                                    msg += route.getFromName().c_str();
+                                    msg += "\r\n";
+                                    result.addString(msg.c_str());
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1838,25 +1898,40 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
-                    for (unsigned int i=0; i<units.size(); i++) {
-                        PortCoreUnit *unit = units[i];
-                        if (unit && unit->isInput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getFromName() == target.c_str()) {
-                                yarp::os::Property property;
-                                unit->getCarrierParams(property);
-                                result.addDict() = property;
-                                break;
-                            }
+                    if(target == getName()) {
+                        yarp::os::Property property;
+                        ConstString errMsg;
+                        if(!getParamPortMonitor(property, false, errMsg)) {
+                            result.clear();
+                            result.addVocab(Vocab::encode("fail"));
+                            result.addString(errMsg.c_str());
+                        }
+                        else {
+                            result.clear();
+                            result.addDict() = property;
                         }
                     }
-                    if(!result.size())
-                    {
-                        result.addInt(-1);
-                        ConstString msg = "Could not find an incoming connection from ";
-                        msg += target.c_str();
-                        msg += "\r\n";
-                        result.addString(msg.c_str());
+                    else {
+                        for (unsigned int i=0; i<units.size(); i++) {
+                            PortCoreUnit *unit = units[i];
+                            if (unit && unit->isInput() && !unit->isFinished()) {
+                                Route route = unit->getRoute();
+                                if (route.getFromName() == target.c_str()) {
+                                    yarp::os::Property property;
+                                    unit->getCarrierParams(property);
+                                    result.addDict() = property;
+                                    break;
+                                }
+                            }
+                        }
+                        if(!result.size())
+                        {
+                            result.addInt(-1);
+                            ConstString msg = "Could not find an incoming connection from ";
+                            msg += target.c_str();
+                            msg += "\r\n";
+                            result.addString(msg.c_str());
+                        }
                     }
                 }
                 stateMutex.post();
@@ -1873,26 +1948,41 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     result.addString("target port is not specified.\r\n");
                 }
                 else {
-                    for (unsigned int i=0; i<units.size(); i++) {
-                        PortCoreUnit *unit = units[i];
-                        if (unit && unit->isOutput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getToName() == target.c_str()) {
-                                yarp::os::Property property;
-                                property.fromString(cmd.toString());
-                                unit->getCarrierParams(property);
-                                result.addDict() = property;
-                                break;
-                            }
+                    if(target == getName()) {
+                        yarp::os::Property property;
+                        ConstString errMsg;
+                        if(!getParamPortMonitor(property, true, errMsg)) {
+                            result.clear();
+                            result.addVocab(Vocab::encode("fail"));
+                            result.addString(errMsg.c_str());
+                        }
+                        else {
+                            result.clear();
+                            result.addDict() = property;
                         }
                     }
-                    if(!result.size())
-                    {
-                        result.addInt(-1);
-                        ConstString msg = "Could not find an incoming connection to ";
-                        msg += target.c_str();
-                        msg += "\r\n";
-                        result.addString(msg.c_str());
+                    else {
+                        for (unsigned int i=0; i<units.size(); i++) {
+                            PortCoreUnit *unit = units[i];
+                            if (unit && unit->isOutput() && !unit->isFinished()) {
+                                Route route = unit->getRoute();
+                                if (route.getToName() == target.c_str()) {
+                                    yarp::os::Property property;
+                                    property.fromString(cmd.toString());
+                                    unit->getCarrierParams(property);
+                                    result.addDict() = property;
+                                    break;
+                                }
+                            }
+                        }
+                        if(!result.size())
+                        {
+                            result.addInt(-1);
+                            ConstString msg = "Could not find an incoming connection to ";
+                            msg += target.c_str();
+                            msg += "\r\n";
+                            result.addString(msg.c_str());
+                        }
                     }
                 }
                 stateMutex.post();
@@ -1915,7 +2005,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             ConstString topic =
                 RosNameSpace::fromRosName(cmd.get(2).asString());
             Bottle *pubs = cmd.get(3).asList();
-            if (pubs!=NULL) {
+            if (pubs!=YARP_NULLPTR) {
                 Property listed;
                 for (int i=0; i<pubs->size(); i++) {
                     ConstString pub = pubs->get(i).asString();
@@ -1925,7 +2015,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                 stateMutex.wait();
                 for (unsigned int i=0; i<units.size(); i++) {
                     PortCoreUnit *unit = units[i];
-                    if (unit!=NULL) {
+                    if (unit!=YARP_NULLPTR) {
                         if (unit->isPupped()) {
                             ConstString me = unit->getPupString();
                             present.put(me,1);
@@ -1935,13 +2025,15 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         }
                     }
                 }
+                stateMutex.post();
                 for (int i=0; i<pubs->size(); i++) {
                     ConstString pub = pubs->get(i).asString();
                     if (!present.check(pub)) {
                         YARP_SPRINTF1(log,debug,"ROS ADD %s", pub.c_str());
                         Bottle req, reply;
                         req.addString("requestTopic");
-                        req.addString("dummy_id");
+                        NestedContact nc(getName());
+                        req.addString(nc.getNodeName().c_str());
                         req.addString(topic);
                         Bottle& lst = req.addList();
                         Bottle& sublst = lst.addList();
@@ -1963,7 +2055,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                             int portnum = 0;
                             if (reply.get(0).asInt()!=1) {
                                 fprintf(stderr,"Failure looking up topic %s: %s\n", topic.c_str(), reply.toString().c_str());
-                            } else if (pref==NULL) {
+                            } else if (pref==YARP_NULLPTR) {
                                 fprintf(stderr,"Failure looking up topic %s: expected list of protocols\n", topic.c_str());
                             } else if (pref->get(0).asString()!="TCPROS") {
                                 fprintf(stderr,"Failure looking up topic %s: unsupported protocol %s\n", topic.c_str(),
@@ -1982,12 +2074,12 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                             }
                             if (portnum!=0) {
                                 Contact addr(hostname.c_str(),portnum);
-                                OutputProtocol *op = NULL;
+                                OutputProtocol *op = YARP_NULLPTR;
                                 Route r = Route(getName(),
                                                 pub.c_str(),
                                                 carrier.c_str());
                                 op = Carriers::connect(addr);
-                                if (op==NULL) {
+                                if (op==YARP_NULLPTR) {
                                     fprintf(stderr,"NO CONNECTION\n");
                                     exit(1);
                                 } else {
@@ -1996,21 +2088,20 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 }
                                 op->rename(Route().addFromName(op->getRoute().getToName()).addToName(op->getRoute().getFromName()).addCarrierName(op->getRoute().getCarrierName()));
                                 InputProtocol *ip =  &(op->getInput());
+                                stateMutex.wait();
                                 PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                                            getNextIndex(),
-
                                                                            ip,
-                                                                           true,
                                                                            true);
-                                yAssert(unit!=NULL);
+                                yAssert(unit!=YARP_NULLPTR);
                                 unit->setPupped(pub);
                                 unit->start();
                                 units.push_back(unit);
+                                stateMutex.post();
                             }
                         }
                     }
                 }
-                stateMutex.post();
             }
             result.addInt(1);
             result.addString("ok");
@@ -2023,7 +2114,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             YARP_SPRINTF1(log,debug,"requestTopic! --> %s",
                           cmd.toString().c_str());
             result.addInt(1);
-            result.addString("dummy_id");
+            NestedContact nc(getName());
+            result.addString(nc.getNodeName().c_str());
             Bottle& lst = result.addList();
             Contact addr = getAddress();
             lst.addString("TCPROS");
@@ -2059,8 +2151,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                 {
                     Property *p = acquireProperties(false);
                     if (p) {
-                        if (!cmd.get(2).isNull()) {                            
-                            // request: "prop get /portname"                            
+                        if (!cmd.get(2).isNull()) {
+                            // request: "prop get /portname"
                             ConstString portName = cmd.get(2).asString();
                             bool bFound = false;
                             if((portName.size() > 0) && (portName[0] == '/')) {
@@ -2070,7 +2162,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     result.clear();
                                     Bottle& sched = result.addList();
                                     sched.addString("sched");
-                                    Property& sched_prop = sched.addDict();                                    
+                                    Property& sched_prop = sched.addDict();
                                     sched_prop.put("tid", (int)this->getTid());
                                     sched_prop.put("priority", this->getPriority());
                                     sched_prop.put("policy", this->getPolicy());
@@ -2092,6 +2184,18 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     Property& platform_prop = platform.addDict();
                                     platform_prop.put("os", pinfo.name);
                                     platform_prop.put("hostname", address.getHost());
+
+                                    int f = getFlags();
+                                    bool is_input = (f & PORTCORE_IS_INPUT);
+                                    bool is_output = (f & PORTCORE_IS_OUTPUT);
+                                    bool is_rpc = (f & PORTCORE_IS_RPC);
+                                    Bottle& port = result.addList();
+                                    port.addString("port");
+                                    Property& port_prop = port.addDict();
+                                    port_prop.put("is_input", is_input);
+                                    port_prop.put("is_output", is_output);
+                                    port_prop.put("is_rpc", is_rpc);
+                                    port_prop.put("type", getType().getName());
                                 }
                                 else {
                                     for (unsigned int i=0; i<units.size(); i++) {
@@ -2103,7 +2207,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                 bFound = true;
                                                 int priority = unit->getPriority();
                                                 int policy = unit->getPolicy();
-                                                int tos = getTypeOfService(unit);                                                
+                                                int tos = getTypeOfService(unit);
                                                 int tid = (int) unit->getTid();
                                                 result.clear();
                                                 Bottle& sched = result.addList();
@@ -2155,13 +2259,15 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 if (portName == getName()) {
                                     bOk = false;
                                     Bottle* process_prop = process.find("process").asList();
-                                    if(process_prop != NULL) {
+                                    if(process_prop != YARP_NULLPTR) {
                                         int prio = -1;
                                         int policy = -1;
-                                        if(process_prop->check("priority"))
+                                        if(process_prop->check("priority")) {
                                             prio = process_prop->find("priority").asInt();
-                                        if(process_prop->check("policy"))
+                                        }
+                                        if(process_prop->check("policy")) {
                                             policy = process_prop->find("policy").asInt();
+                                        }
                                         bOk = setProcessSchedulingParam(prio, policy);
                                     }
                                 }
@@ -2183,19 +2289,22 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     if (unit && !unit->isFinished()) {
                                         Route route = unit->getRoute();
                                         ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
+
                                         if (portName == cmd.get(2).asString()) {
                                             Bottle* sched_prop = sched.find("sched").asList();
-                                            if(sched_prop != NULL) {
+                                            if(sched_prop != YARP_NULLPTR) {
                                                 int prio = -1;
                                                 int policy = -1;
-                                                if(sched_prop->check("priority"))
+                                                if(sched_prop->check("priority")) {
                                                     prio = sched_prop->find("priority").asInt();
-                                                if(sched_prop->check("policy"))
+                                                }
+                                                if(sched_prop->check("policy")) {
                                                     policy = sched_prop->find("policy").asInt();
+                                                }
                                                 bOk = (unit->setPriority(prio, policy) != -1);
-                                            }
-                                            else
+                                            } else {
                                                 bOk = false;
+                                            }
                                             break;
                                         }
                                     }
@@ -2219,7 +2328,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                         ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
                                         if (portName == cmd.get(2).asString()) {
                                             Bottle* qos_prop = qos.find("qos").asList();
-                                            if(qos_prop != NULL) {
+                                            if(qos_prop != YARP_NULLPTR) {
                                                 if(qos_prop->check("priority")) {
                                                     NetInt32 priority = qos_prop->find("priority").asVocab();
                                                     // set the packet DSCP value based on some predefined priority levels
@@ -2232,8 +2341,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                         case VOCAB4('C','R','I','T'): dscp = 44; break;
                                                         default: dscp = -1;
                                                     };
-                                                    if(dscp >= 0)
+                                                    if(dscp >= 0) {
                                                         bOk = setTypeOfService(unit, dscp<<2);
+                                                    }
                                                 }
                                                 else if(qos_prop->check("dscp")) {
                                                     QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab());
@@ -2243,8 +2353,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                     } else {
                                                         dscp = (int)dscp_class;
                                                     }
-                                                    if((dscp>=0) && (dscp<64))
+                                                    if((dscp>=0) && (dscp<64)) {
                                                         bOk = setTypeOfService(unit, dscp<<2);
+                                                    }
                                                 }
                                                 else if(qos_prop->check("tos")) {
                                                     int tos = qos_prop->find("tos").asInt();
@@ -2252,8 +2363,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                     bOk = setTypeOfService(unit, tos);
                                                 }
                                             }
-                                            else
+                                            else {
                                                 bOk = false;
+                                            }
                                             break;
                                         }
                                     }
@@ -2294,7 +2406,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     }
 
     ConnectionWriter *writer = reader.getWriter();
-    if (writer!=NULL) {
+    if (writer!=YARP_NULLPTR) {
         result.write(*writer);
     }
 
@@ -2349,7 +2461,7 @@ int PortCore::getTypeOfService(PortCoreUnit *unit) {
 }
 
 // attach a portmonitor plugin to the port or to a specific connection
-bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, String &errMsg) {
+bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, ConstString &errMsg) {
     // attach to the current port
     Carrier *portmonitor = Carriers::chooseCarrier("portmonitor");
     if(!portmonitor) {
@@ -2409,8 +2521,58 @@ bool PortCore::dettachPortMonitor(bool isOutput) {
     return true;
 }
 
+bool PortCore::setParamPortMonitor(yarp::os::Property& param,
+                                   bool isOutput, yarp::os::ConstString &errMsg) {
+    if(isOutput) {
+        modifier.outputMutex.lock();
+        if(modifier.outputModifier == NULL) {
+            errMsg = "No port modifer is attached to the output";
+            modifier.outputMutex.unlock();
+            return false;
+        }
+        modifier.outputModifier->setCarrierParams(param);
+        modifier.outputMutex.unlock();
+    }
+    else {
+        modifier.inputMutex.lock();
+        if(modifier.inputModifier == NULL) {
+            errMsg = "No port modifer is attached to the input";
+            modifier.inputMutex.unlock();
+            return false;
+        }
+        modifier.inputModifier->setCarrierParams(param);
+        modifier.inputMutex.unlock();
+    }
+    return true;
+}
+
+bool PortCore::getParamPortMonitor(yarp::os::Property& param,
+                                   bool isOutput, yarp::os::ConstString &errMsg) {
+    if(isOutput) {
+        modifier.outputMutex.lock();
+        if(modifier.outputModifier == NULL) {
+            errMsg = "No port modifer is attached to the output";
+            modifier.outputMutex.unlock();
+            return false;
+        }
+        modifier.outputModifier->getCarrierParams(param);
+        modifier.outputMutex.unlock();
+    }
+    else {
+        modifier.inputMutex.lock();
+        if(modifier.inputModifier == NULL) {
+            errMsg = "No port modifer is attached to the input";
+            modifier.inputMutex.unlock();
+            return false;
+        }
+        modifier.inputModifier->getCarrierParams(param);
+        modifier.inputMutex.unlock();
+    }
+    return true;
+}
+
 void PortCore::reportUnit(PortCoreUnit *unit, bool active) {
-    if (unit!=NULL) {
+    if (unit!=YARP_NULLPTR) {
         bool isLog = (unit->getMode()!="");
         if (isLog) {
             logNeeded = true;
@@ -2429,16 +2591,18 @@ bool PortCore::setProcessSchedulingParam(int priority, int policy) {
     sprintf(path, "/proc/%d/task/", getPid());
 
     dir = opendir(path);
-    if(dir==NULL)
+    if(dir==YARP_NULLPTR) {
         return false;
+    }
 
     struct dirent *d;
     char *end;
     int tid = 0;
     bool ret = true;
-    while((d = readdir(dir)) != NULL) {
-        if (!isdigit((unsigned char) *d->d_name))
+    while((d = readdir(dir)) != YARP_NULLPTR) {
+        if (!isdigit((unsigned char) *d->d_name)) {
             continue;
+        }
 
         tid = (pid_t) strtol(d->d_name, &end, 10);
         if (d->d_name == end || (end && *end)) {

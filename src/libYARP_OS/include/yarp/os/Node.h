@@ -8,6 +8,7 @@
 #define YARP_OS_NODE_H
 
 #include <yarp/os/Contactables.h>
+#include <yarp/conf/compiler.h>
 
 namespace yarp {
     namespace os {
@@ -15,12 +16,14 @@ namespace yarp {
     }
 }
 
-class YARP_OS_API yarp::os::Node : public Contactables {
+
+class YARP_OS_API yarp::os::Node : public Contactables
+{
 public:
     Node();
     Node(const ConstString& name);
     virtual ~Node();
-    
+
     virtual void add(Contactable& contactable);
     virtual void update(Contactable& contactable);
     virtual void remove(Contactable& contactable);
@@ -34,7 +37,8 @@ public:
 
     virtual void prepare(const ConstString& name);
 private:
-    void *system_resource;
+    class Helper;
+    Helper * const mPriv;
 };
 
 #endif // YARP_OS_NODE_H

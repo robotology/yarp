@@ -1,0 +1,874 @@
+// WARNING semicolumns in this file should be escaped using 3 backslashes,
+//         i.e. \\\;
+
+/**
+ * @{
+ * @name Compiler Identification Macros
+ *
+ * Macro useful to identify current compiler and its version.
+ */
+
+/**
+ * @def YARP_COMPILER_IS_Comeau
+ */
+
+/**
+ * @def YARP_COMPILER_IS_Intel
+ */
+
+/**
+ * @def YARP_COMPILER_IS_PathScale
+ */
+
+/**
+ * @def YARP_COMPILER_IS_Embarcadero
+ */
+
+/**
+ * @def YARP_COMPILER_IS_Borland
+ */
+
+/**
+ * @def YARP_COMPILER_IS_Watcom
+ */
+
+/**
+ * @def YARP_COMPILER_IS_OpenWatcom
+ */
+
+/**
+ * @def YARP_COMPILER_IS_SunPro
+ */
+
+/**
+ * @def YARP_COMPILER_IS_HP
+ */
+
+/**
+ * @def YARP_COMPILER_IS_Compaq
+ */
+
+/**
+ * @def YARP_COMPILER_IS_zOS
+ */
+
+/**
+ * @def YARP_COMPILER_IS_XL
+ */
+
+/**
+ * @def YARP_COMPILER_IS_VisualAge
+ */
+
+/**
+ * @def YARP_COMPILER_IS_PGI
+ */
+
+/**
+ * @def YARP_COMPILER_IS_Cray
+ */
+
+/**
+ * @def YARP_COMPILER_IS_TI
+ */
+
+/**
+ * @def YARP_COMPILER_IS_Fujitsu
+ */
+
+/**
+ * @def YARP_COMPILER_IS_SCO
+ */
+
+/**
+ * @def YARP_COMPILER_IS_AppleClang
+ */
+
+/**
+ * @def YARP_COMPILER_IS_Clang
+ */
+
+/**
+ * @def YARP_COMPILER_IS_GNU
+ */
+
+/**
+ * @def YARP_COMPILER_IS_MSVC
+ */
+
+/**
+ * @def YARP_COMPILER_IS_ADSP
+ */
+
+/**
+ * @def YARP_COMPILER_IS_IAR
+ */
+
+/**
+ * @def YARP_COMPILER_IS_ARMCC
+ */
+
+/**
+ * @def YARP_COMPILER_IS_MIPSpro
+ */
+
+/**
+ * @def YARP_COMPILER_IS_GNU
+ */
+
+/**
+ * @def YARP_COMPILER_VERSION_MAJOR
+ *
+ * Current compiler major version number, if defined.
+ *
+ * @see YARP_COMPILER_VERSION_MINOR, YARP_COMPILER_VERSION_PATCH
+ */
+
+/**
+ * @def YARP_COMPILER_VERSION_MINOR
+ *
+ * Current compiler minor version number, if defined.
+ *
+ * @see YARP_COMPILER_VERSION_MAJOR, YARP_COMPILER_VERSION_PATCH
+ */
+
+/**
+ * @def YARP_COMPILER_VERSION_PATCH
+ *
+ * Current compiler patch version number, if defined.
+ *
+ * @see YARP_COMPILER_VERSION_MAJOR, YARP_COMPILER_VERSION_MINOR
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Compiler Supported Features
+ *
+ * Macros useful to check if current compiler and build flags combination
+ * supports specific features.
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_AGGREGATE_DEFAULT_INITIALIZERS
+ *
+ * 1 if the current c++ compiler and build flags combination supports aggregate
+ * default initializers, as defined in
+ * [N3605](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3605.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_ALIAS_TEMPLATES
+ *
+ * 1 if the current c++ compiler and build flags combination supports template
+ * aliases, as defined in
+ * [N2258](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2258.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_ALIGNAS
+ *
+ * 1 if the current c++ compiler and build flags combination supports alignment
+ * control `alignas`, as defined in
+ * [N2341](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2341.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_ALIGNOF
+ *
+ * 1 if the current c++ compiler and build flags combination supports alignment
+ * control `alignof`, as defined in
+ * [N2341](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2341.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_ATTRIBUTES
+ *
+ * 1 if the current c++ compiler and build flags combination supports generic
+ * attributes, as defined in
+ * [N2761](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2761.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED
+ *
+ * 1 if the current c++ compiler and build flags combination supports the
+ * `[[deprecated]]` attribute, as defined in
+ * [N3760](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3760.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_AUTO_TYPE
+ *
+ * 1 if the current c++ compiler and build flags combination supports automatic
+ * type deduction, as defined in
+ * [N1984](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1984.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_BINARY_LITERALS
+ *
+ * 1 if the current c++ compiler and build flags combination supports binary
+ * literals, as defined in
+ * [N3472](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3472.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_CONSTEXPR
+ *
+ * 1 if the current c++ compiler and build flags combination supports constant
+ * expressions, as defined in
+ * [N2235](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2235.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_CONTEXTUAL_CONVERSIONS
+ *
+ * 1 if the current c++ compiler and build flags combination supports contextual
+ * conversions, as defined in
+ * [N3323](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3323.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_DECLTYPE
+ *
+ * 1 if the current c++ compiler and build flags combination supports decltype,
+ * as defined in
+ * [N2343](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2343.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_DECLTYPE_AUTO
+ *
+ * 1 if the current c++ compiler and build flags combination supports
+ * `decltype(auto)` semantics, as defined in
+ * [N3638](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3638.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_DECLTYPE_INCOMPLETE_RETURN_TYPES
+ *
+ * 1 if the current c++ compiler and build flags combination supports decltype
+ * on incomplete return types, as defined in
+ * [N3276](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3276.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_DEFAULT_FUNCTION_TEMPLATE_ARGS
+ *
+ * 1 if the current c++ compiler and build flags combination supports default
+ * template arguments for function templates, as defined in DR226.
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_DEFAULTED_FUNCTIONS
+ *
+ * 1 if the current c++ compiler and build flags combination supports
+ * defaulted functions, as defined in
+ * [N2346](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2346.htm).
+ *
+ * @see YARP_DEFAULTED_FUNCTION, YARP_COMPILER_CXX_DELETED_FUNCTIONS
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_DEFAULTED_MOVE_INITIALIZERS
+ *
+ * 1 if the current c++ compiler and build flags combination supports
+ * defaulted move initializers, as defined in
+ * [N3053](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2010/n3053.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_DELEGATING_CONSTRUCTORS
+ *
+ * 1 if the current c++ compiler and build flags combination supports delegating
+ * constructors, as defined in
+ * [N1986](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1986.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_DELETED_FUNCTIONS
+ *
+ * 1 if the current c++ compiler and build flags combination supports deleted
+ * functions, as defined in
+ * [N2346](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2346.htm).
+ *
+ * @see YARP_DELETED_FUNCTION, YARP_COMPILER_CXX_DEFAULTED_FUNCTIONS
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_DIGIT_SEPARATORS
+ *
+ * 1 if the current c++ compiler and build flags combination supports digit
+ * separators, as defined in
+ * [N3781](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3781.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_ENUM_FORWARD_DECLARATIONS
+ *
+ * 1 if the current c++ compiler and build flags combination supports enum
+ * forward declarations, as defined in
+ * [N2764](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2764.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_EXPLICIT_CONVERSIONS
+ *
+ * 1 if the current c++ compiler and build flags combination supports explicit
+ * conversion operators, as defined in
+ * [N2437](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2437.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_EXTENDED_FRIEND_DECLARATIONS
+ *
+ * 1 if the current c++ compiler and build flags combination supports extended
+ * friend declarations, as defined in
+ * [N1791](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1791.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_EXTERN_TEMPLATES
+ *
+ * 1 if the current c++ compiler and build flags combination supports extern
+ * templates, as defined in
+ * [N1987](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1987.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_FINAL
+ *
+ * 1 if the current c++ compiler and build flags combination supports the
+ * override control `final` keyword, as defined in
+ * [N2928](http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2009/n2928.htm),
+ * [N3206](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2010/n3206.htm)
+ * and [N3272](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3272.htm).
+ *
+ * @see YARP_FINAL, YARP_COMPILER_CXX_OVERRIDE
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_FUNC_IDENTIFIER
+ *
+ * 1 if the current c++ compiler and build flags combination supports predefined
+ * `__func__` identifier, as defined in
+ * [N2340](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2340.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_GENERALIZED_INITIALIZERS
+ *
+ * 1 if the current c++ compiler and build flags combination supports
+ * initializer lists, as defined in
+ * [N2672](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2672.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_GENERIC_LAMBDAS
+ *
+ * 1 if the current c++ compiler and build flags combination supports generic
+ * lambdas, as defined in
+ * [N3649](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3649.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_INHERITING_CONSTRUCTORS
+ *
+ * 1 if the current c++ compiler and build flags combination supports inheriting
+ * constructors, as defined in
+ * [N2540](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2540.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_INLINE_NAMESPACES
+ *
+ * 1 if the current c++ compiler and build flags combination supports inline
+ * namespaces, as defined in
+ * [N2535](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2535.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_LAMBDAS
+ *
+ * 1 if the current c++ compiler and build flags combination supports lambda
+ * functions, as defined in
+ * [N2927](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2009/n2927.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_LAMBDA_INIT_CAPTURES
+ *
+ * 1 if the current c++ compiler and build flags combination supports lambda
+ * init captures, as defined in
+ * [N3648](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3648.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_LOCAL_TYPE_TEMPLATE_ARGS
+ *
+ * 1 if the current c++ compiler and build flags combination supports local and
+ * unnamed types as template arguments, as defined in
+ * [N2657](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2657.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_LONG_LONG_TYPE
+ *
+ * 1 if the current c++ compiler and build flags combination supports
+ * `long long` type, as defined in
+ * [N1811](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1811.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_NOEXCEPT
+ *
+ * 1 if the current c++ compiler and build flags combination supports
+ * exception specifications, as defined in
+ * [N3050](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2010/n3050.html).
+ *
+ * @see YARP_NOEXCEPT, YARP_NOEXCEPT_EXPR
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_NONSTATIC_MEMBER_INIT
+ *
+ * 1 if the current c++ compiler and build flags combination supports non-static
+ * data member initialization, as defined in
+ * [N2756](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2756.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_NULLPTR
+ *
+ * 1 if the current c++ compiler and build flags combination supports null
+ * pointer, as defined in
+ * [N2431](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2431.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_OVERRIDE
+ *
+ * 1 if the current c++ compiler and build flags combination supports the
+ * override control `override` keyword, as defined in
+ * [N2928](http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2009/n2928.htm),
+ * [N3206](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2010/n3206.htm)
+ * and [N3272](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3272.htm).
+ *
+ * @see YARP_OVERRIDE, YARP_COMPILER_CXX_FINAL
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_RANGE_FOR
+ *
+ * 1 if the current c++ compiler and build flags combination supports range
+ * based for, as defined in
+ * [N2930](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2009/n2930.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_RAW_STRING_LITERALS
+ *
+ * 1 if the current c++ compiler and build flags combination supports raw string
+ * literals, as defined in
+ * [N2442](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2442.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_REFERENCE_QUALIFIED_FUNCTIONS
+ *
+ * 1 if the current c++ compiler and build flags combination supports reference
+ * qualified functions, as defined in
+ * [N2439](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2439.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_RELAXED_CONSTEXPR
+ *
+ * 1 if the current c++ compiler and build flags combination supports relaxed
+ * constexpr, as defined in
+ * [N3652](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3652.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_RETURN_TYPE_DEDUCTION
+ *
+ * 1 if the current c++ compiler and build flags combination supports return
+ * type deduction on normal functions, as defined in
+ * [N3386](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3386.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_RIGHT_ANGLE_BRACKETS
+ *
+ * 1 if the current c++ compiler and build flags combination supports right
+ * angle bracket parsing, as defined in
+ * [N1757](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1757.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_RVALUE_REFERENCES
+ *
+ * 1 if the current c++ compiler and build flags combination supports r-value
+ * references, as defined in
+ * [N2118](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2118.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_SIZEOF_MEMBER
+ *
+ * 1 if the current c++ compiler and build flags combination supports size of
+ * non-static data members, as defined in
+ * [N2253](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2253.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_STATIC_ASSERT
+ *
+ * 1 if the current c++ compiler and build flags combination supports static
+ * asserts, as defined in
+ * [N1720](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1720.html).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_STRONG_ENUMS
+ *
+ * 1 if the current c++ compiler and build flags combination supports strongly
+ * typed enums, as defined in
+ * [N2347](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2347.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_TEMPLATE_TEMPLATE_PARAMETERS
+ *
+ * 1 if the current c++ compiler and build flags combination supports template
+ * template parameters, as defined in ISO/IEC 14882:1998.
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_THREAD_LOCAL
+ *
+ * 1 if the current c++ compiler and build flags combination supports
+ * thread-local variables, as defined in
+ * [N2659](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2659.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_TRAILING_RETURN_TYPES
+ *
+ * 1 if the current c++ compiler and build flags combination supports automatic
+ * function return type, as defined in
+ * [N2541](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2541.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_UNICODE_LITERALS
+ *
+ * 1 if the current c++ compiler and build flags combination supports unicode
+ * string literals, as defined in
+ * [N2443](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2442.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_UNIFORM_INITIALIZATION
+ *
+ * 1 if the current c++ compiler and build flags combination supports uniform
+ * initialization, as defined in
+ * [N2640](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2640.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_UNRESTRICTED_UNIONS
+ *
+ * 1 if the current c++ compiler and build flags combination supports uniform
+ * initialization, as defined in
+ * [N2544](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2544.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_USER_LITERALS
+ *
+ * 1 if the current c++ compiler and build flags combination supports
+ * user-defined literals, as defined in
+ * [N2765](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2765.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_VARIABLE_TEMPLATES
+ *
+ * 1 if the current c++ compiler and build flags combination supports
+ * user-defined literals, as defined in
+ * [N3651](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3651.pdf).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_VARIADIC_MACROS
+ *
+ * 1 if the current c++ compiler and build flags combination supports variadic
+ * macros, as defined in
+ * [N1653](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1653.htm).
+ */
+
+/**
+ * @def YARP_COMPILER_CXX_VARIADIC_TEMPLATES
+ *
+ * 1 if the current c++ compiler and build flags combination supports variadic
+ * templates, as defined in
+ * [N2242](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2242.pdf).
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Alignment Macros
+ */
+
+/**
+ * @def YARP_ALIGNAS
+ *
+ * Expands to the standard `alignas` decorator if supported, or a
+ * compiler-specific decorator such as `__attribute__ ((__aligned__))` used by
+ * GNU compilers.
+ *
+ * @see YARP_COMPILER_CXX_ALIGNAS, YARP_ALIGNOF
+ */
+
+/**
+ * @def YARP_ALIGNOF
+ *
+ * Expands to the standard `alignof` decorator if supported, or a
+ * compiler-specific decorator such as `__alignof__` used by GNU compilers.
+ *
+ * @see YARP_COMPILER_CXX_ALIGNOF, YARP_ALIGNAS
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Deprecated Functions Macros
+ */
+
+/**
+ * @def YARP_DEPRECATED
+ *
+ * Expands to either the standard `[[deprecated]]` attribute or a
+ * compiler-specific decorator such as `__attribute__((__deprecated__))` used by
+ * GNU compilers.
+ *
+ * @see YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED YARP_DEPRECATED_MSG
+ */
+
+/**
+ * @def YARP_DEPRECATED_MSG
+ *
+ * Expands to either the standard `[[deprecated]]` attribute or a
+ * compiler-specific decorator such as `__attribute__((__deprecated__))` used by
+ * GNU compilers.
+ *
+ * @see YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED YARP_DEPRECATED
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Constant Expressions Macros
+ */
+
+/**
+ * @def YARP_CONSTEXPR
+ *
+ * Expands to `constexpr` if constant expressions are supported by the
+ * current c++ compiler and build flags combination, defined empty elsewhere.
+ *
+ * @see YARP_COMPILER_CXX_CONSTEXPR
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Deleted Functions Macros
+ */
+
+/**
+ * @def YARP_DELETED_FUNCTION
+ *
+ * Expands to `= delete` if deleted functions are supported by the the current
+ * c++ compiler and build flags combination, defined empty elsewhere.
+ *
+ * @see YARP_COMPILER_CXX_DELETED_FUNCTIONS
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Extern Templates Macros
+ */
+
+/**
+ * @def YARP_EXTERN_TEMPLATE
+ *
+ * Expands to `exter` if extern templates are supported by the the current
+ * c++ compiler and build flags combination, defined empty elsewhere.
+ *
+ * @see YARP_COMPILER_CXX_EXTERN_TEMPLATES
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Override Control Macros
+ */
+
+/**
+ * @def YARP_OVERRIDE
+ *
+ * Expands to the override control `override` keyword if this is supported by
+ * the current c++ compiler and build flags combination, defined empty
+ * elsewhere.
+ *
+ * @see YARP_COMPILER_CXX_OVERRIDE, YARP_FINAL
+ */
+
+/**
+ * @def YARP_FINAL
+ *
+ * Expands to the override control `final` keyword if this is supported by
+ * the current c++ compiler and build flags combination, defined empty
+ * elsewhere.
+ *
+ * @see YARP_COMPILER_CXX_FINAL, YARP_OVERRIDE
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Exception Specifications Macros
+ */
+
+/**
+ * @def YARP_NOEXCEPT
+ *
+ * Expands to `noexcept` if exception specifications are supported by the
+ * current c++ compiler and build flags combination, defined empty elsewhere.
+ *
+ * @see YARP_COMPILER_CXX_NOEXCEPT, YARP_NOEXCEPT_EXPR
+ */
+
+/**
+ * @def YARP_NOEXCEPT_EXPR
+ *
+ * Expands to `noexcept(X)` if exception specifications are supported by the
+ * current c++ compiler and build flags combination, defined empty elsewhere.
+ *
+ * @see YARP_COMPILER_CXX_NOEXCEPT, YARP_NOEXCEPT
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Null Pointer Macros
+ */
+
+/**
+ * @def YARP_NULLPTR
+ *
+ * Expands to either the standard `nullptr` or to `0` elsewhere.
+ *
+ * @see YARP_COMPILER_CXX_NULLPTR
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Static Assert Macros
+ */
+
+/**
+ * @def YARP_STATIC_ASSERT
+ *
+ * Expands to `static_assert(X, #X)` if static asserts are supported by the
+ * current c++ compiler and build flags combination, to a compatibility
+ * implementation otherwise.
+ *
+ * @warning This macro cannot be used everywhere like a `static_assert`, see
+ *          [CMake#16185](https://gitlab.kitware.com/cmake/cmake/issues/16185)).
+ *          Moreover, in order to be portable, if the `X` argument is an
+ *          expression, it must be enclosed in parenthesis. For example:
+ * @code
+ * YARP_STATIC_ASSERT((42 < 0))\\\;
+ * @endcode
+ *
+ * @see YARP_COMPILER_CXX_STATIC_ASSERT YARP_STATIC_ASSERT_MSG
+ */
+
+/**
+ * @def YARP_STATIC_ASSERT_MSG
+ *
+ * Expands to `static_assert(X, MSG)` if static asserts are supported by the
+ * current c++ compiler and build flags combination, to a compatibility
+ * implementation otherwise.
+ *
+ * @warning This macro cannot be used everywhere like a `static_assert`, see
+ *          [CMake#16185](https://gitlab.kitware.com/cmake/cmake/issues/16185)).
+ *          Moreover, in order to be portable, if the `X` argument is an
+ *          expression, it must be enclosed in parenthesis. For example:
+ * @code
+ * YARP_STATIC_ASSERT_MSG((42 < 0), "This is wrong")\\\;
+ * @endcode
+ *
+ * @see YARP_COMPILER_CXX_STATIC_ASSERT YARP_STATIC_ASSERT
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @{
+ * @name Thread-Local Variables Macros
+ */
+
+/**
+ * @def YARP_THREAD_LOCAL
+ *
+ * Expands to either the standard `thread_loca` attribute, to a
+ * compiler-specific decorator such as `__thread` used by GNU compilers, or
+ * defined empty if not supported by the current c++ compiler and build flags
+ * combination.
+ *
+ * @see YARP_COMPILER_CXX_THREAD_LOCAL
+ */
+
+/**
+ * @}
+ */

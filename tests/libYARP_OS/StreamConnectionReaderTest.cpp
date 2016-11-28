@@ -16,7 +16,7 @@ using namespace yarp::os::impl;
 
 class StreamConnectionReaderTest : public UnitTest {
 public:
-    virtual String getName() { return "StreamConnectionReaderTest"; }
+    virtual ConstString getName() { return "StreamConnectionReaderTest"; }
 
     void testRead() {
         report(0,"testing reading...");
@@ -26,7 +26,7 @@ public:
         StreamConnectionReader sbr;
         Route route;
         sbr.reset(sis,NULL,route,10,true);
-        String line = sbr.expectLine();
+        ConstString line = sbr.expectLine();
         checkEqual(line,"Hello","one line");
     }
 

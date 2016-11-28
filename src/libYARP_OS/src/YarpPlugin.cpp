@@ -8,7 +8,6 @@
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformStdlib.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
@@ -23,21 +22,7 @@ using namespace yarp::os::impl;
 bool YarpPluginSettings::open(SharedLibraryFactory& factory,
                               const ConstString& dll_name,
                               const ConstString& fn_name) {
-    bool ok = subopen(factory,dll_name,fn_name);
-    if (!ok) {
-        if (factory.getStatus() ==
-            SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND) {
-            ok = subopen(factory,dll_name,fn_name + "_carrier");
-            if (!ok) {
-                ok = subopen(factory,dll_name,fn_name + "_device");
-            }
-            if (ok) {
-                // This is deprecated. Print a warning
-                yWarning("This plugin is using a broken .ini file");
-            }
-        }
-    }
-    return ok;
+    return subopen(factory,dll_name,fn_name);
 }
 
 bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
@@ -64,7 +49,7 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
 bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
     YARP_SPRINTF3(impl::Logger::get(),debug,"Plugin [name: %s] [dll: %s] [fn: %s]",
                   name.c_str(),dll_name.c_str(),fn_name.c_str());
-    if (selector!=NULL && name != "") {
+    if (selector!=YARP_NULLPTR && name != "") {
         // we may have a YARP-specific search path available,
         // and a proper name for the DLL
         Bottle paths = selector->getSearchPath();
@@ -190,7 +175,7 @@ void YarpPluginSelector::scan() {
         NetworkBase::lock();
         ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
         if (!rf.isConfigured()) {
-            rf.configure(0,NULL);
+            rf.configure(0,YARP_NULLPTR);
         }
         rf.setQuiet(true);
         Bottle plugins = rf.findPaths("plugins");

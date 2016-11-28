@@ -41,7 +41,7 @@
         while (true)
         {
             DWORD nCount=0;
-            HANDLE* aHandlesVector=NULL;
+            HANDLE* aHandlesVector = YARP_NULLPTR;
             pProcessVector->GetHandles(aHandlesVector,nCount);
 
             if (nCount)
@@ -51,7 +51,7 @@
             }
             else
             {
-                //hZombieHunter=NULL;
+                //hZombieHunter = YARP_NULLPTR;
 
                 return 0;
             }
@@ -137,7 +137,7 @@ bool YarpRunProcInfo::IsActive()
 bool YarpRunProcInfo::Clean()
 {
 #if !defined(WIN32)
-    if (!mCleanCmd && waitpid(mPidCmd,NULL,WNOHANG)==mPidCmd)
+    if (!mCleanCmd && waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
     {
         fprintf(stderr,"CLEANUP cmd %d\n",mPidCmd);
         mCleanCmd=true;
@@ -155,7 +155,7 @@ YarpRunInfoVector::YarpRunInfoVector()
 
     for (int i=0; i<MAX_PROCESSES; ++i)
     {
-        m_apList[i]=NULL;
+        m_apList[i] = YARP_NULLPTR;
     }
 }
 
@@ -168,7 +168,7 @@ YarpRunInfoVector::~YarpRunInfoVector()
         if (m_apList[i])
         {
             delete m_apList[i];
-            m_apList[i]=NULL;
+            m_apList[i] = YARP_NULLPTR;
         }
     }
 
@@ -176,7 +176,7 @@ YarpRunInfoVector::~YarpRunInfoVector()
     if (hZombieHunter)
     {
         HANDLE hkill=hZombieHunter;
-        hZombieHunter=NULL;
+        hZombieHunter = YARP_NULLPTR;
         TerminateThread(hkill,0);
     }
 #endif
@@ -199,7 +199,7 @@ bool YarpRunInfoVector::Add(YarpRunProcInfo *process)
     if (hZombieHunter)
     {
         HANDLE hkill=hZombieHunter;
-        hZombieHunter=NULL;
+        hZombieHunter = YARP_NULLPTR;
         TerminateThread(hkill,0);
     }
 #endif
@@ -310,7 +310,7 @@ bool YarpRunInfoVector::CleanZombie(int zombie)
 {
     bool bFound=false;
 
-    YarpRunProcInfo *pZombie=NULL;
+    YarpRunProcInfo *pZombie = YARP_NULLPTR;
 
     WAIT()
 
@@ -319,7 +319,7 @@ bool YarpRunInfoVector::CleanZombie(int zombie)
         if (m_apList[i] && m_apList[i]->Clean(zombie,pZombie))
         {
             bFound=true;
-            if (pZombie) m_apList[i]=NULL;
+            if (pZombie) m_apList[i] = YARP_NULLPTR;
             break;
         }
     }
@@ -443,7 +443,7 @@ YarpRunProcInfo(alias,on,pidCmd,handleCmd,hold)
     mPidStdout=pidStdout;
     mStdio=stdio;
     mStdioUUID="";
-    mStdioVector=NULL;
+    mStdioVector = YARP_NULLPTR;
 
     mReadFromPipeStdinToCmd = 0;
     mWriteToPipeStdinToCmd = 0;
@@ -525,19 +525,19 @@ bool YarpRunCmdWithStdioInfo::Clean()
 
 #else
 
-    if (!mCleanCmd && waitpid(mPidCmd,NULL,WNOHANG)==mPidCmd)
+    if (!mCleanCmd && waitpid(mPidCmd, YARP_NULLPTR, WNOHANG) == mPidCmd)
     {
         fprintf(stderr,"CLEANUP cmd %d\n",mPidCmd);
         mCleanCmd=true;
     }
 
-    if (!mCleanStdin && waitpid(mPidStdin,NULL,WNOHANG)==mPidStdin)
+    if (!mCleanStdin && waitpid(mPidStdin, YARP_NULLPTR, WNOHANG) == mPidStdin)
     {
         fprintf(stderr,"CLEANUP stdin %d\n",mPidStdin);
         mCleanStdin=true;
     }
 
-    if (!mCleanStdout && waitpid(mPidStdout,NULL,WNOHANG)==mPidStdout)
+    if (!mCleanStdout && waitpid(mPidStdout, YARP_NULLPTR, WNOHANG) == mPidStdout)
     {
         fprintf(stderr,"CLEANUP stdout %d\n",mPidStdout);
         mCleanStdout=true;
@@ -663,7 +663,7 @@ bool TERMINATE(PID dwPID)
     // then we give up immediately.
     hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE,FALSE,dwPID);
 
-    if (hProc==NULL)
+    if (hProc == YARP_NULLPTR)
     {
         return false;
     }

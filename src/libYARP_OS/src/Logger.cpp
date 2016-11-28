@@ -16,7 +16,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-Logger *Logger::root = NULL;
+Logger *Logger::root = YARP_NULLPTR;
 
 Logger& Logger::get() {
     if (!root) root = new Logger("yarp");
@@ -25,11 +25,11 @@ Logger& Logger::get() {
 
 void Logger::fini() {
     if (root) delete root;
-    root = NULL;
+    root = YARP_NULLPTR;
 }
 
 
-void Logger::show(unsigned YARP_INT32 level, const String& txt) {
+void Logger::show(unsigned YARP_INT32 level, const ConstString& txt) {
     unsigned YARP_INT32 inLevel = level;
     //ACE_OS::fprintf(stderr,"level %d txt %s\n", level, txt.c_str());
     if (verbose>0) {
@@ -38,13 +38,13 @@ void Logger::show(unsigned YARP_INT32 level, const String& txt) {
     if (verbose<0) {
         level = 0;
     }
-    if (stream == NULL) {
+    if (stream == YARP_NULLPTR) {
         stream = stderr;
         if (NetworkBase::getEnvironment("YARP_LOGGER_STREAM") == "stdout") {
             stream = stdout;
         }
     }
-    if (parent == NULL) {
+    if (parent == YARP_NULLPTR) {
         if (level>=low) {
             if (inLevel<=LM_DEBUG) {
                 ACE_OS::fprintf(stream,"%s(%04x): %s\n",
@@ -57,7 +57,7 @@ void Logger::show(unsigned YARP_INT32 level, const String& txt) {
             ACE_OS::fflush(stream);
         }
     } else {
-        String more(prefix);
+        ConstString more(prefix);
         more += ": ";
         more += txt;
         parent->show(inLevel,more);

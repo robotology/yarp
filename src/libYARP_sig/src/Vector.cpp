@@ -28,8 +28,6 @@ using namespace yarp::os;
 /// network stuff
 #include <yarp/os/NetInt32.h>
 
-#include <yarp/gsl_compatibility.h>
-
 ///////////////////
 
 YARP_BEGIN_PACK
@@ -143,7 +141,6 @@ const Vector &Vector::operator=(const Vector &r)
     else
     {
         storage=r.storage;
-        updateGslData();
     }
     return *this;
 }
@@ -153,9 +150,6 @@ Vector::Vector(size_t s, const double *p)
     storage.resize(s);
 
     memcpy(storage.getFirst(), p, sizeof(double)*s);
-
-    allocGslData();
-    updateGslData();
 }
 
 void Vector::zero()
@@ -190,54 +184,6 @@ bool Vector::operator==(const yarp::sig::Vector &r) const
     }
 
     return true;
-}
-
-void *Vector::getGslVector()
-{
-    return gslData;
-}
-
-const void *Vector::getGslVector() const
-{
-    return gslData;
-}
-
-void Vector::allocGslData()
-{
-    gsl_vector *vect=new gsl_vector;
-    gsl_block *bl=new gsl_block;
-
-    vect->block=bl;
-
-    //these are constant (at least for now)
-    vect->owner=1;
-    vect->stride=1;
-
-    gslData=vect;
-}
-
-void Vector::freeGslData()
-{
-    gsl_vector *tmp=(gsl_vector *) (gslData);
-
-    if (tmp!=0)
-    {
-        delete tmp->block;
-        delete tmp;
-    }
-
-    gslData=0;
-}
-
-void Vector::updateGslData()
-{
-    gsl_vector *tmp=static_cast<gsl_vector *>(gslData);
-    tmp->block->data=Vector::data();
-    tmp->data=tmp->block->data;
-    tmp->block->size=Vector::size();
-    tmp->owner=1;
-    tmp->stride=1;
-    tmp->size=tmp->block->size;
 }
 
 bool Vector::read(yarp::os::ConnectionReader& connection) {

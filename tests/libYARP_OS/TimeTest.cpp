@@ -7,7 +7,7 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
@@ -17,7 +17,7 @@ using namespace yarp::os::impl;
 
 class TimeTest : public UnitTest {
 public:
-    virtual String getName() { return "TimeTest"; }
+    virtual ConstString getName() { return "TimeTest"; }
 
     void testDelay() {
         report(0,"testing delay (there will be a short pause)...");
@@ -28,7 +28,7 @@ public:
         double dt = t2-t1-target;
         double limit = 2.0; // don't be too picky, there is a lot of undefined slop
         bool inLimits = (-limit<dt)&&(dt<limit);
-        report(0,String("delay was late(+) or early(-) by ") +
+        report(0,ConstString("delay was late(+) or early(-) by ") +
                NetType::toString((int)(dt*1000)) +
                " ms");
         checkEqual(true,inLimits,"delay for 3.0 seconds");

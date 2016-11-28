@@ -11,6 +11,8 @@
 #include <semaphore.h>
 #include <time.h>
 
+#include <yarp/os/api.h>
+
 class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
 public:
     SemaphoreImpl(unsigned int initialCount = 1) {

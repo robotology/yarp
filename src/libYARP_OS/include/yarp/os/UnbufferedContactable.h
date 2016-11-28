@@ -29,8 +29,8 @@ public:
      * is done (otherwise writer.onCompletion() is called)
      * @return true iff the object is successfully written
      */
-    virtual bool write(PortWriter& writer, 
-                       PortWriter *callback = 0 /*NULL*/) const = 0;
+    virtual bool write(PortWriter& writer,
+                       PortWriter *callback = YARP_NULLPTR) const = 0;
 
     /**
      * Write an object to the port, then expect one back.
@@ -43,7 +43,7 @@ public:
      * @return true iff an object is successfully written and read
      */
     virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = 0 /*NULL*/) const = 0;
+                       PortWriter *callback = YARP_NULLPTR) const = 0;
 
     /**
      * Read an object from the port.

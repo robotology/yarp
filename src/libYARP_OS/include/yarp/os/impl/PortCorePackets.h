@@ -62,7 +62,7 @@ public:
      */
     PortCorePacket *getFreePacket() {
         if (PLATFORM_LIST_EMPTY(inactive)) {
-            PortCorePacket *obj = NULL;
+            PortCorePacket *obj = YARP_NULLPTR;
 #if defined(YARP_HAS_ACE) && !defined(YARP_HAS_CXX11)
             size_t obj_size = sizeof (PortCorePacket);
             ACE_NEW_MALLOC_RETURN (obj,
@@ -72,19 +72,19 @@ public:
 #else
             obj = new PortCorePacket();
 #endif
-            yAssert(obj!=NULL);
+            yAssert(obj!=YARP_NULLPTR);
             PLATFORM_LIST_PUSH_BACK(inactive,obj);
         }
-        PortCorePacket *next = NULL;
+        PortCorePacket *next = YARP_NULLPTR;
         PLATFORM_LIST_GET(inactive,next);
-        if (next==NULL) {
+        if (next==YARP_NULLPTR) {
             fprintf(stderr,"*** YARP consistency check failed.\n");
             fprintf(stderr,"*** There has been a low-level failure in \"PortCorePackets\".\n");
             fprintf(stderr,"*** This typically occurs when ports are accessed in a non-threadsafe way.\n");
             fprintf(stderr,"*** For help: https://github.com/robotology/yarp/issues/new\n");
             yAssert(1==0);
         }
-        yAssert(next!=NULL);
+        yAssert(next!=YARP_NULLPTR);
         inactive.remove(next);
         PLATFORM_LIST_PUSH_BACK(active,next);
         return next;
@@ -99,7 +99,7 @@ public:
      *
      */
     void freePacket(PortCorePacket *packet, bool clear=true) {
-        if (packet!=NULL) {
+        if (packet!=YARP_NULLPTR) {
             if (clear) {
                 packet->reset();
             }
@@ -118,7 +118,7 @@ public:
      *
      */
     bool completePacket(PortCorePacket *packet) {
-        if (packet!=NULL) {
+        if (packet!=YARP_NULLPTR) {
             if (packet->getCount()<=0) {
                 packet->complete();
                 return true;
@@ -136,7 +136,7 @@ public:
      *
      */
     bool checkPacket(PortCorePacket *packet) {
-        if (packet!=NULL) {
+        if (packet!=YARP_NULLPTR) {
             if (packet->getCount()<=0) {
                 packet->complete();
                 freePacket(packet);

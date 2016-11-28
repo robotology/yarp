@@ -5,15 +5,11 @@
 *
 */
 
-// Sept. 2010 Uses gsl routines for random generation.
-
 #include <yarp/os/Semaphore.h>
 #include <yarp/math/Rand.h>
 #include <time.h>
 #include <stdio.h>
 #include <math.h>
-
-#include <gsl/gsl_rng.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;

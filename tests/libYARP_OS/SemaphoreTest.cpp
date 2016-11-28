@@ -7,8 +7,6 @@
 
 #include <math.h>
 
-#include <yarp/os/impl/String.h>
-
 #include <yarp/os/all.h>
 
 #include <yarp/os/impl/UnitTest.h>
@@ -28,12 +26,13 @@ public:
     virtual void run() {
         x.wait();
         state = 2;
+        x.post();
     }
 };
 
 class SemaphoreTest : public UnitTest {
 public:
-    virtual String getName() { return "SemaphoreTest"; }
+    virtual ConstString getName() { return "SemaphoreTest"; }
 
     void checkBasic() {
         report(0, "basic semaphore sanity check...");
@@ -52,10 +51,11 @@ public:
         Time::delay(0.5); 
         checkEqual(helper.state,1,"helper blocked");
         helper.x.post();
-        for (int i=0; i<20&&helper.state==1; i++) {
-            Time::delay(0.1); 
-        }
+        Time::delay(0.5);
+        helper.x.wait();
         checkEqual(helper.state,2,"helper unblocked");
+        helper.x.post();
+        helper.stop();
     }
 
     void checkTimed() {

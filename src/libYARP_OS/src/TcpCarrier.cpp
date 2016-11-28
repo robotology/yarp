@@ -6,7 +6,7 @@
  */
 
 #include <yarp/os/impl/TcpCarrier.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 using namespace yarp::os;
 
@@ -19,7 +19,7 @@ yarp::os::Carrier *yarp::os::impl::TcpCarrier::create() {
     return new TcpCarrier(requireAckFlag);
 }
 
-yarp::os::impl::String yarp::os::impl::TcpCarrier::getName() {
+yarp::os::ConstString yarp::os::impl::TcpCarrier::getName() {
     return requireAckFlag?"tcp":"fast_tcp";
 }
 

@@ -61,11 +61,11 @@ public:
     ConnectionReader& getReader()
     {
         writer.stopWrite();
-        String s = writer.toString();
+        ConstString s = writer.toString();
         sis.reset();
         sis.add(s);
         Route r;
-        reader.reset(sis, NULL, r, s.length(), textMode);
+        reader.reset(sis, YARP_NULLPTR, r, s.length(), textMode);
         return reader;
     }
 
@@ -85,9 +85,9 @@ DummyConnector::DummyConnector() {
 
 
 DummyConnector::~DummyConnector() {
-    if (implementation!=NULL) {
+    if (implementation != YARP_NULLPTR) {
         delete &HELPER(implementation);
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 

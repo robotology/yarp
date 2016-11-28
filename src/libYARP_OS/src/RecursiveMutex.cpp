@@ -14,14 +14,14 @@ using namespace yarp::os;
 
 RecursiveMutex::RecursiveMutex() {
     implementation = new RecursiveLockImpl();
-    yAssert(implementation!=NULL);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 RecursiveMutex::~RecursiveMutex() {
     RecursiveLockImpl *lock = static_cast<RecursiveLockImpl*>(implementation);
     if (lock) {
         delete lock;
-        implementation = NULL;
+        implementation = YARP_NULLPTR;
     }
 }
 

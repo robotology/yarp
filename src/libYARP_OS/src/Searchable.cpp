@@ -25,7 +25,7 @@ yarp::os::SearchMonitor::~SearchMonitor() {
 
 
 yarp::os::Searchable::Searchable() :
-        monitor(NULL) {
+        monitor(YARP_NULLPTR) {
 }
 
 yarp::os::Searchable::~Searchable() {
@@ -34,7 +34,7 @@ yarp::os::Searchable::~Searchable() {
 bool yarp::os::Searchable::check(const ConstString& key,
                                  yarp::os::Value *& result,
                                  const ConstString& comment) const {
-    if (getMonitor()!=NULL && comment!="") {
+    if (getMonitor()!=YARP_NULLPTR && comment!="") {
         SearchReport report;
         report.key = key;
         report.value = comment;
@@ -52,14 +52,14 @@ bool yarp::os::Searchable::check(const ConstString& key,
 yarp::os::Value yarp::os::Searchable::check(const ConstString& key,
                                             const yarp::os::Value& fallback,
                                             const ConstString& comment) const {
-    if (getMonitor()!=NULL && comment!="") {
+    if (getMonitor()!=YARP_NULLPTR && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
         report.isComment = true;
         reportToMonitor(report);
     }
-    if (getMonitor()!=NULL) {
+    if (getMonitor()!=YARP_NULLPTR) {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = fallback.toString();
@@ -76,7 +76,7 @@ yarp::os::Value yarp::os::Searchable::check(const ConstString& key,
 
 bool yarp::os::Searchable::check(const ConstString& key,
                                  const ConstString& comment) const {
-    if (getMonitor()!=NULL && comment!="") {
+    if (getMonitor()!=YARP_NULLPTR && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
@@ -88,7 +88,7 @@ bool yarp::os::Searchable::check(const ConstString& key,
 
 yarp::os::Bottle& yarp::os::Searchable::findGroup(const ConstString& key,
                                                   const ConstString& comment) const {
-    if (getMonitor()!=NULL && comment!="") {
+    if (getMonitor()!=YARP_NULLPTR && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
@@ -118,7 +118,7 @@ yarp::os::ConstString yarp::os::Searchable::getMonitorContext() const {
 }
 
 void yarp::os::Searchable::reportToMonitor(const yarp::os::SearchReport& report) const {
-    if (monitor!=NULL) {
+    if (monitor!=YARP_NULLPTR) {
         monitor->report(report,monitorContext.c_str());
     }
 }

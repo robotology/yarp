@@ -146,7 +146,7 @@ public:
 
     ClientFactory() {
         man.setReaderCreator(*this);
-        man.open(Contact::byName("/game").addSocket("...","...",8080));
+        man.open(Contact("/game", "...", "...", 8080));
         Contact where = man.where();
         printf("Game reachable at ip %s port %d (registered with yarp as %s)\n", 
                where.getHost().c_str(),

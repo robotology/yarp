@@ -21,7 +21,7 @@ namespace yarp
         * The diagonal elements of the singular value matrix S are stored in the vector S.
         * The singular values are non-negative and form a non-increasing sequence from S_1 to S_N. 
         * The matrix V contains the elements of V in untransposed form. To form the product U S V^T it 
-        * is necessary to take the transpose of V. This routine uses the Golub-Reinsch SVD algorithm.
+        * is necessary to take the transpose of V.
         * Defining K as min(M, N) the the input matrices are:
         * @param in input M-by-N matrix to decompose
         * @param U output M-by-K orthogonal matrix
@@ -30,6 +30,10 @@ namespace yarp
         * @note The routine computes the \a thin version of the SVD. Mathematically, the \a full SVD is 
         *       defined with U and V as square orthogonal matrices and S as an M-by-N diagonal matrix.
         *       If U, S, V do not have the expected sizes they are resized automatically.
+        *
+        * @note When libYARP_math is compiled with GSL backend, this
+        *       function uses the Golub-Reinsch SVD algorithm.
+        *       When compiled with Eigen backend, this function uses the Jacobi SVD algorithm.
         */
         void YARP_math_API SVD(const yarp::sig::Matrix &in, 
             yarp::sig::Matrix &U,
@@ -38,7 +42,10 @@ namespace yarp
 
         /**
         * Perform SVD decomposition on a MxN matrix (for M >= N) (defined in SVD.h).
-        * Modified Golub Reinsch method. Fast for M>>N.
+        *
+        * @note When libYARP_math is compiled with GSL backend, this
+        *       function uses the Modified Golub-Reinsch SVD algorithm (fast for M>>N)
+        *       When compiled with Eigen backend, this function uses the Jacobi SVD algorithm.
         */
         void YARP_math_API SVDMod(const yarp::sig::Matrix &in, 
             yarp::sig::Matrix &U,
@@ -48,6 +55,8 @@ namespace yarp
         /**
         * Perform SVD decomposition on a matrix using the Jacobi method (defined in SVD.h). The Jacobi method
         * can compute singular values to higher relative accuracy than Golub-Reinsch algorithms.
+        *
+        * @note For both Eigen and GSL backends, the Jacobi algorithm is used in this function.
         */
         void YARP_math_API SVDJacobi(const yarp::sig::Matrix &in, 
             yarp::sig::Matrix &U,

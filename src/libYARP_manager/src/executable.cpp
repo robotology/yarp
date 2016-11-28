@@ -191,7 +191,7 @@ void Executable::watchdogImplement(void)
     {
         CnnIterator itr;
         for(itr=connections.begin(); itr!=connections.end(); itr++)
-            if( !broker->connected((*itr).from(), (*itr).to()) )
+            if( !broker->connected((*itr).from(), (*itr).to(), (*itr).carrier()) )
                 execMachine->connectionFailed(&(*itr));
     }
 }

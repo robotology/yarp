@@ -38,7 +38,7 @@ using namespace yarp::os;
  * An error handler that reaps the zombies.
  */
 void sigchld_handler(int s) {
-    while(waitpid(-1, NULL, WNOHANG) > 0) {}
+    while(waitpid(-1, YARP_NULLPTR, WNOHANG) > 0) {}
 }
 
 
@@ -99,7 +99,7 @@ int TcpAcceptor::shared_open(const Contact& address) {
     sa.sa_handler = sigchld_handler;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
-    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+    if (sigaction(SIGCHLD, &sa, YARP_NULLPTR) == -1) {
         perror("At sigaction(address) there was an error...");
         return -1;
     }

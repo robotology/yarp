@@ -7,7 +7,7 @@
 
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/OutputProtocol.h>
-#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Carriers.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -23,13 +23,13 @@ bool NameSpace::checkNetwork() {
     if (!c.isValid()) return false;
 
     OutputProtocol *out = Carriers::connect(c);
-    if (out==NULL) {
+    if (out==YARP_NULLPTR) {
         return false;
     }
 
     out->close();
     delete out;
-    out = NULL;
+    out = YARP_NULLPTR;
 
     return true;
 }
@@ -40,13 +40,13 @@ bool NameSpace::checkNetwork(double timeout) {
 
     c.setTimeout((float)timeout);
     OutputProtocol *out = Carriers::connect(c);
-    if (out==NULL) {
+    if (out==YARP_NULLPTR) {
         return false;
     }
 
     out->close();
     delete out;
-    out = NULL;
+    out = YARP_NULLPTR;
 
     return true;
 }

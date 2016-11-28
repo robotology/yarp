@@ -13,6 +13,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/BufferedPort.h
                  include/yarp/os/Bytes.h
                  include/yarp/os/Carrier.h
+                 include/yarp/os/Carriers.h
                  include/yarp/os/Clock.h
                  include/yarp/os/Connection.h
                  include/yarp/os/ConnectionReader.h
@@ -141,7 +142,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/BottleImpl.h
                       include/yarp/os/impl/BufferedConnectionWriter.h
-                      include/yarp/os/impl/Carriers.h
                       include/yarp/os/impl/Companion.h
                       include/yarp/os/impl/CXX11LockImpl.h
                       include/yarp/os/impl/CXX11SemaphoreImpl.h
@@ -177,6 +177,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformVector.h
                       include/yarp/os/impl/PortCommand.h
                       include/yarp/os/impl/PortCore.h
+                      include/yarp/os/impl/PortCoreAdapter.h
                       include/yarp/os/impl/PortCoreInputUnit.h
                       include/yarp/os/impl/PortCoreOutputUnit.h
                       include/yarp/os/impl/PortCorePacket.h
@@ -200,7 +201,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/StreamConnectionReader.h
-                      include/yarp/os/impl/String.h
                       include/yarp/os/impl/TcpAcceptor.h
                       include/yarp/os/impl/TcpCarrier.h
                       include/yarp/os/impl/TcpConnector.h
@@ -279,6 +279,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/PortablePair.cpp
                  src/PortCommand.cpp
                  src/PortCore.cpp
+                 src/PortCoreAdapter.cpp
                  src/PortCoreInputUnit.cpp
                  src/PortCoreOutputUnit.cpp
                  src/Port.cpp
@@ -314,6 +315,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ShmemOutputStream.cpp
                  src/ShmemTwoWayStream.cpp
                  src/SocketTwoWayStream.cpp
+                 src/SplitString.cpp
                  src/Stamp.cpp
                  src/StreamConnectionReader.cpp
                  src/SystemClock.cpp
@@ -403,10 +405,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(YARP_OS LINK_PRIVATE pthread)
 endif()
 
-if(YARP_USE_READLINE)
-    add_definitions(-DWITH_READLINE)
-    include_directories(${Readline_INCLUDE_DIRS})
-    target_link_libraries(YARP_OS LINK_PRIVATE ${Readline_LIBRARY})
+if(YARP_HAS_LIBEDIT)
+    add_definitions(-DWITH_LIBEDIT)
+    include_directories(${Libedit_INCLUDE_DIRS})
+    target_link_libraries(YARP_OS LINK_PRIVATE ${Libedit_LIBRARIES})
 endif()
 
 option(YARP_TEST_HEAP "Replace new/delete operators with test harness (may be incompatible with ACE)" FALSE)

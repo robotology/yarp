@@ -39,8 +39,8 @@ public:
         closed = false;
         reader = false;
         writer = false;
-        dgram = NULL;
-        mgram = NULL;
+        dgram = YARP_NULLPTR;
+        mgram = YARP_NULLPTR;
         happy = true;
         bufferAlerted = bufferAlertNeeded = false;
         multiMode = false;
