@@ -41,7 +41,7 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
     // Initialize serial port
     if(_serialConnector.connect(_serial_dev, ACE_DEV_Addr(config.CommChannel)) == -1)
     {
-        yError("Invalid communications port in %s \n", config.CommChannel);
+        yError("Invalid communications port in %s: %s\n", config.CommChannel, strerror(errno));
         return false;
     }
 
