@@ -20,7 +20,7 @@ project(YARP)
 set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
 
-find_package(YCM 0.2.1 QUIET)
+find_package(YCM 0.2.2 QUIET)
 if(NOT YCM_FOUND)
   list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-0.2/find-modules"
                                "${YARP_MODULE_DIR}/ycm-0.2/modules"
