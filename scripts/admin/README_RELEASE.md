@@ -83,10 +83,6 @@ git commit -m "Prepare for next stable release (2.3.68.2)"
   git merge --no-ff master
 ```
 
-* Create 2 labels on github (in https://github.com/robotology/yarp/labels)
-  * `Fixed in: YARP 2.3.68.2` using `#fbca04` as color.
-  * `Target: YARP v2.3.68.2` using #d93f0b as color.
-
 * Open https://github.com/robotology/yarp/settings/branches/master, remove tick
   from `Include administrators` and save changes.
 
@@ -101,13 +97,9 @@ git commit -m "Prepare for next stable release (2.3.68.2)"
 * Open https://github.com/robotology/yarp/settings/branches/master, restore tick
   in `Include administrators` and save changes.
 
-* Create the release on github, copying the release notes file as the release
-  description and save as draft.
-
-* Publish the release by posting an announcement in
-  [`robotology/QA`](https://github.com/robotology/QA) and in the
-  [`rc-hackers`](http://wiki.icub.org/wiki/Robotcub-hackers) mailing list.
-
+* Create 2 labels on github (in https://github.com/robotology/yarp/labels)
+  * `Fixed in: YARP 2.3.68.2` using `#fbca04` as color.
+  * `Target: YARP v2.3.68.2` using #d93f0b as color.
 
 
 
@@ -224,12 +216,6 @@ git add doc/releases.dox
 git commit -m "Prepare for next feature release (2.3.72)"
 ```
 
-* Create 4 labels on github (in https://github.com/robotology/yarp/labels)
-  * `Fixed in: YARP 2.3.70.1` using `#fbca04` as color.
-  * `Target: YARP v2.3.70.1` using #d93f0b as color.
-  * `Fixed in: YARP 2.3.72` using `#fbca04` as color.
-  * `Target: YARP v2.3.72` using #d93f0b as color.
-
 * Open https://github.com/robotology/yarp/settings/branches/master, remove tick
   from `Include administrators` and save changes.
 
@@ -244,6 +230,17 @@ git commit -m "Prepare for next feature release (2.3.72)"
 * Open https://github.com/robotology/yarp/settings/branches/master, restore tick
   in `Include administrators` and save changes.
 
+* Create 4 labels on github (in https://github.com/robotology/yarp/labels)
+  * `Fixed in: YARP 2.3.70.1` using `#fbca04` as color.
+  * `Target: YARP v2.3.70.1` using #d93f0b as color.
+  * `Fixed in: YARP 2.3.72` using `#fbca04` as color.
+  * `Target: YARP v2.3.72` using #d93f0b as color.
+
+
+
+Actions after any YARP release
+==============================
+
 * Create the release on github, copying the release notes file as the release
   description and save as draft.
 
@@ -253,10 +250,6 @@ git commit -m "Prepare for next feature release (2.3.72)"
   [`robotology/QA`](https://github.com/robotology/QA) and in the
   [`rc-hackers`](http://wiki.icub.org/wiki/Robotcub-hackers) mailing list.
 
-
-
-Actions after a YARP release
-=============================
 * Update the latest release version in
   [YARP's Wikipedia page](https://en.wikipedia.org/wiki/YARP).
 
