@@ -99,7 +99,7 @@ git commit -m "Prepare for next stable release (2.3.68.2)"
 
 * Create 2 labels on github (in https://github.com/robotology/yarp/labels)
   * `Fixed in: YARP 2.3.68.2` using `#fbca04` as color.
-  * `Target: YARP v2.3.68.2` using #d93f0b as color.
+  * `Target: YARP v2.3.68.2` using `#d93f0b` as color.
 
 
 
@@ -232,9 +232,9 @@ git commit -m "Prepare for next feature release (2.3.72)"
 
 * Create 4 labels on github (in https://github.com/robotology/yarp/labels)
   * `Fixed in: YARP 2.3.70.1` using `#fbca04` as color.
-  * `Target: YARP v2.3.70.1` using #d93f0b as color.
+  * `Target: YARP v2.3.70.1` using `#d93f0b` as color.
   * `Fixed in: YARP 2.3.72` using `#fbca04` as color.
-  * `Target: YARP v2.3.72` using #d93f0b as color.
+  * `Target: YARP v2.3.72` using `#d93f0b` as color.
 
 
 
