@@ -143,6 +143,8 @@ private:
     typedef yarp::os::BufferedPort<yarp::sig::FlexImage> ImagePortType;
     typedef yarp::os::Publisher<sensor_msgs_Image>       ImageTopicType;
     typedef yarp::os::Publisher<sensor_msgs_CameraInfo>  DepthTopicType;
+    typedef unsigned int                                 UInt;
+
 
     template <class T>
     struct param
@@ -170,7 +172,7 @@ private:
     std::string           nodeName, depthTopicName, colorTopicName, dInfoTopicName, cInfoTopicName, rosFrameId;
     yarp::sig::FlexImage  colorImage;
     DepthImage            depthImage;
-    unsigned int          nodeSeq;
+    UInt                  nodeSeq;
                                             
     // It should be possible to attach this  guy to more than one port, try to see what
     // will happen when receiving 2 calls at the same time (receive one calls while serving
@@ -182,7 +184,7 @@ private:
 
     // Image data specs
     // int hDim, vDim;
-    int                            rate;
+    UInt                           rate;
     std::string                    sensorId;
     yarp::dev::IRGBDSensor*        sensor_p;
     IRGBDSensor::RGBDSensor_status sensorStatus;
@@ -215,13 +217,13 @@ private:
                         sensor_msgs_Image&          dest,
                         const std::string&          frame_id,
                         const TickTime&             timeStamp,
-                        const unsigned int          seq);
+                        const UInt&                 seq);
 
     void deepCopyImages(const DepthImage&           src,
                         sensor_msgs_Image&          dest,
                         const std::string&          frame_id,
                         const TickTime&             timeStamp,
-                        const unsigned int          seq);
+                        const UInt&                 seq);
 
     bool setCamInfo(sensor_msgs_CameraInfo&         cameraInfo,
                     const std::string&              frame_id,
