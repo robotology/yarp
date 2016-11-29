@@ -420,8 +420,8 @@ bool depthCameraDriver::parseIntrinsic(const Searchable& config, const string& g
         }
     }
 
-    realparam.first = "focalLenghtX";       realparam.second = &params.focalLenghtX;    realParams.push_back(realparam);
-    realparam.first = "focalLenghtY";       realparam.second = &params.focalLenghtY;    realParams.push_back(realparam);
+    realparam.first = "focalLengthX";       realparam.second = &params.focalLengthX;    realParams.push_back(realparam);
+    realparam.first = "focalLengthY";       realparam.second = &params.focalLengthY;    realParams.push_back(realparam);
     realparam.first = "principalPointX";    realparam.second = &params.principalPointX; realParams.push_back(realparam);
     realparam.first = "principalPointY";    realparam.second = &params.principalPointY; realParams.push_back(realparam);
     for(i = 0; i < realParams.size(); i++)
@@ -740,8 +740,8 @@ bool depthCameraDriver::setRgbMirroring(bool mirror)
 
 bool depthCameraDriver::setIntrinsic(Property& intrinsic, const intrinsicParams& values)
 {
-    intrinsic.put("focalLenghtX",       values.focalLenghtX);
-    intrinsic.put("focalLenghtY",       values.focalLenghtY);
+    intrinsic.put("focalLengthX",       values.focalLengthX);
+    intrinsic.put("focalLengthY",       values.focalLengthY);
     intrinsic.put("principalPointX",    values.principalPointX);
     intrinsic.put("principalPointY",    values.principalPointY);
     Bottle mat;

@@ -52,8 +52,8 @@ struct intrinsicParams
     yarp::sig::Matrix retificationMatrix;
     double            principalPointX;
     double            principalPointY;
-    double            focalLenghtX;
-    double            focalLenghtY;
+    double            focalLengthX;
+    double            focalLengthY;
     plum_bob          distortionModel;
 };
 
@@ -169,8 +169,8 @@ private:
  * |                              | same as 'SETTINGS' group | -              |    Read only    | -              |   -           |   Alternative to SETTING group   | Parameters here are alternative to the SETTING group                                   |                                                                       |
  * |  RGB_INTRINSIC_PARAMETERS    |      -              | group               |                 | -              |   -           |   Yes                            | Description of rgb camera visual parameters                                            |                                                                       |
  * |                              | retificationMatrix  | 4x4 double matrix   |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   focalLenghtX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   focalLenghtY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
+ * |                              |   focalLengthX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
+ * |                              |   focalLengthY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  principalPointY    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  distortionModel    | string              |                 | -              |   -           |   Yes                            |  Reference to group of parameters describing the distortion model of the camera, example 'rgbDistortionModelGroup'       | This is only another group's name to be searched for in the config file   |
@@ -183,8 +183,8 @@ private:
  * |                              |   k3                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |  DEPTH_INTRINSIC_PARAMETERS  |      -              | group               |                 | -              |   -           |   Yes                            | Description of depth camera visual parameters                                          |                                                                       |
  * |                              | retificationMatrix  | 4x4 double matrix   |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   focalLenghtX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   focalLenghtY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
+ * |                              |   focalLengthX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
+ * |                              |   focalLengthY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  principalPointY    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  distortionModel    | string              |                 | -              |   -           |   Yes                            |  Reference to group of parameters describing the distortion model of the camera, example 'depthDistortionModelGroup' | This is only another group's name to be searched for in the config file    |
@@ -219,8 +219,8 @@ clipPlanes (0.4 4.5)
 
 [RGB_INTRINSIC_PARAMETERS]
 retificationMatrix      (0.99824 0.0182436 -0.0564274 -0.0654844 -0.0165694 0.999413 0.0299975 0.0 0.0569415 -0.0290098 0.997956 0.00113543 0.0 0.0 0.0 1.0)
-focalLenghtX            1.0
-focalLenghtY            2.0
+focalLengthX            1.0
+focalLengthY            2.0
 principalPointX         256.0
 principalPointY         128.0
 distortionModel         rgb_distortion
@@ -235,8 +235,8 @@ k3                      5.0
 
 [DEPTH_INTRINSIC_PARAMETERS]
 retificationMatrix      (0.99824 0.0182436 -0.0564274 -0.0654844 -0.0165694 0.999413 0.0299975 2.80857e-05 0.0569415 -0.0290098 0.997956 0.00113543 0.0 0.0 0.0 1.0)
-focalLenghtX            1.0
-focalLenghtY            2.0
+focalLengthX            1.0
+focalLengthY            2.0
 principalPointX         256.0
 principalPointY         128.0
 distortionModel         depth_distortion
