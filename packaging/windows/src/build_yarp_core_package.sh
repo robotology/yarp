@@ -411,30 +411,35 @@ if [ "$GTKMM_DIR" != "" ]; then
 # NOTE: the path VS10/VC/redist/$OPT_VARIANT/Microsoft.VC100.CRT must be copied to VS10/VC/redist/$OPT_VARIANT/ 
   if [ "$OPT_VCNNN" == "VC110" ] || [ "$OPT_VCNNN" == "VC120" ]
   then
-  echo "**** Fixing missing msvc100 DLLs in gtkmm from $REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT"
-  VC_PLAT="$OPT_VARIANT"
-  if [ "$VC_PLAT" == "amd64" ] || [ "$VC_PLAT" == "x86_amd64" ]
-  then
-    _PLAT_="x64"
-  else
-    _PLAT_="x86"
-  fi
-  cd "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT" || exit 1
-  for f in `ls *.dll`; do
-    nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT"
-  done
+    echo "**** Fixing missing msvc100 DLLs in gtkmm from $REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT"
+    VC_PLAT="$OPT_VARIANT"
+    if [ "$VC_PLAT" == "amd64" ] || [ "$VC_PLAT" == "x86_amd64" ]
+    then
+      _PLAT_="x64"
+    else
+      _PLAT_="x86"
+    fi
+    cd "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT" || exit 1
+    for f in `ls *.dll`; do
+      nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "${REDIST_PATH}/${_PLAT_}/Microsoft.VC100.CRT"
+    done
   fi
 fi
 if [ "$QT_DIR" != "" ]; then
   cd $QT_DIR || exit 1
   nsis_add_recurse qt_files bin ${QT_SUB}/bin
-  nsis_add_recurse qt_files imports ${QT_SUB}/imports
+  if [ -f "${QT_SUB}/imports" ]; then
+    nsis_add_recurse qt_files imports ${QT_SUB}/imports
+  fi
   nsis_add_recurse qt_files include ${QT_SUB}/include
   nsis_add_recurse qt_files lib ${QT_SUB}/lib
   nsis_add_recurse qt_files mkspecs ${QT_SUB}/mkspecs
   nsis_add_recurse qt_files phrasebooks ${QT_SUB}/phrasebooks
   nsis_add_recurse qt_files plugins ${QT_SUB}/plugins
   nsis_add_recurse qt_files qml ${QT_SUB}/qml
+  if [ -f "${QT_SUB}/resources" ]; then
+    nsis_add_recurse qt_files resources ${QT_SUB}/resources
+  fi
   nsis_add_recurse qt_files translations ${QT_SUB}/translations
   
   cd ${YARP_DIR_UNIX}/install/bin || exit 1
