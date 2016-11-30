@@ -317,7 +317,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     module.setPrefix(element->GetText());
 
                 if((element = (TiXmlElement*) mod->FirstChild("environment")))
-                    module.setEnvironemnt(element->GetText());
+                    module.setEnvironment(element->GetText());
 
                 if((element = (TiXmlElement*) mod->FirstChild("display")))
                     module.setDisplay(element->GetText());
