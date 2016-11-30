@@ -11,6 +11,7 @@
 
 #include <yarp/sig/ImageDraw.h>
 #include <yarp/os/Random.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -21,7 +22,7 @@ using namespace yarp::sig::draw;
 #define VOCAB_GRID VOCAB4('g','r','i','d')
 #define VOCAB_RAND VOCAB4('r','a','n','d')
 #define VOCAB_NONE VOCAB4('n','o','n','e')
-
+#define VOCAB_GRID_MULTISIZE VOCAB4('s','i','z','e')
 
 void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                                        image) {
@@ -76,6 +77,43 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             }
         }
         break;
+    case VOCAB_GRID_MULTISIZE:
+    {
+        static int count = 0;
+        count++;
+        if (count== 100)
+        {
+            yDebug() << "size 100, 100";
+            image.resize(100,100);
+        }
+        else if (count == 200)
+        {
+            yDebug() << "size 200, 100";
+            image.resize(200, 100);
+        }
+        else if (count == 300)
+        {
+            yDebug() << "size 300, 50";
+            image.resize(300, 50);
+            count = 0;
+        }
+        
+        int ww = w = image.width();
+        int hh = h = image.height();
+        if (ww>1 && hh>1) {
+            for (int x = 0; x<ww; x++) {
+                for (int y = 0; y<hh; y++) {
+                    double xx = ((double)x) / (ww - 1);
+                    double yy = ((double)y) / (hh - 1);
+                    int r = int(0.5 + 255 * xx);
+                    int g = int(0.5 + 255 * yy);
+                    bool act = (y == ct);
+                    image.pixel(x, y) = PixelRgb(r, g, act * 255);
+                }
+            }
+        }
+    }
+    break;
     case VOCAB_LINE:
     default:
         {
