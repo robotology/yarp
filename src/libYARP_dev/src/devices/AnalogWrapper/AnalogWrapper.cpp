@@ -483,13 +483,13 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     else if (rosMsgType == "sensor_msgs/JointState")
     {
         yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
-        if (!rosGroup.check("joint_names"))
+        if (!rosGroup.check("jointNames"))
         {
-            yError() << sensorId << " cannot find some ros parameters";
+            yError() << sensorId << " missing 'jointNames' parameter needed when broadcasting 'sensor_msgs/JointState' message type";
             useROS = ROS_config_error;
             return false;
         }
-        yarp::os::Bottle& jnam =rosGroup.findGroup("joint_names");
+        yarp::os::Bottle& jnam =rosGroup.findGroup("jointNames");
         int joint_names_size = jnam.size()-1;
         for (int i = 0; i < joint_names_size; i++)
         {
@@ -795,7 +795,7 @@ void AnalogWrapper::run()
 
                     if (data_size != ros_joint_names.size())
                     {
-                        yDebug() << "Invalid ros_joint_names size:" << data_size << "!=" << ros_joint_names.size();
+                        yDebug() << "Invalid jointNames size:" << data_size << "!=" << ros_joint_names.size();
                     }
                     else
                     {
