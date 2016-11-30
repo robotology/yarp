@@ -16,6 +16,7 @@ env:
     - TRAVIS_CMAKE_GENERATOR="Unix Makefiles"
     - TRAVIS_BUILD_TYPE=Release
     - TRAVIS_WITH_INTEGRATION_TESTS=false
+    - TRAVIS_WITH_ACE=true
     - TRAVIS_STATIC=false
     - TRAVIS_WITH_VALGRIND=false
     - TRAVIS_NO_DEPRECATED=false
@@ -56,42 +57,42 @@ matrix:
     # Normal build with Ninja generator (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
+      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
 
     # Normal build with Ninja generator (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
+      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
 
     # Normal build with integration tests (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
 
     # Normal build with integration tests (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
 
     # Normal build no deprecated (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
+      env: TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
 
     # Normal build no deprecated (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
+      env: TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
 
     # Static build (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
 
     # Static build (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
 
     # Static build, no ACE (linux, gcc)
     - os: linux
@@ -106,12 +107,12 @@ matrix:
     # Normal build with valgrind (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
+      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
 
     # C++11 build with valgrind (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
+      env: TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
 
     # No ACE build with valgrind (linux, gcc)
     - os: linux
@@ -126,43 +127,43 @@ matrix:
     # Normal build with valgrind and broken tests (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
     # Normal build with Coverage (linux, gcc)
 #    - os: linux
 #      compiler: gcc
-#      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_BUILD_TYPE=Profile
+#      env: TRAVIS_WITH_CXX11=false TRAVIS_BUILD_TYPE=Profile
 
     # Normal build with Xcode 7.3 (osx, clang)
     - os: osx
       osx_image: xcode7.3
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
+      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
 
     # C++11 build with Xcode 7.3 (osx, clang)
     - os: osx
       osx_image: xcode7.3
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
+      env: TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
 
     # Normal build with Xcode 8 (osx, clang)
     - os: osx
       osx_image: xcode8
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
+      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
 
     # C++11 build with Xcode 8 (osx, clang)
     - os: osx
       osx_image: xcode8
       compiler: clang
-      env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
+      env: TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
 
   allow_failures:
     # Normal build with integration tests (sometimes integration::rpc test fails)
-    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
-    
+    - env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+
     # Normal build with valgrind and broken tests (tests of already broken things)
-    - env: TRAVIS_WITH_ACE=true TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+    - env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
 branches:
   except:
@@ -283,8 +284,18 @@ before_script:
   - if $TRAVIS_WITH_BROKEN_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS=ON"; fi
   - export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_LIB_MATH_USING_GSL=OFF"
 
+  # Print cmake flags
+  - echo "--------------------     BEGIN CMAKE FLAGS    --------------------"
+  - echo -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS}
+  - echo "--------------------      END CMAKE FLAGS     --------------------"
+
   # Run CMake
   - (cd build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ..)
+
+  # Print cmake cache
+  - echo "--------------------     BEGIN CMAKE CACHE    --------------------"
+  - (cd build; cat CMakeCache.txt)
+  - echo "--------------------      END CMAKE CACHE     --------------------"
 
   # Reset coverage information
   - if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then (cd build; lcov --directory . --zerocounters); fi
