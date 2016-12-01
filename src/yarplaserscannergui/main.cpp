@@ -185,17 +185,17 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
-void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las, vector<yarp::dev::LaserMeasurementData> *lmap, IplImage *img, double angle_tot, int scans, double sens_position, double scale, bool absolute, bool verbose, int aspect)
+void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las, vector<yarp::dev::LaserMeasurementData> *lmap, IplImage *img, double angle_tot, int scans, double sens_position_x, double sens_position_y, double sens_position_t, double scale, bool absolute, bool verbose, int aspect)
 {
     cvZero(img);
     cvRectangle(img, cvPoint(0, 0), cvPoint(img->width, img->height), cvScalar(255, 0, 0), -1);
     CvPoint center;
 
-    double center_angle;
+    double center_angle=sens_position_t;
     if (!absolute) center_angle = 0;
     else center_angle = -180 - (*comp)[0];
-    center.x = (int)(img->width / 2 + (sens_position*scale)*sin(center_angle / 180 * M_PI));
-    center.y = (int)(img->height / 2 - (sens_position*scale)*cos(center_angle / 180 * M_PI));
+    center.x = (int)(img->width / 2 + (sens_position_x*scale)*sin(center_angle / 180 * M_PI));
+    center.y = (int)(img->height / 2 - (sens_position_y*scale)*cos(center_angle / 180 * M_PI));
 
     double angle = 0;
     double length = 0;
@@ -249,11 +249,37 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
             CvPoint ray2;
             ray2.x = -int(x*scale);
             ray2.y = -int(y*scale);
-            ray2.x += (center.x - int((sens_position*scale)*sin(center_angle / 180 * M_PI)));
-            ray2.y += (center.y + int((sens_position*scale)*cos(center_angle / 180 * M_PI)));
+            ray2.x += (center.x - int((sens_position_x*scale)*sin(center_angle / 180 * M_PI)));
+            ray2.y += (center.y + int((sens_position_y*scale)*cos(center_angle / 180 * M_PI)));
             cvLine(img, center, ray2, color_bwhite, thickness);
         }
     }
+}
+
+void display_help()
+{
+    yInfo() << "Available options:";
+    yInfo() << "--scale <double> zoom factor (default 100)";
+    yInfo() << "--robot_radius <double> the radius of the disalayed robot footprint ";
+    yInfo() << "--sens_position_x <double> the position in meters of the laser center respect to the center of the robot (default 0 m)";
+    yInfo() << "--sens_position_y <double> the position in meters of the laser center respect to the center of the robot (default 0 m)";
+    yInfo() << "--sens_position_theta <double> the orientation in degrees of the laser sensor respect to the center of the robot (default 0 deg)";
+    yInfo() << "--verbose <bool> toggles debug messages on/off (default false)";
+    yInfo() << "--absolute <bool> display the laser in absolute o relative mode (default false)";
+    yInfo() << "--compass <bool> displays the compass (default true) ";
+    yInfo() << "--period <double> the refresh period (default 50 ms)";
+    yInfo() << "--aspect <0/1> draws line/points (default 0=lines)";
+    yInfo() << "--sens_port <string> the name of the port used by Rangefinder2DClient to connect to the laser device. (mandatory)";
+    yInfo() << "";
+    yInfo() << "Available commands (pressing the key during execution):";
+    yInfo() << "c ...... enables/disables compass.";
+    yInfo() << "a ...... set absolute/relative mode.";
+    yInfo() << "w ...... zoom in.";
+    yInfo() << "s ...... zoom out.";
+    yInfo() << "v ...... set verbose mode on/off.";
+    yInfo() << "r ...... set refresh period (50/100/200ms).";
+    yInfo() << "b ...... change aspect (lines/points)";
+    cout << "prova";
 }
 
 int main(int argc, char *argv[])
@@ -267,15 +293,21 @@ int main(int argc, char *argv[])
     finder->setVerbose();
     finder->setDefaultConfigFile("yarplaserscannergui.ini");
     finder->configure(argc, argv);
-
+    if (finder->check("help"))
+    {
+        display_help();
+        return 0;
+    }
     double scale = finder->check("scale", Value(100), "global scale factor").asDouble();
     double robot_radius = finder->check("robot_radius", Value(0.001), "robot radius [m]").asDouble();
-    double sens_position = finder->check("sens_position", Value(0), "sens_position [m]").asDouble();
+    double sens_position_x = finder->check("sens_position_x", Value(0), "sens_position_x [m]").asDouble();
+    double sens_position_y = finder->check("sens_position_y", Value(0), "sens_position_y [m]").asDouble();
+    double sens_position_t = finder->check("sens_position_theta", Value(0), "sens_position_theta [m]").asDouble();
     bool verbose = finder->check("verbose", Value(false), "verbose [0/1]").asBool();
     bool absolute = finder->check("absolute", Value(false), "absolute [0/1]").asBool();
     bool compass = finder->check("compass", Value(true), "compass [0/1]").asBool();
-    int period = finder->check("rate",Value(50),"period [ms]").asInt(); //ms
-    int aspect = finder->check("aspect", Value(0), "0 draw lines, 1 draw points").asInt(); //ms
+    int period = finder->check("period",Value(50),"period [ms]").asInt(); //ms
+    int aspect = finder->check("aspect", Value(0), "0 draw lines, 1 draw points").asInt();
     string laserport = finder->check("sens_port", Value("/laser:o"), "laser port name").asString();
 
     string laser_map_port_name;
@@ -377,7 +409,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position, scale, absolute, verbose, aspect);
+                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position_x, sens_position_y, sens_position_t, scale, absolute, verbose, aspect);
                 }
 
             }
