@@ -4,14 +4,13 @@
 * CopyPolicy: Released under the terms of the GPL 2.0 license or later.
 */
 
-/** 
-This library provides functions for compatibility with GSL. Including/linking GSL 
-forces this library to be GPL.
-*/
-
-#include <yarp/gsl_compatibility.h>
+/**
+ * This library provides functions for compatibility with GSL.
+ * @warning Including/linking GSL forces this library to be GPL.
+ */
 
 #include <yarp/gsl/Gsl.h>
+#include <yarp/gsl/impl/gsl_structs.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>
 
