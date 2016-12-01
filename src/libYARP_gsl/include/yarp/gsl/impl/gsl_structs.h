@@ -1,15 +1,18 @@
 /*
 * Copyright (C) 2007 RobotCub Consortium
 * Authors: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+* CopyPolicy: Released under the terms of the GPLv2 or later
 */
 
 /**
-* Defines types for binary compatibily with the GSL. Included by cpp
-* files within yarp.
+* Defines types for binary compatibily with the GSL.
 */
 
+#ifndef YARP_GSL_IMPL_GSL_COMPATIBILITY_H
+#define YARP_GSL_IMPL_GSL_COMPATIBILITY_H
+
 #include <stddef.h>
+
 
 #ifndef gsl_block
 typedef struct
@@ -42,4 +45,4 @@ struct gsl_matrix
 };
 #endif
 
-//
+#endif // YARP_GSL_IMPL_GSL_COMPATIBILITY_H

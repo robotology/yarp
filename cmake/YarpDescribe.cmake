@@ -40,7 +40,9 @@ foreach(lib ${YARP_LIBS})
      NOT "${lib}" STREQUAL "YARP_wire_rep_utils" AND
      NOT "${lib}" STREQUAL "YARP_manager" AND
      NOT "${lib}" STREQUAL "YARP_logger" AND
-     NOT "${lib}" STREQUAL "YARP_serversql")
+     NOT "${lib}" STREQUAL "YARP_serversql" AND
+     NOT "${lib}" STREQUAL "YARP_gsl" AND
+     NOT "${lib}" STREQUAL "YARP_eigen")
     list(APPEND YARP_LIBRARIES YARP::${lib})
   endif()
 endforeach()
