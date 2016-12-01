@@ -336,6 +336,13 @@ int main(int argc, char *argv[])
 
     while(!exit)
     {
+        void *v = cvGetWindowHandle("Laser Scanner GUI");
+        if (v == 0)
+        {
+            exit = true;
+            break;
+        }
+
         if (compass)
         {
             yarp::sig::Vector *cmp = compassInPort.read(false);
