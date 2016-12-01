@@ -145,6 +145,7 @@ private:
     typedef yarp::os::Publisher<sensor_msgs_CameraInfo>  DepthTopicType;
     typedef unsigned int                                 UInt;
 
+    enum SensorType{COLOR_SENSOR, DEPTH_SENSOR};
 
     template <class T>
     struct param
@@ -227,7 +228,8 @@ private:
 
     bool setCamInfo(sensor_msgs_CameraInfo&         cameraInfo,
                     const std::string&              frame_id,
-                    const unsigned int&             seq);
+                    const UInt&                     seq,
+                    const SensorType&               sensorType);
 
     static std::string yarp2RosPixelCode(int code);
 

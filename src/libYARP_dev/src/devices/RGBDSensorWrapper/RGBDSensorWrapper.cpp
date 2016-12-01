@@ -678,22 +678,24 @@ void RGBDSensorWrapper::deepCopyImages(const DepthImage&  src,
     dest.is_bigendian    = 0;
 }
 
-bool RGBDSensorWrapper::setCamInfo
-(
-    sensor_msgs_CameraInfo& cameraInfo, 
-    const string&           frame_id, 
-    const unsigned int&     seq
-)
+bool RGBDSensorWrapper::setCamInfo(sensor_msgs_CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
-    double                      fx, fy, cx, cy, tx, ty, k1, k2, t1, t2, k3, stamp;
-    string                      distModel;
-    unsigned int                i;
-    Property                    camData;
-    vector<param<double> >      parVector;
-    param<double>*              par;
+    double                  fx, fy, cx, cy, k1, k2, t1, t2, k3, stamp;
+    string                  distModel, currentSensor;
+    UInt                    i;
+    Property                camData;
+    vector<param<double> >  parVector;
+    param<double>*          par;
+    bool                    ok;
+    
+    currentSensor = sensorType == COLOR_SENSOR ? "Rgb" : "Depth";
+    ok            = sensorType == COLOR_SENSOR ? sensor_p->getRgbIntrinsicParam(camData) : sensor_p->getDepthIntrinsicParam(camData);
 
-    yError() << "RGBDSeneosrWrapper: setCamInfo() for ros interoperation not yet implemented";
-    return false;
+    if (!ok)
+    {
+        yError() << "unable to get intrinsic param from" << currentSensor << "sensor!";
+        return false;
+    }
 
     if(!camData.check("distortionModel"))
     {
@@ -713,8 +715,7 @@ bool RGBDSensorWrapper::setCamInfo
         yWarning() << "missing retification matrix";
         return false;
     }
-    Bottle& retificationMatrix = *camData.find("retificationMatrix").asList();
-    
+    Bottle* retificationMatrix = camData.find("retificationMatrix").asList();
 
     //std::vector<param<string> >     rosStringParam;
     //rosStringParam.push_back(param<string>(nodeName, "asd"));
@@ -728,8 +729,6 @@ bool RGBDSensorWrapper::setCamInfo
     parVector.push_back(param<double>(t1,"t1"));
     parVector.push_back(param<double>(t2,"t2"));
     parVector.push_back(param<double>(k3,"k3"));
-    parVector.push_back(param<double>(tx,"tangentialPointX"));
-    parVector.push_back(param<double>(ty,"tangentialPointY"));
     parVector.push_back(param<double>(stamp,"stamp"));
     for(i = 0; i < parVector.size(); i++)
     {
@@ -737,7 +736,7 @@ bool RGBDSensorWrapper::setCamInfo
         
         if(!camData.check(par->parname))
         {
-            yWarning() << "missing "+par->parname;
+            yWarning() << "RGBSensorWrapper: driver has not the param:" << par->parname;
             return false;
         }
         *par->var = camData.find(par->parname).asDouble();
@@ -746,8 +745,8 @@ bool RGBDSensorWrapper::setCamInfo
     cameraInfo.header.frame_id    = frame_id;
     cameraInfo.header.seq         = seq;
     cameraInfo.header.stamp       = normalizeSecNSec(stamp);
-//     cameraInfo.width              = sensor_p->width();
-//     cameraInfo.height             = sensor_p->height();
+    cameraInfo.width              = sensorType == COLOR_SENSOR ? sensor_p->getRgbWidth() : sensor_p->getDepthWidth();
+    cameraInfo.height             = sensorType == COLOR_SENSOR ? sensor_p->getRgbHeight() : sensor_p->getDepthHeight();
     cameraInfo.distortion_model   = distModel;
     
     cameraInfo.D.resize(5);
@@ -764,7 +763,7 @@ bool RGBDSensorWrapper::setCamInfo
     
     //retification matrix
     
-    if (retificationMatrix.size() == 9)// 3X3 matrix;
+    /*if (retificationMatrix && retificationMatrix->size() == 9)// 3X3 matrix;
     {
         cameraInfo.R.resize(9);
         for (i = 0; i < cameraInfo.R.size(); i++)
@@ -775,15 +774,15 @@ bool RGBDSensorWrapper::setCamInfo
     else
     {
         return false;
-    }
+    }*/
     
     
     cameraInfo.P.resize(12);
-    cameraInfo.P[0]  = fx;      cameraInfo.P[1] = 0;    cameraInfo.P[2]  = cx;  cameraInfo.P[3]  = tx;
-    cameraInfo.P[4]  = 0;       cameraInfo.P[5] = fy;   cameraInfo.P[6]  = cy;  cameraInfo.P[7]  = ty;
+    cameraInfo.P[0]  = fx;      cameraInfo.P[1] = 0;    cameraInfo.P[2]  = cx;  cameraInfo.P[3]  = 0;
+    cameraInfo.P[4]  = 0;       cameraInfo.P[5] = fy;   cameraInfo.P[6]  = cy;  cameraInfo.P[7]  = 0;
     cameraInfo.P[8]  = 0;       cameraInfo.P[9] = 0;    cameraInfo.P[10] = 1;   cameraInfo.P[11] = 0;
     
-    cameraInfo.binning_x = cameraInfo.binning_y = 0;
+    cameraInfo.binning_x  = cameraInfo.binning_y = 0;
     cameraInfo.roi.height = cameraInfo.roi.width = cameraInfo.roi.x_offset = cameraInfo.roi.y_offset = 0;
     cameraInfo.roi.do_rectify = false;
     return true;
@@ -839,7 +838,7 @@ bool RGBDSensorWrapper::writeData()
         rosPublisherPort_depth.setEnvelope(depthStamp);
         rosPublisherPort_depth.write();
 
-        if (setCamInfo(camInfoC, rosFrameId, nodeSeq))
+        if (setCamInfo(camInfoC, rosFrameId, nodeSeq, COLOR_SENSOR))
         {
             rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
             rosPublisherPort_colorCaminfo.write();
@@ -848,7 +847,7 @@ bool RGBDSensorWrapper::writeData()
         {
             yWarning("missing color camera parameters... camera info messages will be not sended");
         }
-        if (setCamInfo(camInfoD, rosFrameId, nodeSeq))
+        if (setCamInfo(camInfoD, rosFrameId, nodeSeq, DEPTH_SENSOR))
         {
             rosPublisherPort_depthCaminfo.setEnvelope(depthStamp);
             rosPublisherPort_depthCaminfo.write();
