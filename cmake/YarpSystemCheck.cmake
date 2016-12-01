@@ -273,6 +273,13 @@ else()
     yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-fPIE -pie")
 
 
+    ## C++98 flags ##
+    unset(CXX98_FLAGS)
+    check_cxx_compiler_flag("-std=c++98" CXX_HAS_STD_CXX98)
+    if(CXX_HAS_STD_CXX98)
+      set(CXX98_FLAGS "-std=c++98")
+    endif()
+
     ## C++11 flags ##
     unset(CXX11_FLAGS)
     check_cxx_compiler_flag("-std=c++11" CXX_HAS_STD_CXX11)
@@ -283,12 +290,24 @@ else()
       set(CXX11_FLAGS "-std=c++0x")
     endif()
 
-
     ## C++14 flags ##
     unset(CXX14_FLAGS)
+    check_cxx_compiler_flag("-std=c++14" CXX_HAS_STD_CXX14)
     check_cxx_compiler_flag("-std=c++1y" CXX_HAS_STD_CXX1Y)
-    if(CXX_HAS_STD_CXX11)
+    if(CXX_HAS_STD_CXX14)
+      set(CXX14_FLAGS "-std=c++14")
+    elseif(CXX_HAS_STD_CXX1Y)
       set(CXX14_FLAGS "-std=c++1y")
+    endif()
+
+    ## C++17 flags ##
+    unset(CXX14_FLAGS)
+    check_cxx_compiler_flag("-std=c++17" CXX_HAS_STD_CXX17)
+    check_cxx_compiler_flag("-std=c++1z" CXX_HAS_STD_CXX1Z)
+    if(CXX_HAS_STD_CXX17)
+      set(CXX17_FLAGS "-std=c++17")
+    elseif(CXX_HAS_STD_CXX1Z)
+      set(CXX17_FLAGS "-std=c++1z")
     endif()
 
 endif()
