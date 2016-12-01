@@ -1795,7 +1795,7 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg,Bottle& result)
                            YARP_NULLPTR,  // primary thread security attributes
                            TRUE,          // handles are inherited
                            CREATE_NEW_PROCESS_GROUP, // creation flags
-                           (LPVOID) chNewEnv,        // use new environemnt list
+                           (LPVOID) chNewEnv,        // use new environment list
                            bWorkdir ? strWorkdir.c_str() : YARP_NULLPTR, // working directory
                            &cmd_startup_info,   // STARTUPINFO pointer
                            &cmd_process_info);  // receives PROCESS_INFORMATION
@@ -1808,7 +1808,7 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg,Bottle& result)
                                YARP_NULLPTR,  // primary thread security attributes
                                TRUE,          // handles are inherited
                                CREATE_NEW_PROCESS_GROUP, // creation flags
-                               (LPVOID) chNewEnv,        // use new environemnt list
+                               (LPVOID) chNewEnv,        // use new environment list
                                strWorkdir.c_str(), // working directory
                                &cmd_startup_info,   // STARTUPINFO pointer
                                &cmd_process_info);  // receives PROCESS_INFORMATION
@@ -2013,7 +2013,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result,yarp::os::ConstSt
                            YARP_NULLPTR,  // primary thread security attributes
                            TRUE,          // handles are inherited
                            CREATE_NEW_PROCESS_GROUP, // creation flags
-                           (LPVOID) chNewEnv,        // use new environemnt list
+                           (LPVOID) chNewEnv,        // use new environment list
                            bWorkdir?strWorkdir.c_str():YARP_NULLPTR, // working directory
                            &cmd_startup_info,   // STARTUPINFO pointer
                            &cmd_process_info);  // receives PROCESS_INFORMATION
@@ -2026,7 +2026,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result,yarp::os::ConstSt
                                YARP_NULLPTR,  // primary thread security attributes
                                TRUE,          // handles are inherited
                                CREATE_NEW_PROCESS_GROUP, // creation flags
-                               (LPVOID) chNewEnv,        // use new environemnt list
+                               (LPVOID) chNewEnv,        // use new environment list
                                strWorkdir.c_str(), // working directory
                                &cmd_startup_info,   // STARTUPINFO pointer
                                &cmd_process_info);  // receives PROCESS_INFORMATION

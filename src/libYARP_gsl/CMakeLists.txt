@@ -7,10 +7,11 @@ project(YARP_gsl)
 set(YARP_gsl_HDRS include/yarp/gsl/api.h
                   include/yarp/gsl/Gsl.h)
 set(YARP_gsl_SRCS src/Gsl.cpp)
-set(YARP_gsl_IMPL_HDRS include/yarp/gsl_compatibility.h)
+set(YARP_gsl_IMPL_HDRS include/yarp/gsl/impl/gsl_structs.h)
 
 source_group("Source Files" FILES ${YARP_gsl_SRCS})
 source_group("Header Files" FILES ${YARP_gsl_HDRS})
+source_group("Implementation Header Files" FILES ${YARP_gsl_IMPL_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)

@@ -175,7 +175,7 @@ public:
     void setStdio(const char* szStdio) { if(szStdio) strStdio = szStdio; }
     void setBroker(const char* szBroker) { if(szBroker) strBroker = szBroker; }
     void setPrefix(const char* szPrefix) {if(szPrefix) strPrefix = szPrefix; }
-    void setEnvironemnt(const char* szEnv) {if(szEnv) strEnvironemnt = szEnv; }
+    void setEnvironment(const char* szEnv) {if(szEnv) strEnvironment = szEnv; }
     void setTag(const char* szTag) {if(szTag) strTag = szTag; }
     void setDisplay(const char* szDisplay) {if(szDisplay) strDisplay = szDisplay;}
 
@@ -187,7 +187,7 @@ public:
     const char* getStdio(void) { return strStdio.c_str(); }
     const char* getBroker(void) { return strBroker.c_str(); }
     const char* getPrefix(void) { return strPrefix.c_str(); }
-    const char* getEnvironment(void) { return strEnvironemnt.c_str(); }
+    const char* getEnvironment(void) { return strEnvironment.c_str(); }
     const char* getTag(void) { return strTag.c_str(); }
     const char* getDisplay() { return strDisplay.c_str(); }
 
@@ -224,7 +224,7 @@ private:
     string strStdio;
     string strBroker;
     string strPrefix;
-    string strEnvironemnt;
+    string strEnvironment;
     string strDisplay;
     int iRank;
     ResourceContainer resources;

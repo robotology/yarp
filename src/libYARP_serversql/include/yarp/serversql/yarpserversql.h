@@ -24,11 +24,8 @@
 #    define yarpserversql_API YARP_IMPORT
 #    define yarpserversql_EXTERN YARP_IMPORT_EXTERN
 #  endif
-#  ifdef YARP_NO_DEPRECATED
-#    define yarpserversql_DEPRECATED_API YARP_DEPRECATED
-#  else
-#    define yarpserversql_DEPRECATED_API YARP_DEPRECATED yarpserversql_API
-#  endif
+#  define yarpserversql_DEPRECATED_API YARP_DEPRECATED_API
+#  define yarpserversql_DEPRECATED_API_MSG(X) YARP_DEPRECATED_API_MSG(X)
 #endif
 
 yarpserversql_API int yarpserver_main(int argc, char *argv[]);

@@ -125,7 +125,7 @@ public:
     void setStdio(const char* szStdio) { if(szStdio) strStdio = szStdio; }
     void setBroker(const char* szBroker) { if(szBroker) strBroker = szBroker; }
     void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
-    void setEnvironemnt(const char* szEnv) {if(szEnv) strEnvironemnt = szEnv; }
+    void setEnvironment(const char* szEnv) {if(szEnv) strEnvironment = szEnv; }
     void setBasePrefix(const char* szPrefix) { if(szPrefix) strBasePrefix = szPrefix; }
     void setNeedDeployer(bool need) { bNeedDeployer = need; }
     void setDisplay(const char* szDisplay) {if(szDisplay) strDisplay = szDisplay;}
@@ -144,7 +144,7 @@ public:
     const char* getStdio(void) { return strStdio.c_str(); }
     const char* getBroker(void) { return strBroker.c_str(); }
     const char* getPrefix(void) { return strPrefix.c_str(); }
-    const char* getEnvironment(void) { return strEnvironemnt.c_str(); }
+    const char* getEnvironment(void) { return strEnvironment.c_str(); }
     const char* getBasePrefix(void) { return strBasePrefix.c_str(); }
     const char* getDisplay() { return strDisplay.c_str(); }
 
@@ -215,7 +215,7 @@ private:
     string strBroker;
     bool bNeedDeployer;
     string strPrefix;
-    string strEnvironemnt;
+    string strEnvironment;
     string strBasePrefix;
     double wait;
     string strDisplay;

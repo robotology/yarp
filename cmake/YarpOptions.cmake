@@ -222,8 +222,10 @@ endif()
 #message(STATUS "VISIBILITY_HIDDEN_FLAGS = ${VISIBILITY_HIDDEN_FLAGS}")
 #message(STATUS "DEPRECATED_DECLARATIONS_FLAGS = ${DEPRECATED_DECLARATIONS_FLAGS}")
 #message(STATUS "HARDENING_FLAGS = ${HARDENING_FLAGS}")
+#message(STATUS "CXX98_FLAGS = ${CXX98_FLAGS}")
 #message(STATUS "CXX11_FLAGS = ${CXX11_FLAGS}")
 #message(STATUS "CXX14_FLAGS = ${CXX14_FLAGS}")
+#message(STATUS "CXX17_FLAGS = ${CXX17_FLAGS}")
 
 
 #########################################################################
@@ -294,14 +296,18 @@ endif(YARP_EXPERIMENTAL_HARDENING)
 
 
 #########################################################################
-# Control whether to build YARP using hardening options
+# Control whether to build YARP using C++11 options
 
 option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 standard" FALSE)
 mark_as_advanced(YARP_EXPERIMENTAL_CXX11)
 if(YARP_EXPERIMENTAL_CXX11)
-    add_definitions("-DYARP_CXX11")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
     set(YARP_HAS_CXX11 TRUE)
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
+       NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.1)
+    # GCC 6.1 uses -std=cxx14 by default. This causes issues in some
+    # configurations, therefore c++98 is forced
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX98_FLAGS}")
 endif(YARP_EXPERIMENTAL_CXX11)
 
 
