@@ -114,10 +114,6 @@ int main(int argc, char *argv[])
     }
 
     NUMBER_OF_AVAILABLE_PARTS=pParts->size();
-    if (NUMBER_OF_AVAILABLE_PARTS > MAX_NUMBER_OF_PARTS){
-        LOG_ERROR("The number of parts exceeds the maximum! \n");
-        return 1;
-    }
     if (NUMBER_OF_AVAILABLE_PARTS<=0){
         LOG_ERROR("Invalid number of parts, check config file \n");
         return 1;
