@@ -64,6 +64,7 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                      ycm-0.2/find-modules/FindNVIDIACg.cmake
                                      ycm-0.2/find-modules/FindOpenCV.cmake
                                      ycm-0.2/find-modules/FindOpenNI.cmake
+                                     ycm-0.2/find-modules/FindOpenNI2.cmake
                                      ycm-0.2/find-modules/FindPortAudio.cmake
                                      ycm-0.2/find-modules/FindSQLite.cmake
                                      ycm-0.2/find-modules/FindStage.cmake
@@ -132,6 +133,7 @@ foreach(_f FindACE.cmake
            FindOctave.cmake
            FindOpenCV.cmake
            FindOpenNI.cmake
+           FindOpenNI2.cmake
            FindPortAudio.cmake
            FindQCustomPlot.cmake
            FindReadLine.cmake

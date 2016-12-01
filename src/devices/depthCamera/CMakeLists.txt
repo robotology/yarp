@@ -3,19 +3,8 @@
 # email:   andrea.ruzzenenti@iit.it
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if(WIN32)
-find_path(OPENNI2_INCLUDE_LOCAL NAMES OpenNI.h HINTS $ENV{OPENNI2_DIR}/Include)
-find_library(OPENNI2_LIBRARY NAMES OpenNI2 libOpenNI2 HINTS $ENV{OPENNI2_DIR}/Lib $ENV{OPENNI2_DIR}/Redist)
-else(WIN32)
-find_path(OPENNI2_INCLUDE_LOCAL NAMES OpenNI.h HINTS $ENV{OPENNI2_DIR}/include)
-find_library(OPENNI2_LIBRARY NAMES OpenNI2 libOpenNI2 HINTS $ENV{OPENNI2_DIR}/lib $ENV{OPENNI2_DIR}/redist)
-endif(WIN32)
-if(OPENNI2_INCLUDE_LOCAL AND OPENNI2_LIBRARY)
-  set(OPENNI2_FOUND TRUE)
-else()
-  set(OPENNI2_FOUND FALSE)
-endif()
 
+find_package(OpenNI2 REQUIRED)
 
 yarp_prepare_plugin(depthCamera
                     CATEGORY             device
