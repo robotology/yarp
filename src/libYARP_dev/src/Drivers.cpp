@@ -87,7 +87,10 @@ public:
             settings.readFromSearchable(prop,name);
             settings.open(lib);
             ConstString location = lib.getName().c_str();
-            if (location=="") continue;
+            if (location=="") {
+              yWarning("Wrong library name for plugin %s", name.c_str());
+              continue;
+            }
 
             ConstString cxx = prop.check("cxx",Value("unknown")).asString();
             ConstString wrapper = prop.check("wrapper",Value("unknown")).asString();
