@@ -47,7 +47,7 @@ private:
     BufferedPort<Bottle> tcpPort;
     bool threadInit()
     {
-        tcpPort.open("/TcpTestServer");
+        return tcpPort.open("/TcpTestServer");
     }
 
     void threadRelease()

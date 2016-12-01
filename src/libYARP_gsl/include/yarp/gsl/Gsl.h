@@ -8,9 +8,9 @@
 #define YARP_GSL_GSL_HEADER_H
 
 /**
-This library provides functions for compatibility with GSL. Including/linking GSL
-forces this library to be GPL.
-*/
+ * This library provides functions for compatibility with GSL.
+ * @warning Including/linking GSL forces this library to be GPL.
+ */
 
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>
@@ -18,7 +18,7 @@ forces this library to be GPL.
 
 namespace yarp {
     /**
-    * A library for interoperability with the GSL library. 
+    * A library for interoperability with the GSL library.
     */
     namespace gsl {
         class GslMatrix;
@@ -31,7 +31,7 @@ namespace yarp {
 * Legacy code like:
 * Matrix m;
 * gsl_function(m.getGslMatrix());
-* 
+*
 * Should be replaced with:
 * Matrix m;
 * gsl_function(GslMatrix(m).getGslMatrix());
@@ -49,7 +49,7 @@ public:
     * Return GSL compatile pointer.
     */
     void *getGslMatrix();
-    
+
     /**
     * Return GSL compatile, const pointer.
     */
