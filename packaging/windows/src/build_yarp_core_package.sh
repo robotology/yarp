@@ -111,12 +111,17 @@ if $add_debug; then
   YARP_DIR_DBG="$YARP_DIR"
   YARP_ROOT_DBG="$YARP_ROOT"
 
-  source gsl_${OPT_COMPILER}_${OPT_VARIANT}_Debug.sh || {
-    echo "Cannot find corresponding GSL debug build"
+# Removing GSL
+  # source gsl_${OPT_COMPILER}_${OPT_VARIANT}_Debug.sh || {
+    # echo "Cannot find corresponding GSL debug build"
+    # exit 1
+  # }
+  # GSL_DIR_DBG="$GSL_DIR"
+  # GSL_ROOT_DBG="$GSL_ROOT"
+  source eigen_any_any_any.sh || {
+    echo "Cannot find corresponding EIGEN build"
     exit 1
   }
-  GSL_DIR_DBG="$GSL_DIR"
-  GSL_ROOT_DBG="$GSL_ROOT"
 fi
 
 # Pick up ACE paths
@@ -131,9 +136,14 @@ source yarp_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
   exit 1
 }
 
+# Removing GSL
 # Pick up GSL paths
-source gsl_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
-  echo "Cannot find corresponding GSL build"
+# source gsl_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
+  # echo "Cannot find corresponding GSL build"
+  # exit 1
+# }
+source eigen_any_any_any.sh || {
+  echo "Cannot find corresponding EIGEN build"
   exit 1
 }
 
@@ -255,20 +265,24 @@ function nsis_add_recurse {
 # Get base YARP path in unix format
 YARP_DIR_UNIX=`cygpath -u $YARP_DIR`
 if $add_debug; then
-  YARP_DIR_DBG_UNIX=`cygpath -u $YARP_DIR_DBG`
+  YARP_DIR_DBG_UNIX=$(cygpath -u $YARP_DIR_DBG)
 fi
-GSL_DIR_UNIX=`cygpath -u $GSL_DIR`
-if $add_debug; then
-  GSL_DIR_DBG_UNIX=`cygpath -u $GSL_DIR_DBG`
-fi
+# Removing GSL
+#GSL_DIR_UNIX=`cygpath -u $GSL_DIR`
+# if $add_debug; then
+  # GSL_DIR_DBG_UNIX=`cygpath -u $GSL_DIR_DBG`
+# fi
+EIGEN_DIR_UNIX=$(cygpath -u $EIGEN_DIR)
 
 # Set up stubs for all NSIS sections
 nsis_setup ace_headers
 nsis_setup ace_libraries
 nsis_setup ace_dlls
 
-nsis_setup gsl_headers
-nsis_setup gsl_libraries
+# Removing GSL
+#nsis_setup gsl_headers
+#nsis_setup gsl_libraries
+nsis_setup_eigen_base
 
 nsis_setup gtkmm_headers
 nsis_setup gtkmm_libraries
@@ -282,7 +296,8 @@ nsis_setup yarp_programs
 nsis_setup yarp_math_libraries
 nsis_setup yarp_math_dlls
 nsis_setup yarp_math_headers
-nsis_setup yarp_gtk_guis
+# Removing GTK GUIs
+#nsis_setup yarp_gtk_guis
 nsis_setup yarp_qt_guis
 
 nsis_setup yarp_vc_dlls
@@ -290,7 +305,9 @@ nsis_setup yarp_examples
 
 YARP_SUB="yarp-$BUNDLE_YARP_VERSION"
 ACE_SUB="$ACE_PATH"
-GSL_SUB="gsl-$BUNDLE_GSL_VERSION"
+# Removing GSL
+#GSL_SUB="gsl-$BUNDLE_GSL_VERSION"
+EIGEN_SUB="eigen-$BUNDLE_EIGEN_VERSION"
 GTKMM_SUB="$GTKMM_PATH"
 QT_SUB="$QT_PATH"
 
@@ -315,9 +332,10 @@ fi
 #sed -i 's|[^"]*/install|${CMAKE_CURRENT_LIST_DIR}/..|g' YARPConfig.cmake
 for k in release debug; do
   if [ -e YARPTargets-$k.cmake ] ; then
-    for f in gsl.lib libgsl.a gslcblas.lib libgslcblas.a; do
-      sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${GSL_SUB}/lib/$f|g" YARPTargets-$k.cmake
-    done
+# Removing GSL  
+    #for f in gsl.lib libgsl.a gslcblas.lib libgslcblas.a; do
+    #  sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${GSL_SUB}/lib/$f|g" YARPTargets-$k.cmake
+    #done
     for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
       sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_SUB}/lib/$f|g" YARPTargets-$k.cmake
     done
@@ -372,10 +390,16 @@ for f in conf os sig dev ; do
 done
 nsis_add_recurse yarp_math_headers math ${YARP_SUB}/include/yarp/math
 
+# Removing GSL
 # add GSL material
-cd $GSL_DIR_UNIX
-nsis_add_recurse gsl_headers include/gsl ${GSL_SUB}/include/gsl
-nsis_add_recurse gsl_libraries lib ${GSL_SUB}/lib
+#cd $GSL_DIR_UNIX
+#nsis_add_recurse gsl_headers include/gsl ${GSL_SUB}/include/gsl
+#nsis_add_recurse gsl_libraries lib ${GSL_SUB}/lib
+# add EIGEN material
+cd $EIGEN_DIR_UNIX
+cd ..
+nsis_add_recurse eigen_base ${EIGEN_SUB} ${EIGEN_SUB}
+
 
 # Add GTKMM material to NSIS
 
@@ -393,19 +417,20 @@ if [ "$GTKMM_DIR" != "" ]; then
     nsis_add_recurse gtkmm_libraries lib ${GTKMM_SUB}/lib
   
   cd ${YARP_DIR_UNIX}/install/bin || exit 1
-  if [ "$QT_DIR" == "" ]; then
-    for f in $GUIS; do
-      if [ -f "${f}.exe" ]; then
-        nsis_add gtk_guis ${f}.exe ${YARP_SUB}/bin/${f}.exe
-      fi 
-    done
-  else
-    for f in $GUIS; do
-      if [ -f "${f}-gtk.exe" ]; then
-        nsis_add gtk_guis ${f}-gtk.exe ${YARP_SUB}/bin/${f}-gtk.exe
-      fi 
-    done
-  fi
+# Removing GTK GUIs
+  # if [ "$QT_DIR" == "" ]; then
+    # for f in $GUIS; do
+      # if [ -f "${f}.exe" ]; then
+        # nsis_add gtk_guis ${f}.exe ${YARP_SUB}/bin/${f}.exe
+      # fi 
+    # done
+  # else
+    # for f in $GUIS; do
+      # if [ -f "${f}-gtk.exe" ]; then
+        # nsis_add gtk_guis ${f}-gtk.exe ${YARP_SUB}/bin/${f}-gtk.exe
+      # fi 
+    # done
+  # fi
 # 03 jan 2013 by Matteo Brunettini : 
 # Add Visual Studio re-distributable material to NSIS - Fix missign GTKMM MVSC100 DLLs
 # NOTE: the path VS10/VC/redist/$OPT_VARIANT/Microsoft.VC100.CRT must be copied to VS10/VC/redist/$OPT_VARIANT/ 
@@ -501,11 +526,12 @@ if $add_debug; then
         nsis_add ace_libraries ${ACE_LIBNAME_DBG}.pdb ${ACE_SUB}/bin/${ACE_LIBNAME_DBG}.pdb
     fi
   cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
-  cd $GSL_DIR_DBG_UNIX
-  rm -rf tmp_debug
-  mkdir -p tmp_debug
-  cp -R lib tmp_debug/debug
-  nsis_add_recurse gsl_libraries tmp_debug/debug ${GSL_SUB}/lib/debug
+  # Removing GSL
+  # cd $GSL_DIR_DBG_UNIX
+  # rm -rf tmp_debug
+  # mkdir -p tmp_debug
+  # cp -R lib tmp_debug/debug
+  # nsis_add_recurse gsl_libraries tmp_debug/debug ${GSL_SUB}/lib/debug
   DBG_HIDE=""
 fi
 
@@ -515,7 +541,9 @@ cp $SETTINGS_SOURCE_DIR/src/nsis/*.nsh .
 
 echo " Creating NSIS installer package.."
 
-NSIS_PARAMETERS=" -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DNSIS_OUTPUT_PATH=$(cygpath -w $PWD)"
+# Removing GSL
+#NSIS_PARAMETERS=" -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DNSIS_OUTPUT_PATH=$(cygpath -w $PWD)"
+NSIS_PARAMETERS=" -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DEIGEN_VERSION=$BUNDLE_EIGEN_VERSION -DACE_SUB=$ACE_SUB -DEIGEN_SUB=$EIGEN_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DNSIS_OUTPUT_PATH=$(cygpath -w $PWD)"
 
 if [ "$GTKMM_SUB" != "" ]; then
   NSIS_PARAMETERS="${NSIS_PARAMETERS} -DGTKMM_SUB=$GTKMM_SUB"
@@ -523,7 +551,7 @@ fi
 if [ "${QT_SUB}" != "" ]; then
   NSIS_PARAMETERS="${NSIS_PARAMETERS} -DQT_SUB=$QT_SUB"
 fi
-echo $NSIS_BIN $NSIS_PARAMETERS "$(cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi)" || exit 1
+
 $NSIS_BIN $NSIS_PARAMETERS "$(cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi)" || exit 1
 
 PACKAGES_DEST_DIR="${BUILD_DIR}/yarp-packages" 

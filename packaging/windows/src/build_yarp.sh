@@ -22,8 +22,8 @@
 #      cmake paths
 #   ace_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
 #      ace paths
-#   gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
-#      gsl paths
+#   eigen_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      eigen paths
 #   gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
 #      gtkmm paths
 #
@@ -45,45 +45,51 @@ BUILD_DIR=$PWD
 
 # Get SETTINGS_* variables (paths) from cache
 source ./settings.sh || {
-	echo "No settings.sh found, are we in the build directory?"
-	exit 1
+  echo "No settings.sh found, are we in the build directory?"
+  exit 1
 }
 
 # Get BUNDLE_* variables (software versions) from the bundle file
 source $SETTINGS_BUNDLE_FILENAME || {
-	echo "Bundle settings not found"
-	exit 1
+  echo "Bundle settings not found"
+  exit 1
 }
 
 # GET OPT_* variables (build options) by processing our command-line options
 source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
-	echo "Cannot process options"
-	exit 1
+  echo "Cannot process options"
+  exit 1
 }
 
 # Pick up CMake paths
 source cmake_any_any_any.sh || {
-	echo "Cannot find corresponding CMAKE build"
-	exit 1
+  echo "Cannot find corresponding CMAKE build"
+  exit 1
 }
 
 # Pick up ACE paths
 source ace_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
-	echo "Cannot find corresponding ACE build"
-	exit 1
+  echo "Cannot find corresponding ACE build"
+  exit 1
 }
 
+# Removing GSL
 # Pick up GSL paths
-source gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
-	echo "Cannot find corresponding GSL build"
-	exit 1
+#source gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
+#  echo "Cannot find corresponding GSL build"
+#  exit 1
+#}
+# Pick up EIGEN paths
+source eigen_any_any_any.sh || {
+  echo "Cannot find EIGEN build"
+  exit 1
 }
 
 # Pick up GTKMM paths
 if [ -f "gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh" ]; then
   source gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh 
 else
-	echo "No GTKMM build"
+  echo "No GTKMM build"
 fi
 
 # Pick up QT paths
@@ -135,35 +141,36 @@ YARP_DIR=`cygpath --mixed "$PWD"`
 YARP_ROOT=`cygpath --mixed "$PWD/../${source_name}"`
 
 echo "Using ACE from $ACE_ROOT"
-echo "Using GSL from $GSL_DIR"
+echo "Using EIGEN from $EIGEN_DIR"
 
 # Set up configure and build steps.  We have to be careful for MINGW.
 (
 cat << XXX
-	source $SETTINGS_SOURCE_DIR/src/restrict_path.sh
-
-	"$CMAKE_BIN" -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION $YARP_CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DGSL_DIR="$GSL_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" ../$source_name || exit 1
-	target_name "YARP"
-	$OPT_BUILDER  \$user_target \$TARGET $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
-	# if [ ! -e install ]; then
-	"$CMAKE_BIN" --build . --target install --config ${OPT_BUILD} || exit 1
-	# fi
+  source $SETTINGS_SOURCE_DIR/src/restrict_path.sh
+# Removing GSL
+#  "$CMAKE_BIN" -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION $YARP_CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DGSL_DIR="$GSL_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" ../$source_name || exit 1
+  "$CMAKE_BIN" -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION $YARP_CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DEIGEN3_INCLUDE_DIR="$EIGEN_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" ../$source_name || exit 1
+  target_name "YARP"
+  $OPT_BUILDER  \$user_target \$TARGET $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
+  # if [ ! -e install ]; then
+  "$CMAKE_BIN" --build . --target install --config ${OPT_BUILD} || exit 1
+  # fi
 XXX
 ) > compile_base.sh
 # Make a small compile script for user testing
 (
-	set
-	echo 'user_target="$1"'
-	echo "source compile_base.sh"
+  set
+  echo 'user_target="$1"'
+  echo "source compile_base.sh"
 ) > compile.sh
 
 # Configure and build
 {
-	source compile_base.sh || exit 1
+  source compile_base.sh || exit 1
 }
 
 # Cache YARP-related paths and variables, for dependent packages to read
 (
-	echo "export YARP_DIR='$YARP_DIR'"
-	echo "export YARP_ROOT='$YARP_ROOT'"
+  echo "export YARP_DIR='$YARP_DIR'"
+  echo "export YARP_ROOT='$YARP_ROOT'"
 ) > $BUILD_DIR/yarp_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
