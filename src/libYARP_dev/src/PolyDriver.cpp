@@ -215,7 +215,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
         str = part->toString().c_str();
     }
 
-#ifndef YARP_NO_DEPRECATE // since yarp 2.3.70
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
     Bottle bot(str.c_str());
     if (bot.size()>1) {
         // this wasn't a device name, but some codes -- rearrange
