@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef YARP2_LOGGER
-#define YARP2_LOGGER
+#ifndef YARP_OS_IMPL_LOGGER_H
+#define YARP_OS_IMPL_LOGGER_H
 
 #include <stdio.h>
 #include <yarp/conf/api.h>
@@ -189,24 +189,24 @@ private:
 // compromise - use macros so that debugging can evaporate in optimized code.
 // also, make a printf-style adaptor since c++ is a bit of a pain to
 // build strings in.
-#define YARP_ERROR(log,x) ((Logger*)&log)->internal_error(x)
-#define YARP_WARN(log,x)  ((Logger*)&log)->internal_warning(x)
-#define YARP_INFO(log,x)  ((Logger*)&log)->internal_info(x)
+#define YARP_ERROR(log,x) ((Logger*)&(log))->internal_error(x)
+#define YARP_WARN(log,x)  ((Logger*)&(log))->internal_warning(x)
+#define YARP_INFO(log,x)  ((Logger*)&(log))->internal_info(x)
 #ifndef NDEBUG
-#  define YARP_DEBUG(log,x) ((Logger*)&log)->internal_debug(x)
+#  define YARP_DEBUG(log,x) ((Logger*)&(log))->internal_debug(x)
 #else
 #  define YARP_DEBUG(log,x) YARP_UNUSED(log)
 #endif
-#define YARP_FAIL(log,x)  ((Logger*)&log)->internal_fail(x)
+#define YARP_FAIL(log,x)  ((Logger*)&(log))->internal_fail(x)
 
 #define YARP_LONGEST_MESSAGE 1000
-#define YARP_SPRINTF0(log,mode,msg)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg); log.internal_ ## mode(_yarp_buf); }
-#define YARP_SPRINTF1(log,mode,msg,a)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg,a); log.internal_ ## mode(_yarp_buf); }
-#define YARP_SPRINTF2(log,mode,msg,a,b)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg,a,b); log.internal_ ## mode(_yarp_buf); }
-#define YARP_SPRINTF3(log,mode,msg,a,b,c)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg,a,b,c); log.internal_ ## mode(_yarp_buf); }
-#define YARP_SPRINTF4(log,mode,msg,a,b,c,d)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg,a,b,c,d); log.internal_ ## mode(_yarp_buf); }
-#define YARP_SPRINTF5(log,mode,msg,a,b,c,d,e)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg,a,b,c,d,e); log.internal_ ## mode(_yarp_buf); }
+#define YARP_SPRINTF0(log,mode,msg)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF1(log,mode,msg,a)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF2(log,mode,msg,a,b)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF3(log,mode,msg,a,b,c)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b,c); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF4(log,mode,msg,a,b,c,d)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b,c,d); (log).internal_ ## mode(&(_yarp_buf[0])); }
+#define YARP_SPRINTF5(log,mode,msg,a,b,c,d,e)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(&(_yarp_buf[0]),YARP_LONGEST_MESSAGE,msg,a,b,c,d,e); (log).internal_ ## mode(&(_yarp_buf[0])); }
 
 
 
-#endif
+#endif // YARP_OS_IMPL_LOGGER_H

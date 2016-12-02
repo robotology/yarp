@@ -22,14 +22,14 @@ namespace yarp {
  * that defines how the connection behaves.
  *
  */
-class YARP_OS_API yarp::os::Connection {
+class YARP_OS_API yarp::os::Connection
+{
 public:
 
     /**
      * Destructor.
      */
-    virtual ~Connection() {
-    }
+    virtual ~Connection() {}
 
     /**
      *
@@ -263,12 +263,13 @@ public:
 };
 
 
-class YARP_OS_API yarp::os::NullConnection : public Connection {
+class YARP_OS_API yarp::os::NullConnection : public Connection
+{
 public:
     virtual bool isValid() { return false; }
     virtual bool isTextMode() { return true; }
     virtual bool canEscape() { return true; }
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) { }
+    virtual void handleEnvelope(const yarp::os::ConstString& envelope) { YARP_UNUSED(envelope); }
     virtual bool requireAck() { return false; }
     virtual bool supportReply() { return false; }
     virtual bool isLocal() { return false; }
@@ -279,41 +280,55 @@ public:
 
     virtual bool modifiesIncomingData() { return false; }
 
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) {
+    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader)
+    {
         return reader;
     }
 
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) {
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader)
+    {
+        YARP_UNUSED(reader);
         return true;
     }
 
-    virtual bool modifiesOutgoingData() {
+    virtual bool modifiesOutgoingData()
+    {
         return false;
     }
 
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) {
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer)
+    {
         return writer;
     }
 
-    virtual bool acceptOutgoingData(PortWriter& writer) {
+    virtual bool acceptOutgoingData(PortWriter& writer)
+    {
+        YARP_UNUSED(writer);
         return true;
     }
 
-    virtual bool modifiesReply() {
+    virtual bool modifiesReply()
+    {
         return false;
     }
 
-    virtual PortReader& modifyReply(PortReader& reader) {
+    virtual PortReader& modifyReply(PortReader& reader)
+    {
         return reader;
     }
 
-    virtual void setCarrierParams(const yarp::os::Property& params) {
+    virtual void setCarrierParams(const yarp::os::Property& params)
+    {
+        YARP_UNUSED(params);
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) {
+    virtual void getCarrierParams(yarp::os::Property& params)
+    {
+        YARP_UNUSED(params);
     }
 
-    virtual void getHeader(const yarp::os::Bytes& header) {
+    virtual void getHeader(const yarp::os::Bytes& header)
+    {
         for (size_t i=0; i<header.length(); i++) {
             header.get()[i] = '\0';
         }
@@ -321,7 +336,8 @@ public:
 
     virtual void prepareDisconnect() {}
 
-    virtual yarp::os::ConstString getName() {
+    virtual yarp::os::ConstString getName()
+    {
         return "null";
     }
 };
