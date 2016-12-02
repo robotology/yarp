@@ -256,7 +256,7 @@ public:
                 tag = work;
                 accum.clear();
             } else {
-                if (work.find("\\")!=ConstString::npos) {
+                if (work.find('\\')!=ConstString::npos) {
                     // Specifically when reading from the command
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
@@ -481,7 +481,7 @@ public:
             if (!done) {
                 including = false;
 
-                if (buf.find("//")!=ConstString::npos||buf.find("#")!=ConstString::npos) {
+                if (buf.find("//")!=ConstString::npos||buf.find('#')!=ConstString::npos) {
                     bool quoted = false;
                     bool prespace = true;
                     int comment = 0;
@@ -518,10 +518,10 @@ public:
                 buf = expand(buf.c_str(),env,owner).c_str();
 
                 if (buf.length()>0 && buf[0]=='[') {
-                    size_t stop = buf.find("]");
+                    size_t stop = buf.find(']');
                     if (stop!=ConstString::npos) {
                         buf = buf.substr(1,stop-1);
-                        size_t space = buf.find(" ");
+                        size_t space = buf.find(' ');
                         if (space!=ConstString::npos) {
                             Bottle bot(buf.c_str());
                             // BEGIN Handle include option
@@ -699,7 +699,7 @@ public:
     ConstString expand(const char *txt, Searchable& env, Searchable& env2) {
         //printf("expanding %s\n", txt);
         ConstString input = txt;
-        if (input.find("$")==ConstString::npos) {
+        if (input.find('$')==ConstString::npos) {
             // no variables present for sure
             return txt;
         }
@@ -760,7 +760,7 @@ public:
                             add = "1";
                         }
                     }
-                    if (add.find("\\")!=ConstString::npos) {
+                    if (add.find('\\')!=ConstString::npos) {
                         // Specifically when reading from the command
                         // line, we will allow windows-style paths.
                         // Hence we have to break the "\" character

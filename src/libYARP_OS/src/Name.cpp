@@ -50,7 +50,7 @@ ConstString Name::getCarrierModifier(const char *mod, bool *hasModifier) {
         size_t modLoc = work.find(target);
         if (modLoc!=ConstString::npos) {
             work = work.substr(modLoc+target.length(),work.length());
-            size_t endLoc = work.find("+");
+            size_t endLoc = work.find('+');
             if (endLoc!=ConstString::npos) {
                 work = work.substr(0,endLoc);
             }

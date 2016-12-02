@@ -132,7 +132,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
                 if (typ=="yarp/image") {
                     typ = "sensor_msgs/Image";
                 }
-                if (typ.find("/")==ConstString::npos) {
+                if (typ.find('/')==ConstString::npos) {
                     typ = ConstString("yarp/") + typ;
                 }
             }
@@ -590,7 +590,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
 
 
 ConstString RosNameSpace::toRosName(const ConstString& name) {
-    if (name.find(":")==ConstString::npos) return name;
+    if (name.find(':')==ConstString::npos) return name;
     ConstString result;
     for (size_t i=0; i<name.length(); i++) {
         if (name[i]!=':') {

@@ -652,7 +652,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 
     for (int i = 0; varChar; i++) {
         std::string tmpVariable(varChar);
-        size_t equalsSign=tmpVariable.find("=");
+        size_t equalsSign=tmpVariable.find('=');
         if(equalsSign!=std::string::npos)
         {
             platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign+1));
@@ -797,7 +797,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
             info.pid = pid;
             // split the cmdline to find the arguments
             info.name = cmdline;
-            size_t index = info.name.find(" ");
+            size_t index = info.name.find(' ');
             if(index != info.name.npos) {
                 info.name = info.name.substr(0, index);
                 info.arguments = cmdline;

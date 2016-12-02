@@ -62,7 +62,7 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
     ConstString s;
     if (name != YARP_NULLPTR) {
         s = *name;
-        size_t i = s.find("+");
+        size_t i = s.find('+');
         if (i!=ConstString::npos) {
             s[i] = '\0';
             s = s.c_str();

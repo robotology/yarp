@@ -268,7 +268,7 @@ ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
             YARP_DEBUG(Logger::get(), ConstString("scanning network interface ") +
                        ip.c_str());
 
-            if (ip.find(":")!=ConstString::npos) continue;
+            if (ip.find(':')!=ConstString::npos) continue;
 
             bool would_be_loopback = false;
             if (ip == "127.0.0.1" || ip == "127.1.0.1" ||

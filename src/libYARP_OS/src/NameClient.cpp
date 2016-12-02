@@ -261,7 +261,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
 
 Contact NameClient::queryName(const ConstString& name) {
     ConstString np = getNamePart(name);
-    size_t i1 = np.find(":");
+    size_t i1 = np.find(':');
     if (i1!=ConstString::npos) {
         Contact c = c.fromString(np.c_str());
         if (c.isValid()&&c.getPort()>0) {

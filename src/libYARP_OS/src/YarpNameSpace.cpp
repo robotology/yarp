@@ -51,8 +51,8 @@ Contact YarpNameSpace::registerContact(const Contact& contact) {
         ConstString cat = nc.getCategory();
         if (nc.getNestedName()!="") {
             //bool service = (cat.find("1") != ConstString::npos);
-            bool publish = (cat.find("+") != ConstString::npos);
-            bool subscribe = (cat.find("-") != ConstString::npos);
+            bool publish = (cat.find('+') != ConstString::npos);
+            bool subscribe = (cat.find('-') != ConstString::npos);
             ContactStyle style;
             Contact c1(nc.getFullName());
             Contact c2(ConstString("topic:/") + nc.getNestedName());
@@ -75,8 +75,8 @@ Contact YarpNameSpace::unregisterName(const ConstString& name) {
     ConstString cat = nc.getCategory();
     if (nc.getNestedName()!="") {
         //bool service = (cat.find("1") != ConstString::npos);
-        bool publish = (cat.find("+") != ConstString::npos);
-        bool subscribe = (cat.find("-") != ConstString::npos);
+        bool publish = (cat.find('+') != ConstString::npos);
+        bool subscribe = (cat.find('-') != ConstString::npos);
         ContactStyle style;
         Contact c1(nc.getFullName());
         Contact c2(ConstString("topic:/") + nc.getNestedName());
