@@ -31,9 +31,7 @@ namespace yarp
         *       defined with U and V as square orthogonal matrices and S as an M-by-N diagonal matrix.
         *       If U, S, V do not have the expected sizes they are resized automatically.
         *
-        * @note When libYARP_math is compiled with GSL backend, this
-        *       function uses the Golub-Reinsch SVD algorithm.
-        *       When compiled with Eigen backend, this function uses the Jacobi SVD algorithm.
+        * @note This function uses the Jacobi SVD algorithm.
         */
         void YARP_math_API SVD(const yarp::sig::Matrix &in,
             yarp::sig::Matrix &U,
@@ -43,9 +41,7 @@ namespace yarp
         /**
         * Perform SVD decomposition on a MxN matrix (for M >= N) (defined in SVD.h).
         *
-        * @note When libYARP_math is compiled with GSL backend, this
-        *       function uses the Modified Golub-Reinsch SVD algorithm (fast for M>>N)
-        *       When compiled with Eigen backend, this function uses the Jacobi SVD algorithm.
+        * @note This function uses the Jacobi SVD algorithm.
         */
         void YARP_math_API SVDMod(const yarp::sig::Matrix &in,
             yarp::sig::Matrix &U,
@@ -56,7 +52,7 @@ namespace yarp
         * Perform SVD decomposition on a matrix using the Jacobi method (defined in SVD.h). The Jacobi method
         * can compute singular values to higher relative accuracy than Golub-Reinsch algorithms.
         *
-        * @note For both Eigen and GSL backends, the Jacobi algorithm is used in this function.
+        * @note This function uses the Jacobi SVD algorithm.
         */
         void YARP_math_API SVDJacobi(const yarp::sig::Matrix &in,
             yarp::sig::Matrix &U,
