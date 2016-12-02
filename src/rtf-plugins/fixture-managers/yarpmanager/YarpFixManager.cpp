@@ -32,7 +32,6 @@ YarpFixManager::~YarpFixManager() {
 bool YarpFixManager::setup(int argc, char** argv) {
     RTF_FIXTURE_REPORT("yarpmanager is setuping the fixture...");
     bool ret;
-    const char* szerror;
     if(!initialized) {
         // check yarp network
         yarp.setVerbosity(-1);
