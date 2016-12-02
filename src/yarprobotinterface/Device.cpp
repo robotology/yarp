@@ -82,7 +82,7 @@ public:
     inline yarp::os::Semaphore* lst_sem() const { return &driver->threadListSemaphore; }
 
     inline bool isValid() const { return drv()->isValid(); }
-    inline bool open() { return drv()->open(paramsAsProperty().toString()); }
+	inline bool open() { return drv()->open(paramsAsProperty().toString()); }
     inline bool close() { return drv()->close(); }
 
     inline void registerThread(yarp::os::Thread *thread) const
@@ -129,13 +129,33 @@ public:
     yarp::os::Property paramsAsProperty() const
     {
         ParamList p = RobotInterface::mergeDuplicateGroups(params);
-        std::string s;
-        s += "(device " + type + ")";
-        for (RobotInterface::ParamList::const_iterator it = p.begin(); it != p.end(); ++it) {
-            const RobotInterface::Param &param = *it;
-            s += " (" + param.name() + " " + param.value() + ")";
-        }
-        return yarp::os::Property(s.c_str());
+   
+		yarp::os::Property prop;
+		prop.put("device",type);
+
+		for (RobotInterface::ParamList::const_iterator it = p.begin(); it != p.end(); ++it) {
+			const RobotInterface::Param &param = *it;
+
+			// check if parentheses are balanced
+			std::string stringFormatValue = param.value();
+			int counter = 0;
+			for (int i = 0; i < stringFormatValue.size() && counter >= 0; i++){
+				if (stringFormatValue[i] == '('){
+					counter++;
+				} else if (stringFormatValue[i] == ')'){
+					counter--;
+				}
+			}
+			if (counter != 0){
+				yWarning() << "Parentheses not balanced for param " << param.name();
+			}
+
+			yarp::os::Value value;
+			value.fromString(param.value().c_str());
+			prop.put(param.name(),value);
+		}
+
+		return prop;
     }
 
     std::string name;
