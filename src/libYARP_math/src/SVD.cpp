@@ -11,14 +11,35 @@
 #include <yarp/math/SVD.h>
 #include <yarp/math/Math.h>
 
-using namespace yarp::sig;
+#include <yarp/eigen/Eigen.h>
 
-/**
-* Perform the moore-penrose pseudo-inverse of a matrix.
-* @param in input matrix 
-* @param tol singular values less than tol are set to zero
-* @return pseudo-inverse of the matrix 'in'
-*/
+#include <Eigen/SVD>
+
+
+using namespace yarp::sig;
+using namespace yarp::eigen;
+
+void yarp::math::SVD(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
+{
+    return SVDJacobi(in,U,S,V);
+}
+
+void yarp::math::SVDMod(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
+{
+    return SVDJacobi(in,U,S,V);
+}
+
+void yarp::math::SVDJacobi(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
+{
+    Eigen::JacobiSVD< Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > svd(toEigen(in), Eigen::ComputeThinU | Eigen::ComputeThinV);
+
+    toEigen(U) = svd.matrixU();
+    toEigen(S) = svd.singularValues();
+    toEigen(V) = svd.matrixV();
+
+    return;
+}
+
 Matrix yarp::math::pinv(const Matrix &in, double tol)
 {
     int m = in.rows(), n = in.cols(), k = m<n?m:n;
