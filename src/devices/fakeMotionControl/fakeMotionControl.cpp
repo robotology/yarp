@@ -73,13 +73,13 @@ bool FakeMotionControl::extractGroup(Bottle &input, Bottle &out, const std::stri
 
     if (tmp.isNull())
     {
-        yWarning () << key1.c_str() << " parameter not found";
+        yError() << key1.c_str() << " parameter not found";
         return false;
     }
 
     if(tmp.size()!=size)
     {
-        yWarning () << key1.c_str() << " incorrect number of entries in board "<< '['  << ']';
+        yError() << key1.c_str() << " incorrect number of entries";
         return false;
     }
 
@@ -727,10 +727,15 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     Bottle general = config.findGroup("GENERAL");
 
     // read AxisMap values from file
-    if (extractGroup(general, xtmp, "AxisMap", "a list of reordered indices for the axes", _njoints))
+    if(general.check("AxisMap"))
     {
-        for (i = 1; i < xtmp.size(); i++)
-            _axisMap[i - 1] = xtmp.get(i).asInt();
+        if(extractGroup(general, xtmp, "AxisMap", "a list of reordered indices for the axes", _njoints))
+        {
+            for (i = 1; i < xtmp.size(); i++)
+                _axisMap[i - 1] = xtmp.get(i).asInt();
+        }
+        else
+            return false;
     }
     else
     {
@@ -739,13 +744,18 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             _axisMap[i] = i;
     }
 
-    if (extractGroup(general, xtmp, "AxisName", "a list of strings representing the axes names", _njoints))
+    if(general.check("AxisName"))
     {
-        //beware: axis name has to be remapped here because they are not set using the toHw() helper function
-        for (i = 1; i < xtmp.size(); i++)
+        if (extractGroup(general, xtmp, "AxisName", "a list of strings representing the axes names", _njoints))
         {
-            _axisName[_axisMap[i - 1]] = xtmp.get(i).asString();
+            //beware: axis name has to be remapped here because they are not set using the toHw() helper function
+            for (i = 1; i < xtmp.size(); i++)
+            {
+                _axisName[_axisMap[i - 1]] = xtmp.get(i).asString();
+            }
         }
+        else
+            return false;
     }
     else
     {
@@ -755,23 +765,26 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             _axisName[_axisMap[i]] = "joint" + toString(i);
         }
     }
-
-    if (extractGroup(general, xtmp, "AxisType", "a list of strings representing the axes type (revolute/prismatic)",
-                      _njoints))
+    if(general.check("AxisType"))
     {
-        //beware: axis type has to be remapped here because they are not set using the toHw() helper function
-        for (i = 1; i < xtmp.size(); i++)
+        if (extractGroup(general, xtmp, "AxisType", "a list of strings representing the axes type (revolute/prismatic)", _njoints))
         {
-            string typeString = xtmp.get(i).asString();
-            if (typeString == "revolute")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
-            else if (typeString == "prismatic")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_PRISMATIC;
-            else
+            //beware: axis type has to be remapped here because they are not set using the toHw() helper function
+            for (i = 1; i < xtmp.size(); i++)
             {
-                yError("Unknown AxisType value %s!", typeString.c_str());
-                _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_UNKNOWN;
-                return false;
+                string typeString = xtmp.get(i).asString();
+                if (typeString == "revolute")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
+                else if (typeString == "prismatic")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_PRISMATIC;
+                else
+                {
+                    yError("Unknown AxisType value %s!", typeString.c_str());
+                    _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_UNKNOWN;
+                    return false;
+                }
             }
         }
+        else
+            return false;
     }
     else
     {
@@ -783,17 +796,19 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     }
 
 
-
-
 //     double tmp_A2E;
     // Encoder scales
-    if (extractGroup(general, xtmp, "Encoder", "a list of scales for the encoders", _njoints))
+    if(general.check("Encoder"))
     {
-        for (i = 1; i < xtmp.size(); i++)
+        if (extractGroup(general, xtmp, "Encoder", "a list of scales for the encoders", _njoints))
         {
-            _angleToEncoder[i-1] = xtmp.get(i).asDouble();
+            for (i = 1; i < xtmp.size(); i++)
+            {
+                _angleToEncoder[i-1] = xtmp.get(i).asDouble();
+            }
         }
-        return false;
+        else
+            return false;
     }
     else
     {
