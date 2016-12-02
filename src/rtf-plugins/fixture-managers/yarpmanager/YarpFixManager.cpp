@@ -44,7 +44,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
         yarp::os::ResourceFinder rf;
         rf.setVerbose(false);
         rf.setDefaultContext("RobotTesting");
-        rf.configure("", argc, argv, false);
+        rf.configure(argc, argv, false);
 
         RTF_ASSERT_ERROR_IF(rf.check("fixture"),
                             "No application xml file is set (add --fixture yourfixture.xml)");
