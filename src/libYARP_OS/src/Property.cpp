@@ -78,9 +78,8 @@ public:
         owner(owner) {}
 
     PropertyItem *getPropNoCreate(const ConstString& key) const {
-        ConstString n(key);
         PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
-        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(ConstString,PropertyItem) *)&data)),n,entry);
+        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(ConstString,PropertyItem) *)&data)),key,entry);
         if (result==-1) {
             return YARP_NULLPTR;
         }
@@ -90,15 +89,14 @@ public:
     }
 
     PropertyItem *getProp(const ConstString& key, bool create = true) {
-        ConstString n(key);
         PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
-        int result = PLATFORM_MAP_FIND(data,n,entry);
+        int result = PLATFORM_MAP_FIND(data,key,entry);
         if (result==-1) {
             if (!create) {
                 return YARP_NULLPTR;
             }
-            PLATFORM_MAP_SET(data,n,PropertyItem());
-            result = PLATFORM_MAP_FIND(data,n,entry);
+            PLATFORM_MAP_SET(data,key,PropertyItem());
+            result = PLATFORM_MAP_FIND(data,key,entry);
         }
         yAssert(result!=-1);
         //yAssert(entry!=YARP_NULLPTR);
@@ -405,13 +403,12 @@ public:
         }
 
         ConstString path("");
-        ConstString sfname = fname;
-        size_t index = sfname.rfind('/');
+        size_t index = fname.rfind('/');
         if (index==ConstString::npos) {
-            index = sfname.rfind('\\');
+            index = fname.rfind('\\');
         }
         if (index!=ConstString::npos) {
-            path = sfname.substr(0,index);
+            path = fname.substr(0,index);
         }
 
         if (!ok) {

@@ -40,7 +40,6 @@ Contact RosNameSpace::getNameServerContact() const {
 Contact RosNameSpace::queryName(const ConstString& name) {
     dbg_printf("ROSNameSpace queryName(%s)\n", name.c_str());
     NestedContact nc(name);
-    ConstString full = name;
     ConstString node = nc.getNodeName();
     ConstString srv = nc.getNestedName();
     ConstString cat = nc.getCategory();
@@ -184,8 +183,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
 
     // Remainder of method is supporting older /name+#/foo syntax
 
-    ConstString full = contact.getName();
-    ConstString name = full;
+    ConstString name = contact.getName();
     size_t pub_idx = name.find("+#");
     size_t sub_idx = name.find("-#");
 
@@ -286,33 +284,31 @@ Contact RosNameSpace::unregisterAdvanced(const ConstString& name, NameStore *sto
 
     // Remainder of method is supporting older /name+#/foo syntax
 
-    ConstString full = name;
-    ConstString xname = full;
-    size_t pub_idx = xname.find("+#");
-    size_t sub_idx = xname.find("-#");
+    size_t pub_idx = name.find("+#");
+    size_t sub_idx = name.find("-#");
 
     ConstString node = "";
     ConstString pub = "";
     ConstString sub = "";
     if (pub_idx!=ConstString::npos) {
-        node = xname.substr(0,pub_idx);
-        pub = xname.substr(pub_idx+2,xname.length());
+        node = name.substr(0,pub_idx);
+        pub = name.substr(pub_idx+2,name.length());
     }
     if (sub_idx!=ConstString::npos) {
-        node = xname.substr(0,sub_idx);
-        sub = xname.substr(sub_idx+2,xname.length());
+        node = name.substr(0,sub_idx);
+        sub = name.substr(sub_idx+2,name.length());
     }
     if (node=="") {
-        node = xname;
+        node = name;
     }
     YARP_SPRINTF3(Logger::get(),debug,"Name [%s] sub [%s] pub [%s]\n",
-                  xname.c_str(), sub.c_str(), pub.c_str());
+                  name.c_str(), sub.c_str(), pub.c_str());
 
     if (pub!="") {
-        NetworkBase::disconnect(full,ConstString("topic:/") + pub);
+        NetworkBase::disconnect(name,ConstString("topic:/") + pub);
     }
     if (sub!="") {
-        NetworkBase::disconnect(ConstString("topic:/") + sub, full);
+        NetworkBase::disconnect(ConstString("topic:/") + sub, name);
     }
 
     Contact contact = NetworkBase::queryName(name);

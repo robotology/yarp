@@ -293,7 +293,7 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
         cmd.addString("...");
     }
     ConstString prefix = NetworkBase::getEnvironment("YARP_IP");
-    NestedContact nc = suggest.getNested();
+    const NestedContact& nc = suggest.getNested();
     ConstString typ = nc.getTypeNameStar();
     if (suggest.isValid()||prefix!=""||typ!="*") {
         if (suggest.getCarrier()!="") {

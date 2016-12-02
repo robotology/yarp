@@ -1701,7 +1701,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         if (unit->isInput()&&!unit->isFinished()) {
                             Route route = unit->getRoute();
                             if (target=="") {
-                                ConstString name = route.getFromName();
+                                const ConstString& name = route.getFromName();
                                 if (name!="") {
                                     result.addString(name.c_str());
                                 }
