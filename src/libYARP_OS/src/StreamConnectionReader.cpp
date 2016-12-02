@@ -85,7 +85,7 @@ Bytes StreamConnectionReader::readEnvelope() {
     if (parentConnectionReader != YARP_NULLPTR) {
         return parentConnectionReader->readEnvelope();
     }
-    return Bytes(0,0);
+    return Bytes(YARP_NULLPTR,0);
 }
 
 

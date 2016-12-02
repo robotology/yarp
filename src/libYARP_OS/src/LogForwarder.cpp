@@ -55,7 +55,7 @@ yarp::os::LogForwarder::LogForwarder()
 //     yarp::os::NetworkBase::initMinimum();
     sem = new yarp::os::Semaphore(1);
     yAssert(sem);
-    outputPort =0;
+    outputPort =YARP_NULLPTR;
     outputPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     char host_name [MAX_STRING_SIZE]; //unsafe
     yarp::os::gethostname(host_name,MAX_STRING_SIZE);
@@ -89,7 +89,7 @@ yarp::os::LogForwarder::~LogForwarder()
         //outputPort->interrupt();
         outputPort->close();
         delete outputPort;
-        outputPort=0;
+        outputPort=YARP_NULLPTR;
     }
     sem->post();
     delete sem;

@@ -116,7 +116,7 @@ char *ManagedBytes::get() const {
 
 void ManagedBytes::clear() {
     if (owned) {
-        if (get()!=0) {
+        if (get()!=YARP_NULLPTR) {
             delete[] get();
         }
         owned = 0;

@@ -2525,7 +2525,7 @@ bool PortCore::setParamPortMonitor(yarp::os::Property& param,
                                    bool isOutput, yarp::os::ConstString &errMsg) {
     if(isOutput) {
         modifier.outputMutex.lock();
-        if(modifier.outputModifier == NULL) {
+        if(modifier.outputModifier == YARP_NULLPTR) {
             errMsg = "No port modifer is attached to the output";
             modifier.outputMutex.unlock();
             return false;
@@ -2535,7 +2535,7 @@ bool PortCore::setParamPortMonitor(yarp::os::Property& param,
     }
     else {
         modifier.inputMutex.lock();
-        if(modifier.inputModifier == NULL) {
+        if(modifier.inputModifier == YARP_NULLPTR) {
             errMsg = "No port modifer is attached to the input";
             modifier.inputMutex.unlock();
             return false;
@@ -2550,7 +2550,7 @@ bool PortCore::getParamPortMonitor(yarp::os::Property& param,
                                    bool isOutput, yarp::os::ConstString &errMsg) {
     if(isOutput) {
         modifier.outputMutex.lock();
-        if(modifier.outputModifier == NULL) {
+        if(modifier.outputModifier == YARP_NULLPTR) {
             errMsg = "No port modifer is attached to the output";
             modifier.outputMutex.unlock();
             return false;
@@ -2560,7 +2560,7 @@ bool PortCore::getParamPortMonitor(yarp::os::Property& param,
     }
     else {
         modifier.inputMutex.lock();
-        if(modifier.inputModifier == NULL) {
+        if(modifier.inputModifier == YARP_NULLPTR) {
             errMsg = "No port modifer is attached to the input";
             modifier.inputMutex.unlock();
             return false;

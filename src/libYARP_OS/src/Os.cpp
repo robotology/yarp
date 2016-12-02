@@ -31,7 +31,7 @@ yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHan
         case yarp::os::YARP_SIGTERM:
             return ACE_OS::signal(SIGTERM, (ACE_SignalHandler) sighandler);
         default:
-            return 0; //signal not implemented yet
+            return YARP_NULLPTR; //signal not implemented yet
     }
 }
 

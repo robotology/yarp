@@ -20,10 +20,10 @@ bool ShmemInputStreamImpl::open(int port,ACE_SOCK_Stream *pSock,int size)
 {
     m_pSock=pSock;
 
-    m_pAccessMutex=m_pWaitDataMutex=0;
-    m_pMap=0;
-    m_pData=0;
-    m_pHeader=0;
+    m_pAccessMutex=m_pWaitDataMutex=YARP_NULLPTR;
+    m_pMap=YARP_NULLPTR;
+    m_pData=YARP_NULLPTR;
+    m_pHeader=YARP_NULLPTR;
     m_ResizeNum=0;
 
     m_Port=port;
@@ -230,15 +230,15 @@ void ShmemInputStreamImpl::close()
 
     m_pAccessMutex->remove();
     delete m_pAccessMutex;
-    m_pAccessMutex=0;
+    m_pAccessMutex=YARP_NULLPTR;
 
     m_pWaitDataMutex->remove();
     delete m_pWaitDataMutex;
-    m_pWaitDataMutex=0;
+    m_pWaitDataMutex=YARP_NULLPTR;
 
     m_pMap->close();
     delete m_pMap;
-    m_pMap=0;
+    m_pMap=YARP_NULLPTR;
 }
 
 

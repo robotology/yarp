@@ -806,7 +806,7 @@ public:
         strcpy(szcmd, command);
         int nargs = 0;
         parseArguments(szcmd, &nargs, szarg, 128);
-        szarg[nargs]=0;
+        szarg[nargs]=YARP_NULLPTR;
         fromCommand(nargs, szarg, wipe);
         // clear allocated memory for arguments
         if(szcmd) {
@@ -1084,7 +1084,7 @@ Bottle& Property::findGroup(const ConstString& key) const {
         }
     }
 
-    if (result!=((Bottle*)0)) { return *result; }
+    if (result!=((Bottle*)YARP_NULLPTR)) { return *result; }
     return Bottle::getNullBottle();
 }
 

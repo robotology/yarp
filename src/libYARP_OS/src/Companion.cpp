@@ -2484,8 +2484,8 @@ public:
     Bottle value;
     Stamp stamp;
 
-    CompanionMergeInput() : port(0),
-                            sema(0),
+    CompanionMergeInput() : port(YARP_NULLPTR),
+                            sema(YARP_NULLPTR),
                             mutex(1) {
     }
 
@@ -2561,8 +2561,8 @@ yarp read ... /portsMerge/o0 envelope &> logfile.txt
 **/
 int Companion::cmdMerge(int argc, char *argv[]) {
     BufferedPort<Bottle >   outPort;
-    BufferedPort<Bottle >*  inPort = 0;
-    CompanionMergeInput *   inData = 0;
+    BufferedPort<Bottle >*  inPort = YARP_NULLPTR;
+    CompanionMergeInput *   inData = YARP_NULLPTR;
     yarp::os::Stamp         outStamp;
 
     int nPorts = argc;

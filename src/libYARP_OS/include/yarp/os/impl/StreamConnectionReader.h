@@ -54,7 +54,7 @@ public:
         ref(YARP_NULLPTR),
         convertedTextMode(false),
         pushedIntFlag(false),
-        parentConnectionReader(NULL) {
+        parentConnectionReader(YARP_NULLPTR) {
     }
 
     virtual ~StreamConnectionReader();

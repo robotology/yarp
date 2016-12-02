@@ -19,7 +19,7 @@ using namespace yarp::os;
 typedef std::list<std::pair<double, Semaphore*> > Waiters;
 
 NetworkClock::NetworkClock()
-: pwaiters(0), sec(0), nsec(0), t(0), closing(false){
+: pwaiters(YARP_NULLPTR), sec(0), nsec(0), t(0), closing(false){
     pwaiters = new Waiters();
     yAssert(pwaiters!=YARP_NULLPTR);
 }
@@ -99,7 +99,7 @@ void NetworkClock::delay(double seconds) {
     waiter.second->wait();
     if (waiter.second) {
         delete waiter.second;
-        waiter.second = 0;
+        waiter.second = YARP_NULLPTR;
     }
 }
 

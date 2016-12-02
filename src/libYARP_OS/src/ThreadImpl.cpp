@@ -279,7 +279,7 @@ bool ThreadImpl::start()
                                    &dummy_id,
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
-                                   0,
+                                   YARP_NULLPTR,
                                    s);
 #else
     pthread_attr_t attr;

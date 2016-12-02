@@ -43,10 +43,10 @@ public:
     {
         m_bOpen=false;
 
-        m_pAccessMutex=m_pWaitDataMutex=0;
-        m_pMap=0;
-        m_pData=0;
-        m_pHeader=0;
+        m_pAccessMutex=m_pWaitDataMutex=YARP_NULLPTR;
+        m_pMap=YARP_NULLPTR;
+        m_pData=YARP_NULLPTR;
+        m_pHeader=YARP_NULLPTR;
         m_ResizeNum=0;
         m_Port=0;
     }

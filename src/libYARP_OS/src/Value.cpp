@@ -73,7 +73,7 @@ Value::Value(const Value& alt) :
 const Value& Value::operator=(const Value& alt)
 {
     if(&alt != this) {
-        if (proxy == 0) {
+        if (proxy == YARP_NULLPTR) {
             if (isLeaf() && alt.proxy) {
                 // we are guaranteed to be a Storable
                 ((Storable*)this)->copy(*((Storable*)alt.proxy));
@@ -235,7 +235,7 @@ bool Value::read(ConnectionReader& connection)
 {
     if (proxy) {
         delete proxy;
-        proxy = 0;
+        proxy = YARP_NULLPTR;
     }
     int x = connection.expectInt();
     if ((x&0xffff) != x) return false;

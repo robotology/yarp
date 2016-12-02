@@ -123,7 +123,7 @@ public:
             ACE_NEW_MALLOC_RETURN (obj,
                                    (PortReaderPacket *)
                                    ACE_Allocator::instance()->malloc(obj_size),
-                                   PortReaderPacket(), 0);
+                                   PortReaderPacket(), YARP_NULLPTR);
 #else
             obj = new PortReaderPacket();
 #endif

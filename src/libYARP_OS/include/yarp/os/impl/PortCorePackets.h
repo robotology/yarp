@@ -68,7 +68,7 @@ public:
             ACE_NEW_MALLOC_RETURN (obj,
                                    (PortCorePacket *)
                                    ACE_Allocator::instance()->malloc(obj_size),
-                                   PortCorePacket(), 0);
+                                   PortCorePacket(), YARP_NULLPTR);
 #else
             obj = new PortCorePacket();
 #endif
