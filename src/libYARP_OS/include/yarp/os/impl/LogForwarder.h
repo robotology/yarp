@@ -25,7 +25,7 @@ class YARP_OS_API LogForwarder
     public:
         static LogForwarder* getInstance();
         static void clearInstance();
-        void forward (std::string message);
+        void forward (const std::string& message);
     protected:
         LogForwarder();
         ~LogForwarder();

@@ -224,7 +224,7 @@ bool NameConfig::writeConfig(const ConstString& fileName, const ConstString& tex
 
 
 
-ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
+ConstString NameConfig::getHostName(bool prefer_loopback, const ConstString& seed) {
     // try to pick a good host identifier
 
     ConstString result = "127.0.0.1";

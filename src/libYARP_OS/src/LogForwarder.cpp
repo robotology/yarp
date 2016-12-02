@@ -31,7 +31,7 @@ void yarp::os::LogForwarder::clearInstance()
     };
 };
 
-void yarp::os::LogForwarder::forward (std::string message)
+void yarp::os::LogForwarder::forward (const std::string& message)
 {
     sem->wait();
     if (outputPort)

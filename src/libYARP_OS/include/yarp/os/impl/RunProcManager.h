@@ -138,8 +138,8 @@ public:
 
     virtual void finalize(){}
 
-    void setCmd(yarp::os::ConstString cmd) { mCmd = cmd; }
-    void setEnv(yarp::os::ConstString env) { mEnv = env; }
+    void setCmd(const yarp::os::ConstString& cmd) { mCmd = cmd; }
+    void setEnv(const yarp::os::ConstString& env) { mEnv = env; }
 
 protected:
     yarp::os::ConstString mAlias;

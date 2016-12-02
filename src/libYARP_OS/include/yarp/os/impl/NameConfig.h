@@ -49,7 +49,7 @@ public:
     void setAddress(const Contact& address);
 
     static ConstString getHostName(bool prefer_loopback = false,
-                              ConstString seed = "");
+                                   const ConstString& seed = "");
 
     static ConstString getIps();
 
