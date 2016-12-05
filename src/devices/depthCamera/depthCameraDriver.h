@@ -100,7 +100,6 @@ namespace yarp
  * |  HW_DESCRIPTION              |      -              |  group              |                 | -              |   -           |   Yes                            | Hardware description of device property.                                               |  Read only property. Setting will be disabled                         |
  * |                              | same as 'SETTINGS' group | -              |    Read only    | -              |   -           |   Alternative to SETTING group   | Parameters here are alternative to the SETTING group                                   |                                                                       |
  * |  RGB_INTRINSIC_PARAMETERS    |      -              | group               |                 | -              |   -           |   Yes                            | Description of rgb camera visual parameters                                            |                                                                       |
- * |                              | retificationMatrix  | 4x4 double matrix   |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   focalLenghtX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   focalLenghtY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
@@ -114,7 +113,6 @@ namespace yarp
  * |                              |   t2                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   k3                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |  DEPTH_INTRINSIC_PARAMETERS  |      -              | group               |                 | -              |   -           |   Yes                            | Description of depth camera visual parameters                                          |                                                                       |
- * |                              | retificationMatrix  | 4x4 double matrix   |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   focalLenghtX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   focalLenghtY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
@@ -150,7 +148,6 @@ depthMirror     false
 clipPlanes (0.4 4.5)
 
 [RGB_INTRINSIC_PARAMETERS]
-retificationMatrix      (0.99824 0.0182436 -0.0564274 -0.0654844 -0.0165694 0.999413 0.0299975 0.0 0.0569415 -0.0290098 0.997956 0.00113543 0.0 0.0 0.0 1.0)
 focalLenghtX            1.0
 focalLenghtY            2.0
 principalPointX         256.0
@@ -166,7 +163,6 @@ t2                      4.0
 k3                      5.0
 
 [DEPTH_INTRINSIC_PARAMETERS]
-retificationMatrix      (0.99824 0.0182436 -0.0564274 -0.0654844 -0.0165694 0.999413 0.0299975 2.80857e-05 0.0569415 -0.0290098 0.997956 0.00113543 0.0 0.0 0.0 1.0)
 focalLenghtX            1.0
 focalLenghtY            2.0
 principalPointX         256.0
