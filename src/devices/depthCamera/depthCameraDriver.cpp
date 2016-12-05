@@ -116,8 +116,6 @@ depthCameraDriver::depthCameraDriver() : m_depthFrame(NULL), m_imageFrame(NULL),
     m_cameraDescription->rgbMirroring.name    = "rgbMirroring";
     m_cameraDescription->depthMirroring.name  = "depthMirroring";
     m_cameraDescription->transformationMatrix.resize(4, 4);
-    m_cameraDescription->depthIntrinsic.retificationMatrix.resize(4, 4);
-    m_cameraDescription->rgbIntrinsic.retificationMatrix.resize(4, 4);
 
     return;
 }
@@ -426,33 +424,6 @@ bool depthCameraDriver::parseIntrinsic(const Searchable& config, const string& g
         return false;
     }
     Bottle& intrinsic = config.findGroup(groupName);
-
-    if(!intrinsic.check("retificationMatrix"))
-    {
-        yError() << "depthCameraDriver: retificationMatrix not present!";
-        return false;
-    }
-    Bottle* ret_m;
-    ret_m = intrinsic.find("retificationMatrix").asList();
-    if(!(ret_m->size() == 4*4))
-    {
-        yError() << "depthCameraDriver: the size of the retification matrix is wrong";
-        return false;
-    }
-    for(i = 0; i < 4; i++)
-    {
-        for(j = 0; j < 4; j++)
-        {
-            int k = i*4+j;
-            Value& v = ret_m->get(k);
-            if(!v.isDouble())
-            {
-                yError() << "wrong data format on retification matrix (position" << k << ")";
-                return false;
-            }
-            params.retificationMatrix[i][j] = v.asDouble();
-        }
-    }
 
     realparam.first = "focalLengthX";       realparam.second = &params.focalLengthX;    realParams.push_back(realparam);
     realparam.first = "focalLengthY";       realparam.second = &params.focalLengthY;    realParams.push_back(realparam);
@@ -778,16 +749,6 @@ bool depthCameraDriver::setIntrinsic(Property& intrinsic, const IntrinsicParams&
     intrinsic.put("focalLengthY",       values.focalLengthY);
     intrinsic.put("principalPointX",    values.principalPointX);
     intrinsic.put("principalPointY",    values.principalPointY);
-    Bottle mat;
-    for(int i = 0; i < 4; i++)
-    {
-        mat.addDouble(values.retificationMatrix[i][0]);
-        mat.addDouble(values.retificationMatrix[i][1]);
-        mat.addDouble(values.retificationMatrix[i][2]);
-        mat.addDouble(values.retificationMatrix[i][3]);
-    }
-
-    intrinsic.put("retificationMatrix", Value(mat.toString()));
 
     intrinsic.put("distortionModel", "plumb_bob");
     intrinsic.put("k1", values.distortionModel.k1);

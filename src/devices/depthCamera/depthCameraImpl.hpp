@@ -21,12 +21,11 @@ struct yarp::dev::impl::plum_bob
 
 struct yarp::dev::impl::IntrinsicParams
 {
-    yarp::sig::Matrix retificationMatrix;
-    double            principalPointX;
-    double            principalPointY;
-    double            focalLengthX;
-    double            focalLengthY;
-    plum_bob          distortionModel;
+    double   principalPointX;
+    double   principalPointY;
+    double   focalLengthX;
+    double   focalLengthY;
+    plum_bob distortionModel;
 };
 
 struct yarp::dev::impl::RGBDParam
