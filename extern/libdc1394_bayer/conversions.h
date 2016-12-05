@@ -20,14 +20,20 @@
 
 */
 
-#include <yarp/conf/system.h>
+
+#if defined _MSC_VER && _MSC_VER < 1900
+// Since visual studio 2015 stdint.h has fixed-width integral types
+# define uint8_t unsigned __int8
+# define uint16_t unsigned __int16
+# define uint32_t unsigned __int32
+# define uint64_t unsigned __int64
+#else
+# include <stdint.h>
+#endif
+
 #include <assert.h>
 
 #define restrict
-#define uint8_t unsigned char
-#define uint16_t unsigned YARP_INT16
-#define uint32_t unsigned YARP_INT32
-#define uint64_t unsigned YARP_INT64
 #define dc1394error_t int
 #define dc1394bool_t int
 #define dc1394bayer_method_t int
@@ -79,7 +85,7 @@ enum {
 #define dc1394_get_color_coding_bit_size(x,y) (*y) = (3*8)
 
 /*
- * Structure definition from libdc1394 video.h 
+ * Structure definition from libdc1394 video.h
  *
  * 1394-Based Digital Camera Control Library
  *
@@ -133,8 +139,10 @@ typedef struct __dc1394_video_frame
 } dc1394video_frame_t;
 
 
-#ifdef _MSC_VER
-extern "C" 
+#if defined _MSC_VER && _MSC_VER < 1900
+// Since visual studio 2015 libdc1394_bayer.c no longer needs to be compiled
+// as C++ and this is no longer needed.
+extern "C"
 #endif
 dc1394error_t dc1394_debayer_frames(dc1394video_frame_t *in, dc1394video_frame_t *out, dc1394bayer_method_t method);
 
