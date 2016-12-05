@@ -113,6 +113,25 @@ public:
      * @param  intrinsic  return a Property containing intrinsic parameters
      *       of the optical model of the camera.
      * @return true if success
+     *
+     * The yarp::os::Property describing the intrinsic parameters is expected to be
+     * in the form:
+     *
+     * |  Parameter name              | SubParameter        | Type                | Units          | Default Value | Required                         | Description                                                                            | Notes                                                                 |
+     * |:----------------------------:|:-------------------:|:-------------------:|:--------------:|:-------------:|:--------------------------------:|:--------------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
+     * |  focalLengthX                |      -              | double              | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  focalLengthY                |      -              | double              | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  principalPointX             |      -              | double              | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  principalPointY             |      -              | double              | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  retificationMatrix          |      -              | 4x4 double matrix   | -              |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  distortionModel             |      -              | string              | -              |   -           |   Yes                            |  Reference to group of parameters describing the distortion model of the camera, example 'cameraDistortionModelGroup'       | This is another group's name to be searched for in the config file    |
+     * |  cameraDistortionModelGroup  |                     |                     |                |               |                                  |                                                                                        |                                                                       |
+     * |                              |   name              | string              | -              |   -           |   Yes                            |  Name of the distortion model, see notes                                               | right now only 'plumb_bob' is supported                               |
+     * |                              |   k1                | double              | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
+     * |                              |   k2                | double              | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
+     * |                              |   k3                | double              | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
+     * |                              |   t1                | double              | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
+     * |                              |   t2                | double              | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
      */
     virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) = 0;
 
@@ -188,6 +207,25 @@ public:
      * @param  intrinsic  return a Property containing intrinsic parameters
      *       of the optical model of the camera.
      * @return true if success
+     *
+     * The yarp::os::Property describing the intrinsic parameters is expected to be
+     * in the form:
+     *
+     * |  Parameter name              | SubParameter        | Type                | Units          | Default Value | Required                         | Description                                                                            | Notes                                                                 |
+     * |:----------------------------:|:-------------------:|:-------------------:|:--------------:|:-------------:|:--------------------------------:|:--------------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
+     * |  focalLengthX                |      -              | double              | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  focalLengthY                |      -              | double              | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  principalPointX             |      -              | double              | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  principalPointY             |      -              | double              | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  retificationMatrix          |      -              | 4x4 double matrix   | -              |   -           |   Yes                            |                                                                                        |                                                                       |
+     * |  distortionModel             |      -              | string              | -              |   -           |   Yes                            |  Reference to group of parameters describing the distortion model of the camera, example 'cameraDistortionModelGroup'       | This is another group's name to be searched for in the config file    |
+     * |  cameraDistortionModelGroup  |                     |                     |                |               |                                  |                                                                                        |                                                                       |
+     * |                              |   name              | string              | -              |   -           |   Yes                            |  Name of the distortion model, see notes                                               | right now only 'plumb_bob' is supported                               |
+     * |                              |   k1                | double              | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
+     * |                              |   k2                | double              | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
+     * |                              |   k3                | double              | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
+     * |                              |   t1                | double              | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
+     * |                              |   t2                | double              | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
      */
     virtual bool getDepthIntrinsicParam(yarp::os::Property &intrinsic) = 0;
 
