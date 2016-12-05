@@ -31,7 +31,7 @@ Rectangle {
     property string version: "2.0"
 
     signal changeWindowSize(int w, int h)
-    signal synch(bool check);
+    signal synchRate(bool check);
     signal setName(string name)
 
 
@@ -54,11 +54,24 @@ Rectangle {
         }
 
         onSynch:{
-            synch(check);
+            synchRate(check);
         }
 
         onSetName:{
             setName(name)
+        }
+
+        onWidthChanged:{
+            //console.log("onWidthChanged")
+        }
+
+        onHeightChanged:{
+            //console.log("onHeightChanged")
+        }
+
+        onSizeChanged:{
+            //console.log("onSizeChanged")
+            setOriginalSize()
         }
     }
 
@@ -166,6 +179,10 @@ Rectangle {
 
     function synchToDisplay(checked){
         yarpViewCore.synchToDisplay(checked)
+    }
+
+    function synchSize(checked){
+        yarpViewCore.synchSize(checked)
     }
 
     function saveSingleImage(checked){

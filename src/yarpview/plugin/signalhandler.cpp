@@ -18,10 +18,11 @@ SignalHandler::SignalHandler(QObject *parent) :
     QObject(parent),timer(this)
 {
 
-    saveSetFrameMode = false;
-    saveCurrentFrameMode = false;
-    freezeMode = false;
-    synchMode = false;
+    b_saveSetFrameMode = false;
+    b_saveCurrentFrameMode = false;
+    b_freezeMode = false;
+    b_synchRateMode = false;
+    b_synchSizeMode = false;
     defaultNameCounter = 0;
     customNameCounter = 0;
     framesetCounter = 0;
@@ -81,7 +82,7 @@ void SignalHandler::sendVideoFrame(QVideoFrame f)
 {
     portFps.update();
 
-    if(synchMode){
+    if(b_synchRateMode){
         displayFps.update();
         internalSendFrame(f);
     }else{
@@ -94,15 +95,15 @@ void SignalHandler::sendVideoFrame(QVideoFrame f)
 
     }
 
-    if(saveCurrentFrameMode){
-        saveCurrentFrameMode = false;
+    if(b_saveCurrentFrameMode){
+        b_saveCurrentFrameMode = false;
         f.map(QAbstractVideoBuffer::ReadOnly);
         QImage img = QImage(f.bits(),f.width(),f.height(),QImage::Format_RGB32);
         f.unmap();
         saveFrame(img);
     }
 
-    if(saveSetFrameMode){
+    if(b_saveSetFrameMode){
         f.map(QAbstractVideoBuffer::ReadOnly);
         QImage img = QImage(f.bits(),f.width(),f.height(),QImage::Format_RGB32);
         f.unmap();
@@ -120,7 +121,7 @@ void SignalHandler::sendVideoFrame(QVideoFrame f)
  */
 void SignalHandler::internalReceiveFrame(QVideoFrame f)
 {
-    if(!freezeMode){
+    if(!b_freezeMode){
         sendFrame(&f);
     }
 }
@@ -131,8 +132,8 @@ void SignalHandler::internalReceiveFrame(QVideoFrame f)
  */
 void SignalHandler::synchToDisplay(bool check)
 {
-    synchMode = check;
-    if(synchMode){
+    b_synchRateMode = check;
+    if(b_synchRateMode){
         if(timer.isActive()){
             timer.stop();
         }
@@ -143,13 +144,27 @@ void SignalHandler::synchToDisplay(bool check)
     }
 }
 
+/*! \brief Enable/Disable the synch size mode.
+*
+*  \param check
+*/
+void SignalHandler::synchSize(bool check)
+{
+    b_synchSizeMode = check;
+}
+
+bool SignalHandler::getSynchSizeMode()
+{
+    return b_synchSizeMode;
+}
+
 /*! \brief Enable/Disable the freeze mode.
  *
  *  \param check
  */
 void SignalHandler::freeze(bool check)
 {
-    freezeMode = check;
+    b_freezeMode = check;
 }
 
 /*! \brief Sets the refresh interval.
@@ -175,7 +190,7 @@ void SignalHandler::onTimerElapsed()
  */
 void SignalHandler::saveCurrentFrame()
 {
-    saveCurrentFrameMode = true;
+    b_saveCurrentFrameMode = true;
 }
 
 /*! \brief Sets the filename used for saving a video frame.
@@ -278,7 +293,7 @@ void SignalHandler::checkCustomNameCounterCount(QString file)
  */
 void SignalHandler::setFileNames(QUrl url)
 {
-    if(saveSetFrameMode == false)
+    if(b_saveSetFrameMode == false)
         this->fileNames = url.toLocalFile();
 }
 
@@ -286,13 +301,13 @@ void SignalHandler::setFileNames(QUrl url)
 void SignalHandler::startDumpFrames()
 {
     framesetCounter = 0;
-    saveSetFrameMode = true;
+    b_saveSetFrameMode = true;
 }
 
 /*! \brief Stops the Dump frame modality (Save frame set).*/
 void SignalHandler::stopDumpFrames()
 {
-    saveSetFrameMode = false;
+    b_saveSetFrameMode = false;
 }
 
 

@@ -24,6 +24,10 @@ QtYARPView::QtYARPView(QQuickItem *parent):
 
     connect(&sigHandler,SIGNAL(sendFps(double,double,double,double,double,double)),
             this, SLOT(onSendFps(double,double,double,double,double,double)));
+
+    connect(&videoProducer,SIGNAL(resizeWindowRequest()),
+            this, SLOT(onWindowSizeChangeRequested()));
+
     createObjects();
 }
 
@@ -82,11 +86,20 @@ int QtYARPView::windowHeight()
 
 /*! \brief Synchs the video stream to the display.
  *
- *  \param check a bool parameter that enbales or disables the synch option
+ *  \param check a bool parameter that enables or disables the synch option
  */
 void QtYARPView::synchToDisplay(bool check)
 {
     sigHandler.synchToDisplay(check);
+}
+
+/*! \brief Synchs the size of the window with the size of the video stream.
+*
+*  \param check a bool parameter that enables or disables the synch option
+*/
+void QtYARPView::synchSize(bool check)
+{
+    sigHandler.synchSize(check);
 }
 
 /*! \brief Changes the refresh interval.
@@ -287,9 +300,13 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
     }
     if (options.check("synch"))
     {
-        _options.synch=true;
+        _options.synchRate=true;
         synchToDisplay(true);
-        synch(true);
+        synchRate(true);
+    }
+    if (options.check("synchSize"))
+    {
+       _options.synchSize = true;
     }
 }
 
@@ -414,7 +431,8 @@ void QtYARPView::saveOptFile(char *fileName)
     optFile.write((QString("Height %d\n").arg(_options.windHeight)).toLatin1().data());
     optFile.write((QString("OutputEnables %d\n").arg(_options.outputEnabled)).toLatin1().data());
     optFile.write((QString("SaveOptions %d\n").arg(_options.saveOnExit)).toLatin1().data());
-    optFile.write((QString("synch %d\n").arg(_options.synch)).toLatin1().data());
+    optFile.write((QString("synchRate %d\n").arg(_options.synchRate)).toLatin1().data());
+    optFile.write((QString("synchSize %d\n").arg(_options.synchSize)).toLatin1().data());
     optFile.close();
 }
 
@@ -438,5 +456,13 @@ void QtYARPView::clickCoords(int x,int y)
 
     } else {
         qDebug("I would send a position, but there's no image for scaling");
+    }
+}
+
+void QtYARPView::onWindowSizeChangeRequested()
+{
+    if (sigHandler.getSynchSizeMode())
+    {
+        emit sizeChanged();
     }
 }

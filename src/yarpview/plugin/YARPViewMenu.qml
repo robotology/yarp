@@ -20,6 +20,7 @@ MenuBar {
     signal setOriginalSize()
     signal setOriginalAspectRatio()
     signal synchToDisplay(bool checked)
+    signal synchSize(bool checked)
     signal changeRefreshInterval()
     signal saveSingleImage(bool checked)
     signal saveSetImages(bool checked)
@@ -83,6 +84,13 @@ MenuBar {
                    checkable: true
                    onTriggered: {
                        synchToDisplay(synchItem.checked)
+                   }}
+        MenuSeparator{}
+        MenuItem { id: synchSizeItem
+                   text: "Synch size"
+                   checkable: true
+                   onTriggered: {
+                       synchSize(synchSizeItem.checked)
                    }}
         MenuSeparator{}
         MenuItem { text: "Change refresh interval"

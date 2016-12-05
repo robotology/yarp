@@ -42,7 +42,8 @@ struct mOptions
     char			outPortName[256];
     char			outNetworkName[256];
     int				outputEnabled;
-    bool            synch;
+    bool            synchRate;
+    bool            synchSize;
 };
 typedef struct mOptions pgmOptions;
 
@@ -71,6 +72,7 @@ public:
 
     Q_INVOKABLE void freeze(bool check);
     Q_INVOKABLE void synchToDisplay(bool check);
+    Q_INVOKABLE void synchSize(bool check);
     Q_INVOKABLE void changeRefreshInterval(int);
     Q_INVOKABLE void saveFrame();
     Q_INVOKABLE void setFileName(QUrl url);
@@ -118,12 +120,14 @@ signals:
     void posYChanged();
     void widthChanged();
     void heightChanged();
+    void sizeChanged();
     void sendPortFps(QString avg, QString min, QString max);
     void sendDisplayFps(QString avg, QString min, QString max);
-    void synch(bool check);
+    void synchRate(bool check);
     void setName(QString name);
 private slots:
     void onSendFps(double portAvg, double portMin, double portMax, double dispAvg, double dispMin, double dispMax);
+    void onWindowSizeChangeRequested();
 };
 
 #endif // QTYARPVIEW_H

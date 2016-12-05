@@ -97,6 +97,10 @@ ApplicationWindow {
             vSurface.synchToDisplay(checked)
         }
 
+        onSynchSize:{
+            vSurface.synchSize(checked)
+        }
+
         onSaveSingleImage:{
             vSurface.saveSingleImage(checked)
         }
