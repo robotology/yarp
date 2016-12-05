@@ -31,7 +31,6 @@ protected:
     double *temp;
     double *temp2;
     int    *temp_int;
-//     yarp::dev::Pid *fake;
     yarp::dev::Pid *tmpPids;
 
     /**
