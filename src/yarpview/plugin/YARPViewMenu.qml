@@ -19,8 +19,8 @@ MenuBar {
     signal freeze(bool checked)
     signal setOriginalSize()
     signal setOriginalAspectRatio()
-    signal synchToDisplay(bool checked)
-    signal synchSize(bool checked)
+    signal synchDisplayPeriod(bool checked)
+    signal synchDisplaySize(bool checked)
     signal changeRefreshInterval()
     signal saveSingleImage(bool checked)
     signal saveSetImages(bool checked)
@@ -33,7 +33,14 @@ MenuBar {
         }
     }
 
-
+    function enableAutosize(check){
+        if(check === true){
+            autosizeItem.checked = true
+        }else{
+            autosizeItem.checked = false
+        }
+    }
+    
     Menu {
 
         title: "File"
@@ -83,14 +90,14 @@ MenuBar {
                    text: "Synch display"
                    checkable: true
                    onTriggered: {
-                       synchToDisplay(synchItem.checked)
+                       synchDisplayPeriod(synchItem.checked)
                    }}
         MenuSeparator{}
-        MenuItem { id: synchSizeItem
-                   text: "Synch size"
+        MenuItem { id: autosizeItem
+                   text: "Auto resize"
                    checkable: true
                    onTriggered: {
-                       synchSize(synchSizeItem.checked)
+                       synchDisplaySize(autosizeItem.checked)
                    }}
         MenuSeparator{}
         MenuItem { text: "Change refresh interval"

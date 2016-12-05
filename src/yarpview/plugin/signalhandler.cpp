@@ -22,7 +22,7 @@ SignalHandler::SignalHandler(QObject *parent) :
     b_saveCurrentFrameMode = false;
     b_freezeMode = false;
     b_synchRateMode = false;
-    b_synchSizeMode = false;
+    b_autosizeMode = false;
     defaultNameCounter = 0;
     customNameCounter = 0;
     framesetCounter = 0;
@@ -130,7 +130,7 @@ void SignalHandler::internalReceiveFrame(QVideoFrame f)
  *
  *  \param check
  */
-void SignalHandler::synchToDisplay(bool check)
+void SignalHandler::synchDisplayPeriod(bool check)
 {
     b_synchRateMode = check;
     if(b_synchRateMode){
@@ -148,14 +148,14 @@ void SignalHandler::synchToDisplay(bool check)
 *
 *  \param check
 */
-void SignalHandler::synchSize(bool check)
+void SignalHandler::synchDisplaySize(bool check)
 {
-    b_synchSizeMode = check;
+    b_autosizeMode = check;
 }
 
-bool SignalHandler::getSynchSizeMode()
+bool SignalHandler::getAutosizeMode()
 {
-    return b_synchSizeMode;
+    return b_autosizeMode;
 }
 
 /*! \brief Enable/Disable the freeze mode.

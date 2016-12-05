@@ -32,8 +32,8 @@ public:
     ~SignalHandler();
 
     void sendVideoFrame(QVideoFrame);
-    void synchToDisplay(bool check);
-    void synchSize(bool check);
+    void synchDisplayPeriod(bool check);
+    void synchDisplaySize(bool check);
     void changeRefreshInterval(int ineterval);
     void freeze(bool check);
     void saveCurrentFrame();
@@ -41,7 +41,7 @@ public:
     void setFileNames(QUrl url);
     void startDumpFrames();
     void stopDumpFrames();
-    bool getSynchSizeMode();
+    bool getAutosizeMode();
 
 private:
     void saveFrame(QImage);
@@ -72,7 +72,7 @@ private:
     bool b_saveCurrentFrameMode;
     bool b_freezeMode;
     bool b_synchRateMode;
-    bool b_synchSizeMode;
+    bool b_autosizeMode;
     QVideoFrame frame;
     QMutex mutex;
     QTimer timer;
