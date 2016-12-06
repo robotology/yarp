@@ -180,6 +180,7 @@ k3                      5.0
 [EXTRINSIC_PARAMETERS]
 transformation          (1.0 0.0 0.0 0.0   0.0 1.0 0.0 0.0   0.0 0.0 1.0 0.0  0.0 0.0 0.0 1.0)
  *
+ * \endcode
  */
 
 class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
