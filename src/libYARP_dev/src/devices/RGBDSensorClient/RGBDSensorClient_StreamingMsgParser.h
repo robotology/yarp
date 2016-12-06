@@ -26,7 +26,19 @@
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/LogStream.h>
 
-class YARP_dev_API RgbImageReader_Impl:  public yarp::os::TypedReaderCallback<yarp::sig::FlexImage>
+namespace yarp {
+    namespace dev {
+        class depthCameraDriver;
+        namespace impl {
+            class  RgbImageReader_Impl;
+            class  FloatImageReader_Impl;
+            class  RGBDSensor_StreamingMsgParser;
+        }
+    }
+}
+
+
+class YARP_dev_API yarp::dev::impl::RgbImageReader_Impl:  public yarp::os::TypedReaderCallback<yarp::sig::FlexImage>
 {
 private:
     yarp::sig::FlexImage  last_rgb;
@@ -35,12 +47,13 @@ public:
     RgbImageReader_Impl();
     ~RgbImageReader_Impl();
 
+    using yarp::os::TypedReaderCallback<yarp::sig::FlexImage>::onRead;
     void onRead(yarp::sig::FlexImage& datum);
     yarp::sig::FlexImage getImage();
 };
 
 
-class YARP_dev_API FloatImageReader_Impl:  public yarp::os::TypedReaderCallback<yarp::sig::ImageOf< yarp::sig::PixelFloat> >
+class YARP_dev_API yarp::dev::impl::FloatImageReader_Impl:  public yarp::os::TypedReaderCallback<yarp::sig::ImageOf< yarp::sig::PixelFloat> >
 {
 private:
     yarp::sig::ImageOf< yarp::sig::PixelFloat>  last_depth;
@@ -49,12 +62,13 @@ public:
     FloatImageReader_Impl();
     ~FloatImageReader_Impl();
 
+    using yarp::os::TypedReaderCallback<yarp::sig::ImageOf< yarp::sig::PixelFloat> >::onRead;
     void onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum);
     yarp::sig::ImageOf<yarp::sig::PixelFloat> getImage();
 };
 
 
-class RGBDSensor_StreamingMsgParser
+class yarp::dev::impl::RGBDSensor_StreamingMsgParser
 {
 private:
     RgbImageReader_Impl   read_rgb;
