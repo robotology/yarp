@@ -228,6 +228,7 @@ MainWindow::~MainWindow()
 void MainWindow::term()
 {
     sig_internalClose();
+    this->close();
 }
 
 void MainWindow::onSequenceActivated()
