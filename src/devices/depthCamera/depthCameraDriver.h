@@ -13,6 +13,7 @@
 #include <yarp/dev/FrameGrabberControl2.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/sig/all.h>
+#include <yarp/sig/Matrix.h>
 #include <yarp/os/all.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IRGBDSensor.h>
@@ -32,85 +33,16 @@ namespace yarp
     namespace dev
     {
         class depthCameraDriver;
+        namespace impl
+        {
+            class  streamFrameListener;
+            struct CameraParameters;
+            struct RGBDParam;
+            struct IntrinsicParams;
+            struct plum_bob;
+        }
     }
 }
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-struct plum_bob
-{
-    double k1;
-    double k2;
-    double t1;
-    double t2;
-    double k3;
-};
-
-struct intrinsicParams
-{
-    yarp::sig::Matrix retificationMatrix;
-    double            principalPointX;
-    double            principalPointY;
-    double            focalLengthX;
-    double            focalLengthY;
-    plum_bob          distortionModel;
-};
-
-struct RGBDParam
-{
-    RGBDParam() : name("unknown"), isSetting(false), isDescription(false), size(1)
-    {
-        val.resize(size);
-    }
-
-    std::string  name;
-    bool         isSetting;
-    bool         isDescription;
-    int          size;
-
-    std::vector<yarp::os::Value> val;
-};
-
-struct CameraParameters
-{
-    RGBDParam               clipPlanes;
-    RGBDParam               accuracy;
-    RGBDParam               depthRes;
-    RGBDParam               depth_Fov;
-    intrinsicParams         depthIntrinsic;
-
-    RGBDParam               rgbRes;
-    RGBDParam               rgb_Fov;
-    RGBDParam               rgbMirroring;
-    RGBDParam               depthMirroring;
-    intrinsicParams         rgbIntrinsic;
-    yarp::sig::Matrix       transformationMatrix;
-};
-
-class streamFrameListener : public openni::VideoStream::NewFrameListener
-{
-public:
-
-    //Properties
-    yarp::os::Mutex         mutex;
-    yarp::os::Stamp         stamp;
-    yarp::sig::FlexImage    image;
-    openni::PixelFormat     pixF;
-    int                     w, h;
-    size_t                  dataSize;
-    bool                    isReady;
-
-    //Method
-    streamFrameListener();
-    bool isValid(){return frameRef.isValid() & isReady;}
-    void destroy(){frameRef.release();}
-
-private:
-    virtual void onNewFrame(openni::VideoStream& stream);
-    openni::VideoFrameRef   frameRef;
-};
-#endif
 
 
 /**
@@ -168,7 +100,6 @@ private:
  * |  HW_DESCRIPTION              |      -              |  group              |                 | -              |   -           |   Yes                            | Hardware description of device property.                                               |  Read only property. Setting will be disabled                         |
  * |                              | same as 'SETTINGS' group | -              |    Read only    | -              |   -           |   Alternative to SETTING group   | Parameters here are alternative to the SETTING group                                   |                                                                       |
  * |  RGB_INTRINSIC_PARAMETERS    |      -              | group               |                 | -              |   -           |   Yes                            | Description of rgb camera visual parameters                                            |                                                                       |
- * |                              | retificationMatrix  | 4x4 double matrix   |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   focalLengthX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   focalLengthY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
@@ -178,24 +109,23 @@ private:
  * |                              |   name              | string              |                 | -              |   -           |   Yes                            |  Name of the distortion model, see notes                                               | right now only 'plumb_bob' is supported                               |
  * |                              |   k1                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   k2                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
+ * |                              |   k3                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   t1                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   t2                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   k3                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |  DEPTH_INTRINSIC_PARAMETERS  |      -              | group               |                 | -              |   -           |   Yes                            | Description of depth camera visual parameters                                          |                                                                       |
- * |                              | retificationMatrix  | 4x4 double matrix   |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   focalLengthX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   focalLengthY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |  principalPointY    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |  distortionModel    | string              |                 | -              |   -           |   Yes                            |  Reference to group of parameters describing the distortion model of the camera, example 'depthDistortionModelGroup' | This is only another group's name to be searched for in the config file    |
+ * |                              |  distortionModel    | string              |                 | -              |   -           |   Yes                            |  Reference to group of parameters describing the distortion model of the camera, example 'depthDistortionModelGroup' | This is another group's name to be searched for in the config file    |
  * |  depthDistortionModelGroup   |                     |                     |                 |                |               |                                  |                                                                                        |                                                                       |
  * |                              |   name              | string              |                 | -              |   -           |   Yes                            |  Name of the distortion model, see notes                                               | right now only 'plumb_bob' is supported                               |
- * |                              |   k1                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   k2                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   t1                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   t2                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   k3                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
- * |  EXTRINSIC_PARAMETERS        |      -              |                     |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
+ * |                              |   k1                | double              |                 | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
+ * |                              |   k2                | double              |                 | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
+ * |                              |   k3                | double              |                 | -              |   -           |   Yes                            |  Radial distortion coefficient of the lens                                             |                                                                       |
+ * |                              |   t1                | double              |                 | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
+ * |                              |   t2                | double              |                 | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
+ * |  EXTRINSIC_PARAMETERS        |      -              |                     |                 | -              |   -           |   Yes                            |                                                                                        |                                                                        |
  * |                              | transformation      | 4x4 double matrix   |                 | -              |   -           |   Yes                            | trasformation matrix between depth optical frame to the rgb one                        |                                                                       |
  *
  *
@@ -218,7 +148,6 @@ depthMirror     false
 clipPlanes (0.4 4.5)
 
 [RGB_INTRINSIC_PARAMETERS]
-retificationMatrix      (0.99824 0.0182436 -0.0564274 -0.0654844 -0.0165694 0.999413 0.0299975 0.0 0.0569415 -0.0290098 0.997956 0.00113543 0.0 0.0 0.0 1.0)
 focalLengthX            1.0
 focalLengthY            2.0
 principalPointX         256.0
@@ -234,7 +163,6 @@ t2                      4.0
 k3                      5.0
 
 [DEPTH_INTRINSIC_PARAMETERS]
-retificationMatrix      (0.99824 0.0182436 -0.0564274 -0.0654844 -0.0165694 0.999413 0.0299975 2.80857e-05 0.0569415 -0.0290098 0.997956 0.00113543 0.0 0.0 0.0 1.0)
 focalLengthX            1.0
 focalLengthY            2.0
 principalPointX         256.0
@@ -329,24 +257,24 @@ private:
     //method
     inline bool initializeOpeNIDevice();
     inline bool setParams(const os::Bottle& settings, const os::Bottle& description);
-    inline bool parseIntrinsic(const yarp::os::Searchable& config, const std::string& groupName, intrinsicParams &params);
-    bool        getImage(FlexImage& Frame, Stamp* Stamp, streamFrameListener& sourceFrame);
-    bool        getImage(depthImage& Frame, Stamp* Stamp, streamFrameListener& sourceFrame);
+    inline bool parseIntrinsic(const yarp::os::Searchable& config, const std::string& groupName, impl::IntrinsicParams &params);
+    bool        getImage(FlexImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
+    bool        getImage(depthImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
     bool        setResolution(int w, int h, openni::VideoStream &stream);
     bool        setFOV(double horizontalFov, double verticalFov, openni::VideoStream &stream);
-    bool        setIntrinsic(yarp::os::Property& intrinsic, const intrinsicParams& values);
-    bool        checkParam(const os::Bottle& settings, const os::Bottle& description, RGBDParam& param);
-    bool        checkParam(const yarp::os::Bottle& input, RGBDParam &param, bool& found);
+    bool        setIntrinsic(yarp::os::Property& intrinsic, const impl::IntrinsicParams& values);
+    bool        checkParam(const os::Bottle& settings, const os::Bottle& description, impl::RGBDParam& param);
+    bool        checkParam(const yarp::os::Bottle& input, impl::RGBDParam &param, bool& found);
     void        settingErrorMsg(const std::string& error, bool& ret);
 
     //properties
-    openni::Device            m_device;
-    openni::VideoStream       m_depthStream;
-    openni::VideoStream       m_imageStream;
-    streamFrameListener       m_depthFrame;
-    streamFrameListener       m_imageFrame;
-    yarp::os::ConstString     m_lastError;
-    CameraParameters          m_cameraDescription;
+    openni::Device                  m_device;
+    openni::VideoStream             m_depthStream;
+    openni::VideoStream             m_imageStream;
+    impl::streamFrameListener      *m_depthFrame;
+    impl::streamFrameListener      *m_imageFrame;
+    yarp::os::ConstString           m_lastError;
+    impl::CameraParameters         *m_cameraDescription;
 
     std::vector<cameraFeature_id_t> m_supportedFeatures;
 #endif

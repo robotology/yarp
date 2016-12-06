@@ -37,8 +37,8 @@ if(ENABLE_depthCamera)
                       ${YARP_sig_INCLUDE_DIRS}
                       ${YARP_dev_INCLUDE_DIRS})
 
-  yarp_add_plugin(yarp_depthCamera depthCameraDriver.cpp depthCameraDriver.h)
-
+  yarp_add_plugin(yarp_depthCamera depthCameraDriver.cpp depthCameraDriver.h depthCameraImpl.hpp)
+  
   target_link_libraries(yarp_depthCamera YARP_OS YARP_sig YARP_dev ${OPENNI2_LIBRARY})
 
   yarp_install(TARGETS     yarp_depthCamera
