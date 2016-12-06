@@ -8,11 +8,12 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/LogStream.h>
 #include "RGBDSensorClient.h"
+#include "RGBDSensorClient_StreamingMsgParser.h"
 
-using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
-
+using namespace yarp::dev;
+using namespace yarp::dev::impl;
 
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
@@ -33,6 +34,7 @@ RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls2_Sender(rpcPort)
     sensorStatus   = IRGBDSensor::RGBD_SENSOR_NOT_READY;
     RgbMsgSender   = new Implement_RgbVisualParams_Sender(rpcPort);
     DepthMsgSender = new Implement_DepthVisualParams_Sender(rpcPort);
+    streamingReader = new RGBDSensor_StreamingMsgParser;
 }
 
 RGBDSensorClient::~RGBDSensorClient()
@@ -279,7 +281,7 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
     */
 
 
-    streamingReader.attach(&colorFrame_StreamingPort, &depthFrame_StreamingPort);
+    streamingReader->attach(&colorFrame_StreamingPort, &depthFrame_StreamingPort);
 
     return true;
 }
@@ -363,21 +365,21 @@ bool RGBDSensorClient::getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Sta
 {
     if(timeStamp)
         timeStamp->update(yarp::os::Time::now());
-    return streamingReader.readRgb(rgbImage);
+    return streamingReader->readRgb(rgbImage);
 }
 
 bool RGBDSensorClient::getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp)
 {
     if(timeStamp)
         timeStamp->update(yarp::os::Time::now());
-    return streamingReader.readDepth(depthImage);
+    return streamingReader->readDepth(depthImage);
 }
 
 bool RGBDSensorClient::getImages(FlexImage &rgbImage, ImageOf<PixelFloat> &depthImage, Stamp *rgbStamp, Stamp *depthStamp)
 {
     bool ret = true;
-    ret &= streamingReader.readRgb(rgbImage);
-    ret &= streamingReader.readDepth(depthImage);
+    ret &= streamingReader->readRgb(rgbImage);
+    ret &= streamingReader->readDepth(depthImage);
 
     if(rgbStamp)
         rgbStamp->update(yarp::os::Time::now());

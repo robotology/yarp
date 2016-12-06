@@ -709,13 +709,6 @@ bool RGBDSensorWrapper::setCamInfo(sensor_msgs_CameraInfo& cameraInfo, const str
         yError() << "distortion model not supported";
         return false;
     }
-    
-    if(!camData.check("retificationMatrix"))
-    {
-        yWarning() << "missing retification matrix";
-        return false;
-    }
-    Bottle* retificationMatrix = camData.find("retificationMatrix").asList();
 
     //std::vector<param<string> >     rosStringParam;
     //rosStringParam.push_back(param<string>(nodeName, "asd"));
@@ -760,22 +753,18 @@ bool RGBDSensorWrapper::setCamInfo(sensor_msgs_CameraInfo& cameraInfo, const str
     cameraInfo.K[0]  = fx;       cameraInfo.K[1] = 0;        cameraInfo.K[2] = cx;
     cameraInfo.K[3]  = 0;        cameraInfo.K[4] = fy;       cameraInfo.K[5] = cy;
     cameraInfo.K[6]  = 0;        cameraInfo.K[7] = 0;        cameraInfo.K[8] = 1;
-    
-    //retification matrix
-    
-    /*if (retificationMatrix && retificationMatrix->size() == 9)// 3X3 matrix;
-    {
-        cameraInfo.R.resize(9);
-        for (i = 0; i < cameraInfo.R.size(); i++)
-        {
-            cameraInfo.R[i] = retificationMatrix.get(i).asDouble();
-        }
-    }
-    else
-    {
-        return false;
-    }*/
-    
+
+    /*
+     * ROS documentation on cameraInfo message:
+     * "Rectification matrix (stereo cameras only)
+     * A rotation matrix aligning the camera coordinate system to the ideal
+     * stereo image plane so that epipolar lines in both stereo images are
+     * parallel."
+     * useless in our case, it will be an identity matrix
+     */
+
+    cameraInfo.R.assign(9, 0);
+    cameraInfo.R.at(0) = cameraInfo.R.at(4) = cameraInfo.R.at(8) = 1;
     
     cameraInfo.P.resize(12);
     cameraInfo.P[0]  = fx;      cameraInfo.P[1] = 0;    cameraInfo.P[2]  = cx;  cameraInfo.P[3]  = 0;

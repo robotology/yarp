@@ -35,13 +35,17 @@
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
 
-#include "RGBDSensorClient_StreamingMsgParser.h"
+
 
 namespace yarp {
     namespace dev {
         class RGBDSensorClient;
+        namespace impl {
+            class RGBDSensor_StreamingMsgParser;
+        }
     }
 }
+
 
 
 
@@ -149,7 +153,7 @@ protected:
 
 
     // This is gonna be superseded by the synchronized when it'll be ready
-    RGBDSensor_StreamingMsgParser streamingReader;
+    impl::RGBDSensor_StreamingMsgParser *streamingReader;
     bool fromConfig(yarp::os::Searchable &config);
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
