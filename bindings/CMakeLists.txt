@@ -251,7 +251,7 @@ if(CREATE_PYTHON)
   # Update RPATH
   if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
     file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_PYTHONDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
-    get_target_property(_current_rpath "${target_name}" INSTALL_RPATH)
+    get_target_property(_current_rpath _${target_name} INSTALL_RPATH)
     if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
       list(APPEND _current_rpath "@loader_path/${_rel_path}")
     else()
