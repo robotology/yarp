@@ -234,7 +234,10 @@ void AnalogWrapper::removeHandlers()
     for(unsigned int i=0; i<handlers.size(); i++)
     {
         if (handlers[i]!=YARP_NULLPTR)
+        {
             delete handlers[i];
+            handlers[i] = YARP_NULLPTR;
+        }
     }
     handlers.clear();
 }
@@ -887,6 +890,7 @@ bool AnalogWrapper::close()
     {
         subDeviceOwned->close();
         delete subDeviceOwned;
+        subDeviceOwned = YARP_NULLPTR;
     }
 
     if(rosNode!=YARP_NULLPTR) {
