@@ -48,7 +48,7 @@ public:
     explicit PartItem(QString robotName,
                       int partId,
                       QString partName,
-                      ResourceFinder *finder,
+                      ResourceFinder& _finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
                       bool enable_calib_all,

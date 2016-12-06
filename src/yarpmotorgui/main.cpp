@@ -16,6 +16,7 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Os.h>
 
 #include <QApplication>
@@ -25,41 +26,32 @@
 
 using namespace yarp::dev;
 using namespace yarp::os;
+using namespace std;
 
 
 QStringList partsName;
-QList <int> ENA;
-//char *partsName[];
-//int *ENA[];
-int NUMBER_OF_ACTIVATED_PARTS = 0;
-int NUMBER_OF_ACTIVATED_CARTESIAN = 0;
-int NUMBER_OF_AVAILABLE_PARTS = 0;
-int PART;
-bool debug_param_enabled = false;
-bool speedview_param_enabled =false;
-bool enable_calib_all =false;
-bool old_impedance_enabled = false;
+MainWindow* mainW = NULL;
 
-MainWindow *mainW = NULL;
+bool debug_param_enabled     = false;
+bool speedview_param_enabled = false;
+bool enable_calib_all        = false;
 
-static void sighandler(int sig) {
+static void sighandler(int sig)
+{
     Q_UNUSED(sig);
     yDebug("\nCAUGHT Ctrl-c\n");// << "\nCAUGHT Ctrl-c" << endl;
-    if(mainW){
+    if(mainW)
+    {
         mainW->term();
     }
 }
 
-
 int main(int argc, char *argv[])
 {
     qputenv("QT_DEVICE_PIXEL_RATIO", QByteArray("auto"));
-    QApplication a(argc, argv);
 
-    //YARP_REGISTER_DEVICES(icubmod)
 
     Network yarp;
-
     if (!yarp.checkNetwork())
     {
         LOG_ERROR("Error initializing yarp network (is yarpserver running?)\n");
@@ -67,116 +59,124 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    ResourceFinder *finder;
-
-    Property p, q;
-    finder = new ResourceFinder;
+    bool           deleteParts, ret;
+    int            appRet;
+    QApplication   a(argc, argv);
+    ResourceFinder finder;
+    string         robotName;
+    QString        newRobotName;
+    Bottle*        pParts;
+    QStringList    enabledParts;
+    vector<bool>   enabled;
+    MainWindow     w;
 
     //retrieve information for the list of parts
-    finder->setVerbose();
-    finder->setDefaultConfigFile("yarpmotorgui.ini");
-    finder->setDefault("name", "icub");
-    finder->configure(argc,argv);
+    finder.setVerbose();
+    finder.setDefaultConfigFile("yarpmotorgui.ini");
+    finder.setDefault("name", "icub");
+    finder.configure(argc,argv);
 
     qRegisterMetaType<Pid>("Pid");
     qRegisterMetaType<SequenceItem>("SequenceItem");
     qRegisterMetaType<QList<SequenceItem> >("QList<SequenceItem>");
 
-
-    if (finder->check("calib")){
+    if (finder.check("calib"))
+    {
         LOG("Calibrate buttons on\n");
         enable_calib_all = true;
     }
-    if (finder->check("admin")){
+
+    if (finder.check("admin"))
+    {
         LOG("Admin mode on.\n");
-        enable_calib_all = true;
-        debug_param_enabled = false;
-        old_impedance_enabled = true;
+        enable_calib_all      = true;
     }
-    if (finder->check("debug")){
+
+    if (finder.check("debug"))
+    {
         LOG("Debug interface requested.\n");
-        debug_param_enabled = false;
     }
-    if (finder->check("speed")){
+
+    if (finder.check("speed"))
+    {
         LOG("Speed view requested.\n");
         speedview_param_enabled = true;
     }
 
-    bool deleteParts=false;
-    std::string robotName=finder->find("name").asString().c_str();
-    yDebug("Robot name: %s\n",robotName.data());
+    deleteParts = false;
+    robotName   = finder.find("name").asString();
+    pParts      = finder.find("parts").asList();
 
-    Bottle *pParts=finder->find("parts").asList();
-    if (pParts==NULL){
-        printf("Setting default parts.\n");
-        pParts=new Bottle("head torso left_arm right_arm left_leg right_leg");
-        deleteParts=true;
+    yDebug() << "Robot name: %s\n" << robotName;
+
+    if (pParts == NULL)
+    {
+        yInfo() << "Setting default parts.\n";
+
+        pParts      = new Bottle("head torso left_arm right_arm left_leg right_leg");
+        deleteParts = true;
     }
 
-    NUMBER_OF_AVAILABLE_PARTS=pParts->size();
-    if (NUMBER_OF_AVAILABLE_PARTS<=0){
+
+
+    if(pParts->size() < 1)
+    {
         LOG_ERROR("Invalid number of parts, check config file \n");
         return 1;
     }
 
-    for(int n=0; n < MAX_NUMBER_OF_PARTS; n++){
-        //ENA = 0: part available
-        //ENA = -1: part unavailable
-        //ENA = 1: part used
-        ENA.append(-1);
-    }
-
     //Check 1 in the panel
-    for(int n=0;n<NUMBER_OF_AVAILABLE_PARTS;n++){
+    for(int n = 0; n < pParts->size(); n++)
+    {
         QString part = QString("%1").arg(pParts->get(n).asString().c_str());
         yDebug("Appending %s",part.toUtf8().constData());
         partsName.append(part);
-
-        if(n < ENA.count()){
-            ENA.replace(n,1);
-        }else{
-            ENA.append(1);
-        }
     }
 
-    QString newRobotName = robotName.data();
+    newRobotName = robotName.c_str();
 
-    if (!finder->check("skip"))
+    if(!finder.check("skip"))
     {
         StartDlg dlg;
-        dlg.init(QString(robotName.data()),partsName,ENA);
-        if(dlg.exec() == QDialog::Accepted){
-            ENA.clear();
-            ENA = dlg.getEnabledParts();
+        dlg.init(newRobotName, partsName);
+
+        if(dlg.exec() == QDialog::Accepted)
+        {
+            enabled      = dlg.getEnabledParts();
             newRobotName = dlg.getRobotName();
-        }else{
+        }
+        else
+        {
             yInfo("Cancel Button pressed. Closing..");
             return 0;
         }
     }
 
-    QStringList enabledParts;
-    for(int i=0; i<partsName.count();i++){
-        if(ENA.at(i) == 1){
+    for(int i = 0; i < partsName.count(); i++)
+    {
+        if(enabled.at(i))
+        {
             enabledParts.append(partsName.at(i));
         }
     }
 
-    yarp::os::signal(yarp::os::YARP_SIGINT, sighandler);
+    yarp::os::signal(yarp::os::YARP_SIGINT,  sighandler);
     yarp::os::signal(yarp::os::YARP_SIGTERM, sighandler);
-    MainWindow w;
-    mainW = &w;
-    int appRet = 0;
-    bool ret = w.init(newRobotName,enabledParts,finder,debug_param_enabled,speedview_param_enabled,enable_calib_all);
-    if(ret){
+
+    mainW  = &w;
+    appRet = 0;
+    ret    = w.init(newRobotName, enabledParts, finder, debug_param_enabled, speedview_param_enabled, enable_calib_all);
+
+    if(ret)
+    {
         w.show();
         appRet = a.exec();
     }
 
-    delete finder;
-    if(deleteParts){
+    if(deleteParts)
+    {
         delete pParts;
     }
 
-    return (appRet!=0?1:0);
+    return (appRet != 0 ? 1 : 0);
 }
