@@ -240,7 +240,7 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
     {
         laser_frame_name = config.find("laser_frame_name").toString();
         robot_frame_name = config.find("robot_frame_name").toString();
-        bool b_canOpenTransformClient = drv->open(TransformClientOptions);
+        b_canOpenTransformClient = drv->open(TransformClientOptions);
     }
 
     if (b_canOpenTransformClient)
