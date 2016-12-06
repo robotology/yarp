@@ -482,14 +482,46 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     }
     else if (rosMsgType == "sensor_msgs/JointState")
     {
+        std::string jointName = "";
         yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
-        if (!rosGroup.check("jointNames"))
+        bool oldParam = false;
+        bool newParam = false;
+
+        if(rosGroup.check("joint_names"))
+        {
+            oldParam = true;
+            jointName = "joint_names";
+            yWarning() << sensorId << " using DEPRECATED 'joint_names' parameter. Please use 'jointNames' instead.";
+        }
+
+        if(rosGroup.check("jointNames"))
+        {
+            newParam = true;
+            jointName = "jointNames";
+        }
+
+        if(!oldParam && !newParam)
         {
             yError() << sensorId << " missing 'jointNames' parameter needed when broadcasting 'sensor_msgs/JointState' message type";
             useROS = ROS_config_error;
             return false;
         }
-        yarp::os::Bottle& jnam =rosGroup.findGroup("jointNames");
+        // Throw an error if noth new and old are present
+        if(oldParam && newParam)
+        {
+            yError() << sensorId << " found both DEPRECATED 'joint_names' and new 'jointNames' parameters. Please remove the old 'joint_names' from your config file.";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        yarp::os::Bottle& jnam = rosGroup.findGroup(jointName);
+        if(jnam.isNull())
+        {
+            yError() << sensorId << "Cannot find 'jointNames' parameters.";
+            return false;
+        }
+
+        // Cannot check number of channels here because need to wait for the attach function
         int joint_names_size = jnam.size()-1;
         for (int i = 0; i < joint_names_size; i++)
         {
