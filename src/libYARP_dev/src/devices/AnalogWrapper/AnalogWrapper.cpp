@@ -880,10 +880,14 @@ bool AnalogWrapper::close()
         RateThread::stop();
     }
 
-    //RateThread::stop();
-
     detachAll();
     removeHandlers();
+
+    if(subDeviceOwned)
+    {
+        subDeviceOwned->close();
+        delete subDeviceOwned;
+    }
 
     if(rosNode!=YARP_NULLPTR) {
         rosNode->interrupt();
