@@ -434,6 +434,7 @@ bool depthCameraDriver::parseIntrinsic(const Searchable& config, const string& g
         if(!intrinsic.check(realParams[i].first))
         {
             yError() << "depthCameraDriver: missing" << realParams[i].first << "param in" << groupName << "group in the configuration file";
+            return false;
         }
         *(realParams[i].second) = intrinsic.find(realParams[i].first).asDouble();
     }
@@ -475,6 +476,7 @@ bool depthCameraDriver::parseIntrinsic(const Searchable& config, const string& g
         if(!distortion.check(realParams[i].first))
         {
             yError() << "depthCameraDriver: missing" << realParams[i].first << "param in" << intrinsic.find("distortionModel").asString() << "group in the configuration file";
+            return false;
         }
         *(realParams[i].second) = distortion.find(realParams[i].first).asDouble();
     }
