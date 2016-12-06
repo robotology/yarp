@@ -30,19 +30,20 @@
 */
 struct mOptions
 {
-    unsigned int	refreshTime;
-    char			portName[256];
-    char			networkName[256];
-    int				windWidth;
-    int				windHeight;
-    int				posX;
-    int				posY;
-    char			fileName[256];
-    int				saveOnExit;
-    char			outPortName[256];
-    char			outNetworkName[256];
-    int				outputEnabled;
-    bool            synch;
+    unsigned int    m_refreshTime;
+    char            m_portName[256];
+    char            m_networkName[256];
+    int             m_windWidth;
+    int             m_windHeight;
+    int             m_posX;
+    int             m_posY;
+    char            m_fileName[256];
+    int             m_saveOnExit;
+    char            m_outPortName[256];
+    char            m_outNetworkName[256];
+    int             m_outputEnabled;
+    bool            m_synchRate;
+    bool            m_autosize;
 };
 typedef struct mOptions pgmOptions;
 
@@ -70,7 +71,8 @@ public:
     ~QtYARPView();
 
     Q_INVOKABLE void freeze(bool check);
-    Q_INVOKABLE void synchToDisplay(bool check);
+    Q_INVOKABLE void synchDisplayPeriod(bool check);
+    Q_INVOKABLE void synchDisplaySize(bool check);
     Q_INVOKABLE void changeRefreshInterval(int);
     Q_INVOKABLE void saveFrame();
     Q_INVOKABLE void setFileName(QUrl url);
@@ -118,12 +120,15 @@ signals:
     void posYChanged();
     void widthChanged();
     void heightChanged();
+    void sizeChanged();
     void sendPortFps(QString avg, QString min, QString max);
     void sendDisplayFps(QString avg, QString min, QString max);
-    void synch(bool check);
+    void synchRate(bool check);
+    void autosize(bool check);
     void setName(QString name);
 private slots:
     void onSendFps(double portAvg, double portMin, double portMax, double dispAvg, double dispMin, double dispMax);
+    void onWindowSizeChangeRequested();
 };
 
 #endif // QTYARPVIEW_H

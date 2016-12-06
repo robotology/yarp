@@ -54,9 +54,14 @@ ApplicationWindow {
             window.width = w
             window.height = h
         }
-        onSynch:{
+        onSynchRate:{
             if(menu !== undefined){
                 menu.enableSynch(check)
+            }
+        }
+        onAutosize:{
+            if(menu !== undefined){
+                menu.enableAutosize(check)
             }
         }
         onSetName:{
