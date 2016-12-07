@@ -397,8 +397,10 @@ nsis_add_recurse yarp_math_headers math ${YARP_SUB}/include/yarp/math
 #nsis_add_recurse gsl_libraries lib ${GSL_SUB}/lib
 # add EIGEN material
 cd $EIGEN_DIR_UNIX
-cd ..
-nsis_add_recurse eigen_base ${EIGEN_SUB} ${EIGEN_SUB}
+nsis_add eigen_base signature_of_eigen3_matrix_library ${EIGEN_SUB}/signature_of_eigen3_matrix_library
+nsis_add_recurse eigen_base Eigen ${EIGEN_SUB}/Eigen
+
+
 
 
 # Add GTKMM material to NSIS
