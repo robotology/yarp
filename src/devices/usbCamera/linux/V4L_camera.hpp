@@ -199,7 +199,7 @@ private:
     yarp::os::Semaphore mutex;
     bool doCropping;
     bool dual;
-    bool isActive_vector[YARP_FEATURE_NUMEBR_OF];
+    bool isActive_vector[YARP_FEATURE_NUMBER_OF];
     double timeStart, timeTot, timeNow, timeElapsed;
     int myCounter;
     int frameCounter;
