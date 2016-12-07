@@ -30,8 +30,8 @@
 #include <stateExtendedReader.hpp>
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 5
-#define PROTOCOL_VERSION_TWEAK 1
+#define PROTOCOL_VERSION_MINOR 6
+#define PROTOCOL_VERSION_TWEAK 0
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -3549,10 +3549,9 @@ public:
             return true;
 
         // protocol did not match
-        yError("expecting protocol %d %d %d, but remotecontrolboard returned protocol version %d %d %d\n",
+        yError("expecting protocol %d %d %d, but the device we are connectin to has protocol version %d %d %d\n",
                         PROTOCOL_VERSION_MAJOR, PROTOCOL_VERSION_MINOR, PROTOCOL_VERSION_TWEAK,
                         protocolVersion.major, protocolVersion.minor, protocolVersion.tweak);
-
 
         bool ret;
         if (ignore)
