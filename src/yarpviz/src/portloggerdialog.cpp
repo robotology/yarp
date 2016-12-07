@@ -1,10 +1,16 @@
+#include <fstream>
+#include <QDir>
+#include <QFileDialog>
+#include <QProgressDialog>
+
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Time.h>
 #include "portloggerdialog.h"
 #include "ui_portloggerdialog.h"
 #include "NetworkProfiler.h"
 #include <QMessageBox>
-#include <QDir>
 
+using namespace std;
 using namespace yarp::os;
 using namespace yarp::graph;
 
@@ -19,8 +25,10 @@ PortLoggerDialog::PortLoggerDialog(yarp::graph::Graph *graph, QWidget *parent) :
     connect(ui->pushButtonAdd, SIGNAL(clicked()), this, SLOT(addConnections()));
     connect(ui->pushButtonRemove, SIGNAL(clicked()), this, SLOT(removeConnections()));
     connect(ui->pushButtonStart, SIGNAL(clicked()), this, SLOT(startStopLoggers()));
+    connect(ui->toolButtonLogPath, SIGNAL(clicked()), this, SLOT(setLogPath()));
 
     ui->pushButtonStart->setEnabled(false);
+    ui->checkBoxCollect->setChecked(true);
 
     PortLoggerDialog::graph = graph;
     // adding all process nodes and subgraphs
@@ -105,6 +113,9 @@ void PortLoggerDialog::startStopLoggers() {
             QTreeWidgetItem *item = ui->treeWidgetSelectedCons->topLevelItem(i);
             //yInfo()<<item->text(1).toUtf8().constData();
             isStarted = isStarted && NetworkProfiler::attachPortmonitorPlugin(item->text(1).toUtf8().constData(), prop);
+            //yarp::os::Property param;
+            //param.put("log_raw", 1);
+            //isStarted = isStarted && NetworkProfiler::setPortmonitorParams(item->text(1).toUtf8().constData(), param);
         }
 
         if(isStarted) {
@@ -125,11 +136,50 @@ void PortLoggerDialog::startStopLoggers() {
         }
     }
     else { // stop it
+        QProgressDialog* progressDlg = new QProgressDialog("...", "Cancel", 0,
+                                                           ui->treeWidgetSelectedCons->topLevelItemCount(), this);
+        progressDlg->setLabelText("Collecting the results...");
+        progressDlg->reset();
+        progressDlg->setValue(0);
+        progressDlg->setWindowModality(Qt::WindowModal);
+        progressDlg->show();
         for( int i=0; i < ui->treeWidgetSelectedCons->topLevelItemCount(); ++i ){
+            progressDlg->setValue(i);
+            progressDlg->update();
+            progressDlg->repaint();
             QTreeWidgetItem *item = ui->treeWidgetSelectedCons->topLevelItem(i);
+            if(ui->checkBoxCollect->checkState() == Qt::Checked) { //collect the results
+                yarp::os::Bottle param;
+                std::string portname = item->text(1).toUtf8().constData();
+                if(NetworkProfiler::getPortmonitorParams(portname, param)) {
+                    Bottle* bt = param.get(0).asList();
+                    if(!bt) {
+                        yError()<<"Got wrong result format from portrate plugin at "<<portname;
+                        continue;
+                    }
+                    //yInfo()<<bt->toString();
+                    Bottle& data = bt->findGroup("data");
+                    if(data.isNull() || data.size()<2) {
+                        yError()<<"Got wrong result format from portrate plugin at "<<portname;
+                        continue;
+                    }
+                    Bottle* samples = data.get(1).asList();
+                    QString filename = portname.c_str();
+                    filename.replace("/", "_");
+                    filename = ui->lineEditLogPath->text() + "/port." +filename + ".log";
+                    if(!saveLog(filename.toStdString(), samples))
+                        yError()<<"could not save the result into "<<filename.toStdString();
+                }
+            }
+            else {
+                yarp::os::Property param;
+                param.put("log_save", 1);
+                NetworkProfiler::setPortmonitorParams(item->text(1).toUtf8().constData(), param);
+            }
+
             NetworkProfiler::detachPortmonitorPlugin(item->text(1).toUtf8().constData());
         }
-
+        delete progressDlg;
         if(timer) {
             timer->stop();
             delete timer;
@@ -143,8 +193,35 @@ void PortLoggerDialog::startStopLoggers() {
     ui->pushButtonClose->setEnabled(!isStarted);
     ui->pushButtonAdd->setEnabled(!isStarted);
     ui->pushButtonRemove->setEnabled(!isStarted);
+    ui->checkBoxCollect->setEnabled(!isStarted);
 }
 
 void PortLoggerDialog::MyTimerSlot() {
     ui->lcdNumberLogTime->display(logTime.elapsed()/1000);
+}
+
+bool PortLoggerDialog::saveLog(std::string filename, yarp::os::Bottle* samples) {
+    ofstream file;
+    file.open(filename.c_str());
+    if(!file.is_open()) {
+        return false;
+    }
+
+    for(int k=0; k<samples->size(); k++) {
+        Bottle* smp = samples->get(k).asList();
+        file<<smp->toString().c_str()<<endl;
+    }
+
+    file.close();
+    return true;
+}
+
+void PortLoggerDialog::setLogPath() {
+    //QString filters("Log files (*.log);;Text files (*.txt);;All files (*.*)");
+    //QString defaultFilter("Log file (*.log)");
+    QString filename = QFileDialog::getExistingDirectory(0, "Set the log files path",
+                                                    QDir::homePath(),QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if(filename.size() == 0)
+        return;
+    ui->lineEditLogPath->setText(filename);
 }

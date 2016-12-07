@@ -26,7 +26,7 @@ function save_log()
     -- save all the loged data 
     if param_log_raw == true then 
         for i=1,#log_data do      
-            file:write(log_data[i].time,"\t",log_data[i].value,"\n") 
+            file:write(log_data[i].time," ",log_data[i].value,"\n")
         end
     else
         local avg = sum / count
@@ -82,7 +82,7 @@ end
 --
 PortMonitor.destroy = function()
     if param_log_start == false then return true end 
-    save_log()
+    --save_log()
 end
 
 
@@ -158,6 +158,14 @@ PortMonitor.getparam = function()
     else
         prop:put("log_start", 0)
     end
+    bt = yarp.Bottle()
+    data = bt:addList()
+    for i=1,#log_data do
+        v = data:addList()
+        v:addDouble(log_data[i].time)
+        v:addDouble(log_data[i].value)
+    end
+    prop:put("data", bt:get(0))
     return prop
 end
 

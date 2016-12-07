@@ -23,7 +23,10 @@ private slots:
     void removeConnections();
     void startStopLoggers();
     void MyTimerSlot();
+    void setLogPath();
 
+private:
+    bool saveLog(std::string filename, yarp::os::Bottle* samples);
 private:
     bool isStarted;
     yarp::graph::Graph *graph;

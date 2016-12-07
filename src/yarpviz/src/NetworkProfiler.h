@@ -165,6 +165,8 @@ public:
 
     static bool attachPortmonitorPlugin(std::string portName, yarp::os::Property pluginProp);
     static bool detachPortmonitorPlugin(std::string portName);
+    static bool setPortmonitorParams(std::string portName, yarp::os::Property& param);
+    static bool getPortmonitorParams(std::string portName, yarp::os::Bottle &param);
 
 private:
         static ProgressCallback* progCallback;
