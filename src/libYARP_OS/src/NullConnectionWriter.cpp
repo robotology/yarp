@@ -2,7 +2,6 @@
  * Copyright (C) 2012 IITRBCS
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/NullConnectionWriter.h>
@@ -62,11 +61,10 @@ bool yarp::os::NullConnectionWriter::isError() {
 void yarp::os::NullConnectionWriter::requestDrop() {
 }
 
-bool yarp::os::NullConnectionWriter::isNull() const { 
+bool yarp::os::NullConnectionWriter::isNull() const {
     return true;
 }
 
 yarp::os::SizedWriter *yarp::os::NullConnectionWriter::getBuffer() {
     return YARP_NULLPTR;
 }
-

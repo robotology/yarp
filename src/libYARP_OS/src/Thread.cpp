@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -43,10 +42,10 @@ public:
         ThreadImpl::close();
     }
 
-    virtual bool threadInit() 
+    virtual bool threadInit()
     {return owner.threadInit();}
 
-    virtual void threadRelease() 
+    virtual void threadRelease()
     {owner.threadRelease();}
 };
 

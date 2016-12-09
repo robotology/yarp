@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_NAMESERCARRIER
-#define YARP2_NAMESERCARRIER
+#ifndef YARP_OS_IMPL_NAMESERCARRIER_H
+#define YARP_OS_IMPL_NAMESERCARRIER_H
 
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/TcpCarrier.h>
@@ -26,7 +25,8 @@ namespace yarp {
  * originally designed for the yarp name server.  For backwards
  * compatibility
  */
-class yarp::os::impl::NameserTwoWayStream : public TwoWayStream, InputStream {
+class yarp::os::impl::NameserTwoWayStream : public TwoWayStream, InputStream
+{
 private:
     TwoWayStream *delegate;
     ConstString pendingRead;
@@ -57,7 +57,8 @@ public:
  * originally designed for the yarp name server.  For backwards
  * compatibility
  */
-class yarp::os::impl::NameserCarrier : public TcpCarrier {
+class yarp::os::impl::NameserCarrier : public TcpCarrier
+{
 private:
     bool firstSend;
 public:
@@ -84,4 +85,4 @@ public:
     virtual bool write(ConnectionState& proto, SizedWriter& writer);
 };
 
-#endif
+#endif // YARP_OS_IMPL_NAMESERCARRIER_H

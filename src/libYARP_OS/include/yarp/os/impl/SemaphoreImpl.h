@@ -2,11 +2,10 @@
  * Copyright (C) 2006, 2009 RobotCub Consortium
  * Authors: Miguel Sarabia del Castillo, Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SEMAPHOREIMPL
-#define YARP2_SEMAPHOREIMPL
+#ifndef YARP_OS_IMPL_SEMAPHOREIMPL_H
+#define YARP_OS_IMPL_SEMAPHOREIMPL_H
 
 
 // Pre-declare semaphore
@@ -41,7 +40,6 @@ namespace yarp {
 #      endif
 #    endif
 #  endif
-#endif 
-
 #endif
 
+#endif // YARP_OS_IMPL_SEMAPHOREIMPL_H

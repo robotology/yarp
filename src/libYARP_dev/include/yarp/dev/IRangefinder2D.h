@@ -2,11 +2,10 @@
  * Copyright (C) 2015 ICub Facility - Istituto italiano di Tecnologia
  * Author: Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPRANGEFINDER2DINTERFACE
-#define YARPRANGEFINDER2DINTERFACE
+#ifndef YARP_DEV_IRANGEFINDER2D_H
+#define YARP_DEV_IRANGEFINDER2D_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
@@ -133,4 +132,4 @@ public:
     virtual bool getDeviceInfo(yarp::os::ConstString &device_info) = 0;
 };
 
-#endif
+#endif // YARP_DEV_IRANGEFINDER2D_H

@@ -2,7 +2,6 @@
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
  * Author: Lorenzo Natale, Silvio Traversaro
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -536,7 +535,3 @@ void ControlBoardArbitraryAxesDecomposition::resizeSubControlBoardBuffers(const 
         m_bufferForSubControlBoard.resize(m_nJointsInSubControlBoard[ctrlBrd]);
     }
 }
-
-
-
-

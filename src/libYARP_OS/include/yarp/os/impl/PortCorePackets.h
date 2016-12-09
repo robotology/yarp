@@ -2,11 +2,10 @@
  * Copyright (C) 2006, 2008 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PORTCOREPACKETS
-#define YARP2_PORTCOREPACKETS
+#ifndef YARP_OS_IMPL_PORTCOREPACKETS_H
+#define YARP_OS_IMPL_PORTCOREPACKETS_H
 
 #include <yarp/os/impl/PortCorePacket.h>
 #include <yarp/os/impl/PlatformList.h>
@@ -31,36 +30,36 @@ namespace yarp {
  * We call messages "packets" for no particular reason.
  *
  */
-class yarp::os::impl::PortCorePackets {
+class yarp::os::impl::PortCorePackets
+{
 private:
     PLATFORM_LIST(PortCorePacket) inactive; // unused packets we may reuse
     PLATFORM_LIST(PortCorePacket) active;   // a list of packets being sent
 public:
 
-    virtual ~PortCorePackets() {
+    virtual ~PortCorePackets()
+    {
         PLATFORM_LIST_CLEAR(inactive);
         PLATFORM_LIST_CLEAR(active);
     }
 
     /**
-     *
      * @return the number of packets currently being sent.
-     *
      */
-    int getCount() {
+    int getCount()
+    {
         return (int)active.size();
     }
 
     /**
-     *
      * Get a packet that we can prepare for sending.  If a previously sent
      * packet that is not being used is available, we take that.  Otherwise
      * we create one.
      *
      * @return an unused or freshly created packet
-     *
      */
-    PortCorePacket *getFreePacket() {
+    PortCorePacket *getFreePacket()
+    {
         if (PLATFORM_LIST_EMPTY(inactive)) {
             PortCorePacket *obj = YARP_NULLPTR;
 #if defined(YARP_HAS_ACE) && !defined(YARP_HAS_CXX11)
@@ -91,14 +90,13 @@ public:
     }
 
     /**
-     *
      * Force the given packet into an inactive state.  See checkPacket() for
      * a less drastic way to nudge a packet onwards in its lifecycle.
      * @param packet the packet to work on
      * @param clear whether to reset the contents of the packet
-     *
      */
-    void freePacket(PortCorePacket *packet, bool clear=true) {
+    void freePacket(PortCorePacket *packet, bool clear=true)
+    {
         if (packet!=YARP_NULLPTR) {
             if (clear) {
                 packet->reset();
@@ -110,14 +108,13 @@ public:
     }
 
     /**
-     *
      * Send a completion notification if a packet has finished being
      * sent on all connections.
      * @param packet the packet to work on
      * @return true if the packet has finished being sent
-     *
      */
-    bool completePacket(PortCorePacket *packet) {
+    bool completePacket(PortCorePacket *packet)
+    {
         if (packet!=YARP_NULLPTR) {
             if (packet->getCount()<=0) {
                 packet->complete();
@@ -128,14 +125,13 @@ public:
     }
 
     /**
-     *
      * Move a packet to the inactive state if it has finished being
      * sent on all connections.
      * @param packet the packet to work on
      * @return true if the packet was made inactive
-     *
      */
-    bool checkPacket(PortCorePacket *packet) {
+    bool checkPacket(PortCorePacket *packet)
+    {
         if (packet!=YARP_NULLPTR) {
             if (packet->getCount()<=0) {
                 packet->complete();
@@ -148,4 +144,4 @@ public:
 
 };
 
-#endif
+#endif // YARP_OS_IMPL_PORTCOREPACKETS_H

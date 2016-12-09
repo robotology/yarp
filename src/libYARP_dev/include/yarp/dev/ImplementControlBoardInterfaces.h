@@ -2,11 +2,10 @@
  * Copyright (C) 2012 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_IMPLEMENTCONTROLBOARDINTERFACES
-#define YARP_IMPLEMENTCONTROLBOARDINTERFACES
+#ifndef YARP_DEV_IMPLEMENTCONTROLBOARDINTERFACES_H
+#define YARP_DEV_IMPLEMENTCONTROLBOARDINTERFACES_H
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/api.h>
@@ -981,4 +980,4 @@ public:
     {return NOT_YET_IMPLEMENTED("getEncoderAccelerationsRaw");}
 };
 
-#endif
+#endif // YARP_DEV_IMPLEMENTCONTROLBOARDINTERFACES_H

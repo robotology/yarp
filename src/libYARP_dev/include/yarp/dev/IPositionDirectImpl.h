@@ -5,8 +5,8 @@
  */
 
 
-#ifndef IMPLEMENTIPOSITIONDIRECT_H_
-#define IMPLEMENTIPOSITIONDIRECT_H_
+#ifndef YARP_IPOSITIONDIRECTIMPL_H
+#define YARP_IPOSITIONDIRECTIMPL_H
 
 
 #include <yarp/dev/IPositionDirect.h>
@@ -125,4 +125,4 @@ public:
     {return NOT_YET_IMPLEMENTED("setPositions");}
 };
 
-#endif /* IMPLEMENTIPOSITIONDIRECT_H_ */
+#endif // YARP_IPOSITIONDIRECTIMPL_H

@@ -2,7 +2,6 @@
  * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"

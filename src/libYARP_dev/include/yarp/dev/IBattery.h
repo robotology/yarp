@@ -2,11 +2,10 @@
  * Copyright (C) 2015 ICub Facility - Istituto italiano di Tecnologia
  * Author: Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPBATTERYINTERFACE
-#define YARPBATTERYINTERFACE
+#ifndef YARP_DEV_IBATTERY_H
+#define YARP_DEV_IBATTERY_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
@@ -85,4 +84,4 @@ public:
     virtual bool getBatteryInfo(yarp::os::ConstString &battery_info) = 0;
 };
 
-#endif
+#endif // YARP_DEV_IBATTERY_H

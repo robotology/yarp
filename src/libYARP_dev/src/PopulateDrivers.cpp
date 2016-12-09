@@ -1,16 +1,15 @@
 /*
- * Welcome to the "PopulateDrivers" source file, where factories
- * are created for YARP device drivers.
- *
- *
- */
-
-/*
  * Copyright (C) 2006, 2008 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
+
+
+/*
+ * Welcome to the "PopulateDrivers" source file, where factories
+ * are created for YARP device drivers.
+ */
+
 
 #include <yarp/dev/Drivers.h>
 #include <yarp/os/impl/Logger.h>

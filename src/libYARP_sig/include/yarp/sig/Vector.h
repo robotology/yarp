@@ -1,12 +1,12 @@
 /*
-* Copyright (C) 2007 RobotCub Consortium
-* Authors: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2007 RobotCub Consortium
+ * Authors: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 
-#ifndef YARP2_VECTOR
-#define YARP2_VECTOR
+#ifndef YARP_SIG_VECTOR_H
+#define YARP_SIG_VECTOR_H
 
 //#include <stdlib.h> //defines size_t
 #include <stddef.h> //defines size_t
@@ -484,5 +484,4 @@ public:
     }
 };
 
-#endif
-
+#endif // YARP_SIG_VECTOR_H

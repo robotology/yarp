@@ -2,7 +2,6 @@
  * Copyright (C) 2015 Robotics and Cognitive Sciences Department. IIT
  * Authors: Francesco Romano
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/RecursiveMutex.h>

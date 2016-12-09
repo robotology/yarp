@@ -2,27 +2,31 @@
  * Copyright (C) 2006, 2009 RobotCub Consortium
  * Authors: Paul Fitzpatrick, Miguel Sarabia del Castillo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_CXX11SEMAPHOREIMPL
-#define YARP2_CXX11SEMAPHOREIMPL
+#ifndef YARP_OS_IMPL_CXX11SEMAPHOREIMPL_H
+#define YARP_OS_IMPL_CXX11SEMAPHOREIMPL_H
 
 #include <mutex>
 #include <condition_variable>
 
 
-class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
+class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl
+{
 public:
-    SemaphoreImpl(unsigned int initialCount = 1) : count(initialCount),
-        wakeups(0) {
+    SemaphoreImpl(unsigned int initialCount = 1) :
+            count(initialCount),
+            wakeups(0)
+    {
     }
 
-    virtual ~SemaphoreImpl() {
+    virtual ~SemaphoreImpl()
+    {
     }
 
     // blocking wait
-    void wait() {
+    void wait()
+    {
         std::unique_lock<std::mutex> lock(mutex);
         count--;
         if (count<0) {
@@ -33,7 +37,8 @@ public:
     }
 
     // blocking wait with timeout
-    bool waitWithTimeout(double timeout) {
+    bool waitWithTimeout(double timeout)
+    {
         std::unique_lock<std::mutex> lock(mutex);
         count--;
         if (count<0) {
@@ -52,7 +57,8 @@ public:
     }
 
     // polling wait
-    bool check() {
+    bool check()
+    {
         std::unique_lock<std::mutex> lock(mutex);
         if (count) {
             count--;
@@ -62,7 +68,8 @@ public:
     }
 
     // increment
-    void post() {
+    void post()
+    {
         std::lock_guard<std::mutex> lock(mutex);
         count++;
         if (count<=0) {
@@ -78,5 +85,4 @@ private:
     int wakeups;
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_CXX11SEMAPHOREIMPL_H

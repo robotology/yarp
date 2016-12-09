@@ -2,11 +2,10 @@
  * Copyright (C) 2009 RobotCub Consortium
  * Author: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#include "ControlBoardWrapper.h"
 #include "StreamingMessagesParser.h"
+#include "ControlBoardWrapper.h"
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>

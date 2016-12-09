@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_UNITTEST
-#define YARP2_UNITTEST
+#ifndef YARP_OS_IMPL_UNITTEST_H
+#define YARP_OS_IMPL_UNITTEST_H
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Bottle.h>
@@ -25,13 +24,15 @@ namespace yarp {
  * Simple unit testing framework.  There are libraries out there for
  * this, but we don't want to add another dependency to YARP.
  */
-class YARP_OS_impl_API yarp::os::impl::UnitTest {
+class YARP_OS_impl_API yarp::os::impl::UnitTest
+{
 public:
     UnitTest();
 
     UnitTest(UnitTest *parent);
 
-    virtual ~UnitTest() {
+    virtual ~UnitTest()
+    {
         clear();
     }
 
@@ -50,7 +51,8 @@ public:
 
     virtual int run(int argc, char *argv[]);
 
-    virtual void runTests() {
+    virtual void runTests()
+    {
     }
 
     virtual void runSubTests(int argc, char *argv[]);
@@ -82,7 +84,8 @@ public:
     void saveEnvironment(const char *key);
     void restoreEnvironment();
 
-    bool isOk() {
+    bool isOk()
+    {
         return !hasProblem;
     }
 
@@ -149,4 +152,4 @@ private:
 #define checkFalse(x,desc) checkEqualImpl((x)?true:false,false,desc,#x,"false",__FILE__,__LINE__)
 
 
-#endif
+#endif // YARP_OS_IMPL_UNITTEST_H

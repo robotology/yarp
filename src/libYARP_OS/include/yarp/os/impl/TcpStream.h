@@ -22,8 +22,8 @@
  */
 
 
-#ifndef TCPSTREAM_H_
-#define TCPSTREAM_H_
+#ifndef YARP_OS_IMPL_TCPSTREAM_H
+#define YARP_OS_IMPL_TCPSTREAM_H
 
 // General files
 #include <sys/types.h>
@@ -48,7 +48,8 @@ namespace yarp {
  * **************************************************************************************/
 
 
-class yarp::os::impl::TcpStream {
+class yarp::os::impl::TcpStream
+{
 public:
     /**
      * Constructor TcpStream
@@ -60,29 +61,35 @@ public:
      */
     virtual ~TcpStream();
 
-    inline ssize_t recv_n (void *buf, size_t n) {
+    inline ssize_t recv_n (void *buf, size_t n)
+    {
         return ::recv(sd, buf, n, 0);
     }
 
-    inline ssize_t recv_n (void *buf, size_t n, struct timeval *tv) {
+    inline ssize_t recv_n (void *buf, size_t n, struct timeval *tv)
+    {
         setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
         return ::recv(sd, buf, n, 0);
     }
 
-    inline ssize_t recv (void *buf, size_t n) {
+    inline ssize_t recv (void *buf, size_t n)
+    {
         return ::recv(sd, buf, n, 0);
     }
 
-    inline ssize_t recv (void *buf, size_t n, struct timeval *tv) {
+    inline ssize_t recv (void *buf, size_t n, struct timeval *tv)
+    {
         setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
         return ::recv(sd, buf, n, 0);
     }
 
-    inline ssize_t send_n (const void *buf, size_t n) {
+    inline ssize_t send_n (const void *buf, size_t n)
+    {
         return ::send(sd, buf, n, 0);
     }
 
-    inline ssize_t send_n (const void *buf, size_t n, struct timeval *tv) {
+    inline ssize_t send_n (const void *buf, size_t n, struct timeval *tv)
+    {
         setsockopt(sd, SOL_SOCKET, SO_SNDTIMEO, (char *)tv, sizeof (*tv));
         return ::send(sd, buf, n, 0);
     }
@@ -90,19 +97,22 @@ public:
     // No idea what this should do...
     void flush() { }
 
-    void close_reader() {
+    void close_reader()
+    {
         if (sd!=-1) {
             ::shutdown(sd,SHUT_RD);
         }
     }
 
-    void close_writer() {
+    void close_writer()
+    {
         if (sd!=-1) {
             ::shutdown(sd,SHUT_WR);
         }
     }
 
-    void close() {
+    void close()
+    {
         if (sd!=-1) {
             ::close(sd);
             sd = -1;
@@ -122,12 +132,14 @@ public:
     void set_handle(int h) { sd = h; }
 
     // Wrapper around the setsockopt system call.
-    inline int set_option(int level, int option, void *optval, int optlen) const {
+    inline int set_option(int level, int option, void *optval, int optlen) const
+    {
         return setsockopt(sd, level, option, (char*)optval, optlen);
     }
 
     // Wrapper around the getsockopt system call.
-    inline int get_option(int level, int option, void *optval, int *optlen) const {
+    inline int get_option(int level, int option, void *optval, int *optlen) const
+    {
         return getsockopt(sd, level, option, (char*)optval, (socklen_t*)optlen);
     }
 private:
@@ -135,4 +147,4 @@ private:
     int sd;
 };
 
-#endif /* TCPSTREAM_H_ */
+#endif // YARP_OS_IMPL_TCPSTREAM_H

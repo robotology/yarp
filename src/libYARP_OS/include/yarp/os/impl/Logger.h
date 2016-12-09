@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef YARP_OS_IMPL_LOGGER_H
@@ -39,7 +38,6 @@ namespace yarp {
  * This is a wrapper for message logging.
  * This is currently a sad mixture of the java yarp logging mechanism
  * and ACE.
- *
  */
 class YARP_OS_impl_API yarp::os::impl::Logger : public yarp::os::Log
 #ifdef YARP_HAS_ACE

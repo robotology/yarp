@@ -2,7 +2,6 @@
  * Copyright (C) 2008 RobotCub Consortium
  * Authors: Marco Randazo and Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <stdio.h>

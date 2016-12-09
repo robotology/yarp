@@ -2,11 +2,10 @@
  * Copyright (C) 2010 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_DRIVERLINKCREATOR
-#define YARP2_DRIVERLINKCREATOR
+#ifndef YARP_DEV_DRIVERLINKCREATOR_H
+#define YARP_DEV_DRIVERLINKCREATOR_H
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
@@ -66,4 +65,4 @@ public:
     }
 };
 
-#endif
+#endif // YARP_DEV_DRIVERLINKCREATOR_H

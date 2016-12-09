@@ -2,18 +2,17 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
 // Functions for serialization in YARP form.
 // Approximates a subset of the XDR API, with "xdr" -> "ydr".
-// 
+//
 // This is part of an experiment to unify some APIs with the player project
 
 
-#ifndef YARP2_YDR
-#define YARP2_YDR
+#ifndef YARP_OS_IMPL_YDR_H
+#define YARP_OS_IMPL_YDR_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,7 +27,7 @@ extern "C" {
     struct YDR {
         void *controller;
     };
-  
+
     extern int ydrmem_create(YDR *ydrs, void* buf, unsigned int buflen, int op);
     extern int ydr_u_int(YDR *ydrs, unsigned int *p);
     extern int ydr_u_short(YDR *ydrs, unsigned short *p);
@@ -39,7 +38,7 @@ extern "C" {
     extern int ydr_char(YDR *ydrs, char *p);
     extern int ydr_short(YDR *ydrs, short *p);
     extern int ydr_int(YDR *ydrs, int *p);
-    extern int ydr_bytes(YDR *ydrs, char **data, unsigned int *count, 
+    extern int ydr_bytes(YDR *ydrs, char **data, unsigned int *count,
                          unsigned int max_count);
     extern unsigned int ydr_getpos(YDR *ydrs);
     extern void ydr_destroy(YDR *ydrs);
@@ -58,4 +57,4 @@ extern "C" {
 #endif
 
 
-#endif
+#endif // YARP_OS_IMPL_YDR_H

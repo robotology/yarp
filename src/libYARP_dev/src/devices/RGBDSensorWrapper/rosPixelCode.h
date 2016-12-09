@@ -1,3 +1,7 @@
+
+#ifndef YARP_DEV_RGBDSENSORWRAPPER_ROSPIXELCODE_H
+#define YARP_DEV_RGBDSENSORWRAPPER_ROSPIXELCODE_H
+
 #define BAYER_BGGR16 "bayer_bggr16"
 #define BAYER_BGGR8  "bayer_bggr8"
 #define BAYER_GBRG16 "bayer_gbrg16"
@@ -45,3 +49,5 @@
 #define TYPE_8UC3    "8UC3"
 #define TYPE_8UC4    "8UC4"
 #define YUV422       "yuv422"
+
+#endif // YARP_DEV_RGBDSENSORWRAPPER_ROSPIXELCODE_H

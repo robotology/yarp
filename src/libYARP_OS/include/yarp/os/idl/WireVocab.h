@@ -2,11 +2,10 @@
  * Copyright (C) 2012 IITRBCS
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_WIREVOCAB
-#define YARP2_WIREVOCAB
+#ifndef YARP_OS_IDL_WIREVOCAB_H
+#define YARP_OS_IDL_WIREVOCAB_H
 
 #include <yarp/os/api.h>
 
@@ -25,4 +24,4 @@ public:
     virtual std::string toString(int input) = 0;
 };
 
-#endif
+#endif // YARP_OS_IDL_WIREVOCAB_H

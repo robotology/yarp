@@ -2,11 +2,10 @@
  * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia, Anne van Rossum
  * Authors: Paul Fitzpatrick, Anne van Rossum
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PLATFORMMAP
-#define YARP2_PLATFORMMAP
+#ifndef YARP_OS_IMPL_PLATFORMMAP_H
+#define YARP_OS_IMPL_PLATFORMMAP_H
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -96,5 +95,4 @@ int _platform_map_find_raw(std::map<KEY,VAL>& store,const KEY& key, VAL& val) {
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-#endif
-
+#endif // YARP_OS_IMPL_PLATFORMMAP_H

@@ -2,7 +2,6 @@
  * Copyright (C) 2014 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -138,4 +137,3 @@ bool NetworkClock::read(ConnectionReader& reader) {
     listMutex.unlock();
     return true;
 }
-

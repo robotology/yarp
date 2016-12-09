@@ -1,8 +1,8 @@
 /*
-* Author: Lorenzo Natale.
-* Copyright (C) 2007 The RobotCub Consortium
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2007 The RobotCub Consortium
+ * Author: Lorenzo Natale.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include <yarp/sig/Vector.h>
 
@@ -45,7 +45,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     VectorPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
-    if (header.listLen > 0 && 
+    if (header.listLen > 0 &&
       header.listTag == (BOTTLE_TAG_LIST | getBottleTag()))
     {
         if ((size_t)getListSize() != (size_t)(header.listLen))
@@ -193,7 +193,7 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
 
-    if (header.listLen > 0 && 
+    if (header.listLen > 0 &&
         header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE)) {
         if (size() != (size_t)(header.listLen))
             resize(header.listLen);
@@ -226,4 +226,3 @@ bool Vector::write(yarp::os::ConnectionWriter& connection) {
 
     return !connection.isError();
 }
-

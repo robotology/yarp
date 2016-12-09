@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SHMEMTWOWAYSTREAM
-#define YARP2_SHMEMTWOWAYSTREAM
+#ifndef YARP_OS_IMPL_SHMEMTWOWAYSTREAM_H
+#define YARP_OS_IMPL_SHMEMTWOWAYSTREAM_H
 
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
@@ -28,9 +27,12 @@ namespace yarp {
  * A stream abstraction for shared memory / socket hybrid communication.
  */
 class yarp::os::impl::ShmemTwoWayStream : public TwoWayStream,
-            InputStream, OutputStream {
+                                          public InputStream,
+                                          public OutputStream
+{
 public:
-    ShmemTwoWayStream() {
+    ShmemTwoWayStream()
+    {
         happy = false;
         currentLength = 0;
     }
@@ -41,33 +43,40 @@ public:
 
     //void open(ACE_MEM_Acceptor& acceptor);
 
-    virtual ~ShmemTwoWayStream() {
+    virtual ~ShmemTwoWayStream()
+    {
         close();
     }
 
-    virtual InputStream& getInputStream() {
+    virtual InputStream& getInputStream()
+    {
         return *this;
     }
 
-    virtual OutputStream& getOutputStream() {
+    virtual OutputStream& getOutputStream()
+    {
         return *this;
     }
 
-    virtual const Address& getLocalAddress() {
+    virtual const Address& getLocalAddress()
+    {
         return localAddress;
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const Address& getRemoteAddress()
+    {
         return remoteAddress;
     }
 
-    virtual void interrupt() {
+    virtual void interrupt()
+    {
         stream.close_reader();
         stream.close_writer();
         happy = false;
     }
 
-    virtual void close() {
+    virtual void close()
+    {
         stream.close();
         happy = false;
     }
@@ -78,7 +87,8 @@ public:
 
     virtual void flush();
 
-    virtual bool isOk() {
+    virtual bool isOk()
+    {
         return happy;
     }
 
@@ -99,5 +109,4 @@ private:
     void reconnect();
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_SHMEMTWOWAYSTREAM_H

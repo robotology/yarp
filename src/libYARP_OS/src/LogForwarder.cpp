@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2014  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Marco Randazzo <marco.randazzo@iit.it>
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -96,4 +95,3 @@ yarp::os::LogForwarder::~LogForwarder()
     sem = YARP_NULLPTR;
 //     yarp::os::NetworkBase::finiMinimum();
 };
-

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef YARP2SoundFile_INC
-#define YARP2SoundFile_INC
+#ifndef YARP_SIG_SOUNDFILE_H
+#define YARP_SIG_SOUNDFILE_H
 
 #include <yarp/sig/Sound.h>
 
@@ -71,4 +71,4 @@ namespace yarp {
     }
 }
 
-#endif
+#endif // YARP_SIG_SOUNDFILE_H

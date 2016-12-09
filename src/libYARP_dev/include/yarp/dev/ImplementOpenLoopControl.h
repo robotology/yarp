@@ -2,11 +2,10 @@
  * Copyright (C) 2006, 2008, 2009 RobotCub Consortium
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_OPEN_LOOP_IMPL
-#define YARP_OPEN_LOOP_IMPL
+#ifndef YARP_DEV_IMPLEMENTOPENLOOPCONTROL_H
+#define YARP_DEV_IMPLEMENTOPENLOOPCONTROL_H
 
 #include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/api.h>
@@ -52,4 +51,4 @@ public:
 YARP_WARNING_POP
 #endif
 
-#endif
+#endif // YARP_DEV_IMPLEMENTOPENLOOPCONTROL_H

@@ -2,17 +2,15 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SOCKETTWOWAYSTREAM
-#define YARP2_SOCKETTWOWAYSTREAM
+#ifndef YARP_OS_IMPL_SOCKETTWOWAYSTREAM_H
+#define YARP_OS_IMPL_SOCKETTWOWAYSTREAM_H
 
+#include <yarp/conf/system.h>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/conf/system.h>
-
-#  include <yarp/os/impl/PlatformTime.h>
+#include <yarp/os/impl/PlatformTime.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/config.h>
@@ -40,7 +38,9 @@ namespace yarp {
  * A stream abstraction for socket communication.  It supports TCP.
  */
 class yarp::os::impl::SocketTwoWayStream : public TwoWayStream,
-            InputStream, OutputStream {
+                                           public InputStream,
+                                           public OutputStream
+{
 public:
     SocketTwoWayStream() :
             haveWriteTimeout(false),
@@ -53,27 +53,33 @@ public:
 
     int open(ACE_SOCK_Acceptor& acceptor);
 
-    virtual ~SocketTwoWayStream() {
+    virtual ~SocketTwoWayStream()
+    {
         close();
     }
 
-    virtual InputStream& getInputStream() {
+    virtual InputStream& getInputStream()
+    {
         return *this;
     }
 
-    virtual OutputStream& getOutputStream() {
+    virtual OutputStream& getOutputStream()
+    {
         return *this;
     }
 
-    virtual const Contact& getLocalAddress() {
+    virtual const Contact& getLocalAddress()
+    {
         return localAddress;
     }
 
-    virtual const Contact& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress()
+    {
         return remoteAddress;
     }
 
-    virtual void interrupt() {
+    virtual void interrupt()
+    {
         YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket");
         if (happy) {
             happy = false;
@@ -86,13 +92,15 @@ public:
         }
     }
 
-    virtual void close() {
+    virtual void close()
+    {
         stream.close();
         happy = false;
     }
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b) {
+    virtual YARP_SSIZE_T read(const Bytes& b)
+    {
         if (!isOk()) { return -1; }
         YARP_SSIZE_T result;
         if (haveReadTimeout) {
@@ -108,7 +116,8 @@ public:
         return result;
     }
 
-    virtual YARP_SSIZE_T partialRead(const Bytes& b) {
+    virtual YARP_SSIZE_T partialRead(const Bytes& b)
+    {
         if (!isOk()) { return -1; }
         YARP_SSIZE_T result;
         if (haveReadTimeout) {
@@ -125,7 +134,8 @@ public:
     }
 
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b) {
+    virtual void write(const Bytes& b)
+    {
         if (!isOk()) { return; }
         YARP_SSIZE_T result;
         if (haveWriteTimeout) {
@@ -139,24 +149,30 @@ public:
         }
     }
 
-    virtual void flush() {
+    virtual void flush()
+    {
         //stream.flush();
     }
 
-    virtual bool isOk() {
+    virtual bool isOk()
+    {
         return happy;
     }
 
-    virtual void reset() {
+    virtual void reset()
+    {
     }
 
-    virtual void beginPacket() {
+    virtual void beginPacket()
+    {
     }
 
-    virtual void endPacket() {
+    virtual void endPacket()
+    {
     }
 
-    virtual bool setWriteTimeout(double timeout) {
+    virtual bool setWriteTimeout(double timeout)
+    {
         if (timeout<1e-12) {
             haveWriteTimeout = false;
         } else {
@@ -166,7 +182,8 @@ public:
         return true;
     }
 
-    virtual bool setReadTimeout(double timeout) {
+    virtual bool setReadTimeout(double timeout)
+    {
         if (timeout<1e-12) {
             haveReadTimeout = false;
         } else {
@@ -176,7 +193,7 @@ public:
         return true;
     }
 
-    virtual bool setTypeOfService(int tos);    
+    virtual bool setTypeOfService(int tos);
     virtual int getTypeOfService();
 
 private:
@@ -190,4 +207,4 @@ private:
     void updateAddresses();
 };
 
-#endif
+#endif // YARP_OS_IMPL_SOCKETTWOWAYSTREAM_H

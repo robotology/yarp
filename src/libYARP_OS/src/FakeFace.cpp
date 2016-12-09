@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -31,4 +30,3 @@ OutputProtocol *FakeFace::write(const Contact& address) {
     Protocol *prot = new Protocol(new FakeTwoWayStream());
     return prot;
 }
-

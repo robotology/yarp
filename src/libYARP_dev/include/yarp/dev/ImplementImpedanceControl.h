@@ -2,11 +2,10 @@
  * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo and Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_IMPLEMENT_IMPEDANCE_CONTROL
-#define YARP_IMPLEMENT_IMPEDANCE_CONTROL
+#ifndef YARP_DEV_IMPLEMENTIMPEDANCECONTROL_H
+#define YARP_DEV_IMPLEMENTIMPEDANCECONTROL_H
 
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/api.h>
@@ -58,4 +57,4 @@ public:
 
 };
 
-#endif
+#endif // YARP_DEV_IMPLEMENTIMPEDANCECONTROL_H

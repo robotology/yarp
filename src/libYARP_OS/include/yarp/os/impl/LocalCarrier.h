@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_LOCALCARRIER
-#define YARP2_LOCALCARRIER
+#ifndef YARP_OS_IMPL_LOCALCARRIER_H
+#define YARP_OS_IMPL_LOCALCARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/SocketTwoWayStream.h>
@@ -26,7 +25,8 @@ namespace yarp {
 /**
  * Coordinate ports communicating locally within a process.
  */
-class yarp::os::impl::LocalCarrierManager {
+class yarp::os::impl::LocalCarrierManager
+{
 public:
     LocalCarrierManager();
 
@@ -44,7 +44,8 @@ private:
 /**
  * A stream for communicating locally within a process.
  */
-class yarp::os::impl::LocalCarrierStream : public SocketTwoWayStream {
+class yarp::os::impl::LocalCarrierStream : public SocketTwoWayStream
+{
 public:
     void attach(LocalCarrier *owner, bool sender);
 
@@ -61,7 +62,8 @@ private:
 /**
  * A carrier for communicating locally within a process.
  */
-class yarp::os::impl::LocalCarrier : public AbstractCarrier {
+class yarp::os::impl::LocalCarrier : public AbstractCarrier
+{
 public:
     LocalCarrier();
 
@@ -102,4 +104,4 @@ protected:
     static LocalCarrierManager manager;
 };
 
-#endif
+#endif // YARP_OS_IMPL_LOCALCARRIER_H

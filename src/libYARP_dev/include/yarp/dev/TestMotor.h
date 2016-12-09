@@ -2,12 +2,11 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#ifndef YARP2_TESTMOTOR
-#define YARP2_TESTMOTOR
+#ifndef YARP_DEV_TESTMOTOR_H
+#define YARP_DEV_TESTMOTOR_H
 
 #include <stdio.h>
 
@@ -356,4 +355,4 @@ YARP_WARNING_POP
 */
 
 
-#endif
+#endif // YARP_DEV_TESTMOTOR_H

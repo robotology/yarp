@@ -2,11 +2,10 @@
  * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPTORQUECONTROL
-#define YARPTORQUECONTROL
+#ifndef YARP_DEV_ITORQUECONTROL_H
+#define YARP_DEV_ITORQUECONTROL_H
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/ControlBoardPid.h>
@@ -492,4 +491,4 @@ public:
     virtual bool setTorqueOffsetRaw(int j, double v)=0;
 };
 
-#endif
+#endif // YARP_DEV_ITORQUECONTROL_H

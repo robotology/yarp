@@ -311,4 +311,4 @@ inline yarp::os::ConstString int2String(int x)
     return yarp::os::ConstString(buff);
 }
 
-#endif
+#endif // YARP_OS_IMPL_RUNPROCMANAGER_H

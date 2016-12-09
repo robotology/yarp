@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_DGRAMTWOWAYSTREAM
-#define YARP2_DGRAMTWOWAYSTREAM
+#ifndef YARP_OS_IMPL_DGRAMTWOWAYSTREAM_H
+#define YARP_OS_IMPL_DGRAMTWOWAYSTREAM_H
 
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
@@ -31,10 +30,12 @@ namespace yarp {
  * A stream abstraction for datagram communication.  It supports UDP and
  * MCAST.  This class is not concerned with making the stream reliable.
  */
-class YARP_OS_impl_API yarp::os::impl::DgramTwoWayStream : public TwoWayStream, public InputStream, public OutputStream {
+class YARP_OS_impl_API yarp::os::impl::DgramTwoWayStream : public TwoWayStream, public InputStream, public OutputStream
+{
 
 public:
-    DgramTwoWayStream() : mutex(1) {
+    DgramTwoWayStream() : mutex(1)
+    {
         interrupting = false;
         closed = false;
         reader = false;
@@ -48,7 +49,8 @@ public:
         lastReportTime = 0;
     }
 
-    virtual bool openMonitor(int readSize=0, int writeSize=0) {
+    virtual bool openMonitor(int readSize=0, int writeSize=0)
+    {
         allocate(readSize,writeSize);
         return true;
     }
@@ -70,31 +72,37 @@ public:
     virtual bool join(const Contact& group, bool sender,
                       const Contact& ipLocal);
 
-    virtual bool join(const Contact& group, bool sender) {
+    virtual bool join(const Contact& group, bool sender)
+    {
         return join(group,sender,Contact());
     }
 
     virtual ~DgramTwoWayStream();
 
-    virtual InputStream& getInputStream() {
+    virtual InputStream& getInputStream()
+    {
         return *this;
     }
 
-    virtual OutputStream& getOutputStream() {
+    virtual OutputStream& getOutputStream()
+    {
         return *this;
     }
 
-    virtual const Contact& getLocalAddress() {
+    virtual const Contact& getLocalAddress()
+    {
         return localAddress;
     }
 
-    virtual const Contact& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress()
+    {
         return remoteAddress;
     }
 
     virtual void interrupt();
 
-    virtual void close() {
+    virtual void close()
+    {
         closeMain();
     }
 
@@ -122,7 +130,8 @@ public:
 
     virtual int getTypeOfService();
 
-    void setMonitor(const yarp::os::Bytes& data) {
+    void setMonitor(const yarp::os::Bytes& data)
+    {
         monitor = yarp::os::ManagedBytes(data,false);
         monitor.copy();
     }
@@ -163,5 +172,4 @@ private:
     void configureSystemBuffers();
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_DGRAMTWOWAYSTREAM_H

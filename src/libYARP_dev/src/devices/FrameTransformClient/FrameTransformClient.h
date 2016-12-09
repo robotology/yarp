@@ -1,12 +1,11 @@
 /*
-* Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-#ifndef TRANSFORM_CLIENT_H
-#define TRANSFORM_CLIENT_H
+#ifndef YARP_DEV_FRAMETRANSFORMCLIENT_FRAMETRANSFORMCLIENT_H
+#define YARP_DEV_FRAMETRANSFORMCLIENT_FRAMETRANSFORMCLIENT_H
 
 
 #include <yarp/os/Network.h>
@@ -125,4 +124,4 @@ public:
      bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) ;
 };
 
-#endif // TRANSFORM_CLIENT_H
+#endif // YARP_DEV_FRAMETRANSFORMCLIENT_FRAMETRANSFORMCLIENT_H

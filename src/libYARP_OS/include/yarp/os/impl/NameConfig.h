@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_NAMECONFIG
-#define YARP2_NAMECONFIG
+#ifndef YARP_OS_IMPL_NAMECONFIG_H
+#define YARP_OS_IMPL_NAMECONFIG_H
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>
@@ -26,7 +25,8 @@ namespace yarp {
  * Small helper class to help deal with legacy YARP configuration files.
  *
  */
-class YARP_OS_impl_API yarp::os::impl::NameConfig {
+class YARP_OS_impl_API yarp::os::impl::NameConfig
+{
 public:
 
     static ConstString expandFilename(const char *fname);
@@ -34,7 +34,7 @@ public:
     ConstString getSafeString(const ConstString& txt);
 
     ConstString getConfigFileName(const char *stem = YARP_NULLPTR,
-                             const char *ns = YARP_NULLPTR);
+                                  const char *ns = YARP_NULLPTR);
 
     static bool createPath(const ConstString& fileName, int ignoreLevel = 1);
 
@@ -59,11 +59,13 @@ public:
 
     Contact getAddress();
 
-    ConstString getMode() {
+    ConstString getMode()
+    {
         return mode;
     }
 
-    void setMode(const ConstString& mode) {
+    void setMode(const ConstString& mode)
+    {
         this->mode = mode;
     }
 
@@ -82,4 +84,4 @@ private:
     bool fromString(const ConstString& txt);
 };
 
-#endif
+#endif // YARP_OS_IMPL_NAMECONFIG_H

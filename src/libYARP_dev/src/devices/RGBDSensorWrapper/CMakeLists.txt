@@ -1,3 +1,7 @@
+# Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+# Author: Alberto Cardellino <alberto.cardellino@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 # use PARENT_SCOPE to make the following variables available at the 'parent' cmake
 
 set(RGBDWrap_srcs      src/devices/RGBDSensorWrapper/RGBDSensorWrapper.cpp

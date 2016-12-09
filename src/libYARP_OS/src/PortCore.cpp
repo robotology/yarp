@@ -2,7 +2,6 @@
  * Copyright (C) 2006, 2007 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/InputProtocol.h>
@@ -1781,7 +1780,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                     result.addInt(-1);
                     result.addString("target port is not specified.\r\n");
                 }
-                else {                    
+                else {
                     if(target == getName()) {
                         yarp::os::Property property;
                         property.fromString(cmd.toString());

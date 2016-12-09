@@ -2,7 +2,6 @@
  * Copyright (C) 2013 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -32,7 +31,7 @@ bool NestedContact::fromString(const ConstString& nFullName) {
     }
     idx = fullName.find('@');
     if (idx!=ConstString::npos) {
-        // Great!  Looks like we are using a new syntax suggested 
+        // Great!  Looks like we are using a new syntax suggested
         // by Lorenzo Natale, /topic@/node
         nestedName = fullName.substr(0,idx);
         nodeName = fullName.substr(idx+1,fullName.length());
@@ -57,7 +56,7 @@ bool NestedContact::fromString(const ConstString& nFullName) {
             }
         }
         return true;
-    } 
+    }
     idx = fullName.find('=');
     if (idx!=ConstString::npos) {
         nodeName = fullName.substr(0,idx);

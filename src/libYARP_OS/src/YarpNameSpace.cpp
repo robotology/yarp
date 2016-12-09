@@ -2,7 +2,6 @@
  * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/YarpNameSpace.h>
@@ -97,7 +96,7 @@ Contact YarpNameSpace::unregisterContact(const Contact& contact) {
 }
 
 
-bool YarpNameSpace::setProperty(const ConstString& name, const ConstString& key, 
+bool YarpNameSpace::setProperty(const ConstString& name, const ConstString& key,
                                 const Value& value) {
     Bottle command;
     command.addString("bot");
@@ -173,5 +172,3 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
     reply.read(con.getReader());
     return result!="";
 }
-
-

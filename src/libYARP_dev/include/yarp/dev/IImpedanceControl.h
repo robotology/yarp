@@ -2,11 +2,10 @@
  * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo and Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_IMPEDANCE_CONTROLINTERFACE
-#define YARP_IMPEDANCE_CONTROLINTERFACE
+#ifndef YARP_DEV_IIMPEDANCECONTROL_H
+#define YARP_DEV_IIMPEDANCECONTROL_H
 
 #include <yarp/dev/api.h>
 
@@ -118,4 +117,4 @@ public:
 #define VOCAB_VELOCITY VOCAB3('v','e','l')
 #define VOCAB_IOPENLOOP VOCAB3('o','l','o')
 
-#endif
+#endif // YARP_DEV_IIMPEDANCECONTROL_H

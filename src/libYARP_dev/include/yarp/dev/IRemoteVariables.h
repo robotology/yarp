@@ -2,11 +2,10 @@
  * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPREMOTEVARIABLES
-#define YARPREMOTEVARIABLES
+#ifndef YARP_DEV_IREMOTEVARIABLES_H
+#define YARP_DEV_IREMOTEVARIABLES_H
 
 #include <yarp/os/Vocab.h>
 
@@ -62,4 +61,4 @@ public:
 #define VOCAB_LIST_VARIABLES               VOCAB4('l','v','a','r')
 
 
-#endif
+#endif // YARP_DEV_IREMOTEVARIABLES_H

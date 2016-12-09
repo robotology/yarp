@@ -2,11 +2,10 @@
  * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia, Anne van Rossum
  * Authors: Paul Fitzpatrick, Anne van Rossum
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PLATFORMTHREAD
-#define YARP2_PLATFORMTHREAD
+#ifndef YARP_OS_IMPL_PLATFORMTHREAD_H
+#define YARP_OS_IMPL_PLATFORMTHREAD_H
 
 #include <yarp/conf/system.h>
 #if defined(YARP_HAS_CXX11)
@@ -37,4 +36,4 @@
 #  define PLATFORM_THREAD_JOIN(x) pthread_join(x, YARP_NULLPTR)
 #endif
 
-#endif
+#endif // YARP_OS_IMPL_PLATFORMTHREAD_H

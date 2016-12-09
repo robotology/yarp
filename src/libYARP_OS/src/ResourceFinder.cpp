@@ -2,7 +2,6 @@
  * Copyright (C) 2008 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <stdio.h>
@@ -545,7 +544,7 @@ YARP_WARNING_POP
 
         if (verbose) {
             ConstString base = doc.toString();
-            fprintf(RTARGET,"||| checking [%s] (%s%s%s)\n", s.c_str(), 
+            fprintf(RTARGET,"||| checking [%s] (%s%s%s)\n", s.c_str(),
                     base.c_str(),
                     (base.length()==0) ? "" : " ",
                     doc2);
@@ -614,7 +613,7 @@ YARP_WARNING_POP
     }
 
     yarp::os::ConstString findFileBase(Property& config, const ConstString& name,
-                                       bool isDir, 
+                                       bool isDir,
                                        const ResourceFinderOptions *externalOptions) {
         Bottle output;
         ResourceFinderOptions opts;
@@ -721,8 +720,8 @@ YARP_WARNING_POP
         }
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
-        if ((locs & ResourceFinderOptions::ClassicContext) && 
-            (!useNearMain) && 
+        if ((locs & ResourceFinderOptions::ClassicContext) &&
+            (!useNearMain) &&
             root != "") {
             ConstString cap =
                 config.check("capability_directory",Value("app")).asString();
@@ -757,7 +756,7 @@ YARP_WARNING_POP
 
                 // New context still apparently applies only to "applications"
                 // which means we need to restrict our attention to "app"
-                // directories.  
+                // directories.
 
                 // Nested search to locate context directory
                 Bottle paths;

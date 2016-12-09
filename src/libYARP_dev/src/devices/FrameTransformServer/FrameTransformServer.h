@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef TRANSFORM_SERVER_H_
-#define TRANSFORM_SERVER_H_
+#ifndef YARP_DEV_FRAMETRANSFORMSERVER_FRAMETRANSFORMSERVER_H
+#define YARP_DEV_FRAMETRANSFORMSERVER_FRAMETRANSFORMSERVER_H
 
 #include <vector>
 #include <iostream>
@@ -118,4 +118,4 @@ private:
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };
 
-#endif
+#endif // YARP_DEV_FRAMETRANSFORMSERVER_FRAMETRANSFORMSERVER_H

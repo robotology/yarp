@@ -2,11 +2,10 @@
  * Copyright (C) 2012 IITRBCS
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_WIREWRITER
-#define YARP2_WIREWRITER
+#ifndef YARP_OS_IDL_WIREWRITER_H
+#define YARP_OS_IDL_WIREWRITER_H
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/api.h>
@@ -48,7 +47,7 @@ public:
     bool writeNested(WirePortable& obj);
 
     bool writeNested(yarp::os::PortWriter& obj);
-    
+
     bool writeI16(const YARP_INT16& x);
 
     bool writeI32(const YARP_INT32& x);
@@ -97,4 +96,4 @@ private:
     ConnectionWriter& writer;
 };
 
-#endif
+#endif // YARP_OS_IDL_WIREWRITER_H

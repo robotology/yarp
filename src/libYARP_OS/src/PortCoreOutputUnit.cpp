@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -247,7 +246,7 @@ bool PortCoreOutputUnit::sendHelper() {
             if(op->getSender().acceptOutgoingData(*cachedWriter))
                 cachedWriter = &op->getSender().modifyOutgoingData(*cachedWriter);
             else
-               return (done = true); 
+               return (done = true);
         }
 
         if (op->getConnection().isLocal()) {

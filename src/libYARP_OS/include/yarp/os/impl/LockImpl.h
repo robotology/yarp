@@ -2,11 +2,10 @@
  * Copyright (C) 2015 Robotics and Cognitive Sciences Department. IIT
  * Authors: Francesco Romano
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_LOCKIMPL_H
-#define YARP_LOCKIMPL_H
+#ifndef YARP_OS_IMPL_LOCKIMPL_H
+#define YARP_OS_IMPL_LOCKIMPL_H
 
 // Pre-declare Recursive Lock
 namespace yarp {
@@ -35,5 +34,4 @@ namespace yarp {
 #  endif
 #endif
 
-#endif /* end of include guard: YARP_LOCKIMPL_H */
-
+#endif // YARP_OS_IMPL_LOCKIMPL_H

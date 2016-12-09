@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef YARP2_SPLITSTRING
-#define YARP2_SPLITSTRING
+#ifndef YARP_OS_IMPL_SPLITSTRING_H
+#define YARP_OS_IMPL_SPLITSTRING_H
 
 #include <yarp/os/api.h>
 
@@ -26,7 +26,8 @@ namespace yarp {
  * This class is a bit crufty, and should be replaced with a simple Bottle
  * (now that Bottle exists).
  */
-class YARP_OS_impl_API yarp::os::impl::SplitString {
+class YARP_OS_impl_API yarp::os::impl::SplitString
+{
 public:
     SplitString();
 
@@ -48,5 +49,4 @@ private:
     char buf[MAX_ARG_CT][MAX_ARG_LEN];
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_SPLITSTRING_H

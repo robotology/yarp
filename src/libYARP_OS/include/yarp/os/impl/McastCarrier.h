@@ -2,11 +2,10 @@
  * Copyright (C) 2006, 2007 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_MCASTCARRIER
-#define YARP2_MCASTCARRIER
+#ifndef YARP_OS_IMPL_MCASTCARRIER_H
+#define YARP_OS_IMPL_MCASTCARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/UdpCarrier.h>
@@ -64,4 +63,4 @@ public:
     virtual bool isBroadcast();
 };
 
-#endif
+#endif // YARP_OS_IMPL_MCASTCARRIER_H

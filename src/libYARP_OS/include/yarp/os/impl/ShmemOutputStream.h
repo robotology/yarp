@@ -1,8 +1,7 @@
 /*
- * Author: Alessandro Scalzo alessandro@liralab.it
  * Copyright (C) 2007 RobotCub Consortium
+ * Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef YARP_OS_IMPL_SHMEMOUTPUTSTREAM_H
@@ -80,4 +79,4 @@ protected:
     ShmemHeader_t *m_pHeader;
 };
 
-#endif
+#endif // YARP_OS_IMPL_SHMEMOUTPUTSTREAM_H

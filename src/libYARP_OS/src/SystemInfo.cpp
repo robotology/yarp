@@ -1,13 +1,7 @@
 /*
- *  Yarp Modules Manager
  *  Copyright: (C) 2010 RobotCub Consortium
- *              Italian Institute of Technology (IIT)
- *              Via Morego 30, 16163,
- *              Genova, Italy
- *
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #include <stdio.h>

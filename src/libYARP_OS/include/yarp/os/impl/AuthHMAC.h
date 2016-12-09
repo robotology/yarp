@@ -1,11 +1,10 @@
 /*
  * Copyright (C) 2010 Daniel Krieg
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_AUTHHMAC
-#define YARP2_AUTHHMAC
+#ifndef YARP_OS_IMPL_AUTHHMAC_H
+#define YARP_OS_IMPL_AUTHHMAC_H
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
@@ -31,7 +30,8 @@ namespace yarp {
 /**
  * 3-way authentication via HMAC
  */
-class YARP_OS_impl_API yarp::os::impl::AuthHMAC {
+class YARP_OS_impl_API yarp::os::impl::AuthHMAC
+{
 public:
     /**
      * Constructor.
@@ -57,5 +57,4 @@ private:
     HMAC_CONTEXT context;
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_AUTHHMAC_H

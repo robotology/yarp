@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007-2009 RobotCub Consortium
+ * Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -2664,7 +2665,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
                 /*
                 int nargs=CountArgs(cmd_str);
                 char **arg_str=new char*[nargs+1];
-                ParseCmd(cmd_str,arg_str);                
+                ParseCmd(cmd_str,arg_str);
                 arg_str[nargs]=0;
                 */
                 int nargs = 0;
@@ -3772,4 +3773,3 @@ bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::Const
 }
 
 // end API
-

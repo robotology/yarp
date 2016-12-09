@@ -2,11 +2,10 @@
  * Copyright (C) 2008 RobotCub Consortium
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPVELOCITYCONTROL
-#define YARPVELOCITYCONTROL
+#ifndef YARP_DEV_IVELOCITYCONTROL_H
+#define YARP_DEV_IVELOCITYCONTROL_H
 
 namespace yarp {
     namespace dev {
@@ -196,4 +195,4 @@ public:
 };
 
 
-#endif
+#endif // YARP_DEV_IVELOCITYCONTROL_H

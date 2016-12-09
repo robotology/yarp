@@ -1,11 +1,11 @@
 /*
-* Copyright (C) 2008 RobotCub Consortium
-* Authors: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2008 RobotCub Consortium
+ * Authors: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-#ifndef YARPWRAPPERINTERFACE
-#define YARPWRAPPERINTERFACE
+#ifndef YARP_DEV_WRAPPER_H
+#define YARP_DEV_WRAPPER_H
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
@@ -82,4 +82,4 @@ public:
     virtual bool detachAll()=0;
 };
 
-#endif
+#endif // YARP_DEV_WRAPPER_H

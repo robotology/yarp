@@ -6,8 +6,8 @@
 
 #include <yarp/dev/api.h>
 
-#ifndef YARPLASERMEASURMENTDATA
-#define YARPLASERMEASURMENTDATA
+#ifndef YARP_DEV_LASERMEASURMENTDATA_H
+#define YARP_DEV_LASERMEASURMENTDATA_H
 
 /*!
  * \file LaserMeasurementData.h
@@ -36,4 +36,4 @@ public:
     void get_polar(double& rho, double& theta);
 };
 
-#endif
+#endif // YARP_DEV_LASERMEASURMENTDATA_H

@@ -2,11 +2,10 @@
  * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia, Anne van Rossum
  * Authors: Paul Fitzpatrick, Anne van Rossum
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PLATFORMVECTOR
-#define YARP2_PLATFORMVECTOR
+#ifndef YARP_OS_IMPL_PLATFORMVECTOR_H
+#define YARP_OS_IMPL_PLATFORMVECTOR_H
 
 #include <yarp/conf/system.h>
 #ifndef YARP_USE_STL
@@ -19,4 +18,4 @@
 #  define PLATFORM_VECTOR_ITERATOR(x) std::vector<x >::iterator
 #endif
 
-#endif
+#endif // YARP_OS_IMPL_PLATFORMVECTOR_H

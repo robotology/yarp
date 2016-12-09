@@ -2,11 +2,10 @@
  * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo and Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_CONTROL_MODE_INTERFACE
-#define YARP_CONTROL_MODE_INTERFACE
+#ifndef YARP_DEV_ICONTROLMODE_H
+#define YARP_DEV_ICONTROLMODE_H
 
 namespace yarp {
     namespace dev {
@@ -129,4 +128,4 @@ public:
 // Read only (cannot be set from user)
 #define VOCAB_CM_UNKNOWN            VOCAB4('u','n','k','w')
 
-#endif
+#endif // YARP_DEV_ICONTROLMODE_H

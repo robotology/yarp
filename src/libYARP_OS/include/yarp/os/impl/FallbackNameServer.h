@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef YARP2_FALLBACKNAMESERVER
-#define YARP2_FALLBACKNAMESERVER
+#ifndef YARP_OS_IMPL_FALLBACKNAMESERVER_H
+#define YARP_OS_IMPL_FALLBACKNAMESERVER_H
 
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/Contact.h>
@@ -25,10 +25,13 @@ namespace yarp {
  * Multi-cast server, for last resort information sharing about
  * name information -- when config files are missing or wrong
  */
-class YARP_OS_impl_API yarp::os::impl::FallbackNameServer : public ThreadImpl {
+class YARP_OS_impl_API yarp::os::impl::FallbackNameServer : public ThreadImpl
+{
 public:
-    FallbackNameServer(NameServerStub& owner) : owner(owner) {
-        closed = false;
+    FallbackNameServer(NameServerStub& owner) :
+            owner(owner),
+            closed(false)
+    {
     }
 
     virtual void run();
@@ -42,5 +45,4 @@ private:
     bool closed;
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_FALLBACKNAMESERVER_H

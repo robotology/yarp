@@ -4,11 +4,11 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#ifndef YARP_DEV_IINTERACTIONMODE_H
+#define YARP_DEV_IINTERACTIONMODE_H
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#ifndef IINTERACTION_MODE_H
-#define IINTERACTION_MODE_H
 
 namespace yarp {
     namespace dev {
@@ -189,4 +189,4 @@ public:
     virtual bool setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)=0;
 };
 
-#endif /* IINTERACTION_MODE_H */
+#endif // YARP_DEV_IINTERACTIONMODE_H

@@ -2,11 +2,10 @@
  * Copyright (C) 2010 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_IMAGENETWORKHEADER
-#define YARP2_IMAGENETWORKHEADER
+#ifndef YARP_SIG_IMAGENETWORKHEADER_H
+#define YARP_SIG_IMAGENETWORKHEADER_H
 
 #include <yarp/conf/system.h>
 
@@ -68,4 +67,4 @@ public:
 };
 YARP_END_PACK
 
-#endif
+#endif // YARP_SIG_IMAGENETWORKHEADER_H

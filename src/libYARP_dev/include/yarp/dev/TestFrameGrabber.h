@@ -2,12 +2,11 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#ifndef YARP2_TESTFRAMEGRABBER
-#define YARP2_TESTFRAMEGRABBER
+#ifndef YARP_DEV_TESTFRAMEGRABBER_H
+#define YARP_DEV_TESTFRAMEGRABBER_H
 
 #include <stdio.h>
 
@@ -287,4 +286,4 @@ private:
 */
 
 
-#endif
+#endif // YARP_DEV_TESTFRAMEGRABBER_H

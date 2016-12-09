@@ -2,11 +2,10 @@
  * Copyright (C) 2013 RobotCub Consortium
  * Author: Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPVIRTUALANALOGSENSORINTERFACE
-#define YARPVIRTUALANALOGSENSORINTERFACE
+#ifndef YARP_DEV_IVIRTUALANALOGSENSOR_H
+#define YARP_DEV_IVIRTUALANALOGSENSOR_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
@@ -63,4 +62,4 @@ public:
 
 };
 
-#endif
+#endif // YARP_DEV_IVIRTUALANALOGSENSOR_H

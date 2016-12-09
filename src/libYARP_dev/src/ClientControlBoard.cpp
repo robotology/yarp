@@ -1,9 +1,8 @@
 /*
-* Copyright (C) 2014 RobotCub Consortium
-* Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick, Alberto CArdellino
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2014 RobotCub Consortium
+ * Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick, Alberto CArdellino
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 /*
  * This device meant to be used coupled with the ServerControlBoard device to

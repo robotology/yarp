@@ -5,8 +5,8 @@
  */
 
 
-#ifndef YARPPOSITIONCONTROLINTERFACE_V2
-#define YARPPOSITIONCONTROLINTERFACE_V2
+#ifndef YARP_DEV_IPOSITIONCONTROL2_H
+#define YARP_DEV_IPOSITIONCONTROL2_H
 
 #include <yarp/dev/IPositionControl.h>
 
@@ -279,4 +279,6 @@ public:
 #define VOCAB_REF_SPEED_GROUP        VOCAB4('v','e','l','g')
 #define VOCAB_REF_ACCELERATION_GROUP VOCAB4('a','c','c','g')
 #define VOCAB_STOP_GROUP             VOCAB4('s','t','o','g')
-#endif
+
+
+#endif // YARP_DEV_IPOSITIONCONTROL2_H

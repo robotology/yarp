@@ -2,11 +2,10 @@
  * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPMOTOR
-#define YARPMOTOR
+#ifndef YARP_DEV_IMOTOR_H
+#define YARP_DEV_IMOTOR_H
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
@@ -166,4 +165,4 @@ public:
 #define VOCAB_TEMPERATURE_LIMIT    VOCAB4('t','m','p','l')
 
 
-#endif
+#endif // YARP_DEV_IMOTOR_H

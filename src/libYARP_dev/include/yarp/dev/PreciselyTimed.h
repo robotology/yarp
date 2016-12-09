@@ -2,7 +2,6 @@
  * Copyright (C) 2008 RobotCub Consortium
  * Author Alessandro Scalzo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -28,4 +27,4 @@ public:
     virtual ~IPreciselyTimed(){}
 };
 
-#endif
+#endif // YARP_DEV_PRECISELYTIMED_H

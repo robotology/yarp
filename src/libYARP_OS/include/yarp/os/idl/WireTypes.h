@@ -2,12 +2,11 @@
  * Copyright (C) 2012 IITRBCS
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#ifndef YARP2_WIRETYPES
-#define YARP2_WIRETYPES
+#ifndef YARP_OS_IDL_WIRETYPES_H
+#define YARP_OS_IDL_WIRETYPES_H
 
 #if defined(_WIN32) && !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER<1600)
   typedef __int32 int32_t;
@@ -18,7 +17,7 @@
 #  include <stdint.h>
 #endif
 
- 
+
 #include <string>
 #include <vector>
 #include <map>
@@ -44,4 +43,4 @@
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/Log.h>
 
-#endif
+#endif // YARP_OS_IDL_WIRETYPES_H

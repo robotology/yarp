@@ -1,13 +1,11 @@
 /*
  * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
- * Authors: Alberto Cardellino
- * email:   alberto.cardellino@iit.it
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-#ifndef STATE_EXTENDED_READER
-#define STATE_EXTENDED_READER
+#ifndef YARP_DEV_REMOTECONTROLBOARD_STATEEXTENDEDREADER_H
+#define YARP_DEV_REMOTECONTROLBOARD_STATEEXTENDEDREADER_H
 
 
 #include <string.h>
@@ -78,4 +76,4 @@ public:
     void getEstFrequency(int &ite, double &av, double &min, double &max);
 };
 
-#endif //STATE_EXTENDED_READER
+#endif // YARP_DEV_REMOTECONTROLBOARD_STATEEXTENDEDREADER_H

@@ -2,7 +2,6 @@
  * Copyright (C) 2014 iCub Facility
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -64,4 +63,3 @@ Type& Type::addProperty(const char *key, const Value& val) {
     prop->put(key,val);
     return *this;
 }
-
