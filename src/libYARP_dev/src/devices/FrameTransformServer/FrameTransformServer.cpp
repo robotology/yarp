@@ -315,7 +315,6 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         t.translation.tZ = in.get(5).asDouble();
         t.rotFromRPY(in.get(6).asDouble(), in.get(7).asDouble(), in.get(8).asDouble());
         t.timestamp = yarp::os::Time::now();
-        bool static_transform = true;
         ret = m_yarp_static_transform_storage->set_transform(t);
         if (ret == true)
         {
