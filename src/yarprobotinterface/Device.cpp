@@ -129,7 +129,7 @@ public:
     yarp::os::Property paramsAsProperty() const
     {
         ParamList p = RobotInterface::mergeDuplicateGroups(params);
-   
+
         yarp::os::Property prop;
         prop.put("device",type);
 
