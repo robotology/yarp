@@ -4,14 +4,12 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef SIMPLE_INC
-#define SIMPLE_INC
+#ifndef YARP_ZFP_CARRIER_ZFPPORTMONITOR_H
+#define YARP_ZFP_CARRIER_ZFPPORTMONITOR_H
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Things.h>
 #include <yarp/sig/Image.h>
-//#include <yarp/os/Bytes.h>
-//#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/MonitorObject.h>
 
 

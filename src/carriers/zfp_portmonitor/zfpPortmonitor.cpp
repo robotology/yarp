@@ -23,13 +23,12 @@ bool ZfpMonitorObject::create(const yarp::os::Property& options)
    shouldCompress = (options.find("sender_side").asBool());
    compressed=NULL;
    decompressed=NULL;
-   //yDebug()<< ((shouldCompress) ? "compressing..." : "decompressing...");
    return true;
 }
 
 void ZfpMonitorObject::destroy(void)
 {
-    //yDebug()<<"destroyed";
+
 }
 
 bool ZfpMonitorObject::setparam(const yarp::os::Property& params)
@@ -77,7 +76,7 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
         int sizeCompressed;
         compress((float*)img->getRawImage(), compressed, sizeCompressed, img->width(),img->height(),1e-3);
         if(!compressed){
-            yError()<<"Failed to compress, exiting...";
+            yError()<<"ZfpMonitorObject:Failed to compress, exiting...";
             return thing;
         }
         data.clear();
@@ -100,7 +99,6 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
        int height=compressedbt->get(1).asInt();
        int sizeCompressed=compressedbt->get(2).asInt();
        compressed=(float*)compressedbt->get(3).asBlob();
-       //yDebug()<<"W"<<width<<"H"<<height<<"sizecomp"<<sizeCompressed;
        // cast thing to compressed.
        decompress(compressed, decompressed, sizeCompressed, width, height,1e-3);
 
@@ -114,10 +112,6 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
 
    }
 
-
-    //bt.clear();
-
-    //th.setPortWriter(&bt);
     return th;
 }
 
@@ -157,10 +151,6 @@ int ZfpMonitorObject::compress(float* array, float* &compressed, int &zfpsize, i
       fprintf(stderr, "compression failed\n");
       status = 1;
     }
-    //else
-        //yInfo()<<"compression successful, ratio of compression:"<<(nx*ny*4.0)/(zfpsize)<<":1"<<"orgSize="
-              //<<nx*ny*4.0<<"compressedSize="<<zfpsize;//4 -> float
-
 
     compressed = (float*) malloc(zfpsize);
     memcpy(compressed,(float*) stream_data(zfp->stream),zfpsize);
@@ -200,28 +190,16 @@ int ZfpMonitorObject::decompress(float* array, float* &decompressed, int zfpsize
     buffer = malloc(bufsize);
     memcpy(buffer,array,zfpsize);
 
-
-//    /* associate bit stream with allocated buffer */
+    /* associate bit stream with allocated buffer */
     stream = stream_open(buffer, zfpsize);
     zfp_stream_set_bit_stream(zfp, stream);
     zfp_stream_rewind(zfp);
 
-    /* compress or decompress entire array */
     /* read compressed stream and decompress array */
-    //zfpsize = fread(buffer, 1, bufsize, stdin);
-    //devo metterci il mio puntatore al dato compresso.
     if (!zfp_decompress(zfp, field)) {
       fprintf(stderr, "decompression failed\n");
       status = 1;
     }
-    //else
-        //yInfo()<<"Decompression successful";
-    //yDebug()<<"bufsize"<<bufsize<<"zfpsize"<<zfpsize;
-    //std::cout<<"test decompressed data "<<((float*) field->data)[76799]<<std::endl; //OK
-//    ((float*) field->data)[i + nx * (j)]
-    //nx*ny*sizeof(float)
-    //memcpy(decompressed,(float*) field->data,nx*ny*sizeof(float));
-
 
     /* clean up */
     zfp_field_free(field);

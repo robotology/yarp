@@ -1,7 +1,7 @@
 
 zfp_portmonitor plugin 
 ======================================================================
-Portmonitor plugin for compression and decompression of depth images using zfp library. Working on my machine, to include in yarp!
+Portmonitor plugin for compression and decompression of depth images using zfp library.
 
 Usage:
 -----
