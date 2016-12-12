@@ -23,12 +23,28 @@ bool ZfpMonitorObject::create(const yarp::os::Property& options)
    shouldCompress = (options.find("sender_side").asBool());
    compressed=NULL;
    decompressed=NULL;
+   buffer=NULL;
+   sizeToAllocate=0;
+   sizeToAllocateB=0;
    return true;
 }
 
 void ZfpMonitorObject::destroy(void)
 {
+    if(compressed){
+        free(compressed);
+        compressed=NULL;
+    }
 
+    if(buffer){
+        free(buffer);
+        buffer=NULL;
+    }
+
+    if(decompressed){
+        free(decompressed);
+        decompressed=NULL;
+    }
 }
 
 bool ZfpMonitorObject::setparam(const yarp::os::Property& params)
@@ -67,10 +83,6 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
 {
 
    if(shouldCompress) {
-       if(compressed){
-           free(compressed);
-           compressed=NULL;
-       }
         ImageOf<PixelFloat>* img = thing.cast_as< ImageOf<PixelFloat> >();
         // .... buffer, len
         int sizeCompressed;
@@ -89,21 +101,17 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
    }
    else
    {
-       if(decompressed){
-           free(decompressed);
-           decompressed=NULL;
-       }
+
        Bottle* compressedbt= thing.cast_as<Bottle>();
 
        int width=compressedbt->get(0).asInt();
        int height=compressedbt->get(1).asInt();
        int sizeCompressed=compressedbt->get(2).asInt();
-       compressed=(float*)compressedbt->get(3).asBlob();
        // cast thing to compressed.
-       decompress(compressed, decompressed, sizeCompressed, width, height,1e-3);
+       decompress((float*)compressedbt->get(3).asBlob(), decompressed, sizeCompressed, width, height,1e-3);
 
        if(!decompressed){
-           yError()<<"Failed to decompress, exiting...";
+           yError()<<"ZfpMonitorObject:Failed to decompress, exiting...";
            return thing;
        }
        imageOut.resize(width,height);
@@ -115,12 +123,30 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
     return th;
 }
 
+void ZfpMonitorObject::resizeF(float *&array, int newSize){
+    if(newSize>sizeToAllocate){
+        sizeToAllocate=newSize;
+        free(array);
+        array=(float*) malloc(sizeToAllocate);
+    }
+
+
+}
+void ZfpMonitorObject::resizeV(void *&array, int newSize){
+    if(newSize>sizeToAllocateB){
+        sizeToAllocateB=newSize;
+        free(array);
+        array=(void*) malloc(sizeToAllocateB);
+    }
+
+
+}
+
 int ZfpMonitorObject::compress(float* array, float* &compressed, int &zfpsize, int nx, int ny, float tolerance){
     int status = 0;    /* return value: 0 = success */
     zfp_type type;     /* array scalar type */
     zfp_field* field;  /* array meta data */
     zfp_stream* zfp;   /* compressed stream */
-    void* buffer;      /* storage for compressed stream */
     size_t bufsize;    /* byte size of compressed buffer */
     bitstream* stream; /* bit stream to write to or read from */
 
@@ -137,7 +163,8 @@ int ZfpMonitorObject::compress(float* array, float* &compressed, int &zfpsize, i
 
     /* allocate buffer for compressed data */
     bufsize = zfp_stream_maximum_size(zfp, field);
-    buffer = malloc(bufsize);
+
+    resizeV(buffer,bufsize);
 
     /* associate bit stream with allocated buffer */
     stream = stream_open(buffer, bufsize);
@@ -152,14 +179,13 @@ int ZfpMonitorObject::compress(float* array, float* &compressed, int &zfpsize, i
       status = 1;
     }
 
-    compressed = (float*) malloc(zfpsize);
+    resizeF(compressed,zfpsize);
     memcpy(compressed,(float*) stream_data(zfp->stream),zfpsize);
 
     /* clean up */
     zfp_field_free(field);
     zfp_stream_close(zfp);
     stream_close(stream);
-    free(buffer);
 
     return status;
 }
@@ -169,12 +195,11 @@ int ZfpMonitorObject::decompress(float* array, float* &decompressed, int zfpsize
     zfp_type type;     /* array scalar type */
     zfp_field* field;  /* array meta data */
     zfp_stream* zfp;   /* compressed stream */
-    void* buffer;      /* storage for compressed stream */
     size_t bufsize;    /* byte size of compressed buffer */
     bitstream* stream; /* bit stream to write to or read from */
 
     type = zfp_type_float;
-    decompressed = (float*) malloc(nx*ny*sizeof(float));
+    resizeF(decompressed,nx*ny*sizeof(float));
     field = zfp_field_2d(decompressed, type, nx, ny);
 
     /* allocate meta data for a compressed stream */
@@ -187,7 +212,7 @@ int ZfpMonitorObject::decompress(float* array, float* &decompressed, int zfpsize
 
     /* allocate buffer for compressed data */
     bufsize = zfp_stream_maximum_size(zfp, field);
-    buffer = malloc(bufsize);
+    resizeV(buffer,bufsize);
     memcpy(buffer,array,zfpsize);
 
     /* associate bit stream with allocated buffer */
@@ -205,7 +230,6 @@ int ZfpMonitorObject::decompress(float* array, float* &decompressed, int zfpsize
     zfp_field_free(field);
     zfp_stream_close(zfp);
     stream_close(stream);
-    free(buffer);
 
     return status;
 
