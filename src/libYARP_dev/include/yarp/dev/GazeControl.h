@@ -4,8 +4,8 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-#ifndef YARPGAZECONTROLINTERFACES
-#define YARPGAZECONTROLINTERFACES
+#ifndef YARP_DEV_GAZECONTROL_H
+#define YARP_DEV_GAZECONTROL_H
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Stamp.h>
@@ -931,4 +931,4 @@ public:
     virtual bool tweakGet(yarp::os::Bottle &options) = 0;
 };
 
-#endif
+#endif // YARP_DEV_GAZECONTROL_H

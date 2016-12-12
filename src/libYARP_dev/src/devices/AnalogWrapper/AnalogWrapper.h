@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef ANALOG_SERVER_H_
-#define ANALOG_SERVER_H_
+#ifndef YARP_DEV_ANALOGWRAPPER_ANALOGWRAPPER_H
+#define YARP_DEV_ANALOGWRAPPER_ANALOGWRAPPER_H
 
  //#include <list>
 #include <vector>
@@ -61,7 +61,7 @@ namespace yarp{
  *  @ingroup dev_impl_wrapper
  *
  * \brief Device that expose an AnalogSensor (using the IAnalogSensor interface) on the YARP or ROS network.
- * 
+ *
  * \section analogWrapper_parameter Description of input parameters
  *
  *  It reads the data from an analog sensor and sends them on one or more ports.
@@ -197,7 +197,7 @@ private:
     // Function used when one or more output ports are specified
     bool createPorts(const std::vector<yarp::dev::impl::AnalogPortEntry>& _analogPorts, int rate=20);
     bool checkForDeprecatedParams(yarp::os::Searchable &params);
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 
@@ -240,7 +240,7 @@ public:
     AnalogPortEntry(const AnalogPortEntry &alt);
     AnalogPortEntry &operator =(const AnalogPortEntry &alt);
 };
-#endif
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 
-#endif
+#endif // YARP_DEV_ANALOGWRAPPER_ANALOGWRAPPER_H

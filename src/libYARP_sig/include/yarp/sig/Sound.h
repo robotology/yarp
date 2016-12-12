@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SOUND
-#define YARP2_SOUND
+#ifndef YARP_SIG_SOUND_H
+#define YARP_SIG_SOUND_H
 
 #include <yarp/os/Portable.h>
 
@@ -28,7 +27,7 @@ public:
     Sound(int bytesPerSample = 2);
 
     /**
-     * Copy constructor.  
+     * Copy constructor.
      * Clones the content of another sound.
      * @param alt the image to sound
      */
@@ -119,4 +118,4 @@ private:
     int frequency;
 };
 
-#endif
+#endif // YARP_SIG_SOUND_H

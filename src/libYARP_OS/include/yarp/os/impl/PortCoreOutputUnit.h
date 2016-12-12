@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PORTCOREOUTPUTUNIT
-#define YARP2_PORTCOREOUTPUTUNIT
+#ifndef YARP_OS_IMPL_PORTCOREOUTPUTUNIT_H
+#define YARP_OS_IMPL_PORTCOREOUTPUTUNIT_H
 
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
@@ -25,7 +24,8 @@ namespace yarp {
  * Manager for a single output from a port.  Associated
  * with a PortCore object.
  */
-class yarp::os::impl::PortCoreOutputUnit : public PortCoreUnit {
+class yarp::os::impl::PortCoreOutputUnit : public PortCoreUnit
+{
 public:
     /**
      *
@@ -36,60 +36,63 @@ public:
      *
      */
     PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :
-        PortCoreUnit(owner,index), op(op), phase(1), activate(0), trackerMutex(1) {
-
+            PortCoreUnit(owner,index),
+            op(op),
+            closing(false),
+            finished(false),
+            running(false),
+            threaded(false),
+            sending(false),
+            phase(1),
+            activate(0),
+            trackerMutex(1),
+            cachedWriter(YARP_NULLPTR),
+            cachedReader(YARP_NULLPTR),
+            cachedCallback(YARP_NULLPTR),
+            cachedTracker(YARP_NULLPTR)
+    {
         yAssert(op!=YARP_NULLPTR);
-        closing = false;
-        finished = false;
-        running = false;
-        threaded = false;
-        sending = false;
-        cachedWriter = YARP_NULLPTR;
-        cachedReader = YARP_NULLPTR;
-        cachedTracker = YARP_NULLPTR;
     }
 
     /**
      * Destructor.
      */
-    virtual ~PortCoreOutputUnit() {
+    virtual ~PortCoreOutputUnit()
+    {
         closeMain();
     }
 
     /**
-     *
      * Prepare to serve this output.  A thread will start if a call
      * to send() has been made with options that require a thread.
-     *
      */
     virtual bool start();
 
     /**
-     *
      * The body of a thread managing background sends.
-     *
      */
     virtual void run();
 
     /**
-     *
      * Perform send operations without a separate thread.
-     *
      */
     virtual void runSingleThreaded();
 
     // documented in PortCoreUnit
-    virtual bool isOutput() {
+    virtual bool isOutput()
+    {
         return true;
     }
 
     // documented in PortCoreUnit
-    virtual void close() {
+    virtual void close()
+    {
         closeMain();
     }
 
     // documented in PortCoreUnit
-    virtual bool isFinished() {
+    virtual bool isFinished()
+    {
         return finished;
     }
 
@@ -113,19 +116,24 @@ public:
     virtual bool isBusy();
 
     // documented in PortCoreUnit
-    void setCarrierParams(const yarp::os::Property& params) {
+    void setCarrierParams(const yarp::os::Property& params)
+    {
         if(op)
             op->getConnection().setCarrierParams(params);
     }
 
     // documented in PortCoreUnit
-    void getCarrierParams(yarp::os::Property& params) { 
+    void getCarrierParams(yarp::os::Property& params)
+    {
         if(op)
             op->getConnection().getCarrierParams(params);
     }
 
     // return the protocol object
-    OutputProtocol* getOutPutProtocol() { return op; }
+    OutputProtocol* getOutPutProtocol()
+    {
+        return op;
+    }
 
 private:
     OutputProtocol *op; ///< protocol object for writing/reading
@@ -145,25 +153,19 @@ private:
     ConstString cachedEnvelope;      ///< some text to pass along with the message
 
     /**
-     *
      * The core logic for sending a message.
-     *
      */
     bool sendHelper();
 
     /**
-     *
      * Try to close the connection, but not very hard.
-     *
      */
     void closeBasic();
 
     /**
-     *
      * Try harder to close the connection.
-     *
      */
     void closeMain();
 };
 
-#endif
+#endif // YARP_OS_IMPL_PORTCOREOUTPUTUNIT_H

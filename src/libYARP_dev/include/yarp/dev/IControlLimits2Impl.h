@@ -5,8 +5,8 @@
  */
 
 
-#ifndef ICONTROL_LIMIT2_IMPL_H_
-#define ICONTROL_LIMIT2_IMPL_H_
+#ifndef YARP_DEV_ICONTROLLIMITS2IMPL_H
+#define YARP_DEV_ICONTROLLIMITS2IMPL_H
 
 
 #include <yarp/dev/IControlLimits2.h>
@@ -132,4 +132,4 @@ public:
 
 };
 
-#endif /* ICONTROL_LIMIT2_IMPL_H_ */
+#endif // YARP_DEV_ICONTROLLIMITS2IMPL_H

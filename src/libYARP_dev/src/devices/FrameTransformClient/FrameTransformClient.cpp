@@ -1,9 +1,8 @@
 /*
-* Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include <FrameTransformClient.h>
 #include <yarp/os/Log.h>
@@ -165,7 +164,7 @@ Transforms_client_storage::~Transforms_client_storage()
 }
 
 size_t   Transforms_client_storage::size()
-{ 
+{
     RecursiveLockGuard l(m_mutex);
     return m_transforms.size();
 }
@@ -360,7 +359,7 @@ bool yarp::dev::FrameTransformClient::getParent(const std::string &frame_id, std
         std::string par((*m_transform_storage)[i].dst_frame_id);
         if (((*m_transform_storage)[i].dst_frame_id == frame_id))
         {
-            
+
             parent_frame_id = (*m_transform_storage)[i].src_frame_id;
             return true;
         }
@@ -426,7 +425,7 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string &target_fra
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
     FrameTransform   tf;
-    
+
     if (!tf.fromMatrix(transform))
     {
         yError() << "FrameTransformClient::setTransform() wrong matrix format, it has to be 4 by 4";
@@ -579,7 +578,7 @@ bool yarp::dev::FrameTransformClient::transformPose(const std::string &target_fr
     transformed_pose[0] = t.translation.tX;
     transformed_pose[1] = t.translation.tY;
     transformed_pose[2] = t.translation.tZ;
-    
+
     yarp::sig::Vector rot;
     rot = t.getRPYRot();
     transformed_pose[3] = rot[0];

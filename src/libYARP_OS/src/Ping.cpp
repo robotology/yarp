@@ -2,7 +2,6 @@
  * Copyright (C) 2010 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/Ping.h>
@@ -23,7 +22,7 @@ using namespace yarp::os;
 #define safe_printf sprintf_s
 #else
 #define safe_printf snprintf
-#endif 
+#endif
 
 void Ping::connect() {
     lastConnect.clear();
@@ -55,12 +54,12 @@ void Ping::report() {
         int space = 14;
         int decimal = 5;
         printf("  %s connection time (%s with name lookup)\n",
-               renderTime(lastConnect.targetTime.mean(),space,decimal).c_str(), 
+               renderTime(lastConnect.targetTime.mean(),space,decimal).c_str(),
                renderTime(lastConnect.totalTime.mean(),space,decimal).c_str());
         if (accumConnect.totalTime.count()>1) {
             printf("  %s +/- %s on average (%s +/- %s with name lookup)\n",
-                   renderTime(accumConnect.targetTime.mean(),space,decimal).c_str(), 
-                   renderTime(accumConnect.targetTime.deviation(),space,decimal).c_str(), 
+                   renderTime(accumConnect.targetTime.mean(),space,decimal).c_str(),
+                   renderTime(accumConnect.targetTime.deviation(),space,decimal).c_str(),
                    renderTime(accumConnect.totalTime.mean(),space,decimal).c_str(),
                    renderTime(accumConnect.totalTime.deviation(),space,decimal).c_str());
         }
@@ -138,4 +137,3 @@ void Ping::sample() {
            sampler.period.deviation(),
            sampler.ct);
 }
-

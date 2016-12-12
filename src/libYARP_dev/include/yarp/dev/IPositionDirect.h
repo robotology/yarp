@@ -5,8 +5,8 @@
  */
 
 
-#ifndef YARPP_DIRECTOSITION_INTERFACE
-#define YARPP_DIRECTOSITION_INTERFACE
+#ifndef YARP_IPOSITIONDIRECT_H
+#define YARP_IPOSITIONDIRECT_H
 
 namespace yarp {
     namespace dev {
@@ -211,4 +211,4 @@ public:
 #define VOCAB_POSITION_DIRECTS          VOCAB4('d','p','o','s')
 #define VOCAB_POSITION_DIRECT_GROUP     VOCAB4('d','p','o','g')
 
-#endif
+#endif // YARP_IPOSITIONDIRECT_H

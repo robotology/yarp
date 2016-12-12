@@ -2,11 +2,10 @@
  * Copyright (C) 2012 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPIENCODERS
-#define YARPIENCODERS
+#ifndef YARP_DEV_IENCODERS_H
+#define YARP_DEV_IENCODERS_H
 
 #include <yarp/os/Vocab.h>
 
@@ -215,4 +214,4 @@ public:
 #define VOCAB_ENCODER_ACCELERATION VOCAB3('e','a','c')
 #define VOCAB_ENCODER_ACCELERATIONS VOCAB4('e','a','c','s')
 
-#endif
+#endif // YARP_DEV_IENCODERS_H

@@ -128,6 +128,7 @@ endif()
 
 set(YARP_HAVE_SYS_TYPES_H ${HAVE_SYS_TYPES_H})
 set(YARP_HAVE_STDDEF_H ${HAVE_STDDEF_H})
+check_include_file_cxx(cstddef YARP_HAVE_CSTDDEF)
 
 
 #########################################################################

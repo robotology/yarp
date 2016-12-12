@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PORTCOMMAND
-#define YARP2_PORTCOMMAND
+#ifndef YARP_OS_IMPL_PORTCOMMAND_H
+#define YARP_OS_IMPL_PORTCOMMAND_H
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConnectionReader.h>
@@ -25,15 +24,19 @@ namespace yarp {
 /**
  * Simple Readable and Writable object representing a command to a YARP port.
  */
-class YARP_OS_impl_API yarp::os::impl::PortCommand : public yarp::os::Portable {
+class YARP_OS_impl_API yarp::os::impl::PortCommand : public yarp::os::Portable
+{
 public:
 
-    PortCommand() : header(8) {
+    PortCommand() : header(8)
+    {
         ch = '\0';
         str = "";
     }
 
-    PortCommand(char ch, const ConstString& str) : header(8) {
+    PortCommand(char ch, const ConstString& str) :
+            header(8)
+    {
         this->ch = ch;
         this->str = str;
     }
@@ -41,11 +44,13 @@ public:
     virtual bool write(yarp::os::ConnectionWriter& writer);
     virtual bool read(yarp::os::ConnectionReader& reader);
 
-    char getKey() {
+    char getKey()
+    {
         return ch;
     }
 
-    ConstString getText() {
+    ConstString getText()
+    {
         return str;
     }
 
@@ -55,4 +60,4 @@ public:
     yarp::os::ManagedBytes header;
 };
 
-#endif
+#endif // YARP_OS_IMPL_PORTCOMMAND_H

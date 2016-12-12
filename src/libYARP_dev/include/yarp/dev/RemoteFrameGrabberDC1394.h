@@ -1,14 +1,12 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Author: Alessandro Scalzo
- * email: alessandro.scalzo@iit.it
- * website: www.robotcub.org
+ * Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ */
 
 
-#ifndef YARP2_REMOTEFRAMEGRABBERDC1394
-#define YARP2_REMOTEFRAMEGRABBERDC1394
+#ifndef YARP_DEV_REMOTEFRAMEGRABBERDC1394_H
+#define YARP_DEV_REMOTEFRAMEGRABBERDC1394_H
 
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/os/Network.h>
@@ -597,4 +595,4 @@ protected:
     }
 };
 
-#endif
+#endif // YARP_DEV_REMOTEFRAMEGRABBERDC1394_H

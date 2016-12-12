@@ -1,11 +1,11 @@
 /*
-* Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Lorenzo Natale, Silvio Traversaro
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Lorenzo Natale, Silvio Traversaro
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-#ifndef YARP_DEV_CONTROLBOARDWRAPPER_CONTROLBOARDREMAPPER_H
-#define YARP_DEV_CONTROLBOARDWRAPPER_CONTROLBOARDREMAPPER_H
+#ifndef YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H
+#define YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H
 
 #include <yarp/os/Network.h>
 
@@ -636,4 +636,4 @@ public:
 }
 }
 
-#endif
+#endif // YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H

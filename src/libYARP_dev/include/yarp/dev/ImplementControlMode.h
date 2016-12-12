@@ -2,11 +2,10 @@
  * Copyright (C) 2011 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo and Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_IMPLEMENT_CONTROL_MODE
-#define YARP_IMPLEMENT_CONTROL_MODE
+#ifndef YARP_DEV_IMPLEMENTCONTROLMODE_H
+#define YARP_DEV_IMPLEMENTCONTROLMODE_H
 
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/api.h>
@@ -36,4 +35,4 @@ public:
     bool getControlModes(int *modes);
 };
 
-#endif
+#endif // YARP_DEV_IMPLEMENTCONTROLMODE_H

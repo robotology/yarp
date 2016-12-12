@@ -1,23 +1,11 @@
 /*
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
- * Author:  Alberto Cardellino
- * email:   alberto.cardellino@iit.it
- * website: www.robotcub.org
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
- *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
+ * Author: Alberto Cardellino <alberto.cardellino@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef YARP_DEV_RGBD_SENSOR_WRAPPER_H_
-#define YARP_DEV_RGBD_SENSOR_WRAPPER_H_
+#ifndef YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H
+#define YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H
 
 #include <vector>
 #include <iostream>
@@ -174,7 +162,7 @@ private:
     yarp::sig::FlexImage  colorImage;
     DepthImage            depthImage;
     UInt                  nodeSeq;
-                                            
+
     // It should be possible to attach this  guy to more than one port, try to see what
     // will happen when receiving 2 calls at the same time (receive one calls while serving
     // another one, it will result in concurrent thread most probably) and buffering issues.
@@ -210,7 +198,7 @@ private:
     yarp::os::Stamp                colorStamp;
     yarp::os::Stamp                depthStamp;
     yarp::os::Property             m_conf;
-                                            
+
     void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
     void shallowCopyImages(const DepthImage& src, DepthImage& dest);
     bool writeData();
@@ -263,4 +251,4 @@ public:
     void        run();
 };
 
-#endif   // YARP_DEV_RGBD_SENSOR_WRAPPER_H_
+#endif   // YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H

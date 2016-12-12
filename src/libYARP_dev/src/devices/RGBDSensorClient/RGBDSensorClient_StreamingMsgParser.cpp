@@ -1,9 +1,8 @@
 /*
-* Copyright (C) 2016 RobotCub Consortium
-* Author: Alberto Cardellino
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2016 RobotCub Consortium
+ * Author: Alberto Cardellino
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include "RGBDSensorClient_StreamingMsgParser.h"
 
@@ -80,4 +79,3 @@ void RGBDSensor_StreamingMsgParser::attach(yarp::os::BufferedPort<yarp::sig::Fle
     port_rgb->useCallback(read_rgb);
     port_depth->useCallback(read_depth);
 }
-

@@ -2,11 +2,10 @@
  * Copyright (C) 2012 IITRBCS
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_WIRESTATE
-#define YARP2_WIRESTATE
+#ifndef YARP_OS_IDL_WIRESTATE_H
+#define YARP_OS_IDL_WIRESTATE_H
 
 #include <yarp/os/api.h>
 
@@ -36,4 +35,4 @@ public:
 };
 
 
-#endif
+#endif // YARP_OS_IDL_WIRESTATE_H

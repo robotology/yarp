@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_AUDIO_GRABBER_INTERFACES
-#define YARP2_AUDIO_GRABBER_INTERFACES
+#ifndef YARP_DEV_AUDIOGRABBERINTERFACES_H
+#define YARP_DEV_AUDIOGRABBERINTERFACES_H
 
 #include <yarp/sig/Sound.h>
 
@@ -74,4 +73,4 @@ public:
 };
 
 
-#endif
+#endif // YARP_DEV_AUDIOGRABBERINTERFACES_H

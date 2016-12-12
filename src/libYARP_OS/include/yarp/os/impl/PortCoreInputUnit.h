@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PORTCOREINPUTUNIT
-#define YARP2_PORTCOREINPUTUNIT
+#ifndef YARP_OS_IMPL_PORTCOREINPUTUNIT_H
+#define YARP_OS_IMPL_PORTCOREINPUTUNIT_H
 
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
@@ -25,7 +24,8 @@ namespace yarp {
  * Manager for a single input to a port.  Associated
  * with a PortCore object.
  */
-class yarp::os::impl::PortCoreInputUnit : public PortCoreUnit {
+class yarp::os::impl::PortCoreInputUnit : public PortCoreUnit
+{
 public:
     /**
      * Constructor.
@@ -33,26 +33,29 @@ public:
      * @param owner the port we call home
      * @param index an id for this connection
      * @param ip the protocol object used to read/write to connection
-     * @param reversed true if this input connection was originally 
+     * @param reversed true if this input connection was originally
      * an output which was then reversed
      *
      */
-    PortCoreInputUnit(PortCore& owner, int index, InputProtocol *ip,
+    PortCoreInputUnit(PortCore& owner,
+                      int index,
+                      InputProtocol *ip,
                       bool reversed) :
-        PortCoreUnit(owner,index),
-        ip(ip),
-        phase(1),
-        access(1),
-        reversed(reversed) {
-
+            PortCoreUnit(owner,index),
+            ip(ip),
+            phase(1),
+            access(1),
+            closing(false),
+            finished(false),
+            running(false),
+            name(owner.getName()),
+            localReader(YARP_NULLPTR),
+            reversed(reversed)
+    {
         yAssert(ip!=YARP_NULLPTR);
-        closing = false;
-        finished = false;
-        running = false;
-        name = owner.getName();
+
         yarp::os::PortReaderCreator *creator = owner.getReadCreator();
-        localReader = YARP_NULLPTR;
-        if (creator!=YARP_NULLPTR) {
+        if (creator != YARP_NULLPTR) {
             localReader = creator->create();
         }
     }
@@ -60,7 +63,8 @@ public:
     /**
      * Destructor.
      */
-    virtual ~PortCoreInputUnit() {
+    virtual ~PortCoreInputUnit()
+    {
         closeMain();
         if (localReader!=YARP_NULLPTR) {
             delete localReader;
@@ -84,19 +88,23 @@ public:
      */
     virtual void run();
 
-    virtual bool isInput() {
+    virtual bool isInput()
+    {
         return true;
     }
 
-    virtual void close() {
+    virtual void close()
+    {
         closeMain();
     }
 
-    virtual bool isFinished() {
+    virtual bool isFinished()
+    {
         return finished;
     }
 
-    const ConstString& getName() {
+    const ConstString& getName()
+    {
         return name;
     }
 
@@ -104,18 +112,25 @@ public:
 
     virtual bool interrupt();
 
-    void setCarrierParams(const yarp::os::Property& params) {
-        if(ip)
+    void setCarrierParams(const yarp::os::Property& params)
+    {
+        if(ip) {
             ip->getReceiver().setCarrierParams(params);
+        }
     }
 
-    void getCarrierParams(yarp::os::Property& params) { 
-        if(ip)
+    void getCarrierParams(yarp::os::Property& params)
+    {
+        if(ip) {
             ip->getReceiver().getCarrierParams(params);
+        }
     }
 
     // return the protocol object
-    InputProtocol* getInPutProtocol() { return ip; }
+    InputProtocol* getInPutProtocol()
+    {
+        return ip;
+    }
 
     virtual bool isBusy();
 
@@ -135,4 +150,4 @@ private:
     static void envelopeReadCallback(void* data, const Bytes& envelope);
 };
 
-#endif
+#endif // YARP_OS_IMPL_PORTCOREINPUTUNIT_H

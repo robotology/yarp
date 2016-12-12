@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef YARP_IMPLEMENT_CONTROL2_MODE
-#define YARP_IMPLEMENT_CONTROL2_MODE
+#ifndef YARP_DEV_IMPLEMENTCONTROLMODE2_H
+#define YARP_DEV_IMPLEMENTCONTROLMODE2_H
 
 #include <yarp/dev/IControlMode2.h>
 #include <yarp/dev/api.h>
@@ -51,4 +51,4 @@ public:
 };
 
 
-#endif
+#endif // YARP_DEV_IMPLEMENTCONTROLMODE2_H

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
- * Author:  Alberto Cardellino
+ * Author: Alberto Cardellino
  * email:   alberto.cardellino@iit.it
  * website: www.robotcub.org
  * Permission is granted to copy, distribute, and/or modify this program

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef IINTERACTION_MODE_IMPL_H
-#define IINTERACTION_MODE_IMPL_H
+#ifndef YARP_DEV_IINTERACTIONMODEIMPL_H
+#define YARP_DEV_IINTERACTIONMODEIMPL_H
 
 #include <yarp/dev/api.h>
 #include <yarp/dev/IInteractionMode.h>
@@ -153,4 +153,4 @@ public:
     }
 };
 
-#endif /* IINTERACTION_MODE_IMPL_H */
+#endif // YARP_DEV_IINTERACTIONMODEIMPL_H

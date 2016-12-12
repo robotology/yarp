@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_FAKETWOWAYSTREAM
-#define YARP2_FAKETWOWAYSTREAM
+#ifndef YARP_OS_IMPL_FAKETWOWAYSTREAM_H
+#define YARP_OS_IMPL_FAKETWOWAYSTREAM_H
 
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/StringInputStream.h>
@@ -24,66 +23,81 @@ namespace yarp {
 /**
  * A dummy two way stream for testing purposes.
  */
-class yarp::os::impl::FakeTwoWayStream : public TwoWayStream {
+class yarp::os::impl::FakeTwoWayStream : public TwoWayStream
+{
 public:
     FakeTwoWayStream(StringInputStream *target = YARP_NULLPTR) :
-            TwoWayStream() {
+            TwoWayStream()
+    {
         this->out.owner = this;
         this->target = target;
     }
 
-    void setTarget(StringInputStream& target) {
+    void setTarget(StringInputStream& target)
+    {
         this->target = &target;
     }
 
-    virtual InputStream& getInputStream() {
+    virtual InputStream& getInputStream()
+    {
         return in;
     }
 
-    virtual StringInputStream& getStringInputStream() {
+    virtual StringInputStream& getStringInputStream()
+    {
         return in;
     }
 
-    virtual OutputStream& getOutputStream() {
+    virtual OutputStream& getOutputStream()
+    {
         return out;
     }
 
-    virtual const Contact& getLocalAddress() {
+    virtual const Contact& getLocalAddress()
+    {
         return local;
     }
 
-    virtual const Contact& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress()
+    {
         return remote;
     }
 
-    virtual void close() {
+    virtual void close()
+    {
         in.close();
         out.close();
     }
 
-    virtual void apply(const Bytes& b) {
+    virtual void apply(const Bytes& b)
+    {
         if (target!=YARP_NULLPTR) {
             target->add(b);
         }
     }
 
-    void addInputText(const ConstString& str) {
+    void addInputText(const ConstString& str)
+    {
         in.add(str);
     }
 
-    ConstString getOutputText() {
+    ConstString getOutputText()
+    {
         return out.toString();
     }
 
-    ConstString getInputText() {
+    ConstString getInputText()
+    {
         return in.toString();
     }
 
-    virtual bool isOk() {
+    virtual bool isOk()
+    {
         return true;
     }
 
-    virtual void reset() {
+    virtual void reset()
+    {
     }
 
     virtual void beginPacket() { }
@@ -92,13 +106,17 @@ public:
 
 private:
 
-    class ActiveStringOutputStream : public StringOutputStream {
+    class ActiveStringOutputStream : public StringOutputStream
+    {
     public:
-        ActiveStringOutputStream() : owner(YARP_NULLPTR) {
+        ActiveStringOutputStream() :
+                owner(YARP_NULLPTR)
+        {
         }
 
         using yarp::os::OutputStream::write;
-        virtual void write(const Bytes& b) {
+        virtual void write(const Bytes& b)
+        {
             StringOutputStream::write(b);
             if (owner) {
                 owner->apply(b);
@@ -115,4 +133,4 @@ private:
     StringInputStream *target;
 };
 
-#endif
+#endif // YARP_OS_IMPL_FAKETWOWAYSTREAM_H

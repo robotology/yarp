@@ -2,11 +2,10 @@
  * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPREMOTEVARIABLESIMPL
-#define YARPREMOTEVARIABLESIMPL
+#ifndef YARP_DEV_IMPLEMENTREMOTEVARIABLES_H
+#define YARP_DEV_IMPLEMENTREMOTEVARIABLES_H
 
 #include <yarp/dev/IRemoteVariables.h>
 
@@ -55,4 +54,4 @@ public:
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys);
 };
 
-#endif
+#endif // YARP_DEV_IMPLEMENTREMOTEVARIABLES_H

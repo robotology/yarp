@@ -20,11 +20,17 @@ if(NOT SKIP_bayer)
                       ${YARP_sig_INCLUDE_DIRS})
 
   if(NOT YARP_HAS_LIBDC1394)
-    set(DC1394_SRC ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/libdc1394_bayer.c)
+    set(DC1394_SRC ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/libdc1394_bayer.c
+                   ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/conversions.h)
     include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/)
     set(Libdc1394_LIBRARIES)
     if (MSVC AND DC1394_SRC)
-      set_source_files_properties(${DC1394_SRC} PROPERTIES LANGUAGE CXX)
+      if(MSVC_VERSION VERSION_LESS 1900)
+        # Visual studio 2015 no longer needs this
+        # When this if is no longer needed, remember to fix also
+        # extern/libdc1394_bayer/conversions.h
+        set_source_files_properties(${DC1394_SRC} PROPERTIES LANGUAGE CXX)
+      endif()
       set_source_files_properties(${DC1394_SRC} PROPERTIES COMPILE_FLAGS "/wd4309 /wd4244 /wd4018")
     endif()
     if (UNIX AND DC1394_SRC)

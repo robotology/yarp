@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -70,7 +69,7 @@ void Protocol::setRoute(const Route& route) {
     // those qualifiers to the carrier.
     ConstString from = r.getFromName();
     ConstString carrier = r.getCarrierName();
-    if (from.find(" ")!=ConstString::npos) {
+    if (from.find(' ')!=ConstString::npos) {
         Bottle b(from.c_str());
         if (b.size()>1) {
             r = r.addFromName(b.get(0).toString().c_str());
@@ -118,7 +117,7 @@ ConstString Protocol::getSenderSpecifier() {
     // the sender name, but we do it for now in the name of
     // backwards compatibility.
     ConstString carrier = r.getCarrierName();
-    size_t start = carrier.find("+");
+    size_t start = carrier.find('+');
     if (start!=ConstString::npos) {
         from += " (";
         for (size_t i=start+1; i<(size_t)carrier.length(); i++) {
@@ -437,4 +436,3 @@ bool Protocol::write(SizedWriter& writer) {
     this->writer = YARP_NULLPTR;
     return replied;
 }
-

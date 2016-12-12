@@ -2,7 +2,6 @@
  * Copyright (C) 2006, 2007 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -78,9 +77,8 @@ public:
         owner(owner) {}
 
     PropertyItem *getPropNoCreate(const ConstString& key) const {
-        ConstString n(key);
         PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
-        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(ConstString,PropertyItem) *)&data)),n,entry);
+        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(ConstString,PropertyItem) *)&data)),key,entry);
         if (result==-1) {
             return YARP_NULLPTR;
         }
@@ -90,15 +88,14 @@ public:
     }
 
     PropertyItem *getProp(const ConstString& key, bool create = true) {
-        ConstString n(key);
         PLATFORM_MAP_ITERATOR(ConstString,PropertyItem,entry);
-        int result = PLATFORM_MAP_FIND(data,n,entry);
+        int result = PLATFORM_MAP_FIND(data,key,entry);
         if (result==-1) {
             if (!create) {
                 return YARP_NULLPTR;
             }
-            PLATFORM_MAP_SET(data,n,PropertyItem());
-            result = PLATFORM_MAP_FIND(data,n,entry);
+            PLATFORM_MAP_SET(data,key,PropertyItem());
+            result = PLATFORM_MAP_FIND(data,key,entry);
         }
         yAssert(result!=-1);
         //yAssert(entry!=YARP_NULLPTR);
@@ -258,7 +255,7 @@ public:
                 tag = work;
                 accum.clear();
             } else {
-                if (work.find("\\")!=ConstString::npos) {
+                if (work.find('\\')!=ConstString::npos) {
                     // Specifically when reading from the command
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
@@ -405,13 +402,12 @@ public:
         }
 
         ConstString path("");
-        ConstString sfname = fname;
-        size_t index = sfname.rfind('/');
+        size_t index = fname.rfind('/');
         if (index==ConstString::npos) {
-            index = sfname.rfind('\\');
+            index = fname.rfind('\\');
         }
         if (index!=ConstString::npos) {
-            path = sfname.substr(0,index);
+            path = fname.substr(0,index);
         }
 
         if (!ok) {
@@ -484,7 +480,7 @@ public:
             if (!done) {
                 including = false;
 
-                if (buf.find("//")!=ConstString::npos||buf.find("#")!=ConstString::npos) {
+                if (buf.find("//")!=ConstString::npos||buf.find('#')!=ConstString::npos) {
                     bool quoted = false;
                     bool prespace = true;
                     int comment = 0;
@@ -521,10 +517,10 @@ public:
                 buf = expand(buf.c_str(),env,owner).c_str();
 
                 if (buf.length()>0 && buf[0]=='[') {
-                    size_t stop = buf.find("]");
+                    size_t stop = buf.find(']');
                     if (stop!=ConstString::npos) {
                         buf = buf.substr(1,stop-1);
-                        size_t space = buf.find(" ");
+                        size_t space = buf.find(' ');
                         if (space!=ConstString::npos) {
                             Bottle bot(buf.c_str());
                             // BEGIN Handle include option
@@ -702,7 +698,7 @@ public:
     ConstString expand(const char *txt, Searchable& env, Searchable& env2) {
         //printf("expanding %s\n", txt);
         ConstString input = txt;
-        if (input.find("$")==ConstString::npos) {
+        if (input.find('$')==ConstString::npos) {
             // no variables present for sure
             return txt;
         }
@@ -763,7 +759,7 @@ public:
                             add = "1";
                         }
                     }
-                    if (add.find("\\")!=ConstString::npos) {
+                    if (add.find('\\')!=ConstString::npos) {
                         // Specifically when reading from the command
                         // line, we will allow windows-style paths.
                         // Hence we have to break the "\" character
@@ -806,7 +802,7 @@ public:
         strcpy(szcmd, command);
         int nargs = 0;
         parseArguments(szcmd, &nargs, szarg, 128);
-        szarg[nargs]=0;
+        szarg[nargs]=YARP_NULLPTR;
         fromCommand(nargs, szarg, wipe);
         // clear allocated memory for arguments
         if(szcmd) {
@@ -1084,7 +1080,7 @@ Bottle& Property::findGroup(const ConstString& key) const {
         }
     }
 
-    if (result!=((Bottle*)0)) { return *result; }
+    if (result!=((Bottle*)YARP_NULLPTR)) { return *result; }
     return Bottle::getNullBottle();
 }
 

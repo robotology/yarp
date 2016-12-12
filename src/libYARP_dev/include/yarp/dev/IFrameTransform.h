@@ -2,11 +2,10 @@
  * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_ITRANSFORM_H
-#define YARP_ITRANSFORM_H
+#ifndef YARP_DEV_IFRAMETRANSFORM_H
+#define YARP_DEV_IFRAMETRANSFORM_H
 
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Matrix.h>
@@ -54,13 +53,13 @@ public:
     virtual bool     canTransform (const std::string &target_frame, const std::string &source_frame)  = 0;
 
     /**
-     Removes all the registered transforms. 
+     Removes all the registered transforms.
     * @return true/false
     */
     virtual bool     clear () = 0;
 
     /**
-    Check if a frame exists. 
+    Check if a frame exists.
     * @param frame_id the frame to be searched
     * @param target_frame_id the name of target reference frame
     * @param source_frame_id the name of source reference frame
@@ -69,20 +68,20 @@ public:
     virtual bool     frameExists (const std::string &frame_id) = 0;
 
     /**
-    Gets a vector containing all the registered frames. 
+    Gets a vector containing all the registered frames.
     * @param ids the returned vector containing all frame ids
     * @return true/false
     */
     virtual bool    getAllFrameIds (std::vector< std::string > &ids) = 0;
 
     /**
-     Get the parent of a frame. 
+     Get the parent of a frame.
     * @param frame_id the name of target reference frame
     * @param parent_frame_id the name of parent reference frame
     * @return true/false
     */
     virtual bool     getParent (const std::string &frame_id, std::string &parent_frame_id) = 0;
-    
+
     /**
      Get the transform between two frames.
     * @param target_frame_id the name of target reference frame
@@ -96,7 +95,7 @@ public:
      Register a transform between two frames.
      * @param target_frame_id the name of target reference frame
     * @param source_frame_id the name of source reference frame
-    * @param transform the transformation matrix from source_frame_id to target_frame_id    
+    * @param transform the transformation matrix from source_frame_id to target_frame_id
     * @return true/false
     */
     virtual bool     setTransform (const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) = 0;
@@ -119,10 +118,10 @@ public:
     virtual bool     deleteTransform (const std::string &target_frame_id, const std::string &source_frame_id) = 0;
 
     /**
-    Transform a point into the target frame.  
+    Transform a point into the target frame.
     * @param target_frame_id the name of target reference frame
     * @param source_frame_id the name of frame in which input_point is expressed
-    * @param input_point the input point (x y z)    
+    * @param input_point the input point (x y z)
     * @param transformed_point the returned point (x y z)
     * @return true/false
     */
@@ -137,9 +136,9 @@ public:
     * @return true/false
     */
     virtual bool     transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose) = 0;
-    
+
     /**
-     Transform a quaternion into the target frame.  
+     Transform a quaternion into the target frame.
     * @param target_frame_id the name of target reference frame
     * @param source_frame_id the name of frame in which input_quaternion is expressed
     * @param input_quaternion the input quaternion (x y z w)
@@ -164,4 +163,4 @@ public:
 #define VOCAB_TRANSFORM_DELETE        VOCAB4('t','f','d','l')
 #define VOCAB_TRANSFORM_DELETE_ALL    VOCAB4('t','f','d','a')
 
-#endif
+#endif // YARP_DEV_IFRAMETRANSFORM_H

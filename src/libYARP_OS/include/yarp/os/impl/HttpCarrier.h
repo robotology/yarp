@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_HTTPCARRIER
-#define YARP2_HTTPCARRIER
+#ifndef YARP_OS_IMPL_HTTPCARRIER
+#define YARP_OS_IMPL_HTTPCARRIER
 
 #include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/NetType.h>
@@ -46,7 +45,8 @@ namespace yarp {
  *
  * For "POST /" ... not done yet.
  */
-class yarp::os::impl::HttpTwoWayStream : public TwoWayStream, public OutputStream {
+class yarp::os::impl::HttpTwoWayStream : public TwoWayStream, public OutputStream
+{
 private:
     ConstString proc;
     ConstString part;
@@ -93,7 +93,8 @@ public:
 /**
  * Communicating via http.
  */
-class yarp::os::impl::HttpCarrier : public TcpCarrier {
+class yarp::os::impl::HttpCarrier : public TcpCarrier
+{
 private:
     ConstString url, input, prefix;
     bool urlDone;
@@ -129,4 +130,4 @@ public:
     virtual bool write(ConnectionState& proto, SizedWriter& writer);
 };
 
-#endif
+#endif // YARP_OS_IMPL_HTTPCARRIER

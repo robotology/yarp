@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_TCPCARRIER
-#define YARP2_TCPCARRIER
+#ifndef YARP_OS_IMPL_TCPCARRIER_H
+#define YARP_OS_IMPL_TCPCARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
 
@@ -21,7 +20,8 @@ namespace yarp {
 /**
  * Communicating between two ports via TCP.
  */
-class yarp::os::impl::TcpCarrier : public AbstractCarrier {
+class yarp::os::impl::TcpCarrier : public AbstractCarrier
+{
 public:
 
     TcpCarrier(bool requireAckFlag = true);
@@ -44,5 +44,4 @@ private:
     bool requireAckFlag;
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_TCPCARRIER_H

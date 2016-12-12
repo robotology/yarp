@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef YARP_OS_CLOCKTIME_H
-#define YARP_OS_CLOCKTIME_H
+#ifndef YARP_OS_CLOCK_H
+#define YARP_OS_CLOCK_H
 
 #include <yarp/os/api.h>
 
@@ -26,7 +26,7 @@ public:
 
 
     /**
-     * Return the current time in seconds, relative to an arbitrary 
+     * Return the current time in seconds, relative to an arbitrary
      * starting point.
      * @return the time in seconds
      */
@@ -42,11 +42,11 @@ public:
     /**
      *
      * Check if time is valid (non-zero).  For example, for
-     * a network clock, if no timestamp has yet been received, 
+     * a network clock, if no timestamp has yet been received,
      * this method will return false.
      *
      */
     virtual bool isValid() const = 0;
 };
 
-#endif // YARP_OS_CLOCKTIME_H
+#endif // YARP_OS_CLOCK_H

@@ -2,11 +2,10 @@
  * Copyright (C) 2006, 2008 RobotCub Consortium
  * Authors: Paul Fitzpatrick, Giorgio Metta
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_IMAGE
-#define YARP2_IMAGE
+#ifndef YARP_SIG_IMAGE_H
+#define YARP_SIG_IMAGE_H
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Portable.h>
@@ -660,4 +659,4 @@ public: \
 #define YARP_IMAGE_HEADER_CONTROL
 #endif
 
-#endif
+#endif // YARP_SIG_IMAGE_H

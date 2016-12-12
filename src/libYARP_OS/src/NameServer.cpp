@@ -2,7 +2,6 @@
  * Copyright (C) 2006, 2008 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/impl/NameServer.h>
@@ -976,5 +975,3 @@ int NameServer::main(int argc, char *argv[]) {
 
     return 0;
 }
-
-

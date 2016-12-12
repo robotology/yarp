@@ -2,11 +2,10 @@
  * Copyright (C) 2016 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_INAVIGATION_H
-#define YARP_INAVIGATION_H
+#ifndef YARP_DEV_INAVIGATION2D_H
+#define YARP_DEV_INAVIGATION2D_H
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
@@ -230,4 +229,4 @@ public:
 #define VOCAB_NAV_SUSPEND           VOCAB4('s','u','s','p')
 #define VOCAB_NAV_RESUME            VOCAB4('r','e','s','m')
 
-#endif
+#endif // YARP_DEV_INAVIGATION2D_H

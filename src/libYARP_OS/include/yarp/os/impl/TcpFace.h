@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_TCPFACE
-#define YARP2_TCPFACE
+#ifndef YARP_OS_IMPL_TCPFACE_H
+#define YARP_OS_IMPL_TCPFACE_H
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Face.h>
@@ -36,7 +35,8 @@ namespace yarp {
 /**
  * Communicating with a port via TCP.
  */
-class YARP_OS_impl_API yarp::os::impl::TcpFace : public yarp::os::Face {
+class YARP_OS_impl_API yarp::os::impl::TcpFace : public yarp::os::Face
+{
 public:
     TcpFace() { }
 
@@ -66,4 +66,4 @@ private:
 };
 
 
-#endif
+#endif // YARP_OS_IMPL_TCPFACE_H

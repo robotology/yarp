@@ -2,7 +2,6 @@
  * Copyright (C) 2010 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/Event.h>
@@ -108,4 +107,3 @@ void yarp::os::Event::signal() {
 void yarp::os::Event::reset() {
     EVENT_IMPL(implementation)->reset();
 }
-

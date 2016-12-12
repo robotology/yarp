@@ -2,11 +2,10 @@
  * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPMOTORIMPL
-#define YARPMOTORIMPL
+#ifndef YARP_DEV_IMPLEMENTMOTOR_H
+#define YARP_DEV_IMPLEMENTMOTOR_H
 
 #include <yarp/dev/IMotor.h>
 
@@ -59,4 +58,4 @@ public:
     virtual bool setGearboxRatio     (int m, const double val);
 };
 
-#endif
+#endif // YARP_DEV_IMPLEMENTMOTOR_H

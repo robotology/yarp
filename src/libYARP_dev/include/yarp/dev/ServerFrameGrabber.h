@@ -2,12 +2,11 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#ifndef YARP2_SERVERFRAMEGRABBER
-#define YARP2_SERVERFRAMEGRABBER
+#ifndef YARP_DEV_SERVERFRAMEGRABBER_H
+#define YARP_DEV_SERVERFRAMEGRABBER_H
 
 #include <stdio.h>
 
@@ -343,4 +342,4 @@ public:
     virtual bool updateService();
 };
 
-#endif
+#endif // YARP_DEV_SERVERFRAMEGRABBER_H

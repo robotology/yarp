@@ -1,3 +1,8 @@
+# Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+# Author: Alberto Cardellino <alberto.cardellino@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+
 # use PARENT_SCOPE to make the following variables available at the 'parent' cmake
 
 set(serverInertial_srcs src/devices/ServerInertial/ServerInertial.cpp  PARENT_SCOPE)

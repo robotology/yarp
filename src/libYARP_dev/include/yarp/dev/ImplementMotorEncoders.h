@@ -2,11 +2,10 @@
  * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPIMOTORENCODERSIMPL
-#define YARPIMOTORENCODERSIMPL
+#ifndef YARP_DEV_IMPLEMENTMOTORENCODERS_H
+#define YARP_DEV_IMPLEMENTMOTORENCODERS_H
 
 #include <yarp/dev/IMotorEncoders.h>
 
@@ -69,4 +68,4 @@ public:
     virtual bool getMotorEncoderAccelerations(double *accs);
 };
 
-#endif
+#endif // YARP_DEV_IMPLEMENTMOTORENCODERS_H

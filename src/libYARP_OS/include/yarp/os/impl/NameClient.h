@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_NAMECLIENT
-#define YARP2_NAMECLIENT
+#ifndef YARP_OS_IMPL_NAMECLIENT_H
+#define YARP_OS_IMPL_NAMECLIENT_H
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>
@@ -34,7 +33,8 @@ namespace yarp {
  * name server these days - it is now a regular port, that can read
  * and respond to messages in the bottle format.
  */
-class YARP_OS_impl_API yarp::os::impl::NameClient {
+class YARP_OS_impl_API yarp::os::impl::NameClient
+{
 public:
 
     /**
@@ -42,7 +42,8 @@ public:
      * created on demand.
      * return the name client
      */
-    static NameClient& getNameClient() {
+    static NameClient& getNameClient()
+    {
         mutex.lock();
         if (instance == YARP_NULLPTR) {
             instance = new NameClient();
@@ -55,7 +56,8 @@ public:
      * Remove and delete the current global name client.
      *
      */
-    static void removeNameClient() {
+    static void removeNameClient()
+    {
         mutex.lock();
         if (instance != YARP_NULLPTR) {
             delete instance;
@@ -65,11 +67,13 @@ public:
         mutex.unlock();
     }
 
-    static bool isClosed() {
+    static bool isClosed()
+    {
         return instanceClosed;
     }
 
-    static NameClient *create() {
+    static NameClient *create()
+    {
         return new NameClient();
     }
 
@@ -77,7 +81,8 @@ public:
      * The address of the name server.
      * @return the address of the name server
      */
-    Contact getAddress() {
+    Contact getAddress()
+    {
         setup();
         return address;
     }
@@ -86,7 +91,8 @@ public:
      * Deprecated, this is the identity function.
      *
      */
-    ConstString getNamePart(const ConstString& name) {
+    ConstString getNamePart(const ConstString& name)
+    {
         return name;
     }
 
@@ -128,7 +134,8 @@ public:
      * @return the address extracted from the reply, all errors result
      * in a non-valid address.
      */
-    Contact probe(const ConstString& cmd) {
+    Contact probe(const ConstString& cmd)
+    {
         ConstString result = send(cmd);
         return extractAddress(result);
     }
@@ -171,7 +178,8 @@ public:
      *
      * @param fake whether to use a fake name server
      */
-    void setFakeMode(bool fake = true) {
+    void setFakeMode(bool fake = true)
+    {
         this->fake = fake;
     }
 
@@ -181,7 +189,8 @@ public:
      *
      * @return true iff a fake name server is being used.
      */
-    bool isFakeMode() {
+    bool isFakeMode()
+    {
         return fake;
     }
 
@@ -191,7 +200,8 @@ public:
      *
      * @param allow true if the name client may scan for the name server.
      */
-    void setScan(bool allow = true) {
+    void setScan(bool allow = true)
+    {
         allowScan = allow;
     }
 
@@ -201,7 +211,8 @@ public:
      *
      * @param allow true if the name client may save the name server address.
      */
-    void setSave(bool allow = true) {
+    void setSave(bool allow = true)
+    {
         allowSaveScan = allow;
     }
 
@@ -211,7 +222,8 @@ public:
      *
      * @return true iff the name client scanned for the name server.
      */
-    bool didScan() {
+    bool didScan()
+    {
         return reportScan;
     }
 
@@ -221,7 +233,8 @@ public:
      *
      * @return true iff the name client saved the address of the name server.
      */
-    bool didSave() {
+    bool didSave()
+    {
         return reportSaveScan;
     }
 
@@ -237,15 +250,18 @@ public:
 
     virtual ~NameClient();
 
-    void queryBypass(NameStore *store) {
+    void queryBypass(NameStore *store)
+    {
         altStore = store;
     }
 
-    NameStore *getQueryBypass() {
+    NameStore *getQueryBypass()
+    {
         return altStore;
     }
 
-    yarp::os::ConstString getMode() {
+    yarp::os::ConstString getMode()
+    {
         return mode.c_str();
     }
 
@@ -254,24 +270,24 @@ public:
      * for finding configuration files.
      *
      */
-    ResourceFinder& getResourceFinder() {
+    ResourceFinder& getResourceFinder()
+    {
         return resourceFinder;
     }
 
-    yarp::os::Nodes& getNodes() {
+    yarp::os::Nodes& getNodes()
+    {
         return nodes;
     }
 
-    Property& getPluginState() {
+    Property& getPluginState()
+    {
         return pluginState;
     }
 
 private:
     NameClient();
-
-    NameClient(const NameClient& nic) {
-        // make sure no-one tries to do this accidentally
-    }
+    NameClient(const NameClient& nic);
 
     NameServer& getServer();
 
@@ -298,4 +314,4 @@ private:
     void setup();
 };
 
-#endif
+#endif // YARP_OS_IMPL_NAMECLIENT_H

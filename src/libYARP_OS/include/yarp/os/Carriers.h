@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_CARRIERS
-#define YARP2_CARRIERS
+#ifndef YARP_OS_CARRIERS_H
+#define YARP_OS_CARRIERS_H
 
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ConstString.h>
@@ -114,4 +113,4 @@ private:
 };
 
 
-#endif
+#endif // YARP_OS_CARRIERS_H

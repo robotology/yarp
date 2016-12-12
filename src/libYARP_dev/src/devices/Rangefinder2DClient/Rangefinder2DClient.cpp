@@ -1,9 +1,8 @@
 /*
-* Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include "Rangefinder2DClient.h"
 #include <yarp/os/Log.h>
@@ -240,7 +239,7 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
     {
         laser_frame_name = config.find("laser_frame_name").toString();
         robot_frame_name = config.find("robot_frame_name").toString();
-        bool b_canOpenTransformClient = drv->open(TransformClientOptions);
+        b_canOpenTransformClient = drv->open(TransformClientOptions);
     }
 
     if (b_canOpenTransformClient)

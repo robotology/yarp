@@ -1,9 +1,8 @@
 /*
-* Copyright (C) 2006 RobotCub Consortium
-* Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2006 RobotCub Consortium
+ * Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include <string.h>
 

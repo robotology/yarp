@@ -2,11 +2,10 @@
  * Copyright (C) 2012 Robotics Brain and Cognitive Sciences Department, Istituto Italiano di Tecnologia
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPIENCODERS_TIMED
-#define YARPIENCODERS_TIMED
+#ifndef YARP_DEV_IENCODERSTIMED_H
+#define YARP_DEV_IENCODERSTIMED_H
 
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/api.h>
@@ -81,4 +80,4 @@ public:
 };
 
 
-#endif
+#endif // YARP_DEV_IENCODERSTIMED_H

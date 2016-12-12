@@ -2,12 +2,11 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#ifndef YARP2_DEVICEPIPE
-#define YARP2_DEVICEPIPE
+#ifndef YARP_DEV_DEVICEPIPE_H
+#define YARP_DEV_DEVICEPIPE_H
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
@@ -52,4 +51,4 @@ protected:
 };
 
 
-#endif
+#endif // YARP_DEV_DEVICEPIPE_H

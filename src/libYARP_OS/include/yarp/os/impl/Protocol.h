@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PROTOCOL
-#define YARP2_PROTOCOL
+#ifndef YARP_OS_IMPL_PROTOCOL_H
+#define YARP_OS_IMPL_PROTOCOL_H
 
 #include <yarp/os/Carrier.h>
 #include <yarp/os/impl/Logger.h>
@@ -33,9 +32,11 @@ namespace yarp {
  * Connection choreographer.  Handles one side of a single YARP connection.
  * The Protocol object for a connection holds its streams (which may
  * change over time) and its carriers (which may be chained).
- *
  */
-class YARP_OS_impl_API yarp::os::impl::Protocol : public yarp::os::OutputProtocol, public yarp::os::InputProtocol, public yarp::os::ConnectionState {
+class YARP_OS_impl_API yarp::os::impl::Protocol : public yarp::os::OutputProtocol,
+                                                  public yarp::os::InputProtocol,
+                                                  public yarp::os::ConnectionState
+{
 public:
 
     /**
@@ -49,7 +50,8 @@ public:
      * Destructor.
      *
      */
-    virtual ~Protocol() {
+    virtual ~Protocol()
+    {
         closeHelper();
     }
 
@@ -57,7 +59,8 @@ public:
     virtual void setRoute(const Route& route);
 
     // Documented in yarp::os::ConnectionState.
-    virtual const Route& getRoute() {
+    virtual const Route& getRoute()
+    {
         return route;
     }
 
@@ -65,17 +68,20 @@ public:
     void interrupt();
 
     // Documented in yarp::os::InputProtocol.
-    void close() {
+    void close()
+    {
         closeHelper();
     }
 
     // Documented in yarp::os::ConnectionState.
-    TwoWayStream& getStreams() {
+    TwoWayStream& getStreams()
+    {
         return shift;
     }
 
     // Documented in yarp::os::ConnectionState.
-    void takeStreams(TwoWayStream *streams) {
+    void takeStreams(TwoWayStream *streams)
+    {
         shift.takeStream(streams);
         if (streams!=YARP_NULLPTR) {
             active = true;
@@ -83,17 +89,20 @@ public:
     }
 
     // Documented in yarp::os::ConnectionState.
-    TwoWayStream *giveStreams() {
+    TwoWayStream *giveStreams()
+    {
         return shift.giveStream();
     }
 
     // Documented in yarp::os::InputProtocol.
-    OutputStream& getOutputStream() {
+    OutputStream& getOutputStream()
+    {
         return shift.getOutputStream();
     }
 
     // Documented in yarp::os::InputProtocol.
-    InputStream& getInputStream() {
+    InputStream& getInputStream()
+    {
         return shift.getInputStream();
     }
 
@@ -101,7 +110,8 @@ public:
     virtual bool open(const Route& route);
 
     // Documented in yarp::os::OutputProtocol.
-    virtual void rename(const Route& route) {
+    virtual void rename(const Route& route)
+    {
         setRoute(route);
     }
 
@@ -109,7 +119,8 @@ public:
     virtual bool open(const ConstString& name);
 
     // Documented in yarp::os::OutputProtocol.
-    virtual bool isOk() {
+    virtual bool isOk()
+    {
         if (!checkStreams() || recv_delegate_fail || recv_delegate_fail) {
             return false;
         }
@@ -120,19 +131,22 @@ public:
     virtual bool write(SizedWriter& writer);
 
     // Documented in yarp::os::InputProtocol.
-    void reply(SizedWriter& writer) {
+    void reply(SizedWriter& writer)
+    {
         writer.stopWrite();
         delegate->reply(*this,writer);
         pendingReply = false;
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual OutputProtocol& getOutput() {
+    virtual OutputProtocol& getOutput()
+    {
         return *this;
     }
 
     // Documented in yarp::os::OutputProtocol.
-    virtual InputProtocol& getInput() {
+    virtual InputProtocol& getInput()
+    {
         return *this;
     }
 
@@ -140,28 +154,33 @@ public:
     virtual yarp::os::ConnectionReader& beginRead();
 
     // Documented in yarp::os::InputProtocol.
-    virtual void endRead() {
+    virtual void endRead()
+    {
         reader.flushWriter();
         sendAck();  // acknowledge after reply (if there is one)
     }
 
     // Documented in yarp::os::OutputProtocol.
-    virtual void beginWrite() {
+    virtual void beginWrite()
+    {
         getSendDelegate();
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual void suppressReply() {
+    virtual void suppressReply()
+    {
         reader.suppressReply();
     }
 
     // Documented in yarp::os::ConnectionState.
-    virtual bool checkStreams() {
+    virtual bool checkStreams()
+    {
         return shift.isOk();
     }
 
     // Documented in yarp::os::ConnectionState.
-    void setReference(yarp::os::Portable *ref) {
+    void setReference(yarp::os::Portable *ref)
+    {
         this->ref = ref;
     }
 
@@ -169,34 +188,40 @@ public:
     yarp::os::ConstString getSenderSpecifier();
 
     // Documented in yarp::os::InputProtocol.
-    virtual bool setTimeout(double timeout) {
+    virtual bool setTimeout(double timeout)
+    {
         bool ok = os().setWriteTimeout(timeout);
         if (!ok) return false;
         return is().setReadTimeout(timeout);
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual void setEnvelope(const yarp::os::ConstString& str) {
+    virtual void setEnvelope(const yarp::os::ConstString& str)
+    {
         envelope = str;
     }
 
     // Documented in yarp::os::ConnectionState.
-    virtual const ConstString& getEnvelope() {
+    virtual const ConstString& getEnvelope()
+    {
         return envelope;
     }
 
     // Documented in yarp::os::ConnectionState.
-    Log& getLog() {
+    Log& getLog()
+    {
         return log;
     }
 
     // Documented in yarp::os::ConnectionState.
-    void setRemainingLength(int len) {
+    void setRemainingLength(int len)
+    {
         messageLen = len;
     }
 
     // Documented in yarp::os::ConnectionState.
-    Connection& getConnection() {
+    Connection& getConnection()
+    {
         if (delegate==YARP_NULLPTR) {
             return nullConnection;
         }
@@ -204,7 +229,8 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    Connection& getReceiver() {
+    Connection& getReceiver()
+    {
         if (recv_delegate==YARP_NULLPTR) {
             return nullConnection;
         }
@@ -212,7 +238,8 @@ public:
     }
 
     // Documented in yarp::os::OutputProtocol.
-    Connection& getSender() {
+    Connection& getSender()
+    {
         if (send_delegate==YARP_NULLPTR) {
             return nullConnection;
         }
@@ -220,12 +247,14 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual void attachPort(yarp::os::Contactable *port) {
+    virtual void attachPort(yarp::os::Contactable *port)
+    {
         this->port = port;
     }
 
     // Documented in yarp::os::ConnectionState.
-    virtual Contactable *getContactable() {
+    virtual Contactable *getContactable()
+    {
         return port;
     }
 
@@ -234,13 +263,15 @@ public:
      * Promise that we'll be making a reply.
      *
      */
-    void willReply() {
+    void willReply()
+    {
         pendingReply = true;
     }
 
 
     // Documented in yarp::os::InputProtocol.
-    virtual bool isReplying() {
+    virtual bool isReplying()
+    {
         return pendingReply;
     }
 
@@ -276,7 +307,8 @@ private:
      * Read the name of the port on the other side of the connection.
      *
      */
-    bool expectSenderSpecifier() {
+    bool expectSenderSpecifier()
+    {
         yAssert(delegate!=YARP_NULLPTR);
         return delegate->expectSenderSpecifier(*this);
     }
@@ -304,7 +336,8 @@ private:
      * Send the various parts of a connection header.
      *
      */
-    bool sendHeader() {
+    bool sendHeader()
+    {
         yAssert(delegate!=YARP_NULLPTR);
         return delegate->sendHeader(*this);
     }
@@ -315,7 +348,8 @@ private:
      * no-op.
      *
      */
-    bool expectReplyToHeader() {
+    bool expectReplyToHeader()
+    {
         yAssert(delegate!=YARP_NULLPTR);
         return delegate->expectReplyToHeader(*this);
     }
@@ -346,7 +380,8 @@ private:
      * it.
      *
      */
-    bool respondToIndex() {
+    bool respondToIndex()
+    {
         return true;
     }
 
@@ -396,4 +431,4 @@ private:
     bool pendingReply;  ///< will we be making a reply
 };
 
-#endif
+#endif // YARP_OS_IMPL_PROTOCOL_H

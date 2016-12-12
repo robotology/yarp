@@ -1,5 +1,5 @@
 # Copyright: (C) 2009 RobotCub Consortium
-# Author:  Giorgio Metta, Lorenzo Natale
+# Author: Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 yarp_prepare_plugin(meiMotionControl

@@ -240,14 +240,14 @@ RateThread::RateThread(int period)
 {
     // use period
     implementation = new RateThreadCallbackAdapter(*this, period);
-    yAssert(implementation!=0);
+    yAssert(implementation!=YARP_NULLPTR);
 }
 
 RateThread::~RateThread()
 {
-    if (implementation!=0) {
+    if (implementation!=YARP_NULLPTR) {
         delete ((RateThreadCallbackAdapter*)implementation);
-        implementation = 0;
+        implementation = YARP_NULLPTR;
     }
 }
 
@@ -445,7 +445,7 @@ void RateThreadWrapper::run() {
 }
 
 bool RateThreadWrapper::threadInit() {
-    if (helper!=0) {
+    if (helper!=YARP_NULLPTR) {
         return helper->threadInit();
     }
     else
@@ -453,19 +453,19 @@ bool RateThreadWrapper::threadInit() {
 }
 
 void RateThreadWrapper::threadRelease() {
-    if (helper!=0) {
+    if (helper!=YARP_NULLPTR) {
         helper->threadRelease();
     }
 }
 
 void RateThreadWrapper::afterStart(bool success) {
-    if (helper!=0) {
+    if (helper!=YARP_NULLPTR) {
         helper->afterStart(success);
     }
 }
 
 void RateThreadWrapper::beforeStart() {
-    if (helper!=0) {
+    if (helper!=YARP_NULLPTR) {
         helper->beforeStart();
     }
 }

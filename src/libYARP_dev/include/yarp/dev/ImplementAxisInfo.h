@@ -2,11 +2,10 @@
  * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPAXISINFOIMPL
-#define YARPAXISINFOIMPL
+#ifndef YARP_DEV_IMPLEMENTAXISINFO_H
+#define YARP_DEV_IMPLEMENTAXISINFO_H
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
@@ -52,4 +51,4 @@ public:
     virtual bool getJointType(int axis, yarp::dev::JointTypeEnum& type);
 };
 
-#endif
+#endif // YARP_DEV_IMPLEMENTAXISINFO_H

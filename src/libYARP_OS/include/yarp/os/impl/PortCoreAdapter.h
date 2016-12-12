@@ -22,7 +22,8 @@ namespace yarp {
 }
 
 
-class yarp::os::impl::PortCoreAdapter : public PortCore {
+class yarp::os::impl::PortCoreAdapter : public PortCore
+{
 private:
     SemaphoreImpl stateMutex;
     PortReader *readDelegate;

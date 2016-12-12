@@ -1,12 +1,11 @@
 /*
-* Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-#ifndef LOCATIONS_SERVER_H
-#define LOCATIONS_SERVER_H
+#ifndef YARP_DEV_LOCATIONSSERVER_LOCATIONSSERVER_H
+#define YARP_DEV_LOCATIONSSERVER_LOCATIONSSERVER_H
 
 #include <map>
 #include <yarp/os/Network.h>
@@ -74,4 +73,4 @@ public:
     bool         save_locations(yarp::os::ConstString locations_file);
 };
 
-#endif // LOCATIONS_SERVER_H
+#endif // YARP_DEV_LOCATIONSSERVER_LOCATIONSSERVER_H

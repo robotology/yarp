@@ -2,11 +2,10 @@
  * Copyright (C) 2010 RobotCub Consortium
  * Author: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPANALOGSENSORINTERFACE
-#define YARPANALOGSENSORINTERFACE
+#ifndef YARP_DEV_IANALOGSENSOR_H
+#define YARP_DEV_IANALOGSENSOR_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
@@ -89,4 +88,4 @@ public:
     virtual int calibrateChannel(int ch, double value)=0;
 };
 
-#endif
+#endif // YARP_DEV_IANALOGSENSOR_H

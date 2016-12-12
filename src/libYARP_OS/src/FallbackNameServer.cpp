@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/conf/system.h>
@@ -65,8 +64,5 @@ void FallbackNameServer::close() {
 int FallbackNameServerDummySymbol = 42;
 
 #endif // YARP_HAS_ACE
-
-
-
 
 

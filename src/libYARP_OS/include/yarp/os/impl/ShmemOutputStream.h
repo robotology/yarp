@@ -1,8 +1,7 @@
 /*
- * Author: Alessandro Scalzo alessandro@liralab.it
  * Copyright (C) 2007 RobotCub Consortium
+ * Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef YARP_OS_IMPL_SHMEMOUTPUTSTREAM_H
@@ -43,10 +42,10 @@ public:
     {
         m_bOpen=false;
 
-        m_pAccessMutex=m_pWaitDataMutex=0;
-        m_pMap=0;
-        m_pData=0;
-        m_pHeader=0;
+        m_pAccessMutex=m_pWaitDataMutex=YARP_NULLPTR;
+        m_pMap=YARP_NULLPTR;
+        m_pData=YARP_NULLPTR;
+        m_pHeader=YARP_NULLPTR;
         m_ResizeNum=0;
         m_Port=0;
     }
@@ -80,4 +79,4 @@ protected:
     ShmemHeader_t *m_pHeader;
 };
 
-#endif
+#endif // YARP_OS_IMPL_SHMEMOUTPUTSTREAM_H

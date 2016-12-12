@@ -1,11 +1,11 @@
 /*
-* Copyright (C) 2008 RobotCub Consortium
-* Authors: Lorenzo Natale and Ugo Pattacini
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2008 RobotCub Consortium
+ * Authors: Lorenzo Natale and Ugo Pattacini
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-#ifndef YARPCARTESIANCONTROLINTERFACES
-#define YARPCARTESIANCONTROLINTERFACES
+#ifndef YARP_DEV_CARTESIANCONTROL_H
+#define YARP_DEV_CARTESIANCONTROL_H
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Stamp.h>
@@ -732,4 +732,4 @@ public:
     virtual bool tweakGet(yarp::os::Bottle &options) = 0;
 };
 
-#endif
+#endif // YARP_DEV_CARTESIANCONTROL_H

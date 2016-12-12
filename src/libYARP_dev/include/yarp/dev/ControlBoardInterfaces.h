@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Lorenzo Natale, Giorgio Metta
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPCONTROLBOARDINTERFACES
-#define YARPCONTROLBOARDINTERFACES
+#ifndef YARP_DEV_CONTROLBOARDINTERFACES_H
+#define YARP_DEV_CONTROLBOARDINTERFACES_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardPid.h>
@@ -1041,4 +1040,4 @@ public:
 // protocol version
 #define VOCAB_PROTOCOL_VERSION VOCAB('p', 'r', 'o', 't')
 
-#endif
+#endif // YARP_DEV_CONTROLBOARDINTERFACES_H

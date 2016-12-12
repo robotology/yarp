@@ -61,7 +61,7 @@ bool yarp::os::QosStyle::setPacketPriority(const ConstString& priority) {
     } else if (key == "TOS") {
         char* p;
         int tos = strtol(value.c_str(), &p, 10);
-        if (p == 0 && tos >= 0) {
+        if (p == YARP_NULLPTR && tos >= 0) {
             setPacketPrioritybyTOS(tos);
             return true;
         }

@@ -1,12 +1,11 @@
 /*
-* Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2015 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-#ifndef YARP_DEV_RANGEFINDER_RANGEFINDER2DCLIENT_H
-#define YARP_DEV_RANGEFINDER_RANGEFINDER2DCLIENT_H
+#ifndef YARP_DEV_RANGEFINDER2DCLIENT_RANGEFINDER2DCLIENT_H
+#define YARP_DEV_RANGEFINDER2DCLIENT_RANGEFINDER2DCLIENT_H
 
 
 #include <yarp/os/Network.h>
@@ -201,4 +200,4 @@ public:
 
 };
 
-#endif // YARP_DEV_RANGEFINDER_RANGEFINDER2DCLIENT_H
+#endif // YARP_DEV_RANGEFINDER2DCLIENT_RANGEFINDER2DCLIENT_H

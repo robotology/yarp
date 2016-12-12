@@ -1,5 +1,6 @@
 /*
 * Copyright (C) 2007-2009 RobotCub Consortium
+* Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
@@ -265,4 +266,3 @@ void RunReadWrite::run()
 
     RUNLOG(">>>run()")
 }
-

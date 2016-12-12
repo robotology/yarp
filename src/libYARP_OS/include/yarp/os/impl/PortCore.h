@@ -2,11 +2,10 @@
  * Copyright (C) 2006, 2007, 2009 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_PORTCORE
-#define YARP2_PORTCORE
+#ifndef YARP_OS_IMPL_PORTCORE_H
+#define YARP_OS_IMPL_PORTCORE_H
 
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
@@ -103,7 +102,7 @@ namespace yarp {
  *
  * The port's connections are stored in the PortCore#units list.  Input
  * and output connections are stored in the same list, and a lot
- * of the code does not distinguish them.  Outgoing messages on the 
+ * of the code does not distinguish them.  Outgoing messages on the
  * connections are tracked using the PortCore#packets list.  A single
  * message may be associated with many connections.
  *
@@ -113,18 +112,23 @@ namespace yarp {
  * @brief The yarp::os::impl::PortDataModifier class is a helper
  *  class to manage the port data modifiers
  */
-class YARP_OS_impl_API yarp::os::impl::PortDataModifier {
+class YARP_OS_impl_API yarp::os::impl::PortDataModifier
+{
 public:
-    PortDataModifier() {
-        outputModifier = YARP_NULLPTR;
-        inputModifier = YARP_NULLPTR;
+    PortDataModifier() :
+            outputModifier(YARP_NULLPTR),
+            inputModifier(YARP_NULLPTR)
+    {
     }
-    virtual ~PortDataModifier() {
+
+    virtual ~PortDataModifier()
+    {
         releaseOutModifier();
         releaseInModifier();
     }
 
-    void releaseOutModifier() {
+    void releaseOutModifier()
+    {
         if(outputModifier != YARP_NULLPTR) {
             outputModifier->close();
             delete outputModifier;
@@ -132,7 +136,8 @@ public:
         }
     }
 
-    void releaseInModifier() {
+    void releaseInModifier()
+    {
         if(inputModifier != YARP_NULLPTR) {
             inputModifier->close();
             delete inputModifier;
@@ -147,7 +152,8 @@ public:
     yarp::os::Mutex    inputMutex;
 };
 
-class YARP_OS_impl_API yarp::os::impl::PortCore : public ThreadImpl, public PortManager, public yarp::os::PortReader {
+class YARP_OS_impl_API yarp::os::impl::PortCore : public ThreadImpl, public PortManager, public yarp::os::PortReader
+{
 public:
 
     /**
@@ -203,18 +209,21 @@ public:
     /**
      * Configure the port to meet certain restrictions in behavior.
      */
-    void setFlags(int flags) {
+    void setFlags(int flags)
+    {
         this->flags = flags;
     }
 
-    void setContactable(Contactable *contactable) {
+    void setContactable(Contactable *contactable)
+    {
         this->contactable = contactable;
     }
 
     /**
      * Check current configuration of port.
      */
-    int getFlags() {
+    int getFlags()
+    {
         return flags;
     }
 
@@ -257,7 +266,8 @@ public:
      * Upon being asked to send a message, should we wait for
      * any existing message to be sent to all destinations?
      */
-    void setWaitBeforeSend(bool waitBeforeSend) {
+    void setWaitBeforeSend(bool waitBeforeSend)
+    {
         this->waitBeforeSend = waitBeforeSend;
     }
 
@@ -265,14 +275,16 @@ public:
      * After sending a message, should we wait for
      * it to be sent to all destinations before returning?
      */
-    void setWaitAfterSend(bool waitAfterSend) {
+    void setWaitAfterSend(bool waitAfterSend)
+    {
         this->waitAfterSend = waitAfterSend;
     }
 
     /**
      * Callback for data.
      */
-    virtual bool read(yarp::os::ConnectionReader& reader) {
+    virtual bool read(yarp::os::ConnectionReader& reader)
+    {
         // does nothing by default
         return true;
     }
@@ -327,18 +339,21 @@ public:
     /**
      * Get the address associated with the port.
      */
-    const Contact& getAddress() const {
+    const Contact& getAddress() const
+    {
         return address;
     }
 
-    void resetPortName(const ConstString& str) {
+    void resetPortName(const ConstString& str)
+    {
         address.setName(str);
     }
 
     /**
      * Get the creator of callbacks.
      */
-    yarp::os::PortReaderCreator *getReadCreator() {
+    yarp::os::PortReaderCreator *getReadCreator()
+    {
         return readableCreator;
     }
 
@@ -368,7 +383,8 @@ public:
      * Normally the port will unregister its name with the name server
      * when shutting down.  This can be inhibited.
      */
-    void setControlRegistration(bool flag) {
+    void setControlRegistration(bool flag)
+    {
         controlRegistration = flag;
     }
 
@@ -411,7 +427,8 @@ public:
      * associated with this port.
      *
      */
-    bool isListening() const {
+    bool isListening() const
+    {
         return listening;
     }
 
@@ -421,7 +438,8 @@ public:
      * a server socket/thread.
      *
      */
-    bool isManual() const {
+    bool isManual() const
+    {
         return manual;
     }
 
@@ -430,7 +448,8 @@ public:
      * @return true if port operation has been interrupted.
      *
      */
-    bool isInterrupted() const {
+    bool isInterrupted() const
+    {
         return interrupted;
     }
 
@@ -464,28 +483,33 @@ public:
      */
     void addOutput(OutputProtocol *op);
 
-    virtual bool removeIO(const Route& route, bool synch) {
+    virtual bool removeIO(const Route& route, bool synch)
+    {
         return removeUnit(route,synch);
     }
 
     virtual void reportUnit(PortCoreUnit *unit, bool active);
 
-    void setTimeout(float timeout) {
+    void setTimeout(float timeout)
+    {
         this->timeout = timeout;
     }
 
-    void setVerbosity(int level) {
+    void setVerbosity(int level)
+    {
         verbosity = level;
     }
 
-    int getVerbosity() {
+    int getVerbosity()
+    {
         return verbosity;
     }
 
     Property *acquireProperties(bool readOnly);
     void releaseProperties(Property *prop);
 
-    bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR) {
+    bool setCallbackLock(yarp::os::Mutex *mutex = YARP_NULLPTR)
+    {
         removeCallbackLock();
         if (mutex) {
             this->mutex = mutex;
@@ -497,7 +521,8 @@ public:
         return true;
     }
 
-    bool removeCallbackLock() {
+    bool removeCallbackLock()
+    {
         if (mutexOwned&&mutex) {
             delete mutex;
         }
@@ -506,26 +531,31 @@ public:
         return true;
     }
 
-    bool lockCallback() {
+    bool lockCallback()
+    {
         if (!mutex) return false;
         mutex->lock();
         return true;
     }
 
-    bool tryLockCallback() {
+    bool tryLockCallback()
+    {
         if (!mutex) return true;
         return mutex->tryLock();
     }
 
-    void unlockCallback() {
+    void unlockCallback()
+    {
         if (!mutex) return;
         mutex->unlock();
     }
 
-    void take(PortCore *alt) {
+    void take(PortCore *alt)
+    {
     }
 
-    yarp::os::impl::PortDataModifier& getPortModifier() {
+    yarp::os::impl::PortDataModifier& getPortModifier()
+    {
         return modifier;
     }
 
@@ -652,7 +682,8 @@ private:
     bool removeUnit(const Route& route, bool synch = false,
                     bool *except = YARP_NULLPTR);
 
-    int getNextIndex() {
+    int getNextIndex()
+    {
         int result = counter;
         counter++;
         if (counter<0) counter = 1;
@@ -660,4 +691,4 @@ private:
     }
 };
 
-#endif
+#endif // YARP_OS_IMPL_PORTCORE_H

@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_DISPATCHER
-#define YARP2_DISPATCHER
+#ifndef YARP_OS_IMPL_DISPATCHER_H
+#define YARP_OS_IMPL_DISPATCHER_H
 
 #include <yarp/os/ConstString.h>
 
@@ -28,9 +27,11 @@ namespace yarp {
  * Dispatch to named methods based on string input.
  */
 template <class T, class RET>
-class yarp::os::impl::Dispatcher {
+class yarp::os::impl::Dispatcher
+{
 private:
-    class Entry {
+    class Entry
+    {
     public:
         ConstString name;
         RET (T::*fn)(int argc, char *argv[]);
@@ -38,9 +39,11 @@ private:
         Entry(const char *name, RET (T::*fn)(int argc, char *argv[])) :
             name(name),
             fn(fn)
-        {}
+        {
+        }
 
-        Entry() {
+        Entry()
+        {
         }
     };
 
@@ -48,14 +51,16 @@ private:
     PlatformVector<ConstString> names;
 
 public:
-    void add(const char *name, RET (T::*fn)(int argc, char *argv[])) {
+    void add(const char *name, RET (T::*fn)(int argc, char *argv[]))
+    {
         Entry e(name,fn);
         PLATFORM_MAP_SET(action,ConstString(name),e);
         // maintain a record of order of keys
         names.push_back(ConstString(name));
     }
 
-    RET dispatch(T *owner, const char *name, int argc, char *argv[]) {
+    RET dispatch(T *owner, const char *name, int argc, char *argv[])
+    {
         ConstString sname(name);
         Entry e;
         int result = PLATFORM_MAP_FIND_RAW(action,sname,e);
@@ -67,10 +72,10 @@ public:
         return RET();
     }
 
-    PlatformVector<ConstString> getNames() {
+    PlatformVector<ConstString> getNames()
+    {
         return names;
     }
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_DISPATCHER_H

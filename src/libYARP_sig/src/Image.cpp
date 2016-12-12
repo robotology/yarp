@@ -2,7 +2,6 @@
  * Copyright (C) 2007 RobotCub Consortium
  * Authors: Paul Fitzpatrick, Giorgio Metta
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -39,7 +38,7 @@ using namespace yarp::os;
 //}
 
 /**
-* This helper function groups code to avoid duplication. It is not a member function of Image because 
+* This helper function groups code to avoid duplication. It is not a member function of Image because
 * there are problems with ImageNetworkHeader, anyhow the function is state-less and uses only parameters.
 */
 inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, ConnectionReader& connection)
@@ -162,7 +161,7 @@ void ImageStorage::_alloc (void) {
     if (pImage != NULL)
         if (pImage->imageData != NULL)
             _free(); // was iplDeallocateImage(pImage); but that won't work with refs
-	
+
     if ( (type_id == VOCAB_PIXEL_MONO_FLOAT) || (type_id == VOCAB_PIXEL_RGB_FLOAT) ||
          (type_id == VOCAB_PIXEL_HSV_FLOAT) )
         iplAllocateImageFP(pImage, 0, 0);
@@ -305,12 +304,12 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           1,
                                           0,
-                                          IPL_DEPTH_8U,			
+                                          IPL_DEPTH_8U,
                                           (char *)"GRAY",
                                           (char *)"GRAY",
                                           IPL_DATA_ORDER_PIXEL,
                                           origin,
-                                          quantum,		
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -343,12 +342,12 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           3,
                                           0,
-                                          IPL_DEPTH_8U,			
+                                          IPL_DEPTH_8U,
                                           (char *)"RGB",
                                           (char *)"RGB",
                                           IPL_DATA_ORDER_PIXEL,
                                           origin,
-                                          quantum,		
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -361,12 +360,12 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           4,
                                           0,
-                                          IPL_DEPTH_8U,			
+                                          IPL_DEPTH_8U,
                                           (char *)"RGBA",
                                           (char *)"RGBA",
                                           IPL_DATA_ORDER_PIXEL,
                                           origin,
-                                          quantum,		
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -379,12 +378,12 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           4,
                                           0,
-                                          IPL_DEPTH_8U,			
+                                          IPL_DEPTH_8U,
                                           (char *)"BGRA",
                                           (char *)"BGRA",
                                           IPL_DATA_ORDER_PIXEL,
                                           origin,
-                                          quantum,		
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -402,7 +401,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           (char *)"RGB",
                                           IPL_DATA_ORDER_PIXEL,
                                           origin,
-                                          quantum,		
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -415,12 +414,12 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           3,
                                           0,
-                                          IPL_DEPTH_8U,			
+                                          IPL_DEPTH_8U,
                                           (char *)"HSV",
                                           (char *)"HSV",
                                           IPL_DATA_ORDER_PIXEL,
                                           origin,
-                                          quantum,		
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -433,12 +432,12 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           3,
                                           0,
-                                          IPL_DEPTH_8U,			
+                                          IPL_DEPTH_8U,
                                           (char *)"RGB",
                                           (char *)"BGR",
                                           IPL_DATA_ORDER_PIXEL,
                                           origin,
-                                          quantum,		
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -451,12 +450,12 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           1,
                                           0,
-                                          IPL_DEPTH_8S,			
+                                          IPL_DEPTH_8S,
                                           (char *)"GRAY",
                                           (char *)"GRAY",
                                           IPL_DATA_ORDER_PIXEL,
                                           origin,
-                                          quantum,		
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -491,12 +490,12 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           3,
                                           0,
-                                          IPL_DEPTH_32F,			
+                                          IPL_DEPTH_32F,
                                           (char *)"RGB",
                                           (char *)"RGB",
                                           IPL_DATA_ORDER_PIXEL,
                                           origin,
-                                          quantum,		
+                                          quantum,
                                           x,
                                           y,
                                           NULL,
@@ -866,7 +865,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     if (header.width == 0 || header.height == 0)
     {
         // I maintain the prevous logic, although we should probably return false
-        return !connection.isError(); 
+        return !connection.isError();
     }
 
     imgPixelCode = header.id;
@@ -1097,4 +1096,3 @@ bool Image::copy(const Image& alt, int w, int h) {
         }
     return true;
 }
-

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef YARP2ImageFile_INC
-#define YARP2ImageFile_INC
+#ifndef YARP_SIG_IMAGEFILE_H
+#define YARP_SIG_IMAGEFILE_H
 
 #include <yarp/os/ConstString.h>
 #include <yarp/sig/Image.h>
@@ -62,4 +62,4 @@ namespace yarp {
     }
 }
 
-#endif
+#endif // YARP_SIG_IMAGEFILE_H

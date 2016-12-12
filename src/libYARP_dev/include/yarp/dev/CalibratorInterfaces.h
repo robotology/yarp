@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_CALLIBRATOR_INTERFACES
-#define YARP2_CALLIBRATOR_INTERFACES
+#ifndef YARP_DEV_CALIBRATORINTERFACES_H
+#define YARP_DEV_CALIBRATORINTERFACES_H
 
 #include <yarp/dev/DeviceDriver.h>
 
@@ -144,4 +143,4 @@ public:
 #define VOCAB_QUIT_CALIBRATE                        VOCAB4('q','u','c','a')
 #define VOCAB_QUIT_PARK                             VOCAB4('q','u','p','a')
 
-#endif
+#endif // YARP_DEV_CALIBRATORINTERFACES_H

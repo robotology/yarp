@@ -2,11 +2,10 @@
  * Copyright: (C) 2008 RobotCub Consortium
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPCANBUSINTERFACE
-#define YARPCANBUSINTERFACE
+#ifndef YARP_DEV_CANBUSINTERFACE_H
+#define YARP_DEV_CANBUSINTERFACE_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Log.h>
@@ -187,4 +186,4 @@ public:
     virtual ~ICanBusErrors(){}
 };
 
-#endif
+#endif // YARP_DEV_CANBUSINTERFACE_H

@@ -35,4 +35,4 @@ inline bool CHECK_FAIL(bool ok, yarp::os::Bottle& response) {
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-#endif
+#endif // YARP_DEV_CONTROLBOARDHELPERS_H_H

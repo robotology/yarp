@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -153,7 +152,7 @@ int UnitTest::run(int argc, char *argv[]) {
     runSubTests(argc,argv);
     if (hasProblem) {
         report(0,"A PROBLEM WAS ENCOUNTERED");
-    } 
+    }
     else {
         if (ran) {
             report(0,"no problems reported");
@@ -187,7 +186,7 @@ void UnitTest::stopTestSystem() {
 }
 
 
-bool UnitTest::checkEqualImpl(int x, int y, 
+bool UnitTest::checkEqualImpl(int x, int y,
                               const char *desc,
                               const char *txt1,
                               const char *txt2,
@@ -204,7 +203,7 @@ bool UnitTest::checkEqualImpl(int x, int y,
     return x==y;
 }
 
-bool UnitTest::checkEqualishImpl(double x, double y, 
+bool UnitTest::checkEqualishImpl(double x, double y,
                                  const char *desc,
                                  const char *txt1,
                                  const char *txt2,
@@ -285,7 +284,7 @@ void UnitTest::restoreEnvironment() {
     env.clear();
 }
 
- 
+
 bool UnitTest::heapMonitorSupported() {
 #ifdef YARP_TEST_HEAP
     return true;

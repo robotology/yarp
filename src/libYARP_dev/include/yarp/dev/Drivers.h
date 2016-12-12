@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_DRIVERS
-#define YARP2_DRIVERS
+#ifndef YARP_DRIVERS_H
+#define YARP_DRIVERS_H
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -22,6 +21,7 @@ namespace yarp {
     }
 }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.64
 // Make devices in a library available for use via yarp::dev::PolyDriver
 #define YARP_DECLARE_DEVICES(name) \
   YARP_COMPILER_DEPRECATED_WARNING(YARP_DECLARE_DEVICES is deprecated. Use YARP_DECLARE_PLUGINS instead.) \
@@ -30,7 +30,7 @@ namespace yarp {
 #define YARP_REGISTER_DEVICES(name) \
   YARP_COMPILER_DEPRECATED_WARNING(YARP_REGISTER_DEVICES is deprecated. Use YARP_REGISTER_DEVICES instead.) \
   YARP_REGISTER_PLUGINS(name)
-
+#endif // YARP_NO_DEPRECATED
 
 
 /**
@@ -276,4 +276,4 @@ private:
     static Drivers instance;
 };
 
-#endif
+#endif // YARP_DRIVERS_H

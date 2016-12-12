@@ -2,11 +2,10 @@
  * Copyright (C) 2008 RobotCub Consortium
  * Authors: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPPOSITIONCONTROLINTERFACE
-#define YARPPOSITIONCONTROLINTERFACE
+#ifndef YARP_DEV_IPOSITIONCONTROL_H
+#define YARP_DEV_IPOSITIONCONTROL_H
 
 namespace yarp {
     namespace dev {
@@ -306,4 +305,4 @@ public:
     virtual bool stop()=0;
 };
 
-#endif
+#endif // YARP_DEV_IPOSITIONCONTROL_H

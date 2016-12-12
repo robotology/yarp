@@ -2,16 +2,12 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SHMEMCARRIER
-#define YARP2_SHMEMCARRIER
+#ifndef YARP_OS_IMPL_SHMEMCARRIER_H
+#define YARP_OS_IMPL_SHMEMCARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
-
-
-//#include <ace/OS.h>
 
 namespace yarp {
     namespace os {
@@ -24,7 +20,8 @@ namespace yarp {
 /**
  * Communicating between two ports via shared memory.
  */
-class yarp::os::impl::ShmemCarrier : public AbstractCarrier {
+class yarp::os::impl::ShmemCarrier : public AbstractCarrier
+{
 private:
     int version;
 public:
@@ -61,5 +58,4 @@ public:
     bool becomeShmem(ConnectionState& proto, bool sender);
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_SHMEMCARRIER_H

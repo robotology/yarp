@@ -1,8 +1,7 @@
 /*
- * Author: Alessandro Scalzo alessandro@liralab.it
  * Copyright (C) 2007 RobotCub Consortium
+ * Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef YARP_OS_IMPL_SHMEMHYBRIDSTREAM_H
@@ -103,27 +102,4 @@ protected:
     int connect(const ACE_INET_Addr &ace_address);
 };
 
-#endif
-
-    /*
-    virtual void endPacket()
-    {
-        m_SendSerializerMutex.wait();
-
-        ShmemPacket_t write_data;
-        write_data.command=WRITE;
-        write_data.size=m_PacketDataSent;
-        m_PacketDataSent=0;
-        int ret=m_SockStream.send_n(&write_data,sizeof write_data);
-
-        if (ret<=0)
-        {
-            YARP_ERROR(Logger::get(),
-                       String("ShmemHybridStream socket writing error ")
-                       +NetType::toString(ret));
-            Close();
-        }
-
-        m_SendSerializerMutex.post();
-    }
-    */
+#endif // YARP_OS_IMPL_SHMEMHYBRIDSTREAM_H

@@ -2,11 +2,10 @@
  * Copyright (C) 2015 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPIMOTORENCODERS
-#define YARPIMOTORENCODERS
+#ifndef YARP_DEV_IMOTORENCODERS_H
+#define YARP_DEV_IMOTORENCODERS_H
 
 #include <yarp/os/Vocab.h>
 
@@ -285,4 +284,4 @@ public:
 #define VOCAB_MOTOR_ENCODER_ACCELERATION VOCAB3('m','a','c')
 #define VOCAB_MOTOR_ENCODER_ACCELERATIONS VOCAB4('m','a','c','s')
 
-#endif
+#endif // YARP_DEV_IMOTORENCODERS_H

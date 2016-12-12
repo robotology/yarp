@@ -5,8 +5,8 @@
  */
 
 
-#ifndef YARP2_REMOTEFRAMEGRABBER
-#define YARP2_REMOTEFRAMEGRABBER
+#ifndef YARP_DEV_REMOTEFRAMEGRABBER_H
+#define YARP_DEV_REMOTEFRAMEGRABBER_H
 
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/os/Network.h>
@@ -635,7 +635,7 @@ public:
                               "port name of real grabber").asString();
         local = config.check("local",yarp::os::Value("..."),
                              "port name to use locally").asString();
-        yarp::os::ConstString carrier = 
+        yarp::os::ConstString carrier =
             config.check("stream",yarp::os::Value("tcp"),
                          "carrier to use for streaming").asString();
         port.open(local);
@@ -761,7 +761,7 @@ private:
 protected:
 
     IFrameGrabberControlsDC1394 *Ifirewire;
-    
+
     bool setCommand(int code, double v) {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -810,9 +810,7 @@ class yarp::dev::RemoteFrameGrabberDC1394 : public yarp::dev::RemoteFrameGrabber
 
 #ifdef _MSC_VER
     /* Re-anable warning 4251*/
-    #pragma warning(pop) 
+    #pragma warning(pop)
 #endif
 
-#endif
-
-
+#endif // YARP_DEV_REMOTEFRAMEGRABBER_H

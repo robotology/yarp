@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -123,7 +122,7 @@ public:
             ACE_NEW_MALLOC_RETURN (obj,
                                    (PortReaderPacket *)
                                    ACE_Allocator::instance()->malloc(obj_size),
-                                   PortReaderPacket(), 0);
+                                   PortReaderPacket(), YARP_NULLPTR);
 #else
             obj = new PortReaderPacket();
 #endif
@@ -631,5 +630,3 @@ void PortReaderBufferBase::clear() {
 void typedReaderMissingCallback() {
     YARP_ERROR(Logger::get(), "Missing or incorrectly typed onRead function");
 }
-
-

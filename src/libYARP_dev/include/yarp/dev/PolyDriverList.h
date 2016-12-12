@@ -1,11 +1,11 @@
+/*
+ * Copyright (C) 2008 RobotCub Consortium
+ * Authors: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #ifndef YARP_DEV_POLYDRIVERLIST_H
 #define YARP_DEV_POLYDRIVERLIST_H
-
-/*
-* Copyright (C) 2008 RobotCub Consortium
-* Authors: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
 
 #include <yarp/dev/PolyDriverDescriptor.h>
 
@@ -42,4 +42,4 @@ private:
     void *aceVector;
 };
 
-#endif
+#endif // YARP_DEV_POLYDRIVERLIST_H

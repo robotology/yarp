@@ -2,7 +2,6 @@
  * Copyright (C) 2009 RobotCub Consortium
  * Author: Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <cstdio>
@@ -31,7 +30,7 @@ yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHan
         case yarp::os::YARP_SIGTERM:
             return ACE_OS::signal(SIGTERM, (ACE_SignalHandler) sighandler);
         default:
-            return 0; //signal not implemented yet
+            return YARP_NULLPTR; //signal not implemented yet
     }
 }
 

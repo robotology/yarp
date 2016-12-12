@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -85,7 +84,7 @@ Bytes StreamConnectionReader::readEnvelope() {
     if (parentConnectionReader != YARP_NULLPTR) {
         return parentConnectionReader->readEnvelope();
     }
-    return Bytes(0,0);
+    return Bytes(YARP_NULLPTR,0);
 }
 
 
