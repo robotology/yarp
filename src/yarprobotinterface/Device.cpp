@@ -139,7 +139,7 @@ public:
             // check if parentheses are balanced
             std::string stringFormatValue = param.value();
             int counter = 0;
-            for (int i = 0; i < stringFormatValue.size() && counter >= 0; i++){
+            for (size_t i = 0; i < stringFormatValue.size() && counter >= 0; i++){
                 if (stringFormatValue[i] == '('){
                     counter++;
                 } else if (stringFormatValue[i] == ')'){
