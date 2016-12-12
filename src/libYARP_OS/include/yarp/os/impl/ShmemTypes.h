@@ -1,8 +1,7 @@
 /*
- * Author: Alessandro Scalzo alessandro@liralab.it
  * Copyright (C) 2007 RobotCub Consortium
+ * Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef YARP_OS_IMPL_SHMEMTYPES_H
@@ -12,22 +11,22 @@
 
 struct ShmemHeader_t
 {
-	bool resize;
-	bool close;
+    bool resize;
+    bool close;
 
-	int size;
-	int newsize;
+    int size;
+    int newsize;
 
-	int head;
-	int tail;
-	int avail;
-	int waiting;
+    int head;
+    int tail;
+    int avail;
+    int waiting;
 };
 
 struct ShmemPacket_t
 {
-	int command;
-	int size;
+    int command;
+    int size;
 };
 
-#endif
+#endif // YARP_OS_IMPL_SHMEMTYPES_H

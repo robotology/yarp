@@ -1,5 +1,6 @@
 /*
 * Copyright (C) 2007-2009 RobotCub Consortium
+* Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
@@ -421,7 +422,7 @@ void YarpRunInfoVector::Pack()
 
     for (int i=tot; i<m_nProcesses; ++i)
     {
-        m_apList[i]=0;
+        m_apList[i]=YARP_NULLPTR;
     }
 
     m_nProcesses=tot;

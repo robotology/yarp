@@ -1,12 +1,11 @@
 /*
  * Copyright (C) 2006 Alex Bernardino & Carlos Beltran-Gonzalez
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#ifndef YARP2_SERVERSERIAL
-#define YARP2_SERVERSERIAL
+#ifndef YARP_DEV_SERVERSERIAL_H
+#define YARP_DEV_SERVERSERIAL_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -146,4 +145,4 @@ public:
     virtual void run();
 };
 
-#endif
+#endif // YARP_DEV_SERVERSERIAL_H

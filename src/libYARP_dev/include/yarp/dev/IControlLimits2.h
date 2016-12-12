@@ -5,10 +5,10 @@
  */
 
 
-#include <yarp/dev/ControlBoardInterfaces.h>
+#ifndef YARP_DEV_ICONTROLLIMITS2_H
+#define YARP_DEV_ICONTROLLIMITS2_H
 
-#ifndef ICONTROL_LIMIT_V2_H_
-#define ICONTROL_LIMIT_V2_H_
+#include <yarp/dev/ControlBoardInterfaces.h>
 
 namespace yarp {
     namespace dev {
@@ -93,4 +93,5 @@ public:
 };
 
 #define VOCAB_VEL_LIMITS VOCAB4('v','l','i','m')
-#endif /* ICONTROL_LIMIT_V2_H_ */
+
+#endif // YARP_DEV_ICONTROLLIMITS2_H

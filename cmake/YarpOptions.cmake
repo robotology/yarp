@@ -303,7 +303,7 @@ mark_as_advanced(YARP_EXPERIMENTAL_CXX11)
 if(YARP_EXPERIMENTAL_CXX11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
     set(YARP_HAS_CXX11 TRUE)
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
        NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.1)
     # GCC 6.1 uses -std=cxx14 by default. This causes issues in some
     # configurations, therefore c++98 is forced

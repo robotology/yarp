@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 RobotCub Consortium
- * Author Alessandro Scalzo alessandro@liralab.it
+ * Author Alessandro Scalzo alessandro.scalzo@iit.it
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -14,7 +14,7 @@
 #include <stdio.h>
 
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     yarp::os::Network yarp;
     int ret=yarp::os::Run::main(argc,argv);

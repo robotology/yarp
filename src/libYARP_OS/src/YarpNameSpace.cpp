@@ -2,7 +2,6 @@
  * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/YarpNameSpace.h>
@@ -51,8 +50,8 @@ Contact YarpNameSpace::registerContact(const Contact& contact) {
         ConstString cat = nc.getCategory();
         if (nc.getNestedName()!="") {
             //bool service = (cat.find("1") != ConstString::npos);
-            bool publish = (cat.find("+") != ConstString::npos);
-            bool subscribe = (cat.find("-") != ConstString::npos);
+            bool publish = (cat.find('+') != ConstString::npos);
+            bool subscribe = (cat.find('-') != ConstString::npos);
             ContactStyle style;
             Contact c1(nc.getFullName());
             Contact c2(ConstString("topic:/") + nc.getNestedName());
@@ -75,8 +74,8 @@ Contact YarpNameSpace::unregisterName(const ConstString& name) {
     ConstString cat = nc.getCategory();
     if (nc.getNestedName()!="") {
         //bool service = (cat.find("1") != ConstString::npos);
-        bool publish = (cat.find("+") != ConstString::npos);
-        bool subscribe = (cat.find("-") != ConstString::npos);
+        bool publish = (cat.find('+') != ConstString::npos);
+        bool subscribe = (cat.find('-') != ConstString::npos);
         ContactStyle style;
         Contact c1(nc.getFullName());
         Contact c2(ConstString("topic:/") + nc.getNestedName());
@@ -97,7 +96,7 @@ Contact YarpNameSpace::unregisterContact(const Contact& contact) {
 }
 
 
-bool YarpNameSpace::setProperty(const ConstString& name, const ConstString& key, 
+bool YarpNameSpace::setProperty(const ConstString& name, const ConstString& key,
                                 const Value& value) {
     Bottle command;
     command.addString("bot");
@@ -173,5 +172,3 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
     reply.read(con.getReader());
     return result!="";
 }
-
-

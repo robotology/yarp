@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/impl/NameClient.h>
@@ -261,7 +260,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
 
 Contact NameClient::queryName(const ConstString& name) {
     ConstString np = getNamePart(name);
-    size_t i1 = np.find(":");
+    size_t i1 = np.find(':');
     if (i1!=ConstString::npos) {
         Contact c = c.fromString(np.c_str());
         if (c.isValid()&&c.getPort()>0) {
@@ -293,7 +292,7 @@ Contact NameClient::registerName(const ConstString& name, const Contact& suggest
         cmd.addString("...");
     }
     ConstString prefix = NetworkBase::getEnvironment("YARP_IP");
-    NestedContact nc = suggest.getNested();
+    const NestedContact& nc = suggest.getNested();
     ConstString typ = nc.getTypeNameStar();
     if (suggest.isValid()||prefix!=""||typ!="*") {
         if (suggest.getCarrier()!="") {

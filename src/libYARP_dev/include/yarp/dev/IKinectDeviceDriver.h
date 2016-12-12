@@ -1,12 +1,11 @@
 /*
-* Copyright (C) 2011 Duarte Aragao
-* Author: Duarte Aragao
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2011 Duarte Aragao
+ * Author: Duarte Aragao
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-
-#pragma once
+#ifndef YARP_DEV_IKINECTDEVICEDRIVER_H
+#define YARP_DEV_IKINECTDEVICEDRIVER_H
 
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>
@@ -133,3 +132,5 @@ public:
     */
     virtual yarp::sig::ImageOf<yarp::sig::PixelInt> getDepthMap() = 0;
 };
+
+#endif // YARP_DEV_IKINECTDEVICEDRIVER_H

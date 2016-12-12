@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_STREAMBLOCKREADER
-#define YARP2_STREAMBLOCKREADER
+#ifndef YARP_OS_IMPL_STREAMCONNECTIONREADER_H
+#define YARP_OS_IMPL_STREAMCONNECTIONREADER_H
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/TwoWayStream.h>
@@ -36,7 +35,8 @@ namespace yarp {
  * Lets Readable objects read from the underlying InputStream
  * associated with the connection between two ports.
  */
-class YARP_OS_impl_API yarp::os::impl::StreamConnectionReader : public ConnectionReader {
+class YARP_OS_impl_API yarp::os::impl::StreamConnectionReader : public ConnectionReader
+{
 public:
     StreamConnectionReader() :
         ConnectionReader(),
@@ -54,13 +54,15 @@ public:
         ref(YARP_NULLPTR),
         convertedTextMode(false),
         pushedIntFlag(false),
-        parentConnectionReader(NULL) {
+        parentConnectionReader(YARP_NULLPTR)
+    {
     }
 
     virtual ~StreamConnectionReader();
 
     void reset(yarp::os::InputStream& in, TwoWayStream *str, const Route& route,
-               size_t len, bool textMode, bool bareMode = false) {
+               size_t len, bool textMode, bool bareMode = false)
+    {
         this->in = &in;
         this->str = str;
         this->route = route;
@@ -74,22 +76,27 @@ public:
         pushedIntFlag = false;
     }
 
-    virtual bool setSize(size_t len) {
+    virtual bool setSize(size_t len)
+    {
         reset(*in,str,route,len,textMode,bareMode);
         return true;
     }
 
-    void setProtocol(Protocol *protocol) {
+    void setProtocol(Protocol *protocol)
+    {
         this->protocol = protocol;
     }
 
-    virtual bool expectBlock(const yarp::os::Bytes& b) {
+    virtual bool expectBlock(const yarp::os::Bytes& b)
+    {
         if (!isGood()) {
             return false;
         }
         yAssert(in!=YARP_NULLPTR);
         size_t len = b.length();
-        if (len==0) return true;
+        if (len==0) {
+            return true;
+        }
         //if (len<0) len = messageLen;
         if (len>0) {
             YARP_SSIZE_T rlen = in->readFull(b);
@@ -102,19 +109,25 @@ public:
         return false;
     }
 
-    virtual bool pushInt(int x) {
-        if (pushedIntFlag) return false;
+    virtual bool pushInt(int x)
+    {
+        if (pushedIntFlag) {
+            return false;
+        }
         pushedIntFlag = true;
         pushedInt = x;
         return true;
     }
 
-    virtual int expectInt() {
+    virtual int expectInt()
+    {
         if (pushedIntFlag) {
             pushedIntFlag = false;
             return pushedInt;
         }
-        if (!isGood()) { return 0; }
+        if (!isGood()) {
+            return 0;
+        }
         NetInt32 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         yAssert(in!=YARP_NULLPTR);
@@ -127,8 +140,11 @@ public:
         return x;
     }
 
-    virtual YARP_INT64 expectInt64() {
-        if (!isGood()) { return 0; }
+    virtual YARP_INT64 expectInt64()
+    {
+        if (!isGood()) {
+            return 0;
+        }
         NetInt64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         yAssert(in!=YARP_NULLPTR);
@@ -141,8 +157,11 @@ public:
         return x;
     }
 
-    virtual double expectDouble() {
-        if (!isGood()) { return 0; }
+    virtual double expectDouble()
+    {
+        if (!isGood()) {
+            return 0;
+        }
         NetFloat64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         yAssert(in!=YARP_NULLPTR);
@@ -155,8 +174,11 @@ public:
         return x;
     }
 
-    virtual ConstString expectString(int len) {
-        if (!isGood()) { return ""; }
+    virtual ConstString expectString(int len)
+    {
+        if (!isGood()) {
+            return "";
+        }
         char *buf = new char[len];
         yarp::os::Bytes b(buf,len);
         yAssert(in!=YARP_NULLPTR);
@@ -172,8 +194,11 @@ public:
         return s;
     }
 
-    virtual ConstString expectLine() {
-        if (!isGood()) { return ""; }
+    virtual ConstString expectLine()
+    {
+        if (!isGood()) {
+            return "";
+        }
         yAssert(in!=YARP_NULLPTR);
         bool success = false;
         ConstString result = in->readLine('\n',&success);
@@ -185,42 +210,49 @@ public:
         return result;
     }
 
-    virtual bool isTextMode() {
+    virtual bool isTextMode()
+    {
         return textMode;
     }
 
-    virtual bool isBareMode() {
+    virtual bool isBareMode()
+    {
         return bareMode;
     }
 
     virtual bool convertTextMode();
 
-    virtual size_t getSize() {
+    virtual size_t getSize()
+    {
         return messageLen + (pushedIntFlag?sizeof(yarp::os::NetInt32):0);
     }
 
     /*
-      virtual OutputStream *getReplyStream() {
-      if (str==YARP_NULLPTR) {
-      return YARP_NULLPTR;
-      }
-      return &(str->getOutputStream());
-      }
+    virtual OutputStream *getReplyStream()
+    {
+        if (str==YARP_NULLPTR) {
+            return YARP_NULLPTR;
+        }
+        return &(str->getOutputStream());
+    }
     */
 
     virtual yarp::os::ConnectionWriter *getWriter();
 
-    void suppressReply() {
+    void suppressReply()
+    {
         str = YARP_NULLPTR;
     }
 
     virtual void flushWriter();
 
-    //virtual TwoWayStream *getStreams() {
-    //return str;
-    //}
+    // virtual TwoWayStream *getStreams()
+    // {
+    // return str;
+    // }
 
-    virtual yarp::os::Contact getRemoteContact() {
+    virtual yarp::os::Contact getRemoteContact()
+    {
         if (str!=YARP_NULLPTR) {
             Contact remote = str->getRemoteAddress();
             remote.setName(route.getFromName());
@@ -230,7 +262,8 @@ public:
         return remote;
     }
 
-    virtual yarp::os::Contact getLocalContact() {
+    virtual yarp::os::Contact getLocalContact()
+    {
         if (str!=YARP_NULLPTR) {
             Contact local = str->getLocalAddress();
             local.setName(route.getToName());
@@ -241,12 +274,16 @@ public:
 
 
 
-    virtual bool expectBlock(const char *data, size_t len) {
+    virtual bool expectBlock(const char *data, size_t len)
+    {
         return expectBlock(yarp::os::Bytes((char*)data,len));
     }
 
-    virtual ::yarp::os::ConstString expectText(int terminatingChar) {
-        if (!isGood()) { return ""; }
+    virtual ::yarp::os::ConstString expectText(int terminatingChar)
+    {
+        if (!isGood()) {
+            return "";
+        }
         yAssert(in!=YARP_NULLPTR);
         bool lsuccess = false;
         ConstString result = in->readLine(terminatingChar,&lsuccess);
@@ -256,18 +293,27 @@ public:
         return ::yarp::os::ConstString(result.c_str());
     }
 
-    virtual bool isValid() {
+    virtual bool isValid()
+    {
         return valid;
     }
 
-    virtual bool isError() {
-        if (err) return true;
+    virtual bool isError()
+    {
+        if (err) {
+            return true;
+        }
         return !isActive();
     }
 
-    virtual bool isActive() {
-        if (shouldDrop) return false;
-        if (!isValid()) return false;
+    virtual bool isActive()
+    {
+        if (shouldDrop) {
+            return false;
+        }
+        if (!isValid()) {
+            return false;
+        }
         if (in!=YARP_NULLPTR) {
             if (in->isOk()) {
                 return true;
@@ -276,33 +322,39 @@ public:
         return false;
     }
 
-    virtual yarp::os::Portable *getReference() {
+    virtual yarp::os::Portable *getReference()
+    {
         return ref;
     }
 
-    virtual void setReference(yarp::os::Portable *obj) {
+    virtual void setReference(yarp::os::Portable *obj)
+    {
         ref = obj;
     }
 
     virtual yarp::os::Bytes readEnvelope();
 
-    virtual void requestDrop() {
+    virtual void requestDrop()
+    {
         shouldDrop = true;
     }
 
-    bool dropRequested() {
+    bool dropRequested()
+    {
         return shouldDrop;
     }
 
     virtual yarp::os::Searchable& getConnectionModifiers();
 
-    virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader) {
+    virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader)
+    {
         this->parentConnectionReader = parentConnectionReader;
     }
 
 private:
 
-    bool isGood() {
+    bool isGood()
+    {
         return isActive()&&isValid()&&!isError();
     }
 
@@ -327,4 +379,4 @@ private:
     ConnectionReader *parentConnectionReader;
 };
 
-#endif
+#endif // YARP_OS_IMPL_STREAMCONNECTIONREADER_H

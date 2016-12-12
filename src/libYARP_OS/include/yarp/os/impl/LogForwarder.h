@@ -1,13 +1,12 @@
 /*
  * Copyright (C) 2014  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Marco Randazzo <marco.randazzo@iit.it>
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
-#ifndef YARP2_LOG_FORWARDER
-#define YARP2_LOG_FORWARDER
+#ifndef YARP_OS_IMPL_LOGFORWARDER_H
+#define YARP_OS_IMPL_LOGFORWARDER_H
 
 #include <yarp/os/api.h>
 #include <yarp/os/BufferedPort.h>
@@ -25,7 +24,7 @@ class YARP_OS_API LogForwarder
     public:
         static LogForwarder* getInstance();
         static void clearInstance();
-        void forward (std::string message);
+        void forward (const std::string& message);
     protected:
         LogForwarder();
         ~LogForwarder();
@@ -39,7 +38,7 @@ class YARP_OS_API LogForwarder
         static LogForwarder* instance;
 };
 
-}
-}
+} // namespace os
+} // namespace yarp
 
-#endif // _YARP2_LOG_FORWARDER_
+#endif // YARP_OS_IMPL_LOGFORWARDER_H

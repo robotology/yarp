@@ -2,7 +2,6 @@
  * Copyright (C) 2010 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <stdio.h>
@@ -62,4 +61,3 @@ void yarp::os::Network::fini() {
     }
     if (__custom_yarp_is_initialized>0) __custom_yarp_is_initialized--;
 }
-

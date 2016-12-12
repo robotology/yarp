@@ -5,8 +5,8 @@
  */
 
 
-#ifndef IVELOCITYCONTROLIMPL_V2_H_
-#define IVELOCITYCONTROLIMPL_V2_H_
+#ifndef YARP_DEV_IVELOCITYCONTROL2IMPL_H
+#define YARP_DEV_IVELOCITYCONTROL2IMPL_H
 
 
 #include <yarp/dev/IVelocityControl2.h>
@@ -192,4 +192,4 @@ public:
     {return NOT_YET_IMPLEMENTED("getVelPidsRaw");}
 
 };
-#endif /* IVELOCITYCONTROLIMPL_V2_H_ */
+#endif // YARP_DEV_IVELOCITYCONTROL2IMPL_H

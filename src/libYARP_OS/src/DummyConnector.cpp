@@ -2,7 +2,6 @@
  * Copyright (C) 2007 Freyr Magnusson and RobotCub Consortium
  * Authors: Freyr Magnusson and Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -111,4 +110,3 @@ ConnectionReader& DummyConnector::getReader() {
 void DummyConnector::reset() {
     HELPER(implementation).reset();
 }
-

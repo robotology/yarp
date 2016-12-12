@@ -29,4 +29,4 @@
 // old interface implementation file
 #include <yarp/dev/ImplementControlBoardInterfaces.h>
 
-#endif
+#endif // YARP_DEV_CONTROLBOARDINTERFACESIMPL_H

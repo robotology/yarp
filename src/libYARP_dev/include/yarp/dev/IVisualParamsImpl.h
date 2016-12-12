@@ -1,13 +1,12 @@
 /*
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
- * Author:  Alberto Cardellino
- * email:   alberto.cardellino@iit.it
+ * Author: Alberto Cardellino <alberto.cardellino@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
-#ifndef YARP_IMPLEMENT_VISUAL_INTERFACES
-#define YARP_IMPLEMENT_VISUAL_INTERFACES
+#ifndef YARP_DEV_IVISUALPARAMSIMPL_H
+#define YARP_DEV_IVISUALPARAMSIMPL_H
 
 #include <yarp/dev/api.h>
 #include <yarp/os/Port.h>
@@ -102,4 +101,4 @@ public:
     virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
 };
 
-#endif  // YARP_IMPLEMENT_VISUAL_INTERFACES
+#endif  // YARP_DEV_IVISUALPARAMSIMPL_H

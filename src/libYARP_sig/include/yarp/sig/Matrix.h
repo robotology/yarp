@@ -1,12 +1,12 @@
 /*
-* Copyright (C) 2007 RobotCub Consortium
-* Authors: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2007 RobotCub Consortium
+ * Authors: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 
-#ifndef YARP2_MATRIX
-#define YARP2_MATRIX
+#ifndef YARP_SIG_MATRIX_H
+#define YARP_SIG_MATRIX_H
 
 #include <stdlib.h> //defines size_t
 #include <memory.h> //memset
@@ -329,5 +329,4 @@ public:
 
 };
 
-#endif
-
+#endif // YARP_SIG_MATRIX_H

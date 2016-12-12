@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2006 The Robotcub Consortium
  * Author: Lorenzo Natale, Paul Fitzpatrick, Anne van Rossum
- * Copyright (C) 2006 The Robotcub consortium
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -279,7 +279,7 @@ bool ThreadImpl::start()
                                    &dummy_id,
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
-                                   0,
+                                   YARP_NULLPTR,
                                    s);
 #else
     pthread_attr_t attr;

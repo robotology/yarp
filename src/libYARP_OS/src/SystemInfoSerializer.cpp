@@ -1,13 +1,7 @@
 /*
- *  Yarp Modules Manager
  *  Copyright: (C) 2010 RobotCub Consortium
- *              Italian Institute of Technology (IIT)
- *              Via Morego 30, 16163, 
- *              Genova, Italy
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #include <yarp/os/SystemInfo.h>
@@ -41,7 +35,7 @@ bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
     //network.mac = connection.expectText();
     //network.ip4 = connection.expectText();
     //network.ip6 = connection.expectText();
-    
+
     // reading processor
     processor.architecture = connection.expectText();
     processor.model = connection.expectText();
@@ -82,9 +76,9 @@ bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
     storage = SystemInfo::getStorageInfo();
     //network = SystemInfo::getNetworkInfo();
     processor = SystemInfo::getProcessorInfo();
-    platform = SystemInfo::getPlatformInfo(); 
+    platform = SystemInfo::getPlatformInfo();
     load = SystemInfo::getLoadInfo();
-    user = SystemInfo::getUserInfo();    
+    user = SystemInfo::getUserInfo();
 
     // serializing memory
     connection.appendInt(memory.totalSpace);
@@ -98,7 +92,7 @@ bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
     //connection.appendString(network.mac.c_str());
     //connection.appendString(network.ip4.c_str());
     //connection.appendString(network.ip6.c_str());
-    
+
     // serializing processor
     connection.appendString(processor.architecture.c_str());
     connection.appendString(processor.model.c_str());
@@ -131,5 +125,3 @@ bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
 
     return !connection.isError();
 }
-
-

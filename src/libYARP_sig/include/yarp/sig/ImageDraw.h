@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_IMAGEDRAW
-#define YARP2_IMAGEDRAW
+#ifndef YARP_SIG_IMAGEDRAW_H
+#define YARP_SIG_IMAGEDRAW_H
 
 #include <math.h>
 
@@ -18,13 +17,13 @@ namespace yarp {
         /**
          * \ingroup sig_class
          *
-         *  Very basic drawing functions, in case you don't have 
+         *  Very basic drawing functions, in case you don't have
          *  anything better available.
          */
         namespace draw {
 
             template <class T>
-            void addSegment(ImageOf<T>& dest, const T& pix, 
+            void addSegment(ImageOf<T>& dest, const T& pix,
                             int x, int y, int dx, int dy) {
                 const double vx = double(dx - x);
                 const double vy = double(dy - y);
@@ -38,7 +37,7 @@ namespace yarp {
             }
 
             template <class T>
-            void addCircle(ImageOf<T>& dest, const T& pix, 
+            void addCircle(ImageOf<T>& dest, const T& pix,
                            int i, int j, int r) {
                 float d, r2 = (float)(r*r);
                 for (int ii=i-r; ii<=i+r; ii++) {
@@ -52,7 +51,7 @@ namespace yarp {
             }
 
             template <class T>
-            void addCrossHair(ImageOf<T>& dest, const T& pix, 
+            void addCrossHair(ImageOf<T>& dest, const T& pix,
                               int i, int j, int r) {
                 for (int ii=i-r; ii<=i+r; ii++) {
                     for (int jj=j-r; jj<=j+r; jj++) {
@@ -64,7 +63,7 @@ namespace yarp {
             }
 
             template <class T>
-            void addCircleOutline(ImageOf<T>& dest, const T& pix, 
+            void addCircleOutline(ImageOf<T>& dest, const T& pix,
                                   int i, int j, int r) {
                 float d, r2 = float(r*r), r2l = float((r-1.1)*(r-1.1));
                 for (int ii=i-r; ii<=i+r; ii++) {
@@ -78,7 +77,7 @@ namespace yarp {
             }
 
             template <class T>
-            void addOvalOutline(ImageOf<T>& dest, const T& pix, 
+            void addOvalOutline(ImageOf<T>& dest, const T& pix,
                                 int i, int j, int h2, int w2) {
                 float x, y;
                 for (float th=0; th<2.0*3.14159; th+=0.01) {
@@ -90,7 +89,7 @@ namespace yarp {
 
 
             template <class T>
-            void addRectangleOutline(ImageOf<T>& dest, const T& pix, 
+            void addRectangleOutline(ImageOf<T>& dest, const T& pix,
                                      int i, int j, int w, int h) {
                 for (int ii=i-w; ii<=i+w; ii++) {
                     dest.safePixel(ii,j-h) = pix;
@@ -110,7 +109,7 @@ namespace yarp {
              * warning : i, j is x, y center of rectangle
              */
             template <class T>
-            void addRectangle(ImageOf<T>& dest, const T& pix, 
+            void addRectangle(ImageOf<T>& dest, const T& pix,
                               int i, int j, int w, int h) {
                 for (int ii=i-w; ii<=i+w; ii++) {
                     for (int jj=j-h; jj<=j+h; jj++) {
@@ -120,7 +119,7 @@ namespace yarp {
             }
 
             template <class T>
-            int applyThreshold(ImageOf<T>& src, ImageOf<T>& dest, 
+            int applyThreshold(ImageOf<T>& src, ImageOf<T>& dest,
                                const T& thetalo, const T& thetahi,
                                const T& pix0, const T& pix1) {
                 int h = src.height();
@@ -145,7 +144,7 @@ namespace yarp {
                     for (int j=0; j<w; j++) {
                         src(i,j) = pix;
                     }
-                }  
+                }
             }
 
 #ifndef IMGFOR
@@ -156,5 +155,4 @@ namespace yarp {
     }
 }  // end namespace yarp::sig::draw
 
-#endif
-
+#endif // YARP_SIG_IMAGEDRAW_H

@@ -22,8 +22,8 @@
  */
 
 
-#ifndef TCPACCEPTOR_H_
-#define TCPACCEPTOR_H_
+#ifndef YARP_OS_IMPL_TCPACCEPTOR_H
+#define YARP_OS_IMPL_TCPACCEPTOR_H
 
 
 #include <yarp/os/TwoWayStream.h>
@@ -53,7 +53,8 @@ namespace yarp {
  * Interface of TcpAcceptor
  * **************************************************************************************/
 
-class yarp::os::impl::TcpAcceptor {
+class yarp::os::impl::TcpAcceptor
+{
 public:
 
     TcpAcceptor();
@@ -87,4 +88,4 @@ private:
     int port_number;
 };
 
-#endif /* TCPACCEPTOR_H_ */
+#endif // YARP_OS_IMPL_TCPACCEPTOR_H

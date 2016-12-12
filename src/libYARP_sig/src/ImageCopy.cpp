@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/Log.h>
@@ -50,13 +49,13 @@ SPECIAL_COPY_BEGIN
 SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB)
     dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGBA)
-    dest->r = dest->g = dest->b = *src; 
+    dest->r = dest->g = dest->b = *src;
     dest->a = 255;
 SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_BGRA)
-    dest->r = dest->g = dest->b = *src; 
+    dest->r = dest->g = dest->b = *src;
     dest->a = 255;
 SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_RGB_INT)
-    dest->r = dest->g = dest->b = *src; 
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_BGR)
     dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(VOCAB_PIXEL_MONO,VOCAB_PIXEL_HSV)
@@ -543,7 +542,7 @@ SPECIAL_COPY_END
 ///
 ///
 template <class T1, class T2>
-static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2, 
+static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2,
                        int w, int h,
                        bool flip)
 {
@@ -584,7 +583,7 @@ static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2,
 #define MAKE_2CASE(id1,id2) MAKE_CASE(id1,id2); MAKE_CASE(id2,id1);
 
 // More elegant ways to do this, but needs to be efficient at pixel level
-void Image::copyPixels(const unsigned char *src, int id1, 
+void Image::copyPixels(const unsigned char *src, int id1,
                        char unsigned *dest, int id2, int w, int h,
                        int imageSize, int quantum1, int quantum2,
                        bool topIsLow1, bool topIsLow2)
@@ -729,4 +728,3 @@ void Image::copyPixels(const unsigned char *src, int id1,
 
     DBG printf("... done copyPixels\n");
 }
-

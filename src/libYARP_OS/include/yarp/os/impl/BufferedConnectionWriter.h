@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_BUFFEREDCONNECTIONWRITER
-#define YARP2_BUFFEREDCONNECTIONWRITER
+#ifndef YARP_OS_IMPL_BUFFEREDCONNECTIONWRITER_H
+#define YARP_OS_IMPL_BUFFEREDCONNECTIONWRITER_H
 
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ConnectionReader.h>
@@ -52,7 +51,7 @@ namespace yarp {
  * a BufferedConnectionWriter is useful. It will create buffer space
  * for any parts serialized on the fly, and keep track of any external
  * blocks (e.g. arrays of pixel data) that we want to include verbatim
- * in the message.  This class plays no role in management of the 
+ * in the message.  This class plays no role in management of the
  * lifecycle of external blocks (e.g. when they are created/destroyed,
  * or when they may change in value). If you use external blocks, be
  * sure to pay attention to onCompletion() events on your object.
@@ -71,7 +70,7 @@ public:
      *
      * @param bareMode suggest that the object be serialized with the
      * assumption that all type information is known by recipient.
-     * BufferedConnectionWriter simply passes this flag along to read/write 
+     * BufferedConnectionWriter simply passes this flag along to read/write
      * methods, it takes on action on it.
      *
      */
@@ -739,4 +738,4 @@ public:
 
 
 
-#endif
+#endif // YARP_OS_IMPL_BUFFEREDCONNECTIONWRITER_H

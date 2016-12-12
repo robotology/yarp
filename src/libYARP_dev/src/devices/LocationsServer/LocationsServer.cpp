@@ -1,9 +1,8 @@
 /*
-* Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo <marco.randazzo@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #include <yarp/dev/INavigation2D.h>
 #include "LocationsServer.h"
@@ -217,7 +216,7 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
         if (cmd == VOCAB_NAV_GET_LOCATION_LIST)
         {
             yarp::os::ConstString info;
-               
+
             out.addVocab(VOCAB_OK);
             Bottle& l = out.addList();
 
@@ -259,7 +258,7 @@ bool yarp::dev::LocationsServer::read(yarp::os::ConnectionReader& connection)
             std::string name = in.get(2).asString();
 
             std::map<std::string, Map2DLocation>::iterator it;
-            it = m_locations.find(name);            
+            it = m_locations.find(name);
             if (it != m_locations.end())
             {
                 out.addVocab(VOCAB_OK);
@@ -329,7 +328,7 @@ bool yarp::dev::LocationsServer::open(yarp::os::Searchable &config)
         yError("LocationsServer::open() error you have to provide valid local name");
         return false;
     }
-    
+
     if (config.check("ROS_enabled"))
     {
         m_ros_enabled = true;
@@ -359,7 +358,7 @@ bool yarp::dev::LocationsServer::open(yarp::os::Searchable &config)
 
     ConstString local_rpc = m_local_name;
     local_rpc += "/rpc";
-    
+
     if (!m_rpc_port.open(local_rpc.c_str()))
     {
         yError("LocationsServer::open() error could not open rpc port %s, check network", local_rpc.c_str());

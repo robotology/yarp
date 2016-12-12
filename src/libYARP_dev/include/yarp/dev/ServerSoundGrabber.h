@@ -1,11 +1,10 @@
 /*
  * Copyright (C) 2006 Julio Gomes
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_SERVERSOUNDGRABBER
-#define YARP2_SERVERSOUNDGRABBER
+#ifndef YARP_DEV_SERVERSOUNDGRABBER_H
+#define YARP_DEV_SERVERSOUNDGRABBER_H
 
 #include <stdio.h>
 
@@ -185,4 +184,4 @@ public:
     }
 };
 
-#endif
+#endif // YARP_DEV_SERVERSOUNDGRABBER_H

@@ -1,16 +1,18 @@
 /*
-* Copyright (C) 2015 Istituto Italiano di Tecnologia, iCub Facility
-* Authors: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-* 
-* Basic implementations of debayering functions. Used to convert Bayer images received
-* in a YARP port. Prototype implementation, in the future we should replace these functions
-* with better implementations, like the ones in the Bayer Carrier. If we decide to implement
-* debayering by chaining carriers this code could be removed completely.
-*/
+ * Copyright (C) 2015 Istituto Italiano di Tecnologia, iCub Facility
+ * Authors: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-#ifndef YARP_IMAGE_DEBAYER
-#define YARP_IMAGE_DEBAYER
+/**
+ * Basic implementations of debayering functions. Used to convert Bayer images received
+ * in a YARP port. Prototype implementation, in the future we should replace these functions
+ * with better implementations, like the ones in the Bayer Carrier. If we decide to implement
+ * debayering by chaining carriers this code could be removed completely.
+ */
+
+#ifndef YARP_SIG_IMPL_DEBAYER_H
+#define YARP_SIG_IMPL_DEBAYER_H
 
 #include <yarp/sig/Image.h>
 
@@ -37,8 +39,8 @@ inline bool isBayer16(int v)
 }
 
 /*
-* Nearest neighbor debayer implementation (warning: skip borders)
-*/
+ * Nearest neighbor debayer implementation (warning: skip borders)
+ */
 bool deBayer_GRBG8_TO_RGB(yarp::sig::Image &source, yarp::sig::Image &dest, int pixelSize);
 
 bool deBayer_BGGR8_TO_RGB(yarp::sig::Image &source, yarp::sig::Image &dest, int pixelSize);
@@ -46,12 +48,12 @@ bool deBayer_BGGR8_TO_RGB(yarp::sig::Image &source, yarp::sig::Image &dest, int 
 bool deBayer_RGGB8_TO_RGB(yarp::sig::Image &source, yarp::sig::Image &dest, int pixelSize);
 
 /*
-* Nearest neighbor debayer implementation (warning: skip borders)
-*/
+ * Nearest neighbor debayer implementation (warning: skip borders)
+ */
 bool deBayer_GRBG8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int pixelSize);
 
 bool deBayer_BGGR8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int pixelSize);
 
 inline bool deBayer_RGGB8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int pixelSize);
 
-#endif
+#endif // YARP_SIG_IMPL_DEBAYER_H

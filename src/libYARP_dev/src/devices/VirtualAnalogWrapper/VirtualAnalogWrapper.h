@@ -1,8 +1,8 @@
 /*
-* Copyright (C) 2013 RobotCub Consortium
-* Author: Alberto Cardellino
-* CopyPolicy: Released under the terms of the GNU GPL v2.0.
-*/
+ * Copyright (C) 2013 RobotCub Consortium
+ * Author: Alberto Cardellino
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #ifndef YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H
 #define YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H
@@ -169,4 +169,4 @@ protected:
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-#endif
+#endif // YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H

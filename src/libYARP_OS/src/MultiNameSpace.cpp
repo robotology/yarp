@@ -2,7 +2,6 @@
  * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -166,7 +165,7 @@ public:
             NameSpace *ns = spaces[i];
             if (!ns) continue;
             if (ns->getNameServerName()==name) {
-                // optimization: return cached server address for 
+                // optimization: return cached server address for
                 // port names that match name of namespace
                 return ns->getNameServerContact();
             }

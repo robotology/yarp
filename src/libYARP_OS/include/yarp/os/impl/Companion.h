@@ -2,11 +2,10 @@
  * Copyright (C) 2006, 2008, 2009, 2010 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_COMPANION
-#define YARP2_COMPANION
+#ifndef YARP_OS_IMPL_COMPANION_H
+#define YARP_OS_IMPL_COMPANION_H
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/PortWriter.h>
@@ -17,7 +16,7 @@
 #include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/PlatformStdio.h>
 
-// ACE headers may fiddle with main 
+// ACE headers may fiddle with main
 #ifdef main
 #undef main
 #endif
@@ -70,7 +69,7 @@ public:
     static int disconnectInput(const char *src, const char *dest,
                                bool silent = false);
 
-    static int poll(const char *target, bool silent = false); 
+    static int poll(const char *target, bool silent = false);
 
     static int wait(const char *target, bool silent = false,
                     const char *target2 = YARP_NULLPTR);
@@ -79,9 +78,9 @@ public:
         ContactStyle style;
         style.quiet = silent;
         return exists(target,style);
-    } 
+    }
 
-    static int exists(const char *target, const ContactStyle& style); 
+    static int exists(const char *target, const ContactStyle& style);
 
     /**
      * Create a port to read Bottles and prints them to standard input.
@@ -210,7 +209,7 @@ public:
 private:
 
     Companion();
-  
+
     static Companion instance;
 
     void applyArgs(yarp::os::Contactable& port);
@@ -250,4 +249,4 @@ private:
     }
 };
 
-#endif
+#endif // YARP_OS_IMPL_COMPANION_H

@@ -1,24 +1,12 @@
 /*
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
- * Author:  Alberto Cardellino
- * email:   alberto.cardellino@iit.it
- * website: www.robotcub.org
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
- *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
+ * Author: Alberto Cardellino <alberto.cardellino@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
-#ifndef YARP_DEV_RGBD_SENSOR_INTERFACE
-#define YARP_DEV_RGBD_SENSOR_INTERFACE
+#ifndef YARP_DEV_IRGBDSENSOR_H
+#define YARP_DEV_IRGBDSENSOR_H
 
 #include <yarp/os/Stamp.h>
 #include <yarp/sig/Image.h>
@@ -176,4 +164,4 @@ public:
     virtual RGBDSensor_status getSensorStatus() = 0;
 };
 
-#endif   // YARP_DEV_RGBD_INTERFACE__
+#endif   // YARP_DEV_IRGBDSENSOR_H

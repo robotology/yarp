@@ -2,13 +2,12 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Lorenzo Natale, Giorgio Metta
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/dev/api.h>
 
-#ifndef YARPCONTROLBOARDPID
-#define YARPCONTROLBOARDPID
+#ifndef YARP_DEV_CONTROLBOARDPID_H
+#define YARP_DEV_CONTROLBOARDPID_H
 
 /*!
  * \file ControlBoardPid.h define control board standard interfaces
@@ -141,4 +140,4 @@ public:
     void setKff(double Kff);
 };
 
-#endif
+#endif // YARP_DEV_CONTROLBOARDPID_H

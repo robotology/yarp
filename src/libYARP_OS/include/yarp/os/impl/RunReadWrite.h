@@ -291,4 +291,4 @@ protected:
     yarp::os::Port fPort;
 };
 
-#endif
+#endif // YARP_OS_IMPL_RUNREADWRITE_H

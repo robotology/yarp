@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef YARP2_BOTTLEIMPL
-#define YARP2_BOTTLEIMPL
+#ifndef YARP_OS_IMPL_BOTTLEIMPL_H
+#define YARP_OS_IMPL_BOTTLEIMPL_H
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionReader.h>
@@ -567,4 +567,4 @@ private:
 };
 
 
-#endif
+#endif // YARP_OS_IMPL_BOTTLEIMPL_H

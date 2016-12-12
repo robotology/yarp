@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_DATASOURCE
-#define YARP2_DATASOURCE
+#ifndef YARP_DEV_DATASOURCE_H
+#define YARP_DEV_DATASOURCE_H
 
 #include <yarp/os/Port.h>
 #include <yarp/os/Runnable.h>
@@ -182,4 +181,4 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
-#endif
+#endif // YARP_DEV_DATASOURCE_H

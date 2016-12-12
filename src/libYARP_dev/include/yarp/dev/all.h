@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_DEV_ALL
-#define YARP2_DEV_ALL
+#ifndef YARP_DEV_ALL_H
+#define YARP_DEV_ALL_H
 
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
@@ -36,4 +35,4 @@
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/Wrapper.h>
 
-#endif
+#endif // YARP_DEV_ALL_H

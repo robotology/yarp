@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef YARP2_PLATFORMTIME
-#define YARP2_PLATFORMTIME
+#ifndef YARP_OS_IMPL_PLATFORMTIME_H
+#define YARP_OS_IMPL_PLATFORMTIME_H
 
 #include <yarp/conf/system.h>
 
@@ -31,7 +31,7 @@ namespace yarp {
             void getTime(ACE_Time_Value& now);
             void sleepThread(ACE_Time_Value& sleep_period);
             void addTime(ACE_Time_Value& val, const ACE_Time_Value & add);
-            void subtractTime(ACE_Time_Value & val, 
+            void subtractTime(ACE_Time_Value & val,
                               const ACE_Time_Value & subtract);
             double toDouble(const ACE_Time_Value &v);
             void fromDouble(ACE_Time_Value &v, double x,int unit=1);
@@ -39,4 +39,4 @@ namespace yarp {
     }
 }
 
-#endif
+#endif // YARP_OS_IMPL_PLATFORMTIME_H

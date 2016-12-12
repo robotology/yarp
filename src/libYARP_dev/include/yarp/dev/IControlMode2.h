@@ -2,11 +2,10 @@
  * Copyright (C) 2014 iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP_CONTROL_MODE2_INTERFACE
-#define YARP_CONTROL_MODE2_INTERFACE
+#ifndef YARP_DEV_ICONTROLMODE2_H
+#define YARP_DEV_ICONTROLMODE2_H
 
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/api.h>
@@ -154,4 +153,5 @@ public:
 #define VOCAB_CM_NOT_CONFIGURED VOCAB4('c','m','n','c')
 #define VOCAB_CM_CONFIGURED     VOCAB4('c','m','c','f')
 */
-#endif
+
+#endif // YARP_DEV_ICONTROLMODE2_H

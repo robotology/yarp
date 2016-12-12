@@ -1,11 +1,10 @@
 /*
  * Authors: Holger Friedrich
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_MEMORYOUTPUTSTREAM
-#define YARP2_MEMORYOUTPUTSTREAM
+#ifndef YARP_OS_IMPL_MEMORYOUTPUTSTREAM_H
+#define YARP_OS_IMPL_MEMORYOUTPUTSTREAM_H
 
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Bytes.h>
@@ -36,5 +35,4 @@ private:
     char *_location;
 };
 
-#endif
-
+#endif // YARP_OS_IMPL_MEMORYOUTPUTSTREAM_H

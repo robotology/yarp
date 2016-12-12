@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_FAKEFACE
-#define YARP2_FAKEFACE
+#ifndef YARP_OS_IMPL_FAKEFACE_H
+#define YARP_OS_IMPL_FAKEFACE_H
 
 #include <yarp/os/Face.h>
 
@@ -21,7 +20,8 @@ namespace yarp {
 /**
  * A dummy Face for testing purposes.
  */
-class yarp::os::impl::FakeFace : public yarp::os::Face {
+class yarp::os::impl::FakeFace : public yarp::os::Face
+{
 public:
     virtual bool open(const Contact& address);
     virtual void close();
@@ -30,4 +30,4 @@ public:
 private:
 };
 
-#endif
+#endif // YARP_OS_IMPL_FAKEFACE_H

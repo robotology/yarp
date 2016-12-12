@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef YARPOPENLOOP
-#define YARPOPENLOOP
+#ifndef YARP_DEV_IOPENLOOPCONTROL_H
+#define YARP_DEV_IOPENLOOPCONTROL_H
 
 #include <yarp/dev/api.h>
 
@@ -140,4 +140,6 @@ public:
 #define VOCAB_OPENLOOP_REF_OUTPUTS VOCAB4('r','e','f','s')
 #define VOCAB_OPENLOOP_PWM_OUTPUT  VOCAB3('p','w','m')
 #define VOCAB_OPENLOOP_PWM_OUTPUTS VOCAB4('p','w','m','s')
-#endif
+
+
+#endif // YARP_DEV_IOPENLOOPCONTROL_H

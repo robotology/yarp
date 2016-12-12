@@ -2,7 +2,6 @@
  * Copyright (C) 2008 RobotCub Consortium
  * Authors: Marco Randazzo and Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include "yarp/dev/ImplementOpenLoopControl.h"

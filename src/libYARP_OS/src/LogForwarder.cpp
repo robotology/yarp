@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2014  iCub Facility, Istituto Italiano di Tecnologia
  * Author: Marco Randazzo <marco.randazzo@iit.it>
- *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -31,7 +30,7 @@ void yarp::os::LogForwarder::clearInstance()
     };
 };
 
-void yarp::os::LogForwarder::forward (std::string message)
+void yarp::os::LogForwarder::forward (const std::string& message)
 {
     sem->wait();
     if (outputPort)
@@ -55,7 +54,7 @@ yarp::os::LogForwarder::LogForwarder()
 //     yarp::os::NetworkBase::initMinimum();
     sem = new yarp::os::Semaphore(1);
     yAssert(sem);
-    outputPort =0;
+    outputPort =YARP_NULLPTR;
     outputPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     char host_name [MAX_STRING_SIZE]; //unsafe
     yarp::os::gethostname(host_name,MAX_STRING_SIZE);
@@ -89,11 +88,10 @@ yarp::os::LogForwarder::~LogForwarder()
         //outputPort->interrupt();
         outputPort->close();
         delete outputPort;
-        outputPort=0;
+        outputPort=YARP_NULLPTR;
     }
     sem->post();
     delete sem;
     sem = YARP_NULLPTR;
 //     yarp::os::NetworkBase::finiMinimum();
 };
-

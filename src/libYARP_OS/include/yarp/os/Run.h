@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007-2009 RobotCub Consortium
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- * Author: Alessandro Scalzo <alessandro@liralab.it>
+ * Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
  */
 
 #ifndef YARP_OS_RUN_H

@@ -1,10 +1,10 @@
 /**
  * @file TcpConnector.h
- * @brief 
+ * @brief
  *
- * This file is created at Almende B.V. It is open-source software and part of the Common 
- * Hybrid Agent Platform (CHAP). A toolbox with a lot of open-source tools, ranging from 
- * thread pools and TCP/IP components to control architectures and learning algorithms. 
+ * This file is created at Almende B.V. It is open-source software and part of the Common
+ * Hybrid Agent Platform (CHAP). A toolbox with a lot of open-source tools, ranging from
+ * thread pools and TCP/IP components to control architectures and learning algorithms.
  * This software is published under the GNU Lesser General Public license (LGPL).
  *
  * It is not possible to add usage restrictions to an open-source license. Nevertheless,
@@ -22,8 +22,8 @@
  */
 
 
-#ifndef TCPCONNECTOR_H_
-#define TCPCONNECTOR_H_
+#ifndef YARP_OS_IMPL_TCPCONNECTOR_H
+#define YARP_OS_IMPL_TCPCONNECTOR_H
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/TcpStream.h>
@@ -49,7 +49,8 @@ namespace yarp {
  * Interface of TcpConnector
  * **************************************************************************************/
 
-class yarp::os::impl::TcpConnector {
+class yarp::os::impl::TcpConnector
+{
 public:
     /**
      * Constructor TcpConnector
@@ -70,4 +71,4 @@ private:
 
 };
 
-#endif /* TCPCONNECTOR_H_ */
+#endif // YARP_OS_IMPL_TCPCONNECTOR_H

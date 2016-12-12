@@ -2,12 +2,11 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#ifndef YARP2_UDPCARRIER
-#define YARP2_UDPCARRIER
+#ifndef YARP_OS_IMPL_UDPCARRIER_H
+#define YARP_OS_IMPL_UDPCARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
@@ -23,7 +22,8 @@ namespace yarp {
 /**
  * Communicating between two ports via UDP.
  */
-class yarp::os::impl::UdpCarrier : public AbstractCarrier {
+class yarp::os::impl::UdpCarrier : public AbstractCarrier
+{
 public:
     UdpCarrier();
 
@@ -42,4 +42,4 @@ public:
     virtual bool expectReplyToHeader(ConnectionState& proto);
 };
 
-#endif
+#endif // YARP_OS_IMPL_UDPCARRIER_H

@@ -2,7 +2,6 @@
  * Copyright (C) 2006, 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia, Anne van Rossum
  * Authors: Paul Fitzpatrick, Anne van Rossum
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -224,7 +223,7 @@ bool NameConfig::writeConfig(const ConstString& fileName, const ConstString& tex
 
 
 
-ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
+ConstString NameConfig::getHostName(bool prefer_loopback, const ConstString& seed) {
     // try to pick a good host identifier
 
     ConstString result = "127.0.0.1";
@@ -268,7 +267,7 @@ ConstString NameConfig::getHostName(bool prefer_loopback, ConstString seed) {
             YARP_DEBUG(Logger::get(), ConstString("scanning network interface ") +
                        ip.c_str());
 
-            if (ip.find(":")!=ConstString::npos) continue;
+            if (ip.find(':')!=ConstString::npos) continue;
 
             bool would_be_loopback = false;
             if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
@@ -460,4 +459,3 @@ Bottle NameConfig::getNamespaces(bool refresh) {
     getNamespace(refresh);
     return spaces;
 }
-

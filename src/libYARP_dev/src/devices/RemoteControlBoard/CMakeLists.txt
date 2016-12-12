@@ -1,3 +1,8 @@
+# Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+# Author: Alberto Cardellino <alberto.cardellino@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+
 set(rmc_core_srcs src/devices/RemoteControlBoard/RemoteControlBoard.cpp)
 
 set(rmc_core_hrds src/devices/RemoteControlBoard/RemoteControlBoard.h)

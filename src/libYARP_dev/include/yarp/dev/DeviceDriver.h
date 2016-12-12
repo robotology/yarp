@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_DEVICEDRIVER
-#define YARP2_DEVICEDRIVER
+#ifndef YARP_DEV_DEVICEDRIVER_H
+#define YARP_DEV_DEVICEDRIVER_H
 
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
@@ -204,4 +203,4 @@ public:
 };
 
 
-#endif
+#endif // YARP_DEV_DEVICEDRIVER_H

@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef BATTERY_SERVER_H_
-#define BATTERY_SERVER_H_
+#ifndef YARP_DEV_BATTERYWRAPPER_BATTERYWRAPPER_H
+#define YARP_DEV_BATTERYWRAPPER_BATTERYWRAPPER_H
 
  //#include <list>
 #include <vector>
@@ -91,4 +91,4 @@ private:
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 };
 
-#endif
+#endif // YARP_DEV_BATTERYWRAPPER_BATTERYWRAPPER_H

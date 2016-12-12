@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
@@ -127,7 +126,7 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy) {
         }
         buf = bytes;
         bytes->setUsed(data.length());
-    } 
+    }
     if (buf == YARP_NULLPTR) {
         buf = new yarp::os::ManagedBytes(data,false);
         if (copy) buf->copy();

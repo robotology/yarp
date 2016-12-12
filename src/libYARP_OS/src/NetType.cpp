@@ -2,7 +2,6 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #include <yarp/os/NetType.h>
@@ -62,7 +61,7 @@ int NetType::toInt(const ConstString& x) {
 
 
 /*
-  PNG's nice and simple CRC code 
+  PNG's nice and simple CRC code
   (from http://www.w3.org/TR/PNG-CRCAppendix.html)
 */
 
@@ -71,12 +70,12 @@ static unsigned long crc_table[256];
 
 /* Flag: has the table been computed? Initially false. */
 static int crc_table_computed = 0;
-   
+
 /* Make the table for a fast CRC. */
 static void make_crc_table(void) {
     unsigned long c;
     int n, k;
-   
+
     for (n = 0; n < 256; n++) {
         c = (unsigned long) n;
         for (k = 0; k < 8; k++) {
@@ -100,7 +99,7 @@ static unsigned long update_crc(unsigned long crc, unsigned char *buf,
 
     unsigned long c = crc;
     size_t n;
-  
+
     if (!crc_table_computed)
         make_crc_table();
     for (n = 0; n < len; n++) {

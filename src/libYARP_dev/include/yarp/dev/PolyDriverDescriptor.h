@@ -38,4 +38,4 @@ public:
     }
 };
 
-#endif
+#endif // YARP_DEV_POLYDRIVERDESCRIPTOR_H

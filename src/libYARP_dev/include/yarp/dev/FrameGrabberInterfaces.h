@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick and Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_FRAME_GRABBER
-#define YARP2_FRAME_GRABBER
+#ifndef YARP_FRAMEGRABBERINTERFACES_H
+#define YARP_FRAMEGRABBERINTERFACES_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Image.h>
@@ -536,4 +535,4 @@ public:
     virtual bool setBytesPerPacketDC1394(unsigned int bpp)=0;//{ return true; }
 };
 
-#endif
+#endif // YARP_FRAMEGRABBERINTERFACES_H

@@ -1,8 +1,8 @@
 /*
-* Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #ifndef YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
 #define YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
@@ -169,4 +169,4 @@ public:
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-#endif  //YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
+#endif // YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H

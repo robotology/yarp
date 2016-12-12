@@ -1,11 +1,10 @@
 /*
  * Copyright (C) 2006 Alex Bernardino & Carlos Beltran-Gonzalez
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARPSERIALINTERFACES
-#define YARPSERIALINTERFACES
+#ifndef YARP_DEV_SERIALINTERFACES_H
+#define YARP_DEV_SERIALINTERFACES_H
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
@@ -80,4 +79,4 @@ public:
     virtual int  flush() = 0;
 };
 
-#endif
+#endif // YARP_DEV_SERIALINTERFACES_H

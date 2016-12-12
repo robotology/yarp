@@ -835,7 +835,7 @@ void StoreDouble::fromString(const ConstString& src)
     // YARP Bug 2526259: Locale settings influence YARP behavior
     // Need to deal with alternate versions of the decimal point.
     ConstString tmp = src;
-    size_t offset = tmp.find(".");
+    size_t offset = tmp.find('.');
     if (offset != ConstString::npos) {
         struct lconv* lc = localeconv();
         tmp[offset] = lc->decimal_point[0];

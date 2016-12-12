@@ -2,11 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_NAMESERVER
-#define YARP2_NAMESERVER
+#ifndef YARP_OS_IMPL_NAMESERVER_H
+#define YARP_OS_IMPL_NAMESERVER_H
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Contact.h>
@@ -40,7 +39,8 @@ namespace yarp {
 /**
  * Stub for a YARP2-conforming name server.
  */
-class YARP_OS_impl_API yarp::os::impl::NameServerStub {
+class YARP_OS_impl_API yarp::os::impl::NameServerStub
+{
 public:
     virtual ~NameServerStub() {}
     virtual ConstString apply(const ConstString& txt, const Contact& remote) = 0;
@@ -49,14 +49,17 @@ public:
 /**
  * Implementation of a YARP2-conforming name server.
  */
-class YARP_OS_impl_API yarp::os::impl::NameServer : public NameServerStub {
+class YARP_OS_impl_API yarp::os::impl::NameServer : public NameServerStub
+{
 public:
 
     NameServer() :
 #ifndef YARP_USE_STL
-        nameMap(17), hostMap(17),
+            nameMap(17),
+            hostMap(17),
 #endif
-        mutex(1) {
+            mutex(1)
+    {
         setup();
     }
 
@@ -65,7 +68,8 @@ public:
     // address may be partial - partial information gets filled in
     // (not YARP2 compliant yet, won't do fill-in)
     Contact registerName(const ConstString& name,
-                         const Contact& address) {
+                         const Contact& address)
+    {
         return registerName(name,address,"...");
     }
 
@@ -73,7 +77,8 @@ public:
                          const Contact& address,
                          const ConstString& remote);
 
-    Contact registerName(const ConstString& name) {
+    Contact registerName(const ConstString& name)
+    {
         return registerName(name,Contact());
     }
 
@@ -88,17 +93,20 @@ public:
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
                const Contact& remote);
 
-    ConstString apply(const ConstString& txt) {
+    ConstString apply(const ConstString& txt)
+    {
         return apply(txt,Contact());
     }
 
-    virtual void onEvent(yarp::os::Bottle& event) {
+    virtual void onEvent(yarp::os::Bottle& event)
+    {
     }
 
     static ConstString textify(const Contact& address);
     static yarp::os::Bottle botify(const Contact& address);
 
-    void setBasePort(int basePort) {
+    void setBasePort(int basePort)
+    {
         this->basePort = basePort;
         mcastRecord.setBasePort(basePort);
     }
@@ -109,7 +117,8 @@ private:
     void setup();
 
     template <class T>
-    class ReusableRecord {
+    class ReusableRecord
+    {
     private:
         PlatformVector<T> reuse;
     public:
@@ -117,11 +126,13 @@ private:
 
         virtual T fresh() = 0;
 
-        void release(const T& o) {
+        void release(const T& o)
+        {
             reuse.push_back(o);
         }
 
-        T getFree() {
+        T getFree()
+        {
             if (reuse.size()>=1) {
                 T result = reuse[reuse.size()-1];
                 reuse.pop_back();
@@ -132,27 +143,32 @@ private:
     };
 
 
-    class DisposableNameRecord : public ReusableRecord<int> {
+    class DisposableNameRecord : public ReusableRecord<int>
+    {
     private:
         int base;
         ConstString prefix;
     public:
-        DisposableNameRecord() {
+        DisposableNameRecord()
+        {
             base = 1;
             prefix = "/tmp/port/";
         }
 
-        ConstString get() {
+        ConstString get()
+        {
             return prefix + NetType::toString(getFree());
         }
 
-        virtual int fresh() {
+        virtual int fresh()
+        {
             int result = base;
             base++;
             return result;
         }
 
-        bool release(const ConstString& name) {
+        bool release(const ConstString& name)
+        {
             if (name.find(prefix)==0) {
                 ConstString num = name.substr(prefix.length());
                 int x = NetType::toInt(num.c_str());
@@ -164,30 +180,35 @@ private:
     };
 
 
-    class HostRecord : public ReusableRecord<int> {
+    class HostRecord : public ReusableRecord<int>
+    {
     private:
         int base;
         int legacyStep; // this is for YARP1 compatibility
 
     public:
-        HostRecord() {
+        HostRecord()
+        {
             //YARP_DEBUG(Logger::get(),"FIXME: HostRecord has hardcoded base");
             base = 0;
             legacyStep = 10;
         }
 
-        void setBase(int base) {
+        void setBase(int base)
+        {
             this->base = base;
         }
 
-        int get() {
+        int get()
+        {
             int result = ReusableRecord<int>::getFree();
             //YARP_DEBUG(Logger::get(), ConstString("host record says ") +
             //NetType::toString(result) + " is free");
             return result;
         }
 
-        virtual int fresh() {
+        virtual int fresh()
+        {
             int result = base;
             base += legacyStep;
             return result;
@@ -195,31 +216,36 @@ private:
     };
 
 
-    class McastRecord : public ReusableRecord<int> {
+    class McastRecord : public ReusableRecord<int>
+    {
     private:
         int base;
         int last;
         int basePort;
     public:
 
-        McastRecord() {
+        McastRecord()
+        {
             //YARP_DEBUG(Logger::get(),"FIXME: mcast records are never reused");
             base = 0;
             basePort = 0;
             last = 0;
         }
 
-        void setBasePort(int basePort) {
+        void setBasePort(int basePort)
+        {
             this->basePort = basePort;
         }
 
-        virtual int fresh() {
+        virtual int fresh()
+        {
             int result = base;
             base++;
             return result;
         }
 
-        ConstString get() {
+        ConstString get()
+        {
             int x = getFree();
             last = x;
             int v1 = x%255;
@@ -229,11 +255,13 @@ private:
                 NetType::toString(v1+1);
         }
 
-        int lastPortNumber() {
+        int lastPortNumber()
+        {
             return basePort+last;
         }
 
-        void releaseAddress(const char *addr) {
+        void releaseAddress(const char *addr)
+        {
             SplitString ss(addr,'.');
             int ip[] = { 224, 3, 1, 1 };
             yAssert(ss.size()==4);
@@ -249,22 +277,27 @@ private:
     };
 
 
-    class PropertyRecord {
+    class PropertyRecord
+    {
     private:
         PlatformVector<ConstString> prop;
     public:
-        PropertyRecord() {
+        PropertyRecord()
+        {
         }
 
-        void clear() {
+        void clear()
+        {
             prop.clear();
         }
 
-        void add(const ConstString& p) {
+        void add(const ConstString& p)
+        {
             prop.push_back(p);
         }
 
-        bool check(const ConstString& p) {
+        bool check(const ConstString& p)
+        {
             for (unsigned int i=0; i<prop.size(); i++) {
                 if (prop[i]==p) {
                     return true;
@@ -273,7 +306,8 @@ private:
             return false;
         }
 
-        ConstString match(const ConstString& str) {
+        ConstString match(const ConstString& str)
+        {
             ConstString base = "";
             bool needSpace = false;
             for (unsigned int i=0; i<prop.size(); i++) {
@@ -286,7 +320,8 @@ private:
             return base;
         }
 
-        ConstString toString() {
+        ConstString toString()
+        {
             ConstString base = "";
             for (unsigned int i=0; i<prop.size(); i++) {
                 if (i>0) {
@@ -298,7 +333,8 @@ private:
         }
     };
 
-    class NameRecord {
+    class NameRecord
+    {
     private:
         bool reusablePort;
         bool reusableIp;
@@ -307,9 +343,9 @@ private:
     public:
         NameRecord() :
 #ifndef YARP_USE_STL
-            propMap(5),
+                propMap(5),
 #endif
-            address()
+                address()
         {
             reusableIp = false;
             reusablePort = false;
@@ -317,23 +353,26 @@ private:
 
         NameRecord(const NameRecord& alt) :
 #ifndef YARP_USE_STL
-            propMap(5),
+                propMap(5),
 #endif
-            address()
+                address()
         {
             reusableIp = false;
             reusablePort = false;
         }
 
-        bool isReusablePort() {
+        bool isReusablePort()
+        {
             return reusablePort;
         }
 
-        bool isReusableIp() {
+        bool isReusableIp()
+        {
             return reusableIp;
         }
 
-        void clear() {
+        void clear()
+        {
             PLATFORM_MAP_CLEAR(propMap);
             address = Contact();
             reusableIp = false;
@@ -342,18 +381,21 @@ private:
 
         void setAddress(const Contact& address,
                         bool reusablePort=false,
-                        bool reusableIp=false) {
+                        bool reusableIp=false)
+        {
             this->address = address;
             this->reusablePort = reusablePort;
             this->reusableIp = reusableIp;
         }
 
-        Contact getAddress() {
+        Contact getAddress()
+        {
             return address;
         }
 
 
-        PropertyRecord *getPR(const ConstString& key, bool create = true) {
+        PropertyRecord *getPR(const ConstString& key, bool create = true)
+        {
             PLATFORM_MAP_ITERATOR(ConstString,PropertyRecord,entry);
             int result = PLATFORM_MAP_FIND(propMap,key,entry);
             if (result==-1 && create) {
@@ -368,15 +410,18 @@ private:
             return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
         }
 
-        void clearProp(const ConstString& key) {
+        void clearProp(const ConstString& key)
+        {
             getPR(key)->clear();
         }
 
-        void addProp(const ConstString& key, const ConstString& val) {
+        void addProp(const ConstString& key, const ConstString& val)
+        {
             getPR(key)->add(val);
         }
 
-        ConstString getProp(const ConstString& key) {
+        ConstString getProp(const ConstString& key)
+        {
             PropertyRecord *rec = getPR(key,false);
             if (rec!=YARP_NULLPTR) {
                 return rec->toString();
@@ -384,7 +429,8 @@ private:
             return "";
         }
 
-        bool checkProp(const ConstString& key, const ConstString& val) {
+        bool checkProp(const ConstString& key, const ConstString& val)
+        {
             PropertyRecord *rec = getPR(key,false);
             if (rec!=YARP_NULLPTR) {
                 return rec->check(val);
@@ -392,7 +438,8 @@ private:
             return false;
         }
 
-        ConstString matchProp(const ConstString& key, const ConstString& val) {
+        ConstString matchProp(const ConstString& key, const ConstString& val)
+        {
             PropertyRecord *rec = getPR(key,false);
             if (rec!=YARP_NULLPTR) {
                 return rec->match(val);
@@ -401,10 +448,6 @@ private:
         }
 
     };
-
-
-
-
 
 
     ConstString cmdRegister(int argc, char *argv[]);
@@ -436,7 +479,8 @@ private:
 
     NameRecord *getNameRecord(const ConstString& name, bool create);
 
-    NameRecord &getNameRecord(const ConstString& name) {
+    NameRecord &getNameRecord(const ConstString& name)
+    {
         NameRecord *result = getNameRecord(name,true);
         yAssert(result!=YARP_NULLPTR);
         return *result;
@@ -444,7 +488,8 @@ private:
 
     HostRecord *getHostRecord(const ConstString& name, bool create);
 
-    HostRecord &getHostRecord(const ConstString& name) {
+    HostRecord &getHostRecord(const ConstString& name)
+    {
         HostRecord *result = getHostRecord(name,true);
         yAssert(result!=YARP_NULLPTR);
         return *result;
@@ -463,4 +508,4 @@ private:
     yarp::os::Semaphore mutex;
 };
 
-#endif
+#endif // YARP_OS_IMPL_NAMESERVER_H

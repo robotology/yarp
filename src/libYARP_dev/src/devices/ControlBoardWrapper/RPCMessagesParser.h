@@ -1,8 +1,8 @@
 /*
-* Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
-* Author: Alberto Cardellino
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Alberto Cardellino
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 #ifndef YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H
 #define YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H
@@ -150,4 +150,4 @@ public:
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-#endif  //YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H
+#endif // YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H

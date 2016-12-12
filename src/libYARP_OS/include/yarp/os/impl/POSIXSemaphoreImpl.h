@@ -2,34 +2,38 @@
  * Copyright (C) 2006, 2009 RobotCub Consortium
  * Authors: Paul Fitzpatrick, Miguel Sarabia del Castillo
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef YARP2_POSIXSEMAPHOREIMPL
-#define YARP2_POSIXSEMAPHOREIMPL
+#ifndef YARP_OS_IMPL_POSIXSEMAPHOREIMPL_H
+#define YARP_OS_IMPL_POSIXSEMAPHOREIMPL_H
 
 #include <semaphore.h>
 #include <time.h>
 
 #include <yarp/os/api.h>
 
-class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
+class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl
+{
 public:
-    SemaphoreImpl(unsigned int initialCount = 1) {
+    SemaphoreImpl(unsigned int initialCount = 1)
+    {
         sem_init(&sema,0,initialCount);
     }
 
-    virtual ~SemaphoreImpl() {
+    virtual ~SemaphoreImpl()
+    {
         sem_destroy(&sema);
     }
 
     // blocking wait
-    void wait() {
+    void wait()
+    {
         sem_wait(&sema);
     }
 
     // blocking wait with timeout
-    bool waitWithTimeout(double timeout) {
+    bool waitWithTimeout(double timeout)
+    {
         struct timespec ts;
         if (clock_gettime(CLOCK_REALTIME, &ts) == -1) return false;
         ts.tv_sec = ts.tv_sec + (int)timeout;
@@ -44,12 +48,14 @@ public:
     }
 
     // polling wait
-    bool check() {
+    bool check()
+    {
         return sem_trywait(&sema)==0;
     }
 
     // increment
-    void post() {
+    void post()
+    {
         sem_post(&sema);
     }
 
@@ -58,4 +64,3 @@ private:
 };
 
 #endif
-

@@ -9,11 +9,16 @@
 
 #cmakedefine YARP_HAVE_SYS_TYPES_H
 #cmakedefine YARP_HAVE_STDDEF_H
+#cmakedefine YARP_HAVE_CSTDDEF
+
 
 #ifdef YARP_HAVE_SYS_TYPES_H
 #  include <sys/types.h>
 #endif
-#ifdef YARP_HAVE_STDDEF_H
+
+#ifdef YARP_HAVE_CSTDDEF
+#  include <cstddef>
+#elif defined YARP_HAVE_STDDEF_H
 #  include <stddef.h>
 #endif
 

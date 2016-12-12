@@ -5,8 +5,8 @@
  */
 
 
-#ifndef YARPVELOCITYCONTROL_V2
-#define YARPVELOCITYCONTROL_V2
+#ifndef YARP_DEV_IVELOCITYCONTROL2_H
+#define YARP_DEV_IVELOCITYCONTROL2_H
 
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/ControlBoardPid.h>
@@ -251,4 +251,6 @@ public:
 #define VOCAB_VELOCITY_MOVE_GROUP VOCAB4('v','m','o','g')
 #define VOCAB_VEL_PID  VOCAB3('v','p','d')
 #define VOCAB_VEL_PIDS VOCAB4('v','p','d','s')
-#endif
+
+
+#endif // YARP_DEV_IVELOCITYCONTROL2_H

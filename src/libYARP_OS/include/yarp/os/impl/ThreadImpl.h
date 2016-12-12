@@ -2,13 +2,10 @@
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-//added threadInit/threadRelease functions, and synchronization -nat
-
-#ifndef YARP2_THREADIMPL
-#define YARP2_THREADIMPL
+#ifndef YARP_OS_IMPL_THREADIMPL_H
+#define YARP_OS_IMPL_THREADIMPL_H
 
 #include <yarp/os/impl/Runnable.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
@@ -26,7 +23,8 @@ namespace yarp {
 /**
  * An abstraction for a thread of execution.
  */
-class YARP_OS_impl_API yarp::os::impl::ThreadImpl : public Runnable {
+class YARP_OS_impl_API yarp::os::impl::ThreadImpl : public Runnable
+{
 public:
 
     ThreadImpl();
@@ -109,4 +107,4 @@ private:
 
 };
 
-#endif
+#endif // YARP_OS_IMPL_THREADIMPL_H

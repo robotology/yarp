@@ -1,6 +1,6 @@
 /*
-* Author: Lorenzo Natale, Anne van Rossum, Paul Fitzpatrick
 * Copyright (C) 2009 The RobotCub consortium
+* Author: Lorenzo Natale, Anne van Rossum, Paul Fitzpatrick
 * Based on code by Paul Fitzpatrick 2007.
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
@@ -215,7 +215,7 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection) {
     bool result = owner.safeRespond(cmd,response);
     if (response.size() >= 1) {
         ConnectionWriter *writer = connection.getWriter();
-        if (writer!=0) {
+        if (writer!=YARP_NULLPTR) {
             if (response.get(0).toString() == "many" && writer->isTextMode()) {
                 for (int i=1; i<response.size(); i++) {
                     Value& v = response.get(i);
@@ -297,7 +297,7 @@ public:
 #define THREADED_HANDLER(x) (*(HELPER(x).threaded_handler))
 
 
-static RFModule *module = 0;
+static RFModule *module = YARP_NULLPTR;
 
 
 static void handler (int sig) {
@@ -309,7 +309,7 @@ static void handler (int sig) {
     }
     yInfo("[try %d of 3] Trying to shut down.", ct);
 
-    if (module != 0) {
+    if (module != YARP_NULLPTR) {
         module->stopModule(false);
     }
 
@@ -371,10 +371,10 @@ RFModule::RFModule() {
 
 
 RFModule::~RFModule() {
-    if (implementation != 0) {
+    if (implementation != YARP_NULLPTR) {
         //HELPER(implementation).stop();
         delete &HELPER(implementation);
-        implementation = 0;
+        implementation = YARP_NULLPTR;
     }
 }
 

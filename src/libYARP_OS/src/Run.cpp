@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007-2009 RobotCub Consortium
+ * Author: Alessandro Scalzo <alessandro.scalzo@iit.it>
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -64,7 +65,7 @@ ZombieHunterThread* yarp::os::Run::mBraveZombieHunter = YARP_NULLPTR;
 ///////////////////////////
 
 yarp::os::ConstString yarp::os::Run::mPortName;
-yarp::os::RpcServer* yarp::os::Run::pServerPort=0;
+yarp::os::RpcServer* yarp::os::Run::pServerPort=YARP_NULLPTR;
 int yarp::os::Run::mProcCNT=0;
 bool yarp::os::Run::mStresstest=false;
 bool yarp::os::Run::mLogged=false;
@@ -1022,7 +1023,7 @@ int yarp::os::Run::server()
                         yarp::os::ConstString portName="/log";
                         portName+=mPortName+"/";
                         yarp::os::ConstString command=msg.findGroup("cmd").get(1).asString();
-                        size_t space=command.find(" ");
+                        size_t space=command.find(' ');
                         if (space!=ConstString::npos) command=command.substr(0,space);
                         portName+=command;
 
@@ -1195,7 +1196,7 @@ int yarp::os::Run::server()
         {
             mBraveZombieHunter->stop();
             delete mBraveZombieHunter;
-            mBraveZombieHunter = 0;
+            mBraveZombieHunter = YARP_NULLPTR;
         }
 
         delete mProcessVector;
@@ -2664,13 +2665,13 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
                 /*
                 int nargs=CountArgs(cmd_str);
                 char **arg_str=new char*[nargs+1];
-                ParseCmd(cmd_str,arg_str);                
+                ParseCmd(cmd_str,arg_str);
                 arg_str[nargs]=0;
                 */
                 int nargs = 0;
                 char **arg_str = new char*[C_MAXARGS + 1];
                 parseArguments(cmd_str, &nargs, arg_str);
-                arg_str[nargs]=0;
+                arg_str[nargs]=YARP_NULLPTR;
 
                 setvbuf(stdout, YARP_NULLPTR, _IONBF, 0);
 
@@ -2722,7 +2723,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
                 {
                     char **cwd_arg_str=new char*[nargs+1];
                     for (int i=1; i<nargs; ++i) cwd_arg_str[i]=arg_str[i];
-                    cwd_arg_str[nargs]=0;
+                    cwd_arg_str[nargs]=YARP_NULLPTR;
                     cwd_arg_str[0]=new char[strlen(currWorkDir)+strlen(arg_str[0])+16];
 
                     strcpy(cwd_arg_str[0],currWorkDir);
@@ -2876,7 +2877,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
     portName+=mPortName+"/";
 
     yarp::os::ConstString command=strCmd;
-    size_t space=command.find(" ");
+    size_t space=command.find(' ');
     if (space!=ConstString::npos) command=command.substr(0,space);
     portName+=command;
 
@@ -3026,7 +3027,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
                 int nargs = 0;
                 char **arg_str = new char*[C_MAXARGS + 1];
                 parseArguments(cmd_str, &nargs, arg_str);
-                arg_str[nargs]=0;
+                arg_str[nargs]=YARP_NULLPTR;
 
                 setvbuf(stdout, YARP_NULLPTR, _IONBF, 0);
 
@@ -3077,7 +3078,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
                 {
                     char **cwd_arg_str=new char*[nargs+1];
                     for (int i=1; i<nargs; ++i) cwd_arg_str[i]=arg_str[i];
-                    cwd_arg_str[nargs]=0;
+                    cwd_arg_str[nargs]=YARP_NULLPTR;
                     cwd_arg_str[0]=new char[strlen(currWorkDir)+strlen(arg_str[0])+16];
 
                     strcpy(cwd_arg_str[0],currWorkDir);
@@ -3463,7 +3464,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
         int nargs = 0;
         char **arg_str = new char*[C_MAXARGS + 1];
         parseArguments(cmd_str, &nargs, arg_str);
-        arg_str[nargs]=0;
+        arg_str[nargs]=YARP_NULLPTR;
 
         if (msg.check("env"))
         {
@@ -3508,7 +3509,7 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
         {
             char **cwd_arg_str=new char*[nargs+1];
             for (int i=1; i<nargs; ++i) cwd_arg_str[i]=arg_str[i];
-            cwd_arg_str[nargs]=0;
+            cwd_arg_str[nargs]=YARP_NULLPTR;
             cwd_arg_str[0]=new char[strlen(currWorkDir)+strlen(arg_str[0])+16];
 
 
@@ -3772,4 +3773,3 @@ bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::Const
 }
 
 // end API
-
