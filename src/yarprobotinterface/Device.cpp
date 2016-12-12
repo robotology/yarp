@@ -82,7 +82,7 @@ public:
     inline yarp::os::Semaphore* lst_sem() const { return &driver->threadListSemaphore; }
 
     inline bool isValid() const { return drv()->isValid(); }
-    inline bool open() { return drv()->open(paramsAsProperty()); }
+    inline bool open() { yarp::os::Property p = paramsAsProperty(); return drv()->open(p); }
     inline bool close() { return drv()->close(); }
 
     inline void registerThread(yarp::os::Thread *thread) const
