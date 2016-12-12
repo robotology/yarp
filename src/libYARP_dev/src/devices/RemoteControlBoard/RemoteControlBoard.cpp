@@ -11,12 +11,12 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/Thread.h>
+#include <yarp/os/RateThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/QosStyle.h>
 
 #include <yarp/sig/Vector.h>
 
@@ -25,7 +25,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/QosStyle.h>
+
 
 #include <stateExtendedReader.hpp>
 
@@ -45,6 +45,9 @@ namespace yarp{
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+const int DIAGNOSTIC_THREAD_RATE=1000;
+const double TIMEOUT=0.5;
 
 inline bool getTimeStamp(Bottle &bot, Stamp &st)
 {
@@ -67,150 +70,16 @@ struct yarp::dev::ProtocolVersion
 };
 
 
-// encoders should arrive at least every 0.5s to be considered valide
-// getEncoders will return false otherwise.
-const double TIMEOUT=0.5;
-
-class StateInputPort : public yarp::os::BufferedPort<yarp::sig::Vector>
-{
-    yarp::sig::Vector last;
-    Semaphore mutex;
-    Stamp lastStamp;
-    double deltaT;
-    double deltaTMax;
-    double deltaTMin;
-    double prev;
-    double now;
-
-    bool valid;
-    int count;
-public:
-
-    inline void resetStat()
-    {
-        mutex.wait();
-        count=0;
-        deltaT=0;
-        deltaTMax=0;
-        deltaTMin=1e22;
-        now=Time::now();
-        prev=now;
-        mutex.post();
-    }
-
-    StateInputPort()
-    {
-        valid=false;
-        resetStat();
-    }
-
-    using yarp::os::BufferedPort<yarp::sig::Vector>::onRead;
-    virtual void onRead(yarp::sig::Vector &v)
-    {
-        now=Time::now();
-        mutex.wait();
-
-        if (count>0)
-        {
-            double tmpDT=now-prev;
-            deltaT+=tmpDT;
-            if (tmpDT>deltaTMax)
-                deltaTMax=tmpDT;
-            if (tmpDT<deltaTMin)
-                deltaTMin=tmpDT;
-        }
-
-        prev=now;
-        count++;
-
-        valid=true;
-        last=v;
-        getEnvelope(lastStamp);
-        //check that timestamp are available
-        if (!lastStamp.isValid())
-            lastStamp.update(now);
-        mutex.post();
-    }
-
-    inline bool getLast(int j, double &v, Stamp &stamp, double &localArrivalTime)
-    {
-        if ((size_t) j>=last.size())
-            return false;
-
-        mutex.wait();
-        bool ret=valid;
-        if (ret)
-        {
-            v=last[j];
-            stamp=lastStamp;
-            localArrivalTime=now;
-        }
-        mutex.post();
-        return ret;
-    }
-
-    inline bool getLast(yarp::sig::Vector &n, Stamp &stmp, double &localArrivalTime)
-    {
-        mutex.wait();
-        bool ret=valid;
-        if (ret)
-        {
-            n=last;
-            stmp=lastStamp;
-            localArrivalTime=now;
-        }
-        mutex.post();
-
-        return ret;
-    }
-
-    inline int getIterations()
-    {
-        mutex.wait();
-        int ret=count;
-        mutex.post();
-        return ret;
-    }
-
-    // time is in ms
-    void getEstFrequency(int &ite, double &av, double &min, double &max)
-    {
-        mutex.wait();
-        ite=count;
-        min=deltaTMin*1000;
-        max=deltaTMax*1000;
-        if (count<1)
-        {
-            av=0;
-        }
-        else
-        {
-            av=deltaT/count;
-        }
-        av=av*1000;
-        mutex.post();
-    }
-
-};
-
-
-
-#include <yarp/os/RateThread.h>
-
-using namespace yarp::os;
-
-const int DIAGNOSTIC_THREAD_RATE=1000;
-
 class DiagnosticThread: public RateThread
 {
-    StateInputPort *owner;
+    StateExtendedInputPort *owner;
     ConstString ownerName;
 
 public:
     DiagnosticThread(int r): RateThread(r)
     { owner=0; }
 
-    void setOwner(StateInputPort *o)
+    void setOwner(StateExtendedInputPort *o)
     {
         owner=o;
         ownerName=owner->getName().c_str();
@@ -299,7 +168,6 @@ protected:
     DiagnosticThread *diagnosticThread;
 
     PortReaderBuffer<yarp::sig::Vector> state_buffer;
-    StateInputPort state_p;
     PortWriterBuffer<CommandMessage> command_buffer;
     bool writeStrict_singleJoint;
     bool writeStrict_moreJoints;
@@ -1118,16 +986,10 @@ public:
             s1 += "/command:o";
             if (!command_p.open(s1.c_str())) { portProblem = true; }
             s1 = local;
-            s1 += "/state:i";
-            if (!state_p.open(s1.c_str())) { portProblem = true; }
-
-            s1 = local;
             s1 += "/stateExt:i";
             if (!extendedIntputStatePort.open(s1.c_str())) { portProblem = true; }
-            //new code
             if (!portProblem)
             {
-                state_p.useCallback();
                 extendedIntputStatePort.useCallback();
             }
         }
@@ -1165,20 +1027,6 @@ public:
                 NetworkBase::setConnectionQos(command_p.getName(), s1.c_str(), localQos, remoteQos, false);
 
             s1 = remote;
-            s1 += "/state:o";
-            s2 = local;
-            s2 += "/state:i";
-            ok = Network::connect(s1, state_p.getName(), carrier);
-
-            if (!ok) {
-                yError("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
-                connectionProblem = true;
-            }
-            // set the QoS preferences for the 'state' port
-            if (config.check("local_qos") || config.check("remote_qos"))
-                NetworkBase::setConnectionQos(s1, state_p.getName(), remoteQos, localQos, false);
-
-            s1 = remote;
             s1 += "/stateExt:o";
             s2 = local;
             s2 += "/stateExt:i";
@@ -1201,7 +1049,6 @@ public:
 
             rpc_p.close();
             command_p.close();
-            state_p.close();
             extendedIntputStatePort.close();
             return false;
         }
@@ -1215,7 +1062,6 @@ public:
             command_buffer.detach();
             rpc_p.close();
             command_p.close();
-            state_p.close();
             extendedIntputStatePort.close();
             return false;
         }
@@ -1226,7 +1072,6 @@ public:
                 command_buffer.detach();
                 rpc_p.close();
                 command_p.close();
-                state_p.close();
                 extendedIntputStatePort.close();
                 return false;
             }
@@ -1235,7 +1080,7 @@ public:
         if (config.check("diagnostic"))
         {
             diagnosticThread = new DiagnosticThread(DIAGNOSTIC_THREAD_RATE);
-            diagnosticThread->setOwner(&state_p);
+            diagnosticThread->setOwner(&extendedIntputStatePort);
             diagnosticThread->start();
         }
         else
@@ -1282,7 +1127,6 @@ public:
 
         rpc_p.close();
         command_p.close();
-        state_p.close();
         extendedIntputStatePort.close();
         return true;
     }

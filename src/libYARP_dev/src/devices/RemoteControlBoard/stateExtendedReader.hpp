@@ -58,7 +58,7 @@ public:
 
     StateExtendedInputPort();
 
-    inline void resetStat();
+    void resetStat();
     void init(int numberOfJoints);
 
     using yarp::os::BufferedPort<jointData>::onRead;
