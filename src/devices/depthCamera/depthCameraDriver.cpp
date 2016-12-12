@@ -91,8 +91,8 @@ void streamFrameListener::onNewFrame(openni::VideoStream& stream)
 
 depthCameraDriver::depthCameraDriver() : m_depthFrame(NULL), m_imageFrame(NULL), m_cameraDescription(NULL)
 {
-    m_depthFrame = new streamFrameListener();
-    m_imageFrame = new streamFrameListener();
+    m_depthFrame        = new streamFrameListener();
+    m_imageFrame        = new streamFrameListener();
     m_cameraDescription = new CameraParameters();
 
     m_supportedFeatures.push_back(YARP_FEATURE_EXPOSURE);
@@ -122,6 +122,7 @@ depthCameraDriver::depthCameraDriver() : m_depthFrame(NULL), m_imageFrame(NULL),
 
 depthCameraDriver::~depthCameraDriver()
 {
+    close();
     if(m_depthFrame)
         delete m_depthFrame;
     if(m_imageFrame)
@@ -194,8 +195,6 @@ bool depthCameraDriver::checkParam(const Bottle& settings, const Bottle& descrip
     bool ret1, ret2, ret3;
 
     ret3 = true;
-
-
     ret1 = checkParam(settings,    param, param.isSetting);    // look for settings
     ret2 = checkParam(description, param, param.isDescription);// look for HW_DESCRIPTION
 
@@ -429,6 +428,7 @@ bool depthCameraDriver::parseIntrinsic(const Searchable& config, const string& g
     realparam.first = "focalLengthY";       realparam.second = &params.focalLengthY;    realParams.push_back(realparam);
     realparam.first = "principalPointX";    realparam.second = &params.principalPointX; realParams.push_back(realparam);
     realparam.first = "principalPointY";    realparam.second = &params.principalPointY; realParams.push_back(realparam);
+
     for(i = 0; i < realParams.size(); i++)
     {
         if(!intrinsic.check(realParams[i].first))
@@ -436,6 +436,7 @@ bool depthCameraDriver::parseIntrinsic(const Searchable& config, const string& g
             yError() << "depthCameraDriver: missing" << realParams[i].first << "param in" << groupName << "group in the configuration file";
             return false;
         }
+
         *(realParams[i].second) = intrinsic.find(realParams[i].first).asDouble();
     }
 
@@ -523,6 +524,7 @@ bool depthCameraDriver::open(Searchable& config)
         yError() << "depthCamera driver input file not correct, please fix it!";
         return false;
     }
+
     if (!initializeOpeNIDevice())
     {
         return false;
@@ -564,6 +566,7 @@ bool depthCameraDriver::open(Searchable& config)
         yError() << "depthCameraDriver: the size of the transformation matrix is wrong";
         return false;
     }
+
     for(int i = 0; i < 4; i++)
     {
         for(int j = 0; j < 4; j++)
