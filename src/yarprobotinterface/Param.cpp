@@ -105,6 +105,8 @@ bool RobotInterface::Param::isGroup() const
 yarp::os::Property RobotInterface::Param::toProperty() const
 {
     yarp::os::Property p;
-    p.put(mPriv->name.c_str(), mPriv->value.c_str());
+    yarp::os::Value v;
+    v.fromString(mPriv->value.c_str());
+    p.put(mPriv->name.c_str(), v);
     return p;
 }
