@@ -9,6 +9,7 @@
 include(TestBigEndian)
 include(CheckCXXCompilerFlag)
 include(CheckIncludeFiles)
+include(CheckIncludeFileCXX)
 
 # CheckTypeSize changes CMAKE_MINIMUM_REQUIRED_VERSION, see
 # http://www.cmake.org/Bug/view.php?id=14864 (fixed in CMake 3.1)
