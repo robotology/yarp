@@ -21,6 +21,8 @@
 # (To distribute this file outside of YCM, substitute the full
 #  License text for the above reference.)
 
+include(FindPackageHandleStandardArgs)
+
 
 if(WIN32)
 	set(CMAKE_DEBUG_POSTFIX "d") 
@@ -44,7 +46,9 @@ if (ZFP_DEBUG_LIBRARY)
 else ()
   set(ZFP_DEBUG_LIBRARY ${ZFP_LIBRARY})
 endif () 
- 
+
+find_package_handle_standard_args(ZFP FOUND_VAR ZFP_FOUND
+                                  REQUIRED_VARS ZFP_LIBRARY ZFP_INCLUDE_DIR)
 
 # TSS: backwards compatibility
 set(ZFP_LIBRARIES ${ZFP_LIBRARY}) 
