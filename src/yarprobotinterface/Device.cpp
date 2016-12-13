@@ -150,10 +150,9 @@ public:
                 yWarning() << "Parentheses not balanced for param " << param.name();
             }
 
-            yarp::os::Value value;
-            value.fromString(param.value().c_str());
-            prop.put(param.name(),value);
-            }
+            std::string s = "(" + param.name() + " " + param.value() + ")";
+            prop.fromString(s, false);
+        }
 
         return prop;
     }
