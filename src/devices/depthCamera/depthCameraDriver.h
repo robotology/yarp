@@ -269,9 +269,9 @@ private:
     void        settingErrorMsg(const std::string& error, bool& ret);
 
     //properties
-    openni::Device                  m_device;
     openni::VideoStream             m_depthStream;
     openni::VideoStream             m_imageStream;
+    openni::Device                  m_device;
     impl::streamFrameListener      *m_depthFrame;
     impl::streamFrameListener      *m_imageFrame;
     yarp::os::ConstString           m_lastError;
