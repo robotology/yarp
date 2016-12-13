@@ -10,8 +10,9 @@
 #include <algorithm>
 #include <yarp/sig/Image.h>
 #include <yarp/os/LogStream.h>
-#include "zfp.h"
-
+extern "C" {
+    #include "zfp.h"
+}
 #include "zfpPortmonitor.h"
 
 using namespace yarp::os;
@@ -20,13 +21,13 @@ using namespace yarp::sig;
 
 bool ZfpMonitorObject::create(const yarp::os::Property& options)
 {
-   shouldCompress = (options.find("sender_side").asBool());
-   compressed=NULL;
-   decompressed=NULL;
-   buffer=NULL;
-   sizeToAllocate=0;
-   sizeToAllocateB=0;
-   return true;
+    shouldCompress = (options.find("sender_side").asBool());
+    compressed=NULL;
+    decompressed=NULL;
+    buffer=NULL;
+    sizeToAllocate=0;
+    sizeToAllocateB=0;
+    return true;
 }
 
 void ZfpMonitorObject::destroy(void)
