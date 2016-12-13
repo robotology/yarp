@@ -246,6 +246,8 @@ Actions after any YARP release
 
 * Create and upload the binary packages.
 
+* Create an issue in https://github.com/robotology/homebrew-cask/issues titled ** Update YARP formula to [versionnum] **
+
 * Publish the release by posting an announcement in
   [`robotology/QA`](https://github.com/robotology/QA) and in the
   [`rc-hackers`](http://wiki.icub.org/wiki/Robotcub-hackers) mailing list.
@@ -253,5 +255,3 @@ Actions after any YARP release
 * Update the latest release version in
   [YARP's Wikipedia page](https://en.wikipedia.org/wiki/YARP).
 
-* Update YARP's homebrew formula at
-  https://github.com/robotology/homebrew-cask/blob/master/yarp.rb .
