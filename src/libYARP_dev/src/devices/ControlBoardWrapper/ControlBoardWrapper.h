@@ -52,8 +52,8 @@
 #endif
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 5
-#define PROTOCOL_VERSION_TWEAK 1
+#define PROTOCOL_VERSION_MINOR 6
+#define PROTOCOL_VERSION_TWEAK 0
 
 /*
  * To optimize memory allocation, for group of joints we can have one mem reserver for rpc port
