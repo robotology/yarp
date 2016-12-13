@@ -823,7 +823,6 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
 
     ifstream file1;
     file1.open(filename.c_str(),std::ifstream::binary);
-    std::streamoff debug_pos=file1.tellg();
     if (file1.is_open() == false) return false;
 
     int log_file_version;
