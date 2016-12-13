@@ -38,11 +38,11 @@ bool FakeLaser::open(yarp::os::Searchable& config)
         period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt();
     }
 
-    min_distance = 0.1; //m
+    min_distance = 0.1;  //m
     max_distance = 3.5;  //m
-    min_angle = 0;      //degrees
-    max_angle = 359;    //degrees
-    resolution = 1.0;   //degrees
+    min_angle = 0;       //degrees
+    max_angle = 360;     //degrees
+    resolution = 1.0;    //degrees
 
     sensorsNum = (int)((max_angle-min_angle)/resolution);
     laser_data.resize(sensorsNum);
@@ -150,7 +150,8 @@ bool FakeLaser::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 #endif
     size_t size = laser_data.size();
     data.resize(size);
-    double laser_angle_of_view = fabs(min_angle) + fabs(max_angle);
+    if (max_angle < min_angle) { yError() << "getLaserMeasurement failed"; return false; }
+    double laser_angle_of_view = max_angle - min_angle;
     for (size_t i = 0; i < size; i++)
     {
         double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
@@ -183,8 +184,9 @@ void FakeLaser::run()
 {
     mutex.wait();
     laser_data.clear();
-    double t = yarp::os::Time::now();
-    double size = (t - int(t));
+    double t      = yarp::os::Time::now();
+    static double t_orig = yarp::os::Time::now();
+    double size = (t - (t_orig));
     
     static int test_count = 0;
     static int test = 0;
@@ -196,6 +198,12 @@ void FakeLaser::run()
             value = i / 100.0;
         else if (test == 1)
             value = size*2;
+        else if (test == 2)
+        {
+            if (i >= 0 && i <= 10) value = 1.0+i/20.0;
+            else if (i >= 90 && i <= 100) value = 2.0+(i-90)/20.0;
+            else value = min_distance;
+        }
 
         if (value < min_distance) value = min_distance;
         if (value > max_distance) value = max_distance;
@@ -203,9 +211,10 @@ void FakeLaser::run()
     }
 
     test_count++;
-    if (test_count == 40)
+    if (test_count == 60)
     {
-        test_count = 0; test++; if (test > 1) test = 0;
+        test_count = 0; test++; if (test > 2) test = 0;
+        t_orig = yarp::os::Time::now();
     }
 
     mutex.post();

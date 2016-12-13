@@ -197,7 +197,6 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
     center.x = (int)(img->width / 2 + (sens_position*scale)*sin(center_angle / 180 * M_PI));
     center.y = (int)(img->height / 2 - (sens_position*scale)*cos(center_angle / 180 * M_PI));
 
-    double angle = 0;
     double length = 0;
     static double old_time = 0;
 
@@ -223,10 +222,10 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
         //if (length<0)     length = 0;
         //else if (length>15)    length = 15; //15m maximum
 
-        angle -= center_angle;
+        //the following rotation is performed to have x axis aligned with screen vertical 
         CvPoint ray;
-        ray.x = int(-x*scale);
-        ray.y = int(-y*scale);
+        ray.x = int(-y*scale);
+        ray.y = int(-x*scale);
         ray.x += center.x;
         ray.y += center.y;
 

@@ -213,7 +213,8 @@ bool LaserFromDepth::getLaserMeasurement(std::vector<LaserMeasurementData> &data
 #endif
     size_t size = m_laser_data.size();
     data.resize(size);
-    double laser_angle_of_view = fabs(m_min_angle) + fabs(m_max_angle);
+    if (m_max_angle < m_min_angle) { yError() << "getLaserMeasurement failed"; return false; }
+    double laser_angle_of_view = m_max_angle - m_min_angle;
     for (size_t i = 0; i < size; i++)
     {
         double angle = (i / double(size)*laser_angle_of_view + m_min_angle)* DEG2RAD;
