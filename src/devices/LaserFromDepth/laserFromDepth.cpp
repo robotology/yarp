@@ -30,6 +30,7 @@ using namespace std;
 
 bool LaserFromDepth::open(yarp::os::Searchable& config)
 {
+    Property subConfig;
     m_info = "LaserFromDepth device";
     m_device_status = DEVICE_OK_STANBY;
 
@@ -39,11 +40,10 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
 
     m_min_distance = 0.1; //m
     m_max_distance = 2.5;  //m
-
-    bool br = config.check("GENERAL");
+    bool br = config.check("SUBDEVICE");
     if (br != false)
     {
-        yarp::os::Searchable& general_config = config.findGroup("GENERAL");
+        yarp::os::Searchable& general_config = config.findGroup("SUBDEVICE");
         m_clip_max_enable = general_config.check("clip_max");
         m_clip_min_enable = general_config.check("clip_min");
         if (m_clip_max_enable) { m_max_distance = general_config.find("clip_max").asDouble(); }
@@ -52,10 +52,9 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
     }
     else
     {
-        yError() << "Missing GENERAL section";
+        yError() << "Missing SUBDEVICE section";
         return false;
     }
-
     bool bs = config.check("SKIP");
     if (bs != false)
     {
@@ -88,19 +87,15 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
     }
 
     Time::turboBoost();
-
-    yarp::os::Searchable& general_config = config.findGroup("GENERAL");
    
     Property prop;
-    ResourceFinder rf;
-    rf.setVerbose();
+    if(!config.check("RGBD_SENSOR_CLIENT"))
+    {
+        yError() << "missing RGBD_SENSOR_CLIENT section in configuration file!";
+        return false;
+    }
+    prop.fromString(config.findGroup("RGBD_SENSOR_CLIENT").toString());
     prop.put("device", "RGBDSensorClient");
-    prop.put("localImagePort", "/clientRgbPort:i");
-    prop.put("localDepthPort","/clientDepthPort:i");
-    prop.put("localRpcPort","/clientRpcPort");
-    prop.put("remoteImagePort","/RGBD/rgbCamera:o");
-    prop.put("remoteDepthPort","/RGBD/depthCamera:o");
-    prop.put("remoteRpcPort","/RGBD/rpc");
   
     driver.open(prop);
     if (!driver.isValid())
@@ -252,6 +247,20 @@ void LaserFromDepth::run()
     LockGuard guard(mutex);
 
     iRGBD->getDepthImage(m_depth_image);
+    if (m_depth_image.getRawImage()==0)
+    {
+        yDebug()<<"invalid image received";
+        return;
+    }
+
+    if (m_depth_image.width()!=m_depth_width ||
+        m_depth_image.height()!=m_depth_height)
+    {
+        yDebug()<<"invalid image size";
+        return;
+    }
+
+
     float* pointer = (float*)m_depth_image.getPixelAddress(0, m_depth_height / 2);
     
     for (int elem = 0; elem < m_sensorsNum; elem++)
