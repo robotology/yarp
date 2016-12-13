@@ -78,6 +78,7 @@ public:
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+    yarp::dev::PolyDriver driver;
     yarp::os::ConstString partName;
     yarp::os::ConstString streamingPortName;
     yarp::os::ConstString rpcPortName;
@@ -91,6 +92,7 @@ private:
     double minAngle, maxAngle;
     double minDistance, maxDistance;
     double resolution;
+    bool   isDeviceOwned;
 
     bool checkROSParams(yarp::os::Searchable &config);
     bool initialize_ROS();
