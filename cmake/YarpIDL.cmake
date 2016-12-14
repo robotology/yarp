@@ -296,7 +296,7 @@ function(YARP_ADD_IDL var first_file)
 
     # Set intermediate output directory, remove extra '/' and ensure that
     # the directory exists.
-    set(tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/yarpidl_${family}/${path}")
+    set(tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/yarpidl_${family}")
     string(REGEX REPLACE "/(/|$)" "\\1" tmp_dir "${tmp_dir}")
     make_directory(${tmp_dir})
 
@@ -328,7 +328,11 @@ function(YARP_ADD_IDL var first_file)
       endif()
     endforeach()
     foreach(gen_file ${gen_hdrs})
-      set(out "${hdrs_out_dir}/${path}/${gen_file}")
+      if("${family}" STREQUAL "thrift")
+        set(out "${hdrs_out_dir}/${path}/${gen_file}")
+      else()
+        set(out "${hdrs_out_dir}/${gen_file}")
+      endif()
       list(FIND ${var} ${out} x)
       if(x EQUAL -1)
         list(APPEND output "${out}")
@@ -350,10 +354,14 @@ function(YARP_ADD_IDL var first_file)
       # Append output to return variable
       list(APPEND ${var} ${output})
 
-      # Force CMake to run again if the file is modified
-      configure_file("${file}" "${tmp_dir}/${basename}${ext}" COPYONLY)
+      # Mark the generated files as generated
+      set_source_files_properties("${output}" PROPERTIES GENERATED TRUE)
     endif()
 
+    # Force CMake to run again if the file is modified.
+    # This is required because the new version might generate new
+    # output files, therefore we need to parse it again.
+    configure_file("${file}" "${tmp_dir}/${basename}${ext}" COPYONLY)
   endforeach()
 
   set(${var} ${${var}} PARENT_SCOPE)
