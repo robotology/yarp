@@ -285,7 +285,8 @@ bool RpLidar::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 #endif
     size_t size = laser_data.size();
     data.resize(size);
-    double laser_angle_of_view = fabs(min_angle) + fabs(max_angle);
+    if (max_angle < min_angle) { yError() << "getLaserMeasurement failed"; return false; }
+    double laser_angle_of_view = max_angle - min_angle;
     for (size_t i = 0; i < size; i++)
     {
         double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
