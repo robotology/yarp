@@ -408,6 +408,8 @@ checkandset_dependency(Libusb1)
 find_package(Stage QUIET)
 checkandset_dependency(Stage)
 
+find_package(ZFP QUIET)
+checkandset_dependency(ZFP)
 
 # PRINT DEPENDENCIES STATUS:
 
@@ -439,6 +441,7 @@ print_dependency(PortAudio)
 print_dependency(NVIDIACg)
 print_dependency(Libusb1)
 print_dependency(Stage)
+print_dependency(ZFP)
 
 
 # CHECK DEPENDENCIES:
