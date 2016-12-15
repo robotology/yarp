@@ -47,7 +47,8 @@ Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
     maxAngle    = 0;
     minDistance = 0;
     maxDistance = 0;
-    resolution = 0;
+    resolution  = 0;
+    isDeviceOwned = false;
 }
 
 Rangefinder2DWrapper::~Rangefinder2DWrapper()
@@ -511,6 +512,27 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
         return false;
     }
 
+    if(config.check("subdevice"))
+    {
+        Property       p;
+        PolyDriverList driverlist;
+        p.fromString(config.toString(), false);
+        p.put("device", config.find("subdevice").asString());
+
+        if(!driver.open(p) || !driver.isValid())
+        {
+            yError() << "RangeFinder2DWrapper: failed to open subdevice.. check params";
+            return false;
+        }
+
+        driverlist.push(&driver, "1");
+        if(!attachAll(driverlist))
+        {
+            yError() << "RangeFinder2DWrapper: failed to open subdevice.. check params";
+            return false;
+        }
+        isDeviceOwned = true;
+    }
     return true;
 }
 

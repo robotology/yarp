@@ -305,7 +305,8 @@ bool yarp::dev::Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasur
     inputPort.getData(ranges);
     size_t size = ranges.size();
     data.resize(size);
-    double laser_angle_of_view = fabs(scan_angle_min) + fabs(scan_angle_max);
+    if (scan_angle_max < scan_angle_min) { yError() << "getLaserMeasurement failed"; return false; }
+    double laser_angle_of_view = scan_angle_max - scan_angle_min;
     for (size_t i = 0; i < size; i++)
     {
         double angle = (i / double(size)*laser_angle_of_view + device_position_theta + scan_angle_min)* DEG2RAD;

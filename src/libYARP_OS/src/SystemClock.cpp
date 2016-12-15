@@ -18,7 +18,12 @@
 void yarp::os::SystemClock::delaySystem(double seconds)
 {
 #if defined YARP_HAS_CXX11
+#if defined _MSC_VER && _MSC_VER <= 1800
+    std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(seconds)));
+#else
     std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
+#endif
+
 #elif defined YARP_HAS_ACE
     ACE_Time_Value tv;
     tv.sec (long(seconds));

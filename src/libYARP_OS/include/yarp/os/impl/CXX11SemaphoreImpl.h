@@ -42,11 +42,13 @@ public:
         std::unique_lock<std::mutex> lock(mutex);
         count--;
         if (count<0) {
-            auto target = std::chrono::system_clock::now() +
-                std::chrono::duration<double>(timeout);
-            cond.wait_until(lock,
-                            target,
-                            [this] { return wakeups > 0; });
+#if defined _MSC_VER && _MSC_VER <= 1800
+            std::chrono::nanoseconds ctime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(timeout));
+#else
+            std::chrono::duration<double> ctime(timeout)
+#endif
+            cond.wait_for(lock, ctime, [this] { return wakeups > 0; });
+
             if (wakeups<=0) {
                 count++;
                 return false;
