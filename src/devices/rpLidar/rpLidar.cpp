@@ -108,11 +108,10 @@ bool RpLidar::open(yarp::os::Searchable& config)
 
     }
 
-    if (min_angle < 0 || min_angle > 360 ) { yError() << "min_angle should be >= 0, <= 360"; return false; }
-    if (max_angle < 0 || max_angle > 360 ) { yError() << "max_angle should be >= 0, <= 360"; return false; }
     if (max_angle <= min_angle)            { yError() << "max_angle should be > min_angle";  return false; }
-
-    sensorsNum = (int)((max_angle-min_angle)/resolution) +1;
+    double fov = (max_angle - min_angle);
+    if (fov >360)                          { yError() << "max_angle - min_angle <= 360";  return false; }
+    sensorsNum = (int)(fov/resolution);
     laser_data.resize(sensorsNum,0.0);
 
     yInfo("Starting debug mode");
@@ -692,8 +691,14 @@ void RpLidar::run()
         buffer->throw_away_elems(5);
         //int m_elem = (int)((max_angle - min_angle) / resolution);
         int elem = (int)(angle / resolution);
-        if(elem >= 0 && elem < (int) laser_data.size())
+        if (elem >= 0 && elem < (int)laser_data.size())
+        {
             laser_data[elem] = distance;
+        }
+        else
+        {
+            yDebug() << "RpLidar::run() invalid angle: elem" << elem << ">" << "laser_data.size()" << laser_data.size();
+        }
      }
     while (buffer->size() > packet &&  isRunning() );
 
