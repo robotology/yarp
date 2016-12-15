@@ -39,7 +39,7 @@ install:
 
   # Get Qt5:
   - cmd: appveyor DownloadFile "https://raw.githubusercontent.com/robotology-dependencies/robotology-dep-scripts/master/qt5/qt-installer-noninteractive.qs" -FileName "C:\downloads\qt-installer-noninteractive.qs"
-  - cmd: if "%platform%"=="Win32" appveyor DownloadFile "https://download.qt.io/official_releases/qt/5.5/5.5.1/qt-opensource-windows-x86-msvc2012-5.5.1.exe" -FileName "C:\downloads\qt5.exe"
+  - cmd: if "%platform%"=="Win32" appveyor DownloadFile "https://download.qt.io/archive/qt/5.5/5.5.1/qt-opensource-windows-x86-msvc2012-5.5.1.exe" -FileName "C:\downloads\qt5.exe"
   - cmd: if "%platform%"=="Win32" C:\downloads\qt5.exe --script C:\downloads\qt-installer-noninteractive.qs
   - cmd: if "%platform%"=="Win32" set QTDIR=C:\Qt\Qt5.5.1\5.5\msvc2012
   - cmd: set Qt5_DIR=%QTDIR%\lib\cmake\Qt5
