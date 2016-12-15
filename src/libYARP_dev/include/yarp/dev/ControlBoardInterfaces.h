@@ -28,6 +28,7 @@
 #include <yarp/dev/IMotorEncoders.h>
 #include <yarp/dev/IMotor.h>
 #include <yarp/dev/IRemoteVariables.h>
+#include <yarp/dev/IRobotDescription.h>
 
 namespace yarp {
     namespace dev {

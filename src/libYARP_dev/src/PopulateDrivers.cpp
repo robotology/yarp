@@ -41,6 +41,8 @@ extern DriverCreator *createRGBDSensorClient();
 extern DriverCreator *createControlBoardRemapper();
 extern DriverCreator *createRemoteControlBoardRemapper();
 extern DriverCreator *createNavigation2DClient();
+extern DriverCreator *createRobotDescriptionServer();
+extern DriverCreator *createRobotDescriptionClient();
 
 #ifdef WITH_YARPMATH
 extern DriverCreator *createFrameTransformServer();
@@ -101,6 +103,8 @@ void Drivers::init() {
     add(createControlBoardRemapper());
     add(createRemoteControlBoardRemapper());
     add(createNavigation2DClient());
+    add(createRobotDescriptionServer());
+    add(createRobotDescriptionClient());
 
 #ifdef WITH_YARPMATH
     add(createFrameTransformServer());
