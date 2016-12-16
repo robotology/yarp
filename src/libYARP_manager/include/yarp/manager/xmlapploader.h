@@ -13,6 +13,7 @@
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
 
+
 namespace yarp {
 namespace manager {
 
@@ -40,6 +41,7 @@ private:
     vector<string> fileNames;
     Application app;
     Application* parsXml(const char* szFile);
+    std::string  parseText(const char *element);
 };
 
 } // namespace yarp
