@@ -164,24 +164,44 @@ Application* XmlAppLoader::getNextApplication(void)
 string XmlAppLoader::parseText(const char* element)
 {
     using namespace yarp::os;
-    static string ret;
+    string ret, startKeyword, endKeyword;
     size_t s, e;
 
     ret = "";
     if(element)
     {
         ret = element;
-        s   = ret.find("${");
-        e   = ret.find("}", s);
+        startKeyword = "$ENV{";
+        endKeyword   = "}";
+        s            = ret.find(startKeyword);
+        e            = ret.find(endKeyword, s);
 
         if(s != string::npos && e != string::npos)
         {
             string envName, envValue;
 
-            envName  = ret.substr(s + 2, e - s -2);
+            envName  = ret.substr(s + startKeyword.size(), e - s -startKeyword.size());
             envValue = NetworkBase::getEnvironment(envName.c_str());
+            ret      = ret.substr(0, s)+ envValue + ret.substr(e + endKeyword.size(), ret.size() - endKeyword.size());
 
-            ret = ret.substr(0, s)+ envValue + ret.substr(e + 1, ret.size() - 1);
+            return parseText(ret.c_str());
+        }
+
+        ret = element;
+        startKeyword = "${";
+        endKeyword   = "}";
+        s            = ret.find(startKeyword);
+        e            = ret.find(endKeyword, s);
+
+        if(s != string::npos && e != string::npos)
+        {
+            string envName, envValue;
+
+            envName  = ret.substr(s + startKeyword.size(), e - s -startKeyword.size());
+            envValue = variables[envName];
+            ret      = ret.substr(0, s)+ envValue + ret.substr(e + endKeyword.size(), ret.size() - endKeyword.size());
+
+            return parseText(ret.c_str());
         }
     }
 
@@ -233,6 +253,14 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         err<<"Module from "<<szFile<<" has no name.";
         logger->addError(err);
         //return NULL;
+    }
+
+    for(TiXmlElement* var = root->FirstChildElement("var"); var; var = var->NextSiblingElement())
+    {
+        if(var->Attribute("name"))
+        {
+            variables[var->Attribute("name")] = parseText(var->GetText());
+        }
     }
 
     app.setXmlFile(szFile);
@@ -316,20 +344,29 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         }
 
     /* retrieving modules information*/
-    for(TiXmlElement* mod = root->FirstChildElement(); mod;
-            mod = mod->NextSiblingElement())
+    typedef void (ModuleInterface::*setter)(const char*);
+
+    vector<pair<const char*, setter> > modList;
+    pair<const char*, setter>          pairNode;
+
+    pairNode.first = "node";        pairNode.second = &ModuleInterface::setHost;        modList.push_back(pairNode);
+    pairNode.first = "parameters";  pairNode.second = &ModuleInterface::setParam;       modList.push_back(pairNode);
+    pairNode.first = "stdio";       pairNode.second = &ModuleInterface::setStdio;       modList.push_back(pairNode);
+    pairNode.first = "workdir";     pairNode.second = &ModuleInterface::setWorkDir;     modList.push_back(pairNode);
+    pairNode.first = "deployer";    pairNode.second = &ModuleInterface::setBroker;      modList.push_back(pairNode);
+    pairNode.first = "prefix";      pairNode.second = &ModuleInterface::setPrefix;      modList.push_back(pairNode);
+    pairNode.first = "environment"; pairNode.second = &ModuleInterface::setEnvironment; modList.push_back(pairNode);
+    pairNode.first = "display";     pairNode.second = &ModuleInterface::setDisplay;     modList.push_back(pairNode);
+    for(TiXmlElement* mod = root->FirstChildElement(); mod; mod = mod->NextSiblingElement())
     {
         if(compareString(mod->Value(), "module"))
         {
             TiXmlElement* element;
             if((element = (TiXmlElement*) mod->FirstChild("name")))
             {
-                typedef void (ModuleInterface::*setter)(const char*);
-
-                vector<pair<const char*, setter> > modList;
                 string                             elemText;
                 const char*                        text;
-                pair<const char*, setter>          pairNode;
+
 
                 text = NULL;
                 if(element->GetText())
@@ -339,17 +376,6 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 }
 
                 ModuleInterface module(text);
-
-
-
-                pairNode.first = "node";        pairNode.second = &ModuleInterface::setHost;        modList.push_back(pairNode);
-                pairNode.first = "parameters";  pairNode.second = &ModuleInterface::setParam;       modList.push_back(pairNode);
-                pairNode.first = "stdio";       pairNode.second = &ModuleInterface::setStdio;       modList.push_back(pairNode);
-                pairNode.first = "workdir";     pairNode.second = &ModuleInterface::setWorkDir;     modList.push_back(pairNode);
-                pairNode.first = "deployer";    pairNode.second = &ModuleInterface::setBroker;      modList.push_back(pairNode);
-                pairNode.first = "prefix";      pairNode.second = &ModuleInterface::setPrefix;      modList.push_back(pairNode);
-                pairNode.first = "environment"; pairNode.second = &ModuleInterface::setEnvironment; modList.push_back(pairNode);
-                pairNode.first = "display";     pairNode.second = &ModuleInterface::setDisplay;     modList.push_back(pairNode);
 
                 for(size_t i = 0; i < modList.size(); i++)
                 {

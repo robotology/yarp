@@ -23,25 +23,28 @@ namespace manager {
  */
 class XmlAppLoader : public AppLoader {
 
+    typedef map<string, string> VarMap;
 public:
     XmlAppLoader(const char* szFileName);
     XmlAppLoader(const char* szPath, const char* szAppName);
     virtual ~XmlAppLoader();
-    bool init(void);
-    void fini(void);
-    void reset(void);
+
+    bool         init(void);
+    void         fini(void);
+    void         reset(void);
     Application* getNextApplication(void);
 
 protected:
 
 private:
-    string strAppName;
-    string strPath;
-    string strFileName;
+    string         strAppName;
+    string         strPath;
+    string         strFileName;
     vector<string> fileNames;
-    Application app;
-    Application* parsXml(const char* szFile);
-    std::string  parseText(const char *element);
+    VarMap         variables;
+    Application    app;
+    Application*   parsXml(const char* szFile);
+    std::string    parseText(const char *element);
 };
 
 } // namespace yarp
