@@ -95,8 +95,8 @@ namespace yarp
  * |                              |  accuracy           | double              |  Read / write   | meters         |   -           |  Alternative to HW_DESCRIPTION   | Accuracy of the device, as the depth measurement error at 1 meter distance             |                                                                       |
  * |                              |  rgbFOV             | double, double      |  Read / write   | degrees        |   -           |  Alternative to HW_DESCRIPTION   | Horizontal and Vertical fields of view of the rgb camera                               | 2 values expected as horizontal and vertical FOVs                     |
  * |                              |  depthFOV           | double, double      |  Read / write   | degrees        |   -           |  Alternative to HW_DESCRIPTION   | Horizontal and Vertical fields of view of the depth camera                             | 2 values expected as horizontal and vertical FOVs                     |
- * |                              |  rgbMirror          | bool                |  Read / write   | true/false     |  false        |  Alternative to HW_DESCRIPTION   | Set the mirroring to the acquired rgb image                                            |                                                                       |
- * |                              |  deptgMirror        | bool                |  Read / write   | true/false     |  false        |  Alternative to HW_DESCRIPTION   | Set the mirroring to the acquired rgb image                                            |                                                                       |
+ * |                              |  rgbMirroring       | bool                |  Read / write   | true/false     |  false        |  Alternative to HW_DESCRIPTION   | Set the mirroring to the acquired rgb image                                            |                                                                       |
+ * |                              |  depthMirroring     | bool                |  Read / write   | true/false     |  false        |  Alternative to HW_DESCRIPTION   | Set the mirroring to the acquired rgb image                                            |                                                                       |
  * |  HW_DESCRIPTION              |      -              |  group              |                 | -              |   -           |   Yes                            | Hardware description of device property.                                               |  Read only property. Setting will be disabled                         |
  * |                              | same as 'SETTINGS' group | -              |    Read only    | -              |   -           |   Alternative to SETTING group   | Parameters here are alternative to the SETTING group                                   |                                                                       |
  * |  RGB_INTRINSIC_PARAMETERS    |      -              | group               |                 | -              |   -           |   Yes                            | Description of rgb camera visual parameters                                            |                                                                       |
@@ -141,8 +141,8 @@ name         /depthCamera
 accuracy     0.001
 depthResolution (320 240)    #Note the parentesys
 rgbResolution   (320 240)
-rgbMirror       false
-depthMirror     false
+rgbMirroring    false
+depthMirroring  false
 
 [HW_DESCRIPTION]
 clipPlanes (0.4 4.5)
