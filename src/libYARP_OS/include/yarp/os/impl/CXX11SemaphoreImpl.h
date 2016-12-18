@@ -45,7 +45,7 @@ public:
 #if defined _MSC_VER && _MSC_VER <= 1800
             std::chrono::nanoseconds ctime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(timeout));
 #else
-            std::chrono::duration<double> ctime(timeout)
+            std::chrono::duration<double> ctime(timeout);
 #endif
             cond.wait_for(lock, ctime, [this] { return wakeups > 0; });
 
