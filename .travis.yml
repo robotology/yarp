@@ -18,15 +18,9 @@ env:
     - TRAVIS_WITH_INTEGRATION_TESTS=false
     - TRAVIS_WITH_ACE=true
     - TRAVIS_STATIC=false
-    - TRAVIS_CLEAN_API=false
     - TRAVIS_WITH_VALGRIND=false
     - TRAVIS_NO_DEPRECATED=false
     - TRAVIS_WITH_BROKEN_TESTS=false
-
-  matrix:
-    # Normal build
-    - TRAVIS_WITH_CXX11=false
-    # C++11 build
     - TRAVIS_WITH_CXX11=true
 
 matrix:
@@ -35,146 +29,114 @@ matrix:
     compiler: gcc
 
   include:
-    # No ACE build  (linux, gcc)
+    # No ACE build (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
+      env: TRAVIS_WITH_ACE=false
 
-    # No ACE build  (linux, clang)
+    # No ACE build (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false
-
-    # C++11, no ACE build  (linux, gcc)
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
-
-    # C++11, no ACE build  (linux, clang)
-    - os: linux
-      compiler: clang
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true
+      env: TRAVIS_WITH_ACE=false
 
     # Normal build with CLEAN_API (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CLEAN_API=true
+      env: TRAVIS_CLEAN_API=true
 
     # Normal build with CLEAN_API (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CLEAN_API=true
+      env: TRAVIS_CLEAN_API=true
 
     # Normal build with Ninja generator (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
+      env: TRAVIS_CMAKE_GENERATOR="Ninja"
 
     # Normal build with Ninja generator (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Ninja"
+      env: TRAVIS_CMAKE_GENERATOR="Ninja"
 
     # Normal build with integration tests (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+      env: TRAVIS_WITH_INTEGRATION_TESTS=true
 
     # Normal build with integration tests (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+      env: TRAVIS_WITH_INTEGRATION_TESTS=true
 
     # Normal build no deprecated (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
+      env: TRAVIS_NO_DEPRECATED=true
 
     # Normal build no deprecated (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_NO_DEPRECATED=true
+      env: TRAVIS_NO_DEPRECATED=true
 
     # Static build (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_STATIC=true
 
     # Static build (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_STATIC=true
 
     # Static build, no ACE (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_WITH_ACE=false TRAVIS_STATIC=true
 
     # Static build, no ACE (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_STATIC=true
+      env: TRAVIS_WITH_ACE=false TRAVIS_STATIC=true
 
     # Normal build with valgrind (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
-
-    # C++11 build with valgrind (linux, gcc)
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
+      env: TRAVIS_WITH_VALGRIND=true
 
     # No ACE build with valgrind (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true
-
-    # C++11 build with valgrind (linux, gcc)
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_CXX11=true TRAVIS_WITH_VALGRIND=true
+      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_VALGRIND=true
 
     # Normal build with valgrind and broken tests (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+      env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
     # Normal build with Coverage (linux, gcc)
 #    - os: linux
 #      compiler: gcc
-#      env: TRAVIS_WITH_CXX11=false TRAVIS_BUILD_TYPE=Profile
+#      env: TRAVIS_BUILD_TYPE=Profile
 
     # Normal build with Xcode 7.3 (osx, clang)
     - os: osx
       osx_image: xcode7.3
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
-
-    # C++11 build with Xcode 7.3 (osx, clang)
-    - os: osx
-      osx_image: xcode7.3
-      compiler: clang
-      env: TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
+      env: TRAVIS_CMAKE_GENERATOR="Xcode"
 
     # Normal build with Xcode 8 (osx, clang)
     - os: osx
       osx_image: xcode8
       compiler: clang
-      env: TRAVIS_WITH_CXX11=false TRAVIS_CMAKE_GENERATOR="Xcode"
-
-    # C++11 build with Xcode 8 (osx, clang)
-    - os: osx
-      osx_image: xcode8
-      compiler: clang
-      env: TRAVIS_WITH_CXX11=true TRAVIS_CMAKE_GENERATOR="Xcode"
+      env: TRAVIS_CMAKE_GENERATOR="Xcode"
 
   allow_failures:
     # Normal build with integration tests (sometimes integration::rpc test fails)
-    - env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_INTEGRATION_TESTS=true
+    - env: TRAVIS_WITH_INTEGRATION_TESTS=true
 
     # Normal build with valgrind and broken tests (tests of already broken things)
-    - env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+    - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
 branches:
   except:
@@ -285,9 +247,8 @@ before_script:
 
   # Prepare cmake options
   - . scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
-  - export YARP_CMAKE_OPTIONS=" $CMAKE_OPTIONS"
+  - export YARP_CMAKE_OPTIONS=" $CMAKE_OPTIONS -DYARP_EXPERIMENTAL_CXX11=ON"
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
-  - if $TRAVIS_WITH_CXX11; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_EXPERIMENTAL_CXX11=ON"; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_SHARED_LIBRARY=OFF"; fi
   - if $TRAVIS_CLEAN_API; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_CLEAN_API=ON -DYARP_COMPILE_TESTS=OFF"; fi
