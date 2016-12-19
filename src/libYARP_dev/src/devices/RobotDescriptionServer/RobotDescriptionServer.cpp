@@ -45,11 +45,11 @@ bool yarp::dev::RobotDescriptionServer::open(yarp::os::Searchable &config)
 
 bool yarp::dev::RobotDescriptionServer::attachAll(const PolyDriverList &p)
 {
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
-        yDebug() << "***************"<< p[i]->poly->getOptions().toString();
-        yDebug() << "***************" << p[i]->poly->getValue("device").toString();
-        yDebug() << "***************" << p[i]->poly->getValue("name").toString();
+        //yDebug() << "***************" << p[i]->poly->getOptions().toString();
+        //yDebug() << "***************" << p[i]->poly->getValue("device").toString();
+        //yDebug() << "***************" << p[i]->poly->getValue("name").toString();
         RobotDescription dev;
         dev.device_name = p[i]->poly->getValue("name").toString();
         dev.device_type = p[i]->poly->getValue("device").toString();
