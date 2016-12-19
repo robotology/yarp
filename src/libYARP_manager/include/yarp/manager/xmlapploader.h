@@ -12,6 +12,7 @@
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
+#include <yarp/manager/impl/textparser.h>
 
 
 namespace yarp {
@@ -23,7 +24,6 @@ namespace manager {
  */
 class XmlAppLoader : public AppLoader {
 
-    typedef map<string, string> VarMap;
 public:
     XmlAppLoader(const char* szFileName);
     XmlAppLoader(const char* szPath, const char* szAppName);
@@ -41,10 +41,9 @@ private:
     string         strPath;
     string         strFileName;
     vector<string> fileNames;
-    VarMap         variables;
     Application    app;
+    TextParser     parser;
     Application*   parsXml(const char* szFile);
-    std::string    parseText(const char *element);
 };
 
 } // namespace yarp

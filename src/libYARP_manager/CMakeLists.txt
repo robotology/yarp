@@ -43,7 +43,7 @@ if(CREATE_LIB_MANAGER)
                         include/yarp/manager/ymm-dir.h
                         include/yarp/manager/ymm-types.h)
 
-  set(YARP_manager_IMPL_HDRS )
+  set(YARP_manager_IMPL_HDRS include/yarp/manager/impl/textparser.h)
 
   set(YARP_manager_SRCS src/application.cpp
                         src/arbitrator.cpp
