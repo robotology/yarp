@@ -228,6 +228,7 @@ MainWindow::~MainWindow()
 void MainWindow::term()
 {
     sig_internalClose();
+    this->close();
 }
 
 void MainWindow::onSequenceActivated()
@@ -388,7 +389,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 
 bool MainWindow::init(QString robotName, QStringList enabledParts,
-                      ResourceFinder *finder,
+                      ResourceFinder& finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
                       bool enable_calib_all)

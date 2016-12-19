@@ -1133,7 +1133,6 @@ void JointItem::setPosition(double val)
 
     if(ui->stackedWidget->currentIndex() == POSITION){
         ui->editPositionCurrentPos->setText(sVal);
-        double dt = ui->sliderTrajectoryPosition->value();
         updateSliderPosition(ui->sliderTrajectoryPosition, val);
     }
 
