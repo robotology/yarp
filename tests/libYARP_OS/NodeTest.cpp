@@ -52,6 +52,14 @@ public:
 
 private:
 
+    void wrongNamePort()
+    {
+        report(0, "trying to open a port without '/' after Node creation.");
+        Node n("/mynode");
+        BufferedPort<Bottle> p;
+        checkFalse(p.open("nameWithoutSlash+"), "open port with wrong name should fail");
+    }
+
     void parseName(const ConstString& arg,
                    const ConstString& node,
                    const ConstString& nested,
@@ -257,6 +265,11 @@ void NodeTest::typePropTest() {
 
 void NodeTest::runTests() {
     NetworkBase::setLocalMode(true);
+
+#ifdef BROKEN_TEST
+    wrongNamePort();
+#endif
+
     parseNameTest();
     basicNodeTest();
     basicNodesTest();
