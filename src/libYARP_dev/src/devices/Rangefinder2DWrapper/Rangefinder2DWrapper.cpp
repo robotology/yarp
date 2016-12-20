@@ -122,7 +122,7 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
         // check for ROS_topicName parameter
         if (!rosGroup.check("ROS_topicName"))
         {
-            yError() << partName << " cannot find rosTopicName parameter, mandatory when using ROS message";
+            yError() << partName << " cannot find ROS_topicName parameter, mandatory when using ROS message";
             useROS = ROS_config_error;
             return false;
         }
@@ -132,7 +132,7 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
         // check for frame_id parameter
         if (!rosGroup.check("frame_id"))
         {
-            yError() << partName << " cannot find rosTopicName parameter, mandatory when using ROS message";
+            yError() << partName << " cannot find frame_id parameter, mandatory when using ROS message";
             useROS = ROS_config_error;
             return false;
         }
