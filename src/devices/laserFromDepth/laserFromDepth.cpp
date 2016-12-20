@@ -294,7 +294,7 @@ void LaserFromDepth::run()
             }
         }
 
-        m_laser_data[elem] = distance;
+        m_laser_data[m_sensorsNum - 1 - elem] = distance;
     }
 
     return;
