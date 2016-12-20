@@ -263,34 +263,39 @@ void LaserFromDepth::run()
 
 
     float* pointer = (float*)m_depth_image.getPixelAddress(0, m_depth_height / 2);
-    
+    double angle, distance, infinity, angleShift;
+    size_t i;
+
+    infinity   = std::numeric_limits<double>::infinity();
+    angleShift = m_sensorsNum * m_resolution / 2;
+
     for (int elem = 0; elem < m_sensorsNum; elem++)
     {
-        double distance = *(pointer + elem); //m
-        double angle = elem*m_resolution; //deg
 
-        if (m_clip_min_enable)
+        angle    = elem * m_resolution;    //deg
+
+        //the 1 / cos(blabla) distortion simulate the way RGBD devices calculate the distance..
+        //sorry for the one line unreadable operation, it's for performance reason..
+        distance = *(pointer + elem) * 1 / cos((angle - angleShift) * DEG2RAD); //m
+
+        if (m_clip_min_enable && distance < m_min_distance)
         {
-            if (distance < m_min_distance)
-                distance = m_max_distance;
+            distance = m_max_distance;
         }
 
-        if (m_clip_max_enable)
+        if (m_clip_max_enable              &&
+            distance > m_max_distance      &&
+            !m_do_not_clip_infinity_enable &&
+            distance <= infinity)
         {
-            if (distance > m_max_distance)
-            {
-                if (!m_do_not_clip_infinity_enable && distance <= std::numeric_limits<double>::infinity())
-                {
-                    distance = m_max_distance;
-                }
-            }
+            distance = m_max_distance;
         }
 
-        for (size_t i = 0; i < m_range_skip_vector.size(); i++)
+        for (i = 0; i < m_range_skip_vector.size(); i++)
         {
             if (angle > m_range_skip_vector[i].min && angle < m_range_skip_vector[i].max)
             {
-                distance = std::numeric_limits<double>::infinity();
+                distance = infinity;
             }
         }
 
