@@ -28,10 +28,9 @@ StartDlg::~StartDlg()
 }
 
 
-void StartDlg::init(QString robotName, QStringList partsName)
+void StartDlg::init(QStringList partsName)
 {
 
-    ui->lineEdit->setText(robotName);
     FlowLayout *layout = new FlowLayout(ui->groupBox);
 
     for(int i=0;i<partsName.count();i++)
@@ -58,9 +57,4 @@ std::vector<bool> StartDlg::getEnabledParts()
     }
 
     return enabled;
-}
-
-QString StartDlg::getRobotName()
-{
-    return ui->lineEdit->text();
 }

@@ -61,14 +61,9 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
     QString robotPartPort;
-    if (robotName != "")
-    {
-        robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
-    }
-    else
-    {
-        robotPartPort = QString(partName);
-    }
+    if (robotName.at(0) == '/') robotName.remove(0, 1);
+    if (partName.at(0) == '/')  partName.remove(0, 1);
+    robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
 
     //checking existence of the port
     int ind = 0;

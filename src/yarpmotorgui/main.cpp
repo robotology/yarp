@@ -64,8 +64,6 @@ int main(int argc, char *argv[])
     int            appRet;
     QApplication   a(argc, argv);
     ResourceFinder finder;
-    string         robotName;
-    QString        newRobotName;
     Bottle         pParts;
     QStringList    enabledParts;
     vector<bool>   enabled;
@@ -139,26 +137,30 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(pParts.size() == 0)
+    std::string robotName = finder.find("robot").asString();
+    Bottle* b_part = finder.find("parts").asList();
+    if (pParts.size() == 0)
     {
-        robotName = finder.find("name").asString();
-        if (robotName == "")
-        {
-
-        }
-        Bottle* b = finder.find("parts").asList();
-        if (b)
+        if (robotName != "" && b_part != 0)
         {
             //check parts from config file
-            pParts = *b;
+            for (int i = 0; i < b_part->size(); i++)
+            {
+                string ss = b_part->get(i).asString();
+                if (ss.at(0) != '/')
+                {
+                    ss = "/" + robotName + "/" + ss;
+                }
+                pParts.addString(ss);
+            }
         }
         else
         {
             //use default names
-            pParts = Bottle("head torso left_arm right_arm left_leg right_leg");
+            pParts = Bottle("/icub/head /icub/torso /icub/left_arm /icub/right_arm /icub/left_leg /icub/right_leg");
         }
     }
-
+    
     //Check 1 in the panel
     for(int n = 0; n < pParts.size(); n++)
     {
@@ -167,17 +169,14 @@ int main(int argc, char *argv[])
         partsName.append(part);
     }
 
-    newRobotName = robotName.c_str();
-
     if(!finder.check("skip"))
     {
         StartDlg dlg;
-        dlg.init(newRobotName, partsName);
+        dlg.init(partsName);
 
         if(dlg.exec() == QDialog::Accepted)
         {
             enabled      = dlg.getEnabledParts();
-            newRobotName = dlg.getRobotName();
         }
         else
         {
@@ -200,8 +199,7 @@ int main(int argc, char *argv[])
 
     mainW  = &w;
     appRet = 0;
-    std::string debug_s2 = newRobotName.toStdString();
-    ret    = w.init(newRobotName, enabledParts, finder, debug_param_enabled, speedview_param_enabled, enable_calib_all);
+    ret = w.init(enabledParts, finder, debug_param_enabled, speedview_param_enabled, enable_calib_all);
 
     if(ret)
     {

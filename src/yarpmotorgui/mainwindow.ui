@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="res.qrc">
+   <iconset>
     <normaloff>:/logo.svg</normaloff>:/logo.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -54,7 +54,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>225</width>
+         <width>300</width>
          <height>16777215</height>
         </size>
        </property>
@@ -65,7 +65,7 @@
         <bool>true</bool>
        </property>
        <attribute name="headerDefaultSectionSize">
-        <number>100</number>
+        <number>150</number>
        </attribute>
        <column>
         <property name="text">
@@ -89,7 +89,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
