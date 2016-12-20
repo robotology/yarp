@@ -559,6 +559,12 @@ bool depthCameraDriver::open(Searchable& config)
         return false;
     }
 
+    if(!extrinsic.find("transformation").isList())
+    {
+        yError() << "transformation parameter is not formatted as a list, values should be between round brackets '('";
+        return false;
+    }
+
     Bottle* transformation;
     transformation = extrinsic.find("transformation").asList();
     if(!(transformation->size() == 4*4))
