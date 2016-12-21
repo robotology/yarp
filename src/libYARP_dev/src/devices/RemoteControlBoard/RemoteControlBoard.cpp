@@ -2878,7 +2878,7 @@ public:
         double localArrivalTime=0.0;
 
         extendedPortMutex.wait();
-        bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.controlMode.data(), lastStamp, localArrivalTime);
+        bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.controlMode.getFirst(), lastStamp, localArrivalTime);
         if(ret)
         {
             for (int i = 0; i < n_joint; i++)
@@ -3177,7 +3177,7 @@ public:
         double localArrivalTime=0.0;
 
         extendedPortMutex.wait();
-        bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.interactionMode.data(), lastStamp, localArrivalTime);
+        bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.interactionMode.getFirst(), lastStamp, localArrivalTime);
         if(ret)
         {
             for (int i = 0; i < n_joints; i++)
