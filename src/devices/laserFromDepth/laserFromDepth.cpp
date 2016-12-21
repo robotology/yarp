@@ -275,8 +275,8 @@ void LaserFromDepth::run()
         angle    = elem * m_resolution;    //deg
 
         //the 1 / cos(blabla) distortion simulate the way RGBD devices calculate the distance..
-        //sorry for the one line unreadable operation, it's for performance reason..
-        distance = *(pointer + elem) * 1 / cos((angle - angleShift) * DEG2RAD); //m
+        distance = *(pointer + elem);
+        distance /= cos((angle - angleShift) * DEG2RAD); //m
 
         if (m_clip_min_enable && distance < m_min_distance)
         {
