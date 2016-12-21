@@ -276,6 +276,16 @@ public:
         return asString() != alt;
     }
 
+    bool operator==(const int alt) const
+    {
+        return asInt() == alt;
+    }
+
+    bool operator!=(const int alt) const
+    {
+        return asInt() != alt;
+    }
+
     /**
      * Set value to correspond to a textual representation.
      * For example if str="10" then the value will be an integer,

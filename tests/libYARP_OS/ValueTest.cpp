@@ -235,6 +235,11 @@ public:
             checkTrue((v1!=v2), "(blob) operator!= ok");
             checkTrue((v1!=*(reinterpret_cast<const int*>(v2.asBlob()))), "(blob) value ok");
         }
+
+        {
+            Value v(0);
+            checkTrue(v == 0, "equivalence with integer literal ok");
+        }
     }
 
     virtual void runTests() {
