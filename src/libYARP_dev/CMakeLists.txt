@@ -30,6 +30,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
+                  include/yarp/dev/IMap2D.h
                   include/yarp/dev/IRangefinder2D.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
@@ -146,8 +147,11 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
                         src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                         src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
+                        src/devices/JoypadControlServer/JoypadControlClient.cpp
                         src/devices/JoypadControlServer/JoypadControlServer.cpp
-                        src/devices/JoypadControlClient/JoypadControlClient.cpp)
+                        src/devices/Map2DClient/Map2DClient.cpp
+                        src/devices/Map2DServer/Map2DServer.cpp)
+
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
                                 src/devices/FrameTransformServer/FrameTransformServer.cpp
@@ -169,7 +173,9 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/RobotDescriptionServer/RobotDescriptionServer.h
                         src/devices/JoypadControlServer/JoypadControlServer.h
                         src/devices/JoypadControlClient/JoypadControlClient.h
-                        src/devices/JoypadControlServer/JoypadControlNetUtils.h)
+                        src/devices/JoypadControlServer/JoypadControlNetUtils.h
+                        src/devices/Map2DClient/Map2DClient.h
+                        src/devices/Map2DServer/Map2DServer.h)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_HDRS src/devices/FrameTransformClient/FrameTransformClient.h
                                 src/devices/FrameTransformServer/FrameTransformServer.h
