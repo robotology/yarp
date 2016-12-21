@@ -160,12 +160,10 @@ public:
      * \return true/false on success/failure.
      *
      * \note When the reference mode is enabled the controller makes
-     *       use of the low-level joints set-points that result from
-     *       the integration of the velocity commands in place of the
-     *       actual encoders feedbacks. This modality is particularly
-     *       useful in a scenario where the velocity commands are
-     *       executed by the control boards with resort to torque
-     *       actuation.
+     *       use of the low-level joints set-points in place of the
+     *       actual encoders feedback. This modality is particularly
+     *       useful in a scenario where the commands are executed by
+     *       the control boards with resort to torque actuation.
      */
     virtual bool setReferenceMode(const bool f) = 0;
 
