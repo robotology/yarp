@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 RobotCub Consortium
- * Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick
+ * Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick, Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -29,7 +29,7 @@
 #include <stateExtendedReader.hpp>
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 6
+#define PROTOCOL_VERSION_MINOR 7
 #define PROTOCOL_VERSION_TWEAK 0
 
 using namespace yarp::os;

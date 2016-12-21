@@ -1,12 +1,13 @@
 /*
  * Copyright (C) 2009 RobotCub Consortium
- * Author: Lorenzo Natale
+ * Author: Lorenzo Natale, Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #include "ControlBoardWrapper.h"
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
+#include "../msgs/yarp/include/jointData.h"
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
@@ -885,16 +886,16 @@ void ControlBoardWrapper::run()
         yarp_struct.controlMode.resize(controlledJoints);
         yarp_struct.interactionMode.resize(controlledJoints);
 
-        yarp_struct.jointPosition_isValid       = getEncoders(yarp_struct.jointPosition.data());
-        yarp_struct.jointVelocity_isValid       = getEncoderSpeeds(yarp_struct.jointVelocity.data());
-        yarp_struct.jointAcceleration_isValid   = getEncoderAccelerations(yarp_struct.jointAcceleration.data());
-        yarp_struct.motorPosition_isValid       = getMotorEncoders(yarp_struct.motorPosition.data());
-        yarp_struct.motorVelocity_isValid       = getMotorEncoderSpeeds(yarp_struct.motorVelocity.data());
-        yarp_struct.motorAcceleration_isValid   = getMotorEncoderAccelerations(yarp_struct.motorAcceleration.data());
-        yarp_struct.torque_isValid              = getTorques(yarp_struct.torque.data());
-        yarp_struct.pidOutput_isValid           = getOutputs(yarp_struct.pidOutput.data());
-        yarp_struct.controlMode_isValid         = getControlModes(yarp_struct.controlMode.data());
-        yarp_struct.interactionMode_isValid     = getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.data());
+        yarp_struct.jointPosition_isValid       = getEncoders(yarp_struct.jointPosition.getFirst());
+        yarp_struct.jointVelocity_isValid       = getEncoderSpeeds(yarp_struct.jointVelocity.getFirst());
+        yarp_struct.jointAcceleration_isValid   = getEncoderAccelerations(yarp_struct.jointAcceleration.getFirst());
+        yarp_struct.motorPosition_isValid       = getMotorEncoders(yarp_struct.motorPosition.getFirst());
+        yarp_struct.motorVelocity_isValid       = getMotorEncoderSpeeds(yarp_struct.motorVelocity.getFirst());
+        yarp_struct.motorAcceleration_isValid   = getMotorEncoderAccelerations(yarp_struct.motorAcceleration.getFirst());
+        yarp_struct.torque_isValid              = getTorques(yarp_struct.torque.getFirst());
+        yarp_struct.pidOutput_isValid           = getOutputs(yarp_struct.pidOutput.getFirst());
+        yarp_struct.controlMode_isValid         = getControlModes(yarp_struct.controlMode.getFirst());
+        yarp_struct.interactionMode_isValid     = getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.getFirst());
 
         extendedOutputStatePort.setEnvelope(time);
         extendedOutputState_buffer.write();
@@ -3320,13 +3321,14 @@ bool ControlBoardWrapper::disableAmp(int j)
         return false;
 
     // Use the newer interface if available, otherwise fallback on the old one.
-    if(p->iMode2) {
+    if(p->iMode2)
         return p->iMode2->setControlMode(off+p->base, VOCAB_CM_IDLE);
-    }
-    if (p->pos) {
-        return p->amp->disableAmp(off+p->base);
-    }
-    return false;
+    else
+        if (p->pos)
+        {
+            return p->amp->disableAmp(off+p->base);
+        }
+        return false;
 }
 
 bool ControlBoardWrapper::getAmpStatus(int *st)

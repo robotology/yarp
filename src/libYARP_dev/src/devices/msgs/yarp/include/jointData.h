@@ -6,6 +6,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/sig/Vector.h>
 
 class jointData;
 
@@ -13,25 +14,25 @@ class jointData;
 class jointData : public yarp::os::idl::WirePortable {
 public:
   // Fields
-  std::vector<double>  jointPosition;
+  yarp::sig::VectorOf<double> jointPosition;
   bool jointPosition_isValid;
-  std::vector<double>  jointVelocity;
+  yarp::sig::VectorOf<double> jointVelocity;
   bool jointVelocity_isValid;
-  std::vector<double>  jointAcceleration;
+  yarp::sig::VectorOf<double> jointAcceleration;
   bool jointAcceleration_isValid;
-  std::vector<double>  motorPosition;
+  yarp::sig::VectorOf<double> motorPosition;
   bool motorPosition_isValid;
-  std::vector<double>  motorVelocity;
+  yarp::sig::VectorOf<double> motorVelocity;
   bool motorVelocity_isValid;
-  std::vector<double>  motorAcceleration;
+  yarp::sig::VectorOf<double> motorAcceleration;
   bool motorAcceleration_isValid;
-  std::vector<double>  torque;
+  yarp::sig::VectorOf<double> torque;
   bool torque_isValid;
-  std::vector<double>  pidOutput;
+  yarp::sig::VectorOf<double> pidOutput;
   bool pidOutput_isValid;
-  std::vector<int32_t>  controlMode;
+  yarp::sig::VectorOf<int> controlMode;
   bool controlMode_isValid;
-  std::vector<int32_t>  interactionMode;
+  yarp::sig::VectorOf<int> interactionMode;
   bool interactionMode_isValid;
 
   // Default constructor
@@ -39,7 +40,7 @@ public:
   }
 
   // Constructor with field values
-  jointData(const std::vector<double> & jointPosition,const bool jointPosition_isValid,const std::vector<double> & jointVelocity,const bool jointVelocity_isValid,const std::vector<double> & jointAcceleration,const bool jointAcceleration_isValid,const std::vector<double> & motorPosition,const bool motorPosition_isValid,const std::vector<double> & motorVelocity,const bool motorVelocity_isValid,const std::vector<double> & motorAcceleration,const bool motorAcceleration_isValid,const std::vector<double> & torque,const bool torque_isValid,const std::vector<double> & pidOutput,const bool pidOutput_isValid,const std::vector<int32_t> & controlMode,const bool controlMode_isValid,const std::vector<int32_t> & interactionMode,const bool interactionMode_isValid) : jointPosition(jointPosition), jointPosition_isValid(jointPosition_isValid), jointVelocity(jointVelocity), jointVelocity_isValid(jointVelocity_isValid), jointAcceleration(jointAcceleration), jointAcceleration_isValid(jointAcceleration_isValid), motorPosition(motorPosition), motorPosition_isValid(motorPosition_isValid), motorVelocity(motorVelocity), motorVelocity_isValid(motorVelocity_isValid), motorAcceleration(motorAcceleration), motorAcceleration_isValid(motorAcceleration_isValid), torque(torque), torque_isValid(torque_isValid), pidOutput(pidOutput), pidOutput_isValid(pidOutput_isValid), controlMode(controlMode), controlMode_isValid(controlMode_isValid), interactionMode(interactionMode), interactionMode_isValid(interactionMode_isValid) {
+  jointData(const yarp::sig::VectorOf<double>& jointPosition,const bool jointPosition_isValid,const yarp::sig::VectorOf<double>& jointVelocity,const bool jointVelocity_isValid,const yarp::sig::VectorOf<double>& jointAcceleration,const bool jointAcceleration_isValid,const yarp::sig::VectorOf<double>& motorPosition,const bool motorPosition_isValid,const yarp::sig::VectorOf<double>& motorVelocity,const bool motorVelocity_isValid,const yarp::sig::VectorOf<double>& motorAcceleration,const bool motorAcceleration_isValid,const yarp::sig::VectorOf<double>& torque,const bool torque_isValid,const yarp::sig::VectorOf<double>& pidOutput,const bool pidOutput_isValid,const yarp::sig::VectorOf<int>& controlMode,const bool controlMode_isValid,const yarp::sig::VectorOf<int>& interactionMode,const bool interactionMode_isValid) : jointPosition(jointPosition), jointPosition_isValid(jointPosition_isValid), jointVelocity(jointVelocity), jointVelocity_isValid(jointVelocity_isValid), jointAcceleration(jointAcceleration), jointAcceleration_isValid(jointAcceleration_isValid), motorPosition(motorPosition), motorPosition_isValid(motorPosition_isValid), motorVelocity(motorVelocity), motorVelocity_isValid(motorVelocity_isValid), motorAcceleration(motorAcceleration), motorAcceleration_isValid(motorAcceleration_isValid), torque(torque), torque_isValid(torque_isValid), pidOutput(pidOutput), pidOutput_isValid(pidOutput_isValid), controlMode(controlMode), controlMode_isValid(controlMode_isValid), interactionMode(interactionMode), interactionMode_isValid(interactionMode_isValid) {
   }
 
   // Copy constructor
@@ -228,16 +229,9 @@ public:
       group--;
       if (group==0&&is_dirty) communicate();
     }
-    void set_jointPosition(const std::vector<double> & jointPosition) {
+    void set_jointPosition(const yarp::sig::VectorOf<double>& jointPosition) {
       will_set_jointPosition();
       obj->jointPosition = jointPosition;
-      mark_dirty_jointPosition();
-      communicate();
-      did_set_jointPosition();
-    }
-    void set_jointPosition(int index, const double elem) {
-      will_set_jointPosition();
-      obj->jointPosition[index] = elem;
       mark_dirty_jointPosition();
       communicate();
       did_set_jointPosition();
@@ -249,16 +243,9 @@ public:
       communicate();
       did_set_jointPosition_isValid();
     }
-    void set_jointVelocity(const std::vector<double> & jointVelocity) {
+    void set_jointVelocity(const yarp::sig::VectorOf<double>& jointVelocity) {
       will_set_jointVelocity();
       obj->jointVelocity = jointVelocity;
-      mark_dirty_jointVelocity();
-      communicate();
-      did_set_jointVelocity();
-    }
-    void set_jointVelocity(int index, const double elem) {
-      will_set_jointVelocity();
-      obj->jointVelocity[index] = elem;
       mark_dirty_jointVelocity();
       communicate();
       did_set_jointVelocity();
@@ -270,16 +257,9 @@ public:
       communicate();
       did_set_jointVelocity_isValid();
     }
-    void set_jointAcceleration(const std::vector<double> & jointAcceleration) {
+    void set_jointAcceleration(const yarp::sig::VectorOf<double>& jointAcceleration) {
       will_set_jointAcceleration();
       obj->jointAcceleration = jointAcceleration;
-      mark_dirty_jointAcceleration();
-      communicate();
-      did_set_jointAcceleration();
-    }
-    void set_jointAcceleration(int index, const double elem) {
-      will_set_jointAcceleration();
-      obj->jointAcceleration[index] = elem;
       mark_dirty_jointAcceleration();
       communicate();
       did_set_jointAcceleration();
@@ -291,16 +271,9 @@ public:
       communicate();
       did_set_jointAcceleration_isValid();
     }
-    void set_motorPosition(const std::vector<double> & motorPosition) {
+    void set_motorPosition(const yarp::sig::VectorOf<double>& motorPosition) {
       will_set_motorPosition();
       obj->motorPosition = motorPosition;
-      mark_dirty_motorPosition();
-      communicate();
-      did_set_motorPosition();
-    }
-    void set_motorPosition(int index, const double elem) {
-      will_set_motorPosition();
-      obj->motorPosition[index] = elem;
       mark_dirty_motorPosition();
       communicate();
       did_set_motorPosition();
@@ -312,16 +285,9 @@ public:
       communicate();
       did_set_motorPosition_isValid();
     }
-    void set_motorVelocity(const std::vector<double> & motorVelocity) {
+    void set_motorVelocity(const yarp::sig::VectorOf<double>& motorVelocity) {
       will_set_motorVelocity();
       obj->motorVelocity = motorVelocity;
-      mark_dirty_motorVelocity();
-      communicate();
-      did_set_motorVelocity();
-    }
-    void set_motorVelocity(int index, const double elem) {
-      will_set_motorVelocity();
-      obj->motorVelocity[index] = elem;
       mark_dirty_motorVelocity();
       communicate();
       did_set_motorVelocity();
@@ -333,16 +299,9 @@ public:
       communicate();
       did_set_motorVelocity_isValid();
     }
-    void set_motorAcceleration(const std::vector<double> & motorAcceleration) {
+    void set_motorAcceleration(const yarp::sig::VectorOf<double>& motorAcceleration) {
       will_set_motorAcceleration();
       obj->motorAcceleration = motorAcceleration;
-      mark_dirty_motorAcceleration();
-      communicate();
-      did_set_motorAcceleration();
-    }
-    void set_motorAcceleration(int index, const double elem) {
-      will_set_motorAcceleration();
-      obj->motorAcceleration[index] = elem;
       mark_dirty_motorAcceleration();
       communicate();
       did_set_motorAcceleration();
@@ -354,16 +313,9 @@ public:
       communicate();
       did_set_motorAcceleration_isValid();
     }
-    void set_torque(const std::vector<double> & torque) {
+    void set_torque(const yarp::sig::VectorOf<double>& torque) {
       will_set_torque();
       obj->torque = torque;
-      mark_dirty_torque();
-      communicate();
-      did_set_torque();
-    }
-    void set_torque(int index, const double elem) {
-      will_set_torque();
-      obj->torque[index] = elem;
       mark_dirty_torque();
       communicate();
       did_set_torque();
@@ -375,16 +327,9 @@ public:
       communicate();
       did_set_torque_isValid();
     }
-    void set_pidOutput(const std::vector<double> & pidOutput) {
+    void set_pidOutput(const yarp::sig::VectorOf<double>& pidOutput) {
       will_set_pidOutput();
       obj->pidOutput = pidOutput;
-      mark_dirty_pidOutput();
-      communicate();
-      did_set_pidOutput();
-    }
-    void set_pidOutput(int index, const double elem) {
-      will_set_pidOutput();
-      obj->pidOutput[index] = elem;
       mark_dirty_pidOutput();
       communicate();
       did_set_pidOutput();
@@ -396,16 +341,9 @@ public:
       communicate();
       did_set_pidOutput_isValid();
     }
-    void set_controlMode(const std::vector<int32_t> & controlMode) {
+    void set_controlMode(const yarp::sig::VectorOf<int>& controlMode) {
       will_set_controlMode();
       obj->controlMode = controlMode;
-      mark_dirty_controlMode();
-      communicate();
-      did_set_controlMode();
-    }
-    void set_controlMode(int index, const int32_t elem) {
-      will_set_controlMode();
-      obj->controlMode[index] = elem;
       mark_dirty_controlMode();
       communicate();
       did_set_controlMode();
@@ -417,16 +355,9 @@ public:
       communicate();
       did_set_controlMode_isValid();
     }
-    void set_interactionMode(const std::vector<int32_t> & interactionMode) {
+    void set_interactionMode(const yarp::sig::VectorOf<int>& interactionMode) {
       will_set_interactionMode();
       obj->interactionMode = interactionMode;
-      mark_dirty_interactionMode();
-      communicate();
-      did_set_interactionMode();
-    }
-    void set_interactionMode(int index, const int32_t elem) {
-      will_set_interactionMode();
-      obj->interactionMode[index] = elem;
       mark_dirty_interactionMode();
       communicate();
       did_set_interactionMode();
@@ -438,61 +369,61 @@ public:
       communicate();
       did_set_interactionMode_isValid();
     }
-    const std::vector<double> & get_jointPosition() {
+    const yarp::sig::VectorOf<double>& get_jointPosition() {
       return obj->jointPosition;
     }
     bool get_jointPosition_isValid() {
       return obj->jointPosition_isValid;
     }
-    const std::vector<double> & get_jointVelocity() {
+    const yarp::sig::VectorOf<double>& get_jointVelocity() {
       return obj->jointVelocity;
     }
     bool get_jointVelocity_isValid() {
       return obj->jointVelocity_isValid;
     }
-    const std::vector<double> & get_jointAcceleration() {
+    const yarp::sig::VectorOf<double>& get_jointAcceleration() {
       return obj->jointAcceleration;
     }
     bool get_jointAcceleration_isValid() {
       return obj->jointAcceleration_isValid;
     }
-    const std::vector<double> & get_motorPosition() {
+    const yarp::sig::VectorOf<double>& get_motorPosition() {
       return obj->motorPosition;
     }
     bool get_motorPosition_isValid() {
       return obj->motorPosition_isValid;
     }
-    const std::vector<double> & get_motorVelocity() {
+    const yarp::sig::VectorOf<double>& get_motorVelocity() {
       return obj->motorVelocity;
     }
     bool get_motorVelocity_isValid() {
       return obj->motorVelocity_isValid;
     }
-    const std::vector<double> & get_motorAcceleration() {
+    const yarp::sig::VectorOf<double>& get_motorAcceleration() {
       return obj->motorAcceleration;
     }
     bool get_motorAcceleration_isValid() {
       return obj->motorAcceleration_isValid;
     }
-    const std::vector<double> & get_torque() {
+    const yarp::sig::VectorOf<double>& get_torque() {
       return obj->torque;
     }
     bool get_torque_isValid() {
       return obj->torque_isValid;
     }
-    const std::vector<double> & get_pidOutput() {
+    const yarp::sig::VectorOf<double>& get_pidOutput() {
       return obj->pidOutput;
     }
     bool get_pidOutput_isValid() {
       return obj->pidOutput_isValid;
     }
-    const std::vector<int32_t> & get_controlMode() {
+    const yarp::sig::VectorOf<int>& get_controlMode() {
       return obj->controlMode;
     }
     bool get_controlMode_isValid() {
       return obj->controlMode_isValid;
     }
-    const std::vector<int32_t> & get_interactionMode() {
+    const yarp::sig::VectorOf<int>& get_interactionMode() {
       return obj->interactionMode;
     }
     bool get_interactionMode_isValid() {
