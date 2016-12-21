@@ -23,6 +23,7 @@ extern yarp::os::impl::UnitTest& getImageTest();
 extern yarp::os::impl::UnitTest& getVectorTest();
 extern yarp::os::impl::UnitTest& getSoundTest();
 extern yarp::os::impl::UnitTest& getMatrixTest();
+extern yarp::os::impl::UnitTest& getMapGrid2DTest();
 
 class yarp::sig::impl::TestList {
 public:
@@ -32,6 +33,7 @@ public:
         root.add(getVectorTest());
         root.add(getMatrixTest());
         root.add(getSoundTest());
+        root.add(getMapGrid2DTest());
     }
 };
 
