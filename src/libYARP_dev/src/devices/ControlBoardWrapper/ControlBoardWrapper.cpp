@@ -3316,19 +3316,24 @@ bool ControlBoardWrapper::disableAmp(int j)
     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
 
+    bool ret = true;
     yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
     if (!p)
         return false;
 
     // Use the newer interface if available, otherwise fallback on the old one.
     if(p->iMode2)
-        return p->iMode2->setControlMode(off+p->base, VOCAB_CM_IDLE);
+    {
+        ret = p->iMode2->setControlMode(off+p->base, VOCAB_CM_IDLE);
+    }
     else
+    {
         if (p->pos)
-        {
-            return p->amp->disableAmp(off+p->base);
-        }
-        return false;
+            ret = p->amp->disableAmp(off+p->base);
+        else
+            ret = false;
+    }
+    return ret;
 }
 
 bool ControlBoardWrapper::getAmpStatus(int *st)
