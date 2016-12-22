@@ -140,10 +140,10 @@ AnalogPortEntry &AnalogPortEntry::operator =(const AnalogPortEntry &alt)
 
  // closing anonimous namespace
 
-/**
-  * It reads the data from an analog sensor and sends them on one or more ports.
-  * It creates one rpc port and its related handler for every output port.
-  */
+/*
+ * It reads the data from an analog sensor and sends them on one or more ports.
+ * It creates one rpc port and its related handler for every output port.
+ */
 
 // Constructor used when there is only one output port
 AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
