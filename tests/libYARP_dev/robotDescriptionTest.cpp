@@ -65,7 +65,7 @@ public:
         std::vector<RobotDescription> list1;
         std::vector<RobotDescription> list2;
         idesc->getAllDevices(list1);
-        idesc->getControlBoardWrapperDevices(list2);
+        idesc->getAllDevicesByType("controlboardwrapper2", list2);
 
         size_t sl1 = list1.size();
         size_t sl2 = list2.size();

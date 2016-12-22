@@ -59,9 +59,9 @@ public:
     bool getAllDevices(std::vector<RobotDescription>& dev_list);
 
     /**
-    * Ask a list of all yarp control board wrappers registered by a robot description server.
+    * Ask a list of all registered yarp device drivers whose type corresponds to the given param.
     */
-    bool getControlBoardWrapperDevices(std::vector<RobotDescription>& dev_list);
+    bool getAllDevicesByType(const std::string &type, std::vector<RobotDescription>& dev_list);
 
     /**
     * Register a new running yarp device into a robot description server.

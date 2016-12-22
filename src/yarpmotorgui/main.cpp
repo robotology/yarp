@@ -126,7 +126,8 @@ int main(int argc, char *argv[])
 
     PolyDriver* desc_driver = 0;
     desc_driver = new PolyDriver;
-    std::vector<RobotDescription> robot_description;
+    std::vector<RobotDescription> cbw1_list;
+    std::vector<RobotDescription> cbw2_list;
     Property desc_driver_options;
     desc_driver_options.put("device", "robotDescriptionClient");
     desc_driver_options.put("local", descLocalName);
@@ -138,12 +139,16 @@ int main(int argc, char *argv[])
         desc_driver->view(idesc);
         if (idesc)
         {
-            idesc->getControlBoardWrapperDevices(robot_description);
-            for (size_t i = 0; i < robot_description.size(); i++)
+            idesc->getAllDevicesByType("controlboardwrapper", cbw1_list);
+            idesc->getAllDevicesByType("controlboardwrapper2", cbw2_list);
+            std::vector<RobotDescription> wrappers_list;
+            wrappers_list.reserve(cbw1_list.size() + cbw2_list.size());
+            wrappers_list.insert(wrappers_list.end(), cbw1_list.begin(), cbw1_list.end());
+            wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());
+            for (size_t i = 0; i < wrappers_list.size(); i++)
             {
-                yDebug() << robot_description[i].device_name;
-                //add device_name to robotinyerface.
-                pParts.addString(robot_description[i].device_name);
+                yDebug() << wrappers_list[i].device_name;
+                pParts.addString(wrappers_list[i].device_name);
             }
         }
     }

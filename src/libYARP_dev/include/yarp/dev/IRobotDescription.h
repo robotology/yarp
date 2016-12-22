@@ -45,10 +45,9 @@ public:
     virtual bool getAllDevices(std::vector<RobotDescription>& dev_list) = 0;
 
     /**
-    * Ask a list of all yarp control board wrappers (i.e. all the devices of type 'controlboardwrapper' and 'controlboardwrapper2')
-    * registered by a robot description server.
+    * Ask a list of all registered yarp device drivers whose type corresponds to the given param.
     */
-    virtual bool getControlBoardWrapperDevices(std::vector<RobotDescription>& dev_list) = 0;
+    virtual bool getAllDevicesByType(const std::string &type, std::vector<RobotDescription>& dev_list) = 0;
 
     /**
     * Register a new running yarp device into a robot description server.
@@ -61,6 +60,6 @@ public:
 #define VOCAB_IROBOT_SET                    VOCAB3('s','e','t')
 #define VOCAB_IROBOT_ALL                    VOCAB3('a','l','l')
 #define VOCAB_IROBOT_DEVICE                 VOCAB3('d','e','v')
-#define VOCAB_IROBOT_CONTROLBOARD_WRAPPERS  VOCAB4('c','w','r','p')
+#define VOCAB_IROBOT_BY_TYPE                VOCAB4('t','y','p','e')
 
 #endif // YARP_DEV_IROBOTDESCRIPTION_H

@@ -70,14 +70,15 @@ bool yarp::dev::RobotDescriptionClient::close()
     return true;
 }
 
-bool yarp::dev::RobotDescriptionClient::getControlBoardWrapperDevices(std::vector<RobotDescription>& dev_list)
+bool yarp::dev::RobotDescriptionClient::getAllDevicesByType(const std::string &type, std::vector<RobotDescription>& dev_list)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_IROBOT_DESCRIPTION);
     b.addVocab(VOCAB_IROBOT_GET);
-    b.addVocab(VOCAB_IROBOT_CONTROLBOARD_WRAPPERS);
+    b.addVocab(VOCAB_IROBOT_BY_TYPE);
+    b.addString(type);
     bool ret = m_rpc_port.write(b, resp);
     if (ret)
     {

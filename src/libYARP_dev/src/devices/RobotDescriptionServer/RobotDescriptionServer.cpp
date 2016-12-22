@@ -137,14 +137,14 @@ bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connect
                 }
                 ret = true;
             }
-            else if (cmd == VOCAB_IROBOT_CONTROLBOARD_WRAPPERS)
+            else if (cmd == VOCAB_IROBOT_BY_TYPE)
             {
+                std::string type = in.get(3).asString();
                 out.addVocab(VOCAB_OK);
                 Bottle& l = out.addList();
                 for (size_t i = 0; i < m_robot_devices.size(); i++)
                 {
-                    if (m_robot_devices[i].device_type == "controlboardwrapper" || 
-                        m_robot_devices[i].device_type == "controlboardwrapper2")
+                    if (m_robot_devices[i].device_type == type)
                     {
                         l.addString(m_robot_devices[i].device_name);
                         l.addString(m_robot_devices[i].device_type);
