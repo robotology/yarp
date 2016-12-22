@@ -702,9 +702,9 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                     yDebug() << "opening port " << ports->get(k).asString().c_str();
                     tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString().c_str());
 
-                    createPorts(tmpPorts, _rate);
                     sumOfChannels+=portChannels;
                 }
+                createPorts(tmpPorts, _rate);
 
                 if (sumOfChannels!=deviceChannels.asInt())
                 {
