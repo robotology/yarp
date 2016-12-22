@@ -112,6 +112,11 @@ if(YARP_COMPILE_TESTS)
     add_definitions(-DYARP_CONTROLBOARDREMAPPER_TESTS)
   endif()
 
+  # Compile AnalogWrapperTest only if fakeAnalog is enabled
+  if(ENABLE_yarpmod_fakeAnalogSensor)
+    add_definitions(-DYARP_ANALOGWRAPPER_TESTS)
+  endif()
+
   # Add in hardware specific tests, if requested
   option(CREATE_PLUGIN_TESTS "Compile plugin tests" FALSE)
   mark_as_advanced(CREATE_PLUGIN_TESTS)
