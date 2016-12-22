@@ -145,6 +145,7 @@ AnalogPortEntry &AnalogPortEntry::operator =(const AnalogPortEntry &alt)
   * It creates one rpc port and its related handler for every output port.
   */
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 // Constructor used when there is only one output port
 AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
 {
@@ -161,6 +162,7 @@ AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
     sensorId = "AnalogServer";
     createPort(name, rate);
 }
+#endif // YARP_NO_DEPRECATED
 
 bool AnalogWrapper::createPort(const char* name, int rate)
 {
@@ -174,6 +176,7 @@ bool AnalogWrapper::createPort(const char* name, int rate)
     return true;
 }
 
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 // Contructor used when one or more output ports are specified
 AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, int rate): RateThread(rate)
 {
@@ -188,6 +191,8 @@ AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, i
     sensorId = "AnalogServer";
     createPorts(_analogPorts, rate);
 }
+#endif // YARP_NO_DEPRECATED
+
 bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts, int rate)
 {
     analogSensor_p=0;
