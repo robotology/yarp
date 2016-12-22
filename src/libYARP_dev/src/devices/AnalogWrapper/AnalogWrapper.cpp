@@ -277,8 +277,7 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
 
     attach(analogSensor_p);
     RateThread::setRate(_rate);
-    RateThread::start();
-    return true;
+    return RateThread::start();
 }
 
 
@@ -321,9 +320,7 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
     }
     attach(analogSensor_p);
     RateThread::setRate(_rate);
-    RateThread::start();
-
-    return true;
+    return RateThread::start();
 }
 
 bool AnalogWrapper::detachAll()
