@@ -27,7 +27,13 @@ namespace yarp {
 
 /**
 * @ingroup dev_impl_wrapper
+* This client device is used to connect to a robotDescriptionServer and ask info about the currently opened devices.
 *
+* Parameters required by this device are:
+* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                                 | Notes |
+* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:---------------------------------------------------------------------------:|:-----:|
+* | local          |      -         | string  | -              |   -           | Yes                         | prefix of the port opened by the device, like /my_module/descriptionClient  | MUST start with a '/' character. /rpc is automatically appended. |
+* | remote         |      -         | string  | -              |   -           | Yes                         | prefix of the port opened by the robotDescriptionServer, like /descriptionServer.  | MUST start with a '/' character. /rpc is automatically appended. |
 */
 
 class yarp::dev::RobotDescriptionClient : public DeviceDriver,

@@ -177,6 +177,6 @@ yarp::dev::DriverCreator *createRobotDescriptionClient()
                (
                    "robotDescriptionClient",
                    "",
-                   "robotDescriptionClient"
+                   "RobotDescriptionClient"
                );
 }

@@ -15,6 +15,7 @@
 #include "sequencewindow.h"
 
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IRobotDescription.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Os.h>
@@ -79,6 +80,16 @@ int main(int argc, char *argv[])
     qRegisterMetaType<SequenceItem>("SequenceItem");
     qRegisterMetaType<QList<SequenceItem> >("QList<SequenceItem>");
 
+    if (finder.check("help"))
+    {
+        yInfo("yarpmotorgui options:");
+        yInfo("--robot <name>: name of the robot");
+        yInfo("--parts ""( <name1> <name2> )"": parts of the robot to add to the list.");
+        yInfo("--skip_parts ""( <name1> <name2> )"": parts of the robot to skip.");
+        yInfo("--calib to enable calibration buttons (be careful!)");
+        return 0;
+    }
+
     if (finder.check("calib"))
     {
         LOG("Calibrate buttons on\n");
@@ -138,6 +149,7 @@ int main(int argc, char *argv[])
     }
 
     std::string robotName = finder.find("robot").asString();
+    Bottle* b_part_skip = finder.find("skip_parts").asList();
     Bottle* b_part = finder.find("parts").asList();
     if (pParts.size() == 0)
     {
@@ -165,7 +177,11 @@ int main(int argc, char *argv[])
     for(int n = 0; n < pParts.size(); n++)
     {
         QString part = QString("%1").arg(pParts.get(n).asString().c_str());
-        yDebug("Appending %s",part.toUtf8().constData());
+        if (b_part_skip)
+        {
+            if (b_part_skip->check(part.toStdString().c_str())) continue;
+        }
+        yDebug("Appending %s", part.toUtf8().constData());
         partsName.append(part);
     }
 

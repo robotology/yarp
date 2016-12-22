@@ -20,7 +20,7 @@ namespace yarp {
         {
             std::string  device_name;
             std::string  device_type;
-            bool RobotDescription::operator ==(RobotDescription const& b) { return this->device_name == b.device_name && this->device_type == b.device_type; }
+            bool operator ==(RobotDescription const& b) { return this->device_name == b.device_name && this->device_type == b.device_type; }
         };
       }
 }
@@ -28,7 +28,8 @@ namespace yarp {
 /**
  * @ingroup dev_iface_motor
  *
- * Control board, encoder interface.
+ * This interface allows users to retrieve a list which contains the names and the types of the currently running devices.
+ * This list is stored in a RobotDescriptionsServer class. The user can access to the data opening a RobotDescriptionsClient in its own module.
  */
 class yarp::dev::IRobotDescription
 {
@@ -44,7 +45,8 @@ public:
     virtual bool getAllDevices(std::vector<RobotDescription>& dev_list) = 0;
 
     /**
-    * Ask a list of all yarp control board wrappers registered by a robot description server.
+    * Ask a list of all yarp control board wrappers (i.e. all the devices of type 'controlboardwrapper' and 'controlboardwrapper2')
+    * registered by a robot description server.
     */
     virtual bool getControlBoardWrapperDevices(std::vector<RobotDescription>& dev_list) = 0;
 

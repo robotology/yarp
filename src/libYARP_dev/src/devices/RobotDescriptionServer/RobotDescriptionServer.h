@@ -29,7 +29,14 @@ namespace yarp {
 
 /**
 * @ingroup dev_impl_wrapper
+* This device is a storage which contains a list of the currently opened device drivers.
+* yarprobotinterfaces adds/removes devices to the storage using attachAll()/detachAll() methods.
+* A robotDescriptionClient devices can bused by the user to retrieve information about the currently opened devices.
 *
+* Parameters required by this device are:
+* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
+* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | local          |      -         | string  | -              |   -           | Yes                         | prefix of the port opened by the device, like /descriptionServer  | MUST start with a '/' character. /rpc is automatically appended. |
 */
 
 class yarp::dev::RobotDescriptionServer : public DeviceDriver, public yarp::os::PortReader, public yarp::dev::IMultipleWrapper
@@ -38,10 +45,10 @@ class yarp::dev::RobotDescriptionServer : public DeviceDriver, public yarp::os::
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
 
-    yarp::os::Mutex               m_mutex;
+    yarp::os::Mutex               m_external_mutex;
+    yarp::os::Mutex               m_internal_mutex;
     yarp::os::Port                m_rpc_port;
     yarp::os::ConstString         m_local_name;
-    yarp::os::ConstString         m_remote_name;
     std::vector<RobotDescription> m_robot_devices;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

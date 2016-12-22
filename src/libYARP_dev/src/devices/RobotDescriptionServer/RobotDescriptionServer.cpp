@@ -10,7 +10,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
 
-/*! \file Navigation2DClient.cpp */
+/*! \file RobotDescriptionServer.cpp */
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -45,6 +45,7 @@ bool yarp::dev::RobotDescriptionServer::open(yarp::os::Searchable &config)
 
 bool yarp::dev::RobotDescriptionServer::attachAll(const PolyDriverList &p)
 {
+    LockGuard guard(m_external_mutex);
     for (int i = 0; i < p.size(); i++)
     {
         //yDebug() << "***************" << p[i]->poly->getOptions().toString();
@@ -64,6 +65,7 @@ bool yarp::dev::RobotDescriptionServer::attachAll(const PolyDriverList &p)
 
 bool yarp::dev::RobotDescriptionServer::detachAll()
 {
+    LockGuard guard(m_external_mutex);
     m_robot_devices.clear();
     return true;
 }
@@ -71,12 +73,12 @@ bool yarp::dev::RobotDescriptionServer::detachAll()
 bool yarp::dev::RobotDescriptionServer::close()
 {
     m_rpc_port.close();
-
     return true;
 }
 
 bool yarp::dev::RobotDescriptionServer::add_device(RobotDescription dev)
 {
+    LockGuard guard(m_internal_mutex);
     for (std::vector<RobotDescription>::iterator it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
     {
         if (dev.device_name == it->device_name)
@@ -91,6 +93,7 @@ bool yarp::dev::RobotDescriptionServer::add_device(RobotDescription dev)
 
 bool yarp::dev::RobotDescriptionServer::remove_device(RobotDescription dev)
 {
+    LockGuard guard(m_internal_mutex);
     for (std::vector<RobotDescription>::iterator it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
     {
         if (dev.device_name == it->device_name)
@@ -104,6 +107,7 @@ bool yarp::dev::RobotDescriptionServer::remove_device(RobotDescription dev)
 
 bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
 {
+    LockGuard guard(m_external_mutex);
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool             ret;
@@ -215,6 +219,6 @@ yarp::dev::DriverCreator *createRobotDescriptionServer()
                (
                    "robotDescriptionServer",
                    "",
-                   "robotDescriptionServer"
+                   "RobotDescriptionServer"
                );
 }
