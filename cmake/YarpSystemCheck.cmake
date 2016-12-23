@@ -275,13 +275,6 @@ else()
     yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-fPIE -pie")
 
 
-    ## C++98 flags ##
-    unset(CXX98_FLAGS)
-    check_cxx_compiler_flag("-std=c++98" CXX_HAS_STD_CXX98)
-    if(CXX_HAS_STD_CXX98)
-      set(CXX98_FLAGS "-std=c++98")
-    endif()
-
     ## C++11 flags ##
     unset(CXX11_FLAGS)
     check_cxx_compiler_flag("-std=c++11" CXX_HAS_STD_CXX11)
