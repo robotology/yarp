@@ -75,7 +75,7 @@ configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cma
                               NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 write_basic_package_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
-                                 VERSION ${YARP_VERSION}
+                                 VERSION ${YARP_VERSION_SHORT}
                                  COMPATIBILITY AnyNewerVersion)
 
 # YARPTargets.cmake (build tree)
@@ -154,7 +154,7 @@ install(EXPORT YARP
         FILE YARPTargets.cmake)
 
 foreach(lib ${YARP_LIBS})
-  set_target_properties(${lib} PROPERTIES VERSION ${YARP_VERSION}
+  set_target_properties(${lib} PROPERTIES VERSION ${YARP_VERSION_SHORT}
                                           SOVERSION ${YARP_GENERIC_SOVERSION})
 
   # Compile libraries using -fPIC to produce position independent code
