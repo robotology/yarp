@@ -70,6 +70,7 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
     set(YCM_CMAKE_modules_FILES ycm-0.2/modules/AddInstallRPATHSupport.cmake
                                 ycm-0.2/modules/ExtractVersion.cmake
                                 ycm-0.2/modules/GetAllCMakeProperties.cmake
+                                ycm-0.2/modules/GitInfo.cmake
                                 ycm-0.2/modules/ReplaceImportedTargets.cmake
                                 ycm-0.2/modules/StandardFindModule.cmake)
     set(YCM_CMAKE_3rdparty_FILES ycm-0.2/3rdparty/FindEigen3.cmake

@@ -1,15 +1,12 @@
 version: appveyor.{build}
 
-init:
-  - cmd: git config --global core.autocrlf true
-  - cmd: cmake --version
-  - cmd: msbuild /version
-
-clone_folder: C:\projects\yarp
-
 platform:
   - Win32
-#  - x64
+  - x64
+
+os:
+ - Visual Studio 2013
+# - Visual Studio 2015
 
 configuration:
   - Release
@@ -17,46 +14,132 @@ configuration:
 
 branches:
   except:
-    - travis
+    - /^.*travis.*$/
+
+environment:
+  CTEST_OUTPUT_ON_FAILURE: 1
+  CTEST_PARALLEL_LEVEL: 1
+  YARP_VERBOSE: 1
+
+init:
+  - cmd: git config --global core.autocrlf true
+
+  # System related variables
+  - cmd: set CMAKE_GENERATOR=Visual Studio 12 2013
+  - cmd: if "%platform%"=="x64" set CMAKE_GENERATOR=%CMAKE_GENERATOR% Win64
+  - cmd: echo CMAKE_GENERATOR=%CMAKE_GENERATOR%
+  - cmd: set DOWNLOADS_PATH=
+
+  # Dependencies found in YARP and iCub packages
+  - cmd: set YARP_LATEST=2.3.68
+  - cmd: set YARP_LATEST_PKG=1
+  - cmd: set ICUB_LATEST=1.6.0
+  - cmd: set ICUB_LATEST_PKG=1
+
+  - cmd: if "%platform%"=="Win32" set ROBOTOLOGY_DEFAULT_ROOT=%ProgramFiles(x86)%\robotology
+  - cmd: if "%platform%"=="x64" set ROBOTOLOGY_DEFAULT_ROOT=%ProgramFiles%\robotology
+  - cmd: echo ROBOTOLOGY_DEFAULT_ROOT=%ROBOTOLOGY_DEFAULT_ROOT%
+  - cmd: set ROBOTOLOGY_ROOT=%APPVEYOR_BUILD_FOLDER%\robotology
+  - cmd: set ROBOTOLOGY_VS=v12
+  - cmd: if "%platform%"=="Win32" set ROBOTOLOGY_ARCH=x86
+  - cmd: if "%platform%"=="x64" set ROBOTOLOGY_ARCH=x86_amd64
+
+  - cmd: set ACE_REL_DIR=ACE-6.3.4_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
+  - cmd: set ACE_ROOT=%ROBOTOLOGY_ROOT%\%ACE_REL_DIR%
+  - cmd: set PATH=%PATH%;%ACE_ROOT%\bin
+
+  - cmd: set Eigen3_REL_DIR=eigen-3.3.0
+  - cmd: set Eigen3_ROOT=%ROBOTOLOGY_ROOT%\%Eigen3_REL_DIR%
+
+  - cmd: set Qt5_REL_DIR=Qt-5.6.1_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
+  - cmd: set Qt5_ROOT=%ROBOTOLOGY_ROOT%\%Qt5_REL_DIR%
+  - cmd: set Qt5_DIR=%Qt5_ROOT%\lib\cmake\Qt5
+  - cmd: set PATH=%PATH%;%Qt5_ROOT%\bin
+
+  - cmd: set OpenCV_DEFAULT_REL_DIR=opencv-2.4.9
+  - cmd: set OpenCV_REL_DIR=opencv-2.4.9_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
+  - cmd: set OpenCV_ROOT=%ROBOTOLOGY_ROOT%\%OpenCV_REL_DIR%
+  - cmd: set OpenCV_DIR=%OpenCV_ROOT%
+  - cmd: set PATH=%PATH%;%OpenCV_ROOT%\bin
+
+  # Other dependencies (libjpeg-turbo)
+  - cmd: set JPEG_REL_DIR=libjpeg-turbo-1.5.1_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
+  - cmd: set JPEG_DEFAULT_ROOT=%ROBOTOLOGY_DEFAULT_ROOT%\%JPEG_REL_DIR%
+  - cmd: set JPEG_ROOT=%ROBOTOLOGY_ROOT%\%JPEG_REL_DIR%
+  - cmd: set JPEG_INCLUDE_DIR=%JPEG_ROOT%\include
+  - cmd: set JPEG_LIBRARY=%JPEG_ROOT%\lib\jpeg.lib
+  - cmd: set PATH=%PATH%;%JPEG_ROOT%\bin
+
+  # Installers URLs
+  - cmd: set YARP_INSTALLER=https://github.com/robotology/yarp/releases/download/v%YARP_LATEST%/yarp_%YARP_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
+  - cmd: set ICUB_INSTALLER=https://github.com/robotology/icub-main/releases/download/v%ICUB_LATEST%/iCub_%ICUB_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
+  - cmd: if "%platform%"=="Win32" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc.exe/download
+  - cmd: if "%platform%"=="x64" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc64.exe/download
+
+  # Print some useful informations:
+  - cmd: set
+  - cmd: cmake --version
+  - cmd: msbuild /version
 
 install:
   - cmd: md C:\downloads
 
-  # Get 7zip
-  - cmd: cinst 7zip.commandline -x86
+  # Get YARP installer
+  - cmd: echo Downloading %YARP_INSTALLER%
+  - cmd: appveyor DownloadFile "%YARP_INSTALLER%" -FileName "C:\downloads\yarp.exe"
+  - cmd: start "" /WAIT "c:\downloads\yarp.exe" /S
+  - cmd: timeout 10
+  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\yarp-%YARP_LATEST%" /S /Q
+  - cmd: del "%ROBOTOLOGY_DEFAULT_ROOT%\Uninstall_YARP.exe" /F /Q
+  - cmd: del "%ROBOTOLOGY_DEFAULT_ROOT%\uninstall_YARP.log" /F /Q
 
+  # Get iCub installer (for opencv)
+  - cmd: echo Downloading %ICUB_INSTALLER%
+  - cmd: appveyor DownloadFile "%ICUB_INSTALLER%" -FileName "C:\downloads\iCub.exe"
+  - cmd: start "" /WAIT "c:\downloads\iCub.exe" /S
+  - cmd: timeout 10
+  - cmd: move "%ROBOTOLOGY_DEFAULT_ROOT%\%OpenCV_DEFAULT_REL_DIR%" "%ROBOTOLOGY_DEFAULT_ROOT%\%OpenCV_REL_DIR%"
+  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\icub-%ICUB_LATEST%" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\glut-3.7.6" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\gsl-1.14" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\ipopt-3.11.7" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\ode-0.13" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\sdl-1.2.15" /S /Q
+  - cmd: del "%ROBOTOLOGY_DEFAULT_ROOT%\Uninstall_iCub.exe" /F /Q
 
-  # Get ACE:
-  - cmd: if "%platform%"=="Win32" appveyor DownloadFile "http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip" -FileName "C:\downloads\ace.zip"
-  - cmd: 7z x C:\downloads\ace.zip -oC:\tools\ACE -y > nul
-  - cmd: set ACE_ROOT=C:\tools\ACE\ACE_wrappers
-  - cmd: set PATH=%PATH%;C:\tools\ACE\ACE_wrappers\bin;C:\projects\yarp\build\bin\%CONFIGURATION%;C:\projects\yarp\build\lib\%CONFIGURATION%
+  # Get libjpeg-turbo installer
+  - cmd: echo Downloading %JPEG_INSTALLER%
+  - cmd: appveyor DownloadFile "%JPEG_INSTALLER%" -FileName "C:\downloads\libjpeg-turbo.exe"
+  - cmd: start "" /WAIT "C:\downloads\libjpeg-turbo.exe" /S /D=%JPEG_DEFAULT_ROOT%
+  - cmd: timeout 10
+  - cmd: rmdir "%JPEG_DEFAULT_ROOT%\classes" /S /Q
+  - cmd: rmdir "%JPEG_DEFAULT_ROOT%\doc" /S /Q
+  - cmd: del "%JPEG_DEFAULT_ROOT%\*.exe" /S /F /Q
 
-  # Get Eigen:
-  - cmd: appveyor DownloadFile "http://bitbucket.org/eigen/eigen/get/3.3-beta2.zip" -FileName "C:\downloads\eigen.zip"
-  - cmd: 7z x C:\downloads\eigen.zip -o"C:\tools\eigen" -y > nul
-  - cmd: set EIGEN3_ROOT=C:\tools\eigen\eigen-eigen-69d418c06999
-
-  # Get Qt5:
-  - cmd: appveyor DownloadFile "https://raw.githubusercontent.com/robotology-dependencies/robotology-dep-scripts/master/qt5/qt-installer-noninteractive.qs" -FileName "C:\downloads\qt-installer-noninteractive.qs"
-  - cmd: if "%platform%"=="Win32" appveyor DownloadFile "https://download.qt.io/archive/qt/5.5/5.5.1/qt-opensource-windows-x86-msvc2012-5.5.1.exe" -FileName "C:\downloads\qt5.exe"
-  - cmd: if "%platform%"=="Win32" C:\downloads\qt5.exe --script C:\downloads\qt-installer-noninteractive.qs
-  - cmd: if "%platform%"=="Win32" set QTDIR=C:\Qt\Qt5.5.1\5.5\msvc2012
-  - cmd: set Qt5_DIR=%QTDIR%\lib\cmake\Qt5
+  # Move Robotology root (warning, Qt5 works only from the installation
+  # directory, but the /D switch does not work for YARP and iCub installers)
+  - cmd: move "%ROBOTOLOGY_DEFAULT_ROOT%" "%ROBOTOLOGY_ROOT%"
 
 before_build:
-  - cmd: md C:\projects\yarp\build
-  - cmd: cd C:\projects\yarp\build
-  - cmd: if "%platform%"=="Win32" cmake -G"Visual Studio 11" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -C ..\scripts\admin\initial-cache.cmake ..
-  - cmd: if "%platform%"=="x64" cmake -G"Visual Studio 11 Win64" -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\yarp\install -C ..\scripts\admin\initial-cache.cmake ..
+  - cmd: cmake -H%APPVEYOR_BUILD_FOLDER% -B%APPVEYOR_BUILD_FOLDER%\build -G"%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX:PATH=%APPVEYOR_BUILD_FOLDER%\install -C%APPVEYOR_BUILD_FOLDER%\scripts\admin\initial-cache.cmake
 
 build:
-  project: C:\projects\yarp\build\yarp.sln
+  project: build\yarp.sln
+  parallel: false
+  verbosity: minimal
 
 after_build:
-  - cmd: cmake --build C:\projects\yarp\build --target INSTALL --config %CONFIGURATION%
+  - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target PACKAGE --config %CONFIGURATION%
+  - cmd: move /Y %APPVEYOR_BUILD_FOLDER%\build\*.exe %APPVEYOR_BUILD_FOLDER%
 
 test_script:
-  - cmd: set YARP_VERBOSE=1
-  - cmd: set YARP_DATA_DIRS=C:\projects\yarp\build\share\yarp
-  - cmd: ctest --output-on-failure --build . -C %CONFIGURATION%
+  - cmd: set YARP_DATA_DIRS=%APPVEYOR_BUILD_FOLDER%\build\share\yarp
+  - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target RUN_TESTS --config %CONFIGURATION%
+
+artifacts:
+  - path: '*.exe'
+  - path: 'robotology/$(ACE_REL_DIR)'
+  - path: 'robotology/$(Eigen3_REL_DIR)'
+  - path: 'robotology/$(Qt5_REL_DIR)'
+  - path: 'robotology/$(OpenCV_REL_DIR)'
+  - path: 'robotology/$(JPEG_REL_DIR)'
