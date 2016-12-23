@@ -36,10 +36,8 @@ init:
   - cmd: set ICUB_LATEST=1.6.0
   - cmd: set ICUB_LATEST_PKG=1
 
-  - cmd: if "%platform%"=="Win32" set ROBOTOLOGY_DEFAULT_ROOT=%ProgramFiles(x86)%\robotology
-  - cmd: if "%platform%"=="x64" set ROBOTOLOGY_DEFAULT_ROOT=%ProgramFiles%\robotology
-  - cmd: echo ROBOTOLOGY_DEFAULT_ROOT=%ROBOTOLOGY_DEFAULT_ROOT%
-  - cmd: set ROBOTOLOGY_ROOT=%APPVEYOR_BUILD_FOLDER%\robotology
+  - cmd: if "%platform%"=="Win32" set ROBOTOLOGY_ROOT=%ProgramFiles(x86)%\robotology
+  - cmd: if "%platform%"=="x64" set ROBOTOLOGY_ROOT=%ProgramFiles%\robotology
   - cmd: set ROBOTOLOGY_VS=v12
   - cmd: if "%platform%"=="Win32" set ROBOTOLOGY_ARCH=x86
   - cmd: if "%platform%"=="x64" set ROBOTOLOGY_ARCH=x86_amd64
@@ -64,7 +62,7 @@ init:
 
   # Other dependencies (libjpeg-turbo)
   - cmd: set JPEG_REL_DIR=libjpeg-turbo-1.5.1_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
-  - cmd: set JPEG_DEFAULT_ROOT=%ROBOTOLOGY_DEFAULT_ROOT%\%JPEG_REL_DIR%
+  - cmd: set JPEG_DEFAULT_ROOT=%ROBOTOLOGY_ROOT%\%JPEG_REL_DIR%
   - cmd: set JPEG_ROOT=%ROBOTOLOGY_ROOT%\%JPEG_REL_DIR%
   - cmd: set JPEG_INCLUDE_DIR=%JPEG_ROOT%\include
   - cmd: set JPEG_LIBRARY=%JPEG_ROOT%\lib\jpeg.lib
@@ -89,23 +87,23 @@ install:
   - cmd: appveyor DownloadFile "%YARP_INSTALLER%" -FileName "C:\downloads\yarp.exe"
   - cmd: start "" /WAIT "c:\downloads\yarp.exe" /S
   - cmd: timeout 10
-  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\yarp-%YARP_LATEST%" /S /Q
-  - cmd: del "%ROBOTOLOGY_DEFAULT_ROOT%\Uninstall_YARP.exe" /F /Q
-  - cmd: del "%ROBOTOLOGY_DEFAULT_ROOT%\uninstall_YARP.log" /F /Q
+  - cmd: rmdir "%ROBOTOLOGY_ROOT%\yarp-%YARP_LATEST%" /S /Q
+  - cmd: del "%ROBOTOLOGY_ROOT%\Uninstall_YARP.exe" /F /Q
+  - cmd: del "%ROBOTOLOGY_ROOT%\uninstall_YARP.log" /F /Q
 
   # Get iCub installer (for opencv)
   - cmd: echo Downloading %ICUB_INSTALLER%
   - cmd: appveyor DownloadFile "%ICUB_INSTALLER%" -FileName "C:\downloads\iCub.exe"
   - cmd: start "" /WAIT "c:\downloads\iCub.exe" /S
   - cmd: timeout 10
-  - cmd: move "%ROBOTOLOGY_DEFAULT_ROOT%\%OpenCV_DEFAULT_REL_DIR%" "%ROBOTOLOGY_DEFAULT_ROOT%\%OpenCV_REL_DIR%"
-  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\icub-%ICUB_LATEST%" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\glut-3.7.6" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\gsl-1.14" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\ipopt-3.11.7" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\ode-0.13" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_DEFAULT_ROOT%\sdl-1.2.15" /S /Q
-  - cmd: del "%ROBOTOLOGY_DEFAULT_ROOT%\Uninstall_iCub.exe" /F /Q
+  - cmd: move "%ROBOTOLOGY_ROOT%\%OpenCV_DEFAULT_REL_DIR%" "%ROBOTOLOGY_ROOT%\%OpenCV_REL_DIR%"
+  - cmd: rmdir "%ROBOTOLOGY_ROOT%\icub-%ICUB_LATEST%" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_ROOT%\glut-3.7.6" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_ROOT%\gsl-1.14" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_ROOT%\ipopt-3.11.7" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_ROOT%\ode-0.13" /S /Q
+  - cmd: rmdir "%ROBOTOLOGY_ROOT%\sdl-1.2.15" /S /Q
+  - cmd: del "%ROBOTOLOGY_ROOT%\Uninstall_iCub.exe" /F /Q
 
   # Get libjpeg-turbo installer
   - cmd: echo Downloading %JPEG_INSTALLER%
@@ -115,10 +113,6 @@ install:
   - cmd: rmdir "%JPEG_DEFAULT_ROOT%\classes" /S /Q
   - cmd: rmdir "%JPEG_DEFAULT_ROOT%\doc" /S /Q
   - cmd: del "%JPEG_DEFAULT_ROOT%\*.exe" /S /F /Q
-
-  # Move Robotology root (warning, Qt5 works only from the installation
-  # directory, but the /D switch does not work for YARP and iCub installers)
-  - cmd: move "%ROBOTOLOGY_DEFAULT_ROOT%" "%ROBOTOLOGY_ROOT%"
 
 before_build:
   - cmd: cmake -H%APPVEYOR_BUILD_FOLDER% -B%APPVEYOR_BUILD_FOLDER%\build -G"%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX:PATH=%APPVEYOR_BUILD_FOLDER%\install -C%APPVEYOR_BUILD_FOLDER%\scripts\admin\initial-cache.cmake
@@ -135,6 +129,9 @@ after_build:
 test_script:
   - cmd: set YARP_DATA_DIRS=%APPVEYOR_BUILD_FOLDER%\build\share\yarp
   - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target RUN_TESTS --config %CONFIGURATION%
+
+after_test:
+  - cmd: move "%ROBOTOLOGY_ROOT%" "%APPVEYOR_BUILD_FOLDER%/robotology"
 
 artifacts:
   - path: '*.exe'
