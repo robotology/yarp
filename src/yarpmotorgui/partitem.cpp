@@ -24,7 +24,7 @@
 #include <QSettings>
 #include <cmath>
 
-PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *finder,
+PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& _finder,
                    bool debug_param_enabled,
                    bool speedview_param_enabled,
                    bool enable_calib_all, QWidget *parent) :   QWidget(parent)
@@ -38,7 +38,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
     node = NULL;
     currentPidDlg = NULL;
     sequenceWindow = NULL;
-    this->finder = finder;
+    this->finder = &_finder;
     this->partName = partName;
     mixedEnabled = false;
     positionDirectEnabled = false;
@@ -61,9 +61,6 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
     QString robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
-
-
-    QString robotPartDebugPort = QString("/%1/debug/%2").arg(robotName).arg(partName);
 
     //checking existence of the port
     int ind = 0;
@@ -218,7 +215,6 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder *
 
             iinfo->getAxisName(k, jointname);
             yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
-            bool bjt = iinfo->getJointType(k, jtype);
 
             Pid myPid(0,0,0,0,0,0);
             yarp::os::Time::delay(0.005);
@@ -1312,7 +1308,6 @@ void PartItem::onOpenSequence()
     QXmlStreamReader reader(&file);
     reader.readNext();
 
-    int totPositions = 0;
     QString referencePart;
 
     QList<SequenceItem> sequenceItems;
@@ -1323,7 +1318,6 @@ void PartItem::onOpenSequence()
         if(reader.isStartElement()){
             if(reader.name().contains("Sequence_")){ //Sequence_
                 QXmlStreamAttributes attributes = reader.attributes();
-                totPositions = attributes.value("TotPositions").toInt();
                 referencePart = attributes.value("ReferencePart").toString();
             }
 

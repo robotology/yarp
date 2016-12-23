@@ -42,6 +42,7 @@ private:
     QVideoSurfaceFormat *m_format;
 
 signals:
+    void resizeWindowRequest();
 
 public slots:
     void onNewVideoContentReceived(QVideoFrame *frame);

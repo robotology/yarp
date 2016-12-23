@@ -26,8 +26,8 @@ public:
     explicit StartDlg(QWidget *parent = 0);
     ~StartDlg();
 
-    void init(QString robotName, QStringList partsName, QList<int> ENA);
-    QList <int> getEnabledParts();
+    void init(QString robotName, QStringList partsName);
+    std::vector<bool> getEnabledParts();
     QString getRobotName();
 
 private:

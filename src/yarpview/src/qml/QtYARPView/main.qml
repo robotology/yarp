@@ -64,7 +64,12 @@ ApplicationWindow {
             window.width = w
             window.height = h
         }
-        onSynch:{
+        onAutosize:{
+            if(menu !== undefined){
+                menu.enableAutosize(check)
+            }
+        }
+        onSynchRate:{
             if(menu !== undefined){
                 menu.enableSynch(check)
             }
@@ -93,8 +98,12 @@ ApplicationWindow {
             vSurface.changeRefreshInterval()
         }
 
-        onSynchToDisplay:{
-            vSurface.synchToDisplay(checked)
+        onSynchDisplayPeriod:{
+            vSurface.synchDisplayPeriod(checked)
+        }
+
+        onSynchDisplaySize:{
+            vSurface.synchDisplaySize(checked)
         }
 
         onSaveSingleImage:{

@@ -36,7 +36,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     bool init(QString robotName, QStringList enabledParts,
-              ResourceFinder *finder,
+              ResourceFinder& finder,
               bool debug_param_enabled,
               bool speedview_param_enabled,
               bool enable_calib_all);

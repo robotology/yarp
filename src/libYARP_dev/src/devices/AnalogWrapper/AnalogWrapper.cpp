@@ -234,7 +234,10 @@ void AnalogWrapper::removeHandlers()
     for(unsigned int i=0; i<handlers.size(); i++)
     {
         if (handlers[i]!=YARP_NULLPTR)
+        {
             delete handlers[i];
+            handlers[i] = YARP_NULLPTR;
+        }
     }
     handlers.clear();
 }
@@ -482,14 +485,46 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     }
     else if (rosMsgType == "sensor_msgs/JointState")
     {
+        std::string jointName = "";
         yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
-        if (!rosGroup.check("joint_names"))
+        bool oldParam = false;
+        bool newParam = false;
+
+        if(rosGroup.check("joint_names"))
         {
-            yError() << sensorId << " cannot find some ros parameters";
+            oldParam = true;
+            jointName = "joint_names";
+            yWarning() << sensorId << " using DEPRECATED 'joint_names' parameter. Please use 'jointNames' instead.";
+        }
+
+        if(rosGroup.check("jointNames"))
+        {
+            newParam = true;
+            jointName = "jointNames";
+        }
+
+        if(!oldParam && !newParam)
+        {
+            yError() << sensorId << " missing 'jointNames' parameter needed when broadcasting 'sensor_msgs/JointState' message type";
             useROS = ROS_config_error;
             return false;
         }
-        yarp::os::Bottle& jnam =rosGroup.findGroup("joint_names");
+        // Throw an error if noth new and old are present
+        if(oldParam && newParam)
+        {
+            yError() << sensorId << " found both DEPRECATED 'joint_names' and new 'jointNames' parameters. Please remove the old 'joint_names' from your config file.";
+            useROS = ROS_config_error;
+            return false;
+        }
+
+        yarp::os::Bottle& jnam = rosGroup.findGroup(jointName);
+        if(jnam.isNull())
+        {
+            yError() << sensorId << "Cannot find 'jointNames' parameters.";
+            return false;
+        }
+
+        // Cannot check number of channels here because need to wait for the attach function
         int joint_names_size = jnam.size()-1;
         for (int i = 0; i < joint_names_size; i++)
         {
@@ -795,7 +830,7 @@ void AnalogWrapper::run()
 
                     if (data_size != ros_joint_names.size())
                     {
-                        yDebug() << "Invalid ros_joint_names size:" << data_size << "!=" << ros_joint_names.size();
+                        yDebug() << "Invalid jointNames size:" << data_size << "!=" << ros_joint_names.size();
                     }
                     else
                     {
@@ -848,10 +883,15 @@ bool AnalogWrapper::close()
         RateThread::stop();
     }
 
-    //RateThread::stop();
-
     detachAll();
     removeHandlers();
+
+    if(subDeviceOwned)
+    {
+        subDeviceOwned->close();
+        delete subDeviceOwned;
+        subDeviceOwned = YARP_NULLPTR;
+    }
 
     if(rosNode!=YARP_NULLPTR) {
         rosNode->interrupt();

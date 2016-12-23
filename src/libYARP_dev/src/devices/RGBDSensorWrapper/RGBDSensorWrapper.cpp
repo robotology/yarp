@@ -307,7 +307,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         isSubdeviceOwned=true;
         if(! openAndAttachSubDevice(config))
         {
-            yError("ControlBoardWrapper: error while opening subdevice\n");
+            yError("RGBDSensorWrapper: error while opening subdevice\n");
             return false;
         }
     }

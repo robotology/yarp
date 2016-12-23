@@ -56,7 +56,6 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                      ycm-0.2/find-modules/FindFreenect.cmake
                                      ycm-0.2/find-modules/FindFTDI.cmake
                                      ycm-0.2/find-modules/FindGLFW3.cmake
-                                     ycm-0.2/find-modules/FindGSL.cmake
                                      ycm-0.2/find-modules/FindLibedit.cmake
                                      ycm-0.2/find-modules/FindLibOVR.cmake
                                      ycm-0.2/find-modules/FindLibdc1394.cmake
@@ -116,8 +115,8 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
   endif()
 endif()
 
-# Remove renamed files from installation (since YARP 2.3.68)
-foreach(_f FindACE.cmake
+# Remove renamed files from installation
+foreach(_f FindACE.cmake                                          # since YARP 2.3.68
            FindAtlas.cmake
            FindFFMPEG.cmake
            FindFreenect.cmake
@@ -170,7 +169,8 @@ foreach(_f FindACE.cmake
            cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake
            cmake-3.5/Modules/FindPackageMessage.cmake
            cmake-3.5/Modules/SelectLibraryConfigurations.cmake
-           ycm-0.2/cmake-next/Modules/FindGLEW.cmake)
+           ycm-0.2/cmake-next/Modules/FindGLEW.cmake
+           ycm-0.2/find-modules/FindGSL.cmake)                    # since YARP 2.3.70
   if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}")
     install(CODE
  "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")

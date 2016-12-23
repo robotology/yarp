@@ -31,7 +31,8 @@ Rectangle {
     property string version: "2.0"
 
     signal changeWindowSize(int w, int h)
-    signal synch(bool check);
+    signal synchRate(bool check);
+    signal autosize(bool check);
     signal setName(string name)
 
 
@@ -53,12 +54,29 @@ Rectangle {
             }
         }
 
-        onSynch:{
-            synch(check);
+        onSynchRate:{
+            synchRate(check);
         }
 
+        onAutosize:{
+            autosize(check);
+        }
+        
         onSetName:{
             setName(name)
+        }
+
+        onWidthChanged:{
+            //console.log("onWidthChanged")
+        }
+
+        onHeightChanged:{
+            //console.log("onHeightChanged")
+        }
+
+        onSizeChanged:{
+            //console.log("onSizeChanged")
+            setOriginalSize()
         }
     }
 
@@ -164,8 +182,12 @@ Rectangle {
         setIntervalDlg.visibility = Window.Windowed
     }
 
-    function synchToDisplay(checked){
-        yarpViewCore.synchToDisplay(checked)
+    function synchDisplayPeriod(checked){
+        yarpViewCore.synchDisplayPeriod(checked)
+    }
+
+    function synchDisplaySize(checked){
+        yarpViewCore.synchDisplaySize(checked)
     }
 
     function saveSingleImage(checked){

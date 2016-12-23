@@ -14,17 +14,6 @@
 
 #include <yarp/os/ResourceFinder.h>
 
-const int MAX_NUMBER_OF_PARTS = 16;
-const int NUMBER_OF_STORED = 30;
-
-extern int PART;
-extern int NUMBER_OF_AVAILABLE_PARTS;
-extern int NUMBER_OF_ACTIVATED_PARTS;
-extern int NUMBER_OF_ACTIVATED_CARTESIAN;
-//extern char *partsName[MAX_NUMBER_ACTIVATED];
-//extern int        *ENA[MAX_NUMBER_ACTIVATED];
-
-
 const QColor idleColor           = QColor( 249,236,141);
 const QColor positionColor       = QColor( 149,221,186);
 const QColor positionDirectColor = QColor( 119,206,111);
