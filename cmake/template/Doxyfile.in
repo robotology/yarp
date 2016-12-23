@@ -1262,7 +1262,7 @@ DOCSET_FEEDNAME        = "YARP Doxygen generated docs"
 # The default value is: org.doxygen.Project.
 # This tag requires that the tag GENERATE_DOCSET is set to YES.
 
-DOCSET_BUNDLE_ID       = eu.robotology.YARP-@YARP_VERSION@
+DOCSET_BUNDLE_ID       = eu.robotology.YARP-@YARP_VERSION_SHORT@
 
 # The DOCSET_PUBLISHER_ID tag specifies a string that should uniquely identify
 # the documentation publisher. This should be a reverse domain-name style
@@ -1361,7 +1361,7 @@ QCH_FILE               = YARP.qch
 # The default value is: org.doxygen.Project.
 # This tag requires that the tag GENERATE_QHP is set to YES.
 
-QHP_NAMESPACE          = eu.robotology.YARP-@YARP_VERSION@
+QHP_NAMESPACE          = eu.robotology.YARP-@YARP_VERSION_SHORT@
 
 # The QHP_VIRTUAL_FOLDER tag specifies the namespace to use when generating Qt
 # Help Project output. For more information please see Qt Help Project / Virtual
@@ -1370,7 +1370,7 @@ QHP_NAMESPACE          = eu.robotology.YARP-@YARP_VERSION@
 # The default value is: doc.
 # This tag requires that the tag GENERATE_QHP is set to YES.
 
-QHP_VIRTUAL_FOLDER     = YARP-@YARP_VERSION@
+QHP_VIRTUAL_FOLDER     = YARP-@YARP_VERSION_SHORT@
 
 # If the QHP_CUST_FILTER_NAME tag is set, it specifies the name of a custom
 # filter to add. For more information please see Qt Help Project / Custom
@@ -1420,7 +1420,7 @@ GENERATE_ECLIPSEHELP   = @DOX_GENERATE_ECLIPSEHELP@
 # The default value is: org.doxygen.Project.
 # This tag requires that the tag GENERATE_ECLIPSEHELP is set to YES.
 
-ECLIPSE_DOC_ID         = eu.robotology.YARP-@YARP_VERSION@
+ECLIPSE_DOC_ID         = eu.robotology.YARP-@YARP_VERSION_SHORT@
 
 # If you want full control over the layout of the generated HTML pages it might
 # be necessary to disable the index and replace it with your own. The
