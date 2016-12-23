@@ -214,6 +214,7 @@ AnalogWrapper::AnalogWrapper(): RateThread(DEFAULT_THREAD_PERIOD)
 AnalogWrapper::~AnalogWrapper()
 {
     threadRelease();
+    close();
     _rate = DEFAULT_THREAD_PERIOD;
     analogSensor_p = YARP_NULLPTR;
 }
@@ -335,7 +336,8 @@ bool AnalogWrapper::detachAll()
     analogSensor_p = YARP_NULLPTR;
     for(unsigned int i=0; i<analogPorts.size(); i++)
     {
-        handlers[i]->setInterface(analogSensor_p);
+        if(handlers[i] != YARP_NULLPTR)
+            handlers[i]->setInterface(analogSensor_p);
     }
     return true;
 }
