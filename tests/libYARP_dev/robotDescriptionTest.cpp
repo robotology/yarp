@@ -31,7 +31,7 @@ public:
         return "RobotDescriptionTest";
     }
 
-    void testFrameTransformClient()
+    void testRobotDescription()
     {
         report(0,"\ntest the RobotDescription client/server");
         bool precision_verbose = false;
@@ -56,14 +56,14 @@ public:
         checkTrue(ok_view, "IRobotDescription interface open reported successful");
 
         //
-        RobotDescription dev1; dev1.device_name = "/icubTest/left_arm"; dev1.device_type = "controlboardwrapper2";
-        RobotDescription dev2; dev2.device_name = "/icubTest/left_leg"; dev2.device_type = "controlboardwrapper2";
-        RobotDescription dev3; dev3.device_name = "/icubTest/test";     dev3.device_type = "testDevice";
+        DeviceDescription dev1; dev1.device_name = "/icubTest/left_arm"; dev1.device_type = "controlboardwrapper2";
+        DeviceDescription dev2; dev2.device_name = "/icubTest/left_leg"; dev2.device_type = "controlboardwrapper2";
+        DeviceDescription dev3; dev3.device_name = "/icubTest/test";     dev3.device_type = "testDevice";
         idesc->registerDevice(dev1);
         idesc->registerDevice(dev2);
         idesc->registerDevice(dev3);
-        std::vector<RobotDescription> list1;
-        std::vector<RobotDescription> list2;
+        std::vector<DeviceDescription> list1;
+        std::vector<DeviceDescription> list2;
         idesc->getAllDevices(list1);
         idesc->getAllDevicesByType("controlboardwrapper2", list2);
 
@@ -78,6 +78,11 @@ public:
         checkTrue((sl1 == 3) && b1 && b2 &&  b3, "IRobotDescription::getAllDevices() successfully tested");
         checkTrue((sl2 == 2) && b4 && b5 && !b6, "IRobotDescription::getControlBoardWrapperDevices() successfully tested");
         
+        // Test unregister device
+        idesc->unregisterDevice("/icubTest/test");
+        idesc->getAllDevicesByType("testDevice", list2);
+        checkTrue(list2.size() == 0, "IRobotDescription::unregisterDevice() successfully tested");
+
         // Close devices
         bool cl1 = ddclient.close();
         bool cl2 = ddserver.close();
@@ -88,7 +93,7 @@ public:
     virtual void runTests()
     {
         Network::setLocalMode(true);
-        testFrameTransformClient();
+        testRobotDescription();
         Network::setLocalMode(false);
     }
 };

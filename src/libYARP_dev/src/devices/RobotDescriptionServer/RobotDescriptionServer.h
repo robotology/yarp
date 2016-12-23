@@ -45,11 +45,11 @@ class yarp::dev::RobotDescriptionServer : public DeviceDriver, public yarp::os::
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
 
-    yarp::os::Mutex               m_external_mutex;
-    yarp::os::Mutex               m_internal_mutex;
-    yarp::os::Port                m_rpc_port;
-    yarp::os::ConstString         m_local_name;
-    std::vector<RobotDescription> m_robot_devices;
+    yarp::os::Mutex                m_external_mutex;
+    yarp::os::Mutex                m_internal_mutex;
+    yarp::os::Port                 m_rpc_port;
+    yarp::os::ConstString          m_local_name;
+    std::vector<DeviceDescription> m_robot_devices;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
@@ -64,8 +64,8 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection);
 
 private:
-    bool add_device(RobotDescription dev);
-    bool remove_device(RobotDescription dev);
+    bool add_device(DeviceDescription dev);
+    bool remove_device(DeviceDescription dev);
 };
 
 #endif // YARP_DEV_ROBOTDESCRIPTIONSERVER_H

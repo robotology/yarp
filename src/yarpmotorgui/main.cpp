@@ -126,8 +126,7 @@ int main(int argc, char *argv[])
 
     PolyDriver* desc_driver = 0;
     desc_driver = new PolyDriver;
-    std::vector<RobotDescription> cbw1_list;
-    std::vector<RobotDescription> cbw2_list;
+    std::vector<DeviceDescription> cbw2_list;
     Property desc_driver_options;
     desc_driver_options.put("device", "robotDescriptionClient");
     desc_driver_options.put("local", descLocalName);
@@ -139,11 +138,9 @@ int main(int argc, char *argv[])
         desc_driver->view(idesc);
         if (idesc)
         {
-            idesc->getAllDevicesByType("controlboardwrapper", cbw1_list);
             idesc->getAllDevicesByType("controlboardwrapper2", cbw2_list);
-            std::vector<RobotDescription> wrappers_list;
-            wrappers_list.reserve(cbw1_list.size() + cbw2_list.size());
-            wrappers_list.insert(wrappers_list.end(), cbw1_list.begin(), cbw1_list.end());
+            std::vector<DeviceDescription> wrappers_list;
+            wrappers_list.reserve(cbw2_list.size());
             wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());
             for (size_t i = 0; i < wrappers_list.size(); i++)
             {

@@ -56,17 +56,22 @@ public:
     /**
     * Ask the complete list of all yarp device drivers registered by a robot description server.
     */
-    bool getAllDevices(std::vector<RobotDescription>& dev_list);
+    bool getAllDevices(std::vector<DeviceDescription>& dev_list);
 
     /**
     * Ask a list of all registered yarp device drivers whose type corresponds to the given param.
     */
-    bool getAllDevicesByType(const std::string &type, std::vector<RobotDescription>& dev_list);
+    bool getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list);
 
     /**
     * Register a new running yarp device into a robot description server.
     */
-    bool registerDevice(const RobotDescription& dev);
+    bool registerDevice(const DeviceDescription& dev);
+
+    /**
+    * Unregister a running yarp device from a robot description server.
+    */
+    bool unregisterDevice(const std::string& device_name);
 };
 
 #endif // YARP_DEV_ROBOTDESCRIPTION_CLIENT_H

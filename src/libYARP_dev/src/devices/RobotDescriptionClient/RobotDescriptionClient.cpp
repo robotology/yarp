@@ -70,10 +70,11 @@ bool yarp::dev::RobotDescriptionClient::close()
     return true;
 }
 
-bool yarp::dev::RobotDescriptionClient::getAllDevicesByType(const std::string &type, std::vector<RobotDescription>& dev_list)
+bool yarp::dev::RobotDescriptionClient::getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
+    dev_list.clear();
 
     b.addVocab(VOCAB_IROBOT_DESCRIPTION);
     b.addVocab(VOCAB_IROBOT_GET);
@@ -92,7 +93,7 @@ bool yarp::dev::RobotDescriptionClient::getAllDevicesByType(const std::string &t
             Bottle *b = resp.get(1).asList();
             for (int i = 0; i < b->size(); i += 2)
             {
-                RobotDescription desc;
+                DeviceDescription desc;
                 desc.device_name = b->get(i).asString();
                 desc.device_type = b->get(i + 1).asString();
                 dev_list.push_back(desc);
@@ -108,7 +109,33 @@ bool yarp::dev::RobotDescriptionClient::getAllDevicesByType(const std::string &t
     return true;
 }
 
-bool yarp::dev::RobotDescriptionClient::registerDevice(const RobotDescription& dev)
+bool yarp::dev::RobotDescriptionClient::unregisterDevice(const std::string& device_name)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_IROBOT_DESCRIPTION);
+    b.addVocab(VOCAB_IROBOT_DELETE);
+    b.addVocab(VOCAB_IROBOT_DEVICE);
+    b.addString(device_name);
+    bool ret = m_rpc_port.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "RobotDescriptionClient::unregisterDevice() received error from server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "RobotDescriptionClient: error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
+bool yarp::dev::RobotDescriptionClient::registerDevice(const DeviceDescription& dev)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -135,10 +162,11 @@ bool yarp::dev::RobotDescriptionClient::registerDevice(const RobotDescription& d
     return true;
 }
 
-bool yarp::dev::RobotDescriptionClient::getAllDevices(std::vector<RobotDescription>& dev_list)
+bool yarp::dev::RobotDescriptionClient::getAllDevices(std::vector<DeviceDescription>& dev_list)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
+    dev_list.clear();
 
     b.addVocab(VOCAB_IROBOT_DESCRIPTION);
     b.addVocab(VOCAB_IROBOT_GET);
@@ -156,7 +184,7 @@ bool yarp::dev::RobotDescriptionClient::getAllDevices(std::vector<RobotDescripti
             Bottle *b = resp.get(1).asList();
             for (int i = 0; i < b->size();i+=2) 
             {
-                RobotDescription desc;
+                DeviceDescription desc;
                 desc.device_name = b->get(i).asString();
                 desc.device_type = b->get(i+1).asString();
                 dev_list.push_back(desc);

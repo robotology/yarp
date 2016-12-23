@@ -51,7 +51,7 @@ bool yarp::dev::RobotDescriptionServer::attachAll(const PolyDriverList &p)
         //yDebug() << "***************" << p[i]->poly->getOptions().toString();
         //yDebug() << "***************" << p[i]->poly->getValue("device").toString();
         //yDebug() << "***************" << p[i]->poly->getValue("name").toString();
-        RobotDescription dev;
+        DeviceDescription dev;
         dev.device_name = p[i]->poly->getValue("name").toString();
         dev.device_type = p[i]->poly->getValue("device").toString();
         if (this->add_device(dev) == false)
@@ -76,10 +76,10 @@ bool yarp::dev::RobotDescriptionServer::close()
     return true;
 }
 
-bool yarp::dev::RobotDescriptionServer::add_device(RobotDescription dev)
+bool yarp::dev::RobotDescriptionServer::add_device(DeviceDescription dev)
 {
     LockGuard guard(m_internal_mutex);
-    for (std::vector<RobotDescription>::iterator it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
+    for (std::vector<DeviceDescription>::iterator it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
     {
         if (dev.device_name == it->device_name)
         {
@@ -91,10 +91,10 @@ bool yarp::dev::RobotDescriptionServer::add_device(RobotDescription dev)
     return true;
 }
 
-bool yarp::dev::RobotDescriptionServer::remove_device(RobotDescription dev)
+bool yarp::dev::RobotDescriptionServer::remove_device(DeviceDescription dev)
 {
     LockGuard guard(m_internal_mutex);
-    for (std::vector<RobotDescription>::iterator it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
+    for (std::vector<DeviceDescription>::iterator it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
     {
         if (dev.device_name == it->device_name)
         {
@@ -159,12 +159,37 @@ bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connect
             }
 
         }
+        else if (macro_cmd == VOCAB_IROBOT_DELETE)
+        {
+            int cmd = in.get(2).asVocab();
+            if (cmd == VOCAB_IROBOT_DEVICE)
+            {
+                std::string name = in.get(3).asString();
+                DeviceDescription dev;
+                dev.device_name = name;
+                bool b_rem = this->remove_device(dev);
+                if (b_rem == false)
+                {
+                    yError() << "RobotDescriptionServer remove_device failed";
+                }
+                else
+                {
+                    out.addVocab(VOCAB_OK);
+                    ret = true;
+                }
+            }
+            else
+            {
+                ret = false;
+                yError("Invalid vocab received in RobotDescriptionServer");
+            }
+        }
         else if (macro_cmd == VOCAB_IROBOT_SET)
         {
             int cmd = in.get(2).asVocab();
             if (cmd == VOCAB_IROBOT_DEVICE)
             {
-                RobotDescription desc;
+                DeviceDescription desc;
                 desc.device_name = in.get(3).asString();
                 desc.device_type = in.get(4).asString();
                 bool b_add = this->add_device(desc);
