@@ -499,7 +499,7 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
       set_property(TARGET ${X_YARP_PLUGIN_MASTER} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
-      target_link_libraries(${X_YARP_PLUGIN_MASTER} LINK_PRIVATE ${libs})
+      target_link_libraries(${X_YARP_PLUGIN_MASTER} PRIVATE ${libs})
     endif()
     # give user access to a list of all the plugin libraries
     set(${X_YARP_PLUGIN_MASTER}_LIBRARIES ${libs})

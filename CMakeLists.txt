@@ -2,19 +2,7 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
-
-# CMake Policy CMP0020 (Automatically link Qt executables to qtmain
-# target on Windows). Can be removed with
-# CMAKE_MINIMUM_REQUIRED_VERSION 2.8.11 or later.
-if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 2.8.11)
-  message(AUTHOR_WARNING "CMake Policy CMP0020 is now NEW by default. You can remove this.")
-endif()
-if(NOT ${CMAKE_VERSION} VERSION_LESS 2.8.11)
-  cmake_policy(SET CMP0020 NEW)
-endif()
-
-project(YARP)
+cmake_minimum_required(VERSION 3.0)
 
 # Pick up our CMake scripts - they are all in the cmake subdirectory.
 set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
@@ -33,6 +21,15 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
+# Get the current YARP version.
+# See cmake/YarpVersion.cmake.
+include(YarpVersion)
+
+# Main project
+project(YARP
+        VERSION ${YARP_VERSION_SHORT}
+        LANGUAGES C CXX)
+
 # The YARP build is fairly flexible, so we need to accumulate some
 # information about what libraries are being built (and their dependencies),
 # along with the include path.  We'll be passing that along to clients
@@ -41,9 +38,6 @@ set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
 
-# Get the current YARP version.
-# See cmake/YarpVersion.cmake.
-include(YarpVersion)
 
 # Check system configuration.
 # See cmake/YarpSystemCheck.cmake.
@@ -52,10 +46,6 @@ include(YarpSystemCheck)
 # Set up some compilation options.
 # See cmake/YarpOptions.cmake.
 include(YarpOptions)
-
-# Include some workarounds for older cmake versions
-# See cmake/YarpCMakeWorkarounds.cmake
-include(YarpCMakeWorkarounds)
 
 # Check YARP dependencies, find necessary libraries.
 # See cmake/YarpFindDependencies.cmake.

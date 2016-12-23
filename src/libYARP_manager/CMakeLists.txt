@@ -94,11 +94,11 @@ if(CREATE_LIB_MANAGER)
                                   ${YARP_manager_HDRS}
                                   ${YARP_manager_IMPL_HDRS})
 
-  target_link_libraries(YARP_manager LINK_PRIVATE YARP_sig YARP_OS)
-  target_link_libraries(YARP_manager LINK_PRIVATE ${TinyXML_LIBRARIES})
+  target_link_libraries(YARP_manager PRIVATE YARP_sig YARP_OS)
+  target_link_libraries(YARP_manager PRIVATE ${TinyXML_LIBRARIES})
 
   if(CREATE_LIB_MATH)
-    target_link_libraries(YARP_manager LINK_PRIVATE YARP_math)
+    target_link_libraries(YARP_manager PRIVATE YARP_math)
   endif()
 
   set_property(TARGET YARP_manager PROPERTY PUBLIC_HEADER ${YARP_manager_HDRS})

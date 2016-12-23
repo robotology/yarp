@@ -43,7 +43,6 @@ install(FILES ${YARP_TEMPLATE_FILES}
 
 if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
   set(YARP_PRIVATE_CMAKE_FILES YarpDeprecatedOption.cmake
-                               YarpCMakeWorkarounds.cmake
                                YarpRenamedOption.cmake
                                YarpBackupVariable.cmake)
   install(FILES ${YARP_PRIVATE_CMAKE_FILES}
@@ -170,7 +169,8 @@ foreach(_f FindACE.cmake                                          # since YARP 2
            cmake-3.5/Modules/FindPackageMessage.cmake
            cmake-3.5/Modules/SelectLibraryConfigurations.cmake
            ycm-0.2/cmake-next/Modules/FindGLEW.cmake
-           ycm-0.2/find-modules/FindGSL.cmake)                    # since YARP 2.3.70
+           ycm-0.2/find-modules/FindGSL.cmake                     # since YARP 2.3.70
+           deprecated/YarpCMakeWorkarounds.cmake)
   if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}")
     install(CODE
  "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")

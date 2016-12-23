@@ -43,13 +43,9 @@ if(CREATE_YARPBATTERYGUI)
   target_link_libraries(yarpbatterygui YARP_OS
                                        YARP_init
                                        YARP_sig
-                                       YARP_dev)
-  qtyarp_use_modules(yarpbatterygui Widgets
-                                    Gui)
-  qtyarp_deprecate_with_cmake_version(2.8.11)
-  if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-    target_link_libraries(yarpbatterygui Qt5::WinMain)
-  endif()
+                                       YARP_dev
+                                       Qt5::Widgets
+                                       Qt5::Gui)
 
   install(TARGETS yarpbatterygui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 

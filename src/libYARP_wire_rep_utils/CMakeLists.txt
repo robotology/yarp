@@ -15,7 +15,7 @@ if(CREATE_OPTIONAL_CARRIERS)
                                          WireBottle.h
                                          WireTwiddler.cpp
                                          WireTwiddler.h)
-  target_link_libraries(YARP_wire_rep_utils LINK_PRIVATE YARP_OS
+  target_link_libraries(YARP_wire_rep_utils PRIVATE YARP_OS
                                                          YARP_sig
                                                          ${ACE_LIBRARIES})
 

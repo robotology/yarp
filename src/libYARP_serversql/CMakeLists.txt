@@ -42,12 +42,12 @@ add_library(YARP_serversql STATIC ${YARP_serversql_SRCS}
                                   ${YARP_serversql_HDRS}
                                   ${YARP_serversql_IMPL_HDRS})
 
-target_link_libraries(YARP_serversql LINK_PRIVATE YARP_OS
+target_link_libraries(YARP_serversql PRIVATE YARP_OS
                                                   YARP_init
                                                   YARP_name)
-target_link_libraries(YARP_serversql LINK_PRIVATE ${SQLite_LIBRARIES})
+target_link_libraries(YARP_serversql PRIVATE ${SQLite_LIBRARIES})
 if(UNIX)
-  target_link_libraries(YARP_serversql LINK_PRIVATE ${CMAKE_DL_LIBS})
+  target_link_libraries(YARP_serversql PRIVATE ${CMAKE_DL_LIBS})
 endif()
 
 

@@ -57,34 +57,34 @@ if(CREATE_YARPC)
                     ${yarpc_SRCS}
                     ${YARP_COPY_SRC})
 
-  target_link_libraries(yarpc LINK_PRIVATE ${ACE_LIBRARIES})
+  target_link_libraries(yarpc PRIVATE ${ACE_LIBRARIES})
 
   if(NOT CREATE_YARPC_STANDALONE)
-    target_link_libraries(yarpc LINK_PRIVATE YARP_OS
+    target_link_libraries(yarpc PRIVATE YARP_OS
                                              YARP_init)
     if(YARP_LINK_PLUGINS)
       if(CREATE_OPTIONAL_CARRIERS)
         set_property(SOURCE ${init_src}
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION=add_yarpcar_plugins)
-        target_link_libraries(yarpc LINK_PRIVATE yarpcar)
+        target_link_libraries(yarpc PRIVATE yarpcar)
       endif()
 
       if(CREATE_DEVICE_LIBRARY_MODULES)
         set_property(SOURCE ${init_src}
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)
-          target_link_libraries(yarpc LINK_PRIVATE yarpmod)
+          target_link_libraries(yarpc PRIVATE yarpmod)
       endif()
     endif()
 
   else()
     if(LINUX)
-      target_link_libraries(yarpc LINK_PRIVATE pthread m dl rt)
+      target_link_libraries(yarpc PRIVATE pthread m dl rt)
     endif()
     if(MINGW)
-      target_link_libraries(yarpc LINK_PRIVATE stdc++)
-      target_link_libraries(yarpc LINK_PRIVATE m ws2_32 mswsock netapi32 winmm)
+      target_link_libraries(yarpc PRIVATE stdc++)
+      target_link_libraries(yarpc PRIVATE m ws2_32 mswsock netapi32 winmm)
       set_target_properties(yarpc PROPERTIES LINK_FLAGS "-Wl,--output-def,${LIBRARY_OUTPUT_PATH}/libyarpc.def")
     endif()
   endif(NOT CREATE_YARPC_STANDALONE)

@@ -10,11 +10,26 @@ source_group("Header Files" FILES ${YARP_eigen_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 
-# When we support CMake 3.0 as the minimum required, we can make this an INTERFACE library
-# For now we just install the headers in a specific location
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.0)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. YARP_eigen can now be an INTERFACE library.")
+add_library(YARP_eigen INTERFACE)
+
+if(TARGET Eigen3::Eigen) # Since Eigen 3.3.1
+  target_include_directories(YARP_eigen INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                                  $<INSTALL_INTERFACE:include>)
+  target_link_libraries(YARP_eigen INTERFACE YARP_sig
+                                             Eigen3::Eigen)
+else()
+  target_include_directories(YARP_eigen INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                                  $<INSTALL_INTERFACE:include>
+                                                  ${EIGEN3_INCLUDE_DIR})
+  target_link_libraries(YARP_eigen INTERFACE YARP_sig)
 endif()
+
+install(TARGETS YARP_eigen
+        EXPORT YARP
+        COMPONENT YARP_eigen
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/eigen)
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/yarp/eigen
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp)
+
+set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_eigen)

@@ -154,16 +154,9 @@ install(EXPORT YARP
         FILE YARPTargets.cmake)
 
 foreach(lib ${YARP_LIBS})
-  set_target_properties(${lib} PROPERTIES VERSION ${YARP_VERSION_SHORT}
-                                          SOVERSION ${YARP_GENERIC_SOVERSION})
-
-  # Compile libraries using -fPIC to produce position independent code
-  # For CMAKE_VERSION >= 2.8.10 this is handled in YarpOptions.cmake
-  # using the CMAKE_POSITION_INDEPENDENT_CODE flag
-  if(${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_GREATER 2.8.9)
-      message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-  endif()
-  if(CMAKE_VERSION VERSION_EQUAL "2.8.9")
-      set_target_properties(${lib} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+  get_target_property(type ${lib} TYPE)
+  if("${type}" STREQUAL "SHARED_LIBRARY")
+    set_target_properties(${lib} PROPERTIES VERSION ${YARP_VERSION_SHORT}
+                                            SOVERSION ${YARP_GENERIC_SOVERSION})
   endif()
 endforeach(lib)
