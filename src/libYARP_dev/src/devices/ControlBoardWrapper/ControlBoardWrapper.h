@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Lorenzo Natale
+ * Author: Lorenzo Natale, Alberto Cardellino
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -52,7 +52,7 @@
 #endif
 
 #define PROTOCOL_VERSION_MAJOR 1
-#define PROTOCOL_VERSION_MINOR 6
+#define PROTOCOL_VERSION_MINOR 7
 #define PROTOCOL_VERSION_TWEAK 0
 
 /*

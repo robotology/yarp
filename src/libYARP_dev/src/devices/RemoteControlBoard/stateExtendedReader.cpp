@@ -183,42 +183,42 @@ bool StateExtendedInputPort::getLastVector(int field, double* data, Stamp& stamp
         {
             case VOCAB_ENCODERS:
                 ret = last.jointPosition_isValid;
-                std::copy(last.jointPosition.begin(), last.jointPosition.end(), data);
+                memcpy(data, last.jointPosition.getFirst(), last.jointPosition.size() * last.jointPosition.getElementSize() );
             break;
 
             case VOCAB_ENCODER_SPEEDS:
                 ret = last.jointVelocity_isValid;
-                std::copy(last.jointVelocity.begin(), last.jointVelocity.end(), data);
+                memcpy(data, last.jointVelocity.getFirst(), last.jointVelocity.size() * last.jointVelocity.getElementSize() );
             break;
 
             case VOCAB_ENCODER_ACCELERATIONS:
                 ret = last.jointAcceleration_isValid;
-                std::copy(last.jointAcceleration.begin(), last.jointAcceleration.end(), data);
+                memcpy(data, last.jointAcceleration.getFirst(), last.jointAcceleration.size() * last.jointAcceleration.getElementSize() );
             break;
 
             case VOCAB_MOTOR_ENCODERS:
                 ret = last.motorPosition_isValid;
-                std::copy(last.motorPosition.begin(), last.motorPosition.end(), data);
+                memcpy(data, last.motorPosition.getFirst(), last.motorPosition.size() * last.motorPosition.getElementSize() );
             break;
 
             case VOCAB_MOTOR_ENCODER_SPEEDS:
                 ret = last.motorVelocity_isValid;
-                std::copy(last.motorVelocity.begin(), last.motorVelocity.end(), data);
+                memcpy(data, last.motorVelocity.getFirst(), last.motorVelocity.size() * last.motorVelocity.getElementSize() );
             break;
 
             case VOCAB_MOTOR_ENCODER_ACCELERATIONS:
                 ret = last.motorAcceleration_isValid;
-                std::copy(last.motorAcceleration.begin(), last.motorAcceleration.end(), data);
+                memcpy(data, last.motorAcceleration.getFirst(), last.motorAcceleration.size() * last.motorAcceleration.getElementSize() );
             break;
 
             case VOCAB_TRQS:
                 ret = last.torque_isValid;
-                std::copy(last.torque.begin(), last.torque.end(), data);
+                memcpy(data, last.torque.getFirst(), last.torque.size() * last.torque.getElementSize() );
             break;
 
             case VOCAB_OUTPUTS:
                 ret = last.pidOutput_isValid;
-                std::copy(last.pidOutput.begin(), last.pidOutput.end(), data);
+                memcpy(data, last.pidOutput.getFirst(), last.pidOutput.size() * last.pidOutput.getElementSize() );
             break;
 
             default:
@@ -244,12 +244,12 @@ bool StateExtendedInputPort::getLastVector(int field, int* data, Stamp& stamp, d
         {
             case VOCAB_CM_CONTROL_MODES:
                 ret = last.controlMode_isValid;
-                std::copy(last.controlMode.begin(), last.controlMode.end(), data);
+                memcpy(data, last.controlMode.getFirst(), last.controlMode.size() * last.controlMode.getElementSize());
             break;
 
             case VOCAB_INTERACTION_MODES:
                 ret = last.interactionMode_isValid;
-                std::copy(last.interactionMode.begin(), last.interactionMode.end(), data);
+                memcpy(data, last.interactionMode.getFirst(), last.interactionMode.size() * last.interactionMode.getElementSize());
             break;
 
             default:
