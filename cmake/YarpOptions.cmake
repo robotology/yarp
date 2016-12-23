@@ -25,60 +25,60 @@ set(YARP_DEBUG_CONFIGURATIONS "Debug" "RelWithDebInfo")
 # DebugFull builds options
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_C_FLAGS_DEBUGFULL "-O0 -g3 -ggdb -fno-inline -DDEBUG" CACHE STRING "Flags used by the compiler during debugfull builds.")
-    set(CMAKE_CXX_FLAGS_DEBUGFULL "-O0 -g3 -ggdb -fno-inline -DDEBUG" CACHE STRING "Flags used by the compiler during debugfull builds.")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
-    set(CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
-    set(CMAKE_STATIC_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
+  set(CMAKE_C_FLAGS_DEBUGFULL "-O0 -g3 -ggdb -fno-inline -DDEBUG" CACHE STRING "Flags used by the compiler during debugfull builds.")
+  set(CMAKE_CXX_FLAGS_DEBUGFULL "-O0 -g3 -ggdb -fno-inline -DDEBUG" CACHE STRING "Flags used by the compiler during debugfull builds.")
+  set(CMAKE_EXE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
+  set(CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
+  set(CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
+  set(CMAKE_STATIC_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
 
-    mark_as_advanced(CMAKE_C_FLAGS_DEBUGFULL
-                     CMAKE_CXX_FLAGS_DEBUGFULL
-                     CMAKE_EXE_LINKER_FLAGS_DEBUGFULL
-                     CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL
-                     CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL
-                     CMAKE_STATIC_LINKER_FLAGS_DEBUGFULL)
+  mark_as_advanced(CMAKE_C_FLAGS_DEBUGFULL
+                   CMAKE_CXX_FLAGS_DEBUGFULL
+                   CMAKE_EXE_LINKER_FLAGS_DEBUGFULL
+                   CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL
+                   CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL
+                   CMAKE_STATIC_LINKER_FLAGS_DEBUGFULL)
 
-    list(APPEND YARP_DEBUG_CONFIGURATIONS "DebugFull")
-endif(CMAKE_COMPILER_IS_GNUCXX)
+  list(APPEND YARP_DEBUG_CONFIGURATIONS "DebugFull")
+endif()
 
 #########################################################################
 # Profile builds options
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_C_FLAGS_PROFILE "-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" CACHE STRING "Flags used by the compiler during profile builds.")
-    set(CMAKE_CXX_FLAGS_PROFILE "-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" CACHE STRING "Flags used by the compiler during profile builds.")
-    set(CMAKE_EXE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
-    set(CMAKE_MODULE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
-    set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
-    set(CMAKE_STATIC_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
+  set(CMAKE_C_FLAGS_PROFILE "-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" CACHE STRING "Flags used by the compiler during profile builds.")
+  set(CMAKE_CXX_FLAGS_PROFILE "-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" CACHE STRING "Flags used by the compiler during profile builds.")
+  set(CMAKE_EXE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
+  set(CMAKE_MODULE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
+  set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
+  set(CMAKE_STATIC_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
 
-    mark_as_advanced(CMAKE_C_FLAGS_PROFILE
-                     CMAKE_CXX_FLAGS_PROFILE
-                     CMAKE_EXE_LINKER_FLAGS_PROFILE
-                     CMAKE_MODULE_LINKER_FLAGS_PROFILE
-                     CMAKE_SHARED_LINKER_FLAGS_PROFILE
-                     CMAKE_STATIC_LINKER_FLAGS_PROFILE)
+  mark_as_advanced(CMAKE_C_FLAGS_PROFILE
+                   CMAKE_CXX_FLAGS_PROFILE
+                   CMAKE_EXE_LINKER_FLAGS_PROFILE
+                   CMAKE_MODULE_LINKER_FLAGS_PROFILE
+                   CMAKE_SHARED_LINKER_FLAGS_PROFILE
+                   CMAKE_STATIC_LINKER_FLAGS_PROFILE)
 
-    list(APPEND YARP_DEBUG_CONFIGURATIONS "Profile")
-endif(CMAKE_COMPILER_IS_GNUCXX)
+  list(APPEND YARP_DEBUG_CONFIGURATIONS "Profile")
+endif()
 
 #########################################################################
 # Handle CMAKE_CONFIGURATION_TYPES and CMAKE_BUILD_TYPE
 
 if(NOT CMAKE_CONFIGURATION_TYPES)
-    # Possible values for the CMAKE_BUILD_TYPE variable
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YARP_OPTIMIZED_CONFIGURATIONS} ${YARP_DEBUG_CONFIGURATIONS})
-    unset(_configurations)
-    foreach(_conf ${YARP_OPTIMIZED_CONFIGURATIONS} ${YARP_DEBUG_CONFIGURATIONS})
-        set(_configurations "${_configurations} ${_conf}")
-    endforeach()
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY HELPSTRING "Choose the type of build, options are:${_configurations}.")
-    if(NOT CMAKE_BUILD_TYPE)
-        # Encourage user to specify build type.
-        message(STATUS "Setting build type to 'Release' as none was specified.")
-        set_property(CACHE CMAKE_BUILD_TYPE PROPERTY VALUE "Release")
-    endif()
+  # Possible values for the CMAKE_BUILD_TYPE variable
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YARP_OPTIMIZED_CONFIGURATIONS} ${YARP_DEBUG_CONFIGURATIONS})
+  unset(_configurations)
+  foreach(_conf ${YARP_OPTIMIZED_CONFIGURATIONS} ${YARP_DEBUG_CONFIGURATIONS})
+    set(_configurations "${_configurations} ${_conf}")
+  endforeach()
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY HELPSTRING "Choose the type of build, options are:${_configurations}.")
+  if(NOT CMAKE_BUILD_TYPE)
+    # Encourage user to specify build type.
+    message(STATUS "Setting build type to 'Release' as none was specified.")
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY VALUE "Release")
+  endif()
 endif()
 
 # Let CMake know which configurations are the debug ones, so that it can
@@ -94,13 +94,13 @@ set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS ${YARP_DEBUG_CONFIGURATIONS})
 
 set(STATLIB "${CMAKE_BINARY_DIR}/static_libs")
 if(EXISTS ${STATLIB})
-    message(STATUS "static_libs directory present: ${STATLIB}")
-    link_directories(${STATLIB})
-    add_definitions(-static-libgcc)
-    set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc")
-    file(GLOB statlibs ${STATLIB}/*.a)
-    link_libraries(${statlibs})
-endif(EXISTS ${STATLIB})
+  message(STATUS "static_libs directory present: ${STATLIB}")
+  link_directories(${STATLIB})
+  add_definitions(-static-libgcc)
+  set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc")
+  file(GLOB statlibs ${STATLIB}/*.a)
+  link_libraries(${statlibs})
+endif()
 
 
 #########################################################################
@@ -109,7 +109,7 @@ endif(EXISTS ${STATLIB})
 option(CREATE_SHARED_LIBRARY "Compile shared libraries rather than linking statically" TRUE)
 if(WIN32)
   set(YARP_FILTER_API TRUE)
-endif(WIN32)
+endif()
 
 if(CREATE_SHARED_LIBRARY)
   set(BUILD_SHARED_LIBS ON)
@@ -137,7 +137,7 @@ mark_as_advanced(YARP_COMPILE_UNMAINTAINED)
 option(YARP_COMPILE_TESTS "Enable YARP tests" OFF)
 mark_as_advanced(YARP_COMPILE_TESTS)
 if(YARP_COMPILE_TESTS)
-    enable_testing()
+  enable_testing()
 endif()
 
 #########################################################################
@@ -235,8 +235,8 @@ endif()
 option(YARP_EXPERIMENTAL_WARNINGS "Enable some more checks that at the moment produce a lot of warnings" FALSE)
 mark_as_advanced(YARP_EXPERIMENTAL_WARNINGS)
 if(YARP_EXPERIMENTAL_WARNINGS)
-    set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} ${EXPERIMENTAL_WARNING_FLAGS}")
-endif(YARP_EXPERIMENTAL_WARNINGS)
+  set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} ${EXPERIMENTAL_WARNING_FLAGS}")
+endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WANTED_WARNING_FLAGS} ${UNWANTED_WARNING_FLAGS}")
 
 
@@ -246,16 +246,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WANTED_WARNING_FLAGS} ${UNWANTED_WARNI
 option(YARP_CLEAN_API "Filter out non-public symbols" FALSE)
 mark_as_advanced(YARP_CLEAN_API)
 if(YARP_CLEAN_API)
-    if(YARP_COMPILE_TESTS)
-        if(WIN32)
-            message(FATAL_ERROR "On Windows, we cannot compile tests when building dlls. Turn one of YARP_COMPILE_TESTS or CREATE_SHARED_LIBRARY off.")
-        else(WIN32)
-            message(STATUS "Since tests access non-public classes, we'll need to leave all symbols in the shared libraries. If this is undesired, turn one of YARP_COMPILE_TESTS or CREATE_SHARED_LIBRARY off.")
-        endif(WIN32)
+  if(YARP_COMPILE_TESTS)
+    if(WIN32)
+      message(FATAL_ERROR "On Windows, we cannot compile tests when building dlls. Turn one of YARP_COMPILE_TESTS or CREATE_SHARED_LIBRARY off.")
     else()
-        set(YARP_FILTER_API TRUE)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISIBILITY_HIDDEN_FLAGS}")
+      message(STATUS "Since tests access non-public classes, we'll need to leave all symbols in the shared libraries. If this is undesired, turn one of YARP_COMPILE_TESTS or CREATE_SHARED_LIBRARY off.")
     endif()
+  else()
+    set(YARP_FILTER_API TRUE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISIBILITY_HIDDEN_FLAGS}")
+  endif()
 endif()
 
 
@@ -272,7 +272,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DEPRECATED_DECLARATIONS_FLAGS}")
 option(YARP_NO_DEPRECATED "Filter out deprecated declarations from YARP API" FALSE)
 mark_as_advanced(YARP_NO_DEPRECATED)
 if(YARP_NO_DEPRECATED)
-    add_definitions("-DYARP_NO_DEPRECATED")
+  add_definitions("-DYARP_NO_DEPRECATED")
 endif()
 
 cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
@@ -280,7 +280,7 @@ cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
                        "NOT YARP_NO_DEPRECATED" FALSE)
 mark_as_advanced(YARP_NO_DEPRECATED_WARNINGS)
 if(YARP_NO_DEPRECATED_WARNINGS)
-    add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
+  add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
 endif()
 
 
@@ -290,9 +290,9 @@ endif()
 option(YARP_EXPERIMENTAL_HARDENING "Build YARP using hardening flags" FALSE)
 mark_as_advanced(YARP_EXPERIMENTAL_HARDENING)
 if(YARP_EXPERIMENTAL_HARDENING)
-    add_definitions("-D_FORTIFY_SOURCE=2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${HARDENING_FLAGS}")
-endif(YARP_EXPERIMENTAL_HARDENING)
+  add_definitions("-D_FORTIFY_SOURCE=2")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${HARDENING_FLAGS}")
+endif()
 
 
 #########################################################################
@@ -301,14 +301,14 @@ endif(YARP_EXPERIMENTAL_HARDENING)
 option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 standard" FALSE)
 mark_as_advanced(YARP_EXPERIMENTAL_CXX11)
 if(YARP_EXPERIMENTAL_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
-    set(YARP_HAS_CXX11 TRUE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
+  set(YARP_HAS_CXX11 TRUE)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
        NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.1)
-    # GCC 6.1 uses -std=cxx14 by default. This causes issues in some
-    # configurations, therefore c++98 is forced
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX98_FLAGS}")
-endif(YARP_EXPERIMENTAL_CXX11)
+  # GCC 6.1 uses -std=cxx14 by default. This causes issues in some
+  # configurations, therefore c++98 is forced
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX98_FLAGS}")
+endif()
 
 
 #########################################################################
@@ -322,7 +322,7 @@ option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::st
 mark_as_advanced(YARP_WRAP_STL_STRING)
 set(YARP_WRAP_STL_STRING_INLINE_DEFAULT TRUE)
 if(MSVC)
-    set(YARP_WRAP_STL_STRING_INLINE_DEFAULT FALSE)
+  set(YARP_WRAP_STL_STRING_INLINE_DEFAULT FALSE)
 endif()
 option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT})
 mark_as_advanced(YARP_WRAP_STL_STRING_INLINE)
@@ -340,7 +340,7 @@ mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
 # Control submission of reports
 option(ENABLE_DASHBOARD_SUBMIT "Allow submission of builds to http://dashboard.icub.org/index.php?project=YARP" OFF)
 if(ENABLE_DASHBOARD_SUBMIT)
-    include(CTest)
+  include(CTest)
 endif()
 
 
@@ -375,21 +375,21 @@ set(CMAKE_POSITION_INDEPENDENT_CODE "TRUE")
 
 ### -Werror
 if(CXX_HAS_WERROR)
-    option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." TRUE)
-    mark_as_advanced(YARP_ABORT_ON_WARNING)
-    if(YARP_ABORT_ON_WARNING)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-    endif()
+  option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." TRUE)
+  mark_as_advanced(YARP_ABORT_ON_WARNING)
+  if(YARP_ABORT_ON_WARNING)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+  endif()
 endif()
 
 
 ### -Wfatal-errors
 if(CXX_HAS_WFATAL_ERROR)
-    option(YARP_FATAL_ERRORS "Abort compilation on the first error rather than trying to keep going and printing further error messages (-Wfatal-errors)" FALSE)
-    mark_as_advanced(YARP_FATAL_ERRORS)
-    if(YARP_FATAL_ERRORS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
-    endif()
+  option(YARP_FATAL_ERRORS "Abort compilation on the first error rather than trying to keep going and printing further error messages (-Wfatal-errors)" FALSE)
+  mark_as_advanced(YARP_FATAL_ERRORS)
+  if(YARP_FATAL_ERRORS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
+  endif()
 endif()
 
 
