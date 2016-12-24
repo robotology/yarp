@@ -18,10 +18,10 @@ env:
     - TRAVIS_WITH_INTEGRATION_TESTS=false
     - TRAVIS_WITH_ACE=true
     - TRAVIS_STATIC=false
+    - TRAVIS_CLEAN_API=false
     - TRAVIS_WITH_VALGRIND=false
     - TRAVIS_NO_DEPRECATED=false
     - TRAVIS_WITH_BROKEN_TESTS=false
-    - TRAVIS_WITH_CXX11=true
 
 matrix:
   exclude:
