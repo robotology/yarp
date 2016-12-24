@@ -86,12 +86,8 @@ if(CREATE_YARPDATAPLAYER)
 
   target_link_libraries(yarpdataplayer YARP_OS
                                        YARP_init
-                                       YARP_sig)
-  qtyarp_use_modules(yarpdataplayer Widgets)
-  qtyarp_deprecate_with_cmake_version(2.8.11)
-  if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-    target_link_libraries(yarpdataplayer Qt5::WinMain)
-  endif()
+                                       YARP_sig
+                                       Qt5::Widgets)
 
   if(YARP_HAS_OPENCV)
     target_link_libraries(yarpdataplayer ${OpenCV_LIBRARIES})

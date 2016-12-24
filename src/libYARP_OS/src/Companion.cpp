@@ -1388,7 +1388,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.addString("# the current directory.");
     f.addString("# Replace \"yarpy\" with whatever your executable should be called.");
     f.addString("");
-    f.addString("cmake_minimum_required(VERSION 2.8.9)");
+    f.addString("cmake_minimum_required(VERSION 3.0)");
     f.addString("");
     f.addString("set(KEYWORD \"yarpy\")");
     f.addString("");

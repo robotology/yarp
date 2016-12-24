@@ -38,11 +38,11 @@ add_library(QtYARPViewPlugin MODULE ${QtYARPViewPlugin_SRCS}
                                     ${QtYARPViewPlugin_QRC_GEN_SRCS} )
 target_link_libraries(QtYARPViewPlugin YARP_OS
                                        YARP_init
-                                       YARP_sig)
-qtyarp_use_modules(QtYARPViewPlugin Widgets
-                                    Qml
-                                    Quick
-                                    Multimedia)
+                                       YARP_sig
+                                       Qt5::Widgets
+                                       Qt5::Qml
+                                       Qt5::Quick
+                                       Qt5::Multimedia)
 
 qtyarp_qml_plugin(QtYARPViewPlugin "${QtYARPViewPlugin_QMLDIR}")
 

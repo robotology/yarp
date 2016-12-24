@@ -36,10 +36,10 @@ add_library(YARP_logger STATIC ${YARP_logger_SRCS}
                                 ${YARP_logger_HDRS}
                                 ${YARP_logger_IMPL_HDRS})
 
-target_link_libraries(YARP_logger LINK_PRIVATE YARP_sig YARP_OS)
+target_link_libraries(YARP_logger PRIVATE YARP_sig YARP_OS)
 
 if(CREATE_LIB_MATH)
-  target_link_libraries(YARP_logger LINK_PRIVATE YARP_math)
+  target_link_libraries(YARP_logger PRIVATE YARP_math)
 endif()
 
 set_property(TARGET YARP_logger PROPERTY PUBLIC_HEADER ${YARP_logger_HDRS})

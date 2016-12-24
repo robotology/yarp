@@ -296,18 +296,25 @@ endif()
 
 
 #########################################################################
-# Control whether to build YARP using C++11 options
+# C++11 is required
 
-option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 standard" FALSE)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED 14)
+if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(${CMAKE_VERSION} VERSION_LESS 3.1)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
+endif()
+
+
+#########################################################################
+# Control whether to build YARP using C++11 replacements for ACE stuff
+
+option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 replacement for threads, semaphores, etc." FALSE)
 mark_as_advanced(YARP_EXPERIMENTAL_CXX11)
 if(YARP_EXPERIMENTAL_CXX11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
   set(YARP_HAS_CXX11 TRUE)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
-       NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.1)
-  # GCC 6.1 uses -std=cxx14 by default. This causes issues in some
-  # configurations, therefore c++98 is forced
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX98_FLAGS}")
 endif()
 
 

@@ -17,22 +17,22 @@ source_group("Header Files" FILES ${YARP_init_HDRS})
 source_group("Implementation Header Files" FILES ${YARP_init_IMPL_HDRS})
 
 add_library(YARP_init ${YARP_init_SRCS} ${YARP_init_HDRS})
-target_link_libraries(YARP_init LINK_PRIVATE YARP_OS)
+target_link_libraries(YARP_init PRIVATE YARP_OS)
 
 if(YARP_LINK_PLUGINS)
     if(CREATE_OPTIONAL_CARRIERS)
         set_property(SOURCE src/CustomInit.cpp
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION=add_yarpcar_plugins)
-        target_link_libraries(YARP_init LINK_PRIVATE yarpcar)
+        target_link_libraries(YARP_init PRIVATE yarpcar)
     endif()
 
     if(CREATE_DEVICE_LIBRARY_MODULES)
         set_property(SOURCE src/CustomInit.cpp
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)
-        target_link_libraries(YARP_init LINK_PRIVATE yarpmod)
-        target_link_libraries(YARP_init LINK_PRIVATE YARP_dev)
+        target_link_libraries(YARP_init PRIVATE yarpmod)
+        target_link_libraries(YARP_init PRIVATE YARP_dev)
     endif()
 endif()
 

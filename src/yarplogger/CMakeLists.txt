@@ -33,13 +33,9 @@ if(CREATE_YARPLOGGER)
 
   target_link_libraries(yarplogger YARP_OS
                                    YARP_init
-                                   YARP_logger)
-  qtyarp_use_modules(yarplogger Widgets
-                                Gui)
-  qtyarp_deprecate_with_cmake_version(2.8.11)
-  if(WIN32)
-       target_link_libraries(yarplogger Qt5::WinMain)
-  endif()
+                                   YARP_logger
+                                   Qt5::Widgets
+                                   Qt5::Gui)
 
   install(TARGETS yarplogger
           COMPONENT utilities

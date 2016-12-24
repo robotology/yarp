@@ -25,7 +25,7 @@ if(CREATE_YARPLASERSCANNERGUI)
  # set(yarplaserscannergui_UI_FILES gui.ui)
 
   set(yarplaserscannergui_SRCS main.cpp)
- 
+
  # qt5_add_resources(yarplaserscannergui_QRC_GEN_SRCS $yarplaserscannergui_QRC_FILES})
   qt5_wrap_ui(yarplaserscannergui_UI_GEN_SRCS ${yarplaserscannerguii_UI_FILES})
 
@@ -44,13 +44,9 @@ if(CREATE_YARPLASERSCANNERGUI)
   target_link_libraries(yarplaserscannergui YARP_OS
                                             YARP_init
                                             YARP_sig
-                                            YARP_dev)
-  qtyarp_use_modules(yarplaserscannergui Widgets
-                                         Gui)
-  qtyarp_deprecate_with_cmake_version(2.8.11)
-  if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-    #target_link_libraries(yarplaserscannergui Qt5::WinMain))
-  endif()
+                                            YARP_dev
+                                            Qt5::Widgets
+                                            Qt5::Gui)
 
   target_link_libraries(yarplaserscannergui ${OpenCV_LIBRARIES})
 
