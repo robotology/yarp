@@ -86,6 +86,8 @@ yarp_begin_plugin_library(yarpmod)
 endforeach(EXTFILE)
 
 yarp_end_plugin_library(yarpmod)
+add_library(YARP::yarpmod ALIAS yarpmod)
+
 
 install(TARGETS yarpmod
         EXPORT YARP

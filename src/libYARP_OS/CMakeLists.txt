@@ -396,6 +396,8 @@ add_library(YARP_OS ${YARP_OS_SRCS}
                     ${YARP_OS_IDL_HDRS}
                     ${YARP_OS_IMPL_HDRS}
                     ${YARP_OS_IMPL_HMAC_HDRS})
+add_library(YARP::YARP_OS ALIAS YARP_OS)
+
 target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES})
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})

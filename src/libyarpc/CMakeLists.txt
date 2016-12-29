@@ -56,25 +56,26 @@ if(CREATE_YARPC)
   add_library(yarpc ${yarpc_HDRS}
                     ${yarpc_SRCS}
                     ${YARP_COPY_SRC})
+  add_library(YARP::yarpc ALIAS yarpc)
 
   target_link_libraries(yarpc PRIVATE ${ACE_LIBRARIES})
 
   if(NOT CREATE_YARPC_STANDALONE)
-    target_link_libraries(yarpc PRIVATE YARP_OS
-                                             YARP_init)
+    target_link_libraries(yarpc PRIVATE YARP::YARP_OS
+                                        YARP::YARP_init)
     if(YARP_LINK_PLUGINS)
       if(CREATE_OPTIONAL_CARRIERS)
         set_property(SOURCE ${init_src}
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION=add_yarpcar_plugins)
-        target_link_libraries(yarpc PRIVATE yarpcar)
+        target_link_libraries(yarpc PRIVATE YARP::yarpcar)
       endif()
 
       if(CREATE_DEVICE_LIBRARY_MODULES)
         set_property(SOURCE ${init_src}
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)
-          target_link_libraries(yarpc PRIVATE yarpmod)
+          target_link_libraries(yarpc PRIVATE YARP::yarpmod)
       endif()
     endif()
 
@@ -91,10 +92,10 @@ if(CREATE_YARPC)
 
   if(YARP_COMPILE_TESTS)
     add_executable(yarpc_test1 test1.cpp)
-    target_link_libraries(yarpc_test1 yarpc)
+    target_link_libraries(yarpc_test1 YARP::yarpc)
 
     add_executable(yarpc_test2 test2.cpp)
-    target_link_libraries(yarpc_test2 yarpc)
+    target_link_libraries(yarpc_test2 YARP::yarpc)
   endif(YARP_COMPILE_TESTS)
 
 endif(CREATE_YARPC)

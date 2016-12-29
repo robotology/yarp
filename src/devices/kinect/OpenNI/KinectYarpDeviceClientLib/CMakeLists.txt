@@ -21,9 +21,9 @@ foreach(header_file ${folder_header})
 endforeach(header_file ${folder_header})
 
 yarp_add_plugin(KinectYarpDeviceClientLib ${folder_source} ${folder_header})
-target_link_libraries(KinectYarpDeviceClientLib YARP_OS
-                                                YARP_sig
-                                                YARP_dev)
+target_link_libraries(KinectYarpDeviceClientLib YARP::YARP_OS
+                                                YARP::YARP_sig
+                                                YARP::YARP_dev)
 yarp_install(TARGETS KinectYarpDeviceClientLib
              EXPORT YARP
              COMPONENT runtime

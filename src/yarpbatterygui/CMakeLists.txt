@@ -40,10 +40,10 @@ if(CREATE_YARPBATTERYGUI)
                                       ${yarpbatterygui_QRC_GEN_SRCS}
                                       ${yarpbatterygui_UI_GEN_SRCS})
 
-  target_link_libraries(yarpbatterygui YARP_OS
-                                       YARP_init
-                                       YARP_sig
-                                       YARP_dev
+  target_link_libraries(yarpbatterygui YARP::YARP_OS
+                                       YARP::YARP_init
+                                       YARP::YARP_sig
+                                       YARP::YARP_dev
                                        Qt5::Widgets
                                        Qt5::Gui)
 

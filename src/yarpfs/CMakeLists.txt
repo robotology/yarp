@@ -25,8 +25,8 @@ if(CREATE_YARPFS)
                   yarputils.h)
 
   add_executable(yarpfs ${yarpfs_SRCS} ${yarpfs_HDRS})
-  target_link_libraries(yarpfs YARP_OS
-                               YARP_init
+  target_link_libraries(yarpfs YARP::YARP_OS
+                               YARP::YARP_init
                                ${ACE_LIBRARIES}
                                ${Fuse_LIBRARIES})
 endif()

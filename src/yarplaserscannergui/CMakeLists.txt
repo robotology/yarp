@@ -41,10 +41,10 @@ if(CREATE_YARPLASERSCANNERGUI)
                                            ${yarplaserscannergui_QRC_GEN_SRCS}
                                            ${yarplaserscannergui_UI_GEN_SRCS})
 
-  target_link_libraries(yarplaserscannergui YARP_OS
-                                            YARP_init
-                                            YARP_sig
-                                            YARP_dev
+  target_link_libraries(yarplaserscannergui YARP::YARP_OS
+                                            YARP::YARP_init
+                                            YARP::YARP_sig
+                                            YARP::YARP_dev
                                             Qt5::Widgets
                                             Qt5::Gui)
 

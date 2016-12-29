@@ -41,10 +41,11 @@ set(YARP_serversql_IMPL_HDRS include/yarp/serversql/impl/TripleSourceCreator.h
 add_library(YARP_serversql STATIC ${YARP_serversql_SRCS}
                                   ${YARP_serversql_HDRS}
                                   ${YARP_serversql_IMPL_HDRS})
+add_library(YARP::YARP_serversql ALIAS YARP_serversql)
 
-target_link_libraries(YARP_serversql PRIVATE YARP_OS
-                                                  YARP_init
-                                                  YARP_name)
+target_link_libraries(YARP_serversql PRIVATE YARP::YARP_OS
+                                             YARP::YARP_init
+                                             YARP::YARP_name)
 target_link_libraries(YARP_serversql PRIVATE ${SQLite_LIBRARIES})
 if(UNIX)
   target_link_libraries(YARP_serversql PRIVATE ${CMAKE_DL_LIBS})

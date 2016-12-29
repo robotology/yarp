@@ -53,8 +53,10 @@ if (YARP_HAS_MATH_LIB)
   add_library(YARP_math ${YARP_math_SRCS}
                         ${YARP_math_HDRS}
                         ${YARP_math_IMPL_HDRS})
-  target_link_libraries(YARP_math PRIVATE YARP_OS)
-  target_link_libraries(YARP_math PRIVATE YARP_sig)
+  add_library(YARP::YARP_math ALIAS YARP_math)
+
+  target_link_libraries(YARP_math PRIVATE YARP::YARP_OS)
+  target_link_libraries(YARP_math PRIVATE YARP::YARP_sig)
 
   set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
   set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})

@@ -61,12 +61,12 @@ if(CREATE_YARPMOTORGUI)
                                      ${yarpmotorgui_QRC_GEN_SRCS}
                                      ${yarpmotorgui_UI_GEN_SRCS})
 
-  target_link_libraries(yarpmotorgui YARP_OS
-                                        YARP_init
-                                        YARP_sig
-                                        YARP_dev
-                                        Qt5::Widgets
-                                        Qt5::Gui)
+  target_link_libraries(yarpmotorgui YARP::YARP_OS
+                                     YARP::YARP_init
+                                     YARP::YARP_sig
+                                     YARP::YARP_dev
+                                     Qt5::Widgets
+                                     Qt5::Gui)
 
   install(TARGETS yarpmotorgui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 

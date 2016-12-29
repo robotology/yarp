@@ -26,9 +26,9 @@ if(CREATE_YARPMANAGER_CONSOLE)
 
   add_executable(yarpmanager-console ${folder_source} ${folder_header} )
 
-  target_link_libraries(yarpmanager-console YARP_init
-                                            YARP_OS
-                                            YARP_manager
+  target_link_libraries(yarpmanager-console YARP::YARP_init
+                                            YARP::YARP_OS
+                                            YARP::YARP_manager
                                             ${ACE_LIBRARIES})
 
   if(YARP_HAS_LIBEDIT)

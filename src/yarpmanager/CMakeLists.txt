@@ -129,9 +129,9 @@ if(CREATE_YARPMANAGER)
                                    ${yarpmanager_UI_GEN_SRCS}
                                    ${yarpmanager_UI_FILES})
 
-  target_link_libraries(yarpmanager YARP_OS
-                                    YARP_init
-                                    YARP_manager
+  target_link_libraries(yarpmanager YARP::YARP_OS
+                                    YARP::YARP_init
+                                    YARP::YARP_manager
                                     Qt5::Widgets
                                     Qt5::Gui)
 

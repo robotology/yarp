@@ -23,9 +23,9 @@ if(NOT SKIP_portaudio)
                                  PortAudioBuffer.h
                                  PortAudioDeviceDriver.cpp
                                  PortAudioDeviceDriver.h)
-  target_link_libraries(yarp_portaudio YARP_OS
-                                       YARP_sig
-                                       YARP_dev
+  target_link_libraries(yarp_portaudio YARP::YARP_OS
+                                       YARP::YARP_sig
+                                       YARP::YARP_dev
                                        ${PortAudio_LIBRARIES})
   yarp_install(TARGETS yarp_portaudio
                EXPORT YARP

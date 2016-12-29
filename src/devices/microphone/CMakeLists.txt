@@ -26,9 +26,9 @@ if(NOT SKIP_microphone)
 
   yarp_add_plugin(yarp_microphone ${_SYS}MicrophoneDeviceDriver.cpp
                                   MicrophoneDeviceDriver.h)
-  target_link_libraries(yarp_microphone YARP_OS
-                                        YARP_sig
-                                        YARP_dev)
+  target_link_libraries(yarp_microphone YARP::YARP_OS
+                                        YARP::YARP_sig
+                                        YARP::YARP_dev)
   yarp_install(TARGETS yarp_microphone
                EXPORT YARP
                COMPONENT runtime

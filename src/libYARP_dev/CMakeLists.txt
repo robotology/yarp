@@ -263,12 +263,13 @@ include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 add_library(YARP_dev ${YARP_dev_SRCS}
                      ${YARP_devices_SRCS}
                      ${YARP_dev_HDRS})
+add_library(YARP::YARP_dev ALIAS YARP_dev)
 
-target_link_libraries(YARP_dev PRIVATE YARP_OS)
-target_link_libraries(YARP_dev PRIVATE YARP_sig)
+target_link_libraries(YARP_dev PRIVATE YARP::YARP_OS)
+target_link_libraries(YARP_dev PRIVATE YARP::YARP_sig)
 
 if (CREATE_LIB_MATH)
-target_link_libraries(YARP_dev PRIVATE YARP_math)
+target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)
 endif()
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})

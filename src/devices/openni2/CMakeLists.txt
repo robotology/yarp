@@ -60,9 +60,9 @@ if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
                                      OpenNI2SkeletonData.h
                                      OpenNI2SkeletonTracker.cpp
                                      OpenNI2SkeletonTracker.h)
-  target_link_libraries(yarp_OpenNI2Device YARP_OS
-                                           YARP_sig
-                                           YARP_dev
+  target_link_libraries(yarp_OpenNI2Device YARP::YARP_OS
+                                           YARP::YARP_sig
+                                           YARP::YARP_dev
                                            ${OPENNI2_LIBRARY})
 
   if(NITE2_FOUND)
