@@ -198,8 +198,9 @@ bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts
 }
 
 AnalogWrapper::AnalogWrapper() :
-		RateThread(DEFAULT_THREAD_PERIOD),
-		subDeviceOwned(YARP_NULLPTR)
+        RateThread(DEFAULT_THREAD_PERIOD),
+        subDeviceOwned(YARP_NULLPTR),
+        ownDevices(false)
 {
     _rate = DEFAULT_THREAD_PERIOD;
     analogSensor_p = YARP_NULLPTR;
