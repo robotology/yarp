@@ -13,6 +13,7 @@
 #include <yarp/manager/physicresource.h>
 #include <yarp/manager/logicresource.h>
 #include <yarp/manager/primresource.h>
+#include <yarp/manager/impl/textparser.h>
 
 #include <algorithm>
 #include <cctype>
@@ -28,6 +29,7 @@ using namespace yarp::manager;
 
 XmlModLoader::XmlModLoader(const char* szPath, const char* szName)
 {
+    parser = new(TextParser);
     module.clear();
 
     if(strlen(szPath))
@@ -47,6 +49,7 @@ XmlModLoader::XmlModLoader(const char* szPath, const char* szName)
  */
 XmlModLoader::XmlModLoader(const char* szFileName)
 {
+    parser = new(TextParser);
     module.clear();
     if(szFileName)
         strFileName = szFileName;
@@ -56,7 +59,10 @@ XmlModLoader::XmlModLoader(const char* szFileName)
 
 XmlModLoader::~XmlModLoader()
 {
-
+    if(parser)
+    {
+        delete parser;
+    }
 }
 
 
@@ -212,20 +218,28 @@ Module* XmlModLoader::parsXml(const char* szFile)
         //return NULL;
     }
 
+    for(TiXmlElement* var = root->FirstChildElement("var"); var; var = var->NextSiblingElement())
+    {
+        if(var->Attribute("name") && var->GetText())
+        {
+            parser->addVariable(var->Attribute("name"), var->GetText());
+        }
+    }
+
     module.setXmlFile(szFile);
 
     if(name)
-        module.setName(name->GetText());
+        module.setName(parser->parseText(name->GetText()).c_str());
 
     /* retrieving description */
     TiXmlElement* desc;
     if((desc = (TiXmlElement*) root->FirstChild("description")))
-        module.setDescription(desc->GetText());
+        module.setDescription(parser->parseText(desc->GetText()).c_str());
 
     /* retrieving version */
     TiXmlElement* ver;
     if((ver = (TiXmlElement*) root->FirstChild("version")))
-        module.setVersion(ver->GetText());
+        module.setVersion(parser->parseText(ver->GetText()).c_str());
 
 
     /* retrieving parameter */
@@ -241,7 +255,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                     bool brequired = false;
                     if(compareString(param->Attribute("required"), "yes"))
                         brequired = true;
-                    Argument arg(param->GetText(),
+                    Argument arg(parser->parseText(param->GetText()).c_str(),
                                  brequired,
                                  param->Attribute("desc"));
                     arg.setDefault(param->Attribute("default"));
@@ -256,7 +270,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                     bool brequired = false;
                     if(compareString(param->Attribute("required"), "yes"))
                         brequired = true;
-                    Argument arg(param->GetText(),
+                    Argument arg(parser->parseText(param->GetText()).c_str(),
                                  brequired,
                                  param->Attribute("desc"), true);
                     arg.setDefault(param->Attribute("default"));
@@ -278,7 +292,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
     TiXmlElement* rank;
     if((rank = (TiXmlElement*) root->FirstChild("rank")) &&
         rank->GetText())
-        module.setRank(atoi(rank->GetText()));
+        module.setRank(atoi(parser->parseText(rank->GetText()).c_str()));
 
 
     /* retrieving authors information*/
@@ -291,7 +305,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
             {
                 Author author;
                 if(ath->GetText())
-                    author.setName(ath->GetText());
+                    author.setName(parser->parseText(ath->GetText()).c_str());
                 if(ath->Attribute("email"))
                     author.setEmail(ath->Attribute("email"));
                 module.addAuthor(author);
@@ -336,7 +350,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 if(output.getPortType() != SERVICE_PORT )
                 {
                     if((element = (TiXmlElement*) data->FirstChild("type")))
-                        output.setName(element->GetText());
+                        output.setName(parser->parseText(element->GetText()).c_str());
                     else
                     {
                         OSTRINGSTREAM war;
@@ -350,7 +364,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
 
                 if((element = (TiXmlElement*) data->FirstChild("port")))
                 {
-                    output.setPort(element->GetText());
+                    output.setPort(parser->parseText(element->GetText()).c_str());
                     output.setCarrier(element->Attribute("carrier"));
                 }
                 else
@@ -362,7 +376,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 }
 
                 if((element = (TiXmlElement*) data->FirstChild("description")))
-                    output.setDescription(element->GetText());
+                    output.setDescription(parser->parseText(element->GetText()).c_str());
 
                 module.addOutput(output);
             } // end of output data
@@ -391,7 +405,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 {
 
                     if((element = (TiXmlElement*) data->FirstChild("type")))
-                        input.setName(element->GetText());
+                        input.setName(parser->parseText(element->GetText()).c_str());
                     else
                     {
                         OSTRINGSTREAM war;
@@ -405,7 +419,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
 
                 if((element = (TiXmlElement*) data->FirstChild("port")))
                 {
-                    input.setPort(element->GetText());
+                    input.setPort(parser->parseText(element->GetText()).c_str());
                     input.setCarrier(element->Attribute("carrier"));
                 }
                 else
@@ -417,14 +431,14 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 }
 
                 if((element = (TiXmlElement*) data->FirstChild("description")))
-                    input.setDescription(element->GetText());
+                    input.setDescription(parser->parseText(element->GetText()).c_str());
 
                 if((element = (TiXmlElement*) data->FirstChild("required")))
-                    if(compareString(element->GetText(), "yes"))
+                    if(compareString(parser->parseText(element->GetText()).c_str(), "yes"))
                         input.setRequired(true);
 
                 if((element = (TiXmlElement*) data->FirstChild("priority")))
-                    if(compareString(element->GetText(), "yes"))
+                    if(compareString(parser->parseText(element->GetText()).c_str(), "yes"))
                         input.setPriority(true);
 
                 module.addInput(input);
@@ -443,13 +457,13 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 input.setPortType(SERVICE_PORT);
                 TiXmlElement* element;
                 if((element = (TiXmlElement*) services->FirstChild("port"))) {
-                    input.setPort(element->GetText());
+                    input.setPort(parser->parseText(element->GetText()).c_str());
                     input.setCarrier("tcp");
                 }
                 if((element = (TiXmlElement*) services->FirstChild("description")))
-                    input.setDescription(element->GetText());
+                    input.setDescription(parser->parseText(element->GetText()).c_str());
                 if((element = (TiXmlElement*) services->FirstChild("type")))
-                    input.setName(element->GetText());
+                    input.setName(parser->parseText(element->GetText()).c_str());
                 else
                     input.setName("rpc");
                 module.addInput(input);
@@ -461,13 +475,13 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 output.setPortType(SERVICE_PORT);
                 TiXmlElement* element;
                 if((element = (TiXmlElement*) services->FirstChild("port"))) {
-                    output.setPort(element->GetText());
+                    output.setPort(parser->parseText(element->GetText()).c_str());
                     output.setCarrier("tcp");
                 }
                 if((element = (TiXmlElement*) services->FirstChild("description")))
-                    output.setDescription(element->GetText());
+                    output.setDescription(parser->parseText(element->GetText()).c_str());
                 if((element = (TiXmlElement*) services->FirstChild("type")))
-                    output.setName(element->GetText());
+                    output.setName(parser->parseText(element->GetText()).c_str());
                 else
                     output.setName("rpc");
                 module.addOutput(output);
@@ -480,7 +494,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
     TiXmlElement* element;
     if((element = (TiXmlElement*) root->FirstChild("deployer")))
     {
-        module.setBroker(element->GetText());
+        module.setBroker(parser->parseText(element->GetText()).c_str());
         module.setNeedDeployer(true);
     }
 
@@ -499,11 +513,11 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 {
                      /* retrieving name */
                     if(compareString(comptag->Value(), "name"))
-                        computer.setName(comptag->GetText());
+                        computer.setName(parser->parseText(comptag->GetText()).c_str());
 
                     /* retrieving description */
                      if(compareString(comptag->Value(), "description"))
-                        computer.setDescription(comptag->GetText());
+                        computer.setDescription(parser->parseText(comptag->GetText()).c_str());
 
                     // platform
                     if(compareString(comptag->Value(), "platform"))
@@ -511,11 +525,11 @@ Module* XmlModLoader::parsXml(const char* szFile)
                         Platform os;
                         TiXmlElement* element;
                         if((element = (TiXmlElement*) comptag->FirstChild("name")))
-                            os.setName(element->GetText());
+                            os.setName(parser->parseText(element->GetText()).c_str());
                         if((element = (TiXmlElement*) comptag->FirstChild("distribution")))
-                            os.setDistribution(element->GetText());
+                            os.setDistribution(parser->parseText(element->GetText()).c_str());
                         if((element = (TiXmlElement*) comptag->FirstChild("release")))
-                            os.setRelease(element->GetText());
+                            os.setRelease(parser->parseText(element->GetText()).c_str());
                         computer.setPlatform(os);
                     } // end of platform tag
 
@@ -551,9 +565,9 @@ Module* XmlModLoader::parsXml(const char* szFile)
                         Memory mem;
                         TiXmlElement* element;
                         if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
-                            mem.setTotalSpace((Capacity)atol(element->GetText()));
+                            mem.setTotalSpace((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                         if((element = (TiXmlElement*) comptag->FirstChild("free_space")))
-                            mem.setFreeSpace((Capacity)atol(element->GetText()));
+                            mem.setFreeSpace((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                         computer.setMemory(mem);
                     } // end of memory tag
 
@@ -563,9 +577,9 @@ Module* XmlModLoader::parsXml(const char* szFile)
                         Storage stg;
                         TiXmlElement* element;
                         if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
-                            stg.setTotalSpace((Capacity)atol(element->GetText()));
+                            stg.setTotalSpace((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                         if((element = (TiXmlElement*) comptag->FirstChild("free_space")))
-                            stg.setFreeSpace((Capacity)atol(element->GetText()));
+                            stg.setFreeSpace((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                         computer.setStorage(stg);
                     } // end of storage tag
 
@@ -575,15 +589,15 @@ Module* XmlModLoader::parsXml(const char* szFile)
                         Processor proc;
                         TiXmlElement* element;
                         if((element = (TiXmlElement*) comptag->FirstChild("architecture")))
-                            proc.setArchitecture(element->GetText());
+                            proc.setArchitecture(parser->parseText(element->GetText()).c_str());
                         if((element = (TiXmlElement*) comptag->FirstChild("model")))
-                            proc.setModel(element->GetText());
+                            proc.setModel(parser->parseText(element->GetText()).c_str());
                         if((element = (TiXmlElement*) comptag->FirstChild("cores")))
-                            proc.setCores((size_t)atoi(element->GetText()));
+                            proc.setCores((size_t)atoi(parser->parseText(element->GetText()).c_str()));
                         if((element = (TiXmlElement*) comptag->FirstChild("siblings")))
-                            proc.setSiblings((size_t)atoi(element->GetText()));
+                            proc.setSiblings((size_t)atoi(parser->parseText(element->GetText()).c_str()));
                         if((element = (TiXmlElement*) comptag->FirstChild("frequency")))
-                            proc.setFrequency(atof(element->GetText()));
+                            proc.setFrequency(atof(parser->parseText(element->GetText()).c_str()));
                         computer.setProcessor(proc);
                     } // end of processor tag
 
@@ -593,11 +607,11 @@ Module* XmlModLoader::parsXml(const char* szFile)
                         Network net;
                         TiXmlElement* element;
                         if((element = (TiXmlElement*) comptag->FirstChild("ip4")))
-                            net.setIP4(element->GetText());
+                            net.setIP4(parser->parseText(element->GetText()).c_str());
                         if((element = (TiXmlElement*) comptag->FirstChild("ip6")))
-                            net.setIP6(element->GetText());
+                            net.setIP6(parser->parseText(element->GetText()).c_str());
                         if((element = (TiXmlElement*) comptag->FirstChild("mac")))
-                            net.setMAC(element->GetText());
+                            net.setMAC(parser->parseText(element->GetText()).c_str());
                         module.addResource(net);
                         computer.setNetwork(net);
                     } // end of network tag
@@ -609,8 +623,8 @@ Module* XmlModLoader::parsXml(const char* szFile)
                         TiXmlElement* element = (TiXmlElement*) comptag->FirstChild("name");
                         if(element && element->GetText())
                         {
-                            yport.setName(element->GetText());
-                            yport.setPort(element->GetText());
+                            yport.setName(parser->parseText(element->GetText()).c_str());
+                            yport.setPort(parser->parseText(element->GetText()).c_str());
                             computer.addPeripheral(yport);
                         }
                         else
@@ -627,20 +641,20 @@ Module* XmlModLoader::parsXml(const char* szFile)
                         GPU gpu;
                         TiXmlElement* element;
                         if((element = (TiXmlElement*) comptag->FirstChild("name")))
-                            gpu.setName(element->GetText());
+                            gpu.setName(parser->parseText(element->GetText()).c_str());
                         if((element = (TiXmlElement*) comptag->FirstChild("capability")))
-                            gpu.setCompCompatibility(element->GetText());
+                            gpu.setCompCompatibility(parser->parseText(element->GetText()).c_str());
                         if((element = (TiXmlElement*) comptag->FirstChild("cores")))
-                            gpu.setCores((size_t)atoi(element->GetText()));
+                            gpu.setCores((size_t)atoi(parser->parseText(element->GetText()).c_str()));
                         if((element = (TiXmlElement*) comptag->FirstChild("frequency")))
-                            gpu.setFrequency(atof(element->GetText()));
+                            gpu.setFrequency(atof(parser->parseText(element->GetText()).c_str()));
                         if((element = (TiXmlElement*) comptag->FirstChild("register_block")))
-                            gpu.setResgisterPerBlock((size_t)atoi(element->GetText()));
+                            gpu.setResgisterPerBlock((size_t)atoi(parser->parseText(element->GetText()).c_str()));
                         if((element = (TiXmlElement*) comptag->FirstChild("thread_block")))
-                            gpu.setThreadPerBlock((size_t)atoi(element->GetText()));
+                            gpu.setThreadPerBlock((size_t)atoi(parser->parseText(element->GetText()).c_str()));
                         if((element = (TiXmlElement*) comptag->FirstChild("overlap")))
                         {
-                            if(compareString(element->GetText(), "yes"))
+                            if(compareString(parser->parseText(element->GetText()).c_str(), "yes"))
                                 gpu.setOverlap(true);
                             else
                                 gpu.setOverlap(false);
@@ -653,7 +667,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                             TiXmlElement* element;
                             element = (TiXmlElement*) comptag->FirstChild("global_memory");
                             if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                                gpu.setGlobalMemory((Capacity)atol(element->GetText()));
+                                gpu.setGlobalMemory((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                         } // end of global memory tag
 
                         // shared memory
@@ -662,7 +676,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                             TiXmlElement* element;
                             element = (TiXmlElement*) comptag->FirstChild("shared_memory");
                             if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                                gpu.setSharedMemory((Capacity)atol(element->GetText()));
+                                gpu.setSharedMemory((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                         } // end of shared memory tag
 
                         // constant memory
@@ -671,7 +685,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                             TiXmlElement* element;
                             element = (TiXmlElement*) comptag->FirstChild("constant_memory");
                             if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                                gpu.setConstantMemory((Capacity)atol(element->GetText()));
+                                gpu.setConstantMemory((Capacity)atol(parser->parseText(element->GetText()).c_str()));
                         } // end of shared memory tag
                         computer.addPeripheral(gpu);
                     } // end of gpu tag

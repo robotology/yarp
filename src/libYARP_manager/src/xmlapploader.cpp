@@ -21,6 +21,7 @@
 #include <string>
 #include <fstream>
 #include <yarp/os/Network.h>
+#include <yarp/manager/impl/textparser.h>
 
 
 
@@ -35,6 +36,7 @@ using namespace yarp::manager;
  */
 XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
 {
+    parser = new(TextParser);
     app.clear();
     if(szAppName)
         strAppName = szAppName;
@@ -53,6 +55,7 @@ XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
  */
 XmlAppLoader::XmlAppLoader(const char* szFileName)
 {
+    parser = new(TextParser);
     app.clear();
     if(szFileName)
         strFileName = szFileName;
@@ -61,6 +64,10 @@ XmlAppLoader::XmlAppLoader(const char* szFileName)
 
 XmlAppLoader::~XmlAppLoader()
 {
+    if(parser)
+    {
+        delete parser;
+    }
 }
 
 
@@ -211,7 +218,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     {
         if(var->Attribute("name") && var->GetText())
         {
-            parser.addVariable(var->Attribute("name"), var->GetText());
+            parser->addVariable(var->Attribute("name"), var->GetText());
         }
     }
 
@@ -219,7 +226,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
 
     if(name)
     {
-        string strname = parser.parseText(name->GetText());
+        string strname = parser->parseText(name->GetText());
         for(unsigned int i=0; i<strname.size(); i++)
             if(strname[i] == ' ')
                 strname[i] = '_';
@@ -229,12 +236,12 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     /* retrieving description */
     TiXmlElement* desc;
     if((desc = (TiXmlElement*) root->FirstChild("description")))
-        app.setDescription(parser.parseText(desc->GetText()).c_str());
+        app.setDescription(parser->parseText(desc->GetText()).c_str());
 
     /* retrieving version */
     TiXmlElement* ver;
     if((ver = (TiXmlElement*) root->FirstChild("version")))
-        app.setVersion(parser.parseText(ver->GetText()).c_str());
+        app.setVersion(parser->parseText(ver->GetText()).c_str());
 
     /*
      * TODO: setting prefix of the main application is inactivated.
@@ -257,7 +264,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             {
                 Author author;
                 if(ath->GetText())
-                    author.setName(parser.parseText(ath->GetText()).c_str());
+                    author.setName(parser->parseText(ath->GetText()).c_str());
                 if(ath->Attribute("email"))
                     author.setEmail(ath->Attribute("email"));
                 app.addAuthor(author);
@@ -281,8 +288,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             {
                 if(res->GetText())
                 {
-                    ResYarpPort resource(parser.parseText(res->GetText()).c_str());
-                    resource.setPort(parser.parseText(res->GetText()).c_str());
+                    ResYarpPort resource(parser->parseText(res->GetText()).c_str());
+                    resource.setPort(parser->parseText(res->GetText()).c_str());
                     app.addResource(resource);
                 }
             }
@@ -323,7 +330,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 text = NULL;
                 if(element->GetText())
                 {
-                    elemText = parser.parseText(element->GetText());
+                    elemText = parser->parseText(element->GetText());
                     text     = elemText.c_str();
                 }
 
@@ -336,7 +343,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         text = NULL;
                         if(element->GetText())
                         {
-                            elemText = parser.parseText(element->GetText());
+                            elemText = parser->parseText(element->GetText());
                             text     = elemText.c_str();
                         }
 
@@ -348,7 +355,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 {
                     if(element->GetText())
                     {
-                        elemText = parser.parseText(element->GetText());
+                        elemText = parser->parseText(element->GetText());
                         text     = elemText.c_str();
                     }
 
@@ -359,7 +366,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 element = (TiXmlElement*) mod->FirstChild("geometry");
                 if(element && element->GetText())
                 {
-                    yarp::os::Property prop(parser.parseText(element->GetText()).c_str());
+                    yarp::os::Property prop(parser->parseText(element->GetText()).c_str());
                     GraphicModel model;
                     GyPoint pt;
                     if(prop.check("Pos"))
@@ -382,8 +389,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         {
                             if(res->GetText())
                             {
-                                ResYarpPort resource(parser.parseText(res->GetText()).c_str());
-                                resource.setPort(parser.parseText(res->GetText()).c_str());
+                                ResYarpPort resource(parser->parseText(res->GetText()).c_str());
+                                resource.setPort(parser->parseText(res->GetText()).c_str());
                                 if(res->Attribute("timeout"))
                                     resource.setTimeout(atof(res->Attribute("timeout")));
                                 if(res->Attribute("request"))
@@ -412,8 +419,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     {
                         if(compareString(res->Value(), "wait"))
                         {
-                            if(parser.parseText(res->GetText()).c_str())
-                                module.setPostExecWait(atof(parser.parseText(res->GetText()).c_str()));
+                            if(parser->parseText(res->GetText()).c_str())
+                                module.setPostExecWait(atof(parser->parseText(res->GetText()).c_str()));
                         }
                         else
                         {
@@ -434,7 +441,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         if((first=(TiXmlElement*) map->FirstChild("old")) &&
                            (second=(TiXmlElement*) map->FirstChild("new")) )
                         {
-                            Portmap portmap(parser.parseText(first->GetText()).c_str(), parser.parseText(second->GetText()).c_str());
+                            Portmap portmap(parser->parseText(first->GetText()).c_str(), parser->parseText(second->GetText()).c_str());
                             module.addPortmap(portmap);
                         }
                     }
@@ -462,14 +469,14 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             TiXmlElement* prefix;
             if((name=(TiXmlElement*) embApp->FirstChild("name")))
             {
-                ApplicationInterface IApp(parser.parseText(name->GetText()).c_str());
+                ApplicationInterface IApp(parser->parseText(name->GetText()).c_str());
                 if((prefix=(TiXmlElement*) embApp->FirstChild("prefix")))
-                    IApp.setPrefix(parser.parseText(prefix->GetText()).c_str());
+                    IApp.setPrefix(parser->parseText(prefix->GetText()).c_str());
 #ifdef WITH_GEOMETRY
                 TiXmlElement* element = (TiXmlElement*) embApp->FirstChild("geometry");
                 if(element && element->GetText())
                 {
-                    yarp::os::Property prop(parser.parseText(element->GetText()).c_str());
+                    yarp::os::Property prop(parser->parseText(element->GetText()).c_str());
                     GraphicModel model;
                     GyPoint pt;
                     if(prop.check("Pos"))
@@ -503,7 +510,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             TiXmlElement* port = (TiXmlElement*) arb->FirstChild("port");
             if(port && port->GetText())
             {
-                Arbitrator arbitrator(parser.parseText(port->GetText()).c_str());
+                Arbitrator arbitrator(parser->parseText(port->GetText()).c_str());
 
                 // retrieving rules
                 for(TiXmlElement* rule = arb->FirstChildElement(); rule;
@@ -512,14 +519,14 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     if(compareString(rule->Value(), "rule"))
                     {
                         if(rule->Attribute("connection"))
-                            arbitrator.addRule(rule->Attribute("connection"), parser.parseText(rule->GetText()).c_str());
+                            arbitrator.addRule(rule->Attribute("connection"), parser->parseText(rule->GetText()).c_str());
                     }
                 }
 #ifdef WITH_GEOMETRY
                 TiXmlElement* geometry = (TiXmlElement*) arb->FirstChild("geometry");
                 if(geometry && geometry->GetText())
                 {
-                    yarp::os::Property prop(parser.parseText(geometry->GetText()).c_str());
+                    yarp::os::Property prop(parser->parseText(geometry->GetText()).c_str());
                     GraphicModel model;
                     if(prop.check("Pos"))
                     {
@@ -567,9 +574,9 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 string strCarrier;
                 if((protocol=(TiXmlElement*) cnn->FirstChild("protocol")) &&
                     protocol->GetText())
-                    strCarrier = parser.parseText(protocol->GetText()).c_str();
-                Connection connection(parser.parseText(from->GetText()).c_str(),
-                                    parser.parseText(to->GetText()).c_str(),
+                    strCarrier = parser->parseText(protocol->GetText()).c_str();
+                Connection connection(parser->parseText(from->GetText()).c_str(),
+                                    parser->parseText(to->GetText()).c_str(),
                                     strCarrier.c_str());
 
                 // check if Qos is set for the connection
@@ -584,8 +591,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     connection.setFromExternal(true);
                     if(from->GetText())
                     {
-                        ResYarpPort resource(parser.parseText(from->GetText()).c_str());
-                        resource.setPort(parser.parseText(from->GetText()).c_str());
+                        ResYarpPort resource(parser->parseText(from->GetText()).c_str());
+                        resource.setPort(parser->parseText(from->GetText()).c_str());
                         app.addResource(resource);
                     }
                 }
@@ -597,8 +604,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     if(to->GetText())
                     {
                         connection.setToExternal(true);
-                        ResYarpPort resource(parser.parseText(to->GetText()).c_str());
-                        resource.setPort(parser.parseText(to->GetText()).c_str());
+                        ResYarpPort resource(parser->parseText(to->GetText()).c_str());
+                        resource.setPort(parser->parseText(to->GetText()).c_str());
                         app.addResource(resource);
                     }
                 }
@@ -627,7 +634,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 TiXmlElement* geometry = (TiXmlElement*) cnn->FirstChild("geometry");
                 if(geometry && geometry->GetText())
                 {
-                    yarp::os::Property prop(parser.parseText(geometry->GetText()).c_str());
+                    yarp::os::Property prop(parser->parseText(geometry->GetText()).c_str());
                     GraphicModel model;
                     if(prop.check("Pos"))
                     {
