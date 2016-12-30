@@ -26,6 +26,9 @@ extern yarp::os::impl::UnitTest& getPolyDriverTest();
 extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
 #endif
 
+#ifdef YARP_ANALOGWRAPPER_TESTS
+extern yarp::os::impl::UnitTest& getAnalogWrapperTest();
+#endif
 
 #ifdef WITH_YARPMATH
 extern yarp::os::impl::UnitTest& getFrameTransformClientTest();
@@ -39,7 +42,9 @@ public:
 #ifdef YARP_CONTROLBOARDREMAPPER_TESTS
         root.add(getControlBoardRemapperTest());
 #endif
-
+#ifdef YARP_ANALOGWRAPPER_TESTS
+        root.add(getAnalogWrapperTest());
+#endif
 #ifdef WITH_YARPMATH
         root.add(getFrameTransformClientTest());
 #endif	

@@ -140,6 +140,7 @@ AnalogPortEntry &AnalogPortEntry::operator =(const AnalogPortEntry &alt)
 
  // closing anonimous namespace
 
+
 /**
   * It reads the data from an analog sensor and sends them on one or more ports.
   * It creates one rpc port and its related handler for every output port.
@@ -202,7 +203,10 @@ bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts
     return true;
 }
 
-AnalogWrapper::AnalogWrapper(): RateThread(DEFAULT_THREAD_PERIOD)
+AnalogWrapper::AnalogWrapper() :
+        RateThread(DEFAULT_THREAD_PERIOD),
+        subDeviceOwned(YARP_NULLPTR),
+        ownDevices(false)
 {
     _rate = DEFAULT_THREAD_PERIOD;
     analogSensor_p = YARP_NULLPTR;
@@ -219,6 +223,7 @@ AnalogWrapper::AnalogWrapper(): RateThread(DEFAULT_THREAD_PERIOD)
 AnalogWrapper::~AnalogWrapper()
 {
     threadRelease();
+    close();
     _rate = DEFAULT_THREAD_PERIOD;
     analogSensor_p = YARP_NULLPTR;
 }
@@ -258,12 +263,12 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
     p.put("device", prop.find("subdevice").asString());  // subdevice was already checked before
 
     // if error occour during open, quit here.
-    yDebug("opening analogServer subdevice...");
+    yDebug("opening AnalogWrapper subdevice...");
     subDeviceOwned->open(p);
 
     if (!subDeviceOwned->isValid())
     {
-        yError("opening analogServer subdevice... FAILED\n");
+        yError("opening AnalogWrapper subdevice... FAILED\n");
         return false;
     }
 
@@ -271,7 +276,7 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
 
     if (analogSensor_p == 0)
     {
-        yError("Opening IAnalogSensor interface of analogServer subdevice... FAILED\n");
+        yError("Opening IAnalogSensor interface of AnalogWrapper subdevice... FAILED\n");
         return false;
     }
 
@@ -285,8 +290,7 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
 
     attach(analogSensor_p);
     RateThread::setRate(_rate);
-    RateThread::start();
-    return true;
+    return RateThread::start();
 }
 
 
@@ -294,7 +298,7 @@ bool AnalogWrapper::openDeferredAttach(yarp::os::Searchable &prop)
 {
     // nothing to do here?
     if( (subDeviceOwned != YARP_NULLPTR) || (ownDevices == true) )
-        yError() << "AnalogServer: something wrong with the initialization.";
+        yError() << "AnalogWrapper: something wrong with the initialization.";
     return true;
 }
 
@@ -329,9 +333,7 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
     }
     attach(analogSensor_p);
     RateThread::setRate(_rate);
-    RateThread::start();
-
-    return true;
+    return RateThread::start();
 }
 
 bool AnalogWrapper::detachAll()
@@ -343,7 +345,8 @@ bool AnalogWrapper::detachAll()
     analogSensor_p = YARP_NULLPTR;
     for(unsigned int i=0; i<analogPorts.size(); i++)
     {
-        handlers[i]->setInterface(analogSensor_p);
+        if(handlers[i] != YARP_NULLPTR)
+            handlers[i]->setInterface(analogSensor_p);
     }
     return true;
 }
@@ -604,11 +607,11 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString().c_str());
-    yTrace() << "AnalogServer params are: " << config.toString();
+    yTrace() << "AnalogWrapper params are: " << config.toString();
 
     if (!config.check("period"))
     {
-        yError() << "AnalogServer: missing 'period' parameter. Check you configuration file\n";
+        yError() << "AnalogWrapper: missing 'period' parameter. Check you configuration file\n";
         return false;
     }
     else
@@ -618,7 +621,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
     if (config.check("deviceId"))
     {
-        yError() << "AnalogServer: the parameter 'deviceId' has been removed, please use parameter 'name' instead. \n"
+        yError() << "AnalogWrapper: the parameter 'deviceId' has been removed, please use parameter 'name' instead. \n"
             << "e.g. In the FT wrapper configuration files of your robot, replace '<param name=""deviceId""> left_arm </param>' \n"
             << "with '/icub/left_arm/analog:o' ";
         return false;
@@ -626,7 +629,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("name"))
     {
-        yError() << "AnalogServer: missing 'name' parameter. Check you configuration file; it must be like:\n"
+        yError() << "AnalogWrapper: missing 'name' parameter. Check you configuration file; it must be like:\n"
                     "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
         return false;
     }
@@ -661,7 +664,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
         ownDevices=true;
         if(! openAndAttachSubDevice(config))
         {
-            yError("AnalogServer: error while opening subdevice\n");
+            yError("AnalogWrapper: error while opening subdevice\n");
             return false;
         }
     }
@@ -692,6 +695,11 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
             if(!params.check("ports"))
             {
              // if there is no "ports" section open only 1 port and use name as is.
+                if (Network::exists(streamingPortName + "/rpc:i") || Network::exists(streamingPortName))
+                {
+                    yError() << "AnalogWrapper: unable to open the analog server, address conflict";
+                    return false;
+                }
                 createPort((streamingPortName ).c_str(), _rate );
                 // since createPort always return true, check the port is really been opened is done here
                 if(! Network::exists(streamingPortName + "/rpc:i"))
@@ -725,6 +733,12 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                         return false;
                     }
 
+                    if (Network::exists(streamingPortName + "/" + string(ports->get(k).asString().c_str()) + "/rpc:i")
+                        || Network::exists(streamingPortName + "/" + string(ports->get(k).asString().c_str())))
+                    {
+                        yError() << "AnalogWrapper: unable to open the analog server, address conflict";
+                        return false;
+                    }
                     int wBase=parameters.get(1).asInt();
                     int wTop=parameters.get(2).asInt();
                     int base=parameters.get(3).asInt();
@@ -745,9 +759,9 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                     yDebug() << "opening port " << ports->get(k).asString().c_str();
                     tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString().c_str());
 
-                    createPorts(tmpPorts, _rate);
                     sumOfChannels+=portChannels;
                 }
+                createPorts(tmpPorts, _rate);
 
                 if (sumOfChannels!=deviceChannels.asInt())
                 {
