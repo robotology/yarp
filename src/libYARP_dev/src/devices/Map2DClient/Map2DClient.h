@@ -13,7 +13,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/IMap2D.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/sig/MapGrid2D.h>
+#include <yarp/dev/MapGrid2D.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
@@ -63,8 +63,8 @@ public:
 
     virtual bool     clear      ();
     virtual bool     remove_map (std::string map_name);
-    virtual bool     store_map  (const yarp::sig::MapGrid2D& map);
-    virtual bool     get_map    (std::string map_name, yarp::sig::MapGrid2D& map);
+    virtual bool     store_map  (const yarp::dev::MapGrid2D& map);
+    virtual bool     get_map    (std::string map_name, yarp::dev::MapGrid2D& map);
     virtual bool     get_map_names(std::vector<std::string>& map_names);
 };
 

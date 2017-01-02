@@ -9,7 +9,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Image.h>
-#include <yarp/sig/MapGrid2D.h>
+#include <yarp/dev/MapGrid2D.h>
 #include <vector>
 #include <string>
 
@@ -44,13 +44,13 @@ public:
     Stores a map into the map server.
     * @return true/false
     */
-    virtual bool     store_map(const yarp::sig::MapGrid2D& map) = 0;
+    virtual bool     store_map(const yarp::dev::MapGrid2D& map) = 0;
 
     /**
     Gets a map from the map server.
     * @return true/false
     */
-    virtual bool     get_map(std::string map_name, yarp::sig::MapGrid2D& map) = 0;
+    virtual bool     get_map(std::string map_name, yarp::dev::MapGrid2D& map) = 0;
 
     /**
     Gets a list containing the names of all registered maps.

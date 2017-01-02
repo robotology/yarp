@@ -68,18 +68,19 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
             Value& b = in.get(2);
             if (Property::copyPortable(b, the_map))
             {
-                auto it = m_maps_storage.find(the_map.m_map_name);
+                string map_name = the_map.getMapName();
+                auto it = m_maps_storage.find(map_name);
                 if (it == m_maps_storage.end())
                 {
                     //add a new map
-                    m_maps_storage[the_map.m_map_name] = the_map;
+                    m_maps_storage[map_name] = the_map;
                     out.clear();
                     out.addVocab(VOCAB_IMAP_OK);
                 }
                 else
                 {
                     //the map alreay exists
-                    m_maps_storage[the_map.m_map_name] = the_map;
+                    m_maps_storage[map_name] = the_map;
                     out.clear();
                     out.addVocab(VOCAB_IMAP_OK);
                 }
@@ -212,18 +213,19 @@ bool Map2DServer::loadMaps(std::string mapsfile)
         {
             string mapfilename;
             iss >> mapfilename;
-            yarp::sig::MapGrid2D map;
+            yarp::dev::MapGrid2D map;
             bool r = map.loadFromFile(mapfilename);
             if (r)
             { 
-                auto p = m_maps_storage.find(map.m_map_name);
+                string map_name= map.getMapName();
+                auto p = m_maps_storage.find(map_name);
                 if (p == m_maps_storage.end())
                 {
-                    m_maps_storage[map.m_map_name] = map;
+                    m_maps_storage[map_name] = map;
                 }
                 else
                 {
-                    yError() << "A map with the same name '" << map.m_map_name << "'was found, skipping...";
+                    yError() << "A map with the same name '" << map_name << "'was found, skipping...";
                 }
             }
             else
