@@ -1,7 +1,11 @@
 sudo: required
 dist: trusty
 language: cpp
-cache: ccache
+
+cache:
+  ccache: true
+  directories:
+    - /usr/local/Cellar
 
 os:
   - linux
@@ -176,9 +180,34 @@ matrix:
     # Normal build with valgrind and broken tests (tests of already broken things)
     - env: TRAVIS_WITH_CXX11=false TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
+
 branches:
   except:
     - /^.*appveyor.*$/
+
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
+      - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
+        key_url: 'http://packages.ros.org/ros.key'
+    packages:
+      - ninja-build
+      - lcov
+      - valgrind
+      - ccache
+      - libace-dev
+      - libsqlite3-dev
+      - libtinyxml-dev
+      - libedit-dev
+      - qtbase5-dev
+      - qtdeclarative5-dev
+      - qtmultimedia5-dev
+      - libqt5opengl5-dev
+      - libgsl0-dev
+      - libqcustomplot-dev
+      - libopencv-dev
+      - libeigen3-dev
 
 notifications:
   irc:
@@ -193,7 +222,7 @@ notifications:
 before_install:
   # Prepare ros environment variables
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_DESKTOP=`lsb_release -cs`; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_VERSION=indigo; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_VERSION=jade; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_CI_PREFIX=ros-${ROS_CI_VERSION}-; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_HOSTNAME=localhost; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then export ROS_MASTER_URI=http://localhost:11311; fi; fi
@@ -203,18 +232,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
 
   # Add additional repositories
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then echo "deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main" | sudo tee /etc/apt/sources.list.d/ros-latest.list; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_INTEGRATION_TESTS; then wget http://packages.ros.org/ros.key -O - | sudo apt-key add -; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/science; fi
-
-  # Update repositories (Linux)
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -qq; fi
-
-  # Install missing build tools
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_CMAKE_GENERATOR" == "Ninja" ]; then sudo apt-get install ninja-build; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then sudo apt-get -y install lcov; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_BUILD_TYPE" == "Profile" ]; then sudo gem install coveralls-lcov; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_VALGRIND; then sudo apt-get install -y valgrind; fi; fi
 
   # Install ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ccache; fi
@@ -222,9 +240,9 @@ before_install:
 
   # Use ccache also for clang and clang++ on linux
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export CFLAGS="-Qunused-arguments"; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export CFLAGS="$CFLAGS -Qunused-arguments"; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLAGS="-Qunused-arguments"; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLAGS="$CXXFLAGS -Qunused-arguments"; fi; fi
 
   # Print some more system information after installing all build tools
   - echo "-------------------- BEGIN SYSTEM INFORMATION --------------------"
@@ -246,24 +264,19 @@ before_install:
 
 install:
   # Install ACE
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if $TRAVIS_WITH_ACE; then sudo apt-get -y install libace-dev; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then if $TRAVIS_WITH_ACE; then brew install ace; fi; fi
 
   # Install other core dependencies (sqlite, tinyxml, libedit)
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libsqlite3-dev libtinyxml-dev libedit-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install sqlite tinyxml homebrew/dupes/libedit; fi
 
   # Install Qt5 GUIs dependencies
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"; fi
 
   # Install GPL dependencies (gsl, qcustomplot)
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libgsl0-dev libqcustomplot-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gsl readline; fi
 
   # Install other dependencies (opencv, eigen)
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libopencv-dev libeigen3-dev; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip uninstall numpy || true; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen; fi
 
