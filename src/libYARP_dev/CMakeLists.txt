@@ -91,7 +91,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/TestMotor.h
                   include/yarp/dev/Wrapper.h
                   include/yarp/dev/ControlBoardInterfacesImpl.inl
-                  include/yarp/dev/IRobotDescription.h)
+                  include/yarp/dev/IRobotDescription.h
+                  include/yarp/dev/MapGrid2D.h)
 
 set(YARP_dev_IMPL_HDRS )
 
@@ -130,7 +131,8 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/TorqueControlImpl.cpp
                   src/CurrentControlImpl.cpp
                   src/PWMControlImpl.cpp
-                  src/IAxisInfoImpl.cpp)
+                  src/IAxisInfoImpl.cpp
+                  src/MapGrid2D.cpp)
 
 set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/AnalogSensorClient/AnalogSensorClient.cpp

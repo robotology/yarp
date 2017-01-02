@@ -37,6 +37,7 @@ extern yarp::os::impl::UnitTest& getTestFrameGrabberTest();
 
 #ifdef WITH_YARPMATH
 extern yarp::os::impl::UnitTest& getFrameTransformClientTest();
+extern yarp::os::impl::UnitTest& getMapGrid2DTest();
 #endif
 
 class yarp::os::impl::TestList {
@@ -56,6 +57,7 @@ public:
 #endif
 #ifdef WITH_YARPMATH
         root.add(getFrameTransformClientTest());
+        root.add(getMapGrid2DTest());
 #endif	
     }
 };

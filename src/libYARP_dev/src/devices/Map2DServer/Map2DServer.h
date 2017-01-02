@@ -22,7 +22,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/sig/MapGrid2D.h>
+#include <yarp/dev/MapGrid2D.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -57,7 +57,7 @@ namespace yarp
 class yarp::dev::Map2DServer : public yarp::dev::DeviceDriver, public yarp::os::PortReader
 {
 private:
-    std::map<std::string, yarp::sig::MapGrid2D> m_maps_storage;
+    std::map<std::string, yarp::dev::MapGrid2D> m_maps_storage;
 
 public:
     Map2DServer();
