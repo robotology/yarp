@@ -30,6 +30,11 @@ project(YARP
         VERSION ${YARP_VERSION_SHORT}
         LANGUAGES C CXX)
 
+message(STATUS "Using:")
+message(STATUS "  CMake: ${CMAKE_VERSION} (${CMAKE_COMMAND})")
+message(STATUS "  C Compiler: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})")
+message(STATUS "  CXX Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
+
 # The YARP build is fairly flexible, so we need to accumulate some
 # information about what libraries are being built (and their dependencies),
 # along with the include path.  We'll be passing that along to clients

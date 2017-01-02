@@ -298,6 +298,7 @@ endif()
 #########################################################################
 # C++11 is required
 
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED 11)
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
