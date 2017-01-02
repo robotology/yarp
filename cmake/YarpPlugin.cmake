@@ -499,7 +499,13 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
       set_property(TARGET ${X_YARP_PLUGIN_MASTER} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
-      target_link_libraries(${X_YARP_PLUGIN_MASTER} PRIVATE ${libs})
+      # Before CMake 3.5 "PRIVATE" does not export the library with the
+      # namespace, causing issues with the linking of static libraries.
+      if(NOT CMAKE_VERSION VERSION_LESS 3.5)
+        target_link_libraries(${X_YARP_PLUGIN_MASTER} PRIVATE ${libs})
+      else()
+        target_link_libraries(${X_YARP_PLUGIN_MASTER} ${libs})
+      endif()
     endif()
     # give user access to a list of all the plugin libraries
     set(${X_YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
