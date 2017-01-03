@@ -1,0 +1,22 @@
+#projectname
+{
+    font: 300% Courier, monospace;
+    font-weight: bold;
+    font-stretch: ultra-expanded;
+    font-style: oblique;
+    color: #5991ac;
+}
+
+#projectbrief
+{
+    font: 140% Courier, monospace;
+    font-weight: bold;
+    font-variant: small-caps;
+    color: #87b5cc;
+}
+
+#projectnumber
+{
+    font: 35% Courier, monospace;
+    color: #19c2d8;
+}

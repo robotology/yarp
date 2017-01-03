@@ -1000,7 +1000,8 @@ YARP_WARNING_POP
 
 #define HELPER(x) (*((ResourceFinderHelper*)(x)))
 
-ResourceFinder::ResourceFinder() {
+ResourceFinder::ResourceFinder()
+{
     // We need some pieces of YARP to be initialized.
     NetworkBase::autoInitMinimum();
     implementation = new ResourceFinderHelper();
@@ -1021,7 +1022,8 @@ ResourceFinder::ResourceFinder(const ResourceFinder& alt) :
     *this = alt;
 }
 
-ResourceFinder::ResourceFinder(Searchable& data, void *implementation) {
+ResourceFinder::ResourceFinder(Searchable& data, void *implementation)
+{
     this->implementation = implementation;
     if (!data.isNull()) {
         config.fromString(data.toString());
@@ -1031,17 +1033,20 @@ ResourceFinder::ResourceFinder(Searchable& data, void *implementation) {
     isConfiguredFlag = true;
 }
 
-ResourceFinder::~ResourceFinder() {
+ResourceFinder::~ResourceFinder()
+{
     if (implementation!=YARP_NULLPTR) {
         if (owned) {
             delete &HELPER(implementation);
         }
         implementation = YARP_NULLPTR;
     }
+    NetworkBase::finiMinimum();
 }
 
 
-const ResourceFinder& ResourceFinder::operator= (const ResourceFinder& alt) {
+const ResourceFinder& ResourceFinder::operator= (const ResourceFinder& alt)
+{
     HELPER(implementation) = HELPER(alt.implementation);
     owned = true;
     nullConfig = alt.nullConfig;
@@ -1052,7 +1057,8 @@ const ResourceFinder& ResourceFinder::operator= (const ResourceFinder& alt) {
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
 bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
-                               bool skipFirstArgument) {
+                               bool skipFirstArgument)
+{
     isConfiguredFlag = true;
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
@@ -1062,13 +1068,15 @@ YARP_WARNING_POP
 }
 #endif // YARP_NO_DEPRECATED
 
-bool ResourceFinder::configure(int argc, char *argv[], bool skipFirstArgument) {
+bool ResourceFinder::configure(int argc, char *argv[], bool skipFirstArgument)
+{
     isConfiguredFlag = true;
     return HELPER(implementation).configure(config,argc,argv,skipFirstArgument);
 }
 
 
-bool ResourceFinder::addContext(const char *appName) {
+bool ResourceFinder::addContext(const char *appName)
+{
     if (appName[0]=='\0') return true;
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| adding context [%s]\n", appName);
@@ -1076,23 +1084,28 @@ bool ResourceFinder::addContext(const char *appName) {
     return HELPER(implementation).addAppName(appName);
 }
 
-bool ResourceFinder::clearContext() {
+bool ResourceFinder::clearContext()
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| clearing context\n");
     }
     return HELPER(implementation).clearAppNames();
 }
 
-bool ResourceFinder::setDefault(const char *key, const yarp::os::ConstString& val) {
+bool ResourceFinder::setDefault(const char *key, const yarp::os::ConstString& val)
+{
     Value val2;
     val2.fromString(val.c_str());
     return HELPER(implementation).setDefault(config,key,val2);
 }
-bool ResourceFinder::setDefault(const char *key, const yarp::os::Value& val) {
+
+bool ResourceFinder::setDefault(const char *key, const yarp::os::Value& val)
+{
     return HELPER(implementation).setDefault(config,key,val);
 }
 
-yarp::os::ConstString ResourceFinder::findFile(const ConstString& name) {
+yarp::os::ConstString ResourceFinder::findFile(const ConstString& name)
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| finding file [%s]\n", name.c_str());
     }
@@ -1100,14 +1113,16 @@ yarp::os::ConstString ResourceFinder::findFile(const ConstString& name) {
 }
 
 yarp::os::ConstString ResourceFinder::findFile(const ConstString& name,
-                                               const ResourceFinderOptions& options) {
+                                               const ResourceFinderOptions& options)
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| finding file [%s]\n", name.c_str());
     }
     return HELPER(implementation).findFile(config,name,&options);
 }
 
-yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name) {
+yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name)
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| finding file %s\n", name.c_str());
     }
@@ -1115,7 +1130,8 @@ yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name) {
 }
 
 yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name,
-                                               const ResourceFinderOptions& options) {
+                                                     const ResourceFinderOptions& options)
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| finding file %s\n", name.c_str());
     }
@@ -1123,7 +1139,8 @@ yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name,
 }
 
 
-yarp::os::ConstString ResourceFinder::findPath(const ConstString& name) {
+yarp::os::ConstString ResourceFinder::findPath(const ConstString& name)
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| finding path [%s]\n", name.c_str());
     }
@@ -1131,14 +1148,16 @@ yarp::os::ConstString ResourceFinder::findPath(const ConstString& name) {
 }
 
 yarp::os::ConstString ResourceFinder::findPath(const ConstString& name,
-                                               const ResourceFinderOptions& options) {
+                                               const ResourceFinderOptions& options)
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| finding path [%s]\n", name.c_str());
     }
     return HELPER(implementation).findPath(config,name,&options);
 }
 
-yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name) {
+yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name)
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| finding paths [%s]\n", name.c_str());
     }
@@ -1146,14 +1165,16 @@ yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name) {
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name,
-                                           const ResourceFinderOptions& options) {
+                                           const ResourceFinderOptions& options)
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| finding paths [%s]\n", name.c_str());
     }
     return HELPER(implementation).findPaths(config,name,&options);
 }
 
-yarp::os::ConstString ResourceFinder::findPath() {
+yarp::os::ConstString ResourceFinder::findPath()
+{
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| finding path\n");
     }
@@ -1161,76 +1182,90 @@ yarp::os::ConstString ResourceFinder::findPath() {
 }
 
 
-bool ResourceFinder::setVerbose(bool verbose) {
+bool ResourceFinder::setVerbose(bool verbose)
+{
     return HELPER(implementation).setVerbose(verbose);
 }
 
-bool ResourceFinder::setQuiet(bool quiet) {
+bool ResourceFinder::setQuiet(bool quiet)
+{
     return HELPER(implementation).setQuiet(quiet);
 }
 
 
 
-bool ResourceFinder::check(const ConstString& key) const {
+bool ResourceFinder::check(const ConstString& key) const
+{
     return config.check(key);
 }
 
 
-Value& ResourceFinder::find(const ConstString& key) const {
+Value& ResourceFinder::find(const ConstString& key) const
+{
     return config.find(key);
 }
 
 
-Bottle& ResourceFinder::findGroup(const ConstString& key) const {
+Bottle& ResourceFinder::findGroup(const ConstString& key) const
+{
     return config.findGroup(key);
 }
 
 
-bool ResourceFinder::isNull() const {
+bool ResourceFinder::isNull() const
+{
     return nullConfig||config.isNull();
 }
 
 
-ConstString ResourceFinder::toString() const {
+ConstString ResourceFinder::toString() const
+{
     return config.toString();
 }
 
-ConstString ResourceFinder::getContext() {
+ConstString ResourceFinder::getContext()
+{
     return HELPER(implementation).getContext();
 }
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.60
-ConstString ResourceFinder::getContextPath() {
+ConstString ResourceFinder::getContextPath()
+{
     return HELPER(implementation).context2path(config,
                                                HELPER(implementation).getContext());
 }
 #endif // YARP_NO_DEPRECATED
 
-ConstString ResourceFinder::getHomeContextPath() {
+ConstString ResourceFinder::getHomeContextPath()
+{
     return HELPER(implementation).getHomeContextPath(config,
                                                HELPER(implementation).getContext());
 }
 
-ConstString ResourceFinder::getHomeRobotPath() {
+ConstString ResourceFinder::getHomeRobotPath()
+{
     return HELPER(implementation).getHomeRobotPath();
 }
 
-Bottle ResourceFinder::getContexts() {
+Bottle ResourceFinder::getContexts()
+{
     return HELPER(implementation).getContexts();
 }
 
 
-ResourceFinder ResourceFinder::findNestedResourceFinder(const char *key) {
+ResourceFinder ResourceFinder::findNestedResourceFinder(const char *key)
+{
     return ResourceFinder(findGroup(key),implementation);
 }
 
 
-ResourceFinder& ResourceFinder::getResourceFinderSingleton() {
+ResourceFinder& ResourceFinder::getResourceFinderSingleton()
+{
     return NameClient::getNameClient().getResourceFinder();
 }
 
-
-ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate) {
+ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
+{
     ConstString slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     ConstString yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
@@ -1266,7 +1301,8 @@ ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate) {
 }
 
 
-ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate) {
+ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
+{
     ConstString slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     ConstString yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME",
@@ -1301,16 +1337,16 @@ ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate) {
     return "";
 }
 
-
 ConstString ResourceFinder::createIfAbsent(bool mayCreate,
-                                           const ConstString& path) {
+                                           const ConstString& path)
+{
     if (!mayCreate) return path;
     NameConfig::createPath(path,0);
     return path;
 }
 
-
-Bottle ResourceFinder::getDataDirs() {
+Bottle ResourceFinder::getDataDirs()
+{
     ConstString slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_DATA_DIRS",
@@ -1339,7 +1375,8 @@ Bottle ResourceFinder::getDataDirs() {
 }
 
 
-Bottle ResourceFinder::getConfigDirs() {
+Bottle ResourceFinder::getConfigDirs()
+{
     ConstString slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_CONFIG_DIRS",
@@ -1373,7 +1410,8 @@ Bottle ResourceFinder::getConfigDirs() {
 
 bool ResourceFinder::readConfig(Property& config,
                                 const ConstString& key,
-                                const ResourceFinderOptions& options) {
+                                const ResourceFinderOptions& options)
+{
     Bottle bot = HELPER(implementation).findPaths(config,key,&options,false);
 
     for (int i=bot.size()-1; i>=0; i--) {

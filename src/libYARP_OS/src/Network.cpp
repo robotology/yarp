@@ -78,30 +78,38 @@ public:
 };
 static YarpAutoInit yarp_auto_init; ///< destructor is called on shutdown.
 
-static MultiNameSpace& getNameSpace() {
+static MultiNameSpace& getNameSpace()
+{
     if (__multi_name_space == YARP_NULLPTR) {
         __multi_name_space = new MultiNameSpace;
-        yAssert(__multi_name_space!=YARP_NULLPTR);
+        yAssert(__multi_name_space != YARP_NULLPTR);
     }
     return *__multi_name_space;
 }
 
-static void removeNameSpace() {
-    if (__multi_name_space!=YARP_NULLPTR) {
+static void removeNameSpace()
+{
+    if (__multi_name_space != YARP_NULLPTR) {
         delete __multi_name_space;
         __multi_name_space = YARP_NULLPTR;
     }
 }
 
-static bool needsLookup(const Contact& contact) {
-    if (contact.getHost()!="") return false;
-    if (contact.getCarrier()=="topic") return false;
+static bool needsLookup(const Contact& contact)
+{
+    if (contact.getHost() != "") {
+        return false;
+    }
+    if (contact.getCarrier() == "topic") {
+        return false;
+    }
     return true;
 }
 
-static int noteDud(const Contact& src) {
+static int noteDud(const Contact& src)
+{
     NameStore *store = getNameSpace().getQueryBypass();
-    if (store!=YARP_NULLPTR) {
+    if (store != YARP_NULLPTR) {
         return store->announce(src.getName().c_str(),0);
     }
     Bottle cmd, reply;
@@ -112,14 +120,15 @@ static int noteDud(const Contact& src) {
     bool ok = NetworkBase::writeToNameServer(cmd,
                                              reply,
                                              style);
-    return ok?0:1;
+    return ok ? 0 : 1;
  }
 
 static int enactConnection(const Contact& src,
                            const Contact& dest,
                            const ContactStyle& style,
                            int mode,
-                           bool reversed) {
+                           bool reversed)
+{
     ContactStyle rpc;
     rpc.admin = true;
     rpc.quiet = style.quiet;
