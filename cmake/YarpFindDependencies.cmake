@@ -360,8 +360,15 @@ if(YARP_COMPILE_BINDINGS)
   checkandset_dependency(SWIG)
 endif()
 
+# First part of workaround for OpenCV 2.4 bug https://github.com/robotology/yarp/issues/1024#issuecomment-267074067
+# Can be removed once we only support OpenCV 3
+get_property(OpenCV24_WORKAROUND_ORIGINAL_INCLUDE_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+# End first part of workaround
 find_package(OpenCV QUIET)
 checkandset_dependency(OpenCV)
+# Second part of the workaround
+set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES ${OpenCV24_WORKAROUND_ORIGINAL_INCLUDE_DIRS})
+# End second part of workaround
 
 find_package(Lua QUIET)
 checkandset_dependency(Lua)
