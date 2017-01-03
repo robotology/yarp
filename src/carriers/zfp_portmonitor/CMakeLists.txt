@@ -8,7 +8,6 @@ yarp_prepare_plugin(zfp TYPE ZfpMonitorObject
                         DEPENDS "CREATE_OPTIONAL_CARRIERS;ENABLE_yarpcar_portmonitor")
 
 if(NOT SKIP_zfp)
-  find_package(ZFP REQUIRED)
   get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_OS_INCLUDE_DIRS} ${YARP_sig_INCLUDE_DIRS})
