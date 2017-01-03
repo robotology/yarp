@@ -1,19 +1,25 @@
 /*
  * Copyright (C) 2010 RobotCub Consortium
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 /**
- * @page yarp_logos logos
 
- \image html yarp-small.jpg ""
- \image latex yarp-small.eps "Welcome to YARP!"
+@page yarp_logos YARP Logos
 
-\image html yarp-small.jpg ""
-\image html yarp-yal01.png ""
-\image html yarp-yal01-100.png ""
-\image html yarp-yal02-100.png ""
+@image html yarp-logo.png "yarp-logo.png"
+@image html yarp-logo-name.png "yarp-logo-name.png"
+@image html yarp-robot-16.png "yarp-robot-16.png"
+@image html yarp-robot-22.png "yarp-robot-22.png"
+@image html yarp-robot-24.png "yarp-robot-24.png"
+@image html yarp-robot-32.png "yarp-robot-32.png"
+@image html yarp-robot-48.png "yarp-robot-48.png"
+@image html yarp-robot-64.png "yarp-robot-64.png"
+@image html yarp-robot-128.png "yarp-robot-128.png"
+@image html yarp-robot-256.png "yarp-robot-256.png"
+@image html yarp-square-64.png yarp-square-64.png""
+@image html yarp-square-128.png "yarp-square-128.png"
+@image html yarp-square-256.png "yarp-square-256.png"
+@image html yarp-square-512.png "yarp-square-512.png"
 
-*
 */
