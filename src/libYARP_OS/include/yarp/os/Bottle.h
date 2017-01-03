@@ -376,7 +376,7 @@ public:
      */
     static ConstString describeBottleCode(int code);
 
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // since YARP 2.3.65
     // worked "accidentally", user code relies on this
     /**
      * @deprecated since YARP 2.3.65
