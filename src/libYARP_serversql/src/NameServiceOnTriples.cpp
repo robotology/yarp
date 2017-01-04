@@ -605,7 +605,7 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
     NameTripleState act(cmd,reply,event,remote,mem);
 
     if (cmd.check("format")) {
-        if (cmd.find("format")=="json") {
+        if (cmd.find("format").asString()=="json") {
             act.bottleMode = true;
         }
     }

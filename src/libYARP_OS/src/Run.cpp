@@ -1227,22 +1227,22 @@ int yarp::os::Run::client(yarp::os::Property& config)
     {
         ///////////////
         // syntax check
-        if (config.find("stdio")=="")
+        if (config.find("stdio").asString()=="")
         {
             Help("SYNTAX ERROR: missing remote stdio server\n");
             return YARPRUN_ERROR;
         }
-        if (config.find("cmd")=="")
+        if (config.find("cmd").asString()=="")
         {
             Help("SYNTAX ERROR: missing command\n");
             return YARPRUN_ERROR;
         }
-        if (!config.check("as") || config.find("as")=="")
+        if (!config.check("as") || config.find("as").asString()=="")
         {
             Help("SYNTAX ERROR: missing tag\n");
             return YARPRUN_ERROR;
         }
-        if (!config.check("on") || config.find("on")=="")
+        if (!config.check("on") || config.find("on").asString()=="")
         {
             Help("SYNTAX ERROR: missing remote server\n");
             return YARPRUN_ERROR;
