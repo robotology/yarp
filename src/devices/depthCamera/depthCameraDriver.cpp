@@ -250,6 +250,7 @@ bool depthCameraDriver::checkParam(const Bottle& input, RGBDParam& param, bool& 
             {
                 param.val[i] = b->get(i); // maybe i=1? check...
             }
+            found = true;
             return true;
         }
         else  // got a single value from file
