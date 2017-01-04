@@ -217,9 +217,9 @@ bool AbstractCarrier::defaultSendIndex(ConnectionState& proto, SizedWriter& writ
 {
     writeYarpInt(10,proto);
     int len = (int)writer.length();
-    char lens[] = { (char)len, 1,
-                    -1, -1, -1, -1,
-                    -1, -1, -1, -1 };
+    char lens[] = { (char)len, (char)1,
+                    (char)-1, (char)-1, (char)-1, (char)-1,
+                    (char)-1, (char)-1, (char)-1, (char)-1 };
     Bytes b(lens,10);
     OutputStream& os = proto.os();
     os.write(b);
