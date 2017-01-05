@@ -1041,7 +1041,6 @@ ResourceFinder::~ResourceFinder()
         }
         implementation = YARP_NULLPTR;
     }
-    NetworkBase::finiMinimum();
 }
 
 
