@@ -8,7 +8,8 @@
 /**
 \mainpage Welcome to YARP
 
-\image html yarp-logo-small.png height=128px
+<img src="yarp-logo-name.png" id="yarp-logo">
+\image latex yarp-logo-name.png height=128px
 
 YARP stands for Yet Another Robot Platform.  What is it?
 If data is the bloodstream of your robot, then YARP is
