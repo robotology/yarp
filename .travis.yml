@@ -137,20 +137,13 @@ matrix:
 
   allow_failures:
 
-    # Broken tests are supposed to fail
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
-
     # Valgrind tests are at the moment constantly failing.
     # Will be re-enabled as soon as possible
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_VALGRIND=true
+    - env: TRAVIS_WITH_VALGRIND=true
+    - env: TRAVIS_WITH_ACE=false TRAVIS_WITH_VALGRIND=true
 
-    - os: linux
-      compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_VALGRIND=true
+    # Broken tests are supposed to fail
+    - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
 
 branches:
