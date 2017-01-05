@@ -1,6 +1,7 @@
 #projectname
 {
-    font: 300% Courier, monospace;
+    font-size: 300%;
+    font-family: "Courier", "Courier New", "Monaco", monospace;
     font-weight: bold;
     font-stretch: ultra-expanded;
     font-style: oblique;
@@ -9,7 +10,8 @@
 
 #projectbrief
 {
-    font: 140% Courier, monospace;
+    font-size: 140%;
+    font-family: "Courier", "Courier New", "Monaco", monospace;
     font-weight: bold;
     font-variant: small-caps;
     color: #87b5cc;
@@ -17,6 +19,16 @@
 
 #projectnumber
 {
-    font: 35% Courier, monospace;
+    font-size: 25%;
+    font-family: "Courier", "Courier New", "Monaco", monospace;
     color: #19c2d8;
+}
+
+#titlearea {
+    background-color: #f6fbfd;
+}
+
+#yarp-logo {
+    max-height: 128px;
+    max-width: 100%;
 }
