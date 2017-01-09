@@ -478,6 +478,14 @@ if(CREATE_LUA)
                    LANGUAGE lua
                    SOURCES yarp.i)
   swig_link_libraries(${target_name} ${LUA_LIBRARY})
+
+  if(NOT MSVC)
+    check_cxx_compiler_flag("-Wno-maybe-uninitialized" CXX_HAS_WNO_MAYBE_UNINITIALIZED)
+    if(CXX_HAS_WNO_MAYBE_UNINITIALIZED)
+      target_compile_options(${target_name} PRIVATE "-Wno-maybe-uninitialized")
+    endif()
+  endif()
+
   set_target_properties(${target_name} PROPERTIES PREFIX "")
   set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
   if(YARP_COLLISION_AVOIDANCE)
