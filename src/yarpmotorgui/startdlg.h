@@ -26,9 +26,8 @@ public:
     explicit StartDlg(QWidget *parent = 0);
     ~StartDlg();
 
-    void init(QString robotName, QStringList partsName);
+    void init(QStringList partsName);
     std::vector<bool> getEnabledParts();
-    QString getRobotName();
 
 private:
     Ui::StartDlg *ui;

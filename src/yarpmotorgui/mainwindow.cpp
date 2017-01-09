@@ -24,6 +24,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QFileDialog>
+#include <map>
 
 #define TREEMODE_OK     1
 #define TREEMODE_WARN   2
@@ -388,42 +389,88 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 
 
-bool MainWindow::init(QString robotName, QStringList enabledParts,
+bool MainWindow::init(QStringList enabledParts,
                       ResourceFinder& finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
                       bool enable_calib_all)
 {
-
-    int count = enabledParts.count();
-
     tabPanel = new QTabWidget(ui->mainContainer);
 
     if(!enable_calib_all){
         calibAll->setEnabled(false);
     }
 
-
     int errorCount = 0;
     QScrollArea *scroll = NULL;
     PartItem *part = NULL;
-    for(int i=0;i<count;i++){
+
+    struct robot_type
+    {
+        QTreeWidgetItem* tree_pointer;
+        std::string      robot_name_without_slash;
+    };
+
+    struct part_type
+    {
+        std::string      robot_name;
+        std::string      complete_name;
+        std::string      part_name_without_slash;
+        int              partindex;
+    };
+
+    std::map<std::string, robot_type> robots;
+    std::map<std::string, part_type> parts;
+
+    for (int i = 0; i < enabledParts.size(); i++)
+    {
+        std::string ss = enabledParts.at(i).toStdString();
+        size_t b1 = ss.find('/');
+        size_t b2 = ss.find('/', b1 + 1);
+        std::string cur_robot_name = ss.substr(b1, b2 - b1);
+        bool found = false;
+        auto it = robots.find(cur_robot_name);
+        if (it == robots.end())
+        {
+            robot_type r;
+            r.robot_name_without_slash = cur_robot_name;
+            if (r.robot_name_without_slash[0]='/') r.robot_name_without_slash.erase(0, 1);
+            r.tree_pointer = 0;
+            robots[cur_robot_name]=r;
+        }
+        part_type p;
+        p.partindex = i;
+        p.complete_name = enabledParts.at(i).toStdString();
+        p.part_name_without_slash = ss.substr(b2);
+        if (p.part_name_without_slash[0] = '/') p.part_name_without_slash.erase(0, 1);
+        p.robot_name = cur_robot_name;
+        parts[ss.substr(b2)] = p;
+    }
+
+    for (auto i_robot = robots.begin(); i_robot != robots.end(); i_robot++)
+    {
+        QTreeWidgetItem *robot_top = new QTreeWidgetItem();
+        robot_top->setText(0, i_robot->first.c_str());
+        ui->treeWidgetMode->addTopLevelItem(robot_top);
+        robot_top->setExpanded(true);
+        i_robot->second.tree_pointer = robot_top;
+    }
+
+    for (auto i_parts = parts.begin(); i_parts != parts.end(); i_parts++)
+    {
         //JointItem *item = new JointItem();
         //layout->addWidget(item);
         scroll = new QScrollArea(tabPanel);
         scroll->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scroll->setWidgetResizable(true);
-        part = new PartItem(robotName,
-                            i,
-                            enabledParts.at(i),
-                            finder,
-                            debug_param_enabled,
-                            speedview_param_enabled,
-                            enable_calib_all,
-                            scroll);
+        std::string part_name = i_parts->first;
+        std::string robot_name = i_parts->second.robot_name;
+        int         part_id = i_parts->second.partindex;
+        part = new PartItem(robot_name.c_str(), part_id, part_name.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
 
-        if(!part->getInterfaceError()){
+        if(!part->getInterfaceError())
+        {
             connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
             connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
             connect(this,SIGNAL(sig_viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
@@ -438,36 +485,43 @@ bool MainWindow::init(QString robotName, QStringList enabledParts,
             connect(this, SIGNAL(sig_enableControlOpenloop(bool)), part, SLOT(onEnableControlOpenloop(bool)));
 
             scroll->setWidget(part);
-            tabPanel->addTab(scroll,enabledParts.at(i));
-            if(i==0){
-
-                QString auxName = enabledParts.at(i);
-                auxName.replace(0,1,enabledParts.at(i).at(0).toUpper());
+            tabPanel->addTab(scroll, part_name.c_str());
+            if (part_id == 0)
+            {
+                QString auxName = part_name.c_str();
+                auxName.replace(0, 1, QString(part_name.c_str()).at(0).toUpper());
                 currentPartMenu->setTitle(QString("%1 Commands ").arg(auxName));
-
                 this->partName->setText(QString("%1 Commands ").arg(auxName));
             }
 
             QTreeWidgetItem *mode = new QTreeWidgetItem();
-            mode->setText(0,enabledParts.at(i));
-            ui->treeWidgetMode->addTopLevelItem(mode);
+            mode->setText(0, part_name.c_str());
+            QTreeWidgetItem *tp = robots[i_parts->second.robot_name].tree_pointer;
+            tp->addChild(mode);
             mode->setExpanded(false);
             part->setTreeWidgetModeNode(mode);
-
-        }else{
-            if(part){
+        }
+        else
+        {
+            if(part)
+            {
                 delete part;
+                part = 0;
             }
-            if(scroll){
+            if(scroll)
+            {
                 delete scroll;
+                scroll = 0;
             }
             errorCount++;
         }
     }
 
-    if(errorCount == count){
+    if(errorCount == parts.size())
+    {
         return false;
     }
+
     QHBoxLayout *lay = new QHBoxLayout();
     lay->setMargin(0);
     lay->setSpacing(0);

@@ -60,11 +60,14 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
-    QString robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
+    QString robotPartPort;
+    if (robotName.at(0) == '/') robotName.remove(0, 1);
+    if (partName.at(0) == '/')  partName.remove(0, 1);
+    robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
 
     //checking existence of the port
     int ind = 0;
-    QString portLocalName = QString("/%1/yarpmotorgui%2/%3").arg(robotName).arg(ind).arg(partName);
+    QString portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(robotPartPort);
 
 
     QString nameToCheck = portLocalName;
@@ -82,7 +85,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     while(adr.isValid()){
         ind++;
 
-        portLocalName = QString("/%1/yarpmotorgui%2/%3").arg(robotName).arg(ind).arg(partName);;
+        portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(robotPartPort);
 
         nameToCheck = portLocalName;
         nameToCheck += "/rpc:o";

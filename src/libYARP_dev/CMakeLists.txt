@@ -87,7 +87,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/TestFrameGrabber.h
                   include/yarp/dev/TestMotor.h
                   include/yarp/dev/Wrapper.h
-                  include/yarp/dev/ControlBoardInterfacesImpl.inl)
+                  include/yarp/dev/ControlBoardInterfacesImpl.inl
+                  include/yarp/dev/IRobotDescription.h)
 
 set(YARP_dev_IMPL_HDRS )
 
@@ -155,7 +156,9 @@ set(YARP_devices_SRCS   src/devices/AnalogWrapper/AnalogWrapper.cpp
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
-                        src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp)
+                        src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
+                        src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
+                        src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.cpp
                                 src/devices/FrameTransformServer/FrameTransformServer.cpp
@@ -173,7 +176,9 @@ set(YARP_devices_HDRS   src/devices/AnalogWrapper/AnalogWrapper.h
                         src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                         src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
-                        src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h)
+                        src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
+                        src/devices/RobotDescriptionClient/RobotDescriptionClient.h
+                        src/devices/RobotDescriptionServer/RobotDescriptionServer.h)
 if (CREATE_LIB_MATH)
   list(APPEND YARP_devices_SRCS src/devices/FrameTransformClient/FrameTransformClient.h
                                 src/devices/FrameTransformServer/FrameTransformServer.h

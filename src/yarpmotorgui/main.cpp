@@ -15,6 +15,7 @@
 #include "sequencewindow.h"
 
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IRobotDescription.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Os.h>
@@ -23,6 +24,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -58,14 +60,12 @@ int main(int argc, char *argv[])
         QMessageBox::critical(0,"Error","Error initializing yarp network (is yarpserver running?)");
         return 1;
     }
-
-    bool           deleteParts, ret;
+    
+    bool           ret;
     int            appRet;
     QApplication   a(argc, argv);
     ResourceFinder finder;
-    string         robotName;
-    QString        newRobotName;
-    Bottle*        pParts;
+    Bottle         pParts;
     QStringList    enabledParts;
     vector<bool>   enabled;
     MainWindow     w;
@@ -79,6 +79,16 @@ int main(int argc, char *argv[])
     qRegisterMetaType<Pid>("Pid");
     qRegisterMetaType<SequenceItem>("SequenceItem");
     qRegisterMetaType<QList<SequenceItem> >("QList<SequenceItem>");
+
+    if (finder.check("help"))
+    {
+        yInfo("yarpmotorgui options:");
+        yInfo("--robot <name>: name of the robot");
+        yInfo("--parts ""( <name1> <name2> )"": parts of the robot to add to the list.");
+        yInfo("--skip_parts ""( <name1> <name2> )"": parts of the robot to skip.");
+        yInfo("--calib to enable calibration buttons (be careful!)");
+        return 0;
+    }
 
     if (finder.check("calib"))
     {
@@ -103,47 +113,88 @@ int main(int argc, char *argv[])
         speedview_param_enabled = true;
     }
 
-    deleteParts = false;
-    robotName   = finder.find("name").asString();
-    pParts      = finder.find("parts").asList();
-
-    yDebug() << "Robot name: %s\n" << robotName;
-
-    if (pParts == NULL)
+    //ask the robot part to the description server
+    int count = 0;
+    std::string descLocalName = "/yarpmotorgui" + std::to_string(count) + "/descriptionClient";
+    Contact adr = Network::queryName(descLocalName);
+    while (adr.isValid())
     {
-        yInfo() << "Setting default parts.\n";
-
-        pParts      = new Bottle("head torso left_arm right_arm left_leg right_leg");
-        deleteParts = true;
+        count++;
+        descLocalName = "/yarpmotorgui" + std::to_string(count) + "/descriptionClient";
+        adr = Network::queryName(descLocalName);
     }
 
-
-
-    if(pParts->size() < 1)
+    PolyDriver* desc_driver = 0;
+    desc_driver = new PolyDriver;
+    std::vector<DeviceDescription> cbw2_list;
+    Property desc_driver_options;
+    desc_driver_options.put("device", "robotDescriptionClient");
+    desc_driver_options.put("local", descLocalName);
+    desc_driver_options.put("remote", "/robotDescription");
+    desc_driver->open(desc_driver_options);
+    if (desc_driver && desc_driver->isValid())
     {
-        LOG_ERROR("Invalid number of parts, check config file \n");
-        return 1;
+        IRobotDescription* idesc = 0;
+        desc_driver->view(idesc);
+        if (idesc)
+        {
+            idesc->getAllDevicesByType("controlboardwrapper2", cbw2_list);
+            std::vector<DeviceDescription> wrappers_list;
+            wrappers_list.reserve(cbw2_list.size());
+            wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());
+            for (size_t i = 0; i < wrappers_list.size(); i++)
+            {
+                yDebug() << wrappers_list[i].device_name;
+                pParts.addString(wrappers_list[i].device_name);
+            }
+        }
     }
 
+    std::string robotName = finder.find("robot").asString();
+    Bottle* b_part_skip = finder.find("skip_parts").asList();
+    Bottle* b_part = finder.find("parts").asList();
+    if (pParts.size() == 0)
+    {
+        if (robotName != "" && b_part != 0)
+        {
+            //check parts from config file
+            for (int i = 0; i < b_part->size(); i++)
+            {
+                string ss = b_part->get(i).asString();
+                if (ss.at(0) != '/')
+                {
+                    ss = "/" + robotName + "/" + ss;
+                }
+                pParts.addString(ss);
+            }
+        }
+        else
+        {
+            //use default names
+            pParts = Bottle("/icub/head /icub/torso /icub/left_arm /icub/right_arm /icub/left_leg /icub/right_leg");
+        }
+    }
+    
     //Check 1 in the panel
-    for(int n = 0; n < pParts->size(); n++)
+    for(int n = 0; n < pParts.size(); n++)
     {
-        QString part = QString("%1").arg(pParts->get(n).asString().c_str());
-        yDebug("Appending %s",part.toUtf8().constData());
+        QString part = QString("%1").arg(pParts.get(n).asString().c_str());
+        if (b_part_skip)
+        {
+            if (b_part_skip->check(part.toStdString().c_str())) continue;
+        }
+        yDebug("Appending %s", part.toUtf8().constData());
         partsName.append(part);
     }
-
-    newRobotName = robotName.c_str();
 
     if(!finder.check("skip"))
     {
         StartDlg dlg;
-        dlg.init(newRobotName, partsName);
+        dlg.init(partsName);
 
         if(dlg.exec() == QDialog::Accepted)
         {
             enabled      = dlg.getEnabledParts();
-            newRobotName = dlg.getRobotName();
         }
         else
         {
@@ -156,6 +207,7 @@ int main(int argc, char *argv[])
     {
         if(enabled.at(i))
         {
+            std::string debug_s2 = partsName.at(i).toStdString();
             enabledParts.append(partsName.at(i));
         }
     }
@@ -165,17 +217,12 @@ int main(int argc, char *argv[])
 
     mainW  = &w;
     appRet = 0;
-    ret    = w.init(newRobotName, enabledParts, finder, debug_param_enabled, speedview_param_enabled, enable_calib_all);
+    ret = w.init(enabledParts, finder, debug_param_enabled, speedview_param_enabled, enable_calib_all);
 
     if(ret)
     {
         w.show();
         appRet = a.exec();
-    }
-
-    if(deleteParts)
-    {
-        delete pParts;
     }
 
     return (appRet != 0 ? 1 : 0);

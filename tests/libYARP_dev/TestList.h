@@ -21,6 +21,7 @@ namespace yarp {
 // need to made one function for each new test, and add to collectTests()
 // method
 extern yarp::os::impl::UnitTest& getPolyDriverTest();
+extern yarp::os::impl::UnitTest& getRobotDescriptionTest();
 
 #ifdef YARP_CONTROLBOARDREMAPPER_TESTS
 extern yarp::os::impl::UnitTest& getControlBoardRemapperTest();
@@ -39,6 +40,7 @@ public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();
         root.add(getPolyDriverTest());
+        root.add(getRobotDescriptionTest());
 #ifdef YARP_CONTROLBOARDREMAPPER_TESTS
         root.add(getControlBoardRemapperTest());
 #endif
