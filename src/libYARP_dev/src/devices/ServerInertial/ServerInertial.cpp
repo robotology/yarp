@@ -4,6 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include "ServerInertial.h"
 #include <stdio.h>
 
 #include <yarp/os/BufferedPort.h>
@@ -17,7 +18,6 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <ServerInertial.h>
 
 
 using namespace yarp::dev;

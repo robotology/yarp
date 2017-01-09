@@ -4,8 +4,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "ControlBoardWrapper.h"
 #include "RPCMessagesParser.h"
+#include "ControlBoardWrapper.h"
 
 #include <iostream>
 #include <yarp/os/Log.h>

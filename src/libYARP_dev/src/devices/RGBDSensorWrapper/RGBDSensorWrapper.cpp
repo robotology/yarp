@@ -5,12 +5,12 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include "RGBDSensorWrapper.h"
 #include <sstream>
 #include <stdio.h>
 #include <string.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include "RGBDSensorWrapper.h"
 #include <yarpRosHelper.h>
 #include "rosPixelCode.h"
 
