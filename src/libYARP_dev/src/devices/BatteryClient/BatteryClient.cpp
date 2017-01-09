@@ -4,7 +4,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <BatteryClient.h>
+#include "BatteryClient.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 

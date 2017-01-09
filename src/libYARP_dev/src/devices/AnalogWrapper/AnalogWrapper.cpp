@@ -4,9 +4,9 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include "AnalogWrapper.h"
 #include <sstream>
 #include <iostream>
-#include "AnalogWrapper.h"
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
@@ -205,8 +205,8 @@ bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts
 
 AnalogWrapper::AnalogWrapper() :
         RateThread(DEFAULT_THREAD_PERIOD),
-        subDeviceOwned(YARP_NULLPTR),
-        ownDevices(false)
+        ownDevices(false),
+        subDeviceOwned(YARP_NULLPTR)
 {
     _rate = DEFAULT_THREAD_PERIOD;
     analogSensor_p = YARP_NULLPTR;
