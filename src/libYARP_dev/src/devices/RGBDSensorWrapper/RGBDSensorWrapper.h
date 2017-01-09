@@ -98,6 +98,7 @@ public:
  * | subdevice      |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | ROS            |      -                  | group   |  -             |   -           | No                             | Group containing parameter for ROS topic initialization                                             | if missing, it is assumed to not use ROS topics |
  * |   -            |  useROS                 | string  | true/false/only|   -           |  if ROS group is present       | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
+ * |   -            |  forceInfoSync          | string  | bool           |   -           |  no                            | set 'true' to force the timestamp on the camera_info message to match the image one                 |  - |
  * |   -            |  ROS_colorTopicName     | string  |  -             |   -           |  if ROS group is present       | set the name for ROS image topic                                                                    | must start with a leading '/' |
  * |   -            |  ROS_depthTopicName     | string  |  -             |   -           |  if ROS group is present       | set the name for ROS depth topic                                                                    | must start with a leading '/' |
  * |   -            |  ROS_colorInfoTopicName | string  |  -             |   -           |  if ROS group is present       | set the name for ROS imageInfo topic                                                                | must start with a leading '/' |
@@ -180,6 +181,7 @@ private:
     int                            verbose;
     bool                           use_YARP;
     bool                           use_ROS;
+    bool                           forceInfoSync;
     bool                           initialize_YARP(yarp::os::Searchable &config);
     bool                           initialize_ROS(yarp::os::Searchable &config);
     bool                           read(yarp::os::ConnectionReader& connection);

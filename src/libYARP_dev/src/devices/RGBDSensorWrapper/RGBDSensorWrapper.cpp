@@ -165,6 +165,7 @@ RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
     isSubdeviceOwned = false;
     verbose          = 4;
     sensorStatus     = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    forceInfoSync    = false;
 }
 
 RGBDSensorWrapper::~RGBDSensorWrapper()
@@ -278,6 +279,12 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
             }
             *(prm->var) = rosGroup.find(prm->parname).asString().c_str();
         }
+        
+        if (rosGroup.check("forceInfoSync"))
+        {
+            forceInfoSync = rosGroup.find("forceInfoSync").asBool();    
+        }
+        *(prm->var) = rosGroup.find(prm->parname).asString().c_str();
     }
 
     if(use_YARP)
@@ -829,6 +836,8 @@ bool RGBDSensorWrapper::writeData()
 
         if (setCamInfo(camInfoC, rosFrameId, nodeSeq, COLOR_SENSOR))
         {
+            if(forceInfoSync)
+              camInfoC.header.stamp = rColorImage.header.stamp;
             rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
             rosPublisherPort_colorCaminfo.write();
         }
@@ -838,6 +847,8 @@ bool RGBDSensorWrapper::writeData()
         }
         if (setCamInfo(camInfoD, rosFrameId, nodeSeq, DEPTH_SENSOR))
         {
+            if(forceInfoSync)
+                camInfoD.header.stamp = rDepthImage.header.stamp;
             rosPublisherPort_depthCaminfo.setEnvelope(depthStamp);
             rosPublisherPort_depthCaminfo.write();
         }
