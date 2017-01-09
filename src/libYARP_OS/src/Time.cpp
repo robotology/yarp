@@ -157,7 +157,8 @@ static Clock *getClock()
     // if no clock was ever set, fallback to System Clock
     if(pclock == NULL)
     {
-        /* Assuming this should never happen, if we do get here, what shall be done??
+        /* WIP
+         * Assuming this should never happen, if we do get here, what shall be done??
          *
          * 1: create system clock
          *   If we get here, probably there is some sort of race condition while changing the clock,
@@ -165,20 +166,26 @@ static Clock *getClock()
          *   clock really wanted by the user, i.e. this system clock may be destroyed again to
          *   instantiate the good one, leaving space for another possible race condition.
          * 2: use the system clock only for this call
-         *   This may lead to*/
-//         pclock = createsystemClock();
+         */
+        pclock = createsystemClock();
     }
     return pclock;
 }
 
 void Time::delay(double seconds)
 {
+    if(isSystemClock())
+        return SystemClock::delaySystem(seconds);
+
     Clock *clk = getClock();
     clk->delay(seconds);
 }
 
 double Time::now()
 {
+    if(isSystemClock())
+        return SystemClock::nowSystem();
+
     Clock *clk = getClock();
     return clk->now();
 }
