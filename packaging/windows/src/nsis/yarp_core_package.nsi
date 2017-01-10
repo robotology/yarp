@@ -191,15 +191,21 @@ SectionGroup "ACE (Adaptive Communication Environment)" SecAce
 
 SectionGroupEnd
   
-SectionGroup "GSL (GNU Scientific Library) (GPL license)" SecGsl
-  Section "GSL headers" SecGslHeaders
-    SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\gsl_headers_add.nsi
-  SectionEnd
+; Removing GSL
+; SectionGroup "GSL (GNU Scientific Library) (GPL license)" SecGsl
+  ; Section "GSL headers" SecGslHeaders
+    ; SetOutPath "$INSTDIR"
+    ; !include ${NSIS_OUTPUT_PATH}\gsl_headers_add.nsi
+  ; SectionEnd
 
-  Section "GSL libraries" SecGslLibraries
+  ; Section "GSL libraries" SecGslLibraries
+    ; SetOutPath "$INSTDIR"
+    ; !include ${NSIS_OUTPUT_PATH}\gsl_libraries_add.nsi
+  ; SectionEnd
+  SectionGroup "EIGEN library" SecEigen
+  Section "EIGEN libraries" SecEigenLibraries
     SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\gsl_libraries_add.nsi
+    !include ${NSIS_OUTPUT_PATH}\eigen_base_add.nsi
   SectionEnd
 
   Section "YARP headers for math" SecYarpMathHeaders
@@ -217,14 +223,13 @@ SectionGroup "GSL (GNU Scientific Library) (GPL license)" SecGsl
     !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_add.nsi
   SectionEnd
 
-  Section "Set environment variables and registry keys" SecGslEnv
-    !insertmacro AddKey "Software\${VENDOR}\GSL\${GSL_SUB}" "" "$INSTDIR\${GSL_SUB}"
-    !insertmacro AddKey "Software\${VENDOR}\GSL\Common" "LastInstallLocation" $INSTDIR
-    !insertmacro AddKey "Software\${VENDOR}\GSL\Common" "LastInstallVersion" ${GSL_SUB}
-    # !insertmacro AddEnv "PATH" "$INSTDIR\${GSL_SUB}\bin"
-    !insertmacro AddEnv "LIB" "$INSTDIR\${GSL_SUB}\lib"
-    !insertmacro AddEnv "INCLUDE" "$INSTDIR\${GSL_SUB}\include"
-    !insertmacro AddEnv1 GSL_DIR "$INSTDIR\${GSL_SUB}"
+  ; Removing GSL
+  ;Section "Set environment variables and registry keys" SecGslEnv
+  Section "Set environment variables and registry keys" SecEigenEnv
+    !insertmacro AddKey "Software\${VENDOR}\EIGEN\${EIGEN_SUB}" "" "$INSTDIR\${EIGEN_SUB}"
+    !insertmacro AddKey "Software\${VENDOR}\EIGEN\Common" "LastInstallLocation" $INSTDIR
+    !insertmacro AddKey "Software\${VENDOR}\EIGEN\Common" "LastInstallVersion" ${EIGEN_SUB}
+    !insertmacro AddEnv1 EIGEN3_ROOT "$INSTDIR\${EIGEN_SUB}"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   SectionEnd
 
@@ -262,7 +267,8 @@ SectionGroup "GTKMM" SecGtkmm
 
   Section "GTKMM GUIs" SecGtkGuis
 		SetOutPath "$INSTDIR"
-		!include ${NSIS_OUTPUT_PATH}\gtk_guis_add.nsi
+    # Removing GTK GUIs
+		#!include ${NSIS_OUTPUT_PATH}\gtk_guis_add.nsi
 		#CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
   SectionEnd
 SectionGroupEnd
@@ -316,9 +322,13 @@ Section "Visual Studio Runtime (nonfree)" SecVcDlls
 SectionEnd
 
 Section "-last"
-  !insertmacro SectionFlagIsSet ${SecGsl} ${SF_PSELECTED} isSel chkAll
+  ; Removing GSL
+  ;!insertmacro SectionFlagIsSet ${SecGsl} ${SF_PSELECTED} isSel chkAll
+   ;chkAll:
+   ;  !insertmacro SectionFlagIsSet ${SecGsl} ${SF_SELECTED} isSel notSel
+   !insertmacro SectionFlagIsSet ${SecEigen} ${SF_PSELECTED} isSel chkAll
    chkAll:
-     !insertmacro SectionFlagIsSet ${SecGsl} ${SF_SELECTED} isSel notSel
+     !insertmacro SectionFlagIsSet ${SecEigen} ${SF_SELECTED} isSel notSel
    notSel:
      !insertmacro ReplaceInFile "$INSTDIR\${YARP_SUB}\cmake\YARPConfig.cmake" "YARP_math;" ""
 	 !insertmacro ReplaceInFile "$INSTDIR\${YARP_SUB}\cmake\YARPConfig.cmake" "YARP_HAS_MATH_LIB TRUE" "YARP_HAS_MATH_LIB FALSE"
@@ -374,7 +384,9 @@ FunctionEnd
 ;Language strings
 LangString DESC_SecYarp ${LANG_ENGLISH} "YARP libraries and tools. Unselect this if you intend to compile YARP yourself and just want YARP's dependencies."
 LangString DESC_SecAce ${LANG_ENGLISH} "The Adaptive Communications Environment, used by this version of YARP."
-LangString DESC_SecGsl ${LANG_ENGLISH} "The YARP math library.  Based on the GNU Scientific Library.  This is therefore GPL software, not the LGPL like YARP."
+; Removing GSL
+;LangString DESC_SecGsl ${LANG_ENGLISH} "The YARP math library.  Based on the GNU Scientific Library.  This is therefore GPL software, not the LGPL like YARP."
+LangString DESC_SecEigen ${LANG_ENGLISH} "The YARP math library.  Based on the EIGEN Library."
 LangString DESC_SecGtkmm ${LANG_ENGLISH} "User interface library.  Not needed to use the YARP library.  Used by the yarpview program."
 LangString DESC_SecPrograms ${LANG_ENGLISH} "YARP programs, including the standard YARP companion, and the standard YARP name server."
 LangString DESC_SecLibraries ${LANG_ENGLISH} "Libraries for linking against YARP."
@@ -383,9 +395,9 @@ LangString DESC_SecExamples ${LANG_ENGLISH} "A basic example of using YARP.  See
 LangString DESC_SecDLLs ${LANG_ENGLISH} "Libraries needed for YARP programs to run."
 LangString DESC_SecAceLibraries ${LANG_ENGLISH} "ACE library files."
 LangString DESC_SecAceDLLs ${LANG_ENGLISH} "ACE library run-time."
-LangString DESC_SecGslLibraries ${LANG_ENGLISH} "Math library files."
+;LangString DESC_SecGslLibraries ${LANG_ENGLISH} "Math library files."
 LangString DESC_SecYarpMathDLLs ${LANG_ENGLISH} "Math library run-time."
-LangString DESC_SecGslHeaders ${LANG_ENGLISH} "Math library header files."
+;LangString DESC_SecGslHeaders ${LANG_ENGLISH} "Math library header files."
 LangString DESC_SecGtkGuis ${LANG_ENGLISH} "GUIs usign GTK+."
 LangString DESC_SecQtGuis ${LANG_ENGLISH} "GUIs usign Qt."
 LangString DESC_SecYarpEnv ${LANG_ENGLISH} "Add YARP to PATH, LIB, and INCLUDE variables, and set YARP_DIR variable."
@@ -404,14 +416,17 @@ LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAce} $(DESC_SecAce)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAceLibraries} $(DESC_SecAceLibraries)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAceDLLs} $(DESC_SecAceDLLs)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecGsl} $(DESC_SecGsl)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecGslLibraries} $(DESC_SecGslLibraries)
+; Removing GSL
+;!insertmacro MUI_DESCRIPTION_TEXT ${SecGsl} $(DESC_SecGsl)
+;!insertmacro MUI_DESCRIPTION_TEXT ${SecGslLibraries} $(DESC_SecGslLibraries)
+;!insertmacro MUI_DESCRIPTION_TEXT ${SecEigen} $(DESC_SecEigen)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecYarpMathDLLs} $(DESC_SecYarpMathDLLs)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecGslHeaders} $(DESC_SecGslHeaders)
+; Removing GSL
+;!insertmacro MUI_DESCRIPTION_TEXT ${SecGslHeaders} $(DESC_SecGslHeaders)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkGuis} $(DESC_SecGtkGuis)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecQtGuis} $(DESC_SecQtGuis)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecYarpEnv} $(DESC_SecYarpEnv)
-#!insertmacro MUI_DESCRIPTION_TEXT ${Sec} $(DESC_Sec)
+;!insertmacro MUI_DESCRIPTION_TEXT ${Sec} $(DESC_Sec)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
@@ -437,7 +452,9 @@ Section "Uninstall"
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   
   RMDir /r "$INSTDIR\${YARP_SUB}"
-  RMDir /r "$INSTDIR\${GSL_SUB}"
+  # Removing GSL
+  #RMDir /r "$INSTDIR\${GSL_SUB}"
+  RMDir /r "$INSTDIR\${EIGEN_SUB}"
   RMDir /r "$INSTDIR\${ACE_SUB}"
   !ifdef GTKMM_SUB
     RMDir /r "$INSTDIR\${GTKMM_SUB}"
@@ -451,15 +468,19 @@ Section "Uninstall"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\${YARP_SUB}"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP"
   
+  # Removing GSL
   # cleanup GSL registry entries
-  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\Common"
-  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\${GSL_SUB}"
-  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL"
+  #DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\Common"
+  #DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\${GSL_SUB}"
+  #DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\EIGEN\Common"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\EIGEN\${EIGEN_SUB}"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\EIGEN"
   
   # cleanup GTKMM registry entries
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM\Common"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM\${GTKMM_SUB}"
-  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM\${GSL_SUB}" # clean up a mistake in an earlier installer 
+  #DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM\${GSL_SUB}" # clean up a mistake in an earlier installer 
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM"
   
   # cleanup ACE registry entries

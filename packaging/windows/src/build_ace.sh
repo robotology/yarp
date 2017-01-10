@@ -45,6 +45,15 @@ source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 #   OPT_PLATFORM_COMMAND="/p:Platform=Win32"
 # fi
 #fi
+if [ "$OPT_COMPILER" == "v14" ] ; then
+  pname=ACE_vc14.vcxproj
+  if [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+    OPT_PLATFORM_COMMAND="/p:Platform=x64"
+  elif [ "$OPT_VARIANT" == "x86" ] ; then
+    OPT_PLATFORM_COMMAND="/p:Platform=Win32"
+  fi
+  OPT_VSVERSION_COMMAND="/p:VisualStudioVersion=14.0"
+fi
 if [ "$OPT_COMPILER" == "v12" ] ; then
   pname=ACE_vc12.vcxproj
   if [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
@@ -118,7 +127,7 @@ fi
 ACE_FILE_NAME="ACE-${!ACE_VERSION_TAG}"
 ACE_REMOTE_PATH="http://download.dre.vanderbilt.edu/previous_versions/"
 if [ ! -e "${ACE_FILE_NAME}.tar.gz" ]; then
-  wget ${ACE_REMOTE_PATH}${ACE_FILE_NAME} || (
+  wget ${ACE_REMOTE_PATH}${ACE_FILE_NAME}.tar.gz || (
     echo "Cannot fetch ACE from ${ACE_REMOTE_PATH}${ACE_FILE_NAME}.tar.gz"
     exit 1
   )

@@ -138,29 +138,38 @@ done
 # make targets for the various software packages
 
 # Here's the list of all available targets we care about
-full_target_list="cmake ace gsl gtkmm qt yarp nsis yarp_core_package"
+# Removing GSL
+#full_target_list="cmake ace gsl gtkmm qt yarp nsis yarp_core_package"
+full_target_list="cmake ace eigen gtkmm qt yarp nsis yarp_core_package"
 
 # For package $PACKAGE, depend_$PACKAGE contains a list of packages
 # it depends on
 depend_cmake=
 depend_ace=
-depend_gsl="cmake"
+# Removing GSL
+#depend_gsl="cmake"
+depend_eigen=
 depend_gtkmm=
 depend_qt=
-depend_yarp="cmake ace gsl gtkmm qt"
-depend_icub="cmake yarp ace gsl gtkmm"
+# Removing GSL
+#depend_yarp="cmake ace gsl gtkmm qt"
+#depend_icub="cmake yarp ace gsl gtkmm"
+depend_yarp="cmake eigen ace gtkmm qt"
+depend_icub="cmake eigen yarp ace gtkmm"
 depend_nsis=
 depend_yarp_core_package="yarp nsis"
 
 # We mark packages that don't have separate debug/release builds by
 # setting build_out_$PACKAGE to "any"
 build_out_cmake="any"
+build_out_eigen="any"
 build_out_nsis="any"
 build_out_yarp_core_package="any"
 
 # We mark packages that don't need a compiler by setting
 # compilers_out_$PACKAGE to "any"
 compilers_out_cmake="any"
+compilers_out_eigen="any"
 compilers_out_nsis="any"
 
 # This variable simplifies later scripts, saying that a package
