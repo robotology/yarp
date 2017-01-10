@@ -31,115 +31,112 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    m_ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
 
     QLocale::setDefault(QLocale::C);
-    tabPanel = NULL;
-    sequenceActiveCount = 0;
+    m_tabPanel = NULL;
+    m_sequenceActiveCount = 0;
 
     setWindowTitle("Qt Robot Motor GUI V2.0");
     setMinimumWidth(MAX_WIDTH_JOINT + 60);
 
-    sliderOpt = 0;
+    m_sliderOpt = 0;
 
     QString globalLabel("Global Joints Commands ");
-    globalToolBar = new QToolBar("Global Joints Commands",this);
+    m_globalToolBar = new QToolBar("Global Joints Commands", this);
     QLabel *label1 = new QLabel(globalLabel);
 
     QFont f = label1->font();
     f.setBold(true);
     label1->setFont(f);
-    globalToolBar->addWidget(label1)->setCheckable(false);
+    m_globalToolBar->addWidget(label1)->setCheckable(false);
 
 
-    globalToolBar->addSeparator();
-    goAll = globalToolBar->addAction(QIcon(":/play-all.svg"),"Go All");
-    globalToolBar->addSeparator();
-    runAllSeq      = globalToolBar->addAction(QIcon(":/images/runSequence.png"),"Run All Sequences (use joint speeds from Speed tab)");
-    runAllSeqTime  = globalToolBar->addAction(QIcon(":/images/runSequenceTime.png"),"Run All Sequences (ignore Speed tab, produce coordinated movement using Timing)");
-    saveAllSeq     = globalToolBar->addAction(QIcon(":/file-save.svg"),"Save All Sequences");
-    loadAllSeq     = globalToolBar->addAction(QIcon(":/file-open.svg"),"Load All Sequences");
-    cycleAllSeq    = globalToolBar->addAction(QIcon(":/images/cycleAllSequence.png"),"Cycle All Sequences (use joint speeds from Speed tab)");
-    cycleAllSeqTime= globalToolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"),"Cycle All Sequences (ignore Speed tab, produce coordinated movement using Timing)");
-    stopAllSeq     = globalToolBar->addAction(QIcon(":/stop.svg"),"Stop All Sequences");
-    globalToolBar->addSeparator();
-    runAllParts    = globalToolBar->addAction(QIcon(":/play.svg"),"Run All Parts");
-    homeAllParts   = globalToolBar->addAction(QIcon(":/home.svg"),"Home All Parts");
-    addToolBar(globalToolBar);
+    m_globalToolBar->addSeparator();
+    m_goAll = m_globalToolBar->addAction(QIcon(":/play-all.svg"), "Go All");
+    m_globalToolBar->addSeparator();
+    m_runAllSeq = m_globalToolBar->addAction(QIcon(":/images/runSequence.png"), "Run All Sequences (use joint speeds from Speed tab)");
+    m_runAllSeqTime = m_globalToolBar->addAction(QIcon(":/images/runSequenceTime.png"), "Run All Sequences (ignore Speed tab, produce coordinated movement using Timing)");
+    m_saveAllSeq = m_globalToolBar->addAction(QIcon(":/file-save.svg"), "Save All Sequences");
+    m_loadAllSeq = m_globalToolBar->addAction(QIcon(":/file-open.svg"), "Load All Sequences");
+    m_cycleAllSeq = m_globalToolBar->addAction(QIcon(":/images/cycleAllSequence.png"), "Cycle All Sequences (use joint speeds from Speed tab)");
+    m_cycleAllSeqTime = m_globalToolBar->addAction(QIcon(":/images/cycleAllSequenceTime.png"), "Cycle All Sequences (ignore Speed tab, produce coordinated movement using Timing)");
+    m_stopAllSeq = m_globalToolBar->addAction(QIcon(":/stop.svg"), "Stop All Sequences");
+    m_globalToolBar->addSeparator();
+    m_runAllParts = m_globalToolBar->addAction(QIcon(":/play.svg"), "Run All Parts");
+    m_homeAllParts = m_globalToolBar->addAction(QIcon(":/home.svg"), "Home All Parts");
+    addToolBar(m_globalToolBar);
 
-    QMenu *globalMenuCommands = ui->menuBar->addMenu("Global Joints Commands ");
-    globalMenuCommands->addAction(goAll);
+    QMenu *globalMenuCommands = m_ui->menuBar->addMenu("Global Joints Commands ");
+    globalMenuCommands->addAction(m_goAll);
     globalMenuCommands->addSeparator();
-    globalMenuCommands->addAction(runAllSeq);
-    globalMenuCommands->addAction(runAllSeqTime);
-    globalMenuCommands->addAction(saveAllSeq);
-    globalMenuCommands->addAction(loadAllSeq);
-    globalMenuCommands->addAction(cycleAllSeq);
-    globalMenuCommands->addAction(cycleAllSeqTime);
-    globalMenuCommands->addAction(stopAllSeq);
+    globalMenuCommands->addAction(m_runAllSeq);
+    globalMenuCommands->addAction(m_runAllSeqTime);
+    globalMenuCommands->addAction(m_saveAllSeq);
+    globalMenuCommands->addAction(m_loadAllSeq);
+    globalMenuCommands->addAction(m_cycleAllSeq);
+    globalMenuCommands->addAction(m_cycleAllSeqTime);
+    globalMenuCommands->addAction(m_stopAllSeq);
     globalMenuCommands->addSeparator();
-    globalMenuCommands->addAction(runAllParts);
-    globalMenuCommands->addAction(homeAllParts);
+    globalMenuCommands->addAction(m_runAllParts);
+    globalMenuCommands->addAction(m_homeAllParts);
 
-    connect(goAll,SIGNAL(triggered()),this,SLOT(onGoAll()));
-    connect(runAllParts,SIGNAL(triggered()),this,SLOT(onRunAllParts()));
-    connect(homeAllParts,SIGNAL(triggered()),this,SLOT(onHomeAllParts()));
+    connect(m_goAll, SIGNAL(triggered()), this, SLOT(onGoAll()));
+    connect(m_runAllParts, SIGNAL(triggered()), this, SLOT(onRunAllParts()));
+    connect(m_homeAllParts, SIGNAL(triggered()), this, SLOT(onHomeAllParts()));
 
-    connect(runAllSeq,SIGNAL(triggered()),this,SLOT(onRunAllSeq()));
-    connect(runAllSeqTime,SIGNAL(triggered()),this,SLOT(onRunTimeAllSeq()));
-    connect(cycleAllSeq,SIGNAL(triggered()),this,SLOT(onCycleAllSeq()));
-    connect(cycleAllSeqTime,SIGNAL(triggered()),this,SLOT(onCycleTimeAllSeq()));
+    connect(m_runAllSeq, SIGNAL(triggered()), this, SLOT(onRunAllSeq()));
+    connect(m_runAllSeqTime, SIGNAL(triggered()), this, SLOT(onRunTimeAllSeq()));
+    connect(m_cycleAllSeq, SIGNAL(triggered()), this, SLOT(onCycleAllSeq()));
+    connect(m_cycleAllSeqTime, SIGNAL(triggered()), this, SLOT(onCycleTimeAllSeq()));
 
-    connect(stopAllSeq,SIGNAL(triggered()),this,SLOT(onStopAllSeq()));
-    connect(loadAllSeq,SIGNAL(triggered()),this,SLOT(onLoadAllSeq()));
-    connect(saveAllSeq,SIGNAL(triggered()),this,SLOT(onSaveAllSeq()));
+    connect(m_stopAllSeq, SIGNAL(triggered()), this, SLOT(onStopAllSeq()));
+    connect(m_loadAllSeq, SIGNAL(triggered()), this, SLOT(onLoadAllSeq()));
+    connect(m_saveAllSeq, SIGNAL(triggered()), this, SLOT(onSaveAllSeq()));
 
 
     //addToolBarBreak();
 
-    partToolBar = new QToolBar("Current Part",this);
-    partToolBar->setMovable(true);
-    partToolBar->setFloatable(true);
-    partToolBar->setAllowedAreas(Qt::AllToolBarAreas);
+    m_partToolBar = new QToolBar("Current Part", this);
+    m_partToolBar->setMovable(true);
+    m_partToolBar->setFloatable(true);
+    m_partToolBar->setAllowedAreas(Qt::AllToolBarAreas);
 
-    partName = new QLabel("NONE");
-    f = partName->font();
+    m_partName = new QLabel("NONE");
+    f = m_partName->font();
     f.setBold(true);
-    partName->setFont(f);
+    m_partName->setFont(f);
 
-    partToolBar->addWidget(partName)->setCheckable(false);
+    m_partToolBar->addWidget(m_partName)->setCheckable(false);
 
-    partToolBar->addSeparator();
-    openSequenceAction     = partToolBar->addAction(QIcon(":/file-new.svg"),"Open Sequence Tab");
-    partToolBar->addSeparator();
-    runAll                 = partToolBar->addAction(QIcon(":/play.svg"),"Run All");
-    calibAll               = partToolBar->addAction(QIcon(":/images/calibrate.png"),"Calibrate All");
-    homeAll                = partToolBar->addAction(QIcon(":/home.svg"),"Home All");
-    partToolBar->addSeparator();
-    idleAll                = partToolBar->addAction(QIcon(":/idle.svg"),"Idle All");
-    addToolBar(partToolBar);
+    m_partToolBar->addSeparator();
+    openSequenceAction = m_partToolBar->addAction(QIcon(":/file-new.svg"), "Open Sequence Tab");
+    m_partToolBar->addSeparator();
+    m_runAll = m_partToolBar->addAction(QIcon(":/play.svg"), "Run All");
+    m_calibAll = m_partToolBar->addAction(QIcon(":/images/calibrate.png"), "Calibrate All");
+    m_homeAll = m_partToolBar->addAction(QIcon(":/home.svg"), "Home All");
+    m_partToolBar->addSeparator();
+    m_idleAll = m_partToolBar->addAction(QIcon(":/idle.svg"), "Idle All");
+    addToolBar(m_partToolBar);
 
-    currentPartMenu = ui->menuBar->addMenu("Current Part: ");
-    currentPartMenu->addAction(openSequenceAction);
-    currentPartMenu->addSeparator();
-    currentPartMenu->addAction(runAll);
-    currentPartMenu->addAction(calibAll);
-    currentPartMenu->addAction(homeAll);
-    currentPartMenu->addSeparator();
-    currentPartMenu->addAction(idleAll);
+    m_currentPartMenu = m_ui->menuBar->addMenu("Current Part: ");
+    m_currentPartMenu->addAction(openSequenceAction);
+    m_currentPartMenu->addSeparator();
+    m_currentPartMenu->addAction(m_runAll);
+    m_currentPartMenu->addAction(m_calibAll);
+    m_currentPartMenu->addAction(m_homeAll);
+    m_currentPartMenu->addSeparator();
+    m_currentPartMenu->addAction(m_idleAll);
 
     connect(openSequenceAction,SIGNAL(triggered()),this,SLOT(onOpenSequenceTab()));
-    connect(runAll,SIGNAL(triggered()),this,SLOT(onRunAll()));
-    connect(idleAll,SIGNAL(triggered()),this,SLOT(onIdleAll()));
-    connect(homeAll,SIGNAL(triggered()),this,SLOT(onHomeAll()));
-    connect(calibAll,SIGNAL(triggered()),this,SLOT(onCalibAll()));
+    connect(m_runAll, SIGNAL(triggered()), this, SLOT(onRunAll()));
+    connect(m_idleAll, SIGNAL(triggered()), this, SLOT(onIdleAll()));
+    connect(m_homeAll, SIGNAL(triggered()), this, SLOT(onHomeAll()));
+    connect(m_calibAll, SIGNAL(triggered()), this, SLOT(onCalibAll()));
 
-
-
-
-    QMenu *windows = ui->menuBar->addMenu("View");
+    QMenu *windows = m_ui->menuBar->addMenu("View");
     QAction *viewGlobalToolbar = windows->addAction("Global Commands Toolbar");
     QAction *viewPartToolbar = windows->addAction("Part Commands Toolbar");
     QAction *viewSpeedValues = windows->addAction("View Speed Values");
@@ -178,8 +175,8 @@ MainWindow::MainWindow(QWidget *parent) :
     enableControlPositionDirect->setChecked(false);
     enableControlOpenloop->setChecked(false);
 
-    globalToolBar->setVisible(bViewGlobalToolbar);
-    partToolBar->setVisible(bViewPartToolbar);
+    m_globalToolBar->setVisible(bViewGlobalToolbar);
+    m_partToolBar->setVisible(bViewPartToolbar);
 
     connect(viewGlobalToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewGlobalToolbar(bool)));
     connect(viewPartToolbar,SIGNAL(triggered(bool)),this,SLOT(onViewPartToolbar(bool)));
@@ -195,35 +192,37 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
 
-    timer.setInterval(200);
-    timer.setSingleShot(false);
-    connect(&timer,SIGNAL(timeout()),this,SLOT(onUpdate()),Qt::QueuedConnection);
-    timer.start();
+    m_timer.setInterval(200);
+    m_timer.setSingleShot(false);
+    connect(&m_timer, SIGNAL(timeout()), this, SLOT(onUpdate()), Qt::QueuedConnection);
+    m_timer.start();
 }
 
 MainWindow::~MainWindow()
 {
-    mutex.lock();
+    m_mutex.lock();
 
-    disconnect(&timer,SIGNAL(timeout()),this,SLOT(onUpdate()));
-    timer.stop();
+    disconnect(&m_timer, SIGNAL(timeout()), this, SLOT(onUpdate()));
+    m_timer.stop();
 
     onStopAllSeq();
 
-    if(tabPanel){
-        disconnect(tabPanel,SIGNAL(currentChanged(int)),this,SLOT(onCurrentPartChanged(int)));
-        for(int i=0;i<tabPanel->count();i++){
-            if(tabPanel->widget(i)){
-                delete tabPanel->widget(i);
+    if (m_tabPanel){
+        disconnect(m_tabPanel, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPartChanged(int)));
+        for (int i = 0; i<m_tabPanel->count(); i++)
+        {
+            if (m_tabPanel->widget(i))
+            {
+                delete m_tabPanel->widget(i);
             }
         }
-        delete tabPanel;
-        tabPanel = NULL;
+        delete m_tabPanel;
+        m_tabPanel = NULL;
     }
 
-    delete ui;
+    delete m_ui;
 
-    mutex.unlock();
+    m_mutex.unlock();
 }
 
 void MainWindow::term()
@@ -234,35 +233,33 @@ void MainWindow::term()
 
 void MainWindow::onSequenceActivated()
 {
-    sequenceActiveCount++;
-    goAll->setEnabled(false);
-    runAllSeq->setEnabled(false);
-    runAllSeqTime->setEnabled(false);
-    saveAllSeq->setEnabled(false);
-    loadAllSeq->setEnabled(false);
-    cycleAllSeq->setEnabled(false);
-    cycleAllSeqTime->setEnabled(false);
-    runAllParts->setEnabled(false);
-    homeAllParts->setEnabled(false);
-
+    m_sequenceActiveCount++;
+    m_goAll->setEnabled(false);
+    m_runAllSeq->setEnabled(false);
+    m_runAllSeqTime->setEnabled(false);
+    m_saveAllSeq->setEnabled(false);
+    m_loadAllSeq->setEnabled(false);
+    m_cycleAllSeq->setEnabled(false);
+    m_cycleAllSeqTime->setEnabled(false);
+    m_runAllParts->setEnabled(false);
+    m_homeAllParts->setEnabled(false);
 }
 
 void MainWindow::onSequenceStopped()
 {
-    sequenceActiveCount--;
-    if(sequenceActiveCount <= 0){
-        sequenceActiveCount = 0;
-
-        goAll->setEnabled(true);
-        runAllSeq->setEnabled(true);
-        runAllSeqTime->setEnabled(true);
-        saveAllSeq->setEnabled(true);
-        loadAllSeq->setEnabled(true);
-        cycleAllSeq->setEnabled(true);
-        cycleAllSeqTime->setEnabled(true);
-        runAllParts->setEnabled(true);
-        homeAllParts->setEnabled(true);
-
+    m_sequenceActiveCount--;
+    if (m_sequenceActiveCount <= 0)
+    {
+        m_sequenceActiveCount = 0;
+        m_goAll->setEnabled(true);
+        m_runAllSeq->setEnabled(true);
+        m_runAllSeqTime->setEnabled(true);
+        m_saveAllSeq->setEnabled(true);
+        m_loadAllSeq->setEnabled(true);
+        m_cycleAllSeq->setEnabled(true);
+        m_cycleAllSeqTime->setEnabled(true);
+        m_runAllParts->setEnabled(true);
+        m_homeAllParts->setEnabled(true);
     }
 }
 
@@ -272,9 +269,9 @@ void MainWindow::onViewGlobalToolbar(bool val)
     QSettings settings("YARP","yarpmotorgui");
     settings.setValue("GlobalToolVisible",val);
     if(!val){
-        globalToolBar->hide();
+        m_globalToolBar->hide();
     }else{
-        globalToolBar->show();
+        m_globalToolBar->show();
     }
 
 }
@@ -284,9 +281,9 @@ void MainWindow::onViewPartToolbar(bool val)
     QSettings settings("YARP","yarpmotorgui");
     settings.setValue("PartToolVisible",val);
     if(!val){
-        partToolBar->hide();
+        m_partToolBar->hide();
     }else{
-        partToolBar->show();
+        m_partToolBar->show();
     }
 }
 
@@ -312,12 +309,12 @@ void MainWindow::onEnableControlOpenloop(bool val)
 
 void MainWindow::onSliderOptionsClicked()
 {
-    sliderOpt = new sliderOptions(this);
+    m_sliderOpt = new sliderOptions(this);
 
-    sliderOpt->exec();
+    m_sliderOpt->exec();
 
-    delete sliderOpt;
-    sliderOpt = NULL;
+    delete m_sliderOpt;
+    m_sliderOpt = NULL;
 }
 
 void MainWindow::onViewSpeeds(bool val)
@@ -360,27 +357,27 @@ void MainWindow::onSetTrqSliderOptionMW(int choice, double val)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 
-    mutex.lock();
+    m_mutex.lock();
 
     this->setVisible(false);
 
-    disconnect(&timer,SIGNAL(timeout()),this,SLOT(onUpdate()));
-    timer.stop();
+    disconnect(&m_timer, SIGNAL(timeout()), this, SLOT(onUpdate()));
+    m_timer.stop();
 
     onStopAllSeq();
 
-    if(tabPanel){
-        disconnect(tabPanel,SIGNAL(currentChanged(int)),this,SLOT(onCurrentPartChanged(int)));
-        for(int i=0;i<tabPanel->count();i++){
-            if(tabPanel->widget(i)){
-                delete tabPanel->widget(i);
+    if (m_tabPanel){
+        disconnect(m_tabPanel, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPartChanged(int)));
+        for (int i = 0; i<m_tabPanel->count(); i++){
+            if (m_tabPanel->widget(i)){
+                delete m_tabPanel->widget(i);
             }
         }
-        delete tabPanel;
-        tabPanel = NULL;
+        delete m_tabPanel;
+        m_tabPanel = NULL;
     }
 
-    mutex.unlock();
+    m_mutex.unlock();
 
     QMainWindow::closeEvent(event);
 
@@ -395,10 +392,11 @@ bool MainWindow::init(QStringList enabledParts,
                       bool speedview_param_enabled,
                       bool enable_calib_all)
 {
-    tabPanel = new QTabWidget(ui->mainContainer);
+    m_tabPanel = new QTabWidget(m_ui->mainContainer);
 
-    if(!enable_calib_all){
-        calibAll->setEnabled(false);
+    if(!enable_calib_all)
+    {
+        m_calibAll->setEnabled(false);
     }
 
     int errorCount = 0;
@@ -451,7 +449,7 @@ bool MainWindow::init(QStringList enabledParts,
     {
         QTreeWidgetItem *robot_top = new QTreeWidgetItem();
         robot_top->setText(0, i_robot->first.c_str());
-        ui->treeWidgetMode->addTopLevelItem(robot_top);
+        m_ui->treeWidgetMode->addTopLevelItem(robot_top);
         robot_top->setExpanded(true);
         i_robot->second.tree_pointer = robot_top;
     }
@@ -460,7 +458,7 @@ bool MainWindow::init(QStringList enabledParts,
     {
         //JointItem *item = new JointItem();
         //layout->addWidget(item);
-        scroll = new QScrollArea(tabPanel);
+        scroll = new QScrollArea(m_tabPanel);
         scroll->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scroll->setWidgetResizable(true);
@@ -485,13 +483,13 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_enableControlOpenloop(bool)), part, SLOT(onEnableControlOpenloop(bool)));
 
             scroll->setWidget(part);
-            tabPanel->addTab(scroll, part_name.c_str());
+            m_tabPanel->addTab(scroll, part_name.c_str());
             if (part_id == 0)
             {
                 QString auxName = part_name.c_str();
                 auxName.replace(0, 1, QString(part_name.c_str()).at(0).toUpper());
-                currentPartMenu->setTitle(QString("%1 Commands ").arg(auxName));
-                this->partName->setText(QString("%1 Commands ").arg(auxName));
+                m_currentPartMenu->setTitle(QString("%1 Commands ").arg(auxName));
+                this->m_partName->setText(QString("%1 Commands ").arg(auxName));
             }
 
             QTreeWidgetItem *mode = new QTreeWidgetItem();
@@ -525,9 +523,9 @@ bool MainWindow::init(QStringList enabledParts,
     QHBoxLayout *lay = new QHBoxLayout();
     lay->setMargin(0);
     lay->setSpacing(0);
-    ui->mainContainer->setLayout(lay);
-    ui->mainContainer->layout()->addWidget(tabPanel);
-    connect(tabPanel,SIGNAL(currentChanged(int)),this,SLOT(onCurrentPartChanged(int)));
+    m_ui->mainContainer->setLayout(lay);
+    m_ui->mainContainer->layout()->addWidget(m_tabPanel);
+    connect(m_tabPanel, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPartChanged(int)));
 
     QSettings settings("YARP","yarpmotorgui");
     bool speedVisible = settings.value("SpeedValuesVisible",false).toBool();
@@ -544,14 +542,14 @@ void MainWindow::onCurrentPartChanged(int index)
     if(index < 0){
         return;
     }
-    QString partName = tabPanel->tabText(index);
+    QString partName = m_tabPanel->tabText(index);
 
     QString auxName = partName;
     auxName.replace(0,1,partName.at(0).toUpper());
-    currentPartMenu->setTitle(QString("%1 Commands").arg(auxName));
-    this->partName->setText(QString("%1 Commands").arg(auxName));
+    m_currentPartMenu->setTitle(QString("%1 Commands").arg(auxName));
+    this->m_partName->setText(QString("%1 Commands").arg(auxName));
 
-    QScrollArea *scroll = (QScrollArea *)tabPanel->widget(index);
+    QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(index);
     PartItem *part = (PartItem*)scroll->widget();
     if(!part){
         return;
@@ -563,11 +561,11 @@ void MainWindow::onCurrentPartChanged(int index)
 
 void MainWindow::onCalibAll()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)tabPanel->currentWidget();
+    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
     PartItem *part = (PartItem*)scroll->widget();
     if(!part){
         return;
@@ -581,14 +579,15 @@ void MainWindow::onCalibAll()
 
 void MainWindow::onHomeAllParts()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
     QString parts;
 
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++)
+    {
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part){
             continue;
@@ -607,11 +606,11 @@ void MainWindow::onHomeAllParts()
 
 void MainWindow::onHomeAll()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)tabPanel->currentWidget();
+    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
     PartItem *part = (PartItem*)scroll->widget();
     if(!part){
         return;
@@ -622,11 +621,11 @@ void MainWindow::onHomeAll()
 
 void MainWindow::onIdleAll()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)tabPanel->currentWidget();
+    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
     PartItem *part = (PartItem*)scroll->widget();
     if(!part){
         return;
@@ -637,14 +636,14 @@ void MainWindow::onIdleAll()
 
 void MainWindow::onCycleTimeAllSeq()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
     QString notSelectedParts;
 
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++){
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part){
             continue;
@@ -662,14 +661,14 @@ void MainWindow::onCycleTimeAllSeq()
 
 void MainWindow::onCycleAllSeq()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
     QString notSelectedParts;
 
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++){
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part){
             continue;
@@ -687,14 +686,14 @@ void MainWindow::onCycleAllSeq()
 
 void MainWindow::onRunAllSeq()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
     QString notSelectedParts;
 
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++){
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part){
             continue;
@@ -713,14 +712,14 @@ void MainWindow::onRunAllSeq()
 
 void MainWindow::onRunTimeAllSeq()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
     QString notSelectedParts;
 
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++){
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part){
             continue;
@@ -738,13 +737,13 @@ void MainWindow::onRunTimeAllSeq()
 
 void MainWindow::onLoadAllSeq()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
 
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++){
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part){
             continue;
@@ -757,15 +756,15 @@ void MainWindow::onLoadAllSeq()
 
 void MainWindow::onSaveAllSeq()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
     QString fileName = QFileDialog::getSaveFileName(this, QString("Save Sequence for all parts as:"), QDir::homePath());
 
-    for(int i=0; i<tabPanel->count();i++)
+    for (int i = 0; i<m_tabPanel->count(); i++)
     {
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part)
         {
@@ -778,13 +777,13 @@ void MainWindow::onSaveAllSeq()
 
 void MainWindow::onStopAllSeq()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
 
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++){
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part){
             continue;
@@ -798,14 +797,14 @@ void MainWindow::onStopAllSeq()
 
 void MainWindow::onGoAll()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
     QString notSelectedParts;
 
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++){
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part){
             continue;
@@ -828,12 +827,12 @@ void MainWindow::onGoAll()
 
 void MainWindow::onRunAllParts()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *scroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++){
+        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *part = (PartItem*)scroll->widget();
         if(!part){
             continue;
@@ -845,11 +844,11 @@ void MainWindow::onRunAllParts()
 
 void MainWindow::onRunAll()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)tabPanel->currentWidget();
+    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
     PartItem *part = (PartItem*)scroll->widget();
     if(!part){
         return;
@@ -860,11 +859,11 @@ void MainWindow::onRunAll()
 
 void MainWindow::onOpenSequenceTab()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)tabPanel->currentWidget();
+    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
     PartItem *part = (PartItem*)scroll->widget();
     if(!part){
         return;
@@ -876,31 +875,36 @@ void MainWindow::onOpenSequenceTab()
 
 void MainWindow::onUpdate()
 {
-    if(!tabPanel){
+    if (!m_tabPanel){
         return;
     }
-    mutex.lock();
+    m_mutex.lock();
 
-    QScrollArea *scroll = (QScrollArea *)tabPanel->currentWidget();
+    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
     if(!scroll){
-        mutex.unlock();
+        m_mutex.unlock();
         return;
     }
     PartItem *currentPart = (PartItem*)scroll->widget();
     if(!currentPart){
-        mutex.unlock();
+        m_mutex.unlock();
         return;
     }
-    for(int i=0; i<tabPanel->count();i++){
-        QScrollArea *tabScroll = (QScrollArea *)tabPanel->widget(i);
+    for (int i = 0; i<m_tabPanel->count(); i++)
+    {
+        QScrollArea *tabScroll = (QScrollArea *)m_tabPanel->widget(i);
         PartItem *item = (PartItem*)tabScroll->widget();
         item->updateControlMode();
         updateModesTree(item);
-        if(item == currentPart){
-            item->updatePart();
+        if(item == currentPart)
+        {
+            if (item->updatePart() == false)
+            {
+                //this part is disconnected!
+            }
         }
     }
-    mutex.unlock();
+    m_mutex.unlock();
 }
 
 QColor MainWindow::getColorMode(int m)
