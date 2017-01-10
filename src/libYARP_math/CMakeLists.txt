@@ -21,6 +21,7 @@ if (YARP_HAS_MATH_LIB)
                      include/yarp/math/RandVector.h
                      include/yarp/math/SVD.h
                      include/yarp/math/Quaternion.h
+                     include/yarp/math/Vec2D.h
                      include/yarp/math/FrameTransform.h)
 
   set(YARP_math_IMPL_HDRS include/yarp/impl/mt.h)
@@ -32,6 +33,7 @@ if (YARP_HAS_MATH_LIB)
                      src/RandVector.cpp
                      src/SVD.cpp
                      src/Quaternion.cpp
+                     src/Vec2D.cpp
                      src/FrameTransform.cpp
                      src/RandScalar.cpp
                      src/RandnScalar.cpp
