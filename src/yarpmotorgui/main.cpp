@@ -57,10 +57,10 @@ int main(int argc, char *argv[])
     if (!yarp.checkNetwork())
     {
         LOG_ERROR("Error initializing yarp network (is yarpserver running?)\n");
-        QMessageBox::critical(0,"Error","Error initializing yarp network (is yarpserver running?)");
+        QMessageBox::critical(0, "Error", "Error initializing yarp network (is yarpserver running?)");
         return 1;
     }
-    
+
     bool           ret;
     int            appRet;
     QApplication   a(argc, argv);
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     finder.setVerbose();
     finder.setDefaultConfigFile("yarpmotorgui.ini");
     finder.setDefault("name", "icub");
-    finder.configure(argc,argv);
+    finder.configure(argc, argv);
 
     qRegisterMetaType<Pid>("Pid");
     qRegisterMetaType<SequenceItem>("SequenceItem");
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     if (finder.check("admin"))
     {
         LOG("Admin mode on.\n");
-        enable_calib_all      = true;
+        enable_calib_all = true;
     }
 
     if (finder.check("debug"))
@@ -124,30 +124,37 @@ int main(int argc, char *argv[])
         adr = Network::queryName(descLocalName);
     }
 
-    PolyDriver* desc_driver = 0;
-    desc_driver = new PolyDriver;
-    std::vector<DeviceDescription> cbw2_list;
-    Property desc_driver_options;
-    desc_driver_options.put("device", "robotDescriptionClient");
-    desc_driver_options.put("local", descLocalName);
-    desc_driver_options.put("remote", "/robotDescription");
-    desc_driver->open(desc_driver_options);
-    if (desc_driver && desc_driver->isValid())
+    if (yarp::os::Network::exists("/robotDescription/rpc"))
     {
-        IRobotDescription* idesc = 0;
-        desc_driver->view(idesc);
-        if (idesc)
+        PolyDriver* desc_driver = 0;
+        desc_driver = new PolyDriver;
+        std::vector<DeviceDescription> cbw2_list;
+        Property desc_driver_options;
+        desc_driver_options.put("device", "robotDescriptionClient");
+        desc_driver_options.put("local", descLocalName);
+        desc_driver_options.put("remote", "/robotDescription");
+        desc_driver->open(desc_driver_options);
+        if (desc_driver && desc_driver->isValid())
         {
-            idesc->getAllDevicesByType("controlboardwrapper2", cbw2_list);
-            std::vector<DeviceDescription> wrappers_list;
-            wrappers_list.reserve(cbw2_list.size());
-            wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());
-            for (size_t i = 0; i < wrappers_list.size(); i++)
+            IRobotDescription* idesc = 0;
+            desc_driver->view(idesc);
+            if (idesc)
             {
-                yDebug() << wrappers_list[i].device_name;
-                pParts.addString(wrappers_list[i].device_name);
+                idesc->getAllDevicesByType("controlboardwrapper2", cbw2_list);
+                std::vector<DeviceDescription> wrappers_list;
+                wrappers_list.reserve(cbw2_list.size());
+                wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());
+                for (size_t i = 0; i < wrappers_list.size(); i++)
+                {
+                    yDebug() << wrappers_list[i].device_name;
+                    pParts.addString(wrappers_list[i].device_name);
+                }
             }
         }
+    }
+    else
+    {
+        yWarning() << "robotDescriptionServer not found, robot parts will be set manually.";
     }
 
     std::string robotName = finder.find("robot").asString();
@@ -167,6 +174,15 @@ int main(int argc, char *argv[])
                 }
                 pParts.addString(ss);
             }
+        }
+        else if (robotName != "" && b_part == 0)
+        {
+            pParts.addString("/" + robotName + "/head");
+            pParts.addString("/" + robotName + "/torso");
+            pParts.addString("/" + robotName + "/left_arm");
+            pParts.addString("/" + robotName + "/right_arm");
+            pParts.addString("/" + robotName + "/left_leg");
+            pParts.addString("/" + robotName + "/right_leg");
         }
         else
         {
