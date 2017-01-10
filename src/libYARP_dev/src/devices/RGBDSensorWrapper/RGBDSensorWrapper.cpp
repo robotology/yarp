@@ -284,7 +284,6 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         {
             forceInfoSync = rosGroup.find("forceInfoSync").asBool();    
         }
-        *(prm->var) = rosGroup.find(prm->parname).asString().c_str();
     }
 
     if(use_YARP)
