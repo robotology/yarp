@@ -12,6 +12,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/FrameGrabberControl2Impl.h>
 
 /* This pragma is required only to compile yarp::dev::RemoteFrameGrabber*/
@@ -583,13 +584,14 @@ return response.get(0).asInt()!=0? true:false;
 class YARP_dev_API yarp::dev::RemoteFrameGrabber :  public IFrameGrabberImage,
                                                     public FrameGrabberControls2_Sender,
                                                     public ImplementDC1394,
+                                                    public Implement_RgbVisualParams_Sender,
                                                     public DeviceDriver
 {
 public:
     /**
      * Constructor.
      */
-    RemoteFrameGrabber() : FrameGrabberControls2_Sender(port), mutex(1) {
+    RemoteFrameGrabber() : FrameGrabberControls2_Sender(port), Implement_RgbVisualParams_Sender(port), mutex(1) {
         lastHeight = 0;
         lastWidth = 0;
     }
