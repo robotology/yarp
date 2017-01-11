@@ -165,7 +165,7 @@ RGBDSensorWrapper::RGBDSensorWrapper(): RateThread(DEFAULT_THREAD_PERIOD),
     isSubdeviceOwned = false;
     verbose          = 4;
     sensorStatus     = IRGBDSensor::RGBD_SENSOR_NOT_READY;
-    forceInfoSync    = false;
+    forceInfoSync    = true;
 }
 
 RGBDSensorWrapper::~RGBDSensorWrapper()
@@ -795,6 +795,22 @@ bool RGBDSensorWrapper::writeData()
     {
         return false;
     }
+
+    static Stamp oldColorStamp = Stamp(0, 0);
+    static Stamp oldDepthStamp = Stamp(0, 0);
+
+    if (colorStamp.getTime() - oldColorStamp.getTime() > 0 == false)
+    {
+        return true;
+    }
+
+    if (depthStamp.getTime() - oldDepthStamp.getTime() > 0 == false)
+    {
+        return true;
+    }
+
+    oldDepthStamp = depthStamp;
+    oldColorStamp = colorStamp;
 
     if (use_YARP)
     {
