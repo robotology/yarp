@@ -145,7 +145,7 @@ const char* ErrorLogger::getLastError(void) {
 }
 
 const char* ErrorLogger::getFormatedErrorString() {
-    string msgs;
+    static string msgs;
     char* err;
     while((err=(char*)getLastError()) != NULL)
         msgs += string(err) + " ";
@@ -162,7 +162,7 @@ const char* ErrorLogger::getLastWarning(void) {
 }
 
 const char* ErrorLogger::getFormatedWarningString() {
-    string msgs;
+    static string msgs;
     char* err;
     while((err=(char*)getLastWarning()) != NULL)
         msgs += string(err) + " ";
