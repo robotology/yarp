@@ -272,11 +272,11 @@ private:
     openni::VideoStream             m_depthStream;
     openni::VideoStream             m_imageStream;
     openni::Device                  m_device;
-    impl::streamFrameListener      *m_depthFrame;
-    impl::streamFrameListener      *m_imageFrame;
+    impl::streamFrameListener*      m_depthFrame;
+    impl::streamFrameListener*      m_imageFrame;
     yarp::os::ConstString           m_lastError;
-    impl::CameraParameters         *m_cameraDescription;
-
+    impl::CameraParameters*         m_cameraDescription;
+    bool                            m_depthRegistration;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
 #endif
 };
