@@ -10,6 +10,52 @@
 //#include "TestList.h"
 #include <yarp/os/impl/UnitTest.h>
 
+
+#define testBoolFromString(val) \
+{ \
+    Value v; \
+    v.fromString(#val); \
+    checkTrue(v.isBool(), #val " is a bool"); \
+    checkFalse(v.isInt(), #val " is not an int"); \
+    checkFalse(v.isDouble(), #val " is not a double"); \
+    checkFalse(v.isString(), #val " is not a string"); \
+    checkEqual(v.asBool(), val, #val " bool value ok"); \
+}
+
+#define testIntFromString(val) \
+{ \
+    Value v; \
+    v.fromString(#val); \
+    checkFalse(v.isBool(), #val " is not a bool"); \
+    checkTrue(v.isInt(), #val " is an int"); \
+    checkFalse(v.isDouble(), #val " is not a double"); \
+    checkFalse(v.isString(), #val " is not a string"); \
+    checkEqual(v.asInt(), val, #val " int value ok"); \
+}
+
+#define testDoubleFromString(val) \
+{ \
+    Value v; \
+    v.fromString(#val); \
+    checkFalse(v.isBool(), #val " is not a bool"); \
+    checkFalse(v.isInt(), #val " is not an int"); \
+    checkTrue(v.isDouble(), #val " is a double"); \
+    checkFalse(v.isString(), #val " is not a string"); \
+    checkEqual(v.asDouble(), val, #val " double value ok"); \
+}
+
+#define testStringFromString(val) \
+{ \
+    Value v; \
+    v.fromString(val); \
+    checkFalse(v.isBool(), val " is not a bool"); \
+    checkFalse(v.isInt(), val " is not an int"); \
+    checkFalse(v.isDouble(), val " is not a double"); \
+    checkTrue(v.isString(), val " is a string"); \
+    checkEqual(v.asString(), val, val " string value ok"); \
+    checkEqual(v.toString(), val, val " string value ok"); \
+}
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
@@ -237,6 +283,49 @@ public:
         }
     }
 
+    void checkNumericFromString() {
+        report(0,"check numeric types");
+
+        testBoolFromString(true);
+        testBoolFromString(false);
+
+        testIntFromString(0);
+        testIntFromString(1);
+        testIntFromString(0x00);
+        testIntFromString(0xFF);
+//        testIntFromString(10l);
+
+        testDoubleFromString(0.0);
+        testDoubleFromString(1.0);
+        testDoubleFromString(.0);
+        testDoubleFromString(.1);
+        testDoubleFromString(1e1);
+        testDoubleFromString(1e-1);
+        testDoubleFromString(-1e1);
+        testDoubleFromString(0.1);
+        testDoubleFromString(0.01);
+        testDoubleFromString(0.001);
+        testDoubleFromString(0.0001);
+        testDoubleFromString(0.00001);
+        testDoubleFromString(0.000001);
+        testDoubleFromString(0.0000001);
+        testDoubleFromString(0.00000001);
+        testDoubleFromString(0.000000001);
+        testDoubleFromString(0.0000000001);
+        testDoubleFromString(0.00000000001);
+        testDoubleFromString(0.000000000001);
+        testDoubleFromString(0.0000000000001);
+//        testDoubleFromString(0.1f);
+
+        testStringFromString("foo");
+        testStringFromString("e-e");
+//        testStringFromString(".1.1");
+//        testStringFromString(".1-1");
+//        testStringFromString("-1-1");
+//        testStringFromString("1-1");
+        testStringFromString("1foo");
+    }
+
     virtual void runTests() {
         checkCopy();
         checkMixedCopy();
@@ -244,6 +333,7 @@ public:
         checkAssignment();
         checkInt64();
         checkEqualityOperator();
+        checkNumericFromString();
     }
 };
 
