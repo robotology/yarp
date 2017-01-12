@@ -219,8 +219,8 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/path/to/Qt/5.3/gcc_64/
 
 \subsubsection dependencies_qt5_Linux Linux
 
-\paragraph dependencies_qt5_debian_jessie Debian (jessie)
-On Debian testing you need to install the following packages:
+\paragraph dependencies_qt5_debian_ubuntu Debian (jessie, stretch), Ubuntu (utopic, vivid, xenial, yakkety, zesty)
+On recent Debian and Ubuntu systems, you need to install the following packages:
 
 \li qtbase5-dev
 \li qtdeclarative5-dev
@@ -237,7 +237,7 @@ You can install them by running:
 sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qml-module-qtquick2 qml-module-qtquick-window2 \
   qml-module-qtmultimedia qml-module-qtquick-dialogs \
-  qml-module-qtquick-controls libqt5svg5
+  qml-module-qtquick-controls
 \endverbatim
 
 
@@ -263,11 +263,6 @@ sudo apt-get install -t wheezy-backports qtbase5-dev \
   qml-module-qtquick-dialogs qml-module-qtquick-controls libqt5svg5
 \endverbatim
 
-
-
-\paragraph dependencies_qt5_ubuntu Ubuntu (utopic and vivid)
-Qt5 is available from the main repository. See
-\ref dependencies_qt5_debian_jessie for instructions.
 
 \paragraph dependencies_qt5_ubuntu_trusty Ubuntu (trusty)
 Qt5 packages are available from the main repository, but the package
