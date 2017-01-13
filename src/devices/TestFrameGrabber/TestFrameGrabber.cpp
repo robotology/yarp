@@ -22,6 +22,197 @@ using namespace yarp::sig::draw;
 #define VOCAB_RAND VOCAB4('r','a','n','d')
 #define VOCAB_NONE VOCAB4('n','o','n','e')
 #define VOCAB_GRID_MULTISIZE VOCAB4('s','i','z','e')
+TestFrameGrabber::TestFrameGrabber() {
+    ct = 0;
+    freq = 30;
+    period = 1/freq;
+    // just for nostalgia
+    w = 128;
+    h = 128;
+    first = 0;
+    prev = 0;
+    rnd = 0;
+    use_bayer = false;
+    use_mono = false;
+}
+
+
+bool TestFrameGrabber::close() {
+    return true;
+}
+
+bool TestFrameGrabber::open(yarp::os::Searchable& config) {
+    yarp::os::Value *val;
+    w = config.check("width",yarp::os::Value(128),
+                     "desired width of test image").asInt();
+    h = config.check("height",yarp::os::Value(128),
+                     "desired height of test image").asInt();
+    if (config.check("freq",val,"rate of test images in Hz")) {
+        freq = val->asDouble();
+        period = 1/freq;
+    } else if (config.check("period",val,
+                            "period of test images in seconds")) {
+        period = val->asDouble();
+        if(period<=0) {
+            period =0;
+            freq = -1;
+        }
+    }
+    mode = config.check("mode",
+                        yarp::os::Value(VOCAB_LINE, true),
+                        "bouncy [ball], scrolly [line], grid [grid], random [rand], none [none]").asVocab();
+
+    if (config.check("src")) {
+        if (!yarp::sig::file::read(background,
+                                   config.check("src",
+                                                yarp::os::Value("test.ppm"),
+                                                "background image to use, if any").asString().c_str())) {
+            return false;
+        }
+        if (background.width()>0) {
+            w = background.width();
+            h = background.height();
+        }
+    }
+
+    use_bayer = config.check("bayer","should emit bayer test image?");
+    use_mono = config.check("mono","should emit a monochrome image?");
+    use_mono = use_mono||use_bayer;
+
+    if (freq!=-1) {
+        yInfo("Test grabber period %g / freq %g , mode [%s]", period, freq,
+               yarp::os::Vocab::decode(mode).c_str());
+    } else {
+        yInfo("Test grabber period %g / freq [inf], mode [%s]", period,
+               yarp::os::Vocab::decode(mode).c_str());
+    }
+
+    bx = w/2;
+    by = h/2;
+    return true;
+}
+
+void TestFrameGrabber::timing() {
+    double now = yarp::os::Time::now();
+
+    if (now-prev>1000) {
+        first = now;
+        prev = now;
+    }
+    double dt = period-(now-prev);
+
+    if (dt>0) {
+        yarp::os::Time::delay(dt);
+    }
+
+    // this is the controlled instant when we consider the
+    // image as going out
+    prev += period;
+}
+
+bool TestFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+    timing();
+    createTestImage(image);
+    return true;
+}
+
+
+bool TestFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+    timing();
+    createTestImage(rgb_image);
+    if (use_bayer) {
+        makeSimpleBayer(rgb_image,image);
+    } else {
+        image.copy(rgb_image);
+    }
+    return true;
+}
+
+int TestFrameGrabber::height() const {
+    return h;
+}
+
+int TestFrameGrabber::width() const {
+    return w;
+}
+
+
+bool TestFrameGrabber::setBrightness(double v) {
+    return false;
+}
+bool TestFrameGrabber::setExposure(double v) {
+    return false;
+}
+bool TestFrameGrabber::setSharpness(double v) {
+    return false;
+}
+bool TestFrameGrabber::setWhiteBalance(double blue, double red){
+    return false;
+}
+bool TestFrameGrabber::setHue(double v) {
+    return false;
+}
+bool TestFrameGrabber::setSaturation(double v) {
+    return false;
+}
+bool TestFrameGrabber::setGamma(double v) {
+    return false;
+}
+bool TestFrameGrabber::setShutter(double v) {
+    return false;
+}
+bool TestFrameGrabber::setGain(double v) {
+    return false;
+}
+bool TestFrameGrabber::setIris(double v) {
+    return false;
+}
+
+double TestFrameGrabber::getBrightness(){
+    return 0.0;
+}
+double TestFrameGrabber::getExposure(){
+    return 0.0;
+}
+double TestFrameGrabber::getSharpness(){
+    return 0.0;
+}
+bool TestFrameGrabber::getWhiteBalance(double &blue, double &red)
+{
+    red=0.0;
+    blue=0.0;
+    return true;
+}
+double TestFrameGrabber::getHue(){
+    return 0.0;
+}
+double TestFrameGrabber::getSaturation(){
+    return 0.0;
+}
+double TestFrameGrabber::getGamma(){
+    return 0.0;
+}
+double TestFrameGrabber::getShutter(){
+    return 0.0;
+}
+double TestFrameGrabber::getGain(){
+    return 0.0;
+}
+double TestFrameGrabber::getIris(){
+    return 0.0;
+}
+
+yarp::os::Stamp TestFrameGrabber::getLastInputStamp() {
+    return stamp;
+}
+
+bool TestFrameGrabber::hasAudio() { return false; }
+
+bool TestFrameGrabber::hasVideo() { return !use_mono; }
+
+bool TestFrameGrabber::hasRawVideo() {
+    return use_mono;
+}
 
 void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                                        image) {
