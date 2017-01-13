@@ -40,6 +40,7 @@ yarp_begin_plugin_library(yarpmod)
   add_subdirectory(ovrheadset)
   add_subdirectory(PumaCalibrator)
   add_subdirectory(meiMotionControl)
+  add_subdirectory(TestFrameGrabber)
 
   if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
     add_subdirectory(microphone)

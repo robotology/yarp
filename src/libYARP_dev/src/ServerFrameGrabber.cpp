@@ -6,8 +6,6 @@
 
 
 #include <yarp/os/Log.h>
-
-#include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
 //#include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/PolyDriver.h>

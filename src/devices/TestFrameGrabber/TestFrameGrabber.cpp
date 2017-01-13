@@ -5,7 +5,7 @@
  */
 
 
-#include <yarp/dev/TestFrameGrabber.h>
+#include <TestFrameGrabber.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <yarp/sig/ImageDraw.h>
