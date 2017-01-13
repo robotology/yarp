@@ -38,6 +38,8 @@ bool FakeLaser::open(yarp::os::Searchable& config)
         period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt();
     }
 
+    m_string_test_mode = config.check("test", Value(string("complete_test")), "string to select test mode").asString();
+
     min_distance = 0.1;  //m
     max_distance = 3.5;  //m
     min_angle = 0;       //degrees
@@ -52,6 +54,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     yInfo("max_angle %f, min_angle %f", max_angle, min_angle);
     yInfo("resolution %f", resolution);
     yInfo("sensors %d", sensorsNum);
+    yInfo("test mode: %s", m_string_test_mode.c_str());
     Time::turboBoost();
     RateThread::start();
     return true;
@@ -191,30 +194,44 @@ void FakeLaser::run()
     static int test_count = 0;
     static int test = 0;
 
-    for (int i = 0; i < sensorsNum; i++)
+    if (m_string_test_mode == "complete_test")
     {
-        double value = 0;
-        if (test == 0)
-            value = i / 100.0;
-        else if (test == 1)
-            value = size*2;
-        else if (test == 2)
+        for (int i = 0; i < sensorsNum; i++)
         {
-            if (i >= 0 && i <= 10) value = 1.0+i/20.0;
-            else if (i >= 90 && i <= 100) value = 2.0+(i-90)/20.0;
-            else value = min_distance;
+            double value = 0;
+            if (test == 0)
+                value = i / 100.0;
+            else if (test == 1)
+                value = size * 2;
+            else if (test == 2)
+            {
+                if (i >= 0 && i <= 10) value = 1.0 + i / 20.0;
+                else if (i >= 90 && i <= 100) value = 2.0 + (i - 90) / 20.0;
+                else value = min_distance;
+            }
+
+            if (value < min_distance) value = min_distance;
+            if (value > max_distance) value = max_distance;
+            laser_data.push_back(value);
         }
 
-        if (value < min_distance) value = min_distance;
-        if (value > max_distance) value = max_distance;
-        laser_data.push_back(value);
+        test_count++;
+        if (test_count == 60)
+        {
+            test_count = 0; test++; if (test > 2) test = 0;
+            t_orig = yarp::os::Time::now();
+        }
     }
-
-    test_count++;
-    if (test_count == 60)
+    else if (m_string_test_mode=="no_obstacles")
     {
-        test_count = 0; test++; if (test > 2) test = 0;
-        t_orig = yarp::os::Time::now();
+        for (int i = 0; i < sensorsNum; i++)
+        {
+            laser_data.push_back(std::numeric_limits<double>::infinity());
+        }
+    }
+    else
+    {
+        yError() << "Unknown test mode:" << m_string_test_mode;
     }
 
     mutex.post();

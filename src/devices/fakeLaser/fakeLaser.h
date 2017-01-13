@@ -24,7 +24,7 @@ class FakeLaser : public RateThread, public yarp::dev::IRangefinder2D, public De
 {
 protected:
     PolyDriver driver;
-   
+    std::string m_string_test_mode;
     yarp::os::Semaphore mutex;
 
     int period;
