@@ -19,6 +19,7 @@ using namespace yarp::sig;
 
 
 ServerFrameGrabber::ServerFrameGrabber() {
+    rgbVis_p = NULL;
     fgImage = NULL;
     fgImageRaw = NULL;
     fgSound = NULL;
@@ -110,6 +111,15 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         if(fgCtrl2)
             ifgCtrl2_Parser.configure(fgCtrl2);
         poly.view(fgTimed);
+        poly.view(rgbVis_p);
+
+        bool conf = rgbParser.configure(rgbVis_p);
+
+        if(!conf)
+        {
+            yError() << "ServerFrameGrabber: error configuring interfaces for parsers";
+            return false;
+        }
     }
 
     canDrop = !config.check("no_drop","if present, use strict policy for sending data");
@@ -222,6 +232,10 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
     case VOCAB_FRAMEGRABBER_CONTROL2:
     {
         return ifgCtrl2_Parser.respond(cmd, response);    // I don't like all those returns everywhere!!! :-(
+    } break;
+    case VOCAB_RGB_VISUAL_PARAMS:
+    {
+        return rgbParser.respond(cmd,response);
     } break;
 
     case VOCAB_SET:

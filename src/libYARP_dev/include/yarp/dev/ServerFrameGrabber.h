@@ -23,7 +23,7 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
-
+#include <yarp/dev/IVisualParamsImpl.h>
 namespace yarp {
     namespace dev {
         class ServerFrameGrabber;
@@ -90,6 +90,8 @@ class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public DataSource2<yarp::sig::ImageOf<yarp::sig::PixelRgb>,yarp::sig::Sound>
 {
 private:
+    yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
+    yarp::dev::IRgbVisualParams* rgbVis_p;
     yarp::os::Port p;
     yarp::os::Port *p2;
     yarp::os::RateThreadWrapper thread;
