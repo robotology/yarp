@@ -112,134 +112,133 @@ public:
         checkTrue(ok_client, "ddtransformclient open reported successful");
 
         bool ok_view = ddtransformclient.view(itf);
-        checkTrue(ok_view, "iTransform interface open reported successful");
+        checkTrue(ok_view && itf!=0, "iTransform interface open reported successful");
 
-        if (itf)
+        yarp::sig::Matrix m1(4, 4);
+        m1[0][0] = cos(M_PI / 4); m1[0][1] = -sin(M_PI / 4); m1[0][2] = 0; m1[0][3] = 3;
+        m1[1][0] = sin(M_PI / 4); m1[1][1] = cos(M_PI /4);   m1[1][2] = 0; m1[1][3] = 1;
+        m1[2][0] = 0;             m1[2][1] = 0;              m1[2][2] = 1; m1[2][3] = 2;
+        m1[3][0] = 0;             m1[3][1] = 0;              m1[3][2] = 0; m1[3][3] = 1;
+
+        yarp::sig::Matrix m2(4, 4);
+        m2[0][0] = cos(M_PI / 4);  m2[0][1] = 0; m2[0][2] = sin(M_PI / 4);  m2[0][3] = 0.1;
+        m2[1][0] = 0;              m2[1][1] = 1; m2[1][2] = 0;              m2[1][3] = 0.2;
+        m2[2][0] = -sin(M_PI / 4); m2[2][1] = 0; m2[2][2] = cos(M_PI / 4);  m2[2][3] = 0.3;
+        m2[3][0] = 0;              m2[3][1] = 0; m2[3][2] = 0;              m2[3][3] = 1;
+
+        yarp::sig::Matrix m3(4, 4);
+        m3 = m1*m2;
+        double precision;
+        precision = 0.00000001;
+        itf->setTransformStatic("frame2", "frame1", m1);
+        itf->setTransformStatic("frame3", "frame2", m2);
+        itf->setTransformStatic("frame4", "frame3", m3);
+        itf->setTransformStatic("frame11", "frame10", m1);
+        itf->setTransformStatic("frame3b", "frame2", m2);
+
+        yarp::sig::Matrix m4(4, 4);
+        m4[0][0] = +0.9585267399;  m4[0][1] = -0.2305627908;  m4[0][2] = +0.1675329472;  m4[0][3] = 0.1;
+        m4[1][0] = +0.2433237939;  m4[1][1] = +0.9680974922;  m4[1][2] = -0.0598395928;  m4[1][3] = 0.2;
+        m4[2][0] = -0.1483914426;  m4[2][1] = +0.0981226021;  m4[2][2] = +0.9840487461;  m4[2][3] = 0.3;
+        m4[3][0] = 0;              m4[3][1] = 0;              m4[3][2] = 0;              m4[3][3] = 1;
+
+        yarp::os::Time::delay(1);
+        //test 0
+        std::vector<std::string> ids;
+        itf->getAllFrameIds(ids);
+        char buff[1024]; buff[0] = 0;
+        for (size_t i = 0; i < ids.size(); i++)
         {
-            yarp::sig::Matrix m1(4, 4);
-            m1[0][0] = cos(M_PI / 4); m1[0][1] = -sin(M_PI / 4); m1[0][2] = 0; m1[0][3] = 3;
-            m1[1][0] = sin(M_PI / 4); m1[1][1] = cos(M_PI /4);   m1[1][2] = 0; m1[1][3] = 1;
-            m1[2][0] = 0;             m1[2][1] = 0;              m1[2][2] = 1; m1[2][3] = 2;
-            m1[3][0] = 0;             m1[3][1] = 0;              m1[3][2] = 0; m1[3][3] = 1;
+            sprintf(buff +strlen(buff), "%s ", ids[i].c_str());
+        }
+        report(0, std::string("Found frames: ") + std::string(buff));
+        bool b_ids = (ids.size() == 7);
+        checkTrue(b_ids, "getAllFrameIds ok");
 
-            yarp::sig::Matrix m2(4, 4);
-            m2[0][0] = cos(M_PI / 4);  m2[0][1] = 0; m2[0][2] = sin(M_PI / 4);  m2[0][3] = 0.1;
-            m2[1][0] = 0;              m2[1][1] = 1; m2[1][2] = 0;              m2[1][3] = 0.2;
-            m2[2][0] = -sin(M_PI / 4); m2[2][1] = 0; m2[2][2] = cos(M_PI / 4);  m2[2][3] = 0.3;
-            m2[3][0] = 0;              m2[3][1] = 0; m2[3][2] = 0;              m2[3][3] = 1;
+        //test 1
+        std::string parent;
+        itf->getParent("frame3", parent);
+        checkTrue(parent == "frame2", "getParent ok");
 
-            yarp::sig::Matrix m3(4, 4);
-            m3 = m1*m2;
-            double precision;
-            precision = 0.00000001;
-            itf->setTransformStatic("frame2", "frame1", m1);
-            itf->setTransformStatic("frame3", "frame2", m2);
-            itf->setTransformStatic("frame4", "frame3", m3);
-            itf->setTransformStatic("frame11", "frame10", m1);
-            itf->setTransformStatic("frame3b", "frame2", m2);
+        //test 2
+        yarp::sig::Matrix mt(4, 4);
+        bool b_gt = itf->getTransform("frame3", "frame1", mt);
+        isEqual(mt, m3, precision);
+        checkTrue(b_gt, "getTransform ok");
+        if (precision_verbose || b_gt==false) { yInfo() << "precision error:\n" + (mt - m3).toString(); }
 
-            yarp::sig::Matrix m4(4, 4);
-            m4[0][0] = +0.9585267399;  m4[0][1] = -0.2305627908;  m4[0][2] = +0.1675329472;  m4[0][3] = 0.1;
-            m4[1][0] = +0.2433237939;  m4[1][1] = +0.9680974922;  m4[1][2] = -0.0598395928;  m4[1][3] = 0.2;
-            m4[2][0] = -0.1483914426;  m4[2][1] = +0.0981226021;  m4[2][2] = +0.9840487461;  m4[2][3] = 0.3;
-            m4[3][0] = 0;              m4[3][1] = 0;              m4[3][2] = 0;              m4[3][3] = 1;
+        //test3
+        bool b_exist1, b_exist2;
+        b_exist1 = itf->frameExists("frame3");
+        b_exist2 = itf->frameExists("frame3_err");
+        checkTrue(b_exist1 && !b_exist2, "frameExists ok");
 
-            yarp::os::Time::delay(1);
-            //test 0
-            std::vector<std::string> ids;
-            itf->getAllFrameIds(ids);
-            char buff[1024]; buff[0] = 0;
-            for (size_t i = 0; i < ids.size(); i++)
-            {
-                sprintf(buff +strlen(buff), "%s ", ids[i].c_str());
-            }
-            report(0, std::string("Found frames: ") + std::string(buff));
-            bool b_ids = (ids.size() == 7);
-            checkTrue(b_ids, "getAllFrameIds ok");
+        //test4
+        bool b_can1, b_can2;
+        b_can1 = itf->canTransform("frame2", "frame1");
+        b_can2 = itf->canTransform("frame11", "frame1");
+        checkTrue(b_can1 && !b_can2, "canTransform ok");
 
-            //test 1
-            std::string parent;
-            itf->getParent("frame3", parent);
-            checkTrue(parent == "frame2", "getParent ok");
+        //test4bis
+        bool b_canb1;
+        b_canb1 = itf->canTransform("frame3b", "frame1");
+        checkTrue(b_canb1, "canTransform Bis ok");
 
-            //test 2
-            yarp::sig::Matrix mt(4, 4);
-            bool b_gt = itf->getTransform("frame3", "frame1", mt);
-            isEqual(mt, m3, precision);
-            checkTrue(b_gt, "getTransform ok");
-            if (precision_verbose || b_gt==false) { yInfo() << "precision error:\n" + (mt - m3).toString(); }
+        //test 5
+        yarp::sig::Matrix mti(4, 4);
+        itf->getTransform("frame1", "frame3b", mti);
+        bool b_gt_inv = isEqual(mti, yarp::math::SE3inv(m3), precision);
+        checkTrue(b_gt_inv, "inverted getTransform ok");
+        if (precision_verbose || b_gt_inv==false) { yInfo() << "precision error:\n" + (mti - yarp::math::SE3inv(m3)).toString(); }
 
-            //test3
-            bool b_exist1, b_exist2;
-            b_exist1 = itf->frameExists("frame3");
-            b_exist2 = itf->frameExists("frame3_err");
-            checkTrue(b_exist1 && !b_exist2, "frameExists ok");
+        //test 6
+        yarp::sig::Vector in_point1(3), out_point1(3), verPoint1(4);
+        yarp::sig::Vector in_pose1(6),  out_pose1(6),  verPose(6);
+        yarp::math::Quaternion in_quat1,  out_quat1,   verQuat;
 
-            //test4
-            bool b_can1, b_can2;
-            b_can1 = itf->canTransform("frame2", "frame1");
-            b_can2 = itf->canTransform("frame11", "frame1");
-            checkTrue(b_can1 && !b_can2, "canTransform ok");
+        in_quat1.fromRotationMatrix(m4);
 
-            //test4bis
-            bool b_canb1;
-            b_canb1 = itf->canTransform("frame3b", "frame1");
-            checkTrue(b_canb1, "canTransform Bis ok");
+        in_pose1[0] = 1;  in_pose1[1] = 2;  in_pose1[2] = 3;
+        in_pose1[3] = 30; in_pose1[4] = 60; in_pose1[5] = 90;
 
-            //test 5
-            yarp::sig::Matrix mti(4, 4);
-            itf->getTransform("frame1", "frame3b", mti);
-            bool b_gt_inv = isEqual(mti, yarp::math::SE3inv(m3), precision);
-            checkTrue(b_gt_inv, "inverted getTransform ok");
-            if (precision_verbose || b_gt_inv==false) { yInfo() << "precision error:\n" + (mti - yarp::math::SE3inv(m3)).toString(); }
+        in_point1[0] = 10; in_point1[1] = 15; in_point1[2] = 5;
 
-            //test 6
-            yarp::sig::Vector in_point1(3), out_point1(3), verPoint1(4);
-            yarp::sig::Vector in_pose1(6),  out_pose1(6),  verPose(6);
-            yarp::math::Quaternion in_quat1,  out_quat1,   verQuat;
+        in_point1.push_back(1);
+        verPoint1 = m1*m2*in_point1;
+        verPoint1.pop_back();
+        in_point1.pop_back();
 
-            in_quat1.fromRotationMatrix(m4);
+        yarp::sig::Matrix mat(4, 4);
+        yarp::sig::Vector temp(3);
 
-            in_pose1[0] = 1;  in_pose1[1] = 2;  in_pose1[2] = 3;
-            in_pose1[3] = 30; in_pose1[4] = 60; in_pose1[5] = 90;
+        double rot[3]     = { in_pose1[3], in_pose1[4], in_pose1[5] };
+        mat               = yarp::math::rpy2dcm(yarp::sig::Vector(3, rot));
+        mat[0][3]         = in_pose1[0]; mat[1][3] = in_pose1[1]; mat[2][3] = in_pose1[2];
+        mat               = m3 * mat;
+        verPose[0]        = mat[0][3]; verPose[1] = mat[1][3]; verPose[2] = mat[2][3];
+        temp              = yarp::math::dcm2rpy(mat);
+        verPose[3]        = temp[0]; verPose[4] = temp[1]; verPose[5] = temp[2];
 
-            in_point1[0] = 10; in_point1[1] = 15; in_point1[2] = 5;
+        verQuat.fromRotationMatrix(m1 * m2 * m4);
 
-            in_point1.push_back(1);
-            verPoint1 = m1*m2*in_point1;
-            verPoint1.pop_back();
-            in_point1.pop_back();
+        itf->transformPoint("frame3", "frame1", in_point1, out_point1);
+        itf->transformPose("frame3", "frame1", in_pose1, out_pose1);
+        itf->transformQuaternion("frame3", "frame1", in_quat1, out_quat1);
 
-            yarp::sig::Matrix mat(4, 4);
-            yarp::sig::Vector temp(3);
+        bool b_tpoint = isEqual(verPoint1, out_point1, precision);
+        checkTrue(b_tpoint, "transformPoint ok");
+        if (precision_verbose || b_tpoint == false) { yInfo() << "precision error:\n" + (verPoint1 - out_point1).toString(); }
 
-            double rot[3]     = { in_pose1[3], in_pose1[4], in_pose1[5] };
-            mat               = yarp::math::rpy2dcm(yarp::sig::Vector(3, rot));
-            mat[0][3]         = in_pose1[0]; mat[1][3] = in_pose1[1]; mat[2][3] = in_pose1[2];
-            mat               = m3 * mat;
-            verPose[0]        = mat[0][3]; verPose[1] = mat[1][3]; verPose[2] = mat[2][3];
-            temp              = yarp::math::dcm2rpy(mat);
-            verPose[3]        = temp[0]; verPose[4] = temp[1]; verPose[5] = temp[2];
+        bool b_tpose = isEqual(verPose, out_pose1, precision);
+        checkTrue(b_tpose, "transformPose ok");
+        if (precision_verbose || b_tpose == false) { yInfo() << "precision error:\n" + (verPose - out_pose1).toString(); }
 
-            verQuat.fromRotationMatrix(m1 * m2 * m4);
+        bool b_tquat = isEqual(verQuat, out_quat1, precision);
+        checkTrue(b_tquat, "transformQuaternion ok");
+        if (precision_verbose || b_tquat == false) { yInfo() << "precision error:\n" + (verQuat.toVector() - out_quat1.toVector()).toString(); }
 
-            itf->transformPoint("frame3", "frame1", in_point1, out_point1);
-            itf->transformPose("frame3", "frame1", in_pose1, out_pose1);
-            itf->transformQuaternion("frame3", "frame1", in_quat1, out_quat1);
-
-            bool b_tpoint = isEqual(verPoint1, out_point1, precision);
-            checkTrue(b_tpoint, "transformPoint ok");
-            if (precision_verbose || b_tpoint == false) { yInfo() << "precision error:\n" + (verPoint1 - out_point1).toString(); }
-
-            bool b_tpose = isEqual(verPose, out_pose1, precision);
-            checkTrue(b_tpose, "transformPose ok");
-            if (precision_verbose || b_tpose == false) { yInfo() << "precision error:\n" + (verPose - out_pose1).toString(); }
-
-            bool b_tquat = isEqual(verQuat, out_quat1, precision);
-            checkTrue(b_tquat, "transformQuaternion ok");
-            if (precision_verbose || b_tquat == false) { yInfo() << "precision error:\n" + (verQuat.toVector() - out_quat1.toVector()).toString(); }
-
-            //test 7
+        //test 7
+        {
             std::string all_frames;
             bool b_all_f = itf->allFramesAsString(all_frames);
             b_all_f &= (std::string::npos != all_frames.find("frame1"));
@@ -250,8 +249,10 @@ public:
             b_all_f &= (std::string::npos != all_frames.find("frame11"));
             b_all_f &= (std::string::npos != all_frames.find("frame3b"));
             checkTrue(b_all_f, "allFramesAsString ok");
+        }
 
-            //test 8
+        //test 8
+        {
             itf->setTransformStatic("frame_test", "frame1", m1);
             yarp::os::Time::delay(1);
             bool del_bool = itf->frameExists("frame_test");
@@ -259,14 +260,19 @@ public:
             yarp::os::Time::delay(1);
             del_bool &= (!itf->frameExists("frame_test"));
             checkTrue(del_bool, "deleteTransform ok");
+        }
 
-            //test 9
+        //test 9
+        {
             itf->clear();
             std::vector<std::string> cids;
             itf->getAllFrameIds(cids);
             checkTrue(cids.size() == 0, "clear ok");
+        }
 
-            //test 10
+        //test 10
+        {
+            itf->clear();
             itf->setTransform("frame2", "frame10", m1);
             yarp::os::Time::delay(0.050);
             bool b_can;
@@ -275,6 +281,72 @@ public:
             yarp::os::Time::delay(0.6);
             b_can = itf->canTransform("frame2", "frame10");
             checkFalse(b_can, "itf->setTransform successfully expired after 0.6s");
+        }
+
+        //test 11
+        {
+            itf->clear();
+            bool set_b1 = itf->setTransform("frame2", "frame10", m1);
+            yarp::os::Time::delay(0.050);
+            yarp::sig::Matrix mt1;
+            itf->getTransform("frame2", "frame10", mt1);
+            bool set_b2 = itf->setTransform("frame2", "frame10", m2);
+            yarp::os::Time::delay(0.050);
+            yarp::sig::Matrix mt2;
+            itf->getTransform("frame2", "frame10", mt2);
+            checkTrue(set_b1 && set_b2 && m1 == mt1 && m2 == mt2, "itf->setTransform successfully updated");
+        }
+
+        //test 11b
+        {
+            itf->clear();
+            bool set_b1 = itf->setTransformStatic("frame2", "frame10", m1);
+            yarp::os::Time::delay(0.050);
+            yarp::sig::Matrix mt1;
+            itf->getTransform("frame2", "frame10", mt1);
+            bool set_b2 = itf->setTransformStatic("frame2", "frame10", m2);
+            yarp::os::Time::delay(0.050);
+            yarp::sig::Matrix mt2;
+            itf->getTransform("frame2", "frame10", mt2);
+            checkTrue(set_b1 && set_b2 && m1 == mt1 && m2 == mt2, "itf->setTransformStatic successfully updated");
+        }
+
+        //test 12
+        {
+            itf->clear();
+            bool set_b1 = itf->setTransform("frame2", "frame1", m1);
+            yarp::os::Time::delay(0.050);
+            bool set_b2 = itf->setTransform("frame3", "frame2", m1);
+            yarp::os::Time::delay(0.050);
+            bool set_b3 = itf->setTransform("frame3", "frame1", m1);
+            yarp::sig::Matrix mt1;
+            yarp::sig::Matrix mt2;
+            yarp::sig::Matrix mt3;
+            yarp::sig::Matrix mt4;
+            itf->getTransform("frame2", "frame1", mt1);
+            itf->getTransform("frame3", "frame2", mt2);
+            itf->getTransform("frame3", "frame1", mt3);
+            checkTrue(set_b1 && set_b2 && set_b3==false,    "itf->setTransform duplicate transform successfully skipped");
+            checkTrue(mt1==m1 && mt2==m2 && mt3 == (m2*m1), "itf->setTransform still working after duplicate transform");
+        }
+
+        //test 12b
+        {
+            itf->clear();
+            bool set_b1 = itf->setTransformStatic("frame2", "frame1", m1);
+            yarp::os::Time::delay(0.050);
+            bool set_b2 = itf->setTransformStatic("frame3", "frame2", m1);
+            yarp::os::Time::delay(0.050);
+            bool set_b3 = itf->setTransformStatic("frame3", "frame1", m1);
+            yarp::sig::Matrix mt1;
+            yarp::sig::Matrix mt2;
+            yarp::sig::Matrix mt3;
+            yarp::sig::Matrix mt4;
+            itf->getTransform("frame2", "frame1", mt1);
+            itf->getTransform("frame3", "frame2", mt2);
+            itf->getTransform("frame3", "frame1", mt3);
+            checkTrue(set_b1 && set_b2 && set_b3 == false, "itf->setTransformStatic duplicate transform successfully skipped");
+            checkTrue(mt1 == m1 && mt2 == m2 && mt3 == (m2*m1), "itf->setTransformStatic still working after duplicate transform");
         }
 
         // Close devices
