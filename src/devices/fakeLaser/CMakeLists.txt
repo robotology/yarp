@@ -20,7 +20,8 @@ if(NOT SKIP_fakeLaser)
                             fakeLaser.cpp)
   target_link_libraries(fakeLaser YARP_OS
                                   YARP_sig
-                                  YARP_dev)
+                                  YARP_dev
+                                  YARP_math)
   yarp_install(TARGETS fakeLaser
                EXPORT YARP
                COMPONENT runtime
