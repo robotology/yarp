@@ -11,7 +11,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-
+#include <yarp/math/Vec2D.h>
 #include <iostream>
 #include <limits>
 #include <cstring>
@@ -51,6 +51,25 @@ bool FakeLaser::open(yarp::os::Searchable& config)
 
     sensorsNum = (int)((max_angle-min_angle)/resolution);
     laser_data.resize(sensorsNum);
+    if (m_string_test_mode == "map_test")
+    {
+        string map_file;
+        if (config.check("map_file"))
+        {
+            map_file = config.check("map_file",Value(string("map.yaml")),"map filename").asString();
+        }
+        else
+        {
+            yError() << "Missing map_file";
+            return false;
+        }
+        m_map.loadFromFile(map_file);
+        m_loc_port.open("/fakeLaser/location:i");
+        m_loc_x=0;
+        m_loc_y=0;
+        m_loc_t=0;
+        max_distance = 8;  //m
+    }
 
     yInfo("Starting debug mode");
     yInfo("max_dist %f, min_dist %f", max_distance, min_distance);
@@ -232,6 +251,32 @@ void FakeLaser::run()
             laser_data.push_back(std::numeric_limits<double>::infinity());
         }
     }
+    else if (m_string_test_mode == "map_test")
+    {
+        Bottle* b = m_loc_port.read(false);
+        if (b)
+        {
+          m_loc_x = b->get(0).asDouble();
+          m_loc_y = b->get(1).asDouble();
+          m_loc_t = b->get(2).asDouble();
+        }
+        for (int i = 0; i < sensorsNum; i++)
+        {
+            //compute the ray in the robot reference frame
+            double robot_curr_t = i*resolution + min_angle;
+            double robot_curr_x = max_distance * cos(robot_curr_t*DEG2RAD);
+            double robot_curr_y = max_distance * sin(robot_curr_t*DEG2RAD);
+
+            //transforms the ray from the robot to the world reference frame
+            MapGrid2D::XYWorld ray_world;
+            ray_world.x = robot_curr_x*cos(m_loc_t*DEG2RAD) - robot_curr_y*sin(m_loc_t*DEG2RAD) + m_loc_x;
+            ray_world.y = robot_curr_x*sin(m_loc_t*DEG2RAD) + robot_curr_y*cos(m_loc_t*DEG2RAD) + m_loc_y;
+            MapGrid2D::XYCell src = m_map.world2Cell(MapGrid2D::XYWorld(m_loc_x, m_loc_y));
+            MapGrid2D::XYCell dst = m_map.world2Cell(ray_world);
+            double distance = checkStraightLine(src,dst);
+            laser_data.push_back(distance + (*m_dis)(*m_gen));
+        }
+    }
     else
     {
         yError() << "Unknown test mode:" << m_string_test_mode;
@@ -239,6 +284,45 @@ void FakeLaser::run()
 
     mutex.post();
     return;
+}
+
+double FakeLaser::checkStraightLine(MapGrid2D::XYCell src, MapGrid2D::XYCell dst)
+{
+    MapGrid2D::XYCell src_final = src;
+
+    //here using the fast Bresenham algorithm
+    int dx = abs(dst.x - src.x);
+    int dy = abs(dst.y - src.y);
+    int err = dx - dy;
+
+    int sx;
+    int sy;
+    if (src.x < dst.x) sx = 1; else sx = -1;
+    if (src.y < dst.y) sy = 1; else sy = -1;
+
+    while (1)
+    {
+        //if (m_map.isFree(src) == false)
+        if (m_map.isWall(src))
+        {
+            yarp::dev::MapGrid2D::XYWorld world_start =  m_map.cell2World(src);
+            yarp::dev::MapGrid2D::XYWorld world_end =  m_map.cell2World(src_final);
+            return sqrt(pow(world_start.x - world_end.x, 2) + pow(world_start.y - world_end.y, 2));
+        }
+        if (src.x == dst.x && src.y == dst.y) break;
+        int e2 = err * 2;
+        if (e2 > -dy)
+        {
+            err = err - dy;
+            src.x += sx;
+        }
+        if (e2 < dx)
+        {
+            err = err + dx;
+            src.y += sy;
+        }
+    }
+    return std::numeric_limits<double>::infinity();
 }
 
 void FakeLaser::threadRelease()

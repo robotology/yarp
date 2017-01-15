@@ -12,10 +12,13 @@
 
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
+#include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
+#include <random>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -36,18 +39,40 @@ protected:
     double max_distance;
     double resolution;
 
+    yarp::dev::MapGrid2D   m_map;
+    yarp::os::BufferedPort<yarp::os::Bottle> m_loc_port;
+    double m_loc_x;
+    double m_loc_y;
+    double m_loc_t;
+
+  //  yarp::dev:::Map2DLocation
+
     std::string info;
     Device_status device_status;
 
     yarp::sig::Vector laser_data;
 
+    std::random_device* m_rd;
+    std::mt19937* m_gen;
+    std::uniform_real_distribution<>* m_dis;
+
 public:
     FakeLaser(int period = 20) : RateThread(period), mutex(1)
-    {}
+    {
+        m_rd = new std::random_device;
+        m_gen = new std::mt19937((*m_rd)());
+        m_dis = new std::uniform_real_distribution<>(0, 0.01);
+    }
     
 
     ~FakeLaser()
     {
+        delete m_rd;
+        delete m_gen;
+        delete m_dis;
+        m_rd = 0;
+        m_gen = 0;
+        m_dis = 0;
     }
 
     virtual bool open(yarp::os::Searchable& config);
@@ -55,6 +80,9 @@ public:
     virtual bool threadInit();
     virtual void threadRelease();
     virtual void run();
+
+private:
+    double checkStraightLine(MapGrid2D::XYCell src, MapGrid2D::XYCell dst);
 
 public:
     //IRangefinder2D interface
