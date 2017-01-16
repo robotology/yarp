@@ -34,6 +34,9 @@ TestFrameGrabber::TestFrameGrabber() {
     rnd = 0;
     use_bayer = false;
     use_mono = false;
+    mirror=false;
+    horizontalFov=0.0;
+    verticalFov=0.0;
 }
 
 
@@ -43,10 +46,32 @@ bool TestFrameGrabber::close() {
 
 bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     yarp::os::Value *val;
-    w = config.check("width",yarp::os::Value(128),
+    Value* retM;
+    retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
+    w = config.check("width",yarp::os::Value(320),
                      "desired width of test image").asInt();
-    h = config.check("height",yarp::os::Value(128),
+    h = config.check("height",yarp::os::Value(240),
                      "desired height of test image").asInt();
+    horizontalFov=config.check("horizontalFov",Value(1.0),
+                               "desired horizontal fov of test image").asDouble();
+    verticalFov=config.check("verticalFov",Value(2.0),
+                               "desired vertical fov of test image").asDouble();
+    mirror=config.check("mirror",Value(false),
+                        "mirroring disabled by default").asBool();
+    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"").asDouble());
+    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"").asDouble());
+    intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"").asDouble());
+    intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"").asDouble());
+    intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,""));
+    intrinsic.put("distortionModel",config.check("distortionModel",Value("FishEye"),"").asString());
+    intrinsic.put("k1",config.check("k1",Value(8.0),"").asDouble());
+    intrinsic.put("k2",config.check("k2",Value(9.0),"").asDouble());
+    intrinsic.put("k3",config.check("k3",Value(10.0),"").asDouble());
+    intrinsic.put("t1",config.check("t1",Value(11.0),"").asDouble());
+    intrinsic.put("t2",config.check("t2",Value(12.0),"").asDouble());
+
+    delete retM;
+
     if (config.check("freq",val,"rate of test images in Hz")) {
         freq = val->asDouble();
         period = 1/freq;
@@ -110,6 +135,54 @@ void TestFrameGrabber::timing() {
     prev += period;
 }
 
+int TestFrameGrabber::height() const {
+    return h;
+}
+
+int TestFrameGrabber::width() const {
+    return w;
+}
+
+int TestFrameGrabber::getRgbHeight(){
+    return h;
+}
+
+int TestFrameGrabber::getRgbWidth(){
+    return w;
+}
+
+bool TestFrameGrabber::setRgbResolution(int width, int height){
+    w=width;
+    h=height;
+    return true;
+}
+
+bool TestFrameGrabber::getRgbFOV(double &horizontalFov, double &verticalFov){
+    horizontalFov=this->horizontalFov;
+    verticalFov=this->verticalFov;
+    return true;
+}
+
+bool TestFrameGrabber::setRgbFOV(double horizontalFov, double verticalFov){
+    this->horizontalFov=horizontalFov;
+    this->verticalFov=verticalFov;
+    return true;
+}
+
+bool TestFrameGrabber::getRgbIntrinsicParam(yarp::os::Property &intrinsic){
+    intrinsic=this->intrinsic;
+    return true;
+}
+
+bool TestFrameGrabber::getRgbMirroring(bool &mirror){
+    mirror=this->mirror;
+    return true;}
+
+bool TestFrameGrabber::setRgbMirroring(bool mirror){
+    this->mirror=mirror;
+    return true;
+}
+
 bool TestFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     timing();
     createTestImage(image);
@@ -127,15 +200,6 @@ bool TestFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
     }
     return true;
 }
-
-int TestFrameGrabber::height() const {
-    return h;
-}
-
-int TestFrameGrabber::width() const {
-    return w;
-}
-
 
 bool TestFrameGrabber::setBrightness(double v) {
     return false;

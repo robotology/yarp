@@ -19,6 +19,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Value.h>
+#include <yarp/dev/IVisualParams.h>
 
 #define VOCAB_LINE VOCAB4('l','i','n','e')
 
@@ -35,12 +36,13 @@ namespace yarp {
  * Implements the IFrameGrabberImage and IFrameGrabberControls
  * interfaces.
  */
-class YARP_dev_API yarp::dev::TestFrameGrabber : public DeviceDriver,
-                                                 public IFrameGrabberImage,
-                                                 public IFrameGrabberImageRaw,
-                                                 public IFrameGrabberControls,
-                                                 public IPreciselyTimed,
-                                                 public IAudioVisualStream
+class yarp::dev::TestFrameGrabber : public DeviceDriver,
+                                    public IFrameGrabberImage,
+                                    public IFrameGrabberImageRaw,
+                                    public IFrameGrabberControls,
+                                    public IPreciselyTimed,
+                                    public IAudioVisualStream,
+                                    public IRgbVisualParams
 {
 private:
     int ct;
@@ -49,10 +51,13 @@ private:
     unsigned long rnd;
     double period, freq;
     double first;
+    double horizontalFov,verticalFov;
     double prev;
     int mode;
     bool use_bayer;
     bool use_mono;
+    bool mirror;
+    yarp::os::Property intrinsic;
 
 public:
     /**
@@ -82,13 +87,29 @@ public:
 
     void timing();
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
-
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
-
     virtual int height() const;
 
     virtual int width() const;
+    //INIZIO
+    virtual int getRgbHeight();
+
+    virtual int getRgbWidth();
+
+    virtual bool setRgbResolution(int width, int height);
+
+    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov);
+
+    virtual bool setRgbFOV(double horizontalFov, double verticalFov);
+
+    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic);
+
+    virtual bool getRgbMirroring(bool &mirror);
+
+    virtual bool setRgbMirroring(bool mirror);
+//FINE
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
 
     virtual bool setBrightness(double v);
 
