@@ -1,12 +1,12 @@
 /*
-* Copyright: (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
-* Authors: Nicolo' Genesio <nicolo.genesio@iit.it>
-* CopyPolicy: Released under the terms of the GNU GPL v2.0.
-*/
+ * Copyright: (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Authors: Nicolò Genesio <nicolo.genesio@iit.it>
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 
-#ifndef _YARP_PLUGIN_FIXTURE_H_
-#define _YARP_PLUGIN_FIXTURE_H_
+#ifndef YARP_RTF_PLUGINS_YARPPLUGIN_YARPPLUGINFIXTURE_H
+#define YARP_RTF_PLUGINS_YARPPLUGIN_YARPPLUGINFIXTURE_H
 
 #include <rtf/FixtureManager.h>
 #include <rtf/Asserter.h>
@@ -35,4 +35,4 @@ private:
     yarp::os::Bottle plugins;
 };
 
-#endif //_YARP_PLUGIN_FIXTURE_H_
+#endif // YARP_RTF_PLUGINS_YARPPLUGIN_YARPPLUGINFIXTURE_H

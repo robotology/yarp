@@ -1,19 +1,20 @@
 /*
-*  Copyright: (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
-* Authors: Nicolo' Genesio <nicolo.genesio@iit.it>
-* CopyPolicy: Released under the terms of the GNU GPL v2.0.
-*/
+ * Copyright: (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
+ * Authors: Nicolò Genesio <nicolo.genesio@iit.it>
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#include "YarpPluginFixture.h"
 
 #include <cstdio>
 #include <ctime>
 #include <rtf/dll/Plugin.h>
 #include <rtf/TestAssert.h>
-#include <rtf/yarp/YarpTestCase.h>
-#include "YarpPluginFixture.h"
 #include <yarp/os/Property.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/Drivers.h>
 #include <yarp/os/YarpPlugin.h>
+#include <yarp/dev/Drivers.h>
+#include <yarp/rtf/TestCase.h>
 
 using namespace std;
 using namespace RTF;

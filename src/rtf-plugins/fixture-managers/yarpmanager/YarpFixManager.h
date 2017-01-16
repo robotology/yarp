@@ -1,14 +1,11 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
  * Copyright (C) 2015 iCub Facility
  * Authors: Ali Paikan
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#ifndef _YarpFixManager_H_
-#define _YarpFixManager_H_
+#ifndef YARP_RTF_PLUGINS_YARPMANAGER_YARPFIXMANAGER_H
+#define YARP_RTF_PLUGINS_YARPMANAGER_YARPFIXMANAGER_H
 
 #include <yarp/os/Network.h>
 #include <yarp/manager/manager.h>
@@ -53,4 +50,4 @@ private:
     std::string fixtureName;
 };
 
-#endif //_YarpFixManager_H_
+#endif // YARP_RTF_PLUGINS_YARPMANAGER_YARPFIXMANAGER_H
