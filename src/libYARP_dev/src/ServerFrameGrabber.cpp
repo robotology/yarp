@@ -115,8 +115,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
 
         if(!conf)
         {
-            yError() << "ServerFrameGrabber: error configuring interfaces for parsers";
-            return false;
+            yWarning() << "ServerFrameGrabber: error configuring interfaces for parsers";
         }
     }
 
@@ -223,7 +222,6 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 
     IFrameGrabberControlsDC1394* fgCtrlDC1394=dynamic_cast<IFrameGrabberControlsDC1394*>(fgCtrl);
 
-    yInfo() << "cmd is "<< cmd.toString();
     switch (code)
     {
     // first check if requests are coming from new iFrameGrabberControl2 interface and process them
