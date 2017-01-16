@@ -1,20 +1,25 @@
+@font-face { font-family: Moonhouse; src: url('moonhouse.ttf'); }
+
 #projectname
 {
     font-size: 300%;
-    font-family: "Courier", "Courier New", "Monaco", monospace;
+    font-family: Moonhouse, Roboto, sans-serif;
     font-weight: bold;
     font-stretch: ultra-expanded;
     font-style: oblique;
     color: #5991ac;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
 }
 
 #projectbrief
 {
     font-size: 140%;
-    font-family: "Courier", "Courier New", "Monaco", monospace;
+    font-family: Moonhouse, Roboto, sans-serif;
     font-weight: bold;
+    font-style: oblique;
     font-variant: small-caps;
     color: #87b5cc;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
 }
 
 #projectnumber
@@ -22,13 +27,57 @@
     font-size: 25%;
     font-family: "Courier", "Courier New", "Monaco", monospace;
     color: #19c2d8;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
 }
 
 #titlearea {
     background-color: #f6fbfd;
 }
 
+#main-nav .sm-dox a {
+    font-size: 14px;
+    font-family: Moonhouse, Roboto, sans-serif;
+    font-weight: bold;
+    font-style: oblique;
+    font-variant: small-caps;
+    color: #19526e;
+    text-shadow: 0 2px 2px rgba(255,255,255,0.9);
+}
+
 #yarp-logo {
     max-height: 128px;
     max-width: 100%;
+}
+
+h1, h2, h3, h4 {
+    color: #19526e;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+h1 {
+    font-family: Moonhouse, Roboto, sans-serif;
+    font-variant: small-caps;
+}
+
+h2.groupheader {
+    font-family: Moonhouse, Roboto, sans-serif;
+    font-style: oblique;
+    font-variant: small-caps;
+}
+
+h2.memtitle {
+    font-weight: bold;
+}
+
+td.memname {
+    font-size: 120%;
+    font-weight: bold;
+}
+
+#doc-content div.title {
+    font-size: 160%;
+    font-weight: bold;
+    font-style: oblique;
+    color: #19526e;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
 }

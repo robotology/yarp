@@ -1181,7 +1181,8 @@ HTML_EXTRA_STYLESHEET  = @CMAKE_SOURCE_DIR@/doc/yarp-doxygen.css
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = @CMAKE_SOURCE_DIR@/doc/images/yarp-favicon.ico
+HTML_EXTRA_FILES       = @CMAKE_SOURCE_DIR@/doc/images/yarp-favicon.ico \
+                         @CMAKE_SOURCE_DIR@/doc/moonhouse.ttf
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
