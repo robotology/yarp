@@ -5,6 +5,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 #include <iostream>
+#include <yarp/manager/utility.h>
 
 namespace yarp{
 namespace manager{
@@ -14,14 +15,18 @@ class TextParser
 {
     typedef std::map<std::string, std::string> VarMap;
 
-    VarMap variables;
+    VarMap        variables;
+    ErrorLogger*  logger;
+    OSTRINGSTREAM war;
 public:
-    TextParser(){}
+    TextParser(){logger = logger->Instance();}
+
     bool addVariable(const std::string& key, const std::string& value)
     {
         if (key.empty())
         {
-            cout << "TextParser: empty key on variable setting..";
+            war << "TextParser: empty key on variable setting..";
+            if (logger) logger->addWarning(war);
             return false;
         }
         variables[key] = parseText(value.c_str());
@@ -78,7 +83,8 @@ public:
 
             if(badSymbol)
             {
-                yWarning() << "use of symbol '$' detected but no keyword understood.. possible use: ${foo} for internal variable or $ENV{foo} for environment variable";
+                war << "use of symbol '$' detected but no keyword understood.. possible use: ${foo} for internal variable or $ENV{foo} for environment variable";
+                if (logger) logger->addWarning(war);
             }
         }
 
