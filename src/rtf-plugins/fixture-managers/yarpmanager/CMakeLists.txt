@@ -1,38 +1,27 @@
-#  RTF
-#  Copyright: (C) 2015 Ali Paikan
-#  Authors: Ali Paikan <ali.paikan@gmail.com>
-#
-#  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-#
+# Copyright: (C) 2017 iCub Facility, Istituto Italiano di Tecnologia
+# Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-cmake_minimum_required(VERSION 2.8.9)
-set(PROJECTNAME yarpmanager)
-project(${PROJECTNAME})
+project(rtf_fixturemanager_yarpmanager)
 
-find_package(YARP REQUIRED)
+get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
 
-get_property(RTF_LIBS GLOBAL PROPERTY RTF_LIBS)
-get_property(RTF_TREE_INCLUDE_DIRS GLOBAL PROPERTY RTF_TREE_INCLUDE_DIRS)
+include_directories(SYSTEM ${RTF_INCLUDE_DIRS})
+include_directories(${YARP_OS_INCLUDE_DIRS}
+                    ${YARP_manager_INCLUDE_DIRS})
 
+add_library(rtf_fixturemanager_yarpmanager MODULE YarpFixManager.h
+                                                  YarpFixManager.cpp)
+set_property(TARGET rtf_fixturemanager_yarpmanager PROPERTY PREFIX "")
+set_property(TARGET rtf_fixturemanager_yarpmanager PROPERTY OUTPUT_NAME yarpmanager)
 
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_TREE_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
+target_link_libraries(rtf_fixturemanager_yarpmanager PRIVATE RTF::RTF
+                                                             YARP::YARP_OS
+                                                             YARP::YARP_manager)
 
-set(CMAKE_SHARED_MODULE_PREFIX "")
-
-link_libraries(${RTF_LIBS}
-               ${YARP_LIBRARIES}
-               YARP::YARP_manager)
-
-add_library(${PROJECTNAME} MODULE YarpFixManager.h
-                                  YarpFixManager.cpp)
-install(TARGETS ${PROJECTNAME}
-        EXPORT ${PROJECTNAME}
-        COMPONENT runtime
-        LIBRARY DESTINATION lib)
-
-
-
-
+yarp_install(TARGETS rtf_fixturemanager_yarpmanager
+             EXPORT YARP
+             COMPONENT runtime
+             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/rtf)

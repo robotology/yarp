@@ -35,6 +35,7 @@ foreach(lib ${YARP_LIBS})
   if(NOT "${lib}" MATCHES "carrier$" AND
      NOT "${lib}" MATCHES "^yarp_" AND
      NOT "${lib}" MATCHES "^YARP_priv" AND
+     NOT "${lib}" MATCHES "rtf_fixturemanager_" AND
      NOT "${lib}" STREQUAL "yarpcar" AND
      NOT "${lib}" STREQUAL "yarpmod" AND
      NOT "${lib}" STREQUAL "YARP_wire_rep_utils" AND
@@ -42,7 +43,8 @@ foreach(lib ${YARP_LIBS})
      NOT "${lib}" STREQUAL "YARP_logger" AND
      NOT "${lib}" STREQUAL "YARP_serversql" AND
      NOT "${lib}" STREQUAL "YARP_gsl" AND
-     NOT "${lib}" STREQUAL "YARP_eigen")
+     NOT "${lib}" STREQUAL "YARP_eigen" AND
+     NOT "${lib}" STREQUAL "YARP_rtf")
     list(APPEND YARP_LIBRARIES YARP::${lib})
   endif()
 endforeach()

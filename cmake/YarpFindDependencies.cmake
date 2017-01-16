@@ -320,6 +320,10 @@ else()
   endif()
 endif()
 
+set(RTF_REQUIRED_VERSION 1.1.0.1)
+find_package(RTF ${RTF_REQUIRED_VERSION} QUIET)
+checkbuildandset_dependency(RTF)
+
 find_package(SQLite QUIET)
 checkbuildandset_dependency(SQLite)
 
@@ -423,6 +427,7 @@ checkandset_dependency(ZFP)
 message(STATUS "I have found the following libraries:")
 print_dependency(YCM)
 print_dependency(ACE)
+print_dependency(RTF)
 print_dependency(SQLite)
 print_dependency(Eigen3)
 print_dependency(TinyXML)
@@ -462,6 +467,7 @@ check_optional_dependency(CREATE_GUIS Qt5)
 check_optional_dependency(CREATE_YARPSCOPE QCustomPlot)
 check_optional_dependency(CREATE_YARPLASERSCANNERGUI OpenCV)
 check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
+check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
 
 
 #########################################################################

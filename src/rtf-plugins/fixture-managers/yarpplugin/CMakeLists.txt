@@ -1,35 +1,29 @@
-# Copyright: (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
-# Authors: Nicolo' Genesio <nicolo.genesio@iit.it>
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+# Copyright: (C) 2016, 2017 iCub Facility - Istituto Italiano di Tecnologia
+# Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.9)
+project(rtf_fixturemanager_yarpplugin)
 
-# set the project name
-set(PROJECTNAME YarpPluginFixture)
-project(${PROJECTNAME})
+get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
+get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_rtf PROPERTY INCLUDE_DIRS)
 
-# add the required cmake packages
-find_package(RTF)
-find_package(RTF COMPONENTS DLL)
-find_package(YARP)
+include_directories(SYSTEM ${RTF_INCLUDE_DIRS})
+include_directories(${YARP_OS_INCLUDE_DIRS}
+                    ${YARP_dev_INCLUDE_DIRS}
+                    ${YARP_rtf_INCLUDE_DIRS})
 
-# add include directories
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS}
-                    ${YARP_HELPERS_INCLUDE_DIR})
+add_library(rtf_fixturemanager_yarpplugin MODULE YarpPluginFixture.h
+                                                 YarpPluginFixture.cpp)
+set_property(TARGET rtf_fixturemanager_yarpplugin PROPERTY PREFIX "")
+set_property(TARGET rtf_fixturemanager_yarpplugin PROPERTY OUTPUT_NAME yarpplugin)
 
-# add required libraries 
-link_libraries(${RTF_LIBRARIES}
-               ${YARP_LIBRARIES})
+target_link_libraries(rtf_fixturemanager_yarpplugin RTF::RTF
+                                                    YARP::YARP_OS
+                                                    YARP::YARP_dev
+                                                    YARP::YARP_rtf)
 
-# add the source codes to build the plugin library
-add_library(${PROJECTNAME} MODULE YarpPluginFixture.h
-                                  YarpPluginFixture.cpp)
-
-# set the installation options
-install(TARGETS ${PROJECTNAME}
-        EXPORT ${PROJECTNAME}
-        COMPONENT runtime
-        LIBRARY DESTINATION lib)
-
+yarp_install(TARGETS rtf_fixturemanager_yarpplugin
+             EXPORT YARP
+             COMPONENT runtime
+             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/rtf)
