@@ -4,8 +4,6 @@ language: cpp
 
 cache:
   ccache: true
-  directories:
-    - /usr/local/Cellar
 
 os:
   - linux
