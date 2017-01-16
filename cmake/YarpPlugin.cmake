@@ -532,7 +532,6 @@ macro(YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE exename bundle_name)
   add_executable(${exename} ${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp)
   target_link_libraries(${exename} ${bundle_name})
   target_link_libraries(${exename} YARP::YARP_OS YARP::YARP_init YARP::YARP_dev)
-  endif()
 endmacro()
 
 
