@@ -118,6 +118,11 @@ if(YARP_COMPILE_TESTS)
     add_definitions(-DYARP_ANALOGWRAPPER_TESTS)
   endif()
 
+  # Compile TestFrameGrabberTest only if test_grabber is enabled
+  if(ENABLE_yarpmod_test_grabber)
+    add_definitions(-DYARP_TESTFRAMEGRABBER_TESTS)
+  endif()
+
   # Add in hardware specific tests, if requested
   option(CREATE_PLUGIN_TESTS "Compile plugin tests" FALSE)
   mark_as_advanced(CREATE_PLUGIN_TESTS)
