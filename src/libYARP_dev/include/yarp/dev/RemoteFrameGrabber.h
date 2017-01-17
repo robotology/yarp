@@ -628,7 +628,6 @@ public:
      */
     virtual bool open(yarp::os::Searchable& config){
         yTrace();
-        std::cout << "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
         yDebug() << "config is " << config.toString();
 
         remote = config.check("remote",yarp::os::Value(""),
