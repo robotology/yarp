@@ -1,5 +1,22 @@
 @font-face { font-family: Moonhouse; src: url('moonhouse.ttf'); }
 
+#titlearea
+{
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#titlearea table
+{
+    width: 100%;
+}
+
+#projectlogo
+{
+    width: 64px;
+    height: 64px;
+}
+
 #projectname
 {
     font-size: 300%;
@@ -9,11 +26,12 @@
     font-style: oblique;
     color: #5991ac;
     text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+    padding: 0px 0px;
 }
 
 #projectbrief
 {
-    font-size: 140%;
+    font-size: 120%;
     font-family: Moonhouse, Roboto, sans-serif;
     font-weight: bold;
     font-style: oblique;
@@ -24,8 +42,8 @@
 
 #projectnumber
 {
-    font-size: 25%;
-    font-family: "Courier", "Courier New", "Monaco", monospace;
+    font-size: 20%;
+    font-family: "Courier New", "Courier", "Monaco", monospace;
     color: #19c2d8;
     text-shadow: 0 2px 2px rgba(135,181,204,0.9);
 }
@@ -84,5 +102,11 @@ td.memname {
     font-weight: bold;
     font-style: oblique;
     color: #19526e;
+    text-shadow: 0 2px 2px rgba(135,181,204,0.9);
+}
+
+.overload {
+    font-size: 50%;
+    color: #5991ac;
     text-shadow: 0 2px 2px rgba(135,181,204,0.9);
 }
