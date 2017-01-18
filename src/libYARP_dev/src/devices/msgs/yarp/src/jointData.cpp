@@ -2,7 +2,6 @@
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #include <jointData.h>
-#include <yarp/os/Time.h>
 
 bool jointData::read_jointPosition(yarp::os::idl::WireReader& reader) {
   if (!reader.read(jointPosition)) {
