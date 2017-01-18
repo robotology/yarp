@@ -574,64 +574,64 @@ if(NOT YARP_NO_DEPRECATED)
   include(${CMAKE_CURRENT_LIST_DIR}/YarpDeprecatedWarning.cmake)
 
   macro(BEGIN_PLUGIN_LIBRARY)
-    yarp_deprecated_warning("BEGIN_PLUGIN_LIBRARY is deprecated. Use YARP_BEGIN_PLUGIN_LIBRARY instead.")
+    yarp_deprecated_warning("BEGIN_PLUGIN_LIBRARY is deprecated. Use YARP_BEGIN_PLUGIN_LIBRARY instead.") # Since YARP 2.3.21
     yarp_begin_plugin_library(${ARGN})
   endmacro()
 
   macro(ADD_PLUGIN_NORMALIZED)
-    yarp_deprecated_warning("ADD_PLUGIN_NORMALIZED is deprecated.\nUse YARP_ADD_PLUGIN_NORMALIZED instead.")
+    yarp_deprecated_warning("ADD_PLUGIN_NORMALIZED is deprecated.\nUse YARP_ADD_PLUGIN_NORMALIZED instead.") # Since YARP 2.3.21
     yarp_add_plugin_normalized(${ARGN})
   endmacro()
 
   macro(PREPARE_PLUGIN)
-    yarp_deprecated_warning("PREPARE_PLUGIN is deprecated.\nUse YARP_PREPARE_PLUGIN instead.")
+    yarp_deprecated_warning("PREPARE_PLUGIN is deprecated.\nUse YARP_PREPARE_PLUGIN instead.") # Since YARP 2.3.21
     yarp_prepare_plugin(${ARGN})
   endmacro()
 
   macro(PREPARE_DEVICE)
-    yarp_deprecated_warning("PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.")
+    yarp_deprecated_warning("PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.") # Since YARP 2.3.21
     yarp_prepare_plugin(${ARGN} CATEGORY device)
   endmacro()
 
   macro(YARP_PREPARE_DEVICE)
-    yarp_deprecated_warning("YARP_PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.")
+    yarp_deprecated_warning("YARP_PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.") # Since YARP 2.3.68
     yarp_prepare_plugin(${ARGN} CATEGORY device)
   endmacro()
 
   macro(PREPARE_CARRIER)
-    yarp_deprecated_warning("PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.")
+    yarp_deprecated_warning("PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.") # Since YARP 2.3.21
     yarp_prepare_plugin(${ARGN} CATEGORY carrier)
   endmacro()
 
   macro(YARP_PREPARE_CARRIER)
-    yarp_deprecated_warning("YARP_PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.")
+    yarp_deprecated_warning("YARP_PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.") # Since YARP 2.3.68
     yarp_prepare_plugin(${ARGN} CATEGORY carrier)
   endmacro()
 
   macro(END_PLUGIN_LIBRARY)
-    yarp_deprecated_warning("END_PLUGIN_LIBRARY is deprecated.\nUse YARP_END_PLUGIN_LIBRARY instead.")
+    yarp_deprecated_warning("END_PLUGIN_LIBRARY is deprecated.\nUse YARP_END_PLUGIN_LIBRARY instead.") # Since YARP 2.3.21
     yarp_end_plugin_library(${ARGN})
   endmacro()
 
   macro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
-    yarp_deprecated_warning("ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated.\nUse YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.")
+    yarp_deprecated_warning("ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated.\nUse YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.") # Since YARP 2.3.21
     yarp_add_plugin_yarpdev_executable(${ARGN})
   endmacro()
 
   macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
-    yarp_deprecated_warning("YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated.\nUse YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.")
+    yarp_deprecated_warning("YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated.\nUse YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE instead.") # Since YARP 2.3.21
     yarp_add_plugin_yarpdev_executable(${ARGN})
   endmacro()
 
   macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
-    yarp_deprecated_warning("YARP_ADD_CARRIER_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.")
+    yarp_deprecated_warning("YARP_ADD_CARRIER_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
     yarp_install(FILES ${file_name}
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   endmacro()
 
   macro(YARP_ADD_DEVICE_FINGERPRINT file_name)
-    yarp_deprecated_warning("YARP_ADD_DEVICE_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.")
+    yarp_deprecated_warning("YARP_ADD_DEVICE_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
     yarp_install(FILES ${file_name}
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
