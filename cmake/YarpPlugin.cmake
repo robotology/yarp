@@ -71,11 +71,18 @@ include(CMakeDependentOption)
 # Calls to this macro may be nested.
 #
 macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
+  set(_options QUIET)
+  set(_oneValueArgs )
+  set(_multiValueArgs )
+  cmake_parse_arguments(_YBPL "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
+
   if(X_YARP_PLUGIN_MODE)
 
     # If we are nested inside a larger plugin block, we don't
     # have to do anything.
-    message(STATUS "nested library ${bundle_name}")
+    if(NOT _YBPL_QUIET AND NOT YarpPlugin_QUIET)
+      message(STATUS "nested library ${bundle_name}")
+    endif()
   else()
     # If we are the outermost plugin block, then we need to set up
     # everything for tracking the plugins within that block.
@@ -84,7 +91,9 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
     set(X_YARP_PLUGIN_MODE TRUE)
 
     # Declare that we are starting to compile the given plugin library
-    message(STATUS "starting plugin library: ${bundle_name}")
+    if(NOT _YBPL_QUIET AND NOT YarpPlugin_QUIET)
+      message(STATUS "starting plugin library: ${bundle_name}")
+    endif()
 
     # Choose a prefix for CMake options related to this library
     set(X_YARP_PLUGIN_PREFIX "${bundle_name}_")
@@ -123,6 +132,8 @@ endmacro()
 #                       [EXTRA_CONFIG <config>]
 #                       [CODE <code>]        # Deprecated, used only by carriers
 #                       [WRAPPER <wrapper>]  # Deprecated, used only by devices
+#                       [QUIET]
+#                       [VERBOSE]
 #
 # This macro converts a plugin declaration to code, and to set up a CMake option
 # for enabling or disabling the compilation of that plugin.
@@ -188,10 +199,17 @@ endmacro()
 # changed to `YARPPLUG_<KEY>` and used when the template is configured. For
 # example `EXTRA_CONFIG WRAPPER=foo` generates the `YARPPLUG_WRAPPER` variable
 # that is then replaced in the `yarp_plugin_device.cpp.in`.
+#
+# If the `QUIET` argument is used, or the `YarpPlugin_QUIET` variable is set,
+# the command does not print any message, except for warnings and errors.
+# Alternately, if the VERBOSE argument is used, or the `YarpPlugin_VERBOSE` is
+# set, some extra information about unsatisfied dependencies are printed.
 
 macro(YARP_PREPARE_PLUGIN _plugin_name)
   set(_options ADVANCED
-               INTERNAL)
+               INTERNAL
+               QUIET
+               VERBOSE)
   set(_oneValueArgs TYPE
                     INCLUDE
                     CATEGORY
@@ -382,7 +400,9 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
 
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${_plugin_name})
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
-    message(STATUS " +++ plugin ${_plugin_fullname}: enabled")
+    if (NOT _YPP_QUIET AND NOT YarpPlugin_QUIET)
+      message(STATUS " +++ plugin ${_plugin_fullname}: enabled")
+    endif()
   else()
     unset(_missing_deps)
     if(DEFINED _YPP_DEPENDS)
@@ -392,10 +412,12 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
         endif()
       endforeach()
     endif()
-    if(YarpPlugin_VERBOSE AND DEFINED _missing_deps)
-      message(STATUS " --- plugin ${_plugin_fullname}: dependencies unsatisfied: \"${_missing_deps}\"")
-    else()
-      message(STATUS " --- plugin ${_plugin_fullname}: disabled")
+    if (NOT _YPP_QUIET AND NOT YarpPlugin_QUIET)
+      if((_YPP_VERBOSE OR YarpPlugin_VERBOSE) AND DEFINED _missing_deps)
+        message(STATUS " --- plugin ${_plugin_fullname}: dependencies unsatisfied: \"${_missing_deps}\"")
+      else()
+        message(STATUS " --- plugin ${_plugin_fullname}: disabled")
+      endif()
     endif()
   endif()
 endmacro()
@@ -454,13 +476,22 @@ endmacro()
 # it.
 #
 macro(YARP_END_PLUGIN_LIBRARY bundle_name)
+  set(_options QUIET)
+  set(_oneValueArgs )
+  set(_multiValueArgs )
+  cmake_parse_arguments(_YEPL "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
+
   # make sure we are the outermost plugin library, if nesting is present.
   if(NOT "${bundle_name}" STREQUAL "${X_YARP_PLUGIN_MASTER}")
     # If we are nested inside a larger plugin block, we don't
     # have to do anything.
-    message(STATUS "ending nested plugin library ${bundle_name}")
+    if (NOT _YEPL_QUIET)
+      message(STATUS "ending nested plugin library ${bundle_name}")
+    endif()
   else()
-    message(STATUS "ending plugin library: ${bundle_name}")
+    if (NOT _YEPL_QUIET)
+      message(STATUS "ending plugin library: ${bundle_name}")
+    endif()
     # generate code to call all plugin initializers
     set(YARP_LIB_NAME ${X_YARP_PLUGIN_MASTER})
     get_property(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
