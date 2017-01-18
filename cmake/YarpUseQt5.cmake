@@ -56,9 +56,5 @@ macro(qtyarp_use_qml_plugin)
 endmacro()
 
 
-# Instruct CMake to issue deprecation warnings for macros and functions.
-set(CMAKE_WARN_DEPRECATED TRUE)
-
-
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
