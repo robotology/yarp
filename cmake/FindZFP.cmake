@@ -55,7 +55,7 @@ find_package_handle_standard_args(ZFP
 
 # Set package properties if FeatureSummary was included
 if(COMMAND set_package_properties)
-    set_package_properties(Libedit PROPERTIES DESCRIPTION "An open source C/C++ library for compressed floating-point arrays"
-                                              URL "http://computation.llnl.gov/projects/floating-point-compression")
+    set_package_properties(ZFP PROPERTIES DESCRIPTION "An open source C/C++ library for compressed floating-point arrays"
+                                          URL "http://computation.llnl.gov/projects/floating-point-compression")
 endif()
 
