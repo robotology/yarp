@@ -27,9 +27,11 @@ namespace yarp
         * @param U output M-by-K orthogonal matrix
         * @param S output K-dimensional vector containing the diagonal entries of the diagonal matrix S
         * @param V output N-by-K orthogonal matrix
+        *
+        * @note If U, S, V do not have the expected sizes they are resized automatically.
+        *
         * @note The routine computes the \a thin version of the SVD. Mathematically, the \a full SVD is
         *       defined with U and V as square orthogonal matrices and S as an M-by-N diagonal matrix.
-        *       If U, S, V do not have the expected sizes they are resized automatically.
         *
         * @note This function uses the Jacobi SVD algorithm.
         */
@@ -41,16 +43,19 @@ namespace yarp
         /**
         * Perform SVD decomposition on a MxN matrix (for M >= N) (defined in SVD.h).
         *
+        * @note If U, S, V do not have the expected sizes they are resized automatically.
+        *
         * @note This function uses the Jacobi SVD algorithm.
         */
         void YARP_math_API SVDMod(const yarp::sig::Matrix &in,
             yarp::sig::Matrix &U,
             yarp::sig::Vector &S,
             yarp::sig::Matrix &V);
-
         /**
         * Perform SVD decomposition on a matrix using the Jacobi method (defined in SVD.h). The Jacobi method
         * can compute singular values to higher relative accuracy than Golub-Reinsch algorithms.
+        *
+        * @note If U, S, V do not have the expected sizes they are resized automatically.
         *
         * @note This function uses the Jacobi SVD algorithm.
         */

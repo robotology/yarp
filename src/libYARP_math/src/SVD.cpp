@@ -33,8 +33,13 @@ void yarp::math::SVDJacobi(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
 {
     Eigen::JacobiSVD< Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > svd(toEigen(in), Eigen::ComputeThinU | Eigen::ComputeThinV);
 
+    U.resize(svd.matrixU().rows(),svd.matrixU().cols());
     toEigen(U) = svd.matrixU();
+
+    S.resize(svd.singularValues().size());
     toEigen(S) = svd.singularValues();
+
+    V.resize(svd.matrixV().rows(),svd.matrixV().cols());
     toEigen(V) = svd.matrixV();
 
     return;
