@@ -134,12 +134,6 @@ matrix:
 #      env: TRAVIS_WITH_INTEGRATION_TESTS=true
 
   allow_failures:
-
-    # Valgrind tests are at the moment constantly failing.
-    # Will be re-enabled as soon as possible
-    - env: TRAVIS_WITH_VALGRIND=true
-    - env: TRAVIS_WITH_ACE=false TRAVIS_WITH_VALGRIND=true
-
     # Broken tests are supposed to fail
     - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
 
