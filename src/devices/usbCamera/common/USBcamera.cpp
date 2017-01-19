@@ -306,8 +306,15 @@ int USBCameraDriver::getRgbWidth(){
 }
 
 bool USBCameraDriver::setRgbResolution(int width, int height){
-    if(deviceRgbVisualParam)
+    if(width<=0 || height<=0){
+        yError()<<"usbCamera: invalid width or height";
+        return false;
+    }
+    if(deviceRgbVisualParam){
+        _width=width;
+        _height=height;
         return deviceRgbVisualParam->setRgbResolution(width, height);
+    }
     return false;
 }
 
