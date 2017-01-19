@@ -83,6 +83,25 @@ public:
         }
     }
 
+    void svdCheckResizeOfOutputMatrices()
+    {
+        report(0,"checking that SVD resizes the output matrices");
+
+        int m=6, n=5;
+        Matrix U, V;
+        Vector s;
+
+        Matrix M = Rand::matrix(m,n)*100;
+
+        SVD(M, U, s, V);
+
+        checkEqual(U.rows(), m, "Number of Rows of U matrix is correct");
+        checkEqual(U.cols(), n, "Number of Cols of U matrix is correct");
+        checkEqual(s.size(), n, "Size of s vector is correct");
+        checkEqual(V.rows(), n, "Number of Rows of V matrix is correct");
+        checkEqual(V.cols(), n, "Number of Cols of V matrix is correct");
+    }
+
     void svdFat()
     {
         report(0,"checking SVD of fat matrix");
@@ -258,6 +277,7 @@ public:
     virtual void runTests() 
     {
         svd();
+        svdCheckResizeOfOutputMatrices();
         svdFat();
         pInv();
         pInvFat();
