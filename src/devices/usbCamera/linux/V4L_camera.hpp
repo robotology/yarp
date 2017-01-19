@@ -216,6 +216,7 @@ private:
     bool configPPx,configPPy;
     bool configRet,configDistM;
     bool configIntrins;
+    bool configured;
     bool doCropping;
     bool dual;
     bool isActive_vector[YARP_FEATURE_NUMBER_OF];

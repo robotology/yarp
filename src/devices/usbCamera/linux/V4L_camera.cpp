@@ -97,6 +97,7 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false)
     configRet = false;
     configDistM = false;
     configIntrins = false;
+    configured = false;
 }
 
 yarp::os::Stamp V4L_camera::getLastInputStamp()
@@ -424,6 +425,7 @@ bool V4L_camera::deviceInit()
     struct v4l2_crop crop;
     struct v4l2_streamparm frameint;
     unsigned int min;
+    configured = false;
 
     if (-1 == xioctl(param.fd, VIDIOC_QUERYCAP, &cap))
     {
@@ -482,6 +484,7 @@ bool V4L_camera::deviceInit()
 
         if (-1 == xioctl(param.fd, VIDIOC_S_CROP, &crop))
         {
+            yError() << "xioctl error VIDIOC_S_FMT" << strerror(errno);
             switch (errno)
             {
                 case EINVAL:
@@ -535,8 +538,10 @@ bool V4L_camera::deviceInit()
     param.dst_fmt = param.src_fmt;
     param.dst_fmt.fmt.pix.pixelformat = param.pixelType;
 
-    if (-1 == xioctl(param.fd, VIDIOC_S_FMT, &param.src_fmt))
-        std::cout << "xioctl error VIDIOC_S_FMT" << std::endl;
+    if (-1 == xioctl(param.fd, VIDIOC_S_FMT, &param.src_fmt)){
+        yError() << "xioctl error VIDIOC_S_FMT" << strerror(errno);
+        return false;
+    }
 
 
     /* Note VIDIOC_S_FMT may change width and height. */
@@ -604,6 +609,7 @@ bool V4L_camera::deviceInit()
     }
 
     query_current_image_fmt_v4l2(param.fd);
+    configured =true;
 
     return true;
 }
@@ -612,6 +618,7 @@ bool V4L_camera::deviceUninit()
 {
     unsigned int i;
     bool ret = true;
+    configured=false;
 
     switch (param.io)
     {
@@ -699,28 +706,44 @@ bool V4L_camera::close()
 bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 {
     mutex.wait();
-    imageProcess(param.raw_image);
-//     memcpy(buffer, param.dst_image, param.rgb_src_image_size*12/16);
-//     memcpy(buffer, param.tmp_image2, param.rgb_src_image_size*12/16);
-//     memcpy(buffer, param.outMat.data, param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3);
+    if(configured){
+        imageProcess(param.raw_image);
+    //     memcpy(buffer, param.dst_image, param.rgb_src_image_size*12/16);
+    //     memcpy(buffer, param.tmp_image2, param.rgb_src_image_size*12/16);
+    //     memcpy(buffer, param.outMat.data, param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3);
 
-//     memcpy(buffer, param.img.data, param.src_fmt.fmt.pix.width*12/16 * param.src_fmt.fmt.pix.height * 3);
-//     std::cout << "dst_image_size"<< param.dst_image_size << "; compute " << param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3 *12 /16  << std::endl;
-//     memcpy(buffer, param.outMat.data, param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3 *12 /16 );
-//     int __size = param.outMat.total();
-    memcpy(buffer, param.outMat.data, param.outMat.total()*3);
-    mutex.post();
-    return true;
+    //     memcpy(buffer, param.img.data, param.src_fmt.fmt.pix.width*12/16 * param.src_fmt.fmt.pix.height * 3);
+    //     std::cout << "dst_image_size"<< param.dst_image_size << "; compute " << param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3 *12 /16  << std::endl;
+    //     memcpy(buffer, param.outMat.data, param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3 *12 /16 );
+    //     int __size = param.outMat.total();
+        memcpy(buffer, param.outMat.data, param.outMat.total()*3);
+        mutex.post();
+        return true;
+    }
+    else
+    {
+        yError()<<"usbCamera: unable to get the buffer, device unitialized";
+        mutex.post();
+        return false;
+    }
 }
 
 // IFrameGrabber Interface
 bool V4L_camera::getRawBuffer(unsigned char *buffer)
 {
+
     mutex.wait();
-    imageProcess(param.raw_image);
-    memcpy(buffer, param.dst_image, param.dst_image_size);
-    mutex.post();
-    return true;
+    if(configured){
+        imageProcess(param.raw_image);
+        memcpy(buffer, param.dst_image, param.dst_image_size);
+        mutex.post();
+        return true;
+    }
+    else{
+        yError()<<"usbCamera: unable to get the buffer, device unitialized";
+        mutex.post();
+        return false;
+    }
 }
 
 int V4L_camera::getRawBufferSize()
