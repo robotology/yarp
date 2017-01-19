@@ -169,21 +169,23 @@ public:
 
     virtual void resize(size_t size)
     {
-        // T def = (T)0;
-        // resize(size, def);
+        size_t prev_len = len;
         bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
         bytes.setUsed(size*sizeof(T));
         _updatePointers();
+        for (size_t i = prev_len; i < size; i++) {
+            new (&((*this)[i])) T(); // non-allocating placement operator new
+        }
     }
 
     void resize(size_t size, const T&def)
     {
-        /*
         bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
         bytes.setUsed(size*sizeof(T));
-        _updatePointers(); */
-        resize(size);
-        for (size_t i=0; i<size; i++) { (*this)[i] = def; }
+        _updatePointers();
+        for (size_t i = 0; i < size; i++) {
+            new (&((*this)[i])) T(def); // non-allocating placement operator new
+        }
     }
 
     inline void push_back (const T &elem)
