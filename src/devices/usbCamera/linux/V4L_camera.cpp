@@ -177,12 +177,17 @@ int V4L_camera::getRgbWidth(){
 }
 
 bool V4L_camera::setRgbResolution(int width, int height){
-//    deviceUninit();
-//    param.width=width;
-//    param.height=height;
-//    return deviceInit();
-    yWarning("usbCamera: setRgbResolution not implemented yet");
-    return false;
+    mutex.wait();
+    captureStop();
+    deviceUninit();
+    param.width=width;
+    param.height=height;
+    bool res=deviceInit();
+    captureStart();
+    mutex.post();
+    return res;
+//    yWarning("usbCamera: setRgbResolution not implemented yet");
+//    return false;
 }
 
 bool V4L_camera::getRgbFOV(double &horizontalFov, double &verticalFov){
