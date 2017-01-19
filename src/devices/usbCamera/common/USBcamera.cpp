@@ -81,6 +81,7 @@ bool USBCameraDriver::open(yarp::os::Searchable& config)
     os_device->view(deviceControls);
     os_device->view(deviceControls2);
     os_device->view(deviceTimed);
+    os_device->view(deviceRgbVisualParam);
 
     if(deviceRaw)
     {
@@ -122,6 +123,7 @@ int USBCameraDriver::height () const
     else
         return 0;
 }
+
 
 bool USBCameraDriver::getRawBuffer(unsigned char *buff)
 {
@@ -288,6 +290,54 @@ bool USBCameraDriver::setWhiteBalance(double blue, double red)
 {
     if(deviceControls)
         return deviceControls->setWhiteBalance(blue, red);
+    return false;
+}
+
+int USBCameraDriver::getRgbHeight(){
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->getRgbHeight();
+    return false;
+}
+
+int USBCameraDriver::getRgbWidth(){
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->getRgbWidth();
+    return false;
+}
+
+bool USBCameraDriver::setRgbResolution(int width, int height){
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->setRgbResolution(width, height);
+    return false;
+}
+
+bool USBCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov){
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->getRgbFOV(horizontalFov, verticalFov);
+    return false;
+}
+
+bool USBCameraDriver::setRgbFOV(double horizontalFov, double verticalFov){
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->setRgbFOV(horizontalFov, verticalFov);
+    return false;
+}
+
+bool USBCameraDriver::getRgbIntrinsicParam(yarp::os::Property &intrinsic){
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->getRgbIntrinsicParam(intrinsic);
+    return false;
+}
+
+bool USBCameraDriver::getRgbMirroring(bool &mirror){
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->getRgbMirroring(mirror);
+    return false;
+}
+
+bool USBCameraDriver::setRgbMirroring(bool mirror){
+    if(deviceRgbVisualParam)
+        return deviceRgbVisualParam->setRgbMirroring(mirror);
     return false;
 }
 
