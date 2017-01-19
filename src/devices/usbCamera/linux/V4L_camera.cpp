@@ -90,13 +90,13 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false)
     param.camModel = SEE3CAMCU50;
     myCounter = 0;
     timeTot = 0;
-    configFx = true;
-    configFy = true;
-    configPPx = true;
-    configPPy =true;
-    configRet = true;
-    configDistM = true;
-    configIntrins = true;
+    configFx = false;
+    configFy = false;
+    configPPx = false;
+    configPPy =false;
+    configRet = false;
+    configDistM = false;
+    configIntrins = false;
 }
 
 yarp::os::Stamp V4L_camera::getLastInputStamp()
@@ -109,65 +109,6 @@ yarp::os::Stamp V4L_camera::getLastInputStamp()
  */
 bool V4L_camera::open(yarp::os::Searchable& config)
 {
-    yarp::os::Value *val;
-    Value* retM;
-    retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
-    yDebug()<<"Checking the configuration file";
-    if(config.find("horizontalFov").isNull())
-        configFx=false;
-    if(config.find("verticalFov").isNull())
-        configFy=false;
-    if(config.find("principalPointX").isNull())
-        configPPx=false;
-    if(config.find("principalPointY").isNull())
-        configPPy=false;
-    if(config.find("retificationMatrix").isNull())
-        configRet=false;
-    if(config.find("distortionModel").isNull())
-        configDistM=false;
-    Bottle bt;
-    bt=config.findGroup("cameraDistortionModelGroup");
-    if(bt.isNull())
-        configIntrins=false;
-    else if(bt.find("name").isNull() || bt.find("k1").isNull()
-            || bt.find("k2").isNull() || bt.find("k3").isNull()
-            || bt.find("t1").isNull() || bt.find("t2").isNull())
-        configIntrins=false;
-
-    param.width = config.check("width",yarp::os::Value(320),
-                     "desired width of test image").asInt();
-    param.height = config.check("height",yarp::os::Value(240),
-                     "desired height of test image").asInt();
-    param.horizontalFov=config.check("horizontalFov",Value(0.0),
-                               "desired horizontal fov of test image").asDouble();
-    param.verticalFov=config.check("verticalFov",Value(0.0),
-                               "desired vertical fov of test image").asDouble();
-    param.mirror=config.check("mirror",Value(false),
-                        "mirroring disabled by default").asBool();
-    param.intrinsic.put("focalLengthX",config.check("focalLengthX",Value(0.0),"").asDouble());
-    param.intrinsic.put("focalLengthY",config.check("focalLengthY",Value(0.0),"").asDouble());
-    param.intrinsic.put("principalPointX",config.check("principalPointX",Value(0.0),"").asDouble());
-    param.intrinsic.put("principalPointY",config.check("principalPointY",Value(0.0),"").asDouble());
-    param.intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,""));
-    param.intrinsic.put("distortionModel",config.check("distortionModel",Value(""),"").asString());
-    if(bt.isNull())
-    {
-        param.intrinsic.put("name","");
-        param.intrinsic.put("k1",0.0);
-        param.intrinsic.put("k2",0.0);
-        param.intrinsic.put("k3",0.0);
-        param.intrinsic.put("t1",0.0);
-        param.intrinsic.put("t2",0.0);
-    }
-    else{
-        param.intrinsic.put("name",bt.check("name",Value(""),"").asString());
-        param.intrinsic.put("k1",bt.check("k1",Value(0.0),"").asDouble());
-        param.intrinsic.put("k2",bt.check("k2",Value(0.0),"").asDouble());
-        param.intrinsic.put("k3",bt.check("k3",Value(0.0),"").asDouble());
-        param.intrinsic.put("t1",bt.check("t1",Value(0.0),"").asDouble());
-        param.intrinsic.put("t2",bt.check("t2",Value(0.0),"").asDouble());
-    }
-    delete retM;
     struct stat st;
     yTrace() << "input params are " << config.toString();
 
@@ -361,6 +302,71 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
             return false;
             break;
     }
+    yarp::os::Value *val;
+    Value* retM;
+    retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
+    configFx=config.check("horizontalFov");
+    configFy=config.check("verticalFov");
+    configPPx=config.check("principalPointX");
+    configPPy=config.check("principalPointY");
+    configRet=config.check("retificationMatrix");
+    configDistM=config.check("distortionModel");
+    Bottle bt;
+    bt=config.findGroup("cameraDistortionModelGroup");
+    if(!bt.isNull())
+    {
+        if(bt.find("name").isNull() || bt.find("k1").isNull()
+                    || bt.find("k2").isNull() || bt.find("k3").isNull()
+                    || bt.find("t1").isNull() || bt.find("t2").isNull())
+        {
+            yError()<<"usbCamera: group cameraDistortionModelGroup incomplete, "
+                      "fields k1, k2, k3, t1, t2, name are required when using cameraDistortionModelGroup";
+            configIntrins=false;
+            return false;
+        }
+        else
+            configIntrins=true;
+    }
+    else
+        configIntrins=false;
+    param.horizontalFov=config.check("horizontalFov",Value(0.0),
+                               "desired horizontal fov of test image").asDouble();
+    param.verticalFov=config.check("verticalFov",Value(0.0),
+                               "desired vertical fov of test image").asDouble();
+    if(config.check("mirror"))
+    {
+        if(!setRgbMirroring(config.check("mirror",
+                                        Value(false),
+                                        "mirroring disabled by default").asBool())){
+            yError("usbCamera: cannot set mirroring option");
+            return false;
+        }
+    }
+
+    param.intrinsic.put("focalLengthX",config.check("focalLengthX",Value(0.0),"").asDouble());
+    param.intrinsic.put("focalLengthY",config.check("focalLengthY",Value(0.0),"").asDouble());
+    param.intrinsic.put("principalPointX",config.check("principalPointX",Value(0.0),"").asDouble());
+    param.intrinsic.put("principalPointY",config.check("principalPointY",Value(0.0),"").asDouble());
+    param.intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,""));
+    param.intrinsic.put("distortionModel",config.check("distortionModel",Value(""),"").asString());
+    if(bt.isNull())
+    {
+        param.intrinsic.put("name","");
+        param.intrinsic.put("k1",0.0);
+        param.intrinsic.put("k2",0.0);
+        param.intrinsic.put("k3",0.0);
+        param.intrinsic.put("t1",0.0);
+        param.intrinsic.put("t2",0.0);
+    }
+    else{
+        param.intrinsic.put("name",bt.check("name",Value(""),"").asString());
+        param.intrinsic.put("k1",bt.check("k1",Value(0.0),"").asDouble());
+        param.intrinsic.put("k2",bt.check("k2",Value(0.0),"").asDouble());
+        param.intrinsic.put("k3",bt.check("k3",Value(0.0),"").asDouble());
+        param.intrinsic.put("t1",bt.check("t1",Value(0.0),"").asDouble());
+        param.intrinsic.put("t2",bt.check("t2",Value(0.0),"").asDouble());
+    }
+    delete retM;
 
     yDebug() << "using following device " << param.deviceId << "with the configuration: " << param.width << "x" << param.height << "; camModel is " << param.camModel;
     return true;
