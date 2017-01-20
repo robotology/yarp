@@ -365,7 +365,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE "TRUE")
 
 ### -Werror
 if(CXX_HAS_WERROR)
-  option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." TRUE)
+  option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." OFF)
   mark_as_advanced(YARP_ABORT_ON_WARNING)
   if(YARP_ABORT_ON_WARNING)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")

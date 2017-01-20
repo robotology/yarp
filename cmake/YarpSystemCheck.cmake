@@ -312,6 +312,10 @@ else()
       set(CXX17_FLAGS "-std=c++1z")
     endif()
 
+
+    ## Error and warning flags ##
+    check_cxx_compiler_flag("-Werror" CXX_HAS_WERROR)
+    check_cxx_compiler_flag("-Wfatal-errors" CXX_HAS_WFATAL_ERROR)
 endif()
 
 
