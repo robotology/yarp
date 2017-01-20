@@ -101,6 +101,7 @@ bool USBCameraDriver::close(void)
 {
     // close OS dependant device
     os_device->close();
+    delete os_device;
 	return true;
 }
 
@@ -366,7 +367,6 @@ bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
 {
     if( (image.width() != _width) || (image.height() != _height) )
         image.resize(_width, _height);
-
     deviceRgb->getRgbBuffer(image.getRawImage());
     return true;
 }
