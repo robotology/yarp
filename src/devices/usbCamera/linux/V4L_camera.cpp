@@ -84,9 +84,12 @@ V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false)
     param.deviceId = "/dev/video0";
     param.fd  = -1;
     param.image_size = 0;
-    param.dst_image = NULL;
     param.n_buffers = 0;
+    param.dst_image = NULL;
     param.buffers = NULL;
+    param.tmp_image= NULL;
+    param.tmp_image2 = NULL;
+    param.raw_image = NULL;
     param.camModel = SEE3CAMCU50;
     myCounter = 0;
     timeTot = 0;
@@ -657,6 +660,31 @@ bool V4L_camera::deviceUninit()
 
     if(param.buffers != 0)
         free(param.buffers);
+
+    if(param.dst_image != NULL)
+    {
+        free (param.dst_image);
+        param.dst_image=NULL;
+    }
+
+    if(param.tmp_image != NULL)
+    {
+        delete[] param.tmp_image;
+        param.tmp_image=NULL;
+    }
+
+    if(param.tmp_image2 != NULL)
+    {
+        delete[] param.tmp_image2;
+        param.tmp_image2=NULL;
+    }
+
+    if(param.raw_image != NULL)
+    {
+        free (param.raw_image);
+        param.raw_image=NULL;
+
+    }
     return ret;
 }
 
@@ -679,25 +707,6 @@ bool V4L_camera::close()
         return false;
     }
     param.fd = -1;
-    if(param.dst_image != NULL)
-    {
-        delete[] param.dst_image;
-    }
-
-    if(param.tmp_image != NULL)
-    {
-        delete[] param.tmp_image;
-    }
-
-    if(param.tmp_image2 != NULL)
-    {
-        delete[] param.tmp_image2;
-    }
-
-    if(param.raw_image != NULL)
-    {
-        free (param.raw_image);
-    }
     return true;
 }
 
