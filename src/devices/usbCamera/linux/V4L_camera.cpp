@@ -190,8 +190,6 @@ bool V4L_camera::setRgbResolution(int width, int height){
     captureStart();
     mutex.post();
     return res;
-//    yWarning("usbCamera: setRgbResolution not implemented yet");
-//    return false;
 }
 
 bool V4L_camera::getRgbFOV(double &horizontalFov, double &verticalFov){
@@ -592,7 +590,7 @@ bool V4L_camera::deviceInit()
 
     param.image_size = param.src_fmt.fmt.pix.sizeimage;
     param.rgb_src_image_size = param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 3;
-    param.dst_image  = (unsigned char*) malloc(param.width * param.height * 3 *100);  // 3 for rgb without gamma  *100 is for debug
+    param.dst_image  = (unsigned char*) malloc(param.width * param.height * 3);
     param.tmp_image  = new unsigned char[param.rgb_src_image_size];
     param.tmp_image2 = new unsigned char[param.rgb_src_image_size];
 
