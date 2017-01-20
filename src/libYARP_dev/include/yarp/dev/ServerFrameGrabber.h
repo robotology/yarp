@@ -23,7 +23,7 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
-
+#include <yarp/dev/IVisualParamsImpl.h>
 namespace yarp {
     namespace dev {
         class ServerFrameGrabber;
@@ -90,6 +90,8 @@ class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public DataSource2<yarp::sig::ImageOf<yarp::sig::PixelRgb>,yarp::sig::Sound>
 {
 private:
+    yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
+    yarp::dev::IRgbVisualParams* rgbVis_p;
     yarp::os::Port p;
     yarp::os::Port *p2;
     yarp::os::RateThreadWrapper thread;
@@ -115,19 +117,7 @@ public:
      */
     ServerFrameGrabber();
 
-    virtual bool close() {
-        if (!active) {
-            return false;
-        }
-        active = false;
-        thread.stop();
-        if (p2!=NULL) {
-            delete p2;
-            p2 = NULL;
-        }
-        return true;
-    }
-
+    virtual bool close();
     /**
      * Configure with a set of options. These are:
      * <TABLE>
@@ -145,199 +135,80 @@ public:
     virtual bool respond(const yarp::os::Bottle& command,
                          yarp::os::Bottle& reply);
 
-    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-        return getImage(image);
-    }
+    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
-    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
-        return getImage(image);
-    }
+    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
 
-    virtual bool getDatum(yarp::sig::Sound& sound) {
-        return getSound(sound);
-    }
+    virtual bool getDatum(yarp::sig::Sound& sound);
 
-    virtual bool getDatum(ImageRgbSound& imageSound) {
-        return getDatum(imageSound.head,imageSound.body);
-    }
+    virtual bool getDatum(ImageRgbSound& imageSound);
 
     virtual bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                          yarp::sig::Sound& sound) {
-        return getAudioVisual(image,sound);
-    }
+                          yarp::sig::Sound& sound);
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-        if (fgImage==NULL) { return false; }
-        return fgImage->getImage(image);
-    }
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
-        if (fgImageRaw==NULL) { return false; }
-        return fgImageRaw->getImage(image);
-    }
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
 
-    virtual bool getSound(yarp::sig::Sound& sound) {
-        if (fgSound==NULL) { return false; }
-        return fgSound->getSound(sound);
-    }
+    virtual bool getSound(yarp::sig::Sound& sound);
 
-    virtual bool startRecording() {
-        if (fgSound==NULL) { return false; }
-        return fgSound->startRecording();
-    }
+    virtual bool startRecording();
 
-    virtual bool stopRecording() {
-        if (fgSound==NULL) { return false; }
-        return fgSound->stopRecording();
-    }
+    virtual bool stopRecording();
 
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                                yarp::sig::Sound& sound) {
-        if (fgAv==NULL) { return false; }
-        return fgAv->getAudioVisual(image,sound);
-    }
+                                yarp::sig::Sound& sound);
 
-    virtual int height() const {
-        if (fgImage) { return fgImage->height(); }
-        if (fgImageRaw) { return fgImageRaw->height(); }
-        return 0;
-    }
+    virtual int height() const ;
 
-    virtual int width() const {
-        if (fgImage) { return fgImage->width(); }
-        if (fgImageRaw) { return fgImageRaw->width(); }
-        return 0;
-    }
+    virtual int width() const;
 
 // set
-    virtual bool setBrightness(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setBrightness(v);
-    }
-    virtual bool setExposure(double v)
-    {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setExposure(v);
-    }
-    virtual bool setSharpness(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setSharpness(v);
-    }
-    virtual bool setWhiteBalance(double blue, double red) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setWhiteBalance(blue,red);
-    }
-    virtual bool setHue(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setHue(v);
-    }
-    virtual bool setSaturation(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setSaturation(v);
-    }
-    virtual bool setGamma(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setGamma(v);
-    }
-    virtual bool setShutter(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setShutter(v);
-    }
-    virtual bool setGain(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setGain(v);
-    }
-    virtual bool setIris(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setIris(v);
-    }
+    virtual bool setBrightness(double v);
 
-    /*
-    virtual bool setTemperature(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setTemperature(v);
-    }
-    virtual bool setWhiteShading(double r,double g,double b) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setWhiteShading(r,g,b);
-    }
-    virtual bool setOpticalFilter(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setOpticalFilter(v);
-    }
-    virtual bool setCaptureQuality(double v) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->setCaptureQuality(v);
-    }
-    */
+    virtual bool setExposure(double v);
+
+    virtual bool setSharpness(double v);
+
+    virtual bool setWhiteBalance(double blue, double red);
+
+    virtual bool setHue(double v);
+
+    virtual bool setSaturation(double v);
+
+    virtual bool setGamma(double v);
+
+    virtual bool setShutter(double v);
+
+    virtual bool setGain(double v);
+
+    virtual bool setIris(double v);
 
 // get
 
-    virtual double getBrightness() {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getBrightness();
-    }
-    virtual double getExposure() {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->getExposure();
-    }
-    virtual double getSharpness() {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getSharpness();
-    }
-    virtual bool getWhiteBalance(double &blue, double &red) {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->getWhiteBalance(blue,red);
-    }
-    virtual double getHue() {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getHue();
-    }
-    virtual double getSaturation() {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getSaturation();
-    }
-    virtual double getGamma() {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getGamma();
-    }
-    virtual double getShutter() {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getShutter();
-    }
-    virtual double getGain() {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getGain();
-    }
-    virtual double getIris() {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getIris();
-    }
+    virtual double getBrightness();
 
-    /*
-    virtual double getTemperature() const {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getTemperature();
-    }
-    virtual bool getWhiteShading(double &r, double &g, double &b) const {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->getWhiteShading(r,g,b);
-    }
-    virtual double getOpticalFilter() const {
-        if (fgCtrl==NULL) { return 0.0; }
-        return fgCtrl->getOpticalFilter();
-    }
-    virtual double getCaptureQuality() const {
-        if (fgCtrl==NULL) { return false; }
-        return fgCtrl->getCaptureQuality();
-    }
-    */
+    virtual double getExposure();
+
+    virtual double getSharpness();
+
+    virtual bool getWhiteBalance(double &blue, double &red);
+
+    virtual double getHue();
+
+    virtual double getSaturation();
+
+    virtual double getGamma();
+
+    virtual double getShutter();
+
+    virtual double getGain();
+
+    virtual double getIris();
 
     virtual bool startService();
 
-    virtual bool stopService() {
-        return close();
-    }
+    virtual bool stopService() ;
 
     virtual bool updateService();
 };

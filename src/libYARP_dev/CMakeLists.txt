@@ -84,7 +84,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ServerSerial.h
                   include/yarp/dev/ServerSoundGrabber.h
                   include/yarp/dev/ServiceInterfaces.h
-                  include/yarp/dev/TestFrameGrabber.h
                   include/yarp/dev/TestMotor.h
                   include/yarp/dev/Wrapper.h
                   include/yarp/dev/ControlBoardInterfacesImpl.inl
@@ -125,7 +124,6 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/RemoteFrameGrabberDC1394.cpp
                   src/ServerFrameGrabber.cpp
                   src/ServerSerial.cpp
-                  src/TestFrameGrabber.cpp
                   src/TorqueControlImpl.cpp
                   src/IAxisInfoImpl.cpp)
 

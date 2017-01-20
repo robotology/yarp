@@ -20,7 +20,6 @@
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/DevicePipe.h>
 #include <yarp/dev/DeviceGroup.h>
-#include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerSoundGrabber.h>
 #include <yarp/dev/TestMotor.h>
 
@@ -57,10 +56,6 @@ extern DriverCreator *createClientControlBoard();
 #endif // YARP_NO_DEPRECATED
 
 void Drivers::init() {
-
-    add(new DriverCreatorOf<yarp::dev::TestFrameGrabber>("test_grabber",
-                                                         "grabber",
-                                                         "yarp::dev::TestFrameGrabber"));
 
     add(new DriverCreatorOf<yarp::dev::TestMotor>("test_motor",
                                                   "controlboard",
