@@ -712,6 +712,7 @@ bool V4L_camera::close()
 // IFrameGrabberRgb Interface 777
 bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 {
+    bool res=false;
     mutex.wait();
     if(configured){
         imageProcess(param.raw_image);
@@ -725,32 +726,34 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
     //     int __size = param.outMat.total();
         memcpy(buffer, param.outMat.data, param.outMat.total()*3);
         mutex.post();
-        return true;
+        res=true;
     }
     else
     {
         yError()<<"usbCamera: unable to get the buffer, device unitialized";
         mutex.post();
-        return false;
+        res=false;
     }
+    return res;
 }
 
 // IFrameGrabber Interface
 bool V4L_camera::getRawBuffer(unsigned char *buffer)
 {
-
+    bool res=false;
     mutex.wait();
     if(configured){
         imageProcess(param.raw_image);
         memcpy(buffer, param.dst_image, param.dst_image_size);
         mutex.post();
-        return true;
+        res=true;
     }
     else{
         yError()<<"usbCamera: unable to get the buffer, device unitialized";
         mutex.post();
-        return false;
+        res=false;
     }
+    return res;
 }
 
 int V4L_camera::getRawBufferSize()
@@ -1828,6 +1831,7 @@ bool V4L_camera::setActive(int feature, bool onoff)
             }
         } break;
     }
+    return true;
 }
 
 bool V4L_camera::getActive(int feature, bool *_isActive)
