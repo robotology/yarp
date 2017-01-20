@@ -330,6 +330,7 @@ mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
 #########################################################################
 # Control submission of reports
 option(ENABLE_DASHBOARD_SUBMIT "Allow submission of builds to http://dashboard.icub.org/index.php?project=YARP" OFF)
+mark_as_advanced(ENABLE_DASHBOARD_SUBMIT)
 if(ENABLE_DASHBOARD_SUBMIT)
   include(CTest)
 endif()
