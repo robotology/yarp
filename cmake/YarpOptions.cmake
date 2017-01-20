@@ -314,7 +314,8 @@ set(YARP_WRAP_STL_STRING_INLINE_DEFAULT TRUE)
 if(MSVC)
   set(YARP_WRAP_STL_STRING_INLINE_DEFAULT FALSE)
 endif()
-option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT})
+cmake_dependent_option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT}
+                       YARP_WRAP_STL_STRING OFF)
 mark_as_advanced(YARP_WRAP_STL_STRING_INLINE)
 
 
