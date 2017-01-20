@@ -957,6 +957,7 @@ void* V4L_camera::frameRead()
 {
     struct v4l2_buffer buf;
     unsigned int i;
+    mutex.wait();
 
     switch (param.io)
     {
@@ -967,6 +968,7 @@ void* V4L_camera::frameRead()
                 switch (errno)
                 {
                     case EAGAIN:
+                        mutex.post();
                         return NULL;
 
                     case EIO:
@@ -975,6 +977,7 @@ void* V4L_camera::frameRead()
 
                     default:
                         errno_exit("read");
+                        mutex.post();
                         return NULL;
                 }
                 timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
@@ -1000,6 +1003,7 @@ void* V4L_camera::frameRead()
                     {
                         default:
                             printf("\n ERROR: VIDIOC_DQBUF\n");
+                            mutex.post();
                             return NULL;
                     }
                 }
@@ -1007,19 +1011,20 @@ void* V4L_camera::frameRead()
                 if( !(buf.index < param.n_buffers) )
                 {
                     yError() << "at line " << __LINE__;
+                    mutex.post();
+                    return NULL;
                 }
 
 
-                mutex.wait();
                 memcpy(param.raw_image, param.buffers[buf.index].start, param.buffers[0].length); //param.image_size);
 //                 param.raw_image = param.buffers[buf.index].start;
 //                 imageProcess(param.raw_image);
                 timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
-                mutex.post();
 
                 if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
                 {
                     errno_exit("VIDIOC_QBUF");
+                    mutex.post();
                     return NULL;
                 }
 
@@ -1057,13 +1062,13 @@ void* V4L_camera::frameRead()
                     if(! (i < param.n_buffers) )
                     {
                         yError() << "at line " << __LINE__;
+                        mutex.post();
+                        return NULL;
                     }
 
-                mutex.wait();
                 memcpy(param.raw_image, param.buffers[buf.index].start, param.image_size);
 //                 param.raw_image = (void*) buf.m.userptr;
                 timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec/1000000.0);
-                mutex.post();
 
 
                 if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf))
@@ -1076,6 +1081,7 @@ void* V4L_camera::frameRead()
 //             param.raw_image = NULL;
         }
     }
+    mutex.post();
     return (void*) param.raw_image; //param.dst_image;
 }
 
