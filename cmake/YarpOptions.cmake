@@ -109,9 +109,6 @@ endif()
 option(BUILD_SHARED_LIBS "Compile shared libraries rather than linking statically" ON)
 mark_as_advanced(BUILD_SHARED_LIBS)
 yarp_renamed_option(CREATE_SHARED_LIBRARY BUILD_SHARED_LIBS) # Since YARP 2.3.68.1
-if(WIN32)
-  set(YARP_FILTER_API ON)
-endif()
 
 if(BUILD_SHARED_LIBS)
   set(YARP_DLL ON)
