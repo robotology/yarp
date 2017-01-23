@@ -13,6 +13,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/YarpPlugin.h>
+#include <yarp/os/Carriers.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/rtf/TestCase.h>
 
@@ -37,14 +38,15 @@ bool YarpPluginFixture::scanPlugins(ConstString name){
 }
 
 bool YarpPluginFixture::setup(int argc, char** argv) {
+
     if(argc<=1)
     {
         //RTF::RTF_FIXTURE_REPORT();
-        RTF_ASSERT_ERROR("YarpPluginFixture: Please specify --devices and/or --plugins parameters");
+        RTF_ASSERT_ERROR("YarpPluginFixture: Please specify --devices and/or --plugins and/or --carriers parameters");
         return false;
     }
     RTF_FIXTURE_REPORT("YarpPluginFixture: setupping fixture...");
-    bool resDev=true, resPlug=true;
+    bool resDev=false, resPlug=false, resCarr=false;
     Property prop;
     prop.fromCommand(argc, argv, false);
     if(prop.check("devices"))
@@ -53,14 +55,13 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         if(devices.isNull())
         {
             RTF_ASSERT_ERROR("YarpPluginFixture: not found devices parameter");
-            resDev=false;
         }
+        resDev=true;
         for(int i=1;i<devices.size();i++)
         {
             if(Drivers::factory().find(devices.get(i).asString().c_str())==NULL)
             {
                 RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+ devices.get(i).asString() +" among the available devices");
-                resDev=false;
             }
         }
     }
@@ -75,24 +76,42 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         if(plugins.isNull())
         {
             RTF_ASSERT_ERROR("YarpPluginFixture: not found plugins parameter");
-            resPlug=false;
         }
+        resPlug=true;
         for(int i=1;i<plugins.size();i++)
         {
             if(!scanPlugins(plugins.get(i).asString())){
                 RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+plugins.get(i).asString()+" among the available plugins");
-                resPlug=false;
             }
         }
     }
     else
     {
-        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'plugins' param. Probably not required skipping this check...");
-        resPlug=prop.check("devices");
+        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'plugins' param. Probably not required skipping this check. Trying with 'carriers' param...");
     }
 
+    if(prop.check("carriers"))
+    {
+        carriers = prop.findGroup("carriers");
+        if(carriers.isNull())
+        {
+            RTF_ASSERT_ERROR("YarpPluginFixture: not found carriers parameter");
+        }
+        Bottle lst=Carriers::listCarriers();
+        resCarr=true;
+        for(int i=1;i<carriers.size();i++)
+        {
+            if(lst.find(carriers.get(i).asString()).isNull()){
+                RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+carriers.get(i).asString()+" among the available carriers");
+            }
+        }
+    }
+    else
+    {
+        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'carriers' param. Probably not required skipping this check...");
+    }
 
-    return resDev && resPlug;
+    return resDev || resPlug || resCarr;
 }
 
 bool YarpPluginFixture::check() {
@@ -102,3 +121,4 @@ bool YarpPluginFixture::check() {
 
 void YarpPluginFixture::tearDown() {
 }
+
